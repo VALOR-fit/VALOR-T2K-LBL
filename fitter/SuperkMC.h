@@ -95,6 +95,9 @@ public:
   // Allow osc prob > 1 in 2 flavour oscillation?
   void SetUnphysicalOscProb(bool unphys) { fUnphysicalOscProb = unphys; }
 
+  // Allow changing the mass hierarchy
+  void SetMassHierarchy(t2kana::conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
+
 private:
 
   // Init and clean-up
@@ -171,26 +174,26 @@ private:
 
   int        fMCTemplArrayOri1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   int        fMCTemplArrayOri1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  int        fMCTemplArrayRHCOri1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];    // ANTINU
-  int        fMCTemplArrayRHCOri1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];     // ANTINU
+  int        fMCTemplArrayOriRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];    // ANTINU
+  int        fMCTemplArrayOriRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];     // ANTINU
 
   double     fMCTemplArrayNom1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayNom1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  double     fMCTemplArrayRHCNom1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];   // ANTINU
-  double     fMCTemplArrayRHCNom1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
+  double     fMCTemplArrayNomRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];   // ANTINU
+  double     fMCTemplArrayNomRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
 
   double     fMCTemplArrayTun1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayTun1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  double     fMCTemplArrayRHCTun1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];  // ANTINU
-  double     fMCTemplArrayRHCTun1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
+  double     fMCTemplArrayTunRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];  // ANTINU
+  double     fMCTemplArrayTunRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
 
   //double     fMCTemplArraySys[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu]; 
   //double     fMCTemplArrayRHCSys[kns][knm][conv::kRHCNEtrueBins][conv::kRHCNErecoBins1Rmu];   // ANTINU
 
   double     fMCTemplArrayFin1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCTemplArrayFin1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  double     fMCTemplArrayRHCFin1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];  // ANTINU
-  double     fMCTemplArrayRHCFin1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
+  double     fMCTemplArrayFinRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];  // ANTINU
+  double     fMCTemplArrayFinRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
 
   double     fMCStatFracErr1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
   double     fMCStatFracErr1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
@@ -221,48 +224,48 @@ private:
   TTree*     fMCTreeNuMuBar1Rmu;           ///< input MC event tree /  sample: numubar                      / cuts: 1-ring mu-like 
   TTree*     fMCTreeNuE1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like 
   TTree*     fMCTreeNuEBar1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like 
-  TTree*     fMCTreeSigNuE1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like 
+  TTree*     fMCTreeOscNuE1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like 
   
   TTree*     fMCTreeNuMu1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like 
   TTree*     fMCTreeNuMuBar1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like 
   TTree*     fMCTreeNuE1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like 
   TTree*     fMCTreeNuEBar1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like 
-  TTree*     fMCTreeSigNuE1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like 
+  TTree*     fMCTreeOscNuE1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like 
  
   TTree*     fMCTreeNuMuRHC1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like    // ANTINU
   TTree*     fMCTreeNuMuBarRHC1Rmu;           ///< input MC event tree /  sample: numubar                      / cuts: 1-ring mu-like    // ANTINU
   TTree*     fMCTreeNuERHC1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like    // ANTINU
   TTree*     fMCTreeNuEBarRHC1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like    // ANTINU
-  TTree*     fMCTreeSigNuEBarRHC1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like    // ANTINU
+  TTree*     fMCTreeOscNuEBarRHC1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like    // ANTINU
   
   TTree*     fMCTreeNuMuRHC1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like    // ANTINU
   TTree*     fMCTreeNuMuBarRHC1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like    // ANTINU
   TTree*     fMCTreeNuERHC1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like    // ANTINU
   TTree*     fMCTreeNuEBarRHC1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like    // ANTINU
-  TTree*     fMCTreeSigNuEBarRHC1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like    // ANTINU
+  TTree*     fMCTreeOscNuEBarRHC1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like    // ANTINU
  
   TH1D*      fMCPOTHistNuMu;               ///< input MC event sample POT histogram : numu
   TH1D*      fMCPOTHistNuMuBar;            ///< input MC event sample POT histogram : numubar
   TH1D*      fMCPOTHistNuE;                ///< input MC event sample POT histogram : nue 
   TH1D*      fMCPOTHistNuEBar;             ///< input MC event sample POT histogram : nuebar
-  TH1D*      fMCPOTHistSigNuE;             ///< input MC event sample POT histogram : nue (signal)
+  TH1D*      fMCPOTHistOscNuE;             ///< input MC event sample POT histogram : nue (signal)
   double     fMCPOTNuMu;                   ///< MC event sample POT : numu
   double     fMCPOTNuMuBar;                ///< MC event sample POT : numubar
   double     fMCPOTNuE;                    ///< MC event sample POT : nue 
   double     fMCPOTNuEBar;                 ///< MC event sample POT : nuebar
-  double     fMCPOTSigNuE;                 ///< MC event sample POT : nue (signal)
+  double     fMCPOTOscNuE;                 ///< MC event sample POT : nue (signal)
 
   // ANTINU
   TH1D*      fMCPOTHistRHCNuMu;            ///< input MC event sample POT histogram : numu
   TH1D*      fMCPOTHistRHCNuMuBar;         ///< input MC event sample POT histogram : numubar
   TH1D*      fMCPOTHistRHCNuE;             ///< input MC event sample POT histogram : nue 
-  TH1D*      fMCPOTHistRHCNuEBar;             ///< input MC event sample POT histogram : nue
-  TH1D*      fMCPOTHistRHCSigNuEBar;       ///< input MC event sample POT histogram : nuebar (signal)
+  TH1D*      fMCPOTHistRHCNuEBar;          ///< input MC event sample POT histogram : nue
+  TH1D*      fMCPOTHistRHCOscNuEBar;       ///< input MC event sample POT histogram : nuebar (signal)
   double     fMCPOTRHCNuMu;                ///< MC event sample POT : numu
   double     fMCPOTRHCNuMuBar;             ///< MC event sample POT : numubar
   double     fMCPOTRHCNuE;                 ///< MC event sample POT : nue 
-  double     fMCPOTRHCNuEBar;                 ///< MC event sample POT : nue
-  double     fMCPOTRHCSigNuEBar;           ///< MC event sample POT : nuebar (signal)
+  double     fMCPOTRHCNuEBar;              ///< MC event sample POT : nue
+  double     fMCPOTRHCOscNuEBar;           ///< MC event sample POT : nuebar (signal)
   ////
 
   float      fBrEreco;                     ///< branch var for reading input MC mini-DST

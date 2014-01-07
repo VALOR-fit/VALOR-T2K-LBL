@@ -146,9 +146,9 @@ void test_nsk_twk_osc_mixing13_deltacp
        double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike)->Integral();
        double frac_dnsk = 100*(nsk-nskref)/nskref;
        //lorena - now separate signal and background
-       double nsksig = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCQE)->Integral();
-       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCoth_e)->Integral();
-       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECC1pi)->Integral();
+       double nsksig = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmOscNuECCQE)->Integral();
+       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmOscNuECCoth_e)->Integral();
+       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmOscNuECC1pi)->Integral();
        double nskback = nsk - nsksig;
        // store values
        nsk_vs_osc_params->SetBinContent(i,j,nsk);
@@ -277,9 +277,9 @@ void test_nsk_twk_osc_mixing13_deltacp
        double nsk = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike)->Integral();
        double frac_dnsk = 100*(nsk-nskref)/nskref;
        //lorena - now separate signal and background
-       double nsksig = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCQE)->Integral();
-       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECCoth_e)->Integral();
-       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmSigNuECC1pi)->Integral();
+       double nsksig = skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmOscNuECCQE)->Integral();
+       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmOscNuECCoth_e)->Integral();
+       nsksig += skexp.CurrPredictedErecoSpectrum(conv::kSKsFCFV1RingELike, conv::kSKmOscNuECC1pi)->Integral();
        double nskback = nsk - nsksig;
        // store values
        nsk_vs_osc_params_bis->SetBinContent(i,j,nsk);

@@ -606,10 +606,10 @@ double SuperkDetector::EfficiencyWeight(
        case (kSKmNuEBarCC1pi)    : 
        case (kSKmNuEBarCCcoh)    : 
        case (kSKmNuEBarCCoth) : 
-       case (kSKmSigNuECCQE)     : 
-       case (kSKmSigNuECC1pi)    : 
-       case (kSKmSigNuECCcoh)    : 
-       case (kSKmSigNuECCoth) : 
+       case (kSKmOscNuECCQE)     : 
+       case (kSKmOscNuECC1pi)    : 
+       case (kSKmOscNuECCcoh)    : 
+       case (kSKmOscNuECCoth) : 
        {
           double relerr  = fEff1RmuNuECCRelErr;
           double twkdial = fEff1RmuNuECCTwkDial;

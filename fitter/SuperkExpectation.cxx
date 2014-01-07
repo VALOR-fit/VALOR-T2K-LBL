@@ -98,6 +98,7 @@ void SuperkExpectation::Init(void)
       }//im
     }//ir
   }//is
+  cout << "done" << endl;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::Book(void)

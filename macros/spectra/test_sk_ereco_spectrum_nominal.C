@@ -258,7 +258,7 @@ void test_sk_ereco_spectrum_nominal
        || m == conv::kSKmNuECC1pi
        || m == conv::kSKmNuEBarCC1pi
        || m == conv::kSKmOscNuMuCC1pi
-       || m == conv::kSKmSigNuECC1pi
+       || m == conv::kSKmOscNuECC1pi
        )
       n1pi += nmode;
   }

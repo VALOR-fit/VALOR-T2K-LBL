@@ -322,7 +322,7 @@ void NuFlux::BookAndInitAuxSpectra(void)
 
   const int n_nu = 4;
   int nu_pdg[n_nu] = { conv::kPdgNuE, conv::kPdgNuMu, conv::kPdgNuEBar, conv::kPdgNuMuBar };
-  
+
   for(int inu = 0; inu < n_nu; inu++) {
      TH1D * hnom = this->SuperkFluxSpectrum(nu_pdg[inu], conv::kFlxNominal  );
      for(int ie = 1; ie <= hnom->GetNbinsX(); ie++) {
@@ -334,8 +334,10 @@ void NuFlux::BookAndInitAuxSpectra(void)
      }//ie
   }//inu
 
+  cout << "BLA" << endl;  
+
   for(int inu = 0; inu < n_nu; inu++) {
-    TH1D * hnomrhc = this->SuperkRHCFluxSpectrum(nu_pdg[inu], conv::kRHCFlxNominal  );
+    TH1D * hnomrhc = this->SuperkFluxSpectrum(nu_pdg[inu], conv::kRHCFlxNominal  );
     for(int ie = 1; ie <= hnomrhc->GetNbinsX(); ie++) {
       double E = hnomrhc->GetBinCenter (ie);
       double f = hnomrhc->GetBinContent(ie);
@@ -344,6 +346,8 @@ void NuFlux::BookAndInitAuxSpectra(void)
       hnomrhc->SetBinContent(ie,f);
     }//ie
   }//inu
+
+  cout << "BLA" << endl;  
 
   //
   // Create the fin/tuned flux histograms and initialize them using the ext/tuned flux
@@ -368,6 +372,8 @@ void NuFlux::BookAndInitAuxSpectra(void)
   fSKRHCNuMuBarFluxTunedFinal -> SetDirectory(0);
   fSKRHCNuEFluxTunedFinal     -> SetDirectory(0);
   fSKRHCNuEBarFluxTunedFinal  -> SetDirectory(0);
+
+  cout << "BLA" << endl;  
 
   this->ApplyBANFFWeights(false); // reweight ext/tuned to fin/tuned flux (corresponds to BANFF best-fit)
 

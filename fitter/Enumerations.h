@@ -159,18 +159,15 @@ SuperkSample_t;
 
 // Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkModes = 59;  // number of reaction modes kept track of within each sample
+static const int kNSuperkModes = 53;  // number of reaction modes kept track of within each sample
 static const int knm = kNSuperkModes; // as above - shorter name
 typedef enum ESuperkMode 
 {
    kSKmUndefined = -1, 
    kSKmNuMuCCQE,         // numu CC QE
-   kSKmMEC,              // numu CC MEC
    kSKmNuMuCC1pi,        // numu CC 1pi
    kSKmNuMuCCcoh,        // numu CC coherent
-   //   kSKmNuMuCCoth_mu,     // numu CC other, nu_mu disappearance analysis definition
-   //   kSKmNuMuCCoth_e,      // numu CC other, nu_e appearance analysis definition
-   kSKmNuMuCCoth,        // it is actually the same definition for CC!
+   kSKmNuMuCCoth,        // numu CC other
    kSKmNuMuNC1piC,       // numu NC 1 charged pi
    kSKmNuMuNC1pi0,       // numu NC 1pi0
    kSKmNuMuNCcoh,        // numu NC coherent
@@ -179,70 +176,47 @@ typedef enum ESuperkMode
    kSKmOscNuMuCCQE,      // oscillated numu CCQE
    kSKmOscNuMuCC1pi,     // oscillated numu CC 1pi
    kSKmOscNuMuCCcoh,     // oscillated numu coh
-   //   kSKmOscNuMuCCoth_mu,  // oscillated numu other, nu_mu disappearance analysis definition
-   //   kSKmOscNuMuCCoth_e,   // oscillated numu other, nu_e appearance analysis definition
-   kSKmOscNuMuCCoth,     // it is actually the same definition for CC!
+   kSKmOscNuMuCCoth,     // oscillated numu CC other
    kSKmNuMuBarCCQE,      // numubar CCQE
    kSKmNuMuBarCC1pi,     // numubar CC 1pi
    kSKmNuMuBarCCcoh,     // numubar CC coh
-   //   kSKmNuMuBarCCoth_mu,  // numubar CC other, nu_mu disappearance analysis definition
-   //   kSKmNuMuBarCCoth_e,   // numubar CC other, nu_e appearance analysis definition
-   kSKmNuMuBarCCoth,     // it is actually the same definition for CC!
+   kSKmNuMuBarCCoth,     // numubar CC other
    kSKmNuMuBarNC1piC,    // numubar NC 1 charged pi
    kSKmNuMuBarNC1pi0,    // numubar NC 1pi0
    kSKmNuMuBarNCcoh,     // numubar NC coherent
    kSKmNuMuBarNCoth_mu,  // numubar NC other, nu_mu appearance analysis definition
    kSKmNuMuBarNCoth_e,   // numubar NC other, nu_e appearance analysis definition
-   kSKmOscNuMuBarCCQE,      // numubar CCQE
-   kSKmOscNuMuBarCC1pi,     // numubar CC 1pi
-   kSKmOscNuMuBarCCcoh,     // numubar CC coh
-   //   kSKmNuMuBarCCoth_mu,  // numubar CC other, nu_mu disappearance analysis definition
-   //   kSKmNuMuBarCCoth_e,   // numubar CC other, nu_e appearance analysis definition
-   kSKmOscNuMuBarCCoth,     // it is actually the same definition for CC!
+   kSKmOscNuMuBarCCQE,   // oscillated numubar CCQE
+   kSKmOscNuMuBarCC1pi,  // oscillated numubar CC 1pi
+   kSKmOscNuMuBarCCcoh,  // oscillated numubar CC coh
+   kSKmOscNuMuBarCCoth,  // oscillated numubar CC other
    kSKmNuECCQE,          // nue CC QE
    kSKmNuECC1pi,         // nue CC 1pi
    kSKmNuECCcoh,         // nue CC coherent
-   //   kSKmNuECCoth_mu,      // nue CC other, nu_mu disappearance analysis definition
-   //   kSKmNuECCoth_e,       // nue CC other, nu_e appearance analysis definition
-   kSKmNuECCoth,         // it is actually the same definition for CC!
+   kSKmNuECCoth,         // nue CC other
    kSKmNuENC1piC,        // nue NC 1 charged pi
    kSKmNuENC1pi0,        // nue NC 1pi0
    kSKmNuENCcoh,         // nue NC coherent
    kSKmNuENCoth_mu,      // nue NC other, nu_mu appearance analysis definition
    kSKmNuENCoth_e,       // nue NC other, nu_e appearance analysis definition
+   kSKmOscNuEBarCCQE,    // oscillated nuebar CC QE
+   kSKmOscNuEBarCC1pi,   // oscillated nuebar CC 1pi
+   kSKmOscNuEBarCCcoh,   // oscillated nuebar CC coherent
+   kSKmOscNuEBarCCoth,   // oscillated nuebar CC other
    kSKmNuEBarCCQE,       // nuebar CC QE
    kSKmNuEBarCC1pi,      // nuebar CC 1pi
    kSKmNuEBarCCcoh,      // nuebar CC coherent
-   //   kSKmNuEBarCCoth_mu,   // nuebar CC other, nu_mu disappearance analysis definition
-   //   kSKmNuEBarCCoth_e,    // nuebar CC other, nu_e appearance analysis definition
-   kSKmNuEBarCCoth,      // it is actually the same definition for CC!
+   kSKmNuEBarCCoth,      // nuebar CC other
    kSKmNuEBarNC1piC,     // nuebar NC 1 charged pi
    kSKmNuEBarNC1pi0,     // nuebar NC 1pi0
    kSKmNuEBarNCcoh,      // nuebar NC coherent
    kSKmNuEBarNCoth_mu,   // nuebar NC other, nu_mu appearance analysis definition
    kSKmNuEBarNCoth_e,    // nuebar NC other, nu_e appearance analysis definition
-   kSKmOscNuEBarCCQE,       // nuebar CC QE
-   kSKmOscNuEBarCC1pi,      // nuebar CC 1pi
-   kSKmOscNuEBarCCcoh,      // nuebar CC coherent
-   //   kSKmNuEBarCCoth_mu,   // nuebar CC other, nu_mu disappearance analysis definition
-   //   kSKmNuEBarCCoth_e,    // nuebar CC other, nu_e appearance analysis definition
-   kSKmOscNuEBarCCoth,      // it is actually the same definition for CC!
-   kSKmSigNuECCQE,       // oscillated nue CCQE
-   kSKmSigNuECC1pi,      // oscillated nue CC 1pi
-   kSKmSigNuECCcoh,      // oscillated nue coh
-   //   kSKmSigNuECCoth_mu,   // oscillated nue other, nu_mu disappearance analysis definition
-   //   kSKmSigNuECCoth_e     // oscillated nue other, nu_e appearance analysis definition
-   kSKmSigNuECCoth,       // it is actually the same definition for CC!
-
-   //******** ADDITIONAL MODES FOR REVERSE HORN CURRENT (RHC) RUNNING ************
-   kSKmRHCOscNuECCQE,       // oscillated nue CCQE                                                                                                                                                    
-   kSKmRHCOscNuECC1pi,      // oscillated nue CC 1pi                                                                                                                                                  
-   kSKmRHCOscNuECCcoh,      // oscillated nue coh                                                                                                                                                    
-   kSKmRHCOscNuECCoth,      // oscillated nue CC other 
-   kSKmRHCSigNuEBarCCQE,    // signal nuebar CC QE                                                                                                                                                     
-   kSKmRHCSigNuEBarCC1pi,   // signal nuebar CC 1pi                                                                                                                                                   
-   kSKmRHCSigNuEBarCCcoh,   // signal nuebar CC coherent                                                                                                                                             
-   kSKmRHCSigNuEBarCCoth    // signal nuebar CC other                                                                                                                                              
+   kSKmOscNuECCQE,       // oscillated nue CCQE
+   kSKmOscNuECC1pi,      // oscillated nue CC 1pi
+   kSKmOscNuECCcoh,      // oscillated nue CC coh
+   kSKmOscNuECCoth,      // oscillated nue CC other
+   kSKmMEC               // numu CC MEC
 } 
 SuperkMode_t; 
 
@@ -454,93 +428,99 @@ typedef enum EPhysParamId
 
    //********* REVERSE HORN CURRENT **************************
 
-   /*                                                                                                                                                                                                  
-    * SuperK detector errors (energy scale and efficiencies)                                                                                                                                         
+   /*
+    * Special RHC to FHC errors
+    */
+
+   kNuisRHCToLHC,
+
+   /*
+    * SuperK detector errors (energy scale and efficiencies)
     */
    
-   kRHCNuisSuperkEnergyScale,     // SK energy scale                                                                                                                                                  
+   kRHCNuisSuperkEnergyScale,     // SK energy scale
    
-   /*                                                                                                                                                                                                 
-    * (flux and cross-section) correlated parameters used in the BANFF fit                                                                                                                              
+   /*                                               
+    * (flux and cross-section) correlated parameters used in the BANFF fit               
     */
    
-   kRHCNuisBANFF00,               // # 00, SK     numu    flux,  E =  0.0 -  0.4 GeV                                                                                                                     
-   kRHCNuisBANFF01,               // # 01, SK     numu    flux,  E =  0.4 -  0.5 GeV                                                                                                               
-   kRHCNuisBANFF02,               // # 02, SK     numu    flux,  E =  0.5 -  0.6 GeV                                                                                                          
-   kRHCNuisBANFF03,               // # 03, SK     numu    flux,  E =  0.6 -  0.7 GeV                                                                                                                     
-   kRHCNuisBANFF04,               // # 04, SK     numu    flux,  E =  0.7 -  1.0 GeV                                                                                                         
-   kRHCNuisBANFF05,               // # 05, SK     numu    flux,  E =  1.0 -  1.5 GeV                                                                                                                     
-   kRHCNuisBANFF06,               // # 06, SK     numu    flux,  E =  1.5 -  2.5 GeV                                                                                                                      
-   kRHCNuisBANFF07,               // # 07, SK     numu    flux,  E =  2.5 -  3.5 GeV                                                                                                                     
-   kRHCNuisBANFF08,               // # 08, SK     numu    flux,  E =  3.5 -  5.0 GeV                                                                                                                     
-   kRHCNuisBANFF09,               // # 09, SK     numu    flux,  E =  5.0 -  7.0 GeV                                                                                                                     
-   kRHCNuisBANFF10,               // # 10, SK     numu    flux,  E =  7.0 - 30.0 GeV                                                                                                                      
-   kRHCNuisBANFF11,               // # 11, different meanings depending on samples defined                                                                                                               
-   kRHCNuisBANFF12,               // # 12, different meanings depending on samples defined                                                                                                               
-   kRHCNuisBANFF13,               // # 13, different meanings depending on samples defined                                                                                                              
-   kRHCNuisBANFF14,               // # 14, different meanings depending on samples defined                                                                                                             
-   kRHCNuisBANFF15,               // # 15, different meanings depending on samples defined                                                                                                              
+   kRHCNuisBANFF00,               // # 00, SK     numu    flux,  E =  0.0 -  0.4 GeV
+   kRHCNuisBANFF01,               // # 01, SK     numu    flux,  E =  0.4 -  0.5 GeV
+   kRHCNuisBANFF02,               // # 02, SK     numu    flux,  E =  0.5 -  0.6 GeV   
+   kRHCNuisBANFF03,               // # 03, SK     numu    flux,  E =  0.6 -  0.7 GeV
+   kRHCNuisBANFF04,               // # 04, SK     numu    flux,  E =  0.7 -  1.0 GeV  
+   kRHCNuisBANFF05,               // # 05, SK     numu    flux,  E =  1.0 -  1.5 GeV
+   kRHCNuisBANFF06,               // # 06, SK     numu    flux,  E =  1.5 -  2.5 GeV 
+   kRHCNuisBANFF07,               // # 07, SK     numu    flux,  E =  2.5 -  3.5 GeV
+   kRHCNuisBANFF08,               // # 08, SK     numu    flux,  E =  3.5 -  5.0 GeV
+   kRHCNuisBANFF09,               // # 09, SK     numu    flux,  E =  5.0 -  7.0 GeV
+   kRHCNuisBANFF10,               // # 10, SK     numu    flux,  E =  7.0 - 30.0 GeV 
+   kRHCNuisBANFF11,               // # 11, different meanings depending on samples defined
+   kRHCNuisBANFF12,               // # 12, different meanings depending on samples defined
+   kRHCNuisBANFF13,               // # 13, different meanings depending on samples defined       
+   kRHCNuisBANFF14,               // # 14, different meanings depending on samples defined      
+   kRHCNuisBANFF15,               // # 15, different meanings depending on samples defined       
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-   kRHCNuisBANFF16,               // # 16, different meanings depending on samples defined                                                                                                               
-   kRHCNuisBANFF17,               // # 17, different meanings depending on samples defined                                                                                                               
-   kRHCNuisBANFF18,               // # 18, different meanings depending on samples defined                                                                                                               
-   kRHCNuisBANFF19,               // # 19, different meanings depending on samples defined                                                                                                              
-   kRHCNuisBANFF20,               // # 20, different meanings depending on samples defined                                                                                                               
-   kRHCNuisBANFF21,               // # 21, different meanings depending on samples defined                                                                                                             
+   kRHCNuisBANFF16,               // # 16, different meanings depending on samples defined
+   kRHCNuisBANFF17,               // # 17, different meanings depending on samples defined
+   kRHCNuisBANFF18,               // # 18, different meanings depending on samples defined
+   kRHCNuisBANFF19,               // # 19, different meanings depending on samples defined       
+   kRHCNuisBANFF20,               // # 20, different meanings depending on samples defined
+   kRHCNuisBANFF21,               // # 21, different meanings depending on samples defined      
 #endif
 #if BANFF_BINS == 1
-   kRHCNuisBANFF22,               // # 22, different meanings depending on samples defined                                                                                                               
-   kRHCNuisBANFF23,               // # 23, different meanings depending on samples defined                                                                                                              
-   kRHCNuisBANFF24,               // # 24, different meanings depending on samples defined                                                                                                               
+   kRHCNuisBANFF22,               // # 22, different meanings depending on samples defined
+   kRHCNuisBANFF23,               // # 23, different meanings depending on samples defined       
+   kRHCNuisBANFF24,               // # 24, different meanings depending on samples defined
 #endif
-   kRHCNuisBANFFMAQE,             // # M_{A}  QE                                                                                                                                                          
-   kRHCNuisBANFFMARES,            // # M_{A}  RES                                                                                                                                                        
+   kRHCNuisBANFFMAQE,             // # M_{A}  QE                                     
+   kRHCNuisBANFFMARES,            // # M_{A}  RES                                   
    kRHCNuisBANFFCCQEE0,           // # CCQE   normalization, 0 - 1.5 GeV   
 #if BANFF_BINS != 3
-   kRHCNuisBANFFCCQEE1,           // # CCQE   normalization, 1.5 -  3.5 GeV                                                                                                                             
-   kRHCNuisBANFFCCQEE2,           // # CCQE   normalization, 3.5 - 30.0 GeV                                                                                                                             
+   kRHCNuisBANFFCCQEE1,           // # CCQE   normalization, 1.5 -  3.5 GeV        
+   kRHCNuisBANFFCCQEE2,           // # CCQE   normalization, 3.5 - 30.0 GeV        
 #endif
-   kRHCNuisBANFFCC1piE0,          // # CC1pi  normalization, 0 - 2.5 GeV                                                                                                                                
+   kRHCNuisBANFFCC1piE0,          // # CC1pi  normalization, 0 - 2.5 GeV           
 #if BANFF_BINS != 3
-   kRHCNuisBANFFCC1piE1,          // # CC1pi  normalization, 2.5 - 30.0 GeV                                                                                                                            
+   kRHCNuisBANFFCC1piE1,          // # CC1pi  normalization, 2.5 - 30.0 GeV       
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-   kRHCNuisBANFFNC1pi0,           // # NC1pi0 normalization, 0 - 30.0 GeV                                                                                                                              
+   kRHCNuisBANFFNC1pi0,           // # NC1pi0 normalization, 0 - 30.0 GeV         
 #endif
 #if BANFF_BINS == 4
-   kRHCNuisBANFFMECNorm,          // MEC template normalisation                                                                                                                                          
-   kRHCNuisBANFFPDDDoubleCount,   // PDD double counting                                                                                                                                               
+   kRHCNuisBANFFMECNorm,          // MEC template normalisation                     
+   kRHCNuisBANFFPDDDoubleCount,   // PDD double counting                          
 #endif
    
-   /*                                                                                                                                                                                                  
-    * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)                                                              
-    * These other paramers are taken to be uncorrelated and are applied to SK only.                                                                                                                    
+   /*                                                                             
+    * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
+    * These other paramers are taken to be uncorrelated and are applied to SK only.     
     */
    
-   //systematics which use splines                                                                                                                                                                    
-   kRHCNuisXSecFermiMom,          // Fermi momentum                                                                                                                                                      
-   kRHCNuisXSecSpecFunc,          // spectral function on/off                                                                                                                              
-   kRHCNuisXSecWshape,            // W-shape                                                                                                                                               
-   kRHCNuisXSecShapeCCoth,        // CC other shape                                                                                                                                    
-   kRHCNuisXSecPiLessDelta,       // Pion-less delta decay                                                                                                                                     
-   kRHCNuisXSecBindE,             // Binding energy                                                                                                                                    
+   //systematics which use splines                                               
+   kRHCNuisXSecFermiMom,          // Fermi momentum                                 
+   kRHCNuisXSecSpecFunc,          // spectral function on/off         
+   kRHCNuisXSecWshape,            // W-shape                          
+   kRHCNuisXSecShapeCCoth,        // CC other shape               
+   kRHCNuisXSecPiLessDelta,       // Pion-less delta decay                
+   kRHCNuisXSecBindE,             // Binding energy               
 
-   //systematics that are normalisations                                                                                                                                                              
-   kRHCNuisXSecNormCCcoh,         // CC coherent norm                                                                                                                                                   
-   kRHCNuisXSecNormNC1piC,        // NC 1piC norm                                                                                                                                                        
-   kRHCNuisXSecNormNCcoh,         // NC coh norm                                                                                                                                                        
-   kRHCNuisXSecNormNCoth,         // NC other norm                                                                                                                                            
-   kRHCNuisXSecNormNuEToNuMu,     // nue / numu cross section                                                                                                                                       
-   kRHCNuisXSecNormAntiNuToNu,    // antinu / nu cross section                                                                                                                             
+   //systematics that are normalisations                                         
+   kRHCNuisXSecNormCCcoh,         // CC coherent norm                              
+   kRHCNuisXSecNormNC1piC,        // NC 1piC norm                                   
+   kRHCNuisXSecNormNCcoh,         // NC coh norm                                   
+   kRHCNuisXSecNormNCoth,         // NC other norm                       
+   kRHCNuisXSecNormNuEToNuMu,     // nue / numu cross section                  
+   kRHCNuisXSecNormAntiNuToNu,    // antinu / nu cross section        
    
-   /*                                                                                                                                                                                               
-    * SK and FSI parameters.                                                                                                                                                      
-    * Assuming here a 10x10 covariance matrix will be made available.                                                                                                                                 
-    * Each parameter is a scaling factor to apply at some Ereco range (to be defined) for some                                                                                                          
-    * SK reaction mode (or the total? to be defined)                                                                                                                                                   
+   /*                                                                          
+    * SK and FSI parameters.                                 
+    * Assuming here a 10x10 covariance matrix will be made available.            
+    * Each parameter is a scaling factor to apply at some Ereco range (to be defined) for some
+    * SK reaction mode (or the total? to be defined)                              
     */
    
-   // SKDET+FSI matrix 18x18                                                                                                                                                                       
+   // SKDET+FSI matrix 18x18                                                  
 #if FSI_BINS != 3
    kRHCNuisSKDetFSI000,
    kRHCNuisSKDetFSI001,

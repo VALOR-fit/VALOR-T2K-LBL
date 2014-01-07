@@ -140,14 +140,14 @@ void test_systematic_error_propagation_all
     if (EtrueBinNuEBar[itb] < 1 && itb != 0) {NEtrueBinNuEBar = itb-1; break;}
   }
 
-  // Get the ETrue bin edges for SigNuECCQE
-  int NEtrueBinSigNuE = conv::kXsNEtrueBins;
-  Long64_t EtrueBinSigNuE[conv::kXsNEtrueBins+1];
+  // Get the ETrue bin edges for OscNuECCQE
+  int NEtrueBinOscNuE = conv::kXsNEtrueBins;
+  Long64_t EtrueBinOscNuE[conv::kXsNEtrueBins+1];
   for(int itb = 0; itb < conv::kXsNEtrueBins+1; itb++) {
-    EtrueBinSigNuE[itb] = -1;
-    EtrueBinSigNuE[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][itb]-conv::kASmallNum);
-    if (EtrueBinSigNuE[itb] > NEtrueBinTempl) EtrueBinSigNuE[itb] = NEtrueBinTempl;
-    if (EtrueBinSigNuE[itb] < 1 && itb != 0) {NEtrueBinSigNuE = itb-1; break;}
+    EtrueBinOscNuE[itb] = -1;
+    EtrueBinOscNuE[itb] = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(conv::kXsEtrueBinEdges[util::ArrIdx::Instance()->SuperkSampleIdx(s)][util::ArrIdx::Instance()->SuperkModeIdx(s,conv::kSKmNuMuCCQE)][itb]-conv::kASmallNum);
+    if (EtrueBinOscNuE[itb] > NEtrueBinTempl) EtrueBinOscNuE[itb] = NEtrueBinTempl;
+    if (EtrueBinOscNuE[itb] < 1 && itb != 0) {NEtrueBinOscNuE = itb-1; break;}
   }
 
   vector<string> systematics;
@@ -349,11 +349,11 @@ void test_systematic_error_propagation_all
     double nsknuebarccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
     double nsknuebarccres_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
     double nsknuebarccres_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
-    double nsksignueccqe_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
-    double nsksignueccqe_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
-    double nsksignueccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
-    double nsksignueccres_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
-    double nsksignueccres_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
+    double nsksignueccqe_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+    double nsksignueccqe_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+    double nsksignueccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
+    double nsksignueccres_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+    double nsksignueccres_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
     double nskoscnumuccqe_etrue_na = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
     double nskoscnumuccqe_etrue_nb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
     double nskoscnumuccqe_etrue_nc = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
@@ -403,13 +403,13 @@ void test_systematic_error_propagation_all
 	}
       }
     }
-    for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    for(int itb = 0; itb < NEtrueBinOscNuE; itb++) {
       nsksignue_etrue_n[itb] = 0.;
       for (int im = 0; im < conv::knm; im++) {
 	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
 	if(m == conv::kSKmUndefined) continue;
 	if(util::IsSignalNuE(m)) {
-	  nsksignue_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+	  nsksignue_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinOscNuE[itb]+1, EtrueBinOscNuE[itb+1]);
 	}
       }
     }
@@ -514,11 +514,11 @@ void test_systematic_error_propagation_all
     double nsknuebarccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
     double nsknuebarccres_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
     double nsknuebarccres_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
-    double nsksignueccqe_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
-    double nsksignueccqe_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
-    double nsksignueccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
-    double nsksignueccres_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
-    double nsksignueccres_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
+    double nsksignueccqe_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+    double nsksignueccqe_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+    double nsksignueccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
+    double nsksignueccres_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+    double nsksignueccres_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
     double nskoscnumuccqe_etrue_0a = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
     double nskoscnumuccqe_etrue_0b = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
     double nskoscnumuccqe_etrue_0c = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
@@ -567,13 +567,13 @@ void test_systematic_error_propagation_all
 	}
       }
     }
-    for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    for(int itb = 0; itb < NEtrueBinOscNuE; itb++) {
       nsksignue_etrue_0[itb] = 0.;
       for (int im = 0; im < conv::knm; im++) {
 	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
 	if(m == conv::kSKmUndefined) continue;
 	if(util::IsSignalNuE(m)) {
-	  nsksignue_etrue_0[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+	  nsksignue_etrue_0[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinOscNuE[itb]+1, EtrueBinOscNuE[itb+1]);
 	}
       }
     }
@@ -721,11 +721,11 @@ void test_systematic_error_propagation_all
     double nsknuebarccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
     double nsknuebarccres_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
     double nsknuebarccres_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
-    double nsksignueccqe_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
-    double nsksignueccqe_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
-    double nsksignueccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
-    double nsksignueccres_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
-    double nsksignueccres_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
+    double nsksignueccqe_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+    double nsksignueccqe_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+    double nsksignueccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
+    double nsksignueccres_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+    double nsksignueccres_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
     double nskoscnumuccqe_etrue_pa = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
     double nskoscnumuccqe_etrue_pb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
     double nskoscnumuccqe_etrue_pc = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
@@ -774,13 +774,13 @@ void test_systematic_error_propagation_all
 	}
       }
     }
-    for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    for(int itb = 0; itb < NEtrueBinOscNuE; itb++) {
       nsksignue_etrue_p[itb] = 0.;
       for (int im = 0; im < conv::knm; im++) {
 	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
 	if(m == conv::kSKmUndefined) continue;
 	if(util::IsSignalNuE(m)) {
-	  nsksignue_etrue_p[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+	  nsksignue_etrue_p[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinOscNuE[itb]+1, EtrueBinOscNuE[itb+1]);
 	}
       }
     }
@@ -928,11 +928,11 @@ void test_systematic_error_propagation_all
     double nsknuebarccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
     double nsknuebarccres_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
     double nsknuebarccres_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmNuEBarCC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
-    double nsksignueccqe_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
-    double nsksignueccqe_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
-    double nsksignueccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
-    double nsksignueccres_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
-    double nsksignueccres_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
+    double nsksignueccqe_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
+    double nsksignueccqe_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
+    double nsksignueccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
+    double nsksignueccres_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCResNorm);
+    double nsksignueccres_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECC1pi, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCResNorm+1, NEtrueBinTempl);
     double nskoscnumuccqe_etrue_ma = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, 1, EtrueBin1CCQENorm);
     double nskoscnumuccqe_etrue_mb = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin1CCQENorm+1, EtrueBin2CCQENorm);
     double nskoscnumuccqe_etrue_mc = skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBin2CCQENorm+1, NEtrueBinTempl);
@@ -981,13 +981,13 @@ void test_systematic_error_propagation_all
 	}
       }
     }
-    for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    for(int itb = 0; itb < NEtrueBinOscNuE; itb++) {
       nsksignue_etrue_m[itb] = 0.;
       for (int im = 0; im < conv::knm; im++) {
 	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
 	if(m == conv::kSKmUndefined) continue;
 	if(util::IsSignalNuE(m)) {
-	  nsksignue_etrue_m[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinSigNuE[itb]+1, EtrueBinSigNuE[itb+1]);
+	  nsksignue_etrue_m[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinOscNuE[itb]+1, EtrueBinOscNuE[itb+1]);
 	}
       }
     }
@@ -1071,7 +1071,7 @@ void test_systematic_error_propagation_all
     for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
       frac_nsknuebar_etrue_p[itb]        = (nsknuebar_etrue_0[itb]    > 0) ? 100.*(nsknuebar_etrue_p[itb]   - nsknuebar_etrue_0[itb]  ) / nsknuebar_etrue_0[itb]   : 0.;
     }
-    for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    for(int itb = 0; itb < NEtrueBinOscNuE; itb++) {
       frac_nsksignue_etrue_p[itb]        = (nsksignue_etrue_0[itb]    > 0) ? 100.*(nsksignue_etrue_p[itb]   - nsksignue_etrue_0[itb]  ) / nsksignue_etrue_0[itb]   : 0.;
     }
 
@@ -1152,7 +1152,7 @@ void test_systematic_error_propagation_all
     for(int itb = 0; itb < NEtrueBinNuEBar; itb++) {
       frac_nsknuebar_etrue_m[itb]        = (nsknuebar_etrue_0[itb]    > 0) ? 100.*(nsknuebar_etrue_m[itb]   - nsknuebar_etrue_0[itb]  ) / nsknuebar_etrue_0[itb]   : 0.;
     }
-    for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
+    for(int itb = 0; itb < NEtrueBinOscNuE; itb++) {
       frac_nsksignue_etrue_m[itb]        = (nsksignue_etrue_0[itb]    > 0) ? 100.*(nsksignue_etrue_m[itb]   - nsksignue_etrue_0[itb]  ) / nsksignue_etrue_0[itb]   : 0.;
     }
 
@@ -1223,7 +1223,7 @@ void test_systematic_error_propagation_all
       component +=  util::AsStringTex(m);
       //extra hline above ccqe modes
       if(use_tex)
-	if(m == conv::kSKmNuMuCCQE || m == conv::kSKmNuMuBarCCQE || m == conv::kSKmNuECCQE || m == conv::kSKmNuEBarCCQE || m == conv::kSKmSigNuECCQE)
+	if(m == conv::kSKmNuMuCCQE || m == conv::kSKmNuMuBarCCQE || m == conv::kSKmNuECCQE || m == conv::kSKmNuEBarCCQE || m == conv::kSKmOscNuECCQE)
 	  streamer << "\\hline" << endl;
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // spectral etrue ccqe and ccres (all species)
@@ -1437,7 +1437,7 @@ void test_systematic_error_propagation_all
 	if(use_tex) streamer << "\\hline" << endl;
       }
       //spectral ccqe etrue (sig nue)
-      if ( m == conv::kSKmSigNuECCQE && show_sk_spectral_info_etrue_norm_binning) {
+      if ( m == conv::kSKmOscNuECCQE && show_sk_spectral_info_etrue_norm_binning) {
 	temp = component + " ($E_{t} <$ 1.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
@@ -1690,7 +1690,7 @@ void test_systematic_error_propagation_all
 	if(use_tex) streamer << "\\hline" << endl;
       }
       //spectral ccres etrue (sig nue)
-      if ( m == conv::kSKmSigNuECC1pi && show_sk_spectral_info_etrue_norm_binning) {
+      if ( m == conv::kSKmOscNuECC1pi && show_sk_spectral_info_etrue_norm_binning) {
 	if(use_tex) streamer << "\\hline" << endl;
 	temp = component + " ($E_{t} <$ 2.5 GeV)";
 	streamer << setw(ncol1)  << setfill(' ') << temp
@@ -2073,7 +2073,7 @@ void test_systematic_error_propagation_all
 	if(use_tex) streamer << "\\hline" << endl;
       }
       //cc total (sig nue)
-      if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth_e)) {
+      if ((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmOscNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmOscNuECCoth_e)) {
 	temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_e$ CC all";
 	streamer << setw(ncol1)  << setfill(' ') << temp
 		 << endcolumn
@@ -2198,11 +2198,11 @@ void test_systematic_error_propagation_all
       }
       */
       //spectral total etrue (signue)
-      if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmSigNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmSigNuECCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
+      if (((s == conv::kSKsFCFV1RingMuLike && m == conv::kSKmOscNuECCoth_mu) || (s == conv::kSKsFCFV1RingELike && m == conv::kSKmOscNuECCoth_e)) && show_sk_spectral_info_etrue_flux_binning) {
 	char bufl[100], bufu[100];
-	for(int itb = 0; itb < NEtrueBinSigNuE; itb++) {
-	  snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinSigNuE[itb]+1));
-	  snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmSigNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinSigNuE[itb+1]));
+	for(int itb = 0; itb < NEtrueBinOscNuE; itb++) {
+	  snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinOscNuE[itb]+1));
+	  snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuECCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinOscNuE[itb+1]));
 	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_{e}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
 	  streamer << setw(ncol1)  << setfill(' ') << temp
 		   << endcolumn

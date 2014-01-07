@@ -3603,23 +3603,11 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
        //     case ( kSKmOscNuMuCCoth ) : return "oscillated numu CC oth ";        break;
      case ( kSKmOscNuEBarCCoth  ) : return "oscillated nuebar CC oth ";         break;
 
-     case ( kSKmSigNuECCQE      ) : return "oscillation nue CC QE";                  break;
-     case ( kSKmSigNuECC1pi     ) : return "oscillation nue CC 1pi";                 break;
-     case ( kSKmSigNuECCcoh     ) : return "oscillation nue CC coh";                 break;
-       //     case ( kSKmSigNuECCoth  ) : return "oscillation nue CC oth (numu disap)";    break;
-     case ( kSKmSigNuECCoth   ) : return "oscillation nue CC oth (nue app)";       break;
-
-     case ( kSKmRHCOscNuECCQE   ) : return "oscillated nue CC QE (RHC running)";           break;
-     case ( kSKmRHCOscNuECC1pi  ) : return "oscillated nue CC 1pi (RHC running)";          break;  
-     case ( kSKmRHCOscNuECCcoh  ) : return "oscillated nue CC coh (RHC running)";          break;
-     //     case ( kSKmRHCOscNueCCoth ) : return "oscillated nue CC oth (RHC running)";        break;
-     case ( kSKmRHCOscNuECCoth  ) : return "oscillated nue CC oth (RHC running)";         break;
-
-     case ( kSKmRHCSigNuEBarCCQE      ) : return "oscillation nuebar CC QE (RHC running)";                  break;
-     case ( kSKmRHCSigNuEBarCC1pi     ) : return "oscillation nuebar CC 1pi (RHC running)";                 break;
-     case ( kSKmRHCSigNuEBarCCcoh     ) : return "oscillation nuebar CC coh (RHC running)";                 break;
-     //     case ( kSKmRHCSigNuEBarCCoth  ) : return "oscillation nuebar CC oth (numu disapp, RHC running)";    break;
-     case ( kSKmRHCSigNuEBarCCoth   ) : return "oscillation nuebar CC oth (nue app, RHC running)";       break;
+     case ( kSKmOscNuECCQE      ) : return "oscillation nue CC QE";                  break;
+     case ( kSKmOscNuECC1pi     ) : return "oscillation nue CC 1pi";                 break;
+     case ( kSKmOscNuECCcoh     ) : return "oscillation nue CC coh";                 break;
+       //     case ( kSKmOscNuECCoth  ) : return "oscillation nue CC oth (numu disap)";    break;
+     case ( kSKmOscNuECCoth   ) : return "oscillation nue CC oth (nue app)";       break;
 
      default                      : return "--";
   }
@@ -3759,22 +3747,11 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmOscNuEBarCCcoh  ) : return "Osc. $\\bar{\\nu}_e$ CC coherent";                               break; 
        //     case ( kSKmOscNueCCoth ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                  break;
      case ( kSKmOscNuEBarCCoth  ) : return "Osc. $\\bar{\\nu}_e$ CC other";                                  break;
-     case ( kSKmSigNuECCQE      ) : return "Osc. $\\nu_e$ CCQE";                                           break;
-     case ( kSKmSigNuECC1pi     ) : return "Osc. $\\nu_e$ CC 1$\\pi$";                                     break;
-     case ( kSKmSigNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                    break;
-       //     case ( kSKmSigNuECCoth  ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                     break;
-     case ( kSKmSigNuECCoth   ) : return "Osc. $\\nu_e$ CC other";                        break;
-
-     case ( kSKmRHCOscNuECCQE   ) : return "Osc. $\\nu_e$ CCQE (RHC)";                                      break;
-     case ( kSKmRHCOscNuECC1pi  ) : return "Osc. $\\nu_e$ CC 1$\\pi$ (RHC)";                                break;
-     case ( kSKmRHCOscNuECCcoh  ) : return "Osc. $\\nu_e$ CC coherent (RHC)";                               break; 
-     //     case ( kSKmRHCOscNuECCoth ) : return "\\nu_e$ CC other ($\\nu_\\mu$ disapp, RHC)";                  break;
-     case ( kSKmRHCOscNuECCoth  ) : return "Osc. $\\nu_e$ CC other (RHC)";                                  break;
-     case ( kSKmRHCSigNuEBarCCQE      ) : return "Osc. $\\bar{\\nu}_e$ CCQE (RHC)";                                           break;
-     case ( kSKmRHCSigNuEBarCC1pi     ) : return "Osc. $\\bar{\\nu}_e$ CC 1$\\pi$ (RHC)";                                     break;
-     case ( kSKmRHCSigNuEBarCCcoh     ) : return "Osc. $\\bar{\\nu}_e$ CC coherent (RHC)";                                    break;
-     //     case ( kSKmRHCSigNuEBarCCoth  ) : return "Osc. $\\bar{\\nu}_e$ CC other ($\\nu_\\mu$ disapp RHC)";                     break;
-     case ( kSKmRHCSigNuEBarCCoth   ) : return "Osc. $\\bar{\\nu}_e$ CC other (RHC)";                        break;
+     case ( kSKmOscNuECCQE      ) : return "Osc. $\\nu_e$ CCQE";                                           break;
+     case ( kSKmOscNuECC1pi     ) : return "Osc. $\\nu_e$ CC 1$\\pi$";                                     break;
+     case ( kSKmOscNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                    break;
+       //     case ( kSKmOscNuECCoth  ) : return "Osc. $\\nu_e$ CC other ($\\nu_\\mu$ disap)";                     break;
+     case ( kSKmOscNuECCoth   ) : return "Osc. $\\nu_e$ CC other";                        break;
 
     default                      : return "--";
   }
@@ -3857,22 +3834,11 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
      case ( kSKmOscNuEBarCCcoh  ) : return "Osc. #bar{#nu}_{e} CC coherent";                break;
        //     case ( kSKmOscNuMuCCoth ) : return "Osc. #nu_{#mu} CC other";                       break;
      case ( kSKmOscNuEBarCCoth  ) : return "Osc. #bar{#nu}_{e} CC other";                   break;
-     case ( kSKmSigNuECCQE      ) : return "Osc. #nu_{e} CCQE";                             break;
-     case ( kSKmSigNuECC1pi     ) : return "Osc. #nu_{e} CC 1#pi";                          break;
-     case ( kSKmSigNuECCcoh     ) : return "Osc. #nu_{e} CC coherent";                      break;
-       //     case ( kSKmSigNuECCoth  ) : return "Osc. #nu_{e} CC other";                         break;
-     case ( kSKmSigNuECCoth   ) : return "Osc. #nu_{e} CC other";                         break;
-
-     case ( kSKmRHCOscNuECCQE   ) : return "Osc. #nu_{e} CCQE (RHC)";                       break;
-     case ( kSKmRHCOscNuECC1pi  ) : return "Osc. #nu_{e} CC 1#pi (RHC)";                    break;
-     case ( kSKmRHCOscNuECCcoh  ) : return "Osc. #nu_{e} CC coherent (RHC)";                break;
-     //     case ( kSKmRHCOscNuECCoth ) : return "Osc. #nu_{e} CC other (RHC)";                       break;
-     case ( kSKmRHCOscNuECCoth  ) : return "Osc. #nu_{e} CC other (RHC)";                   break;
-     case ( kSKmRHCSigNuEBarCCQE      ) : return "Osc. #bar{#nu}_{e} CCQE (RHC)";                             break;
-     case ( kSKmRHCSigNuEBarCC1pi     ) : return "Osc. #bar{#nu}_{e} CC 1#pi (RHC)";                          break;
-     case ( kSKmRHCSigNuEBarCCcoh     ) : return "Osc. #bar{#nu}_{e} CC coherent (RHC)";                      break;
-     //     case ( kSKmRHCSigNuECCoth  ) : return "Osc. #bar{#nu}_{e} CC other (RHC)";                         break;
-     case ( kSKmRHCSigNuEBarCCoth   ) : return "Osc. #bar{#nu}_{e} CC other (RHC)";                         break;
+     case ( kSKmOscNuECCQE      ) : return "Osc. #nu_{e} CCQE";                             break;
+     case ( kSKmOscNuECC1pi     ) : return "Osc. #nu_{e} CC 1#pi";                          break;
+     case ( kSKmOscNuECCcoh     ) : return "Osc. #nu_{e} CC coherent";                      break;
+       //     case ( kSKmOscNuECCoth  ) : return "Osc. #nu_{e} CC other";                         break;
+     case ( kSKmOscNuECCoth   ) : return "Osc. #nu_{e} CC other";                         break;
 
      default                      : return "";
   }
@@ -4006,19 +3972,11 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
      case ( kSKmOscNuEBarCCcoh  ) : return "oscnuebarcccoh";   break;
        //     case ( kSKmOscNuMuCCoth ) : return "oscnumuccoth";   break;
      case ( kSKmOscNuEBarCCoth  ) : return "oscnuebarccoth";   break;
-     case ( kSKmSigNuECCQE      ) : return "signueccqe";     break;
-     case ( kSKmSigNuECC1pi     ) : return "signuecc1pi";    break;
-     case ( kSKmSigNuECCcoh     ) : return "signuecccoh";    break;
-       //     case ( kSKmSigNuECCoth  ) : return "signueccoth";    break;
-     case ( kSKmSigNuECCoth   ) : return "signueccoth";    break;
-     case ( kSKmRHCOscNuECCQE   ) : return "oscnueccqe";    break;
-     case ( kSKmRHCOscNuECC1pi  ) : return "oscnuecc1pi";   break;
-     case ( kSKmRHCOscNuECCcoh  ) : return "oscnuecccoh";   break;
-     case ( kSKmRHCOscNuECCoth  ) : return "oscnueccoth";   break;
-     case ( kSKmRHCSigNuEBarCCQE      ) : return "signuebarccqe";     break;
-     case ( kSKmRHCSigNuEBarCC1pi     ) : return "signuebarcc1pi";    break;
-     case ( kSKmRHCSigNuEBarCCcoh     ) : return "signuebarcccoh";    break;
-     case ( kSKmRHCSigNuEBarCCoth   ) : return "signuebarccoth";    break;
+     case ( kSKmOscNuECCQE      ) : return "oscnueccqe";     break;
+     case ( kSKmOscNuECC1pi     ) : return "oscnuecc1pi";    break;
+     case ( kSKmOscNuECCcoh     ) : return "oscnuecccoh";    break;
+       //     case ( kSKmOscNuECCoth  ) : return "oscnueccoth";    break;
+     case ( kSKmOscNuECCoth   ) : return "oscnueccoth";    break;
 
      default                      : return "";
   }
@@ -4077,11 +4035,11 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
      case ( kSKmNuEBarNCcoh     ) : return "nueb_nccoh";    break;
      case ( kSKmNuEBarNCoth_e   ) : return "nueb_ncoth";    break;
      case ( kSKmNuEBarNCoth_mu  ) : return "nueb_ncoth";    break;
-     case ( kSKmSigNuECCQE      ) : return "signue_ccqe";     break;
-     case ( kSKmSigNuECC1pi     ) : return "signue_ccpi";     break;
-     case ( kSKmSigNuECCcoh     ) : return "signue_cccoh";    break;
-       //     case ( kSKmSigNuECCoth  ) : return "signue_ccoth";    break;
-     case ( kSKmSigNuECCoth   ) : return "signue_ccoth";    break;
+     case ( kSKmOscNuECCQE      ) : return "signue_ccqe";     break;
+     case ( kSKmOscNuECC1pi     ) : return "signue_ccpi";     break;
+     case ( kSKmOscNuECCcoh     ) : return "signue_cccoh";    break;
+       //     case ( kSKmOscNuECCoth  ) : return "signue_ccoth";    break;
+     case ( kSKmOscNuECCoth   ) : return "signue_ccoth";    break;
      default                      : return "";
   }
   return "";
@@ -4177,17 +4135,13 @@ t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
   if(sh == "nuebar NC oth") return kSKmNuEBarNCoth_mu;
   if(sh == "nuebar NC oth (numu disap)") return kSKmNuEBarNCoth_mu;
   if(sh == "nuebar NC oth (nue app)") return kSKmNuEBarNCoth_e;
-  if(sh == "oscillation nue CC QE") return kSKmSigNuECCQE;
-  if(sh == "oscillation nue CC 1pi") return kSKmSigNuECC1pi;
-  if(sh == "oscillation nue CC coh") return kSKmSigNuECCcoh;
-  //  if(sh == "oscillation nue CC oth") return kSKmSigNuECCoth_mu;
-  if(sh == "oscillation nue CC oth") return kSKmSigNuECCoth;
-  //  if(sh == "oscillation nue CC oth (numu disap)") return kSKmSigNuECCoth_mu;
-  //if(sh == "oscillation nue CC oth (nue app)") return kSKmSigNuECCoth_e;
-  if(sh == "oscillation nuebar CC QE (RHC running)") return kSKmRHCSigNuEBarCCQE;
-  if(sh == "oscillation nuebar CC 1pi (RHC running)") return kSKmRHCSigNuEBarCC1pi;
-  if(sh == "oscillation nuebar CC coh (RHC running)") return kSKmRHCSigNuEBarCCcoh;
-  if(sh == "oscillation nuebar CC oth (nue app, RHC running)") return kSKmRHCSigNuEBarCCoth;
+  if(sh == "oscillation nue CC QE") return kSKmOscNuECCQE;
+  if(sh == "oscillation nue CC 1pi") return kSKmOscNuECC1pi;
+  if(sh == "oscillation nue CC coh") return kSKmOscNuECCcoh;
+  //  if(sh == "oscillation nue CC oth") return kSKmOscNuECCoth_mu;
+  if(sh == "oscillation nue CC oth") return kSKmOscNuECCoth;
+  //  if(sh == "oscillation nue CC oth (numu disap)") return kSKmOscNuECCoth_mu;
+  //if(sh == "oscillation nue CC oth (nue app)") return kSKmOscNuECCoth_e;
 
   return kSKmUndefined;
 }
@@ -4966,9 +4920,7 @@ int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuE       (m) ) return kPdgNuE;
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
   if ( util::IsOscNuEBar (m) ) return kPdgNuMuBar; /// nue -> numu
-  if ( util::IsSignalNuE (m) ) return kPdgNuMu; /// numu -> nue
-  if ( util::IsRHCOscNuE (m) ) return kPdgNuMu; /// nue -> numu
-  if ( util::IsRHCSignalNuEBar (m) ) return kPdgNuMuBar; /// numu -> nue 
+  if ( util::IsOscNuE    (m) ) return kPdgNuMu; /// numu -> nue
    
   // NOTE: Beam NuEBars not handled
 
@@ -4984,9 +4936,7 @@ int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
   if ( util::IsNuE       (m) ) return kPdgNuE;
   if ( util::IsNuEBar    (m) ) return kPdgNuEBar;
   if ( util::IsOscNuEBar (m) ) return kPdgNuEBar;
-  if ( util::IsSignalNuE (m) ) return kPdgNuE;
-  if ( util::IsRHCOscNuE (m) ) return kPdgNuE;
-  if ( util::IsRHCSignalNuEBar (m) ) return kPdgNuEBar;
+  if ( util::IsOscNuE    (m) ) return kPdgNuE;
    
   // NOTE: Beam NuEBars not handled
 
@@ -5087,15 +5037,6 @@ bool t2kana::util::IsOscNuEBar(t2kana::conv::SuperkMode_t  m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsRHCOscNuE(t2kana::conv::SuperkMode_t  m)
-{
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-  if(m >= kSKmRHCOscNuECCQE && m <=  kSKmRHCOscNuECCoth)
-    return true;
-#endif
-  return false;
-}
-//____________________________________________________________________________
 bool t2kana::util::IsNuMuBar(t2kana::conv::SuperkMode_t m)
 {
   if(m >= kSKmNuMuBarCCQE && m <= kSKmNuMuBarNCoth_e)
@@ -5174,9 +5115,9 @@ bool t2kana::util::IsNuEBar(t2kana::conv::SuperkMode_t m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsSignalNuE(t2kana::conv::SuperkMode_t m)
+bool t2kana::util::IsOscNuE(t2kana::conv::SuperkMode_t m)
 {
-  if(m >= kSKmSigNuECCQE && m <= kSKmSigNuECCoth)
+  if(m >= kSKmOscNuECCQE && m <= kSKmOscNuECCoth)
     return true;
   /*
   switch(m) {
@@ -5195,67 +5136,9 @@ bool t2kana::util::IsSignalNuE(t2kana::conv::SuperkMode_t m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsRHCSignalNuEBar(t2kana::conv::SuperkMode_t m)
-{
-  if(m >= kSKmRHCSigNuEBarCCQE && m <= kSKmRHCSigNuEBarCCoth)
-    return true;
-  return false;
-}
-//____________________________________________________________________________
 bool t2kana::util::IsCC(t2kana::conv::SuperkMode_t m)
 {
   return !(IsNC(m));
-  /*
-  switch(m) {
-     case ( kSKmNuMuCCQE        ) : 
-     case ( kSKmNuMuCC1pi       ) : 
-     case ( kSKmNuMuCCcoh       ) : 
-       //     case ( kSKmNuMuCCoth    ) : 
-     case ( kSKmNuMuCCoth     ) : 
-     case ( kSKmOscNuMuCCQE     ) : 
-     case ( kSKmOscNuMuCC1pi    ) :
-     case ( kSKmOscNuMuCCcoh    ) :
-       //     case ( kSKmOscNuMuCCoth ) :
-     case ( kSKmOscNuMuCCoth  ) :
-     case ( kSKmNuMuBarCCQE     ) : 
-     case ( kSKmNuMuBarCC1pi    ) : 
-     case ( kSKmNuMuBarCCcoh    ) : 
-       //     case ( kSKmNuMuBarCCoth ) : 
-     case ( kSKmNuMuBarCCoth  ) :
-     case ( kSKmOscNuMuBarCCQE     ) : 
-     case ( kSKmOscNuMuBarCC1pi    ) :
-     case ( kSKmOscNuMuBarCCcoh    ) :
-       //     case ( kSKmOscNuMuCCoth ) :
-     case ( kSKmOscNuMuBarCCoth  ) : 
-     case ( kSKmNuECCQE         ) : 
-     case ( kSKmNuECC1pi        ) : 
-     case ( kSKmNuECCcoh        ) : 
-       //     case ( kSKmNuECCoth     ) : 
-     case ( kSKmNuECCoth      ) : 
-     case ( kSKmNuEBarCCQE      ) : 
-     case ( kSKmNuEBarCC1pi     ) : 
-     case ( kSKmNuEBarCCcoh     ) : 
-       //     case ( kSKmNuEBarCCoth  ) : 
-     case ( kSKmNuEBarCCoth   ) : 
-     case ( kSKmOscNuEBarCCQE      ) : 
-     case ( kSKmOscNuEBarCC1pi     ) : 
-     case ( kSKmOscNuEBarCCcoh     ) : 
-       //     case ( kSKmNuEBarCCoth  ) : 
-     case ( kSKmOscNuEBarCCoth   ) : 
-     case ( kSKmSigNuECCQE      ) : 
-     case ( kSKmSigNuECC1pi     ) : 
-     case ( kSKmSigNuECCcoh     ) : 
-       //     case ( kSKmSigNuECCoth  ) : 
-     case ( kSKmSigNuECCoth   ) : 
-     case ( kSKmMEC             ) :
-	return true;
-	break;
-     default: 
-	return false;
-	break;
-  }
-  return false;
-  */
 }
 //____________________________________________________________________________
 bool t2kana::util::IsNC(t2kana::conv::SuperkMode_t m)
@@ -5936,22 +5819,22 @@ int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
 
   //need to start counter at zero. Want nbins. Looping over bin edges.
   int nbins = -1;
-  if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)  
-    {
+  //if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)  
+  //{
     for(int it = 0; it <= t2kana::conv::kXsNEtrueBins; it++) {
       if(t2kana::conv::kXsEtrueBinEdges[is][im][it] < 0)
         break;
       nbins++;
       }
-    }
-  else if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    /*}
+    else if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
     {
       for(int it = 0; it <= t2kana::conv::kRHCXsNEtrueBins; it++) {
 	if(t2kana::conv::kRHCXsEtrueBinEdges[is][im][it] < 0)
 	  break;
 	nbins++;
       }
-    }
+      }*/
 
   return nbins;
 }
@@ -5966,9 +5849,9 @@ const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-    return t2kana::conv::kRHCXsEtrueBinEdges[is][im];
-  else
+  //if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+  //return t2kana::conv::kRHCXsEtrueBinEdges[is][im];
+  //else
     return t2kana::conv::kXsEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
@@ -5985,14 +5868,14 @@ int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
   //need to start counter at zero. Want nbins. Looping over bin edges.
   int nbins = -1;
 
-  if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
-    {
+  //if (s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
+  //{
       for(int it = 0; it <= t2kana::conv::kMCNEtrueBins; it++) {
 	if(t2kana::conv::kMCEtrueBinEdges[is][im][it] < 0)
 	  break;
 	nbins++;
       }
-    }
+      /*}
   else if (s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
     {
     for(int it = 0; it <= t2kana::conv::kRHCMCNEtrueBins; it++) {
@@ -6000,7 +5883,7 @@ int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
         break;
       nbins++;
       }
-    }
+      }*/
 
   return nbins;
 }
@@ -6015,9 +5898,9 @@ const double * t2kana::util::VariableMCEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-    return t2kana::conv::kRHCMCEtrueBinEdges[is][im];
-  else
+  //if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+  //return t2kana::conv::kRHCMCEtrueBinEdges[is][im];
+  //else
     return t2kana::conv::kMCEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
@@ -7175,35 +7058,35 @@ bool t2kana::util::UseEventToFillInTemplate(
 
   //NuE (signal and beam) templates
   else
-  if(m == kSKmNuECCQE || m == kSKmSigNuECCQE) 
+  if(m == kSKmNuECCQE || m == kSKmOscNuECCQE) 
   {
      bool is_nue  = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsCCQE(neut_reaction_mode);
   } 
 
   else
-  if(m == kSKmNuECC1pi || m == kSKmSigNuECC1pi) 
+  if(m == kSKmNuECC1pi || m == kSKmOscNuECC1pi) 
   {
      bool is_nue   = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsCC1pi(neut_reaction_mode);
   }
 
   else
-  if(m == kSKmNuECCcoh || m == kSKmSigNuECCcoh) 
+  if(m == kSKmNuECCcoh || m == kSKmOscNuECCcoh) 
   {
      bool is_nue   = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsCCcoh(neut_reaction_mode);
   } 
 
   else
-  if(m == kSKmNuECCoth || m == kSKmSigNuECCoth) 
+  if(m == kSKmNuECCoth || m == kSKmOscNuECCoth) 
   {
      bool is_nue      = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsCCoth(neut_reaction_mode);
   }
 
   else
-  if(m == kSKmNuECCoth || m == kSKmSigNuECCoth) 
+  if(m == kSKmNuECCoth || m == kSKmOscNuECCoth) 
   {
      bool is_nue     = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsCCoth(neut_reaction_mode);
@@ -7212,7 +7095,7 @@ bool t2kana::util::UseEventToFillInTemplate(
   //this is a little different. nuesig has no CCcoh in 1Re sample, whereas CCcoh is included
   // for the other species
   //  else
-  //if(m == kSKmSigNuECCoth) 
+  //if(m == kSKmOscNuECCoth) 
   //{
   // bool is_nue     = (nu_pdg_code == kPdgNuE); 
   // use_it = is_nue && (IsCCoth(neut_reaction_mode) || IsCCcoh(neut_reaction_mode));

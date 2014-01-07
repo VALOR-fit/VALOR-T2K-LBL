@@ -83,7 +83,7 @@ void run_fit_dcp
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC generation" << endl;
-  cout << "   - Number of toy experiments: " << nexperiments << endl; 
+  cout << "   - Number of toy experiments: " << nexperiments << endl;
   cout << "   - Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO");
   if(tweak_systematics) cout << tweak_systematics << endl;
   else cout << endl;
@@ -121,6 +121,7 @@ void run_fit_dcp
   FitParamList * fparm_dcppi_ih = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
   FitParamList * fparm1_dcppi_ih = FitParamList::NamedParameterList(fit_param_list);
   FitParamList * fparm2_dcppi_ih = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * iparmfit = FitParamList::NamedParameterList(fit_param_list);
   PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
@@ -186,6 +187,7 @@ void run_fit_dcp
   fitnt->Branch("best_fit_params_dcppi_ih",      "t2kana::FitParamList",  &fparm_dcppi_ih, 1280000,0);
   fitnt->Branch("best_fit_params_dcppi_ih_fit1", "t2kana::FitParamList",  &fparm1_dcppi_ih,1280000,0);
   fitnt->Branch("best_fit_params_dcppi_ih_fit2", "t2kana::FitParamList",  &fparm2_dcppi_ih,1280000,0);
+  fitnt->Branch("iparm_fit",                     "t2kana::FitParamList",  &iparmfit,      1280000,0);
   fitnt->Branch("input_params",                   "t2kana::PhysParamList", &iparm,      1280000,0);
   fitnt->Branch("data",                           "TObjArray",             &dat_array,  1280000,0);
   fitnt->Branch("best_fit_pdf",                   "TObjArray",             &pdf_array,  1280000,0);
@@ -213,6 +215,7 @@ void run_fit_dcp
   TBranch * br_bf_array_dcp0_ih   = fitnt->GetBranch("best_fit_pdf_dcp0_ih");
   TBranch * br_fparm_dcppi_ih     = fitnt->GetBranch("best_fit_params_dcppi_ih");
   TBranch * br_bf_array_dcppi_ih  = fitnt->GetBranch("best_fit_pdf_dcppi_ih");
+  TBranch * br_iparmfit           = fitnt->GetBranch("iparm_fit");
 
   // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
@@ -276,6 +279,12 @@ void run_fit_dcp
        fparm1->SetInitValue(kPhypDeltaCP,  input_deltacp);
        fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
        fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       iparmfit->SetInitValue(kPhypMixing12, input_mixing12);
+       iparmfit->SetInitValue(kPhypMixing13, input_mixing13);
+       iparmfit->SetInitValue(kPhypMixing23, input_mixing23);
+       iparmfit->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       iparmfit->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       iparmfit->SetInitValue(kPhypDm23sq,   input_dm23sq);
        fparm1_dcp0_nh->SetInitValue(kPhypMixing12, input_mixing12);
        fparm1_dcp0_nh->SetInitValue(kPhypMixing13, input_mixing13);
        fparm1_dcp0_nh->SetInitValue(kPhypMixing23, input_mixing23);
@@ -348,7 +357,7 @@ void run_fit_dcp
 	 // tweak all sources of systematic error
 	 if(tweak_systematics == 1) {
 	   cout << "- Randomizing all systematic params in pdf..." << endl;
-	   skexp->TweakAllSystematics(); 
+	   skexp->TweakAllSystematics();
 	 }
 	 else if(tweak_systematics == 2) {
 	   cout << "- Randomizing BANFF systematic params in pdf..." << endl;
@@ -363,7 +372,7 @@ void run_fit_dcp
 	   skexp->TweakAllSKDetectorFSISystematics();
 	 }
 	 skexp->PrintSystematicVariations();
-	 // generate mock data using the current PDF (incl. systematic variations) 
+	 // generate mock data using the current PDF (incl. systematic variations)
 	 // + statistical fluctuations if requested (Poisson fluctuation in each bin)
 	 cout << "- Generating toy-MC..." << endl;
 	 //note that fparm does not contain the tweaks, so use only the PhysHyp here
@@ -381,10 +390,10 @@ void run_fit_dcp
        else {
 	 //make sure systematics are reset
 	 skexp->ResetSystematicVariations();
-	 // generate mock data using the current PDF (without systematic variations) 
+	 // generate mock data using the current PDF (without systematic variations)
 	 // with statistical fluctuations if requested (Poisson fluctuation in each bin)
 	 cout << "- Generating toy-MC..." << endl;
-	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
+	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
        }
      }//applied_negevents_condition
 
@@ -442,12 +451,25 @@ void run_fit_dcp
 	 skexp->Write(pdf_array2, "pdf");
        }
      }
+     //Do the fit for input parameters (to get input chisq)
+    iparmfit->FixParameter(kPhypDeltaCP);
+    iparmfit->FixParameter(kPhypMixing13);
+    iparmfit->FixParameter(kPhypMixing12);
+    iparmfit->FixParameter(kPhypMixing23);
+    iparmfit->FixParameter(kPhypDm12sq);
+    iparmfit->FixParameter(kPhypDm23sq);
+
+    FitInputs * iparmfitinputs = new FitInputs(skobs,skexp,iparmfit);
+    FitterABC * fitter_iparmfit = util::GetFitter(iparmfitinputs,fit_option);
+
+      fitter_iparmfit->DoTheFit();
 
      //
      /////NORMAL HIERARCHY
      //
      Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
      Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
+     skexp->GetSuperkMC()->SetMassHierarchy(conv::kNmhNormal);
 
      //Fit again, fixing deltacp to 0. Start from nominal (not previous best fits) for other parameters
      fparm1_dcp0_nh->SetInitValue(kPhypDeltaCP,  0);
@@ -637,6 +659,7 @@ void run_fit_dcp
      //
      Opt::Instance()->gMassHierarchyAssumed = conv::kNmhInverted;
      Opt::Instance()->gOscDmsqScheme        = conv::kNuDmsq12andAbs23;
+     skexp->GetSuperkMC()->SetMassHierarchy(conv::kNmhInverted);
 
      //Fit again, fixing deltacp to 0. Start from nominal (not previous best fits) for other parameters
      fparm1_dcp0_ih->SetInitValue(kPhypDeltaCP,  0);

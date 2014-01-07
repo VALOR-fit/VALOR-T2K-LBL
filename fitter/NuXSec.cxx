@@ -17,10 +17,10 @@ Added samples, modes and systematics for reverse horn current running
 //#define __show_syst_var_wght_mesg_debug__
 //#define __show_build_xsbinning_template_mesg_info__
 //#define __show_build_xsbinning_template_mesg_debug__
-//#define __show_wght_spline_idx_mesg_debug__
+#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __save_ori_templates_init_debug__
-#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
+//#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
 //#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 
 #include <cassert>
@@ -1079,11 +1079,6 @@ TSpline3 * NuXSec::FindWghtSpline(
   else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
   else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
 
-  else if ( mp == kSKmRHCOscNuECCQE     ) { m = kSKmNuEBarCCQE; }
-  else if ( mp == kSKmRHCOscNuECC1pi    ) { m = kSKmNuEBarCC1pi; }
-  else if ( mp == kSKmRHCOscNuECCcoh    ) { m = kSKmNuEBarCCcoh; }
-  else if ( mp == kSKmRHCOscNuECCoth    ) { m = kSKmNuEBarCCoth; }
-
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
   if(idx == -1 || idx == -2) 
   {
@@ -1180,21 +1175,29 @@ int NuXSec::WghtSplineIdx(
   }
 
   int itrue = -1; 
-  for (int i = 0; i < kXsNEtrueBins; i++) {
-    if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
-       kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
-      {
-        itrue = i;
-        break;
+
+  for(int is = 0; is < kns; is++){
+    for(int im = 0; im < knm; im++){
+      cout << util::AsString(kSKSamples[is]) << " " << util::AsString(kSKReactionModes[is][im]) << "\t" << is << " " << im << endl;
+      for (int i = 0; i < kXsNEtrueBins; i++) {
+	cout << kXsEtrueBinEdges[is][im][i]   << "\t"
+	     << kXsEtrueBinEdges[is][im][i+1] << endl;
+	/*if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
+	   kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
+	  {
+	    itrue = i;
+	    break;
+	    }*/
       }
+    }
   }
   if(itrue == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
     cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ETrueBin for etrue value "
 	 << Etrue 
-	 << " in mode "
+	 << " in mode " << m << " "
 	 << util::AsString(m)
-	 << " in sample "
+	 << " in sample " << s << " "
 	 << util::AsString(s)
 	 << endl;
 #endif//__show_wght_spline_idx_mesg_debug__

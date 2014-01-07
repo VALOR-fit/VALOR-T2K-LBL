@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<analysis_inputs analysis="T2K/VaLOR13a/numu" data="run1234" flux="11b/v3.2" mc="neut/13a" ndfit="banff/13v5" oth="sk+fsi">
+<analysis_inputs analysis="T2K/VaLORHK/joint" data="5year" flux="11b/v3.2" mc="neut/13a" ndfit="banff/13v5" oth="sk+fsi">
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10,7 +10,12 @@
 
   <data_pot>
      <superk> 
-        6.5700e+20
+       <fhc>
+        7.8e+21
+       </fhc>
+       <rhc>
+        7.8e+21
+       </rhc>       
      </superk> 
   </data_pot>
 
@@ -281,16 +286,16 @@
       </weight_splines>
       <normalisations>
 	  <cccoh>
-	       1.0
+	       0.08
 	  </cccoh>
 	  <nc1piC>
-	       0.3
+	       0.08
 	  </nc1piC>
 	  <nccoh>
-	       0.3
+	       0.088
 	  </nccoh>
 	  <ncoth>
-	       0.3
+	       0.088
 	  </ncoth>
 	  <numu_to_nue>
 	       0.03

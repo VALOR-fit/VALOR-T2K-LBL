@@ -187,18 +187,18 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 #endif
 #if BANFF_BINS == 3
    kPdgNuMu,             // kNuisBANFF00        
-   kPdgNuMu,             // kNuisBANFF01                                                                                                                                          
-   kPdgNuMu,             // kNuisBANFF02                                                                                                                                            
-   kPdgNuMu,             // kNuisBANFF03                                                                                                                                           
-   kPdgNuMu,             // kNuisBANFF04                                                                                                                                           
-   kPdgNuMu,             // kNuisBANFF05                                                                                                                                          
-   kPdgNuMu,             // kNuisBANFF06                                                                                                                                           
-   kPdgNuMu,             // kNuisBANFF07                                                                                                                                          
-   kPdgNuMu,             // kNuisBANFF08                                                                                                                                          
-   kPdgNuMu,             // kNuisBANFF09                                                                                                                                          
-   kPdgNuMu,             // kNuisBANFF10                                                                                                                                          
-   kPdgNuMuBar,          // kNuisBANFF11                                                                                                                                           
-   kPdgNuMuBar,          // kNuisBANFF12                                                                                                                                          
+   kPdgNuMu,             // kNuisBANFF01       
+   kPdgNuMu,             // kNuisBANFF02         
+   kPdgNuMu,             // kNuisBANFF03        
+   kPdgNuMu,             // kNuisBANFF04        
+   kPdgNuMu,             // kNuisBANFF05       
+   kPdgNuMu,             // kNuisBANFF06        
+   kPdgNuMu,             // kNuisBANFF07       
+   kPdgNuMu,             // kNuisBANFF08       
+   kPdgNuMu,             // kNuisBANFF09       
+   kPdgNuMu,             // kNuisBANFF10       
+   kPdgNuMuBar,          // kNuisBANFF11        
+   kPdgNuMuBar,          // kNuisBANFF12       
    kPdgNuE,              // kNuisBANFF13
    kPdgNuE,              // kNuisBANFF14
    kPdgNuE,              // kNuisBANFF15
@@ -278,18 +278,18 @@ static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
 #endif
 #if BANFF_BINS == 3
     kPdgNuMu,             // kRHCNuisBANFF00        
-    kPdgNuMu,             // kRHCNuisBANFF01                                                                                                                                          
-    kPdgNuMu,             // kRHCNuisBANFF02                                                                                                                                            
-    kPdgNuMu,             // kRHCNuisBANFF03                                                                                                                                           
-    kPdgNuMu,             // kRHCNuisBANFF04                                                                                                                                           
-    kPdgNuMu,             // kRHCNuisBANFF05                                                                                                                                          
-    kPdgNuMu,             // kRHCNuisBANFF06                                                                                                                                           
-    kPdgNuMu,             // kRHCNuisBANFF07                                                                                                                                          
-    kPdgNuMu,             // kRHCNuisBANFF08                                                                                                                                          
-    kPdgNuMu,             // kRHCNuisBANFF09                                                                                                                                          
-    kPdgNuMu,             // kRHCNuisBANFF10                                                                                                                                          
-    kPdgNuMuBar,          // kRHCNuisBANFF11                                                                                                                                           
-    kPdgNuMuBar,          // kRHCNuisBANFF12                                                                                                                                          
+    kPdgNuMu,             // kRHCNuisBANFF01       
+    kPdgNuMu,             // kRHCNuisBANFF02         
+    kPdgNuMu,             // kRHCNuisBANFF03        
+    kPdgNuMu,             // kRHCNuisBANFF04        
+    kPdgNuMu,             // kRHCNuisBANFF05       
+    kPdgNuMu,             // kRHCNuisBANFF06        
+    kPdgNuMu,             // kRHCNuisBANFF07       
+    kPdgNuMu,             // kRHCNuisBANFF08       
+    kPdgNuMu,             // kRHCNuisBANFF09       
+    kPdgNuMu,             // kRHCNuisBANFF10       
+    kPdgNuMuBar,          // kRHCNuisBANFF11        
+    kPdgNuMuBar,          // kRHCNuisBANFF12       
     kPdgNuE,              // kRHCNuisBANFF13
     kPdgNuE,              // kRHCNuisBANFF14
     kPdgNuE,              // kRHCNuisBANFF15

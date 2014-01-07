@@ -171,16 +171,16 @@ void SuperkMC::Init(void)
 	  ////
 	  // ANTINU
 	  else if (s==kSKsRHCFCFV1RingMuLike){
-	    fMCTemplArrayRHCOri1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayRHCNom1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayRHCTun1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayRHCFin1Rmu[im][it][ir] = 0;
+	    fMCTemplArrayOriRHC1Rmu[im][it][ir] = 0;
+	    fMCTemplArrayNomRHC1Rmu[im][it][ir] = 0;
+	    fMCTemplArrayTunRHC1Rmu[im][it][ir] = 0;
+	    fMCTemplArrayFinRHC1Rmu[im][it][ir] = 0;
 	  }
 	  else if (s==kSKsRHCFCFV1RingELike) {
-	    fMCTemplArrayRHCOri1Re[im][it][ir] = 0;
-	    fMCTemplArrayRHCNom1Re[im][it][ir] = 0;
-	    fMCTemplArrayRHCTun1Re[im][it][ir] = 0;
-	    fMCTemplArrayRHCFin1Re[im][it][ir] = 0;
+	    fMCTemplArrayOriRHC1Re[im][it][ir] = 0;
+	    fMCTemplArrayNomRHC1Re[im][it][ir] = 0;
+	    fMCTemplArrayTunRHC1Re[im][it][ir] = 0;
+	    fMCTemplArrayFinRHC1Re[im][it][ir] = 0;
 	  }
 	  ////
 
@@ -236,40 +236,40 @@ void SuperkMC::Init(void)
   fMCTreeNuMuBar1Rmu   = 0;
   fMCTreeNuE1Rmu       = 0;
   fMCTreeNuEBar1Rmu    = 0;
-  fMCTreeSigNuE1Rmu    = 0;
+  fMCTreeOscNuE1Rmu    = 0;
   
   fMCTreeNuMu1Re       = 0;
   fMCTreeNuMuBar1Re    = 0;
   fMCTreeNuE1Re        = 0;
   fMCTreeNuEBar1Re     = 0;
-  fMCTreeSigNuE1Re     = 0;
+  fMCTreeOscNuE1Re     = 0;
 
   // ANTINU
   fMCTreeNuMuRHC1Rmu      = 0;
   fMCTreeNuMuBarRHC1Rmu   = 0;
   fMCTreeNuERHC1Rmu       = 0;
   fMCTreeNuEBarRHC1Rmu    = 0;
-  fMCTreeSigNuEBarRHC1Rmu = 0;
+  fMCTreeOscNuEBarRHC1Rmu = 0;
   
   fMCTreeNuMuRHC1Re       = 0;
   fMCTreeNuMuBarRHC1Re    = 0;
   fMCTreeNuERHC1Re        = 0;
   fMCTreeNuEBarRHC1Re     = 0;
-  fMCTreeSigNuEBarRHC1Re  = 0;
+  fMCTreeOscNuEBarRHC1Re  = 0;
   ////  
 
   fMCPOTNuMu           = 0;
   fMCPOTNuMuBar        = 0;
   fMCPOTNuE            = 0;
   fMCPOTNuEBar         = 0;
-  fMCPOTSigNuE         = 0;
+  fMCPOTOscNuE         = 0;
 
   // ANTINU
   fMCPOTRHCNuMu           = 0;
   fMCPOTRHCNuMuBar        = 0;
   fMCPOTRHCNuE            = 0;
   fMCPOTRHCNuEBar         = 0;
-  fMCPOTRHCSigNuEBar      = 0;
+  fMCPOTRHCOscNuEBar      = 0;
   ////
 
   fBrEreco             = 0;
@@ -295,28 +295,28 @@ void SuperkMC::CleanUp(void)
   if(fMCTreeNuMuBar1Rmu ) delete fMCTreeNuMuBar1Rmu;
   if(fMCTreeNuE1Rmu     ) delete fMCTreeNuE1Rmu;
   if(fMCTreeNuEBar1Rmu  ) delete fMCTreeNuEBar1Rmu;
-  if(fMCTreeSigNuE1Rmu  ) delete fMCTreeSigNuE1Rmu;
+  if(fMCTreeOscNuE1Rmu  ) delete fMCTreeOscNuE1Rmu;
   */
   /*
   if(fMCTreeNuMu1Re     ) delete fMCTreeNuMu1Re;
   if(fMCTreeNuMuBar1Re  ) delete fMCTreeNuMuBar1Re;
   if(fMCTreeNuE1Re      ) delete fMCTreeNuE1Re;
   if(fMCTreeNuEBar1Re   ) delete fMCTreeNuEBar1Re;
-  if(fMCTreeSigNuE1Re   ) delete fMCTreeSigNuE1Re;
+  if(fMCTreeOscNuE1Re   ) delete fMCTreeOscNuE1Re;
   */
   /*
   if(fMCTreeNuMuRHC1Rmu    ) delete fMCTreeNuMuRHC1Rmu;     // ANTINU
   if(fMCTreeNuMuBarRHC1Rmu ) delete fMCTreeNuMuBarRHC1Rmu;  // ANTINU
   if(fMCTreeNuERHC1Rmu     ) delete fMCTreeNuERHC1Rmu;      // ANTINU
   if(fMCTreeNuEBarRHC1Rmu  ) delete fMCTreeNuEBarRHC1Rmu;   // ANTINU
-  if(fMCTreeSigNuERHC1Rmu  ) delete fMCTreeSigNuERHC1Rmu;   // ANTINU
+  if(fMCTreeOscNuERHC1Rmu  ) delete fMCTreeOscNuERHC1Rmu;   // ANTINU
   */
   /*
   if(fMCTreeNuMuRHC1Re     ) delete fMCTreeNuMuRHC1Re;      // ANTINU
   if(fMCTreeNuMuBarRHC1Re  ) delete fMCTreeNuMuBarRHC1Re;   // ANTINU
   if(fMCTreeNuERHC1Re      ) delete fMCTreeNuERHC1Re;       // ANTINU
   if(fMCTreeNuEBarRHC1Re   ) delete fMCTreeNuEBarRHC1Re;    // ANTINU
-  if(fMCTreeSigNuERHC1Re   ) delete fMCTreeSigNuERHC1Re;    // ANTINU
+  if(fMCTreeOscNuERHC1Re   ) delete fMCTreeOscNuERHC1Re;    // ANTINU
   */
 
   if(fMCTemplMECMartini) delete fMCTemplMECMartini;
@@ -359,14 +359,14 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Get data POT
   // 
-  fPOT = util::XML2Dbl(xml,root_node,"data_pot/superk");
+  fPOT = util::XML2Dbl(xml,root_node,"data_pot/superk/fhc");
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> " << "POT_{data} = " << fPOT << endl;
 #endif
   //
   // Get data POT RHC
   // 
-  fPOTRHC = util::XML2Dbl(xml,root_node,"data_pot/superk");
+  fPOTRHC = util::XML2Dbl(xml,root_node,"data_pot/superk/rhc");
 #ifdef __show_init_mesg_info__
   cout << "RHC: Exp/SKMC >> " << "POT_{data} = " << fPOTRHC << endl;
 #endif
@@ -378,13 +378,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCPOTHistNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
   fMCPOTHistNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
   fMCPOTHistNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-  fMCPOTHistSigNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+  fMCPOTHistOscNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
 
   fMCPOTNuMu    = fMCPOTHistNuMu->GetBinContent(2)    / fMCPOTHistNuMu->GetBinContent(1);
   fMCPOTNuMuBar = fMCPOTHistNuMuBar->GetBinContent(2) / fMCPOTHistNuMuBar->GetBinContent(1);
   fMCPOTNuE     = fMCPOTHistNuE->GetBinContent(2)     / fMCPOTHistNuE->GetBinContent(1);
   fMCPOTNuEBar  = fMCPOTHistNuEBar->GetBinContent(2)  / fMCPOTHistNuEBar->GetBinContent(1);
-  fMCPOTSigNuE  = fMCPOTHistSigNuE->GetBinContent(2)  / fMCPOTHistSigNuE->GetBinContent(1);
+  fMCPOTOscNuE  = fMCPOTHistOscNuE->GetBinContent(2)  / fMCPOTHistOscNuE->GetBinContent(1);
 
 
   // ANTINU
@@ -392,13 +392,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCPOTHistRHCNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
   fMCPOTHistRHCNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
   fMCPOTHistRHCNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-  fMCPOTHistRHCSigNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+  fMCPOTHistRHCOscNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
 
   fMCPOTRHCNuMu    = fMCPOTHistRHCNuMu->GetBinContent(2)    / fMCPOTHistRHCNuMu->GetBinContent(1);
   fMCPOTRHCNuMuBar = fMCPOTHistRHCNuMuBar->GetBinContent(2) / fMCPOTHistRHCNuMuBar->GetBinContent(1);
   fMCPOTRHCNuE     = fMCPOTHistRHCNuE->GetBinContent(2)     / fMCPOTHistRHCNuE->GetBinContent(1);
   fMCPOTRHCNuEBar  = fMCPOTHistRHCNuEBar->GetBinContent(2)  / fMCPOTHistRHCNuEBar->GetBinContent(1);
-  fMCPOTRHCSigNuEBar  = fMCPOTHistRHCSigNuEBar->GetBinContent(2)  / fMCPOTHistRHCSigNuEBar->GetBinContent(1);
+  fMCPOTRHCOscNuEBar  = fMCPOTHistRHCOscNuEBar->GetBinContent(2)  / fMCPOTHistRHCOscNuEBar->GetBinContent(1);
   ////
 
   // MODIFIED
@@ -409,24 +409,24 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        fMCTreeNuMuBar1Rmu = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_mu_ring");
        fMCTreeNuE1Rmu     = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_mu_ring");
        fMCTreeNuEBar1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_mu_ring");
-       fMCTreeSigNuE1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
+       fMCTreeOscNuE1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
        assert (fMCTreeNuMu1Rmu   );
        assert (fMCTreeNuMuBar1Rmu);
        assert (fMCTreeNuE1Rmu    );
        assert (fMCTreeNuEBar1Rmu );
-       assert (fMCTreeSigNuE1Rmu );
+       assert (fMCTreeOscNuE1Rmu );
      }
      else if(s == kSKsFCFV1RingELike) {
        fMCTreeNuMu1Re     = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_e_ring");
        fMCTreeNuMuBar1Re  = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_e_ring");
        fMCTreeNuE1Re      = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_e_ring");
        fMCTreeNuEBar1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_e_ring");
-       fMCTreeSigNuE1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
+       fMCTreeOscNuE1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
        assert (fMCTreeNuMu1Re    );
        assert (fMCTreeNuMuBar1Re );
        assert (fMCTreeNuE1Re     );
        assert (fMCTreeNuEBar1Re  );
-       assert (fMCTreeSigNuE1Re  );
+       assert (fMCTreeOscNuE1Re  );
      }
      ////
 	
@@ -438,24 +438,24 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        fMCTreeNuMuBarRHC1Rmu = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_mu_ring");
        fMCTreeNuERHC1Rmu     = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_mu_ring");
        fMCTreeNuEBarRHC1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_mu_ring");
-       fMCTreeSigNuEBarRHC1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
+       fMCTreeOscNuEBarRHC1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
        assert (fMCTreeNuMuRHC1Rmu   );
        assert (fMCTreeNuMuBarRHC1Rmu);
        assert (fMCTreeNuERHC1Rmu    );
        assert (fMCTreeNuEBarRHC1Rmu );
-       assert (fMCTreeSigNuEBarRHC1Rmu );
+       assert (fMCTreeOscNuEBarRHC1Rmu );
      }
      else if(s == kSKsRHCFCFV1RingELike) {
        fMCTreeNuMuRHC1Re     = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_e_ring");
        fMCTreeNuMuBarRHC1Re  = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_e_ring");
        fMCTreeNuERHC1Re      = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_e_ring");
        fMCTreeNuEBarRHC1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_e_ring");
-       fMCTreeSigNuEBarRHC1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
+       fMCTreeOscNuEBarRHC1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
        assert (fMCTreeNuMuRHC1Re    );
        assert (fMCTreeNuMuBarRHC1Re );
        assert (fMCTreeNuERHC1Re     );
        assert (fMCTreeNuEBarRHC1Re  );
-       assert (fMCTreeSigNuEBarRHC1Re  );
+       assert (fMCTreeOscNuEBarRHC1Re  );
      }
      ////
   }
@@ -466,14 +466,14 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTNuMuBar << endl;
   cout << "Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTNuE     << endl;
   cout << "Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTNuEBar  << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; nue_sig} = " << fMCPOTSigNuE  << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTOscNuE  << endl;
   
   // ANTINU
   cout << "RHC: Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTRHCNuMu    << endl;
   cout << "RHC: Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTRHCNuMuBar << endl;
   cout << "RHC: Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTRHCNuE     << endl;
   cout << "RHC: Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTRHCNuEBar  << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; nue_sig} = " << fMCPOTRHCSigNuEBar  << endl;
+  cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTRHCOscNuEBar  << endl;
   ////
 
   for(int is = 0; is < kns; is++) {
@@ -483,14 +483,14 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        cout << "Exp/SKMC >> " << "Nev {MC; numubar;  1Rmu} = " << fMCTreeNuMuBar1Rmu -> GetEntries()  << endl;
        cout << "Exp/SKMC >> " << "Nev {MC; nue;      1Rmu} = " << fMCTreeNuE1Rmu     -> GetEntries()  << endl;
        cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   1Rmu} = " << fMCTreeNuEBar1Rmu  -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; nue[sig]; 1Rmu} = " << fMCTreeSigNuE1Rmu  -> GetEntries()  << endl;
+       cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Rmu} = " << fMCTreeOscNuE1Rmu  -> GetEntries()  << endl;
      }
      else if(s == kSKsFCFV1RingELike) {
        cout << "Exp/SKMC >> " << "Nev {MC; numu;     1Re } = " << fMCTreeNuMu1Re     -> GetEntries()  << endl;
        cout << "Exp/SKMC >> " << "Nev {MC; numubar;  1Re } = " << fMCTreeNuMuBar1Re  -> GetEntries()  << endl;
        cout << "Exp/SKMC >> " << "Nev {MC; nue;      1Re } = " << fMCTreeNuE1Re      -> GetEntries()  << endl;
        cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   1Re } = " << fMCTreeNuEBar1Re   -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; nue[sig]; 1Re } = " << fMCTreeSigNuE1Re   -> GetEntries()  << endl;
+       cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Re } = " << fMCTreeOscNuE1Re   -> GetEntries()  << endl;
      }
 
      // ANTINU
@@ -499,14 +499,14 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; numubar;  1Rmu} = " << fMCTreeNuMuBarRHC1Rmu -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue;      1Rmu} = " << fMCTreeNuERHC1Rmu     -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; nuebar;   1Rmu} = " << fMCTreeNuEBarRHC1Rmu  -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[sig]; 1Rmu} = " << fMCTreeSigNuEBarRHC1Rmu  -> GetEntries()  << endl;
+       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Rmu} = " << fMCTreeOscNuEBarRHC1Rmu  -> GetEntries()  << endl;
      }
      else if(s == kSKsRHCFCFV1RingELike) {
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; numu;     1Re } = " << fMCTreeNuMuRHC1Re     -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; numubar;  1Re } = " << fMCTreeNuMuBarRHC1Re  -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue;      1Re } = " << fMCTreeNuERHC1Re      -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; nuebar;   1Re } = " << fMCTreeNuEBarRHC1Re   -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[sig]; 1Re } = " << fMCTreeSigNuEBarRHC1Re   -> GetEntries()  << endl;
+       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Re } = " << fMCTreeOscNuEBarRHC1Re   -> GetEntries()  << endl;
      }
      ////
 
@@ -807,9 +807,9 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 	  fMCTemplArrayOri1Re[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);   // MODIFIED
 	// ANTINU
 	else if (s==kSKsRHCFCFV1RingMuLike)
-	  fMCTemplArrayRHCOri1Rmu[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+	  fMCTemplArrayOriRHC1Rmu[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
 	else if (s==kSKsRHCFCFV1RingELike)
-	  fMCTemplArrayRHCOri1Re[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);   
+	  fMCTemplArrayOriRHC1Re[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);   
 	////
 
 	double nev = this->Template(s,m,kSKMCtNom)->GetBinContent(ir,it);
@@ -828,14 +828,14 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 
 	// ANTINU
 	else if (s==kSKsRHCFCFV1RingMuLike) {
-	  fMCTemplArrayRHCNom1Rmu[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayRHCTun1Rmu[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayRHCFin1Rmu[midx][it-1][ir-1] = nev;
+	  fMCTemplArrayNomRHC1Rmu[midx][it-1][ir-1] = nev;
+	  fMCTemplArrayTunRHC1Rmu[midx][it-1][ir-1] = nev;
+	  fMCTemplArrayFinRHC1Rmu[midx][it-1][ir-1] = nev;
 	}
 	else if (s==kSKsRHCFCFV1RingELike) {
-	  fMCTemplArrayRHCNom1Re[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayRHCTun1Re[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayRHCFin1Re[midx][it-1][ir-1] = nev;
+	  fMCTemplArrayNomRHC1Re[midx][it-1][ir-1] = nev;
+	  fMCTemplArrayTunRHC1Re[midx][it-1][ir-1] = nev;
+	  fMCTemplArrayFinRHC1Re[midx][it-1][ir-1] = nev;
 	}
 	////
 
@@ -1741,24 +1741,24 @@ void SuperkMC::ApplyMCStatFluctationToTemplates(bool shape_only)
 	    // ANTINU
             else if (s==kSKsRHCFCFV1RingMuLike)  
             { 
-               double nev_old_bin  = fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; 
+               double nev_old_bin  = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; 
                double frac_error   = fMCStatFracErrRHC1Rmu  [im][it-1][ir-1];
                double error        = frac_error * nev_old_bin;
                double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
                nev_new_bin = TMath::Max(0.,nev_new_bin);
                nev_old += nev_old_bin;
                nev_new += nev_new_bin;
-               fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev_new_bin;
+               fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_new_bin;
             }
 	    else if (s==kSKsRHCFCFV1RingELike){
-               double nev_old_bin  = fMCTemplArrayRHCFin1Re[im][it-1][ir-1]; 
+               double nev_old_bin  = fMCTemplArrayFinRHC1Re[im][it-1][ir-1]; 
                double frac_error   = fMCStatFracErrRHC1Re  [im][it-1][ir-1];
                double error        = frac_error * nev_old_bin;
                double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
                nev_new_bin = TMath::Max(0.,nev_new_bin);
                nev_old += nev_old_bin;
                nev_new += nev_new_bin;
-               fMCTemplArrayRHCFin1Re[im][it-1][ir-1] = nev_new_bin;
+               fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev_new_bin;
             }
 	    ////
 
@@ -1783,12 +1783,12 @@ void SuperkMC::ApplyMCStatFluctationToTemplates(bool shape_only)
                }
 	       // ANTINU
 	       else if (s==kSKsRHCFCFV1RingMuLike) { 
-                  double nev  = fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; 
-                  fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev*scale;
+                  double nev  = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; 
+                  fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev*scale;
                }
 	       else if (s==kSKsRHCFCFV1RingELike){
-                  double nev  = fMCTemplArrayRHCFin1Re[im][it-1][ir-1]; 
-                  fMCTemplArrayRHCFin1Re[im][it-1][ir-1] = nev*scale;
+                  double nev  = fMCTemplArrayFinRHC1Re[im][it-1][ir-1]; 
+                  fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev*scale;
                }
 	       ////
 
@@ -1962,10 +1962,10 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
 	   ////
 	   // ANTINU
 	   else if (s==kSKsRHCFCFV1RingMuLike) {
-	     if(fMCTemplArrayRHCOri1Rmu[im][it-1][ir-1] <= 0) continue;
+	     if(fMCTemplArrayOriRHC1Rmu[im][it-1][ir-1] <= 0) continue;
 	   }
 	   else if (s==kSKsRHCFCFV1RingELike){
-	     if(fMCTemplArrayRHCOri1Re[im][it-1][ir-1] <= 0) continue;
+	     if(fMCTemplArrayOriRHC1Re[im][it-1][ir-1] <= 0) continue;
 	   }
 	   ////
 
@@ -1978,8 +1978,8 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
 	   if (s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
 	   else if (s==kSKsFCFV1RingELike) nev = fMCTemplArrayNom1Re[im][it-1][ir-1]; // MODIFIED
 	   // ANTINU
-	   else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayRHCNom1Rmu[im][it-1][ir-1];
-	   else if (s==kSKsRHCFCFV1RingELike) nev = fMCTemplArrayRHCNom1Re[im][it-1][ir-1]; // MODIFIED
+	   else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayNomRHC1Rmu[im][it-1][ir-1];
+	   else if (s==kSKsRHCFCFV1RingELike) nev = fMCTemplArrayNomRHC1Re[im][it-1][ir-1]; // MODIFIED
 	   ////
 
 	   nev = TMath::Max(0.,nev);
@@ -2021,14 +2021,14 @@ void SuperkMC::ApplyFluxExtTuningToTemplates(void)
 	   ////
 	   // ANTINU
 	   else if (s==kSKsRHCFCFV1RingMuLike) {
-	     fMCTemplArrayRHCNom1Rmu[im][it-1][ir-1] = nev;
-	     fMCTemplArrayRHCTun1Rmu[im][it-1][ir-1] = nev;
-	     fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev;
+	     fMCTemplArrayNomRHC1Rmu[im][it-1][ir-1] = nev;
+	     fMCTemplArrayTunRHC1Rmu[im][it-1][ir-1] = nev;
+	     fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev;
 	   }
 	   else if (s==kSKsRHCFCFV1RingELike) {
-	     fMCTemplArrayRHCNom1Re[im][it-1][ir-1] = nev;
-	     fMCTemplArrayRHCTun1Re[im][it-1][ir-1] = nev;
-	     fMCTemplArrayRHCFin1Re[im][it-1][ir-1] = nev;
+	     fMCTemplArrayNomRHC1Re[im][it-1][ir-1] = nev;
+	     fMCTemplArrayTunRHC1Re[im][it-1][ir-1] = nev;
+	     fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev;
 	   }
 	   ////
 
@@ -2152,10 +2152,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 #if BANFF_BINS == 4
 	    if(!util::IsMEC(m))
 #endif
-	      if(fMCTemplArrayRHCOri1Rmu[im][it-1][ir-1] <= 0) continue;
+	      if(fMCTemplArrayOriRHC1Rmu[im][it-1][ir-1] <= 0) continue;
 	  }
 	  else if (s==kSKsRHCFCFV1RingELike){
-	    if(fMCTemplArrayRHCOri1Re[im][it-1][ir-1] <= 0) continue;
+	    if(fMCTemplArrayOriRHC1Re[im][it-1][ir-1] <= 0) continue;
 	  }
 	  ////
 
@@ -2203,8 +2203,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	    
 	    if (s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayNom1Rmu[im][it-1][ir-1];
 	    else if (s==kSKsFCFV1RingELike) nev = fMCTemplArrayNom1Re[im][it-1][ir-1];  // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayRHCNom1Rmu[im][it-1][ir-1]; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike) nev = fMCTemplArrayRHCNom1Re[im][it-1][ir-1];   // ANTINU
+	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayNomRHC1Rmu[im][it-1][ir-1]; // ANTINU
+	    else if (s==kSKsRHCFCFV1RingELike) nev = fMCTemplArrayNomRHC1Re[im][it-1][ir-1];   // ANTINU
 	  
 	  
 	  nev = TMath::Max(0.,nev);
@@ -2240,12 +2240,12 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	  ////
 	  // ANTINU
 	  else if (s==kSKsRHCFCFV1RingMuLike) {
-	    fMCTemplArrayRHCTun1Rmu[im][it-1][ir-1] = nev_tuned;
-	    fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev_tuned;
+	    fMCTemplArrayTunRHC1Rmu[im][it-1][ir-1] = nev_tuned;
+	    fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_tuned;
 	  }
 	  else if (s==kSKsRHCFCFV1RingELike){
-	    fMCTemplArrayRHCTun1Re[im][it-1][ir-1] = nev_tuned;
-	    fMCTemplArrayRHCFin1Re[im][it-1][ir-1] = nev_tuned;
+	    fMCTemplArrayTunRHC1Re[im][it-1][ir-1] = nev_tuned;
+	    fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev_tuned;
 	  }
 	  ////
 
@@ -2410,10 +2410,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #if BANFF_BINS == 4
 	    if(!util::IsMEC(m))
 #endif
-	      assert(fMCTemplArrayRHCOri1Rmu[im][it-1][ir-1] > 0);
+	      assert(fMCTemplArrayOriRHC1Rmu[im][it-1][ir-1] > 0);
 	  }
 	  else if (s==kSKsRHCFCFV1RingELike){
-	    assert(fMCTemplArrayRHCOri1Re[im][it-1][ir-1] > 0);
+	    assert(fMCTemplArrayOriRHC1Re[im][it-1][ir-1] > 0);
 	  }
 	  ////
 
@@ -2461,8 +2461,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 	    if (s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayTun1Rmu[im][it-1][ir-1];
 	    else if (s==kSKsFCFV1RingELike) nev = fMCTemplArrayTun1Re[im][it-1][ir-1]; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayRHCTun1Rmu[im][it-1][ir-1]; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike) nev = fMCTemplArrayRHCTun1Re[im][it-1][ir-1]; // ANTINU
+	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayTunRHC1Rmu[im][it-1][ir-1]; // ANTINU
+	    else if (s==kSKsRHCFCFV1RingELike) nev = fMCTemplArrayTunRHC1Re[im][it-1][ir-1]; // ANTINU
 	  
 	  
 	  
@@ -2527,8 +2527,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	  
 	  if (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_systm;
 	  else if (s==kSKsFCFV1RingELike) fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_systm;  // MODIFIED
-	  else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev_systm; // ANTINU
-	  else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayRHCFin1Re[im][it-1][ir-1] = nev_systm;  // ANTINU
+	  else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_systm; // ANTINU
+	  else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev_systm;  // ANTINU
 
 
 	}//ifb
@@ -2605,10 +2605,10 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
     kSKmNuEBarCCoth,
     kSKmUndefined, //kSKmNuEBarNC1piC,
     kSKmUndefined, //kSKmNuEBarNCoth_mu,
-    kSKmSigNuECCQE,
-    kSKmSigNuECC1pi,
-    kSKmSigNuECCcoh,
-    kSKmSigNuECCoth,
+    kSKmOscNuECCQE,
+    kSKmOscNuECC1pi,
+    kSKmOscNuECCcoh,
+    kSKmOscNuECCoth,
     kSKmUndefined,//kSKmMEC, //keep MEC templates here - they won't be renormalised!
     kSKmUndefined,
     kSKmUndefined,
@@ -2755,10 +2755,10 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
     kSKmNuEBarCCoth,
     kSKmUndefined, //kSKmNuEBarNC1piC,
     kSKmUndefined, //kSKmNuEBarNCoth_mu,
-    kSKmRHCSigNuEBarCCQE,   // ANTINU --> SigNuEBar instead of SigNuE
-    kSKmRHCSigNuEBarCC1pi,  // ANTINU --> SigNuEBar instead of SigNuE
-    kSKmRHCSigNuEBarCCcoh,  // ANTINU --> SigNuEBar instead of SigNuE
-    kSKmRHCSigNuEBarCCoth,  // ANTINU --> SigNuEBar instead of SigNuE
+    kSKmOscNuEBarCCQE,   // ANTINU --> OscNuEBar instead of OscNuE
+    kSKmOscNuEBarCC1pi,  // ANTINU --> OscNuEBar instead of OscNuE
+    kSKmOscNuEBarCCcoh,  // ANTINU --> OscNuEBar instead of OscNuE
+    kSKmOscNuEBarCCoth,  // ANTINU --> OscNuEBar instead of OscNuE
     kSKmUndefined,//kSKmMEC, //keep MEC templates here - they won't be renormalised!
     kSKmUndefined,
     kSKmUndefined,
@@ -2794,7 +2794,7 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
       // loop over Etrue
       for(int it = 1; it <= n_etrue_bins; it++) {
-	double nev = fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1];
+	double nev = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1];
 	nev = TMath::Max(0.,nev);
 	integrals[im] += nev;
       }//it
@@ -2848,11 +2848,11 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
       // loop over Etrue
       for(int it = 1; it <= n_etrue_bins; it++) {
-	fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] *= renorm_factor;
+	fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] *= renorm_factor;
 #ifndef PRODUCTIONMODE
 	TH2D * mctempl_tgt = this -> Template(s,m,kSKMCtSys);
 	if(mctempl_tgt)
-	  mctempl_tgt->SetBinContent(ir,it,fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]);
+	  mctempl_tgt->SetBinContent(ir,it,fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]);
 #endif
       }//it
     }//ir
@@ -2915,9 +2915,9 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
       ////
       // ANTINU
       else if (s==kSKsRHCFCFV1RingMuLike)
-	memcpy (mctemplarry_no_ereco_scale, fMCTemplArrayRHCFin1Rmu[im], sizeof (fMCTemplArrayRHCFin1Rmu[im])) ;
+	memcpy (mctemplarry_no_ereco_scale, fMCTemplArrayFinRHC1Rmu[im], sizeof (fMCTemplArrayFinRHC1Rmu[im])) ;
       else if (s==kSKsRHCFCFV1RingELike)
-	memcpy (mctemplarry_no_ereco_scale, fMCTemplArrayRHCFin1Re[im], sizeof (fMCTemplArrayRHCFin1Re[im]));
+	memcpy (mctemplarry_no_ereco_scale, fMCTemplArrayFinRHC1Re[im], sizeof (fMCTemplArrayFinRHC1Re[im]));
       ////
 
 
@@ -2975,8 +2975,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 		      else if (s==kSKsFCFV1RingELike) mctempl->SetBinContent(ir, it, fMCTemplArrayFin1Re[im][it-1][ir-1]  - dn);
 		      ////
 		      // ANTINU
-		      else if (s==kSKsRHCFCFV1RingMuLike)  mctempl->SetBinContent(ir, it, fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]  - dn);
-		      else if (s==kSKsRHCFCFV1RingELike) mctempl->SetBinContent(ir, it, fMCTemplArrayRHCFin1Re[im][it-1][ir-1]  - dn);
+		      else if (s==kSKsRHCFCFV1RingMuLike)  mctempl->SetBinContent(ir, it, fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]  - dn);
+		      else if (s==kSKsRHCFCFV1RingELike) mctempl->SetBinContent(ir, it, fMCTemplArrayFinRHC1Re[im][it-1][ir-1]  - dn);
 		      ////
 
                       if (s==kSKsFCFV1RingMuLike)  mctempl->SetBinContent(irp,it, fMCTemplArrayFin1Rmu[im][it-1][irp-1] + dn);
@@ -2984,8 +2984,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 		      else if (s==kSKsFCFV1RingELike) mctempl->SetBinContent(irp,it, fMCTemplArrayFin1Re[im][it-1][irp-1] + dn);
 		      ////
 		      // ANTINU
-                      else if (s==kSKsRHCFCFV1RingMuLike)  mctempl->SetBinContent(irp,it, fMCTemplArrayRHCFin1Rmu[im][it-1][irp-1] + dn);
-		      else if (s==kSKsRHCFCFV1RingELike) mctempl->SetBinContent(irp,it, fMCTemplArrayRHCFin1Re[im][it-1][irp-1] + dn);
+                      else if (s==kSKsRHCFCFV1RingMuLike)  mctempl->SetBinContent(irp,it, fMCTemplArrayFinRHC1Rmu[im][it-1][irp-1] + dn);
+		      else if (s==kSKsRHCFCFV1RingELike) mctempl->SetBinContent(irp,it, fMCTemplArrayFinRHC1Re[im][it-1][irp-1] + dn);
 		      ////
 
 
@@ -3001,8 +3001,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 		      else if (s==kSKsFCFV1RingELike) fMCTemplArrayFin1Re[im][it-1][ir-1]  -= dn;
 		      ////
 		      // ANTINU
-		      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]  -= dn;
-		      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayRHCFin1Re[im][it-1][ir-1]  -= dn;
+		      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]  -= dn;
+		      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayFinRHC1Re[im][it-1][ir-1]  -= dn;
 		      ////
 
 		      
@@ -3011,8 +3011,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 		      else if (s==kSKsFCFV1RingELike) fMCTemplArrayFin1Re[im][it-1][irp-1] += dn;
 		      ////
 		      // ANTINU
-		      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][irp-1] += dn;
-		      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayRHCFin1Re[im][it-1][irp-1] += dn;
+		      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][irp-1] += dn;
+		      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayFinRHC1Re[im][it-1][irp-1] += dn;
 		      ////
 
 
@@ -3064,8 +3064,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 	      else if (s==kSKsFCFV1RingELike) mctempl->SetBinContent(ir, it, fMCTemplArrayFin1Re[im][it-1][ir-1]  - dn);
 	      ////
 	      // ANTINU
-	      else if (s==kSKsRHCFCFV1RingMuLike) mctempl->SetBinContent(ir, it, fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]  - dn);
-	      else if (s==kSKsRHCFCFV1RingELike) mctempl->SetBinContent(ir, it, fMCTemplArrayRHCFin1Re[im][it-1][ir-1]  - dn);
+	      else if (s==kSKsRHCFCFV1RingMuLike) mctempl->SetBinContent(ir, it, fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]  - dn);
+	      else if (s==kSKsRHCFCFV1RingELike) mctempl->SetBinContent(ir, it, fMCTemplArrayFinRHC1Re[im][it-1][ir-1]  - dn);
 	      ////
 
 
@@ -3074,8 +3074,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 	      else if (s==kSKsFCFV1RingELike) mctempl->SetBinContent(irp,it, fMCTemplArrayFin1Re[im][it-1][irp-1] + dn);
 	      ////
 	      // ANTINU
-	      else if (s==kSKsRHCFCFV1RingMuLike) mctempl->SetBinContent(irp,it, fMCTemplArrayRHCFin1Rmu[im][it-1][irp-1] + dn);
-	      else if (s==kSKsRHCFCFV1RingELike) mctempl->SetBinContent(irp,it, fMCTemplArrayRHCFin1Re[im][it-1][irp-1] + dn);
+	      else if (s==kSKsRHCFCFV1RingMuLike) mctempl->SetBinContent(irp,it, fMCTemplArrayFinRHC1Rmu[im][it-1][irp-1] + dn);
+	      else if (s==kSKsRHCFCFV1RingELike) mctempl->SetBinContent(irp,it, fMCTemplArrayFinRHC1Re[im][it-1][irp-1] + dn);
 	      ////
 	      
 
@@ -3086,8 +3086,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 	      else if (s==kSKsFCFV1RingELike) fMCTemplArrayFin1Re[im][it-1][ir-1]  -= dn; 
 	      ////
 	      // ANTINU
-	      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]  -= dn;
-	      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayRHCFin1Re[im][it-1][ir-1]  -= dn; 
+	      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]  -= dn;
+	      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayFinRHC1Re[im][it-1][ir-1]  -= dn; 
 	      ////
 
 	      
@@ -3096,8 +3096,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 	      else if (s==kSKsFCFV1RingELike) fMCTemplArrayFin1Re[im][it-1][irp-1] += dn;
 	      ////
 	      // ANTINU 
-	      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][irp-1] += dn;
-	      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayRHCFin1Re[im][it-1][irp-1] += dn;
+	      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][irp-1] += dn;
+	      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayFinRHC1Re[im][it-1][irp-1] += dn;
 	      ////
 
 
@@ -3148,29 +3148,29 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 
 	  // ANTINU
 	  else if (s==kSKsRHCFCFV1RingMuLike){
-	    if(fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] < 0) {
+	    if(fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] < 0) {
 #ifdef __show_negative_events_mesg_debug__
-	      cout << "Exp/SKMC/ApplySystematicsToTemplates_NonMultiplicative " << fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]
+	      cout << "Exp/SKMC/ApplySystematicsToTemplates_NonMultiplicative " << fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]
 		   << " to " << 0 << "\t" << " Ereco: " << kRHCErecoBinEdges1Rmu[ir-1]+kOneMeV
 		   << " Etrue: " << kRHCEtrueBinEdges1Rmu[it-1]+kOneMeV << endl;
 #endif
 #ifndef PRODUCTIONMODE
 	      mctempl->SetBinContent(ir,  it,  0);
 #endif
-	      fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = 0;
+	      fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = 0;
 	    }
 	  }
 	  else if (s==kSKsRHCFCFV1RingELike) {                 
-	    if(fMCTemplArrayRHCFin1Re[im][it-1][ir-1] < 0) {
+	    if(fMCTemplArrayFinRHC1Re[im][it-1][ir-1] < 0) {
 #ifdef __show_negative_events_mesg_debug__
-	      cout << "Exp/SKMC/ApplySystematicsToTemplates_NonMultiplicative " << fMCTemplArrayRHCFin1Re[im][it-1][ir-1]
+	      cout << "Exp/SKMC/ApplySystematicsToTemplates_NonMultiplicative " << fMCTemplArrayFinRHC1Re[im][it-1][ir-1]
 		   << " to " << 0 << "\t" << " Ereco: " << kRHCErecoBinEdges1Re[ir-1]+kOneMeV
 		   << " Etrue: " << kRHCEtrueBinEdges1Re[it-1]+kOneMeV << endl;
 #endif
 #ifndef PRODUCTIONMODE
 	      mctempl->SetBinContent(ir,  it,  0);
 #endif
-	      fMCTemplArrayRHCFin1Re[im][it-1][ir-1] = 0;
+	      fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = 0;
 	    }
 	  }
 	  ////
@@ -3617,7 +3617,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
 	    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
 	    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-	    else if( util::IsSignalNuE(m) ) { posc = p_numu_nue;        }
+	    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
 	    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
 	  }
 	  // loop over Ereco
@@ -3632,8 +3632,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	    else if (s==kSKsFCFV1RingELike) nev = fMCTemplArrayFin1Re[im][it-1][ir-1];
 	    ////
 	    // ANTINU
-	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1];
-	    else if (s==kSKsRHCFCFV1RingELike) nev = fMCTemplArrayRHCFin1Re[im][it-1][ir-1];
+	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1];
+	    else if (s==kSKsRHCFCFV1RingELike) nev = fMCTemplArrayFinRHC1Re[im][it-1][ir-1];
 	    ////
 
 
@@ -3641,7 +3641,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 #ifdef PHYSHYPWEIGHTSAREONE
               posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-              if(util::IsSignalNuE(m)) posc = 0;
+              if(util::IsOscNuE(m)) posc = 0;
 #endif
 #endif
 	    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
@@ -3657,8 +3657,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	      else if (s==kSKsFCFV1RingELike) fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_osc;
 	      ////
 	      // ANTINU
-	      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev_osc;
-	      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayRHCFin1Re[im][it-1][ir-1] = nev_osc;
+	      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_osc;
+	      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev_osc;
 	      ////
 
 
@@ -3706,7 +3706,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 
 	     double nev;
 	     if(s==kSKsFCFV1RingMuLike) nev =  fMCTemplArrayFin1Rmu[im][it-1][ir-1];            // MODIFIED
-	     else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; // ANTINU
+	     else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
 	     
 	     nev *= psurv;
 #ifndef PRODUCTIONMODE
@@ -3714,7 +3714,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 #endif
 
 	     if(s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev;  // MODIFIED
-	     else if(s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev; // ANTINU
+	     else if(s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev; // ANTINU
 
 
 	   }//ir
@@ -3760,7 +3760,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 
 	     double nev;
 	     if(s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1]; // MODIFIED
-	     else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; // ANTINU
+	     else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
 	     
 	     nev *= psurv;
 #ifndef PRODUCTIONMODE
@@ -3769,7 +3769,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 
 
 	     if(s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev;  // MODIFIED
-	     else if(s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev; // ANTINU
+	     else if(s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev; // ANTINU
 
 
            }//ir
@@ -3814,7 +3814,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	     
 	     double nev;
 	     if(s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1];  // MODIFIED
-             else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; // ANTINU
+             else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
 	     
 	     nev *= psurv;
 #ifndef PRODUCTIONMODE
@@ -3823,7 +3823,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	   
 
 	     if(s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev;   // MODIFIED
-	     else if(s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1] = nev; // ANTINU
+	     else if(s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev; // ANTINU
 	     
 
 	   }//ir
@@ -3871,8 +3871,8 @@ bool SuperkMC::UpdateErecoSpectra(void)
           for(int it = 1; it <= n_etrue_bins; it++) {
 	    if (s==kSKsFCFV1RingMuLike)	nev += fMCTemplArrayFin1Rmu[im][it-1][ir-1];
 	    else if (s==kSKsFCFV1RingELike) nev += fMCTemplArrayFin1Re[im][it-1][ir-1]; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike)	nev += fMCTemplArrayRHCFin1Rmu[im][it-1][ir-1]; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike) nev += fMCTemplArrayRHCFin1Re[im][it-1][ir-1]; // ANTINU
+	    else if (s==kSKsRHCFCFV1RingMuLike)	nev += fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
+	    else if (s==kSKsRHCFCFV1RingELike) nev += fMCTemplArrayFinRHC1Re[im][it-1][ir-1]; // ANTINU
           }//it
           nev_tot += nev;
 #ifdef __apply_minevents_to_individual_modes__
@@ -4052,7 +4052,7 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar1Rmu;
      if ( util::IsNuE(m)       ) return fMCTreeNuE1Rmu;
      if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar1Rmu;
-     if ( util::IsSignalNuE(m) ) return fMCTreeSigNuE1Rmu;
+     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuE1Rmu;
   }//1Rmu
   
   if (s==kSKsFCFV1RingELike)
@@ -4061,7 +4061,7 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar1Re;
      if ( util::IsNuE(m)       ) return fMCTreeNuE1Re;
      if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar1Re;
-     if ( util::IsSignalNuE(m) ) return fMCTreeSigNuE1Re;
+     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuE1Re;
   }//1Re
 
 
@@ -4072,7 +4072,7 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBarRHC1Rmu;
      if ( util::IsNuE(m)       ) return fMCTreeNuERHC1Rmu;
      if ( util::IsNuEBar(m)    ) return fMCTreeNuEBarRHC1Rmu;
-     if ( util::IsSignalNuE(m) ) return fMCTreeSigNuEBarRHC1Rmu;
+     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuEBarRHC1Rmu;
   }//1Rmu
   if (s==kSKsRHCFCFV1RingELike)
   {
@@ -4080,7 +4080,7 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBarRHC1Re;
      if ( util::IsNuE(m)       ) return fMCTreeNuERHC1Re;
      if ( util::IsNuEBar(m)    ) return fMCTreeNuEBarRHC1Re;
-     if ( util::IsSignalNuE(m) ) return fMCTreeSigNuEBarRHC1Re;
+     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuEBarRHC1Re;
   }//1Re
   ////
 
@@ -4096,7 +4096,7 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCPOTNuMuBar;
      if ( util::IsNuE(m)       ) return fMCPOTNuE;
      if ( util::IsNuEBar(m)    ) return fMCPOTNuEBar;
-     if ( util::IsSignalNuE(m) ) return fMCPOTSigNuE;
+     if ( util::IsOscNuE(m)    ) return fMCPOTOscNuE;
   }
 
   
@@ -4107,7 +4107,7 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCPOTRHCNuMuBar;
      if ( util::IsNuE(m)       ) return fMCPOTRHCNuE;
      if ( util::IsNuEBar(m)    ) return fMCPOTRHCNuEBar;
-     if ( util::IsSignalNuE(m) ) return fMCPOTRHCSigNuEBar;
+     if ( util::IsOscNuE(m)    ) return fMCPOTRHCOscNuEBar;
   }
   ////
   
@@ -4345,7 +4345,7 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
 {
 // ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
 
-  bool mode_is_nuesig = util::IsSignalNuE(m);
+  bool mode_is_nuesig = util::IsOscNuE(m);
 
   PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
   bool hyp_is_not_3flavour_osc = (hyp != kHypOsc3F);

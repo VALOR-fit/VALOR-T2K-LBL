@@ -89,7 +89,7 @@ private:
   // Access flux and weight histograms held in this object
   TH1D * SuperkFluxSpectrum       (int neutrino_pdg, conv::FluxType_t type = conv::kFlxCurrent) const;
   TH1D * SuperkFluxExtTuningWghts (int neutrino_pdg) const;
-  TH1D * SuperkRHCFluxSpectrum       (int neutrino_pdg, conv::FluxType_t type = conv::kRHCFlxCurrent) const;
+  //TH1D * SuperkRHCFluxSpectrum       (int neutrino_pdg, conv::FluxType_t type = conv::kRHCFlxCurrent) const;
   TH1D * SuperkRHCFluxExtTuningWghts (int neutrino_pdg) const;
 
   //

@@ -38,7 +38,7 @@ Split t2kana::conv namespace into several smaller files
 #endif
 
 #ifndef HK
-//#define HK //allow mix23 & dm32sq to be nuisance for current osc params
+#define HK //allow mix23 & dm32sq to be nuisance for current osc params
 #endif
 
 #ifndef BANFF_BINS

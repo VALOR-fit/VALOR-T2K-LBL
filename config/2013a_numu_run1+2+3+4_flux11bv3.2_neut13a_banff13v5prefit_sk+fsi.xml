@@ -10,7 +10,12 @@
 
   <data_pot>
      <superk> 
+       <fhc>
         6.5700e+20
+       </fhc>
+       <rhc>
+       0
+       </rhc>
      </superk> 
   </data_pot>
 

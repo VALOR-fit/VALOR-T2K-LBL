@@ -137,9 +137,7 @@ namespace util {
   bool IsNuE              (conv::SuperkMode_t  m);
   bool IsNuEBar           (conv::SuperkMode_t  m);
   bool IsOscNuEBar        (conv::SuperkMode_t  m);
-  bool IsRHCOscNuE        (conv::SuperkMode_t  m);
-  bool IsSignalNuE        (conv::SuperkMode_t  m);
-  bool IsRHCSignalNuEBar  (conv::SuperkMode_t  m);
+  bool IsOscNuE           (conv::SuperkMode_t  m);
   bool IsCC               (conv::SuperkMode_t  m);
   bool IsNC               (conv::SuperkMode_t  m);
   bool IsMEC              (conv::SuperkMode_t  m);
