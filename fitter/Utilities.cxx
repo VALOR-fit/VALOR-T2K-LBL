@@ -7528,6 +7528,14 @@ void t2kana::util::ArrIdx::Init(void)
     if(p == kPhypUndefined) continue;
     fXSecSystIdx[p] = ip;
   }
+  for(int i = 0; i < knppmax; i++) {
+    fRHCXSecSystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfRHCXSecSyst; ip++) {
+    PhysParamId_t p = kListOfRHCXSecSyst[ip];
+    if(p == kPhypUndefined) continue;
+    fRHCXSecSystIdx[p] = ip;
+  }
   //BANFF
   for(int i = 0; i < knppmax; i++) {
     fBANFFSystIdx[i] = -1;

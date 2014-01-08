@@ -410,11 +410,29 @@ double NuXSec::FinTuningWght(
 {
   double tot_wght = 1.;
 
-  for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
-     PhysParamId_t p = kListOfXSecSyst[isyst];
-     // "Tuning" involves reweighting to BANFF best-fit values.
-     // Consider only the cross-section systematics that were included in the BANFF fit.
-     bool is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
+  int nXSecSyst;
+  PhysParamId_t p;
+  bool is_banff_xsec_param;
+
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    nXSecSyst = kNumOfRHCXSecSyst;
+  else
+    nXSecSyst = kNumOfXSecSyst;
+
+
+  for(int isyst = 0; isyst < nXSecSyst; isyst++) {
+    if(s == kSKsRHCFCFV1RingMuLike || s ==  kSKsRHCFCFV1RingELike)
+      {
+      p = kListOfRHCXSecSyst[isyst];
+      // "Tuning" involves reweighting to BANFF best-fit values.
+      // Consider only the cross-section systematics that were included in the BANFF fit.
+      is_banff_xsec_param = kRHCXSecSystIncludedInBANFF[isyst];
+      }
+    else
+      {
+      p = kListOfXSecSyst[isyst];
+      is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
+      }
      if(!is_banff_xsec_param) continue;
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
@@ -1217,8 +1235,19 @@ bool NuXSec::ApplySyst(
 //________________________________________________________________________________________
 bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m) const
 {
-  int isyst = arr_index->XSecSystIdx(p);
-  if (isyst == -1) return false;
+  int isyst;
+
+  if(s ==  kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    {
+    isyst = arr_index->RHCXSecSystIdx(p);
+    if (isyst == -1) return false;
+    }
+  else
+    {
+    isyst = arr_index->XSecSystIdx(p);
+    if (isyst == -1) return false;
+    }
+
   int is = arr_index->SuperkSampleIdx(s);
   if (is == -1) return false;
   int im = arr_index->SuperkModeIdx(s,m);
@@ -1231,12 +1260,24 @@ bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m
 //________________________________________________________________________________________
 bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) const
 {
-  int isyst = arr_index->XSecSystIdx(p);
-  if (isyst == -1) return false;
+  int isyst;
+  bool apply;
 
-  bool apply = 
-     (Ereco >= kXSecSystErecoCut[isyst][0] && Ereco < kXSecSystErecoCut[isyst][1]) &&
-     (Etrue >= kXSecSystEtrueCut[isyst][0] && Etrue < kXSecSystEtrueCut[isyst][1]);
+  TString paramName = AsString(p);
+  if(paramName.Contains("RHC"))
+    {
+    isyst = arr_index->RHCXSecSystIdx(p);
+    if (isyst == -1) return false;
+    apply = (Ereco >= kRHCXSecSystErecoCut[isyst][0] && Ereco < kRHCXSecSystErecoCut[isyst][1]) &&
+      (Etrue >= kRHCXSecSystEtrueCut[isyst][0] && Etrue < kRHCXSecSystEtrueCut[isyst][1]);
+    }
+  else
+    {
+    isyst = arr_index->XSecSystIdx(p);
+    if (isyst == -1) return false;
+    apply = (Ereco >= kXSecSystErecoCut[isyst][0] && Ereco < kXSecSystErecoCut[isyst][1]) &&
+      (Etrue >= kXSecSystEtrueCut[isyst][0] && Etrue < kXSecSystEtrueCut[isyst][1]);
+    }
 
   return apply;
 }

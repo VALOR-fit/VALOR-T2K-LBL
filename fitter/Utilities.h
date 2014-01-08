@@ -268,6 +268,7 @@ namespace util {
     int SuperkSampleIdx (conv::SuperkSample_t s)                       { return fSuperkSampleIdx[s];    }
     int SuperkModeIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m) { return fSuperkModeIdx  [s][m]; }
     int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
+    int RHCXSecSystIdx  (conv::PhysParamId_t p)                        { return fRHCXSecSystIdx    [p]; }
     int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
     int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
     int SKDetFSISystIdx (conv::PhysParamId_t p)                        { return fSKDetFSISystIdx[p];    }
@@ -281,6 +282,7 @@ namespace util {
     int fSuperkSampleIdx [2*conv::kns];                  ///< maps sample to kSKSamples array index
     int fSuperkModeIdx   [2*conv::kns][2*conv::knm];     ///< maps sample/mode to kSKReactionModes array index
     int fXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfXSecSyst array index
+    int fRHCXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfRHCXSecSyst array index
     int fBANFFSystIdx    [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
     int fFSISystIdx      [conv::knppmax];                ///< maps physics param to FSI covariance matrix
     int fSKDetFSISystIdx [conv::knppmax];                ///< maps physics param to FSI covariance matrix
