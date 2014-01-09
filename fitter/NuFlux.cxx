@@ -388,6 +388,16 @@ void NuFlux::BookAndInitAuxSpectra(void)
   fSKNuEFluxCurrent     -> SetDirectory(0);
   fSKNuEBarFluxCurrent  -> SetDirectory(0);
 
+  fSKRHCNuMuFluxCurrent    = new TH1D(*fSKRHCNuMuFluxTunedFinal   );
+  fSKRHCNuMuBarFluxCurrent = new TH1D(*fSKRHCNuMuBarFluxTunedFinal);
+  fSKRHCNuEFluxCurrent     = new TH1D(*fSKRHCNuEFluxTunedFinal    );
+  fSKRHCNuEBarFluxCurrent  = new TH1D(*fSKRHCNuEBarFluxTunedFinal );
+
+  fSKRHCNuMuFluxCurrent    -> SetDirectory(0);
+  fSKRHCNuMuBarFluxCurrent -> SetDirectory(0);
+  fSKRHCNuEFluxCurrent     -> SetDirectory(0);
+  fSKRHCNuEBarFluxCurrent  -> SetDirectory(0);
+
 }
 //________________________________________________________________________________________
 void NuFlux::ApplyBANFFWeights(bool get_current) const
@@ -494,9 +504,118 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
   }//ip loop  
 }
 //________________________________________________________________________________________
+void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
+{
+  // Apply RHC BANFF weights to ext/tuned flux.
+  //
+  // Input param     | Action    
+  // ---------------------------------------------------
+  // false           | apply RHC BANFF best-fit params to fin/tuned flux
+  // true            | apply RHC BANFF currrent params to current   flux 
+
+#ifdef __show_flux_twk_mesg_info__
+  cout << "Exp/Flux >> Applying RHC BANFF weights to SuperK flux " 
+       << ( (get_current) ? "[ext/tuned --> current]" : "[ext/tuned --> fin/tuned]" )
+       << endl;   
+#endif
+#ifdef __show_flux_twk_mesg_debug_level2__
+  fRHCBANFF->PrintSystematicVariations();
+#endif
+
+  const int np = conv::kNumOfRHCParamsInBANFFfit;
+
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = conv::PhysParamId_t ( (int)conv::kRHCNuisBANFF00 + ip );
+    // flux param?
+    bool is_sk_flux_param = conv::kRHCParamInBANFFfitIsSuperkFluxParam[ip];
+    if(is_sk_flux_param) 
+      {
+        // Get the current or best-fit BANFF Superk flux param value
+        double banff_param_value = (get_current) ? 
+	  fRHCBANFF->CurrentValue(p) :
+	  fRHCBANFF->BestFitValue(p) ; 
+
+#ifdef __show_flux_twk_mesg_debug__
+        cout << "Exp/Flux >> Taking into account the effect of BANFF flux param: "
+             << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
+#endif
+
+        // BANFF param -> neutrino PDG code
+        int nu_pdg = conv::kNuPdgCodeOfRHCFluxParamInBANFFfit[ip];
+
+        // BANFF param -> true energy range [variable size bin]
+        double Emin = conv::kEtrueRangeOfRHCFluxParamInBANFFfit[ip][0];
+        double Emax = conv::kEtrueRangeOfRHCFluxParamInBANFFfit[ip][1];
+        assert(Emin >= 0. && Emax > 0);
+
+        // Access flux histograms
+
+        // original spectrum:
+        TH1D * flux_spectrum_orig = this->SuperkFluxSpectrum(nu_pdg, conv::kRHCFlxExtTuning); 
+        // original spectrum + BANFF weights
+        TH1D * flux_spectrum_wght = (get_current) ?
+	  this->SuperkFluxSpectrum(nu_pdg, conv::kRHCFlxCurrent) :
+	  this->SuperkFluxSpectrum(nu_pdg, conv::kRHCFlxFinalTuning);
+
+        // Note: 
+        // The flux_spectrum histograms used in this code, use a binning scheme
+        // (typically fixed-size 50-MeV bins, although other fixed or variable binning
+        // schemes are possible) which is, in principle, different from the coarser
+        // binning scheme used by BANFF.
+        // Below, we will refer to the two binning schemes as `own' and `BANFF'
+
+        // Find range of `own' bins which corresponds to the current `BANFF' bin ([Emin,Emax] range)
+        int bin_min = flux_spectrum_orig->FindBin(Emin + conv::kASmallNum); 
+        int bin_max = flux_spectrum_orig->FindBin(Emax - conv::kASmallNum);
+
+#ifdef __show_flux_twk_mesg_debug__
+        cout << "Exp/Flux >> RHC BANFF parameter tweaks Superk flux for neutrino PDG = " << nu_pdg 
+             << " in true energy range = [" << Emin << ", " << Emax << "]"
+             << endl;
+        cout << "Exp/Flux >> In our binning scheme, this energy range corresponds to bins = ["
+             << bin_min << ", " << bin_max << "]" 
+             << endl;
+#endif
+
+        // Loop over `own' bins contained in the current `BANFF' bin and
+        // "distribute" the `BANFF' bin flux variation to our `own' bins.
+        for ( int bin = bin_min; bin <= bin_max; bin++ ) {
+	  // Un-tweaked flux in current bin 
+	  double flux = flux_spectrum_orig->GetBinContent(bin);
+	  // Tweaked flux in current bin
+	  double flux_twk = flux * banff_param_value;
+#ifdef __show_flux_twk_mesg_debug_level2__
+	  cout << "Exp/Flux >> - Our bin = " << bin
+	       << ", RHC flux = " << flux << " --> " << flux_twk << endl;
+#endif
+	  if(flux_twk < 0) {
+	    cerr << "Exp/Flux >> Tweaked RHC flux for neutrino PDG = " << nu_pdg 
+		 << " in bin = " << bin << " is = " << flux_twk << " !!! " << endl;
+	    cerr << "Exp/Flux >> Negative value was the result of tweaking RHC BANFF param: " 
+		 << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
+	    exit(1);
+	  }
+	  flux_spectrum_wght->SetBinContent(bin,flux_twk);
+        } // bin
+      } 
+    else 
+      {
+#ifdef __show_flux_twk_mesg_debug__
+        cout << "Exp/Flux >> RHC BANFF param: " << util::AsString(p) 
+             << " is not a flux param and it is skipped..." << endl;
+#endif
+      }//sk flux param?
+  }//ip loop  
+}
+//________________________________________________________________________________________
 void NuFlux::TellMeAboutTheBANFFfit(BANFF * banff)
 {
   fBANFF = banff;
+}
+//________________________________________________________________________________________
+void NuFlux::TellMeAboutTheRHCBANFFfit(BANFF * banff)
+{
+  fRHCBANFF = banff;
 }
 //________________________________________________________________________________________
 double NuFlux::SuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
@@ -951,5 +1070,112 @@ void NuFlux::Draw(TVirtualPad * c, Option_t * option) const
     htunf->Draw("same");
     c->Update();
   }
+
+}
+void NuFlux::DrawRHC(TVirtualPad * c, Option_t * option) const
+  {
+  if(!c) return;
+
+  c->cd();
+
+  TString opt = option;
+  util::SetDefaultStyle();
+
+  if(opt.Contains("Flux/SK/NuMuRHC/TuneWghts")) { 
+    TH1D * hrhc = new TH1D(*fSKRHCNuMuFluxExtTuningWght);
+    hrhc->SetDirectory(0);
+    hrhc->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hrhc->GetYaxis()->SetTitle("SuperK RHC numu flux weight");
+    hrhc->Draw();
+    c->Update();
+  }
+  else
+  if(opt.Contains("Flux/SK/NuMuBarRHC/TuneWghts")) { 
+    TH1D * hrhc = new TH1D(*fSKRHCNuMuBarFluxExtTuningWght);
+    hrhc->SetDirectory(0);
+    hrhc->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hrhc->GetYaxis()->SetTitle("SuperK RHC numubar flux weight");
+    hrhc->Draw();
+    c->Update();
+  }
+  else
+  if(opt.Contains("Flux/SK/NuERHC/TuneWghts")) { 
+    TH1D * hrhc = new TH1D(*fSKRHCNuEFluxExtTuningWght);
+    hrhc->SetDirectory(0);
+    hrhc->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hrhc->GetYaxis()->SetTitle("SuperK RHC nue flux weight");
+    hrhc->Draw();
+    c->Update();
+  }
+  else
+  if(opt.Contains("Flux/SK/NuEBarRHC/TuneWghts")) { 
+    TH1D * hrhc = new TH1D(*fSKRHCNuEBarFluxExtTuningWght);
+    hrhc->SetDirectory(0);
+    hrhc->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hrhc->GetYaxis()->SetTitle("SuperK RHC nuebar flux weight");
+    hrhc->Draw();
+    c->Update();
+  }
+  else
+  if(opt.Contains("Flux/SK/NuMuRHC")) { 
+    TH1D * hnomrhc  = new TH1D(*fSKRHCNuMuFluxNominal);
+    TH1D * htunerhc = new TH1D(*fSKRHCNuMuFluxTunedExt);
+    TH1D * htunfrhc = new TH1D(*fSKRHCNuMuFluxTunedFinal);
+    hnomrhc ->SetDirectory(0);
+    htunerhc->SetDirectory(0);
+    htunfrhc->SetDirectory(0);
+    hnomrhc->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hnomrhc->GetYaxis()->SetTitle("SuperK RHC numu flux (#antineutrinos /cm2 /x POT)");
+    hnomrhc->Draw();
+    htunerhc->Draw("same");
+    htunfrhc->Draw("same");
+    c->Update();
+  }
+  else
+  if(opt.Contains("Flux/SK/NuMuBarRHC")) { 
+    TH1D * hnomrhc  = new TH1D(*fSKRHCNuMuBarFluxNominal);
+    TH1D * htunerhc = new TH1D(*fSKRHCNuMuBarFluxTunedExt);
+    TH1D * htunfrhc = new TH1D(*fSKRHCNuMuBarFluxTunedFinal);
+    hnomrhc ->SetDirectory(0);
+    htunerhc->SetDirectory(0);
+    htunfrhc->SetDirectory(0);
+    hnomrhc->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hnomrhc->GetYaxis()->SetTitle("SuperK RHC numubar flux (#antineutrinos /cm2 /x POT)");
+    hnomrhc->Draw();
+    htunerhc->Draw("same");
+    htunfrhc->Draw("same");
+    c->Update();
+  }
+  else
+  if(opt.Contains("Flux/SK/NuERHC")) { 
+    TH1D * hnomrhc  = new TH1D(*fSKRHCNuEFluxNominal);
+    TH1D * htunerhc = new TH1D(*fSKRHCNuEFluxTunedExt);
+    TH1D * htunfrhc = new TH1D(*fSKRHCNuEFluxTunedFinal);
+    hnomrhc ->SetDirectory(0);
+    htunerhc->SetDirectory(0);
+    htunfrhc->SetDirectory(0);
+    hnomrhc->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hnomrhc->GetYaxis()->SetTitle("SuperK RHC nue flux (#antineutrinos /cm2 /x POT)");
+    hnomrhc->Draw();
+    htunerhc->Draw("same");
+    htunfrhc->Draw("same");
+    c->Update();
+  }
+  else
+  if(opt.Contains("Flux/SK/NuEBarRHC")) { 
+    TH1D * hnomrhc  = new TH1D(*fSKRHCNuEBarFluxNominal);
+    TH1D * htunerhc = new TH1D(*fSKRHCNuEBarFluxTunedExt);
+    TH1D * htunfrhc = new TH1D(*fSKRHCNuEBarFluxTunedFinal);
+    hnomrhc->SetDirectory(0);
+    htunerhc->SetDirectory(0);
+    htunfrhc->SetDirectory(0);
+    hnomrhc->GetXaxis()->SetTitle("E_{#nu} (GeV)");
+    hnomrhc->GetYaxis()->SetTitle("SuperK RHC nuebar flux (#antineutrinos /cm2 /x POT)");
+    hnomrhc->Draw();
+    htunerhc->Draw("same");
+    htunfrhc->Draw("same");
+    c->Update();
+  }
+
 }
 //________________________________________________________________________________________

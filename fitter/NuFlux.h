@@ -62,6 +62,7 @@ public:
 
   // BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
+  void TellMeAboutTheRHCBANFFfit(BANFF * banff);
 
   // Drawing options:
   // - "Flux/SK/NuMu/TuneWghts"    :
@@ -73,6 +74,16 @@ public:
   // - "Flux/SK/NuE"               :
   // - "Flux/SK/NuEBar"            :
   void Draw(TVirtualPad * c, Option_t * opt) const;
+  // Drawing options:
+  // - "Flux/SK/NuMuRHC/TuneWghts"    :
+  // - "Flux/SK/NuMuBarRHC/TuneWghts" :
+  // - "Flux/SK/NuERHC/TuneWghts"     :
+  // - "Flux/SK/NuEBarRHC/TuneWghts"  :
+  // - "Flux/SK/NuMuRHC"              :
+  // - "Flux/SK/NuMuBarRHC"           :
+  // - "Flux/SK/NuERHC"               :
+  // - "Flux/SK/NuEBarRHC"            :
+  void DrawRHC(TVirtualPad * c, Option_t * opt) const;
 
 private:
 
@@ -85,6 +96,7 @@ private:
 
   // Apply BANFF weights
   void ApplyBANFFWeights (bool get_current) const; 
+  void ApplyRHCBANFFWeights (bool get_current) const;
 
   // Access flux and weight histograms held in this object
   TH1D * SuperkFluxSpectrum       (int neutrino_pdg, conv::FluxType_t type = conv::kFlxCurrent) const;
