@@ -158,30 +158,50 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   TSpline3 *flatspline = new TSpline3("",x,y,n);
 #endif //__use_flat_splines_for_missing_splines__
 
+  PhysParamId_t p;
+  bool need_splines;
+  int nXSecSyst;
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+
+    if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+      nXSecSyst = kNumOfRHCXSecSyst;
+    else
+      nXSecSyst = kNumOfXSecSyst;
+
     // loop over modes for current sample
     for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
        if(util::IsOscNuMu(m)) continue; //using NuMu splines
        if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
-       if(util::IsOscNuEBar(m)) continue; //using NuEBar splines
-
+       if((s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike) && util::IsOscNuE(m)) continue; 
+       if((s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike) && util::IsOscNuEBar(m)) continue; //using NuEBar splines
 
        // loop over cross-section systematic parameters
-       for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
-          PhysParamId_t p = kListOfXSecSyst[ip];          
-          if(p == kPhypUndefined) continue;
-          // do we need weight splines for the current systematic parameter?
-          bool need_splines = kXSecSystHasWghtSplines[ip];
-          if(!need_splines) continue;
-          // is the current systematic parameter going to be applied to current sample/mode?
-          bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
-          if(!is_applied) continue;
+       for(int ip = 0; ip < nXSecSyst; ip++) {
+	 if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+	   {
+	   p = kListOfRHCXSecSyst[ip];
+	   if(p == kPhypUndefined) continue;
+	   //do we need weight splines for the current systematic parameter? 
+	   need_splines = kRHCXSecSystHasWghtSplines[ip];
+	   if(!need_splines) continue;
+	   }
+	 else
+	   {
+           p = kListOfXSecSyst[ip];          
+           if(p == kPhypUndefined) continue;
+           // do we need weight splines for the current systematic parameter?
+           need_splines = kXSecSystHasWghtSplines[ip];
+           if(!need_splines) continue;
+	   }
+	 // is the current systematic parameter going to be applied to current sample/mode?
+	 bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
+	 if(!is_applied) continue;
           // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
           for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
 	    double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
@@ -813,7 +833,7 @@ double NuXSec::SystWght_1p(
   //
   else
   if(
-     p >= kNuisXSecNormCCcoh && p <= kNuisXSecNormAntiNuToNu)
+     (p >= kNuisXSecNormCCcoh && p <= kNuisXSecNormAntiNuToNu) || (p >= kRHCNuisXSecNormCCcoh && p <= kRHCNuisXSecNormAntiNuToNu))
     /*     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
 	   p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu || p == kNuisXSecNormAntiNuToNu)*/
   {
@@ -824,7 +844,7 @@ double NuXSec::SystWght_1p(
   // pion-less delta-decay
   //
   else
-  if(p == kNuisXSecPiLessDelta)
+  if(p == kNuisXSecPiLessDelta || p == kRHCNuisXSecPiLessDelta)
   {
 #if SPLINE_TYPE == -1
     return wght;
@@ -833,7 +853,7 @@ double NuXSec::SystWght_1p(
     //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
-      double tc = TMath::Max(this->CurrentValue(p), -1.);
+      tc = TMath::Max(this->CurrentValue(p), -1.);
       wght = wght_spl->Eval(tc); //wght_spl->Eval(0); 
       //}
   }
@@ -1203,7 +1223,11 @@ int NuXSec::WghtSplineIdx(
 #endif //__show_wght_spline_idx_mesg_debug__
     return -1;
   }
-  int ip = arr_index->XSecSystIdx(p);
+  int ip;
+  if(s == kSKsRHCFCFV1RingMuLike || s ==  kSKsRHCFCFV1RingELike)
+    ip = arr_index->RHCXSecSystIdx(p);
+  else
+    ip = arr_index->XSecSystIdx(p);
   if(ip == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
     cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec sysy "
