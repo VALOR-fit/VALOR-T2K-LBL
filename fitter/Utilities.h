@@ -253,6 +253,12 @@ namespace util {
   // 3x3 matrix diagonalisation
   int DiagonaliseJacobi(std::complex<double> A[3][3],  std::complex<double> Q[3][3], double w[3]);
   
+  // Full diagonalisation using GSL
+  // matrix_in is a pointer to a block representing a n*n complex matrix, equivalent to a double[n][n][2]
+  // eigenvectors_out is pointer to (assigned) memory in same format
+  // eigenvalues_out is pointer to double[n]
+  int DiagonaliseGSL(int ndim, double * matrix_in, double * eigenvectors_out, double * eigenvalues_out);
+  
   void PrintCompact (const TVectorD & v, int w=15, int prec=9, Option_t * opt="", ostream & stream = std::cout);
   void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, ostream & stream = std::cout);
   void PrintCompact (const TMatrixD & m, int w=15, int prec=9, ostream & stream = std::cout);

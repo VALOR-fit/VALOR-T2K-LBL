@@ -41,6 +41,14 @@ Added samples and modes for reverse horn current running
 #include "Opt.h"
 #include "Rnd.h"
 
+#ifdef __GSL_ENABLED__ 
+#include <gsl/gsl_complex.h>
+#include <gsl/gsl_complex_math.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_blas.h>
+#include <gsl/gsl_eigen.h>
+#endif
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -7754,5 +7762,32 @@ int t2kana::util::DiagonaliseJacobi(std::complex<double> A[3][3],  std::complex<
   }
 
   return -1;
+}
+//____________________________________________________________________________
+int t2kana::util::DiagonaliseGSL(int ndim, double * matrix_in, double * eigenvectors_out, double * eigenvalues_out)
+{
+#ifdef __GSL_ENABLED__ 
+  gsl_matrix_complex * matr = gsl_matrix_complex_alloc(ndim,ndim);
+  memcpy( (double*)gsl_matrix_complex_const_ptr(matr,0,0), matrix_in, ndim*ndim*2*sizeof(double) );
+  
+  gsl_matrix_complex * eigenvectors = gsl_matrix_complex_alloc(ndim,ndim);
+  gsl_vector * eigenvalues  = gsl_vector_alloc(ndim);
+  gsl_eigen_hermv_workspace * workspace = gsl_eigen_hermv_alloc(ndim);
+  
+  int status=gsl_eigen_hermv(matr, eigenvalues, eigenvectors, workspace);
+  
+  memcpy( eigenvectors_out, (double*)gsl_matrix_complex_const_ptr(eigenvectors,0,0) , ndim*ndim*2*sizeof(double));
+  memcpy( eigenvalues_out , (double*)gsl_vector_const_ptr        (eigenvalues ,0)   , ndim*sizeof(double));
+                           
+  gsl_matrix_complex_free(matr);
+  gsl_matrix_complex_free(eigenvectors);
+  gsl_vector_free(eigenvalues);
+  gsl_eigen_hermv_free(workspace);
+  
+  return (status != GSL_SUCCESS);
+#else
+  std::cerr<<"GSL Disabled"<<std::endl;
+  exit(-1);
+#endif
 }
 //____________________________________________________________________________
