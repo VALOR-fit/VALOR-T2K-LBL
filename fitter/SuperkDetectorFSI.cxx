@@ -64,6 +64,13 @@ void SuperkDetectorFSI::Init(void)
   fEnergyScale1RmuRelErr      = 0.;
   fEnergyScale1ReRelErr       = 0.;
   fEnergyScaleTwkDial         = 0.;
+  fRHCCurrentValues = 0;
+  fRHCNominalValues = 0;
+  fRHCCovMtrx       = 0;
+  fRHCCovMtrxChoL   = 0;
+  fRHCEnergyScale1RmuRelErr      = 0.;
+  fRHCEnergyScale1ReRelErr       = 0.;
+  fRHCEnergyScaleTwkDial         = 0.;
   
   arr_index = util::ArrIdx::Instance();
 }
@@ -74,6 +81,10 @@ void SuperkDetectorFSI::CleanUp(void)
   if ( fNominalValues ) delete fNominalValues;
   if ( fCovMtrx       ) delete fCovMtrx;
   if ( fCovMtrxChoL   ) delete fCovMtrxChoL;
+  if ( fRHCCurrentValues ) delete fRHCCurrentValues;
+  if ( fRHCNominalValues ) delete fRHCNominalValues;
+  if ( fRHCCovMtrx       ) delete fRHCCovMtrx;
+  if ( fRHCCovMtrxChoL   ) delete fRHCCovMtrxChoL;
 }
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -150,10 +161,91 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   return true;  
 }
+//________________________________________________________________________________________
+bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
+{
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SuperkDetectorFSI >> Reading RHC SuperkDetector+FSI inputs from input XML file." << endl;
+#endif
+
+  // Get relative error on energy scale 
+  fRHCEnergyScale1RmuRelErr =
+    util::XML2Dbl(xml,root_node,
+                  "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
+  fRHCEnergyScale1ReRelErr =
+    util::XML2Dbl(xml,root_node,
+                  "detector_systematics/superk/energy_scale_relative_error/one_e_ring");
+  
+
+  const int np = conv::kNumOfRHCSKDetFSIParams;
+
+  // Get SuperkDetectorFSI covariance matrix
+#if FSI_BINS == 1
+  fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
+#elif FSI_BINS == 2
+  fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+#elif FSI_BINS == 3
+  fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+#endif
+  if(!fRHCCovMtrx) {
+    cerr << "Exp/SuperkDetectorFSI >> No RHC SuperkDetector+FSI covariance matrix was found." << endl;
+    exit(1);
+  }
+
+  const TMatrixD & cov = *fRHCCovMtrx;
+  if(cov.GetNrows() != np || cov.GetNcols() != np)
+    {
+      cerr << "Exp/SuperkDetectorFSI >> RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
+      cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+      cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+      exit(1);
+    }
+
+  double det;
+  fRHCCovMtrxInv = new TMatrixD(*fRHCCovMtrx);
+  (*fRHCCovMtrxInv).SetTol(1E-23);
+  (*fRHCCovMtrxInv).Invert(&det);
+  //  cout << "Determinant = " << det << endl;
+  const TMatrixD &   covInv  = *fRHCCovMtrxInv;
+  TMatrixD prod = cov*covInv;
+
+
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI >> " << "Error {RHC EnergyScale;1Rmu}    : " << fRHCEnergyScale1RmuRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI >> " << "Error {RHC EnergyScale;1Re}    : " << fRHCEnergyScale1ReRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI >> Input RHC SuperkDetector+FSI covariance matrix: " << endl; 
+  //cov.Print();
+  util::PrintCompact(cov,7,4);
+  cout << "Exp/SuperkDetectorFSI >> Inverse RHC SuperkDetector+FSI covariance matrix: " << endl;
+  util::PrintCompact(*fRHCCovMtrxInv,7,4);
+  cout << "Exp/SuperkDetectorFSI >> check of RHC product cov*(cov)^-1 : "<< endl;
+  util::PrintCompact(prod,7,4);
+#endif
+
+  // Create/init current SuperkDetector+FSI params
+  fRHCCurrentValues = new TVectorD(np);
+  fRHCNominalValues = new TVectorD(np);
+  for(int ip = 0; ip < np; ip++) 
+    {
+      (*fRHCCurrentValues)[ip] = 1.;
+      (*fRHCNominalValues)[ip] = 1.;
+    }
+
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SuperkDetectorFSI >> Done reading RHC SuperkDetector+FSI inputs!" << endl;
+#endif
+
+  return true;  
+}
 //________________________________________________________________________________________                                                                                        
 void SuperkDetectorFSI::TweakEnergyScale(double twkdial)
 {
   fEnergyScaleTwkDial = twkdial;
+}
+//________________________________________________________________________________________
+void SuperkDetectorFSI::TweakRHCEnergyScale(double twkdial)
+{
+  fRHCEnergyScaleTwkDial = twkdial;
 }
 //________________________________________________________________________________________
 double SuperkDetectorFSI::SystWght(
@@ -545,12 +637,81 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
   return 0;
 }
 //________________________________________________________________________________________
+double SuperkDetectorFSI::RHCChisqPenalty(void) const
+//just a straight copy of BANFF::ChisqPenalty
+{
+  //Vector with deviations of current values from  best fit values
+  const TVectorD & bestfit_values   = *fRHCNominalValues;
+  const TVectorD & current_values   = *fRHCCurrentValues;
+  const int np = conv::kNumOfRHCSKDetFSIParams;
+  TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+  TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+  for(int i = 0; i < np; i++){
+    dev[0][i]  = current_values[i]-bestfit_values[i];
+    devT[i][0] = current_values[i]-bestfit_values[i];
+  }
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> RHC SuperkDetector+FSI parameters: " << endl;
+  util::PrintCompact(current_values, bestfit_values, 12,6,"RHC SuperkDetector+FSI fit params");
+#endif
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/ChisqPenalty >> deviations in RHC SuperkDetector+FSI parameters: " << endl;
+  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"RHC SuperkDetector+FSI fit params");
+#endif
+
+  //covariance matrix
+  const TMatrixD cov    (this->RHCCovMatrix());
+  const TMatrixD    covInv (this->RHCCovMatrixInv());
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> RHC SuperkDetector+FSI covariance matrix: " << endl;
+  util::PrintCompact(cov,7,4);
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> RHC inverse SuperkDetector+FSI covariance matrix: " << endl;
+  util::PrintCompact(covInv,7,4);
+#endif
+
+  //Check the inverse:
+  TMatrixD prod = cov*covInv;
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> check of RHC product cov*(cov)^-1 : "<< endl;
+  util::PrintCompact(prod,7,4);
+#endif
+
+  TMatrixD chisqpenalty =  dev * covInv * devT;
+  double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
+
+  //now add the contribution from energy scale
+  if (fRHCEnergyScaleTwkDial   ) chisq_penalty += fRHCEnergyScaleTwkDial*fRHCEnergyScaleTwkDial;
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> RHC chisqPenalty = " << chisq_penalty << endl;
+#endif
+
+  if(chisq_penalty < 0) 
+    cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> RHC chisqPenalty = " << chisq_penalty << endl;
+
+  if(chisq_penalty) return chisq_penalty;
+  
+  return 0;
+}
+//________________________________________________________________________________________
 void SuperkDetectorFSI::PrintSystematicVariations(ostream & stream) const
 {
   const TVectorD & curr_skdetfsi_params = *fCurrentValues;
   stream << "Exp/SuperkDetectorFSI >> Energy scale twk        = "  << fEnergyScaleTwkDial      << endl;
   stream << "Exp/SuperkDetectorFSI >> SuperkDetector+FSI parameters: " << endl;
   util::PrintCompact(curr_skdetfsi_params,15,6,"SuperkDetector+FSI params",stream);
+
+}
+//________________________________________________________________________________________
+void SuperkDetectorFSI::PrintRHCSystematicVariations(ostream & stream) const
+{
+  const TVectorD & curr_skdetfsi_params = *fRHCCurrentValues;
+  stream << "Exp/SuperkDetectorFSI >> RHC energy scale twk        = "  << fRHCEnergyScaleTwkDial      << endl;
+  stream << "Exp/SuperkDetectorFSI >> RHC SuperkDetector+FSI parameters: " << endl;
+  util::PrintCompact(curr_skdetfsi_params,15,6,"RHC SuperkDetector+FSI params",stream);
 
 }
 //________________________________________________________________________________________
@@ -565,7 +726,12 @@ bool SuperkDetectorFSI::ApplySyst(
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const
 {
-  int idx = arr_index->SKDetFSISystIdx(p);
+  int idx;
+
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    idx = arr_index->RHCSKDetFSISystIdx(p);
+  else
+    idx = arr_index->SKDetFSISystIdx(p);
   if (idx == -1) return false;
   int is = arr_index->SuperkSampleIdx(s);
   if (is == -1) return false;
@@ -583,11 +749,23 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco) const
 {
-  int idx = arr_index->SKDetFSISystIdx(p);
+  TString paramName = AsString(p);
+  int idx;
+
+  if(paramName.Contains("RHC"))
+    idx = arr_index->RHCSKDetFSISystIdx(p);
+  else
+    idx = arr_index->SKDetFSISystIdx(p);
   if (idx == -1) return false;
 
-  bool apply = Ereco >= conv::kSKDetFSIParamsErecoCut[idx][0] &&
+  bool apply;
+  if(paramName.Contains("RHC"))
+    apply = Ereco >= conv::kRHCSKDetFSIParamsErecoCut[idx][0] &&
+      Ereco <  conv::kRHCSKDetFSIParamsErecoCut[idx][1];
+  else
+    apply = Ereco >= conv::kSKDetFSIParamsErecoCut[idx][0] &&
                Ereco <  conv::kSKDetFSIParamsErecoCut[idx][1];
+
 #ifdef __show_skdetfsi_applysyst_mesg_debug__
   string applystr;
   applystr = apply ? "Passed" : "Failed";
@@ -622,8 +800,12 @@ double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m 
 //________________________________________________________________________________________                                                                                       
 double SuperkDetectorFSI::EnergyScale(SuperkSample_t s, SuperkMode_t m) const
 {
+  double twkdial;
   // energy scale
-  double twkdial = fEnergyScaleTwkDial;
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    twkdial = fRHCEnergyScaleTwkDial;
+  else
+    twkdial = fEnergyScaleTwkDial;
   double err     = this->EnergyScaleRelErr(s,m);
   double scale   = 1. + twkdial * err;
   return scale;
@@ -631,8 +813,12 @@ double SuperkDetectorFSI::EnergyScale(SuperkSample_t s, SuperkMode_t m) const
 //________________________________________________________________________________________                                                                                        
 double SuperkDetectorFSI::EnergyScale(SuperkSample_t s) const
 {
-  // energy scale       
-  double twkdial = fEnergyScaleTwkDial;
+  double twkdial;
+  // energy scale
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    twkdial = fRHCEnergyScaleTwkDial;
+  else       
+    twkdial = fEnergyScaleTwkDial;
   double err     = this->EnergyScaleRelErr(s,kSKmNuMuCCQE);
   double scale   = 1. + twkdial * err;
   return scale;

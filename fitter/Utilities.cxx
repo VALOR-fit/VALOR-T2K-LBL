@@ -7544,6 +7544,7 @@ void t2kana::util::ArrIdx::Init(void)
     if(p == kPhypUndefined) continue;
     fRHCXSecSystIdx[p] = ip;
   }
+
   //BANFF
   for(int i = 0; i < knppmax; i++) {
     fBANFFSystIdx[i] = -1;
@@ -7558,6 +7559,20 @@ void t2kana::util::ArrIdx::Init(void)
           << " is at slot: " << fBANFFSystIdx [p] << endl;
 #endif
   }
+  for(int i = 0; i < knppmax; i++) {
+    fRHCBANFFSystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfRHCParamsInBANFFfit; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisBANFF00 + ip);
+    if(p == kPhypUndefined) continue;
+    fRHCBANFFSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+    cout << "Util/ArrIdx >> RHC BANFF: "
+	 << util::AsString(p)
+	 << " is at slot: " << fRHCBANFFSystIdx [p] << endl;
+#endif
+  }
+
 #ifndef SKFSITOGETHER
   //FSI
   for(int i = 0; i < knppmax; i++) {
@@ -7578,8 +7593,9 @@ void t2kana::util::ArrIdx::Init(void)
 #endif
   }
 #endif
-#ifdef SKFSITOGETHER
+
   //SKDET + FSI
+#ifdef SKFSITOGETHER
   for(int i = 0; i < knppmax; i++) {
     fSKDetFSISystIdx[i] = -1;
   }
@@ -7596,6 +7612,25 @@ void t2kana::util::ArrIdx::Init(void)
           << util::AsString(p)
           << " is at slot: " << fSKDetFSISystIdx [p] << endl;
      //#endif
+  }
+#endif
+#ifdef SKFSITOGETHER
+  for(int i = 0; i < knppmax; i++) {
+    fRHCSKDetFSISystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfRHCSKDetFSIParams; ip++) {
+#if FSI_BINS != 3
+    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + ip);
+#else
+    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + ip);
+#endif
+    if(p == kPhypUndefined) continue;
+    fRHCSKDetFSISystIdx[p] = ip;
+    //#ifdef __show_arr_idx_mesg_debug__
+    cout << "Util/ArrIdx >> RHC SKDet+FSI: "
+	 << util::AsString(p)
+	 << " is at slot: " << fRHCSKDetFSISystIdx [p] << endl;
+    //#endif
   }
 #endif
 

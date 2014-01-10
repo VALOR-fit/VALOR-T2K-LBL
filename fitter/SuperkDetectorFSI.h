@@ -50,6 +50,7 @@ public:
 
   // Tweak FSI params (either force the input params or generate correlated params using the Cholesky method)
   void TweakEnergyScale                    (double twkdial);
+  void TweakRHCEnergyScale                    (double twkdial);
   void Tweak (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakOnly1Rmu (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakOnly1Re (bool force_inputs = false, TVectorD * input_params = 0);
@@ -62,15 +63,21 @@ public:
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
   const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
   const TMatrixD & CovMatrixInv      (void) const { return *fCovMtrxInv;    }
+  const TMatrixD & RHCCovMatrix         (void) const { return *fRHCCovMtrx; }
+  const TMatrixD & RHCCovMatrixCholesky (void) const { return *fRHCCovMtrxChoL; }
+  const TMatrixD & RHCCovMatrixInv      (void) const { return *fRHCCovMtrxInv; }
 
   // Penalty term included in the chisq if FSI nuisance terms are included in the fit       
   double ChisqPenalty(void) const;
+  double RHCChisqPenalty(void) const;
 
   // Print
   void PrintSystematicVariations (ostream & stream = std::cout) const;
+  void PrintRHCSystematicVariations (ostream & stream = std::cout) const;
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+  bool ReadRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
    
 private:
 
@@ -90,10 +97,19 @@ private:
   TMatrixD * fCovMtrxInv;       ///< Inverse FSI covariance matrix
   TMatrixD * fCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
 
+  TVectorD * fRHCCurrentValues;    ///< Current values of FSI params
+  TVectorD * fRHCNominalValues;    ///< Nominal values of FSI params
+  TMatrixD * fRHCCovMtrx;          ///< FSI covariance matrix
+  TMatrixD * fRHCCovMtrxInv;       ///< Inverse FSI covariance matrix
+  TMatrixD * fRHCCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
+
   double     fEnergyScale1RmuRelErr;       ///< 1Rmu energy scale relative error   
-  double     fEnergyScale1ReRelErr;        ///< 1Re energy scale relative error    
+  double     fEnergyScale1ReRelErr;        ///< 1Re energy scale relative error
+  double     fRHCEnergyScale1RmuRelErr;    ///< 1Rmu energy scale relative error   
+  double     fRHCEnergyScale1ReRelErr;     ///< 1Re energy scale relative error    
   // > 1Rmu + 1Re 
   double     fEnergyScaleTwkDial;          ///< 1Rmu/1Re Energy scale tweaking dial         
+  double     fRHCEnergyScaleTwkDial;          ///< 1Rmu/1Re Energy scale tweaking dial
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 

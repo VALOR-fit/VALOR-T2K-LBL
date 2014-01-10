@@ -276,8 +276,10 @@ namespace util {
     int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
     int RHCXSecSystIdx  (conv::PhysParamId_t p)                        { return fRHCXSecSystIdx    [p]; }
     int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
+    int RHCBANFFSystIdx (conv::PhysParamId_t p)                        { return fRHCBANFFSystIdx   [p]; }
     int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
     int SKDetFSISystIdx (conv::PhysParamId_t p)                        { return fSKDetFSISystIdx[p];    }
+    int RHCSKDetFSISystIdx (conv::PhysParamId_t p)                     { return fRHCSKDetFSISystIdx[p]; }
     int SKDet1ReSystIdx (conv::PhysParamId_t p)                        { return fSKDet1ReSystIdx[p];    }
     int PhysParamIdx    (conv::PhysParamId_t p)                        { return fPhysParamIdx   [p];    }
   private:
@@ -288,10 +290,12 @@ namespace util {
     int fSuperkSampleIdx [2*conv::kns];                  ///< maps sample to kSKSamples array index
     int fSuperkModeIdx   [2*conv::kns][2*conv::knm];     ///< maps sample/mode to kSKReactionModes array index
     int fXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfXSecSyst array index
-    int fRHCXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfRHCXSecSyst array index
+    int fRHCXSecSystIdx  [conv::knppmax];                ///< maps physics param to kListOfRHCXSecSyst array index
     int fBANFFSystIdx    [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
+    int fRHCBANFFSystIdx [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
     int fFSISystIdx      [conv::knppmax];                ///< maps physics param to FSI covariance matrix
     int fSKDetFSISystIdx [conv::knppmax];                ///< maps physics param to FSI covariance matrix
+    int fRHCSKDetFSISystIdx [conv::knppmax];             ///< maps physics param to FSI covariance matrix
     int fSKDet1ReSystIdx [conv::knppmax];                ///< maps physics param to 1Re eff covariance matrix
     int fPhysParamIdx    [conv::knppmax];                ///< maps physics param
     static ArrIdx * fInstance;
