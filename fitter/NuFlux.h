@@ -56,9 +56,11 @@ public:
 
   // SK flux (current, tuned/fin, tuned/ext, nominal - depending on input flux type)
   double SuperkFlux (int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;
+  double RHCSuperkFlux (int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;
 
   // Read configuration and data from input XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+  bool ReadRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
 
   // BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
@@ -93,6 +95,7 @@ private:
 
   // Book and initialize/compute spectra not loaded from config files
   void BookAndInitAuxSpectra(void);
+  void BookAndInitRHCAuxSpectra(void);
 
   // Apply BANFF weights
   void ApplyBANFFWeights (bool get_current) const; 
