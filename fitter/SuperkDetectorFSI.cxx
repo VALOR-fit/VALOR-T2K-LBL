@@ -254,32 +254,76 @@ double SuperkDetectorFSI::SystWght(
 
   // find SuperkDetector+FSI param which corresponds to the current Ereco param
   int iparam = -1;
-  for(int ip = 0; ip < conv::kNumOfSKDetFSIParams; ip++) {
-     conv::PhysParamId_t p = conv::kListOfSKDetFSIParams[ip];
+  int nSKDetFSIParams;
+  conv::PhysParamId_t p;
+
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    nSKDetFSIParams = conv::kNumOfRHCSKDetFSIParams;
+  else
+    nSKDetFSIParams = conv::kNumOfSKDetFSIParams;
+
+  for(int ip = 0; ip < nSKDetFSIParams; ip++) {
+    if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+      p = conv::kListOfRHCSKDetFSIParams[ip];
+    else
+      p = conv::kListOfSKDetFSIParams[ip];
      // Is the current systematic parameter applied to current sample/mode end energy bin?
      bool apply = this->ApplySyst(p,s,m,Ereco);
      if(!apply) continue;
      if(iparam != -1) {
-       cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
+       if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+	 {
+	 cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple RHC SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
+		<< util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+#if FSI_BINS != 3
+	      << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+#else
+	      << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+#endif
+	 }
+       else
+	 {
+         cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
 	    << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
 #if FSI_BINS != 3
 	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
 #else
 	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
 #endif
+	 }
        exit(1);
      }
-     iparam = arr_index->SKDetFSISystIdx(p);
+     if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+       iparam = arr_index->RHCSKDetFSISystIdx(p);
+     else
+       iparam = arr_index->SKDetFSISystIdx(p);
   }
-  const int np = conv::kNumOfSKDetFSIParams;
-  if(iparam < 0 || iparam >= np) {
-    cerr << "Exp/SuperkDetectorFSI >> Weird SuperkDetector+FSI Ereco index: " << iparam << " for Ereco value = " << Ereco 
+
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    {
+    int np = conv::kNumOfSKDetFSIParams;
+    if(iparam < 0 || iparam >= np) {
+      cerr << "Exp/SuperkDetectorFSI >> Weird SuperkDetector+FSI Ereco index: " << iparam << " for Ereco value = " << Ereco 
 	 << " sample " << util::AsString(s) << " mode " << util::AsString(m) << endl;
-     exit(1);
-  }
- 
+      exit(1);
+      }
+    } 
+  else
+    {
+    int np = conv::kNumOfRHCSKDetFSIParams;
+    if(iparam < 0 || iparam >= np) {
+      cerr << "Exp/SuperkDetectorFSI >> Weird RHC SuperkDetector+FSI Ereco index: " << iparam << " for Ereco value = " << Ereco
+	   << " sample " << util::AsString(s) << " mode " << util::AsString(m) << endl;
+      exit(1);
+      }
+    }
+
   // get current value of iparam^th FSI param
-  double skdetfsi_param_value = (*fCurrentValues)[iparam];
+  double skdetfsi_param_value; 
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    skdetfsi_param_value = (*fRHCCurrentValues)[iparam];
+  else
+    skdetfsi_param_value = (*fCurrentValues)[iparam];
 
   // param tweaked
   bool tweaked = TMath::Abs(skdetfsi_param_value - 1.) > conv::kASmallNum;
@@ -300,6 +344,15 @@ double SuperkDetectorFSI::CurrentValue(conv::PhysParamId_t p) const
   return current_values[idx];
 }
 //________________________________________________________________________________________
+double SuperkDetectorFSI::RHCCurrentValue(conv::PhysParamId_t p) const
+{
+  if(p == kRHCNuisSuperkEnergyScale)
+    return fRHCEnergyScaleTwkDial;
+  const TVectorD & current_values = *fRHCCurrentValues;
+  int idx = arr_index->RHCSKDetFSISystIdx(p);
+  return current_values[idx];
+}
+//________________________________________________________________________________________
 double SuperkDetectorFSI::OneSigmaError(PhysParamId_t p) const
 {
   if(p == kNuisSuperkEnergyScale)
@@ -307,7 +360,17 @@ double SuperkDetectorFSI::OneSigmaError(PhysParamId_t p) const
   const TMatrixD & cov = *fCovMtrx;
   int idx = arr_index->SKDetFSISystIdx(p);
   return TMath::Sqrt(cov[idx][idx]);
-}//________________________________________________________________________________________
+}
+//________________________________________________________________________________________
+double SuperkDetectorFSI::RHCOneSigmaError(PhysParamId_t p) const
+{
+  if(p == kRHCNuisSuperkEnergyScale)
+    return 1;
+  const TMatrixD & cov = *fRHCCovMtrx;
+  int idx = arr_index->RHCSKDetFSISystIdx(p);
+  return TMath::Sqrt(cov[idx][idx]);
+}
+//________________________________________________________________________________________
 void SuperkDetectorFSI::Tweak(
   bool       force_inputs,    /* force the input params or generate random ones internally  */
   TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
@@ -327,7 +390,6 @@ void SuperkDetectorFSI::Tweak(
     return;
   }
   
-
   TVectorD & current_values = *fCurrentValues;
 
   //
@@ -399,6 +461,98 @@ void SuperkDetectorFSI::Tweak(
      current_values = vec;
      return;
   }
+}
+//________________________________________________________________________________________ 
+void SuperkDetectorFSI::TweakRHC(
+  bool       force_inputs,    /* force the input params or generate random ones internally  */
+  TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
+)
+{
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/Tweak >> Tweaking RHC SuperkDetector+FSI parameters" << endl;
+#endif
+
+  if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaRHCNuMuDisappOnly) {
+    this->TweakOnlyRHC1Rmu(force_inputs,input_skdetfsi_params);
+    return;
+  }
+
+  if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaRHCNuEAppOnly) {
+    this->TweakOnlyRHC1Re(force_inputs,input_skdetfsi_params);
+    return;
+  }
+  
+  TVectorD & current_values = *fRHCCurrentValues;
+
+  //
+  // Force input FSI parameters
+  //
+  if(force_inputs)
+    {
+      // Input vector is NULL.
+      // This resets the FSI params to their best-fit values.
+      if(input_skdetfsi_params==0) {
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+        cout << "Exp/SuperkDetectorFSI/Tweak >> Reset RHC SuperkDetector+FSI params to nominal values." << endl;
+#endif
+        const int np = conv::kNumOfRHCSKDetFSIParams;
+        for(int ip = 0; ip < np; ip++) {
+	  current_values[ip] = 1.;
+        }
+        return;
+      }
+      else
+	{
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+	  cout << "Exp/SuperkDetectorFSI/Tweak >> Forcing input RHC SuperkDetector+FSI parameters. " << endl;
+#endif
+	  TVectorD & vec = *input_skdetfsi_params;
+	  current_values = vec;
+	  return;
+	}
+    }//force_inputs?
+
+  //
+  // If this is the first time this function is called, then run the Cholesky
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fRHCCovMtrxChoL == 0)
+    {
+#ifdef __show_skdetfsi_cholesky_mesg_info__
+      cout << "Exp/SuperkDetectorFSI/Tweak >> "
+	   << "Running Cholesky's decomposition method on the RHC SuperkDetector+FSI covariance matrix." << endl;
+#endif
+    
+      TMatrixD cov(this->RHCCovMatrix());
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/Tweak >> RHC SuperkDetector+FSI covariance matrix: " << endl;
+      util::PrintCompact(cov,7,4);
+#endif
+
+      TMatrixD L = util::CholeskyDecomposition(cov);
+      fRHCCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/Tweak >> Cholesky decomposition of RHC SuperkDetector+FSI covariance matrix: " << endl;
+      util::PrintCompact(*fRHCCovMtrxChoL,7,4);
+#endif
+    }
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  if(!force_inputs)
+    {   
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/Tweak >> Generating random RHC SuperkDetector+FSI params (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fRHCCovMtrxChoL; 
+      TVectorD & nominal_values = *fRHCNominalValues;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
+      current_values = vec;
+      return;
+    }
 }
 //________________________________________________________________________________________
 void SuperkDetectorFSI::TweakOnly1Rmu(
@@ -489,6 +643,94 @@ void SuperkDetectorFSI::TweakOnly1Rmu(
   }
 }
 //________________________________________________________________________________________
+void SuperkDetectorFSI::TweakOnlyRHC1Rmu(
+  bool       force_inputs,    /* force the input params or generate random ones internally  */
+  TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
+)
+{
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> Tweaking RHC SuperkDetector+FSI parameters" << endl;
+#endif
+
+  TVectorD & current_values = *fRHCCurrentValues;
+
+  //
+  // Force input FSI parameters
+  //
+  if(force_inputs)
+    {
+      // Input vector is NULL.
+      // This resets the FSI params to their best-fit values.
+      if(input_skdetfsi_params==0) {
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+        cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> Reset RHC SuperkDetector+FSI params to nominal values." << endl;
+#endif
+        const int np = conv::kNumOfRHCSKDetFSIParams1Rmu;
+        for(int ip = 0; ip < np; ip++) {
+	  current_values[ip] = 1.;
+        }
+        return;
+      }
+      else
+	{
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+	  cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> Forcing input RHC SuperkDetector+FSI parameters. " << endl;
+#endif
+	  TVectorD & vec = *input_skdetfsi_params;
+	  const int np = conv::kNumOfRHCSKDetFSIParams1Rmu;
+	  for(int ip = 0; ip < np; ip++) {
+	    current_values[ip] = vec[ip];
+	  }      
+	  return;
+	}
+    }//force_inputs?
+
+  //
+  // If this is the first time this function is called, then run the Cholesky
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fRHCCovMtrxChoL == 0)
+    {
+#ifdef __show_skdetfsi_cholesky_mesg_info__
+      cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> "
+	   << "Running Cholesky's decomposition method on the RHC SuperkDetector+FSI covariance matrix." << endl;
+#endif
+    
+      TMatrixD cov(this->RHCCovMatrix());
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> RHC SuperkDetector+FSI covariance matrix: " << endl;
+      util::PrintCompact(cov,7,4);
+#endif
+
+      TMatrixD L = util::CholeskyDecomposition(cov);
+      fRHCCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> Cholesky decomposition of RHC SuperkDetector+FSI covariance matrix: " << endl;
+      util::PrintCompact(*fRHCCovMtrxChoL,7,4);
+#endif
+    }
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  if(!force_inputs)
+    {   
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> Generating random RHC SuperkDetector+FSI params (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fRHCCovMtrxChoL; 
+      TVectorD & nominal_values = *fRHCNominalValues;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
+      const int np = conv::kNumOfRHCSKDetFSIParams1Rmu;
+      for(int ip = 0; ip < np; ip++) {
+	current_values[ip] = vec[ip];
+      }
+      return;
+    }
+}
+//________________________________________________________________________________________
 void SuperkDetectorFSI::TweakOnly1Re(
   bool       force_inputs,    /* force the input params or generate random ones internally  */
   TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
@@ -575,6 +817,94 @@ void SuperkDetectorFSI::TweakOnly1Re(
      }
      return;
   }
+}
+//________________________________________________________________________________________
+void SuperkDetectorFSI::TweakOnlyRHC1Re(
+ bool       force_inputs,    /* force the input params or generate random ones internally  */
+ TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
+)
+{
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/TweakOnly1Re >> Tweaking RHC SuperkDetector+FSI parameters" << endl;
+#endif
+
+  TVectorD & current_values = *fRHCCurrentValues;
+
+  //
+  // Force input FSI parameters
+  //
+  if(force_inputs)
+    {
+      // Input vector is NULL.
+      // This resets the FSI params to their best-fit values.
+      if(input_skdetfsi_params==0) {
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+        cout << "Exp/SuperkDetectorFSI/TweakOnly1Re >> Reset RHC SuperkDetector+FSI params to nominal values." << endl;
+#endif
+        const int np = conv::kNumOfRHCSKDetFSIParams1Re;
+        for(int ip = 0; ip < np; ip++) {
+          current_values[ip+conv::kNumOfRHCSKDetFSIParams1Rmu] = 1.;
+        }
+        return;
+      }
+      else
+	{
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+	  cout << "Exp/SuperkDetectorFSI/TweakOnly1Re >> Forcing RHC input SuperkDetector+FSI parameters. " << endl;
+#endif
+	  TVectorD & vec = *input_skdetfsi_params;
+	  const int np = conv::kNumOfRHCSKDetFSIParams1Re;
+	  for(int ip = 0; ip < np; ip++) {
+	    current_values[ip+conv::kNumOfRHCSKDetFSIParams1Rmu] = vec[ip];
+	  }
+	  return;
+	}
+    }//force_inputs?
+
+  //
+  // If this is the first time this function is called, then run the Cholesky
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fRHCCovMtrxChoL == 0)
+    {
+#ifdef __show_skdetfsi_cholesky_mesg_info__
+      cout << "Exp/SuperkDetectorFSI/TweakOnly1Re >> "
+	   << "Running Cholesky's decomposition method on the RHC SuperkDetector+FSI covariance matrix." << endl;
+#endif
+    
+      TMatrixD cov(this->RHCCovMatrix());
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/TweakOnly1Re >> RHC SuperkDetector+FSI covariance matrix: " << endl;
+      util::PrintCompact(cov,7,4);
+#endif
+
+      TMatrixD L = util::CholeskyDecomposition(cov);
+      fRHCCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/TweakOnly1Re >> Cholesky decomposition of RHC SuperkDetector+FSI covariance matrix: " << endl;
+      util::PrintCompact(*fRHCCovMtrxChoL,7,4);
+#endif
+    }
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  if(!force_inputs)
+    {   
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/TweakOnly1Re >> Generating random RHC SuperkDetector+FSI params (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fRHCCovMtrxChoL; 
+      TVectorD & nominal_values = *fRHCNominalValues;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
+      const int np = conv::kNumOfRHCSKDetFSIParams1Re;
+      for(int ip = conv::kNumOfRHCSKDetFSIParams1Rmu; ip < np+conv::kNumOfRHCSKDetFSIParams1Rmu; ip++) {
+	current_values[ip] = vec[ip];
+      }
+      return;
+    }
 }
 //________________________________________________________________________________________
 double SuperkDetectorFSI::ChisqPenalty(void) const

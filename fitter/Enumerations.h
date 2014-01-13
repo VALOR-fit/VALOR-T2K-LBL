@@ -159,7 +159,7 @@ SuperkSample_t;
 
 // Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkModes = 53;  // number of reaction modes kept track of within each sample
+static const int kNSuperkModes = 57;  // number of reaction modes kept track of within each sample
 static const int knm = kNSuperkModes; // as above - shorter name
 typedef enum ESuperkMode 
 {

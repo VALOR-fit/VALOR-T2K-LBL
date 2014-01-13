@@ -52,12 +52,18 @@ public:
   void TweakEnergyScale                    (double twkdial);
   void TweakRHCEnergyScale                    (double twkdial);
   void Tweak (bool force_inputs = false, TVectorD * input_params = 0);
+  void TweakRHC (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakOnly1Rmu (bool force_inputs = false, TVectorD * input_params = 0);
+  void TweakOnlyRHC1Rmu (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakOnly1Re (bool force_inputs = false, TVectorD * input_params = 0);
+  void TweakOnlyRHC1Re (bool force_inputs = false, TVectorD * input_params = 0);
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
+  double RHCCurrentValue (conv::PhysParamId_t p) const;
   double OneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
+  double RHCOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
+  
 
   // Get input FSI covariance matrix and its Cholesky decomposition
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
