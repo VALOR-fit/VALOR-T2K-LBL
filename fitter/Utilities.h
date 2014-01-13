@@ -108,6 +108,7 @@ namespace util {
   string AsStringCompact    (conv::SuperkSample_t     s);
   string AsStringCompact    (conv::SuperkMode_t       m);
   string AsStringCompact_KDI(conv::SuperkMode_t m);
+  string AsStringCompact_splinehack(conv::SuperkMode_t m);
   string AsStringCompact    (conv::PhysParamId_t      p);
   string AsStringCompact_KDI(conv::PhysParamId_t p);
   string Pdg2String         (int pdg_code);

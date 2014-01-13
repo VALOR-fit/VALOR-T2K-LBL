@@ -19,8 +19,9 @@ Added samples, modes and systematics for reverse horn current running
 //#define __show_build_xsbinning_template_mesg_debug__
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
+//#define __show_find_wght_spline_mesg_debug__
 //#define __save_ori_templates_init_debug__
-//#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
+#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
 //#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 
 #include <cassert>
@@ -178,8 +179,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
        if(m == kSKmUndefined) continue;
        if(util::IsOscNuMu(m)) continue; //using NuMu splines
        if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
-       if((s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike) && util::IsOscNuE(m)) continue; 
-       if((s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike) && util::IsOscNuEBar(m)) continue; //using NuEBar splines
+       if(util::IsOscNuEBar(m)) continue; //using NuEBar splines
 
        // loop over cross-section systematic parameters
        for(int ip = 0; ip < nXSecSyst; ip++) {
@@ -224,9 +224,9 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_"
-		  //<< util::AsStringCompact(kSKsFCFV1RingMuLike) << "_"
 			<< util::AsStringCompact(s) << "_"
-                        << util::AsStringCompact(m) << "_"
+		      //<< util::AsStringCompact(m) << "_"
+                        << util::AsStringCompact_splinehack(m) << "_"
                         << util::AsStringCompact(p) << "_"
                         << ir << "_" 
                         << it;
@@ -238,9 +238,9 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 // Copy spline from input file
 		TSpline3 * spl;
 		//Todo: add separate splines for RHC running if necessary
-		if (s==kSKsFCFV1RingMuLike)      spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
-		else if(s==kSKsFCFV1RingELike)   spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str()); 
-                else if (s==kSKsRHCFCFV1RingMuLike)      spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
+		if     (s==kSKsFCFV1RingMuLike)     spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
+		else if(s==kSKsFCFV1RingELike)      spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str()); 
+                else if(s==kSKsRHCFCFV1RingMuLike)  spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
                 else if(s==kSKsRHCFCFV1RingELike)   spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str());
 
 		if(!spl) {
@@ -274,7 +274,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 			 << ", Etrue: " << Etrue_min << "-" << Etrue_max 
 			 << ". Spline thinks there are " << spl->GetTitle()
 			 << endl;
-		    exit(1);
+		    // exit(1);
 		  }
 		}
 
@@ -311,10 +311,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		     << spl->GetTitle() << endl;
 #endif
 
-                if (s == kSKsFCFV1RingMuLike)      fXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
-		else if(s == kSKsFCFV1RingELike)   fXSecWghtSpl1Re[idx] = new TSpline3(*spl);
-                else if (s == kSKsRHCFCFV1RingMuLike)      fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
-                else if(s == kSKsRHCFCFV1RingELike)   fRHCXSecWghtSpl1Re[idx] = new TSpline3(*spl);
+                if     (s == kSKsFCFV1RingMuLike)    fXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
+		else if(s == kSKsFCFV1RingELike)     fXSecWghtSpl1Re[idx] = new TSpline3(*spl);
+                else if(s == kSKsRHCFCFV1RingMuLike) fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
+                else if(s == kSKsRHCFCFV1RingELike)  fRHCXSecWghtSpl1Re[idx] = new TSpline3(*spl);
 
 #ifdef __show_init_mesg_debug2__
 		//check that the spline is not flat
@@ -1144,9 +1144,7 @@ TSpline3 * NuXSec::FindWghtSpline(
   if      ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     }
   else if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmNuMuCC1pi;    }
   else if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmNuMuCCcoh;    }
-  //  else if ( mp == kSKmOscNuMuCCoth_mu ) { m = kSKmNuMuCCoth_mu; }
-  //  else if ( mp == kSKmOscNuMuCCoth_e  ) { m = kSKmNuMuCCoth_e;  }
-  else if ( mp == kSKmOscNuMuCCoth    ) { m = kSKmNuMuCCoth;  }
+  else if ( mp == kSKmOscNuMuCCoth    ) { m = kSKmNuMuCCoth;    }
 
   else if ( mp == kSKmOscNuMuBarCCQE     ) { m = kSKmNuMuBarCCQE;     }
   else if ( mp == kSKmOscNuMuBarCC1pi    ) { m = kSKmNuMuBarCC1pi;    }
@@ -1157,6 +1155,7 @@ TSpline3 * NuXSec::FindWghtSpline(
   else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }
   else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
   else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
+
 
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
   if(idx == -1 || idx == -2) 
@@ -1171,6 +1170,17 @@ TSpline3 * NuXSec::FindWghtSpline(
 	 << endl;
     exit(1);
   }
+
+#ifdef __show_find_wght_spline_mesg_debug__
+  cout << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
+         << "sample = "      << util::AsString(s) 
+         << ", mode = "      << util::AsString(m)
+         << ", parameter = " << util::AsString(p)
+         << ", Ereco = "     << Ereco << " GeV"
+         << ", Etrue = "     << Etrue << " GeV!"
+	 << " idx = " << idx 
+	 << endl;
+#endif
 
   //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
   //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
