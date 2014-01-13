@@ -44,16 +44,24 @@ public:
   // Get BANFF fit param values (nominal + tweaked)
   double BestFitValue (conv::PhysParamId_t p) const;
   double BestFitValue (int idx) const;
+  double RHCBestFitValue (conv::PhysParamId_t p) const;
+  double RHCBestFitValue (int idx) const;
   double CurrentValue (conv::PhysParamId_t p) const;
   double CurrentValue (int idx) const;
+  double RHCCurrentValue (conv::PhysParamId_t p) const;
+  double RHCCurrentValue (int idx) const;
   double OneSigmaError(conv::PhysParamId_t p) const;
   double OneSigmaError(int idx) const;
+  double RHCOneSigmaError(conv::PhysParamId_t p) const;
+  double RHCOneSigmaError(int idx) const;
    
   // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
-  const TVectorD & BestFitValues              (void) const { return *fBestFitValues; }
-  const TMatrixD & CovMatrix                  (void) const { return *fCovMtrx;       }
-  const TMatrixD & CovMatrixInv               (void) const { return *fCovMtrxInv;    }
-  const TMatrixD & CovMatrixCholesky          (void) const { return *fCovMtrxChoL;   }
+  const TVectorD & BestFitValues              (void) const { return *fBestFitValues;    }
+  const TMatrixD & CovMatrix                  (void) const { return *fCovMtrx;          }
+  const TMatrixD & CovMatrixInv               (void) const { return *fCovMtrxInv;       }
+  const TMatrixD & CovMatrixCholesky          (void) const { return *fCovMtrxChoL;      }
+  const TMatrixD & RHCCovMatrix               (void) const { return *fRHCCovMtrx;       }
+  const TMatrixD & RHCCovMatrixInv            (void) const { return *fRHCCovMtrxInv;    }
 
   // Systematic variations (wrt the best-fit BANFF params)
   void Tweak             (bool force_inputs = false, TVectorD * input_vec = 0); 
@@ -64,6 +72,7 @@ public:
 
   // Penalty term included in the chisq if the BANFF fit parameters are included in the oscillation fit.
   double ChisqPenalty             (bool all_syst = true) const;
+  double RHCChisqPenalty          (bool all_syst = true) const;
 
   // Get & tweak flags	
   bool IsTweaked           (void) const { return fIsTweaked;         } ///< BANFF params tweaked?
@@ -72,9 +81,11 @@ public:
 
   // Print
   void PrintSystematicVariations (ostream & stream = std::cout) const;
+  void PrintRHCSystematicVariations (ostream & stream = std::cout) const;
    
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
+  bool ReadRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
 
 private:
 
@@ -90,9 +101,20 @@ private:
   TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
   bool        fIsTweaked;         ///< Were BANF params tweaked?
   bool        fIsFluxWghtUpdated; ///< Were Flux weights updated as a result of the last BANFF param variation
+
+  TVectorD *  fRHCBestFitValues;     ///< BANFF best fit values
+  TVectorD *  fRHCCurrentValues;     ///< Current values of BANFF parameters 
+  TMatrixD *  fRHCCovMtrx;           ///< BANFF covariance matrix
+  TMatrixD *  fRHCCovMtrxInv;        ///< Inverse BANFF covariance matrix
+  TMatrixD *  fRHCCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
+  bool        fIsTweakedRHC;         ///< Were BANF params tweaked?
+  bool        fIsFluxWghtUpdatedRHC; ///< Were Flux weights updated as a result of the last BANFF param variation
   
   double * fBestFitArray; //! ///< Pointer to the actual memory location of the best fit values
   double * fCurrentArray; //! ///< Pointer to the actual memory location of the current values
+  
+  double * fRHCBestFitArray; //! ///< Pointer to the actual memory location of the best fit values
+  double * fRHCCurrentArray; //! ///< Pointer to the actual memory location of the current values
 
 ClassDef(BANFF, 1)
 };

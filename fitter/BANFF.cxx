@@ -54,12 +54,19 @@ BANFF::~BANFF()
 //________________________________________________________________________________________
 void BANFF::Init(void)
 {
-  fBestFitValues      = 0; 
-  fCurrentValues      = 0; 
-  fCovMtrx            = 0; 
-  fCovMtrxChoL        = 0; 
-  fIsTweaked          = false;
-  fIsFluxWghtUpdated  = true;
+  fBestFitValues        = 0; 
+  fCurrentValues        = 0; 
+  fCovMtrx              = 0; 
+  fCovMtrxChoL          = 0; 
+  fRHCBestFitValues     = 0;
+  fRHCCurrentValues     = 0;
+  fRHCCovMtrx           = 0;
+  fRHCCovMtrxChoL       = 0;
+  fIsTweaked            = false;
+  fIsFluxWghtUpdated    = true;
+  fIsTweakedRHC         = false;
+  fIsFluxWghtUpdatedRHC = true;
+
 }
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
@@ -68,6 +75,10 @@ void BANFF::CleanUp(void)
   if ( fCurrentValues             ) delete fCurrentValues;
   if ( fCovMtrx                   ) delete fCovMtrx;
   if ( fCovMtrxChoL               ) delete fCovMtrxChoL;
+  if ( fRHCBestFitValues          ) delete fRHCBestFitValues;
+  if ( fRHCCurrentValues          ) delete fRHCCurrentValues;
+  if ( fRHCCovMtrx                ) delete fRHCCovMtrx;
+  if ( fRHCCovMtrxChoL            ) delete fRHCCovMtrxChoL;
 }
 //________________________________________________________________________________________
 bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -162,6 +173,98 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   return true;
 }
 //________________________________________________________________________________________
+bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
+{
+  // Read BANFF inputs to oscillation analysis
+  //
+#ifdef __show_init_mesg_info__
+  cout << "Exp/BANFF >> Reading RHC BANFF inputs from XML configuration file." << endl;
+#endif
+
+  const int np = conv::kNumOfRHCParamsInBANFFfit;
+
+  // Get BANFF fit central values
+
+#ifndef __BANFF_BESTFIT_IS_ONE__
+#if BANFF_BINS == 1
+  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
+#elif BANFF_BINS == 2
+  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
+#elif BANFF_BINS == 3
+  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
+#elif BANFF_BINS == 4
+  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disapmec/best_fit_values");
+#endif
+  if(!fBestFitValues) {
+    cerr << "Exp/BANFF >> No RHC BANFF best-fit parameter vector was found." << endl;
+    exit(1);
+  }
+#else
+  double init[np];
+  for(int ip = 0; ip < np; ip++)
+    init[ip] = 1;
+  fRHCBestFitValues = new TVectorD(np, init);
+#endif
+
+  const TVectorD & bestfit = *fRHCBestFitValues;
+  if(bestfit.GetNoElements() != np) 
+    {
+      cerr << "Exp/BANFF >> RHC BANFF best-fit parameter vector has unexpected number of elements!" << endl;
+      cerr << "Exp/BANFF >> Expecting: " <<  np << " elements" << endl;
+      cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
+      exit(1);
+    }
+
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/BANFF >> RHC input BANFF best-fit parameters: " << endl; 
+  util::PrintCompact(bestfit,12,6,"RHC BANFF fit params");
+#endif
+
+  // init current values to best-fit values
+  fRHCCurrentValues = new TVectorD(bestfit);
+
+  // Get BANFF fit covariance matrix
+#if BANFF_BINS == 1
+  fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+#elif BANFF_BINS == 2
+  fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
+#elif BANFF_BINS == 3
+  fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
+#elif BANFF_BINS == 4
+  fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disapmec/covariance_matrix");
+#endif
+  if(!fRHCCovMtrx) {
+    cerr << "Exp/BANFF >> No RHC BANFF covariance matrix was found." << endl;
+    exit(1);
+  }
+  // Invert BANFF fit covariance matrix
+  double det;
+  fRHCCovMtrxInv = new TMatrixD(*fRHCCovMtrx);
+  (*fRHCCovMtrxInv).Invert(&det);
+
+  const TMatrixD & cov = *fRHCCovMtrx;
+  if(cov.GetNrows() != np || cov.GetNcols() != np) 
+    {
+      cerr << "Exp/BANFF >> RHC BANFF covariance matrix has unexpected size!" << endl;
+      cerr << "Exp/BANFF >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+      cerr << "Exp/BANFF >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+    }
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/BANFF >> RHC input BANFF covariance matrix: " << endl; 
+  util::PrintCompact(cov,7,5);
+  cout << "Exp/BANFF >> RHC inverse BANFF covariance matrix: " << endl;
+  util::PrintCompact(*fRHCCovMtrxInv,7,5);
+#endif
+
+#ifdef __show_init_mesg_info__
+  cout << "Exp/BANFF >> Done reading RHC BANFF inputs!" << endl;
+#endif
+  
+  fRHCBestFitArray = fRHCBestFitValues->GetMatrixArray();
+  fRHCCurrentArray = fRHCCurrentValues->GetMatrixArray();
+  return true;
+}
+//________________________________________________________________________________________
 double BANFF::BestFitValue(PhysParamId_t p) const
 {
   int idx = this->Param2Idx(p);
@@ -171,6 +274,17 @@ double BANFF::BestFitValue(PhysParamId_t p) const
 double BANFF::BestFitValue(int idx) const
 {
   return fBestFitArray[idx];
+}
+//________________________________________________________________________________________
+double BANFF::RHCBestFitValue(PhysParamId_t p) const
+{
+  int idx = this->Param2Idx(p);
+  return fRHCBestFitArray[idx];
+}
+//________________________________________________________________________________________
+double BANFF::RHCBestFitValue(int idx) const
+{
+  return fRHCBestFitArray[idx];
 }
 //________________________________________________________________________________________
 double BANFF::CurrentValue(int idx) const
@@ -184,6 +298,17 @@ double BANFF::CurrentValue(PhysParamId_t p) const
   return fCurrentArray[idx];
 }
 //________________________________________________________________________________________
+double BANFF::RHCCurrentValue(int idx) const
+{
+  return fRHCCurrentArray[idx];
+}
+//________________________________________________________________________________________
+double BANFF::RHCCurrentValue(PhysParamId_t p) const
+{
+  int idx = this->Param2Idx(p);
+  return fRHCCurrentArray[idx];
+}
+//________________________________________________________________________________________
 double BANFF::OneSigmaError(PhysParamId_t p) const
 {
   const TMatrixD & cov = *fCovMtrx;
@@ -194,6 +319,19 @@ double BANFF::OneSigmaError(PhysParamId_t p) const
 double BANFF::OneSigmaError(int idx) const
 {
   const TMatrixD & cov = *fCovMtrx;
+  return TMath::Sqrt(cov[idx][idx]);
+}
+//________________________________________________________________________________________
+double BANFF::RHCOneSigmaError(PhysParamId_t p) const
+{
+  const TMatrixD & cov = *fRHCCovMtrx;
+  int idx = this->Param2Idx(p);
+  return TMath::Sqrt(cov[idx][idx]);
+}
+//________________________________________________________________________________________
+double BANFF::RHCOneSigmaError(int idx) const
+{
+  const TMatrixD & cov = *fRHCCovMtrx;
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
@@ -549,6 +687,61 @@ double BANFF::ChisqPenalty(bool /*all_syst*/) const
 
   return 0;
 }
+//________________________________________________________________________________________ 
+double BANFF::RHCChisqPenalty(bool /*all_syst*/) const
+{
+  //Vector of current values & best fit values
+  const TVectorD & bestfit_values   = *fRHCBestFitValues;
+  const TVectorD & current_values   = *fRHCCurrentValues;
+#ifdef __show_chisqpenalty_mesg_debug2__
+  cout << "Exp/BANFF/ChisqPenalty >> RHC BANFF parameters: " << endl;
+  util::PrintCompact(current_values, bestfit_values, 12,6,"RHC BANFF fit params");
+#endif
+
+  //covariance matrix 
+  const TMatrixD cov    (this->RHCCovMatrix());
+  const TMatrixD covInv (this->RHCCovMatrixInv());
+
+  //Vector with deviations of current values from  best fit values
+  const int np = conv::kNumOfRHCParamsInBANFFfit;
+  TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+  TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+  for(int i = 0; i < np; i++){
+    dev[0][i]  = current_values[i]-bestfit_values[i];
+    devT[i][0] = current_values[i]-bestfit_values[i];
+  }
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/ChisqPenalty >> deviations in RHC BANFF parameters: " << endl;
+  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"RHC BANFF fit params");
+#endif
+
+#ifdef __show_chisqpenalty_mesg_debug2__
+  cout << "Exp/BANFF/ChisqPenalty >> RHC BANFF covariance matrix: " << endl;
+  util::PrintCompact(cov,7,5);
+  cout << "Exp/BANFF/ChisqPenalty >> RHC inverse BANFF covariance matrix: " << endl;
+  util::PrintCompact(covInv,7,5);
+#endif
+
+  //Check the inverse:
+#ifdef __show_chisqpenalty_mesg_debug2__
+  TMatrixD prod = cov*covInv;
+  cout << "Exp/BANFF/ChisqPenalty >> check of RHC product cov*(cov)^-1 : "<< endl;
+  util::PrintCompact(prod,7,5);
+#endif
+
+  TMatrixD chisqpenalty =  dev * covInv * devT;
+  double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/BANFF/ChisqPenalty >> RHC ChisqPenalty = " << chisq_penalty << endl;
+#endif
+
+  if(chisq_penalty) return chisq_penalty;
+  //}//all_syst
+
+  return 0;
+}
 //________________________________________________________________________________________
 void BANFF::PrintSystematicVariations(ostream & stream) const
 {
@@ -559,6 +752,17 @@ void BANFF::PrintSystematicVariations(ostream & stream) const
 
   stream << "Exp/BANFF >> BANFF parameters: " << endl; 
   util::PrintCompact(current_values, bestfit_values, 12,6,"BANFF fit params", stream);
+}
+//________________________________________________________________________________________
+void BANFF::PrintRHCSystematicVariations(ostream & stream) const
+{
+  //assert(fCurrentValues->GetNoElements() == conv::kNumOfRHCParamsInBANFFfit);
+
+  const TVectorD & current_values = *fRHCCurrentValues;
+  const TVectorD & bestfit_values = *fRHCBestFitValues;
+
+  stream << "Exp/BANFF >> RHC BANFF parameters: " << endl;
+  util::PrintCompact(current_values, bestfit_values, 12,6,"RHC BANFF fit params", stream);
 }
 //________________________________________________________________________________________
 int BANFF::Param2Idx(PhysParamId_t p) const
