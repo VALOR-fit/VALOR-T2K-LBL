@@ -407,6 +407,78 @@ void BANFF::Tweak(
 
 }
 //________________________________________________________________________________________
+void BANFF::TweakRHC(
+ bool       force_inputs, /* force the input params or generate random ones internally  */
+ TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/Tweak >> Tweaking RHC BANFF fit parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdatedRHC = false;
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fRHCCovMtrxChoL == 0) 
+    this->CholeskyDecomposeRHCMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  TVectorD & bestfit_values = *fRHCBestFitValues;
+  TVectorD & current_values = *fRHCCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+    {
+      // Input vector is NULL.
+      // This resets the BANFF params to their best-fit values.
+      if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/Tweak >> Reset RHC BANFF params to best-fit values." << endl;
+#endif
+        fIsTweakedRHC = false;
+        current_values = bestfit_values;
+        return;
+      }
+      else     
+	{
+#ifdef __show_tweak_mesg_debug__
+	  cout << "Exp/BANFF/Tweak >> Forcing RHC input BANFF parameters. " << endl;
+#endif
+	  TVectorD & vec = *input_vec;
+	  assert(vec.GetNoElements() == conv::kNumOfRHCParamsInBANFFfit);
+	  current_values = vec;
+	  return;
+	}
+    }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+    {
+#ifdef __show_tweak_mesg_debug__
+      cout << "Exp/BANFF/Tweak >> Generating RHC random twk dials (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fRHCCovMtrxChoL;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+      current_values = vec;
+      return;
+    }
+
+}
+//________________________________________________________________________________________
 void BANFF::TweakFluxOnly(
   bool       force_inputs, /* force the input params or generate random ones internally  */
   TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
@@ -484,6 +556,83 @@ void BANFF::TweakFluxOnly(
 
 }
 //________________________________________________________________________________________
+void BANFF::TweakRHCFluxOnly(
+ bool       force_inputs, /* force the input params or generate random ones internally  */
+ TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/TweakFluxOnly >> Tweaking RHC BANFF flux parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdatedRHC = false;
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fRHCCovMtrxChoL == 0) 
+    this->CholeskyDecomposeRHCMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  TVectorD & bestfit_values = *fRHCBestFitValues;
+  TVectorD & current_values = *fRHCCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+    {
+      // Input vector is NULL.
+      // This resets the BANFF params to their best-fit values.
+      if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/TweakFluxOnly >> Reset RHC BANFF flux params to best-fit values." << endl;
+#endif
+        fIsTweakedRHC = false;
+        current_values = bestfit_values;
+        return;
+      }
+      else     
+	{
+#ifdef __show_tweak_mesg_debug__
+	  cout << "Exp/BANFF/TweakFluxOnly >> Forcing RHC input BANFF flux parameters. " << endl;
+#endif
+	  TVectorD & vec = *input_vec;
+	  assert(vec.GetNoElements() == conv::kNumOfRHCFluxParamsInBANFFfit);
+	  for (int i=0; i< conv::kNumOfRHCFluxParamsInBANFFfit; i++){
+	    current_values[i] = vec[i];
+	  }
+	  return;
+	}
+    }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+    {
+#ifdef __show_tweak_mesg_debug__
+      cout << "Exp/BANFF/TweakFluxOnly >> Generating RHC random twk dials (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fRHCCovMtrxChoL;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+      for (int i=0; i< conv::kNumOfRHCParamsInBANFFfit; i++){
+	if(i<conv::kNumOfRHCFluxParamsInBANFFfit) current_values[i] = vec[i];
+	else current_values[i] = bestfit_values[i];
+      }
+      return;
+    }
+
+}
+//________________________________________________________________________________________
 void BANFF::CholeskyDecomposeMatrix()
 {
 #ifdef __show_cholesky_mesg_info__  
@@ -505,6 +654,27 @@ void BANFF::CholeskyDecomposeMatrix()
 #endif
 }
 //________________________________________________________________________________________
+void BANFF::CholeskyDecomposeRHCMatrix()
+{
+#ifdef __show_cholesky_mesg_info__
+  cout << "Exp/BANFF/CholeskyDecomposeMatrix >> "
+       << "Running Cholesky's decomposition method on the RHC BANFF covariance matrix." << endl;
+#endif
+
+  TMatrixD cov(this->RHCCovMatrix());
+#ifdef __show_cholesky_mesg_debug__
+  cout << "Exp/BANFF/CholeskyDecomposeMatrix >> RHC BANFF covariance matrix: " << endl;
+  util::PrintCompact(cov,7,5);
+#endif
+
+  TMatrixD L = util::CholeskyDecomposition(cov);
+  fRHCCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_cholesky_mesg_debug__
+  cout << "Exp/BANFF/CholeskyDecomposeMatrix >> Cholesky decomposition of RHC BANFF covariance matrix: " << endl;
+  util::PrintCompact(*fRHCCovMtrxChoL,7,5);
+#endif
+}
+//________________________________________________________________________________________
 void BANFF::RestoreNominalMC(void)
 {
 // A special tweak method
@@ -522,6 +692,29 @@ void BANFF::RestoreNominalMC(void)
   //TVectorD & bestfit_values = *fBestFitValues;
 
   const int np = conv::kNumOfParamsInBANFFfit;
+  for(int i=0; i<np; i++) {
+    current_values[i] = 1.;
+    //bestfit_values[i] = 1.;
+  }
+}
+//________________________________________________________________________________________
+void BANFF::RestoreRHCNominalMC(void)
+{
+  // A special tweak method
+
+  cout << "Exp/BANFF >> ** Applying special tweak cancelling the effect of RHC BANFF tuning "
+       << "and restoring RHC nominal MC..." << endl; 
+
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdatedRHC = false;
+
+  //this is doing nothing at end, because NuFlux and NuXSec
+  //are still reading bestfit values from fBestFitValues
+  //we need to modify BestFitValue(p) 
+  TVectorD & current_values = *fRHCCurrentValues;
+  //TVectorD & bestfit_values = *fRHCBestFitValues;
+
+  const int np = conv::kNumOfRHCParamsInBANFFfit;
   for(int i=0; i<np; i++) {
     current_values[i] = 1.;
     //bestfit_values[i] = 1.;

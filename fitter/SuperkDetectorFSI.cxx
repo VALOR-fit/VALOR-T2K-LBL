@@ -504,7 +504,7 @@ void SuperkDetectorFSI::TweakRHC(
       else
 	{
 #ifdef __show_skdetfsi_tweak_mesg_debug__
-	  cout << "Exp/SuperkDetectorFSI/Tweak >> Forcing input RHC SuperkDetector+FSI parameters. " << endl;
+	  cout << "Exp/SuperkDetectorFSI/Tweak >> Forcing RHC input SuperkDetector+FSI parameters. " << endl;
 #endif
 	  TVectorD & vec = *input_skdetfsi_params;
 	  current_values = vec;
@@ -674,7 +674,7 @@ void SuperkDetectorFSI::TweakOnlyRHC1Rmu(
       else
 	{
 #ifdef __show_skdetfsi_tweak_mesg_debug__
-	  cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> Forcing input RHC SuperkDetector+FSI parameters. " << endl;
+	  cout << "Exp/SuperkDetectorFSI/TweakOnly1Rmu >> Forcing RHC input SuperkDetector+FSI parameters. " << endl;
 #endif
 	  TVectorD & vec = *input_skdetfsi_params;
 	  const int np = conv::kNumOfRHCSKDetFSIParams1Rmu;

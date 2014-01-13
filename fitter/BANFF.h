@@ -65,10 +65,13 @@ public:
 
   // Systematic variations (wrt the best-fit BANFF params)
   void Tweak             (bool force_inputs = false, TVectorD * input_vec = 0); 
-  void TweakFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0); 
+  void TweakRHC          (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakRHCFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0); 
 
   // A special systematic variation which cancels the effect of BANFF tuning and reverts back to the nominal MC
   void RestoreNominalMC(void);
+  void RestoreRHCNominalMC(void);
 
   // Penalty term included in the chisq if the BANFF fit parameters are included in the oscillation fit.
   double ChisqPenalty             (bool all_syst = true) const;
@@ -93,6 +96,7 @@ private:
   void CleanUp   (void);
   int  Param2Idx   (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
   void CholeskyDecomposeMatrix (void);    ///< Cholesky decompose the covariance matrix
+  void CholeskyDecomposeRHCMatrix (void);    ///< Cholesky decompose the covariance matrix
 
   TVectorD *  fBestFitValues;     ///< BANFF best fit values
   TVectorD *  fCurrentValues;     ///< Current values of BANFF parameters 
