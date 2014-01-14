@@ -13,7 +13,7 @@ Added samples and modes for reverse horn current running
 //#define __show_cholesky_gen_corr_param_variations_mesg_debug__
 //#define __show_xml_mesg_info__
 //#define __show_xml_mesg_debug__
-//#define __show_arr_idx_mesg_debug__
+#define __show_arr_idx_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -3514,6 +3514,133 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
+string t2kana::util::AsStringCompact_splinehack(PhysParamId_t p)
+{
+  switch(p) {
+
+  //***************************** REVERSE HORN CURRENT *************************
+
+  case ( kRHCNuisSuperkEnergyScale     ) : return "f_sk_e_scale";                   break;
+
+  case ( kRHCNuisBANFF00               ) : return "f_banff00";      break;
+  case ( kRHCNuisBANFF01               ) : return "f_banff01";      break;
+  case ( kRHCNuisBANFF02               ) : return "f_banff02";      break;
+  case ( kRHCNuisBANFF03               ) : return "f_banff03";      break;
+  case ( kRHCNuisBANFF04               ) : return "f_banff04";      break;
+  case ( kRHCNuisBANFF05               ) : return "f_banff05";      break;
+  case ( kRHCNuisBANFF06               ) : return "f_banff06";      break;
+  case ( kRHCNuisBANFF07               ) : return "f_banff07";      break;
+  case ( kRHCNuisBANFF08               ) : return "f_banff08";      break;
+  case ( kRHCNuisBANFF09               ) : return "f_banff09";      break;
+  case ( kRHCNuisBANFF10               ) : return "f_banff10";      break;
+  case ( kRHCNuisBANFF11               ) : return "f_banff11";      break;
+  case ( kRHCNuisBANFF12               ) : return "f_banff12";      break;
+  case ( kRHCNuisBANFF13               ) : return "f_banff13";      break;
+  case ( kRHCNuisBANFF14               ) : return "f_banff14";      break;
+  case ( kRHCNuisBANFF15               ) : return "f_banff15";      break;
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  case ( kRHCNuisBANFF16               ) : return "f_banff16";      break;
+  case ( kRHCNuisBANFF17               ) : return "f_banff17";      break;
+  case ( kRHCNuisBANFF18               ) : return "f_banff18";      break;
+  case ( kRHCNuisBANFF19               ) : return "f_banff19";      break;
+  case ( kRHCNuisBANFF20               ) : return "f_banff20";      break;
+  case ( kRHCNuisBANFF21               ) : return "f_banff21";      break;
+#endif
+#if BANFF_BINS == 1
+  case ( kRHCNuisBANFF22               ) : return "f_banff22";      break;
+  case ( kRHCNuisBANFF23               ) : return "f_banff23";      break;
+  case ( kRHCNuisBANFF24               ) : return "f_banff24";      break;
+#endif
+
+#ifndef ONEOVERMAQE
+  case ( kRHCNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
+#else
+  case ( kRHCNuisBANFFMAQE             ) : return "f_banff1overmaqe2";  break;
+#endif
+  case ( kRHCNuisBANFFMARES            ) : return "f_banffmares";   break;
+  case ( kRHCNuisBANFFCCQEE0           ) : return "f_banffccqee0";  break;
+#if BANFF_BINS != 3
+  case ( kRHCNuisBANFFCCQEE1           ) : return "f_banffccqee1";  break;
+  case ( kRHCNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
+#endif
+  case ( kRHCNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
+#if BANFF_BINS != 3
+  case ( kRHCNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffNc1pi0";  break;
+#endif
+#if BANFF_BINS == 4
+  case ( kRHCNuisBANFFMECNorm          ) : return "f_banffmec";     break;
+  case ( kRHCNuisBANFFPDDDoubleCount   ) : return "f_banffpdd";     break;
+#endif
+  case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi";       break;
+  case ( kRHCNuisXSecSpecFunc          ) : return "f_specfunc";     break;
+  case ( kRHCNuisXSecWshape            ) : return "f_wshape";       break;
+  case ( kRHCNuisXSecShapeCCoth        ) : return "f_shapeCCoth";   break;
+  case ( kRHCNuisXSecPiLessDelta       ) : return "f_pilessdelta";  break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecBindE             ) : return "f_bindE";        break;
+#endif
+  case ( kRHCNuisXSecNormCCcoh         ) : return "f_norm_cccoh";   break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecNormNC1piC        ) : return "f_norm_nc1piC";  break;
+#endif
+#ifndef __NUMUONLY__
+  case ( kRHCNuisXSecNormNCcoh         ) : return "f_norm_nccoh";   break;
+#endif
+  case ( kRHCNuisXSecNormNCoth         ) : return "f_norm_ncoth";   break;
+  case ( kRHCNuisXSecNormNuEToNuMu     ) : return "f_norm_nuetonumu";  break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecNormAntiNuToNu    ) : return "f_norm_antinutonu"; break;
+#endif
+#ifdef SKFSITOGETHER
+#if FSI_BINS != 3
+  case ( kRHCNuisSKDetFSI000 ) : return "f_skdetfsi000"; break;
+  case ( kRHCNuisSKDetFSI001 ) : return "f_skdetfsi001"; break;
+  case ( kRHCNuisSKDetFSI002 ) : return "f_skdetfsi002"; break;
+  case ( kRHCNuisSKDetFSI003 ) : return "f_skdetfsi003"; break;
+  case ( kRHCNuisSKDetFSI004 ) : return "f_skdetfsi004"; break;
+  case ( kRHCNuisSKDetFSI005 ) : return "f_skdetfsi005"; break;
+#endif
+#if FSI_BINS != 2
+  case ( kRHCNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
+  case ( kRHCNuisSKDetFSI007 ) : return "f_skdetfsi007"; break;
+  case ( kRHCNuisSKDetFSI008 ) : return "f_skdetfsi008"; break;
+  case ( kRHCNuisSKDetFSI009 ) : return "f_skdetfsi009"; break;
+  case ( kRHCNuisSKDetFSI010 ) : return "f_skdetfsi010"; break;
+  case ( kRHCNuisSKDetFSI011 ) : return "f_skdetfsi011"; break;
+  case ( kRHCNuisSKDetFSI012 ) : return "f_skdetfsi012"; break;
+  case ( kRHCNuisSKDetFSI013 ) : return "f_skdetfsi013"; break;
+  case ( kRHCNuisSKDetFSI014 ) : return "f_skdetfsi014"; break;
+  case ( kRHCNuisSKDetFSI015 ) : return "f_skdetfsi015"; break;
+  case ( kRHCNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
+  case ( kRHCNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
+#endif
+#ifdef SKCORRELATIONS
+  case ( kRHCNuisSKDetFSI018 ) : return "f_skdetfsi018"; break;
+  case ( kRHCNuisSKDetFSI019 ) : return "f_skdetfsi019"; break;
+  case ( kRHCNuisSKDetFSI020 ) : return "f_skdetfsi020"; break;
+  case ( kRHCNuisSKDetFSI021 ) : return "f_skdetfsi021"; break;
+  case ( kRHCNuisSKDetFSI022 ) : return "f_skdetfsi022"; break;
+  case ( kRHCNuisSKDetFSI023 ) : return "f_skdetfsi023"; break;
+  case ( kRHCNuisSKDetFSI024 ) : return "f_skdetfsi024"; break;
+  case ( kRHCNuisSKDetFSI025 ) : return "f_skdetfsi025"; break;
+  case ( kRHCNuisSKDetFSI026 ) : return "f_skdetfsi026"; break;
+  case ( kRHCNuisSKDetFSI027 ) : return "f_skdetfsi027"; break;
+  case ( kRHCNuisSKDetFSI028 ) : return "f_skdetfsi028"; break;
+  case ( kRHCNuisSKDetFSI029 ) : return "f_skdetfsi029"; break;
+  case ( kRHCNuisSKDetFSI030 ) : return "f_skdetfsi030"; break;
+  case ( kRHCNuisSKDetFSI031 ) : return "f_skdetfsi031"; break;
+#endif
+#endif
+
+    default : 
+      return AsStringCompact(p);
+  }
+  return AsStringCompact(p);
+}
+//____________________________________________________________________________
 string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
 {
   //Uses the KDI conventions (where different)
@@ -3638,11 +3765,15 @@ string t2kana::util::AsString(conv::SKMCTemplateType_t t)
 string t2kana::util::AsString(t2kana::conv::FluxType_t f)
 {
   switch(f) {
-    case ( kFlxNominal     ) : return "nominal";          break;
-    case ( kFlxExtTuning   ) : return "tuned (external)"; break;
-    case ( kFlxFinalTuning ) : return "tuned (final)";    break;
-    case ( kFlxCurrent     ) : return "current";          break;
-    default                  : return "--";               break;
+    case ( kFlxNominal        ) : return "nominal";          break;
+    case ( kFlxExtTuning      ) : return "tuned (external)"; break;
+    case ( kFlxFinalTuning    ) : return "tuned (final)";    break;
+    case ( kFlxCurrent        ) : return "current";          break;
+    case ( kRHCFlxNominal     ) : return "nominal; RHC";          break;
+    case ( kRHCFlxExtTuning   ) : return "tuned (external); RHC"; break;
+    case ( kRHCFlxFinalTuning ) : return "tuned (final); RHC";    break;
+    case ( kRHCFlxCurrent     ) : return "current; RHC";          break;
+    default                     : return "--";               break;
   }
   return "";
 }
@@ -3884,14 +4015,27 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkSample_t s)
 // Compact string used for naming output histograms stored ROOT files
 //
   switch(s) {
-     case ( kSKsFCFV1RingMuLike ) : return "1Rmu"; break;
-     case ( kSKsFCFV1RingELike  ) : return "1Re";  break;
+     case ( kSKsFCFV1RingMuLike    ) : return "1Rmu";    break;
+     case ( kSKsFCFV1RingELike     ) : return "1Re";     break;
      case ( kSKsRHCFCFV1RingMuLike ) : return "RHC1Rmu"; break;
      case ( kSKsRHCFCFV1RingELike  ) : return "RHC1Re";  break;
 
-     default                      : return "";
+     default                         : return "";
   }
   return "";
+}
+//____________________________________________________________________________
+string t2kana::util::AsStringCompact_splinehack (t2kana::conv::SuperkSample_t s)
+{
+// Compact string used for naming output histograms stored ROOT files
+//
+  switch(s) {
+     case ( kSKsRHCFCFV1RingMuLike ) : return "1Rmu"; break;
+     case ( kSKsRHCFCFV1RingELike  ) : return "1Re";  break;
+
+     default                         : return AsStringCompact(s);
+  }
+  return AsStringCompact(s);
 }
 //____________________________________________________________________________
 string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
@@ -3970,7 +4114,7 @@ string t2kana::util::AsStringCompact_splinehack (t2kana::conv::SuperkMode_t m)
 
      default                      : return AsStringCompact(m);
   }
-  return "";
+  return AsStringCompact(m);
 }
 //____________________________________________________________________________
 string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
@@ -5662,6 +5806,20 @@ bool t2kana::util::IsAntiNeutrino(int pdg_code)
   {
     return true;
   }
+  return false;
+}
+//___________________________________________________________________________
+bool t2kana::util::IsFHCSample(conv::SuperkSample_t s)
+{
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    return false;
+  return true;
+}
+//___________________________________________________________________________
+bool t2kana::util::IsRHCSample(conv::SuperkSample_t s)
+{
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    return true;
   return false;
 }
 //___________________________________________________________________________
@@ -7502,6 +7660,11 @@ void t2kana::util::ArrIdx::Init(void)
     PhysParamId_t p = kListOfXSecSyst[ip];
     if(p == kPhypUndefined) continue;
     fXSecSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+         cout << "Util/ArrIdx >> FHC Systematic: " 
+              << util::AsString(p) 
+              << " is at slot: " << fXSecSystIdx[p] << endl;
+#endif
   }
   for(int i = 0; i < knppmax; i++) {
     fRHCXSecSystIdx[i] = -1;
@@ -7510,6 +7673,11 @@ void t2kana::util::ArrIdx::Init(void)
     PhysParamId_t p = kListOfRHCXSecSyst[ip];
     if(p == kPhypUndefined) continue;
     fRHCXSecSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+         cout << "Util/ArrIdx >> RHC Systematic: " 
+              << util::AsString(p) 
+              << " is at slot: " << fRHCXSecSystIdx[p] << endl;
+#endif
   }
 
   //BANFF
@@ -7624,7 +7792,7 @@ void t2kana::util::ArrIdx::Init(void)
   for(int i = 0; i < knppmax; i++) {
     fPhysParamIdx[i] = -1;
   }
-  for(int ip = 0; ip < kNumOfFSIParams; ip++) {
+  for(int ip = 0; ip < knppmax; ip++) {
     PhysParamId_t p = PhysParamId_t(ip);
     if(p == kPhypUndefined) continue;
     fPhysParamIdx[p] = ip;

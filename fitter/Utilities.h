@@ -108,11 +108,15 @@ namespace util {
   string AsStringCompact    (conv::SuperkSample_t     s);
   string AsStringCompact    (conv::SuperkMode_t       m);
   string AsStringCompact_KDI(conv::SuperkMode_t m);
-  string AsStringCompact_splinehack(conv::SuperkMode_t m);
   string AsStringCompact    (conv::PhysParamId_t      p);
   string AsStringCompact_KDI(conv::PhysParamId_t p);
   string Pdg2String         (int pdg_code);
   string Pdg2StringTex      (int pdg_code);
+
+  //temporary methods to get around spline naming
+  string AsStringCompact_splinehack(conv::SuperkSample_t s);
+  string AsStringCompact_splinehack(conv::SuperkMode_t   m);
+  string AsStringCompact_splinehack(conv::PhysParamId_t  p);
 
   conv::SuperkMode_t       SuperkModeFromString      (string h);
   conv::PhysHypothesis_t   PhysHypFromString         (string h);
@@ -154,6 +158,8 @@ namespace util {
   bool IsSKDetFSI         (conv::PhysParamId_t p);
   bool IsNeutrino         (int pdg_code);
   bool IsAntiNeutrino     (int pdg_code);
+  bool IsRHCSample        (conv::SuperkSample_t s);
+  bool IsFHCSample        (conv::SuperkSample_t s);
 
   int            NumErecoBins  (conv::SuperkSample_t s);
   const double * ErecoBinEdges (conv::SuperkSample_t s);

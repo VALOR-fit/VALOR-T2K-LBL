@@ -248,7 +248,7 @@ typedef enum EFluxType
 FluxType_t;
 
 // Fit parameters
-static const int knppmax = 140; // maximum number of physics params listed below (for booking large enough param arrays)
+static const int knppmax = 200; // maximum number of physics params listed below (for booking large enough param arrays)
 
 typedef enum EPhysParamId 
 {   

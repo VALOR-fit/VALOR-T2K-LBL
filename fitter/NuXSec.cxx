@@ -176,29 +176,27 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
     // loop over modes for current sample
     for(int im = 0; im < knm; im++) {
        SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined) continue;
-       if(util::IsOscNuMu(m)) continue; //using NuMu splines
+       if(m == kSKmUndefined)    continue;
+       if(util::IsOscNuMu(m))    continue; //using NuMu splines
        if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
-       if(util::IsOscNuEBar(m)) continue; //using NuEBar splines
+       if(util::IsOscNuEBar(m))  continue; //using NuEBar splines
 
        // loop over cross-section systematic parameters
        for(int ip = 0; ip < nXSecSyst; ip++) {
-	 if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-	   {
+	 if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike) {
 	   p = kListOfRHCXSecSyst[ip];
 	   if(p == kPhypUndefined) continue;
 	   //do we need weight splines for the current systematic parameter? 
 	   need_splines = kRHCXSecSystHasWghtSplines[ip];
 	   if(!need_splines) continue;
-	   }
-	 else
-	   {
+	 }
+	 else {
            p = kListOfXSecSyst[ip];          
            if(p == kPhypUndefined) continue;
            // do we need weight splines for the current systematic parameter?
            need_splines = kXSecSystHasWghtSplines[ip];
            if(!need_splines) continue;
-	   }
+	 }
 	 // is the current systematic parameter going to be applied to current sample/mode?
 	 bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
 	 if(!is_applied) continue;
@@ -224,10 +222,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 // Build spline name
                 ostringstream splname;
                 splname << "spl_"
-			<< util::AsStringCompact(s) << "_"
+		      //<< util::AsStringCompact(s) << "_"
 		      //<< util::AsStringCompact(m) << "_"
+		      //<< util::AsStringCompact(p) << "_"
+			<< util::AsStringCompact_splinehack(s) << "_"
                         << util::AsStringCompact_splinehack(m) << "_"
-                        << util::AsStringCompact(p) << "_"
+                        << util::AsStringCompact_splinehack(p) << "_"
                         << ir << "_" 
                         << it;
 
@@ -260,6 +260,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 			 << ", " << mode[0]
 #endif
 			 << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+		    cerr << AsString(s) << endl;
 		    exit(1);
 #else
 		    spl = flatspline;
@@ -1240,7 +1241,7 @@ int NuXSec::WghtSplineIdx(
     ip = arr_index->XSecSystIdx(p);
   if(ip == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec sysy "
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec syst "
 	 << util::AsString(p)
 	 << ". util::ArrIdx returned "
 	 << arr_index->XSecSystIdx(p)

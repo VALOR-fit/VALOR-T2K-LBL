@@ -1426,33 +1426,7 @@ void SuperkMC::FillSpecialTemplates(void)
     cout << "SKMC/FillSpecialTemplates >> Filling osc nuebar templates for " << util::AsString(s) << " sample" << endl;
   
     SuperkMode_t src_modes_nuebar[n] = {  kSKmNuEBarCCQE,    kSKmNuEBarCC1pi,     kSKmNuEBarCCcoh,    kSKmNuEBarCCoth    };   
-
-    
-    // src_modes_nuebar[n] is not changed because NuEBar* is the same in RHC and FHC modes
-    // only tgt_modes_nuebar changes, since OscNuEBar is for FHC mode and OscNuE is for RHC mode
-
-    //SuperkMode_t tgt_modes_nuebar[n] = {  kSKmOscNuEBarCCQE, kSKmOscNuEBarCC1pi,  kSKmOscNuEBarCCcoh, kSKmOscNuEBarCCoth };
-    
-    // MODIFIED
-    SuperkMode_t tgt_modes_nuebar[n];
-    if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
-      tgt_modes_nuebar[0] = kSKmOscNuEBarCCQE;
-      tgt_modes_nuebar[1] = kSKmOscNuEBarCC1pi;
-      tgt_modes_nuebar[2] = kSKmOscNuEBarCCcoh;
-      tgt_modes_nuebar[3] = kSKmOscNuEBarCCoth;
-    }
-    ////
-    // ANTINU
-    else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
-      tgt_modes_nuebar[0] = kSKmOscNuECCQE;
-      tgt_modes_nuebar[1] = kSKmOscNuECC1pi;
-      tgt_modes_nuebar[2] = kSKmOscNuECCcoh;
-      tgt_modes_nuebar[3] = kSKmOscNuECCoth;
-    }
-    ////
-      
- 
-      
+    SuperkMode_t tgt_modes_nuebar[n] = {  kSKmOscNuEBarCCQE, kSKmOscNuEBarCC1pi,  kSKmOscNuEBarCCcoh, kSKmOscNuEBarCCoth };
     
     for(int i=0; i<n; i++) {
       
@@ -4375,7 +4349,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
     if(s == kSKsUndefined) continue;
     if(s == kSKsFCFV1RingELike) continue;
 
-    if(s == kSKsRHCFCFV1RingMuLike) continue;    // ANTINU
+    //if(s == kSKsRHCFCFV1RingMuLike) continue;    // ANTINU
     if(s == kSKsRHCFCFV1RingELike) continue;     // ANTINU
 
     double nsk = 0;
