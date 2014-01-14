@@ -2059,7 +2059,11 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
 
 	// Plug-in BANFF flux systematics
-	double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
+        double flux_wght;
+	if(IsRHCSample(s))
+          flux_wght = fNuFlux->SuperkRHCFluxFinTuningWght(s,m,EtrueVarMin);
+	else
+	  flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
 
 	//skip if the big bin is empty
 	
@@ -2306,7 +2310,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 	// Plug-in BANFF flux systematics
 	if (itv!=last_itv) {
-	  flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+          if(IsRHCSample(s))
+            flux_wght = fNuFlux->SuperkRHCFluxSystWght(s,m,EtrueVarMin);
+	  else
+	    flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
 	  last_itv = itv;
 	}
 

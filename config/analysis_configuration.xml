@@ -51,6 +51,28 @@
             <objtype>    TH1D                  </objtype>
          </nuebar>
        </tuned>
+       <tuned_antinu>
+         <numu>
+            <filename>   inputs/official/2013/flux/11b_v3.2_antinu/sk_tuned11bv3.2_11anom_m250ka.root </filename>
+            <objname>    enu_sk_tuned11b_numu  </objname>
+            <objtype>    TH1D                  </objtype>
+         </numu>
+         <numubar>
+            <filename>   inputs/official/2013/flux/11b_v3.2_antinu/sk_tuned11bv3.2_11anom_m250ka.root </filename>
+            <objname>    enu_sk_tuned11b_numub </objname>
+            <objtype>    TH1D                  </objtype>
+         </numubar>
+         <nue>
+            <filename>   inputs/official/2013/flux/11b_v3.2_antinu/sk_tuned11bv3.2_11anom_m250ka.root </filename>
+            <objname>    enu_sk_tuned11b_nue   </objname>
+            <objtype>    TH1D                  </objtype>
+         </nue>
+         <nuebar>
+            <filename>   inputs/official/2013/flux/11b_v3.2_antinu/sk_tuned11bv3.2_11anom_m250ka.root </filename>
+            <objname>    enu_sk_tuned11b_nueb  </objname>
+            <objtype>    TH1D                  </objtype>
+         </nuebar>
+       </tuned_antinu>
        <!--
         Flux weights: nominal -> tuned 
        -->
@@ -76,6 +98,28 @@
             <objtype>    TH1D                         </objtype>
          </nuebar>
        </tuning_weights>
+       <tuning_weights_antinu>
+         <numu>
+            <filename>   inputs/official/2013/flux/11b_v3.2_antinu/sk_tuned11bv3.2_11anom_m250ka.root </filename>
+            <objname>    enu_sk_tuned11b_numu_ratio   </objname>
+            <objtype>    TH1D                         </objtype>
+         </numu>
+         <numubar>
+            <filename>   inputs/official/2013/flux/11b_v3.2_antinu/sk_tuned11bv3.2_11anom_m250ka.root </filename>
+            <objname>    enu_sk_tuned11b_numub_ratio  </objname>
+            <objtype>    TH1D                         </objtype>
+         </numubar>
+         <nue>
+            <filename>   inputs/official/2013/flux/11b_v3.2_antinu/sk_tuned11bv3.2_11anom_m250ka.root </filename>
+            <objname>    enu_sk_tuned11b_nue_ratio    </objname>
+            <objtype>    TH1D                         </objtype>
+         </nue>
+         <nuebar>
+            <filename>   inputs/official/2013/flux/11b_v3.2_antinu/sk_tuned11bv3.2_11anom_m250ka.root </filename>
+            <objname>    enu_sk_tuned11b_nueb_ratio   </objname>
+            <objtype>    TH1D                         </objtype>
+         </nuebar>
+       </tuning_weights_antinu>
      </superk>     
   </flux>
 
