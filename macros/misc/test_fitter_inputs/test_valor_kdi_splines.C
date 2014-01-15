@@ -64,7 +64,7 @@ void test_valor_kdi_splines
 	fref = fkdi_nue;
       else if(util::IsNuEBar(m))
 	fref = fkdi_nuebar;
-      else if(util::IsSignalNuE(m))
+      else if(util::IsOscNuE(m))
 	fref = fkdi_signue;
     } 
     else {

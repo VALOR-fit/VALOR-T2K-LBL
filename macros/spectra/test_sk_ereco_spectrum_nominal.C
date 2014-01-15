@@ -232,7 +232,7 @@ void test_sk_ereco_spectrum_nominal
       nnc += nmode;
     else if(util::IsMEC(m))
       nmec += nmode;
-    else if(util::IsNuE(m) || util::IsNuEBar(m) || util::IsSignalNuE(m))
+    else if(util::IsNuE(m) || util::IsNuEBar(m) || util::IsOscNuE(m))
       nnuecc += nmode;
     else if(m == conv::kSKmNuMuCCQE || m == conv::kSKmNuMuBarCCQE
 	    || m == conv::kSKmOscNuMuCCQE)// || m == conv::kSKmOscNuMuBarCCQE)

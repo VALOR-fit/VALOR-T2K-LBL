@@ -390,7 +390,7 @@ nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s,
 	  n.nskecc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
 	else if(util::IsNuEBar(m))
 	  n.nskebarcc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
-	else if(util::IsSignalNuE(m))
+	else if(util::IsOscNuE(m))
 	  n.nsksigecc += skexp->GetSuperkMC()->Template(s, m, t)->Integral();
 	else if(util::IsOscNuMu(m))
 	  n.nskoscnumu += skexp->GetSuperkMC()->Template(s, m, t)->Integral();

@@ -291,7 +291,7 @@ void test_systematic_error_propagation_all
 	  nsknuecc_n += nskmodes_n[m];
 	else if(util::IsNuEBar(m))
 	  nsknuebarcc_n += nskmodes_n[m];
-	else if(util::IsSignalNuE(m))
+	else if(util::IsOscNuE(m))
 	  nsknuesig_n += nskmodes_n[m];
 	else if(util::IsOscNuMu(m))
 	  nskoscnumu_n += nskmodes_n[m];
@@ -408,7 +408,7 @@ void test_systematic_error_propagation_all
       for (int im = 0; im < conv::knm; im++) {
 	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
 	if(m == conv::kSKmUndefined) continue;
-	if(util::IsSignalNuE(m)) {
+	if(util::IsOscNuE(m)) {
 	  nsksignue_etrue_n[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinOscNuE[itb]+1, EtrueBinOscNuE[itb+1]);
 	}
       }
@@ -456,7 +456,7 @@ void test_systematic_error_propagation_all
 	  nsknuecc_0 += nskmodes_0[m];
 	else if(util::IsNuEBar(m))
 	  nsknuebarcc_0 += nskmodes_0[m];
-	else if(util::IsSignalNuE(m))
+	else if(util::IsOscNuE(m))
 	  nsknuesig_0 += nskmodes_0[m];
 	else if(util::IsOscNuMu(m))
 	  nskoscnumu_0 += nskmodes_0[m];
@@ -572,7 +572,7 @@ void test_systematic_error_propagation_all
       for (int im = 0; im < conv::knm; im++) {
 	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
 	if(m == conv::kSKmUndefined) continue;
-	if(util::IsSignalNuE(m)) {
+	if(util::IsOscNuE(m)) {
 	  nsksignue_etrue_0[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinOscNuE[itb]+1, EtrueBinOscNuE[itb+1]);
 	}
       }
@@ -663,7 +663,7 @@ void test_systematic_error_propagation_all
 	  nsknuecc_p += nskmodes_p[m];
 	else if(util::IsNuEBar(m))
 	  nsknuebarcc_p += nskmodes_p[m];
-	else if(util::IsSignalNuE(m))
+	else if(util::IsOscNuE(m))
 	  nsknuesig_p += nskmodes_p[m];
 	else if(util::IsOscNuMu(m))
 	  nskoscnumu_p += nskmodes_p[m];
@@ -779,7 +779,7 @@ void test_systematic_error_propagation_all
       for (int im = 0; im < conv::knm; im++) {
 	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
 	if(m == conv::kSKmUndefined) continue;
-	if(util::IsSignalNuE(m)) {
+	if(util::IsOscNuE(m)) {
 	  nsksignue_etrue_p[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinOscNuE[itb]+1, EtrueBinOscNuE[itb+1]);
 	}
       }
@@ -870,7 +870,7 @@ void test_systematic_error_propagation_all
 	  nsknuecc_m += nskmodes_m[m];
 	else if(util::IsNuEBar(m))
 	  nsknuebarcc_m += nskmodes_m[m];
-	else if(util::IsSignalNuE(m))
+	else if(util::IsOscNuE(m))
 	  nsknuesig_m += nskmodes_m[m];
 	else if(util::IsOscNuMu(m))
 	  nskoscnumu_m += nskmodes_m[m];
@@ -986,7 +986,7 @@ void test_systematic_error_propagation_all
       for (int im = 0; im < conv::knm; im++) {
 	conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
 	if(m == conv::kSKmUndefined) continue;
-	if(util::IsSignalNuE(m)) {
+	if(util::IsOscNuE(m)) {
 	  nsksignue_etrue_m[itb] += skexp->GetSuperkMC()->Template(s, m, conv::kSKMCtFin)->Integral(1, conv::kNErecoBins1Rmu, EtrueBinOscNuE[itb]+1, EtrueBinOscNuE[itb+1]);
 	}
       }
