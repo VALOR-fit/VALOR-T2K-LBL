@@ -195,7 +195,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 #elif BANFF_BINS == 4
   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disapmec/best_fit_values");
 #endif
-  if(!fBestFitValues) {
+  if(!fRHCBestFitValues) {
     cerr << "Exp/BANFF >> No RHC BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }

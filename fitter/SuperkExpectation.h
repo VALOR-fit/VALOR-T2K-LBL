@@ -93,6 +93,7 @@ public:
    NuFlux *         GetNuFlux         (void) { return fNuFlux;         }
    NuXSec *         GetNuXSec         (void) { return fNuXSec;         }
    BANFF *          GetBANFF          (void) { return fBANFF;          }
+   BANFF *          GetRHCBANFF       (void) { return fRHCBANFF;       }
    FSI *            GetFSI            (void) { return fFSI;            }
 
    // Print
@@ -119,6 +120,7 @@ private:
    NuFlux *         fNuFlux;                      ///< Neutrino flux simulation inputs
    NuXSec *         fNuXSec;                      ///< Neutrino generator / cross section inputs
    BANFF *          fBANFF;                       ///< BANFF fit info
+   BANFF *          fRHCBANFF;                    ///< RHC BANFF fit info
    FSI *            fFSI;                         ///< FSI info
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)

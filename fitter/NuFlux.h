@@ -47,12 +47,10 @@ public:
   double SuperkRHCFluxMECSystWght    (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned flux -> current (incl. syst. variation)  
 
   // ... as above, slighty different interface
+  // note that these check for FHC/RHC so there is only a single copy of each
   double SuperkFluxExtTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
   double SuperkFluxFinTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
   double SuperkFluxSystWght       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
-  double SuperkRHCFluxExtTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;
-  double SuperkRHCFluxFinTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;
-  double SuperkRHCFluxSystWght       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;
 
   // SK flux (current, tuned/fin, tuned/ext, nominal - depending on input flux type)
   double SuperkFlux (int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;

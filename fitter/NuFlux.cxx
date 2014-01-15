@@ -17,7 +17,7 @@
 #define __show_init_mesg_info__  
 //#define __show_flux_twk_mesg_info__   
 //#define __show_flux_twk_mesg_debug__   
-//#define __show_flux_twk_mesg_debug_level2__  #even more verbose
+//#define __show_flux_twk_mesg_debug_level2__  //even more verbose
 
 #include <cassert>
 #include <cstdlib>
@@ -588,7 +588,7 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
        << endl;   
 #endif
 #ifdef __show_flux_twk_mesg_debug_level2__
-  fRHCBANFF->PrintSystematicVariations();
+  fRHCBANFF->PrintRHCSystematicVariations();
 #endif
 
   const int np = conv::kNumOfRHCParamsInBANFFfit;
@@ -601,8 +601,8 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
       {
         // Get the current or best-fit BANFF Superk flux param value
         double banff_param_value = (get_current) ? 
-	  fRHCBANFF->CurrentValue(p) :
-	  fRHCBANFF->BestFitValue(p) ; 
+	  fRHCBANFF->RHCCurrentValue(p) :
+	  fRHCBANFF->RHCBestFitValue(p) ; 
 
 #ifdef __show_flux_twk_mesg_debug__
         cout << "Exp/Flux >> Taking into account the effect of BANFF flux param: "
@@ -779,8 +779,8 @@ double NuFlux::SuperkRHCFluxFinTuningWght(int nu_pdg, double Etrue) const
 {
   // Weights required to re-weight ext/tuned flux to fin/tuned flux
   //
-  double flux_ext = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxExtTuning  );
-  double flux_fin = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxFinalTuning);
+  double flux_ext = this->RHCSuperkFlux(nu_pdg, Etrue, conv::kRHCFlxExtTuning  );
+  double flux_fin = this->RHCSuperkFlux(nu_pdg, Etrue, conv::kRHCFlxFinalTuning);
 
   double wght = 1.0;
   if(flux_ext >= 0) {
@@ -809,8 +809,8 @@ double NuFlux::SuperkRHCFluxSystWght(int nu_pdg, double Etrue) const
   // Weights required to re-weight fin/tuned flux to current (fin/tuned + systematic
   // variarions) flux
   //
-  double flux_twk = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxCurrent    );
-  double flux     = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxFinalTuning);
+  double flux_twk = this->RHCSuperkFlux(nu_pdg, Etrue, conv::kRHCFlxCurrent    );
+  double flux     = this->RHCSuperkFlux(nu_pdg, Etrue, conv::kRHCFlxFinalTuning);
 
   double wght = 1.0;
   if(flux >= 0) {
@@ -839,8 +839,8 @@ double NuFlux::SuperkRHCFluxMECSystWght(int nu_pdg, double Etrue) const
   // Weights required to re-weight ext/tuned flux to current (fin/tuned + systematic
   // variarions) flux
   //
-  double flux_twk = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxCurrent    );
-  double flux     = this->SuperkFlux(nu_pdg, Etrue, conv::kRHCFlxExtTuning  );
+  double flux_twk = this->RHCSuperkFlux(nu_pdg, Etrue, conv::kRHCFlxCurrent    );
+  double flux     = this->RHCSuperkFlux(nu_pdg, Etrue, conv::kRHCFlxExtTuning  );
 
   double wght = 1.0;
   if(flux >= 0) {
@@ -853,7 +853,7 @@ double NuFlux::SuperkFluxExtTuningWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const
 {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  if(s == conv::kSKsRHCFCFV1RingMuLike || s == conv::kSKsRHCFCFV1RingELike) 
+  if(IsRHCSample(s))
     return this->SuperkRHCFluxExtTuningWght(flux_nu_pdg,Etrue);
   else
     return this->SuperkFluxExtTuningWght(flux_nu_pdg,Etrue);
@@ -863,7 +863,7 @@ double NuFlux::SuperkFluxFinTuningWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const
 {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  if(s == conv::kSKsRHCFCFV1RingMuLike || s == conv::kSKsRHCFCFV1RingELike)
+  if(IsRHCSample(s))
     return this->SuperkRHCFluxFinTuningWght(flux_nu_pdg,Etrue);
   else
     return this->SuperkFluxFinTuningWght(flux_nu_pdg,Etrue);
@@ -873,7 +873,7 @@ double NuFlux::SuperkFluxSystWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const
 {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
-  if(s == conv::kSKsRHCFCFV1RingMuLike || s == conv::kSKsRHCFCFV1RingELike)
+  if(IsRHCSample(s))
     {
     if(util::IsMEC(m))
       return this->SuperkRHCFluxMECSystWght(flux_nu_pdg,Etrue);
@@ -1036,9 +1036,10 @@ TH1D * NuFlux::SuperkFluxExtTuningWghts(int nu_pdg) const
   else if ( nu_pdg == conv::kPdgNuMu    ) return fSKNuMuFluxExtTuningWght;
   else if ( nu_pdg == conv::kPdgNuMuBar ) return fSKNuMuBarFluxExtTuningWght;
   else
-  {
-    exit(1);
-  }
+    {
+      cerr << "Exp/Flux >> Unknown neutrino PDG value: " << nu_pdg << endl;
+      exit(1);
+    }
   return 0;
 }
 //________________________________________________________________________________________
@@ -1050,6 +1051,7 @@ TH1D * NuFlux::SuperkRHCFluxExtTuningWghts(int nu_pdg) const
   else if ( nu_pdg == conv::kPdgNuMuBar ) return fSKRHCNuMuBarFluxExtTuningWght;
   else
     {
+      cerr << "Exp/Flux >> Unknown neutrino PDG value: " << nu_pdg << endl;
       exit(1);
     }
   return 0;

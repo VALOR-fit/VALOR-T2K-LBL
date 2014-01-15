@@ -501,7 +501,7 @@ double NuXSec::FinTuningWght_1p(
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-	tb = fRHCBANFF->BestFitValue(p);
+	tb = fRHCBANFF->RHCBestFitValue(p);
       else
         tb = fBANFF->BestFitValue(p);
       /*
@@ -565,7 +565,7 @@ relerr = fSplineMARESRelErr;
 #endif
        )
       {
-	wght = fRHCBANFF->BestFitValue(p);
+	wght = fRHCBANFF->RHCBestFitValue(p);
       }
   //
   // BANFF param, PDD double counting
@@ -581,7 +581,7 @@ relerr = fSplineMARESRelErr;
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       if(p == kRHCNuisBANFFPDDDoubleCount)
-	tb = fabs(fRHCBANFF->BestFitValue(p));
+	tb = fabs(fRHCBANFF->RHCBestFitValue(p));
       else
         tb = fabs(fBANFF->BestFitValue(p));
 #warning Need to check PDD spline evaluation is correct
@@ -691,8 +691,8 @@ double NuXSec::SystWght_1p(
        assert(wght_spl);
        if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
 	 {
-	 tb = fRHCBANFF->BestFitValue(p);
-	 tc = fRHCBANFF->CurrentValue(p);
+	 tb = fRHCBANFF->RHCBestFitValue(p);
+	 tc = fRHCBANFF->RHCCurrentValue(p);
 	 }
        else
 	 {
@@ -769,7 +769,7 @@ double NuXSec::SystWght_1p(
 #endif
 	)
       {
-	wght = fRHCBANFF->CurrentValue(p) / fRHCBANFF->BestFitValue(p);
+	wght = fRHCBANFF->RHCCurrentValue(p) / fRHCBANFF->RHCBestFitValue(p);
       }
 
   //
@@ -788,7 +788,7 @@ double NuXSec::SystWght_1p(
       //Don't de-tune the MEC BANFF parameters
       //tb = fBANFF->BestFitValue(p);
       if(p == kRHCNuisBANFFPDDDoubleCount)
-	tc = fRHCBANFF->CurrentValue(p);
+	tc = fRHCBANFF->RHCCurrentValue(p);
       else
         tc = fBANFF->CurrentValue(p);
       //wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
@@ -1020,7 +1020,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kRHCNuisBANFFMECNorm:
     case kRHCNuisBANFFPDDDoubleCount:
 #endif
-      return fRHCBANFF->CurrentValue(p);
+      return fRHCBANFF->RHCCurrentValue(p);
       break;
 
     default:
@@ -1042,7 +1042,7 @@ double NuXSec::RHCMECBestFitValue() const
 {
   double value = -1;
 #if BANFF_BINS == 4
-  value = fRHCBANFF->BestFitValue(kRHCNuisBANFFMECNorm);
+  value = fRHCBANFF->RHCBestFitValue(kRHCNuisBANFFMECNorm);
 #endif
   return value;
 }

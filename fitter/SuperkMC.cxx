@@ -2044,6 +2044,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	x_mec = fNuXSec->MECBestFitValue();
 #endif
 
+#ifdef __show_syst_var_wght_mesg_debug__ 
+      cout << "Exp/SKMC >> Applying BANFF tuning to sample, mode: " << AsString(s) << "\t" << AsString(m) << endl;
+#endif
+
       //
       // There are 600 50MeV Etrue energy bins in the templates, but
       // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
@@ -2059,16 +2063,9 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
 
 	// Plug-in BANFF flux systematics
-        double flux_wght;
-	if(IsRHCSample(s))
-          flux_wght = fNuFlux->SuperkRHCFluxFinTuningWght(s,m,EtrueVarMin);
-	else
-	  flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
+        double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
 
 	//skip if the big bin is empty
-	
-
-
 	if(s == kSKsFCFV1RingMuLike) {
 	  if(fMCVariableTemplArray1Rmu[im][itv-1][irv-1] <= 0) continue;
 	}
@@ -2084,9 +2081,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	else if(s == kSKsRHCFCFV1RingELike) {
 	  if(fMCVariableTemplArrayRHC1Re[im][itv-1][irv-1] <= 0) continue;
 	}
-	////
-
-     
+	////     
 	
 	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 	
@@ -2221,6 +2216,23 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	  }
 	  ////
 
+#ifdef __show_syst_var_wght_mesg_debug__ 
+	  // Get the energy of the current bin
+	  double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+	  double Ereco = util::ErecoBinEdges(s,it-1) + kOneMeV;
+	  if( flux_wght  != 1. ||
+	      xsec_wght  != 1. )
+	  {
+	    cout << "Exp/SKMC/SystVarWght >> "
+	      << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+	      << ", Ereco = " << Ereco << " GeV"
+	      << ", Etrue = " << Etrue << " GeV => Weights: "
+	      << ", Flux = "  << flux_wght
+	      << ", XSec = "  << xsec_wght
+	      << " (total = " << wght << ")"
+	      << endl;
+	  }
+#endif//__show_syst_var_wght_mesg_debug__ 
 
 	}//ifb
       }//ivb
@@ -2228,6 +2240,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
   }//is
 
   //fFSI    -> BuildFracMCTemplates(fMCTemplTun);
+
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> Complete" << endl;
+#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::UpdateTemplates(void)
@@ -2310,10 +2326,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 	// Plug-in BANFF flux systematics
 	if (itv!=last_itv) {
-          if(IsRHCSample(s))
-            flux_wght = fNuFlux->SuperkRHCFluxSystWght(s,m,EtrueVarMin);
-	  else
-	    flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+	  flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
 	  last_itv = itv;
 	}
 
@@ -2446,14 +2459,15 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	  double nev_systm = nev * wght;
 
 #ifdef __show_syst_var_wght_mesg_debug__ 
+	    // Get the energy of the current bin
+	    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+	    double Ereco = util::ErecoBinEdges(s,it-1) + kOneMeV;
 #ifndef SKFSITOGETHER	       
 	  if( skeff_wght != 1. || 
 	      flux_wght  != 1. || 
 	      xsec_wght  != 1. ||
 	      fsi_wght   != 1. )
 	  {
-	    // Get the energy of the current 50MeV Etrue bin
-	    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
 	    cout << "Exp/SKMC/SystVarWght >> "
 	      << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
 	      << ", Ereco = " << Ereco << " GeV" 
@@ -2470,8 +2484,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	      flux_wght  != 1. ||
 	      xsec_wght  != 1. )
 	  {
-	    // Get the energy of the current 50MeV Etrue bin
-	    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
 	    cout << "Exp/SKMC/SystVarWght >> "
 	      << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
 	      << ", Ereco = " << Ereco << " GeV"
