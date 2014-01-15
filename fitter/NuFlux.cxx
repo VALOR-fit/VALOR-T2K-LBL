@@ -245,25 +245,25 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
 
   // SuperK numu flux (reverse horn current)
-  fSKRHCNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_antinu/numu");
+  fSKRHCNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numu");
   if(!fSKRHCNuMuFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC numu ext/tuned flux histogram!" << endl;
     exit(1);
   }
   // SuperK numubar flux (reverse horn current)
-  fSKRHCNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_antinu/numubar");
+  fSKRHCNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numubar");
   if(!fSKRHCNuMuBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC numubar ext/tuned flux histogram!" << endl;
     exit(1);
   }
   // SuperK nue flux (reverse horn current)
-  fSKRHCNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_antinu/nue");
+  fSKRHCNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nue");
   if(!fSKRHCNuEFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC nue ext/tuned flux histogram!" << endl;
     exit(1);
   }
   // SuperK nuebar flux (reverse horn current)
-  fSKRHCNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_antinu/nuebar");
+  fSKRHCNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nuebar");
   if(!fSKRHCNuEBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC nuebar ext/tuned flux histogram!" << endl;
     exit(1);
@@ -279,28 +279,28 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   // SuperK numu flux tuning weights (reverse horn current) 
   fSKRHCNuMuFluxExtTuningWght = 
-    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_antinu/numu");
+    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numu");
   if(!fSKRHCNuMuFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC numu flux ext/tuning weights!" << endl;
     exit(1);
   }
   // SuperK numubar flux tuning weights (reverse horn current) 
   fSKRHCNuMuBarFluxExtTuningWght = 
-    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_antinu/numubar");
+    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numubar");
   if(!fSKRHCNuMuBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC numubar flux ext/tuning weights!" << endl;
     exit(1);
   }
   // SuperK nue flux tuning weights (reverse horn current) 
   fSKRHCNuEFluxExtTuningWght = 
-    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_antinu/nue");
+    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nue");
   if(!fSKRHCNuEFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC nue flux ext/tuning weights!" << endl;
     exit(1);
   }
   // SuperK nuebar flux tuning weights (reverse horn current) 
   fSKRHCNuEBarFluxExtTuningWght = 
-    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_antinu/nuebar");
+    util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nuebar");
   if(!fSKRHCNuEBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC nuebar flux ext/tuning weights!" << endl;
     exit(1);
