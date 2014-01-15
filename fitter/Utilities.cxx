@@ -13,7 +13,7 @@ Added samples and modes for reverse horn current running
 //#define __show_cholesky_gen_corr_param_variations_mesg_debug__
 //#define __show_xml_mesg_info__
 //#define __show_xml_mesg_debug__
-#define __show_arr_idx_mesg_debug__
+//#define __show_arr_idx_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -7742,11 +7742,11 @@ void t2kana::util::ArrIdx::Init(void)
 #endif
     if(p == kPhypUndefined) continue;
     fSKDetFSISystIdx[p] = ip;
-    //#ifdef __show_arr_idx_mesg_debug__
+#ifdef __show_arr_idx_mesg_debug__
      cout << "Util/ArrIdx >> SKDet+FSI: " 
           << util::AsString(p)
           << " is at slot: " << fSKDetFSISystIdx [p] << endl;
-     //#endif
+#endif
   }
 #endif
 #ifdef SKFSITOGETHER
@@ -7761,11 +7761,11 @@ void t2kana::util::ArrIdx::Init(void)
 #endif
     if(p == kPhypUndefined) continue;
     fRHCSKDetFSISystIdx[p] = ip;
-    //#ifdef __show_arr_idx_mesg_debug__
+#ifdef __show_arr_idx_mesg_debug__
     cout << "Util/ArrIdx >> RHC SKDet+FSI: "
 	 << util::AsString(p)
 	 << " is at slot: " << fRHCSKDetFSISystIdx [p] << endl;
-    //#endif
+#endif
   }
 #endif
 
