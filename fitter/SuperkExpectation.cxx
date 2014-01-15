@@ -1052,7 +1052,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     //energy scale
     if(fp.Exists(kNuisSuperkEnergyScale)) {
       double twk = fp.CurrValue(kNuisSuperkEnergyScale);
+     
+      //Todo: fix this so that FHC and RHC can have different tweaks
       this->GetSuperkDetectorFSI()->TweakEnergyScale(twk);
+      this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
     }
 
 #ifndef SKFSITOGETHER
@@ -1070,7 +1073,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
       twkv[ip] = fp.CurrValue(p);
     }
+
+    //Todo: fix this so that FHC and RHC can have different tweaks
+    //Also that FHC and RHC can have different numbers of parameters
     this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
+    this->GetSuperkDetectorFSI()->TweakOnlyRHC1Rmu(true,&twkv);
     //}
 #else
 #if FSI_BINS == 3
@@ -1082,7 +1089,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
 	twkv[ip] = fp.CurrValue(p);
       }
+
+      //Todo: fix this so that FHC and RHC can have different tweaks
+      //Also that FHC and RHC can have different numbers of parameters
       this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
+      this->GetSuperkDetectorFSI()->TweakOnlyRHC1Re(true,&twkv);
       //}
 #else
       //    else {
@@ -1092,7 +1103,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
 	twkv[ip] = fp.CurrValue(p);
       }
+
+      //Todo: fix this so that FHC and RHC can have different tweaks
+      //Also that FHC and RHC can have different numbers of parameters
       this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
+      this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
       //}
 #endif
 #endif
@@ -1105,7 +1120,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
       twkvBANFF[ip] = fp.CurrValue(p);
     }
+
+    //Todo: fix this so that FHC and RHC can have different tweaks
+    //Also that FHC and RHC can have different numbers of parameters 
     this->GetBANFF()->Tweak(true,&twkvBANFF);
+    this->GetBANFF()->TweakRHC(true,&twkvBANFF);
 
     // Cross-section systematics (other than BANFF ones)
     for(int ip = 0; ip < kNumOfXSecSyst; ip++) {

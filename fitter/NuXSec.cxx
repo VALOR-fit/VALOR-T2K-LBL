@@ -501,7 +501,7 @@ double NuXSec::FinTuningWght_1p(
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-	tb = fRHCBANFF->RHCBestFitValue(p);
+        tb = fRHCBANFF->RHCBestFitValue(p);
       else
         tb = fBANFF->BestFitValue(p);
       /*
@@ -549,7 +549,7 @@ relerr = fSplineMARESRelErr;
   {
    wght = fBANFF->BestFitValue(p);
   }
-
+  
   else
     if(p == kRHCNuisBANFFCCQEE0
 #if BANFF_BINS != 3
@@ -567,6 +567,7 @@ relerr = fSplineMARESRelErr;
       {
 	wght = fRHCBANFF->RHCBestFitValue(p);
       }
+  
   //
   // BANFF param, PDD double counting
   //
@@ -581,7 +582,7 @@ relerr = fSplineMARESRelErr;
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       if(p == kRHCNuisBANFFPDDDoubleCount)
-	tb = fabs(fRHCBANFF->RHCBestFitValue(p));
+        tb = fabs(fRHCBANFF->RHCBestFitValue(p));
       else
         tb = fabs(fBANFF->BestFitValue(p));
 #warning Need to check PDD spline evaluation is correct
@@ -690,15 +691,17 @@ double NuXSec::SystWght_1p(
        TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
        assert(wght_spl);
        if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-	 {
-	 tb = fRHCBANFF->RHCBestFitValue(p);
-	 tc = fRHCBANFF->RHCCurrentValue(p);
-	 }
+         {
+         tb = fRHCBANFF->RHCBestFitValue(p);
+         tc = fRHCBANFF->RHCCurrentValue(p);
+         }
        else
-	 {
+         {
          tb = fBANFF->BestFitValue(p);
          tc = fBANFF->CurrentValue(p);
 	 }
+
+
        //       SPLINES now in terms of x_MA, rather than sigma
        /*
        if(s == kSKsFCFV1RingELike){
@@ -787,8 +790,9 @@ double NuXSec::SystWght_1p(
       assert(wght_spl);
       //Don't de-tune the MEC BANFF parameters
       //tb = fBANFF->BestFitValue(p);
+      
       if(p == kRHCNuisBANFFPDDDoubleCount)
-	tc = fRHCBANFF->RHCCurrentValue(p);
+        tc = fRHCBANFF->RHCCurrentValue(p);
       else
         tc = fBANFF->CurrentValue(p);
       //wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
@@ -1022,7 +1026,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 #endif
       return fRHCBANFF->RHCCurrentValue(p);
       break;
-
+ 
     default:
       return 0;
   }
@@ -1501,22 +1505,24 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
 
   // hack for hk
   if(hk_syst) {
-#ifdef __FHC_RUNNING__
+    //#ifdef __FHC_RUNNING__
     if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
     if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
     if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
     if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
-#endif
+    //#endif
+    /*
 #ifdef __RHC_RUNNING__
     if (fRHCNormCCcohTwkDial)      chisq_penalty += fRHCNormCCcohTwkDial*fRHCNormCCcohTwkDial;
     if (fRHCNormNC1piCTwkDial)     chisq_penalty += fRHCNormNC1piCTwkDial*fRHCNormNC1piCTwkDial;
     if (fRHCNormNCcohTwkDial)      chisq_penalty += fRHCNormNCcohTwkDial*fRHCNormNCcohTwkDial;
     if (fRHCNormNCothTwkDial)      chisq_penalty += fRHCNormNCothTwkDial*fRHCNormNCothTwkDial;
 #endif
+    */
     return chisq_penalty;
   }
 
-#ifdef __FHC_RUNNING__
+  //#ifdef __FHC_RUNNING__
 
   if (fFermiMomTwkDial)       chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
   if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
@@ -1539,8 +1545,9 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
   if (fNormAntiNuToNuTwkDial) chisq_penalty += fNormAntiNuToNuTwkDial*fNormAntiNuToNuTwkDial;
 #endif
 
-#endif
+  //#endif
 
+  /*
 #ifdef __RHC_RUNNING__
 
     if (fRHCFermiMomTwkDial)       chisq_penalty += fRHCFermiMomTwkDial*fRHCFermiMomTwkDial;
@@ -1565,6 +1572,8 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
 #endif
 
 #endif
+  */
+
 
   return chisq_penalty;
 }
