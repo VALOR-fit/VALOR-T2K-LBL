@@ -162,7 +162,6 @@ private:
   //
 
   BANFF *     fBANFF;               ///< BANFF fit info
-  BANFF *     fRHCBANFF;            ///< BANFF fit info
   TSpline3 *  fXSecWghtSpl1Rmu[knwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TSpline3 *  fXSecWghtSpl1Re[knwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TSpline3 *  fRHCXSecWghtSpl1Rmu[kRHCnwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin

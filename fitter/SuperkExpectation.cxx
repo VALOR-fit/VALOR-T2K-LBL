@@ -156,7 +156,6 @@ bool SuperkExpectation::Read(string config_file)
 
   // Create components used for building-up the p.d.f & implemeting its systematic variation
   fBANFF          = new BANFF;
-  fRHCBANFF       = new BANFF;
   fNuFlux         = new NuFlux; 
   fNuXSec         = new NuXSec; 
 #ifdef SKFSITOGETHER
@@ -169,9 +168,9 @@ bool SuperkExpectation::Read(string config_file)
 
   // Configure inter-dependencies.
   fNuFlux   -> TellMeAboutTheBANFFfit   (fBANFF);
-  fNuFlux   -> TellMeAboutTheRHCBANFFfit(fRHCBANFF);
+  fNuFlux   -> TellMeAboutTheRHCBANFFfit(fBANFF);
   fNuXSec   -> TellMeAboutTheBANFFfit   (fBANFF);
-  fNuXSec   -> TellMeAboutTheRHCBANFFfit(fRHCBANFF);
+  fNuXSec   -> TellMeAboutTheRHCBANFFfit(fBANFF);
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
 #ifdef SKFSITOGETHER
@@ -196,7 +195,7 @@ bool SuperkExpectation::Read(string config_file)
 
   // Configure each of the components 
   if ( ! this->GetBANFF            () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetRHCBANFF         () -> ReadRHC (xml, root_node) ) return false;
+  if ( ! this->GetBANFF            () -> ReadRHC (xml, root_node) ) return false;
   if ( ! this->GetNuFlux           () -> Read (xml, root_node) ) return false;
   if ( ! this->GetNuFlux           () -> ReadRHC (xml, root_node) ) return false;
   if ( ! this->GetNuXSec           () -> Read (xml, root_node) ) return false;

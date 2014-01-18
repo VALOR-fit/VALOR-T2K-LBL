@@ -415,6 +415,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   return true;  
 }
+//Todo: change these methods so the they return the correct BANFF fit
 //________________________________________________________________________________________
 void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
 {
@@ -423,7 +424,7 @@ void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
 //________________________________________________________________________________________
 void NuXSec::TellMeAboutTheRHCBANFFfit(BANFF * banff)
 {
-  fRHCBANFF = banff;
+  fBANFF = banff;
 }
 //________________________________________________________________________________________
 double NuXSec::FinTuningWght(
@@ -501,7 +502,7 @@ double NuXSec::FinTuningWght_1p(
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-        tb = fRHCBANFF->RHCBestFitValue(p);
+        tb = fBANFF->RHCBestFitValue(p);
       else
         tb = fBANFF->BestFitValue(p);
       /*
@@ -565,7 +566,7 @@ relerr = fSplineMARESRelErr;
 #endif
        )
       {
-	wght = fRHCBANFF->RHCBestFitValue(p);
+	wght = fBANFF->RHCBestFitValue(p);
       }
   
   //
@@ -582,7 +583,7 @@ relerr = fSplineMARESRelErr;
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       if(p == kRHCNuisBANFFPDDDoubleCount)
-        tb = fabs(fRHCBANFF->RHCBestFitValue(p));
+        tb = fabs(fBANFF->RHCBestFitValue(p));
       else
         tb = fabs(fBANFF->BestFitValue(p));
 #warning Need to check PDD spline evaluation is correct
@@ -692,14 +693,14 @@ double NuXSec::SystWght_1p(
        assert(wght_spl);
        if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
          {
-         tb = fRHCBANFF->RHCBestFitValue(p);
-         tc = fRHCBANFF->RHCCurrentValue(p);
+         tb = fBANFF->RHCBestFitValue(p);
+         tc = fBANFF->RHCCurrentValue(p);
          }
        else
          {
          tb = fBANFF->BestFitValue(p);
          tc = fBANFF->CurrentValue(p);
-	 }
+         }
 
 
        //       SPLINES now in terms of x_MA, rather than sigma
@@ -772,7 +773,7 @@ double NuXSec::SystWght_1p(
 #endif
 	)
       {
-	wght = fRHCBANFF->RHCCurrentValue(p) / fRHCBANFF->RHCBestFitValue(p);
+        wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
       }
 
   //
@@ -792,7 +793,7 @@ double NuXSec::SystWght_1p(
       //tb = fBANFF->BestFitValue(p);
       
       if(p == kRHCNuisBANFFPDDDoubleCount)
-        tc = fRHCBANFF->RHCCurrentValue(p);
+        tc = fBANFF->RHCCurrentValue(p);
       else
         tc = fBANFF->CurrentValue(p);
       //wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
@@ -1024,7 +1025,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     case kRHCNuisBANFFMECNorm:
     case kRHCNuisBANFFPDDDoubleCount:
 #endif
-      return fRHCBANFF->RHCCurrentValue(p);
+      return fBANFF->RHCCurrentValue(p);
       break;
  
     default:
@@ -1046,7 +1047,7 @@ double NuXSec::RHCMECBestFitValue() const
 {
   double value = -1;
 #if BANFF_BINS == 4
-  value = fRHCBANFF->RHCBestFitValue(kRHCNuisBANFFMECNorm);
+  value = fBANFF->RHCBestFitValue(kRHCNuisBANFFMECNorm);
 #endif
   return value;
 }
