@@ -95,7 +95,6 @@ void NuFlux::Init(void)
   fSKRHCNuMuBarFluxExtTuningWght = 0;
   fSKRHCNuEFluxExtTuningWght     = 0;
   fSKRHCNuEBarFluxExtTuningWght  = 0;
-  fRHCBANFF                      = 0;
 }
 //________________________________________________________________________________________
 void NuFlux::CleanUp(void)
@@ -588,7 +587,7 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
        << endl;   
 #endif
 #ifdef __show_flux_twk_mesg_debug_level2__
-  fRHCBANFF->PrintRHCSystematicVariations();
+  fBANFF->PrintRHCSystematicVariations();
 #endif
 
   const int np = conv::kNumOfRHCParamsInBANFFfit;
@@ -601,8 +600,8 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
       {
         // Get the current or best-fit BANFF Superk flux param value
         double banff_param_value = (get_current) ? 
-	  fRHCBANFF->RHCCurrentValue(p) :
-	  fRHCBANFF->RHCBestFitValue(p) ; 
+	  fBANFF->RHCCurrentValue(p) :
+          fBANFF->RHCBestFitValue(p) ;
 
 #ifdef __show_flux_twk_mesg_debug__
         cout << "Exp/Flux >> Taking into account the effect of BANFF flux param: "
@@ -676,6 +675,7 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
       }//sk flux param?
   }//ip loop  
 }
+//Todo: change these methods so that they return the correct BANFF fit
 //________________________________________________________________________________________
 void NuFlux::TellMeAboutTheBANFFfit(BANFF * banff)
 {
@@ -684,7 +684,7 @@ void NuFlux::TellMeAboutTheBANFFfit(BANFF * banff)
 //________________________________________________________________________________________
 void NuFlux::TellMeAboutTheRHCBANFFfit(BANFF * banff)
 {
-  fRHCBANFF = banff;
+  fBANFF = banff;
 }
 //________________________________________________________________________________________
 double NuFlux::SuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
@@ -710,10 +710,11 @@ double NuFlux::SuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) co
 double NuFlux::RHCSuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
 {
   // update current flux (if not already) as a result of the latest BANFF param twk
-  if( flxtype == conv::kRHCFlxCurrent && !fRHCBANFF->IsFluxWghtUpdated() ) {
+  if( flxtype == conv::kRHCFlxCurrent && !fBANFF->IsFluxWghtUpdatedRHC() ) {
     this->ApplyRHCBANFFWeights(true);
-    fRHCBANFF->MarkFluxWghtUpdated();
+    fBANFF->MarkFluxWghtUpdatedRHC();
   }
+
 
   TH1D * flux_spectrum = this->SuperkFluxSpectrum(nu_pdg,flxtype);
   if(!flux_spectrum) {

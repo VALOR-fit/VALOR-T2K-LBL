@@ -153,7 +153,6 @@ private:
   TH1D *           fSKRHCNuMuBarFluxExtTuningWght;  ///< SuperK numubar flux tuning weights
   TH1D *           fSKRHCNuEFluxExtTuningWght;      ///< SuperK nue     flux tuning weights
   TH1D *           fSKRHCNuEBarFluxExtTuningWght;   ///< SuperK nue     flux tuning weights
-  BANFF *          fRHCBANFF;                       ///< BANFF fit info
       
 ClassDef(NuFlux, 5)
 };

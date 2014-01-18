@@ -1,3 +1,4 @@
+
 //____________________________________________________________________________
 /*!
 
@@ -78,9 +79,12 @@ public:
   double RHCChisqPenalty          (bool all_syst = true) const;
 
   // Get & tweak flags	
-  bool IsTweaked           (void) const { return fIsTweaked;         } ///< BANFF params tweaked?
-  bool IsFluxWghtUpdated   (void) const { return fIsFluxWghtUpdated; } ///< NuFlux object updated flux in response?
-  void MarkFluxWghtUpdated (void)       { fIsFluxWghtUpdated = true; }
+  bool IsTweaked              (void) const { return fIsTweaked;            } ///< BANFF params tweaked?
+  bool IsTweakedRHC           (void) const { return fIsTweakedRHC;         } ///< BANFF params tweaked?
+  bool IsFluxWghtUpdated      (void) const { return fIsFluxWghtUpdated;    } ///< NuFlux object updated flux in response?
+  bool IsFluxWghtUpdatedRHC   (void) const { return fIsFluxWghtUpdatedRHC; } ///< NuFlux object updated flux in response?
+  void MarkFluxWghtUpdated    (void)       { fIsFluxWghtUpdated = true;    }
+  void MarkFluxWghtUpdatedRHC (void)       { fIsFluxWghtUpdatedRHC = true; }
 
   // Print
   void PrintSystematicVariations (ostream & stream = std::cout) const;
@@ -103,7 +107,7 @@ private:
   TMatrixD *  fCovMtrx;           ///< BANFF covariance matrix
   TMatrixD *  fCovMtrxInv;        ///< Inverse BANFF covariance matrix
   TMatrixD *  fCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
-  bool        fIsTweaked;         ///< Were BANF params tweaked?
+  bool        fIsTweaked;         ///< Were BANFF params tweaked?
   bool        fIsFluxWghtUpdated; ///< Were Flux weights updated as a result of the last BANFF param variation
 
   TVectorD *  fRHCBestFitValues;     ///< BANFF best fit values
@@ -111,7 +115,7 @@ private:
   TMatrixD *  fRHCCovMtrx;           ///< BANFF covariance matrix
   TMatrixD *  fRHCCovMtrxInv;        ///< Inverse BANFF covariance matrix
   TMatrixD *  fRHCCovMtrxChoL;       ///< Triangular matrix obtained from Cholesky decomposition of BANFF covariance matrix
-  bool        fIsTweakedRHC;         ///< Were BANF params tweaked?
+  bool        fIsTweakedRHC;         ///< Were BANFF params tweaked?
   bool        fIsFluxWghtUpdatedRHC; ///< Were Flux weights updated as a result of the last BANFF param variation
   
   double * fBestFitArray; //! ///< Pointer to the actual memory location of the best fit values
