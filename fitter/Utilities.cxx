@@ -6205,7 +6205,7 @@ void t2kana::util::PrintCompact(
   TString opt = option;
 
   bool printing_banff_params = opt.Contains("BANFF fit params");
-  bool printing_fsi_params   = opt.Contains("FSI params");
+  bool printing_fsi_params   = opt.Contains("SKDetFSI params");
   bool printing_selected_banff_params = opt.Contains("BANFF selected fit params");
 
   int np = v.GetNoElements();
@@ -6222,9 +6222,9 @@ void t2kana::util::PrintCompact(
      if(printing_fsi_params) {
          stream << " [ ";
 #if FSI_BINS != 3
-         PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI000 + ip );
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 #else
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI006 + ip );
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
 #endif
          stream << setw(30) << util::AsString(p);
          stream << " ]";

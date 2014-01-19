@@ -371,6 +371,12 @@ double SuperkDetectorFSI::RHCOneSigmaError(PhysParamId_t p) const
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
+void SuperkDetectorFSI::SyncRHCToFHCSystematics()
+{
+  fRHCEnergyScaleTwkDial = fEnergyScaleTwkDial;
+  this->TweakRHC(true, fCurrentValues);
+}
+//________________________________________________________________________________________
 void SuperkDetectorFSI::Tweak(
   bool       force_inputs,    /* force the input params or generate random ones internally  */
   TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
@@ -923,12 +929,12 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(current_values, bestfit_values, 12,6,"SuperkDetector+FSI fit params");
+  util::PrintCompact(current_values, bestfit_values, 12,6,"SKDetFSI fit params");
 #endif
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/ChisqPenalty >> deviations in SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"SuperkDetector+FSI fit params");
+  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"SKDetFSI fit params");
 #endif
 
   //covariance matrix
@@ -983,12 +989,12 @@ double SuperkDetectorFSI::RHCChisqPenalty(void) const
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> RHC SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(current_values, bestfit_values, 12,6,"RHC SuperkDetector+FSI fit params");
+  util::PrintCompact(current_values, bestfit_values, 12,6,"RHC SKDetFSI fit params");
 #endif
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/ChisqPenalty >> deviations in RHC SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"RHC SuperkDetector+FSI fit params");
+  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"RHC SKDetFSI fit params");
 #endif
 
   //covariance matrix
@@ -1032,7 +1038,7 @@ void SuperkDetectorFSI::PrintSystematicVariations(ostream & stream) const
   const TVectorD & curr_skdetfsi_params = *fCurrentValues;
   stream << "Exp/SuperkDetectorFSI >> Energy scale twk        = "  << fEnergyScaleTwkDial      << endl;
   stream << "Exp/SuperkDetectorFSI >> SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(curr_skdetfsi_params,15,6,"SuperkDetector+FSI params",stream);
+  util::PrintCompact(curr_skdetfsi_params,15,6,"SKDetFSI params",stream);
 
 }
 //________________________________________________________________________________________
@@ -1041,7 +1047,7 @@ void SuperkDetectorFSI::PrintRHCSystematicVariations(ostream & stream) const
   const TVectorD & curr_skdetfsi_params = *fRHCCurrentValues;
   stream << "Exp/SuperkDetectorFSI >> RHC energy scale twk        = "  << fRHCEnergyScaleTwkDial      << endl;
   stream << "Exp/SuperkDetectorFSI >> RHC SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(curr_skdetfsi_params,15,6,"RHC SuperkDetector+FSI params",stream);
+  util::PrintCompact(curr_skdetfsi_params,15,6,"RHC SKDetFSI params",stream);
 
 }
 //________________________________________________________________________________________

@@ -78,7 +78,7 @@ static const double kFutureAbsErrSinsqTheta23  = 0.05;//red line, page 36, PAC r
 static const double kFutureAbsErrSinsq2Theta23 = 0.19;//conversion of above (seems huge!)
 static const double kFutureAbsErrDm23sq        = 0.045E-3;//red line, page 36, PAC report final
 //mix13 using current daya bay systematic error
-static const double kFutureAbsErrSinsqTheta13  = 0.0;
+ static const double kFutureAbsErrSinsqTheta13  = 0.0013858; //conversion of number below
 static const double kFutureAbsErrSinsq2Theta13 = 0.005;
 //solar are known
 static const double kFutureAbsErrSinsqTheta12  = 0.0;//if you make these non zero, also change FitInputs.cxx and add the relevant penalty term

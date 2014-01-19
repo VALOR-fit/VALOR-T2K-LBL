@@ -69,6 +69,7 @@ public:
   void TweakRHC          (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakRHCFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0); 
+  void SyncRHCToFHCSystematics();
 
   // A special systematic variation which cancels the effect of BANFF tuning and reverts back to the nominal MC
   void RestoreNominalMC(void);

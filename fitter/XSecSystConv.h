@@ -108,7 +108,7 @@ static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
    kNuisXSecNormAntiNuToNu,    // antinu / nu cross section
 #endif
    kNuisXSecNormNuEToNuMu,     // nue / numu cross section
-   kNuisRHCToLHC               // RHC / LHC normalisation
+   kNuisRHCToFHC               // RHC / FHC normalisation
 };
 
 static const PhysParamId_t kListOfRHCXSecSyst[kNumOfRHCXSecSyst] = 
@@ -151,7 +151,7 @@ static const PhysParamId_t kListOfRHCXSecSyst[kNumOfRHCXSecSyst] =
     kRHCNuisXSecNormAntiNuToNu,    // antinu / nu cross section
 #endif
     kRHCNuisXSecNormNuEToNuMu,     // nue / numu cross section
-    kNuisRHCToLHC,                 // RHC / LHC normalisation
+    kNuisRHCToFHC,                 // RHC / FHC normalisation
   };
 
 
@@ -198,7 +198,7 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
    false,                     // antinu / nu cross section
 #endif
    false,                     // nue / numu cross section
-   false                      // RHC / LHC normalisation
+   false                      // RHC / FHC normalisation
 };
 
 static const bool kRHCXSecSystHasWghtSplines[kNumOfRHCXSecSyst] = 
@@ -241,7 +241,7 @@ static const bool kRHCXSecSystHasWghtSplines[kNumOfRHCXSecSyst] =
     false,                     // antinu / nu cross section
 #endif
     false,                     // nue / numu cross section
-    false                      // RHC / LHC normalisation
+    false                      // RHC / FHC normalisation
   };
 
 // The following list specifies which cross-section related systematic 
@@ -287,7 +287,7 @@ static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
    false,                     // antinu / nu cross section
 #endif
    false,                     // nue / numu cross section
-   false                      // RHC / LHC normalisation
+   false                      // RHC / FHC normalisation
 };
 
 static const bool kRHCXSecSystIncludedInBANFF[kNumOfRHCXSecSyst] = 
@@ -330,7 +330,7 @@ static const bool kRHCXSecSystIncludedInBANFF[kNumOfRHCXSecSyst] =
     false,                     // antinu / nu cross section
 #endif
     false,                     // nue / numu cross section
-    false                      // RHC / LHC normalisation
+    false                      // RHC / FHC normalisation
   };
 
 // Ereco and Etrue cuts for the application of cross-section systematics.
@@ -375,7 +375,7 @@ static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // antinu / nu cross section
 #endif
    { 0.0, 100.0 },            // nue / numu cross section
-   { 0.0, 100.0 }             // RHC / LHC normalisation
+   { 0.0, 100.0 }             // RHC / FHC normalisation
 };
 
 static const double kRHCXSecSystErecoCut[kNumOfRHCXSecSyst][2] =
@@ -418,7 +418,7 @@ static const double kRHCXSecSystErecoCut[kNumOfRHCXSecSyst][2] =
     { 0.0, 100.0 },            // antinu / nu cross section
 #endif
     { 0.0, 100.0 },            // nue / numu cross section
-    { 0.0, 100.0 }             // RHC / LHC normalisation
+    { 0.0, 100.0 }             // RHC / FHC normalisation
   };
 
 static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
@@ -461,7 +461,7 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
    { 0.0, 100.0 },            // antinu / nu cross section
 #endif
    { 0.0, 100.0 },            // nue / numu cross section
-   { 0.0, 100.0 }             // RHC / LHC normalisation
+   { 0.0, 100.0 }             // RHC / FHC normalisation
 };
 
 static const double kRHCXSecSystEtrueCut[kNumOfRHCXSecSyst][2] =
@@ -504,7 +504,7 @@ static const double kRHCXSecSystEtrueCut[kNumOfRHCXSecSyst][2] =
     { 0.0, 100.0 },            // antinu / nu cross section
 #endif
     { 0.0, 100.0 },            // nue / numu cross section
-    { 0.0, 100.0 }             // RHC / LHC normalisation
+    { 0.0, 100.0 }             // RHC / FHC normalisation
   };
 
 
@@ -550,7 +550,7 @@ static const double kXSecSystFracErr[kNumOfXSecSyst] =
   0.4,            // antinu / nu cross section
 #endif
   0.03,           // nue / numu cross section
-  0.10            // RHC / LHC normalisation
+  0.10            // RHC / FHC normalisation
 };
 
 static const double kRHCXSecSystFracErr[kNumOfRHCXSecSyst] =
@@ -593,7 +593,7 @@ static const double kRHCXSecSystFracErr[kNumOfRHCXSecSyst] =
     0.4,            // antinu / nu cross section
 #endif
     0.03,           // nue / numu cross section
-    0.10            // RHC / LHC normalisation
+    0.10            // RHC / FHC normalisation
   };
 
 // The following list describles in which MC templates we are supposed to apply the
@@ -612,7 +612,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc1piC   nccoh   ncoth    antinu/nu   nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -700,7 +700,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc1piC   nccoh   ncoth    antinu/nu   nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -788,7 +788,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc1piC   nccoh   ncoth    antinu/nu   nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -876,7 +876,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc1piC   nccoh   ncoth    antinu/nu   nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -972,7 +972,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banff & spline sections all 0
     // numusignal numubackground nuesignal nuebackground, aka:
     // cccoh    nc1piC   nccoh   ncoth    0 0
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 1, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 1, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1059,7 +1059,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banff & spline sections all 0
     // numusignal numubackground nuesignal nuebackground, aka:
     // cccoh    nc1piC   nccoh   ncoth    0 0
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1146,7 +1146,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banff & spline sections all 0
     // numusignal numubackground nuesignal nuebackground, aka:
     // cccoh    nc1piC   nccoh   ncoth    0 0
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 1, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 1, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1233,7 +1233,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banff & spline sections all 0
     // numusignal numubackground nuesignal nuebackground, aka:
     // cccoh    nc1piC   nccoh   ncoth    0 0
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1331,7 +1331,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc1piC     ncoth    antinu/nu   nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  1, 0, 1, 1, 1,  0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 0, 0,  1, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1420,7 +1420,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc1piC     ncoth    antinu/nu  nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0,  0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0,  0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1506,7 +1506,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc1piC     ncoth    antinu/nu   nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  1, 0, 1, 1, 1,  0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 0, 0,  1, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1595,7 +1595,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc1piC     ncoth    antinu/nu  nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0,  0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0,  0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,  0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1686,7 +1686,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffmaqe banffmares banffccqeE0 banffcc1piE0 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta
     // cccoh    nccoh   ncoth    nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
     {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1773,7 +1773,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffmaqe banffmares banffccqeE0 banffcc1piE0 banffnc0pi0
     // pF  spectral   W-shape  ccothshape pilessdelta 
     // cccoh   nccoh   ncoth    nue/numu 
-    // RHC/LHC
+    // RHC/FHC
     {  1, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1860,7 +1860,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffmaqe banffmares banffccqeE0 banffcc1piE0 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta
     // cccoh    nccoh   ncoth    nue/numu
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
     {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -1947,7 +1947,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffmaqe banffmares banffccqeE0 banffcc1piE0 banffnc0pi0
     // pF  spectral   W-shape  ccothshape pilessdelta 
     // cccoh   nccoh   ncoth    nue/numu 
-    // RHC/LHC
+    // RHC/FHC
     {  1, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 1, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
     {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -2132,7 +2132,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc0piC   nccoh   ncoth    nue/numu antinu/nu
-    // RHC/LHC
+    // RHC/FHC
     {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
     {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
@@ -2310,7 +2310,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
     // banffcc1piE0 banffcc1piE1 banffnc1pi0
     // pF  spectral   W-shape  ccothshape pilessdelta bindE
     // cccoh    nc0piC   nccoh   ncoth    nue/numu antinu/nu
-    // RHC/LHC
+    // RHC/FHC!
     {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
     {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
     {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh

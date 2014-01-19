@@ -365,14 +365,12 @@ void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
   fBANFF          -> PrintSystematicVariations(stream);
+  fBANFF          -> PrintRHCSystematicVariations(stream);
   fNuXSec         -> PrintSystematicVariations(stream);
-#ifdef SKFSITOGETHER
+  fNuXSec         -> PrintRHCSystematicVariations(stream);
   fSuperkDetectorFSI -> PrintSystematicVariations(stream);
-#endif
-#ifndef SKFSITOGETHER
-  fSuperkDetector -> PrintSystematicVariations(stream);
-  fFSI            -> PrintSystematicVariations(stream);
-#endif
+  fSuperkDetectorFSI -> PrintRHCSystematicVariations(stream);
+
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag)
@@ -806,12 +804,17 @@ void SuperkExpectation::TweakAllSystematics(void)
 
   this->TweakAllBANFFSystematics();
   this->TweakAllUncorrelatedXSecSystematics();
-#ifndef SKFSITOGETHER
-  this->TweakAllFSISystematics();
-  this->TweakAllSKDetectorSystematics();
-#endif
-#ifdef SKFSITOGETHER
   this->TweakAllSKDetectorFSISystematics();
+  this->GetNuXSec()->Tweak(kNuisRHCToFHC, Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+
+#ifdef __FULLY_CORRELATED__
+  this->GetNuXSec()->SyncRHCToFHCSystematics();
+  this->GetBANFF() ->SyncRHCToFHCSystematics();
+  this->GetSuperkDetectorFSI()->SyncRHCToFHCSystematics();
+#else
+  this->TweakAllRHCBANFFSystematics();
+  this->TweakAllRHCUncorrelatedXSecSystematics();
+  this->TweakAllRHCSKDetectorFSISystematics();
 #endif
 
 #endif//HKHACK

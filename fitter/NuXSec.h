@@ -82,6 +82,8 @@ public:
   
   void Tweak(conv::PhysParamId_t p , double twkdial);
 
+  void SyncRHCToFHCSystematics();
+
   // Get current value of systematic params handled by this class
   double CurrentValue        (conv::PhysParamId_t p) const;
   // Used by SuperkMC to get hold of the BANFF best fit value for MEC norm parameter
@@ -96,6 +98,7 @@ public:
 
   // Print
   void PrintSystematicVariations (ostream & stream = std::cout) const;
+  void PrintRHCSystematicVariations (ostream & stream = std::cout) const;
 
   // Read inputs from XML file
   bool Read        (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -193,6 +196,7 @@ private:
   double fRHCNormNCothTwkDial;
   double fRHCNormNuEToNuMuTwkDial;
   double fRHCNormAntiNuToNuTwkDial;
+  double fNormRHCToFHCTwkDial;
 
   // relative errors
   double fNormCCcohRelErr;
@@ -213,6 +217,7 @@ private:
   double fRHCSplineMAQERelErr;
   double fRHCSpline1overMAQE2RelErr;
   double fRHCSplineMARESRelErr;
+  double fNormRHCToFHCRelErr;
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 

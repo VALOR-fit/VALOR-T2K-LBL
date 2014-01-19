@@ -27,6 +27,10 @@ Split t2kana::conv namespace into several smaller files
 #include "Rtypes.h"
 #endif
 
+#ifndef __FULLY_CORRELATED__
+#define __FULLY_CORRELATED__
+#endif
+
 #ifndef SKFSITOGETHER
 #define SKFSITOGETHER
 // If turned on, errors for SK detector efficiencies and FSI are combined

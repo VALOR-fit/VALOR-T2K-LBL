@@ -335,6 +335,11 @@ double BANFF::RHCOneSigmaError(int idx) const
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
+void BANFF::SyncRHCToFHCSystematics()
+{
+  this->TweakRHC(true, fCurrentValues);
+}
+//________________________________________________________________________________________
 void BANFF::Tweak(
   bool       force_inputs, /* force the input params or generate random ones internally  */
   TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */

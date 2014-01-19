@@ -432,7 +432,7 @@ typedef enum EPhysParamId
     * Special RHC to FHC errors
     */
 
-   kNuisRHCToLHC,
+   kNuisRHCToFHC,
 
    /*
     * SuperK detector errors (energy scale and efficiencies)

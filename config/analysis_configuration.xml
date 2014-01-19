@@ -14,7 +14,7 @@
         7.8e+21
        </fhc>
        <rhc>
-        7.8e+21
+        0
        </rhc>       
      </superk> 
   </data_pot>
@@ -347,6 +347,9 @@
 	  <nu_to_antinu>
 	       0.20
 	  </nu_to_antinu>
+	  <rhc_to_fhc>
+	       0.10
+	  </rhc_to_fhc>
       </normalisations>
   </xsec>
 
