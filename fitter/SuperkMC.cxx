@@ -706,7 +706,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      exit(1);
   }
 
-  double pot_wght = this->AnalyzedSamplePOT() / mcpot;
+  double pot_wght = this->AnalyzedSamplePOT(s) / mcpot;    
+
 #ifdef POTWEIGHTSAREONE
   pot_wght = 1;
 #endif
@@ -715,7 +716,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   cout << "Exp/SKMC/CreateTemplate >>      "
        << "Weight (data POT / MC POT) = " << pot_wght << endl;
 #endif
-  if(pot_wght <= 0) {
+  if(pot_wght < 0) {
      cerr << "Exp/SKMC/CreateTemplate >> Weight (data POT / MC POT) for " 
           << util::AsString(s) << "/" << util::AsString(m)
           << " is " << pot_wght << endl;
@@ -4026,9 +4027,12 @@ bool SuperkMC::IsThereAnEvent(SuperkSample_t s, double Etrue) const
   return ev;
 } 
 //________________________________________________________________________________________
-double SuperkMC::AnalyzedSamplePOT(void) const
+double SuperkMC::AnalyzedSamplePOT(SuperkSample_t s) const
 {
-  return fPOT;  
+  if(util::IsRHCSample(s))
+    return fPOTRHC;
+  else
+    return fPOT;  
 }
 //________________________________________________________________________________________
 TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)

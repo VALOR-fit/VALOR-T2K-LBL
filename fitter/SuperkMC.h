@@ -66,7 +66,7 @@ public:
   TH2D * VarTemplate (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
 
   // POT of analysed data sample (MC is scaled to that POT value)
-  double AnalyzedSamplePOT(void) const;
+  double AnalyzedSamplePOT(conv::SuperkSample_t s) const;
 
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
