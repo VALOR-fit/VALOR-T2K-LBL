@@ -278,7 +278,7 @@ void SuperkMC::Init(void)
   
   arr_index = util::ArrIdx::Instance();
 
-  cout << "init complete" << endl;
+  cout << "Exp/SKMC >> Init complete" << endl;
 
 }
 //________________________________________________________________________________________
@@ -3882,9 +3882,9 @@ bool SuperkMC::UpdateErecoSpectra(void)
 	  else if (s==kSKsFCFV1RingELike)
 	    fMCErecoSpectrumArray1Re [im][ir-1] = nev;  // MODIFIED
 	  else if (s==kSKsRHCFCFV1RingMuLike) 
-	    fMCErecoSpectrumArray1Rmu[im][ir-1] = nev;  // ANTINU 
+	    fMCErecoSpectrumArrayRHC1Rmu[im][ir-1] = nev;  // ANTINU 
 	  else if (s==kSKsRHCFCFV1RingELike)
-	    fMCErecoSpectrumArray1Re [im][ir-1] = nev;  // ANTINU
+	    fMCErecoSpectrumArrayRHC1Re [im][ir-1] = nev;  // ANTINU
 	 
 
        }//im
