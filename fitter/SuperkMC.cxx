@@ -750,6 +750,9 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      if(!use_it) continue;
 
      double ereco_fill = fBrEreco/1000.;
+
+     if(util::IsRHCSample(s))
+       fBrWght = fNuFlux->SuperkFluxExtTuningWght(s,m,fBrEtrue);
      
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
      ereco_fill = TMath::Min(29.9, ereco_fill);
