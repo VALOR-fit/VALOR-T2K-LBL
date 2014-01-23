@@ -104,6 +104,8 @@ class NuOscSterile
   double fBaseline; ///< baseline (km)
   double fNe;       ///< number density of electrons in Earth's crust (cm^-3)
 
+  bool usingOscParams; 
+
   //Index 0 is not used and is set to 0 in init().
   //Indices 1 - nFlav are used and these correspond to the usual mixing angle and dmsq notation. 
   double sinMixingAngle[nFlav+1][nFlav+1];

@@ -171,6 +171,8 @@ void NuOscSterile::SetMixingAngles(double sinsqtheta12, double sinsqtheta13, dou
   cosMixingAngle[3][4] = sqrt(1.0 - sinsqtheta34);
   cosMixingAngle[3][5] = sqrt(1.0 - sinsqtheta35);
 
+  usingOscParams = true;
+
 }
 //________________________________________________________________________________________
 void NuOscSterile::SetDmsq(double dm21sq, double dm31sq, double dm41sq, double dm51sq)
@@ -196,6 +198,8 @@ void NuOscSterile::SetDmsq(double dm21sq, double dm31sq, double dm41sq, double d
     dmsq[4][3] = dm41sq + dm31sq;
     dmsq[5][3] = dm51sq + dm31sq;
     }
+
+  usingOscParams = true;
 }
 //________________________________________________________________________________________
 void NuOscSterile::SetDeltaCP(double dcp12, double dcp13, double dcp15, double dcp34, double dcp35)
@@ -205,6 +209,9 @@ void NuOscSterile::SetDeltaCP(double dcp12, double dcp13, double dcp15, double d
   deltaCP[1][5] = dcp15;
   deltaCP[3][4] = dcp34;
   deltaCP[3][5] = dcp35;
+
+  usingOscParams = true;
+
 }
 //________________________________________________________________________________________
 void NuOscSterile::SetVacuumPMNSReal
@@ -249,6 +256,8 @@ void NuOscSterile::SetVacuumPMNSReal
   UVacuum[5][4][re] = U54;
   UVacuum[5][5][re] = U55;
 
+  usingOscParams = false;
+
 }
 //________________________________________________________________________________________
 
@@ -292,6 +301,9 @@ void NuOscSterile::SetVacuumPMNSIm
   UVacuum[5][3][im] = U53;
   UVacuum[5][4][im] = U54;
   UVacuum[5][5][im] = U55;
+
+  usingOscParams = false;
+
 }
 //________________________________________________________________________________________
 void NuOscSterile::SetVacuumPMNSImToZero()
@@ -303,6 +315,9 @@ void NuOscSterile::SetVacuumPMNSImToZero()
       UVacuum[i][j][im] = 0.0;
       }
     }
+
+  usingOscParams = false;
+
 }
 //________________________________________________________________________________________ 
 void NuOscSterile::CalcVacuumPMNS()
@@ -534,7 +549,8 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
 
   double oscProb;
 
-  this->CalcVacuumPMNS();
+  if(usingOscParams)
+    this->CalcVacuumPMNS();
 
   // nue->nue, nuebar->nuebar
   if(osch == kOscNuE2NuE || osch == kOscNuEBar2NuEBar)
