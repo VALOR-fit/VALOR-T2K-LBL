@@ -944,7 +944,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-    case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV";   break;
+    case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";   break;
 #endif
 #if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
@@ -1288,7 +1288,7 @@ string t2kana::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV; RHC";    break;
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-  case ( kRHCNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 0.0 - 30.0 GeV; RHC";   break;
+  case ( kRHCNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; RHC";   break;
 #endif
 #if BANFF_BINS == 4
   case ( kRHCNuisBANFFMECNorm ) : return "BANFF; Norm; MEC; RHC";                       break;
@@ -1643,7 +1643,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-    case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 2.5 - 30.0 GeV";    break;
+    case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";    break;
 #endif
 #if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
@@ -2073,7 +2073,7 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
     case ( kNuisBANFFCC1piE1 ) : return "CC1$\\pi$ 2.5-30 GeV";    break;
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-    case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; 2.5 - 30.0 GeV";    break;
+    case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";    break;
 #endif
 #if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
@@ -2430,35 +2430,15 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
      * 2011-analysis nuisance parameters                                                                                                                                            
      */
 
+    //
+    // RHC systematics
+    //
+
     // 
     // SK detector  
     //                                                                                                                                                                                 
-  case ( kNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}$  ";                 break;
-#ifndef SKFSITOGETHER
-#if FSI_BINS != 3
-  case ( kNuisSuperkEff1RmuCCQEoth  ) : return "$f_{1R_{\\mu}: CCQEoth; r}^{SK}$";             break;
-  case ( kNuisSuperkEff1RmuCCQErc0u ) : return "$f_{1R_{\\mu}: CCQERC0; r}^{SK}$";             break;
-  case ( kNuisSuperkEff1RmuCCQErc1u ) : return "$f_{1R_{\\mu}: CCQERC1; r}^{SK}$";             break;
-  case ( kNuisSuperkEff1RmuCCQErc2u ) : return "$f_{1R_{\\mu}: CCQERC2; r}^{SK}$";             break;
-  case ( kNuisSuperkEff1RmuCCnonQE  ) : return "$f_{1R_{\\mu}: CCnQE; r}^{SK}$";               break;
-  case ( kNuisSuperkEff1RmuNC       ) : return "$f_{1R_{\\mu}: NC; r}^{SK}$";                  break;
-  case ( kNuisSuperkEff1RmuNueCC    ) : return "$f_{1R_{\\mu}: \\nu_e; r}^{SK}$";              break;
-#endif
-#if FSI_BINS != 2
-  case ( kNuisSuperkEff1ReNueSigCC0  )   : return "$f_{1R_{e}: osc \\nu_e CC E0; r}^{SK}$";     break;
-  case ( kNuisSuperkEff1ReNueSigCC1  )   : return "$f_{1R_{e}: osc \\nu_e CC E1; r}^{SK}$";     break;
-  case ( kNuisSuperkEff1ReNueSigCC2  )   : return "$f_{1R_{e}: osc \\nu_e CC E2; r}^{SK}$";     break;
-  case ( kNuisSuperkEff1ReNumuCC0    )   : return "$f_{1R_{e}: \\nu_{\\mu} CC E0; r}^{SK}$";     break;
-  case ( kNuisSuperkEff1ReNumuCC1    )   : return "$f_{1R_{e}: \\nu_{\\mu} CC E1; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNumuCC2    )   : return "$f_{1R_{e}: \\nu_{\\mu} CC E2; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNueCC0     )   : return "$f_{1R_{e}: \\nu_{e} CC E0; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNueCC1     )   : return "$f_{1R_{e}: \\nu_{e} CC E1; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNueCC2     )   : return "$f_{1R_{e}: \\nu_{e} CC E2; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNC0        )   : return "$f_{1R_{e}: NC E0; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNC1        )   : return "$f_{1R_{e}: NC E1; r}^{SK}$";   break;
-  case ( kNuisSuperkEff1ReNC2        )   : return "$f_{1R_{e}: NC E2; r}^{SK}$";   break;
-#endif
-#endif
+  case ( kNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}$";                 break;
+
     //                                                          
     // BANFF flux and cross-section params                                                                                                                                       
     //                                                                                                                                                                               
@@ -2539,40 +2519,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #ifndef __NUEONLY__
   case ( kNuisXSecNormAntiNuToNu ) : return "$f_{CC\\bar{\\nu}; t}$";      break;
 #endif
-#ifndef SKFSITOGETHER
-#if FSI_BINS != 3
-  case ( kNuisFSI000 ) :
-  case ( kNuisFSI001 ) :
-  case ( kNuisFSI002 ) :
-  case ( kNuisFSI003 ) :
-  case ( kNuisFSI004 ) :
-  case ( kNuisFSI005 ) :
-#endif
-#if FSI_BINS != 2
-  case ( kNuisFSI006 ) :
-  case ( kNuisFSI007 ) :
-  case ( kNuisFSI008 ) :
-  case ( kNuisFSI009 ) :
-  case ( kNuisFSI010 ) :
-  case ( kNuisFSI011 ) :
-  case ( kNuisFSI012 ) :
-  case ( kNuisFSI013 ) :
-  case ( kNuisFSI014 ) :
-  case ( kNuisFSI015 ) :
-  case ( kNuisFSI016 ) :
-  case ( kNuisFSI017 ) :
-#endif
-#endif
-    {
-#if FSI_BINS != 3
-      int ip = (int)p - (int)kNuisFSI000;
-#else
-      int ip = (int)p - (int)kNuisFSI006;
-#endif
-      return Form("$f_{%d; t, r}^{FSI}$", ip);
-      break;
-    }//FSI
-#ifdef SKFSITOGETHER
+
 #if FSI_BINS != 3                
   case ( kNuisSKDetFSI000 ) :
   case ( kNuisSKDetFSI001 ) :
@@ -2611,7 +2558,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSKDetFSI030 ) :
   case ( kNuisSKDetFSI031 ) :
 #endif
-#endif
+
     {
 #if FSI_BINS != 3
       int ip = (int)p - (int)kNuisSKDetFSI000;
@@ -2622,7 +2569,147 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
       break;
     }//FSI
 
-  case ( kNuisRHCToFHC ) : return "f^{RHC/FHC}"; break;
+  case ( kNuisRHCToFHC ) : return "$f^{RHC/FHC}$"; break;
+
+
+    //
+    // RHC systematics
+    //
+
+    // 
+    // SK detector  
+    //                                                                                                                                                                                 
+  case ( kRHCNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}RHC$";                 break;
+
+    //                                                          
+    // BANFF flux and cross-section params                                                                                                                                       
+    //                                                                                                                                                                               
+  case ( kRHCNuisBANFF00 ) :
+  case ( kRHCNuisBANFF01 ) :
+  case ( kRHCNuisBANFF02 ) :
+  case ( kRHCNuisBANFF03 ) :
+  case ( kRHCNuisBANFF04 ) :
+  case ( kRHCNuisBANFF05 ) :
+  case ( kRHCNuisBANFF06 ) :
+  case ( kRHCNuisBANFF07 ) :
+  case ( kRHCNuisBANFF08 ) :
+  case ( kRHCNuisBANFF09 ) :
+  case ( kRHCNuisBANFF10 ) :
+  case ( kRHCNuisBANFF11 ) :
+  case ( kRHCNuisBANFF12 ) :
+  case ( kRHCNuisBANFF13 ) :
+  case ( kRHCNuisBANFF14 ) :
+  case ( kRHCNuisBANFF15 ) :
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  case ( kRHCNuisBANFF16 ) :
+  case ( kRHCNuisBANFF17 ) :
+  case ( kRHCNuisBANFF18 ) :
+  case ( kRHCNuisBANFF19 ) :
+  case ( kRHCNuisBANFF20 ) :
+  case ( kRHCNuisBANFF21 ) :
+#endif
+#if BANFF_BINS == 1
+  case ( kRHCNuisBANFF22 ) :
+  case ( kRHCNuisBANFF23 ) :
+  case ( kRHCNuisBANFF24 ) :
+#endif
+  case ( kRHCNuisBANFFMAQE ) :
+  case ( kRHCNuisBANFFMARES ) :
+  case ( kRHCNuisBANFFCCQEE0 ) :
+#if BANFF_BINS != 3
+  case ( kRHCNuisBANFFCCQEE1 ) :
+  case ( kRHCNuisBANFFCCQEE2 ) :
+#endif
+  case ( kRHCNuisBANFFCC1piE0 ) :
+#if BANFF_BINS != 3
+  case ( kRHCNuisBANFFCC1piE1 ) :
+#endif
+#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+  case ( kRHCNuisBANFFNC1pi0 ) :
+#endif
+#if BANFF_BINS == 4
+    case ( kRHCNuisBANFFMECNorm ) :
+    case ( kRHCNuisBANFFPDDDoubleCount ) :
+#endif
+    {
+      int ip = (int)p - (int)kRHCNuisBANFF00;
+      return Form("$f_{%d; t, r}^{banff}RHC$", ip);
+      break;
+    }
+    
+    //
+    // XSec params not correlated with flux 
+    // 
+
+  case ( kRHCNuisXSecFermiMom   ) : return "$f_{pF; t, r}RHC$";                  break;
+  case ( kRHCNuisXSecSpecFunc   ) : return "$f_{SF; t, r}RHC$";                  break;
+  case ( kRHCNuisXSecWshape     ) : return "$f_{Wshape; t, r}RHC$";              break;
+  case ( kRHCNuisXSecShapeCCoth ) : return "$f_{CCothShape; t, r}RHC$";          break;
+  case ( kRHCNuisXSecPiLessDelta) : return "$f_{\\pi-less\\Delta; t, r}RHC$";    break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecBindE      ) : return "$f_{bindE; t, r}RHC$";               break;
+#endif
+  case ( kRHCNuisXSecNormCCcoh  ) : return "$f_{CCcoh; t}RHC$";                  break;
+#ifndef __NUMUONLY__
+  case ( kRHCNuisXSecNormNCcoh  ) : return "$f_{NCcoh; t}RHC$";                  break;
+#endif
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecNormNC1piC ) : return "$f_{NC1\\pi^\\pm; t}RHC$";           break;
+#endif
+  case ( kRHCNuisXSecNormNCoth  ) : return "$f_{NCoth; t}RHC$";                  break;
+  case ( kRHCNuisXSecNormNuEToNuMu  ) : return "$f_{CC\\nu_e; t}RHC$";           break;
+#ifndef __NUEONLY__
+  case ( kRHCNuisXSecNormAntiNuToNu ) : return "$f_{CC\\bar{\\nu}; t}RHC$";      break;
+#endif
+
+#if FSI_BINS != 3                
+  case ( kRHCNuisSKDetFSI000 ) :
+  case ( kRHCNuisSKDetFSI001 ) :
+  case ( kRHCNuisSKDetFSI002 ) :
+  case ( kRHCNuisSKDetFSI003 ) :
+  case ( kRHCNuisSKDetFSI004 ) :
+  case ( kRHCNuisSKDetFSI005 ) :
+#endif
+#if FSI_BINS != 2
+  case ( kRHCNuisSKDetFSI006 ) :
+  case ( kRHCNuisSKDetFSI007 ) :
+  case ( kRHCNuisSKDetFSI008 ) :
+  case ( kRHCNuisSKDetFSI009 ) :
+  case ( kRHCNuisSKDetFSI010 ) :
+  case ( kRHCNuisSKDetFSI011 ) :
+  case ( kRHCNuisSKDetFSI012 ) :
+  case ( kRHCNuisSKDetFSI013 ) :
+  case ( kRHCNuisSKDetFSI014 ) :
+  case ( kRHCNuisSKDetFSI015 ) :
+  case ( kRHCNuisSKDetFSI016 ) :
+  case ( kRHCNuisSKDetFSI017 ) :
+#endif
+#ifdef SKCORRELATIONS
+  case ( kRHCNuisSKDetFSI018 ) :
+  case ( kRHCNuisSKDetFSI019 ) :
+  case ( kRHCNuisSKDetFSI020 ) :
+  case ( kRHCNuisSKDetFSI021 ) :
+  case ( kRHCNuisSKDetFSI022 ) :
+  case ( kRHCNuisSKDetFSI023 ) :
+  case ( kRHCNuisSKDetFSI024 ) :
+  case ( kRHCNuisSKDetFSI025 ) :
+  case ( kRHCNuisSKDetFSI026 ) :
+  case ( kRHCNuisSKDetFSI027 ) :
+  case ( kRHCNuisSKDetFSI028 ) :
+  case ( kRHCNuisSKDetFSI029 ) :
+  case ( kRHCNuisSKDetFSI030 ) :
+  case ( kRHCNuisSKDetFSI031 ) :
+#endif
+
+    {
+#if FSI_BINS != 3
+      int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+#else
+      int ip = (int)p - (int)kRHCNuisSKDetFSI006;
+#endif
+      return Form("$f_{%d; t, r}^{SK+FSI}RHC$", ip);
+      break;
+    }//FSI
 
   default :
     return "--";
@@ -3317,7 +3404,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-    case ( kNuisBANFFNC1pi0           ) : return "f_banffNc1pi0";  break;
+    case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
 #endif
 #if BANFF_BINS == 4
     case ( kNuisBANFFMECNorm          ) : return "f_banffmec";     break;
@@ -3460,7 +3547,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisBANFFCC1piE1          ) : return "f_banffcc1pie1_rhc"; break;
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffNc1pi0_rhc";  break;
+  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffnc1pi0_rhc";  break;
 #endif
 #if BANFF_BINS == 4
   case ( kRHCNuisBANFFMECNorm          ) : return "f_banffmec_rhc";     break;
@@ -3587,7 +3674,7 @@ string t2kana::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kRHCNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffNc1pi0";  break;
+  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
 #endif
 #if BANFF_BINS == 4
   case ( kRHCNuisBANFFMECNorm          ) : return "f_banffmec";     break;
