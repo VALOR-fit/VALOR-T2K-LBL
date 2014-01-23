@@ -558,127 +558,15 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   //
 
   if(systematic == "sk_energy_scale") {
-#ifndef SKFSITOGETHER
-     this->GetSuperkDetector()->TweakEnergyScale(twkdial);
-#else
-     this->GetSuperkDetectorFSI()->TweakEnergyScale(twkdial);
-#endif
+    this->GetSuperkDetectorFSI()->TweakEnergyScale(twkdial);
+  }
+  else
+  if(systematic == "sk_energy_scale_rhc") {
+    this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twkdial);
   }
 
-#ifndef SKFSITOGETHER
-#if FSI_BINS != 3
-  else
-  if(systematic == "sk_1Rmu_ccqe_other_eff") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
-  }
-  else
-  // tweak CCQE energy-dependent ring-counting efficiency generating random
-  // efficiency tweaks and taking into account bin-to-bin correlations
-  if(systematic == "sk_1Rmu_ccqe_ring_counting_eff") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(); //< Cholesky method
-  }
-  //... or tweak the CCQE ring-counting efficiency in single Ereco bins only
-  // neglecting correlations (for validation purposes only)
-  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_0") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,twkdial,0.,0.); 
-  }
-  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_1") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,twkdial,0.); 
-  }
-  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_2") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,0.,twkdial); 
-  }
-  //special tweak for comparing to KIT analysis (ring counting + other)
-  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_0+other") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,twkdial,0.,0.); 
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
-  }
-  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_1+other") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,twkdial,0.); 
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
-  }
-  else if(systematic == "sk_1Rmu_ccqe_ring_counting_eff_2+other") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting(true,0.,0.,twkdial); 
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther(twkdial);
-  }
-  else
-  if(systematic == "sk_1Rmu_ccnonqe_eff") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE(twkdial);
-  }
-  else
-  if(systematic == "sk_1Rmu_nc_eff") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuNC(twkdial);
-  }
-  else
-  if(systematic == "sk_1Rmu_nuecc_eff") {
-     this->GetSuperkDetector()->TweakEfficiency1RmuNuECC(twkdial);
-  }
-#endif
-  // tweak 1Re efficiency generating random
-  // efficiency tweaks and taking into account bin-to-bin correlations
-#if FSI_BINS !=2
-  else
-  if(systematic == "sk_1Re_eff") {
-    this->GetSuperkDetector()->TweakEfficiencies1Re();
-  }
-  else
-  if(systematic.find("sk_1Re_eff_") != string::npos) {
-    bool found = false;
-    const int neff1Re = conv::kNumOfSKDetParams1Re;
-    TVectorD twkv(neff1Re);
-    for (int ip = 0; ip < neff1Re; ip++) {
-      twkv[ip] = 1;
-    }
-    for (int ip = 0; ip < neff1Re; ip++) {
-      if(systematic == Form("sk_1Re_eff_%03i",ip)) {
-	twkv[ip]=twkdial;
-	this->GetSuperkDetector()->TweakEfficiencies1Re(true,&twkv);
-	found = true;
-	break;
-      }
-    }//ib                                                                                                                                                                                                    
-#endif
-    if(!found) {
-      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-      exit(1);
-    }
-  }
   //
-  // FSI
-  //
-
-  // tweak all FSI parameters taking into account correlations
-  else
-  if(systematic == "fsi") {
-    this->GetFSI()->Tweak(); //< Cholesky method
-  }
-  // tweak an individual FSI parameter (ignores correlations, debug)
-  else
-  if(systematic.find("fsi_") != string::npos) {
-     bool found = false;
-     const int nfsi = conv::kNumOfFSIParams;
-     TVectorD twkv(nfsi);
-     for (int ip = 0; ip < nfsi; ip++) {
-       twkv[ip] = 1;
-     }
-     for (int ip = 0; ip < nfsi; ip++) {
-       if(systematic == Form("fsi_%03i",ip)) {
-	 twkv[ip]=twkdial;
-	 this->GetFSI()->Tweak(true,&twkv);
-	 found = true;
-	 break;
-       }
-     }//ib
-     if(!found) {
-       cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-       exit(1);
-     }   
-  }  
-#endif
-
-#ifdef SKFSITOGETHER
-  //
-  // sKDET + FSI
+  // SKDET + FSI
   //
 
   // tweak all FSI parameters taking into account correlations
@@ -686,31 +574,48 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   if(systematic == "skdetfsi") {
     this->GetSuperkDetectorFSI()->Tweak(); //< Cholesky method
   }
+  else
+  if(systematic == "skdetfsi_rhc") {
+    this->GetSuperkDetectorFSI()->TweakRHC(); //< Cholesky method
+  }
   // tweak an individual FSI parameter (ignores correlations, debug)
   else
   if(systematic.find("skdetfsi_") != string::npos) {
-     bool found = false;
-     const int nskdetfsi = conv::kNumOfSKDetFSIParams;
-     TVectorD twkv(nskdetfsi);
-     for (int ip = 0; ip < nskdetfsi; ip++) {
-       twkv[ip] = 1;
-     }
-     for (int ip = 0; ip < nskdetfsi; ip++) {
-       if(systematic == Form("skdetfsi_%03i",ip)) {
-	 twkv[ip]=twkdial;
-	 this->GetSuperkDetectorFSI()->Tweak(true,&twkv);
-	 found = true;
-	 break;
-       }
-     }//ib
+    bool is_rhc = systematic.find("rhc") != string::npos;
+    bool found = false;
+    int nskdetfsi = 0;
+    if(is_rhc)
+      nskdetfsi = conv::kNumOfRHCSKDetFSIParams;
+    else
+      nskdetfsi = conv::kNumOfSKDetFSIParams;
+    TVectorD twkv(nskdetfsi);
+    for (int ip = 0; ip < nskdetfsi; ip++) {
+      twkv[ip] = 1;
+    }
+    for (int ip = 0; ip < nskdetfsi; ip++) {
+      if(is_rhc) {
+	if(systematic == Form("skdetfsi_%03i_rhc",ip)) {
+	  twkv[ip]=twkdial;
+	  this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
+	  found = true;
+	  break;
+	}
+      }//is_rhc
+      else {
+	if(systematic == Form("skdetfsi_%03i",ip)) {
+	  twkv[ip]=twkdial;
+	  this->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+	  found = true;
+	  break;
+	}
+      }//!is_rhc
+    }//ip
      if(!found) {
        cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
        exit(1);
      }   
-  }
+  }//skdetfsi
     
-#endif
-
   //
   // BANFF & Uncorrelated BANFF
   //
@@ -720,30 +625,58 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   if(systematic == "banff") {
     this->GetBANFF()->Tweak(false,0); //< Cholesky method
   }
+  else
+  if(systematic == "banff_rhc") {
+    this->GetBANFF()->TweakRHC(false,0); //< Cholesky method
+  }
 
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else
   if(systematic.find("banff_") != string::npos) {
-    const int nbanff = conv::kNumOfParamsInBANFFfit;
-    TVectorD twkv(this->GetBANFF()->BestFitValues());
-    if(!best_banff) {
-      for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
-    }
-    PhysParamId_t p = util::PhysParamIdFromString(systematic);
-    int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
-    if(ip < 0) {
-      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-      exit(1);
-    }
-    twkv[ip] = twkdial;
+    bool is_rhc = systematic.find("rhc") != string::npos;
+    if(is_rhc) {
+      const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
+      TVectorD twkv(this->GetBANFF()->RHCBestFitValues());
+      if(!best_banff) {
+	for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+      }
+      PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);
+      if(ip < 0) {
+	cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+	exit(1);
+      }
+      twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
-    cout << "Exp >> Tweaking systematic string: " << systematic
-	 << ", NuisParam: " << util::AsString(p)
-	 << endl;
-    util::PrintCompact(twkv);
+      cout << "Exp >> Tweaking systematic string: " << systematic
+	   << ", NuisParam: " << util::AsString(p)
+	   << endl;
+      util::PrintCompact(twkv);
 #endif
-    this->GetBANFF()->Tweak(true,&twkv);
-  }
+      this->GetBANFF()->TweakRHC(true,&twkv);
+    }//is_rhc
+    else {
+      const int nbanff = conv::kNumOfParamsInBANFFfit;
+      TVectorD twkv(this->GetBANFF()->BestFitValues());
+      if(!best_banff) {
+	for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+      }
+      PhysParamId_t p = util::PhysParamIdFromString(systematic);
+      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+      if(ip < 0) {
+	cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+	exit(1);
+      }
+      twkv[ip] = twkdial;
+#ifdef __show_syst_tweak_debug__
+      cout << "Exp >> Tweaking systematic string: " << systematic
+	   << ", NuisParam: " << util::AsString(p)
+	   << endl;
+      util::PrintCompact(twkv);
+#endif
+      this->GetBANFF()->Tweak(true,&twkv);
+    }//!is_rhc
+  }//banff
 
   //
   // XSec
@@ -781,6 +714,42 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
   else if(systematic == "xsec_norm_antinutonu")
     this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, twkdial);
 #endif
+
+  else if(systematic == "xsec_pf_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecFermiMom      , twkdial);
+  else if(systematic == "xsec_sf_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecSpecFunc      , twkdial);
+  else if(systematic == "xsec_wshape_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecWshape        , twkdial);
+  else if(systematic == "xsec_shape_ccoth_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecShapeCCoth    , twkdial);
+  else if(systematic == "xsec_pilessdelta_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecPiLessDelta   , twkdial);
+#ifndef __NUEONLY__
+  else if(systematic == "xsec_bindE_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecBindE         , twkdial);
+#endif
+  else if(systematic == "xsec_norm_cccoh_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecNormCCcoh     , twkdial);
+#ifndef __NUMUONLY__
+  else if(systematic == "xsec_norm_nccoh_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCcoh     , twkdial);
+#endif
+#ifndef __NUEONLY__
+  else if(systematic == "xsec_norm_nc1piC_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecNormNC1piC    , twkdial);
+#endif
+  else if(systematic == "xsec_norm_ncoth_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCoth     , twkdial);
+  else if(systematic == "xsec_norm_nuetonumu_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecNormNuEToNuMu , twkdial);
+#ifndef __NUEONLY__
+  else if(systematic == "xsec_norm_antinutonu_rhc")
+    this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, twkdial);
+#endif
+
+  else if(systematic == "rhcfhcnorm")
+    this->GetNuXSec()->Tweak(kNuisRHCToFHC, twkdial);
 
   else {
      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;

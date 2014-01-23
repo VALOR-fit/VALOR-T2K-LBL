@@ -1225,6 +1225,8 @@ string t2kana::util::AsString(PhysParamId_t p)
 #endif
 #endif //SKDETFSI  
 
+  case ( kNuisRHCToFHC ) : return "RHC to FHC normalisation"; break;
+
       //************************** REVERSE HORN CURRENT *****************************
 
     case ( kRHCNuisSuperkEnergyScale     ) : return "SK energy scale; RHC";                 break;
@@ -1917,6 +1919,9 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
       }
 #endif
 #endif
+
+    case ( kNuisRHCToFHC ) : return "RHC to FHC normalisation"; break;
+
     default : 
       return "--";
   }
@@ -2344,6 +2349,9 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
       }
 #endif
 #endif
+
+    case ( kNuisRHCToFHC ) : return "RHC to FHC normalisation"; break;
+
     default : 
       return "--";
   }
@@ -2612,7 +2620,10 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #endif
       return Form("$f_{%d; t, r}^{SK+FSI}$", ip);
       break;
-    }//FSI                
+    }//FSI
+
+  case ( kNuisRHCToFHC ) : return "f^{RHC/FHC}"; break;
+
   default :
     return "--";
   }
@@ -2880,7 +2891,10 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
 #endif
       return Form("f_{%d; r}^{SK+FSI}", ip);
       break;
-    }//FSI                
+    }//FSI
+
+  case ( kNuisRHCToFHC ) : return "f^{RHC/FHC}"; break;
+
   default :
     return "--";
   }
@@ -3148,7 +3162,10 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 #endif
       return Form("f_{%d; t, r}^{SK+FSI}", ip);
       break;
-    }//FSI      
+    }//FSI
+
+  case ( kNuisRHCToFHC ) : return "f^{RHC/FHC}"; break;
+
   default :
     return "--";
   }
@@ -3390,6 +3407,8 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisSKDetFSI031 ) : return "f_skdetfsi031"; break;
 #endif
 #endif
+
+  case ( kNuisRHCToFHC ) : return "f_rhcfhcnorm"; break;
 
   //***************************** REVERSE HORN CURRENT *************************
 
@@ -4355,31 +4374,7 @@ t2kana::conv::PhysParamId_t
   if(sh == "sinsq2theta_decoh") return kPhypSinsq2ThetaDecoh;
 
   if(sh == "sk_energy_scale") return kNuisSuperkEnergyScale;
-#ifndef SKFSITOGETHER
-#if FSI_BINS != 3
-  if(sh == "sk_1Rmu_ccqe_other_eff") return kNuisSuperkEff1RmuCCQEoth;
-  if(sh == "sk_1Rmu_ccqe_ring_counting_eff_0") return kNuisSuperkEff1RmuCCQErc0u;
-  if(sh == "sk_1Rmu_ccqe_ring_counting_eff_1") return kNuisSuperkEff1RmuCCQErc1u;
-  if(sh == "sk_1Rmu_ccqe_ring_counting_eff_2") return kNuisSuperkEff1RmuCCQErc2u;
-  if(sh == "sk_1Rmu_ccnonqe_eff") return kNuisSuperkEff1RmuCCnonQE;
-  if(sh == "sk_1Rmu_nc_eff") return kNuisSuperkEff1RmuNC;
-  if(sh == "sk_1Rmu_nuecc_eff") return kNuisSuperkEff1RmuNueCC;
-#endif
-#if FSI_BINS != 2
-  if(sh == "sk_1Re_eff_signue_0") return kNuisSuperkEff1ReNueSigCC0;
-  if(sh == "sk_1Re_eff_signue_1") return kNuisSuperkEff1ReNueSigCC1;
-  if(sh == "sk_1Re_eff_signue_2") return kNuisSuperkEff1ReNueSigCC2;
-  if(sh == "sk_1Re_eff_numu_0") return kNuisSuperkEff1ReNumuCC0;
-  if(sh == "sk_1Re_eff_numu_1") return kNuisSuperkEff1ReNumuCC1;
-  if(sh == "sk_1Re_eff_numu_2") return kNuisSuperkEff1ReNumuCC2;
-  if(sh == "sk_1Re_eff_nue_0") return kNuisSuperkEff1ReNueCC0;
-  if(sh == "sk_1Re_eff_nue_1") return kNuisSuperkEff1ReNueCC1;
-  if(sh == "sk_1Re_eff_nue_2") return kNuisSuperkEff1ReNueCC2;
-  if(sh == "sk_1Re_eff_nc_0") return kNuisSuperkEff1ReNC0;
-  if(sh == "sk_1Re_eff_nc_1") return kNuisSuperkEff1ReNC1;
-  if(sh == "sk_1Re_eff_nc_2") return kNuisSuperkEff1ReNC2;
-#endif
-#endif
+
   if(sh == "banff_00") return kNuisBANFF00;
   if(sh == "banff_01") return kNuisBANFF01;
   if(sh == "banff_02") return kNuisBANFF02;
@@ -4542,6 +4537,8 @@ t2kana::conv::PhysParamId_t
   if(sh == "skdetfsi_031") return kNuisSKDetFSI031;
 #endif
 #endif
+
+  if(sh == "rhcfhcnorm") return kNuisRHCToFHC;
 
   //************************ REVERSE HORN CURRENT *****************************
 
@@ -4874,6 +4871,8 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
  }
 #endif
 #endif
+
+ if(sh == "RHC to FHC normalisation") return kNuisRHCToFHC;
 
  //************************* REVERSE HORN CURRENT ***************************
 

@@ -61,6 +61,7 @@ public:
   const TMatrixD & CovMatrix                  (void) const { return *fCovMtrx;          }
   const TMatrixD & CovMatrixInv               (void) const { return *fCovMtrxInv;       }
   const TMatrixD & CovMatrixCholesky          (void) const { return *fCovMtrxChoL;      }
+  const TVectorD & RHCBestFitValues           (void) const { return *fRHCBestFitValues; }
   const TMatrixD & RHCCovMatrix               (void) const { return *fRHCCovMtrx;       }
   const TMatrixD & RHCCovMatrixInv            (void) const { return *fRHCCovMtrxInv;    }
 
