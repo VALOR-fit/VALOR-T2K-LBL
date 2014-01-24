@@ -2431,7 +2431,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
      */
 
     //
-    // RHC systematics
+    // FHC systematics
     //
 
     // 
@@ -4560,31 +4560,7 @@ t2kana::conv::PhysParamId_t
 #ifndef __NUEONLY__
   if(sh == "xsec_norm_antinutonu") return kNuisXSecNormAntiNuToNu;
 #endif
-#ifndef SKFSITOGETHER
-#if FSI_BINS != 3
-  if(sh == "fsi_000") return kNuisFSI000;
-  if(sh == "fsi_001") return kNuisFSI001;
-  if(sh == "fsi_002") return kNuisFSI002;
-  if(sh == "fsi_003") return kNuisFSI003;
-  if(sh == "fsi_004") return kNuisFSI004;
-  if(sh == "fsi_005") return kNuisFSI005;
-#endif
-#if FSI_BINS != 2
-  if(sh == "fsi_006") return kNuisFSI006;
-  if(sh == "fsi_007") return kNuisFSI007;
-  if(sh == "fsi_008") return kNuisFSI008;
-  if(sh == "fsi_009") return kNuisFSI009;
-  if(sh == "fsi_010") return kNuisFSI010;
-  if(sh == "fsi_011") return kNuisFSI011;
-  if(sh == "fsi_012") return kNuisFSI012;
-  if(sh == "fsi_013") return kNuisFSI013;
-  if(sh == "fsi_014") return kNuisFSI014;
-  if(sh == "fsi_015") return kNuisFSI015;
-  if(sh == "fsi_016") return kNuisFSI016;
-  if(sh == "fsi_017") return kNuisFSI017;
-#endif
-#endif
-#ifdef SKFSITOGETHER
+
 #if FSI_BINS != 3
   if(sh == "skdetfsi_000") return kNuisSKDetFSI000;
   if(sh == "skdetfsi_001") return kNuisSKDetFSI001;
@@ -4622,7 +4598,6 @@ t2kana::conv::PhysParamId_t
   if(sh == "skdetfsi_029") return kNuisSKDetFSI029;
   if(sh == "skdetfsi_030") return kNuisSKDetFSI030;
   if(sh == "skdetfsi_031") return kNuisSKDetFSI031;
-#endif
 #endif
 
   if(sh == "rhcfhcnorm") return kNuisRHCToFHC;
@@ -4729,7 +4704,7 @@ t2kana::conv::PhysParamId_t
 #ifndef __NUEONLY__
   if(sh == "xsec_norm_antinutonu_rhc") return kRHCNuisXSecNormAntiNuToNu;
 #endif
-#ifdef SKFSITOGETHER
+
 #if FSI_BINS != 3
   if(sh == "skdetfsi_000_rhc") return kRHCNuisSKDetFSI000;
   if(sh == "skdetfsi_001_rhc") return kRHCNuisSKDetFSI001;
@@ -4767,7 +4742,6 @@ t2kana::conv::PhysParamId_t
   if(sh == "skdetfsi_029_rhc") return kRHCNuisSKDetFSI029;
   if(sh == "skdetfsi_030_rhc") return kRHCNuisSKDetFSI030;
   if(sh == "skdetfsi_031_rhc") return kRHCNuisSKDetFSI031;
-#endif
 #endif
 
   cout << sh << " not yet supported in util::PhysParamIdFromString()" << endl;

@@ -441,26 +441,13 @@ void SuperkExpectation::ResetSystematicVariations(void)
   cout << "Exp >> Reseting all systematic variations." << endl;
 #endif
 
-#ifndef SKFSITOGETHER
-  // SuperK detector systematics
-  this->GetSuperkDetector()->TweakEnergyScale                    (0.);
-#if FSI_BINS != 3
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther        (0.);
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting (true,0.,0.,0.); 
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE          (0.);
-  this->GetSuperkDetector()->TweakEfficiency1RmuNC               (0.);     
-  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC            (0.);
-#endif
-#if FSI_BINS != 2
-  this->GetSuperkDetector()->TweakEfficiencies1Re                (true,0);
-#endif
-  // FSI
-  this->GetFSI()->Tweak(true,0);
-#endif
-#ifdef SKFSITOGETHER
+  //
+  //FHC
+  //
+
+  // SK det + FSI
   this->GetSuperkDetectorFSI()->TweakEnergyScale(0.);
   this->GetSuperkDetectorFSI()->Tweak(true,0);
-#endif
 
   // BANFF
   this->GetBANFF()->Tweak(true,0);
@@ -485,6 +472,40 @@ void SuperkExpectation::ResetSystematicVariations(void)
   this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , 0.);
 #ifndef __NUEONLY__
   this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, 0.);
+#endif
+
+  //
+  //RHC
+  //
+  this->GetNuXSec()->Tweak(kNuisRHCToFHC, 0.);
+
+  // SK det + FSI
+  this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(0.);
+  this->GetSuperkDetectorFSI()->TweakRHC(true,0);
+
+  // BANFF
+  this->GetBANFF()->TweakRHC(true,0);
+
+  // X Section
+  this->GetNuXSec()->Tweak(kRHCNuisXSecFermiMom      , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecSpecFunc      , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecWshape        , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecShapeCCoth    , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecPiLessDelta   , 0.);
+#ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kRHCNuisXSecBindE         , 0.);
+#endif
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormCCcoh     , 0.);
+#ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNC1piC    , 0.);
+#endif
+#ifndef __NUMUONLY__
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCcoh     , 0.);
+#endif
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCoth     , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNuEToNuMu , 0.);
+#ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, 0.);
 #endif
 }
 //________________________________________________________________________________________
