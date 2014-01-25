@@ -139,7 +139,24 @@ typedef enum EOscChannelId
    kOscNuMuBar2NuTauBar,
    kOscNuTauBar2NuEBar,
    kOscNuTauBar2NuMuBar,
-   kOscNuTauBar2NuTauBar
+   kOscNuTauBar2NuTauBar,
+   //oscillations to or from sterile neutrinos NuS4 or NuS5
+   kOscNuE2NuS4,
+   kOscNuE2NuS5,
+   kOscNuMu2NuS4,
+   kOscNuMu2NuS5,
+   kOscNuS42NuE,
+   kOscNuS52NuE,
+   kOscNuS42NuMu,
+   kOscNuS52NuMu,
+   kOscNuEBar2NuS4Bar,
+   kOscNuEBar2NuS5Bar,
+   kOscNuMuBar2NuS4Bar,
+   kOscNuMuBar2NuS5Bar,
+   kOscNuS4Bar2NuEBar,
+   kOscNuS5Bar2NuEBar,
+   kOscNuS4Bar2NuMuBar,
+   kOscNuS5Bar2NuMuBar
 } 
 OscChannelId_t;
 

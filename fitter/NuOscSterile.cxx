@@ -772,6 +772,7 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
+  //For antineutrinos, use the complex conjugate of UMassUdagger
   if(util::IsAntiNeutrino(nu_start))
     {
     for(int i=1; i<=nFlav; i++)
@@ -783,8 +784,7 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-
-  // Add potential due to constant density matter to first diagonal element of UMassUdagger.
+  // Add potential due to constant density matter to real part of first diagonal element of UMassUdagger.
   // The factor of 1.0e9 is to convert the energy from GeV to eV.
   if(util::IsNeutrino(nu_start))
     UMassUdagger[1][1][re] +=2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe;
@@ -801,9 +801,23 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
   //columns of UMatter (using indices 1-5 only).
 
   double eigenvalues[nFlav+1];
+  eigenvalues[0] = 0.0;
 
   double UMatter[nFlav+1][nFlav+1][2];
   double UMatterDagger[nFlav+1][nFlav+1][2];
+  for(int j=0; j<=nFlav; j++)
+    {
+    UMatter[0][j][re] = 0.0;
+    UMatter[0][j][im] = 0.0;
+    UMatter[j][0][re] = 0.0;
+    UMatter[j][0][im] = 0.0;
+    UMatterDagger[0][j][re] = 0.0;
+    UMatterDagger[0][j][im] = 0.0;
+    UMatterDagger[j][0][re] = 0.0;
+    UMatterDagger[j][0][im] = 0.0;
+    }
+
+  //UMatterDagger is the Hermitian conjugate (complex conjugate of transpose) of UMatter
   for(int i=1; i<=nFlav; i++)
     {
     for(int j=1; j<=nFlav; j++)
@@ -822,17 +836,15 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
   // The neutrino is formed in a definite flavour state
   if(nu_start == kPdgNuE || nu_start == kPdgNuEBar)
-    {
     initialFlavourState[1][re] = 1.0;
-    }
   else if(nu_start == kPdgNuMu || nu_start == kPdgNuMuBar)
-      {
-      initialFlavourState[2][re] = 1.0;
-      }
-    else if(nu_start == kPdgNuTau || nu_start == kPdgNuTauBar)
-	{
-	  initialFlavourState[3][re] = 1.0;
-	}
+    initialFlavourState[2][re] = 1.0;
+  else if(nu_start == kPdgNuTau || nu_start == kPdgNuTauBar)
+    initialFlavourState[3][re] = 1.0;
+  else if(nu_start == kPdgNuS4 || nu_start == kPdgNuS4Bar)
+    initialFlavourState[4][re] = 1.0;
+  else if(nu_start == kPdgNuS5 || nu_start == kPdgNuS5Bar)
+    initialFlavourState[5][re] = 1.0;
 
   double initialMassState[nFlav+1][2];
   for(int i=0; i<=nFlav; i++)
