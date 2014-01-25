@@ -552,7 +552,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   if(usingOscParams)
     this->CalcVacuumPMNS();
 
-  // nue->nue, nuebar->nuebar
+  //nue->nue, nuebar->nuebar
   if(osch == kOscNuE2NuE || osch == kOscNuEBar2NuEBar)
     {
     oscProb = 1.0;
@@ -567,7 +567,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     } 
 
-  // numu->nue, nuebar->numubar 
+  //numu->nue, nuebar->numubar 
   else if(osch == kOscNuMu2NuE || osch == kOscNuEBar2NuMuBar)
     { 
     oscProb = 0.0;
@@ -583,7 +583,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       } 
     }
 
-  // numubar->nuebar, nue->numu
+  //numubar->nuebar, nue->numu
   else if(osch == kOscNuMuBar2NuEBar || osch == kOscNuE2NuMu)
     {
     oscProb = 0.0;
@@ -599,7 +599,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  // numu->numu, numubar->numubar
+  //numu->numu, numubar->numubar
   else if(osch == kOscNuMu2NuMu || osch == kOscNuMuBar2NuMuBar)
     {
     oscProb = 1.0;
@@ -614,7 +614,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  // nue->nutau, nutaubar->nuebar
+  //nue->nutau, nutaubar->nuebar
   else if(osch == kOscNuE2NuTau || osch == kOscNuTauBar2NuEBar)
     {
     oscProb = 0.0;
@@ -630,7 +630,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  // nuebar->nutaubar, nutau->nue
+  //nuebar->nutaubar, nutau->nue
   else if(osch == kOscNuEBar2NuTauBar || osch == kOscNuTau2NuE)
     {
     oscProb = 0.0;
@@ -646,7 +646,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  // numu->nutau, nutaubar->numubar
+  //numu->nutau, nutaubar->numubar
   else if(osch == kOscNuMu2NuTau || osch == kOscNuTauBar2NuMuBar)
      {
      oscProb = 0.0;
@@ -662,7 +662,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
        }
      }
 
-  // numubar->nutaubar, nutau->numu
+  //numubar->nutaubar, nutau->numu
   else if(osch == kOscNuMuBar2NuTauBar || osch == kOscNuTau2NuMu)
     {
     oscProb = 0.0;
@@ -678,7 +678,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
      }
    }
 
-  // nutau->nutau, nutaubar->nutaubar
+  //nutau->nutau, nutaubar->nutaubar
   else if(osch == kOscNuTau2NuTau || osch == kOscNuTauBar2NuTauBar)
     {
     oscProb = 1.0;
@@ -692,6 +692,134 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
 	}
       }
     }
+
+  //nue->nus4, nus4bar->nuebar
+  else if(osch ==  kOscNuE2NuS4 || osch == kOscNuS4Bar2NuEBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+	{
+	this->CalcMEProduct(1, 4, i, j);
+	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	}
+      }
+    }
+
+  //nus4->nue, nuebar->nus4bar
+  else if(osch ==  kOscNuS42NuE || osch == kOscNuEBar2NuS4Bar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+        this->CalcMEProduct(1, 4, i, j);
+        oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        }
+      }
+    }
+
+  //numu->nus4, nus4bar->numubar
+  else if(osch ==  kOscNuMu2NuS4 || osch == kOscNuS4Bar2NuMuBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+        this->CalcMEProduct(2, 4, i, j);
+        oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        }
+      }
+    }
+  //nus4->numu, numubar->nus4bar
+  else if(osch ==  kOscNuS42NuMu || osch == kOscNuMuBar2NuS4Bar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+        this->CalcMEProduct(2, 4, i, j);
+        oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        }
+      }
+    }
+
+  //nue->nus5, nus5bar->nuebar
+  else if(osch ==  kOscNuE2NuS5 || osch == kOscNuS5Bar2NuEBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+        this->CalcMEProduct(1, 5, i, j);
+        oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        }
+      }
+    }
+
+  //nus5->nue, nuebar->nus5bar
+  else if(osch ==  kOscNuS52NuE || osch == kOscNuEBar2NuS5Bar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+        this->CalcMEProduct(1, 5, i, j);
+        oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        }
+      }
+    }
+
+  //numu->nus5, nus5bar->numubar
+  else if(osch ==  kOscNuMu2NuS5 || osch == kOscNuS5Bar2NuMuBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+        this->CalcMEProduct(2, 5, i, j);
+        oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        }
+      }
+    }
+
+  //nus5->numu, numubar->nus5bar
+  else if(osch ==  kOscNuS52NuMu || osch == kOscNuMuBar2NuS5Bar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+        this->CalcMEProduct(2, 5, i, j);
+        oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        }
+      }
+    }
+
 
   return oscProb;
   
