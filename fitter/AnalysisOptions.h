@@ -100,12 +100,12 @@ Split t2kana::conv namespace into several smaller files
 
 #ifndef FSI_BINS
 #ifdef __NUMUONLY__
-#define FSI_BINS 2 //joint analysis, 18 bins
+#define FSI_BINS 2 //numu disapp analysis, 6 bins
 #else
 #ifdef __NUEONLY__
-#define FSI_BINS 3 //numu disapp analysis, 6 bins
+#define FSI_BINS 3 //nue app analysis, 12 bins
 #else
-#define FSI_BINS 1 //numu disapp analysis, 6 bins
+#define FSI_BINS 1 //joint analysis, 18 bins
 #endif
 #endif
 #endif

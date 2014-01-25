@@ -147,6 +147,8 @@ namespace util {
   bool IsNC               (conv::SuperkMode_t  m);
   bool IsMEC              (conv::SuperkMode_t  m);
   bool IsSystematic       (conv::PhysParamId_t p);
+  bool IsFHCSystematic    (conv::PhysParamId_t p);
+  bool IsRHCSystematic    (conv::PhysParamId_t p);
   bool IsMixingAngle      (conv::PhysParamId_t p);
   bool IsBANFF            (conv::PhysParamId_t p);
   bool IsXSec             (conv::PhysParamId_t p);
@@ -160,6 +162,8 @@ namespace util {
   bool IsAntiNeutrino     (int pdg_code);
   bool IsRHCSample        (conv::SuperkSample_t s);
   bool IsFHCSample        (conv::SuperkSample_t s);
+  bool Is1RMuSample       (conv::SuperkSample_t s);
+  bool Is1RESample        (conv::SuperkSample_t s);
 
   int            NumErecoBins  (conv::SuperkSample_t s);
   const double * ErecoBinEdges (conv::SuperkSample_t s);

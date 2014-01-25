@@ -326,7 +326,7 @@ double SuperkDetectorFSI::SystWght(
     skdetfsi_param_value = (*fCurrentValues)[iparam];
 
   // param tweaked
-  bool tweaked = TMath::Abs(skdetfsi_param_value - 1.) > conv::kASmallNum;
+  bool tweaked = fabs(skdetfsi_param_value - 1.) > conv::kASmallNum;
   if(!tweaked) {
     return 1.;
   }

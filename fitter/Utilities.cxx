@@ -5632,37 +5632,7 @@ bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
 #endif
   if(p == kNuisSuperkEnergyScale)
     return true;
-  /*
-  switch(p) {
-    case ( kNuisSuperkEnergyScale          ) : return true;  break;
-#ifdef SKFSITOGETHER
-#if FSI_BINS != 3
-    case ( kNuisSKDetFSI000                ) : return true;  break;
-    case ( kNuisSKDetFSI001                ) : return true;  break;
-    case ( kNuisSKDetFSI002                ) : return true;  break;
-    case ( kNuisSKDetFSI003                ) : return true;  break;
-    case ( kNuisSKDetFSI004                ) : return true;  break;
-    case ( kNuisSKDetFSI005                ) : return true;  break;
-#endif
-#if FSI_BINS != 2
-    case ( kNuisSKDetFSI006             ) : return true;  break;
-    case ( kNuisSKDetFSI007             ) : return true;  break;
-    case ( kNuisSKDetFSI008             ) : return true;  break;
-    case ( kNuisSKDetFSI009             ) : return true;  break;
-    case ( kNuisSKDetFSI010             ) : return true;  break;
-    case ( kNuisSKDetFSI011             ) : return true;  break;
-    case ( kNuisSKDetFSI012             ) : return true;  break;
-    case ( kNuisSKDetFSI013             ) : return true;  break;
-    case ( kNuisSKDetFSI014             ) : return true;  break;
-    case ( kNuisSKDetFSI015             ) : return true;  break;
-    case ( kNuisSKDetFSI016             ) : return true;  break;
-    case ( kNuisSKDetFSI017             ) : return true;  break;
-#endif
-#endif
-  default :
-    return false;
-  }
-  */
+
   return false;
 }
 //____________________________________________________________________________
@@ -5671,164 +5641,20 @@ bool t2kana::util::IsSystematic(PhysParamId_t p)
   if(p <= kPhypSinsq2ThetaDecoh)
     return false;
   return true;
-  /*
-  switch(p) {
-    case ( kPhypMixing23              ) : return false; break;
-    case ( kPhypMixing13              ) : return false; break;
-    case ( kPhypMixing12              ) : return false; break;
-    case ( kPhypDeltaCP               ) : return false; break;
-    case ( kPhypDm23sq                ) : return false; break;
-    case ( kPhypDm12sq                ) : return false; break;
-    case ( kPhypAlphaDecay            ) : return false; break;
-    case ( kPhypSinsq2ThetaDecay      ) : return false; break;
-    case ( kPhypMusqDecoh             ) : return false; break;
-    case ( kPhypSinsq2ThetaDecoh      ) : return false; break;
-    case ( kNuisSuperkEnergyScale     ) : return true;  break;
-#ifndef SKFSITOGETHER
-#if FSI_BINS != 3
-    case ( kNuisSuperkEff1RmuCCQEoth  ) : return true;  break;
-    case ( kNuisSuperkEff1RmuCCQErc0u ) : return true;  break;
-    case ( kNuisSuperkEff1RmuCCQErc1u ) : return true;  break;
-    case ( kNuisSuperkEff1RmuCCQErc2u ) : return true;  break;
-    case ( kNuisSuperkEff1RmuCCnonQE  ) : return true;  break;
-    case ( kNuisSuperkEff1RmuNC       ) : return true;  break;
-    case ( kNuisSuperkEff1RmuNueCC    ) : return true;  break;
-#endif
-#if FSI_BINS != 2
-    case ( kNuisSuperkEff1ReNueSigCC0 ) : return true;  break;
-    case ( kNuisSuperkEff1ReNueSigCC1 ) : return true;  break;
-    case ( kNuisSuperkEff1ReNueSigCC2 ) : return true;  break;
-    case ( kNuisSuperkEff1ReNumuCC0   ) : return true;  break;
-    case ( kNuisSuperkEff1ReNumuCC1   ) : return true;  break;
-    case ( kNuisSuperkEff1ReNumuCC2   ) : return true;  break;
-    case ( kNuisSuperkEff1ReNueCC0    ) : return true;  break;
-    case ( kNuisSuperkEff1ReNueCC1    ) : return true;  break;
-    case ( kNuisSuperkEff1ReNueCC2    ) : return true;  break;
-    case ( kNuisSuperkEff1ReNC0       ) : return true;  break;
-    case ( kNuisSuperkEff1ReNC1       ) : return true;  break;
-    case ( kNuisSuperkEff1ReNC2       ) : return true;  break;
-#endif
-#endif
-    case ( kNuisBANFF00               ) : return true;  break;
-    case ( kNuisBANFF01               ) : return true;  break;
-    case ( kNuisBANFF02               ) : return true;  break;
-    case ( kNuisBANFF03               ) : return true;  break;
-    case ( kNuisBANFF04               ) : return true;  break;
-    case ( kNuisBANFF05               ) : return true;  break;
-    case ( kNuisBANFF06               ) : return true;  break;
-    case ( kNuisBANFF07               ) : return true;  break;
-    case ( kNuisBANFF08               ) : return true;  break;
-    case ( kNuisBANFF09               ) : return true;  break;
-    case ( kNuisBANFF10               ) : return true;  break;
-    case ( kNuisBANFF11               ) : return true;  break;
-    case ( kNuisBANFF12               ) : return true;  break;
-    case ( kNuisBANFF13               ) : return true;  break;
-    case ( kNuisBANFF14               ) : return true;  break;
-    case ( kNuisBANFF15               ) : return true;  break;
-#if BANFF_BINS == 1
-    case ( kNuisBANFF16               ) : return true;  break;
-    case ( kNuisBANFF17               ) : return true;  break;
-    case ( kNuisBANFF18               ) : return true;  break;
-    case ( kNuisBANFF19               ) : return true;  break;
-    case ( kNuisBANFF20               ) : return true;  break;
-    case ( kNuisBANFF21               ) : return true;  break;
-    case ( kNuisBANFF22               ) : return true;  break;
-    case ( kNuisBANFF23               ) : return true;  break;
-    case ( kNuisBANFF24               ) : return true;  break;
-#endif
-
-    case ( kNuisBANFFMAQE             ) : return true;  break;
-    case ( kNuisBANFFMARES            ) : return true;  break;
-    case ( kNuisBANFFCCQEE0           ) : return true;  break;
-#if BANFF_BINS != 3
-    case ( kNuisBANFFCCQEE1           ) : return true;  break;
-    case ( kNuisBANFFCCQEE2           ) : return true;  break;
-#endif
-    case ( kNuisBANFFCC1piE0          ) : return true;  break;
-#if BANFF_BINS != 3
-    case ( kNuisBANFFCC1piE1          ) : return true;  break;
-#endif
-#if BANFF_BINS == 1
-    case ( kNuisBANFFNC1pi0           ) : return true;  break;
-#endif
-#if BANFF_BINS == 4
-    case ( kNuisBANFFMECNorm          ) : return true;  break;
-    case ( kNuisBANFFPDDDoubleCount   ) : return true;  break;
-#endif
-
-    case ( kNuisXSecFermiMom          ) : return true;  break;
-    case ( kNuisXSecSpecFunc          ) : return true;  break; 
-    case ( kNuisXSecWshape            ) : return true;  break;
-    case ( kNuisXSecShapeCCoth        ) : return true;  break;
-    case ( kNuisXSecPiLessDelta       ) : return true;  break;
-#ifndef __NUEONLY__
-    case ( kNuisXSecBindE             ) : return true;  break;
-#endif
-    case ( kNuisXSecNormCCcoh         ) : return true;  break;
-#ifndef __NUEONLY__
-    case ( kNuisXSecNormNC1piC        ) : return true;  break;
-#endif
-#ifndef __NUMUONLY__
-    case ( kNuisXSecNormNCcoh         ) : return true;  break;
-#endif
-    case ( kNuisXSecNormNCoth         ) : return true;  break;
-    case ( kNuisXSecNormNuEToNuMu     ) : return true;  break;
-#ifndef __NUEONLY__
-    case ( kNuisXSecNormAntiNuToNu    ) : return true;  break;
-#endif
-#ifndef SKFSITOGETHER
-#if FSI_BINS != 3
-    case ( kNuisFSI000                ) : return true;  break;
-    case ( kNuisFSI001                ) : return true;  break;
-    case ( kNuisFSI002                ) : return true;  break;
-    case ( kNuisFSI003                ) : return true;  break;
-    case ( kNuisFSI004                ) : return true;  break;
-    case ( kNuisFSI005                ) : return true;  break;
-#endif
-#if FSI_BINS != 2
-    case ( kNuisFSI006             ) : return true;  break;
-    case ( kNuisFSI007             ) : return true;  break;
-    case ( kNuisFSI008             ) : return true;  break;
-    case ( kNuisFSI009             ) : return true;  break;
-    case ( kNuisFSI010             ) : return true;  break;
-    case ( kNuisFSI011             ) : return true;  break;
-    case ( kNuisFSI012             ) : return true;  break;
-    case ( kNuisFSI013             ) : return true;  break;
-    case ( kNuisFSI014             ) : return true;  break;
-    case ( kNuisFSI015             ) : return true;  break;
-    case ( kNuisFSI016             ) : return true;  break;
-    case ( kNuisFSI017             ) : return true;  break;
-#endif
-#endif
-#ifdef SKFSITOGETHER
-#if FSI_BINS != 3
-    case ( kNuisSKDetFSI000           ) : return true;  break;
-    case ( kNuisSKDetFSI001           ) : return true;  break;
-    case ( kNuisSKDetFSI002           ) : return true;  break;
-    case ( kNuisSKDetFSI003           ) : return true;  break;
-    case ( kNuisSKDetFSI004           ) : return true;  break;
-    case ( kNuisSKDetFSI005           ) : return true;  break;
-#endif
-#if FSI_BINS != 2
-    case ( kNuisSKDetFSI006           ) : return true;  break;
-    case ( kNuisSKDetFSI007           ) : return true;  break;
-    case ( kNuisSKDetFSI008           ) : return true;  break;
-    case ( kNuisSKDetFSI009           ) : return true;  break;
-    case ( kNuisSKDetFSI010           ) : return true;  break;
-    case ( kNuisSKDetFSI011           ) : return true;  break;
-    case ( kNuisSKDetFSI012           ) : return true;  break;
-    case ( kNuisSKDetFSI013           ) : return true;  break;
-    case ( kNuisSKDetFSI014           ) : return true;  break;
-    case ( kNuisSKDetFSI015           ) : return true;  break;
-    case ( kNuisSKDetFSI016           ) : return true;  break;
-    case ( kNuisSKDetFSI017           ) : return true;  break;
-#endif
-#endif
-    default : 
-      return false;
-  }
-  return false;
-  */
+}
+//____________________________________________________________________________
+bool t2kana::util::IsFHCSystematic(PhysParamId_t p)
+{
+  return !IsRHCSystematic(p);
+}
+//____________________________________________________________________________
+bool t2kana::util::IsRHCSystematic(PhysParamId_t p)
+{
+  if(!IsSystematic(p))
+    return false;
+  if(p < kNuisRHCToFHC)
+    return false;
+  return true;
 }
 //____________________________________________________________________________
 bool t2kana::util::IsMixingAngle(PhysParamId_t p)
@@ -5879,6 +5705,20 @@ bool t2kana::util::IsFHCSample(conv::SuperkSample_t s)
 bool t2kana::util::IsRHCSample(conv::SuperkSample_t s)
 {
   if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    return true;
+  return false;
+}
+//___________________________________________________________________________
+bool t2kana::util::Is1RMuSample(conv::SuperkSample_t s)
+{
+  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsFCFV1RingMuLike)
+    return true;
+  return false;
+}
+//___________________________________________________________________________
+bool t2kana::util::Is1RESample(conv::SuperkSample_t s)
+{
+  if(s == kSKsRHCFCFV1RingELike || s == kSKsFCFV1RingELike)
     return true;
   return false;
 }
@@ -6468,7 +6308,7 @@ void t2kana::util::PrintCompactTex(
 //___________________________________________________________________________
 int t2kana::util::Sign(double tweaking_dial)
 {
-  if(TMath::Abs(tweaking_dial) < kASmallNum) return 0;
+  if(fabs(tweaking_dial) < kASmallNum) return 0;
   if (tweaking_dial < 0) return -1;
   return +1;
 }

@@ -168,8 +168,9 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+    bool is_rhc = util::IsRHCSample(s);
 
-    if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    if(is_rhc)
       nXSecSyst = kNumOfRHCXSecSyst;
     else
       nXSecSyst = kNumOfXSecSyst;
@@ -184,7 +185,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 
        // loop over cross-section systematic parameters
        for(int ip = 0; ip < nXSecSyst; ip++) {
-	 if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike) {
+	 if(is_rhc) {
 	   p = kListOfRHCXSecSyst[ip];
 	   if(p == kPhypUndefined) continue;
 	   //do we need weight splines for the current systematic parameter? 
@@ -438,33 +439,31 @@ double NuXSec::FinTuningWght(
   int nXSecSyst;
   PhysParamId_t p;
   bool is_banff_xsec_param;
+  bool is_rhc = util::IsRHCSample(s);
 
-  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+  if(is_rhc)
     nXSecSyst = kNumOfRHCXSecSyst;
   else
     nXSecSyst = kNumOfXSecSyst;
 
-
   for(int isyst = 0; isyst < nXSecSyst; isyst++) {
-    if(s == kSKsRHCFCFV1RingMuLike || s ==  kSKsRHCFCFV1RingELike)
-      {
+    if(is_rhc) {
       p = kListOfRHCXSecSyst[isyst];
       // "Tuning" involves reweighting to BANFF best-fit values.
       // Consider only the cross-section systematics that were included in the BANFF fit.
       is_banff_xsec_param = kRHCXSecSystIncludedInBANFF[isyst];
-      }
-    else
-      {
+    }
+    else {
       p = kListOfXSecSyst[isyst];
       is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
-      }
-     if(!is_banff_xsec_param) continue;
-     // Is the current systematic parameter applied to current sample/mode end energy bin?
-     bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
-     if(!apply) continue;
-     // Calculate weight
-     double wght = this->FinTuningWght_1p(p,s,m,Ereco,Etrue);
-     tot_wght *= wght;
+    }
+    if(!is_banff_xsec_param) continue;
+    // Is the current systematic parameter applied to current sample/mode end energy bin?
+    bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
+    if(!apply) continue;
+    // Calculate weight
+    double wght = this->FinTuningWght_1p(p,s,m,Ereco,Etrue);
+    tot_wght *= wght;
   }
 
   return tot_wght;
@@ -648,23 +647,44 @@ double NuXSec::SystWght(
 {
   double tot_wght = 1.;
 
-  for(int isyst = 0; isyst < kNumOfXSecSyst; isyst++) {
-     PhysParamId_t p = kListOfXSecSyst[isyst];
-     // Was tweaked?
-     double dt = 0.;
-     if(kXSecSystIncludedInBANFF[isyst])
-       dt = fabs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
-     else
-       dt = fabs(this->CurrentValue(p)); // non-banff normalisations
-     if(dt < kASmallNum) continue;
-     
-     // Is the current systematic parameter applied to current sample/mode end energy bin?
-     bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
-     if(!apply) continue;
-     // Calculate weight
-     double wght = this->SystWght_1p(p,s,m,Ereco,Etrue);
-     tot_wght *= wght;
-  }
+
+
+  int nXSecSyst;
+  PhysParamId_t p;
+  double dt;
+  bool is_rhc = util::IsRHCSample(s);
+
+  if(is_rhc)
+    nXSecSyst = kNumOfRHCXSecSyst;
+  else
+    nXSecSyst = kNumOfXSecSyst;
+
+  for(int isyst = 0; isyst < nXSecSyst; isyst++) {
+    if(is_rhc) {
+      p = kListOfRHCXSecSyst[isyst];
+      // Was tweaked?
+      if(kRHCXSecSystIncludedInBANFF[isyst])
+	dt = fabs(fBANFF->RHCCurrentValue(p) - fBANFF->RHCBestFitValue(p)); // banff parameters
+      else
+	dt = fabs(this->CurrentValue(p)); // non-banff normalisations
+    }//RHC
+    else {
+      p = kListOfXSecSyst[isyst];
+      // Was tweaked?
+      if(kXSecSystIncludedInBANFF[isyst])
+	dt = fabs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
+      else
+	dt = fabs(this->CurrentValue(p)); // non-banff normalisations
+    }//FHC
+    // Was tweaked?
+    if(dt < kASmallNum) continue;
+    // Is the current systematic parameter applied to current sample/mode end energy bin?
+    bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
+    if(!apply) continue;
+    // Calculate weight
+    double wght = this->SystWght_1p(p,s,m,Ereco,Etrue);
+    tot_wght *= wght;
+  }//isyst
   return tot_wght;
 }
 //________________________________________________________________________________________
@@ -1249,7 +1269,7 @@ int NuXSec::WghtSplineIdx(
     return -1;
   }
   int ip;
-  if(s == kSKsRHCFCFV1RingMuLike || s ==  kSKsRHCFCFV1RingELike)
+  if(util::IsRHCSample(s))
     ip = arr_index->RHCXSecSystIdx(p);
   else
     ip = arr_index->XSecSystIdx(p);
@@ -1327,16 +1347,14 @@ bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m
 {
   int isyst;
 
-  if(s ==  kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-    {
+  if(util::IsRHCSample(s)) {
     isyst = arr_index->RHCXSecSystIdx(p);
     if (isyst == -1) return false;
-    }
-  else
-    {
+  }
+  else {
     isyst = arr_index->XSecSystIdx(p);
     if (isyst == -1) return false;
-    }
+  }
 
   int is = arr_index->SuperkSampleIdx(s);
   if (is == -1) return false;
@@ -1353,21 +1371,18 @@ bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) c
   int isyst;
   bool apply;
 
-  TString paramName = AsString(p);
-  if(paramName.Contains("RHC"))
-    {
+  if(IsRHCSystematic(p)) {
     isyst = arr_index->RHCXSecSystIdx(p);
     if (isyst == -1) return false;
     apply = (Ereco >= kRHCXSecSystErecoCut[isyst][0] && Ereco < kRHCXSecSystErecoCut[isyst][1]) &&
       (Etrue >= kRHCXSecSystEtrueCut[isyst][0] && Etrue < kRHCXSecSystEtrueCut[isyst][1]);
-    }
-  else
-    {
+  }
+  else {
     isyst = arr_index->XSecSystIdx(p);
     if (isyst == -1) return false;
     apply = (Ereco >= kXSecSystErecoCut[isyst][0] && Ereco < kXSecSystErecoCut[isyst][1]) &&
       (Etrue >= kXSecSystEtrueCut[isyst][0] && Etrue < kXSecSystEtrueCut[isyst][1]);
-    }
+  }
 
   return apply;
 }
