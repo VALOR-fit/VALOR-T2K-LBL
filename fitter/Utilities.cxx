@@ -5675,9 +5675,11 @@ bool t2kana::util::IsMixingAngle(PhysParamId_t p)
 //____________________________________________________________________________
 bool t2kana::util::IsNeutrino(int pdg_code)
 {
-  if ( pdg_code == kPdgNuE   ||
-       pdg_code == kPdgNuMu  ||
-       pdg_code == kPdgNuTau ) 
+  if ( pdg_code == kPdgNuE    ||
+       pdg_code == kPdgNuMu   ||
+       pdg_code == kPdgNuTau  ||
+       pdg_code == kPdgNuS4   ||
+       pdg_code == kPdgNuS5   ) 
   {
     return true;
   }
@@ -5686,9 +5688,11 @@ bool t2kana::util::IsNeutrino(int pdg_code)
 //___________________________________________________________________________
 bool t2kana::util::IsAntiNeutrino(int pdg_code)
 {
-  if ( pdg_code == kPdgNuEBar   ||
-       pdg_code == kPdgNuMuBar  ||
-       pdg_code == kPdgNuTauBar ) 
+  if ( pdg_code == kPdgNuEBar    ||
+       pdg_code == kPdgNuMuBar   ||
+       pdg_code == kPdgNuTauBar  ||
+       pdg_code == kPdgNuS4Bar   ||
+       pdg_code == kPdgNuS5Bar   )
   {
     return true;
   }

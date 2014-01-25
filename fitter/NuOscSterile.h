@@ -87,8 +87,13 @@ class NuOscSterile
                         int mass1,
                         int mass2
 		        ); 
+
   double CalcVacuumOscProb(int nu_start,
 			   int nu_end,
+                           double energy);
+
+  double CalcMatterOscProb(int nu_start,
+                           int nu_end,
                            double energy);
 
  private:

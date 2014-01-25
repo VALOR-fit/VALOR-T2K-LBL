@@ -1,3 +1,4 @@
+
 //________________________________________________________________________________________
 /*
 
@@ -199,7 +200,6 @@ void NuOscSterile::SetDmsq(double dm21sq, double dm31sq, double dm41sq, double d
     dmsq[5][3] = dm51sq + dm31sq;
     }
 
-  usingOscParams = true;
 }
 //________________________________________________________________________________________
 void NuOscSterile::SetDeltaCP(double dcp12, double dcp13, double dcp15, double dcp34, double dcp35)
@@ -537,12 +537,12 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   //This method calculates the oscillation probabilities in vacuum by extending the 
   //standard 3-flavour formula to 4 or 5 flavours.
   //The 3-flavour formula is found in many papers and theses, e.g. equation 11 in hep-ph 0506165.
-  //The neutrino codes are the PDG ones and the neutrino energy is in GeV.
+  //The neutrino energy is in GeV.
 
   OscChannelId_t osch = util::GetOscChannel(nu_start, nu_end);
 
   if(osch == kOscUndefined) {
-    cerr << "NuOsc3Flavour: Not allowing (neutrino = " << nu_start << ") --> "
+    cerr << "NuOscSterile: Not allowing (neutrino = " << nu_start << ") --> "
          << "(neutrino = " << nu_end << ") oscillations" << endl;
     return 0.;
   }
@@ -696,3 +696,233 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   return oscProb;
   
 }
+//________________________________________________________________________________________
+double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
+{
+  //This method calculates the oscillation probabilities in constant density matter.
+  //The neutrino energy is in GeV.
+
+  OscChannelId_t osch = util::GetOscChannel(nu_start, nu_end);
+
+  if(osch == kOscUndefined) {
+    cerr << "NuOscSterile: Not allowing (neutrino = " << nu_start << ") --> "
+         << "(neutrino = " << nu_end << ") oscillations" << endl;
+    return 0.;
+  }
+
+  double oscProb = 0.0;
+
+  if(usingOscParams)
+    this->CalcVacuumPMNS();
+
+  //UMassUdagger is the product of the PMNS matrix, the mass squared matrix and the
+  //dagger of the PMNS matrix.
+  double UMassUdagger[nFlav+1][nFlav+1][2];
+
+  //The mass squared matrix has diagonal elements 0, dm21sq, dm31sq, dm41sq, dm51sq,
+  //and all off-diagonal elements are zero.
+  double massSqMatrix[nFlav+1][nFlav+1][2];
+
+  //UMass is the product of UVacuum and the mass squared matrix
+  double UMass[nFlav+1][nFlav+1][2];
+
+  for(int i=0; i<=nFlav; i++)
+    {
+    for(int j=0; j<=nFlav; j++)
+      {
+      massSqMatrix[i][j][re] = 0.0;
+      massSqMatrix[i][j][im] = 0.0;
+      UMass[i][j][re] = 0.0;
+      UMass[i][j][im] = 0.0;
+      UMassUdagger[i][j][re] = 0.0;
+      UMassUdagger[i][j][im] = 0.0;
+      }
+    }
+
+  massSqMatrix[2][2][re] = dmsq[2][1];
+  massSqMatrix[3][3][re] = dmsq[3][1];
+  massSqMatrix[4][4][re] = dmsq[4][1];
+  massSqMatrix[5][5][re] = dmsq[5][1];
+
+  for(int i=1; i<=nFlav; i++)
+    {
+    for(int j=1; j<=nFlav; j++)
+      {
+      for(int k=1; k<=nFlav; k++)
+        {
+        UMass[i][j][re] += UVacuum[i][k][re] * massSqMatrix[k][j][re]
+	                 - UVacuum[i][k][im] * massSqMatrix[k][j][im];
+        UMass[i][j][im] += UVacuum[i][k][re] * massSqMatrix[k][j][im]
+	                 + UVacuum[i][k][im] * massSqMatrix[k][j][re];
+        }
+      }
+    }
+
+  for(int i=1; i<=nFlav; i++)
+    {
+    for(int j=1; j<=nFlav; j++)
+      {
+      for(int k=1; k<=nFlav; k++)
+	{
+        UMassUdagger[i][j][re] += UMass[i][k][re] *  UVacuum[j][k][re]
+	                        - UMass[i][k][im] * -UVacuum[j][k][im];
+        UMassUdagger[i][j][im] += UMass[i][k][re] * -UVacuum[j][k][im]
+	                        + UMass[i][k][im] *  UVacuum[j][k][re];
+	}
+      }
+    }
+
+  if(util::IsAntiNeutrino(nu_start))
+    {
+    for(int i=1; i<=nFlav; i++)
+      {
+      for(int j=1; j<=nFlav; j++)
+        {
+	UMassUdagger[i][j][im] = -UMassUdagger[i][j][im];
+        }
+      }
+    }
+
+
+  // Add potential due to constant density matter to first diagonal element of UMassUdagger.
+  // The factor of 1.0e9 is to convert the energy from GeV to eV.
+  if(util::IsNeutrino(nu_start))
+    UMassUdagger[1][1][re] +=2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe;
+  else if(util::IsAntiNeutrino(nu_start))
+    UMassUdagger[1][1][re] -= 2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe;
+
+  //Please add diagonalisation code here
+
+  //Need to diagonalise UMassUdagger
+  //Note on array indices: array size nFlav+1 is declared and index 0 is not used.
+  //Indices 1-nFlav are used and correspond to the usual indices for the mixing angles and dmsq, 
+  //i.e. need to diagonalise 5 x 5 matrix with indices 1-5. 
+  //Please put the eigenvalues into the array called eigenvalues and enter the eigenvectors as the 
+  //columns of UMatter (using indices 1-5 only).
+
+  double eigenvalues[nFlav+1];
+
+  double UMatter[nFlav+1][nFlav+1][2];
+  double UMatterDagger[nFlav+1][nFlav+1][2];
+  for(int i=1; i<=nFlav; i++)
+    {
+    for(int j=1; j<=nFlav; j++)
+      {
+      UMatterDagger[i][j][re] = UMatter[j][i][re];
+      UMatterDagger[i][j][im] = -UMatter[j][i][im];
+      }
+    }
+
+  double initialFlavourState[nFlav+1][2];
+  for(int i=0; i<=nFlav; i++)
+    {
+    initialFlavourState[i][re] = 0.0;
+    initialFlavourState[i][im] = 0.0;
+    }
+
+  // The neutrino is formed in a definite flavour state
+  if(nu_start == kPdgNuE || nu_start == kPdgNuEBar)
+    {
+    initialFlavourState[1][re] = 1.0;
+    }
+  else if(nu_start == kPdgNuMu || nu_start == kPdgNuMuBar)
+      {
+      initialFlavourState[2][re] = 1.0;
+      }
+    else if(nu_start == kPdgNuTau || nu_start == kPdgNuTauBar)
+	{
+	  initialFlavourState[3][re] = 1.0;
+	}
+
+  double initialMassState[nFlav+1][2];
+  for(int i=0; i<=nFlav; i++)
+    {
+    initialMassState[i][re] = 0.0;
+    initialMassState[i][im] = 0.0;
+    }
+
+  // Convert the initial flavour state to initial mass states by multiplying by UMatterDagger
+  for(int i=1; i<=nFlav; i++)
+    {
+    for(int j=1; j<=nFlav; j++)
+      {
+      initialMassState[i][re] += UMatterDagger[i][j][re] * initialFlavourState[j][re]
+	                       - UMatterDagger[i][j][im] * initialFlavourState[j][im];
+      initialMassState[i][im] += UMatterDagger[i][j][re] * initialFlavourState[j][im]
+           	               + UMatterDagger[i][j][im] * initialFlavourState[j][re];
+      }
+    }
+
+  // Now propagate the mass eigenstates to the far detector
+  double finalMassState[nFlav+1][2];
+  for(int i=0; i<=nFlav; i++)
+    {
+    finalMassState[i][re] = 0.0;
+    finalMassState[i][im] = 0.0;
+    }
+
+  // For the first mass eigenstate, the difference in the squared masses is zero.
+  // Therefore only retain terms multiplied by cos(0), and drop those multiplied by sin(0).
+  finalMassState[1][re] = initialMassState[1][re];
+  finalMassState[1][im] = initialMassState[1][im];
+
+  for(int i=2; i<=nFlav; i++)
+    {
+    finalMassState[i][re] = initialMassState[i][re] *  cos((2.0 * kOscDimensFactor * (eigenvalues[i] - eigenvalues[1]) * fBaseline) / energy)
+                          - initialMassState[i][im] * -sin((2.0 * kOscDimensFactor * (eigenvalues[i] - eigenvalues[1]) * fBaseline) / energy);  
+    finalMassState[i][im] = initialMassState[i][re] * -sin((2.0 * kOscDimensFactor * (eigenvalues[i] - eigenvalues[1]) * fBaseline) / energy)
+                          + initialMassState[i][im] *  cos((2.0 * kOscDimensFactor * (eigenvalues[i] - eigenvalues[1]) * fBaseline) / energy);
+    }
+
+  double finalFlavourState[nFlav+1][2];
+  for(int i=0; i<=nFlav; i++)
+    {
+    finalFlavourState[i][re] = 0.0;
+    finalFlavourState[i][im] = 0.0;
+    }
+
+  // Convert final mass states to flavour states by multiplying by UMatter 
+  for(int i=i; i<nFlav; i++)
+    {
+    for(int j=1; j<nFlav; j++)
+      {
+      finalFlavourState[i][re] += UMatter[i][j][re] * finalMassState[j][re]
+	                        - UMatter[i][j][im] * finalMassState[j][im];
+      finalFlavourState[i][im] += UMatter[i][j][re] * finalMassState[j][im]
+	                        + UMatter[i][j][im] * finalMassState[j][re];
+      }
+    }
+
+  //Each component of finalFlavourState is the amplitude for the neutrino to interact 
+  //in the far detector as that flavour.
+  //The oscillation probabilities are the moduli squared of the amplitudes
+  if(nu_end == kPdgNuE || nu_end == kPdgNuEBar)
+    {
+    oscProb = finalFlavourState[1][re]*finalFlavourState[1][re] 
+            + finalFlavourState[1][im]*finalFlavourState[1][im];
+    }
+  else if(nu_end == kPdgNuMu || nu_end == kPdgNuMuBar)
+    {
+    oscProb = finalFlavourState[2][re]*finalFlavourState[2][re] 
+            + finalFlavourState[2][im]*finalFlavourState[2][im];
+    }
+  else if(nu_end == kPdgNuTau || nu_end == kPdgNuTauBar)
+    {
+    oscProb = finalFlavourState[3][re]*finalFlavourState[3][re] 
+            + finalFlavourState[3][im]*finalFlavourState[3][im];
+    }
+  else if(nu_end == kPdgNuS4 || nu_end == kPdgNuS4Bar)
+    {
+    oscProb = finalFlavourState[4][re]*finalFlavourState[4][re]
+	    + finalFlavourState[4][im]*finalFlavourState[4][im];
+    }
+  else if(nu_end == kPdgNuS5|| nu_end == kPdgNuS5Bar)
+    {
+    oscProb = finalFlavourState[5][re]*finalFlavourState[5][re]
+	    + finalFlavourState[5][im]*finalFlavourState[5][im];
+    }
+
+  return oscProb;
+
+}
+//________________________________________________________________________________________
