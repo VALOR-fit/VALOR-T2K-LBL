@@ -280,10 +280,10 @@ void test_systematic_error_propagation_all
   systematics.push_back("deltacp");
 
   //TESTING
-  systematics.clear();
+  //systematics.clear();
   //for(int ib = 0; ib < 11; ib++) { systematics.push_back(Form("banff_%02d",ib)); }
   //for(int ib = 0; ib < conv::kNumOfRHCSKDetFSIParams; ib++) { systematics.push_back(Form("skdetfsi_%03d_rhc",ib)); }
-  for(int ib = 0; ib < conv::kNumOfSKDetFSIParams; ib++) { systematics.push_back(Form("skdetfsi_%03d",ib)); }
+  //for(int ib = 0; ib < conv::kNumOfSKDetFSIParams; ib++) { systematics.push_back(Form("skdetfsi_%03d",ib)); }
 
 
 
