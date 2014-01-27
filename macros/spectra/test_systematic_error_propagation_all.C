@@ -311,12 +311,17 @@ void test_systematic_error_propagation_all
       if(systematic.find("banff_ma") == string::npos && systematic.find("banff_nc") == string::npos) {
 	//we know its a banff flux parameter. now check whether it effects numu(bar) or nue(bar) fluxes
 	conv::PhysParamId_t p_flux_check = util::PhysParamIdFromString(systematic);
+	cout << p_flux_check << "\t" << util::AsString(p_flux_check) << endl;
 	int flux_type;
-	if(util::IsRHCSystematic(p_flux_check))
-	  flux_type = kNuPdgCodeOfFluxParamInBANFFfit[util::ArrIdx->Instance()->BANFFSystIdx(p_flux_check)];
-	else
-	  flux_type = kNuPdgCodeOfRHCFluxParamInBANFFfit[util::ArrIdx->Instance()->RHCBANFFSystIdx(p_flux_check)];
-	bool effects_numu_fluxes = (flux_type == kPdgNuMu) || (flux_type == kPdgNuMuBar);
+	if(util::IsFHCSystematic(p_flux_check)) {
+	  int ip_flux_check = util::ArrIdx::Instance()->BANFFSystIdx(p_flux_check);
+	  flux_type = conv::kNuPdgCodeOfFluxParamInBANFFfit[ip_flux_check];
+	}
+	else {
+	  int ip_flux_check = util::ArrIdx::Instance()->RHCBANFFSystIdx(p_flux_check);
+	  flux_type = conv::kNuPdgCodeOfRHCFluxParamInBANFFfit[ip_flux_check];
+	}
+	bool effects_numu_fluxes = (flux_type == conv::kPdgNuMu) || (flux_type == conv::kPdgNuMuBar);
 	if(effects_numu_fluxes)
 	  show_sk_spectral_info_etrue_flux_binning_mu = true;
 	else
