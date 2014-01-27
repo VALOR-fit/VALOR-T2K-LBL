@@ -7,9 +7,10 @@ void mcstaterr_spectrum()
 
   TFile f84  ("$T2KOSCANA/2013results/SPECTRA/mcstaterror/numu/Template_mcstaterr_84.root");
   TFile f84d ("$T2KOSCANA/2013results/SPECTRA/mcstaterror/numu/Template_mcstaterr_84_doublestat.root");
+  TFile fsing("2013results/SPECTRA/1sigma_tweaks_spectra/unoscillated/sk_ereco_spectrum-twk_sys_sinsq2theta_octantone[12_0.000,13_0.000,23_0.000],dcp_0.000,dmsq_Normal[12_0.00000000,23_0.000000]eV2.root");
   TFile fsyst("$T2KOSCANA/2013results/SPECTRA/mcstaterror/numu/sk_ereco_spectrum-twk_sys_throw_sinsqtheta[12_0.000,13_0.000,23_0.000],dcp_0.000,dmsq_Normal[12_0.00000000,23_0.000000]eV2.root");
 
-  TH1D * h84 = 0, * h84d = 0, * h1 = 0, * hsyst = 0, * hnom = 0, * hstat = 0;
+  TH1D * h84 = 0, * h84d = 0, * h1 = 0, * hsyst = 0, * hnom = 0, * hstat = 0, * hsing = 0;
 
   //get nominal
   f84.GetObject("spe",hnom);
@@ -29,7 +30,7 @@ void mcstaterr_spectrum()
     double nev = hstat->GetBinContent(ix);
     if(nev < 1E-9) continue;
     hstat->SetBinContent(ix, 1 / TMath::Sqrt(nev));
-    cout << hstat->GetBinContent(ix) << endl;
+    //cout << hstat->GetBinContent(ix) << endl;
   }
 
   //84-bin 2D-error
@@ -60,8 +61,26 @@ void mcstaterr_spectrum()
   for(int ix = 1; ix <= nbins; ix++) {
     double env = h84d->GetBinContent(ix);
     double nom = hnom->GetBinContent(ix);
+    //if(nom > 0) cout << env << "\t" << nom << "\t" << (env-nom)/nom << endl;
     h84d->SetBinContent(ix, ((nom > 0) ? (env-nom)/nom : 0));
   } 
+
+  //a single systematic
+  TH1D * hnom2 = 0;
+  fsing.GetObject("nominal",hnom2);
+  fsing.GetObject("xsec_norm_antinutonu_1_sigma",hsing);
+  fsing.GetObject("xsec_norm_cccoh_1_sigma",hsing);
+  hsing->SetLineColor(kBlack);
+  hsing->SetLineWidth(width);
+  //fsing.GetObject("xsec_norm_nuetonumu_1_sigma",hsing);
+  for(int ix = 1; ix <= nbins; ix++) {
+    double env = hsing->GetBinContent(ix);
+    double nom = hnom2->GetBinContent(ix);
+    //env = env - (env-nom)/2; //hack the reduction in size of the antinumu ratio systematic
+    if(nom > 0) cout << env << "\t" << nom << "\t" << (env-nom)/nom << endl;
+    hsing->SetBinContent(ix, ((nom > 0) ? (env-nom)/nom : 0));
+  } 
+
 
   //draw
   //double ymax = TMath::Max(hsyst->GetMaximum() * 1.05, hstat->GetMaximum() * 1.05);
@@ -75,6 +94,7 @@ void mcstaterr_spectrum()
   h84->Draw("same");
   h1->Draw("same");
   h84d->Draw("same");
+  hsing->Draw("same");
 
   //legend
   TLegend * l = 0;
@@ -87,6 +107,7 @@ void mcstaterr_spectrum()
   l->AddEntry(h1,      " 1 etrue bin  *  1 mode","l");
   l->AddEntry(h84d,"84 etrue bins * 32 modes","l");
   l->AddEntry((TObject*)0,"    + double MC stats","");
+  l->AddEntry(hsing,"CC coherent","l");
   l->AddEntry(hsyst,"All systematic tweaks","l");
   //l->AddEntry(hstat,"Run 1-4 stat error","l");
   l->Draw();
@@ -95,6 +116,7 @@ void mcstaterr_spectrum()
   c->SaveAs("mcstaterr_spectrum.pdf");
   c->SaveAs("mcstaterr_spectrum.eps");
   hframe->GetXaxis()->SetRangeUser(0,2.9999);
+  hframe->GetYaxis()->SetRangeUser(0,0.05);
   c->Update();
   c->SaveAs("mcstaterr_spectrum_zoom.pdf");
   c->SaveAs("mcstaterr_spectrum_zoom.eps");
