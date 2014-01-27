@@ -495,37 +495,20 @@ double NuXSec::FinTuningWght_1p(
   // BANFF param, M_{A} RES
   //
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES || p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-  {
+    {
 #if SPLINE_TYPE == -1
-    return wght;
+      return wght;
 #endif
-    //    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
-    //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      //if(!wght_spl)
+      //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
       assert(wght_spl);
       if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
         tb = fBANFF->RHCBestFitValue(p);
       else
         tb = fBANFF->BestFitValue(p);
-      /*
-      if(s == kSKsFCFV1RingELike){
-	//SPLINES now in terms of x_MA, rather than sigma
-	double relerr = 0;
-	if(p == kNuisBANFFMAQE)
-#ifndef ONEOVERMAQE
-	  relerr = fSplineMAQERelErr;
-#else
-	relerr = fSpline1overMAQE2RelErr;
-#endif
-	else if(p == kNuisBANFFMARES)
-relerr = fSplineMARESRelErr;
-	double numerator = (tb-1) / relerr;
-	wght = wght_spl->Eval(numerator) / 1.;
-      }
-      else*/
       wght = wght_spl->Eval(tb);
-      //}
-  }
+    }
   
   //
   // BANFF param, CCQE   normalization, 0 - 1.5 GeV
@@ -535,41 +518,39 @@ relerr = fSplineMARESRelErr;
   // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
   // BANFF param, NC1pi0 normalization
   //  
-  else
-  if(p == kNuisBANFFCCQEE0
+  else if(p == kNuisBANFFCCQEE0
 #if BANFF_BINS != 3
-     || p == kNuisBANFFCCQEE1
-     || p == kNuisBANFFCCQEE2
+	  || p == kNuisBANFFCCQEE1
+	  || p == kNuisBANFFCCQEE2
 #endif
-     || p == kNuisBANFFCC1piE0
+	  || p == kNuisBANFFCC1piE0
 #if BANFF_BINS != 3
-     || p == kNuisBANFFCC1piE1
+	  || p == kNuisBANFFCC1piE1
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-     || p == kNuisBANFFNC1pi0
+	  || p == kNuisBANFFNC1pi0
 #endif
-     )
-  {
-   wght = fBANFF->BestFitValue(p);
-  }
+	  )
+    {
+      wght = fBANFF->BestFitValue(p);
+    }
   
-  else
-    if(p == kRHCNuisBANFFCCQEE0
+  else if(p == kRHCNuisBANFFCCQEE0
 #if BANFF_BINS != 3
-     || p == kRHCNuisBANFFCCQEE1
-     || p == kRHCNuisBANFFCCQEE2
+	  || p == kRHCNuisBANFFCCQEE1
+	  || p == kRHCNuisBANFFCCQEE2
 #endif
-     || p == kRHCNuisBANFFCC1piE0
+	  || p == kRHCNuisBANFFCC1piE0
 #if BANFF_BINS != 3
-     || p == kRHCNuisBANFFCC1piE1
+	  || p == kRHCNuisBANFFCC1piE1
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-     || p == kRHCNuisBANFFNC1pi0
+	  || p == kRHCNuisBANFFNC1pi0
 #endif
-       )
-      {
-	wght = fBANFF->RHCBestFitValue(p);
-      }
+	  )
+    {
+      wght = fBANFF->RHCBestFitValue(p);
+    }
   
   //
   // BANFF param, PDD double counting
@@ -580,29 +561,24 @@ relerr = fSplineMARESRelErr;
 #if SPLINE_TYPE == -1
       return wght;
 #endif
-      // bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
-      //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       if(p == kRHCNuisBANFFPDDDoubleCount)
-        tb = fabs(fBANFF->RHCBestFitValue(p));
+	tb = fabs(fBANFF->RHCBestFitValue(p));
       else
-        tb = fabs(fBANFF->BestFitValue(p));
+	tb = fabs(fBANFF->BestFitValue(p));
 #warning Need to check PDD spline evaluation is correct
       wght = wght_spl->Eval(tb);
-      //}
     }
 #endif
 
 #ifdef __show_banff_tuning_wght_mesg_debug__
-  {
-     cout << "Exp/NuXSec/FinTuningWght >> "
-          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
-          << ", Ereco = " << Ereco << " GeV" 
-          << ", Etrue = " << Etrue << " GeV => Weight [" 
-          << util::AsString(p) << "] = " << wght 
-          << endl;   
-  }
+    cout << "Exp/NuXSec/FinTuningWght >> "
+	 << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+	 << ", Ereco = " << Ereco << " GeV" 
+	 << ", Etrue = " << Etrue << " GeV => Weight [" 
+	 << util::AsString(p) << "] = " << wght 
+	 << endl;   
 #endif
 
   if(fabs(wght) > conv::kMaxAllowedWght) {
@@ -706,47 +682,24 @@ double NuXSec::SystWght_1p(
   // BANFF param # 32, M_{A} RES
   //
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES || p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-  {
+    {
 #if SPLINE_TYPE == -1
-    return wght;
+      return wght;
 #endif
-     //bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);//already done in SKMC
-     //if(ev) {
-       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-       assert(wght_spl);
-       if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-         {
-         tb = fBANFF->RHCBestFitValue(p);
-         tc = fBANFF->RHCCurrentValue(p);
-         }
-       else
-         {
-         tb = fBANFF->BestFitValue(p);
-         tc = fBANFF->CurrentValue(p);
-         }
-
-
-       //       SPLINES now in terms of x_MA, rather than sigma
-       /*
-       if(s == kSKsFCFV1RingELike){
-	 double relerr = 0;
-	 if(p == kNuisBANFFMAQE)
-#ifndef ONEOVERMAQE
-	   relerr = fSplineMAQERelErr;
-#else
-         relerr = fSpline1overMAQE2RelErr;
-#endif
-	 else if(p == kNuisBANFFMARES)
-	   relerr = fSplineMARESRelErr;
-	 double denominator = (tb-1) / relerr;
-	 double numerator = (tc-1) / relerr;
-	 wght = wght_spl->Eval(numerator) / wght_spl->Eval(denominator);
-       }
-       else*/
-       wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
-       
-       //}
-  }
+      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      assert(wght_spl);
+      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
+	{
+	  tb = fBANFF->RHCBestFitValue(p);
+	  tc = fBANFF->RHCCurrentValue(p);
+	}
+      else
+	{
+	  tb = fBANFF->BestFitValue(p);
+	  tc = fBANFF->CurrentValue(p);
+	}
+      wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+    }
 
   //
   //
@@ -757,47 +710,39 @@ double NuXSec::SystWght_1p(
   // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
   // BANFF param, NC1pi0 normalization
   // 
-  else
-    /*if(p >= kNuisBANFFCCQEE0
-#if BANFF_BINS != 1
-     && p <= kNuisBANFFCC1piE1
-#else
-     && p <= kNuisBANFFNC1pi0
-     #endif
-*/
-    if(p == kNuisBANFFCCQEE0
+  else if(p == kNuisBANFFCCQEE0
 #if BANFF_BINS != 3
-       || p == kNuisBANFFCCQEE1
-       || p == kNuisBANFFCCQEE2
+	  || p == kNuisBANFFCCQEE1
+	  || p == kNuisBANFFCCQEE2
 #endif
-       || p == kNuisBANFFCC1piE0
+	  || p == kNuisBANFFCC1piE0
 #if BANFF_BINS != 3
-       || p == kNuisBANFFCC1piE1
+	  || p == kNuisBANFFCC1piE1
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-       || p == kNuisBANFFNC1pi0
+	  || p == kNuisBANFFNC1pi0
 #endif
-       )
-  {
-    wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
-  }
+	  )
+    {
+      wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
+    }
 
-    else if(p == kRHCNuisBANFFCCQEE0
+  else if(p == kRHCNuisBANFFCCQEE0
 #if BANFF_BINS != 3
-       || p == kRHCNuisBANFFCCQEE1
-       || p == kRHCNuisBANFFCCQEE2
+	  || p == kRHCNuisBANFFCCQEE1
+	  || p == kRHCNuisBANFFCCQEE2
 #endif
-       || p == kRHCNuisBANFFCC1piE0
+	  || p == kRHCNuisBANFFCC1piE0
 #if BANFF_BINS != 3
-       || p == kRHCNuisBANFFCC1piE1
+	  || p == kRHCNuisBANFFCC1piE1
 #endif
 #if (BANFF_BINS != 2) && (BANFF_BINS != 4)
-       || p == kRHCNuisBANFFNC1pi0
+	  || p == kRHCNuisBANFFNC1pi0
 #endif
-	)
-      {
-        wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
-      }
+	  )
+    {
+      wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
+    }
 
   //
   // BANFF param, PDD double counting
@@ -808,20 +753,15 @@ double NuXSec::SystWght_1p(
 #if SPLINE_TYPE == -1
       return wght;
 #endif
-      // bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue); //already done in SKMC
-      //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       //Don't de-tune the MEC BANFF parameters
       //tb = fBANFF->BestFitValue(p);
-      
       if(p == kRHCNuisBANFFPDDDoubleCount)
         tc = fBANFF->RHCCurrentValue(p);
       else
         tc = fBANFF->CurrentValue(p);
-      //wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
       wght = wght_spl->Eval(tc);
-      //}
     }
 #endif
 
@@ -832,23 +772,19 @@ double NuXSec::SystWght_1p(
   // CC other shape
   // Binding energy
   //
-  else
-  if((p >= kNuisXSecFermiMom && p <= kNuisXSecShapeCCoth) ||
-     p == kNuisXSecBindE || (p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecShapeCCoth) || p == kRHCNuisXSecBindE)
-    /*  if(p == kNuisXSecFermiMom || p == kNuisXSecSpecFunc || p == kNuisXSecWshape || p == kNuisXSecShapeCCoth ||
-	|| p == kNuisXSecBindE)*/
-  {
+  else if((p >= kNuisXSecFermiMom && p <= kNuisXSecShapeCCoth)
+	  || p == kNuisXSecBindE
+	  || (p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecShapeCCoth)
+	  || p == kRHCNuisXSecBindE)
+    {
 #if SPLINE_TYPE == -1
-    return wght;
+      return wght;
 #endif
-    //    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);//already done in SKMC
-    //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       tc = this->CurrentValue(p);
-      wght = wght_spl->Eval(tc); //wght_spl->Eval(0); 
-      //}
-  }
+      wght = wght_spl->Eval(tc);
+    }
 
   //
   // CCQE norm 1.5 - 3.5 GeV
@@ -860,32 +796,26 @@ double NuXSec::SystWght_1p(
   // NC other norm
   // nue / numu cross section
   //
-  else
-  if(
-     (p >= kNuisXSecNormCCcoh && p <= kNuisXSecNormAntiNuToNu) || (p >= kRHCNuisXSecNormCCcoh && p <= kRHCNuisXSecNormAntiNuToNu) || p == kNuisRHCToFHC)
-    /*     p == kNuisXSecNormCCcoh || p == kNuisXSecNormNC1piC || p == kNuisXSecNormNCcoh ||
-	   p == kNuisXSecNormNCoth || p == kNuisXSecNormNuEToNuMu || p == kNuisXSecNormAntiNuToNu)*/
-  {
-    wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
-  }
+  else if((p >= kNuisXSecNormCCcoh && p <= kNuisXSecNormAntiNuToNu) 
+	  || (p >= kRHCNuisXSecNormCCcoh && p <= kRHCNuisXSecNormAntiNuToNu) 
+	  || p == kNuisRHCToFHC)
+    {
+      wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
+    }
 
   //
   // pion-less delta-decay
   //
-  else
-  if(p == kNuisXSecPiLessDelta || p == kRHCNuisXSecPiLessDelta)
-  {
+  else if(p == kNuisXSecPiLessDelta || p == kRHCNuisXSecPiLessDelta)
+    {
 #if SPLINE_TYPE == -1
-    return wght;
+      return wght;
 #endif
-    //    bool ev = this->IsThereAnEvent(s, m, Ereco, Etrue);//already done in SKMC
-    //if(ev) {
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       tc = TMath::Max(this->CurrentValue(p), -1.);
-      wght = wght_spl->Eval(tc); //wght_spl->Eval(0); 
-      //}
-  }
+      wght = wght_spl->Eval(tc);
+    }
 
 #ifdef __show_syst_var_wght_mesg_debug__
   if (wght != 1.)

@@ -26,6 +26,7 @@
 //#define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__ 
+//#define __show_banfftun_syst_var_wght_mesg_debug__ 
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__ 
 //#define __show_skipped_templates__ 
@@ -2048,7 +2049,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	x_mec = fNuXSec->MECBestFitValue();
 #endif
 
-#ifdef __show_syst_var_wght_mesg_debug__ 
+#ifdef __show_banfftun_syst_var_wght_mesg_debug__ 
       cout << "Exp/SKMC >> Applying BANFF tuning to sample, mode: " << AsString(s) << "\t" << AsString(m) << endl;
 #endif
 
@@ -2220,7 +2221,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	  }
 	  ////
 
-#ifdef __show_syst_var_wght_mesg_debug__ 
+#ifdef __show_banfftun_syst_var_wght_mesg_debug__ 
 	  // Get the energy of the current bin
 	  double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
 	  double Ereco = util::ErecoBinEdges(s,it-1) + kOneMeV;
@@ -2236,7 +2237,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	      << " (total = " << wght << ")"
 	      << endl;
 	  }
-#endif//__show_syst_var_wght_mesg_debug__ 
+#endif//__show_banfftun_syst_var_wght_mesg_debug__ 
 
 	}//ifb
       }//ivb
@@ -2354,23 +2355,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 	double wght = 1;
 
-#ifdef SKFSITOGETHER
 	// Plug-in SK efficiency + FSI uncertainties
 	double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
 	// Combined weight					  
 	wght = skfsi_wght * flux_wght * xsec_wght;
-#else
-	// Plug-in SK efficiency uncertainty due to fiducial volume, reduction chain, OD cut,
-	// ring-counting, PID, momentum cut and decay e- cut.
-	// The ring-counting error for CCQE has Ereco-dependence.
-	double skeff_wght = fSKDet->EfficiencyWeight(s,m,ErecoVarMin);
-
-	// Plug-in FSI weights
-	double fsi_wght = fFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
-
-	// Combined weight
-	wght = skeff_wght * flux_wght * xsec_wght * fsi_wght;
-#endif//!SKFSITOGETHER
 
 #ifdef SYSTWEIGHTSAREONE
 	wght = 1;
@@ -2464,26 +2452,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 #ifdef __show_syst_var_wght_mesg_debug__ 
 	    // Get the energy of the current bin
-	    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
-	    double Ereco = util::ErecoBinEdges(s,it-1) + kOneMeV;
-#ifndef SKFSITOGETHER	       
-	  if( skeff_wght != 1. || 
-	      flux_wght  != 1. || 
-	      xsec_wght  != 1. ||
-	      fsi_wght   != 1. )
-	  {
-	    cout << "Exp/SKMC/SystVarWght >> "
-	      << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m) 
-	      << ", Ereco = " << Ereco << " GeV" 
-	      << ", Etrue = " << Etrue << " GeV => Weights: " 
-	      << "SK eff = "  << skeff_wght
-	      << ", Flux = "  << flux_wght
-	      << ", XSec = "  << xsec_wght
-	      << ", FSI  = "  << fsi_wght
-	      << " (total = " << wght << ")"
-	      << endl;
-	  }
-#else
+	  double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+	  double Ereco = util::ErecoBinEdges(s,it-1) + kOneMeV;
 	  if( skfsi_wght != 1. ||
 	      flux_wght  != 1. ||
 	      xsec_wght  != 1. )
@@ -2498,7 +2468,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	      << " (total = " << wght << ")"
 	      << endl;
 	  }
-#endif//SKFSITOGETHER
 #endif//__show_syst_var_wght_mesg_debug__ 
 
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
