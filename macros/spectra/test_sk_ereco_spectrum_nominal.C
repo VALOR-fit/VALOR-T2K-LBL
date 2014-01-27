@@ -312,7 +312,7 @@ void test_sk_ereco_spectrum_nominal
   // Save histograms in a ROOT file
   //
 
-  TFile f(Form("sk_ereco_spectrum-%s%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")) ,"recreate");
+  TFile f(Form("sk_ereco_spectrum-%s%s-%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : ""),sk_sample) ,"recreate");
   nuisance_params.Write("nuisance_params");
   hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str());
   hErecoTot -> Write("erec_sk"); //KDI
@@ -372,7 +372,7 @@ void test_sk_ereco_spectrum_nominal
   streamer.seekg(0);
 
   //write to file
-  ofstream outfile (Form("sk_ereco_spectrum-%s%s.txt",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : "")));
+  ofstream outfile (Form("sk_ereco_spectrum-%s%s-%s.txt",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : ""),sk_sample));
   outfile.write (streamer.str().c_str(),size);
   outfile.close();
 

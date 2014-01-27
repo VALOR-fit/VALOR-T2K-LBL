@@ -33,10 +33,13 @@ void test_nsk
  double input_dm12sq      = -99,
  const string sample_str  = "1Rmu",
  const string template_str = "fin",
- const char * config_file = "analysis_configuration.xml"
+ const char * config_file = "analysis_configuration.xml",
+ bool verbose = false
 )
 {
   conv::SuperkSample_t s = util::SKSampleFromString(sample_str);
+  if(s == conv::kSKsUndefined)
+    return;
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
 
   conv::SKMCTemplateType_t t = util::SKMCTemplateTypeFromString(template_str);
@@ -91,12 +94,15 @@ void test_nsk
   osc_banff.nskoscnumu = 0; noosc_banff.nskoscnumu = 0; osc_nobanff.nskoscnumu = 0; noosc_nobanff.nskoscnumu = 0;
 
   // generate predictions for no oscillation, with BANFF
+  if(verbose) skexp.PrintSystematicVariations();
   skexp.Generate(ph);
   if(template_str=="fin")
     noosc_banff = nsk_integration(noosc_banff, &skexp, s, t);
 
   //undo banff
   skexp.GetBANFF()->RestoreNominalMC();
+  skexp.GetBANFF()->RestoreRHCNominalMC();
+  if(verbose) skexp.PrintSystematicVariations();
   skexp.Generate(ph);
   if(template_str=="fin")
     noosc_nobanff = nsk_integration(noosc_nobanff, &skexp, s, t);
@@ -104,6 +110,8 @@ void test_nsk
   //restore banff
   TVectorD twkv(skexp.GetBANFF()->BestFitValues());
   skexp.GetBANFF()->Tweak(true,&twkv);
+  TVectorD twkv_rhc(skexp.GetBANFF()->RHCBestFitValues());
+  skexp.GetBANFF()->TweakRHC(true,&twkv_rhc);
   // oscillate!
   ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
   ph.SetCurrValue(t2kana::conv::kPhypMixing13, input_mixing13);
@@ -113,12 +121,15 @@ void test_nsk
   ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  input_deltacp);
 
   // generate predictions for oscillation, with BANFF
+  if(verbose) skexp.PrintSystematicVariations();
   skexp.Generate(ph);
   if(template_str=="fin" || template_str=="tun" || template_str=="sys")
     osc_banff = nsk_integration(osc_banff, &skexp, s, t);
 
   //undo banff
   skexp.GetBANFF()->RestoreNominalMC();
+  skexp.GetBANFF()->RestoreRHCNominalMC();
+  if(verbose) skexp.PrintSystematicVariations();
   skexp.Generate(ph);
   osc_nobanff = nsk_integration(osc_nobanff, &skexp, s, t);
 

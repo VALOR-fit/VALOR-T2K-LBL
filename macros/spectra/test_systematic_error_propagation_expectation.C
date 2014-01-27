@@ -4,7 +4,8 @@
 test_systematic_error_propagation_expectation(
   bool         use_tex      = true,
   const char * output_file  = "systematic_tables_expectation.tex",
-  const char * config_file  = "analysis_configuration.xml"    /* */
+  const char * config_file  = "analysis_configuration.xml",    /* */
+  bool         for_tn       = false
 )
 {
   using namespace std;
@@ -26,26 +27,10 @@ test_systematic_error_propagation_expectation(
   //SK
   double SKDetEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,
      "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
-  double SKDetEff1RmuCCQEOthRelErr = util::XML2Dbl(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/other_error");
-  TMatrixD *SKDetEff1RmuCCQERCCovarRelErr = util::XML2TMatrixD(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccqe/rc_error");
-  double SKDetEff1RmuCCnonQERelErr   =
-    util::XML2Dbl(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/ccnonqe");
-  double SKDetEff1RmuNCRelErr        =
-    util::XML2Dbl(xml,root_node,
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nc");
-  double SKDetEff1RmuNuECCRelErr =
-    util::XML2Dbl(xml,root_node, 
-      "detector_systematics/superk/efficiency_relative_error/one_mu_ring/nuecc");
 
   //BANFF
   TMatrixD *BANFFCovMtrx = util::XML2TMatrixD(xml,root_node, "banff/covariance_matrix");
   TVectorD *BANNFBestFit = util::XML2TVectorD(xml,root_node, "banff/best_fit_values");
-
-  //FSI
-  TMatrixD *FSICovMtrx = util::XML2TMatrixD(xml,root_node, "fsi/covariance_matrix");
 
   //SKDetFSI
   TMatrixD *SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node, "skdetfsi/covariance_matrix");
@@ -53,6 +38,7 @@ test_systematic_error_propagation_expectation(
   //XSec
   double NormCCcohRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   double NormNC1piCRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
+  double NormNCcohRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
   double NormNCothRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
   double NormNuEToNuMuRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
   double NormNuToAntiNuRelErr = util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
@@ -98,42 +84,16 @@ test_systematic_error_propagation_expectation(
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << 0 << pctsymbol << " (movement in Ereco)"
 	   << endrow << endl;
-  systematic = "$f_{CCQEoth; r}^{SK}$";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuCCQEOthRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  for (int i = 0; i < 3; i++) {
-    systematic = Form("$f_{CCQERC%d; r}^{SK}$",i);
-    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << TMath::Sqrt(SKDetEff1RmuCCQERCCovarRelErr(i,i)) * 100 << pctsymbol
-	     << endrow << endl;
-  }
-  systematic = "$f_{CCnQE; r}^{SK}$";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuCCnonQERelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "$f_{NC; r}^{SK}$";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuNCRelErr * 100 << pctsymbol
-	   << endrow << endl;
-  systematic = "$f_{\\nu_e; r}^{SK}$";
-  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	   << SKDetEff1RmuNuECCRelErr * 100 << pctsymbol
-	   << endrow << endl;
   for (int i = 0; i < conv::kNumOfParamsInBANFFfit; i++) {
-    if(i == 16 || i == 17) continue; //skip MAQE, MARES
-    systematic = Form("$f_{%d; t, r}^{banff}$",i);
+    //if(i == 16 || i == 17) continue; //skip MAQE, MARES
+    systematic = Form("$f_{%d; t, r}^{banff}$ ",i);
+    if(!for_tn)
+      systematic += util::AsStringTex(conv::kNuisBANFF00+(conv::PhysParamId_t)i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << sqrt(BANFFCovMtrx(i,i)) * 100 / BANNFBestFit(i) << pctsymbol;
     streamer << endrow << endl;
   }
-
   systematic = "$f_{CCcoh; t}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
@@ -143,6 +103,11 @@ test_systematic_error_propagation_expectation(
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNC1piCRelErr * 100 << pctsymbol
+	   << endrow << endl;
+  systematic = "$f_{NCcoh; t}$";
+  streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
+	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
+	   << NormNCcohRelErr * 100 << pctsymbol
 	   << endrow << endl;
   systematic = "$f_{NCoth; t}$";
   streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
@@ -159,15 +124,10 @@ test_systematic_error_propagation_expectation(
 	   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	   << NormNuToAntiNuRelErr * 100 << pctsymbol
 	   << endrow << endl; NormNuToAntiNuRelErr;
-  for (int i = 0; i < conv::kNumOfFSIParams1Rmu; i++) {
-    systematic = Form("$f_{%d; t, r}^{FSI}$",i);
-    streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
-	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
-	     << sqrt(FSICovMtrx(i,i)) * 100 << pctsymbol;
-    streamer << endrow << endl;
-  }
-  for (int i = 0; i < conv::kNumOfSKDetFSIParams1Rmu; i++) {
-    systematic = Form("$f_{%d; t, r}^{SKFSI}$",i);
+  for (int i = 0; i < conv::kNumOfSKDetFSIParams; i++) {
+    systematic = Form("$f_{%d; t, r}^{SKFSI}$ ",i);
+    if(!for_tn)
+      systematic += util::AsStringTex(conv::kNuisSKDetFSI000+(conv::PhysParamId_t)i);
     streamer << setw(ncol1)  << setfill(' ') << systematic << endcolumn
 	     << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev)
 	     << sqrt(SKDetFSICovMtrx(i,i)) * 100 << pctsymbol;
