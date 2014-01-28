@@ -355,28 +355,34 @@ void NuOscSterile::CalcVacuumPMNS()
 	    }
 	  else if(k == i && l == j)
 	    {
-	    if(nFlav == 5 && ((i == 1 && (j == 2) || j == 3 || j == 5) || (i == 3 && (j == 4 || j == 5))))
+	    if(nFlav == 5)
 	      {
-	      rotationMatrix[i][j][k][l][re] = sinMixingAngle[i][j] * cos(deltaCP[i][j]);
-	      rotationMatrix[i][j][k][l][im] = sinMixingAngle[i][j] * -sin(deltaCP[i][j]);
-	      }
-	    else
-	      {
-	      rotationMatrix[i][j][k][l][re] = sinMixingAngle[i][j];
-	      rotationMatrix[i][j][k][l][im] = 0.0;
+	      if((i == 1 && (j == 2 || j == 3 || j == 5)) || (i == 3 && (j == 4 || j == 5)))
+	        {
+		rotationMatrix[i][j][k][l][re] = sinMixingAngle[i][j] * cos(deltaCP[i][j]);
+		rotationMatrix[i][j][k][l][im] = sinMixingAngle[i][j] * -sin(deltaCP[i][j]);
+		}
+	      else
+		{
+		rotationMatrix[i][j][k][l][re] = sinMixingAngle[i][j];
+		rotationMatrix[i][j][k][l][im] = 0.0;
+		}
 	      }
 	    }
 	  else if(k == j && l == i)
 	    {
-	    if(nFlav == 5 && ((i == 1 && (j == 2) || j == 3 || j == 5) || (i == 3 && (j == 4 || j == 5))))
-	      {
-	      rotationMatrix[i][j][k][l][re] = -sinMixingAngle[i][j] * cos(deltaCP[i][j]);
-	      rotationMatrix[i][j][k][l][im] = -sinMixingAngle[i][j] * sin(deltaCP[i][j]);
-	      }
-	    else
-	      {
-	      rotationMatrix[i][j][k][l][re] = -sinMixingAngle[i][j];
-	      rotationMatrix[i][j][k][l][im] = 0.0;
+	    if(nFlav == 5)
+              {
+	      if((i == 1 && (j == 2 || j == 3 || j == 5)) || (i == 3 && (j == 4 || j == 5)))
+		{
+		rotationMatrix[i][j][k][l][re] = -sinMixingAngle[i][j] * cos(deltaCP[i][j]);
+		rotationMatrix[i][j][k][l][im] = -sinMixingAngle[i][j] * sin(deltaCP[i][j]);
+		}
+	      else
+		{
+		rotationMatrix[i][j][k][l][re] = -sinMixingAngle[i][j];
+		rotationMatrix[i][j][k][l][im] = 0.0;
+		}
 	      }
 	    }
 	  else if(k == j && l == j)
@@ -1022,7 +1028,7 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
     }
 
   // Convert final mass states to flavour states by multiplying by UMatter 
-  for(int i=i; i<nFlav; i++)
+  for(int i=1; i<nFlav; i++)
     {
     for(int j=1; j<nFlav; j++)
       {
