@@ -1949,7 +1949,7 @@ double NuOsc3Flavour::Calc2FlavMatterOscProb(int nu_start, int nu_end, double en
       return 0.0;
     }  
   
-  double oscProb;
+  double oscProb = 0.0;
 
   //the mass squared matrix has diagonal elements 0, dmsq12, dmsq13; all off-diagonal elements are zero
   //UMassUdagger is the product of the PMNS matrix, the mass squared matrix, and the dagger of the PMNS matrix 

@@ -83,5 +83,7 @@ private:
   friend struct Cleaner;
 };
 
+ostream & operator<< (ostream & stream, const Rnd & plst);
+
 }      // t2kana namespace
 #endif // __t2kana_rnd__

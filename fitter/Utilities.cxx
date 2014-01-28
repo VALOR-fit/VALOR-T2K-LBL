@@ -7859,7 +7859,13 @@ int t2kana::util::DiagonaliseJacobi(std::complex<double> A[3][3],  std::complex<
   return -1;
 }
 //____________________________________________________________________________
-int t2kana::util::DiagonaliseGSL(int ndim, double * matrix_in, double * eigenvectors_out, double * eigenvalues_out)
+int t2kana::util::DiagonaliseGSL(
+#ifdef __GSL_ENABLED__ 
+int ndim, double * matrix_in, double * eigenvectors_out, double * eigenvalues_out
+#else
+int, double *, double *, double *
+#endif
+)
 {
 #ifdef __GSL_ENABLED__ 
   gsl_matrix_complex * matr = gsl_matrix_complex_alloc(ndim,ndim);

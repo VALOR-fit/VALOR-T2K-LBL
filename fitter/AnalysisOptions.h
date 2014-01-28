@@ -137,7 +137,7 @@ Split t2kana::conv namespace into several smaller files
 
 #ifndef ERECO_XSEC_BINS_1RE
 //#define ERECO_XSEC_BINS_1RE 1 // DEFAULT 0-0.3 GeV, 50 MeV 0.3-1.25 GeV (20 bins)
-#define ERECO_XSEC_BINS_1RE 2 // DEFAULT 0-0.3 GeV, 50 MeV 0.3-1.25 GeV (20 bins)
+#define ERECO_XSEC_BINS_1RE 2 // DEFAULT 50 MeV 0.0-1.25 GeV (25 bins)
 #endif
 
 #ifndef SPLINE_TYPE

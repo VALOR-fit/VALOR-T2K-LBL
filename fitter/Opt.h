@@ -81,5 +81,7 @@ private:
   friend struct Cleaner;
 };
 
+ostream & operator<< (ostream & stream, const Opt & plst);
+
 }      // t2kana namespace
 #endif // __t2kana_opt__

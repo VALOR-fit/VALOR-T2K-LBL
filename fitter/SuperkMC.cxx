@@ -962,16 +962,16 @@ void SuperkMC::FillSpecialTemplates(void)
 
 
 	    // MODIFIED
-	    double nev_martini;
-	    double nev_nieves;
-	    if (s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
+	    double nev_martini = 0.0;
+	    double nev_nieves  = 0.0;
+	    if(util::IsFHCSample(s)) {
 	      nev_martini = fMCTemplMECMartini->GetBinContent(ir,it);
 	      nev_nieves  = fMCTemplMECNieves-> GetBinContent(ir,it);
 	    }
 	    ////
 
 	    // ANTINU
-	    else if (s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
+	    else if(util::IsRHCSample(s)) {
 	      nev_martini = fMCTemplRHCMECMartini->GetBinContent(ir,it);
 	      nev_nieves  = fMCTemplRHCMECNieves-> GetBinContent(ir,it);
 	    }
@@ -986,13 +986,13 @@ void SuperkMC::FillSpecialTemplates(void)
 
 
 	    // MODIFIED
-	    if(s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
+	    if(util::IsFHCSample(s)){
 	      fMCTemplArrayMECMartini[it-1][ir-1] = nev_martini;
 	      fMCTemplArrayMECNieves [it-1][ir-1] = nev_nieves;
 	    }
 	    ////
 	    // ANTINU
-	    else if(s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
+	    else if(util::IsRHCSample(s)){
 	      fMCTemplArrayRHCMECMartini[it-1][ir-1] = nev_martini;
 	      fMCTemplArrayRHCMECNieves [it-1][ir-1] = nev_nieves;
 	    }
@@ -2145,13 +2145,13 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	    // MODIFIED
 	    double nev_martini;
 	    double nev_nieves;
-	    if (s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
+	    if (util::IsFHCSample(s)){
 	      nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
 	      nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
 	    }
 	    ////
 	    // ANTINU
-	    else if (s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
+	    else if (util::IsRHCSample(s)){
 	      nev_martini = fMCTemplArrayRHCMECMartini[it-1][ir-1];
 	      nev_nieves  = fMCTemplArrayRHCMECNieves [it-1][ir-1];
 	    }
@@ -2410,15 +2410,15 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 	  
 	    // MODIFIED
-	    double nev_martini;
-	    double nev_nieves;
-	    if (s==kSKsFCFV1RingMuLike || s==kSKsFCFV1RingELike){
+	    double nev_martini = 0.0;
+	    double nev_nieves  = 0.0;
+	    if (util::IsFHCSample(s)){
 	      nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
 	      nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
 	    }
 	    ////
 	    // ANTINU
-	    else if (s==kSKsRHCFCFV1RingMuLike || s==kSKsRHCFCFV1RingELike){
+	    else if (util::IsRHCSample(s)){
 	      nev_martini = fMCTemplArrayRHCMECMartini[it-1][ir-1];
 	      nev_nieves  = fMCTemplArrayRHCMECNieves [it-1][ir-1];
 	    }
@@ -3599,27 +3599,27 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 
 	    
 #ifdef PHYSHYPWEIGHTSAREONE
-              posc = 1;
+	    posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-              if(util::IsOscNuE(m)) posc = 0;
+	    if(util::IsOscNuE(m)) posc = 0;
 #endif
 #endif
 	    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
 	    double nev_osc = nev * posc;
 #ifndef PRODUCTIONMODE
-              this -> Template(s,m,kSKMCtFin) -> SetBinContent(ir,it, nev_osc);
+	    this -> Template(s,m,kSKMCtFin) -> SetBinContent(ir,it, nev_osc);
 #endif
 
 
 
-	      if (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_osc;
-	      // MODIFIED
-	      else if (s==kSKsFCFV1RingELike) fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_osc;
-	      ////
-	      // ANTINU
-	      else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_osc;
-	      else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev_osc;
-	      ////
+	    if (s==kSKsFCFV1RingMuLike) fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_osc;
+	    // MODIFIED
+	    else if (s==kSKsFCFV1RingELike) fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_osc;
+	    ////
+	    // ANTINU
+	    else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_osc;
+	    else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev_osc;
+	    ////
 
 
 
@@ -3664,7 +3664,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            // loop over Ereco
 	   for(int ir = 1; ir <= n_ereco_bins; ir++) {
 
-	     double nev;
+	     double nev = 0.0;
 	     if(s==kSKsFCFV1RingMuLike) nev =  fMCTemplArrayFin1Rmu[im][it-1][ir-1];            // MODIFIED
 	     else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
 	     
@@ -3718,7 +3718,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            // loop over Ereco
            for(int ir = 1; ir <= n_ereco_bins; ir++) {
 
-	     double nev;
+	     double nev = 0.0;
 	     if(s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1]; // MODIFIED
 	     else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
 	     
@@ -3772,7 +3772,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
            // loop over Ereco
            for(int ir = 1; ir <= n_ereco_bins; ir++) {
 	     
-	     double nev;
+	     double nev = 0.0;
 	     if(s==kSKsFCFV1RingMuLike) nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1];  // MODIFIED
              else if(s==kSKsRHCFCFV1RingMuLike) nev =  fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
 	     

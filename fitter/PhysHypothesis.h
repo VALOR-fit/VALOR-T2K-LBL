@@ -58,6 +58,8 @@ private:
    map<int,double>        fParams;
 };
 
+ostream & operator<< (ostream & stream, const PhysHypothesis & plst);
+
 } // t2kana
 
 #endif

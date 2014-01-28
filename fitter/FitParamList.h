@@ -270,6 +270,8 @@ private:
 ClassDef(FitParamList,1)
 };
 
+ostream & operator<< (ostream & stream, const FitParamList & plst);
+
 } // t2kana
   
 #endif

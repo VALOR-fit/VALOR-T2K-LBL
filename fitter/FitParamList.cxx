@@ -348,7 +348,7 @@ void FitParamList::SetTo(ROOT::Math::Minimizer * fitter)
 {
   if(!fitter) return;
   fitter->Clear();
-  map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  // map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
   // for ( ; iter != fIdMap.end(); ++iter) {
   for(int ip = 0; ip < fNParams; ip++) {  
     //    PhysParamId_t p = iter->first;
@@ -377,7 +377,7 @@ void FitParamList::SetTo(ROOT::Math::Minimizer * fitter)
 void FitParamList::SetTo(ROOT::Fit::Fitter * fitter)
 {
   if(!fitter) return;
-  map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
+  // map<t2kana::conv::PhysParamId_t, int>::const_iterator iter = fIdMap.begin();
   // for ( ; iter != fIdMap.end(); ++iter) {
   double par0[fNParams];
   for(int ip = 0; ip < fNParams; ip++) {

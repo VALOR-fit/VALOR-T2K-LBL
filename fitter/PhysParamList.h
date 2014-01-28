@@ -59,6 +59,8 @@ private:
 ClassDef(PhysParamList,1)
 };
 
+ostream & operator<< (ostream & stream, const PhysParamList & plst);
+
 } // t2kana
 
 #endif

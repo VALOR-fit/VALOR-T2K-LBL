@@ -86,6 +86,9 @@ CXXVRS_REV  = $(shell awk 'BEGIN {\
 # gcc version >= 4.1.0 ?
 GCC_GE_4_1_0  = $(shell awk 'BEGIN {\
 		if($(CXXVRS_MAJ)>=4 && $(CXXVRS_MIN)>0) print "YES"}') 
+# gcc version >= 4.2.1 ?
+GCC_GE_4_2_1  = $(shell awk 'BEGIN {\
+		if($(CXXVRS_MAJ)>=4 && $(CXXVRS_MIN)>0 && $(CXXVRS_REV)>=0) print "YES"}') 
 
 # MAC OS X with gcc, 32-bit mode
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -123,16 +126,29 @@ ifeq ($(strip $(ARCH)),macosx64)
 ARCH_OK       = YES
 IS_MACOSX     = YES
 CXXFLAGS      = -m64 -pipe -W -Wall \
-		-fsigned-char -fno-common -flat_namespace \
+		-fsigned-char -fno-common \
 		$(GOPT_WITH_CXX_DEBUG_FLAG) \
 		$(GOPT_WITH_CXX_OPTIMIZ_FLAG) \
 		$(GOPT_WITH_CXX_USERDEF_FLAGS) 
+ifneq ($(strip $(GCC_GE_4_2_1)), YES) 
+  CXXFLAGS   += -flat_namespace
+endif
+ifeq ($(strip $(GCC_GE_4_2_1)), YES) 
+  CXXFLAGS   += -Wno-overloaded-virtual
+endif
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
-  CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+  ifeq ($(strip $(GCC_GE_4_2_1)), YES) 
+    CXXFLAGS += -Wno-strict-aliasing
+  else
+    CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+  endif
 endif
 LDFLAGS       = -bind_at_load
-SOFLAGS       = -dynamiclib -flat_namespace \
+SOFLAGS       = -dynamiclib \
 		-single_module -undefined dynamic_lookup
+ifneq ($(strip $(GCC_GE_4_2_1)), YES) 
+  SOFLAGS    += -flat_namespace
+endif
 DllSuf       := dylib
 DllLinkSuf   := so
 StaticLibSuf := a

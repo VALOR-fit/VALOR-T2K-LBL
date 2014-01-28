@@ -547,7 +547,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
     return 0.;
   }
 
-  double oscProb;
+  double oscProb = 0.0;
 
   if(usingOscParams)
     this->CalcVacuumPMNS();

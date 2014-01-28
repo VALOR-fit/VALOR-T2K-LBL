@@ -238,7 +238,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                      << splname.str() << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 #endif
                 // Copy spline from input file
-		TSpline3 * spl;
+		TSpline3 * spl = NULL;
 		//Todo: add separate splines for RHC running if necessary
 		if     (s==kSKsFCFV1RingMuLike)     spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
 		else if(s==kSKsFCFV1RingELike)      spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str()); 
