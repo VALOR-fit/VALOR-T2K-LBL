@@ -3182,7 +3182,7 @@ void test_systematic_error_propagation_all
 	for(int itb = 0; itb < NEtrueBinOscNuMu; itb++) {
 	  snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinOscNuMu[itb]+1));
 	  snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinOscNuMu[itb+1]));
-	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_{e}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_{\\mu}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
 	  streamer << setw(ncol1)  << setfill(' ') << temp
 		   << endcolumn
 		   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskoscnumu_etrue_n[itb]
@@ -3207,7 +3207,7 @@ void test_systematic_error_propagation_all
 	for(int itb = 0; itb < NEtrueBinOscNuMuBar; itb++) {
 	  snprintf(bufl, sizeof(bufl), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuBarCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinLowEdge(EtrueBinOscNuMuBar[itb]+1));
 	  snprintf(bufu, sizeof(bufu), "%g",  skexp->GetSuperkMC()->Template(s, conv::kSKmOscNuMuBarCCQE, conv::kSKMCtFin)->GetYaxis()->GetBinUpEdge(EtrueBinOscNuMuBar[itb+1]));
-	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\nu_{e}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
+	  temp = "$N_{SK}$ (" + util::AsStringTex(s) + "): oscillation $\\bar{\\nu_{\\mu}}$ all (" + bufl + " $\\leq E_{t} <$ " + bufu + "GeV)";
 	  streamer << setw(ncol1)  << setfill(' ') << temp
 		   << endcolumn
 		   << setw(ncolnev)  << setfill(' ') << setprecision(nprecisionnev) << nskoscnumubar_etrue_n[itb]
