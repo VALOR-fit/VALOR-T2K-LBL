@@ -145,18 +145,26 @@ typedef enum EOscChannelId
    kOscNuE2NuS5,
    kOscNuMu2NuS4,
    kOscNuMu2NuS5,
+   kOscNuTau2NuS4,
+   kOscNuTau2NuS5,
    kOscNuS42NuE,
    kOscNuS52NuE,
    kOscNuS42NuMu,
    kOscNuS52NuMu,
+   kOscNuS42NuTau,
+   kOscNuS52NuTau,
    kOscNuEBar2NuS4Bar,
    kOscNuEBar2NuS5Bar,
    kOscNuMuBar2NuS4Bar,
    kOscNuMuBar2NuS5Bar,
+   kOscNuTauBar2NuS4Bar,
+   kOscNuTauBar2NuS5Bar,
    kOscNuS4Bar2NuEBar,
    kOscNuS5Bar2NuEBar,
    kOscNuS4Bar2NuMuBar,
-   kOscNuS5Bar2NuMuBar
+   kOscNuS5Bar2NuMuBar,
+   kOscNuS4Bar2NuTauBar,
+   kOscNuS5Bar2NuTauBar
 } 
 OscChannelId_t;
 

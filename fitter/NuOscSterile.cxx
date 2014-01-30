@@ -746,6 +746,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
         }
       }
     }
+
   //nus4->numu, numubar->nus4bar
   else if(osch ==  kOscNuS42NuMu || osch == kOscNuMuBar2NuS4Bar)
     {
@@ -760,6 +761,38 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
                 * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
         }
       }
+    }
+
+  //nutau->nus4, nus4bar->nutaubar
+  else if(osch ==  kOscNuTau2NuS4 || osch == kOscNuS4Bar2NuTauBar)
+    {
+      oscProb = 0.0;
+      for(int i=1; i<=3; i++)
+	{
+	  for(int j=i+1; j<=nFlav; j++)
+	    {
+	      this->CalcMEProduct(3, 4, i, j);
+	      oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	      oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	    }
+	}
+    }
+ 
+ //nus4->nutau, nutaubar->nus4bar
+  else if(osch ==  kOscNuS42NuTau || osch == kOscNuTauBar2NuS4Bar)
+    {
+      oscProb = 0.0;
+      for(int i=1; i<=3; i++)
+	{
+	  for(int j=i+1; j<=nFlav; j++)
+	    {
+	      this->CalcMEProduct(3, 4, i, j);
+	      oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	      oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	    }
+	}
     }
 
   //nue->nus5, nus5bar->nuebar
@@ -826,6 +859,37 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
+  //nutau->nus5, nus5bar->nutaubar
+  else if(osch ==  kOscNuTau2NuS5 || osch == kOscNuS5Bar2NuTauBar)
+    {
+      oscProb = 0.0;
+      for(int i=1; i<=3; i++)
+	{
+	  for(int j=i+1; j<=nFlav; j++)
+	    {
+	      this->CalcMEProduct(3, 5, i, j);
+	      oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	      oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	    }
+	}
+    }
+
+  //nus5->nutau, nutaubar->nus5bar
+  else if(osch ==  kOscNuS52NuTau || osch == kOscNuTauBar2NuS5Bar)
+    {
+      oscProb = 0.0;
+      for(int i=1; i<=3; i++)
+	{
+	  for(int j=i+1; j<=nFlav; j++)
+	    {
+	      this->CalcMEProduct(3, 5, i, j);
+	      oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	      oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	    }
+	}
+    }
 
   return oscProb;
   

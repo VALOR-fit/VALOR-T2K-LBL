@@ -5092,21 +5092,29 @@ t2kana::conv::OscChannelId_t
   if ( nu_start == kPdgNuE      && nu_end == kPdgNuS5     ) return kOscNuE2NuS5;
   if ( nu_start == kPdgNuMu     && nu_end == kPdgNuS4     ) return kOscNuMu2NuS4;
   if ( nu_start == kPdgNuMu     && nu_end == kPdgNuS5     ) return kOscNuMu2NuS5;
+  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuS4     ) return kOscNuTau2NuS4;
+  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuS5     ) return kOscNuTau2NuS5;
 
   if ( nu_start == kPdgNuS4     && nu_end == kPdgNuE      ) return kOscNuS42NuE;
   if ( nu_start == kPdgNuS5     && nu_end == kPdgNuE      ) return kOscNuS52NuE;
   if ( nu_start == kPdgNuS4     && nu_end == kPdgNuMu     ) return kOscNuS42NuMu;
   if ( nu_start == kPdgNuS5     && nu_end == kPdgNuMu     ) return kOscNuS52NuMu;
+  if ( nu_start == kPdgNuS4     && nu_end == kPdgNuTau    ) return kOscNuS42NuTau;
+  if ( nu_start == kPdgNuS5     && nu_end == kPdgNuTau    ) return kOscNuS52NuTau;
 
   if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuS4Bar  ) return kOscNuEBar2NuS4Bar;
   if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuS5Bar  ) return kOscNuEBar2NuS5Bar;
   if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuS4Bar  ) return kOscNuMuBar2NuS4Bar;
   if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuS5Bar  ) return kOscNuMuBar2NuS5Bar;
-   
+  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuS4Bar  ) return kOscNuTauBar2NuS4Bar;
+  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuS5Bar  ) return kOscNuTauBar2NuS5Bar;
+
   if ( nu_start == kPdgNuS4Bar  && nu_end == kPdgNuEBar   ) return kOscNuS4Bar2NuEBar;
   if ( nu_start == kPdgNuS5Bar  && nu_end == kPdgNuEBar   ) return kOscNuS5Bar2NuEBar;
   if ( nu_start == kPdgNuS4Bar  && nu_end == kPdgNuMuBar  ) return kOscNuS4Bar2NuMuBar;
   if ( nu_start == kPdgNuS5Bar  && nu_end == kPdgNuMuBar  ) return kOscNuS5Bar2NuMuBar;
+  if ( nu_start == kPdgNuS4Bar  && nu_end == kPdgNuTauBar ) return kOscNuS4Bar2NuTauBar;
+  if ( nu_start == kPdgNuS5Bar  && nu_end == kPdgNuTauBar ) return kOscNuS5Bar2NuTauBar;
 
   return kOscUndefined;
 }
