@@ -542,6 +542,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
 {
   //This method calculates the oscillation probabilities in vacuum by extending the 
   //standard 3-flavour formula to 4 or 5 flavours.
+  //Oscillations between the sterile states 4 and 5 are neglected as they give no observable effects.
   //The 3-flavour formula is found in many papers and theses, e.g. equation 11 in hep-ph 0506165.
   //The neutrino energy is in GeV.
 
@@ -558,6 +559,8 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   if(usingOscParams)
     this->CalcVacuumPMNS();
 
+  //**************************** OSCILLATIONS BETWEEN ACTIVE NEUTRINOS ******************************
+
   //nue->nue, nuebar->nuebar
   if(osch == kOscNuE2NuE || osch == kOscNuEBar2NuEBar)
     {
@@ -573,6 +576,38 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     } 
 
+  //nue->numu, numubar->nuebar
+  else if(osch == kOscNuE2NuMu || osch == kOscNuMuBar2NuEBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+	{
+	this->CalcMEProduct(1, 2, i, j);
+	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	}
+      }
+    }
+
+  //nue->nutau, nutaubar->nuebar
+  else if(osch == kOscNuE2NuTau || osch == kOscNuTauBar2NuEBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+	{
+	this->CalcMEProduct(1, 3, i, j);
+	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	}
+      }
+    }
+
   //numu->nue, nuebar->numubar 
   else if(osch == kOscNuMu2NuE || osch == kOscNuEBar2NuMuBar)
     { 
@@ -581,28 +616,12 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       {
       for(int j=i+1; j<=nFlav; j++)
 	{
-	this->CalcMEProduct(2, 1, i, j);
-	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	this->CalcMEProduct(1, 2, i, j);
+	oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
 	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
 		* sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);	
         }
       } 
-    }
-
-  //numubar->nuebar, nue->numu
-  else if(osch == kOscNuMuBar2NuEBar || osch == kOscNuE2NuMu)
-    {
-    oscProb = 0.0;
-    for(int i=1; i<=3; i++)
-      {
-      for(int j=i+1; j<=nFlav; j++)
-	{
-	this->CalcMEProduct(2, 1, i, j);
-	oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
-		* sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	}
-      }
     }
 
   //numu->numu, numubar->numubar
@@ -620,31 +639,15 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  //nue->nutau, nutaubar->nuebar
-  else if(osch == kOscNuE2NuTau || osch == kOscNuTauBar2NuEBar)
+  //numu->nutau, nutaubar->numubar
+  else if(osch == kOscNuMu2NuTau || osch == kOscNuTauBar2NuMuBar)
     {
     oscProb = 0.0;
     for(int i=1; i<=3; i++)
       {
       for(int j=i+1; j<=nFlav; j++)
 	{
-	this->CalcMEProduct(3, 1, i, j);
-	oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
-		* sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	}
-      }
-    }
-
-  //nuebar->nutaubar, nutau->nue
-  else if(osch == kOscNuEBar2NuTauBar || osch == kOscNuTau2NuE)
-    {
-    oscProb = 0.0;
-    for(int i=1; i<=3; i++)
-      {
-      for(int j=i+1; j<=nFlav; j++)
-	{
-	this->CalcMEProduct(3, 1, i, j);
+	this->CalcMEProduct(2, 3, i, j);
 	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
 	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
 		* sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
@@ -652,24 +655,24 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  //numu->nutau, nutaubar->numubar
-  else if(osch == kOscNuMu2NuTau || osch == kOscNuTauBar2NuMuBar)
-     {
-     oscProb = 0.0;
-     for(int i=1; i<=3; i++)
-       {
-       for(int j=i+1; j<=nFlav; j++)
-	 {
-	 this->CalcMEProduct(2, 3, i, j);
-	 oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	 oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
-		 * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	 }
-       }
-     }
+  //nutau->nue, nuebar->nutaubar
+  else if(osch == kOscNuTau2NuE || osch == kOscNuEBar2NuTauBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+	{
+	this->CalcMEProduct(1, 3, i, j);
+	oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+		* sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	}
+      }
+    }
 
-  //numubar->nutaubar, nutau->numu
-  else if(osch == kOscNuMuBar2NuTauBar || osch == kOscNuTau2NuMu)
+  //nutau->numu, numubar->nutaubar
+  else if(osch == kOscNuTau2NuMu || osch == kOscNuMuBar2NuTauBar)
     {
     oscProb = 0.0;
     for(int i=1; i<=3; i++)
@@ -699,6 +702,8 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
+  //********************** OSCILLATIONS BETWEEN ACTIVE AND STERILE NEUTRINOS ***************************
+
   //nue->nus4, nus4bar->nuebar
   else if(osch ==  kOscNuE2NuS4 || osch == kOscNuS4Bar2NuEBar)
     {
@@ -708,6 +713,87 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       for(int j=i+1; j<=nFlav; j++)
 	{
 	this->CalcMEProduct(1, 4, i, j);
+	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	}
+      }
+    }
+
+  //nue->nus5, nus5bar->nuebar
+  else if(osch ==  kOscNuE2NuS5 || osch == kOscNuS5Bar2NuEBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+	this->CalcMEProduct(1, 5, i, j);
+	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+		* sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	}
+      }
+    }
+
+  //numu->nus4, nus4bar->numubar
+  else if(osch ==  kOscNuMu2NuS4 || osch == kOscNuS4Bar2NuMuBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+	{
+	this->CalcMEProduct(2, 4, i, j);
+	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	}
+      }
+    }
+
+  //numu->nus5, nus5bar->numubar
+  else if(osch ==  kOscNuMu2NuS5 || osch == kOscNuS5Bar2NuMuBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+	this->CalcMEProduct(2, 5, i, j);
+	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	}
+      }
+    }
+
+  //nutau->nus4, nus4bar->nutaubar
+  else if(osch ==  kOscNuTau2NuS4 || osch == kOscNuS4Bar2NuTauBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+        this->CalcMEProduct(3, 4, i, j);
+        oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+        }
+      }
+    }
+
+
+  //nutau->nus5, nus5bar->nutaubar
+  else if(osch ==  kOscNuTau2NuS5 || osch == kOscNuS5Bar2NuTauBar)
+    {
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
+        {
+	this->CalcMEProduct(3, 5, i, j);
 	oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
 	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
                 * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
@@ -731,22 +817,6 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  //numu->nus4, nus4bar->numubar
-  else if(osch ==  kOscNuMu2NuS4 || osch == kOscNuS4Bar2NuMuBar)
-    {
-    oscProb = 0.0;
-    for(int i=1; i<=3; i++)
-      {
-      for(int j=i+1; j<=nFlav; j++)
-        {
-        this->CalcMEProduct(2, 4, i, j);
-        oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
-                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-        }
-      }
-    }
-
   //nus4->numu, numubar->nus4bar
   else if(osch ==  kOscNuS42NuMu || osch == kOscNuMuBar2NuS4Bar)
     {
@@ -763,51 +833,19 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  //nutau->nus4, nus4bar->nutaubar
-  else if(osch ==  kOscNuTau2NuS4 || osch == kOscNuS4Bar2NuTauBar)
-    {
-      oscProb = 0.0;
-      for(int i=1; i<=3; i++)
-	{
-	  for(int j=i+1; j<=nFlav; j++)
-	    {
-	      this->CalcMEProduct(3, 4, i, j);
-	      oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	      oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
-                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	    }
-	}
-    }
- 
- //nus4->nutau, nutaubar->nus4bar
+  //nus4->nutau, nutaubar->nus4bar
   else if(osch ==  kOscNuS42NuTau || osch == kOscNuTauBar2NuS4Bar)
-    {
-      oscProb = 0.0;
-      for(int i=1; i<=3; i++)
-	{
-	  for(int j=i+1; j<=nFlav; j++)
-	    {
-	      this->CalcMEProduct(3, 4, i, j);
-	      oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	      oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
-                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	    }
-	}
-    }
-
-  //nue->nus5, nus5bar->nuebar
-  else if(osch ==  kOscNuE2NuS5 || osch == kOscNuS5Bar2NuEBar)
     {
     oscProb = 0.0;
     for(int i=1; i<=3; i++)
       {
       for(int j=i+1; j<=nFlav; j++)
-        {
-        this->CalcMEProduct(1, 5, i, j);
-        oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+	{
+	this->CalcMEProduct(3, 4, i, j);
+	oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
                 * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-        }
+	}
       }
     }
 
@@ -821,22 +859,6 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
         {
         this->CalcMEProduct(1, 5, i, j);
         oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-        oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
-                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-        }
-      }
-    }
-
-  //numu->nus5, nus5bar->numubar
-  else if(osch ==  kOscNuMu2NuS5 || osch == kOscNuS5Bar2NuMuBar)
-    {
-    oscProb = 0.0;
-    for(int i=1; i<=3; i++)
-      {
-      for(int j=i+1; j<=nFlav; j++)
-        {
-        this->CalcMEProduct(2, 5, i, j);
-        oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
         oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
                 * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
         }
@@ -859,36 +881,20 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
-  //nutau->nus5, nus5bar->nutaubar
-  else if(osch ==  kOscNuTau2NuS5 || osch == kOscNuS5Bar2NuTauBar)
-    {
-      oscProb = 0.0;
-      for(int i=1; i<=3; i++)
-	{
-	  for(int j=i+1; j<=nFlav; j++)
-	    {
-	      this->CalcMEProduct(3, 5, i, j);
-	      oscProb += 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	      oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
-                * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	    }
-	}
-    }
-
   //nus5->nutau, nutaubar->nus5bar
   else if(osch ==  kOscNuS52NuTau || osch == kOscNuTauBar2NuS5Bar)
     {
-      oscProb = 0.0;
-      for(int i=1; i<=3; i++)
+    oscProb = 0.0;
+    for(int i=1; i<=3; i++)
+      {
+      for(int j=i+1; j<=nFlav; j++)
 	{
-	  for(int j=i+1; j<=nFlav; j++)
-	    {
-	      this->CalcMEProduct(3, 5, i, j);
-	      oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	      oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
+	this->CalcMEProduct(3, 5, i, j);
+	oscProb -= 2 * MEProduct[im] * sin((2.0 * kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
+	oscProb -= 4.0 * MEProduct[re] * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy)
                 * sin((kOscDimensFactor * dmsq[j][i] * fBaseline) / energy);
-	    }
 	}
+      }
     }
 
   return oscProb;
