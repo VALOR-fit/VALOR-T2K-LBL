@@ -906,33 +906,20 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
   //UMassUdagger is the product of the PMNS matrix, the mass squared matrix and the
   //dagger of the PMNS matrix.
-  double UMassUdagger[nFlav][nFlav][2];
+  double UMassUdagger[nFlav][nFlav][2] = {};
 
   //The mass squared matrix has diagonal elements 0, dm21sq, dm31sq, dm41sq, dm51sq,
   //and all off-diagonal elements are zero.
-  double massSqMatrix[nFlav][nFlav][2];
+  double massSqMatrix[nFlav][nFlav][2] = {};
 
   //UMass is the product of UVacuum and the mass squared matrix
-  double UMass[nFlav][nFlav][2];
+  double UMass[nFlav][nFlav][2] = {};
 
-  for(int i=0; i<nFlav; i++)
-    {
-    for(int j=0; j<nFlav; j++)
-      {
-      massSqMatrix[i][j][re] = 0.0;
-      massSqMatrix[i][j][im] = 0.0;
-      UMass[i][j][re] = 0.0;
-      UMass[i][j][im] = 0.0;
-      UMassUdagger[i][j][re] = 0.0;
-      UMassUdagger[i][j][im] = 0.0;
-      }
-    }
-
-  massSqMatrix[1][1][re] = dmsq[2][1];
-  massSqMatrix[2][2][re] = dmsq[3][1];
-  massSqMatrix[3][3][re] = dmsq[4][1];
-  massSqMatrix[4][4][re] = dmsq[5][1];
-
+  massSqMatrix[1][1][re] = dmsq[1][0];
+  massSqMatrix[2][2][re] = dmsq[2][0];
+  massSqMatrix[3][3][re] = dmsq[3][0];
+  massSqMatrix[4][4][re] = dmsq[4][0];
+  
   for(int i=0; i<nFlav; i++)
     {
     for(int j=0; j<nFlav; j++)
@@ -990,43 +977,7 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
   
   // Let's do it with GSL. Lots of ugly boilerplate here that can be removed if we move to 0 indexed arrays
 #ifdef __GSL_ENABLED__ 
-  gsl_matrix_complex * g_matr = gsl_matrix_complex_alloc(nFlav,nFlav);
-  gsl_matrix_complex * g_eigenvectors = gsl_matrix_complex_alloc(nFlav,nFlav);
-  gsl_vector * g_eigenvalues  = gsl_vector_alloc(nFlav);
-  gsl_eigen_hermv_workspace * g_workspace = gsl_eigen_hermv_alloc(nFlav);
-  
-  // Cast the GSL pointer to a C++ array
-  double (&matr)[nFlav][nFlav][2] = *reinterpret_cast< double (*) [nFlav][nFlav][2]> (gsl_matrix_complex_ptr(g_matr,0,0));
-  for (int ii = 0 ; ii < nFlav ; ii++) {
-    for (int jj = 0 ; jj < nFlav ; jj++) {
-      matr[ii][jj][re] = UMassUdagger[ii+1][jj+1][re];
-      matr[ii][jj][im] = UMassUdagger[ii+1][jj+1][im];
-    }
-  }
-  
-  int status=gsl_eigen_hermv(g_matr, g_eigenvalues, g_eigenvectors, g_workspace);
-  
-  if (status != GSL_SUCCESS) {
-    std::cerr<<"NuOscSterile/CalcMatterOscProb >> GSL Diagonaliser failed"<<std::endl;
-    exit(-2);
-  }
-  
-  // Cast gsl pointers to C++ arrays
-  const double (&evec)[nFlav][nFlav][2] = *reinterpret_cast< const double (*) [nFlav][nFlav][2]> (gsl_matrix_complex_const_ptr(g_eigenvectors,0,0));
-  const double (&eval)[nFlav] = *reinterpret_cast< const double (*) [nFlav]> (gsl_vector_const_ptr(g_eigenvalues,0));
-  for (int ii = 0 ; ii < nFlav ; ii++) {
-    eigenvalues[ii+1] = eval[ii];
-    for (int jj = 0 ; jj < nFlav ; jj++) {
-      UMatter[ii+1][jj+1][re] = evec[ii][jj][re];
-      UMatter[ii+1][jj+1][im] = evec[ii][jj][im];
-    }
-  }
-                           
-  gsl_matrix_complex_free(g_matr);
-  gsl_matrix_complex_free(g_eigenvectors);
-  gsl_vector_free(g_eigenvalues);
-  gsl_eigen_hermv_free(g_workspace);
-
+  util::DiagonaliseGSL(nFlav, &UMassUdagger[0][0][0], &UMatter[0][0][0], &eigenvalues[0]);
 #else
   std::cerr<<"Need GSL"<<std::endl;
   exit(-1);
@@ -1090,8 +1041,8 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
   // For the first mass eigenstate, the difference in the squared masses is zero.
   // Therefore only retain terms multiplied by cos(0), and drop those multiplied by sin(0).
-  finalMassState[0][re] = initialMassState[1][re];
-  finalMassState[0][im] = initialMassState[1][im];
+  finalMassState[0][re] = initialMassState[0][re];
+  finalMassState[0][im] = initialMassState[0][im];
 
   for(int i=1; i<nFlav; i++)
   {
