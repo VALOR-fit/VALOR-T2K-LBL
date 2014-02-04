@@ -350,7 +350,6 @@ void NuOscSterile::CalcVacuumPMNS()
 	    {
 	    if(nFlav == 5)
 	      {
-		//if((i == 1 && (j == 2 || j == 3 || j == 5)) || (i == 3 && (j == 4 || j == 5)))
 	      if((i == 0 && (j == 1 || j == 2 || j == 4)) || (i == 2 && (j == 3 || j == 4)))
 	        {
 		rotationMatrix[i][j][k][l][re] = sinMixingAngle[i][j] * cos(deltaCP[i][j]);
@@ -367,7 +366,6 @@ void NuOscSterile::CalcVacuumPMNS()
 	    {
 	    if(nFlav == 5)
               {
-		//if((i == 1 && (j == 2 || j == 3 || j == 5)) || (i == 3 && (j == 4 || j == 5)))
 	      if((i == 0 && (j == 1 || j == 2 || j == 4)) || (i == 2 && (j == 3 || j == 4)))
 		{
 		rotationMatrix[i][j][k][l][re] = -sinMixingAngle[i][j] * cos(deltaCP[i][j]);
