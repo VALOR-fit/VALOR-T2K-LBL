@@ -3397,10 +3397,10 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
       ////
 
 
-      bool MuLike = (s==kSKsFCFV1RingMuLike  && (ir >= 6 && nev_tot < kASmallNum));    // MODIFIED 
-      bool ELike = (s==kSKsFCFV1RingELike  && (ir >= 3 && nev_tot < kASmallNum));      // MODIFIED
-      bool RHCMuLike = (s==kSKsRHCFCFV1RingMuLike  && (ir >= 6 && nev_tot < kASmallNum));  // ANTINU
-      bool RHCELike = (s==kSKsRHCFCFV1RingELike  && (ir >= 3 && nev_tot < kASmallNum));    // ANTINU
+      bool MuLike = (s==kSKsFCFV1RingMuLike  && (ir >= 5 && nev_tot < kASmallNum));    // MODIFIED 
+      bool ELike = (s==kSKsFCFV1RingELike  && (ir >= 2 && nev_tot < kASmallNum));      // MODIFIED
+      bool RHCMuLike = (s==kSKsRHCFCFV1RingMuLike  && (ir >= 5 && nev_tot < kASmallNum));  // ANTINU
+      bool RHCELike = (s==kSKsRHCFCFV1RingELike  && (ir >= 2 && nev_tot < kASmallNum));    // ANTINU
       
       //if(nev_tot < 0 || (s==kSKsFCFV1RingMuLike  && (ir >= 6 && nev_tot < kASmallNum)) || (s==kSKsFCFV1RingELike  && (ir >= 3 && nev_tot < kASmallNum))) {
       if(nev_tot < 0 || MuLike || ELike || RHCMuLike || RHCELike) { // MODIFIED ANTINU

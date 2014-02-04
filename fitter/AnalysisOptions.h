@@ -58,42 +58,6 @@ Split t2kana::conv namespace into several smaller files
 #endif
 #endif
 
-
-#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-//#ifndef __NUEONLY__
-//#define __USE_OSC_NUMU_MC_TEMPLATES__
-// If turned on, oscillated numu (from nue) templates will be added (to be weighted with P(nue->numu)).
-// Turn off for compatibility with 2012-era analysis.
-//#endif
-#endif
-
-
-#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-//#ifndef __NUEONLY__
-//#define __USE_OSC_NUMUBAR_MC_TEMPLATES__
-// If turned on, oscillated numu (from nue) templates will be added (to be weighted with P(nue->numu)).
-// Turn off for compatibility with 2012-era analysis.
-//#endif
-#endif
-
-
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-//#ifndef __NUEONLY__
-//#define __USE_OSC_NUEBAR_MC_TEMPLATES__
-// If turned on, oscillated numu (from nue) templates will be added (to be weighted with P(nue->numu)).
-// Turn off for compatibility with 2012-era analysis.
-//#endif
-#endif
-
-//#ifndef __USE_EXTRA_MC_TEMPLATES__
-//#ifndef __NUEONLY__
-//#define __USE_EXTRA_MC_TEMPLATES__
-// If turned on, oscillated numu (from nue) templates will be added (to be weighted with P(nue->numu)).
-// Turn off for compatibility with 2012-era analysis.
-//#endif
-//#endif
-
-
 #ifndef USE_MEC
 //#define USE_MEC //if this is turned off, kSKmMEC is not included in kSKReactionModes
 #endif
