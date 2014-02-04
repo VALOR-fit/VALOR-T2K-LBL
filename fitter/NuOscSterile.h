@@ -111,15 +111,13 @@ class NuOscSterile
 
   bool usingOscParams; 
 
-  //Index 0 is not used and is set to 0 in init().
-  //Indices 1 - nFlav are used and these correspond to the usual mixing angle and dmsq notation. 
-  double sinMixingAngle[nFlav+1][nFlav+1];
-  double cosMixingAngle[nFlav+1][nFlav+1];
-  double dmsq[nFlav+1][nFlav+1];
-  double deltaCP[nFlav+1][nFlav+1];
+  double sinMixingAngle[nFlav][nFlav];
+  double cosMixingAngle[nFlav][nFlav];
+  double dmsq[nFlav][nFlav];
+  double deltaCP[nFlav][nFlav];
 
-  double rotationMatrix[nFlav+1][nFlav+1][nFlav+1][nFlav+1][2];
-  double UVacuum[nFlav+1][nFlav+1][2];
+  double rotationMatrix[nFlav][nFlav][nFlav][nFlav][2];
+  double UVacuum[nFlav][nFlav][2];
   double MEProduct[2];
 
 };
