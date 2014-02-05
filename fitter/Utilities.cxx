@@ -124,25 +124,11 @@ double t2kana::util::ChisqGauss(
 double t2kana::util::ChisqPoisson(
   double ndata, double nmc)
 {
-  if(nmc <= 0. || ndata <= 0.) 
-    {
-      double term1 = 2.*(nmc-ndata);
-      if(term1 < 0){
-	return -term1;
-      }
-      return term1;
-    }
-  double chisq = 2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc);
-  if (chisq < 0)
-    {
-      double term1 = 2.*(nmc-ndata);
-      if(term1 < 0){
-	return -term1;
-      }
-      return term1;
-    }
-  
-  return chisq;
+  if(nmc <= 0.)
+    nmc = kSetNegEventsTo;
+  if(ndata <= 0.)
+    return = 2.*(nmc-ndata);
+  return 2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc);
 }
 //____________________________________________________________________________
 TMatrixD t2kana::util::CholeskyDecomposition(TMatrixD& cov_matrix)

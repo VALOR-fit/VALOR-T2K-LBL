@@ -3383,61 +3383,25 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     // loop over Ereco
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
       double nev_tot = 0;
-
-
-
-
       if (s==kSKsFCFV1RingMuLike) nev_tot = fMCErecoSpectrumTotArray1Rmu[ir-1];
-      // MODIFIED 
       else if (s==kSKsFCFV1RingELike) nev_tot = fMCErecoSpectrumTotArray1Re[ir-1];
-      ////
-      // ANTINU
       else if (s==kSKsRHCFCFV1RingMuLike) nev_tot = fMCErecoSpectrumTotArrayRHC1Rmu[ir-1];
       else if (s==kSKsRHCFCFV1RingELike) nev_tot = fMCErecoSpectrumTotArrayRHC1Re[ir-1];
-      ////
 
-
-      bool MuLike = (s==kSKsFCFV1RingMuLike  && (ir >= 5 && nev_tot < kASmallNum));    // MODIFIED 
-      bool ELike = (s==kSKsFCFV1RingELike  && (ir >= 2 && nev_tot < kASmallNum));      // MODIFIED
-      bool RHCMuLike = (s==kSKsRHCFCFV1RingMuLike  && (ir >= 5 && nev_tot < kASmallNum));  // ANTINU
-      bool RHCELike = (s==kSKsRHCFCFV1RingELike  && (ir >= 2 && nev_tot < kASmallNum));    // ANTINU
-      
-      //if(nev_tot < 0 || (s==kSKsFCFV1RingMuLike  && (ir >= 6 && nev_tot < kASmallNum)) || (s==kSKsFCFV1RingELike  && (ir >= 3 && nev_tot < kASmallNum))) {
-      if(nev_tot < 0 || MuLike || ELike || RHCMuLike || RHCELike) { // MODIFIED ANTINU
-	  // bin 5 is first bin expect events in (nominally empty, but can have events for negative energy scale) bin 4 is empty, except for more than 8 sigma tweak!
+      if(nev_tot < 0) {
 #ifdef __show_negative_events_mesg_debug__
 	cout << "Exp/SKMC/ApplyEnergyScaleSystematicToTotalSpectrum >> set negative number of events " << nev_tot
-	     << " to " << kSetNegEventsTo << "\t" << " for Ereco: " << ErecoBinEdges(s,ir-1)+kOneMeV << " in sample = " << util::AsString(s) << endl;
+	     << " to " << 0 << "\t" << " for Ereco: " << ErecoBinEdges(s,ir-1)+kOneMeV << " in sample = " << util::AsString(s) << endl;
 #endif
 	applied_negevents_condition = true;
 #ifndef PRODUCTIONMODE
-	reco_spectrum_tot->SetBinContent(ir, kSetNegEventsTo);
+	reco_spectrum_tot->SetBinContent(ir, 0);
 #endif
-
-
-
-	if (s==kSKsFCFV1RingMuLike) fMCErecoSpectrumTotArray1Rmu[ir-1] = kSetNegEventsTo;
-	// MODIFIED
-	else if (s==kSKsFCFV1RingELike) fMCErecoSpectrumTotArray1Re[ir-1] = kSetNegEventsTo;
-	////
-	// ANTINU
-	else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[ir-1] = kSetNegEventsTo;
-	else if (s==kSKsRHCFCFV1RingELike) fMCErecoSpectrumTotArrayRHC1Re[ir-1] = kSetNegEventsTo;
-	////
-
-
-      }
-      /*      else if(ir == 5 && nev_tot < kASmallNum) {
-#ifdef __show_negative_events_mesg_debug__
-	cout << "Exp/SKMC/ApplyEnergyScaleSystematicToTotalSpectrum >> set negative number of events " << reco_spectrum_tot->GetBinContent(ir)
-	     << " to " << kSetNegEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
-#endif
-#ifndef PRODUCTIONMODE
-	reco_spectrum_tot->SetBinContent(ir, kSetNegEventsTo);
-#endif
-        if (s==kSKsFCFV1RingMuLike) fMCErecoSpectrumTotArray1Rmu[ir-1] = kSetNegEventsTo;
-	else fMCErecoSpectrumTotArray1Re[ir-1] = kSetNegEventsTo; 
-	}*/
+	if (s==kSKsFCFV1RingMuLike) fMCErecoSpectrumTotArray1Rmu[ir-1] = 0;
+	else if (s==kSKsFCFV1RingELike) fMCErecoSpectrumTotArray1Re[ir-1] = 0;
+	else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[ir-1] = 0;
+	else if (s==kSKsRHCFCFV1RingELike) fMCErecoSpectrumTotArrayRHC1Re[ir-1] = 0;
+      }//nev_tot < 0
     }//ir
 
   }//is
@@ -3839,9 +3803,9 @@ bool SuperkMC::UpdateErecoSpectra(void)
 	  if(nev < 0) {
 #ifdef __show_negative_events_mesg_debug__
 	    cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev
-		 << " to kSetNegEventsTo " << kSetNegEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
+		 << " to zero " << 0 << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
 #endif
-	    nev = kSetNegEventsTo;
+	    nev = 0;
 	  }
 #endif //__apply_minevents_to_individual_modes__
 #ifndef PRODUCTIONMODE
@@ -3860,36 +3824,25 @@ bool SuperkMC::UpdateErecoSpectra(void)
 	 
 
        }//im
-#ifndef APPLY_ESCALE_AT_SPECTRUM_STAGE
 
-       bool RingMu = (s==kSKsFCFV1RingMuLike && (ir >= 5 && nev_tot < kASmallNum));  // MODIFIED
-       bool RingE = (s==kSKsFCFV1RingELike && (ir >= 2 && nev_tot < kASmallNum));    // MODIFIED
-       bool RHCRingMu = (s==kSKsRHCFCFV1RingMuLike && (ir >= 5 && nev_tot < kASmallNum));  // ANTINU
-       bool RHCRingE = (s==kSKsRHCFCFV1RingELike && (ir >= 2 && nev_tot < kASmallNum));    // ANTINU
-       
-       //if(nev_tot < 0 || (s==kSKsFCFV1RingMuLike && (ir >= 5 && nev_tot < kASmallNum)) || (s==kSKsFCFV1RingELike && (ir >= 2 && nev_tot < kASmallNum))) {
-       if(nev_tot < 0 || RingMu || RingE || RHCRingMu || RHCRingE) {  // ANTINU
-	 // bin 5 is first bin expect events in (nominally empty, but can have events for negative energy scale) bin 4 is empty, except for more than 8 sigma tweak!
+#ifndef APPLY_ESCALE_AT_SPECTRUM_STAGE
+       if(nev_tot < 0) {
 #ifdef __show_negative_events_mesg_debug__
 	 cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev_tot 
-	      << " to kSetNegEventsTo " << kSetNegEventsTo << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
+	      << " to zero " << 0 << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
 #endif
 	 applied_negevents_condition = true;
-	 nev_tot = kSetNegEventsTo;
+	 nev_tot = 0;
        }
 #endif //!APPLY_ESCALE_AT_SPECTRUM_STAGE
+
 #ifndef PRODUCTIONMODE
        reco_spectrum_tot->SetBinContent(ir,nev_tot);
 #endif
-
-
-
        if (s==kSKsFCFV1RingMuLike) fMCErecoSpectrumTotArray1Rmu[ir-1] = nev_tot;
        else if (s==kSKsFCFV1RingELike) fMCErecoSpectrumTotArray1Re[ir-1] = nev_tot;  // MODIFIED
        else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[ir-1] = nev_tot; // ANTINU
        else if (s==kSKsRHCFCFV1RingELike) fMCErecoSpectrumTotArrayRHC1Re[ir-1] = nev_tot;  // ANTINU
-
-
 
     }//ir
   }//is
