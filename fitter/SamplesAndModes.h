@@ -537,38 +537,38 @@ static const bool kIsCC[kns][knm]= {
 #ifdef USE_MEC
      1, //mec
 #else
-     -1,
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
-     -1, //always undefined (12)
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1
+     0, //undefined //always undefined (12)
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0  //undefined
   }
   ,
   // > 1 e-like ring
@@ -619,32 +619,32 @@ static const bool kIsCC[kns][knm]= {
      1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
-     -1, //always undefined (9)
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1
+     0, //always undefined (9)
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0  //undefined
   }
   ,
   // > 1 muon-like ring (RHC)
@@ -697,38 +697,38 @@ static const bool kIsCC[kns][knm]= {
 #ifdef USE_MEC
      1, //mec
 #else
-     -1,
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
-     -1, //always undefined (12)
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1
+     0, //always undefined (12)
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0  //undefined
   }
   ,
   // > 1 e-like ring (RHC)
@@ -779,32 +779,32 @@ static const bool kIsCC[kns][knm]= {
      1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     -1,
-     -1,
-     -1,
-     -1,
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
 #endif
-     -1, //always undefined (9)
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1,
-     -1
+     0, //always undefined (9)
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0, //undefined
+     0  //undefined
   }
 
 };
