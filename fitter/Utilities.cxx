@@ -127,7 +127,7 @@ double t2kana::util::ChisqPoisson(
   if(nmc <= 0.)
     nmc = kSetNegEventsTo;
   if(ndata <= 0.)
-    return = 2.*(nmc-ndata);
+    return 2.*(nmc-ndata);
   return 2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc);
 }
 //____________________________________________________________________________
