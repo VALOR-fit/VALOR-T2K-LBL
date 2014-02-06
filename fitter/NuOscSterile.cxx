@@ -324,10 +324,9 @@ void NuOscSterile::CalcVacuumPMNS()
   //element[j][i] = -sin(mixingAngle[i][j] 
   //element[j][j] = cos(mixingAngle[i][j]
   //In matrices 12, 13, 15, 34 and 35, element[i][j] is multplied by exp(-deltaCP[i][j]) and element[j][i] by exp(deltaCP[i][j])
-  //Index 0 is not used and is set to 0 in init()
-  //Indices 1 and 2 are those of matrix
-  //Indices 3 and 4 are elements of that matrix
-  //Index 5: 0 is real part, 1 is imaginary part of matrix element
+  //Indices 0 and 1 are those of matrix
+  //Indices 2 and 3 are elements of that matrix
+  //Index 4: 0 is real part, 1 is imaginary part of matrix element
   for (int i=0; i<nFlav; i++)
     {
     for (int j=0; j<nFlav; j++)
@@ -594,7 +593,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
 
   //numu->nue, nuebar->numubar 
   else if(osch == kOscNuMu2NuE || osch == kOscNuEBar2NuMuBar)
-    { 
+    {
     oscProb = 0.0;
     for(int i=0; i<3; i++)
       {
@@ -958,22 +957,34 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
       }
     }
 
+  //Define number density of neutrons in matter and assume it is the same as that of electrons
+  double Nn = fNe;
+
   // Add potential due to constant density matter to real part of first diagonal element of UMassUdagger.
   // The factor of 1.0e9 is to convert the energy from GeV to eV.
   if(util::IsNeutrino(nu_start))
-    UMassUdagger[0][0][re] +=2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe;
+    {
+    //First term is for CC interactions between nue and electrons in matter 
+    //Second term is for NC interactions between any active neutrino and protons, neutrons or electrons in matter
+    UMassUdagger[0][0][re] = UMassUdagger[0][0][re] + 2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe - 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    //Only apply potential for NC interactions since only nue can have CC interactions with electrons in matter
+    UMassUdagger[1][1][re] -= 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    UMassUdagger[2][2][re] -= 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    }
   else if(util::IsAntiNeutrino(nu_start))
-    UMassUdagger[0][0][re] -= 2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe;
+    {
+    UMassUdagger[0][0][re] = UMassUdagger[0][0][re] - 2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe + 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    UMassUdagger[1][1][re] += 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    UMassUdagger[2][2][re] += 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    }
   
   double eigenvalues[nFlav] = {};
   double UMatter[nFlav][nFlav][2] = {};
   double UMatterDagger[nFlav][nFlav][2] = {};
   
-  //Need to diagonalise UMassUdagger
-  //Please put the eigenvalues into the array called eigenvalues and enter the eigenvectors as the 
-  //columns of UMatter.
-  
-  // Let's do it with GSL. Lots of ugly boilerplate here that can be removed if we move to 0 indexed arrays
+  //Diagonalise UMassUdagger, put eigenvalues into array with same name and enter eigenvectors as  
+  //columns of UMatter. 
+  //Use complex form of symmetric bidiagonalisation and QR reduction method in GSL.
 #ifdef __GSL_ENABLED__ 
   util::DiagonaliseGSL(nFlav, &UMassUdagger[0][0][0], &UMatter[0][0][0], &eigenvalues[0]);
 #else
