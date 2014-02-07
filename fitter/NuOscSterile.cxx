@@ -8,6 +8,8 @@
 */
 //________________________________________________________________________________________
 
+//#define __check_diagonalisation__
+
 #include <TMath.h>
 
 #include "NuOscSterile.h"
@@ -991,6 +993,69 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
   std::cerr<<"Need GSL"<<std::endl;
   exit(-1);
 #endif
+
+#ifdef __check_diagonalisation__
+  // Check that the sum of the eigenvalues is equal to the trace of the matrix
+  double eigenvalueSum = eigenvalues[0] + eigenvalues[1] + eigenvalues[2] + eigenvalues[3] + eigenvalues[4];
+  double trace = UMassUdagger[0][0][re] + UMassUdagger[1][1][re] + UMassUdagger[2][2][re] + UMassUdagger[3][3][re] + UMassUdagger[4][4][re];
+
+  cout<<"eigenvalueSum / trace =   "<<eigenvalueSum<<"    "<<trace<<endl;
+  cout<<"Fractional difference =   "<<fabs((eigenvalueSum - trace) / trace)<<endl; 
+
+  if(fabs((eigenvalueSum - trace) / trace) > 1.0e-10) 
+    {
+      cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : fractional difference between sum of eigenvalues and trace of matrix = "
+	   << fabs((eigenvalueSum - trace) / trace) << "." << endl;
+    }
+
+  double UMassUdaggerMinusEv[nFlav][nFlav][2];
+  for(int i=0; i<nFlav; i++)
+    {
+    for(int j=0; j<nFlav; j++)
+      {
+      for(int k=0; k<2; k++)
+	{
+	UMassUdaggerMinusEv[i][j][k] = UMassUdagger[i][j][k];
+	}//k
+      }//j
+    }//i
+
+  double eigenvectorCheck[nFlav][2] = {};
+
+  for(int i=0; i<nFlav; i++)
+    {
+    // UMassUdaggerMinusEv is UMassUdagger with the eigenvalue subtracted from all diagonal real elements
+    for(int j=0; j<nFlav; j++) 
+      UMassUdaggerMinusEv[j][j][re] = UMassUdagger[j][j][re] - eigenvalues[i];
+    
+    // Check the eigenvector is correct.
+    // Multiplying any row of UMassUdaggerMinusEv by the column eigenvector should give zero   
+    for(int m=0; m<nFlav; m++)
+      {
+      eigenvectorCheck[i][re] += UMassUdaggerMinusEv[i][m][re] * UMatter[m][i][re]
+	                       - UMassUdaggerMinusEv[i][m][im] * UMatter[m][i][im];
+      eigenvectorCheck[i][im] += UMassUdaggerMinusEv[i][m][re] * UMatter[m][i][im]
+	                       + UMassUdaggerMinusEv[i][m][im] * UMatter[m][i][re];
+      }
+
+    }//end of for(int i=0; i<3; i++)
+
+  for(int i=0; i<nFlav; i++) 
+    {
+      cout<<"eigenvectorCheck   "<<eigenvectorCheck[i][re]<<"    "<<eigenvectorCheck[i][im]<<endl;
+      if(fabs(eigenvectorCheck[i][re]) > 1.0e-10) 
+	{
+	  cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : real part of eigenvector check = "
+	       << eigenvectorCheck[i][re] <<"." << endl;
+	}
+      if(fabs(eigenvectorCheck[i][im]) > 1.0e-10) 
+	{
+	  cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : imaginary part of eigenvector check = "
+	       << eigenvectorCheck[i][im] << "." << endl;
+	}
+    }//end of for(int i=0; i<3; i++)
+
+#endif //__check_diagonalisation__
 
   //UMatterDagger is the Hermitian conjugate (complex conjugate of transpose) of UMatter
   for(int i=0; i<nFlav; i++)
