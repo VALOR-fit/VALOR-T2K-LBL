@@ -1004,7 +1004,7 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
   if(fabs((eigenvalueSum - trace) / trace) > 1.0e-10) 
     {
-      cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : fractional difference between sum of eigenvalues and trace of matrix = "
+      cerr << "Warning in NuOscSterile::CalcMatterOscProb() : fractional difference between sum of eigenvalues and trace of matrix = "
 	   << fabs((eigenvalueSum - trace) / trace) << "." << endl;
     }
 
@@ -1038,22 +1038,22 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 	                       + UMassUdaggerMinusEv[i][m][im] * UMatter[m][i][re];
       }
 
-    }//end of for(int i=0; i<3; i++)
+    }//end of for(int i=0; i<nFlav; i++)
 
   for(int i=0; i<nFlav; i++) 
     {
       cout<<"eigenvectorCheck   "<<eigenvectorCheck[i][re]<<"    "<<eigenvectorCheck[i][im]<<endl;
       if(fabs(eigenvectorCheck[i][re]) > 1.0e-10) 
 	{
-	  cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : real part of eigenvector check = "
+	  cerr << "Warning in NuOscSterile::CalcMatterOscProb() : real part of eigenvector check = "
 	       << eigenvectorCheck[i][re] <<"." << endl;
 	}
       if(fabs(eigenvectorCheck[i][im]) > 1.0e-10) 
 	{
-	  cerr << "Warning in NuOsc3Flavour::CalcMatterOscProb() : imaginary part of eigenvector check = "
+	  cerr << "Warning in NuOscSterile::CalcMatterOscProb() : imaginary part of eigenvector check = "
 	       << eigenvectorCheck[i][im] << "." << endl;
 	}
-    }//end of for(int i=0; i<3; i++)
+    }//end of for(int i=0; i<nFlav; i++)
 
 #endif //__check_diagonalisation__
 
