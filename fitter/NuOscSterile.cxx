@@ -209,6 +209,7 @@ void NuOscSterile::SetDmsq(double dm21sq, double dm31sq, double dm41sq, double d
     dmsq[3][2] = dm41sq + dm31sq;
     dmsq[4][2] = dm51sq + dm31sq;
     }
+  dmsq[4][3] = dm51sq - dm41sq;
 
 }
 //________________________________________________________________________________________
@@ -550,7 +551,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   if(osch == kOscNuE2NuE || osch == kOscNuEBar2NuEBar)
     {
     oscProb = 1.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -565,7 +566,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch == kOscNuE2NuMu || osch == kOscNuMuBar2NuEBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -581,7 +582,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch == kOscNuE2NuTau || osch == kOscNuTauBar2NuEBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -597,7 +598,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch == kOscNuMu2NuE || osch == kOscNuEBar2NuMuBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -613,7 +614,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch == kOscNuMu2NuMu || osch == kOscNuMuBar2NuMuBar)
     {
     oscProb = 1.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -628,7 +629,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch == kOscNuMu2NuTau || osch == kOscNuTauBar2NuMuBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -644,7 +645,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch == kOscNuTau2NuE || osch == kOscNuEBar2NuTauBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -660,7 +661,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch == kOscNuTau2NuMu || osch == kOscNuMuBar2NuTauBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -676,7 +677,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch == kOscNuTau2NuTau || osch == kOscNuTauBar2NuTauBar)
     {
     oscProb = 1.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -693,7 +694,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuE2NuS4 || osch == kOscNuS4Bar2NuEBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -709,7 +710,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuE2NuS5 || osch == kOscNuS5Bar2NuEBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -725,7 +726,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuMu2NuS4 || osch == kOscNuS4Bar2NuMuBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -741,7 +742,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuMu2NuS5 || osch == kOscNuS5Bar2NuMuBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -757,7 +758,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuTau2NuS4 || osch == kOscNuS4Bar2NuTauBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -773,7 +774,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuTau2NuS5 || osch == kOscNuS5Bar2NuTauBar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -789,7 +790,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuS42NuE || osch == kOscNuEBar2NuS4Bar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -805,7 +806,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuS42NuMu || osch == kOscNuMuBar2NuS4Bar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -821,7 +822,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuS42NuTau || osch == kOscNuTauBar2NuS4Bar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
@@ -837,7 +838,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuS52NuE || osch == kOscNuEBar2NuS5Bar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -853,7 +854,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuS52NuMu || osch == kOscNuMuBar2NuS5Bar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
         {
@@ -869,7 +870,7 @@ double NuOscSterile::CalcVacuumOscProb(int nu_start, int nu_end, double energy)
   else if(osch ==  kOscNuS52NuTau || osch == kOscNuTauBar2NuS5Bar)
     {
     oscProb = 0.0;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<nFlav-1; i++)
       {
       for(int j=i+1; j<nFlav; j++)
 	{
