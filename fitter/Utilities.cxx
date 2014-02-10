@@ -483,7 +483,7 @@ double t2kana::util::RandomizeDm23sq(void)
   NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
   switch (odmsq) {
     
-  case(kNuDmsqFogliLisi:
+  case(kNuDmsqFogliLisi):
     mean  =  kGlobFitDmsqFL;
     break;
   case(kNuDmsq12andAbs23):
@@ -3632,10 +3632,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 
   default :
     return "--";
-  }
+  } // Switch p
   return "--";
-}
-
 }
 //____________________________________________________________________________
 string t2kana::util::AsStringCompact(PhysParamId_t p)
