@@ -1179,3 +1179,208 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 
 }
 //________________________________________________________________________________________
+void NuOscSterile::CalcMatterOscProbAll(bool isAntineutrino, double energy, double * osc_probs_out)
+{
+  //This method calculates all the oscillation probabilities in constant density matter.
+  //The neutrino energy is in GeV.
+
+  if(usingOscParams)
+    this->CalcVacuumPMNS();
+
+  //UMassUdagger is the product of the PMNS matrix, the mass squared matrix and the
+  //dagger of the PMNS matrix.
+  double UMassUdagger[nFlav][nFlav][2] = {};
+
+  //The mass squared matrix has diagonal elements 0, dm21sq, dm31sq, dm41sq, dm51sq,
+  //and all off-diagonal elements are zero.
+  double massSqMatrix[nFlav][nFlav][2] = {};
+
+  //UMass is the product of UVacuum and the mass squared matrix
+  double UMass[nFlav][nFlav][2] = {};
+
+  massSqMatrix[1][1][re] = dmsq[1][0];
+  massSqMatrix[2][2][re] = dmsq[2][0];
+  massSqMatrix[3][3][re] = dmsq[3][0];
+  massSqMatrix[4][4][re] = dmsq[4][0];
+  
+  for(int i=0; i<nFlav; i++) {
+    for(int j=0; j<nFlav; j++) {
+      for(int k=0; k<nFlav; k++) {
+        UMass[i][j][re] += UVacuum[i][k][re] * massSqMatrix[k][j][re]
+	                 - UVacuum[i][k][im] * massSqMatrix[k][j][im];
+        UMass[i][j][im] += UVacuum[i][k][re] * massSqMatrix[k][j][im]
+	                 + UVacuum[i][k][im] * massSqMatrix[k][j][re];
+      }
+    }
+  }
+
+  for(int i=0; i<nFlav; i++) {
+    for(int j=0; j<nFlav; j++) {
+      for(int k=0; k<nFlav; k++) {
+        UMassUdagger[i][j][re] += UMass[i][k][re] *  UVacuum[j][k][re]
+	                        - UMass[i][k][im] * -UVacuum[j][k][im];
+        UMassUdagger[i][j][im] += UMass[i][k][re] * -UVacuum[j][k][im]
+	                        + UMass[i][k][im] *  UVacuum[j][k][re];
+      }
+    }
+  }
+
+  //For antineutrinos, use the complex conjugate of UMassUdagger
+  if(isAntineutrino) {
+    for(int i=0; i<nFlav; i++) {
+      for(int j=0; j<nFlav; j++) {
+	UMassUdagger[i][j][im] = -UMassUdagger[i][j][im];
+      }
+    }
+  }
+
+  //Define number density of neutrons in matter and assume it is the same as that of electrons
+  double Nn = fNe;
+
+  // Add potential due to constant density matter to real part of first diagonal element of UMassUdagger.
+  // The factor of 1.0e9 is to convert the energy from GeV to eV.
+  if(!isAntineutrino) {
+    //First term is for CC interactions between nue and electrons in matter 
+    //Second term is for NC interactions between any active neutrino and protons, neutrons or electrons in matter
+    UMassUdagger[0][0][re] = UMassUdagger[0][0][re] + 2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe - 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    //Only apply potential for NC interactions since only nue can have CC interactions with electrons in matter
+    UMassUdagger[1][1][re] -= 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    UMassUdagger[2][2][re] -= 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+  }
+  else {
+    UMassUdagger[0][0][re] = UMassUdagger[0][0][re] - 2.0*1.0e9*energy*sqrt(2.0)*kGF_SI*fNe + 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    UMassUdagger[1][1][re] += 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+    UMassUdagger[2][2][re] += 2.0*1.0e9*energy*0.5*sqrt(2.0)*kGF_SI*Nn;
+  }
+  
+  double eigenvalues[nFlav] = {};
+  double UMatter[nFlav][nFlav][2] = {};
+  double UMatterDagger[nFlav][nFlav][2] = {};
+  
+  //Diagonalise UMassUdagger, put eigenvalues into array with same name and enter eigenvectors as  
+  //columns of UMatter. 
+  //Use complex form of symmetric bidiagonalisation and QR reduction method in GSL.
+#ifdef __GSL_ENABLED__ 
+  util::DiagonaliseGSL(nFlav, &UMassUdagger[0][0][0], &UMatter[0][0][0], &eigenvalues[0]);
+#else
+  std::cerr<<"Need GSL"<<std::endl;
+  exit(-1);
+#endif
+
+#ifdef __check_diagonalisation__
+  // Check that the sum of the eigenvalues is equal to the trace of the matrix
+  double eigenvalueSum = eigenvalues[0] + eigenvalues[1] + eigenvalues[2] + eigenvalues[3] + eigenvalues[4];
+  double trace = UMassUdagger[0][0][re] + UMassUdagger[1][1][re] + UMassUdagger[2][2][re] + UMassUdagger[3][3][re] + UMassUdagger[4][4][re];
+
+  cout<<"eigenvalueSum / trace =   "<<eigenvalueSum<<"    "<<trace<<endl;
+  cout<<"Fractional difference =   "<<fabs((eigenvalueSum - trace) / trace)<<endl; 
+
+  if(fabs((eigenvalueSum - trace) / trace) > 1.0e-10) {
+    cerr << "Warning in NuOscSterile::CalcMatterOscProb() : fractional difference between sum of eigenvalues and trace of matrix = "
+	 << fabs((eigenvalueSum - trace) / trace) << "." << endl;
+  }
+
+  double UMassUdaggerMinusEv[nFlav][nFlav][2];
+  for(int i=0; i<nFlav; i++) {
+    for(int j=0; j<nFlav; j++) {
+      for(int k=0; k<2; k++) {
+	UMassUdaggerMinusEv[i][j][k] = UMassUdagger[i][j][k];
+      }//k
+    }//j
+  }//i
+
+  double eigenvectorCheck[nFlav][2] = {};
+
+  for(int i=0; i<nFlav; i++) {
+    // UMassUdaggerMinusEv is UMassUdagger with the eigenvalue subtracted from all diagonal real elements
+    for(int j=0; j<nFlav; j++) 
+      UMassUdaggerMinusEv[j][j][re] = UMassUdagger[j][j][re] - eigenvalues[i];
+    
+    // Check the eigenvector is correct.
+    // Multiplying any row of UMassUdaggerMinusEv by the column eigenvector should give zero   
+    for(int m=0; m<nFlav; m++) {
+      eigenvectorCheck[i][re] += UMassUdaggerMinusEv[i][m][re] * UMatter[m][i][re]
+	                       - UMassUdaggerMinusEv[i][m][im] * UMatter[m][i][im];
+      eigenvectorCheck[i][im] += UMassUdaggerMinusEv[i][m][re] * UMatter[m][i][im]
+	                       + UMassUdaggerMinusEv[i][m][im] * UMatter[m][i][re];
+    }
+  }//end of for(int i=0; i<nFlav; i++)
+
+  for(int i=0; i<nFlav; i++) {
+    cout<<"eigenvectorCheck   "<<eigenvectorCheck[i][re]<<"    "<<eigenvectorCheck[i][im]<<endl;
+    if(fabs(eigenvectorCheck[i][re]) > 1.0e-10) {
+      cerr << "Warning in NuOscSterile::CalcMatterOscProb() : real part of eigenvector check = "
+	   << eigenvectorCheck[i][re] <<"." << endl;
+    }
+    if(fabs(eigenvectorCheck[i][im]) > 1.0e-10) {
+      cerr << "Warning in NuOscSterile::CalcMatterOscProb() : imaginary part of eigenvector check = "
+	   << eigenvectorCheck[i][im] << "." << endl;
+    }
+  }//end of for(int i=0; i<nFlav; i++)
+
+#endif //__check_diagonalisation__
+
+  //UMatterDagger is the Hermitian conjugate (complex conjugate of transpose) of UMatter
+  for(int i=0; i<nFlav; i++) {
+    for(int j=0; j<nFlav; j++) {
+      UMatterDagger[i][j][re] =  UMatter[j][i][re];
+      UMatterDagger[i][j][im] = -UMatter[j][i][im];
+    }
+  }
+  
+  // Treat that block of memory as a 2D array
+  double(&osc_probs)[nFlav][nFlav] = *reinterpret_cast< double (*) [nFlav][nFlav]> (osc_probs_out);
+  
+  for (int i_initflav = 0 ; i_initflav < nFlav ; i_initflav++) {
+    double initialFlavourState[nFlav][2] = {};
+    double initialMassState   [nFlav][2] = {};
+    double finalMassState     [nFlav][2] = {};
+    double finalFlavourState  [nFlav][2] = {};
+    
+    initialFlavourState[i_initflav][re] = 1.0;
+
+    // Convert the initial flavour state to initial mass states by multiplying by UMatterDagger
+    for(int i=0; i<nFlav; i++) {
+      for(int j=0; j<nFlav; j++) {
+	initialMassState[i][re] += UMatterDagger[i][j][re] * initialFlavourState[j][re]
+				 - UMatterDagger[i][j][im] * initialFlavourState[j][im];
+	initialMassState[i][im] += UMatterDagger[i][j][re] * initialFlavourState[j][im]
+				 + UMatterDagger[i][j][im] * initialFlavourState[j][re];
+      }
+    }
+    
+    // Now propagate the mass eigenstates to the far detector
+    // For the first mass eigenstate, the difference in the squared masses is zero.
+    // Therefore only retain terms multiplied by cos(0), and drop those multiplied by sin(0).
+    finalMassState[0][re] = initialMassState[0][re];
+    finalMassState[0][im] = initialMassState[0][im];
+
+    for(int i=1; i<nFlav; i++) {
+      finalMassState[i][re] = initialMassState[i][re] *  cos((2.0 * kOscDimensFactor * (eigenvalues[i] - eigenvalues[0]) * fBaseline) / energy)
+			    - initialMassState[i][im] * -sin((2.0 * kOscDimensFactor * (eigenvalues[i] - eigenvalues[0]) * fBaseline) / energy);  
+      finalMassState[i][im] = initialMassState[i][re] * -sin((2.0 * kOscDimensFactor * (eigenvalues[i] - eigenvalues[0]) * fBaseline) / energy)
+			    + initialMassState[i][im] *  cos((2.0 * kOscDimensFactor * (eigenvalues[i] - eigenvalues[0]) * fBaseline) / energy);
+    }
+
+    // Convert final mass states to flavour states by multiplying by UMatter 
+    for(int i=0; i<nFlav; i++) {
+      for(int j=0; j<nFlav; j++) {
+	finalFlavourState[i][re] += UMatter[i][j][re] * finalMassState[j][re]
+				  - UMatter[i][j][im] * finalMassState[j][im];
+	finalFlavourState[i][im] += UMatter[i][j][re] * finalMassState[j][im]
+				  + UMatter[i][j][im] * finalMassState[j][re];
+      }
+    }
+
+    //Each component of finalFlavourState is the amplitude for the neutrino to interact 
+    //in the far detector as that flavour.
+    //The oscillation probabilities are the moduli squared of the amplitudes
+    for (int i_finalflav = 0 ; i_finalflav < nFlav ; i_finalflav++ ) {
+      osc_probs[i_initflav][i_finalflav] = finalFlavourState[i_finalflav][re]*finalFlavourState[i_finalflav][re] 
+					 + finalFlavourState[i_finalflav][im]*finalFlavourState[i_finalflav][im];
+    }
+    
+  } //i_initflav
+  
+  return;
+}

@@ -95,6 +95,11 @@ class NuOscSterile
   double CalcMatterOscProb(int nu_start,
                            int nu_end,
                            double energy);
+			   
+  // Calculate all matter probabilities at once.
+  // Osc_probs_out should point to a block of memory nflav*nflav
+  // It fills this with an array[i][j] of P(nu_i)->P(nu_j)
+  void CalcMatterOscProbAll(bool isAntineutrino, double energy, double * osc_probs_out);
 
  private:
 
