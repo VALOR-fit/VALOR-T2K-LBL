@@ -906,6 +906,32 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode(0);
     return fp;
   }
+  
+  //Steriles
+  if(name == "nuoscsterile4f") {
+    FitParamList * fp = FitParamList::NuOscSterile4FlavourFit();
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+  if(name == "nuoscsterile4f+nuisance") {
+    FitParamList * fp = FitParamList::NuOscSterile4FlavourFitWithAllSyst();
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    return fp;
+  }
+  if(name == "nuoscsterile5f") {
+    FitParamList * fp = FitParamList::NuOscSterile5FlavourFit();
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+  if(name == "nuoscsterile5f+nuisance") {
+    FitParamList * fp = FitParamList::NuOscSterile5FlavourFitWithAllSyst();
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    return fp;
+  }
 
   return 0;
 }
@@ -1133,6 +1159,68 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithSelectedSystNoBANFF(void)
   return fparm;
 }
 //________________________________________________________________________________________
+FitParamList * FitParamList::NuOscSterile4FlavourFit(void)
+{
+  FitParamList * fparm = new FitParamList(12);
+
+  FitParamList::Append4FlavourSterileOscillation(fparm, 0);
+
+  return fparm;
+}
+//________________________________________________________________________________________
+FitParamList * FitParamList::NuOscSterile4FlavourFitWithAllSyst(void)
+{
+ FitParamList * fparm = new FitParamList(12+kNumOfNuisanceParams); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+
+  FitParamList::Append4FlavourSterileOscillation(fparm, 0);
+
+  //
+  // add nuisance params
+  //
+  FitParamList::AppendAllCorrelatedBANFFSystematics (fparm, 12);
+#ifndef SKFSITOGETHER
+  FitParamList::AppendAllSuperkDetectorSystematics  (fparm, 12+kNumOfParamsInBANFFfit);
+  FitParamList::AppendAllFSISystematics             (fparm, 12+kNumOfParamsInBANFFfit+kNumOfSKDetParams);
+  FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 12+kNumOfParamsInBANFFfit+kNumOfSKDetParams+kNumOfFSIParams);
+#endif
+#ifdef SKFSITOGETHER
+  FitParamList::AppendAllSuperkDetectorFSISystematics  (fparm, 12+kNumOfParamsInBANFFfit);
+  FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 12+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+#endif
+  return fparm;
+}
+//________________________________________________________________________________________
+FitParamList * FitParamList::NuOscSterile5FlavourFit(void)
+{
+  FitParamList * fparm = new FitParamList(18);
+
+  FitParamList::Append4FlavourSterileOscillation(fparm, 0);
+
+  return fparm;
+}
+//________________________________________________________________________________________
+FitParamList * FitParamList::NuOscSterile5FlavourFitWithAllSyst(void)
+{
+ FitParamList * fparm = new FitParamList(18+kNumOfNuisanceParams); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+
+  FitParamList::Append4FlavourSterileOscillation(fparm, 0);
+
+  //
+  // add nuisance params
+  //
+  FitParamList::AppendAllCorrelatedBANFFSystematics (fparm, 18);
+#ifndef SKFSITOGETHER
+  FitParamList::AppendAllSuperkDetectorSystematics  (fparm, 18+kNumOfParamsInBANFFfit);
+  FitParamList::AppendAllFSISystematics             (fparm, 18+kNumOfParamsInBANFFfit+kNumOfSKDetParams);
+  FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 18+kNumOfParamsInBANFFfit+kNumOfSKDetParams+kNumOfFSIParams);
+#endif
+#ifdef SKFSITOGETHER
+  FitParamList::AppendAllSuperkDetectorFSISystematics  (fparm, 18+kNumOfParamsInBANFFfit);
+  FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 18+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+#endif
+  return fparm;
+}
+//________________________________________________________________________________________
 FitParamList * FitParamList::NumuDisapFit(void)
 {
   FitParamList * fparm = new FitParamList(2);
@@ -1276,6 +1364,161 @@ void FitParamList::Append3FlavourOscillation(FitParamList * fparm, int start)
   
   fparm->AddParam( ip++, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, kStepDm12sq,  false, false);
 
+}
+//________________________________________________________________________________________
+void FitParamList::Append4FlavourSterileOscillation(FitParamList * fparm, int start)
+{
+
+  int ip = start; // first unallocated element in the param list
+
+  //
+  // add osc params
+  //
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
+  case(kNuMixSinsq2Theta):
+    fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  kStepSinsq2Theta12,  false, false);
+    fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  kStepSinsq2Theta13,  false, false);
+    fparm->AddParam( ip++, kPhypMixing14,  kInitFitSinsq2Theta14,  kMinFitSinsq2Theta14,  kMaxFitSinsq2Theta14,  kStepSinsq2Theta14,  false, false);
+    fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  kStepSinsq2Theta23,  false, false);
+    fparm->AddParam( ip++, kPhypMixing24,  kInitFitSinsq2Theta24,  kMinFitSinsq2Theta24,  kMaxFitSinsq2Theta24,  kStepSinsq2Theta24,  false, false);
+    fparm->AddParam( ip++, kPhypMixing34,  kInitFitSinsq2Theta34,  kMinFitSinsq2Theta34,  kMaxFitSinsq2Theta34,  kStepSinsq2Theta34,  false, false);
+    break;
+  case(kNuMixSinsqTheta):
+    fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsqTheta12,  kMinFitSinsqTheta12,  kMaxFitSinsqTheta12,  kStepSinsqTheta12,  false, false);
+    fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsqTheta13,  kMinFitSinsqTheta13,  kMaxFitSinsqTheta13,  kStepSinsqTheta13,  false, false);
+    fparm->AddParam( ip++, kPhypMixing14,  kInitFitSinsq2Theta14,  kMinFitSinsq2Theta14,  kMaxFitSinsq2Theta14,  kStepSinsq2Theta14,  false, false);
+    fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsqTheta23,  kMinFitSinsqTheta23,  kMaxFitSinsqTheta23,  kStepSinsqTheta23,  false, false);
+    fparm->AddParam( ip++, kPhypMixing24,  kInitFitSinsqTheta24,  kMinFitSinsqTheta24,  kMaxFitSinsqTheta24,  kStepSinsqTheta24,  false, false);
+    fparm->AddParam( ip++, kPhypMixing34,  kInitFitSinsqTheta34,  kMinFitSinsqTheta34,  kMaxFitSinsqTheta34,  kStepSinsqTheta34,  false, false);
+     break;
+  default:
+     delete fparm;
+     return;
+  }
+  
+  NuOscDeltaCP_t dcp = Opt::Instance()->gOscDeltaCP;
+  switch(dcp){
+  case(kNuDeltaCPPhase):
+    fparm->AddParam( ip++, kPhypDelta12,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta13,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta34,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+  break;
+  case(kNuDeltaCPSin):
+    fparm->AddParam( ip++, kPhypDelta12,   0,                  -1,            1,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta13,   0,                  -1,            1,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta34,   0,                  -1,            1,           1.0E-2,  false, false);
+  break;
+  default:
+    delete fparm;
+    return;
+  }
+
+  fparm->AddParam( ip++, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, kStepDm12sq,  false, false);
+  //  fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+  NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
+  switch (odmsq) {
+  case(kNuDmsqFogliLisi):
+    fparm->AddParam( ip++, kPhypDm23sq,    kGlobFitDmsqFL,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    break;
+  case(kNuDmsq12andAbs23):
+    fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    break;
+  case(kNuDmsq12andAbs31):
+    if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
+      fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq + kInitFitDm12sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
+      fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq - kInitFitDm12sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    break;
+  default:
+    delete fparm;
+    return;
+  }
+  
+  fparm->AddParam( ip++, kPhypDm41sq,    kInitFitDm41sq,   kMinFitDm41sq, kMaxFitDm41sq, kStepDm41sq,  false, false);
+}
+//________________________________________________________________________________________
+void FitParamList::Append5FlavourSterileOscillation(FitParamList * fparm, int start)
+{
+
+  int ip = start; // first unallocated element in the param list
+
+  //
+  // add osc params
+  //
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  switch(omp) {
+  case(kNuMixSinsq2Theta):
+    fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsq2Theta12,  kMinFitSinsq2Theta12,  kMaxFitSinsq2Theta12,  kStepSinsq2Theta12,  false, false);
+    fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsq2Theta13,  kMinFitSinsq2Theta13,  kMaxFitSinsq2Theta13,  kStepSinsq2Theta13,  false, false);
+    fparm->AddParam( ip++, kPhypMixing14,  kInitFitSinsq2Theta14,  kMinFitSinsq2Theta14,  kMaxFitSinsq2Theta14,  kStepSinsq2Theta14,  false, false);
+    fparm->AddParam( ip++, kPhypMixing15,  kInitFitSinsq2Theta15,  kMinFitSinsq2Theta15,  kMaxFitSinsq2Theta15,  kStepSinsq2Theta15,  false, false);
+    fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsq2Theta23,  kMinFitSinsq2Theta23,  kMaxFitSinsq2Theta23,  kStepSinsq2Theta23,  false, false);
+    fparm->AddParam( ip++, kPhypMixing24,  kInitFitSinsq2Theta24,  kMinFitSinsq2Theta24,  kMaxFitSinsq2Theta24,  kStepSinsq2Theta24,  false, false);
+    fparm->AddParam( ip++, kPhypMixing25,  kInitFitSinsq2Theta25,  kMinFitSinsq2Theta25,  kMaxFitSinsq2Theta25,  kStepSinsq2Theta25,  false, false);
+    fparm->AddParam( ip++, kPhypMixing34,  kInitFitSinsq2Theta34,  kMinFitSinsq2Theta34,  kMaxFitSinsq2Theta34,  kStepSinsq2Theta34,  false, false);
+    fparm->AddParam( ip++, kPhypMixing35,  kInitFitSinsq2Theta35,  kMinFitSinsq2Theta35,  kMaxFitSinsq2Theta35,  kStepSinsq2Theta35,  false, false);
+    break;
+  case(kNuMixSinsqTheta):
+    fparm->AddParam( ip++, kPhypMixing12,  kInitFitSinsqTheta12,  kMinFitSinsqTheta12,  kMaxFitSinsqTheta12,  kStepSinsqTheta12,  false, false);
+    fparm->AddParam( ip++, kPhypMixing13,  kInitFitSinsqTheta13,  kMinFitSinsqTheta13,  kMaxFitSinsqTheta13,  kStepSinsqTheta13,  false, false);
+    fparm->AddParam( ip++, kPhypMixing14,  kInitFitSinsqTheta14,  kMinFitSinsqTheta14,  kMaxFitSinsqTheta14,  kStepSinsqTheta14,  false, false);
+    fparm->AddParam( ip++, kPhypMixing15,  kInitFitSinsqTheta15,  kMinFitSinsqTheta15,  kMaxFitSinsqTheta15,  kStepSinsqTheta15,  false, false);
+    fparm->AddParam( ip++, kPhypMixing23,  kInitFitSinsqTheta23,  kMinFitSinsqTheta23,  kMaxFitSinsqTheta23,  kStepSinsqTheta23,  false, false);
+    fparm->AddParam( ip++, kPhypMixing24,  kInitFitSinsqTheta24,  kMinFitSinsqTheta24,  kMaxFitSinsqTheta24,  kStepSinsqTheta24,  false, false);
+    fparm->AddParam( ip++, kPhypMixing25,  kInitFitSinsqTheta25,  kMinFitSinsqTheta25,  kMaxFitSinsqTheta25,  kStepSinsqTheta25,  false, false);
+    fparm->AddParam( ip++, kPhypMixing34,  kInitFitSinsqTheta34,  kMinFitSinsqTheta34,  kMaxFitSinsqTheta34,  kStepSinsqTheta34,  false, false);
+    fparm->AddParam( ip++, kPhypMixing35,  kInitFitSinsqTheta35,  kMinFitSinsqTheta35,  kMaxFitSinsqTheta35,  kStepSinsqTheta35,  false, false);
+     break;
+  default:
+     delete fparm;
+     return;
+  }
+  
+  NuOscDeltaCP_t dcp = Opt::Instance()->gOscDeltaCP;
+  switch(dcp){
+  case(kNuDeltaCPPhase):
+    fparm->AddParam( ip++, kPhypDelta12,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta13,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta15,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta34,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta35,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+  break;
+  case(kNuDeltaCPSin):
+    fparm->AddParam( ip++, kPhypDelta12,   0,                  -1,            1,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta13,   0,                  -1,            1,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta15,   0,                  -1,            1,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta34,   0,                  -1,            1,           1.0E-2,  false, false);
+    fparm->AddParam( ip++, kPhypDelta35,   0,                  -1,            1,           1.0E-2,  false, false);
+  break;
+  default:
+    delete fparm;
+    return;
+  }
+
+  fparm->AddParam( ip++, kPhypDm12sq,    kInitFitDm12sq,   kMinFitDm12sq, kMaxFitDm12sq, kStepDm12sq,  false, false);
+  //  fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, 1.0E-4,  false, false);
+  NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
+  switch (odmsq) {
+  case(kNuDmsqFogliLisi):
+    fparm->AddParam( ip++, kPhypDm23sq,    kGlobFitDmsqFL,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    break;
+  case(kNuDmsq12andAbs23):
+    fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    break;
+  case(kNuDmsq12andAbs31):
+    if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
+      fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq + kInitFitDm12sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
+      fparm->AddParam( ip++, kPhypDm23sq,    kInitFitDm23sq - kInitFitDm12sq,   kMinFitDm23sq, kMaxFitDm23sq, kStepDm23sq,  false, false);
+    break;
+  default:
+    delete fparm;
+    return;
+  }
+  
+  fparm->AddParam( ip++, kPhypDm41sq,    kInitFitDm41sq,   kMinFitDm41sq, kMaxFitDm41sq, kStepDm41sq,  false, false);
+  fparm->AddParam( ip++, kPhypDm51sq,    kInitFitDm51sq,   kMinFitDm51sq, kMaxFitDm51sq, kStepDm51sq,  false, false);
 }
 //________________________________________________________________________________________
 void FitParamList::Append2FlavourOscillation(FitParamList * fparm, int start)

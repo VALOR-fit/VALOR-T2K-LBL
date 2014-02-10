@@ -193,22 +193,26 @@ private:
    void SetSystMode    (int m)      { fSystMode    = m; }
 
    // Various functions called by NamedParameterList(name)
-   static FitParamList * NuOsc3FlavourFit                 (void);
-   static FitParamList * NuOsc3FlavourFitWithAllSyst      (void);
-   static FitParamList * NuOsc3FlavourFitWithHackSyst     (void);
-   static FitParamList * NuOsc3FlavourFitWithXSec         (void);
-   static FitParamList * NuOsc3FlavourFitWithEScale       (void);
-   static FitParamList * NuOsc3FlavourFitWithAllSystButSKDetFSI      (void);
-   static FitParamList * NuOsc3FlavourFitWithAllSystDisap (void);
-   static FitParamList * NuOsc3FlavourFitWithAllSystApp   (void);
-   static FitParamList * NuOsc3FlavourFitWithSelectedSyst (void);
+   static FitParamList * NuOsc3FlavourFit                          (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSyst               (void);
+   static FitParamList * NuOsc3FlavourFitWithHackSyst              (void);
+   static FitParamList * NuOsc3FlavourFitWithXSec                  (void);
+   static FitParamList * NuOsc3FlavourFitWithEScale                (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSystButSKDetFSI    (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSystDisap          (void);
+   static FitParamList * NuOsc3FlavourFitWithAllSystApp            (void);
+   static FitParamList * NuOsc3FlavourFitWithSelectedSyst          (void);
    static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFF (void);
-   static FitParamList * NuOsc3FlavourFitWithSelectedSystNoBANFF (void);
-   static FitParamList * NumuDisapFit                     (void);
-   static FitParamList * NumuDisapFitWithSelectedSyst     (void);
-   static FitParamList * NumuDisapFitWithAllSyst          (void);
-   static FitParamList * NumuDecayFit                     (void);
-   static FitParamList * NumuDecohFit                     (void);
+   static FitParamList * NuOsc3FlavourFitWithSelectedSystNoBANFF   (void);
+   static FitParamList * NumuDisapFit                              (void);
+   static FitParamList * NumuDisapFitWithSelectedSyst              (void);
+   static FitParamList * NumuDisapFitWithAllSyst                   (void);
+   static FitParamList * NumuDecayFit                              (void);
+   static FitParamList * NumuDecohFit                              (void);
+   static FitParamList * NuOscSterile4FlavourFit                   (void);
+   static FitParamList * NuOscSterile4FlavourFitWithAllSyst        (void);
+   static FitParamList * NuOscSterile5FlavourFit                   (void);
+   static FitParamList * NuOscSterile5FlavourFitWithAllSyst        (void);
    static void           Append3FlavourOscillation                  (FitParamList * fp, int start);
    static void           Append2FlavourOscillation                  (FitParamList * fp, int start);
    static void           AppendAllUncorrelatedXSecSystematics       (FitParamList * fp, int start);
@@ -229,6 +233,8 @@ private:
    static void           AppendAllUncorrelatedBANFFSystematics      (FitParamList * fp, int start);
    static void           AppendSelectedNonBANFFSystematics          (FitParamList * fp, int start);
    static void           AppendSelectedCorrelatedBANFFSystematics   (FitParamList * fp, int start);
+   static void           Append4FlavourSterileOscillation           (FitParamList * fp, int start);
+   static void           Append5FlavourSterileOscillation           (FitParamList * fp, int start);
 
    //
    // Private data members
