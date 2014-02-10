@@ -52,7 +52,10 @@ typedef enum EPhysHypothesis
    kHypDecay,             // neutrino decay 
    kHypDecoh,             // neutrino decoherence 
    kHypNuMuDisapp2F,      // muon-neutrino disappearance, simple 2-flavour oscillation framework 
-   kHypOsc3F              // neutrino oscillations, 3-flavour framework 
+   kHypOsc3F,             // neutrino oscillations, 3-flavour framework
+   kHypOscSterile4F,      // neutrino oscillations with steriles, 3+1
+   kHypOscSterile5F,      // neutrino oscillations with steriles, 3+2
+   kHypNSI3F              // Nonstandard matter interactions
 } 
 PhysHypothesis_t;
 
@@ -288,6 +291,20 @@ typedef enum EPhysParamId
    kPhypSinsq2ThetaDecay,      // 
    kPhypMusqDecoh,             //
    kPhypSinsq2ThetaDecoh,      //
+   kPhypMixing14,              // Sterile Mixings
+   kPhypMixing15,              // Sterile Mixings
+   kPhypMixing24,              // Sterile Mixings
+   kPhypMixing25,              // Sterile Mixings
+   kPhypMixing34,              // Sterile Mixings
+   kPhypMixing35,              // Sterile Mixings
+   kPhypDm41sq,                // Sterile mass splitting
+   kPhypDm51sq,                // Sterile mass splitting
+   kPhypDelta12,               // Sterile phase
+   kPhypDelta13,               // Sterile phase - same as kPhypDeltaCP, but separate for constistency.
+   kPhypDelta15,               // Sterile phase
+   kPhypDelta34,               // Sterile phase
+   kPhypDelta35,               // Sterile phase
+   kPhypNSIepsMuTau,           // Nonstandard matter interactions
 
    /*
     * List of 2011 analysis nuisance parameters 

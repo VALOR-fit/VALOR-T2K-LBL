@@ -448,12 +448,12 @@ double t2kana::util::RandomizeMixing13(void)
     exit(1);
   }
 
-  // return if a physical value was generated                                                                                                                                               
+  // return if a physical value was generated
   if(mix >=0. && mix <= 1.) {
     return mix;
   }
 
-  // or try again                                                                                                                                                                         
+  // or try again 
   return util::RandomizeMixing13();
 }
 //____________________________________________________________________________
@@ -480,21 +480,22 @@ double t2kana::util::RandomizeDm12sq(void)
 double t2kana::util::RandomizeDm23sq(void)
 {
   double mean  = 0.0;
-  NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;                                                                                                                                              
-  switch (odmsq) {                                                                                                                                                                                        
-  case(kNuDmsqFogliLisi):                                                                                                                                                                         
+  NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
+  switch (odmsq) {
+    
+  case(kNuDmsqFogliLisi:
     mean  =  kGlobFitDmsqFL;
     break;
   case(kNuDmsq12andAbs23):
     mean  = kGlobFitDm23sq; 
-    break;                                                                                                                                                                                                
+    break;
   case(kNuDmsq12andAbs31):
     if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
       mean  = kGlobFitDm23sq + kGlobFitDm12sq; 
     else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
       mean  = kGlobFitDm23sq - kGlobFitDm12sq; 
-    break;                                                                                                                                                                                                
-  default:                                                                                                                                                                                                
+    break;
+  default:
     mean  = kGlobFitDm23sq;  
   }       
   double sigma = mean * kGlobFitErrDm23sq;
@@ -649,6 +650,14 @@ string t2kana::util::AsString (
     }
 
   }//3f
+  
+  // Placeholder for steriles
+  if (hyp == t2kana::conv::kHypOscSterile4F) {
+    out<<"sterile_3+1";
+  }
+  if (hyp == t2kana::conv::kHypOscSterile5F) {
+    out<<"sterile_3+2";
+  }
 
   //
   // 2-flavour oscillations, numu disappearance
@@ -730,7 +739,7 @@ string t2kana::util::AsString(t2kana::conv::NuOscOctant_t o)
   }
   return "";
 }
-//____________________________________________________________________________                                                                                                                            
+//____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::NuOscDmsqScheme_t dmsqs)
 {
   switch(dmsqs) {
@@ -748,7 +757,7 @@ string t2kana::util::AsString(t2kana::conv::NuOscDmsqScheme_t dmsqs)
     break;
   }
 }
-//____________________________________________________________________________                                                                                                                            
+//____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::NuOscDeltaCP_t deltaCP)
 {
   switch(deltaCP) {
@@ -778,6 +787,12 @@ string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)
        break;
     case (kHypOsc3F) : 
        return "<3-flavour Neutrino Oscillations>"; 
+       break;
+    case (kHypOscSterile4F) : 
+       return "<3+1 Sterile Neutrino Oscillations>"; 
+       break;
+    case (kHypOscSterile5F) : 
+       return "<3+2 Sterile Neutrino Oscillations>"; 
        break;
     default:                
       return "undefined"; 
@@ -840,6 +855,80 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kPhypSinsq2ThetaDecay      ) : return "sin^2(2*theta_decay)";       break;
     case ( kPhypMusqDecoh             ) : return "mu^2_decoh";                 break;
     case ( kPhypSinsq2ThetaDecoh      ) : return "sin^2(2*theta_decoh)";       break;
+    
+    // Steriles
+    case ( kPhypMixing14 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_14)";  break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_14)";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing15 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_15)";  break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_15)";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing24 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_24)";  break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_24)";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing25 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_25)";  break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_25)";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing34 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_34)";  break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_34)";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing35 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sin^2(2*theta_35)";  break;
+           case(kNuMixSinsqTheta ) : return "sin^2(theta_35)";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    
+    case ( kPhypDelta12               ) : return "delta_12";                   break;
+    case ( kPhypDelta13               ) : return "delta_13";                   break;
+    case ( kPhypDelta15               ) : return "delta_15";                   break;
+    case ( kPhypDelta34               ) : return "delta_34";                   break;
+    case ( kPhypDelta35               ) : return "delta_35";                   break;
+    
+    case ( kPhypDm41sq                ) : return "|Dm^2_41|";       break;
+    case ( kPhypDm51sq                ) : return "|Dm^2_51|";       break;
+    
+    // Nonstandard matter interaction
+    case ( kPhypNSIepsMuTau           ) : return "nsi_epsilonMuTau";           break;
 
     /*
      * 2011-analysis nuisance parameters
@@ -1539,10 +1628,83 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     break;
 
     case ( kPhypAlphaDecay            ) : return "$\\alpha_{decay}$";                break;
-    case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";       break;
+    case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";      break;
     case ( kPhypMusqDecoh             ) : return "$\\mu^2_{decoh}$";                 break;
-    case ( kPhypSinsq2ThetaDecoh      ) : return "$\\sin^2(2\\theta_{decoh})$";       break;
+    case ( kPhypSinsq2ThetaDecoh      ) : return "$\\sin^2(2\\theta_{decoh})$";      break;
+    
+    // Steriles
+    case ( kPhypMixing14 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{14})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{14})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing15 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{15})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{15})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing24 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{24})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{24})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing25 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{25})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{25})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing34 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{34})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{34})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing35 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{35})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{35})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
 
+    case ( kPhypDelta12               ) : return "$\\delta_{12}$";                   break;
+    case ( kPhypDelta13               ) : return "$\\delta_{13}$";                   break;
+    case ( kPhypDelta15               ) : return "$\\delta_{15}$";                   break;
+    case ( kPhypDelta34               ) : return "$\\delta_{34}$";                   break;
+    case ( kPhypDelta35               ) : return "$\\delta_{35}$";                   break;
+    case ( kPhypDm41sq                ) : return "$|\\Delta m^2_{41}|$";             break;
+    case ( kPhypDm51sq                ) : return "$|\\Delta m^2_{51}|$";             break;
+    
+    // Nonstandard matter interaction
+    case ( kPhypNSIepsMuTau           ) : return "$nsi_\\epsilon_{\\mu\\tau}$";      break;
+    
     /*
      * 2011-analysis nuisance parameters
      */
@@ -1968,15 +2130,89 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
     break;
 
     case ( kPhypAlphaDecay            ) : return "$\\alpha_{decay}$";                break;
-    case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";       break;
+    case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";      break;
     case ( kPhypMusqDecoh             ) : return "$\\mu^2_{decoh}$";                 break;
-    case ( kPhypSinsq2ThetaDecoh      ) : return "$\\sin^2(2\\theta_{decoh})$";       break;
+    case ( kPhypSinsq2ThetaDecoh      ) : return "$\\sin^2(2\\theta_{decoh})$";      break;
+    
+        
+    // Steriles
+    case ( kPhypMixing14 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{14})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{14})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing15 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{15})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{15})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing24 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{24})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{24})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing25 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{25})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{25})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing34 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{34})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{34})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+    case ( kPhypMixing35 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{35})$";  break;
+           case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{35})$";    break;
+           default                 : return "--";                 break;
+         }
+    }
+    break;
+
+    case ( kPhypDelta12               ) : return "$\\delta_{12}$";                   break;
+    case ( kPhypDelta13               ) : return "$\\delta_{13}$";                   break;
+    case ( kPhypDelta15               ) : return "$\\delta_{15}$";                   break;
+    case ( kPhypDelta34               ) : return "$\\delta_{34}$";                   break;
+    case ( kPhypDelta35               ) : return "$\\delta_{35}$";                   break;
+    case ( kPhypDm41sq                ) : return "$|\\Delta m^2_{41}|$";             break;
+    case ( kPhypDm51sq                ) : return "$|\\Delta m^2_{51}|$";             break;
+    
+    // Nonstandard matter interaction
+    case ( kPhypNSIepsMuTau           ) : return "$nsi_\\epsilon_{\\mu\\tau}$";      break;
 
     //
     // 2011-analysis nuisance parameters
     //
   
-      //
+    //
     // SK detector
     //
 #ifndef SKFSITOGETHER
@@ -2347,7 +2583,7 @@ string t2kana::util::AsStringPresentTex(PhysParamId_t p)
   
   return "--";
 }
-//____________________________________________________________________________                                                                                                    
+//____________________________________________________________________________
 string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 {
   switch(p) {
@@ -2411,12 +2647,85 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
     }
     
   case ( kPhypAlphaDecay            ) : return "$\\alpha_{decay}$";                break;
-  case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";       break;
+  case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^2(2\\theta_{decay})$";      break;
   case ( kPhypMusqDecoh             ) : return "$\\mu^2_{decoh}$";                 break;
-  case ( kPhypSinsq2ThetaDecoh      ) : return "$\\sin^2(2\\theta_{decoh})$";       break;
+  case ( kPhypSinsq2ThetaDecoh      ) : return "$\\sin^2(2\\theta_{decoh})$";      break;
   
-    /*                                                     
-     * 2011-analysis nuisance parameters                                                                                                                                            
+  case ( kPhypMixing14 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{14})$";  break;
+      case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{14})$";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing15 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{15})$";  break;
+      case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{15})$";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing24 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{24})$";  break;
+      case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{24})$";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing25 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{25})$";  break;
+      case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{25})$";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing34 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{34})$";  break;
+      case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{34})$";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing35 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "$\\sin^2(2\\theta_{35})$";  break;
+      case(kNuMixSinsqTheta ) : return "$\\sin^2(\\theta_{35})$";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+    
+  case ( kPhypDelta12               ) : return "$\\delta_{12}$";                   break;
+  case ( kPhypDelta13               ) : return "$\\delta_{13}$";                   break;
+  case ( kPhypDelta15               ) : return "$\\delta_{15}$";                   break;
+  case ( kPhypDelta34               ) : return "$\\delta_{34}$";                   break;
+  case ( kPhypDelta35               ) : return "$\\delta_{35}$";                   break;
+  case ( kPhypDm41sq                ) : return "$|\\Delta m^2_{41}|$";             break;
+  case ( kPhypDm51sq                ) : return "$|\\Delta m^2_{51}|$";             break;
+  
+  // Nonstandard matter interaction
+  case ( kPhypNSIepsMuTau           ) : return "$nsi_\\epsilon_{\\mu\\tau}$";      break;
+    
+  
+    /*
+     * 2011-analysis nuisance parameters
      */
 
     //
@@ -2425,12 +2734,13 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 
     // 
     // SK detector  
-    //                                                                                                                                                                                 
+    //
+    
   case ( kNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}$";                 break;
 
-    //                                                          
-    // BANFF flux and cross-section params                                                                                                                                       
-    //                                                                                                                                                                               
+    //
+    // BANFF flux and cross-section params
+    //
   case ( kNuisBANFF00 ) :
   case ( kNuisBANFF01 ) :
   case ( kNuisBANFF02 ) :
@@ -2567,12 +2877,12 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 
     // 
     // SK detector  
-    //                                                                                                                                                                                 
+    //
   case ( kRHCNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}RHC$";                 break;
 
-    //                                                          
-    // BANFF flux and cross-section params                                                                                                                                       
-    //                                                                                                                                                                               
+    //
+    // BANFF flux and cross-section params
+    //
   case ( kRHCNuisBANFF00 ) :
   case ( kRHCNuisBANFF01 ) :
   case ( kRHCNuisBANFF02 ) :
@@ -2705,10 +3015,15 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   }
   return "--";
 }
-//____________________________________________________________________________                                                                                                    
+//____________________________________________________________________________
 string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
 {
-    switch(p) {
+  /* // This function should probably be:
+  string s = AsStringPaperTex(p);
+  if (s.size()<=2) return s;
+  return s.substr(1,s.size()-2);*/
+  
+  switch(p) {
     
   case ( kPhypMixing23 ) :
     {
@@ -2746,9 +3061,9 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-        case(kNuDmsqFogliLisi) :	return "|\\Deltam^2| = |m^2_{3} - (m^2_{1} + m^2_{1})/2|";                  break;
-        case(kNuDmsq12andAbs23):	return "|\\Deltam^2_{32}|";                  break;
-        case(kNuDmsq12andAbs31):	return "|\\Deltam^2_{31}|";                  break;
+        case(kNuDmsqFogliLisi) :       return "|\\Deltam^2| = |m^2_{3} - (m^2_{1} + m^2_{1})/2|";                  break;
+        case(kNuDmsq12andAbs23):       return "|\\Deltam^2_{32}|";                  break;
+        case(kNuDmsq12andAbs31):       return "|\\Deltam^2_{31}|";                  break;
         default                :        return "--";                                   break;
       }
     }
@@ -2759,27 +3074,99 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
       case(kNuDmsqFogliLisi):
-	return "\\deltam^2 = \\Delta m^2_{21}";      break;
+       return "\\deltam^2 = \\Delta m^2_{21}";      break;
       case(kNuDmsq12andAbs23):
       case(kNuDmsq12andAbs31):
-	return "\\Delta m^2_{21}";                   break;
+       return "\\Delta m^2_{21}";                   break;
       default:
-	return "--";                                   break;
+       return "--";                                   break;
       }
     }
     
   case ( kPhypAlphaDecay            ) : return "\\alpha_{decay}";                break;
-  case ( kPhypSinsq2ThetaDecay      ) : return "\\sin^2(2\\theta_{decay})";       break;
+  case ( kPhypSinsq2ThetaDecay      ) : return "\\sin^2(2\\theta_{decay})";      break;
   case ( kPhypMusqDecoh             ) : return "\\mu^2_{decoh}";                 break;
-  case ( kPhypSinsq2ThetaDecoh      ) : return "\\sin^2(2\\theta_{decoh})";       break;
+  case ( kPhypSinsq2ThetaDecoh      ) : return "\\sin^2(2\\theta_{decoh})";      break;
   
-    //                                                    
-    // 2011-analysis nuisance parameters                                                                                                                                            
+  case ( kPhypMixing14 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "\\sin^2(2\\theta_{14})";  break;
+      case(kNuMixSinsqTheta ) : return "\\sin^2(\\theta_{14})";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing15 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "\\sin^2(2\\theta_{15})";  break;
+      case(kNuMixSinsqTheta ) : return "\\sin^2(\\theta_{15})";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing24 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "\\sin^2(2\\theta_{24})";  break;
+      case(kNuMixSinsqTheta ) : return "\\sin^2(\\theta_{24})";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing25 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "\\sin^2(2\\theta_{25})";  break;
+      case(kNuMixSinsqTheta ) : return "\\sin^2(\\theta_{25})";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing34 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "\\sin^2(2\\theta_{34})";  break;
+      case(kNuMixSinsqTheta ) : return "\\sin^2(\\theta_{34})";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+  case ( kPhypMixing35 ) :
+    {
+      NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+      switch(omp) {
+      case(kNuMixSinsq2Theta) : return "\\sin^2(2\\theta_{35})";  break;
+      case(kNuMixSinsqTheta ) : return "\\sin^2(\\theta_{35})";    break;
+      default                 : return "--";                 break;
+      }
+    }
+    break;
+    
+  case ( kPhypDelta12               ) : return "\\delta_{12}";                   break;
+  case ( kPhypDelta13               ) : return "\\delta_{13}";                   break;
+  case ( kPhypDelta15               ) : return "\\delta_{15}";                   break;
+  case ( kPhypDelta34               ) : return "\\delta_{34}";                   break;
+  case ( kPhypDelta35               ) : return "\\delta_{35}";                   break;
+  case ( kPhypDm41sq                ) : return "|\\Delta m^2_{41}|";             break;
+  case ( kPhypDm51sq                ) : return "|\\Delta m^2_{51}|";             break;
+  
+  // Nonstandard matter interaction
+  case ( kPhypNSIepsMuTau           ) : return "$nsi_\\epsilon_{\\mu\\tau}$";      break;
+  
+    //
+    // 2011-analysis nuisance parameters
     //
 
     // 
-    // SK detector  
-    //                                                                                                                                                                                 
+    // SK detector
+    //
 #ifndef SKFSITOGETHER
 #if FSI_BINS != 3  
   case ( kNuisSuperkEnergyScale     ) : return "f_{E; r}^{SK}  ";                 break;
@@ -2806,9 +3193,9 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
   case ( kNuisSuperkEff1ReNC2        )   : return "f_{1R_{e}: NC E2; r}^{SK}";   break;
 #endif
 #endif
-    //                                                          
-    // BANFF flux and cross-section params                                                                                                                                       
-    //                                                                                                                                                                               
+    //
+    // BANFF flux and cross-section params
+    //
   case ( kNuisBANFF00 ) :
   case ( kNuisBANFF01 ) :
   case ( kNuisBANFF02 ) :
@@ -2975,8 +3362,8 @@ string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
     return "--";
   }
   return "--";
-}
-//____________________________________________________________________________                                                                                                    
+ }
+//____________________________________________________________________________                    
 string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 {
   switch(p) {
@@ -3017,9 +3404,9 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-        case(kNuDmsqFogliLisi ):	return "|#Deltam^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|";                  break;
-        case(kNuDmsq12andAbs23):	return "|#Deltam^{2}_{32}|";                  break;
-        case(kNuDmsq12andAbs31):	return "|#Deltam^{2}_{31}|";                  break;
+        case(kNuDmsqFogliLisi ):       return "|#Deltam^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|";                  break;
+        case(kNuDmsq12andAbs23):       return "|#Deltam^{2}_{32}|";                  break;
+        case(kNuDmsq12andAbs31):       return "|#Deltam^{2}_{31}|";                  break;
         default                :        return "--";                                  break;
       }
     }
@@ -3030,12 +3417,12 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
       case(kNuDmsqFogliLisi):
-	return "#deltam^{2} = #Deltam^{2}_{21}";     break;
+       return "#deltam^{2} = #Deltam^{2}_{21}";     break;
       case(kNuDmsq12andAbs23):
       case(kNuDmsq12andAbs31):
-	return "#Delta m^{2}_{21}";                  break;
+       return "#Delta m^{2}_{21}";                  break;
       default                 :
-	return "--";                                 break;
+       return "--";                                 break;
       }
     }
 
@@ -3044,13 +3431,14 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   case ( kPhypMusqDecoh             ) : return "#mu^{2}_{decoh}";                 break;
   case ( kPhypSinsq2ThetaDecoh      ) : return "sin^{2}(2#theta_{decoh})";       break;
 
-    /*                                   
+    /*
      * 2011-analysis nuisance parameters
      */
 
     // 
     // SK detector 
-    //                                                                                                                                                                                 
+    //
+    
   case ( kNuisSuperkEnergyScale     ) : return "f_{E; r}^{SK}  ";                 break;
 #ifndef SKFSITOGETHER
 #if FSI_BINS != 3
@@ -3078,8 +3466,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
 #endif
 #endif
     //
-    // BANFF flux and cross-section params 
-    //                                                                                                                                                                                 
+    // BANFF flux and cross-section params
+    //
   case ( kNuisBANFF00 ) :
   case ( kNuisBANFF01 ) :
   case ( kNuisBANFF02 ) :
@@ -3247,6 +3635,8 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   }
   return "--";
 }
+
+}
 //____________________________________________________________________________
 string t2kana::util::AsStringCompact(PhysParamId_t p)
 {
@@ -3314,6 +3704,80 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kPhypSinsq2ThetaDecay      ) : return "sinsq2theta_decay";           break;
     case ( kPhypMusqDecoh             ) : return "musq_decoh";                  break;
     case ( kPhypSinsq2ThetaDecoh      ) : return "sinsq2theta_decoh";           break;
+    
+    // Steriles
+    case ( kPhypMixing14 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta14";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta14";   break;
+           default                 : return "--";             break;
+         }
+    }
+    break;
+    case ( kPhypMixing15 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta15";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta15";   break;
+           default                 : return "--";             break;
+         }
+    }
+    break;
+    case ( kPhypMixing24 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta24";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta24";   break;
+           default                 : return "--";             break;
+         }
+    }
+    break;
+    case ( kPhypMixing25 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta25";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta25";   break;
+           default                 : return "--";             break;
+         }
+    }
+    break;
+    case ( kPhypMixing34 ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta34";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta34";   break;
+           default                 : return "--";             break;
+         }
+    }
+    break;
+    case ( kPhypMixing35 ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta35";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta35";   break;
+           default                 : return "--";             break;
+         }
+    }
+    break;
+    
+    case ( kPhypDelta12               ) : return "delta_12";                   break;
+    case ( kPhypDelta13               ) : return "delta_13";                   break;
+    case ( kPhypDelta15               ) : return "delta_15";                   break;
+    case ( kPhypDelta34               ) : return "delta_34";                   break;
+    case ( kPhypDelta35               ) : return "delta_35";                   break;
+    
+    case ( kPhypDm41sq                ) : return "|dm41sq|";       break;
+    case ( kPhypDm51sq                ) : return "|dm51sq|";       break;
+    
+    // NSI
+    case( kPhypNSIepsMuTau) : return "nsi_epsMuTau" ; break;
 
     /*
      * 2011-analysis nuisance parameters
@@ -4366,6 +4830,8 @@ t2kana::conv::PhysHypothesis_t t2kana::util::PhysHypFromString(string sh)
   if(sh == "decoh"         ) return kHypDecoh;
   if(sh == "2f_numu_disap" ) return kHypNuMuDisapp2F;
   if(sh == "3f_osc"        ) return kHypOsc3F;
+  if(sh == "4f_sterile_osc") return kHypOscSterile4F;
+  if(sh == "5f_sterile_osc") return kHypOscSterile5F;
 
   return kHypUndefined;
 }
@@ -4448,7 +4914,23 @@ t2kana::conv::PhysParamId_t
   if(sh == "sinsq2theta_decay") return kPhypSinsq2ThetaDecay;
   if(sh == "musq_decoh") return kPhypMusqDecoh;
   if(sh == "sinsq2theta_decoh") return kPhypSinsq2ThetaDecoh;
-
+  
+  if(sh == "mixing14") return kPhypMixing14;
+  if(sh == "mixing15") return kPhypMixing15;
+  if(sh == "mixing24") return kPhypMixing24;
+  if(sh == "mixing25") return kPhypMixing25;
+  if(sh == "mixing34") return kPhypMixing34;
+  if(sh == "mixing35") return kPhypMixing35;
+  if(sh == "|dm41sq|") return kPhypDm41sq;
+  if(sh == "|dm51sq|") return kPhypDm51sq;
+  if(sh == "delta_12") return kPhypDelta12;
+  if(sh == "delta_13") return kPhypDelta13;
+  if(sh == "delta_15") return kPhypDelta15;
+  if(sh == "delta_34") return kPhypDelta34;
+  if(sh == "delta_35") return kPhypDelta35;
+  
+  if(sh == "nsi_epsMuTau") return kPhypNSIepsMuTau;
+  
   if(sh == "sk_energy_scale") return kNuisSuperkEnergyScale;
 
   if(sh == "banff_00") return kNuisBANFF00;
@@ -4757,6 +5239,28 @@ t2kana::conv::PhysParamId_t t2kana::util::PhysParamIdFromLongString(string sh)
   if(sh == "sin^2(2*theta_decay)") return kPhypSinsq2ThetaDecay;
   if(sh == "mu^2_decoh"          ) return kPhypMusqDecoh;
   if(sh == "sin^2(2*theta_decoh)") return kPhypSinsq2ThetaDecoh;
+  
+  if(sh == "sin^2(2*theta_14)"   ) return kPhypMixing14;
+  if(sh == "sin^2(theta_15)"     ) return kPhypMixing14;
+  if(sh == "sin^2(2*theta_14)"   ) return kPhypMixing15;
+  if(sh == "sin^2(theta_15)"     ) return kPhypMixing15;
+  if(sh == "sin^2(2*theta_24)"   ) return kPhypMixing24;
+  if(sh == "sin^2(theta_25)"     ) return kPhypMixing24;
+  if(sh == "sin^2(2*theta_24)"   ) return kPhypMixing25;
+  if(sh == "sin^2(theta_25)"     ) return kPhypMixing25;
+  if(sh == "sin^2(2*theta_34)"   ) return kPhypMixing34;
+  if(sh == "sin^2(theta_35)"     ) return kPhypMixing34;
+  if(sh == "sin^2(2*theta_34)"   ) return kPhypMixing35;
+  if(sh == "sin^2(theta_35)"     ) return kPhypMixing35;
+  if(sh == "|Dm^2_41|"           ) return kPhypDm41sq;
+  if(sh == "|Dm^2_51|"           ) return kPhypDm51sq;
+  if(sh == "delta_12"            ) return kPhypDelta12;
+  if(sh == "delta_13"            ) return kPhypDelta13;
+  if(sh == "delta_15"            ) return kPhypDelta15;
+  if(sh == "delta_34"            ) return kPhypDelta34;
+  if(sh == "delta_35"            ) return kPhypDelta35;
+  
+  if(sh == "nsi_epsilonMuTau"    ) return kPhypNSIepsMuTau;
 
   if(sh == "SK energy scale"                ) return kNuisSuperkEnergyScale;
 #ifndef SKFSITOGETHER
@@ -5452,7 +5956,7 @@ bool t2kana::util::IsBANFF(PhysParamId_t p)
   return false;
   
 }
-//____________________________________________________________________________                                                                                
+//____________________________________________________________________________
 bool t2kana::util::IsXSec(PhysParamId_t p)
 {
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
@@ -5485,7 +5989,7 @@ bool t2kana::util::IsXSec(PhysParamId_t p)
   */
   return false;
 }
-//____________________________________________________________________________                                                                                
+//____________________________________________________________________________
 bool t2kana::util::IsUsingSplines(PhysParamId_t p)
 {
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecBindE)
@@ -5517,7 +6021,7 @@ bool t2kana::util::IsUsingSplines(PhysParamId_t p)
   */
   return false;
 }
-//____________________________________________________________________________                                                                                
+//____________________________________________________________________________
 bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
 {
   switch(p) {
@@ -5538,7 +6042,7 @@ bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
   }
   return false; 
 }
-//____________________________________________________________________________                                                                                  
+//____________________________________________________________________________  
 bool t2kana::util::IsEff1Re(PhysParamId_t p)
 {
   switch(p) {
@@ -5564,7 +6068,7 @@ bool t2kana::util::IsEff1Re(PhysParamId_t p)
   }
   return false;
 }
-//____________________________________________________________________________                                                                                 
+//____________________________________________________________________________ 
 bool t2kana::util::IsEff(PhysParamId_t p)
 {
   switch(p) {
@@ -5599,7 +6103,7 @@ bool t2kana::util::IsEff(PhysParamId_t p)
   }
   return false;
 }
-//____________________________________________________________________________                                                                                   
+//____________________________________________________________________________   
 bool t2kana::util::IsFSI(PhysParamId_t p)
 {
   switch(p) {
@@ -5632,7 +6136,7 @@ bool t2kana::util::IsFSI(PhysParamId_t p)
   }
   return false;
 }
-//____________________________________________________________________________                                                                                   
+//____________________________________________________________________________   
 bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
 {
 #ifdef SKCORRELATIONS
@@ -5683,6 +6187,12 @@ bool t2kana::util::IsMixingAngle(PhysParamId_t p)
     case ( kPhypMixing12              ) : return true; break;
     case ( kPhypSinsq2ThetaDecay      ) : return true; break;
     case ( kPhypSinsq2ThetaDecoh      ) : return true; break;
+    case ( kPhypMixing14              ) : return true; break;
+    case ( kPhypMixing15              ) : return true; break;
+    case ( kPhypMixing24              ) : return true; break;
+    case ( kPhypMixing25              ) : return true; break;
+    case ( kPhypMixing34              ) : return true; break;
+    case ( kPhypMixing35              ) : return true; break;
 
     default : 
       return false;
@@ -7418,17 +7928,17 @@ double t2kana::util::NuMuSurvProbDecay (
 m == kSKmOscNuMuCCQE     ||
      m == kSKmOscNuMuCC1pi    ||
      m == kSKmOscNuMuCCcoh    ||
-//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+//     m == kSKmOscNuMuCCoth ||
      m == kSKmOscNuMuCCoth  ||
      m == kSKmOscNuMuBarCCQE     ||
      m == kSKmOscNuMuBarCC1pi    ||
      m == kSKmOscNuMuBarCCcoh    ||
-//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+//     m == kSKmOscNuMuCCoth ||
      m == kSKmOscNuMuBarCCoth  ||
      m == kSKmOscNuEBarCCQE     ||
      m == kSKmOscNuEBarCC1pi    ||
      m == kSKmOscNuEBarCCcoh    ||
-//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+//     m == kSKmOscNuMuCCoth ||
      m == kSKmOscNuEBarCCoth
      )
   {
@@ -7500,17 +8010,17 @@ double t2kana::util::NuMuSurvProbDecoh (
      m == kSKmOscNuMuCCQE     ||
      m == kSKmOscNuMuCC1pi    ||
      m == kSKmOscNuMuCCcoh    ||
-//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+//     m == kSKmOscNuMuCCoth ||
      m == kSKmOscNuMuCCoth  ||
      m == kSKmOscNuMuBarCCQE     ||
      m == kSKmOscNuMuBarCC1pi    ||
      m == kSKmOscNuMuBarCCcoh    ||
-//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+//     m == kSKmOscNuMuCCoth ||
      m == kSKmOscNuMuBarCCoth  ||
      m == kSKmOscNuEBarCCQE     ||
      m == kSKmOscNuEBarCC1pi    ||
      m == kSKmOscNuEBarCCcoh    ||
-//     m == kSKmOscNuMuCCoth ||                                                                                                                                 
+//     m == kSKmOscNuMuCCoth ||
      m == kSKmOscNuEBarCCoth
      )
   {
@@ -7865,18 +8375,23 @@ int, double *, double *, double *
 )
 {
 #ifdef __GSL_ENABLED__ 
+  // Initialise GSL memory structures
   gsl_matrix_complex * matr = gsl_matrix_complex_alloc(ndim,ndim);
-  memcpy( (double*)gsl_matrix_complex_const_ptr(matr,0,0), matrix_in, ndim*ndim*2*sizeof(double) );
-  
   gsl_matrix_complex * eigenvectors = gsl_matrix_complex_alloc(ndim,ndim);
   gsl_vector * eigenvalues  = gsl_vector_alloc(ndim);
   gsl_eigen_hermv_workspace * workspace = gsl_eigen_hermv_alloc(ndim);
   
+  // Put our matrix in the GSL matrix container
+  memcpy( (double*)gsl_matrix_complex_ptr(matr,0,0), matrix_in, ndim*ndim*2*sizeof(double) );
+  
+  // Diagonalise
   int status=gsl_eigen_hermv(matr, eigenvalues, eigenvectors, workspace);
   
-  memcpy( eigenvectors_out, (double*)gsl_matrix_complex_const_ptr(eigenvectors,0,0) , ndim*ndim*2*sizeof(double));
-  memcpy( eigenvalues_out , (double*)gsl_vector_const_ptr        (eigenvalues ,0)   , ndim*sizeof(double));
-                           
+  // Copy the results to the output matrices
+  memcpy( eigenvectors_out, (const double*)gsl_matrix_complex_const_ptr(eigenvectors,0,0) , ndim*ndim*2*sizeof(double));
+  memcpy( eigenvalues_out , (const double*)gsl_vector_const_ptr        (eigenvalues ,0)   , ndim*sizeof(double));
+  
+  // Free GSL memory structures
   gsl_matrix_complex_free(matr);
   gsl_matrix_complex_free(eigenvectors);
   gsl_vector_free(eigenvalues);
