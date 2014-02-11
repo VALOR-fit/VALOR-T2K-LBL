@@ -52,6 +52,26 @@ class NuOscSterile
                          double sinsqtheta35
 			 );
 
+  void SetMixingDoubleAnglesOct1(double sinsq2theta12,
+                                 double sinsq2theta13,
+                                 double sinsq2theta14,
+                                 double sinsq2theta15,
+                                 double sinsq2theta23,
+                                 double sinsq2theta24,
+                                 double sinsq2theta25,
+                                 double sinsq2theta34,
+                                 double sinsq2theta35);
+
+  void SetMixingDoubleAnglesOct2(double sinsq2theta12, 
+                                 double sinsq2theta13, 
+                                 double sinsq2theta14, 
+                                 double sinsq2theta15,
+				 double sinsq2theta23, 
+                                 double sinsq2theta24, 
+                                 double sinsq2theta25, 
+                                 double sinsq2theta34, 
+                                 double sinsq2theta35);
+
   void SetDmsq          (double dm21sq,
 			 double dm31sq,
 			 double dm41sq,

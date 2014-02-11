@@ -186,6 +186,108 @@ void NuOscSterile::SetMixingAngles(double sinsqtheta12, double sinsqtheta13, dou
 
 }
 //________________________________________________________________________________________
+void NuOscSterile::SetMixingDoubleAnglesOct1(double sinsq2theta12, double sinsq2theta13, double sinsq2theta14, double sinsq2theta15,
+                                   double sinsq2theta23, double sinsq2theta24, double sinsq2theta25, double sinsq2theta34, double sinsq2theta35)
+{
+  //Neglect oscillations between sterile states 4 and 5 since they give no observable effects, i.e. theta45 = 0.
+
+  // Code returns NaN if sin^2(2*mixing angle) is unphysical.
+  // Don't let sin^2(2*mixing angle) be below 0 or above 1.
+  sinsq2theta12 = TMath::Min(1.,sinsq2theta12);
+  sinsq2theta12 = TMath::Max(0.,sinsq2theta12);
+  sinsq2theta13 = TMath::Min(1.,sinsq2theta13);
+  sinsq2theta13 = TMath::Max(0.,sinsq2theta13);
+  sinsq2theta14 = TMath::Min(1.,sinsq2theta14);
+  sinsq2theta14 = TMath::Max(0.,sinsq2theta14);
+  sinsq2theta15 = TMath::Min(1.,sinsq2theta15);
+  sinsq2theta15 = TMath::Max(0.,sinsq2theta15);
+  sinsq2theta23 = TMath::Min(1.,sinsq2theta23);
+  sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
+  sinsq2theta24 = TMath::Min(1.,sinsq2theta24);
+  sinsq2theta24 = TMath::Max(0.,sinsq2theta24);
+  sinsq2theta25 = TMath::Min(1.,sinsq2theta25);
+  sinsq2theta25 = TMath::Max(0.,sinsq2theta25);
+  sinsq2theta34 = TMath::Min(1.,sinsq2theta34);
+  sinsq2theta34 = TMath::Max(0.,sinsq2theta34);
+  sinsq2theta35 = TMath::Min(1.,sinsq2theta35);
+  sinsq2theta35 = TMath::Max(0.,sinsq2theta35);
+
+  //Calculate sin and cos(mixingAngle) from sin^2(2*mixingAngle)
+  sinMixingAngle[0][1] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
+  sinMixingAngle[0][2] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
+  sinMixingAngle[0][3] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta14)));
+  sinMixingAngle[0][4] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta15)));
+  //theta23 is in first octant
+  sinMixingAngle[1][2] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta23)));
+  sinMixingAngle[1][3] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta24)));
+  sinMixingAngle[1][4] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta25)));
+  sinMixingAngle[2][3] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta34)));
+  sinMixingAngle[2][4] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta35)));
+  cosMixingAngle[0][1] = sqrt(1.0 - sinMixingAngle[0][1] * sinMixingAngle[0][1]);
+  cosMixingAngle[0][2] = sqrt(1.0 - sinMixingAngle[0][2] * sinMixingAngle[0][2]);
+  cosMixingAngle[0][3] = sqrt(1.0 - sinMixingAngle[0][3] * sinMixingAngle[0][3]);
+  cosMixingAngle[0][4] = sqrt(1.0 - sinMixingAngle[0][4] * sinMixingAngle[0][4]);
+  cosMixingAngle[1][2] = sqrt(1.0 - sinMixingAngle[1][2] * sinMixingAngle[1][2]);
+  cosMixingAngle[1][3] = sqrt(1.0 - sinMixingAngle[1][3] * sinMixingAngle[1][3]);
+  cosMixingAngle[1][4] = sqrt(1.0 - sinMixingAngle[1][4] * sinMixingAngle[1][4]);
+  cosMixingAngle[2][3] = sqrt(1.0 - sinMixingAngle[2][3] * sinMixingAngle[2][3]);
+  cosMixingAngle[2][4] = sqrt(1.0 - sinMixingAngle[2][4] * sinMixingAngle[2][4]);
+
+  usingOscParams = true;
+
+}
+//________________________________________________________________________________________
+void NuOscSterile::SetMixingDoubleAnglesOct2(double sinsq2theta12, double sinsq2theta13, double sinsq2theta14, double sinsq2theta15,
+					     double sinsq2theta23, double sinsq2theta24, double sinsq2theta25, double sinsq2theta34, double sinsq2theta35)
+{
+  //Neglect oscillations between sterile states 4 and 5 since they give no observable effects, i.e. theta45 = 0.
+
+  //Code returns NaN if sin^2(2*mixing angle) is unphysical.
+  //Don't let sin^2(2*mixing angle) be below 0 or above 1.
+
+  sinsq2theta12 = TMath::Min(1.,sinsq2theta12);
+  sinsq2theta12 = TMath::Max(0.,sinsq2theta12);
+  sinsq2theta13 = TMath::Min(1.,sinsq2theta13);
+  sinsq2theta13 = TMath::Max(0.,sinsq2theta13);
+  sinsq2theta14 = TMath::Min(1.,sinsq2theta14);
+  sinsq2theta14 = TMath::Max(0.,sinsq2theta14);
+  sinsq2theta15 = TMath::Min(1.,sinsq2theta15);
+  sinsq2theta15 = TMath::Max(0.,sinsq2theta15);
+  sinsq2theta23 = TMath::Min(1.,sinsq2theta23);
+  sinsq2theta23 = TMath::Max(0.,sinsq2theta23);
+  sinsq2theta24 = TMath::Min(1.,sinsq2theta24);
+  sinsq2theta24 = TMath::Max(0.,sinsq2theta24);
+  sinsq2theta25 = TMath::Min(1.,sinsq2theta25);
+  sinsq2theta25 = TMath::Max(0.,sinsq2theta25);
+  sinsq2theta34 = TMath::Min(1.,sinsq2theta34);
+  sinsq2theta34 = TMath::Max(0.,sinsq2theta34);
+  sinsq2theta35 = TMath::Min(1.,sinsq2theta35);
+  sinsq2theta35 = TMath::Max(0.,sinsq2theta35);
+
+  //Calculate sin and cos(mixingAngle) from sin^2(2*mixingAngle)
+  sinMixingAngle[0][1] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta12)));
+  sinMixingAngle[0][2] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta13)));
+  sinMixingAngle[0][3] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta14)));
+  sinMixingAngle[0][4] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta15)));
+  //theta23 is in second octant
+  sinMixingAngle[1][2] = sqrt(1 - (0.5 * (1 - sqrt(1 - sinsq2theta23))));
+  sinMixingAngle[1][3] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta24)));
+  sinMixingAngle[1][4] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta25)));
+  sinMixingAngle[2][3] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta34)));
+  sinMixingAngle[2][4] = sqrt(0.5 * (1 - sqrt(1 - sinsq2theta35)));
+  cosMixingAngle[0][1] = sqrt(1.0 - sinMixingAngle[0][1] * sinMixingAngle[0][1]);
+  cosMixingAngle[0][2] = sqrt(1.0 - sinMixingAngle[0][2] * sinMixingAngle[0][2]);
+  cosMixingAngle[0][3] = sqrt(1.0 - sinMixingAngle[0][3] * sinMixingAngle[0][3]);
+  cosMixingAngle[0][4] = sqrt(1.0 - sinMixingAngle[0][4] * sinMixingAngle[0][4]);
+  cosMixingAngle[1][2] = sqrt(1.0 - sinMixingAngle[1][2] * sinMixingAngle[1][2]);
+  cosMixingAngle[1][3] = sqrt(1.0 - sinMixingAngle[1][3] * sinMixingAngle[1][3]);
+  cosMixingAngle[1][4] = sqrt(1.0 - sinMixingAngle[1][4] * sinMixingAngle[1][4]);
+  cosMixingAngle[2][3] = sqrt(1.0 - sinMixingAngle[2][3] * sinMixingAngle[2][3]);
+  cosMixingAngle[2][4] = sqrt(1.0 - sinMixingAngle[2][4] * sinMixingAngle[2][4]);
+
+  usingOscParams = true;
+}
+//________________________________________________________________________________________
 void NuOscSterile::SetDmsq(double dm21sq, double dm31sq, double dm41sq, double dm51sq)
 {
   //This assumes that m4^2 and m5^2 are both > m1^2, m2^2 and m3^2.
@@ -963,7 +1065,7 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
   //Define number density of neutrons in matter and assume it is the same as that of electrons
   double Nn = fNe;
 
-  // Add potential due to constant density matter to real part of first diagonal element of UMassUdagger.
+  // Add potential due to constant density matter to UMassUdagger.
   // The factor of 1.0e9 is to convert the energy from GeV to eV.
   if(util::IsNeutrino(nu_start))
     {
@@ -1237,7 +1339,7 @@ void NuOscSterile::CalcMatterOscProbAll(bool isAntineutrino, double energy, doub
   //Define number density of neutrons in matter and assume it is the same as that of electrons
   double Nn = fNe;
 
-  // Add potential due to constant density matter to real part of first diagonal element of UMassUdagger.
+  // Add potential due to constant density matter to UMassUdagger.
   // The factor of 1.0e9 is to convert the energy from GeV to eV.
   if(!isAntineutrino) {
     //First term is for CC interactions between nue and electrons in matter 
