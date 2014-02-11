@@ -32,6 +32,8 @@ using std::endl;
 using namespace t2kana;
 using namespace t2kana::conv;
 
+//#define DEBUG_INFO
+
 //________________________________________________________________________________________
 NuOscSterile::NuOscSterile()
 {
@@ -131,8 +133,9 @@ void NuOscSterile::SetDensity(double density)
 //________________________________________________________________________________________
 void NuOscSterile::SetMassHierarchy(NuMassHierarchy_t h)
 {
+#ifdef DEBUG_INFO
   cout << "NuOscSterile >> Mass hierarchy assumed: " << util::AsString(h) << endl;
-
+#endif
   fMassHierarchy = h;
 }
 //________________________________________________________________________________________

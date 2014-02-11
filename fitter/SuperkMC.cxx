@@ -3620,7 +3620,6 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
       mixing15 = fPhysHypothesis.CurrValue(kPhypMixing15);
       mixing25 = fPhysHypothesis.CurrValue(kPhypMixing25);
       mixing35 = fPhysHypothesis.CurrValue(kPhypMixing35);
-      mixing35 = fPhysHypothesis.CurrValue(kPhypMixing35);
       dm51sq   = fPhysHypothesis.CurrValue(kPhypDm51sq);
       delta_15 = fPhysHypothesis.CurrValue(kPhypDelta15);
       delta_35 = fPhysHypothesis.CurrValue(kPhypDelta35);
@@ -3683,22 +3682,42 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
 	if(!bin_is_not_empty) continue;
 	
-	double p_osc    [NuOscSterile::nFlav][NuOscSterile::nFlav];
-	double p_osc_bar[NuOscSterile::nFlav][NuOscSterile::nFlav];
+	double p_osc    [NuOscSterile::nFlav][NuOscSterile::nFlav] = {};
+	double p_osc_bar[NuOscSterile::nFlav][NuOscSterile::nFlav] = {};
 	
 	osc.CalcMatterOscProbAll(false, Etrue, &p_osc    [0][0]);
 	osc.CalcMatterOscProbAll(true , Etrue, &p_osc_bar[0][0]);
 	
+	double p_numu_numu       = p_osc    [1][1];
+	double p_numubar_numubar = p_osc_bar[1][1];
+	double p_nue_nue         = p_osc    [0][0];
+	double p_nuebar_nuebar   = p_osc_bar[0][0];
+	double p_numu_nue        = p_osc    [1][0];
+	double p_numubar_nuebar  = p_osc_bar[1][0];
+	double p_nue_numu        = p_osc    [0][1];
+	double p_nuebar_numubar  = p_osc_bar[0][1];
+	
+	double p_numu_nc    = p_osc    [1][0]+p_osc    [1][1]+p_osc    [1][2];
+	double p_numubar_nc = p_osc_bar[1][0]+p_osc_bar[1][1]+p_osc_bar[1][2];
+	double p_nue_nc     = p_osc    [0][0]+p_osc    [0][1]+p_osc    [0][2];
+	double p_nuebar_nc  = p_osc_bar[0][0]+p_osc_bar[0][1]+p_osc_bar[0][2];
+	
 #ifdef __show_hypothesis_probabilities__
-        cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-        cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_osc    [1][1] << endl;
-        cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_osc_bar[1][1] << endl;
-        cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_osc    [0][0] << endl;
-        cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_osc_bar[0][0] << endl;
-        cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_osc    [1][0] << endl;
-        cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_osc_bar[1][0] << endl;
-        cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_osc    [0][1] << endl;
-        cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_osc_bar[0][1] << endl;
+	cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
+	cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
+	cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
+	cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
+	cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
+	cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
+	cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
+	cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
+	cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
+	
+	cout << "Exp/SKMC >>  * P (numu     -> active ) = " << p_numu_nc         << endl;
+	cout << "Exp/SKMC >>  * P (numubar  -> active ) = " << p_numubar_nc      << endl;
+	cout << "Exp/SKMC >>  * P (nue      -> active ) = " << p_nue_nc          << endl;
+	cout << "Exp/SKMC >>  * P (nuebar   -> active ) = " << p_nuebar_nc       << endl;
+	
 #endif
         
 	// loop over modes
@@ -3709,27 +3728,27 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	  double posc = 1.;
 	  if(kIsCC[is][im])
 	  {
-	    if     ( util::IsNuMu(m)      ) { posc = p_osc    [1][1];  }
-	    else if( util::IsNuMuBar(m)   ) { posc = p_osc_bar[1][1];  }
-	    else if( util::IsNuE(m)       ) { posc = p_osc    [0][0];  } 
-	    else if( util::IsNuEBar(m)    ) { posc = p_osc_bar[0][0];  }
-	    else if( util::IsOscNuMu(m)   ) { posc = p_osc    [0][1];  }
-	    else if( util::IsOscNuMuBar(m)) { posc = p_osc_bar[0][1];  }
-	    else if( util::IsOscNuE(m)    ) { posc = p_osc    [1][0];  }
-	    else if( util::IsOscNuEBar(m) ) { posc = p_osc_bar[1][0];  }
+	    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+	    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+	    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
+	    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+	    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+	    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+	    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+	    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
 	  }
 	  else { // NC oscillations to sterile
 	    if (util::IsNuMu(m)) {
-	      posc = p_osc[1][0]+p_osc[1][1]+p_osc[1][2];
+	      posc = p_numu_nc;
 	    }
 	    else if (util::IsNuMuBar(m)) {
-	      posc = p_osc_bar[1][0]+p_osc_bar[1][1]+p_osc_bar[1][2];
+	      posc = p_numubar_nc;
 	    }
 	    else if (util::IsNuE(m)) {
-	      posc = p_osc[0][0]+p_osc[0][1]+p_osc[0][2];
+	      posc = p_nue_nc;
 	    }
 	    else if (util::IsNuEBar(m)) {
-	      posc = p_osc_bar[0][0]+p_osc_bar[0][1]+p_osc_bar[0][2];
+	      posc = p_nuebar_nc;
 	    }
 	  }
 	      
