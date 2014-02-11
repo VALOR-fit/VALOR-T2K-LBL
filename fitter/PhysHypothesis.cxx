@@ -90,6 +90,15 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
     this->SetCurrValue(kPhypMusqDecoh,          fp.CurrValue(kPhypMusqDecoh));
     this->SetCurrValue(kPhypSinsq2ThetaDecoh,   fp.CurrValue(kPhypSinsq2ThetaDecoh));
   }
+  
+  // Steriles
+  else if(hyp == kHypOscSterile4F || hyp == kHypOscSterile5F ) {
+    this->Init(hyp);
+    for (int i = 0 ; i < fp.Size() ; i++) {
+      PhysParamId_t p = fp.WhichParam(i);
+      this->SetCurrValue(p, fp.CurrValue(p));
+    }
+  }
 
   // undefined
   else {  

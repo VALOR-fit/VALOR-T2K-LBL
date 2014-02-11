@@ -2293,6 +2293,13 @@ void FitParamList::AppendSelectedCorrelatedBANFFSystematics(FitParamList * fparm
 //________________________________________________________________________________________
 PhysHypothesis_t FitParamList::PhysicsHypothesis(void) const
 {
+  // Steriles 3+2,3+1
+  if( this->Exists(kPhypDm51sq) ) {
+    return kHypOscSterile5F;
+  }
+  if(this->Exists(kPhypDm41sq) ) {
+    return kHypOscSterile4F;
+  }
   // neutrino oscillations (3-flavour framework)
   if( this->Exists(kPhypDm12sq)   &&
       this->Exists(kPhypDm23sq)   &&
