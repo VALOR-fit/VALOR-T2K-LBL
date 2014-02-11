@@ -100,6 +100,13 @@ class NuOscSterile
 			 );
 
   void SetVacuumPMNSImToZero();
+  
+  // Set a single PMNS matrix element. Flav and mass arguments are indices 0-4.
+  void SetVacuumPMNSElementByIndex(int iflav , int imass, double real, double imag);
+  
+  // Set a single PMNS matrix element. Flav and mass arguments are neutrino PDG/state number.
+  void SetVacuumPMNSElementByType (int nu_pdg, int nmass, double real, double imag);
+  
   void CalcVacuumPMNS   ();
   bool Check3FlavPMNS   ();
   void CalcMEProduct    (int nu_start, 

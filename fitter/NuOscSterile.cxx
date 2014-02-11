@@ -417,6 +417,32 @@ void NuOscSterile::SetVacuumPMNSImToZero()
   usingOscParams = false;
 
 }
+//________________________________________________________________________________________
+void NuOscSterile::SetVacuumPMNSElementByIndex(int iflav, int imass, double real, double imag)
+{
+  UVacuum[iflav][imass][re] = real;
+  UVacuum[iflav][imass][im] = imag;
+  usingOscParams = false;
+  return;
+}
+//________________________________________________________________________________________
+void NuOscSterile::SetVacuumPMNSElementByType(int nu_pdg, int nmass, double real, double imag)
+{
+  int imass = nmass-1;
+  int iflav;
+  switch (abs(nu_pdg)) {
+    case kPdgNuE  : iflav=0; break;
+    case kPdgNuMu : iflav=1; break;
+    case kPdgNuTau: iflav=2; break;
+    case kPdgNuS4 : iflav=3; break;
+    case kPdgNuS5 : iflav=4; break;
+    default: cerr<<"NuOscSterile/SetVacuumPMNSElementByType >> Unrecognised PDG: "<<nu_pdg<<endl;
+  }
+  UVacuum[iflav][imass][re] = real;
+  UVacuum[iflav][imass][im] = imag;
+  usingOscParams = false;
+  return;
+}
 //________________________________________________________________________________________ 
 void NuOscSterile::CalcVacuumPMNS()
 {
