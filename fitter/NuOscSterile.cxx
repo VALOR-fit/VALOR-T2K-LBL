@@ -1187,6 +1187,48 @@ double NuOscSterile::CalcMatterOscProb(int nu_start, int nu_end, double energy)
 	}
     }//end of for(int i=0; i<nFlav; i++)
 
+  // Check that consecutive complex eigenvectors are orthogonal  
+  double scalarProduct[nFlav][2] = {};
+
+  // For complex vectors, the scalar product is defined as the complex product 
+  // of the first vector and the complex conjugate of the second vector
+  for(int i=0; i<nFlav-1; i++)
+    {
+    for(int j=0; j<nFlav; j++)
+      {
+      scalarProduct[i][re] +=  UMatter[j][i][re] * UMatter[j][i+1][re]
+	                   +   UMatter[j][i][im] * UMatter[j][i+1][im];
+      scalarProduct[i][im] += -UMatter[j][i][re] * UMatter[j][i+1][im]
+	                   +   UMatter[j][i][im] * UMatter[j][i+1][re];
+      }
+    }
+  
+  for(int j=0; j<nFlav; j++)
+    {
+    scalarProduct[nFlav-1][re] +=  UMatter[j][0][re] * UMatter[j][nFlav-1][re]
+                               +   UMatter[j][0][im] * UMatter[j][nFlav-1][im];
+    scalarProduct[nFlav-1][im] +=- UMatter[j][0][re] * UMatter[j][nFlav-1][im]
+                               +   UMatter[j][0][im] * UMatter[j][nFlav-1][re];
+    }
+
+  cout<<"Eigenvector orthogonality check";
+  for(int i=0; i<nFlav; i++)
+    {
+    cout<<"    "<<scalarProduct[i][re]<<"    "<<scalarProduct[i][im];
+    if(fabs(scalarProduct[i][re]) > 1.0e-8)
+      {
+      cerr << "Warning in NuOscSterile::CalcMatterOscProb() : in eigenvector orthogonality check, real part of scalar product = "
+	   << scalarProduct[i][re] << "." << endl;
+      }        
+    if(fabs(scalarProduct[i][im]) > 1.0e-8)
+      {
+      cerr << "Warning in NuOscSterile::CalcMatterOscProb() : in eigenvector orthogonality check, imaginary part of scalar product = "
+	   << scalarProduct[i][im] << "." << endl;
+      }
+    }//end of for(int i=0; i<nFlav; i++)
+
+  cout<<endl;
+
 #endif //__check_diagonalisation__
 
   //UMatterDagger is the Hermitian conjugate (complex conjugate of transpose) of UMatter
@@ -1448,6 +1490,48 @@ void NuOscSterile::CalcMatterOscProbAll(bool isAntineutrino, double energy, doub
 	   << eigenvectorCheck[i][im] << "." << endl;
     }
   }//end of for(int i=0; i<nFlav; i++)
+
+  // Check that consecutive complex eigenvectors are orthogonal  
+  double scalarProduct[nFlav][2] = {};
+
+  // For complex vectors, the scalar product is defined as the complex product 
+  // of the first vector and the complex conjugate of the second vector
+  for(int i=0; i<nFlav-1; i++)
+    {
+    for(int j=0; j<nFlav; j++)
+      {
+      scalarProduct[i][re] +=  UMatter[j][i][re] * UMatter[j][i+1][re]
+	                   +   UMatter[j][i][im] * UMatter[j][i+1][im];
+      scalarProduct[i][im] += -UMatter[j][i][re] * UMatter[j][i+1][im]
+	                   +   UMatter[j][i][im] * UMatter[j][i+1][re];
+      }
+    }
+  
+  for(int j=0; j<nFlav; j++)
+    {
+    scalarProduct[nFlav-1][re] +=  UMatter[j][0][re] * UMatter[j][nFlav-1][re]
+                               +   UMatter[j][0][im] * UMatter[j][nFlav-1][im];
+    scalarProduct[nFlav-1][im] +=- UMatter[j][0][re] * UMatter[j][nFlav-1][im]
+                               +   UMatter[j][0][im] * UMatter[j][nFlav-1][re];
+    }
+
+  cout<<"Eigenvector orthogonality check";
+  for(int i=0; i<nFlav; i++)
+    {
+    cout<<"    "<<scalarProduct[i][re]<<"    "<<scalarProduct[i][im];
+    if(fabs(scalarProduct[i][re]) > 1.0e-8)
+      {
+      cerr << "Warning in NuOscSterile::CalcMatterOscProb() : in eigenvector orthogonality check, real part of scalar product = "
+	   << scalarProduct[i][re] << "." << endl;
+      }        
+    if(fabs(scalarProduct[i][im]) > 1.0e-8)
+      {
+      cerr << "Warning in NuOscSterile::CalcMatterOscProb() : in eigenvector orthogonality check, imaginary part of scalar product = "
+	   << scalarProduct[i][im] << "." << endl;
+      }
+    }//end of for(int i=0; i<nFlav; i++)
+
+  cout<<endl;
 
 #endif //__check_diagonalisation__
 
