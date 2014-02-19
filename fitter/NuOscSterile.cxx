@@ -318,12 +318,13 @@ void NuOscSterile::SetDmsq(double dm21sq, double dm31sq, double dm41sq, double d
 
 }
 //________________________________________________________________________________________
-void NuOscSterile::SetDeltaCP(double dcp12, double dcp13, double dcp15, double dcp34, double dcp35)
+void NuOscSterile::SetDeltaCP(double dcp12, double dcp13, double dcp24, double dcp25, double dcp35)
 {
+  //for CP-violating phases, use convention from equation 2.6 in arXiv 1303.3011v2
   deltaCP[0][1] = dcp12;
   deltaCP[0][2] = dcp13;
-  deltaCP[0][4] = dcp15;
-  deltaCP[2][3] = dcp34;
+  deltaCP[1][3] = dcp24;
+  deltaCP[1][4] = dcp25;
   deltaCP[2][4] = dcp35;
 
   usingOscParams = true;
@@ -449,7 +450,7 @@ void NuOscSterile::SetVacuumPMNSElementByType(int nu_pdg, int nmass, double real
 //________________________________________________________________________________________ 
 void NuOscSterile::CalcVacuumPMNS()
 {
-  //This calculation for 5 neutrinos is based on appendix A in arXiv 1111.4225.
+  //This calculation for 5 neutrinos is based on equation 2.6 in arXiv 1303.3011v2.
   //It neglects oscillations between the two sterile states 4 and 5 since they produce no observable effects. 
   
   //Define 2D rotation matrices, where rotationMatrix[i][j] is an identity matrix plus 
@@ -457,7 +458,7 @@ void NuOscSterile::CalcVacuumPMNS()
   //element[i][j] = sin(mixingAngle[i][j] 
   //element[j][i] = -sin(mixingAngle[i][j] 
   //element[j][j] = cos(mixingAngle[i][j]
-  //In matrices 12, 13, 15, 34 and 35, element[i][j] is multplied by exp(-deltaCP[i][j]) and element[j][i] by exp(deltaCP[i][j])
+  //In matrices 12, 13, 24, 25 and 35, element[i][j] is multplied by exp(-deltaCP[i][j]) and element[j][i] by exp(deltaCP[i][j])
   //Indices 0 and 1 are those of matrix
   //Indices 2 and 3 are elements of that matrix
   //Index 4: 0 is real part, 1 is imaginary part of matrix element
@@ -483,7 +484,7 @@ void NuOscSterile::CalcVacuumPMNS()
 	    {
 	    if(nFlav == 5)
 	      {
-	      if((i == 0 && (j == 1 || j == 2 || j == 4)) || (i == 2 && (j == 3 || j == 4)))
+	      if((i == 0 && (j == 1 || j == 2)) || (i == 1 && (j == 3 || j == 4)) || (i == 2 && j == 4))
 	        {
 		rotationMatrix[i][j][k][l][re] = sinMixingAngle[i][j] * cos(deltaCP[i][j]);
 		rotationMatrix[i][j][k][l][im] = sinMixingAngle[i][j] * -sin(deltaCP[i][j]);
@@ -499,7 +500,7 @@ void NuOscSterile::CalcVacuumPMNS()
 	    {
 	    if(nFlav == 5)
               {
-	      if((i == 0 && (j == 1 || j == 2 || j == 4)) || (i == 2 && (j == 3 || j == 4)))
+	      if((i == 0 && (j == 1 || j == 2)) || (i == 1 && (j == 3 || j == 4)) || (i == 2 && j == 4))
 		{
 		rotationMatrix[i][j][k][l][re] = -sinMixingAngle[i][j] * cos(deltaCP[i][j]);
 		rotationMatrix[i][j][k][l][im] = -sinMixingAngle[i][j] * sin(deltaCP[i][j]);
