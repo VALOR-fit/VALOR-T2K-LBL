@@ -40,6 +40,7 @@ class NuOscSterile
   void SetBaseline      (double length);
   void SetDensity       (double density);
   void SetMassHierarchy (t2kana::conv::NuMassHierarchy_t h);
+  void SetSterileMassHierarchy(int h);
 
   void SetMixingAngles  (double sinsqtheta12, 
                          double sinsqtheta13, 
@@ -138,6 +139,10 @@ class NuOscSterile
   void Init(void);
 
   t2kana::conv::NuMassHierarchy_t fMassHierarchy; ///< mass hierarchy
+  //set fSterileMassHierarchy to 32 for 3+2 model, i.e. m4^2 and m5^2 both > m1^2, m2^2 and m3^2
+  //set it to 131 for 1+3+1 model, i.e. m4^2 < m1^2, m2^2 and m3^2, m5^2 > m1^2, m2^2 and m3^2
+  //default is 32 which is set in Init()
+  int    fSterileMassHierarchy;  
   double fBaseline; ///< baseline (km)
   double fNe;       ///< number density of electrons in Earth's crust (cm^-3)
 

@@ -54,6 +54,9 @@ void NuOscSterile::Init()
   NuMassHierarchy_t nmh = Opt::Instance()->gMassHierarchyAssumed;
   this->SetMassHierarchy(nmh);
 
+  //set sterile mass hierarchy to 32 which is 3+2 model
+  this->SetSterileMassHierarchy(32);
+
   // set default density 
   this->SetDensity(kCrustDensity);
 
@@ -137,6 +140,21 @@ void NuOscSterile::SetMassHierarchy(NuMassHierarchy_t h)
   cout << "NuOscSterile >> Mass hierarchy assumed: " << util::AsString(h) << endl;
 #endif
   fMassHierarchy = h;
+}
+//________________________________________________________________________________________
+void NuOscSterile::SetSterileMassHierarchy(int h)
+{
+  //set sterile mass hierarchy to 32 for 3+2 model, i.e. m4^2 and m5^2 both > m1^2, m2^2 and m3^2
+  //set it to 131 for 1+3+1 model, i.e. m4^2 < m1^2, m2^2 and m3^2, m5^2 > m1^2, m2^2 and m3^2  
+#ifdef DEBUG_INFO
+  cout << "NuOscSterile >> Sterile mass hierarchy assumed: " << h << endl;
+#endif
+  if(h != 32 && h!= 131)
+    {
+    cerr<<"Sterile mass hierarchy not recognised. Please set it to 32 or 131"<<endl;
+    exit(1);
+    }
+  fSterileMassHierarchy = h;
 }
 //________________________________________________________________________________________
 void NuOscSterile::SetMixingAngles(double sinsqtheta12, double sinsqtheta13, double sinsqtheta14, double sinsqtheta15,
@@ -293,28 +311,48 @@ void NuOscSterile::SetMixingDoubleAnglesOct2(double sinsq2theta12, double sinsq2
 //________________________________________________________________________________________
 void NuOscSterile::SetDmsq(double dm21sq, double dm31sq, double dm41sq, double dm51sq)
 {
-  //This assumes that m4^2 and m5^2 are both > m1^2, m2^2 and m3^2.
+  //All of dm21sq, dm31sq, dm41sq and dm51sq must be entered as POSITIVE values
+  //The following code calculates the mass-squared differences depending on the 3-flavour 
+  //mass hierarchy and the sterile mass hierarchy
   dmsq[1][0] = dm21sq;
   dmsq[2][0] = dm31sq;
   if(fMassHierarchy == kNmhInverted) {
     dmsq[2][0] = -dmsq[2][0];
   }
-  dmsq[3][0] = dm41sq;
-  dmsq[4][0] = dm51sq;
   dmsq[2][1] = dmsq[2][0] - dmsq[1][0];
-  dmsq[3][1] = dm41sq - dm21sq;
+
+  if(fSterileMassHierarchy == 32)
+    {
+    dmsq[3][0] = dm41sq;
+    dmsq[3][1] = dm41sq - dm21sq;
+    dmsq[4][3] = dm51sq - dm41sq;
+    }
+  else if(fSterileMassHierarchy == 131)
+    {
+    dmsq[3][0] = -dm41sq;
+    dmsq[3][1] = -dm41sq - dm21sq;
+    dmsq[4][3] = dm51sq + dm41sq;
+    }
+
+  dmsq[4][0] = dm51sq;
   dmsq[4][1] = dm51sq - dm21sq;
+
   if(fMassHierarchy == kNmhNormal) 
     {
-    dmsq[3][2] = dm41sq - dm31sq;
+    if(fSterileMassHierarchy == 32)
+      dmsq[3][2] = dm41sq - dm31sq;
+    else if(fSterileMassHierarchy == 131)
+      dmsq[3][2] = -dm41sq - dm31sq;
     dmsq[4][2] = dm51sq - dm31sq;
     }
   else if(fMassHierarchy == kNmhInverted)  
     {
-    dmsq[3][2] = dm41sq + dm31sq;
+    if(fSterileMassHierarchy == 32)
+      dmsq[3][2] = dm41sq + dm31sq;
+    else if(fSterileMassHierarchy == 131)
+      dmsq[3][2] = -dm41sq + dm31sq;
     dmsq[4][2] = dm51sq + dm31sq;
     }
-  dmsq[4][3] = dm51sq - dm41sq;
 
 }
 //________________________________________________________________________________________
