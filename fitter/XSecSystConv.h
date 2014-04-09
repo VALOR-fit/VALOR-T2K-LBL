@@ -55,15 +55,15 @@ static const int kNumOfRHCXSecSyst = 21;
 #endif
 
 #ifdef __NUMUONLY__
-static const int kNumOfUncXSecSyst = 12;
-static const int kNumOfRHCUncXSecSyst = 12;
+static const int kNumOfUncXSecSyst = 11;
+static const int kNumOfRHCUncXSecSyst = 11;
 #else
 #ifdef __NUEONLY__
-static const int kNumOfUncXSecSyst = 10;
-static const int kNumOfRHCUncXSecSyst = 10;
+static const int kNumOfUncXSecSyst = 9;
+static const int kNumOfRHCUncXSecSyst = 9;
 #else
-static const int kNumOfUncXSecSyst = 13;
-static const int kNumOfRHCUncXSecSyst = 13;
+static const int kNumOfUncXSecSyst = 12;
+static const int kNumOfRHCUncXSecSyst = 12;
 #endif
 #endif
 

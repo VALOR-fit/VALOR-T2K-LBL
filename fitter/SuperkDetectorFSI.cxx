@@ -1085,17 +1085,17 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco) const
 {
-  TString paramName = AsString(p);
   int idx;
-
-  if(paramName.Contains("RHC"))
+  
+  bool isRHC = util::IsRHCSystematic(p);
+  if(isRHC)
     idx = arr_index->RHCSKDetFSISystIdx(p);
   else
     idx = arr_index->SKDetFSISystIdx(p);
   if (idx == -1) return false;
 
   bool apply;
-  if(paramName.Contains("RHC"))
+  if(isRHC)
     apply = Ereco >= conv::kRHCSKDetFSIParamsErecoCut[idx][0] &&
       Ereco <  conv::kRHCSKDetFSIParamsErecoCut[idx][1];
   else
