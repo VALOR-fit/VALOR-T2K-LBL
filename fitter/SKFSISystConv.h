@@ -1962,19 +1962,11 @@ static const bool kSKDet1ReApplyParamToSKMode[kns][knm][kNumOfSKDetParams1Re] = 
 //   -  8 BANFF xsec            
 //                                 
 
-#ifdef SKFSITOGETHER
 //static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Rmu + kNumOfUncXSecSyst;                                                                                
 //static const int kNumOfNuisanceParams1Re   = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Re  + kNumOfUncXSecSyst - 1 + 1 ;                                                                       
 //static const int kNumOfNuisanceParamsJoint = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams     + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + 1;                      
 static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
 static const int kNumOfRHCNuisanceParams = kNumOfRHCParamsInBANFFfit + kNumOfRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfRHCUncXSecSyst ;
-#endif
-#ifndef SKFSITOGETHER
-//static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfFSIParams1Rmu + kNumOfUncXSecSyst + kNumOfSKDetParams1Rmu;                                                            
-//static const int kNumOfNuisanceParams1Re   = kNumOfParamsInBANFFfit + kNumOfFSIParams1Re  + kNumOfUncXSecSyst - 1 + kNumOfSKDetParams1Re + 1 ;                                                    
-//static const int kNumOfNuisanceParamsJoint = kNumOfParamsInBANFFfit + kNumOfFSIParams     + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + kNumOfSKDetParams;        
-static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfFSIParams + kNumOfSKDetParams + kNumOfUncXSecSyst ;
-#endif
 
 
 } // conv

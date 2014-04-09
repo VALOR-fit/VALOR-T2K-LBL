@@ -27,13 +27,11 @@ Added samples for reverse horn current running
 #include <TRandom3.h>
 
 #include "SuperkExpectation.h"
-#include "SuperkDetector.h"
 #include "SuperkDetectorFSI.h"
 #include "SuperkMC.h"
 #include "NuFlux.h"
 #include "NuXSec.h"
 #include "BANFF.h"
-#include "FSI.h"
 #include "Conventions.h"
 #include "Utilities.h"
 #include "Opt.h"
@@ -63,13 +61,11 @@ void SuperkExpectation::Init(void)
 {
   fIsConfigured = false;
 
-  fSuperkDetector = 0;
+  fSuperkMC          = 0;
   fSuperkDetectorFSI = 0;
-  fSuperkMC       = 0;
-  fNuFlux         = 0;
-  fNuXSec         = 0;
-  fFSI            = 0;
-  fBANFF          = 0;
+  fNuFlux            = 0;
+  fNuXSec            = 0;
+  fBANFF             = 0;
 
   for(int is=0; is<kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -124,12 +120,7 @@ void SuperkExpectation::Book(void)
 //________________________________________________________________________________________
 void SuperkExpectation::CleanUp(void)
 {
-#ifdef SKFSITOGETHER
   if (fSuperkDetectorFSI ) delete fSuperkDetectorFSI;
-#else
-  if (fSuperkDetector ) delete fSuperkDetector;
-  if (fFSI            ) delete fFSI;
-#endif
   if (fSuperkMC       ) delete fSuperkMC;
   if (fNuFlux         ) delete fNuFlux; 
   if (fNuXSec         ) delete fNuXSec;
@@ -158,12 +149,7 @@ bool SuperkExpectation::Read(string config_file)
   fBANFF          = new BANFF;
   fNuFlux         = new NuFlux; 
   fNuXSec         = new NuXSec; 
-#ifdef SKFSITOGETHER
   fSuperkDetectorFSI = new SuperkDetectorFSI; 
-#else
-  fFSI            = new FSI; 
-  fSuperkDetector = new SuperkDetector; 
-#endif
   fSuperkMC       = new SuperkMC;
 
   // Configure inter-dependencies.
@@ -173,15 +159,7 @@ bool SuperkExpectation::Read(string config_file)
   fNuXSec   -> TellMeAboutTheRHCBANFFfit(fBANFF);
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
-#ifdef SKFSITOGETHER
   fSuperkMC -> TellMeAboutTheDetectorFSI(fSuperkDetectorFSI);
-  fSuperkMC -> TellMeAboutTheDetector   (0);
-  fSuperkMC -> TellMeAboutFSI           (0);
-#else
-  fSuperkMC -> TellMeAboutTheDetectorFSI(0);
-  fSuperkMC -> TellMeAboutTheDetector   (fSuperkDetector);
-  fSuperkMC -> TellMeAboutFSI           (fFSI);
-#endif
 
   // Parse the input XML configuration file
   TXMLEngine* xml = new TXMLEngine;   
@@ -830,16 +808,6 @@ void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
   this->GetSuperkDetectorFSI()->Tweak(); // <-- Cholesky method
 }
 //________________________________________________________________________________________
-void SuperkExpectation::TweakAllFSISystematics(void)
-{
-#ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all FSI systematic params." << endl;
-#endif
-
-  // FSI
-  this->GetFSI()->Tweak(); // <-- Cholesky method
-}
-//________________________________________________________________________________________
 void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 {
 #ifdef __show_syst_tweak_mesg__
@@ -871,27 +839,6 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu  , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
 #ifndef __NUEONLY__
   this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-#endif
-}
-//________________________________________________________________________________________
-void SuperkExpectation::TweakAllSKDetectorSystematics(void)
-{
-#ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all SKDetector systematic params." << endl;
-#endif
-
-
-  // SuperK detector systematics
-  this->GetSuperkDetector()->TweakEnergyScale              (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-#if FSI_BINS != 3
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCQEOther  (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCQERingCounting  (); // <-- Cholesky method
-  this->GetSuperkDetector()->TweakEfficiency1RmuCCnonQE    (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuNC         (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetSuperkDetector()->TweakEfficiency1RmuNuECC      (Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-#endif 
-#if FSI_BINS != 2
-  this->GetSuperkDetector()->TweakEfficiencies1Re          (); // <-- Cholesky method
 #endif
 }
 //________________________________________________________________________________________
@@ -936,57 +883,7 @@ PhysParamList SuperkExpectation::Tweaks(void)
   // 
   // SuperK detector + FSI systematics
   //
-
-#ifndef SKFSITOGETHER
-  pl.SetValue( kNuisSuperkEnergyScale,      this->GetSuperkDetector()->CurrentValue(kNuisSuperkEnergyScale)     );
-
-#if FSI_BINS != 3
-  pl.SetValue( kNuisSuperkEff1RmuCCQEoth,   this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQEoth)  );
-  pl.SetValue( kNuisSuperkEff1RmuCCQErc0u,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQErc0u) );
-  pl.SetValue( kNuisSuperkEff1RmuCCQErc1u,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQErc1u) );
-  pl.SetValue( kNuisSuperkEff1RmuCCQErc2u,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCQErc2u) );
-  pl.SetValue( kNuisSuperkEff1RmuCCnonQE,   this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuCCnonQE)  );
-  pl.SetValue( kNuisSuperkEff1RmuNC,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuNC)       );
-  pl.SetValue( kNuisSuperkEff1RmuNueCC,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1RmuNueCC)    );
-#endif
-#if FSI_BINS != 2
-  pl.SetValue( kNuisSuperkEff1ReNueSigCC0,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC0) ); 
-  pl.SetValue( kNuisSuperkEff1ReNueSigCC1,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC1) ); 
-  pl.SetValue( kNuisSuperkEff1ReNueSigCC2,  this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueSigCC2) ); 
-  pl.SetValue( kNuisSuperkEff1ReNumuCC0,    this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNumuCC0)   ); 
-  pl.SetValue( kNuisSuperkEff1ReNumuCC1,    this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNumuCC1)   ); 
-  pl.SetValue( kNuisSuperkEff1ReNumuCC2,    this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNumuCC2)   ); 
-  pl.SetValue( kNuisSuperkEff1ReNueCC0,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueCC0)    ); 
-  pl.SetValue( kNuisSuperkEff1ReNueCC1,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueCC1)    ); 
-  pl.SetValue( kNuisSuperkEff1ReNueCC2,     this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNueCC2)    ); 
-  pl.SetValue( kNuisSuperkEff1ReNC0,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC0)       );  
-  pl.SetValue( kNuisSuperkEff1ReNC1,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC1)       );  
-  pl.SetValue( kNuisSuperkEff1ReNC2,        this->GetSuperkDetector()->CurrentValue(kNuisSuperkEff1ReNC2)       );  
-#endif 
-#if FSI_BINS != 3
-  pl.SetValue( kNuisFSI000,  this->GetFSI()->CurrentValue(kNuisFSI000) );
-  pl.SetValue( kNuisFSI001,  this->GetFSI()->CurrentValue(kNuisFSI001) );
-  pl.SetValue( kNuisFSI002,  this->GetFSI()->CurrentValue(kNuisFSI002) );
-  pl.SetValue( kNuisFSI003,  this->GetFSI()->CurrentValue(kNuisFSI003) );
-  pl.SetValue( kNuisFSI004,  this->GetFSI()->CurrentValue(kNuisFSI004) );
-  pl.SetValue( kNuisFSI005,  this->GetFSI()->CurrentValue(kNuisFSI005) );
-#endif
-#if FSI_BINS != 2
-  pl.SetValue( kNuisFSI006,  this->GetFSI()->CurrentValue(kNuisFSI006) );
-  pl.SetValue( kNuisFSI007,  this->GetFSI()->CurrentValue(kNuisFSI007) );
-  pl.SetValue( kNuisFSI008,  this->GetFSI()->CurrentValue(kNuisFSI008) );
-  pl.SetValue( kNuisFSI009,  this->GetFSI()->CurrentValue(kNuisFSI009) );
-  pl.SetValue( kNuisFSI010,  this->GetFSI()->CurrentValue(kNuisFSI010) );
-  pl.SetValue( kNuisFSI011,  this->GetFSI()->CurrentValue(kNuisFSI011) );
-  pl.SetValue( kNuisFSI012,  this->GetFSI()->CurrentValue(kNuisFSI012) );
-  pl.SetValue( kNuisFSI013,  this->GetFSI()->CurrentValue(kNuisFSI013) );
-  pl.SetValue( kNuisFSI014,  this->GetFSI()->CurrentValue(kNuisFSI014) );
-  pl.SetValue( kNuisFSI015,  this->GetFSI()->CurrentValue(kNuisFSI015) );
-  pl.SetValue( kNuisFSI016,  this->GetFSI()->CurrentValue(kNuisFSI016) );
-  pl.SetValue( kNuisFSI017,  this->GetFSI()->CurrentValue(kNuisFSI017) );
-#endif // FSI_BINS=1
-
-#else // SKFSITOGETHER
+  
   pl.SetValue( kNuisSuperkEnergyScale,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale) );
 #if FSI_BINS != 3
   pl.SetValue( kNuisSKDetFSI000,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI000) );
@@ -1026,7 +923,6 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kNuisSKDetFSI031,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI031) );
 #endif
 #endif // FSI_BINS=1
-#endif // SKFSITOGETHER
 
   return pl;
 }
@@ -1049,11 +945,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       this->GetSuperkDetectorFSI()->TweakEnergyScale(twk);
       this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
     }
-
-#ifndef SKFSITOGETHER
-    cerr << "SKDet and FSI separate systematics not implemented in SuperkExpectation::SetNuisanceParams(). Exiting..." << endl;
-    exit(1);
-#endif
 
     // use current values stored in fit param list
     // to tweak the SKDET + FSI object

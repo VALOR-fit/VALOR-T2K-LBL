@@ -34,8 +34,6 @@
 #include "Utilities.h"
 #include "Conventions.h"
 #include "BANFF.h"
-#include "FSI.h"
-#include "SuperkDetector.h"
 
 using std::cerr; 
 using std::cout; 

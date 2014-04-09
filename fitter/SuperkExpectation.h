@@ -42,13 +42,11 @@ using t2kana::conv::knm;
 
 namespace t2kana {
 
-class SuperkDetector;    ///< SuperK detector systematics
 class SuperkDetectorFSI; ///< SuperK detector systematics + FSI
 class SuperkMC;          ///< SuperK MC templates
 class NuFlux;            ///< Neutrino flux info
 class NuXSec;            ///< Neutrino generator / cross-section info
 class BANFF;             ///< BANFF near-detector flux and cross-section fit info
-class FSI;               ///< Final State Interaction (FSI) info
 
 class SuperkExpectation: public TObject
 {
@@ -65,9 +63,7 @@ public:
    //                     best_banff refers to whether to use bestfit or param=1 when fitting a single banff parameter
    void TweakAllSystematics                  (void);           ///< random variation of all systematics
    void TweakAllBANFFSystematics             (void);           ///< random variation of all BANFF systematics
-   void TweakAllFSISystematics               (void);           ///< random variation of all FSI systematics
    void TweakAllUncorrelatedXSecSystematics  (void);           ///< random variation of all Uncorrelated XSec systematics
-   void TweakAllSKDetectorSystematics        (void);           ///< random variation of all SK Detector systematics
    void TweakAllSKDetectorFSISystematics     (void);           ///< random variation of all SK Detector systematics
 
    PhysParamList Tweaks(void);
@@ -87,13 +83,11 @@ public:
    bool Read(string config_file);
 
    // Access inputs used for building-up the expected spectrum at SK
-   SuperkDetector * GetSuperkDetector (void) { return fSuperkDetector; }
    SuperkDetectorFSI * GetSuperkDetectorFSI (void) { return fSuperkDetectorFSI; }
    SuperkMC *       GetSuperkMC       (void) { return fSuperkMC;       }
    NuFlux *         GetNuFlux         (void) { return fNuFlux;         }
    NuXSec *         GetNuXSec         (void) { return fNuXSec;         }
    BANFF *          GetBANFF          (void) { return fBANFF;          }
-   FSI *            GetFSI            (void) { return fFSI;            }
 
    // Print
    void PrintSystematicVariations(ostream & stream = std::cout) const;
@@ -113,13 +107,11 @@ private:
    void SetNuisanceParams (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
 
    bool             fIsConfigured;                ///< Is this object properly configured?
-   SuperkDetector * fSuperkDetector;              ///< SuperK detector info
    SuperkDetectorFSI * fSuperkDetectorFSI;              ///< SuperK detector info + FSI
    SuperkMC *       fSuperkMC;                    ///< SuperK MC templates
    NuFlux *         fNuFlux;                      ///< Neutrino flux simulation inputs
    NuXSec *         fNuXSec;                      ///< Neutrino generator / cross section inputs
    BANFF *          fBANFF;                       ///< BANFF fit info
-   FSI *            fFSI;                         ///< FSI info
 
    TH1D *  fPredictErecoSpectrum[kns][knm];  ///< Ereco spectrum = f(sample,mode)
    TH1D *  fPredictErecoSpectrumTot[kns];    ///< Ereco spectrum = f(sample), sum over modes

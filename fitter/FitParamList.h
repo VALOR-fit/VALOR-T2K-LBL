@@ -153,17 +153,12 @@ public:
    // The string argument of NamedParameterList() can take the following values:
    // - "nuosc3f"                        : Fit for sin^2(2theta12), sin^2(2theta13), sin^2(2theta23), delta_CP, |Dm23^2| and Dm12^2 (3-flavour formalism).
    // - "nuosc3f+nuisance"               : As "nuosc3f" + all nuisance parameters
-   // - "nuosc3f+nuisanceselection"      : As "nuosc3f" + a selection of nuisance parameters
    // - "nuosc3f_12constrain"            : As "nuosc3f", but penalizing sin^2(2theta12), Dm12^2 devations from values measured in solar/reactor expts.
    // - "nuosc3f_12fix"                  : As "nuosc3f", but fixing sin^2(2theta12), Dm12^2 devations to values measured in solar/reactor expts.
    // - "nuosc3f_numudisapp_fix4"        : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2.
-   // - "nuosc3f_numudisapp_fix4+nuisanceselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters.
-   // - "nuosc3f_numudisapp_fix4+nuisanceselectionnobanff": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (no BANFF"s included).
-   // - "nuosc3f_numudisapp_fix4+nuisancefullbanffselection": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + a selection of nuisance parameters (including the full BANFF matrix).
    // - "nuosc3f_numudisapp_fix4+nuisance": As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta13), delta_CP and Dm12^2 + all nuisance parameters.
    // - "nuosc3f_nueapp_fix4"            : As "nuosc3f" but fixing  sin^2(2theta12), sin^2(2theta23), |Dm23^2| and Dm12^2.
    // - "numudisapp2f"                   : Fit for sin^2(2theta23) and |Dm23^2| (2-flavour formalism)
-   // - "numudisapp2f+nuisanceselection" : As "numudisapp2f" + selected nuisance parameters 
    // - "numudisapp2f+nuisance"          : As "numudisapp2f" + all nuisance parameters 
    // - "decay"                          : Fit for sin^2(2theta) and \alpha_{decay}
    // - "decoh"                          : Fit for sin^2(2theta) and \mu_{decoherence}
@@ -201,11 +196,7 @@ private:
    static FitParamList * NuOsc3FlavourFitWithAllSystButSKDetFSI    (void);
    static FitParamList * NuOsc3FlavourFitWithAllSystDisap          (void);
    static FitParamList * NuOsc3FlavourFitWithAllSystApp            (void);
-   static FitParamList * NuOsc3FlavourFitWithSelectedSyst          (void);
-   static FitParamList * NuOsc3FlavourFitWithSelectedSystFullBANFF (void);
-   static FitParamList * NuOsc3FlavourFitWithSelectedSystNoBANFF   (void);
    static FitParamList * NumuDisapFit                              (void);
-   static FitParamList * NumuDisapFitWithSelectedSyst              (void);
    static FitParamList * NumuDisapFitWithAllSyst                   (void);
    static FitParamList * NumuDecayFit                              (void);
    static FitParamList * NumuDecohFit                              (void);
@@ -231,8 +222,6 @@ private:
    static void           AppendCorrelatedBANFFSystematicsDisap      (FitParamList * fp, int start);
    static void           AppendCorrelatedBANFFSystematicsApp        (FitParamList * fp, int start);
    static void           AppendAllUncorrelatedBANFFSystematics      (FitParamList * fp, int start);
-   static void           AppendSelectedNonBANFFSystematics          (FitParamList * fp, int start);
-   static void           AppendSelectedCorrelatedBANFFSystematics   (FitParamList * fp, int start);
    static void           Append4FlavourSterileOscillation           (FitParamList * fp, int start);
    static void           Append5FlavourSterileOscillation           (FitParamList * fp, int start);
 

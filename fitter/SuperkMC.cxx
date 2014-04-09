@@ -71,9 +71,7 @@
 #include <TMath.h>
 
 #include "SuperkMC.h"
-#include "SuperkDetector.h"
 #include "SuperkDetectorFSI.h"
-#include "FSI.h"
 #include "NuXSec.h"
 #include "NuFlux.h"
 #include "Utilities.h"
@@ -275,8 +273,6 @@ void SuperkMC::Init(void)
   
   fNuFlux              = 0;
   fNuXSec              = 0;  
-  fFSI                 = 0;  
-  fSKDet               = 0;
   fSKDetFSI            = 0;
   
   arr_index = util::ArrIdx::Instance();
@@ -2246,8 +2242,6 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
     }//im
   }//is
 
-  //fFSI    -> BuildFracMCTemplates(fMCTemplTun);
-
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> Complete" << endl;
 #endif
@@ -2888,12 +2882,8 @@ void SuperkMC::ApplySystematicsToTemplates_NonMultiplicative(void)
 
       // get energy scale
       double escale = 1;
-#ifdef SKFSITOGETHER
       escale = fSKDetFSI->EnergyScale(s,m);
-#endif 
-#ifndef SKFSITOGETHER
-      escale = fSKDet->EnergyScale(s,m);
-#endif
+      
       // energy scale > 1 : 
       // For a given bin, events are gained from bins on the left (lower Ereco bins) and 
       // are lost to bins on the right (higher Ereco bins)
@@ -3200,12 +3190,7 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
 
      // get energy scale
      double escale = 1;
- #ifdef SKFSITOGETHER
      escale = fSKDetFSI->EnergyScale(s);
- #endif
- #ifndef SKFSITOGETHER
-     escale = fSKDet->EnergyScale(s);
- #endif
      // energy scale > 1 : 
      // For a given bin, events are gained from bins on the left (lower Ereco bins) and 
      // are lost to bins on the right (higher Ereco bins)

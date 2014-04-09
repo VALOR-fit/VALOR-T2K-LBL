@@ -31,12 +31,6 @@ Split t2kana::conv namespace into several smaller files
 #define __FULLY_CORRELATED__
 #endif
 
-#ifndef SKFSITOGETHER
-#define SKFSITOGETHER
-// If turned on, errors for SK detector efficiencies and FSI are combined
-// fits are faster in this way. 
-#endif
-
 #ifndef HKHACK
 //#define HKHACK //use signal/background only systematics
 #endif

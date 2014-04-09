@@ -35,11 +35,9 @@
 #include "Conventions.h"
 #include "SuperkObservation.h"
 #include "SuperkExpectation.h"
-#include "SuperkDetector.h"
 #include "SuperkDetectorFSI.h"
 #include "BANFF.h"
 #include "NuXSec.h"
-#include "FSI.h"
 #include "FitInputs.h"
 #include "Opt.h" 
 
@@ -570,41 +568,15 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by NuXSec"
        << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_xsec << endl;
 #endif
-
-  //
-  // Add penalty term for SuperkDetector params
-  //
-#ifndef SKFSITOGETHER
-  double dchisq_penalty_skdet = fExp->GetSuperkDetector()->ChisqPenalty(all_syst);
-  chisq_penalty += dchisq_penalty_skdet;
-#ifdef __show_contributions_to_penalty_term__
-  cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by SuperkDetector"
-       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdet << endl;
-#endif
-#endif
-
-  //
-  // Add penalty term for FSI params 
-  //
-#ifndef SKFSITOGETHER
-  double dchisq_penalty_fsi = fExp->GetFSI()->ChisqPenalty();
-  chisq_penalty += dchisq_penalty_fsi;
-#ifdef __show_contributions_to_penalty_term__
-  cout << "FitInputs::ChisquarePenaltyTerm >> Current FSI param variation"
-       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_fsi << endl;
-#endif
-#endif
+  
     
   //
   // Add penalty term for SuperkDetector + FSI params
-  //
-#ifdef SKFSITOGETHER
   double dchisq_penalty_skdetfsi = fExp->GetSuperkDetectorFSI()->ChisqPenalty();
   chisq_penalty += dchisq_penalty_skdetfsi;
 #ifdef __show_contributions_to_penalty_term__
   cout << "FitInputs::ChisquarePenaltyTerm >> Current SK+FSI param variation"
        << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdetfsi << endl;
-#endif
 #endif
 
   return chisq_penalty;

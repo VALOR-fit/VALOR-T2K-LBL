@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <complex>
+#include <cassert>
 
 #include <TXMLEngine.h>
 #include <TFile.h>

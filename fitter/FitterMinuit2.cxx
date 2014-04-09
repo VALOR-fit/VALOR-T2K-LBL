@@ -51,8 +51,6 @@
 #include "Utilities.h"
 #include "Conventions.h"
 #include "BANFF.h"
-#include "FSI.h"
-#include "SuperkDetector.h"
 
 using std::cerr; 
 using std::cout; 
@@ -143,6 +141,9 @@ void FitterMinuit2::ConstructCovMatrix(void)
   cout << "FitterMinuit2/ConstructCovMatrix >> Constructing covariance matrix" << endl;
 #endif
 
+#ifndef NEVERDEFINED
+  assert(!"FitterMinuit2/ConstructCovMatrix not implemented");
+#else
   //Get number of free parameters
   int nfree = fNFreeFitParams;
   TMatrixD total_covariance(nfree, nfree);
@@ -228,6 +229,8 @@ void FitterMinuit2::ConstructCovMatrix(void)
   cout << "FitterMinuit2/ConstructCovMatrix >> Covariance matrix:" << endl;
   total_covariance.Print();
 #endif
+
+#endif //neverdefined
 
 }
 //____________________________________________________________________________ 

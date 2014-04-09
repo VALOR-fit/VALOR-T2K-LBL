@@ -23,13 +23,11 @@
 #pragma link C++ class t2kana::SuperkObservation;
 
 #pragma link C++ class t2kana::SuperkExpectation;
-#pragma link C++ class t2kana::SuperkDetector;
 #pragma link C++ class t2kana::SuperkDetectorFSI;
 #pragma link C++ class t2kana::SuperkMC;
 #pragma link C++ class t2kana::BANFF;
 #pragma link C++ class t2kana::NuXSec;
 #pragma link C++ class t2kana::NuFlux;
-#pragma link C++ class t2kana::FSI;
 
 #pragma link C++ class t2kana::FitterABC;
 #pragma link C++ class t2kana::FitterMinuit;

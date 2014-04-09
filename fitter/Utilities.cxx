@@ -1284,29 +1284,7 @@ void t2kana::util::ArrIdx::Init(void)
 #endif
   }
 
-#ifndef SKFSITOGETHER
-  //FSI
-  for(int i = 0; i < knppmax; i++) {
-    fFSISystIdx[i] = -1;
-  }
-  for(int ip = 0; ip < kNumOfFSIParams; ip++) {
-#if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kNuisFSI000 + ip);
-#else
-    PhysParamId_t p = PhysParamId_t ((int) kNuisFSI006 + ip);
-#endif
-    if(p == kPhypUndefined) continue;
-    fFSISystIdx[p] = ip;
-#ifdef __show_arr_idx_mesg_debug__
-     cout << "Util/ArrIdx >> FSI: " 
-          << util::AsString(p)
-          << " is at slot: " << fFSISystIdx [p] << endl;
-#endif
-  }
-#endif
-
   //SKDET + FSI
-#ifdef SKFSITOGETHER
   for(int i = 0; i < knppmax; i++) {
     fSKDetFSISystIdx[i] = -1;
   }
@@ -1324,8 +1302,6 @@ void t2kana::util::ArrIdx::Init(void)
           << " is at slot: " << fSKDetFSISystIdx [p] << endl;
 #endif
   }
-#endif
-#ifdef SKFSITOGETHER
   for(int i = 0; i < knppmax; i++) {
     fRHCSKDetFSISystIdx[i] = -1;
   }
@@ -1343,26 +1319,6 @@ void t2kana::util::ArrIdx::Init(void)
 	 << " is at slot: " << fRHCSKDetFSISystIdx [p] << endl;
 #endif
   }
-#endif
-
-#ifndef SKFSITOGETHER
-#if FSI_BINS != 2
-  //1Re SK eff
-  for(int i = 0; i < knppmax; i++) {
-    fSKDet1ReSystIdx[i] = -1;
-  }
-  for(int ip = 0; ip < kNumOfSKDetParams1Re; ip++) {
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSuperkEff1ReNueSigCC0 + ip);
-    if(p == kPhypUndefined) continue;
-    fSKDet1ReSystIdx[p] = ip;
-#ifdef __show_arr_idx_mesg_debug__
-     cout << "Util/ArrIdx >> 1Re SK Det: " 
-          << util::AsString(p)
-          << " is at slot: " << fSKDet1ReSystIdx [p] << endl;
-#endif
-  }
-#endif
-#endif
 
   //PhysParam
   for(int i = 0; i < knppmax; i++) {
