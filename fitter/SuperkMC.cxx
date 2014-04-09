@@ -80,6 +80,7 @@
 #include "Opt.h"
 #include "Rnd.h"
 #include "NuOscSterile.h"
+#include "UtlOsc.h"
 
 using std::cout;
 using std::cerr;

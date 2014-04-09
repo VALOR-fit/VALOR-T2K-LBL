@@ -28,6 +28,7 @@ Add samples and modes for reverse horn current running
 #include "AnalysisOptions.h"
 
 namespace t2kana {
+  
 namespace conv   {
 
 //

@@ -28,20 +28,7 @@ namespace conv   {
 // ------------------------------------------------------------------------
 // Constants & commonly used codes
 // ------------------------------------------------------------------------
-//
 
-// PDG Codes
-static const int kPdgNuE      =   12;
-static const int kPdgNuMu     =   14;
-static const int kPdgNuTau    =   16;
-static const int kPdgNuEBar   =  -12;
-static const int kPdgNuMuBar  =  -14;
-static const int kPdgNuTauBar =  -16;
-//sterile neutrinos (PDG codes are made up)
-static const int kPdgNuS4     =   80;
-static const int kPdgNuS5     =  100;
-static const int kPdgNuS4Bar  =  -80;
-static const int kPdgNuS5Bar  = -100;
 //
 // Oscillation parameters, recent global fit values & 1 sigma errors and
 // typical initialization and range values for fitter
