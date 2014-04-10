@@ -68,7 +68,7 @@ private:
   TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
-ClassDef(SuperkObservation, 3)
+ClassDef(SuperkObservation, 4)
 };
 
 } // t2kana

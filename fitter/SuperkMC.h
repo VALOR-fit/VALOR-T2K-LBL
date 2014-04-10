@@ -107,10 +107,7 @@ private:
   // Fill MC templates from the input SK event tree or from other sources
   void FillTemplate (conv::SuperkSample_t s, conv::SuperkMode_t m);
   void FillSpecialTemplates (void);
-
-  // Apply any flux tuning based on external (NA61,...) data to nominal MC
-  void ApplyFluxExtTuningToTemplates (void); 
-
+  
   // Apply BANFF flux + cross section tuning (based on ND280 data) on top of NA61-based flux tuned MC
   void ApplyBANFFTuningToTemplates (void); 
 
@@ -294,7 +291,7 @@ private:
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
-ClassDef(SuperkMC, 5);
+ClassDef(SuperkMC, 6);
 };
 
 } //t2kana

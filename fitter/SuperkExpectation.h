@@ -126,7 +126,7 @@ private:
    double  fPredictRHCErecoSpectrumArray1Rmu   [conv::knm][conv::kRHCNErecoBins1Rmu];
    double  fPredictRHCErecoSpectrumArray1Re    [conv::knm][conv::kRHCNErecoBins1Re];
    
-ClassDef(SuperkExpectation, 5)
+ClassDef(SuperkExpectation, 6)
 };
 
 } // t2kana

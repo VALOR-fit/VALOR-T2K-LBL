@@ -56,135 +56,6 @@ using namespace t2kana;
 using namespace t2kana::conv;
 
 //____________________________________________________________________________
-string t2kana::util::AsString (
-  t2kana::conv::PhysHypothesis_t hyp, 
-  double mix12, double mix13, double mix23, 
-  double deltacp, double dm12sq, double dm23sq)
-{
-// The code builds strings which are typically used in building names of
-// files containing t2kana results
-//
-
-  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-  NuOscOctant_t   oct = Opt::Instance()->gOscOctantChoice;
-  string mixparam = "?";
-  switch(omp) {
-      case(kNuMixSinsq2Theta):
-	 switch(oct) {
-	   case(kNuOctantOne):
-	     mixparam = "sinsq2theta_octantone";
-	     break;
-	   case(kNuOctantTwo):
-	     mixparam = "sinsq2theta_octanttwo";
-	     break;
-	   default:
-	     return "";
-	 }
-         break;
-      case(kNuMixSinsqTheta):
-         mixparam = "sinsqtheta";
-         break;
-      default:
-         return "";
-  }
-
-  ostringstream out;
-
-  //
-  // 3-flavour oscillations
-  // Build the string as mix[12_nnn,13_nnn,23_nnn],dcp_nnn,dmsq[12_nnn,23_nnn]eV2
-  // where mix is either sinsqtheta or sinsq2theta and nnn is the parameter
-  // value with the specified numerical accuracy.
-  // Params with value of -999 (randomized during toy-MC generation) will not be 
-  // included in the output string
-  //
-  if( hyp == t2kana::conv::kHypOsc3F )
-  {
-    double rndmz = -900;
-    bool show_mix12   = (mix12   > rndmz);
-    bool show_mix13   = (mix13   > rndmz);
-    bool show_mix23   = (mix23   > rndmz);
-    bool show_mix     = show_mix12 || show_mix13 || show_mix23;
-    bool show_deltacp = (deltacp > rndmz);
-    bool show_dm12sq  = (dm12sq  > rndmz);
-    bool show_dm23sq  = (dm23sq  > rndmz);
-    bool show_dmsq    = show_dm12sq || show_dm23sq;
-
-    if(show_mix) 
-    {
-       out << mixparam << "[";
-       if(show_mix12) {
-          out << "12_" << Form("%.3f",mix12);
-       }
-       if(show_mix13) {
-          if(show_mix12) { 
-             out << ","; 
-          }
-          out << "13_" << Form("%.3f",mix13);
-       }
-       if(show_mix23) {
-          if(show_mix13 || (!show_mix13 && show_mix12)) {
-             out << ",";
-          }
-          out << "23_" << Form("%.3f",mix23);
-       }
-       out << "]";
-    }
-
-    if(show_mix && (show_deltacp || show_dmsq)) 
-    {
-      out << ",";
-    } 
-
-    if(show_deltacp)
-    {
-      out << "dcp_" << Form("%.3f",deltacp);
-    }
-
-    if(show_deltacp && show_dmsq)
-    {
-      out << ",";
-    } 
-
-    if(show_dmsq) 
-    {
-      out << "dmsq_" << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << "[";
-       if(show_dm12sq) {
-          out << "12_" << Form("%.8f",dm12sq);
-       }
-       if(show_dm23sq) {
-          if(show_dm12sq) { 
-             out << ","; 
-          }
-          out << "23_" << Form("%.6f",dm23sq);
-       }
-       out << "]eV2";
-    }
-
-  }//3f
-  
-  // Placeholder for steriles
-  if (hyp == t2kana::conv::kHypOscSterile4F) {
-    out<<"sterile_3+1";
-  }
-  if (hyp == t2kana::conv::kHypOscSterile5F) {
-    out<<"sterile_3+2";
-  }
-
-  //
-  // 2-flavour oscillations, numu disappearance
-  // Build the string as mix23_nnn,dm23sq_nnneV2
-  // where mix is either sinsqtheta or sinsq2theta and nnn is the parameter
-  // value with the specified numerical accuracy.
-  //
-  if( hyp == t2kana::conv::kHypNuMuDisapp2F)
-  {
-    out << mixparam << "23_" << Form("%.3f",mix23) << ",dm23sq_" << Form("%.5f",dm23sq) << "eV2";
-  } 
-
-  return out.str();
-}
-//____________________________________________________________________________
 string t2kana::util::AsString(t2kana::conv::OscAnaType_t a)
 {
   switch(a) {
@@ -203,119 +74,6 @@ string t2kana::util::AsString(t2kana::conv::OscAnaType_t a)
   }
   return "";
 }
-//____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::NuMassHierarchy_t m)
-{
-  switch(m) {
-   case (kNmhNormal) :
-     return "Normal";
-     break;
-   case (kNmhInverted) :
-     return "Inverted";
-     break;
-   default :
-     return "Undefined"; 
-     break;
-  }
-  return "";
-}
-//____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::NuOscMixParam_t p)
-{
-  switch(p) {   
-   case (kNuMixSinsq2Theta) :
-     return "sin^2(2*theta_{ij})";
-     break;
-   case (kNuMixSinsqTheta) :
-     return "sin^2(theta_{ij})";
-     break;
-   default :
-     return "Undefined"; 
-     break;
-  }
-  return "";
-}
-//____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::NuOscOctant_t o)
-{
-  switch(o) {   
-   case (kNuOctantOne) :
-     return "sin^2(theta_{23}) <= 0.5";
-     break;
-   case (kNuOctantTwo) :
-     return "sin^2(theta_{23}) >= 0.5";
-     break;
-   default :
-     return "Undefined"; 
-     break;
-  }
-  return "";
-}
-//____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::NuOscDmsqScheme_t dmsqs)
-{
-  switch(dmsqs) {
-  case(kNuDmsq12andAbs23) :
-    return "dm^2 = Dm^2_{21}, Dm^2 = |Dm^2_{32}|";
-    break;
-  case(kNuDmsq12andAbs31) :
-    return "dm^2 = Dm^2_{21}, Dm^2 = |Dm^2_{31}|";
-    break;
-  case(kNuDmsqFogliLisi ) :
-    return "dm^2 = Dm^2_{21}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|";
-    break;
-  default :
-    return "Undefined";
-    break;
-  }
-}
-//____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::NuOscDeltaCP_t deltaCP)
-{
-  switch(deltaCP) {
-  case(kNuDeltaCPPhase) :
-    return "d_{CP}";
-    break;
-  case(kNuDeltaCPSin) :
-    return "sin(d_{CP})";
-    break;
-  default :
-    return "Undefined";
-    break;
-  }
-}
-//____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::PhysHypothesis_t h)
-{
-  switch(h) {
-    case (kHypDecay) : 
-       return "<Neutrino Decay>"; 
-       break;
-    case (kHypDecoh) : 
-       return "<Neutrino Decoherence>"; 
-       break;
-    case (kHypNuMuDisapp2F) : 
-       return "<2-Flavour Neutrino Oscillations: nu_mu disappearance>"; 
-       break;
-    case (kHypOsc3F) : 
-       return "<3-flavour Neutrino Oscillations>"; 
-       break;
-    case (kHypNSI3F) : 
-       return "<3-flavour Neutrino Oscillations with nonstandard matter interactions>"; 
-       break;
-    case (kHypOscSterile4F) : 
-       return "<3+1 Sterile Neutrino Oscillations>"; 
-       break;
-    case (kHypOscSterile5F) : 
-       return "<3+2 Sterile Neutrino Oscillations>"; 
-       break;
-    default:                
-      return "undefined"; 
-      break;
-  }
-  return "";
-}
-//___________________________________________________________________________
 //____________________________________________________________________________
 string t2kana::util::AsString(conv::SKMCTemplateType_t t)
 {
@@ -353,32 +111,6 @@ string t2kana::util::AsString(t2kana::conv::FluxType_t f)
     default                     : return "--";               break;
   }
   return "";
-}
-//____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::OscChannelId_t osch)
-{
-  switch(osch) {
-     case ( kOscNuE2NuE           ) : return "nue -> nue";            break;
-     case ( kOscNuE2NuMu          ) : return "nue -> numu";           break;
-     case ( kOscNuE2NuTau         ) : return "nue -> nutau";          break;
-     case ( kOscNuMu2NuE          ) : return "numu -> nue";           break;  
-     case ( kOscNuMu2NuMu         ) : return "numu -> numu";          break;
-     case ( kOscNuMu2NuTau        ) : return "numu -> nutau";         break;
-     case ( kOscNuTau2NuE         ) : return "nutau -> nue";          break;
-     case ( kOscNuTau2NuMu        ) : return "nutau -> numu";         break;
-     case ( kOscNuTau2NuTau       ) : return "nutau -> nutau";        break;
-     case ( kOscNuEBar2NuEBar     ) : return "nuebar -> nuebar";      break;
-     case ( kOscNuEBar2NuMuBar    ) : return "nuebar -> numubar";     break;
-     case ( kOscNuEBar2NuTauBar   ) : return "nuebar -> nutaubar";    break;
-     case ( kOscNuMuBar2NuEBar    ) : return "numubar -> nuebar";     break;
-     case ( kOscNuMuBar2NuMuBar   ) : return "numubar -> numubar";    break;
-     case ( kOscNuMuBar2NuTauBar  ) : return "numubar -> nutaubar";   break;
-     case ( kOscNuTauBar2NuEBar   ) : return "nutaubar -> nuebar";    break;
-     case ( kOscNuTauBar2NuMuBar  ) : return "nutaubar -> numubar";   break;
-     case ( kOscNuTauBar2NuTauBar ) : return "nutaubar -> nutaubar";  break;
-     default                        : return "--";
-  }
-  return "--";
 }
 //____________________________________________________________________________
 string t2kana::util::AsStringRooTex (
@@ -444,19 +176,6 @@ string t2kana::util::AsStringCompact_splinehack (t2kana::conv::SuperkSample_t s)
   }
   return AsStringCompact(s);
 }
-//___________________________________________________________________________
-t2kana::conv::PhysHypothesis_t t2kana::util::PhysHypFromString(string sh)
-{
-  if(sh == "decay"         ) return kHypDecay;
-  if(sh == "decoh"         ) return kHypDecoh;
-  if(sh == "2f_numu_disap" ) return kHypNuMuDisapp2F;
-  if(sh == "3f_osc"        ) return kHypOsc3F;
-  if(sh == "3f_nsi"        ) return kHypNSI3F;
-  if(sh == "4f_sterile_osc") return kHypOscSterile4F;
-  if(sh == "5f_sterile_osc") return kHypOscSterile5F;
-
-  return kHypUndefined;
-}
 //____________________________________________________________________________
 t2kana::conv::OscAnaType_t  
    t2kana::util::OscAnaFromString(string sh) 
@@ -466,43 +185,6 @@ t2kana::conv::OscAnaType_t
   if(sh == "nue_app"    ) return kAnaNuEAppOnly;
   
   return kAnaUndefined;
-}
-//____________________________________________________________________________
-t2kana::conv::NuOscDmsqScheme_t  
-  t2kana::util::DmsqSchemeFromString(string sh) 
-{
-  if(sh == "abs23"    ) return kNuDmsq12andAbs23;
-  if(sh == "abs31"    ) return kNuDmsq12andAbs31;
-  if(sh == "fogli"    ) return kNuDmsqFogliLisi;
-  
-  return kNuDmsqUndefined;
-}
-//____________________________________________________________________________
-t2kana::conv::NuMassHierarchy_t  
-  t2kana::util::HierarchyFromString(string sh) 
-{
-  if(sh == "normal"   ) return kNmhNormal;
-  if(sh == "inverted" ) return kNmhInverted;
-  
-  return kNmhUndefined;
-}
-//____________________________________________________________________________
-t2kana::conv::NuOscOctant_t   
-  t2kana::util::OctantFromString(string sh) 
-{
-  if(sh == "one") return kNuOctantOne;
-  if(sh == "two") return kNuOctantTwo;
-  
-  return kNuOctantUndefined;
-}
-//____________________________________________________________________________
-t2kana::conv::NuOscMixParam_t   
-  t2kana::util::MixingTypeFromString(string sh) 
-{
-  if(sh == "sinsq2theta") return kNuMixSinsq2Theta;
-  if(sh == "sinsqtheta" ) return kNuMixSinsqTheta;
-  
-  return kNuMixUndefined;
 }
 //____________________________________________________________________________
 t2kana::conv::SKMCTemplateType_t   
@@ -515,61 +197,6 @@ t2kana::conv::SKMCTemplateType_t
   if(sh == "fin")        return kSKMCtFin;
 
   return kSKMCtUndefined;
-}
-//____________________________________________________________________________
-t2kana::conv::OscChannelId_t
-  t2kana::util::GetOscChannel(int nu_start, int nu_end)
-{
-  if ( nu_start == kPdgNuE      && nu_end == kPdgNuE      ) return kOscNuE2NuE;
-  if ( nu_start == kPdgNuE      && nu_end == kPdgNuMu     ) return kOscNuE2NuMu;
-  if ( nu_start == kPdgNuE      && nu_end == kPdgNuTau    ) return kOscNuE2NuTau;
-  if ( nu_start == kPdgNuMu     && nu_end == kPdgNuE      ) return kOscNuMu2NuE;
-  if ( nu_start == kPdgNuMu     && nu_end == kPdgNuMu     ) return kOscNuMu2NuMu;
-  if ( nu_start == kPdgNuMu     && nu_end == kPdgNuTau    ) return kOscNuMu2NuTau;
-  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuE      ) return kOscNuTau2NuE;
-  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuMu     ) return kOscNuTau2NuMu;
-  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuTau    ) return kOscNuTau2NuTau;
-     
-  if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuEBar   ) return kOscNuEBar2NuEBar;
-  if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuMuBar  ) return kOscNuEBar2NuMuBar;
-  if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuTauBar ) return kOscNuEBar2NuTauBar;
-  if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuEBar   ) return kOscNuMuBar2NuEBar;
-  if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuMuBar  ) return kOscNuMuBar2NuMuBar;
-  if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuTauBar ) return kOscNuMuBar2NuTauBar;
-  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuEBar   ) return kOscNuTauBar2NuEBar;
-  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuMuBar  ) return kOscNuTauBar2NuMuBar;
-  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuTauBar ) return kOscNuTauBar2NuTauBar;
-
-  //oscillations to or from sterile neutrinos NuS4 or NuS5
-  if ( nu_start == kPdgNuE      && nu_end == kPdgNuS4     ) return kOscNuE2NuS4;
-  if ( nu_start == kPdgNuE      && nu_end == kPdgNuS5     ) return kOscNuE2NuS5;
-  if ( nu_start == kPdgNuMu     && nu_end == kPdgNuS4     ) return kOscNuMu2NuS4;
-  if ( nu_start == kPdgNuMu     && nu_end == kPdgNuS5     ) return kOscNuMu2NuS5;
-  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuS4     ) return kOscNuTau2NuS4;
-  if ( nu_start == kPdgNuTau    && nu_end == kPdgNuS5     ) return kOscNuTau2NuS5;
-
-  if ( nu_start == kPdgNuS4     && nu_end == kPdgNuE      ) return kOscNuS42NuE;
-  if ( nu_start == kPdgNuS5     && nu_end == kPdgNuE      ) return kOscNuS52NuE;
-  if ( nu_start == kPdgNuS4     && nu_end == kPdgNuMu     ) return kOscNuS42NuMu;
-  if ( nu_start == kPdgNuS5     && nu_end == kPdgNuMu     ) return kOscNuS52NuMu;
-  if ( nu_start == kPdgNuS4     && nu_end == kPdgNuTau    ) return kOscNuS42NuTau;
-  if ( nu_start == kPdgNuS5     && nu_end == kPdgNuTau    ) return kOscNuS52NuTau;
-
-  if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuS4Bar  ) return kOscNuEBar2NuS4Bar;
-  if ( nu_start == kPdgNuEBar   && nu_end == kPdgNuS5Bar  ) return kOscNuEBar2NuS5Bar;
-  if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuS4Bar  ) return kOscNuMuBar2NuS4Bar;
-  if ( nu_start == kPdgNuMuBar  && nu_end == kPdgNuS5Bar  ) return kOscNuMuBar2NuS5Bar;
-  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuS4Bar  ) return kOscNuTauBar2NuS4Bar;
-  if ( nu_start == kPdgNuTauBar && nu_end == kPdgNuS5Bar  ) return kOscNuTauBar2NuS5Bar;
-
-  if ( nu_start == kPdgNuS4Bar  && nu_end == kPdgNuEBar   ) return kOscNuS4Bar2NuEBar;
-  if ( nu_start == kPdgNuS5Bar  && nu_end == kPdgNuEBar   ) return kOscNuS5Bar2NuEBar;
-  if ( nu_start == kPdgNuS4Bar  && nu_end == kPdgNuMuBar  ) return kOscNuS4Bar2NuMuBar;
-  if ( nu_start == kPdgNuS5Bar  && nu_end == kPdgNuMuBar  ) return kOscNuS5Bar2NuMuBar;
-  if ( nu_start == kPdgNuS4Bar  && nu_end == kPdgNuTauBar ) return kOscNuS4Bar2NuTauBar;
-  if ( nu_start == kPdgNuS5Bar  && nu_end == kPdgNuTauBar ) return kOscNuS5Bar2NuTauBar;
-
-  return kOscUndefined;
 }
 //____________________________________________________________________________
 void t2kana::util::PrintCompact(

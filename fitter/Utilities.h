@@ -41,6 +41,7 @@ class TH2D;
 class TAxis;
 
 #include "Conventions.h"
+#include "Enumerations.h"
 #include "ConfLevel.h"
 #include "PDG.h"
 #include "UtlNumStat.h"
@@ -58,24 +59,11 @@ namespace util {
   //
   // Utility functions for T2KAna enumerations
   //
-
-  string AsString           (conv::PhysHypothesis_t hyp, double mix12, double mix13, double mix23, double deltacp, double dm12sq, double dm23sq);
+  
   string AsString           (conv::OscAnaType_t       a);
-  string AsString           (conv::NuMassHierarchy_t  m);
-  string AsString           (conv::NuOscMixParam_t    o);
-  string AsString           (conv::NuOscOctant_t      p);
-  string AsString           (t2kana::conv::NuOscDmsqScheme_t dmsqs);
-  string AsString           (t2kana::conv::NuOscDeltaCP_t deltaCP);
-  string AsString           (conv::PhysHypothesis_t   h);
-  //string AsString           (conv::PhysParamId_t      p);
   string AsString           (conv::SKMCTemplateType_t t);
   string AsString           (conv::FluxType_t         f);
-  string AsString           (conv::OscChannelId_t     o);
- /* string AsStringTex        (conv::PhysParamId_t      p);
-  string AsStringPresentTex (conv::PhysParamId_t      p);
-  string AsStringPaperTex   (conv::PhysParamId_t      p);
-  string AsStringPaperTexNoDollar   (conv::PhysParamId_t      p);
-  string AsStringPaperRooTex(conv::PhysParamId_t      p); */
+/*string AsStringPresentTex (conv::PhysParamId_t      p);*/
   string AsStringRooTex     (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
   string AsStringCompact    (conv::SuperkSample_t s, conv::SuperkMode_t m, string append_begin="", string append_end="");
   string AsStringCompact_KDI(conv::SuperkMode_t m);
@@ -83,13 +71,8 @@ namespace util {
   //temporary methods to get around spline naming
   string AsStringCompact_splinehack(conv::SuperkSample_t s);
   string AsStringCompact_splinehack(conv::SuperkMode_t   m);
-
-  conv::PhysHypothesis_t   PhysHypFromString         (string h);
+  
   conv::OscAnaType_t       OscAnaFromString          (string h);
-  conv::NuMassHierarchy_t  HierarchyFromString       (string h);
-  conv::NuOscDmsqScheme_t  DmsqSchemeFromString      (string h);
-  conv::NuOscMixParam_t    MixingTypeFromString      (string h);
-  conv::NuOscOctant_t      OctantFromString          (string h);
   conv::SKMCTemplateType_t SKMCTemplateTypeFromString(string h);
 
   conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
