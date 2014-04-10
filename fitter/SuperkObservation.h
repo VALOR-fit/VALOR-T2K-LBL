@@ -47,8 +47,9 @@ public:
   double NumOfEvents (t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;             
   double NumOfEvents (double Er, t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;  
 
-  TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; 
+  TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
   double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s); 
+  const double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s) const; 
 
   // Write datasets to the input container or to the input file
   bool Write(TObjArray * data_collection, const char * tag = "data");

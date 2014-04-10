@@ -56,6 +56,8 @@ namespace util {
   // T2K specific
  
    void SetDefaultSKSpectrumStyle (conv::SuperkSample_t s, conv::SuperkMode_t m, TH1D * histogram);
+   // When making an ereco hist, set directory/axis titles/line colour
+   void FormatErecoHist(TH1 * hist);
 
 } // util
 } // t2kana

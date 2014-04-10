@@ -265,3 +265,13 @@ void t2kana::util::SetDefaultSKSpectrumStyle (
     hist->SetLineColor(line_colour);
   }
 }
+//________________________________________________________________________________________
+void t2kana::util::FormatErecoHist(TH1 * hist)
+{
+  hist->SetDirectory(0);
+  hist->SetLineWidth(2);
+  hist->SetLineColor(kBlack);
+  hist->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hist->GetYaxis()->SetTitle("Events per bin");
+}
+//________________________________________________________________________________________

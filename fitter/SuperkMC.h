@@ -50,15 +50,17 @@ public:
 
   // Integrate current MC templates and get Ereco spectra (needed for fitting the data)
   bool  UpdateErecoSpectra  (void);
-  TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s) const;
-  TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
-  double* CurrErecoSpectrumArray   (conv::SuperkSample_t s);
-  double* CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m);
+  TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s, conv::SuperkMode_t m) const; // Returns new object, mut be deleted
+  double*       CurrErecoSpectrumArray   (conv::SuperkSample_t s);
+  const double* CurrErecoSpectrumArray   (conv::SuperkSample_t s) const;
+  double*       CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m);
+  const double* CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
       
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (conv::SuperkSample_t s, conv::SuperkMode_t m);
   double  MCPOT  (conv::SuperkSample_t s, conv::SuperkMode_t m);
-
+  
   // Access MC templates
   TH2D * Template (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::SKMCTemplateType_t type) const;
   TH2D * VarTemplate (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
@@ -73,8 +75,8 @@ public:
   PhysHypothesis & Hypothesis(void);
 
   // Hooks for obtaining necessary flux, cross-section and detector information
-  void TellMeAboutTheFlux       (NuFlux *         flux ) { fNuFlux = flux; }
-  void TellMeAboutCrossSections (NuXSec *         xsec ) { fNuXSec = xsec; }
+  void TellMeAboutTheFlux       (NuFlux *         flux )       { fNuFlux = flux; }
+  void TellMeAboutCrossSections (NuXSec *         xsec )       { fNuXSec = xsec; }
   void TellMeAboutTheDetectorFSI(SuperkDetectorFSI * skdetfsi) { fSKDetFSI  = skdetfsi; }
 
   // Calculate error in each 2D template bin due to finite MC statistics & fluctuate to study effect of MC stat err
@@ -93,7 +95,8 @@ public:
 
   // Allow changing the mass hierarchy
   void SetMassHierarchy(t2kana::conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
-
+  
+  
 private:
 
   // Init and clean-up
@@ -133,7 +136,7 @@ private:
 
   // Integrate current MC templates and get Etrue spectra (needed for applying physics hypothesis)
   void FillEtrueSpectra(void);
-
+  
   //
   // Private data members
   //
@@ -144,11 +147,7 @@ private:
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplOri[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
   TH2D *     fMCTemplNom[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
-#ifndef PRODUCTIONMODE
-  TH2D *     fMCTemplTun[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning
-  TH2D *     fMCTemplSys[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics 
-  TH2D *     fMCTemplFin[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
-#endif
+  
   TH2D *     fMCTemplMECMartini;           ///< Martini MEC template
   TH2D *     fMCTemplRHCMECMartini;           ///< Martini MEC template    // ANTINU
 
