@@ -48,11 +48,6 @@ static const int kNumOfParamsInBANFFfit = 27;
 static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 5;
 static const int kNumOfRHCParamsInBANFFfit = 27;
 static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 5;
-#elif BANFF_BINS == 4 //disap + MEC
-static const int kNumOfParamsInBANFFfit = 25;
-static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 7;
-static const int kNumOfRHCParamsInBANFFfit = 25;
-static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 7;
 #endif
 
 //
@@ -78,7 +73,7 @@ static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
    true,                 // kNuisBANFF13
    true,                 // kNuisBANFF14
    true,                 // kNuisBANFF15
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    true,                 // kNuisBANFF16
    true,                 // kNuisBANFF17
    true,                 // kNuisBANFF18
@@ -102,12 +97,8 @@ static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
 #if BANFF_BINS != 3
    false,                // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    false                 // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-   false,                // kNuisBANFFMECNorm
-   false                 // kNuisBANFFPDDDoubleCount
 #endif
 };
 
@@ -129,7 +120,7 @@ static const bool kRHCParamInBANFFfitIsSuperkFluxParam[kNumOfRHCParamsInBANFFfit
     true,                 // kRHCNuisBANFF13
     true,                 // kRHCNuisBANFF14
     true,                 // kRHCNuisBANFF15
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     true,                 // kRHCNuisBANFF16
     true,                 // kRHCNuisBANFF17
     true,                 // kRHCNuisBANFF18
@@ -153,12 +144,8 @@ static const bool kRHCParamInBANFFfitIsSuperkFluxParam[kNumOfRHCParamsInBANFFfit
 #if BANFF_BINS != 3
     false,                // kRHCNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     false                 // kRHCNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-    false,                // kRHCNuisBANFFMECNorm
-    false                 // kRHCNuisBANFFPDDDoubleCount
 #endif
   };
 
@@ -167,7 +154,7 @@ static const bool kRHCParamInBANFFfitIsSuperkFluxParam[kNumOfRHCParamsInBANFFfit
 // flux-related BANFF parameters --> flux neutrino PDG code
 static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 {
-#if (BANFF_BINS == 2) || (BANFF_BINS == 4)
+#if (BANFF_BINS == 2)
    kPdgNuMu,             // kNuisBANFF00
    kPdgNuMu,             // kNuisBANFF01
    kPdgNuMu,             // kNuisBANFF02
@@ -247,18 +234,14 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 #if BANFF_BINS != 3
    0,                    // kNuisBANFFCC1piE1, not a flux param
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    0                     // kNuisBANFFNC1pi0, not a flux param
-#endif
-#if BANFF_BINS == 4
-   0,                    // kNuisBANFFMECNorm
-   0                     // kNuisBANFFPDDDoubleCount
 #endif
 };
 
 static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
   {
-#if (BANFF_BINS == 2) || (BANFF_BINS == 4)
+#if (BANFF_BINS == 2)
     kPdgNuMu,             // kRHCNuisBANFF00
     kPdgNuMu,             // kRHCNuisBANFF01
     kPdgNuMu,             // kRHCNuisBANFF02
@@ -338,12 +321,8 @@ static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
 #if BANFF_BINS != 3
     0,                    // kRHCNuisBANFFCC1piE1, not a flux param
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     0                     // kRHCNuisBANFFNC1pi0, not a flux param
-#endif
-#if BANFF_BINS == 4
-    0,                    // kRHCNuisBANFFMECNorm
-    0                     // kRHCNuisBANFFPDDDoubleCount
 #endif
   };
 
@@ -431,12 +410,8 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
 #if BANFF_BINS != 3
    {  -1,   -1 },        // kNuisBANFFCC1piE1, not a flux param
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    {  -1,   -1 }         // kNuisBANFFNC1pi0, not a flux param
-#endif
-#if BANFF_BINS == 4
-   {  -1,   -1 },        // kNuisBANFFMECNorm
-   {  -1,   -1 }         // kNuisBANFFPDDDoubleCount
 #endif
 };
 
@@ -522,12 +497,8 @@ static const double kEtrueRangeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfi
 #if BANFF_BINS != 3
     {  -1,   -1 },        // kRHCNuisBANFFCC1piE1, not a flux param
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     {  -1,   -1 }         // kRHCNuisBANFFNC1pi0, not a flux param
-#endif
-#if BANFF_BINS == 4
-    {  -1,   -1 },        // kRHCNuisBANFFMECNorm
-    {  -1,   -1 }         // kRHCNuisBANFFPDDDoubleCount
 #endif
   };
 

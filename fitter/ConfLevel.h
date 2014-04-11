@@ -15,8 +15,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef __valor_conf_level_h__
-#define __valor_conf_level_h__
+#ifndef _valor_conf_level_h_
+#define _valor_conf_level_h_
 
 namespace t2kana {
 

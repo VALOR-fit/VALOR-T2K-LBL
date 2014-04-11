@@ -23,8 +23,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef __t2kana_rnd__
-#define __t2kana_rnd__
+#ifndef _t2kana_rnd_
+#define _t2kana_rnd_
 
 #include <iostream>
 

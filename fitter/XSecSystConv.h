@@ -49,9 +49,6 @@ static const int kNumOfRHCXSecSyst = 19;
 #elif BANFF_BINS == 3
 static const int kNumOfXSecSyst = 15;
 static const int kNumOfRHCXSecSyst = 15;
-#elif BANFF_BINS == 4
-static const int kNumOfXSecSyst = 21;
-static const int kNumOfRHCXSecSyst = 21;
 #endif
 
 #ifdef __NUMUONLY__
@@ -81,12 +78,8 @@ static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
 #if BANFF_BINS != 3
    kNuisBANFFCC1piE1,          // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    kNuisBANFFNC1pi0,           // BANFF, NC1pi0 normalization, 0.0 - 30.0 GeV
-#endif
-#if BANFF_BINS == 4
-   kNuisBANFFMECNorm,          // BANFF, MEC template normalisation
-   kNuisBANFFPDDDoubleCount,   // BANFF, PDD double counting systematic
 #endif
    kNuisXSecFermiMom,          // Fermi momentum
    kNuisXSecSpecFunc,          // spectral function on/off
@@ -124,12 +117,8 @@ static const PhysParamId_t kListOfRHCXSecSyst[kNumOfRHCXSecSyst] =
 #if BANFF_BINS != 3
     kRHCNuisBANFFCC1piE1,          // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     kRHCNuisBANFFNC1pi0,           // BANFF, NC1pi0 normalization, 0.0 - 30.0 GeV
-#endif
-#if BANFF_BINS == 4
-    kRHCNuisBANFFMECNorm,          // BANFF, MEC template normalisation
-    kRHCNuisBANFFPDDDoubleCount,   // BANFF, PDD double counting systematic
 #endif
     kRHCNuisXSecFermiMom,          // Fermi momentum
     kRHCNuisXSecSpecFunc,          // spectral function on/off
@@ -171,12 +160,8 @@ static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
 #if BANFF_BINS != 3
    false,                     // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    false,                     // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-   false,                     // kNuisBANFFMECNorm
-   true,                      // kNuisBANFFPDDDoubleCount
 #endif
    true,                      // Fermi momentum
    true,                      // spectral function on/off
@@ -214,12 +199,8 @@ static const bool kRHCXSecSystHasWghtSplines[kNumOfRHCXSecSyst] =
 #if BANFF_BINS != 3
     false,                     // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     false,                     // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-    false,                     // kNuisBANFFMECNorm
-    true,                      // kNuisBANFFPDDDoubleCount
 #endif
     true,                      // Fermi momentum
     true,                      // spectral function on/off
@@ -260,12 +241,8 @@ static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
 #if BANFF_BINS != 3
    true,                      // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    true,                      // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-   true,                      // kNuisBANFFMECNorm
-   true,                      // kNuisBANFFPDDDoubleCount
 #endif
    false,                     // Fermi momentum
    false,                     // spectral function on/off
@@ -303,12 +280,8 @@ static const bool kRHCXSecSystIncludedInBANFF[kNumOfRHCXSecSyst] =
 #if BANFF_BINS != 3
     true,                      // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     true,                      // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-    true,                      // kNuisBANFFMECNorm
-    true,                      // kNuisBANFFPDDDoubleCount
 #endif
     false,                     // Fermi momentum
     false,                     // spectral function on/off
@@ -348,12 +321,8 @@ static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
 #if BANFF_BINS != 3
    { 0.0, 100.0 },            // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    { 0.0, 100.0 },            // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-   { 0.0, 100.0 },            // kNuisBANFFMECNorm
-   { 0.0, 100.0 },            // kNuisBANFFPDDDoubleCount
 #endif
    { 0.0, 100.0 },            // Fermi momentum
    { 0.0, 100.0 },            // spectral function on/off
@@ -391,12 +360,8 @@ static const double kRHCXSecSystErecoCut[kNumOfRHCXSecSyst][2] =
 #if BANFF_BINS != 3
     { 0.0, 100.0 },            // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     { 0.0, 100.0 },            // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-    { 0.0, 100.0 },            // kNuisBANFFMECNorm
-    { 0.0, 100.0 },            // kNuisBANFFPDDDoubleCount
 #endif
     { 0.0, 100.0 },            // Fermi momentum
     { 0.0, 100.0 },            // spectral function on/off
@@ -434,12 +399,8 @@ static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
 #if BANFF_BINS != 3
    { 2.5,  30.0 },            // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    { 0.0, 100.0 },            // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-   { 0.0, 100.0 },            // kNuisBANFFMECNorm
-   { 0.0, 100.0 },            // kNuisBANFFPDDDoubleCount
 #endif
    { 0.0, 100.0 },            // Fermi momentum
    { 0.0, 100.0 },            // spectral function on/off
@@ -477,12 +438,8 @@ static const double kRHCXSecSystEtrueCut[kNumOfRHCXSecSyst][2] =
 #if BANFF_BINS != 3
     { 2.5,  30.0 },            // kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     { 0.0, 100.0 },            // kNuisBANFFNC1pi0
-#endif
-#if BANFF_BINS == 4
-    { 0.0, 100.0 },            // kNuisBANFFMECNorm
-    { 0.0, 100.0 },            // kNuisBANFFPDDDoubleCount
 #endif
     { 0.0, 100.0 },            // Fermi momentum
     { 0.0, 100.0 },            // spectral function on/off
@@ -523,12 +480,8 @@ static const double kXSecSystFracErr[kNumOfXSecSyst] =
 #if BANFF_BINS != 3
   0.4,            // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   0.3,            // BANFF, NC1pi0 normalization, 0.0 - 30.0 GeV 
-#endif
-#if BANFF_BINS == 4
-  -9999,          // BANFF, MEC template normalisation
-  0.2,            // BANFF, PDD double counting systematic
 #endif
   0.13333,        // Fermi momentum
   1.0,            // spectral function on/off
@@ -566,12 +519,8 @@ static const double kRHCXSecSystFracErr[kNumOfRHCXSecSyst] =
 #if BANFF_BINS != 3
     0.4,            // BANFF, CC1pi  normalization, 2.5 - 30.0 GeV
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     0.3,            // BANFF, NC1pi0 normalization, 0.0 - 30.0 GeV 
-#endif
-#if BANFF_BINS == 4
-    -9999,          // BANFF, MEC template normalisation
-    0.2,            // BANFF, PDD double counting systematic
 #endif
     0.13333,        // Fermi momentum
     1.0,            // spectral function on/off
@@ -2030,369 +1979,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
   }//1ReRHC
 };
 
-#elif BANFF_BINS == 4
-
-//Todo: make this work if kNumOfRHCXSecSyst is different from kNumOfXSecSyst.
-
-static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
-
-  // > 1 muon-like ring 
-  {
-    // banffmaqe banffmares banffccqeE0 banffccqeE1 banffccqeE2
-    // banffcc1piE0 banffcc1piE1
-    // banff MEC, banff PDDDC
-    // pF  spectral   W-shape  ccothshape pilessdelta bindE
-    // cccoh    nc1piC    ncoth    nue/numu antinu/nu
-    // 1Re
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 1, 0, 0, 0,  0 }, // kSKmNuMuNC1piC
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 1, 0, 0,  0 }, // kSKmNuMuNCoth_mu
-#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCoth
-#endif
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1,  0 }, // kSKmNuMuBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,  0 }, // kSKmNuMuBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1,  0 }, // kSKmNuMuBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 0, 1,  0 }, // kSKmNuMuBarCCoth
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 1, 0, 0, 0,  0 }, // kSKmNuMuBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 1, 0, 0,  0 }, // kSKmNuMuBarNCoth_mu
-#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1,  0 }, // kSKmOscNuMuBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,  0 }, // kSKmOscNuMuBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1,  0 }, // kSKmOscNuMuBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 0, 1,  0 }, // kSKmOscNuMuBarCCoth
-#endif
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 1, 0,  0 }, // kSKmNuECCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 1, 0,  0 }, // kSKmNuECC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 1, 0,  0 }, // kSKmNuECCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 1, 0,  0 }, // kSKmNuECCoth
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 1, 0, 0, 0,  0 }, // kSKmNuENC1piC
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 1, 0, 0,  0 }, // kSKmNuENCoth_mu
-
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 1, 0,  0 }, // kSKmOscNuECCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 1, 0,  0 }, // kSKmOscNuECC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 1, 0,  0 }, // kSKmOscNuECCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 1, 0,  0 }, // kSKmOscNuECCoth
-
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 1, 1,  0 }, // kSKmNuEBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 1, 1,  0 }, // kSKmNuEBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 1, 1,  0 }, // kSKmNuEBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 1, 1,  0 }, // kSKmNuEBarCCoth
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 1, 0, 0, 0,  0 }, // kSKmNuEBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCoth_mu
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCoth
-#endif
-    //note that BANFFMECNorm is not handled by NuXSec (instead by SuperkMC) so it is set to false here
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmMEC
-#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }  // kSKmUndefined
-  }//1Rmu
-  ,
-  // > 1 electron-like ring 
-  {
-    // banffmaqe banffmares banffccqeE0 banffccqeE1 banffccqeE2
-    // banffcc1piE0 banffcc1piE1 banffnc1pi0
-    // pF  spectral   W-shape  ccothshape pilessdelta bindE
-    // cccoh    nc0piC   nccoh   ncoth    nue/numu antinu/nu
-    // RHC/FHC
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuNC0pi0 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuNCcoh 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuNCoth_e
-#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCoth
-#endif
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuBarCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuBarCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuBarCCoth
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuBarNC0pi0 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuBarNCcoh 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuBarNCoth_e
-#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCoth
-#endif
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuECCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuECC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuECCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuECCoth
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuENC0pi0 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuENCcoh 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuENCoth_e
-
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuECCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuECC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuECCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuECCoth
-
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuEBarCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuEBarCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuEBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuEBarCCoth
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuEBarC0pi0 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuEBarNCcoh 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuEBarNCoth_e
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuEBarCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuEBarCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuEBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuEBarCCoth
-#endif
-#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }  // kSKmUndefined
-  }//1Re
-  ,
-  // > 1 muon-like ring RHC
-  {
-    // banffmaqe banffmares banffccqeE0 banffccqeE1 banffccqeE2
-    // banffcc1piE0 banffcc1piE1
-    // banff MEC, banff PDDDC
-    // pF  spectral   W-shape  ccothshape pilessdelta bindE
-    // cccoh    nc1piC    ncoth    nue/numu antinu/nu
-    // 1Re
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 1, 0, 0, 0,  0 }, // kSKmNuMuNC1piC
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 1, 0, 0,  0 }, // kSKmNuMuNCoth_mu
-#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCoth
-#endif
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1,  1 }, // kSKmNuMuBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,  1 }, // kSKmNuMuBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1,  1 }, // kSKmNuMuBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 0, 1,  1 }, // kSKmNuMuBarCCoth
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 1, 0, 0, 0,  1 }, // kSKmNuMuBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 1, 0, 0,  1 }, // kSKmNuMuBarNCoth_mu
-#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1,  1 }, // kSKmOscNuMuBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,  1 }, // kSKmOscNuMuBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1,  1 }, // kSKmOscNuMuBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 0, 1,  1 }, // kSKmOscNuMuBarCCoth
-#endif
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 1, 0,  0 }, // kSKmNuECCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 1, 0,  0 }, // kSKmNuECC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 1, 0,  0 }, // kSKmNuECCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 1, 0,  0 }, // kSKmNuECCoth
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 1, 0, 0, 0,  0 }, // kSKmNuENC1piC
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 1, 0, 0,  0 }, // kSKmNuENCoth_mu
-
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 1, 0,  0 }, // kSKmOscNuECCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 1, 0,  0 }, // kSKmOscNuECC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 1, 0,  0 }, // kSKmOscNuECCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 1, 0,  0 }, // kSKmOscNuECCoth
-
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 1, 1,  1 }, // kSKmNuEBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 1, 1,  1 }, // kSKmNuEBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 1, 1,  1 }, // kSKmNuEBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 1, 1,  1 }, // kSKmNuEBarCCoth
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 1, 0, 0, 0,  1 }, // kSKmNuEBarNC1piC
-    {  0, 1, 0, 0, 0,  0, 0,   0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 1, 0, 0,  1 }, // kSKmNuEBarNCoth_mu
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    {  1, 0, 1, 1, 1,  0, 0,   0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 1, 1,  1 }, // kSKmOscNuEBarCCQE        
-    {  0, 1, 0, 0, 0,  1, 1,   0, 1,   0, 0, 0, 0, 1, 0,   0, 0, 0, 1, 1,  1 }, // kSKmOscNuEBarCC1pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 1, 1,  1 }, // kSKmOscNuEBarCCcoh
-    {  0, 1, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 1, 0, 0,   0, 0, 0, 1, 1,  1 }, // kSKmOscNuEBarCCoth
-#endif
-    //note that BANFFMECNorm is not handled by NuXSec (instead by SuperkMC) so it is set to false here
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmMEC
-#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }  // kSKmUndefined
-  }//1RmuRHC
-  ,
-  // > 1 electron-like ring RHC
-  {
-    // banffmaqe banffmares banffccqeE0 banffccqeE1 banffccqeE2
-    // banffcc1piE0 banffcc1piE1 banffnc1pi0
-    // pF  spectral   W-shape  ccothshape pilessdelta bindE
-    // cccoh    nc0piC   nccoh   ncoth    nue/numu antinu/nu
-    // RHC/FHC!
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuNC0pi0 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuNCcoh 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuMuNCoth_e
-#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuMuCCoth
-#endif
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuMuBarCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuMuBarCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuMuBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuMuBarCCoth
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuMuBarNC0pi0 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuMuBarNCcoh 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuMuBarNCoth_e
-#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmOscNuMuBarCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmOscNuMuBarCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmOscNuMuBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmOscNuMuBarCCoth
-#endif
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuECCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuECC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuECCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuECCoth
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuENC0pi0 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuENCcoh 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmNuENCoth_e
-
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuECCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuECC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuECCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmOscNuECCoth
-
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuEBarCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuEBarCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuEBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuEBarCCoth
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuEBarC0pi0 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuEBarNCcoh 
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmNuEBarNCoth_e
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmOscNuEBarCCQE        
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmOscNuEBarCC0pi
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmOscNuEBarCCcoh
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  1 }, // kSKmOscNuEBarCCoth
-#endif
-#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-#endif
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }, // kSKmUndefined
-    {  0, 0, 0, 0, 0,  0, 0,   0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,  0 }  // kSKmUndefined
-  }//1ReRHC
-};
-#endif
+#endif //BANFF_BINS
 
 } // conv
 } // t2kana

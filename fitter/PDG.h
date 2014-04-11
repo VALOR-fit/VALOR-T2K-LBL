@@ -12,8 +12,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef __valor_pdg_h__
-#define __valor_pdg_h__
+#ifndef _valor_pdg_h_
+#define _valor_pdg_h_
 
 #include <string>
 

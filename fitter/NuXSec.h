@@ -86,9 +86,6 @@ public:
 
   // Get current value of systematic params handled by this class
   double CurrentValue        (conv::PhysParamId_t p) const;
-  // Used by SuperkMC to get hold of the BANFF best fit value for MEC norm parameter
-  double MECBestFitValue     () const;
-  double RHCMECBestFitValue     () const;
 
   // Get the relative error of systematic params handled by this class
   double RelativeError (conv::PhysParamId_t p) const;

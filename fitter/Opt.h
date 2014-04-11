@@ -13,8 +13,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef __t2kana_opt__
-#define __t2kana_opt__
+#ifndef _t2kana_opt_
+#define _t2kana_opt_
 
 #include <iostream>
 

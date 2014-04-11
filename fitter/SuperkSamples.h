@@ -21,8 +21,8 @@ Add samples and modes for reverse horn current running
 */
 //____________________________________________________________________________
 
-#ifndef __skmodes_samples_h__
-#define __skmodes_samples_h__
+#ifndef _sksamples_h_
+#define _sksamples_h_
 
 #include "Enumerations.h"
 #include "AnalysisOptions.h"

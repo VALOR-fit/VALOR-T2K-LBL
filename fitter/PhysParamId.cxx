@@ -196,7 +196,7 @@ string t2kana::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
@@ -232,12 +232,8 @@ string t2kana::util::AsString(PhysParamId_t p)
 #if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";   break;
-#endif
-#if BANFF_BINS == 4
-    case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
-    case ( kNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting";      break;
 #endif
 
     //
@@ -464,7 +460,7 @@ string t2kana::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFF13 ) :
   case ( kRHCNuisBANFF14 ) :
   case ( kRHCNuisBANFF15 ) :
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFF16 ) :
   case ( kRHCNuisBANFF17 ) :
   case ( kRHCNuisBANFF18 ) :
@@ -500,12 +496,8 @@ string t2kana::util::AsString(PhysParamId_t p)
 #if BANFF_BINS != 3
   case ( kRHCNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV; RHC";    break;
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; RHC";   break;
-#endif
-#if BANFF_BINS == 4
-  case ( kRHCNuisBANFFMECNorm ) : return "BANFF; Norm; MEC; RHC";                       break;
-  case ( kRHCNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting; RHC";      break;
 #endif
 
     //
@@ -870,7 +862,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
@@ -906,12 +898,8 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
 #if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";    break;
-#endif
-#if BANFF_BINS == 4
-    case ( kNuisBANFFMECNorm ) : return "BANFF; Norm; MEC";                       break;
-    case ( kNuisBANFFPDDDoubleCount ) : return "BANFF; PDD double counting";      break;
 #endif
 
     //
@@ -1281,7 +1269,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return "f_banff13";      break;
     case ( kNuisBANFF14               ) : return "f_banff14";      break;
     case ( kNuisBANFF15               ) : return "f_banff15";      break;
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     case ( kNuisBANFF16               ) : return "f_banff16";      break;
     case ( kNuisBANFF17               ) : return "f_banff17";      break;
     case ( kNuisBANFF18               ) : return "f_banff18";      break;
@@ -1310,12 +1298,8 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 #if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
-#endif
-#if BANFF_BINS == 4
-    case ( kNuisBANFFMECNorm          ) : return "f_banffmec";     break;
-    case ( kNuisBANFFPDDDoubleCount   ) : return "f_banffpdd";     break;
 #endif
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
@@ -1400,7 +1384,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisBANFF13               ) : return "f_banff13_rhc";      break;
   case ( kRHCNuisBANFF14               ) : return "f_banff14_rhc";      break;
   case ( kRHCNuisBANFF15               ) : return "f_banff15_rhc";      break;
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFF16               ) : return "f_banff16_rhc";      break;
   case ( kRHCNuisBANFF17               ) : return "f_banff17_rhc";      break;
   case ( kRHCNuisBANFF18               ) : return "f_banff18_rhc";      break;
@@ -1429,12 +1413,8 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 #if BANFF_BINS != 3
   case ( kRHCNuisBANFFCC1piE1          ) : return "f_banffcc1pie1_rhc"; break;
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffnc1pi0_rhc";  break;
-#endif
-#if BANFF_BINS == 4
-  case ( kRHCNuisBANFFMECNorm          ) : return "f_banffmec_rhc";     break;
-  case ( kRHCNuisBANFFPDDDoubleCount   ) : return "f_banffpdd_rhc";     break;
 #endif
   case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi_rhc";       break;
   case ( kRHCNuisXSecSpecFunc          ) : return "f_specfunc_rhc";     break;
@@ -1676,7 +1656,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFF13 ) :
   case ( kNuisBANFF14 ) :
   case ( kNuisBANFF15 ) :
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kNuisBANFF16 ) :
   case ( kNuisBANFF17 ) :
   case ( kNuisBANFF18 ) :
@@ -1700,12 +1680,8 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #if BANFF_BINS != 3
   case ( kNuisBANFFCC1piE1 ) :
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kNuisBANFFNC1pi0 ) :
-#endif
-#if BANFF_BINS == 4
-    case ( kNuisBANFFMECNorm ) :
-    case ( kNuisBANFFPDDDoubleCount ) :
 #endif
     {
       int ip = (int)p - (int)kNuisBANFF00;
@@ -1818,7 +1794,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisBANFF13 ) :
   case ( kRHCNuisBANFF14 ) :
   case ( kRHCNuisBANFF15 ) :
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFF16 ) :
   case ( kRHCNuisBANFF17 ) :
   case ( kRHCNuisBANFF18 ) :
@@ -1842,12 +1818,8 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
 #if BANFF_BINS != 3
   case ( kRHCNuisBANFFCC1piE1 ) :
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0 ) :
-#endif
-#if BANFF_BINS == 4
-    case ( kRHCNuisBANFFMECNorm ) :
-    case ( kRHCNuisBANFFPDDDoubleCount ) :
 #endif
     {
       int ip = (int)p - (int)kRHCNuisBANFF00;
@@ -1976,7 +1948,7 @@ string t2kana::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kRHCNuisBANFF13               ) : return "f_banff13";      break;
   case ( kRHCNuisBANFF14               ) : return "f_banff14";      break;
   case ( kRHCNuisBANFF15               ) : return "f_banff15";      break;
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFF16               ) : return "f_banff16";      break;
   case ( kRHCNuisBANFF17               ) : return "f_banff17";      break;
   case ( kRHCNuisBANFF18               ) : return "f_banff18";      break;
@@ -2005,12 +1977,8 @@ string t2kana::util::AsStringCompact_splinehack(PhysParamId_t p)
 #if BANFF_BINS != 3
   case ( kRHCNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
-#endif
-#if BANFF_BINS == 4
-  case ( kRHCNuisBANFFMECNorm          ) : return "f_banffmec";     break;
-  case ( kRHCNuisBANFFPDDDoubleCount   ) : return "f_banffpdd";     break;
 #endif
   case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi";       break;
   case ( kRHCNuisXSecSpecFunc          ) : return "f_specfunc";     break;
@@ -2139,10 +2107,6 @@ bool t2kana::util::IsUsingSplines(PhysParamId_t p)
     return true;
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMAQE)
     return true;
-#if BANFF_BINS == 4
-  if(p == kNuisBANFFMECNorm || p == kNuisBANFFPDDDoubleCount)
-    return true;
-#endif
 
   return false;
 }
@@ -2212,10 +2176,8 @@ bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
 bool t2kana::util::IsBANFF(PhysParamId_t p)
 {
   if(p >= kNuisBANFF00
-#if ((BANFF_BINS != 2)&&(BANFF_BINS != 4))
+#if (BANFF_BINS != 2)
      && p <= kNuisBANFFNC1pi0
-#elif BANFF_BINS == 4
-     && p <= kNuisBANFFPDDDoubleCount
 #else
      && p <= kNuisBANFFCC1piE1
 #endif
@@ -2240,9 +2202,6 @@ string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
     case ( kNuisXSecShapeCCoth        ) : return "ccothshp"; break;
     case ( kNuisXSecPiLessDelta       ) : return "pdd";      break;
     case ( kNuisXSecBindE             ) : return "eb";       break;
-#if BANFF_BINS == 4
-    case ( kNuisBANFFPDDDoubleCount   ) : return "pddonly";  break;
-#endif
 
     default : 
       return AsStringCompact(p);

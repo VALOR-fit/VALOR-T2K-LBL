@@ -42,7 +42,6 @@ Split t2kana::conv namespace into several smaller files
 #ifndef BANFF_BINS
 #ifdef __NUMUONLY__
 #define BANFF_BINS 2 //numu disapp without MEC
-//#define BANFF_BINS 4 //numu disapp analysis, 25 bins (includes MEC systematics)
 #else
 #ifdef __NUEONLY__
 #define BANFF_BINS 3 //nue app

@@ -100,8 +100,6 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
 #elif BANFF_BINS == 3
   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-#elif BANFF_BINS == 4
-  fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disapmec/best_fit_values");
 #endif
   if(!fBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
@@ -138,8 +136,6 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
 #elif BANFF_BINS == 3
   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-#elif BANFF_BINS == 4
-  fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disapmec/covariance_matrix");
 #endif
   if(!fCovMtrx) {
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
@@ -192,8 +188,6 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
 #elif BANFF_BINS == 3
   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-#elif BANFF_BINS == 4
-  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disapmec/best_fit_values");
 #endif
   if(!fRHCBestFitValues) {
     cerr << "Exp/BANFF >> No RHC BANFF best-fit parameter vector was found." << endl;
@@ -230,8 +224,6 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
 #elif BANFF_BINS == 3
   fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-#elif BANFF_BINS == 4
-  fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disapmec/covariance_matrix");
 #endif
   if(!fRHCCovMtrx) {
     cerr << "Exp/BANFF >> No RHC BANFF covariance matrix was found." << endl;
@@ -967,27 +959,23 @@ int BANFF::Param2Idx(PhysParamId_t p) const
 {
   int first, last;
   int iparam = (int) p;
-  TString param_name = util::AsString(p);
-  if(param_name.Contains("RHC"))
+  bool isRHC = util::IsRHCSystematic(p);
+  if(isRHC)
     {
     first  = (int) kRHCNuisBANFF00;
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     last   = (int) kRHCNuisBANFFNC1pi0;
 #elif BANFF_BINS == 2
     last   = (int) kRHCNuisBANFFCC1piE1;
-#elif BANFF_BINS == 4
-    last   = (int) kRHCNuisBANFFPDDDoubleCount;
 #endif
     }
   else
     {
     first  = (int) kNuisBANFF00;
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     last   = (int) kNuisBANFFNC1pi0;
 #elif BANFF_BINS == 2
     last   = (int) kNuisBANFFCC1piE1;
-#elif BANFF_BINS == 4
-    last   = (int) kNuisBANFFPDDDoubleCount;
 #endif
     }
 

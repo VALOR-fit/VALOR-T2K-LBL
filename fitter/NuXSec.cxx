@@ -527,7 +527,7 @@ double NuXSec::FinTuningWght_1p(
 #if BANFF_BINS != 3
 	  || p == kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
 	  || p == kNuisBANFFNC1pi0
 #endif
 	  )
@@ -544,7 +544,7 @@ double NuXSec::FinTuningWght_1p(
 #if BANFF_BINS != 3
 	  || p == kRHCNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
 	  || p == kRHCNuisBANFFNC1pi0
 #endif
 	  )
@@ -552,26 +552,6 @@ double NuXSec::FinTuningWght_1p(
       wght = fBANFF->RHCBestFitValue(p);
     }
   
-  //
-  // BANFF param, PDD double counting
-  //
-#if BANFF_BINS == 4
-  else if(p == kNuisBANFFPDDDoubleCount || p == kRHCNuisBANFFPDDDoubleCount)
-    {
-#if SPLINE_TYPE == -1
-      return wght;
-#endif
-      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-      assert(wght_spl);
-      if(p == kRHCNuisBANFFPDDDoubleCount)
-	tb = fabs(fBANFF->RHCBestFitValue(p));
-      else
-	tb = fabs(fBANFF->BestFitValue(p));
-#warning Need to check PDD spline evaluation is correct
-      wght = wght_spl->Eval(tb);
-    }
-#endif
-
 #ifdef __show_banff_tuning_wght_mesg_debug__
     cout << "Exp/NuXSec/FinTuningWght >> "
 	 << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
@@ -719,7 +699,7 @@ double NuXSec::SystWght_1p(
 #if BANFF_BINS != 3
 	  || p == kNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
 	  || p == kNuisBANFFNC1pi0
 #endif
 	  )
@@ -736,35 +716,14 @@ double NuXSec::SystWght_1p(
 #if BANFF_BINS != 3
 	  || p == kRHCNuisBANFFCC1piE1
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
 	  || p == kRHCNuisBANFFNC1pi0
 #endif
 	  )
     {
       wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
     }
-
-  //
-  // BANFF param, PDD double counting
-  //
-#if BANFF_BINS == 4
-  else if(p == kNuisBANFFPDDDoubleCount || p == kRHCNuisBANFFPDDDoubleCount)
-    {
-#if SPLINE_TYPE == -1
-      return wght;
-#endif
-      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-      assert(wght_spl);
-      //Don't de-tune the MEC BANFF parameters
-      //tb = fBANFF->BestFitValue(p);
-      if(p == kRHCNuisBANFFPDDDoubleCount)
-        tc = fBANFF->RHCCurrentValue(p);
-      else
-        tc = fBANFF->CurrentValue(p);
-      wght = wght_spl->Eval(tc);
-    }
-#endif
-
+    
   //
   // Fermi momentum
   // spectral function on/off
@@ -954,7 +913,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 #if BANFF_BINS != 3
     case kNuisBANFFCC1piE1:
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     case kNuisBANFFNC1pi0:
 #endif
 #if BANFF_BINS == 4
@@ -974,12 +933,8 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 #if BANFF_BINS != 3
     case kRHCNuisBANFFCC1piE1:
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
     case kRHCNuisBANFFNC1pi0:
-#endif
-#if BANFF_BINS == 4
-    case kRHCNuisBANFFMECNorm:
-    case kRHCNuisBANFFPDDDoubleCount:
 #endif
       return fBANFF->RHCCurrentValue(p);
       break;
@@ -988,24 +943,6 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
       return 0;
   }
   return 0;
-}
-//________________________________________________________________________________________
-double NuXSec::MECBestFitValue() const
-{
-  double value = -1;
-#if BANFF_BINS == 4
-  value = fBANFF->BestFitValue(kNuisBANFFMECNorm);
-#endif
-  return value;
-}
-//________________________________________________________________________________________
-double NuXSec::RHCMECBestFitValue() const
-{
-  double value = -1;
-#if BANFF_BINS == 4
-  value = fBANFF->RHCBestFitValue(kRHCNuisBANFFMECNorm);
-#endif
-  return value;
 }
 //________________________________________________________________________________________
 double NuXSec::RelativeError(PhysParamId_t p) const

@@ -16,8 +16,8 @@ Changes since 2014 v0.0.1:
 */
 //____________________________________________________________________________
 
-#ifndef __skmodes_modes_h__
-#define __skmodes_modes_h__
+#ifndef _skmodes_modes_h_
+#define _skmodes_modes_h_
 
 #include "Enumerations.h"
 #include "AnalysisOptions.h"

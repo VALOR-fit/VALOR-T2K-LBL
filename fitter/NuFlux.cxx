@@ -876,20 +876,10 @@ double NuFlux::SuperkFluxSystWght(
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
   if(IsRHCSample(s))
     {
-#if BANFF_BINS == 4
-    if(util::IsMEC(m))
-      return this->SuperkRHCFluxMECSystWght(flux_nu_pdg,Etrue);
-    else
-#endif
       return this->SuperkRHCFluxSystWght(flux_nu_pdg,Etrue);
     }
   else
     {
-#if BANFF_BINS == 4
-    if(util::IsMEC(m))
-      return this->SuperkFluxMECSystWght(flux_nu_pdg,Etrue);
-    else
-#endif
       return this->SuperkFluxSystWght(flux_nu_pdg,Etrue);
     }
 }

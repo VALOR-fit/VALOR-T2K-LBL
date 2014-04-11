@@ -15,8 +15,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef __valor_osc_util_h__
-#define __valor_osc_util_h__
+#ifndef _valor_osc_util_h_
+#define _valor_osc_util_h_
 
 #include "Enumerations.h"
 

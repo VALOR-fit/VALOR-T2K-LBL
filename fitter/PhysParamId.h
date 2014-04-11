@@ -114,7 +114,7 @@ typedef enum EPhysParamId
    kNuisBANFF13,               // # 13, different meanings depending on samples defined
    kNuisBANFF14,               // # 14, different meanings depending on samples defined
    kNuisBANFF15,               // # 15, different meanings depending on samples defined
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    kNuisBANFF16,               // # 16, different meanings depending on samples defined
    kNuisBANFF17,               // # 17, different meanings depending on samples defined
    kNuisBANFF18,               // # 18, different meanings depending on samples defined
@@ -138,12 +138,8 @@ typedef enum EPhysParamId
 #if BANFF_BINS != 3
    kNuisBANFFCC1piE1,          // # CC1pi  normalization, 2.5 - 30.0 GeV
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4) 
+#if (BANFF_BINS != 2)
    kNuisBANFFNC1pi0,           // # NC1pi0 normalization, 0 - 30.0 GeV
-#endif
-#if BANFF_BINS == 4
-   kNuisBANFFMECNorm,          // MEC template normalisation
-   kNuisBANFFPDDDoubleCount,   // PDD double counting
 #endif
 
    /*
@@ -255,7 +251,7 @@ typedef enum EPhysParamId
    kRHCNuisBANFF13,               // # 13, different meanings depending on samples defined       
    kRHCNuisBANFF14,               // # 14, different meanings depending on samples defined      
    kRHCNuisBANFF15,               // # 15, different meanings depending on samples defined       
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    kRHCNuisBANFF16,               // # 16, different meanings depending on samples defined
    kRHCNuisBANFF17,               // # 17, different meanings depending on samples defined
    kRHCNuisBANFF18,               // # 18, different meanings depending on samples defined
@@ -279,12 +275,8 @@ typedef enum EPhysParamId
 #if BANFF_BINS != 3
    kRHCNuisBANFFCC1piE1,          // # CC1pi  normalization, 2.5 - 30.0 GeV       
 #endif
-#if (BANFF_BINS != 2) && (BANFF_BINS != 4)
+#if (BANFF_BINS != 2)
    kRHCNuisBANFFNC1pi0,           // # NC1pi0 normalization, 0 - 30.0 GeV         
-#endif
-#if BANFF_BINS == 4
-   kRHCNuisBANFFMECNorm,          // MEC template normalisation                     
-   kRHCNuisBANFFPDDDoubleCount,   // PDD double counting                          
 #endif
    
    /*                                                                             

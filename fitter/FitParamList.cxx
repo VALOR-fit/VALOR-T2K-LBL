@@ -1616,8 +1616,6 @@ void FitParamList::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int
   TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
 #elif BANFF_BINS == 3
   TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-#elif BANFF_BINS == 4
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disapmec/best_fit_values");
 #endif
   if(!BANFFBestFitValues) {
     cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
@@ -1631,8 +1629,6 @@ void FitParamList::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int
   TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
 #elif BANFF_BINS == 3
   TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-#elif BANFF_BINS == 4
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disapmec/covariance_matrix");
 #endif
   if(!BANFFCovMtrx) {
     cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;

@@ -1902,12 +1902,6 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
       bool skip = this->SkipTemplate(m);
       if(skip) continue;
       
-#if BANFF_BINS == 4
-      double x_mec = fXMEC;
-      if(util::IsMEC(m))
-	x_mec = fNuXSec->MECBestFitValue();
-#endif
-
 #ifdef __show_banfftun_syst_var_wght_mesg_debug__ 
       cout << "Exp/SKMC >> Applying BANFF tuning to sample, mode: " << AsString(s) << "\t" << AsString(m) << endl;
 #endif
@@ -1964,13 +1958,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 
 
 	  //check for empty bins
-
-
-
+	  
 	  if (s==kSKsFCFV1RingMuLike) {
-#if BANFF_BINS == 4
-	    if(!util::IsMEC(m))
-#endif
 	      if(fMCTemplArrayOri1Rmu[im][it-1][ir-1] <= 0) continue;
 	  }
 	  // MODIFIED
@@ -1980,63 +1969,21 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	  ////
 	  // ANTINU
 	  else if (s==kSKsRHCFCFV1RingMuLike) {
-#if BANFF_BINS == 4
-	    if(!util::IsMEC(m))
-#endif
 	      if(fMCTemplArrayOriRHC1Rmu[im][it-1][ir-1] <= 0) continue;
 	  }
 	  else if (s==kSKsRHCFCFV1RingELike){
 	    if(fMCTemplArrayOriRHC1Re[im][it-1][ir-1] <= 0) continue;
 	  }
 	  ////
-
-
-
 	  //double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
-
+	  
 	  // get number of events in current bin of source MC template
 	  double nev = 0;
-#if BANFF_BINS == 4
-	  if(util::IsMEC(m)) {
-	    
-
-	    
-	    // MODIFIED
-	    double nev_martini;
-	    double nev_nieves;
-	    if (util::IsFHCSample(s)){
-	      nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
-	      nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
-	    }
-	    ////
-	    // ANTINU
-	    else if (util::IsRHCSample(s)){
-	      nev_martini = fMCTemplArrayRHCMECMartini[it-1][ir-1];
-	      nev_nieves  = fMCTemplArrayRHCMECNieves [it-1][ir-1];
-	    }
-	    ////
-
-
-
-	    //-1 nominal -> 0 nieves
-	    if(x_mec < 0) {
-	      nev  = nev_nieves * (1 + x_mec);
-	    }
-	    // 0 nieves -> +1 martini
-	    else {
-	      nev += TMath::Min(nev_martini, nev_martini * x_mec);
-	      nev += nev_nieves * (1 - x_mec);
-	    }
-	  }//MEC
-	  else 
-#endif
-	    
-	    
-	    if      (s==kSKsFCFV1RingMuLike)    nev = fMCTemplArrayNom1Rmu   [im][it-1][ir-1];
-	    else if (s==kSKsFCFV1RingELike)     nev = fMCTemplArrayNom1Re    [im][it-1][ir-1]; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayNomRHC1Rmu[im][it-1][ir-1]; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike)  nev = fMCTemplArrayNomRHC1Re [im][it-1][ir-1]; // ANTINU
 	  
+	  if      (s==kSKsFCFV1RingMuLike)    nev = fMCTemplArrayNom1Rmu   [im][it-1][ir-1];
+	  else if (s==kSKsFCFV1RingELike)     nev = fMCTemplArrayNom1Re    [im][it-1][ir-1]; // MODIFIED
+	  else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayNomRHC1Rmu[im][it-1][ir-1]; // ANTINU
+	  else if (s==kSKsRHCFCFV1RingELike)  nev = fMCTemplArrayNomRHC1Re [im][it-1][ir-1]; // ANTINU
 	  
 	  nev = TMath::Max(0.,nev);
 	  double nev_tuned = nev * wght;
@@ -2147,11 +2094,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
       bool skip = this->SkipTemplate(m);
       if(skip) continue;
       
-#if BANFF_BINS == 4
-      double x_mec = fXMEC;
-      if(util::IsMEC(m))
-	x_mec = fNuXSec->CurrentValue(kNuisBANFFMECNorm);       // GUARDARE
-#endif
       const double * variableMCEtrueBinEdges = util::VariableMCEtrueBinEdges(s,m);
 
       //
@@ -2210,9 +2152,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	  
 	  
 	  if (s==kSKsFCFV1RingMuLike){
-#if BANFF_BINS == 4
-	    if(!util::IsMEC(m))
-#endif
 	      assert(fMCTemplArrayOri1Rmu[im][it-1][ir-1] > 0);
 	  }
 	  // MODIFIED
@@ -2222,9 +2161,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	  ////
 	  // ANTINU
 	  else if (s==kSKsRHCFCFV1RingMuLike){
-#if BANFF_BINS == 4
-	    if(!util::IsMEC(m))
-#endif
 	      assert(fMCTemplArrayOriRHC1Rmu[im][it-1][ir-1] > 0);
 	  }
 	  else if (s==kSKsRHCFCFV1RingELike){
@@ -2235,40 +2171,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	  
 	  // get number of events in current bin of source MC template
 	  double nev = 0;
-#if BANFF_BINS == 4
-	  if(util::IsMEC(m)) {
-
 	  
-	    // MODIFIED
-	    double nev_martini = 0.0;
-	    double nev_nieves  = 0.0;
-	    if (util::IsFHCSample(s)){
-	      nev_martini = fMCTemplArrayMECMartini[it-1][ir-1];
-	      nev_nieves  = fMCTemplArrayMECNieves [it-1][ir-1];
-	    }
-	    ////
-	    // ANTINU
-	    else if (util::IsRHCSample(s)){
-	      nev_martini = fMCTemplArrayRHCMECMartini[it-1][ir-1];
-	      nev_nieves  = fMCTemplArrayRHCMECNieves [it-1][ir-1];
-	    }
-	    ////
-
-	    
-	    //-1 nominal -> 0 nieves
-	    if(x_mec < 0) {
-	      nev  = nev_nieves * (1 + x_mec);
-	    }
-	    // 0 nieves -> +1 martini
-	    else {
-	      nev += TMath::Min(nev_martini, nev_martini * x_mec);
-	      nev += nev_nieves * (1 - x_mec);
-	    }
-	  }//MEC
-	  else
-#endif
-
-
 	    if      (s==kSKsFCFV1RingMuLike)    nev = fMCTemplArrayTun1Rmu   [im][it-1][ir-1];
 	    else if (s==kSKsFCFV1RingELike)     nev = fMCTemplArrayTun1Re    [im][it-1][ir-1]; // MODIFIED
 	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayTunRHC1Rmu[im][it-1][ir-1]; // ANTINU
