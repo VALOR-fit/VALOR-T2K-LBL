@@ -7,6 +7,8 @@ ChangeLog:
 
 */
 
+#include <TMath.h>
+
 #include "Enumerations.h"
 #include "Utilities.h"
 #include "Binning.h"
@@ -51,6 +53,13 @@ double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
      default                      : return 0;
   }
   return 0;
+}
+//___________________________________________________________________________
+int t2kana::util::ErecoBinContains(t2kana::conv::SuperkSample_t s, double Ereco)
+{
+  int bin =  TMath::BinarySearch(util::NumErecoBins(s)+1,util::ErecoBinEdges(s),Ereco);
+  if (bin == util::NumErecoBins(s)+1) return -1;
+  return bin;
 }
 //___________________________________________________________________________
 int t2kana::util::NumXsecErecoBins(t2kana::conv::SuperkSample_t s)

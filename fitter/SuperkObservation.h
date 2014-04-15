@@ -54,18 +54,17 @@ public:
   // Write datasets to the input container or to the input file
   bool Write(TObjArray * data_collection, const char * tag = "data");
   bool Write(const char * filename, const char * tag = "data", const char * option_file="update");
-
-  double  fErDistrArray1Rmu[conv::kNErecoBins1Rmu];
-  double  fErDistrArray1Re[conv::kNErecoBins1Re];
-  double  fRHCErDistrArray1Rmu[conv::kRHCNErecoBins1Rmu];
-  double  fRHCErDistrArray1Re[conv::kRHCNErecoBins1Re];
-
+  
 private:
+  
+  double  fErDistrArray1Rmu   [conv::kNErecoBins1Rmu];
+  double  fErDistrArray1Re    [conv::kNErecoBins1Re];
+  double  fRHCErDistrArray1Rmu[conv::kRHCNErecoBins1Rmu];
+  double  fRHCErDistrArray1Re [conv::kRHCNErecoBins1Re];
 
   void Init    (void);
   void CleanUp (void);
-
-  TH1D *  fErDistr[kns];  ///< Reconstructed energy spectrum for each sample
+  
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
 ClassDef(SuperkObservation, 4)

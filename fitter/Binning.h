@@ -28,18 +28,22 @@ Split t2kana::conv namespace into several smaller files
 namespace t2kana {
 namespace util   {
     
-  int            NumErecoBins  (conv::SuperkSample_t s);
-  const double * ErecoBinEdges (conv::SuperkSample_t s);
-  double         ErecoBinEdges (conv::SuperkSample_t s, int i);
+  int            NumErecoBins      (conv::SuperkSample_t s);
+  const double * ErecoBinEdges     (conv::SuperkSample_t s);
+  double         ErecoBinEdges     (conv::SuperkSample_t s, int i);
+  int            ErecoBinContains  (conv::SuperkSample_t s, double Ereco);
+  
   int            NumXsecErecoBins  (conv::SuperkSample_t s);
   const double * XsecErecoBinEdges (conv::SuperkSample_t s);
   double         XsecErecoBinEdges (conv::SuperkSample_t s, int i);
+  
   int            NumEtrueBins  (conv::SuperkSample_t s);
   const double * EtrueBinEdges (conv::SuperkSample_t s);
   double         EtrueBinEdges (conv::SuperkSample_t s, int i);
-  int            NumVariableXsEtrueBins(conv::SuperkSample_t s, conv::SuperkMode_t m);
+  
+  int            NumVariableXsEtrueBins (conv::SuperkSample_t s, conv::SuperkMode_t m);
   const double * VariableXsEtrueBinEdges(conv::SuperkSample_t s, conv::SuperkMode_t m);
-  int            NumVariableMCEtrueBins(conv::SuperkSample_t s, conv::SuperkMode_t m);
+  int            NumVariableMCEtrueBins (conv::SuperkSample_t s, conv::SuperkMode_t m);
   const double * VariableMCEtrueBinEdges(conv::SuperkSample_t s, conv::SuperkMode_t m);
 }//conv  
 
