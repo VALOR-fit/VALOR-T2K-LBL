@@ -266,14 +266,14 @@ void fit_xml_seeded_from_chisq_map
       bestfit_mixing12 = fparm->BestFitValue(conv::kPhypMixing12);
       bestfit_mixing13 = fparm->BestFitValue(conv::kPhypMixing13);
       bestfit_mixing23 = fparm->BestFitValue(conv::kPhypMixing23);
-      bestfit_deltacp  = fparm->BestFitValue(conv::kPhypDeltaCP);
+      bestfit_deltacp  = fparm->BestFitValue(conv::kPhypCPV    );
       bestfit_dm12sq   = fparm->BestFitValue(conv::kPhypDm12sq);
       bestfit_dm23sq   = fparm->BestFitValue(conv::kPhypDm23sq);
 
       err_mixing12 = fparm->MigradError(conv::kPhypMixing12);
       err_mixing13 = fparm->MigradError(conv::kPhypMixing13);
       err_mixing23 = fparm->MigradError(conv::kPhypMixing23);
-      err_deltacp  = fparm->MigradError(conv::kPhypDeltaCP);
+      err_deltacp  = fparm->MigradError(conv::kPhypCPV    );
       err_dm12sq   = fparm->MigradError(conv::kPhypDm12sq);
       err_dm23sq   = fparm->MigradError(conv::kPhypDm23sq);
 
@@ -390,7 +390,7 @@ void fit_xml_seeded_from_chisq_map
       streamer << util::AsStringPaperRooTex(conv::kPhypMixing12) << "\t" << bestfit_mixing12 << "\t" << err_mixing12 << endl;
       streamer << util::AsStringPaperRooTex(conv::kPhypMixing13) << "\t" << bestfit_mixing13 << "\t" << err_mixing13 << endl;
       streamer << util::AsStringPaperRooTex(conv::kPhypMixing23) << "\t" << bestfit_mixing23 << "\t" << err_mixing23 << endl;
-      streamer << util::AsStringPaperRooTex(conv::kPhypDeltaCP) << "\t" << bestfit_deltacp  << "\t" << err_deltacp  << endl;
+      streamer << util::AsStringPaperRooTex(conv::kPhypCPV    ) << "\t" << bestfit_deltacp  << "\t" << err_deltacp  << endl;
       streamer << util::AsStringPaperRooTex(conv::kPhypDm12sq) << "\t" << bestfit_dm12sq   << "\t" << err_dm12sq   << endl;
       streamer << util::AsStringPaperRooTex(conv::kPhypDm23sq) << "\t" << bestfit_dm23sq   << "\t" << err_dm23sq   << endl;
 

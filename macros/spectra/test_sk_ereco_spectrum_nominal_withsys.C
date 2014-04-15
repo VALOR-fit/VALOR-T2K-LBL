@@ -370,7 +370,7 @@ void test_sk_ereco_spectrum_nominal_withsys
     fparm->Update(conv::kPhypMixing12,  input_mixing12);
     fparm->Update(conv::kPhypMixing13,  input_mixing13);
     fparm->Update(conv::kPhypMixing23,  input_mixing23);
-    fparm->Update(conv::kPhypDeltaCP,   input_deltacp);
+    fparm->Update(conv::kPhypCPV    ,   input_deltacp);
     fparm->Update(conv::kPhypDm12sq,    input_dm12sq);
     fparm->Update(conv::kPhypDm23sq,    input_dm23sq);
   }

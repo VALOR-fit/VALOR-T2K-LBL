@@ -252,7 +252,7 @@ void feldman_cousins_fitting_job
        if(tweak_non23oscparams) {
          input_mixing12 = util::RandomizeMixing12(); 
          input_mixing13 = util::RandomizeMixing13(); 
-         input_deltacp  = util::RandomizeDeltaCP();
+         input_deltacp  = util::RandomizeCPV();
          input_dm12sq   = util::RandomizeDm12sq(); 
        }
        else {
@@ -265,7 +265,7 @@ void feldman_cousins_fitting_job
               << util::AsString(conv::kPhypMixing12) << " = " << input_mixing12 << ", "
               << util::AsString(conv::kPhypDm12sq)   << " = " << input_dm12sq   << " eV^2, "
               << util::AsString(conv::kPhypMixing12) << " = " << input_mixing13 << ", "
-              << util::AsString(conv::kPhypDeltaCP)  << " = " << input_deltacp  << " rad "
+              << util::AsString(conv::kPhypCPV    )  << " = " << input_deltacp  << " rad "
               << endl;
      }
      if(mixing23_only) {
@@ -291,7 +291,7 @@ void feldman_cousins_fitting_job
      if(hyp == conv::kHypOsc3F) {
        fparm->Update(conv::kPhypMixing12, input_mixing12);
        fparm->Update(conv::kPhypMixing13, input_mixing13);
-       fparm->Update(conv::kPhypDeltaCP,  input_deltacp);
+       fparm->Update(conv::kPhypCPV    ,  input_deltacp);
        fparm->Update(conv::kPhypDm12sq,   input_dm12sq);
      }
 

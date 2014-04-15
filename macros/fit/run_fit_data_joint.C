@@ -171,12 +171,12 @@ void run_fit_data_joint
       fparm2->FixParameter(conv::kPhypDm23sq);
     }
     if(param1 == "deltacp") {
-      fparm1->SetInitValue(conv::kPhypDeltaCP,(deltacp_min + (i-1)*deltacp_step));
-      fparm1->Update(conv::kPhypDeltaCP,(deltacp_min + (i-1)*deltacp_step));
-      fparm1->FixParameter(conv::kPhypDeltaCP);
-      fparm2->SetInitValue(conv::kPhypDeltaCP,(deltacp_min + (i-1)*deltacp_step));
-      fparm2->Update(conv::kPhypDeltaCP,(deltacp_min + (i-1)*deltacp_step));
-      fparm2->FixParameter(conv::kPhypDeltaCP);
+      fparm1->SetInitValue(conv::kPhypCPV    ,(deltacp_min + (i-1)*deltacp_step));
+      fparm1->Update(conv::kPhypCPV    ,(deltacp_min + (i-1)*deltacp_step));
+      fparm1->FixParameter(conv::kPhypCPV    );
+      fparm2->SetInitValue(conv::kPhypCPV    ,(deltacp_min + (i-1)*deltacp_step));
+      fparm2->Update(conv::kPhypCPV    ,(deltacp_min + (i-1)*deltacp_step));
+      fparm2->FixParameter(conv::kPhypCPV    );
     }
     //loop for the second parameter (if any)
     for (int j = min_bin_param2; j <= max_bin_param2; j++){
@@ -205,12 +205,12 @@ void run_fit_data_joint
 	fparm2->FixParameter(conv::kPhypDm23sq);
       }
       if(param2 == "deltacp") {
-	fparm1->SetInitValue(conv::kPhypDeltaCP,(deltacp_min + (j-1)*deltacp_step));
-	fparm1->Update(conv::kPhypDeltaCP,(deltacp_min + (j-1)*deltacp_step));
-	fparm1->FixParameter(conv::kPhypDeltaCP);
-	fparm2->SetInitValue(conv::kPhypDeltaCP,(deltacp_min + (j-1)*deltacp_step));
-	fparm2->Update(conv::kPhypDeltaCP,(deltacp_min + (j-1)*deltacp_step));
-	fparm2->FixParameter(conv::kPhypDeltaCP);
+	fparm1->SetInitValue(conv::kPhypCPV    ,(deltacp_min + (j-1)*deltacp_step));
+	fparm1->Update(conv::kPhypCPV    ,(deltacp_min + (j-1)*deltacp_step));
+	fparm1->FixParameter(conv::kPhypCPV    );
+	fparm2->SetInitValue(conv::kPhypCPV    ,(deltacp_min + (j-1)*deltacp_step));
+	fparm2->Update(conv::kPhypCPV    ,(deltacp_min + (j-1)*deltacp_step));
+	fparm2->FixParameter(conv::kPhypCPV    );
       }
     
       //if theta23 is not fixed then initialize to 0.4 for the first fit (first octant) and 0.6 for the second one

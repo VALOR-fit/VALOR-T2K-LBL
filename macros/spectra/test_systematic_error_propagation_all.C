@@ -54,7 +54,7 @@ void test_systematic_error_propagation_all
   ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
   ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
   ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+  ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
   ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
   ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
 
@@ -882,7 +882,7 @@ void test_systematic_error_propagation_all
       cout << ph << endl;
     }
     else if(systematic.find("deltacp") == 0) {
-      ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp + conv::kpi/2);
+      ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp + conv::kpi/2);
       cout << ph << endl;
     }
     else
@@ -1181,7 +1181,7 @@ void test_systematic_error_propagation_all
       cout << ph << endl;
     }
     else if(systematic.find("deltacp") == 0) {
-      ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp - conv::kpi/2);
+      ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp - conv::kpi/2);
       cout << ph << endl;
     }
     else
@@ -3373,7 +3373,7 @@ void test_systematic_error_propagation_all
     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }//isys

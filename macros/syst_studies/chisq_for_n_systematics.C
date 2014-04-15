@@ -47,7 +47,7 @@ void chisq_for_n_systematics
     fp->Update(conv::kPhypMixing12,  input_mixing12);
     fp->Update(conv::kPhypMixing13,  input_mixing13);
     fp->Update(conv::kPhypMixing23,  input_mixing23);
-    fp->Update(conv::kPhypDeltaCP,   input_deltacp);
+    fp->Update(conv::kPhypCPV    ,   input_deltacp);
     fp->Update(conv::kPhypDm12sq,    input_dm12sq);
     fp->Update(conv::kPhypDm23sq,    input_dm23sq);
   }

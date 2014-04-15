@@ -2753,7 +2753,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     //double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
     double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
     double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
-    double delta_cp = fPhysHypothesis.CurrValue(kPhypDeltaCP);
+    double delta_cp = fPhysHypothesis.CurrValue(kPhypCPV    );
 #ifdef __show_hypothesis__
     cout << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif

@@ -1,18 +1,9 @@
 //________________________________________________________________________________________
 /*
 
- >> ChangeLog:
+Copyright (c) 2010-2014, The VALOR group. All rights reserved.
 
- For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
- see code in the corresponding SVN branch.
-
- Changes since 2011_v0.9.0:
-
- @ 18/2/13 - LE                                                                                                                               
- Added back the selection of dmsq schema,from branch 2010_v3: choice between usual Dm12sq + Dm23sq and Fogli&Lisi schema
-
- 30-12-2013  Nick
- Added samples for reverse horn current running
+ChangeLog:
 
 */
 //________________________________________________________________________________________
@@ -29,7 +20,9 @@ using std::string;
 using namespace t2kana;
 using namespace t2kana::conv;
 
-//____________________________________________________________________________
+ClassImp(Opt::Persistable);
+
+//________________________________________________________________________________________
 namespace t2kana {
   ostream & operator<<(ostream & stream, const Opt & opt)
   {
@@ -45,7 +38,12 @@ Opt::Opt()
   this->SetDefaults();
   fInstance = 0;
 }
-//____________________________________________________________________________
+//________________________________________________________________________________________
+Opt::Opt(const Opt &) 
+{
+
+}
+//________________________________________________________________________________________
 Opt::~Opt()
 {
 

@@ -70,7 +70,7 @@ namespace util {
   double RandomizeMixing23 (void); ///< pull from gaussian with mean & sigma from global fit (mixing param is either sinsq2theta or sinsqtheta depending on config)
   double RandomizeMixing12 (void); ///< pull from gaussian with mean & sigma from global fit ( -//- )
   double RandomizeMixing13 (void); ///< uniform from 0 up to ~ small_factor x CHOOZ limit    ( -//- )
-  double RandomizeDeltaCP  (void); ///< uniform from -pi to +pi
+  double RandomizeCPV      (void); ///< uniform from -pi to +pi (or -1 to +1)
   double RandomizeDm12sq   (void); ///< pull from gaussian with mean & sigma from global fit
   double RandomizeDm23sq   (void); ///< pull from gaussian with mean & sigma from global fit
   

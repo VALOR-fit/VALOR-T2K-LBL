@@ -86,7 +86,7 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
     if(icase > 0) {
       ph.SetCurrValue(conv::kPhypMixing12,  mixing12[icase]);
       ph.SetCurrValue(conv::kPhypMixing13,  mixing13[icase]);
-      ph.SetCurrValue(conv::kPhypDeltaCP,   deltacp[icase] );
+      ph.SetCurrValue(conv::kPhypCPV    ,   deltacp[icase] );
       ph.SetCurrValue(conv::kPhypDm12sq,    dm12sq[icase]  );
     }
     // generate predictions  

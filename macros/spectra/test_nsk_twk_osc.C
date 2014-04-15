@@ -76,7 +76,7 @@ void test_nsk_twk_osc
 	   ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsqTheta12);
 	   ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsqTheta13);
 	 }
-	 ph.SetCurrValue(conv::kPhypDeltaCP,   conv::kGlobFitDeltaCP);
+	 ph.SetCurrValue(conv::kPhypCPV    ,   conv::kGlobFitDeltaCP);
 	 ph.SetCurrValue(conv::kPhypDm12sq,    conv::kGlobFitDm12sq);
        }
 
@@ -92,7 +92,7 @@ void test_nsk_twk_osc
 	 for(int t = 0; t < nthrows; t++) {
 	   ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
 	   ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
-	   ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP());
+	   ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV());
 	   ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
 	   skexp.Generate(ph);
 	   double thisnsk = skexp.CurrPredictedErecoSpectrum(s)->Integral();

@@ -63,7 +63,7 @@ void test_nsk
   ph.SetCurrValue(t2kana::conv::kPhypMixing12, 0);
   ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   0);
   ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   0);
-  ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  0);
+  ph.SetCurrValue(t2kana::conv::kPhypCPV    ,  0);
 
   // find the oscillation parameters to use
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
@@ -118,7 +118,7 @@ void test_nsk
   ph.SetCurrValue(t2kana::conv::kPhypMixing12, input_mixing12);
   ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   input_dm23sq);
   ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   input_dm12sq);
-  ph.SetCurrValue(t2kana::conv::kPhypDeltaCP,  input_deltacp);
+  ph.SetCurrValue(t2kana::conv::kPhypCPV    ,  input_deltacp);
 
   // generate predictions for oscillation, with BANFF
   if(verbose) skexp.PrintSystematicVariations();

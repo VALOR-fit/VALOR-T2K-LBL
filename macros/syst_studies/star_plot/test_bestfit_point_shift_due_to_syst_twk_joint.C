@@ -120,7 +120,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
     fparm->Update(conv::kPhypMixing12, input_mixing12);
     fparm->Update(conv::kPhypMixing13, input_mixing13);
     fparm->Update(conv::kPhypMixing23, input_mixing23);
-    fparm->Update(conv::kPhypDeltaCP,  input_deltacp);
+    fparm->Update(conv::kPhypCPV    ,  input_deltacp);
     fparm->Update(conv::kPhypDm12sq,   input_dm12sq);
     fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
   }
@@ -144,7 +144,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
   cout << "       > " << util::AsString(conv::kPhypMixing12) << " = " << input_mixing12 << endl;
   cout << "       > " << util::AsString(conv::kPhypMixing13) << " = " << input_mixing13 << endl;
   cout << "       > " << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23 << endl;
-  cout << "       > " << util::AsString(conv::kPhypDeltaCP)  << " = " << input_deltacp << endl;
+  cout << "       > " << util::AsString(conv::kPhypCPV    )  << " = " << input_deltacp << endl;
   cout << "       > " << util::AsString(conv::kPhypDm12sq)   << " = " << input_dm12sq << " eV^2/c^4" << endl;
   cout << "       > " << util::AsString(conv::kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << " - Fit info: " << endl;
@@ -258,10 +258,10 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
   }
   else if(sys.find("osc_deltacp") == 0) {
     double tweak_deltacp = input_deltacp + (TMath::Pi()/2);
-    if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
-    if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
-    fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
-    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
+    if(tweak_deltacp >  fparm->MaxValue(conv::kPhypCPV    )) tweak_deltacp = fparm->MaxValue(conv::kPhypCPV    );
+    if(tweak_deltacp <  fparm->MinValue(conv::kPhypCPV    )) tweak_deltacp = fparm->MinValue(conv::kPhypCPV    );
+    fparm->Update(conv::kPhypCPV    , tweak_deltacp);
+    fparm->SetInitValue(conv::kPhypCPV    , tweak_deltacp);
   }
   else {
     skexp->TweakSystematic(systematic,+1.);
@@ -280,7 +280,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
   // Get fitter
   fparm->SetInitValue(conv::kPhypMixing23, input_mixing23); //in order to select the octant
   //fparm->SetMaxValue(conv::kPhypMixing23, 0.52);
-  //  fparm->FixParameter(conv::kPhypDeltaCP);
+  //  fparm->FixParameter(conv::kPhypCPV    );
   fparm->ResetCurrToInitValues();  
   fit_inputs = new FitInputs(skobs,skexp,fparm);
   fitter = new FitterMinuit(fit_inputs,fit_option);
@@ -299,7 +299,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
     bestfit_mixing12_p1sig = fparm->BestFitValue(conv::kPhypMixing12);
     bestfit_mixing13_p1sig = fparm->BestFitValue(conv::kPhypMixing13);
     bestfit_mixing23_p1sig = fparm->BestFitValue(conv::kPhypMixing23);
-    bestfit_deltacp_p1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
+    bestfit_deltacp_p1sig  = fparm->BestFitValue(conv::kPhypCPV    );
     bestfit_dm12sq_p1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
     bestfit_dm23sq_p1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
   }
@@ -321,7 +321,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
     fparm->Update(conv::kPhypMixing12, input_mixing12);
     fparm->Update(conv::kPhypMixing13, input_mixing13);
     fparm->Update(conv::kPhypMixing23, input_mixing23);
-    fparm->Update(conv::kPhypDeltaCP,  input_deltacp);
+    fparm->Update(conv::kPhypCPV    ,  input_deltacp);
     fparm->Update(conv::kPhypDm12sq,   input_dm12sq);
     fparm->Update(conv::kPhypDm23sq,   input_dm23sq);
   }
@@ -429,10 +429,10 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
   }
   else if(sys.find("osc_deltacp") == 0) {
     double tweak_deltacp = input_deltacp - (TMath::Pi()/2);
-    if(tweak_deltacp >  fparm->MaxValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MaxValue(conv::kPhypDeltaCP);
-    if(tweak_deltacp <  fparm->MinValue(conv::kPhypDeltaCP)) tweak_deltacp = fparm->MinValue(conv::kPhypDeltaCP);
-    fparm->Update(conv::kPhypDeltaCP, tweak_deltacp);
-    fparm->SetInitValue(conv::kPhypDeltaCP, tweak_deltacp);
+    if(tweak_deltacp >  fparm->MaxValue(conv::kPhypCPV    )) tweak_deltacp = fparm->MaxValue(conv::kPhypCPV    );
+    if(tweak_deltacp <  fparm->MinValue(conv::kPhypCPV    )) tweak_deltacp = fparm->MinValue(conv::kPhypCPV    );
+    fparm->Update(conv::kPhypCPV    , tweak_deltacp);
+    fparm->SetInitValue(conv::kPhypCPV    , tweak_deltacp);
   }
   else {
     skexp->TweakSystematic(systematic,-1.);
@@ -451,7 +451,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
   // Get fitter
   fparm->SetInitValue(conv::kPhypMixing23, input_mixing23); //in order to select the octant
   //fparm->SetMaxValue(conv::kPhypMixing23, 0.52);
-  //fparm->FixParameter(conv::kPhypDeltaCP);
+  //fparm->FixParameter(conv::kPhypCPV    );
   fparm->ResetCurrToInitValues();  
   fit_inputs = new FitInputs(skobs,skexp,fparm);
   fitter = new FitterMinuit(fit_inputs,fit_option);
@@ -470,7 +470,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
     bestfit_mixing12_m1sig = fparm->BestFitValue(conv::kPhypMixing12);
     bestfit_mixing13_m1sig = fparm->BestFitValue(conv::kPhypMixing13);
     bestfit_mixing23_m1sig = fparm->BestFitValue(conv::kPhypMixing23);
-    bestfit_deltacp_m1sig  = fparm->BestFitValue(conv::kPhypDeltaCP);
+    bestfit_deltacp_m1sig  = fparm->BestFitValue(conv::kPhypCPV    );
     bestfit_dm12sq_m1sig   = fparm->BestFitValue(conv::kPhypDm12sq);
     bestfit_dm23sq_m1sig   = fparm->BestFitValue(conv::kPhypDm23sq);
   }

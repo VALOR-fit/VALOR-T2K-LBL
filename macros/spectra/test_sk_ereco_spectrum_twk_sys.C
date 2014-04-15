@@ -236,7 +236,7 @@ void test_sk_ereco_spectrum_twk_sys
     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
@@ -510,7 +510,7 @@ void test_sk_ereco_spectrum_twk_sys
 	  cout << ph << endl;
 	  break;
         case 703:
-	  ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp + (tweak * conv::kpi/2));
+	  ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp + (tweak * conv::kpi/2));
 	  cout << ph << endl;
 	  break;
 

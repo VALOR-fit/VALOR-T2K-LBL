@@ -27,8 +27,9 @@ using std::vector;
 namespace t2kana {
 namespace util {
 
-  string         TrimSpaces (string input);	
-  vector<string> Tokens     (string input, string delimiter);
+  string         TrimSpaces      (string input);
+  vector<string> Tokens          (string input, string delimiter);
+  string         ToLowerCase     (string data);
   
 } // util
 } // t2kana

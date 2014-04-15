@@ -67,10 +67,10 @@ void run_fit_xml
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
   //make an assumption for deltacp
-  if(fparm->IsFixed(conv::kPhypDeltaCP)) {
-    fparm ->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
-    fparm1->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
-    fparm2->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+  if(fparm->IsFixed(conv::kPhypCPV    )) {
+    fparm ->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
+    fparm1->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
+    fparm2->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
   }
 
   // Get superk spectrum predictor & configure

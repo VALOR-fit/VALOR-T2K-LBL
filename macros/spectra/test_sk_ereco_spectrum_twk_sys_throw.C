@@ -220,7 +220,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
@@ -422,7 +422,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
       if(mode == 11) {
 	ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
 	ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
-	ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP());
+	ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV());
 	ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
       }
 
@@ -483,7 +483,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
         case 702:
 	  ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq()); break;
         case 703:
-	  ph.SetCurrValue(conv::kPhypDeltaCP,   util::RandomizeDeltaCP()); break;
+	  ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV()); break;
 
         default:
 	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {

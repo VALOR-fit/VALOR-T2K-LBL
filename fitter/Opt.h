@@ -1,14 +1,16 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::Opt
+\class     t2kana::Opt
 
-\brief    Singleton to keep global analysis options
+\brief     Singleton to keep global analysis options
 
-\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          STFC, Rutherford Appleton Laboratory
+\author    Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+           University of Liverpool & STFC Rutherford Appleton Laboratory
 
-\created  October 20, 2010
+\created   October 20, 2010
+
+\copyright (c) 2010-2014, The VALOR group.
 
 */
 //____________________________________________________________________________
@@ -17,6 +19,7 @@
 #define _t2kana_opt_
 
 #include <iostream>
+#include <TNamed.h>
 
 #include "Conventions.h"
 
@@ -27,6 +30,7 @@ namespace t2kana {
 class Opt {
 
 public:
+  class Persistable; // a lightweight class to extract state in a persistable named object
   static Opt * Instance();
 
   // Mass hierarchy 
@@ -59,10 +63,43 @@ public:
   // Check for any parameters being undefined
   bool Undefined(void);
 
+  // 
+  void WriteTo  (Persistable & optp);
+  void ReadFrom (Persistable & optp);
+
+  // nested lightweight class to extract state in a persistable named object
+  class Persistable: public TNamed {
+   public:
+     Persistable() : 
+     TNamed() 
+     {
+       mh    = conv::kNmhNormal;
+       mixp  = conv::kNuMixSinsq2Theta;
+       oct   = conv::kNuOctantOne;
+       dmsqs = conv::kNuDmsq12andAbs23;
+       dcp   = conv::kNuDeltaCPPhase;
+     }
+     Persistable(const Persistable & p) : 
+     TNamed() 
+     {
+       mh    = p.mh;
+       mixp  = p.mixp;
+       oct   = p.oct;
+       dmsqs = p.dmsqs;
+       dcp   = p.dcp;
+     }
+    ~Persistable() { }
+     conv::NuMassHierarchy_t mh;
+     conv::NuOscMixParam_t   mixp;
+     conv::NuOscOctant_t     oct;
+     conv::NuOscDmsqScheme_t dmsqs;
+     conv::NuOscDeltaCP_t    dcp;
+   ClassDef(Persistable,1);
+  };
 private:
 
   Opt();
-  Opt(const Opt &) {}
+  Opt(const Opt &);
  ~Opt();
 
   static Opt * fInstance;

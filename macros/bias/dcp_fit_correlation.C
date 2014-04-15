@@ -125,11 +125,11 @@ void dcp_fit_correlation(
       }
     }//verbosity<< this_chisq << endl;
 
-    cout << fparm->GetStatusCode("migrad_min") << "\t" << fparm->GetStatusCode("migrad_err") << "\t" << fparm->GetFitTries() << "\t" << fparm->BestFitValue(conv::kPhypDm23sq) << "\t" << fparm->BestFitValue(conv::kPhypMixing23) << "\t" << fparm->BestFitValue(conv::kPhypDeltaCP) << endl;
-    //if(TMath::Abs(fparm->BestFitValue(conv::kPhypDeltaCP) < 1E-4) || TMath::Abs(fparm->BestFitValue(conv::kPhypDeltaCP) - conv::kpi) < 1E-4 || TMath::Abs(fparm->BestFitValue(conv::kPhypDeltaCP) + conv::kpi) < 1E-4)
-    //if(TMath::Abs(fparm->BestFitValue(conv::kPhypDeltaCP)) > conv::kpi)
+    cout << fparm->GetStatusCode("migrad_min") << "\t" << fparm->GetStatusCode("migrad_err") << "\t" << fparm->GetFitTries() << "\t" << fparm->BestFitValue(conv::kPhypDm23sq) << "\t" << fparm->BestFitValue(conv::kPhypMixing23) << "\t" << fparm->BestFitValue(conv::kPhypCPV    ) << endl;
+    //if(TMath::Abs(fparm->BestFitValue(conv::kPhypCPV    ) < 1E-4) || TMath::Abs(fparm->BestFitValue(conv::kPhypCPV    ) - conv::kpi) < 1E-4 || TMath::Abs(fparm->BestFitValue(conv::kPhypCPV    ) + conv::kpi) < 1E-4)
+    //if(TMath::Abs(fparm->BestFitValue(conv::kPhypCPV    )) > conv::kpi)
     //hdcpbf->SetBinContent(imix23,idm32sq,1);
-    hdcpbf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypDeltaCP));
+    hdcpbf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypCPV    ));
     hmix13bf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypMixing13));
     hmix12bf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypMixing12));
     hdm21sqbf->SetBinContent(imix23,idm32sq,fparm->BestFitValue(conv::kPhypDm12sq));
@@ -151,7 +151,7 @@ void dcp_fit_correlation(
       if(scan_dcp) {
 	for(int ix = 1; ix <= hdcp[idm32sq][imix23]->GetNbinsX(); ix++) {
 	  double dcp = hdcp[idm32sq][imix23]->GetBinCenter(ix);
-	  fparm->SetInitValue(conv::kPhypDeltaCP, dcp);
+	  fparm->SetInitValue(conv::kPhypCPV    , dcp);
 	  skexp->Generate(*fparm);      
 	  double chisq = fit_inputs->Chisquare();//("poisson",conv::kSKsFCFV1RingMuLike);
 	  hdcp[idm32sq][imix23]->Fill(dcp, chisq);
@@ -161,7 +161,7 @@ void dcp_fit_correlation(
 	//save & draw
 	hmix13[idm32sq][imix23]->GetYaxis()->SetTitle("#chi^{2}");
 #line 0
-	hmix13[idm32sq][imix23]->GetXaxis()->SetTitle(util::AsString(conv::kPhypDeltaCP).c_str());
+	hmix13[idm32sq][imix23]->GetXaxis()->SetTitle(util::AsString(conv::kPhypCPV    ).c_str());
 	hdcp[idm32sq][imix23]->Write(Form("dcp_mix_%d_dm_%d",imix23,idm32sq));
 	hdcp[idm32sq][imix23]->Draw();
 	TLegend * l = new TLegend(0,0,0.3,0.1);

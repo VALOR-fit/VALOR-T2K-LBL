@@ -72,7 +72,7 @@ void test_sk_ereco_spectrum_nominal_samples_all_syst_joint
     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }
@@ -88,8 +88,8 @@ void test_sk_ereco_spectrum_nominal_samples_all_syst_joint
   const char * fit_param_list      = "nuosc3f_12fix";
 
   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
-  fparm->SetInitValue(conv::kPhypDeltaCP, input_deltacp);
-  fparm->Update(conv::kPhypDeltaCP, input_deltacp);
+  fparm->SetInitValue(conv::kPhypCPV    , input_deltacp);
+  fparm->Update(conv::kPhypCPV    , input_deltacp);
   fparm->SetInitValue(conv::kPhypMixing13, input_mixing13);
   fparm->Update(conv::kPhypMixing13, input_mixing13);
 

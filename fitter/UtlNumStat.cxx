@@ -464,11 +464,31 @@ double t2kana::util::RandomizeMixing13(void)
   return util::RandomizeMixing13();
 }
 //____________________________________________________________________________
-double t2kana::util::RandomizeDeltaCP(void)
+double t2kana::util::RandomizeCPV(void)
 {
-  double min = -conv::kpi;
-  double max =  conv::kpi;
-  return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
+  NuOscDeltaCP_t cpv = Opt::Instance()->gOscDeltaCP;
+  switch(cpv) {
+
+    case (kNuDeltaCPPhase) :
+    {
+       double min = -conv::kpi;
+       double max =  conv::kpi;
+       return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
+    }
+    break;
+
+    case (kNuDeltaCPSin) :
+    {
+       double min = -1.;
+       double max =  1.;
+       return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
+    }
+    break;
+
+    default:
+      return -99999;
+  }
+  return -99999;
 }
 //____________________________________________________________________________
 double t2kana::util::RandomizeDm12sq(void)

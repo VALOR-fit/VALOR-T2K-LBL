@@ -125,7 +125,7 @@ void chisq_vs_theta23_dm23sq
    fparm->Update(conv::kPhypMixing12, mixing12);
    fparm->Update(conv::kPhypMixing13, mixing13);
    fparm->Update(conv::kPhypMixing23, mixing23);
-   fparm->Update(conv::kPhypDeltaCP,  deltacp);
+   fparm->Update(conv::kPhypCPV    ,  deltacp);
    fparm->Update(conv::kPhypDm12sq,   dm12sq);
    fparm->Update(conv::kPhypDm23sq,   dm23sq);
    
@@ -179,8 +179,8 @@ void chisq_vs_theta23_dm23sq
        fparm0->Update(conv::kPhypDm23sq, dm23sq_bin);
        fparm0->FixParameter(conv::kPhypDm23sq);
        // fparm0->ResetCurrToInitValues(); // reset osc params     
-       fparm0->Update(conv::kPhypDeltaCP, deltacp_init);
-       fparm0->SetInitValue(conv::kPhypDeltaCP, deltacp_init);
+       fparm0->Update(conv::kPhypCPV    , deltacp_init);
+       fparm0->SetInitValue(conv::kPhypCPV    , deltacp_init);
        fparm0->SetInitValue(conv::kPhypMixing13, mixing13_init);
        fparm0->Update(conv::kPhypMixing13, mixing13_init);
        fparm0->Print();
@@ -214,11 +214,11 @@ void chisq_vs_theta23_dm23sq
        bestfit_mixing12 = fparm0->BestFitValue(conv::kPhypMixing12);
        bestfit_mixing13 = fparm0->BestFitValue(conv::kPhypMixing13);
        bestfit_mixing23 = fparm0->BestFitValue(conv::kPhypMixing23);
-       bestfit_deltacp  = fparm0->BestFitValue(conv::kPhypDeltaCP);
+       bestfit_deltacp  = fparm0->BestFitValue(conv::kPhypCPV    );
        bestfit_dm12sq   = fparm0->BestFitValue(conv::kPhypDm12sq);
        bestfit_dm23sq   = fparm0->BestFitValue(conv::kPhypDm23sq);
    
-       deltacp_init = fparm0->BestFitValue(conv::kPhypDeltaCP);
+       deltacp_init = fparm0->BestFitValue(conv::kPhypCPV    );
        mixing13_init = fparm0->BestFitValue(conv::kPhypMixing13);
        
        //Disappearance only:
@@ -251,7 +251,7 @@ void chisq_vs_theta23_dm23sq
        bestfit_disap_mixing12 = fparm_disap->BestFitValue(conv::kPhypMixing12);
        bestfit_disap_mixing13 = fparm_disap->BestFitValue(conv::kPhypMixing13);
        bestfit_disap_mixing23 = fparm_disap->BestFitValue(conv::kPhypMixing23);
-       bestfit_disap_deltacp  = fparm_disap->BestFitValue(conv::kPhypDeltaCP);
+       bestfit_disap_deltacp  = fparm_disap->BestFitValue(conv::kPhypCPV    );
        bestfit_disap_dm12sq   = fparm_disap->BestFitValue(conv::kPhypDm12sq);
        bestfit_disap_dm23sq   = fparm_disap->BestFitValue(conv::kPhypDm23sq);
        

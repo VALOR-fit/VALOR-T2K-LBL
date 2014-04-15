@@ -100,7 +100,7 @@ void test_nsk_twk_osc_mixing12_dm12sq
   ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
   ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq       );
   ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
-  ph.SetCurrValue(conv::kPhypDeltaCP,        input_deltacp      );
+  ph.SetCurrValue(conv::kPhypCPV    ,        input_deltacp      );
    
   // loop over varied params and generate predictions
   for(int i = 1; i <= nsk_vs_osc_params->GetNbinsX(); i++) {

@@ -103,7 +103,7 @@ void mock_data_fit_pulls_new
      kPhypMixing12,   
      kPhypDm12sq,
 #if FITPARMLIST == 2
-     kPhypDeltaCP,
+     kPhypCPV    ,
 #endif //2
 #endif //>=1
 #if FITPARMLIST >= 0
@@ -211,7 +211,7 @@ void mock_data_fit_pulls_new
      mix12_err,                    // kPhypMixing12
      dm21sq_err,                   // kPhypDm12sq
 #if FITPARMLIST == 2
-     deltacp_err,                  // kPhypDeltaCP
+     deltacp_err,                  // kPhypCPV    
 #endif //==2
 #endif //>=1
 #if FITPARMLIST >= 0
@@ -291,7 +291,7 @@ void mock_data_fit_pulls_new
      global_bestfit_mix12,     // kPhypMixing12
      kGlobFitDm12sq,           // kPhypDm12sq
 #if FITPARMLIST == 2
-     kGlobFitDeltaCP,          // kPhypDeltaCP
+     kGlobFitDeltaCP,          // kPhypCPV    
 #endif
 #endif
 #if FITPARMLIST >= 0
@@ -464,7 +464,7 @@ void mock_data_fit_pulls_new
        residual_lo = -0.5;
        residual_hi =  0.5;
      }
-     else if(p == kPhypDeltaCP) {
+     else if(p == kPhypCPV    ) {
        residual_lo = -10;
        residual_hi =  10;
      }
@@ -678,8 +678,8 @@ void mock_data_fit_pulls_new
        double pull_3     = (bestfit-nominal)/err_fit;
 
        h_bestfit    [ip] -> Fill(bestfit);
-       h_corr_inputdcp_residual[ip] -> Fill(iparm->Value(conv::kPhypDeltaCP),         residuals);
-       h_corr_inputdcp_bestfit [ip] -> Fill(iparm->Value(conv::kPhypDeltaCP),         bestfit);
+       h_corr_inputdcp_residual[ip] -> Fill(iparm->Value(conv::kPhypCPV    ),         residuals);
+       h_corr_inputdcp_bestfit [ip] -> Fill(iparm->Value(conv::kPhypCPV    ),         bestfit);
        h_corr_fitmix23_residual[ip] -> Fill(fparm->BestFitValue(conv::kPhypMixing23), residuals);
        h_corr_fitmix23_bestfit [ip] -> Fill(fparm->BestFitValue(conv::kPhypMixing23), bestfit);
        h_residuals  [ip] -> Fill(residuals);
@@ -735,7 +735,7 @@ void mock_data_fit_pulls_new
   //h_normal_test->FillRandom("gaus",100000);
   for(int ip = 0, ipp = 0; ip < nparams; ip++) {
     PhysParamId_t p = params[ip];
-    if(p == conv::kPhypDm23sq || p == conv::kPhypMixing23)// || p == conv::kNuisXSecSpecFunc || p == conv::kPhypDeltaCP)
+    if(p == conv::kPhypDm23sq || p == conv::kPhypMixing23)// || p == conv::kNuisXSecSpecFunc || p == conv::kPhypCPV    )
       continue;
     TString label;
     if(ipp%2)
@@ -780,7 +780,7 @@ void mock_data_fit_pulls_new
     h_normal->Draw("same");
     ctest->SaveAs("test.pdf");
     h_pull_1[ip]->Scale(1 / h_pull_1[ip]->Integral());
-    if(!do_gaus_fits || p == conv::kNuisXSecSpecFunc || p == conv::kPhypDeltaCP) {
+    if(!do_gaus_fits || p == conv::kNuisXSecSpecFunc || p == conv::kPhypCPV    ) {
       h_summary_nuis->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
       h_summary_nuis->SetBinError(  ipp+1, h_pull_1[ip]->GetRMS());
       h_summary_mean->SetBinContent(ipp+1, h_pull_1[ip]->GetMean());
@@ -931,7 +931,7 @@ void mock_data_fit_pulls_new
   ipc = 0;
   for(int ip = 0; ip < nparams; ip++) {
     PhysParamId_t p = params[ip];
-    if(!(p == conv::kPhypDeltaCP || p == conv::kNuisXSecSpecFunc
+    if(!(p == conv::kPhypCPV     || p == conv::kNuisXSecSpecFunc
 	 || p == conv::kNuisXSecPiLessDelta || p == conv::kNuisSuperkEnergyScale
 	 || p == conv::kNuisSKDetFSI005))
       continue;
@@ -1059,7 +1059,7 @@ void mock_data_fit_pulls_new
     }
     else
       h_pull_1[ip]->Draw("SAME C");
-    if(p != conv::kPhypDeltaCP && p != conv::kNuisXSecSpecFunc)
+    if(p != conv::kPhypCPV     && p != conv::kNuisXSecSpecFunc)
       ymax = TMath::Max(ymax, h_pull_1[ip]->GetMaximum());
     if(icol % ncols == (ncols - 1))
       istyle++;

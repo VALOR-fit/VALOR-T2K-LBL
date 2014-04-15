@@ -16,9 +16,9 @@
            for all oscillation parameters bins etc.
 
 \author    Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-           STFC, Rutherford Appleton Laboratory
+           University of Liverpool & STFC Rutherford Appleton Laboratory
 
-\copyright (c) 2010-2013, VaLOR group.
+\copyright (c) 2010-2014, The VALOR group.
 
 */
 //____________________________________________________________________________

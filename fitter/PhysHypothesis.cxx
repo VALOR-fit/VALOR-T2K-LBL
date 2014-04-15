@@ -64,7 +64,7 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
     this->SetCurrValue(kPhypMixing12, fp.CurrValue(kPhypMixing12));
     this->SetCurrValue(kPhypMixing13, fp.CurrValue(kPhypMixing13));
     this->SetCurrValue(kPhypMixing23, fp.CurrValue(kPhypMixing23));
-    this->SetCurrValue(kPhypDeltaCP,  fp.CurrValue(kPhypDeltaCP));
+    this->SetCurrValue(kPhypCPV    ,  fp.CurrValue(kPhypCPV    ));
   }
 
   // numu disappearance, 2-flavour neutrino oscillation framework 
@@ -156,7 +156,7 @@ void PhysHypothesis::Init(PhysHypothesis_t h)
     fParams[kPhypMixing12]  = 0;
     fParams[kPhypMixing13]  = 0;
     fParams[kPhypMixing23]  = 0;
-    fParams[kPhypDeltaCP]   = 0;
+    fParams[kPhypCPV    ]   = 0;
     fParams[kPhypDm23sq]    = 0;
     fParams[kPhypDm12sq]    = 0;
   }

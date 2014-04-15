@@ -657,7 +657,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing13);
     fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypDeltaCP);
+    fp -> FixParameter (kPhypCPV    );
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
     fp -> SetSystMode(0);
@@ -667,7 +667,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystDisap();
     fp -> FixParameter (kPhypMixing13);
     fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypDeltaCP);
+    fp -> FixParameter (kPhypCPV    );
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
@@ -677,7 +677,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> SetNuisance  (kPhypMixing13, true);
     fp -> SetNuisance  (kPhypMixing12, true);
-    fp -> SetNuisance  (kPhypDeltaCP,  true);
+    fp -> SetNuisance  (kPhypCPV    ,  true);
     fp -> SetNuisance  (kPhypDm12sq,   true);
     fp -> SetParListName(name);
     fp -> SetSystMode(3);//special value (get's chisq for osc params, but not for systematics)
@@ -687,7 +687,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystDisap();
     fp -> SetNuisance  (kPhypMixing13, true);
     fp -> SetNuisance  (kPhypMixing12, true);
-    fp -> SetNuisance  (kPhypDeltaCP,  true);
+    fp -> SetNuisance  (kPhypCPV    ,  true);
     fp -> SetNuisance  (kPhypDm12sq,   true);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
@@ -698,7 +698,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetNuisance  (kPhypMixing13, true);
     fp -> SetNuisance  (kPhypMixing12, true);
     fp -> SetNuisance  (kPhypDm12sq,   true);
-    fp -> FixParameter (kPhypDeltaCP);
+    fp -> FixParameter (kPhypCPV    );
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
     return fp;
@@ -797,7 +797,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetNuisance  (kPhypMixing13, true);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq);
-    fp -> FixParameter (kPhypDeltaCP);
+    fp -> FixParameter (kPhypCPV    );
     fp -> SetParListName(name);
     fp -> SetSystMode(4);
     return fp;
@@ -1115,10 +1115,10 @@ void FitParamList::Append3FlavourOscillation(FitParamList * fparm, int start)
   NuOscDeltaCP_t dcp = Opt::Instance()->gOscDeltaCP;
   switch(dcp){
   case(kNuDeltaCPPhase):
-  fparm->AddParam( ip++, kPhypDeltaCP,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+  fparm->AddParam( ip++, kPhypCPV    ,   0,                -kpi,          kpi,           1.0E-2,  false, false);
   break;
   case(kNuDeltaCPSin):
-  fparm->AddParam( ip++, kPhypDeltaCP,   0,                  -1,            1,           1.0E-2,  false, false);
+  fparm->AddParam( ip++, kPhypCPV    ,   0,                  -1,            1,           1.0E-2,  false, false);
   break;
   default:
     delete fparm;
@@ -1764,7 +1764,7 @@ PhysHypothesis_t FitParamList::PhysicsHypothesis(void) const
       this->Exists(kPhypMixing13) &&
       this->Exists(kPhypMixing12) &&
       this->Exists(kPhypMixing23) &&
-      this->Exists(kPhypDeltaCP) )
+      this->Exists(kPhypCPV    ) )
   {
     return kHypOsc3F;
   }

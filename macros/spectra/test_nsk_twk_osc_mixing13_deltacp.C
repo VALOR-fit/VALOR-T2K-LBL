@@ -139,7 +139,7 @@ void test_nsk_twk_osc_mixing13_deltacp
        double mixing13 = nsk_vs_osc_params->GetXaxis()->GetBinCenter(i);
        double deltacp       = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
        ph.SetCurrValue(conv::kPhypMixing13, mixing13);
-       ph.SetCurrValue(conv::kPhypDeltaCP,  deltacp );
+       ph.SetCurrValue(conv::kPhypCPV    ,  deltacp );
        // generate predictions
        skexp.Generate(ph);
        // integrate Ereco distribution 
@@ -259,7 +259,7 @@ void test_nsk_twk_osc_mixing13_deltacp
   // 3-flavour physics hypothesis, setting fixed params
   // PhysHypothesis ph(conv::kHypOsc3F);
   ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltaCP );
+  ph.SetCurrValue(conv::kPhypCPV    ,   input_deltaCP );
   ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
   ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq  );
    

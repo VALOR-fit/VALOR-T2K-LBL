@@ -523,79 +523,16 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
 //____________________________________________________________________________
 t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
 {
+  string lsh = util::ToLowerCase(sh);
   for (int i = 0 ; i < kNSuperkModes ; i ++ ) {
     SuperkMode_t m = (SuperkMode_t) i;
-    if (m != kSKmUndefined && sh == AsString(m) ) return m;
+    string full    = util::ToLowerCase(AsString(m));
+    string compact = util::ToLowerCase(AsStringCompact(m));
+    if (m != kSKmUndefined && (lsh == full || lsh == compact) ) return m;
   }
   std::cerr<<"SuperkModeFromString >> Did not get mode for string: "<<sh<<std::endl;
   return kSKmUndefined;
 }
-  // FORMER VERSION
-//~ t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
-//~ { 
-  //~ // WARNING: "NC oth" returns the disappearance mode if there is no disapp/app information given
-  //~ if(sh == "numu CC QE"  ) return kSKmNuMuCCQE;
-  //~ if(sh == "numu CC MEC" ) return kSKmMEC;
-  //~ if(sh == "numu CC 1pi" ) return kSKmNuMuCC1pi;
-  //~ if(sh == "numu CC coh" ) return kSKmNuMuCCcoh;
-  //~ if(sh == "numu CC oth" ) return kSKmNuMuCCoth;
-  //~ if(sh == "numu NC 1piC") return kSKmNuMuNC1piC;
-  //~ if(sh == "numu/nutau NC 1pi0") return kSKmNuMuNC1pi0;
-  //~ if(sh == "numu/nutau NC coh" ) return kSKmNuMuNCcoh;
-  //~ if(sh == "numu/nutau NC oth" ) return kSKmNuMuNCoth_mu;
-  //~ if(sh == "numu/nutau NC oth (numu disapp)") return kSKmNuMuNCoth_mu;
-  //~ if(sh == "numu/nutau NC oth (nue app)"    ) return kSKmNuMuNCoth_e;
-  //~ if(sh == "oscillated numu CC QE" ) return kSKmOscNuMuCCQE;
-  //~ if(sh == "oscillated numu CC 1pi") return kSKmOscNuMuCC1pi;
-  //~ if(sh == "oscillated numu CC coh") return kSKmOscNuMuCCcoh;
-  //~ if(sh == "oscillated numu CC oth") return kSKmOscNuMuCCoth;
-  //~ if(sh == "numubar CC QE" ) return kSKmNuMuBarCCQE;
-  //~ if(sh == "numubar CC 1pi") return kSKmNuMuBarCC1pi;
-  //~ if(sh == "numubar CC coh") return kSKmNuMuBarCCcoh;
-  //~ if(sh == "numubar CC oth") return kSKmNuMuBarCCoth;
-  //~ if(sh == "numubar/nutaubar NC 1piC") return kSKmNuMuBarNC1piC;
-  //~ if(sh == "numubar/nutaubar NC 1pi0") return kSKmNuMuBarNC1pi0;
-  //~ if(sh == "numubar/nutaubar NC coh" ) return kSKmNuMuBarNCcoh;
-  //~ if(sh == "numubar/nutaubar NC oth" ) return kSKmNuMuBarNCoth_mu;
-  //~ if(sh == "numubar/nutaubar NC oth (numu disapp)") return kSKmNuMuBarNCoth_mu;
-  //~ if(sh == "numubar/nutaubar NC oth (nue app)"    ) return kSKmNuMuBarNCoth_e;
-  //~ if(sh == "oscillated numubar CC QE" ) return kSKmOscNuMuBarCCQE;
-  //~ if(sh == "oscillated numubar CC 1pi") return kSKmOscNuMuBarCC1pi;
-  //~ if(sh == "oscillated numubar CC coh") return kSKmOscNuMuBarCCcoh;
-  //~ if(sh == "oscillated numubar CC oth") return kSKmOscNuMuBarCCoth;
-  //~ if(sh == "nue CC QE"  ) return kSKmNuECCQE;
-  //~ if(sh == "nue CC 1pi" ) return kSKmNuECC1pi;
-  //~ if(sh == "nue CC coh" ) return kSKmNuECCcoh;
-  //~ if(sh == "nue CC oth" ) return kSKmNuECCoth;
-  //~ if(sh == "nue NC 1piC") return kSKmNuENC1piC;
-  //~ if(sh == "nue NC 1pi0") return kSKmNuENC1pi0;
-  //~ if(sh == "nue NC coh" ) return kSKmNuENCcoh;
-  //~ if(sh == "nue NC oth" ) return kSKmNuENCoth_mu;
-  //~ if(sh == "nue NC oth (nue app)"    ) return kSKmNuENCoth_e;
-  //~ if(sh == "nue NC oth (numu disapp)") return kSKmNuENCoth_mu;
-  //~ if(sh == "oscillated nue CC QE" ) return kSKmOscNuECCQE;
-  //~ if(sh == "oscillated nue CC 1pi") return kSKmOscNuECC1pi;
-  //~ if(sh == "oscillated nue CC coh") return kSKmOscNuECCcoh;
-  //~ if(sh == "oscillated nue CC oth") return kSKmOscNuECCoth;
-  //~ if(sh == "nuebar CC QE"  ) return kSKmNuEBarCCQE;
-  //~ if(sh == "nuebar CC 1pi" ) return kSKmNuEBarCC1pi;
-  //~ if(sh == "nuebar CC coh" ) return kSKmNuEBarCCcoh;
-  //~ if(sh == "nuebar CC oth" ) return kSKmNuEBarCCoth;
-  //~ if(sh == "nuebar NC 1piC") return kSKmNuEBarNC1piC;
-  //~ if(sh == "nuebar NC 1pi0") return kSKmNuEBarNC1pi0;
-  //~ if(sh == "nuebar NC coh" ) return kSKmNuEBarNCcoh;
-  //~ if(sh == "nuebar NC oth" ) return kSKmNuEBarNCoth_mu;
-  //~ if(sh == "nuebar NC oth (numu disapp)") return kSKmNuEBarNCoth_mu;
-  //~ if(sh == "nuebar NC oth (nue app)"    ) return kSKmNuEBarNCoth_e;
-  //~ if(sh == "oscillated nuebar CC QE" ) return kSKmOscNuEBarCCQE;
-  //~ if(sh == "oscillated nuebar CC 1pi") return kSKmOscNuEBarCC1pi;
-  //~ if(sh == "oscillated nuebar CC coh") return kSKmOscNuEBarCCcoh;
-  //~ if(sh == "oscillated nuebar CC oth") return kSKmOscNuEBarCCoth;
-//~ 
-  //~ return kSKmUndefined;
-//~ }
-
-
 //____________________DEPRECATED______________________________________________
 bool t2kana::util::IsMEC(t2kana::conv::SuperkMode_t m)
 {

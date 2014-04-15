@@ -58,6 +58,16 @@ string t2kana::util::AsString(PhysParamId_t p)
          }
     }
     break;
+    case ( kPhypCPV ) : 
+    {
+        conv::NuOscDeltaCP_t cpv = Opt::Instance()->gOscDeltaCP;
+        switch(cpv) {
+           case(kNuDeltaCPPhase) : return "delta_cp";      break;
+           case(kNuDeltaCPSin  ) : return "sin(delta_cp)"; break;
+           default               : return "--";            break;
+        }
+    }
+    break;
 
     case ( kPhypDm23sq  ) :
     {
@@ -82,8 +92,6 @@ string t2kana::util::AsString(PhysParamId_t p)
         }
     }
     break;
-    
-    case ( kPhypDeltaCP               ) : return "delta_cp";        break;
 
     // esoteric hypotheses
     case ( kPhypAlphaDecay            ) : return "alpha_decay";                break;
@@ -742,18 +750,39 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
     }
     break;
 
-    case ( kPhypDeltaCP               ) : return "$\\delta_{CP}$";                   break;
-    case ( kPhypDm12sq                ) : return "$|\\Delta m^{2}_{21}|$";                  break;
-    case ( kPhypDm23sq                ) :
-      {
-	NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
-	switch(dmscheme) {
-	  case(kNuDmsq12andAbs23) : return "|\\Delta m^{2}_{32}|";                  break;
-	  case(kNuDmsq12andAbs31) : return "|\\Delta m^{2}_{31}|";                  break;
-	  case(kNuDmsqFogliLisi ) : return "|\\Delta m^{2}|";                       break;
-  	  default                 : return "--";                                  break;
-	}
-      }
+    case ( kPhypCPV ) : 
+    {
+        conv::NuOscDeltaCP_t cpv = Opt::Instance()->gOscDeltaCP;
+        switch(cpv) {
+           case(kNuDeltaCPPhase) : return "$\\delta_{CP}$";      break;
+           case(kNuDeltaCPSin  ) : return "$sin(\\delta_{CP})$"; break;
+           default               : return "--";                  break;
+        }
+    }
+    break;
+
+    case ( kPhypDm12sq ) : 
+    {
+        NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+        switch(dmscheme) {
+          case(kNuDmsq12andAbs23) : return "\\Delta m^2_{22}";                  break;
+          case(kNuDmsq12andAbs31) : return "\\Delta m^2_{21}";                  break;
+          case(kNuDmsqFogliLisi ) : return "\\delta m^2";                       break;
+          default                 : return "--";                                  break;
+        }
+    }
+    break;
+
+    case ( kPhypDm23sq ) :
+    {
+        NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+        switch(dmscheme) {
+          case(kNuDmsq12andAbs23) : return "|\\Delta m^2_{32}|";                  break;
+          case(kNuDmsq12andAbs31) : return "|\\Delta m^2_{31}|";                  break;
+          case(kNuDmsqFogliLisi ) : return "|\\Delta m^2|";                       break;
+          default                 : return "--";                                  break;
+        }
+    }
     break;
 
     case ( kPhypAlphaDecay            ) : return "$\\alpha_{decay}$";                break;
@@ -1140,7 +1169,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
     }
     break;
 
-    case ( kPhypDeltaCP               ) : return "delta_cp";            break;
+    case ( kPhypCPV                   ) : return "delta_cp";            break;
     case ( kPhypDm23sq                ) :
       {
 	NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
@@ -1161,7 +1190,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
 	    return "dm12sq";                  break;
 	  case(kNuDmsqFogliLisi ) :
 	    return "dmsq";                    break;
-   	  default                 :
+	  default                 :
 	    return "--";                        break;  
 	}
       }
@@ -1517,8 +1546,16 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
       }
     }
     break;
-    
-  case ( kPhypDeltaCP               ) : return "$\\delta_{CP}$";                   break;
+
+    case ( kPhypCPV ) : 
+    {
+        conv::NuOscDeltaCP_t cpv = Opt::Instance()->gOscDeltaCP;
+        switch(cpv) {
+           case(kNuDeltaCPPhase) : return "$\\delta_{CP}$";       break;
+           case(kNuDeltaCPSin  ) : return "$\\sin(\\delta_{CP})$";break;
+           default               : return "--";                   break;
+        }
+    }
   case ( kPhypDm23sq                ) : 
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
@@ -2098,14 +2135,20 @@ bool t2kana::util::IsXSec(PhysParamId_t p)
 {
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
     return true;
+  if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecNormAntiNuToNu)
+    return true;
   return false;
+  
 }
 //____________________________________________________________________________
 bool t2kana::util::IsUsingSplines(PhysParamId_t p)
 {
+  assert(!"IsUsingSplines Currently unimplemented");
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecBindE)
     return true;
-  if(p == kNuisBANFFMAQE || p == kNuisBANFFMAQE)
+  if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecBindE)
+    return true;
+  if(p == kNuisBANFFMAQE || p == kRHCNuisBANFFMAQE)
     return true;
 
   return false;
@@ -2212,9 +2255,10 @@ string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
 t2kana::conv::PhysParamId_t
   t2kana::util::PhysParamIdFromString(string sh) 
 {
+  string lsh = util::ToLowerCase(sh);
   for (int i = 0 ; i < knppmax ; i++) {
     PhysParamId_t k = (PhysParamId_t) i ;
-    if (k != kPhypUndefined && sh == AsStringCompact(k)) return k;
+    if (k != kPhypUndefined && lsh == util::ToLowerCase(AsStringCompact(k))) return k;
   }
   std::cerr<<"util::PhysParamIdFromString >> Unmatched string: "<<sh<<std::endl;
   return kPhypUndefined;
@@ -2223,9 +2267,10 @@ t2kana::conv::PhysParamId_t
 t2kana::conv::PhysParamId_t
   t2kana::util::PhysParamIdFromLongString(string sh) 
 {
+  string lsh = util::ToLowerCase(sh);
   for (int i = 0 ; i < knppmax ; i++) {
     PhysParamId_t k = (PhysParamId_t) i ;
-    if (k != kPhypUndefined && sh == AsString(k)) return k;
+    if (k != kPhypUndefined && lsh == util::ToLowerCase(AsString(k)) ) return k;
   }
   std::cerr<<"util::PhysParamIdFromString >> Unmatched string: "<<sh<<std::endl;
   return kPhypUndefined;

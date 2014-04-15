@@ -89,7 +89,7 @@ void run_fit_dcp
   else cout << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > " << util::AsString(kPhypDeltaCP)  << " = " << input_deltacp << endl;
+  cout << "       > " << util::AsString(kPhypCPV    )  << " = " << input_deltacp << endl;
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
   cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
   cout << "       > " << util::AsString(kPhypMixing23) << " = " << ((randomize_mixing23) ? "* randomized *" : input_mixing23) << endl;
@@ -276,37 +276,37 @@ void run_fit_dcp
        fparm1->SetInitValue(kPhypMixing12, input_mixing12);
        fparm1->SetInitValue(kPhypMixing13, input_mixing13);
        fparm1->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1->SetInitValue(kPhypCPV    ,  input_deltacp);
        fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
        fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
        iparmfit->SetInitValue(kPhypMixing12, input_mixing12);
        iparmfit->SetInitValue(kPhypMixing13, input_mixing13);
        iparmfit->SetInitValue(kPhypMixing23, input_mixing23);
-       iparmfit->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       iparmfit->SetInitValue(kPhypCPV    ,  input_deltacp);
        iparmfit->SetInitValue(kPhypDm12sq,   input_dm12sq);
        iparmfit->SetInitValue(kPhypDm23sq,   input_dm23sq);
        fparm1_dcp0_nh->SetInitValue(kPhypMixing12, input_mixing12);
        fparm1_dcp0_nh->SetInitValue(kPhypMixing13, input_mixing13);
        fparm1_dcp0_nh->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1_dcp0_nh->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1_dcp0_nh->SetInitValue(kPhypCPV    ,  input_deltacp);
        fparm1_dcp0_nh->SetInitValue(kPhypDm12sq,   input_dm12sq);
        fparm1_dcp0_nh->SetInitValue(kPhypDm23sq,   input_dm23sq);
        fparm1_dcppi_nh->SetInitValue(kPhypMixing12, input_mixing12);
        fparm1_dcppi_nh->SetInitValue(kPhypMixing13, input_mixing13);
        fparm1_dcppi_nh->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1_dcppi_nh->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1_dcppi_nh->SetInitValue(kPhypCPV    ,  input_deltacp);
        fparm1_dcppi_nh->SetInitValue(kPhypDm12sq,   input_dm12sq);
        fparm1_dcppi_nh->SetInitValue(kPhypDm23sq,   input_dm23sq);
        fparm1_dcp0_ih->SetInitValue(kPhypMixing12, input_mixing12);
        fparm1_dcp0_ih->SetInitValue(kPhypMixing13, input_mixing13);
        fparm1_dcp0_ih->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1_dcp0_ih->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1_dcp0_ih->SetInitValue(kPhypCPV    ,  input_deltacp);
        fparm1_dcp0_ih->SetInitValue(kPhypDm12sq,   input_dm12sq);
        fparm1_dcp0_ih->SetInitValue(kPhypDm23sq,   input_dm23sq);
        fparm1_dcppi_ih->SetInitValue(kPhypMixing12, input_mixing12);
        fparm1_dcppi_ih->SetInitValue(kPhypMixing13, input_mixing13);
        fparm1_dcppi_ih->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1_dcppi_ih->SetInitValue(kPhypDeltaCP,  input_deltacp);
+       fparm1_dcppi_ih->SetInitValue(kPhypCPV    ,  input_deltacp);
        fparm1_dcppi_ih->SetInitValue(kPhypDm12sq,   input_dm12sq);
        fparm1_dcppi_ih->SetInitValue(kPhypDm23sq,   input_dm23sq);
      }
@@ -452,7 +452,7 @@ void run_fit_dcp
        }
      }
      //Do the fit for input parameters (to get input chisq)
-    iparmfit->FixParameter(kPhypDeltaCP);
+    iparmfit->FixParameter(kPhypCPV    );
     iparmfit->FixParameter(kPhypMixing13);
     iparmfit->FixParameter(kPhypMixing12);
     iparmfit->FixParameter(kPhypMixing23);
@@ -472,8 +472,8 @@ void run_fit_dcp
      skexp->GetSuperkMC()->SetMassHierarchy(conv::kNmhNormal);
 
      //Fit again, fixing deltacp to 0. Start from nominal (not previous best fits) for other parameters
-     fparm1_dcp0_nh->SetInitValue(kPhypDeltaCP,  0);
-     fparm1_dcp0_nh->FixParameter(kPhypDeltaCP);
+     fparm1_dcp0_nh->SetInitValue(kPhypCPV    ,  0);
+     fparm1_dcp0_nh->FixParameter(kPhypCPV    );
      // Get fitter
      FitInputs * fit_inputs_dcp0_nh = new FitInputs(skobs,skexp,fparm1_dcp0_nh);
      FitterABC * fitter_dcp0_nh = util::GetFitter(fit_inputs_dcp0_nh,fit_option);
@@ -523,8 +523,8 @@ void run_fit_dcp
      }
 
      //Fit again, fixing deltacp to +pi. Start from nominal (not previous best fits) for other parameters
-     fparm1_dcppi_nh->SetInitValue(kPhypDeltaCP,  +conv::kpi);
-     fparm1_dcppi_nh->FixParameter(kPhypDeltaCP);
+     fparm1_dcppi_nh->SetInitValue(kPhypCPV    ,  +conv::kpi);
+     fparm1_dcppi_nh->FixParameter(kPhypCPV    );
      // Get fitter
      FitInputs * fit_inputs_dcppi_nh = new FitInputs(skobs,skexp,fparm1_dcppi_nh);
      FitterABC * fitter_dcppi_nh = util::GetFitter(fit_inputs_dcppi_nh,fit_option);
@@ -662,8 +662,8 @@ void run_fit_dcp
      skexp->GetSuperkMC()->SetMassHierarchy(conv::kNmhInverted);
 
      //Fit again, fixing deltacp to 0. Start from nominal (not previous best fits) for other parameters
-     fparm1_dcp0_ih->SetInitValue(kPhypDeltaCP,  0);
-     fparm1_dcp0_ih->FixParameter(kPhypDeltaCP);
+     fparm1_dcp0_ih->SetInitValue(kPhypCPV    ,  0);
+     fparm1_dcp0_ih->FixParameter(kPhypCPV    );
      // Get fitter
      FitInputs * fit_inputs_dcp0_ih = new FitInputs(skobs,skexp,fparm1_dcp0_ih);
      FitterABC * fitter_dcp0_ih = util::GetFitter(fit_inputs_dcp0_ih,fit_option);
@@ -713,8 +713,8 @@ void run_fit_dcp
      }
 
      //Fit again, fixing deltacp to +pi. Start from nominal (not previous best fits) for other parameters
-     fparm1_dcppi_ih->SetInitValue(kPhypDeltaCP,  +conv::kpi);
-     fparm1_dcppi_ih->FixParameter(kPhypDeltaCP);
+     fparm1_dcppi_ih->SetInitValue(kPhypCPV    ,  +conv::kpi);
+     fparm1_dcppi_ih->FixParameter(kPhypCPV    );
      // Get fitter
      FitInputs * fit_inputs_dcppi_ih = new FitInputs(skobs,skexp,fparm1_dcppi_ih);
      FitterABC * fitter_dcppi_ih = util::GetFitter(fit_inputs_dcppi_ih,fit_option);

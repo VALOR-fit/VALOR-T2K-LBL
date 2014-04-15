@@ -52,7 +52,7 @@ void plot_numu_surv_prob_2f_vs_3frange(double mixing23=1.0, double dm23sq=2.32E-
        double dm12sq   = util::RandomizeDm12sq();
        double mixing12 = util::RandomizeMixing12();
        double mixing13 = util::RandomizeMixing13();
-       double delta_cp = util::RandomizeDeltaCP();
+       double delta_cp = util::RandomizeCPV();
 
        calc_osc3f.SetOscParameters(mixing12,mixing13,mixing23,dm12sq,dm23sq,delta_cp);
 

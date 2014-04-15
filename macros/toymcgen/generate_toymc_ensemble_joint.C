@@ -119,7 +119,7 @@ void generate_toymc_ensemble_joint
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
   cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
   cout << "       > " << util::AsString(kPhypMixing23) << " = " << input_mixing23 << endl;
-  cout << "       > " << util::AsString(kPhypDeltaCP)  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
+  cout << "       > " << util::AsString(kPhypCPV    )  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
   cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
   cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "   - Adding the following data-points in each toy-MC expt: " << endl;
@@ -175,7 +175,7 @@ void generate_toymc_ensemble_joint
        // Randomize specified osc params for current toy MC expt
        if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
        if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
-       if (randomize_deltacp ) { input_deltacp  = util::RandomizeDeltaCP();       }
+       if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();       }
        if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();        }
 
        // Set physics hypothesis
@@ -187,7 +187,7 @@ void generate_toymc_ensemble_joint
 	 ph.SetCurrValue(kPhypMixing12,  input_mixing12);
 	 ph.SetCurrValue(kPhypMixing13,  input_mixing13);
 	 ph.SetCurrValue(kPhypMixing23,  input_mixing23);
-	 ph.SetCurrValue(kPhypDeltaCP,   input_deltacp);
+	 ph.SetCurrValue(kPhypCPV    ,   input_deltacp);
 	 ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
 	 ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
        }

@@ -65,8 +65,8 @@ void run_fit_xml_seeded
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
   //make an assumption for deltacp
-  if(fparm->IsFixed(conv::kPhypDeltaCP))
-    fparm->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+  if(fparm->IsFixed(conv::kPhypCPV    ))
+    fparm->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -142,8 +142,8 @@ void run_fit_xml_seeded
 	fparm->SetInitValue(conv::kPhypMixing13, util::RandomizeMixing13());
       if(!fparm->IsFixed(conv::kPhypDm12sq))
 	fparm->SetInitValue(conv::kPhypDm12sq,   util::RandomizeDm12sq());
-      if(!fparm->IsFixed(conv::kPhypDeltaCP))
-	fparm->SetInitValue(conv::kPhypDeltaCP,  util::RandomizeDeltaCP());
+      if(!fparm->IsFixed(conv::kPhypCPV    ))
+	fparm->SetInitValue(conv::kPhypCPV    ,  util::RandomizeCPV());
 
       // Set the osc params seed to be within 3 bins of the chisq surfaces' best fit
       if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)

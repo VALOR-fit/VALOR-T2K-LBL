@@ -42,8 +42,8 @@ void dcp_sensitivity
     ch->GetEntry(i);
 
     //get values
-    double cpin   = iparm->Value(kPhypDeltaCP);
-    double cpfit  = fparm->BestFitValue(kPhypDeltaCP);
+    double cpin   = iparm->Value(kPhypCPV    );
+    double cpfit  = fparm->BestFitValue(kPhypCPV    );
     double chi    = fparm->GetBestFitChisq();
     double chicp0 = fcp0->GetBestFitChisq();
 

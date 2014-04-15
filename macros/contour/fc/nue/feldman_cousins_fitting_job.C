@@ -125,7 +125,7 @@ void feldman_cousins_fitting_job
           << input_deltacp << ", mixing13_{true} = " << input_mixing13 << endl;
 
      fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
-     fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
+     fparm->Update(t2kana::conv::kPhypCPV    ,       input_deltacp);
 
      //
      // if requested, randomize mixing12,mixing23,|dm23sq| and dm12sq
@@ -180,7 +180,7 @@ void feldman_cousins_fitting_job
      // they are set to nominal (constant) values used in the fit).
      fparm->ResetCurrToInitValues();
      fparm->Update(t2kana::conv::kPhypMixing13, input_mixing13);
-     fparm->Update(t2kana::conv::kPhypDeltaCP,       input_deltacp);
+     fparm->Update(t2kana::conv::kPhypCPV    ,       input_deltacp);
      double chisq_for_input_params = fit_inputs->Chisquare();
      cout << "- Chisq (input/true oscillation params) = " << chisq_for_input_params << endl;
 
@@ -191,7 +191,7 @@ void feldman_cousins_fitting_job
 
      // get best-fit params
      double bestfit_mixing13 = fparm->BestFitValue(conv::kPhypMixing13);
-     double bestfit_deltacp       = fparm->BestFitValue(conv::kPhypDeltaCP);
+     double bestfit_deltacp       = fparm->BestFitValue(conv::kPhypCPV    );
      double bestfit_chisq         = fit_inputs->BestFitChisquare();
 
      cout << "- Chisq (Best-fit params:" 

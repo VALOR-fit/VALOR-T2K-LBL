@@ -502,7 +502,7 @@ void analyse_output_new
 	cout << util::AsString(p) << "\t" << error << "\t" << conv::kGlobFitErrSinsqTheta12 << "\t" << error / conv::kGlobFitErrSinsqTheta12 << endl;
       }
     }
-    else if(p == conv::kPhypDeltaCP) {
+    else if(p == conv::kPhypCPV    ) {
       pulls-> SetBinContent(ipfree, (best - conv::kGlobFitDeltaCP) / error);
       values->SetBinContent(ipfree, (best - conv::kGlobFitDeltaCP) / conv::kpi);//conv::kGlobFitErrDeltaCP);
       errratio->SetBinContent(ipfree, error / conv::kpi);

@@ -248,8 +248,8 @@ bool FitterMinuit::DoTheFit(void)
       fFitInputs->FitParams().SetInitValue(conv::kPhypDm12sq, util::RandomizeDm12sq());
     if(fFitInputs->FitParams().Exists(conv::kPhypMixing12) && !fFitInputs->FitParams().IsFixed(conv::kPhypMixing12))
       fFitInputs->FitParams().SetInitValue(conv::kPhypMixing12, util::RandomizeMixing12());
-    if(fFitInputs->FitParams().Exists(conv::kPhypDeltaCP) && !fFitInputs->FitParams().IsFixed(conv::kPhypDeltaCP))
-      fFitInputs->FitParams().SetInitValue(conv::kPhypDeltaCP, util::RandomizeDeltaCP());
+    if(fFitInputs->FitParams().Exists(conv::kPhypCPV    ) && !fFitInputs->FitParams().IsFixed(conv::kPhypCPV    ))
+      fFitInputs->FitParams().SetInitValue(conv::kPhypCPV    , util::RandomizeCPV());
     //randomise systematics
     //first check if there is a floating systematic in the fit (only need to look at one, since we're only ever fitting either 0 or all systematics)
     if(fFitInputs->FitParams().Exists(conv::kNuisXSecNormNuEToNuMu) && !fFitInputs->FitParams().IsFixed(conv::kNuisXSecNormNuEToNuMu)) {
@@ -343,14 +343,14 @@ bool FitterMinuit::RunOnce(bool use_simplex)
       cout << "FitterMinuit/RunOnce >> Performing two step fit. Fit everything but dcp, fit only dcp..." << endl;
 #endif
       //fix dcp
-      fFitInputs->FitParams().FixParameter(conv::kPhypDeltaCP);
-      double dcp_slot = (double)(fFitInputs->FitParams().Id(conv::kPhypDeltaCP) + 1); //FitParamList Id runs from 0. MINUIT Id runs from 1.
+      fFitInputs->FitParams().FixParameter(conv::kPhypCPV    );
+      double dcp_slot = (double)(fFitInputs->FitParams().Id(conv::kPhypCPV    ) + 1); //FitParamList Id runs from 0. MINUIT Id runs from 1.
       fitter->ExecuteCommand("FIX",&dcp_slot,1);
       //fit
       fMigradMinStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);
       //return if the not-dcp fit failed
       if(fMigradMinStatusCode == 4) {
-	fFitInputs->FitParams().FreeParameter(conv::kPhypDeltaCP);
+	fFitInputs->FitParams().FreeParameter(conv::kPhypCPV    );
 	fitter->ExecuteCommand("RELEASE",&dcp_slot,1);
 	cout << "FitterMinuit/RunOnce >> Fit did not converge when fixing dcp" << endl;
 	return false;
@@ -376,7 +376,7 @@ bool FitterMinuit::RunOnce(bool use_simplex)
 	}
       }//ip
       //free dcp
-      fFitInputs->FitParams().FreeParameter(conv::kPhypDeltaCP);
+      fFitInputs->FitParams().FreeParameter(conv::kPhypCPV    );
       fitter->ExecuteCommand("RELEASE",&dcp_slot,1);
       //fit
       fMigradMinStatusCode = fitter->ExecuteCommand("MIGRAD",arglist, 2);

@@ -131,7 +131,7 @@ void dcp_fit_correlation_draw_scans(
 	}//switch im
 	ctemp->SaveAs(Form("dcp_profiles_probabilities_%s_%d.pdf[",modename.c_str(),i_energy_scans));
 	for(int ie = 0; ie < nenergies; ie++) {
-	  //hprob[im][ie] = new TH1D("",Form(";;%s",modename.c_str()),100,fparm->BestFitValue(conv::kPhypDeltaCP),fparm->BestFitValue(conv::kPhypDeltaCP)+conv::kpi);
+	  //hprob[im][ie] = new TH1D("",Form(";;%s",modename.c_str()),100,fparm->BestFitValue(conv::kPhypCPV    ),fparm->BestFitValue(conv::kPhypCPV    )+conv::kpi);
 	  hprob[im][ie] = new TH1D("",Form(";;%s",modename.c_str()),200,-conv::kpi,conv::kpi);
 	  double Etrue = (util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike,ie-1) + util::EtrueBinEdges(conv::kSKsFCFV1RingMuLike,ie) ) / 2;
 	  for(int ip = 1; ip <= hprob[im][ie]->GetNbinsX(); ip++) {
@@ -217,13 +217,13 @@ void dcp_fit_correlation_draw_scans(
     l->AddEntry((TObject*)0, hdcp[idm32sq][imix23]->GetTitle(), "l");
     l->Draw();
     TLegend * leg = new TLegend(0.3,0,1.0,0.1);
-    leg->AddEntry((TObject*)0, Form("#chi^{2}_{bf}=%f, tries=%d, #delta_{CP}=%f [%d,%d], #chi^{2}=%f", fparm->GetBestFitChisq(), fparm->GetFitTries(), fparm->BestFitValue(conv::kPhypDeltaCP), imix23, idm32sq, chisq), "l");
+    leg->AddEntry((TObject*)0, Form("#chi^{2}_{bf}=%f, tries=%d, #delta_{CP}=%f [%d,%d], #chi^{2}=%f", fparm->GetBestFitChisq(), fparm->GetFitTries(), fparm->BestFitValue(conv::kPhypCPV    ), imix23, idm32sq, chisq), "l");
     leg->SetTextSize(0.03);
     leg->Draw();
     TLine *l1 = new TLine(-conv::kpi,fparm->GetBestFitChisq(),+conv::kpi,fparm->GetBestFitChisq());
     l1->SetLineColor(kRed);
     l1->Draw();
-    TLine *l2 = new TLine(fparm->BestFitValue(conv::kPhypDeltaCP),0,fparm->BestFitValue(conv::kPhypDeltaCP),200);
+    TLine *l2 = new TLine(fparm->BestFitValue(conv::kPhypCPV    ),0,fparm->BestFitValue(conv::kPhypCPV    ),200);
     l2->SetLineColor(kRed);
     l2->Draw();
   }//iev

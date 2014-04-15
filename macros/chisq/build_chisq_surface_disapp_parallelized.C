@@ -93,8 +93,8 @@ void build_chisq_surface_disapp_parallelized
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
   //make an assumption for deltacp
-  if(fparm->IsFixed(conv::kPhypDeltaCP))
-    fparm->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+  if(fparm->IsFixed(conv::kPhypCPV    ))
+    fparm->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -196,8 +196,8 @@ void build_chisq_surface_disapp_parallelized
 	     //cout << *iparm << endl;
 	     fparm->FromPhysParamList(*iparm, "initial", true);
 	     //make an assumption for deltacp
-	     if(fparm->IsFixed(conv::kPhypDeltaCP))
-	       fparm->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+	     if(fparm->IsFixed(conv::kPhypCPV    ))
+	       fparm->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
 	   }
            cout << *fparm;
            // do the fit

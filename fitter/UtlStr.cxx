@@ -8,6 +8,8 @@ ChangeLog:
 */
 //____________________________________________________________________________
 
+#include <algorithm>
+
 #include "UtlStr.h"
 
 //___________________________________________________________________________
@@ -36,5 +38,11 @@ vector<string> t2kana::util::Tokens (string input, string delimiter)
   }
   tokens.push_back(input);
   return tokens;
+}
+//___________________________________________________________________________
+string t2kana::util::ToLowerCase(string data)
+{
+  std::transform(data.begin(), data.end(), data.begin(), ::tolower);
+  return data;
 }
 //___________________________________________________________________________

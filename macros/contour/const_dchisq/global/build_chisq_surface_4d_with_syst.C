@@ -94,7 +94,7 @@ void build_chisq_surface_4d_with_syst
             << " bins in (" << mix13_min << ", " << mix13_max << ")" << endl;
       cout << "   - " << util::AsString(conv::kPhypMixing23) << " : " << mix23_nbins 
             << " bins in (" << mix23_min << ", " << mix23_max << ")" << endl;
-      cout << "   - " << util::AsString(conv::kPhypDeltaCP) << " : " << dcp_nbins 
+      cout << "   - " << util::AsString(conv::kPhypCPV    ) << " : " << dcp_nbins 
             << " bins in (" << dcp_min << ", " << dcp_max << ")" << endl;
       cout << "   - " << util::AsString(conv::kPhypDm23sq) << " : " << dm23sq_nbins 
             << " bins in (" << dm23sq_min << ", " << dm23sq_max << ") eV^2/c^4" << endl;
@@ -103,7 +103,7 @@ void build_chisq_surface_4d_with_syst
             << " considering bins [" << mix13_min_bin << ", " << mix13_max_bin << "]" << endl;
       cout << "   - " << util::AsString(conv::kPhypMixing23) << " : " 
             << " considering bins [" << mix23_min_bin << ", " << mix23_max_bin << "]" << endl;
-      cout << "   - " << util::AsString(conv::kPhypDeltaCP) << " : " 
+      cout << "   - " << util::AsString(conv::kPhypCPV    ) << " : " 
             << " considering bins [" << dcp_min_bin << ", " << dcp_max_bin << "]" << endl;
       cout << "   - " << util::AsString(conv::kPhypDm23sq) << " : " 
             << " considering bins [" << dm23sq_min_bin << ", " << dm23sq_max_bin << "]" << endl;
@@ -136,9 +136,9 @@ void build_chisq_surface_4d_with_syst
 
       for(int idcp = dcp_min_bin; idcp <= dcp_max_bin; idcp++) {
             double dcp = dcp_min + (idcp-1) * dcp_step;
-            fparm->Update(conv::kPhypDeltaCP, dcp);
-            fparm->SetInitValue(conv::kPhypDeltaCP, dcp);
-            fparm->FixParameter(conv::kPhypDeltaCP);
+            fparm->Update(conv::kPhypCPV    , dcp);
+            fparm->SetInitValue(conv::kPhypCPV    , dcp);
+            fparm->FixParameter(conv::kPhypCPV    );
 
             for(int imix13 = mix13_min_bin; imix13 <= mix13_max_bin; imix13++) {
                   double mix13 = mix13_min + (imix13-1) * mix13_step;

@@ -73,7 +73,7 @@ void plot_osc_prob_deltacp(
   ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
   ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
   ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  ph.SetCurrValue(conv::kPhypDeltaCP,        input_dcp);
+  ph.SetCurrValue(conv::kPhypCPV    ,        input_dcp);
   ph.SetCurrValue(conv::kPhypDm12sq,         input_dm12sq);
   ph.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq);
 
@@ -331,7 +331,7 @@ void plot_osc_prob_deltacp(
 
   //first value of deltacp
   double dcp_1 = -conv::kpi;
-  ph.SetCurrValue(conv::kPhypDeltaCP, dcp_1);
+  ph.SetCurrValue(conv::kPhypCPV    , dcp_1);
 
   //loop over Mu-like Ereco bin edges
   for(int ir = 1; ir <= util::NumErecoBins(conv::kSKsFCFV1RingMuLike); ir++) {
@@ -364,7 +364,7 @@ void plot_osc_prob_deltacp(
 
   //first value of deltacp
   double dcp_2 = -conv::kpi/2.;
-  ph.SetCurrValue(conv::kPhypDeltaCP, dcp_2);
+  ph.SetCurrValue(conv::kPhypCPV    , dcp_2);
 
   //loop over Mu-like Ereco bin edges
   for(int ir = 1; ir <= util::NumErecoBins(conv::kSKsFCFV1RingMuLike); ir++) {
@@ -396,7 +396,7 @@ void plot_osc_prob_deltacp(
 
   //first value of deltacp
   double dcp_3 = 0.0;
-  ph.SetCurrValue(conv::kPhypDeltaCP, dcp_3);
+  ph.SetCurrValue(conv::kPhypCPV    , dcp_3);
 
   //loop over Mu-like Ereco bin edges
   for(int ir = 1; ir <= util::NumErecoBins(conv::kSKsFCFV1RingMuLike); ir++) {
@@ -429,7 +429,7 @@ void plot_osc_prob_deltacp(
 
   //first value of deltacp
   double dcp_4 = conv::kpi/2.;
-  ph.SetCurrValue(conv::kPhypDeltaCP, dcp_4);
+  ph.SetCurrValue(conv::kPhypCPV    , dcp_4);
 
   //loop over Mu-like Ereco bin edges
   for(int ir = 1; ir <= util::NumErecoBins(conv::kSKsFCFV1RingMuLike); ir++) {
@@ -462,7 +462,7 @@ void plot_osc_prob_deltacp(
 
     //first value of deltacp
   double dcp_5 = conv::kpi;
-  ph.SetCurrValue(conv::kPhypDeltaCP, dcp_5);
+  ph.SetCurrValue(conv::kPhypCPV    , dcp_5);
 
   //loop over Mu-like Ereco bin edges
   for(int ir = 1; ir <= util::NumErecoBins(conv::kSKsFCFV1RingMuLike); ir++) {

@@ -77,7 +77,7 @@ void bestfit_systematic_study_fitting_job
      if(hyp == conv::kHypOsc3F) {
        fparm->Update(conv::kPhypMixing12, input_mixing12);
        fparm->Update(conv::kPhypMixing13, input_mixing13);
-       fparm->Update(conv::kPhypDeltaCP,  input_deltacp);
+       fparm->Update(conv::kPhypCPV    ,  input_deltacp);
        fparm->Update(conv::kPhypDm12sq,   input_dm12sq);
      }
      fparm->Update(conv::kPhypMixing23, input_mixing23);
@@ -104,7 +104,7 @@ void bestfit_systematic_study_fitting_job
      if(hyp == conv::kHypOsc3F) {
        bestfit_mixing12 = fparm->CurrValue(conv::kPhypMixing12);
        bestfit_mixing13 = fparm->CurrValue(conv::kPhypMixing13);
-       bestfit_deltacp  = fparm->CurrValue(conv::kPhypDeltaCP);
+       bestfit_deltacp  = fparm->CurrValue(conv::kPhypCPV    );
        bestfit_dm12sq   = fparm->CurrValue(conv::kPhypDm12sq);
      }
      double bestfit_mixing23 = fparm->CurrValue(conv::kPhypMixing23);

@@ -69,7 +69,7 @@ void run_fit
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
   cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
   cout << "       > " << util::AsString(kPhypMixing23) << " = " << input_mixing23 << endl;
-  cout << "       > " << util::AsString(kPhypDeltaCP)  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
+  cout << "       > " << util::AsString(kPhypCPV    )  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
   cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
   cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "- Fit" << endl;
@@ -90,10 +90,10 @@ void run_fit
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
   //make an assumption for deltacp
-  if(fparm->IsFixed(conv::kPhypDeltaCP)) {
-    fparm ->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
-    fparm1->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
-    fparm2->SetInitValue(conv::kPhypDeltaCP, dcp_value * conv::kpi);
+  if(fparm->IsFixed(conv::kPhypCPV    )) {
+    fparm ->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
+    fparm1->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
+    fparm2->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
   }
 
   // Get superk spectrum predictor & configure
@@ -138,7 +138,7 @@ void run_fit
      // randomize specified osc params for current toy MC expt
      if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
      if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
-     if (randomize_deltacp ) { input_deltacp  = util::RandomizeDeltaCP();  }
+     if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();  }
      if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
 
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
@@ -146,7 +146,7 @@ void run_fit
        fparm1->Update(kPhypMixing12, input_mixing12);
        fparm1->Update(kPhypMixing13, input_mixing13);
        fparm1->Update(kPhypMixing23, input_mixing23);
-       fparm1->Update(kPhypDeltaCP,  input_deltacp);
+       fparm1->Update(kPhypCPV    ,  input_deltacp);
        fparm1->Update(kPhypDm12sq,   input_dm12sq);
        fparm1->Update(kPhypDm23sq,   input_dm23sq);
      }
