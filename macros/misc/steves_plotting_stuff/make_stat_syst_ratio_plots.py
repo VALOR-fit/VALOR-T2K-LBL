@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # Script to make plots of relative error envelope sizes
-# eg plots ___ in TN-[RUN1-4 2013]
+# eg plots 9-12 in TN-183
 # Takes output of macros/spectrum/test_sk_ereco_spectrum_twk_sys_throw_runAll.py
 
 #Steve Dennis, October 2013

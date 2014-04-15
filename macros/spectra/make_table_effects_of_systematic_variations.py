@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Script to make table of variations in systematic efficiencies (tab7 in tn155)
+# Script to make table of variations in systematics (tab7 in tn155)
 # Generates only body of table
 # Adding hlines is left as an exercise for the user
 # Takes a while to run (maybe 12 hours)
@@ -53,6 +53,7 @@ try:
 except:
   ROOT.gROOT.ProcessLine(".x "+ana_dir+"/root/loadincs.C");    
   ROOT.gROOT.ProcessLine(".x "+ana_dir+"/root/loadlibs.C");
+  #~ ROOT.gROOT.ProcessLine(".x "+ana_dir+"/root/root2k.C");    
 
 ROOT.gROOT.SetBatch(1)
 
@@ -62,6 +63,8 @@ Opt = ROOT.t2kana.Opt.Instance()
 Rnd = ROOT.t2kana.Rnd.Instance()
 
 Opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
+
+expected_oscillation = [-99,-99,0.5,-99,-99, 2.4E-3]
 
 def main():
   for column in columns:
@@ -75,7 +78,7 @@ def main():
 def normalisation_errors(column):
   
   if "no_osc"      in column : osc_params = [0]*6    # No osc
-  elif "with_osc"  in column : osc_params = [-99]*6  # Global fit
+  elif "with_osc"  in column : osc_params = expected_oscillation
   else: raise T2KAnaError("Could not determine whether to use oscillations")
   
   if "prefit"    in column : config = prefit_config
@@ -101,7 +104,7 @@ def normalisation_errors(column):
 # Run the macro to get osc/nuxsec errors
 def other_errors(column):
   if "no_osc"  in column : osc_params = [0]*6    # No osc
-  elif "with_osc"  in column : osc_params = [-99]*6  # Global fit
+  elif "with_osc"  in column : osc_params = expected_oscillation
   else: raise T2KAnaError("Could not determine whether to use oscillations")
   
   if "prefit"    in column : config = prefit_config
@@ -131,6 +134,9 @@ def other_errors(column):
 def make_table():
   col_dicts = []
   for column in columns:
+    # Reads the file representing the column into a dict
+    # with parameter name (in latex) as key and formatted number as value
+    # Remembers list of rows from last column file read
     d = dict()
     col_dicts.append(d)
     rows = []
@@ -151,33 +157,31 @@ def make_table():
     f.close()
     
     # Read others errors
+    # If present, these override the values from the other macro
     thrown = glob.glob("syst_"+column+"/*.txt")
     if not len(thrown)==1:
       raise T2KAnaError("Found "+`len(thrown)`+ "txt files for "+column+", expected 1")
-    
-    # dict with key=name,mode by number in test_sk_ereo
-    mode_dict = dict( map(reversed,other_modes ) )
         
     f = open(thrown[0])
     for l in f:
       name,junk,val = l.split("&")
       name = name.strip()
       name = name.replace("prefit","") # the prefit params have 'prefit' appended, which we don't need
-      val = val.strip().partition(" ")[0]
+      val = val.strip().partition(" ")[0] # Get just the number
       
       physparm_id = util.PhysParamIdFromString(name)
       key = util.AsStringPaperTex(physparm_id)
       if "no_osc" in column and not util.IsSystematic(physparm_id):
         val = "0"
       else:
-        val = float(val)*100 # The values from that macro are percentages
+        val = float(val)*100 # The values from this macro are percentages
         val = format_to2sf_decimal(val)
-      #rows.append(key)
+      #rows.append(key) # All these rows should exist from the other macro.
       d[key] = val
     f.close()
   
   # Actually start writing it out
-  f = open("efficiency_systematic_variations.tex","w")
+  f = open("effect_of_systematic_variations.tex","w")
   for param in rows:
     cols = [param.rjust(2*col_width)]
     for column,d in zip(columns,col_dicts):
@@ -187,7 +191,7 @@ def make_table():
   
   f.close()
 
-# Rounds to 2sf, and then writes out as a decimal with up to 5dp# Still in testing
+# Rounds to 2sf, and then writes out as a decimal with up to 5dp
 # This is ugly.
 def format_to2sf_decimal(value):
   to2sf = float("{0:.1e}".format(float(value)))
