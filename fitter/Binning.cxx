@@ -57,7 +57,10 @@ double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
 //___________________________________________________________________________
 int t2kana::util::ErecoBinContains(t2kana::conv::SuperkSample_t s, double Ereco)
 {
-  int bin =  TMath::BinarySearch(util::NumErecoBins(s)+1,util::ErecoBinEdges(s),Ereco);
+  int nedges = util::NumErecoBins(s)+1;
+  const double * edges = util::ErecoBinEdges(s);
+  if (Ereco > edges[nedges] || Ereco < edges[0]) return -1;
+  int bin =  TMath::BinarySearch(nedges,edges,Ereco);
   if (bin == util::NumErecoBins(s)+1) return -1;
   return bin;
 }

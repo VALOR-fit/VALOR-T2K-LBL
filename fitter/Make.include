@@ -5,7 +5,7 @@
 GOPT_WITH_CXX_DEBUG_FLAG    = -g
 #GOPT_WITH_CXX_OPTIMIZ_FLAG = -O3
 GOPT_WITH_CXX_OPTIMIZ_FLAG  =
-GOPT_WITH_CXX_USERDEF_FLAGS =
+GOPT_WITH_CXX_USERDEF_FLAGS = ${T2KCOMPILE}
 
 #-------------------------------------------------------------------
 #                           ARCHITECTURE 

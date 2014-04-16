@@ -15,8 +15,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef __valor_physics_hypothesid_ids_h__
-#define __valor_physics_hypothesid_ids_h__
+#ifndef valor_physics_hypotheses_h
+#define valor_physics_hypotheses_h
 
 #include <string>
 

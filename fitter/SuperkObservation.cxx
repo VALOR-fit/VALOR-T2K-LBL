@@ -302,6 +302,17 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
   return nev;
 }
 //________________________________________________________________________________________
+int SuperkObservation::NumOfBins() const
+{
+  int nbins = 0;
+  for (int is = 0 ; is < kns ; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if (s==kSKsUndefined) continue;
+    nbins+=util::NumErecoBins(s);
+  }
+  return nbins;
+}
+//________________________________________________________________________________________
 TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
 {
   if(s == kSKsUndefined) {
@@ -403,7 +414,7 @@ bool SuperkObservation::CreateMockData(
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag)
+bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag) const
 {
   if(!data_collection) {
     cout << "Obs >> Null TObjArray. Not writing data" << endl;
@@ -433,7 +444,7 @@ bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Write(
-  const char * filename, const char * data_tag, const char * option_file)
+  const char * filename, const char * data_tag, const char * option_file) const
 {
   TObjArray * array = new TObjArray();
   this->Write(array, data_tag);

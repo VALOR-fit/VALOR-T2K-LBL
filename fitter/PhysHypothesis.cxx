@@ -1,14 +1,9 @@
 //________________________________________________________________________________________
 /*
 
- >> ChangeLog:
+Copyright (c) 2010-2014, The VALOR group. All rights reserved.
 
- For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis)
- see code in the corresponding SVN branch.
-
- Changes since 2011_v0.9.0:
-
- @
+ChangeLog:
 
 */
 //________________________________________________________________________________________
@@ -51,6 +46,11 @@ PhysHypothesis::PhysHypothesis(string sh)
   this->Init(h);
 }
 //________________________________________________________________________________________
+PhysHypothesis::PhysHypothesis(const PhysHypothesis & ph)
+{
+  this->Copy(ph);
+}
+//________________________________________________________________________________________
 PhysHypothesis::PhysHypothesis(const FitParamList & fp)
 {
   PhysHypothesis_t hyp = fp.PhysicsHypothesis();
@@ -64,7 +64,7 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
     this->SetCurrValue(kPhypMixing12, fp.CurrValue(kPhypMixing12));
     this->SetCurrValue(kPhypMixing13, fp.CurrValue(kPhypMixing13));
     this->SetCurrValue(kPhypMixing23, fp.CurrValue(kPhypMixing23));
-    this->SetCurrValue(kPhypCPV    ,  fp.CurrValue(kPhypCPV    ));
+    this->SetCurrValue(kPhypCPV,      fp.CurrValue(kPhypCPV));
   }
 
   // numu disappearance, 2-flavour neutrino oscillation framework 
@@ -107,7 +107,7 @@ PhysHypothesis::PhysHypothesis(const FitParamList & fp)
 
 #ifdef __show_init_mesg_info__
   cout << " PhysHypothesis ctor > "
-       << "Input physics hypothesis = " << util::AsString(fHypothesis) << endl;
+       << "Constructed physics hypothesis = " << *this << endl;
 #endif
 }
 //________________________________________________________________________________________
@@ -133,11 +133,17 @@ void PhysHypothesis::SetCurrValue(PhysParamId_t p, double v)
 //________________________________________________________________________________________
 void PhysHypothesis::Copy(const PhysHypothesis & ph)
 {
+  fHypothesis = ph.fHypothesis;
+
+  fParams.clear();
+  fParams.insert(ph.fParams.begin(), ph.fParams.end());
+/*
   this->Init(ph.fHypothesis);
   map<int,double>::const_iterator it = ph.fParams.begin();
   for( ; it != ph.fParams.end(); ++it) {
      fParams[it->first] = it->second;
   }
+*/
 }
 //________________________________________________________________________________________
 void PhysHypothesis::Init(PhysHypothesis_t h)
@@ -156,7 +162,7 @@ void PhysHypothesis::Init(PhysHypothesis_t h)
     fParams[kPhypMixing12]  = 0;
     fParams[kPhypMixing13]  = 0;
     fParams[kPhypMixing23]  = 0;
-    fParams[kPhypCPV    ]   = 0;
+    fParams[kPhypCPV]       = 0;
     fParams[kPhypDm23sq]    = 0;
     fParams[kPhypDm12sq]    = 0;
   }

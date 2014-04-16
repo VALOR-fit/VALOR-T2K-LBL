@@ -1,11 +1,10 @@
 //____________________________________________________________________________ 
 /*
 
- \copyright (c) 2010-2013, VaLOR group.
+Copyright (c) 2010-2014, The VALOR group. All rights reserved.
 
 
-30-12-2013  Nick
-Added samples for reverse horn current running
+ChangeLog:
 
 */ 
 //____________________________________________________________________________
@@ -172,15 +171,11 @@ void FitterMinuit::Init(FitInputs * fit_inputs, Option_t * option)
 */
 
   // calculate degrees of freedom  
-  fNFitBins = 0;  
-  for(int is = 0; is < kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsFCFV1RingMuLike) fNFitBins += kNErecoBins1Rmu;
-    if(s == kSKsFCFV1RingELike ) fNFitBins += kNErecoBins1Re;
-    if(s == kSKsRHCFCFV1RingMuLike) fNFitBins += kRHCNErecoBins1Rmu;
-    if(s == kSKsRHCFCFV1RingELike ) fNFitBins += kRHCNErecoBins1Re;
-  }  
+  fNFitBins       = fit_inputs->Observation().NumOfBins();
   fNFreeFitParams = fit_params.GetNumberFreeParameters();
+  
+  assert(fNFitBins > 0);
+  assert(fNFreeFitParams >= 0);
   
 #ifdef __show_fit_init_info__
   cout << "FitterMinuit/Init >> NDoF = " << this->NDOF()
@@ -197,13 +192,13 @@ bool FitterMinuit::DoTheFit(void)
   TStopwatch w;
   w.Start();
 
-  fFitTime = 0;
+  fFitTime  = 0;
   fFitTries = -1;
 
-  // reset fit time, bestfit chisq and status codes in
+  // reset fit time, bestfit statistic and status codes in
   // persistable FitParamList obj
   fFitInputs->FitParams().SetFitTime(0);
-  fFitInputs->FitParams().SetBestFitChisq(0);
+  fFitInputs->FitParams().SetBestFitStatistic(0);
   fFitInputs->FitParams().ClearStatusCodes();
 
   // Run the fitter once - we have the option here to check the status code
@@ -282,12 +277,12 @@ bool FitterMinuit::DoTheFit(void)
        << fFitTries << " attempts" << endl;
 #endif
 
-  // copy fit time and bestfit chisq and status codes 
+  // copy fit time and bestfit statistic and status codes 
   // to persistable FitParamList obj
 
-  fFitInputs->FitParams().SetFitTime ( fFitTime  );
-  fFitInputs->FitParams().SetFitTries( fFitTries );
-  fFitInputs->FitParams().SetBestFitChisq ( fFitInputs->BestFitChisquare());
+  fFitInputs->FitParams().SetFitTime (fFitTime);
+  fFitInputs->FitParams().SetFitTries(fFitTries);
+  fFitInputs->FitParams().SetBestFitStatistic(fFitInputs->BestFitChisquare());
 
   fFitInputs->FitParams().SetStatusCode("migrad_min", fMigradMinStatusCode);
   fFitInputs->FitParams().SetStatusCode("migrad_err", fMigradErrStatusCode);

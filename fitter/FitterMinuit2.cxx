@@ -448,7 +448,7 @@ bool FitterMinuit2::RunOnce(void)
 #endif
 
   fFitInputs->FitParams().SetFitTime ( fFitTime );
-  fFitInputs->FitParams().SetBestFitChisq ( fFitInputs->BestFitChisquare());
+  fFitInputs->FitParams().SetBestFitStatistic ( fFitInputs->BestFitChisquare());
 
 
   // Print fit result

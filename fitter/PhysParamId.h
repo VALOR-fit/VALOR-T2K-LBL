@@ -37,9 +37,9 @@ typedef enum EPhysParamId
    kPhypMixing23,              // 23-mixing parameter (either sin^2(2*\theta_{23}) or sin^2(\theta_{23}) depending on config choices)
    kPhypMixing13,              // 13-mixing parameter (either sin^2(2*\theta_{13}) or sin^2(\theta_{13}) depending on config choices)
    kPhypMixing12,              // 12-mixing parameter (either sin^2(2*\theta_{12}) or sin^2(\theta_{12}) depending on config choices)
-   kPhypCPV    ,               // CP-invariance violating phase 
-   kPhypDm23sq,                // modulus of squared-mass splitting \Deltam_{23}^{2} (always positive independent of mass hierarchy) 
-   kPhypDm12sq,                // squared-mass splitting \Deltam_{12}^{2} 
+   kPhypCPV,                   // CP-invariance violating param (either deltacp, or sin(deltacp) depending on config choices)
+   kPhypDm23sq,                // modulus of large squared-mass splitting (Dm^2_32, Dm^2_31 or Fogli-Lisi Dm^2 depending on config choices)
+   kPhypDm12sq,                // small squared-mass splitting (Dm^2_21 or Fogli-Lisi dm^2 depending on config choices)
    kPhypAlphaDecay,            //
    kPhypSinsq2ThetaDecay,      // 
    kPhypMusqDecoh,             //

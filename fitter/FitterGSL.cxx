@@ -198,7 +198,7 @@ bool FitterGSL::DoTheFit(void)
   return true;
   
   fFitInputs->FitParams().SetFitTime ( fFitTime );
-  fFitInputs->FitParams().SetBestFitChisq ( fFitInputs->BestFitChisquare());
+  fFitInputs->FitParams().SetBestFitStatistic ( fFitInputs->BestFitChisquare());
   
 
 #endif // GSL

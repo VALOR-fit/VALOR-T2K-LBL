@@ -1,16 +1,22 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::FitterMinuit
+\class     t2kana::FitterMinuit
 
-\brief    T2KAna fitter based on Minuit
+\brief     Minuit-based VALOR fitter.
 
-\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          STFC, Rutherford Appleton Laboratory
+\author    Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+           University of Liverpool & STFC Rutherford Appleton Laboratory
+           Thomas Dealtry <Thomas.Dealtry \at physics.ox.ac.uk>
+           Universty of Oxford
+           Lorena Escudero <loressa \at ific.uv.es>
+           IFIC Valencia
+           Nick Grant <n.grant \at lancaster.ac.uk>
+           University of Lancaster
 
-\created  October 20, 2010
+\created   October 20, 2010
 
-\copyright (c) 2010-2013, VaLOR group.
+\copyright (c) 2010-2014, The VALOR group
 
 */
 //____________________________________________________________________________
@@ -64,7 +70,6 @@ protected:
    bool        fCalcHesseErrors;     ///< calculate HESSE errors?
    bool        fCalcMinosErrors;     ///< calculate MINOS errors?
    bool        fCalcEScaleErrors;    ///< calculate MINOS errors for Energy scale paramter only
- //bool        fSimplex;             ///< 
    double      fTol;                 ///< set tolerance
    int         fStr;
 };

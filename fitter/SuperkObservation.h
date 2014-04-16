@@ -35,6 +35,8 @@ class SuperkObservation: public TObject
 public:
   SuperkObservation();
  ~SuperkObservation();
+ 
+  string Name() const {return string("SuperkObservation");};
 
   // Read data
   bool Read(string config_file, int data_set_id=0, bool is_xml = true);
@@ -49,11 +51,13 @@ public:
 
   TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
   double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s); 
-  const double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s) const; 
+  const double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s) const;
+  
+  int NumOfBins(void) const;
 
   // Write datasets to the input container or to the input file
-  bool Write(TObjArray * data_collection, const char * tag = "data");
-  bool Write(const char * filename, const char * tag = "data", const char * option_file="update");
+  bool Write(TObjArray * data_collection, const char * tag = "data") const;
+  bool Write(const char * filename, const char * tag = "data", const char * option_file="update") const;
   
 private:
   

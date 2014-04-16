@@ -1,14 +1,18 @@
 //____________________________________________________________________________
 /*!
    
-\class    t2kana::PhysHypothesis
+\class     t2kana::PhysHypothesis
       
-\brief    A physics hypothesis (oscillations, decay, decoherence, ...)
+\brief     This class describes a physics hypothesis (eg. effective 2-flavour
+           oscillation, 3-flavour oscillation, 3+N sterile flavour oscillation,
+           decay, decoherence, ...).
    
-\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          STFC, Rutherford Appleton Laboratory
+\author    Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+           University of Liverpool & STFC Rutherford Appleton Laboratory
 
-\created  June 06, 2011
+\created   June 06, 2011
+
+\copyright (c) 2010-2014, The VALOR group
 
 */
 //____________________________________________________________________________
@@ -34,6 +38,7 @@ class PhysHypothesis
 public:
    PhysHypothesis(conv::PhysHypothesis_t hypothesis = conv::kHypUndefined);
    PhysHypothesis(string hypothesis);
+   PhysHypothesis(const PhysHypothesis & ph);
    PhysHypothesis(const FitParamList & fp);
   ~PhysHypothesis();
 
@@ -49,7 +54,7 @@ public:
    void Print (ostream & stream) const;
    friend ostream & operator << (ostream & stream, const PhysHypothesis & ph);
 
-   // copy values to a PhysParamList 
+   // Copy values to a PhysParamList 
    t2kana::PhysParamList AsPhysParamList(void) const;
 
 private:

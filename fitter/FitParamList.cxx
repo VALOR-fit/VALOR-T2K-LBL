@@ -43,19 +43,19 @@ namespace t2kana {
 }
 //________________________________________________________________________________________
 FitParamList::FitParamList() :
-TObject()
+TNamed()
 {
   this->Init(0);
 }
 //________________________________________________________________________________________
 FitParamList::FitParamList(int nparams) :
-TObject()
+TNamed()
 {
   this->Init(nparams);
 }
 //________________________________________________________________________________________
 FitParamList::FitParamList(const FitParamList & plst) :
-TObject()
+TNamed()
 {
   this->Init(plst.fNParams);
   this->Copy(plst);
@@ -121,6 +121,7 @@ void FitParamList::CopyCurrToBestFitValues(void)
   for(int ip = 0; ip < fNParams; ip++) {
      fBestFitValue[ip] = fCurrValue[ip];
   }
+  fBestFitStatistic = fCurrStatistic;
 }
 //________________________________________________________________________________________
 void FitParamList::CopyBestFitToCurrValues(void)
@@ -128,6 +129,7 @@ void FitParamList::CopyBestFitToCurrValues(void)
   for(int ip = 0; ip < fNParams; ip++) {
      fCurrValue[ip] = fBestFitValue[ip];
   }
+  fCurrStatistic = fBestFitStatistic;
 }
 //________________________________________________________________________________________
 void FitParamList::CopyBestFitToInitValues(void)
@@ -560,9 +562,8 @@ void FitParamList::Print(ostream & stream) const
     int code = sciter->second;
     stream << setw(20) << name << setw(10) << code << endl;  
   }
-  stream << "Fit time:  " << fFitTime  << " sec" << endl;
-  stream << "Fit tries: " << fFitTries << " tries" << endl;
-  stream << "Best-fit chisq: " << fBestFitChisq << endl;  
+  stream << "Fit time: " << fFitTime  << " sec" << ", tries: " << fFitTries << endl;
+  stream << "Best-fit statistic: " << fBestFitStatistic << endl;  
 }
 //________________________________________________________________________________________
 void FitParamList::Print() const
@@ -840,7 +841,9 @@ FitParamList * FitParamList::NamedParameterList(string name)
     return fp;
   }
   
-  //Steriles
+  //
+  // sterile neutrino fitting
+  //
   if(name == "nuoscsterile4f") {
     FitParamList * fp = FitParamList::NuOscSterile4FlavourFit();
     fp -> SetParListName(name);
@@ -999,7 +1002,7 @@ FitParamList * FitParamList::NuOscSterile4FlavourFit(void)
 //________________________________________________________________________________________
 FitParamList * FitParamList::NuOscSterile4FlavourFitWithAllSyst(void)
 {
- FitParamList * fparm = new FitParamList(12+kNumOfNuisanceParams); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+ FitParamList * fparm = new FitParamList(12+kNumOfNuisanceParams);
 
   FitParamList::Append4FlavourSterileOscillation(fparm, 0);
 
@@ -1024,7 +1027,7 @@ FitParamList * FitParamList::NuOscSterile5FlavourFit(void)
 //________________________________________________________________________________________
 FitParamList * FitParamList::NuOscSterile5FlavourFitWithAllSyst(void)
 {
- FitParamList * fparm = new FitParamList(18+kNumOfNuisanceParams); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+ FitParamList * fparm = new FitParamList(18+kNumOfNuisanceParams);
 
   FitParamList::Append4FlavourSterileOscillation(fparm, 0);
 
@@ -1115,10 +1118,10 @@ void FitParamList::Append3FlavourOscillation(FitParamList * fparm, int start)
   NuOscDeltaCP_t dcp = Opt::Instance()->gOscDeltaCP;
   switch(dcp){
   case(kNuDeltaCPPhase):
-  fparm->AddParam( ip++, kPhypCPV    ,   0,                -kpi,          kpi,           1.0E-2,  false, false);
+  fparm->AddParam( ip++, kPhypCPV,   0,                -kpi,          kpi,           1.0E-2,  false, false);
   break;
   case(kNuDeltaCPSin):
-  fparm->AddParam( ip++, kPhypCPV    ,   0,                  -1,            1,           1.0E-2,  false, false);
+  fparm->AddParam( ip++, kPhypCPV,   0,                  -1,            1,           1.0E-2,  false, false);
   break;
   default:
     delete fparm;
@@ -1764,7 +1767,7 @@ PhysHypothesis_t FitParamList::PhysicsHypothesis(void) const
       this->Exists(kPhypMixing13) &&
       this->Exists(kPhypMixing12) &&
       this->Exists(kPhypMixing23) &&
-      this->Exists(kPhypCPV    ) )
+      this->Exists(kPhypCPV) )
   {
     return kHypOsc3F;
   }
@@ -1826,9 +1829,10 @@ void FitParamList::Copy(const FitParamList & plst)
      this->fMinusError[i]   = plst.fMinusError[i];
    } 
 
-   this->fBestFitChisq = plst.fBestFitChisq;
-   this->fFitTime      = plst.fFitTime;
-   this->fFitTries     = plst.fFitTries;
+   this->fBestFitStatistic = plst.fBestFitStatistic;
+   this->fCurrStatistic    = plst.fCurrStatistic;
+   this->fFitTime          = plst.fFitTime;
+   this->fFitTries         = plst.fFitTries;
 
    this->fStatusCodes.insert(plst.fStatusCodes.begin(),  plst.fStatusCodes.end());
 
@@ -1882,9 +1886,10 @@ void FitParamList::Init(int nparams)
    fShowCurrValuesOnly    = false;
    fShowBestFitValuesOnly = false;
 
-   fBestFitChisq = 0.;
-   fFitTime      = -1;
-   fFitTries     = 0;
+   fBestFitStatistic = 0.;
+   fCurrStatistic    = 0.;
+   fFitTime          = -1;
+   fFitTries         = 0;
 
    fStatusCodes.clear();
 
@@ -1926,12 +1931,13 @@ void FitParamList::CleanUp(void)
    fPlusError    = 0;
    fMinusError   = 0;
 
-   fBestFitChisq = 0.;
-   fFitTime      = 0.;
-   fFitTries     = -1;
+   fBestFitStatistic = 0.;
+   fCurrStatistic    = 0.;
+   fFitTime          = 0.;
+   fFitTries         = -1;
 
    fParListName = "";
-   fSystMode = -1;
+   fSystMode    = -1;
 }
 //________________________________________________________________________________________
 int FitParamList::Id(PhysParamId_t p) const

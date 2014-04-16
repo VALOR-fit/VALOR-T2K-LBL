@@ -23,7 +23,7 @@
 #include <map>
 #include <vector>
 
-#include <TObject.h>
+#include <TNamed.h>
 #include <TObjString.h>
 #include <TVirtualFitter.h>
 #include <Minuit2/MnUserParameters.h>
@@ -39,7 +39,7 @@ namespace t2kana {
 
 class PhysParamList;
 
-class FitParamList: public TObject {
+class FitParamList: public TNamed {
 
 public:
    FitParamList();
@@ -90,6 +90,8 @@ public:
    void CopyBestFitToCurrValues (void);
    void CopyBestFitToInitValues (void);
    void CopyBestFitToInitValues (const FitParamList & plst);
+   // Copy from input
+   void Copy (const FitParamList & plst);
 
    // Set the errors
    // used with FitterKernel
@@ -128,16 +130,18 @@ public:
    int GetNumberFreeParameters(void);
    int GetNumberParameters(void);
 
-   // Set and get other fit properties: chisq at best-fit point, fit time, status codes etc
-   void   ClearStatusCodes (void);
-   void   SetStatusCode    (string st, int code);
-   int    GetStatusCode    (string st) const;
-   void   SetBestFitChisq  (double chisq_bf) { fBestFitChisq = chisq_bf; }
-   double GetBestFitChisq  (void) const      { return fBestFitChisq;     }
-   void   SetFitTime       (double fit_time) { fFitTime      = fit_time; }
-   double GetFitTime       (void) const      { return fFitTime;          }
-   void   SetFitTries      (int   fit_tries) { fFitTries     = fit_tries;}
-   int    GetFitTries      (void) const      { return fFitTries;         }
+   // Set and get other fit properties: statistic at best-fit point, fit time, status codes etc
+   void   ClearStatusCodes    (void);
+   void   SetStatusCode       (string st, int code);
+   int    GetStatusCode       (string st) const;
+   void   SetBestFitStatistic (double stat_bf)   { fBestFitStatistic = stat_bf; }
+   double GetBestFitStatistic (void) const       { return fBestFitStatistic;    }
+   void   SetCurrStatistic    (double stat_curr) { fCurrStatistic = stat_curr;  }
+   double GetCurrStatistic    (void) const       { return fCurrStatistic;       }
+   void   SetFitTime          (double fit_time)  { fFitTime = fit_time;         }
+   double GetFitTime          (void) const       { return fFitTime;             }
+   void   SetFitTries         (int   fit_tries)  { fFitTries = fit_tries;       }
+   int    GetFitTries         (void) const       { return fFitTries;            }
 
    // Print
    void Print (ostream & stream) const;
@@ -179,11 +183,15 @@ public:
    int  Id      (t2kana::conv::PhysParamId_t p) const; // PhysParamId_t --> array slot
    t2kana::conv::PhysParamId_t WhichParam(int id) const; // array slot --> PhysParamId_t
    
+   // Deprecated aliases
+   void   SetBestFitChisq (double stat_bf)   { fBestFitStatistic = stat_bf; }
+   double GetBestFitChisq (void) const       { return fBestFitStatistic;    }
+
+   
 private:
 
    void CleanUp        (void);
    void Init           (int nparams);
-   void Copy           (const FitParamList & plst);
    void SetParListName (string s)   { fParListName = s; }
    void SetSystMode    (int m)      { fSystMode    = m; }
 
@@ -249,7 +257,8 @@ private:
    double *     fHesseError;   //[fNParams]
    double *     fPlusError;    //[fNParams]
    double *     fMinusError;   //[fNParams]
-   double       fBestFitChisq; 
+   double       fBestFitStatistic; 
+   double       fCurrStatistic; 
    double       fFitTime;
    int          fFitTries;
 

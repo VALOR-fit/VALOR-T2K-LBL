@@ -179,5 +179,23 @@ void Opt::Print(ostream & stream) const
          << util::AsString(gOscAnaTypeChoice) 
          << endl;
 }
-//____________________________________________________________________________
+//________________________________________________________________________________________
+void Opt::WriteTo (Opt::Persistable & optp)
+{
+  optp.mh    = gMassHierarchyAssumed; 
+  optp.mixp  = gOscMixingParamChoice;
+  optp.oct   = gOscOctantChoice; 
+  optp.dmsqs = gOscDmsqScheme;
+  optp.dcp   = gOscDeltaCP;
+}
+//________________________________________________________________________________________
+void Opt::ReadFrom (Opt::Persistable & optp)
+{
+  gMassHierarchyAssumed = optp.mh;
+  gOscMixingParamChoice = optp.mixp;
+  gOscOctantChoice      = optp.oct;
+  gOscDmsqScheme        = optp.dmsqs;
+  gOscDeltaCP           = optp.dcp;
+}
+//________________________________________________________________________________________
 

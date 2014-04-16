@@ -7,7 +7,7 @@
 #include "FitterMinuit.h"
 #include "FitterMinuit2.h"
 
-#include "Fitter.h"
+#include "UtlFit.h"
 
 using namespace t2kana;
 

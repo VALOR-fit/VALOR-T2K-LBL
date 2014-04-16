@@ -1,14 +1,16 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::FitterABC
+\class     t2kana::FitterABC
 
-\brief    Fitter ABC
+\brief     Pure abstract base class (pABC) for VALOR fitters.
 
-\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          STFC, Rutherford Appleton Laboratory
+\author    Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+           University of Liverpool & STFC Rutherford Appleton Laboratory
 
-\created  July 05, 2011
+\created   July 05, 2011
+
+\copyright (c) 2010-2014, The VALOR group
 
 */
 //____________________________________________________________________________
