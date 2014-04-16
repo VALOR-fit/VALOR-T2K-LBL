@@ -229,8 +229,8 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t
   const double * arr = CurrPredictedErecoSpectrumArray(s);
   if (!arr) return 0;
   
-  string name  = Form("curr_ereco_%s"                       ,util::AsStringCompact(s).c_str() );
-  string title = Form("Current Predicted Ereco Spectrum: %s",util::AsString(s).c_str() );
+  string name (Form("curr_ereco_%s"                       ,util::AsStringCompact(s).c_str() ) );
+  string title(Form("Current Predicted Ereco Spectrum: %s",util::AsString(s).c_str() ) );
   
   int nbins = util::NumErecoBins(s);
   TH1D * h = new TH1D(name.c_str(), title.c_str(), nbins, util::ErecoBinEdges(s) );
@@ -248,8 +248,8 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   if (!arr) return 0;
   
   int nbins = util::NumErecoBins(s);
-  string name  = Form("curr_ereco_%s_%s"                       ,util::AsStringCompact(s).c_str(), util::AsStringCompact(m).c_str());
-  string title = Form("Current Predicted Ereco Spectrum: %s %s",util::AsString(s).c_str()       , util::AsString(m).c_str()       );
+  string name  (Form("curr_ereco_%s_%s"                       ,util::AsStringCompact(s).c_str(), util::AsStringCompact(m).c_str()) );
+  string title (Form("Current Predicted Ereco Spectrum: %s %s",util::AsString(s).c_str()       , util::AsString(m).c_str()       ) );
   TH1D * h = new TH1D(name.c_str(), title.c_str(), nbins, util::ErecoBinEdges(s) );
   util::FormatErecoHist(h);
   for (int i = 0 ; i < nbins ; i++ ) {
@@ -365,29 +365,24 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag)
 
   util::SetDefaultStyle();
 
-  const char * append_begin = Form("%s_", pdf_tag);
-
+  string append_begin(Form("%s_", pdf_tag));
+  
   for(int is=0; is<kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
 
     TH1D * spectrum = 0;
-    TH1D * spectrum_mode[knm] = {0};
+    TH1D * spectrum_mode[knm] = { };
 
      // copy & format Ereco spectra
      spectrum = this->CurrPredictedErecoSpectrum(s);
      spectrum->SetDirectory (0);
-     for(int ir = 1; ir <= spectrum->GetNbinsX(); ir++) {
-       spectrum->SetBinContent(ir, this->CurrPredictedErecoSpectrumArray(s)[ir-1]);
-     }
+     
      for(int im = 0; im < knm; im++) {
         SuperkMode_t m = kSKReactionModes[is][im];
         if(m == kSKmUndefined) continue;
         spectrum_mode[im] = this->CurrPredictedErecoSpectrum(s,m);
         spectrum_mode[im]->SetDirectory (0);
-	for(int ir = 1; ir <= spectrum->GetNbinsX(); ir++) {
-	  spectrum_mode[im]->SetBinContent(ir, this->CurrPredictedErecoSpectrumArrayMode(s,m)[ir-1]);
-	}
      }//imode
 
      // add spectra to the results array
@@ -409,7 +404,6 @@ bool SuperkExpectation::Write(
 {
   TObjArray * array = new TObjArray();
   this->Write(array,pdf_tag);
-
   TFile f(filename, option_file);
   array->Write();
   f.Close();
