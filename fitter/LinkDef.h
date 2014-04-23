@@ -13,6 +13,10 @@
 #pragma link C++ enum  t2kana::conv::SuperkSample_t;
 #pragma link C++ enum  t2kana::conv::SuperkMode_t;
 
+
+#pragma link C++ class t2kana::FitModelABC;
+#pragma link C++ class t2kana::FitDataABC;
+
 #pragma link C++ class t2kana::util::ArrIdx;
 #pragma link C++ class t2kana::Opt;
 #pragma link C++ class t2kana::Opt::Persistable;
@@ -39,5 +43,7 @@
 #pragma link C++ class t2kana::PhysParamList+;
 
 #pragma link C++ class t2kana::FitInputs;
+
+#pragma link C++ class t2kana::VALORArray;
 
 #endif

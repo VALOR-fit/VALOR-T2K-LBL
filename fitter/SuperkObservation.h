@@ -22,6 +22,7 @@ class TH1D;
 class TObjArray;
 
 #include "Conventions.h"
+#include "FitDataABC.h"
 #include "SuperkExpectation.h"
 #include "FitParamList.h"
 
@@ -30,41 +31,62 @@ using t2kana::conv::kns;
 
 namespace t2kana {
 
-class SuperkObservation: public TObject
+class SuperkObservation: public FitDataABC
 {
 public:
   SuperkObservation();
  ~SuperkObservation();
  
-  string Name() const {return string("SuperkObservation");};
+  // FitDataABC interface
+  string Name(void) const {return string("SuperkObservation");};
 
   // Read data
-  bool Read(string config_file, int data_set_id=0, bool is_xml = true);
+  bool Read(string config_file, Option_t * opt = 0); // Valid options: dataset=n
 
   // Create mock data
-  bool CreateMockData(SuperkExpectation & exp, const FitParamList & fp,   bool fluctuate=true);
-  bool CreateMockData(SuperkExpectation & exp, const PhysHypothesis & ph, bool fluctuate=true);
+  bool Generate(FitModelABC * exp, const FitParamList & fp,   bool fluctuate=true);
+  bool Generate(FitModelABC * exp, const PhysHypothesis & ph, bool fluctuate=true);
+  bool Generate(FitModelABC * exp, bool fluctuate=true);
+  
+  // Write datasets to the input container or to the input file
+  bool Write (TObjArray * collection, const char * tag = "data", Option_t * write_opt = 0) const;
+  bool Write (const char * filename,  const char * tag = "data", Option_t * write_opt = 0, Option_t * file_opt = 0) const;
+  
+  // Number of bins in fit data, or number of events for unbinned fits
+  int NumOfBins(void) const;
+  
+  // Calculate the specified statistic
+  // The corresponding prediction is taken from the input model.
+  // Similar considerations as in Write() method, see above, apply for how this prediction is generated.
+  // This method calculates the statistical term. 
+  // The penalty terms is requested from the input model, which knows of all the systematic tweaks applied to it [TO BE IMPLEMENTED]
+  double Statistic (FitModelABC * pred, const FitParamList & fp,   Option_t * stat_opt = "likelihood-ratio");
+  double Statistic (FitModelABC * pred, const PhysHypothesis & ph, Option_t * stat_opt = "likelihood-ratio");
+  double Statistic (FitModelABC * pred, Option_t * stat_opt = "likelihood-ratio");
+  
+  //  *** T2K LEGACY INTERFACE ***
+  bool Read(string config_file, int data_set_id, bool is_xml = true);
+
+  // Create mock data
+  bool CreateMockData(SuperkExpectation & exp, const FitParamList & fp,   bool fluctuate=true) {return Generate(&exp,fp,fluctuate);};
+  bool CreateMockData(SuperkExpectation & exp, const PhysHypothesis & ph, bool fluctuate=true) {return Generate(&exp,ph,fluctuate);};
 
   // Get data
   double NumOfEvents (t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;             
   double NumOfEvents (double Er, t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;  
 
   TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
-  double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s); 
-  const double*  ErecoSpectrumArray (t2kana::conv::SuperkSample_t s) const;
-  
-  int NumOfBins(void) const;
-
-  // Write datasets to the input container or to the input file
-  bool Write(TObjArray * data_collection, const char * tag = "data") const;
-  bool Write(const char * filename, const char * tag = "data", const char * option_file="update") const;
+  VALORArray       *  ErecoSpectrumVArray (t2kana::conv::SuperkSample_t s);
+  const VALORArray *  ErecoSpectrumVArray (t2kana::conv::SuperkSample_t s) const;
+  double           *  ErecoSpectrumArray  (t2kana::conv::SuperkSample_t s);
+  const double     *  ErecoSpectrumArray  (t2kana::conv::SuperkSample_t s) const;
   
 private:
   
-  double  fErDistrArray1Rmu   [conv::kNErecoBins1Rmu];
-  double  fErDistrArray1Re    [conv::kNErecoBins1Re];
-  double  fRHCErDistrArray1Rmu[conv::kRHCNErecoBins1Rmu];
-  double  fRHCErDistrArray1Re [conv::kRHCNErecoBins1Re];
+  VALORArray * fErDistrArray1Rmu   ;
+  VALORArray * fErDistrArray1Re    ;
+  VALORArray * fRHCErDistrArray1Rmu;
+  VALORArray * fRHCErDistrArray1Re ;
 
   void Init    (void);
   void CleanUp (void);

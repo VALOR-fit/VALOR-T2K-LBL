@@ -39,6 +39,7 @@
 #include "Utilities.h"
 #include "Rnd.h"
 
+using std::istringstream;
 using std::ostringstream;
 using std::cout;
 using std::cerr;
@@ -64,20 +65,43 @@ void SuperkObservation::Init(void)
 {
 // Initialize private data members
 //
-  for(int is=0; is<kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    if (s==kSKsUndefined) continue;
-    double * spectrum = ErecoSpectrumArray(s);
-    for(int ir=0; ir<kNErecoBins[is]; ir++) {
-      spectrum[ir] = 0;
-    }
-  }
+  fErDistrArray1Rmu    = new VALORArray (conv::kNErecoBins1Rmu    );
+  fErDistrArray1Re     = new VALORArray (conv::kNErecoBins1Re     );
+  fRHCErDistrArray1Rmu = new VALORArray (conv::kRHCNErecoBins1Rmu );
+  fRHCErDistrArray1Re  = new VALORArray (conv::kRHCNErecoBins1Re  );
+  
+  fErDistrArray1Rmu    ->SetAll(0.);
+  fErDistrArray1Re     ->SetAll(0.);
+  fRHCErDistrArray1Rmu ->SetAll(0.);
+  fRHCErDistrArray1Re  ->SetAll(0.);
+  
   arr_index = util::ArrIdx::Instance();
 }
 //________________________________________________________________________________________
 void SuperkObservation::CleanUp(void)
 {
-  
+  delete fErDistrArray1Rmu    ;
+  delete fErDistrArray1Re     ;
+  delete fRHCErDistrArray1Rmu ;
+  delete fRHCErDistrArray1Re  ;
+}
+//________________________________________________________________________________________
+bool SuperkObservation::Read(string config_file, Option_t * opt)
+{
+  int data_set_id = 0;
+  bool is_xml = true;
+  if ( opt ) {
+    string stopt(opt);
+    size_t pos =stopt.find("data_set=");
+    if (pos != string::npos) {
+      istringstream iss(stopt.c_str()+pos+9);
+      iss >> data_set_id;
+    }
+    if (stopt.find("root")!=string::npos) {
+      is_xml = false;
+    }
+  }
+  return Read(config_file,data_set_id,is_xml);
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
@@ -106,14 +130,14 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       vector<double> values = util::XML2DblArray(xml,root_node,datanode1Rmu.str());
       vector<double>::const_iterator value_iter = values.begin();
       for( ; value_iter != values.end(); ++value_iter) {
-	double Ereco = *value_iter;
-	h.Fill(Ereco);
+        double Ereco = *value_iter;
+        h.Fill(Ereco);
       }
       cout << "Obs >> Read: " << h.Integral() 
-	   << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
+           << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
       for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
-	double nobs = h.GetBinContent(ibin);
-	fErDistrArray1Rmu[ibin-1] = nobs;
+        double nobs = h.GetBinContent(ibin);
+        fErDistrArray1Rmu->GetArray()[ibin-1] = nobs;
       }
     }
     else {
@@ -130,14 +154,14 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       vector<double> values = util::XML2DblArray(xml,root_node,datanode1Re.str());
       vector<double>::const_iterator value_iter = values.begin();
       for( ; value_iter != values.end(); ++value_iter) {
-	double Ereco = *value_iter;
-	h.Fill(Ereco);
+        double Ereco = *value_iter;
+        h.Fill(Ereco);
       }
       cout << "Obs >> Read: " << h.Integral() 
-	   << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
+           << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
       for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
-	double nobs = h.GetBinContent(ibin);
-	fErDistrArray1Re[ibin-1] = nobs;
+        double nobs = h.GetBinContent(ibin);
+        fErDistrArray1Re->GetArray()[ibin-1] = nobs;
       }
     }
 
@@ -166,7 +190,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
            << " " << util::AsString(kSKsRHCFCFV1RingMuLike) << " events." << endl;
       for(int ibin = 1; ibin <= kRHCNErecoBins1Rmu; ibin++) {
         double nobs = h.GetBinContent(ibin);
-        fRHCErDistrArray1Rmu[ibin-1] = nobs;
+        fRHCErDistrArray1Rmu->Array()[ibin-1] = nobs;
       }
     }
     else {
@@ -191,7 +215,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
            << " " << util::AsString(kSKsRHCFCFV1RingELike) << " events." << endl;
       for(int ibin = 1; ibin <= kRHCNErecoBins1Re; ibin++) {
         double nobs = h.GetBinContent(ibin);
-        fRHCErDistrArray1Re[ibin-1] = nobs;
+        fRHCErDistrArray1Re->Array()[ibin-1] = nobs;
       }
     }
 
@@ -222,7 +246,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       for(int ix = 1; ix <= hist->GetNbinsX(); ix++) {
         double nev   = hist->GetBinContent(ix);
         integral+=nev;
-        fErDistrArray1Rmu[ix-1] = nev;
+        fErDistrArray1Rmu->GetArray()[ix-1] = nev;
       }
       cout << "Obs >> Read: " << integral
            << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
@@ -243,7 +267,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
         double Ereco = histRHC->GetBinCenter(ix);
         double nev   = histRHC->GetBinContent(ix);
         integral+=nev;
-        fRHCErDistrArray1Rmu[ix-1] = nev;
+        fRHCErDistrArray1Rmu->Array()[ix-1] = nev;
       }
       cout << "Obs >> Read: " << integral
            << " " << util::AsString(kSKsRHCFCFV1RingMuLike) << " events." << endl;
@@ -336,53 +360,63 @@ TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
   return data;
 }
 //________________________________________________________________________________________
-double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s)
+VALORArray * SuperkObservation::ErecoSpectrumVArray (t2kana::conv::SuperkSample_t s)
 {
-  /*if(s == kSKsUndefined) {
-    return 0;
-  } */ // This probably shouldn't fail silently
-
   if      (s == kSKsRHCFCFV1RingMuLike) return fRHCErDistrArray1Rmu;
   else if (s == kSKsRHCFCFV1RingELike)  return fRHCErDistrArray1Re;
   else if (s == kSKsFCFV1RingELike)     return fErDistrArray1Re; 
-  else if (s == kSKsFCFV1RingMuLike)    return fErDistrArray1Rmu;
-  
-  std::cerr<<"SuperkObservation/ErecoSpectrumArray >> Failed for sample "<<util::AsString(s)<<std::endl;
+  else if (s == kSKsFCFV1RingMuLike)    return fErDistrArray1Rmu; 
+  std::cerr<<"SuperkObservation/ErecoSpectrumValorArray >> Failed for sample "<<util::AsString(s)<<std::endl;
   exit(-1);
+}
+//________________________________________________________________________________________
+const VALORArray * SuperkObservation::ErecoSpectrumVArray (t2kana::conv::SuperkSample_t s) const
+{
+  if      (s == kSKsRHCFCFV1RingMuLike) return fRHCErDistrArray1Rmu;
+  else if (s == kSKsRHCFCFV1RingELike)  return fRHCErDistrArray1Re;
+  else if (s == kSKsFCFV1RingELike)     return fErDistrArray1Re; 
+  else if (s == kSKsFCFV1RingMuLike)    return fErDistrArray1Rmu; 
+  std::cerr<<"SuperkObservation/ErecoSpectrumValorArray >> Failed for sample "<<util::AsString(s)<<std::endl;
+  exit(-1);
+}
+//________________________________________________________________________________________
+double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s)
+{
+  return ErecoSpectrumVArray(s)->GetArray();
 }
 //________________________________________________________________________________________
 const double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s) const
 {
-  /*
-  if(s == kSKsUndefined) {
-    return 0;
-  }*/ // This probably shouldn't fail silently
-
-  if      (s == kSKsRHCFCFV1RingMuLike) return fRHCErDistrArray1Rmu;
-  else if (s == kSKsRHCFCFV1RingELike)  return fRHCErDistrArray1Re;
-  else if (s == kSKsFCFV1RingELike)     return fErDistrArray1Re; 
-  else if (s == kSKsFCFV1RingMuLike)    return fErDistrArray1Rmu;
-  
-  std::cerr<<"SuperkObservation/ErecoSpectrumArray >> Failed for sample "<<util::AsString(s)<<std::endl;
-  exit(-1);
+  return ErecoSpectrumVArray(s)->GetArray();
 }
 //________________________________________________________________________________________
-bool SuperkObservation::CreateMockData(
-      SuperkExpectation & skexp, const FitParamList & fp, bool fluctuate)
+bool SuperkObservation::Generate(
+     FitModelABC * model, bool fluctuate)
+{
+  assert(!"Not yet implemented");
+  return false;
+}
+//________________________________________________________________________________________
+bool SuperkObservation::Generate(
+      FitModelABC * model, const FitParamList & fp, bool fluctuate)
 {
 // Get observed reconstructed energy distribution
   
   fp.ShowOnlyCurrValuesInNextPrint();
   cout << "Obs >> Generating a toy-MC expt with the following params: " << fp;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
-
-  bool applied_negevents_condition = skexp.Generate(fp); //generate prediction
+  
+  // Should do this properly.
+  SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
+  assert(skexp);
+  
+  bool applied_negevents_condition = skexp->Generate(fp); //generate prediction
   
   for (int is = 0 ; is < conv::kns ; is++ ) {
     SuperkSample_t s = kSKSamples[is];
     if (s==kSKsUndefined) continue;
     for(int ibin = 0; ibin < util::NumErecoBins(s); ibin++) {
-       double nexp  = skexp.CurrPredictedErecoSpectrumArray(s)[ibin];
+       double nexp  = skexp->CurrPredictedErecoSpectrumArray(s)[ibin];
        double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
        this->ErecoSpectrumArray(s)[ibin] = nobs;
     }
@@ -391,21 +425,25 @@ bool SuperkObservation::CreateMockData(
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-bool SuperkObservation::CreateMockData(
-     SuperkExpectation & skexp, const PhysHypothesis & ph, bool fluctuate)
+bool SuperkObservation::Generate(
+     FitModelABC * model, const PhysHypothesis & ph, bool fluctuate)
 {
 // Get observed reconstructed energy distribution
   
   cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
+  
+  // Should do this properly.
+  SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
+  assert(skexp);
 
-  bool applied_negevents_condition = skexp.Generate(ph); //generate prediction
+  bool applied_negevents_condition = skexp->Generate(ph); //generate prediction
   
   for (int is = 0 ; is < conv::kns ; is++ ) {
     SuperkSample_t s = kSKSamples[is];
     if (s==kSKsUndefined) continue;
     for(int ibin = 0; ibin < util::NumErecoBins(s); ibin++) {
-       double nexp  = skexp.CurrPredictedErecoSpectrumArray(s)[ibin];
+       double nexp  = skexp->CurrPredictedErecoSpectrumArray(s)[ibin];
        double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
        this->ErecoSpectrumArray(s)[ibin] = nobs;
     }
@@ -414,7 +452,7 @@ bool SuperkObservation::CreateMockData(
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag) const
+bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag, Option_t * write_opt) const
 {
   if(!data_collection) {
     cout << "Obs >> Null TObjArray. Not writing data" << endl;
@@ -427,8 +465,7 @@ bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
     
-    // This is probably leaking memory.
-    // Shouldn't be too much of an issue.
+    // This is a new object, leaks memory if data_collection has not been set as owner
     TH1D * data = this->ErecoSpectrum(s);
     
     data -> SetName( 
@@ -439,20 +476,37 @@ bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag
 
     data_collection -> Add(data);
   }
-
+  
   return true;
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Write(
-  const char * filename, const char * data_tag, const char * option_file) const
+  const char * filename, const char * data_tag, Option_t * write_opt, Option_t * file_opt) const
 {
+  if (!file_opt) file_opt="update";
   TObjArray * array = new TObjArray();
-  this->Write(array, data_tag);
+  array->SetOwner(true);
+  this->Write(array, data_tag, write_opt);
 
-  TFile f(filename, option_file);
+  TFile f(filename, file_opt);
   array->Write();
   f.Close();
 
   return true;
+}
+//________________________________________________________________________________________
+double SuperkObservation::Statistic (FitModelABC * pred, const FitParamList & fp,   Option_t * stat_opt)
+{
+  assert(!"Not yet implemented");
+}
+//________________________________________________________________________________________
+double SuperkObservation::Statistic (FitModelABC * pred, const PhysHypothesis & ph, Option_t * stat_opt)
+{
+  assert(!"Not yet implemented");
+}
+//________________________________________________________________________________________
+double SuperkObservation::Statistic (FitModelABC * pred, Option_t * stat_opt)
+{
+  assert(!"Not yet implemented");
 }
 //________________________________________________________________________________________

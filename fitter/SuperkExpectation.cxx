@@ -66,32 +66,16 @@ void SuperkExpectation::Init(void)
   fNuFlux            = 0;
   fNuXSec            = 0;
   fBANFF             = 0;
-
-  for(int is=0; is<kns; is++) {
-    SuperkSample_t s = kSKSamples[is];
-    
-    for(int ir=0; ir<kNErecoBins[is]; ir++) {
-      if (s==kSKsFCFV1RingMuLike)
-        fPredictErecoSpectrumArrayTot1Rmu[ir] = 0;
-      else if(s==kSKsFCFV1RingELike)
-        fPredictErecoSpectrumArrayTot1Re[ir] = 0;
-      else if (s==kSKsRHCFCFV1RingMuLike)
-        fPredictRHCErecoSpectrumArrayTot1Rmu[ir] = 0;
-      else if(s==kSKsRHCFCFV1RingELike)
-        fPredictRHCErecoSpectrumArrayTot1Re[ir] = 0;
-      for(int im=0; im<knm; im++) {
-        if (s==kSKsFCFV1RingMuLike)
-          fPredictErecoSpectrumArray1Rmu[im][ir] = 0;
-        else if(s==kSKsFCFV1RingELike)
-          fPredictErecoSpectrumArray1Re[im][ir] = 0;
-        else if (s==kSKsRHCFCFV1RingMuLike)
-          fPredictRHCErecoSpectrumArray1Rmu[im][ir] = 0;
-        else if(s==kSKsRHCFCFV1RingELike)
-          fPredictRHCErecoSpectrumArray1Re[im][ir] = 0;
-      }//im
-    }//ir
-  }//is
-  cout << "done" << endl;
+  
+  fPredictErecoSpectrumArrayTot1Rmu    = new VALORArray(conv::kNErecoBins1Rmu);
+  fPredictErecoSpectrumArrayTot1Re     = new VALORArray(conv::kNErecoBins1Re);
+  fPredictErecoSpectrumArray1Rmu       = new VALORArray(conv::knm, conv::kNErecoBins1Rmu);
+  fPredictErecoSpectrumArray1Re        = new VALORArray(conv::knm, conv::kNErecoBins1Re);
+  fPredictRHCErecoSpectrumArrayTot1Rmu = new VALORArray(conv::kRHCNErecoBins1Rmu );
+  fPredictRHCErecoSpectrumArrayTot1Re  = new VALORArray(conv::kRHCNErecoBins1Re  );
+  fPredictRHCErecoSpectrumArray1Rmu    = new VALORArray(conv::knm, conv::kRHCNErecoBins1Rmu);
+  fPredictRHCErecoSpectrumArray1Re     = new VALORArray(conv::knm, conv::kRHCNErecoBins1Re);
+  
 }
 //________________________________________________________________________________________
 void SuperkExpectation::Book(void)
@@ -102,13 +86,13 @@ void SuperkExpectation::Book(void)
 void SuperkExpectation::CleanUp(void)
 {
   if (fSuperkDetectorFSI ) delete fSuperkDetectorFSI;
-  if (fSuperkMC       ) delete fSuperkMC;
-  if (fNuFlux         ) delete fNuFlux; 
-  if (fNuXSec         ) delete fNuXSec;
-  if (fBANFF          ) delete fBANFF;
+  if (fSuperkMC          ) delete fSuperkMC;
+  if (fNuFlux            ) delete fNuFlux; 
+  if (fNuXSec            ) delete fNuXSec;
+  if (fBANFF             ) delete fBANFF;
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Read(string config_file)
+bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
 {
   cout << "Exp >> Reading config file: " << config_file << endl;
 
@@ -204,6 +188,11 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
+bool SuperkExpectation::Generate(const FitParamList & fp)
+{
+  return Generate(fp, false, false);
+}
+//________________________________________________________________________________________
 bool SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff)
 {
 // SuperkExpectation interface method for fitters.
@@ -258,40 +247,64 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   return h;
 }
 //________________________________________________________________________________________
+VALORArray * SuperkExpectation::CurrPredictedErecoVArray(t2kana::conv::SuperkSample_t s) 
+{
+  VALORArray * arr;
+  if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArrayTot1Rmu;
+  else if(s == kSKsRHCFCFV1RingELike)  arr = fPredictRHCErecoSpectrumArrayTot1Re ;
+  else if(s == kSKsFCFV1RingELike)     arr = fPredictErecoSpectrumArrayTot1Re    ;
+  else if(s == kSKsFCFV1RingMuLike )   arr = fPredictErecoSpectrumArrayTot1Rmu   ;
+  else assert(!"Bad sample");
+  
+  return arr;
+}
+//________________________________________________________________________________________
+VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(t2kana::conv::SuperkSample_t s) 
+{
+  VALORArray * arr;
+  if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArray1Rmu;
+  else if(s == kSKsRHCFCFV1RingELike)  arr = fPredictRHCErecoSpectrumArray1Re ;
+  else if(s == kSKsFCFV1RingELike)     arr = fPredictErecoSpectrumArray1Re    ;
+  else if(s == kSKsFCFV1RingMuLike )   arr = fPredictErecoSpectrumArray1Rmu   ;
+  else assert(!"Bad Sample");
+  
+  return arr;
+}
+//________________________________________________________________________________________
+const VALORArray * SuperkExpectation::CurrPredictedErecoVArray(t2kana::conv::SuperkSample_t s) const
+{
+  const VALORArray * arr;
+  if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArrayTot1Rmu;
+  else if(s == kSKsRHCFCFV1RingELike)  arr = fPredictRHCErecoSpectrumArrayTot1Re ;
+  else if(s == kSKsFCFV1RingELike)     arr = fPredictErecoSpectrumArrayTot1Re    ;
+  else if(s == kSKsFCFV1RingMuLike )   arr = fPredictErecoSpectrumArrayTot1Rmu   ;
+  else assert(!"Bad sample");
+  
+  return arr;
+}
+//________________________________________________________________________________________
+const VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(t2kana::conv::SuperkSample_t s) const 
+{
+  const VALORArray * arr;
+  if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArray1Rmu;
+  else if(s == kSKsRHCFCFV1RingELike)  arr = fPredictRHCErecoSpectrumArray1Re ;
+  else if(s == kSKsFCFV1RingELike)     arr = fPredictErecoSpectrumArray1Re    ;
+  else if(s == kSKsFCFV1RingMuLike )   arr = fPredictErecoSpectrumArray1Rmu   ;
+  else assert(!"Bad Sample");
+  
+  return arr;
+}
+//________________________________________________________________________________________
 double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s) 
 {
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  if(sidx == -1) {
-    return 0;
-  }
-
-  if(s == kSKsRHCFCFV1RingMuLike)
-    return fPredictRHCErecoSpectrumArrayTot1Rmu;
-  else if(s == kSKsRHCFCFV1RingELike)
-    return fPredictRHCErecoSpectrumArrayTot1Re;
-  else if(s == kSKsFCFV1RingELike)
-    return fPredictErecoSpectrumArrayTot1Re;
-  else
-    return fPredictErecoSpectrumArrayTot1Rmu;
-
+  VALORArray * arr = this->CurrPredictedErecoVArray(s);
+  return arr->GetArray();
 }
 //________________________________________________________________________________________
 const double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s)  const
 {
-  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  if(sidx == -1) {
-    return 0;
-  }
-
-  if(s == kSKsRHCFCFV1RingMuLike)
-    return fPredictRHCErecoSpectrumArrayTot1Rmu;
-  else if(s == kSKsRHCFCFV1RingELike)
-    return fPredictRHCErecoSpectrumArrayTot1Re;
-  else if(s == kSKsFCFV1RingELike)
-    return fPredictErecoSpectrumArrayTot1Re;
-  else
-    return fPredictErecoSpectrumArrayTot1Rmu;
-
+  const VALORArray * arr = this->CurrPredictedErecoVArray(s);
+  return arr->GetArray();
 }
 //________________________________________________________________________________________
 double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
@@ -305,16 +318,10 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
   if(midx == -1) {
     return 0;
   }
+  
+  VALORArray * arr = this->CurrPredictedErecoVArrayMode(s);
 
-  if(s == kSKsRHCFCFV1RingMuLike)
-    return fPredictRHCErecoSpectrumArray1Rmu[midx];
-  else if(s == kSKsRHCFCFV1RingELike)
-    return fPredictRHCErecoSpectrumArray1Re[midx];
-  else if(s == kSKsFCFV1RingELike)
-    return fPredictErecoSpectrumArray1Re[midx];
-  else
-    return fPredictErecoSpectrumArray1Rmu[midx];
-
+  return &(arr->GetEntryRef(midx,0));
 }
 //________________________________________________________________________________________
 const double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
@@ -328,16 +335,10 @@ const double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
   if(midx == -1) {
     return 0;
   }
+  
+  const VALORArray * arr = this->CurrPredictedErecoVArrayMode(s);
 
-  if(s == kSKsRHCFCFV1RingMuLike)
-    return fPredictRHCErecoSpectrumArray1Rmu[midx];
-  else if(s == kSKsRHCFCFV1RingELike)
-    return fPredictRHCErecoSpectrumArray1Re[midx];
-  else if(s == kSKsFCFV1RingELike)
-    return fPredictErecoSpectrumArray1Re[midx];
-  else
-    return fPredictErecoSpectrumArray1Rmu[midx];
-
+  return &(arr->GetEntryRef(midx,0));
 }
 //________________________________________________________________________________________
 double SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s, int i) const
@@ -359,7 +360,7 @@ void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
 
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag)
+bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t * /*write_opt*/) const
 {
   if(!array) return false;
 
@@ -400,18 +401,20 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag)
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Write(
-  const char * filename, const char * pdf_tag, const char * option_file)
+  const char * filename, const char * pdf_tag, Option_t * write_opt, Option_t * file_opt) const
 {
+  if (!file_opt) file_opt = "update";
   TObjArray * array = new TObjArray();
-  this->Write(array,pdf_tag);
-  TFile f(filename, option_file);
+  array->SetOwner(true);
+  this->Write(array, pdf_tag, write_opt);
+  TFile f(filename, file_opt);
   array->Write();
   f.Close();
 
   return true;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::ResetSystematicVariations(void)
+void SuperkExpectation::ResetSystematics(void)
 {
 #ifdef __show_syst_reset_mesg__
   cout << "Exp >> Reseting all systematic variations." << endl;
@@ -485,7 +488,13 @@ void SuperkExpectation::ResetSystematicVariations(void)
 #endif
 }
 //________________________________________________________________________________________
-void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool best_banff)
+void SuperkExpectation::TweakSystematic(string systematic, double twkdial, Option_t * opt)
+{
+  bool best_banff = !opt || string(opt).find("best_banff")!=string::npos;
+  TweakSystematicLegacy(systematic, twkdial, best_banff);
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial, bool best_banff)
 {
 #ifdef __show_syst_tweak_mesg__
   cout << "Exp >> Setting systematic parameter: " << systematic 
@@ -591,20 +600,20 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
     }
     for (int ip = 0; ip < nskdetfsi; ip++) {
       if(is_rhc) {
-	if(systematic == Form("skdetfsi_%03i_rhc",ip)) {
-	  twkv[ip]=twkdial;
-	  this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
-	  found = true;
-	  break;
-	}
+        if(systematic == Form("skdetfsi_%03i_rhc",ip)) {
+          twkv[ip]=twkdial;
+          this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
+          found = true;
+          break;
+        }
       }//is_rhc
       else {
-	if(systematic == Form("skdetfsi_%03i",ip)) {
-	  twkv[ip]=twkdial;
-	  this->GetSuperkDetectorFSI()->Tweak(true,&twkv);
-	  found = true;
-	  break;
-	}
+        if(systematic == Form("skdetfsi_%03i",ip)) {
+          twkv[ip]=twkdial;
+          this->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+          found = true;
+          break;
+        }
       }//!is_rhc
     }//ip
      if(!found) {
@@ -635,19 +644,19 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
       const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
       TVectorD twkv(this->GetBANFF()->RHCBestFitValues());
       if(!best_banff) {
-	for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+        for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
       }
       PhysParamId_t p = util::PhysParamIdFromString(systematic);
       int ip = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);
       if(ip < 0) {
-	cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-	exit(1);
+        cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+        exit(1);
       }
       twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
       cout << "Exp >> Tweaking systematic string: " << systematic
-	   << ", NuisParam: " << util::AsString(p)
-	   << endl;
+           << ", NuisParam: " << util::AsString(p)
+           << endl;
       util::PrintCompact(twkv);
 #endif
       this->GetBANFF()->TweakRHC(true,&twkv);
@@ -656,19 +665,19 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
       const int nbanff = conv::kNumOfParamsInBANFFfit;
       TVectorD twkv(this->GetBANFF()->BestFitValues());
       if(!best_banff) {
-	for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+        for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
       }
       PhysParamId_t p = util::PhysParamIdFromString(systematic);
       int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
       if(ip < 0) {
-	cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-	exit(1);
+        cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+        exit(1);
       }
       twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
       cout << "Exp >> Tweaking systematic string: " << systematic
-	   << ", NuisParam: " << util::AsString(p)
-	   << endl;
+           << ", NuisParam: " << util::AsString(p)
+           << endl;
       util::PrintCompact(twkv);
 #endif
       this->GetBANFF()->Tweak(true,&twkv);
@@ -755,7 +764,99 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, bool 
      
 }
 //________________________________________________________________________________________
-void SuperkExpectation::TweakAllSystematics(void)
+void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, Option_t * opt)
+{
+#ifdef __show_syst_tweak_mesg__
+  cout << "Exp >> Setting systematic parameter: " << systematic 
+       << " to value = " << twkdial << endl;
+#endif
+
+  if(p == kNuisSuperkEnergyScale) {
+    this->GetSuperkDetectorFSI()->TweakEnergyScale(twkdial);
+  }
+  else
+  if(p == kRHCNuisSuperkEnergyScale) {
+    this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twkdial);
+  }
+
+  //
+  // SKDET + FSI
+  //
+  
+  // tweak an individual FSI parameter (ignores correlations, debug)
+  else if(util::IsSKDetFSI(p)) {
+    bool is_rhc = util::IsRHCSystematic(p);
+    int nskdetfsi = 0;
+    if(is_rhc)
+      nskdetfsi = conv::kNumOfRHCSKDetFSIParams;
+    else
+      nskdetfsi = conv::kNumOfSKDetFSIParams;
+    TVectorD twkv(nskdetfsi);
+    for (int ip = 0; ip < nskdetfsi; ip++) {
+      twkv[ip] = 1;
+    }
+    int ip = 0;
+    if (is_rhc) ip = p-kRHCNuisSKDetFSI000;
+    else        ip = p-kNuisSKDetFSI000;
+    assert(ip >=0 && ip<twkv.GetNoElements());
+    twkv[ip]=twkdial;
+    if (is_rhc) this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
+    else        this->GetSuperkDetectorFSI()->Tweak   (true,&twkv);
+  }//skdetfsi
+    
+  //
+  // BANFF & Uncorrelated BANFF
+  //
+  
+  // tweak an individual BANFF parameter (ignores correlations, debug)
+  else if(util::IsBANFF(p)) {
+    bool best_banff = opt && string(opt).find("best_banff")!=string::npos;
+    bool is_rhc = util::IsRHCSystematic(p);
+    if(is_rhc) {
+      const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
+      TVectorD twkv(this->GetBANFF()->RHCBestFitValues());
+      if(!best_banff) {
+        for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+      }
+      int ip = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);
+      if(ip < 0) {
+        cerr << "Exp >> Unknown systematic parameter (" << util::AsString(p) << ")" << endl;
+        exit(1);
+      }
+      twkv[ip] = twkdial;
+      this->GetBANFF()->TweakRHC(true,&twkv);
+    }//is_rhc
+    else {
+      const int nbanff = conv::kNumOfParamsInBANFFfit;
+      TVectorD twkv(this->GetBANFF()->BestFitValues());
+      if(!best_banff) {
+        for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+      }
+      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+      if(ip < 0) {
+        cerr << "Exp >> Unknown systematic parameter (" << util::AsString(p) << ")" << endl;
+        exit(1);
+      }
+      twkv[ip] = twkdial;
+      this->GetBANFF()->Tweak(true,&twkv);
+    }//!is_rhc
+  }//banff
+
+  //
+  // XSec
+  //
+  else if (util::IsXSec(p)) {
+    this->GetNuXSec()->Tweak(p , twkdial);
+  }
+  
+  else {
+     cerr << "Exp/Tweak>> Unhandled systematic parameter (" << util::AsString(p) << ")" << endl;
+     exit(1);
+  }   
+     
+}
+//________________________________________________________________________________________
+void SuperkExpectation::RandomizeSystematics(void)
 {
 #ifdef __show_syst_tweak_mesg__
   cout << "Exp >> Generating random variations of all systematic params." << endl;
@@ -966,9 +1067,9 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       //    else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
       TVectorD twkv(nskdetfsi_1Re);
       for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
-	//	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip + nskdetfsi_1Rmu);
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
-	twkv[ip] = fp.CurrValue(p);
+        //        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip + nskdetfsi_1Rmu);
+        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+        twkv[ip] = fp.CurrValue(p);
       }
 
       //Todo: fix this so that FHC and RHC can have different tweaks
@@ -981,8 +1082,8 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi = conv::kNumOfSKDetFSIParams;
       TVectorD twkv(nskdetfsi);
       for(int ip = 0; ip < nskdetfsi; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
-	twkv[ip] = fp.CurrValue(p);
+        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+        twkv[ip] = fp.CurrValue(p);
       }
 
       //Todo: fix this so that FHC and RHC can have different tweaks
@@ -1023,5 +1124,48 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     exit(1);
   }
 }
+//________________________________________________________________________________________
+void SuperkExpectation::PrintSystematics (ostream & stream) const
+{
+  stream<<"SuperkExpectation/PrintSystematics not yet implemented"<<endl;
+}
+//________________________________________________________________________________________
+//~ double SuperkExpectation::GetFitStatisticPenalty(void) const
+//~ {
+  //~ bool all_syst=true;
+  //~ double chisq_penalty = 0.;
+  //~ //
+  //~ // Add penalty term for BANFF params 
+  //~ //
+//~ #ifdef __include_all_systematics_in_banff_penalty_term__
+  //~ double dchisq_penalty_banff = fBANFF->ChisqPenalty();
+//~ #else
+  //~ double dchisq_penalty_banff = fBANFF->ChisqPenalty(all_syst);
+//~ #endif
+  //~ chisq_penalty += dchisq_penalty_banff;
+//~ #ifdef __show_contributions_to_penalty_term__
+  //~ cout << "FitInputs::GetFitStatisticPenalty >> Current BANFF param variation"
+       //~ << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_banff << endl;
+//~ #endif
+//~ 
+  //~ //
+  //~ // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
+  //~ //
+  //~ double dchisq_penalty_xsec =  fNuXSec->ChisqPenalty(all_syst);
+  //~ chisq_penalty += dchisq_penalty_xsec;
+//~ #ifdef __show_contributions_to_penalty_term__
+  //~ cout << "FitInputs::GetFitStatisticPenalty >> Current variation of params considered by NuXSec"
+       //~ << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_xsec << endl;
+//~ #endif
+  //~ 
+  //~ //
+  //~ // Add penalty term for SuperkDetector + FSI params
+  //~ double dchisq_penalty_skdetfsi = GetSuperkDetectorFSI()->ChisqPenalty();
+  //~ chisq_penalty += dchisq_penalty_skdetfsi;
+//~ #ifdef __show_contributions_to_penalty_term__
+  //~ cout << "FitInputs::GetFitStatisticPenalty >> Current SK+FSI param variation"
+       //~ << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdetfsi << endl;
+//~ #endif
+//~ }
 //________________________________________________________________________________________
 

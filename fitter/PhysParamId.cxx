@@ -2197,6 +2197,7 @@ bool t2kana::util::IsFSI(PhysParamId_t p)
 //____________________________________________________________________________   
 bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
 {
+  //fhc
 #ifdef SKCORRELATIONS
   if(p >= kNuisSKDetFSI000 && p <= kNuisSKDetFSI031)
     return true;
@@ -2212,17 +2213,45 @@ bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
 #endif
   if(p == kNuisSuperkEnergyScale)
     return true;
+    
+  //rhc
+#ifdef SKCORRELATIONS
+  if(p >= kRHCNuisSKDetFSI000 && p <= kRHCNuisSKDetFSI031)
+    return true;
+#else
+#if FSI_BINS != 3
+  if(p >= kRHCNuisSKDetFSI000 && p <= kRHCNuisSKDetFSI005)
+    return true;
+#endif
+#if FSI_BINS != 2
+  if(p >= kRHCNuisSKDetFSI006 && p <= kRHCNuisSKDetFSI017)
+    return true;
+#endif
+#endif
+  if(p == kRHCNuisSuperkEnergyScale)
+    return true;
 
   return false;
 }
 //____________________________________________________________________________   
 bool t2kana::util::IsBANFF(PhysParamId_t p)
 {
+  //fhc
   if(p >= kNuisBANFF00
 #if (BANFF_BINS != 2)
      && p <= kNuisBANFFNC1pi0
 #else
      && p <= kNuisBANFFCC1piE1
+#endif
+     )
+    return true;
+    
+  //rhc
+  if(p >= kRHCNuisBANFF00
+#if (BANFF_BINS != 2)
+     && p <= kRHCNuisBANFFNC1pi0
+#else
+     && p <= kRHCNuisBANFFCC1piE1
 #endif
      )
     return true;

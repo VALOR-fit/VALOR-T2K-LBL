@@ -868,7 +868,8 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetSystMode(1);
     return fp;
   }
-
+  
+  cerr<<"FitParamList/NamedParameterList >> Could not generate paramlist for "<<name<<endl;
   return 0;
 }
 //________________________________________________________________________________________
