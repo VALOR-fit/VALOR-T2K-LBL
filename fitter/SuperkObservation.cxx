@@ -19,6 +19,7 @@
 //________________________________________________________________________________________
 
 //#define __show_num_of_events_mesg_debug__
+//#define __show_bin_contributions_to_chisq__
 
 #include <cassert>
 #include <cstdlib>
@@ -495,18 +496,108 @@ bool SuperkObservation::Write(
   return true;
 }
 //________________________________________________________________________________________
-double SuperkObservation::Statistic (FitModelABC * pred, const FitParamList & fp,   Option_t * stat_opt)
+double SuperkObservation::Statistic (FitModelABC * model, const FitParamList & fp,   Option_t * stat_opt)
 {
-  assert(!"Not yet implemented");
+  model->Generate(fp);
+  double total_chisq = this->Statistic(model,stat_opt);
+  double phys_penalty = fp.HypothesisFitStatisticPenalty(stat_opt);
+  
+  //~ std::cerr<<"Statistic: "<<total_chisq<<"\t"<<phys_penalty<<endl;
+  total_chisq += phys_penalty;
+  return total_chisq;
 }
 //________________________________________________________________________________________
-double SuperkObservation::Statistic (FitModelABC * pred, const PhysHypothesis & ph, Option_t * stat_opt)
+double SuperkObservation::Statistic (FitModelABC * model, const PhysHypothesis & ph, Option_t * stat_opt)
 {
-  assert(!"Not yet implemented");
+  model->Generate(ph);
+  double total_chisq = this->Statistic(model,stat_opt);
+  
+  return total_chisq;
 }
 //________________________________________________________________________________________
-double SuperkObservation::Statistic (FitModelABC * pred, Option_t * stat_opt)
+double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
 {
-  assert(!"Not yet implemented");
+  SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
+  assert(skexp);
+  
+  bool gauss   = false;
+  bool gof     = false; //goodness of fit
+  if (stat_opt) {
+    string stopt(stat_opt);
+    if (stopt.find("gauss") != string::npos) gauss = true;
+    if (stopt.find("gof")   != string::npos) gof     = true;
+  }
+  
+  double total_chisq = 0;
+  
+  double nobs,nexp,delta_chisq;
+  
+  for (int is = 0 ; is < kns ; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    // current sample is undefined: skip
+    if (s == conv::kSKsUndefined) continue;
+    int n_ereco_bins = kNErecoBins[is];
+    
+    const VALORArray * obs_v = this->ErecoSpectrumVArray(s);
+    const VALORArray * exp_v = skexp->CurrPredictedErecoVArray(s);
+    const double * obs_arr = obs_v->GetArray();
+    const double * exp_arr = exp_v->GetArray();
+    
+    if (not gof) {
+        
+      for (int ibin = 0 ; ibin < n_ereco_bins ; ibin++) {
+        nobs = obs_arr[ibin];
+        nexp = exp_arr[ibin];
+        
+        if    (gauss) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+        else          { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+        
+        total_chisq += delta_chisq;
+      
+#ifdef __show_bin_contributions_to_chisq__
+        double xlo = util::ErecoBinEdges(s,ibin);
+        double xup = util::ErecoBinEdges(s,ibin+1);
+          cout << "SuperkObservation::Statistic >> delta_chisq (s = "<<util::AsString(s)<<", bin = " << ibin 
+               << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
+          cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
+#endif
+      }//ibin
+    }// not goodness of fit
+    else {
+      const int nbins = 5;
+      double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0}; 
+    
+      //loop over Ereco bins
+      for(int ibin = 0; ibin < nbins; ibin++) {
+
+        int ErecoMinBin = TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedges[ibin]);
+        int ErecoMaxBin = TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedges[ibin+1]);
+        nobs = 0;
+        nexp = 0;
+        for(int ir = ErecoMinBin; ir < ErecoMaxBin; ir++) {
+          nobs += obs_arr[ir];
+          nexp += exp_arr[ir];
+        }
+        
+        if    (gauss) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+        else          { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+        
+        total_chisq += delta_chisq;
+          
+#ifdef __show_bin_contributions_to_chisq__
+        double xlo = util::ErecoBinEdges(s,ibin);
+        double xup = util::ErecoBinEdges(s,ibin+1);
+        cout << "FitInputs::Chisquare()> delta_chisq (s = "<<util::AsString(s)<<", bin = " << ibin 
+           << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
+        cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
+#endif
+      }//ibin
+    } //goodness of fit
+  }//is
+  
+  double syst_chisq_pen = model->GetFitStatisticPenalty();
+  total_chisq += syst_chisq_pen;
+  
+  return total_chisq;
 }
 //________________________________________________________________________________________

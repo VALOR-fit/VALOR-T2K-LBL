@@ -1130,42 +1130,44 @@ void SuperkExpectation::PrintSystematics (ostream & stream) const
   stream<<"SuperkExpectation/PrintSystematics not yet implemented"<<endl;
 }
 //________________________________________________________________________________________
-//~ double SuperkExpectation::GetFitStatisticPenalty(void) const
-//~ {
-  //~ bool all_syst=true;
-  //~ double chisq_penalty = 0.;
-  //~ //
-  //~ // Add penalty term for BANFF params 
-  //~ //
-//~ #ifdef __include_all_systematics_in_banff_penalty_term__
-  //~ double dchisq_penalty_banff = fBANFF->ChisqPenalty();
-//~ #else
-  //~ double dchisq_penalty_banff = fBANFF->ChisqPenalty(all_syst);
-//~ #endif
-  //~ chisq_penalty += dchisq_penalty_banff;
-//~ #ifdef __show_contributions_to_penalty_term__
-  //~ cout << "FitInputs::GetFitStatisticPenalty >> Current BANFF param variation"
-       //~ << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_banff << endl;
-//~ #endif
-//~ 
-  //~ //
-  //~ // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
-  //~ //
-  //~ double dchisq_penalty_xsec =  fNuXSec->ChisqPenalty(all_syst);
-  //~ chisq_penalty += dchisq_penalty_xsec;
-//~ #ifdef __show_contributions_to_penalty_term__
-  //~ cout << "FitInputs::GetFitStatisticPenalty >> Current variation of params considered by NuXSec"
-       //~ << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_xsec << endl;
-//~ #endif
-  //~ 
-  //~ //
-  //~ // Add penalty term for SuperkDetector + FSI params
-  //~ double dchisq_penalty_skdetfsi = GetSuperkDetectorFSI()->ChisqPenalty();
-  //~ chisq_penalty += dchisq_penalty_skdetfsi;
-//~ #ifdef __show_contributions_to_penalty_term__
-  //~ cout << "FitInputs::GetFitStatisticPenalty >> Current SK+FSI param variation"
-       //~ << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdetfsi << endl;
-//~ #endif
-//~ }
+double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
+{
+  bool all_syst=true;
+  double chisq_penalty = 0.;
+  //
+  // Add penalty term for BANFF params 
+  //
+#ifdef __include_all_systematics_in_banff_penalty_term__
+  double dchisq_penalty_banff = fBANFF->ChisqPenalty();
+#else
+  double dchisq_penalty_banff = fBANFF->ChisqPenalty(all_syst);
+#endif
+  chisq_penalty += dchisq_penalty_banff;
+#ifdef __show_contributions_to_penalty_term__
+  cout << "FitInputs::GetFitStatisticPenalty >> Current BANFF param variation"
+       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_banff << endl;
+#endif
+
+  //
+  // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
+  //
+  double dchisq_penalty_xsec =  fNuXSec->ChisqPenalty(all_syst);
+  chisq_penalty += dchisq_penalty_xsec;
+#ifdef __show_contributions_to_penalty_term__
+  cout << "FitInputs::GetFitStatisticPenalty >> Current variation of params considered by NuXSec"
+       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_xsec << endl;
+#endif
+  
+  //
+  // Add penalty term for SuperkDetector + FSI params
+  double dchisq_penalty_skdetfsi = fSuperkDetectorFSI->ChisqPenalty();
+  chisq_penalty += dchisq_penalty_skdetfsi;
+#ifdef __show_contributions_to_penalty_term__
+  cout << "FitInputs::GetFitStatisticPenalty >> Current SK+FSI param variation"
+       << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdetfsi << endl;
+#endif
+
+  return chisq_penalty;
+}
 //________________________________________________________________________________________
 

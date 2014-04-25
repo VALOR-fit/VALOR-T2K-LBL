@@ -3,7 +3,7 @@
 
 \class    t2kana::VALORArray
 
-\brief    N-dimensional array (for N<5)
+\brief    N-dimensional array (for N<=6)
 
 \author   Steve Dennis <stephen.dennis \at warwick.ac.uk>
           University of Warwick, Rutherford Appleton Laboratory

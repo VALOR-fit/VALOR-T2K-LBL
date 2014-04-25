@@ -55,6 +55,9 @@ public:
   virtual void ResetSystematics (void) = 0;  
   virtual void PrintSystematics (ostream & stream = std::cout) const = 0;
   virtual PhysParamList Tweaks(void) = 0;
+  
+  // Get penalty term for current systematics
+  virtual double GetFitStatisticPenalty(Option_t * opt = 0) const = 0;
 
   // This is a second interface for generating predictions for a given physics hypothesis and systematics.
   // This interface method was developed for fitters. 

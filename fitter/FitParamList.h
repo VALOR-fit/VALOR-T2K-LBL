@@ -142,6 +142,9 @@ public:
    double GetFitTime          (void) const       { return fFitTime;             }
    void   SetFitTries         (int   fit_tries)  { fFitTries = fit_tries;       }
    int    GetFitTries         (void) const       { return fFitTries;            }
+   
+   // Calculate the fit statistic penalty
+   double HypothesisFitStatisticPenalty(Option_t * opt = 0) const;
 
    // Print
    void Print (ostream & stream) const;

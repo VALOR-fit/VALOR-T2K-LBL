@@ -366,6 +366,8 @@ namespace util {
   
   conv::PhysParamId_t      PhysParamIdFromString     (string h);
   conv::PhysParamId_t      PhysParamIdFromLongString (string h);
+  
+  bool GlobalFit(conv::PhysParamId_t p, double & bestfit_out, double & error_out);
 
 
 } // util

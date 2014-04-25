@@ -138,6 +138,71 @@ double t2kana::util::ChisqPoisson(
   return 2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc);
 }
 //____________________________________________________________________________
+double t2kana::util::ArrayChisqGauss(
+  const VALORArray * data, const VALORArray * mc, VALORArray * output)
+{
+  int size = data->GetSize();
+  assert(size == mc->GetSize());
+  
+  const double * data_arr = data->GetArray();
+  const double * mc_arr   = mc  ->GetArray();
+  double * out_arr = NULL;
+  if (output) {
+    assert(size==output->GetSize());
+    out_arr = output->GetArray();
+  }
+  
+  double total_chisq = 0., chisq=0;
+  double nmc,ndata;
+  for (int ii = 0 ; ii < size ; ii++) {
+    nmc   = mc_arr  [ii];
+    ndata = data_arr[ii];
+    if(nmc>0) {
+      chisq = TMath::Power(ndata-nmc,2.)/nmc;
+    }
+    else {
+      chisq=0;
+    }
+    if (output) out_arr[ii] = chisq;
+    total_chisq+=chisq;
+  }
+  return total_chisq;
+}
+//____________________________________________________________________________
+double t2kana::util::ArrayChisqPoisson(
+  const VALORArray *  data, const VALORArray *  mc, VALORArray * output)
+{
+  // Warning - empty bins (0 MC, 0 data) have a small but non-zero chisq (kSetNegEventsTo).
+  int size = data->GetSize();
+  assert(size == mc->GetSize());
+  
+  const double * data_arr = data->GetArray();
+  const double * mc_arr   = mc  ->GetArray();
+  double * out_arr = NULL;
+  if (output) {
+    assert(size==output->GetSize());
+    out_arr = output->GetArray();
+  }
+  
+  double total_chisq = 0., chisq=0;
+  double nmc,ndata;
+  for (int ii = 0 ; ii < size ; ii++) {
+    nmc   = mc_arr  [ii];
+    ndata = data_arr[ii];
+    chisq = 0.;
+    if(nmc <= 0.)
+      nmc = kSetNegEventsTo;
+    if(ndata <= 0.)
+      chisq = 2.*(nmc-ndata);
+    else
+      chisq = 2. * (nmc-ndata) + 2. * ndata * TMath::Log(ndata/nmc);
+    
+    if (output) out_arr[ii] = chisq;
+    total_chisq+=chisq;
+  }
+  return total_chisq;
+}
+//____________________________________________________________________________
 TMatrixD t2kana::util::CholeskyDecomposition(TMatrixD& cov_matrix)
 {
 // Perform a Cholesky decomposition of the input covariance matrix and
@@ -532,7 +597,7 @@ double t2kana::util::RandomizeDm23sq(void)
     return dm;
   }
   //or try again
-  return util::RandomizeDm12sq();
+  return util::RandomizeDm23sq();
 }
 //____________________________________________________________________________
 int t2kana::util::Sign(double tweaking_dial)

@@ -78,13 +78,11 @@ public:
    bool Generate (const FitParamList & fp);
    
    // Write all predictions to the input container or to the input file
-  virtual bool Write (TObjArray* collection, const char * tag = "model", Option_t * write_opt = 0) const;
-  virtual bool Write (const char * filename, const char * tag = "model", Option_t * write_opt = 0, Option_t * file_opt = 0) const;
+  bool Write (TObjArray* collection, const char * tag = "model", Option_t * write_opt = 0) const;
+  bool Write (const char * filename, const char * tag = "model", Option_t * write_opt = 0, Option_t * file_opt = 0) const;
    
-   /*
    // Get penalty term for current systematics
-   double GetFitStatisticPenalty(void) const;
-   */
+   double GetFitStatisticPenalty(Option_t * opt = 0) const;
    
    // ***T2K Legacy interface ***
    

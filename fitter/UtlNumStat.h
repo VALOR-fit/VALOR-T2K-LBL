@@ -38,6 +38,7 @@ class TH2D;
 class TAxis;
 
 #include "Conventions.h"
+#include "VALORArray.h"
 
 using std::string;
 using std::vector;
@@ -52,6 +53,9 @@ namespace util {
   double DeltaChisquare   (conv::ConfLevel_t cl, int nfitparams);
   double ChisqGauss       (double ndata, double nmc);
   double ChisqPoisson     (double ndata, double nmc);
+  
+  double ArrayChisqGauss  (const VALORArray *  data, const VALORArray *  mc, VALORArray * output = 0);
+  double ArrayChisqPoisson(const VALORArray *  data, const VALORArray *  mc, VALORArray * output = 0);
 
   //
   // Cholesky decomposition

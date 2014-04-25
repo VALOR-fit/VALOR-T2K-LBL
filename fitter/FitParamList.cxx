@@ -1963,4 +1963,28 @@ t2kana::conv::PhysParamId_t FitParamList::WhichParam(int id) const
    return kPhypUndefined;
 }
 //________________________________________________________________________________________
-
+double FitParamList::HypothesisFitStatisticPenalty(Option_t * /*opt*/) const
+{
+  double chisq = 0;
+  double center, error, current, tweak;
+  for (int ip = kPhypMixing23 ; ip < kNuisSuperkEnergyScale ; ip++) {
+    PhysParamId_t p = (PhysParamId_t) ip;
+    if (not (this->Exists(p) && this->IsNuisance(p))) continue;
+    current = this->CurrValue(p);
+    
+    // Should maybe make this object aware of global fit values
+    // So they can change during running
+    bool got_global = util::GlobalFit(p, center, error);
+    if (!got_global) {
+      std::cerr<<"FitParamList/HypothesisFitStatisticPenalty >> Using zero penalty for parameter "
+               << util::AsString(p) << std::endl;
+      continue;
+    }
+    
+    tweak = (current-center)/error;
+    
+    chisq += tweak*tweak;
+  }
+  
+  return chisq;
+}
