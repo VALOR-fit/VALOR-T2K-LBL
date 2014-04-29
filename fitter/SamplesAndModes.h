@@ -12,10 +12,10 @@
 
 Changes since 2011_v0.9.0:
 
-17-12-2013  Nick  
+1702-2013  Nick  
             Split t2kana::conv namespace into several smaller files
 
-31-12-2013  Nick
+3102-2013  Nick
 Add samples and modes for reverse horn current running
 
 */
@@ -373,84 +373,84 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
   ,
   // > 1 electron-like ring (nue appearance) (RHC)
   {
-    kSKmNuMuCCQE,
-    kSKmNuMuCC1pi,
-    kSKmNuMuCCcoh,
-    kSKmNuMuCCoth, 
-    kSKmNuMuNC1pi0, 
-    kSKmNuMuNCcoh, 
-    kSKmNuMuNCoth_e, 
-#ifdef __USE_OSC_NUMU_MC_TEMPLATES__    
-    kSKmOscNuMuCCQE,
-    kSKmOscNuMuCC1pi,
-    kSKmOscNuMuCCcoh,
-    kSKmOscNuMuCCoth,               
+        kSKmNuMuCCQE,
+        kSKmNuMuCC1pi,
+        kSKmNuMuCCcoh,
+        kSKmNuMuCCoth,
+        kSKmNuMuNC1pi0,
+        kSKmNuMuNCcoh,
+        kSKmNuMuNCoth_e,
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+        kSKmOscNuMuCCQE,
+        kSKmOscNuMuCC1pi,
+        kSKmOscNuMuCCcoh,
+        kSKmOscNuMuCCoth,
 #endif
-    kSKmNuMuBarCCQE, 
-    kSKmNuMuBarCC1pi, 
-    kSKmNuMuBarCCcoh, 
-    kSKmNuMuBarCCoth,  
-    kSKmNuMuBarNC1pi0, 
-    kSKmNuMuBarNCcoh, 
-    kSKmNuMuBarNCoth_e,
+        kSKmNuMuBarCCQE,
+        kSKmNuMuBarCC1pi,
+        kSKmNuMuBarCCcoh,
+        kSKmNuMuBarCCoth,
+        kSKmNuMuBarNC1pi0,
+        kSKmNuMuBarNCcoh,
+        kSKmNuMuBarNCoth_e,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmOscNuMuBarCCQE,
-    kSKmOscNuMuBarCC1pi,
-    kSKmOscNuMuBarCCcoh,
-    kSKmOscNuMuBarCCoth,               
-#endif             
-    kSKmNuECCQE, 
-    kSKmNuECC1pi, 
-    kSKmNuECCcoh, 
-    kSKmNuECCoth,
-    kSKmNuENC1pi0,  
-    kSKmNuENCcoh, 
-    kSKmNuENCoth_e,
-    kSKmOscNuECCQE,  
-    kSKmOscNuECC1pi,  
-    kSKmOscNuECCcoh,
-    kSKmOscNuECCoth,
-    kSKmNuEBarCCQE,
-    kSKmNuEBarCC1pi,
-    kSKmNuEBarCCcoh,
-    kSKmNuEBarCCoth,
-    kSKmNuEBarNC1pi0,
-    kSKmNuEBarNCcoh,
-    kSKmNuEBarNCoth_e,
+        kSKmOscNuMuBarCCQE,
+        kSKmOscNuMuBarCC1pi,
+        kSKmOscNuMuBarCCcoh,
+        kSKmOscNuMuBarCCoth,
+#endif
+        kSKmNuECCQE,
+        kSKmNuECC1pi,
+        kSKmNuECCcoh,
+        kSKmNuECCoth,
+        kSKmNuENC1pi0,
+        kSKmNuENCcoh,
+        kSKmNuENCoth_e,
+        kSKmOscNuECCQE,
+        kSKmOscNuECC1pi,
+        kSKmOscNuECCcoh,
+        kSKmOscNuECCoth,
+        kSKmNuEBarCCQE,
+        kSKmNuEBarCC1pi,
+        kSKmNuEBarCCcoh,
+        kSKmNuEBarCCoth,
+        kSKmNuEBarNC1pi0,
+        kSKmNuEBarNCcoh,
+        kSKmNuEBarNCoth_e,
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    kSKmOscNuEBarCCQE,
-    kSKmOscNuEBarCC1pi,
-    kSKmOscNuEBarCCcoh,
-    kSKmOscNuEBarCCoth,               
-#endif          
+        kSKmOscNuEBarCCQE,
+        kSKmOscNuEBarCC1pi,
+        kSKmOscNuEBarCCcoh,
+        kSKmOscNuEBarCCoth,
+#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
 #endif
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
-  }
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined,
+        kSKmUndefined
+    }
 
 #else //not using RHC
   // > 1 muon-like ring (numu disappearance) (RHC)
@@ -538,38 +538,38 @@ static const bool kIsCC[kns][knm]= {
 #ifdef USE_MEC
      1, //mec
 #else
-     0, //undefined
+     0,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+     0,
+     0,
+     0,
+     0,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+     0,
+     0,
+     0,
+     0,
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+     0,
+     0,
+     0,
+     0,
 #endif
-     0, //undefined //always undefined (12)
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0  //undefined
+     0, //always undefined (12)
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
   }
   ,
   // > 1 e-like ring
@@ -577,6 +577,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     0,
      0,
      0,
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
@@ -591,6 +592,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      0,
      0,
+     0,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
      1, //oscnumubar
      1,
@@ -603,6 +605,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      0,
      0,
+     0,
      1, //oscnue
      1,
      1,
@@ -613,6 +616,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      0,
      0,
+     0,
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
      1, //oscnuebar
      1,
@@ -620,32 +624,32 @@ static const bool kIsCC[kns][knm]= {
      1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
 #endif
-     0, //always undefined (9)
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0  //undefined
+      0, //always undefined (9)
+      0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
+      0, //undefined
+      0  //undefined
   }
   ,
   // > 1 muon-like ring (RHC)
@@ -698,116 +702,119 @@ static const bool kIsCC[kns][knm]= {
 #ifdef USE_MEC
      1, //mec
 #else
-     0, //undefined
+     0,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+     0,
+     0,
+     0,
+     0,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+     0,
+     0,
+     0,
+     0,
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+     0,
+     0,
+     0,
+     0,
 #endif
      0, //always undefined (12)
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0  //undefined
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
   }
   ,
   // > 1 e-like ring (RHC)
-  {  1, //numu
-     1,
-     1,
-     1,
-     0,
-     0,
+    {  1, //numu
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     1, //oscnumu
-     1,
-     1,
-     1,
+        1, //oscnumu
+        1,
+        1,
+        1,
 #endif
-     1, //numubar
-     1,
-     1,
-     1,
-     0,
-     0,
+        1, //numubar
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     1, //oscnumubar
-     1,
-     1,
-     1,
+        1, //oscnumubar
+        1,
+        1,
+        1,
 #endif
-     1, //nue
-     1,
-     1,
-     1,
-     0,
-     0,
-     1, //oscnue
-     1,
-     1,
-     1,
-     1, //nuebar
-     1,
-     1,
-     1,
-     0,
-     0,
+        1, //nue
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1, //oscnue
+        1,
+        1,
+        1,
+        1, //nuebar
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     1, //oscnuebar
-     1,
-     1,
-     1,
+        1, //oscnuebar
+        1,
+        1,
+        1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
 #endif
-     0, //always undefined (9)
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0, //undefined
-     0  //undefined
-  }
-
+        0, //always undefined (9)
+        0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
+        0, //undefined
+        0  //undefined
+    }
 };
 
 } // conv

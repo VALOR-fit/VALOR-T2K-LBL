@@ -23,13 +23,13 @@
 #define __show_init_mesg_debug__
 //#define __ereco_scale_debug__
 //#define __show_init_mesg_debug2__
-//#define __show_update_mesg_info__
+#define __show_update_mesg_info__
 //#define __show_hypothesis__ 
-//#define __show_hypothesis_probabilities__ 
-//#define __show_banfftun_syst_var_wght_mesg_debug__ 
+//#define __show_hypothesis_probabilities__
+//#define __show_banfftun_syst_var_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__ 
-//#define __show_spectra_update_mesg_debug__ 
-//#define __show_skipped_templates__ 
+//#define __show_spectra_update_mesg_debug__
+#define __show_skipped_templates__
 //#define __show_isanevent_mesg_debug__
 //#define __show_negative_events_mesg_debug__
 //#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
@@ -51,7 +51,7 @@
 //#define BANFFWEIGHTSAREONE
 //#define SYSTWEIGHTSAREONE
 //#define PHYSHYPWEIGHTSAREONE
-//#define PHYSHYPWEIGHTAREONEANDNUEISZERO
+//#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
 #define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
 //#define RENORMALISE_MEC // NEEDS CHECKING renormalise non-MEC templates so that MEC isn't an arbitary addition of events, but respects the total normalisation
 
@@ -239,13 +239,13 @@ void SuperkMC::Init(void)
   fMCTreeNuMuBarRHC1Rmu   = 0;
   fMCTreeNuERHC1Rmu       = 0;
   fMCTreeNuEBarRHC1Rmu    = 0;
-  fMCTreeOscNuEBarRHC1Rmu = 0;
+  fMCTreeOscNuERHC1Rmu = 0;
   
   fMCTreeNuMuRHC1Re       = 0;
   fMCTreeNuMuBarRHC1Re    = 0;
   fMCTreeNuERHC1Re        = 0;
   fMCTreeNuEBarRHC1Re     = 0;
-  fMCTreeOscNuEBarRHC1Re  = 0;
+  fMCTreeOscNuERHC1Re  = 0;
   ////  
 
   fMCPOTNuMu           = 0;
@@ -259,7 +259,7 @@ void SuperkMC::Init(void)
   fMCPOTRHCNuMuBar        = 0;
   fMCPOTRHCNuE            = 0;
   fMCPOTRHCNuEBar         = 0;
-  fMCPOTRHCOscNuEBar      = 0;
+  fMCPOTRHCOscNuE         = 0;
   ////
 
   fBrEreco             = 0;
@@ -376,13 +376,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCPOTHistRHCNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
   fMCPOTHistRHCNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
   fMCPOTHistRHCNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-  fMCPOTHistRHCOscNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+  fMCPOTHistRHCOscNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
 
   fMCPOTRHCNuMu    = fMCPOTHistRHCNuMu->GetBinContent(2)    / fMCPOTHistRHCNuMu->GetBinContent(1);
   fMCPOTRHCNuMuBar = fMCPOTHistRHCNuMuBar->GetBinContent(2) / fMCPOTHistRHCNuMuBar->GetBinContent(1);
   fMCPOTRHCNuE     = fMCPOTHistRHCNuE->GetBinContent(2)     / fMCPOTHistRHCNuE->GetBinContent(1);
   fMCPOTRHCNuEBar  = fMCPOTHistRHCNuEBar->GetBinContent(2)  / fMCPOTHistRHCNuEBar->GetBinContent(1);
-  fMCPOTRHCOscNuEBar  = fMCPOTHistRHCOscNuEBar->GetBinContent(2)  / fMCPOTHistRHCOscNuEBar->GetBinContent(1);
+  fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuE->GetBinContent(2)  / fMCPOTHistRHCOscNuE->GetBinContent(1);
   ////
 
   // MODIFIED
@@ -422,24 +422,24 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        fMCTreeNuMuBarRHC1Rmu = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_mu_ring");
        fMCTreeNuERHC1Rmu     = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_mu_ring");
        fMCTreeNuEBarRHC1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_mu_ring");
-       fMCTreeOscNuEBarRHC1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
+       fMCTreeOscNuERHC1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
        assert (fMCTreeNuMuRHC1Rmu   );
        assert (fMCTreeNuMuBarRHC1Rmu);
        assert (fMCTreeNuERHC1Rmu    );
        assert (fMCTreeNuEBarRHC1Rmu );
-       assert (fMCTreeOscNuEBarRHC1Rmu );
+       assert (fMCTreeOscNuERHC1Rmu );
      }
      else if(s == kSKsRHCFCFV1RingELike) {
        fMCTreeNuMuRHC1Re     = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_e_ring");
        fMCTreeNuMuBarRHC1Re  = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_e_ring");
        fMCTreeNuERHC1Re      = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_e_ring");
        fMCTreeNuEBarRHC1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_e_ring");
-       fMCTreeOscNuEBarRHC1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
+       fMCTreeOscNuERHC1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
        assert (fMCTreeNuMuRHC1Re    );
        assert (fMCTreeNuMuBarRHC1Re );
        assert (fMCTreeNuERHC1Re     );
        assert (fMCTreeNuEBarRHC1Re  );
-       assert (fMCTreeOscNuEBarRHC1Re  );
+       assert (fMCTreeOscNuERHC1Re  );
      }
      ////
   }
@@ -457,7 +457,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "RHC: Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTRHCNuMuBar << endl;
   cout << "RHC: Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTRHCNuE     << endl;
   cout << "RHC: Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTRHCNuEBar  << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTRHCOscNuEBar  << endl;
+  cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTRHCOscNuE  << endl;
   ////
 
   for(int is = 0; is < kns; is++) {
@@ -483,14 +483,14 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; numubar;  1Rmu} = " << fMCTreeNuMuBarRHC1Rmu -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue;      1Rmu} = " << fMCTreeNuERHC1Rmu     -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; nuebar;   1Rmu} = " << fMCTreeNuEBarRHC1Rmu  -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Rmu} = " << fMCTreeOscNuEBarRHC1Rmu  -> GetEntries()  << endl;
+       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Rmu} = " << fMCTreeOscNuERHC1Rmu  -> GetEntries()  << endl;
      }
      else if(s == kSKsRHCFCFV1RingELike) {
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; numu;     1Re } = " << fMCTreeNuMuRHC1Re     -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; numubar;  1Re } = " << fMCTreeNuMuBarRHC1Re  -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue;      1Re } = " << fMCTreeNuERHC1Re      -> GetEntries()  << endl;
        cout << "RHC: Exp/SKMC >> " << "Nev {MC; nuebar;   1Re } = " << fMCTreeNuEBarRHC1Re   -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Re } = " << fMCTreeOscNuEBarRHC1Re   -> GetEntries()  << endl;
+       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Re } = " << fMCTreeOscNuERHC1Re   -> GetEntries()  << endl;
      }
      ////
 
@@ -527,9 +527,12 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtOri, "nevents");
-  //this->NevDebug(kSKMCtNom, "mcnorm");
+  this->NevDebug(kSKMCtNom, "mcnorm");
 #endif
 
+#ifdef __save_templates_debug__
+    this->NevDebug(kSKMCtNom, "mcnorm_fluxtuned");
+#endif
 
   this->CalculateMCStatError();
 #ifdef __save_templates_debug_mcstat__
@@ -543,9 +546,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // apply flux tuning (based on external data) to templates
   //this->ApplyFluxExtTuningToTemplates();
 
-#ifdef __save_templates_debug__
-  this->NevDebug(kSKMCtNom, "mcnorm_fluxtuned");
-#endif
+
 
   // apply flux and cross-section tuning (based on nd280 data fit by BANFF) to templates
   this->ApplyBANFFTuningToTemplates();
@@ -675,7 +676,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      exit(1);
   }
 
-  double pot_wght = this->AnalyzedSamplePOT(s) / mcpot;    
+  double pot_wght = this->AnalyzedSamplePOT(s) / mcpot;
 
 #ifdef POTWEIGHTSAREONE
   pot_wght = 1;
@@ -720,8 +721,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 
      double ereco_fill = fBrEreco/1000.;
 
-     if(util::IsRHCSample(s))
-       fBrWght = fNuFlux->SuperkFluxExtTuningWght(s,m,fBrEtrue);
+     //if(util::IsRHCSample(s))
+     fBrWght = fNuFlux->SuperkFluxExtTuningWght(s,m,fBrEtrue);
      
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
      ereco_fill = TMath::Min(29.9, ereco_fill);
@@ -809,7 +810,13 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 
       int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
       int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);      
-      
+      /*
+        cout <<
+        "\nEmin: " << util::VariableMCEtrueBinEdges(s,m)[itv-1] <<
+        " Emax: " << util::VariableMCEtrueBinEdges(s,m)[itv] <<
+        "\nEtruemin Bin number: " << 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin) <<
+        " Etruemax Bin number: " << 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax) << endl;
+        */
       // loop over variable Ereco
       for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
 	int nev = (int)fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv);
@@ -821,6 +828,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       
 	// Fill nonempty bin numbers.
 	if (nev < conv::kASmallNum) {
+        //cout << irv << "exit" << endl;
 	  continue;
 	}
 	
@@ -831,7 +839,16 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 
 	int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
 	int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
-
+/*
+          cout <<
+          "\n" <<
+          irv <<
+          "\nErmin: " << util::XsecErecoBinEdges(s,irv-1) <<
+          " Ermax: " << util::XsecErecoBinEdges(s,irv) <<
+          "\nErecomin Bin number: " << 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin) <<
+          " Erecomax Bin number: " << 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax) << endl;
+          
+  */
 	int i_ne_fixed = 0;
 	// loop over fixed Etrue to count n nonempty
 	for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
@@ -860,6 +877,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 	    i_ne_fixed++;
 	  }//ir
 	}//it
+          
+          
 	i_ne_var++;
       }//irv
     }//itv
@@ -894,6 +913,9 @@ void SuperkMC::FillSpecialTemplates(void)
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
     int sidx = arr_index->SuperkSampleIdx(s);
+      
+      EFluxType fNom = (IsRHCSample(s)) ? kRHCFlxNominal : kFlxNominal ;
+      EFluxType fExt = (IsRHCSample(s)) ? kRHCFlxExtTuning : kFlxExtTuning ;
     
     //
     // Add MEC template, if included in the list of modes
@@ -1062,10 +1084,10 @@ void SuperkMC::FillSpecialTemplates(void)
 	// calc weight for weighting numu flux to nue flux
 	// (note: we have used `nominal' with different meaning in the flux and in the template enumerations.
 	// perhaps we should rename kFlxNominal -> kFlxOriginal, for consistency).
-	double flux_nue_ori  = fNuFlux->SuperkFlux (kPdgNuE,  Etrue, kFlxNominal   );
-	double flux_nue_nom  = fNuFlux->SuperkFlux (kPdgNuE,  Etrue, kFlxExtTuning ); 
-	double flux_numu_ori = fNuFlux->SuperkFlux (kPdgNuMu, Etrue, kFlxNominal   );
-	double flux_numu_nom = fNuFlux->SuperkFlux (kPdgNuMu, Etrue, kFlxExtTuning ); 
+	double flux_nue_ori  = fNuFlux->SuperkFlux (s, kPdgNuE,  Etrue, fNom   );
+	double flux_nue_nom  = fNuFlux->SuperkFlux (s, kPdgNuE,  Etrue, fExt );
+	double flux_numu_ori = fNuFlux->SuperkFlux (s, kPdgNuMu, Etrue, fNom   );
+	double flux_numu_nom = fNuFlux->SuperkFlux (s, kPdgNuMu, Etrue, fExt ); 
 	double wght_numu2nue_ori = (flux_numu_ori != 0) ? flux_nue_ori / flux_numu_ori : 0;
 	double wght_numu2nue_nom = (flux_numu_nom != 0) ? flux_nue_nom / flux_numu_nom : 0;
 	// loop over Ereco
@@ -1233,11 +1255,11 @@ void SuperkMC::FillSpecialTemplates(void)
 	double Etrue = src_ori->GetYaxis()->GetBinCenter(it);
 	// calc weight for weighting numu flux to nue flux
 	// (note: we have used `nominal' with different meaning in the flux and in the template enumerations.
-	// perhaps we should rename kFlxNominal -> kFlxOriginal, for consistency).
-	double flux_nue_ori  = fNuFlux->SuperkFlux (kPdgNuEBar,  Etrue, kFlxNominal   );
-	double flux_nue_nom  = fNuFlux->SuperkFlux (kPdgNuEBar,  Etrue, kFlxExtTuning ); 
-	double flux_numu_ori = fNuFlux->SuperkFlux (kPdgNuMuBar, Etrue, kFlxNominal   );
-	double flux_numu_nom = fNuFlux->SuperkFlux (kPdgNuMuBar, Etrue, kFlxExtTuning ); 
+	// perhaps we should rename fNom -> kFlxOriginal, for consistency).
+	double flux_nue_ori  = fNuFlux->SuperkFlux (s, kPdgNuEBar,  Etrue, fNom   );
+	double flux_nue_nom  = fNuFlux->SuperkFlux (s, kPdgNuEBar,  Etrue, fExt ); 
+	double flux_numu_ori = fNuFlux->SuperkFlux (s, kPdgNuMuBar, Etrue, fNom   );
+	double flux_numu_nom = fNuFlux->SuperkFlux (s, kPdgNuMuBar, Etrue, fExt ); 
 	double wght_numu2nue_ori = (flux_numu_ori != 0) ? flux_nue_ori / flux_numu_ori : 0;
 	double wght_numu2nue_nom = (flux_numu_nom != 0) ? flux_nue_nom / flux_numu_nom : 0;
 	// loop over Ereco
@@ -1400,10 +1422,10 @@ void SuperkMC::FillSpecialTemplates(void)
 	// calc weight for weighting numu flux to nue flux
 	// (note: we have used `nominal' with different meaning in the flux and in the template enumerations.
 	// perhaps we should rename kFlxNominal -> kFlxOriginal, for consistency).
-	double flux_nue_ori  = fNuFlux->SuperkFlux (kPdgNuEBar,  Etrue, kFlxNominal   );
-	double flux_nue_nom  = fNuFlux->SuperkFlux (kPdgNuEBar,  Etrue, kFlxExtTuning ); 
-	double flux_numu_ori = fNuFlux->SuperkFlux (kPdgNuMuBar, Etrue, kFlxNominal   );
-	double flux_numu_nom = fNuFlux->SuperkFlux (kPdgNuMuBar, Etrue, kFlxExtTuning ); 
+	double flux_nue_ori  = fNuFlux->SuperkFlux (s, kPdgNuEBar,  Etrue, fNom   );
+	double flux_nue_nom  = fNuFlux->SuperkFlux (s, kPdgNuEBar,  Etrue, fExt ); 
+	double flux_numu_ori = fNuFlux->SuperkFlux (s, kPdgNuMuBar, Etrue, fNom   );
+	double flux_numu_nom = fNuFlux->SuperkFlux (s, kPdgNuMuBar, Etrue, fExt ); 
 	double wght_nue2numu_ori = (flux_nue_ori != 0) ? flux_numu_ori / flux_nue_ori : 0;
 	double wght_nue2numu_nom = (flux_nue_nom != 0) ? flux_numu_nom / flux_nue_nom : 0;
 	// loop over Ereco
@@ -2219,6 +2241,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	}//ifb
       }//ivb
     }//im
+      
   }//is
 
 #ifdef __save_templates_debug__
@@ -2536,7 +2559,7 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
 #endif //__RHC_RUNNING__
     
 #ifdef __save_templates_debug__
-  this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_multi_mecrenorm");
+  //this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_multi_mecrenorm");
 #endif
  ////
   
@@ -2743,8 +2766,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
   //
   // 3-flavour oscillations
   //
-  if(hyp == kHypOsc3F) 
-  {
+  if(hyp == kHypOsc3F)
+    {
     // set oscillation parameters to the oscillation probability calculation code
     double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
     double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
@@ -2824,8 +2847,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
        double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
 
 	// skip unnecessary calculations
-	bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
-	if(!bin_is_not_empty) continue;
+	//bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
+	//if(!bin_is_not_empty) continue;
 	
 	double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
 	double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
@@ -2878,7 +2901,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 #ifdef PHYSHYPWEIGHTSAREONE
 	    posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-	    if(util::IsOscNuE(m)) posc = 0;
+	    if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
 #endif
 #endif
 	    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
@@ -3419,7 +3442,7 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBarRHC1Rmu;
      if ( util::IsNuE(m)       ) return fMCTreeNuERHC1Rmu;
      if ( util::IsNuEBar(m)    ) return fMCTreeNuEBarRHC1Rmu;
-     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuEBarRHC1Rmu;
+     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuERHC1Rmu;
   }//1Rmu
   if (s==kSKsRHCFCFV1RingELike)
   {
@@ -3427,7 +3450,7 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBarRHC1Re;
      if ( util::IsNuE(m)       ) return fMCTreeNuERHC1Re;
      if ( util::IsNuEBar(m)    ) return fMCTreeNuEBarRHC1Re;
-     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuEBarRHC1Re;
+     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuERHC1Re;
   }//1Re
   ////
 
@@ -3454,7 +3477,7 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuMuBar(m)   ) return fMCPOTRHCNuMuBar;
      if ( util::IsNuE(m)       ) return fMCPOTRHCNuE;
      if ( util::IsNuEBar(m)    ) return fMCPOTRHCNuEBar;
-     if ( util::IsOscNuE(m)    ) return fMCPOTRHCOscNuEBar;
+     if ( util::IsOscNuE(m)    ) return fMCPOTRHCOscNuE;
   }
   ////
   
@@ -3693,11 +3716,13 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
 // ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
 
   bool mode_is_nuesig = util::IsOscNuE(m);
+  bool mode_is_nuebarsig = util::IsOscNuEBar(m);
+
 
   PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
   bool hyp_is_not_3flavour_osc = (hyp != kHypOsc3F);
 
-  bool skip = (mode_is_nuesig && hyp_is_not_3flavour_osc);
+  bool skip = ((mode_is_nuesig || mode_is_nuebarsig) && hyp_is_not_3flavour_osc );
 
 #ifdef __show_skipped_templates__
   if(skip) {
@@ -3710,9 +3735,7 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
 //________________________________________________________________________________________
 void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
 {
-  TFile out(Form("Template_%s.root", name.c_str()),"RECREATE");
-  static const int erecobins = kNErecoBins1Rmu;//70;
-  static const double * erecobinedges = kErecoBinEdges1Rmu;
+
   /*static const double erecobinedges[erecobins+1] = {
       0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
       0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
@@ -3724,12 +3747,18 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       30.000
       };*/
   for(int is = 0; is < kns; is++) {
+      
     SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsUndefined) continue;
-    if(s == kSKsFCFV1RingELike) continue;
-
-    //if(s == kSKsRHCFCFV1RingMuLike) continue;    // ANTINU
-    if(s == kSKsRHCFCFV1RingELike) continue;     // ANTINU
+      
+      TFile* oute = new TFile(Form("Template_%s%s.root", name.c_str(),util::AsStringCompact(s).c_str()),"RECREATE");
+      static const int erecobins = util::NumErecoBins(s);//70;
+      static const double * erecobinedges = util::ErecoBinEdges(s);
+    
+      if(s == kSKsUndefined) continue;
+    //if(s == kSKsFCFV1RingELike) continue;
+   // if(s == kSKsFCFV1RingMuLike) continue;
+   // if(s == kSKsRHCFCFV1RingMuLike) continue;    // ANTINU
+   // if(s == kSKsRHCFCFV1RingELike) continue;     // ANTINU
 
     double nsk = 0;
     for(int im = 0; im < knm; im++) {
@@ -3777,7 +3806,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       delete hrecf;
 
       //fill a 1D etrue spectrum
-      TH1D * htru = new TH1D(Form("enu_int_%s",AsStringCompact_KDI(m).c_str()), Form("enu_int_%s",AsStringCompact_KDI(m).c_str()), util::NumVariableXsEtrueBins(s,m), util::VariableXsEtrueBinEdges(s,m));
+      TH1D * htru = new TH1D(Form("enu_int_%s",AsStringCompact_KDI(m).c_str()), Form("enu_int_%s",AsStringCompact_KDI(m).c_str()), util::NumVariableMCEtrueBins(s,m), util::VariableMCEtrueBinEdges(s,m));
       // loop over Etrue
       for(int it = 1; it <= htru->GetNbinsX(); it++) {
 	//find low and high of etrue for current bin
@@ -3797,10 +3826,12 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
     //get the total ereco spectrum
     TH1D * hfull = this->CurrErecoSpectrum(s);
     hfull->Write("ereco_spectrum");
-
+ //      delete hfull;
     //    cout << "Total: " << nsk << endl << endl;
+      oute->Close();
+      delete oute;
   }//sample
-  out.Close();
+ 
 }
 //________________________________________________________________________________________
 void SuperkMC::MCStatErrDebug()

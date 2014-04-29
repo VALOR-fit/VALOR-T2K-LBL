@@ -687,27 +687,39 @@ void NuFlux::TellMeAboutTheRHCBANFFfit(BANFF * banff)
   fBANFF = banff;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
+double NuFlux::SuperkFlux(conv::SuperkSample_t s, int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
 {
-  // update current flux (if not already) as a result of the latest BANFF param twk
-  if( flxtype == conv::kFlxCurrent && !fBANFF->IsFluxWghtUpdated() ) {
-    this->ApplyBANFFWeights(true);
-    fBANFF->MarkFluxWghtUpdated();
-  }
-
-  TH1D * flux_spectrum = this->SuperkFluxSpectrum(nu_pdg,flxtype);
-  if(!flux_spectrum) {
-    cerr << "Exp/Flux >> No " << util::AsString(flxtype)
-         << " flux spectrum for neutrino PDG = " << nu_pdg
-         << endl;
-  }
-  assert(flux_spectrum);
-  int bin = flux_spectrum->FindBin(Etrue);
-  double flux = flux_spectrum->GetBinContent(bin);
-  return flux;
+  
+    if(IsRHCSample(s))
+    {
+        return this->RHCSuperkFlux(nu_pdg, Etrue, flxtype);
+    }
+    else
+        return this->SuperkFlux(nu_pdg, Etrue, flxtype);
 }
 //________________________________________________________________________________________
-double NuFlux::RHCSuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
+double NuFlux::SuperkFlux(int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
+{
+    // update current flux (if not already) as a result of the latest BANFF param twk
+    if( flxtype == conv::kFlxCurrent && !fBANFF->IsFluxWghtUpdated() ) {
+        this->ApplyBANFFWeights(true);
+        fBANFF->MarkFluxWghtUpdated();
+    }
+    
+    TH1D * flux_spectrum = this->SuperkFluxSpectrum(nu_pdg,flxtype);
+    if(!flux_spectrum) {
+        cerr << "Exp/Flux >> No " << util::AsString(flxtype)
+        << " flux spectrum for neutrino PDG = " << nu_pdg
+        << endl;
+    }
+    assert(flux_spectrum);
+    int bin = flux_spectrum->FindBin(Etrue);
+    double flux = flux_spectrum->GetBinContent(bin);
+    return flux;
+}
+//________________________________________________________________________________________
+
+double NuFlux::RHCSuperkFlux( int nu_pdg, double Etrue, conv::FluxType_t flxtype) const
 {
   // update current flux (if not already) as a result of the latest BANFF param twk
   if( flxtype == conv::kRHCFlxCurrent && !fBANFF->IsFluxWghtUpdatedRHC() ) {

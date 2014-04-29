@@ -53,6 +53,7 @@ public:
   double SuperkFluxSystWght       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
 
   // SK flux (current, tuned/fin, tuned/ext, nominal - depending on input flux type)
+  double SuperkFlux (conv::SuperkSample_t s,int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;
   double SuperkFlux (int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;
   double RHCSuperkFlux (int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;
 

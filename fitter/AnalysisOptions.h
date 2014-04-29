@@ -74,17 +74,17 @@ Split t2kana::conv namespace into several smaller files
 #endif 
 
 #ifndef ETRUE_BINS_1RMU
-//#define ETRUE_BINS_1RMU 1 // 50 MeV binning 0-30 GeV (600 bins)
-#define ETRUE_BINS_1RMU 2 // DEFAULT 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
+#define ETRUE_BINS_1RMU 1 // 50 MeV binning 0-30 GeV (600 bins)
+//#define ETRUE_BINS_1RMU 2 // DEFAULT 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
 //#define ETRUE_BINS_1RMU 3 // same binning as BANFF numu flux binning (11 bins)
 //#define ETRUE_BINS_1RMU 4 // 1 bin
 #endif
 
 #ifndef ETRUE_BINS_1RE
 //#define ETRUE_BINS_1RE 1 // 50 MeV binning 0-3 GeV , 1GeV/bin 3-4 GeV,  10-30 GeV (69 bins)
-//#define ETRUE_BINS_1RE 3 //  5 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV (780 bins)
+#define ETRUE_BINS_1RE 3 //  5 MeV binning 0-1 GeV, 50 MeV binning 1-30 GeV (780 bins)
 //#define ETRUE_BINS_1RE 4 //  SPECIAL BINNING for testing -> 11 bins (numu) flux binning in BANFF
-#define ETRUE_BINS_1RE 2 // DEFAULT same as disap. 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
+//#define ETRUE_BINS_1RE 2 // DEFAULT same as disap. 50 MeV 0-0.3 GeV, 25 MeV 0.3-1 GeV, 50 MeV 1-3 GeV, 100 MeV 3-3.5 GeV, 3.5-4 GeV, 4-5 GeV, 5-7 GeV, 7-10 GeV, 10-30 GeV (84 bins)
 #endif
 
 #ifndef ERECO_XSEC_BINS_1RMU
@@ -105,8 +105,9 @@ Split t2kana::conv namespace into several smaller files
 #endif
 
 #ifndef ERECO_BINS_1RMU
-//#define ERECO_BINS_1RMU 1 // 50 MeV binning 0-30 GeV
-#define ERECO_BINS_1RMU 2 // DEFAULT 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins)
+#define ERECO_BINS_1RMU 1 // 50 MeV binning 0-30 GeV
+//#define ERECO_BINS_1RMU 2 // DEFAULT 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins)
+//#define ERECO_BINS_1RMU 4 //Same as Linda's binning scheme
 //#define ERECO_BINS_1RMU 3 // 41 bins, same as ERECO_XSEC_BINS_1RMU 1
 #endif
 
@@ -114,6 +115,7 @@ Split t2kana::conv namespace into several smaller files
 //#define ERECO_BINS_1RE 1 // DEFAULT 200 MeV bins 0-1 GeV, 1 bin from 1-1.25 GeV (6 bins)
 //#define ERECO_BINS_1RE 2 // 1 bin (0-1.25 GeV)
 #define ERECO_BINS_1RE 3 // 50 MeV bins 0-1.25 GeV (25 bins)
+//#define ERECO_BINS_1RE 4 //Same as Linda's binning scheme
 #endif
 
 #endif

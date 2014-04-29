@@ -489,7 +489,15 @@ double NuXSec::FinTuningWght_1p(
 
   double wght = 1.;
   double tb;
-
+    /*
+    
+cout <<
+    "\nEtrue: " << Etrue <<
+    "Ereco: " << Ereco <<
+    "\np :" << AsString(p) <<
+    "mode: " << AsString(m) << endl;
+    */
+    
   //
   // BANFF param, M_{A} QE
   // BANFF param, M_{A} RES
@@ -1043,18 +1051,18 @@ TSpline3 * NuXSec::FindWghtSpline(
 {
   SuperkMode_t m = mp; // default
   // HACK: for `osc numu' templates, use `numu' response functions
-  if      ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     }
+  if      ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     } //both use the same binning
   else if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmNuMuCC1pi;    }
   else if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmNuMuCCcoh;    }
   else if ( mp == kSKmOscNuMuCCoth    ) { m = kSKmNuMuCCoth;    }
 
-  else if ( mp == kSKmOscNuMuBarCCQE     ) { m = kSKmNuMuBarCCQE;     }
+  else if ( mp == kSKmOscNuMuBarCCQE     ) { m = kSKmNuMuBarCCQE;     }//both use the same binning
   else if ( mp == kSKmOscNuMuBarCC1pi    ) { m = kSKmNuMuBarCC1pi;    }
   else if ( mp == kSKmOscNuMuBarCCcoh    ) { m = kSKmNuMuBarCCcoh;    }
   else if ( mp == kSKmOscNuMuBarCCoth    ) { m = kSKmNuMuBarCCoth;  }
 
-  else if ( mp == kSKmOscNuEBarCCQE     ) { m = kSKmNuEBarCCQE;     }
-  else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }
+  else if ( mp == kSKmOscNuEBarCCQE     ) { m = kSKmNuEBarCCQE;     }//problem if they dont use the same binning?
+  else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }//fewer bins then numubar
   else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
   else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
 

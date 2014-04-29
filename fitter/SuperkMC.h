@@ -95,8 +95,9 @@ public:
 
   // Allow changing the mass hierarchy
   void SetMassHierarchy(t2kana::conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
-  
-  
+    
+    void NevDebug(conv::SKMCTemplateType_t t, string name);
+
 private:
 
   // Init and clean-up
@@ -125,7 +126,7 @@ private:
   bool SkipTemplate(conv::SuperkMode_t m);
 
   // Debug method, prints out some number of events, and also saves templates & spectra
-  void NevDebug(conv::SKMCTemplateType_t t, string name);
+ // void NevDebug(conv::SKMCTemplateType_t t, string name);
   void MCStatErrDebug(void);
 
   // Looks to see if there are any events for the given Etrue in the sample
@@ -228,13 +229,13 @@ private:
   TTree*     fMCTreeNuMuBarRHC1Rmu;           ///< input MC event tree /  sample: numubar                      / cuts: 1-ring mu-like    // ANTINU
   TTree*     fMCTreeNuERHC1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like    // ANTINU
   TTree*     fMCTreeNuEBarRHC1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like    // ANTINU
-  TTree*     fMCTreeOscNuEBarRHC1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like    // ANTINU
+  TTree*     fMCTreeOscNuERHC1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like    // ANTINU
   
   TTree*     fMCTreeNuMuRHC1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like    // ANTINU
   TTree*     fMCTreeNuMuBarRHC1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like    // ANTINU
   TTree*     fMCTreeNuERHC1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like    // ANTINU
   TTree*     fMCTreeNuEBarRHC1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like    // ANTINU
-  TTree*     fMCTreeOscNuEBarRHC1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like    // ANTINU
+  TTree*     fMCTreeOscNuERHC1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like    // ANTINU
  
   TH1D*      fMCPOTHistNuMu;               ///< input MC event sample POT histogram : numu
   TH1D*      fMCPOTHistNuMuBar;            ///< input MC event sample POT histogram : numubar
@@ -252,12 +253,12 @@ private:
   TH1D*      fMCPOTHistRHCNuMuBar;         ///< input MC event sample POT histogram : numubar
   TH1D*      fMCPOTHistRHCNuE;             ///< input MC event sample POT histogram : nue 
   TH1D*      fMCPOTHistRHCNuEBar;          ///< input MC event sample POT histogram : nue
-  TH1D*      fMCPOTHistRHCOscNuEBar;       ///< input MC event sample POT histogram : nuebar (signal)
+  TH1D*      fMCPOTHistRHCOscNuE;       ///< input MC event sample POT histogram : nuebar (signal)
   double     fMCPOTRHCNuMu;                ///< MC event sample POT : numu
   double     fMCPOTRHCNuMuBar;             ///< MC event sample POT : numubar
   double     fMCPOTRHCNuE;                 ///< MC event sample POT : nue 
   double     fMCPOTRHCNuEBar;              ///< MC event sample POT : nue
-  double     fMCPOTRHCOscNuEBar;           ///< MC event sample POT : nuebar (signal)
+  double     fMCPOTRHCOscNuE;           ///< MC event sample POT : nuebar (signal)
   ////
 
   float      fBrEreco;                     ///< branch var for reading input MC mini-DST
