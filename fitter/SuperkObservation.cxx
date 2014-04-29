@@ -191,7 +191,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
            << " " << util::AsString(kSKsRHCFCFV1RingMuLike) << " events." << endl;
       for(int ibin = 1; ibin <= kRHCNErecoBins1Rmu; ibin++) {
         double nobs = h.GetBinContent(ibin);
-        fRHCErDistrArray1Rmu->Array()[ibin-1] = nobs;
+        fRHCErDistrArray1Rmu->GetArray()[ibin-1] = nobs;
       }
     }
     else {
@@ -216,7 +216,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
            << " " << util::AsString(kSKsRHCFCFV1RingELike) << " events." << endl;
       for(int ibin = 1; ibin <= kRHCNErecoBins1Re; ibin++) {
         double nobs = h.GetBinContent(ibin);
-        fRHCErDistrArray1Re->Array()[ibin-1] = nobs;
+        fRHCErDistrArray1Re->GetArray()[ibin-1] = nobs;
       }
     }
 
@@ -268,7 +268,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
         double Ereco = histRHC->GetBinCenter(ix);
         double nev   = histRHC->GetBinContent(ix);
         integral+=nev;
-        fRHCErDistrArray1Rmu->Array()[ix-1] = nev;
+        fRHCErDistrArray1Rmu->GetArray()[ix-1] = nev;
       }
       cout << "Obs >> Read: " << integral
            << " " << util::AsString(kSKsRHCFCFV1RingMuLike) << " events." << endl;
