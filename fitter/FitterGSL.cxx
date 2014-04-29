@@ -195,11 +195,8 @@ bool FitterGSL::DoTheFit(void)
 #endif
   
   fFitInputs->FitParams().CopyCurrToBestFitValues();
-  return true;
-  
   fFitInputs->FitParams().SetFitTime ( fFitTime );
-  fFitInputs->FitParams().SetBestFitStatistic ( fFitInputs->BestFitChisquare());
-  
+  return true;
 
 #endif // GSL
 

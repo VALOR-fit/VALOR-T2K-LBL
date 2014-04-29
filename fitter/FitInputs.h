@@ -1,16 +1,18 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::FitInputs
+\class     t2kana::FitInputs
 
-\brief    Bundles fitter inputs into a single TObject-derived class so that 
-          they can be passed to the minuit fitting function via 
-          TMinuit::Set/GetObjectFit();
+\brief     Bundles fitter inputs into a single TObject-derived class so that 
+           they can be passed to the minuit fitting function via 
+           TMinuit::Set/GetObjectFit();
 
-\author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
-          STFC, Rutherford Appleton Laboratory
+\author    Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+           University of Liverpool & STFC Rutherford Appleton Laboratory
 
-\created  October 20, 2010
+\created   October 20, 2010
+
+\copyright (c) 2010-2014, The VALOR group
 
 */
 //____________________________________________________________________________
@@ -28,12 +30,10 @@
 
 namespace t2kana {
   
-class SuperkObservation;
-class SuperkExpectation;
- 
+class FitDataABC;
+class FitModelABC; 
 class FitInputs;
-  
- //class FitFunctor: public ROOT::Math::IBaseFunctionMultiDim 
+//____________________________________________________________________________  
 class FitFunctor: public ROOT::Math::IMultiGenFunction
 {
 public:
@@ -47,7 +47,7 @@ public:
  private:
   FitInputs * fFitInputs;
 };
-  
+//____________________________________________________________________________
 class FitMethodFunc : public ROOT::Math::FitMethodFunction 
 {
  public:
@@ -69,30 +69,22 @@ class FitMethodFunc : public ROOT::Math::FitMethodFunction
   virtual double DoEval(const double * x) const;
   
 };
-  
+//____________________________________________________________________________
 class FitInputs: public ROOT::Minuit2::FCNBase, public TObject
 {
 public :
-  FitInputs(SuperkObservation * o, SuperkExpectation * e, FitParamList * p, string opt = "poisson", double errdef = 1, bool goodnessoffit = false);
+  FitInputs(FitDataABC * o, FitModelABC * e, FitParamList * p, string opt = "poisson", double errdef = 1, bool goodnessoffit = false);
   ~FitInputs();
   
-  SuperkObservation & Observation(void);
-  SuperkExpectation & Expectation(void);
-  FitParamList &      FitParams  (void);
+  FitDataABC &    Observation (void);
+  FitModelABC &   Expectation (void);
+  FitParamList &  FitParams   (void);
   void UpdateParamList(FitParamList * fpar);
+  
+  double Statistic(Option_t * stat_opt = "likelihood-ratio") const;
 
   // set the chisq definition 5 bins vs 73 bins
   void SetChisqDefinition (bool goodnessoffit) { fGoodnessOfFit = goodnessoffit; }
-  
-  // judge the agreement between the input data and the current prediction
-  double Chisquare (Option_t * opt,      conv::SuperkSample_t s = conv::kSKsUndefined, int point = -1) const;
-  double Chisquare (int        mode = 1, conv::SuperkSample_t s = conv::kSKsUndefined, int point = -1) const; //mode 1 is poisson, mode 2 is gauss
-  
-  // get chisquare for the best fit prediction
-  double BestFitChisquare (Option_t * opt = "poisson");
-  
-  // Set the chisquare type (e.g. poisson) to be used in the fit
-  void SetChisquareFitOption(Option_t * opt) { fOpt = opt; }
   
   // Minuit2: Minimum chi2 fit (delta chi2 = 1 for 1 sigma error)
   double Up          (void) const    { return fErrDef;   }
@@ -109,25 +101,33 @@ public :
   
   int GetNDim(void) const {return fNDim;}
   int GetNPoints (void) const {return fNPoints;}
+  
+  
+  // Old interface
+  double BestFitChisquare(void) const { return fFitParams->GetBestFitStatistic(); }
+  // Set the chisquare type (e.g. poisson) to be used in the fit
+  void SetChisquareFitOption(Option_t * opt) { fOpt = opt; }
 
   double ChisquarePenaltyTerm(void) const;
+  // judge the agreement between the input data and the current prediction
+  double Chisquare (Option_t * opt,      conv::SuperkSample_t s = conv::kSKsUndefined, int point = -1) const;
+  double Chisquare (int        mode = 1, conv::SuperkSample_t s = conv::kSKsUndefined, int point = -1) const; //mode 1 is poisson, mode 2 is gauss
 
 private:
   
-  SuperkObservation *         fObs;
-  mutable SuperkExpectation * fExp;
-  mutable FitParamList *      fFitParams;
-  string              fOpt;
-  int                 fMode;
-  double              fErrDef;
-  bool                fAllBANFFFit;
-  bool                fAll1ReEff;
-  bool                fGoodnessOfFit;
-  int                 fNPoints;
-  int                 fNDim;
+  FitDataABC *            fObs;
+  mutable FitModelABC *   fExp;
+  mutable FitParamList *  fFitParams;
+  string                  fOpt;
+  int                     fMode;
+  double                  fErrDef;
+  bool                    fAllBANFFFit;
+  bool                    fAll1ReEff;
+  bool                    fGoodnessOfFit;
+  int                     fNPoints;
+  int                     fNDim;
   
-  ClassDef(FitInputs, 4)
-    
+  ClassDef(FitInputs, 5)    
 };
   
 //

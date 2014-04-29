@@ -1,18 +1,9 @@
 //________________________________________________________________________________________
 /*
 
- >> ChangeLog:
+Copyright (c) 2010-2014, The VALOR group. All rights reserved.
 
- For changes up to version 2010_v3.0.0 (last implementation of the 2010-era analysis) 
- see code in the corresponding SVN branch.
- 
- Changes since 2011_v0.9.0:
-
- @ 18/2/13 LE
- Added back Fogli and Lisi schema in the penalty term.
-
- 30-12-2013 Nick
- Added samples for reverse horn current running
+ChangeLog:
 
 */
 //________________________________________________________________________________________
@@ -52,7 +43,7 @@ ClassImp(FitInputs)
 
 //________________________________________________________________________________________
 FitInputs::FitInputs(
-	  SuperkObservation * skobs, SuperkExpectation * skexp, FitParamList * fpar, string opt, double errdef, bool goodnessoffit) :
+	  FitDataABC * skobs, FitModelABC * skexp, FitParamList * fpar, string opt, double errdef, bool goodnessoffit) :
 fObs(skobs), 
 fExp(skexp), 
 fFitParams(fpar),
@@ -90,12 +81,12 @@ void FitInputs::UpdateParamList(FitParamList * fpar)
   fFitParams = fpar;
 }
 //________________________________________________________________________________________
-SuperkObservation & FitInputs::Observation(void) 
+FitDataABC & FitInputs::Observation(void) 
 { 
   return *fObs;       
 }
 //________________________________________________________________________________________
-SuperkExpectation & FitInputs::Expectation(void) 
+FitModelABC & FitInputs::Expectation(void) 
 { 
   return *fExp;       
 }
@@ -105,6 +96,17 @@ FitParamList & FitInputs::FitParams(void)
   return *fFitParams; 
 }
 //________________________________________________________________________________________
+double FitInputs::Statistic(Option_t * option) const
+{
+  if (option || fGoodnessOfFit) {
+    const char * s = fGoodnessOfFit ? "%s gof" : "%s";
+    Option_t * newopt( Form(s,option) );
+    return fObs->Statistic(fExp,*fFitParams, newopt);
+  }
+  return fObs->Statistic(fExp,*fFitParams, NULL);
+}
+//________________________________________________________________________________________
+// DEPRECATED
 double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int point) const
 {
   TString opt = option;
@@ -115,6 +117,7 @@ double FitInputs::Chisquare(Option_t * option, conv::SuperkSample_t s0, int poin
   return Chisquare(0,s0,point);
 }
 //________________________________________________________________________________________
+// DEPRECATED
 double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
 // If input is s0 = kSKsUndefined then go ahead and calculate a chisq which is the sum of 
 // chisq for all SK samples included in the analysis.
@@ -127,6 +130,9 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
   double chisq = 0; // total chisq to be returned
 
   //TString opt = option;
+  
+  SuperkObservation * skobs = dynamic_cast<SuperkObservation*>(fObs);
+  SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(fExp);
 
   // Get the oscillation analysis type for chisquare computation
   OscAnaType_t oscana = Opt::Instance()->gOscAnaTypeChoice;
@@ -157,7 +163,7 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
 
       int n_ereco_bins = kNErecoBins[is];
 
-      applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit, fAll1ReEff) || applied_negevents_condition;
+      applied_negevents_condition = skexp->Generate(*fFitParams, fAllBANFFFit, fAll1ReEff) || applied_negevents_condition;
       if(!fGoodnessOfFit) {
 #ifdef __show_bin_contributions_to_chisq__
 	cout << "FitInputs::Chisquare()> nbins = " << nbins << endl;
@@ -165,8 +171,8 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
 	//loop over Ereco bins
 	for(int ibin = 1; ibin <= n_ereco_bins; ibin++) {
 	  if((point!=-1) && (point != ibin)) continue;
-	  double nobs = fObs->ErecoSpectrumArray             (s)[ibin-1];
-	  double nexp = fExp->CurrPredictedErecoSpectrumArray(s)[ibin-1];
+	  double nobs = skobs->ErecoSpectrumArray             (s)[ibin-1];
+	  double nexp = skexp->CurrPredictedErecoSpectrumArray(s)[ibin-1];
 	  
 	  double delta_chisq = 0.;
 	  //if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
@@ -202,8 +208,8 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
 	    int ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedges[ibin]);
 	    double nobs = 0, nexp = 0;
 	    for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
-	      nobs += fObs->ErecoSpectrumArray             (s)[ir-1];
-	      nexp += fExp->CurrPredictedErecoSpectrumArray(s)[ir-1];
+	      nobs += skobs->ErecoSpectrumArray             (s)[ir-1];
+	      nexp += skexp->CurrPredictedErecoSpectrumArray(s)[ir-1];
 	    }
 	    double delta_chisq = 0.;
 	    //if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
@@ -229,10 +235,10 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
       else 
       if ((s == conv::kSKsFCFV1RingELike) && (oscana != conv::kAnaNuMuDisappOnly) )
       {
-	    applied_negevents_condition = fExp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
+	    applied_negevents_condition = skexp->Generate(*fFitParams, fAllBANFFFit) || applied_negevents_condition;
 	    // Note: Counting experiment for the time-being
-	    double nobs = fObs->ErecoSpectrum(s)->Integral();
-	    double nexp = fExp->CurrPredictedErecoSpectrum(s)->Integral();
+	    double nobs = skobs->ErecoSpectrum(s)->Integral();
+	    double nexp = skexp->CurrPredictedErecoSpectrum(s)->Integral();
 	    
 	    double delta_chisq = 0.;
 	    //if      (opt.Contains("poisson")) { delta_chisq = util::ChisqPoisson(nobs,nexp); }
@@ -267,9 +273,11 @@ double FitInputs::Chisquare(int mode, conv::SuperkSample_t s0, int point) const
   
   return chisq; 
 }
-//____________________________________________________________________________ 
+//____________________________________________________________________________
+// DEPRECATED
 double FitInputs::ChisquarePenaltyTerm(void) const
 {
+  SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(fExp);
 // Add penalty term for nuisance parameters
 
   double chisq_penalty = 0;
@@ -536,7 +544,7 @@ double FitInputs::ChisquarePenaltyTerm(void) const
     return chisq_penalty;
 
   if(hk_hack) {
-    double dchisq_penalty_xsec = fExp->GetNuXSec()->ChisqPenalty(all_syst,true);
+    double dchisq_penalty_xsec = skexp->GetNuXSec()->ChisqPenalty(all_syst,true);
     chisq_penalty += dchisq_penalty_xsec;
 #ifdef __show_contributions_to_penalty_term__
     cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by NuXSec"
@@ -549,9 +557,9 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   // Add penalty term for BANFF params 
   //
 #ifdef __include_all_systematics_in_banff_penalty_term__
-  double dchisq_penalty_banff = fExp->GetBANFF()->ChisqPenalty();
+  double dchisq_penalty_banff = skexp->GetBANFF()->ChisqPenalty();
 #else
-  double dchisq_penalty_banff = fExp->GetBANFF()->ChisqPenalty(all_syst);
+  double dchisq_penalty_banff = skexp->GetBANFF()->ChisqPenalty(all_syst);
 #endif
   chisq_penalty += dchisq_penalty_banff;
 #ifdef __show_contributions_to_penalty_term__
@@ -562,7 +570,7 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   //
   // Add penalty term for NuXSec params (other than the ones incl. in BANFF)
   //
-  double dchisq_penalty_xsec = fExp->GetNuXSec()->ChisqPenalty(all_syst);
+  double dchisq_penalty_xsec = skexp->GetNuXSec()->ChisqPenalty(all_syst);
   chisq_penalty += dchisq_penalty_xsec;
 #ifdef __show_contributions_to_penalty_term__
   cout << "FitInputs::ChisquarePenaltyTerm >> Current variation of params considered by NuXSec"
@@ -572,7 +580,7 @@ double FitInputs::ChisquarePenaltyTerm(void) const
     
   //
   // Add penalty term for SuperkDetector + FSI params
-  double dchisq_penalty_skdetfsi = fExp->GetSuperkDetectorFSI()->ChisqPenalty();
+  double dchisq_penalty_skdetfsi = skexp->GetSuperkDetectorFSI()->ChisqPenalty();
   chisq_penalty += dchisq_penalty_skdetfsi;
 #ifdef __show_contributions_to_penalty_term__
   cout << "FitInputs::ChisquarePenaltyTerm >> Current SK+FSI param variation"
@@ -582,23 +590,20 @@ double FitInputs::ChisquarePenaltyTerm(void) const
   return chisq_penalty;
 }
 //____________________________________________________________________________ 
-double FitInputs::BestFitChisquare(Option_t * opt)
-{
-  fFitParams->CopyBestFitToCurrValues();
-  return Chisquare(opt);
-}
-//____________________________________________________________________________ 
 // MINUIT fit functions 
 // 
 //____________________________________________________________________________ 
 double FitInputs::operator() (const std::vector<double>& x) const
 {
 // To be used with Minuit2
-
- fFitParams->Sync(x);
-
- //return  this->Chisquare(fOpt.c_str());
- return  this->Chisquare(fMode);
+  
+  fFitParams->Sync(x);
+  
+  Option_t * opt = NULL; // should add mode support
+  
+  // judge the agreement between the data and the current prediction
+  double f = this->Statistic(opt);
+  return f;
 }
 //____________________________________________________________________________ 
 void t2kana::FitFunc (
@@ -614,19 +619,8 @@ void t2kana::FitFunc (
   // synchronize FitParamList with the paramerer array used by MINUIT
   fpar.Sync(par);
 
-  // judge the agreement between the data and the current prediction
-  f = inputs->Chisquare("poisson"); 
-      
-//      TString smpl = fpar.GetTheSample();
-//      // judge the agreement between the data and the current prediction
-//      if(smpl.Contains("numu")) {
-//            f = inputs->Chisquare("poisson",conv::kSKsFCFV1RingMuLike); 
-//      }else if(smpl.Contains("nue")){
-//            f = inputs->Chisquare("poisson",conv::kSKsFCFV1RingELike); 
-//      }else{
-//            f = inputs->Chisquare("poisson"); 
-//      }
-
+  f = inputs->Statistic(NULL);
+  fpar.SetCurrStatistic(f);
 }
 //____________________________________________________________________________
 FitFunctor::FitFunctor(FitInputs * inputs) 
@@ -644,7 +638,7 @@ double FitFunctor::operator() (const double * x) const
 double FitFunctor::DoEval(const double * x) const 
 {
   fFitInputs->FitParams().Sync(x);
-  return fFitInputs->Chisquare("poisson");
+  return fFitInputs->Statistic(NULL);
 }
 ROOT::Math::IBaseFunctionMultiDim * FitFunctor::Clone(void) const 
 {
@@ -666,7 +660,7 @@ double FitMethodFunc::operator() (const double * x) const
 double FitMethodFunc::DoEval(const double * x) const 
 {
   fFitInputs->FitParams().Sync(x);
-  return fFitInputs->Chisquare("poisson");
+  return fFitInputs->Statistic(NULL);
 }
 ROOT::Math::BasicFitMethodFunction<ROOT::Math::IBaseFunctionMultiDim>::Type_t FitMethodFunc::Type(void) const
 {
@@ -691,4 +685,5 @@ double  FitMethodFunc::DataElement(const double *par, unsigned int ipoint, doubl
   //  cout << "DataElement: chisqbin = " << chisqbin << " for point = " << ipoint << endl;
   return chisqbin;
 }
+//____________________________________________________________________________
 

@@ -249,7 +249,7 @@ bool FitterMinuit::DoTheFit(void)
     //first check if there is a floating systematic in the fit (only need to look at one, since we're only ever fitting either 0 or all systematics)
     if(fFitInputs->FitParams().Exists(conv::kNuisXSecNormNuEToNuMu) && !fFitInputs->FitParams().IsFixed(conv::kNuisXSecNormNuEToNuMu)) {
       //tweak everything
-      fFitInputs->Expectation().TweakAllSystematics();
+      fFitInputs->Expectation().RandomizeSystematics();
       //get the tweaks
       PhysParamList tweaks = fFitInputs->Expectation().Tweaks();
       //initialise the FitParamList with these random tweaks
@@ -282,7 +282,7 @@ bool FitterMinuit::DoTheFit(void)
 
   fFitInputs->FitParams().SetFitTime (fFitTime);
   fFitInputs->FitParams().SetFitTries(fFitTries);
-  fFitInputs->FitParams().SetBestFitStatistic(fFitInputs->BestFitChisquare());
+  fFitInputs->FitParams().CopyBestFitToCurrValues();
 
   fFitInputs->FitParams().SetStatusCode("migrad_min", fMigradMinStatusCode);
   fFitInputs->FitParams().SetStatusCode("migrad_err", fMigradErrStatusCode);

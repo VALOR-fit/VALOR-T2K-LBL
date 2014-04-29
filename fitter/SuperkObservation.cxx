@@ -394,7 +394,18 @@ const double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_
 bool SuperkObservation::Generate(
      FitModelABC * model, bool fluctuate)
 {
-  assert(!"Not yet implemented");
+  SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
+  assert(skexp);
+  
+  for (int is = 0 ; is < conv::kns ; is++ ) {
+    SuperkSample_t s = kSKSamples[is];
+    if (s==kSKsUndefined) continue;
+    for(int ibin = 0; ibin < util::NumErecoBins(s); ibin++) {
+       double nexp  = skexp->CurrPredictedErecoSpectrumArray(s)[ibin];
+       double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
+       this->ErecoSpectrumArray(s)[ibin] = nobs;
+    }
+  }
   return false;
 }
 //________________________________________________________________________________________
@@ -413,16 +424,7 @@ bool SuperkObservation::Generate(
   
   bool applied_negevents_condition = skexp->Generate(fp); //generate prediction
   
-  for (int is = 0 ; is < conv::kns ; is++ ) {
-    SuperkSample_t s = kSKSamples[is];
-    if (s==kSKsUndefined) continue;
-    for(int ibin = 0; ibin < util::NumErecoBins(s); ibin++) {
-       double nexp  = skexp->CurrPredictedErecoSpectrumArray(s)[ibin];
-       double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
-       this->ErecoSpectrumArray(s)[ibin] = nobs;
-    }
-  }
-  
+  applied_negevents_condition = this->Generate(model,fluctuate) || applied_negevents_condition;
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
@@ -439,16 +441,7 @@ bool SuperkObservation::Generate(
   assert(skexp);
 
   bool applied_negevents_condition = skexp->Generate(ph); //generate prediction
-  
-  for (int is = 0 ; is < conv::kns ; is++ ) {
-    SuperkSample_t s = kSKSamples[is];
-    if (s==kSKsUndefined) continue;
-    for(int ibin = 0; ibin < util::NumErecoBins(s); ibin++) {
-       double nexp  = skexp->CurrPredictedErecoSpectrumArray(s)[ibin];
-       double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
-       this->ErecoSpectrumArray(s)[ibin] = nobs;
-    }
-  }
+  applied_negevents_condition = this->Generate(model,fluctuate) || applied_negevents_condition;
 
   return applied_negevents_condition;
 }
@@ -498,7 +491,7 @@ bool SuperkObservation::Write(
 //________________________________________________________________________________________
 double SuperkObservation::Statistic (FitModelABC * model, const FitParamList & fp,   Option_t * stat_opt)
 {
-  model->Generate(fp);
+  bool applied_negevents_condition = model->Generate(fp);
   double total_chisq = this->Statistic(model,stat_opt);
   double phys_penalty = fp.HypothesisFitStatisticPenalty(stat_opt);
   
@@ -509,7 +502,7 @@ double SuperkObservation::Statistic (FitModelABC * model, const FitParamList & f
 //________________________________________________________________________________________
 double SuperkObservation::Statistic (FitModelABC * model, const PhysHypothesis & ph, Option_t * stat_opt)
 {
-  model->Generate(ph);
+  bool applied_negevents_condition = model->Generate(ph);
   double total_chisq = this->Statistic(model,stat_opt);
   
   return total_chisq;
@@ -525,7 +518,7 @@ double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
   if (stat_opt) {
     string stopt(stat_opt);
     if (stopt.find("gauss") != string::npos) gauss = true;
-    if (stopt.find("gof")   != string::npos) gof     = true;
+    if (stopt.find("gof")   != string::npos) gof   = true;
   }
   
   double total_chisq = 0;
@@ -574,7 +567,7 @@ double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
         int ErecoMaxBin = TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedges[ibin+1]);
         nobs = 0;
         nexp = 0;
-        for(int ir = ErecoMinBin; ir < ErecoMaxBin; ir++) {
+        for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
           nobs += obs_arr[ir];
           nexp += exp_arr[ir];
         }
