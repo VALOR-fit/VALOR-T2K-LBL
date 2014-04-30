@@ -43,6 +43,7 @@ ChangeLog:
 //~ #include "Utilities/Rnd.h"
 
 #include "ParameterValues.h"
+#include "ParameterStorage.h"
 #include "Conventions.h"
 #include "Opt.h"
 #include "UtlNumStat.h"
@@ -424,35 +425,11 @@ TVectorD t2kana::util::CholeskyCalculateCorrelatedParamVariations (
 //____________________________________________________________________________
 double t2kana::util::RandomizeMixing12(void)
 {
-  double mix = 0;
-
-  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-  switch(omp) {
-   case(kNuMixSinsq2Theta):
-   {
-     double mean  = conv::kGlobFitSinsq2Theta12; 
-     double sigma = conv::kGlobFitSinsq2Theta12 * conv::kGlobFitErrSinsq2Theta12;
-     double sinsq2theta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-     mix = sinsq2theta;
-     break;
-   }
-   case(kNuMixSinsqTheta):
-   {
-     double mean  = conv::kGlobFitSinsqTheta12; 
-     double sigma = conv::kGlobFitSinsqTheta12 * conv::kGlobFitErrSinsqTheta12;
-     double sinsqtheta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-     mix = sinsqtheta;
-     break;
-   }
-   default:
-     exit(1);
-  }
-
+  double mix = ParameterStorage::Instance()->GetRandomGaus(kPhypMixing12);
   // return if a physical value was generated
   if(mix >=0. && mix <= 1.) {
-     return mix;
+    return mix;
   }
-
   // or try again
   return util::RandomizeMixing12();
 }
@@ -460,35 +437,11 @@ double t2kana::util::RandomizeMixing12(void)
 double t2kana::util::RandomizeMixing23(void)
 {
 
-  double mix = 0;
-
-  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-  switch(omp) {
-   case(kNuMixSinsq2Theta):
-   {
-     double mean  = conv::kGlobFitSinsq2Theta23; 
-     double sigma = conv::kGlobFitSinsq2Theta23 * conv::kGlobFitErrSinsq2Theta23;
-     double sinsq2theta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-     mix = sinsq2theta;
-     break;
-   }
-   case(kNuMixSinsqTheta):
-   {
-     double mean  = conv::kGlobFitSinsqTheta23; 
-     double sigma = conv::kGlobFitSinsqTheta23 * conv::kGlobFitErrSinsqTheta23;
-     double sinsqtheta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-     mix = sinsqtheta;
-     break;
-   }
-   default:
-     exit(1);
-  }
-
+  double mix = ParameterStorage::Instance()->GetRandomGaus(kPhypMixing23);
   // return if a physical value was generated
   if(mix >=0. && mix <= 1.) {
-     return mix;
+    return mix;
   }
-
   // or try again
   return util::RandomizeMixing23();
 }
@@ -496,29 +449,7 @@ double t2kana::util::RandomizeMixing23(void)
 double t2kana::util::RandomizeMixing13(void)
 {
 
-  double mix = 0;
-
-  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-  switch(omp) {
-  case(kNuMixSinsq2Theta):
-    {
-      double mean  = conv::kGlobFitSinsq2Theta13;
-      double sigma = conv::kGlobFitSinsq2Theta13 * conv::kGlobFitErrSinsq2Theta13;
-      double sinsq2theta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-      mix = sinsq2theta;
-      break;
-    }
-  case(kNuMixSinsqTheta):
-    {
-      double mean  = conv::kGlobFitSinsqTheta13;
-      double sigma = conv::kGlobFitSinsqTheta13 * conv::kGlobFitErrSinsqTheta13;
-      double sinsqtheta = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-      mix = sinsqtheta;
-      break;
-    }
-  default:
-    exit(1);
-  }
+  double mix = ParameterStorage::Instance()->GetRandomGaus(kPhypMixing13);
 
   // return if a physical value was generated
   if(mix >=0. && mix <= 1.) {
@@ -558,46 +489,20 @@ double t2kana::util::RandomizeCPV(void)
 //____________________________________________________________________________
 double t2kana::util::RandomizeDm12sq(void)
 {
-  double mean  = conv::kGlobFitDm12sq; 
-  double sigma = conv::kGlobFitDm12sq * conv::kGlobFitErrDm12sq;
-  double dm    = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-  // return if a physical value was generated
-  if(dm >= 0.) {
-    return dm;
+  double val = -1;
+  while (val<=0) {
+    val = ParameterStorage::Instance()->GetRandomGaus(kPhypDm12sq);
   }
-  //or try again
-  return util::RandomizeDm12sq();
+  return val;
 }
 //____________________________________________________________________________
 double t2kana::util::RandomizeDm23sq(void)
 {
-  double mean  = 0.0;
-  NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
-  switch (odmsq) {
-    
-  case(kNuDmsqFogliLisi):
-    mean  =  kGlobFitDmsqFL;
-    break;
-  case(kNuDmsq12andAbs23):
-    mean  = kGlobFitDm23sq; 
-    break;
-  case(kNuDmsq12andAbs31):
-    if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
-      mean  = kGlobFitDm23sq + kGlobFitDm12sq; 
-    else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
-      mean  = kGlobFitDm23sq - kGlobFitDm12sq; 
-    break;
-  default:
-    mean  = kGlobFitDm23sq;  
-  }       
-  double sigma = mean * kGlobFitErrDm23sq;
-  double dm    = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-  // return if a physical value was generated
-  if(dm >= 0.) {
-    return dm;
+  double val = -1;
+  while (val<=0) {
+    val = ParameterStorage::Instance()->GetRandomGaus(kPhypDm23sq);
   }
-  //or try again
-  return util::RandomizeDm23sq();
+  return val;
 }
 //____________________________________________________________________________
 int t2kana::util::Sign(double tweaking_dial)

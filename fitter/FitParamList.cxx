@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <math.h>
 
+#include "ParameterStorage.h"
 #include "PhysParamList.h"
 #include "FitParamList.h"
 #include "Utilities.h"
@@ -1972,10 +1973,10 @@ double FitParamList::HypothesisFitStatisticPenalty(Option_t * /*opt*/) const
     if (not (this->Exists(p) && this->IsNuisance(p))) continue;
     current = this->CurrValue(p);
     
-    // Should maybe make this object aware of global fit values
-    // So they can change during running
-    bool got_global = util::GlobalFit(p, center, error);
-    if (!got_global) {
+    center = ParameterStorage::Instance()->GetGlobalBestFit(p);
+    error  = ParameterStorage::Instance()->GetGlobalFitError(p)*center;
+    
+    if (center == ParameterStorage::BadResult()) {
       std::cerr<<"FitParamList/HypothesisFitStatisticPenalty >> Using zero penalty for parameter "
                << util::AsString(p) << std::endl;
       continue;
