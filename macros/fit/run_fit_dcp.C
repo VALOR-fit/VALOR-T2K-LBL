@@ -11,8 +11,8 @@ void run_fit_dcp
 (
   const char * tag                     = "toyexptfits",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
-  double       input_deltacp           = 0,                                   /* deltacp */
+  int          nexperiments            = 3,                                   /* number of toy MC experiment fits */
+  double       input_deltacp           = 2,                                   /* deltacp */
   double       input_mixing12          = -99,                                 /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize. If -99, then bestfit from Conventions.h */
   double       input_mixing13          = -99,                                 /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize. If -99, then bestfit from Conventions.h  */
   double       input_mixing23          = -99,                                 /* 23-mixing, sinq2theta or sinsqtheta depending on user choice. If -99, then bestfit from Conventions.h  */
@@ -20,8 +20,8 @@ void run_fit_dcp
   double       input_dm23sq            = -99,                                 /* |Dm^2_{23}|, if -999 then randomize. If -99, then bestfit from Conventions.h  */
   const char * config_file             = "analysis_configuration.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
-  int          tweak_systematics       = 1,                                   /* generate toy MC with randomized systematics? */
-  const char * fit_param_list          = "nuosc3f_dcpsensitivity_13error",       /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  int          tweak_systematics       = 0,                                   /* generate toy MC with randomized systematics? */
+  const char * fit_param_list          = "nuosc3f_dcpsensitivity_allnuisance",       /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = true,                                /* disable this if you don't want to store the best-fit spectra */
@@ -451,6 +451,7 @@ void run_fit_dcp
 	 skexp->Write(pdf_array2, "pdf");
        }
      }
+     /*
      //Do the fit for input parameters (to get input chisq)
     iparmfit->FixParameter(kPhypCPV    );
     iparmfit->FixParameter(kPhypMixing13);
@@ -462,8 +463,8 @@ void run_fit_dcp
     FitInputs * iparmfitinputs = new FitInputs(skobs,skexp,iparmfit);
     FitterABC * fitter_iparmfit = util::GetFitter(iparmfitinputs,fit_option);
 
-      fitter_iparmfit->DoTheFit();
-
+         fitter_iparmfit->DoTheFit();
+     */
      //
      /////NORMAL HIERARCHY
      //
@@ -511,6 +512,8 @@ void run_fit_dcp
 	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
        fparm2_dcp0_nh->SetInitValue(conv::kPhypMixing23, reseed);
        // Get fitter
+       fparm1_dcp0_nh->SetInitValue(kPhypCPV    ,  0);
+       fparm1_dcp0_nh->FixParameter(kPhypCPV    );
        FitInputs * fit_inputs2_dcp0_nh = new FitInputs(skobs,skexp,fparm2_dcp0_nh);
        FitterABC * fitter2_dcp0_nh = util::GetFitter(fit_inputs2_dcp0_nh,fit_option);
        fparm2_dcp0_nh->ResetCurrToInitValues(); // reset osc params
@@ -532,7 +535,7 @@ void run_fit_dcp
      double true_chisq_dcppi_nh = fit_inputs_dcppi_nh->Chisquare();
      // Print-out true params
      fparm1_dcppi_nh->ShowOnlyCurrValuesInNextPrint();
-     cout << "- True oscillation params (with dcp=0) (below) yield chisq = " << true_chisq_dcppi_nh
+     cout << "- True oscillation params (with dcp=pi) (below) yield chisq = " << true_chisq_dcppi_nh
           << *fparm1_dcppi_nh;
      // Do the fit
 	 cout << *fparm1_dcppi_nh;
@@ -722,7 +725,7 @@ void run_fit_dcp
      double true_chisq_dcppi_ih = fit_inputs_dcppi_ih->Chisquare();
      // Print-out true params
      fparm1_dcppi_ih->ShowOnlyCurrValuesInNextPrint();
-     cout << "- True oscillation params (with dcp=0) (below) yield chisq = " << true_chisq_dcppi_ih
+     cout << "- True oscillation params (with dcp=pi) (below) yield chisq = " << true_chisq_dcppi_ih
           << *fparm1_dcppi_ih;
      // Do the fit
 	 cout << *fparm1_dcppi_ih;
@@ -752,6 +755,8 @@ void run_fit_dcp
 	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
        fparm2_dcppi_ih->SetInitValue(conv::kPhypMixing23, reseed);
        // Get fitter
+       fparm2_dcppi_ih->SetInitValue(kPhypCPV    ,  +conv::kpi);
+       fparm2_dcppi_ih->FixParameter(kPhypCPV    );
        FitInputs * fit_inputs2_dcppi_ih = new FitInputs(skobs,skexp,fparm2_dcppi_ih);
        FitterABC * fitter2_dcppi_ih = util::GetFitter(fit_inputs2_dcppi_ih,fit_option);
        fparm2_dcppi_ih->ResetCurrToInitValues(); // reset osc params
