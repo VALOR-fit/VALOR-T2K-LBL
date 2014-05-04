@@ -19,17 +19,17 @@
 */
 //________________________________________________________________________________________
 
-#define __show_init_mesg_info__
-#define __show_init_mesg_debug__
+//#define __show_init_mesg_info__
+//#define __show_init_mesg_debug__
 //#define __ereco_scale_debug__
 //#define __show_init_mesg_debug2__
-#define __show_update_mesg_info__
+//#define __show_update_mesg_info__
 //#define __show_hypothesis__ 
 //#define __show_hypothesis_probabilities__
 //#define __show_banfftun_syst_var_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__
-#define __show_skipped_templates__
+//#define __show_skipped_templates__
 //#define __show_isanevent_mesg_debug__
 //#define __show_negative_events_mesg_debug__
 //#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:

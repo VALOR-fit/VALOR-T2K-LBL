@@ -762,21 +762,22 @@ FitParamList * FitParamList::NamedParameterList(string name)
     return fp;
   }
 
-  if(name == "nuosc3f_dcpsensitivity_fix3+nuisance") {
+  if(name == "nuosc3f_dcpsensitivity_allnuisance") {
     //FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithHackSyst();
-    fp -> SetNuisance  (kPhypMixing23, true);
-    fp -> SetNuisance  (kPhypDm23sq,   true);
-    fp -> FixParameter (kPhypMixing13);
-    fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypDm12sq);
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSyst();
+      fp -> SetNuisance  (kPhypMixing23, true);
+      fp -> SetNuisance  (kPhypDm23sq,   true);
+      fp -> SetNuisance  (kPhypMixing13, true);
+      fp -> SetNuisance  (kPhypMixing12, true);
+      fp -> SetNuisance  (kPhypDm12sq,   true);
+      fp -> FixParameter (kPhypCPV);
     /*
     fp -> FixParameter (kNuisXSecFermiMom);
     fp -> FixParameter (kNuisXSecSpecFunc);
     fp -> FixParameter (kNuisXSecBindE);
     */
     fp -> SetParListName(name);
-    fp -> SetSystMode(5);//use future osc errors
+    fp -> SetSystMode(1);//use future osc errors
     return fp;
   }
 
@@ -788,12 +789,13 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetNuisance  (kPhypMixing13, true);
     fp -> SetNuisance  (kPhypMixing12, true);
     fp -> SetNuisance  (kPhypDm12sq,   true);
+    fp -> FixParameter (kPhypCPV);
     fp -> SetParListName(name);
     fp -> SetSystMode(6);//use current osc errors
     return fp;
   }
 
-  if(name == "nuosc3f_dcpsensitivity_13error")
+  if(name == "nuosc3f_dcpsensitivity_13error")//m23 is free to float
     {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> SetNuisance  (kPhypMixing13, true);
@@ -801,7 +803,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq);
     fp -> FixParameter (kPhypCPV    );
     fp -> SetParListName(name);
-    fp -> SetSystMode(4);
+    fp -> SetSystMode(4); //future errors
     return fp;
     }
   //FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystApp();
