@@ -737,17 +737,19 @@ FitParamList * FitParamList::NamedParameterList(string name)
     return fp;
   }
 
-  if(name == "nuosc3f_dcpsensitivity_fix3") {
+  if(name == "nuosc3f_dcpsensitivity_future") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> SetNuisance  (kPhypMixing23, true);
     fp -> SetNuisance  (kPhypDm23sq,   true);
-    fp -> FixParameter (kPhypMixing13);
+    fp -> SetNuisance  (kPhypMixing13, true);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq);
+    fp -> FixParameter (kPhypCPV);
     fp -> SetParListName(name);
     fp -> SetSystMode(4);//use future osc errors
     return fp;
   }
+
 
   if(name == "nuosc3f_dcpsensitivity") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
@@ -756,6 +758,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> SetNuisance  (kPhypMixing13, true);
     fp -> SetNuisance  (kPhypMixing12, true);
     fp -> SetNuisance  (kPhypDm12sq,   true);
+    fp -> FixParameter (kPhypCPV);
     fp -> SetParListName(name);
     fp -> SetSystMode(3);//use current osc errors
     return fp;
@@ -776,7 +779,21 @@ FitParamList * FitParamList::NamedParameterList(string name)
     fp -> FixParameter (kNuisXSecBindE);
     */
     fp -> SetParListName(name);
-    fp -> SetSystMode(1);//use future osc errors
+    fp -> SetSystMode(1);//use current osc errors
+    return fp;
+  }
+
+  if(name == "nuosc3f_dcpsensitivity_uncorrolated_xsec") {
+ 
+    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithXSec();
+    fp -> SetNuisance  (kPhypMixing23, true);
+    fp -> SetNuisance  (kPhypDm23sq,   true);
+    fp -> SetNuisance  (kPhypMixing13, true);
+    fp -> SetNuisance  (kPhypMixing12, true);
+    fp -> SetNuisance  (kPhypDm12sq,   true);
+    fp -> FixParameter (kPhypCPV);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(6);//use current osc errors with hk_hack-> only cross section errors                                     
     return fp;
   }
 
@@ -798,7 +815,7 @@ FitParamList * FitParamList::NamedParameterList(string name)
     {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> SetNuisance  (kPhypMixing13, true);
-    fp -> FixParameter (kPhypMixing12);
+    fp -> SetNuisance  (kPhypMixing12, true);
     fp -> FixParameter (kPhypDm12sq);
     fp -> FixParameter (kPhypCPV    );
     fp -> SetParListName(name);
@@ -926,17 +943,17 @@ FitParamList * FitParamList::NuOsc3FlavourFitWithEScale(void)
 
   return fparm;
 }
-//________________________________________________________________________________________
+//________________________________________________________________________________________                                                                                               
 FitParamList * FitParamList::NuOsc3FlavourFitWithXSec(void)
 {
- FitParamList * fparm = new FitParamList(6+12); // NOTE: This will have to change for the 2012a 1Re and joint analysis
+  FitParamList * fparm = new FitParamList(6+12); // NOTE: This will have to change for the 2012a 1Re and joint analysis                                                                  
 
   FitParamList::Append3FlavourOscillation(fparm, 0);
 
-  //
-  // add nuisance params
-  //
-  FitParamList::AppendAllUncorrelatedXSecSystematics(fparm, 6);
+  //                                                                                                                                                                                      
+  // add nuisance params                                                                                                                                                                  
+  //                                                                                                                                                                                      
+  FitParamList::AppendAllUncorrelatedXSecSystematics(fparm,6);
   return fparm;
 }
 //________________________________________________________________________________________
