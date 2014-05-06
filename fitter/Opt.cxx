@@ -12,6 +12,7 @@ ChangeLog:
 #include <cstdlib>
 
 #include "Opt.h"
+#include "Rnd.h"
 #include "Utilities.h"
 
 using std::endl;
@@ -137,7 +138,85 @@ void Opt::SetDefaults(void)
     gOscAnaTypeChoice = kAnaRHCNuEAppOnly;
   else
     gOscAnaTypeChoice = kAnaUndefined;
-
+    
+  this->SetDefaultParameterValues();
+}
+//____________________________________________________________________________
+void Opt::SetDefaultParameterValues()
+{
+  // Set default global parameter values
+  // set empty values
+  for (int ip = 0 ; ip < knppmax ; ip++ ) {
+    fGlobalBestFit [ip] = kBadResult;
+    fGlobalFitError[ip] = kBadResult;
+    //fInitialValue  [ip] = 0.;
+  }
+  
+  NuOscDmsqScheme_t odmsq = Opt::Instance()->gOscDmsqScheme;
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  
+  double mean;
+  
+  //dm12
+  fGlobalBestFit  [kPhypDm12sq] = kGlobFitDm12sq;
+  fGlobalFitError [kPhypDm12sq] = kGlobFitErrDm12sq;
+  //fInitialValue   [kPhypDm12sq] = kInitFitDm12sq;
+ 
+  //dm23
+  switch (odmsq) {
+    case(kNuDmsqFogliLisi):
+      mean  =  kGlobFitDmsqFL;
+      break;
+    case(kNuDmsq12andAbs23):
+      mean  = kGlobFitDm23sq; 
+      break;
+    case(kNuDmsq12andAbs31):
+      if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
+        mean  = kGlobFitDm23sq + kGlobFitDm12sq; 
+      else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
+        mean  = kGlobFitDm23sq - kGlobFitDm12sq; 
+      break;
+    default:
+      mean  = kGlobFitDm23sq;  
+  }
+  fGlobalBestFit  [kPhypDm23sq] = mean;
+  fGlobalFitError [kPhypDm23sq] = kGlobFitErrDm23sq;
+  //fInitialValue   [kPhypDm23sq] = fGlobalBestFit[kPhypDm23sq];
+  
+  // mixing angles
+  switch(omp) {
+    case(kNuMixSinsq2Theta):
+    {
+      fGlobalBestFit  [kPhypMixing12] = kGlobFitSinsq2Theta12;
+      fGlobalFitError [kPhypMixing12] = kGlobFitErrSinsq2Theta12;
+      //fInitialValue   [kPhypMixing12] = fGlobalBestFit[kPhypMixing12];
+      
+      fGlobalBestFit  [kPhypMixing23] = kGlobFitSinsq2Theta23;
+      fGlobalFitError [kPhypMixing23] = kGlobFitErrSinsq2Theta23;
+      //fInitialValue   [kPhypMixing23] = fGlobalBestFit[kPhypMixing23];
+      
+      fGlobalBestFit  [kPhypMixing13] = kGlobFitSinsq2Theta13;
+      fGlobalFitError [kPhypMixing13] = kGlobFitErrSinsq2Theta13;
+      //fInitialValue   [kPhypMixing13] = fGlobalBestFit[kPhypMixing13];
+      break;
+    }
+    case(kNuMixSinsqTheta):
+    {
+      fGlobalBestFit  [kPhypMixing12] = kGlobFitSinsqTheta12;
+      fGlobalFitError [kPhypMixing12] = kGlobFitErrSinsqTheta12;
+      //fInitialValue   [kPhypMixing12] = fGlobalBestFit[kPhypMixing12];
+      
+      fGlobalBestFit  [kPhypMixing23] = kGlobFitSinsqTheta23;
+      fGlobalFitError [kPhypMixing23] = kGlobFitErrSinsqTheta23;
+      //fInitialValue   [kPhypMixing23] = fGlobalBestFit[kPhypMixing23];
+      
+      fGlobalBestFit  [kPhypMixing13] = kGlobFitSinsqTheta13;
+      fGlobalFitError [kPhypMixing13] = kGlobFitErrSinsqTheta13;
+      //fInitialValue   [kPhypMixing13] = fGlobalBestFit[kPhypMixing13];
+      break;
+    }
+    default: exit(-1);
+  }
 }
 //____________________________________________________________________________
 bool Opt::Undefined(void)
@@ -198,4 +277,28 @@ void Opt::ReadFrom (Opt::Persistable & optp)
   gOscDeltaCP           = optp.dcp;
 }
 //________________________________________________________________________________________
-
+//________________________________________________________________________________________
+double Opt::GetGlobalBestFit(PhysParamId_t p) const
+{
+  assert(p!=kPhypUndefined);
+  return fGlobalBestFit[p];
+}
+//________________________________________________________________________________________
+double Opt::GetGlobalFitError(PhysParamId_t p) const
+{
+  assert(p!=kPhypUndefined);
+  return fGlobalFitError[p];
+}
+//________________________________________________________________________________________
+double Opt::GetRandomGaus(PhysParamId_t p) const
+{
+  assert(p!=kPhypUndefined);
+  
+  double mean  = fGlobalBestFit[p]; 
+  double sigma = fGlobalFitError[p]*mean;
+  
+  assert(mean!=kBadResult);
+  double randval = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+  return randval;
+}
+//________________________________________________________________________________________

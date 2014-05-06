@@ -43,7 +43,6 @@ ChangeLog:
 //~ #include "Utilities/Rnd.h"
 
 #include "ParameterValues.h"
-#include "ParameterStorage.h"
 #include "Conventions.h"
 #include "Opt.h"
 #include "UtlNumStat.h"
@@ -425,7 +424,7 @@ TVectorD t2kana::util::CholeskyCalculateCorrelatedParamVariations (
 //____________________________________________________________________________
 double t2kana::util::RandomizeMixing12(void)
 {
-  double mix = ParameterStorage::Instance()->GetRandomGaus(kPhypMixing12);
+  double mix = Opt::Instance()->GetRandomGaus(kPhypMixing12);
   // return if a physical value was generated
   if(mix >=0. && mix <= 1.) {
     return mix;
@@ -437,7 +436,7 @@ double t2kana::util::RandomizeMixing12(void)
 double t2kana::util::RandomizeMixing23(void)
 {
 
-  double mix = ParameterStorage::Instance()->GetRandomGaus(kPhypMixing23);
+  double mix = Opt::Instance()->GetRandomGaus(kPhypMixing23);
   // return if a physical value was generated
   if(mix >=0. && mix <= 1.) {
     return mix;
@@ -449,7 +448,7 @@ double t2kana::util::RandomizeMixing23(void)
 double t2kana::util::RandomizeMixing13(void)
 {
 
-  double mix = ParameterStorage::Instance()->GetRandomGaus(kPhypMixing13);
+  double mix = Opt::Instance()->GetRandomGaus(kPhypMixing13);
 
   // return if a physical value was generated
   if(mix >=0. && mix <= 1.) {
@@ -491,7 +490,7 @@ double t2kana::util::RandomizeDm12sq(void)
 {
   double val = -1;
   while (val<=0) {
-    val = ParameterStorage::Instance()->GetRandomGaus(kPhypDm12sq);
+    val = Opt::Instance()->GetRandomGaus(kPhypDm12sq);
   }
   return val;
 }
@@ -500,7 +499,7 @@ double t2kana::util::RandomizeDm23sq(void)
 {
   double val = -1;
   while (val<=0) {
-    val = ParameterStorage::Instance()->GetRandomGaus(kPhypDm23sq);
+    val = Opt::Instance()->GetRandomGaus(kPhypDm23sq);
   }
   return val;
 }
