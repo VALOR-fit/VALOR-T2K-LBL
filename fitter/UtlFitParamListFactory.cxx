@@ -17,6 +17,10 @@ ChangeLog:
 
 #include <TSystem.h>
 
+#include "Enumerations.h"
+#include "Conventions.h"
+#include "Utilities.h"
+
 #include "UtlFitParamListFactory.h"
 #include "FitCore/FitParamList.h"
 
@@ -44,8 +48,7 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
   }
   if(name == "nuosc3f+nuisance") {
-    FitParamList * fp = new FitParamList(6+kNumOfNuisanceParams);
-    FitParamList::Append3FlavourOscillation(fp,0);
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
@@ -66,8 +69,7 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
   }
   if(name == "nuosc3f_12constrain+nuisance") {
-    FitParamList * fp = new FitParamList(6+kNumOfNuisanceParams);
-    FitParamList::Append3FlavourOscillation(fp,0);
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
     fp -> SetNuisance (kPhypMixing12, true);
     fp -> SetNuisance (kPhypDm12sq,   true);
@@ -84,8 +86,7 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
   }
   if(name == "nuosc3f_12fix+nuisance") {
-    FitParamList * fp = new FitParamList(6+kNumOfNuisanceParams);
-    FitParamList::Append3FlavourOscillation(fp,0);
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq  );
@@ -106,7 +107,7 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
   }
   if(name == "nuosc3f_numudisapp_fix4+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystDisap();
+    FitParamList * fp = util::NuOsc3FlavourFitWithAllSystDisap();
     fp -> FixParameter (kPhypMixing13);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypCPV);
@@ -127,7 +128,7 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
   }
   if(name == "nuosc3f_nueapp_fix4+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFitWithAllSystApp();
+    FitParamList * fp = util::NuOsc3FlavourFitWithAllSystApp();
     fp -> FixParameter (kPhypMixing23);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm23sq);
@@ -175,8 +176,7 @@ FitParamList * util::NamedParameterList(string name)
   }
 
   if(name == "nuosc3f_dcpsensitivity_fix3+nuisance") {
-    FitParamList * fp = new FitParamList(6+kNumOfNuisanceParams);
-    FitParamList::Append3FlavourOscillation(fp,0);
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
     fp -> SetNuisance  (kPhypMixing23, true);
     fp -> SetNuisance  (kPhypDm23sq,   true);
@@ -189,8 +189,7 @@ FitParamList * util::NamedParameterList(string name)
   }
 
   if(name == "nuosc3f_dcpsensitivity+nuisance") {
-    FitParamList * fp = new FitParamList(6+kNumOfNuisanceParams);
-    FitParamList::Append3FlavourOscillation(fp,0);
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
     fp -> SetNuisance  (kPhypMixing23, true);
     fp -> SetNuisance  (kPhypDm23sq,   true);
@@ -212,6 +211,386 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 // Add nuisance params
 //
 
+  //
+  // add nuisance params
+  //
+  util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
+  util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);
+  util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+
 }
 //________________________________________________________________________________________
 
+//________________________________________________________________________________________
+void util::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  // XSec
+  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.5, 0.,               1.,              SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+#ifndef __NUEONLY__
+  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+#endif
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+#ifndef __NUEONLY__
+  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+#endif
+#ifndef __NUMUONLY__
+  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP*0.3,  false, true);
+#endif
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+#ifndef __NUEONLY__
+  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+#endif
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
+
+}
+#ifdef __NUMUONLY__
+//________________________________________________________________________________________
+void util::AppendUncorrelatedXSecSystematicsDisap(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+  // XSec
+  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.5, 0.,               1.,              SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+}
+#endif
+#ifdef __NUEONLY__
+//________________________________________________________________________________________
+void util::AppendUncorrelatedXSecSystematicsApp(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+  // XSec
+  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.5, 0.,               1.,              SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  //  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+  //  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+}
+#endif
+//________________________________________________________________________________________
+void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+  int ip = start; // first unallocated element in the param list
+  // SK detector energy scale
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get FSI covariance matrix
+#if FSI_BINS == 1
+  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
+#elif FSI_BINS == 2
+  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+#elif FSI_BINS == 3
+  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+#endif
+  if(!SKDetFSICovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // FSI
+  for(int i = 0; i < kNumOfSKDetFSIParams; i++) {
+#if FSI_BINS != 3
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+#else
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+#endif
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+}
+#ifdef __NUMUONLY__
+//________________________________________________________________________________________
+void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+  int ip = start; // first unallocated element in the param list
+  // SK detector energy scale
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get FSI covariance matrix
+  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+  if(!SKDetFSICovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // FSI
+  for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+}
+#endif
+#ifdef __NUEONLY__
+//________________________________________________________________________________________
+void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+  int ip = start; // first unallocated element in the param list
+  // SK detector energy scale
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true);
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get FSI covariance matrix
+  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+  if(!SKDetFSICovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // FSI
+  for(int i = 0; i < kNumOfSKDetFSIParams1Re; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+}
+#endif
+//________________________________________________________________________________________
+void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+
+  int ip = start; // first unallocated element in the param list
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get BANFF fit central values
+#if BANFF_BINS == 1
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
+#elif BANFF_BINS == 2
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
+#elif BANFF_BINS == 3
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
+#endif
+  if(!BANFFBestFitValues) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    exit(1);
+  }
+  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
+  // Get BANFF fit covariance matrix
+#if BANFF_BINS == 1
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+#elif BANFF_BINS == 2
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
+#elif BANFF_BINS == 3
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
+#endif
+  if(!BANFFCovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & BANFFCov = *BANFFCovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // BANFF 
+  for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
+    double bf = BANFFBestFit[i];
+    double err = sqrt(BANFFCov[i][i]);
+    double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+
+}
+#ifdef __NUMUONLY__
+//________________________________________________________________________________________
+void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+  int ip = start; // first unallocated element in the param list
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get BANFF fit central values
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
+  if(!BANFFBestFitValues) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    exit(1);
+  }
+  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
+  // Get BANFF fit covariance matrix
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
+  if(!BANFFCovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & BANFFCov = *BANFFCovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // BANFF 
+  for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
+    double bf = BANFFBestFit[i];
+    double err = sqrt(BANFFCov[i][i]);
+    double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+}
+#endif
+#ifdef __NUEONLY__
+//________________________________________________________________________________________
+void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
+{
+// Add nuisance params
+//
+  int ip = start; // first unallocated element in the param list
+
+  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
+  //    to have something sensible to initialise to
+  // Parse the input XML configuration file
+  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  TXMLEngine* xml = new TXMLEngine;   
+  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
+  if (xmldoc==0) {
+    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    delete xml;
+    exit(1);  
+  }
+  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+  // Get BANFF fit central values
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
+  if(!BANFFBestFitValues) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    exit(1);
+  }
+  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
+  // Get BANFF fit covariance matrix
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
+  if(!BANFFCovMtrx) {
+    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    exit(1);
+  }
+  const TMatrixD & BANFFCov = *BANFFCovMtrx;
+  // Release memory
+  //  xml->FreeDoc(xmldoc);
+  xml->FreeNode(root_node);
+  delete xml;
+
+  // BANFF 
+  for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
+    double bf = BANFFBestFit[i];
+    double err = sqrt(BANFFCov[i][i]);
+    double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+  }
+}
+#endif
+//________________________________________________________________________________________
