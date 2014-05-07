@@ -33,8 +33,8 @@ double modDmsq32MinusError = 0.08e-3,  //current value 0.08e-3, T2K LOI 0.1e-3
 )
 {
   using namespace std;
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = kNuMixSinsq2Theta;

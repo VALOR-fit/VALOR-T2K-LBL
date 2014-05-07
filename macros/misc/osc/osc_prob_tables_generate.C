@@ -25,7 +25,7 @@ void osc_prob_tables_generate
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Global options                                                                                                                         
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;

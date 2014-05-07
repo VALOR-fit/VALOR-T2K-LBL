@@ -12,7 +12,7 @@
 void plot_numu_surv_prob_var_hypotheses()
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   const int n = 1000;
   double emin = 0.05;

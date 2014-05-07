@@ -54,7 +54,7 @@ void plot_osc_prob_deltacp(
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   TStopwatch w;
   w.Start();
