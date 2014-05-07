@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::NuFlux
+\class    valor::NuFlux
 
 \brief    Neutrino flux inputs to the oscillation analysis
 
@@ -13,8 +13,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_nu_flux_h_
-#define _t2kana_nu_flux_h_
+#ifndef _valor_nu_flux_h_
+#define _valor_nu_flux_h_
 
 #include <TObject.h>
 #include <TMatrixD.h>
@@ -23,10 +23,11 @@
 #include <TH1D.h>
 
 #include "Conventions.h"
+#include "Enumerations.h"
 
 class TVirtualPad;
 
-namespace t2kana {
+namespace valor {
 
 class BANFF;
 
@@ -158,6 +159,6 @@ private:
 ClassDef(NuFlux, 5)
 };
 
-} //t2kana
+} //valor
 
 #endif

@@ -19,7 +19,7 @@
 */
 //________________________________________________________________________________________
 
-//#define __show_init_mesg_info__
+#define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
 //#define __ereco_scale_debug__
 //#define __show_init_mesg_debug2__
@@ -74,18 +74,17 @@
 #include "NuXSec.h"
 #include "NuFlux.h"
 #include "Utilities.h"
-#include "Opt.h"
-#include "Rnd.h"
-#include "NuOscSterile.h"
-#include "UtlOsc.h"
+#include "Conventions/Opt.h"
+#include "Utilities/Rnd.h"
+#include "Utilities/NuOscSterile.h"
 
 using std::cout;
 using std::cerr;
 using std::endl;
 
-using namespace t2kana;
-using namespace t2kana::conv;
-using namespace t2kana::util;
+using namespace valor;
+using namespace valor::conv;
+using namespace valor::util;
 
 ClassImp(SuperkMC)
 
@@ -3106,7 +3105,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
      }//it
    }//is
   } // end of angle/splitting/phase sterile hypotheses
-
+/*
   //
   // 2-flavour oscillations / numu disappearance
   //
@@ -3248,6 +3247,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
       }//im
     }//is
   }
+  * */
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_phys");
 #endif

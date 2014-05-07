@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -13,7 +13,7 @@
 Changes since 2011_v0.9.0:
 
 1702-2013  Nick  
-            Split t2kana::conv namespace into several smaller files
+            Split valor::conv namespace into several smaller files
 
 3102-2013  Nick
 Add samples and modes for reverse horn current running
@@ -27,7 +27,7 @@ Add samples and modes for reverse horn current running
 #include "Enumerations.h"
 #include "AnalysisOptions.h"
 
-namespace t2kana {
+namespace valor {
   
 namespace conv   {
 
@@ -818,7 +818,7 @@ static const bool kIsCC[kns][knm]= {
 };
 
 } // conv
-} // t2kana
+} // valor
   
 #endif 
 

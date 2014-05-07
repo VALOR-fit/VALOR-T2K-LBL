@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -13,7 +13,7 @@
 Changes since 2011_v0.9.0:
 
 17-12-2013  Nick  
-Split t2kana::conv namespace into several smaller files
+Split valor::conv namespace into several smaller files
 
 */
 //____________________________________________________________________________

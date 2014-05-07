@@ -38,8 +38,8 @@ Added samples and modes for reverse horn current running
 #include <TSystem.h>
 
 #include "Utilities.h"
-#include "Opt.h"
-#include "Rnd.h"
+
+#include "Utilities/Rnd.h"
 
 using std::cout;
 using std::cerr;
@@ -52,11 +52,11 @@ using std::setprecision;
 using std::ofstream;
 using std::ostringstream;
 
-using namespace t2kana;
-using namespace t2kana::conv;
+using namespace valor;
+using namespace valor::conv;
 
 //____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::OscAnaType_t a)
+string valor::util::AsString(valor::conv::OscAnaType_t a)
 {
   switch(a) {
    case (kAnaCombined) :
@@ -75,7 +75,7 @@ string t2kana::util::AsString(t2kana::conv::OscAnaType_t a)
   return "";
 }
 //____________________________________________________________________________
-string t2kana::util::AsString(conv::SKMCTemplateType_t t)
+string valor::util::AsString(conv::SKMCTemplateType_t t)
 {
   switch(t) {
     case ( kSKMCtNom ) : 
@@ -97,7 +97,7 @@ string t2kana::util::AsString(conv::SKMCTemplateType_t t)
   return "";
 }
 //____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::FluxType_t f)
+string valor::util::AsString(valor::conv::FluxType_t f)
 {
   switch(f) {
     case ( kFlxNominal        ) : return "nominal";          break;
@@ -113,8 +113,8 @@ string t2kana::util::AsString(t2kana::conv::FluxType_t f)
   return "";
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringRooTex (
-  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, 
+string valor::util::AsStringRooTex (
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m, 
   string append_begin, string append_end)
 {
   ostringstream out;
@@ -123,11 +123,11 @@ string t2kana::util::AsStringRooTex (
     out << append_begin;
   }
 
-  out << t2kana::util::AsStringRooTex(s);
+  out << valor::util::AsStringRooTex(s);
 
   if(m != kSKmUndefined) {
     out << " (";
-    out << t2kana::util::AsStringRooTex(m);
+    out << valor::util::AsStringRooTex(m);
     out << ")";
   }
 
@@ -138,8 +138,8 @@ string t2kana::util::AsStringRooTex (
   return out.str();
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringCompact (
-  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m, 
+string valor::util::AsStringCompact (
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m, 
   string append_begin, string append_end)
 {
 // Compact string used for naming output histograms stored ROOT files
@@ -150,11 +150,11 @@ string t2kana::util::AsStringCompact (
     out << append_begin;
   }
 
-  out << t2kana::util::AsStringCompact(s);
+  out << valor::util::AsStringCompact(s);
 
   if(m != kSKmUndefined) {
     out << "_";
-    out << t2kana::util::AsStringCompact(m);
+    out << valor::util::AsStringCompact(m);
   }
 
   if(append_end.size() > 0) {
@@ -164,7 +164,7 @@ string t2kana::util::AsStringCompact (
   return out.str();
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringCompact_splinehack (t2kana::conv::SuperkSample_t s)
+string valor::util::AsStringCompact_splinehack (valor::conv::SuperkSample_t s)
 {
 // Compact string used for naming output histograms stored ROOT files
 //
@@ -177,8 +177,8 @@ string t2kana::util::AsStringCompact_splinehack (t2kana::conv::SuperkSample_t s)
   return AsStringCompact(s);
 }
 //____________________________________________________________________________
-t2kana::conv::OscAnaType_t  
-   t2kana::util::OscAnaFromString(string sh) 
+valor::conv::OscAnaType_t  
+   valor::util::OscAnaFromString(string sh) 
 {
   if(sh == "combined"   ) return kAnaCombined;
   if(sh == "numu_disap" ) return kAnaNuMuDisappOnly;
@@ -187,8 +187,8 @@ t2kana::conv::OscAnaType_t
   return kAnaUndefined;
 }
 //____________________________________________________________________________
-t2kana::conv::SKMCTemplateType_t   
-  t2kana::util::SKMCTemplateTypeFromString(string sh) 
+valor::conv::SKMCTemplateType_t   
+  valor::util::SKMCTemplateTypeFromString(string sh) 
 {
   if(sh == "ori")        return kSKMCtOri;
   if(sh == "nom")        return kSKMCtNom;
@@ -199,7 +199,7 @@ t2kana::conv::SKMCTemplateType_t
   return kSKMCtUndefined;
 }
 //____________________________________________________________________________
-void t2kana::util::PrintCompact(
+void valor::util::PrintCompact(
         const TVectorD & v, int w, int prec, Option_t * option, ostream & stream)
 {
   TString opt = option;
@@ -215,7 +215,7 @@ void t2kana::util::PrintCompact(
      stream << "> param = " << setw(3) << ip;
      if(printing_banff_params) {
          stream << " [ ";
-         PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
+         PhysParamId_t p = kListOfBANFFParams[ip];
          stream << setw(42) << util::AsString(p);
          stream << " ]";
      }
@@ -246,7 +246,7 @@ void t2kana::util::PrintCompact(
   stream << scientific;
 }
 //___________________________________________________________________________
-void t2kana::util::PrintCompact(
+void valor::util::PrintCompact(
    const TVectorD & current, const TVectorD & nominal, 
    int w, int prec, Option_t * option, ostream & stream)
 {
@@ -262,18 +262,8 @@ void t2kana::util::PrintCompact(
      stream << "> param = " << setw(3) << ip;
      if(printing_banff_params) {
          stream << " [ ";
-         PhysParamId_t p = PhysParamId_t ( (int)kNuisBANFF00 + ip );
+         PhysParamId_t p = kListOfBANFFParams[ip];
          stream << setw(42) << util::AsString(p);
-         stream << " ]";
-     }
-     if(printing_fsi_params) {
-         stream << " [ ";
-#if FSI_BINS != 3
-         PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI000 + ip );
-#else
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisFSI006 + ip );
-#endif
-         stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
      stream << " - current = " 
@@ -289,7 +279,7 @@ void t2kana::util::PrintCompact(
   stream << scientific;
 }
 //___________________________________________________________________________
-void t2kana::util::PrintCompact(
+void valor::util::PrintCompact(
   const TMatrixD & m, int w, int prec, ostream & stream)
 {
   int nc = m.GetNcols();
@@ -313,7 +303,7 @@ void t2kana::util::PrintCompact(
   stream << scientific;
 }
 //___________________________________________________________________________
-void t2kana::util::PrintCompactTex(
+void valor::util::PrintCompactTex(
 				   const TMatrixD & m, int w, int prec, ostream & stream, TString opt)
 {
   int nc = m.GetNcols();
@@ -410,12 +400,12 @@ void t2kana::util::PrintCompactTex(
 // A few helper functions for use in UseEventToFillInTemplate
 // that make swapping mode definitions a little easier
 
-bool t2kana::util::IsCCQE(int neut_reaction_mode) 
+bool valor::util::IsCCQE(int neut_reaction_mode) 
 {
   return neut_reaction_mode ==  1;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsCC1pi(int neut_reaction_mode) 
+bool valor::util::IsCC1pi(int neut_reaction_mode) 
 {
   bool is_cc1pi = (neut_reaction_mode == 11 || 
 		   neut_reaction_mode == 12 || 
@@ -423,12 +413,12 @@ bool t2kana::util::IsCC1pi(int neut_reaction_mode)
   return is_cc1pi;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsCCcoh(int neut_reaction_mode) 
+bool valor::util::IsCCcoh(int neut_reaction_mode) 
 {
   return neut_reaction_mode ==  16;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsCCoth(int neut_reaction_mode) 
+bool valor::util::IsCCoth(int neut_reaction_mode) 
 //this is a catch all for everything CC that is not QE, 1pi, or coh
 // needs to be updated if another subcategory is added
 {
@@ -440,36 +430,36 @@ bool t2kana::util::IsCCoth(int neut_reaction_mode)
   return is_ccoth;
 }
 //___________________________________________________________________________
-//bool t2kana::util::IsCCoth(int neut_reaction_mode) 
+//bool valor::util::IsCCoth(int neut_reaction_mode) 
 //{
 //return IsCCoth(neut_reaction_mode);
 //}
 //___________________________________________________________________________
-//bool t2kana::util::IsCCoth(int neut_reaction_mode) 
+//bool valor::util::IsCCoth(int neut_reaction_mode) 
 //{
 //return IsCCoth(neut_reaction_mode);
 //}
 //___________________________________________________________________________
-bool t2kana::util::IsNC1pi0(int neut_reaction_mode) 
+bool valor::util::IsNC1pi0(int neut_reaction_mode) 
 {
   bool is_cc1pi0 = (neut_reaction_mode == 31 ||
 		    neut_reaction_mode == 32);
   return is_cc1pi0;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsNC1piC(int neut_reaction_mode) 
+bool valor::util::IsNC1piC(int neut_reaction_mode) 
 {
   bool is_cc1pi0 = (neut_reaction_mode == 33 ||
 		    neut_reaction_mode == 34);
   return is_cc1pi0;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsNCcoh(int neut_reaction_mode) 
+bool valor::util::IsNCcoh(int neut_reaction_mode) 
 {
   return neut_reaction_mode == 36;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsNCoth(int neut_reaction_mode) 
+bool valor::util::IsNCoth(int neut_reaction_mode) 
 //this is a catch all for everything NC that is not 1pi0, 1piC or coh
 // needs to be updated if another subcategory is added
 {
@@ -486,7 +476,7 @@ bool t2kana::util::IsNCoth(int neut_reaction_mode)
   return is_ncoth;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsNCoth_mu(int neut_reaction_mode) 
+bool valor::util::IsNCoth_mu(int neut_reaction_mode) 
 {
   bool is_ncoth_mu = ( IsNCoth (neut_reaction_mode) ||
 		       IsNCcoh (neut_reaction_mode) ||
@@ -494,14 +484,14 @@ bool t2kana::util::IsNCoth_mu(int neut_reaction_mode)
   return is_ncoth_mu;
 }
 //___________________________________________________________________________
-bool t2kana::util::IsNCoth_e(int neut_reaction_mode) 
+bool valor::util::IsNCoth_e(int neut_reaction_mode) 
 {
   bool is_ncoth_e = ( IsNCoth (neut_reaction_mode) ||
 		      IsNC1piC(neut_reaction_mode) );
   return is_ncoth_e;
 }
 //___________________________________________________________________________
-bool t2kana::util::UseEventToFillInTemplate(
+bool valor::util::UseEventToFillInTemplate(
   SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode)
 {
 
@@ -803,25 +793,25 @@ bool t2kana::util::UseEventToFillInTemplate(
   return use_it;
 }
 //___________________________________________________________________________
-t2kana::util::ArrIdx * t2kana::util::ArrIdx::fInstance = 0;
+valor::util::ArrIdx * valor::util::ArrIdx::fInstance = 0;
 //____________________________________________________________________________
-t2kana::util::ArrIdx::ArrIdx()
+valor::util::ArrIdx::ArrIdx()
 {
   this->Init();
   fInstance = 0;
 }
 //____________________________________________________________________________
-t2kana::util::ArrIdx * t2kana::util::ArrIdx::Instance()
+valor::util::ArrIdx * valor::util::ArrIdx::Instance()
 {
   if(fInstance == 0) {
-    static t2kana::util::ArrIdx::Cleaner cleaner;
+    static valor::util::ArrIdx::Cleaner cleaner;
     cleaner.DummyMethodAndSilentCompiler();
-    fInstance = new t2kana::util::ArrIdx;
+    fInstance = new valor::util::ArrIdx;
   }
   return fInstance;
 }
 //____________________________________________________________________________
-void t2kana::util::ArrIdx::Init(void)
+void valor::util::ArrIdx::Init(void)
 {
   //
   // sample/mode arrays
@@ -888,7 +878,7 @@ void t2kana::util::ArrIdx::Init(void)
     fBANFFSystIdx[i] = -1;
   }
   for(int ip = 0; ip < kNumOfParamsInBANFFfit; ip++) {
-    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+    PhysParamId_t p = kListOfBANFFParams[ip];
     if(p == kPhypUndefined) continue;
     fBANFFSystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__

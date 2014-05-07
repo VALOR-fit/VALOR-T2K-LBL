@@ -14,17 +14,16 @@ ChangeLog:
 
 #include <TROOT.h>
 
-#include "PhysParamId.h"
+#include "T2KPhysParamId.h"
 #include "Utilities.h"
 //~ #include "NuOscMixParam.h"
 #include "Enumerations.h"
-#include "Opt.h"
 
-using namespace t2kana;
-using namespace t2kana::conv;
+using namespace valor;
+using namespace valor::conv;
 
 //________________________________________________________________________________________
-string t2kana::util::AsString(PhysParamId_t p)
+string valor::util::AsString(PhysParamId_t p)
 {
   switch(p) {
 
@@ -711,7 +710,7 @@ string t2kana::util::AsString(PhysParamId_t p)
   return "--";
 }
 //________________________________________________________________________________________
-string t2kana::util::AsStringTex(PhysParamId_t p)
+string valor::util::AsStringTex(PhysParamId_t p)
 {
   // Specify tex strings all ALL subscripts and superscripts in braces.
   // Otherwise conversion to RooTex won't work.
@@ -1134,7 +1133,7 @@ string t2kana::util::AsStringTex(PhysParamId_t p)
   return "--";
 }
 //________________________________________________________________________________________
-string t2kana::util::AsStringCompact(PhysParamId_t p)
+string valor::util::AsStringCompact(PhysParamId_t p)
 {
   switch(p) {
 
@@ -1512,7 +1511,7 @@ string t2kana::util::AsStringCompact(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringPaperTex(PhysParamId_t p)
+string valor::util::AsStringPaperTex(PhysParamId_t p)
 {
   switch(p) {
     
@@ -1944,7 +1943,7 @@ string t2kana::util::AsStringPaperTex(PhysParamId_t p)
   return "--";
 }
 //________________________________________________________________________________________
-string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
+string valor::util::AsStringPaperRooTex(PhysParamId_t p)
 {
   string s = AsStringPaperTexNoDollar(p);
   replace( s.begin(), s.end(), '\\', '#' ); // Make slashes hashes for RooTex
@@ -1954,14 +1953,14 @@ string t2kana::util::AsStringPaperRooTex(PhysParamId_t p)
   return util::TrimSpaces(s);
 }
 //________________________________________________________________________________________
-string t2kana::util::AsStringPaperTexNoDollar(PhysParamId_t p)
+string valor::util::AsStringPaperTexNoDollar(PhysParamId_t p)
 {
   string s = AsStringPaperTex(p);
   s.erase( std::remove( s.begin(), s.end(), '$'), s.end() ) ; // Remove dollar signs.
   return s;
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringCompact_splinehack(PhysParamId_t p)
+string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
 {
   switch(p) {
 
@@ -2084,7 +2083,7 @@ string t2kana::util::AsStringCompact_splinehack(PhysParamId_t p)
   return AsStringCompact(p);
 }
 //________________________________________________________________________________________
-bool t2kana::util::IsMixingAngle(PhysParamId_t p)
+bool valor::util::IsMixingAngle(PhysParamId_t p)
 {
   switch(p) {
     case ( kPhypMixing23              ) : return true; break;
@@ -2105,19 +2104,19 @@ bool t2kana::util::IsMixingAngle(PhysParamId_t p)
   return false;
 }
 //________________________________________________________________________________________
-bool t2kana::util::IsSystematic(PhysParamId_t p)
+bool valor::util::IsSystematic(PhysParamId_t p)
 {
   if(p <= kPhypNSIepsMuTau) return false;
   return true;
 }
 //________________________________________________________________________________________
 
-bool t2kana::util::IsFHCSystematic(PhysParamId_t p)
+bool valor::util::IsFHCSystematic(PhysParamId_t p)
 {
   return !IsRHCSystematic(p);
 }
 //________________________________________________________________________________________
-bool t2kana::util::IsRHCSystematic(PhysParamId_t p)
+bool valor::util::IsRHCSystematic(PhysParamId_t p)
 {
   if(!IsSystematic(p))
     return false;
@@ -2131,7 +2130,7 @@ bool t2kana::util::IsRHCSystematic(PhysParamId_t p)
 }
 //________________________________________________________________________________________
 //____________________________________________________________________________
-bool t2kana::util::IsXSec(PhysParamId_t p)
+bool valor::util::IsXSec(PhysParamId_t p)
 {
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
     return true;
@@ -2141,7 +2140,7 @@ bool t2kana::util::IsXSec(PhysParamId_t p)
   
 }
 //____________________________________________________________________________
-bool t2kana::util::IsUsingSplines(PhysParamId_t p)
+bool valor::util::IsUsingSplines(PhysParamId_t p)
 {
   assert(!"IsUsingSplines Currently unimplemented");
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecBindE)
@@ -2154,7 +2153,7 @@ bool t2kana::util::IsUsingSplines(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
+bool valor::util::IsEff1Rmu(PhysParamId_t p)
 {
   assert(!"IsEff1Re Currently unimplemented");
   switch(p) {
@@ -2164,7 +2163,7 @@ bool t2kana::util::IsEff1Rmu(PhysParamId_t p)
   return false; 
 }
 //____________________________________________________________________________  
-bool t2kana::util::IsEff1Re(PhysParamId_t p)
+bool valor::util::IsEff1Re(PhysParamId_t p)
 {
   assert(!"IsEff1Re Currently unimplemented");
   switch(p) {
@@ -2174,7 +2173,7 @@ bool t2kana::util::IsEff1Re(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________ 
-bool t2kana::util::IsEff(PhysParamId_t p)
+bool valor::util::IsEff(PhysParamId_t p)
 {
   assert(!"IsEff Currently unimplemented");
   switch(p) {
@@ -2185,7 +2184,7 @@ bool t2kana::util::IsEff(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________   
-bool t2kana::util::IsFSI(PhysParamId_t p)
+bool valor::util::IsFSI(PhysParamId_t p)
 {
   assert(!"IsFSI Currently unimplemented");
   switch(p) {
@@ -2195,7 +2194,7 @@ bool t2kana::util::IsFSI(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________   
-bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
+bool valor::util::IsSKDetFSI(PhysParamId_t p)
 {
   //fhc
 #ifdef SKCORRELATIONS
@@ -2234,7 +2233,7 @@ bool t2kana::util::IsSKDetFSI(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________   
-bool t2kana::util::IsBANFF(PhysParamId_t p)
+bool valor::util::IsBANFF(PhysParamId_t p)
 {
   //fhc
   if(p >= kNuisBANFF00
@@ -2260,7 +2259,7 @@ bool t2kana::util::IsBANFF(PhysParamId_t p)
 }
 //____________________________________________________________________________
 
-string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
+string valor::util::AsStringCompact_KDI(PhysParamId_t p)
 {
   //Uses the KDI conventions (where different)
 
@@ -2281,8 +2280,8 @@ string t2kana::util::AsStringCompact_KDI(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
-t2kana::conv::PhysParamId_t
-  t2kana::util::PhysParamIdFromString(string sh) 
+valor::conv::PhysParamId_t
+  valor::util::PhysParamIdFromString(string sh) 
 {
   string lsh = util::ToLowerCase(sh);
   for (int i = 0 ; i < knppmax ; i++) {
@@ -2293,8 +2292,8 @@ t2kana::conv::PhysParamId_t
   return kPhypUndefined;
 }
 //____________________________________________________________________________
-t2kana::conv::PhysParamId_t
-  t2kana::util::PhysParamIdFromLongString(string sh) 
+valor::conv::PhysParamId_t
+  valor::util::PhysParamIdFromLongString(string sh) 
 {
   string lsh = util::ToLowerCase(sh);
   for (int i = 0 ; i < knppmax ; i++) {

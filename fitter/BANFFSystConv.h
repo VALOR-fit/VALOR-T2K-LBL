@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -13,7 +13,7 @@
 Changes since 2011_v0.9.0:
 
 17-12-2013  Nick  
-Split t2kana::conv namespace into several smaller files
+Split valor::conv namespace into several smaller files
 
 22-12-2013  Nick
 Added extra arrays for reverse horn current systematic parameters
@@ -27,7 +27,7 @@ Added extra arrays for reverse horn current systematic parameters
 #include "Enumerations.h"
 #include "SamplesAndModes.h"
 
-namespace t2kana {
+namespace valor {
 namespace conv   {
 
 //
@@ -49,6 +49,102 @@ static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 5;
 static const int kNumOfRHCParamsInBANFFfit = 27;
 static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 5;
 #endif
+
+static const PhysParamId_t kListOfBANFFParams[kNumOfParamsInBANFFfit] = 
+{
+   kNuisBANFF00 ,
+   kNuisBANFF01 ,
+   kNuisBANFF02 ,
+   kNuisBANFF03 ,
+   kNuisBANFF04 ,
+   kNuisBANFF05 ,
+   kNuisBANFF06 ,
+   kNuisBANFF07 ,
+   kNuisBANFF08 ,
+   kNuisBANFF09 ,
+   kNuisBANFF10 ,
+   kNuisBANFF11 ,
+   kNuisBANFF12 ,
+   kNuisBANFF13 ,
+   kNuisBANFF14 ,
+   kNuisBANFF15 ,
+#if (BANFF_BINS != 2)
+   kNuisBANFF16 ,
+   kNuisBANFF17 ,
+   kNuisBANFF18 ,
+   kNuisBANFF19 ,
+   kNuisBANFF20 ,
+   kNuisBANFF21 ,
+#endif
+#if BANFF_BINS == 1
+   kNuisBANFF22 , 
+   kNuisBANFF23 , 
+   kNuisBANFF24 , 
+#endif
+   kNuisBANFFMAQE   ,
+   kNuisBANFFMARES  ,
+   kNuisBANFFCCQEE0 ,
+#if BANFF_BINS != 3
+   kNuisBANFFCCQEE1 ,
+   kNuisBANFFCCQEE2 ,
+#endif
+   kNuisBANFFCC1piE0 ,
+#if BANFF_BINS != 3
+   kNuisBANFFCC1piE1,
+#endif
+#if (BANFF_BINS != 2)
+   kNuisBANFFNC1pi0 ,
+#endif
+
+};
+
+static const PhysParamId_t kListOfRHCBANFFParams[kNumOfRHCParamsInBANFFfit] = 
+{
+   kRHCNuisBANFF00 ,
+   kRHCNuisBANFF01 ,
+   kRHCNuisBANFF02 ,
+   kRHCNuisBANFF03 ,
+   kRHCNuisBANFF04 ,
+   kRHCNuisBANFF05 ,
+   kRHCNuisBANFF06 ,
+   kRHCNuisBANFF07 ,
+   kRHCNuisBANFF08 ,
+   kRHCNuisBANFF09 ,
+   kRHCNuisBANFF10 ,
+   kRHCNuisBANFF11 ,
+   kRHCNuisBANFF12 ,
+   kRHCNuisBANFF13 ,
+   kRHCNuisBANFF14 ,
+   kRHCNuisBANFF15 ,
+#if (BANFF_BINS != 2)
+   kRHCNuisBANFF16 ,
+   kRHCNuisBANFF17 ,
+   kRHCNuisBANFF18 ,
+   kRHCNuisBANFF19 ,
+   kRHCNuisBANFF20 ,
+   kRHCNuisBANFF21 ,
+#endif
+#if BANFF_BINS == 1
+   kRHCNuisBANFF22 , 
+   kRHCNuisBANFF23 , 
+   kRHCNuisBANFF24 , 
+#endif
+   kRHCNuisBANFFMAQE   ,
+   kRHCNuisBANFFMARES  ,
+   kRHCNuisBANFFCCQEE0 ,
+#if BANFF_BINS != 3
+   kRHCNuisBANFFCCQEE1 ,
+   kRHCNuisBANFFCCQEE2 ,
+#endif
+   kRHCNuisBANFFCC1piE0 ,
+#if BANFF_BINS != 3
+   kRHCNuisBANFFCC1piE1,
+#endif
+#if (BANFF_BINS != 2)
+   kRHCNuisBANFFNC1pi0 ,
+#endif
+
+};
 
 //
 // ** Flux systematics
@@ -504,7 +600,7 @@ static const double kEtrueRangeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfi
 
 
 } // conv
-} // t2kana
+} // valor
   
 #endif 
 

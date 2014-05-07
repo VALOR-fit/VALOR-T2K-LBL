@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::SuperkMC
+\class    valor::SuperkMC
 
 \brief    SuperK Monte Carlo templates
 
@@ -13,16 +13,17 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_sk_mc_templates_h_
-#define _t2kana_sk_mc_templates_h_
+#ifndef _valor_sk_mc_templates_h_
+#define _valor_sk_mc_templates_h_
 
 #include <TObject.h>
 #include <TXMLEngine.h>
 #include <TMatrixD.h>
 
 #include "Conventions.h"
-#include "PhysHypothesis.h"
-#include "NuOsc3Flavour.h"
+#include "FitCore/PhysHypothesis.h"
+#include "Utilities/NuOsc3Flavour.h"
+#include "Utilities/NuOscSterile.h"
 #include "Utilities.h"
 
 class TVirtualPad;
@@ -30,10 +31,10 @@ class TTree;
 class TH1D;
 class TH2D;
 
-using t2kana::conv::kns;
-using t2kana::conv::knm;
+using valor::conv::kns;
+using valor::conv::knm;
 
-namespace t2kana {
+namespace valor {
 
 class NuFlux;
 class NuXSec;
@@ -94,7 +95,7 @@ public:
   void SetUnphysicalOscProb(bool unphys) { fUnphysicalOscProb = unphys; }
 
   // Allow changing the mass hierarchy
-  void SetMassHierarchy(t2kana::conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
+  void SetMassHierarchy(valor::conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
     
     void NevDebug(conv::SKMCTemplateType_t t, string name);
 
@@ -295,6 +296,6 @@ private:
 ClassDef(SuperkMC, 6);
 };
 
-} //t2kana
+} //valor
 
 #endif

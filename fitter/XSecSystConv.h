@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -13,7 +13,7 @@
 Changes since 2011_v0.9.0:
 
 17-12-2013  Nick  
-Split t2kana::conv namespace into several smaller files
+Split valor::conv namespace into several smaller files
 
 31-12-2013  Nick
 Added extra arrays for reverse horn current modes
@@ -28,7 +28,7 @@ Added extra arrays for reverse horn current modes
 #include "Enumerations.h"
 #include "SamplesAndModes.h"
 
-namespace t2kana {
+namespace valor {
 namespace conv   {
 
 //
@@ -1982,7 +1982,7 @@ static const bool kXsApplyXSecSystToSKMode[kns][knm][kNumOfXSecSyst] = {
 #endif //BANFF_BINS
 
 } // conv
-} // t2kana
+} // valor
   
 #endif 
 

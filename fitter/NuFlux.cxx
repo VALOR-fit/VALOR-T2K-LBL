@@ -36,8 +36,8 @@ using std::cerr;
 using std::setw;
 using std::endl;
 
-using namespace t2kana;
-using namespace t2kana::util;
+using namespace valor;
+using namespace valor::util;
 
 ClassImp(NuFlux)
 
@@ -489,7 +489,7 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
   const int np = conv::kNumOfParamsInBANFFfit;
 
   for(int ip = 0; ip < np; ip++) {
-     conv::PhysParamId_t p = conv::PhysParamId_t ( (int)conv::kNuisBANFF00 + ip );
+     conv::PhysParamId_t p = conv::PhysParamId_t ( conv::kListOfBANFFParams[ip]);
      // flux param?
      bool is_sk_flux_param = conv::kParamInBANFFfitIsSuperkFluxParam[ip];
      if(is_sk_flux_param) 

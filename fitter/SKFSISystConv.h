@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -13,7 +13,7 @@
 Changes since 2011_v0.9.0:
 
 17-12-2013  Nick  
-Split t2kana::conv namespace into several smaller files
+Split valor::conv namespace into several smaller files
 
 31-12-2013  Nick
 Added extra arrays for reverse horn current modes
@@ -28,7 +28,7 @@ Added extra arrays for reverse horn current modes
 #include "Enumerations.h"
 #include "SamplesAndModes.h"
 
-namespace t2kana {
+namespace valor {
 namespace conv   {
 
 //
@@ -1213,33 +1213,6 @@ static const int kNumOfFSIParams1Rmu = 0;
 static const int kNumOfFSIParams1Re  = 12;
 #endif
 
-// The following is the list of the above kNumOfFSIParams
-static const PhysParamId_t kListOfFSIParams[kNumOfFSIParams] = 
-{
-#if FSI_BINS != 3
-    kNuisFSI000,
-    kNuisFSI001,
-    kNuisFSI002,
-    kNuisFSI003,
-    kNuisFSI004,
-    kNuisFSI005,
-#endif
-#if FSI_BINS != 2
-    kNuisFSI006,
-    kNuisFSI007,
-    kNuisFSI008,
-    kNuisFSI009,
-    kNuisFSI010,
-    kNuisFSI011,
-    kNuisFSI012,
-    kNuisFSI013,
-    kNuisFSI014,
-    kNuisFSI015,
-    kNuisFSI016,
-    kNuisFSI017,
-#endif
-};
-
 static const double kFSIParamsErecoCut[kNumOfFSIParams][2] =
 {
 #if FSI_BINS != 3
@@ -1965,12 +1938,12 @@ static const bool kSKDet1ReApplyParamToSKMode[kns][knm][kNumOfSKDetParams1Re] = 
 //static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Rmu + kNumOfUncXSecSyst;                                                                                
 //static const int kNumOfNuisanceParams1Re   = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Re  + kNumOfUncXSecSyst - 1 + 1 ;                                                                       
 //static const int kNumOfNuisanceParamsJoint = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams     + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + 1;                      
-static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
-static const int kNumOfRHCNuisanceParams = kNumOfRHCParamsInBANFFfit + kNumOfRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfRHCUncXSecSyst ;
+//~ static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
+//~ static const int kNumOfRHCNuisanceParams = kNumOfRHCParamsInBANFFfit + kNumOfRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfRHCUncXSecSyst ;
 
 
 } // conv
-} // t2kana
+} // valor
   
 #endif 
 

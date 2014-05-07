@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -13,7 +13,7 @@
 Changes since 2011_v0.9.0:
 
 17-12-2013  Nick  
-Split t2kana::conv namespace into several smaller files
+Split valor::conv namespace into several smaller files
 
 */
 //____________________________________________________________________________
@@ -24,8 +24,9 @@ Split t2kana::conv namespace into several smaller files
 #include "AnalysisOptions.h"
 #include "SamplesAndModes.h"
 #include "Enumerations.h"
+#include "XSecSystConv.h"
 
-namespace t2kana {
+namespace valor {
 namespace util   {
     
   int            NumErecoBins      (conv::SuperkSample_t s);
@@ -1770,7 +1771,7 @@ static const int kNumOfRHCXSecSystWghtSpl1Re = kNSuperkModes * kNumOfRHCXSecSyst
 static const int kRHCnwspl1Re = kNumOfRHCXSecSystWghtSpl1Re; // as above - shorter name 
 
 } // conv
-} // t2kana
+} // valor
   
 #endif
 

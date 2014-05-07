@@ -12,11 +12,11 @@ ChangeLog:
 #include "Utilities.h"
 #include "Binning.h"
 
-using namespace t2kana;
-using namespace t2kana::conv;
+using namespace valor;
+using namespace valor::conv;
 
 //___________________________________________________________________________
-int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
+int valor::util::SuperkMode2FluxNuPdg(valor::conv::SuperkMode_t m)
 {
   if ( util::IsNuMu      (m) ) return kPdgNuMu;
   if ( util::IsOscNuMu   (m) ) return kPdgNuE; /// nue -> numu
@@ -32,7 +32,7 @@ int t2kana::util::SuperkMode2FluxNuPdg(t2kana::conv::SuperkMode_t m)
   return 0;
 }
 //____________________________________________________________________________
-int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
+int valor::util::SuperkMode2SKMCPdg(valor::conv::SuperkMode_t m)
 {
   if ( util::IsNuMu      (m) ) return kPdgNuMu;
   if ( util::IsOscNuMu   (m) ) return kPdgNuMu;
@@ -48,7 +48,7 @@ int t2kana::util::SuperkMode2SKMCPdg(t2kana::conv::SuperkMode_t m)
   return 0;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
+bool valor::util::IsNuMu(valor::conv::SuperkMode_t  m)
 {
 
   if(m >= kSKmNuMuCCQE && m <= kSKmNuMuNCoth_e)
@@ -76,7 +76,7 @@ bool t2kana::util::IsNuMu(t2kana::conv::SuperkMode_t  m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsOscNuMu(t2kana::conv::SuperkMode_t  m)
+bool valor::util::IsOscNuMu(valor::conv::SuperkMode_t  m)
 {
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
   if(m >= kSKmOscNuMuCCQE && m <= kSKmOscNuMuCCoth)
@@ -99,7 +99,7 @@ bool t2kana::util::IsOscNuMu(t2kana::conv::SuperkMode_t  m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsOscNuMuBar(t2kana::conv::SuperkMode_t  m)
+bool valor::util::IsOscNuMuBar(valor::conv::SuperkMode_t  m)
 {
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
   if(m >= kSKmOscNuMuBarCCQE && m <= kSKmOscNuMuBarCCoth)
@@ -121,7 +121,7 @@ bool t2kana::util::IsOscNuMuBar(t2kana::conv::SuperkMode_t  m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsOscNuEBar(t2kana::conv::SuperkMode_t  m)
+bool valor::util::IsOscNuEBar(valor::conv::SuperkMode_t  m)
 {
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
   if(m >= kSKmOscNuEBarCCQE && m <= kSKmOscNuEBarCCoth)
@@ -142,7 +142,7 @@ bool t2kana::util::IsOscNuEBar(t2kana::conv::SuperkMode_t  m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsNuMuBar(t2kana::conv::SuperkMode_t m)
+bool valor::util::IsNuMuBar(valor::conv::SuperkMode_t m)
 {
   if(m >= kSKmNuMuBarCCQE && m <= kSKmNuMuBarNCoth_e)
     return true;
@@ -168,7 +168,7 @@ bool t2kana::util::IsNuMuBar(t2kana::conv::SuperkMode_t m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsNuE(t2kana::conv::SuperkMode_t m)
+bool valor::util::IsNuE(valor::conv::SuperkMode_t m)
 {
   if(m >= kSKmNuECCQE && m <= kSKmNuENCoth_e)
     return true;
@@ -194,7 +194,7 @@ bool t2kana::util::IsNuE(t2kana::conv::SuperkMode_t m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsNuEBar(t2kana::conv::SuperkMode_t m)
+bool valor::util::IsNuEBar(valor::conv::SuperkMode_t m)
 {
   if(m >= kSKmNuEBarCCQE && m <= kSKmNuEBarNCoth_e)
     return true;
@@ -220,19 +220,19 @@ bool t2kana::util::IsNuEBar(t2kana::conv::SuperkMode_t m)
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsOscNuE(t2kana::conv::SuperkMode_t m)
+bool valor::util::IsOscNuE(valor::conv::SuperkMode_t m)
 {
   if(m >= kSKmOscNuECCQE && m <= kSKmOscNuECCoth)
     return true;
   return false;
 }
 //____________________________________________________________________________
-bool t2kana::util::IsCC(t2kana::conv::SuperkMode_t m)
+bool valor::util::IsCC(valor::conv::SuperkMode_t m)
 {
   return !(IsNC(m));
 }
 //____________________________________________________________________________
-bool t2kana::util::IsNC(t2kana::conv::SuperkMode_t m)
+bool valor::util::IsNC(valor::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmNuMuNC1piC      ) : 
@@ -268,7 +268,7 @@ bool t2kana::util::IsNC(t2kana::conv::SuperkMode_t m)
 
 
 //____________________________________________________________________________
-string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
+string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
 {
 // Compact string used for naming output histograms stored ROOT files
 // using the Japanese analysis naming convention
@@ -324,7 +324,7 @@ string t2kana::util::AsStringCompact_KDI (t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
-string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
+string valor::util::AsString(valor::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "numu CC QE";                        break;
@@ -386,7 +386,7 @@ string t2kana::util::AsString(t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
+string valor::util::AsStringRooTex(valor::conv::SuperkMode_t m)
 {
   string s = AsStringTex(m);
   replace( s.begin(), s.end(), '\\', '#' ); // Make slashes hashes for RooTex
@@ -394,7 +394,7 @@ string t2kana::util::AsStringRooTex(t2kana::conv::SuperkMode_t m)
   return s;
 }
 //________________________________________________________________________________________
-string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
+string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
 {
   switch(m) {
 
@@ -457,7 +457,7 @@ string t2kana::util::AsStringTex(t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
+string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
 {
 // Compact string used for naming output histograms stored ROOT files
 //
@@ -521,7 +521,7 @@ string t2kana::util::AsStringCompact (t2kana::conv::SuperkMode_t m)
   return "";
 }
 //____________________________________________________________________________
-t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
+valor::conv::SuperkMode_t valor::util::SuperkModeFromString(string sh)
 {
   string lsh = util::ToLowerCase(sh);
   for (int i = 0 ; i < kNSuperkModes ; i ++ ) {
@@ -534,7 +534,7 @@ t2kana::conv::SuperkMode_t t2kana::util::SuperkModeFromString(string sh)
   return kSKmUndefined;
 }
 //____________________DEPRECATED______________________________________________
-bool t2kana::util::IsMEC(t2kana::conv::SuperkMode_t m)
+bool valor::util::IsMEC(valor::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmMEC      ) :
@@ -547,7 +547,7 @@ bool t2kana::util::IsMEC(t2kana::conv::SuperkMode_t m)
   return false;
 }
 //____________________________________________________________________________
-string t2kana::util::AsStringCompact_splinehack (t2kana::conv::SuperkMode_t m)
+string valor::util::AsStringCompact_splinehack (valor::conv::SuperkMode_t m)
 {
 // TEMPORARY HACK using the old naming scheme for osc nue
 //

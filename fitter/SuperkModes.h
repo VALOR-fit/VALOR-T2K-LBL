@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana skmodes
+\class    valor skmodes
 
 \brief    Superk Modes for VALOR
 
@@ -22,7 +22,7 @@ Changes since 2014 v0.0.1:
 #include "Enumerations.h"
 #include "AnalysisOptions.h"
 
-namespace t2kana {
+namespace valor {
   
 namespace conv   {
   
@@ -115,7 +115,7 @@ namespace util {
   string AsStringRooTex     (conv::SuperkMode_t       m);
   
 } // util
-} // t2kana
+} // valor
   
 #endif 
 

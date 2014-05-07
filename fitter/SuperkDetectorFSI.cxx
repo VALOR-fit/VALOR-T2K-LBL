@@ -31,16 +31,15 @@
 
 #include "SuperkDetectorFSI.h"
 #include "Utilities.h"
-#include "Opt.h"
 
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::ostringstream;
 
-using namespace t2kana;
-using namespace t2kana::conv;
-using namespace t2kana::util;
+using namespace valor;
+using namespace valor::conv;
+using namespace valor::util;
 
 ClassImp(SuperkDetectorFSI)
 
@@ -386,12 +385,12 @@ void SuperkDetectorFSI::Tweak(
   cout << "Exp/SuperkDetectorFSI/Tweak >> Tweaking SuperkDetector+FSI parameters" << endl;
 #endif
 
-  if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly) {
+  if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly) {
     this->TweakOnly1Rmu(force_inputs,input_skdetfsi_params);
     return;
   }
 
-  if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly) {
+  if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly) {
     this->TweakOnly1Re(force_inputs,input_skdetfsi_params);
     return;
   }
@@ -478,12 +477,12 @@ void SuperkDetectorFSI::TweakRHC(
   cout << "Exp/SuperkDetectorFSI/Tweak >> Tweaking RHC SuperkDetector+FSI parameters" << endl;
 #endif
 
-  if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaRHCNuMuDisappOnly) {
+  if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaRHCNuMuDisappOnly) {
     this->TweakOnlyRHC1Rmu(force_inputs,input_skdetfsi_params);
     return;
   }
 
-  if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaRHCNuEAppOnly) {
+  if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaRHCNuEAppOnly) {
     this->TweakOnlyRHC1Re(force_inputs,input_skdetfsi_params);
     return;
   }

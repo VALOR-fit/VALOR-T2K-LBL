@@ -23,10 +23,10 @@
 #include <TRandom3.h>
 #include <TMath.h>
 
+#include "Enumerations.h"
+#include "Utilities.h"
 #include "BANFF.h" 
 #include "Conventions.h"
-#include "Utilities.h" 
-#include "Opt.h"
 
 using std::cout;
 using std::cerr;
@@ -34,9 +34,9 @@ using std::endl;
 using std::setw;
 using std::setprecision;
 
-using namespace t2kana;
-using namespace t2kana::conv;
-using namespace t2kana::util;
+using namespace valor;
+using namespace valor::conv;
+using namespace valor::util;
 
 ClassImp(BANFF)
 
@@ -66,6 +66,21 @@ void BANFF::Init(void)
   fIsFluxWghtUpdated    = true;
   fIsTweakedRHC         = false;
   fIsFluxWghtUpdatedRHC = true;
+  
+  for (int ip = 0 ; ip < conv::knppmax ; ip++) {
+    PhysParamId_t p = (PhysParamId_t) ip;
+    fParam2Idx[ip]=-1;
+    for (int ibp = 0 ; ibp < kNumOfParamsInBANFFfit ; ibp++) {
+      if (kListOfBANFFParams[ibp] == p) {
+        fParam2Idx[ip] = ibp;
+      }
+    }
+    for (int ibp = 0 ; ibp < kNumOfRHCParamsInBANFFfit ; ibp++) {
+      if (kListOfRHCBANFFParams[ibp] == p) {
+        fParam2Idx[ip] = ibp;
+      }
+    }
+  }
 
 }
 //________________________________________________________________________________________
@@ -733,7 +748,7 @@ double BANFF::ChisqPenalty(bool /*all_syst*/) const
   const TMatrixD covInv (this->CovMatrixInv());
   /*
   if(!all_syst) {
-    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined){
+    if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined){
       //Vector with deviations of current values from  best fit values
       const int np = 3;
       TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
@@ -957,32 +972,7 @@ void BANFF::PrintRHCSystematicVariations(ostream & stream) const
 //________________________________________________________________________________________
 int BANFF::Param2Idx(PhysParamId_t p) const
 {
-  int first, last;
-  int iparam = (int) p;
-  bool isRHC = util::IsRHCSystematic(p);
-  if(isRHC)
-    {
-    first  = (int) kRHCNuisBANFF00;
-#if (BANFF_BINS != 2)
-    last   = (int) kRHCNuisBANFFNC1pi0;
-#elif BANFF_BINS == 2
-    last   = (int) kRHCNuisBANFFCC1piE1;
-#endif
-    }
-  else
-    {
-    first  = (int) kNuisBANFF00;
-#if (BANFF_BINS != 2)
-    last   = (int) kNuisBANFFNC1pi0;
-#elif BANFF_BINS == 2
-    last   = (int) kNuisBANFFCC1piE1;
-#endif
-    }
-
-  if(! (iparam >= first && iparam <= last) )
-    cout << AsString(p) << endl;
-  assert(iparam >= first && iparam <= last);
-  int idx = iparam-first;
-  return idx;  
+  assert(p!=kPhypUndefined);
+  return fParam2Idx[p];  
 }
 //________________________________________________________________________________________

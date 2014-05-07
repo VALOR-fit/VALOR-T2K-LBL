@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -13,7 +13,7 @@
 Changes since 2011_v0.9.0:
 
 17-12-2013  Nick  
-Split t2kana::conv namespace into several smaller files
+Split valor::conv namespace into several smaller files
 
 31-12-2013  Nick
 Add samples, modes and systematic parameters for reverse horn current running
@@ -26,20 +26,24 @@ Add samples, modes and systematic parameters for reverse horn current running
 
 #include "AnalysisOptions.h"
 
-#include "PhysParamId.h"    
-#include "SuperkModes.h"    
-#include "SuperkSamples.h"  
-#include "ConfLevel.h"      
-#include "PDG.h"            
-#include "OscChannelId.h"
-#include "NuOscDeltaCP.h"
-#include "NuOscDmsqScheme.h"
-#include "NuOscOctant.h"
-#include "NuOscMixParam.h"
-#include "PhysHypothesisId.h"
-#include "NuMassHierarchy.h"
+#include "T2KPhysParamId.h"
 
-namespace t2kana {
+#include "Conventions/ConfLevel.h"
+#include "Conventions/NuMassHierarchy.h"
+#include "Conventions/NuOscDeltaCP.h"
+#include "Conventions/NuOscDmsqScheme.h"
+#include "Conventions/NuOscMixParam.h"
+#include "Conventions/NuOscOctant.h"
+#include "Conventions/OscChannelId.h"
+#include "Conventions/PDG.h"
+#include "Conventions/PhysHypothesisId.h"
+//#include "Conventions/PhysParamId.h"
+//#include "Conventions/ReacMode.h"
+
+#include "SuperkModes.h"  
+#include "SuperkSamples.h"
+
+namespace valor {
 namespace conv   {
 
 //
@@ -92,7 +96,7 @@ typedef enum EFluxType
 FluxType_t;
 
 } // conv
-} // t2kana
+} // valor
   
 #endif 
 

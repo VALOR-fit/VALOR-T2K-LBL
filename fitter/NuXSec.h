@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
    
-\class    t2kana::NuXSec
+\class    valor::NuXSec
       
 \brief    Neutrino cross-section info used in the oscillation fit
    
@@ -15,8 +15,8 @@
 */
 //____________________________________________________________________________
    
-#ifndef _t2kana_nu_xsec_h_
-#define _t2kana_nu_xsec_h_
+#ifndef _valor_nu_xsec_h_
+#define _valor_nu_xsec_h_
 
 #include <TObject.h>
 #include <TXMLEngine.h>
@@ -25,16 +25,17 @@
 #include <TFile.h>
 
 #include "Conventions.h"
+#include "Enumerations.h"
 #include "Utilities.h"
 
-using t2kana::conv::kns;
-using t2kana::conv::knm;
-using t2kana::conv::knwspl1Rmu;
-using t2kana::conv::knwspl1Re;
-using t2kana::conv::kRHCnwspl1Rmu;
-using t2kana::conv::kRHCnwspl1Re;
+using valor::conv::kns;
+using valor::conv::knm;
+using valor::conv::knwspl1Rmu;
+using valor::conv::knwspl1Re;
+using valor::conv::kRHCnwspl1Rmu;
+using valor::conv::kRHCnwspl1Re;
 
-namespace t2kana {
+namespace valor {
 
 class BANFF;
 
@@ -221,6 +222,6 @@ private:
 ClassDef(NuXSec, 4);
 };
 
-} // t2kana
+} // valor
 
 #endif

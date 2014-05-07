@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::SuperkObservation
+\class    valor::SuperkObservation
 
 \brief    
 
@@ -13,23 +13,24 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_sk_observation_h_
-#define _t2kana_sk_observation_h_
+#ifndef _valor_sk_observation_h_
+#define _valor_sk_observation_h_
 
 #include <string>
 
 class TH1D;
 class TObjArray;
 
-#include "Conventions.h"
-#include "FitDataABC.h"
+#include "FitCore/FitDataABC.h"
+
+#include "FitCore/FitParamList.h"
+
 #include "SuperkExpectation.h"
-#include "FitParamList.h"
 
 using std::string;
-using t2kana::conv::kns;
+using valor::conv::kns;
 
-namespace t2kana {
+namespace valor {
 
 class SuperkObservation: public FitDataABC
 {
@@ -38,7 +39,7 @@ public:
  ~SuperkObservation();
  
   // FitDataABC interface
-  string Name(void) const {return string("SuperkObservation");};
+  string Name(void) {return string("SuperkObservation");};
 
   // Read data
   bool Read(string config_file, Option_t * opt = 0); // Valid options: dataset=n
@@ -49,11 +50,11 @@ public:
   bool Generate(FitModelABC * exp, bool fluctuate=true);
   
   // Write datasets to the input container or to the input file
-  bool Write (TObjArray * collection, const char * tag = "data", Option_t * write_opt = 0) const;
-  bool Write (const char * filename,  const char * tag = "data", Option_t * write_opt = 0, Option_t * file_opt = 0) const;
+  bool Write (TObjArray * collection, const char * tag = "data", Option_t * write_opt = 0);
+  bool Write (const char * filename,  const char * tag = "data", Option_t * write_opt = 0, Option_t * file_opt = 0);
   
   // Number of bins in fit data, or number of events for unbinned fits
-  int NumOfBins(void) const;
+  int NumOfBins(void);
   
   // Calculate the specified statistic
   // The corresponding prediction is taken from the input model.
@@ -72,14 +73,14 @@ public:
   bool CreateMockData(SuperkExpectation & exp, const PhysHypothesis & ph, bool fluctuate=true) {return Generate(&exp,ph,fluctuate);};
 
   // Get data
-  double NumOfEvents (t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;             
-  double NumOfEvents (double Er, t2kana::conv::SuperkSample_t s = t2kana::conv::kSKsUndefined) const;  
+  double NumOfEvents (valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;             
+  double NumOfEvents (double Er, valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;  
 
-  TH1D*  ErecoSpectrum (t2kana::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
-  VALORArray       *  ErecoSpectrumVArray (t2kana::conv::SuperkSample_t s);
-  const VALORArray *  ErecoSpectrumVArray (t2kana::conv::SuperkSample_t s) const;
-  double           *  ErecoSpectrumArray  (t2kana::conv::SuperkSample_t s);
-  const double     *  ErecoSpectrumArray  (t2kana::conv::SuperkSample_t s) const;
+  TH1D*  ErecoSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  VALORArray       *  ErecoSpectrumVArray (valor::conv::SuperkSample_t s);
+  const VALORArray *  ErecoSpectrumVArray (valor::conv::SuperkSample_t s) const;
+  double           *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s);
+  const double     *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s) const;
   
 private:
   
@@ -96,7 +97,7 @@ private:
 ClassDef(SuperkObservation, 4)
 };
 
-} // t2kana
+} // valor
 
 #endif 
 

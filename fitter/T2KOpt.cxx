@@ -11,62 +11,55 @@ ChangeLog:
 #include <string>
 #include <cstdlib>
 
-#include "Opt.h"
-#include "Rnd.h"
+#include "T2KOpt.h"
+#include "Utilities/Rnd.h"
 #include "Utilities.h"
 
 using std::endl;
 using std::string;
 
-using namespace t2kana;
-using namespace t2kana::conv;
-
-ClassImp(Opt::Persistable);
+using namespace valor;
+using namespace valor::conv;
 
 //________________________________________________________________________________________
-namespace t2kana {
-  ostream & operator<<(ostream & stream, const Opt & opt)
+namespace valor {
+  ostream & operator<<(ostream & stream, const T2KOpt & opt)
   {
     opt.Print(stream);
     return stream;
   }
 }
 //____________________________________________________________________________
-Opt * Opt::fInstance = 0;
+T2KOpt * T2KOpt::fInstance = 0;
 //____________________________________________________________________________
-Opt::Opt()
+T2KOpt::T2KOpt()
 {
   this->SetDefaults();
   fInstance = 0;
 }
 //________________________________________________________________________________________
-Opt::Opt(const Opt &) 
+T2KOpt::T2KOpt(const T2KOpt &) 
 {
 
 }
 //________________________________________________________________________________________
-Opt::~Opt()
+T2KOpt::~T2KOpt()
 {
 
 }
 //____________________________________________________________________________
-Opt * Opt::Instance()
+T2KOpt * T2KOpt::Instance()
 {
   if(fInstance == 0) {
-    static Opt::Cleaner cleaner;
+    static T2KOpt::Cleaner cleaner;
     cleaner.DummyMethodAndSilentCompiler();
-    fInstance = new Opt;
+    fInstance = new T2KOpt;
   }
   return fInstance;
 }
 //____________________________________________________________________________
-void Opt::SetDefaults(void) 
+void T2KOpt::SetDefaults(void) 
 {
-  gMassHierarchyAssumed = kNmhNormal;
-  gOscMixingParamChoice = kNuMixSinsq2Theta;
-  gOscDmsqScheme        = kNuDmsq12andAbs23;
-  gOscDeltaCP           = kNuDeltaCPPhase;
-  gOscOctantChoice      = kNuOctantOne;
 
   bool fit_1Rmu = false;
   bool fit_1Re  = false;
@@ -142,7 +135,7 @@ void Opt::SetDefaults(void)
   this->SetDefaultParameterValues();
 }
 //____________________________________________________________________________
-void Opt::SetDefaultParameterValues()
+void T2KOpt::SetDefaultParameterValues()
 {
   // Set default global parameter values
   // set empty values
@@ -219,78 +212,34 @@ void Opt::SetDefaultParameterValues()
   }
 }
 //____________________________________________________________________________
-bool Opt::Undefined(void)
+bool T2KOpt::Undefined(void)
 {
-  if(gMassHierarchyAssumed == kNmhUndefined)
-    return true;
-  if(gOscMixingParamChoice == kNuMixUndefined)
-    return true;
-  if(gOscDmsqScheme        == kNuDmsqUndefined)
-    return true;
-  if(gOscDeltaCP           == kNuDeltaCPUndefined)
-    return true;
-  if(gOscOctantChoice      == kNuOctantUndefined)
-    return true;
 
   return false;
 }
 //____________________________________________________________________________
-void Opt::Print(ostream & stream) const
+void T2KOpt::Print(ostream & stream) const
 {
-  stream << "[Global analysis options]" 
-         << endl;
-  stream << " - Hierarchy: " 
-         << util::AsString(gMassHierarchyAssumed) 
-         << endl;
-  stream << " - Mixing param choice: " 
-         << util::AsString(gOscMixingParamChoice) 
-         << endl;
-  stream << " - 23 octant choice: "
-	 << util::AsString(gOscOctantChoice)
-	 << endl;
-  stream << " - Independent squared mass splittings: "
-         << util::AsString(gOscDmsqScheme)
-         << endl;
-  stream << " - Choice for Delta CP phase: "
-         << util::AsString(gOscDeltaCP)
-         << endl;
   stream << " - Oscillation analysis choice: " 
          << util::AsString(gOscAnaTypeChoice) 
          << endl;
 }
 //________________________________________________________________________________________
-void Opt::WriteTo (Opt::Persistable & optp)
-{
-  optp.mh    = gMassHierarchyAssumed; 
-  optp.mixp  = gOscMixingParamChoice;
-  optp.oct   = gOscOctantChoice; 
-  optp.dmsqs = gOscDmsqScheme;
-  optp.dcp   = gOscDeltaCP;
-}
-//________________________________________________________________________________________
-void Opt::ReadFrom (Opt::Persistable & optp)
-{
-  gMassHierarchyAssumed = optp.mh;
-  gOscMixingParamChoice = optp.mixp;
-  gOscOctantChoice      = optp.oct;
-  gOscDmsqScheme        = optp.dmsqs;
-  gOscDeltaCP           = optp.dcp;
-}
 //________________________________________________________________________________________
 //________________________________________________________________________________________
-double Opt::GetGlobalBestFit(PhysParamId_t p) const
+double T2KOpt::GetGlobalBestFit(PhysParamId_t p) const
 {
   assert(p!=kPhypUndefined);
   return fGlobalBestFit[p];
 }
 //________________________________________________________________________________________
-double Opt::GetGlobalFitError(PhysParamId_t p) const
+double T2KOpt::GetGlobalFitError(PhysParamId_t p) const
 {
   assert(p!=kPhypUndefined);
   return fGlobalFitError[p];
 }
 //________________________________________________________________________________________
-double Opt::GetRandomGaus(PhysParamId_t p) const
+double T2KOpt::GetRandomGaus(PhysParamId_t p) const
 {
   assert(p!=kPhypUndefined);
   

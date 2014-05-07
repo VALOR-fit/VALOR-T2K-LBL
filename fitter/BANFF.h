@@ -2,7 +2,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::BANFF
+\class    valor::BANFF
 
 \brief    Class to hold analysis inputs from BANFF (Beam and ND280 Flux
           Extrapolation Task Force)
@@ -17,8 +17,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_banff_h_
-#define _t2kana_banff_h_
+#ifndef _valor_banff_h_
+#define _valor_banff_h_
 
 #include <TObject.h>
 #include <TMatrixD.h>
@@ -28,13 +28,13 @@
 
 #include <iostream>
 
-#include "Conventions.h"
+#include <Enumerations.h>
 
 class TH1D;
 class TH2D;
 class TVirtualPad;
 
-namespace t2kana {
+namespace valor {
 
 class BANFF: public TObject
 {
@@ -125,10 +125,12 @@ private:
   
   double * fRHCBestFitArray; //! ///< Pointer to the actual memory location of the best fit values
   double * fRHCCurrentArray; //! ///< Pointer to the actual memory location of the current values
+  
+  int fParam2Idx[conv::knppmax];
 
 ClassDef(BANFF, 1)
 };
 
-} //t2kana
+} //valor
 
 #endif

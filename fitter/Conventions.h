@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -16,17 +16,20 @@ Changes since 2011_v0.9.0:
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_conv_h_
-#define _t2kana_conv_h_
+#ifndef _valor_conv_h_
+#define _valor_conv_h_
+
+#include "Enumerations.h"
 
 #include "Build.h"
 #include "AnalysisOptions.h"
-#include "ParameterValues.h"
-#include "Enumerations.h"
-#include "SamplesAndModes.h"
+
+#include "Conventions/Constants.h"
+
 #include "BANFFSystConv.h"
 #include "XSecSystConv.h"
 #include "SKFSISystConv.h"
+
 #include "Binning.h"
 #include "Formatting.h"
 

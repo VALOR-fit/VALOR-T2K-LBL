@@ -1,7 +1,7 @@
  //____________________________________________________________________________
 /*!
 
-\class    t2kana::SuperkExpectation
+\class    valor::SuperkExpectation
 
 \brief    Code for predicting the SuperK reconstructed energy spectrum.
 
@@ -15,8 +15,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_sk_expectation_h_
-#define _t2kana_sk_expectation_h_
+#ifndef _valor_sk_expectation_h_
+#define _valor_sk_expectation_h_
 
 #include <string>
 
@@ -30,19 +30,21 @@
 #include <TVectorD.h>
 #include <TXMLEngine.h>
 
-#include "FitModelABC.h"
-#include "FitParamList.h"
-#include "PhysParamList.h"
-#include "PhysHypothesis.h"
+#include "Enumerations.h"
 #include "Conventions.h"
 #include "Utilities.h"
-#include "VALORArray.h"
+
+#include "FitCore/FitModelABC.h"
+#include "FitCore/FitParamList.h"
+#include "FitCore/PhysParamList.h"
+#include "Utilities/VALORArray.h"
+#include "FitCore/PhysHypothesis.h"
 
 using std::string;
-using t2kana::conv::kns;
-using t2kana::conv::knm;
+using valor::conv::kns;
+using valor::conv::knm;
 
-namespace t2kana {
+namespace valor {
 
 class SuperkDetectorFSI; ///< SuperK detector systematics + FSI
 class SuperkMC;          ///< SuperK MC templates
@@ -58,7 +60,7 @@ public:
   ~SuperkExpectation();
 
    // *** FitModelABC Interface ***
-   string Name(void) const {return "SuperkExpectation";};
+   string Name(void);
    
    // Read inputs from input XML file
    bool Read(string config_file, Option_t * opt = 0);
@@ -78,11 +80,11 @@ public:
    bool Generate (const FitParamList & fp);
    
    // Write all predictions to the input container or to the input file
-  bool Write (TObjArray* collection, const char * tag = "model", Option_t * write_opt = 0) const;
-  bool Write (const char * filename, const char * tag = "model", Option_t * write_opt = 0, Option_t * file_opt = 0) const;
+  bool Write (TObjArray* collection, const char * tag = "model", Option_t * write_opt = 0);
+  bool Write (const char * filename, const char * tag = "model", Option_t * write_opt = 0, Option_t * file_opt = 0);
    
-   // Get penalty term for current systematics
-   double GetFitStatisticPenalty(Option_t * opt = 0) const;
+  // Get penalty term for current systematics
+  double GetFitStatisticPenalty(Option_t * opt = 0) const;
    
    // ***T2K Legacy interface ***
    
@@ -100,22 +102,22 @@ public:
    bool Generate (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
 
    // Access calculated SK reconstructed energy spectrum for each sample/mode
-   const VALORArray * CurrPredictedErecoVArray     (t2kana::conv::SuperkSample_t s) const;
-   const VALORArray * CurrPredictedErecoVArrayMode (t2kana::conv::SuperkSample_t s) const;
-   VALORArray       * CurrPredictedErecoVArray     (t2kana::conv::SuperkSample_t s);
-   VALORArray       * CurrPredictedErecoVArrayMode (t2kana::conv::SuperkSample_t s);
+   const VALORArray * CurrPredictedErecoVArray     (valor::conv::SuperkSample_t s) const;
+   const VALORArray * CurrPredictedErecoVArrayMode (valor::conv::SuperkSample_t s) const;
+   VALORArray       * CurrPredictedErecoVArray     (valor::conv::SuperkSample_t s);
+   VALORArray       * CurrPredictedErecoVArrayMode (valor::conv::SuperkSample_t s);
    
    // As histograms
-   TH1D*   CurrPredictedErecoSpectrum      (t2kana::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
-   TH1D*   CurrPredictedErecoSpectrum      (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
+   TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+   TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
    
    // Double array getters
-   double* CurrPredictedErecoSpectrumArray     (t2kana::conv::SuperkSample_t s);
-   double* CurrPredictedErecoSpectrumArrayMode (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m);
+   double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s);
+   double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m);
    
-   const double* CurrPredictedErecoSpectrumArray     (t2kana::conv::SuperkSample_t s) const;
-   const double* CurrPredictedErecoSpectrumArrayMode (t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const;
-   double  CurrPredictedErecoSpectrumArray           (t2kana::conv::SuperkSample_t s, int i) const;
+   const double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s) const;
+   const double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const;
+   double  CurrPredictedErecoSpectrumArray           (valor::conv::SuperkSample_t s, int i) const;
    
    // Access inputs used for building-up the expected spectrum at SK
    SuperkDetectorFSI * GetSuperkDetectorFSI (void) { return fSuperkDetectorFSI; }
@@ -156,7 +158,7 @@ private:
 ClassDef(SuperkExpectation, 6)
 };
 
-} // t2kana
+} // valor
 
 #endif 
 

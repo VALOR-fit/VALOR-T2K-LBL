@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
    
-\class    t2kana::FSI
+\class    valor::FSI
       
 \brief    Final state interaction (FSI) info used in the oscillation fit
    
@@ -13,8 +13,8 @@
 */
 //____________________________________________________________________________
    
-#ifndef _t2kana_skdetfsi_h_
-#define _t2kana_skdetfsi_h_
+#ifndef _valor_skdetfsi_h_
+#define _valor_skdetfsi_h_
 
 #include <TObject.h>
 #include <TXMLEngine.h>
@@ -25,13 +25,14 @@
 
 #include <iostream>
 
+#include "Enumerations.h"
 #include "Conventions.h"
 #include "Utilities.h"
 
-using t2kana::conv::kns;
-using t2kana::conv::knm;
+using valor::conv::kns;
+using valor::conv::knm;
 
-namespace t2kana {
+namespace valor {
 
 class SuperkDetectorFSI: public TObject
 {
@@ -123,6 +124,6 @@ private:
 ClassDef(SuperkDetectorFSI, 1);
 };
 
-} // t2kana
+} // valor
 
 #endif

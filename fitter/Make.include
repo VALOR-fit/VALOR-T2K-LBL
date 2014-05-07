@@ -25,7 +25,11 @@ T2KANA_VERSION  = $(shell awk '{print $0}' VERSION)
 
 # T2KANA paths
 #
-T2KANA_INCLUDES := -I./
+T2KANA_INCLUDES := -I./ 
+
+# VALOR paths
+#
+VALOR_INCLUDES := -I$(VALOR_FMWK)/src/
 
 #-------------------------------------------------------------------
 #                              ROOT
@@ -224,6 +228,7 @@ endif
 # includes and libraries needed to compile programs. 
 
 INCLUDES  := $(T2KANA_INCLUDES) \
+	     $(VALOR_INCLUDES) \
 	     $(ROOT_INCLUDES) \
 	     $(LINUX_SYS_INCLUDES)
 

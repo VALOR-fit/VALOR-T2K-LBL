@@ -36,9 +36,11 @@
 #include <TMath.h>
 #include <TCanvas.h>
 
+#include "Enumerations.h"
+
 #include "SuperkObservation.h"
 #include "Utilities.h"
-#include "Rnd.h"
+#include "Utilities/Rnd.h"
 
 using std::istringstream;
 using std::ostringstream;
@@ -46,8 +48,8 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-using namespace t2kana;
-using namespace t2kana::conv;
+using namespace valor;
+using namespace valor::conv;
 
 ClassImp(SuperkObservation)
 
@@ -327,7 +329,7 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
   return nev;
 }
 //________________________________________________________________________________________
-int SuperkObservation::NumOfBins() const
+int SuperkObservation::NumOfBins()
 {
   int nbins = 0;
   for (int is = 0 ; is < kns ; is++) {
@@ -338,7 +340,7 @@ int SuperkObservation::NumOfBins() const
   return nbins;
 }
 //________________________________________________________________________________________
-TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
+TH1D* SuperkObservation::ErecoSpectrum (valor::conv::SuperkSample_t s) const
 {
   if(s == kSKsUndefined) {
     return 0;
@@ -361,7 +363,7 @@ TH1D* SuperkObservation::ErecoSpectrum (t2kana::conv::SuperkSample_t s) const
   return data;
 }
 //________________________________________________________________________________________
-VALORArray * SuperkObservation::ErecoSpectrumVArray (t2kana::conv::SuperkSample_t s)
+VALORArray * SuperkObservation::ErecoSpectrumVArray (valor::conv::SuperkSample_t s)
 {
   if      (s == kSKsRHCFCFV1RingMuLike) return fRHCErDistrArray1Rmu;
   else if (s == kSKsRHCFCFV1RingELike)  return fRHCErDistrArray1Re;
@@ -371,7 +373,7 @@ VALORArray * SuperkObservation::ErecoSpectrumVArray (t2kana::conv::SuperkSample_
   exit(-1);
 }
 //________________________________________________________________________________________
-const VALORArray * SuperkObservation::ErecoSpectrumVArray (t2kana::conv::SuperkSample_t s) const
+const VALORArray * SuperkObservation::ErecoSpectrumVArray (valor::conv::SuperkSample_t s) const
 {
   if      (s == kSKsRHCFCFV1RingMuLike) return fRHCErDistrArray1Rmu;
   else if (s == kSKsRHCFCFV1RingELike)  return fRHCErDistrArray1Re;
@@ -381,12 +383,12 @@ const VALORArray * SuperkObservation::ErecoSpectrumVArray (t2kana::conv::SuperkS
   exit(-1);
 }
 //________________________________________________________________________________________
-double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s)
+double* SuperkObservation::ErecoSpectrumArray (valor::conv::SuperkSample_t s)
 {
   return ErecoSpectrumVArray(s)->GetArray();
 }
 //________________________________________________________________________________________
-const double* SuperkObservation::ErecoSpectrumArray (t2kana::conv::SuperkSample_t s) const
+const double* SuperkObservation::ErecoSpectrumArray (valor::conv::SuperkSample_t s) const
 {
   return ErecoSpectrumVArray(s)->GetArray();
 }
@@ -446,7 +448,7 @@ bool SuperkObservation::Generate(
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag, Option_t * write_opt) const
+bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag, Option_t * write_opt)
 {
   if(!data_collection) {
     cout << "Obs >> Null TObjArray. Not writing data" << endl;
@@ -475,7 +477,7 @@ bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Write(
-  const char * filename, const char * data_tag, Option_t * write_opt, Option_t * file_opt) const
+  const char * filename, const char * data_tag, Option_t * write_opt, Option_t * file_opt)
 {
   if (!file_opt) file_opt="update";
   TObjArray * array = new TObjArray();

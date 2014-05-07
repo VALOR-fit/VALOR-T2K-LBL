@@ -40,9 +40,9 @@ using std::cerr;
 using std::endl;
 using std::ostringstream;
 
-using namespace t2kana;
-using namespace t2kana::conv;
-using namespace t2kana::util;
+using namespace valor;
+using namespace valor::conv;
+using namespace valor::util;
 
 ClassImp(NuXSec)
 

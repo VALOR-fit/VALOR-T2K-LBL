@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class     t2kana::utils
+\class     valor::utils
 
 \brief     Utilities for formatting and style
 
@@ -15,8 +15,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_style_utils_h_
-#define _t2kana_style_utils_h_
+#ifndef _valor_t2kstyle_utils_h_
+#define _valor_t2kstyle_utils_h_
 
 #include <iostream>
 #include <string>
@@ -35,24 +35,9 @@ using std::string;
 using std::vector;
 using std::cout;
 
-namespace t2kana {
+namespace valor {
 namespace util {
-
-  void SetDefaultStyle(bool black_n_white=false);
-
-  void Format(TGraph* gr,
-        int lcol, int lsty, int lwid, int mcol, int msty, double msiz);
-  void Format(TH1* hst,
-        int lcol, int lsty, int lwid, int mcol, int msty, double msiz);
-
-  void PrintBanner(void);
-  void PrintBanner(string filename, UInt_t wait_msec);
-
-  //~ void PrintCompact    (const TVectorD & v, int w=15, int prec=9, Option_t * opt="", ostream & stream = cout);
-  //~ void PrintCompact    (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, ostream & stream = cout);
-  //~ void PrintCompact    (const TMatrixD & m, int w=15, int prec=9, ostream & stream = cout);
-  //~ void PrintCompactTex (const TMatrixD & m, int w=20, int prec=9, ostream & stream = cout, TString opt = "");
-
+  
   // T2K specific
  
    void SetDefaultSKSpectrumStyle (conv::SuperkSample_t s, conv::SuperkMode_t m, TH1D * histogram);
@@ -60,7 +45,7 @@ namespace util {
    void FormatErecoHist(TH1 * hist);
 
 } // util
-} // t2kana
+} // valor
   
 #endif
 

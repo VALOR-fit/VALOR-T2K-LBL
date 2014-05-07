@@ -13,10 +13,10 @@ ChangeLog:
 #include "Utilities.h"
 #include "Binning.h"
 
-using namespace t2kana;
-using namespace t2kana::conv;
+using namespace valor;
+using namespace valor::conv;
 //________________________________________________________________________________________
-int t2kana::util::NumErecoBins(t2kana::conv::SuperkSample_t s)
+int valor::util::NumErecoBins(valor::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kNErecoBins1Rmu; break;
@@ -29,7 +29,7 @@ int t2kana::util::NumErecoBins(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-const double * t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s)
+const double * valor::util::ErecoBinEdges(valor::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kErecoBinEdges1Rmu; break;
@@ -42,7 +42,7 @@ const double * t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
+double valor::util::ErecoBinEdges(valor::conv::SuperkSample_t s, int i)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kErecoBinEdges1Rmu[i]; break;
@@ -55,7 +55,7 @@ double t2kana::util::ErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
   return 0;
 }
 //___________________________________________________________________________
-int t2kana::util::ErecoBinContains(t2kana::conv::SuperkSample_t s, double Ereco)
+int valor::util::ErecoBinContains(valor::conv::SuperkSample_t s, double Ereco)
 {
   int nedges = util::NumErecoBins(s)+1;
   const double * edges = util::ErecoBinEdges(s);
@@ -65,7 +65,7 @@ int t2kana::util::ErecoBinContains(t2kana::conv::SuperkSample_t s, double Ereco)
   return bin;
 }
 //___________________________________________________________________________
-int t2kana::util::NumXsecErecoBins(t2kana::conv::SuperkSample_t s)
+int valor::util::NumXsecErecoBins(valor::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kXsNErecoBins1Rmu; break;
@@ -78,7 +78,7 @@ int t2kana::util::NumXsecErecoBins(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-const double * t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s)
+const double * valor::util::XsecErecoBinEdges(valor::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kXsErecoBinEdges1Rmu; break;
@@ -91,7 +91,7 @@ const double * t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-double t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
+double valor::util::XsecErecoBinEdges(valor::conv::SuperkSample_t s, int i)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kXsErecoBinEdges1Rmu[i]; break;
@@ -104,7 +104,7 @@ double t2kana::util::XsecErecoBinEdges(t2kana::conv::SuperkSample_t s, int i)
   return 0;
 }
 //___________________________________________________________________________
-int t2kana::util::NumEtrueBins(t2kana::conv::SuperkSample_t s)
+int valor::util::NumEtrueBins(valor::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kNEtrueBins1Rmu; break;
@@ -117,7 +117,7 @@ int t2kana::util::NumEtrueBins(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-const double * t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s)
+const double * valor::util::EtrueBinEdges(valor::conv::SuperkSample_t s)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kEtrueBinEdges1Rmu; break;
@@ -130,7 +130,7 @@ const double * t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s)
   return 0;
 }
 //___________________________________________________________________________
-double  t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s, int i)
+double  valor::util::EtrueBinEdges(valor::conv::SuperkSample_t s, int i)
 {
   switch(s) {
      case ( kSKsFCFV1RingMuLike    ) : return kEtrueBinEdges1Rmu[i]; break;
@@ -143,8 +143,8 @@ double  t2kana::util::EtrueBinEdges(t2kana::conv::SuperkSample_t s, int i)
   return 0;
 }
 //___________________________________________________________________________
-int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
-                                         t2kana::conv::SuperkMode_t m)
+int valor::util::NumVariableXsEtrueBins(valor::conv::SuperkSample_t s,
+                                         valor::conv::SuperkMode_t m)
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1)
@@ -156,8 +156,8 @@ int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
   //need to start counter at zero. Want nbins. Looping over bin edges.
   int nbins = -1;
 
-  for(int it = 0; it <= t2kana::conv::kXsNEtrueBins; it++) {
-    if(t2kana::conv::kXsEtrueBinEdges[is][im][it] < 0)
+  for(int it = 0; it <= valor::conv::kXsNEtrueBins; it++) {
+    if(valor::conv::kXsEtrueBinEdges[is][im][it] < 0)
       break;
     nbins++;
     }
@@ -165,8 +165,8 @@ int t2kana::util::NumVariableXsEtrueBins(t2kana::conv::SuperkSample_t s,
   return nbins;
 }
 //___________________________________________________________________________
-const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_t s,
-                                                     t2kana::conv::SuperkMode_t m)
+const double * valor::util::VariableXsEtrueBinEdges(valor::conv::SuperkSample_t s,
+                                                     valor::conv::SuperkMode_t m)
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1)
@@ -175,11 +175,11 @@ const double * t2kana::util::VariableXsEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  return t2kana::conv::kXsEtrueBinEdges[is][im];
+  return valor::conv::kXsEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________
-int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
-                                         t2kana::conv::SuperkMode_t m)
+int valor::util::NumVariableMCEtrueBins(valor::conv::SuperkSample_t s,
+                                         valor::conv::SuperkMode_t m)
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1)
@@ -191,8 +191,8 @@ int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
   //need to start counter at zero. Want nbins. Looping over bin edges.
   int nbins = -1;
 
-  for(int it = 0; it <= t2kana::conv::kMCNEtrueBins; it++) {
-    if(t2kana::conv::kMCEtrueBinEdges[is][im][it] < 0)
+  for(int it = 0; it <= valor::conv::kMCNEtrueBins; it++) {
+    if(valor::conv::kMCEtrueBinEdges[is][im][it] < 0)
       break;
     nbins++;
     }
@@ -200,8 +200,8 @@ int t2kana::util::NumVariableMCEtrueBins(t2kana::conv::SuperkSample_t s,
   return nbins;
 }
 //___________________________________________________________________________
-const double * t2kana::util::VariableMCEtrueBinEdges(t2kana::conv::SuperkSample_t s,
-                                                     t2kana::conv::SuperkMode_t m)
+const double * valor::util::VariableMCEtrueBinEdges(valor::conv::SuperkSample_t s,
+                                                     valor::conv::SuperkMode_t m)
 {
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(is == -1)
@@ -210,6 +210,6 @@ const double * t2kana::util::VariableMCEtrueBinEdges(t2kana::conv::SuperkSample_
   if(im == -1)
     return 0;
 
-  return t2kana::conv::kMCEtrueBinEdges[is][im];
+  return valor::conv::kMCEtrueBinEdges[is][im];
 }
 //___________________________________________________________________________

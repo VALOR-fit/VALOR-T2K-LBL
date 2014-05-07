@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::utils
+\class    valor::utils
 
 \brief    Utilities
 
@@ -15,8 +15,8 @@
 */
 //____________________________________________________________________________
 
-#ifndef _t2kana_utils_h_
-#define _t2kana_utils_h_
+#ifndef _valor_utils_h_
+#define _valor_utils_h_
 
 #include <iostream>
 #include <algorithm>
@@ -42,18 +42,21 @@ class TAxis;
 
 #include "Conventions.h"
 #include "Enumerations.h"
-#include "ConfLevel.h"
-#include "PDG.h"
-#include "UtlNumStat.h"
-#include "UtlStr.h"
-#include "UtlStyle.h"
-#include "UtlXML.h"
+#include "T2KOpt.h"
+
+#include "UtlT2KStyle.h"
+
+#include "Conventions/Opt.h"
+#include "Utilities/UtlNumStat.h"
+#include "Utilities/UtlStr.h"
+#include "Utilities/UtlStyle.h"
+#include "Utilities/UtlXML.h"
 
 
 using std::string;
 using std::vector;
 
-namespace t2kana {
+namespace valor {
 namespace util {
 
   //
@@ -153,7 +156,7 @@ namespace util {
   };
 
 } // util
-} // t2kana
+} // valor
   
 #endif
 

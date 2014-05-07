@@ -1,7 +1,7 @@
 //____________________________________________________________________________
 /*!
 
-\class    t2kana::conv
+\class    valor::conv
 
 \brief    Conventions
 
@@ -13,7 +13,7 @@
 Changes since 2011_v0.9.0:
 
 17-12-2013  Nick  
-Split t2kana::conv namespace into several smaller files
+Split valor::conv namespace into several smaller files
 
 */
 //____________________________________________________________________________
@@ -24,7 +24,7 @@ Split t2kana::conv namespace into several smaller files
 #include "AnalysisOptions.h"
 #include "SamplesAndModes.h"
 
-namespace t2kana {
+namespace valor {
 namespace conv   {
 
 // Indices for array with default graphic attributes (see below)
@@ -726,7 +726,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
 };
   
 } // conv
-} // t2kana
+} // valor
   
 #endif 
 

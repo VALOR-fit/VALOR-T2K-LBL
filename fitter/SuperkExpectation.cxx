@@ -32,17 +32,16 @@ Added samples for reverse horn current running
 #include "NuFlux.h"
 #include "NuXSec.h"
 #include "BANFF.h"
-#include "Conventions.h"
 #include "Utilities.h"
-#include "Opt.h"
-#include "Rnd.h"
+#include "Conventions/Opt.h"
+#include "Utilities/Rnd.h"
 
 using std::cout;
 using std::cerr;
 using std::endl;
 
-using namespace t2kana;
-using namespace t2kana::conv;
+using namespace valor;
+using namespace valor::conv;
 
 ClassImp(SuperkExpectation)
 
@@ -213,7 +212,7 @@ bool SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit, bo
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t s) const 
+TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(valor::conv::SuperkSample_t s) const 
 {
   const double * arr = CurrPredictedErecoSpectrumArray(s);
   if (!arr) return 0;
@@ -231,7 +230,7 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(t2kana::conv::SuperkSample_t
 }
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
-  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const 
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const 
 { 
   const double * arr = CurrPredictedErecoSpectrumArrayMode(s,m);
   if (!arr) return 0;
@@ -247,7 +246,7 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   return h;
 }
 //________________________________________________________________________________________
-VALORArray * SuperkExpectation::CurrPredictedErecoVArray(t2kana::conv::SuperkSample_t s) 
+VALORArray * SuperkExpectation::CurrPredictedErecoVArray(valor::conv::SuperkSample_t s) 
 {
   VALORArray * arr;
   if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArrayTot1Rmu;
@@ -259,7 +258,7 @@ VALORArray * SuperkExpectation::CurrPredictedErecoVArray(t2kana::conv::SuperkSam
   return arr;
 }
 //________________________________________________________________________________________
-VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(t2kana::conv::SuperkSample_t s) 
+VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(valor::conv::SuperkSample_t s) 
 {
   VALORArray * arr;
   if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArray1Rmu;
@@ -271,7 +270,7 @@ VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(t2kana::conv::Super
   return arr;
 }
 //________________________________________________________________________________________
-const VALORArray * SuperkExpectation::CurrPredictedErecoVArray(t2kana::conv::SuperkSample_t s) const
+const VALORArray * SuperkExpectation::CurrPredictedErecoVArray(valor::conv::SuperkSample_t s) const
 {
   const VALORArray * arr;
   if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArrayTot1Rmu;
@@ -283,7 +282,7 @@ const VALORArray * SuperkExpectation::CurrPredictedErecoVArray(t2kana::conv::Sup
   return arr;
 }
 //________________________________________________________________________________________
-const VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(t2kana::conv::SuperkSample_t s) const 
+const VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(valor::conv::SuperkSample_t s) const 
 {
   const VALORArray * arr;
   if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArray1Rmu;
@@ -295,20 +294,20 @@ const VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(t2kana::conv:
   return arr;
 }
 //________________________________________________________________________________________
-double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s) 
+double* SuperkExpectation::CurrPredictedErecoSpectrumArray(valor::conv::SuperkSample_t s) 
 {
   VALORArray * arr = this->CurrPredictedErecoVArray(s);
   return arr->GetArray();
 }
 //________________________________________________________________________________________
-const double* SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s)  const
+const double* SuperkExpectation::CurrPredictedErecoSpectrumArray(valor::conv::SuperkSample_t s)  const
 {
   const VALORArray * arr = this->CurrPredictedErecoVArray(s);
   return arr->GetArray();
 }
 //________________________________________________________________________________________
 double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
-  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m)
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m)
 { 
   int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(sidx == -1) {
@@ -325,7 +324,7 @@ double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
 }
 //________________________________________________________________________________________
 const double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
-  t2kana::conv::SuperkSample_t s, t2kana::conv::SuperkMode_t m) const
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const
 { 
   int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
   if(sidx == -1) {
@@ -341,7 +340,7 @@ const double* SuperkExpectation::CurrPredictedErecoSpectrumArrayMode(
   return &(arr->GetEntryRef(midx,0));
 }
 //________________________________________________________________________________________
-double SuperkExpectation::CurrPredictedErecoSpectrumArray(t2kana::conv::SuperkSample_t s, int i) const
+double SuperkExpectation::CurrPredictedErecoSpectrumArray(valor::conv::SuperkSample_t s, int i) const
 {
   const double * arr = CurrPredictedErecoSpectrumArray(s);
   assert(arr);
@@ -360,7 +359,7 @@ void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
 
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t * /*write_opt*/) const
+bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t * /*write_opt*/)
 {
   if(!array) return false;
 
@@ -401,7 +400,7 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t 
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Write(
-  const char * filename, const char * pdf_tag, Option_t * write_opt, Option_t * file_opt) const
+  const char * filename, const char * pdf_tag, Option_t * write_opt, Option_t * file_opt)
 {
   if (!file_opt) file_opt = "update";
   TObjArray * array = new TObjArray();
@@ -767,7 +766,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, Option_t * opt)
 {
 #ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Setting systematic parameter: " << systematic 
+  cout << "Exp >> Setting systematic parameter: " << util::AsString(p) 
        << " to value = " << twkdial << endl;
 #endif
 
@@ -905,6 +904,7 @@ void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
 
   this->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetectorFSI()->Tweak(); // <-- Cholesky method
+  
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
@@ -950,7 +950,7 @@ PhysParamList SuperkExpectation::Tweaks(void)
   //
   const int nbanff = conv::kNumOfParamsInBANFFfit;
   for(int ip = 0; ip < nbanff; ip++) {
-     PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+     PhysParamId_t p = kListOfBANFFParams[ip];
      double v = this->GetBANFF()->CurrentValue(p);
      pl.SetValue(p,v);
   }
@@ -1049,7 +1049,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     // to tweak the SKDET + FSI object
 #if FSI_BINS == 2
     const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
-    //    if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
+    //    if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaNuMuDisappOnly){
     TVectorD twkv(nskdetfsi_1Rmu);
     for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
@@ -1064,7 +1064,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 #else
 #if FSI_BINS == 3
     const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
-      //    else if (Opt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
+      //    else if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaNuEAppOnly){
       TVectorD twkv(nskdetfsi_1Re);
       for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
         //        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip + nskdetfsi_1Rmu);
@@ -1099,7 +1099,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     const int nbanff = conv::kNumOfParamsInBANFFfit;
     TVectorD twkvBANFF(nbanff);
     for(int ip = 0; ip < nbanff; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + ip);
+      PhysParamId_t p = kListOfBANFFParams[ip];
       twkvBANFF[ip] = fp.CurrValue(p);
     }
 
@@ -1170,4 +1170,8 @@ double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
   return chisq_penalty;
 }
 //________________________________________________________________________________________
-
+string valor::SuperkExpectation::Name(void)
+{
+  return "SuperkExpectation";
+}
+//________________________________________________________________________________________
