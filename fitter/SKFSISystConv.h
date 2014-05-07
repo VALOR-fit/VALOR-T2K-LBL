@@ -1938,8 +1938,8 @@ static const bool kSKDet1ReApplyParamToSKMode[kns][knm][kNumOfSKDetParams1Re] = 
 //static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Rmu + kNumOfUncXSecSyst;                                                                                
 //static const int kNumOfNuisanceParams1Re   = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Re  + kNumOfUncXSecSyst - 1 + 1 ;                                                                       
 //static const int kNumOfNuisanceParamsJoint = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams     + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + 1;                      
-//~ static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
-//~ static const int kNumOfRHCNuisanceParams = kNumOfRHCParamsInBANFFfit + kNumOfRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfRHCUncXSecSyst ;
+static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
+static const int kNumOfRHCNuisanceParams = kNumOfRHCParamsInBANFFfit + kNumOfRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfRHCUncXSecSyst ;
 
 
 } // conv
