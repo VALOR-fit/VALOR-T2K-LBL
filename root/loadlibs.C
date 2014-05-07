@@ -14,7 +14,12 @@
   gSystem->Load("libMinuit");
   gSystem->Load("libMinuit2");
   gSystem->Load("libMathMore"); 
-
+  
+  gSystem->Load("libValorConv.so");
+  gSystem->Load("libValorFitCore.so");
+  gSystem->Load("libValorMesg.so");
+  gSystem->Load("libValorUtil.so");
+  
   gSystem->Load("libT2KNuOsc.so");
 ////  gSystem->Load("$T2KOSCANA/fitter/libT2KNuOsc.so");
 }

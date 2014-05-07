@@ -24,9 +24,15 @@ for f in rootargs:
   i+=1
 
 R = ROOT
-t2kana = ROOT.t2kana
-conv = t2kana.conv
-util = t2kana.util
-Opt  = t2kana.Opt.Instance()
-Rnd  = t2kana.Rnd.Instance()
+#~ t2kana = ROOT.t2kana
+#~ conv = t2kana.conv
+#~ util = t2kana.util
+#~ Opt  = t2kana.Opt.Instance()
+#~ Rnd  = t2kana.Rnd.Instance()
+
+valor = ROOT.valor
+conv = valor.conv
+util = valor.util
+Opt  = valor.Opt.Instance()
+Rnd  = valor.Rnd.Instance()
 
