@@ -22,6 +22,8 @@
 #include <map>
 #include <vector>
 
+#include "Build.h"
+
 #include "FitCore/FitParamList.h"
 
 using std::string;
@@ -35,15 +37,20 @@ namespace valor {
     void AppendAllSystematicsTo(FitParamList * fp, int start);
     
     void  AppendAllUncorrelatedXSecSystematics       (FitParamList * fp, int start);
-    void  AppendUncorrelatedXSecSystematicsDisap     (FitParamList * fp, int start);
-    void  AppendUncorrelatedXSecSystematicsApp       (FitParamList * fp, int start);
     void  AppendAllSuperkDetectorFSISystematics      (FitParamList * fp, int start);
-    void  AppendSuperkDetectorFSISystematicsDisap    (FitParamList * fp, int start);
-    void  AppendSuperkDetectorFSISystematicsApp      (FitParamList * fp, int start);
     void  AppendAllCorrelatedBANFFSystematics        (FitParamList * fp, int start);
+
+#ifdef __NUMUONLY__
+    void  AppendUncorrelatedXSecSystematicsDisap     (FitParamList * fp, int start);
     void  AppendCorrelatedBANFFSystematicsDisap      (FitParamList * fp, int start);
+    void  AppendSuperkDetectorFSISystematicsDisap    (FitParamList * fp, int start);
+#endif
+
+#ifdef __NUEONLY__
+    void  AppendUncorrelatedXSecSystematicsApp       (FitParamList * fp, int start);
     void  AppendCorrelatedBANFFSystematicsApp        (FitParamList * fp, int start);
-    void  AppendAllUncorrelatedBANFFSystematics      (FitParamList * fp, int start);
+    void  AppendSuperkDetectorFSISystematicsApp      (FitParamList * fp, int start);
+#endif
   
   }
 } // valor

@@ -211,12 +211,19 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 // Add nuisance params
 //
 
-  //
-  // add nuisance params
-  //
+#ifdef __NUMU_ONLY__
+  util::AppendAllCorrelatedBANFFSystematicsDisap  (fparm, start);
+  util::AppendAllSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
+  util::AppendAllUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+#elsif __NUE_ONLY__
+  util::AppendAllCorrelatedBANFFSystematicsApp  (fparm, start);
+  util::AppendAllSuperkDetectorFSISystematicsApp(fparm, start+kNumOfParamsInBANFFfit);
+  util::AppendAllUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+#else
   util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
   util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);
   util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+#endif
 
 }
 //________________________________________________________________________________________
