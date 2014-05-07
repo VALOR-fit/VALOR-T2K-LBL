@@ -40,17 +40,6 @@ public:
   void Print(ostream & stream) const;
   friend ostream & operator << (ostream & stream, const T2KOpt & opt);
 
-  double GetGlobalBestFit     (conv::PhysParamId_t p) const;
-  double GetGlobalFitError    (conv::PhysParamId_t p) const;
-  double GetRandomGaus        (conv::PhysParamId_t p) const;
-  
-  void SetGlobalBestFit     (conv::PhysParamId_t p, double value);
-  void SetGlobalFitError    (conv::PhysParamId_t p, double value);
-  
-  void SetDefaultParameterValues(void);
-
-  static double BadResult(void) { return kBadResult;};
-
   // Check for any parameters being undefined
   bool Undefined(void);
 
@@ -63,11 +52,6 @@ private:
   static T2KOpt * fInstance;
 
   void SetDefaults(void);
-
-  double fGlobalBestFit       [conv::knppmax];
-  double fGlobalFitError      [conv::knppmax];
-  
-  static const double kBadResult = -999;
 
   struct Cleaner {
       void DummyMethodAndSilentCompiler() { }
