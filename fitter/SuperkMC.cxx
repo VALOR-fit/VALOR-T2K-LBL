@@ -1769,6 +1769,7 @@ TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s, SuperkMode_t m) const
   int nbins = util::NumErecoBins(s);
   TH1D * h = new TH1D(name.c_str(), title.c_str(), nbins, util::ErecoBinEdges(s) );
   util::FormatErecoHist(h);
+  util::SetDefaultSKSpectrumStyle(s,m,h);
   for (int i = 0 ; i < nbins ; i++ ) {
     h->SetBinContent(i+1,arr[i]);
   }
