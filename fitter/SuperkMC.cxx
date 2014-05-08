@@ -3961,7 +3961,7 @@ TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) 
     if (m==kSKmUndefined) continue;
     for (int it = 0 ; it < n_etrue_bins ; it++) {
       for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
-        int binno = h.GetBin(it+1,ir+1);
+        int binno = h.GetBin(ir+1,it+1);
         if (type == conv::kSKMCtOri) {
           if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayOri1Rmu   [im][it][ir]);
           else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayOri1Re    [im][it][ir]);
@@ -4009,7 +4009,7 @@ TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SK
   
   for (int it = 0 ; it < n_etrue_bins ; it++) {
     for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
-      int binno = h.GetBin(it+1,ir+1);
+      int binno = h.GetBin(ir+1,it+1);
       if (type == conv::kSKMCtOri) {
         if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayOri1Rmu   [im][it][ir]);
         else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayOri1Re    [im][it][ir]);
