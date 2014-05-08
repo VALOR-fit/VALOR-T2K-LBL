@@ -2286,7 +2286,11 @@ valor::conv::PhysParamId_t
   string lsh = util::ToLowerCase(sh);
   for (int i = 0 ; i < knppmax ; i++) {
     PhysParamId_t k = (PhysParamId_t) i ;
-    if (k != kPhypUndefined && lsh == util::ToLowerCase(AsStringCompact(k))) return k;
+    string s = util::ToLowerCase(AsStringCompact(k));
+    string s2;
+    if (s2.find("f_") == 0) s2 = s.substr(2);
+    else s2 = "gskfgjalkfjgalfkgjadlfj";
+    if (k != kPhypUndefined && (lsh == s || lsh == s2) ) return k;
   }
   std::cerr<<"util::PhysParamIdFromString >> Unmatched string: "<<sh<<std::endl;
   return kPhypUndefined;
