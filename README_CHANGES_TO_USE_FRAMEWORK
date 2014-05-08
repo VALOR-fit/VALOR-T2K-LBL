@@ -1,0 +1,17 @@
+
+Moving to use the VALOR framework rather than a standalone analysis package entailed a number of changes, which will mean the macros will generally need to be updated.
+
+A (probably incomplete) list of changes that need to be made
+
+namespace t2kana->valor (find and replace)
+FitParameterList::NamedParameterList -> util::NamedParameterList
+FitInputs::Chisquare => FitInputs::Statistic
+FitInputs::BestFitChisquare => FitParamList => BestFitStatistic 
+
+Skobs/Skexp's GetSpectrum (histogram) methods now allocate a new histogram, which should be deleted or it'll leak memory over time (if you call skobs->GetCurrErecoHist()->Integral() for example)
+
+After setting analysis options in Opt() like dmsq scheme and mixing param choice, you should  then call Opt::Instance()->SetDefaultParameters()
+
+Opt::gOscAnaType now lives in T2KOpt
+
+
