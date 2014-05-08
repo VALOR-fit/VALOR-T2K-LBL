@@ -65,6 +65,9 @@ public:
   // Access MC templates
   TH2D * Template (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::SKMCTemplateType_t type) const;
   TH2D * VarTemplate (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  
+  TH2D Get2DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) const;
+  TH2D Get2DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SKMCTemplateType_t type) const;
 
   // POT of analysed data sample (MC is scaled to that POT value)
   double AnalyzedSamplePOT(conv::SuperkSample_t s) const;
@@ -97,7 +100,7 @@ public:
   // Allow changing the mass hierarchy
   void SetMassHierarchy(valor::conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
     
-    void NevDebug(conv::SKMCTemplateType_t t, string name);
+  void NevDebug(conv::SKMCTemplateType_t t, string name);
 
 private:
 

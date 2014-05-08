@@ -3765,7 +3765,8 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
     for(int im = 0; im < knm; im++) {
       SuperkMode_t m = kSKReactionModes[is][im];
       if(m == kSKmUndefined) continue;
-      TH2D * mctempl = this -> Template(s,m,t);
+      TH2D h = this -> Get2DHist(s,m,t);
+      TH2D * mctempl = &h;
 
       //first write the 2d template, and cout the mode integral
       mctempl->Write();
@@ -3939,4 +3940,102 @@ void SuperkMC::MCStatErrDebug()
     spectrum_rms->Write("spe_with2derr");
   }//is
   out.Close();
+}
+//____________________________________________________________________________________
+TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) const
+{
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  const int      n_ereco_bins    = kNErecoBins[is];
+  const int      n_etrue_bins    = kNEtrueBins[is];
+  const double * ereco_bin_edges = util::ErecoBinEdges(s);
+  
+  TH2D h(Form("nsk_%d",is), util::AsString(s).c_str(),
+    n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+    
+  h.SetDirectory(0);
+  h.GetXaxis()->SetTitle("E_{reco} (GeV)");
+  h.GetYaxis()->SetTitle("E_{true} (GeV)");
+  
+  for (int im = 0 ; im < kNSuperkModes ; im++ ) {
+    SuperkMode_t m = kSKReactionModes[is][im];
+    if (m==kSKmUndefined) continue;
+    for (int it = 0 ; it < n_etrue_bins ; it++) {
+      for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
+        int binno = h.GetBin(it+1,ir+1);
+        if (type == conv::kSKMCtOri) {
+          if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayOri1Rmu   [im][it][ir]);
+          else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayOri1Re    [im][it][ir]);
+          else if (s == kSKsRHCFCFV1RingMuLike) h.AddBinContent(binno, fMCTemplArrayOriRHC1Rmu[im][it][ir]);
+          else if (s == kSKsRHCFCFV1RingELike)  h.AddBinContent(binno, fMCTemplArrayOriRHC1Re [im][it][ir]);
+        }
+        if (type == conv::kSKMCtNom) {
+          if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayNom1Rmu   [im][it][ir]);
+          else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayNom1Re    [im][it][ir]);
+          else if (s == kSKsRHCFCFV1RingMuLike) h.AddBinContent(binno, fMCTemplArrayNomRHC1Rmu[im][it][ir]);
+          else if (s == kSKsRHCFCFV1RingELike)  h.AddBinContent(binno, fMCTemplArrayNomRHC1Re [im][it][ir]);
+        }
+        if (type == conv::kSKMCtTun) {
+          if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayTun1Rmu   [im][it][ir]);
+          else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayTun1Re    [im][it][ir]);
+          else if (s == kSKsRHCFCFV1RingMuLike) h.AddBinContent(binno, fMCTemplArrayTunRHC1Rmu[im][it][ir]);
+          else if (s == kSKsRHCFCFV1RingELike)  h.AddBinContent(binno, fMCTemplArrayTunRHC1Re [im][it][ir]);
+        }
+        if (type == conv::kSKMCtFin) {
+          if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayFin1Rmu   [im][it][ir]);
+          else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayFin1Re    [im][it][ir]);
+          else if (s == kSKsRHCFCFV1RingMuLike) h.AddBinContent(binno, fMCTemplArrayFinRHC1Rmu[im][it][ir]);
+          else if (s == kSKsRHCFCFV1RingELike)  h.AddBinContent(binno, fMCTemplArrayFinRHC1Re [im][it][ir]);
+        }
+      }
+    }
+  }
+  return h;
+}
+//____________________________________________________________________________________
+TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SKMCTemplateType_t type) const
+{
+  int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  const int      n_ereco_bins    = kNErecoBins[is];
+  const int      n_etrue_bins    = kNEtrueBins[is];
+  const double * ereco_bin_edges = util::ErecoBinEdges(s);
+  
+  TH2D h(Form("nsk_%d_%d",is,im), util::AsString(m).c_str(),
+    n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+    
+  h.SetDirectory(0);
+  h.GetXaxis()->SetTitle("E_{reco} (GeV)");
+  h.GetYaxis()->SetTitle("E_{true} (GeV)");
+  
+  for (int it = 0 ; it < n_etrue_bins ; it++) {
+    for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
+      int binno = h.GetBin(it+1,ir+1);
+      if (type == conv::kSKMCtOri) {
+        if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayOri1Rmu   [im][it][ir]);
+        else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayOri1Re    [im][it][ir]);
+        else if (s == kSKsRHCFCFV1RingMuLike) h.SetBinContent(binno, fMCTemplArrayOriRHC1Rmu[im][it][ir]);
+        else if (s == kSKsRHCFCFV1RingELike)  h.SetBinContent(binno, fMCTemplArrayOriRHC1Re [im][it][ir]);
+      }
+      if (type == conv::kSKMCtNom) {
+        if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayNom1Rmu   [im][it][ir]);
+        else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayNom1Re    [im][it][ir]);
+        else if (s == kSKsRHCFCFV1RingMuLike) h.SetBinContent(binno, fMCTemplArrayNomRHC1Rmu[im][it][ir]);
+        else if (s == kSKsRHCFCFV1RingELike)  h.SetBinContent(binno, fMCTemplArrayNomRHC1Re [im][it][ir]);
+      }
+      if (type == conv::kSKMCtTun) {
+        if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayTun1Rmu   [im][it][ir]);
+        else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayTun1Re    [im][it][ir]);
+        else if (s == kSKsRHCFCFV1RingMuLike) h.SetBinContent(binno, fMCTemplArrayTunRHC1Rmu[im][it][ir]);
+        else if (s == kSKsRHCFCFV1RingELike)  h.SetBinContent(binno, fMCTemplArrayTunRHC1Re [im][it][ir]);
+      }
+      if (type == conv::kSKMCtFin) {
+        if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayFin1Rmu   [im][it][ir]);
+        else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayFin1Re    [im][it][ir]);
+        else if (s == kSKsRHCFCFV1RingMuLike) h.SetBinContent(binno, fMCTemplArrayFinRHC1Rmu[im][it][ir]);
+        else if (s == kSKsRHCFCFV1RingELike)  h.SetBinContent(binno, fMCTemplArrayFinRHC1Re [im][it][ir]);
+      }
+    }
+  }
+  
+  return h;
 }
