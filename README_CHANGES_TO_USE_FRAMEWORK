@@ -6,7 +6,7 @@ A (probably incomplete) list of changes that need to be made
 namespace t2kana->valor (find and replace)
 FitParameterList::NamedParameterList -> util::NamedParameterList
 FitInputs::Chisquare => FitInputs::Statistic
-FitInputs::BestFitChisquare => FitParamList => BestFitStatistic 
+FitInputs::BestFitChisquare => FitParamList::GetBestFitStatistic
 
 Skobs/Skexp's GetSpectrum (histogram) methods now allocate a new histogram, which should be deleted or it'll leak memory over time (if you call skobs->GetCurrErecoHist()->Integral() for example)
 
@@ -14,4 +14,5 @@ After setting analysis options in Opt() like dmsq scheme and mixing param choice
 
 Opt::gOscAnaType now lives in T2KOpt
 
+Since PRODUCTIONMODE is always on now, macros should be calling SuperkMC->Get2DHist() instead of Template() (returns by value, not pointer)
 
