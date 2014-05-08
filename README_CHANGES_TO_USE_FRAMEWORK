@@ -3,16 +3,17 @@ Moving to use the VALOR framework rather than a standalone analysis package enta
 
 A (probably incomplete) list of changes that need to be made
 
-namespace t2kana->valor (find and replace)
+namespace t2kana => valor (find and replace)
+
 FitParameterList::NamedParameterList -> util::NamedParameterList
 FitInputs::Chisquare => FitInputs::Statistic
 FitInputs::BestFitChisquare => FitParamList::GetBestFitStatistic
 
-Skobs/Skexp's GetSpectrum (histogram) methods now allocate a new histogram, which should be deleted or it'll leak memory over time (if you call skobs->GetCurrErecoHist()->Integral() for example)
+Skobs/Skexp's GetSpectrum (histogram) methods now allocate a new histogram, which should be deleted or it'll leak memory over time (if you call skobs->GetCurrErecoHist()->Integral() for example). Not really important for short macros.
 
-After setting analysis options in Opt() like dmsq scheme and mixing param choice, you should  then call Opt::Instance()->SetDefaultParameters()
+After setting analysis options in Opt() like dmsq scheme and mixing param choice, you should  then call Opt::Instance()->SetDefaultParameterValues()
 
-Opt::gOscAnaType now lives in T2KOpt
+Opt::gOscAnaTypeChoice now lives in T2KOpt, but not many macros need this.
 
-Since PRODUCTIONMODE is always on now, macros should be calling SuperkMC->Get2DHist() instead of Template() (returns by value, not pointer)
+Since PRODUCTIONMODE is always on now, macros should be calling SuperkMC->Get2DHist(...) instead of Template(...) (returns by value, not pointer)
 
