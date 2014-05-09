@@ -15,6 +15,9 @@
   gSystem->Load("libMinuit2");
   gSystem->Load("libMathMore"); 
   
+    // log4cpp lib
+  gSystem->Load("liblog4cpp");
+  
   gSystem->Load("libValorConv.so");
   gSystem->Load("libValorFitCore.so");
   gSystem->Load("libValorMesg.so");
