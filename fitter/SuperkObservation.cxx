@@ -125,7 +125,9 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 #ifdef __FHC_RUNNING__
 #ifndef __NUEONLY__ 
     ostringstream datanode1Rmu;
-    datanode1Rmu << "superk/observation/one_mu_ring/ereco_values" << "/data_set_" << data_set_id;
+    datanode1Rmu << "superk/observation";
+    datanode1Rmu << "/data_set_" << data_set_id;
+    datanode1Rmu << "/one_mu_ring/ereco_values"; 
 
     if(util::NodeExists(xml,root_node,datanode1Rmu.str())) {
       TH1D h("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
@@ -150,7 +152,10 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 #ifndef __NUMUONLY__ 
     ostringstream datanode1Re;
     //Ereco spectrum
-    datanode1Re << "superk/observation/one_e_ring/ereco_values" << "/data_set_" << data_set_id;
+    datanode1Re << "superk/observation";
+    datanode1Re << "/data_set_" << data_set_id;
+    datanode1Re << "/one_e_ring/ereco_values";
+    
     if(util::NodeExists(xml,root_node,datanode1Re.str())) {
       TH1D h("", "", kNErecoBins1Re,kErecoBinEdges1Re);
       h.SetDirectory(0);
@@ -177,7 +182,9 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 #ifdef __RHC_RUNNING__
 #ifndef __NUEONLY__
     ostringstream datanodeRHC1Rmu;
-    datanodeRHC1Rmu << "superk/observation/one_rhc_mu_ring/ereco_values" << "/data_set_" << data_set_id;
+    datanodeRHC1Rmu << "superk/observation";
+    datanodeRHC1Rmu << "/data_set_" << data_set_id;
+    datanodeRHC1Rmu << "/one_mu_ring_rhc/ereco_values"; 
 
     if(util::NodeExists(xml,root_node,datanodeRHC1Rmu.str())) {
       int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike);
@@ -202,8 +209,11 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 #endif
 #ifndef __NUMUONLY__
     ostringstream datanodeRHC1Re;
-    //Ereco spectrum                                                                                                                                                                
-    datanodeRHC1Re << "superk/observation/one_rhc_e_ring/ereco_values" << "/data_set_" << data_set_id;
+    //Ereco spectrum                                                                            
+    datanodeRHC1Re << "superk/observation";
+    datanodeRHC1Re << "/data_set_" << data_set_id;
+    datanodeRHC1Re << "/one_e_ring_rhc/ereco_values"; 
+
     if(util::NodeExists(xml,root_node,datanodeRHC1Re.str())) {
       int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingELike);
       TH1D h("", "", kRHCNErecoBins1Re,kRHCErecoBinEdges1Re);
