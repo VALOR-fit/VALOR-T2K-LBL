@@ -19,14 +19,16 @@ void generate_toymc_ensemble_joint
   double       input_deltacp           = 0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
   double       input_dm12sq            = -99,                            /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = 2.4E-3,                            /* |Dm^2_{23}| */
-  const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_test.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
   bool         save_in_xml_format      = true,                           /* also save in txt format */
   bool         save_in_root_format     = true,                           /* */
   const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  bool         save_fluct_in_xml       = true,                           /* save the values of the variations in the xml file? */
+  const char * points_to_add_1Rmu_RHC      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  const char * points_to_add_1Re_RHC       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  bool         save_fluct_in_xml       = false,                           /* save the values of the variations in the xml file? */
   const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                       /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
@@ -256,7 +258,7 @@ void generate_toymc_ensemble_joint
      double escale = skexp->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale);
      cout << "escale = " << escale << endl;
 
-     // Get 1-ring mu-like Ereco spectrum
+     // Get 1-ring mu-like Ereco spectrum FHC
      TH1D* mock_data_1Rmu = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingMuLike); ib++) {
        mock_data_1Rmu->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingMuLike)[ib-1]);
@@ -267,18 +269,35 @@ void generate_toymc_ensemble_joint
        if(ib == 4) h_3->Fill(events);
        if(ib == 5) h_4->Fill(events);
        if(ib == 5) h_4_Escale->Fill( escale, events);
-
      }
      mock_data_1Rmu->SetDirectory(0);
-
+     
      TH1D* mock_data_1Re = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingELike), util::ErecoBinEdges(kSKsFCFV1RingELike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingELike); ib++) {
        mock_data_1Re->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingELike)[ib-1]);
      }
      mock_data_1Re->SetDirectory(0);
 
+
+     // Get 1-ring mu-like Ereco spectrum RHC
+     TH1D* mock_data_1Rmu_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingMuLike), util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
+     for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++) {
+       mock_data_1Rmu_RHC->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib-1]);
+     }
+     mock_data_1Rmu_RHC->SetDirectory(0);
+     
+     // Get 1-ring e-like Ereco spectrum RHC
+     TH1D* mock_data_1Re_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingELike), util::ErecoBinEdges(kSKsRHCFCFV1RingELike));
+     for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingELike); ib++) {
+       mock_data_1Re_RHC->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingELike)[ib-1]);
+     }
+     mock_data_1Re_RHC->SetDirectory(0);
+
      // If an XML file was specified, add an entry
+
      if(save_in_xml_format) {
+
+       // Now the 1Rmu part
        fxml << "       <one_mu_ring>    " << endl;
        fxml << "         <ereco_values> " << endl;
        fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
@@ -322,6 +341,7 @@ void generate_toymc_ensemble_joint
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_mu_ring>    " << endl;
        
+              
        //Now the 1Re part
        ftxt << endl;
        ftxt << "1Re:";
@@ -339,7 +359,7 @@ void generate_toymc_ensemble_joint
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ","; 
-	      ftxt << ","; 
+       	      ftxt << ","; 
             }
             fxml << E; 
             ftxt << E; 
@@ -356,6 +376,80 @@ void generate_toymc_ensemble_joint
        fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_e_ring>    " << endl;
+       
+
+       // Now the 1Rmu RHC part
+       fxml << "       <one_mu_ring_rhc>    " << endl;
+       fxml << "         <ereco_values> " << endl;
+       fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
+       fxml << "\t\t";
+       ftxt << "1Rmu RHC:";
+       ftxt << endl;
+       
+       // Adding Ereco values as a comma separated list.
+       // Assuming uniform distribution within each bin, randomize values within each bin.
+       int ievtot = 0;
+       for(int ibin = 1; ibin <= mock_data_1Rmu_RHC->GetNbinsX(); ibin++) {
+         double Nb   = mock_data_1Rmu_RHC->GetBinContent (ibin); // number of events in this Ereco bin
+         double Emin = mock_data_1Rmu_RHC->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+         double Emax = mock_data_1Rmu_RHC->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+         for(int iev = 0; iev < Nb; iev++) {
+            double E = Emin + rand.Uniform() * (Emax-Emin);
+            if(ievtot > 0) {
+              fxml << ","; 
+	      ftxt << ","; 
+            }
+            fxml << E; 
+            ftxt << E; 
+            ievtot++;
+         }//iev
+       }//ibin
+       // add extra data-points, if any
+       if(points_to_add_1Rmu_RHC) {
+         fxml << "," << points_to_add_1Rmu_RHC;
+         ftxt << "," << points_to_add_1Rmu_RHC;
+       }
+       fxml << endl;
+       ftxt << endl;
+       fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       fxml << "         </ereco_values> " << endl;
+       fxml << "       </one_mu_ring_rhc>    " << endl;
+
+
+       //Now the 1Re RHC part
+       ftxt << endl;
+       ftxt << "1Re RHC:";
+       ftxt << endl;
+       fxml << "       <one_e_ring_rhc>    " << endl;
+       fxml << "         <ereco_values> " << endl;
+       fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
+       
+       ievtot = 0;
+       for(int ibin = 1; ibin <= mock_data_1Re_RHC->GetNbinsX(); ibin++) {
+         double Nb   = mock_data_1Re_RHC->GetBinContent (ibin); // number of events in this Ereco bin
+         double Emin = mock_data_1Re_RHC->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+         double Emax = mock_data_1Re_RHC->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+         for(int iev = 0; iev < Nb; iev++) {
+            double E = Emin + rand.Uniform() * (Emax-Emin);
+            if(ievtot > 0) {
+              fxml << ","; 
+       	      ftxt << ","; 
+            }
+            fxml << E; 
+            ftxt << E; 
+            ievtot++;
+         }//iev
+       }//ibin
+       // add extra data-points, if any
+       if(points_to_add_1Re_RHC) {
+         fxml << "," << points_to_add_1Re_RHC;
+         ftxt << "," << points_to_add_1Re_RHC;
+       }
+       fxml << endl;
+       ftxt << endl;
+       fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       fxml << "         </ereco_values> " << endl;
+       fxml << "       </one_e_ring_rhc>    " << endl;
        
      }//xml
 
@@ -376,10 +470,28 @@ void generate_toymc_ensemble_joint
 	      mock_data_1Re->Fill(atof(vecp[ip].c_str()));
 	    }
           }
+	  
+	  if(points_to_add_1Rmu_RHC) {
+	    vector<string> vecp = util::Tokens(points_to_add_1Rmu_RHC,",");
+	    assert(vecp.size()>0);
+	    for(int ip=0; ip < vecp.size(); ip++) {
+	      mock_data_1Rmu_RHC->Fill(atof(vecp[ip].c_str()));
+	    }
+          }
+	  if(points_to_add_1Re_RHC) {
+	    vector<string> vecp = util::Tokens(points_to_add_1Re_RHC,",");
+	    assert(vecp.size()>0);
+	    for(int ip=0; ip < vecp.size(); ip++) {
+	      mock_data_1Re_RHC->Fill(atof(vecp[ip].c_str()));
+	    }
+          }
        }
        f->cd();
        mock_data_1Rmu->Write(Form("mock_data_1Rmu_%d",iexperiment));
+       mock_data_1Rmu_RHC->Write(Form("mock_data_1Rmu_RHC_%d",iexperiment));
        mock_data_1Re->Write(Form("mock_data_1Re_%d",iexperiment));
+       mock_data_1Re_RHC->Write(Form("mock_data_1Re_RHC_%d",iexperiment));
+
        // Object for storing input oscillation and nuisance params in each toy-MC
        PhysParamList * iparm = new PhysParamList;
        iparm->Clear();
