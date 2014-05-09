@@ -26,9 +26,9 @@ void generate_toymc_ensemble_joint
   bool         save_in_root_format     = true,                           /* */
   const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_1Rmu_RHC      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_1Re_RHC       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  bool         save_fluct_in_xml       = false,                           /* save the values of the variations in the xml file? */
+  const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  const char * points_to_add_1Re_RHC   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  bool         save_fluct_in_xml       = true,                           /* save the values of the variations in the xml file? */
   const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                       /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
@@ -301,7 +301,6 @@ void generate_toymc_ensemble_joint
        fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        fxml << "       <one_mu_ring>    " << endl;
        fxml << "         <ereco_values> " << endl;
-       //fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        
        if(save_fluct_in_xml) {
 	 fxml << "\t\t" << "<!-- ";
@@ -339,7 +338,6 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_mu_ring>    " << endl;
        
@@ -350,7 +348,6 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "       <one_e_ring>    " << endl;
        fxml << "         <ereco_values> " << endl;
-       //fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re->GetNbinsX(); ibin++) {
@@ -369,7 +366,6 @@ void generate_toymc_ensemble_joint
          }//iev
        }//ibin
 
-
        // add extra data-points, if any
        if(points_to_add_1Re) {
          fxml << "," << points_to_add_1Re;
@@ -378,7 +374,6 @@ void generate_toymc_ensemble_joint
 
        fxml << endl;
        ftxt << endl;
-       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_e_ring>    " << endl;
        
@@ -386,7 +381,6 @@ void generate_toymc_ensemble_joint
        // Now the 1Rmu RHC part
        fxml << "       <one_mu_ring_rhc>    " << endl;
        fxml << "         <ereco_values> " << endl;
-       //fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        fxml << "\t\t";
        ftxt << "1Rmu RHC:";
        ftxt << endl;
@@ -416,7 +410,6 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_mu_ring_rhc>    " << endl;
 
@@ -427,7 +420,6 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "       <one_e_ring_rhc>    " << endl;
        fxml << "         <ereco_values> " << endl;
-       //fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re_RHC->GetNbinsX(); ibin++) {
@@ -452,10 +444,8 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_e_ring_rhc>    " << endl;
-
        fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        
      }//xml
