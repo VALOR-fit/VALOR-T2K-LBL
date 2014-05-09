@@ -134,9 +134,9 @@ void run_fit_xml
      PhysParamList * iparm = 0;
      if(!using_xml_file) {
        f_sysparm->GetObject(Form("iparm_%d",iexperiment),iparm);
+       fparm1->FromPhysParamList(*iparm, "initial", false);
      }
-     fparm1->FromPhysParamList(*iparm, "initial", false);
-     cout << *iparm << endl;
+     
      cout << *fparm1 << endl;
 
      // Get fitter
