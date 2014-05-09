@@ -11,7 +11,8 @@ void generate_toymc_ensemble
 (
   const char * tag                     = "toymc",                        /* */
   int          run                     = 0,                              /* */
-  double       nexperiments            = 10,                             /* number of toy-MC expts to generate */
+  double       nexperiments            = 10
+,                             /* number of toy-MC expts to generate */
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
   double       input_mixing13          = -99,                            /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
@@ -19,12 +20,13 @@ void generate_toymc_ensemble
   double       input_deltacp           = -99,                            /* deltacp, if -999 then randomize */
   double       input_dm12sq            = -99,                            /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = -99,                            /* |Dm^2_{23}| */
-  const char * config_file             = "analysis_configuration.xml",   /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_test.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
   bool         save_in_xml_format      = true,                           /* also save in txt format */
   bool         save_in_root_format     = true,                           /* */
   const char * points_to_add           = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  const char * points_to_add_rhc       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   bool         save_fluct_in_xml       = false,                          /* save the values of the variations in the xml file? */
   const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                       /* normal or inverted */
@@ -132,8 +134,8 @@ void generate_toymc_ensemble
     fxml << "<analysis_inputs>       " << endl;
     fxml << "  <superk>              " << endl;
     fxml << "    <observation>       " << endl;
-    fxml << "       <one_mu_ring>    " << endl;
-    fxml << "         <ereco_values> " << endl;
+    // fxml << "       <one_mu_ring>    " << endl;
+    // fxml << "         <ereco_values> " << endl;
     ostringstream txt_filename;
     txt_filename << tag << "-" << run << ".txt";
     ftxt.open(txt_filename.str().c_str());
@@ -226,6 +228,13 @@ void generate_toymc_ensemble
      }
      mock_data->SetDirectory(0);
 
+     // Get 1-ring mu-like RHC Ereco spectrum
+     TH1D* mock_data_rhc = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingMuLike), util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
+     for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++) {
+       mock_data_rhc->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib-1]);
+     }
+     mock_data_rhc->SetDirectory(0);
+
      // If an XML file was specified, add an entry
      if(save_in_xml_format) {
        fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
@@ -240,6 +249,14 @@ void generate_toymc_ensemble
        // Adding Ereco values as a comma separated list.
        // Assuming uniform distribution within each bin, randomize values within each bin.
        int ievtot = 0;
+
+       // Now the FHC part
+       ftxt << endl;
+       ftxt << "1Rmu:";
+       ftxt << endl;
+       fxml << "       <one_mu_ring>    " << endl;
+       fxml << "         <ereco_values> " << endl;
+
        for(int ibin = 1; ibin <= mock_data->GetNbinsX(); ibin++) {
          double Nb   = mock_data->GetBinContent (ibin); // number of events in this Ereco bin
          double Emin = mock_data->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
@@ -260,8 +277,50 @@ void generate_toymc_ensemble
          fxml << "," << points_to_add;
          ftxt << "," << points_to_add;
        }
+       
        fxml << endl;
        ftxt << endl;
+       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       fxml << "         </ereco_values> " << endl;
+       fxml << "       </one_mu_ring>    " << endl;
+
+
+       // Now the RHC part
+
+       ftxt << endl;
+       ftxt << "1Rmu RHC:";
+       ftxt << endl;
+       fxml << "       <one_mu_ring_rhc>    " << endl;
+       fxml << "         <ereco_values> " << endl;
+
+       int ievtot = 0;
+       for(int ibin = 1; ibin <= mock_data_rhc->GetNbinsX(); ibin++) {
+         double Nb   = mock_data_rhc->GetBinContent (ibin); // number of events in this Ereco bin
+         double Emin = mock_data_rhc->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+         double Emax = mock_data_rhc->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+         for(int iev = 0; iev < Nb; iev++) {
+            double E = Emin + rand.Uniform() * (Emax-Emin);
+            if(ievtot > 0) {
+              fxml << ","; 
+	      ftxt << ","; 
+            }
+            fxml << E; 
+            ftxt << E; 
+            ievtot++;
+         }//iev
+       }//ibin
+       // add extra data-points, if any
+       if(points_to_add_rhc) {
+         fxml << "," << points_to_add_rhc;
+         ftxt << "," << points_to_add_rhc;
+       }
+
+       fxml << endl;
+       ftxt << endl;
+       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       fxml << "         </ereco_values> " << endl;
+       fxml << "       </one_mu_ring_rhc>    " << endl;
+
        fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
      }//xml
 
@@ -275,9 +334,17 @@ void generate_toymc_ensemble
 	      mock_data->Fill(atof(vecp[ip].c_str()));
 	    }
           }
+ 	  if(points_to_add_rhc) {
+	    vector<string> vecp = util::Tokens(points_to_add_rhc,",");
+	    assert(vecp.size()>0);
+	    for(int ip=0; ip < vecp.size(); ip++) {
+	      mock_data_rhc->Fill(atof(vecp[ip].c_str()));
+	    }
+          }
        }
        f->cd();
        mock_data->Write(Form("mock_data_%d",iexperiment));
+       mock_data_rhc->Write(Form("mock_data_rhc_%d",iexperiment));
        // Object for storing input oscillation and nuisance params in each toy-MC
        PhysParamList * iparm = new PhysParamList;
        iparm->Clear();
@@ -297,8 +364,8 @@ void generate_toymc_ensemble
   // Close files
   //
   if(save_in_xml_format) {
-    fxml << "         </ereco_values> " << endl;
-    fxml << "       </one_mu_ring>    " << endl;
+    // fxml << "         </ereco_values> " << endl;
+    // fxml << "       </one_mu_ring>    " << endl;
     fxml << "    </observation>       " << endl;
     fxml << "  </superk>              " << endl;
     fxml << "</analysis_inputs>       ";// << endl;
