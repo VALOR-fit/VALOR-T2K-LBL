@@ -507,7 +507,7 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 
   // BANFF 
   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
-    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
+    PhysParamId_t p = kListOfBANFFParams[i];
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
     double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
@@ -556,7 +556,7 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
 
   // BANFF 
   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
-    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
+    PhysParamId_t p = kListOfBANFFParams[i];
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
     double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
@@ -605,7 +605,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
 
   // BANFF 
   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
-    PhysParamId_t p = PhysParamId_t ((int) kNuisBANFF00 + i);
+    PhysParamId_t p = kListOfBANFFParams[i];
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
     double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
