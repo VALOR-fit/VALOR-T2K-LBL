@@ -50,6 +50,8 @@ void run_fit
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
+  
+  Opt::Instance()->SetDefaultParameterValues();
 
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12 = (TMath::Abs(input_mixing12 + 999) < kASmallNum);

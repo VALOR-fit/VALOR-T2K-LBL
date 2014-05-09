@@ -47,6 +47,8 @@ void run_fit_data_joint
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
+  
+  Opt::Instance()->SetDefaultParameterValues();
 
   // Print settings
   cout << "\n[Data fit]" << endl;

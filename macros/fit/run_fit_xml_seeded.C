@@ -44,6 +44,8 @@ void run_fit_xml_seeded
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
+  
+  Opt::Instance()->SetDefaultParameterValues();
 
   // Print settings
   cout << "\n[Job inputs]" << endl;
