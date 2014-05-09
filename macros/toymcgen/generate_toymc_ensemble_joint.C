@@ -11,7 +11,7 @@ void generate_toymc_ensemble_joint
 (
   const char * tag                     = "toymc",                        /* */
   int          run                     = 0,                              /* */
-  double       nexperiments            = 1,                             /* number of toy-MC expts to generate */
+  double       nexperiments            = 3,                             /* number of toy-MC expts to generate */
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
   double       input_mixing13          = 0.0251,                            /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
@@ -298,9 +298,11 @@ void generate_toymc_ensemble_joint
      if(save_in_xml_format) {
 
        // Now the 1Rmu part
+       fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        fxml << "       <one_mu_ring>    " << endl;
        fxml << "         <ereco_values> " << endl;
-       fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
+       //fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
+       
        if(save_fluct_in_xml) {
 	 fxml << "\t\t" << "<!-- ";
 	 ph.Print(fxml);
@@ -337,7 +339,7 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_mu_ring>    " << endl;
        
@@ -348,7 +350,7 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "       <one_e_ring>    " << endl;
        fxml << "         <ereco_values> " << endl;
-       fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
+       //fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re->GetNbinsX(); ibin++) {
@@ -366,14 +368,17 @@ void generate_toymc_ensemble_joint
             ievtot++;
          }//iev
        }//ibin
+
+
        // add extra data-points, if any
        if(points_to_add_1Re) {
          fxml << "," << points_to_add_1Re;
          ftxt << "," << points_to_add_1Re;
        }
+
        fxml << endl;
        ftxt << endl;
-       fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_e_ring>    " << endl;
        
@@ -381,7 +386,7 @@ void generate_toymc_ensemble_joint
        // Now the 1Rmu RHC part
        fxml << "       <one_mu_ring_rhc>    " << endl;
        fxml << "         <ereco_values> " << endl;
-       fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
+       //fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        fxml << "\t\t";
        ftxt << "1Rmu RHC:";
        ftxt << endl;
@@ -411,7 +416,7 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_mu_ring_rhc>    " << endl;
 
@@ -422,7 +427,7 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "       <one_e_ring_rhc>    " << endl;
        fxml << "         <ereco_values> " << endl;
-       fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
+       //fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
        
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re_RHC->GetNbinsX(); ibin++) {
@@ -447,9 +452,11 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       //fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        fxml << "         </ereco_values> " << endl;
        fxml << "       </one_e_ring_rhc>    " << endl;
+
+       fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
        
      }//xml
 
