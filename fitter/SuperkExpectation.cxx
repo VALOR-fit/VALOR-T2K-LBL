@@ -240,6 +240,7 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   string title (Form("Current Predicted Ereco Spectrum: %s %s",util::AsString(s).c_str()       , util::AsString(m).c_str()       ) );
   TH1D * h = new TH1D(name.c_str(), title.c_str(), nbins, util::ErecoBinEdges(s) );
   util::FormatErecoHist(h);
+  util::SetDefaultSKSpectrumStyle(s,m,h);
   for (int i = 0 ; i < nbins ; i++ ) {
     h->SetBinContent(i+1,arr[i]);
   }
