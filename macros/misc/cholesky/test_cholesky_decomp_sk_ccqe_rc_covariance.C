@@ -16,7 +16,7 @@ void test_cholesky_decomp_sk_ccqe_rc_covariance
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   TMatrixD V(3,3);
 

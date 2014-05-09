@@ -25,7 +25,7 @@ void bestfit_systematic_study_fitting_job
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   TRandom3 rand(0);
 
@@ -62,7 +62,7 @@ void bestfit_systematic_study_fitting_job
   skexp.Read(config);
 
   // Fit params
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
 
   // Initialise bestfits for the oscillation parameters

@@ -15,8 +15,8 @@ void make_fake_xsec_wght_splines(
        const char * config_file        = "analysis_configuration.xml"    /* */
 )
 {
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
 
   // Create & config superk spectrum predictor - so we can get a template to check which splines we don't need to make
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);

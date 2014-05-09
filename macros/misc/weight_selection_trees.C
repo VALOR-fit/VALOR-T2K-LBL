@@ -2,7 +2,7 @@ void weight_selection_trees()
 
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Global options                                                                                                                                                                                     
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;

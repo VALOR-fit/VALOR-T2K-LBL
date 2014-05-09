@@ -8,7 +8,7 @@ void plot_contour_constdchisqVSfc
  bool draw_fc            = false
  )
 {
-  using namespace t2kana;
+  using namespace valor;
 
   double linewidth = 2;
   double marker_size = 1.8;

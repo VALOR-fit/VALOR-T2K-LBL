@@ -8,7 +8,7 @@ Tom
 void max_deviation_table(const char * filename = "readfile.root")
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   /*TFile f(filename);
   TTree * tree = 0;

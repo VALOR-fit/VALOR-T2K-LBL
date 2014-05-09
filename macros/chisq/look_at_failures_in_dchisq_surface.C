@@ -3,7 +3,7 @@
 
 void look_at_failures_in_dchisq_surface(const char * filename = "final.root")
 {
-  using namespace t2kana;
+  using namespace valor;
 
   TFile f(filename);
   TTree * fitnt = (TTree*)f.Get("fitnt");

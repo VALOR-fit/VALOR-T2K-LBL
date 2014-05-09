@@ -28,7 +28,7 @@ void run_fit_xml_seeded
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -59,7 +59,7 @@ void run_fit_xml_seeded
   cout << *Opt::Instance() << endl;
 
   // Fit param list
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
 
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
@@ -164,7 +164,7 @@ void run_fit_xml_seeded
     //skexp->PrintSystematicVariations();
     fitter->DoTheFit();
     int fitstatus = fitter->FitStatusCode();
-    double bestfit_chisq = fit_inputs->BestFitChisquare();
+    double bestfit_chisq = fparm->GetBestFitStatistic();
 
     // Print-out best-fit params
     fparm->ShowOnlyBestFitValuesInNextPrint();

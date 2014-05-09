@@ -83,7 +83,7 @@ void test_sk_ereco_spectrum_twk_sys
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;

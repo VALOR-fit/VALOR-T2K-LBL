@@ -21,7 +21,7 @@ void automated_caption_maker_1sigmatweakspectra(
 {
 
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;

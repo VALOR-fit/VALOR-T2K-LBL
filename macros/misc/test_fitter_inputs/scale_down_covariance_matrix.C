@@ -17,7 +17,7 @@ void scale_down_covariance_matrix
  const char * matrixname  = "postfit_cov"
 )
 {
-  using namespace t2kana;
+  using namespace valor;
 
   //get matrix
   TFile * f = new TFile(infilename,"read");

@@ -13,7 +13,7 @@ void test_cholesky_decomp_banff_covariance
 
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   cout << "Reading analysis configuration from: " << config << endl;

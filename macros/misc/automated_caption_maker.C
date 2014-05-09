@@ -21,7 +21,7 @@ void automated_caption_maker(
 {
 
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Set inputs
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {

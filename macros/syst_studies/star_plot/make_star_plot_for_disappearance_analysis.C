@@ -50,7 +50,7 @@ void make_star_plot_for_disappearance_analysis
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   gStyle->SetOptStat(0);
 

@@ -22,7 +22,7 @@ void test_sk_ereco_spectrum_twk_osc_non23sector
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 

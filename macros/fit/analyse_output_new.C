@@ -86,7 +86,7 @@ void analyse_output_new
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   //global options
   Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;

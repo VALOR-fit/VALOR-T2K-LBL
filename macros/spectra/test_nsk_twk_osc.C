@@ -19,7 +19,7 @@ void test_nsk_twk_osc
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -65,8 +65,8 @@ void test_nsk_twk_osc
     for(int j = 1; j <= nsk_vs_osc_params->GetNbinsY(); j++) {
        double mixing23 = nsk_vs_osc_params->GetXaxis()->GetBinCenter(i);
        double dm23sq   = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
-       ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
-       ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   dm23sq);
+       ph.SetCurrValue(valor::conv::kPhypMixing23, mixing23);
+       ph.SetCurrValue(valor::conv::kPhypDm23sq,   dm23sq);
        if(ph.Hypothesis() == conv::kHypOsc3F) {
 	 if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
 	   ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);

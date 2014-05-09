@@ -6,7 +6,7 @@ using namespace std;
 void read_physparamlist_obj(
    const char * filename = "./physlist.root", const char * objname = "phys_param_list")
 {
-  using namespace t2kana;
+  using namespace valor;
 
   // open ROOT file
   TFile f(filename,"read");

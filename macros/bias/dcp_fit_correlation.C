@@ -24,7 +24,7 @@ void dcp_fit_correlation(
 			 bool scan_dm21sq           = true
 )
 {
-  using namespace t2kana;
+  using namespace valor;
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
   //Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;

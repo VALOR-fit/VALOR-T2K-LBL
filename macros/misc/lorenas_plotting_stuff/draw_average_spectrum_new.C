@@ -7,7 +7,7 @@ void draw_average_spectrum(
 {
 
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   //set up the tchain
   TChain ch(treename);

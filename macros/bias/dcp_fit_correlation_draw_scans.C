@@ -23,7 +23,7 @@ void dcp_fit_correlation_draw_scans(
 				    bool scan_energies = true
 )
 {
-  using namespace t2kana;
+  using namespace valor;
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
   //Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;

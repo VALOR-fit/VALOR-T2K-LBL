@@ -9,7 +9,7 @@ test_systematic_error_propagation_expectation(
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
   
   // Parse the input XML configuration file
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);

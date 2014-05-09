@@ -28,9 +28,9 @@ void calc_crit_deltachisq
     }  
 
   TChain *fitChain = new TChain("fitnt");
-  fitChain->Add(Form("/opt/ppd/t2k/users/nick/t2kana1DFCRun1to4/production/%sbin%02d/fc-run_*.root", oscparameter, bin));
+  fitChain->Add(Form("/opt/ppd/t2k/users/nick/valor1DFCRun1to4/production/%sbin%02d/fc-run_*.root", oscparameter, bin));
 
-  TString filename = Form("/opt/ppd/t2k/users/nick/t2kana1DFCRun1to4/production/%sbin%02d/fc-run_*.root", oscparameter, bin);
+  TString filename = Form("/opt/ppd/t2k/users/nick/valor1DFCRun1to4/production/%sbin%02d/fc-run_*.root", oscparameter, bin);
   cout<<filename<<endl;
 
   fitChain->SetBranchAddress("iexp",&iexp);

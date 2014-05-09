@@ -83,8 +83,8 @@ void test_bestfit_point_shift_due_to_syst_twk
  )
 {
   using namespace std;
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -116,7 +116,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
 
   // Instantiate fit params & set specified inputs as necessary
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {

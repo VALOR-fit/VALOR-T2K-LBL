@@ -4,7 +4,7 @@ void plot_tuning_steps_spectra
  double templemax = 10.0
 )
 {
-  using namespace t2kana;
+  using namespace valor;
 
   TFile f_tun_noosc ("2013results/SPECTRA/FULLRUN1-4FIXSPLINE/tuning_steps/banff_tuned/sk_ereco_spectrum-sinsqtheta[12_0.000,13_0.000,23_0.000],dcp_0.000,dmsq_Normal[12_0.00000000,23_0.000000]eV2.root");
   TFile f_tun_osc ("2013results/SPECTRA/FULLRUN1-4FIXSPLINE/tuning_steps/banff_tuned/sk_ereco_spectrum-sinsqtheta[12_0.306,13_0.025,23_0.500],dcp_0.000,dmsq_Normal[12_0.00007500,23_0.002400]eV2.root");

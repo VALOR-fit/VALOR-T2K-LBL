@@ -29,7 +29,7 @@ void calculate_goodness_of_fit
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Analysis configuration
   TString config   = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -59,9 +59,9 @@ void calculate_goodness_of_fit
   cout << *Opt::Instance() << endl;
 
   // Fit param list
-  FitParamList * fparm  = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
-  FitParamList * fparm1 = FitParamList::NamedParameterList(fit_param_list);
-  FitParamList * fparm2 = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm  = util::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1 = util::NamedParameterList(fit_param_list);
+  FitParamList * fparm2 = util::NamedParameterList(fit_param_list);
 
   conv::PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
@@ -92,10 +92,10 @@ void calculate_goodness_of_fit
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR goodness of fit test");
-  fitnt->Branch("best_fit_params",      "t2kana::FitParamList",  &fparm,      1280000,0);
-  fitnt->Branch("best_fit_params_fit1", "t2kana::FitParamList",  &fparm1,     1280000,0);
-  fitnt->Branch("best_fit_params_fit2", "t2kana::FitParamList",  &fparm2,     1280000,0);
-  fitnt->Branch("input_params",         "t2kana::PhysParamList", &iparm,      1280000,0);
+  fitnt->Branch("best_fit_params",      "valor::FitParamList",  &fparm,      1280000,0);
+  fitnt->Branch("best_fit_params_fit1", "valor::FitParamList",  &fparm1,     1280000,0);
+  fitnt->Branch("best_fit_params_fit2", "valor::FitParamList",  &fparm2,     1280000,0);
+  fitnt->Branch("input_params",         "valor::PhysParamList", &iparm,      1280000,0);
   fitnt->Branch("data",                 "TObjArray",             &dat_array,  1280000,0);
   fitnt->Branch("best_fit_pdf",         "TObjArray",             &pdf_array,  1280000,0);
   fitnt->Branch("data_fit1",            "TObjArray",             &dat_array1, 1280000,0);

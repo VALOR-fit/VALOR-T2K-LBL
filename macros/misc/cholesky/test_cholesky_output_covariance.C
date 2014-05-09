@@ -18,7 +18,7 @@ void test_cholesky_output_covariance(
   const int np=6, const char * inpfile="inputs/test/cholesky_inputs_6dim_1.txt")
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   //
   // read inputs for the Cholesky method 

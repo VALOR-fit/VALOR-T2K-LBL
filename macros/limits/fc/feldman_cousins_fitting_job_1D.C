@@ -44,13 +44,13 @@ void feldman_cousins_fitting_job_1D
   const char * hierarchy               = "normal",                            /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one",                                /* one==kNuOctantOne two==kNuOctantTwo */
-  const char * dchisqsurf_file         = "/home/ppd/tdealtry/RAL_repoistory/t2k/t2kana/nuosc/trunk/2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normalfine/combination/final.root"
+  const char * dchisqsurf_file         = "/home/ppd/tdealtry/RAL_repoistory/t2k/valor/nuosc/trunk/2013results/DATA/FULLRUN1-4FIXSPLINE/run1-4_nuis4_sintheta_normalfine/combination/final.root"
   //bool         apply_2nu_boundary    = true                                 /* if using the 2nu flavour osc prob, apply the physical boundary? */
 )
 {
   using namespace std;
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
 
   // Analysis configuration
   TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -221,12 +221,12 @@ void feldman_cousins_fitting_job_1D
   cout << *Rnd::Instance() << endl;
   
   // Fit parameter list
-  FitParamList * fparm      = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
-  FitParamList * fparm1     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the first seed
-  FitParamList * fparm2     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the mirror of best fit seed
-  FitParamList * fparm3     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of |dm32sq| 
-  FitParamList * fparm4     = FitParamList::NamedParameterList(fit_param_list); // for 2+N fit using the first seed of mixing23
-  FitParamList * fparm5     = FitParamList::NamedParameterList(fit_param_list); // for 2+N fit using the mirror of best fit seed of mixing23
+  FitParamList * fparm      = util::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1     = util::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the first seed
+  FitParamList * fparm2     = util::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the mirror of best fit seed
+  FitParamList * fparm3     = util::NamedParameterList(fit_param_list); // for 1+N fit of |dm32sq| 
+  FitParamList * fparm4     = util::NamedParameterList(fit_param_list); // for 2+N fit using the first seed of mixing23
+  FitParamList * fparm5     = util::NamedParameterList(fit_param_list); // for 2+N fit using the mirror of best fit seed of mixing23
   PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
@@ -274,13 +274,13 @@ void feldman_cousins_fitting_job_1D
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
   /*
-  fitnt->Branch("best_fit_params",           "t2kana::FitParamList",  &fparm,          1280000,0);
-  fitnt->Branch("best_fit_params_fit1",      "t2kana::FitParamList",  &fparm1,         1280000,0);
-  fitnt->Branch("best_fit_params_fit2",      "t2kana::FitParamList",  &fparm2,         1280000,0);
-  fitnt->Branch("best_fit_params_fit3",      "t2kana::FitParamList",  &fparm3,         1280000,0);
-  fitnt->Branch("best_fit_params_fit4",      "t2kana::FitParamList",  &fparm4,         1280000,0);
-  fitnt->Branch("best_fit_params_fit5",      "t2kana::FitParamList",  &fparm5,         1280000,0);
-  fitnt->Branch("input_params",              "t2kana::PhysParamList", &iparm,          1280000,0);
+  fitnt->Branch("best_fit_params",           "valor::FitParamList",  &fparm,          1280000,0);
+  fitnt->Branch("best_fit_params_fit1",      "valor::FitParamList",  &fparm1,         1280000,0);
+  fitnt->Branch("best_fit_params_fit2",      "valor::FitParamList",  &fparm2,         1280000,0);
+  fitnt->Branch("best_fit_params_fit3",      "valor::FitParamList",  &fparm3,         1280000,0);
+  fitnt->Branch("best_fit_params_fit4",      "valor::FitParamList",  &fparm4,         1280000,0);
+  fitnt->Branch("best_fit_params_fit5",      "valor::FitParamList",  &fparm5,         1280000,0);
+  fitnt->Branch("input_params",              "valor::PhysParamList", &iparm,          1280000,0);
   */
   if(store_toy_expts)
     {

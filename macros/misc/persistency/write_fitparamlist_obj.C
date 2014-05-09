@@ -1,10 +1,10 @@
 void write_fitparamlist_obj(
    const char * filename = "./fp.root", const char * objname = "fit_param_list")
 {
-  using namespace t2kana;
+  using namespace valor;
 
   // get a param list
-  FitParamList * fparm = FitParamList::NamedParameterList("nuosc3f_numudisapp_fix4+nuisance");
+  FitParamList * fparm = util::NamedParameterList("nuosc3f_numudisapp_fix4+nuisance");
 
   // tweak a couple of params
   fparm->Update(conv::kPhypDm23sq,   2.345E-3);

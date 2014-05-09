@@ -18,7 +18,7 @@ struct nsk_t {
 };
 
 using namespace std;
-using namespace t2kana;
+using namespace valor;
 
 nsk_t nsk_integration(nsk_t n, SuperkExpectation *skexp, conv::SuperkSample_t s, conv::SKMCTemplateType_t t);
 void nsk_print(nsk_t n, double input_dm23sq);
@@ -55,15 +55,15 @@ void test_nsk
   skexp.Read(config);
 
   // fit params
-  PhysHypothesis ph(t2kana::conv::kHypOsc3F);
+  PhysHypothesis ph(valor::conv::kHypOsc3F);
 
   // set up for no oscillations
-  ph.SetCurrValue(t2kana::conv::kPhypMixing23, 0);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing13, 0);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing12, 0);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   0);
-  ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   0);
-  ph.SetCurrValue(t2kana::conv::kPhypCPV    ,  0);
+  ph.SetCurrValue(valor::conv::kPhypMixing23, 0);
+  ph.SetCurrValue(valor::conv::kPhypMixing13, 0);
+  ph.SetCurrValue(valor::conv::kPhypMixing12, 0);
+  ph.SetCurrValue(valor::conv::kPhypDm23sq,   0);
+  ph.SetCurrValue(valor::conv::kPhypDm12sq,   0);
+  ph.SetCurrValue(valor::conv::kPhypCPV    ,  0);
 
   // find the oscillation parameters to use
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
@@ -113,12 +113,12 @@ void test_nsk
   TVectorD twkv_rhc(skexp.GetBANFF()->RHCBestFitValues());
   skexp.GetBANFF()->TweakRHC(true,&twkv_rhc);
   // oscillate!
-  ph.SetCurrValue(t2kana::conv::kPhypMixing23, input_mixing23);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing13, input_mixing13);
-  ph.SetCurrValue(t2kana::conv::kPhypMixing12, input_mixing12);
-  ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   input_dm23sq);
-  ph.SetCurrValue(t2kana::conv::kPhypDm12sq,   input_dm12sq);
-  ph.SetCurrValue(t2kana::conv::kPhypCPV    ,  input_deltacp);
+  ph.SetCurrValue(valor::conv::kPhypMixing23, input_mixing23);
+  ph.SetCurrValue(valor::conv::kPhypMixing13, input_mixing13);
+  ph.SetCurrValue(valor::conv::kPhypMixing12, input_mixing12);
+  ph.SetCurrValue(valor::conv::kPhypDm23sq,   input_dm23sq);
+  ph.SetCurrValue(valor::conv::kPhypDm12sq,   input_dm12sq);
+  ph.SetCurrValue(valor::conv::kPhypCPV    ,  input_deltacp);
 
   // generate predictions for oscillation, with BANFF
   if(verbose) skexp.PrintSystematicVariations();

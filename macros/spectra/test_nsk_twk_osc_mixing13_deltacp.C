@@ -20,7 +20,7 @@ void test_nsk_twk_osc_mixing13_deltacp
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   const double pi = TMath::Pi();
 
@@ -109,7 +109,7 @@ void test_nsk_twk_osc_mixing13_deltacp
   skexp.Read(config);
 
   // reference (2-flavour) physics hypothesis
-  PhysHypothesis phref(t2kana::conv::kHypNuMuDisapp2F);
+  PhysHypothesis phref(valor::conv::kHypNuMuDisapp2F);
   phref.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
   phref.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
 

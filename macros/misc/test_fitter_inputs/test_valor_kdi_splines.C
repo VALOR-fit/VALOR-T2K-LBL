@@ -1,6 +1,6 @@
 using namespace std;
-using namespace t2kana;
-using namespace t2kana::util;
+using namespace valor;
+using namespace valor::util;
 
 void test_valor_kdi_splines
 (

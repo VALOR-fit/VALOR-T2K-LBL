@@ -20,7 +20,7 @@ void test_banff_chisq_penalty_term
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   const int nexp = 5000; // number of BANFF param tweaks
 

@@ -20,7 +20,7 @@ void test_nsk_twk_osc_mixing12_dm12sq
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
@@ -86,7 +86,7 @@ void test_nsk_twk_osc_mixing12_dm12sq
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
 
   // reference (2-flavour) physics hypothesis
-  PhysHypothesis phref(t2kana::conv::kHypNuMuDisapp2F);
+  PhysHypothesis phref(valor::conv::kHypNuMuDisapp2F);
   phref.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
   phref.SetCurrValue(conv::kPhypDm23sq,         input_dm23sq       );
 

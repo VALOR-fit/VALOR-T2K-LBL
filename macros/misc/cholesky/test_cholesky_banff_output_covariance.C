@@ -12,7 +12,7 @@ void test_cholesky_banff_output_covariance
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
   
   int n_iter = (int)1E5;
   TString * outfile_name = new TString("test_chol_covar.root");

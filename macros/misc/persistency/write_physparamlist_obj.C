@@ -1,7 +1,7 @@
 void write_physparamlist_obj(
    const char * filename = "./physlist.root", const char * objname = "phys_param_list")
 {
-  using namespace t2kana;
+  using namespace valor;
 
   // create a physics parameter list
   PhysParamList pl;

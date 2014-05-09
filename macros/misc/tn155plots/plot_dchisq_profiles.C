@@ -10,7 +10,7 @@ void plot_dchisq_profiles
  bool         is_mix23  = true
  )
 {
-  using namespace t2kana;
+  using namespace valor;
 
   // get chisq profiles
   TFile f1(filename1);

@@ -7,7 +7,7 @@
 
 void plot_mc_templates() 
 {
-  using namespace t2kana;
+  using namespace valor;
 
   TFile f("Template_mcnorm_fluxtuned_banfftuned_syst_phys.root");
   double templemax = 10.0;

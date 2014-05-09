@@ -30,7 +30,7 @@ void chisq_vs_theta23_dm23sq
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
   
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -121,7 +121,7 @@ void chisq_vs_theta23_dm23sq
  for (int exp = 1; exp <21; i++){
 
    // Get specified fit parameter list & build fit inputs
-   FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+   FitParamList * fparm = util::NamedParameterList(fit_param_list);
    fparm->Update(conv::kPhypMixing12, mixing12);
    fparm->Update(conv::kPhypMixing13, mixing13);
    fparm->Update(conv::kPhypMixing23, mixing23);
@@ -171,7 +171,7 @@ void chisq_vs_theta23_dm23sq
        // cout << "mixing23_bin = " << mixing23_bin << endl;
        Opt::Instance()->gOscAnaTypeChoice     = conv::kAnaCombined;
        // FIRST FIT - JOINT
-       FitParamList * fparm0 = FitParamList::NamedParameterList(fit_param_list);
+       FitParamList * fparm0 = util::NamedParameterList(fit_param_list);
        fparm0->SetInitValue(conv::kPhypMixing23, mixing23_bin);
        fparm0->Update(conv::kPhypMixing23, mixing23_bin);
        fparm0->FixParameter(conv::kPhypMixing23);
@@ -224,7 +224,7 @@ void chisq_vs_theta23_dm23sq
        //Disappearance only:
        Opt::Instance()->gOscAnaTypeChoice     = conv::kAnaNuMuDisappOnly;
        // SECOND FIT - DISAP
-       FitParamList * fparm_disap = FitParamList::NamedParameterList(fit_param_list_disap);
+       FitParamList * fparm_disap = util::NamedParameterList(fit_param_list_disap);
        fparm_disap->SetInitValue(conv::kPhypMixing23, mixing23_bin);
        fparm_disap->Update(conv::kPhypMixing23, mixing23_bin);
        fparm_disap->FixParameter(conv::kPhypMixing23);

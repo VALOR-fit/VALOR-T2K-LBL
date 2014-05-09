@@ -16,7 +16,7 @@ void combine_chisq_surface_files(
 				 int verbose                = 0
 )
 {
-  using namespace t2kana;
+  using namespace valor;
 
   TChain * fitnt = new TChain("fitnt");
   fitnt->Add(filename_tree);

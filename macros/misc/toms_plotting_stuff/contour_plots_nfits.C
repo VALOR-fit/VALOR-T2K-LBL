@@ -26,7 +26,7 @@ void contour_plots_nfits(
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // param space
   TCanvas * c = new TCanvas();

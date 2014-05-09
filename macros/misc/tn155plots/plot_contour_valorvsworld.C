@@ -3,7 +3,7 @@ void plot_contour_valorvsworld
 )
 {
   using std::cout;
-  using namespace t2kana;
+  using namespace valor;
 
   double linewidth_val = 2; // for the new results
   double linewidth_ext = 1.5; // for old/external results

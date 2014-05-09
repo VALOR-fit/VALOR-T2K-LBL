@@ -1,5 +1,5 @@
 {
-  using namespace t2kana;
+  using namespace valor;
 
   TFile f_tun("$T2KOSCANA/2013results/SPECTRA/FULLRUN1-4FIXSPLINE/nsk_plots/banfftuned_normal/nsk_vs_osc_params.root");
   TFile f_flux("$T2KOSCANA/2013results/SPECTRA/FULLRUN1-4FIXSPLINE/nsk_plots/fluxtuned_normal/nsk_vs_osc_params.root");

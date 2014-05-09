@@ -82,7 +82,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
   

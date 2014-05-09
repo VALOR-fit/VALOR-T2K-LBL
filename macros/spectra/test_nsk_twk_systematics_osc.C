@@ -17,7 +17,7 @@ void test_nsk_twk_systematics_osc
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
 
@@ -114,7 +114,7 @@ void test_nsk_twk_systematics_osc
   skexp.Read(config);
 
   // phys hypothesis
-  PhysHypothesis ph(t2kana::conv::kHypNuMuDisapp2F);
+  PhysHypothesis ph(valor::conv::kHypNuMuDisapp2F);
 
   // generate predictions
   for(int i = 1; i <= frac_nsk_err->GetNbinsX(); i++) {
@@ -123,8 +123,8 @@ void test_nsk_twk_systematics_osc
        double mixing23 = frac_nsk_err->GetXaxis()->GetBinCenter(i);
        double dm23sq   = frac_nsk_err->GetYaxis()->GetBinCenter(j);
        mixing23 = TMath::Max(0.,mixing23);
-       ph.SetCurrValue(t2kana::conv::kPhypMixing23, mixing23);
-       ph.SetCurrValue(t2kana::conv::kPhypDm23sq,   dm23sq);
+       ph.SetCurrValue(valor::conv::kPhypMixing23, mixing23);
+       ph.SetCurrValue(valor::conv::kPhypDm23sq,   dm23sq);
 
        cout << "* Dm23^2 = " << dm23sq 
             << " eV^2, sin^2(2theta) = " << mixing23 << endl;

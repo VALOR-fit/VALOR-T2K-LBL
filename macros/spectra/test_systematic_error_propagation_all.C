@@ -20,8 +20,8 @@ void test_systematic_error_propagation_all
 )
 {
   using namespace std;
-  using namespace t2kana;
-  using namespace t2kana::util;
+  using namespace valor;
+  using namespace valor::util;
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);

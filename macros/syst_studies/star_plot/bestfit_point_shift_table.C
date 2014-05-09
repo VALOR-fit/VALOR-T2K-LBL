@@ -19,7 +19,7 @@ void bestfit_point_shift_table(
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
 
   ifstream fit_data(data_file.c_str());

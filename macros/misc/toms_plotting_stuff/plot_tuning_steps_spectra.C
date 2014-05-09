@@ -4,7 +4,7 @@ void plot_tuning_steps_spectra
  double templemax = 10.0
 )
 {
-  using namespace t2kana;
+  using namespace valor;
 
   TFile f_tun_noosc ("alltune/tun_noosc.root");
   TFile f_tun_osc ("alltune/tun_osc.root");

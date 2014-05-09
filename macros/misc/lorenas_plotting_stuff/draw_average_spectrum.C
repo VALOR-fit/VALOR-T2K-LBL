@@ -4,7 +4,7 @@ void draw_average_spectrum(
 {
 
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   const char * filename = Form("%s.root",name);
   TFile * f = new TFile(filename,"read");

@@ -47,9 +47,9 @@ other_modes = [ (200 , "xsec_pf",              ),
 col_width = 15
               
 # Load T2K Oscillation analysis libraries
-# Load t2kana libraries if necessary
+# Load valor libraries if necessary
 try:
-  ROOT.t2kana
+  ROOT.valor
 except:
   ROOT.gROOT.ProcessLine(".x "+ana_dir+"/root/loadincs.C");    
   ROOT.gROOT.ProcessLine(".x "+ana_dir+"/root/loadlibs.C");
@@ -57,10 +57,10 @@ except:
 
 ROOT.gROOT.SetBatch(1)
 
-conv = ROOT.t2kana.conv
-util = ROOT.t2kana.util
-Opt = ROOT.t2kana.Opt.Instance()
-Rnd = ROOT.t2kana.Rnd.Instance()
+conv = ROOT.valor.conv
+util = ROOT.valor.util
+Opt = ROOT.valor.Opt.Instance()
+Rnd = ROOT.valor.Rnd.Instance()
 
 Opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
 

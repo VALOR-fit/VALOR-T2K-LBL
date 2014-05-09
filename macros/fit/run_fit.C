@@ -34,8 +34,8 @@ void run_fit
 )
 {
   using namespace std;
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
 
   // Analysis configuration
   TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -83,9 +83,9 @@ void run_fit
   cout << *Rnd::Instance() << endl;
 
   // Fit parameter list
-  FitParamList * fparm  = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
-  FitParamList * fparm1 = FitParamList::NamedParameterList(fit_param_list);
-  FitParamList * fparm2 = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm  = util::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1 = util::NamedParameterList(fit_param_list);
+  FitParamList * fparm2 = util::NamedParameterList(fit_param_list);
   PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
@@ -119,10 +119,10 @@ void run_fit
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
-  fitnt->Branch("best_fit_params",      "t2kana::FitParamList",  &fparm,      1280000,0);
-  fitnt->Branch("best_fit_params_fit1", "t2kana::FitParamList",  &fparm1,     1280000,0);
-  fitnt->Branch("best_fit_params_fit2", "t2kana::FitParamList",  &fparm2,     1280000,0);
-  fitnt->Branch("input_params",         "t2kana::PhysParamList", &iparm,      1280000,0);
+  fitnt->Branch("best_fit_params",      "valor::FitParamList",  &fparm,      1280000,0);
+  fitnt->Branch("best_fit_params_fit1", "valor::FitParamList",  &fparm1,     1280000,0);
+  fitnt->Branch("best_fit_params_fit2", "valor::FitParamList",  &fparm2,     1280000,0);
+  fitnt->Branch("input_params",         "valor::PhysParamList", &iparm,      1280000,0);
   fitnt->Branch("data",                 "TObjArray",             &dat_array,  1280000,0);
   fitnt->Branch("best_fit_pdf",         "TObjArray",             &pdf_array,  1280000,0);
   fitnt->Branch("best_fit_pdf_fit1",    "TObjArray",             &pdf_array1, 1280000,0);
@@ -224,7 +224,7 @@ void run_fit
      // Chisq for true (input) params
      if(fparm1->Exists(conv::kNuisXSecSpecFunc))
 	fparm1->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
-     double true_chisq = fit_inputs->Chisquare();
+     double true_chisq = fit_inputs->Statistic();
 
      // Print-out true params
      fparm1->ShowOnlyCurrValuesInNextPrint();
@@ -235,7 +235,7 @@ void run_fit
      fparm1->ResetCurrToInitValues(); // reset osc params
      fitter->DoTheFit();
      int fitstatus = fitter->FitStatusCode();
-     double bestfit_chisq  = fit_inputs->BestFitChisquare();
+     double bestfit_chisq  = fparm1->GetBestFitStatistic();
      double bestfit_chisq2 = 0;
 
      // Save spectra (data and best-fit prediction)
@@ -265,7 +265,7 @@ void run_fit
        FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
        fparm2->ResetCurrToInitValues(); // reset osc params
        fitter2->DoTheFit();
-       bestfit_chisq2 = fit_inputs2->BestFitChisquare();
+       bestfit_chisq2 =  fparm2->GetBestFitStatistic();;
        // Save spectra (best-fit prediction)
        if(store_bestfit_spectrum) {
 	 skexp->Write(pdf_array2, "pdf");

@@ -3,7 +3,7 @@ void plot_tuning_steps_nsk_ratios
 
  )
 {
-  using namespace t2kana;
+  using namespace valor;
 
   TFile f_tun("alltune/nsk_vs_osc_params.root");
   TFile f_flux("fluxtune/nsk_vs_osc_params.root");

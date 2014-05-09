@@ -55,8 +55,8 @@ void mock_data_fit_pulls_new
 {
   using namespace std;
   using namespace std::string;
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
 
   if(is_sinsqtheta)
     Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;

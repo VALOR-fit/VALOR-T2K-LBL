@@ -25,7 +25,7 @@ void print_dataset_chisq
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
@@ -52,7 +52,7 @@ void print_dataset_chisq
   if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {

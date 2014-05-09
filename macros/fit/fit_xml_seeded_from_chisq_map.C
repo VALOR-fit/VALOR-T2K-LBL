@@ -20,7 +20,7 @@ void fit_xml_seeded_from_chisq_map
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -43,7 +43,7 @@ void fit_xml_seeded_from_chisq_map
   cout << *Opt::Instance() << endl;
 
   // Fit param list
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
 
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
@@ -256,11 +256,11 @@ void fit_xml_seeded_from_chisq_map
     int fitstatus = fitter->FitStatusCode();
 
     // Get best-fit params (if its a better minimum)
-    if(fit_inputs->BestFitChisquare() < bestfit_chisq) {
-      bestfit_chisq = fit_inputs->BestFitChisquare();
+    if(fparm->GetBestFitStatistic() < bestfit_chisq) {
+      bestfit_chisq = fparm->GetBestFitStatistic();
 
       fit_inputs->SetChisqDefinition(true);
-      bestfit_chisq5 = fit_inputs->BestFitChisquare();
+      bestfit_chisq5 = fparm->GetBestFitStatistic();
       fit_inputs->SetChisqDefinition(false);
 
       bestfit_mixing12 = fparm->BestFitValue(conv::kPhypMixing12);

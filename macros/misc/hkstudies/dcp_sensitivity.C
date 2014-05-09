@@ -7,8 +7,8 @@ void dcp_sensitivity
 {
   using namespace std;
   using namespace std::string;
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
 
   //set up chain
   TChain *ch = new TChain("fitnt");

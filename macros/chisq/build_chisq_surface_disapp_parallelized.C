@@ -38,7 +38,7 @@ void build_chisq_surface_disapp_parallelized
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -87,7 +87,7 @@ void build_chisq_surface_disapp_parallelized
   cout << *Opt::Instance() << endl;
 
   // Fit param list
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
 
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
@@ -128,7 +128,7 @@ void build_chisq_surface_disapp_parallelized
   int idm32sq = 0; // dm32sq bin
   int imix23  = 0; // mixing23 bin
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
-  fitnt->Branch("best_fit_params", "t2kana::FitParamList",  &fparm,     1280000,0);
+  fitnt->Branch("best_fit_params", "valor::FitParamList",  &fparm,     1280000,0);
   fitnt->Branch("iexpt",   &iexpt,   "iexpt/I");
   fitnt->Branch("idm32sq", &idm32sq, "idm32sq/I");
   fitnt->Branch("imix23",  &imix23,  "imix23/I");

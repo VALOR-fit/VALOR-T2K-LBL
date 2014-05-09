@@ -31,7 +31,7 @@ void calculate_sensitvity_p_value
 )
 {
 
-  using namespace t2kana;
+  using namespace valor;
 
   //set up input tree
   TFile f("final.root");

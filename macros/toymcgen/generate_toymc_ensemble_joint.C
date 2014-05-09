@@ -34,8 +34,8 @@ void generate_toymc_ensemble_joint
 )
 {
   using namespace std;
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
 
   TRandom rand(0);
 

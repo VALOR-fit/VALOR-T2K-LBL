@@ -22,7 +22,7 @@ void summarize_systematics
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // chain together files for each systematic
 

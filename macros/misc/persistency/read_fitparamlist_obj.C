@@ -6,7 +6,7 @@ using namespace std;
 void read_fitparamlist_obj(
    const char * filename = "./fp.root", const char * objname = "fit_param_list")
 {
-  using namespace t2kana;
+  using namespace valor;
 
   // open ROOT file
   TFile f(filename,"read");

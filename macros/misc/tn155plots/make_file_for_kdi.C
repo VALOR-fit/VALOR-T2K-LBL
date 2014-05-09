@@ -8,7 +8,7 @@ void make_file_for_kdi(
 		       const char * tag2 = "run1-4full_nuis4_sintheta_inverted31"
 )
 {
-  using namespace t2kana;
+  using namespace valor;
 
   if(tag2 == "")
     tag2 = tag;

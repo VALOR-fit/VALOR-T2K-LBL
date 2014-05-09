@@ -12,7 +12,7 @@
 void plot_numu_surv_prob_2f_vs_3frange(double mixing23=1.0, double dm23sq=2.32E-3)
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;

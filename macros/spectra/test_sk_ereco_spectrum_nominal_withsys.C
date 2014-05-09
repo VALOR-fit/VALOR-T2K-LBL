@@ -338,7 +338,7 @@ void test_sk_ereco_spectrum_nominal_withsys
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -361,7 +361,7 @@ void test_sk_ereco_spectrum_nominal_withsys
   if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
-  FitParamList * fparm = FitParamList::NamedParameterList("nuosc3f_numudisapp_fix4+nuisance");
+  FitParamList * fparm = util::NamedParameterList("nuosc3f_numudisapp_fix4+nuisance");
   if(fparm->PhysicsHypothesis() == conv::kHypNuMuDisapp2F) {
     fparm->Update(conv::kPhypMixing23,  input_mixing23);
     fparm->Update(conv::kPhypDm23sq,    input_dm23sq);

@@ -5,7 +5,7 @@ void skmc_events_per_bin
  const char * filename = "2013results/SPECTRA/mcstaterror/numu/Template_mcstaterr_84.root"
 )
 {
-  using namespace t2kana;
+  using namespace valor;
   TFile f(filename);
   TCanvas * c = new TCanvas();
   c->SaveAs("events_per_template_bin.pdf[");

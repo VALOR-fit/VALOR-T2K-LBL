@@ -23,7 +23,7 @@ void calculate_dataset_probability(
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -38,7 +38,7 @@ void calculate_dataset_probability(
   skexp->Read(config);
 
   // Set osc params
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "Specified physics hypothesis: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {

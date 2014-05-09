@@ -2,7 +2,7 @@ void get_starplot_staterror(
 			    const char * folder    = "./"
 )
 {
-  using namespace t2kana;
+  using namespace valor;
   Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta;
 
   TChain c("fitnt");

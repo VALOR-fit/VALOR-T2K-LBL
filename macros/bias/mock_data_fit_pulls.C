@@ -30,7 +30,7 @@ void mock_data_fit_pulls(
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
   // First get the expected systematic variations
   //gStyle->SetOptFit(1); // show fit results

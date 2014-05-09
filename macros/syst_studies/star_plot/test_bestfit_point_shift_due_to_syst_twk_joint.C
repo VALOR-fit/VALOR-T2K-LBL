@@ -81,7 +81,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
  )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
   //  TGAxis::SetMaxDigits(3);
 
   // Analysis configuration
@@ -113,7 +113,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
 
   // Instantiate fit params & set specified inputs as necessary
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
   conv::PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
@@ -315,7 +315,7 @@ void test_bestfit_point_shift_due_to_syst_twk_joint
   delete fparm;
   skexp->ResetSystematicVariations();
 
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
     cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
   if(hyp == conv::kHypOsc3F) {
     fparm->Update(conv::kPhypMixing12, input_mixing12);

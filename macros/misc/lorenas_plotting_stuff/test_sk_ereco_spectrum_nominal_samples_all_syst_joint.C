@@ -23,7 +23,7 @@ void test_sk_ereco_spectrum_nominal_samples_all_syst_joint
 
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
 
  // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);  
@@ -87,7 +87,7 @@ void test_sk_ereco_spectrum_nominal_samples_all_syst_joint
 
   const char * fit_param_list      = "nuosc3f_12fix";
 
-  FitParamList * fparm = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm = util::NamedParameterList(fit_param_list);
   fparm->SetInitValue(conv::kPhypCPV    , input_deltacp);
   fparm->Update(conv::kPhypCPV    , input_deltacp);
   fparm->SetInitValue(conv::kPhypMixing13, input_mixing13);
@@ -227,7 +227,7 @@ void test_sk_ereco_spectrum_nominal_samples_all_syst_joint
     v[ib] = 1;
   }
 
-  FitParamList * fparm0 = FitParamList::NamedParameterList(fit_param_list);
+  FitParamList * fparm0 = util::NamedParameterList(fit_param_list);
   
   fparm0->SetInitValue(conv::kPhypMixing12, input_mixing12);
   fparm0->SetInitValue(conv::kPhypDm12sq,   input_dm12sq);

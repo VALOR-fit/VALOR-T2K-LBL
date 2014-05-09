@@ -3,7 +3,7 @@
 //
 
 void plot_contour_with1Dlimits() {
-  using namespace t2kana;
+  using namespace valor;
 
   const char * filename = "2013results/DATA/run1-4full_skdetmathfix_run1-4abanff_nuis4_sintheta_normal/combination/run1-4full_skdetmathfix_run1-4abanff_nuis4_sintheta_normal-run_0-expt_8.root";
   const char * tag = "normal";
