@@ -182,74 +182,74 @@ void generate_toymc_ensemble_joint
 
        // Set physics hypothesis
        if(ph.Hypothesis() == kHypNuMuDisapp2F) {
-	 ph.SetCurrValue(kPhypMixing23,  input_mixing23);
-	 ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
+         ph.SetCurrValue(kPhypMixing23,  input_mixing23);
+         ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
        }
        else if(ph.Hypothesis() == kHypOsc3F) {  
-	 ph.SetCurrValue(kPhypMixing12,  input_mixing12);
-	 ph.SetCurrValue(kPhypMixing13,  input_mixing13);
-	 ph.SetCurrValue(kPhypMixing23,  input_mixing23);
-	 ph.SetCurrValue(kPhypCPV    ,   input_deltacp);
-	 ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
-	 ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
+         ph.SetCurrValue(kPhypMixing12,  input_mixing12);
+         ph.SetCurrValue(kPhypMixing13,  input_mixing13);
+         ph.SetCurrValue(kPhypMixing23,  input_mixing23);
+         ph.SetCurrValue(kPhypCPV    ,   input_deltacp);
+         ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
+         ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
        }
        cout << "- Physics hypothesis set: " << ph << endl;
 
        if(tweak_systematics == 1) {
-	 // tweak all sources of systematic err (gaussian err)
-	 cout << "- Randomizing all systematic params in pdf..." << endl;
-	 skexp->TweakAllSystematics();
-	 //	 skexp->TweakSystematic("sk_energy_scale",0.0,true);
-	 skexp->PrintSystematicVariations();
+         // tweak all sources of systematic err (gaussian err)
+         cout << "- Randomizing all systematic params in pdf..." << endl;
+         skexp->TweakAllSystematics();
+         //         skexp->TweakSystematic("sk_energy_scale",0.0,true);
+         skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 2) {
-	 // special tweak, increasing numu flux parameters <700MeV by 5%
-	 cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
-	 TVectorD twkv(skexp->GetBANFF()->BestFitValues());
-	 twkv[0] += 0.05;
-	 twkv[1] += 0.05;
-	 twkv[2] += 0.05;
-	 twkv[3] += 0.05;
-	 skexp->GetBANFF()->Tweak(true,&twkv);
-	 skexp->PrintSystematicVariations();
+         // special tweak, increasing numu flux parameters <700MeV by 5%
+         cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
+         TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+         twkv[0] += 0.05;
+         twkv[1] += 0.05;
+         twkv[2] += 0.05;
+         twkv[3] += 0.05;
+         skexp->GetBANFF()->Tweak(true,&twkv);
+         skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 3) {
-	 cout << "- Randomizing all but SK systematic params in pdf..." << endl;
-	 skexp->TweakAllBANFFSystematics();
-	 skexp->TweakAllUncorrelatedXSecSystematics();
-	 skexp->PrintSystematicVariations();
+         cout << "- Randomizing all but SK systematic params in pdf..." << endl;
+         skexp->TweakAllBANFFSystematics();
+         skexp->TweakAllUncorrelatedXSecSystematics();
+         skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 4) {
-	 skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
-	 skexp->PrintSystematicVariations();
+         skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
+         skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 5) {
-	 cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
-	 TVectorD twkv(skexp->GetBANFF()->BestFitValues());
-	 twkv[6]  += 0.15;
-	 twkv[7]  += 0.15;
-	 twkv[8]  += 0.15;
-	 twkv[9]  += 0.15;
-	 twkv[10] += 0.15;
-	 twkv[14] += 0.15;
-	 twkv[15] += 0.15;
-	 skexp->GetBANFF()->Tweak(true,&twkv);
-	 skexp->PrintSystematicVariations();
+         cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
+         TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+         twkv[6]  += 0.15;
+         twkv[7]  += 0.15;
+         twkv[8]  += 0.15;
+         twkv[9]  += 0.15;
+         twkv[10] += 0.15;
+         twkv[14] += 0.15;
+         twkv[15] += 0.15;
+         skexp->GetBANFF()->Tweak(true,&twkv);
+         skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 6) {
-	 cout << "- Randomizing all BANFF systematic params in pdf..." << endl;
-	 skexp->TweakAllBANFFSystematics();
-	 skexp->PrintSystematicVariations();
+         cout << "- Randomizing all BANFF systematic params in pdf..." << endl;
+         skexp->TweakAllBANFFSystematics();
+         skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 7) {
-	 cout << "- Randomizing all uncorrelated cross section systematic params in pdf..." << endl;
-	 skexp->TweakAllUncorrelatedXSecSystematics();
-	 skexp->PrintSystematicVariations();
+         cout << "- Randomizing all uncorrelated cross section systematic params in pdf..." << endl;
+         skexp->TweakAllUncorrelatedXSecSystematics();
+         skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 8) {
-	 cout << "- Randomizing all SK+FSI systematic params in pdf..." << endl;
-	 skexp->TweakAllSKDetectorFSISystematics();
-	 skexp->PrintSystematicVariations();
+         cout << "- Randomizing all SK+FSI systematic params in pdf..." << endl;
+         skexp->TweakAllSKDetectorFSISystematics();
+         skexp->PrintSystematicVariations();
        }
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
@@ -297,19 +297,22 @@ void generate_toymc_ensemble_joint
 
      if(save_in_xml_format) {
 
-       // Now the 1Rmu part
-       fxml << "           " << Form("<data_set_%d>",iexperiment) << endl;
-       fxml << "       <one_mu_ring>    " << endl;
-       fxml << "         <ereco_values> " << endl;
-       
+       // Dataset info
+       fxml << "    " << Form("<data_set_%d>",iexperiment) << endl;
        if(save_fluct_in_xml) {
-	 fxml << "\t\t" << "<!-- ";
-	 ph.Print(fxml);
-	 if(tweak_systematics)
-	   skexp->PrintSystematicVariations(fxml);
-	 fxml << " -->" << endl;
+         fxml << "<!-- ";
+         ph.Print(fxml);
+         if(tweak_systematics)
+           skexp->PrintSystematicVariations(fxml);
+         fxml << " -->" << endl;
        }
-       fxml << "\t\t";
+       
+       // Now the 1Rmu part
+       
+       fxml << "      <one_mu_ring>    " << endl;
+       fxml << "        <ereco_values> " << endl;
+       
+       fxml << "          ";
        ftxt << "1Rmu:";
        ftxt << endl;
        
@@ -324,7 +327,7 @@ void generate_toymc_ensemble_joint
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ","; 
-	      ftxt << ","; 
+              ftxt << ","; 
             }
             fxml << E; 
             ftxt << E; 
@@ -338,16 +341,16 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "         </ereco_values> " << endl;
-       fxml << "       </one_mu_ring>    " << endl;
+       fxml << "        </ereco_values> " << endl;
+       fxml << "      </one_mu_ring>    " << endl;
        
               
        //Now the 1Re part
        ftxt << endl;
        ftxt << "1Re:";
        ftxt << endl;
-       fxml << "       <one_e_ring>    " << endl;
-       fxml << "         <ereco_values> " << endl;
+       fxml << "      <one_e_ring>    " << endl;
+       fxml << "        <ereco_values> " << endl;
        
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re->GetNbinsX(); ibin++) {
@@ -358,7 +361,7 @@ void generate_toymc_ensemble_joint
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ","; 
-       	      ftxt << ","; 
+                     ftxt << ","; 
             }
             fxml << E; 
             ftxt << E; 
@@ -374,14 +377,14 @@ void generate_toymc_ensemble_joint
 
        fxml << endl;
        ftxt << endl;
-       fxml << "         </ereco_values> " << endl;
-       fxml << "       </one_e_ring>    " << endl;
+       fxml << "        </ereco_values> " << endl;
+       fxml << "      </one_e_ring>    " << endl;
        
 
        // Now the 1Rmu RHC part
-       fxml << "       <one_mu_ring_rhc>    " << endl;
-       fxml << "         <ereco_values> " << endl;
-       fxml << "\t\t";
+       fxml << "      <one_mu_ring_rhc>    " << endl;
+       fxml << "        <ereco_values> " << endl;
+       fxml << "          ";
        ftxt << "1Rmu RHC:";
        ftxt << endl;
        
@@ -396,7 +399,7 @@ void generate_toymc_ensemble_joint
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ","; 
-	      ftxt << ","; 
+              ftxt << ","; 
             }
             fxml << E; 
             ftxt << E; 
@@ -410,16 +413,16 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "         </ereco_values> " << endl;
-       fxml << "       </one_mu_ring_rhc>    " << endl;
+       fxml << "        </ereco_values> " << endl;
+       fxml << "      </one_mu_ring_rhc>" << endl;
 
 
        //Now the 1Re RHC part
        ftxt << endl;
        ftxt << "1Re RHC:";
        ftxt << endl;
-       fxml << "       <one_e_ring_rhc>    " << endl;
-       fxml << "         <ereco_values> " << endl;
+       fxml << "      <one_e_ring_rhc>"  << endl;
+       fxml << "        <ereco_values> " << endl;
        
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re_RHC->GetNbinsX(); ibin++) {
@@ -430,7 +433,7 @@ void generate_toymc_ensemble_joint
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ","; 
-       	      ftxt << ","; 
+                     ftxt << ","; 
             }
             fxml << E; 
             ftxt << E; 
@@ -444,43 +447,43 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "         </ereco_values> " << endl;
-       fxml << "       </one_e_ring_rhc>    " << endl;
-       fxml << "           " << Form("</data_set_%d>",iexperiment) << endl;
+       fxml << "        </ereco_values> " << endl;
+       fxml << "      </one_e_ring_rhc>    " << endl;
+       fxml << "    " << Form("</data_set_%d>",iexperiment) << endl;
        
      }//xml
 
      // If a ROOT filename was specified, save the ROOT histogram too
      if(f) {
        if(save_in_root_format) {
- 	  if(points_to_add_1Rmu) {
-	    vector<string> vecp = util::Tokens(points_to_add_1Rmu,",");
-	    assert(vecp.size()>0);
-	    for(int ip=0; ip < vecp.size(); ip++) {
-	      mock_data_1Rmu->Fill(atof(vecp[ip].c_str()));
-	    }
+           if(points_to_add_1Rmu) {
+            vector<string> vecp = util::Tokens(points_to_add_1Rmu,",");
+            assert(vecp.size()>0);
+            for(int ip=0; ip < vecp.size(); ip++) {
+              mock_data_1Rmu->Fill(atof(vecp[ip].c_str()));
+            }
           }
-	  if(points_to_add_1Re) {
-	    vector<string> vecp = util::Tokens(points_to_add_1Re,",");
-	    assert(vecp.size()>0);
-	    for(int ip=0; ip < vecp.size(); ip++) {
-	      mock_data_1Re->Fill(atof(vecp[ip].c_str()));
-	    }
+          if(points_to_add_1Re) {
+            vector<string> vecp = util::Tokens(points_to_add_1Re,",");
+            assert(vecp.size()>0);
+            for(int ip=0; ip < vecp.size(); ip++) {
+              mock_data_1Re->Fill(atof(vecp[ip].c_str()));
+            }
           }
-	  
-	  if(points_to_add_1Rmu_RHC) {
-	    vector<string> vecp = util::Tokens(points_to_add_1Rmu_RHC,",");
-	    assert(vecp.size()>0);
-	    for(int ip=0; ip < vecp.size(); ip++) {
-	      mock_data_1Rmu_RHC->Fill(atof(vecp[ip].c_str()));
-	    }
+          
+          if(points_to_add_1Rmu_RHC) {
+            vector<string> vecp = util::Tokens(points_to_add_1Rmu_RHC,",");
+            assert(vecp.size()>0);
+            for(int ip=0; ip < vecp.size(); ip++) {
+              mock_data_1Rmu_RHC->Fill(atof(vecp[ip].c_str()));
+            }
           }
-	  if(points_to_add_1Re_RHC) {
-	    vector<string> vecp = util::Tokens(points_to_add_1Re_RHC,",");
-	    assert(vecp.size()>0);
-	    for(int ip=0; ip < vecp.size(); ip++) {
-	      mock_data_1Re_RHC->Fill(atof(vecp[ip].c_str()));
-	    }
+          if(points_to_add_1Re_RHC) {
+            vector<string> vecp = util::Tokens(points_to_add_1Re_RHC,",");
+            assert(vecp.size()>0);
+            for(int ip=0; ip < vecp.size(); ip++) {
+              mock_data_1Re_RHC->Fill(atof(vecp[ip].c_str()));
+            }
           }
        }
        f->cd();
