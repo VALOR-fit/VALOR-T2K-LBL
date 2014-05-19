@@ -38,6 +38,8 @@ void generate_toymc_ensemble_joint
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+  
+  int n_points_per_line_xml = 5;
 
   TRandom rand(0);
 
@@ -298,7 +300,7 @@ void generate_toymc_ensemble_joint
      if(save_in_xml_format) {
 
        // Dataset info
-       fxml << "    " << Form("<data_set_%d>",iexperiment) << endl;
+       fxml << "      " << Form("<data_set_%d>",iexperiment) << endl;
        if(save_fluct_in_xml) {
          fxml << "<!-- ";
          ph.Print(fxml);
@@ -309,10 +311,9 @@ void generate_toymc_ensemble_joint
        
        // Now the 1Rmu part
        
-       fxml << "      <one_mu_ring>    " << endl;
-       fxml << "        <ereco_values> " << endl;
+       fxml << "        <one_mu_ring>    " << endl;
+       fxml << "          <ereco_values> " << endl;
        
-       fxml << "          ";
        ftxt << "1Rmu:";
        ftxt << endl;
        
@@ -326,8 +327,9 @@ void generate_toymc_ensemble_joint
          for(int iev = 0; iev < Nb; iev++) {
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
-              fxml << ","; 
+              fxml << ", "; 
               ftxt << ","; 
+              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
             }
             fxml << E; 
             ftxt << E; 
@@ -341,16 +343,16 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "        </ereco_values> " << endl;
-       fxml << "      </one_mu_ring>    " << endl;
+       fxml << "          </ereco_values> " << endl;
+       fxml << "        </one_mu_ring>    " << endl;
        
               
        //Now the 1Re part
        ftxt << endl;
        ftxt << "1Re:";
        ftxt << endl;
-       fxml << "      <one_e_ring>    " << endl;
-       fxml << "        <ereco_values> " << endl;
+       fxml << "        <one_e_ring>    " << endl;
+       fxml << "          <ereco_values> " << endl;
        
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re->GetNbinsX(); ibin++) {
@@ -360,8 +362,9 @@ void generate_toymc_ensemble_joint
          for(int iev = 0; iev < Nb; iev++) {
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
-              fxml << ","; 
-                     ftxt << ","; 
+              fxml << ", "; 
+              ftxt << ","; 
+              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
             }
             fxml << E; 
             ftxt << E; 
@@ -377,14 +380,14 @@ void generate_toymc_ensemble_joint
 
        fxml << endl;
        ftxt << endl;
-       fxml << "        </ereco_values> " << endl;
-       fxml << "      </one_e_ring>    " << endl;
+       fxml << "          </ereco_values> " << endl;
+       fxml << "        </one_e_ring>    " << endl;
        
 
        // Now the 1Rmu RHC part
-       fxml << "      <one_mu_ring_rhc>    " << endl;
-       fxml << "        <ereco_values> " << endl;
-       fxml << "          ";
+       fxml << "        <one_mu_ring_rhc>    " << endl;
+       fxml << "          <ereco_values> " << endl;
+       
        ftxt << "1Rmu RHC:";
        ftxt << endl;
        
@@ -398,8 +401,9 @@ void generate_toymc_ensemble_joint
          for(int iev = 0; iev < Nb; iev++) {
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
-              fxml << ","; 
+              fxml << ", "; 
               ftxt << ","; 
+              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
             }
             fxml << E; 
             ftxt << E; 
@@ -413,16 +417,16 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "        </ereco_values> " << endl;
-       fxml << "      </one_mu_ring_rhc>" << endl;
+       fxml << "          </ereco_values> " << endl;
+       fxml << "        </one_mu_ring_rhc>" << endl;
 
 
        //Now the 1Re RHC part
        ftxt << endl;
        ftxt << "1Re RHC:";
        ftxt << endl;
-       fxml << "      <one_e_ring_rhc>"  << endl;
-       fxml << "        <ereco_values> " << endl;
+       fxml << "        <one_e_ring_rhc>"  << endl;
+       fxml << "          <ereco_values> " << endl;
        
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re_RHC->GetNbinsX(); ibin++) {
@@ -432,8 +436,9 @@ void generate_toymc_ensemble_joint
          for(int iev = 0; iev < Nb; iev++) {
             double E = Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
-              fxml << ","; 
-                     ftxt << ","; 
+              fxml << ", "; 
+              ftxt << ","; 
+              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
             }
             fxml << E; 
             ftxt << E; 
@@ -447,9 +452,9 @@ void generate_toymc_ensemble_joint
        }
        fxml << endl;
        ftxt << endl;
-       fxml << "        </ereco_values> " << endl;
-       fxml << "      </one_e_ring_rhc>    " << endl;
-       fxml << "    " << Form("</data_set_%d>",iexperiment) << endl;
+       fxml << "          </ereco_values> " << endl;
+       fxml << "        </one_e_ring_rhc>    " << endl;
+       fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;
        
      }//xml
 
