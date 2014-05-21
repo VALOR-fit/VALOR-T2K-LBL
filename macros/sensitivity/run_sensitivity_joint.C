@@ -48,6 +48,8 @@ void run_sensitivity_joint
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
+  
+  Opt::Instance()::SetDefaultParameterValues()
 
   // Print settings
   cout << "\n[Data fit]" << endl;

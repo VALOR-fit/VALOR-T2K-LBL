@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# Runs a sensitivity job, using the config specified, on a batch system and tags results
+
 import ROOT
 import itertools as it
 import os
@@ -14,7 +16,7 @@ import sys
 import shutil
 import inspect
 
-config_file  = "analysis_configuration.xml"
+config_file  = "analysis_configuration_test.xml"
 
 store_bf_spectrum      = False
 use_reactor_constraint = True
@@ -37,7 +39,8 @@ scratch = "/tmp"
 user = os.environ['LOGNAME']
 init_dir = os.getcwd()
 
-full_macroname = os.path.realpath(macroname)
+#~ full_macroname = os.path.realpath(macroname)
+full_macroname = macroname
 
 for possible_outdir in ["OUTFOLDER","STOR","mystor","PWD"]:
   try:
@@ -65,7 +68,7 @@ def main(setname          ,
   os.chdir(tmp_dir)
   print "Moved to directory: "+os.getcwd()
   
-  data_file = "data.xml"
+  data_file = "toymc-0.xml"
   dataset_id = 0
   
   macroargs = [tag, data_file, dataset_id, config_file,

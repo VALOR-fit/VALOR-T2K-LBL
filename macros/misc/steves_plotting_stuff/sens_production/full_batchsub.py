@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# Submits a bunch of sensitivity jobs
+
 import math
 import os
 import subprocess
@@ -21,19 +23,24 @@ vmem_limit=8388608
 
 n_submitted = 0
 
+script_location = os.path.dirname(os.path.realpath(__file__))
+
 try:
-  script_loc=os.environ["PBS_O_WORKDIR"]
+  working_dir=os.environ["PBS_O_WORKDIR"]
 except KeyError:
-  script_loc=os.environ["PWD"]
-  
-for possible_outdir in ["OUTFOLDER","STOR","mystor","PWD"]:
+  working_dir=os.environ["PWD"]
+
+output_dir = ""
+for possible_outdir in ["OUTFOLDER","STOR","mystor"]:
   try:
     output_dir = os.path.abspath( os.environ[possible_outdir] )
     break
   except:
     continue
+
+if not output_dir: output_dir = working_dir
   
-prog    =  os.path.abspath( script_loc+"/run_sens_job.py" )
+prog    =  os.path.abspath( script_location+"/run_sens_job.py" )
 log_dir =  os.path.abspath( output_dir+"/log/" )
 
 if not os.path.isdir(output_dir):
@@ -72,8 +79,8 @@ def main(include1d=True,include2d=False,
     print >>sys.stderr,"No supported queue submission found"
     exit(-1)
   
-  var_bins = dict( [ ("mixing23", 41),
-                     ("dm23sq"  , 41)
+  var_bins = dict( [ ("mixing23", 40),
+                     ("dmsq"  , 20)
                   ])
   
   seeds = range(min_seed,max_seed+1)
@@ -90,8 +97,8 @@ def main(include1d=True,include2d=False,
         njobs= int(math.ceil(float(nbins1)/bins_per_job))
         
         for ijob in xrange(njobs):
-          min_bin1 = bins_per_job*ijob
-          max_bin1 = min( nbins1, min_bin1+bins_per_job ) - 1
+          min_bin1 = bins_per_job*ijob+1
+          max_bin1 = min( nbins1, min_bin1+bins_per_job )
           
           job_info = [tag,seed,surface,min_bin1,max_bin1]
           job_name = "_".join(map(str,job_info))
@@ -113,7 +120,7 @@ def main(include1d=True,include2d=False,
           
     #2d
     if include2d:
-      for surface in ["mixing23_dm23sq"]:
+      for surface in ["mixing23_dmsq"]:
         var1,var2=surface.split("_")
         nbins1=var_bins[var1]
         nbins2=var_bins[var2]

@@ -7,6 +7,10 @@
 # If no argument given, just use the directory containing the script
 #
 
+if [ -z ${VALOR_FWMK} ] ; then
+  source /home/steve/analysis/fmwk/setup/setup_at_steve_laptop.sh 
+fi
+
 export T2KOSCANA=$1
 
 if [ -z $T2KOSCANA ]; then

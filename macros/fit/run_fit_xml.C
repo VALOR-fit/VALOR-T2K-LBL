@@ -33,6 +33,28 @@ void run_fit_xml
   // Analysis configuration
   TString config   = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
+  
+  FileStat_t dummy;
+  
+  // Check for config file, and XML data file.
+  // If not found in inputs or config, see if it works as a normal path
+  if (gSystem->GetPathInfo(config.Data(), dummy)) 
+  {
+    config = config_file;
+    if (gSystem->GetPathInfo(config.Data(), dummy)) {
+      cerr<<"Config file not found: "<<config_file<<endl;
+      exit(-1);
+    }
+  }
+  
+  if (gSystem->GetPathInfo(xmlfile2.Data(), dummy)) 
+  {
+    xmlfile2 = xmlfile;
+    if (gSystem->GetPathInfo(xmlfile2.Data(), dummy)) {
+      cerr<<"Data input file not found: "<<xmlfile<<endl;
+      exit(-1);
+    }
+  }
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
