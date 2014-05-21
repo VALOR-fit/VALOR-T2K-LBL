@@ -49,7 +49,7 @@ void run_sensitivity_joint
     exit(1);
   }
   
-  Opt::Instance()::SetDefaultParameterValues()
+  Opt::Instance()->SetDefaultParameterValues();
 
   // Print settings
   cout << "\n[Data fit]" << endl;
