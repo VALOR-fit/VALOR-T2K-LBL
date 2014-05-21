@@ -2308,3 +2308,12 @@ valor::conv::PhysParamId_t
   return kPhypUndefined;
 }
 //____________________________________________________________________________
+string valor::util::ParamAsString                   (conv::PhysParamId_t p) { return util::AsString                  (p);}
+string valor::util::ParamAsStringTex                (conv::PhysParamId_t p) { return util::AsStringTex               (p);}
+string valor::util::ParamAsStringPaperTexNoDollar   (conv::PhysParamId_t p) { return util::AsStringPaperTexNoDollar  (p);}
+string valor::util::ParamAsStringPaperTex           (conv::PhysParamId_t p) { return util::AsStringPaperTex          (p);}
+string valor::util::ParamAsStringPaperRooTex        (conv::PhysParamId_t p) { return util::AsStringPaperRooTex       (p);}
+string valor::util::ParamAsStringCompact            (conv::PhysParamId_t p) { return util::AsStringCompact           (p);}
+string valor::util::ParamAsStringCompact_splinehack (conv::PhysParamId_t p) { return util::AsStringCompact_splinehack(p);}
+string valor::util::ParamAsStringCompact_KDI        (conv::PhysParamId_t p) { return util::AsStringCompact_KDI       (p);}
+//____________________________________________________________________________

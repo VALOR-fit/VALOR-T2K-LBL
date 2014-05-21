@@ -335,6 +335,16 @@ namespace util {
   conv::PhysParamId_t      PhysParamIdFromString     (string h);
   conv::PhysParamId_t      PhysParamIdFromLongString (string h);
   
+  // Aliases to avoid overloading with enums
+  string ParamAsString                   (conv::PhysParamId_t p);
+  string ParamAsStringTex                (conv::PhysParamId_t p);
+  string ParamAsStringPaperTexNoDollar   (conv::PhysParamId_t p);
+  string ParamAsStringPaperTex           (conv::PhysParamId_t p);
+  string ParamAsStringPaperRooTex        (conv::PhysParamId_t p);
+  string ParamAsStringCompact            (conv::PhysParamId_t p);
+  string ParamAsStringCompact_splinehack (conv::PhysParamId_t p);
+  string ParamAsStringCompact_KDI        (conv::PhysParamId_t p);
+  
 } // util
 
 } // valor
