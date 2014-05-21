@@ -82,7 +82,7 @@ def main(files, treename="fitnt"):
         
         for ipar in xrange(fpl.Size()): # Loop over parameters
           par = fpl.WhichParam(ipar)
-          parname = util.ParamAsStringCompact(par)
+          parname = util.ParamAsStringCompact(par).replace("|","")
           
           for method, entryname in fitparamlist_methods_and_entries:
             full_branch_name = basename+"__"+parname+"__"+entryname
