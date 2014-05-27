@@ -102,7 +102,7 @@ void analyse_output_bias
  const char * hierarchy = "normal",
  const char * dmsqscheme = "abs23",
  const char * mixparamchoice = "sinsqtheta",
- const char * config_file = "analysis_configuration.xml",
+ const char * config_file = "analysis_configuration_test.xml",
  const char * hypothesis = "3f_osc",   // "3f_osc", "4f_sterile_osc", "5f_sterile_osc 
  )
 {  
@@ -394,6 +394,8 @@ void analyse_output_bias
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = best_fit_params->WhichParam(ip);
     
+    if(!best_fit_params->IsNuisance(p)) continue; // no free params
+
     mean = hPullAll[ip]->GetMean();
     rms = hPullAll[ip]->GetRMS();
 
@@ -413,38 +415,35 @@ void analyse_output_bias
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = best_fit_params->WhichParam(ip);
     
-
-    // Extracted parameters
-    
-    if(best_fit_params->IsNuisance(p) && DrawNuisExtr){ // Oscillations    
-      sprintf(canvname,best_fit_params->Name(p).c_str());
-      cExtrParAll[ip] = new TCanvas(canvname,canvname);
-      cExtrParAll[ip]->cd();
-      hExtrParAll[ip]->Draw();
-      
-      double x = best_fit_params->MinValue(p);
-      double y = hExtrParAll[ip]->GetMaximum()*0.75;
-      DrawName(NameFitParAll[ip].Data(),x,y);    
-      double mean = hExtrParAll[ip]->GetMean();
-      double rms = hExtrParAll[ip]->GetRMS();
-      char *namemean = "Mean = %f";
-      sprintf(name,namemean,mean);
-      DrawName(name,x,y*0.8);
-      char *namerms = "RMS = %f";
-      sprintf(name,namerms,rms);
-      DrawName(name,x,y*0.7);
-
-      if(SaveNuisExtr) save_canvas(cExtrParAll[ip],canvname,tag);
-    }
+    // // Extracted parameters    
+    // if(best_fit_params->IsNuisance(p) && DrawNuisExtr){ // Oscillations    
+    //   sprintf(canvname,best_fit_params->Name(p).c_str());
+    //   cExtrParAll[ip] = new TCanvas(canvname,canvname);
+    //   cExtrParAll[ip]->cd();
+    //   hExtrParAll[ip]->Draw();
+    //   double x = best_fit_params->MinValue(p);
+    //   double y = hExtrParAll[ip]->GetMaximum()*0.75;
+    //   DrawName(NameFitParAll[ip].Data(),x,y);    
+    //   double mean = hExtrParAll[ip]->GetMean();
+    //   double rms = hExtrParAll[ip]->GetRMS();
+    //   char *namemean = "Mean = %f";
+    //   sprintf(name,namemean,mean);
+    //   DrawName(name,x,y*0.8);
+    //   char *namerms = "RMS = %f";
+    //   sprintf(name,namerms,rms);
+    //   DrawName(name,x,y*0.7);
+    //   if(SaveNuisExtr) save_canvas(cExtrParAll[ip],canvname,tag);
+    // }
     
     // Fit parameters
     
-    if(!best_fit_params->IsNuisance(p) && !best_fit_params->IsFixed(p) && DrawOscFit){ // Oscillations    
+    if(!best_fit_params->IsNuisance(p) && !best_fit_params->IsFixed(p) && DrawOscFit ){ // Oscillations    
       sprintf(canvname,best_fit_params->Name(p).c_str());
       cFitParAll[ip] = new TCanvas(canvname,canvname);
       cFitParAll[ip]->cd();
-      hFitParAll[ip]->Draw();
-      
+
+      hFitParAll[ip]->Draw();  
+      hFitParAll[ip]->SetLineColor(kBlack);   
       double x = best_fit_params->MinValue(p);
       double y = hFitParAll[ip]->GetMaximum()*0.75;
       DrawName(NameFitParAll[ip].Data(),x,y);    
@@ -456,7 +455,7 @@ void analyse_output_bias
       char *namerms = "RMS = %f";
       sprintf(name,namerms,rms);
       DrawName(name,x,y*0.7);
-
+     
       if(SaveOscFit) save_canvas(cFitParAll[ip],canvname,tag);
     }
     else if (best_fit_params->IsNuisance(p) && DrawNuisFit){ // Nuisances
@@ -466,8 +465,9 @@ void analyse_output_bias
       sprintf(canvname,best_fit_params->Name(p).c_str());
       cFitParAll[ip] = new TCanvas(canvname,canvname);
       cFitParAll[ip]->cd();
-      hFitParAll[ip]->Draw();
       
+      hFitParAll[ip]->Draw();
+      hFitParAll[ip]->SetLineColor(kBlack);
       double x = best_fit_params->MinValue(p);
       double y = hFitParAll[ip]->GetMaximum()*0.75;
       DrawName(NameFitParAll[ip].Data(),x,y);    
@@ -480,6 +480,22 @@ void analyse_output_bias
       sprintf(name,namerms,rms);
       DrawName(name,x,y*0.7);
       
+      if(DrawNuisExtr){
+	hExtrParAll[ip]->Draw("same");
+	hExtrParAll[ip]->SetLineColor(kRed);
+	double x = best_fit_params->MinValue(p);
+	double y = hExtrParAll[ip]->GetMaximum()*0.75;
+	DrawName(NameFitParAll[ip].Data(),x,y);    
+	double mean = hExtrParAll[ip]->GetMean();
+	double rms = hExtrParAll[ip]->GetRMS();
+	char *namemean = "Mean = %f";
+	sprintf(name,namemean,mean);
+	DrawName(name,x,y*0.8);
+	char *namerms = "RMS = %f";
+	sprintf(name,namerms,rms);
+	DrawName(name,x,y*0.7);
+      }
+       
       if(SaveNuisFit) save_canvas(cFitParAll[ip],canvname,tag);
     }
     
@@ -537,6 +553,9 @@ void analyse_output_bias
     
   } // loop over parameters
 
+  //return;
+
+
   // Draw pull means and widths
 
   //style
@@ -564,7 +583,8 @@ void analyse_output_bias
   int nbigpull = 0;
   for(int i = 1; i <= hPullMean->GetNbinsX(); i++) {
     if(TMath::Abs(hPullMean->GetBinContent(i)) > 0.1) {
-      cout << hPullMean->GetXaxis()->GetBinLabel(i) << " has a large pull: " << hPullMean->GetBinContent(i) << endl;
+      cout << "Param " << i << " " << hPullMean->GetXaxis()->GetBinLabel(i) << " has a large pull: " << hPullMean->GetBinContent(i) << ":" << endl;
+      cout << 
       nbigpull++;
     }
   }
