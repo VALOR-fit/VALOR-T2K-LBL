@@ -35,6 +35,8 @@
 #define NBinsFitPar 200
 #define NBinsPull 200
 
+#define SaveCombinedPullPlots false
+
 
 // Declare Histograms
 
@@ -119,6 +121,8 @@ void analyse_output_bias
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
+
+ Opt::Instance()->SetDefaultParameterValues();
  
   // Analysis configuration
   const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -172,10 +176,7 @@ void analyse_output_bias
 
   // cout << "np = " << np << endl;
   // cout << "nph = " << nph << endl;
-
-
-
-
+  
   NameFitParAll = new TString[np];
   cExtrParAll = new TCanvas* [np];
   cFitParAll = new TCanvas* [np];
@@ -255,7 +256,12 @@ void analyse_output_bias
       double pull=-999.;
 
       double bestfitval = best_fit_params->BestFitValue(p);
-      double bestfiterr = best_fit_params->MigradError(p);
+      double bestfiterr;
+      if(best_fit_params->HesseErrorsSet())
+      bestfiterr = best_fit_params->HesseError(p);
+        else
+      bestfiterr = best_fit_params->MigradError(p);
+      
       centval = input_params->Value(p);
 
       // Extracted parameters
@@ -397,16 +403,19 @@ void analyse_output_bias
     if(!best_fit_params->IsNuisance(p)) continue; // no free params
 
     mean = hPullAll[ip]->GetMean();
-    rms = hPullAll[ip]->GetRMS();
+    rms  = hPullAll[ip]->GetRMS();
 
-    hPullMean->SetBinContent(ip,mean);
-    hPullWidth->SetBinContent(ip,rms);
+    hPullMean ->SetBinContent(ip+1,mean);
+    hPullWidth->SetBinContent(ip+1,rms);
+    
+    hPullMean ->GetXaxis()->SetBinLabel(ip+1, util::AsStringCompact(p).c_str());
+    hPullWidth->GetXaxis()->SetBinLabel(ip+1, util::AsStringCompact(p).c_str());
     
     //mean = hPullValAll[ip]->GetMean();
-    //rms = hPullValAll[ip]->GetRMS();
+    //rms  = hPullValAll[ip]->GetRMS();
 
-    //hPullValMean->SetBinContent(ip,mean);
-    //hPullValWidth->SetBinContent(ip,rms);
+    //hPullValMean ->SetBinContent(ip+1,mean);
+    //hPullValWidth->SetBinContent(ip+1,rms);
 
   }
   
@@ -584,12 +593,160 @@ void analyse_output_bias
   for(int i = 1; i <= hPullMean->GetNbinsX(); i++) {
     if(TMath::Abs(hPullMean->GetBinContent(i)) > 0.1) {
       cout << "Param " << i << " " << hPullMean->GetXaxis()->GetBinLabel(i) << " has a large pull: " << hPullMean->GetBinContent(i) << ":" << endl;
-      cout << 
       nbigpull++;
     }
   }
   cout << endl << nbigpull << " parameters have |pull| > 0.1" << endl << endl;
+  
+  //////////////////////////////////////////////////////////////////////
+  // Make disappearance style pull plot
+  //PULL PLOT
+  if (SaveCombinedPullPlots) {
+    FitParamList * fparm = best_fit_params;
 
+    //count free parameters
+    int np = fparm->GetNumberParameters();
+    int npfree = 0;
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      if(fparm->IsNuisance(p))
+        npfree++;
+    }
+    cout << npfree << " free parameters (" << np << " total)" << endl;
+    //make the histogram
+    TH1D * pulls    = new TH1D("","",npfree,0,npfree);
+    TH1D * values   = new TH1D("","",npfree,0,npfree);
+    TH1D * errratio = new TH1D("","",npfree,0,npfree); // postfit/prefit error
+    //get deviation from best fit (in sigma)
+    for(int ip = 0, ipfree = 1; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      if(!fparm->IsNuisance(p)) continue;
+      TString label;
+      if(ipfree%2)
+        label = Form("%s           ",util::AsStringPaperRooTex(p).c_str());
+      else
+        label = Form("%s",util::AsStringPaperRooTex(p).c_str());
+      pulls->   GetXaxis()->SetBinLabel(ipfree, label.Data());
+      values->  GetXaxis()->SetBinLabel(ipfree, label.Data());
+      errratio->GetXaxis()->SetBinLabel(ipfree, label.Data());
+      //get best fit info
+      double best = fparm->BestFitValue(p);
+      double error = 0;
+      if(fparm->HesseErrorsSet())
+        error = fparm->HesseError(p);
+      else
+        error = fparm->MigradError(p);
+      //osc params
+      if(p == conv::kPhypMixing13) {
+        if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+          pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / error);
+          values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta13) / (conv::kGlobFitErrSinsq2Theta13 * conv::kGlobFitSinsq2Theta13));
+          errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrSinsq2Theta13 * conv::kGlobFitSinsq2Theta13));
+        }
+        else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+          pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta13) / error);
+          values->SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta13) / (conv::kGlobFitErrSinsqTheta13 * conv::kGlobFitSinsqTheta13));
+          errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrSinsqTheta13 * conv::kGlobFitSinsqTheta13));
+          cout << util::AsString(p) << "        " << error << "        " << conv::kGlobFitErrSinsqTheta13 << "        " << error / conv::kGlobFitErrSinsqTheta13 << endl;
+        }
+      }
+      else if(p == conv::kPhypMixing12) {
+        if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+          pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / error);
+          values->SetBinContent(ipfree, (best - conv::kGlobFitSinsq2Theta12) / (conv::kGlobFitErrSinsq2Theta12 * conv::kGlobFitSinsq2Theta12));
+          errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrSinsq2Theta12 * conv::kGlobFitSinsq2Theta12));
+        }
+        else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
+          pulls-> SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta12) / error);
+          values->SetBinContent(ipfree, (best - conv::kGlobFitSinsqTheta12) / (conv::kGlobFitErrSinsqTheta12 * conv::kGlobFitSinsqTheta12));
+          errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrSinsqTheta12 * conv::kGlobFitSinsqTheta12));
+          cout << util::AsString(p) << "        " << error << "        " << conv::kGlobFitErrSinsqTheta12 << "        " << error / conv::kGlobFitErrSinsqTheta12 << endl;
+        }
+      }
+      else if(p == conv::kPhypCPV    ) {
+        pulls-> SetBinContent(ipfree, (best - conv::kGlobFitDeltaCP) / error);
+        values->SetBinContent(ipfree, (best - conv::kGlobFitDeltaCP) / conv::kpi);//conv::kGlobFitErrDeltaCP);
+        errratio->SetBinContent(ipfree, error / conv::kpi);
+        cout << best << endl;
+        cout << error << endl;
+        cout << 2*conv::kpi << endl;
+      }
+      else if(p == conv::kPhypDm12sq) {
+        pulls-> SetBinContent(ipfree, (best - conv::kGlobFitDm12sq) / error);
+        values->SetBinContent(ipfree, (best - conv::kGlobFitDm12sq) / (conv::kGlobFitErrDm12sq * conv::kGlobFitDm12sq));
+        errratio->SetBinContent(ipfree, error / (conv::kGlobFitErrDm12sq * conv::kGlobFitDm12sq));
+          cout << util::AsString(p) << "        " << error << "        " << conv::kGlobFitErrDm12sq << "        " << error / conv::kGlobFitErrDm12sq << endl;
+      }
+      else if(util::IsBANFF(p)) {
+        pulls-> SetBinContent(ipfree, (best - skexp->GetBANFF()->BestFitValue(p)) / error);
+        values->SetBinContent(ipfree, (best - skexp->GetBANFF()->BestFitValue(p)) / skexp->GetBANFF()->OneSigmaError(p));
+        errratio->SetBinContent(ipfree, error / skexp->GetBANFF()->OneSigmaError(p));
+      }
+      else if(util::IsXSec(p)) {
+        //"nominal best fit" is 0
+        //"1 sigma error" is 1
+        pulls-> SetBinContent(ipfree, (best - 0) / error);
+        values->SetBinContent(ipfree, (best - 0) / 1);
+        errratio->SetBinContent(ipfree, error / 1);
+      }
+      else if(p == conv::kNuisSuperkEnergyScale) {
+        //"nominal best fit" is 0
+        //"1 sigma error" is 1
+        pulls-> SetBinContent(ipfree, (best - 0) / error);
+        values->SetBinContent(ipfree, (best - 0) / 1);
+        errratio->SetBinContent(ipfree, error / 1);
+      }
+      else if(util::IsSKDetFSI(p)) {
+        //"nominal best fit" is 1
+        pulls-> SetBinContent(ipfree, (best - 1) / error);
+        values->SetBinContent(ipfree, (best - 1) / skexp->GetSuperkDetectorFSI()->OneSigmaError(p));
+        errratio->SetBinContent(ipfree, error / skexp->GetSuperkDetectorFSI()->OneSigmaError(p));
+      }
+      else {
+        cerr << "Unknown pull for parameter " << util::AsStringCompact(p) << endl;
+      }
+      cout << util::AsString(p) << "        " << errratio->GetBinContent(ipfree) << endl;
+      ipfree++;
+    }//ip
+    //style
+    pulls->   GetYaxis()->SetRangeUser(-1,1);
+    pulls->   GetXaxis()->LabelsOption("v");
+    values->  GetYaxis()->SetRangeUser(-1,1);
+    values->  GetXaxis()->LabelsOption("v");
+    errratio->GetYaxis()->SetRangeUser( 0,2);
+    errratio->GetXaxis()->LabelsOption("v");
+    TLine * lpull = new TLine(0,0,pulls->GetXaxis()->GetLast(),0);
+    TLine * lerr  = new TLine(0,1,pulls->GetXaxis()->GetLast(),1);
+    //title
+    pulls-> GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{bf}");
+    values->GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{input}");
+    errratio->GetYaxis()->SetTitle("#sigma_{bf} / #sigma_{input}");
+    
+    // Make plot of pull with unfitted params:
+    TH1D * pulls_unfit = new TH1D(*pulls);
+    pulls_unfit->Multiply(errratio);
+    pulls_unfit->SetMarkerStyle(kOpenSquare);
+    pulls_unfit->SetMarkerColor(kRed);
+    
+    //draw
+    TCanvas * cpull = new TCanvas();
+    cpull->SetGridx(1);
+    cpull->SetBottomMargin(0.4);
+    cpull->cd();
+    pulls->Draw("P");
+    lpull->Draw();
+    pulls_unfit->Draw("same P");
+    save_canvas(cpull,"combined_pulls",tag);
+    /*
+    cpull->cd();
+    values->Draw("P");
+    lpull->Draw();
+    save_canvas(cpull,"values",tag);
+    cpull->cd();
+    errratio->Draw("P");
+    lerr->Draw();
+    save_canvas(cpull,"err_ratio",tag);*/
+  }
 
   // // Draw value pull means and widths
 
