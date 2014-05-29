@@ -5,7 +5,7 @@
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
 //
-
+ 
 void run_fit_xml
 (
   const char * tag,                                                    /* */
@@ -13,9 +13,10 @@ void run_fit_xml
   const char * xmlfile,                                                /* input XML file with toy MC experiments */
   int          first_experiment = 0,                                   /* */
   int          last_experiment  = 0,                                   /* */
-  const char * config_file      = "analysis_configuration.xml",        /* analysis configuration file */
-  const char * fit_param_list   = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_option       = "minuit",                            /* fitter option */
+  const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
+  //const char * fit_param_list   = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list   = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_option       = "minuit+hesse",                            /* fitter option */
   bool         store_toy_expts         = true,                         /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = true,                         /* disable this if you don't want to store the best-fit spectra */
   const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -150,7 +151,7 @@ void run_fit_xml
 
      // Re-seed fitter (reset current values to specified init values)
      fparm1->ResetCurrToInitValues();
-
+     
      // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
      skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
