@@ -20,7 +20,7 @@
 #define DrawOscRes false
 #define SaveOscRes false
 
-#define DrawNuisFit false
+#define DrawNuisFit true
 #define SaveNuisFit false
 
 #define DrawNuisPull true
@@ -29,13 +29,20 @@
 #define DrawNuisRes false
 #define SaveNuisRes false
 
-#define DrawNuisExtr false
+#define DrawNuisExtr true
 #define SaveNuisExtr false
 
-#define NBinsFitPar 200
-#define NBinsPull 200
+#define DrawOscErr false
+#define DrawNuisErr true
+
+#define NBinsFitPar 2000
+#define NBinsPull 2000
 
 #define SaveCombinedPullPlots false
+
+using namespace std;
+using namespace valor;
+using namespace valor::conv;
 
 
 // Declare Histograms
@@ -44,6 +51,8 @@ TString *NameFitParAll;
 
 TH1F **hExtrParAll;
 TH1F **hFitParAll;
+TH1F **hErrParAll;
+
 TH1F **hPullAll;
 TH1F **hPullValAll;
 TH1F **hResAll;
@@ -54,6 +63,7 @@ TH1F *hPullValWidth;
 
 TCanvas **cExtrParAll;
 TCanvas **cFitParAll;
+TCanvas **cErrParAll;
 TCanvas **cPullAll;
 TCanvas **cResAll;
 
@@ -71,6 +81,7 @@ TLatex *DrawName(char *name,double x,double y){
   TLatex *tname = new TLatex(x,y,name);
   tname->SetTextSize(0.08);
   tname->Draw();
+  //tname->DrawClone("");
 }
 
 double calc_pull_osc(double centval,double fitval,double fiterr){
@@ -95,6 +106,73 @@ double calc_pull_val(double centval,double centerr,double fitval,double fiterr){
   double pull = (fitval-centval)/fiterr; 
   return pull;
 }
+ 
+inline double get_cent_err(conv::PhysParamId_t p,SuperkExpectation * skexp){ // very slow...
+
+  double centerr = 0.;
+  
+  if(p == conv::kPhypMixing13) {      
+    if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+      centerr = conv::kGlobFitErrSinsq2Theta13;
+    }
+    else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+      centerr = conv::kGlobFitErrSinsqTheta13;
+    }
+  }
+  else if(p == conv::kPhypMixing12) {
+    if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+      centerr = conv::kGlobFitErrSinsq2Theta12;
+    }
+    else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+      centerr = conv::kGlobFitErrSinsqTheta12;
+    }
+  }
+  else if(p == conv::kPhypMixing23) {
+    if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+      centerr = conv::kGlobFitErrSinsq2Theta23;
+    }
+    else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+      centerr = conv::kGlobFitErrSinsqTheta23;
+    }
+  }
+  else if(p == conv::kPhypDm23sq) {
+    centerr = conv::kGlobFitErrDm23sq;
+  }
+  else if(p == conv::kPhypDm12sq) {
+    centerr = conv::kGlobFitErrDm12sq;
+  }
+  else if(p == conv::kPhypCPV) {
+    centerr = conv::kGlobFitErrDeltaCP;
+  }
+  
+  else if(util::IsBANFF(p)){
+    //centval = skexp->GetBANFF()->BestFitValue(p);
+    centerr = skexp->GetBANFF()->OneSigmaError(p);
+  }	  
+  else if(util::IsXSec(p)) {
+    //"nominal best fit" is 0
+    //"1 sigma error" is 1
+    //centval = 0;
+    centerr = 1;
+  }
+  else if(p == conv::kNuisSuperkEnergyScale) {
+    //"nominal best fit" is 0
+    //"1 sigma error" is 1
+    //centval = 0;
+    centerr = 1;
+  }
+  else if(util::IsSKDetFSI(p)) {
+    //"nominal best fit" is 1
+    //centval = 1;
+    centerr = skexp->GetSuperkDetectorFSI()->OneSigmaError(p);
+  }	
+  else {
+    cerr << "Unknown pull for parameter " << util::AsStringCompact(p) << endl;
+  }
+  return centerr;
+}
+
+
 
 
 void analyse_output_bias
@@ -108,10 +186,6 @@ void analyse_output_bias
  const char * hypothesis = "3f_osc",   // "3f_osc", "4f_sterile_osc", "5f_sterile_osc 
  )
 {  
-  using namespace std;
-  using namespace valor;
-  using namespace valor::conv;
-
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
@@ -159,10 +233,6 @@ void analyse_output_bias
   fitnt->SetBranchAddress("best_fit_params",&best_fit_params);
   fitnt->SetBranchAddress("best_fit_params_fit1",&best_fit_params_fit1);
   fitnt->SetBranchAddress("best_fit_params_fit2",&best_fit_params_fit2);
-  //fitnt->SetBranchAddress("data",                 &data);
-  //fitnt->SetBranchAddress("best_fit_pdf",         &best_fit_pdf);
-  //fitnt->SetBranchAddress("best_fit_pdf_fit1",    &best_fit_pdf_fit1);
-  //fitnt->SetBranchAddress("best_fit_pdf_fit2",    &best_fit_pdf_fit2);
 
   // Initialize Histograms
 
@@ -173,13 +243,11 @@ void analyse_output_bias
   fitnt->GetEntry(0); // Get Tree general informations
   int np = best_fit_params->GetNumberParameters();
   int nph = input_params->NParams();
-
-  // cout << "np = " << np << endl;
-  // cout << "nph = " << nph << endl;
-  
+ 
   NameFitParAll = new TString[np];
   cExtrParAll = new TCanvas* [np];
   cFitParAll = new TCanvas* [np];
+  cErrParAll = new TCanvas* [np];
   cPullAll = new TCanvas* [np];
   cPullOsc = new TCanvas* [np];
   cResAll = new TCanvas* [np];
@@ -195,6 +263,7 @@ void analyse_output_bias
   hFitParOsc = new TH1F*[np];
   hFitParNuis = new TH1F*[np];
   hExtrParAll = new TH1F*[np];
+  hErrParAll = new TH1F*[np];
   
   hPullMean = new TH1F("hPullMean","hPullMean",np,0,np);
   hPullWidth = new TH1F("hPullWitdh","hPullWidth",np,0,np);
@@ -209,21 +278,34 @@ void analyse_output_bias
     // Extracted distributions
     max = best_fit_params->MaxValue(p);
     min = best_fit_params->MinValue(p);
-    sprintf(name,best_fit_params->Name(p).c_str());
+    string extrname = "extr_";
+    extrname.append(best_fit_params->Name(p));
+    sprintf(name,extrname.c_str());
     hExtrParAll[ip] = new TH1F(name,name,NBinsFitPar,min,max);
-
+    
     // Fitted distributions
     max = best_fit_params->MaxValue(p);
     min = best_fit_params->MinValue(p);
-    sprintf(name,best_fit_params->Name(p).c_str());
+    string fitname = "fit_";
+    fitname.append(best_fit_params->Name(p));
+    sprintf(name,fitname.c_str());
     hFitParAll[ip] = new TH1F(name,name,NBinsFitPar,min,max);
 
+    // Fitted Error distributions
+    max = best_fit_params->MaxValue(p);
+    min = 0.;
+    
+    string errname = "err_";
+    errname.append(best_fit_params->Name(p));
+    sprintf(name,errname.c_str());
+    hErrParAll[ip] = new TH1F(name,name,NBinsFitPar,min,max);
+    
     // Pull distributions
     string pullname = "pull_";
     pullname.append(best_fit_params->Name(p));
     sprintf(name,pullname.c_str());
-    hPullAll[ip] = new TH1F(name,name,NBinsPull,-5,5);    
-
+    hPullAll[ip] = new TH1F(name,name,NBinsPull,-500,500);    
+    
     // Pull Value distributions
     string pullname = "pullvalue_";
     pullname.append(best_fit_params->Name(p));
@@ -234,7 +316,7 @@ void analyse_output_bias
     string resname = "res_";
     resname.append(best_fit_params->Name(p));
     sprintf(name,resname.c_str());
-    hResAll[ip] = new TH1F(name,name,NBinsPull,-5,5);    
+    hResAll[ip] = new TH1F(name,name,NBinsPull,-5,5);        
   }
   
   // Loop on the tree events
@@ -258,19 +340,34 @@ void analyse_output_bias
       double bestfitval = best_fit_params->BestFitValue(p);
       double bestfiterr;
       if(best_fit_params->HesseErrorsSet())
-      bestfiterr = best_fit_params->HesseError(p);
-        else
-      bestfiterr = best_fit_params->MigradError(p);
+	bestfiterr = best_fit_params->HesseError(p);
+      else
+	bestfiterr = best_fit_params->MigradError(p);
       
+      //cout << best_fit_params->HesseErrorsSet() << endl;
+
       centval = input_params->Value(p);
 
-      // Extracted parameters
 
+
+      //if(p==conv::kPhypDm23sq) cout << bestfitval << " +- " << bestfiterr << endl;
+      
+      if(p == conv::kNuisSuperkEnergyScale){
+      	if( (bestfitval<-0.0005 || bestfitval>0.0005) ){
+          continue;
+      	}
+      }
+      
+	
+
+      // Extracted parameters
       hExtrParAll[ip]->Fill(centval);
       
       // Fitted parameters
-
       hFitParAll[ip]->Fill(bestfitval); 
+
+      // Fitted error parameters
+      hErrParAll[ip]->Fill(bestfiterr); 
             
       // Take the parameter names
       
@@ -379,16 +476,20 @@ void analyse_output_bias
 	}
 	
 	pull = calc_pull_nuis(centval,centerr,bestfitval,bestfiterr);
+	
+
+	//if(centerr < bestfiterr) cout << centerr << " " << bestfiterr << endl;
+
 	hPullAll[ip]->Fill(pull);
 		
 	//pull = calc_pull_val(centval,centerr,bestfitval,bestfiterr);
 	//hPullValAll[ip]->Fill(pull);
 
       } // end pulls oscillation params
-      
+
     } // loop np
     
-    if(itoy>2000) break;
+    //if(itoy>2000) break;
     
   } // end itoy
   
@@ -416,38 +517,20 @@ void analyse_output_bias
 
     //hPullValMean ->SetBinContent(ip+1,mean);
     //hPullValWidth->SetBinContent(ip+1,rms);
-
   }
   
   // Draw histograms
   //int np = best_fit_params->GetNumberParameters();
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = best_fit_params->WhichParam(ip);
-    
-    // // Extracted parameters    
-    // if(best_fit_params->IsNuisance(p) && DrawNuisExtr){ // Oscillations    
-    //   sprintf(canvname,best_fit_params->Name(p).c_str());
-    //   cExtrParAll[ip] = new TCanvas(canvname,canvname);
-    //   cExtrParAll[ip]->cd();
-    //   hExtrParAll[ip]->Draw();
-    //   double x = best_fit_params->MinValue(p);
-    //   double y = hExtrParAll[ip]->GetMaximum()*0.75;
-    //   DrawName(NameFitParAll[ip].Data(),x,y);    
-    //   double mean = hExtrParAll[ip]->GetMean();
-    //   double rms = hExtrParAll[ip]->GetRMS();
-    //   char *namemean = "Mean = %f";
-    //   sprintf(name,namemean,mean);
-    //   DrawName(name,x,y*0.8);
-    //   char *namerms = "RMS = %f";
-    //   sprintf(name,namerms,rms);
-    //   DrawName(name,x,y*0.7);
-    //   if(SaveNuisExtr) save_canvas(cExtrParAll[ip],canvname,tag);
-    // }
-    
+   
     // Fit parameters
     
     if(!best_fit_params->IsNuisance(p) && !best_fit_params->IsFixed(p) && DrawOscFit ){ // Oscillations    
-      sprintf(canvname,best_fit_params->Name(p).c_str());
+
+      string fitname = "canv_fit_";
+      fitname.append(best_fit_params->Name(p));
+      sprintf(canvname,fitname.c_str());
       cFitParAll[ip] = new TCanvas(canvname,canvname);
       cFitParAll[ip]->cd();
 
@@ -470,8 +553,12 @@ void analyse_output_bias
     else if (best_fit_params->IsNuisance(p) && DrawNuisFit){ // Nuisances
 
       //if(p != conv::kPhypDm12sq && p != kPhypMixing12) continue;
+      //if(p == conv::kRHCNuisSuperkEnergyScale) cout << "kRHCNuisSuperkEnergyScale" << endl;
+      if(p != conv::kNuisSuperkEnergyScale) continue;
       
-      sprintf(canvname,best_fit_params->Name(p).c_str());
+      string fitname = "canv_fit_";
+      fitname.append(best_fit_params->Name(p));
+      sprintf(canvname,fitname.c_str());
       cFitParAll[ip] = new TCanvas(canvname,canvname);
       cFitParAll[ip]->cd();
       
@@ -479,39 +566,102 @@ void analyse_output_bias
       hFitParAll[ip]->SetLineColor(kBlack);
       double x = best_fit_params->MinValue(p);
       double y = hFitParAll[ip]->GetMaximum()*0.75;
-      DrawName(NameFitParAll[ip].Data(),x,y);    
+      //DrawName(NameFitParAll[ip].Data(),x,y);    
       double mean = hFitParAll[ip]->GetMean();
       double rms = hFitParAll[ip]->GetRMS();
       char *namemean = "Mean = %f";
       sprintf(name,namemean,mean);
-      DrawName(name,x,y*0.8);
+      //DrawName(name,x,y*0.8);
       char *namerms = "RMS = %f";
       sprintf(name,namerms,rms);
-      DrawName(name,x,y*0.7);
+      //DrawName(name,x,y*0.7);
       
       if(DrawNuisExtr){
 	hExtrParAll[ip]->Draw("same");
 	hExtrParAll[ip]->SetLineColor(kRed);
 	double x = best_fit_params->MinValue(p);
 	double y = hExtrParAll[ip]->GetMaximum()*0.75;
-	DrawName(NameFitParAll[ip].Data(),x,y);    
+	//DrawName(NameFitParAll[ip].Data(),x,y);    
 	double mean = hExtrParAll[ip]->GetMean();
 	double rms = hExtrParAll[ip]->GetRMS();
 	char *namemean = "Mean = %f";
 	sprintf(name,namemean,mean);
-	DrawName(name,x,y*0.8);
+	//DrawName(name,x,y*0.8);
 	char *namerms = "RMS = %f";
 	sprintf(name,namerms,rms);
-	DrawName(name,x,y*0.7);
+	//DrawName(name,x,y*0.7);
       }
        
       if(SaveNuisFit) save_canvas(cFitParAll[ip],canvname,tag);
     }
     
+    // Fit error parameters
+    
+    if(!best_fit_params->IsNuisance(p) && !best_fit_params->IsFixed(p) && DrawOscErr ){ // Oscillations    
+      string errname = "canv_err_";
+      errname.append(best_fit_params->Name(p));
+      sprintf(canvname,errname.c_str());
+      cErrParAll[ip] = new TCanvas(canvname,canvname);
+      cErrParAll[ip]->cd();
+
+      hErrParAll[ip]->Draw();  
+      hErrParAll[ip]->SetLineColor(kBlack);   
+      //double x = best_fit_params->MinValue(p);
+      double x = 0;
+      double y = hErrParAll[ip]->GetMaximum()*0.75;
+      //DrawName(NameFitParAll[ip].Data(),x,y);    
+      double mean = hErrParAll[ip]->GetMean();
+      double rms = hErrParAll[ip]->GetRMS();
+      char *namemean = "Mean = %f";
+      sprintf(name,namemean,mean);
+      //DrawName(name,x,y*0.8);
+      char *namerms = "RMS = %f";
+      sprintf(name,namerms,rms);
+      //DrawName(name,x,y*0.7);
+      
+      //if(SaveOscFit) save_canvas(cErrParAll[ip],canvname,tag);
+    }
+    else if (best_fit_params->IsNuisance(p) && !best_fit_params->IsFixed(p) && DrawNuisErr){ // Nuisances
+
+      if(p != conv::kNuisSuperkEnergyScale) continue;
+      
+      string canverrname = "canv_err_";
+      canverrname.append(best_fit_params->Name(p));
+      sprintf(canvname,canverrname.c_str());
+      cErrParAll[ip] = new TCanvas(canvname,canvname);
+      cErrParAll[ip]->cd();
+
+      hErrParAll[ip]->Draw();
+      hErrParAll[ip]->SetLineColor(kBlack);
+      double x = best_fit_params->MinValue(p);
+      double y = hErrParAll[ip]->GetMaximum()*0.75;
+      //DrawName(NameFitParAll[ip].Data(),x,y);    
+      double mean = hErrParAll[ip]->GetMean();
+      double rms = hErrParAll[ip]->GetRMS();
+      char *namemean = "Mean = %f";
+      sprintf(name,namemean,mean);
+      //DrawName(name,x,y*0.8);
+      char *namerms = "RMS = %f";
+      sprintf(name,namerms,rms);
+      //DrawName(name,x,y*0.7);
+ 
+      centerr = get_cent_err(p,skexp);
+
+      TLine *lcenterr = new TLine(centerr,0,centerr,hErrParAll[ip]->GetMaximum()*1.2);
+      lcenterr->SetLineColor(kRed);
+      lcenterr->Draw();
+      
+      cout << centerr << endl;
+
+      //if(SaveNuisFit) save_canvas(cFitParAll[ip],canvname,tag);
+    }
+
+    
+    
     // Pulls
 
     if(!best_fit_params->IsNuisance(p) && !best_fit_params->IsFixed(p) && DrawOscPull){     
-      string pullname = "pull_";
+      string pullname = "canv_pull_";
       pullname.append(best_fit_params->Name(p));
       sprintf(canvname,pullname.c_str());
       cPullAll[ip] = new TCanvas(canvname,canvname);
@@ -520,17 +670,15 @@ void analyse_output_bias
 
       double x = -5.;
       double y = hPullAll[ip]->GetMaximum();
-
-      DrawName(NameFitParAll[ip].Data(),x,y);
-
+      //DrawName(NameFitParAll[ip].Data(),x,y);
       double mean = hPullAll[ip]->GetMean();
       double rms = hPullAll[ip]->GetRMS();
       char *namemean = "Mean = %f";
       sprintf(name,namemean,mean);
-      DrawName(name,x,y*0.8);
+      //DrawName(name,x,y*0.8);
       char *namerms = "RMS = %f";
       sprintf(name,namerms,rms);
-      DrawName(name,x,y*0.6);
+      //DrawName(name,x,y*0.6);
 
       if(SaveOscPull) save_canvas(cPullAll[ip],canvname,tag);
     }
@@ -538,8 +686,9 @@ void analyse_output_bias
 
       //if(p != conv::kPhypDm12sq && p != conv::kPhypMixing12) continue;
       //if(!util::IsBANFF(p)) continue;
+      if(p != conv::kNuisSuperkEnergyScale) continue;
 
-      string pullname = "pull_";
+      string pullname = "canv_pull_";
       pullname.append(best_fit_params->Name(p));
       sprintf(name,pullname.c_str());
       cPullAll[ip] = new TCanvas(name,name);
@@ -547,15 +696,15 @@ void analyse_output_bias
       hPullAll[ip]->Draw();
       double x = -5.;
       double y = hPullAll[ip]->GetMaximum();
-      DrawName(name,x,y);
+      //DrawName(name,x,y);
       double mean = hPullAll[ip]->GetMean();
       double rms = hPullAll[ip]->GetRMS();
       char *namemean = "Mean = %f";
       sprintf(name,namemean,mean);
-      DrawName(name,x,y*0.8);
+      //DrawName(name,x,y*0.8);
       char *namerms = "RMS = %f";
       sprintf(name,namerms,rms);
-      DrawName(name,x,y*0.6);
+      //DrawName(name,x,y*0.6);
 
       //if(p!=conv::kNuisBANFF00) return;
     }
