@@ -22,6 +22,9 @@ util = ROOT.valor.util
 conv = ROOT.valor.conv
 opt  = ROOT.valor.Opt.Instance()
 
+opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
+opt.SetDefaultParameterValues()
+
 image_format = "png"
 n_x = 2
 n_y = 5
@@ -38,11 +41,13 @@ def main(files, treename="fitnt",make_combined=True):
   params = []
   pull_hists = dict()
   
+  nbins = int( 2 * math.sqrt(chain.GetEntries()))
+  
   for iparam in xrange(fpl.Size()):
     p = fpl.WhichParam(iparam)
     if fpl.IsFixed(p): continue
     name = util.ParamAsStringCompact(p)
-    hist = ROOT.TH1D("pull_"+name,"Pull of "+name,50,-5,5)
+    hist = ROOT.TH1D("pull_"+name,"Pull of "+name,nbins,-5,5)
     hist.SetLineColor(ROOT.kBlack)
     hist.SetLineWidth(5)
     
@@ -58,6 +63,7 @@ def main(files, treename="fitnt",make_combined=True):
       
       hist.Fill( (bestfit-starting)/ postfit_error)
   
+  ROOT.gStyle.SetOptStat(111110)
   canv = ROOT.TCanvas("c","c",1280,720)
   for hist in pull_hists.itervalues():
     canv.cd()
@@ -65,7 +71,7 @@ def main(files, treename="fitnt",make_combined=True):
     canv.Print(hist.GetName()+"."+image_format)
     
   if make_combined:
-    big_canv = ROOT.TCanvas("big_canv","big_canv",2100,2970)
+    big_canv = ROOT.TCanvas("big_canv","big_canv",2000,2400)
     
     n_per_page = n_x * n_y
     

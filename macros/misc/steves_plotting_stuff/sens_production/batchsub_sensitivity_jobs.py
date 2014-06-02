@@ -31,7 +31,7 @@ except KeyError:
   working_dir=os.environ["PWD"]
 
 output_dir = ""
-for possible_outdir in ["OUTFOLDER","STOR","mystor"]:
+for possible_outdir in ["OUTFOLDER","PWD"]:
   try:
     output_dir = os.path.abspath( os.environ[possible_outdir] )
     break
@@ -55,7 +55,9 @@ extra_qsub = ["-o", log_dir, "-e", log_dir]
 def main(include1d=True,include2d=False,
          min_seed = 1, max_seed=10,
          fit_param = None, bins_per_job=21,
-         hierarchy="normal", tag="valor_sens"):
+         hierarchy="normal", tag="valor_sens",
+         config="analysis_configuration.xml",
+         dataset_id = 0):
   # Warwick cluster
   if distutils.spawn.find_executable("bsub"):
     base_command="bsub"
@@ -110,8 +112,10 @@ def main(include1d=True,include2d=False,
                        "--p2","none",
                        "-t",tag,
                        "-m",hierarchy,
+                       "-c",config,
                        "--min-param1-bin", min_bin1,
                        "--max-param1-bin", max_bin1,
+                       "-d",dataset_id,
                       ]
           
           if fit_param is not None: my_args+=["-f", fit_param]
@@ -144,10 +148,12 @@ def main(include1d=True,include2d=False,
                          "--p2",var2,
                          "-t",tag,
                          "-m",hierarchy,
+                         "-c",config,
                          "--min-param1_bin", min_bin1,
                          "--max-param1_bin", max_bin1,
                          "--min-param2_bin", min_bin2,
                          "--max-param2_bin", max_bin2,
+                         "-d",dataset_id,
                         ]
             
             if fit_param is not None: my_args+=["-f", fit_param]
@@ -197,6 +203,10 @@ if __name__=="__main__":
   parser.add_option('-b', '--bins-per-job', dest='bins_per_job', default=21, help="Number of fits to do per job",type='int')
   parser.add_option('-t', '--tag', dest='tag', default="valor_sens", help="Tag for output files")
   
+  parser.add_option('-c', '--config', dest='config', default="analysis_configuration.xml", help="Configuration file")
+  
+  parser.add_option('-d', '--dataset', dest='dataset', default=0, help="Which dataset in the XML file to use", type='int')
+  
   options,other = parser.parse_args()
   
   if not (options.submit1d or options.submit2d):
@@ -215,4 +225,5 @@ if __name__=="__main__":
   main(include1d, include2d,
        options.min_seed, options.max_seed,
        options.fit_param, options.bins_per_job,
-       options.hierarchy, options.tag)
+       options.hierarchy, options.tag,
+       options.config, options.dataset)

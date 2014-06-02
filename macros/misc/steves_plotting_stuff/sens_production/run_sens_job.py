@@ -16,13 +16,11 @@ import sys
 import shutil
 import inspect
 
-config_file  = "analysis_configuration_test.xml"
-
 store_bf_spectrum      = False
 use_reactor_constraint = True
 
 fit_par                 = "nuosc3f_12fix+nuisance"
-fitter                  = "minuit+hesse_err"
+fitter                  = "minuit+hesse"
 dmsqscheme              = "abs23"
 hierarchy               = "normal"
 mixparamchoice          = "sinsqtheta"
@@ -42,7 +40,7 @@ init_dir = os.getcwd()
 #~ full_macroname = os.path.realpath(macroname)
 full_macroname = macroname
 
-for possible_outdir in ["OUTFOLDER","STOR","mystor","PWD"]:
+for possible_outdir in ["OUTFOLDER","PWD"]:
   try:
     output_dir = os.environ[possible_outdir]
     break
@@ -52,9 +50,10 @@ for possible_outdir in ["OUTFOLDER","STOR","mystor","PWD"]:
 def main(setname          ,
          hierarchy        ,
          param1           , param2           ,
-         min_param1_bin   , max_param1_bin ,
+         min_param1_bin   , max_param1_bin   ,
          min_param2_bin   , max_param2_bin   ,
-         seed             , nexp):
+         seed             , nexp             ,
+         config_file      , dataset_id):
   
   # Get list of function argument values, and build a unique tag
   args = [locals()[arg] for arg in inspect.getargvalues(inspect.currentframe())[0]]
@@ -62,14 +61,13 @@ def main(setname          ,
   
   print "Using tag: "+tag
            
-  tmp_dir = tempfile.mkdtemp(suffix="osc_sensitivity_"+"_".join(sys.argv[1:]),prefix=user+"_",dir=scratch)
+  tmp_dir = tempfile.mkdtemp(suffix="_osc_sensitivity_"+`hash("_".join(sys.argv[1:]))`,prefix=user+"_",dir=scratch)
   print "Made directory "+tmp_dir
   
   os.chdir(tmp_dir)
   print "Moved to directory: "+os.getcwd()
   
   data_file = "toymc-0.xml"
-  dataset_id = 0
   
   macroargs = [tag, data_file, dataset_id, config_file,
                fit_par, fitter,
@@ -120,11 +118,15 @@ if __name__=="__main__":
   parser.add_option('-m'  , dest="hierarchy", default="normal"  , help='Mass hierarchy: "normal" or "inverted"')
   
   parser.add_option('-f', dest='fitpar' ,default="nuosc3f_12fix+nuisance",help='Fit parameter list')
+  parser.add_option('-c', '--config', dest='config', default="analysis_configuration.xml", help="Configuration file")
+  
   
   parser.add_option('--min-param1-bin', dest='min_param1_bin' , default=-1, help="Bin range for variable, -1 sets full range" , type='int')
   parser.add_option('--max-param1-bin', dest='max_param1_bin' , default=-1, help="Bin range for variable, -1 sets full range" , type='int')
   parser.add_option('--min-param2-bin', dest='min_param2_bin' , default=-1, help="Bin range for variable, -1 sets full range" , type='int')
   parser.add_option('--max-param2-bin', dest='max_param2_bin' , default=-1, help="Bin range for variable, -1 sets full range" , type='int')
+  
+  parser.add_option('-d', '--dataset', dest='dataset', default=0, help="Which dataset in the XML file to use", type='int')
   
   options,other = parser.parse_args()
   
@@ -139,6 +141,8 @@ if __name__=="__main__":
   max_param2_bin   = options.max_param2_bin
   fitpar    = options.fitpar
   hierarchy = options.hierarchy
+  config    = options.config
+  dataset   = options.dataset
   
   print options
   
@@ -146,5 +150,6 @@ if __name__=="__main__":
        param1           , param2           ,
        min_param1_bin   , max_param1_bin   ,
        min_param2_bin   , max_param2_bin   ,
-       seed             , nexp)
+       seed             , nexp,
+       config           , dataset)
        
