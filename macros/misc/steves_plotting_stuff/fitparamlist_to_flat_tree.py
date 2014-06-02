@@ -27,9 +27,14 @@ ext = ".root"
 fitparamlist_methods_and_entries= [("BestFitValue","bestfit"  ),
                                    ("HesseError"  ,"hesse"    ),
                                    ("MigradError" ,"migraderr"),
-                                   ("InitValue"   ,"init"),
-                                  ]
-                            
+                                   ("InitValue"   ,"init"     ),
+                                   ("PlusError"   ,"pluserr"  ),
+                                   ("MinusError"  ,"minuserr" ),
+]
+
+physparamlist_methods_and_entries = [
+  ("Value" , "value")
+]                 
 
 # Should be updated to read from Opt::Persistable
 opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
@@ -55,14 +60,14 @@ def main(files, treename="fitnt"):
     
     # Clone the tree without the FitParamLists
     for branch in in_tree.GetListOfBranches():
-      if "FitParamList" in branch.GetClassName():
+      if "ParamList" in branch.GetClassName():
         branch.SetStatus(0)
     
     out_tree = in_tree.CloneTree(0)
     
     # Turn the branches back on
     for branch in in_tree.GetListOfBranches():
-      if "FitParamList" in branch.GetClassName():
+      if "ParamList" in branch.GetClassName():
         branch.SetStatus(1)
     
     # Get the first tree entry to set up the branches
@@ -75,6 +80,9 @@ def main(files, treename="fitnt"):
     basename_dict = dict()  # Name of branch with FitParamList object
     method_dict   = dict()  # Method which must be called on fitparamlist to fill new branch
     
+    physics_params = []
+    
+    # Do FitParamLists
     for branch in in_tree.GetListOfBranches():
       basename = branch.GetName()
       if "FitParamList" in branch.GetClassName():
@@ -84,7 +92,36 @@ def main(files, treename="fitnt"):
           par = fpl.WhichParam(ipar)
           parname = util.ParamAsStringCompact(par).replace("|","")
           
+          if par < conv.kNuis000:
+            physics_params.append(par)
+          
           for method, entryname in fitparamlist_methods_and_entries:
+            full_branch_name = basename+"__"+parname+"__"+entryname
+            new_branches.append(full_branch_name)
+            
+            var = array.array('d',[0.])
+            
+            param_dict    [full_branch_name] = par
+            var_dict      [full_branch_name] = var
+            method_dict   [full_branch_name] = method
+            basename_dict [full_branch_name] = basename
+            
+            out_tree.Branch(full_branch_name,var,full_branch_name+"/D")
+    
+    # Remove duplicates from physics_params list
+    physics_params = list(set(physics_params))
+    
+    # Do PhysParamLists
+    for branch in in_tree.GetListOfBranches():
+      basename = branch.GetName()
+      if "PhysParamList" in branch.GetClassName():
+        ppl = getattr(in_tree,basename) # Get the physparamlist object
+        
+        # Loop over physics parameters
+        for par in physics_params:
+          parname = util.ParamAsStringCompact(par).replace("|","")
+          
+          for method, entryname in physparamlist_methods_and_entries:
             full_branch_name = basename+"__"+parname+"__"+entryname
             new_branches.append(full_branch_name)
             
