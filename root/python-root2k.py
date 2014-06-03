@@ -12,8 +12,11 @@ try:
 except:
   print "Warning: Numpy not loaded"
 
-ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/loadincs.C");    
-ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/loadlibs.C");
+ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
+
+ROOT.gROOT.ProcessLine("using namespace valor");
+ROOT.gROOT.ProcessLine("using namespace util");
+ROOT.gROOT.ProcessLine("using namespace conv");
 
 rootargs = [x for x in sys.argv if x.endswith(".root")]
 i=0

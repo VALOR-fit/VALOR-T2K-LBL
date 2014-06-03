@@ -1,6 +1,7 @@
 void change_prompt()
 {
     TRint* rint = dynamic_cast<TRint*>(gApplication);
+
     if (!rint) return;
 
     rint->SetPrompt("VALOR/T2xK [%d] ");
@@ -137,8 +138,10 @@ void root2k()
 
     gROOT->ProcessLine(loadincs.Data());
     gROOT->ProcessLine(loadlibs.Data());
-
-    change_prompt();
+    
+    if (! (TString(gApplication->ApplicationName()).Contains("PyROOT")) ) {
+      change_prompt();
+    }
 
     define_valor_style();
     gROOT->SetStyle("VALOR");
