@@ -113,6 +113,11 @@ namespace util {
   string AsStringCompact    (conv::SuperkMode_t       m);
   string AsStringTex        (conv::SuperkMode_t       m);
   string AsStringRooTex     (conv::SuperkMode_t       m);
+  // Aliases
+  string ModeAsString           (conv::SuperkMode_t       m);
+  string ModeAsStringCompact    (conv::SuperkMode_t       m);
+  string ModeAsStringTex        (conv::SuperkMode_t       m);
+  string ModeAsStringRooTex     (conv::SuperkMode_t       m);
   
 } // util
 } // valor

@@ -103,3 +103,8 @@ string valor::util::AsStringRooTex(valor::conv::SuperkSample_t samp)
   return s;
 }
 //________________________________________________________________________________________
+string valor::util::SampleAsString       (conv::SuperkSample_t s) { return AsString       (s);}
+string valor::util::SampleAsStringCompact(conv::SuperkSample_t s) { return AsStringCompact(s);}
+string valor::util::SampleAsStringTex    (conv::SuperkSample_t s) { return AsStringTex    (s);}
+string valor::util::SampleAsStringRooTex (conv::SuperkSample_t s) { return AsStringRooTex (s);}
+//________________________________________________________________________________________

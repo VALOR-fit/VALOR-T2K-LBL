@@ -59,6 +59,11 @@ namespace util {
   string AsStringCompact    (conv::SuperkSample_t     s);
   string AsStringTex        (conv::SuperkSample_t     s);
   string AsStringRooTex     (conv::SuperkSample_t     s);
+  // Aliases
+  string SampleAsString       (conv::SuperkSample_t   s);
+  string SampleAsStringCompact(conv::SuperkSample_t   s);
+  string SampleAsStringTex    (conv::SuperkSample_t   s);
+  string SampleAsStringRooTex (conv::SuperkSample_t   s);
   
 } // util
 } // valor

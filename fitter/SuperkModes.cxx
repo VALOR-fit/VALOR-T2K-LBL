@@ -561,3 +561,9 @@ string valor::util::AsStringCompact_splinehack (valor::conv::SuperkMode_t m)
   }
   return AsStringCompact(m);
 }
+//___________________________________________________________________________
+string valor::util::ModeAsString       (conv::SuperkMode_t m) { return AsString       (m); }
+string valor::util::ModeAsStringCompact(conv::SuperkMode_t m) { return AsStringCompact(m); }
+string valor::util::ModeAsStringTex    (conv::SuperkMode_t m) { return AsStringTex    (m); }
+string valor::util::ModeAsStringRooTex (conv::SuperkMode_t m) { return AsStringRooTex (m); }
+//___________________________________________________________________________
