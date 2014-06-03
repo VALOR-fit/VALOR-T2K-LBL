@@ -124,7 +124,7 @@ void root2k()
     TString top_dir = gSystem->Getenv("T2KOSCANA");
 
     TString banner    = top_dir + "/inputs/banner/banner.dat";
-    TString verbosity = top_dir + "/inputs/mesg/verbosity.xml";
+    TString verbosity = top_dir + "/config/verbosity.xml";
 
     valor::util::PrintBanner(banner.Data(),500);
     valor::util::Verbosity(verbosity.Data());
