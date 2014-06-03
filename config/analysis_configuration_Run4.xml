@@ -31,22 +31,22 @@
        -->
        <tuned>
          <numu>
-            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
+            <filename>   official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_numu  </objname>
             <objtype>    TH1D                  </objtype>
          </numu>
          <numubar>
-            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
+            <filename>   official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_numub </objname>
             <objtype>    TH1D                  </objtype>
          </numubar>
          <nue>
-            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
+            <filename>   official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_nue   </objname>
             <objtype>    TH1D                  </objtype>
          </nue>
          <nuebar>
-            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
+            <filename>   official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_nueb  </objname>
             <objtype>    TH1D                  </objtype>
          </nuebar>
@@ -56,22 +56,22 @@
        -->
        <tuning_weights>
          <numu>
-            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
+            <filename>   official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_numu_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </numu>
          <numubar>
-            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
+            <filename>   official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_numub_ratio  </objname>
             <objtype>    TH1D                         </objtype>
          </numubar>
          <nue>
-            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
+            <filename>   official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_nue_ratio    </objname>
             <objtype>    TH1D                         </objtype>
          </nue>
          <nuebar>
-            <filename>   inputs/official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
+            <filename>   official/2013/flux/11b_v3.2_run1-4a/sk_tuned11bv3.2_11anom_run1-run4_fine.root </filename>
             <objname>    enu_sk_tuned11b_nueb_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </nuebar>
@@ -90,85 +90,85 @@
         <nominal>     
            <numu>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
+	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnumu  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
            </numu>
            <numubar>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
+	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnumubar  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
            </numubar>
            <nue>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
+	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnue  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
           </nue>
           <nuebar>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
+	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnuebar  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
           </nuebar>
           <signal_nue>
              <pot> 
-	       <filename>    inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
+	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnuesig  </objname>
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
                 <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   inputs/official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
                 <objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
@@ -189,12 +189,12 @@
        -->
        <templates>
          <martini>
-	   <filename>   inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root </filename>
+	   <filename>   official/2013/xsec/sk_mec_erec_etrue_run1to4.root </filename>
 	   <objname>    sk_martini_erec_etrue </objname>
 	   <objtype>    TH2D                  </objtype>
 	 </martini>
 	 <nieves>
-	   <filename>   inputs/official/2013/xsec/sk_mec_erec_etrue_run1to4.root </filename>
+	   <filename>   official/2013/xsec/sk_mec_erec_etrue_run1to4.root </filename>
 	   <objname>    sk_nieves_erec_etrue  </objname>
 	   <objtype>    TH2D                  </objtype>
 	 </nieves>
@@ -213,7 +213,7 @@
     Central values from BANFF fit                                                                                                                                                  
      -->
    <best_fit_values>
-     <filename>   inputs/official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
+     <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
      <objname>    postfit_params   </objname>
      <objtype>    TVectorD         </objtype>
    </best_fit_values>
@@ -221,14 +221,14 @@
     Covariance of fit parameters                                                                                                                                                   
      -->
    <covariance_matrix>
-     <filename>   inputs/official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
+     <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
      <objname>    postfit_cov      </objname>
      <objtype>    TMatrixD         </objtype>
    </covariance_matrix>
    
    <disap>
      <best_fit_values>
-       <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
+       <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
        <objname>    postfit_params   </objname>
        <objtype>    TVectorD         </objtype>
      </best_fit_values>
@@ -236,7 +236,7 @@
          Covariance of fit parameters
        -->
      <covariance_matrix>
-       <filename>   inputs/official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
+       <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
        <objname>    postfit_cov      </objname>
        <objtype>    TMatrixD         </objtype>
      </covariance_matrix>
@@ -244,7 +244,7 @@
    
    <app>
      <best_fit_values>
-       <filename>   inputs/official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
+       <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
        <objname>    postfit_params   </objname>
        <objtype>    TVectorD         </objtype>
      </best_fit_values>
@@ -252,7 +252,7 @@
       Covariance of fit parameters                                                                                                                                              
        -->
      <covariance_matrix>
-       <filename>   inputs/official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
+       <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
        <objname>    postfit_cov      </objname>
        <objtype>    TMatrixD         </objtype>
      </covariance_matrix>
@@ -275,12 +275,12 @@
       <weight_splines>
           <one_mu_ring>
                 <filename>
-                    inputs/official/2013/xsec/XSecSplines2013Run1to4.root
+                    official/2013/xsec/XSecSplines2013Run1to4.root
                 </filename>
           </one_mu_ring>
           <one_e_ring>
                 <filename>
-		  inputs/official/2013/xsec/XSecSplines1Re2013v5.root
+		  official/2013/xsec/XSecSplines1Re2013v5.root
                 </filename>
           </one_e_ring>
       </weight_splines>
@@ -329,7 +329,7 @@
                <ccqe>
                   <other_error>   0.018  </other_error>          
                   <rc_error>          
-                     <filename>  inputs/official/2012/superk/err/sk_ccqe_rc_err_covariance.root </filename>
+                     <filename>  official/2012/superk/err/sk_ccqe_rc_err_covariance.root </filename>
                      <objname>   ccqe_rc_err_covariance  </objname>
                      <objtype>   TMatrixD </objtype>
                   </rc_error>                     
@@ -341,7 +341,7 @@
                <nuecc>     1.000 </nuecc>
             </one_mu_ring>
             <one_e_ring>
-              <filename>      inputs/official/2012/superk/err/SKMay.root </filename>
+              <filename>      official/2012/superk/err/SKMay.root </filename>
               <objname>       mat_cov_all </objname>
               <objtype>       TMatrixD </objtype>
             </one_e_ring>
@@ -363,7 +363,7 @@
        -->
 <!--
        <covariance_matrix>
-          <filename>   inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a.root  </filename>
+          <filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a.root  </filename>
           <objname>    covmat_fsi       </objname>
           <objtype>    TMatrixD         </objtype>
        </covariance_matrix>     
@@ -380,14 +380,14 @@
         Covariance matrix of SKDet FSI parameters
       -->
     <covariance_matrix>
-      <filename>   inputs/official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
+      <filename>   official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
       <objname>    skfsipn_cov             </objname>
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
     
     <disap>
       <covariance_matrix>
-	<filename>   inputs/official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
+	<filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
 	<objname>    covmat_sk_fsi         </objname>
 	<objtype>    TMatrixD              </objtype>
       </covariance_matrix>
@@ -395,7 +395,7 @@
     
     <app>
       <covariance_matrix>
-	<filename>   inputs/official/2013/skdetfsi/covariance_matrices_2013full_appearance.root  </filename>
+	<filename>   official/2013/skdetfsi/covariance_matrices_2013full_appearance.root  </filename>
 	<objname>    cov_total             </objname>
 	<objtype>    TMatrixD              </objtype>
       </covariance_matrix>
