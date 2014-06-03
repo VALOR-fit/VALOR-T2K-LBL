@@ -266,6 +266,16 @@ void valor::util::PrintCompact(
          stream << setw(42) << util::AsString(p);
          stream << " ]";
      }
+     if(printing_fsi_params) {
+         stream << " [ ";
+#if FSI_BINS != 3
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+#else
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+#endif
+         stream << setw(30) << util::AsString(p);
+         stream << " ]";
+     }
      stream << " - current = " 
           << setw(w) << setprecision(prec) << current[ip];
      stream << " - nominal = " 

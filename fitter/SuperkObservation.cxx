@@ -187,7 +187,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     datanodeRHC1Rmu << "/one_mu_ring_rhc/ereco_values"; 
 
     if(util::NodeExists(xml,root_node,datanodeRHC1Rmu.str())) {
-      int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike);
+      //int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike);
       TH1D h("", "", kRHCNErecoBins1Rmu,kRHCErecoBinEdges1Rmu);
       h.SetDirectory(0);
       vector<double> values = util::XML2DblArray(xml,root_node,datanodeRHC1Rmu.str());
@@ -215,7 +215,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     datanodeRHC1Re << "/one_e_ring_rhc/ereco_values"; 
 
     if(util::NodeExists(xml,root_node,datanodeRHC1Re.str())) {
-      int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingELike);
+      //int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingELike);
       TH1D h("", "", kRHCNErecoBins1Re,kRHCErecoBinEdges1Re);
       h.SetDirectory(0);
       vector<double> values = util::XML2DblArray(xml,root_node,datanodeRHC1Re.str());
@@ -275,9 +275,9 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     else {
       assert(histRHC->GetNbinsX() == util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
       double integral = 0;
-      int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike);
+      //int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike);
       for(int ix = 1; ix <= histRHC->GetNbinsX(); ix++) {
-        double Ereco = histRHC->GetBinCenter(ix);
+        //double Ereco = histRHC->GetBinCenter(ix);
         double nev   = histRHC->GetBinContent(ix);
         integral+=nev;
         fRHCErDistrArray1Rmu->GetArray()[ix-1] = nev;
@@ -458,7 +458,7 @@ bool SuperkObservation::Generate(
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag, Option_t * write_opt)
+bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag, Option_t * /*write_opt*/)
 {
   if(!data_collection) {
     cout << "Obs >> Null TObjArray. Not writing data" << endl;
