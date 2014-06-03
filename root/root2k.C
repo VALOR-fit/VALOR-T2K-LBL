@@ -3,7 +3,7 @@ void change_prompt()
     TRint* rint = dynamic_cast<TRint*>(gApplication);
     if (!rint) return;
 
-    rint->SetPrompt("RooT2K: What can I do for you master? [%d] ");
+    rint->SetPrompt("VALOR/T2xK [%d] ");
 }
 
 void t2k_style()
@@ -110,20 +110,22 @@ void t2k_style()
 
 void root2k()
 {   
-    TString script_dir = gSystem->Getenv("T2KOSCANA");
-    script_dir += "./";
-
-    TString curr_dir = gSystem->pwd();
-
-    gSystem->cd(script_dir.Data());
-
     gROOT->ProcessLine(".x $T2KOSCANA/root/loadincs.C");    
     gROOT->ProcessLine(".x $T2KOSCANA/root/loadlibs.C");    
 
+    TString curr_dir = gSystem->pwd();
     gSystem->cd(curr_dir.Data());
 
     change_prompt();
 
     t2k_style();
     gROOT->SetStyle("T2K");
+
+    TString top_dir = gSystem->Getenv("T2KOSCANA");
+
+    TString banner    = top_dir + "/inputs/banner/banner.dat";
+    TString verbosity = top_dir + "/inputs/mesg/verbosity.xml";
+
+    valor::util::PrintBanner(banner.Data(),500);
+    valor::util::Verbosity(verbosity.Data());
 }
