@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<messenger_config>
+
+  <!-- 
+    Defines the priority levels for VALOR message streams.
+    The priority (in descending importance order) can be 
+    FATAL, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, DEBUG.
+   -->
+
+  <priority msgstream="Messenger">    DEBUG    </priority>
+  <priority msgstream="XML">          NOTICE   </priority>
+
+</messenger_config>
