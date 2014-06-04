@@ -8,19 +8,20 @@ import math
 import array
 import numpy as np
 import sys
+import os
 
 try:
   ROOT.valor
 except:
-  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/loadincs.C");    
-  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/loadlibs.C");    
+  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
   
 ROOT.gROOT.SetBatch(1)
   
 valor = ROOT.valor
-util = ROOT.valor.util
-conv = ROOT.valor.conv
-opt  = ROOT.valor.Opt.Instance()
+util =  valor.util
+conv =  valor.conv
+opt  =  valor.Opt.Instance()
+env  =  valor.Env.Instance()
 
 opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
 opt.SetDefaultParameterValues()

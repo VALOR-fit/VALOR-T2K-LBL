@@ -13,9 +13,7 @@ import sys
 try:
   ROOT.valor
 except:
-  #~ ROOT.gROOT.ProcessLine(".L $T2KOSCANA/root/root2k.C");
-  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/loadincs.C");    
-  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/loadlibs.C");    
+  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
   
 valor = ROOT.valor
 util = ROOT.valor.util
