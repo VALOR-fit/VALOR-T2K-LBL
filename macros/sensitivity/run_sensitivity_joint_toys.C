@@ -141,6 +141,7 @@ void run_sensitivity_joint_toys
   int fitstatus_err1, fitstatus_err2, fitstatus_err;
   double chisq1, chisq2, chisq;
   double inparam1, inparam2;
+  int nbins_param1, nbins_param2;
 
   // Create file to store results
   string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
@@ -169,6 +170,8 @@ void run_sensitivity_joint_toys
   fitnt->Branch("chisq",&chisq,"chisq/D");
   fitnt->Branch("inparam1",&inparam1,"inparam1/D");
   fitnt->Branch("inparam2",&inparam2,"inparam2/D");
+  fitnt->Branch("nbins_param1",&nbins_param1,"nbins_param1/I");
+  fitnt->Branch("nbins_param2",&nbins_param2,"nbins_param2/I");
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
   
@@ -182,6 +185,9 @@ void run_sensitivity_joint_toys
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
+
+     nbins_param1 = max_bin_param1;
+     nbins_param2 = max_bin_param2;
 
      // randomize specified osc params for current toy MC expt
      if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }

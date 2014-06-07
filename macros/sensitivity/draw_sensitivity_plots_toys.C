@@ -1,23 +1,33 @@
+//
+// Sensitivity study w/ 1D or 2D plost
+//
+
+#define doShiftMin true
+#define doNH true
+#define doIH false
+
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style);
 
 void draw_sensitivity_plots_toys(
 			    bool reactor = true, 
 			    bool theta2theta = false,
-			    const char * name_nh = "../inputs/toyexptsensi_PROVA_3toys",
+			    const char * name_nh = "../inputs/toyexptsensi_PROVA_3toys_New",
 			    const char * name_ih = "../inputs/toyexptsensi_PROVA"
 			    )
 {
- 
   using namespace std;
   using namespace std::string;
   using namespace valor;
   using namespace valor::conv;
-   
-  const char * filename = Form("%s.root",name_nh);
-  FitParamList *  fparm = 0;
-  FitParamList *  fparm_deltacp = 0;
-  PhysParamList * iparm = new PhysParamList;
- 
+
+  const char * filename_nh = Form("%s.root",name_nh);
+  FitParamList * fparm_nh = 0;
+  FitParamList * fparm_deltacp_nh = 0;
+  PhysParamList * iparm_nh = new PhysParamList;
+  int nbins_param1_nh, nbins_param2_nh;
+  int nbins1_nh = 0;
+  int nbins2_nh = 0;
+
   //Set up bins and histograms
   double mixing13_min = 0;
   double mixing13_max = 0;
@@ -48,6 +58,13 @@ void draw_sensitivity_plots_toys(
     }
   }
 
+
+
+
+
+
+
+
   double mixing23_min = 0.3;
   double mixing23_max = 0.7;
   double mixing23_step = 0.01;
@@ -60,154 +77,220 @@ void draw_sensitivity_plots_toys(
   double deltacp_max = conv::kpi;
   double deltacp_step = (2*conv::kpi)/50.;
 
-  ///////////////////////////////// TO CHANGE ///////////////////////
-  
-  int nbins_mixing13 = 21;
-  int nbins_mixing23 = 41;
-  int nbins_dmsq = 21;
-  const int nbins_deltacp = 51;
 
-  //////////////////////////////////////////////////////////////////
-  
-  // 1D vs deltacp
 
-  const char * filename_deltacp = Form("%s.root",name_nh);
-  TChain ch_deltacp("fitnt");
-  ch_deltacp.Add(filename_deltacp);
-  //"best_fit_params" is already the minimum after the two fits one of each starting in a different octant
-  ch_deltacp.SetBranchAddress("best_fit_params", &fparm_deltacp); 
 
-  const int nentries_deltacp = ch_deltacp.GetEntries();
-  cout << "nentries deltacp = " << nentries_deltacp << endl;
-  
-  const int ntoys = nentries_deltacp / nbins_deltacp;
-  cout << "ntoys = " << ntoys << endl;
 
-  //Double_t* bestfit_points_x = new Double_t[nbins_deltacp];
-  //Double_t* bestfit_points_y = new Double_t[nbins_deltacp];
 
-  Double_t** bestfit_points_x = new Double_t*[ntoys]; // bestfit points for each toy
-  for(int itoy=0; itoy<ntoys; itoy++){
-    bestfit_points_x[itoy] = new Double_t[nbins_deltacp];
+
+  // 1D vs deltacp (Normal Hierarchy)
+
+  const char * filename_deltacp_nh = Form("%s.root",name_nh);
+  TChain ch_deltacp_nh("fitnt");
+  ch_deltacp_nh.Add(filename_deltacp_nh);
+  ch_deltacp_nh.SetBranchAddress("best_fit_params", &fparm_deltacp_nh); 
+  ch_deltacp_nh.SetBranchAddress("nbins_param1", &nbins_param1_nh); 
+  ch_deltacp_nh.SetBranchAddress("nbins_param2", &nbins_param2_nh); 
+
+  const int nentries_deltacp_nh = ch_deltacp_nh.GetEntries();
+  cout << "nentries deltacp (NH) = " << nentries_deltacp_nh << endl;
+  ch_deltacp_nh.GetEntry(0);
+  const int nbins1_nh = nbins_param1_nh;
+ 
+  const int ntoys_nh = nentries_deltacp_nh / nbins1_nh;
+  cout << "ntoys (NH) = " << ntoys_nh << endl;
+
+  Double_t** bestfit_points_nh_x = new Double_t*[ntoys_nh]; // bestfit points for each toy
+  for(int itoy=0; itoy<ntoys_nh; itoy++){
+    bestfit_points_nh_x[itoy] = new Double_t[nbins1_nh];
   }
-  Double_t** bestfit_points_y = new Double_t*[ntoys]; // bestfit points for each toy
-  for(int itoy=0; itoy<ntoys; itoy++){
-    bestfit_points_y[itoy] = new Double_t[nbins_deltacp];
+  Double_t** bestfit_points_nh_y = new Double_t*[ntoys_nh]; // bestfit points for each toy
+  for(int itoy=0; itoy<ntoys_nh; itoy++){
+    bestfit_points_nh_y[itoy] = new Double_t[nbins1_nh];
   }
 
-  //  TH1D * h_chisq_deltacp = new TH1D("h_deltacp","h_deltacp",nbins_deltacp,deltacp_min-0.5*deltacp_step,deltacp_max+0.5*deltacp_step);
-  //  TH1D * h_mix13_deltacp = new TH1D("h_mix13_deltacp","h_mix13_deltacp",nbins_deltacp,deltacp_min-0.5*deltacp_step,deltacp_max+0.5*deltacp_step);
-  TH1D ** h_chisq_deltacp = new TH1D*[ntoys];
-  for(int itoy=0; itoy<ntoys; itoy++){
+  TH1D * h_chisq_deltacp_Ave_nh = new TH1D("h_chisq_deltacp_Ave_nh","h_chisq_deltacp_Ave_nh",nbins1_nh,deltacp_min-0.5*deltacp_step,deltacp_max+0.5*deltacp_step);
+  TH1D ** h_chisq_deltacp_nh = new TH1D*[ntoys_nh];
+  for(int itoy=0; itoy<ntoys_nh; itoy++){
     char histoname[200];
-    sprintf(histoname,"h_deltacp_Toy%d",itoy);
-    h_chisq_deltacp[itoy] = new TH1D(histoname,histoname,nbins_deltacp,deltacp_min-0.5*deltacp_step,deltacp_max+0.5*deltacp_step);
+    sprintf(histoname,"h_deltacp_nh_Toy%d",itoy);
+    h_chisq_deltacp_nh[itoy] = new TH1D(histoname,histoname,nbins1_nh,deltacp_min-0.5*deltacp_step,deltacp_max+0.5*deltacp_step);
   }  
-  TH1D ** h_mix13_deltacp= new TH1D*[ntoys];
-  for(int itoy=0; itoy<ntoys; itoy++){
+  TH1D ** h_mix13_deltacp_nh= new TH1D*[ntoys_nh];
+  for(int itoy=0; itoy<ntoys_nh; itoy++){
     char histoname[200];
-    sprintf(histoname,"h_mix13_deltacp_Toy%d",itoy);
-    h_mix13_deltacp[itoy] = new TH1D(histoname,histoname,nbins_deltacp,deltacp_min-0.5*deltacp_step,deltacp_max+0.5*deltacp_step);
+    sprintf(histoname,"h_mix13_deltacp_nh_Toy%d",itoy);
+    h_mix13_deltacp_nh[itoy] = new TH1D(histoname,histoname,nbins1_nh,deltacp_min-0.5*deltacp_step,deltacp_max+0.5*deltacp_step);
   }  
+  TH1D ** h_chisq_deltacp_nh_bin = new TH1D*[nbins1_nh];
+  for(int ibin=0;ibin<nbins1_nh;ibin++){
+    char histoname[200];
+    sprintf(histoname,"h_chisq_deltacp_nh_bin%d",ibin);
+    h_chisq_deltacp_nh_bin[ibin] = new TH1D(histoname,histoname,50,50,150);
+  }
 
-  // for(int i = 0; i < nentries_deltacp; i++){ 
+  // Loop over toys in the tree
 
   int iEvtToy = 0;
-  for(int i = 0; i < nentries_deltacp; i++){
+  for(int i = 0; i < nentries_deltacp_nh; i++){
+    iEvtToy = i / nbins1_nh;
+    if( !(i%nbins1_nh) ) cout << "# Toy " << iEvtToy << endl;
+    
+    ch_deltacp_nh.GetEntry(i);
+    int migradminstat_nh = fparm_deltacp_nh->GetStatusCode("migrad_min");
+    if (migradminstat_nh == 4) cout << "Fit failed!" << endl;
+    double mix13_nh = fparm_deltacp_nh->BestFitValue(conv::kPhypMixing13);
+    double mix23_nh = fparm_deltacp_nh->BestFitValue(conv::kPhypMixing23);
+    double dmsq_nh = fparm_deltacp_nh->BestFitValue(conv::kPhypDm23sq);
+    double deltacp_nh = fparm_deltacp_nh->BestFitValue(conv::kPhypCPV);
+    double chisq_nh = fparm_deltacp_nh->GetBestFitStatistic();
    
-    iEvtToy = i / nbins_deltacp;
-    //if( !(i%nbins_deltacp) ) cout << "# Toy " << iEvtToy << endl;
-    
-    ch_deltacp.GetEntry(i);
-    int migradminstat = fparm_deltacp->GetStatusCode("migrad_min");
-    if (migradminstat == 4) cout << "Fit failed!" << endl;
-    double mix13 = fparm_deltacp->BestFitValue(conv::kPhypMixing13);
-    double mix23 = fparm_deltacp->BestFitValue(conv::kPhypMixing23);
-    double dmsq = fparm_deltacp->BestFitValue(conv::kPhypDm23sq);
-    double deltacp = fparm_deltacp->BestFitValue(conv::kPhypCPV);
-    double chisq = fparm_deltacp->GetBestFitStatistic();
-    
-    int bin_idx = h_chisq_deltacp[iEvtToy]->FindBin(deltacp);
-    //double bincont = h_chisq_deltacp[iEvtToy]->GetBinContent(bin_idx) / (nentries_deltacp / nbins_deltacp);
-    double bincont = h_chisq_deltacp[iEvtToy]->GetBinContent(bin_idx);
+    int bin_idx = h_chisq_deltacp_nh[iEvtToy]->FindBin(deltacp_nh);
+    //double bincont = h_chisq_deltacp_nh[iEvtToy]->GetBinContent(bin_idx) / (nentries_deltacp_nh / nbins1_nh);
+    double bincont = h_chisq_deltacp_nh[iEvtToy]->GetBinContent(bin_idx);
     if(bincont!=0){
-      if(bincont>chisq){
-	if(chisq!=0){
-	  h_chisq_deltacp[iEvtToy]->SetBinContent(bin_idx,chisq+bincont);
-	  bestfit_points_x[iEvtToy][bin_idx-1]  = mix13;//sinsq2theta13;
-	  bestfit_points_y[iEvtToy][bin_idx-1]  = deltacp;
+      if(bincont>chisq_nh){
+	if(chisq_nh!=0){
+	  h_chisq_deltacp_nh[iEvtToy]->SetBinContent(bin_idx,chisq_nh+bincont);
+	  bestfit_points_nh_x[iEvtToy][bin_idx-1]  = mix13_nh;//sinsq2theta13;
+	  bestfit_points_nh_y[iEvtToy][bin_idx-1]  = deltacp_nh;
 	}
       }
     } 
     else{ 
-      if(chisq!=0){
-	h_chisq_deltacp[iEvtToy]->SetBinContent(bin_idx,chisq+bincont);
-	bestfit_points_x[iEvtToy][bin_idx-1] = mix13;//sinsq2theta13;
-	bestfit_points_y[iEvtToy][bin_idx-1] = deltacp;
+      if(chisq_nh!=0){
+	h_chisq_deltacp_nh[iEvtToy]->SetBinContent(bin_idx,chisq_nh+bincont);
+	bestfit_points_nh_x[iEvtToy][bin_idx-1] = mix13_nh;//sinsq2theta13;
+	bestfit_points_nh_y[iEvtToy][bin_idx-1] = deltacp_nh;
       }
     }
   }
 
-  //TGraph* gbestfit = new TGraph( nbins_deltacp, bestfit_points_x ,bestfit_points_y ); // dcp Vs mix13  
-  TGraph ** gbestfit_Toy = new TGraph*[ntoys]; 
+  TGraph ** gbestfit_nh_Toy = new TGraph*[ntoys_nh]; 
 
-  for(int itoy=0;itoy<ntoys;itoy++){
+  for(int itoy=0;itoy<ntoys_nh;itoy++){
     char graphname[200];
-    sprintf(graphname,"gbestfit_Toy%d",itoy);
-    gbestfit_Toy[itoy] = new TGraph( nbins_deltacp, bestfit_points_x[itoy] ,bestfit_points_y[itoy] ); // dcp Vs mix13  
-    gbestfit_Toy[itoy]->SetName(graphname);
+    sprintf(graphname,"gbestfit_nh_Toy%d",itoy);
+    gbestfit_nh_Toy[itoy] = new TGraph( nbins1_nh, bestfit_points_nh_x[itoy] ,bestfit_points_nh_y[itoy] ); // dcp Vs mix13  
+    gbestfit_nh_Toy[itoy]->SetName(graphname);
     //cout << graphname << endl;
   }
   
   cout << endl;
-  
-  // Find the minimum chi2
-  double min_chisq[ntoys];
-  for(int itoy=0;itoy<ntoys;itoy++){
-    min_chisq[itoy] = 999.;
-    cout << "# Toy " << itoy << endl;    
-    for(int i = 1; i <= nbins_deltacp; i++){
-      double bin = h_chisq_deltacp[itoy]->GetBinContent(i);
-      if (bin < min_chisq[itoy]) min_chisq[itoy] = bin;
-      //cout << bin << ", ";
+
+  // Get the toy distribution for each dcp value
+  for(int ibin=0;ibin<nbins1_nh;ibin++){
+    for(int itoy=0;itoy<ntoys_nh;itoy++){
+      double bincont = h_chisq_deltacp_nh[itoy]->GetBinContent(ibin+1);
+      h_chisq_deltacp_nh_bin[ibin]->Fill(bincont);
     }
-    cout << "For deltaCP, min chisq  = " << min_chisq[itoy] << endl;
+  }
+    
+  // Compute the average sensitivity    
+  for(int itoy=0;itoy<ntoys_nh;itoy++){
+    h_chisq_deltacp_Ave_nh->Add(h_chisq_deltacp_nh[itoy]);
+  }
+  h_chisq_deltacp_Ave_nh->Scale(1./ntoys_nh);
+
+  // Find the minimum chi2
+  double min_chisq_nh[ntoys_nh];
+  for(int itoy=0;itoy<ntoys_nh;itoy++){
+    min_chisq_nh[itoy] = 999.;
+    cout << "# Toy " << itoy << endl;    
+    for(int i = 1; i <= nbins1_nh; i++){
+      double bin = h_chisq_deltacp_nh[itoy]->GetBinContent(i);
+      if (bin < min_chisq_nh[itoy]) min_chisq_nh[itoy] = bin;
+    }
+    cout << "For deltaCP, min chisq  = " << min_chisq_nh[itoy] << endl;
     cout << endl;
   }
 
-  
+  double min_chisq_Ave_nh=999.;
+  for(int i = 1; i <= nbins1_nh; i++){
+    double bin = h_chisq_deltacp_Ave_nh->GetBinContent(i);
+    if (bin < min_chisq_Ave_nh) min_chisq_Ave_nh = bin;
+  }
 
+  // Take RMS of dcp in each true bin
+  // Chi2 distribution is gaussian (many bins)
+
+  TCanvas **c_chisq_deltacp_nh_bin = new TCanvas*[nbins1_nh];
+  double *RMS_nh = new double[nbins1_nh];
+  double *RelErr_nh = new double[nbins1_nh];      
+
+  for(int ibin=0;ibin<nbins1_nh;ibin++){
+    // char canvname[200];
+    // sprintf(canvname,"c_chisq_deltacp_nh_bin%d",ibin);
+    // c_chisq_deltacp_nh_bin = new TCanvas(canvname,canvname);
+    // h_chisq_deltacp_nh_bin[ibin]->Draw();    
+    RMS_nh[ibin] = h_chisq_deltacp_nh_bin[ibin]->GetRMS();
+    RelErr_nh[ibin] = h_chisq_deltacp_nh_bin[ibin]->GetRMS() / h_chisq_deltacp_nh_bin[ibin]->GetMean();
+  }
+  
+  // Sensi with error bars
+
+  TGraphErrors *g_chisq_deltacp_nh_Err = new TGraphErrors();
+  TGraph *g_chisq_deltacp_nh = new TGraph();
+  for(int ipt=0;ipt<nbins1_nh;ipt++){
+    double contx = h_chisq_deltacp_Ave_nh->GetBinCenter(ipt+1);
+    double conty = h_chisq_deltacp_Ave_nh->GetBinContent(ipt+1);
+    if(doShiftMin) conty -= min_chisq_Ave_nh; // shift the chi2 wrt the minimum
+    double errx = h_chisq_deltacp_Ave_nh->GetBinWidth(ipt+1)/2;
+    double erry = RMS_nh[ipt];
+    if(erry<=0.) continue;
+    g_chisq_deltacp_nh->SetPoint(ipt,contx,conty);
+    g_chisq_deltacp_nh_Err->SetPoint(ipt,contx,conty);
+    g_chisq_deltacp_nh_Err->SetPointError(ipt,errx,erry);	
+    //cout << contx << " +- " << errx << endl;
+  }
+    
   // Shift the chi2 wrt the minimum
-  for(int itoy=0;itoy<ntoys;itoy++){
-    for(int i = 1; i <= nbins_deltacp; i++){
-      double bin = h_chisq_deltacp[itoy]->GetBinContent(i);
-      h_chisq_deltacp[itoy]->SetBinContent(i,bin-min_chisq[itoy]); // scanned global minimum
-      //h_chisq_deltacp[itoy]->SetBinContent(i,bin-chisq_bf); // fiited global minimum
+  if(doShiftMin){
+    for(int itoy=0;itoy<ntoys_nh;itoy++){
+      for(int i = 1; i <= nbins1_nh; i++){
+	double bin = h_chisq_deltacp_nh[itoy]->GetBinContent(i);
+	h_chisq_deltacp_nh[itoy]->SetBinContent(i,bin-min_chisq_nh[itoy]); // scanned global minimum
+	//h_chisq_deltacp_nh[itoy]->SetBinContent(i,bin-chisq_bf_nh); // fiited global minimum
+      }
+    }
+    for(int i = 1; i <= nbins1_nh; i++){
+      double bin = h_chisq_deltacp_Ave_nh->GetBinContent(i);
+      h_chisq_deltacp_Ave_nh->SetBinContent(i,bin-min_chisq_Ave_nh); // scanned global minimum
     }
   }
 
-  TCanvas *cdeltacp = new TCanvas("cdeltacp","cdeltacp");
-  for(int itoy=0;itoy<ntoys;itoy++){
-    h_chisq_deltacp[itoy]->GetXaxis()->SetTitle("#delta_{CP}");
-    //h_chisq_deltacp[itoy]->GetYaxis()->SetTitle("sin^{2}#theta_{23}");
-    h_chisq_deltacp[itoy]->GetYaxis()->SetTitle("#Delta#chi^{2}");
-    //h_chisq_deltacp[itoy]->GetYaxis()->SetTitle("#chi^{2}");
-    //h_chisq_deltacp[itoy]->GetYaxis()->SetRangeUser(55,135);
-    h_chisq_deltacp[itoy]->GetYaxis()->SetRangeUser(0,4);
-    h_chisq_deltacp[itoy]->SetLineWidth(2);
-    if(itoy==0) h_chisq_deltacp[itoy]->Draw("c");  
-    else h_chisq_deltacp[itoy]->Draw("c same");  
+  // Draw plots
+
+  TCanvas *c = new TCanvas("c","c");
+  double min = TMath::Min(0.,(double)g_chisq_deltacp_nh_Err->GetMinimum());
+  min = TMath::Max(0.,min);
+  double max = g_chisq_deltacp_nh_Err->GetMaximum() * 1.25;
+  g_chisq_deltacp_nh_Err->SetMinimum(max);
+  g_chisq_deltacp_nh_Err->SetMinimum(0);
+  g_chisq_deltacp_nh_Err->SetFillColor(kRed);
+  g_chisq_deltacp_nh_Err->SetFillStyle(3001);
+  g_chisq_deltacp_nh_Err->DrawClone("a2");
+  g_chisq_deltacp_nh->SetFillColor(kBlue);
+  g_chisq_deltacp_nh->DrawClone("same");
+
+  TCanvas *cdeltacp_nh = new TCanvas("cdeltacp_nh","cdeltacp_nh");
+  h_chisq_deltacp_Ave_nh->SetLineColor(kBlue);
+  h_chisq_deltacp_Ave_nh->GetXaxis()->SetTitle("#delta_{CP} (NH)");
+  h_chisq_deltacp_Ave_nh->GetYaxis()->SetTitle("#Delta#chi^{2}");
+  h_chisq_deltacp_Ave_nh->Draw("c");
+  for(int itoy=0;itoy<ntoys_nh;itoy++){
+    h_chisq_deltacp_nh[itoy]->Draw("c same");    
   }
 
-  TCanvas *cbestfit = new TCanvas("cbestfit","cbestfit");
-  for(int itoy=0;itoy<ntoys;itoy++){  
-    gbestfit_Toy[itoy]->GetXaxis()->SetTitle("#delta_{CP}");
-    gbestfit_Toy[itoy]->GetYaxis()->SetTitle("#Delta#chi^{2}");
-    gbestfit_Toy[itoy]->GetYaxis()->SetRangeUser(-3.2,3.2);
-    gbestfit_Toy[itoy]->SetLineWidth(2);
-    gbestfit_Toy[itoy]->SetLineColor(kBlue);
-    if(itoy==0) gbestfit_Toy[itoy]->Draw("ac");
-    else gbestfit_Toy[itoy]->Draw("c same");
+  TCanvas *cbestfit_nh = new TCanvas("cbestfit_nh","cbestfit_nh");
+  for(int itoy=0;itoy<ntoys_nh;itoy++){  
+    gbestfit_nh_Toy[itoy]->GetXaxis()->SetTitle("#delta_{CP} (NH)");
+    gbestfit_nh_Toy[itoy]->GetYaxis()->SetTitle("#Delta#chi^{2}");
+    gbestfit_nh_Toy[itoy]->GetYaxis()->SetRangeUser(-3.2,3.2);
+    gbestfit_nh_Toy[itoy]->SetLineWidth(2);
+    gbestfit_nh_Toy[itoy]->SetLineColor(kBlue);
+    if(itoy==0) gbestfit_nh_Toy[itoy]->Draw("ac");
+    else gbestfit_nh_Toy[itoy]->Draw("c same");
   }
 
 
@@ -218,180 +301,11 @@ void draw_sensitivity_plots_toys(
 
 
 
-
-
-
- //  const char * filename_sensitivity = "data_sensitivity_joint_final_ih_chisq_vs_deltacp.root";
- //  TChain ch_sensitivity("fitnt");
- //  ch_sensitivity.Add(filename_sensitivity);
-
- //  FitParamList *  fparm_sensitivity = 0;
- //  ch_sensitivity.SetBranchAddress("best_fit_params", &fparm_sensitivity); 
- //  const int nentries_sensitivity = ch_sensitivity.GetEntries();
- //  const int ntoys = (const int) nentries_sensitivity/nbins_deltacp;
- //  cout << "nentries_sensitivity = " << nentries_sensitivity << " and ntoys = " << ntoys << endl;
-  
-
- //  //  double chisq_sensitivity[nbins_deltacp][ntoys];
- //  //double x_sensitivity[nbins_deltacp][ntoys];
- //  double chisq_sensitivity[51][487];
- //  double x_sensitivity[51][487];
- //  int j = 0;
- //  int k = 0;
-
- //  for(int i = 0; i < nentries_sensitivity; i++) 
- //    { 
- //      ch_sensitivity.GetEntry(i);
- //      double deltacp = fparm_sensitivity->BestFitValue(conv::kPhypCPV);
- //      double chisq = fparm_sensitivity->GetBestFitStatistic();
- //      //      cout << " deltacp = " << deltacp << " and chisq = " << chisq << endl;
- //      chisq_sensitivity[j][k] = chisq;
- //      x_sensitivity[j][k] = deltacp;
- //      //      cout << "chisq_sensitivity["<<j<<"]["<<k<<"] = "<< chisq_sensitivity[j][k]<<endl;
- //      j++;
- //      if(j == nbins_deltacp){
- // 	j = 0;
- // 	k ++; 
- //      }
- //    }
-
- //  TGraph* gchisq_toy[nbins_deltacp];
-  
-  
- //  for(int i = 0; i < nbins_deltacp; i++) 
- //    {
- //      gchisq_toy[i] = new TGraph( ntoys, x_sensitivity[i], chisq_sensitivity[i]);
- //      gchisq_toy[i]->SetMarkerStyle(1);
- //      gchisq_toy[i]->Draw("P");
- //    }
-
- //  double chisq_average[51];
-  
- //  for(int j = 0; j < nbins_deltacp; j++)
- //    { 
- //      double average = 0;
- //      for(int i = 0; i < ntoys; i++) 
- // 	{ 
- // 	  average + = chisq_sensitivity[j][i];
- // 	}
- //      average /= ntoys;
- //      chisq_average[j] = average;
- //    }
-  
-
-
- //  double average_min = 9999;
- //  for(int j = 0; j < nbins_deltacp; j++)
- //    { 
- //      if(chisq_average[j]<average_min) 
- //  	average_min = chisq_average[j];
- //    }
- //  for(int j = 0; j < nbins_deltacp; j++)
- //    { 
- //      chisq_average[j] -= average_min;
-      
- //      cout << chisq_average[j] << endl;
- //    }
-  
-
-
-
-
-
-  
-
- //  TGraph* gchisq_average = new TGraph( 51, bestfit_points_y, chisq_average);
- //  gchisq_average->SetLineColor(kBlue);
- //  gchisq_average->SetLineWidth(2);
- //  gchisq_average->Draw("L");
-
- //  TLegend * legend = new TLegend(0.7, 0.6, 0.9, 0.9);
- //  legend->SetFillColor(0); 
- //  legend->SetBorderSize(0);
- //  legend->AddEntry(h_chisq_deltacp,"T2K Run1+2+3+4 dataset fit (IH)","L");
- //  legend->AddEntry(gchisq_average,"T2K Run1+2+3+4 sensitivity (IH)","L");
- //  // legend->Draw("same");
-
- //  //to calculate the 68% CL
-  
- //  double chisq_above[51][487];
- //  double n_above[51];
- //  double chisq_below[51][487];
- //  double n_below[51];
-
- // for(int j = 0; j < nbins_deltacp; j++)
- //    { 
- //      int i_above = 0;
- //      int i_below = 0;
- //      for(int i = 0; i < ntoys; i++) 
- // 	{ 
- // 	  if(chisq_sensitivity[j][i]>chisq_average[j]){
- // 	    chisq_above[j][i_above] = chisq_sensitivity[j][i];
- // 	    i_above++;
- // 	  }
- // 	  else{
- // 	    chisq_below[j][i_below] = chisq_sensitivity[j][i];
- // 	    i_below++;
- // 	  }
- // 	}
- //      n_above[j] = i_above;
- //      n_below[j] = i_below;
- //      //      cout << " n_above = " << n_above[j] << " and n_below = " << n_below[j] << endl;
- //    }
-
- // double sigma_above[51];
- // double sigma_below[51];
-
- // for(int j = 0; j < nbins_deltacp; j++)
- //   { 
- //     Int_t idx[999999];
- //     TMath::Sort(n_below[j], chisq_below[j], idx, true); //the one above, sorted from largest to smallest
- //     int cut = (int)n_below[j]*0.68;
- //     sigma_below[j] = chisq_below[j][idx[cut-1]];
-
- //     Int_t idx2[999999];
- //     TMath::Sort(n_above[j], chisq_above[j], idx2, false); //the one below, sorted from smallest to largest
- //     int cut2 = (int)n_above[j]*0.68;
- //     sigma_above[j] = chisq_above[j][idx2[cut2-1]];
- //     //    cout << "cut = " << cut << " and = " << chisq_below[0][idx[cut-1]];
- //   }
-
- // TGraph* gchisq_above = new TGraph( 51, bestfit_points_y, sigma_above);
- // gchisq_above->SetLineColor(kBlue);
- // gchisq_above->SetLineWidth(2);
- // gchisq_above->Draw("L");
-
- // TGraph* gchisq_below = new TGraph( 51, bestfit_points_y, sigma_below);
- // gchisq_below->SetLineColor(kBlue);
- // gchisq_below->SetLineWidth(2);
- // gchisq_below->Draw("L");
-
- // TGraph *grshade = new TGraph(2*51);
- //  for(int j = 0; j < nbins_deltacp; j++)
- //   { 
- //     grshade->SetPoint(j,bestfit_points_y[j],sigma_above[j]);
- //     grshade->SetPoint(51+j,bestfit_points_y[50-j],sigma_below[50-j]);
- //   }
- //  grshade->SetFillStyle(3013);
- //  grshade->SetFillColor(kAzure+10);
- //  grshade->Draw("F");
-  
-
- // /*   
- // for(int i = 0; i < ntoys; i++) 
- //   { 
- //     cout << chisq_below[0][idx[i]] << "  " ;
- //   }
- // */
-
-   
- //  const char * filename_out = Form("%s_sensitivity.root",name);
- //  TFile * f_out = new TFile(filename_out, "recreate");
- //  h_chisq_deltacp->Write();
- 
+  return;
 }
 
 
+  
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style)
 {
   contour->SetLineWidth(width);
