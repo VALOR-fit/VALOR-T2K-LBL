@@ -200,7 +200,7 @@ void run_sensitivity_joint_toys
        fparm1->Update(kPhypMixing12, input_mixing12);
        fparm1->Update(kPhypMixing13, input_mixing13);
        fparm1->Update(kPhypMixing23, input_mixing23);
-       fparm1->Update(kPhypCPV    ,  input_deltacp);
+       fparm1->Update(kPhypCPV    ,  input_deltacp*conv::kpi);
        fparm1->Update(kPhypDm12sq,   input_dm12sq);
        fparm1->Update(kPhypDm23sq,   input_dm23sq);
      }

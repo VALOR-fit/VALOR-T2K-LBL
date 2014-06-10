@@ -11,7 +11,7 @@ void run_fit
 (
   const char * tag                     = "toyexptfits",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
+  int          nexperiments            = 5000,                                   /* number of toy MC experiment fits */
   double       input_mixing12          = 0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -22,7 +22,8 @@ void run_fit
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
   //const char * fit_param_list        = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */ nuosc3f+escale
+  //const char * fit_param_list          = "nuosc3f_12constrain+escale",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit+hesse",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
@@ -166,7 +167,7 @@ void run_fit
        fparm1->Update(kPhypMixing12, input_mixing12);
        fparm1->Update(kPhypMixing13, input_mixing13);
        fparm1->Update(kPhypMixing23, input_mixing23);
-       fparm1->Update(kPhypCPV    ,  input_deltacp);
+       fparm1->Update(kPhypCPV    ,  input_deltacp*conv::kpi);
        fparm1->Update(kPhypDm12sq,   input_dm12sq);
        fparm1->Update(kPhypDm23sq,   input_dm23sq);
      }
@@ -187,9 +188,8 @@ void run_fit
      PhysParamList true_oscillation_params = fparm1->AsPhysParamList("current");
      iparm->Append(true_oscillation_params);
 
-     //
      // get toy MC with/without systematics
-     //
+     
      SuperkObservation * skobs = new SuperkObservation;
      bool applied_negevents_condition = true;
      while(applied_negevents_condition) {
