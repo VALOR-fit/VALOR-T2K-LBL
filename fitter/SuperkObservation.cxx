@@ -78,6 +78,11 @@ void SuperkObservation::Init(void)
   fRHCErDistrArray1Rmu ->SetAll(0.);
   fRHCErDistrArray1Re  ->SetAll(0.);
   
+  fErDistrArray1Rmu    ->SetName("Ereco distribution 1Rmu FHC");
+  fErDistrArray1Re     ->SetName("Ereco distribution 1Re FHC");
+  fRHCErDistrArray1Rmu ->SetName("Ereco distribution 1Rmu RHC");
+  fRHCErDistrArray1Re  ->SetName("Ereco distribution 1Re RHC");
+  
   arr_index = util::ArrIdx::Instance();
 }
 //________________________________________________________________________________________
@@ -458,29 +463,36 @@ bool SuperkObservation::Generate(
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag, Option_t * /*write_opt*/)
+bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag, Option_t * write_opt)
 {
   if(!data_collection) {
     cout << "Obs >> Null TObjArray. Not writing data" << endl;
     return false;
   }
-
-  util::SetDefaultStyle();
+  
+  bool hist_mode = (write_opt && string(write_opt).find("hist")!=string::npos);
 
   for(int is=0; is<kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
     
-    // This is a new object, leaks memory if data_collection has not been set as owner
-    TH1D * data = this->ErecoSpectrum(s);
-    
-    data -> SetName( 
-     Form( "%s_%s", 
-            data_tag,
-            util::AsStringCompact(s).c_str() ) 
-    );
+    if (hist_mode) {
+      util::SetDefaultStyle();
+      // This is a new object, leaks memory if data_collection has not been set as owner
+      TH1D * data = this->ErecoSpectrum(s);
+      
+      data -> SetName( 
+       Form( "%s_%s", 
+              data_tag,
+              util::AsStringCompact(s).c_str() ) 
+      );
+      data_collection -> Add(data);
+    }
+    else {
+      VALORArray * data = this->ErecoSpectrumVArray(s);
+      data_collection -> Add(data);
+    }
 
-    data_collection -> Add(data);
   }
   
   return true;
@@ -491,7 +503,7 @@ bool SuperkObservation::Write(
 {
   if (!file_opt) file_opt="update";
   TObjArray * array = new TObjArray();
-  array->SetOwner(true);
+  if (write_opt && string(write_opt).find("hist")!=string::npos) array->SetOwner(true);
   this->Write(array, data_tag, write_opt);
 
   TFile f(filename, file_opt);

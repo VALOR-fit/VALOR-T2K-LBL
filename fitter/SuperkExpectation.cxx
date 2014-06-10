@@ -75,6 +75,15 @@ void SuperkExpectation::Init(void)
   fPredictRHCErecoSpectrumArray1Rmu    = new VALORArray(conv::knm, conv::kRHCNErecoBins1Rmu);
   fPredictRHCErecoSpectrumArray1Re     = new VALORArray(conv::knm, conv::kRHCNErecoBins1Re);
   
+  fPredictErecoSpectrumArrayTot1Rmu   ->SetName("Predicted FHC Ereco Spectrum Array 1Rmu total");
+  fPredictErecoSpectrumArrayTot1Re    ->SetName("Predicted FHC Ereco Spectrum Array 1Re total");
+  fPredictErecoSpectrumArray1Rmu      ->SetName("Predicted FHC Ereco Spectrum Array 1Rmu by mode");
+  fPredictErecoSpectrumArray1Re       ->SetName("Predicted FHC Ereco Spectrum Array 1Re by mode");
+  fPredictRHCErecoSpectrumArrayTot1Rmu->SetName("Predicted RHC Ereco Spectrum Array 1Rmu total");
+  fPredictRHCErecoSpectrumArrayTot1Re ->SetName("Predicted RHC Ereco Spectrum Array 1RE total");
+  fPredictRHCErecoSpectrumArray1Rmu   ->SetName("Predicted RHC Ereco Spectrum Array 1Rmu by mode");
+  fPredictRHCErecoSpectrumArray1Re    ->SetName("Predicted RHC Ereco Spectrum Array 1Re by mode");
+  
 }
 //________________________________________________________________________________________
 void SuperkExpectation::Book(void)
@@ -360,41 +369,53 @@ void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
 
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t * /*write_opt*/)
+bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t * write_opt)
 {
-  if(!array) return false;
-
-  util::SetDefaultStyle();
-
+  if(!array) {
+    cout << "SKExp >> Null TObjArray. Not writing data" << endl;
+    return false;
+  }
+  
+  bool hist_mode = (write_opt && string(write_opt).find("hist")!=string::npos);
+  
   string append_begin(Form("%s_", pdf_tag));
   
   for(int is=0; is<kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
-
-    TH1D * spectrum = 0;
-    TH1D * spectrum_mode[knm] = { };
-
-     // copy & format Ereco spectra
-     spectrum = this->CurrPredictedErecoSpectrum(s);
-     spectrum->SetDirectory (0);
-     
-     for(int im = 0; im < knm; im++) {
-        SuperkMode_t m = kSKReactionModes[is][im];
-        if(m == kSKmUndefined) continue;
-        spectrum_mode[im] = this->CurrPredictedErecoSpectrum(s,m);
-        spectrum_mode[im]->SetDirectory (0);
-     }//imode
-
-     // add spectra to the results array
-     spectrum->SetName(util::AsStringCompact(s,kSKmUndefined,append_begin).c_str());
-     array->Add(spectrum);
-     for(int im = 0; im < knm; im++) {
-        SuperkMode_t m = kSKReactionModes[is][im];
-        if(m == kSKmUndefined) continue;
-        spectrum_mode[im]->SetName(util::AsStringCompact(s,m,append_begin).c_str());
-        array->Add(spectrum_mode[im]);
-     }//im
+    
+    if (hist_mode) {
+      util::SetDefaultStyle();
+      TH1D * spectrum = 0;
+      TH1D * spectrum_mode[knm] = { };
+      
+      // copy & format Ereco spectra
+      spectrum = this->CurrPredictedErecoSpectrum(s);
+      spectrum->SetDirectory (0);
+      
+      for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         if(m == kSKmUndefined) continue;
+         spectrum_mode[im] = this->CurrPredictedErecoSpectrum(s,m);
+         spectrum_mode[im]->SetDirectory (0);
+      }//imode
+      
+      // add spectra to the results array
+      spectrum->SetName(util::AsStringCompact(s,kSKmUndefined,append_begin).c_str());
+      array->Add(spectrum);
+      for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         if(m == kSKmUndefined) continue;
+         spectrum_mode[im]->SetName(util::AsStringCompact(s,m,append_begin).c_str());
+         array->Add(spectrum_mode[im]);
+      }//im
+    } // hist mode
+    else {
+      VALORArray * total = this->CurrPredictedErecoVArray(s);
+      array->Add(total);
+      VALORArray * bymode = this->CurrPredictedErecoVArrayMode(s);
+      array->Add(bymode);
+    }
   }//is
 
   return true;
@@ -405,7 +426,7 @@ bool SuperkExpectation::Write(
 {
   if (!file_opt) file_opt = "update";
   TObjArray * array = new TObjArray();
-  array->SetOwner(true);
+  if (write_opt && string(write_opt).find("hist")!=string::npos) array->SetOwner(true);
   this->Write(array, pdf_tag, write_opt);
   TFile f(filename, file_opt);
   array->Write();
@@ -796,8 +817,8 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
       twkv[ip] = 1;
     }
     int ip = 0;
-    if (is_rhc) ip = p-kRHCNuisSKDetFSI000;
-    else        ip = p-kNuisSKDetFSI000;
+    if (is_rhc) ip = p-kListOfSKDetFSIParams[0];
+    else        ip = p-kListOfRHCSKDetFSIParams[0];
     assert(ip >=0 && ip<twkv.GetNoElements());
     twkv[ip]=twkdial;
     if (is_rhc) this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
