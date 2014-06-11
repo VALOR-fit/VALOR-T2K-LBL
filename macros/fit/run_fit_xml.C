@@ -14,8 +14,8 @@ void run_fit_xml
   int          first_experiment = 0,                                   /* */
   int          last_experiment  = 0,                                   /* */
   const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
-  //const char * fit_param_list   = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_param_list   = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  //const char * fit_param_list   = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
+  const char * fit_param_list   = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
   const char * fit_option       = "minuit+hesse",                            /* fitter option */
   bool         store_toy_expts         = true,                         /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = true,                         /* disable this if you don't want to store the best-fit spectra */

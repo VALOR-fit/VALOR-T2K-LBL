@@ -16,7 +16,7 @@ void run_fit_xml_seeded
   const char * xmlfile,                                                     /* input XML file with toy MC experiments */
   int          experiment_id,                                               /* */
   const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
-  const char * fit_param_list      = "nuosc3f_numudisapp_nuis4+nuisance",   /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list      = "nuosc3f_numudisapp_nuis4+nuisance",   /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
   const char * fit_option          = "minuit",                              /* fitter option */
   const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",                              /* normal or inverted */

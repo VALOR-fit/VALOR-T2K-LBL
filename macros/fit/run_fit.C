@@ -21,9 +21,9 @@ void run_fit
   const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
-  //const char * fit_param_list        = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */ nuosc3f+escale
-  //const char * fit_param_list          = "nuosc3f_12constrain+escale",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  //const char * fit_param_list        = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
+  const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */ nuosc3f+escale
+  //const char * fit_param_list          = "nuosc3f_12constrain+escale",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
   const char * fit_option              = "minuit+hesse",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */

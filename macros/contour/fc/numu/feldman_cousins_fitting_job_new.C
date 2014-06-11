@@ -21,7 +21,7 @@ void feldman_cousins_fitting_job_new
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   bool         tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
   bool         tweak_non23oscparams    = true,                                /* generate toy MC with randomized dmsq12,theta12,theta13,dcp / only in 3-flavour fmwk */
-  const char * fit_param_list          = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list          = "nuosc3f_numudisapp_fix4+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
   const char * fit_option              = "minuit",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = true,                                /* disable this if you don't want to store the best-fit spectra */

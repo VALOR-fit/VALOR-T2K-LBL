@@ -13,7 +13,7 @@ void build_chisq_profiles_disapp
  const char * xmlfile,                                                     /* input XML file with toy MC experiment or actual T2K data */
  int          iexperiment,                                                 /* */
  const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
- const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisance",    /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+ const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisance",    /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
  const char * fit_option          = "minuit",                              /* fitter option */
  double       mixing23_min        = 0.3,
  double       mixing23_max        = 0.7,

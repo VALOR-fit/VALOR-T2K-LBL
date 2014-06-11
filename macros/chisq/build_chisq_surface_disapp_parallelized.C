@@ -18,7 +18,7 @@ void build_chisq_surface_disapp_parallelized
   int          first_experiment    = 0,                                     /* */
   int          last_experiment     = 0,                                     /* */
   const char * config_file         = "analysis_configuration.xml",          /* analysis configuration file */
-  const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisance",    /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list      = "nuosc3f_numudisapp_fix4+nuisance",    /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
   const char * fit_option          = "minuit",                              /* fitter option */
   double       mixing23_min        = 0.35,
   double       mixing23_max        = 0.70,

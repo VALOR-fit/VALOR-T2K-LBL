@@ -14,7 +14,7 @@ void run_sensitivity_joint
   const char * data_file               = "inputs/data.xml",                 /* data file to be read */
   int          data_id                 = 0,                                 /* data index inside the data file */
   const char * config_file             = "analysis_configuration.xml",      /* analysis configuration file */
-  const char * fit_param_list          = "nuosc3f_12fix+nuisance",        /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list          = "nuosc3f_12fix+nuisance",        /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
   const char * fit_option              = "minuit+hesse_err",                            /* fitter option */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
   bool         reactor                 = true,                               /* enable this if you want to apply the reactor constraint */
