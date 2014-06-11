@@ -158,7 +158,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   return true;
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Generate(const PhysHypothesis & ph)
+bool SuperkExpectation::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
 {
 // Calculate dN^{exp}_{SuperK}(E_{reco}) / dE_{reco} for the input E_{reco} and 
 // the input physics hypothesis
@@ -196,7 +196,7 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph)
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
-bool SuperkExpectation::Generate(const FitParamList & fp)
+bool SuperkExpectation::Generate(const FitParamList & fp, Option_t * /*opt*/)
 {
   return Generate(fp, false, false);
 }

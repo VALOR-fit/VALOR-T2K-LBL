@@ -67,7 +67,7 @@ public:
 
    // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
    // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
-   bool Generate             (const PhysHypothesis & ph);
+   bool Generate             (const PhysHypothesis & ph, Option_t * opt = 0);
    void RandomizeSystematics (void); ///< random variation of all systematics
    void TweakSystematic      (string syst_name, double twkdial=0., Option_t * opt = 0);
    void TweakSystematic      (conv::PhysParamId_t syst, double twkdial=0., Option_t * opt = 0);
@@ -77,7 +77,7 @@ public:
    
    PhysParamList Tweaks(void);
    
-   bool Generate (const FitParamList & fp);
+   bool Generate (const FitParamList & fp, Option_t * opt = 0);
    
    // Write all predictions to the input container or to the input file
   bool Write (TObjArray* collection, const char * tag = "model", Option_t * write_opt = 0);
