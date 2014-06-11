@@ -1002,7 +1002,7 @@ double NuXSec::RelativeError(PhysParamId_t p) const
   return 0;
 }
 //________________________________________________________________________________________
-void NuXSec::PrintSystematicVariations(ostream & stream) const
+void NuXSec::PrintSystematicVariations(std::ostream & stream) const
 {
   stream << "Exp/XSec >> XSec parameters:"                              << endl; 
   stream << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
@@ -1021,7 +1021,7 @@ void NuXSec::PrintSystematicVariations(ostream & stream) const
   stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
 }
 //________________________________________________________________________________________
-void NuXSec::PrintRHCSystematicVariations(ostream & stream) const
+void NuXSec::PrintRHCSystematicVariations(std::ostream & stream) const
 {
   stream << "Exp/XSec >> RHC XSec parameters:"                              << endl;
   stream << "         >> RHC Fermi momentum      " << fRHCFermiMomTwkDial      << endl;

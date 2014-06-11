@@ -1032,7 +1032,7 @@ double SuperkDetectorFSI::RHCChisqPenalty(void) const
   return 0;
 }
 //________________________________________________________________________________________
-void SuperkDetectorFSI::PrintSystematicVariations(ostream & stream) const
+void SuperkDetectorFSI::PrintSystematicVariations(std::ostream & stream) const
 {
   const TVectorD & curr_skdetfsi_params = *fCurrentValues;
   stream << "Exp/SuperkDetectorFSI >> Energy scale twk        = "  << fEnergyScaleTwkDial      << endl;
@@ -1041,7 +1041,7 @@ void SuperkDetectorFSI::PrintSystematicVariations(ostream & stream) const
 
 }
 //________________________________________________________________________________________
-void SuperkDetectorFSI::PrintRHCSystematicVariations(ostream & stream) const
+void SuperkDetectorFSI::PrintRHCSystematicVariations(std::ostream & stream) const
 {
   const TVectorD & curr_skdetfsi_params = *fRHCCurrentValues;
   stream << "Exp/SuperkDetectorFSI >> RHC energy scale twk        = "  << fRHCEnergyScaleTwkDial      << endl;

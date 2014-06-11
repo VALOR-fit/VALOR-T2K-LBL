@@ -73,7 +73,7 @@ public:
    void TweakSystematic      (conv::PhysParamId_t syst, double twkdial=0., Option_t * opt = 0);
    // Additional related methods to reset the systematics and enquire their values.
    void ResetSystematics (void);
-   void PrintSystematics (ostream & stream = std::cout) const;
+   void PrintSystematics (std::ostream & stream = std::cout) const;
    
    PhysParamList Tweaks(void);
    
@@ -127,7 +127,7 @@ public:
    BANFF             * GetBANFF             (void) { return fBANFF;             }
 
    // Print
-   void PrintSystematicVariations(ostream & stream = std::cout) const;
+   void PrintSystematicVariations(std::ostream & stream = std::cout) const;
    
 private:
 

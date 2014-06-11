@@ -103,10 +103,10 @@ namespace util {
   // Etc
   //
   
-  void PrintCompact (const TVectorD & v, int w=15, int prec=9, Option_t * opt="", ostream & stream = std::cout);
-  void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, ostream & stream = std::cout);
-  void PrintCompact (const TMatrixD & m, int w=15, int prec=9, ostream & stream = std::cout);
-  void PrintCompactTex (const TMatrixD & m, int w=20, int prec=9, ostream & stream = std::cout, TString opt = "");
+  void PrintCompact (const TVectorD & v, int w=15, int prec=9, Option_t * opt="", std::ostream & stream = std::cout);
+  void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, std::ostream & stream = std::cout);
+  void PrintCompact (const TMatrixD & m, int w=15, int prec=9, std::ostream & stream = std::cout);
+  void PrintCompactTex (const TMatrixD & m, int w=20, int prec=9, std::ostream & stream = std::cout, TString opt = "");
 
   //
   //

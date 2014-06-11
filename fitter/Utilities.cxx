@@ -200,7 +200,7 @@ valor::conv::SKMCTemplateType_t
 }
 //____________________________________________________________________________
 void valor::util::PrintCompact(
-        const TVectorD & v, int w, int prec, Option_t * option, ostream & stream)
+        const TVectorD & v, int w, int prec, Option_t * option, std::ostream & stream)
 {
   TString opt = option;
 
@@ -248,7 +248,7 @@ void valor::util::PrintCompact(
 //___________________________________________________________________________
 void valor::util::PrintCompact(
    const TVectorD & current, const TVectorD & nominal, 
-   int w, int prec, Option_t * option, ostream & stream)
+   int w, int prec, Option_t * option, std::ostream & stream)
 {
   TString opt = option;
 
@@ -290,7 +290,7 @@ void valor::util::PrintCompact(
 }
 //___________________________________________________________________________
 void valor::util::PrintCompact(
-  const TMatrixD & m, int w, int prec, ostream & stream)
+  const TMatrixD & m, int w, int prec, std::ostream & stream)
 {
   int nc = m.GetNcols();
   int nr = m.GetNrows();
@@ -314,7 +314,7 @@ void valor::util::PrintCompact(
 }
 //___________________________________________________________________________
 void valor::util::PrintCompactTex(
-				   const TMatrixD & m, int w, int prec, ostream & stream, TString opt)
+				   const TMatrixD & m, int w, int prec, std::ostream & stream, TString opt)
 {
   int nc = m.GetNcols();
   int nr = m.GetNrows();

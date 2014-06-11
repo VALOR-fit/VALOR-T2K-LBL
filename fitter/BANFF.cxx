@@ -948,7 +948,7 @@ double BANFF::RHCChisqPenalty(bool /*all_syst*/) const
   return 0;
 }
 //________________________________________________________________________________________
-void BANFF::PrintSystematicVariations(ostream & stream) const
+void BANFF::PrintSystematicVariations(std::ostream & stream) const
 {
   //assert(fCurrentValues->GetNoElements() == conv::kNumOfParamsInBANFFfit);
 
@@ -959,7 +959,7 @@ void BANFF::PrintSystematicVariations(ostream & stream) const
   util::PrintCompact(current_values, bestfit_values, 12,6,"BANFF fit params", stream);
 }
 //________________________________________________________________________________________
-void BANFF::PrintRHCSystematicVariations(ostream & stream) const
+void BANFF::PrintRHCSystematicVariations(std::ostream & stream) const
 {
   //assert(fCurrentValues->GetNoElements() == conv::kNumOfRHCParamsInBANFFfit);
 

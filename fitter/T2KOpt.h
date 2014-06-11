@@ -24,8 +24,6 @@
 #include "Conventions.h"
 #include "Conventions/Opt.h"
 
-using std::ostream;
-
 namespace valor {
 
 class T2KOpt {
@@ -37,8 +35,8 @@ public:
   // Choice of oscillation analysis type (combined, numu disapp only, nue app only)
   conv::OscAnaType_t gOscAnaTypeChoice;
 
-  void Print(ostream & stream) const;
-  friend ostream & operator << (ostream & stream, const T2KOpt & opt);
+  void Print(std::ostream & stream) const;
+  friend std::ostream & operator << (std::ostream & stream, const T2KOpt & opt);
 
   // Check for any parameters being undefined
   bool Undefined(void);
@@ -65,7 +63,7 @@ private:
   friend struct Cleaner;
 };
 
-ostream & operator<< (ostream & stream, const T2KOpt & plst);
+std::ostream & operator<< (std::ostream & stream, const T2KOpt & plst);
 
 }      // valor namespace
 #endif // __valor_opt__

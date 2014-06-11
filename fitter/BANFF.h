@@ -89,8 +89,8 @@ public:
   void MarkFluxWghtUpdatedRHC (void)       { fIsFluxWghtUpdatedRHC = true; }
 
   // Print
-  void PrintSystematicVariations (ostream & stream = std::cout) const;
-  void PrintRHCSystematicVariations (ostream & stream = std::cout) const;
+  void PrintSystematicVariations (std::ostream & stream = std::cout) const;
+  void PrintRHCSystematicVariations (std::ostream & stream = std::cout) const;
    
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);

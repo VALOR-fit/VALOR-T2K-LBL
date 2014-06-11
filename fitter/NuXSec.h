@@ -95,8 +95,8 @@ public:
   TSpline3 * FindWghtSpline(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
 
   // Print
-  void PrintSystematicVariations (ostream & stream = std::cout) const;
-  void PrintRHCSystematicVariations (ostream & stream = std::cout) const;
+  void PrintSystematicVariations (std::ostream & stream = std::cout) const;
+  void PrintRHCSystematicVariations (std::ostream & stream = std::cout) const;
 
   // Read inputs from XML file
   bool Read        (TXMLEngine* xml, XMLNodePointer_t root_node);

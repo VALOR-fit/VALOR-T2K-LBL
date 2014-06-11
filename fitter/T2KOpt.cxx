@@ -23,7 +23,7 @@ using namespace valor::conv;
 
 //________________________________________________________________________________________
 namespace valor {
-  ostream & operator<<(ostream & stream, const T2KOpt & opt)
+  std::ostream & operator<<(std::ostream & stream, const T2KOpt & opt)
   {
     opt.Print(stream);
     return stream;
@@ -140,7 +140,7 @@ bool T2KOpt::Undefined(void)
   return false;
 }
 //____________________________________________________________________________
-void T2KOpt::Print(ostream & stream) const
+void T2KOpt::Print(std::ostream & stream) const
 {
   stream << " - Oscillation analysis choice: " 
          << util::AsString(gOscAnaTypeChoice) 

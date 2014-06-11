@@ -357,7 +357,7 @@ double SuperkExpectation::CurrPredictedErecoSpectrumArray(valor::conv::SuperkSam
   return arr[i];
 }
 //________________________________________________________________________________________
-void SuperkExpectation::PrintSystematicVariations(ostream & stream) const
+void SuperkExpectation::PrintSystematicVariations(std::ostream & stream) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
   fBANFF          -> PrintSystematicVariations(stream);
@@ -1147,7 +1147,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
   }
 }
 //________________________________________________________________________________________
-void SuperkExpectation::PrintSystematics (ostream & stream) const
+void SuperkExpectation::PrintSystematics (std::ostream & stream) const
 {
   stream<<"SuperkExpectation/PrintSystematics not yet implemented"<<endl;
 }
