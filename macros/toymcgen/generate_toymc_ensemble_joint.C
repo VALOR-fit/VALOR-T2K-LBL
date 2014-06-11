@@ -19,7 +19,7 @@ void generate_toymc_ensemble_joint
   double       input_deltacp           = 0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
   double       input_dm12sq            = -99,                            /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = 2.4E-3,                            /* |Dm^2_{23}| */
-  const char * config_file             = "analysis_configuration_test.xml",   /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_run5and6.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
   bool         save_in_xml_format      = true,                           /* also save in txt format */
@@ -28,6 +28,7 @@ void generate_toymc_ensemble_joint
   const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   const char * points_to_add_1Re_RHC   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  const char * xml_file_to_add         = 0,                              /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
   bool         save_fluct_in_xml       = true,                           /* save the values of the variations in the xml file? */
   const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                       /* normal or inverted */
@@ -51,7 +52,7 @@ void generate_toymc_ensemble_joint
   TH2D * h_4_Escale = new TH2D ("h_4_Escale","h_4_Escale", 100, -5, 5, 100, 0, 10);
 
   // Analysis configuration
-  const char * config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  const char * config = (new string(Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file)))->c_str();
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -109,6 +110,41 @@ void generate_toymc_ensemble_joint
     default:
       tweak_sys_str = "None";
   }
+  
+  string * full_points_to_add_1Rmu     = 0;
+  string * full_points_to_add_1Re      = 0;
+  string * full_points_to_add_1Rmu_RHC = 0;
+  string * full_points_to_add_1Re_RHC  = 0;
+  
+  // Are we adding events from an XML file?
+  if (xml_file_to_add) {
+    TXMLEngine xml;
+    const char * xml_path = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xml_file_to_add);
+    XMLDocPointer_t xmldoc = xml.ParseFile(xml_path);
+    if (xmldoc==0) {
+      cerr << "Can not parse XML file to add: " << xml_path << endl;
+      exit(1);
+    }
+    XMLNodePointer_t root_node = xml.DocGetRootElement(xmldoc);
+    
+    string s_1Rmu = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring/ereco_values");
+    full_points_to_add_1Rmu = new string( points_to_add_1Rmu ? Form("%s,%s",points_to_add_1Rmu,s_1Rmu) : s_1Rmu);
+
+    string s_1Re = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_e_ring/ereco_values");
+    full_points_to_add_1Re = new string( points_to_add_1Re ? Form("%s,%s",points_to_add_1Re,s_1Re) : s_1Re);
+    
+    string s_1Rmu_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring/ereco_values");
+    full_points_to_add_1Rmu_RHC = new string( points_to_add_1Rmu_RHC ? Form("%s,%s",points_to_add_1Rmu_RHC,s_1Rmu_RHC) : s_1Rmu_RHC);
+    
+    string s_1Re_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_e_ring/ereco_values");
+    full_points_to_add_1Re_RHC = new string( points_to_add_1Re_RHC ? Form("%s,%s",points_to_add_1Re_RHC,s_1Re_RHC) : s_1Re_RHC);
+  }
+  else {
+    if (points_to_add_1Rmu    ) full_points_to_add_1Rmu     = new string(points_to_add_1Rmu    );
+    if (points_to_add_1Re     ) full_points_to_add_1Re      = new string(points_to_add_1Re     );
+    if (points_to_add_1Rmu_RHC) full_points_to_add_1Rmu_RHC = new string(points_to_add_1Rmu_RHC);
+    if (points_to_add_1Re_RHC ) full_points_to_add_1Re_RHC  = new string(points_to_add_1Re_RHC );
+  }
 
   // Print out job summary
   cout << "\n[Job inputs]" << endl;
@@ -127,8 +163,10 @@ void generate_toymc_ensemble_joint
   cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
   cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "   - Adding the following data-points in each toy-MC expt: " << endl;
-  cout << "    For 1R mu-like: " << ((points_to_add_1Rmu) ? points_to_add_1Rmu : "* none *") << endl;
-  cout << "    For 1R e-like: " << ((points_to_add_1Re) ? points_to_add_1Re : "* none *") << endl;
+  cout << "    For 1R mu-like: "     << ((full_points_to_add_1Rmu)     ? *full_points_to_add_1Rmu     : "*None*") << endl;
+  cout << "    For 1R e-like: "      << ((full_points_to_add_1Re)      ? *full_points_to_add_1Re      : "*None*") << endl;
+  cout << "    For 1R mu-like RHC: " << ((full_points_to_add_1Rmu_RHC) ? *full_points_to_add_1Rmu_RHC : "*None*") << endl;
+  cout << "    For 1R e-like RHC: "  << ((full_points_to_add_1Re_RHC)  ? *full_points_to_add_1Re_RHC  : "*None*") << endl;
   cout << "- Outputs" << endl;
   cout << "     - Storing toy-MC expts in XML format: "   << ((save_in_xml_format) ?   "YES " : "NO") << endl;
   cout << "     - Storing toy-MC expts in ROOT format:  " << ((save_in_root_format) ?  "YES " : "NO") << endl;
@@ -258,8 +296,7 @@ void generate_toymc_ensemble_joint
      }//applied_negevents_condition
 
      double escale = skexp->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale);
-     cout << "escale = " << escale << endl;
-
+     
      // Get 1-ring mu-like Ereco spectrum FHC
      TH1D* mock_data_1Rmu = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingMuLike); ib++) {
@@ -296,7 +333,7 @@ void generate_toymc_ensemble_joint
      mock_data_1Re_RHC->SetDirectory(0);
 
      // If an XML file was specified, add an entry
-
+     
      if(save_in_xml_format) {
 
        // Dataset info
@@ -336,10 +373,12 @@ void generate_toymc_ensemble_joint
             ievtot++;
          }//iev
        }//ibin
+       
        // add extra data-points, if any
-       if(points_to_add_1Rmu) {
-         fxml << "," << points_to_add_1Rmu;
-         ftxt << "," << points_to_add_1Rmu;
+       if(full_points_to_add_1Rmu) {
+         fxml << ",\n"<<endl; // should really have an XML comment here but TXMLEngine won't let us.
+         fxml << *full_points_to_add_1Rmu;
+         ftxt << "," << *full_points_to_add_1Rmu;
        }
        fxml << endl;
        ftxt << endl;
@@ -373,9 +412,10 @@ void generate_toymc_ensemble_joint
        }//ibin
 
        // add extra data-points, if any
-       if(points_to_add_1Re) {
-         fxml << "," << points_to_add_1Re;
-         ftxt << "," << points_to_add_1Re;
+       if(full_points_to_add_1Re) {
+         fxml << ",\n"<<endl;
+         fxml << *full_points_to_add_1Re;
+         ftxt << "," << *full_points_to_add_1Re;
        }
 
        fxml << endl;
@@ -411,9 +451,10 @@ void generate_toymc_ensemble_joint
          }//iev
        }//ibin
        // add extra data-points, if any
-       if(points_to_add_1Rmu_RHC) {
-         fxml << "," << points_to_add_1Rmu_RHC;
-         ftxt << "," << points_to_add_1Rmu_RHC;
+       if(full_points_to_add_1Rmu_RHC) {
+         fxml << ",\n"<<endl;
+         fxml << *full_points_to_add_1Rmu_RHC;
+         ftxt << "," << *full_points_to_add_1Rmu_RHC;
        }
        fxml << endl;
        ftxt << endl;
@@ -446,9 +487,10 @@ void generate_toymc_ensemble_joint
          }//iev
        }//ibin
        // add extra data-points, if any
-       if(points_to_add_1Re_RHC) {
-         fxml << "," << points_to_add_1Re_RHC;
-         ftxt << "," << points_to_add_1Re_RHC;
+       if(full_points_to_add_1Re_RHC) {
+         fxml << ",\n"<<endl;
+         fxml << *full_points_to_add_1Re_RHC;
+         ftxt << "," << *full_points_to_add_1Re_RHC;
        }
        fxml << endl;
        ftxt << endl;
@@ -461,30 +503,30 @@ void generate_toymc_ensemble_joint
      // If a ROOT filename was specified, save the ROOT histogram too
      if(f) {
        if(save_in_root_format) {
-           if(points_to_add_1Rmu) {
-            vector<string> vecp = util::Tokens(points_to_add_1Rmu,",");
+           if(full_points_to_add_1Rmu) {
+            vector<string> vecp = util::Tokens(*full_points_to_add_1Rmu,",");
             assert(vecp.size()>0);
             for(int ip=0; ip < vecp.size(); ip++) {
               mock_data_1Rmu->Fill(atof(vecp[ip].c_str()));
             }
           }
-          if(points_to_add_1Re) {
-            vector<string> vecp = util::Tokens(points_to_add_1Re,",");
+          if(full_points_to_add_1Re) {
+            vector<string> vecp = util::Tokens(*full_points_to_add_1Re,",");
             assert(vecp.size()>0);
             for(int ip=0; ip < vecp.size(); ip++) {
               mock_data_1Re->Fill(atof(vecp[ip].c_str()));
             }
           }
           
-          if(points_to_add_1Rmu_RHC) {
-            vector<string> vecp = util::Tokens(points_to_add_1Rmu_RHC,",");
+          if(full_points_to_add_1Rmu_RHC) {
+            vector<string> vecp = util::Tokens(*full_points_to_add_1Rmu_RHC,",");
             assert(vecp.size()>0);
             for(int ip=0; ip < vecp.size(); ip++) {
               mock_data_1Rmu_RHC->Fill(atof(vecp[ip].c_str()));
             }
           }
-          if(points_to_add_1Re_RHC) {
-            vector<string> vecp = util::Tokens(points_to_add_1Re_RHC,",");
+          if(full_points_to_add_1Re_RHC) {
+            vector<string> vecp = util::Tokens(*full_points_to_add_1Re_RHC,",");
             assert(vecp.size()>0);
             for(int ip=0; ip < vecp.size(); ip++) {
               mock_data_1Re_RHC->Fill(atof(vecp[ip].c_str()));
