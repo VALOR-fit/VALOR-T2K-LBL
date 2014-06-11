@@ -133,10 +133,10 @@ void generate_toymc_ensemble_joint
     string s_1Re = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_e_ring/ereco_values");
     full_points_to_add_1Re = new string( points_to_add_1Re ? Form("%s,%s",points_to_add_1Re,s_1Re) : s_1Re);
     
-    string s_1Rmu_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring/ereco_values");
+    string s_1Rmu_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring_rhc/ereco_values");
     full_points_to_add_1Rmu_RHC = new string( points_to_add_1Rmu_RHC ? Form("%s,%s",points_to_add_1Rmu_RHC,s_1Rmu_RHC) : s_1Rmu_RHC);
     
-    string s_1Re_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_e_ring/ereco_values");
+    string s_1Re_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_e_ring_rhc/ereco_values");
     full_points_to_add_1Re_RHC = new string( points_to_add_1Re_RHC ? Form("%s,%s",points_to_add_1Re_RHC,s_1Re_RHC) : s_1Re_RHC);
   }
   else {
