@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<analysis_inputs analysis="T2K/VaLORHK/joint" data="5year" flux="11b/v3.2" mc="neut/13a" ndfit="banff/13v5" oth="sk+fsi">
+<analysis_inputs analysis="T2K/VaLOR/joint" data="run1to6" flux="11b/v3.2" mc="neut/13a" ndfit="banff/13v5" oth="sk+fsi">
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
