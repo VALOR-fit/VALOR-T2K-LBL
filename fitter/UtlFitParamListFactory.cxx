@@ -54,7 +54,25 @@ FitParamList * util::NamedParameterList(string name)
     fp -> SetSystMode(1);
     return fp;
   }
-
+  if(name == "nuosc3f_12constrain+escale") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 6);
+    fp -> SetNuisance (kPhypMixing12, true);
+    fp -> SetNuisance (kPhypDm12sq,   true);
+    int np = fp->GetNumberParameters();
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fp->WhichParam(ip);
+      if(!fp->IsNuisance(p)) continue; 
+      if(p != kNuisSuperkEnergyScale &&
+	 p != kPhypMixing12 &&
+	 p != kPhypDm12sq ) 
+	fp -> FixParameter(p);
+    }
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    return fp;
+  }
+  
   //
   // 3-flavour oscillation fit with various oscillation param subsets either fixed or
   // treated as nuisance paramers.
@@ -613,4 +631,3 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   }
 }
 #endif
-//________________________________________________________________________________________
