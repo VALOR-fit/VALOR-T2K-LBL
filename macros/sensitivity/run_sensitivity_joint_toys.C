@@ -11,19 +11,20 @@ void run_sensitivity_joint_toys
 (
   const char * tag                     = "toyexptsensi",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 3,                                   /* number of toy MC experiment fits */
+  int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
   double       input_mixing12          = 0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-  double       input_deltacp           = 0.00,                                /* deltacp, if -999 then randomize */
+  double       input_deltacp           = 0.,                                /* deltacp, if -999 then randomize */
   double       input_dm12sq            = 7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = 2.32E-3,                             /* |Dm^2_{23}| */
-  const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
+  //const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
-  //const char * fit_param_list        = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
-  //const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
-  const char * fit_param_list          = "nuosc3f_12constrain",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
+  //const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  //const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit+hesse",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
@@ -88,7 +89,8 @@ void run_sensitivity_joint_toys
   cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
   cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "- Fit vs " << param1 << " and " << param2 << endl; 
-  cout << "- Applying reactor constraint: " << ((reactor)  ? "YES" : "NO" ) << endl;
+  cout << "   - Fitter tolerance: " << tolerance << endl;
+  cout << "  Applying reactor constraint: " << ((reactor)  ? "YES" : "NO" ) << endl;
   cout << endl;
   cout << *Opt::Instance() << endl;
   cout << *Rnd::Instance() << endl;
@@ -183,18 +185,18 @@ void run_sensitivity_joint_toys
   
   // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
-
+    
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
-
+     
      nbins_param1 = max_bin_param1;
      nbins_param2 = max_bin_param2;
-
+     
      // randomize specified osc params for current toy MC expt
      if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
      if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
      if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();  }
      if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
-
+     
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == kHypOsc3F) {
        fparm1->Update(kPhypMixing12, input_mixing12);
@@ -502,20 +504,30 @@ void run_sensitivity_joint_toys
 	 // Get fitter
 	 FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);
 	 FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
-      
-	 // Chisq for true (input) params
+	 
+	 // Set SF Initial value to 0
 	 if(fparm1->Exists(conv::kNuisXSecSpecFunc))
 	   fparm1->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
+
+	 // Chisq for true (input) params
 	 double true_chisq = fit_inputs->Statistic();
-	 
+	     
 	 // Print-out true params
 	 cout << "- True oscillation params (below) yield chisq = " << true_chisq
 	      << *fparm1;
 	 
 	 // Do the fit
+
+	 cout << endl;
+	 cout << endl;
+	 cout << "First Octant" << endl;
+	 cout << endl;
+	 cout << endl;
+
 	 fitter->SetTol(tolerance);
 	 fitter->DoTheFit();
 	 fitstatus1 = fitter->FitStatusCode("migrad_min");
+	 fitstatus_err1 = fitter->FitStatusCode("hesse_err");     
 	 fittime1 = fitter->FitTime();
 	 chisq1  = fparm1->GetBestFitStatistic();
 	 cout << "chisq = " << chisq1 << endl;
@@ -525,8 +537,17 @@ void run_sensitivity_joint_toys
 	 }
             
 	 //now, only if theta23 is not fixed, repeat the fit at mirror point...
+
 	 if(((Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)||(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta2Theta)) && (!(fparm1->IsFixed(conv::kPhypMixing23))) ) {
+
+	   cout << endl;
+	   cout << endl;
+	   cout << "Second Octant" << endl;
+	   cout << endl;
+	   cout << endl;
+	   
 	   skexp->ResetSystematicVariations();
+
 	   //first fit with only osc
 	   fparm00->ResetCurrToInitValues(); // reset osc params
 	   FitInputs * fit_inputs00 = new FitInputs(skobs,skexp,fparm00);
@@ -536,7 +557,11 @@ void run_sensitivity_joint_toys
 	   
 	   skexp->ResetSystematicVariations();
 
+	   //get the correct intial values (best fit points from first fit)
+	   //fparm2->CopyBestFitToInitValues(*fparm1); // SF=0 not needed!!!
 	   fparm2->ResetCurrToInitValues(); // reset osc params
+	   if(fparm2->Exists(conv::kNuisXSecSpecFunc))
+	     fparm2->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
 
 	   // Get fitter
 	   FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
@@ -597,6 +622,12 @@ void run_sensitivity_joint_toys
 	   br_bf_array->SetAddress(&pdf_array1);
 	 }
 	 	 
+	 cout << endl;
+	 cout << "Best-fit chisq1 = " << chisq1 << endl;
+	 cout << "Best-fit chisq2 = " << chisq2 << endl;
+	 cout << endl;
+
+
 	 // Add all results in the tree
 	 fitnt->Fill();
        
