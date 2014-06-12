@@ -19,7 +19,7 @@ void test_sk_ereco_spectrum_nominal
   double       input_dm12sq         = -99,                            /* */
   double       input_dm23sq         = -99,                            /* */
   bool         disable_banff_tuning = false,                          /* */
-  const char * config_file          = "analysis_configuration.xml",   /* */
+  const char * config_file          = "analysis_configuration_test.xml",   /* */
   bool         print_spectrum       = false,                          /* */
   const char * mixparamchoice       = "sinsqtheta",
   const char * hierarchy            = "normal"
