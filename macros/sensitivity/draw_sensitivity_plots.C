@@ -3,14 +3,16 @@ void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style);
 void draw_sensitivity_plots(
 			    bool reactor = true, 
 			    bool theta2theta = true,
-			    const char * name = "data_theta2theta_fit_joint_ih_final_fix_reactor_abs31"
+			    //const char * name = "data_theta2theta_fit_joint_ih_final_fix_reactor_abs31"
+			    //const char * name = "data_nh_sensitivity_chisq_vs_deltacp_0"
+			    const char * name = "fakedata"
 			    )
 {
  
   using namespace std;
   using namespace std::string;
-  using namespace t2kana;
-  using namespace t2kana::conv;
+  using namespace valor;
+  using namespace valor::conv;
    
   // FIRST - use the single fit and store the global best-fit point
   const char * filename = Form("%s.root",name);
@@ -50,8 +52,8 @@ void draw_sensitivity_plots(
      mixing13_bf = fparm->BestFitValue(conv::kPhypMixing13);
      mixing23_bf = fparm->BestFitValue(conv::kPhypMixing23);
      dmsq_bf = fparm->BestFitValue(conv::kPhypDm23sq)*1.E3;//+(7.5E-5)/2;
-     deltacp_bf = fparm->BestFitValue(conv::kPhypDeltaCP);
-     chisq_bf = fparm->GetBestFitChisq();
+     deltacp_bf = fparm->BestFitValue(conv::kPhypCPV);
+     chisq_bf = fparm->GetBestFitStatistic();
      //data1Rmu    = (TH1D*) dat_array->FindObject("obs_1Rmu");
      //   bestfit1Rmu = (TH1D*) pdf_array->FindObject("pdf_1Rmu");
      //data1Re     = (TH1D*) dat_array->FindObject("obs_1Re");
@@ -108,12 +110,13 @@ void draw_sensitivity_plots(
   int nbins_mixing23 = 41;
   int nbins_dmsq = 21;
   const int nbins_deltacp = 51;
-  
+
   TCanvas * c = 0;
   
 // 1D vs deltacp
 //  const char * filename_deltacp = Form("%s_chisq_vs_deltacp_reduced.root",name);
-  const char * filename_deltacp = Form("%s_chisq_vs_deltacp.root",name);
+  //const char * filename_deltacp = Form("%s_chisq_vs_deltacp.root",name);
+  const char * filename_deltacp = Form("%s.root",name);
   //const char * filename_deltacp = "data_theta2theta_fit_joint_nh_final_fix_reactor_abs23_chisq_vs_deltacp_octants.root";//"data_fit_joint_final_ih_chisq_vs_deltacp_reduced.root";
   TChain ch_deltacp("fitnt");
   ch_deltacp.Add(filename_deltacp);
@@ -141,8 +144,8 @@ void draw_sensitivity_plots(
       double mix13 = fparm_deltacp->BestFitValue(conv::kPhypMixing13);
       double mix23 = fparm_deltacp->BestFitValue(conv::kPhypMixing23);
       double dmsq = fparm_deltacp->BestFitValue(conv::kPhypDm23sq);
-      double deltacp = fparm_deltacp->BestFitValue(conv::kPhypDeltaCP);
-      double chisq = fparm_deltacp->GetBestFitChisq();
+      double deltacp = fparm_deltacp->BestFitValue(conv::kPhypCPV);
+      double chisq = fparm_deltacp->GetBestFitStatistic();
        
       int bin_idx = h_chisq_deltacp->FindBin(deltacp);
       //      cout << " deltacp = " << deltacp << " bin_idx = " << bin_idx << endl;
@@ -174,6 +177,7 @@ void draw_sensitivity_plots(
   /*  for(int i = 0; i < nbins_deltacp; i++){
     cout << "  x = " << bestfit_points_x[i] << " and y = " << bestfit_points_y[i] << endl;
     }*/
+ 
   
   //TGraph* gbestfit = new TGraph( nentries_deltacp, bestfit_points_x ,bestfit_points_y );
   TGraph* gbestfit = new TGraph( nbins_deltacp, bestfit_points_x ,bestfit_points_y );
@@ -187,6 +191,17 @@ void draw_sensitivity_plots(
     }
   cout << "For deltaCP, min chisq  = " << min_chisq << endl;
   
+  return;
+
+
+
+
+
+
+
+
+
+
   for(int i = 1; i <= nbins_deltacp; i++) 
     {
       double bin = h_chisq_deltacp->GetBinContent(i);
@@ -226,8 +241,8 @@ void draw_sensitivity_plots(
   for(int i = 0; i < nentries_sensitivity; i++) 
     { 
       ch_sensitivity.GetEntry(i);
-      double deltacp = fparm_sensitivity->BestFitValue(conv::kPhypDeltaCP);
-      double chisq = fparm_sensitivity->GetBestFitChisq();
+      double deltacp = fparm_sensitivity->BestFitValue(conv::kPhypCPV);
+      double chisq = fparm_sensitivity->GetBestFitStatistic();
       //      cout << " deltacp = " << deltacp << " and chisq = " << chisq << endl;
       chisq_sensitivity[j][k] = chisq;
       x_sensitivity[j][k] = deltacp;
