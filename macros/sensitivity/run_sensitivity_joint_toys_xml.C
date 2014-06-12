@@ -9,8 +9,8 @@
 
 void run_sensitivity_joint_toys_xml
 (
-  const char * xmlfile                 = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
-  //const char * xmlfile                 = "toymc-0.xml",                                                /* input XML file with toy MC experiments */
+  //const char * xmlfile                 = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
+  const char * xmlfile                 = "inputs/toymc-0.xml",                                                /* input XML file with toy MC experiments */
   int          first_experiment        = 0,                                   /* */
   int          last_experiment         = 0,                                   /* */
   bool         using_xml_file          = true,                                   /* if false, skobs reads xmlfile as a root file */
@@ -60,7 +60,8 @@ void run_sensitivity_joint_toys_xml
 
   // Analysis configuration
   TString config   = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
+  //TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
+  TString xmlfile2 = Form("%s/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
   
   FileStat_t dummy;
 
@@ -203,8 +204,9 @@ void run_sensitivity_joint_toys_xml
   
   // Loop over toy-MC experiments
   const int nexperiments = last_experiment - first_experiment + 1; // i=first_exp, i<=last_exp 
-  for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
-    
+  //for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
+  for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
+
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
      
      nbins_param1 = max_bin_param1;
