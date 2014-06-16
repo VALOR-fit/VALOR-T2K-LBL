@@ -10,7 +10,7 @@
 void run_sensitivity_joint_toys_xml
 (
   //const char * xmlfile                 = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
-  const char * xmlfile                 = "inputs/toymc-0.xml",                                                /* input XML file with toy MC experiments */
+  const char * xmlfile                 = "inputs/toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                /* input XML file with toy MC experiments */
   int          first_experiment        = 0,                                   /* */
   int          last_experiment         = 0,                                   /* */
   bool         using_xml_file          = true,                                   /* if false, skobs reads xmlfile as a root file */
@@ -19,14 +19,9 @@ void run_sensitivity_joint_toys_xml
 
   const char * tag                     = "toyexptsensi",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  double       input_mixing12          = 0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing13          = 0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing23          = 0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-  double       input_deltacp           = 0.,                                /* deltacp, if -999 then randomize */
-  double       input_dm12sq            = 7.58E-5, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
-  double       input_dm23sq            = 2.32E-3,               /* |Dm^2_{23}| */
-  //const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
-  const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+  //const char * config_file             = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
+  //const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
   //const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
@@ -155,8 +150,6 @@ void run_sensitivity_joint_toys_xml
 
   // Create file to store results
   TFile f(Form("sensi-%s-run_%d-expts_%d_%d.root", tag, run, first_experiment, last_experiment), "recreate");
-  //string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-  //TFile f(Form("%s-run_%d-%s.root", tag, run, oscstr.c_str()), "recreate");
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
