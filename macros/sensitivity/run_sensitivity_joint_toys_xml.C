@@ -19,9 +19,9 @@ void run_sensitivity_joint_toys_xml
 
   const char * tag                     = "toyexptsensi",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+  //const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
   //const char * config_file             = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
-  //const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
   //const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
@@ -43,10 +43,11 @@ void run_sensitivity_joint_toys_xml
   double       tolerance               = 0.01,                                 /* value for the fitter tolerance */
   const char * param1                  = "deltacp",
   const char * param2                  = "none",                  /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
-  int          min_bin_param1          = 1,                                /* minimum bin for param1 */
+  int          min_bin_param1          = 1,                                /* minimum bin for param1: dcp, sinsqth23 */
   int          max_bin_param1          = 51,                                /* maximum bin for param1 */
-  int          min_bin_param2          = 1 ,                                /* minimum bin for param2 */
-  int          max_bin_param2          = 1                                  /* maximum bin for param2 */
+  int          min_bin_param2          = 1,                                /* minimum bin for param2: sinsqth13, dmsq32 */
+  int          max_bin_param2          = 1
+                                  /* maximum bin for param2 */
 )
 {
   using namespace std;
@@ -147,6 +148,15 @@ void run_sensitivity_joint_toys_xml
   double chisq1, chisq2, chisq;
   double inparam1, inparam2;
   int nbins_param1, nbins_param2;
+  int max_bin_param1, min_bin_param1, max_bin_param2, min_bin_param2;
+  double max_val_param1, min_val_param1, max_val_param2, min_val_param2;
+  double step1, step2;
+
+  //string parname1, parname2;
+  std::string *parname1 = new std::string();
+  std::string *parname2 = new std::string();
+  parname1->append(param1);
+  parname2->append(param2);
 
   // Create file to store results
   TFile f(Form("sensi-%s-run_%d-expts_%d_%d.root", tag, run, first_experiment, last_experiment), "recreate");
@@ -176,6 +186,14 @@ void run_sensitivity_joint_toys_xml
   fitnt->Branch("inparam2",&inparam2,"inparam2/D");
   fitnt->Branch("nbins_param1",&nbins_param1,"nbins_param1/I");
   fitnt->Branch("nbins_param2",&nbins_param2,"nbins_param2/I");
+  fitnt->Branch("max_val_param1",&max_val_param1,"max_val_param1/D");
+  fitnt->Branch("min_val_param1",&min_val_param1,"min_val_param1/D");
+  fitnt->Branch("max_val_param2",&max_val_param2,"max_val_param2/D");
+  fitnt->Branch("min_val_param2",&min_val_param2,"min_val_param2/D");
+  fitnt->Branch("step1",&step1,"step1/D");
+  fitnt->Branch("step2",&step2,"step2/D");
+  fitnt->Branch("parname1", &parname1); // name of the grid parameter 1
+  fitnt->Branch("parname2", &parname2); // name of the grid parameter 2
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
 
@@ -197,13 +215,12 @@ void run_sensitivity_joint_toys_xml
   
   // Loop over toy-MC experiments
   const int nexperiments = last_experiment - first_experiment + 1; // i=first_exp, i<=last_exp 
-  //for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
 
      cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
      
-     nbins_param1 = max_bin_param1;
-     nbins_param2 = max_bin_param2;
+     nbins_param1 = (max_bin_param1-min_bin_param1)+1;
+     nbins_param2 = (max_bin_param2-min_bin_param2)+1;
 
      // Reset all output spectra
      dat_array ->Clear();
@@ -214,10 +231,10 @@ void run_sensitivity_joint_toys_xml
      // Re-seed fitter (reset current values to specified init values)
      fparm1->ResetCurrToInitValues();
 
+     // Set exclusion grid points
      double mixing13_min = 0.0;
      double mixing13_max = 0.1;
-     double mixing13_step = 0.005;
-     
+     double mixing13_step = 0.005;     
      if(reactor){
        mixing13_min = 0.015;
        mixing13_max = 0.035;
@@ -233,21 +250,88 @@ void run_sensitivity_joint_toys_xml
        mixing13_max = 0.22;//0.14;
        mixing13_step = 0.004;
      }
+     if(param1 == "mixing13")      mixing13_step = (mixing13_max-mixing13_min)/(max_bin_param1-min_bin_param1);
+     else if(param2 == "mixing13") mixing13_step = (mixing13_max-mixing13_min)/(max_bin_param2-min_bin_param2);     
      
      double mixing23_min = 0.3;
      double mixing23_max = 0.7;
-     //double mixing23_step = 0.01;
      double mixing23_step = 0.01;
+     if(param1 == "mixing23")      mixing23_step = (mixing23_max-mixing23_min)/(max_bin_param1-min_bin_param1);
+     else if(param2 == "mixing23") mixing23_step = (mixing23_max-mixing23_min)/(max_bin_param2-min_bin_param2);
 
      double dmsq_min = 2.0E-3;
      double dmsq_max = 3.0E-3;
-     //double dmsq_step = 0.05E-3;
-     double dmsq_step = (dmsq_max-dmsq_min)/(max_bin_param1 - min_bin_param1);
+     double dmsq_step = 0.05E-3;
+     if(param1 == "dmsq")      dmsq_step = (dmsq_max-dmsq_min)/(max_bin_param1-min_bin_param1);
+     else if(param2 == "dmsq") dmsq_step = (dmsq_max-dmsq_min)/(max_bin_param2-min_bin_param2);     
      
      double deltacp_min = -conv::kpi;
      double deltacp_max = conv::kpi;
-     //double deltacp_step = (2*conv::kpi)/50.;
-     double deltacp_step = (deltacp_max-deltacp_min)/(max_bin_param1 - min_bin_param1);
+     double deltacp_step = (2*conv::kpi)/50.;
+     //double deltacp_step = (deltacp_max-deltacp_min)/(max_bin_param1 - min_bin_param1);
+     if(param1 == "deltacp")      deltacp_step = (deltacp_max-deltacp_min)/(max_bin_param1-min_bin_param1);
+     else if(param2 == "deltacp") deltacp_step = (deltacp_max-deltacp_min)/(max_bin_param2-min_bin_param2);     
+
+     if(param1=="mixing13"){
+       step1 = mixing13_step;
+       max_val_param1 = mixing13_max;
+       min_val_param1 = mixing13_min;
+     }
+     else if(param1=="mixing23"){
+       step1 = mixing23_step;
+       max_val_param1 = mixing23_max;
+       min_val_param1 = mixing23_min;
+     }
+     else if(param1=="dmsq"){
+       step1 = dmsq_step;
+       max_val_param1 = dmsq_max;
+       min_val_param1 = dmsq_min;
+     }
+     else if(param1=="deltacp"){
+       step1 = deltacp_step;
+       max_val_param1 = deltacp_max;
+       min_val_param1 = deltacp_min;
+     }
+     else if(param1=="none"){
+       step1 = 0;
+       max_val_param1 = 0;
+       min_val_param1 = 0;
+     }
+     else{
+       cout << "You did not choose the right oscillation parameter 1 !!!" << endl;
+       exit(0);
+     }
+
+     if(param2=="mixing13"){
+       step2 = mixing13_step;
+       max_val_param2 = mixing13_max;
+       min_val_param2 = mixing13_min;
+     }
+     else if(param2=="mixing23"){
+       step2 = mixing23_step;
+       max_val_param2 = mixing23_max;
+       min_val_param2 = mixing23_min;
+     }
+     else if(param2=="dmsq"){
+       step2 = dmsq_step;
+       max_val_param2 = dmsq_max;
+       min_val_param2 = dmsq_min;
+     }
+     else if(param2=="deltacp"){
+       step2 = deltacp_step;
+       max_val_param2 = deltacp_max;
+       min_val_param2 = deltacp_min;
+     }
+     else if(param2=="none"){
+       step2 = 0;
+       max_val_param2 = 0;
+       min_val_param2 = 0;
+     }
+     else{
+       cout << "You did not choose the right oscillation parameter 2 !!!" << endl;
+       exit(0);
+     }
+
 
      int parvalue1 = -999;
      int parvalue2 = -999;
@@ -405,6 +489,18 @@ void run_sensitivity_joint_toys_xml
 	 cout << endl;
 	 cout << "Grid point:" << endl;
 	 cout << endl;
+	 conv::PhysParamId_t p1 = fparm1->WhichParam(parvalue1);
+	 conv::PhysParamId_t p2 = fparm1->WhichParam(parvalue2);
+	 if(param1!="none"){
+	   TString namepar1 = fparm1->Name(p1);
+	   cout << namepar1.Data() << " = " << fparm1->CurrValue(p1) << " ";
+	 }
+	 if(param2!="none"){
+	   TString namepar2 = fparm2->Name(p2);
+	   cout << namepar2.Data() << " = " << fparm1->CurrValue(p2) << " ";
+	 }
+	 cout << endl;
+	 cout << endl;
 
 	 // Get superk spectrum observation (toy experiment)
 	 SuperkObservation * skobs = new SuperkObservation;
@@ -415,23 +511,14 @@ void run_sensitivity_joint_toys_xml
 	 //   f_sysparm->GetObject(Form("iparm_%d",iexperiment),iparm);
 	 //   fparm1->FromPhysParamList(*iparm, "initial", false);
 	 // }	 
+	 
+	 cout << endl << endl;
 	 cout << *fparm1 << endl;
-
-	 conv::PhysParamId_t p1 = fparm1->WhichParam(conv::kPhypCPV);
-	 conv::PhysParamId_t p2 = fparm1->WhichParam(conv::kPhypCPV);
-	 if(param1!="none"){
-	   TString namepar1 = fparm1->Name(p1);
-	   cout << namepar1.Data() << " = " << fparm1->CurrValue(p1) << " ";
-	 }
-	 if(param2!="none"){
-	   TString namepar2 = fparm1->Name(p2);
-	   cout << namepar2.Data() << " = " << fparm1->CurrValue(p2) << " ";
-	 }
 	 cout << endl << endl;
 	 	
 	 // Save the grid point in the tree
-	 inparam1 = fparm1->CurrValue(p1);  
-	 inparam2 = fparm1->CurrValue(p2);
+	 if(param1!="none") inparam1 = fparm1->CurrValue(p1);  
+	 if(param2!="none") inparam2 = fparm1->CurrValue(p2);
 
 	 //reset systematic variations, otherwise fit is initialized at
 	 //best fit values of systematics from previous fit
