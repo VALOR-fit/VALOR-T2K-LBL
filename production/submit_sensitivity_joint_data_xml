@@ -74,17 +74,17 @@ $store_toy_expts        = 1                                      unless defined 
 $store_bestfit_spectra  = 0                                      unless defined $store_bestfit_spectra;
 #$fitparamlist           = "nuosc3f_numudisapp_fix4+nuisance"     unless defined $fitparamlist;
 #$fitparamlist           = "nuosc3f_12constrain+nuisance"         unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;
-$fitparamlist           = "nuosc3f_12fix"                    unless defined $fitparamlist;
+$fitparamlist           = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3f_12fix"                    unless defined $fitparamlist;
 $fitoption              = "minuit+hesse"                               unless defined $fitoption;
 #$fitoption              = "minuit+minos"                               unless defined $fitoption;
-$tag                    = "toyexptfits"                          unless defined $tag;
+$tag                    = "exclusion_data_IH"                          unless defined $tag;
 #$job_dir                = `pwd`                                  unless defined $job_dir;
 $job_dir                = "."                                  unless defined $job_dir;
 #$softw_dir              = `pwd`                                  unless defined $softw_dir;
 $softw_dir              = "."                                  unless defined $softw_dir;
-#$config_file            = "analysis_configuration_test.xml"           unless defined $config_file;
 $config_file            = "analysis_configuration_test.xml"           unless defined $config_file;
+#$config_file            = "analysis_configuration_Run4.xml"           unless defined $config_file;
 #$config_file            = "analysis_configuration_run1to6.xml"           unless defined $config_file; 
 $dmsqscheme             = "abs23"                                unless defined $dmsqscheme;
 $masshierarchy          = "inverted"                               unless defined $masshierarchy;
@@ -101,7 +101,6 @@ $param2                 = "mixing13"                                 unless defi
 $min_bin_param1          = 1                                     unless defined $min_bin_param1; 
 $max_bin_param1          = 10                                    unless defined $max_bin_param1;
 #$max_bin_param1          = 51                                    unless defined $max_bin_param1;
-
 $min_bin_param2          = 1                                     unless defined $min_bin_param2;
 $max_bin_param2          = 30                                     unless defined $max_bin_param2; 
 
@@ -140,14 +139,16 @@ while($irun < $nruns) {
   if($resource eq "ETH-Monch") {
       open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
       print PBS "#!/bin/bash -l  \n";
-      print PBS "#SBATCH --partition=dphys_compute  \n";
+      print PBS "#SBATCH --partition=dphys_compute_wk  \n";
+      #print PBS "#SBATCH --partition=dphys_compute  \n";
       print PBS "#SBATCH --nodes=1  \n";
       print PBS "#SBATCH --ntasks-per-node=1  \n";
       print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
       print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
       print PBS "$command \n";
       close(PBS);
-      `sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      `sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
   }
       
   #
