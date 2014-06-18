@@ -49,12 +49,6 @@ foreach (@ARGV) {
   if($_ eq '--tweak-systematics'      ) { $twk_systematics       = 1;              }
   if($_ eq '--store-toy-expts'        ) { $store_toy_expts       = 1;              }
   if($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = 1;              }
-  if($_ eq '--dm23sq'                 ) { $dm23sq                = $ARGV[$iarg+1]; }
-  if($_ eq '--dm12sq'                 ) { $dm12sq                = $ARGV[$iarg+1]; }
-  if($_ eq '--mix23'                  ) { $mix23                 = $ARGV[$iarg+1]; }
-  if($_ eq '--mix13'                  ) { $mix13                 = $ARGV[$iarg+1]; }
-  if($_ eq '--mix12'                  ) { $mix12                 = $ARGV[$iarg+1]; }
-  if($_ eq '--deltacp'                ) { $deltacp               = $ARGV[$iarg+1]; }
   if($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
   if($_ eq '--fit-option'             ) { $fitoption             = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
@@ -81,40 +75,29 @@ foreach (@ARGV) {
   
   $iarg++;
 }
-$dm23sq                 = 0.00232                                unless defined $dm23sq;
-#$dm12sq                 = 0.0000758                              unless defined $dm12sq; 
-$dm12sq                 = -999                              unless defined $dm12sq; 
-$mix23                  = 0.513                                   unless defined $mix23;
-#$mix13                  = 0.0251                                 unless defined $mix13;
-$mix13                  = -999                                 unless defined $mix13;
-#$mix12                  = 0.306                                  unless defined $mix12;
-$mix12                  = -999                                  unless defined $mix12;
-$deltacp                = 0.00                                   unless defined $deltacp;
 $resource               = "interactive"                          unless defined $resource;
-#$nruns                  = 500                                      unless defined $nruns;
-$nruns                  = 2                                      unless defined $nruns;
-#$nexpts                 = 10                                      unless defined $nexpts;
-$nexpts                 = 5                                      unless defined $nexpts;
+$nruns                  = 500                                      unless defined $nruns;
+#$nruns                  = 1                                      unless defined $nruns;
+$nexpts                 = 1                                      unless defined $nexpts;
+#$nexpts                 = 2                                      unless defined $nexpts;
 $stat_fluct             = 1                                      unless defined $stat_fluct;
 $twk_systematics        = 1                                      unless defined $twk_systematics;
 $store_toy_expts        = 1                                      unless defined $store_toy_expts;
 $store_bestfit_spectra  = 0                                      unless defined $store_bestfit_spectra;
-#$fitparamlist           = "nuosc3f_numudisapp_fix4+nuisance"     unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3f_12constrain+nuisance"         unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;
-$fitparamlist           = "nuosc3f_12fix"         unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3f_12fix"                        unless defined $fitparamlist;
+$fitparamlist           = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;  
 $fitoption              = "minuit+hesse"                               unless defined $fitoption;
 #$fitoption              = "minuit+minos"                               unless defined $fitoption;
-$tag                    = "toyexptfits"                          unless defined $tag;
+$tag                    = "Sensi_FHCpRHC_MCRun1to6_th13DB_IH_500toys"                          unless defined $tag;
 #$job_dir                = `pwd`                                  unless defined $job_dir;
 $job_dir                = "."                                  unless defined $job_dir;
 #$softw_dir              = `pwd`                                  unless defined $softw_dir;
 $softw_dir              = "."                                  unless defined $softw_dir;
 #$config_file            = "analysis_configuration_test.xml"           unless defined $config_file;
-#$config_file            = "analysis_configuration.xml"           unless defined $config_file;
+#$config_file            = "analysis_configuration_Run4.xml"           unless defined $config_file;
 $config_file            = "analysis_configuration_run1to6.xml"           unless defined $config_file; 
 $dmsqscheme             = "abs23"                                unless defined $dmsqscheme;
-$masshierarchy          = "normal"                               unless defined $masshierarchy;
+$masshierarchy          = "inverted"                               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"                           unless defined $mixparamchoice;
 $mixparamoctant         = "one"                                  unless defined $mixparamoctant;
 #$apply_2nu_boundary     = 1                                      unless defined $apply_2nu_boundary;
@@ -152,7 +135,7 @@ while($irun < $nruns) {
 
   print "Jobs w/ toys from $first to $last \n";
 
-  $command = "root2k -l -b -q \'$softw_dir/macros/sensitivity/run_sensitivity_joint_toys_xml.C(\"$xmlfile\",$first,$last,$using_xmlfile,\"$tag\",$irun,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",$min_bin_param1,$max_bin_param1,$min_bin_param2,$max_bin_param2)\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/sensitivity/run_sensitivity_joint_toys_xml.C(\"$xmlfile\",$first,$last,$using_xmlfile,\"$tag\",$irun,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",$min_bin_param1,$max_bin_param1,$min_bin_param2,$max_bin_param2)\'";
 
   print "$command \n";
        
@@ -162,14 +145,17 @@ while($irun < $nruns) {
   if($resource eq "ETH-Monch") {
       open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
       print PBS "#!/bin/bash -l  \n";
-      print PBS "#SBATCH --partition=dphys_compute  \n";
+      #print PBS "#SBATCH --partition=dphys_compute  \n";
+      print PBS "#SBATCH --partition=dphys_compute_wk  \n";
       print PBS "#SBATCH --nodes=1  \n";
       print PBS "#SBATCH --ntasks-per-node=1  \n";
       print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
       print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
       print PBS "$command \n";
       close(PBS);
-      `sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      #`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      `sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
   }
       
   #
