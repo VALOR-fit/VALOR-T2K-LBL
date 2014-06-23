@@ -75,14 +75,36 @@ void SuperkExpectation::Init(void)
   fPredictRHCErecoSpectrumArray1Rmu    = new VALORArray(conv::knm, conv::kRHCNErecoBins1Rmu);
   fPredictRHCErecoSpectrumArray1Re     = new VALORArray(conv::knm, conv::kRHCNErecoBins1Re);
   
-  fPredictErecoSpectrumArrayTot1Rmu   ->SetName("Predicted FHC Ereco Spectrum Array 1Rmu total");
-  fPredictErecoSpectrumArrayTot1Re    ->SetName("Predicted FHC Ereco Spectrum Array 1Re total");
-  fPredictErecoSpectrumArray1Rmu      ->SetName("Predicted FHC Ereco Spectrum Array 1Rmu by mode");
-  fPredictErecoSpectrumArray1Re       ->SetName("Predicted FHC Ereco Spectrum Array 1Re by mode");
-  fPredictRHCErecoSpectrumArrayTot1Rmu->SetName("Predicted RHC Ereco Spectrum Array 1Rmu total");
-  fPredictRHCErecoSpectrumArrayTot1Re ->SetName("Predicted RHC Ereco Spectrum Array 1RE total");
-  fPredictRHCErecoSpectrumArray1Rmu   ->SetName("Predicted RHC Ereco Spectrum Array 1Rmu by mode");
-  fPredictRHCErecoSpectrumArray1Re    ->SetName("Predicted RHC Ereco Spectrum Array 1Re by mode");
+  fPredictErecoSpectrumArrayTot1Rmu   ->SetTitle("Predicted FHC Ereco Spectrum Array 1Rmu total");
+  fPredictErecoSpectrumArrayTot1Re    ->SetTitle("Predicted FHC Ereco Spectrum Array 1Re total");
+  fPredictErecoSpectrumArray1Rmu      ->SetTitle("Predicted FHC Ereco Spectrum Array 1Rmu by mode");
+  fPredictErecoSpectrumArray1Re       ->SetTitle("Predicted FHC Ereco Spectrum Array 1Re by mode");
+  fPredictRHCErecoSpectrumArrayTot1Rmu->SetTitle("Predicted RHC Ereco Spectrum Array 1Rmu total");
+  fPredictRHCErecoSpectrumArrayTot1Re ->SetTitle("Predicted RHC Ereco Spectrum Array 1RE total");
+  fPredictRHCErecoSpectrumArray1Rmu   ->SetTitle("Predicted RHC Ereco Spectrum Array 1Rmu by mode");
+  fPredictRHCErecoSpectrumArray1Re    ->SetTitle("Predicted RHC Ereco Spectrum Array 1Re by mode");
+  
+  fPredictErecoSpectrumArrayTot1Rmu   ->SetName("FHC_ereco_1Rmu_total");
+  fPredictErecoSpectrumArrayTot1Re    ->SetName("FHC_ereco_1Re_total");
+  fPredictErecoSpectrumArray1Rmu      ->SetName("FHC_ereco_1Rmu_mode");
+  fPredictErecoSpectrumArray1Re       ->SetName("FHC_ereco_1Re_mode");
+  fPredictRHCErecoSpectrumArrayTot1Rmu->SetName("RHC_ereco_1Rmu_total");
+  fPredictRHCErecoSpectrumArrayTot1Re ->SetName("RHC_ereco_1RE_total");
+  fPredictRHCErecoSpectrumArray1Rmu   ->SetName("RHC_ereco_1Rmu_mode");
+  fPredictRHCErecoSpectrumArray1Re    ->SetName("RHC_ereco_1Re_mode");
+  
+  fPredictErecoSpectrumArrayTot1Rmu   ->SetDimensionName(0, "Ereco");
+  fPredictErecoSpectrumArrayTot1Re    ->SetDimensionName(0, "Ereco");
+  fPredictErecoSpectrumArray1Rmu      ->SetDimensionName(0, "SK Mode");
+  fPredictErecoSpectrumArray1Re       ->SetDimensionName(0, "SK Mode");
+  fPredictErecoSpectrumArray1Rmu      ->SetDimensionName(1, "Ereco");
+  fPredictErecoSpectrumArray1Re       ->SetDimensionName(1, "Ereco");
+  fPredictRHCErecoSpectrumArrayTot1Rmu->SetDimensionName(0, "Ereco");
+  fPredictRHCErecoSpectrumArrayTot1Re ->SetDimensionName(0, "Ereco");
+  fPredictRHCErecoSpectrumArray1Rmu   ->SetDimensionName(0, "SK Mode");
+  fPredictRHCErecoSpectrumArray1Re    ->SetDimensionName(0, "SK Mode");
+  fPredictRHCErecoSpectrumArray1Rmu   ->SetDimensionName(1, "Ereco");
+  fPredictRHCErecoSpectrumArray1Re    ->SetDimensionName(1, "Ereco");
   
 }
 //________________________________________________________________________________________

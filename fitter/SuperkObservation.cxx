@@ -78,10 +78,20 @@ void SuperkObservation::Init(void)
   fRHCErDistrArray1Rmu ->SetAll(0.);
   fRHCErDistrArray1Re  ->SetAll(0.);
   
-  fErDistrArray1Rmu    ->SetName("Ereco distribution 1Rmu FHC");
-  fErDistrArray1Re     ->SetName("Ereco distribution 1Re FHC");
-  fRHCErDistrArray1Rmu ->SetName("Ereco distribution 1Rmu RHC");
-  fRHCErDistrArray1Re  ->SetName("Ereco distribution 1Re RHC");
+  fErDistrArray1Rmu    ->SetTitle("Ereco distribution 1Rmu FHC");
+  fErDistrArray1Re     ->SetTitle("Ereco distribution 1Re FHC");
+  fRHCErDistrArray1Rmu ->SetTitle("Ereco distribution 1Rmu RHC");
+  fRHCErDistrArray1Re  ->SetTitle("Ereco distribution 1Re RHC");
+  
+  fErDistrArray1Rmu    ->SetTitle("1Rmu_FHC");
+  fErDistrArray1Re     ->SetTitle("1Re_FHC");
+  fRHCErDistrArray1Rmu ->SetTitle("1Rmu_RHC");
+  fRHCErDistrArray1Re  ->SetTitle("1Re_RHC");
+  
+  fErDistrArray1Rmu    ->SetDimensionName(0,"Reconstructed energy /GeV");
+  fErDistrArray1Re     ->SetDimensionName(0,"Reconstructed energy /GeV");
+  fRHCErDistrArray1Rmu ->SetDimensionName(0,"Reconstructed energy /GeV");
+  fRHCErDistrArray1Re  ->SetDimensionName(0,"Reconstructed energy /GeV");
   
   arr_index = util::ArrIdx::Instance();
 }
