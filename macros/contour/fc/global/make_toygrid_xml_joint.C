@@ -33,27 +33,15 @@ void make_toygrid_xml_joint
  bool         reactor             = true,                               /* enable this if you want to apply the reactor constraint */
  double       tolerance           = 0.1,                                 /* value for the fitter tolerance */
  
- const char * param1                  = "mixing13",                        /* first parameter to be fitting vs - default: none for a single fit */ 
- const char * param2                  = "mixing23",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
- const char * param3                  = "dmsq",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
+ const char * param1                  = "mixing23",                        /* first parameter to be fitting vs - default: none for a single fit */ 
+ const char * param2                  = "dmsq",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
+ const char * param3                  = "mixing13",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  int          min_bin_param1          = 1 ,                                /* minimum bin for param1 */
  int          max_bin_param1          = 5 ,                                /* maximum bin for param1 */
  int          min_bin_param2          = 1 ,                                /* minimum bin for param2 */
  int          max_bin_param2          = 5 ,                                  /* maximum bin for param2 */
  int          min_bin_param3          = 1 ,                                /* minimum bin for param2 */
  int          max_bin_param3          = 5 ,                                  /* maximum bin for param2 */
-
-
- //const char * param1                  = "none",                        /* first parameter to be fitting vs - default: none for a single fit */ 
- //const char * param2                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
- //const char * param3                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
- //int          min_bin_param1          = 1 ,                                /* minimum bin for param1 */
- //int          max_bin_param1          = 1 ,                                /* maximum bin for param1 */
- //int          min_bin_param2          = 1 ,                                /* minimum bin for param2 */
- //int          max_bin_param2          = 1 ,                                  /* maximum bin for param2 */
- //int          min_bin_param3          = 1 ,                                /* minimum bin for param2 */
- //int          max_bin_param3          = 1 ,                                  /* maximum bin for param2 */
-
  )
 {
   using namespace std;
@@ -257,22 +245,30 @@ void make_toygrid_xml_joint
     }
     if(param1 == "mixing13")      mixing13_step = (mixing13_max-mixing13_min)/(max_bin_param1-min_bin_param1);
     else if(param2 == "mixing13") mixing13_step = (mixing13_max-mixing13_min)/(max_bin_param2-min_bin_param2);     
+    else if(param3 == "mixing13") mixing13_step = (mixing13_max-mixing13_min)/(max_bin_param3-min_bin_param3);     
+    
     double mixing23_min = 0.3;
     double mixing23_max = 0.7;
     double mixing23_step = 0.01;
     if(param1 == "mixing23")      mixing23_step = (mixing23_max-mixing23_min)/(max_bin_param1-min_bin_param1);
     else if(param2 == "mixing23") mixing23_step = (mixing23_max-mixing23_min)/(max_bin_param2-min_bin_param2);
+    else if(param3 == "mixing23") mixing23_step = (mixing23_max-mixing23_min)/(max_bin_param3-min_bin_param3);
+    
     double dmsq_min = 2.0E-3;
     double dmsq_max = 3.0E-3;
     double dmsq_step = 0.05E-3;
     if(param1 == "dmsq")      dmsq_step = (dmsq_max-dmsq_min)/(max_bin_param1-min_bin_param1);
     else if(param2 == "dmsq") dmsq_step = (dmsq_max-dmsq_min)/(max_bin_param2-min_bin_param2);          
+    else if(param3 == "dmsq") dmsq_step = (dmsq_max-dmsq_min)/(max_bin_param3-min_bin_param3);          
+
     double deltacp_min = -conv::kpi;
     double deltacp_max = conv::kpi;
     double deltacp_step = (2*conv::kpi)/50.;
     //double deltacp_step = (deltacp_max-deltacp_min)/(max_bin_param1 - min_bin_param1);
     if(param1 == "deltacp")      deltacp_step = (deltacp_max-deltacp_min)/(max_bin_param1-min_bin_param1);
     else if(param2 == "deltacp") deltacp_step = (deltacp_max-deltacp_min)/(max_bin_param2-min_bin_param2);     
+    else if(param3 == "deltacp") deltacp_step = (deltacp_max-deltacp_min)/(max_bin_param3-min_bin_param3);     
+
     if(param1=="mixing13"){
       step1 = mixing13_step;
       max_val_param1 = mixing13_max;
@@ -302,6 +298,7 @@ void make_toygrid_xml_joint
       cout << "You did not choose the right oscillation parameter 1 !!!" << endl;
       exit(0);
     }
+   
     if(param2=="mixing13"){
       step2 = mixing13_step;
       max_val_param2 = mixing13_max;
@@ -331,6 +328,7 @@ void make_toygrid_xml_joint
       cout << "You did not choose the right oscillation parameter 2 !!!" << endl;
       exit(0);
     }
+    
     if(param3=="mixing13"){
       step3 = mixing13_step;
       max_val_param3 = mixing13_max;
