@@ -1222,9 +1222,9 @@ void SuperkMC::FillSpecialTemplates(void)
 	  else if(s==kSKsRHCFCFV1RingELike){
 	    fMCTemplArrayOriRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_ori;
 	  }
-          fMCTemplArrayNomRHC[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
-          fMCTemplArrayTunRHC[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
-          fMCTemplArrayFinRHC[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+          fMCTemplArrayNom[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+          fMCTemplArrayTun[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+          fMCTemplArrayFin[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
         }//ir
       }//it
       //one more loop, for the variable binning scheme.
