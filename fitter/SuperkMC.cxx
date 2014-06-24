@@ -1735,6 +1735,13 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
       if(skip) continue;
       
       const double * variableMCEtrueBinEdges = util::VariableMCEtrueBinEdges(s,m);
+      
+      // Recast VALORArray blocks so they can be used addressed like normal arrays (fast).
+      // Hard to read, so should only be used in code for which speed is essential.
+      int n_ereco_bins = kNErecoBins[is];
+      int n_etrue_bins = kNEtrueBins[is];
+      const double(&templTun)[n_etrue_bins][n_ereco_bins] = *reinterpret_cast< const double (*) [n_etrue_bins][n_ereco_bins]> (&(fMCTemplArrayTun[is].GetEntryRef(im,0,0)));
+      double      (&templFin)[n_etrue_bins][n_ereco_bins] = *reinterpret_cast< double       (*) [n_etrue_bins][n_ereco_bins]> (&(fMCTemplArrayFin[is].GetEntryRef(im,0,0)));
 
       //
       // There are 600 50MeV Etrue energy bins in the templates, but
@@ -1791,8 +1798,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	  //double Etrue = util::ErecoBinEdges(s)(s,it-1) + kOneMeV;
 	  
 	  // get number of events in current bin of source MC template
-	  double nev = 0;
-	  nev = fMCTemplArrayTun[is].GetEntryRef(im, it-1, ir-1);
+	  double nev = templTun[it-1][ir-1];
 	  
 	  nev = TMath::Max(0.,nev);
 	  double nev_systm = nev * wght;
@@ -1828,7 +1834,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #endif// NO_EVENTS_CAN_BE_NEGATIVE
 	  // Update target MC template
 	  
-	  fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1) = nev_systm;
+	  templFin[it-1][ir-1] = nev_systm;
 	  
 	}//ifb
       }//ivb
@@ -2752,6 +2758,7 @@ bool SuperkMC::UpdateErecoSpectra(void)
     int n_etrue_bins = kNEtrueBins[is];
     
     // Recast VALORArray blocks so they can be used addressed like normal arrays (fast).
+    // Hard to read, so should only be used in code for which speed is essential.
     const double(&templFin)[knm][n_etrue_bins][n_ereco_bins] = *reinterpret_cast< const double (*) [knm][n_etrue_bins][n_ereco_bins]> (fMCTemplArrayFin[is].GetArray());
     double(&erecoMode)[knm][n_ereco_bins] = *reinterpret_cast<double (*) [knm][n_ereco_bins]> (fMCErecoSpectrumArray[is].GetArray());
     double * erecoTot = fMCErecoSpectrumTotArray[is].GetArray();
