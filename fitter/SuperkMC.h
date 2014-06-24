@@ -164,15 +164,9 @@ private:
 
   TH2D *     fMCVariableTempl[conv::kns][conv::knm];
   
-  int        fMCVariableTemplArray1Rmu[conv::knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
-  int        fMCVariableTemplArray1Re [conv::knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
-  int        fMCVariableTemplArrayRHC1Rmu[conv::knm][conv::kMCNEtrueBins][conv::kRHCXsNErecoBins1Rmu];     // ANTINU
-  int        fMCVariableTemplArrayRHC1Re [conv::knm][conv::kMCNEtrueBins][conv::kRHCXsNErecoBins1Re];      // ANTINU
+  std::vector<VALORArray> fMCVariableTemplArray; // sample -> (mode, MCetrue,Xsereco)
+  std::vector<VALORArray> fMCTemplArrayOri;      // sample -> (mode, etrue, ereco)   
 
-  int        fMCTemplArrayOri1Rmu[conv::knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
-  int        fMCTemplArrayOri1Re [conv::knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  int        fMCTemplArrayOriRHC1Rmu[conv::knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];    // ANTINU
-  int        fMCTemplArrayOriRHC1Re [conv::knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];     // ANTINU
   
   std::vector<VALORArray> fMCTemplArrayNom; //sample -> (mode, etrue, observable)
   std::vector<VALORArray> fMCTemplArrayTun; //sample -> (mode, etrue, observable)
