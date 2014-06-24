@@ -132,7 +132,31 @@ void SuperkMC::Init(void)
     int n_etrue_bins = kNEtrueBins[is];
     int n_ereco_bins = kNErecoBins[is];
     int n_xs_ereco_bins = kNXsErecoBins[is];
-
+    
+    fMCTemplArrayNom        .push_back( VALORArray(knm, n_etrue_bins, n_ereco_bins) );
+    fMCTemplArrayTun        .push_back( VALORArray(knm, n_etrue_bins, n_ereco_bins) );
+    fMCTemplArrayFin        .push_back( VALORArray(knm, n_etrue_bins, n_ereco_bins) );
+    fMCStatFracErr          .push_back( VALORArray(knm, n_etrue_bins, n_ereco_bins) );
+    fMCEtrueSpectrumTotArray.push_back( VALORArray(n_etrue_bins) );
+    fMCErecoSpectrumTotArray.push_back( VALORArray(n_ereco_bins) );
+    fMCErecoSpectrumArray   .push_back( VALORArray(knm, n_ereco_bins) );
+    
+    fMCTemplArrayNom        [is].SetName( Form("mc_templ_nom_%s"         , util::AsStringCompact(s).c_str()));
+    fMCTemplArrayTun        [is].SetName( Form("mc_templ_tun_%s"         , util::AsStringCompact(s).c_str()));
+    fMCTemplArrayFin        [is].SetName( Form("mc_templ_fin_%s"         , util::AsStringCompact(s).c_str()));
+    fMCStatFracErr          [is].SetName( Form("mc_staterr_%s"           , util::AsStringCompact(s).c_str()));
+    fMCEtrueSpectrumTotArray[is].SetName( Form("mc_spectrum_etrue_tot_%s", util::AsStringCompact(s).c_str()));
+    fMCErecoSpectrumTotArray[is].SetName( Form("mc_spectrum_obs_tot_%s"  , util::AsStringCompact(s).c_str()));
+    fMCErecoSpectrumArray   [is].SetName( Form("mc_spectrum_obs_%s"      , util::AsStringCompact(s).c_str()));
+    
+    fMCTemplArrayNom        [is].SetTitle( Form("MC template nom %s"           , util::AsString(s).c_str()));
+    fMCTemplArrayTun        [is].SetTitle( Form("MC template tun %s"           , util::AsString(s).c_str()));
+    fMCTemplArrayFin        [is].SetTitle( Form("MC template fin %s"           , util::AsString(s).c_str()));
+    fMCStatFracErr          [is].SetTitle( Form("MC Fractional StatErr %s"     , util::AsString(s).c_str()));
+    fMCEtrueSpectrumTotArray[is].SetTitle( Form("MC Spectrum Etrue_Total %s"   , util::AsString(s).c_str()));
+    fMCErecoSpectrumTotArray[is].SetTitle( Form("MC Spectrum Ereco Total %s"   , util::AsString(s).c_str()));
+    fMCErecoSpectrumArray   [is].SetTitle( Form("MC Spectrum Ereco per mode %s", util::AsString(s).c_str()));
+    
     fMCErecoSpectrumTot[is] = 0;
     fMCEtrueSpectrumTot[is] = 0;
     for(int im=0; im<knm; im++) {
@@ -144,84 +168,22 @@ void SuperkMC::Init(void)
       
       fNNonEmptyVariableBins [is][im] = 0;
       for (int ivb = 0; ivb < kMaxVarBins; ivb++) {
-	fNNonEmptyFixedBins    [is][im][ivb] = 0;
-	fNonEmptyFixedBins     [is][im][ivb] = NULL;
-	fNonEmptyVariableBins  [is][im][ivb] = 0;
+        fNNonEmptyFixedBins    [is][im][ivb] = 0;
+        fNonEmptyFixedBins     [is][im][ivb] = NULL;
+        fNonEmptyVariableBins  [is][im][ivb] = 0;
       }
-      
-      //////////////
-      for(int it=0; it<n_etrue_bins; it++) {
-	for(int ir=0; ir<n_ereco_bins; ir++) {
-	  
-	  // MODIFIED
-	  if (s==kSKsFCFV1RingMuLike){
-	    fMCTemplArrayOri1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayNom1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayTun1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayFin1Rmu[im][it][ir] = 0;
-	  }
-	  else if(s==kSKsFCFV1RingELike) {
-	    fMCTemplArrayOri1Re[im][it][ir] = 0;
-	    fMCTemplArrayNom1Re[im][it][ir] = 0;
-	    fMCTemplArrayTun1Re[im][it][ir] = 0;
-	    fMCTemplArrayFin1Re[im][it][ir] = 0;
-	  }
-	  ////
-	  // ANTINU
-	  else if (s==kSKsRHCFCFV1RingMuLike){
-	    fMCTemplArrayOriRHC1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayNomRHC1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayTunRHC1Rmu[im][it][ir] = 0;
-	    fMCTemplArrayFinRHC1Rmu[im][it][ir] = 0;
-	  }
-	  else if (s==kSKsRHCFCFV1RingELike) {
-	    fMCTemplArrayOriRHC1Re[im][it][ir] = 0;
-	    fMCTemplArrayNomRHC1Re[im][it][ir] = 0;
-	    fMCTemplArrayTunRHC1Re[im][it][ir] = 0;
-	    fMCTemplArrayFinRHC1Re[im][it][ir] = 0;
-	  }
-	  ////
-
-	}//ir
-      }//it
       
       int n_mc_etrue_bins = kMCNEtrueBins;
 
       for(int itv=0; itv<n_mc_etrue_bins; itv++) {   // MODIFIED
-	for(int irv=0; irv<n_xs_ereco_bins; irv++) {
-
-	  if      (s==kSKsFCFV1RingMuLike)    fMCVariableTemplArray1Rmu   [im][itv][irv] = 0; // MODIFIED
-	  else if (s==kSKsFCFV1RingELike)     fMCVariableTemplArray1Re    [im][itv][irv] = 0; // MODIFIED
-	  else if (s==kSKsRHCFCFV1RingMuLike) fMCVariableTemplArrayRHC1Rmu[im][itv][irv] = 0; // ANTINU
-	  else if (s==kSKsRHCFCFV1RingELike)  fMCVariableTemplArrayRHC1Re [im][itv][irv] = 0; // ANTINU
-
-	}//irv
+        for(int irv=0; irv<n_xs_ereco_bins; irv++) {
+          if      (s==kSKsFCFV1RingMuLike)    fMCVariableTemplArray1Rmu   [im][itv][irv] = 0; // MODIFIED
+          else if (s==kSKsFCFV1RingELike)     fMCVariableTemplArray1Re    [im][itv][irv] = 0; // MODIFIED
+          else if (s==kSKsRHCFCFV1RingMuLike) fMCVariableTemplArrayRHC1Rmu[im][itv][irv] = 0; // ANTINU
+          else if (s==kSKsRHCFCFV1RingELike)  fMCVariableTemplArrayRHC1Re [im][itv][irv] = 0; // ANTINU
+        }//irv
       }//itv
     }//im
-    for(int ir=0; ir<n_ereco_bins; ir++) {
-      
-      if      (s==kSKsFCFV1RingMuLike)   fMCErecoSpectrumTotArray1Rmu   [ir] = 0;  // MODIFIED
-      else if (s==kSKsFCFV1RingELike)    fMCErecoSpectrumTotArray1Re    [ir] = 0;  // MODIFIED
-      else if (s==kSKsRHCFCFV1RingMuLike)fMCErecoSpectrumTotArrayRHC1Rmu[ir] = 0;  // ANTINU
-      else if (s==kSKsRHCFCFV1RingELike) fMCErecoSpectrumTotArrayRHC1Re [ir] = 0;  // ANTINU
-      
-      for(int im=0; im<knm; im++) {
-	
-	if      (s==kSKsFCFV1RingMuLike)    fMCErecoSpectrumArray1Rmu   [im][ir] = 0; // MODIFIED
-	else if (s==kSKsFCFV1RingELike)     fMCErecoSpectrumArray1Re    [im][ir] = 0; // MODIFIED
-	else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumArrayRHC1Rmu[im][ir] = 0; // ANTINU
-	else if (s==kSKsRHCFCFV1RingELike)  fMCErecoSpectrumArrayRHC1Re [im][ir] = 0; // ANTINU
-	
-      }//im
-    }//ir
-    for(int it=0; it<n_etrue_bins; it++) {
-      
-      if      (s==kSKsFCFV1RingMuLike)    fMCEtrueSpectrumTotArray1Rmu   [it] = 0; // MODIFIED
-      else if (s==kSKsFCFV1RingELike)     fMCEtrueSpectrumTotArray1Re    [it] = 0; // MODIFIED
-      else if (s==kSKsRHCFCFV1RingMuLike) fMCEtrueSpectrumTotArrayRHC1Rmu[it] = 0; // ANTINU
-      else if (s==kSKsRHCFCFV1RingELike)  fMCEtrueSpectrumTotArrayRHC1Re [it] = 0; // ANTINU
-      
-    }//it
   }//is
   
   fMCTreeNuMu1Rmu      = 0;
@@ -761,43 +723,18 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
       // loop over Ereco
       for(int ir = 1; ir <= this->Template(s,m,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
 
-	
-	if (s==kSKsFCFV1RingMuLike) fMCTemplArrayOri1Rmu[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
-	else if (s==kSKsFCFV1RingELike)
-	  fMCTemplArrayOri1Re[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);   // MODIFIED
-	// ANTINU
-	else if (s==kSKsRHCFCFV1RingMuLike)
-	  fMCTemplArrayOriRHC1Rmu[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
-	else if (s==kSKsRHCFCFV1RingELike)
-	  fMCTemplArrayOriRHC1Re[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);   
-	////
+        
+        if      (s==kSKsFCFV1RingMuLike)   fMCTemplArrayOri1Rmu   [midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+        else if (s==kSKsFCFV1RingELike)    fMCTemplArrayOri1Re    [midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+        else if (s==kSKsRHCFCFV1RingMuLike)fMCTemplArrayOriRHC1Rmu[midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+        else if (s==kSKsRHCFCFV1RingELike) fMCTemplArrayOriRHC1Re [midx][it-1][ir-1] = (int)this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+        ////
 
-	double nev = this->Template(s,m,kSKMCtNom)->GetBinContent(ir,it);
-	if (s==kSKsFCFV1RingMuLike) {
-	  fMCTemplArrayNom1Rmu[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayTun1Rmu[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayFin1Rmu[midx][it-1][ir-1] = nev;
-	}
-	// MODIFIED
-	else if (s==kSKsFCFV1RingELike) {
-	  fMCTemplArrayNom1Re[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayTun1Re[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayFin1Re[midx][it-1][ir-1] = nev;
-	}
-	////
-
-	// ANTINU
-	else if (s==kSKsRHCFCFV1RingMuLike) {
-	  fMCTemplArrayNomRHC1Rmu[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayTunRHC1Rmu[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayFinRHC1Rmu[midx][it-1][ir-1] = nev;
-	}
-	else if (s==kSKsRHCFCFV1RingELike) {
-	  fMCTemplArrayNomRHC1Re[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayTunRHC1Re[midx][it-1][ir-1] = nev;
-	  fMCTemplArrayFinRHC1Re[midx][it-1][ir-1] = nev;
-	}
-	////
+        double nev = this->Template(s,m,kSKMCtNom)->GetBinContent(ir,it);
+        fMCTemplArrayNom[sidx].GetEntryRef(midx, it-1 , ir-1) = nev;
+        fMCTemplArrayTun[sidx].GetEntryRef(midx, it-1 , ir-1) = nev;
+        fMCTemplArrayFin[sidx].GetEntryRef(midx, it-1 , ir-1) = nev;
+        ////
 
       }//ir
     }//it
@@ -1108,36 +1045,26 @@ void SuperkMC::FillSpecialTemplates(void)
 	  double nev_tgt_nom = tgt_nom->GetBinContent(ir,it);
 	  if(s==kSKsFCFV1RingMuLike){
 	    fMCTemplArrayOri1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNom1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTun1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFin1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  
 	  // MODIFIED
 	  else if(s==kSKsFCFV1RingELike){
 	    fMCTemplArrayOri1Re[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNom1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTun1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFin1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  ////
 	  // ANTINU
 	  else if(s==kSKsRHCFCFV1RingMuLike){
 	    fMCTemplArrayOriRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNomRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTunRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFinRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  else if(s==kSKsRHCFCFV1RingELike){
 	    fMCTemplArrayOriRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNomRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTunRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFinRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  ////
-	  
+            fMCTemplArrayNom[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+            fMCTemplArrayTun[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+            fMCTemplArrayFin[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
 
-	}//ir
+        }//ir
       }//it
       //one more loop, for the variable binning scheme.
       //just set the OscNuMu equal to the NuMu
@@ -1282,35 +1209,23 @@ void SuperkMC::FillSpecialTemplates(void)
 
 	  if(s==kSKsFCFV1RingMuLike){
 	    fMCTemplArrayOri1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNom1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTun1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFin1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  // MODIFIED
 	  else if(s==kSKsFCFV1RingELike){
 	    fMCTemplArrayOri1Re[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNom1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTun1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFin1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  ////
 	  // ANTINU
 	  else if(s==kSKsRHCFCFV1RingMuLike){
 	    fMCTemplArrayOriRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNomRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTunRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFinRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  else if(s==kSKsRHCFCFV1RingELike){
 	    fMCTemplArrayOriRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNomRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTunRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFinRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
-	  ////
-
-  
-	}//ir
+          fMCTemplArrayNomRHC[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+          fMCTemplArrayTunRHC[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+          fMCTemplArrayFinRHC[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+        }//ir
       }//it
       //one more loop, for the variable binning scheme.
       //just set the OscNuMu equal to the NuMu
@@ -1447,35 +1362,26 @@ void SuperkMC::FillSpecialTemplates(void)
 	  
 	  if(s==kSKsFCFV1RingMuLike){
 	    fMCTemplArrayOri1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNom1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTun1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFin1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  // MODIFIED
 	  else if(s==kSKsFCFV1RingELike){
 	    fMCTemplArrayOri1Re[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNom1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTun1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFin1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  ////
 	  // ANTINU
 	  else if(s==kSKsRHCFCFV1RingMuLike){
 	    fMCTemplArrayOriRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNomRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTunRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFinRHC1Rmu[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  else if(s==kSKsRHCFCFV1RingELike){
 	    fMCTemplArrayOriRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_ori;
-	    fMCTemplArrayNomRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayTunRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
-	    fMCTemplArrayFinRHC1Re[tgt_midx][it-1][ir-1] = nev_tgt_nom;
 	  }
 	  ////
-
-	  
-	}//ir
+    
+          fMCTemplArrayNom[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+          fMCTemplArrayTun[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+          fMCTemplArrayFin[is].GetEntryRef(tgt_midx, it-1, ir-1) = nev_tgt_nom;
+          
+        }//ir
       }//it
       //one more loop, for the variable binning scheme.
       //just set the OscNuMu equal to the NuMu
@@ -1572,60 +1478,30 @@ void SuperkMC::FillSpecialTemplates(void)
 //________________________________________________________________________________________
 void SuperkMC::CalculateMCStatError(void)
 {
-  // init
-  for(int im=0; im < knm; im++) {
-    for(int it = 0; it < kNEtrueBins1Rmu; it++) {
-      for(int ir = 0; ir < kNErecoBins1Rmu; ir++) {
-	fMCStatFracErr1Rmu[im][it][ir] = 0;
-      }
-    }
-    for(int it = 0; it < kNEtrueBins1Re; it++) {
-      for(int ir = 0; ir < kNErecoBins1Re; ir++) {
-	fMCStatFracErr1Re[im][it][ir] = 0;
-      }
-    }
-    // ANTINU
-    for(int it = 0; it < kRHCNEtrueBins1Rmu; it++) {
-      for(int ir = 0; ir < kRHCNErecoBins1Rmu; ir++) {
-	fMCStatFracErrRHC1Rmu[im][it][ir] = 0;
-      }
-    }
-    for(int it = 0; it < kRHCNEtrueBins1Re; it++) {
-      for(int ir = 0; ir < kRHCNErecoBins1Re; ir++) {
-	fMCStatFracErrRHC1Re[im][it][ir] = 0;
-      }
-    }
-    ////
-     
-  }
-  
   // set MC frac err in each bin
   for(int is = 0; is < kns; is++) 
   {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
-     for(int im=0; im < knm; im++) 
-     {
-       SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined) continue;
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    fMCStatFracErr[is].SetAll(0.);
+    for(int im=0; im < knm; im++) 
+    {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
 
-       // loop over Etrue
-       for(int it = 1; it <= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetNbins(); it++) {
-          // loop over Ereco
-          for(int ir = 1; ir <= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetNbins(); ir++) {
-             double nev  = (double) this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
-             nev = TMath::Max(0.,nev);
-             double dnev = TMath::Sqrt(nev);
-             double fracerr = (nev > 0) ? dnev/nev : 0;
+      // loop over Etrue
+      for(int it = 1; it <= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetNbins(); it++) {
+        // loop over Ereco
+        for(int ir = 1; ir <= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetNbins(); ir++) {
+            double nev  = (double) this->Template(s,m,kSKMCtOri)->GetBinContent(ir,it);
+            nev = TMath::Max(0.,nev);
+            double dnev = TMath::Sqrt(nev);
+            double fracerr = (nev > 0) ? dnev/nev : 0;
 
-             if(s == kSKsFCFV1RingMuLike)         { fMCStatFracErr1Rmu[im][it-1][ir-1] = fracerr; }
-             else if(s == kSKsFCFV1RingELike)     { fMCStatFracErr1Re [im][it-1][ir-1] = fracerr; } // MODIFIED
-             else if(s == kSKsRHCFCFV1RingMuLike) { fMCStatFracErrRHC1Rmu[im][it-1][ir-1] = fracerr; } // ANTINU
-             else if(s == kSKsRHCFCFV1RingELike)  { fMCStatFracErrRHC1Re [im][it-1][ir-1] = fracerr; } // ANTINU
-	     
-          }//ir
-       }//it
-     }//m
+            fMCStatFracErr[is].GetEntryRef(im, it-1, ir-1) = fracerr;
+        }//ir
+      }//it
+    }//m
   }//s
 
 }
@@ -1648,92 +1524,29 @@ void SuperkMC::ApplyMCStatFluctationToTemplates(bool shape_only)
        double nev_new = 0;
 
        // fluctuate bin contents
-
-       // MODIFIED
        int n_ereco_bins = kNErecoBins[is];
        int n_etrue_bins = kNEtrueBins[is];
-
+       
        for(int ir = 1; ir <= n_ereco_bins; ir++) {
           for(int it = 1; it <= n_etrue_bins; it++) {
-
-            if (s==kSKsFCFV1RingMuLike)  
-            { 
-               double nev_old_bin  = fMCTemplArrayFin1Rmu[im][it-1][ir-1]; 
-               double frac_error   = fMCStatFracErr1Rmu  [im][it-1][ir-1];
-               double error        = frac_error * nev_old_bin;
-               double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
-               nev_new_bin = TMath::Max(0.,nev_new_bin);
-               nev_old += nev_old_bin;
-               nev_new += nev_new_bin;
-               fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_new_bin;
-            }
-	    // MODIFIED
-            else if (s==kSKsFCFV1RingELike){
-               double nev_old_bin  = fMCTemplArrayFin1Re[im][it-1][ir-1]; 
-               double frac_error   = fMCStatFracErr1Re  [im][it-1][ir-1];
-               double error        = frac_error * nev_old_bin;
-               double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
-               nev_new_bin = TMath::Max(0.,nev_new_bin);
-               nev_old += nev_old_bin;
-               nev_new += nev_new_bin;
-               fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_new_bin;
-            }
-	    ////
-	    // ANTINU
-            else if (s==kSKsRHCFCFV1RingMuLike)  
-            { 
-               double nev_old_bin  = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; 
-               double frac_error   = fMCStatFracErrRHC1Rmu  [im][it-1][ir-1];
-               double error        = frac_error * nev_old_bin;
-               double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
-               nev_new_bin = TMath::Max(0.,nev_new_bin);
-               nev_old += nev_old_bin;
-               nev_new += nev_new_bin;
-               fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_new_bin;
-            }
-	    else if (s==kSKsRHCFCFV1RingELike){
-               double nev_old_bin  = fMCTemplArrayFinRHC1Re[im][it-1][ir-1]; 
-               double frac_error   = fMCStatFracErrRHC1Re  [im][it-1][ir-1];
-               double error        = frac_error * nev_old_bin;
-               double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
-               nev_new_bin = TMath::Max(0.,nev_new_bin);
-               nev_old += nev_old_bin;
-               nev_new += nev_new_bin;
-               fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev_new_bin;
-            }
-	    ////
-
+            double nev_old_bin  = fMCTemplArrayFin[is].GetEntry(im, it-1, ir-1); 
+            double frac_error   = fMCStatFracErr  [is].GetEntry(im, it-1, ir-1);
+            double error        = frac_error * nev_old_bin;
+            double nev_new_bin  = rndgen.Gaus(nev_old_bin, error);
+            nev_new_bin = TMath::Max(0.,nev_new_bin);
+            nev_old += nev_old_bin;
+            nev_new += nev_new_bin;
+            fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1) = nev_new_bin;
+            
           }//it
        }//ir
-
+       
        if(shape_only) {
           double scale = (nev_new > 0.) ? nev_old/nev_new : 0.;
           for(int ir = 1; ir <= n_ereco_bins; ir++) {
              for(int it = 1; it <= n_etrue_bins; it++) {
-              
-	       
-
-	       if (s==kSKsFCFV1RingMuLike) { 
-                  double nev  = fMCTemplArrayFin1Rmu[im][it-1][ir-1]; 
-                  fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev*scale;
-               }
-               // MODIFIED
-	       else if (s==kSKsFCFV1RingELike){
-                  double nev  = fMCTemplArrayFin1Re[im][it-1][ir-1]; 
-                  fMCTemplArrayFin1Re[im][it-1][ir-1] = nev*scale;
-               }
-	       // ANTINU
-	       else if (s==kSKsRHCFCFV1RingMuLike) { 
-                  double nev  = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; 
-                  fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev*scale;
-               }
-	       else if (s==kSKsRHCFCFV1RingELike){
-                  double nev  = fMCTemplArrayFinRHC1Re[im][it-1][ir-1]; 
-                  fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev*scale;
-               }
-	       ////
-
-	       
+                double nev  = fMCTemplArrayFin[is].GetEntry(im, it-1, ir-1); 
+                fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1) = nev*scale;
              }//it
           }//ir
        }//shape_only?
@@ -1786,14 +1599,7 @@ const double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s) const
     return 0;
   }
   
-  // ANTINU 
-  if      (s==kSKsRHCFCFV1RingMuLike) return fMCErecoSpectrumTotArrayRHC1Rmu;
-  else if (s==kSKsRHCFCFV1RingELike ) return fMCErecoSpectrumTotArrayRHC1Re; 
-  else if (s==kSKsFCFV1RingELike    ) return fMCErecoSpectrumTotArray1Re;
-  else if (s==kSKsFCFV1RingMuLike   ) return fMCErecoSpectrumTotArray1Rmu;
-  
-  std::cerr<<"SuperkMC/CurrErecoSpectrumArray >> Failed for sample "<<AsString(s)<<std::endl;
-  exit(-1);
+  return fMCErecoSpectrumTotArray[sidx].GetArray();
 }
 //________________________________________________________________________________________
 double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s)  
@@ -1803,14 +1609,7 @@ double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s)
     return 0;
   }
   
-  // ANTINU 
-  if      (s==kSKsRHCFCFV1RingMuLike) return fMCErecoSpectrumTotArrayRHC1Rmu;
-  else if (s==kSKsRHCFCFV1RingELike ) return fMCErecoSpectrumTotArrayRHC1Re; 
-  else if (s==kSKsFCFV1RingELike    ) return fMCErecoSpectrumTotArray1Re;
-  else if (s==kSKsFCFV1RingMuLike   ) return fMCErecoSpectrumTotArray1Rmu;
-  
-  std::cerr<<"SuperkMC/CurrErecoSpectrumArray >> Failed for sample "<<AsString(s)<<std::endl;
-  exit(-1);
+  return fMCErecoSpectrumTotArray[sidx].GetArray();
 }
 //________________________________________________________________________________________
 const double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m) const
@@ -1823,15 +1622,8 @@ const double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m)
   if(midx == -1) {
     return 0;
   }
-
-  // ANTINU 
-  if      (s==kSKsRHCFCFV1RingMuLike) return fMCErecoSpectrumArrayRHC1Rmu[midx];
-  else if (s==kSKsRHCFCFV1RingELike ) return fMCErecoSpectrumArrayRHC1Re [midx];
-  else if (s==kSKsFCFV1RingELike    ) return fMCErecoSpectrumArray1Re    [midx];
-  else if (s==kSKsFCFV1RingMuLike   ) return fMCErecoSpectrumArray1Rmu   [midx];
   
-  std::cerr<<"SuperkMC/CurrErecoSpectrumArray >> Failed for sample "<<AsString(s)<<std::endl;
-  exit(-1);
+  return &(fMCErecoSpectrumArray[sidx].GetEntryRef(midx,0));
 }
 //________________________________________________________________________________________
 double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m)
@@ -1845,14 +1637,7 @@ double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m)
     return 0;
   }
 
-  // ANTINU 
-  if      (s==kSKsRHCFCFV1RingMuLike) return fMCErecoSpectrumArrayRHC1Rmu[midx];
-  else if (s==kSKsRHCFCFV1RingELike ) return fMCErecoSpectrumArrayRHC1Re [midx];
-  else if (s==kSKsFCFV1RingELike    ) return fMCErecoSpectrumArray1Re    [midx];
-  else if (s==kSKsFCFV1RingMuLike   ) return fMCErecoSpectrumArray1Rmu   [midx];
-  
-  std::cerr<<"SuperkMC/CurrErecoSpectrumArray >> Failed for sample "<<AsString(s)<<std::endl;
-  exit(-1);
+  return &(fMCErecoSpectrumArray[sidx].GetEntryRef(midx,0));
 }
 //________________________________________________________________________________________
 TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
@@ -2003,12 +1788,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	  //double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
 	  
 	  // get number of events in current bin of source MC template
-	  double nev = 0;
-	  
-	  if      (s==kSKsFCFV1RingMuLike)    nev = fMCTemplArrayNom1Rmu   [im][it-1][ir-1];
-	  else if (s==kSKsFCFV1RingELike)     nev = fMCTemplArrayNom1Re    [im][it-1][ir-1]; // MODIFIED
-	  else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayNomRHC1Rmu[im][it-1][ir-1]; // ANTINU
-	  else if (s==kSKsRHCFCFV1RingELike)  nev = fMCTemplArrayNomRHC1Re [im][it-1][ir-1]; // ANTINU
+	  double nev = fMCTemplArrayNom[is].GetEntry(im, it-1, ir-1);
 	  
 	  nev = TMath::Max(0.,nev);
 	  double nev_tuned = nev * wght;
@@ -2022,28 +1802,10 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 	    nev_tuned = 0;
 	  }
 #endif //NO_EVENTS_CAN_BE_NEGATIVE
-	  
-	  if (s==kSKsFCFV1RingMuLike) {
-	    fMCTemplArrayTun1Rmu[im][it-1][ir-1] = nev_tuned;
-	    fMCTemplArrayFin1Rmu[im][it-1][ir-1] = nev_tuned;
-	  }
-	  // MODIFIED
-	  else if (s==kSKsFCFV1RingELike){
-	    fMCTemplArrayTun1Re[im][it-1][ir-1] = nev_tuned;
-	    fMCTemplArrayFin1Re[im][it-1][ir-1] = nev_tuned;
-	  }
-	  ////
-	  // ANTINU
-	  else if (s==kSKsRHCFCFV1RingMuLike) {
-	    fMCTemplArrayTunRHC1Rmu[im][it-1][ir-1] = nev_tuned;
-	    fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_tuned;
-	  }
-	  else if (s==kSKsRHCFCFV1RingELike){
-	    fMCTemplArrayTunRHC1Re[im][it-1][ir-1] = nev_tuned;
-	    fMCTemplArrayFinRHC1Re[im][it-1][ir-1] = nev_tuned;
-	  }
-	  ////
-
+    
+    fMCTemplArrayTun[is].GetEntryRef(im, it-1, ir-1) = nev_tuned;
+    fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1) = nev_tuned;
+    
 #ifdef __show_banfftun_syst_var_wght_mesg_debug__ 
 	  // Get the energy of the current bin
 	  double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
@@ -2143,12 +1905,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	  last_itv = itv;
 	}
 	
-	//skip if the big bin is empty
-	
-	if     (s == kSKsFCFV1RingMuLike)    assert(fMCVariableTemplArray1Rmu   [im][itv-1][irv-1] > 0);
-	else if(s == kSKsFCFV1RingELike)     assert(fMCVariableTemplArray1Re    [im][itv-1][irv-1] > 0); // MODIFIED
-	else if(s == kSKsRHCFCFV1RingMuLike) assert(fMCVariableTemplArrayRHC1Rmu[im][itv-1][irv-1] > 0); // ANTINU
-	else if(s == kSKsRHCFCFV1RingELike)  assert(fMCVariableTemplArrayRHC1Re [im][itv-1][irv-1] > 0); // ANTINU
+	//if     (s == kSKsFCFV1RingMuLike)    assert(fMCVariableTemplArray1Rmu   [im][itv-1][irv-1] > 0);
+	//else if(s == kSKsFCFV1RingELike)     assert(fMCVariableTemplArray1Re    [im][itv-1][irv-1] > 0); // MODIFIED
+	//else if(s == kSKsRHCFCFV1RingMuLike) assert(fMCVariableTemplArrayRHC1Rmu[im][itv-1][irv-1] > 0); // ANTINU
+	//else if(s == kSKsRHCFCFV1RingELike)  assert(fMCVariableTemplArrayRHC1Re [im][itv-1][irv-1] > 0); // ANTINU
 	
 	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 
@@ -2159,7 +1919,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 	// Plug-in SK efficiency + FSI uncertainties
 	double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
-	// Combined weight					  
+	// Combined weight
 	wght = skfsi_wght * flux_wght * xsec_wght;
 
 #ifdef SYSTWEIGHTSAREONE
@@ -2175,32 +1935,17 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	  int ir = (fNonEmptyFixedBins[is][im][ivb][ifb] - it)/conv::kBigIndex;
 	  //check for empty bins
 	  
-	  
-	  if (s==kSKsFCFV1RingMuLike){
-	      assert(fMCTemplArrayOri1Rmu[im][it-1][ir-1] > 0);
-	  }
-	  // MODIFIED
-	  else if (s==kSKsFCFV1RingELike){
-	    assert(fMCTemplArrayOri1Re[im][it-1][ir-1] > 0);
-	  }
-	  ////
-	  // ANTINU
-	  else if (s==kSKsRHCFCFV1RingMuLike){
-	      assert(fMCTemplArrayOriRHC1Rmu[im][it-1][ir-1] > 0);
-	  }
-	  else if (s==kSKsRHCFCFV1RingELike){
-	    assert(fMCTemplArrayOriRHC1Re[im][it-1][ir-1] > 0);
-	  }
+	  //if     (s == kSKsFCFV1RingMuLike)    assert(fMCTemplOri1Rmu   [im][itv-1][irv-1] > 0);
+	  //else if(s == kSKsFCFV1RingELike)     assert(fMCTemplOri1Re    [im][itv-1][irv-1] > 0); // MODIFIED
+	  //else if(s == kSKsRHCFCFV1RingMuLike) assert(fMCTemplOriRHC1Rmu[im][itv-1][irv-1] > 0); // ANTINU
+	  //else if(s == kSKsRHCFCFV1RingELike)  assert(fMCTemplOriRHC1Re [im][itv-1][irv-1] > 0); // ANTINU
+    
 	  ////
 	  //double Etrue = util::ErecoBinEdges(s)(s,it-1) + kOneMeV;
 	  
 	  // get number of events in current bin of source MC template
 	  double nev = 0;
-	  
-	    if      (s==kSKsFCFV1RingMuLike)    nev = fMCTemplArrayTun1Rmu   [im][it-1][ir-1];
-	    else if (s==kSKsFCFV1RingELike)     nev = fMCTemplArrayTun1Re    [im][it-1][ir-1]; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayTunRHC1Rmu[im][it-1][ir-1]; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike)  nev = fMCTemplArrayTunRHC1Re [im][it-1][ir-1]; // ANTINU
+	  nev = fMCTemplArrayTun[is].GetEntry(im, it-1, ir-1);
 	  
 	  nev = TMath::Max(0.,nev);
 	  double nev_systm = nev * wght;
@@ -2236,10 +1981,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #endif// NO_EVENTS_CAN_BE_NEGATIVE
 	  // Update target MC template
 	  
-	  if      (s==kSKsFCFV1RingMuLike)    fMCTemplArrayFin1Rmu   [im][it-1][ir-1] = nev_systm;
-	  else if (s==kSKsFCFV1RingELike)     fMCTemplArrayFin1Re    [im][it-1][ir-1] = nev_systm;  // MODIFIED
-	  else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_systm;  // ANTINU
-	  else if (s==kSKsRHCFCFV1RingELike)  fMCTemplArrayFinRHC1Re [im][it-1][ir-1] = nev_systm;  // ANTINU
+	  fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1) = nev_systm;
 	  
 	}//ifb
       }//ivb
@@ -2264,14 +2006,14 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
   SuperkSample_t s=kSKsUndefined;
   int n_ereco_bins=0;
   int n_etrue_bins=0;
-  double integrals[knm] = {0};
+  double integrals[knm] = { };
   double renorm_total = 0;
   double renorm_mec   = 0;
   double renorm_templ = 0;
   double renorm_factor = 0.;
   ////
-
-
+  
+  int sidx=-1;
 #ifdef __show_update_mesg_info__
   cout << "Exp/SKMC >> Applying MEC renormalisation" << endl;
 #endif
@@ -2280,8 +2022,9 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
   
   //MEC only included in 1Rmu sample
   s = kSKsFCFV1RingMuLike;
-  n_ereco_bins = kNErecoBins[0];
-  n_etrue_bins = kNEtrueBins[0];
+  sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  n_ereco_bins = kNErecoBins[sidx];
+  n_etrue_bins = kNEtrueBins[sidx];
   
   //define which modes we're interested in normalising to.
   // to turn off, swap a mode with kSKmUndefined
@@ -2354,7 +2097,7 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
       // loop over Etrue
       for(int it = 1; it <= n_etrue_bins; it++) {
-	double nev = fMCTemplArrayFin1Rmu[im][it-1][ir-1];
+	double nev = fMCTemplArrayFin[sidx].GetEntry(im, it-1, ir-1);
 	nev = TMath::Max(0.,nev);
 	integrals[im] += nev;
       }//it
@@ -2408,8 +2151,7 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
       // loop over Etrue
       for(int it = 1; it <= n_etrue_bins; it++) {
-	fMCTemplArrayFin1Rmu[im][it-1][ir-1] *= renorm_factor;
-	
+        fMCTemplArrayFin[sidx].GetEntryRef(im, it-1, ir-1) *= renorm_factor;
       }//it
     }//ir
   }//im
@@ -2425,8 +2167,9 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
   
   //MEC only included in 1Rmu sample
   s = kSKsRHCFCFV1RingMuLike;
-  n_ereco_bins = kNErecoBins[2];
-  n_etrue_bins = kNEtrueBins[2];
+  sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  n_ereco_bins = kNErecoBins[sidx];
+  n_etrue_bins = kNEtrueBins[sidx];
   
   //define which modes we're interested in normalising to.
   // to turn off, swap a mode with kSKmUndefined
@@ -2499,7 +2242,7 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
       // loop over Etrue
       for(int it = 1; it <= n_etrue_bins; it++) {
-	double nev = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1];
+	double nev = fMCTemplArrayFin[sidx].GetEntry(im,it-1,ir-1);
 	nev = TMath::Max(0.,nev);
 	integrals[im] += nev;
       }//it
@@ -2553,7 +2296,7 @@ void SuperkMC::ApplyMECRenormalisationToTemplates(void)
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
       // loop over Etrue
       for(int it = 1; it <= n_etrue_bins; it++) {
-	fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] *= renorm_factor;
+	fMCTemplArrayFin[sidx].GetEntryRef(im, it-1, ir-1) *= renorm_factor;
 	
       }//it
     }//ir
@@ -2589,7 +2332,7 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     double escale = fSKDetFSI->EnergyScale(s);
     
     const int n_ereco_bins = kNErecoBins[is];
-#if METHOD_FOR_ESCALE == 1
+    
     double * events_per_bin = this->CurrErecoSpectrumArray(s);
     
     const double * bin_edges = util::ErecoBinEdges(s);
@@ -2653,168 +2396,6 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
       assert(!"Broken");
     }
 #endif //NDEBUG
-    
-#else // Previous method of applying energy scale. Should be removed once new method is verified.
-    // This method involves calculating how many events a lost to / gained
-    // from neighbouring bins and modifying them.
-    //
-    //clone
-    //TH1D * reco_spectrum_tot_no_ereco_scale = new TH1D(*reco_spectrum_tot);
-    double reco_spectrum_tot_arry_no_ereco_scale[kns][n_ereco_bins];
-
-    if (s==kSKsFCFV1RingMuLike) 
-      memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Rmu, sizeof (fMCErecoSpectrumTotArray1Rmu)) ;
-    // MODIFIED
-    else if (s==kSKsFCFV1RingELike)
-      memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArray1Re, sizeof (fMCErecoSpectrumTotArray1Re)) ;
-    ////
-    // ANTINU
-    else if (s==kSKsRHCFCFV1RingMuLike) 
-      memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArrayRHC1Rmu, sizeof (fMCErecoSpectrumTotArrayRHC1Rmu)) ;
-    else if (s==kSKsRHCFCFV1RingELike)
-      memcpy(reco_spectrum_tot_arry_no_ereco_scale[is], fMCErecoSpectrumTotArrayRHC1Re, sizeof (fMCErecoSpectrumTotArrayRHC1Re)) ;
-    ////
-    
-     // energy scale > 1 : 
-     // For a given bin, events are gained from bins on the left (lower Ereco bins) and 
-     // are lost to bins on the right (higher Ereco bins)
-     if(escale > 1. + kASmallNum) {
-       // loop over Ereco
-       for(int ir = 1; ir <= n_ereco_bins; ir++) {
-	 // nominal reco bin edges
-	 //double bin_max = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (ir);
-	 //double bin_min = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(ir);
-	 double bin_max = util::ErecoBinEdges(s, ir);
-	 double bin_min = util::ErecoBinEdges(s, ir-1);
-	 // scaled reco bin edges
-	 bin_max *= escale;
-	 bin_min *= escale;
-	 // loop over Ereco' (> Ereco)
-	 for(int irp = ir+1; irp <= n_ereco_bins; irp++) {
-	   // bin edges for reco bin ir'
-	   //double bin_max_p = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (irp);
-	   //double bin_min_p = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(irp);
-	   double bin_max_p = util::ErecoBinEdges(s, irp);
-	   double bin_min_p = util::ErecoBinEdges(s, irp-1);
-	   // do bins ir and ir' overlap?
-	   if(bin_max <= bin_min_p || bin_min >= bin_max_p) continue; // no overlap
-	   // calculate overlap
-	   double overlap = 0;
-	   if(bin_min_p < bin_max && bin_min_p > bin_min) overlap = bin_max   - bin_min_p;
-	   if(bin_max_p < bin_max && bin_max_p > bin_min) overlap = bin_max_p - bin_min;
-	   if(bin_max_p > bin_max && bin_min_p < bin_min) overlap = bin_max   - bin_min;
-	   if(bin_max_p < bin_max && bin_min_p > bin_min) overlap = bin_max_p - bin_min_p;
-
-	   // calculate how many events from nominal bin ir get lost to bin ir'
-	   double n  = reco_spectrum_tot_arry_no_ereco_scale[is][ir-1];
-	   double dn = n * overlap / (bin_max-bin_min); ///< (overlap) * (nominal # of events) / (bin width)
-	   // update the systematically varied spectrum
-	   dn = TMath::Min(dn,n);
-	   
-	   if      (s==kSKsFCFV1RingMuLike)    fMCErecoSpectrumTotArray1Rmu   [ir-1] -= dn;
-	   else if (s==kSKsFCFV1RingELike)     fMCErecoSpectrumTotArray1Re    [ir-1] -= dn; // MODIFIED
-	   else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[ir-1] -= dn; // ANTINU
-	   else if (s==kSKsRHCFCFV1RingELike)  fMCErecoSpectrumTotArrayRHC1Re [ir-1] -= dn; // ANTINU
-	   ////
-	   
-	   if      (s==kSKsFCFV1RingMuLike)    fMCErecoSpectrumTotArray1Rmu   [irp-1] += dn;
-	   else if (s==kSKsFCFV1RingELike)     fMCErecoSpectrumTotArray1Re    [irp-1] += dn; // MODIFIED
-	   else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[irp-1] += dn; // ANTINU
-	   else if (s==kSKsRHCFCFV1RingELike)  fMCErecoSpectrumTotArrayRHC1Re [irp-1] += dn; // ANTINU
-	   ////
-	   
-	 }//irp
-       }//ir
-     }// scale > 1
-
-     // energy scale < 1 : 
-     // For a given bin, events are gained from bins on the right (higher Ereco bins) and 
-     // are lost to bins on the left (lower Ereco bins)
-     else if(escale < 1. - kASmallNum) {
-       // loop over Ereco
-       for(int ir = 1; ir <= n_ereco_bins; ir++) {
-	 // nominal reco bin edges
-	 //double bin_max = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (ir);
-	 //double bin_min = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(ir);
-	 double bin_max = util::ErecoBinEdges(s, ir);
-	 double bin_min = util::ErecoBinEdges(s, ir-1);
-	 // scaled reco bin edges
-	 bin_max *= escale;
-	 bin_min *= escale;
-	 // loop over Ereco' (< Ereco)
-	 for(int irp = 1; irp <= ir-1; irp++) {
-	   // bin edges for reco bin ir'
-	   //	   double bin_max_p = reco_spectrum_tot->GetXaxis()->GetBinUpEdge (irp);
-	   //double bin_min_p = reco_spectrum_tot->GetXaxis()->GetBinLowEdge(irp);
-	   double bin_max_p = util::ErecoBinEdges(s, irp);
-	   double bin_min_p = util::ErecoBinEdges(s, irp-1);
-	   // do bins ir and ir' overlap?
-	   if(bin_max <= bin_min_p || bin_min >= bin_max_p) continue; // no overlap
-	   // calculate overlap
-	   double overlap = 0;
-	   if(bin_min_p < bin_max && bin_min_p > bin_min) overlap = bin_max   - bin_min_p;
-	   if(bin_max_p < bin_max && bin_max_p > bin_min) overlap = bin_max_p - bin_min;
-	   if(bin_max_p > bin_max && bin_min_p < bin_min) overlap = bin_max   - bin_min;
-	   if(bin_max_p < bin_max && bin_min_p > bin_min) overlap = bin_max_p - bin_min_p;
-
-	   // calculate how many events from nominal bin ir get lost to bin ir'
-	   double n  = reco_spectrum_tot_arry_no_ereco_scale[is][ir-1];
-	   double dn = n * overlap / (bin_max-bin_min); ///< (overlap) * (nominal # of events) / (bin width)
-	   // update the systematically varied templates
-	   dn = TMath::Min(dn,n);
-	   
-	   if (s==kSKsFCFV1RingMuLike) fMCErecoSpectrumTotArray1Rmu[ir-1]  -= dn;
-	   // MODIFIED
-	   else if (s==kSKsFCFV1RingELike) fMCErecoSpectrumTotArray1Re[ir-1]  -= dn;
-	   ////
-	   // ANTINU
-	   else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[ir-1]  -= dn;
-	   else if (s==kSKsRHCFCFV1RingELike) fMCErecoSpectrumTotArrayRHC1Re[ir-1]  -= dn;
-	   ////
-
-	   
-	   if (s==kSKsFCFV1RingMuLike) fMCErecoSpectrumTotArray1Rmu[irp-1] += dn;
-	   // MODIFIED
-	   else if (s==kSKsFCFV1RingELike) fMCErecoSpectrumTotArray1Re[irp-1] += dn;
-	   ////
-	   // ANTINU
-	   else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[irp-1] += dn;
-	   // MODIFIED
-	   else if (s==kSKsRHCFCFV1RingELike) fMCErecoSpectrumTotArrayRHC1Re[irp-1] += dn;
-	   ////
-
-
-
-	 }//irp
-       }//ir
-     }// scale < 1
-
-    //delete reco_spectrum_tot_no_ereco_scale;
-
-    // loop at the end, to get rid of any negatives
-    // loop over Ereco
-    for(int ir = 1; ir <= n_ereco_bins; ir++) {
-      double nev_tot = 0;
-      if (s==kSKsFCFV1RingMuLike) nev_tot = fMCErecoSpectrumTotArray1Rmu[ir-1];
-      else if (s==kSKsFCFV1RingELike) nev_tot = fMCErecoSpectrumTotArray1Re[ir-1];
-      else if (s==kSKsRHCFCFV1RingMuLike) nev_tot = fMCErecoSpectrumTotArrayRHC1Rmu[ir-1];
-      else if (s==kSKsRHCFCFV1RingELike) nev_tot = fMCErecoSpectrumTotArrayRHC1Re[ir-1];
-
-      if(nev_tot < 0) {
-#ifdef __show_negative_events_mesg_debug__
-	cout << "Exp/SKMC/ApplyEnergyScaleSystematicToTotalSpectrum >> set negative number of events " << nev_tot
-	     << " to " << 0 << "\t" << " for Ereco: " << ErecoBinEdges(s,ir-1)+kOneMeV << " in sample = " << util::AsString(s) << endl;
-#endif
-	applied_negevents_condition = true;
-	
-	if (s==kSKsFCFV1RingMuLike) fMCErecoSpectrumTotArray1Rmu[ir-1] = 0;
-	else if (s==kSKsFCFV1RingELike) fMCErecoSpectrumTotArray1Re[ir-1] = 0;
-	else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[ir-1] = 0;
-	else if (s==kSKsRHCFCFV1RingELike) fMCErecoSpectrumTotArrayRHC1Re[ir-1] = 0;
-      }//nev_tot < 0
-    }//ir
-    
-#endif // old method
 
   }//is
   return applied_negevents_condition;
@@ -2943,6 +2524,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	for(int im=0; im < knm; im++) {
 	  SuperkMode_t m = kSKReactionModes[is][im];
 	  if(m == kSKmUndefined) continue;
+	  double * array = &(fMCTemplArrayFin[is].GetEntryRef(im,it-1,0));
 	  // osc. probability
 	  double posc = 1.;
 	  if(kIsCC[is][im])
@@ -2961,10 +2543,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	    // number of events in (Ereco,Etrue) bin (systematics applied)
 	    double nev = 0;
 	    
-	    if      (s==kSKsFCFV1RingMuLike)    nev = fMCTemplArrayFin1Rmu   [im][it-1][ir-1];
-	    else if (s==kSKsFCFV1RingELike)     nev = fMCTemplArrayFin1Re    [im][it-1][ir-1]; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike)  nev = fMCTemplArrayFinRHC1Re [im][it-1][ir-1]; // ANTINU
+	    nev = array[ir-1];
 	    ////
 	    
 #ifdef PHYSHYPWEIGHTSAREONE
@@ -2976,10 +2555,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
 	    double nev_osc = nev * posc;
 	    
-	    if      (s==kSKsFCFV1RingMuLike)    fMCTemplArrayFin1Rmu   [im][it-1][ir-1] = nev_osc;
-	    else if (s==kSKsFCFV1RingELike)     fMCTemplArrayFin1Re    [im][it-1][ir-1] = nev_osc; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_osc; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike)  fMCTemplArrayFinRHC1Re [im][it-1][ir-1] = nev_osc; // ANTINU
+	    array[ir-1] = nev_osc;
 	    ////
 	  }//ir
 	}//im
@@ -3150,10 +2726,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	    // number of events in (Ereco,Etrue) bin (systematics applied)
 	    double nev = 0;
 	    
-	    if      (s==kSKsFCFV1RingMuLike)    nev = fMCTemplArrayFin1Rmu   [im][it-1][ir-1]; 
-	    else if (s==kSKsFCFV1RingELike)     nev = fMCTemplArrayFin1Re    [im][it-1][ir-1]; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) nev = fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike)  nev = fMCTemplArrayFinRHC1Re [im][it-1][ir-1]; // ANTINU
+	    nev = fMCTemplArrayFin[is].GetEntry(im, it-1, ir-1); 
 	    ////
 	    
 #ifdef PHYSHYPWEIGHTSAREONE
@@ -3165,10 +2738,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
 	    double nev_osc = nev * posc;
 	    
-	    if      (s==kSKsFCFV1RingMuLike)    fMCTemplArrayFin1Rmu   [im][it-1][ir-1] = nev_osc;
-	    else if (s==kSKsFCFV1RingELike)     fMCTemplArrayFin1Re    [im][it-1][ir-1] = nev_osc; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1] = nev_osc; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike)  fMCTemplArrayFinRHC1Re [im][it-1][ir-1] = nev_osc; // ANTINU
+	    fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1) = nev_osc;
 	    ////
 	  }//ir
 	}//im
@@ -3333,55 +2903,46 @@ bool SuperkMC::UpdateErecoSpectra(void)
 
     int n_ereco_bins = kNErecoBins[is];
     int n_etrue_bins = kNEtrueBins[is];
+    
+    // Recast VALORArray blocks so they can be used addressed like normal arrays (fast).
+    const double(&templFin)[knm][n_etrue_bins][n_ereco_bins] = *reinterpret_cast< const double (*) [knm][n_etrue_bins][n_ereco_bins]> (fMCTemplArrayFin[is].GetArray());
+    double(&erecoMode)[knm][n_ereco_bins] = *reinterpret_cast<double (*) [knm][n_ereco_bins]> (fMCErecoSpectrumArray[is].GetArray());
+    double * erecoTot = fMCErecoSpectrumTotArray[is].GetArray();
 
     // loop over Ereco
     for(int ir = 1; ir <= n_ereco_bins; ir++) {
-       double nev_tot = 0;
-       // loop over modes
-       for(int im = 0; im < knm; im++) { 
-          SuperkMode_t m = kSKReactionModes[is][im];
-          if(m == kSKmUndefined) continue;
-          // consider template?
-          bool skip = this->SkipTemplate(m);
-          if(skip) continue;
+      double nev_tot = 0;
+      // loop over modes
+      for(int im = 0; im < knm; im++) { 
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
+        // consider template?
+        bool skip = this->SkipTemplate(m);
+        if(skip) continue;
 
-          //TH2D * mctempl = this -> Template(s,m,kSKMCtFin);
-          
-          // loop over Etrue
-          double nev = 0;
-          for(int it = 1; it <= n_etrue_bins; it++) {
-	    if      (s==kSKsFCFV1RingMuLike)    nev += fMCTemplArrayFin1Rmu   [im][it-1][ir-1];
-	    else if (s==kSKsFCFV1RingELike)     nev += fMCTemplArrayFin1Re    [im][it-1][ir-1]; // MODIFIED
-	    else if (s==kSKsRHCFCFV1RingMuLike) nev += fMCTemplArrayFinRHC1Rmu[im][it-1][ir-1]; // ANTINU
-	    else if (s==kSKsRHCFCFV1RingELike)  nev += fMCTemplArrayFinRHC1Re [im][it-1][ir-1]; // ANTINU
-          }//it
-          nev_tot += nev;
+        //TH2D * mctempl = this -> Template(s,m,kSKMCtFin);
+        
+        // loop over Etrue
+        double nev = 0;
+        for(int it = 1; it <= n_etrue_bins; it++) {
+          nev += templFin[im][it-1][ir-1];
+        }//it
+        nev_tot += nev;
 #ifdef __apply_minevents_to_individual_modes__
-	  if(nev < 0) {
+        if(nev < 0) {
 #ifdef __show_negative_events_mesg_debug__
-	    cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev
-		 << " to zero " << 0 << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
+        cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev
+             << " to zero " << 0 << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
 #endif
-	    nev = 0;
-	  }
+          nev = 0;
+        } // if nev < 0
 #endif //__apply_minevents_to_individual_modes__
 
-	  if (s==kSKsFCFV1RingMuLike) 
-	    fMCErecoSpectrumArray1Rmu[im][ir-1] = nev;   
-	  else if (s==kSKsFCFV1RingELike)
-	    fMCErecoSpectrumArray1Re [im][ir-1] = nev;  // MODIFIED
-	  else if (s==kSKsRHCFCFV1RingMuLike) 
-	    fMCErecoSpectrumArrayRHC1Rmu[im][ir-1] = nev;  // ANTINU 
-	  else if (s==kSKsRHCFCFV1RingELike)
-	    fMCErecoSpectrumArrayRHC1Re [im][ir-1] = nev;  // ANTINU
-	 
-       }//im
-       
-       if      (s==kSKsFCFV1RingMuLike)    fMCErecoSpectrumTotArray1Rmu   [ir-1] = nev_tot;
-       else if (s==kSKsFCFV1RingELike)     fMCErecoSpectrumTotArray1Re    [ir-1] = nev_tot; // MODIFIED
-       else if (s==kSKsRHCFCFV1RingMuLike) fMCErecoSpectrumTotArrayRHC1Rmu[ir-1] = nev_tot; // ANTINU
-       else if (s==kSKsRHCFCFV1RingELike)  fMCErecoSpectrumTotArrayRHC1Re [ir-1] = nev_tot; // ANTINU
-
+        erecoMode[im][ir-1] = nev;   
+      }//im
+      
+      erecoTot[ir-1] = nev_tot;
+      
     }//ir
   }//is
   
@@ -3413,19 +2974,16 @@ void SuperkMC::FillEtrueSpectra(void)
           if(skip) continue;
 
           TH2D * mctempl = this -> Template(s,m,kSKMCtOri);
-	  
+          
           // loop over Ereco
           double nev = 0;
           for(int ir = 1; ir <= n_ereco_bins; ir++) {
-	    nev += mctempl->GetBinContent(ir,it);
+            nev += mctempl->GetBinContent(ir,it);
           }//ir
           nev_tot += nev;
        }//im
       
-       if      (s==kSKsFCFV1RingMuLike)    fMCEtrueSpectrumTotArray1Rmu   [it-1] = nev_tot;
-       else if (s==kSKsFCFV1RingELike)     fMCEtrueSpectrumTotArray1Re    [it-1] = nev_tot; // MODIFIED
-       else if (s==kSKsRHCFCFV1RingMuLike) fMCEtrueSpectrumTotArrayRHC1Rmu[it-1] = nev_tot; // ANTINU
-       else if (s==kSKsRHCFCFV1RingELike)  fMCEtrueSpectrumTotArrayRHC1Re [it-1] = nev_tot; // ANTINU
+       fMCEtrueSpectrumTotArray[is].GetEntryRef(it-1) = nev_tot;
 
     }//it
   }//is
@@ -3442,34 +3000,16 @@ bool SuperkMC::IsThereAnEvent(SuperkSample_t s, double Etrue) const
   int it = true_spectrum_tot->GetXaxis()->FindBin(Etrue);
   bool ev = false;
 
-  if (s == kSKsFCFV1RingMuLike){
-    ev = fMCEtrueSpectrumTotArray1Rmu[it-1] > kASmallNum;
-  }
-  // MODIFIED
-  else if (s == kSKsFCFV1RingELike) {
-    ev = fMCEtrueSpectrumTotArray1Re[it-1] > kASmallNum;
-  }
-  ////
-  // ANTINU
-  else if (s == kSKsRHCFCFV1RingMuLike){
-    ev = fMCEtrueSpectrumTotArrayRHC1Rmu[it-1] > kASmallNum;
-  }
-  else if (s == kSKsRHCFCFV1RingELike) {
-    ev = fMCEtrueSpectrumTotArrayRHC1Re[it-1] > kASmallNum;
-  }
+  ev = fMCEtrueSpectrumTotArray[is].GetEntry(it-1) > kASmallNum;
   ////
   
 #ifdef __show_isanevent_mesg_debug__
   if(ev){
     
-    if      (s == kSKsFCFV1RingMuLike)    cout << "Exp/SuperkMC >> There are " << fMCErecoSpectrumTotArray1Rmu   [it-1];
-    else if (s == kSKsFCFV1RingELike)     cout << "Exp/SuperkMC >> There are " << fMCErecoSpectrumTotArray1Re    [it-1]; // MODIFIED
-    else if (s == kSKsRHCFCFV1RingMuLike) cout << "Exp/SuperkMC >> There are " << fMCErecoSpectrumTotArrayRHC1Rmu[it-1]; // ANTINU
-    else if (s == kSKsRHCFCFV1RingELike)  cout << "Exp/SuperkMC >> There are " << fMCErecoSpectrumTotArrayRHC1Re [it-1]; // ANTINU
-    
+    cout << "Exp/SuperkMC >> There are " << fMCEtrueSpectrumTotArray[is].GetEntry(it-1);
     cout << " events for sample = " << util::AsString(s) 
-	 << ", Etrue = " << Etrue
-	 << endl;
+         << ", Etrue = " << Etrue
+         << endl;
   }
 #endif
   
@@ -3503,7 +3043,6 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar1Re;
      if ( util::IsOscNuE(m)    ) return fMCTreeOscNuE1Re;
   }//1Re
-
 
   // ANTINU
   if (s==kSKsRHCFCFV1RingMuLike)
@@ -4031,29 +3570,17 @@ TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) 
     for (int it = 0 ; it < n_etrue_bins ; it++) {
       for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
         int binno = h.GetBin(ir+1,it+1);
-        if (type == conv::kSKMCtOri) {
-          if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayOri1Rmu   [im][it][ir]);
-          else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayOri1Re    [im][it][ir]);
-          else if (s == kSKsRHCFCFV1RingMuLike) h.AddBinContent(binno, fMCTemplArrayOriRHC1Rmu[im][it][ir]);
-          else if (s == kSKsRHCFCFV1RingELike)  h.AddBinContent(binno, fMCTemplArrayOriRHC1Re [im][it][ir]);
-        }
+        //~ if (type == conv::kSKMCtOri) {
+          //~ h.SetBinContent(binno, fMCTemplArrayOri[is].GetEntry(im,it,ir));
+        //~ }
         if (type == conv::kSKMCtNom) {
-          if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayNom1Rmu   [im][it][ir]);
-          else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayNom1Re    [im][it][ir]);
-          else if (s == kSKsRHCFCFV1RingMuLike) h.AddBinContent(binno, fMCTemplArrayNomRHC1Rmu[im][it][ir]);
-          else if (s == kSKsRHCFCFV1RingELike)  h.AddBinContent(binno, fMCTemplArrayNomRHC1Re [im][it][ir]);
+          h.SetBinContent(binno, fMCTemplArrayNom[is].GetEntry(im,it,ir));
         }
         if (type == conv::kSKMCtTun) {
-          if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayTun1Rmu   [im][it][ir]);
-          else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayTun1Re    [im][it][ir]);
-          else if (s == kSKsRHCFCFV1RingMuLike) h.AddBinContent(binno, fMCTemplArrayTunRHC1Rmu[im][it][ir]);
-          else if (s == kSKsRHCFCFV1RingELike)  h.AddBinContent(binno, fMCTemplArrayTunRHC1Re [im][it][ir]);
+          h.SetBinContent(binno, fMCTemplArrayTun[is].GetEntry(im,it,ir));
         }
         if (type == conv::kSKMCtFin) {
-          if      (s == kSKsFCFV1RingMuLike)    h.AddBinContent(binno, fMCTemplArrayFin1Rmu   [im][it][ir]);
-          else if (s == kSKsFCFV1RingELike)     h.AddBinContent(binno, fMCTemplArrayFin1Re    [im][it][ir]);
-          else if (s == kSKsRHCFCFV1RingMuLike) h.AddBinContent(binno, fMCTemplArrayFinRHC1Rmu[im][it][ir]);
-          else if (s == kSKsRHCFCFV1RingELike)  h.AddBinContent(binno, fMCTemplArrayFinRHC1Re [im][it][ir]);
+          h.SetBinContent(binno, fMCTemplArrayFin[is].GetEntry(im,it,ir));
         }
       }
     }
@@ -4079,29 +3606,17 @@ TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SK
   for (int it = 0 ; it < n_etrue_bins ; it++) {
     for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
       int binno = h.GetBin(ir+1,it+1);
-      if (type == conv::kSKMCtOri) {
-        if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayOri1Rmu   [im][it][ir]);
-        else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayOri1Re    [im][it][ir]);
-        else if (s == kSKsRHCFCFV1RingMuLike) h.SetBinContent(binno, fMCTemplArrayOriRHC1Rmu[im][it][ir]);
-        else if (s == kSKsRHCFCFV1RingELike)  h.SetBinContent(binno, fMCTemplArrayOriRHC1Re [im][it][ir]);
-      }
+      //~ if (type == conv::kSKMCtOri) {
+        //~ h.SetBinContent(binno, fMCTemplArrayOri[is].GetEntry(im,it,ir));
+      //~ }
       if (type == conv::kSKMCtNom) {
-        if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayNom1Rmu   [im][it][ir]);
-        else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayNom1Re    [im][it][ir]);
-        else if (s == kSKsRHCFCFV1RingMuLike) h.SetBinContent(binno, fMCTemplArrayNomRHC1Rmu[im][it][ir]);
-        else if (s == kSKsRHCFCFV1RingELike)  h.SetBinContent(binno, fMCTemplArrayNomRHC1Re [im][it][ir]);
+        h.SetBinContent(binno, fMCTemplArrayNom[is].GetEntry(im,it,ir));
       }
       if (type == conv::kSKMCtTun) {
-        if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayTun1Rmu   [im][it][ir]);
-        else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayTun1Re    [im][it][ir]);
-        else if (s == kSKsRHCFCFV1RingMuLike) h.SetBinContent(binno, fMCTemplArrayTunRHC1Rmu[im][it][ir]);
-        else if (s == kSKsRHCFCFV1RingELike)  h.SetBinContent(binno, fMCTemplArrayTunRHC1Re [im][it][ir]);
+        h.SetBinContent(binno, fMCTemplArrayTun[is].GetEntry(im,it,ir));
       }
       if (type == conv::kSKMCtFin) {
-        if      (s == kSKsFCFV1RingMuLike)    h.SetBinContent(binno, fMCTemplArrayFin1Rmu   [im][it][ir]);
-        else if (s == kSKsFCFV1RingELike)     h.SetBinContent(binno, fMCTemplArrayFin1Re    [im][it][ir]);
-        else if (s == kSKsRHCFCFV1RingMuLike) h.SetBinContent(binno, fMCTemplArrayFinRHC1Rmu[im][it][ir]);
-        else if (s == kSKsRHCFCFV1RingELike)  h.SetBinContent(binno, fMCTemplArrayFinRHC1Re [im][it][ir]);
+        h.SetBinContent(binno, fMCTemplArrayFin[is].GetEntry(im,it,ir));
       }
     }
   }

@@ -19,20 +19,19 @@
 #include <TObject.h>
 #include <TXMLEngine.h>
 #include <TMatrixD.h>
+#include <vector>
 
 #include "Conventions.h"
 #include "FitCore/PhysHypothesis.h"
 #include "Utilities/NuOsc3Flavour.h"
 #include "Utilities/NuOscSterile.h"
 #include "Utilities.h"
+#include "Utilities/VALORArray.h"
 
 class TVirtualPad;
 class TTree;
 class TH1D;
 class TH2D;
-
-using valor::conv::kns;
-using valor::conv::knm;
 
 namespace valor {
 
@@ -42,6 +41,7 @@ class SuperkDetectorFSI;
 
 class SuperkMC: public TObject
 {
+
 public:
   SuperkMC();
  ~SuperkMC();
@@ -98,7 +98,7 @@ public:
   void SetUnphysicalOscProb(bool unphys) { fUnphysicalOscProb = unphys; }
 
   // Allow changing the mass hierarchy
-  void SetMassHierarchy(valor::conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
+  void SetMassHierarchy(conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
     
   void NevDebug(conv::SKMCTemplateType_t t, string name);
 
@@ -147,8 +147,8 @@ private:
   double fPOTRHC;  ///< POT for actual data-set in RHC sample (MC is scaled to that exposure)
 
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
-  TH2D *     fMCTemplOri[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
-  TH2D *     fMCTemplNom[kns][knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
+  TH2D *     fMCTemplOri[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
+  TH2D *     fMCTemplNom[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
   
   TH2D *     fMCTemplMECMartini;           ///< Martini MEC template
   TH2D *     fMCTemplRHCMECMartini;           ///< Martini MEC template    // ANTINU
@@ -162,60 +162,31 @@ private:
   double     fMCTemplArrayMECNieves [conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Nieves MEC template
   double     fMCTemplArrayRHCMECNieves [conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu]; ///< Nieves MEC template     // ANTINU
 
-  TH2D *     fMCVariableTempl[kns][knm];
+  TH2D *     fMCVariableTempl[conv::kns][conv::knm];
   
-  int        fMCVariableTemplArray1Rmu[knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
-  int        fMCVariableTemplArray1Re [knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
-  int        fMCVariableTemplArrayRHC1Rmu[knm][conv::kMCNEtrueBins][conv::kRHCXsNErecoBins1Rmu];     // ANTINU
-  int        fMCVariableTemplArrayRHC1Re [knm][conv::kMCNEtrueBins][conv::kRHCXsNErecoBins1Re];      // ANTINU
+  int        fMCVariableTemplArray1Rmu[conv::knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Rmu];
+  int        fMCVariableTemplArray1Re [conv::knm][conv::kMCNEtrueBins][conv::kXsNErecoBins1Re];
+  int        fMCVariableTemplArrayRHC1Rmu[conv::knm][conv::kMCNEtrueBins][conv::kRHCXsNErecoBins1Rmu];     // ANTINU
+  int        fMCVariableTemplArrayRHC1Re [conv::knm][conv::kMCNEtrueBins][conv::kRHCXsNErecoBins1Re];      // ANTINU
 
-  int        fMCTemplArrayOri1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
-  int        fMCTemplArrayOri1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  int        fMCTemplArrayOriRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];    // ANTINU
-  int        fMCTemplArrayOriRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];     // ANTINU
-
-  double     fMCTemplArrayNom1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
-  double     fMCTemplArrayNom1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  double     fMCTemplArrayNomRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];   // ANTINU
-  double     fMCTemplArrayNomRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
-
-  double     fMCTemplArrayTun1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
-  double     fMCTemplArrayTun1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  double     fMCTemplArrayTunRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];  // ANTINU
-  double     fMCTemplArrayTunRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
-
-  //double     fMCTemplArraySys[kns][knm][conv::kNEtrueBins][conv::kNErecoBins1Rmu]; 
-  //double     fMCTemplArrayRHCSys[kns][knm][conv::kRHCNEtrueBins][conv::kRHCNErecoBins1Rmu];   // ANTINU
-
-  double     fMCTemplArrayFin1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
-  double     fMCTemplArrayFin1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  double     fMCTemplArrayFinRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];  // ANTINU
-  double     fMCTemplArrayFinRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];    // ANTINU
-
-  double     fMCStatFracErr1Rmu[knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
-  double     fMCStatFracErr1Re [knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
-  double     fMCStatFracErrRHC1Rmu[knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];    // ANTINU
-  double     fMCStatFracErrRHC1Re [knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];      // ANTINU
-
-  TH1D *     fMCErecoSpectrum[kns][knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
-  TH1D *     fMCErecoSpectrumTot[kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
-  TH1D *     fMCEtrueSpectrumTot[kns];     ///< Etrue MC spectrum (sample)          : nominal
-
-  double     fMCEtrueSpectrumTotArray1Rmu[conv::kNEtrueBins1Rmu];
-  double     fMCEtrueSpectrumTotArray1Re[conv::kNEtrueBins1Re];
-  double     fMCEtrueSpectrumTotArrayRHC1Rmu[conv::kRHCNEtrueBins1Rmu];     // ANTINU
-  double     fMCEtrueSpectrumTotArrayRHC1Re[conv::kRHCNEtrueBins1Re];       // ANTINU
-
-  double     fMCErecoSpectrumTotArray1Rmu[conv::kNErecoBins1Rmu];
-  double     fMCErecoSpectrumTotArray1Re[conv::kNErecoBins1Re];
-  double     fMCErecoSpectrumTotArrayRHC1Rmu[conv::kRHCNErecoBins1Rmu];    // ANTINU
-  double     fMCErecoSpectrumTotArrayRHC1Re[conv::kRHCNErecoBins1Re];      // ANTINU 
-
-  double     fMCErecoSpectrumArray1Rmu[conv::knm][conv::kNErecoBins1Rmu];
-  double     fMCErecoSpectrumArray1Re [conv::knm][conv::kNErecoBins1Re];
-  double     fMCErecoSpectrumArrayRHC1Rmu[conv::knm][conv::kRHCNErecoBins1Rmu];    // ANTINU
-  double     fMCErecoSpectrumArrayRHC1Re [conv::knm][conv::kRHCNErecoBins1Re];     // ANTINU
-
+  int        fMCTemplArrayOri1Rmu[conv::knm][conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu];
+  int        fMCTemplArrayOri1Re [conv::knm][conv::kNEtrueBins1Re][conv::kNErecoBins1Re];
+  int        fMCTemplArrayOriRHC1Rmu[conv::knm][conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu];    // ANTINU
+  int        fMCTemplArrayOriRHC1Re [conv::knm][conv::kRHCNEtrueBins1Re][conv::kRHCNErecoBins1Re];     // ANTINU
+  
+  std::vector<VALORArray> fMCTemplArrayNom; //sample -> (mode, etrue, observable)
+  std::vector<VALORArray> fMCTemplArrayTun; //sample -> (mode, etrue, observable)
+  std::vector<VALORArray> fMCTemplArrayFin; //sample -> (mode, etrue, observable)
+  
+  std::vector<VALORArray> fMCStatFracErr;           // sample -> (mode, etrue, observable)
+  std::vector<VALORArray> fMCEtrueSpectrumTotArray; // sample -> etrue
+  std::vector<VALORArray> fMCErecoSpectrumTotArray; // sample -> observable
+  std::vector<VALORArray> fMCErecoSpectrumArray   ; // sample -> (mode, observable)
+  
+  TH1D *     fMCErecoSpectrum[conv::kns][conv::knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
+  TH1D *     fMCErecoSpectrumTot[conv::kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
+  TH1D *     fMCEtrueSpectrumTot[conv::kns];     ///< Etrue MC spectrum (sample)          : nominal
+  
   // input event trees and normalisation factors
   TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like 
   TTree*     fMCTreeNuMuBar1Rmu;           ///< input MC event tree /  sample: numubar                      / cuts: 1-ring mu-like 
@@ -257,12 +228,12 @@ private:
   TH1D*      fMCPOTHistRHCNuMuBar;         ///< input MC event sample POT histogram : numubar
   TH1D*      fMCPOTHistRHCNuE;             ///< input MC event sample POT histogram : nue 
   TH1D*      fMCPOTHistRHCNuEBar;          ///< input MC event sample POT histogram : nue
-  TH1D*      fMCPOTHistRHCOscNuE;       ///< input MC event sample POT histogram : nuebar (signal)
+  TH1D*      fMCPOTHistRHCOscNuE;          ///< input MC event sample POT histogram : nuebar (signal)
   double     fMCPOTRHCNuMu;                ///< MC event sample POT : numu
   double     fMCPOTRHCNuMuBar;             ///< MC event sample POT : numubar
   double     fMCPOTRHCNuE;                 ///< MC event sample POT : nue 
   double     fMCPOTRHCNuEBar;              ///< MC event sample POT : nue
-  double     fMCPOTRHCOscNuE;           ///< MC event sample POT : nuebar (signal)
+  double     fMCPOTRHCOscNuE;              ///< MC event sample POT : nuebar (signal)
   ////
 
   float      fBrEreco;                     ///< branch var for reading input MC mini-DST
@@ -275,11 +246,11 @@ private:
   static const int kMaxVarBins = 1000;
   
   // Arrays for remembering which big bins have events, and which little bins for those big bigs have events.
-  int fNNonEmptyVariableBins[kns][knm];               //!
-  int fNNonEmptyFixedBins   [kns][knm][kMaxVarBins];  //!
+  int fNNonEmptyVariableBins[conv::kns][conv::knm];               //!
+  int fNNonEmptyFixedBins   [conv::kns][conv::knm][kMaxVarBins];  //!
   
-  int fNonEmptyVariableBins [kns][knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
-  int * fNonEmptyFixedBins  [kns][knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
+  int fNonEmptyVariableBins [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
+  int * fNonEmptyFixedBins  [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
 
   // utility objects for computing cross-section and flux weights
   NuFlux *         fNuFlux;                ///< Neutrino flux inputs
@@ -296,7 +267,7 @@ private:
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
-ClassDef(SuperkMC, 6);
+ClassDef(SuperkMC, 7);
 };
 
 } //valor
