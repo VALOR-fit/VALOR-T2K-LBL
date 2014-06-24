@@ -7,6 +7,40 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+#ifndef __CINT__
+#include "TROOT.h"
+#include "TSystem.h"
+#include "TH1D.h"
+#include "TStopwatch.h"
+#include "TString.h"
+#include "TFile.h"
+#include "TCanvas.h"
+#include "TVectorD.h"
+#include "TRandom3.h"
+#include "TSystem.h"
+#include "TMath.h"
+#include "TMatrixD.h"
+#include "TAxis.h"
+#include "TXMLEngine.h"
+
+#include "Conventions/Opt.h"
+#include "Conventions.h"
+#include "Utilities.h"
+#include "Utilities/Rnd.h"
+#include "Utilities/Env.h"
+#include "FitCore/PhysHypothesis.h"
+#include "SuperkExpectation.h"
+#include "SuperkObservation.h"
+#include "FitCore/FitInputs.h"
+#include "FitCore/FitterMinuit.h"
+#include "FitCore/UtlFit.h"
+#include "BANFF.h"
+#include "SuperkDetectorFSI.h"
+#include "NuXSec.h"
+#include "UtlFitParamListFactory.h"
+#endif
+
+
 void run_fit
 (
   const char * tag                     = "toyexptfits",                       /* tag for output file */
@@ -18,15 +52,14 @@ void run_fit
   double       input_deltacp           = 0.00,                                /* deltacp, if -999 then randomize */
   double       input_dm12sq            = 7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = 2.32E-3,                             /* |Dm^2_{23}| */
-  const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
   //const char * fit_param_list        = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
-  const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */ nuosc3f+escale
-  //const char * fit_param_list          = "nuosc3f_12constrain+escale",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
+  const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see UtlFitParamListFactory.h) */
   const char * fit_option              = "minuit+hesse",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
-  bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
+  bool         store_bestfit_spectrum  = true,                                /* disable this if you don't want to store the best-fit spectra */
   const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                            /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
@@ -38,9 +71,18 @@ void run_fit
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
-
+  
   // Analysis configuration
   TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  FileStat_t dummy;
+  if (gSystem->GetPathInfo(config.Data(), dummy)) 
+  {
+    config = config_file;
+    if (gSystem->GetPathInfo(config.Data(), dummy)) {
+      cerr<<"Config file not found: "<<config_file<<endl;
+      exit(-1);
+    }
+  }
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -70,11 +112,11 @@ void run_fit
   cout << "   - Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
-  cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
+  cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : Form("%lf",input_mixing12) ) << endl;
+  cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : Form("%lf",input_mixing13) ) << endl;
   cout << "       > " << util::AsString(kPhypMixing23) << " = " << input_mixing23 << endl;
-  cout << "       > " << util::AsString(kPhypCPV    )  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
-  cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypCPV    )  << " = " << ((randomize_deltacp) ? "* randomized *" : Form("%lf",input_deltacp)) << endl;
+  cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : Form("%lf",input_dm12sq )) << " eV^2/c^4" << endl;
   cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
   cout << "- Fit" << endl;
   cout << "   - Fit Parameter List: " << fit_param_list << endl;
@@ -117,11 +159,6 @@ void run_fit
   TObjArray * pdf_array2 = new TObjArray;
   pdf_array2->SetOwner(false);
 
-  double fittime1, fittime2;
-  int fitstatus1, fitstatus2, fitstatus;
-  int fitstatus_err1, fitstatus_err2, fitstatus_err;
-  double chisq1, chisq2, chisq;
-
   // Create file to store results
   string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("%s-run_%d-%s.root", tag, run, oscstr.c_str()), "recreate");
@@ -136,21 +173,12 @@ void run_fit
   fitnt->Branch("best_fit_pdf",         "TObjArray",             &pdf_array,  1280000,0);
   fitnt->Branch("best_fit_pdf_fit1",    "TObjArray",             &pdf_array1, 1280000,0);
   fitnt->Branch("best_fit_pdf_fit2",    "TObjArray",             &pdf_array2, 1280000,0);
-  fitnt->Branch("fittime1",&fittime1,"fittime1/D");
-  fitnt->Branch("fittime2",&fittime2,"fittime2/D");
-  fitnt->Branch("fitstatus1",&fitstatus1,"fitstatus1/I");
-  fitnt->Branch("fitstatus2",&fitstatus2,"fitstatus2/I");
-  fitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
-  fitnt->Branch("fitstatus_err1",&fitstatus_err1,"fitstatus_err1/I");
-  fitnt->Branch("fitstatus_err2",&fitstatus_err2,"fitstatus_err2/I");
-  fitnt->Branch("fitstatus_err",&fitstatus_err,"fitstatus_err/I");
-  fitnt->Branch("chisq1",&chisq1,"chisq1/D");
-  fitnt->Branch("chisq2",&chisq2,"chisq2/D");
-  fitnt->Branch("chisq",&chisq,"chisq/D");
-
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
-
+  
+  FitInputs * fit_inputs2 = NULL;
+  FitterABC * fitter2     = NULL;
+  
   // Loop over toy-MC experiments
   for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
 
@@ -254,11 +282,8 @@ void run_fit
      // Do the fit
      fparm1->ResetCurrToInitValues(); // reset osc params
      fitter->DoTheFit();
-     fitstatus1 = fitter->FitStatusCode("migrad_min");
-     fitstatus_err1 = fitter->FitStatusCode("hesse_err");     
-     
+     //int fitstatus = fitter->FitStatusCode();
      double bestfit_chisq  = fparm1->GetBestFitStatistic();
-     chisq1 = bestfit_chisq;
      double bestfit_chisq2 = 0;
 
      // Save spectra (data and best-fit prediction)
@@ -284,15 +309,11 @@ void run_fit
 	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
        fparm2->SetInitValue(conv::kPhypMixing23, reseed);
        // Get fitter
-       FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
-       FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
+       fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
+       fitter2    = util::GetFitter(fit_inputs2,fit_option);
        fparm2->ResetCurrToInitValues(); // reset osc params
        fitter2->DoTheFit();
-       fitstatus2 = fitter->FitStatusCode("migrad_min");
-       fitstatus_err2 = fitter->FitStatusCode("hesse_err");     
-       bestfit_chisq2 =  fparm2->GetBestFitStatistic();
-       chisq2 = bestfit_chisq2;
-
+       bestfit_chisq2 = fparm2->GetBestFitStatistic();
        // Save spectra (best-fit prediction)
        if(store_bestfit_spectrum) {
 	 skexp->Write(pdf_array2, "pdf");
@@ -303,11 +324,6 @@ void run_fit
      cout << "- Best-fit oscillation params (below) yield chisq = ";
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
        if(bestfit_chisq2 < bestfit_chisq) {
-
-	 fitstatus = fitstatus2;
-	 fitstatus_err = fitstatus_err2;
-	 chisq = chisq2;
-	 
 	 cout << bestfit_chisq2 << " from the second seed fit" << endl;
 	 fparm2->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm2;
@@ -315,11 +331,6 @@ void run_fit
 	 br_bf_array->SetAddress(&pdf_array2);
        }
        else {
-
-	 fitstatus = fitstatus1;
-	 fitstatus_err = fitstatus_err1;
-	 chisq = chisq1;
-
 	 cout << bestfit_chisq << " from the first seed fit" << endl;
 	 fparm1->ShowOnlyBestFitValuesInNextPrint();
 	 cout << *fparm1;
@@ -329,11 +340,6 @@ void run_fit
      }
      else {
        cout << bestfit_chisq << endl;
-
-       fitstatus = fitstatus1;
-       fitstatus_err = fitstatus_err1;
-       chisq = chisq1;
-
        fparm1->ShowOnlyBestFitValuesInNextPrint();
        cout << *fparm1;
        br_fparm->SetAddress(&fparm1);
@@ -352,10 +358,24 @@ void run_fit
        delete fitter2;
      }
 
-  }
+  }//iexperiment
 
   // Store ntuple with best-fit results
   f.cd();
   fitnt->Write();
   f.Close();
 }
+
+
+
+#ifndef __CINT__
+int main()
+{
+  valor::Env::Instance()->AutoSet("t2xk");
+  TString conf_dir  = valor::Env::Instance()->TopLevelConfDir();
+  TString verbosity = conf_dir + "/verbosity.xml";
+  valor::util::Verbosity(verbosity.Data());
+  run_fit("profiling",0,1);
+  return 0;
+}
+#endif
