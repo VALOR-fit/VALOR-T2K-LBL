@@ -148,7 +148,9 @@ void make_toygrid_xml_joint
   double max_val_param1, min_val_param1, max_val_param2, min_val_param2, max_val_param3, min_val_param3;
   double step1, step2, step3;
 
-  TH2D *hLike2D = new TH2D(); // 23, |dm2|
+  TH2D *hLike2D_12 = new TH2D(); // 23, |dm2|
+  TH2D *hLike2D_13 = new TH2D(); // 23, 13
+  TH2D *hLike2D_23 = new TH2D(); // |dm2|, 13
   TH3D *hLike3D = new TH3D(); // 13, 23, |dm2|
 
   //string parname1, parname2;
@@ -199,7 +201,9 @@ void make_toygrid_xml_joint
     fitnt->Branch("parname1", &parname1); // name of the grid parameter 1
     fitnt->Branch("parname2", &parname2); // name of the grid parameter 2    
     fitnt->Branch("parname3", &parname3); // name of the grid parameter 3    
-    fitnt->Branch("hLike2D","TH2D",&hLike2D);
+    fitnt->Branch("hLike2D_12","TH2D",&hLike2D_12);
+    fitnt->Branch("hLike2D_13","TH2D",&hLike2D_13);
+    fitnt->Branch("hLike2D_23","TH2D",&hLike2D_23);
     fitnt->Branch("hLike3D","TH3D",&hLike3D);
   }
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
@@ -363,14 +367,34 @@ void make_toygrid_xml_joint
     // Set histograms of likelihood grid
 
     if(param1!="none" && param2!="none"){
-      hLike2D->Clear();
+      hLike2D_12->Clear();
       int n_param1 = (max_val_param1 - min_val_param1)/step1 + 1; // +1 for last point
       double min1 = min_val_param1;
       double max1 = max_val_param1+step1;
       int n_param2 = (max_val_param2 - min_val_param2)/step2 + 1; // +1 for last point
       double min2 = min_val_param2;
       double max2 = max_val_param2+step2;
-      hLike2D = new TH2D("hLike2D","hLike2D",n_param1,min1,max1,n_param2,min2,max2);
+      hLike2D_12 = new TH2D("hLike2D_12","hLike2D_12",n_param1,min1,max1,n_param2,min2,max2);
+    }
+    if(param1!="none" && param3!="none"){
+      hLike2D_13->Clear();
+      int n_param1 = (max_val_param1 - min_val_param1)/step1 + 1; // +1 for last point
+      double min1 = min_val_param1;
+      double max1 = max_val_param1+step1;
+      int n_param3 = (max_val_param3 - min_val_param3)/step3 + 1; // +1 for last point
+      double min3 = min_val_param3;
+      double max3 = max_val_param3+step3;
+      hLike2D_13 = new TH2D("hLike2D_13","hLike2D_13",n_param1,min1,max1,n_param3,min3,max3);
+    }
+    if(param2!="none" && param3!="none"){
+      hLike2D_23->Clear();
+      int n_param2 = (max_val_param2 - min_val_param2)/step2 + 1; // +1 for last point
+      double min2 = min_val_param2;
+      double max2 = max_val_param2+step2;
+      int n_param3 = (max_val_param3 - min_val_param3)/step3 + 1; // +1 for last point
+      double min3 = min_val_param3;
+      double max3 = max_val_param3+step3;
+      hLike2D_23 = new TH2D("hLike2D_23","hLike2D_23",n_param2,min2,max2,n_param3,min3,max3);
     }
     if(param1!="none" && param2!="none" && param3!="none"){
       hLike3D->Clear();
@@ -696,8 +720,20 @@ void make_toygrid_xml_joint
 	  if(param1!="none" && param2!="none"){
 	    double x = fparm1->CurrValue(p1);
 	    double y = fparm2->CurrValue(p2);
-	    int bin = hLike2D->FindBin(x+conv::kASmallNum,y+conv::kASmallNum);
-	    hLike2D->SetBinContent(bin,chisq);
+	    int bin = hLike2D_12->FindBin(x+conv::kASmallNum,y+conv::kASmallNum);
+	    hLike2D_12->SetBinContent(bin,chisq);
+	  }
+	  if(param1!="none" && param3!="none"){
+	    double x = fparm1->CurrValue(p1);
+	    double y = fparm1->CurrValue(p3);
+	    int bin = hLike2D_13->FindBin(x+conv::kASmallNum,y+conv::kASmallNum);
+	    hLike2D_13->SetBinContent(bin,chisq);
+	  }
+	  if(param2!="none" && param3!="none"){
+	    double x = fparm1->CurrValue(p2);
+	    double y = fparm1->CurrValue(p3);
+	    int bin = hLike2D_23->FindBin(x+conv::kASmallNum,y+conv::kASmallNum);
+	    hLike2D_23->SetBinContent(bin,chisq);
 	  }
 	  if(param1!="none" && param2!="none" && param3!="none"){
 	    double x = fparm1->CurrValue(p1);
@@ -728,12 +764,14 @@ void make_toygrid_xml_joint
     if(last_experiment-first_experiment==0){
       if(param1!="none" || param2!="none" || param3!="none"){
 	char foutname[200];
-	sprintf(foutname,"LikeGrid_%s_%s_%s.root",param1,param2,param3);
+	sprintf(foutname,"LikeGrid_%s_Nbins%d_%s_Nbins%d_%s_Nbins%d.root",param1,nbins_param1,param2,nbins_param2,param3,nbins_param3);
 	TFile *fout = new TFile(foutname,"RECREATE");
 	cout << endl;
 	cout << "Store likelihood grid in " << foutname << endl;
 	cout << endl;
-	hLike2D->Write();
+	hLike2D_12->Write();
+	hLike2D_13->Write();
+	hLike2D_23->Write();
 	hLike3D->Write();
 	fout->Close();
       }
