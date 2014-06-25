@@ -9,8 +9,8 @@
 
 void run_sensitivity_joint_toys_xml
 (
-  //const char * xmlfile                 = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
-  const char * xmlfile                 = "inputs/toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                /* input XML file with toy MC experiments */
+  const char * xmlfile                 = "../inputs/data_newstruct.xml",                                                /* input XML file with toy MC experiments */
+  //const char * xmlfile                 = "inputs/toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                /* input XML file with toy MC experiments */
   int          first_experiment        = 0,                                   /* */
   int          last_experiment         = 0,                                   /* */
   bool         using_xml_file          = true,                                   /* if false, skobs reads xmlfile as a root file */
@@ -41,12 +41,15 @@ void run_sensitivity_joint_toys_xml
 
   bool         reactor                 = true,                               /* enable this if you want to apply the reactor constraint */
   double       tolerance               = 0.01,                                 /* value for the fitter tolerance */
-  const char * param1                  = "deltacp",
-  const char * param2                  = "none",                  /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
+
+  //
+
+  const char * param1                  = "mixing13",
+  const char * param2                  = "mixing23",                  /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
   int          min_bin_param1          = 1,                                /* minimum bin for param1: dcp, sinsqth23 */
-  int          max_bin_param1          = 51,                                /* maximum bin for param1 */
+  int          max_bin_param1          = 3,                                /* maximum bin for param1 */
   int          min_bin_param2          = 1,                                /* minimum bin for param2: sinsqth13, dmsq32 */
-  int          max_bin_param2          = 1
+  int          max_bin_param2          = 3
                                   /* maximum bin for param2 */
 )
 {
@@ -221,12 +224,6 @@ void run_sensitivity_joint_toys_xml
      
      nbins_param1 = (max_bin_param1-min_bin_param1)+1;
      nbins_param2 = (max_bin_param2-min_bin_param2)+1;
-
-     // Reset all output spectra
-     dat_array ->Clear();
-     pdf_array ->Clear();
-     pdf_array1->Clear();
-     pdf_array2->Clear();
 
      // Re-seed fitter (reset current values to specified init values)
      fparm1->ResetCurrToInitValues();
@@ -502,6 +499,12 @@ void run_sensitivity_joint_toys_xml
 	 cout << endl;
 	 cout << endl;
 
+	 // Reset all output spectra
+	 dat_array ->Clear();
+	 pdf_array ->Clear();
+	 pdf_array1->Clear();
+	 pdf_array2->Clear();
+
 	 // Get superk spectrum observation (toy experiment)
 	 SuperkObservation * skobs = new SuperkObservation;
 	 skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
@@ -571,13 +574,14 @@ void run_sensitivity_joint_toys_xml
             
 	 //now, only if theta23 is not fixed, repeat the fit at mirror point...
 
-	 cout << endl;
-	 cout << endl;
-	 cout << "Second Octant" << endl;
-	 cout << endl;
-	 cout << endl;
-
 	 if(((Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)||(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta2Theta)) && (!(fparm1->IsFixed(conv::kPhypMixing23))) ) {
+
+	   cout << endl;
+	   cout << endl;
+	   cout << "Second Octant" << endl;
+	   cout << endl;
+	   cout << endl;
+
 	   skexp->ResetSystematicVariations();
 	   //first fit with only osc
 	   fparm00->ResetCurrToInitValues(); // reset osc params
