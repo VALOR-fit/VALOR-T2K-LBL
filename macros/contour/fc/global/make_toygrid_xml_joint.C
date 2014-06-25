@@ -36,12 +36,12 @@ void make_toygrid_xml_joint
  const char * param1                  = "mixing23",                        /* first parameter to be fitting vs - default: none for a single fit */ 
  const char * param2                  = "dmsq",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  const char * param3                  = "mixing13",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
- int          min_bin_param1          = 1 ,                                /* minimum bin for param1 */
- int          max_bin_param1          = 5 ,                                /* maximum bin for param1 */
- int          min_bin_param2          = 1 ,                                /* minimum bin for param2 */
- int          max_bin_param2          = 5 ,                                  /* maximum bin for param2 */
- int          min_bin_param3          = 1 ,                                /* minimum bin for param2 */
- int          max_bin_param3          = 5 ,                                  /* maximum bin for param2 */
+ int          min_bin_param1          = 1,                                /* minimum bin for param1 */
+ int          max_bin_param1          = 5,                                /* maximum bin for param1 */
+ int          min_bin_param2          = 1,                                /* minimum bin for param2 */
+ int          max_bin_param2          = 5,                                  /* maximum bin for param2 */
+ int          min_bin_param3          = 1,                                /* minimum bin for param2 */
+ int          max_bin_param3          = 5                                  /* maximum bin for param2 */
  )
 {
   using namespace std;
