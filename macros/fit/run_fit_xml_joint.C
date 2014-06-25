@@ -8,30 +8,31 @@
  
 void run_fit_xml_joint
 (
- //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
-  const char * xmlfile = "toymc-0.xml",                                                /* input XML file with toy MC experiments */
-  const char * tag = "0",                                                    /* */
-  int          run = 1,                                                    /* */
+ const char * xmlfile = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
+ // const char * xmlfile = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                 /* input XML file with toy MC experiments */
+  const char * tag = "prova",                                                    /* */
+  int          run = 0,                                                    /* */
   int          first_experiment = 0,                                   /* */
-  int          last_experiment  = 2,                                   /* */
+  int          last_experiment  = 0,                                   /* */
   //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
-  //const char * config_file      = "analysis_configuration_run5to6.xml",        /* analysis configuration file */
+  //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
   const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
   //const char * fit_param_list   = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+ const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+ //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option       = "minuit+hesse",                            /* fitter option */
   bool         store_toy_expts         = true,                         /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                         /* disable this if you don't want to store the best-fit spectra */
-  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ //const char * dmsqscheme          = "fogli",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",                              /* normal or inverted */
   const char * mixparamchoice      = "sinsqtheta",                          /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
   //bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
   double       dcp_value           = 0,                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
   bool         using_xml_file      = true,                                   /* if false, skobs reads xmlfile as a root file */
-  bool         reactor                 = true,                               /* enable this if you want to apply the reactor constraint */
-  double       tolerance               = 0.01,                                 /* value for the fitter tolerance */
+  bool         reactor             = true,                               /* enable this if you want to apply the reactor constraint */
+  double       tolerance           = 0.1,                                 /* value for the fitter tolerance */
 )
 {
   using namespace std;
@@ -185,11 +186,6 @@ void run_fit_xml_joint
      // Re-seed fitter (reset current values to specified init values)
      fparm1->ResetCurrToInitValues();
      
-     //if reactor constraint enabled, set nuisance
-     if(reactor) {
-       fparm1->SetNuisance(conv::kPhypMixing13,true);
-     }
-
      // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
      skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
@@ -228,7 +224,7 @@ void run_fit_xml_joint
      double true_chisq = fit_inputs->Statistic();
 
      // Print-out true params
-     fparm1->ShowOnlyCurrValuesInNextPrint();
+     //fparm1->ShowOnlyCurrValuesInNextPrint();
      cout << "- True oscillation params (below) yield chisq = " << true_chisq
           << *fparm1;
 
