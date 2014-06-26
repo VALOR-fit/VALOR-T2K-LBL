@@ -815,8 +815,8 @@ void make_toygrid_xml_joint
     if(last_experiment-first_experiment==0){
       if(param1!="none" || param2!="none" || param3!="none"){
 	char foutname[200];
-	sprintf(foutname,"LikeGrid_%s_%s_%s_BinsTot_%d_BinsTot_%d_BinsTot_%d_BinsPart_%d_%d_BinsPart_%d_%d_BinsPart_%d_%d.root",
-		param1,param2,param3,
+	sprintf(foutname,"LikeGrid_%s_%s_%s_%s_BinsTot_%d_BinsTot_%d_BinsTot_%d_BinsPart_%d_%d_BinsPart_%d_%d_BinsPart_%d_%d.root",
+		tag,param1,param2,param3,
 		nbins_tot_param1,nbins_tot_param2,nbins_tot_param3,
 		min_bin_param1,max_bin_param1,min_bin_param2,max_bin_param2,min_bin_param3,max_bin_param3,
 		);
