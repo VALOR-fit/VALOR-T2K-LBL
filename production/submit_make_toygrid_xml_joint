@@ -53,19 +53,29 @@ foreach (@ARGV) {
 
   if($_ eq '--reactor'             ) { $reactor            = $ARGV[$iarg+1]; }
   if($_ eq '--tolerance'           ) { $tolerance          = $ARGV[$iarg+1]; }
+  
+  if($_ eq '--xmlfile'             ) { $xmlfile            = $ARGV[$iarg+1]; }
+  if($_ eq '--using-xmlfile'       ) { $using_xmlfile      = $ARGV[$iarg+1]; }
+
   if($_ eq '--param1'              ) { $param1             = $ARGV[$iarg+1]; }
   if($_ eq '--param2'              ) { $param2             = $ARGV[$iarg+1]; }
   if($_ eq '--param3'              ) { $param3             = $ARGV[$iarg+1]; }
-  if($_ eq '--min_bin_param1'      ) { $min_bin_param1     = $ARGV[$iarg+1]; }
-  if($_ eq '--min_bin_param2'      ) { $min_bin_param2     = $ARGV[$iarg+1]; }
-  if($_ eq '--min_bin_param3'      ) { $min_bin_param3     = $ARGV[$iarg+1]; }
-  if($_ eq '--max_bin_param1'      ) { $max_bin_param1     = $ARGV[$iarg+1]; }
-  if($_ eq '--max_bin_param2'      ) { $max_bin_param2     = $ARGV[$iarg+1]; }
-  if($_ eq '--max_bin_param3'      ) { $max_bin_param3     = $ARGV[$iarg+1]; }
-
-  if($_ eq '--xmlfile'             ) { $xmlfile            = $ARGV[$iarg+1]; }
-  if($_ eq '--using-xmlfile'       ) { $using_xmlfile      = $ARGV[$iarg+1]; }
   
+  if($_ eq '--nbins-tot-param1'      ) { $min_bin_param1     = $ARGV[$iarg+1]; }
+  if($_ eq '--nbins-tot-param2'      ) { $min_bin_param2     = $ARGV[$iarg+1]; }
+  if($_ eq '--nbins-tot-param3'      ) { $min_bin_param3     = $ARGV[$iarg+1]; }
+
+  if($_ eq '--min-bin-param1'      ) { $min_bin_param1     = $ARGV[$iarg+1]; }
+  if($_ eq '--min-bin-param2'      ) { $min_bin_param2     = $ARGV[$iarg+1]; }
+  if($_ eq '--min-bin-param3'      ) { $min_bin_param3     = $ARGV[$iarg+1]; }
+  if($_ eq '--max-bin-param1'      ) { $max_bin_param1     = $ARGV[$iarg+1]; }
+  if($_ eq '--max-bin-param2'      ) { $max_bin_param2     = $ARGV[$iarg+1]; }
+  if($_ eq '--max-bin-param3'      ) { $max_bin_param3     = $ARGV[$iarg+1]; }
+
+  if($_ eq '--step-grid-1'           ) { $step_grid_1          = $ARGV[$iarg+1]; }
+  if($_ eq '--step-grid-2'           ) { $step_grid_2          = $ARGV[$iarg+1]; }
+  if($_ eq '--step-grid-3'           ) { $step_grid_3          = $ARGV[$iarg+1]; }
+
   $iarg++;
 }
 $resource               = "interactive"                          unless defined $resource;
@@ -91,111 +101,156 @@ $dcp_value              = 0                                      unless defined 
 
 $reactor                = 1                                      unless defined $reactor;
 $tolerance              = 0.01                                   unless defined $tolerance;
-$param1                 = "mixing23"                              unless defined $param1;
-$param2                 = "dmsq"                                 unless defined $param2;
-$param3                 = "mixing13"                                 unless defined $param3;
-$min_bin_param1          = 1                                     unless defined $min_bin_param1; 
-$max_bin_param1          = 41                                    unless defined $max_bin_param1;
-$min_bin_param2          = 1                                     unless defined $min_bin_param2;
-$max_bin_param2          = 21                                     unless defined $max_bin_param2; 
-$min_bin_param3          = 1                                     unless defined $min_bin_param3;
-$max_bin_param3          = 21                                     unless defined $max_bin_param3; 
 
 $xmlfile                 = "inputs/data.xml"                  unless defined $xmlfile;
 $using_xmlfile           = 1                                     unless defined $using_xmlfile;
 
+$param1                 = "mixing23"                              unless defined $param1;
+$param2                 = "dmsq"                                 unless defined $param2;
+$param3                 = "mixing13"                                 unless defined $param3;
+
+$nbins_tot_param1        = 41,                                    unless defined $nbins_tot_param1;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
+$nbins_tot_param2        = 21,                                    unless defined $nbins_tot_param2;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
+$nbins_tot_param3        = 21,                                    unless defined $nbins_tot_param3;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
+
+$min_bin_param1          = 1                                      unless defined $min_bin_param1;     # total range to loop over (first bin, param1)
+$max_bin_param1          = 41                                      unless defined $max_bin_param1;    # total range to loop over (last bin, param1)
+$min_bin_param2          = 1                                      unless defined $min_bin_param2;     # total range to loop over (first bin, param2)
+$max_bin_param2          = 21                                      unless defined $max_bin_param2;    # total range to loop over (last bin, param2)
+$min_bin_param3          = 1                                      unless defined $min_bin_param3;     # total range to loop over (first bin, param3)
+$max_bin_param3          = 21                                      unless defined $max_bin_param3;    # total range to loop over (last bin, param3)
+
+$step_grid_1               = 4                                    unless defined $step_grid_1;     # step for each job for param1
+$step_grid_2               = 2                                    unless defined $step_grid_2;     # step for each job for param2
+$step_grid_3               = 4                                    unless defined $step_grid_3;     # step for each job for param3
+
+
 if( !defined $cput ) {
-  if($resource eq "RAL"   ) { $cput = "6:00:00";  }
-  if($resource eq "Oxford") { $cput = "11:50:00"; }
+    if($resource eq "RAL"   ) { $cput = "6:00:00";  }
+    if($resource eq "Oxford") { $cput = "11:50:00"; }
 }
 
 mkpath ($job_dir, {verbose => 1, mode=>0777}); 
 die("$job_dir doesn't exist") unless -d $job_dir;
 
-
 # Select which toys in the xml files to fit
-$nruns = 1;
-$nexpts = 1;
-$firstexpt = 0;
 $irun  = 0;
-while($irun < $nruns) {
-  print "Submitting run: $irun \n";
+$first = 0;                # first toy of the job
+$last  = 0;                # last toy of the job
+$ijob = 1;
 
-  $first = $firstexpt;                # first toy of the job
-  $last  = $firstexpt + $nexpts - 1;  # last toy of the job
+for($imin1 = $min_bin_param1; $imin1 <= $max_bin_param1; $imin1 = $imin1+$step_grid_1) { 
+    $min_bin_1 = $imin1;
+    $max_bin_1 = $imin1-1 + $step_grid_1;
 
-  print "Jobs w/ toys from $first to $last \n";
+    if($min_bin_1 < $min_bin_param1) {
+	$min_bin_1 = $min_bin_param1;
+    }
+    if($max_bin_1 > $max_bin_param1) {
+	$max_bin_1 = $max_bin_param1;
+    }
+    
+    for($imin2 = $min_bin_param2; $imin2 <= $max_bin_param2; $imin2 = $imin2+$step_grid_2) { 
+	$min_bin_2 = $imin2;
+	$max_bin_2 = $imin2-1 + $step_grid_2;
+	
+	if($min_bin_2 < $min_bin_param2) {
+	    $min_bin_2 = $min_bin_param2;
+	}
+	if($max_bin_2 > $max_bin_param2) {
+	    $max_bin_2 = $max_bin_param2;
+	}
 
-  $command = "root2k -l -b -q \'$softw_dir/macros/contour/fc/global/make_toygrid_xml_joint.C(\"$xmlfile\",\"$tag\",$irun,$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$using_xmlfile,$reactor,$tolerance,\"$param1\",\"$param2\",\"$param3\",$min_bin_param1,$max_bin_param1,$min_bin_param2,$max_bin_param2,$min_bin_param3,$max_bin_param3)\'";
+	for($imin3 = $min_bin_param3; $imin3 <= $max_bin_param3; $imin3 = $imin3+$step_grid_3) { 
+	    $min_bin_3 = $imin3;
+	    $max_bin_3 = $imin3-1 + $step_grid_3;
+	     	    
+	    if($min_bin_3 < $min_bin_param3) {
+		$min_bin_3 = $min_bin_param3;
+	    }
+	    if($max_bin_3 > $max_bin_param3) {
+		$max_bin_3 = $max_bin_param3;
+	    }
 
-  print "$command \n";
-       
-  #
-  # ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
-  #
-  if($resource eq "ETH-Monch") {
-      open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
-      print PBS "#!/bin/bash -l  \n";
-      print PBS "#SBATCH --partition=dphys_compute_wk  \n";
-      #print PBS "#SBATCH --partition=dphys_compute  \n";
-      print PBS "#SBATCH --nodes=1  \n";
-      print PBS "#SBATCH --ntasks-per-node=1  \n";
-      print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
-      print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
-      print PBS "$command \n";
-      close(PBS);
-      #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-      `sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-  }
-      
-  #
-  # RAL
-  #
-  if($resource eq "RAL") {
-     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
-     print PBS "#!/bin/bash \n";
-     print PBS "#PBS -N $tag-$irun \n";
-     print PBS "#PBS -l cput=$cput \n";
-     print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-     print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-     print PBS "#PBS -q prod \n";
-     print PBS "#PBS -l walltime=$cput \n";
-     print PBS "cd $job_dir \n";
-     print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
-     print PBS "$command \n";
-     close(PBS);
-     `qsub -q prod $job_dir/$tag-$irun.pbs`;
-  }
-  #
-  # Oxford
-  #
-  if($resource eq "Oxford") {
-     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
-     print PBS "#!/bin/bash \n";
-     print PBS "#PBS -N $tag-$irun \n";
-     print PBS "#PBS -l cput=$cput \n";
-     print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-     print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-     print PBS "cd $job_dir \n";
-     print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
-     print PBS "$command \n";
-     close(PBS);
-     `qsub $job_dir/$tag-$irun.pbs`;
-  }
-  #
-  # Grid
-  #
-  if($resource eq "Grid") {
-     print "Not supported just yet!\n";
-  }
-  #
-  # interactive
-  #
-  if($resource eq "interactive") {
-     system($command);
-  }
+	    $nfits = ($max_bin_1-$min_bin_1+1)*($max_bin_2-$min_bin_2+1)*($max_bin_3-$min_bin_3+1);
+	    
+	    print "\n";
+	    print "Submitting job $ijob: \n";
+	    print "nbins_tot_param1 = $nbins_tot_param1 - bin_param_1 = $min_bin_1 - $max_bin_1 \n";
+	    print "nbins_tot_param2 = $nbins_tot_param2 - bin_param_2 = $min_bin_2 - $max_bin_2 \n";
+	    print "nbins_tot_param3 = $nbins_tot_param3 - bin_param_3 = $min_bin_3 - $max_bin_3 \n";
+	    print "# point fits = $nfits \n";
 
-  $firstexpt = $firstexpt + $nexpts;
-  
-  $irun++;
-}
+	    $command = "root2k -l -b -q \'$softw_dir/macros/contour/fc/global/make_toygrid_xml_joint.C(\"$xmlfile\",\"$tag\",$irun,$first,$last,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$using_xmlfile,$reactor,$tolerance,\"$param1\",\"$param2\",\"$param3\",$nbins_tot_param1,$nbins_tot_param2,$nbins_tot_param3,$min_bin_1,$max_bin_1,$min_bin_2,$max_bin_2,$min_bin_3,$max_bin_3)\'";
+    
+	    print "$command \n";
+
+	    $ijob=$ijob+1;
+
+	    #
+	    # ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
+	    #
+	    if($resource eq "ETH-Monch") {
+		open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
+		print PBS "#!/bin/bash -l  \n";
+		print PBS "#SBATCH --partition=dphys_compute_wk  \n";
+		#print PBS "#SBATCH --partition=dphys_compute  \n";
+		print PBS "#SBATCH --nodes=1  \n";
+		print PBS "#SBATCH --ntasks-per-node=1  \n";
+		print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
+		print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
+		print PBS "$command \n";
+		close(PBS);
+		#`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+		`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+	    }
+	    
+	    #
+	    # RAL
+	    #
+	    if($resource eq "RAL") {
+		open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+		print PBS "#!/bin/bash \n";
+		print PBS "#PBS -N $tag-$irun \n";
+		print PBS "#PBS -l cput=$cput \n";
+		print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+		print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+		print PBS "#PBS -q prod \n";
+		print PBS "#PBS -l walltime=$cput \n";
+		print PBS "cd $job_dir \n";
+		print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
+		print PBS "$command \n";
+		close(PBS);
+		`qsub -q prod $job_dir/$tag-$irun.pbs`;
+	    }
+	    #
+	    # Oxford
+	    #
+	    if($resource eq "Oxford") {
+		open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+		print PBS "#!/bin/bash \n";
+		print PBS "#PBS -N $tag-$irun \n";
+		print PBS "#PBS -l cput=$cput \n";
+		print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+		print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+		print PBS "cd $job_dir \n";
+		print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
+		print PBS "$command \n";
+		close(PBS);
+		`qsub $job_dir/$tag-$irun.pbs`;
+	    }
+	    #
+	    # Grid
+	    #
+	    if($resource eq "Grid") {
+		print "Not supported just yet!\n";
+	    }
+	    #
+	    # interactive
+	    #
+	    if($resource eq "interactive") {
+		system($command);
+	    }
+	} # ibin3
+    } # ibin2
+} # ibin1
