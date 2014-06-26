@@ -629,13 +629,6 @@ void make_toygrid_xml_joint
 	    if(param3!="none") inparam3 = fparm1->CurrValue(p3);
 	  }
 
-	  continue;
-
-
-
-
-
-
 	  // Reset output spectra
 	  dat_array ->Clear();
 	  pdf_array ->Clear();
