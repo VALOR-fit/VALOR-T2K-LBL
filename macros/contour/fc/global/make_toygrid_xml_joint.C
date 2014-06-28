@@ -37,16 +37,16 @@ void make_toygrid_xml_joint
  const char * param2                  = "dmsq",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  const char * param3                  = "mixing13",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  
- int          nbins_tot_param1            = 9,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
- int          nbins_tot_param2            = 9,                              /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
- int          nbins_tot_param3            = 9,                              /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int          nbins_tot_param1            = 5,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int          nbins_tot_param2            = 5,                              /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int          nbins_tot_param3            = 5,                              /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
 
- int          min_bin_param1          = 5,                                /* minimum bin for param1 */
- int          max_bin_param1          = 7,                                /* maximum bin for param1 */
- int          min_bin_param2          = 4,                                /* minimum bin for param2 */
- int          max_bin_param2          = 7,                                  /* maximum bin for param2 */
+ int          min_bin_param1          = 1,                                /* minimum bin for param1 */
+ int          max_bin_param1          = 5,                                /* maximum bin for param1 */
+ int          min_bin_param2          = 1,                                /* minimum bin for param2 */
+ int          max_bin_param2          = 5,                                  /* maximum bin for param2 */
  int          min_bin_param3          = 1,                                /* minimum bin for param2 */
- int          max_bin_param3          = 2                                  /* maximum bin for param2 */
+ int          max_bin_param3          = 5                                  /* maximum bin for param2 */
  )
 {
   using namespace std;
@@ -139,10 +139,15 @@ void make_toygrid_xml_joint
   pdf_array2->SetOwner(false);
 
   // Create file to store results
-  TFile f(Form("fit-%s-run_%d-expts_%d_%d.root", tag, run, first_experiment, last_experiment), "recreate");
-  //string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-  //TFile f(Form("%s-run_%d-%s.root", tag, run, oscstr.c_str()), "recreate");
-
+  //TFile f(Form("fitgrid-%s_expts_%d_%d.root", tag, run, first_experiment, last_experiment), "recreate");
+  char outtreename[200];
+  sprintf(outtreename,"fitgrid_%s_%s_%s_%s_BinsTot_%d_BinsTot_%d_BinsTot_%d_BinsPart_%d_%d_BinsPart_%d_%d_BinsPart_%d_%d.root",
+	  tag,param1,param2,param3,
+	  nbins_tot_param1,nbins_tot_param2,nbins_tot_param3,
+	  min_bin_param1,max_bin_param1,min_bin_param2,max_bin_param2,min_bin_param3,max_bin_param3
+	  );
+  TFile f(outtreename, "recreate");
+  
   double fittime1, fittime2;
   int fitstatus1, fitstatus2, fitstatus;
   int fitstatus_err1, fitstatus_err2, fitstatus_err;
@@ -818,7 +823,7 @@ void make_toygrid_xml_joint
 	sprintf(foutname,"LikeGrid_%s_%s_%s_%s_BinsTot_%d_BinsTot_%d_BinsTot_%d_BinsPart_%d_%d_BinsPart_%d_%d_BinsPart_%d_%d.root",
 		tag,param1,param2,param3,
 		nbins_tot_param1,nbins_tot_param2,nbins_tot_param3,
-		min_bin_param1,max_bin_param1,min_bin_param2,max_bin_param2,min_bin_param3,max_bin_param3,
+		min_bin_param1,max_bin_param1,min_bin_param2,max_bin_param2,min_bin_param3,max_bin_param3
 		);
 	TFile *fout = new TFile(foutname,"RECREATE");
 	cout << endl;
