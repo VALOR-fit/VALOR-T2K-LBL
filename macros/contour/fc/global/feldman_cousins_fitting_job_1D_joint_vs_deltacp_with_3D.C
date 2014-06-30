@@ -13,7 +13,8 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
 (
  //const char * tag                     = "fc_test_wo_syst_pointX_0",
  const char * tag                     = "fc_prova",
-  int          nexperiments            = 1000,                                   /* number of toy MC experiment fits */
+ int run                              = 0,                                      /* run number */
+  int          nexperiments            = 2,                                  /* number of toy MC experiment fits */
   double       input_deltacp           = -3,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
   const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
@@ -30,7 +31,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   const char * mixparamoctant          = "one",                                /* one==kNuOctantOne two==kNuOctantTwo */
  //const char * dchisqsurf_file         = "data_theta2theta_fit_joint_nh_final_fix_reactor_abs23_chisq_vs_theta23_dmsq_theta13_extra_3D.root" 
  //const char * dchisqsurf_file         = "LikeGrid_mixing23_Nbins5_dmsq_Nbins5_mixing13_Nbins5.root"
- const char * dchisqsurf_file         = "LikeGrid_prova_mixing23_dmsq_mixing13_BinsTot_11_BinsTot_11_BinsTot_11_BinsPart_1_11_BinsPart_1_11_BinsPart_1_11.root"
+ const char * dchisqsurf_file         = "../../inputs/fc/LikeGrid_Data_Run1to4_NH_mixing23_dmsq_mixing13_BinsTot_41_BinsTot_21_BinsTot_21.root"
 )
 {
   using namespace std;
@@ -238,7 +239,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   pdf_array6->SetOwner(false);
 
   // Create file to store results
-  TFile f(Form("%s.root",tag), "recreate"); 
+  TFile f(Form("%s_run_%d.root",tag,run), "recreate"); 
 
   //numbers to store results in
   int nsk_1Rmu,nsk_1Re;
