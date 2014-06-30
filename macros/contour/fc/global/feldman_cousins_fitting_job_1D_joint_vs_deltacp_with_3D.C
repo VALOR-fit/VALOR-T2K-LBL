@@ -11,8 +11,9 @@
 
 void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
 (
- const char * tag                     = "fc_test_wo_syst_pointX_0",
-  int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
+ //const char * tag                     = "fc_test_wo_syst_pointX_0",
+ const char * tag                     = "fc_prova",
+  int          nexperiments            = 1000,                                   /* number of toy MC experiment fits */
   double       input_deltacp           = -3,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
   const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
@@ -28,7 +29,8 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one",                                /* one==kNuOctantOne two==kNuOctantTwo */
  //const char * dchisqsurf_file         = "data_theta2theta_fit_joint_nh_final_fix_reactor_abs23_chisq_vs_theta23_dmsq_theta13_extra_3D.root" 
- const char * dchisqsurf_file         = "LikeGrid_mixing23_Nbins5_dmsq_Nbins5_mixing13_Nbins5.root",  
+ //const char * dchisqsurf_file         = "LikeGrid_mixing23_Nbins5_dmsq_Nbins5_mixing13_Nbins5.root"
+ const char * dchisqsurf_file         = "LikeGrid_prova_mixing23_dmsq_mixing13_BinsTot_11_BinsTot_11_BinsTot_11_BinsPart_1_11_BinsPart_1_11_BinsPart_1_11.root"
 )
 {
   using namespace std;
@@ -135,22 +137,21 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   
   cumulNormLikelihood[dmsq_nbins*mixing23_nbins*mixing13_nbins] = 1.0;
  
-  cout<<endl;
-  cout<<"This table shows likelihood, normalised likelihood and cumulative normalised likelihood for the 2D chisq surface for each bin" <<endl;
-  cout<<endl;
-
-  for(int mixing13_bin=1; mixing13_bin<=mixing13_nbins; mixing13_bin++){
-    for(int dmsq_bin=1; dmsq_bin<=dmsq_nbins; dmsq_bin++){
-      for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
-	int index = (mixing13_bin-1)*mixing23_nbins*dmsq_nbins + (dmsq_bin-1)*mixing23_nbins + mixing23_bin;
-	cout<<mixing23_bin<<"  ,  "<<dmsq_bin << "  ,  " << mixing13_bin
-	    <<"    "<<dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin) // -2 log likelihood
-	    <<"    "<<exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin)) // likelihood
-	    <<"    "<<"    "<<(exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin)) / totalLikelihood) // normalized likelihood
-	    <<"    "<<cumulNormLikelihood[index]<<endl; // cumulative likelihood
-      }
-    }
-  }
+  // cout<<endl;
+  // cout<<"This table shows likelihood, normalised likelihood and cumulative normalised likelihood for the 2D chisq surface for each bin" <<endl;
+  // cout<<endl;
+  // for(int mixing13_bin=1; mixing13_bin<=mixing13_nbins; mixing13_bin++){
+  //   for(int dmsq_bin=1; dmsq_bin<=dmsq_nbins; dmsq_bin++){
+  //     for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
+  // 	int index = (mixing13_bin-1)*mixing23_nbins*dmsq_nbins + (dmsq_bin-1)*mixing23_nbins + mixing23_bin;
+  // 	cout<<mixing23_bin<<"  ,  "<<dmsq_bin << "  ,  " << mixing13_bin
+  // 	    <<"    "<<dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin) // -2 log likelihood
+  // 	    <<"    "<<exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin)) // likelihood
+  // 	    <<"    "<<"    "<<(exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin)) / totalLikelihood) // normalized likelihood
+  // 	    <<"    "<<cumulNormLikelihood[index]<<endl; // cumulative likelihood
+  //     }
+  //   }
+  // }
 
   // Print settings
   cout << "\n[Job inputs]" << endl;
@@ -192,7 +193,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   cout << endl;
   cout << *Opt::Instance() << endl;
   cout << *Rnd::Instance() << endl;
-  
+ 
   // Fit parameter list
   FitParamList * fparm      = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
   FitParamList * fparm1     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the first seed
@@ -211,7 +212,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   if(hierarchy == "normal")
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
   else Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
-  
+
   SuperkExpectation * skexp_mh = new SuperkExpectation;
   skexp_mh->Read(config.Data());
 
@@ -254,7 +255,6 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   double bestfit_mixing13_true, bestfit_mixing13_true_alt, bestfit_mixing13_min, bestfit_mixing13_min_oct, bestfit_mixing13_min_mh,bestfit_mixing13_min_mh_oct;
   double bestfit_dmsq_true, bestfit_dmsq_true_alt, bestfit_dmsq_min, bestfit_dmsq_min_oct, bestfit_dmsq_min_mh,bestfit_dmsq_min_mh_oct;
   double bestfit_deltacp_true, bestfit_deltacp_true_alt, bestfit_deltacp_min, bestfit_deltacp_min_oct, bestfit_deltacp_min_mh,bestfit_deltacp_min_mh_oct;
-
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
@@ -347,7 +347,6 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   fitnt->Branch("bestfit_deltacp_min_mh",    &bestfit_deltacp_min_mh);
   fitnt->Branch("bestfit_deltacp_min_mh_oct",  &bestfit_deltacp_min_mh_oct);
 
-
   //TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   if(store_bestfit_spectrum)
     TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
@@ -367,14 +366,14 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
     cout << "//////////////////////////////////" << endl;
     cout << endl;
 
-     //     
-     // Random selection of (mixing23,dmsq,mixing13) bin 
-     //     
-     
-     uniformRand = rand.Uniform(0.0, 1.0);
-
-     cout << "uniformRand = " << uniformRand << endl;
-
+    //     
+    // Random selection of (mixing23,dmsq,mixing13) bin 
+    //     
+    
+    uniformRand = rand.Uniform(0.0, 1.0);
+    
+    cout << "uniformRand = " << uniformRand << endl;
+    
      for(int mixing13_bin=1; mixing13_bin<=mixing13_nbins; mixing13_bin++){
        for(int dmsq_bin=1; dmsq_bin<=dmsq_nbins; dmsq_bin++){
 	 for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
