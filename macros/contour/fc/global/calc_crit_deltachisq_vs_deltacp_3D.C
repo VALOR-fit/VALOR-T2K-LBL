@@ -62,16 +62,22 @@ void calc_crit_deltachisq_vs_deltacp_3D
   for(int icl=0;icl<nConfidenceLevel;icl++){
     for(int ibin=0;ibin<nbins;ibin++){
       gDLcritConv[icl][ibin] = new TGraph();
-      TString name = Form("gDLcritConv_%d",ibin);
+      TString name = Form("gDLcritConv_bin%d_cl%2.0f",ibin,confidenceLevel[icl]);
       gDLcritConv[icl][ibin]->SetName(name);
     }
   }
- 
+
+  TGraph *gCritVal[nConfidenceLevel];
+  for(int icl=0;icl<nConfidenceLevel;icl++){
+    gCritVal[icl] = new TGraph();
+    TString name = Form("gCritVal_%2.0f",confidenceLevel[icl]);
+    gCritVal[icl]->SetName(name);
+  }
+  
   TCanvas *cDeltaChisq[nbins];
   for(int ibin=0;ibin<nbins;ibin++){
     TString name = Form("cDeltaChisq_%d",ibin);
     cDeltaChisq[ibin] = new TCanvas(name,name);
-    hDeltaChisq[ibin]->Draw("histo");
   }
   
   TCanvas *cDLConv_68[nbins];
@@ -86,6 +92,11 @@ void calc_crit_deltachisq_vs_deltacp_3D
     cDLConv_95[ibin] = new TCanvas(name,name);
   }
   
+  TCanvas *cCritVal[nConfidenceLevel];
+  for(int icl=0;icl<nConfidenceLevel;icl++){
+    TString name = Form("cCritVal_%2.0fCL",confidenceLevel[icl]);
+    cCritVal[icl] = new TCanvas(name,name);
+  }
 
   //TH1D *hInputMixing23 = new TH1D("hInputMixing23", "", 101, 0.25, 0.75); 
   //TH1D *hInputDm23sq = new TH1D("hInputDm23sq", "", 41, 0.0015, 0.0035);
@@ -114,10 +125,6 @@ void calc_crit_deltachisq_vs_deltacp_3D
 
     int ibin = ifile - startbin; // delta_cp bins for arrays and histograms
     
-
-    cout << ibin << " " << ifile << " " << startbin << " " << lastbin << endl;
-
-
     // Check if the file exists and the tree is not corrupted. If yes skip it
 
     TString infilename = Form(FCfilename,ifile); 
@@ -324,16 +331,31 @@ void calc_crit_deltachisq_vs_deltacp_3D
       outfile << "Critical value of delta chisq at "<<confidenceLevel[icl]<<"% confidence = "<< value
 	      << " + " << errorpos << "  -  " << errorneg     
 	      << endl << endl; 
+
+      gCritVal[icl]->SetPoint(gCritVal[icl]->GetN(),input_deltacp,value);
     }
     
-    // Draw histograms
-    
+    MyFile->Close();
+    MyFile->Delete();
+
+  } // end loop deltacp bins
+
+
+  // Draw histograms
+  
+  for(int icl=0;icl<nConfidenceLevel;icl++){
+    cCritVal[icl]->cd();
+    gCritVal[icl]->Draw("APL");
+  }
+  
+  for(int ibin=0;ibin<nbins;ibin++) {
+
+    cDeltaChisq[ibin]->cd();
     hDeltaChisq[ibin]->Scale(1/hDeltaChisq[ibin]->Integral());
     hDeltaChisq[ibin]->GetXaxis()->SetTitle("#Delta#chi^{2}");
     hDeltaChisq[ibin]->GetYaxis()->SetTitle("Fraction of events");
     hDeltaChisq[ibin]->Draw("");
-  
-    // Check the convergence of the critical values
+      
     if(CheckConvergence){
       cDLConv_68[ibin]->cd();
       gDLcritConv[kCL68][ibin]->Draw("APL");
@@ -342,7 +364,7 @@ void calc_crit_deltachisq_vs_deltacp_3D
       cDLConv_95[ibin]->cd();
       gDLcritConv[kCL95][ibin]->Draw("APL");
     }
-
+      
     /*
       TCanvas *InputMixing23 = new TCanvas("InputMixing23", "InputMixing23", 800, 600);
       hInputMixing23->SetStats(0);
@@ -350,14 +372,12 @@ void calc_crit_deltachisq_vs_deltacp_3D
       hInputMixing23->GetXaxis()->SetTitleOffset(1.15);
       hInputMixing23->GetXaxis()->CenterTitle();
       hInputMixing23->Draw();
-
       TCanvas *InputDm23sq = new TCanvas("InputDm23sq", "InputDm23sq", 800, 600);
       hInputDm23sq->SetStats(0);
       hInputDm23sq->GetXaxis()->SetTitle("Input value of |#Deltam_{32}^{2}|");
       hInputDm23sq->GetXaxis()->SetTitleOffset(1.15);
       hInputDm23sq->GetXaxis()->CenterTitle();
       hInputDm23sq->Draw();
-
       TCanvas *InputBestFit1NMixing23 = new TCanvas("InputBestFit1NMixing23", "InputBestFit1NMixing23", 800, 600);
       hInputBestFit1NMixing23->SetStats(0);
       hInputBestFit1NMixing23->GetXaxis()->SetTitle("Input sin^{2}#theta_{23}");
@@ -365,7 +385,6 @@ void calc_crit_deltachisq_vs_deltacp_3D
       hInputBestFit1NMixing23->GetXaxis()->CenterTitle();
       hInputBestFit1NMixing23->GetYaxis()->CenterTitle();
       hInputBestFit1NMixing23->Draw("colz");  
-
       TCanvas *InputBestFit2NMixing23 = new TCanvas("InputBestFit2NMixing23", "InputBestFit2NMixing23", 800, 600);
       hInputBestFit2NMixing23->SetStats(0);
       hInputBestFit2NMixing23->GetXaxis()->SetTitle("Input sin^{2}#theta_{23}");
@@ -373,7 +392,6 @@ void calc_crit_deltachisq_vs_deltacp_3D
       hInputBestFit2NMixing23->GetXaxis()->CenterTitle();
       hInputBestFit2NMixing23->GetYaxis()->CenterTitle();
       hInputBestFit2NMixing23->Draw("colz");
-
       TCanvas *InputBestFit1NDm23sq = new TCanvas("InputBestFit1NDm23sq", "InputBestFit1NDm23sq", 800, 600);
       hInputBestFit1NDm23sq->SetStats(0);
       hInputBestFit1NDm23sq->GetXaxis()->SetTitle("Input #Deltam_{32}^{2}");
@@ -381,7 +399,6 @@ void calc_crit_deltachisq_vs_deltacp_3D
       hInputBestFit1NDm23sq->GetYaxis()->CenterTitle();
       hInputBestFit1NDm23sq->GetYaxis()->CenterTitle();
       hInputBestFit1NDm23sq->Draw("colz");
-
       TCanvas *InputBestFit2NDm23sq = new TCanvas("InputBestFit2NDm23sq", "InputBestFit2NDm23sq", 800, 600);
       hInputBestFit2NDm23sq->SetStats(0);
       hInputBestFit2NDm23sq->GetXaxis()->SetTitle("Input #Deltam_{32}^{2}");
@@ -389,22 +406,13 @@ void calc_crit_deltachisq_vs_deltacp_3D
       hInputBestFit2NDm23sq->GetXaxis()->CenterTitle();
       hInputBestFit2NDm23sq->GetYaxis()->CenterTitle();
       hInputBestFit2NDm23sq->Draw("colz");
-
       TFile *InputValues = new TFile("InputValues.root", "UPDATE");
       InputValues->cd();
       hInputDm23sq->Write();
       InputValues->Close();
-
       deltaChisq[ibin].clear();
     */
-
-    //
-    
-    MyFile->Close();
-    MyFile->Delete();
-
-  } // end loop deltacp bins
-
+  }
 
   // Write output file
   
@@ -415,8 +423,11 @@ void calc_crit_deltachisq_vs_deltacp_3D
   TFile *InputValues = new TFile(outfilename, "RECREATE");
   for(int ibin=0;ibin<nbins;ibin++){
     hDeltaChisq[ibin]->Write();
-  }
+  }  
 
+  for(int icl=0;icl<nConfidenceLevel;icl++){
+    gCritVal[icl]->Write();
+  }
   return;
 
 }//end of calc_crit_dchisq_mixing23_test
