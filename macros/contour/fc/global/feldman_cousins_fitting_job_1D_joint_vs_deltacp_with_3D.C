@@ -11,19 +11,19 @@
 
 void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
 (
- //const char * tag                     = "fc_test_wo_syst_pointX_0",
- const char * tag                     = "fc_prova",
+ const char * tag                     = "fc_test_wo_syst_pointX_0",
+ //const char * tag                     = "fc_prova",
  int run                              = 0,                                      /* run number */
   int          nexperiments            = 2,                                  /* number of toy MC experiment fits */
-  double       input_deltacp           = -3,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
+  double       input_deltacp           = 0,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
   const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
-  bool         tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
- //const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  bool         tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
+ const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+ //const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit+hesse",                            /* fitter option */
   double       tolerance               = 0.01,
-  bool         store_toy_expts         = false,                                /* disable this if you don't want to store the toy MC expts     */
+  bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
   const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                            /* normal or inverted */
@@ -51,6 +51,9 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
+  
+  Opt::Instance()->SetDefaultParameterValues();
+
 
   // Take input oscillation likelihood grid for toy extraction
   TFile *dchisqfile = TFile::Open(dchisqsurf_file);
@@ -62,6 +65,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   double mixing23_max   = dchisq3D->GetXaxis()->GetBinCenter(dchisq3D->GetNbinsX());
   double mixing23_step  = dchisq3D->GetXaxis()->GetBinCenter(2) - dchisq3D->GetXaxis()->GetBinCenter(1);
   double dmsq_min     = dchisq3D->GetYaxis()->GetBinCenter(1);
+
   double dmsq_max     = dchisq3D->GetYaxis()->GetBinCenter(dchisq3D->GetNbinsY());
   double dmsq_step    = dchisq3D->GetYaxis()->GetBinCenter(2) - dchisq3D->GetYaxis()->GetBinCenter(1);
   double mixing13_min   = dchisq3D->GetZaxis()->GetBinCenter(1);
@@ -92,19 +96,19 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
        dmsq_max + 0.5*dmsq_step);
 
  TH1D * theta13_param_space = new TH1D("theta13_param_space", "",
-				       mixing13_nbins, 
-				       mixing13_min - 0.5*mixing13_step, 
-				       mixing13_max + 0.5*mixing13_step);
+ 				       mixing13_nbins, 
+ 				       mixing13_min - 0.5*mixing13_step, 
+ 				       mixing13_max + 0.5*mixing13_step);
 
  TH1D * theta23_param_space = new TH1D("theta23_param_space", "",
-				       mixing23_nbins, 
-				       mixing23_min - 0.5*mixing23_step, 
-				       mixing23_max + 0.5*mixing23_step);
+ 				       mixing23_nbins, 
+ 				       mixing23_min - 0.5*mixing23_step, 
+ 				       mixing23_max + 0.5*mixing23_step);
 
  TH1D * dmsq_param_space = new TH1D("dmsq_param_space", "",
-				       dmsq_nbins, 
-				       dmsq_min - 0.5*dmsq_step, 
-				       dmsq_max + 0.5*dmsq_step);
+ 				       dmsq_nbins, 
+ 				       dmsq_min - 0.5*dmsq_step, 
+ 				       dmsq_max + 0.5*dmsq_step);
 
   int input_mixing23_bin,input_mixing13_bin, input_dmsq_bin;
   double input_mixing23,input_mixing13,input_dmsq;
@@ -113,7 +117,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   for(int mixing13_bin=1; mixing13_bin<=mixing13_nbins; mixing13_bin++){
     for(int dmsq_bin=1; dmsq_bin<=dmsq_nbins; dmsq_bin++){
       for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
-	totalLikelihood += exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin,mixing13_bin));	
+ 	totalLikelihood += exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin,mixing13_bin));	
       }
     }
   }
@@ -125,13 +129,13 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   for(int mixing13_bin=1; mixing13_bin<=mixing13_nbins; mixing13_bin++){
     for(int dmsq_bin=1; dmsq_bin<=dmsq_nbins; dmsq_bin++){
       for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
-	int index = (mixing13_bin-1)*mixing23_nbins*dmsq_nbins + (dmsq_bin-1)*mixing23_nbins + mixing23_bin;
-	//	cout << "index = " << index << endl;
-	cumulNormLikelihood[index] = cumulNormLikelihood[index-1] 
-	  + (exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin)) / totalLikelihood);
-	//cout << " cumulNormLikelihood["<< index<<"] = " << cumulNormLikelihood[index] << ", with exp = " << (exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin))) << endl;
-	//prevent cumulative normalised likelihood being > 1.0
-	cumulNormLikelihood[index] = TMath::Min(1.0, cumulNormLikelihood[index]);
+ 	int index = (mixing13_bin-1)*mixing23_nbins*dmsq_nbins + (dmsq_bin-1)*mixing23_nbins + mixing23_bin;
+ 	//	cout << "index = " << index << endl;
+ 	cumulNormLikelihood[index] = cumulNormLikelihood[index-1] 
+ 	  + (exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin)) / totalLikelihood);
+ 	//cout << " cumulNormLikelihood["<< index<<"] = " << cumulNormLikelihood[index] << ", with exp = " << (exp(-0.5 * dchisq3D->GetBinContent(mixing23_bin, dmsq_bin, mixing13_bin))) << endl;
+ 	//prevent cumulative normalised likelihood being > 1.0
+ 	cumulNormLikelihood[index] = TMath::Min(1.0, cumulNormLikelihood[index]);
       }
     }
   }
@@ -195,14 +199,16 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
   cout << *Opt::Instance() << endl;
   cout << *Rnd::Instance() << endl;
  
+
   // Fit parameter list
-  FitParamList * fparm      = FitParamList::NamedParameterList(fit_param_list); //only used to initialise branch
-  FitParamList * fparm1     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the first seed
-  FitParamList * fparm2     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the mirror of best fit seed
-  FitParamList * fparm3     = FitParamList::NamedParameterList(fit_param_list); // for 1+N fit of |dm32sq| 
-  FitParamList * fparm4     = FitParamList::NamedParameterList(fit_param_list); // for 2+N fit using the first seed of mixing23
-  FitParamList * fparm5     = FitParamList::NamedParameterList(fit_param_list); // for 2+N fit using the mirror of best fit seed of mixing23
-  FitParamList * fparm6     = FitParamList::NamedParameterList(fit_param_list); // for 2+N fit using the mirror of best fit seed of mixing23
+  FitParamList * fparm      = util::NamedParameterList(fit_param_list); //only used to initialise branch
+  FitParamList * fparm1     = util::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the first seed
+  FitParamList * fparm2     = util::NamedParameterList(fit_param_list); // for 1+N fit of mixing23 using the mirror of best fit seed
+  FitParamList * fparm3     = util::NamedParameterList(fit_param_list); // for 1+N fit of |dm32sq| 
+  FitParamList * fparm4     = util::NamedParameterList(fit_param_list); // for 2+N fit using the first seed of mixing23
+  FitParamList * fparm5     = util::NamedParameterList(fit_param_list); // for 2+N fit using the mirror of best fit seed of mixing23
+  FitParamList * fparm6     = util::NamedParameterList(fit_param_list); // for 2+N fit using the mirror of best fit seed of mixing23
+  
   PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
@@ -377,14 +383,14 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
     
      for(int mixing13_bin=1; mixing13_bin<=mixing13_nbins; mixing13_bin++){
        for(int dmsq_bin=1; dmsq_bin<=dmsq_nbins; dmsq_bin++){
-	 for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
-	   int index = (mixing13_bin-1)*mixing23_nbins*dmsq_nbins + (dmsq_bin-1)*mixing23_nbins + mixing23_bin;
-	   if(uniformRand >= cumulNormLikelihood[index-1] && uniformRand <= cumulNormLikelihood[index]){
-	     input_dmsq_bin = dmsq_bin;
-	     input_mixing23_bin = mixing23_bin;
-	     input_mixing13_bin = mixing13_bin;
-	   }
-	 }
+  	 for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
+  	   int index = (mixing13_bin-1)*mixing23_nbins*dmsq_nbins + (dmsq_bin-1)*mixing23_nbins + mixing23_bin;
+  	   if(uniformRand >= cumulNormLikelihood[index-1] && uniformRand <= cumulNormLikelihood[index]){
+  	     input_dmsq_bin = dmsq_bin;
+  	     input_mixing23_bin = mixing23_bin;
+  	     input_mixing13_bin = mixing13_bin;
+  	   }
+  	 }
        }
      }
 
@@ -436,7 +442,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
           << util::AsString(conv::kPhypMixing13) << " = " << input_mixing13 << ", "
           << util::AsString(conv::kPhypDm23sq)   << " = " << input_dmsq   << " eV^2"
           << endl
-	  << endl;
+  	  << endl;
       
      //
      // Set the generated oscillation parameter values (used to generate toy-MC expt)
@@ -451,12 +457,12 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
        dat_array     ->Clear();
      if(store_bestfit_spectrum)
        {
-	 pdf_array     ->Clear();
-	 pdf_array1    ->Clear();
-	 pdf_array2    ->Clear();
-	 pdf_array3    ->Clear();
-	 pdf_array4    ->Clear();
-	 pdf_array5    ->Clear();
+  	 pdf_array     ->Clear();
+  	 pdf_array1    ->Clear();
+  	 pdf_array2    ->Clear();
+  	 pdf_array3    ->Clear();
+  	 pdf_array4    ->Clear();
+  	 pdf_array5    ->Clear();
        }
      
      // Reset input true params and add true oscillation params
@@ -471,30 +477,30 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
      bool applied_negevents_condition = true;
      while(applied_negevents_condition) {
        if(tweak_systematics) {
-	 // tweak all sources of systematic error
-	 cout << "- Randomizing all systematic params in pdf..." << endl;
-	 skexp->TweakAllSystematics();     
-	 skexp->PrintSystematicVariations();
-	 // keep track of all nuisance params set so as to add in output tree
-	 PhysParamList true_nuisance_params = skexp->Tweaks();
-	 iparm->Append(true_nuisance_params);
-	 // generate mock data using the current PDF (incl. systematic variations) 
-	 // + statistical fluctuations if requested (Poisson fluctuation in each bin)
-	 cout << "- Generating toy-MC..." << endl;
-	 //note that fparm does not contain the tweaks, so use only the PhysHyp here
-	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
-	 // reset all systematics so that the PDF used in the fitter is the nominal one
-	 cout << "- Reseting all systematic params in pdf..." << endl;
-	 skexp->ResetSystematicVariations();
-	 //skexp->PrintSystematicVariations();
+  	 // tweak all sources of systematic error
+  	 cout << "- Randomizing all systematic params in pdf..." << endl;
+  	 skexp->TweakAllSystematics();     
+  	 skexp->PrintSystematicVariations();
+  	 // keep track of all nuisance params set so as to add in output tree
+  	 PhysParamList true_nuisance_params = skexp->Tweaks();
+  	 iparm->Append(true_nuisance_params);
+  	 // generate mock data using the current PDF (incl. systematic variations) 
+  	 // + statistical fluctuations if requested (Poisson fluctuation in each bin)
+  	 cout << "- Generating toy-MC..." << endl;
+  	 //note that fparm does not contain the tweaks, so use only the PhysHyp here
+  	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
+  	 // reset all systematics so that the PDF used in the fitter is the nominal one
+  	 cout << "- Reseting all systematic params in pdf..." << endl;
+  	 skexp->ResetSystematicVariations();
+  	 //skexp->PrintSystematicVariations();
        }
        else {
-	 //make sure systematics are reset
-	 skexp->ResetSystematicVariations();
-	 // generate mock data using the current PDF (without systematic variations) 
-	 // with statistical fluctuations if requested (Poisson fluctuation in each bin)
-	 cout << "- Generating toy-MC..." << endl;
-	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
+  	 //make sure systematics are reset
+  	 skexp->ResetSystematicVariations();
+  	 // generate mock data using the current PDF (without systematic variations) 
+  	 // with statistical fluctuations if requested (Poisson fluctuation in each bin)
+  	 cout << "- Generating toy-MC..." << endl;
+  	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
        }
      }//applied_negevents_condition
 
@@ -545,9 +551,9 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
        centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
        reseed = sinsqtheta23_bestfit;
        if     (reseed < centre)
-	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
+  	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
        else if(reseed > centre)
-	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
+  	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
        fparm2->SetInitValue(conv::kPhypMixing23, reseed);
        fparm2->SetInitValue(conv::kPhypDm23sq,   input_dmsq);
        fparm2->SetInitValue(conv::kPhypMixing13, input_mixing13);
@@ -568,7 +574,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
        cout<<"Migrad min and err codes for fit 2:   "<<migradmin2<<"    "<<migraderr2<<endl;
        // Save spectra (best-fit prediction)
        if(store_bestfit_spectrum) {
-	 skexp->Write(pdf_array2, "pdf");
+  	 skexp->Write(pdf_array2, "pdf");
        }
      }
 
@@ -576,56 +582,56 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
      cout << "- Best-fit mixing23 (below) yields chisq = ";
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
        if(bestfit_chisq_seed2 < bestfit_chisq_seed1) {
-	 cout << bestfit_chisq_seed2 << " from the second seed fit" << endl;
+  	 cout << bestfit_chisq_seed2 << " from the second seed fit" << endl;
          fittries_true = fparm2->GetFitTries();
          fittries_true_alt = fparm1->GetFitTries();
          fittime_true = fparm2->GetFitTime();
-	 fittime_true_alt = fparm1->GetFitTime();
-	 bestfit_chisq_true    = bestfit_chisq_seed2;
-	 bestfit_chisq_true_alt    = bestfit_chisq_seed1;
-	 bestfit_mixing23_true = fparm2->BestFitValue(conv::kPhypMixing23);
-	 bestfit_mixing23_true_alt = fparm1->BestFitValue(conv::kPhypMixing23);
-	 bestfit_mixing13_true = fparm2->BestFitValue(conv::kPhypMixing13);
-	 bestfit_mixing13_true_alt = fparm1->BestFitValue(conv::kPhypMixing13);	 
-	 bestfit_dmsq_true = fparm2->BestFitValue(conv::kPhypDm23sq);
-	 bestfit_dmsq_true_alt = fparm1->BestFitValue(conv::kPhypDm23sq);
-	 bestfit_deltacp_true = fparm2->BestFitValue(conv::kPhypCPV);
-	 bestfit_deltacp_true_alt = fparm1->BestFitValue(conv::kPhypCPV);
-	 migradmin_true        = migradmin2;
-	 migradmin_true_alt        = migradmin1;
+  	 fittime_true_alt = fparm1->GetFitTime();
+  	 bestfit_chisq_true    = bestfit_chisq_seed2;
+  	 bestfit_chisq_true_alt    = bestfit_chisq_seed1;
+  	 bestfit_mixing23_true = fparm2->BestFitValue(conv::kPhypMixing23);
+  	 bestfit_mixing23_true_alt = fparm1->BestFitValue(conv::kPhypMixing23);
+  	 bestfit_mixing13_true = fparm2->BestFitValue(conv::kPhypMixing13);
+  	 bestfit_mixing13_true_alt = fparm1->BestFitValue(conv::kPhypMixing13);	 
+  	 bestfit_dmsq_true = fparm2->BestFitValue(conv::kPhypDm23sq);
+  	 bestfit_dmsq_true_alt = fparm1->BestFitValue(conv::kPhypDm23sq);
+  	 bestfit_deltacp_true = fparm2->BestFitValue(conv::kPhypCPV);
+  	 bestfit_deltacp_true_alt = fparm1->BestFitValue(conv::kPhypCPV);
+  	 migradmin_true        = migradmin2;
+  	 migradmin_true_alt        = migradmin1;
          migraderr_true        = migraderr2;
          migraderr_true_alt        = migraderr1;
-	 fparm2->ShowOnlyBestFitValuesInNextPrint();
-	 cout << *fparm2;
-	 //br_fparm->SetAddress(&fparm2);
-	 if(store_bestfit_spectrum)
-	   br_bf_array->SetAddress(&pdf_array2);
+  	 fparm2->ShowOnlyBestFitValuesInNextPrint();
+  	 cout << *fparm2;
+  	 //br_fparm->SetAddress(&fparm2);
+  	 if(store_bestfit_spectrum)
+  	   br_bf_array->SetAddress(&pdf_array2);
        }
        else {
-	 cout << bestfit_chisq_seed1 << " from the first seed fit" << endl;
+  	 cout << bestfit_chisq_seed1 << " from the first seed fit" << endl;
          fittries_true = fparm1->GetFitTries();
          fittries_true_alt = fparm2->GetFitTries();
          fittime_true = fparm1->GetFitTime();
-	 fittime_true_alt = fparm2->GetFitTime();
-	 bestfit_chisq_true    = bestfit_chisq_seed1;
-	 bestfit_chisq_true_alt    = bestfit_chisq_seed2;
-	 bestfit_mixing23_true = fparm1->BestFitValue(conv::kPhypMixing23);
-	 bestfit_mixing23_true_alt = fparm2->BestFitValue(conv::kPhypMixing23);
-	 bestfit_mixing13_true = fparm1->BestFitValue(conv::kPhypMixing13);
-	 bestfit_mixing13_true_alt = fparm2->BestFitValue(conv::kPhypMixing13);	 
-	 bestfit_dmsq_true = fparm1->BestFitValue(conv::kPhypDm23sq);
-	 bestfit_dmsq_true_alt = fparm2->BestFitValue(conv::kPhypDm23sq);
-	 bestfit_deltacp_true = fparm1->BestFitValue(conv::kPhypCPV);
-	 bestfit_deltacp_true_alt = fparm2->BestFitValue(conv::kPhypCPV);
-	 migradmin_true        = migradmin1;
-	 migradmin_true_alt        = migradmin2;
+  	 fittime_true_alt = fparm2->GetFitTime();
+  	 bestfit_chisq_true    = bestfit_chisq_seed1;
+  	 bestfit_chisq_true_alt    = bestfit_chisq_seed2;
+  	 bestfit_mixing23_true = fparm1->BestFitValue(conv::kPhypMixing23);
+  	 bestfit_mixing23_true_alt = fparm2->BestFitValue(conv::kPhypMixing23);
+  	 bestfit_mixing13_true = fparm1->BestFitValue(conv::kPhypMixing13);
+  	 bestfit_mixing13_true_alt = fparm2->BestFitValue(conv::kPhypMixing13);	 
+  	 bestfit_dmsq_true = fparm1->BestFitValue(conv::kPhypDm23sq);
+  	 bestfit_dmsq_true_alt = fparm2->BestFitValue(conv::kPhypDm23sq);
+  	 bestfit_deltacp_true = fparm1->BestFitValue(conv::kPhypCPV);
+  	 bestfit_deltacp_true_alt = fparm2->BestFitValue(conv::kPhypCPV);
+  	 migradmin_true        = migradmin1;
+  	 migradmin_true_alt        = migradmin2;
          migraderr_true        = migraderr1;
          migraderr_true_alt        = migraderr2;
-	 fparm1->ShowOnlyBestFitValuesInNextPrint();
-	 cout << *fparm1;
-	 //br_fparm->SetAddress(&fparm1);
-	 if(store_bestfit_spectrum)
-	   br_bf_array->SetAddress(&pdf_array1);
+  	 fparm1->ShowOnlyBestFitValuesInNextPrint();
+  	 cout << *fparm1;
+  	 //br_fparm->SetAddress(&fparm1);
+  	 if(store_bestfit_spectrum)
+  	   br_bf_array->SetAddress(&pdf_array1);
        }
      }
      else {
@@ -741,7 +747,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
 
        // Opposite hierarchy
        if(hierarchy == "normal")
-	 Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
+  	 Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
        else Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
 
        fparm6->CopyBestFitToInitValues(*fparm4);
@@ -786,12 +792,12 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
      }
      if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta) {
        if (bestfit_chisq_seed3<bestfit_chisq_total)  {
-	 bestfit_chisq_total = bestfit_chisq_seed3;
-	 index_chisq = 3;
+  	 bestfit_chisq_total = bestfit_chisq_seed3;
+  	 index_chisq = 3;
        }
        if (bestfit_chisq_seed4<bestfit_chisq_total)  {
-	 bestfit_chisq_total = bestfit_chisq_seed4;
-	 index_chisq = 4;
+  	 bestfit_chisq_total = bestfit_chisq_seed4;
+  	 index_chisq = 4;
        }
      }
      
@@ -837,7 +843,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
        cout << *fparm1;
        //br_fparm->SetAddress(&fparm1);
        if(store_bestfit_spectrum)
-	 br_bf_array->SetAddress(&pdf_array1);
+  	 br_bf_array->SetAddress(&pdf_array1);
      }
      else if(index_chisq == 2){
      cout << bestfit_chisq_seed2 << " from the second seed fit" << endl;
@@ -881,7 +887,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
        cout << *fparm2;
        //br_fparm->SetAddress(&fparm1);
        if(store_bestfit_spectrum)
-	 br_bf_array->SetAddress(&pdf_array2);
+  	 br_bf_array->SetAddress(&pdf_array2);
      }
      else if(index_chisq == 3){
      cout << bestfit_chisq_seed3 << " from the third seed fit" << endl;
@@ -925,7 +931,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
        cout << *fparm3;
        //br_fparm->SetAddress(&fparm1);
        if(store_bestfit_spectrum)
-	 br_bf_array->SetAddress(&pdf_array3);
+  	 br_bf_array->SetAddress(&pdf_array3);
      }
      else if(index_chisq == 4){
      cout << bestfit_chisq_seed4 << " from the forth seed fit" << endl;
@@ -969,7 +975,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D
        cout << *fparm4;
        //br_fparm->SetAddress(&fparm1);
        if(store_bestfit_spectrum)
-	 br_bf_array->SetAddress(&pdf_array4);
+  	 br_bf_array->SetAddress(&pdf_array4);
      }
      cout<<endl;
 
