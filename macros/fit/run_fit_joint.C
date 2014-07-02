@@ -15,16 +15,16 @@ void run_fit_joint
   double       input_mixing12          = 0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-  double       input_deltacp           = 0.00,                                /* deltacp, if -999 then randomize */
+  double       input_deltacp           = -3.1,                                /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
   double       input_dm12sq            = 7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = 2.32E-3,                             /* |Dm^2_{23}| */
   //const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
   const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
-  bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
-  int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
+  bool         stat_fluctuations       = false,                                /* include statistical fluctuation in toy MC expts? */
+  int          tweak_systematics       = false,                                /* generate toy MC with randomized systematics? */
   //const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */ 
-  //const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */ 
-  const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */ 
+  //const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit+hesse",                            /* fitter option */
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
@@ -33,7 +33,7 @@ void run_fit_joint
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one",                               /* one==kNuOctantOne two==kNuOctantTwo */
   //bool         apply_2nu_boundary      = true                                 /* if using the 2nu flavour osc prob, apply the physical boundary? */
-  double       dcp_value               = 0,                                    /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
+  double       dcp_value               = 1.,                                    /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
   bool         reactor                 = true,                               /* enable this if you want to apply the reactor constraint */
   double       tolerance               = 0.01,                                 /* value for the fitter tolerance */
 )
@@ -175,15 +175,46 @@ void run_fit_joint
        fparm1->Update(kPhypMixing12, input_mixing12);
        fparm1->Update(kPhypMixing13, input_mixing13);
        fparm1->Update(kPhypMixing23, input_mixing23);
-       fparm1->Update(kPhypCPV    ,  input_deltacp*conv::kpi);
+       fparm1->Update(kPhypCPV    ,  input_deltacp);
        fparm1->Update(kPhypDm12sq,   input_dm12sq);
        fparm1->Update(kPhypDm23sq,   input_dm23sq);
+       /////////////////////////////////////////
+       fparm2->Update(kPhypMixing12, input_mixing12);
+       fparm2->Update(kPhypMixing13, input_mixing13);
+       fparm2->Update(kPhypMixing23, input_mixing23);
+       fparm2->Update(kPhypCPV    ,  input_deltacp);
+       fparm2->Update(kPhypDm12sq,   input_dm12sq);
+       fparm2->Update(kPhypDm23sq,   input_dm23sq);
+       /////////////////////////////////////////
      }
      else
      if(hyp == kHypNuMuDisapp2F) {
        fparm1->Update(kPhypMixing23, input_mixing23);
        fparm1->Update(kPhypDm23sq,   input_dm23sq);
+       /////////////////////////////////////////       
+       fparm2->Update(kPhypMixing23, input_mixing23);
+       fparm2->Update(kPhypDm23sq,   input_dm23sq);
+       /////////////////////////////////////////
      }
+   
+     // fparm1->FixParameter(conv::kPhypMixing23);
+     // fparm1->FixParameter(conv::kPhypMixing13);
+     // fparm1->FixParameter(conv::kPhypDm23sq);
+     // //fparm1->FixParameter(conv::kPhypCPV);
+     // fparm2->FixParameter(conv::kPhypMixing23);
+     // fparm2->FixParameter(conv::kPhypMixing13);
+     // fparm2->FixParameter(conv::kPhypDm23sq);
+     // //fparm2->FixParameter(conv::kPhypCPV);     
+     
+     //fparm1->SetInitValue(conv::kPhypCPV,input_deltacp);
+     //fparm2->SetInitValue(conv::kPhypCPV,input_deltacp);
+
+     //cout << *fparm1 << endl;
+     //cout << *fparm2 << endl;
+          
+
+
+
 
      // Reset all output spectra
      dat_array ->Clear();
