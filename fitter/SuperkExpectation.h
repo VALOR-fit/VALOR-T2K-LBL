@@ -146,14 +146,8 @@ private:
    NuXSec            * fNuXSec;                   ///< Neutrino generator / cross section inputs
    BANFF             * fBANFF;                    ///< BANFF fit info
    
-   VALORArray * fPredictErecoSpectrumArrayTot1Rmu   ;
-   VALORArray * fPredictErecoSpectrumArrayTot1Re    ;
-   VALORArray * fPredictErecoSpectrumArray1Rmu      ;
-   VALORArray * fPredictErecoSpectrumArray1Re       ;
-   VALORArray * fPredictRHCErecoSpectrumArrayTot1Rmu;
-   VALORArray * fPredictRHCErecoSpectrumArrayTot1Re ;
-   VALORArray * fPredictRHCErecoSpectrumArray1Rmu   ;
-   VALORArray * fPredictRHCErecoSpectrumArray1Re    ;
+   VALORArray * fPredictErecoSpectrumArrayTot [conv::kns];
+   VALORArray * fPredictErecoSpectrumArray    [conv::kns];
    
 ClassDef(SuperkExpectation, 6)
 };

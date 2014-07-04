@@ -66,45 +66,25 @@ void SuperkExpectation::Init(void)
   fNuXSec            = 0;
   fBANFF             = 0;
   
-  fPredictErecoSpectrumArrayTot1Rmu    = new VALORArray(conv::kNErecoBins1Rmu);
-  fPredictErecoSpectrumArrayTot1Re     = new VALORArray(conv::kNErecoBins1Re);
-  fPredictErecoSpectrumArray1Rmu       = new VALORArray(conv::knm, conv::kNErecoBins1Rmu);
-  fPredictErecoSpectrumArray1Re        = new VALORArray(conv::knm, conv::kNErecoBins1Re);
-  fPredictRHCErecoSpectrumArrayTot1Rmu = new VALORArray(conv::kRHCNErecoBins1Rmu );
-  fPredictRHCErecoSpectrumArrayTot1Re  = new VALORArray(conv::kRHCNErecoBins1Re  );
-  fPredictRHCErecoSpectrumArray1Rmu    = new VALORArray(conv::knm, conv::kRHCNErecoBins1Rmu);
-  fPredictRHCErecoSpectrumArray1Re     = new VALORArray(conv::knm, conv::kRHCNErecoBins1Re);
-  
-  fPredictErecoSpectrumArrayTot1Rmu   ->SetTitle("Predicted FHC Ereco Spectrum Array 1Rmu total");
-  fPredictErecoSpectrumArrayTot1Re    ->SetTitle("Predicted FHC Ereco Spectrum Array 1Re total");
-  fPredictErecoSpectrumArray1Rmu      ->SetTitle("Predicted FHC Ereco Spectrum Array 1Rmu by mode");
-  fPredictErecoSpectrumArray1Re       ->SetTitle("Predicted FHC Ereco Spectrum Array 1Re by mode");
-  fPredictRHCErecoSpectrumArrayTot1Rmu->SetTitle("Predicted RHC Ereco Spectrum Array 1Rmu total");
-  fPredictRHCErecoSpectrumArrayTot1Re ->SetTitle("Predicted RHC Ereco Spectrum Array 1RE total");
-  fPredictRHCErecoSpectrumArray1Rmu   ->SetTitle("Predicted RHC Ereco Spectrum Array 1Rmu by mode");
-  fPredictRHCErecoSpectrumArray1Re    ->SetTitle("Predicted RHC Ereco Spectrum Array 1Re by mode");
-  
-  fPredictErecoSpectrumArrayTot1Rmu   ->SetName("FHC_ereco_1Rmu_total");
-  fPredictErecoSpectrumArrayTot1Re    ->SetName("FHC_ereco_1Re_total");
-  fPredictErecoSpectrumArray1Rmu      ->SetName("FHC_ereco_1Rmu_mode");
-  fPredictErecoSpectrumArray1Re       ->SetName("FHC_ereco_1Re_mode");
-  fPredictRHCErecoSpectrumArrayTot1Rmu->SetName("RHC_ereco_1Rmu_total");
-  fPredictRHCErecoSpectrumArrayTot1Re ->SetName("RHC_ereco_1RE_total");
-  fPredictRHCErecoSpectrumArray1Rmu   ->SetName("RHC_ereco_1Rmu_mode");
-  fPredictRHCErecoSpectrumArray1Re    ->SetName("RHC_ereco_1Re_mode");
-  
-  fPredictErecoSpectrumArrayTot1Rmu   ->SetDimensionName(0, "Ereco");
-  fPredictErecoSpectrumArrayTot1Re    ->SetDimensionName(0, "Ereco");
-  fPredictErecoSpectrumArray1Rmu      ->SetDimensionName(0, "SK Mode");
-  fPredictErecoSpectrumArray1Re       ->SetDimensionName(0, "SK Mode");
-  fPredictErecoSpectrumArray1Rmu      ->SetDimensionName(1, "Ereco");
-  fPredictErecoSpectrumArray1Re       ->SetDimensionName(1, "Ereco");
-  fPredictRHCErecoSpectrumArrayTot1Rmu->SetDimensionName(0, "Ereco");
-  fPredictRHCErecoSpectrumArrayTot1Re ->SetDimensionName(0, "Ereco");
-  fPredictRHCErecoSpectrumArray1Rmu   ->SetDimensionName(0, "SK Mode");
-  fPredictRHCErecoSpectrumArray1Re    ->SetDimensionName(0, "SK Mode");
-  fPredictRHCErecoSpectrumArray1Rmu   ->SetDimensionName(1, "Ereco");
-  fPredictRHCErecoSpectrumArray1Re    ->SetDimensionName(1, "Ereco");
+  for (int is = 0 ; is < conv::kns ; is++) {
+    SuperkSample_t s = conv::kSKSamples[is];
+    if (s==kSKsUndefined) {
+      fPredictErecoSpectrumArrayTot [is] = 0;
+      fPredictErecoSpectrumArray    [is] = 0;
+      continue;
+    }
+    fPredictErecoSpectrumArrayTot [is]= new VALORArray(util::NumErecoBins(s));
+    fPredictErecoSpectrumArray    [is]= new VALORArray(conv::knm, util::NumErecoBins(s));
+    
+    fPredictErecoSpectrumArrayTot[is] ->SetDimensionName(0, "Ereco");
+    fPredictErecoSpectrumArray   [is] ->SetDimensionName(0, "SK Mode");
+    fPredictErecoSpectrumArray   [is] ->SetDimensionName(1, "Ereco");
+    
+    fPredictErecoSpectrumArrayTot[is]->SetTitle(Form("Predicted Ereco Spectrum Array %s total"  ,util::AsStringCompact(s).c_str()));
+    fPredictErecoSpectrumArray   [is]->SetTitle(Form("Predicted Ereco Spectrum Array %s by mode",util::AsStringCompact(s).c_str()));
+    fPredictErecoSpectrumArrayTot[is]->SetName(Form("ereco_%s_total"  , util::AsStringCompact(s).c_str()));
+    fPredictErecoSpectrumArray   [is]->SetName(Form("ereco_%s_mode"   , util::AsStringCompact(s).c_str()));
+  }
   
 }
 //________________________________________________________________________________________
@@ -280,48 +260,44 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
 //________________________________________________________________________________________
 VALORArray * SuperkExpectation::CurrPredictedErecoVArray(valor::conv::SuperkSample_t s) 
 {
-  VALORArray * arr;
-  if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArrayTot1Rmu;
-  else if(s == kSKsRHCFCFV1RingELike)  arr = fPredictRHCErecoSpectrumArrayTot1Re ;
-  else if(s == kSKsFCFV1RingELike)     arr = fPredictErecoSpectrumArrayTot1Re    ;
-  else if(s == kSKsFCFV1RingMuLike )   arr = fPredictErecoSpectrumArrayTot1Rmu   ;
-  else assert(!"Bad sample");
+  VALORArray * arr = fPredictErecoSpectrumArrayTot[s];
+  if (!arr) {
+    std::cerr<<"SKExp/CurrPredictedErecoVArray could not find array for sample "<<util::AsString(s)<<std::endl;
+    exit(-1);
+  }
   
   return arr;
 }
 //________________________________________________________________________________________
 VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(valor::conv::SuperkSample_t s) 
 {
-  VALORArray * arr;
-  if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArray1Rmu;
-  else if(s == kSKsRHCFCFV1RingELike)  arr = fPredictRHCErecoSpectrumArray1Re ;
-  else if(s == kSKsFCFV1RingELike)     arr = fPredictErecoSpectrumArray1Re    ;
-  else if(s == kSKsFCFV1RingMuLike )   arr = fPredictErecoSpectrumArray1Rmu   ;
-  else assert(!"Bad Sample");
+  VALORArray * arr = fPredictErecoSpectrumArray[s];
+  if (!arr) {
+    std::cerr<<"SKExp/CurrPredictedErecoVArrayMode could not find array for sample "<<util::AsString(s)<<std::endl;
+    exit(-1);
+  }
   
   return arr;
 }
 //________________________________________________________________________________________
 const VALORArray * SuperkExpectation::CurrPredictedErecoVArray(valor::conv::SuperkSample_t s) const
 {
-  const VALORArray * arr;
-  if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArrayTot1Rmu;
-  else if(s == kSKsRHCFCFV1RingELike)  arr = fPredictRHCErecoSpectrumArrayTot1Re ;
-  else if(s == kSKsFCFV1RingELike)     arr = fPredictErecoSpectrumArrayTot1Re    ;
-  else if(s == kSKsFCFV1RingMuLike )   arr = fPredictErecoSpectrumArrayTot1Rmu   ;
-  else assert(!"Bad sample");
+  const VALORArray * arr = fPredictErecoSpectrumArrayTot[s];
+  if (!arr) {
+    std::cerr<<"SKExp/CurrPredictedErecoVArray could not find array for sample "<<util::AsString(s)<<std::endl;
+    exit(-1);
+  }
   
   return arr;
 }
 //________________________________________________________________________________________
-const VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(valor::conv::SuperkSample_t s) const 
+const VALORArray * SuperkExpectation::CurrPredictedErecoVArrayMode(valor::conv::SuperkSample_t s) const
 {
-  const VALORArray * arr;
-  if     (s == kSKsRHCFCFV1RingMuLike) arr = fPredictRHCErecoSpectrumArray1Rmu;
-  else if(s == kSKsRHCFCFV1RingELike)  arr = fPredictRHCErecoSpectrumArray1Re ;
-  else if(s == kSKsFCFV1RingELike)     arr = fPredictErecoSpectrumArray1Re    ;
-  else if(s == kSKsFCFV1RingMuLike )   arr = fPredictErecoSpectrumArray1Rmu   ;
-  else assert(!"Bad Sample");
+  const VALORArray * arr = fPredictErecoSpectrumArray[s];
+  if (!arr) {
+    std::cerr<<"SKExp/CurrPredictedErecoVArrayMode could not find array for sample "<<util::AsString(s)<<std::endl;
+    exit(-1);
+  }
   
   return arr;
 }

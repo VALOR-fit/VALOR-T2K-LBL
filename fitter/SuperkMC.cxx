@@ -180,32 +180,14 @@ void SuperkMC::Init(void)
         fNonEmptyVariableBins  [is][im][ivb] = 0;
       }
     }//im
+    fMCTreeNuMu   .push_back(0);
+    fMCTreeNuMuBar.push_back(0);
+    fMCTreeNuE    .push_back(0);
+    fMCTreeNuEBar .push_back(0);
+    fMCTreeOscNuE .push_back(0);
   }//is
   
-  fMCTreeNuMu1Rmu      = 0;
-  fMCTreeNuMuBar1Rmu   = 0;
-  fMCTreeNuE1Rmu       = 0;
-  fMCTreeNuEBar1Rmu    = 0;
-  fMCTreeOscNuE1Rmu    = 0;
   
-  fMCTreeNuMu1Re       = 0;
-  fMCTreeNuMuBar1Re    = 0;
-  fMCTreeNuE1Re        = 0;
-  fMCTreeNuEBar1Re     = 0;
-  fMCTreeOscNuE1Re     = 0;
-
-  // ANTINU
-  fMCTreeNuMuRHC1Rmu      = 0;
-  fMCTreeNuMuBarRHC1Rmu   = 0;
-  fMCTreeNuERHC1Rmu       = 0;
-  fMCTreeNuEBarRHC1Rmu    = 0;
-  fMCTreeOscNuERHC1Rmu = 0;
-  
-  fMCTreeNuMuRHC1Re       = 0;
-  fMCTreeNuMuBarRHC1Re    = 0;
-  fMCTreeNuERHC1Re        = 0;
-  fMCTreeNuEBarRHC1Re     = 0;
-  fMCTreeOscNuERHC1Re  = 0;
   ////  
 
   fMCPOTNuMu           = 0;
@@ -238,33 +220,14 @@ void SuperkMC::Init(void)
 //________________________________________________________________________________________
 void SuperkMC::CleanUp(void)
 {
-  /*started causing segfaults???
-  if(fMCTreeNuMu1Rmu    ) delete fMCTreeNuMu1Rmu;
-  if(fMCTreeNuMuBar1Rmu ) delete fMCTreeNuMuBar1Rmu;
-  if(fMCTreeNuE1Rmu     ) delete fMCTreeNuE1Rmu;
-  if(fMCTreeNuEBar1Rmu  ) delete fMCTreeNuEBar1Rmu;
-  if(fMCTreeOscNuE1Rmu  ) delete fMCTreeOscNuE1Rmu;
-  */
   /*
-  if(fMCTreeNuMu1Re     ) delete fMCTreeNuMu1Re;
-  if(fMCTreeNuMuBar1Re  ) delete fMCTreeNuMuBar1Re;
-  if(fMCTreeNuE1Re      ) delete fMCTreeNuE1Re;
-  if(fMCTreeNuEBar1Re   ) delete fMCTreeNuEBar1Re;
-  if(fMCTreeOscNuE1Re   ) delete fMCTreeOscNuE1Re;
-  */
-  /*
-  if(fMCTreeNuMuRHC1Rmu    ) delete fMCTreeNuMuRHC1Rmu;     // ANTINU
-  if(fMCTreeNuMuBarRHC1Rmu ) delete fMCTreeNuMuBarRHC1Rmu;  // ANTINU
-  if(fMCTreeNuERHC1Rmu     ) delete fMCTreeNuERHC1Rmu;      // ANTINU
-  if(fMCTreeNuEBarRHC1Rmu  ) delete fMCTreeNuEBarRHC1Rmu;   // ANTINU
-  if(fMCTreeOscNuERHC1Rmu  ) delete fMCTreeOscNuERHC1Rmu;   // ANTINU
-  */
-  /*
-  if(fMCTreeNuMuRHC1Re     ) delete fMCTreeNuMuRHC1Re;      // ANTINU
-  if(fMCTreeNuMuBarRHC1Re  ) delete fMCTreeNuMuBarRHC1Re;   // ANTINU
-  if(fMCTreeNuERHC1Re      ) delete fMCTreeNuERHC1Re;       // ANTINU
-  if(fMCTreeNuEBarRHC1Re   ) delete fMCTreeNuEBarRHC1Re;    // ANTINU
-  if(fMCTreeOscNuERHC1Re   ) delete fMCTreeOscNuERHC1Re;    // ANTINU
+  for (int is = 0 ; is < kns ; is++) {
+    if(fMCTreeNuMu   [is] ) delete fMCTreeNuMu   [is];
+    if(fMCTreeNuMuBar[is] ) delete fMCTreeNuMuBar[is];
+    if(fMCTreeNuE    [is] ) delete fMCTreeNuE    [is];
+    if(fMCTreeNuEBar [is] ) delete fMCTreeNuEBar [is];
+    if(fMCTreeOscNuE [is] ) delete fMCTreeOscNuE [is];
+  }
   */
 
   if(fMCTemplMECMartini) delete fMCTemplMECMartini;
@@ -324,12 +287,11 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCPOTHistNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
   fMCPOTHistOscNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
 
-  fMCPOTNuMu    = fMCPOTHistNuMu->GetBinContent(2)    / fMCPOTHistNuMu->GetBinContent(1);
+  fMCPOTNuMu    = fMCPOTHistNuMu   ->GetBinContent(2) / fMCPOTHistNuMu   ->GetBinContent(1);
   fMCPOTNuMuBar = fMCPOTHistNuMuBar->GetBinContent(2) / fMCPOTHistNuMuBar->GetBinContent(1);
-  fMCPOTNuE     = fMCPOTHistNuE->GetBinContent(2)     / fMCPOTHistNuE->GetBinContent(1);
-  fMCPOTNuEBar  = fMCPOTHistNuEBar->GetBinContent(2)  / fMCPOTHistNuEBar->GetBinContent(1);
-  fMCPOTOscNuE  = fMCPOTHistOscNuE->GetBinContent(2)  / fMCPOTHistOscNuE->GetBinContent(1);
-
+  fMCPOTNuE     = fMCPOTHistNuE    ->GetBinContent(2) / fMCPOTHistNuE    ->GetBinContent(1);
+  fMCPOTNuEBar  = fMCPOTHistNuEBar ->GetBinContent(2) / fMCPOTHistNuEBar ->GetBinContent(1);
+  fMCPOTOscNuE  = fMCPOTHistOscNuE ->GetBinContent(2) / fMCPOTHistOscNuE ->GetBinContent(1);
 
   // ANTINU
   fMCPOTHistRHCNuMu    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
@@ -338,70 +300,26 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCPOTHistRHCNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
   fMCPOTHistRHCOscNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
 
-  fMCPOTRHCNuMu    = fMCPOTHistRHCNuMu->GetBinContent(2)    / fMCPOTHistRHCNuMu->GetBinContent(1);
+  fMCPOTRHCNuMu    = fMCPOTHistRHCNuMu   ->GetBinContent(2) / fMCPOTHistRHCNuMu   ->GetBinContent(1);
   fMCPOTRHCNuMuBar = fMCPOTHistRHCNuMuBar->GetBinContent(2) / fMCPOTHistRHCNuMuBar->GetBinContent(1);
-  fMCPOTRHCNuE     = fMCPOTHistRHCNuE->GetBinContent(2)     / fMCPOTHistRHCNuE->GetBinContent(1);
-  fMCPOTRHCNuEBar  = fMCPOTHistRHCNuEBar->GetBinContent(2)  / fMCPOTHistRHCNuEBar->GetBinContent(1);
-  fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuE->GetBinContent(2)  / fMCPOTHistRHCOscNuE->GetBinContent(1);
+  fMCPOTRHCNuE     = fMCPOTHistRHCNuE    ->GetBinContent(2) / fMCPOTHistRHCNuE    ->GetBinContent(1);
+  fMCPOTRHCNuEBar  = fMCPOTHistRHCNuEBar ->GetBinContent(2) / fMCPOTHistRHCNuEBar ->GetBinContent(1);
+  fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuE ->GetBinContent(2) / fMCPOTHistRHCOscNuE ->GetBinContent(1);
   ////
-
-  // MODIFIED
+  
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsFCFV1RingMuLike) {
-       fMCTreeNuMu1Rmu    = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_mu_ring");
-       fMCTreeNuMuBar1Rmu = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_mu_ring");
-       fMCTreeNuE1Rmu     = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_mu_ring");
-       fMCTreeNuEBar1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_mu_ring");
-       fMCTreeOscNuE1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
-       assert (fMCTreeNuMu1Rmu   );
-       assert (fMCTreeNuMuBar1Rmu);
-       assert (fMCTreeNuE1Rmu    );
-       assert (fMCTreeNuEBar1Rmu );
-       assert (fMCTreeOscNuE1Rmu );
-     }
-     else if(s == kSKsFCFV1RingELike) {
-       fMCTreeNuMu1Re     = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_e_ring");
-       fMCTreeNuMuBar1Re  = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_e_ring");
-       fMCTreeNuE1Re      = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_e_ring");
-       fMCTreeNuEBar1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_e_ring");
-       fMCTreeOscNuE1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
-       assert (fMCTreeNuMu1Re    );
-       assert (fMCTreeNuMuBar1Re );
-       assert (fMCTreeNuE1Re     );
-       assert (fMCTreeNuEBar1Re  );
-       assert (fMCTreeOscNuE1Re  );
-     }
-     ////
-	
-
-					
-     // ANTINU
-     else if(s == kSKsRHCFCFV1RingMuLike) {
-       fMCTreeNuMuRHC1Rmu    = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_mu_ring");
-       fMCTreeNuMuBarRHC1Rmu = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_mu_ring");
-       fMCTreeNuERHC1Rmu     = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_mu_ring");
-       fMCTreeNuEBarRHC1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_mu_ring");
-       fMCTreeOscNuERHC1Rmu  = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_mu_ring");
-       assert (fMCTreeNuMuRHC1Rmu   );
-       assert (fMCTreeNuMuBarRHC1Rmu);
-       assert (fMCTreeNuERHC1Rmu    );
-       assert (fMCTreeNuEBarRHC1Rmu );
-       assert (fMCTreeOscNuERHC1Rmu );
-     }
-     else if(s == kSKsRHCFCFV1RingELike) {
-       fMCTreeNuMuRHC1Re     = util::XML2TTree (xml,root_node,"mc/superk/nominal/numu/one_e_ring");
-       fMCTreeNuMuBarRHC1Re  = util::XML2TTree (xml,root_node,"mc/superk/nominal/numubar/one_e_ring");
-       fMCTreeNuERHC1Re      = util::XML2TTree (xml,root_node,"mc/superk/nominal/nue/one_e_ring");
-       fMCTreeNuEBarRHC1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/nuebar/one_e_ring");
-       fMCTreeOscNuERHC1Re   = util::XML2TTree (xml,root_node,"mc/superk/nominal/signal_nue/one_e_ring");
-       assert (fMCTreeNuMuRHC1Re    );
-       assert (fMCTreeNuMuBarRHC1Re );
-       assert (fMCTreeNuERHC1Re     );
-       assert (fMCTreeNuEBarRHC1Re  );
-       assert (fMCTreeOscNuERHC1Re  );
-     }
-     ////
+     if (s==kSKsUndefined) continue;
+     fMCTreeNuMu   [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/numu/%s"      ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeNuMuBar[is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/numubar/%s"   ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeNuE    [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/nue/%s"       ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeNuEBar [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/nuebar/%s"    ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeOscNuE [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/signal_nue/%s",util::GetXMLMCTreeName(s).c_str()));
+     assert (fMCTreeNuMu   [is]);
+     assert (fMCTreeNuMuBar[is]);
+     assert (fMCTreeNuE    [is]);
+     assert (fMCTreeNuEBar [is]);
+     assert (fMCTreeOscNuE [is]);
   }
   
 
@@ -422,38 +340,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsFCFV1RingMuLike) {
-       cout << "Exp/SKMC >> " << "Nev {MC; numu;     1Rmu} = " << fMCTreeNuMu1Rmu    -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; numubar;  1Rmu} = " << fMCTreeNuMuBar1Rmu -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; nue;      1Rmu} = " << fMCTreeNuE1Rmu     -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   1Rmu} = " << fMCTreeNuEBar1Rmu  -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Rmu} = " << fMCTreeOscNuE1Rmu  -> GetEntries()  << endl;
-     }
-     else if(s == kSKsFCFV1RingELike) {
-       cout << "Exp/SKMC >> " << "Nev {MC; numu;     1Re } = " << fMCTreeNuMu1Re     -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; numubar;  1Re } = " << fMCTreeNuMuBar1Re  -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; nue;      1Re } = " << fMCTreeNuE1Re      -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   1Re } = " << fMCTreeNuEBar1Re   -> GetEntries()  << endl;
-       cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Re } = " << fMCTreeOscNuE1Re   -> GetEntries()  << endl;
-     }
-
-     // ANTINU
-     else if(s == kSKsRHCFCFV1RingMuLike) {
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; numu;     1Rmu} = " << fMCTreeNuMuRHC1Rmu    -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; numubar;  1Rmu} = " << fMCTreeNuMuBarRHC1Rmu -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue;      1Rmu} = " << fMCTreeNuERHC1Rmu     -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nuebar;   1Rmu} = " << fMCTreeNuEBarRHC1Rmu  -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Rmu} = " << fMCTreeOscNuERHC1Rmu  -> GetEntries()  << endl;
-     }
-     else if(s == kSKsRHCFCFV1RingELike) {
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; numu;     1Re } = " << fMCTreeNuMuRHC1Re     -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; numubar;  1Re } = " << fMCTreeNuMuBarRHC1Re  -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue;      1Re } = " << fMCTreeNuERHC1Re      -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nuebar;   1Re } = " << fMCTreeNuEBarRHC1Re   -> GetEntries()  << endl;
-       cout << "RHC: Exp/SKMC >> " << "Nev {MC; nue[osc]; 1Re } = " << fMCTreeOscNuERHC1Re   -> GetEntries()  << endl;
-     }
-     ////
-
+     if (s==kSKsUndefined) continue;
+     
+     cout << "Exp/SKMC >> " << "Nev {MC; numu;     "<<AsStringCompact(s)<<"} = " << fMCTreeNuMu   [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; numubar;  "<<AsStringCompact(s)<<"} = " << fMCTreeNuMuBar[is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; nue;      "<<AsStringCompact(s)<<"} = " << fMCTreeNuE    [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   "<<AsStringCompact(s)<<"} = " << fMCTreeNuEBar [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; "<<AsStringCompact(s)<<"} = " << fMCTreeOscNuE [is]-> GetEntries()  << endl;
      
   }
 #endif//__show_init_mesg_info__
@@ -2773,8 +2666,6 @@ bool SuperkMC::UpdateErecoSpectra(void)
         // consider template?
         bool skip = this->SkipTemplate(m);
         if(skip) continue;
-
-        //TH2D * mctempl = this -> Template(s,m,kSKMCtFin);
         
         // loop over Etrue
         double nev = 0;
@@ -2880,50 +2771,21 @@ double SuperkMC::AnalyzedSamplePOT(SuperkSample_t s) const
 //________________________________________________________________________________________
 TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
 {
-  if (s==kSKsFCFV1RingMuLike)
+  if (s!=kSKsUndefined)
   {
-     if ( util::IsNuMu(m)      ) return fMCTreeNuMu1Rmu;
-     if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar1Rmu;
-     if ( util::IsNuE(m)       ) return fMCTreeNuE1Rmu;
-     if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar1Rmu;
-     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuE1Rmu;
-  }//1Rmu
-  
-  if (s==kSKsFCFV1RingELike)
-  {
-     if ( util::IsNuMu(m)      ) return fMCTreeNuMu1Re;
-     if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar1Re;
-     if ( util::IsNuE(m)       ) return fMCTreeNuE1Re;
-     if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar1Re;
-     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuE1Re;
-  }//1Re
-
-  // ANTINU
-  if (s==kSKsRHCFCFV1RingMuLike)
-  {
-     if ( util::IsNuMu(m)      ) return fMCTreeNuMuRHC1Rmu;
-     if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBarRHC1Rmu;
-     if ( util::IsNuE(m)       ) return fMCTreeNuERHC1Rmu;
-     if ( util::IsNuEBar(m)    ) return fMCTreeNuEBarRHC1Rmu;
-     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuERHC1Rmu;
-  }//1Rmu
-  if (s==kSKsRHCFCFV1RingELike)
-  {
-     if ( util::IsNuMu(m)      ) return fMCTreeNuMuRHC1Re;
-     if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBarRHC1Re;
-     if ( util::IsNuE(m)       ) return fMCTreeNuERHC1Re;
-     if ( util::IsNuEBar(m)    ) return fMCTreeNuEBarRHC1Re;
-     if ( util::IsOscNuE(m)    ) return fMCTreeOscNuERHC1Re;
-  }//1Re
-  ////
-
+    if ( util::IsNuMu(m)      ) return fMCTreeNuMu   [s];
+    if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar[s];
+    if ( util::IsNuE(m)       ) return fMCTreeNuE    [s];
+    if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar [s];
+    if ( util::IsOscNuE(m)    ) return fMCTreeOscNuE [s];
+  }
 
   return 0;
 }
 //________________________________________________________________________________________
 double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
 {
-  if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
+  if(util::IsFHCSample(s))
   {
      if ( util::IsNuMu(m)      ) return fMCPOTNuMu;
      if ( util::IsNuMuBar(m)   ) return fMCPOTNuMuBar;
@@ -2931,10 +2793,8 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuEBar(m)    ) return fMCPOTNuEBar;
      if ( util::IsOscNuE(m)    ) return fMCPOTOscNuE;
   }
-
   
-  // ANTINU
-  else if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+  else if(util::IsRHCSample(s))
   {
      if ( util::IsNuMu(m)      ) return fMCPOTRHCNuMu;
      if ( util::IsNuMuBar(m)   ) return fMCPOTRHCNuMuBar;
@@ -2963,9 +2823,9 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
   util::SetDefaultStyle();
 
   if(opt.Contains("EtrueSpectra/NuMu")) { 
-      fMCTreeNuMu1Rmu->Draw("Enu");
-      fMCTreeNuMu1Rmu->Draw("Enu","Mode==1","same");
-      fMCTreeNuMu1Rmu->Draw("Enu","Mode==11||Mode==12||Mode==13","same");
+      fMCTreeNuMu[0]->Draw("Enu");
+      fMCTreeNuMu[0]->Draw("Enu","Mode==1","same");
+      fMCTreeNuMu[0]->Draw("Enu","Mode==11||Mode==12||Mode==13","same");
       c->Update();
   }
 /*

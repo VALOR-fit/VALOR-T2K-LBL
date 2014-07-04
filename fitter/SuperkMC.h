@@ -166,7 +166,6 @@ private:
   
   std::vector<VALORArray> fMCVariableTemplArray; // sample -> (mode, MCetrue,Xsereco)
   std::vector<VALORArray> fMCTemplArrayOri;      // sample -> (mode, etrue, ereco)   
-
   
   std::vector<VALORArray> fMCTemplArrayNom; //sample -> (mode, etrue, observable)
   std::vector<VALORArray> fMCTemplArrayTun; //sample -> (mode, etrue, observable)
@@ -182,29 +181,11 @@ private:
   TH1D *     fMCEtrueSpectrumTot[conv::kns];     ///< Etrue MC spectrum (sample)          : nominal
   
   // input event trees and normalisation factors
-  TTree*     fMCTreeNuMu1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like 
-  TTree*     fMCTreeNuMuBar1Rmu;           ///< input MC event tree /  sample: numubar                      / cuts: 1-ring mu-like 
-  TTree*     fMCTreeNuE1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like 
-  TTree*     fMCTreeNuEBar1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like 
-  TTree*     fMCTreeOscNuE1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like 
-  
-  TTree*     fMCTreeNuMu1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like 
-  TTree*     fMCTreeNuMuBar1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like 
-  TTree*     fMCTreeNuE1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like 
-  TTree*     fMCTreeNuEBar1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like 
-  TTree*     fMCTreeOscNuE1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like 
- 
-  TTree*     fMCTreeNuMuRHC1Rmu;              ///< input MC event tree /  sample: numu                         / cuts: 1-ring mu-like    // ANTINU
-  TTree*     fMCTreeNuMuBarRHC1Rmu;           ///< input MC event tree /  sample: numubar                      / cuts: 1-ring mu-like    // ANTINU
-  TTree*     fMCTreeNuERHC1Rmu;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring mu-like    // ANTINU
-  TTree*     fMCTreeNuEBarRHC1Rmu;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring mu-like    // ANTINU
-  TTree*     fMCTreeOscNuERHC1Rmu;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring mu-like    // ANTINU
-  
-  TTree*     fMCTreeNuMuRHC1Re;               ///< input MC event tree /  sample: numu                         / cuts: 1-ring e-like    // ANTINU
-  TTree*     fMCTreeNuMuBarRHC1Re;            ///< input MC event tree /  sample: numubar                      / cuts: 1-ring e-like    // ANTINU
-  TTree*     fMCTreeNuERHC1Re;                ///< input MC event tree /  sample: nue (intrinsic)              / cuts: 1-ring e-like    // ANTINU
-  TTree*     fMCTreeNuEBarRHC1Re;             ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: 1-ring e-like    // ANTINU
-  TTree*     fMCTreeOscNuERHC1Re;             ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: 1-ring e-like    // ANTINU
+  vector<TTree*> fMCTreeNuMu;              ///< input MC event tree /  sample: numu                         / cuts: by sample 
+  vector<TTree*> fMCTreeNuMuBar;           ///< input MC event tree /  sample: numubar                      / cuts: by sample 
+  vector<TTree*> fMCTreeNuE;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: by sample 
+  vector<TTree*> fMCTreeNuEBar;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: by sample 
+  vector<TTree*> fMCTreeOscNuE;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: by sample 
  
   TH1D*      fMCPOTHistNuMu;               ///< input MC event sample POT histogram : numu
   TH1D*      fMCPOTHistNuMuBar;            ///< input MC event sample POT histogram : numubar

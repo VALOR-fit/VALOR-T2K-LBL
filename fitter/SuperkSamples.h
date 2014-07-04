@@ -53,6 +53,9 @@ namespace util {
   bool Is1RMuSample       (conv::SuperkSample_t s);
   bool Is1RESample        (conv::SuperkSample_t s);
   
+  string GetXMLMCTreeName  (conv::SuperkSample_t     s);
+  string GetXMLDatasetName (conv::SuperkSample_t     s);
+  
   // String stuff
   conv::SuperkSample_t  SKSampleFromString        (string h);
   string AsString           (conv::SuperkSample_t     s);

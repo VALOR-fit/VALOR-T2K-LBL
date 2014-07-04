@@ -84,10 +84,7 @@ public:
   
 private:
   
-  VALORArray * fErDistrArray1Rmu   ;
-  VALORArray * fErDistrArray1Re    ;
-  VALORArray * fRHCErDistrArray1Rmu;
-  VALORArray * fRHCErDistrArray1Re ;
+  VALORArray * fErDistrArray   [conv::kns];
 
   void Init    (void);
   void CleanUp (void);

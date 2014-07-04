@@ -54,6 +54,32 @@ bool valor::util::Is1RESample(conv::SuperkSample_t s)
   return false;
 }
 //___________________________________________________________________________
+string valor::util::GetXMLMCTreeName(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike )    : return "one_mu_ring";
+     case ( kSKsFCFV1RingELike  )    : return "one_e_ring";
+     case ( kSKsRHCFCFV1RingMuLike ) : return "one_mu_ring";
+     case ( kSKsRHCFCFV1RingELike  ) : return "one_e_ring";
+
+     default                      : return "--";
+  }
+  return "";
+}
+//___________________________________________________________________________
+string valor::util::GetXMLDatasetName(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike )    : return "one_mu_ring";
+     case ( kSKsFCFV1RingELike  )    : return "one_e_ring";
+     case ( kSKsRHCFCFV1RingMuLike ) : return "one_mu_ring_rhc";
+     case ( kSKsRHCFCFV1RingELike  ) : return "one_e_ring_rhc";
+
+     default                      : return "--";
+  }
+  return "";
+}
+//___________________________________________________________________________
 string valor::util::AsString(valor::conv::SuperkSample_t s)
 {
   switch(s) {

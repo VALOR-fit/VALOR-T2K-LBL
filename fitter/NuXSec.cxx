@@ -1220,8 +1220,10 @@ bool NuXSec::ApplySyst(
 //________________________________________________________________________________________
 bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m) const
 {
+  int im = arr_index->SuperkModeIdx(s,m);
+  if (im == -1) return false;
+  
   int isyst;
-
   if(util::IsRHCSample(s)) {
     isyst = arr_index->RHCXSecSystIdx(p);
     if (isyst == -1) return false;
@@ -1230,11 +1232,8 @@ bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m
     isyst = arr_index->XSecSystIdx(p);
     if (isyst == -1) return false;
   }
-
+  
   int is = arr_index->SuperkSampleIdx(s);
-  if (is == -1) return false;
-  int im = arr_index->SuperkModeIdx(s,m);
-  if (im == -1) return false;
 
   bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
 

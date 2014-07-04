@@ -68,40 +68,27 @@ void SuperkObservation::Init(void)
 {
 // Initialize private data members
 //
-  fErDistrArray1Rmu    = new VALORArray (conv::kNErecoBins1Rmu    );
-  fErDistrArray1Re     = new VALORArray (conv::kNErecoBins1Re     );
-  fRHCErDistrArray1Rmu = new VALORArray (conv::kRHCNErecoBins1Rmu );
-  fRHCErDistrArray1Re  = new VALORArray (conv::kRHCNErecoBins1Re  );
-  
-  fErDistrArray1Rmu    ->SetAll(0.);
-  fErDistrArray1Re     ->SetAll(0.);
-  fRHCErDistrArray1Rmu ->SetAll(0.);
-  fRHCErDistrArray1Re  ->SetAll(0.);
-  
-  fErDistrArray1Rmu    ->SetTitle("Ereco distribution 1Rmu FHC");
-  fErDistrArray1Re     ->SetTitle("Ereco distribution 1Re FHC");
-  fRHCErDistrArray1Rmu ->SetTitle("Ereco distribution 1Rmu RHC");
-  fRHCErDistrArray1Re  ->SetTitle("Ereco distribution 1Re RHC");
-  
-  fErDistrArray1Rmu    ->SetTitle("1Rmu_FHC");
-  fErDistrArray1Re     ->SetTitle("1Re_FHC");
-  fRHCErDistrArray1Rmu ->SetTitle("1Rmu_RHC");
-  fRHCErDistrArray1Re  ->SetTitle("1Re_RHC");
-  
-  fErDistrArray1Rmu    ->SetDimensionName(0,"Reconstructed energy /GeV");
-  fErDistrArray1Re     ->SetDimensionName(0,"Reconstructed energy /GeV");
-  fRHCErDistrArray1Rmu ->SetDimensionName(0,"Reconstructed energy /GeV");
-  fRHCErDistrArray1Re  ->SetDimensionName(0,"Reconstructed energy /GeV");
+  for (int is = 0 ; is < conv::kns ;  is ++ ) {
+    SuperkSample_t s = kSKSamples[is];
+    if (s==kSKsUndefined) {
+      fErDistrArray[is]=0;
+    }
+    else {
+      fErDistrArray[is] = new VALORArray(util::NumErecoBins(s));
+      fErDistrArray[is]->SetTitle(Form("Ereco distribution: %s",util::AsString(s).c_str()));
+      fErDistrArray[is]->SetName(Form("%s",util::AsStringCompact(s).c_str()));
+      fErDistrArray[is]->SetDimensionName(0,"Reconstructed energy /GeV");
+    }
+  }
   
   arr_index = util::ArrIdx::Instance();
 }
 //________________________________________________________________________________________
 void SuperkObservation::CleanUp(void)
 {
-  delete fErDistrArray1Rmu    ;
-  delete fErDistrArray1Re     ;
-  delete fRHCErDistrArray1Rmu ;
-  delete fRHCErDistrArray1Re  ;
+  for (int is = 0 ; is < conv::kns ; is++) {
+    if (fErDistrArray[is]) delete fErDistrArray[is];
+  }
 }
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file, Option_t * opt)
@@ -137,171 +124,62 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     }
     XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
     
-#ifdef __FHC_RUNNING__
-#ifndef __NUEONLY__ 
-    ostringstream datanode1Rmu;
-    datanode1Rmu << "superk/observation";
-    datanode1Rmu << "/data_set_" << data_set_id;
-    datanode1Rmu << "/one_mu_ring/ereco_values"; 
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s==kSKsUndefined) continue;
+      ostringstream datanode;
+      datanode << "superk/observation";
+      datanode << "/data_set_" << data_set_id;
+      datanode << "/"<<util::GetXMLDatasetName(s);
+      datanode << "/ereco_values"; 
 
-    if(util::NodeExists(xml,root_node,datanode1Rmu.str())) {
-      TH1D h("", "", kNErecoBins1Rmu,kErecoBinEdges1Rmu);
-      h.SetDirectory(0);
-      vector<double> values = util::XML2DblArray(xml,root_node,datanode1Rmu.str());
-      vector<double>::const_iterator value_iter = values.begin();
-      for( ; value_iter != values.end(); ++value_iter) {
-        double Ereco = *value_iter;
-        h.Fill(Ereco);
+      if(util::NodeExists(xml,root_node,datanode.str())) {
+        TH1D h("", "", util::NumErecoBins(s), util::ErecoBinEdges(s));
+        h.SetDirectory(0);
+        vector<double> values = util::XML2DblArray(xml,root_node,datanode.str());
+        vector<double>::const_iterator value_iter = values.begin();
+        for( ; value_iter != values.end(); ++value_iter) {
+          double Ereco = *value_iter;
+          h.Fill(Ereco);
+        }
+        cout << "Obs >> Read: " << h.Integral() 
+             << " " << util::AsString(s) << " events." << endl;
+        for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
+          double nobs = h.GetBinContent(ibin);
+          fErDistrArray[is]->GetArray()[ibin-1] = nobs;
+        }
       }
-      cout << "Obs >> Read: " << h.Integral() 
-           << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
-      for(int ibin = 1; ibin <= kNErecoBins1Rmu; ibin++) {
-        double nobs = h.GetBinContent(ibin);
-        fErDistrArray1Rmu->GetArray()[ibin-1] = nobs;
+      else {
+        cerr << "Obs >> Node " << datanode.str() << " does not exist!" << endl;
       }
-    }
-    else {
-      cerr << "Obs >> Node " << datanode1Rmu.str() << " does not exist!" << endl;
-    }
-#endif
-#ifndef __NUMUONLY__ 
-    ostringstream datanode1Re;
-    //Ereco spectrum
-    datanode1Re << "superk/observation";
-    datanode1Re << "/data_set_" << data_set_id;
-    datanode1Re << "/one_e_ring/ereco_values";
+    } // is
     
-    if(util::NodeExists(xml,root_node,datanode1Re.str())) {
-      TH1D h("", "", kNErecoBins1Re,kErecoBinEdges1Re);
-      h.SetDirectory(0);
-      vector<double> values = util::XML2DblArray(xml,root_node,datanode1Re.str());
-      vector<double>::const_iterator value_iter = values.begin();
-      for( ; value_iter != values.end(); ++value_iter) {
-        double Ereco = *value_iter;
-        h.Fill(Ereco);
-      }
-      cout << "Obs >> Read: " << h.Integral() 
-           << " " << util::AsString(kSKsFCFV1RingELike) << " events." << endl;
-      for(int ibin = 1; ibin <= kNErecoBins1Re; ibin++) {
-        double nobs = h.GetBinContent(ibin);
-        fErDistrArray1Re->GetArray()[ibin-1] = nobs;
-      }
-    }
-
-    else {
-      cerr << "Obs >> Node " << datanode1Re.str() << " does not exist!" << endl;
-    }
-#endif
-#endif
-
-#ifdef __RHC_RUNNING__
-#ifndef __NUEONLY__
-    ostringstream datanodeRHC1Rmu;
-    datanodeRHC1Rmu << "superk/observation";
-    datanodeRHC1Rmu << "/data_set_" << data_set_id;
-    datanodeRHC1Rmu << "/one_mu_ring_rhc/ereco_values"; 
-
-    if(util::NodeExists(xml,root_node,datanodeRHC1Rmu.str())) {
-      //int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike);
-      TH1D h("", "", kRHCNErecoBins1Rmu,kRHCErecoBinEdges1Rmu);
-      h.SetDirectory(0);
-      vector<double> values = util::XML2DblArray(xml,root_node,datanodeRHC1Rmu.str());
-      vector<double>::const_iterator value_iter = values.begin();
-      for( ; value_iter != values.end(); ++value_iter) {
-        double Ereco = *value_iter;
-        h.Fill(Ereco);
-      }
-      cout << "Obs >> Read: " << h.Integral()
-           << " " << util::AsString(kSKsRHCFCFV1RingMuLike) << " events." << endl;
-      for(int ibin = 1; ibin <= kRHCNErecoBins1Rmu; ibin++) {
-        double nobs = h.GetBinContent(ibin);
-        fRHCErDistrArray1Rmu->GetArray()[ibin-1] = nobs;
-      }
-    }
-    else {
-      cerr << "Obs >> Node " << datanodeRHC1Rmu.str() << " does not exist!" << endl;
-    }
-#endif
-#ifndef __NUMUONLY__
-    ostringstream datanodeRHC1Re;
-    //Ereco spectrum                                                                            
-    datanodeRHC1Re << "superk/observation";
-    datanodeRHC1Re << "/data_set_" << data_set_id;
-    datanodeRHC1Re << "/one_e_ring_rhc/ereco_values"; 
-
-    if(util::NodeExists(xml,root_node,datanodeRHC1Re.str())) {
-      //int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingELike);
-      TH1D h("", "", kRHCNErecoBins1Re,kRHCErecoBinEdges1Re);
-      h.SetDirectory(0);
-      vector<double> values = util::XML2DblArray(xml,root_node,datanodeRHC1Re.str());
-      vector<double>::const_iterator value_iter = values.begin();
-      for( ; value_iter != values.end(); ++value_iter) {
-        double Ereco = *value_iter;
-        h.Fill(Ereco);
-      }
-      cout << "Obs >> Read: " << h.Integral()
-           << " " << util::AsString(kSKsRHCFCFV1RingELike) << " events." << endl;
-      for(int ibin = 1; ibin <= kRHCNErecoBins1Re; ibin++) {
-        double nobs = h.GetBinContent(ibin);
-        fRHCErDistrArray1Re->GetArray()[ibin-1] = nobs;
-      }
-    }
-
-    else {
-      cerr << "Obs >> Node " << datanodeRHC1Re.str() << " does not exist!" << endl;
-    }
-#endif
-
-#endif
-
     // Release memory
     xml->FreeDoc(xmldoc);
     delete xml;
   }//is_xml
 
   else { // DEPRECATE?
-#ifndef __NUEONLY__ 
-#ifdef __FHC_RUNNING__
-    TFile f(config_file.c_str());
-    TH1D * hist = 0;
-    f.GetObject(Form("mock_data_%d",data_set_id),hist);
-    if(!hist) {
-      cerr << "Obs >> Histogram for 1Rmu does not exist!" << endl;
-    }
-    else {
-      assert(hist->GetNbinsX() == util::NumErecoBins(kSKsFCFV1RingMuLike));
-      double integral = 0;
-      for(int ix = 1; ix <= hist->GetNbinsX(); ix++) {
-        double nev   = hist->GetBinContent(ix);
-        integral+=nev;
-        fErDistrArray1Rmu->GetArray()[ix-1] = nev;
-      }
-      cout << "Obs >> Read: " << integral
-           << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
-    }
-#endif
-#ifdef __RHC_RUNNING__
-    TFile fRHC(config_file.c_str());
-    TH1D * histRHC = 0;
-    fRHC.GetObject(Form("mock_data_%d",data_set_id),histRHC);
-    if(!histRHC) {
-      cerr << "Obs >> Histogram for RHC 1Rmu does not exist!" << endl;
-    }
-    else {
-      assert(histRHC->GetNbinsX() == util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
-      double integral = 0;
-      //int idx = arr_index->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike);
-      for(int ix = 1; ix <= histRHC->GetNbinsX(); ix++) {
-        //double Ereco = histRHC->GetBinCenter(ix);
-        double nev   = histRHC->GetBinContent(ix);
-        integral+=nev;
-        fRHCErDistrArray1Rmu->GetArray()[ix-1] = nev;
-      }
-      cout << "Obs >> Read: " << integral
-           << " " << util::AsString(kSKsRHCFCFV1RingMuLike) << " events." << endl;
-    }
-#endif
-#endif
+    assert(!"This code branch is deprecated");
+//~ #ifndef __NUEONLY__ 
+    //~ TFile f(config_file.c_str());
+    //~ TH1D * hist = 0;
+    //~ f.GetObject(Form("mock_data_%d",data_set_id),hist);
+    //~ if(!hist) {
+      //~ cerr << "Obs >> Histogram for 1Rmu does not exist!" << endl;
+    //~ }
+    //~ else {
+      //~ assert(hist->GetNbinsX() == util::NumErecoBins(kSKsFCFV1RingMuLike));
+      //~ double integral = 0;
+      //~ for(int ix = 1; ix <= hist->GetNbinsX(); ix++) {
+        //~ double nev   = hist->GetBinContent(ix);
+        //~ integral+=nev;
+        //~ fErDistrArray1Rmu->GetArray()[ix-1] = nev;
+      //~ }
+      //~ cout << "Obs >> Read: " << integral
+           //~ << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
+    //~ }
+//~ #endif
   }//!is_xml
 
   return true;
@@ -390,31 +268,25 @@ TH1D* SuperkObservation::ErecoSpectrum (valor::conv::SuperkSample_t s) const
 //________________________________________________________________________________________
 VALORArray * SuperkObservation::ErecoSpectrumVArray (valor::conv::SuperkSample_t s)
 {
-  if      (s == kSKsRHCFCFV1RingMuLike) return fRHCErDistrArray1Rmu;
-  else if (s == kSKsRHCFCFV1RingELike)  return fRHCErDistrArray1Re;
-  else if (s == kSKsFCFV1RingELike)     return fErDistrArray1Re; 
-  else if (s == kSKsFCFV1RingMuLike)    return fErDistrArray1Rmu; 
-  std::cerr<<"SuperkObservation/ErecoSpectrumValorArray >> Failed for sample "<<util::AsString(s)<<std::endl;
-  exit(-1);
+  return fErDistrArray[s];
 }
 //________________________________________________________________________________________
 const VALORArray * SuperkObservation::ErecoSpectrumVArray (valor::conv::SuperkSample_t s) const
 {
-  if      (s == kSKsRHCFCFV1RingMuLike) return fRHCErDistrArray1Rmu;
-  else if (s == kSKsRHCFCFV1RingELike)  return fRHCErDistrArray1Re;
-  else if (s == kSKsFCFV1RingELike)     return fErDistrArray1Re; 
-  else if (s == kSKsFCFV1RingMuLike)    return fErDistrArray1Rmu; 
-  std::cerr<<"SuperkObservation/ErecoSpectrumValorArray >> Failed for sample "<<util::AsString(s)<<std::endl;
-  exit(-1);
+  return fErDistrArray[s];
 }
 //________________________________________________________________________________________
 double* SuperkObservation::ErecoSpectrumArray (valor::conv::SuperkSample_t s)
 {
+  VALORArray * va = ErecoSpectrumVArray(s);
+  if (not va) return 0;
   return ErecoSpectrumVArray(s)->GetArray();
 }
 //________________________________________________________________________________________
 const double* SuperkObservation::ErecoSpectrumArray (valor::conv::SuperkSample_t s) const
 {
+  const VALORArray * va = ErecoSpectrumVArray(s);
+  if (not va) return 0;
   return ErecoSpectrumVArray(s)->GetArray();
 }
 //________________________________________________________________________________________
