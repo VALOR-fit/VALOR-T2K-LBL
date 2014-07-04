@@ -409,165 +409,93 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D_locmin
     cout << endl;
 
 
-
-
-
-
-    // //     
-    // // Random selection of (mixing23,dmsq,mixing13) bin 
-    // //     
+    //     
+    // Random selection of (mixing23,dmsq,mixing13) bin 
+    //     
     
-    // uniformRand = rand.Uniform(0.0, 1.0);
+    uniformRand = rand.Uniform(0.0, 1.0);
    
-    // cout << "uniformRand = " << uniformRand << endl;
+    cout << "uniformRand = " << uniformRand << endl;
     
-    //  for(int mixing13_bin=1; mixing13_bin<=mixing13_nbins; mixing13_bin++){
-    //    for(int dmsq_bin=1; dmsq_bin<=dmsq_nbins; dmsq_bin++){
-    // 	 for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
-    // 	   int index = (mixing13_bin-1)*mixing23_nbins*dmsq_nbins + (dmsq_bin-1)*mixing23_nbins + mixing23_bin;
-    // 	   if(uniformRand >= cumulNormLikelihood[index-1] && uniformRand <= cumulNormLikelihood[index]){
-    // 	     input_dmsq_bin = dmsq_bin;
-    // 	     input_mixing23_bin = mixing23_bin;
-    // 	     input_mixing13_bin = mixing13_bin;
-    // 	   }
-    // 	 }
-    //    }
-    //  }
+     for(int mixing13_bin=1; mixing13_bin<=mixing13_nbins; mixing13_bin++){
+       for(int dmsq_bin=1; dmsq_bin<=dmsq_nbins; dmsq_bin++){
+    	 for(int mixing23_bin=1; mixing23_bin<=mixing23_nbins; mixing23_bin++){
+    	   int index = (mixing13_bin-1)*mixing23_nbins*dmsq_nbins + (dmsq_bin-1)*mixing23_nbins + mixing23_bin;
+    	   if(uniformRand >= cumulNormLikelihood[index-1] && uniformRand <= cumulNormLikelihood[index]){
+    	     input_dmsq_bin = dmsq_bin;
+    	     input_mixing23_bin = mixing23_bin;
+    	     input_mixing13_bin = mixing13_bin;
+    	   }
+    	 }
+       }
+     }
 
-    //  cout << endl;
-    //  cout << endl;
-    //  cout<<"Uniform random number thrown between 0 and 1 = "<<uniformRand<<" which means the input (mixing23,dmsq,mixing13) bin is "<<input_mixing23_bin <<" , " << input_dmsq_bin<< " and " << input_mixing13_bin << endl;
-    //  cout << "Extracted Likelihood = " << dchisq3D->GetBinContent(input_mixing23_bin, input_dmsq_bin, input_mixing13_bin) << endl;
-    //  cout << "mixing23 = " << dchisq3D->GetXaxis()->GetBinCenter(input_mixing23_bin) << endl;
-    //  cout << "dmsq = " << dchisq3D->GetYaxis()->GetBinCenter(input_dmsq_bin) << endl;
-    //  cout << "mixing13 = " << dchisq3D->GetZaxis()->GetBinCenter(input_mixing13_bin) << endl;
-    //  cout << endl;
-    //  cout << endl;
+     cout << endl;
+     cout << endl;
+     cout<<"Uniform random number thrown between 0 and 1 = "<<uniformRand<<" which means the input (mixing23,dmsq,mixing13) bin is "<<input_mixing23_bin <<" , " << input_dmsq_bin<< " and " << input_mixing13_bin << endl;
+     cout << "Extracted Likelihood = " << dchisq3D->GetBinContent(input_mixing23_bin, input_dmsq_bin, input_mixing13_bin) << endl;
+     cout << "mixing23 = " << dchisq3D->GetXaxis()->GetBinCenter(input_mixing23_bin) << endl;
+     cout << "dmsq = " << dchisq3D->GetYaxis()->GetBinCenter(input_dmsq_bin) << endl;
+     cout << "mixing13 = " << dchisq3D->GetZaxis()->GetBinCenter(input_mixing13_bin) << endl;
+     cout << endl;
+     cout << endl;
 
-     // // Sanity check on bin range
-     // input_mixing23_bin = TMath::Max(1,              input_mixing23_bin);
-     // input_mixing23_bin = TMath::Min(mixing23_nbins, input_mixing23_bin);
-     // input_mixing13_bin = TMath::Max(1,              input_mixing13_bin);
-     // input_mixing13_bin = TMath::Min(mixing13_nbins, input_mixing13_bin);
-     // input_dmsq_bin     = TMath::Max(1,              input_dmsq_bin  );
-     // input_dmsq_bin     = TMath::Min(dmsq_nbins,     input_dmsq_bin  );
+     // Sanity check on bin range
+     input_mixing23_bin = TMath::Max(1,              input_mixing23_bin);
+     input_mixing23_bin = TMath::Min(mixing23_nbins, input_mixing23_bin);
+     input_mixing13_bin = TMath::Max(1,              input_mixing13_bin);
+     input_mixing13_bin = TMath::Min(mixing13_nbins, input_mixing13_bin);
+     input_dmsq_bin     = TMath::Max(1,              input_dmsq_bin  );
+     input_dmsq_bin     = TMath::Min(dmsq_nbins,     input_dmsq_bin  );
 
-     // cout << "- Toy-MC > Selected 23-sector and theta13 params bin: " 
-     //      << util::AsString(conv::kPhypMixing23) << " bin # = " << input_mixing23_bin << ", "
-     //      << util::AsString(conv::kPhypMixing13) << " bin # = " << input_mixing13_bin << ", "
-     //      << util::AsString(conv::kPhypDm23sq)   << " bin # = " << input_dmsq_bin
-     //      << endl;
+     cout << "- Toy-MC > Selected 23-sector and theta13 params bin: " 
+          << util::AsString(conv::kPhypMixing23) << " bin # = " << input_mixing23_bin << ", "
+          << util::AsString(conv::kPhypMixing13) << " bin # = " << input_mixing13_bin << ", "
+          << util::AsString(conv::kPhypDm23sq)   << " bin # = " << input_dmsq_bin
+          << endl;
 
-     // //input_mixing13 = rand.Gaus(glob_theta13, sigma_theta13);
+     //input_mixing13 = rand.Gaus(glob_theta13, sigma_theta13);
 
-     // // Get dm23sq or mixing23 at the centre of the randomly selected bin
-     // input_dmsq   = dchisq3D->GetYaxis()->GetBinCenter(input_dmsq_bin);
-     // input_mixing23 = dchisq3D->GetXaxis()->GetBinCenter(input_mixing23_bin);
-     // input_mixing13 = dchisq3D->GetZaxis()->GetBinCenter(input_mixing13_bin);
+     // Get dm23sq or mixing23 at the centre of the randomly selected bin
+     input_dmsq   = dchisq3D->GetYaxis()->GetBinCenter(input_dmsq_bin);
+     input_mixing23 = dchisq3D->GetXaxis()->GetBinCenter(input_mixing23_bin);
+     input_mixing13 = dchisq3D->GetZaxis()->GetBinCenter(input_mixing13_bin);
 
-     // osc_param_space->Fill(input_mixing23,input_dmsq);
-     // theta13_param_space->Fill(input_mixing13);
-     // theta23_param_space->Fill(input_mixing23);
-     // dmsq_param_space->Fill(input_dmsq);
+     osc_param_space->Fill(input_mixing23,input_dmsq);
+     theta13_param_space->Fill(input_mixing13);
+     theta23_param_space->Fill(input_mixing23);
+     dmsq_param_space->Fill(input_dmsq);
 
-     // //input_dmsq = input_dmsq*1.E-3;
+     //input_dmsq = input_dmsq*1.E-3;
 
-     // input_mixing23 = TMath::Max(0.,input_mixing23); // protection from rnd-err
-     // input_mixing23 = TMath::Min(1.,input_mixing23); // protection from rnd-err
-     // input_mixing13 = TMath::Max(0.,input_mixing13); // protection from rnd-err
-     // input_mixing13 = TMath::Min(1.,input_mixing13); // protection from rnd-err
-
-
+     input_mixing23 = TMath::Max(0.,input_mixing23); // protection from rnd-err
+     input_mixing23 = TMath::Min(1.,input_mixing23); // protection from rnd-err
+     input_mixing13 = TMath::Max(0.,input_mixing13); // protection from rnd-err
+     input_mixing13 = TMath::Min(1.,input_mixing13); // protection from rnd-err
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    input_mixing13          = conv::kGlobFitSinsqTheta13;                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-    input_mixing23          = conv::kGlobFitSinsqTheta23;                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-    input_dmsq            = conv::kGlobFitDm23sq;                                        /* |Dm^2_{23}| */
- 
-    fparm1->Update(kPhypMixing13, input_mixing13);
-    fparm1->Update(kPhypMixing23, input_mixing23);
-    fparm1->Update(kPhypDm23sq,   input_dmsq);
-
-    fparm2->Update(kPhypMixing13, input_mixing13);
-    fparm2->Update(kPhypMixing23, input_mixing23);
-    fparm2->Update(kPhypDm23sq,   input_dmsq);
-
-    fparm3->Update(kPhypMixing13, input_mixing13);
-    fparm3->Update(kPhypMixing23, input_mixing23);
-    fparm3->Update(kPhypDm23sq,   input_dmsq);
-
-    fparm4->Update(kPhypMixing13, input_mixing13);
-    fparm4->Update(kPhypMixing23, input_mixing23);
-    fparm4->Update(kPhypDm23sq,   input_dmsq);
-
-    fparm5->Update(kPhypMixing13, input_mixing13);
-    fparm5->Update(kPhypMixing23, input_mixing23);
-    fparm5->Update(kPhypDm23sq,   input_dmsq);
-
-    fparm6->Update(kPhypMixing13, input_mixing13);
-    fparm6->Update(kPhypMixing23, input_mixing23);
-    fparm6->Update(kPhypDm23sq,   input_dmsq);
-
-    
-
-    
-
-
-
-
-    // Set deltacp min and max values
-    //double dcp_max = conv::kpi+conv::kpi/2.;
-    //double dcp_min = -conv::kpi+conv::kpi/2.;
-    double dcp_max = +2*conv::kpi;
-    double dcp_min = -2*conv::kpi;
-    fparm1->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm1->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm2->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm2->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm3->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm3->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm4->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm4->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm5->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm5->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm6->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm6->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm3_dcp->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm3_dcp->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm4_dcp->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm4_dcp->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm5_dcp->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm5_dcp->SetMaxValue(conv::kPhypCPV,dcp_max);
-    fparm6_dcp->SetMinValue(conv::kPhypCPV,dcp_min);
-    fparm6_dcp->SetMaxValue(conv::kPhypCPV,dcp_max);
-
-
-
-
-
-
-
-
-
-
+     // // Set not extracted values for oscillation parameters
+    // input_mixing13          = conv::kGlobFitSinsqTheta13;                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+    // input_mixing23          = conv::kGlobFitSinsqTheta23;                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+    // input_dmsq            = conv::kGlobFitDm23sq;                                        /* |Dm^2_{23}| */
+    // fparm1->Update(kPhypMixing13, input_mixing13);
+    // fparm1->Update(kPhypMixing23, input_mixing23);
+    // fparm1->Update(kPhypDm23sq,   input_dmsq);
+    // fparm2->Update(kPhypMixing13, input_mixing13);
+    // fparm2->Update(kPhypMixing23, input_mixing23);
+    // fparm2->Update(kPhypDm23sq,   input_dmsq);
+    // fparm3->Update(kPhypMixing13, input_mixing13);
+    // fparm3->Update(kPhypMixing23, input_mixing23);
+    // fparm3->Update(kPhypDm23sq,   input_dmsq);
+    // fparm4->Update(kPhypMixing13, input_mixing13);
+    // fparm4->Update(kPhypMixing23, input_mixing23);
+    // fparm4->Update(kPhypDm23sq,   input_dmsq);
+    // fparm5->Update(kPhypMixing13, input_mixing13);
+    // fparm5->Update(kPhypMixing23, input_mixing23);
+    // fparm5->Update(kPhypDm23sq,   input_dmsq);
+    // fparm6->Update(kPhypMixing13, input_mixing13);
+    // fparm6->Update(kPhypMixing23, input_mixing23);
+    // fparm6->Update(kPhypDm23sq,   input_dmsq);
 
      cout << "- Toy-MC > True 23-sector params: " 
           << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23 << ", "
@@ -584,6 +512,30 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D_locmin
      fparm1->Update(conv::kPhypMixing13, input_mixing13);
      fparm1->Update(conv::kPhypCPV,  input_deltacp);
 
+     // Set deltacp min and max values [-2pi;2pi]
+     double dcp_max = +2*conv::kpi;
+     double dcp_min = -2*conv::kpi;
+     fparm1->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm1->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm2->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm2->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm3->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm3->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm4->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm4->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm5->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm5->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm6->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm6->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm3_dcp->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm3_dcp->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm4_dcp->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm4_dcp->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm5_dcp->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm5_dcp->SetMaxValue(conv::kPhypCPV,dcp_max);
+     fparm6_dcp->SetMinValue(conv::kPhypCPV,dcp_min);
+     fparm6_dcp->SetMaxValue(conv::kPhypCPV,dcp_max);
+    
      // Reset all output spectra
      if(store_toy_expts)
        dat_array     ->Clear();
