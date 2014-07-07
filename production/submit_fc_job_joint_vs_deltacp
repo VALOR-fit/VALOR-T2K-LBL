@@ -40,15 +40,15 @@ $idcpflag = 1;
     [ -1.25663706143591725 ,   1 ],
     [ -0.628318530717958623,   0 ],
     [ 0.,                  ,   0 ],
-    [ +0.628318530717958623,   1 ],
+    [ +0.628318530717958623,   0 ],
     [ +1.25663706143591725 ,   0 ],
     [ +1.88495559215387587 ,   0 ],
     [ +2.51327412287183449 ,   0 ],
-    [ +3.14159265358979312 ,   1 ],
+    [ +3.14159265358979312 ,   0 ],
     );
 
 my $n_dcp = @dcp; # get number of deltacp grid points (# of column elements)
-print "\n $n_dcp \n";
+#print "\n $n_dcp \n";
 
 ######################################################################################################
 
@@ -61,7 +61,6 @@ foreach (@ARGV) {
   if($_ eq '--nruns-start'            ) { $nruns_start           = $ARGV[$iarg+1]; } # starting number of jobs for each deltacp point
   if($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
   if($_ eq '--nexpts'                 ) { $nexpts                = $ARGV[$iarg+1]; }
-  if($_ eq '--input-deltacp'          ) { $input_deltacp         = $ARGV[$iarg+1]; }
   if($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }  
   if($_ eq '--stat-fluctuations'      ) { $stat_fluct            = 1;              }
   if($_ eq '--tweak-systematics'      ) { $twk_systematics       = 1;              }
@@ -75,22 +74,22 @@ foreach (@ARGV) {
   if($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
   if($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
   if($_ eq '--dchisq-file'            ) { $dchisq_file           = $ARGV[$iarg+1]; }
+  if($_ eq '--asimov'                 ) { $asimov                = $ARGV[$iarg+1]; }
   $iarg++;
 }
 
 $resource               = "interactive"                          unless defined $resource;
 $job_dir                = "."                                  unless defined $job_dir;
 $softw_dir              = "."                                  unless defined $softw_dir;
-$nruns                  = 5                                      unless defined $nruns;
-$nruns_start            = 20                                      unless defined $nruns_start;
+$nruns                  = 1                                      unless defined $nruns;
+$nruns_start            = 0                                      unless defined $nruns_start;
 
 $tag                    = "prova"                                unless defined $tag;
-$nexpts                 = 5                                      unless defined $nexpts;
-$input_deltacp          = 1                                      unless defined $input_deltacp;
+$nexpts                 = 1                                      unless defined $nexpts;
 $config_file            = "analysis_configuration_test.xml"           unless defined $config_file;
 
-$stat_fluct             = 1                                      unless defined $stat_fluct;
-$twk_systematics        = 1                                      unless defined $twk_systematics;
+$stat_fluct             = 0                                      unless defined $stat_fluct;
+$twk_systematics        = 0                                      unless defined $twk_systematics;
 #$fitparamlist           = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;
 $fitparamlist           = "nuosc3f_12fix"              unless defined $fitparamlist;
 $fitoption              = "minuit+hesse"                               unless defined $fitoption;
@@ -104,6 +103,8 @@ $mixparamchoice         = "sinsqtheta"                           unless defined 
 $mixparamoctant         = "one"                                  unless defined $mixparamoctant;
 $dchisq_file            = "dchisq_file.root"                     unless defined $dchisq_file;
 
+$asimov                 = 0                                      unless defined $asimov;
+  
 if( !defined $cput ) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
   if($resource eq "Oxford") { $cput = "11:50:00"; }
@@ -149,7 +150,9 @@ for($idcp = 0; $idcp < $n_dcp; $idcp = $idcp+1) {  # loop over grid points
 	my $tag_loop = join "", $tag, "_ntoys_" , $nexpts, "_idcp_", $idcp;
 	#print "$tag_loop \n";
 	
-	$command = "root2k -l -b -q \'$softw_dir/macros/contour/fc/global/feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D.C(\"$tag_loop\",$irun,$nexpts,$dcp[$idcp][$idcpval],\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$tolerance,$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$dchisq_file\")\'";
+	#$command = "root2k -l -b -q \'$softw_dir/macros/contour/fc/global/feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D.C(\"$tag_loop\",$irun,$nexpts,$dcp[$idcp][$idcpval],\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$tolerance,$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$dchisq_file\")\'";
+	$command = "root2k -l -b -q \'$softw_dir/macros/contour/fc/global/feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D_locmin.C(\"$tag_loop\",$irun,$nexpts,$dcp[$idcp][$idcpval],\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$tolerance,$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$dchisq_file\")\'";
+	#$command = "root2k -l -b -q \'$softw_dir/macros/contour/fc/global/feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D_locmin_Asimov.C($asimov,\"$tag_loop\",$irun,$nexpts,$dcp[$idcp][$idcpval],\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$tolerance,$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$dchisq_file\")\'";
 	
 	print "$command \n\n";
 		    
