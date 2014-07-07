@@ -18,19 +18,30 @@ double confidenceLevel[nConfidenceLevel] = {
   //99.0,
 };
 
-
 void calc_crit_deltachisq_vs_deltacp_3D
 (
- char FCfilename[200] = "prova_idcp_%d.root",
- bool SingleBin = true,
- int lastbin = 6,
- bool CheckConvergence = true,
- int StepConvergence = 100,
- const char tag[200] = "critval",
+ char FCfilename[200]        = "../fc_dcp_allsyst_locmin_3D_ntoys_1000_idcp_%d.root",
+ //char FCfilename[200]        = "../fc_dcp_allsyst_3D_ntoys_1000_idcp_%d.root",
+ bool SingleBin              = true,
+ int lastbin                 = 8,
+ bool CheckConvergence       = false,
+ int StepConvergence         = 100,
+ const char tag[200]         = "critval",
+ bool GetAsimov              = false,
+ char Asimovfilename[200]    = "Asimov_allsyst_NH_ntoys_1_idcp_%d_run_0.root",
  )
 {
+  using namespace std;
+  using namespace valor;
+  using namespace valor::conv;
+
   cout<<setprecision(3);
   
+  double Ngod_Min = 0.;
+  double Ngod_Max = 10.;
+  const int Ngod_Bins = 75;
+  double SetPar_ndf = 0.4;
+
   //
 
   int startbin = 0;
@@ -48,7 +59,8 @@ void calc_crit_deltachisq_vs_deltacp_3D
   int negdchisq=0;
   ofstream outfile;
   char outfilename[200];
-  
+  double asimov_mu, asimov_sigma;
+  double mu[nbins], sigma[nbins];
 
   // Declare histograms, graphs, canvases
 
@@ -97,22 +109,14 @@ void calc_crit_deltachisq_vs_deltacp_3D
     TString name = Form("cCritVal_%2.0fCL",confidenceLevel[icl]);
     cCritVal[icl] = new TCanvas(name,name);
   }
-
-  //TH1D *hInputMixing23 = new TH1D("hInputMixing23", "", 101, 0.25, 0.75); 
-  //TH1D *hInputDm23sq = new TH1D("hInputDm23sq", "", 41, 0.0015, 0.0035);
-  //TH2D *hInputBestFit1NMixing23 = new TH2D("hInputBestFit1NMixing23", "", 101, 0.25, 0.75, 101, 0.25, 0.75);
-  //TH2D *hInputBestFit2NMixing23 = new TH2D("hInputBestFit2NMixing23", "", 101, 0.25, 0.75, 101, 0.25, 0.75);
-  //TH2D *hInputBestFit1NDm23sq = new TH2D("hInputBestFit1NDm23sq", "", 41, 0.0015, 0.0035, 41, 0.0015, 0.0035);
-  //TH2D *hInputBestFit2NDm23sq = new TH2D("hInputBestFit2NDm23sq", "", 41, 0.0015, 0.0035, 41, 0.0015, 0.0035);
-
     
   // Output logfile
 
-  TString outname="";
-  outname.Append(tag);
-  outname.Append(".log");
-  sprintf(outfilename,"%s",(char*)outname.Data());
-  outfile.open(outname.Data());
+  TString outlogname="";
+  outlogname.Append(tag);
+  outlogname.Append(".log");
+  sprintf(outfilename,"%s",(char*)outlogname.Data());
+  outfile.open(outlogname.Data());
   if (!outfile.is_open()) {    
     std::cout << "Error opening file" << endl;
     std::cout << outfilename << std::endl; 
@@ -124,7 +128,41 @@ void calc_crit_deltachisq_vs_deltacp_3D
   for(int ifile = startbin; ifile<=lastbin; ifile++){ // loop over delta_cp files    
 
     int ibin = ifile - startbin; // delta_cp bins for arrays and histograms
-    
+   
+    // Get Asimov data set
+    if(GetAsimov){
+      sigma[ibin]=0.;
+      TString infilename = Form(Asimovfilename,ifile); 
+      bool AsimovFlag = true;
+      TFile *MyFileAsimov = new TFile(infilename,"READ");      
+      if(!MyFileAsimov || MyFileAsimov->IsOpen()==false){
+    	cout << "        File " << infilename << " not available!!! --> SKIP IT!!!" << endl << endl;	
+    	outfile << "        File " << infilename << " not available!!! --> SKIP IT!!!" << endl << endl;	
+    	AsimovFlag = false;
+    	MyFileAsimov->Close();
+    	MyFileAsimov->Delete();
+      } 
+      TTree *fitChainAsimov;
+      if(AsimovFlag){
+	fitChainAsimov = (TTree*)MyFileAsimov->Get("fitnt");
+	if(!fitChainAsimov){
+	  cout << "        Problem in reading the tree --> SKIP IT!!!" << endl << endl;
+	  outfile << "        Problem in reading the tree --> SKIP IT!!!" << endl << endl;
+	  AsimovFlag = false;
+	  MyFileAsimov->Close();
+	  MyFileAsimov->Delete();
+	}
+	fitChainAsimov->SetBranchAddress("asimov_sigma",               &asimov_sigma);
+	fitChainAsimov->GetEntry(0);
+	sigma[ifile-startbin] = asimov_sigma;
+	
+	cout << endl;
+	cout << "Asimov data set from: " << infilename << endl;
+	cout << "sigma = " << sigma[ifile-startbin] << endl;
+	cout << endl;
+      }
+    }
+
     // Check if the file exists and the tree is not corrupted. If yes skip it
 
     TString infilename = Form(FCfilename,ifile); 
@@ -134,7 +172,6 @@ void calc_crit_deltachisq_vs_deltacp_3D
       cout << "        File " << infilename << " not available!!! --> SKIP IT!!!" << endl << endl;	
       outfile << "        File " << infilename << " not available!!! --> SKIP IT!!!" << endl << endl;	
       DLcritFlag = false;
-
       MyFile->Close();
       MyFile->Delete();
     } 
@@ -149,8 +186,9 @@ void calc_crit_deltachisq_vs_deltacp_3D
       MyFile->Delete();
     }
     if(!DLcritFlag) continue;
+  
 
-    //
+      //
 
     int nsk_1Rmu,nsk_1Re;
     int input_mixing23_bin,input_mixing13_bin, input_dmsq_bin;
@@ -252,37 +290,47 @@ void calc_crit_deltachisq_vs_deltacp_3D
     outfile << "# of toys = " << nentries << endl;
     cout << endl;
     outfile << endl;
+  
+    //
     
+    mu[ifile-startbin] = input_deltacp; // true value for non-central chi2  
+
     // 
 
     for(Long64_t i = 0; i < nentries; i++) {       
 
       fitChain->GetEntry(i);
       
-      if((migradmin_true == 0 && migraderr_true == 3 && migradmin_min == 0 && migraderr_min == 3) || (migradmin_true == 0 && migraderr_true == 3 && migradmin_min == -1 && migraderr_min == 0)) {
-	double dchisq = bestfit_chisq_true - bestfit_chisq_min;
-	deltaChisq[ibin].push_back(dchisq);
-	hDeltaChisq[ibin]->Fill(bestfit_chisq_true - bestfit_chisq_min);
-	
-	if(dchisq<0.) negdchisq++;
-	
-	if(CheckConvergence){
-	  if(i%StepConvergence==0){
-	    for(int icl=0;icl<nConfidenceLevel;icl++){    
-	      double CurrCritVal = CalcCritVal(deltaChisq[ibin],confidenceLevel[icl],0.);
-	      gDLcritConv[icl][ibin]->SetPoint(gDLcritConv[icl][ibin]->GetN(),gDLcritConv[icl][ibin]->GetN()*StepConvergence,CurrCritVal);
-	    }
-	  }	
-	}
+      //if((migradmin_true == 0 && migraderr_true == 3 && migradmin_min == 0 && migraderr_min == 3) || (migradmin_true == 0 && migraderr_true == 3 && migradmin_min == -1 && migraderr_min == 0)) {
+      if((migradmin_true == 0 && migradmin_min == 0) || (migradmin_true == 0 && migradmin_min == -1)) {
+  	double dchisq = bestfit_chisq_true - bestfit_chisq_min;
+
+  	if(dchisq<0.){
+  	  if(dchisq>-0.0001) dchisq = 0.;
+  	  else negdchisq++;
+  	  //cout << "dchisq = " << dchisq << endl;
+  	}
+
+  	deltaChisq[ibin].push_back(dchisq);
+  	hDeltaChisq[ibin]->Fill(dchisq);
+
+  	if(CheckConvergence){
+  	  if(i%StepConvergence==0){
+  	    for(int icl=0;icl<nConfidenceLevel;icl++){    
+  	      double CurrCritVal = CalcCritVal(deltaChisq[ibin],confidenceLevel[icl],0.);
+  	      gDLcritConv[icl][ibin]->SetPoint(gDLcritConv[icl][ibin]->GetN(),gDLcritConv[icl][ibin]->GetN()*StepConvergence,CurrCritVal);
+  	    }
+  	  }	
+  	}
       }
       else {
-	cout << endl;
-	cout << "Fit ended w/o convergence or fit problems:" << endl;
-	cout << " migradmin_true = " << migradmin_true << " migraderr_true = " << migraderr_true << " migradmin_min = " << migradmin_min << " migraderr_min = " << migraderr_min << endl;
-	outfile << endl;
-	outfile << "Fit ended w/o convergence or fit problems:" << endl;
-	outfile << " migradmin_true = " << migradmin_true << " migraderr_true = " << migraderr_true << " migradmin_min = " << migradmin_min << " migraderr_min = " << migraderr_min << endl;
-	nbadfits++;
+  	cout << endl;
+  	cout << "Fit ended w/o convergence or fit problems:" << endl;
+  	cout << " migradmin_true = " << migradmin_true << " migraderr_true = " << migraderr_true << " migradmin_min = " << migradmin_min << " migraderr_min = " << migraderr_min << endl;
+  	outfile << endl;
+  	outfile << "Fit ended w/o convergence or fit problems:" << endl;
+  	outfile << " migradmin_true = " << migradmin_true << " migraderr_true = " << migraderr_true << " migradmin_min = " << migradmin_min << " migraderr_min = " << migraderr_min << endl;
+  	nbadfits++;
       }
    
     }//end of loop over entries
@@ -292,13 +340,13 @@ void calc_crit_deltachisq_vs_deltacp_3D
     cout << "Print outputs:" << endl;
     cout << endl;
     cout << "# of bad fits = " << nbadfits << endl;
-    cout << "Frac negative dchisq = " << negdchisq / deltaChisq[ibin].size() << endl;
+    cout << "Frac negative dchisq = " << (double)negdchisq / (double)deltaChisq[ibin].size() << endl;
     cout << "deltaChisq size = " << deltaChisq[ibin].size() << endl;
     cout << endl;
     outfile << "Print outputs:" << endl;
     outfile << endl;
     outfile << "# of bad fits = " << nbadfits << endl;
-    outfile << "Frac negative dchisq = " << negdchisq / deltaChisq[ibin].size() << endl;
+    outfile << "Frac negative dchisq = " << (double)negdchisq / (double)deltaChisq[ibin].size() << endl;
     outfile << "deltaChisq size = " << deltaChisq[ibin].size() << endl;
     outfile << endl;
   
@@ -326,18 +374,18 @@ void calc_crit_deltachisq_vs_deltacp_3D
       double errorneg = value - valuem;
      
       cout << "Critical value of delta chisq at "<<confidenceLevel[icl]<<"% confidence = "<< value
-	   << " + " << errorpos << "  -  " << errorneg     
-	   << endl << endl; 
+    	   << " + " << errorpos << "  -  " << errorneg     
+    	   << endl << endl; 
       outfile << "Critical value of delta chisq at "<<confidenceLevel[icl]<<"% confidence = "<< value
-	      << " + " << errorpos << "  -  " << errorneg     
-	      << endl << endl; 
+    	      << " + " << errorpos << "  -  " << errorneg     
+    	      << endl << endl; 
 
       gCritVal[icl]->SetPoint(gCritVal[icl]->GetN(),input_deltacp,value);
     }
     
     MyFile->Close();
     MyFile->Delete();
-
+    
   } // end loop deltacp bins
 
 
@@ -350,12 +398,51 @@ void calc_crit_deltachisq_vs_deltacp_3D
   
   for(int ibin=0;ibin<nbins;ibin++) {
 
+    if(!hDeltaChisq[ibin]->Integral()) continue;
+    
     cDeltaChisq[ibin]->cd();
-    hDeltaChisq[ibin]->Scale(1/hDeltaChisq[ibin]->Integral());
+    //hDeltaChisq[ibin]->Scale(1/hDeltaChisq[ibin]->Integral());
+    hDeltaChisq[ibin]->Scale(1./hDeltaChisq[ibin]->Integral()*Ngod_Bins/(Ngod_Max-Ngod_Min));
     hDeltaChisq[ibin]->GetXaxis()->SetTitle("#Delta#chi^{2}");
     hDeltaChisq[ibin]->GetYaxis()->SetTitle("Fraction of events");
     hDeltaChisq[ibin]->Draw("");
+    
+
+    // Fit w/ dchisq asymptotic formula (arXiv:1007.1727v2)
+  
+    if(sigma[ibin]<conv::kASmallNum){
+      cout << endl;
+      cout << "/////////////////////////////////////" << endl;
+      cout << endl;
+      cout << "Can't use Asimov informations for file # " << ibin << endl;
+      cout << "sigma = 0" << endl;
+      cout << endl;
+      cout << "/////////////////////////////////////" << endl;
+      cout << endl;
+    }
+    else{
+      cout << endl;
+      cout << "Get non-central chi2 w/ 1dof:" << endl; 
+      cout << "mu = " << mu[ibin] << endl;
+      cout << "sigma = " << sigma[ibin] << endl;
+      cout << endl;
+    }
+    
+    TF1 *f_chi2_1dof = new TF1("f_chi2_1dof",chi2_1dof,Ngod_Min,Ngod_Max,1);
+    f_chi2_1dof->SetLineColor(kRed);
+    f_chi2_1dof->SetParameter(0,SetPar_ndf);
+    f_chi2_1dof->SetParameter(0,0.5);
+    f_chi2_1dof->SetParNames("dof");
+    f_chi2_1dof->Draw("same");    
       
+    TF1 *f_chi2_1dof_noncentr = new TF1("f_chi2_1dof_noncentr",chi2_1dof_noncentr,Ngod_Min,Ngod_Max,1);
+    f_chi2_1dof_noncentr->SetLineColor(kBlue);
+    //f_chi2_1dof_noncentr->SetParameter(0,mu[ibin]); // true mu (true deltacp)
+    //f_chi2_1dof_noncentr->SetParameter(1,sigma[ibin]); // sigma   
+    f_chi2_1dof_noncentr->SetParNames("dof");
+    f_chi2_1dof_noncentr->Draw("same");
+    hDeltaChisq[ibin]->GetYaxis()->SetRangeUser(0.,1.);
+    
     if(CheckConvergence){
       cDLConv_68[ibin]->cd();
       gDLcritConv[kCL68][ibin]->Draw("APL");
@@ -365,53 +452,6 @@ void calc_crit_deltachisq_vs_deltacp_3D
       gDLcritConv[kCL95][ibin]->Draw("APL");
     }
       
-    /*
-      TCanvas *InputMixing23 = new TCanvas("InputMixing23", "InputMixing23", 800, 600);
-      hInputMixing23->SetStats(0);
-      hInputMixing23->GetXaxis()->SetTitle("Input value of sin^{2}#theta_{23}");
-      hInputMixing23->GetXaxis()->SetTitleOffset(1.15);
-      hInputMixing23->GetXaxis()->CenterTitle();
-      hInputMixing23->Draw();
-      TCanvas *InputDm23sq = new TCanvas("InputDm23sq", "InputDm23sq", 800, 600);
-      hInputDm23sq->SetStats(0);
-      hInputDm23sq->GetXaxis()->SetTitle("Input value of |#Deltam_{32}^{2}|");
-      hInputDm23sq->GetXaxis()->SetTitleOffset(1.15);
-      hInputDm23sq->GetXaxis()->CenterTitle();
-      hInputDm23sq->Draw();
-      TCanvas *InputBestFit1NMixing23 = new TCanvas("InputBestFit1NMixing23", "InputBestFit1NMixing23", 800, 600);
-      hInputBestFit1NMixing23->SetStats(0);
-      hInputBestFit1NMixing23->GetXaxis()->SetTitle("Input sin^{2}#theta_{23}");
-      hInputBestFit1NMixing23->GetYaxis()->SetTitle("Best-fit sin^{2}#theta_{23} (1+N)");   
-      hInputBestFit1NMixing23->GetXaxis()->CenterTitle();
-      hInputBestFit1NMixing23->GetYaxis()->CenterTitle();
-      hInputBestFit1NMixing23->Draw("colz");  
-      TCanvas *InputBestFit2NMixing23 = new TCanvas("InputBestFit2NMixing23", "InputBestFit2NMixing23", 800, 600);
-      hInputBestFit2NMixing23->SetStats(0);
-      hInputBestFit2NMixing23->GetXaxis()->SetTitle("Input sin^{2}#theta_{23}");
-      hInputBestFit2NMixing23->GetYaxis()->SetTitle("Best-fit sin^{2}#theta_{23} (2+N)");
-      hInputBestFit2NMixing23->GetXaxis()->CenterTitle();
-      hInputBestFit2NMixing23->GetYaxis()->CenterTitle();
-      hInputBestFit2NMixing23->Draw("colz");
-      TCanvas *InputBestFit1NDm23sq = new TCanvas("InputBestFit1NDm23sq", "InputBestFit1NDm23sq", 800, 600);
-      hInputBestFit1NDm23sq->SetStats(0);
-      hInputBestFit1NDm23sq->GetXaxis()->SetTitle("Input #Deltam_{32}^{2}");
-      hInputBestFit1NDm23sq->GetXaxis()->SetTitle("Best-fit #Deltam_{32}^{2} (1+N)");
-      hInputBestFit1NDm23sq->GetYaxis()->CenterTitle();
-      hInputBestFit1NDm23sq->GetYaxis()->CenterTitle();
-      hInputBestFit1NDm23sq->Draw("colz");
-      TCanvas *InputBestFit2NDm23sq = new TCanvas("InputBestFit2NDm23sq", "InputBestFit2NDm23sq", 800, 600);
-      hInputBestFit2NDm23sq->SetStats(0);
-      hInputBestFit2NDm23sq->GetXaxis()->SetTitle("Input #Deltam_{32}^{2}");
-      hInputBestFit2NDm23sq->GetYaxis()->SetTitle("Best-fit #Deltam_{32}^{2} (2+N)");
-      hInputBestFit2NDm23sq->GetXaxis()->CenterTitle();
-      hInputBestFit2NDm23sq->GetYaxis()->CenterTitle();
-      hInputBestFit2NDm23sq->Draw("colz");
-      TFile *InputValues = new TFile("InputValues.root", "UPDATE");
-      InputValues->cd();
-      hInputDm23sq->Write();
-      InputValues->Close();
-      deltaChisq[ibin].clear();
-    */
   }
 
   // Write output file
@@ -441,4 +481,41 @@ double CalcCritVal(vector<double> dchisq, double conflev, double sigmacl){
   double critval = (*dchisqIter);
   return critval;
 }
- 
+
+
+Double_t chi2_1dof(Double_t *x,Double_t *par) {
+  Double_t fitval = (pow(x[0],par[0]/2.-1.)*(1./exp(x[0]/2.))) / ((pow(2.,par[0]/2.)*TMath::Gamma(par[0]/2.)));
+  return fitval;
+}
+
+Double_t chi2_1dof_noncentr(Double_t *x,Double_t *par) { // (arXiv:1007.1727v2 eq.19)
+  double fact1,fact2,term,term1,term2,chisq=0.;
+  double tmu = x[0]; // test statistic 
+  double mu = par[0]; // true value
+  double sigma = par[1]; // sigma
+  fact1 = 1. / sqrt( tmu*2*TMath::Pi() ); 
+  term1 = exp(-0.5 * tmu);
+  chisq = fact1*term1;
+  return chisq;
+}
+
+Double_t chi2_1dof_noncentr_bound(Double_t *x,Double_t *par) { // (arXiv:1007.1727v2 eq.19)
+  double fact1,fact2,term,term1,term2,chisq=0.;
+  double tmu = x[0]; // test statistic 
+  double mu = par[0]; // true value
+  double sigma = par[1]; // sigma
+  // With physical border
+  if(tmu<= mu*mu/sigma*sigma){
+    fact1 = 1. / sqrt( tmu*2*TMath::Pi() ); 
+    term1 = exp(-0.5 * tmu);
+    chisq = fact1*term1;
+  }
+  else{
+    fact1 = 0.5 / sqrt( tmu*2*TMath::Pi() ); 
+    term1 = exp(-0.5 * tmu);    
+    fact2 = 1./(sqrt(2*TMath::Pi()) * 2*mu/sigma);
+    term2 = exp(-0.5 * (tmu + mu*mu/(sigma*sigma))*(tmu + mu*mu/(sigma*sigma))/(2*mu/(sigma*sigma)) );
+    chisq = fact1*term1 + fact2*term2;
+  }
+  return chisq;
+}
