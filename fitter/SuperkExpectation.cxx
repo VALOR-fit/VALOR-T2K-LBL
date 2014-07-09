@@ -1136,6 +1136,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
         this->GetNuXSec()->Tweak(p,twk);
       }
     }
+    this->GetNuXSec()->SyncRHCToFHCSystematics();
 
   }//systmode == 1
 
