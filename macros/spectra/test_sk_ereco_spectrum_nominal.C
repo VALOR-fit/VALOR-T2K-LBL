@@ -10,7 +10,7 @@
 
 void test_sk_ereco_spectrum_nominal
 (
-  const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re" */
+  const char * sk_sample            = "MultiRe",                         /* options: "1Rmu", "1Re" */
   const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
   double       input_mixing12       = -99,                            /* */
   double       input_mixing13       = -99,                            /* */
@@ -19,7 +19,8 @@ void test_sk_ereco_spectrum_nominal
   double       input_dm12sq         = -99,                            /* */
   double       input_dm23sq         = -99,                            /* */
   bool         disable_banff_tuning = false,                          /* */
-  const char * config_file          = "analysis_configuration_test.xml",   /* */
+  //const char * config_file          = "analysis_configuration_test.xml",   /* */
+  const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
   bool         print_spectrum       = false,                          /* */
   const char * mixparamchoice       = "sinsqtheta",
   const char * hierarchy            = "normal"
@@ -110,7 +111,7 @@ void test_sk_ereco_spectrum_nominal
   cout << "- Generating predictions..." << endl;
   skexp.GetSuperkMC()->SetXMEC(1);
   skexp.Generate(ph);
-
+  
   // Get energy spectra
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
@@ -187,8 +188,7 @@ void test_sk_ereco_spectrum_nominal
   legend_coarse->Draw();
   c_coarse->Update();
   c_coarse->SaveAs(Form("sk_ereco_spectrum-%s_%f_%f.pdf",input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : "")));
-
-
+  
   //can save this to file &/or print it
   stringstream streamer;
 

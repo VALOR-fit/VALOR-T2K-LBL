@@ -9,17 +9,23 @@
 
 void generate_toymc_ensemble_joint
 (
-  const char * tag                     = "toymc",                        /* */
+ const char * tag                     = "toymc_prova",                        /* */
+ //const char * tag                     = "toymc_FHCpRHCpMultiRing",                        /* */
+ //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_ResultsRun1to4_IH",                        /* */
+ //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH",                        /* */
+ //const char * tag                     = "toymc_FHCpRHC_MCRun1to6_th13DB_NH",                        /* */
   int          run                     = 0,                              /* */
-  double       nexperiments            = 3,                             /* number of toy-MC expts to generate */
+  double       nexperiments            = 1, //1000,                             /* number of toy-MC expts to generate */
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12          = -99,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
-  double       input_mixing13          = 0.0251,                            /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
-  double       input_mixing23          = 0.513,                            /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
-  double       input_deltacp           = 0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
-  double       input_dm12sq            = -99,                            /* Dm^2_{12}, if -999 then randomize */
-  double       input_dm23sq            = 2.4E-3,                            /* |Dm^2_{23}| */
-  const char * config_file             = "analysis_configuration_run5and6.xml",   /* analysis configuration file */
+  double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+  double       input_mixing13          = -99, //0.0252, //-99, //0.02146 , // 0.0251,                          /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+  double       input_mixing23          = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+  double       input_deltacp           = -99, //-1.556, //-99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
+  double       input_dm12sq            = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
+  double       input_dm23sq            = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
+ //const char * config_file             = "analysis_configuration_run5and6.xml",   /* analysis configuration file */
+  //const char * config_file             = "analysis_configuration_test.xml",   /* analysis configuration file */
+ const char * config_file             = "analysis_configuration_run1to6.xml",
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
   bool         save_in_xml_format      = true,                           /* also save in txt format */
@@ -28,10 +34,13 @@ void generate_toymc_ensemble_joint
   const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   const char * points_to_add_1Re_RHC   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * xml_file_to_add         = 0,                              /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
-  bool         save_fluct_in_xml       = true,                           /* save the values of the variations in the xml file? */
+  const char * points_to_add_MultiRmu  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  const char * points_to_add_MultiRe   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+  //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
+  const char * xml_file_to_add         = 0,           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
+  bool         save_fluct_in_xml       = false,                          /* save the values of the variations in the xml file? */
   const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
-  const char * hierarchy               = "normal",                       /* normal or inverted */
+  const char * hierarchy               = "inverted",                       /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one"                           /* one==kNuOctantOne two==kNuOctantTwo */
 )
@@ -70,7 +79,7 @@ void generate_toymc_ensemble_joint
   bool randomize_mixing13      = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
   bool randomize_deltacp       = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
   bool randomize_dm12sq        = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
-  bool randomized_osc_params   = (randomize_mixing12 || randomize_mixing13 || randomize_deltacp || randomize_dm12sq);
+
 
   //Set to defaults
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
@@ -115,6 +124,8 @@ void generate_toymc_ensemble_joint
   string * full_points_to_add_1Re      = 0;
   string * full_points_to_add_1Rmu_RHC = 0;
   string * full_points_to_add_1Re_RHC  = 0;
+  string * full_points_to_add_MultiRmu = 0;
+  string * full_points_to_add_MultiRe  = 0;
   
   // Are we adding events from an XML file?
   if (xml_file_to_add) {
@@ -138,12 +149,20 @@ void generate_toymc_ensemble_joint
     
     string s_1Re_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_e_ring_rhc/ereco_values");
     full_points_to_add_1Re_RHC = new string( points_to_add_1Re_RHC ? Form("%s,%s",points_to_add_1Re_RHC,s_1Re_RHC) : s_1Re_RHC);
+
+    string s_MultiRmu = util::XML2String(&xml, root_node, "superk/observation/data_set_0/multi_mu_ring/ereco_values");
+    full_points_to_add_MultiRmu = new string( points_to_add_MultiRmu ? Form("%s,%s",points_to_add_MultiRmu,s_MultiRmu) : s_MultiRmu);
+    
+    string s_MultiRe = util::XML2String(&xml, root_node, "superk/observation/data_set_0/multi_e_ring/ereco_values");
+    full_points_to_add_MultiRe = new string( points_to_add_MultiRe ? Form("%s,%s",points_to_add_MultiRe,s_MultiRe) : s_MultiRe);
   }
   else {
     if (points_to_add_1Rmu    ) full_points_to_add_1Rmu     = new string(points_to_add_1Rmu    );
     if (points_to_add_1Re     ) full_points_to_add_1Re      = new string(points_to_add_1Re     );
     if (points_to_add_1Rmu_RHC) full_points_to_add_1Rmu_RHC = new string(points_to_add_1Rmu_RHC);
     if (points_to_add_1Re_RHC ) full_points_to_add_1Re_RHC  = new string(points_to_add_1Re_RHC );
+    if (points_to_add_MultiRmu) full_points_to_add_MultiRmu = new string(points_to_add_MultiRmu);
+    if (points_to_add_MultiRe ) full_points_to_add_MultiRe  = new string(points_to_add_MultiRe );
   }
 
   // Print out job summary
@@ -167,6 +186,8 @@ void generate_toymc_ensemble_joint
   cout << "    For 1R e-like: "      << ((full_points_to_add_1Re)      ? *full_points_to_add_1Re      : "*None*") << endl;
   cout << "    For 1R mu-like RHC: " << ((full_points_to_add_1Rmu_RHC) ? *full_points_to_add_1Rmu_RHC : "*None*") << endl;
   cout << "    For 1R e-like RHC: "  << ((full_points_to_add_1Re_RHC)  ? *full_points_to_add_1Re_RHC  : "*None*") << endl;
+  cout << "    For MultiR mu-like: " << ((full_points_to_add_MultiRmu) ? *full_points_to_add_MultiRmu : "*None*") << endl;
+  cout << "    For MultiR e-like: "  << ((full_points_to_add_MultiRe)  ? *full_points_to_add_MultiRe  : "*None*") << endl;
   cout << "- Outputs" << endl;
   cout << "     - Storing toy-MC expts in XML format: "   << ((save_in_xml_format) ?   "YES " : "NO") << endl;
   cout << "     - Storing toy-MC expts in ROOT format:  " << ((save_in_root_format) ?  "YES " : "NO") << endl;
@@ -332,6 +353,20 @@ void generate_toymc_ensemble_joint
      }
      mock_data_1Re_RHC->SetDirectory(0);
 
+     // Get Multi-ring mu-like Ereco spectrum
+     TH1D* mock_data_MultiRmu = new TH1D("","", util::NumErecoBins(kSKsFCFVMultiRingMuLike), util::ErecoBinEdges(kSKsFCFVMultiRingMuLike));
+     for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFVMultiRingMuLike); ib++) {
+       mock_data_MultiRmu->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFVMultiRingMuLike)[ib-1]);
+     }
+     mock_data_MultiRmu->SetDirectory(0);
+     
+     // Get Multi-ring e-like Ereco spectrum 
+     TH1D* mock_data_MultiRe = new TH1D("","", util::NumErecoBins(kSKsFCFVMultiRingELike), util::ErecoBinEdges(kSKsFCFVMultiRingELike));
+     for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFVMultiRingELike); ib++) {
+       mock_data_MultiRe->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFVMultiRingELike)[ib-1]);
+     }
+     mock_data_MultiRe->SetDirectory(0);
+
      // If an XML file was specified, add an entry
      
      if(save_in_xml_format) {
@@ -345,7 +380,7 @@ void generate_toymc_ensemble_joint
            skexp->PrintSystematicVariations(fxml);
          fxml << " -->" << endl;
        }
-       
+     
        // Now the 1Rmu part
        
        fxml << "        <one_mu_ring>    " << endl;
@@ -496,6 +531,80 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "          </ereco_values> " << endl;
        fxml << "        </one_e_ring_rhc>    " << endl;
+
+       // Now the MultiRmu part
+       fxml << "        <multi_mu_ring>    " << endl;
+       fxml << "          <ereco_values> " << endl;
+       
+       ftxt << "MultiRmu :";
+       ftxt << endl;
+       
+       // Adding Ereco values as a comma separated list.
+       // Assuming uniform distribution within each bin, randomize values within each bin.
+       int ievtot = 0;
+       for(int ibin = 1; ibin <= mock_data_MultiRmu->GetNbinsX(); ibin++) {
+         double Nb   = mock_data_MultiRmu->GetBinContent (ibin); // number of events in this Ereco bin
+         double Emin = mock_data_MultiRmu->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+         double Emax = mock_data_MultiRmu->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+         for(int iev = 0; iev < Nb; iev++) {
+            double E = Emin + rand.Uniform() * (Emax-Emin);
+            if(ievtot > 0) {
+              fxml << ", "; 
+              ftxt << ","; 
+              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
+            }
+            fxml << E; 
+            ftxt << E; 
+            ievtot++;
+         }//iev
+       }//ibin
+       // add extra data-points, if any
+       if(full_points_to_add_MultiRmu) {
+         fxml << ",\n"<<endl;
+         fxml << *full_points_to_add_MultiRmu;
+         ftxt << "," << *full_points_to_add_MultiRmu;
+       }
+       fxml << endl;
+       ftxt << endl;
+       fxml << "          </ereco_values> " << endl;
+       fxml << "        </multi_mu_ring>" << endl;
+
+
+       //Now the MultiRe part
+       ftxt << endl;
+       ftxt << "MultiRe:";
+       ftxt << endl;
+       fxml << "        <multi_e_ring>"  << endl;
+       fxml << "          <ereco_values> " << endl;
+       
+       ievtot = 0;
+       for(int ibin = 1; ibin <= mock_data_MultiRe->GetNbinsX(); ibin++) {
+         double Nb   = mock_data_MultiRe->GetBinContent (ibin); // number of events in this Ereco bin
+         double Emin = mock_data_MultiRe->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+         double Emax = mock_data_MultiRe->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+         for(int iev = 0; iev < Nb; iev++) {
+            double E = Emin + rand.Uniform() * (Emax-Emin);
+            if(ievtot > 0) {
+              fxml << ", "; 
+              ftxt << ","; 
+              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
+            }
+            fxml << E; 
+            ftxt << E; 
+            ievtot++;
+         }//iev
+       }//ibin
+       // add extra data-points, if any
+       if(full_points_to_add_MultiRe) {
+         fxml << ",\n"<<endl;
+         fxml << *full_points_to_add_MultiRe;
+         ftxt << "," << *full_points_to_add_MultiRe;
+       }
+       fxml << endl;
+       ftxt << endl;
+       fxml << "          </ereco_values> " << endl;
+       fxml << "        </multi_e_ring>    " << endl;
+
        fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;
        
      }//xml
@@ -532,12 +641,37 @@ void generate_toymc_ensemble_joint
               mock_data_1Re_RHC->Fill(atof(vecp[ip].c_str()));
             }
           }
+
+
+          if(full_points_to_add_MultiRmu) {
+            vector<string> vecp = util::Tokens(*full_points_to_add_MultiRmu,",");
+            assert(vecp.size()>0);
+            for(int ip=0; ip < vecp.size(); ip++) {
+              mock_data_MultiRmu->Fill(atof(vecp[ip].c_str()));
+            }
+          }
+          if(full_points_to_add_MultiRe) {
+            vector<string> vecp = util::Tokens(*full_points_to_add_MultiRe,",");
+            assert(vecp.size()>0);
+            for(int ip=0; ip < vecp.size(); ip++) {
+              mock_data_MultiRe->Fill(atof(vecp[ip].c_str()));
+            }
+          }
+
+
+
        }
        f->cd();
+       
        mock_data_1Rmu->Write(Form("mock_data_1Rmu_%d",iexperiment));
-       mock_data_1Rmu_RHC->Write(Form("mock_data_1Rmu_RHC_%d",iexperiment));
        mock_data_1Re->Write(Form("mock_data_1Re_%d",iexperiment));
+       mock_data_1Rmu_RHC->Write(Form("mock_data_1Rmu_RHC_%d",iexperiment));
        mock_data_1Re_RHC->Write(Form("mock_data_1Re_RHC_%d",iexperiment));
+       mock_data_MultiRmu->Write(Form("mock_data_MultiRmu_%d",iexperiment));
+       mock_data_MultiRe->Write(Form("mock_data_MultiRe_%d",iexperiment));
+       
+
+
 
        // Object for storing input oscillation and nuisance params in each toy-MC
        PhysParamList * iparm = new PhysParamList;
@@ -549,6 +683,7 @@ void generate_toymc_ensemble_joint
        PhysParamList true_nuisance_params = skexp->Tweaks();
        iparm->Append(true_nuisance_params);
        iparm->Write(Form("iparm_%d",iexperiment));
+       
        delete iparm;
      }
 
