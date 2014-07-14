@@ -18,6 +18,8 @@ Changes since 2011_v0.9.0:
 31-12-2013  Nick
 Add samples and modes for reverse horn current running
 
+7-7-2014 Davide
+Added MultiRing sample
 */
 //____________________________________________________________________________
 
@@ -32,7 +34,7 @@ namespace conv   {
 
 // Enumeration of event samples that may be included in the analysis
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkSamples  = 4;  // number of samples 
+static const int kNSuperkSamples  = 6;  // number of samples 
 static const int kns = kNSuperkSamples; // as above - shorter name
 typedef enum ESuperkSample 
 {
@@ -40,7 +42,9 @@ typedef enum ESuperkSample
    kSKsFCFV1RingMuLike, // fully-contained fiducial-volume single-ring mu-like
    kSKsFCFV1RingELike,  // fully-contained fiducial-volume single-ring e-like
    kSKsRHCFCFV1RingMuLike, //fully-contained fiducial-volume single-ring mu-like with reverse horn current 
-   kSKsRHCFCFV1RingELike  //fully-contained fiducial-volume single-ring e-like with reverse horn current 
+   kSKsRHCFCFV1RingELike,  //fully-contained fiducial-volume single-ring e-like with reverse horn current 
+   kSKsFCFVMultiRingMuLike, // fully-contained fiducial-volume multi-ring mu-like
+   kSKsFCFVMultiRingELike  // fully-contained fiducial-volume multi-ring e-like
 } 
 SuperkSample_t;
 
@@ -50,8 +54,11 @@ namespace util {
   // Samples
   bool IsRHCSample        (conv::SuperkSample_t s);
   bool IsFHCSample        (conv::SuperkSample_t s);
+  bool IsMultiRingSample  (conv::SuperkSample_t s);
   bool Is1RMuSample       (conv::SuperkSample_t s);
   bool Is1RESample        (conv::SuperkSample_t s);
+  bool IsMultiRMuSample   (conv::SuperkSample_t s);
+  bool IsMultiRESample    (conv::SuperkSample_t s);
   
   string GetXMLMCTreeName  (conv::SuperkSample_t     s);
   string GetXMLDatasetName (conv::SuperkSample_t     s);

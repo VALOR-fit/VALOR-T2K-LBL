@@ -18,6 +18,9 @@ Split valor::conv namespace into several smaller files
 31-12-2013  Nick
 Add samples, modes and systematic parameters for reverse horn current running
 
+7-7-2014 Davide
+Added MultiRing sample
+
 */
 //____________________________________________________________________________
 
@@ -56,15 +59,34 @@ namespace conv   {
 typedef enum EOscAnaType 
 {   
    kAnaUndefined = -1, 
+
    kAnaCombined,
    kAnaNuMuDisappOnly,
    kAnaNuEAppOnly,
+
    kAnaRHCCombined,
    kAnaRHCNuMuDisappOnly,
    kAnaRHCNuEAppOnly,
+
    kAnaFHCAndRHCNuMuDisappOnly,
    kAnaFHCAndRHCNuEAppOnly,
-   kAnaFHCAndRHCCombined
+   kAnaFHCAndRHCCombined,
+
+   // MultiRing-FHC
+   kAnaMultiRingCombined,
+   kAnaMultiRingNuMuDisappOnly,
+   kAnaMultiRingNuEAppOnly,
+
+   // MultiRing-FHC + 1Ring-FHC
+   kAnaMultiRingAnd1RingCombined,
+   kAnaMultiRingAnd1RingNuMuDisappOnly,
+   kAnaMultiRingAnd1RingNuEAppOnly,
+
+   // MultiRing-FHC + 1Ring-FHC&RHC
+   kAnaMultiRingFHCAnd1RingFHCAndRHCCombined,
+   kAnaMultiRingFHCAnd1RingFHCAndRHCNuMuDisappOnly,
+   kAnaMultiRingFHCAnd1RingFHCAndRHCNuEAppOnly,
+
 } 
 OscAnaType_t;
 
@@ -91,7 +113,14 @@ typedef enum EFluxType
    kRHCFlxNominal     =  4,  // RHC flux used for MC production
    kRHCFlxExtTuning   =  5,  // RHC flux used for MC production + tuning wghts based on external data (NA61,...)
    kRHCFlxFinalTuning =  6,  // RHC flux used for MC production + tuning wghts based on external data (NA61,...) + tuning wghts based on T2K data (ND280 data fit by BANFF,...)
-   kRHCFlxCurrent     =  7   // RHC current flux from systematic param variation of kFlxFinalTuning flux
+   kRHCFlxCurrent     =  7,   // RHC current flux from systematic param variation of kFlxFinalTuning flux
+   
+   /* /// NEW MULTIRING */
+   /* kMultiRingFlxNominal     =  8,  // RHC flux used for MC production */
+   /* kMultiRingFlxExtTuning   =  9,  // RHC flux used for MC production + tuning wghts based on external data (NA61,...) */
+   /* kMultiRingFlxFinalTuning =  10,  // RHC flux used for MC production + tuning wghts based on external data (NA61,...) + tuning wghts based on T2K data (ND280 data fit by BANFF,...) */
+   /* kMultiRingFlxCurrent     =  11   // RHC current flux from systematic param variation of kFlxFinalTuning flux */
+   /* /// */
 } 
 FluxType_t;
 

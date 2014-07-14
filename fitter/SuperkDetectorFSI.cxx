@@ -267,10 +267,12 @@ double SuperkDetectorFSI::SystWght(
     else
       p = conv::kListOfSKDetFSIParams[ip];
      // Is the current systematic parameter applied to current sample/mode end energy bin?
+    
      bool apply = this->ApplySyst(p,s,m,Ereco);
      if(!apply) continue;
+
      if(iparam != -1) {
-       if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+      if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
 	 {
 	 cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple RHC SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
 		<< util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
@@ -306,7 +308,7 @@ double SuperkDetectorFSI::SystWght(
 	 << " sample " << util::AsString(s) << " mode " << util::AsString(m) << endl;
       exit(1);
       }
-    } 
+    }
   else
     {
     int np = conv::kNumOfRHCSKDetFSIParams;
@@ -1121,6 +1123,14 @@ double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m 
     return fEnergyScale1RmuRelErr;
   else if (s == kSKsRHCFCFV1RingELike)
     return fEnergyScale1RmuRelErr;
+  
+  /// NEW MULTIRING
+  else if (s == kSKsFCFVMultiRingMuLike)
+    return fEnergyScale1RmuRelErr;
+  else if (s == kSKsFCFVMultiRingELike)
+    return fEnergyScale1RmuRelErr; 
+  ///
+
 
       //lorena - so far never seen different energy scale for signal/background                                                                                                  
       //    if( util::IsSignalNuE(m)) {                                                                                                                                          

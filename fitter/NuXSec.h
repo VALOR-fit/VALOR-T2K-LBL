@@ -34,6 +34,10 @@ using valor::conv::knwspl1Rmu;
 using valor::conv::knwspl1Re;
 using valor::conv::kRHCnwspl1Rmu;
 using valor::conv::kRHCnwspl1Re;
+/// NEW MULTIRING
+using valor::conv::knwsplMultiRmu;
+using valor::conv::knwsplMultiRe;
+////
 
 namespace valor {
 
@@ -167,6 +171,12 @@ private:
   TSpline3 *  fXSecWghtSpl1Re[knwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TSpline3 *  fRHCXSecWghtSpl1Rmu[kRHCnwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
   TSpline3 *  fRHCXSecWghtSpl1Re[kRHCnwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+
+  /// NEW MULTIRING
+  TSpline3 *  fXSecWghtSplMultiRmu[knwsplMultiRmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fXSecWghtSplMultiRe[knwsplMultiRe]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  ////
+
   TH2D *      fXsBinningTempl[kns][knm]; ///< Ereco-Etrue templates in XSec binning scheme
 
   // tweaking dials

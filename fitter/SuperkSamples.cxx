@@ -18,19 +18,23 @@ using namespace valor::conv;
 //____________________________________________________________________________
 valor::conv::SuperkSample_t valor::util::SKSampleFromString(string sh)
 {
-  if(sh == "1Rmu") return kSKsFCFV1RingMuLike;
-  if(sh == "1Re" ) return kSKsFCFV1RingELike;
-  if(sh == "RHC1Rmu") return kSKsRHCFCFV1RingMuLike;
-  if(sh == "RHC1Re" ) return kSKsRHCFCFV1RingELike;
+  if(sh == "1Rmu")     return kSKsFCFV1RingMuLike;
+  if(sh == "1Re" )     return kSKsFCFV1RingELike;
+  if(sh == "RHC1Rmu")  return kSKsRHCFCFV1RingMuLike;
+  if(sh == "RHC1Re" )  return kSKsRHCFCFV1RingELike;
+  if(sh == "MultiRmu") return kSKsFCFVMultiRingMuLike;       /// NEW MULTIRING
+  if(sh == "MultiRe" ) return kSKsFCFVMultiRingELike;       /// NEW MULTIRING
 
   return kSKsUndefined;
 }
 //________________________________________________________________________________________
 bool valor::util::IsFHCSample(conv::SuperkSample_t s)
 {
-  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-    return false;
-  return true;
+  //if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
+  if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike ||
+     s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)   /// ADD MULTIRING
+    return true;
+  return false;
 }
 //___________________________________________________________________________
 bool valor::util::IsRHCSample(conv::SuperkSample_t s)
@@ -39,6 +43,18 @@ bool valor::util::IsRHCSample(conv::SuperkSample_t s)
     return true;
   return false;
 }
+//___________________________________________________________________________
+
+
+/// NEW MULTIRING
+bool valor::util::IsMultiRingSample(conv::SuperkSample_t s)
+{
+  if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
+    return true;
+  return false;
+}
+///
+
 //___________________________________________________________________________
 bool valor::util::Is1RMuSample(conv::SuperkSample_t s)
 {
@@ -54,28 +70,73 @@ bool valor::util::Is1RESample(conv::SuperkSample_t s)
   return false;
 }
 //___________________________________________________________________________
+bool valor::util::IsMultiRMuSample(conv::SuperkSample_t s)
+{
+  if(s == kSKsFCFVMultiRingMuLike)
+    return true;
+  return false;
+}
+//___________________________________________________________________________
+
+
+/// NEW MULTIRING
+bool valor::util::IsMultiRESample(conv::SuperkSample_t s)
+{
+  if(s == kSKsFCFVMultiRingELike)
+    return true;
+  return false;
+}
+///
+
+
+
+
+//___________________________________________________________________________
 string valor::util::GetXMLMCTreeName(valor::conv::SuperkSample_t s)
 {
   switch(s) {
-     case ( kSKsFCFV1RingMuLike )    : return "one_mu_ring";
-     case ( kSKsFCFV1RingELike  )    : return "one_e_ring";
-     case ( kSKsRHCFCFV1RingMuLike ) : return "one_mu_ring";
-     case ( kSKsRHCFCFV1RingELike  ) : return "one_e_ring";
+     case ( kSKsFCFV1RingMuLike     ) : return "one_mu_ring";
+     case ( kSKsFCFV1RingELike      ) : return "one_e_ring";
 
-     default                      : return "--";
+       //case ( kSKsRHCFCFV1RingMuLike  ) : return "one_mu_ring_rhc";  // rhc not available yet
+       //case ( kSKsRHCFCFV1RingELike   ) : return "one_e_ring_rhc";   // rhc not available yet
+     case ( kSKsRHCFCFV1RingMuLike  ) : return "one_mu_ring";
+     case ( kSKsRHCFCFV1RingELike   ) : return "one_e_ring";
+
+       /// NEW MULTIRING
+       //case ( kSKsFCFVMultiRingMuLike ) : return "multi_mu_ring";    // multiring not available yet
+       //case ( kSKsFCFVMultiRingELike  ) : return "multi_e_ring";     // multiring not available yet
+     case ( kSKsFCFVMultiRingMuLike ) : return "one_mu_ring";    
+     case ( kSKsFCFVMultiRingELike  ) : return "one_e_ring";
+       ////
+
+     default                          : return "--";
   }
   return "";
 }
+
+
+
+
 //___________________________________________________________________________
 string valor::util::GetXMLDatasetName(valor::conv::SuperkSample_t s)
 {
   switch(s) {
-     case ( kSKsFCFV1RingMuLike )    : return "one_mu_ring";
-     case ( kSKsFCFV1RingELike  )    : return "one_e_ring";
-     case ( kSKsRHCFCFV1RingMuLike ) : return "one_mu_ring_rhc";
-     case ( kSKsRHCFCFV1RingELike  ) : return "one_e_ring_rhc";
-
-     default                      : return "--";
+     
+     case ( kSKsFCFV1RingMuLike     ) : return "one_mu_ring";
+     case ( kSKsFCFV1RingELike      ) : return "one_e_ring";
+     
+  case ( kSKsRHCFCFV1RingMuLike  ) : return "one_mu_ring_rhc";  // rhc available
+  case ( kSKsRHCFCFV1RingELike   ) : return "one_e_ring_rhc"; // rhc available
+    
+    /// NEW MULTIRING
+  case ( kSKsFCFVMultiRingMuLike ) : return "multi_mu_ring";  // multiring not available yet
+  case ( kSKsFCFVMultiRingELike  ) : return "multi_e_ring";   // multiring not available yet
+    //case ( kSKsFCFVMultiRingMuLike ) : return "one_mu_ring";
+    //case ( kSKsFCFVMultiRingELike  ) : return "one_e_ring";
+    ///
+     
+     default                          : return "--";
   }
   return "";
 }
@@ -83,12 +144,13 @@ string valor::util::GetXMLDatasetName(valor::conv::SuperkSample_t s)
 string valor::util::AsString(valor::conv::SuperkSample_t s)
 {
   switch(s) {
-     case ( kSKsFCFV1RingMuLike ) : return "FCFV 1-ring mu-like"; break;
-     case ( kSKsFCFV1RingELike  ) : return "FCFV 1-ring e-like";  break;
-     case ( kSKsRHCFCFV1RingMuLike ) : return "FCFV 1-ring mu-like (RHC running)"; break;
-     case ( kSKsRHCFCFV1RingELike  ) : return "FCFV 1-ring e-like (RHC running)";  break;
-
-     default                      : return "--";
+     case ( kSKsFCFV1RingMuLike     ) : return "FCFV 1-ring mu-like"; break;
+     case ( kSKsFCFV1RingELike      ) : return "FCFV 1-ring e-like";  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return "FCFV 1-ring mu-like (RHC running)"; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return "FCFV 1-ring e-like (RHC running)";  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return "FCFV multi-ring mu-like"; break;          /// NEW MULTIRING
+     case ( kSKsFCFVMultiRingELike  ) : return "FCFV multi-ring e-like";  break;       /// NEW MULTIRING
+     default                          : return "--";
   }
   return "";
 }
@@ -98,12 +160,13 @@ string valor::util::AsStringCompact (valor::conv::SuperkSample_t s)
 // Compact string used for naming output histograms stored ROOT files
 //
   switch(s) {
-     case ( kSKsFCFV1RingMuLike    ) : return "1Rmu";    break;
-     case ( kSKsFCFV1RingELike     ) : return "1Re";     break;
-     case ( kSKsRHCFCFV1RingMuLike ) : return "RHC1Rmu"; break;
-     case ( kSKsRHCFCFV1RingELike  ) : return "RHC1Re";  break;
-
-     default                         : return "";
+     case ( kSKsFCFV1RingMuLike     ) : return "1Rmu";    break;
+     case ( kSKsFCFV1RingELike      ) : return "1Re";     break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return "RHC1Rmu"; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return "RHC1Re";  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return "MultiRmu";    break;         /// NEW MULTIRING
+     case ( kSKsFCFVMultiRingELike  ) : return "MultiRe";     break;       /// NEW MULTIRING
+     default                          : return "";
   }
   return "";
 }
@@ -111,12 +174,13 @@ string valor::util::AsStringCompact (valor::conv::SuperkSample_t s)
 string valor::util::AsStringTex(valor::conv::SuperkSample_t s)
 {
   switch(s) {
-     case ( kSKsFCFV1RingMuLike ) : return "1 $\\mu$-like ring"; break;
-     case ( kSKsFCFV1RingELike  ) : return "1 e-like ring";      break;
-     case ( kSKsRHCFCFV1RingMuLike ) : return "1 $\\mu$-like ring (RHC running)"; break;
-     case ( kSKsRHCFCFV1RingELike  ) : return "1 e-like ring (RHC running)";      break;
-
-     default                      : return "--";
+     case ( kSKsFCFV1RingMuLike     ) : return "1 $\\mu$-like ring"; break;
+     case ( kSKsFCFV1RingELike      ) : return "1 e-like ring";      break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return "1 $\\mu$-like ring (RHC running)"; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return "1 e-like ring (RHC running)";      break;
+     case ( kSKsFCFVMultiRingMuLike ) : return "Multi $\\mu$-like ring"; break;       /// NEW MULTIRING
+     case ( kSKsFCFVMultiRingELike  ) : return "Multi e-like ring";      break;       /// NEW MULTIRING
+     default                          : return "--";
   }
   return "";
 }

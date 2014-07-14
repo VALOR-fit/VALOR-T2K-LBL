@@ -74,11 +74,23 @@ void NuXSec::Init(void)
     fRHCXSecWghtSpl1Re[ispl] = 0;
   }
 
+
+  /// NEW MULTIRING
+  for(int ispl = 0; ispl < knwsplMultiRmu; ispl++) {
+    fXSecWghtSplMultiRmu[ispl] = 0;
+  }
+  for(int ispl = 0; ispl < knwsplMultiRe; ispl++) {
+    fXSecWghtSplMultiRe[ispl] = 0;
+  }
+  ////
+
+  
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
       fXsBinningTempl [is][im] = 0;
     }
   }
+  ////
 
   fFermiMomTwkDial       = 0;
   fSpecFuncTwkDial       = 0;
@@ -125,6 +137,19 @@ void NuXSec::CleanUp(void)
     if (fRHCXSecWghtSpl1Re[ispl]) delete fRHCXSecWghtSpl1Re[ispl];
   }
 
+
+
+  /// NEW MULTIRING
+  for(int ispl = 0; ispl < knwsplMultiRmu; ispl++) {
+    if (fXSecWghtSplMultiRmu[ispl]) delete fXSecWghtSplMultiRmu[ispl];
+  }
+  for(int ispl = 0; ispl < knwsplMultiRe; ispl++) {
+    if (fXSecWghtSplMultiRe[ispl]) delete fXSecWghtSplMultiRe[ispl];
+  }
+  ////
+
+
+
   for(int is=0; is<kns; is++) {
     for(int im=0; im<knm; im++) {
       if (fXsBinningTempl [is][im]) delete fXsBinningTempl [is][im]; 
@@ -151,6 +176,22 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   assert(spline_file_1Rmu);
   TFile * spline_file_1Re = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
   assert(spline_file_1Re);
+
+
+
+  /// NEW MULTIRING (multiring-only splines)
+  TFile * spline_file_MultiRmu = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
+  assert(spline_file_MultiRmu);
+  TFile * spline_file_MultiRe = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
+  assert(spline_file_MultiRe);
+
+  //TFile * spline_file_MultiRmu = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
+  //assert(spline_file_1Rmu);
+  //TFile * spline_file_MultiRe = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
+  //assert(spline_file_1Re);
+  ////
+
+
 
   // Make a flat spline
 #ifdef __use_flat_splines_for_missing_splines__
@@ -221,22 +262,56 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		if(!bin_is_not_empty)                 
 		  continue;
 #endif
-                // Build spline name
+                
+
+
+
+
+		// // Build spline name
+                // ostringstream splname;
+                // splname << "spl_"
+		//   //<< util::AsStringCompact(s) << "_"
+		//   //<< util::AsStringCompact(m) << "_"
+		//   //<< util::AsStringCompact(p) << "_"
+		// 	<< util::AsStringCompact_splinehack(s) << "_"
+                //         << util::AsStringCompact_splinehack(m) << "_"
+                //         << util::AsStringCompact_splinehack(p) << "_"
+                //         << ir << "_" 
+                //         << it;
+
+		/// NEW MULTIRING (to update when we will have multiring splines with different names) 
+		
+		// Build spline name
                 ostringstream splname;
-                splname << "spl_"
-		      //<< util::AsStringCompact(s) << "_"
-		      //<< util::AsStringCompact(m) << "_"
-		      //<< util::AsStringCompact(p) << "_"
-			<< util::AsStringCompact_splinehack(s) << "_"
-                        << util::AsStringCompact_splinehack(m) << "_"
-                        << util::AsStringCompact_splinehack(p) << "_"
-                        << ir << "_" 
-                        << it;
+                splname << "spl_";
+		  //<< util::AsStringCompact(s) << "_"
+		  //<< util::AsStringCompact(m) << "_"
+		  //<< util::AsStringCompact(p) << "_"
+		if(IsMultiRMuSample(s))
+		  splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
+		else if(IsMultiRESample(s))
+		  splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
+		else
+		  splname << util::AsStringCompact_splinehack(s) << "_";
+		
+		splname   << util::AsStringCompact_splinehack(m) << "_"
+			  << util::AsStringCompact_splinehack(p) << "_"
+			  << ir << "_" 
+			  << it;
+		///
+		
+
+
+
+
+
+
 
 #ifdef __show_init_mesg_debug__
                 cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
                      << splname.str() << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 #endif
+
                 // Copy spline from input file
 		TSpline3 * spl = NULL;
 		//Todo: add separate splines for RHC running if necessary
@@ -244,6 +319,17 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		else if(s==kSKsFCFV1RingELike)      spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str()); 
                 else if(s==kSKsRHCFCFV1RingMuLike)  spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
                 else if(s==kSKsRHCFCFV1RingELike)   spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str());
+
+
+		// /// NEW MULTIRING (to update with splines for MultiRing sample)
+                // else if(s==kSKsFCFVMultiRingMuLike)  spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
+                // else if(s==kSKsFCFVMultiRingELike)   spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str());
+		// ////
+		/// NEW MULTIRING 
+                else if(s==kSKsFCFVMultiRingMuLike)  spl = (TSpline3 *) spline_file_MultiRmu->Get(splname.str().c_str());
+                else if(s==kSKsFCFVMultiRingELike)   spl = (TSpline3 *) spline_file_MultiRe ->Get(splname.str().c_str());
+		////
+		
 
 		if(!spl) {
 		  if(!bin_is_not_empty) {
@@ -319,6 +405,13 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 else if(s == kSKsRHCFCFV1RingMuLike) fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
                 else if(s == kSKsRHCFCFV1RingELike)  fRHCXSecWghtSpl1Re[idx] = new TSpline3(*spl);
 
+
+		/// NEW MULTIRING (update with splines for MultiRing sample)
+                else if(s == kSKsFCFVMultiRingMuLike) fXSecWghtSplMultiRmu[idx] = new TSpline3(*spl);
+                else if(s == kSKsFCFVMultiRingELike)  fXSecWghtSplMultiRe[idx] = new TSpline3(*spl);
+		///
+
+
 #ifdef __show_init_mesg_debug2__
 		//check that the spline is not flat
 		cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: " ;
@@ -342,6 +435,23 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                          << fRHCXSecWghtSpl1Re[idx]->Eval(0) << "\t"
                          << fRHCXSecWghtSpl1Re[idx]->Eval(+1) << endl;
                   }
+
+
+		  /// NEW MULTIRING (update with splines for MultiRing sample)
+                  else if (s == kSKsFCFVMultiRingMuLike){
+                    cout << fXSecWghtSplMultiRmu[idx]->Eval(-1) << "\t"
+                         << fXSecWghtSplMultiRmu[idx]->Eval(0) << "\t"
+			 << fXSecWghtSplMultiRmu[idx]->Eval(+1) << endl;
+                  }
+                  else if(s == kSKsFCFVMultiRingELike){
+                    cout << fXSecWghtSplMultiRe[idx]->Eval(-1) << "\t"
+                         << fXSecWghtSplMultiRe[idx]->Eval(0) << "\t"
+                         << fXSecWghtSplMultiRe[idx]->Eval(+1) << endl;
+                  }
+		  ///
+		  
+
+
 #endif
              }//Etrue
           }//Ereco
@@ -1068,6 +1178,7 @@ TSpline3 * NuXSec::FindWghtSpline(
 
 
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
+
   if(idx == -1 || idx == -2) 
   {
     cerr << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
@@ -1094,14 +1205,39 @@ TSpline3 * NuXSec::FindWghtSpline(
 
   //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
   //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
+
+  // if(s == kSKsRHCFCFV1RingMuLike)
+  //   return fRHCXSecWghtSpl1Rmu[idx];
+  // else if(s == kSKsRHCFCFV1RingELike)
+  //   return fRHCXSecWghtSpl1Re[idx];
+  // else if(s == kSKsFCFV1RingELike)
+  //   return fXSecWghtSpl1Re[idx];
+  // else
+  //   return fXSecWghtSpl1Rmu[idx];
+
+  /// NEW MULTIRING (use 1 ring splines for multiring sample)
   if(s == kSKsRHCFCFV1RingMuLike)
     return fRHCXSecWghtSpl1Rmu[idx];
   else if(s == kSKsRHCFCFV1RingELike)
     return fRHCXSecWghtSpl1Re[idx];
+  
   else if(s == kSKsFCFV1RingELike)
     return fXSecWghtSpl1Re[idx];
-  else
+  else if(s == kSKsFCFV1RingMuLike)
     return fXSecWghtSpl1Rmu[idx];
+
+  else if(s == kSKsFCFVMultiRingELike){ // multiring
+    //cout << "kSKsFCFVMultiRingELike" << endl;
+    assert(fXSecWghtSplMultiRe[idx]);
+    return fXSecWghtSplMultiRe[idx];    
+  }
+  else {
+    //cout << "kSKsFCFVMultiRingLike" << endl;
+    assert(fXSecWghtSplMultiRmu[idx]);
+    return fXSecWghtSplMultiRmu[idx];
+  }
+  ///
+  
 
 
 }
@@ -1186,7 +1322,7 @@ int NuXSec::WghtSplineIdx(
 	itrue = i;
 	break;
       }
-  }
+  } 
   if(itrue == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
     cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ETrueBin for etrue value "
