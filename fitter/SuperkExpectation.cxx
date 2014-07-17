@@ -814,9 +814,9 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
     for (int ip = 0; ip < nskdetfsi; ip++) {
       twkv[ip] = 1;
     }
-    int ip = 0;
-    if (is_rhc) ip = p-kListOfSKDetFSIParams[0];
-    else        ip = p-kListOfRHCSKDetFSIParams[0];
+    int ip = 0; 
+    if (is_rhc) ip = p-kListOfRHCSKDetFSIParams[0];
+    else        ip = p-kListOfSKDetFSIParams[0];
     assert(ip >=0 && ip<twkv.GetNoElements());
     twkv[ip]=twkdial;
     if (is_rhc) this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
