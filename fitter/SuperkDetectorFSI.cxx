@@ -300,7 +300,7 @@ double SuperkDetectorFSI::SystWght(
        iparam = arr_index->SKDetFSISystIdx(p);
   }
 
-  if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+  if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
     {
     int np = conv::kNumOfSKDetFSIParams;
     if(iparam < 0 || iparam >= np) {
