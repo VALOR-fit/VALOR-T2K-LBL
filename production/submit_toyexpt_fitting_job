@@ -67,32 +67,40 @@ foreach (@ARGV) {
   if($_ eq '--dcp-value'              ) { $dcp_value             = $ARGV[$iarg+1]; }
   $iarg++;
 }
-$dm23sq                 = 0.00232                                unless defined $dm23sq; 
-$dm12sq                 = 0.0000758                              unless defined $dm12sq; 
-$mix23                  = 0.50                                   unless defined $mix23;
-$mix13                  = 0.0251                                 unless defined $mix13;
-$mix12                  = 0.306                                  unless defined $mix12;
-$deltacp                = 0.00                                   unless defined $deltacp;
+#$dm23sq                 = 0.00232                                unless defined $dm23sq; 
+#$dm12sq                 = 0.0000758                              unless defined $dm12sq; 
+#$mix23                  = 0.50                                   unless defined $mix23;
+#$mix13                  = 0.0251                                 unless defined $mix13;
+#$mix12                  = 0.306                                  unless defined $mix12;
+#$deltacp                = 0.00                                   unless defined $deltacp;
+$dm23sq                 = -99                                     unless defined $dm23sq; 
+$dm12sq                 = -99                                     unless defined $dm12sq; 
+$mix23                  = -99                                     unless defined $mix23;
+$mix13                  = -99                                     unless defined $mix13;
+$mix12                  = -99                                     unless defined $mix12;
+$deltacp                = -99                                     unless defined $deltacp;
 $resource               = "interactive"                          unless defined $resource;
-$nruns                  = 500                                      unless defined $nruns;
-$nexpts                 = 2                                      unless defined $nexpts;
-$stat_fluct             = 1                                      unless defined $stat_fluct;
-$twk_systematics        = 1                                      unless defined $twk_systematics;
-$store_toy_expts        = 1                                      unless defined $store_toy_expts;
-$store_bestfit_spectra  = 1                                      unless defined $store_bestfit_spectra;
-#$fitparamlist           = "nuosc3f_numudisapp_fix4+nuisance"     unless defined $fitparamlist;
-$fitparamlist           = "nuosc3f_12constrain+nuisance"         unless defined $fitparamlist;
-$fitoption              = "minuit+hesse"                               unless defined $fitoption;
-$tag                    = "toyexptfits"                          unless defined $tag;
-$job_dir                = "."                                  unless defined $job_dir;
-$softw_dir              = "."                                  unless defined $softw_dir;
-$config_file            = "analysis_configuration_test.xml"           unless defined $config_file;
-$dmsqscheme             = "abs23"                                unless defined $dmsqscheme;
-$masshierarchy          = "normal"                               unless defined $masshierarchy;
-$mixparamchoice         = "sinsqtheta"                           unless defined $mixparamchoice;
-$mixparamoctant         = "one"                                  unless defined $mixparamoctant;
-#$apply_2nu_boundary     = 1                                      unless defined $apply_2nu_boundary;
-$dcp_value              = 0                                      unless defined $dcp_value;
+$nruns                  = 1                                       unless defined $nruns;
+$nexpts                 = 1                                       unless defined $nexpts;
+$stat_fluct             = 1                                       unless defined $stat_fluct;
+$twk_systematics        = 1                                       unless defined $twk_systematics;
+$store_toy_expts        = 1                                       unless defined $store_toy_expts;
+$store_bestfit_spectra  = 1                                       unless defined $store_bestfit_spectra;
+#$fitparamlist           = "nuosc3f_numudisapp_fix4+nuisance"      unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3f_12constrain+nuisance"          unless defined $fitparamlist;
+$fitparamlist           = "nuosc3f_12fix+nuisance"                unless defined $fitparamlist;
+$fitoption              = "minuit+hesse"                          unless defined $fitoption;
+$tag                    = "toyexptfits"                           unless defined $tag;
+$job_dir                = "."                                     unless defined $job_dir;
+$softw_dir              = "."                                     unless defined $softw_dir;
+#$config_file            = "analysis_configuration_test.xml"       unless defined $config_file;
+$config_file            = "analysis_configuration_test_multiring.xml"       unless defined $config_file;
+$dmsqscheme             = "abs23"                                 unless defined $dmsqscheme;
+$masshierarchy          = "normal"                                unless defined $masshierarchy;
+$mixparamchoice         = "sinsqtheta"                            unless defined $mixparamchoice;
+$mixparamoctant         = "one"                                   unless defined $mixparamoctant;
+#$apply_2nu_boundary     = 1                                       unless defined $apply_2nu_boundary;
+$dcp_value              = 0                                       unless defined $dcp_value;
 
 if( !defined $cput ) {
   if($resource eq "RAL"   ) { $cput = "6:00:00";  }
@@ -106,7 +114,7 @@ $irun = 0;
 while($irun < $nruns) {
   print "Submitting run: $irun \n";
 
-  $command = "root2k -l -b -q \'$softw_dir/macros/fit/run_fit.C(\"$tag\",$irun,$nexpts,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value)\'";
+  $command = "root2k -l -b -q \'$softw_dir/macros/fit/run_fit_joint.C(\"$tag\",$irun,$nexpts,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value)\'";
 
   print "$command \n";
   
