@@ -7,6 +7,8 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+#include "Build.h"
+
 void generate_toymc_ensemble_joint
 (
  const char * tag                     = "toymc_prova",                        /* */
@@ -15,17 +17,18 @@ void generate_toymc_ensemble_joint
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_MCRun1to6_th13DB_NH",                        /* */
   int          run                     = 0,                              /* */
-  double       nexperiments            = 1, //1000,                             /* number of toy-MC expts to generate */
+  double       nexperiments            = 1,                             /* number of toy-MC expts to generate */
   const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
   double       input_mixing13          = -99, //0.0252, //-99, //0.02146 , // 0.0251,                          /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
   double       input_mixing23          = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
   double       input_deltacp           = -99, //-1.556, //-99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
-  double       input_dm12sq            = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
+ double       input_dm12sq            = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
  //const char * config_file             = "analysis_configuration_run5and6.xml",   /* analysis configuration file */
-  //const char * config_file             = "analysis_configuration_test.xml",   /* analysis configuration file */
- const char * config_file             = "analysis_configuration_run1to6.xml",
+ //const char * config_file             = "analysis_configuration_test.xml",   /* analysis configuration file */
+ const char * config_file             = "analysis_configuration_test_multiring.xml",   /* analysis configuration file */
+ //const char * config_file             = "analysis_configuration_run1to6.xml",
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
   bool         save_in_xml_format      = true,                           /* also save in txt format */
@@ -315,10 +318,13 @@ void generate_toymc_ensemble_joint
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
      }//applied_negevents_condition
-
-     double escale = skexp->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale);
-     
-     // Get 1-ring mu-like Ereco spectrum FHC
+  
+     double escale=0.;
+#ifdef __FHC_RUNNING__
+     escale = skexp->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale);
+#endif     
+#ifdef __FHC_RUNNING__
+     // Get 1-ring mu-like Ereco spectrum FHC     
      TH1D* mock_data_1Rmu = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingMuLike); ib++) {
        mock_data_1Rmu->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingMuLike)[ib-1]);
@@ -330,43 +336,42 @@ void generate_toymc_ensemble_joint
        if(ib == 5) h_4->Fill(events);
        if(ib == 5) h_4_Escale->Fill( escale, events);
      }
-     mock_data_1Rmu->SetDirectory(0);
-     
+     mock_data_1Rmu->SetDirectory(0);     
      TH1D* mock_data_1Re = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingELike), util::ErecoBinEdges(kSKsFCFV1RingELike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingELike); ib++) {
        mock_data_1Re->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingELike)[ib-1]);
      }
      mock_data_1Re->SetDirectory(0);
-
-
+#endif
+#ifdef __RHC_RUNNING__
      // Get 1-ring mu-like Ereco spectrum RHC
      TH1D* mock_data_1Rmu_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingMuLike), util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++) {
        mock_data_1Rmu_RHC->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib-1]);
      }
-     mock_data_1Rmu_RHC->SetDirectory(0);
-     
+     mock_data_1Rmu_RHC->SetDirectory(0);     
      // Get 1-ring e-like Ereco spectrum RHC
      TH1D* mock_data_1Re_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingELike), util::ErecoBinEdges(kSKsRHCFCFV1RingELike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingELike); ib++) {
        mock_data_1Re_RHC->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingELike)[ib-1]);
      }
      mock_data_1Re_RHC->SetDirectory(0);
-
+#endif
+#ifdef __MULTIRING_FHC_RUNNING__
      // Get Multi-ring mu-like Ereco spectrum
      TH1D* mock_data_MultiRmu = new TH1D("","", util::NumErecoBins(kSKsFCFVMultiRingMuLike), util::ErecoBinEdges(kSKsFCFVMultiRingMuLike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFVMultiRingMuLike); ib++) {
        mock_data_MultiRmu->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFVMultiRingMuLike)[ib-1]);
      }
-     mock_data_MultiRmu->SetDirectory(0);
-     
+     mock_data_MultiRmu->SetDirectory(0);     
      // Get Multi-ring e-like Ereco spectrum 
      TH1D* mock_data_MultiRe = new TH1D("","", util::NumErecoBins(kSKsFCFVMultiRingELike), util::ErecoBinEdges(kSKsFCFVMultiRingELike));
      for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFVMultiRingELike); ib++) {
        mock_data_MultiRe->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFVMultiRingELike)[ib-1]);
      }
      mock_data_MultiRe->SetDirectory(0);
-
+#endif
+     
      // If an XML file was specified, add an entry
      
      if(save_in_xml_format) {
@@ -381,14 +386,13 @@ void generate_toymc_ensemble_joint
          fxml << " -->" << endl;
        }
      
+       // FHC
+#ifdef __FHC_RUNNING__
        // Now the 1Rmu part
-       
        fxml << "        <one_mu_ring>    " << endl;
        fxml << "          <ereco_values> " << endl;
-       
        ftxt << "1Rmu:";
        ftxt << endl;
-       
        // Adding Ereco values as a comma separated list.
        // Assuming uniform distribution within each bin, randomize values within each bin.
        int ievtot = 0;
@@ -408,7 +412,6 @@ void generate_toymc_ensemble_joint
             ievtot++;
          }//iev
        }//ibin
-       
        // add extra data-points, if any
        if(full_points_to_add_1Rmu) {
          fxml << ",\n"<<endl; // should really have an XML comment here but TXMLEngine won't let us.
@@ -418,16 +421,14 @@ void generate_toymc_ensemble_joint
        fxml << endl;
        ftxt << endl;
        fxml << "          </ereco_values> " << endl;
-       fxml << "        </one_mu_ring>    " << endl;
+       fxml << "        </one_mu_ring>    " << endl;       
        
-              
        //Now the 1Re part
        ftxt << endl;
        ftxt << "1Re:";
        ftxt << endl;
        fxml << "        <one_e_ring>    " << endl;
-       fxml << "          <ereco_values> " << endl;
-       
+       fxml << "          <ereco_values> " << endl;       
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re->GetNbinsX(); ibin++) {
          double Nb   = mock_data_1Re->GetBinContent (ibin); // number of events in this Ereco bin
@@ -445,27 +446,23 @@ void generate_toymc_ensemble_joint
             ievtot++;
          }//iev
        }//ibin
-
        // add extra data-points, if any
        if(full_points_to_add_1Re) {
          fxml << ",\n"<<endl;
          fxml << *full_points_to_add_1Re;
          ftxt << "," << *full_points_to_add_1Re;
        }
-
        fxml << endl;
        ftxt << endl;
        fxml << "          </ereco_values> " << endl;
-       fxml << "        </one_e_ring>    " << endl;
-       
-
+       fxml << "        </one_e_ring>    " << endl;       
+#endif
+#ifdef __RHC_RUNNING__
        // Now the 1Rmu RHC part
        fxml << "        <one_mu_ring_rhc>    " << endl;
-       fxml << "          <ereco_values> " << endl;
-       
+       fxml << "          <ereco_values> " << endl;       
        ftxt << "1Rmu RHC:";
-       ftxt << endl;
-       
+       ftxt << endl;       
        // Adding Ereco values as a comma separated list.
        // Assuming uniform distribution within each bin, randomize values within each bin.
        int ievtot = 0;
@@ -495,15 +492,13 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "          </ereco_values> " << endl;
        fxml << "        </one_mu_ring_rhc>" << endl;
-
-
+       
        //Now the 1Re RHC part
        ftxt << endl;
        ftxt << "1Re RHC:";
        ftxt << endl;
        fxml << "        <one_e_ring_rhc>"  << endl;
-       fxml << "          <ereco_values> " << endl;
-       
+       fxml << "          <ereco_values> " << endl;       
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_1Re_RHC->GetNbinsX(); ibin++) {
          double Nb   = mock_data_1Re_RHC->GetBinContent (ibin); // number of events in this Ereco bin
@@ -531,14 +526,13 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "          </ereco_values> " << endl;
        fxml << "        </one_e_ring_rhc>    " << endl;
-
+#endif
+#ifdef __MULTIRING_FHC_RUNNING__       
        // Now the MultiRmu part
        fxml << "        <multi_mu_ring>    " << endl;
-       fxml << "          <ereco_values> " << endl;
-       
+       fxml << "          <ereco_values> " << endl;       
        ftxt << "MultiRmu :";
-       ftxt << endl;
-       
+       ftxt << endl;       
        // Adding Ereco values as a comma separated list.
        // Assuming uniform distribution within each bin, randomize values within each bin.
        int ievtot = 0;
@@ -568,15 +562,13 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "          </ereco_values> " << endl;
        fxml << "        </multi_mu_ring>" << endl;
-
-
+       
        //Now the MultiRe part
        ftxt << endl;
        ftxt << "MultiRe:";
        ftxt << endl;
        fxml << "        <multi_e_ring>"  << endl;
-       fxml << "          <ereco_values> " << endl;
-       
+       fxml << "          <ereco_values> " << endl;       
        ievtot = 0;
        for(int ibin = 1; ibin <= mock_data_MultiRe->GetNbinsX(); ibin++) {
          double Nb   = mock_data_MultiRe->GetBinContent (ibin); // number of events in this Ereco bin
@@ -604,14 +596,15 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "          </ereco_values> " << endl;
        fxml << "        </multi_e_ring>    " << endl;
-
        fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;
+#endif
        
      }//xml
 
      // If a ROOT filename was specified, save the ROOT histogram too
      if(f) {
        if(save_in_root_format) {
+#ifdef __FHC_RUNNING__
            if(full_points_to_add_1Rmu) {
             vector<string> vecp = util::Tokens(*full_points_to_add_1Rmu,",");
             assert(vecp.size()>0);
@@ -626,7 +619,8 @@ void generate_toymc_ensemble_joint
               mock_data_1Re->Fill(atof(vecp[ip].c_str()));
             }
           }
-          
+#endif
+#ifdef __RHC_RUNNING__	 
           if(full_points_to_add_1Rmu_RHC) {
             vector<string> vecp = util::Tokens(*full_points_to_add_1Rmu_RHC,",");
             assert(vecp.size()>0);
@@ -641,8 +635,8 @@ void generate_toymc_ensemble_joint
               mock_data_1Re_RHC->Fill(atof(vecp[ip].c_str()));
             }
           }
-
-
+#endif
+#ifdef __MULTIRING_FHC_RUNNING__
           if(full_points_to_add_MultiRmu) {
             vector<string> vecp = util::Tokens(*full_points_to_add_MultiRmu,",");
             assert(vecp.size()>0);
@@ -657,21 +651,22 @@ void generate_toymc_ensemble_joint
               mock_data_MultiRe->Fill(atof(vecp[ip].c_str()));
             }
           }
-
-
-
+#endif
        }
        f->cd();
        
+#ifdef __FHC_RUNNING__
        mock_data_1Rmu->Write(Form("mock_data_1Rmu_%d",iexperiment));
        mock_data_1Re->Write(Form("mock_data_1Re_%d",iexperiment));
+#endif
+#ifdef __RHC_RUNNING__
        mock_data_1Rmu_RHC->Write(Form("mock_data_1Rmu_RHC_%d",iexperiment));
        mock_data_1Re_RHC->Write(Form("mock_data_1Re_RHC_%d",iexperiment));
+#endif
+#ifdef __MULTIRING_FHC_RUNNING__
        mock_data_MultiRmu->Write(Form("mock_data_MultiRmu_%d",iexperiment));
        mock_data_MultiRe->Write(Form("mock_data_MultiRe_%d",iexperiment));
-       
-
-
+#endif
 
        // Object for storing input oscillation and nuisance params in each toy-MC
        PhysParamList * iparm = new PhysParamList;
@@ -680,9 +675,19 @@ void generate_toymc_ensemble_joint
        PhysParamList true_oscillation_params = ph.AsPhysParamList();
        iparm->Append(true_oscillation_params);
        // keep track of all systematic params
+#ifdef __FHC_RUNNING__
        PhysParamList true_nuisance_params = skexp->Tweaks();
        iparm->Append(true_nuisance_params);
-       iparm->Write(Form("iparm_%d",iexperiment));
+#endif  
+#ifdef __RHC_RUNNING__
+       PhysParamList true_nuisance_params_rhc = skexp->Tweaks();
+       iparm->Append(true_nuisance_params_rhc);
+#endif  
+#ifdef __MULTIRING_FHC_RUNNING__
+       PhysParamList true_nuisance_params_multiring = skexp->Tweaks();
+       iparm->Append(true_nuisance_params_multiring);
+#endif  
+     iparm->Write(Form("iparm_%d",iexperiment));
        
        delete iparm;
      }
