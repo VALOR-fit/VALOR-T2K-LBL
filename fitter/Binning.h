@@ -15,6 +15,9 @@ Changes since 2011_v0.9.0:
 17-12-2013  Nick  
 Split valor::conv namespace into several smaller files
 
+21-7-2014 Davide
+Added samples for multiring forward horn current
+
 */
 //____________________________________________________________________________
 

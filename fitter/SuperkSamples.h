@@ -18,8 +18,9 @@ Changes since 2011_v0.9.0:
 31-12-2013  Nick
 Add samples and modes for reverse horn current running
 
-7-7-2014 Davide
-Added MultiRing sample
+21-7-2014 Davide
+Added samples for multiring forward horn current
+
 */
 //____________________________________________________________________________
 

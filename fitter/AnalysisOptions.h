@@ -27,9 +27,15 @@ Split valor::conv namespace into several smaller files
 #include "Rtypes.h"
 #endif
 
-#ifndef __FULLY_CORRELATED__
+#ifndef __FULLY_CORRELATED__  // rhc-fhc samples
 #define __FULLY_CORRELATED__
 #endif
+
+/// NEW MULTIRING 2
+#ifndef __FULLY_CORRELATED_MULTIRING__ // multiring-fhc samples
+//#define __FULLY_CORRELATED_MULTIRING__
+#endif
+///
 
 #ifndef HKHACK
 //#define HKHACK //use signal/background only systematics

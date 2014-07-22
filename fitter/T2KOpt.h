@@ -12,9 +12,9 @@
 
 \copyright (c) 2010-2014, The VALOR group.
 
-7/7/2014 Davide
-Added MultiRing sample
-
+21-7-2014 Davide
+Added samples for multiring forward horn current
+ 
 */
 //____________________________________________________________________________
 

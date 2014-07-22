@@ -92,10 +92,13 @@ public:
    
    void TweakSystematicLegacy    (string systematic, double twkdial=0., bool best_banff=true); ///< set systematic variation (from top level)
    //                     best_banff refers to whether to use bestfit or param=1 when fitting a single banff parameter
-   void TweakAllSystematics                  (void) {RandomizeSystematics();}
-   void TweakAllBANFFSystematics             (void);           ///< random variation of all BANFF systematics
-   void TweakAllUncorrelatedXSecSystematics  (void);           ///< random variation of all Uncorrelated XSec systematics
-   void TweakAllSKDetectorFSISystematics     (void);           ///< random variation of all SK Detector systematics
+   void TweakAllSystematics                       (void) {RandomizeSystematics();}
+   void TweakAllBANFFSystematics                  (void);           ///< random variation of all BANFF systematics
+   void TweakAllUncorrelatedXSecSystematics       (void);           ///< random variation of all Uncorrelated XSec systematics
+   void TweakAllSKDetectorFSISystematics          (void);           ///< random variation of all SK Detector systematics
+   /// NEW MULTIRING 2
+   void TweakAllMultiRingSKDetectorFSISystematics (void);           ///< random variation of all SK Detector systematics
+   ///
 
    // Interface method for fitters. The fit parameter list can contain info for both the 
    // physics hypothesis and the systematic variations.

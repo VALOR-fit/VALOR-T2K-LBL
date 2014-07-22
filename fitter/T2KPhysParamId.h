@@ -303,7 +303,55 @@ static const PhysParamId_t kRHCNuisSKDetFSI017 = kNuis197;
 
 static const PhysParamId_t kRHCLastParam = kNuis198;
 
+
+
+
+
+
+//*********  MULTIRING FORWARD HORN CURRENT **************************
+
+
+/*
+ * SuperK detector errors (energy scale and efficiencies)
+ */   
+
+/// NEW MULTIRING 3
+static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis199;   // SK energy scale
+///
+
+/// NEW MULTIRING 2
+
+// SKDET+FSI matrix 18x18 
+#if FSI_BINS != 3
+static const PhysParamId_t kMultiRingNuisSKDetFSI000 = kNuis200;
+static const PhysParamId_t kMultiRingNuisSKDetFSI001 = kNuis201;
+static const PhysParamId_t kMultiRingNuisSKDetFSI002 = kNuis202;
+static const PhysParamId_t kMultiRingNuisSKDetFSI003 = kNuis203;
+static const PhysParamId_t kMultiRingNuisSKDetFSI004 = kNuis204;
+static const PhysParamId_t kMultiRingNuisSKDetFSI005 = kNuis205;
+#endif
+#if FSI_BINS != 2
+static const PhysParamId_t kMultiRingNuisSKDetFSI006 = kNuis206;
+static const PhysParamId_t kMultiRingNuisSKDetFSI007 = kNuis207;
+static const PhysParamId_t kMultiRingNuisSKDetFSI008 = kNuis208;
+static const PhysParamId_t kMultiRingNuisSKDetFSI009 = kNuis209;
+static const PhysParamId_t kMultiRingNuisSKDetFSI010 = kNuis210;
+static const PhysParamId_t kMultiRingNuisSKDetFSI011 = kNuis211;
+static const PhysParamId_t kMultiRingNuisSKDetFSI012 = kNuis212;
+static const PhysParamId_t kMultiRingNuisSKDetFSI013 = kNuis213;
+static const PhysParamId_t kMultiRingNuisSKDetFSI014 = kNuis214;
+static const PhysParamId_t kMultiRingNuisSKDetFSI015 = kNuis215;
+static const PhysParamId_t kMultiRingNuisSKDetFSI016 = kNuis216;
+static const PhysParamId_t kMultiRingNuisSKDetFSI017 = kNuis217;
+#endif
+
+static const PhysParamId_t kMultiRingLastParam = kNuis218;
+////
+
 } // conv
+
+
+
 
 namespace util {
 
@@ -322,6 +370,9 @@ namespace util {
   bool IsSystematic       (conv::PhysParamId_t p);
   bool IsFHCSystematic    (conv::PhysParamId_t p);
   bool IsRHCSystematic    (conv::PhysParamId_t p);
+  /// NEW MULTIRING 2
+  bool IsMultiRingSystematic    (conv::PhysParamId_t p);
+  /// 
   bool IsMixingAngle      (conv::PhysParamId_t p);
   bool IsBANFF            (conv::PhysParamId_t p);
   bool IsXSec             (conv::PhysParamId_t p);

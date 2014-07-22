@@ -124,6 +124,9 @@ namespace util {
     int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
     int SKDetFSISystIdx (conv::PhysParamId_t p)                        { return fSKDetFSISystIdx[p];    }
     int RHCSKDetFSISystIdx (conv::PhysParamId_t p)                     { return fRHCSKDetFSISystIdx[p]; }
+    /// NEW MULTIRING 2
+    int MultiRingSKDetFSISystIdx (conv::PhysParamId_t p)               { return fMultiRingSKDetFSISystIdx[p]; }
+    ///
     int SKDet1ReSystIdx (conv::PhysParamId_t p)                        { return fSKDet1ReSystIdx[p];    }
     int PhysParamIdx    (conv::PhysParamId_t p)                        { return fPhysParamIdx   [p];    }
   private:
@@ -140,11 +143,14 @@ namespace util {
     int fFSISystIdx      [conv::knppmax];                ///< maps physics param to FSI covariance matrix
     int fSKDetFSISystIdx [conv::knppmax];                ///< maps physics param to FSI covariance matrix
     int fRHCSKDetFSISystIdx [conv::knppmax];             ///< maps physics param to FSI covariance matrix
+    /// NEW MULTIRING 2
+    int fMultiRingSKDetFSISystIdx [conv::knppmax];       ///< maps physics param to FSI covariance matrix
+    ///
     int fSKDet1ReSystIdx [conv::knppmax];                ///< maps physics param to 1Re eff covariance matrix
     int fPhysParamIdx    [conv::knppmax];                ///< maps physics param
     static ArrIdx * fInstance;
     struct Cleaner {
-      void DummyMethodAndSilentCompiler() { }
+      void DummyMethodAndSilentCompiler() { } 
       ~Cleaner() {
          if (ArrIdx::fInstance !=0) {
             delete ArrIdx::fInstance;
