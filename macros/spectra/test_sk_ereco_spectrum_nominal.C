@@ -12,15 +12,25 @@ void test_sk_ereco_spectrum_nominal
 (
   const char * sk_sample            = "MultiRe",                         /* options: "1Rmu", "1Re" */
   const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+
+  // double       input_mixing12       = 0.,                            /* */
+  // double       input_mixing13       = 0.,                            /* */
+  // double       input_mixing23       = 0.,                            /* */
+  // double       input_deltacp        = 0.,                            /* */
+  // double       input_dm12sq         = 0.,                            /* */
+  // double       input_dm23sq         = 0.,                            /* */
+
   double       input_mixing12       = -99,                            /* */
   double       input_mixing13       = -99,                            /* */
   double       input_mixing23       = -99,                            /* */
   double       input_deltacp        = -99,                            /* */
   double       input_dm12sq         = -99,                            /* */
   double       input_dm23sq         = -99,                            /* */
+
   bool         disable_banff_tuning = false,                          /* */
   //const char * config_file          = "analysis_configuration_test.xml",   /* */
-  const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+  const char * config_file          = "analysis_configuration_test_multiring.xml",   /* */
+  //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
   bool         print_spectrum       = false,                          /* */
   const char * mixparamchoice       = "sinsqtheta",
   const char * hierarchy            = "normal"
