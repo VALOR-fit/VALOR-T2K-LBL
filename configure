@@ -7,12 +7,15 @@
 #    --production-mode
 #    --fhc-running
 #    --rhc-running
+#    --mring-running
 #    --numudisap-only
 #    --nueapp-only
 #    --seed-trandom-zero
 #    --use_osc_numu
 #    --use_osc_numubar
 #    --use_osc_nuebar
+#    --use_osc_nuebar
+#    --multiring-fhc-running
 #
 
 $T2KOSCANA = $ENV{'T2KOSCANA'};
@@ -45,6 +48,11 @@ foreach (@ARGV) {
   elsif($_ eq '--rhc-running') {
       print BLD "// For reverse horn current running. \n";
       print BLD "#define __RHC_RUNNING__ \n\n";
+  }
+
+  elsif($_ eq '--multiring-fhc-running') {
+      print BLD "// For reverse multi-ring forward current running. \n";
+      print BLD "#define __MULTIRING_FHC_RUNNING__ \n\n";
   }
 
   elsif($_ eq '--numudisap-only') { 
