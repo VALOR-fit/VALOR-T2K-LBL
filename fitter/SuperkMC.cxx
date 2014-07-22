@@ -203,7 +203,7 @@ void SuperkMC::Init(void)
   fMCPOTRHCNuEBar         = 0;
   fMCPOTRHCOscNuE         = 0;
 
-  // MultiRing FHC
+  // NEW MULTIRING
   fMCPOTMultiRingNuMu           = 0;
   fMCPOTMultiRingNuMuBar        = 0;
   fMCPOTMultiRingNuE            = 0;
@@ -285,13 +285,17 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> " << "POT_{data} (RHC) = " << fPOTRHC << endl;
 #endif
+
+  // NEW MULTIRING 
+
   //
   // Get data POT FHC MultiRing
   // 
-  fPOTMultiRing = util::XML2Dbl(xml,root_node,"data_pot/superk/fhc");
+  fPOTMultiRing = util::XML2Dbl(xml,root_node,"data_pot/superk/multiring_fhc");
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> " << "POT_{data} (MultiRing) = " << fPOTMultiRing << endl;
 #endif
+  ///
   
   //
   // Get MC trees and MC POT
@@ -323,7 +327,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCPOTRHCNuEBar  = fMCPOTHistRHCNuEBar ->GetBinContent(2) / fMCPOTHistRHCNuEBar ->GetBinContent(1);
   fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuE ->GetBinContent(2) / fMCPOTHistRHCOscNuE ->GetBinContent(1);
 
-  // MultiRing FHC
+  // NEW MULTIRING
   fMCPOTHistMultiRingNuMu    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
   fMCPOTHistMultiRingNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
   fMCPOTHistMultiRingNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
@@ -352,7 +356,9 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      assert (fMCTreeNuEBar [is]);
      assert (fMCTreeOscNuE [is]);
   }
-  
+
+
+
 
 #ifdef __show_init_mesg_info__
   // FHC
@@ -369,7 +375,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "RHC: Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTRHCNuEBar  << endl;
   cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTRHCOscNuE  << endl;
 
-  // MultiRing FHC
+  // NEW MULTIRING 
   cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTMultiRingNuMu    << endl;
   cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTMultiRingNuMuBar << endl;
   cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTMultiRingNuE     << endl;
@@ -801,7 +807,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	 
 	    //get nevents
 
-
+	    /// NEW MULTIRING 
 	    // MODIFIED
 	    double nev_martini = 0.0;
 	    double nev_nieves  = 0.0;
@@ -825,7 +831,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	    //fill the mec arrays
 	  
 	  
-
+	    /// NEW MULTIRING 
 	    // MODIFIED
 	    if(util::IsFHCSample(s) && !util::IsMultiRingSample(s)){
 	      fMCTemplArrayMECMartini[it-1][ir-1] = nev_martini;
@@ -1720,7 +1726,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 	//   exit(1);
 	// }
 
-
+      
 
 
 
@@ -2826,8 +2832,10 @@ double SuperkMC::AnalyzedSamplePOT(SuperkSample_t s) const
   if(util::IsRHCSample(s))
     return fPOTRHC;
   else if(util::IsFHCSample(s)){
+    /// NEW MULTIRING
     if(util::IsMultiRingSample(s))
       return fPOTMultiRing;
+    ///
     else
       return fPOT;  
   }
@@ -2855,6 +2863,7 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
 {
   if(util::IsFHCSample(s))
   {
+    /// NEW MULTIRING 
     if(util::IsMultiRingSample(s)){
      if ( util::IsNuMu(m)      ) return fMCPOTMultiRingNuMu;
      if ( util::IsNuMuBar(m)   ) return fMCPOTMultiRingNuMuBar;
@@ -2862,6 +2871,7 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuEBar(m)    ) return fMCPOTMultiRingNuEBar;
      if ( util::IsOscNuE(m)    ) return fMCPOTMultiRingOscNuE;
     }
+    ///
     else{
       if ( util::IsNuMu(m)      ) return fMCPOTNuMu;
       if ( util::IsNuMuBar(m)   ) return fMCPOTNuMuBar;
@@ -3249,8 +3259,10 @@ void SuperkMC::MCStatErrDebug()
     if(s == kSKsRHCFCFV1RingMuLike) continue;   // RHC
     if(s == kSKsRHCFCFV1RingELike) continue;    // RHC
 
+    /// NEW MULTIRING
     if(s == kSKsFCFVMultiRingMuLike) continue; // MultiRing FHC
     if(s == kSKsFCFVMultiRingELike) continue;  // MultiRing FHC
+    ///
 
     int n_ereco_bins = kNErecoBins[is];
 

@@ -15,6 +15,9 @@
  31-12-2013  Nick
  Added samples for reverse horn current running
 
+ 21-7-2014 Davide
+ Added samples for multiring forward horn current
+
 */
 //________________________________________________________________________________________
 
@@ -295,7 +298,7 @@ bool SuperkObservation::Generate(
 {
   SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
   assert(skexp);
-  
+ 
   for (int is = 0 ; is < conv::kns ; is++ ) {
     SuperkSample_t s = kSKSamples[is];
     if (s==kSKsUndefined) continue;

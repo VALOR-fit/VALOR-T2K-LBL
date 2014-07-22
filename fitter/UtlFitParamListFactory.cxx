@@ -5,6 +5,9 @@ Copyright (c) 2010-2014, The VALOR group. All rights reserved.
 
 ChangeLog:
 
+21-7-2014 Davide
+Added samples for multiring forward horn current
+
 */
 //________________________________________________________________________________________
 
@@ -103,15 +106,56 @@ FitParamList * util::NamedParameterList(string name)
     fp -> SetSystMode(0);
     return fp;
   }
+
+
+
+
+  
+
+
+  // if(name == "nuosc3f_12fix+nuisance") {
+  //   FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+  //   util::AppendAllSystematicsTo(fp, 6);
+  //   fp -> FixParameter (kPhypMixing12);
+  //   fp -> FixParameter (kPhypDm12sq  );
+  //   fp -> SetParListName(name);
+  //   fp -> SetSystMode(1);
+  //   return fp;
+  //  }
+
+  /// NEW MULTIRING 2 (to add rhc sample)
   if(name == "nuosc3f_12fix+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+    FitParamList * fp;  
+    //#ifdef __FHC_RUNNING__
+#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
+    #ifdef __MULTIRING_FHC_RUNNING__
+    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParamsFHC_MultiR);   // fhc all + skdetfsi multiring (no escale)
+    #else
+    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);  // fhc only 
+    #endif
+#else
+    #ifdef __MULTIRING_FHC_RUNNING__
+    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParamsMultiR);  // multiring fhc only 
+    #else
+    cerr << "No samples have been chosen for the analysis!!!" << endl;
+    exit(1);    
+    #endif
+#endif // sample analysis option
     util::AppendAllSystematicsTo(fp, 6);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq  );
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
     return fp;
-  }
+   }
+  ///
+
+
+
+
+
+
+
 
   if(name == "nuosc3f_numudisapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
@@ -251,10 +295,47 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
   util::AppendAllSuperkDetectorFSISystematicsApp(fparm, start+kNumOfParamsInBANFFfit);
   util::AppendAllUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
 #else
+
+  // OLD
+  //
+  // util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
+  // util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit); 
+  // util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+
+
+
+
+  /// NEW MULTIRING 2
+
+  //#ifdef __FHC_RUNNING__  
+#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
+  #ifdef __MULTIRING_FHC_RUNNING__
+    // fhc all + skdetfsi multiring (no escale)
   util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
-  util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);
+  util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);          
+  /// NEW MULTIRING 3
+  //util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing);  // No Escale for MultiRing
+  util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing+1);  
+  ///
+  #else
+  // fhc only 
+  util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
+  util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit); 
   util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+  #endif
+#else
+  #ifdef __MULTIRING_FHC_RUNNING__
+  // multiring fhc only 
+  util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
+  util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);  
+  util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParamsMultiRing); 
 #endif
+#endif // sample analysis option
+
+  ///
+
+  
+#endif // oscillation analysis option
 
 }
 //________________________________________________________________________________________
@@ -336,13 +417,17 @@ void util::AppendUncorrelatedXSecSystematicsApp(FitParamList * fparm, int start)
 }
 #endif
 //________________________________________________________________________________________
+
 void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start)
 {
 // Add nuisance params
 //
+
   int ip = start; // first unallocated element in the param list
-  // SK detector energy scale
-  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale) );
+
+  // OLD (UNTIL NEW MULTIRING 2)
+  // // SK detector energy scale
+  // fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale) );
 
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
@@ -374,18 +459,107 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   xml->FreeNode(root_node);
   delete xml;
 
-  // FSI
+
+
+
+
+
+
+//   // FSI 
+//   for(int i = 0; i < kNumOfSKDetFSIParams; i++) {
+// #if FSI_BINS != 3
+//     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+// #else
+//     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+// #endif
+//     double err = sqrt(SKDetFSICov[i][i]);
+//     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+//     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+//   }
+
+
+
+
+  
+  ///////////////////////////////////////////////////////////////
+  //                                                           //
+  // N.B. SAME COVARIANCE MATRIX FOR FHC AND MULTIRING SAMPLES //
+  //                                                           //
+  ///////////////////////////////////////////////////////////////
+
+  ////////////////////////////////
+  //                            //
+  // N.B. No RHC sample for now //
+  //                            //
+  ////////////////////////////////
+
+
+
+
+  /// NEW MULTIRING 2
+  
+  // FSI 
+  //#ifdef __FHC_RUNNING__  
+#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
+  #ifdef __MULTIRING_FHC_RUNNING__
+  // fhc all + skdetfsi multiring
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale) );   // FHC SK escale
   for(int i = 0; i < kNumOfSKDetFSIParams; i++) {
-#if FSI_BINS != 3
+    #if FSI_BINS != 3
     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
-#else
+    #else
     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
-#endif
+    #endif
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
+  //
+  fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale) );   // MultiRing SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParamsMultiRing; i++) {
+    #if FSI_BINS != 3
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+    #else
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+    #endif
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  }
+  #else
+  // fhc only 
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale) );   // FHC SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParams; i++) {
+    #if FSI_BINS != 3
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+    #else
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+    #endif
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  }
+#endif
+#else
+  #ifdef __MULTIRING_FHC_RUNNING__
+  // multiring fhc only 
+  fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale) );   // MultiRing SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParamsMultiRing; i++) {
+    #if FSI_BINS != 3
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+    #else
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+    #endif
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  }
+  #endif
+#endif // sample analysis option
+///
+
 }
+
 #ifdef __NUMUONLY__
 //________________________________________________________________________________________
 void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int start)
@@ -393,8 +567,10 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
 // Add nuisance params
 //
   int ip = start; // first unallocated element in the param list
+
+  // OLD (UNTIL NEW MULTIRING 2)
   // SK detector energy scale
-  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));
+  //fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));
 
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
@@ -420,15 +596,82 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   xml->FreeNode(root_node);
   delete xml;
 
+
+
+
+
+  // // FSI
+  // for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
+  //   PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+  //   double err = sqrt(SKDetFSICov[i][i]);
+  //   double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+  //   fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  // }
+  
+  ///////////////////////////////////////////////////////////////
+  //                                                           //
+  // N.B. SAME COVARIANCE MATRIX FOR FHC AND MULTIRING SAMPLES //
+  //                                                           //
+  ///////////////////////////////////////////////////////////////
+
+  ////////////////////////////////
+  //                            //
+  // N.B. No RHC sample for now //
+  //                            //
+  ////////////////////////////////
+
+
+  /// NEW MULTIRING 2
+  
   // FSI
+  //#ifdef __FHC_RUNNING__  
+#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
+  #ifdef __MULTIRING_FHC_RUNNING__
+  // fhc all + skdetfsi multiring
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
   for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
-}
+  //
+  fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParamsMultiRmu; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  }
+  #else
+  // fhc only
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  } 
 #endif
+#else
+  #ifdef __MULTIRING_FHC_RUNNING__
+  // multiring fhc only 
+  fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParamsMultiRmu; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  }
+  #endif
+#endif // sample analysis option
+  ///
+
+
+
+}
+#endif // #ifdef __NUMUONLY__
+
 #ifdef __NUEONLY__
 //________________________________________________________________________________________
 void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start)
@@ -436,8 +679,10 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
 // Add nuisance params
 //
   int ip = start; // first unallocated element in the param list
+  
+  // OLD (UNTIL NEW MULTIRING 2)
   // SK detector energy scale
-  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));
+  //fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));
 
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
@@ -463,15 +708,80 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   xml->FreeNode(root_node);
   delete xml;
 
+
+
+
+  // // FSI
+  // for(int i = 0; i < kNumOfSKDetFSIParams1Re; i++) {
+  //   PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+  //   double err = sqrt(SKDetFSICov[i][i]);
+  //   double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+  //   fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  // }
+  
+  ///////////////////////////////////////////////////////////////
+  //                                                           //
+  // N.B. SAME COVARIANCE MATRIX FOR FHC AND MULTIRING SAMPLES //
+  //                                                           //
+  ///////////////////////////////////////////////////////////////
+
+  ////////////////////////////////
+  //                            //
+  // N.B. No RHC sample for now //
+  //                            //
+  ////////////////////////////////
+
+
+  /// NEW MULTIRING 2 
+  
   // FSI
+  //#ifdef __FHC_RUNNING__  
+#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
+  #ifdef __MULTIRING_FHC_RUNNING__
+  // fhc all + skdetfsi multiring
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
   for(int i = 0; i < kNumOfSKDetFSIParams1Re; i++) {
     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
-}
+  //
+  fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParamsMultiRe; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  }
+  #else
+  // fhc only
+  fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParams1Re; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  }
 #endif
+#else
+  #ifdef __MULTIRING_FHC_RUNNING__
+  // multiring fhc only 
+  fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
+  for(int i = 0; i < kNumOfSKDetFSIParamsMultiRe; i++) {
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+    double err = sqrt(SKDetFSICov[i][i]);
+    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
+    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
+  }
+  #endif
+#endif // sample analysis option
+ ///
+
+
+}
+#endif // #ifdef __NUEONLY__
+
 //________________________________________________________________________________________
 void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 {
@@ -594,6 +904,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   //    to have something sensible to initialise to
   // Parse the input XML configuration file
   const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {

@@ -6,6 +6,9 @@
 30-12-2013  Nick
 Added samples and modes for reverse horn current running
 
+21-7-2014 Davide
+Added samples for multiring forward horn current
+
 */
 //____________________________________________________________________________
 
@@ -206,6 +209,9 @@ void valor::util::PrintCompact(
 
   bool printing_banff_params = opt.Contains("BANFF fit params");
   bool printing_fsi_params   = opt.Contains("SKDetFSI params");
+  /// NEW MULTIRING 2
+  bool printing_multiring_fsi_params   = opt.Contains("MultiRing SKDetFSI fit params");
+  ///
   bool printing_selected_banff_params = opt.Contains("BANFF selected fit params");
 
   int np = v.GetNoElements();
@@ -229,6 +235,20 @@ void valor::util::PrintCompact(
          stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
+ 
+     /// NEW MULTIRING 2
+     if(printing_multiring_fsi_params) {
+         stream << " [ ";
+#if FSI_BINS != 3
+         PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI000 + ip );
+#else
+	 PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI006 + ip );
+#endif
+         stream << setw(30) << util::AsString(p);
+         stream << " ]";
+     }
+     ///
+
      if(printing_selected_banff_params) {
          stream << " [ ";
          PhysParamId_t p = kPhypUndefined;
@@ -254,6 +274,9 @@ void valor::util::PrintCompact(
 
   bool printing_banff_params = opt.Contains("BANFF fit params");
   bool printing_fsi_params   = opt.Contains("FSI params");
+  /// NEW MULTIRING
+  bool printing_multiring_fsi_params   = opt.Contains("MultiRing FSI params");
+  ///
 
   int np = current.GetNoElements();
   stream << fixed;
@@ -276,6 +299,20 @@ void valor::util::PrintCompact(
          stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
+
+     /// NEW MULTIRING 2
+     if(printing_multiring_fsi_params) {
+       stream << " [ ";
+#if FSI_BINS != 3
+       PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI000 + ip );
+#else
+       PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI006 + ip );
+#endif
+       stream << setw(30) << util::AsString(p);
+       stream << " ]";
+     }
+     ///
+
      stream << " - current = " 
           << setw(w) << setprecision(prec) << current[ip];
      stream << " - nominal = " 
@@ -335,6 +372,10 @@ void valor::util::PrintCompactTex(
 	 << "C^{";
   if(opt.Contains("skdetfsi"))
     stream << "SK+FSI";
+  /// NEW MULTIRING 2
+  else if(opt.Contains("multiring_skdetfsi"))
+    stream << "MultiRing SK+FSI";
+  ///
   else if(opt.Contains("banff"))
     stream << "banff";
   stream << "} =";
@@ -357,6 +398,10 @@ void valor::util::PrintCompactTex(
       for(int ic=0; ic<nc; ic++) {
 	if(opt.Contains("skdetfsi"))
 	  stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ic]) << "}";
+	/// NEW MULTIRING 2
+	else if(opt.Contains("multiring_skdetfsi"))
+	  stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfMultiRingSKDetFSIParams[ic]) << "}";
+	///
 	else if(opt.Contains("banff"))
 	  stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "\\begin{sideways} {\\color{blue} " << util::AsStringPaperTexNoDollar((PhysParamId_t)(ic + (int)kNuisBANFF00)) << "} \\end{sideways}";
 	else
@@ -373,6 +418,10 @@ void valor::util::PrintCompactTex(
     }
     if(opt.Contains("skdetfsi"))
       stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ir]) << "}  \\vspace{0.2cm}";
+    /// NEW MULTIRING 2
+    else if(opt.Contains("multiring_skdetfsi"))
+      stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfMultiRingSKDetFSIParams[ir]) << "}  \\vspace{0.2cm}";
+    ///
     else if(opt.Contains("banff"))
       stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar((PhysParamId_t)(ir + (int)kNuisBANFF00)) << "}  \\vspace{0.2cm}";
     else
@@ -390,6 +439,10 @@ void valor::util::PrintCompactTex(
   stream << "\\end{block}" << endl;
   if(opt.Contains("skdetfsi"))
     stream << "\\label{eq:Cskfsi}" << endl;
+  /// NEW MULTIRING 2
+  else if(opt.Contains("multiring_skdetfsi"))
+    stream << "\\label{eq:Cskfsi}" << endl;
+  ///
   else if(opt.Contains("banff"))
     stream << "\\label{eq:Cbanff}" << endl;
   stream << "\\end{blockarray}" << endl;
@@ -912,6 +965,7 @@ void valor::util::ArrIdx::Init(void)
   }
 
   //SKDET + FSI
+  // fhc
   for(int i = 0; i < knppmax; i++) {
     fSKDetFSISystIdx[i] = -1;
   }
@@ -929,6 +983,7 @@ void valor::util::ArrIdx::Init(void)
           << " is at slot: " << fSKDetFSISystIdx [p] << endl;
 #endif
   }
+  // rhc
   for(int i = 0; i < knppmax; i++) {
     fRHCSKDetFSISystIdx[i] = -1;
   }
@@ -946,6 +1001,28 @@ void valor::util::ArrIdx::Init(void)
 	 << " is at slot: " << fRHCSKDetFSISystIdx [p] << endl;
 #endif
   }
+
+  /// NEW MULTIRING 2
+
+  // multiring
+  for(int i = 0; i < knppmax; i++) {
+    fMultiRingSKDetFSISystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfSKDetFSIParamsMultiRing; ip++) {
+#if FSI_BINS != 3
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + ip);
+#else
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + ip);
+#endif
+    if(p == kPhypUndefined) continue;
+    fMultiRingSKDetFSISystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+    cout << "Util/ArrIdx >> MultiRing SKDet+FSI: "
+	 << util::AsString(p)
+	 << " is at slot: " << fMultiRingSKDetFSISystIdx [p] << endl;
+#endif
+  }
+  ///
 
   //PhysParam
   for(int i = 0; i < knppmax; i++) {
