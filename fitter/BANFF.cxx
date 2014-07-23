@@ -735,6 +735,9 @@ void BANFF::RestoreRHCNominalMC(void)
 //________________________________________________________________________________________
 double BANFF::ChisqPenalty(bool /*all_syst*/) const
 {
+#ifndef __FHC_RUNNING__
+  return 0;
+#endif
   //Vector of current values & best fit values
   const TVectorD & bestfit_values   = *fBestFitValues;
   const TVectorD & current_values   = *fCurrentValues;
@@ -895,6 +898,9 @@ double BANFF::ChisqPenalty(bool /*all_syst*/) const
 //________________________________________________________________________________________ 
 double BANFF::RHCChisqPenalty(bool /*all_syst*/) const
 {
+#ifndef __RHC_RUNNING__
+  return 0;
+#endif
   //Vector of current values & best fit values
   const TVectorD & bestfit_values   = *fRHCBestFitValues;
   const TVectorD & current_values   = *fRHCCurrentValues;

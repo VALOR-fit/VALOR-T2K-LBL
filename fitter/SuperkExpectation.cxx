@@ -1464,11 +1464,12 @@ double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
   //
   // Add penalty term for BANFF params 
   //
-#ifdef __include_all_systematics_in_banff_penalty_term__
-  double dchisq_penalty_banff = fBANFF->ChisqPenalty();
-#else
-  double dchisq_penalty_banff = fBANFF->ChisqPenalty(all_syst);
+  
+  double dchisq_penalty_banff = fBANFF->ChisqPenalty() + fBANFF->RHCChisqPenalty();
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)
+  dchisq_penalty_banff /= 2.;
 #endif
+  
   chisq_penalty += dchisq_penalty_banff;
 #ifdef __show_contributions_to_penalty_term__
   cout << "FitInputs::GetFitStatisticPenalty >> Current BANFF param variation"
@@ -1488,25 +1489,21 @@ double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
   //
   // Add penalty term for SuperkDetector + FSI params
 #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
-  double dchisq_penalty_skdetfsi = fSuperkDetectorFSI->ChisqPenalty();
+  double dchisq_penalty_skdetfsi = fSuperkDetectorFSI->ChisqPenalty() + fSuperkDetectorFSI->RHCChisqPenalty() ;
+  
+#if defined(__FULLY_CORRELATED__) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  dchisq_penalty_skdetfsi /= 2.;
+#endif
+
   chisq_penalty += dchisq_penalty_skdetfsi;
 #ifdef __show_contributions_to_penalty_term__
   cout << "FitInputs::GetFitStatisticPenalty >> Current SK+FSI param variation"
        << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdetfsi << endl;
 #endif
-#endif
+#endif //defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
 
   /// NEW MULTIRING 2
   
-  //   // Add penalty term for SuperkDetector + FSI params (RHC)
-  //   double dchisq_penalty_skdetfsi_rhc = fSuperkDetectorFSI->RHCChisqPenalty();
-  //   chisq_penalty += dchisq_penalty_skdetfsi_rhc;
-  // #ifdef __show_contributions_to_penalty_term__
-  //   cout << "FitInputs::GetFitStatisticPenalty >> Current SK+FSI param variation RHC"
-  //        << " => \\delta\\chi^2_{penalty} = " << dchisq_penalty_skdetfsi_rhc << endl;
-  // #endif
-  
-
   // Add penalty term for SuperkDetector + FSI params MultiRing
 #ifdef __MULTIRING_FHC_RUNNING__
   double dchisq_penalty_skdetfsi_multiring = fSuperkDetectorFSI->MultiRingChisqPenalty();

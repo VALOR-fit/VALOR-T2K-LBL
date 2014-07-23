@@ -1514,6 +1514,9 @@ void SuperkDetectorFSI::TweakOnlyMultiRe(
 double SuperkDetectorFSI::ChisqPenalty(void) const
 //just a straight copy of BANFF::ChisqPenalty
 {
+#ifndef __FHC_RUNNING__
+  return 0.;
+#endif
   //Vector with deviations of current values from  best fit values
   const TVectorD & bestfit_values   = *fNominalValues;
   const TVectorD & current_values   = *fCurrentValues;
@@ -1574,6 +1577,9 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
 double SuperkDetectorFSI::RHCChisqPenalty(void) const
 //just a straight copy of BANFF::ChisqPenalty
 {
+#ifndef __RHC_RUNNING__
+  return 0.;
+#endif
   //Vector with deviations of current values from  best fit values
   const TVectorD & bestfit_values   = *fRHCNominalValues;
   const TVectorD & current_values   = *fRHCCurrentValues;
