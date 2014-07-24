@@ -1252,7 +1252,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
     }
     /// NEW MULTIRING 3
-    else if(fp.Exists(kMultiRingNuisSuperkEnergyScale)) {
+    if(fp.Exists(kMultiRingNuisSuperkEnergyScale)) {
       double twk = fp.CurrValue(kMultiRingNuisSuperkEnergyScale);
       this->GetSuperkDetectorFSI()->TweakMultiRingEnergyScale(twk);
     }
