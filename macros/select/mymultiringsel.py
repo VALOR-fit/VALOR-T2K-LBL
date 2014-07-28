@@ -199,19 +199,44 @@ def select_elike(tree):
 def select_mulike(tree):
     return (ring_type(tree) == 3)
 
-def select_mr_numucc(tree):
+
+
+
+
+
+def select_mr_numucc(tree): # highest momentum ring
+    rtype = ring_type(tree) 
     for i in range(tree.nring):
-        if tree.ip[i] == 3 and tree.amomm[i] > 200: return True
+        if rtype == 3 and tree.amomm[i] > 200: return True
     for inmue in range(tree.nmue):
         evect = [ (tree.pos[xx] - tree.epos[3*inmue+xx])**2 for xx in range(3) ]
         edist = sqrt(sum(evect))
         if edist > 100: return True
     return False
+#def select_mr_numucc(tree):
+#    for i in range(tree.nring):
+#        if tree.ip[i] == 3 and tree.amomm[i] > 200: return True
+#    for inmue in range(tree.nmue):
+#        evect = [ (tree.pos[xx] - tree.epos[3*inmue+xx])**2 for xx in range(3) ]
+#        edist = sqrt(sum(evect))
+#        if edist > 100: return True
+#    return False
 
-def select_mr_nuecc(tree):
+
+
+
+def select_mr_nuecc(tree): # highest momentum ring
+    rtype = ring_type(tree) 
     for i in range(tree.nring):
-        if tree.ip[i] == 2 and tree.amome[i] > 1000: return True
+        if rtype == 2 and tree.amome[i] > 1000: return True
     return False
+#def select_mr_nuecc(tree):
+#    for i in range(tree.nring):
+#        if tree.ip[i] == 2 and tree.amome[i] > 1000: return True
+#    return False
+
+
+
 
 
 def prmslg_ip(tree, rnum = -1):
@@ -305,23 +330,18 @@ def ring_type(tree):
     #    print "++++++++++++++"
     return evtype
     
-
 def select_pi0(tree, nomass = False):
     # 2 rings
     if tree.nring != 2: return False
     #record_cut("2ring")
-
     # 1st and 2nd ring are e-like
     if  tree.ip[0] != 2 or tree.ip[1] != 2: return False
     #record_cut("erings")
-
     # no decay electrons
     if tree.nmue != 0: return False
     #record_cut("dcye")
-
     if nomass:
         return True
-
     mass, mom, costh =  get_pi0_mmd(tree)
     if not select_pi0_mass(mass): return False
     return True
