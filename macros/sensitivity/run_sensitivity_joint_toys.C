@@ -12,17 +12,17 @@ void run_sensitivity_joint_toys
   const char * tag                     = "sensi_NoStat_NoSyst",               /* tag for output file */
   int          run                     = 0,                                   /* run number */
   int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
-  double       input_mixing12          = 0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing13          = 0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing23          = 0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-  double       input_deltacp           = -3.1,                                /* deltacp, if -999 then randomize */
-  double       input_dm12sq            = 7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
-  double       input_dm23sq            = 2.32E-3,                             /* |Dm^2_{23}| */
-  const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
+  double       input_mixing12          = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+  double       input_mixing13          = -99, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+  double       input_mixing23          = -99, //0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+  double       input_deltacp           = -99, //-3.1,                                /* deltacp, if -999 then randomize */
+  double       input_dm12sq            = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
+  double       input_dm23sq            = -99, //2.32E-3,                             /* |Dm^2_{23}| */
+  //const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
   //const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
   bool         stat_fluctuations       = false,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
-  //const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   //const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit+hesse",                            /* fitter option */
@@ -71,6 +71,21 @@ void run_sensitivity_joint_toys
   bool randomize_mixing13 = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
   bool randomize_deltacp  = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
   bool randomize_dm12sq   = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
+
+  //Set to defaults
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq < -1 && input_dm23sq > -900)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1 && input_dm12sq > -900)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_deltacp < -90 && input_deltacp > -900) input_deltacp = conv::kGlobFitDeltaCP;
 
   // Print settings
   cout << "\n[Job inputs]" << endl;
