@@ -44,7 +44,7 @@ def main(argv):
     tree_2rpi0 = ROOT.TTree(treename, treename)
 
     global tmode
-    tmode= n.zeros(1, dtype=int)
+    tmode= n.zeros(1, dtype=n.int)
     global terec
     terec = n.zeros(1, dtype=n.float32)
     global tenu
@@ -59,6 +59,8 @@ def main(argv):
     tQ2 = n.zeros(1, dtype=n.float32)
     global tevis
     tevis = n.zeros(1, dtype=n.float32)
+    global tnring
+    tnring = n.zeros(1, dtype=n.int)
     
     tree_numucc.Branch('mode', tmode, 'mode/I') 
     tree_numucc.Branch('erec', terec, 'erec/F')
@@ -68,6 +70,7 @@ def main(argv):
     tree_numucc.Branch('costheta', tcostheta, 'costheta/F')
     tree_numucc.Branch('Q2', tQ2, 'Q2/F')
     tree_numucc.Branch('evis', tevis, 'evis/F')
+    tree_numucc.Branch('nring', tnring, 'nring/I')
 
     tree_nuecc.Branch('mode', tmode, 'mode/I')
     tree_nuecc.Branch('erec', terec, 'erec/F')
@@ -77,6 +80,7 @@ def main(argv):
     tree_nuecc.Branch('costheta', tcostheta, 'costheta/F')
     tree_nuecc.Branch('Q2', tQ2, 'Q2/F')
     tree_nuecc.Branch('evis', tevis, 'evis/F')
+    tree_nuecc.Branch('nring', tnring, 'nring/I')
 
     tree_2rpi0.Branch('mode', tmode, 'mode/I')
     tree_2rpi0.Branch('erec', terec, 'erec/F')
@@ -86,6 +90,7 @@ def main(argv):
     tree_2rpi0.Branch('costheta', tcostheta, 'costheta/F')
     tree_2rpi0.Branch('Q2', tQ2, 'Q2/F')
     tree_2rpi0.Branch('evis', tevis, 'evis/F')
+    tree_2rpi0.Branch('nring', tnring, 'nring/I')
 
     tree = TChain("h1")
     for f in files: tree.Add(f)
@@ -102,9 +107,9 @@ def main(argv):
     for iev in range(0,nev) :
         tree.GetEntry(iev)
         if iev%10000==0 : print "Event", iev
-
+        
         #if iev==10 : break
-        if iev==10000 : break
+        #if iev==10000 : break
         #print iev
         #print "Mom = ", tree.amomm[0], " - Ereco = ", EnuReco(tree)
         #isnumu = True
@@ -115,7 +120,8 @@ def main(argv):
         # apply cuts (all samples are mutually exclusive)
         if select_fv(tree)==False : continue # fiducial volume events
         if select_fc(tree)==False : continue # fully contained events
-        
+        if reject1ring(tree)==False : continue # reject 1ring events
+
         if select_pi0(tree,False)==True : # 2-ring pi0
             isnumu = False
             if ErecoCut(tree,isnumu)==False : continue 
@@ -132,7 +138,7 @@ def main(argv):
             tree_numucc.Fill()
             h_numuCC.Fill(1)
             continue
-            
+
         #if select_mr_nuecc(tree)==True : # multi-ring nuecc
         if select_mr_nuecc_highmom(tree)==True : # multi-ring nuecc (highest mom ring)
             isnumu = False
@@ -562,7 +568,7 @@ def weight(tree, fileType, osc = 1, banff=False):
 def CosThetaNuLepton(tree) :
     ipmax = get_pmax_ring(tree)
     nudir = [ 0.669764, -0.742179, 0.024223 ]
-    # it would be dir[0][0], dir[0][1] and dir[0][2] in the tree c++ variable
+    # it would be dir[0][0], dir[0][1] and dir[0][2] in the OLD tree c++ variable
     costnl = tree.dir[0+3*ipmax]*nudir[0] + tree.dir[1+3*ipmax]*nudir[1] + tree.dir[2+3*ipmax]*nudir[2]
     #costnl = tree.dir[0]*nudir[0] + tree.dir[1]*nudir[1] + tree.dir[2]*nudir[2]
         
@@ -597,8 +603,10 @@ def EnuReco(tree,isnumu) :
 
     enu = ((neutronMass-V)*leptonEn - leptonMass*leptonMass/2.0 + neutronMass*V - V*V/2.0 + (protonMass2 - neutronMass2)/2.0 ) / (neutronMass - V - leptonEn + leptonMom*costh )
     
-    if enu<=0 :
-        print "tree.amomm[ipmax]", tree.amomm[ipmax],"tree.amome[ipmax]", tree.amome[ipmax], "leptonMom", leptonMom, "leptonEn", leptonEn, "protonMass2", protonMass2, "neutronMass2", neutronMass2, "costh", costh, "enu", enu
+    #if enu<=0 :
+    #    print "tree.amomm[ipmax]", tree.amomm[ipmax],"tree.amome[ipmax]", tree.amome[ipmax], "leptonMom", leptonMom, "leptonEn", leptonEn, "protonMass2", protonMass2, "neutronMass2", neutronMass2, "costh", costh, "enu", enu
+
+    #print "tree.amomm[ipmax]", tree.amomm[ipmax],"tree.amome[ipmax]", tree.amome[ipmax], "leptonMom", leptonMom, "leptonEn", leptonEn, "protonMass2", protonMass2, "neutronMass2", neutronMass2, "costh", costh, "enu", enu
     
     return enu
 
@@ -665,8 +673,8 @@ def FillVarTree(tree,isnumu) :
     #tQ2[0] = Q2(tree,isnumu)
     #print tQ2[0] 
     tevis[0] = tree.evis/1000.0 # given in MeV/c
-
-    #print terec[0], tenu[0], tplep[0], tevis[0]
+    tnring[0] = tree.nring 
+    #print tnring[0], terec[0], tenu[0], tplep[0], tevis[0]
 
 
 
@@ -686,7 +694,7 @@ def select_mr_numucc_highmom(tree): # highest momentum ring
 
 
 
-def select_mr_nuecc_highmom(tree): # highest momentum ring
+def select_mr_nuecc_highmom(tree) : # highest momentum ring
     rtype = ring_type(tree) 
     ipmax = get_pmax_ring(tree)
     if rtype == 2 and tree.amome[ipmax] > 1000: return True
@@ -694,8 +702,10 @@ def select_mr_nuecc_highmom(tree): # highest momentum ring
     #    if rtype == 2 and tree.amome[i] > 1000: return True
     return False
 
-
-
+def reject1ring(tree) :
+    nr = tree.nring 
+    if nr<2 : return False
+    return True
 
 
 ######################## Scaling factors ####################
