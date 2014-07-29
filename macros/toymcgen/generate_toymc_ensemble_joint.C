@@ -11,26 +11,33 @@
 
 void generate_toymc_ensemble_joint
 (
- const char * tag                     = "toymc_prova",                        /* */
+ const char * tag                     = "toymc_Asimov_dcp0_IH",                        /* */
  //const char * tag                     = "toymc_FHCpRHCpMultiRing",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_ResultsRun1to4_IH",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_MCRun1to6_th13DB_NH",                        /* */
-  int          run                     = 0,                              /* */
-  double       nexperiments            = 1,                             /* number of toy-MC expts to generate */
-  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+
+ int          run                     = 0,                              /* */
+ double       nexperiments            = 1,                             /* number of toy-MC expts to generate */
+ const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+
  double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
-  double       input_mixing13          = -99, //0.0252, //-99, //0.02146 , // 0.0251,                          /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
-  double       input_mixing23          = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
-  double       input_deltacp           = -99, //-1.556, //-99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
+ double       input_mixing13          = -99, //0.0252, //-99, //0.02146 , // 0.0251,    /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing23          = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ double       input_deltacp           = -99, //-1.556, //-99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
  double       input_dm12sq            = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
-  double       input_dm23sq            = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
- //const char * config_file             = "analysis_configuration_run5and6.xml",   /* analysis configuration file */
+ double       input_dm23sq            = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
+ 
+//const char * config_file             = "analysis_configuration_run5and6.xml",   /* analysis configuration file */
  //const char * config_file             = "analysis_configuration_test.xml",   /* analysis configuration file */
- const char * config_file             = "analysis_configuration_test_multiring.xml",   /* analysis configuration file */
+ //const char * config_file             = "analysis_configuration_test_multiring.xml",   /* analysis configuration file */
+ const char * config_file             = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
  //const char * config_file             = "analysis_configuration_run1to6.xml",
-  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
-  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
+
+  bool         stat_fluctuations       = false,                           /* include statistical fluctuation in toy MC expts? */
+  int          tweak_systematics       = 0,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
+  bool         IsAsimov                = true,                            /* generate the Asimov dataset */
+
   bool         save_in_xml_format      = true,                           /* also save in txt format */
   bool         save_in_root_format     = true,                           /* */
   const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
@@ -41,9 +48,9 @@ void generate_toymc_ensemble_joint
   const char * points_to_add_MultiRe   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
   const char * xml_file_to_add         = 0,           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
-  bool         save_fluct_in_xml       = false,                          /* save the values of the variations in the xml file? */
+  bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
   const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
-  const char * hierarchy               = "inverted",                       /* normal or inverted */
+  const char * hierarchy               = "normal",                       /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one"                           /* one==kNuOctantOne two==kNuOctantTwo */
 )
@@ -400,16 +407,19 @@ void generate_toymc_ensemble_joint
          double Nb   = mock_data_1Rmu->GetBinContent (ibin); // number of events in this Ereco bin
          double Emin = mock_data_1Rmu->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
          double Emax = mock_data_1Rmu->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+	 double Ecent = mock_data_1Rmu->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
          for(int iev = 0; iev < Nb; iev++) {
-            double E = Emin + rand.Uniform() * (Emax-Emin);
-            if(ievtot > 0) {
-              fxml << ", "; 
-              ftxt << ","; 
-              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
-            }
-            fxml << E; 
-            ftxt << E; 
-            ievtot++;
+	   double E = 0;
+	   if(IsAsimov) E = Ecent;
+	   else E= Emin + rand.Uniform() * (Emax-Emin);
+	   if(ievtot > 0) {
+	     fxml << ", "; 
+	     ftxt << ","; 
+	     if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
+	   }
+	   fxml << E; 
+	   ftxt << E; 
+	   ievtot++;
          }//iev
        }//ibin
        // add extra data-points, if any
@@ -434,17 +444,20 @@ void generate_toymc_ensemble_joint
          double Nb   = mock_data_1Re->GetBinContent (ibin); // number of events in this Ereco bin
          double Emin = mock_data_1Re->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
          double Emax = mock_data_1Re->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-         for(int iev = 0; iev < Nb; iev++) {
-            double E = Emin + rand.Uniform() * (Emax-Emin);
-            if(ievtot > 0) {
-              fxml << ", "; 
-              ftxt << ","; 
-              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
-            }
-            fxml << E; 
-            ftxt << E; 
-            ievtot++;
-         }//iev
+ 	 double Ecent = mock_data_1Re->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
+        for(int iev = 0; iev < Nb; iev++) {
+	   double E = 0;
+	   if(IsAsimov) E = Ecent;
+	   else E= Emin + rand.Uniform() * (Emax-Emin);
+	   if(ievtot > 0) {
+	     fxml << ", "; 
+	     ftxt << ","; 
+	     if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
+	   }
+	   fxml << E; 
+	   ftxt << E; 
+	   ievtot++;
+	}//iev
        }//ibin
        // add extra data-points, if any
        if(full_points_to_add_1Re) {
@@ -470,8 +483,11 @@ void generate_toymc_ensemble_joint
          double Nb   = mock_data_1Rmu_RHC->GetBinContent (ibin); // number of events in this Ereco bin
          double Emin = mock_data_1Rmu_RHC->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
          double Emax = mock_data_1Rmu_RHC->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+	 double Ecent = mock_data_1Rmu_RHC->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
          for(int iev = 0; iev < Nb; iev++) {
-            double E = Emin + rand.Uniform() * (Emax-Emin);
+	   double E = 0;
+	   if(IsAsimov) E = Ecent;
+	   else E= Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ", "; 
               ftxt << ","; 
@@ -504,11 +520,14 @@ void generate_toymc_ensemble_joint
          double Nb   = mock_data_1Re_RHC->GetBinContent (ibin); // number of events in this Ereco bin
          double Emin = mock_data_1Re_RHC->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
          double Emax = mock_data_1Re_RHC->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-         for(int iev = 0; iev < Nb; iev++) {
-            double E = Emin + rand.Uniform() * (Emax-Emin);
-            if(ievtot > 0) {
-              fxml << ", "; 
-              ftxt << ","; 
+ 	 double Ecent = mock_data_1Re_RHC->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
+	 for(int iev = 0; iev < Nb; iev++) {
+	   double E = 0;
+	   if(IsAsimov) E = Ecent;
+	   else E= Emin + rand.Uniform() * (Emax-Emin);
+	   if(ievtot > 0) {
+	     fxml << ", "; 
+	     ftxt << ","; 
               if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
             }
             fxml << E; 
@@ -540,9 +559,12 @@ void generate_toymc_ensemble_joint
          double Nb   = mock_data_MultiRmu->GetBinContent (ibin); // number of events in this Ereco bin
          double Emin = mock_data_MultiRmu->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
          double Emax = mock_data_MultiRmu->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-         for(int iev = 0; iev < Nb; iev++) {
-            double E = Emin + rand.Uniform() * (Emax-Emin);
-            if(ievtot > 0) {
+ 	 double Ecent = mock_data_MultiRmu->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
+	 for(int iev = 0; iev < Nb; iev++) {
+ 	   double E = 0;
+	   if(IsAsimov) E = Ecent;
+	   else E= Emin + rand.Uniform() * (Emax-Emin);
+           if(ievtot > 0) {
               fxml << ", "; 
               ftxt << ","; 
               if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
@@ -574,8 +596,11 @@ void generate_toymc_ensemble_joint
          double Nb   = mock_data_MultiRe->GetBinContent (ibin); // number of events in this Ereco bin
          double Emin = mock_data_MultiRe->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
          double Emax = mock_data_MultiRe->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+	 double Ecent = mock_data_MultiRe->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
          for(int iev = 0; iev < Nb; iev++) {
-            double E = Emin + rand.Uniform() * (Emax-Emin);
+	   double E = 0;
+	   if(IsAsimov) E = Ecent;
+	   else E= Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ", "; 
               ftxt << ","; 
