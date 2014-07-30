@@ -2,6 +2,7 @@
 // Sensitivity study w/ 1D or 2D plost
 //
 
+
 void set_contour_style(TH2D *contour, Int_t color, Int_t width, Int_t style);
 
 void draw_sensitivity_plots_toys(
@@ -15,26 +16,31 @@ void draw_sensitivity_plots_toys(
 				 const bool ChangeOrder_nh = false, // change order of params (2D plots)
 				 const bool ChangeOrder_ih = false, // change order of params (2D plots) 
 				 
-				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5and6_th13DB_NH_500toys",
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5and6_th13DB_IH_500toys",
+				 // Fit systematics
 				 
-				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_NH_500toys",
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH_500toys",
-				 
-				 const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-exclusion_data_th13DB_NH-run_0-expts_0_0",
-				 const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-exclusion_data_th13DB_IH-run_0-expts_0_0",
-				 
-				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-exclusion_data_statonly_th13PDG_NH-run_0-expts_0_0",
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-exclusion_data_statonly_th13PDG_IH-run_0-expts_0_0",
-				 
-				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-exclusion_data_dcpVssinsqth13_th13PDG_statonly_NH-run_0-expts_0_0",
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-exclusion_data_dcpVssinsqth13_th13PDG_statonly_IH-run_0-expts_0_0",
-				 
-				 //const char * name_nh = "$T2KOSCANA/outputs/sensi-prova_dcpVssinsqth13_statonly-run_0-expts_0_0",
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi-prova_dcpVssinsqth13_statonly-run_0-expts_0_0",
-				 
-				 //const char * name_nh = "$T2KOSCANA/outputs/sensi-prova_dcp-run_0-expts_0_0",
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi-prova_dcp-run_0-expts_0_0",
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_th13DB_NH_500_all",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_th13DB_IH_500_all",
+
+				 const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_ResultsRun1to4_NH_500",
+				 const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_ResultsRun1to4_IH_500",
+
+
+				 // MultiRing studies w/ Asimov data set - deltacp only
+
+				 const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_dcp0_NH_deltacp_none_none",
+				 const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_dcp0_NH_deltacp_none_none",
+
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_dcpm1p566_NH_deltacp_none_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_dcpm1p566_NH_deltacp_none_none",
+
+				 // MultiRing studies w/ Asimov data set - deltacp Vs sinsqth13
+
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_dcp0_NH_deltacp_none_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_dcp0_NH_deltacp_none_none",
+
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_dcpm1p566_NH_deltacp_none_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_dcpm1p566_NH_deltacp_none_none",
+
 				 )
 {
   using namespace std;
@@ -46,6 +52,7 @@ void draw_sensitivity_plots_toys(
   FitParamList * fparm_nh = 0;
   PhysParamList * iparm_nh = new PhysParamList;
   int nbins_param1_nh, nbins_param2_nh;
+  int nbins_tot_param1_nh, nbins_tot_param2_nh;
   int nbins1_nh = 0;
   int nbins2_nh = 0;
   string *parname1_nh=new string();
@@ -55,6 +62,7 @@ void draw_sensitivity_plots_toys(
   FitParamList * fparm_ih = 0;
   PhysParamList * iparm_ih = new PhysParamList;
   int nbins_param1_ih, nbins_param2_ih;
+  int nbins_tot_param1_ih, nbins_tot_param2_ih;
   int nbins1_ih = 0;
   int nbins2_ih = 0;
   string *parname1_ih=new string();
@@ -74,6 +82,8 @@ void draw_sensitivity_plots_toys(
     ch_nh.SetBranchAddress("best_fit_params", &fparm_nh); 
     ch_nh.SetBranchAddress("nbins_param1", &nbins_param2_nh); 
     ch_nh.SetBranchAddress("nbins_param2", &nbins_param1_nh); 
+    ch_nh.SetBranchAddress("nbins_tot_param1", &nbins_tot_param2_nh); 
+    ch_nh.SetBranchAddress("nbins_tot_param2", &nbins_tot_param1_nh); 
     ch_nh.SetBranchAddress("best_fit_params", &fparm_nh); 
     ch_nh.SetBranchAddress("parname1", &parname2_nh); // name of the grid parameter 2
     ch_nh.SetBranchAddress("parname2", &parname1_nh); // name of the grid parameter 1
@@ -89,6 +99,8 @@ void draw_sensitivity_plots_toys(
     ch_nh.SetBranchAddress("best_fit_params", &fparm_nh); 
     ch_nh.SetBranchAddress("nbins_param1", &nbins_param1_nh); 
     ch_nh.SetBranchAddress("nbins_param2", &nbins_param2_nh); 
+    ch_nh.SetBranchAddress("nbins_tot_param1", &nbins_tot_param1_nh); 
+    ch_nh.SetBranchAddress("nbins_tot_param2", &nbins_tot_param2_nh); 
     ch_nh.SetBranchAddress("best_fit_params", &fparm_nh); 
     ch_nh.SetBranchAddress("parname1", &parname1_nh); // name of the grid parameter 1
     ch_nh.SetBranchAddress("parname2", &parname2_nh); // name of the grid parameter 2
@@ -109,14 +121,14 @@ void draw_sensitivity_plots_toys(
   cout << "nentries (NH) = " << nentries_nh << endl;
   
   ch_nh.GetEntry(0);
-  const int nbins1_nh = nbins_param1_nh;
-  const int nbins2_nh = nbins_param2_nh;
+  int nbins1_nh = TMath::Max(nbins_tot_param1_nh,nbins_param1_nh); // if using make_toygrid_toys_joint.C nbins_tot_param* is used instead of nbins_param*
+  int nbins2_nh = TMath::Max(nbins_tot_param2_nh,nbins_param2_nh); // otherwise nbins_tot_param* = 1 < nbins_param*
   
   int nDim=0;
-  if(nbins_param1_nh>1 || nbins_param2_nh>1) nDim = 1;
-  if(nbins_param1_nh>1 && nbins_param2_nh>1) nDim = 2;
- 
-  if(*parname1_nh!=""){
+  if(nbins1_nh>1 || nbins2_nh>1) nDim = 1;
+  if(nbins1_nh>1 && nbins2_nh>1) nDim = 2;
+  
+   if(*parname1_nh!=""){
     cout << endl;
     cout << "- Parameter 1: " << *parname1_nh << endl;
     cout << "  # bins = " << nbins1_nh << endl;
@@ -163,13 +175,13 @@ void draw_sensitivity_plots_toys(
       mixing13_min = 0.015;
       mixing13_max = 0.035;
       //mixing13_step = 0.001;
-      mixing13_step = (mixing13_max-mixing13_min)/(nbins_param1_nh-1);
+      mixing13_step = (mixing13_max-mixing13_min)/(nbins1_nh-1);
     }
     else{
       mixing13_min = 0.0;
       mixing13_max = 0.1;
       //mixing13_step = 0.005;
-      mixing13_step = (mixing13_max-mixing13_min)/(nbins_param1_nh-1);
+      mixing13_step = (mixing13_max-mixing13_min)/(nbins1_nh-1);
     }
   }
   else{
@@ -177,29 +189,29 @@ void draw_sensitivity_plots_toys(
       mixing13_min = 0.06;
       mixing13_max = 0.14;
       //mixing13_step = 0.004;
-      mixing13_step = (mixing13_max-mixing13_min)/(nbins_param1_nh-1);
+      mixing13_step = (mixing13_max-mixing13_min)/(nbins1_nh-1);
     }
     else{
       mixing13_min = 0.0;
       mixing13_max = 0.4;
       //mixing13_step = 0.02;
-      mixing13_step = (mixing13_max-mixing13_min)/(nbins_param1_nh-1);
+      mixing13_step = (mixing13_max-mixing13_min)/(nbins1_nh-1);
     }
   }
   mixing23_min = 0.3;
   mixing23_max = 0.7;
   //mixing23_step = 0.01;
-  mixing23_step = (mixing23_max-mixing23_min)/(nbins_param1_nh-1);
+  mixing23_step = (mixing23_max-mixing23_min)/(nbins1_nh-1);
   
   dmsq_min = 2.0;//E-3;
   dmsq_max = 3.0;//E-3;
   //dmsq_step = 0.05;//E-3;
-  dmsq_step = (dmsq_max-dmsq_min)/(nbins_param1_nh-1);
+  dmsq_step = (dmsq_max-dmsq_min)/(nbins1_nh-1);
 
   deltacp_min = -conv::kpi;
   deltacp_max = conv::kpi;
   //deltacp_step = 2*conv::kpi/50;
-  deltacp_step = (deltacp_max-deltacp_min)/(nbins_param1_nh-1);
+  deltacp_step = (deltacp_max-deltacp_min)/(nbins1_nh-1);
   
 
   // Take steps and min-max values from the tree if they exist
@@ -332,7 +344,7 @@ void draw_sensitivity_plots_toys(
     double dmsq_nh = fparm_nh->BestFitValue(conv::kPhypDm23sq);
     double deltacp_nh = fparm_nh->BestFitValue(conv::kPhypCPV);
     double chisq_nh = fparm_nh->GetBestFitStatistic();
-    
+ 
     double bf1_nh=0;
     if(*parname1_nh=="deltacp") bf1_nh = deltacp_nh;
     else if(*parname1_nh=="mixing13") bf1_nh = mix13_nh;
@@ -347,15 +359,15 @@ void draw_sensitivity_plots_toys(
     int bin_idx=0;
     double bincont=0.;
 
-    if(nbins_param1_nh>1 && nbins_param2_nh<=1){ // 1D param1
+    if(nbins1_nh>1 && nbins2_nh<=1){ // 1D param1
       bin_idx = h_chisq_par1_nh[iEvtToy]->FindBin(bf1_nh);
       bincont = h_chisq_par1_nh[iEvtToy]->GetBinContent(bin_idx);
     }
-    else if(nbins_param1_nh<=1 && nbins_param2_nh>1){ // 1D param2 
+    else if(nbins1_nh<=1 && nbins2_nh>1){ // 1D param2 
       bin_idx = h_chisq_par1_nh[iEvtToy]->FindBin(bf1_nh);
       bincont = h_chisq_par1_nh[iEvtToy]->GetBinContent(bin_idx);
     }
-    else if(nbins_param1_nh>1 && nbins_param2_nh>1){ // 2D param2 Vs param1
+    else if(nbins1_nh>1 && nbins2_nh>1){ // 2D param2 Vs param1
       bin_idx = h_chisq_par2_par1_nh[iEvtToy]->FindBin(bf1_nh,bf2_nh);
       bincont = h_chisq_par2_par1_nh[iEvtToy]->GetBinContent(bin_idx);
     }
@@ -558,6 +570,8 @@ void draw_sensitivity_plots_toys(
     ch_ih.SetBranchAddress("best_fit_params", &fparm_ih); 
     ch_ih.SetBranchAddress("nbins_param1", &nbins_param2_ih); 
     ch_ih.SetBranchAddress("nbins_param2", &nbins_param1_ih); 
+    ch_ih.SetBranchAddress("nbins_tot_param1", &nbins_tot_param2_ih); 
+    ch_ih.SetBranchAddress("nbins_tot_param2", &nbins_tot_param1_ih); 
     ch_ih.SetBranchAddress("best_fit_params", &fparm_ih); 
     ch_ih.SetBranchAddress("parname1", &parname2_ih); // name of the grid parameter 2
     ch_ih.SetBranchAddress("parname2", &parname1_ih); // name of the grid parameter 1
@@ -573,6 +587,8 @@ void draw_sensitivity_plots_toys(
     ch_ih.SetBranchAddress("best_fit_params", &fparm_ih); 
     ch_ih.SetBranchAddress("nbins_param1", &nbins_param1_ih); 
     ch_ih.SetBranchAddress("nbins_param2", &nbins_param2_ih); 
+    ch_ih.SetBranchAddress("nbins_tot_param1", &nbins_tot_param1_ih); 
+    ch_ih.SetBranchAddress("nbins_tot_param2", &nbins_tot_param2_ih); 
     ch_ih.SetBranchAddress("best_fit_params", &fparm_ih); 
     ch_ih.SetBranchAddress("parname1", &parname1_ih); // name of the grid parameter 1
     ch_ih.SetBranchAddress("parname2", &parname2_ih); // name of the grid parameter 2
@@ -593,12 +609,12 @@ void draw_sensitivity_plots_toys(
   cout << "nentries (IH) = " << nentries_ih << endl;
   
   ch_ih.GetEntry(0);
-  const int nbins1_ih = nbins_param1_ih;
-  const int nbins2_ih = nbins_param2_ih;
+  int nbins1_ih = TMath::Max(nbins_tot_param1_ih,nbins_param1_ih); // if using make_toygrid_toys_joint.C nbins_tot_param* is used instead of nbins_param*
+  int nbins2_ih = TMath::Max(nbins_tot_param2_ih,nbins_param2_ih); // otherwise nbins_tot_param* = 1 < nbins_param*
   
   int nDim=0;
-  if(nbins_param1_ih>1 || nbins_param2_ih>1) nDim = 1;
-  if(nbins_param1_ih>1 && nbins_param2_ih>1) nDim = 2;
+  if(nbins1_ih>1 || nbins2_ih>1) nDim = 1;
+  if(nbins1_ih>1 && nbins2_ih>1) nDim = 2;
  
   if(*parname1_ih!=""){
     cout << endl;
@@ -647,13 +663,13 @@ void draw_sensitivity_plots_toys(
       mixing13_min = 0.015;
       mixing13_max = 0.035;
       //mixing13_step = 0.001;
-      mixing13_step = (mixing13_max-mixing13_min)/(nbins_param1_ih-1);
+      mixing13_step = (mixing13_max-mixing13_min)/(nbins1_ih-1);
     }
     else{
       mixing13_min = 0.0;
       mixing13_max = 0.1;
       //mixing13_step = 0.005;
-      mixing13_step = (mixing13_max-mixing13_min)/(nbins_param1_ih-1);
+      mixing13_step = (mixing13_max-mixing13_min)/(nbins1_ih-1);
     }
   }
   else{
@@ -661,29 +677,29 @@ void draw_sensitivity_plots_toys(
       mixing13_min = 0.06;
       mixing13_max = 0.14;
       //mixing13_step = 0.004;
-      mixing13_step = (mixing13_max-mixing13_min)/(nbins_param1_ih-1);
+      mixing13_step = (mixing13_max-mixing13_min)/(nbins1_ih-1);
     }
     else{
       mixing13_min = 0.0;
       mixing13_max = 0.4;
       //mixing13_step = 0.02;
-      mixing13_step = (mixing13_max-mixing13_min)/(nbins_param1_ih-1);
+      mixing13_step = (mixing13_max-mixing13_min)/(nbins1_ih-1);
     }
   }
   mixing23_min = 0.3;
   mixing23_max = 0.7;
   //mixing23_step = 0.01;
-  mixing23_step = (mixing23_max-mixing23_min)/(nbins_param1_ih-1);
+  mixing23_step = (mixing23_max-mixing23_min)/(nbins1_ih-1);
   
   dmsq_min = 2.0;//E-3;
   dmsq_max = 3.0;//E-3;
   //dmsq_step = 0.05;//E-3;
-  dmsq_step = (dmsq_max-dmsq_min)/(nbins_param1_ih-1);
+  dmsq_step = (dmsq_max-dmsq_min)/(nbins1_ih-1);
 
   deltacp_min = -conv::kpi;
   deltacp_max = conv::kpi;
   //deltacp_step = 2*conv::kpi/50;
-  deltacp_step = (deltacp_max-deltacp_min)/(nbins_param1_ih-1);
+  deltacp_step = (deltacp_max-deltacp_min)/(nbins1_ih-1);
   
 
   // Take steps and min-max values from the tree if they exist
@@ -831,15 +847,15 @@ void draw_sensitivity_plots_toys(
     int bin_idx=0;
     double bincont=0.;
 
-    if(nbins_param1_ih>1 && nbins_param2_ih<=1){ // 1D param1
+    if(nbins1_ih>1 && nbins2_ih<=1){ // 1D param1
       bin_idx = h_chisq_par1_ih[iEvtToy]->FindBin(bf1_ih);
       bincont = h_chisq_par1_ih[iEvtToy]->GetBinContent(bin_idx);
     }
-    else if(nbins_param1_ih<=1 && nbins_param2_ih>1){ // 1D param2 
+    else if(nbins1_ih<=1 && nbins2_ih>1){ // 1D param2 
       bin_idx = h_chisq_par1_ih[iEvtToy]->FindBin(bf1_ih);
       bincont = h_chisq_par1_ih[iEvtToy]->GetBinContent(bin_idx);
     }
-    else if(nbins_param1_ih>1 && nbins_param2_ih>1){ // 2D param2 Vs param1
+    else if(nbins1_ih>1 && nbins2_ih>1){ // 2D param2 Vs param1
       bin_idx = h_chisq_par2_par1_ih[iEvtToy]->FindBin(bf1_ih,bf2_ih);
       bincont = h_chisq_par2_par1_ih[iEvtToy]->GetBinContent(bin_idx);
     }
@@ -1056,28 +1072,6 @@ void draw_sensitivity_plots_toys(
     cout << "shift_nh = " << shift_nh << " - shift_ih = " << shift_ih << endl;
   }
   
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Draw plots
 
