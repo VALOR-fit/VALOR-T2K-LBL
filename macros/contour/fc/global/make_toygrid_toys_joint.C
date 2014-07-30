@@ -24,13 +24,14 @@ void make_toygrid_toys_joint
  double       input_dm12sq            = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq            = -99, //2.32E-3,                             /* |Dm^2_{23}| */
 
+ bool         stat_fluctuations       = false,                                /* include statistical fluctuation in toy MC expts? */
+ int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
+ bool         using_xml_file      = false,                                   /* if false, skobs reads xmlfile as a root file */
+
  //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
  const char * config_file        = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
-
- bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
- int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
 
  const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
  //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
@@ -48,7 +49,6 @@ void make_toygrid_toys_joint
  double       dcp_value           = 0,                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
  bool         reactor             = true,                               /* enable this if you want to apply the reactor constraint */
  double       tolerance           = 0.1,                                 /* value for the fitter tolerance */
- bool         using_xml_file      = true,                                   /* if false, skobs reads xmlfile as a root file */
  
  //const char * param1                  = "mixing23",                        /* first parameter to be fitting vs - default: none for a single fit */ 
  //const char * param2                  = "dmsq",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
@@ -57,13 +57,12 @@ void make_toygrid_toys_joint
  const char * param2                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  const char * param3                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  
- int          nbins_tot_param1            = 10
-,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int          nbins_tot_param1            = 3,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int          nbins_tot_param2            = 1,                              /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int          nbins_tot_param3            = 1,                              /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
 
  int          min_bin_param1          = 1,                                /* minimum bin for param1 */
- int          max_bin_param1          = 10,                                /* maximum bin for param1 */
+ int          max_bin_param1          = 3,                                /* maximum bin for param1 */
  int          min_bin_param2          = 1,                                /* minimum bin for param2 */
  int          max_bin_param2          = 1,                                  /* maximum bin for param2 */
  int          min_bin_param3          = 1,                                /* minimum bin for param2 */
