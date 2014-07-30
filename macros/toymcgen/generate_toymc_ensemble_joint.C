@@ -11,7 +11,7 @@
 
 void generate_toymc_ensemble_joint
 (
- const char * tag                     = "toymc_Asimov_dcp0_IH",                        /* */
+ const char * tag                     = "toymc_Asimov_dcpm1p566_NH",                        /* */
  //const char * tag                     = "toymc_FHCpRHCpMultiRing",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_ResultsRun1to4_IH",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH",                        /* */
@@ -24,7 +24,7 @@ void generate_toymc_ensemble_joint
  double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
  double       input_mixing13          = -99, //0.0252, //-99, //0.02146 , // 0.0251,    /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
  double       input_mixing23          = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
- double       input_deltacp           = -99, //-1.556, //-99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
+ double       input_deltacp           = -1.556, //-99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
  double       input_dm12sq            = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq            = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
  
@@ -34,12 +34,11 @@ void generate_toymc_ensemble_joint
  const char * config_file             = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
  //const char * config_file             = "analysis_configuration_run1to6.xml",
 
-  bool         stat_fluctuations       = false,                           /* include statistical fluctuation in toy MC expts? */
-  int          tweak_systematics       = 0,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
-  bool         IsAsimov                = true,                            /* generate the Asimov dataset */
+  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
+  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
 
   bool         save_in_xml_format      = true,                           /* also save in txt format */
-  bool         save_in_root_format     = true,                           /* */
+  bool         save_in_root_format     = true,                           /* */  
   const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
   const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
@@ -409,9 +408,7 @@ void generate_toymc_ensemble_joint
          double Emax = mock_data_1Rmu->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
 	 double Ecent = mock_data_1Rmu->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
          for(int iev = 0; iev < Nb; iev++) {
-	   double E = 0;
-	   if(IsAsimov) E = Ecent;
-	   else E= Emin + rand.Uniform() * (Emax-Emin);
+	   double E= Emin + rand.Uniform() * (Emax-Emin);
 	   if(ievtot > 0) {
 	     fxml << ", "; 
 	     ftxt << ","; 
@@ -446,9 +443,7 @@ void generate_toymc_ensemble_joint
          double Emax = mock_data_1Re->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
  	 double Ecent = mock_data_1Re->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
         for(int iev = 0; iev < Nb; iev++) {
-	   double E = 0;
-	   if(IsAsimov) E = Ecent;
-	   else E= Emin + rand.Uniform() * (Emax-Emin);
+	   double E= Emin + rand.Uniform() * (Emax-Emin);
 	   if(ievtot > 0) {
 	     fxml << ", "; 
 	     ftxt << ","; 
@@ -485,9 +480,7 @@ void generate_toymc_ensemble_joint
          double Emax = mock_data_1Rmu_RHC->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
 	 double Ecent = mock_data_1Rmu_RHC->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
          for(int iev = 0; iev < Nb; iev++) {
-	   double E = 0;
-	   if(IsAsimov) E = Ecent;
-	   else E= Emin + rand.Uniform() * (Emax-Emin);
+	   double E= Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ", "; 
               ftxt << ","; 
@@ -522,9 +515,7 @@ void generate_toymc_ensemble_joint
          double Emax = mock_data_1Re_RHC->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
  	 double Ecent = mock_data_1Re_RHC->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
 	 for(int iev = 0; iev < Nb; iev++) {
-	   double E = 0;
-	   if(IsAsimov) E = Ecent;
-	   else E= Emin + rand.Uniform() * (Emax-Emin);
+	   double E= Emin + rand.Uniform() * (Emax-Emin);
 	   if(ievtot > 0) {
 	     fxml << ", "; 
 	     ftxt << ","; 
@@ -561,9 +552,7 @@ void generate_toymc_ensemble_joint
          double Emax = mock_data_MultiRmu->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
  	 double Ecent = mock_data_MultiRmu->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
 	 for(int iev = 0; iev < Nb; iev++) {
- 	   double E = 0;
-	   if(IsAsimov) E = Ecent;
-	   else E= Emin + rand.Uniform() * (Emax-Emin);
+ 	   double E= Emin + rand.Uniform() * (Emax-Emin);
            if(ievtot > 0) {
               fxml << ", "; 
               ftxt << ","; 
@@ -598,9 +587,7 @@ void generate_toymc_ensemble_joint
          double Emax = mock_data_MultiRe->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
 	 double Ecent = mock_data_MultiRe->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
          for(int iev = 0; iev < Nb; iev++) {
-	   double E = 0;
-	   if(IsAsimov) E = Ecent;
-	   else E= Emin + rand.Uniform() * (Emax-Emin);
+	   double E= Emin + rand.Uniform() * (Emax-Emin);
             if(ievtot > 0) {
               fxml << ", "; 
               ftxt << ","; 
