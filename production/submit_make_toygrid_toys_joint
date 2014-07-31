@@ -100,7 +100,7 @@ $fitoption              = "minuit"                               unless defined 
 
 $tag                    = "oscgrid_Run1to4_NH"                          unless defined $tag;
 $job_dir                = "."                                  unless defined $job_dir;
-$softw_dir              = "."                                  unless defined $softw_dir;
+$softw_dir              = $ENV{'T2KOSCANA'}                                 unless defined $softw_dir;
 
 #$config_file            = "analysis_configuration_test.xml"           unless defined $config_file;
 #$config_file            = "analysis_configuration_Run4.xml"           unless defined $config_file;
@@ -249,19 +249,19 @@ for($imin1 = $min_bin_param1; $imin1 <= $max_bin_param1; $imin1 = $imin1+$step_g
 	    # RAL
 	    #
 	    if($resource eq "RAL") {
-		open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+		open(PBS, ">$job_dir/$tag-$irun-$ijob.pbs") or die("Can not create the PBS batch script");
 		print PBS "#!/bin/bash \n";
-		print PBS "#PBS -N $tag-$irun \n";
+		print PBS "#PBS -N $tag-$irun-$ijob \n";
 		print PBS "#PBS -l cput=$cput \n";
-		print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-		print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+		print PBS "#PBS -o $job_dir/$tag-$irun-$ijob.pbs.out \n";
+		print PBS "#PBS -e $job_dir/$tag-$irun-$ijob.pbs.err \n";
 		print PBS "#PBS -q prod \n";
 		print PBS "#PBS -l walltime=$cput \n";
 		print PBS "cd $job_dir \n";
 		print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
 		print PBS "$command \n";
 		close(PBS);
-		`qsub -q prod $job_dir/$tag-$irun.pbs`;
+		`qsub -q prod $job_dir/$tag-$irun-$ijob.pbs`;
 	    }
 	    #
 	    # Oxford
