@@ -1679,8 +1679,12 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
       // Hard to read, so should only be used in code for which speed is essential.
       int n_ereco_bins = kNErecoBins[is];
       int n_etrue_bins = kNEtrueBins[is];
-      const double(&templTun)[n_etrue_bins][n_ereco_bins] = *reinterpret_cast< const double (*) [n_etrue_bins][n_ereco_bins]> (&(fMCTemplArrayTun[is].GetEntryRef(im,0,0)));
-      double      (&templFin)[n_etrue_bins][n_ereco_bins] = *reinterpret_cast< double       (*) [n_etrue_bins][n_ereco_bins]> (&(fMCTemplArrayFin[is].GetEntryRef(im,0,0)));
+      typedef double (templtype)[n_etrue_bins][n_ereco_bins];
+      const templtype & templTun = *reinterpret_cast<const templtype * >(&(fMCTemplArrayTun[is].GetEntryRef(im,0,0)));
+      templtype       & templFin = *reinterpret_cast<templtype       * >(&(fMCTemplArrayFin[is].GetEntryRef(im,0,0)));
+      
+      //~ const double(&templTun)[n_etrue_bins][n_ereco_bins] = *reinterpret_cast< const double (*) [n_etrue_bins][n_ereco_bins]> (&(fMCTemplArrayTun[is].GetEntryRef(im,0,0)));
+      //~ double      (&templFin)[n_etrue_bins][n_ereco_bins] = *reinterpret_cast< double       (*) [n_etrue_bins][n_ereco_bins]> (&(fMCTemplArrayFin[is].GetEntryRef(im,0,0)));
 
       //
       // There are 600 50MeV Etrue energy bins in the templates, but
@@ -2719,8 +2723,14 @@ bool SuperkMC::UpdateErecoSpectra(void)
     
     // Recast VALORArray blocks so they can be used addressed like normal arrays (fast).
     // Hard to read, so should only be used in code for which speed is essential.
-    const double(&templFin)[knm][n_etrue_bins][n_ereco_bins] = *reinterpret_cast< const double (*) [knm][n_etrue_bins][n_ereco_bins]> (fMCTemplArrayFin[is].GetArray());
-    double(&erecoMode)[knm][n_ereco_bins] = *reinterpret_cast<double (*) [knm][n_ereco_bins]> (fMCErecoSpectrumArray[is].GetArray());
+    typedef double (templmtype)[knm][n_etrue_bins][n_ereco_bins];
+    typedef double (ermtype)   [knm][n_ereco_bins];
+    const templmtype & templFin = *reinterpret_cast< const templmtype * > (fMCTemplArrayFin[is].GetArray());
+    ermtype & erecoMode         = *reinterpret_cast< ermtype          * > (fMCErecoSpectrumArray[is].GetArray());
+    
+    //~ const double(&templFin)[knm][n_etrue_bins][n_ereco_bins] = *reinterpret_cast< const double (*) [knm][n_etrue_bins][n_ereco_bins]> (fMCTemplArrayFin[is].GetArray());
+    //~ double(&erecoMode)[knm][n_ereco_bins] = *reinterpret_cast<double (*) [knm][n_ereco_bins]> (fMCErecoSpectrumArray[is].GetArray());
+    
     double * erecoTot = fMCErecoSpectrumTotArray[is].GetArray();
 
     // loop over Ereco
