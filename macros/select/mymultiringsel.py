@@ -18,6 +18,14 @@ from glob import glob
 from ROOT import TLorentzVector
 from ROOT import TVector3
 
+dir_nu  = [0.669764, -0.742179, 0.024223]; #t2k beam direction
+neutronMass  = 939.56536
+protonMass   = 938.27203
+pionMass     = 139.570 # charged
+deltaMass    = 1232.
+electronMass = 0.510999
+muonMass     = 105.66
+    
 try:
     ROOT.t2kana
 except:
@@ -61,6 +69,11 @@ def main(argv):
     tevis = n.zeros(1, dtype=n.float32)
     global tnring
     tnring = n.zeros(1, dtype=n.int)
+
+    global terec_delta
+    terec_delta = n.zeros(1,dtype=n.float32)
+    global terec_pi
+    terec_pi = n.zeros(1,dtype=n.float32)
     
     tree_numucc.Branch('mode', tmode, 'mode/I') 
     tree_numucc.Branch('erec', terec, 'erec/F')
@@ -71,6 +84,8 @@ def main(argv):
     tree_numucc.Branch('Q2', tQ2, 'Q2/F')
     tree_numucc.Branch('evis', tevis, 'evis/F')
     tree_numucc.Branch('nring', tnring, 'nring/I')
+    tree_numucc.Branch('erec_delta', terec_delta, 'erec_delta/F')
+    tree_numucc.Branch('erec_pi', terec_pi, 'erec_pi/F')
 
     tree_nuecc.Branch('mode', tmode, 'mode/I')
     tree_nuecc.Branch('erec', terec, 'erec/F')
@@ -81,6 +96,8 @@ def main(argv):
     tree_nuecc.Branch('Q2', tQ2, 'Q2/F')
     tree_nuecc.Branch('evis', tevis, 'evis/F')
     tree_nuecc.Branch('nring', tnring, 'nring/I')
+    tree_nuecc.Branch('erec_delta', terec_delta, 'erec_delta/F')
+    tree_nuecc.Branch('erec_pi', terec_pi, 'erec_pi/F')
 
     tree_2rpi0.Branch('mode', tmode, 'mode/I')
     tree_2rpi0.Branch('erec', terec, 'erec/F')
@@ -91,7 +108,9 @@ def main(argv):
     tree_2rpi0.Branch('Q2', tQ2, 'Q2/F')
     tree_2rpi0.Branch('evis', tevis, 'evis/F')
     tree_2rpi0.Branch('nring', tnring, 'nring/I')
-
+    tree_2rpi0.Branch('erec_delta', terec_delta, 'erec_delta/F')
+    tree_2rpi0.Branch('erec_pi', terec_pi, 'erec_pi/F')
+    
     tree = TChain("h1")
     for f in files: tree.Add(f)
 
@@ -247,18 +266,17 @@ def get_pmax_ring(tree):
 
     # return ith in NRING of the highest momentum in event
     imax = 0
-    PMAX = 0.
-    P = 0.
+    PMAX = -1
     
     for i in range(tree.nring):
-        #if  prmslg(i,1) < prmslg(i,2) :  P = tree.amome[i] # e-like ring momentum
-        #if  prmslg(i,1) >= prmslg(i,2) : P = tree.amomm[i] # mu-like ring momentum
-        if tree.ip[1] == 2: P = tree.amome[i] # e-like ring momentum
-        if tree.ip[1] == 3: P = tree.amome[i] # e-like ring momentum
+        if   tree.ip[i] == 2: P = tree.amome[i] # e-like ring momentum
+        elif tree.ip[i] == 3: P = tree.amomm[i] # mu-like ring momentum
+        else: P = 0.
         
-        if  PMAX <= P :
+        if PMAX < P:
             PMAX = P
             imax = i
+            
     return imax
 
 
@@ -567,32 +585,22 @@ def weight(tree, fileType, osc = 1, banff=False):
 
 def CosThetaNuLepton(tree) :
     ipmax = get_pmax_ring(tree)
-    nudir = [ 0.669764, -0.742179, 0.024223 ]
     # it would be dir[0][0], dir[0][1] and dir[0][2] in the OLD tree c++ variable
-    costnl = tree.dir[0+3*ipmax]*nudir[0] + tree.dir[1+3*ipmax]*nudir[1] + tree.dir[2+3*ipmax]*nudir[2]
-    #costnl = tree.dir[0]*nudir[0] + tree.dir[1]*nudir[1] + tree.dir[2]*nudir[2]
-        
-    #oldcostnl = tree.dir[0]*nudir[0] + tree.dir[1]*nudir[1] + tree.dir[2]*nudir[2]
-    #print ipmax, costnl, oldcostnl 
-    #for icos in tree.dir :
-    #    print icos
-    #print " "
+    costnl = tree.dir[0+3*ipmax]*dir_nu[0] + tree.dir[1+3*ipmax]*dir_nu[1] + tree.dir[2+3*ipmax]*dir_nu[2]
+
     return costnl
 
 
 def EnuReco(tree,isnumu) :
     V=27.0
     ipmax = get_pmax_ring(tree)
-    neutronMass = 939.56536
-    protonMass = 938.27203
-    leptonMom = 0
-    leptonMom = 0
+    
     if isnumu==True : 
-        leptonMass = 105.66
+        leptonMass = muonMass
         leptonMom = tree.amomm[ipmax]
         #leptonMom = tree.amomm[0]
     else : 
-        leptonMass = 0.510999
+        leptonMass = electronMass
         leptonMom = tree.amome[ipmax]
         #leptonMom = tree.amome[0]
 
@@ -610,6 +618,79 @@ def EnuReco(tree,isnumu) :
     
     return enu
 
+# Calculate  Ereco using a recoil delta, for CC1Pi
+def EnuRecoDelta(tree,isnumu) :
+    V=27.0
+    ipmax = get_pmax_ring(tree)
+    
+    if isnumu==True : 
+        leptonMass = muonMass
+        leptonMom = tree.amomm[ipmax]
+        #leptonMom = tree.amomm[0]
+    else : 
+        leptonMass = electronMass
+        leptonMom = tree.amome[ipmax]
+        #leptonMom = tree.amome[0]
+    
+    leptonMass2 = leptonMass**2
+    leptonEn2 = (leptonMom**2 + leptonMass2);
+    leptonEn = math.sqrt(leptonEn2)
+    protonMass2 = protonMass**2
+    neutronMass2 = neutronMass**2
+    deltaMass2 = deltaMass**2
+    costh = CosThetaNuLepton(tree)
+    
+    # Equation from Morgan Wascko http://wng.ift.uni.wroc.pl/karp45/presentations/Wascko-CC1pi.pdf
+    enu =  ( 0.5 * ( deltaMass2 - protonMass2 + 2*protonMass*leptonEn - leptonMass2) / 
+             (protonMass - leptonEn + math.sqrt(leptonEn2 - leptonMass2) * costh ) )
+    
+    return enu
+
+# Calculate Ereco assuming CC1Pi and using pion ring
+def EnuRecoCC1Pi(tree,isnumu) :
+    if tree.nring < 2: return EnuReco(tree,isnumu)
+    V=27.0
+    
+    rings_ordered_in_descending_energy = sorted( range(tree.nring), key=lambda i: tree.amomm[i], reverse=True )
+    
+    lepton_ringid = rings_ordered_in_descending_energy[0]
+    pion_ringid   = rings_ordered_in_descending_energy[1]
+    
+    #~ print [(rings_ordered_in_descending_energy[i],tree.amomm[rings_ordered_in_descending_energy[i]]) for i in xrange(tree.nring)]
+    #~ if (lepton_ringid != get_pmax_ring(tree)):
+        #~ print get_pmax_ring(tree)
+    
+    leptonMom = 0
+    if isnumu==True : 
+        leptonMass = muonMass
+        leptonMom = tree.amomm[lepton_ringid]
+        #leptonMom = tree.amomm[0]
+    else : 
+        leptonMass = electronMass
+        leptonMom = tree.amome[lepton_ringid]
+        #leptonMom = tree.amome[0]
+
+    leptonEn = math.sqrt(leptonMom**2 + leptonMass**2)
+    protonMass2  = protonMass **2
+    neutronMass2 = neutronMass**2
+    leptonMass2  = leptonMass **2
+    pionMass2    = pionMass   **2
+    
+    costhLepton = CosThetaNuLepton(tree)
+    
+    pionMom = tree.amomp[pion_ringid];
+    pionEn  = math.sqrt(pionMom**2 + pionMass**2)
+    
+    costhPion = sum(( tree.dir[i+3*pion_ringid]*dir_nu[i] for i in xrange(3) ))
+
+    pMuDotpPi = leptonMom * pionMom * sum(( tree.dir[i+3*pion_ringid]*tree.dir[i+3*lepton_ringid] for i in xrange(3) ))
+    
+    # Equation from Morgan Wascko http://wng.ift.uni.wroc.pl/karp45/presentations/Wascko-CC1pi.pdf
+    enu = ( (leptonMass2 + pionMass2 - 2.*neutronMass*(leptonEn + pionEn) + 2.*pMuDotpPi) /
+             (2.*(leptonEn + pionEn - leptonMom*costhLepton - pionMom*costhPion - neutronMass) ) )
+    
+    return enu
+
 
 def ErecoCut(tree,isnumu) :
     ereco = EnuReco(tree,isnumu)
@@ -620,16 +701,13 @@ def ErecoCut(tree,isnumu) :
 def Q2(tree,isnumu) :
     V=27.0
     ipmax = get_pmax_ring(tree)
-    neutronMass = 939.56536
-    protonMass = 938.27203
-    leptonMom = 0
-    leptonMom = 0
+    
     if is_numu(tree)==True : 
-        leptonMass = 105.66
+        leptonMass = muonMass
         leptonMom = tree.amomm[ipmax]
         #leptonMom = tree.amomm[0]
     else : 
-        leptonMass = 0.510999
+        leptonMass = electronMass
         leptonMom = tree.amome[ipmax]
         #leptonMom = tree.amome[0]
 
@@ -641,18 +719,10 @@ def Q2(tree,isnumu) :
     enu = ((neutronMass-V)*leptonEn - leptonMass*leptonMass/2.0 + neutronMass*V - V*V/2.0 + (protonMass2 - neutronMass2)/2.0 ) / (neutronMass - V - leptonEn + leptonMom*costh )
     #enu = EnuReco(tree,isnumu)
     
-    dir_nu  = TVector3(0.669764, -0.742179, 0.024223);
-    p_nu    = TLorentzVector (dir_nu * enu, enu);
-    dir_lep = TVector3( tree.dir[0+3*ipmax], tree.dir[1+3*ipmax], tree.dir[2+3*ipmax]);
-    #dir_lep = TVector3( tree.dir[0], tree.dir[1], tree.dir[2]);
-    p_lep = TLorentzVector(dir_lep * leptonMom, leptonEn);
+    p_nu    = TLorentzVector (enu*dir_nu[0], enu*dir_nu[1], enu*dir_nu[2], enu);
+    dir_lep = [ tree.dir[0+3*ipmax], tree.dir[1+3*ipmax], tree.dir[2+3*ipmax] ];
+    p_lep = TLorentzVector(dir_lep[0]*leptonMom, dir_lep[1]*leptonMom, dir_lep[2]*leptonMom, leptonEn);
     q2 = (p_nu - p_lep).Mag2();
-    
-    #TVector3 dir_lep( dir[0][0], dir[1][0], dir[2][0]);
-    #dir_lep = TLorentzVector(1, 2, 3, 4)
-
-    #TLorentzVector p_lep(dir_lep * leptonMom, leptonEn);
-    #p_lep = TLorentzVector(dir_lep * leptonMom, leptonEn)
 
     return -q2 * 1E-6
 
@@ -670,15 +740,15 @@ def FillVarTree(tree,isnumu) :
     else :
         tplep[0] = tree.amome[ipmax]/1000.0; # given in MeV/c
     tcostheta[0] = CosThetaNuLepton(tree)        
-    #tQ2[0] = Q2(tree,isnumu)
+    tQ2[0] = Q2(tree,isnumu)
     #print tQ2[0] 
     tevis[0] = tree.evis/1000.0 # given in MeV/c
     tnring[0] = tree.nring 
     #print tnring[0], terec[0], tenu[0], tplep[0], tevis[0]
-
-
-
-
+    
+    terec_delta[0] = EnuRecoDelta(tree,isnumu)  # in MeV/c in the tree, then converted in the t2k analysis code
+    terec_pi   [0] = EnuRecoCC1Pi(tree,isnumu)  # in MeV/c in the tree, then converted in the t2k analysis code
+    
 def select_mr_numucc_highmom(tree): # highest momentum ring
     rtype = ring_type(tree) 
     ipmax = get_pmax_ring(tree)
