@@ -640,9 +640,11 @@ def EnuRecoDelta(tree,isnumu) :
     deltaMass2 = deltaMass**2
     costh = CosThetaNuLepton(tree)
     
+    enu = ((neutronMass-V)*leptonEn - leptonMass2/2.0 + neutronMass*V - V*V/2.0 + (deltaMass2 - neutronMass2)/2.0 ) / (neutronMass - V - leptonEn + leptonMom*costh )
+    
     # Equation from Morgan Wascko http://wng.ift.uni.wroc.pl/karp45/presentations/Wascko-CC1pi.pdf
-    enu =  ( 0.5 * ( deltaMass2 - protonMass2 + 2*protonMass*leptonEn - leptonMass2) / 
-             (protonMass - leptonEn + math.sqrt(leptonEn2 - leptonMass2) * costh ) )
+    #~ enu =  ( 0.5 * ( deltaMass2 - protonMass2 + 2*protonMass*leptonEn - leptonMass2) / 
+             #~ (protonMass - leptonEn + math.sqrt(leptonEn2 - leptonMass2) * costh ) )
     
     return enu
 
