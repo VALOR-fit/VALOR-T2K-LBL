@@ -10,30 +10,25 @@ void draw_sensitivity_plots_toys(
 				 const double CLval = 4.61, // 90%CL
 				 const bool reactor = true, 
 				 const bool theta2theta = false,
-				 const char * parname1_def = "deltacp",
-				 const char * parname2_def = "none",
+				 const char * parname1_def = "sinsqth23",
+				 const char * parname2_def = "dmsq32",
 				 
 				 const bool ChangeOrder_nh = false, // change order of params (2D plots)
 				 const bool ChangeOrder_ih = false, // change order of params (2D plots) 
 				 
+				 const char * LegendName_nh = "FHC", 
+				 const char * LegendName_ih = "FHC + MultiRing",
+ 
 				 // Fit systematics
 				 
 				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_th13DB_NH_500_all",
 				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_th13DB_IH_500_all",
 
-				 const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_ResultsRun1to4_NH_500",
-				 const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_ResultsRun1to4_IH_500",
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_ResultsRun1to4_NH_500",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_ResultsRun1to4_IH_500",
 
 
 				 // MultiRing studies w/ Asimov data set - deltacp only
-
-				 const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_dcp0_NH_deltacp_none_none",
-				 const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_dcp0_NH_deltacp_none_none",
-
-				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_dcpm1p566_NH_deltacp_none_none",
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_dcpm1p566_NH_deltacp_none_none",
-
-				 // MultiRing studies w/ Asimov data set - deltacp Vs sinsqth13
 
 				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_dcp0_NH_deltacp_none_none",
 				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_dcp0_NH_deltacp_none_none",
@@ -41,6 +36,29 @@ void draw_sensitivity_plots_toys(
 				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_dcpm1p566_NH_deltacp_none_none",
 				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_dcpm1p566_NH_deltacp_none_none",
 
+				 // MultiRing studies w/ Asimov data set - deltacp Vs sinsqth13
+
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_sinsqth13_dcp_centr_NH_mixing13_deltacp_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_sinsqth13_dcp_centr_NH_mixing13_deltacp_none",
+
+				 // MultiRing studies w/ Asimov data set - sinsqth23 Vs dmsq32
+
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none_OLD",
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHC_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none",
+				 const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/NEW/fitgrid_sensi_FHC_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_MultiRing_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_MultiRing_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_FHCMC_mixing23_dmsq_none",
+				 
+				 //const char *name_ih = "$T2KOSCANA/outputs/sensi/Asimov/NEW/fitgrid_sensi_MultiRing_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_MCFHC_mixing23_dmsq_none",
+				 const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/NEW/fitgrid_sensi_FHCpMultiRing_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none",
+				 
+				 // MultiRing studies w/ Asimov data set - sinsqth23 Vs dmsq32 (numu disapp only)
+
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_numudis_FHC_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_numudis_FHCpMultiRing_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/Asimov/fitgrid_sensi_numudis_MultiRing_Asimov_PDG13_sinsqth23_dmsq32_centr_NH_mixing23_dmsq_none",
+				 
 				 )
 {
   using namespace std;
@@ -73,6 +91,10 @@ void draw_sensitivity_plots_toys(
   double step1, step2;
 
   // 1D: dChi2 vs param1  (Normal Hierarchy)
+
+  cout << endl;
+  cout << "Read file: " << filename_nh << endl;
+  cout << endl;
 
   const char * filename_nh = Form("%s.root",name_nh);
   TChain ch_nh("fitnt");
@@ -333,12 +355,12 @@ void draw_sensitivity_plots_toys(
   for(int i = 0; i < nentries_nh; i++){
     iEvtToy = i / (nbins1_nh*nbins2_nh);
     if( !(i%(nbins1_nh*nbins2_nh)) ) cout << "# Toy " << iEvtToy << endl;
-    //if(1) cout << "# Toy " << iEvtToy << endl;
-    //cout << i << endl;
 
     ch_nh.GetEntry(i);
     int migradminstat_nh = fparm_nh->GetStatusCode("migrad_min");
     if (migradminstat_nh == 4) cout << "Fit failed!" << endl;
+    //cout << "migradminstat_nh = " << migradminstat_nh << endl;
+
     double mix13_nh = fparm_nh->BestFitValue(conv::kPhypMixing13); // Parameters are fixed in the fit
     double mix23_nh = fparm_nh->BestFitValue(conv::kPhypMixing23);
     double dmsq_nh = fparm_nh->BestFitValue(conv::kPhypDm23sq);
@@ -481,7 +503,7 @@ void draw_sensitivity_plots_toys(
       cout << endl;
     }
     cout << "Global scanned chi2 minimum = " << min_chisq_Ave_nh << endl; 
-  }
+  } // nDim==2
   
 
   // Take RMS of dcp in each true bin
@@ -561,6 +583,10 @@ void draw_sensitivity_plots_toys(
   }
 
   // 1D: dChi2 vs param1  (Inverted Hierarchy)
+
+  cout << endl;
+  cout << "Read file: " << filename_ih << endl;
+  cout << endl;
 
   const char * filename_ih = Form("%s.root",name_ih);
   TChain ch_ih("fitnt");
@@ -821,12 +847,12 @@ void draw_sensitivity_plots_toys(
   for(int i = 0; i < nentries_ih; i++){
     iEvtToy = i / (nbins1_ih*nbins2_ih);
     if( !(i%(nbins1_ih*nbins2_ih)) ) cout << "# Toy " << iEvtToy << endl;
-    //if(1) cout << "# Toy " << iEvtToy << endl;
-    //cout << i << endl;
-
+        
     ch_ih.GetEntry(i);
     int migradminstat_ih = fparm_ih->GetStatusCode("migrad_min");
     if (migradminstat_ih == 4) cout << "Fit failed!" << endl;
+    //cout << "migradminstat_ih = " << migradminstat_ih << endl;
+
     double mix13_ih = fparm_ih->BestFitValue(conv::kPhypMixing13); // Parameters are fixed in the fit
     double mix23_ih = fparm_ih->BestFitValue(conv::kPhypMixing23);
     double dmsq_ih = fparm_ih->BestFitValue(conv::kPhypDm23sq);
@@ -964,9 +990,9 @@ void draw_sensitivity_plots_toys(
       for(int i2 = 1; i2 <= nbins2_ih; i2++){
   	double bin = h_chisq_par2_par1_Ave_ih->GetBinContent(i1,i2);
   	if (bin < min_chisq_Ave_ih) min_chisq_Ave_ih = bin;
-	//cout << bin << " ";
+	cout << bin << " ";
       }
-      //cout << endl;
+      cout << endl;
     }
     cout << "Global scanned chi2 minimum = " << min_chisq_Ave_ih << endl; 
   } // nDim==2
@@ -1046,7 +1072,6 @@ void draw_sensitivity_plots_toys(
   }
   
 
-
   // Shift between NH and IH
   TGraph *g_chisq_par1_ih_shift = new TGraph();
   TGraph *g_chisq_par1_nh_shift = new TGraph();
@@ -1081,11 +1106,29 @@ void draw_sensitivity_plots_toys(
   if(nDim==2){
     TCanvas *c_chisq_par2_par1_nh = new TCanvas("c_chisq_par2_par1_nh","c_chisq_par2_par1_nh");
     h_chisq_par2_par1_Ave_nh->DrawClone("colz");
+
+    TCanvas *c_chisq_par2_par1_ih = new TCanvas("c_chisq_par2_par1_ih","c_chisq_par2_par1_ih");
+    h_chisq_par2_par1_Ave_ih->DrawClone("colz");
     
     TCanvas *c_cont_par2_par1_nh = new TCanvas("c_cont_par2_par1_nh","c_cont_par2_par1_nh");
+    h_chisq_par2_par1_Ave_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+    h_chisq_par2_par1_Ave_nh->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
     h_chisq_par2_par1_Ave_nh->SetContour(1);
     h_chisq_par2_par1_Ave_nh->SetContourLevel(0,CLval);
+    h_chisq_par2_par1_Ave_nh->SetLineColor(kBlue);
     h_chisq_par2_par1_Ave_nh->DrawClone("cont3");
+ 
+    h_chisq_par2_par1_Ave_ih->SetContour(1);
+    h_chisq_par2_par1_Ave_ih->SetLineColor(kBlack);
+    h_chisq_par2_par1_Ave_ih->SetContourLevel(0,CLval);
+    h_chisq_par2_par1_Ave_ih->DrawClone("cont3 same");
+
+    TLegend *l_cont_par2_par1 = new TLegend(0.5,0.5,0.79,0.79);
+    l_cont_par2_par1->SetFillColor(0);
+    l_cont_par2_par1->SetLineColor(0);
+    l_cont_par2_par1->AddEntry(h_chisq_par2_par1_Ave_nh,LegendName_nh,"F");
+    l_cont_par2_par1->AddEntry(h_chisq_par2_par1_Ave_ih,LegendName_ih,"F");
+    l_cont_par2_par1->Draw();
   }
   // 1-dimensional plots
   else if(nDim==1){
