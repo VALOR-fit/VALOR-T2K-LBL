@@ -113,34 +113,8 @@ FitParamList * util::NamedParameterList(string name)
   
 
 
-  // if(name == "nuosc3f_12fix+nuisance") {
-  //   FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
-  //   util::AppendAllSystematicsTo(fp, 6);
-  //   fp -> FixParameter (kPhypMixing12);
-  //   fp -> FixParameter (kPhypDm12sq  );
-  //   fp -> SetParListName(name);
-  //   fp -> SetSystMode(1);
-  //   return fp;
-  //  }
-
-  /// NEW MULTIRING 2 (to add rhc sample)
   if(name == "nuosc3f_12fix+nuisance") {
-    FitParamList * fp;  
-    //#ifdef __FHC_RUNNING__
-#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
-    #ifdef __MULTIRING_FHC_RUNNING__
-    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParamsFHC_MultiR);   // fhc all + skdetfsi multiring (no escale)
-    #else
-    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);  // fhc only 
-    #endif
-#else
-    #ifdef __MULTIRING_FHC_RUNNING__
-    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParamsMultiR);  // multiring fhc only 
-    #else
-    cerr << "No samples have been chosen for the analysis!!!" << endl;
-    exit(1);    
-    #endif
-#endif // sample analysis option
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
     fp -> FixParameter (kPhypMixing12);
     fp -> FixParameter (kPhypDm12sq  );
@@ -148,7 +122,33 @@ FitParamList * util::NamedParameterList(string name)
     fp -> SetSystMode(1);
     return fp;
    }
-  ///
+
+//   /// NEW MULTIRING 2 (to add rhc sample)
+//   if(name == "nuosc3f_12fix+nuisance") {
+//     FitParamList * fp;  
+//     //#ifdef __FHC_RUNNING__
+// #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
+//     #ifdef __MULTIRING_FHC_RUNNING__
+//     fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParamsFHC_MultiR);   // fhc all + skdetfsi multiring (no escale)
+//     #else
+//     fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);  // fhc only 
+//     #endif
+// #else
+//     #ifdef __MULTIRING_FHC_RUNNING__
+//     fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParamsMultiR);  // multiring fhc only 
+//     #else
+//     cerr << "No samples have been chosen for the analysis!!!" << endl;
+//     exit(1);    
+//     #endif
+// #endif // sample analysis option
+//     util::AppendAllSystematicsTo(fp, 6);
+//     fp -> FixParameter (kPhypMixing12);
+//     fp -> FixParameter (kPhypDm12sq  );
+//     fp -> SetParListName(name);
+//     fp -> SetSystMode(1);
+//     return fp;
+//    }
+//   ///
 
 
 

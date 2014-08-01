@@ -1646,6 +1646,10 @@ double SuperkDetectorFSI::RHCChisqPenalty(void) const
 double SuperkDetectorFSI::MultiRingChisqPenalty(void) const
 //just a straight copy of BANFF::ChisqPenalty
 {
+#ifndef __MULTIRING_FHC_RUNNING__
+  return 0.;
+#endif
+  
   //Vector with deviations of current values from  best fit values
   const TVectorD & bestfit_values   = *fMultiRingNominalValues;
   const TVectorD & current_values   = *fMultiRingCurrentValues;

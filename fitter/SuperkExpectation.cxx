@@ -1515,8 +1515,6 @@ double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
 #endif
   ///
 
-
-
   return chisq_penalty;
 }
 //________________________________________________________________________________________

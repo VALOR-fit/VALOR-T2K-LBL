@@ -596,6 +596,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   TBranch * branchGenCode = mctree->GetBranch("mode");
   TBranch * branchWght    = mctree->GetBranch("wgt");
 
+
   branchEreco   -> SetAddress(&fBrEreco);
   branchEtrue   -> SetAddress(&fBrEtrue);
   branchGenCode -> SetAddress(&fBrGenCode);
@@ -610,7 +611,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   for(int iev = 0; iev < mctree->GetEntries(); iev++) 
   {
      mctree->GetEntry(iev);
-     
+
      if(fBrEreco<0) continue;
 
      // use current entry for mode m template?

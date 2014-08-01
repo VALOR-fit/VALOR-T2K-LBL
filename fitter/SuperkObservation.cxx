@@ -308,6 +308,7 @@ bool SuperkObservation::Generate(
        this->ErecoSpectrumArray(s)[ibin] = nobs;
     }
   }
+
   return false;
 }
 //________________________________________________________________________________________
@@ -333,6 +334,7 @@ bool SuperkObservation::Generate(
 bool SuperkObservation::Generate(
      FitModelABC * model, const PhysHypothesis & ph, bool fluctuate)
 {
+
 // Get observed reconstructed energy distribution
   
   cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
@@ -341,7 +343,7 @@ bool SuperkObservation::Generate(
   // Should do this properly.
   SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
   assert(skexp);
-
+  
   bool applied_negevents_condition = skexp->Generate(ph); //generate prediction
   applied_negevents_condition = this->Generate(model,fluctuate) || applied_negevents_condition;
 
