@@ -3123,18 +3123,41 @@ static const bool kSKDet1ReApplyParamToSKMode[kns][knm][kNumOfSKDetParams1Re] = 
 //   -  8 BANFF xsec            
 //                                 
 
+// NOT USED AT ALL
 //static const int kNumOfNuisanceParams1Rmu  = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Rmu + kNumOfUncXSecSyst;                                                                                
 //static const int kNumOfNuisanceParams1Re   = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams1Re  + kNumOfUncXSecSyst - 1 + 1 ;                                                                       
 //static const int kNumOfNuisanceParamsJoint = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams     + kNumOfXSecSyst - (kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit) + 1;                      
-static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
-static const int kNumOfRHCNuisanceParams = kNumOfRHCParamsInBANFFfit + kNumOfRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfRHCUncXSecSyst ;
-
-/// NEW MULTIRING 2
-static const int kNumOfNuisanceParamsMultiR = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParamsMultiRing + 1/*energy scale*/  + kNumOfUncXSecSyst ;  // Total # param MultiRing Only
-/// NEW MULTIRING 3
- static const int kNumOfNuisanceParamsFHC_MultiR = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing + 1/*multiring escale*/;  // Tot # par FHC+MultiRing 
- static const int kNumOfNuisanceParamsFHC_RHC_MultiRing = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc-rhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing + 1/*multiring escale*/;  // Tot # par FHC+RHC+MultiRing 
 ///
+/// OLD
+//static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ; 
+//static const int kNumOfRHCNuisanceParams = kNumOfRHCParamsInBANFFfit + kNumOfRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfRHCUncXSecSyst ; 
+// /// NEW MULTIRING 2
+//static const int kNumOfNuisanceParamsMultiR = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParamsMultiRing + 1/*energy scale*/  + kNumOfUncXSecSyst ;  // Total # param MultiRing Only
+// /// NEW MULTIRING 3
+// static const int kNumOfNuisanceParamsFHC_MultiR = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing + 1/*multiring escale*/;  // Tot # par FHC+MultiRing
+// static const int kNumOfNuisanceParamsFHC_RHC_MultiRing = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc-rhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing + 1/*multiring escale*/;  // Tot # par FHC+RHC+MultiRing
+///
+
+
+ 
+// TODO
+// It doesn't support RHC systematic parameters if not fully correlated w/ FHC sample --> to fix it 
+#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
+    #ifdef __MULTIRING_FHC_RUNNING__ // fhc all + skdetfsi multiring (no escale)
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing + 1/*multiring escale*/;  // Tot # par FHC+MultiRing
+    #else // fhc only
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
+    #endif
+#else
+    #ifdef __MULTIRING_FHC_RUNNING__ // multiring fhc only 
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParamsMultiRing + 1/*energy scale*/  + kNumOfUncXSecSyst;
+#else
+    cerr << "No samples have been chosen for the analysis!!!" << endl;
+    exit(1);    
+    #endif
+#endif // sample analysis option
+
+
 
 } // conv
 } // valor
