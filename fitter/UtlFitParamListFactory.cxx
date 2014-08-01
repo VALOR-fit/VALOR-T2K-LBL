@@ -286,35 +286,64 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 // Add nuisance params
 //
 
-#ifdef __NUMU_ONLY__
-  util::AppendAllCorrelatedBANFFSystematicsDisap  (fparm, start);
-  util::AppendAllSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
-  util::AppendAllUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
-#elsif __NUE_ONLY__
-  util::AppendAllCorrelatedBANFFSystematicsApp  (fparm, start);
-  util::AppendAllSuperkDetectorFSISystematicsApp(fparm, start+kNumOfParamsInBANFFfit);
-  util::AppendAllUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+  /// NEW MULTIRING 3
+#if defined(__NUMUONLY__)
+
+  #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
+    #ifdef __MULTIRING_FHC_RUNNING__
+    // fhc all + skdetfsi multiring
+    util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
+    util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
+    util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing+1);
+    #else
+    // fhc only 
+    util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
+    util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
+    util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+    #endif
+  #else
+    #ifdef __MULTIRING_FHC_RUNNING__
+    // multiring fhc only 
+    util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
+    util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
+    util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParamsMultiRing);
+    #endif
+  #endif // sample analysis option
+
+#elif defined(__NUEONLY__)
+  #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
+    #ifdef __MULTIRING_FHC_RUNNING__
+    // fhc all + skdetfsi multiring
+    util::AppendCorrelatedBANFFSystematicsApp  (fparm, start);
+    util::AppendSuperkDetectorFSISystematicsApp(fparm, start+kNumOfParamsInBANFFfit);
+    util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing+1);
+    #else
+    // fhc only 
+    util::AppendCorrelatedBANFFSystematicsApp  (fparm, start);
+    util::AppendSuperkDetectorFSISystematicsApp(fparm, start+kNumOfParamsInBANFFfit);
+    util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+    #endif
+  #else
+    #ifdef __MULTIRING_FHC_RUNNING__
+    // multiring fhc only 
+    util::AppendCorrelatedBANFFSystematicsApp  (fparm, start);
+    util::AppendSuperkDetectorFSISystematicsApp(fparm, start+kNumOfParamsInBANFFfit);
+    util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParamsMultiRing);
+    #endif
+  #endif // sample analysis option
 #else
-
-  // OLD
-  //
-  // util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
-  // util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit); 
-  // util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
+    ////
 
 
-
-
-  /// NEW MULTIRING 2
+    /// NEW MULTIRING 2
 
   //#ifdef __FHC_RUNNING__  
 #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
   #ifdef __MULTIRING_FHC_RUNNING__
-    // fhc all + skdetfsi multiring (no escale)
+    // fhc all + skdetfsi multiring 
   util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
   util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);          
   /// NEW MULTIRING 3
-  //util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing);  // No Escale for MultiRing
   util::AppendAllUncorrelatedXSecSystematics   (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing+1);  
   ///
   #else
@@ -390,8 +419,8 @@ void util::AppendUncorrelatedXSecSystematicsDisap(FitParamList * fparm, int star
   fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormCCcoh) );
   fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNC1piC) );
   fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNCoth) );
-  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNuEToNuMu) );
   fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormAntiNuToNu) );
+  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNuEToNuMu) );
 }
 #endif
 #ifdef __NUEONLY__
