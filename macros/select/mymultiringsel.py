@@ -261,11 +261,11 @@ def select_nueccqe(tree):
     
     if not EnuReco(tree,False) < 1250.: return False
     
-    fitqun_electron_likelihood = tree.fq1rnll[0][1]
-    fitqun_pizero_likelihood   = tree.fq1rnll[0][3]
+    fitqun_electron_likelihood = tree.fq1rnll[1]
+    fitqun_pizero_likelihood   = tree.fq1rnll[3]
     fitqun_pizero_mass         = tree.fqpi0mass[0]
     
-    if not (fitqun_pizero_likelihood-fitqun_electron_likelihood) < (175 - 0.875*fitqun_pizero_mass): return False
+    if not (fitqun_electron_likelihood-fitqun_pizero_likelihood) < (175 - 0.875*fitqun_pizero_mass): return False
     
     return True
     

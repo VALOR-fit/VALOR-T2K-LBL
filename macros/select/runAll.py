@@ -41,8 +41,8 @@ file_loc = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/skfiles/13a/t2
 if os.environ["USER"] == "phrhbq": file_loc = "/storage/epp2/t2k/data/sk/13a/neut/t2ksk_13a_ntuple"
 
 # output file names
-outfile_numuCCQE  = "sk13a_nRnumuCCQE.root"
-outfile_nueCCQE   = "sk13a_nRnueCCQE.root"
+outfile_numuCCQE  = "sk13a_1RnumuCCQE.root"
+outfile_nueCCQE   = "sk13a_1RnueCCQE.root"
 outfile_numuCC    = "sk13a_nRnumuCC.root"
 outfile_nueCC     = "sk13a_nRnueCC.root"
 outfile_2pi0ring  = "sk13a_2pi0ring.root"
@@ -82,11 +82,11 @@ rwght = "t"
 cutsandfiles = []
 
 if process13a:
+   cutsandfiles.append(["tnumu", file_loc+"/numu.h2o.sk.flux11a.*.root","/13a/"])
+   cutsandfiles.append(["tnumubar", file_loc+"/numubar.h2o.sk.flux11a.*.root","/13a/"])
    cutsandfiles.append(["tnue", file_loc+"/nue.h2o.sk.flux11a.*.root","/13a/"])
    cutsandfiles.append(["tnuebar", file_loc+"/nuebar.h2o.sk.flux11a.*.root","/13a/"])
    cutsandfiles.append(["tnuesig", file_loc+"/nue_x_numuflx.h2o.sk.flux11a.*.root","/13a/"])
-   cutsandfiles.append(["tnumu", file_loc+"/numu.h2o.sk.flux11a.*.root","/13a/"])
-   cutsandfiles.append(["tnumubar", file_loc+"/numubar.h2o.sk.flux11a.*.root","/13a/"])
 
 #if process14a:
    #cutsandfiles.append(["e:"+basecut[b]+":nue:neut:14a:"    +rwght, file_loc+"/nue_x_nue/nue_x_nue.h2o.sk.flux13a.*.root"])
