@@ -36,13 +36,28 @@ import math # cos, log, pi etc
 base = os.environ["PWD"]
 
 # input path
-#file_loc = "/storage/epp2/t2k/data/sk/13a/neut/t2ksk_13a_ntuple"
 file_loc = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/skfiles/13a/t2ksk_13a_ntuple"
 
+if os.environ["USER"] == "phrhbq": file_loc = "/storage/epp2/t2k/data/sk/13a/neut/t2ksk_13a_ntuple"
+
 # output file names
-outfile_nueCC = "sk13a_nRnueCC.root"
-outfile_numuCC = "sk13a_nRnumuCC.root"
-outfile_2pi0ring = "sk13a_2pi0ring.root"
+outfile_numuCCQE  = "sk13a_nRnumuCCQE.root"
+outfile_nueCCQE   = "sk13a_nRnueCCQE.root"
+outfile_numuCC    = "sk13a_nRnumuCC.root"
+outfile_nueCC     = "sk13a_nRnueCC.root"
+outfile_2pi0ring  = "sk13a_2pi0ring.root"
+
+#specify the production(s) you want to run over here
+process10a = False
+process11c = False
+process13a = True
+process14a = False
+
+processings = []
+if process10a: processings.append("10a")
+if process11c: processings.append("11c")
+if process13a: processings.append("13a")
+if process14a: processings.append("14a")
 
 if not os.path.isdir(base+"/selected"):
    try:
@@ -55,18 +70,12 @@ for gen in ["/genie", "/neut"]:
          os.makedirs(base+"/selected"+gen)
       except:
          sys.exit("Could not make selected"+gen+" directory")
-   for mc in ["/10a", "/11c", "/13a", "/14a"]:
-      if not os.path.isdir(base+"/selected"+gen+mc):
+   for mc in processings:
+      if not os.path.isdir(base+"/selected"+gen+"/"+mc):
          try:
-            os.makedirs(base+"/selected"+gen+mc)
+            os.makedirs(base+"/selected"+gen+"/"+mc)
          except:
-            sys.exit("Could not make selected"+gen+mc+" directory")
-
-#specify the production(s) you want to run over here
-process10a = False
-process11c = False
-process13a = True
-process14a = False
+            sys.exit("Could not make selected "+gen+"/"+mc+" directory")
 
 rwght = "t"
 
@@ -91,6 +100,12 @@ if process13a:
 path = base+"/selected"+gen+cutsandfiles[0][2]
 
 # remove existing files
+if os.path.isfile(path+outfile_nueCCQE) :
+   print "Remove existing ", path+outfile_nueCCQE
+   os.remove(path+outfile_nueCC)
+if os.path.isfile(path+outfile_numuCCQE) :
+   print "Remove existing ", path+outfile_numuCCQE
+   os.remove(path+outfile_numuCC)
 if os.path.isfile(path+outfile_nueCC) :
    print "Remove existing ", path+outfile_nueCC
    os.remove(path+outfile_nueCC)
@@ -105,7 +120,8 @@ if os.path.isfile(path+outfile_2pi0ring) :
 #sys.exit()
 
 for i in xrange(len(cutsandfiles)):
-   command = './mymultiringsel.py "'+cutsandfiles[i][1]+'" "'+ cutsandfiles[i][0]+'" "'+outfile_nueCC+'" "'+outfile_numuCC+'" "'+outfile_2pi0ring+'" "'+path+'" '
+   args = [cutsandfiles[i][1], cutsandfiles[i][0],outfile_numuCCQE,outfile_nueCCQE,outfile_numuCC,outfile_nueCC,outfile_2pi0ring,path]
+   command = './mymultiringsel.py "'+('" "'.join(args))+'" '
    print " "
    print command
    os.system(command)

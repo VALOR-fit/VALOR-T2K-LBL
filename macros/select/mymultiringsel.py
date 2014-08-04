@@ -36,20 +36,26 @@ def main(argv):
 
     files = glob(argv[0])
     treename = argv[1]
-    outfile_nueCC = argv[2]
-    outfile_numuCC = argv[3]
-    outfile_2pi0ring = argv[4]
-    path = argv[5]+"/"
+    outfile_numuCCQE = argv[2]
+    outfile_nueCCQE  = argv[3]
+    outfile_numuCC   = argv[4]
+    outfile_nueCC    = argv[5]
+    outfile_2pi0ring = argv[6]
+    path = argv[7]+"/"
     
     # set path
-    outfile_nueCC = path+outfile_nueCC
-    outfile_numuCC = path+outfile_numuCC
+    outfile_numuCCQE = path+outfile_numuCCQE
+    outfile_nueCCQE  = path+outfile_nueCCQE
+    outfile_numuCC   = path+outfile_numuCC
+    outfile_nueCC    = path+outfile_nueCC
     outfile_2pi0ring = path+outfile_2pi0ring
     
     # output tree (share same variables since they are mututally exclusive)
-    tree_numucc = ROOT.TTree(treename, treename)
-    tree_nuecc = ROOT.TTree(treename, treename)
-    tree_2rpi0 = ROOT.TTree(treename, treename)
+    tree_numuccqe = ROOT.TTree(treename, treename)
+    tree_nueccqe  = ROOT.TTree(treename, treename)
+    tree_numucc   = ROOT.TTree(treename, treename)
+    tree_nuecc    = ROOT.TTree(treename, treename)
+    tree_2rpi0    = ROOT.TTree(treename, treename)
 
     global tmode
     tmode= n.zeros(1, dtype=n.int)
@@ -75,52 +81,35 @@ def main(argv):
     global terec_pi
     terec_pi = n.zeros(1,dtype=n.float32)
     
-    tree_numucc.Branch('mode', tmode, 'mode/I') 
-    tree_numucc.Branch('erec', terec, 'erec/F')
-    tree_numucc.Branch('enu', tenu, 'enu/F')
-    tree_numucc.Branch('wgt', twgt, 'wgt/F')
-    tree_numucc.Branch('plep', tplep, 'plep/F')
-    tree_numucc.Branch('costheta', tcostheta, 'costheta/F')
-    tree_numucc.Branch('Q2', tQ2, 'Q2/F')
-    tree_numucc.Branch('evis', tevis, 'evis/F')
-    tree_numucc.Branch('nring', tnring, 'nring/I')
-    tree_numucc.Branch('erec_delta', terec_delta, 'erec_delta/F')
-    tree_numucc.Branch('erec_pi', terec_pi, 'erec_pi/F')
-
-    tree_nuecc.Branch('mode', tmode, 'mode/I')
-    tree_nuecc.Branch('erec', terec, 'erec/F')
-    tree_nuecc.Branch('enu', tenu, 'enu/F')
-    tree_nuecc.Branch('wgt', twgt, 'wgt/F')
-    tree_nuecc.Branch('plep', tplep, 'plep/F')
-    tree_nuecc.Branch('costheta', tcostheta, 'costheta/F')
-    tree_nuecc.Branch('Q2', tQ2, 'Q2/F')
-    tree_nuecc.Branch('evis', tevis, 'evis/F')
-    tree_nuecc.Branch('nring', tnring, 'nring/I')
-    tree_nuecc.Branch('erec_delta', terec_delta, 'erec_delta/F')
-    tree_nuecc.Branch('erec_pi', terec_pi, 'erec_pi/F')
-
-    tree_2rpi0.Branch('mode', tmode, 'mode/I')
-    tree_2rpi0.Branch('erec', terec, 'erec/F')
-    tree_2rpi0.Branch('enu', tenu, 'enu/F')
-    tree_2rpi0.Branch('wgt', twgt, 'wgt/F')
-    tree_2rpi0.Branch('plep', tplep, 'plep/F')
-    tree_2rpi0.Branch('costheta', tcostheta, 'costheta/F')
-    tree_2rpi0.Branch('Q2', tQ2, 'Q2/F')
-    tree_2rpi0.Branch('evis', tevis, 'evis/F')
-    tree_2rpi0.Branch('nring', tnring, 'nring/I')
-    tree_2rpi0.Branch('erec_delta', terec_delta, 'erec_delta/F')
-    tree_2rpi0.Branch('erec_pi', terec_pi, 'erec_pi/F')
+    output_trees = [tree_numuccqe,tree_nueccqe,tree_numucc,tree_nuecc,tree_2rpi0]
+    
+    for tree in output_trees:
+        tree.Branch('mode', tmode, 'mode/I') 
+        tree.Branch('erec', terec, 'erec/F')
+        tree.Branch('enu', tenu, 'enu/F')
+        tree.Branch('wgt', twgt, 'wgt/F')
+        tree.Branch('plep', tplep, 'plep/F')
+        tree.Branch('costheta', tcostheta, 'costheta/F')
+        tree.Branch('Q2', tQ2, 'Q2/F')
+        tree.Branch('evis', tevis, 'evis/F')
+        tree.Branch('nring', tnring, 'nring/I')
+        tree.Branch('erec_delta', terec_delta, 'erec_delta/F')
+        tree.Branch('erec_pi', terec_pi, 'erec_pi/F')
     
     tree = TChain("h1")
     for f in files: tree.Add(f)
 
-    h_nueCCname = "h_nueCC"+treename
-    h_numuCCname = "h_numuCC"+treename
-    h_2rpi0name = "h_2rpi0"+treename
+    h_nueCCQEname  = "h_nueCCQE" +treename
+    h_numuCCQEname = "h_numuCCQE"+treename
+    h_nueCCname    = "h_nueCC" +treename
+    h_numuCCname   = "h_numuCC"+treename
+    h_2rpi0name    = "h_2rpi0" +treename
 
-    h_nueCC=ROOT.TH1F(h_nueCCname,"h_nueCC;;# of events",10,0,10)
-    h_numuCC=ROOT.TH1F(h_numuCCname,"h_numuCC;;# of events",10,0,10)
-    h_2rpi0=ROOT.TH1F(h_2rpi0name,"h_2rpi0;;# of events",10,0,10)
+    h_nueCCQE  = ROOT.TH1F(h_nueCCQEname ,"h_nueCCQE;;# of events" ,10,0,10)
+    h_numuCCQE = ROOT.TH1F(h_numuCCQEname,"h_numuCCQE;;# of events",10,0,10)
+    h_nueCC    = ROOT.TH1F(h_nueCCname   ,"h_nueCC;;# of events"   ,10,0,10)
+    h_numuCC   = ROOT.TH1F(h_numuCCname  ,"h_numuCC;;# of events"  ,10,0,10)
+    h_2rpi0    = ROOT.TH1F(h_2rpi0name   ,"h_2rpi0;;# of events"   ,10,0,10)
 
     nev = tree.GetEntries()
     for iev in range(0,nev) :
@@ -139,6 +128,21 @@ def main(argv):
         # apply cuts (all samples are mutually exclusive)
         if select_fv(tree)==False : continue # fiducial volume events
         if select_fc(tree)==False : continue # fully contained events
+        
+        if select_numuccqe(tree):
+            isnumu = True
+            FillVarTree(tree,isnumu)
+            tree_numuccqe.Fill()
+            h_numuCCQE.Fill(1)
+            continue
+            
+        if select_nueccqe(tree):
+            isnumu = False
+            FillVarTree(tree,isnumu)
+            tree_nueccqe.Fill()
+            h_nueCCQE.Fill(1)
+            continue
+        
         if reject1ring(tree)==False : continue # reject 1ring events
 
         if select_pi0(tree,False)==True : # 2-ring pi0
@@ -182,21 +186,31 @@ def main(argv):
         #select_mulike(tree)
 
     # write trees in files
+    
+    fout_numuccqe = ROOT.TFile(outfile_numuCCQE, "update")
+    tree_numuccqe.Write()
+    h_numuCCQE.Write()
+    fout_numuccqe.Close()
+
+    fout_nueccqe = ROOT.TFile(outfile_nueCCQE, "update")
+    tree_nueccqe.Write()
+    h_nueCCQE.Write()
+    fout_nueccqe.Close()
+    
+    fout_numucc = ROOT.TFile(outfile_numuCC, "update")
+    tree_numucc.Write()
+    h_numuCC.Write()
+    fout_numucc.Close()
 
     fout_nuecc = ROOT.TFile(outfile_nueCC, "update")
     tree_nuecc.Write()
     h_nueCC.Write()
     fout_nuecc.Close()
-
+    
     fout_2rpi0 = ROOT.TFile(outfile_2pi0ring, "update")
     tree_2rpi0.Write()
     h_2rpi0.Write()
     fout_2rpi0.Close()
-
-    fout_numucc = ROOT.TFile(outfile_numuCC, "update")
-    tree_numucc.Write()
-    h_numuCC.Write()
-    fout_numucc.Close()
 
 
 ###################################### Selection ###############################
@@ -225,6 +239,36 @@ def select_elike(tree):
 
 def select_mulike(tree):
     return (ring_type(tree) == 3)
+    
+def select_numuccqe(tree):
+    if not select_fc(tree)       : return False
+    if not select_fv(tree)       : return False
+    if not tree.nring == 1       : return False
+    if not tree.ip[0] == 3       : return False
+    if not tree.amomm[0] > 200.  : return False
+    if not tree.nmue <= 1        : return False
+    if not tree.evis > 30.       : return False
+    
+    return True
+    
+def select_nueccqe(tree):
+    if not select_fc(tree)       : return False
+    if not select_fv(tree)       : return False
+    if not tree.evis > 100.      : return False
+    if not tree.nring == 1       : return False
+    if not tree.ip[0] == 2       : return False
+    if not tree.nmue == 0        : return False
+    
+    if not EnuReco(tree,False) < 1250.: return False
+    
+    fitqun_electron_likelihood = tree.fq1rnll[0][1]
+    fitqun_pizero_likelihood   = tree.fq1rnll[0][3]
+    fitqun_pizero_mass         = tree.fqpi0mass[0]
+    
+    if not (fitqun_pizero_likelihood-fitqun_electron_likelihood) < (175 - 0.875*fitqun_pizero_mass): return False
+    
+    return True
+    
 
 def select_mr_numucc(tree):
     for i in range(tree.nring):
@@ -733,8 +777,7 @@ def FillVarTree(tree,isnumu) :
     ipmax = get_pmax_ring(tree)
     tmode[0] = tree.mode
     terec[0] = EnuReco(tree,isnumu)  # in MeV/c in the tree, then converted in the t2k analysis code
-    tenu[0] = tree.pnu[ipmax] # momentum at neutrino interaction
-    #tenu[0] = tree.pnu[0] # momentum at neutrino interaction
+    tenu[0] = tree.pnu[0] # momentum at neutrino interaction
     twgt[0] = 1 
     if isnumu :
         #tplep[0] = tree.amomm[0]/1000.0; # given in MeV/c
