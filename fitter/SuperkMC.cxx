@@ -1719,34 +1719,19 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 	// Plug-in BANFF & other xsec systematics 
 	double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
-
-	double wght = 1;
-
-
-
-
-
-
+  
 	////////// HERE IT CRASHES //////////
 
 	// Plug-in SK efficiency + FSI uncertainties
 	double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
-
+  
 	// if(s==kSKsFCFVMultiRingMuLike || s==kSKsFCFVMultiRingELike){
 	//   exit(1);
 	// }
 
-      
-
-
-
-
-
-
-
 	
 	// Combined weight
-	wght = skfsi_wght * flux_wght * xsec_wght;
+	double wght = skfsi_wght * flux_wght * xsec_wght;
   
 #ifdef SYSTWEIGHTSAREONE
 	wght = 1;
@@ -3160,7 +3145,7 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
 //________________________________________________________________________________________
 void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
 {
-
+  
   for(int is = 0; is < kns; is++) {
       
     SuperkSample_t s = kSKSamples[is];
@@ -3239,7 +3224,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       htru->Write();
       delete htru;
     }//mode
-
+    this->UpdateErecoSpectra();
     //get the total ereco spectrum
     TH1D * hfull = this->CurrErecoSpectrum(s);
     hfull->Write("ereco_spectrum");
