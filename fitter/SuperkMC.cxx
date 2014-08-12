@@ -592,18 +592,21 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   }
 
   TBranch * branchEreco   = mctree->GetBranch("erec");
+  //~ TBranch * branchEreco_d = ((util::IsMultiRingSample(s)) ? mctree->GetBranch("erec_delta") : 0 );
   TBranch * branchEtrue   = mctree->GetBranch("enu");
   TBranch * branchGenCode = mctree->GetBranch("mode");
   TBranch * branchWght    = mctree->GetBranch("wgt");
 
 
   branchEreco   -> SetAddress(&fBrEreco);
+  //~ if (util::IsMultiRingSample(s)) branchEreco_d -> SetAddress(&fBrEreco_d);
   branchEtrue   -> SetAddress(&fBrEtrue);
   branchGenCode -> SetAddress(&fBrGenCode);
   branchWght    -> SetAddress(&fBrWght);  
 
   mctree->SetBranchStatus("*",0);
   mctree->SetBranchStatus("erec",1);
+  //~ if (util::IsMultiRingSample(s)) mctree->SetBranchStatus("erec_delta",1);
   mctree->SetBranchStatus("enu",1);
   mctree->SetBranchStatus("mode",1);
   mctree->SetBranchStatus("wgt",1);
@@ -619,6 +622,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      if(!use_it) continue;
 
      double ereco_fill = fBrEreco/1000.;
+
+     //~ if (util::IsMultiRingSample(s)) ereco_fill = fBrEreco_d/1000.;
 
      //if(util::IsRHCSample(s))
      fBrWght = fNuFlux->SuperkFluxExtTuningWght(s,m,fBrEtrue);
@@ -3156,25 +3161,16 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
 void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
 {
 
-  /*static const double erecobinedges[erecobins+1] = {
-      0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-      0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-      1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
-      1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950, 
-      2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450, 
-      2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950, 
-      3.000,  3.100,  3.200,  3.300,  3.400,  3.500,  4.000,  5.000,  7.000, 10.000,
-      30.000
-      };*/
   for(int is = 0; is < kns; is++) {
       
     SuperkSample_t s = kSKSamples[is];
-      
-      TFile* oute = new TFile(Form("Template_%s%s.root", name.c_str(),util::AsStringCompact(s).c_str()),"RECREATE");
-      static const int erecobins = util::NumErecoBins(s);//70;
-      static const double * erecobinedges = util::ErecoBinEdges(s);
     
-      if(s == kSKsUndefined) continue;
+    if(s == kSKsUndefined) continue;
+      
+    TFile* oute = new TFile(Form("Template_%s%s.root", name.c_str(),util::AsStringCompact(s).c_str()),"RECREATE");
+    static const int erecobins = util::NumErecoBins(s);//70;
+    static const double * erecobinedges = util::ErecoBinEdges(s);
+    
     //if(s == kSKsFCFV1RingELike) continue;
    // if(s == kSKsFCFV1RingMuLike) continue;
    // if(s == kSKsRHCFCFV1RingMuLike) continue;    // ANTINU
@@ -3196,15 +3192,15 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       TH1D * hrec = new TH1D(Form("erec_int_%s",AsStringCompact_KDI(m).c_str()), Form("erec_int_%s",AsStringCompact_KDI(m).c_str()), erecobins, erecobinedges);
       // loop over Ereco
       for(int ir = 1; ir <= hrec->GetNbinsX(); ir++) {
-	//find low and high of ereco for current bin
-	double rmin = hrec->GetXaxis()->GetBinLowEdge(ir) + kOneMeV;
-	double rmax = hrec->GetXaxis()->GetBinUpEdge(ir)  - kOneMeV;
-	//integrate the template
-	int ir_min = mctempl->GetXaxis()->FindBin(rmin);
-	int ir_max = mctempl->GetXaxis()->FindBin(rmax);
-	int it_bins = mctempl->GetNbinsY();
-	double nev = mctempl->Integral(ir_min, ir_max, 1, it_bins);
-	hrec->SetBinContent(ir,nev);
+        //find low and high of ereco for current bin
+        double rmin = hrec->GetXaxis()->GetBinLowEdge(ir) + kOneMeV;
+        double rmax = hrec->GetXaxis()->GetBinUpEdge(ir)  - kOneMeV;
+        //integrate the template
+        int ir_min = mctempl->GetXaxis()->FindBin(rmin);
+        int ir_max = mctempl->GetXaxis()->FindBin(rmax);
+        int it_bins = mctempl->GetNbinsY();
+        double nev = mctempl->Integral(ir_min, ir_max, 1, it_bins);
+        hrec->SetBinContent(ir,nev);
       }
       hrec->Write();
       delete hrec;
@@ -3213,15 +3209,15 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       TH1D * hrecf = new TH1D(Form("erec_int_%s_fine",AsStringCompact_KDI(m).c_str()), Form("erec_int_%s",AsStringCompact_KDI(m).c_str()), mctempl->GetNbinsX(), mctempl->GetXaxis()->GetXbins()->GetArray());
       // loop over Ereco
       for(int ir = 1; ir <= hrecf->GetNbinsX(); ir++) {
-	//find low and high of ereco for current bin
-	double rmin = hrecf->GetXaxis()->GetBinLowEdge(ir) + kOneMeV;
-	double rmax = hrecf->GetXaxis()->GetBinUpEdge(ir)  - kOneMeV;
-	//integrate the template
-	int ir_min = mctempl->GetXaxis()->FindBin(rmin);
-	int ir_max = mctempl->GetXaxis()->FindBin(rmax);
-	int it_bins = mctempl->GetNbinsY();
-	double nev = mctempl->Integral(ir_min, ir_max, 1, it_bins);
-	hrecf->SetBinContent(ir,nev);
+        //find low and high of ereco for current bin
+        double rmin = hrecf->GetXaxis()->GetBinLowEdge(ir) + kOneMeV;
+        double rmax = hrecf->GetXaxis()->GetBinUpEdge(ir)  - kOneMeV;
+        //integrate the template
+        int ir_min = mctempl->GetXaxis()->FindBin(rmin);
+        int ir_max = mctempl->GetXaxis()->FindBin(rmax);
+        int it_bins = mctempl->GetNbinsY();
+        double nev = mctempl->Integral(ir_min, ir_max, 1, it_bins);
+        hrecf->SetBinContent(ir,nev);
       }
       hrecf->Write();
       delete hrecf;
@@ -3230,15 +3226,15 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       TH1D * htru = new TH1D(Form("enu_int_%s",AsStringCompact_KDI(m).c_str()), Form("enu_int_%s",AsStringCompact_KDI(m).c_str()), util::NumVariableMCEtrueBins(s,m), util::VariableMCEtrueBinEdges(s,m));
       // loop over Etrue
       for(int it = 1; it <= htru->GetNbinsX(); it++) {
-	//find low and high of etrue for current bin
-	double tmin = htru->GetXaxis()->GetBinLowEdge(it) + kOneMeV;
-	double tmax = htru->GetXaxis()->GetBinUpEdge(it)  - kOneMeV;
-	//integrate the template
-	int it_min = mctempl->GetYaxis()->FindBin(tmin);
-	int it_max = mctempl->GetYaxis()->FindBin(tmax);
-	int ir_bins = mctempl->GetNbinsX();
-	double nev = mctempl->Integral(1, ir_bins, it_min, it_max);
-	htru->SetBinContent(it,nev);
+        //find low and high of etrue for current bin
+        double tmin = htru->GetXaxis()->GetBinLowEdge(it) + kOneMeV;
+        double tmax = htru->GetXaxis()->GetBinUpEdge(it)  - kOneMeV;
+        //integrate the template
+        int it_min = mctempl->GetYaxis()->FindBin(tmin);
+        int it_max = mctempl->GetYaxis()->FindBin(tmax);
+        int ir_bins = mctempl->GetNbinsX();
+        double nev = mctempl->Integral(1, ir_bins, it_min, it_max);
+        htru->SetBinContent(it,nev);
       }
       htru->Write();
       delete htru;
@@ -3247,10 +3243,10 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
     //get the total ereco spectrum
     TH1D * hfull = this->CurrErecoSpectrum(s);
     hfull->Write("ereco_spectrum");
- //      delete hfull;
+    delete hfull;
     //    cout << "Total: " << nsk << endl << endl;
-      oute->Close();
-      delete oute;
+    oute->Close();
+    delete oute;
   }//sample
  
 }
