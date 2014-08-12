@@ -1916,53 +1916,53 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     //**************************** FORWARD HORN CURRENT *******************************
 
     case ( kNuisSuperkEnergyScale     ) : return "f_sk_e_scale";                   break;    
-    case ( kNuisBANFF00               ) : return "f_banff00";      break;
-    case ( kNuisBANFF01               ) : return "f_banff01";      break;
-    case ( kNuisBANFF02               ) : return "f_banff02";      break;
-    case ( kNuisBANFF03               ) : return "f_banff03";      break;
-    case ( kNuisBANFF04               ) : return "f_banff04";      break;
-    case ( kNuisBANFF05               ) : return "f_banff05";      break;
-    case ( kNuisBANFF06               ) : return "f_banff06";      break;
-    case ( kNuisBANFF07               ) : return "f_banff07";      break;
-    case ( kNuisBANFF08               ) : return "f_banff08";      break;
-    case ( kNuisBANFF09               ) : return "f_banff09";      break;
-    case ( kNuisBANFF10               ) : return "f_banff10";      break;
-    case ( kNuisBANFF11               ) : return "f_banff11";      break;
-    case ( kNuisBANFF12               ) : return "f_banff12";      break;
-    case ( kNuisBANFF13               ) : return "f_banff13";      break;
-    case ( kNuisBANFF14               ) : return "f_banff14";      break;
-    case ( kNuisBANFF15               ) : return "f_banff15";      break;
+    case ( kNuisBANFF00               ) : return "f_banff_00";      break;
+    case ( kNuisBANFF01               ) : return "f_banff_01";      break;
+    case ( kNuisBANFF02               ) : return "f_banff_02";      break;
+    case ( kNuisBANFF03               ) : return "f_banff_03";      break;
+    case ( kNuisBANFF04               ) : return "f_banff_04";      break;
+    case ( kNuisBANFF05               ) : return "f_banff_05";      break;
+    case ( kNuisBANFF06               ) : return "f_banff_06";      break;
+    case ( kNuisBANFF07               ) : return "f_banff_07";      break;
+    case ( kNuisBANFF08               ) : return "f_banff_08";      break;
+    case ( kNuisBANFF09               ) : return "f_banff_09";      break;
+    case ( kNuisBANFF10               ) : return "f_banff_10";      break;
+    case ( kNuisBANFF11               ) : return "f_banff_11";      break;
+    case ( kNuisBANFF12               ) : return "f_banff_12";      break;
+    case ( kNuisBANFF13               ) : return "f_banff_13";      break;
+    case ( kNuisBANFF14               ) : return "f_banff_14";      break;
+    case ( kNuisBANFF15               ) : return "f_banff_15";      break;
 #if (BANFF_BINS != 2)
-    case ( kNuisBANFF16               ) : return "f_banff16";      break;
-    case ( kNuisBANFF17               ) : return "f_banff17";      break;
-    case ( kNuisBANFF18               ) : return "f_banff18";      break;
-    case ( kNuisBANFF19               ) : return "f_banff19";      break;
-    case ( kNuisBANFF20               ) : return "f_banff20";      break;
-    case ( kNuisBANFF21               ) : return "f_banff21";      break;
+    case ( kNuisBANFF16               ) : return "f_banff_16";      break;
+    case ( kNuisBANFF17               ) : return "f_banff_17";      break;
+    case ( kNuisBANFF18               ) : return "f_banff_18";      break;
+    case ( kNuisBANFF19               ) : return "f_banff_19";      break;
+    case ( kNuisBANFF20               ) : return "f_banff_20";      break;
+    case ( kNuisBANFF21               ) : return "f_banff_21";      break;
 #endif
 #if BANFF_BINS == 1
-    case ( kNuisBANFF22               ) : return "f_banff22";      break;
-    case ( kNuisBANFF23               ) : return "f_banff23";      break;
-    case ( kNuisBANFF24               ) : return "f_banff24";      break;
+    case ( kNuisBANFF22               ) : return "f_banff_22";      break;
+    case ( kNuisBANFF23               ) : return "f_banff_23";      break;
+    case ( kNuisBANFF24               ) : return "f_banff_24";      break;
 #endif
 
 #ifndef ONEOVERMAQE
-    case ( kNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
+    case ( kNuisBANFFMAQE             ) : return "f_banff_maqe";    break;
 #else
-    case ( kNuisBANFFMAQE             ) : return "f_banff1overmaqe2";  break;
+    case ( kNuisBANFFMAQE             ) : return "f_banff_1overmaqe2";  break;
 #endif
-    case ( kNuisBANFFMARES            ) : return "f_banffmares";   break;
-    case ( kNuisBANFFCCQEE0           ) : return "f_banffccqee0";  break;
+    case ( kNuisBANFFMARES            ) : return "f_banff_mares";   break;
+    case ( kNuisBANFFCCQEE0           ) : return "f_banff_ccqee0";  break;
 #if BANFF_BINS != 3
-    case ( kNuisBANFFCCQEE1           ) : return "f_banffccqee1";  break;
-    case ( kNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
+    case ( kNuisBANFFCCQEE1           ) : return "f_banff_ccqee1";  break;
+    case ( kNuisBANFFCCQEE2           ) : return "f_banff_ccqee2";  break;
 #endif
-    case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
+    case ( kNuisBANFFCC1piE0          ) : return "f_banff_cc1pie0"; break;
 #if BANFF_BINS != 3
-    case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
+    case ( kNuisBANFFCC1piE1          ) : return "f_banff_cc1pie1"; break;
 #endif
 #if (BANFF_BINS != 2)
-    case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
+    case ( kNuisBANFFNC1pi0           ) : return "f_banff_nc1pi0";  break;
 #endif
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
@@ -2032,53 +2032,53 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 
   case ( kRHCNuisSuperkEnergyScale     ) : return "f_sk_e_scale_rhc";   break;
 
-  case ( kRHCNuisBANFF00               ) : return "f_banff00_rhc";      break;
-  case ( kRHCNuisBANFF01               ) : return "f_banff01_rhc";      break;
-  case ( kRHCNuisBANFF02               ) : return "f_banff02_rhc";      break;
-  case ( kRHCNuisBANFF03               ) : return "f_banff03_rhc";      break;
-  case ( kRHCNuisBANFF04               ) : return "f_banff04_rhc";      break;
-  case ( kRHCNuisBANFF05               ) : return "f_banff05_rhc";      break;
-  case ( kRHCNuisBANFF06               ) : return "f_banff06_rhc";      break;
-  case ( kRHCNuisBANFF07               ) : return "f_banff07_rhc";      break;
-  case ( kRHCNuisBANFF08               ) : return "f_banff08_rhc";      break;
-  case ( kRHCNuisBANFF09               ) : return "f_banff09_rhc";      break;
-  case ( kRHCNuisBANFF10               ) : return "f_banff10_rhc";      break;
-  case ( kRHCNuisBANFF11               ) : return "f_banff11_rhc";      break;
-  case ( kRHCNuisBANFF12               ) : return "f_banff12_rhc";      break;
-  case ( kRHCNuisBANFF13               ) : return "f_banff13_rhc";      break;
-  case ( kRHCNuisBANFF14               ) : return "f_banff14_rhc";      break;
-  case ( kRHCNuisBANFF15               ) : return "f_banff15_rhc";      break;
+  case ( kRHCNuisBANFF00               ) : return "f_banff_00_rhc";      break;
+  case ( kRHCNuisBANFF01               ) : return "f_banff_01_rhc";      break;
+  case ( kRHCNuisBANFF02               ) : return "f_banff_02_rhc";      break;
+  case ( kRHCNuisBANFF03               ) : return "f_banff_03_rhc";      break;
+  case ( kRHCNuisBANFF04               ) : return "f_banff_04_rhc";      break;
+  case ( kRHCNuisBANFF05               ) : return "f_banff_05_rhc";      break;
+  case ( kRHCNuisBANFF06               ) : return "f_banff_06_rhc";      break;
+  case ( kRHCNuisBANFF07               ) : return "f_banff_07_rhc";      break;
+  case ( kRHCNuisBANFF08               ) : return "f_banff_08_rhc";      break;
+  case ( kRHCNuisBANFF09               ) : return "f_banff_09_rhc";      break;
+  case ( kRHCNuisBANFF10               ) : return "f_banff_10_rhc";      break;
+  case ( kRHCNuisBANFF11               ) : return "f_banff_11_rhc";      break;
+  case ( kRHCNuisBANFF12               ) : return "f_banff_12_rhc";      break;
+  case ( kRHCNuisBANFF13               ) : return "f_banff_13_rhc";      break;
+  case ( kRHCNuisBANFF14               ) : return "f_banff_14_rhc";      break;
+  case ( kRHCNuisBANFF15               ) : return "f_banff_15_rhc";      break;
 #if (BANFF_BINS != 2)
-  case ( kRHCNuisBANFF16               ) : return "f_banff16_rhc";      break;
-  case ( kRHCNuisBANFF17               ) : return "f_banff17_rhc";      break;
-  case ( kRHCNuisBANFF18               ) : return "f_banff18_rhc";      break;
-  case ( kRHCNuisBANFF19               ) : return "f_banff19_rhc";      break;
-  case ( kRHCNuisBANFF20               ) : return "f_banff20_rhc";      break;
-  case ( kRHCNuisBANFF21               ) : return "f_banff21_rhc";      break;
+  case ( kRHCNuisBANFF16               ) : return "f_banff_16_rhc";      break;
+  case ( kRHCNuisBANFF17               ) : return "f_banff_17_rhc";      break;
+  case ( kRHCNuisBANFF18               ) : return "f_banff_18_rhc";      break;
+  case ( kRHCNuisBANFF19               ) : return "f_banff_19_rhc";      break;
+  case ( kRHCNuisBANFF20               ) : return "f_banff_20_rhc";      break;
+  case ( kRHCNuisBANFF21               ) : return "f_banff_21_rhc";      break;
 #endif
 #if BANFF_BINS == 1
-  case ( kRHCNuisBANFF22               ) : return "f_banff22_rhc";      break;
-  case ( kRHCNuisBANFF23               ) : return "f_banff23_rhc";      break;
-  case ( kRHCNuisBANFF24               ) : return "f_banff24_rhc";      break;
+  case ( kRHCNuisBANFF22               ) : return "f_banff_22_rhc";      break;
+  case ( kRHCNuisBANFF23               ) : return "f_banff_23_rhc";      break;
+  case ( kRHCNuisBANFF24               ) : return "f_banff_24_rhc";      break;
 #endif
 
 #ifndef ONEOVERMAQE
-  case ( kRHCNuisBANFFMAQE             ) : return "f_banffmaqe_rhc";    break;
+  case ( kRHCNuisBANFFMAQE             ) : return "f_banff_maqe_rhc";    break;
 #else
-  case ( kRHCNuisBANFFMAQE             ) : return "f_banff1overmaqe2_rhc";  break;
+  case ( kRHCNuisBANFFMAQE             ) : return "f_banff_1overmaqe2_rhc";  break;
 #endif
-  case ( kRHCNuisBANFFMARES            ) : return "f_banffmares_rhc";   break;
-  case ( kRHCNuisBANFFCCQEE0           ) : return "f_banffccqee0_rhc";  break;
+  case ( kRHCNuisBANFFMARES            ) : return "f_banff_mares_rhc";   break;
+  case ( kRHCNuisBANFFCCQEE0           ) : return "f_banff_ccqee0_rhc";  break;
 #if BANFF_BINS != 3
-  case ( kRHCNuisBANFFCCQEE1           ) : return "f_banffccqee1_rhc";  break;
-  case ( kRHCNuisBANFFCCQEE2           ) : return "f_banffccqee2_rhc";  break;
+  case ( kRHCNuisBANFFCCQEE1           ) : return "f_banff_ccqee1_rhc";  break;
+  case ( kRHCNuisBANFFCCQEE2           ) : return "f_banff_ccqee2_rhc";  break;
 #endif
-  case ( kRHCNuisBANFFCC1piE0          ) : return "f_banffcc1pie0_rhc"; break;
+  case ( kRHCNuisBANFFCC1piE0          ) : return "f_banff_cc1pie0_rhc"; break;
 #if BANFF_BINS != 3
-  case ( kRHCNuisBANFFCC1piE1          ) : return "f_banffcc1pie1_rhc"; break;
+  case ( kRHCNuisBANFFCC1piE1          ) : return "f_banff_cc1pie1_rhc"; break;
 #endif
 #if (BANFF_BINS != 2)
-  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffnc1pi0_rhc";  break;
+  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banff_nc1pi0_rhc";  break;
 #endif
   case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi_rhc";       break;
   case ( kRHCNuisXSecSpecFunc          ) : return "f_specfunc_rhc";     break;
@@ -2725,53 +2725,53 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
 
   case ( kRHCNuisSuperkEnergyScale     ) : return "f_sk_e_scale";                   break;
 
-  case ( kRHCNuisBANFF00               ) : return "f_banff00";      break;
-  case ( kRHCNuisBANFF01               ) : return "f_banff01";      break;
-  case ( kRHCNuisBANFF02               ) : return "f_banff02";      break;
-  case ( kRHCNuisBANFF03               ) : return "f_banff03";      break;
-  case ( kRHCNuisBANFF04               ) : return "f_banff04";      break;
-  case ( kRHCNuisBANFF05               ) : return "f_banff05";      break;
-  case ( kRHCNuisBANFF06               ) : return "f_banff06";      break;
-  case ( kRHCNuisBANFF07               ) : return "f_banff07";      break;
-  case ( kRHCNuisBANFF08               ) : return "f_banff08";      break;
-  case ( kRHCNuisBANFF09               ) : return "f_banff09";      break;
-  case ( kRHCNuisBANFF10               ) : return "f_banff10";      break;
-  case ( kRHCNuisBANFF11               ) : return "f_banff11";      break;
-  case ( kRHCNuisBANFF12               ) : return "f_banff12";      break;
-  case ( kRHCNuisBANFF13               ) : return "f_banff13";      break;
-  case ( kRHCNuisBANFF14               ) : return "f_banff14";      break;
-  case ( kRHCNuisBANFF15               ) : return "f_banff15";      break;
+  case ( kRHCNuisBANFF00               ) : return "f_banff_00";      break;
+  case ( kRHCNuisBANFF01               ) : return "f_banff_01";      break;
+  case ( kRHCNuisBANFF02               ) : return "f_banff_02";      break;
+  case ( kRHCNuisBANFF03               ) : return "f_banff_03";      break;
+  case ( kRHCNuisBANFF04               ) : return "f_banff_04";      break;
+  case ( kRHCNuisBANFF05               ) : return "f_banff_05";      break;
+  case ( kRHCNuisBANFF06               ) : return "f_banff_06";      break;
+  case ( kRHCNuisBANFF07               ) : return "f_banff_07";      break;
+  case ( kRHCNuisBANFF08               ) : return "f_banff_08";      break;
+  case ( kRHCNuisBANFF09               ) : return "f_banff_09";      break;
+  case ( kRHCNuisBANFF10               ) : return "f_banff_10";      break;
+  case ( kRHCNuisBANFF11               ) : return "f_banff_11";      break;
+  case ( kRHCNuisBANFF12               ) : return "f_banff_12";      break;
+  case ( kRHCNuisBANFF13               ) : return "f_banff_13";      break;
+  case ( kRHCNuisBANFF14               ) : return "f_banff_14";      break;
+  case ( kRHCNuisBANFF15               ) : return "f_banff_15";      break;
 #if (BANFF_BINS != 2)
-  case ( kRHCNuisBANFF16               ) : return "f_banff16";      break;
-  case ( kRHCNuisBANFF17               ) : return "f_banff17";      break;
-  case ( kRHCNuisBANFF18               ) : return "f_banff18";      break;
-  case ( kRHCNuisBANFF19               ) : return "f_banff19";      break;
-  case ( kRHCNuisBANFF20               ) : return "f_banff20";      break;
-  case ( kRHCNuisBANFF21               ) : return "f_banff21";      break;
+  case ( kRHCNuisBANFF16               ) : return "f_banff_16";      break;
+  case ( kRHCNuisBANFF17               ) : return "f_banff_17";      break;
+  case ( kRHCNuisBANFF18               ) : return "f_banff_18";      break;
+  case ( kRHCNuisBANFF19               ) : return "f_banff_19";      break;
+  case ( kRHCNuisBANFF20               ) : return "f_banff_20";      break;
+  case ( kRHCNuisBANFF21               ) : return "f_banff_21";      break;
 #endif
 #if BANFF_BINS == 1
-  case ( kRHCNuisBANFF22               ) : return "f_banff22";      break;
-  case ( kRHCNuisBANFF23               ) : return "f_banff23";      break;
-  case ( kRHCNuisBANFF24               ) : return "f_banff24";      break;
+  case ( kRHCNuisBANFF22               ) : return "f_banff_22";      break;
+  case ( kRHCNuisBANFF23               ) : return "f_banff_23";      break;
+  case ( kRHCNuisBANFF24               ) : return "f_banff_24";      break;
 #endif
 
 #ifndef ONEOVERMAQE
-  case ( kRHCNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
+  case ( kRHCNuisBANFFMAQE             ) : return "f_banff_maqe";    break;
 #else
-  case ( kRHCNuisBANFFMAQE             ) : return "f_banff1overmaqe2";  break;
+  case ( kRHCNuisBANFFMAQE             ) : return "f_banff_1overmaqe2";  break;
 #endif
-  case ( kRHCNuisBANFFMARES            ) : return "f_banffmares";   break;
-  case ( kRHCNuisBANFFCCQEE0           ) : return "f_banffccqee0";  break;
+  case ( kRHCNuisBANFFMARES            ) : return "f_banff_mares";   break;
+  case ( kRHCNuisBANFFCCQEE0           ) : return "f_banff_ccqee0";  break;
 #if BANFF_BINS != 3
-  case ( kRHCNuisBANFFCCQEE1           ) : return "f_banffccqee1";  break;
-  case ( kRHCNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
+  case ( kRHCNuisBANFFCCQEE1           ) : return "f_banff_ccqee1";  break;
+  case ( kRHCNuisBANFFCCQEE2           ) : return "f_banff_ccqee2";  break;
 #endif
-  case ( kRHCNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
+  case ( kRHCNuisBANFFCC1piE0          ) : return "f_banff_cc1pie0"; break;
 #if BANFF_BINS != 3
-  case ( kRHCNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
+  case ( kRHCNuisBANFFCC1piE1          ) : return "f_banff_cc1pie1"; break;
 #endif
 #if (BANFF_BINS != 2)
-  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
+  case ( kRHCNuisBANFFNC1pi0           ) : return "f_banff_nc1pi0";  break;
 #endif
   case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi";       break;
   case ( kRHCNuisXSecSpecFunc          ) : return "f_specfunc";     break;
@@ -3165,8 +3165,8 @@ valor::conv::PhysParamId_t
     PhysParamId_t k = (PhysParamId_t) i ;
     string s = util::ToLowerCase(AsStringCompact(k));
     string s2;
-    if (s2.find("f_") == 0) s2 = s.substr(2);
-    else s2 = "gskfgjalkfjgalfkgjadlfj";
+    if (s.find("f_") == 0) s2 = s.substr(2);
+    else s2 = "Bad string";
     if (k != kPhypUndefined && (lsh == s || lsh == s2) ) return k;
   }
   std::cerr<<"util::PhysParamIdFromString >> Unmatched string: "<<sh<<std::endl;
