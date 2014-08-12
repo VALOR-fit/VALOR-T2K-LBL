@@ -552,6 +552,13 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
   cout << "Exp >> Setting systematic parameter: " << systematic 
        << " to value = " << twkdial << endl;
 #endif
+  {
+    PhysParamId_t p = util::PhysParamIdFromString(systematic);
+    if (p!=kPhypUndefined) {
+      this->TweakSystematic(p, twkdial);
+      return;
+    }
+  }
 
 //
 // Valid systematic parameter names:
