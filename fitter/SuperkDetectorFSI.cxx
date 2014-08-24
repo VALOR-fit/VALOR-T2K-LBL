@@ -265,11 +265,12 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
+#ifdef __MULTIRING_FHC_RUNNING__
+
 #ifdef __show_init_mesg_info__
   cout << "Exp/SuperkDetectorFSI >> Reading MultiRing SuperkDetector+FSI inputs from input XML file." << endl;
 #endif
 
-  
   ///////////////////////////////////////////////////////////////
   //                                                           //
   // N.B. SAME COVARIANCE MATRIX FOR FHC AND MULTIRING SAMPLES //
@@ -346,6 +347,8 @@ bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_nod
 #endif
 
   return true;  
+
+#endif
 }
 ////
 
