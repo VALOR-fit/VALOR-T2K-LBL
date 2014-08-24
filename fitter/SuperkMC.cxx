@@ -291,9 +291,12 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
   // Get data POT FHC MultiRing
   // 
+
+#ifdef __MULTIRING_FHC_RUNNING__
   fPOTMultiRing = util::XML2Dbl(xml,root_node,"data_pot/superk/multiring_fhc");
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> " << "POT_{data} (MultiRing) = " << fPOTMultiRing << endl;
+#endif
 #endif
   ///
   
@@ -328,18 +331,19 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuE ->GetBinContent(2) / fMCPOTHistRHCOscNuE ->GetBinContent(1);
 
   // NEW MULTIRING
+#ifdef __MULTIRING_FHC_RUNNING__
   fMCPOTHistMultiRingNuMu    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
   fMCPOTHistMultiRingNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
   fMCPOTHistMultiRingNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
   fMCPOTHistMultiRingNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
   fMCPOTHistMultiRingOscNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
-
+  
   fMCPOTMultiRingNuMu    = fMCPOTHistMultiRingNuMu   ->GetBinContent(2) / fMCPOTHistMultiRingNuMu   ->GetBinContent(1);
   fMCPOTMultiRingNuMuBar = fMCPOTHistMultiRingNuMuBar->GetBinContent(2) / fMCPOTHistMultiRingNuMuBar->GetBinContent(1);
   fMCPOTMultiRingNuE     = fMCPOTHistMultiRingNuE    ->GetBinContent(2) / fMCPOTHistMultiRingNuE    ->GetBinContent(1);
   fMCPOTMultiRingNuEBar  = fMCPOTHistMultiRingNuEBar ->GetBinContent(2) / fMCPOTHistMultiRingNuEBar ->GetBinContent(1);
   fMCPOTMultiRingOscNuE  = fMCPOTHistMultiRingOscNuE ->GetBinContent(2) / fMCPOTHistMultiRingOscNuE ->GetBinContent(1);
-
+#endif
   ////
   
   for(int is = 0; is < kns; is++) {
@@ -376,11 +380,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTRHCOscNuE  << endl;
 
   // NEW MULTIRING 
+#ifdef __MULTIRING_FHC_RUNNING__
   cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTMultiRingNuMu    << endl;
   cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTMultiRingNuMuBar << endl;
   cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTMultiRingNuE     << endl;
   cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTMultiRingNuEBar  << endl;
   cout << "MultiRing: Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTMultiRingOscNuE  << endl;
+#endif
   ////
 
   for(int is = 0; is < kns; is++) {
