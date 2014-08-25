@@ -151,7 +151,9 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   if ( ! this->GetSuperkDetectorFSI() -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkDetectorFSI() -> ReadRHC (xml, root_node) ) return false;
   /// NEW MULTIRING 2
+#ifdef __MULTIRING_FHC_RUNNING__
   if ( ! this->GetSuperkDetectorFSI() -> ReadMultiRing (xml, root_node) ) return false; /// Take same cov. matrix of FHC sample
+#endif
   ///
   if ( ! this->GetSuperkMC         () -> Read (xml, root_node) ) return false;
 
@@ -621,7 +623,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
   //
   // SK detector systematics
   //
-
+  
   if(systematic == "sk_energy_scale") {
     this->GetSuperkDetectorFSI()->TweakEnergyScale(twkdial);
   }
