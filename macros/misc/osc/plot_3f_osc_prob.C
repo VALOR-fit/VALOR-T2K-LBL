@@ -23,16 +23,22 @@ void plot_3f_osc_prob
   double       dm23sq     = -99,                            /* */
   double       mixing12   = -99,                            /* */
   double       mixing13   = -99,                            /* */
-  double       deltacp    = -99,                            /* */
-  double       dm12sq     = -99                             /* */
-)
+
+  double       deltacp    = +1.5,                            /* */
+  //double       deltacp    = -99,                            /* */
+
+  double       dm12sq     = -99,                             /* */
+
+  const char * hierarchy           = "normal",                              /* normal or inverted */
+ )
 {
   using namespace std;
   using namespace valor;
 
   // Global options
   Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
+  
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
 
   if(mixing13 < -1) mixing13 = conv::kGlobFitSinsq2Theta13;
   if(mixing23 < -1) mixing23 = conv::kGlobFitSinsq2Theta23;
@@ -103,11 +109,16 @@ void plot_3f_osc_prob
   TGraph * g_numu_nue        = new TGraph(nbins, binning, p_numu_nue);
 
   //Draw
-  new TCanvas(); g_numu_numu->Draw("LPA");
-  new TCanvas(); g_numubar_numubar->Draw("LPA");
-  new TCanvas(); g_nue_nue->Draw("LPA");
-  new TCanvas(); g_nuebar_nuebar->Draw("LPA");
-  new TCanvas(); g_numu_nue->Draw("LPA");
+  TCanvas *c_numu_numu = new TCanvas("c_numu_numu","c_numu_numu"); 
+  g_numu_numu->Draw("LPA");
+  TCanvas *c_numubar_numubar = new TCanvas("c_numubar_numubar","c_numubar_numubar");
+  g_numubar_numubar->Draw("LPA");
+  TCanvas *c_nue_nue = new TCanvas("c_nue_nue","c_nue_nue"); 
+  g_nue_nue->Draw("LPA");
+  TCanvas *c_nuebar_nuebar = new TCanvas("c_nuebar_nuebar","c_nuebar_nuebar"); 
+  g_nuebar_nuebar->Draw("LPA");
+  TCanvas *c_numu_nue = new TCanvas("c_numu_nue","c_numu_nue"); 
+  g_numu_nue->Draw("LPA");
 
   //Save
   g_numu_numu      ->Write("g_numu_numu");
