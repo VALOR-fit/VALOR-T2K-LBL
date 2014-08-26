@@ -12,7 +12,9 @@ void make_toygrid_toys_joint
  //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
  //const char * xmlfile = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                 /* input XML file with toy MC experiments */
  
- const char * tag = "prova",                                                    /* */
+ //const char * tag = "prova_fewfits_MultiRing_FHCMC",                                                    /* */
+ const char * tag = "prova_Asimov",                                                    /* */
+
  int          run = 0,                                                    /* */
  int          first_experiment = 0,                                   /* */
  int          last_experiment  = 0,                                   /* */
@@ -28,17 +30,20 @@ void make_toygrid_toys_joint
  int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
  bool         using_xml_file      = false,                                   /* if false, skobs reads xmlfile as a root file */
 
- //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+ const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
- const char * config_file        = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
+ //const char * config_file        = "analysis_configuration_test_multiring.xml",   /* analysis configuration file */
+ //const char * config_file        = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
 
  const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
  //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
- 
+ //const char * fit_option = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",
+ //const char * fit_option = "nuosc3f_numudisapp_nuis3fixdcp",
+  
  //const char * fit_option       = "minuit+hesse",                            /* fitter option */
  const char * fit_option       = "minuit",                            /* fitter option */
- 
+
  bool         store_toy_expts         = false,                         /* disable this if you don't want to store the toy MC expts     */
  bool         store_bestfit_spectrum  = false,                         /* disable this if you don't want to store the best-fit spectra */
  
@@ -57,12 +62,12 @@ void make_toygrid_toys_joint
  const char * param2                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  const char * param3                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  
- int          nbins_tot_param1            = 3,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int          nbins_tot_param1            = 51,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int          nbins_tot_param2            = 1,                              /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int          nbins_tot_param3            = 1,                              /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
 
  int          min_bin_param1          = 1,                                /* minimum bin for param1 */
- int          max_bin_param1          = 3,                                /* maximum bin for param1 */
+ int          max_bin_param1          = 51,                                /* maximum bin for param1 */
  int          min_bin_param2          = 1,                                /* minimum bin for param2 */
  int          max_bin_param2          = 1,                                  /* maximum bin for param2 */
  int          min_bin_param3          = 1,                                /* minimum bin for param2 */
@@ -937,7 +942,8 @@ void make_toygrid_toys_joint
 	  if(param1!="none"){
 	    double x = fparm1->CurrValue(p1);
 	    double y = fparm1->CurrValue(p2);
-	    int bin = hLike1D->FindBin(x+conv::kASmallNum,y+conv::kASmallNum);
+	    //int bin = hLike1D->FindBin(x+conv::kASmallNum,y+conv::kASmallNum);
+	    int bin = hLike1D->FindBin(x+conv::kASmallNum);
 	    hLike1D->SetBinContent(bin,chisq);
 	  }
 	  if(param1!="none" && param2!="none"){
