@@ -1194,7 +1194,7 @@ PhysParamList SuperkExpectation::Tweaks(void)
 #endif // FSI_BINS=1
 
 
-
+#ifdef __MULTIRING_FHC_RUNNING__
   /// NEW MULTIRING 2
   
   // MULTIRING FHC
@@ -1241,6 +1241,8 @@ PhysParamList SuperkExpectation::Tweaks(void)
 #endif
 #endif // FSI_BINS=1
   ///
+  
+#endif // MULTIRING FHC
 
   return pl;
 }
