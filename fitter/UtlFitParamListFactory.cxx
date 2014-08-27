@@ -290,7 +290,7 @@ FitParamList * util::NamedParameterList(string name)
         fp -> FixParameter (kPhypMixing12      );
         fp -> FixParameter (kPhypDm12sq        );
         fp -> SetParListName(name);
-        fp -> SetSystMode(1);//future oscillation
+        fp -> SetSystMode(2);//RHC banff 
         return fp;
     }
   
@@ -947,7 +947,7 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
         double bf = BANFFBestFit[i];
         double err = sqrt(BANFFCov[i][i]);
         double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
-        fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true);
+        fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true,AsString(p));
     }
     
 }
