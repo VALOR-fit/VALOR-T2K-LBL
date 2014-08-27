@@ -31,6 +31,18 @@ Split valor::conv namespace into several smaller files
 #define __FULLY_CORRELATED__
 #endif
 
+#ifndef __BANFF_UNCORRELATED__
+//#define __BANFF_UNCORRELATED__
+#endif
+
+#ifndef SWAP_RHC_NUMU_NUMUBAR_ERRORS
+//#define SWAP_RHC_NUMU_NUMUBAR_ERRORS
+#endif
+
+#ifndef NEW_RHC_BANFF
+//#define NEW_RHC_BANFF //1.06* fhc error
+#endif
+
 /// NEW MULTIRING 2
 #ifndef __FULLY_CORRELATED_MULTIRING__ // multiring-fhc samples
 //#define __FULLY_CORRELATED_MULTIRING__
