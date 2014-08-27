@@ -283,7 +283,7 @@ FitParamList * util::NamedParameterList(string name)
     if(name == "nuosc3f_dcpsensitivity_HK") {
         FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams + kNumOfParamsInBANFFfit);
         AppendAllSuperkDetectorFSISystematics      (fp, 6);
-        AppendAllUncorrelatedXSecSystematics       (fp, 6 + kNumOfSKDetFSIParams);
+        AppendAllUncorrelatedXSecSystematics       (fp, 6 + kNumOfSKDetFSIParams+1);
         AppendAllCorrelatedBANFFSystematics        (fp,6 + kNumOfSKDetFSIParams + kNumOfUncXSecSyst);
         AppendAllCorrelatedBANFFSystematicsRHC     (fp,6 + kNumOfSKDetFSIParams + kNumOfUncXSecSyst + kNumOfParamsInBANFFfit);
         fp -> SetNuisance  (kPhypMixing13, true);
