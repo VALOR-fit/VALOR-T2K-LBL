@@ -1273,7 +1273,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
   //below is what it used to do - check that every single systematic parameter exists in the fit,
   // and only then tweak
   //FitParamList has a 'SystMode', which tells you which parameters are being fit - use this instead!
-  if(fp.GetSystMode() == 1) {
+  if(fp.GetSystMode() == 1 || fp.GetSystMode() == 3) {
     //energy scale
     if(fp.Exists(kNuisSuperkEnergyScale)) {
       double twk = fp.CurrValue(kNuisSuperkEnergyScale);
@@ -1463,7 +1463,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     //Also that FHC and RHC can have different numbers of parameters 
     this->GetBANFF()->Tweak(true,&twkvBANFF);
       
-      if(fp.GetSystMode() == 2){
+      if(fp.GetSystMode() == 3){
       TVectorD twkvBANFF(nbanff);
       for(int ip = 0; ip < nbanff; ip++) {
           PhysParamId_t p = PhysParamId_t ((int) kRHCNuisBANFF00 + ip);

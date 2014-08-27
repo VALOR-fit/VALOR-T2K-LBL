@@ -290,7 +290,7 @@ FitParamList * util::NamedParameterList(string name)
         fp -> FixParameter (kPhypMixing12      );
         fp -> FixParameter (kPhypDm12sq        );
         fp -> SetParListName(name);
-        fp -> SetSystMode(2);//RHC banff 
+        fp -> SetSystMode(3);//RHC banff
         return fp;
     }
   
