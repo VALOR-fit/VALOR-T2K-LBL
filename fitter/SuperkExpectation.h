@@ -1,4 +1,4 @@
- //____________________________________________________________________________
+//____________________________________________________________________________
 /*!
 
 \class    valor::SuperkExpectation
@@ -94,6 +94,7 @@ public:
    //                     best_banff refers to whether to use bestfit or param=1 when fitting a single banff parameter
    void TweakAllSystematics                       (void) {RandomizeSystematics();}
    void TweakAllBANFFSystematics                  (void);           ///< random variation of all BANFF systematics
+   void TweakAllRHCBANFFSystematics               (void);           ///< random variation of all BANFF systematics
    void TweakAllUncorrelatedXSecSystematics       (void);           ///< random variation of all Uncorrelated XSec systematics
    void TweakAllSKDetectorFSISystematics          (void);           ///< random variation of all SK Detector systematics
    /// NEW MULTIRING 2

@@ -13,7 +13,7 @@ Added samples for multiring forward horn current
 //________________________________________________________________________________________
 
 #define __show_syst_reset_mesg__
-//#define __show_syst_tweak_mesg__
+#define __show_syst_tweak_mesg__
 //#define __show_syst_tweak_debug__
 
 #include <cassert>
@@ -554,13 +554,16 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
   cout << "Exp >> Setting systematic parameter: " << systematic 
        << " to value = " << twkdial << endl;
 #endif
-  {
+
+ {
     PhysParamId_t p = util::PhysParamIdFromString(systematic);
     if (p!=kPhypUndefined) {
-      this->TweakSystematic(p, twkdial);
+      if(best_banff) this->TweakSystematic(p, twkdial,"best_banff");
+      else this->TweakSystematic(p, twkdial);
       return;
     }
   }
+  
 
 //
 // Valid systematic parameter names:
@@ -612,11 +615,11 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 //    - xsec_shape_ccoth
 //    - xsec_pilessdelta
 //    - xsec_bindE
-//    - xsec_norm_cccoh
-//    - xsec_norm_nc1piC
-//    - xsec_norm_ncoth
-//    - xsec_norm_nuetonumu
-//    - xsec_norm_antinutonu
+//    - norm_cccoh
+//    - norm_nc1piC
+//    - norm_ncoth
+//    - norm_nuetonumu
+//    - norm_antinutonu
 //
 
 
@@ -624,14 +627,14 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
   // SK detector systematics
   //
   
-  if(systematic == "sk_energy_scale") {
+  if(systematic == "sk_e_scale") {
     this->GetSuperkDetectorFSI()->TweakEnergyScale(twkdial);
   }
-  else if(systematic == "sk_energy_scale_rhc") {
+  else if(systematic == "sk_e_scale_rhc") {
     this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twkdial);
   }
   /// NEW MULTIRING 3
-  else if(systematic == "sk_energy_scale_multiring") {
+  else if(systematic == "sk_e_scale_multiring") {
     this->GetSuperkDetectorFSI()->TweakMultiRingEnergyScale(twkdial);
   }
   ///
@@ -653,7 +656,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
   }
   ///
   // tweak an individual FSI parameter (ignores correlations, debug)
-  else if(systematic.find("skdetfsi_") != string::npos) {
+  else if(systematic.find("skdetfsi") != string::npos) {
     bool is_rhc = systematic.find("rhc") != string::npos;
     /// NEW MULTIRING 2
     bool is_multiring = systematic.find("multiring") != string::npos;
@@ -674,7 +677,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
     }
     for (int ip = 0; ip < nskdetfsi; ip++) {
       if(is_rhc) {
-        if(systematic == Form("skdetfsi_%03i_rhc",ip)) {
+        if(systematic == Form("skdetfsi%03i_rhc",ip)) {
           twkv[ip]=twkdial;
           this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
           found = true;
@@ -685,7 +688,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 
       /// NEW MULTIRING 2
       if(is_multiring) {
-        if(systematic == Form("skdetfsi_%03i_multiring",ip)) {
+        if(systematic == Form("skdetfsi%03i_multiring",ip)) {
           twkv[ip]=twkdial;
           this->GetSuperkDetectorFSI()->TweakMultiRing(true,&twkv);
           found = true;
@@ -696,7 +699,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 
 
       else {
-        if(systematic == Form("skdetfsi_%03i",ip)) {
+        if(systematic == Form("skdetfsi%03i",ip)) {
           twkv[ip]=twkdial;
           this->GetSuperkDetectorFSI()->Tweak(true,&twkv);
           found = true;
@@ -726,7 +729,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else
-  if(systematic.find("banff_") != string::npos) {
+  if(systematic.find("banff") != string::npos) {
     bool is_rhc = systematic.find("rhc") != string::npos;
     if(is_rhc) {
       const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
@@ -776,69 +779,69 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
   // XSec
   //
   
-  else if(systematic == "xsec_pf")
+  else if(systematic == "pfermi")
     this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , twkdial);
-  else if(systematic == "xsec_sf")
+  else if(systematic == "specfunc")
     this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , twkdial);
-  else if(systematic == "xsec_wshape")
+  else if(systematic == "wshape")
     this->GetNuXSec()->Tweak(kNuisXSecWshape        , twkdial);
-  else if(systematic == "xsec_shape_ccoth")
+  else if(systematic == "shapeccoth")
     this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , twkdial);
-  else if(systematic == "xsec_pilessdelta")
+  else if(systematic == "pilessdelta")
     this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , twkdial);
 #ifndef __NUEONLY__
-  else if(systematic == "xsec_bindE")
+  else if(systematic == "bindE")
     this->GetNuXSec()->Tweak(kNuisXSecBindE         , twkdial);
 #endif
-  else if(systematic == "xsec_norm_cccoh")
+  else if(systematic == "norm_cccoh")
     this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , twkdial);
 #ifndef __NUMUONLY__
-  else if(systematic == "xsec_norm_nccoh")
+  else if(systematic == "norm_nccoh")
     this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , twkdial);
 #endif
 #ifndef __NUEONLY__
-  else if(systematic == "xsec_norm_nc1piC")
+  else if(systematic == "norm_nc1piC")
     this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , twkdial);
 #endif
-  else if(systematic == "xsec_norm_ncoth")
+  else if(systematic == "norm_ncoth")
     this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , twkdial);
-  else if(systematic == "xsec_norm_nuetonumu")
+  else if(systematic == "norm_nuetonumu")
     this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , twkdial);
 #ifndef __NUEONLY__
-  else if(systematic == "xsec_norm_antinutonu")
+  else if(systematic == "norm_antinutonu")
     this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, twkdial);
 #endif
 
-  else if(systematic == "xsec_pf_rhc")
+  else if(systematic == "pfermi_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecFermiMom      , twkdial);
-  else if(systematic == "xsec_sf_rhc")
+  else if(systematic == "specfunc_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecSpecFunc      , twkdial);
-  else if(systematic == "xsec_wshape_rhc")
+  else if(systematic == "wshape_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecWshape        , twkdial);
-  else if(systematic == "xsec_shape_ccoth_rhc")
+  else if(systematic == "shapeccoth_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecShapeCCoth    , twkdial);
-  else if(systematic == "xsec_pilessdelta_rhc")
+  else if(systematic == "pilessdelta_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecPiLessDelta   , twkdial);
 #ifndef __NUEONLY__
-  else if(systematic == "xsec_bindE_rhc")
+  else if(systematic == "bindE_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecBindE         , twkdial);
 #endif
-  else if(systematic == "xsec_norm_cccoh_rhc")
+  else if(systematic == "norm_cccoh_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecNormCCcoh     , twkdial);
 #ifndef __NUMUONLY__
-  else if(systematic == "xsec_norm_nccoh_rhc")
+  else if(systematic == "norm_nccoh_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCcoh     , twkdial);
 #endif
 #ifndef __NUEONLY__
-  else if(systematic == "xsec_norm_nc1piC_rhc")
+  else if(systematic == "norm_nc1piC_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecNormNC1piC    , twkdial);
 #endif
-  else if(systematic == "xsec_norm_ncoth_rhc")
+  else if(systematic == "norm_ncoth_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCoth     , twkdial);
-  else if(systematic == "xsec_norm_nuetonumu_rhc")
+  else if(systematic == "norm_nuetonumu_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecNormNuEToNuMu , twkdial);
 #ifndef __NUEONLY__
-  else if(systematic == "xsec_norm_antinutonu_rhc")
+  else if(systematic == "norm_antinutonu_rhc")
     this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, twkdial);
 #endif
 
@@ -858,7 +861,7 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
   cout << "Exp >> Setting systematic parameter: " << util::AsString(p) 
        << " to value = " << twkdial << endl;
 #endif
-
+    
   if(p == kNuisSuperkEnergyScale) {
     this->GetSuperkDetectorFSI()->TweakEnergyScale(twkdial);
   }
@@ -1012,9 +1015,15 @@ void SuperkExpectation::RandomizeSystematics(void)
   this->GetBANFF() ->SyncRHCToFHCSystematics();
   this->GetSuperkDetectorFSI()->SyncRHCToFHCSystematics();   
   #else
+  #ifdef __BANFF_UNCORRELATED__
+  this->TweakAllRHCBANFFSystematics();
+  this->GetNuXSec()->SyncRHCToFHCSystematics();
+  this->GetSuperkDetectorFSI()->SyncRHCToFHCSystematics();
+  #else
   this->TweakAllRHCBANFFSystematics();
   this->TweakAllRHCUncorrelatedXSecSystematics();
   this->TweakAllRHCSKDetectorFSISystematics();
+  #endif
   #endif
 #endif
   
@@ -1032,14 +1041,24 @@ void SuperkExpectation::RandomizeSystematics(void)
 #endif//HKHACK
 }
 //________________________________________________________________________________________
-void SuperkExpectation::TweakAllBANFFSystematics(void)
+void SuperkExpectation::TweakAllRHCBANFFSystematics(void)
 {
 #ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all BANFF systematic params (correlated)" << endl;
+  cout << "Exp >> Generating random variations of all RHC BANFF systematic params (correlated)" << endl;
 #endif
 
   // BANFF
-  this->GetBANFF()->Tweak(false,0); // <-- Cholesky method
+  this->GetBANFF()->TweakRHC(false,0); // <-- Cholesky method
+}
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllBANFFSystematics(void)
+{
+#ifdef __show_syst_tweak_mesg__
+    cout << "Exp >> Generating random variations of all BANFF systematic params (correlated)" << endl;
+#endif
+    
+    // BANFF
+    this->GetBANFF()->Tweak(false,0); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
@@ -1502,10 +1521,10 @@ double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
 #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
   double dchisq_penalty_skdetfsi = fSuperkDetectorFSI->ChisqPenalty() + fSuperkDetectorFSI->RHCChisqPenalty() ;
   
-#if defined(__FULLY_CORRELATED__) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+#if (defined(__FULLY_CORRELATED__) || defined(__BANFF_UNCORRELATED__)) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
   dchisq_penalty_skdetfsi /= 2.;
 #endif
-
+    
   chisq_penalty += dchisq_penalty_skdetfsi;
 #ifdef __show_contributions_to_penalty_term__
   cout << "FitInputs::GetFitStatisticPenalty >> Current SK+FSI param variation"
