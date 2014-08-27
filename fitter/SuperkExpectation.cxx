@@ -1462,8 +1462,18 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     //Todo: fix this so that FHC and RHC can have different tweaks
     //Also that FHC and RHC can have different numbers of parameters 
     this->GetBANFF()->Tweak(true,&twkvBANFF);
-    this->GetBANFF()->TweakRHC(true,&twkvBANFF);
+      
+      if(fp.GetSystMode() == 2){
+      TVectorD twkvBANFF(nbanff);
+      for(int ip = 0; ip < nbanff; ip++) {
+          PhysParamId_t p = PhysParamId_t ((int) kRHCNuisBANFF00 + ip);
+          twkvBANFF[ip] = fp.CurrValue(p);
+      }
+      this->GetBANFF()->TweakRHC(true,&twkvBANFF);
+      }
+      else this->GetBANFF()->TweakRHC(true,&twkvBANFF);
 
+          
     // Cross-section systematics (other than BANFF ones)
     for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
       PhysParamId_t p = kListOfXSecSyst[ip];
