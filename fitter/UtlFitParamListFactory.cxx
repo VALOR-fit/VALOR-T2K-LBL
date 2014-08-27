@@ -284,8 +284,8 @@ FitParamList * util::NamedParameterList(string name)
         FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams + kNumOfParamsInBANFFfit);
         AppendAllSuperkDetectorFSISystematics      (fp, 6);
         AppendAllUncorrelatedXSecSystematics       (fp, 6 + kNumOfSKDetFSIParams+1);
-        AppendAllCorrelatedBANFFSystematics        (fp,6 + kNumOfSKDetFSIParams + kNumOfUncXSecSyst);
-        AppendAllCorrelatedBANFFSystematicsRHC     (fp,6 + kNumOfSKDetFSIParams + kNumOfUncXSecSyst + kNumOfParamsInBANFFfit);
+        AppendAllCorrelatedBANFFSystematics        (fp,6 + kNumOfSKDetFSIParams+1 + kNumOfUncXSecSyst);
+        AppendAllCorrelatedBANFFSystematicsRHC     (fp,6 + kNumOfSKDetFSIParams+1 + kNumOfUncXSecSyst + kNumOfParamsInBANFFfit);
         fp -> SetNuisance  (kPhypMixing13, true);
         fp -> FixParameter (kPhypMixing12      );
         fp -> FixParameter (kPhypDm12sq        );
