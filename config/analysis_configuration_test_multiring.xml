@@ -11,13 +11,13 @@
   <data_pot>
      <superk> 
        <fhc>
-        6.5700e+20
+        1.00e+23
        </fhc>
        <multiring_fhc>
-        6.5700e+20
+        0.00e+20
        </multiring_fhc>
        <rhc>
-        0
+        3.0e+23
        </rhc>       
      </superk> 
   </data_pot>
