@@ -234,7 +234,11 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   // Get BANFF fit covariance matrix
 #if BANFF_BINS == 1
-  fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+#ifdef NEW_RHC_BANFF
+    fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff_rhc/covariance_matrix");
+#else
+    fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+#endif
 #elif BANFF_BINS == 2
   fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
 #elif BANFF_BINS == 3
