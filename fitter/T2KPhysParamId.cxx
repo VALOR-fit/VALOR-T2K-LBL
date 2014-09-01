@@ -1915,7 +1915,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 
     //**************************** FORWARD HORN CURRENT *******************************
 
-    case ( kNuisSuperkEnergyScale     ) : return "f_sk_e_scale";                   break;    
+    case ( kNuisSuperkEnergyScale     ) : return "f_sk_e_scale";    break;    
     case ( kNuisBANFF00               ) : return "f_banff_00";      break;
     case ( kNuisBANFF01               ) : return "f_banff_01";      break;
     case ( kNuisBANFF02               ) : return "f_banff_02";      break;

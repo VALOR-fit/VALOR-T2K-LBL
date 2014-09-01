@@ -24,20 +24,10 @@
 #include <TSpline.h>
 #include <TFile.h>
 
+#include "Binning.h"
 #include "Conventions.h"
 #include "Enumerations.h"
 #include "Utilities.h"
-
-using valor::conv::kns;
-using valor::conv::knm;
-using valor::conv::knwspl1Rmu;
-using valor::conv::knwspl1Re;
-using valor::conv::kRHCnwspl1Rmu;
-using valor::conv::kRHCnwspl1Re;
-/// NEW MULTIRING
-using valor::conv::knwsplMultiRmu;
-using valor::conv::knwsplMultiRe;
-////
 
 namespace valor {
 
@@ -60,18 +50,18 @@ public:
   // Tweak systematic parameters held in this object.
   // Note: BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 
   // correlated with the flux systematic params.
-  void TweakFermiMom      (double twkdial) { fFermiMomTwkDial      = twkdial; }
-  void TweakSpecFunc      (double twkdial) { fSpecFuncTwkDial      = twkdial; }
-  void TweakWshape        (double twkdial) { fWshapeTwkDial        = twkdial; }
-  void TweakShapeCCoth    (double twkdial) { fShapeCCothTwkDial    = twkdial; }
-  void TweakPiLessDelta   (double twkdial) { fPiLessDeltaTwkDial   = twkdial; }
-  void TweakBindE         (double twkdial) { fBindETwkDial         = twkdial; }
-  void TweakNormCCcoh     (double twkdial) { fNormCCcohTwkDial     = twkdial; }
-  void TweakNormNC1piC    (double twkdial) { fNormNC1piCTwkDial    = twkdial; }
-  void TweakNormNCcoh     (double twkdial) { fNormNCcohTwkDial     = twkdial; }
-  void TweakNormNCoth     (double twkdial) { fNormNCothTwkDial     = twkdial; }
-  void TweakNormNuEToNuMu (double twkdial) { fNormNuEToNuMuTwkDial = twkdial; }
-  void TweakNormAntiNuToNu(double twkdial) { fNormAntiNuToNuTwkDial= twkdial; }
+  void TweakFermiMom         (double twkdial) { fFermiMomTwkDial         = twkdial; }
+  void TweakSpecFunc         (double twkdial) { fSpecFuncTwkDial         = twkdial; }
+  void TweakWshape           (double twkdial) { fWshapeTwkDial           = twkdial; }
+  void TweakShapeCCoth       (double twkdial) { fShapeCCothTwkDial       = twkdial; }
+  void TweakPiLessDelta      (double twkdial) { fPiLessDeltaTwkDial      = twkdial; }
+  void TweakBindE            (double twkdial) { fBindETwkDial            = twkdial; }
+  void TweakNormCCcoh        (double twkdial) { fNormCCcohTwkDial        = twkdial; }
+  void TweakNormNC1piC       (double twkdial) { fNormNC1piCTwkDial       = twkdial; }
+  void TweakNormNCcoh        (double twkdial) { fNormNCcohTwkDial        = twkdial; }
+  void TweakNormNCoth        (double twkdial) { fNormNCothTwkDial        = twkdial; }
+  void TweakNormNuEToNuMu    (double twkdial) { fNormNuEToNuMuTwkDial    = twkdial; }
+  void TweakNormAntiNuToNu   (double twkdial) { fNormAntiNuToNuTwkDial   = twkdial; }
   void TweakRHCFermiMom      (double twkdial) { fRHCFermiMomTwkDial      = twkdial; }
   void TweakRHCSpecFunc      (double twkdial) { fRHCSpecFuncTwkDial      = twkdial; }
   void TweakRHCWshape        (double twkdial) { fRHCWshapeTwkDial        = twkdial; }
@@ -111,7 +101,7 @@ public:
   void TellMeAboutTheRHCBANFFfit(BANFF * banff);
 
   //
-  void BuildXsBinningMCTemplates(TH2D* input_mctempl_array[kns][knm]);
+  void BuildXsBinningMCTemplates(TH2D* input_mctempl_array[valor::conv::kns][valor::conv::knm]);
 
   //
   TH2D * Template(conv::SuperkSample_t s, conv::SuperkMode_t m) const;
@@ -167,17 +157,18 @@ private:
   //
 
   BANFF *     fBANFF;               ///< BANFF fit info
-  TSpline3 *  fXSecWghtSpl1Rmu[knwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
-  TSpline3 *  fXSecWghtSpl1Re[knwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
-  TSpline3 *  fRHCXSecWghtSpl1Rmu[kRHCnwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
-  TSpline3 *  fRHCXSecWghtSpl1Re[kRHCnwspl1Re]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fXSecWghtSpl1Rmu   [conv::knwspl1Rmu];    ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fXSecWghtSpl1Re    [conv::knwspl1Re];     ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fRHCXSecWghtSpl1Rmu[conv::kRHCnwspl1Rmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fRHCXSecWghtSpl1Re [conv::kRHCnwspl1Re];  ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
 
   /// NEW MULTIRING
-  TSpline3 *  fXSecWghtSplMultiRmu[knwsplMultiRmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
-  TSpline3 *  fXSecWghtSplMultiRe[knwsplMultiRe]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fXSecWghtSplMultiRmu[conv::knwsplMultiRmu]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  TSpline3 *  fXSecWghtSplMultiRe [conv::knwsplMultiRe]; ///< Weight splines. Index is function of sample, mode, systematic param, Ereco bin, Etrue bin
+  
   ////
 
-  TH2D *      fXsBinningTempl[kns][knm]; ///< Ereco-Etrue templates in XSec binning scheme
+  TH2D *      fXsBinningTempl[conv::kns][conv::knm]; ///< Ereco-Etrue templates in XSec binning scheme
 
   // tweaking dials
   double fFermiMomTwkDial;
@@ -229,7 +220,7 @@ private:
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
-ClassDef(NuXSec, 4);
+ClassDef(NuXSec, 5);
 };
 
 } // valor

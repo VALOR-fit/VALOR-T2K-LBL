@@ -29,9 +29,6 @@
 #include "Conventions.h"
 #include "Utilities.h"
 
-using valor::conv::kns;
-using valor::conv::knm;
-
 namespace valor {
 
 class SuperkDetectorFSI: public TObject

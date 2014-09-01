@@ -602,6 +602,10 @@ double SuperkDetectorFSI::OneSigmaError(PhysParamId_t p) const
     return 1;
   const TMatrixD & cov = *fCovMtrx;
   int idx = arr_index->SKDetFSISystIdx(p);
+  if (idx == -1) {
+    std::cerr<<"SuperkDetectorFSI/OneSigmaError >> Failed for "<<util::AsString(p)<<std::endl;
+    return 1;
+  }
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
@@ -611,6 +615,10 @@ double SuperkDetectorFSI::RHCOneSigmaError(PhysParamId_t p) const
     return 1;
   const TMatrixD & cov = *fRHCCovMtrx;
   int idx = arr_index->RHCSKDetFSISystIdx(p);
+  if (idx == -1) {
+    std::cerr<<"SuperkDetectorFSI/RHCOneSigmaError >> Failed for "<<util::AsString(p)<<std::endl;
+    return 1;
+  }
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
@@ -1821,10 +1829,6 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
     apply = conv::kSKDetFSIParamToSKMode[idxRing][im][idx]; 
   }
   ///
-
-
-
-
 
 
 #ifdef __show_skdetfsi_applysyst_mesg_debug__

@@ -28,7 +28,6 @@ class TObjArray;
 #include "SuperkExpectation.h"
 
 using std::string;
-using valor::conv::kns;
 
 namespace valor {
 
