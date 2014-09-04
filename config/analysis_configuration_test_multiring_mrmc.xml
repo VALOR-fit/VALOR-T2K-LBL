@@ -156,21 +156,23 @@
 
            <multi_mu_ring>
              <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-	     <!-- <filename>   test/sk14a_nRmu.root  </filename> -->
-	     <!-- <filename>   test/sk13a_nRmu.root  </filename> --> 
-	     <filename>   test/sk13a_nRnumuCC.root  </filename>
+	     <!-- <filename>   test/Steve_4_8_14/sk13a_nRnumuCC.root  </filename> -->
+	     <!-- <filename>   test/Steve_4_8_14/sk13a_2RnumuCC.root  </filename> -->
+	     <!-- <filename>   test/sk13a_nRnumuCC.root  </filename> -->
+	     <filename>   test/sk13a_nRmu.root  </filename>
              <objname>    tnumu   </objname>
-                <objtype>    TTree            </objtype>
-             </multi_mu_ring>
-             <multi_e_ring>
-	       <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> -->
-               <!-- <filename>   test/sk14a_nRe.root  </filename> -->
-               <!-- <filename>   test/sk13a_nRe.root  </filename> -->
-	       <filename>   test/sk13a_nRnueCC.root </filename> 
-               <objname>    tnumu   </objname>
-               <objtype>    TTree            </objtype>
-             </multi_e_ring>
-
+             <objtype>    TTree            </objtype>
+           </multi_mu_ring>
+           <multi_e_ring>
+	     <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> -->
+	     <!-- <filename>   test/Steve_4_8_14/sk13a_nRnueCC.root </filename> -->
+	     <!-- <filename>   test/Steve_4_8_14/sk13a_2RnueCC.root </filename> -->
+	     <!-- <filename>   test/sk13a_nRnueCC.root </filename> -->
+	     <filename> test/sk13a_nRe.root </filename>
+             <objname>    tnumu   </objname>
+             <objtype>    TTree            </objtype>
+           </multi_e_ring>
+	   
            </numu>
            <numubar>
              <pot> 
@@ -191,17 +193,19 @@
 
              <multi_mu_ring>
                <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-	       <!-- <filename>   test/sk14a_nRmu.root  </filename> -->
-	       <!-- <filename>   test/sk13a_nRmu.root  </filename> -->
-	       <filename>   test/sk13a_nRnumuCC.root  </filename> 
+	       <!-- <filename>   test/Steve_4_8_14/sk13a_nRnumuCC.root  </filename> -->
+	       <!-- <filename>   test/Steve_4_8_14/sk13a_2RnumuCC.root  </filename> -->
+	       <!-- <filename>   test/sk13a_nRnumuCC.root  </filename> --> 
+	       <filename>   test/sk13a_nRmu.root  </filename>
                <objname>    tnumubar   </objname>
                <objtype>    TTree            </objtype>
              </multi_mu_ring>
              <multi_e_ring>
 	       <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> --> 
-               <!-- <filename>   test/sk14a_nRe.root  </filename> -->
-               <!-- <filename>   test/sk13a_nRe.root  </filename> -->
-               <filename>   test/sk13a_nRnueCC.root  </filename>
+               <!-- <filename>   test/Steve_4_8_14/sk13a_nRnueCC.root  </filename> --> 
+               <!-- <filename>   test/Steve_4_8_14/sk13a_2RnueCC.root  </filename> -->
+               <!-- <filename>   test/sk13a_nRnueCC.root  </filename> -->
+	       <filename> test/sk13a_nRe.root </filename>	       
 	       <objname>    tnumubar   </objname>
                <objtype>    TTree            </objtype>
              </multi_e_ring>
@@ -226,19 +230,21 @@
             
 	     <multi_mu_ring>
                <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-	       <!-- <filename>   test/sk14a_nRmu.root  </filename> -->
-	       <!-- <filename>   test/sk13a_nRmu.root  </filename> -->
-	       <filename>   test/sk13a_nRnumuCC.root  </filename>
+	       <!-- <filename>   test/Steve_4_8_14/sk13a_nRnumuCC.root  </filename> -->
+	       <!-- <filename>   test/Steve_4_8_14/sk13a_2RnumuCC.root  </filename> -->
+	       <!-- <filename>   test/sk13a_nRnumuCC.root  </filename> -->
+	       <filename>   test/sk13a_nRmu.root  </filename>
 	       <objname>    tnue   </objname>
                <objtype>    TTree            </objtype>
              </multi_mu_ring>
              <multi_e_ring>
                <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> --> 
-               <!-- <filename>   test/sk14a_nRe.root  </filename> -->
-               <!-- <filename>   test/sk13a_nRe.root  </filename> -->
-               <filename>   test/sk13a_nRnueCC.root  </filename>
+               <!-- <filename>   test/Steve_4_8_14/sk13a_nRnueCC.root  </filename> --> 
+               <!-- <filename>   test/Steve_4_8_14/sk13a_2RnueCC.root  </filename> -->
+               <!-- <filename>   test/sk13a_nRnueCC.root  </filename> -->
+	       <filename> test/sk13a_nRe.root </filename>
 	       <objname>    tnue   </objname>
-                <objtype>    TTree            </objtype>
+               <objtype>    TTree            </objtype>
              </multi_e_ring>
 
 	   </nue>
@@ -261,17 +267,19 @@
 
              <multi_mu_ring>
                <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-	       <!-- <filename>   test/sk14a_nRmu.root  </filename> -->
-	       <!-- <filename>   test/sk13a_nRmu.root  </filename> -->
-	       <filename>   test/sk13a_nRnumuCC.root  </filename>
+	       <!-- <filename>   test/Steve_4_8_14/sk13a_nRnumuCC.root  </filename> -->
+	       <!-- <filename>   test/Steve_4_8_14/sk13a_2RnumuCC.root  </filename> -->
+	       <!-- <filename>   test/sk13a_nRnumuCC.root  </filename> -->
+	       <filename>   test/sk13a_nRmu.root  </filename>
 	       <objname>    tnuebar   </objname>
                <objtype>    TTree            </objtype>
              </multi_mu_ring>
              <multi_e_ring>
                <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> -->
-               <!-- <filename>   test/sk14a_nRe.root  </filename> -->
-               <!-- <filename>   test/sk13a_nRe.root  </filename> -->
-               <filename>   test/sk13a_nRnueCC.root  </filename>
+               <!-- <filename>   test/Steve_4_8_14/sk13a_nRnueCC.root  </filename> -->
+               <!-- <filename>   test/Steve_4_8_14/sk13a_2RnueCC.root  </filename> -->
+               <!-- <filename>   test/sk13a_nRnueCC.root  </filename> -->
+	       <filename> test/sk13a_nRe.root </filename>	       
 	       <objname>    tnuebar   </objname>
                <objtype>    TTree            </objtype>
              </multi_e_ring>
@@ -296,17 +304,19 @@
 
              <multi_mu_ring>
                 <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-		<!-- <filename>   test/sk14a_nRmu.root  </filename> -->
-		<!-- <filename>   test/sk13a_nRmu.root  </filename> -->
-		<filename>   test/sk13a_nRnumuCC.root  </filename>
+		<!-- <filename>   test/Steve_4_8_14/sk13a_nRnumuCC.root  </filename> -->
+		<!-- <filename>   test/Steve_4_8_14/sk13a_2RnumuCC.root  </filename> -->
+		<!-- <<filename>   test/sk13a_nRnumuCC.root  </filename> -->
+		<filename>   test/sk13a_nRmu.root  </filename>	
 		<objname>    tnuesig   </objname>
                 <objtype>    TTree            </objtype>
              </multi_mu_ring>
              <multi_e_ring>
                <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> -->
-               <!-- <filename>   test/sk14a_nRe.root  </filename> -->
-               <!-- <filename>   test/sk13a_nRe.root  </filename> -->
-               <filename>   test/sk13a_nRnueCC.root  </filename>
+               <!-- <filename>   test/Steve_4_8_14/sk13a_nRnueCC.root  </filename> -->
+               <!-- <filename>   test/Steve_4_8_14/sk13a_2RnueCC.root  </filename> -->
+               <!-- <filename>   test/sk13a_nRnueCC.root  </filename> -->
+	       <filename> test/sk13a_nRe.root </filename>
 	       <objname>    tnuesig   </objname>
                <objtype>    TTree            </objtype>
              </multi_e_ring>
@@ -472,30 +482,6 @@
                0.024
             </multi_e_ring>
          </energy_scale_relative_error>
-<!--
-         <efficiency_relative_error>  
-            <one_mu_ring>
-               <ccqe>
-                  <other_error>   0.018  </other_error>          
-                  <rc_error>          
-                     <filename>  official/2012/superk/err/sk_ccqe_rc_err_covariance.root </filename>
-                     <objname>   ccqe_rc_err_covariance  </objname>
-                     <objtype>   TMatrixD </objtype>
-                  </rc_error>                     
-                  <rc_ereco_high_bin1>   0.4  </rc_ereco_high_bin1>          
-                  <rc_ereco_high_bin2>   1.1  </rc_ereco_high_bin2>   
-               </ccqe>
-               <ccnonqe>   0.200 </ccnonqe>
-               <nc>        1.110 </nc>
-               <nuecc>     1.000 </nuecc>
-            </one_mu_ring>
-            <one_e_ring>
-              <filename>      official/2012/superk/err/SKMay.root </filename>
-              <objname>       mat_cov_all </objname>
-              <objtype>       TMatrixD </objtype>
-            </one_e_ring>
-         </efficiency_relative_error>  
--->
      </superk>
   </detector_systematics>
 
