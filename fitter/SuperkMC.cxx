@@ -57,6 +57,8 @@
 
 #define METHOD_FOR_ESCALE 1 // 1 = new linear method, 0 = old (should be deprecated and removed once new method fully validated)
 
+//#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
+
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
 #include <cassert>
@@ -598,21 +600,18 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   }
 
   TBranch * branchEreco   = mctree->GetBranch("erec");
-  //~ TBranch * branchEreco_d = ((util::IsMultiRingSample(s)) ? mctree->GetBranch("erec_delta") : 0 );
   TBranch * branchEtrue   = mctree->GetBranch("enu");
   TBranch * branchGenCode = mctree->GetBranch("mode");
   TBranch * branchWght    = mctree->GetBranch("wgt");
 
 
   branchEreco   -> SetAddress(&fBrEreco);
-  //~ if (util::IsMultiRingSample(s)) branchEreco_d -> SetAddress(&fBrEreco_d);
   branchEtrue   -> SetAddress(&fBrEtrue);
   branchGenCode -> SetAddress(&fBrGenCode);
   branchWght    -> SetAddress(&fBrWght);  
 
   mctree->SetBranchStatus("*",0);
   mctree->SetBranchStatus("erec",1);
-  //~ if (util::IsMultiRingSample(s)) mctree->SetBranchStatus("erec_delta",1);
   mctree->SetBranchStatus("enu",1);
   mctree->SetBranchStatus("mode",1);
   mctree->SetBranchStatus("wgt",1);
@@ -628,11 +627,11 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      if(!use_it) continue;
 
      double ereco_fill = fBrEreco/1000.;
-
-     //~ if (util::IsMultiRingSample(s)) ereco_fill = fBrEreco_d/1000.;
-
+     
      //if(util::IsRHCSample(s))
+#ifdef USE_FLUX_EXT_WEIGHT
      fBrWght = fNuFlux->SuperkFluxExtTuningWght(s,m,fBrEtrue);
+#endif
      
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
      ereco_fill = TMath::Min(29.9, ereco_fill);
