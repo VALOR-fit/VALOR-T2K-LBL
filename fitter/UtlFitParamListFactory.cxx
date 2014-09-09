@@ -162,6 +162,17 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
   }
   
+  if(name == "nuosc3f_numudisapp_nuis3fixdcp") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit();
+    fp -> SetNuisance (kPhypMixing13, true);
+    fp -> SetNuisance (kPhypMixing12, true);
+    fp -> SetNuisance (kPhypDm12sq, true);
+    fp -> FixParameter (kPhypCPV);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+  
   if(name == "nuosc3f_numudisapp_fix4+nuisance") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
