@@ -12,7 +12,7 @@ input_files_13anom["RHC"] = os.environ["T2KOSCANA"]+"inputs/official/2014/flux/s
 # Laura's files - get 13a tuning from 13a nominal.
 input_files_13atun = dict()
 input_files_13atun["FHC"] = os.environ["T2KOSCANA"]+"inputs/official/2014/flux/sk_tuned13av1.0_13anom_run1-5b.root"
-input_files_13atun["RHC"] = os.environ["T2KOSCANA"]+"inputs/official/2014/flux/sk_tuned13av1.0_13anom_run1-5b.root"
+input_files_13atun["RHC"] = os.environ["T2KOSCANA"]+"inputs/official/2014/flux/sk_tuned13av1.0_13anom_run5c_antinumode.root"
 
 # Sukuki-san's files - get 11bv32 from 11a.
 input_files_11btun = dict()
