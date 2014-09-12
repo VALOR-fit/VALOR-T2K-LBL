@@ -21,11 +21,13 @@ conv =  valor.conv
 opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
+arridx= util.ArrIdx.Instance()
 
 samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
 species   = ["numu","nue","numubar","nuebar","signue"] #,"signuebar"]
 processes = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
-processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother" , "NC1piPM", "NCother"]
+processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
+#~ processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother" , "NC1piPM", "NCother"]
 
 col1_width = 12
 coln_width = 20
@@ -40,8 +42,8 @@ modes_to_species_and_process[conv.kSKmNuMuCCoth]        = ("numu", "CCother")
 modes_to_species_and_process[conv.kSKmNuMuNC1piC]       = ("numu", "NC1piPM")
 modes_to_species_and_process[conv.kSKmNuMuNC1pi0]       = ("numu", "NC1pi0")
 modes_to_species_and_process[conv.kSKmNuMuNCcoh]        = ("numu", "NCcoherent")
-modes_to_species_and_process[conv.kSKmNuMuNCoth_mu]     = ("numu", "NCother") #nu_mu appearance analysis definition
-#~ modes_to_species_and_process[conv.kSKmNuMuNCoth_e]      = ("numu","NCother") nu_e appearance analysis definition
+modes_to_species_and_process[conv.kSKmNuMuNCoth_mu]     = ("numu", "NCother")  #nu_mu appearance analysis definition
+modes_to_species_and_process[conv.kSKmNuMuNCoth_e]      = ("numu", "NCother")  #nu_e appearance analysis definition
 #~ modes_to_species_and_process[conv.kSKmOscNuMuCCQE]      = ("oscillated numu CCQE
 #~ modes_to_species_and_process[conv.kSKmOscNuMuCC1pi]     = ("oscillated numu CC 1pi
 #~ modes_to_species_and_process[conv.kSKmOscNuMuCCcoh]     = ("oscillated numu coh
@@ -53,8 +55,8 @@ modes_to_species_and_process[conv.kSKmNuMuBarCCoth]     = ("numubar", "CCother")
 modes_to_species_and_process[conv.kSKmNuMuBarNC1piC]    = ("numubar", "NC1piPM")
 modes_to_species_and_process[conv.kSKmNuMuBarNC1pi0]    = ("numubar", "NC1pi0")
 modes_to_species_and_process[conv.kSKmNuMuBarNCcoh]     = ("numubar", "NCcoherent")
-modes_to_species_and_process[conv.kSKmNuMuBarNCoth_mu]  = ("numubar", "NCother") #nu_mu appearance analysis definition"
-#~ modes_to_species_and_process[conv.kSKmNuMuBarNCoth_e]   = ("numubar", "NCother") nu_e appearance analysis definition")
+modes_to_species_and_process[conv.kSKmNuMuBarNCoth_mu]  = ("numubar", "NCother")  #nu_mu appearance analysis definition"
+modes_to_species_and_process[conv.kSKmNuMuBarNCoth_e]   = ("numubar", "NCother")  #nu_e appearance analysis definition"
 #~ modes_to_species_and_process[conv.kSKmOscNuMuBarCCQE]   = ("oscillated numubar CCQE")
 #~ modes_to_species_and_process[conv.kSKmOscNuMuBarCC1pi]  = ("oscillated numubar CC 1pi")
 #~ modes_to_species_and_process[conv.kSKmOscNuMuBarCCcoh]  = ("oscillated numubar CC coh")
@@ -67,7 +69,7 @@ modes_to_species_and_process[conv.kSKmNuENC1piC]        = ("nue","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuENC1pi0]        = ("nue","NC1pi0")
 modes_to_species_and_process[conv.kSKmNuENCcoh]         = ("nue","NCcoherent")
 modes_to_species_and_process[conv.kSKmNuENCoth_mu]      = ("nue","NCother") # nu_mu appearance analysis definition
-#~ modes_to_species_and_process[conv.kSKmNuENCoth_e]       = ("nue","NCother") #nu_e appearance analysis definition")
+modes_to_species_and_process[conv.kSKmNuENCoth_e]       = ("nue","NCother") #nu_e appearance analysis definition"
 modes_to_species_and_process[conv.kSKmOscNuEBarCCQE]    = ("nuebar","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuEBarCC1pi]   = ("nuebar","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuEBarCCcoh]   = ("nuebar","CCcoherent")
@@ -80,7 +82,7 @@ modes_to_species_and_process[conv.kSKmNuEBarNC1piC]     = ("nuebar","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuEBarNC1pi0]     = ("nuebar","NC1pi0")
 modes_to_species_and_process[conv.kSKmNuEBarNCcoh]      = ("nuebar","NCcoherent")
 modes_to_species_and_process[conv.kSKmNuEBarNCoth_mu]   = ("nuebar","NCother") #nu_mu appearance analysis definition
-#~ modes_to_species_and_process[conv.kSKmNuEBarNCoth_e]    = ("nuebar","NCother") #nu_e appearance analysis definition
+modes_to_species_and_process[conv.kSKmNuEBarNCoth_e]    = ("nuebar","NCother") #nu_e appearance analysis definition
 modes_to_species_and_process[conv.kSKmOscNuECCQE]       = ("signue","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuECC1pi]      = ("signue","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuECCcoh]      = ("signue","CCcoherent")
@@ -135,6 +137,8 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   
   for sample_name in samples:
     
+    nev_tot = 0.
+    
     event_counts_per_species = dict()
     for proc in processes:
       event_counts_per_species[proc] = dict()
@@ -143,13 +147,18 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     
     for mode,(spec,proc) in modes_to_species_and_process.iteritems():
       
+      if util.Is1RESample (s) and (mode in [conv.kSKmNuMuNCoth_mu, conv.kSKmNuMuBarNCoth_mu, conv.kSKmNuENCoth_mu,  conv.kSKmNuEBarNCoth_mu ]): continue  
+      if util.Is1RMuSample(s) and (mode in [conv.kSKmNuMuNCoth_e , conv.kSKmNuMuBarNCoth_e , conv.kSKmNuENCoth_e ,  conv.kSKmNuEBarNCoth_e  ]): continue  
+      
       spectrum = skexp.CurrPredictedErecoSpectrum(s,mode)
       if not spectrum:
         #~ print "Bad spectrum: ","\t",spec,"\t",proc
         event_counts_per_species[proc][spec] = "Unused"
         continue
-        
-      event_counts_per_species[proc][spec] = to3dp.format(spectrum.Integral())
+      
+      nev = spectrum.Integral()
+      nev_tot += nev
+      event_counts_per_species[proc][spec] = to3dp.format(nev)
       
       #~ print spec,"\t",proc,"\t",event_counts_per_species[proc][spec]
       
@@ -174,7 +183,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     total_spectrum  = skexp.CurrPredictedErecoSpectrum(s)
     total_events = total_spectrum.Integral()
     
-    tex_output.write("\nTotal: "+to3dp.format(total_events)+"\n\n")
+    tex_output.write("\nTotal: "+to3dp.format(total_events)+"    ("+to3dp.format(nev_tot)+")\n\n")
     tex_output.write("POT: "+to3dp.format(skmc.AnalyzedSamplePOT(s)*1E-20)+"E20\n\n")
     
   
