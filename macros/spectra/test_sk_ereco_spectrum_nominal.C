@@ -10,15 +10,22 @@
 
 void test_sk_ereco_spectrum_nominal
 (
-  const char * sk_sample            = "MultiRe",                         /* options: "1Rmu", "1Re" */
+  const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
   const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
 
-  // double       input_mixing12       = 0.,                            /* */
-  // double       input_mixing13       = 0.,                            /* */
-  // double       input_mixing23       = 0.,                            /* */
-  // double       input_deltacp        = 0.,                            /* */
-  // double       input_dm12sq         = 0.,                            /* */
-  // double       input_dm23sq         = 0.,                            /* */
+  //~ double       input_mixing12       = 0.,                            /* */
+  //~ double       input_mixing13       = 0.,                            /* */
+  //~ double       input_mixing23       = 0.,                            /* */
+  //~ double       input_deltacp        = 0.,                            /* */
+  //~ double       input_dm12sq         = 0.,                            /* */
+  //~ double       input_dm23sq         = 0.,                            /* */
+  //~ 
+  //~ double       input_mixing12       = 0.846,                            /* DOUBLE ANGLE*/
+  //~ double       input_mixing13       = 0.093,                            /* DOUBLE ANGLE*/
+  //~ double       input_mixing23       = 0.999,                            /* DOUBLE ANGLE*/
+  //~ double       input_deltacp        = 0.,                               /* DOUBLE ANGLE*/
+  //~ double       input_dm12sq         = 7.53E-5,                          /* DOUBLE ANGLE*/
+  //~ double       input_dm23sq         = 2.44E-3,                          /* DOUBLE ANGLE*/
 
   double       input_mixing12       = -99,                            /* */
   double       input_mixing13       = -99,                            /* */
@@ -28,16 +35,18 @@ void test_sk_ereco_spectrum_nominal
   double       input_dm23sq         = -99,                            /* */
 
   bool         disable_banff_tuning = false,                          /* */
-  //const char * config_file          = "analysis_configuration_test.xml",   /* */
-  const char * config_file          = "analysis_configuration_test_multiring.xml",   /* */
-  //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+  //~ const char * config_file          = "analysis_configuration.xml",   /* */
+  const char * config_file      = "analysis_configuration_run1to5.xml",        /* analysis configuration file */
   bool         print_spectrum       = false,                          /* */
   const char * mixparamchoice       = "sinsqtheta",
-  const char * hierarchy            = "normal"
+  const char * hierarchy            = "normal"   ,
+  bool plot_per_50MeV = true
 )
 {
   using namespace std;
   using namespace valor;
+  
+  const char * plot_format = "eps";
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -131,73 +140,21 @@ void test_sk_ereco_spectrum_nominal
     assert(h);
     hErecoMode[im] = new TH1D(*h);
     hErecoMode_coarse[im] = (TH1D)hErecoMode[im]->Rebin(nbins_coarse,Form("%s_coarse",hErecoMode[im]->GetName()),ereco_bin_edges_coarse);
+    
+    if (plot_per_50MeV) {
+      hErecoMode[im]        = spectrum_to_per_50mev(hErecoMode[im]);
+      hErecoMode_coarse[im] = spectrum_to_per_50mev(hErecoMode_coarse[im]);
+    }
   }
   hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   hErecoTot_coarse = (TH1D)hErecoTot->Rebin(nbins_coarse,Form("%s_coarse",hErecoTot->GetName()),ereco_bin_edges_coarse);
-
-  //
-  // Draw
-  //
-
-  gStyle->SetOptStat(0);
-  TCanvas * c = new TCanvas("c","",20,20,500,500);
-  TLegend * legend = new TLegend(0.6, 0.4, 0.9, 0.9);
-  legend->SetFillColor(0);
-  legend->SetBorderSize(0);
-  hErecoTot->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
-  hErecoTot->Draw();
+  
   hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot->GetYaxis()->SetTitle("Number of events");
-  THStack * stack = new THStack("stack","spectrum contributions");
-  // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
-  // so as to enhance visibility in the stack of smaller components
-  for(int imstack = 0; imstack < conv::knm; imstack++) {
-    conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
-    if(m == conv::kSKmUndefined) continue;
-    int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
-    stack->Add(hErecoMode[im]);
-  }
-  stack->Draw("same");
-  legend->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == conv::kSKmUndefined) continue;
-    legend->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
-  }
-  legend->Draw();
-  c->Update();
-  c->SaveAs(Form("sk_ereco_spectrum-%s_%f_%f.pdf",input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : "")));
-  hErecoTot->GetXaxis()->UnZoom();
-
-  //draw coarse binned histograms
-  TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);
-  TLegend * legend_coarse = new TLegend(0.6, 0.4, 0.9, 0.9);
-  legend_coarse->SetName("legend_coarse");
-  legend_coarse->SetFillColor(0);
-  legend_coarse->SetBorderSize(0);
-  hErecoTot_coarse->GetXaxis()->SetRangeUser(0,7-conv::kASmallNum);
-  hErecoTot_coarse->Draw();
   hErecoTot_coarse->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot_coarse->GetYaxis()->SetTitle("Number of events");
-  THStack * stack_coarse = new THStack("stack_coarse","spectrum contributions");
-  // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
-  // so as to enhance visibility in the stack of smaller components
-  for(int imstack = 0; imstack < conv::knm; imstack++) {
-    conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
-    if(m == conv::kSKmUndefined) continue;
-    int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
-    stack_coarse->Add(hErecoMode_coarse[im]);
-  }
-  stack_coarse->Draw("same");
-  legend_coarse->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == conv::kSKmUndefined) continue;
-    legend_coarse->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
-  }
-  legend_coarse->Draw();
-  c_coarse->Update();
-  c_coarse->SaveAs(Form("sk_ereco_spectrum-%s_%f_%f.pdf",input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : "")));
+  
+  
   
   //can save this to file &/or print it
   stringstream streamer;
@@ -314,6 +271,71 @@ void test_sk_ereco_spectrum_nominal
 	   << setw(40) << setfill(' ') << "1pi" << " : " 
 	   << setw(15) << setfill(' ') << setprecision(6) << n1pi << " events ("
 	   << setw(10) << setfill(' ') << setprecision(6) << 100*n1pi/ntot << " %)" << endl;
+     
+  
+  if (plot_per_50MeV) {
+    hErecoTot        = spectrum_to_per_50mev(hErecoTot);
+    hErecoTot_coarse = spectrum_to_per_50mev(hErecoTot_coarse);
+  }
+  //
+  // Draw
+  //
+
+  gStyle->SetOptStat(0);
+  TCanvas * c = new TCanvas("c","",20,20,1000,1000);
+  TLegend * legend = new TLegend(0.6, 0.4, 0.9, 0.9);
+  legend->SetFillColor(0);
+  legend->SetBorderSize(0);
+  hErecoTot->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
+  hErecoTot->Draw();
+  THStack * stack = new THStack("stack","spectrum contributions");
+  // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
+  // so as to enhance visibility in the stack of smaller components
+  for(int imstack = 0; imstack < conv::knm; imstack++) {
+    conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
+    if(m == conv::kSKmUndefined) continue;
+    int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+    stack->Add(hErecoMode[im]);
+  }
+  stack->Draw("same");
+  legend->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    legend->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
+  }
+  legend->Draw();
+  c->Update();
+  c->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
+  hErecoTot->GetXaxis()->UnZoom();
+
+  //draw coarse binned histograms
+  TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);
+  TLegend * legend_coarse = new TLegend(0.6, 0.4, 0.9, 0.9);
+  legend_coarse->SetName("legend_coarse");
+  legend_coarse->SetFillColor(0);
+  legend_coarse->SetBorderSize(0);
+  hErecoTot_coarse->GetXaxis()->SetRangeUser(0,7-conv::kASmallNum);
+  hErecoTot_coarse->Draw();
+  THStack * stack_coarse = new THStack("stack_coarse","spectrum contributions");
+  // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
+  // so as to enhance visibility in the stack of smaller components
+  for(int imstack = 0; imstack < conv::knm; imstack++) {
+    conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
+    if(m == conv::kSKmUndefined) continue;
+    int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+    stack_coarse->Add(hErecoMode_coarse[im]);
+  }
+  stack_coarse->Draw("same");
+  legend_coarse->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
+  for(int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
+    if(m == conv::kSKmUndefined) continue;
+    legend_coarse->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
+  }
+  legend_coarse->Draw();
+  c_coarse->Update();
+  c_coarse->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s_coarse.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
 
   // get tweaks
   PhysParamList nuisance_params = skexp.Tweaks();
@@ -387,3 +409,15 @@ void test_sk_ereco_spectrum_nominal
   outfile.close();
 
 }
+
+
+TH1D * spectrum_to_per_50mev(TH1D * h) {
+  TH1D * hout = new TH1D(*h);
+  for(int ix = 1; ix <= hout->GetNbinsX(); ix++) {
+    hout->SetBinContent(ix, 0.05 * h->GetBinContent(ix) / h->GetBinWidth(ix));
+  }
+  hout->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  return hout;
+}
+
+
