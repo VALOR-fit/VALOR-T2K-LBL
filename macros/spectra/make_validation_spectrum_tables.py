@@ -24,7 +24,7 @@ rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
 samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
-species   = ["numu","nue","numubar","nuebar","signue"] #,"signuebar"]
+species   = ["numu","nue","numubar","nuebar","signue", "signuebar"]
 processes = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
 processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
 #~ processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother" , "NC1piPM", "NCother"]
@@ -111,9 +111,9 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   phyp.SetCurrValue(conv.kPhypMixing12,  mixing12);
   phyp.SetCurrValue(conv.kPhypMixing13,  mixing13);
   phyp.SetCurrValue(conv.kPhypMixing23,  mixing23);
-  phyp.SetCurrValue(conv.kPhypCPV    ,   deltacp);
-  phyp.SetCurrValue(conv.kPhypDm12sq,    dm12sq);
-  phyp.SetCurrValue(conv.kPhypDm23sq,    dm23sq);
+  phyp.SetCurrValue(conv.kPhypCPV     ,   deltacp);
+  phyp.SetCurrValue(conv.kPhypDm12sq  ,    dm12sq);
+  phyp.SetCurrValue(conv.kPhypDm23sq  ,    dm23sq);
   
   #~ print mixing12
   #~ print mixing13
@@ -134,6 +134,16 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
 \\usepackage{amssymb}
 \\begin{document}
 """)
+
+  # Write osc params
+  params = [conv.kPhypMixing12, conv.kPhypMixing13, conv.kPhypMixing23, conv.kPhypDm12sq , conv.kPhypDm23sq, conv.kPhypCPV]
+  
+  
+  tex_output.write("\n\\section*{Physics parameters}\n\n\\begin{itemize}\n")
+  for param in params:
+    tex_output.write("\\item[] "+util.ParamAsStringTex(param)+" = "+str(phyp.CurrValue(param))+"\n")
+  
+  tex_output.write("\end{itemize}")
   
   for sample_name in samples:
     
@@ -192,6 +202,31 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   print "Table output written to ",output_file
 
 if __name__=="__main__":
-  #~ main("analysis_configuration_run1to5.xml",0.,0.,0.,7.5E-5,2.4E-3,0,"normal","sinsqtheta","validation.tex")
-  main("analysis_configuration_run1to5.xml", 0.846,0.093,0.999,7.53E-5,2.44E-3,0.,"normal","sinsq2theta","validation.tex")
   
+  import optparse
+  parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of validation spectra")
+  
+  parser.add_option('--mixing12', dest='mixing12',default=0.    ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
+  parser.add_option('--mixing13', dest='mixing13',default=0.    ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  parser.add_option('--mixing23', dest='mixing23',default=0.    ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.5E-5,type=float, help='Value of small mass splitting')
+  parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.4E-3,type=float, help='Value of large mass splitting')
+  parser.add_option('--deltacp' , dest='deltacp' ,default=0.    ,type=float, help='Value of delta CP')
+  
+  parser.add_option(     '--hierarchy'          , dest="hierarchy"     , default="normal"    , help='Mass hierarchy: "normal" or "inverted"')
+  parser.add_option('-m','--mixing-param-choice', dest="mixparamchoice", default="sinsqtheta", help='Mixing param coice: "sinsqtheta" or "sinsq2theta"')
+  
+  parser.add_option('-f', '--file', dest='output_file', default="validation.tex", help="Name for output TeX file.")
+  
+  parser.add_option('-c', '--config', dest='config', default="analysis_configuration.xml", help="Configuration file")
+  
+  o,other = parser.parse_args()
+  
+  main(o.config,o.mixing12,o.mixing13,o.mixing23,o.dm12sq,o.dm23sq,o.deltacp,o.hierarchy,o.mixparamchoice,o.output_file)
+  
+  #~ main("analysis_configuration_run1to5.xml",0.,0.,0.,7.5E-5,2.4E-3,0,"normal","sinsqtheta","validation.tex") 
+  #~ main("analysis_configuration_run4.xml",0.8495,0.095,1.,7.54E-5,2.43E-3,0,"normal","sinsq2theta","validation.tex") # run1-4, PDG 2013?
+  #~ main("analysis_configuration_run1to5.xml", 0.846,0.093,0.999,7.53E-5,2.44E-3,0.,"normal","sinsq2theta","validation.tex")
+  
+  if other:
+    print "Warning - ignored arguments: ",other
