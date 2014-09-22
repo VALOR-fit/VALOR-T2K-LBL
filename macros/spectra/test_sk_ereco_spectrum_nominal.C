@@ -111,10 +111,12 @@ void test_sk_ereco_spectrum_nominal
   const double * ereco_bin_edges = util::ErecoBinEdges(s);
   TH1D * hErecoTot = new TH1D("","",nbins,ereco_bin_edges);
   TH1D * hErecoMode[conv::knm]; //< contribution from each mode  
+  TH1D * hErecoMode_draw[conv::knm]; //< contribution from each mode  
   const int nbins_coarse = util::NumVariableXsEtrueBins(s,conv::kSKmNuMuCCQE);
   const double * ereco_bin_edges_coarse = util::VariableXsEtrueBinEdges(s,conv::kSKmNuMuCCQE);
   TH1D * hErecoTot_coarse;
   TH1D * hErecoMode_coarse[conv::knm]; //< contribution from each mode
+  TH1D * hErecoMode_draw_coarse[conv::knm]; //< contribution from each mode
 
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
@@ -142,9 +144,14 @@ void test_sk_ereco_spectrum_nominal
     hErecoMode_coarse[im] = (TH1D)hErecoMode[im]->Rebin(nbins_coarse,Form("%s_coarse",hErecoMode[im]->GetName()),ereco_bin_edges_coarse);
     
     if (plot_per_50MeV) {
-      hErecoMode[im]        = spectrum_to_per_50mev(hErecoMode[im]);
-      hErecoMode_coarse[im] = spectrum_to_per_50mev(hErecoMode_coarse[im]);
+      hErecoMode_draw[im]        = spectrum_to_per_50mev(hErecoMode[im]);
+      hErecoMode_draw_coarse[im] = spectrum_to_per_50mev(hErecoMode_coarse[im]);
     }
+    else {
+      hErecoMode_draw[im]        = hErecoMode[im];
+      hErecoMode_draw_coarse[im] = hErecoMode_coarse[im];
+    }
+      
   }
   hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   hErecoTot_coarse = (TH1D)hErecoTot->Rebin(nbins_coarse,Form("%s_coarse",hErecoTot->GetName()),ereco_bin_edges_coarse);
@@ -273,21 +280,24 @@ void test_sk_ereco_spectrum_nominal
 	   << setw(10) << setfill(' ') << setprecision(6) << 100*n1pi/ntot << " %)" << endl;
      
   
-  if (plot_per_50MeV) {
-    hErecoTot        = spectrum_to_per_50mev(hErecoTot);
-    hErecoTot_coarse = spectrum_to_per_50mev(hErecoTot_coarse);
-  }
   //
   // Draw
   //
+  
+  TH1D * hErecoTot_draw        = hErecoTot;
+  TH1D * hErecoTot_draw_coarse = hErecoTot_coarse;
+  if (plot_per_50MeV) {
+    hErecoTot_draw        = spectrum_to_per_50mev(hErecoTot);
+    hErecoTot_draw_coarse = spectrum_to_per_50mev(hErecoTot_coarse);
+  }
 
   gStyle->SetOptStat(0);
   TCanvas * c = new TCanvas("c","",20,20,1000,1000);
   TLegend * legend = new TLegend(0.6, 0.4, 0.9, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
-  hErecoTot->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
-  hErecoTot->Draw();
+  hErecoTot_draw->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
+  hErecoTot_draw->Draw();
   THStack * stack = new THStack("stack","spectrum contributions");
   // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
   // so as to enhance visibility in the stack of smaller components
@@ -295,7 +305,7 @@ void test_sk_ereco_spectrum_nominal
     conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
     if(m == conv::kSKmUndefined) continue;
     int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
-    stack->Add(hErecoMode[im]);
+    stack->Add(hErecoMode_draw[im]);
   }
   stack->Draw("same");
   legend->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
@@ -307,7 +317,7 @@ void test_sk_ereco_spectrum_nominal
   legend->Draw();
   c->Update();
   c->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
-  hErecoTot->GetXaxis()->UnZoom();
+  hErecoTot_draw->GetXaxis()->UnZoom();
 
   //draw coarse binned histograms
   TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);
@@ -315,8 +325,8 @@ void test_sk_ereco_spectrum_nominal
   legend_coarse->SetName("legend_coarse");
   legend_coarse->SetFillColor(0);
   legend_coarse->SetBorderSize(0);
-  hErecoTot_coarse->GetXaxis()->SetRangeUser(0,7-conv::kASmallNum);
-  hErecoTot_coarse->Draw();
+  hErecoTot_draw_coarse->GetXaxis()->SetRangeUser(0,7-conv::kASmallNum);
+  hErecoTot_draw_coarse->Draw();
   THStack * stack_coarse = new THStack("stack_coarse","spectrum contributions");
   // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
   // so as to enhance visibility in the stack of smaller components
@@ -324,7 +334,7 @@ void test_sk_ereco_spectrum_nominal
     conv::SuperkMode_t m = conv::kSKReactionModesOrderInStack[is][imstack];	
     if(m == conv::kSKmUndefined) continue;
     int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
-    stack_coarse->Add(hErecoMode_coarse[im]);
+    stack_coarse->Add(hErecoMode_draw_coarse[im]);
   }
   stack_coarse->Draw("same");
   legend_coarse->AddEntry(hErecoTot, util::AsStringRooTex(s,conv::kSKmUndefined,""," total").c_str(), "L" );
