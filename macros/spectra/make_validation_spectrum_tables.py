@@ -95,6 +95,7 @@ fancy_species ["numubar"   ] = "$\\bar{\\nu_\\mu}$"
 fancy_species ["nuebar"    ] = "$\\bar{\\nu_e}$"
 fancy_species ["signue"    ] = "Osc. $\\nu_e$"
 fancy_species ["signuebar" ] = "Osc. $\\bar{\\nu_e}$"
+fancy_species ["total"     ] = "Total"
 
 #______________________________________________________________________________________________________________________________
 
@@ -132,6 +133,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
 \\usepackage{amsmath}
 \\usepackage{amsfonts}
 \\usepackage{amssymb}
+\\usepackage{fullpage}
 \\begin{document}
 """)
 
@@ -150,8 +152,15 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     nev_tot = 0.
     
     event_counts_per_species = dict()
+    total_event_counts_per_species = dict()
+    total_event_counts_per_process = dict()
+    
     for proc in processes:
       event_counts_per_species[proc] = dict()
+      total_event_counts_per_process[proc] = 0.
+      
+    for spec in species:
+      total_event_counts_per_species[spec] = 0.
   
     s = util.SKSampleFromString(sample_name)
     
@@ -168,14 +177,16 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
       
       nev = spectrum.Integral()
       nev_tot += nev
+      total_event_counts_per_species[spec] += nev
+      total_event_counts_per_process[proc] += nev
       event_counts_per_species[proc][spec] = to3dp.format(nev)
       
       #~ print spec,"\t",proc,"\t",event_counts_per_species[proc][spec]
       
     
     tex_output.write("\n\\section*{"+sample_name+"}\n")
-    tex_output.write("\\begin{tabular} { | l ||"+("r | "*len(species))+"}\n\\hline\n")
-    tex_output.write(" "+"".ljust(col1_width)+" & "+ " & ".join([fancy_species[x].ljust(coln_width) for x in species]) + " \\\\ \\hline\\hline\n")
+    tex_output.write("\\begin{tabular} { | l ||"+("r | "*len(species))+"| r | }\n\\hline\n")
+    tex_output.write(" "+"".ljust(col1_width)+" & "+ " & ".join([fancy_species[x].ljust(coln_width) for x in species+["total"]]) + " \\\\ \\hline\\hline\n")
     
     for proc in processes_used:
       ev = event_counts_per_species[proc]
@@ -186,9 +197,18 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
           ev_counts.append(ev[spec].ljust(coln_width))
         except KeyError:
           ev_counts.append("N/A".ljust(coln_width))
+      
+      ev_counts.append(to3dp.format(total_event_counts_per_process[proc]).ljust(coln_width))
           
       tex_output.write(" & ".join(ev_counts) + " \\\\ \\hline\n")
-      
+    
+    # Write totals
+    tex_output.write("\\hline\n")
+    tex_output.write(" "+"Total".ljust(col1_width)+" & ")
+    string_totals = [to3dp.format(total_event_counts_per_species[spec]).ljust(coln_width) for spec in species]
+    string_totals.append(to3dp.format(nev_tot).ljust(coln_width))
+    tex_output.write(" & ".join(string_totals) + " \\\\ \\hline\n")
+    
     tex_output.write("\n\\end{tabular}\n")
     total_spectrum  = skexp.CurrPredictedErecoSpectrum(s)
     total_events = total_spectrum.Integral()
