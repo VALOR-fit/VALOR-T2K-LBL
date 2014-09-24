@@ -792,8 +792,8 @@ void SuperkMC::FillSpecialTemplates(void)
     if(s == kSKsUndefined) continue;
     int sidx = arr_index->SuperkSampleIdx(s);
       
-      EFluxType fNom = (IsRHCSample(s)) ? kRHCFlxNominal : kFlxNominal ;
-      EFluxType fExt = (IsRHCSample(s)) ? kRHCFlxExtTuning : kFlxExtTuning ;
+    EFluxType fNom = (IsRHCSample(s)) ? kRHCFlxNominal : kFlxNominal ;
+    EFluxType fExt = (IsRHCSample(s)) ? kRHCFlxExtTuning : kFlxExtTuning ;
     
     //
     // Add MEC template, if included in the list of modes
@@ -934,10 +934,11 @@ void SuperkMC::FillSpecialTemplates(void)
     // and take into account the nue/numu flux weight
     // 
     
+   const int n = 4;
+    
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
   
     cout << "SKMC/FillSpecialTemplates >> Filling osc numu templates for " << util::AsString(s) << " sample" << endl;
-    const int n = 4;
     SuperkMode_t src_modes[n] = {  kSKmNuMuCCQE,    kSKmNuMuCC1pi,     kSKmNuMuCCcoh,    kSKmNuMuCCoth    };         
     SuperkMode_t tgt_modes[n] = {  kSKmOscNuMuCCQE, kSKmOscNuMuCC1pi,  kSKmOscNuMuCCcoh, kSKmOscNuMuCCoth };
     
