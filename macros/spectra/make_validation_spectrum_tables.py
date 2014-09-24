@@ -99,7 +99,7 @@ fancy_species ["total"     ] = "Total"
 
 #______________________________________________________________________________________________________________________________
 
-def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,angle_scheme,output_file):
+def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,angle_scheme,output_file,nobanff, label):
   
   opt.gMassHierarchyAssumed = util.HierarchyFromString(hierarchy)
   opt.gOscMixingParamChoice = util.MixingTypeFromString(angle_scheme)
@@ -108,6 +108,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   phyp = valor.PhysHypothesis("3f_osc")
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file)
+  skmc = skexp.GetSuperkMC()
   
   phyp.SetCurrValue(conv.kPhypMixing12,  mixing12);
   phyp.SetCurrValue(conv.kPhypMixing13,  mixing13);
@@ -123,8 +124,16 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   #~ print dm12sq  
   #~ print dm23sq  
   
+  # Disable BANFF tuning if requested
+  if(nobanff):
+    print "- Performing special systematic parameter variation which cancels the effect of BANFF tuning..."
+    skexp.GetBANFF().RestoreNominalMC()
+    skexp.GetBANFF().RestoreRHCNominalMC()
+    
+  #~ skexp.GetNuXSec().PrintSystematicVariations()
+  
+  # Make the dataset
   skexp.Generate(phyp)
-  skmc = skexp.GetSuperkMC()
   
   tex_output = open(output_file,"w")
   
@@ -141,13 +150,19 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   params = [conv.kPhypMixing12, conv.kPhypMixing13, conv.kPhypMixing23, conv.kPhypDm12sq , conv.kPhypDm23sq, conv.kPhypCPV]
   
   
-  tex_output.write("\n\\section*{Physics parameters}\n\n\\begin{itemize}\n")
+  tex_output.write("\n\\section*{Job details}\n\n\\begin{itemize}\n")
   for param in params:
     tex_output.write("\\item[] "+util.ParamAsStringTex(param)+" = "+str(phyp.CurrValue(param))+"\n")
   
   tex_output.write("\end{itemize}")
   
-  for sample_name in samples:
+  banff_status = ["Enabled","Disabled"][int(nobanff)]
+  
+  tex_output.write("\n\nBANFF tunings: "+ banff_status +"\n\n")
+  tex_output.write("Hierarchy: "+hierarchy.capitalize()+"\n\n")
+  if label: tex_output.write(label+"\n\n")
+  
+  for isample,sample_name in enumerate(samples):
     
     nev_tot = 0.
     
@@ -164,6 +179,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   
     s = util.SKSampleFromString(sample_name)
     
+    # Count events
     for mode,(spec,proc) in modes_to_species_and_process.iteritems():
       
       if util.Is1RESample (s) and (mode in [conv.kSKmNuMuNCoth_mu, conv.kSKmNuMuBarNCoth_mu, conv.kSKmNuENCoth_mu,  conv.kSKmNuEBarNCoth_mu ]): continue  
@@ -184,12 +200,14 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
       #~ print spec,"\t",proc,"\t",event_counts_per_species[proc][spec]
       
     
+    # Start writing output
     tex_output.write("\n\\section*{"+sample_name+"}\n")
     tex_output.write("\\begin{tabular} { | l ||"+("r | "*len(species))+"| r | }\n\\hline\n")
     tex_output.write(" "+"".ljust(col1_width)+" & "+ " & ".join([fancy_species[x].ljust(coln_width) for x in species+["total"]]) + " \\\\ \\hline\\hline\n")
     
     for proc in processes_used:
       ev = event_counts_per_species[proc]
+      if not total_event_counts_per_process[proc]: continue
       tex_output.write(" "+proc.ljust(col1_width)+" & ")
       ev_counts = []
       for spec in species:
@@ -216,6 +234,8 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     tex_output.write("\nTotal: "+to3dp.format(total_events)+"    ("+to3dp.format(nev_tot)+")\n\n")
     tex_output.write("POT: "+to3dp.format(skmc.AnalyzedSamplePOT(s)*1E-20)+"E20\n\n")
     
+    if (isample%2): tex_output.write("\n\n\\clearpage\n\n")
+    
   
   tex_output.write("\\end{document}\n")
   
@@ -239,10 +259,13 @@ if __name__=="__main__":
   parser.add_option('-f', '--file', dest='output_file', default="validation.tex", help="Name for output TeX file.")
   
   parser.add_option('-c', '--config', dest='config', default="analysis_configuration.xml", help="Configuration file")
+  parser.add_option('-l', '--label' , dest='label' , default=None, help="Label to put in file.")
+  
+  parser.add_option('-d', '--disable-banff', dest='nobanff', action="store_true",default=False)
   
   o,other = parser.parse_args()
   
-  main(o.config,o.mixing12,o.mixing13,o.mixing23,o.dm12sq,o.dm23sq,o.deltacp,o.hierarchy,o.mixparamchoice,o.output_file)
+  main(o.config,o.mixing12,o.mixing13,o.mixing23,o.dm12sq,o.dm23sq,o.deltacp,o.hierarchy,o.mixparamchoice,o.output_file,o.nobanff, o.label)
   
   #~ main("analysis_configuration_run1to5.xml",0.,0.,0.,7.5E-5,2.4E-3,0,"normal","sinsqtheta","validation.tex") 
   #~ main("analysis_configuration_run4.xml",0.8495,0.095,1.,7.54E-5,2.43E-3,0,"normal","sinsq2theta","validation.tex") # run1-4, PDG 2013?
