@@ -2245,6 +2245,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 #endif
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+    
+    double p_osc[3][3];
+    double p_osc_bar[3][3];
 
     // mixing params are: sin^2(2*theta)
     // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
@@ -2313,14 +2316,17 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 	//bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
 	//if(!bin_is_not_empty) continue;
 	
-	double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuMu,    Etrue);
-	double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuMuBar, Etrue);
-	double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuE,     Etrue);
-	double p_nuebar_nuebar   = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuEBar,  kPdgNuEBar,  Etrue);
-	double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMu,    kPdgNuE,     Etrue);
-	double p_numubar_nuebar  = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuMuBar, kPdgNuEBar,  Etrue);
-	double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuE,     kPdgNuMu,    Etrue);
-	double p_nuebar_numubar  = fNuOsc3Flavour.CalcMatterOscProb(kPdgNuEBar,  kPdgNuMuBar, Etrue);
+	fNuOsc3Flavour.CalcMatterOscProbAll(false, Etrue, p_osc    );
+	fNuOsc3Flavour.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
+	
+	double p_numu_numu       = p_osc    [1][1];
+	double p_numubar_numubar = p_osc_bar[1][1];
+	double p_nue_nue         = p_osc    [0][0];
+	double p_nuebar_nuebar   = p_osc_bar[0][0];
+	double p_numu_nue        = p_osc    [1][0];
+	double p_numubar_nuebar  = p_osc_bar[1][0];
+	double p_nue_numu        = p_osc    [0][1];
+	double p_nuebar_numubar  = p_osc_bar[0][1];
 	
 #ifdef __show_hypothesis_probabilities__
         cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
