@@ -5,16 +5,19 @@
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Data POT for analysis
+  # 6.5700e+20
+  # 6.8120e+20
+  # 7.8e+21
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
   <data_pot>
      <superk> 
        <fhc>
-        6.5700e+20
+	 6.5700e+20
        </fhc>
        <multiring_fhc>
-        6.5700e+20
+         6.5700e+20
        </multiring_fhc>
        <rhc>
         0
@@ -145,6 +148,8 @@
  
             <one_mu_ring>
                 <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+		<!-- <filename> test/fiTQun_2_10_14/sk14a_fq_1RnumuCCQE.root </filename> -->
+		
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -155,16 +160,39 @@
              </one_e_ring>
 
            <multi_mu_ring>
-             <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-	     <!-- <filename>   test/sk13a_nRmu.root  </filename> -->
-	     <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename>
-             <objname>    tnumu   </objname>
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue.root </filename> -->  <!-- WRONG -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue_fitqun.root </filename> -->  <!-- WRONG --> 
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_1mue.root </filename> -->
+	     <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_1mue.root </filename>
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_muenring.root </filename> --> 
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_muenring.root </filename> -->  
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_erec_delta_muenring.root </filename> -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_erec_delta_muenring.root </filename> -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_nomue.root </filename> --> 
+	     
+	     <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC_erec_delta.root </filename> -->
+	     <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename> --> 
+	     <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_nRnumuCC.root </filename>  -->
+	     <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_2RnumuCC.root </filename> -->
+	     
+	     <objname>    tnumu   </objname>
              <objtype>    TTree            </objtype>
            </multi_mu_ring>
            <multi_e_ring>
-	     <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> -->
-	     <!-- <filename> test/sk13a_nRe.root </filename> -->
-	     <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC.root </filename>
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_nomue.root </filename> -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue.root </filename> --> 
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_mue.root </filename> -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue.root </filename> -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue_fitqun.root </filename> --> <!-- WRONG -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue_fitqun.root </filename> -->   <!-- WRONG -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_erec_delta_mue.root </filename> -->
+	     <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_erec_delta_mue.root </filename> -->
+
+	     <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC_erec_delta.root </filename> -->
+	     <!-- <filename> test/sk13a_2rpi0_fitTQun_Nishimura.root </filename> --> 
+
+	     <filename> test/selected_fiTQun_7_10_14/neut/13a/sk13a_2RnueCC.root </filename>
+	     
              <objname>    tnumu   </objname>
              <objtype>    TTree            </objtype>
            </multi_e_ring>
@@ -178,6 +206,7 @@
              </pot>
              <one_mu_ring>
                 <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+		<!-- <filename> test/fiTQun_2_10_14/sk14a_fq_1RnumuCCQE.root </filename> -->
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
@@ -188,16 +217,38 @@
              </one_e_ring>
 
              <multi_mu_ring>
-               <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-	       <!-- <filename>   test/sk13a_nRmu.root  </filename> -->
-	       <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename>
-               <objname>    tnumubar   </objname>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_nomue.root </filename> -->  <!-- WRONG -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue.root </filename> -->  <!-- WRONG --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_1mue.root </filename> -->
+	       <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_1mue.root </filename>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_erec_delta_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_erec_delta_muenring.root </filename> -->
+
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC_erec_delta.root </filename> --> 
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename> -->
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_nRnumuCC.root </filename> -->
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_2RnumuCC.root </filename> --> 
+	       
+	       <objname>    tnumubar   </objname>
                <objtype>    TTree            </objtype>
              </multi_mu_ring>
              <multi_e_ring>
-	       <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> --> 
-	       <!-- <filename> test/sk13a_nRe.root </filename> -->	       
-	       <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC.root </filename>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_mue.root </filename> --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_erec_delta_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_erec_delta_mue.root </filename> -->
+	       
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC_erec_delta.root </filename> -->
+	       <!-- <filename> test/sk13a_2rpi0_fitTQun_Nishimura.root </filename> -->
+    	       <filename> test/selected_fiTQun_7_10_14/neut/13a/sk13a_2RnueCC.root </filename>
+
 	       <objname>    tnumubar   </objname>
                <objtype>    TTree            </objtype>
              </multi_e_ring>
@@ -211,7 +262,8 @@
              </pot>
              <one_mu_ring>
                 <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
-                <objname>    tnue   </objname>
+		<!-- <filename> test/fiTQun_2_10_14/sk14a_fq_1RnumuCCQE.root </filename> -->
+		<objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
@@ -221,22 +273,44 @@
              </one_e_ring>
             
 	     <multi_mu_ring>
-               <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-	       <!-- <filename>   test/sk13a_nRmu.root  </filename> -->
-	       <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename>	       
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_nomue.root </filename> -->   <!-- WRONG -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue.root </filename> -->  <!-- WRONG --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_1mue.root </filename> -->
+	       <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_1mue.root </filename>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_erec_delta_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_erec_delta_muenring.root </filename> -->
+
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC_erec_delta.root </filename> -->       
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename> -->
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_nRnumuCC.root </filename> --> 
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_2RnumuCC.root </filename>  -->  
+	     
 	       <objname>    tnue   </objname>
                <objtype>    TTree            </objtype>
              </multi_mu_ring>
              <multi_e_ring>
-               <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> --> 
-	       <!-- <filename> test/sk13a_nRe.root </filename> -->
-	       <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC.root </filename>	       
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_erec_delta_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_erec_delta_mue.root </filename> -->
+
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC_erec_delta.root </filename> -->
+	       <!-- <filename> test/sk13a_2rpi0_fitTQun_Nishimura.root </filename> -->
+	       <filename> test/selected_fiTQun_7_10_14/neut/13a/sk13a_2RnueCC.root </filename>
+	     
 	       <objname>    tnue   </objname>
                <objtype>    TTree            </objtype>
              </multi_e_ring>
 
 	   </nue>
-          <nuebar>
+           <nuebar>
              <pot> 
 	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
 	       <objname>     h_stat_snt_tnuebar  </objname>
@@ -244,8 +318,65 @@
              </pot>
              <one_mu_ring>
                 <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
-                <objname>    tnuebar   </objname>
-                <objtype>    TTree            </objtype>
+		<!-- <filename> test/fiTQun_2_10_14/sk14a_fq_1RnumuCCQE.root </filename> -->
+               <objname>    tnuebar   </objname>
+               <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+               <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+               <objname>    tnuebar   </objname>
+               <objtype>    TTree            </objtype>
+             </one_e_ring>
+	     
+             <multi_mu_ring>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_nomue.root </filename> -->   <!-- WRONG -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue.root </filename> -->  <!-- WRONG --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue_fitqun.root </filename> -->
+	       <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_1mue.root </filename>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_1mue.root </filename> --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_muenring.root </filename> --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_erec_delta_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_erec_delta_muenring.root </filename> -->
+
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC_erec_delta.root </filename> -->   
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename> -->
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_nRnumuCC.root </filename> -->    
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_2RnumuCC.root </filename> -->
+
+	       <objname>    tnuebar   </objname>
+               <objtype>    TTree            </objtype>
+             </multi_mu_ring>
+             <multi_e_ring>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue_fitqun.root </filename> --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_erec_delta_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_erec_delta_mue.root </filename> -->
+
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC_erec_delta.root </filename> -->
+	       <!-- <filename> test/sk13a_2rpi0_fitTQun_Nishimura.root </filename> -->
+	       <filename> test/selected_fiTQun_7_10_14/neut/13a/sk13a_2RnueCC.root </filename>
+
+	       <objname>    tnue   </objname>
+               <objtype>    TTree            </objtype>
+             </multi_e_ring>
+	     
+	   </nue>
+           <nuebar>
+             <pot> 
+	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
+	       <objname>     h_stat_snt_tnuebar  </objname>
+	       <objtype>     TH1D                  </objtype>
+             </pot>
+             <one_mu_ring>
+               <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+	       <!-- <filename> test/fiTQun_2_10_14/sk14a_fq_1RnumuCCQE.root </filename> -->
+               <objname>    tnuebar   </objname>
+               <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
                 <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
@@ -254,17 +385,39 @@
              </one_e_ring>
 
              <multi_mu_ring>
-               <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-	       <!-- <filename>   test/sk13a_nRmu.root  </filename> -->
-	       <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename>	       
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_nomue.root </filename> -->    <!-- WRONG -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue.root </filename> -->  <!-- WRONG -->  
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue_fitqun.root </filename> --> 
+	       <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_1mue.root </filename> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_1mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_erec_delta_muenring.root </filename> -->  
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_erec_delta_muenring.root </filename> -->
+    	       
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC_erec_delta.root </filename> -->  
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename> -->
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_nRnumuCC.root </filename>--> 
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_2RnumuCC.root </filename> --> 
+
 	       <objname>    tnuebar   </objname>
                <objtype>    TTree            </objtype>
              </multi_mu_ring>
              <multi_e_ring>
-               <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> -->
-	       <!-- <filename> test/sk13a_nRe.root </filename> -->
-	       <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC.root </filename>	       
-	       <objname>    tnuebar   </objname>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue.root </filename> --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue_fitqun.root </filename> --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_erec_delta_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_erec_delta_mue.root </filename> -->
+
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC_erec_delta.root </filename> -->
+	       <!-- <filename> test/sk13a_2rpi0_fitTQun_Nishimura.root </filename> -->
+	       <filename> test/selected_fiTQun_7_10_14/neut/13a/sk13a_2RnueCC.root </filename>
+
+ 	       <objname>    tnuebar   </objname>
                <objtype>    TTree            </objtype>
              </multi_e_ring>
 
@@ -276,9 +429,10 @@
 	       <objtype>     TH1D                  </objtype>
              </pot>
              <one_mu_ring>
-                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
-                <objname>    tnuesig   </objname>
-                <objtype>    TTree            </objtype>
+               <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+	       <!-- <filename> test/fiTQun_2_10_14/sk14a_fq_1RnumuCCQE.root </filename> -->
+               <objname>    tnuesig   </objname>
+               <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
                 <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
@@ -287,16 +441,38 @@
              </one_e_ring>
 
              <multi_mu_ring>
-                <!-- <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename> -->
-		<!-- <filename>   test/sk13a_nRmu.root  </filename> -->	
-		<filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename>
-		<objname>    tnuesig   </objname>
-                <objtype>    TTree            </objtype>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_nomue.root </filename> -->  <!-- WRONG -->    
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue.root </filename> -->  <!-- WRONG --> 
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_nomue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_1mue.root </filename> -->
+	       <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_1mue.root </filename>
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnumuCC_erec_delta_muenring.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnumuCC_erec_delta_muenring.root </filename> -->
+    
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC_erec_delta.root </filename> -->
+	       <!--  <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root </filename> -->
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_nRnumuCC.root </filename> --> 
+	       <!-- <filename> test/selected_26_9_14/neut/13a/sk13a_2RnumuCC.root </filename> -->
+
+	       <objname>    tnuesig   </objname>
+               <objtype>    TTree            </objtype>
              </multi_mu_ring>
              <multi_e_ring>
-               <!-- <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename> -->
-	       <!-- <filename> test/sk13a_nRe.root </filename> -->
-	       <filename> test/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC.root </filename>
+ 	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_nomue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_mue_fitqun.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_nRnueCC_erec_delta_mue.root </filename> -->
+	       <!-- <filename> test/selected_22_9_14/neut/13a/sk13a_2RnueCC_erec_delta_mue.root </filename> -->
+	      
+	       <!-- <filename> test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC_erec_delta.root </filename> -->
+	       <!-- <filename> test/sk13a_2rpi0_fitTQun_Nishimura.root </filename> -->
+	       <filename> test/selected_fiTQun_7_10_14/neut/13a/sk13a_2RnueCC.root </filename>
+
 	       <objname>    tnuesig   </objname>
                <objtype>    TTree            </objtype>
              </multi_e_ring>
