@@ -43,7 +43,16 @@ public:
 
   // Check for any parameters being undefined
   bool Undefined(void);
-
+  
+  // These parameters are filled based on the condition of the compiler flags.
+  // Altering them does not, at this point, change anything.
+  bool fFit_1Rmu    ;
+  bool fFit_1Re     ;
+  bool fFit_RHC_1Rmu;
+  bool fFit_RHC_1Re ;
+  bool fFit_MultiRmu;
+  bool fFit_MultiRe ;
+  
 private:
 
   T2KOpt();
