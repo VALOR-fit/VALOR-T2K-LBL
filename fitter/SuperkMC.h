@@ -119,7 +119,6 @@ private:
   // Apply systematic variations to MC templates
   void ApplySystematicsToTemplates                   (void); 
   void ApplySystematicsToTemplates_Multiplicative    (void); 
-  void ApplyMECRenormalisationToTemplates            (void); 
   void ApplySystematicsToTemplates_NonMultiplicative (void); 
   bool ApplyEnergyScaleSystematicToTotalSpectrum     (void);
 
@@ -150,18 +149,6 @@ private:
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplOri[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
   TH2D *     fMCTemplNom[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
-  
-  TH2D *     fMCTemplMECMartini;           ///< Martini MEC template
-  TH2D *     fMCTemplRHCMECMartini;           ///< Martini MEC template    // ANTINU
-
-  TH2D *     fMCTemplMECNieves;            ///< Nieves MEC template
-  TH2D *     fMCTemplRHCMECNieves;            ///< Nieves MEC template     // ANTINU
-
-  double     fMCTemplArrayMECMartini[conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Martini MEC template
-  double     fMCTemplArrayRHCMECMartini[conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu]; ///< Martini MEC template     // ANTINU
-
-  double     fMCTemplArrayMECNieves [conv::kNEtrueBins1Rmu][conv::kNErecoBins1Rmu]; ///< Nieves MEC template
-  double     fMCTemplArrayRHCMECNieves [conv::kRHCNEtrueBins1Rmu][conv::kRHCNErecoBins1Rmu]; ///< Nieves MEC template     // ANTINU
 
   TH2D *     fMCVariableTempl[conv::kns][conv::knm];
   

@@ -121,6 +121,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuMuCCQE,         
     kSKmNuMuCC1pi,
     kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
     kSKmNuMuCCoth,                      
     kSKmNuMuNC1piC,
     kSKmNuMuNCoth_mu,          
@@ -128,33 +129,39 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuMuCCQE,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCCoth,
 #endif
     kSKmNuMuBarCCQE,      
     kSKmNuMuBarCC1pi,
     kSKmNuMuBarCCcoh,
-    kSKmNuMuBarCCoth,                  
+    kSKmNuMuBarCCMEC,
+    kSKmNuMuBarCCoth,
     kSKmNuMuBarNC1piC,
     kSKmNuMuBarNCoth_mu,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     kSKmOscNuMuBarCCQE,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCCoth,
 #endif
     kSKmNuECCQE, 
     kSKmNuECC1pi,
     kSKmNuECCcoh,
+    kSKmNuECCMEC,
     kSKmNuECCoth,                                
     kSKmNuENC1piC,
     kSKmNuENCoth_mu,
     kSKmOscNuECCQE,
     kSKmOscNuECC1pi,
     kSKmOscNuECCcoh,
+    kSKmOscNuECCMEC,
     kSKmOscNuECCoth,
     kSKmNuEBarCCQE,
     kSKmNuEBarCC1pi,
     kSKmNuEBarCCcoh,
+    kSKmNuEBarCCMEC,
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1piC,
     kSKmNuEBarNCoth_mu,
@@ -162,14 +169,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCCoth,
 #endif
-#ifdef USE_MEC
-    kSKmMEC,
-#else
-    kSKmUndefined,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -180,8 +184,10 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -206,6 +212,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuMuCCQE,
     kSKmNuMuCC1pi,
     kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
     kSKmNuMuCCoth, 
     kSKmNuMuNC1pi0, 
     kSKmNuMuNCcoh, 
@@ -214,11 +221,13 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuMuCCQE,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCCoth,               
 #endif
     kSKmNuMuBarCCQE, 
     kSKmNuMuBarCC1pi, 
     kSKmNuMuBarCCcoh, 
+    kSKmNuMuBarCCMEC, 
     kSKmNuMuBarCCoth,  
     kSKmNuMuBarNC1pi0, 
     kSKmNuMuBarNCcoh, 
@@ -227,11 +236,13 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuMuBarCCQE,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCCoth,               
 #endif             
     kSKmNuECCQE, 
     kSKmNuECC1pi, 
     kSKmNuECCcoh, 
+    kSKmNuECCMEC, 
     kSKmNuECCoth,
     kSKmNuENC1pi0,  
     kSKmNuENCcoh, 
@@ -239,10 +250,12 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuECCQE,  
     kSKmOscNuECC1pi,  
     kSKmOscNuECCcoh,
+    kSKmOscNuECCMEC,
     kSKmOscNuECCoth,
     kSKmNuEBarCCQE,
     kSKmNuEBarCC1pi,
     kSKmNuEBarCCcoh,
+    kSKmNuEBarCCMEC,
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1pi0,
     kSKmNuEBarNCcoh,
@@ -251,9 +264,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCCoth,               
 #endif          
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -264,14 +279,15 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif
     kSKmUndefined,
+#endif
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -290,7 +306,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
-    kSKmUndefined, kSKmUndefined, kSKmUndefined
+    kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined
   }
   ,
   // > 1 electron-like ring (nue appearance)
@@ -300,7 +316,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
-    kSKmUndefined, kSKmUndefined, kSKmUndefined
+    kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined
   }
 #endif
 
@@ -313,6 +329,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuMuCCQE,         
     kSKmNuMuCC1pi,
     kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
     kSKmNuMuCCoth,                      
     kSKmNuMuNC1piC,
     kSKmNuMuNCoth_mu,          
@@ -320,11 +337,13 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuMuCCQE,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCCoth,
 #endif
     kSKmNuMuBarCCQE,      
     kSKmNuMuBarCC1pi,
     kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCMEC,
     kSKmNuMuBarCCoth,                  
     kSKmNuMuBarNC1piC,
     kSKmNuMuBarNCoth_mu,
@@ -332,21 +351,25 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuMuBarCCQE,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCCoth,
 #endif
     kSKmNuECCQE, 
     kSKmNuECC1pi,
     kSKmNuECCcoh,
+    kSKmNuECCMEC,
     kSKmNuECCoth,                                
     kSKmNuENC1piC,
     kSKmNuENCoth_mu,
     kSKmOscNuECCQE,
     kSKmOscNuECC1pi,
     kSKmOscNuECCcoh,
+    kSKmOscNuECCMEC,
     kSKmOscNuECCoth,
     kSKmNuEBarCCQE,
     kSKmNuEBarCC1pi,
     kSKmNuEBarCCcoh,
+    kSKmNuEBarCCMEC,
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1piC,
     kSKmNuEBarNCoth_mu,
@@ -354,14 +377,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCCoth,
 #endif
-#ifdef USE_MEC
-    kSKmMEC,
-#else
-    kSKmUndefined,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -372,8 +392,10 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -398,6 +420,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
         kSKmNuMuCCQE,
         kSKmNuMuCC1pi,
         kSKmNuMuCCcoh,
+        kSKmNuMuCCMEC,
         kSKmNuMuCCoth,
         kSKmNuMuNC1pi0,
         kSKmNuMuNCcoh,
@@ -406,11 +429,13 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
         kSKmOscNuMuCCQE,
         kSKmOscNuMuCC1pi,
         kSKmOscNuMuCCcoh,
+        kSKmOscNuMuCCMEC,
         kSKmOscNuMuCCoth,
 #endif
         kSKmNuMuBarCCQE,
         kSKmNuMuBarCC1pi,
         kSKmNuMuBarCCcoh,
+        kSKmNuMuBarCCMEC,
         kSKmNuMuBarCCoth,
         kSKmNuMuBarNC1pi0,
         kSKmNuMuBarNCcoh,
@@ -419,11 +444,13 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
         kSKmOscNuMuBarCCQE,
         kSKmOscNuMuBarCC1pi,
         kSKmOscNuMuBarCCcoh,
+        kSKmOscNuMuBarCCMEC,
         kSKmOscNuMuBarCCoth,
 #endif
         kSKmNuECCQE,
         kSKmNuECC1pi,
         kSKmNuECCcoh,
+        kSKmNuECCMEC,
         kSKmNuECCoth,
         kSKmNuENC1pi0,
         kSKmNuENCcoh,
@@ -431,10 +458,12 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
         kSKmOscNuECCQE,
         kSKmOscNuECC1pi,
         kSKmOscNuECCcoh,
+        kSKmOscNuECCMEC,
         kSKmOscNuECCoth,
         kSKmNuEBarCCQE,
         kSKmNuEBarCC1pi,
         kSKmNuEBarCCcoh,
+        kSKmNuEBarCCMEC,
         kSKmNuEBarCCoth,
         kSKmNuEBarNC1pi0,
         kSKmNuEBarNCcoh,
@@ -443,9 +472,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
         kSKmOscNuEBarCCQE,
         kSKmOscNuEBarCC1pi,
         kSKmOscNuEBarCCcoh,
+        kSKmOscNuEBarCCMEC,
         kSKmOscNuEBarCCoth,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+        kSKmUndefined,
         kSKmUndefined,
         kSKmUndefined,
         kSKmUndefined,
@@ -456,14 +487,15 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
         kSKmUndefined,
         kSKmUndefined,
         kSKmUndefined,
+        kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
         kSKmUndefined,
         kSKmUndefined,
         kSKmUndefined,
         kSKmUndefined,
-#endif
         kSKmUndefined,
+#endif
         kSKmUndefined,
         kSKmUndefined,
         kSKmUndefined,
@@ -482,7 +514,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
-    kSKmUndefined, kSKmUndefined, kSKmUndefined
+    kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined
   }
   ,
   // > 1 electron-like ring (nue appearance) (RHC)
@@ -492,7 +524,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
-    kSKmUndefined, kSKmUndefined, kSKmUndefined
+    kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined
   }
 #endif  
   
@@ -508,6 +540,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuMuCCQE,         
     kSKmNuMuCC1pi,
     kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
     kSKmNuMuCCoth,                      
     kSKmNuMuNC1piC,
     kSKmNuMuNCoth_mu,          
@@ -515,33 +548,39 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuMuCCQE,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCCoth,
 #endif
     kSKmNuMuBarCCQE,      
     kSKmNuMuBarCC1pi,
     kSKmNuMuBarCCcoh,
-    kSKmNuMuBarCCoth,                  
+    kSKmNuMuBarCCMEC,
+    kSKmNuMuBarCCoth,
     kSKmNuMuBarNC1piC,
     kSKmNuMuBarNCoth_mu,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     kSKmOscNuMuBarCCQE,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCCoth,
 #endif
     kSKmNuECCQE, 
     kSKmNuECC1pi,
     kSKmNuECCcoh,
+    kSKmNuECCMEC,
     kSKmNuECCoth,                                
     kSKmNuENC1piC,
     kSKmNuENCoth_mu,
     kSKmOscNuECCQE,
     kSKmOscNuECC1pi,
     kSKmOscNuECCcoh,
+    kSKmOscNuECCMEC,
     kSKmOscNuECCoth,
     kSKmNuEBarCCQE,
     kSKmNuEBarCC1pi,
     kSKmNuEBarCCcoh,
+    kSKmNuEBarCCMEC,
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1piC,
     kSKmNuEBarNCoth_mu,
@@ -549,14 +588,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCCoth,
 #endif
-#ifdef USE_MEC
-    kSKmMEC,
-#else
-    kSKmUndefined,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -567,8 +603,10 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -593,6 +631,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuMuCCQE,
     kSKmNuMuCC1pi,
     kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
     kSKmNuMuCCoth, 
     kSKmNuMuNC1pi0, 
     kSKmNuMuNCcoh, 
@@ -601,11 +640,13 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuMuCCQE,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCCoth,               
 #endif
     kSKmNuMuBarCCQE, 
     kSKmNuMuBarCC1pi, 
     kSKmNuMuBarCCcoh, 
+    kSKmNuMuBarCCMEC, 
     kSKmNuMuBarCCoth,  
     kSKmNuMuBarNC1pi0, 
     kSKmNuMuBarNCcoh, 
@@ -614,11 +655,13 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuMuBarCCQE,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCCoth,               
 #endif             
     kSKmNuECCQE, 
     kSKmNuECC1pi, 
     kSKmNuECCcoh, 
+    kSKmNuECCMEC, 
     kSKmNuECCoth,
     kSKmNuENC1pi0,  
     kSKmNuENCcoh, 
@@ -626,10 +669,12 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuECCQE,  
     kSKmOscNuECC1pi,  
     kSKmOscNuECCcoh,
+    kSKmOscNuECCMEC,
     kSKmOscNuECCoth,
     kSKmNuEBarCCQE,
     kSKmNuEBarCC1pi,
     kSKmNuEBarCCcoh,
+    kSKmNuEBarCCMEC,
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1pi0,
     kSKmNuEBarNCcoh,
@@ -638,9 +683,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCCoth,               
 #endif          
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+    kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -651,14 +698,15 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif
     kSKmUndefined,
+#endif
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -669,7 +717,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined
   }
 
-#else //not using MultiRing FHC
+#else //not using MR FHC
   // > 1 muon-like ring (numu disappearance)
   {
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
@@ -677,7 +725,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
-    kSKmUndefined, kSKmUndefined, kSKmUndefined
+    kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined
   }
   ,
   // > 1 electron-like ring (nue appearance)
@@ -687,7 +735,7 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
     kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
-    kSKmUndefined, kSKmUndefined, kSKmUndefined
+    kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined
   }
 #endif
 
@@ -710,6 +758,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      0,
      0,
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
@@ -717,8 +766,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //numubar
+     1,
      1,
      1,
      1,
@@ -729,8 +780,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //nue
+     1,
      1,
      1,
      1,
@@ -740,7 +793,9 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      1, //nuebar
+     1,
      1,
      1,
      1,
@@ -751,13 +806,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
-#endif
-#ifdef USE_MEC
-     1, //mec
-#else
-     0,
+     1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+     0,
      0,
      0,
      0,
@@ -768,8 +820,10 @@ static const bool kIsCC[kns][knm]= {
      0,
      0,
      0,
+     0,
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     0,
      0,
      0,
      0,
@@ -794,6 +848,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      0,
      0,
      0,
@@ -802,8 +857,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //numubar
+     1,
      1,
      1,
      1,
@@ -815,8 +872,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //nue
+     1,
      1,
      1,
      1,
@@ -827,7 +886,9 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      1, //nuebar
+     1,
      1,
      1,
      1,
@@ -839,8 +900,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+      0, //undefined
       0, //undefined
       0, //undefined
       0, //undefined
@@ -851,15 +914,16 @@ static const bool kIsCC[kns][knm]= {
       0, //undefined
       0, //undefined
       0, //undefined
+      0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
       0, //undefined
       0, //undefined
       0, //undefined
       0, //undefined
-#endif
-      0, //always undefined (9)
       0, //undefined
+#endif
+      0, //always undefined (8)
       0, //undefined
       0, //undefined
       0, //undefined
@@ -874,6 +938,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      0,
      0,
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
@@ -881,8 +946,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //numubar
+     1,
      1,
      1,
      1,
@@ -893,8 +960,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //nue
+     1,
      1,
      1,
      1,
@@ -904,7 +973,9 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      1, //nuebar
+     1,
      1,
      1,
      1,
@@ -915,13 +986,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
-#endif
-#ifdef USE_MEC
-     1, //mec
-#else
-     0,
+     1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+     0,
      0,
      0,
      0,
@@ -932,8 +1000,10 @@ static const bool kIsCC[kns][knm]= {
      0,
      0,
      0,
+     0,
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     0,
      0,
      0,
      0,
@@ -954,7 +1024,8 @@ static const bool kIsCC[kns][knm]= {
   }
   ,
   // > 1 e-like ring (RHC)
-    {  1, //numu
+    {   1, //numu
+        1,
         1,
         1,
         1,
@@ -966,8 +1037,10 @@ static const bool kIsCC[kns][knm]= {
         1,
         1,
         1,
+        1,
 #endif
         1, //numubar
+        1,
         1,
         1,
         1,
@@ -979,8 +1052,10 @@ static const bool kIsCC[kns][knm]= {
         1,
         1,
         1,
+        1,
 #endif
         1, //nue
+        1,
         1,
         1,
         1,
@@ -991,7 +1066,9 @@ static const bool kIsCC[kns][knm]= {
         1,
         1,
         1,
+        1,
         1, //nuebar
+        1,
         1,
         1,
         1,
@@ -1003,8 +1080,10 @@ static const bool kIsCC[kns][knm]= {
         1,
         1,
         1,
+        1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+        0, //undefined
         0, //undefined
         0, //undefined
         0, //undefined
@@ -1015,15 +1094,16 @@ static const bool kIsCC[kns][knm]= {
         0, //undefined
         0, //undefined
         0, //undefined
+        0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
         0, //undefined
         0, //undefined
         0, //undefined
         0, //undefined
-#endif
-        0, //always undefined (9)
         0, //undefined
+#endif
+        0, //always undefined (8)
         0, //undefined
         0, //undefined
         0, //undefined
@@ -1038,6 +1118,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      0,
      0,
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
@@ -1045,8 +1126,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //numubar
+     1,
      1,
      1,
      1,
@@ -1057,8 +1140,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //nue
+     1,
      1,
      1,
      1,
@@ -1068,7 +1153,9 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      1, //nuebar
+     1,
      1,
      1,
      1,
@@ -1079,13 +1166,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
-#endif
-#ifdef USE_MEC
-     1, //mec
-#else
-     0,
+     1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+     0,
      0,
      0,
      0,
@@ -1096,8 +1180,10 @@ static const bool kIsCC[kns][knm]= {
      0,
      0,
      0,
+     0,
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+     0,
      0,
      0,
      0,
@@ -1122,6 +1208,7 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      0,
      0,
      0,
@@ -1130,8 +1217,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //numubar
+     1,
      1,
      1,
      1,
@@ -1143,8 +1232,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
      1, //nue
+     1,
      1,
      1,
      1,
@@ -1155,7 +1246,9 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
      1, //nuebar
+     1,
      1,
      1,
      1,
@@ -1167,8 +1260,10 @@ static const bool kIsCC[kns][knm]= {
      1,
      1,
      1,
+     1,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+      0, //undefined
       0, //undefined
       0, //undefined
       0, //undefined
@@ -1179,15 +1274,16 @@ static const bool kIsCC[kns][knm]= {
       0, //undefined
       0, //undefined
       0, //undefined
+      0, //undefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
       0, //undefined
       0, //undefined
       0, //undefined
       0, //undefined
-#endif
-      0, //always undefined (9)
       0, //undefined
+#endif
+      0, //always undefined (8)
       0, //undefined
       0, //undefined
       0, //undefined
