@@ -15,19 +15,26 @@ except:
   
 ROOT.gROOT.SetBatch(1)
   
-valor = ROOT.valor
-util =  valor.util
-conv =  valor.conv
-opt  =  valor.Opt.Instance()
-env  =  valor.Env.Instance()
-rnd  =  valor.Rnd.Instance()
-arridx= util.ArrIdx.Instance()
+valor   = ROOT.valor
+util    = valor.util
+conv    = valor.conv
+opt     = valor.Opt.Instance()
+t2kopt  = valor.T2KOpt.Instance()
+env     = valor.Env.Instance()
+rnd     = valor.Rnd.Instance()
+arridx  = util.ArrIdx.Instance()
 
-samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
 species   = ["numu","nue","numubar","nuebar","signue", "signuebar"]
-processes = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
-processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
+processes = ["CCQE", "CC1pi", "CCcoherent","MEC", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
+processes_used = ["CCQE", "CC1pi", "CCcoherent", "MEC","CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
 #~ processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother" , "NC1piPM", "NCother"]
+
+#~ samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
+samples   = []
+if t2kopt.fFit_1Rmu    : samples.append("1Rmu")
+if t2kopt.fFit_1Re     : samples.append("1Re")
+if t2kopt.fFit_RHC_1Rmu: samples.append("RHC1Rmu")
+if t2kopt.fFit_RHC_1Re : samples.append("RHC1Re")
 
 col1_width = 12
 coln_width = 20
@@ -38,6 +45,7 @@ modes_to_species_and_process = dict()
 modes_to_species_and_process[conv.kSKmNuMuCCQE]         = ("numu", "CCQE")
 modes_to_species_and_process[conv.kSKmNuMuCC1pi]        = ("numu", "CC1pi")
 modes_to_species_and_process[conv.kSKmNuMuCCcoh]        = ("numu", "CCcoherent")
+modes_to_species_and_process[conv.kSKmNuMuCCMEC]        = ("numu", "MEC")
 modes_to_species_and_process[conv.kSKmNuMuCCoth]        = ("numu", "CCother")
 modes_to_species_and_process[conv.kSKmNuMuNC1piC]       = ("numu", "NC1piPM")
 modes_to_species_and_process[conv.kSKmNuMuNC1pi0]       = ("numu", "NC1pi0")
@@ -51,6 +59,7 @@ modes_to_species_and_process[conv.kSKmNuMuNCoth_e]      = ("numu", "NCother")  #
 modes_to_species_and_process[conv.kSKmNuMuBarCCQE]      = ("numubar", "CCQE")
 modes_to_species_and_process[conv.kSKmNuMuBarCC1pi]     = ("numubar", "CC1pi")
 modes_to_species_and_process[conv.kSKmNuMuBarCCcoh]     = ("numubar", "CCcoherent")
+modes_to_species_and_process[conv.kSKmNuMuBarCCMEC]     = ("numubar", "MEC")
 modes_to_species_and_process[conv.kSKmNuMuBarCCoth]     = ("numubar", "CCother")
 modes_to_species_and_process[conv.kSKmNuMuBarNC1piC]    = ("numubar", "NC1piPM")
 modes_to_species_and_process[conv.kSKmNuMuBarNC1pi0]    = ("numubar", "NC1pi0")
@@ -64,6 +73,7 @@ modes_to_species_and_process[conv.kSKmNuMuBarNCoth_e]   = ("numubar", "NCother")
 modes_to_species_and_process[conv.kSKmNuECCQE]          = ("nue","CCQE")
 modes_to_species_and_process[conv.kSKmNuECC1pi]         = ("nue","CC1pi")
 modes_to_species_and_process[conv.kSKmNuECCcoh]         = ("nue","CCcoherent")
+modes_to_species_and_process[conv.kSKmNuECCMEC]         = ("nue","MEC")
 modes_to_species_and_process[conv.kSKmNuECCoth]         = ("nue","CCother")
 modes_to_species_and_process[conv.kSKmNuENC1piC]        = ("nue","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuENC1pi0]        = ("nue","NC1pi0")
@@ -73,10 +83,12 @@ modes_to_species_and_process[conv.kSKmNuENCoth_e]       = ("nue","NCother") #nu_
 modes_to_species_and_process[conv.kSKmOscNuEBarCCQE]    = ("signuebar","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuEBarCC1pi]   = ("signuebar","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuEBarCCcoh]   = ("signuebar","CCcoherent")
+modes_to_species_and_process[conv.kSKmOscNuEBarCCMEC]   = ("signuebar","MEC")
 modes_to_species_and_process[conv.kSKmOscNuEBarCCoth]   = ("signuebar","CCother")
 modes_to_species_and_process[conv.kSKmNuEBarCCQE]       = ("nuebar","CCQE")
 modes_to_species_and_process[conv.kSKmNuEBarCC1pi]      = ("nuebar","CC1pi")
 modes_to_species_and_process[conv.kSKmNuEBarCCcoh]      = ("nuebar","CCcoherent")
+modes_to_species_and_process[conv.kSKmNuEBarCCMEC]      = ("nuebar","MEC")
 modes_to_species_and_process[conv.kSKmNuEBarCCoth]      = ("nuebar","CCother")
 modes_to_species_and_process[conv.kSKmNuEBarNC1piC]     = ("nuebar","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuEBarNC1pi0]     = ("nuebar","NC1pi0")
@@ -86,6 +98,7 @@ modes_to_species_and_process[conv.kSKmNuEBarNCoth_e]    = ("nuebar","NCother") #
 modes_to_species_and_process[conv.kSKmOscNuECCQE]       = ("signue","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuECC1pi]      = ("signue","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuECCcoh]      = ("signue","CCcoherent")
+modes_to_species_and_process[conv.kSKmOscNuECCMEC]      = ("signue","MEC")
 modes_to_species_and_process[conv.kSKmOscNuECCoth]      = ("signue","CCother")
 
 fancy_species = dict()
