@@ -117,15 +117,17 @@ public:
   /// NEW MULTIRING 2
   bool ReadMultiRing (TXMLEngine* xml, XMLNodePointer_t root_node);
   ///
+  
+  
+  // Apply the given FSI parameter to the given sample, mode, Ereco?
+  bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
+  bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco) const;
 
 private:
 
   void Init      (void);
   void CleanUp   (void);
-  // Apply the given FSI parameter to the given sample, mode, Ereco?
-  bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
-  bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
-  bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco) const;
   //
   // Private data members
   //

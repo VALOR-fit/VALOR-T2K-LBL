@@ -408,89 +408,90 @@ double SuperkDetectorFSI::SystWght(
     ///
     else
       p = conv::kListOfSKDetFSIParams[ip];
-
-
-     // Is the current systematic parameter applied to current sample/mode end energy bin?
+      
+    // Is the current systematic parameter applied to current sample/mode end energy bin?
     
-     bool apply = this->ApplySyst(p,s,m,Ereco);
-     if(!apply) continue;
+    bool apply = this->ApplySyst(p,s,m,Ereco);
+    if(!apply) continue;
 
-     if(iparam != -1) {
+    if(iparam != -1) {
       if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-	 {
-	 cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple RHC SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
-		<< util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+      {
+        cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple RHC SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
+             << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
 #if FSI_BINS != 3
-	      << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+             << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
 #else
-	 << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+             << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
 #endif
       }
       
       /// NEW MULTIRING 2
       else if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
-	 {
-	 cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple MultiRing SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
-		<< util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+      {
+        cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple MultiRing SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
+             << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
 #if FSI_BINS != 3
-	      << util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+             << util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
 #else
-	      << util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+             << util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
 #endif
-	 }
+      }
       ///
-
       else
-	{
-         cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
-	    << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+      {
+        cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
+           << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
 #if FSI_BINS != 3
-	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+           << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
 #else
-	    << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+           << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
 #endif
-	 }
-       exit(1);
-     }
-     
-     if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
-       iparam = arr_index->RHCSKDetFSISystIdx(p);
-     /// NEW MULTIRING 2
-     else if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
-       iparam = arr_index->MultiRingSKDetFSISystIdx(p);
-     ///
-     else
-       iparam = arr_index->SKDetFSISystIdx(p);
-     }
+      }
+      exit(1);
+    } //iparam != -1
+    
+    if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+      iparam = arr_index->RHCSKDetFSISystIdx(p);
+    /// NEW MULTIRING 2
+    else if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
+      iparam = arr_index->MultiRingSKDetFSISystIdx(p);
+    ///
+    else {
+      iparam = arr_index->SKDetFSISystIdx(p);
+    }
+  } //ip
 
   if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
-    {
+  {
     int np = conv::kNumOfSKDetFSIParams;
     if(iparam < 0 || iparam >= np) {
-      cerr << "Exp/SuperkDetectorFSI >> Weird SuperkDetector+FSI Ereco index: " << iparam << " for Ereco value = " << Ereco 
-	 << " sample " << util::AsString(s) << " mode " << util::AsString(m) << endl;
-      exit(1);
-      }
+      cerr << "Exp/SuperkDetectorFSI/SystWght >> Found no SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
+           << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl;
+      //exit(1);
+      return 1;
     }
+  }
   /// NEW MULTIRING 2
   else if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
-    {
+  {
     int np = conv::kNumOfSKDetFSIParamsMultiRing;
     if(iparam < 0 || iparam >= np) {
-      cerr << "Exp/SuperkDetectorFSI >> Weird MultiRing SuperkDetector+FSI Ereco index: " << iparam << " for Ereco value = " << Ereco 
-	 << " sample " << util::AsString(s) << " mode " << util::AsString(m) << endl;
-      exit(1);
-      }
+      cerr << "Exp/SuperkDetectorFSI/SystWght >> Found no Multiring SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
+           << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl;
+      //return 1;
     }
+  }
   else
-    {
+  {
     int np = conv::kNumOfRHCSKDetFSIParams;
     if(iparam < 0 || iparam >= np) {
-      cerr << "Exp/SuperkDetectorFSI >> Weird RHC SuperkDetector+FSI Ereco index: " << iparam << " for Ereco value = " << Ereco
-	   << " sample " << util::AsString(s) << " mode " << util::AsString(m) << endl;
-      exit(1);
-      }
+      cerr << "Exp/SuperkDetectorFSI/SystWght >> Found no RHCSuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
+           << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl;
+      //exit(1);
+      return 1;
     }
+  }
 
   // get current value of iparam^th FSI param
   double skdetfsi_param_value; 

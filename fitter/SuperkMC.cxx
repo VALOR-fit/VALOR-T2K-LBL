@@ -53,7 +53,6 @@
 //#define PHYSHYPWEIGHTSAREONE
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
 #define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
-//#define RENORMALISE_MEC // NEEDS CHECKING renormalise non-MEC templates so that MEC isn't an arbitary addition of events, but respects the total normalisation
 
 #define METHOD_FOR_ESCALE 1 // 1 = new linear method, 0 = old (should be deprecated and removed once new method fully validated)
 
@@ -110,24 +109,6 @@ void SuperkMC::Init(void)
   fPOTRHC = 0;
   fXMEC = -1;
   fUnphysicalOscProb = false;
-
-  fMCTemplMECMartini = 0;
-  fMCTemplMECNieves  = 0;
-  for(int it=0; it<util::NumEtrueBins(kSKsFCFV1RingMuLike); it++) {
-    for(int ir=0; ir<util::NumErecoBins(kSKsFCFV1RingMuLike); ir++) {
-      fMCTemplArrayMECMartini[it][ir] = 0;
-      fMCTemplArrayMECNieves [it][ir] = 0;
-    }
-  }
-  
-  //// ANTINU
-  for(int it=0; it<util::NumEtrueBins(kSKsRHCFCFV1RingMuLike); it++) {
-    for(int ir=0; ir<util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ir++) {
-      fMCTemplArrayRHCMECMartini[it][ir] = 0;
-      fMCTemplArrayRHCMECNieves [it][ir] = 0;
-    }
-  }
-  ////
 
   for(int is=0; is<kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -240,10 +221,6 @@ void SuperkMC::CleanUp(void)
   }
   */
 
-  if(fMCTemplMECMartini) delete fMCTemplMECMartini;
-  if(fMCTemplMECNieves ) delete fMCTemplMECNieves;
-  if(fMCTemplRHCMECMartini) delete fMCTemplRHCMECMartini;  // ANTINU
-  if(fMCTemplRHCMECNieves ) delete fMCTemplRHCMECNieves;   // ANTINU
   for(int is = 0; is < kns; is++) {
     for(int im = 0; im < knm; im++) {
       //already deleted Ori & Nom (the if doesn't work!)
@@ -404,15 +381,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 #endif//__show_init_mesg_info__
 
-  // get MEC template
-  fMCTemplMECMartini    = util::XML2TH2D  (xml,root_node,"mec/templates/martini");
-  fMCTemplMECNieves     = util::XML2TH2D  (xml,root_node,"mec/templates/nieves");
-
-  // ANTINU
-  fMCTemplRHCMECMartini    = util::XML2TH2D  (xml,root_node,"mec/templates/martini");
-  fMCTemplRHCMECNieves     = util::XML2TH2D  (xml,root_node,"mec/templates/nieves");
-  ////
-
   // initialise physics hypothesis
   // need to initialise as 3 flavour oscillation, otherwise ExtTuning (NA61) and FinTuning (BANFF) is not applied to nuesig modes
   fPhysHypothesis.Init(kHypOsc3F);
@@ -428,7 +396,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
-  // fill-in "special" MC templates (MEC, osc. numu CC)
+  // fill-in "special" MC templates (osc. numu CC)
   this->FillSpecialTemplates();
 
 #ifdef __save_templates_debug__
@@ -567,7 +535,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 #endif
 
   //filled in FillSpecialTemplates()
-  if(util::IsMEC(m) || util::IsOscNuMu(m) || util::IsOscNuMuBar(m) || util::IsOscNuEBar(m))
+  if(util::IsOscNuMu(m) || util::IsOscNuMuBar(m) || util::IsOscNuEBar(m))
     return;
 
   int sidx = arr_index->SuperkSampleIdx(s);
@@ -794,140 +762,6 @@ void SuperkMC::FillSpecialTemplates(void)
       
     EFluxType fNom = (IsRHCSample(s)) ? kRHCFlxNominal : kFlxNominal ;
     EFluxType fExt = (IsRHCSample(s)) ? kRHCFlxExtTuning : kFlxExtTuning ;
-    
-    //
-    // Add MEC template, if included in the list of modes
-    // Special template that isnt't in the tree! 
-    // Don't need to apply POT weights or flux weights!
-    // Initalise the MEC mode template as empty
-    // Here, just put the histogram in arrays (for quicker access)
-    // and also fill the variable binning array (for skipping calls to find weights)
-    //
-    SuperkMode_t m = kSKmMEC;                        
-    int midx = arr_index->SuperkModeIdx(s,kSKmMEC);
-    bool incl_mec = ( midx != -1 );
-    if(incl_mec)
-      {
-	// loop over Etrue
-	cout << "Exp/SKMC/FillSpecialTemplates >> Filling MEC templates for " << util::AsString(s) << " sample" <<endl;
-	for(int it = 1; it <= this->Template(s,kSKmMEC,kSKMCtNom)->GetYaxis()->GetNbins(); it++) {
-	  double Etrue = this->Template(s,kSKmMEC,kSKMCtNom)->GetYaxis()->GetBinCenter(it);
-	  // loop over Ereco
-	  for(int ir = 1; ir <= this->Template(s,kSKmMEC,kSKMCtNom)->GetXaxis()->GetNbins(); ir++) {
-	    double Ereco = this->Template(s,kSKmMEC,kSKMCtNom)->GetXaxis()->GetBinCenter(ir);
-	 
-	    //get nevents
-
-	    /// NEW MULTIRING 
-	    // MODIFIED
-	    double nev_martini = 0.0;
-	    double nev_nieves  = 0.0;
-	    if(util::IsFHCSample(s) && !util::IsMultiRingSample(s)) {
-	      nev_martini = fMCTemplMECMartini->GetBinContent(ir,it);
-	      nev_nieves  = fMCTemplMECNieves-> GetBinContent(ir,it);
-	    }
-	    ////
-
-	    // ANTINU
-	    else if(util::IsRHCSample(s)) {
-	      nev_martini = fMCTemplRHCMECMartini->GetBinContent(ir,it);
-	      nev_nieves  = fMCTemplRHCMECNieves-> GetBinContent(ir,it);
-	    }
-	    ////
-
-
-	    // fill the variable template (with both)
-	    fMCVariableTempl[sidx][midx]->Fill(Ereco,Etrue,nev_martini);
-	    fMCVariableTempl[sidx][midx]->Fill(Ereco,Etrue,nev_nieves);
-	    //fill the mec arrays
-	  
-	  
-	    /// NEW MULTIRING 
-	    // MODIFIED
-	    if(util::IsFHCSample(s) && !util::IsMultiRingSample(s)){
-	      fMCTemplArrayMECMartini[it-1][ir-1] = nev_martini;
-	      fMCTemplArrayMECNieves [it-1][ir-1] = nev_nieves;
-	    }
-	    ////
-	    // ANTINU
-	    else if(util::IsRHCSample(s)){
-	      fMCTemplArrayRHCMECMartini[it-1][ir-1] = nev_martini;
-	      fMCTemplArrayRHCMECNieves [it-1][ir-1] = nev_nieves;
-	    }
-	    ////
-
-
-
-	  }//ir
-	}//it
-      
-	int i_ne_var = 0;
-	//now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
-	// This loop also keeps a record of which bins are non-empty
-	//loop over variable Etrue
-	for(int itv = 1; itv <= fMCVariableTempl[sidx][midx]->GetYaxis()->GetNbins(); itv++) {
-	  double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
-	  double EtrueVarMax = util::VariableMCEtrueBinEdges(s,m)[itv]   - kOneMeV;
-	  
-	  int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
-	  int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
-	  
-	  // loop over variable Ereco
-	  for(int irv = 1; irv <= fMCVariableTempl[sidx][midx]->GetXaxis()->GetNbins(); irv++) {
-	    double nev = fMCVariableTempl[sidx][midx]->GetBinContent(irv,itv);
-
-	    fMCVariableTemplArray[sidx].GetEntryRef(midx, itv-1, irv-1) = nev; 
-	    ////
-
-
-	    // Fill nonempty bin numbers.
-	    if (nev < conv::kASmallNum) {
-	      continue;
-	    }
-	    
-	    fNonEmptyVariableBins[sidx][midx][i_ne_var] = conv::kBigIndex * irv + itv;
-	    
-	    double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
-	    double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
-	    
-	    int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
-	    int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
-
-	    int i_ne_fixed = 0;
-	    // loop over fixed Etrue to count n nonempty
-	    for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
-	      // loop over fixed Ereco to count
-	      for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
-		double nevf = fMCVariableTempl[sidx][midx]->GetBinContent(ir,it);
-		if (nevf < conv::kASmallNum) {
-		  continue;
-		}
-		i_ne_fixed++;
-	      }//ir
-	    }//it
-	    fNNonEmptyFixedBins[sidx][midx][i_ne_var] = i_ne_fixed;
-	    fNonEmptyFixedBins[sidx][midx][i_ne_var] = new int[i_ne_fixed];
-	    
-	    i_ne_fixed = 0;
-	    // loop over fixed Etrue to count n nonempty
-	    for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
-	      // loop over fixed Ereco to count
-	      for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
-		double nevf = fMCVariableTempl[sidx][midx]->GetBinContent(ir,it);
-		if (nevf < conv::kASmallNum) {
-		  continue;
-		}
-		fNonEmptyFixedBins[sidx][midx][i_ne_var][i_ne_fixed] = conv::kBigIndex * ir + it;
-		i_ne_fixed++;
-	      }//ir
-	    }//it
-	    i_ne_var++;
-	  }//irv
-	}//itv
-	fNNonEmptyVariableBins[sidx][midx] = i_ne_var;
-	assert(i_ne_var<kMaxVarBins);
-      }//incl_mec
-    
   
     //
     // Fill in `osc numu' templates from `numu' templates
@@ -1659,9 +1493,6 @@ void SuperkMC::ApplySystematicsToTemplates(void)
 // Apply systematic variations to MC templates
 //
   this->ApplySystematicsToTemplates_Multiplicative   ();
-#ifdef RENORMALISE_MEC
-  this->ApplyMECRenormalisationToTemplates();
-#endif
 }
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void) 
@@ -1805,323 +1636,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtSys, "mcnorm_fluxtuned_banfftuned_syst_multi");
 #endif
-}
-//________________________________________________________________________________________
-void SuperkMC::ApplyMECRenormalisationToTemplates(void) 
-{
-// For use when the BANFF doesn't give us an updated MEC matrix
-// MEC is just an addition of events, so we can renormalise non-MEC events
-// to be more realistic with it's effect
-//
-
-  // MODIFIED
-  // Declare variables used both for FHC and RHC modes. Avoid compilation errors when both RHC and FHC modes are used
-  SuperkSample_t s=kSKsUndefined;
-  int n_ereco_bins=0;
-  int n_etrue_bins=0;
-  double integrals[knm] = { };
-  double renorm_total = 0;
-  double renorm_mec   = 0;
-  double renorm_templ = 0;
-  double renorm_factor = 0.;
-  ////
-  
-  int sidx=-1;
-#ifdef __show_update_mesg_info__
-  cout << "Exp/SKMC >> Applying MEC renormalisation" << endl;
-#endif
-
-#ifdef __FHC_RUNNING__
-  
-  //MEC only included in 1Rmu sample
-  s = kSKsFCFV1RingMuLike;
-  sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  n_ereco_bins = kNErecoBins[sidx];
-  n_etrue_bins = kNEtrueBins[sidx];
-  
-  //define which modes we're interested in normalising to.
-  // to turn off, swap a mode with kSKmUndefined
-  const SuperkMode_t RenormModes1Rmu[knm] = {
-    kSKmNuMuCCQE,         
-    kSKmNuMuCC1pi,
-    kSKmNuMuCCcoh,
-    kSKmNuMuCCoth,                      
-    kSKmUndefined, //kSKmNuMuNC1piC,
-    kSKmUndefined, //kSKmNuMuNCoth_mu,          
-    kSKmOscNuMuCCQE,
-    kSKmOscNuMuCC1pi,
-    kSKmOscNuMuCCcoh,
-    kSKmOscNuMuCCoth,
-    kSKmNuMuBarCCQE,      
-    kSKmNuMuBarCC1pi,
-    kSKmNuMuBarCCcoh,
-    kSKmNuMuBarCCoth,                  
-    kSKmUndefined, //kSKmNuMuBarNC1piC,
-    kSKmUndefined, //kSKmNuMuBarNCoth_mu,
-    kSKmNuECCQE, 
-    kSKmNuECC1pi,
-    kSKmNuECCcoh,
-    kSKmNuECCoth,     
-                           
-    kSKmUndefined, //kSKmNuENC1piC,
-    kSKmUndefined, //kSKmNuENCoth_mu,
-    kSKmNuEBarCCQE,
-    kSKmNuEBarCC1pi,
-    kSKmNuEBarCCcoh,
-    kSKmNuEBarCCoth,
-    kSKmUndefined, //kSKmNuEBarNC1piC,
-    kSKmUndefined, //kSKmNuEBarNCoth_mu,
-    kSKmOscNuECCQE,
-    kSKmOscNuECC1pi,
-    kSKmOscNuECCcoh,
-    kSKmOscNuECCoth,
-    kSKmUndefined,//kSKmMEC, //keep MEC templates here - they won't be renormalised!
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
-  };
-  
-  //FIRST integrate the templates
-  // Loop over Renorm modes
-  for(int im = 0; im < knm; im++) { 
-    SuperkMode_t m = kSKReactionModes[0][im];//RenormModes1Rmu[im];
-    if(m == kSKmUndefined) continue;
-    // Consider template?
-    bool skip = this->SkipTemplate(m);
-    if(skip) continue;
-    //initialise
-    integrals[im] = 0;
-    //loop over Ereco
-    for(int ir = 1; ir <= n_ereco_bins; ir++) {
-      // loop over Etrue
-      for(int it = 1; it <= n_etrue_bins; it++) {
-	double nev = fMCTemplArrayFin[sidx].GetEntryRef(im, it-1, ir-1);
-	nev = TMath::Max(0.,nev);
-	integrals[im] += nev;
-      }//it
-    }//ir
-    cout << integrals[im] << "\t" << util::AsStringCompact(m) << endl;
-  }//im
-
-  //NEXT get total number of events
-  renorm_total = 0;
-  renorm_mec   = 0;
-  renorm_templ = 0;
-  // Loop over Renorm modes
-  for(int im = 0; im < knm; im++) { 
-    SuperkMode_t m = kSKReactionModes[0][im];//RenormModes1Rmu[im];
-    if(m == kSKmUndefined) continue;
-    // Consider template?
-    bool skip = this->SkipTemplate(m);
-    if(skip) continue;
-    if(util::IsMEC(m))
-      renorm_mec   += integrals[im];
-    else
-      renorm_total += integrals[im];
-  }
-  for(int im = 0; im < knm; im++) { 
-    SuperkMode_t m = RenormModes1Rmu[im];
-    if(m == kSKmUndefined) continue;
-    // Consider template?
-    bool skip = this->SkipTemplate(m);
-    if(skip) continue;
-    renorm_templ += integrals[im];
-  }
-  //and calculate the renorm factor
-  renorm_factor = (renorm_templ - renorm_mec)/renorm_templ;  
-  cout << "FHC mode" << endl;    // MODIFIED
-  cout << "Exp/SKMC >> " << renorm_mec   << " MEC events"           << endl;
-  cout << "Exp/SKMC >> " << renorm_total << " total non-MEC events" << endl;
-  cout << "Exp/SKMC >> " << renorm_templ << " events in templates we're renormalising" << endl;
-  cout << "Exp/SKMC >> " << renorm_total - renorm_templ << " events in templates we're not renormalising" << endl;
-  cout << "Exp/SKMC >> MEC renormalisation factor is " << renorm_factor << endl;
-
-  //FINALLY apply the factor
-  // Loop over Renormsample modes
-  for(int im = 0; im < knm; im++) { 
-    SuperkMode_t m = RenormModes1Rmu[im];
-    if(m == kSKmUndefined) continue;
-    // Consider template?
-    bool skip = this->SkipTemplate(m);
-    if(skip) continue;
-    if(util::IsMEC(m)) continue;
-    //loop over Ereco
-    for(int ir = 1; ir <= n_ereco_bins; ir++) {
-      // loop over Etrue
-      for(int it = 1; it <= n_etrue_bins; it++) {
-        fMCTemplArrayFin[sidx].GetEntryRef(im, it-1, ir-1) *= renorm_factor;
-      }//it
-    }//ir
-  }//im
-
-#endif //__FHC_RUNNING__
-    
-#ifdef __save_templates_debug__
-  this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_multi_mecrenorm");
-#endif
-  
-  // ANTINU
-#ifdef __RHC_RUNNING__          
-  
-  //MEC only included in 1Rmu sample
-  s = kSKsRHCFCFV1RingMuLike;
-  sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-  n_ereco_bins = kNErecoBins[sidx];
-  n_etrue_bins = kNEtrueBins[sidx];
-  
-  //define which modes we're interested in normalising to.
-  // to turn off, swap a mode with kSKmUndefined
-  const SuperkMode_t RenormModesRHC1Rmu[knm] = {
-    kSKmNuMuCCQE,         
-    kSKmNuMuCC1pi,
-    kSKmNuMuCCcoh,
-    kSKmNuMuCCoth,                      
-    kSKmUndefined, //kSKmNuMuNC1piC,
-    kSKmUndefined, //kSKmNuMuNCoth_mu,          
-    kSKmOscNuMuCCQE,
-    kSKmOscNuMuCC1pi,
-    kSKmOscNuMuCCcoh,
-    kSKmOscNuMuCCoth,
-    kSKmNuMuBarCCQE,      
-    kSKmNuMuBarCC1pi,
-    kSKmNuMuBarCCcoh,
-    kSKmNuMuBarCCoth,                  
-    kSKmUndefined, //kSKmNuMuBarNC1piC,
-    kSKmUndefined, //kSKmNuMuBarNCoth_mu,
-    kSKmNuECCQE, 
-    kSKmNuECC1pi,
-    kSKmNuECCcoh,
-    kSKmNuECCoth,     
-                           
-    kSKmUndefined, //kSKmNuENC1piC,
-    kSKmUndefined, //kSKmNuENCoth_mu,
-    kSKmNuEBarCCQE,
-    kSKmNuEBarCC1pi,
-    kSKmNuEBarCCcoh,
-    kSKmNuEBarCCoth,
-    kSKmUndefined, //kSKmNuEBarNC1piC,
-    kSKmUndefined, //kSKmNuEBarNCoth_mu,
-    kSKmOscNuEBarCCQE,   // ANTINU --> OscNuEBar instead of OscNuE
-    kSKmOscNuEBarCC1pi,  // ANTINU --> OscNuEBar instead of OscNuE
-    kSKmOscNuEBarCCcoh,  // ANTINU --> OscNuEBar instead of OscNuE
-    kSKmOscNuEBarCCoth,  // ANTINU --> OscNuEBar instead of OscNuE
-    kSKmUndefined,//kSKmMEC, //keep MEC templates here - they won't be renormalised!
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
-  };
-  
-  //FIRST integrate the templates
-  // Loop over Renorm modes
-  for(int im = 0; im < knm; im++) { 
-    SuperkMode_t m = kSKReactionModes[2][im];//RenormModesRHC1Rmu[im];  // is=2 --> RHC numu disapp // ANTINU
-    if(m == kSKmUndefined) continue;
-    // Consider template?
-    bool skip = this->SkipTemplate(m);
-    if(skip) continue;
-    //initialise
-    integrals[im] = 0;
-    //loop over Ereco
-    for(int ir = 1; ir <= n_ereco_bins; ir++) {
-      // loop over Etrue
-      for(int it = 1; it <= n_etrue_bins; it++) {
-	double nev = fMCTemplArrayFin[sidx].GetEntryRef(im,it-1,ir-1);
-	nev = TMath::Max(0.,nev);
-	integrals[im] += nev;
-      }//it
-    }//ir
-    cout << integrals[im] << "\t" << util::AsStringCompact(m) << endl;
-  }//im
-
-  //NEXT get total number of events
-  renorm_total = 0;
-  renorm_mec   = 0;
-  renorm_templ = 0;
-  // Loop over Renorm modes
-  for(int im = 0; im < knm; im++) { 
-    SuperkMode_t m = kSKReactionModes[2][im];//RenormModesRHC1Rmu[im]; // is=2 --> RHC numu disapp // ANTINU
-    if(m == kSKmUndefined) continue;
-    // Consider template?
-    bool skip = this->SkipTemplate(m);
-    if(skip) continue;
-    if(util::IsMEC(m))
-      renorm_mec   += integrals[im];
-    else
-      renorm_total += integrals[im];
-  }
-  for(int im = 0; im < knm; im++) { 
-    SuperkMode_t m = RenormModesRHC1Rmu[im];
-    if(m == kSKmUndefined) continue;
-    // Consider template?
-    bool skip = this->SkipTemplate(m);
-    if(skip) continue;
-    renorm_templ += integrals[im];
-  }
-  //and calculate the renorm factor
-  renorm_factor = (renorm_templ - renorm_mec)/renorm_templ;  
-  cout << "RHC mode" << endl;    // MODIFIED
-  cout << "Exp/SKMC >> " << renorm_mec   << " MEC events"           << endl;
-  cout << "Exp/SKMC >> " << renorm_total << " total non-MEC events" << endl;
-  cout << "Exp/SKMC >> " << renorm_templ << " events in templates we're renormalising" << endl;
-  cout << "Exp/SKMC >> " << renorm_total - renorm_templ << " events in templates we're not renormalising" << endl;
-  cout << "Exp/SKMC >> MEC renormalisation factor is " << renorm_factor << endl;
-
-  //FINALLY apply the factor
-  // Loop over Renormsample modes
-  for(int im = 0; im < knm; im++) { 
-    SuperkMode_t m = RenormModesRHC1Rmu[im];
-    if(m == kSKmUndefined) continue;
-    // Consider template?
-    bool skip = this->SkipTemplate(m);
-    if(skip) continue;
-    if(util::IsMEC(m)) continue;
-    //loop over Ereco
-    for(int ir = 1; ir <= n_ereco_bins; ir++) {
-      // loop over Etrue
-      for(int it = 1; it <= n_etrue_bins; it++) {
-	fMCTemplArrayFin[sidx].GetEntryRef(im, it-1, ir-1) *= renorm_factor;
-	
-      }//it
-    }//ir
-  }//im
-
-#endif //__RHC_RUNNING__
-    
-#ifdef __save_templates_debug__
-  //this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_multi_mecrenorm");
-#endif
- ////
-  
 }
 //________________________________________________________________________________________
 bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void) 

@@ -69,10 +69,6 @@ Split valor::conv namespace into several smaller files
 #endif
 #endif
 
-#ifndef USE_MEC
-//#define USE_MEC //if this is turned off, kSKmMEC is not included in kSKReactionModes
-#endif
-
 #ifndef FSI_BINS
 #ifdef __NUMUONLY__
 #define FSI_BINS 2 //numu disapp analysis, 6 bins

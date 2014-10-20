@@ -481,6 +481,11 @@ bool valor::util::IsCCcoh(int neut_reaction_mode)
   return neut_reaction_mode ==  16;
 }
 //___________________________________________________________________________
+bool valor::util::IsMEC(int neut_reaction_mode) 
+{
+  return neut_reaction_mode ==  2;
+}
+//___________________________________________________________________________
 bool valor::util::IsCCoth(int neut_reaction_mode) 
 //this is a catch all for everything CC that is not QE, 1pi, or coh
 // needs to be updated if another subcategory is added
@@ -580,6 +585,11 @@ bool valor::util::UseEventToFillInTemplate(
     bool is_numu  = (nu_pdg_code == kPdgNuMu);
     use_it = is_numu && IsCCcoh(neut_reaction_mode);
   }
+  if(m == kSKmNuMuCCMEC)
+  {
+    bool is_numu  = (nu_pdg_code == kPdgNuMu);
+    use_it = is_numu && IsMEC(neut_reaction_mode);
+  }
 
   else
   if(m == kSKmNuMuCCoth) 
@@ -587,14 +597,7 @@ bool valor::util::UseEventToFillInTemplate(
      bool is_numu     = (nu_pdg_code == kPdgNuMu);
      use_it = is_numu && IsCCoth(neut_reaction_mode);
   } 
-
-  else
-  if(m == kSKmNuMuCCoth)
-  {
-    bool is_numu    = (nu_pdg_code == kPdgNuMu);
-    use_it = is_numu && IsCCoth(neut_reaction_mode);
-  }
-
+  
   else
   if(m == kSKmNuMuNC1piC) 
   {
@@ -650,6 +653,13 @@ bool valor::util::UseEventToFillInTemplate(
   {
      bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
      use_it = is_numubar && IsCCcoh(-neut_reaction_mode);
+  }
+  
+  else
+  if(m == kSKmNuMuBarCCMEC) 
+  {
+     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
+     use_it = is_numubar && IsMEC(-neut_reaction_mode);
   } 
 
   else
@@ -658,14 +668,7 @@ bool valor::util::UseEventToFillInTemplate(
      bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
      use_it = is_numubar && IsCCoth(-neut_reaction_mode);
   } 
-
-  else
-  if(m == kSKmNuMuBarCCoth) 
-  {
-     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsCCoth(-neut_reaction_mode);
-  } 
-
+  
   else
   if(m == kSKmNuMuBarNC1piC) 
   {
@@ -724,16 +727,16 @@ bool valor::util::UseEventToFillInTemplate(
   } 
 
   else
-  if(m == kSKmNuECCoth || m == kSKmOscNuECCoth) 
+  if(m == kSKmNuECCMEC || m == kSKmOscNuECCMEC) 
   {
-     bool is_nue      = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsCCoth(neut_reaction_mode);
-  }
+     bool is_nue   = (nu_pdg_code == kPdgNuE); 
+     use_it = is_nue && IsMEC(neut_reaction_mode);
+  } 
 
   else
   if(m == kSKmNuECCoth || m == kSKmOscNuECCoth) 
   {
-     bool is_nue     = (nu_pdg_code == kPdgNuE); 
+     bool is_nue      = (nu_pdg_code == kPdgNuE); 
      use_it = is_nue && IsCCoth(neut_reaction_mode);
   }
 
@@ -803,18 +806,17 @@ bool valor::util::UseEventToFillInTemplate(
      use_it = is_nue && IsCCcoh(-neut_reaction_mode);
   } 
 
+  else
+  if(m == kSKmNuEBarCCMEC) 
+  {
+     bool is_nue   = (nu_pdg_code == kPdgNuEBar); 
+     use_it = is_nue && IsMEC(-neut_reaction_mode);
+  } 
 
   else
   if(m == kSKmNuEBarCCoth) 
   {
      bool is_nue      = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsCCoth(-neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuEBarCCoth) 
-  {
-     bool is_nue     = (nu_pdg_code == kPdgNuEBar); 
      use_it = is_nue && IsCCoth(-neut_reaction_mode);
   }
 

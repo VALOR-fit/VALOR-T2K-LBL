@@ -53,26 +53,7 @@ bool valor::util::IsNuMu(valor::conv::SuperkMode_t  m)
 
   if(m >= kSKmNuMuCCQE && m <= kSKmNuMuNCoth_e)
     return true;
-  /*
-  switch(m) {
-     case ( kSKmNuMuCCQE        ) :
-     case ( kSKmMEC             ) : 
-     case ( kSKmNuMuCC1pi       ) :
-     case ( kSKmNuMuCCcoh       ) :
-     case ( kSKmNuMuCCoth    ) :
-       //     case ( kSKmNuMuCCoth     ) :
-     case ( kSKmNuMuNC1piC      ) :
-     case ( kSKmNuMuNC1pi0      ) :
-     case ( kSKmNuMuNCcoh       ) :
-     case ( kSKmNuMuNCoth_e     ) :
-     case ( kSKmNuMuNCoth_mu    ) :
-       return true;
-       break;
-     default :                
-       return false;
-       break;
-  }
-  */
+    
   return false;
 }
 //____________________________________________________________________________
@@ -273,9 +254,9 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
 // Compact string used for naming output histograms stored ROOT files
 // using the Japanese analysis naming convention
 //
+// needs updating with MEC modes
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "numu_ccqe";       break;
-     case ( kSKmMEC             ) : return "mec";             break;
      case ( kSKmNuMuCC1pi       ) : return "numu_ccpi";       break;
      case ( kSKmNuMuCCcoh       ) : return "numu_cccoh";      break;
      case ( kSKmNuMuCCoth       ) : return "numu_ccoth";      break;
@@ -328,9 +309,9 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
 {
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "numu CC QE";                        break;
-     case ( kSKmMEC             ) : return "numu CC MEC";                       break;
      case ( kSKmNuMuCC1pi       ) : return "numu CC 1pi";                       break;
      case ( kSKmNuMuCCcoh       ) : return "numu CC coh";                       break;
+     case ( kSKmNuMuCCMEC       ) : return "numu CC MEC";                       break;
      case ( kSKmNuMuCCoth       ) : return "numu CC oth";                       break;
      case ( kSKmNuMuNC1piC      ) : return "numu NC 1piC";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "numu/nutau NC 1pi0";                break;
@@ -340,10 +321,12 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
      case ( kSKmOscNuMuCCQE     ) : return "oscillated numu CC QE";             break;
      case ( kSKmOscNuMuCC1pi    ) : return "oscillated numu CC 1pi";            break;  
      case ( kSKmOscNuMuCCcoh    ) : return "oscillated numu CC coh";            break;
+     case ( kSKmOscNuMuCCMEC    ) : return "oscillated numu CC MEC";            break;
      case ( kSKmOscNuMuCCoth    ) : return "oscillated numu CC oth";            break;
      case ( kSKmNuMuBarCCQE     ) : return "numubar CC QE";                     break;
      case ( kSKmNuMuBarCC1pi    ) : return "numubar CC 1pi";                    break;
      case ( kSKmNuMuBarCCcoh    ) : return "numubar CC coh";                    break;
+     case ( kSKmNuMuBarCCMEC    ) : return "numubar CC MEC";                    break;
      case ( kSKmNuMuBarCCoth    ) : return "numubar CC oth";                    break;
      case ( kSKmNuMuBarNC1piC   ) : return "numubar/nutaubar NC 1piC";          break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0";          break;
@@ -353,10 +336,12 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
      case ( kSKmOscNuMuBarCCQE  ) : return "oscillated numubar CC QE";          break;
      case ( kSKmOscNuMuBarCC1pi ) : return "oscillated numubar CC 1pi";         break;  
      case ( kSKmOscNuMuBarCCcoh ) : return "oscillated numubar CC coh";         break;
+     case ( kSKmOscNuMuBarCCMEC ) : return "oscillated numubar CC MEC";         break;
      case ( kSKmOscNuMuBarCCoth ) : return "oscillated numubar CC oth";         break;
      case ( kSKmNuECCQE         ) : return "nue CC QE";                         break;
      case ( kSKmNuECC1pi        ) : return "nue CC 1pi";                        break;
      case ( kSKmNuECCcoh        ) : return "nue CC coh";                        break;
+     case ( kSKmNuECCMEC        ) : return "nue CC MEC";                        break;
      case ( kSKmNuECCoth        ) : return "nue CC oth";                        break;
      case ( kSKmNuENC1piC       ) : return "nue NC 1piC";                       break;
      case ( kSKmNuENC1pi0       ) : return "nue NC 1pi0";                       break;
@@ -366,10 +351,12 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
      case ( kSKmOscNuECCQE      ) : return "oscillated nue CC QE";              break;
      case ( kSKmOscNuECC1pi     ) : return "oscillated nue CC 1pi";             break;
      case ( kSKmOscNuECCcoh     ) : return "oscillated nue CC coh";             break;
+     case ( kSKmOscNuECCMEC     ) : return "oscillated nue CC MEC";             break;
      case ( kSKmOscNuECCoth     ) : return "oscillated nue CC oth";             break;
      case ( kSKmNuEBarCCQE      ) : return "nuebar CC QE";                      break;
      case ( kSKmNuEBarCC1pi     ) : return "nuebar CC 1pi";                     break;
      case ( kSKmNuEBarCCcoh     ) : return "nuebar CC coh";                     break;
+     case ( kSKmNuEBarCCMEC     ) : return "nuebar CC MEC";                     break;
      case ( kSKmNuEBarCCoth     ) : return "nuebar CC oth";                     break;
      case ( kSKmNuEBarNC1piC    ) : return "nuebar NC 1piC";                    break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebar NC 1pi0";                    break;
@@ -379,6 +366,7 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
      case ( kSKmOscNuEBarCCQE   ) : return "oscillated nuebar CC QE";           break;
      case ( kSKmOscNuEBarCC1pi  ) : return "oscillated nuebar CC 1pi";          break;  
      case ( kSKmOscNuEBarCCcoh  ) : return "oscillated nuebar CC coh";          break;
+     case ( kSKmOscNuEBarCCMEC  ) : return "oscillated nuebar CC MEC";          break;
      case ( kSKmOscNuEBarCCoth  ) : return "oscillated nuebar CC oth ";         break;
 
      default                      : return "--";
@@ -399,9 +387,9 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
   switch(m) {
 
      case ( kSKmNuMuCCQE        ) : return "$\\nu_\\mu$ CCQE";                                               break;
-     case ( kSKmMEC             ) : return "$\\nu_\\mu$ CC MEC";                                             break;
      case ( kSKmNuMuCC1pi       ) : return "$\\nu_\\mu$ CC 1$\\pi$";                                         break;
      case ( kSKmNuMuCCcoh       ) : return "$\\nu_\\mu$ CC coherent";                                        break;
+     case ( kSKmNuMuCCMEC       ) : return "$\\nu_\\mu$ CC MEC";                                             break;
      case ( kSKmNuMuCCoth       ) : return "$\\nu_\\mu$ CC other";                                           break;
      case ( kSKmNuMuNC1piC      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^{+/-}$";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^0$";                          break;
@@ -411,10 +399,12 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
      case ( kSKmOscNuMuCCQE     ) : return "Osc. $\\nu_\\mu$ CCQE";                                          break;
      case ( kSKmOscNuMuCC1pi    ) : return "Osc. $\\nu_\\mu$ CC 1$\\pi$";                                    break;
      case ( kSKmOscNuMuCCcoh    ) : return "Osc. $\\nu_\\mu$ CC coherent";                                   break; 
+     case ( kSKmOscNuMuCCMEC    ) : return "Osc. $\\nu_\\mu$ CC MEC";                                        break; 
      case ( kSKmOscNuMuCCoth    ) : return "Osc. $\\nu_\\mu$ CC other";                                      break;
      case ( kSKmNuMuBarCCQE     ) : return "$\\bar{\\nu}_\\mu$ CCQE";                                        break;
      case ( kSKmNuMuBarCC1pi    ) : return "$\\bar{\\nu}_\\mu$ CC 1$\\pi$";                                  break;
      case ( kSKmNuMuBarCCcoh    ) : return "$\\bar{\\nu}_\\mu$ CC coherent";                                 break;
+     case ( kSKmNuMuBarCCMEC    ) : return "$\\bar{\\nu}_\\mu$ CC MEC";                                      break;
      case ( kSKmNuMuBarCCoth    ) : return "$\\bar{\\nu}_\\mu$ CC other";                                    break;
      case ( kSKmNuMuBarNC1piC   ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC 1$\\pi^{+/-}$";        break;
      case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC 1$\\pi^0$";            break;
@@ -424,10 +414,12 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
      case ( kSKmOscNuMuBarCCQE  ) : return "Osc. $\\bar{\\nu}_\\mu$ CCQE";                                   break;
      case ( kSKmOscNuMuBarCC1pi ) : return "Osc. $\\bar{\\nu}_\\mu$ CC 1$\\pi$";                             break;
      case ( kSKmOscNuMuBarCCcoh ) : return "Osc. $\\bar{\\nu}_\\mu$ CC coherent";                            break; 
+     case ( kSKmOscNuMuBarCCMEC ) : return "Osc. $\\bar{\\nu}_\\mu$ CC MEC";                                 break; 
      case ( kSKmOscNuMuBarCCoth ) : return "Osc. $\\bar{\\nu}_\\mu$ CC other";                               break;
      case ( kSKmNuECCQE         ) : return "$\\nu_e$ CCQE";                                                  break;
      case ( kSKmNuECC1pi        ) : return "$\\nu_e$ CC 1$\\pi$";                                            break;
      case ( kSKmNuECCcoh        ) : return "$\\nu_e$ CC coherent";                                           break;
+     case ( kSKmNuECCMEC        ) : return "$\\nu_e$ CC MEC";                                                break;
      case ( kSKmNuECCoth        ) : return "$\\nu_e$ CC other";                                              break;
      case ( kSKmNuENC1piC       ) : return "$\\nu_e$ NC 1$\\pi^{+/-}$";                                      break;
      case ( kSKmNuENC1pi0       ) : return "$\\nu_e$ NC 1$\\pi^0$";                                          break;
@@ -437,10 +429,12 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
      case ( kSKmOscNuECCQE      ) : return "Osc. $\\nu_e$ CCQE";                                             break;
      case ( kSKmOscNuECC1pi     ) : return "Osc. $\\nu_e$ CC 1$\\pi$";                                       break;
      case ( kSKmOscNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                      break;
+     case ( kSKmOscNuECCMEC     ) : return "Osc. $\\nu_e$ CC MEC";                                           break;
      case ( kSKmOscNuECCoth     ) : return "Osc. $\\nu_e$ CC other";                                         break;
      case ( kSKmNuEBarCCQE      ) : return "$\\bar{\\nu}_e$ CCQE";                                           break;
      case ( kSKmNuEBarCC1pi     ) : return "$\\bar{\\nu}_e$ CC 1$\\pi$";                                     break;
      case ( kSKmNuEBarCCcoh     ) : return "$\\bar{\\nu}_e$ CC coherent";                                    break;
+     case ( kSKmNuEBarCCMEC     ) : return "$\\bar{\\nu}_e$ CC MEC";                                         break;
      case ( kSKmNuEBarCCoth     ) : return "$\\bar{\\nu}_e$ CC other";                                       break;
      case ( kSKmNuEBarNC1piC    ) : return "$\\bar{\\nu}_e$ NC 1$\\pi^{+/-}$";                               break;
      case ( kSKmNuEBarNC1pi0    ) : return "$\\bar{\\nu}_e$ NC 1$\\pi^0$";                                   break;
@@ -449,7 +443,8 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
      case ( kSKmNuEBarNCoth_mu  ) : return "$\\bar{\\nu}_e$ NC other ($\\nu_\\mu$ disap)";                   break;
      case ( kSKmOscNuEBarCCQE   ) : return "Osc. $\\bar{\\nu}_e$ CCQE";                                      break;
      case ( kSKmOscNuEBarCC1pi  ) : return "Osc. $\\bar{\\nu}_e$ CC 1$\\pi$";                                break;
-     case ( kSKmOscNuEBarCCcoh  ) : return "Osc. $\\bar{\\nu}_e$ CC coherent";                               break; 
+     case ( kSKmOscNuEBarCCcoh  ) : return "Osc. $\\bar{\\nu}_e$ CC coherent";                               break;
+     case ( kSKmOscNuEBarCCMEC  ) : return "Osc. $\\bar{\\nu}_e$ CC MEC";                                    break;
      case ( kSKmOscNuEBarCCoth  ) : return "Osc. $\\bar{\\nu}_e$ CC other";                                  break;
 
     default                      : return "--";
@@ -463,9 +458,9 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
 //
   switch(m) {
      case ( kSKmNuMuCCQE        ) : return "numuccqe";          break;
-     case ( kSKmMEC             ) : return "mec";               break;
      case ( kSKmNuMuCC1pi       ) : return "numucc1pi";         break;
      case ( kSKmNuMuCCcoh       ) : return "numucccoh";         break;
+     case ( kSKmNuMuCCMEC       ) : return "numuccmec";         break;
      case ( kSKmNuMuCCoth       ) : return "numuccoth";         break;
      case ( kSKmNuMuNC1piC      ) : return "numunc1piC";        break;
      case ( kSKmNuMuNC1pi0      ) : return "numunc1pi0";        break;
@@ -475,10 +470,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
      case ( kSKmOscNuMuCCQE     ) : return "oscnumuccqe";       break;
      case ( kSKmOscNuMuCC1pi    ) : return "oscnumucc1pi";      break;
      case ( kSKmOscNuMuCCcoh    ) : return "oscnumucccoh";      break;
+     case ( kSKmOscNuMuCCMEC    ) : return "oscnumuccmec";      break;
      case ( kSKmOscNuMuCCoth    ) : return "oscnumuccoth";      break;
      case ( kSKmNuMuBarCCQE     ) : return "numubarccqe";       break;
      case ( kSKmNuMuBarCC1pi    ) : return "numubarcc1pi";      break;
      case ( kSKmNuMuBarCCcoh    ) : return "numubarcccoh";      break;
+     case ( kSKmNuMuBarCCMEC    ) : return "numubarccmec";      break;
      case ( kSKmNuMuBarCCoth    ) : return "numubarccoth";      break;
      case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1piC";     break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubarnc1pi0";     break;
@@ -488,10 +485,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
      case ( kSKmOscNuMuBarCCQE  ) : return "oscnumubarccqe";    break;
      case ( kSKmOscNuMuBarCC1pi ) : return "oscnumubarcc1pi";   break;
      case ( kSKmOscNuMuBarCCcoh ) : return "oscnumubarcccoh";   break;
+     case ( kSKmOscNuMuBarCCMEC ) : return "oscnumubarccmec";   break;
      case ( kSKmOscNuMuBarCCoth ) : return "oscnumubarccoth";   break;
      case ( kSKmNuECCQE         ) : return "nueccqe";           break;
      case ( kSKmNuECC1pi        ) : return "nuecc1pi";          break;
      case ( kSKmNuECCcoh        ) : return "nuecccoh";          break;
+     case ( kSKmNuECCMEC        ) : return "nueccmec";          break;
      case ( kSKmNuECCoth        ) : return "nueccoth";          break;
      case ( kSKmNuENC1piC       ) : return "nuenc1piC";         break;
      case ( kSKmNuENC1pi0       ) : return "nuenc1pi0";         break;
@@ -501,10 +500,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
      case ( kSKmOscNuECCQE      ) : return "oscnueccqe";        break;
      case ( kSKmOscNuECC1pi     ) : return "oscnuecc1pi";       break;
      case ( kSKmOscNuECCcoh     ) : return "oscnuecccoh";       break;
+     case ( kSKmOscNuECCMEC     ) : return "oscnueccmec";       break;
      case ( kSKmOscNuECCoth     ) : return "oscnueccoth";       break;
      case ( kSKmNuEBarCCQE      ) : return "nuebarccqe";        break;
      case ( kSKmNuEBarCC1pi     ) : return "nuebarcc1pi";       break;
      case ( kSKmNuEBarCCcoh     ) : return "nuebarcccoh";       break;
+     case ( kSKmNuEBarCCMEC     ) : return "nuebarccmec";       break;
      case ( kSKmNuEBarCCoth     ) : return "nuebarccoth";       break;
      case ( kSKmNuEBarNC1piC    ) : return "nuebarnc1piC";      break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebarnc1pi0";      break;
@@ -514,6 +515,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
      case ( kSKmOscNuEBarCCQE   ) : return "oscnuebarccqe";     break;
      case ( kSKmOscNuEBarCC1pi  ) : return "oscnuebarcc1pi";    break;
      case ( kSKmOscNuEBarCCcoh  ) : return "oscnuebarcccoh";    break;
+     case ( kSKmOscNuEBarCCMEC  ) : return "oscnuebarccmec";    break;
      case ( kSKmOscNuEBarCCoth  ) : return "oscnuebarccoth";    break;
 
      default                      : return "";
@@ -533,11 +535,17 @@ valor::conv::SuperkMode_t valor::util::SuperkModeFromString(string sh)
   std::cerr<<"SuperkModeFromString >> Did not get mode for string: "<<sh<<std::endl;
   return kSKmUndefined;
 }
-//____________________DEPRECATED______________________________________________
 bool valor::util::IsMEC(valor::conv::SuperkMode_t m)
 {
   switch(m) {
-     case ( kSKmMEC      ) :
+     case ( kSKmNuMuCCMEC        ) :
+     case ( kSKmNuMuBarCCMEC     ) :
+     case ( kSKmNuECCMEC         ) :
+     case ( kSKmNuEBarCCMEC      ) :
+     case ( kSKmOscNuMuCCMEC        ) :
+     case ( kSKmOscNuMuBarCCMEC     ) :
+     case ( kSKmOscNuECCMEC         ) :
+     case ( kSKmOscNuEBarCCMEC      ) :
         return true;
         break;
      default: 

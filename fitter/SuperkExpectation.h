@@ -41,8 +41,6 @@
 #include "FitCore/PhysHypothesis.h"
 
 using std::string;
-using valor::conv::kns;
-using valor::conv::knm;
 
 namespace valor {
 
