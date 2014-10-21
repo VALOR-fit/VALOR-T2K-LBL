@@ -45,7 +45,7 @@ void run_fit
 (
   const char * tag                     = "toyexptfits",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 5000,                                   /* number of toy MC experiment fits */
+  int          nexperiments            = 1,                                   /* number of toy MC experiment fits */
   double       input_mixing12          = 0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = 0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing23          = 0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -72,6 +72,9 @@ void run_fit
   using namespace valor;
   using namespace valor::conv;
   
+  int seed = 20;
+  valor::Rnd::Instance()->SetSeeds(seed+1,seed+2,seed+3,seed+4,seed+5);
+
   // Analysis configuration
   TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   FileStat_t dummy;
@@ -199,10 +202,28 @@ void run_fit
        fparm1->Update(kPhypDm12sq,   input_dm12sq);
        fparm1->Update(kPhypDm23sq,   input_dm23sq);
      }
-     else
-     if(hyp == kHypNuMuDisapp2F) {
+     // set oscillation parameter inputs as necessary (used to generate toy-MC expt) (split nubar)
+     else if(hyp == kHypOsc3FBar) {
+       fparm1->Update(kPhypMixing12, input_mixing12);
+       fparm1->Update(kPhypMixing13, input_mixing13);
+       fparm1->Update(kPhypMixing23, input_mixing23);
+       fparm1->Update(kPhypCPV    ,  input_deltacp*conv::kpi);
+       fparm1->Update(kPhypDm12sq,   input_dm12sq);
+       fparm1->Update(kPhypDm23sq,   input_dm23sq);
+       fparm1->Update(kPhypMixing12Bar, input_mixing12);
+       fparm1->Update(kPhypMixing13Bar, input_mixing13);
+       fparm1->Update(kPhypMixing23Bar, input_mixing23);
+       fparm1->Update(kPhypCPVBar     , input_deltacp*conv::kpi);
+       fparm1->Update(kPhypDm12sqBar  , input_dm12sq);
+       fparm1->Update(kPhypDm23sqBar  , input_dm23sq);
+     }
+     else if(hyp == kHypNuMuDisapp2F) {
        fparm1->Update(kPhypMixing23, input_mixing23);
        fparm1->Update(kPhypDm23sq,   input_dm23sq);
+     }
+     else {
+       std::cerr<<"Unrecognised hypothesis #"<<hyp<<" ("<<util::AsString(hyp)<<std::endl;
+       exit(-1);
      }
 
      // Reset all output spectra
