@@ -237,6 +237,7 @@ private:
   // utility objects for defining physics hypothesis (oscillations, decay, ...) & computing probabilities
   PhysHypothesis fPhysHypothesis;          ///< Physics hypothesis 
   NuOsc3Flavour  fNuOsc3Flavour;           ///< 3-flavour neutrino osc. probability calculations
+  NuOsc3Flavour  fNuOsc3FlavourBar;           ///< 3-flavour neutrino osc. probability calculations
 
   double fXMEC; //hack x_mec until we have a parameter we can use
 

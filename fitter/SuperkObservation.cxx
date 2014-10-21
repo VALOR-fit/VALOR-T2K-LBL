@@ -318,7 +318,7 @@ bool SuperkObservation::Generate(
 // Get observed reconstructed energy distribution
   
   fp.ShowOnlyCurrValuesInNextPrint();
-  cout << "Obs >> Generating a toy-MC expt with the following params: " << fp;
+  cout << "Obs >> Generating a toy-MC expt with the following fitparamlist: " << fp;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
   
   // Should do this properly.
@@ -337,7 +337,7 @@ bool SuperkObservation::Generate(
 
 // Get observed reconstructed energy distribution
   
-  cout << "Obs >> Generating a toy-MC expt with the following params: " << ph;
+  cout << "Obs >> Generating a toy-MC expt with the following physics hypothesis: " << ph;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
   
   // Should do this properly.
