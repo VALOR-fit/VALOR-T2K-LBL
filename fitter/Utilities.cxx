@@ -221,16 +221,46 @@ void valor::util::PrintCompact(
      stream << "> param = " << setw(3) << ip;
      if(printing_banff_params) {
          stream << " [ ";
+
+         //PhysParamId_t p = kListOfBANFFParams[ip];
+	 // NEW FLUX
+#ifdef __FHC_RUNNING__
          PhysParamId_t p = kListOfBANFFParams[ip];
+#endif
+#ifdef __RHC_RUNNING__
+	 PhysParamId_t p = kListOfRHCBANFFParams[ip];
+#endif	 
+	 //
+	 
          stream << setw(42) << util::AsString(p);
          stream << " ]";
      }
      if(printing_fsi_params) {
          stream << " [ ";
 #if FSI_BINS != 3
+
+         //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+
+	 // NEW FLUX
+#ifdef __FHC_RUNNING__
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+#endif
+#ifdef __RHC_RUNNING__
+         PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
+#endif
+	 //
 #else
+	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+
+	 // NEW FLUX
+#ifdef __FHC_RUNNING__
 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+#endif
+#ifdef __RHC_RUNNING__
+	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
+#endif
+	 //
+
 #endif
          stream << setw(30) << util::AsString(p);
          stream << " ]";
@@ -285,16 +315,47 @@ void valor::util::PrintCompact(
      stream << "> param = " << setw(3) << ip;
      if(printing_banff_params) {
          stream << " [ ";
+
+         //PhysParamId_t p = kListOfBANFFParams[ip];
+         
+	 // NEW FLUX
+#ifdef __FHC_RUNNING__
          PhysParamId_t p = kListOfBANFFParams[ip];
-         stream << setw(42) << util::AsString(p);
+#endif
+#ifdef __RHC_RUNNING__
+         PhysParamId_t p = kListOfRHCBANFFParams[ip];
+#endif
+	 //
+
+	 stream << setw(42) << util::AsString(p);
          stream << " ]";
      }
      if(printing_fsi_params) {
          stream << " [ ";
 #if FSI_BINS != 3
+
+         //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+
+	 // NEW FLUX
+#ifdef __FHC_RUNNING__
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+#endif
+#ifdef __RHC_RUNNING__
+         PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
+#endif
+	 //
 #else
+	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+	 
+	 // NEW FLUX
+#ifdef __FHC_RUNNING__	 
 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+#endif
+#ifdef __RHC_RUNNING__
+	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
+#endif
+	 //
+	 
 #endif
          stream << setw(30) << util::AsString(p);
          stream << " ]";
