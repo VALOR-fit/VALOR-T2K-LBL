@@ -207,34 +207,34 @@ static const PhysParamId_t kRHCNuisSuperkEff1ReNC2       = kNuis112;    // SK 1R
    /*
     * (flux and cross-section) correlated parameters used in the BANFF fit
    */   
-static const PhysParamId_t kRHCNuisBANFF00 = kNuis120; // # 00; SK     numu    flux;  E =  0.0 -  0.4 GeV
-static const PhysParamId_t kRHCNuisBANFF01 = kNuis121; // # 01; SK     numu    flux;  E =  0.4 -  0.5 GeV
-static const PhysParamId_t kRHCNuisBANFF02 = kNuis122; // # 02; SK     numu    flux;  E =  0.5 -  0.6 GeV
-static const PhysParamId_t kRHCNuisBANFF03 = kNuis123; // # 03; SK     numu    flux;  E =  0.6 -  0.7 GeV
-static const PhysParamId_t kRHCNuisBANFF04 = kNuis124; // # 04; SK     numu    flux;  E =  0.7 -  1.0 GeV
-static const PhysParamId_t kRHCNuisBANFF05 = kNuis125; // # 05; SK     numu    flux;  E =  1.0 -  1.5 GeV
-static const PhysParamId_t kRHCNuisBANFF06 = kNuis126; // # 06; SK     numu    flux;  E =  1.5 -  2.5 GeV
-static const PhysParamId_t kRHCNuisBANFF07 = kNuis127; // # 07; SK     numu    flux;  E =  2.5 -  3.5 GeV
-static const PhysParamId_t kRHCNuisBANFF08 = kNuis128; // # 08; SK     numu    flux;  E =  3.5 -  5.0 GeV
-static const PhysParamId_t kRHCNuisBANFF09 = kNuis129; // # 09; SK     numu    flux;  E =  5.0 -  7.0 GeV
-static const PhysParamId_t kRHCNuisBANFF10 = kNuis130; // # 10; SK     numu    flux;  E =  7.0 - 30.0 GeV
-static const PhysParamId_t kRHCNuisBANFF11 = kNuis131; // # 11; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF12 = kNuis132; // # 12; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF13 = kNuis133; // # 13; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF14 = kNuis134; // # 14; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF15 = kNuis135; // # 15; different meanings depending on samples defined
+static const PhysParamId_t kRHCNuisBANFF00 = kNuis120; // # 00; SK numu
+static const PhysParamId_t kRHCNuisBANFF01 = kNuis121; // # 01; SK numu
+static const PhysParamId_t kRHCNuisBANFF02 = kNuis122; // # 02; SK numu
+static const PhysParamId_t kRHCNuisBANFF03 = kNuis123; // # 03; SK numu 
+static const PhysParamId_t kRHCNuisBANFF04 = kNuis124; // # 04; SK numu
+static const PhysParamId_t kRHCNuisBANFF05 = kNuis125; // # 05; SK numu 
+static const PhysParamId_t kRHCNuisBANFF06 = kNuis126; // # 06; SK anti-numu
+static const PhysParamId_t kRHCNuisBANFF07 = kNuis127; // # 07; SK anti-numu
+static const PhysParamId_t kRHCNuisBANFF08 = kNuis128; // # 08; SK anti-numu 
+static const PhysParamId_t kRHCNuisBANFF09 = kNuis129; // # 09; SK anti-numu 
+static const PhysParamId_t kRHCNuisBANFF10 = kNuis130; // # 10; SK anti-numu 
+static const PhysParamId_t kRHCNuisBANFF11 = kNuis131; // # 11; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF12 = kNuis132; // # 12; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF13 = kNuis133; // # 13; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF14 = kNuis134; // # 14; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF15 = kNuis135; // # 15; SK anti-numu (different meanings depending on samples defined)
 #if (BANFF_BINS != 2)
-static const PhysParamId_t kRHCNuisBANFF16 = kNuis136; // # 16; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF17 = kNuis137; // # 17; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF18 = kNuis138; // # 18; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF19 = kNuis139; // # 19; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF20 = kNuis140; // # 20; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF21 = kNuis141; // # 21; different meanings depending on samples defined
+static const PhysParamId_t kRHCNuisBANFF16 = kNuis136; // # 16; SK nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF17 = kNuis137; // # 17; SK nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF18 = kNuis138; // # 18; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF19 = kNuis139; // # 19; SK anti-nu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF20 = kNuis140; // # 20; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF21 = kNuis141; // # 21; SK anti-nue (different meanings depending on samples defined)
 #endif
 #if BANFF_BINS == 1
-static const PhysParamId_t kRHCNuisBANFF22 = kNuis142; // # 22; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF23 = kNuis143; // # 23; different meanings depending on samples defined
-static const PhysParamId_t kRHCNuisBANFF24 = kNuis144; // # 24; different meanings depending on samples defined
+static const PhysParamId_t kRHCNuisBANFF22 = kNuis142; // # 22; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF23 = kNuis143; // # 23; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF24 = kNuis144; // # 24; SK anti-nue (different meanings depending on samples defined)
 #endif
 static const PhysParamId_t kRHCNuisBANFFMAQE    = kNuis145;  // # M_{A}  QE
 static const PhysParamId_t kRHCNuisBANFFMARES   = kNuis146;  // # M_{A}  RES

@@ -335,6 +335,8 @@ static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
 #endif
 };
 
+// NEW FLUX (invert *Nu* w/ *Nu*Bar for RHC mode)
+
 static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
   {
 #if (BANFF_BINS == 2)
@@ -343,12 +345,12 @@ static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
     kPdgNuMu,             // kRHCNuisBANFF02
     kPdgNuMu,             // kRHCNuisBANFF03
     kPdgNuMu,             // kRHCNuisBANFF04
-    kPdgNuMu,             // kRHCNuisBANFF05
-    kPdgNuMu,             // kRHCNuisBANFF06
-    kPdgNuMu,             // kRHCNuisBANFF07
-    kPdgNuMu,             // kRHCNuisBANFF08
-    kPdgNuMu,             // kRHCNuisBANFF09
-    kPdgNuMu,             // kRHCNuisBANFF10
+    kPdgNuMuBar,          // kRHCNuisBANFF05
+    kPdgNuMuBar,          // kRHCNuisBANFF06
+    kPdgNuMuBar,          // kRHCNuisBANFF07
+    kPdgNuMuBar,          // kRHCNuisBANFF08
+    kPdgNuMuBar,          // kRHCNuisBANFF09
+    kPdgNuMuBar,          // kRHCNuisBANFF10
     kPdgNuMuBar,          // kRHCNuisBANFF11
     kPdgNuMuBar,          // kRHCNuisBANFF12
     kPdgNuMuBar,          // kRHCNuisBANFF13
@@ -361,21 +363,21 @@ static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
     kPdgNuMu,             // kRHCNuisBANFF02         
     kPdgNuMu,             // kRHCNuisBANFF03        
     kPdgNuMu,             // kRHCNuisBANFF04        
-    kPdgNuMu,             // kRHCNuisBANFF05       
-    kPdgNuMu,             // kRHCNuisBANFF06        
-    kPdgNuMu,             // kRHCNuisBANFF07       
-    kPdgNuMu,             // kRHCNuisBANFF08       
-    kPdgNuMu,             // kRHCNuisBANFF09       
-    kPdgNuMu,             // kRHCNuisBANFF10       
+    kPdgNuMuBar,          // kRHCNuisBANFF05       
+    kPdgNuMuBar,          // kRHCNuisBANFF06        
+    kPdgNuMuBar,          // kRHCNuisBANFF07       
+    kPdgNuMuBar,          // kRHCNuisBANFF08       
+    kPdgNuMuBar,          // kRHCNuisBANFF09       
+    kPdgNuMuBar,          // kRHCNuisBANFF10       
     kPdgNuMuBar,          // kRHCNuisBANFF11        
     kPdgNuMuBar,          // kRHCNuisBANFF12       
     kPdgNuE,              // kRHCNuisBANFF13
     kPdgNuE,              // kRHCNuisBANFF14
-    kPdgNuE,              // kRHCNuisBANFF15
-    kPdgNuE,              // kRHCNuisBANFF16
-    kPdgNuE,              // kRHCNuisBANFF17
-    kPdgNuE,              // kRHCNuisBANFF18
-    kPdgNuE,              // kRHCNuisBANFF19
+    kPdgNuEBar,           // kRHCNuisBANFF15
+    kPdgNuEBar,           // kRHCNuisBANFF16
+    kPdgNuEBar,           // kRHCNuisBANFF17
+    kPdgNuEBar,           // kRHCNuisBANFF18
+    kPdgNuEBar,           // kRHCNuisBANFF19
     kPdgNuEBar,           // kRHCNuisBANFF20
     kPdgNuEBar,           // kRHCNuisBANFF21
 #endif
@@ -385,12 +387,12 @@ static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
     kPdgNuMu,             // kRHCNuisBANFF02
     kPdgNuMu,             // kRHCNuisBANFF03
     kPdgNuMu,             // kRHCNuisBANFF04
-    kPdgNuMu,             // kRHCNuisBANFF05
-    kPdgNuMu,             // kRHCNuisBANFF06
-    kPdgNuMu,             // kRHCNuisBANFF07
-    kPdgNuMu,             // kRHCNuisBANFF08
-    kPdgNuMu,             // kRHCNuisBANFF09
-    kPdgNuMu,             // kRHCNuisBANFF10
+    kPdgNuMuBar,          // kRHCNuisBANFF05
+    kPdgNuMuBar,          // kRHCNuisBANFF06
+    kPdgNuMuBar,          // kRHCNuisBANFF07
+    kPdgNuMuBar,          // kRHCNuisBANFF08
+    kPdgNuMuBar,          // kRHCNuisBANFF09
+    kPdgNuMuBar,          // kRHCNuisBANFF10
     kPdgNuMuBar,          // kRHCNuisBANFF11
     kPdgNuMuBar,          // kRHCNuisBANFF12
     kPdgNuMuBar,          // kRHCNuisBANFF13
@@ -398,11 +400,11 @@ static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
     kPdgNuMuBar,          // kRHCNuisBANFF15
     kPdgNuE,              // kRHCNuisBANFF16
     kPdgNuE,              // kRHCNuisBANFF17
-    kPdgNuE,              // kRHCNuisBANFF18
-    kPdgNuE,              // kRHCNuisBANFF19
-    kPdgNuE,              // kRHCNuisBANFF20
-    kPdgNuE,              // kRHCNuisBANFF21
-    kPdgNuE,              // kRHCNuisBANFF22
+    kPdgNuEBar,           // kRHCNuisBANFF18
+    kPdgNuEBar,           // kRHCNuisBANFF19
+    kPdgNuEBar,           // kRHCNuisBANFF20
+    kPdgNuEBar,           // kRHCNuisBANFF21
+    kPdgNuEBar,           // kRHCNuisBANFF22
     kPdgNuEBar,           // kRHCNuisBANFF23
     kPdgNuEBar,           // kRHCNuisBANFF24
 #endif
@@ -421,7 +423,7 @@ static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
     0                     // kRHCNuisBANFFNC1pi0, not a flux param
 #endif
   };
-
+///
 
 // Etrue energy range for flux-related BANFF parameters
 static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
@@ -511,76 +513,89 @@ static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] 
 #endif
 };
 
+
+// NEW FLUX
+
 static const double kEtrueRangeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit][2] =
   {
 #if BANFF_BINS == 2
-    { 0.0,  0.4 },        // kRHCNuisBANFF00
-    { 0.4,  0.5 },        // kRHCNuisBANFF01
-    { 0.5,  0.6 },        // kRHCNuisBANFF02
-    { 0.6,  0.7 },        // kRHCNuisBANFF03
-    { 0.7,  1.0 },        // kRHCNuisBANFF04
-    { 1.0,  1.5 },        // kRHCNuisBANFF05
-    { 1.5,  2.5 },        // kRHCNuisBANFF06
-    { 2.5,  3.5 },        // kRHCNuisBANFF07
-    { 3.5,  5.0 },        // kRHCNuisBANFF08
-    { 5.0,  7.0 },        // kRHCNuisBANFF09
-    { 7.0, 30.0 },        // kRHCNuisBANFF10
-    { 0.0,  0.7 },        // kRHCNuisBANFF11
-    { 0.7,  1.0 },        // kRHCNuisBANFF12
-    { 1.0,  1.5 },        // kRHCNuisBANFF13
-    { 1.5,  2.5 },        // kRHCNuisBANFF14
-    { 2.5, 30.0 },        // kRHCNuisBANFF15
+    // numu
+    { 0.0,  0.7 },        // kRHCNuisBANFF00
+    { 0.7,  1.0 },        // kRHCNuisBANFF01
+    { 1.0,  1.5 },        // kRHCNuisBANFF02
+    { 1.5,  2.5 },        // kRHCNuisBANFF03
+    { 2.5, 30.0 },        // kRHCNuisBANFF04
+    // anti-numu
+    { 0.0,  0.4 },        // kRHCNuisBANFF05
+    { 0.4,  0.5 },        // kRHCNuisBANFF06
+    { 0.5,  0.6 },        // kRHCNuisBANFF07
+    { 0.6,  0.7 },        // kRHCNuisBANFF08
+    { 0.7,  1.0 },        // kRHCNuisBANFF09
+    { 1.0,  1.5 },        // kRHCNuisBANFF10
+    { 1.5,  2.5 },        // kRHCNuisBANFF11
+    { 2.5,  3.5 },        // kRHCNuisBANFF12
+    { 3.5,  5.0 },        // kRHCNuisBANFF13
+    { 5.0,  7.0 },        // kRHCNuisBANFF14
+    { 7.0, 30.0 },        // kRHCNuisBANFF15
 #endif
 #if BANFF_BINS == 3
-    { 0.0,  0.4 },        // kRHCNuisBANFF00
-    { 0.4,  0.5 },        // kRHCNuisBANFF01
-    { 0.5,  0.6 },        // kRHCNuisBANFF02
-    { 0.6,  0.7 },        // kRHCNuisBANFF03
-    { 0.7,  1.0 },        // kRHCNuisBANFF04
-    { 1.0,  1.5 },        // kRHCNuisBANFF05
-    { 1.5,  2.5 },        // kRHCNuisBANFF06
-    { 2.5,  3.5 },        // kRHCNuisBANFF07
-    { 3.5,  5.0 },        // kRHCNuisBANFF08
-    { 5.0,  7.0 },        // kRHCNuisBANFF09
-    { 7.0, 30.0 },        // kRHCNuisBANFF10
-    { 0.0,  1.5 },        // kRHCNuisBANFF11
-    { 1.5, 30.0 },        // kRHCNuisBANFF12
-    { 0.0,  0.5 },        // kRHCNuisBANFF13
-    { 0.5,  0.7 },        // kRHCNuisBANFF14
-    { 0.7,  0.8 },        // kRHCNuisBANFF15
-    { 0.8,  1.5 },        // kRHCNuisBANFF16
-    { 1.5,  2.5 },        // kRHCNuisBANFF17
-    { 2.5,  4.0 },        // kRHCNuisBANFF18
-    { 4.0, 30.0 },        // kRHCNuisBANFF19
-    { 0.0,  2.5 },        // kRHCNuisBANFF20
-    { 2.5, 30.0 },        // kRHCNuisBANFF21
+    // numu
+    { 0.0,  1.5 },        // kRHCNuisBANFF00
+    { 1.5, 30.0 },        // kRHCNuisBANFF01
+    // anti-numu
+    { 0.0,  0.4 },        // kRHCNuisBANFF02
+    { 0.4,  0.5 },        // kRHCNuisBANFF03
+    { 0.5,  0.6 },        // kRHCNuisBANFF04
+    { 0.6,  0.7 },        // kRHCNuisBANFF05
+    { 0.7,  1.0 },        // kRHCNuisBANFF06
+    { 1.0,  1.5 },        // kRHCNuisBANFF07
+    { 1.5,  2.5 },        // kRHCNuisBANFF08
+    { 2.5,  3.5 },        // kRHCNuisBANFF09
+    { 3.5,  5.0 },        // kRHCNuisBANFF10
+    { 5.0,  7.0 },        // kRHCNuisBANFF11
+    { 7.0, 30.0 },        // kRHCNuisBANFF12
+    // nue
+    { 0.0,  2.5 },        // kRHCNuisBANFF13
+    { 2.5, 30.0 },        // kRHCNuisBANFF14
+    // anti-nue
+    { 0.0,  0.5 },        // kRHCNuisBANFF15
+    { 0.5,  0.7 },        // kRHCNuisBANFF16
+    { 0.7,  0.8 },        // kRHCNuisBANFF17
+    { 0.8,  1.5 },        // kRHCNuisBANFF18
+    { 1.5,  2.5 },        // kRHCNuisBANFF19
+    { 2.5,  4.0 },        // kRHCNuisBANFF20
+    { 4.0, 30.0 },        // kRHCNuisBANFF21
 #endif
 #if BANFF_BINS == 1
-    { 0.0,  0.4 },        // kRHCNuisBANFF00
-    { 0.4,  0.5 },        // kRHCNuisBANFF01
-    { 0.5,  0.6 },        // kRHCNuisBANFF02
-    { 0.6,  0.7 },        // kRHCNuisBANFF03
-    { 0.7,  1.0 },        // kRHCNuisBANFF04
-    { 1.0,  1.5 },        // kRHCNuisBANFF05
-    { 1.5,  2.5 },        // kRHCNuisBANFF06
-    { 2.5,  3.5 },        // kRHCNuisBANFF07
-    { 3.5,  5.0 },        // kRHCNuisBANFF08
-    { 5.0,  7.0 },        // kRHCNuisBANFF09
-    { 7.0, 30.0 },        // kRHCNuisBANFF10
-    { 0.0,  0.7 },        // kRHCNuisBANFF11
-    { 0.7,  1.0 },        // kRHCNuisBANFF12
-    { 1.0,  1.5 },        // kRHCNuisBANFF13
-    { 1.5,  2.5 },        // kRHCNuisBANFF14
-    { 2.5, 30.0 },        // kRHCNuisBANFF15
-    { 0.0,  0.5 },        // kRHCNuisBANFF16
-    { 0.5,  0.7 },        // kRHCNuisBANFF17
-    { 0.7,  0.8 },        // kRHCNuisBANFF18
-    { 0.8,  1.5 },        // kRHCNuisBANFF19
-    { 1.5,  2.5 },        // kRHCNuisBANFF20
-    { 2.5,  4.0 },        // kRHCNuisBANFF21
-    { 4.0, 30.0 },        // kRHCNuisBANFF22
-    { 0.0,  2.5 },        // kRHCNuisBANFF23
-    { 2.5, 30.0 },        // kRHCNuisBANFF24
+    // numu
+    { 0.0,  0.7 },        // kRHCNuisBANFF00
+    { 0.7,  1.0 },        // kRHCNuisBANFF01
+    { 1.0,  1.5 },        // kRHCNuisBANFF02
+    { 1.5,  2.5 },        // kRHCNuisBANFF03
+    { 2.5, 30.0 },        // kRHCNuisBANFF04
+    // anti-numu
+    { 0.0,  0.4 },        // kRHCNuisBANFF05
+    { 0.4,  0.5 },        // kRHCNuisBANFF06
+    { 0.5,  0.6 },        // kRHCNuisBANFF07
+    { 0.6,  0.7 },        // kRHCNuisBANFF08
+    { 0.7,  1.0 },        // kRHCNuisBANFF09
+    { 1.0,  1.5 },        // kRHCNuisBANFF10
+    { 1.5,  2.5 },        // kRHCNuisBANFF11
+    { 2.5,  3.5 },        // kRHCNuisBANFF12
+    { 3.5,  5.0 },        // kRHCNuisBANFF13
+    { 5.0,  7.0 },        // kRHCNuisBANFF14
+    { 7.0, 30.0 },        // kRHCNuisBANFF15
+    // nue
+    { 0.0,  2.5 },        // kRHCNuisBANFF16
+    { 2.5, 30.0 },        // kRHCNuisBANFF17
+    // anti-nue 
+    { 0.0,  0.5 },        // kRHCNuisBANFF18
+    { 0.5,  0.7 },        // kRHCNuisBANFF19
+    { 0.7,  0.8 },        // kRHCNuisBANFF20
+    { 0.8,  1.5 },        // kRHCNuisBANFF21
+    { 1.5,  2.5 },        // kRHCNuisBANFF22
+    { 2.5,  4.0 },        // kRHCNuisBANFF23
+    { 4.0, 30.0 },        // kRHCNuisBANFF24
 #endif
     {  -1,   -1 },        // kRHCNuisBANFFMAQE, not a flux param
     {  -1,   -1 },        // kRHCNuisBANFFMARES, not a flux param
