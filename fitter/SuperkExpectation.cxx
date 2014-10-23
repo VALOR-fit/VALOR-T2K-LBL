@@ -1331,8 +1331,25 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     //   this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
     // }
 
+    
     // NEW FLUX
-    // fhc
+
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) // same as before
+    if(fp.Exists(kNuisSuperkEnergyScale)) {
+      double twk = fp.CurrValue(kNuisSuperkEnergyScale);
+      //Todo: fix this so that FHC and RHC can have different tweaks
+      this->GetSuperkDetectorFSI()->TweakEnergyScale(twk);
+      this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
+    }
+  #else
+    cout << endl;
+    cout << "FHC+RHC with correlations is not available" << endl;
+    cout << endl;
+    exit(1);
+  #endif
+#else 
+    // fhc only
     if(fp.Exists(kNuisSuperkEnergyScale)) {
       double twk = fp.CurrValue(kNuisSuperkEnergyScale);
       this->GetSuperkDetectorFSI()->TweakEnergyScale(twk);
@@ -1342,8 +1359,9 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       double twk = fp.CurrValue(kRHCNuisSuperkEnergyScale);
       this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
     }
+#endif
     //
-
+    
     /// NEW MULTIRING 3
     if(fp.Exists(kMultiRingNuisSuperkEnergyScale)) {
       double twk = fp.CurrValue(kMultiRingNuisSuperkEnergyScale);
@@ -1355,18 +1373,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     // to tweak the SKDET + FSI object
 #if FSI_BINS == 2
 
-
-    // NEW MULTIRING 2 
-    
-#ifdef __FHC_RUNNING__
-    const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
-    TVectorD twkv(nskdetfsi_1Rmu);
-    for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
-      twkv[ip] = fp.CurrValue(p);
-    }
-    this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
-#endif
 
 // #ifdef __RHC_RUNNING__
 //     //Todo: fix this so that FHC and RHC can have different tweaks
@@ -1381,7 +1387,52 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 // #endif
 
     // NEW FLUX
-#ifdef __RHC_RUNNING__
+    
+    // fhc+rhc 
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+    //fully correlated
+    #if defined(__FULLY_CORRELATED__)
+      const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
+      TVectorD twkv(nskdetfsi_1Rmu);
+      for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+	twkv[ip] = fp.CurrValue(p);
+      }
+      this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
+      
+      //Todo: fix this so that FHC and RHC can have different tweaks
+      //Also that FHC and RHC can have different numbers of parameters
+      const int nskdetfsi_1Rmu_rhc = conv::kNumOfSKDetFSIParams1Rmu; // same FHC
+      TVectorD twkv_rhc(nskdetfsi_1Rmu_rhc);
+      for(int ip = 0; ip < nskdetfsi_1Rmu_rhc; ip++) {
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip); // same FHC
+	twkv_rhc[ip] = fp.CurrValue(p);
+      }
+      this->GetSuperkDetectorFSI()->TweakOnlyRHC1Rmu(true,&twkv_rhc); // same FHC
+      // with correlations
+    #else 
+      cout << endl;
+      cout << "FHC+RHC with correlations is not available" << endl;
+      cout << endl;
+      exit(1);
+    #endif
+      //
+
+    // NEW MULTIRING 2 
+      
+      // fhc only
+#elif defined(__FHC_RUNNING__)
+    const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
+    TVectorD twkv(nskdetfsi_1Rmu);
+    for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+      twkv[ip] = fp.CurrValue(p);
+    }
+    this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
+
+    // NEW FLUX
+    // rhc only
+#elif defined(__RHC_RUNNING__)
     const int nskdetfsi_1Rmu_rhc = conv::kNumOfRHCSKDetFSIParams1Rmu; 
     TVectorD twkv_rhc(nskdetfsi_1Rmu_rhc);
     for(int ip = 0; ip < nskdetfsi_1Rmu_rhc; ip++) {
@@ -1392,7 +1443,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 #endif
     //
 
-
+    // multiring
 #ifdef __MULTIRING_FHC_RUNNING__
     const int nskdetfsi_MultiRmu = conv::kNumOfSKDetFSIParamsMultiRmu;
     TVectorD twkv_multiring(nskdetfsi_MultiRmu);
@@ -1407,15 +1458,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 #else
 #if FSI_BINS == 3
 
-#ifdef __FHC_RUNNING__
-    const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
-      TVectorD twkv(nskdetfsi_1Re);
-      for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
-        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
-        twkv[ip] = fp.CurrValue(p);
-      }
-      this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
-#endif
+
 
 // #ifdef __RHC_RUNNING__
 //       //Todo: fix this so that FHC and RHC can have different tweaks
@@ -1428,9 +1471,51 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 //       }
 //       this->GetSuperkDetectorFSI()->TweakOnlyRHC1Re(true,&twkv_rhc); // same as FHC
 // #endif
+
+    // NEW FLUX
+    
+    // fhc+rhc 
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+
+    //fully correlated
+    #if defined(__FULLY_CORRELATED__)
+    const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
+      TVectorD twkv(nskdetfsi_1Re);
+      for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
+        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+        twkv[ip] = fp.CurrValue(p);
+      }
+      this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
+      //Todo: fix this so that FHC and RHC can have different tweaks
+      //Also that FHC and RHC can have different numbers of parameters
+      const int nskdetfsi_1Re_rhc = conv::kNumOfSKDetFSIParams1Re; // same as FHC
+      TVectorD twkv_rhc(nskdetfsi_1Re_rhc);
+      for(int ip = 0; ip < nskdetfsi_1Re_rhc; ip++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip); // same as FHC
+      twkv_rhc[ip] = fp.CurrValue(p);
+      }
+      this->GetSuperkDetectorFSI()->TweakOnlyRHC1Re(true,&twkv_rhc); // same as FHC
+   #else
+      cout << endl;
+      cout << "FHC+RHC with correlations is not available" << endl;
+      cout << endl;
+      exit(1);
+   #endif
+      //
+      
+      // fhc only
+#elif defined(__FHC_RUNNING__)
+    const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
+      TVectorD twkv(nskdetfsi_1Re);
+      for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
+        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+        twkv[ip] = fp.CurrValue(p);
+      }
+      this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
       
       // NEW FLUX
-#ifdef __RHC_RUNNING__
+      // rhc only
+#elif defined(__RHC_RUNNING__)
       const int nskdetfsi_1Re_rhc = conv::kNumOfRHCSKDetFSIParams1Re; // same as FHC
       TVectorD twkv_rhc(nskdetfsi_1Re_rhc);
       for(int ip = 0; ip < nskdetfsi_1Re_rhc; ip++) {
@@ -1441,6 +1526,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 #endif
       //
 
+      // multiring
 #ifdef __MULTIRING_FHC_RUNNING__
       const int nskdetfsi_MultiRe = conv::kNumOfSKDetFSIParamsMultiRe;
       TVectorD twkv_multiring(nskdetfsi_MultiRe);
@@ -1451,11 +1537,34 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       this->GetSuperkDetectorFSI()->TweakOnlyMultiRe(true,&twkv_multiring);
 #endif
 
-#else // joint
+
+
+
+#else // JOINT FIT
             
       // NEW MULTIRING 2
 
-#ifdef __FHC_RUNNING__
+      // #ifdef __RHC_RUNNING__
+      //       //Todo: fix this so that FHC and RHC can have different tweaks
+      //       //Also that FHC and RHC can have different numbers of parameters
+      //       const int nskdetfsi_rhc = conv::kNumOfSKDetFSIParams; // same as FHC
+      //       TVectorD twkv_rhc(nskdetfsi_rhc);
+      //       for(int ip = 0; ip < nskdetfsi_rhc; ip++) {
+      //       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip); // same as FHC
+      //       twkv_rhc[ip] = fp.CurrValue(p); 
+      //       }
+      //       // N.B. You have to tweak the FHC syst since RHC SKDetFSI doesn't exist!!!
+      //       this->GetSuperkDetectorFSI()->Tweak(true,&twkv_rhc); // same as FHC    
+      //       this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv_rhc); // same as FHC    
+      // #endif 
+
+
+   // NEW FLUX
+    
+    // fhc+rhc 
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+    //fully correlated
+    #if defined(__FULLY_CORRELATED__)
       const int nskdetfsi = conv::kNumOfSKDetFSIParams;
       TVectorD twkv(nskdetfsi);
       for(int ip = 0; ip < nskdetfsi; ip++) {
@@ -1463,24 +1572,38 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 	twkv[ip] = fp.CurrValue(p); 
       }
       this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
-#endif
+      //Todo: fix this so that FHC and RHC can have different tweaks
+      //Also that FHC and RHC can have different numbers of parameters
+      const int nskdetfsi_rhc = conv::kNumOfSKDetFSIParams; // same as FHC
+      TVectorD twkv_rhc(nskdetfsi_rhc);
+      for(int ip = 0; ip < nskdetfsi_rhc; ip++) {
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip); // same as FHC
+      twkv_rhc[ip] = fp.CurrValue(p); 
+      }
+      // N.B. You have to tweak the FHC syst since RHC SKDetFSI doesn't exist!!!
+      this->GetSuperkDetectorFSI()->Tweak(true,&twkv_rhc); // same as FHC    
+      this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv_rhc); // same as FHC    
+      // with correlations
+    #else 
+      cout << endl;
+      cout << "FHC+RHC with correlations is not available" << endl;
+      cout << endl;
+      exit(1);
+    #endif
 
-// #ifdef __RHC_RUNNING__
-//       //Todo: fix this so that FHC and RHC can have different tweaks
-//       //Also that FHC and RHC can have different numbers of parameters
-//       const int nskdetfsi_rhc = conv::kNumOfSKDetFSIParams; // same as FHC
-//       TVectorD twkv_rhc(nskdetfsi_rhc);
-//       for(int ip = 0; ip < nskdetfsi_rhc; ip++) {
-//       PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip); // same as FHC
-//       twkv_rhc[ip] = fp.CurrValue(p); 
-//       }
-//       // N.B. You have to tweak the FHC syst since RHC SKDetFSI doesn't exist!!!
-//       this->GetSuperkDetectorFSI()->Tweak(true,&twkv_rhc); // same as FHC    
-//       this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv_rhc); // same as FHC    
-// #endif 
+      // fhc only
+#elif defined(__FHC_RUNNING__)
+      const int nskdetfsi = conv::kNumOfSKDetFSIParams;
+      TVectorD twkv(nskdetfsi);
+      for(int ip = 0; ip < nskdetfsi; ip++) {
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+	twkv[ip] = fp.CurrValue(p); 
+      }
+      this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
 
       // NEW FLUX
-#ifdef __RHC_RUNNING__
+      // rhc only
+#elif defined(__RHC_RUNNING__)
       const int nskdetfsi_rhc = conv::kNumOfRHCSKDetFSIParams; // same as FHC
       TVectorD twkv_rhc(nskdetfsi_rhc);
       for(int ip = 0; ip < nskdetfsi_rhc; ip++) {
@@ -1491,6 +1614,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 #endif 
       //
 
+      // multiring
 #ifdef __MULTIRING_FHC_RUNNING__
       const int nskdetfsi_multiring = conv::kNumOfSKDetFSIParamsMultiRing;
       TVectorD twkv_multiring(nskdetfsi_multiring);
@@ -1527,8 +1651,43 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     //   }
     //   else this->GetBANFF()->TweakRHC(true,&twkvBANFF);
 
+
     // NEW FLUX
-    #if defined(__FHC_RUNNING__)
+
+   // fhc+rhc 
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+
+   // fully correlated
+   #if defined(__FULLY_CORRELATED__)
+    // use current values stored in fit param list
+    // to tweak the BANFF object
+    const int nbanff = conv::kNumOfParamsInBANFFfit;
+    TVectorD twkvBANFF(nbanff);
+    for(int ip = 0; ip < nbanff; ip++) {
+      PhysParamId_t p = kListOfBANFFParams[ip];
+      twkvBANFF[ip] = fp.CurrValue(p);
+    }
+   //Todo: fix this so that FHC and RHC can have different tweaks
+   //Also that FHC and RHC can have different numbers of parameters 
+   this->GetBANFF()->Tweak(true,&twkvBANFF);
+      if(fp.GetSystMode() == 3){
+      TVectorD twkvBANFF(nbanff);
+      for(int ip = 0; ip < nbanff; ip++) {
+          PhysParamId_t p = PhysParamId_t ((int) kRHCNuisBANFF00 + ip);
+          twkvBANFF[ip] = fp.CurrValue(p);
+      }
+      this->GetBANFF()->TweakRHC(true,&twkvBANFF);
+      }
+      else this->GetBANFF()->TweakRHC(true,&twkvBANFF);
+    #else
+      cout << endl;
+      cout << "FHC+RHC with correlations is not available" << endl;
+      cout << endl;
+      exit(1);
+    #endif
+
+   // fhc only
+#elif defined(__FHC_RUNNING__)
       const int nbanff = conv::kNumOfParamsInBANFFfit;
       TVectorD twkvBANFF(nbanff);
       for(int ip = 0; ip < nbanff; ip++) {
@@ -1536,8 +1695,9 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 	twkvBANFF[ip] = fp.CurrValue(p);
       }
       this->GetBANFF()->Tweak(true,&twkvBANFF);
-      
-    #elif defined(__RHC_RUNNING__)
+    
+   // rhc only
+#elif defined(__RHC_RUNNING__)
       const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
       TVectorD twkvBANFF(nbanff);
       for(int ip = 0; ip < nbanff; ip++) {
@@ -1545,10 +1705,10 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 	twkvBANFF[ip] = fp.CurrValue(p);
       }
       this->GetBANFF()->TweakRHC(true,&twkvBANFF);
-    #endif
+#endif
       //
-
-    // Cross-section systematics (other than BANFF ones)
+      
+      // Cross-section systematics (other than BANFF ones)
     for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
       PhysParamId_t p = kListOfXSecSyst[ip];
       if( fp.Exists(p) && util::IsXSec(p) ) {

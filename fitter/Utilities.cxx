@@ -224,12 +224,13 @@ void valor::util::PrintCompact(
 
          //PhysParamId_t p = kListOfBANFFParams[ip];
 	 // NEW FLUX
-#ifdef __FHC_RUNNING__
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
          PhysParamId_t p = kListOfBANFFParams[ip];
-#endif
-#ifdef __RHC_RUNNING__
+       #elif defined(__FHC_RUNNING__)
+         PhysParamId_t p = kListOfBANFFParams[ip];
+       #elif defined(__RHC_RUNNING__)
 	 PhysParamId_t p = kListOfRHCBANFFParams[ip];
-#endif	 
+       #endif
 	 //
 	 
          stream << setw(42) << util::AsString(p);
@@ -242,23 +243,25 @@ void valor::util::PrintCompact(
          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 
 	 // NEW FLUX
-#ifdef __FHC_RUNNING__
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+       #elif defined(__FHC_RUNNING__) // fhc only
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
-#endif
-#ifdef __RHC_RUNNING__
+       #elif defined(__RHC_RUNNING__) // rhc only
          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
-#endif
+       #endif
 	 //
 #else
 	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
 
 	 // NEW FLUX
-#ifdef __FHC_RUNNING__
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-#endif
-#ifdef __RHC_RUNNING__
+       #elif defined(__FHC_RUNNING__) // fhc only
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+       #elif defined(__RHC_RUNNING__) // rhc only
 	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
-#endif
+       #endif
 	 //
 
 #endif
@@ -319,12 +322,13 @@ void valor::util::PrintCompact(
          //PhysParamId_t p = kListOfBANFFParams[ip];
          
 	 // NEW FLUX
-#ifdef __FHC_RUNNING__
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
          PhysParamId_t p = kListOfBANFFParams[ip];
-#endif
-#ifdef __RHC_RUNNING__
+       #elif defined(__FHC_RUNNING__)
+         PhysParamId_t p = kListOfBANFFParams[ip];
+       #elif defined(__RHC_RUNNING__)
          PhysParamId_t p = kListOfRHCBANFFParams[ip];
-#endif
+       #endif
 	 //
 
 	 stream << setw(42) << util::AsString(p);
@@ -337,23 +341,25 @@ void valor::util::PrintCompact(
          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 
 	 // NEW FLUX
-#ifdef __FHC_RUNNING__
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
-#endif
-#ifdef __RHC_RUNNING__
+       #elif defined(__FHC_RUNNING__)
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+       #elif defined(__RHC_RUNNING__)
          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
-#endif
+       #endif
 	 //
 #else
 	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
 	 
 	 // NEW FLUX
-#ifdef __FHC_RUNNING__	 
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-#endif
-#ifdef __RHC_RUNNING__
+       #elif defined(__FHC_RUNNING__)	 
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+       #elif defined(__RHC_RUNNING__)
 	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
-#endif
+       #endif
 	 //
 	 
 #endif
