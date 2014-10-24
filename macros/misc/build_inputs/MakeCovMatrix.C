@@ -10,17 +10,19 @@
 
 #include <iomanip.h>
 
+//
 #define ADDCOVMATR
+#define ADDCOVMATR_2
 
 void MakeCovMatrix( 
 		   
-		   const char *filename = "$T2KOSCANA/inputs/test/PrelimCovMatrix/flux_covariance_13av1_prelim.root",
+		   const char *filename = "$T2KOSCANA/inputs/official/2014/flux/flux_covariance_13av1_prelim.root",
 		   const char *covname = "total_flux_cov",
 		   
 		   const char *outfilename = "$T2KOSCANA/outputs/test/flux_prelim_13av1_xsec_postbanff2013.root",
 		   
 
-		   const bool CorrMode = false, // true -> correlated FHC-RHC, false -> not correlated
+		   const bool CorrMode = true, // true -> correlated FHC-RHC, false -> not correlated
 
 		   // Select the sk sub-matrices:
 		   //fhc-only
@@ -33,13 +35,17 @@ void MakeCovMatrix(
 		   const int first_sk_all = 50, 
 		   const int last_sk_all = 99,
 
-		   // Add a piece of covariance matrix
-		   const bool AddCovMatr = true,
-		   const char *addfilename = "$T2KOSCANA/inputs/official/2013/banff/postfit_banff_2013_joint_v5.root",
-		   const char *addcovname = "postfit_cov",
-		   // rhc-only
-		   const int first_add = 25, 
-		   const int last_add = 32,
+		   // Add a piece of covariance matrix 1
+		   //const char *addfilename = "$T2KOSCANA/inputs/official/2013/banff/postfit_banff_2013_joint_v5.root",
+		   //const char *addcovname = "postfit_cov",
+		   // const int first_add = 25, // rhc-only 
+		   // const int last_add = 32,
+
+		   const char *addfilename = "$T2KOSCANA/inputs/official/2014/xsec/xsec_covariance_2014_v1.root",
+		   const char *addcovname = "xsec_cov",
+		   const int first_add = 0, // rhc-only
+		   const int last_add = 3,
+
 		   
 		   ){
   
@@ -144,23 +150,56 @@ void MakeCovMatrix(
 
 
   
-  if(CorrMode){
-    cout << "Remove correlations" << endl;
-    for(int irow=0;irow<cov_sk_all){
-      for(){
-      }
-    }
-  }
-
+  //if(!CorrMode){
+  //cout << "Remove correlations" << endl;
+  //for(int irow=0;irow<cov_sk_all){
+  //for(){
+  //}
+  //}
+  //}
+  
 
   // Add matrix 
 #ifdef ADDCOVMATR
   
   cout << endl;
-  cout << "Add piece of covariance matrix w/o correlations from " << addcovname << endl;
+  cout << "///////////////////////////////////////////////////////////////////////////////" << endl;
+  cout << "//                                                                           " << endl;
+  cout << "// Add piece of covariance matrix w/o correlations from " << addfilename << " " << endl;
+  cout << "//                                                                           " << endl;
+  cout << "///////////////////////////////////////////////////////////////////////////////" << endl;
   
   TFile *addfilein = new TFile(addfilename,"READ");
-  TMatrixD *cov_sk_add = (TMatrixD*) addfilein->Get("postfit_cov");
+  TMatrixD *cov_sk_add = (TMatrixD*) addfilein->Get(addcovname);
+  
+  // Take parameters
+  TVectorD *par_sk_add = (TVectorD*) addfilein->Get("xsec_param_prior");
+
+  TObjArray *parname_sk_add = (TObjArray*) addfilein->Get("paramNames");
+  parname_sk_add->SetOwner(kTRUE);
+  
+
+  cout << endl;
+								
+  int npar = parname_sk_add->GetEntriesFast();
+
+  cout << endl;
+  cout << "# of parameters = " << npar << endl;
+  cout << endl;
+
+  for(int ipar=0;ipar<npar;ipar++){
+    TObjString *parname_objstring = (TObjString*) parname_sk_add->At(ipar);
+    
+    cout << parname_objstring->GetName() << endl;
+  }
+  
+  cout << endl;
+
+  return;
+
+
+
+  
   addfilein->Close();
 
   TMatrixD *cov_sk_add_piece = (TMatrixD*) cov_sk_add->GetSub(first_add,last_add,first_add,last_add);
@@ -221,7 +260,7 @@ void MakeCovMatrix(
 
 #ifdef ADDCOVMATR
   TCanvas *ccov_sk_add_piece = new TCanvas("ccov_sk_add_piece","ccov_sk_add_piece");
-  cov_sk_add_piece->Draw("colz");
+  cov_sk_add_piece->Draw("colz text");
 #endif
   
 #ifdef ADDCOVMATR
