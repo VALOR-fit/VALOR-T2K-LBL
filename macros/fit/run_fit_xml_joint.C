@@ -8,11 +8,11 @@
  
 void run_fit_xml_joint
 (
- //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file Run1-4 data */
+ const char * xmlfile = "data_newstruct.xml",                                                /* input XML file Run1-4 data */
  //const char * xmlfile = "data_newstruct_rhc.xml",                                         /* input XML file Run1-4 data (used by RHC analysis) */
 
  //const char * xmlfile = "data_newstruct_multiring.xml",                                                /* input XML file Run1-4 data (used by RHC analysis) */
- const char * xmlfile = "toymc/toymc_FHCpRHC_DataRun1to4_MCRun5and6_th13DB_NH-0.xml",                 /* input XML file with toy MC experiments */
+ //const char * xmlfile = "toymc/toymc_FHCpRHC_DataRun1to4_MCRun5and6_th13DB_NH-0.xml",                 /* input XML file with toy MC experiments */
  //const char * xmlfile = "toymc_FHCpRHCpMultiRing-0.xml",
  //const char * xmlfile = "toymc_RHCpMultiRing_DataRun1to4_MCRun5and6_th13DB_NH-0.xml",
 
@@ -23,12 +23,12 @@ void run_fit_xml_joint
  
  //const char * config_file      = "analysis_configuration_run1to5.xml",        /* analysis configuration file */
 
- const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6_oa2p0.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6_multiring_test.xml",
  //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
  
- //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
+ const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
  
  //const char * config_file      = "analysis_configuration_test_multiring.xml",        /* analysis configuration file */
@@ -83,6 +83,8 @@ void run_fit_xml_joint
       exit(-1);
     }
   }
+
+  T2KOpt::Instance()->ReadXmlPath(config.Data()); // Read xml config file path/name
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -160,15 +162,10 @@ void run_fit_xml_joint
     fparm2->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
   }
 
-
-  
-  //cout << T2KOpt::Instance()->gOscAnaTypeChoice << endl;
-  //return;
-
-
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(config.Data());
+  //skexp->Read(config.Data());
+  skexp->Read();
 
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
@@ -246,6 +243,7 @@ void run_fit_xml_joint
      // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
      skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
+
      // //Update the fitter initial values (osc & systematic)
      // PhysParamList * iparm = 0;
      // if(!using_xml_file) {
