@@ -60,7 +60,6 @@ T2KOpt * T2KOpt::Instance()
 //____________________________________________________________________________
 void T2KOpt::SetDefaults(void) 
 {
-
   // Get path to banff param values FHC
 #if BANFF_BINS == 1
   fPathBanffParam = "banff/best_fit_values";
@@ -108,6 +107,46 @@ void T2KOpt::SetDefaults(void)
   fPathRHCBanffCovMatr = "banff/disap/covariance_matrix";
 #elif BANFF_BINS == 3
   fPathRHCBanffCovMatr = "banff/app/covariance_matrix";
+#endif
+
+
+  // SK Escale errors
+  fPathEscale1RmuErr = "detector_systematics/superk/energy_scale_relative_error/one_mu_ring";
+  fPathEscale1ReErr = "detector_systematics/superk/energy_scale_relative_error/one_e_ring";
+
+  // SK Escale errors RHC
+  fPathRHCEscale1RmuErr = "detector_systematics/superk/energy_scale_relative_error/one_mu_ring";
+  fPathRHCEscale1ReErr = "detector_systematics/superk/energy_scale_relative_error/one_e_ring";
+
+  // SK Escale errors MultiRing
+  fPathEscaleMultiRmuErr = "detector_systematics/superk/energy_scale_relative_error/multi_mu_ring";
+  fPathEscaleMultiReErr = "detector_systematics/superk/energy_scale_relative_error/multi_e_ring";
+
+  // Get SuperkDetectorFSI covariance matrix
+#if FSI_BINS == 1
+  fPathSKDetFSICovMatr = "skdetfsi/covariance_matrix";
+#elif FSI_BINS == 2
+  fPathSKDetFSICovMatr = "skdetfsi/disap/covariance_matrix";
+#elif FSI_BINS == 3
+  fPathSKDetFSICovMatr = "skdetfsi/app/covariance_matrix";
+#endif
+  
+  // Get SuperkDetectorFSI covariance matrix RHC
+#if FSI_BINS == 1
+  fPathRHCSKDetFSICovMatr = "skdetfsi/covariance_matrix";
+#elif FSI_BINS == 2
+  fPathRHCSKDetFSICovMatr = "skdetfsi/disap/covariance_matrix";
+#elif FSI_BINS == 3
+  fPathRHCSKDetFSICovMatr = "skdetfsi/app/covariance_matrix";
+#endif
+
+  // Get SuperkDetectorFSI covariance matrix FHC-MultiRing
+#if FSI_BINS == 1
+  fPathMultiRingSKDetFSICovMatr = "skdetfsi/covariance_matrix";
+#elif FSI_BINS == 2
+  fPathMultiRingSKDetFSICovMatr = "skdetfsi/disap/covariance_matrix";
+#elif FSI_BINS == 3
+  fPathMultiRingSKDetFSICovMatr = "skdetfsi/app/covariance_matrix";
 #endif
 
   //

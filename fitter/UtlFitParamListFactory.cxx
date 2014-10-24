@@ -605,13 +605,15 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get FSI covariance matrix
-#if FSI_BINS == 1
-  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
-#elif FSI_BINS == 2
-  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
-#elif FSI_BINS == 3
-  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
-#endif
+  // #if FSI_BINS == 1
+  //   TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
+  // #elif FSI_BINS == 2
+  //   TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+  // #elif FSI_BINS == 3
+  //   TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+  // #endif
+  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
+  
   if(!SKDetFSICovMtrx) {
     cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
     exit(1);
@@ -756,7 +758,9 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get FSI covariance matrix
-  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+  //TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
+
   if(!SKDetFSICovMtrx) {
     cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
     exit(1);
@@ -879,7 +883,9 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get FSI covariance matrix
-  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+  //TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
+  
   if(!SKDetFSICovMtrx) {
     cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
     exit(1);
@@ -962,7 +968,6 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
 
 #endif
 
-
 #else
   #ifdef __MULTIRING_FHC_RUNNING__ // multiring fhc only 
   
@@ -976,8 +981,6 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   #endif
 #endif // sample analysis option
  ///
-
-
 }
 #endif // #ifdef __NUEONLY__
 
@@ -1005,8 +1008,6 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get BANFF fit central values
   TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
-
-
 
   if(!BANFFBestFitValues) {
     cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;

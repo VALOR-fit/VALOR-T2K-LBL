@@ -113,24 +113,28 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 
   // Get relative error on energy scale 
-  fEnergyScale1RmuRelErr =
-    util::XML2Dbl(xml,root_node,
-		  "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
-  fEnergyScale1ReRelErr =
-    util::XML2Dbl(xml,root_node,
-		  "detector_systematics/superk/energy_scale_relative_error/one_e_ring");
-  
+  // fEnergyScale1RmuRelErr =
+  //   util::XML2Dbl(xml,root_node,
+  // 		  "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
+  // fEnergyScale1ReRelErr =
+  //   util::XML2Dbl(xml,root_node,
+  // 		  "detector_systematics/superk/energy_scale_relative_error/one_e_ring");
+  fEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1RmuErr.c_str());
+  fEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1ReErr.c_str());
 
   const int np = conv::kNumOfSKDetFSIParams;
 
   // Get SuperkDetectorFSI covariance matrix
-#if FSI_BINS == 1
-  fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
-#elif FSI_BINS == 2
-  fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
-#elif FSI_BINS == 3
-  fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
-#endif
+  // #if FSI_BINS == 1
+  //   fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
+  // #elif FSI_BINS == 2
+  //   fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+  // #elif FSI_BINS == 3
+  //   fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+  // #endif
+  fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
+    
+    
   if(!fCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);
@@ -188,24 +192,27 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 
   // Get relative error on energy scale 
-  fRHCEnergyScale1RmuRelErr =
-    util::XML2Dbl(xml,root_node,
-                  "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
-  fRHCEnergyScale1ReRelErr =
-    util::XML2Dbl(xml,root_node,
-                  "detector_systematics/superk/energy_scale_relative_error/one_e_ring");
-  
+  // fRHCEnergyScale1RmuRelErr =
+  //   util::XML2Dbl(xml,root_node,
+  //                 "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
+  // fRHCEnergyScale1ReRelErr =
+  //   util::XML2Dbl(xml,root_node,
+  //                 "detector_systematics/superk/energy_scale_relative_error/one_e_ring");
+  fRHCEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1RmuErr.c_str());
+  fRHCEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1ReErr.c_str());
 
   const int np = conv::kNumOfRHCSKDetFSIParams;
 
   // Get SuperkDetectorFSI covariance matrix
-#if FSI_BINS == 1
-  fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
-#elif FSI_BINS == 2
-  fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
-#elif FSI_BINS == 3
-  fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
-#endif
+// #if FSI_BINS == 1
+//   fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
+// #elif FSI_BINS == 2
+//   fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+// #elif FSI_BINS == 3
+//   fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+// #endif
+  fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathRHCSKDetFSICovMatr.c_str());
+
   if(!fRHCCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No RHC SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);
@@ -280,24 +287,31 @@ bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_nod
 
   /// NEW MULTIRING 3
   // Get relative error on energy scale 
-  fEnergyScaleMultiRmuRelErr =
-    util::XML2Dbl(xml,root_node,
-                  "detector_systematics/superk/energy_scale_relative_error/multi_mu_ring");
-  fEnergyScaleMultiReRelErr =
-    util::XML2Dbl(xml,root_node,
-                  "detector_systematics/superk/energy_scale_relative_error/multi_e_ring");
+  // fEnergyScaleMultiRmuRelErr =
+  //   util::XML2Dbl(xml,root_node,
+  //                 "detector_systematics/superk/energy_scale_relative_error/multi_mu_ring");
+  // fEnergyScaleMultiReRelErr =
+  //   util::XML2Dbl(xml,root_node,
+  //                 "detector_systematics/superk/energy_scale_relative_error/multi_e_ring");
+  fEnergyScaleMultiRmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscaleMultiRmuErr.c_str());
+  fEnergyScaleMultiReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscaleMultiReErr.c_str());
+
   ///  
 
   const int np = conv::kNumOfSKDetFSIParamsMultiRing;
 
   // Get SuperkDetectorFSI covariance matrix
-#if FSI_BINS == 1
-  fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
-#elif FSI_BINS == 2
-  fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
-#elif FSI_BINS == 3
-  fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
-#endif
+// #if FSI_BINS == 1
+//   fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
+// #elif FSI_BINS == 2
+//   fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
+// #elif FSI_BINS == 3
+//   fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
+// #endif
+  fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathMultiRingSKDetFSICovMatr.c_str());
+
+
+
   if(!fMultiRingCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No MultiRing SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);
