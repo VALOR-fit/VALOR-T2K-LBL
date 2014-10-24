@@ -595,7 +595,11 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
   // Parse the input XML configuration file
-  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  
+
+  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();  
+
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
@@ -748,7 +752,11 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
   // Parse the input XML configuration file
-  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+
+
+  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
+
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
@@ -873,7 +881,10 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
   // Parse the input XML configuration file
-  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+
+  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
+
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
@@ -997,7 +1008,10 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
   // Parse the input XML configuration file
-  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  
+  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
+
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
@@ -1059,7 +1073,10 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
     //    Get the covariance matrices & best fits of FSI & BANFF from xml,
     //    to have something sensible to initialise to
     // Parse the input XML configuration file
-    const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+
+    //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+    const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
+
     TXMLEngine* xml = new TXMLEngine;
     XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
     if (xmldoc==0) {
@@ -1110,7 +1127,10 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
   // Parse the input XML configuration file
-  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  
+  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
+  
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
@@ -1173,7 +1193,9 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
   //    to have something sensible to initialise to
   // Parse the input XML configuration file
-  const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  
+  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
+  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
 
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);

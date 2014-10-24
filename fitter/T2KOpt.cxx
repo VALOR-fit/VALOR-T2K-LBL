@@ -58,6 +58,11 @@ T2KOpt * T2KOpt::Instance()
   return fInstance;
 }
 //____________________________________________________________________________
+void T2KOpt::ReadXmlPath(std::string config_file){ 
+  fConfigFileName = config_file;
+  return;
+}
+//____________________________________________________________________________
 void T2KOpt::SetDefaults(void) 
 {
   // Get path to banff param values FHC

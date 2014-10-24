@@ -39,6 +39,10 @@ public:
   conv::OscAnaType_t gOscAnaTypeChoice;
 
   // Paths in xml
+  
+  string fConfigFileName;
+  void ReadXmlPath(string config_file);
+
   string fPathBanffCovMatr;
   string fPathBanffParam;
   string fPathRHCBanffCovMatr;

@@ -107,6 +107,8 @@ void SuperkExpectation::CleanUp(void)
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
 {
+  config_file = T2KOpt::Instance()->fConfigFileName;
+
   cout << "Exp >> Reading config file: " << config_file << endl;
 
   if(fIsConfigured) {
