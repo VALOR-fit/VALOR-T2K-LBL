@@ -1004,26 +1004,18 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get BANFF fit central values
-#if BANFF_BINS == 1
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
-#elif BANFF_BINS == 2
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
-#elif BANFF_BINS == 3
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-#endif
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
+
+
+
   if(!BANFFBestFitValues) {
     cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
   const TVectorD & BANFFBestFit = *BANFFBestFitValues;
   // Get BANFF fit covariance matrix
-#if BANFF_BINS == 1
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
-#elif BANFF_BINS == 2
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
-#elif BANFF_BINS == 3
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-#endif
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
+
   if(!BANFFCovMtrx) {
     cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
     exit(1);
@@ -1076,26 +1068,16 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
     }
     XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
     // Get BANFF fit central values
-#if BANFF_BINS == 1
-    TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
-#elif BANFF_BINS == 2
-    TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
-#elif BANFF_BINS == 3
-    TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-#endif
+    TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathRHCBanffParam.c_str());
+
     if(!BANFFBestFitValues) {
         cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
         exit(1);
     }
     const TVectorD & BANFFBestFit = *BANFFBestFitValues;
     // Get BANFF fit covariance matrix
-#if BANFF_BINS == 1
-    TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
-#elif BANFF_BINS == 2
-    TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
-#elif BANFF_BINS == 3
-    TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-#endif
+    TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathRHCBanffCovMatr.c_str());
+
     if(!BANFFCovMtrx) {
         cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
         exit(1);
@@ -1137,14 +1119,17 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get BANFF fit central values
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
+
+
   if(!BANFFBestFitValues) {
     cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
   const TVectorD & BANFFBestFit = *BANFFBestFitValues;
   // Get BANFF fit covariance matrix
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
+
   if(!BANFFCovMtrx) {
     cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
     exit(1);
@@ -1198,14 +1183,16 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get BANFF fit central values
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
+  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
+
   if(!BANFFBestFitValues) {
     cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
   const TVectorD & BANFFBestFit = *BANFFBestFitValues;
   // Get BANFF fit covariance matrix
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
+  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
+
   if(!BANFFCovMtrx) {
     cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
     exit(1);

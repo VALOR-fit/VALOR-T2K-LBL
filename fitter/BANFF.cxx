@@ -109,13 +109,16 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // Get BANFF fit central values
 
 #ifndef __BANFF_BESTFIT_IS_ONE__
-#if BANFF_BINS == 1
-  fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
-#elif BANFF_BINS == 2
-  fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
-#elif BANFF_BINS == 3
-  fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-#endif
+
+  // #if BANFF_BINS == 1
+  //   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
+  // #elif BANFF_BINS == 2
+  //   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
+  // #elif BANFF_BINS == 3
+  //   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
+  // #endif
+  fBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
+
   if(!fBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
@@ -145,13 +148,17 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fCurrentValues = new TVectorD(bestfit);
 
   // Get BANFF fit covariance matrix
-#if BANFF_BINS == 1
-  fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
-#elif BANFF_BINS == 2
-  fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
-#elif BANFF_BINS == 3
-  fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-#endif
+
+  // #if BANFF_BINS == 1
+  //   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+  // #elif BANFF_BINS == 2
+  //   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
+  // #elif BANFF_BINS == 3
+  //   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
+  // #endif  
+    fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
+ 
+
   if(!fCovMtrx) {
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
     exit(1);
@@ -197,13 +204,16 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   // Get BANFF fit central values
 
 #ifndef __BANFF_BESTFIT_IS_ONE__
-#if BANFF_BINS == 1
-  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
-#elif BANFF_BINS == 2
-  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
-#elif BANFF_BINS == 3
-  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-#endif
+
+  // #if BANFF_BINS == 1
+  //   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
+  // #elif BANFF_BINS == 2
+  //   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
+  // #elif BANFF_BINS == 3
+  //   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
+  // #endif
+  fRHCBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathRHCBanffParam.c_str());
+    
   if(!fRHCBestFitValues) {
     cerr << "Exp/BANFF >> No RHC BANFF best-fit parameter vector was found." << endl;
     exit(1);
@@ -233,17 +243,20 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fRHCCurrentValues = new TVectorD(bestfit);
 
   // Get BANFF fit covariance matrix
-#if BANFF_BINS == 1
-#ifdef NEW_RHC_BANFF
-    fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff_rhc/covariance_matrix");
-#else
-    fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
-#endif
-#elif BANFF_BINS == 2
-  fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
-#elif BANFF_BINS == 3
-  fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-#endif
+
+  //#if BANFF_BINS == 1
+  // #ifdef NEW_RHC_BANFF
+  //     fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff_rhc/covariance_matrix");
+  // #else
+  //     fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
+  // #endif
+  // #elif BANFF_BINS == 2
+  //   fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
+  // #elif BANFF_BINS == 3
+  //   fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
+  // #endif
+    fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathRHCBanffCovMatr.c_str());
+
   if(!fRHCCovMtrx) {
     cerr << "Exp/BANFF >> No RHC BANFF covariance matrix was found." << endl;
     exit(1);

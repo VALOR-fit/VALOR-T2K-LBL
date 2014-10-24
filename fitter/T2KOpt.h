@@ -38,6 +38,11 @@ public:
   // Choice of oscillation analysis type (combined, numu disapp only, nue app only)
   conv::OscAnaType_t gOscAnaTypeChoice;
 
+  string fPathBanffCovMatr;
+  string fPathBanffParam;
+  string fPathRHCBanffCovMatr;
+  string fPathRHCBanffParam;
+
   void Print(std::ostream & stream) const;
   friend std::ostream & operator << (std::ostream & stream, const T2KOpt & opt);
 
