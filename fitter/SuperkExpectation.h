@@ -62,6 +62,7 @@ public:
    
    // Read inputs from input XML file
    bool Read(string config_file, Option_t * opt = 0);
+   bool Read(Option_t * opt = 0);
 
    // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
    // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
