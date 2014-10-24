@@ -18,14 +18,27 @@ void run_fit_joint
   double       input_deltacp           = -99, //0.,                                /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
   double       input_dm12sq            = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = -99, //2.32E-3,                             /* |Dm^2_{23}| */
+
+  //const char * config_file             = "analysis_configuration_run1to5_test.xml",        /* analysis configuration file */
   //const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+  
   //const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
-  const char * config_file             = "analysis_configuration_test_multiring.xml",        /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
+
+  //const char * config_file             = "analysis_configuration_test_multiring.xml",        /* analysis configuration file */
+  //const char * config_file             = "analysis_configuration_test_multiring_mrmc.xml",        /* analysis configuration file */
+
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
-  const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */ 
+
+  //const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */ 
   //const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_option              = "minuit+hesse",                            /* fitter option */
+  const char * fit_param_list          = "nuosc3fbar_fixnonbar_12fix",
+  //const char * fit_param_list          = "nuosc3fbar_fixnonbar_12fix+nuisance",
+
+  const char * fit_option              = "minuit",                            /* fitter option */
+  //const char * fit_option              = "minuit+hesse",                            /* fitter option */
+
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                                /* disable this if you don't want to store the best-fit spectra */
   const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -212,58 +225,7 @@ void run_fit_joint
        /////////////////////////////////////////
      }
    
-
-
-
-
-
-
-
-
-
-
-    //  // fparm1->FixParameter(conv::kPhypMixing23);
-    //  // fparm1->FixParameter(conv::kPhypMixing13);
-    //  // fparm1->FixParameter(conv::kPhypDm23sq);
-    //  // //fparm1->FixParameter(conv::kPhypCPV);
-    //  // fparm2->FixParameter(conv::kPhypMixing23);
-    //  // fparm2->FixParameter(conv::kPhypMixing13);
-    //  // fparm2->FixParameter(conv::kPhypDm23sq);
-    //  // //fparm2->FixParameter(conv::kPhypCPV);     
-     
-    // input_mixing13          = 0.0251;                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-    // input_mixing23          = 0.50;                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-    // input_dmsq            = 2.32E-3;                             /* |Dm^2_{23}| */
-    // input_deltacp = 0.*conv::kpi;
-    // input_mixing12          = 0.306;                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-    // input_dm12sq            = 7.5E-5;                             /* Dm^2_{12}, if -999 then randomize */
-
-    // fparm1->Update(kPhypMixing12, input_mixing12);
-    // fparm1->Update(kPhypMixing13, input_mixing13);
-    // fparm1->Update(kPhypMixing23, input_mixing23);
-    // fparm1->Update(kPhypCPV    ,  input_deltacp);
-    // fparm1->Update(kPhypDm12sq,   input_dm12sq);
-    // fparm1->Update(kPhypDm23sq,   input_dmsq);
-
-    //  fparm1->SetInitValue(conv::kPhypCPV,input_deltacp);
-    //  fparm1->FixParameter(conv::kPhypCPV);
-    //  fparm2->SetInitValue(conv::kPhypCPV,input_deltacp);
-    //  fparm2->FixParameter(conv::kPhypCPV);
-
      cout << *fparm1 << endl;
-    //  //cout << *fparm2 << endl;
-         
-    //  //return;
-
-
-
-
-
-
-
-
-
-
 
      // Reset all output spectra
      dat_array ->Clear();
@@ -305,6 +267,7 @@ void run_fit_joint
 	 cout << "- Generating toy-MC..." << endl;
 	 //note that fparm does not contain the tweaks, so use only the PhysHyp here
 	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
+
 	 if(!applied_negevents_condition) {
 	   // keep track of all nuisance params set so as to add in output tree
 	   PhysParamList true_nuisance_params = skexp->Tweaks();
