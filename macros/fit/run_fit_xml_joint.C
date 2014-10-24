@@ -8,28 +8,46 @@
  
 void run_fit_xml_joint
 (
- const char * xmlfile = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
- // const char * xmlfile = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                 /* input XML file with toy MC experiments */
-  const char * tag = "prova",                                                    /* */
-  int          run = 0,                                                    /* */
-  int          first_experiment = 0,                                   /* */
-  int          last_experiment  = 0,                                   /* */
-  //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
-  //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
-  const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
-  //const char * fit_param_list   = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
- const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
- //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_option       = "minuit+hesse",                            /* fitter option */
-  bool         store_toy_expts         = true,                         /* disable this if you don't want to store the toy MC expts     */
-  bool         store_bestfit_spectrum  = false,                         /* disable this if you don't want to store the best-fit spectra */
+ //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file Run1-4 data */
+ //const char * xmlfile = "data_newstruct_rhc.xml",                                         /* input XML file Run1-4 data (used by RHC analysis) */
+
+ //const char * xmlfile = "data_newstruct_multiring.xml",                                                /* input XML file Run1-4 data (used by RHC analysis) */
+ const char * xmlfile = "toymc/toymc_FHCpRHC_DataRun1to4_MCRun5and6_th13DB_NH-0.xml",                 /* input XML file with toy MC experiments */
+ //const char * xmlfile = "toymc_FHCpRHCpMultiRing-0.xml",
+ //const char * xmlfile = "toymc_RHCpMultiRing_DataRun1to4_MCRun5and6_th13DB_NH-0.xml",
+
+ const char * tag = "prova",                                                    /* */
+ int          run = 0,                                                    /* */
+ int          first_experiment = 0,                                   /* */
+ int          last_experiment  = 0,                                   /* */
+ 
+ //const char * config_file      = "analysis_configuration_run1to5.xml",        /* analysis configuration file */
+
+ const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_run1to6_oa2p0.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_run1to6_multiring_test.xml",
+ //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
+ 
+ //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
+ 
+ //const char * config_file      = "analysis_configuration_test_multiring.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_test_multiring_mrmc.xml",        /* analysis configuration file */
+ 
+ const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+ //const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+ 
+ const char * fit_option       = "minuit+hesse",                            /* fitter option */
+ 
+ bool         store_toy_expts         = false,                         /* disable this if you don't want to store the toy MC expts     */
+ bool         store_bestfit_spectrum  = false,                         /* disable this if you don't want to store the best-fit spectra */
  //const char * dmsqscheme          = "fogli",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",                              /* normal or inverted */
   const char * mixparamchoice      = "sinsqtheta",                          /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant      = "one",                                 /* one==kNuOctantOne two==kNuOctantTwo */
   //bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
-  double       dcp_value           = 0,                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
+  double       dcp_value           = 0,                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */ 
   bool         using_xml_file      = true,                                   /* if false, skobs reads xmlfile as a root file */
   bool         reactor             = true,                               /* enable this if you want to apply the reactor constraint */
   double       tolerance           = 0.1,                                 /* value for the fitter tolerance */
@@ -86,7 +104,8 @@ void run_fit_xml_joint
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC" << endl;
   cout << "   - Reading experiments from: " << xmlfile2 << endl; 
-  cout << "   - Using experiments in range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
+  cout << "   - Using experiments in
+ range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
@@ -94,6 +113,37 @@ void run_fit_xml_joint
   cout << "  Applying reactor constraint: " << ((reactor)  ? "YES" : "NO" ) << endl;
   cout << endl;
   cout << *Opt::Instance() << endl;
+
+ 
+
+  // //conv::PhysParamId_t p = conv::kNuisXSecNormAntiNuToNu;
+  // //conv::PhysParamId_t p = conv::kRHCNuisXSecNormAntiNuToNu;
+  // //conv::PhysParamId_t p = conv::kMultiRingNuisSKDetFSI002;
+  // //conv::PhysParamId_t p = conv::kNuisSKDetFSI000;
+  // //conv::PhysParamId_t p = conv::kRHCNuisSKDetFSI002;
+  // conv::PhysParamId_t p = conv::kRHCLastParam;
+  // //conv::PhysParamId_t p = conv::kMultiRingLastParam;
+  // if(valor::util::IsMultiRingSystematic(p))
+  //   cout << "IsMultiRingSystematic YES" << endl;
+  // else 
+  //   cout << "IsMultiRingSystematic NO" << endl;
+  // if(valor::util::IsFHCSystematic(p))
+  //   cout << "IsFHCSystematic YES" << endl;
+  // else 
+  //   cout << "IsFHCSystematic NO" << endl;
+  // if(valor::util::IsRHCSystematic(p))
+  //   cout << "IsRHCSystematic YES" << endl;
+  // else 
+  //   cout << "IsRHCSystematic NO" << endl;
+  // cout << valor::util::AsString(p) << endl;
+  // cout << valor::util::AsStringTex(p) << endl;
+  // cout << valor::util::AsStringPaperTex(p) << endl;
+  // cout << valor::util::AsStringCompact(p) << endl;
+  //return;
+
+
+
+
 
   // Fit param list
   FitParamList * fparm  = util::NamedParameterList(fit_param_list); //only used to initialise branch
@@ -109,6 +159,12 @@ void run_fit_xml_joint
     fparm1->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
     fparm2->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
   }
+
+
+  
+  //cout << T2KOpt::Instance()->gOscAnaTypeChoice << endl;
+  //return;
+
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -126,6 +182,7 @@ void run_fit_xml_joint
   pdf_array1->SetOwner(false);
   TObjArray * pdf_array2 = new TObjArray;
   pdf_array2->SetOwner(false);
+
 
   // Create file to store results
   TFile f(Form("fit-%s-run_%d-expts_%d_%d.root", tag, run, first_experiment, last_experiment), "recreate");
@@ -185,7 +242,7 @@ void run_fit_xml_joint
 
      // Re-seed fitter (reset current values to specified init values)
      fparm1->ResetCurrToInitValues();
-     
+    
      // Get superk spectrum observation (toy experiment)
      SuperkObservation * skobs = new SuperkObservation;
      skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
@@ -195,7 +252,7 @@ void run_fit_xml_joint
      //   f_sysparm->GetObject(Form("iparm_%d",iexperiment),iparm);
      //   fparm1->FromPhysParamList(*iparm, "initial", false);
      // }
-          
+   
      //if theta23 is not fixed then initialize to 0.4 for the first fit (first octant) and 0.6 for the second one
      if(!(fparm1->IsFixed(conv::kPhypMixing23))) {     
        fparm1->SetInitValue(conv::kPhypMixing23,0.4);
@@ -217,19 +274,22 @@ void run_fit_xml_joint
      FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
      // Set SF Initial value to 0
-     if(fparm1->Exists(conv::kNuisXSecSpecFunc))
+     if(fparm1->Exists(conv::kNuisXSecSpecFunc)){
        fparm1->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
+     }
 
      // Chisq for true (input) params
      double true_chisq = fit_inputs->Statistic();
-
+     
      // Print-out true params
-     //fparm1->ShowOnlyCurrValuesInNextPrint();
+     fparm1->ShowOnlyCurrValuesInNextPrint();
+     
      cout << "- True oscillation params (below) yield chisq = " << true_chisq
-          << *fparm1;
-
+	  << *fparm1;
+     
      // Do the fit
      fparm1->ResetCurrToInitValues(); // reset osc params
+     
      skexp->PrintSystematicVariations();
      fitter->SetTol(tolerance);
      fitter->DoTheFit();
