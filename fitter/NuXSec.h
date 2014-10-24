@@ -123,6 +123,12 @@ public:
       //else return 0.;
       }
       }*/
+      
+      
+  // Apply systematic to inmput sample/mode and energy bins?
+  bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const; 
+  bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
 
 
 private:
@@ -142,11 +148,6 @@ private:
 
   // Calculate weight spline index
   int  WghtSplineIdx        (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
-
-  // Apply systematic to inmput sample/mode and energy bins?
-  bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const; 
-  bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
-  bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
 
   //
   bool IsThereAnEvent       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
