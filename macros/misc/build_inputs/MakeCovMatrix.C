@@ -12,7 +12,6 @@
 
 //
 #define ADDCOVMATR
-#define ADDCOVMATR_2
 
 void MakeCovMatrix( 
 		   
@@ -20,8 +19,7 @@ void MakeCovMatrix(
 		   const char *covname = "total_flux_cov",
 		   
 		   //const char *outfilename = "$T2KOSCANA/outputs/test/flux_prelim_13av1_xsec_postbanff2013.root",
-		   const char *outfilename = "$T2KOSCANA/outputs/test/flux_prelim_13av1_xsec_prelim.root",
-		   
+		   const char *outfilename = "$T2KOSCANA/outputs/test/flux_prelim_13av1_xsec_prelim.root",		   
 
 		   const bool CorrMode = true, // true -> correlated FHC-RHC, false -> not correlated
 
@@ -37,18 +35,17 @@ void MakeCovMatrix(
 		   const int last_sk_all = 99,
 
 		   // Add a piece of covariance matrix 1
-		   //const char *addfilename = "$T2KOSCANA/inputs/official/2013/banff/postfit_banff_2013_joint_v5.root",
-		   //const char *addcovname = "postfit_cov",
-		   // const int first_add = 25, // rhc-only 
-		   // const int last_add = 32,
+		   const char *addfilename = "$T2KOSCANA/inputs/official/2013/banff/postfit_banff_2013_joint_v5.root",
+		   const char *addcovname = "postfit_cov",
+		   const int first_add = 25, // rhc-only 
+		   const int last_add = 32,
 
-		   const char *addfilename = "$T2KOSCANA/inputs/official/2014/xsec/xsec_covariance_2014_v1.root",
-		   const char *addcovname = "xsec_cov",
-		   const int first_add = 0, // rhc-only
-		   const int last_add = 11,
-
+		   // const char *addfilename = "$T2KOSCANA/inputs/official/2014/xsec/xsec_covariance_2014_v1.root",
+		   // const char *addcovname = "xsec_cov",
+		   // const int first_add = 0, // rhc-only
+		   // const int last_add = 11,
 		   
-		   ){
+		    ){
   
   using namespace std;
   using namespace valor;
@@ -173,28 +170,21 @@ void MakeCovMatrix(
   TFile *addfilein = new TFile(addfilename,"READ");
   TMatrixD *cov_sk_add = (TMatrixD*) addfilein->Get(addcovname);
   
-  // Take parameters
+  //Take parameters
   TVectorD *par_sk_add = (TVectorD*) addfilein->Get("xsec_param_prior");
-
   TObjArray *parname_sk_add = (TObjArray*) addfilein->Get("paramNames");
-  parname_sk_add->SetOwner(kTRUE);
-  
-
-  cout << endl;
-								
-  int npar = parname_sk_add->GetEntriesFast();
-
-  cout << endl;
-  cout << "# of parameters = " << npar << endl;
-  cout << endl;
-
-  for(int ipar=0;ipar<npar;ipar++){
-    TObjString *parname_objstring = (TObjString*) parname_sk_add->At(ipar);
-    
-    cout << parname_objstring->GetName() << endl;
+  if(parname_sk_add!=0){  
+    parname_sk_add->SetOwner(kTRUE);
+    int npar = parname_sk_add->GetEntriesFast();
+    cout << endl;
+    cout << "# of parameters = " << npar << endl;
+    cout << endl;
+    for(int ipar=0;ipar<npar;ipar++){
+      TObjString *parname_objstring = (TObjString*) parname_sk_add->At(ipar);
+      cout << parname_objstring->GetName() << endl;
+    }
+    cout << endl;
   }
-  
-  cout << endl;
   
   addfilein->Close();
 
@@ -246,11 +236,58 @@ void MakeCovMatrix(
   
 #endif
 
+
+  // Write output parameter vector 
+
+  const int NdimAll = cov_sk_all_final->GetNrows();
+  TVectorD *par_sk_all_final = new TVectorD(NdimAll);
+  const int NdimFHC = cov_sk_fhc_final->GetNrows();
+  TVectorD *par_sk_fhc_final = new TVectorD(NdimFHC);
+  const int NdimRHC = cov_sk_rhc_final->GetNrows();
+  TVectorD *par_sk_rhc_final = new TVectorD(NdimRHC);
+
+  // Add original parameter values
+  const int NdimOrig = cov_sk_all->GetNrows(); 
+  for(int ipar=0;ipar<NdimOrig;ipar++) 
+    par_sk_all_final(ipar) = 1.;  //set prior values always to 1 for simplicity
+#ifdef ADDCOVMATR_2
+  // Add adding parameter values
+  const int NdimAdd = cov_sk_add_piece->GetNrows();
+  for(int ipar=0;ipar<NdimAdd;ipar++) 
+    par_sk_all_final(ipar+NdimAdd) = 1.; //set prior values always to 1 for simplicity
+#endif
+  
+  // Add original parameter values
+  const int NdimOrig = cov_sk_fhc->GetNrows(); 
+  for(int ipar=0;ipar<NdimOrig;ipar++) 
+    par_sk_fhc_final(ipar) = 1.;  //set prior values always to 1 for simplicity
+#ifdef ADDCOVMATR_2
+  // Add adding parameter values
+  const int NdimAdd = cov_sk_add_piece->GetNrows();
+  for(int ipar=0;ipar<NdimAdd;ipar++) 
+    par_sk_fhc_final(ipar+NdimAdd) = 1.; //set prior values always to 1 for simplicity
+#endif
+
+  // Add original parameter values
+  const int NdimOrig = cov_sk_rhc->GetNrows(); 
+  for(int ipar=0;ipar<NdimOrig;ipar++) 
+    par_sk_rhc_final(ipar) = 1.;  //set prior values always to 1 for simplicity
+#ifdef ADDCOVMATR_2
+  // Add adding parameter values
+  const int NdimAdd = cov_sk_add_piece->GetNrows();
+  for(int ipar=0;ipar<NdimAdd;ipar++) 
+    par_sk_rhc_final(ipar+NdimAdd) = 1.; //set prior values always to 1 for simplicity
+#endif
+
   // Write output covariance matrices in a file
   TFile *outfile = new TFile(outfilename,"RECREATE");
   cov_sk_all_final->Write("prelim_cov_all");
   cov_sk_fhc_final->Write("prelim_cov_fhc");
   cov_sk_rhc_final->Write("prelim_cov_rhc");
+  //
+  par_sk_all_final->Write("prelim_par_all");
+  par_sk_fhc_final->Write("prelim_par_fhc");
+  par_sk_rhc_final->Write("prelim_par_rhc");
   outfile->Close();
 
 
@@ -281,7 +318,15 @@ void MakeCovMatrix(
   cov_sk_rhc_final->Draw("colz");
   
 
- 
+  // Print out values
+
+  cout << endl;
+  cout << "# of selected parameters = " << endl;
+  cout << "  - All      --> " << cov_sk_all_final->GetNrows() << endl;
+  cout << "  - FHC Only --> " << cov_sk_fhc_final->GetNrows() << endl;
+  cout << "  - RHC Only --> " << cov_sk_rhc_final->GetNrows() << endl;
+  cout << endl;
+
   //cov_sk_add->Print();
   //cov_sk_add_piece->Print();
 
