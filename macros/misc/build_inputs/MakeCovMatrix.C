@@ -19,7 +19,8 @@ void MakeCovMatrix(
 		   const char *filename = "$T2KOSCANA/inputs/official/2014/flux/flux_covariance_13av1_prelim.root",
 		   const char *covname = "total_flux_cov",
 		   
-		   const char *outfilename = "$T2KOSCANA/outputs/test/flux_prelim_13av1_xsec_postbanff2013.root",
+		   //const char *outfilename = "$T2KOSCANA/outputs/test/flux_prelim_13av1_xsec_postbanff2013.root",
+		   const char *outfilename = "$T2KOSCANA/outputs/test/flux_prelim_13av1_xsec_prelim.root",
 		   
 
 		   const bool CorrMode = true, // true -> correlated FHC-RHC, false -> not correlated
@@ -44,7 +45,7 @@ void MakeCovMatrix(
 		   const char *addfilename = "$T2KOSCANA/inputs/official/2014/xsec/xsec_covariance_2014_v1.root",
 		   const char *addcovname = "xsec_cov",
 		   const int first_add = 0, // rhc-only
-		   const int last_add = 3,
+		   const int last_add = 11,
 
 		   
 		   ){
@@ -194,11 +195,6 @@ void MakeCovMatrix(
   }
   
   cout << endl;
-
-  return;
-
-
-
   
   addfilein->Close();
 
