@@ -23,3 +23,9 @@ As of fmwk revision r3983, FitterMinuit now correctly fills the MigradErrors and
 
 I'm trying to make the code support python macros wherever possible. In general, you get this for free with ROOT, but python can't (easily) handle functions overloaded with different enums, so in this case (like AsString) it's probably good practice to ensure there is a uniquely named version that can be called from python.
 
+// Davide 27 October 2014
+Now all the paths in xml file and name of configuration file live in T2KOpt.
+To read configuration files in macros use:    
+T2KOpt::Instance()->ReadXmlPath(config); // Read xml config file path/name
+No need to read using SuperkExpection --> SuperkExpectation * skexp = new SuperkExpectation; skexp->Read();
+
