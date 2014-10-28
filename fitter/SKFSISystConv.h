@@ -3258,7 +3258,7 @@ static const bool kSKDet1ReApplyParamToSKMode[kns][knm][kNumOfSKDetParams1Re] = 
     
     // NEW FLUX
     #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) // fhc+rhc
-    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ; // TODO FHC+RHC WITH CORRELATIONS
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ; // Todo FHC+RHC with correlations
     //
 
     #elif defined(__FHC_RUNNING__)  // fhc only

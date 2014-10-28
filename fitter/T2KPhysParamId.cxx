@@ -30,7 +30,7 @@ string valor::util::AsString(PhysParamId_t p)
 {
   if (!util::IsSystematic(p)) return util::RawParamAsString(p);
   switch(p) {
-
+    
     /*
      * 2011-analysis nuisance parameters
      */

@@ -149,6 +149,18 @@ bool SuperkExpectation::Read(Option_t * /*opt*/)
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
   // Configure each of the components 
+
+  // NEW FLUX FHC+RHC
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && !defined(__FULLY_CORRELATED__)
+  if ( ! this->GetBANFF            () -> ReadFHCpRHC (xml, root_node) ) return false;
+  if ( ! this->GetNuFlux           () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetNuFlux           () -> ReadRHC (xml, root_node) ) return false;
+  if ( ! this->GetNuXSec           () -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkDetectorFSI() -> Read (xml, root_node) ) return false;
+  if ( ! this->GetSuperkDetectorFSI() -> ReadRHC (xml, root_node) ) return false;
+#else
+  //
+
   if ( ! this->GetBANFF            () -> Read (xml, root_node) ) return false;
   if ( ! this->GetBANFF            () -> ReadRHC (xml, root_node) ) return false;
   if ( ! this->GetNuFlux           () -> Read (xml, root_node) ) return false;
@@ -156,6 +168,10 @@ bool SuperkExpectation::Read(Option_t * /*opt*/)
   if ( ! this->GetNuXSec           () -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkDetectorFSI() -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkDetectorFSI() -> ReadRHC (xml, root_node) ) return false;
+#endif
+
+  //
+
   /// NEW MULTIRING 2
 #ifdef __MULTIRING_FHC_RUNNING__
   if ( ! this->GetSuperkDetectorFSI() -> ReadMultiRing (xml, root_node) ) return false; /// Take same cov. matrix of FHC sample

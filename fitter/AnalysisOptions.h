@@ -28,7 +28,7 @@ Split valor::conv namespace into several smaller files
 #endif
 
 #ifndef __FULLY_CORRELATED__  // rhc-fhc samples
-//#define __FULLY_CORRELATED__
+#define __FULLY_CORRELATED__
 #endif
 
 #ifndef __BANFF_UNCORRELATED__

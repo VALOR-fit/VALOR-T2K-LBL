@@ -62,9 +62,17 @@ public:
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
   bool ReadRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
 
+  // NEW FLUX FHC+RHC
+  bool ReadFHCpRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
+  //
+
   // BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
   void TellMeAboutTheRHCBANFFfit(BANFF * banff);
+
+  // NEW FLUX FHC+RHC
+  void TellMeAboutTheFHCpRHCBANFFfit(BANFF * banff);
+  //
 
   // Drawing options:
   // - "Flux/SK/NuMu/TuneWghts"    :
@@ -97,9 +105,19 @@ private:
   void BookAndInitAuxSpectra(void);
   void BookAndInitRHCAuxSpectra(void);
 
+  // NEW FLUX FHC+RHC
+  void BookAndInitFHCpRHCAuxSpectra(void);
+  //
+
   // Apply BANFF weights
   void ApplyBANFFWeights (bool get_current) const; 
   void ApplyRHCBANFFWeights (bool get_current) const;
+
+
+  // NEW FLUX FHC+RHC
+  void ApplyFHCpRHCBANFFWeights (bool get_current) const;
+  //
+
 
   // Access flux and weight histograms held in this object
   TH1D * SuperkFluxSpectrum       (int neutrino_pdg, conv::FluxType_t type = conv::kFlxCurrent) const;

@@ -114,7 +114,6 @@ void T2KOpt::SetDefaults(void)
   fPathRHCBanffCovMatr = "banff/app/covariance_matrix";
 #endif
 
-
   // SK Escale errors
   fPathEscale1RmuErr = "detector_systematics/superk/energy_scale_relative_error/one_mu_ring";
   fPathEscale1ReErr = "detector_systematics/superk/energy_scale_relative_error/one_e_ring";
