@@ -1042,12 +1042,12 @@ void NuFlux::ApplyFHCpRHCBANFFWeights(bool get_current) const
 	conv::FluxType_t iflxCurrent;
 	conv::FluxType_t iflxFinalTuning;
 
-	if(p>=conv::kNuisBANFF00 && p<=conv::kNuisBANFF24){
+	if(p>=conv::kNuisBANFF00 && p<conv::kNuisBANFFMAQE){
 	  iflxExtTuning= conv::kFlxExtTuning;
 	  iflxCurrent= conv::kFlxCurrent;
 	  iflxFinalTuning= conv::kFlxFinalTuning;
 	}
-	else if(p>=conv::kRHCNuisBANFF00 && p<=conv::kRHCNuisBANFF24){
+	else if(p>=conv::kRHCNuisBANFF00 && p<conv::kRHCNuisBANFFMAQE){
 	  iflxExtTuning= conv::kRHCFlxExtTuning;
 	  iflxCurrent= conv::kRHCFlxCurrent;
 	  iflxFinalTuning= conv::kRHCFlxFinalTuning;
