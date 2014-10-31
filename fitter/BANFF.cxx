@@ -200,7 +200,6 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // #endif  
     fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
  
-
   if(!fCovMtrx) {
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
     exit(1);
@@ -582,7 +581,6 @@ void BANFF::Tweak(
   // If this is the first time this function is called, then run the Cholesky 
   // decomposition of the flux covariance matrix
   //
-
   if(fCovMtrxChoL == 0) 
     this->CholeskyDecomposeMatrix();
 
@@ -590,6 +588,7 @@ void BANFF::Tweak(
   // Get best-fit and current BANFF params
   //
 
+  
   TVectorD & bestfit_values = *fBestFitValues;
   TVectorD & current_values = *fCurrentValues;
 
@@ -1043,6 +1042,7 @@ void BANFF::CholeskyDecomposeMatrix()
 #endif
 
     TMatrixD cov(this->CovMatrix());
+
 #ifdef __show_cholesky_mesg_debug__
     cout << "Exp/BANFF/CholeskyDecomposeMatrix >> BANFF covariance matrix: " << endl; 
     util::PrintCompact(cov,7,5);

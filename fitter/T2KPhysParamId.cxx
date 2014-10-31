@@ -102,6 +102,12 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";   break;
 #endif
 
+      // NEW XSEC
+    case ( kNuisBANFFMEC   ) : return "BANFF; Norm; MEC";                 break;
+    case ( kNuisBANFFCA5   ) : return "BANFF; CA5 RES";                   break;
+    case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
+      //
+
     //
     // XSec params not correlated with flux
     //
@@ -365,6 +371,12 @@ string valor::util::AsString(PhysParamId_t p)
 #if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; RHC";   break;
 #endif
+
+    // NEW XSEC
+  case ( kRHCNuisBANFFMEC   ) : return "BANFF; Norm; MEC; RHC";                 break;
+  case ( kRHCNuisBANFFCA5   ) : return "BANFF; CA5 RES; RHC";                   break;
+  case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
+    //
 
     //
     // XSec params not correlated with flux
@@ -828,6 +840,12 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";    break;
 #endif
 
+      // NEW XSEC
+    case ( kNuisBANFFMEC   ) : return "BANFF; Norm; MEC";                 break;
+    case ( kNuisBANFFCA5   ) : return "BANFF; CA5 RES";                   break;
+    case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
+      //
+
     //
     // XSec params not correlated with flux
     //
@@ -1091,6 +1109,12 @@ string valor::util::AsStringTex(PhysParamId_t p)
 #if (BANFF_BINS != 2)
     case ( kRHCNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; RHC";    break;
 #endif
+
+      // NEW XSEC
+    case ( kRHCNuisBANFFMEC   ) : return "BANFF; Norm; MEC; RHC";                 break;
+    case ( kRHCNuisBANFFCA5   ) : return "BANFF; CA5 RES; RHC";                   break;
+    case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
+      //
 
     //
     // XSec params not correlated with flux
@@ -1674,6 +1698,13 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #if (BANFF_BINS != 2)
     case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
 #endif
+
+      // NEW XSEC
+    case ( kNuisBANFFMEC   ) : return "f_banffmec";             break;
+    case ( kNuisBANFFCA5   ) : return "f_banffca5";             break;
+    case ( kNuisBANFFBgRES ) : return "f_banffbgres";           break;
+      //
+
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
     case ( kNuisXSecSpecFunc          ) : return "f_specfunc";     break; 
     case ( kNuisXSecWshape            ) : return "f_wshape";       break;
@@ -1790,6 +1821,13 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0           ) : return "f_banffnc1pi0_rhc";  break;
 #endif
+
+    // NEW XSEC
+  case ( kRHCNuisBANFFMEC   ) : return "f_banffmec_rhc";             break;
+  case ( kRHCNuisBANFFCA5   ) : return "f_banffca5_rhc";             break;
+  case ( kRHCNuisBANFFBgRES ) : return "f_banffbgres_rhc";           break;
+    //
+
   case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi_rhc";       break;
   case ( kRHCNuisXSecSpecFunc          ) : return "f_specfunc_rhc";     break;
   case ( kRHCNuisXSecWshape            ) : return "f_wshape_rhc";       break;
@@ -2185,6 +2223,13 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 #if (BANFF_BINS != 2)
   case ( kNuisBANFFNC1pi0 ) :
 #endif
+    
+    // NEW XSEC
+  case ( kNuisBANFFMEC   ) : 
+  case ( kNuisBANFFCA5   ) : 
+  case ( kNuisBANFFBgRES ) :
+    //
+
     {
       int ip = (int)p - (int)kNuisBANFF00;
       return Form("$f_{%d; t, r}^{banff}$", ip);
@@ -2323,6 +2368,13 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 #if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0 ) :
 #endif
+
+    // NEW XSEC
+  case ( kRHCNuisBANFFMEC   ) : 
+  case ( kRHCNuisBANFFCA5   ) : 
+  case ( kRHCNuisBANFFBgRES ) : 
+    //
+
     {
       int ip = (int)p - (int)kRHCNuisBANFF00;
       return Form("$f_{%d; t, r}^{banff}RHC$", ip);
@@ -2760,17 +2812,32 @@ bool valor::util::IsMultiRingSystematic(PhysParamId_t p)
 //____________________________________________________________________________
 bool valor::util::IsXSec(PhysParamId_t p)
 {
-  if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
-    return true;
-  if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecNormAntiNuToNu)
-    return true;
-  return false;
+  //if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
+  //  return true;
+  //if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecNormAntiNuToNu)
+  //  return true;
   
+  // NEW XSEC
+  if(
+     p == kNuisXSecSpecFunc ||
+     p == kNuisXSecWshape ||
+     p == kNuisXSecPiLessDelta ||
+     p == kNuisXSecNormNC1piC ||
+     p == kNuisXSecNormAntiNuToNu ||
+
+     p == kRHCNuisXSecSpecFunc ||
+     p == kRHCNuisXSecWshape ||
+     p == kRHCNuisXSecPiLessDelta ||
+     p == kRHCNuisXSecNormNC1piC ||
+     p == kRHCNuisXSecNormAntiNuToNu
+     )
+    return false; 
 }
 //____________________________________________________________________________
 bool valor::util::IsUsingSplines(PhysParamId_t p)
 {
   assert(!"IsUsingSplines Currently unimplemented");
+
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecBindE)
     return true;
   if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecBindE)

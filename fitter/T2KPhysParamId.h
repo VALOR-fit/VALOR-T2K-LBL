@@ -113,6 +113,16 @@ static const PhysParamId_t kNuisBANFFCC1piE1 = kNuis051; // # CC1pi  normalizati
 static const PhysParamId_t kNuisBANFFNC1pi0  = kNuis052; // # NC1pi0 normalization; 0 - 30.0 GeV
 #endif
 
+// NEW XSEC
+static const PhysParamId_t kNuisBANFFMEC      = kNuis053;  // MEC normalization
+static const PhysParamId_t kNuisBANFFCA5      = kNuis054;  // CA5 RES 
+static const PhysParamId_t kNuisBANFFBgRES    = kNuis055;  // Isospin 1/2 normalization
+//
+
+
+ 
+
+
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
     * These other paramers are taken to be uncorrelated and are applied to SK only.
@@ -250,6 +260,12 @@ static const PhysParamId_t kRHCNuisBANFFCC1piE1 = kNuis151; // # CC1pi  normaliz
 #if (BANFF_BINS != 2)
 static const PhysParamId_t kRHCNuisBANFFNC1pi0  = kNuis152; // # NC1pi0 normalization; 0 - 30.0 GeV
 #endif
+
+// NEW XSEC
+static const PhysParamId_t kRHCNuisBANFFMEC     = kNuis153;  // MEC normalization
+static const PhysParamId_t kRHCNuisBANFFCA5     = kNuis154;  // CA5 RES 
+static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis155;  // Isospin 1/2 normalization
+//
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
