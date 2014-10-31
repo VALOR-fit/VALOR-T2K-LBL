@@ -104,14 +104,11 @@ void SuperkExpectation::CleanUp(void)
   if (fNuXSec            ) delete fNuXSec;
   if (fBANFF             ) delete fBANFF;
 }
+
 //________________________________________________________________________________________
-bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/){
-  return true;
-}
-//________________________________________________________________________________________
-bool SuperkExpectation::Read(Option_t * /*opt*/)
-{ 
-  string config_file = T2KOpt::Instance()->fConfigFileName;
+bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
+{  
+  T2KOpt::Instance()->ReadXmlPath(config_file); 
   
   cout << "Exp >> Reading config file: " << config_file << endl;
 

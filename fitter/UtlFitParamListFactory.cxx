@@ -599,8 +599,6 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   //    to have something sensible to initialise to
   // Parse the input XML configuration file
   
-
-  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
   const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();  
 
   TXMLEngine* xml = new TXMLEngine;   
