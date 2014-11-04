@@ -2832,6 +2832,8 @@ bool valor::util::IsXSec(PhysParamId_t p)
      p == kRHCNuisXSecNormAntiNuToNu
      )
     return true; 
+    
+  return false;
 }
 //____________________________________________________________________________
 bool valor::util::IsUsingSplines(PhysParamId_t p)
