@@ -2955,23 +2955,10 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
 bool valor::util::IsBANFF(PhysParamId_t p)
 {
   //fhc
-  if(p >= kNuisBANFF00
-#if (BANFF_BINS != 2)
-     && p <= kNuisBANFFNC1pi0
-#else
-     && p <= kNuisBANFFCC1piE1
-#endif
-     )
+  if(p >= kNuisBANFF00 && p < kLastBANFFParam)
     return true;
     
-  //rhc
-  if(p >= kRHCNuisBANFF00
-#if (BANFF_BINS != 2)
-     && p <= kRHCNuisBANFFNC1pi0
-#else
-     && p <= kRHCNuisBANFFCC1piE1
-#endif
-     )
+  if(p >= kRHCNuisBANFF00 && p < kRHCLastBANFFParam)
     return true;
     
   return false;

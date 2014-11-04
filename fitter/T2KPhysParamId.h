@@ -119,6 +119,8 @@ static const PhysParamId_t kNuisBANFFCA5      = kNuis054;  // CA5 RES
 static const PhysParamId_t kNuisBANFFBgRES    = kNuis055;  // Isospin 1/2 normalization
 //
 
+static const PhysParamId_t kLastBANFFParam  = kNuis056; // Utility, should always come after last FHC BANFF
+
 
  
 
@@ -141,6 +143,9 @@ static const PhysParamId_t kNuisXSecNormNCcoh      = kNuis068;   // NC coh norm
 static const PhysParamId_t kNuisXSecNormNCoth      = kNuis069;   // NC other norm
 static const PhysParamId_t kNuisXSecNormNuEToNuMu  = kNuis070;   // nue / numu cross section
 static const PhysParamId_t kNuisXSecNormAntiNuToNu = kNuis071;   // antinu / nu cross section
+
+
+static const PhysParamId_t kLastXSecParam = kNuis072;   // Utility, should always come after last FHC Xsec param
 
    /*
     * FSI parameters.
@@ -267,6 +272,9 @@ static const PhysParamId_t kRHCNuisBANFFCA5     = kNuis154;  // CA5 RES
 static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis155;  // Isospin 1/2 normalization
 //
 
+static const PhysParamId_t kRHCLastBANFFParam  = kNuis156; // Utility, should always come after last RHC BANFF
+
+
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
     * These other paramers are taken to be uncorrelated and are applied to SK only.
@@ -285,6 +293,8 @@ static const PhysParamId_t kRHCNuisXSecNormNCcoh      = kNuis168;   // NC coh no
 static const PhysParamId_t kRHCNuisXSecNormNCoth      = kNuis169;   // NC other norm
 static const PhysParamId_t kRHCNuisXSecNormNuEToNuMu  = kNuis170;   // nue / numu cross section
 static const PhysParamId_t kRHCNuisXSecNormAntiNuToNu = kNuis171;   // antinu / nu cross section
+
+static const PhysParamId_t kRHCLastXSecParam = kNuis172;   // Utility, should always come after last RHC Xsec param
 
    /*
     * FSI parameters.
