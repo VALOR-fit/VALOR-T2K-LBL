@@ -2987,9 +2987,10 @@ string valor::util::AsStringSpline(PhysParamId_t p)
     case ( kNuisXSecFermiMom          ) :
     case ( kRHCNuisXSecFermiMom       ) :
       return "pfo";      
-    
-    //~ case ( kNuisBANFFMPiShp           ) :
-      //~ return "dismpishp";
+    case ( kNuisXSecShapeCCoth           ) :
+    case ( kRHCNuisXSecShapeCCoth           ) :
+      return "dismpishp";
+      
     //~ case ( kNuisXSecRPA               ) :
       //~ return "rpa";   
     //~ case ( kNuisBANFFSCCV             ) :

@@ -26,6 +26,7 @@ Added samples, modes and systematics for reverse horn current running
 
 #define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 
+#define OLD_SPLINE_NAMING
 
 #include <cassert>
 #include <cstdlib>
@@ -175,27 +176,32 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   return true;
 #endif
 
-  TFile * spline_file_1Rmu = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
-  assert(spline_file_1Rmu);
-  TFile * spline_file_1Re = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
-  assert(spline_file_1Re);
+  std::vector<TFile*> spline_files(conv::kns);
 
+  spline_files[kSKsFCFV1RingMuLike    ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
+  spline_files[kSKsFCFV1RingELike     ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring" );
 
-
+#ifndef OLD_SPLINE_NAMING
+  spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring_rhc");
+  spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring_rhc" );
+#else
+  spline_files[kSKsRHCFCFV1RingMuLike ] = spline_files[kSKsFCFV1RingMuLike];
+  spline_files[kSKsRHCFCFV1RingELike  ] = spline_files[kSKsFCFV1RingELike ]; 
+#endif
+  
   /// NEW MULTIRING (multiring-only splines)
-  TFile * spline_file_MultiRmu = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
-  assert(spline_file_MultiRmu);
-  TFile * spline_file_MultiRe = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
-  assert(spline_file_MultiRe);
-
-  //TFile * spline_file_MultiRmu = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
-  //assert(spline_file_1Rmu);
-  //TFile * spline_file_MultiRe = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
-  //assert(spline_file_1Re);
-  ////
-
-
-
+  spline_files[kSKsFCFVMultiRingMuLike]= util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
+  spline_files[kSKsFCFVMultiRingELike ]= util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
+  //~ spline_files[kSKsFCFVMultiRingMuLike] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
+  //~ spline_files[kSKsFCFVMultiRingELike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
+  
+  assert(spline_files[kSKsFCFV1RingMuLike    ]);
+  assert(spline_files[kSKsFCFV1RingELike     ]);
+  assert(spline_files[kSKsRHCFCFV1RingMuLike ]);
+  assert(spline_files[kSKsRHCFCFV1RingELike  ]);
+  assert(spline_files[kSKsFCFVMultiRingMuLike]);
+  assert(spline_files[kSKsFCFVMultiRingELike ]);
+  
   // Make a flat spline
 #ifdef __use_flat_splines_for_missing_splines__
   double x[5] = {-5,-2,0,+2,+5};
@@ -221,242 +227,152 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 
     // loop over modes for current sample
     for(int im = 0; im < knm; im++) {
-       SuperkMode_t m = kSKReactionModes[is][im];
-       if(m == kSKmUndefined)    continue;
-       if(util::IsOscNuMu(m))    continue; //using NuMu splines
-       if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
-       if(util::IsOscNuEBar(m))  continue; //using NuEBar splines
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined)    continue;
+      if(util::IsOscNuMu(m))    continue; //using NuMu splines
+      if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
+      if(util::IsOscNuEBar(m))  continue; //using NuEBar splines
 
-       // loop over cross-section systematic parameters
-       for(int ip = 0; ip < nXSecSyst; ip++) {
-	 if(is_rhc) {
-	   p = kListOfRHCXSecSyst[ip];
-	   if(p == kPhypUndefined) continue;
-	   //do we need weight splines for the current systematic parameter? 
-	   need_splines = kRHCXSecSystHasWghtSplines[ip];
-	   if(!need_splines) continue;
-	 }
-	 else {
-           p = kListOfXSecSyst[ip];          
-           if(p == kPhypUndefined) continue;
-           // do we need weight splines for the current systematic parameter?
-           need_splines = kXSecSystHasWghtSplines[ip];
-           if(!need_splines) continue;
-	 }
-	 // is the current systematic parameter going to be applied to current sample/mode?
-	 bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
-	 if(!is_applied) continue;
-          // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
-          for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
-	    double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
-	    double Ereco_min = util::XsecErecoBinEdges(s,ir);
-	    double Ereco_max = util::XsecErecoBinEdges(s,ir+1);
-             for(int it = 0; it < kXsNEtrueBins; it++) {
-                double Etrue     = kXsEtrueBinEdges[is][im][it] + kOneMeV;
-                double Etrue_min = kXsEtrueBinEdges[is][im][it];
-                double Etrue_max = kXsEtrueBinEdges[is][im][it+1];
+      // loop over cross-section systematic parameters
+      for(int ip = 0; ip < nXSecSyst; ip++) {
+        if(is_rhc) {
+          p = kListOfRHCXSecSyst[ip];
+          if(p == kPhypUndefined) continue;
+          //do we need weight splines for the current systematic parameter? 
+          need_splines = kRHCXSecSystHasWghtSplines[ip];
+          if(!need_splines) continue;
+        }
+        else {
+          p = kListOfXSecSyst[ip];          
+          if(p == kPhypUndefined) continue;
+          // do we need weight splines for the current systematic parameter?
+          need_splines = kXSecSystHasWghtSplines[ip];
+          if(!need_splines) continue;
+        }
+        // is the current systematic parameter going to be applied to current sample/mode?
+        bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
+        if(!is_applied) continue;
+        // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
+        for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
+          double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
+          double Ereco_min = util::XsecErecoBinEdges(s,ir);
+          double Ereco_max = util::XsecErecoBinEdges(s,ir+1);
+          
+          for(int it = 0; it < kXsNEtrueBins; it++) {
+            double Etrue     = kXsEtrueBinEdges[is][im][it] + kOneMeV;
+            double Etrue_min = kXsEtrueBinEdges[is][im][it];
+            double Etrue_max = kXsEtrueBinEdges[is][im][it+1];
 
-                bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
-                if(bin_is_beyond_end_of_range) continue;
-
-		bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
-
+            bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
+            if(bin_is_beyond_end_of_range) continue;
+            
+            bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
+            
 #ifdef __skip_unexpected_spline_test_in_readsplines__
-		if(!bin_is_not_empty)                 
-		  continue;
+            if(!bin_is_not_empty)                 
+              continue;
 #endif
-                
 
-
-
-
-		// // Build spline name
-                // ostringstream splname;
-                // splname << "spl_"
-		//   //<< util::AsStringCompact(s) << "_"
-		//   //<< util::AsStringCompact(m) << "_"
-		//   //<< util::AsStringCompact(p) << "_"
-		// 	<< util::AsStringCompact_splinehack(s) << "_"
-                //         << util::AsStringCompact_splinehack(m) << "_"
-                //         << util::AsStringCompact_splinehack(p) << "_"
-                //         << ir << "_" 
-                //         << it;
-
-		/// NEW MULTIRING (to update when we will have multiring splines with different names) 
-		
-		// Build spline name
-                ostringstream splname;
-                splname << "spl_";
-		  //<< util::AsStringCompact(s) << "_"
-		  //<< util::AsStringCompact(m) << "_"
-		  //<< util::AsStringCompact(p) << "_"
-		if(IsMultiRMuSample(s))
-		  splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
-		else if(IsMultiRESample(s))
-		  splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
-		else
-		  splname << util::AsStringCompact_splinehack(s) << "_";
-		
-		splname   << util::AsStringCompact_splinehack(m) << "_"
-			  << util::AsStringCompact_splinehack(p) << "_"
-			  << ir << "_" 
-			  << it;
-		///
-		
-
-
-
-
-
-
+            std::string splname = this->BuildSplineName(s,m,p,ir,it);
 
 #ifdef __show_init_mesg_debug__
-                cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
-                     << splname.str() << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+            cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
+                 << splname << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
 #endif
 
-                // Copy spline from input file
-		TSpline3 * spl = NULL;
-		//Todo: add separate splines for RHC running if necessary
-		if     (s==kSKsFCFV1RingMuLike)     spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
-		else if(s==kSKsFCFV1RingELike)      spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str()); 
-                else if(s==kSKsRHCFCFV1RingMuLike)  spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
-                else if(s==kSKsRHCFCFV1RingELike)   spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str());
-
-
-		// /// NEW MULTIRING (to update with splines for MultiRing sample)
-                // else if(s==kSKsFCFVMultiRingMuLike)  spl = (TSpline3 *) spline_file_1Rmu->Get(splname.str().c_str());
-                // else if(s==kSKsFCFVMultiRingELike)   spl = (TSpline3 *) spline_file_1Re ->Get(splname.str().c_str());
-		// ////
-		/// NEW MULTIRING 
-                else if(s==kSKsFCFVMultiRingMuLike)  spl = (TSpline3 *) spline_file_MultiRmu->Get(splname.str().c_str());
-                else if(s==kSKsFCFVMultiRingELike)   spl = (TSpline3 *) spline_file_MultiRe ->Get(splname.str().c_str());
-		////
-		
-
-		if(!spl) {
-		  if(!bin_is_not_empty) {
+            // Copy spline from input file
+            TSpline3 * spl = NULL;
+            //Todo: add separate splines for RHC running if necessary
+            spl = (TSpline3 *) spline_files[s]->Get(splname.c_str());
+            
+            if(!spl) {
+              if(!bin_is_not_empty) {
 #ifdef __show_init_mesg_debug__
-		    cout << "Exp/NuXSec >> No events or spline for: "
-			 << splname.str()
-			 << endl;
+                cout << "Exp/NuXSec >> No events or spline for: "
+                     << splname
+                     << endl;
 #endif
-		    continue;
-		  }
-		  else {
+                continue;
+              }
+              else {
 #ifndef __use_flat_splines_for_missing_splines__
-		    cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
-			 << splname.str() 
+                cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
+                     << splname 
 #if SPLINE_TYPE == 0
-			 << ", " << mode[0]
+                     << ", " << mode[0]
 #endif
-			 << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
-		    cerr << AsString(s) << endl;
-		    exit(1);
+                     << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+                cerr << AsString(s) << endl;
+                exit(1);
 #else
-		    spl = flatspline;
+                spl = flatspline;
 #endif //__use_flat_splines_for_missing_splines__
-		  }
-		}
-		else {
-		  if(!bin_is_not_empty) {
-		    cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-			 << splname.str() 
-			 << " Ereco: "  << Ereco_min << "-" << Ereco_max 
-			 << ", Etrue: " << Etrue_min << "-" << Etrue_max 
-			 << ". Spline thinks there are " << spl->GetTitle()
-			 << endl;
-		    // exit(1);
-		  }
-		}
-
+              } //bin_is_not_empty
+            } // !spl
+            else {
+              if(!bin_is_not_empty) {
+                cerr << "Exp/NuXSec >> Spline exists for empty bin: "
+                     << splname 
+                     << " Ereco: "  << Ereco_min << "-" << Ereco_max 
+                     << ", Etrue: " << Etrue_min << "-" << Etrue_max 
+                     << ". Spline thinks there are " << spl->GetTitle()
+                     << endl;
+                // exit(1);
+              }
+            }
+            
 #ifndef __skip_unexpected_spline_test_in_readsplines__
-		string spln(spl->GetTitle());
-		spln.erase(spln.end()-7,spln.end());
-		int nevents_spl = atoi(spln.c_str());
-		int nevents_hist = this->HowManyEvents(s, m, Ereco, Etrue);
-		if(nevents_spl != nevents_hist) {
-		  cerr << "Exp/NuXSec >> Spline and histogram disagree on number of events! "
-		       << "Spline thinks there are: " << nevents_spl
-		       << ", Histogram thinks there are: " << nevents_hist
-		       << "; " << splname.str()
-		       << "; Ereco: " << Ereco - kOneMeV << " to " << util::XsecErecoBinEdges(s,ir+1)
-		       << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
-		       << endl;
-		  //exit(1);
-		}
-#endif	
-
-                // Get index for current weight spline
-                int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
-		if(idx < 0) {
-		  cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: " 
-                       << splname.str()
-			 << endl;
-		  exit(1);
-		}
-
+            string spln(spl->GetTitle());
+            spln.erase(spln.end()-7,spln.end());
+            int nevents_spl = atoi(spln.c_str());
+            int nevents_hist = this->HowManyEvents(s, m, Ereco, Etrue);
+            if(nevents_spl != nevents_hist) {
+              cerr << "Exp/NuXSec >> Spline and histogram disagree on number of events! "
+                   << "Spline thinks there are: " << nevents_spl
+                   << ", Histogram thinks there are: " << nevents_hist
+                   << "; " << splname
+                   << "; Ereco: " << Ereco - kOneMeV << " to " << util::XsecErecoBinEdges(s,ir+1)
+                   << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
+                   << endl;
+              //exit(1);
+            }
+#endif      
+            // Get index for current weight spline
+            int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
+            if(idx < 0) {
+              cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: " 
+                   << splname
+                     << endl;
+              exit(1);
+            }
+            
 #ifdef __show_init_mesg_debug__
-		cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
-		       << idx << "  for spline: " << splname.str() << endl;
-		cout << "Exp/NuXSec >> Spline thinks there are " 
-		     << spl->GetTitle() << endl;
+            cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
+                 << idx << "  for spline: " << splname << endl;
+            cout << "Exp/NuXSec >> Spline thinks there are " 
+                 << spl->GetTitle() << endl;
 #endif
 
-                if     (s == kSKsFCFV1RingMuLike)    fXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
-		else if(s == kSKsFCFV1RingELike)     fXSecWghtSpl1Re[idx] = new TSpline3(*spl);
-                else if(s == kSKsRHCFCFV1RingMuLike) fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
-                else if(s == kSKsRHCFCFV1RingELike)  fRHCXSecWghtSpl1Re[idx] = new TSpline3(*spl);
-
-
-		/// NEW MULTIRING (update with splines for MultiRing sample)
-                else if(s == kSKsFCFVMultiRingMuLike) fXSecWghtSplMultiRmu[idx] = new TSpline3(*spl);
-                else if(s == kSKsFCFVMultiRingELike)  fXSecWghtSplMultiRe[idx] = new TSpline3(*spl);
-		///
-	     
-
+            if     (s == kSKsFCFV1RingMuLike)    fXSecWghtSpl1Rmu   [idx] = new TSpline3(*spl);
+            else if(s == kSKsFCFV1RingELike)     fXSecWghtSpl1Re    [idx] = new TSpline3(*spl);
+            else if(s == kSKsRHCFCFV1RingMuLike) fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
+            else if(s == kSKsRHCFCFV1RingELike)  fRHCXSecWghtSpl1Re [idx] = new TSpline3(*spl);
+            
+            
+            /// NEW MULTIRING (update with splines for MultiRing sample)
+            else if(s == kSKsFCFVMultiRingMuLike) fXSecWghtSplMultiRmu[idx] = new TSpline3(*spl);
+            else if(s == kSKsFCFVMultiRingELike)  fXSecWghtSplMultiRe [idx] = new TSpline3(*spl);
+            ///
+            
 #ifdef __show_init_mesg_debug2__
-		//check that the spline is not flat
-		cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: " ;
-		  if (s == kSKsFCFV1RingMuLike){
-		    cout << fXSecWghtSpl1Rmu[idx]->Eval(-1) << "\t"
-			 << fXSecWghtSpl1Rmu[idx]->Eval(0) << "\t"
-			 << fXSecWghtSpl1Rmu[idx]->Eval(+1) << endl;
-		  }
-		  else if(s == kSKsFCFV1RingELike){
-		    cout << fXSecWghtSpl1Re[idx]->Eval(-1) << "\t"
-			 << fXSecWghtSpl1Re[idx]->Eval(0) << "\t"
-			 << fXSecWghtSpl1Re[idx]->Eval(+1) << endl;
-		  }
-                  else if (s == kSKsRHCFCFV1RingMuLike){
-                    cout << fRHCXSecWghtSpl1Rmu[idx]->Eval(-1) << "\t"
-                         << fRHCXSecWghtSpl1Rmu[idx]->Eval(0) << "\t"
-			 << fRHCXSecWghtSpl1Rmu[idx]->Eval(+1) << endl;
-                  }
-                  else if(s == kSKsRHCFCFV1RingELike){
-                    cout << fRHCXSecWghtSpl1Re[idx]->Eval(-1) << "\t"
-                         << fRHCXSecWghtSpl1Re[idx]->Eval(0) << "\t"
-                         << fRHCXSecWghtSpl1Re[idx]->Eval(+1) << endl;
-                  }
-
-
-		  /// NEW MULTIRING (update with splines for MultiRing sample)
-                  else if (s == kSKsFCFVMultiRingMuLike){
-                    cout << fXSecWghtSplMultiRmu[idx]->Eval(-1) << "\t"
-                         << fXSecWghtSplMultiRmu[idx]->Eval(0) << "\t"
-			 << fXSecWghtSplMultiRmu[idx]->Eval(+1) << endl;
-                  }
-                  else if(s == kSKsFCFVMultiRingELike){
-                    cout << fXSecWghtSplMultiRe[idx]->Eval(-1) << "\t"
-                         << fXSecWghtSplMultiRe[idx]->Eval(0) << "\t"
-                         << fXSecWghtSplMultiRe[idx]->Eval(+1) << endl;
-                  }
-		  ///
-		  
-
-
+            //check that the spline is not flat
+            cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: " ;
+            cout << spl->Eval(-1) << "\t"
+                 << spl->Eval(0) << "\t"
+                 << spl->Eval(+1) << endl;
+              
 #endif
-             }//Etrue
+            }//Etrue
           }//Ereco
        }//p
     }//m
