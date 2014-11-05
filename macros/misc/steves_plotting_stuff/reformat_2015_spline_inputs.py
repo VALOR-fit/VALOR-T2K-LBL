@@ -96,6 +96,10 @@ def main():
       # Loop over spline types - systematic+mode
       for syst in systematics:
         
+        par,mode = syst.split("_")
+        
+        mode = mode.replace("piz","pi0") # VALOR modes have pi0 instead of piz
+        
         # Get all the splines for this systematic+mode
         spline_dict = dict()
         for key in tf.GetListOfKeys():
@@ -109,7 +113,7 @@ def main():
         for orig_spl_name, spline in spline_dict.iteritems():
           
           junk,bins = orig_spl_name.rsplit("_sp_")
-          new_spl_name = "spl_"+sample+"_"+valor_type+syst+"_"+bins
+          new_spl_name = "spl_"+sample+"_"+par+"_"+valor_type+mode+"_"+bins
           
           spline.Write(new_spl_name)
       
