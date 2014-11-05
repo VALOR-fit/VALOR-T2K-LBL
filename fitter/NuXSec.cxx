@@ -1956,3 +1956,28 @@ void NuXSec::SyncRHCToFHCSystematics()
   fRHCNormAntiNuToNuTwkDial = fNormAntiNuToNuTwkDial;
 }
 //________________________________________________________________________________________
+std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const
+{
+  ostringstream splname;
+  splname << "spl_";
+#ifdef OLD_SPLINE_NAMING
+  if(IsMultiRMuSample(s))
+    splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
+  else if(IsMultiRESample(s))
+    splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
+  else
+    splname << util::AsStringCompact_splinehack(s) << "_";
+  
+  splname   << util::AsStringCompact_splinehack(m) << "_"
+            << util::AsStringCompact_splinehack(p) << "_"
+#else
+  splname << util::AsStringCompact(s) <<"_"
+          << util::AsStringSpline(p)  <<"_"
+          << util::AsStringCompact(m) <<"_"
+#endif
+          << reco_bin << "_" 
+          << true_bin;
+          
+  return splname.str();
+}
+//________________________________________________________________________________________

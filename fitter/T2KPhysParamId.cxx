@@ -2966,7 +2966,45 @@ bool valor::util::IsBANFF(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________
-
+string valor::util::AsStringSpline(PhysParamId_t p)
+{
+  switch(p) {
+    case ( kNuisBANFFMAQE             ) :
+    case ( kRHCNuisBANFFMAQE          ) :
+      return "maqe";     
+    case ( kNuisBANFFMARES            ) :
+    case ( kRHCNuisBANFFMARES         ) :
+      return "manff";    
+    case ( kNuisBANFFCA5              ) :
+    case ( kRHCNuisBANFFCA5           ) :
+      return "ca5";      
+    case ( kNuisBANFFBgRES            ) :
+    case ( kRHCNuisBANFFBgRES         ) :
+      return "bgscl";    
+    case ( kNuisXSecBindE             ) :
+    case ( kRHCNuisXSecBindE          ) :
+      return "ebo";      
+    case ( kNuisXSecFermiMom          ) :
+    case ( kRHCNuisXSecFermiMom       ) :
+      return "pfo";      
+    
+    //~ case ( kNuisBANFFMPiShp           ) :
+      //~ return "dismpishp";
+    //~ case ( kNuisXSecRPA               ) :
+      //~ return "rpa";   
+    //~ case ( kNuisBANFFSCCV             ) :
+      //~ return "sccvec";
+    //~ case ( kNuisBANFFSCCA             ) :
+      //~ return "sccaxl";
+    
+    default:
+      break;
+  }
+  std::cerr<<"util/AsStringSpline failed for parameter: "<<util::AsString(p)
+           <<" ("<<util::RawParamAsString(p)<<")"<<std::endl;
+  return "--";
+}
+//____________________________________________________________________________
 string valor::util::AsStringCompact_KDI(PhysParamId_t p)
 {
   //Uses the KDI conventions (where different)
@@ -3024,4 +3062,5 @@ string valor::util::ParamAsStringPaperRooTex        (conv::PhysParamId_t p) { re
 string valor::util::ParamAsStringCompact            (conv::PhysParamId_t p) { return util::AsStringCompact           (p);}
 string valor::util::ParamAsStringCompact_splinehack (conv::PhysParamId_t p) { return util::AsStringCompact_splinehack(p);}
 string valor::util::ParamAsStringCompact_KDI        (conv::PhysParamId_t p) { return util::AsStringCompact_KDI       (p);}
+string valor::util::ParamAsStringSpline             (conv::PhysParamId_t p) { return util::AsStringSpline            (p);}
 //____________________________________________________________________________

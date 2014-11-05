@@ -153,6 +153,8 @@ private:
   bool IsThereAnEvent       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   int  HowManyEvents        (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   
+  std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const;
+  
   //
   // Private data members
   //

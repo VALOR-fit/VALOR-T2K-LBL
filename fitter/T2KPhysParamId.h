@@ -389,6 +389,7 @@ namespace util {
   string AsStringCompact            (conv::PhysParamId_t p);
   string AsStringCompact_splinehack (conv::PhysParamId_t p);
   string AsStringCompact_KDI        (conv::PhysParamId_t p);
+  string AsStringSpline             (conv::PhysParamId_t p);
 
   bool IsSystematic  (conv::PhysParamId_t p);
   bool IsMixingAngle (conv::PhysParamId_t p);
@@ -421,6 +422,7 @@ namespace util {
   string ParamAsStringCompact            (conv::PhysParamId_t p);
   string ParamAsStringCompact_splinehack (conv::PhysParamId_t p);
   string ParamAsStringCompact_KDI        (conv::PhysParamId_t p);
+  string ParamAsStringSpline             (conv::PhysParamId_t p);
   
 } // util
 
