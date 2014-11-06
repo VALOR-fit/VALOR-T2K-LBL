@@ -27,6 +27,9 @@ Split valor::conv namespace into several smaller files
 #include "Rtypes.h"
 #endif
 
+#define SYST_NSIGMA   3   // number of sigma away from nominal nuisance parameters are allowed to be
+#define SYST_STEP     0.1 // step size (in units of sigma)
+
 #ifndef __FULLY_CORRELATED__  // rhc-fhc samples
 #define __FULLY_CORRELATED__
 #endif
