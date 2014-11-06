@@ -106,6 +106,8 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFMEC   ) : return "BANFF; Norm; MEC";                 break;
     case ( kNuisBANFFCA5   ) : return "BANFF; CA5 RES";                   break;
     case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
+    case ( kNuisBANFFSCCA  ) : return "BANFF; Second current axial";      break;
+    case ( kNuisBANFFSCCV  ) : return "BANFF; Second current vector";     break;
       //
 
     //
@@ -376,6 +378,8 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFMEC   ) : return "BANFF; Norm; MEC; RHC";                 break;
   case ( kRHCNuisBANFFCA5   ) : return "BANFF; CA5 RES; RHC";                   break;
   case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
+  case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current axial; RHC";      break;
+  case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current vector; RHC";     break;
     //
 
     //
@@ -844,6 +848,8 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFFMEC   ) : return "BANFF; Norm; MEC";                 break;
     case ( kNuisBANFFCA5   ) : return "BANFF; CA5 RES";                   break;
     case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
+    case ( kNuisBANFFSCCA  ) : return "BANFF; Second current axial";      break;
+    case ( kNuisBANFFSCCV  ) : return "BANFF; Second current vector";     break;
       //
 
     //
@@ -1114,6 +1120,8 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisBANFFMEC   ) : return "BANFF; Norm; MEC; RHC";                 break;
     case ( kRHCNuisBANFFCA5   ) : return "BANFF; CA5 RES; RHC";                   break;
     case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
+    case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current axial; RHC";      break;
+    case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current vector; RHC";     break;
       //
 
     //
@@ -1703,6 +1711,8 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFFMEC   ) : return "f_banffmec";             break;
     case ( kNuisBANFFCA5   ) : return "f_banffca5";             break;
     case ( kNuisBANFFBgRES ) : return "f_banffbgres";           break;
+    case ( kNuisBANFFSCCA  ) : return "f_banffscca";            break;
+    case ( kNuisBANFFSCCV  ) : return "f_banffsccv";            break;
       //
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
@@ -1826,6 +1836,8 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisBANFFMEC   ) : return "f_banffmec_rhc";             break;
   case ( kRHCNuisBANFFCA5   ) : return "f_banffca5_rhc";             break;
   case ( kRHCNuisBANFFBgRES ) : return "f_banffbgres_rhc";           break;
+  case ( kRHCNuisBANFFSCCA  ) : return "f_banffscca_rhc";            break;
+  case ( kRHCNuisBANFFSCCV  ) : return "f_banffsccv_rhc";            break;
     //
 
   case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi_rhc";       break;
@@ -2228,6 +2240,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFFMEC   ) : 
   case ( kNuisBANFFCA5   ) : 
   case ( kNuisBANFFBgRES ) :
+  case ( kNuisBANFFSCCA  ) : 
+  case ( kNuisBANFFSCCV  ) :
     //
 
     {
@@ -2373,6 +2387,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisBANFFMEC   ) : 
   case ( kRHCNuisBANFFCA5   ) : 
   case ( kRHCNuisBANFFBgRES ) : 
+  case ( kRHCNuisBANFFSCCA  ) : 
+  case ( kRHCNuisBANFFSCCV  ) : 
     //
 
     {

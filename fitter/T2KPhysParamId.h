@@ -117,9 +117,11 @@ static const PhysParamId_t kNuisBANFFNC1pi0  = kNuis052; // # NC1pi0 normalizati
 static const PhysParamId_t kNuisBANFFMEC      = kNuis053;  // MEC normalization
 static const PhysParamId_t kNuisBANFFCA5      = kNuis054;  // CA5 RES 
 static const PhysParamId_t kNuisBANFFBgRES    = kNuis055;  // Isospin 1/2 normalization
+static const PhysParamId_t kNuisBANFFSCCA     = kNuis056;  // Second current axial
+static const PhysParamId_t kNuisBANFFSCCV     = kNuis057;  // Second current vector
 //
 
-static const PhysParamId_t kLastBANFFParam  = kNuis056; // Utility, should always come after last FHC BANFF
+static const PhysParamId_t kLastBANFFParam  = kNuis058; // Utility, should always come after last FHC BANFF
 
 
  
@@ -270,9 +272,11 @@ static const PhysParamId_t kRHCNuisBANFFNC1pi0  = kNuis152; // # NC1pi0 normaliz
 static const PhysParamId_t kRHCNuisBANFFMEC     = kNuis153;  // MEC normalization
 static const PhysParamId_t kRHCNuisBANFFCA5     = kNuis154;  // CA5 RES 
 static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis155;  // Isospin 1/2 normalization
+static const PhysParamId_t kRHCNuisBANFFSCCA    = kNuis156;  // Second current axial
+static const PhysParamId_t kRHCNuisBANFFSCCV    = kNuis157;  // Second current vector
 //
 
-static const PhysParamId_t kRHCLastBANFFParam  = kNuis156; // Utility, should always come after last RHC BANFF
+static const PhysParamId_t kRHCLastBANFFParam  = kNuis158; // Utility, should always come after last RHC BANFF
 
 
    /*

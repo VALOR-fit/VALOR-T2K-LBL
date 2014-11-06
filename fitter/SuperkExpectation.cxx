@@ -806,7 +806,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
   //
   // XSec
   //
-  
+
   // NEW XSEC --> comment xsec syst that now are in banff or not used any longer
 
   //   else if(systematic == "pfermi")

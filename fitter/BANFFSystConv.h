@@ -34,36 +34,36 @@ namespace valor {
     // Number of BANFF fit parameters
     //
 #if BANFF_BINS == 1 //joint
-    static const int kNumOfParamsInBANFFfit = 37; //33; // NEW XSEC
-    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 12; //8; // NEW XSEC
-    static const int kNumOfRHCParamsInBANFFfit = 37; //33; // NEW XSEC
-    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 12; // 8 // NEW XSEC
+    static const int kNumOfParamsInBANFFfit = 39; //33; // NEW XSEC
+    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 14; //8; // NEW XSEC
+    static const int kNumOfRHCParamsInBANFFfit = 39; //33; // NEW XSEC
+    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 14; // 8 // NEW XSEC
 
     // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 62; //58; // NEW XSEC
-    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 12; //8; // NEW XSEC
+    static const int kNumOfFHCpRHCParamsInBANFFfit = 64; //58; // NEW XSEC
+    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 14; //8; // NEW XSEC
     //
 
 #elif BANFF_BINS == 2 //disap
-    static const int kNumOfParamsInBANFFfit = 37; //23; // NEW XSEC
-    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 12; //7; // NEW XSEC
-    static const int kNumOfRHCParamsInBANFFfit = 37; //23; // NEW XSEC
-    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 12; //; // NEW XSEC
+    static const int kNumOfParamsInBANFFfit = 39; //23; // NEW XSEC
+    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 14; //7; // NEW XSEC
+    static const int kNumOfRHCParamsInBANFFfit = 39; //23; // NEW XSEC
+    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 14; //; // NEW XSEC
 
     // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 62; //39; // NEW XSEC
-    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 12; //7; // NEW XSEC
+    static const int kNumOfFHCpRHCParamsInBANFFfit = 64; //39; // NEW XSEC
+    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 14; //7; // NEW XSEC
     //
 
 #elif BANFF_BINS == 3 //app
-    static const int kNumOfParamsInBANFFfit = 37; //27; // NEW XSEC
-    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 12; //5; // NEW XSEC
-    static const int kNumOfRHCParamsInBANFFfit = 37; //27; // NEW XSEC
-    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 12; //5; // NEW XSEC
+    static const int kNumOfParamsInBANFFfit = 39; //27; // NEW XSEC
+    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 14; //5; // NEW XSEC
+    static const int kNumOfRHCParamsInBANFFfit = 39; //27; // NEW XSEC
+    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 14; //5; // NEW XSEC
 
     // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 62; //49; // NEW XSEC
-    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 12; //5; // NEW XSEC
+    static const int kNumOfFHCpRHCParamsInBANFFfit = 64; //49; // NEW XSEC
+    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 14; //5; // NEW XSEC
     //
 
 #endif
@@ -156,6 +156,9 @@ namespace valor {
 	kNuisBANFFBgRES        ,
 	kNuisBANFFMAQE         ,
 	kNuisBANFFMARES        ,
+	kNuisBANFFSCCA         ,
+	kNuisBANFFSCCV         ,
+
 	kNuisXSecFermiMom      ,
 	kNuisXSecShapeCCoth    ,
 	kNuisXSecBindE         ,
@@ -262,6 +265,9 @@ namespace valor {
 	kRHCNuisBANFFBgRES ,
 	kRHCNuisBANFFMAQE   ,
 	kRHCNuisBANFFMARES  ,
+	kRHCNuisBANFFSCCA   ,
+	kRHCNuisBANFFSCCV   ,
+
 	kRHCNuisXSecFermiMom      ,
 	kRHCNuisXSecShapeCCoth    ,
 	kRHCNuisXSecBindE         ,
@@ -424,6 +430,9 @@ namespace valor {
 	kNuisBANFFBgRES,
 	kNuisBANFFMAQE   ,
 	kNuisBANFFMARES  ,
+	kNuisBANFFSCCA   ,
+	kNuisBANFFSCCV   ,
+
 	kNuisXSecFermiMom      ,
 	kNuisXSecShapeCCoth    ,
 	kNuisXSecBindE         ,
@@ -523,6 +532,9 @@ namespace valor {
 	false,                // kNuisBANFFBgRES
 	false,                // kNuisBANFFMAQE   
 	false,                // kNuisBANFFMARES  
+	false,                // kNuisBANFFSCCA   
+	false,                // kNuisBANFFSCCV  
+
 	false,                // kNuisXSecFermiMom      
 	false,                // kNuisXSecShapeCCoth    
 	false,                // kNuisXSecBindE         
@@ -611,6 +623,9 @@ namespace valor {
 	false,                // kRHCNuisBANFFBgRES
 	false,                // kRHCNuisBANFFMAQE   
 	false,                // kRHCNuisBANFFMARES  
+	false,                // kRHCNuisBANFFSCCA   
+	false,                // kRHCNuisBANFFSCCV  
+
 	false,                // kRHCNuisXSecFermiMom      
 	false,                // kRHCNuisXSecShapeCCoth    
 	false,                // kRHCNuisXSecBindE         
@@ -760,7 +775,10 @@ namespace valor {
 	false,                // kNuisBANFFCA5
 	false,                // kNuisBANFFBgRES
 	false,                // kNuisBANFFMAQE   
-	false,                // kNuisBANFFMARES  
+	false,                // kNuisBANFFMARES 
+	false,                // kNuisBANFFSCCA   
+	false,                // kNuisBANFFSCCV  
+ 
 	false,                // kNuisXSecFermiMom      
 	false,                // kNuisXSecShapeCCoth    
 	false,                // kNuisXSecBindE         
@@ -894,6 +912,9 @@ namespace valor {
 	0,                    // kNuisBANFFBgRES        
 	0,                    // kNuisBANFFMAQE         
 	0,                    // kNuisBANFFMARES        
+	0,                    // kNuisBANFFSCCA         
+	0,                    // kNuisBANFFSCCV        
+
 	0,                    // kNuisXSecFermiMom      
 	0,                    // kNuisXSecShapeCCoth    
 	0,                    // kNuisXSecBindE        
@@ -1025,7 +1046,10 @@ namespace valor {
 	0,                    // kRHCNuisBANFFCA5          
 	0,                    // kRHCNuisBANFFBgRES        
 	0,                    // kRHCNuisBANFFMAQE         
-	0,                    // kRHCNuisBANFFMARES        
+	0,                    // kRHCNuisBANFFMARES
+	0,                    // kRHCNuisBANFFSCCA         
+	0,                    // kRHCNuisBANFFSCCV
+        
 	0,                    // kRHCNuisXSecFermiMom      
 	0,                    // kRHCNuisXSecShapeCCoth    
 	0,                    // kRHCNuisXSecBindE        
@@ -1248,6 +1272,9 @@ namespace valor {
 	0,                    // kNuisBANFFBgRES        
 	0,                    // kNuisBANFFMAQE         
 	0,                    // kNuisBANFFMARES        
+	0,                    // kNuisBANFFSCCA         
+	0,                    // kNuisBANFFSCCV        
+
 	0,                    // kNuisXSecFermiMom      
 	0,                    // kNuisXSecShapeCCoth    
 	0,                    // kNuisXSecBindE        
@@ -1385,6 +1412,9 @@ namespace valor {
 	{  -1,   -1 },        // kNuisBANFFBgRES not a flux param
 	{  -1,   -1 },        // kNuisBANFFMAQE, not a flux param
 	{  -1,   -1 },        // kNuisBANFFMARES, not a flux param
+	{  -1,   -1 },        // kNuisBANFFSCCA, not a flux param
+	{  -1,   -1 },        // kNuisBANFFSCCV, not a flux param
+
 	{  -1,   -1 },        // kNuisXSecFermiMom, not a flux param
 	{  -1,   -1 },        // kNuisXSecShapeCCoth, not a flux param
 	{  -1,   -1 },        // kNuisXSecBindE, not a flux param
@@ -1529,9 +1559,12 @@ namespace valor {
 
 	{  -1,   -1 },        // kRHCNuisBANFFMEC not a flux param
 	{  -1,   -1 },        // kRHCNuisBANFFCA5 not a flux param  
-	{  -1,   -1 },         // kRHCNuisBANFFBgRES not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFBgRES not a flux param
 	{  -1,   -1 },        // kRHCNuisBANFFMAQE, not a flux param
 	{  -1,   -1 },        // kRHCNuisBANFFMARES, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFSCCA, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFSCCV, not a flux param
+
 	{  -1,   -1 },        // kRHCNuisXSecFermiMom, not a flux param
 	{  -1,   -1 },        // kRHCNuisXSecShapeCCoth, not a flux param
 	{  -1,   -1 },        // kRHCNuisXSecBindE, not a flux param
@@ -1780,6 +1813,9 @@ namespace valor {
 	{  -1,   -1 },        // kNuisBANFFBgRES not a flux param
 	{  -1,   -1 },        // kNuisBANFFMAQE, not a flux param
 	{  -1,   -1 },        // kNuisBANFFMARES, not a flux param
+	{  -1,   -1 },        // kNuisBANFFSCCA, not a flux param
+	{  -1,   -1 },        // kNuisBANFFSCCV, not a flux param
+
 	{  -1,   -1 },        // kNuisXSecFermiMom, not a flux param
 	{  -1,   -1 },        // kNuisXSecShapeCCoth, not a flux param
 	{  -1,   -1 },        // kNuisXSecBindE, not a flux param

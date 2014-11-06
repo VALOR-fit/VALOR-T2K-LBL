@@ -639,8 +639,13 @@ cout <<
 
   // NEW XSEC
 
-// - BANFF param, MEC        normalization
+  // Todo: CA5, SCCA and SCCV are response functions
+
 // - BANFF param, CA5    
+// - BANFF param, SCCA   
+// - BANFF param, SCCV    
+
+// - BANFF param, MEC        normalization
 // - BANFF param, BgRES      normalization
 // - BANFF param, CCcoh      normalization
 // - BANFF param, NCcoh      normalization
@@ -648,8 +653,11 @@ cout <<
 // - BANFF param, NuEToNuMu  normalization
 //  
   else if(
-	  p == kNuisBANFFMEC         || 
 	  p == kNuisBANFFCA5         ||
+	  p == kNuisBANFFSCCA         ||
+	  p == kNuisBANFFSCCV         ||
+
+	  p == kNuisBANFFMEC         || 
 	  p == kNuisBANFFBgRES       ||
 	  p == kNuisXSecNormCCcoh    ||
 	  p == kNuisXSecNormNCcoh    ||
@@ -660,8 +668,11 @@ cout <<
       wght = fBANFF->BestFitValue(p);
     }
   else if(
-	  p == kRHCNuisBANFFMEC         || 
 	  p == kRHCNuisBANFFCA5         ||
+	  p == kRHCNuisBANFFSCCA         ||
+	  p == kRHCNuisBANFFSCCV         ||
+
+	  p == kRHCNuisBANFFMEC         || 
 	  p == kRHCNuisBANFFBgRES       ||
 	  p == kRHCNuisXSecNormCCcoh    ||
 	  p == kRHCNuisXSecNormNCcoh    ||
@@ -887,10 +898,16 @@ double NuXSec::SystWght_1p(
 
   // NEW XSEC
   //
+  
+  // Todo: CA5, SCCA and SCCV are response functions
+
   // BANFF param normalization:
   //
+  // - BANFF param, CA5 
+  // - BANFF param, SCCA
+  // - BANFF param, SCCV
+  //
   // - BANFF param, MEC        normalization
-  // - BANFF param, CA5    
   // - BANFF param, BgRES      normalization
   // - BANFF param, CCcoh      normalization
   // - BANFF param, NCcoh      normalization
@@ -898,8 +915,11 @@ double NuXSec::SystWght_1p(
   // - BANFF param, NuEToNuMu  normalization
   //  
   else if(
-	  p == kNuisBANFFMEC         || 
 	  p == kNuisBANFFCA5         ||
+	  p == kNuisBANFFSCCA         ||
+	  p == kNuisBANFFSCCV         ||
+
+	  p == kNuisBANFFMEC         || 
 	  p == kNuisBANFFBgRES       ||
 	  p == kNuisXSecNormCCcoh    ||
 	  p == kNuisXSecNormNCcoh    ||
@@ -910,8 +930,11 @@ double NuXSec::SystWght_1p(
       wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
     }
   else if(
-	  p == kRHCNuisBANFFMEC         || 
 	  p == kRHCNuisBANFFCA5         ||
+	  p == kRHCNuisBANFFSCCA         ||
+	  p == kRHCNuisBANFFSCCV         ||
+
+	  p == kRHCNuisBANFFMEC         || 
 	  p == kRHCNuisBANFFBgRES       ||
 	  p == kRHCNuisXSecNormCCcoh    ||
 	  p == kRHCNuisXSecNormNCcoh    ||
@@ -1207,6 +1230,8 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   case kNuisBANFFMEC: 
   case kNuisBANFFCA5:
   case kNuisBANFFBgRES:
+  case kNuisBANFFSCCA:
+  case kNuisBANFFSCCV:
 
     // banff paramters not used at all
   case kNuisBANFFCCQEE0:
@@ -1242,7 +1267,9 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   case kRHCNuisBANFFMEC: 
   case kRHCNuisBANFFCA5:
   case kRHCNuisBANFFBgRES:
-    
+  case kRHCNuisBANFFSCCA:
+  case kRHCNuisBANFFSCCV:
+
     // banff parameters not used at all
   case kRHCNuisBANFFCCQEE0:
 #if BANFF_BINS != 3
