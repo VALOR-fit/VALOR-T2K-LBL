@@ -25,6 +25,7 @@ Added samples, modes and systematics for reverse horn current running
 
 
 #define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+//#define WARN_ON_FLAT_SPLINE
 
 #define OLD_SPLINE_NAMING
 
@@ -299,13 +300,18 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
                      << splname 
 #if SPLINE_TYPE == 0
-                     << ", " << mode[0]
+                     << ", " << AsString(m)
 #endif
                      << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
                 cerr << AsString(s) << endl;
                 exit(1);
 #else
                 spl = flatspline;
+#ifdef WARN_ON_FLAT_SPLINE
+                cout<<"Exp/NuXSec >> Using flat spline: "<<splname
+                     << ", " << AsString(m)
+                     << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+#endif // WARN_ON_FLAT_SPLINE
 #endif //__use_flat_splines_for_missing_splines__
               } //bin_is_not_empty
             } // !spl
@@ -1918,8 +1924,8 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
           << util::AsStringSpline(p)  <<"_"
           << util::AsStringCompact(m) <<"_"
 #endif
-          << reco_bin << "_" 
-          << true_bin;
+          << true_bin << "_" 
+          << reco_bin;
           
   return splname.str();
 }

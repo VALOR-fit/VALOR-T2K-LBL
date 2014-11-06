@@ -3009,10 +3009,12 @@ string valor::util::AsStringSpline(PhysParamId_t p)
       
     //~ case ( kNuisXSecRPA               ) :
       //~ return "rpa";   
-    //~ case ( kNuisBANFFSCCV             ) :
-      //~ return "sccvec";
-    //~ case ( kNuisBANFFSCCA             ) :
-      //~ return "sccaxl";
+    case ( kNuisBANFFSCCV             ) :
+    case ( kRHCNuisBANFFSCCV             ) :
+      return "sccvec";
+    case ( kNuisBANFFSCCA             ) :
+    case ( kRHCNuisBANFFSCCA             ) :
+      return "sccaxl";
     
     default:
       break;
