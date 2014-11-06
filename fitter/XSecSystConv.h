@@ -4727,508 +4727,489 @@ namespace valor {
       {  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }  // kSKmUndefined
       }//MultiRe
 
-
-
       };
 
       */
 
 
-
-      // Todo: remove old systematics
-
-
       // > 1 muon-like ring 
       {
 	// MEC CA5 BgRES
-	// banffmaqe banffmares 
-	// banffscca banffsccv
-	// banffccqeE0 banffcc1piE0 banffnc1pi0
-	// pF  spectral   W-shape  ccothshape pilessdelta
-	// cccoh    nccoh   ncoth    nue/numu
-	// RHC/FHC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuNCoth_mu
+	// banffmaqe banffmares banffscca banffsccv 
+	// pF  ccothshape  cccoh    nccoh   ncoth    nue/numu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNCoth_mu
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCoth
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNCoth_mu
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCoth
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuENC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuENCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENCoth_mu
 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCoth
 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarNCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarNCoth_mu
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCoth
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }  // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }  // kSKmUndefined
       }//1Rmu
       ,
       // > 1 electron-like ring
       {
 	// MEC CA5 BgRES
-	// banffmaqe banffmares 
-	// banffscca banffsccv
-	// banffccqeE0 banffcc1piE0 banffnc0pi0
-	// pF  spectral   W-shape  ccothshape pilessdelta 
-	// cccoh   nccoh   ncoth    nue/numu 
-	// RHC/FHC
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuNC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuMuNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuMuNCoth_e
+	// banffmaqe banffmares banffscca banffsccv 
+	// pF  ccothshape  cccoh    nccoh   ncoth    nue/numu
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuMuNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuMuNCoth_e
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuCCoth
 #endif
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuMuBarNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuMuBarNCoth_e
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuBarCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuMuBarNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuMuBarNCoth_e
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCoth
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmOscNuMuBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCoth
 #endif
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmNuECCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmNuECC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmNuECCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmNuECCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuENC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuENCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuENCoth_e
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmNuECCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmNuECC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmNuECCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmNuECCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuENCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuENCoth_e
 
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuECCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmOscNuECC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuECCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmOscNuECCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmOscNuECC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuECCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmOscNuECCoth
 
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmNuEBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmNuEBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmNuEBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmNuEBarCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuEBarC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuEBarNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuEBarNCoth_e
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmNuEBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmNuEBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmNuEBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmNuEBarCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuEBarNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuEBarNCoth_e
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuEBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuEBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCCoth
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmOscNuEBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmOscNuEBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuEBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuEBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmOscNuEBarCCoth
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }  // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }  // kSKmUndefined
       }//1Re
       ,
       // > 1 muon-like ring RHC
       {
-	// banffmaqe banffmares banffccqeE0 banffcc1piE0 banffnc1pi0
-	// pF  spectral   W-shape  ccothshape pilessdelta
-	// cccoh    nccoh   ncoth    nue/numu
-	// RHC/FHC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuNCoth_mu
+	// MEC CA5 BgRES
+	// banffmaqe banffmares banffscca banffsccv 
+	// pF  ccothshape  cccoh    nccoh   ncoth    nue/numu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNCoth_mu
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCoth
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCC0pi   
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCC0pi   
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNCoth_mu
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCoth
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuENC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuENCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENCoth_mu
 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCoth
 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarNCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarNCoth_mu
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCoth
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }  // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }  // kSKmUndefined
       }//1Rmu RHC
       ,
       // > 1 electron-like ring RHC
       {
 	// MEC CA5 BgRES
-	// banffmaqe banffmares banffccqeE0 banffcc1piE0 banffnc0pi0
-	// pF  spectral   W-shape  ccothshape pilessdelta 
-	// cccoh   nccoh   ncoth    nue/numu 
-	// RHC/FHC
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuNC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuMuNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuMuNCoth_e
+	// banffmaqe banffmares banffscca banffsccv 
+	// pF  ccothshape  cccoh    nccoh   ncoth    nue/numu
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuMuNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuMuNCoth_e
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuCCoth
 #endif
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuMuBarNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuMuBarNCoth_e
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuBarCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuMuBarNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuMuBarNCoth_e
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCoth
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmOscNuMuBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCoth
 #endif
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmNuECCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmNuECC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmNuECCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmNuECCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuENC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuENCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuENCoth_e
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmNuECCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmNuECC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmNuECCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmNuECCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuENCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuENCoth_e
 
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuECCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmOscNuECC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuECCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmOscNuECCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmOscNuECC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuECCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmOscNuECCoth
 
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmNuEBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmNuEBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmNuEBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmNuEBarCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuEBarC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuEBarNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuEBarNCoth_e
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmNuEBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmNuEBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmNuEBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmNuEBarCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuEBarNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuEBarNCoth_e
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuEBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuEBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCCoth
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmOscNuEBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmOscNuEBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuEBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuEBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmOscNuEBarCCoth
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }  // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }  // kSKmUndefined
       }//1Re RHC
       ,
       // > Multiple muon-like ring 
       {
 	// MEC CA5 BgRES
-	// banffmaqe banffmares banffccqeE0 banffcc1piE0 banffnc1pi0
-	// pF  spectral   W-shape  ccothshape pilessdelta
-	// cccoh    nccoh   ncoth    nue/numu
-	// RHC/FHC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuNCoth_mu
+	// banffmaqe banffmares banffscca banffsccv 
+	// pF  ccothshape  cccoh    nccoh   ncoth    nue/numu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNCoth_mu
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCC0pi  
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCC0pi  
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuCCoth
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNCoth_mu
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCoth
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuENC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuENCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENCoth_mu
 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCoth
 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCoth
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarNC0piC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarNCoth_mu
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarNC0piC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarNCoth_mu
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCQE        
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECC0pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCcoh
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCQE        
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECC0pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCcoh
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCoth
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }  // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }  // kSKmUndefined
       }//MultiRmu
       ,
       // > Multiple electron-like ring 
@@ -5238,95 +5219,95 @@ namespace valor {
 	// pF  spectral   W-shape  ccothshape pilessdelta 
 	// cccoh   nccoh   ncoth    nue/numu 
 	// RHC/FHC
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuNC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuMuNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuMuNCoth_e
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuNC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuMuNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuMuNCoth_e
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuCCoth
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuCCoth
 #endif
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmNuMuBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmNuMuBarCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuMuBarNC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuMuBarNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuMuBarNCoth_e
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmNuMuBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmNuMuBarCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuMuBarNC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuMuBarNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuMuBarNCoth_e
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 0, 0, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuMuBarCCoth
+	{  0, 0, 0, 1, 0, 0, 0,   1, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 0 }, // kSKmOscNuMuBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCoth
 #endif
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmNuECCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmNuECC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmNuECCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuECCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmNuECCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuENC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuENCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuENCoth_e
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmNuECCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmNuECC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmNuECCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuECCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmNuECCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuENC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuENCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuENCoth_e
 
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuECCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmOscNuECC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuECCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmOscNuECCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuECCoth
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmOscNuECCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmOscNuECC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuECCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmOscNuECCoth
 
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmNuEBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmNuEBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmNuEBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmNuEBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmNuEBarCCoth
-	{  0, 1, 1, 0, 1, 0, 0, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 0,  0 }, // kSKmNuEBarC1pi0 
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0,  0 }, // kSKmNuEBarNCcoh 
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 1, 0, 1,   0, 0, 1, 0,  0 }, // kSKmNuEBarNCoth_e
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmNuEBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmNuEBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmNuEBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmNuEBarCCoth
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmNuEBarC1pi0 
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 1, 0, 0 }, // kSKmNuEBarNCcoh 
+	{  0, 0, 0, 0, 1, 0, 0,   0, 0,   0, 0, 1, 0 }, // kSKmNuEBarNCoth_e
 #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 1, 0, 1, 1, 1, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCCQE        
-	{  0, 1, 1, 0, 1, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCC1pi
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuEBarCCcoh
-	{  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1,  0 }, // kSKmOscNuEBarCCMEC
-	{  0, 0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 1,  0 }, // kSKmOscNuEBarCCoth
+	{  0, 0, 0, 1, 0, 1, 1,   1, 0,   0, 0, 0, 1 }, // kSKmOscNuEBarCCQE        
+	{  0, 1, 1, 0, 1, 0, 0,   0, 0,   0, 0, 0, 1 }, // kSKmOscNuEBarCC1pi
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuEBarCCcoh
+	{  1, 0, 0, 0, 0, 0, 0,   0, 0,   1, 0, 0, 1 }, // kSKmOscNuEBarCCMEC
+	{  0, 0, 0, 0, 1, 0, 0,   0, 1,   0, 0, 0, 1 }, // kSKmOscNuEBarCCoth
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
 #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
 #endif
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }  // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }, // kSKmUndefined
+	{  0, 0, 0, 0, 0, 0, 0,   0, 0,   0, 0, 0, 0 }  // kSKmUndefined
       }//MultiRe
 
     };
