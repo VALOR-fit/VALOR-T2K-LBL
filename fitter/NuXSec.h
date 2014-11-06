@@ -207,9 +207,13 @@ private:
   double fNormNCothRelErr;
   double fNormNuEToNuMuRelErr;
   double fNormAntiNuToNuRelErr;
+
   double fSplineMAQERelErr;
   double fSpline1overMAQE2RelErr;
   double fSplineMARESRelErr;
+  double fSplineCA5RelErr; // NEW XSEC
+  double fSplineSCCARelErr; // NEW XSEC
+  double fSplineSCCVRelErr; // NEW XSEC
   double fRHCNormCCcohRelErr;
   double fRHCNormNC1piCRelErr;
   double fRHCNormNCcohRelErr;
@@ -219,6 +223,9 @@ private:
   double fRHCSplineMAQERelErr;
   double fRHCSpline1overMAQE2RelErr;
   double fRHCSplineMARESRelErr;
+  double fRHCSplineCA5RelErr; // NEW XSEC
+  double fRHCSplineSCCARelErr; // NEW XSEC
+  double fRHCSplineSCCVRelErr; // NEW XSEC
   double fNormRHCToFHCRelErr;
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject

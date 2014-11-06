@@ -106,8 +106,8 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFMEC   ) : return "BANFF; Norm; MEC";                 break;
     case ( kNuisBANFFCA5   ) : return "BANFF; CA5 RES";                   break;
     case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
-    case ( kNuisBANFFSCCA  ) : return "BANFF; Second current axial";      break;
-    case ( kNuisBANFFSCCV  ) : return "BANFF; Second current vector";     break;
+    case ( kNuisBANFFSCCA  ) : return "BANFF; Second current class axial";      break;
+    case ( kNuisBANFFSCCV  ) : return "BANFF; Second current class vector";     break;
       //
 
     //
@@ -378,8 +378,8 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFMEC   ) : return "BANFF; Norm; MEC; RHC";                 break;
   case ( kRHCNuisBANFFCA5   ) : return "BANFF; CA5 RES; RHC";                   break;
   case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
-  case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current axial; RHC";      break;
-  case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current vector; RHC";     break;
+  case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current class axial; RHC";      break;
+  case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current class vector; RHC";     break;
     //
 
     //
@@ -848,8 +848,8 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFFMEC   ) : return "BANFF; Norm; MEC";                 break;
     case ( kNuisBANFFCA5   ) : return "BANFF; CA5 RES";                   break;
     case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
-    case ( kNuisBANFFSCCA  ) : return "BANFF; Second current axial";      break;
-    case ( kNuisBANFFSCCV  ) : return "BANFF; Second current vector";     break;
+    case ( kNuisBANFFSCCA  ) : return "BANFF; Second current class axial";      break;
+    case ( kNuisBANFFSCCV  ) : return "BANFF; Second current class vector";     break;
       //
 
     //
@@ -1120,8 +1120,8 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisBANFFMEC   ) : return "BANFF; Norm; MEC; RHC";                 break;
     case ( kRHCNuisBANFFCA5   ) : return "BANFF; CA5 RES; RHC";                   break;
     case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
-    case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current axial; RHC";      break;
-    case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current vector; RHC";     break;
+    case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current class axial; RHC";      break;
+    case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current class vector; RHC";     break;
       //
 
     //

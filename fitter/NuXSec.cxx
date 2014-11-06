@@ -416,6 +416,8 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      }
   }
 
+  // NEW XSEC --> comment old xsec systematics
+
   //fNormCCcohRelErr =
   //  util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   fNormNC1piCRelErr =
@@ -501,6 +503,9 @@ double NuXSec::FinTuningWght(
 double NuXSec::FinTuningWght_1p(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
+
+  // NEW XSEC
+
 //
 // This method provides weights to reweight MC to the BANFF best-fit parameters.
 // It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
@@ -520,6 +525,8 @@ double NuXSec::FinTuningWght_1p(
 // - BANFF param, BgRES      normalization
 // - BANFF param, M_{A} QE
 // - BANFF param, M_{A} RES
+// - BANFF param, SCCA      
+// - BANFF param, SCCV      
 // - BANFF param, Pf    
 // - BANFF param, CCothShape
 // - BANFF param, Eb 
@@ -554,18 +561,28 @@ cout <<
   //
   // BANFF param, M_{A} QE
   // BANFF param, M_{A} RES
+  // BANFF param, CA5    
+  // BANFF param, SCCA   
+  // BANFF param, SCCV    
   // BANFF param, Pf   
   // BANFF param, CCothShape
   // BANFF param, Eb 
   //
+  
   if( p == kNuisBANFFMAQE         || 
       p == kNuisBANFFMARES        || 
+      p == kNuisBANFFCA5          ||
+      p == kNuisBANFFSCCA         ||
+      p == kNuisBANFFSCCV         ||
       p == kNuisXSecFermiMom      ||
       p == kNuisXSecShapeCCoth    ||
       p == kNuisXSecBindE         ||
       
       p == kRHCNuisBANFFMAQE      || 
       p == kRHCNuisBANFFMARES     ||
+      p == kRHCNuisBANFFCA5       ||
+      p == kRHCNuisBANFFSCCA      ||
+      p == kRHCNuisBANFFSCCV      ||
       p == kRHCNuisXSecFermiMom   ||
       p == kRHCNuisXSecShapeCCoth ||
       p == kRHCNuisXSecBindE      
@@ -584,7 +601,7 @@ cout <<
 
       //if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
       // NEW XSEC
-      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisXSecFermiMom || p == kRHCNuisXSecShapeCCoth || p == kRHCNuisXSecBindE) 
+      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisXSecFermiMom || p == kRHCNuisXSecShapeCCoth || p == kRHCNuisXSecBindE || p == kRHCNuisBANFFCA5 || p == kRHCNuisBANFFSCCA || p == kRHCNuisBANFFSCCV) 
 	tb = fBANFF->RHCBestFitValue(p);
       else
         tb = fBANFF->BestFitValue(p);
@@ -639,24 +656,16 @@ cout <<
 
   // NEW XSEC
 
-  // Todo: CA5, SCCA and SCCV are response functions
+  
+  // - BANFF param, MEC        normalization
+  // - BANFF param, BgRES      normalization
+  // - BANFF param, CCcoh      normalization
+  // - BANFF param, NCcoh      normalization
+  // - BANFF param, NCoth      normalization
+  // - BANFF param, NuEToNuMu  normalization
+  //  
 
-// - BANFF param, CA5    
-// - BANFF param, SCCA   
-// - BANFF param, SCCV    
-
-// - BANFF param, MEC        normalization
-// - BANFF param, BgRES      normalization
-// - BANFF param, CCcoh      normalization
-// - BANFF param, NCcoh      normalization
-// - BANFF param, NCoth      normalization
-// - BANFF param, NuEToNuMu  normalization
-//  
   else if(
-	  p == kNuisBANFFCA5         ||
-	  p == kNuisBANFFSCCA         ||
-	  p == kNuisBANFFSCCV         ||
-
 	  p == kNuisBANFFMEC         || 
 	  p == kNuisBANFFBgRES       ||
 	  p == kNuisXSecNormCCcoh    ||
@@ -668,10 +677,6 @@ cout <<
       wght = fBANFF->BestFitValue(p);
     }
   else if(
-	  p == kRHCNuisBANFFCA5         ||
-	  p == kRHCNuisBANFFSCCA         ||
-	  p == kRHCNuisBANFFSCCV         ||
-
 	  p == kRHCNuisBANFFMEC         || 
 	  p == kRHCNuisBANFFBgRES       ||
 	  p == kRHCNuisXSecNormCCcoh    ||
@@ -809,18 +814,27 @@ double NuXSec::SystWght_1p(
   //
   // BANFF param, M_{A} QE
   // BANFF param, M_{A} RES
+  // BANFF param, CA5 
+  // BANFF param, SCCA
+  // BANFF param, SCCV
   // BANFF param, Pf   
   // BANFF param, CCothShape
   // BANFF param, Eb 
   //
   if( p == kNuisBANFFMAQE         || 
       p == kNuisBANFFMARES        || 
+      p == kNuisBANFFCA5          ||
+      p == kNuisBANFFSCCA         ||
+      p == kNuisBANFFSCCV         ||
       p == kNuisXSecFermiMom      ||
       p == kNuisXSecShapeCCoth    ||
       p == kNuisXSecBindE         ||
       
       p == kRHCNuisBANFFMAQE      || 
       p == kRHCNuisBANFFMARES     ||
+      p == kRHCNuisBANFFCA5       ||
+      p == kRHCNuisBANFFSCCA      ||
+      p == kRHCNuisBANFFSCCV      ||
       p == kRHCNuisXSecFermiMom   ||
       p == kRHCNuisXSecShapeCCoth ||
       p == kRHCNuisXSecBindE      
@@ -835,7 +849,7 @@ double NuXSec::SystWght_1p(
       assert(wght_spl);
       //if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
       // NEW XSEC
-      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisXSecFermiMom || p == kRHCNuisXSecShapeCCoth || p == kRHCNuisXSecBindE) 
+      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisXSecFermiMom || p == kRHCNuisXSecShapeCCoth || p == kRHCNuisXSecBindE || p == kRHCNuisBANFFCA5 || p == kRHCNuisBANFFSCCA || p == kRHCNuisBANFFSCCV) 
 	{
 	  tb = fBANFF->RHCBestFitValue(p);
 	  tc = fBANFF->RHCCurrentValue(p);
@@ -899,13 +913,7 @@ double NuXSec::SystWght_1p(
   // NEW XSEC
   //
   
-  // Todo: CA5, SCCA and SCCV are response functions
-
   // BANFF param normalization:
-  //
-  // - BANFF param, CA5 
-  // - BANFF param, SCCA
-  // - BANFF param, SCCV
   //
   // - BANFF param, MEC        normalization
   // - BANFF param, BgRES      normalization
@@ -915,10 +923,6 @@ double NuXSec::SystWght_1p(
   // - BANFF param, NuEToNuMu  normalization
   //  
   else if(
-	  p == kNuisBANFFCA5         ||
-	  p == kNuisBANFFSCCA         ||
-	  p == kNuisBANFFSCCV         ||
-
 	  p == kNuisBANFFMEC         || 
 	  p == kNuisBANFFBgRES       ||
 	  p == kNuisXSecNormCCcoh    ||
@@ -930,10 +934,6 @@ double NuXSec::SystWght_1p(
       wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
     }
   else if(
-	  p == kRHCNuisBANFFCA5         ||
-	  p == kRHCNuisBANFFSCCA         ||
-	  p == kRHCNuisBANFFSCCV         ||
-
 	  p == kRHCNuisBANFFMEC         || 
 	  p == kRHCNuisBANFFBgRES       ||
 	  p == kRHCNuisXSecNormCCcoh    ||

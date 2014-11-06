@@ -225,12 +225,12 @@ namespace valor {
 
 	// NEW XSEC
 	false,                     // kNuisBANFFMEC
-	false, //true,                      // kNuisBANFFCA5
+	true,                      // kNuisBANFFCA5
 	false,                     // kNuisBANFFBgRES
 	true,                      // kNuisBANFFMAQE
 	true,                      // kNuisBANFFMARES
-	false, //true              // kNuisBANFFSCCA
-	false, //true              // kNuisBANFFSCCV
+	true,                      // kNuisBANFFSCCA
+	true,                      // kNuisBANFFSCCV
 
 	true,                      // Fermi momentum
 	true,                      // CC other shape
@@ -283,12 +283,12 @@ namespace valor {
 
 	// NEW XSEC
 	false,                     // kRHCNuisBANFFMEC
-	false, //true,                      // kRHCNuisBANFFCA5
+	true,                      // kRHCNuisBANFFCA5
 	false,                     // kRHCNuisBANFFBgRES
 	true,                      // kNuisBANFFMAQE
 	true,                      // kNuisBANFFMARES
-	false, //true,             // kNuisBANFFSCCA             
-	false, //true,             // kNuisBANFFSCCV             
+	true,                      // kNuisBANFFSCCA             
+	true,                      // kNuisBANFFSCCV             
 
 	true,                      // Fermi momentum
 	true,                      // CC other shape
@@ -751,13 +751,13 @@ namespace valor {
 
 
 	// NEW XSEC
-	1.0,            // BANFF, MEC
-	1.0,            // BANFF, CA5
-	1.0,            // BANFF, BgRES
+	0.1,            // BANFF, MEC
+	0.1,            // BANFF, CA5
+	0.1,            // BANFF, BgRES
 	0.0716,         // BANFF, M_{A}QE
 	0.0675,         // BANFF, M_{A}RES
-	1.0,            // BANFF, SCCA
-	1.0,            // BANFF, SCCV
+	0.1,            // BANFF, SCCA
+	0.1,            // BANFF, SCCV
 
 	0.13333,        // Fermi momentum
 	0.4,            // CC other shape
