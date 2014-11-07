@@ -169,11 +169,12 @@ private:
   TH1D *     fMCEtrueSpectrumTot[conv::kns];     ///< Etrue MC spectrum (sample)          : nominal
   
   // input event trees and normalisation factors
-  vector<TTree*> fMCTreeNuMu;              ///< input MC event tree /  sample: numu                         / cuts: by sample 
-  vector<TTree*> fMCTreeNuMuBar;           ///< input MC event tree /  sample: numubar                      / cuts: by sample 
-  vector<TTree*> fMCTreeNuE;               ///< input MC event tree /  sample: nue (intrinsic)              / cuts: by sample 
-  vector<TTree*> fMCTreeNuEBar;            ///< input MC event tree /  sample: nuebar (intrinsic)           / cuts: by sample 
-  vector<TTree*> fMCTreeOscNuE;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue) / cuts: by sample 
+  vector<TTree*> fMCTreeNuMu;              ///< input MC event tree /  sample: numu                            / cuts: by sample 
+  vector<TTree*> fMCTreeNuMuBar;           ///< input MC event tree /  sample: numubar                         / cuts: by sample 
+  vector<TTree*> fMCTreeNuE;               ///< input MC event tree /  sample: nue (intrinsic)                 / cuts: by sample 
+  vector<TTree*> fMCTreeNuEBar;            ///< input MC event tree /  sample: nuebar (intrinsic)              / cuts: by sample 
+  vector<TTree*> fMCTreeOscNuE;            ///< input MC event tree /  sample: nue (signal, 100% numu->nue)    / cuts: by sample 
+  vector<TTree*> fMCTreeOscNuEBar;         ///< input MC event tree /  sample: nuebar (signal, 100% numu->nue) / cuts: by sample 
  
   // FHC
   TH1D*      fMCPOTHistNuMu;               ///< input MC event sample POT histogram : numu
@@ -181,23 +182,27 @@ private:
   TH1D*      fMCPOTHistNuE;                ///< input MC event sample POT histogram : nue 
   TH1D*      fMCPOTHistNuEBar;             ///< input MC event sample POT histogram : nuebar
   TH1D*      fMCPOTHistOscNuE;             ///< input MC event sample POT histogram : nue (signal)
+  TH1D*      fMCPOTHistOscNuEBar;          ///< input MC event sample POT histogram : nuebar (signal)
   double     fMCPOTNuMu;                   ///< MC event sample POT : numu
   double     fMCPOTNuMuBar;                ///< MC event sample POT : numubar
   double     fMCPOTNuE;                    ///< MC event sample POT : nue 
   double     fMCPOTNuEBar;                 ///< MC event sample POT : nuebar
   double     fMCPOTOscNuE;                 ///< MC event sample POT : nue (signal)
+  double     fMCPOTOscNuEBar;              ///< MC event sample POT : nuebar (signal)
 
   // RHC
   TH1D*      fMCPOTHistRHCNuMu;            ///< input MC event sample POT histogram : numu
   TH1D*      fMCPOTHistRHCNuMuBar;         ///< input MC event sample POT histogram : numubar
   TH1D*      fMCPOTHistRHCNuE;             ///< input MC event sample POT histogram : nue 
-  TH1D*      fMCPOTHistRHCNuEBar;          ///< input MC event sample POT histogram : nue
-  TH1D*      fMCPOTHistRHCOscNuE;          ///< input MC event sample POT histogram : nuebar (signal)
+  TH1D*      fMCPOTHistRHCNuEBar;          ///< input MC event sample POT histogram : nuebar
+  TH1D*      fMCPOTHistRHCOscNuE;          ///< input MC event sample POT histogram : nue (signal)
+  TH1D*      fMCPOTHistRHCOscNuEBar;       ///< input MC event sample POT histogram : nuebar (signal)
   double     fMCPOTRHCNuMu;                ///< MC event sample POT : numu
   double     fMCPOTRHCNuMuBar;             ///< MC event sample POT : numubar
   double     fMCPOTRHCNuE;                 ///< MC event sample POT : nue 
-  double     fMCPOTRHCNuEBar;              ///< MC event sample POT : nue
-  double     fMCPOTRHCOscNuE;              ///< MC event sample POT : nuebar (signal)
+  double     fMCPOTRHCNuEBar;              ///< MC event sample POT : nuebar
+  double     fMCPOTRHCOscNuE;              ///< MC event sample POT : nue (signal)
+  double     fMCPOTRHCOscNuEBar;           ///< MC event sample POT : nuebar (signal)
 
   // MultiRing FHC
   TH1D*      fMCPOTHistMultiRingNuMu;               ///< input MC event sample POT histogram : numu
@@ -205,16 +210,18 @@ private:
   TH1D*      fMCPOTHistMultiRingNuE;                ///< input MC event sample POT histogram : nue 
   TH1D*      fMCPOTHistMultiRingNuEBar;             ///< input MC event sample POT histogram : nuebar
   TH1D*      fMCPOTHistMultiRingOscNuE;             ///< input MC event sample POT histogram : nue (signal)
+  TH1D*      fMCPOTHistMultiRingOscNuEBar;          ///< input MC event sample POT histogram : nue (signal)
   double     fMCPOTMultiRingNuMu;                   ///< MC event sample POT : numu
   double     fMCPOTMultiRingNuMuBar;                ///< MC event sample POT : numubar
   double     fMCPOTMultiRingNuE;                    ///< MC event sample POT : nue 
   double     fMCPOTMultiRingNuEBar;                 ///< MC event sample POT : nuebar
   double     fMCPOTMultiRingOscNuE;                 ///< MC event sample POT : nue (signal)
+  double     fMCPOTMultiRingOscNuEBar;              ///< MC event sample POT : nuebar (signal)
 
   ////
-
-  float      fBrEreco;                     ///< branch var for reading input MC mini-DST
-  float      fBrEtrue;                     ///< branch var for reading input MC mini-DST
+  float     fBrPtrue[10];                 ///< branch var for reading input MC Minituple
+  double     fBrEreco;                     ///< branch var for reading input MC mini-DST
+  //~ double     fBrEtrue;                     ///< branch var for reading input MC mini-DST
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
   double     fBrWght;                      ///< branch var for reading input MC mini-DST
   float      fBrWght1Re;                      ///< branch var for reading input MC mini-DST

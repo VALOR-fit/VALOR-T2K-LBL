@@ -163,11 +163,12 @@ void SuperkMC::Init(void)
         fNonEmptyVariableBins  [is][im][ivb] = 0;
       }
     }//im
-    fMCTreeNuMu   .push_back(0);
-    fMCTreeNuMuBar.push_back(0);
-    fMCTreeNuE    .push_back(0);
-    fMCTreeNuEBar .push_back(0);
-    fMCTreeOscNuE .push_back(0);
+    fMCTreeNuMu     .push_back(0);
+    fMCTreeNuMuBar  .push_back(0);
+    fMCTreeNuE      .push_back(0);
+    fMCTreeNuEBar   .push_back(0);
+    fMCTreeOscNuE   .push_back(0);
+    fMCTreeOscNuEBar.push_back(0);
   }//is
   
   ////  
@@ -178,6 +179,7 @@ void SuperkMC::Init(void)
   fMCPOTNuE            = 0;
   fMCPOTNuEBar         = 0;
   fMCPOTOscNuE         = 0;
+  fMCPOTOscNuEBar      = 0;
 
   // RHC
   fMCPOTRHCNuMu           = 0;
@@ -185,6 +187,7 @@ void SuperkMC::Init(void)
   fMCPOTRHCNuE            = 0;
   fMCPOTRHCNuEBar         = 0;
   fMCPOTRHCOscNuE         = 0;
+  fMCPOTRHCOscNuEBar      = 0;
 
   // NEW MULTIRING
   fMCPOTMultiRingNuMu           = 0;
@@ -192,11 +195,11 @@ void SuperkMC::Init(void)
   fMCPOTMultiRingNuE            = 0;
   fMCPOTMultiRingNuEBar         = 0;
   fMCPOTMultiRingOscNuE         = 0;
+  fMCPOTMultiRingOscNuEBar      = 0;
 
   ////
 
   fBrEreco             = 0;
-  fBrEtrue             = 0;
   fBrGenCode           = 0;
   
   fNuFlux              = 0;
@@ -211,16 +214,6 @@ void SuperkMC::Init(void)
 //________________________________________________________________________________________
 void SuperkMC::CleanUp(void)
 {
-  /*
-  for (int is = 0 ; is < kns ; is++) {
-    if(fMCTreeNuMu   [is] ) delete fMCTreeNuMu   [is];
-    if(fMCTreeNuMuBar[is] ) delete fMCTreeNuMuBar[is];
-    if(fMCTreeNuE    [is] ) delete fMCTreeNuE    [is];
-    if(fMCTreeNuEBar [is] ) delete fMCTreeNuEBar [is];
-    if(fMCTreeOscNuE [is] ) delete fMCTreeOscNuE [is];
-  }
-  */
-
   for(int is = 0; is < kns; is++) {
     for(int im = 0; im < knm; im++) {
       //already deleted Ori & Nom (the if doesn't work!)
@@ -284,60 +277,68 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   //
 
   // FHC
-  fMCPOTHistNuMu    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
-  fMCPOTHistNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
-  fMCPOTHistNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
-  fMCPOTHistNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-  fMCPOTHistOscNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+  fMCPOTHistNuMu      = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot_fhc"         );
+  fMCPOTHistNuMuBar   = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot_fhc"      );
+  fMCPOTHistNuE       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot_fhc"          );
+  fMCPOTHistNuEBar    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot_fhc"       );
+  fMCPOTHistOscNuE    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot_fhc"   );
+  fMCPOTHistOscNuEBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot_fhc");
 
-  fMCPOTNuMu    = fMCPOTHistNuMu   ->GetBinContent(2) / fMCPOTHistNuMu   ->GetBinContent(1);
-  fMCPOTNuMuBar = fMCPOTHistNuMuBar->GetBinContent(2) / fMCPOTHistNuMuBar->GetBinContent(1);
-  fMCPOTNuE     = fMCPOTHistNuE    ->GetBinContent(2) / fMCPOTHistNuE    ->GetBinContent(1);
-  fMCPOTNuEBar  = fMCPOTHistNuEBar ->GetBinContent(2) / fMCPOTHistNuEBar ->GetBinContent(1);
-  fMCPOTOscNuE  = fMCPOTHistOscNuE ->GetBinContent(2) / fMCPOTHistOscNuE ->GetBinContent(1);
+  fMCPOTNuMu       = fMCPOTHistNuMu     ->GetBinContent(2) / fMCPOTHistNuMu     ->GetBinContent(1);
+  fMCPOTNuMuBar    = fMCPOTHistNuMuBar  ->GetBinContent(2) / fMCPOTHistNuMuBar  ->GetBinContent(1);
+  fMCPOTNuE        = fMCPOTHistNuE      ->GetBinContent(2) / fMCPOTHistNuE      ->GetBinContent(1);
+  fMCPOTNuEBar     = fMCPOTHistNuEBar   ->GetBinContent(2) / fMCPOTHistNuEBar   ->GetBinContent(1);
+  fMCPOTOscNuE     = fMCPOTHistOscNuE   ->GetBinContent(2) / fMCPOTHistOscNuE   ->GetBinContent(1);
+  fMCPOTOscNuEBar  = fMCPOTHistOscNuEBar->GetBinContent(2) / fMCPOTHistOscNuEBar->GetBinContent(1);
 
   // RHC
-  fMCPOTHistRHCNuMu    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
-  fMCPOTHistRHCNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
-  fMCPOTHistRHCNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
-  fMCPOTHistRHCNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-  fMCPOTHistRHCOscNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+  fMCPOTHistRHCNuMu      = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot_rhc"         );
+  fMCPOTHistRHCNuMuBar   = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot_rhc"      );
+  fMCPOTHistRHCNuE       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot_rhc"          );
+  fMCPOTHistRHCNuEBar    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot_rhc"       );
+  fMCPOTHistRHCOscNuE    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot_rhc"   );
+  fMCPOTHistRHCOscNuEBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot_rhc");
 
-  fMCPOTRHCNuMu    = fMCPOTHistRHCNuMu   ->GetBinContent(2) / fMCPOTHistRHCNuMu   ->GetBinContent(1);
-  fMCPOTRHCNuMuBar = fMCPOTHistRHCNuMuBar->GetBinContent(2) / fMCPOTHistRHCNuMuBar->GetBinContent(1);
-  fMCPOTRHCNuE     = fMCPOTHistRHCNuE    ->GetBinContent(2) / fMCPOTHistRHCNuE    ->GetBinContent(1);
-  fMCPOTRHCNuEBar  = fMCPOTHistRHCNuEBar ->GetBinContent(2) / fMCPOTHistRHCNuEBar ->GetBinContent(1);
-  fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuE ->GetBinContent(2) / fMCPOTHistRHCOscNuE ->GetBinContent(1);
+  fMCPOTRHCNuMu    = fMCPOTHistRHCNuMu     ->GetBinContent(2) / fMCPOTHistRHCNuMu     ->GetBinContent(1);
+  fMCPOTRHCNuMuBar = fMCPOTHistRHCNuMuBar  ->GetBinContent(2) / fMCPOTHistRHCNuMuBar  ->GetBinContent(1);
+  fMCPOTRHCNuE     = fMCPOTHistRHCNuE      ->GetBinContent(2) / fMCPOTHistRHCNuE      ->GetBinContent(1);
+  fMCPOTRHCNuEBar  = fMCPOTHistRHCNuEBar   ->GetBinContent(2) / fMCPOTHistRHCNuEBar   ->GetBinContent(1);
+  fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuE   ->GetBinContent(2) / fMCPOTHistRHCOscNuE   ->GetBinContent(1);
+  fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuEBar->GetBinContent(2) / fMCPOTHistRHCOscNuEBar->GetBinContent(1);
 
   // NEW MULTIRING
 #ifdef __MULTIRING_FHC_RUNNING__
-  fMCPOTHistMultiRingNuMu    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
-  fMCPOTHistMultiRingNuMuBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
-  fMCPOTHistMultiRingNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
-  fMCPOTHistMultiRingNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-  fMCPOTHistMultiRingOscNuE  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+  fMCPOTHistMultiRingNuMu       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
+  fMCPOTHistMultiRingNuMuBar    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
+  fMCPOTHistMultiRingNuE        = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
+  fMCPOTHistMultiRingNuEBar     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
+  fMCPOTHistMultiRingOscNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
+  fMCPOTHistMultiRingOscNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot");
   
-  fMCPOTMultiRingNuMu    = fMCPOTHistMultiRingNuMu   ->GetBinContent(2) / fMCPOTHistMultiRingNuMu   ->GetBinContent(1);
-  fMCPOTMultiRingNuMuBar = fMCPOTHistMultiRingNuMuBar->GetBinContent(2) / fMCPOTHistMultiRingNuMuBar->GetBinContent(1);
-  fMCPOTMultiRingNuE     = fMCPOTHistMultiRingNuE    ->GetBinContent(2) / fMCPOTHistMultiRingNuE    ->GetBinContent(1);
-  fMCPOTMultiRingNuEBar  = fMCPOTHistMultiRingNuEBar ->GetBinContent(2) / fMCPOTHistMultiRingNuEBar ->GetBinContent(1);
-  fMCPOTMultiRingOscNuE  = fMCPOTHistMultiRingOscNuE ->GetBinContent(2) / fMCPOTHistMultiRingOscNuE ->GetBinContent(1);
+  fMCPOTMultiRingNuMu       = fMCPOTHistMultiRingNuMu     ->GetBinContent(2) / fMCPOTHistMultiRingNuMu     ->GetBinContent(1);
+  fMCPOTMultiRingNuMuBar    = fMCPOTHistMultiRingNuMuBar  ->GetBinContent(2) / fMCPOTHistMultiRingNuMuBar  ->GetBinContent(1);
+  fMCPOTMultiRingNuE        = fMCPOTHistMultiRingNuE      ->GetBinContent(2) / fMCPOTHistMultiRingNuE      ->GetBinContent(1);
+  fMCPOTMultiRingNuEBar     = fMCPOTHistMultiRingNuEBar   ->GetBinContent(2) / fMCPOTHistMultiRingNuEBar   ->GetBinContent(1);
+  fMCPOTMultiRingOscNuE     = fMCPOTHistMultiRingOscNuE   ->GetBinContent(2) / fMCPOTHistMultiRingOscNuE   ->GetBinContent(1);
+  fMCPOTMultiRingOscNuEBar  = fMCPOTHistMultiRingOscNuEBar->GetBinContent(2) / fMCPOTHistMultiRingOscNuEBar->GetBinContent(1);
 #endif
   ////
   
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if (s==kSKsUndefined) continue;
-     fMCTreeNuMu   [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/numu/%s"      ,util::GetXMLMCTreeName(s).c_str()));
-     fMCTreeNuMuBar[is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/numubar/%s"   ,util::GetXMLMCTreeName(s).c_str()));
-     fMCTreeNuE    [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/nue/%s"       ,util::GetXMLMCTreeName(s).c_str()));
-     fMCTreeNuEBar [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/nuebar/%s"    ,util::GetXMLMCTreeName(s).c_str()));
-     fMCTreeOscNuE [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/signal_nue/%s",util::GetXMLMCTreeName(s).c_str()));
-     assert (fMCTreeNuMu   [is]);
-     assert (fMCTreeNuMuBar[is]);
-     assert (fMCTreeNuE    [is]);
-     assert (fMCTreeNuEBar [is]);
-     assert (fMCTreeOscNuE [is]);
+     fMCTreeNuMu     [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/numu/%s"         ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeNuMuBar  [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/numubar/%s"      ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeNuE      [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/nue/%s"          ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeNuEBar   [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/nuebar/%s"       ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeOscNuE   [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/signal_nue/%s"   ,util::GetXMLMCTreeName(s).c_str()));
+     fMCTreeOscNuEBar[is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/signal_nuebar/%s",util::GetXMLMCTreeName(s).c_str()));
+     assert (fMCTreeNuMu      [is]);
+     assert (fMCTreeNuMuBar   [is]);
+     assert (fMCTreeNuE       [is]);
+     assert (fMCTreeNuEBar    [is]);
+     assert (fMCTreeOscNuE    [is]);
+     assert (fMCTreeOscNuEBar [is]);
   }
 
 
@@ -345,26 +346,29 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 #ifdef __show_init_mesg_info__
   // FHC
-  cout << "Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTNuMu    << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTNuMuBar << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTNuE     << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTNuEBar  << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTOscNuE  << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; numu}    = "    << fMCPOTNuMu       << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; numubar} = "    << fMCPOTNuMuBar    << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; nue}     = "    << fMCPOTNuE        << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; nuebar}  = "    << fMCPOTNuEBar     << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; osc_nue} = "    << fMCPOTOscNuE     << endl;
+  cout << "Exp/SKMC >> " << "POT {MC; osc_nuebar} = " << fMCPOTOscNuEBar  << endl;
   
   // RHC
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTRHCNuMu    << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTRHCNuMuBar << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTRHCNuE     << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTRHCNuEBar  << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTRHCOscNuE  << endl;
+  cout << "RHC: Exp/SKMC >> " << "POT {MC; numu}    = "    << fMCPOTRHCNuMu       << endl;
+  cout << "RHC: Exp/SKMC >> " << "POT {MC; numubar} = "    << fMCPOTRHCNuMuBar    << endl;
+  cout << "RHC: Exp/SKMC >> " << "POT {MC; nue}     = "    << fMCPOTRHCNuE        << endl;
+  cout << "RHC: Exp/SKMC >> " << "POT {MC; nuebar}  = "    << fMCPOTRHCNuEBar     << endl;
+  cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nue} = "    << fMCPOTRHCOscNuE     << endl;
+  cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nuebar} = " << fMCPOTRHCOscNuEBar  << endl;
 
   // NEW MULTIRING 
 #ifdef __MULTIRING_FHC_RUNNING__
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numu}    = " << fMCPOTMultiRingNuMu    << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numubar} = " << fMCPOTMultiRingNuMuBar << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nue}     = " << fMCPOTMultiRingNuE     << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nuebar}  = " << fMCPOTMultiRingNuEBar  << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; osc_nue} = " << fMCPOTMultiRingOscNuE  << endl;
+  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numu}       = " << fMCPOTMultiRingNuMu      << endl;
+  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numubar}    = " << fMCPOTMultiRingNuMuBar   << endl;
+  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nue}        = " << fMCPOTMultiRingNuE       << endl;
+  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nuebar}     = " << fMCPOTMultiRingNuEBar    << endl;
+  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; osc_nue}    = " << fMCPOTMultiRingOscNuE    << endl;
+  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; osc_nuebar} = " << fMCPOTMultiRingOscNuEBar << endl;
 #endif
   ////
 
@@ -372,11 +376,12 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      SuperkSample_t s = kSKSamples[is];
      if (s==kSKsUndefined) continue;
      
-     cout << "Exp/SKMC >> " << "Nev {MC; numu;     "<<AsStringCompact(s)<<"} = " << fMCTreeNuMu   [is]-> GetEntries()  << endl;
-     cout << "Exp/SKMC >> " << "Nev {MC; numubar;  "<<AsStringCompact(s)<<"} = " << fMCTreeNuMuBar[is]-> GetEntries()  << endl;
-     cout << "Exp/SKMC >> " << "Nev {MC; nue;      "<<AsStringCompact(s)<<"} = " << fMCTreeNuE    [is]-> GetEntries()  << endl;
-     cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   "<<AsStringCompact(s)<<"} = " << fMCTreeNuEBar [is]-> GetEntries()  << endl;
-     cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; "<<AsStringCompact(s)<<"} = " << fMCTreeOscNuE [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; numu;     "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMu     [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; numubar;  "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMuBar  [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; nue;      "   <<AsStringCompact(s)<<"} = " << fMCTreeNuE      [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   "   <<AsStringCompact(s)<<"} = " << fMCTreeNuEBar   [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; "   <<AsStringCompact(s)<<"} = " << fMCTreeOscNuE   [is]-> GetEntries()  << endl;
+     cout << "Exp/SKMC >> " << "Nev {MC; nuebar[osc]; "<<AsStringCompact(s)<<"} = " << fMCTreeOscNuEBar[is]-> GetEntries()  << endl;
      
   }
 #endif//__show_init_mesg_info__
@@ -535,7 +540,8 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 #endif
 
   //filled in FillSpecialTemplates()
-  if(util::IsOscNuMu(m) || util::IsOscNuMuBar(m) || util::IsOscNuEBar(m))
+  //~ if(util::IsOscNuMu(m) || util::IsOscNuMuBar(m) || util::IsOscNuEBar(m))
+  if(util::IsOscNuMu(m) || util::IsOscNuMuBar(m))
     return;
 
   int sidx = arr_index->SuperkSampleIdx(s);
@@ -566,66 +572,73 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
           << " is " << pot_wght << endl;
      exit(1);
   }
+  
+  const char * erec_branch      = "erec";
+  const char * etrue_branch     = "pnu";
+  const char * mode_branch      = "mode";
+  const char * flux_wght_branch = "wgtflx";
+  //~ const char * flux_wght_branch = "wgt";
 
-  TBranch * branchEreco   = mctree->GetBranch("erec");
-  TBranch * branchEtrue   = mctree->GetBranch("enu");
-  TBranch * branchGenCode = mctree->GetBranch("mode");
-  TBranch * branchWght    = mctree->GetBranch("wgt");
-
-
+  TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
+  TBranch * branchEtrue   = mctree->GetBranch(etrue_branch     );
+  TBranch * branchGenCode = mctree->GetBranch(mode_branch      );
+  TBranch * branchWght    = mctree->GetBranch(flux_wght_branch );
+  
   branchEreco   -> SetAddress(&fBrEreco);
-  branchEtrue   -> SetAddress(&fBrEtrue);
+  branchEtrue   -> SetAddress(&fBrPtrue);
   branchGenCode -> SetAddress(&fBrGenCode);
   branchWght    -> SetAddress(&fBrWght);  
 
   mctree->SetBranchStatus("*",0);
-  mctree->SetBranchStatus("erec",1);
-  mctree->SetBranchStatus("enu",1);
-  mctree->SetBranchStatus("mode",1);
-  mctree->SetBranchStatus("wgt",1);
+  mctree->SetBranchStatus(erec_branch      , 1 );
+  mctree->SetBranchStatus(etrue_branch     , 1 );
+  mctree->SetBranchStatus(mode_branch      , 1 );
+  mctree->SetBranchStatus(flux_wght_branch , 1 );
 
   for(int iev = 0; iev < mctree->GetEntries(); iev++) 
   {
      mctree->GetEntry(iev);
 
      if(fBrEreco<0) continue;
-
+     
      // use current entry for mode m template?
      bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
      if(!use_it) continue;
 
      double ereco_fill = fBrEreco/1000.;
      
+     double Etrue = fBrPtrue[0];
+     
      //if(util::IsRHCSample(s))
 #ifdef USE_FLUX_EXT_WEIGHT
-     fBrWght = fNuFlux->SuperkFluxExtTuningWght(s,m,fBrEtrue);
+     fBrWght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
 #endif
      
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
      ereco_fill = TMath::Min(29.9, ereco_fill);
 #endif
-     this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, fBrEtrue);
-     fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, fBrEtrue);
+     this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, Etrue);
+     fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, Etrue);
 #ifndef FLUXWEIGHTSAREONE
-     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, fBrEtrue, fBrWght * pot_wght);
+     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, fBrWght * pot_wght);
      
 #else
-     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, fBrEtrue, pot_wght);
+     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_wght);
 #endif//FLUXWEIGHTSAREONE
      
 #ifdef __show_init_mesg_debug__
-     if(fBrEtrue <= 0 || fBrEtrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
-       cout << "Exp/SKMC/CreateTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEtrue 
+     if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
+       cout << "Exp/SKMC/CreateTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue 
 	    << " (Ereco = " << fBrEreco/1000 << ")" << endl;
 #endif
 #ifdef __show_init_mesg_debug2__
      if(fBrEreco/1000 <= 0)
        cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
-	    << " (Etrue = " << fBrEtrue << ")" << endl;
+	    << " (Etrue = " << Etrue << ")" << endl;
      //#endif __show_init_mesg_debug2__
      if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
        cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
-	    << " (Etrue = " << fBrEtrue << ")" << endl;
+	    << " (Etrue = " << Etrue << ")" << endl;
 #endif// __show_init_mesg_debug__
 
   }//iev
@@ -2546,11 +2559,12 @@ TTree * SuperkMC::MCTree(SuperkSample_t s, SuperkMode_t m)
 {
   if (s!=kSKsUndefined)
   {
-    if ( util::IsNuMu(m)      ) return fMCTreeNuMu   [s];
-    if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar[s];
-    if ( util::IsNuE(m)       ) return fMCTreeNuE    [s];
-    if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar [s];
-    if ( util::IsOscNuE(m)    ) return fMCTreeOscNuE [s];
+    if ( util::IsNuMu(m)      ) return fMCTreeNuMu     [s];
+    if ( util::IsNuMuBar(m)   ) return fMCTreeNuMuBar  [s];
+    if ( util::IsNuE(m)       ) return fMCTreeNuE      [s];
+    if ( util::IsNuEBar(m)    ) return fMCTreeNuEBar   [s];
+    if ( util::IsOscNuE(m)    ) return fMCTreeOscNuE   [s];
+    if ( util::IsOscNuEBar(m) ) return fMCTreeOscNuEBar[s];
   }
 
   return 0;
@@ -2567,6 +2581,7 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuE(m)       ) return fMCPOTMultiRingNuE;
      if ( util::IsNuEBar(m)    ) return fMCPOTMultiRingNuEBar;
      if ( util::IsOscNuE(m)    ) return fMCPOTMultiRingOscNuE;
+     if ( util::IsOscNuEBar(m) ) return fMCPOTMultiRingOscNuEBar;
     }
     ///
     else{
@@ -2575,6 +2590,7 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
       if ( util::IsNuE(m)       ) return fMCPOTNuE;
       if ( util::IsNuEBar(m)    ) return fMCPOTNuEBar;
       if ( util::IsOscNuE(m)    ) return fMCPOTOscNuE;
+      if ( util::IsOscNuEBar(m) ) return fMCPOTOscNuEBar;
     }
   }  
   else if(util::IsRHCSample(s))
@@ -2584,6 +2600,7 @@ double SuperkMC::MCPOT(SuperkSample_t s, SuperkMode_t m)
      if ( util::IsNuE(m)       ) return fMCPOTRHCNuE;
      if ( util::IsNuEBar(m)    ) return fMCPOTRHCNuEBar;
      if ( util::IsOscNuE(m)    ) return fMCPOTRHCOscNuE;
+     if ( util::IsOscNuEBar(m) ) return fMCPOTRHCOscNuEBar;
   }
   
   ////

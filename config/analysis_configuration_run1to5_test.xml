@@ -135,90 +135,208 @@
      <superk>     
         <nominal>     
            <numu>
-             <pot> 
-	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
-	       <objname>     h_stat_snt_tnumu  </objname>
-	       <objtype>     TH1D                  </objtype>
-             </pot>
+             <pot_fhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tnumu  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_fhc>
              <one_mu_ring>
-                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
                 <objname>    tnumu   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+             
+             <pot_rhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tnumu  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_rhc>
+             <one_mu_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+                <objname>    tnumu   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring_rhc>
+             <one_e_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+                <objname>    tnumu   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring_rhc>
+             
            </numu>
            <numubar>
-             <pot> 
-	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
-	       <objname>     h_stat_snt_tnumubar  </objname>
-	       <objtype>     TH1D                  </objtype>
-             </pot>
+             <pot_fhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tnumubar  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_fhc>
              <one_mu_ring>
-                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
                 <objname>    tnumubar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+             
+             <pot_rhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tnumubar  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_rhc>
+             <one_mu_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+                <objname>    tnumubar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring_rhc>
+             <one_e_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+                <objname>    tnumubar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring_rhc>
            </numubar>
+           
            <nue>
-             <pot> 
-	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
-	       <objname>     h_stat_snt_tnue  </objname>
-	       <objtype>     TH1D                  </objtype>
-             </pot>
+             <pot_fhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tnue  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_fhc>
              <one_mu_ring>
-                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
                 <objname>    tnue   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+             
+             <pot_rhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tnue  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_rhc>
+             <one_mu_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+                <objname>    tnue   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring_rhc>
+             <one_e_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+                <objname>    tnue   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring_rhc>
           </nue>
+          
           <nuebar>
-             <pot> 
-	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
-	       <objname>     h_stat_snt_tnuebar  </objname>
-	       <objtype>     TH1D                  </objtype>
-             </pot>
+             <pot_fhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tnuebar  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_fhc>
              <one_mu_ring>
-                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
                 <objname>    tnuebar   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+             
+             <pot_rhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tnuebar  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_rhc>
+             <one_mu_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+                <objname>    tnuebar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring_rhc>
+             <one_e_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+                <objname>    tnuebar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring_rhc>
           </nuebar>
+          
           <signal_nue>
-             <pot> 
-	       <filename>    official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root </filename>
-	       <objname>     h_stat_snt_tnuesig  </objname>
-	       <objtype>     TH1D                  </objtype>
-             </pot>
+             <pot_fhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tsignue  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_fhc>
              <one_mu_ring>
-                <filename>   official/2013/superk/mc/neut/13a/smallnt_numu_sk13a_flx11bv32_run1-4_10acut.root  </filename>
-                <objname>    tnuesig   </objname>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
+                <objname>    tsignue   </objname>
                 <objtype>    TTree            </objtype>
              </one_mu_ring>
              <one_e_ring>
-                <filename>   official/2013/superk/mc/neut/13a/small_ntuple_1ReT_Run1to4_2013_fitqun.root  </filename>
-                <objname>    tnuesig   </objname>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
+                <objname>    tsignue   </objname>
                 <objtype>    TTree            </objtype>
              </one_e_ring>
+             
+             <pot_rhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tsignue  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_rhc>
+             <one_mu_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+                <objname>    tsignue   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring_rhc>
+             <one_e_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+                <objname>    tsignue   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring_rhc>
           </signal_nue>
+          
+          <signal_nuebar>
+             <pot_fhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tsignuebar  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_fhc>
+             <one_mu_ring>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
+                <objname>    tsignuebar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring>
+             <one_e_ring>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
+                <objname>    tsignuebar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring>
+             
+             <pot_rhc> 
+               <filename>    official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+               <objname>     h_stat_snt_tsignuebar  </objname>
+               <objtype>     TH1D                  </objtype>
+             </pot_rhc>
+             <one_mu_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+                <objname>    tsignuebar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_mu_ring_rhc>
+             <one_e_ring_rhc>
+                <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+                <objname>    tsignuebar   </objname>
+                <objtype>    TTree            </objtype>
+             </one_e_ring_rhc>
+          </signal_nuebar>
        </nominal>
      </superk>
   </mc>
@@ -338,6 +456,18 @@
                     official/2013/xsec/XSecSplines1Re2013v5_rebin.root
                 </filename>
           </one_e_ring>
+          
+          <one_mu_ring_rhc>
+                <filename>
+                    official/2015/xsec/splines_v1_RHC1Rmu.root
+                </filename>
+          </one_mu_ring_rhc>
+          <one_e_ring_rhc>
+                <filename>
+                    official/2015/xsec/splines_v1_RHC1Re.root
+                </filename>
+          </one_e_ring_rhc>
+          
       </weight_splines>
       <normalisations>
 	  <cccoh>
