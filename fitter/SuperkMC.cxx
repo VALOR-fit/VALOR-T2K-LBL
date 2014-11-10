@@ -56,7 +56,7 @@
 
 #define METHOD_FOR_ESCALE 1 // 1 = new linear method, 0 = old (should be deprecated and removed once new method fully validated)
 
-#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
+//#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
@@ -535,7 +535,7 @@ void SuperkMC::Book(void)
 void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 {
 #ifdef __show_init_mesg_debug__      
-  cout << "Exp/SKMC/CreateTemplate >> Creating MC template for: "
+  cout << "Exp/SKMC/FillTemplate >> Creating MC template for: "
        << util::AsString(s) << " / " << util::AsString(m) << endl;
 #endif
 
@@ -551,7 +551,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   double  mcpot  = this->MCPOT (s,m);
 
   if(!mctree) {
-     cerr << "Exp/SKMC/CreateTemplate >> Couldn't find event tree for template: " 
+     cerr << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: " 
           << util::AsString(s) << "/" << util::AsString(m) << endl;
      exit(1);
   }
@@ -563,11 +563,11 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 #endif
 
 #ifdef __show_init_mesg_debug__        
-  cout << "Exp/SKMC/CreateTemplate >>      "
+  cout << "Exp/SKMC/FillTemplate >>      "
        << "Weight (data POT / MC POT) = " << pot_wght << endl;
 #endif
   if(pot_wght < 0) {
-     cerr << "Exp/SKMC/CreateTemplate >> Weight (data POT / MC POT) for " 
+     cerr << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for " 
           << util::AsString(s) << "/" << util::AsString(m)
           << " is " << pot_wght << endl;
      exit(1);
@@ -628,16 +628,16 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      
 #ifdef __show_init_mesg_debug__
      if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
-       cout << "Exp/SKMC/CreateTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue 
+       cout << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue 
 	    << " (Ereco = " << fBrEreco/1000 << ")" << endl;
 #endif
 #ifdef __show_init_mesg_debug2__
      if(fBrEreco/1000 <= 0)
-       cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+       cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
 	    << " (Etrue = " << Etrue << ")" << endl;
      //#endif __show_init_mesg_debug2__
      if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
-       cout << "Exp/SKMC/CreateTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+       cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
 	    << " (Etrue = " << Etrue << ")" << endl;
 #endif// __show_init_mesg_debug__
 
@@ -747,7 +747,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   } //if valid index
 
 #ifdef __show_init_mesg_debug__        
-  cout << "Exp/SKMC/CreateTemplate >>      "
+  cout << "Exp/SKMC/FillTemplate >>      "
        << "Number of template entries = " 
        << this -> Template(s,m,kSKMCtNom) -> GetEntries() << endl;
 #endif
