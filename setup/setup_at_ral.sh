@@ -7,8 +7,10 @@
 #
 
 export T2KOSCANA=$1
+export VALOR_FMWK=$2
+export LOG4CPP=/opt/ppd/t2k/softw/LOG4CPP/builds/SL5_64bit/v1.0
 export ROOTSYS=/opt/ppd/t2k/softw/ROOT/builds/SL5_64bit/v5.34.03/
-export LD_LIBRARY_PATH=${T2KOSCANA}/fitter:${ROOTSYS}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${T2KOSCANA}/fitter:${VALOR_FMWK}/lib:${ROOTSYS}/lib:${LOG4CPP}/src/.libs/:${LD_LIBRARY_PATH}
 export PATH=${T2KOSCANA}/root:${T2KOSCANA}/production:${ROOTSYS}/bin:${PATH}
 export PYTHONPATH="${ROOTSYS}/lib:${PYTHONPATH}"
 
