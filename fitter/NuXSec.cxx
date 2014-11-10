@@ -27,7 +27,7 @@ Added samples, modes and systematics for reverse horn current running
 #define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
-#define OLD_SPLINE_NAMING
+//#define OLD_SPLINE_NAMING
 
 #include <cassert>
 #include <cstdlib>
@@ -39,6 +39,7 @@ Added samples, modes and systematics for reverse horn current running
 #include "NuXSec.h"
 #include "BANFF.h"
 #include "Utilities.h"
+#include "Build.h"
 
 using std::cout;
 using std::cerr;
@@ -232,7 +233,9 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
       if(m == kSKmUndefined)    continue;
       if(util::IsOscNuMu(m))    continue; //using NuMu splines
       if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
       if(util::IsOscNuEBar(m))  continue; //using NuEBar splines
+#endif
 
       // loop over cross-section systematic parameters
       for(int ip = 0; ip < nXSecSyst; ip++) {
@@ -600,8 +603,8 @@ cout <<
       return wght;
 #endif
       TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-      //if(!wght_spl)
-      //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
+      //~ if(!wght_spl)
+        //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
       assert(wght_spl);
       
 
@@ -1414,11 +1417,12 @@ TSpline3 * NuXSec::FindWghtSpline(
   else if ( mp == kSKmOscNuMuBarCC1pi    ) { m = kSKmNuMuBarCC1pi;    }
   else if ( mp == kSKmOscNuMuBarCCcoh    ) { m = kSKmNuMuBarCCcoh;    }
   else if ( mp == kSKmOscNuMuBarCCoth    ) { m = kSKmNuMuBarCCoth;  }
-
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
   else if ( mp == kSKmOscNuEBarCCQE     ) { m = kSKmNuEBarCCQE;     }//problem if they dont use the same binning?
   else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }//fewer bins then numubar
   else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
   else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
+#endif
 
 
   int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
