@@ -299,13 +299,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fMCPOTHistRHCOscNuE    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot_rhc"   );
   fMCPOTHistRHCOscNuEBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot_rhc");
 
-  fMCPOTRHCNuMu    = fMCPOTHistRHCNuMu     ->GetBinContent(2) / fMCPOTHistRHCNuMu     ->GetBinContent(1);
-  fMCPOTRHCNuMuBar = fMCPOTHistRHCNuMuBar  ->GetBinContent(2) / fMCPOTHistRHCNuMuBar  ->GetBinContent(1);
-  fMCPOTRHCNuE     = fMCPOTHistRHCNuE      ->GetBinContent(2) / fMCPOTHistRHCNuE      ->GetBinContent(1);
-  fMCPOTRHCNuEBar  = fMCPOTHistRHCNuEBar   ->GetBinContent(2) / fMCPOTHistRHCNuEBar   ->GetBinContent(1);
-  fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuE   ->GetBinContent(2) / fMCPOTHistRHCOscNuE   ->GetBinContent(1);
-  fMCPOTRHCOscNuE  = fMCPOTHistRHCOscNuEBar->GetBinContent(2) / fMCPOTHistRHCOscNuEBar->GetBinContent(1);
-
+  fMCPOTRHCNuMu      = fMCPOTHistRHCNuMu     ->GetBinContent(2) / fMCPOTHistRHCNuMu     ->GetBinContent(1);
+  fMCPOTRHCNuMuBar   = fMCPOTHistRHCNuMuBar  ->GetBinContent(2) / fMCPOTHistRHCNuMuBar  ->GetBinContent(1);
+  fMCPOTRHCNuE       = fMCPOTHistRHCNuE      ->GetBinContent(2) / fMCPOTHistRHCNuE      ->GetBinContent(1);
+  fMCPOTRHCNuEBar    = fMCPOTHistRHCNuEBar   ->GetBinContent(2) / fMCPOTHistRHCNuEBar   ->GetBinContent(1);
+  fMCPOTRHCOscNuE    = fMCPOTHistRHCOscNuE   ->GetBinContent(2) / fMCPOTHistRHCOscNuE   ->GetBinContent(1);
+  fMCPOTRHCOscNuEBar = fMCPOTHistRHCOscNuEBar->GetBinContent(2) / fMCPOTHistRHCOscNuEBar->GetBinContent(1);
+  
   // NEW MULTIRING
 #ifdef __MULTIRING_FHC_RUNNING__
   fMCPOTHistMultiRingNuMu       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
