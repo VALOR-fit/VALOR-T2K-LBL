@@ -165,21 +165,12 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1piC,
     kSKmNuEBarNCoth_mu,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
     kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCCoth,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -260,21 +251,12 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarNC1pi0,
     kSKmNuEBarNCcoh,
     kSKmNuEBarNCoth_e,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
     kSKmOscNuEBarCCMEC,
-    kSKmOscNuEBarCCoth,               
-#endif          
+    kSKmOscNuEBarCCoth,                     
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -373,21 +355,12 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1piC,
     kSKmNuEBarNCoth_mu,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
     kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCCoth,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -468,21 +441,12 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
         kSKmNuEBarNC1pi0,
         kSKmNuEBarNCcoh,
         kSKmNuEBarNCoth_e,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
         kSKmOscNuEBarCCQE,
         kSKmOscNuEBarCC1pi,
         kSKmOscNuEBarCCcoh,
         kSKmOscNuEBarCCMEC,
         kSKmOscNuEBarCCoth,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-        kSKmUndefined,
-        kSKmUndefined,
-        kSKmUndefined,
-        kSKmUndefined,
-        kSKmUndefined,
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
         kSKmUndefined,
         kSKmUndefined,
         kSKmUndefined,
@@ -584,21 +548,12 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1piC,
     kSKmNuEBarNCoth_mu,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
     kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCCoth,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
@@ -679,13 +634,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarNC1pi0,
     kSKmNuEBarNCcoh,
     kSKmNuEBarNCoth_e,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,
     kSKmOscNuEBarCCMEC,
-    kSKmOscNuEBarCCoth,               
-#endif          
+    kSKmOscNuEBarCCoth,                   
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
@@ -693,13 +646,11 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
 #endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
@@ -801,13 +752,11 @@ static const bool kIsCC[kns][knm]= {
      1,
      0,
      0,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
      1, //oscnuebar
      1,
      1,
      1,
      1,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
      0,
      0,
@@ -816,13 +765,6 @@ static const bool kIsCC[kns][knm]= {
      0,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     0,
-     0,
-     0,
-     0,
-     0,
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
      0,
      0,
      0,
@@ -895,13 +837,11 @@ static const bool kIsCC[kns][knm]= {
      0,
      0,
      0,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
      1, //oscnuebar
      1,
      1,
      1,
      1,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
       0, //undefined
       0, //undefined
@@ -910,13 +850,6 @@ static const bool kIsCC[kns][knm]= {
       0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-      0, //undefined
-      0, //undefined
-      0, //undefined
-      0, //undefined
-      0, //undefined
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
       0, //undefined
       0, //undefined
       0, //undefined
@@ -981,13 +914,11 @@ static const bool kIsCC[kns][knm]= {
      1,
      0,
      0,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
      1, //oscnuebar
      1,
      1,
      1,
      1,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
      0,
      0,
@@ -996,13 +927,6 @@ static const bool kIsCC[kns][knm]= {
      0,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     0,
-     0,
-     0,
-     0,
-     0,
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
      0,
      0,
      0,
@@ -1075,13 +999,11 @@ static const bool kIsCC[kns][knm]= {
         0,
         0,
         0,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
         1, //oscnuebar
         1,
         1,
         1,
         1,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
         0, //undefined
         0, //undefined
@@ -1090,13 +1012,6 @@ static const bool kIsCC[kns][knm]= {
         0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-        0, //undefined
-        0, //undefined
-        0, //undefined
-        0, //undefined
-        0, //undefined
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
         0, //undefined
         0, //undefined
         0, //undefined
@@ -1161,13 +1076,11 @@ static const bool kIsCC[kns][knm]= {
      1,
      0,
      0,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
      1, //oscnuebar
      1,
      1,
      1,
      1,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
      0,
      0,
@@ -1176,13 +1089,6 @@ static const bool kIsCC[kns][knm]= {
      0,
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     0,
-     0,
-     0,
-     0,
-     0,
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
      0,
      0,
      0,
@@ -1255,13 +1161,11 @@ static const bool kIsCC[kns][knm]= {
      0,
      0,
      0,
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
      1, //oscnuebar
      1,
      1,
      1,
      1,
-#endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
       0, //undefined
       0, //undefined
@@ -1270,13 +1174,6 @@ static const bool kIsCC[kns][knm]= {
       0, //undefined
 #endif
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-      0, //undefined
-      0, //undefined
-      0, //undefined
-      0, //undefined
-      0, //undefined
-#endif
-#ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
       0, //undefined
       0, //undefined
       0, //undefined

@@ -629,300 +629,90 @@ bool valor::util::IsNCoth_e(int neut_reaction_mode)
 bool valor::util::UseEventToFillInTemplate(
   SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode)
 {
+  bool is_numu    = (nu_pdg_code == kPdgNuMu);
+  bool is_nue     = (nu_pdg_code == kPdgNuE);
+  bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
+  bool is_nuebar  = (nu_pdg_code == kPdgNuEBar);
 
-  bool use_it = false;
-
-  //NuMu templates
-  if(m == kSKmNuMuCCQE) 
-  {
-     bool is_numu = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsCCQE(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuCC1pi) 
-  {
-     bool is_numu  = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsCC1pi(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuCCcoh)
-  {
-    bool is_numu  = (nu_pdg_code == kPdgNuMu);
-    use_it = is_numu && IsCCcoh(neut_reaction_mode);
-  }
-  if(m == kSKmNuMuCCMEC)
-  {
-    bool is_numu  = (nu_pdg_code == kPdgNuMu);
-    use_it = is_numu && IsMEC(neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuMuCCoth) 
-  {
-     bool is_numu     = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsCCoth(neut_reaction_mode);
-  } 
-  
-  else
-  if(m == kSKmNuMuNC1piC) 
-  {
-     bool is_numu   = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsNC1piC(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuNC1pi0) 
-  {
-     bool is_numu   = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsNC1pi0(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuNCcoh) 
-  {
-     bool is_numu  = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsNCcoh(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuNCoth_e) 
-  {
-     bool is_numu    = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsNCoth_e(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuNCoth_mu) 
-  {
-     bool is_numu    = (nu_pdg_code == kPdgNuMu);
-     use_it = is_numu && IsNCoth_mu(neut_reaction_mode);
-  } 
-
-  //NuMuBar templates
-  else
-  if(m == kSKmNuMuBarCCQE) 
-  {
-     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsCCQE(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuBarCC1pi) 
-  {
-     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsCC1pi(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuBarCCcoh) 
-  {
-     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsCCcoh(-neut_reaction_mode);
+  switch (m) {
+    // Numu
+    case kSKmNuMuCCQE    :  return ( IsCCQE    ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuCC1pi   :  return ( IsCC1pi   ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuCCcoh   :  return ( IsCCcoh   ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuCCMEC   :  return ( IsMEC     ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuCCoth   :  return ( IsCCoth   ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuNC1piC  :  return ( IsNC1piC  ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuNC1pi0  :  return ( IsNC1pi0  ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuNCcoh   :  return ( IsNCcoh   ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuNCoth_e :  return ( IsNCoth_e ( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuNCoth_mu:  return ( IsNCoth_mu( neut_reaction_mode) && is_numu   );
+    
+    case kSKmNuMuBarCCQE    :  return ( IsCCQE    (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarCC1pi   :  return ( IsCC1pi   (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarCCcoh   :  return ( IsCCcoh   (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarCCMEC   :  return ( IsMEC     (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarCCoth   :  return ( IsCCoth   (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarNC1piC  :  return ( IsNC1piC  (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarNC1pi0  :  return ( IsNC1pi0  (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarNCcoh   :  return ( IsNCcoh   (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarNCoth_e :  return ( IsNCoth_e (-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarNCoth_mu:  return ( IsNCoth_mu(-neut_reaction_mode) && is_numubar );
+    
+    // Osc Numu
+    case kSKmOscNuMuCCQE    :  return ( IsCCQE    ( neut_reaction_mode) && is_numu   );
+    case kSKmOscNuMuCC1pi   :  return ( IsCC1pi   ( neut_reaction_mode) && is_numu   );
+    case kSKmOscNuMuCCcoh   :  return ( IsCCcoh   ( neut_reaction_mode) && is_numu   );
+    case kSKmOscNuMuCCMEC   :  return ( IsMEC     ( neut_reaction_mode) && is_numu   );
+    case kSKmOscNuMuCCoth   :  return ( IsCCoth   ( neut_reaction_mode) && is_numu   );
+    
+    case kSKmOscNuMuBarCCQE    :  return ( IsCCQE    (-neut_reaction_mode) && is_numubar );
+    case kSKmOscNuMuBarCC1pi   :  return ( IsCC1pi   (-neut_reaction_mode) && is_numubar );
+    case kSKmOscNuMuBarCCcoh   :  return ( IsCCcoh   (-neut_reaction_mode) && is_numubar );
+    case kSKmOscNuMuBarCCMEC   :  return ( IsMEC     (-neut_reaction_mode) && is_numubar );
+    case kSKmOscNuMuBarCCoth   :  return ( IsCCoth   (-neut_reaction_mode) && is_numubar );
+    
+    //NuE
+    case kSKmNuECCQE    :  return ( IsCCQE    ( neut_reaction_mode) && is_nue    );
+    case kSKmNuECC1pi   :  return ( IsCC1pi   ( neut_reaction_mode) && is_nue    );
+    case kSKmNuECCcoh   :  return ( IsCCcoh   ( neut_reaction_mode) && is_nue    );
+    case kSKmNuECCMEC   :  return ( IsMEC     ( neut_reaction_mode) && is_nue    );
+    case kSKmNuECCoth   :  return ( IsCCoth   ( neut_reaction_mode) && is_nue    );
+    case kSKmNuENC1piC  :  return ( IsNC1piC  ( neut_reaction_mode) && is_nue    );
+    case kSKmNuENC1pi0  :  return ( IsNC1pi0  ( neut_reaction_mode) && is_nue    );
+    case kSKmNuENCcoh   :  return ( IsNCcoh   ( neut_reaction_mode) && is_nue    );
+    case kSKmNuENCoth_e :  return ( IsNCoth_e ( neut_reaction_mode) && is_nue    );
+    case kSKmNuENCoth_mu:  return ( IsNCoth_mu( neut_reaction_mode) && is_nue    );
+    
+    case kSKmNuEBarCCQE    :  return ( IsCCQE    (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarCC1pi   :  return ( IsCC1pi   (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarCCcoh   :  return ( IsCCcoh   (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarCCMEC   :  return ( IsMEC     (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarCCoth   :  return ( IsCCoth   (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarNC1piC  :  return ( IsNC1piC  (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarNC1pi0  :  return ( IsNC1pi0  (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarNCcoh   :  return ( IsNCcoh   (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarNCoth_e :  return ( IsNCoth_e (-neut_reaction_mode) && is_nuebar );
+    case kSKmNuEBarNCoth_mu:  return ( IsNCoth_mu(-neut_reaction_mode) && is_nuebar );
+    
+    // Osc NuE
+    case kSKmOscNuECCQE    :  return ( IsCCQE    ( neut_reaction_mode) && is_nue    );
+    case kSKmOscNuECC1pi   :  return ( IsCC1pi   ( neut_reaction_mode) && is_nue    );
+    case kSKmOscNuECCcoh   :  return ( IsCCcoh   ( neut_reaction_mode) && is_nue    );
+    case kSKmOscNuECCMEC   :  return ( IsMEC     ( neut_reaction_mode) && is_nue    );
+    case kSKmOscNuECCoth   :  return ( IsCCoth   ( neut_reaction_mode) && is_nue    );
+    
+    case kSKmOscNuEBarCCQE    :  return ( IsCCQE    (-neut_reaction_mode) && is_nuebar );
+    case kSKmOscNuEBarCC1pi   :  return ( IsCC1pi   (-neut_reaction_mode) && is_nuebar );
+    case kSKmOscNuEBarCCcoh   :  return ( IsCCcoh   (-neut_reaction_mode) && is_nuebar );
+    case kSKmOscNuEBarCCMEC   :  return ( IsMEC     (-neut_reaction_mode) && is_nuebar );
+    case kSKmOscNuEBarCCoth   :  return ( IsCCoth   (-neut_reaction_mode) && is_nuebar );
+    
+    
+    case kSKmUndefined: break;
   }
   
-  else
-  if(m == kSKmNuMuBarCCMEC) 
-  {
-     bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsMEC(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuBarCCoth) 
-  {
-     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsCCoth(-neut_reaction_mode);
-  } 
-  
-  else
-  if(m == kSKmNuMuBarNC1piC) 
-  {
-     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsNC1piC(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuBarNC1pi0) 
-  {
-     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsNC1pi0(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuBarNCcoh) 
-  {
-     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsNCcoh(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuBarNCoth_e) 
-  {
-     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsNCoth_e(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuMuBarNCoth_mu) 
-  {
-     bool is_numubar  = (nu_pdg_code == kPdgNuMuBar);
-     use_it = is_numubar && IsNCoth_mu(-neut_reaction_mode);
-  } 
-
-  //NuE (signal and beam) templates
-  else
-  if(m == kSKmNuECCQE || m == kSKmOscNuECCQE) 
-  {
-     bool is_nue  = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsCCQE(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuECC1pi || m == kSKmOscNuECC1pi) 
-  {
-     bool is_nue   = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsCC1pi(neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuECCcoh || m == kSKmOscNuECCcoh) 
-  {
-     bool is_nue   = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsCCcoh(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuECCMEC || m == kSKmOscNuECCMEC) 
-  {
-     bool is_nue   = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsMEC(neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuECCoth || m == kSKmOscNuECCoth) 
-  {
-     bool is_nue      = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsCCoth(neut_reaction_mode);
-  }
-
-  //this is a little different. nuesig has no CCcoh in 1Re sample, whereas CCcoh is included
-  // for the other species
-  //  else
-  //if(m == kSKmOscNuECCoth) 
-  //{
-  // bool is_nue     = (nu_pdg_code == kPdgNuE); 
-  // use_it = is_nue && (IsCCoth(neut_reaction_mode) || IsCCcoh(neut_reaction_mode));
-  //}
-
-  else
-  if(m == kSKmNuENC1piC) 
-  {
-     bool is_nue  = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsNC1piC(neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuENC1pi0) 
-  {
-     bool is_nue    = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsNC1pi0(neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuENCcoh) 
-  {
-     bool is_nue   = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsNCcoh(neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuENCoth_e) 
-  {
-     bool is_nue     = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsNCoth_e(neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuENCoth_mu) 
-  {
-     bool is_nue     = (nu_pdg_code == kPdgNuE); 
-     use_it = is_nue && IsNCoth_mu(neut_reaction_mode);
-  }
-
-  //NuEBar (beam) templates
-  else
-  if(m == kSKmNuEBarCCQE) 
-  {
-     bool is_nue  = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsCCQE(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuEBarCC1pi) 
-  {
-     bool is_nue   = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsCC1pi(-neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuEBarCCcoh) 
-  {
-     bool is_nue   = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsCCcoh(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuEBarCCMEC) 
-  {
-     bool is_nue   = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsMEC(-neut_reaction_mode);
-  } 
-
-  else
-  if(m == kSKmNuEBarCCoth) 
-  {
-     bool is_nue      = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsCCoth(-neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuEBarNC1piC) 
-  {
-     bool is_nue  = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsNC1piC(-neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuEBarNC1pi0) 
-  {
-     bool is_nue    = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsNC1pi0(-neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuEBarNCcoh) 
-  {
-     bool is_nue   = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsNCcoh(-neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuEBarNCoth_e) 
-  {
-     bool is_nue     = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsNCoth_e(-neut_reaction_mode);
-  }
-
-  else
-  if(m == kSKmNuEBarNCoth_mu) 
-  {
-     bool is_nue     = (nu_pdg_code == kPdgNuEBar); 
-     use_it = is_nue && IsNCoth_mu(-neut_reaction_mode);
-  }
-
-  return use_it;
+  std::cerr<<"util/UseEventToFillInTemplate >> Unhandled mode: "<<AsString(m)<<" ("<<m<<")"<<std::endl;
+  return false;
 }
 //___________________________________________________________________________
 valor::util::ArrIdx * valor::util::ArrIdx::fInstance = 0;

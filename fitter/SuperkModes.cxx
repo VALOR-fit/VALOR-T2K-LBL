@@ -104,22 +104,9 @@ bool valor::util::IsOscNuMuBar(valor::conv::SuperkMode_t  m)
 //____________________________________________________________________________
 bool valor::util::IsOscNuEBar(valor::conv::SuperkMode_t  m)
 {
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
   if(m >= kSKmOscNuEBarCCQE && m <= kSKmOscNuEBarCCoth)
     return true;
-#endif
-  /*switch(m) {
-     case ( kSKmOscNuEBarCCQE     ) : 
-     case ( kSKmOscNuEBarCC1pi    ) :
-     case ( kSKmOscNuEBarCCcoh    ) :
-       //     case ( kSKmOscNuMuCCoth ) :
-     case ( kSKmOscNuEBarCCoth  ) :
-       return true;
-       break;
-     default :                
-       return false;
-       break;
-       }*/
+    
   return false;
 }
 //____________________________________________________________________________
@@ -535,6 +522,7 @@ valor::conv::SuperkMode_t valor::util::SuperkModeFromString(string sh)
   std::cerr<<"SuperkModeFromString >> Did not get mode for string: "<<sh<<std::endl;
   return kSKmUndefined;
 }
+//____________________________________________________________________________
 bool valor::util::IsMEC(valor::conv::SuperkMode_t m)
 {
   switch(m) {
