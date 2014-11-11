@@ -3107,33 +3107,33 @@ string valor::util::AsStringSpline(PhysParamId_t p)
   switch(p) {
     case ( kNuisBANFFMAQE             ) :
     case ( kRHCNuisBANFFMAQE          ) :
-      return "banff_maqe";     
+      return "maqe";     
     case ( kNuisBANFFMARES            ) :
     case ( kRHCNuisBANFFMARES         ) :
-      return "banff_manff";    
+      return "manff";    
 
     // NEW XSEC
     case ( kNuisBANFFCA5              ) :
     case ( kRHCNuisBANFFCA5           ) :
-      return "banff_ca5";      
-    // case ( kNuisBANFFBgRES            ) :
-    // case ( kRHCNuisBANFFBgRES         ) :
-    //   return "bgscl";
+      return "ca5";      
+    case ( kNuisBANFFBgRES            ) :
+    case ( kRHCNuisBANFFBgRES         ) :
+      return "bgscl";
     case ( kNuisBANFFSCCV             ) :
     case ( kRHCNuisBANFFSCCV             ) :
-      return "banff_sccvec";
+      return "sccvec";
     case ( kNuisBANFFSCCA             ) :
     case ( kRHCNuisBANFFSCCA             ) :
-      return "banff_sccaxl";
+      return "sccaxl";
     case ( kNuisBANFFFermiMom             ) :
     case ( kRHCNuisBANFFFermiMom             ) :
-      return "banff_pfo";
+      return "pfo";
     case ( kNuisBANFFShapeCCoth             ) :
     case ( kRHCNuisBANFFShapeCCoth             ) :
-      return "banff_dismpishp";
+      return "dismpishp";
     case ( kNuisBANFFBindE             ) :
     case ( kRHCNuisBANFFBindE             ) :
-      return "banff_ebo";
+      return "ebo";
    //
 
     case ( kNuisXSecBindE             ) :
