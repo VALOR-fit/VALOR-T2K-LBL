@@ -168,7 +168,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file." << endl;
 #endif
-
+  
   //
   // Load cross-section weight splines
   //
@@ -233,10 +233,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
       if(m == kSKmUndefined)    continue;
       if(util::IsOscNuMu(m))    continue; //using NuMu splines
       if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
-      if(util::IsOscNuEBar(m))  continue; //using NuEBar splines
-#endif
 
+      // NEW XSEC
+      #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+      if(util::IsOscNuEBar(m))  continue; //using NuEBar splines
+      #endif
+      
       // loop over cross-section systematic parameters
       for(int ip = 0; ip < nXSecSyst; ip++) {
         if(is_rhc) {
@@ -427,28 +429,28 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   // NEW XSEC --> comment old xsec systematics
 
-  //fNormCCcohRelErr =
-  //  util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  fNormCCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   fNormNC1piCRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
-  //fNormNCcohRelErr =
-  //  util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
-  //fNormNCothRelErr =
-  //  util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
-  //fNormNuEToNuMuRelErr =
-  //  util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  fNormNCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
+  fNormNCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
+  fNormNuEToNuMuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
   fNormAntiNuToNuRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
-  //fRHCNormCCcohRelErr =
-  //  util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  fRHCNormCCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   fRHCNormNC1piCRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
-  //fRHCNormNCcohRelErr =
-  //  util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
-  //fRHCNormNCothRelErr =
-  //  util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
-  //fRHCNormNuEToNuMuRelErr =
-  //  util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  fRHCNormNCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
+  fRHCNormNCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
+  fRHCNormNuEToNuMuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
   fRHCNormAntiNuToNuRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
   fNormRHCToFHCRelErr = 
@@ -459,7 +461,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   return true;  
 }
-//Todo: change these methods so the they return the correct BANFF fit
+//Todo: change these methods so that they return the correct BANFF fit
 //________________________________________________________________________________________
 void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
 {
@@ -550,7 +552,6 @@ double NuXSec::FinTuningWght_1p(
   double wght = 1.;
   double tb;
     /*
-    
 cout <<
     "\nEtrue: " << Etrue <<
     "Ereco: " << Ereco <<
@@ -583,18 +584,18 @@ cout <<
       p == kNuisBANFFCA5          ||
       p == kNuisBANFFSCCA         ||
       p == kNuisBANFFSCCV         ||
-      p == kNuisXSecFermiMom      ||
-      p == kNuisXSecShapeCCoth    ||
-      p == kNuisXSecBindE         ||
+      p == kNuisBANFFFermiMom      ||
+      p == kNuisBANFFShapeCCoth    ||
+      p == kNuisBANFFBindE         ||
       
       p == kRHCNuisBANFFMAQE      || 
       p == kRHCNuisBANFFMARES     ||
       p == kRHCNuisBANFFCA5       ||
       p == kRHCNuisBANFFSCCA      ||
       p == kRHCNuisBANFFSCCV      ||
-      p == kRHCNuisXSecFermiMom   ||
-      p == kRHCNuisXSecShapeCCoth ||
-      p == kRHCNuisXSecBindE      
+      p == kRHCNuisBANFFFermiMom   ||
+      p == kRHCNuisBANFFShapeCCoth ||
+      p == kRHCNuisBANFFBindE      
       ) 
     {
       //
@@ -610,7 +611,9 @@ cout <<
 
       //if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
       // NEW XSEC
-      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisXSecFermiMom || p == kRHCNuisXSecShapeCCoth || p == kRHCNuisXSecBindE || p == kRHCNuisBANFFCA5 || p == kRHCNuisBANFFSCCA || p == kRHCNuisBANFFSCCV) 
+      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisBANFFFermiMom || p == kRHCNuisBANFFShapeCCoth || p == kRHCNuisBANFFBindE || p == kRHCNuisBANFFCA5 || p == kRHCNuisBANFFSCCA || p == kRHCNuisBANFFSCCV) 
+	//
+
 	tb = fBANFF->RHCBestFitValue(p);
       else
         tb = fBANFF->BestFitValue(p);
@@ -677,10 +680,10 @@ cout <<
   else if(
 	  p == kNuisBANFFMEC         || 
 	  p == kNuisBANFFBgRES       ||
-	  p == kNuisXSecNormCCcoh    ||
-	  p == kNuisXSecNormNCcoh    ||
-	  p == kNuisXSecNormNCoth    ||
-	  p == kNuisXSecNormNuEToNuMu
+	  p == kNuisBANFFNormCCcoh    ||
+	  p == kNuisBANFFNormNCcoh    ||
+	  p == kNuisBANFFNormNCoth    ||
+	  p == kNuisBANFFNormNuEToNuMu
 	  )
     {
       wght = fBANFF->BestFitValue(p);
@@ -688,10 +691,10 @@ cout <<
   else if(
 	  p == kRHCNuisBANFFMEC         || 
 	  p == kRHCNuisBANFFBgRES       ||
-	  p == kRHCNuisXSecNormCCcoh    ||
-	  p == kRHCNuisXSecNormNCcoh    ||
-	  p == kRHCNuisXSecNormNCoth    ||
-	  p == kRHCNuisXSecNormNuEToNuMu
+	  p == kRHCNuisBANFFNormCCcoh    ||
+	  p == kRHCNuisBANFFNormNCcoh    ||
+	  p == kRHCNuisBANFFNormNCoth    ||
+	  p == kRHCNuisBANFFNormNuEToNuMu
 	  )
     {
       wght = fBANFF->RHCBestFitValue(p);
@@ -750,8 +753,6 @@ double NuXSec::SystWght(
   SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
   double tot_wght = 1.;
-
-
 
   int nXSecSyst;
   PhysParamId_t p;
@@ -835,18 +836,18 @@ double NuXSec::SystWght_1p(
       p == kNuisBANFFCA5          ||
       p == kNuisBANFFSCCA         ||
       p == kNuisBANFFSCCV         ||
-      p == kNuisXSecFermiMom      ||
-      p == kNuisXSecShapeCCoth    ||
-      p == kNuisXSecBindE         ||
+      p == kNuisBANFFFermiMom      ||
+      p == kNuisBANFFShapeCCoth    ||
+      p == kNuisBANFFBindE         ||
       
       p == kRHCNuisBANFFMAQE      || 
       p == kRHCNuisBANFFMARES     ||
       p == kRHCNuisBANFFCA5       ||
       p == kRHCNuisBANFFSCCA      ||
       p == kRHCNuisBANFFSCCV      ||
-      p == kRHCNuisXSecFermiMom   ||
-      p == kRHCNuisXSecShapeCCoth ||
-      p == kRHCNuisXSecBindE      
+      p == kRHCNuisBANFFFermiMom   ||
+      p == kRHCNuisBANFFShapeCCoth ||
+      p == kRHCNuisBANFFBindE      
       ) 
     {
       //
@@ -858,7 +859,7 @@ double NuXSec::SystWght_1p(
       assert(wght_spl);
       //if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
       // NEW XSEC
-      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisXSecFermiMom || p == kRHCNuisXSecShapeCCoth || p == kRHCNuisXSecBindE || p == kRHCNuisBANFFCA5 || p == kRHCNuisBANFFSCCA || p == kRHCNuisBANFFSCCV) 
+      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisBANFFFermiMom || p == kRHCNuisBANFFShapeCCoth || p == kRHCNuisBANFFBindE || p == kRHCNuisBANFFCA5 || p == kRHCNuisBANFFSCCA || p == kRHCNuisBANFFSCCV) 
 	{
 	  tb = fBANFF->RHCBestFitValue(p);
 	  tc = fBANFF->RHCCurrentValue(p);
@@ -934,10 +935,10 @@ double NuXSec::SystWght_1p(
   else if(
 	  p == kNuisBANFFMEC         || 
 	  p == kNuisBANFFBgRES       ||
-	  p == kNuisXSecNormCCcoh    ||
-	  p == kNuisXSecNormNCcoh    ||
-	  p == kNuisXSecNormNCoth    ||
-	  p == kNuisXSecNormNuEToNuMu
+	  p == kNuisBANFFNormCCcoh    ||
+	  p == kNuisBANFFNormNCcoh    ||
+	  p == kNuisBANFFNormNCoth    ||
+	  p == kNuisBANFFNormNuEToNuMu
 	  )
     {
       wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
@@ -945,10 +946,10 @@ double NuXSec::SystWght_1p(
   else if(
 	  p == kRHCNuisBANFFMEC         || 
 	  p == kRHCNuisBANFFBgRES       ||
-	  p == kRHCNuisXSecNormCCcoh    ||
-	  p == kRHCNuisXSecNormNCcoh    ||
-	  p == kRHCNuisXSecNormNCoth    ||
-	  p == kRHCNuisXSecNormNuEToNuMu
+	  p == kRHCNuisBANFFNormCCcoh    ||
+	  p == kRHCNuisBANFFNormNCcoh    ||
+	  p == kRHCNuisBANFFNormNCoth    ||
+	  p == kRHCNuisBANFFNormNuEToNuMu
 	  )
     {
       wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
@@ -1191,49 +1192,15 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   // NEW XSEC
 
   switch(p) {
-    // not banff xsec parameters
-  case kNuisXSecSpecFunc:
-    return fSpecFuncTwkDial;
-    break;
-  case kNuisXSecWshape:
-    return fWshapeTwkDial;
-    break;
-  case kNuisXSecPiLessDelta:
-    return fPiLessDeltaTwkDial;
-    break;
-  case kNuisXSecNormNC1piC:
-    return fNormNC1piCTwkDial;
-    break;
-  case kNuisXSecNormAntiNuToNu:
-    return fNormAntiNuToNuTwkDial;
-    break;
-  case kRHCNuisXSecSpecFunc:
-    return fRHCSpecFuncTwkDial;
-    break;
-  case kRHCNuisXSecWshape:
-    return fRHCWshapeTwkDial;
-    break;
-  case kRHCNuisXSecPiLessDelta:
-    return fRHCPiLessDeltaTwkDial;
-    break;
-  case kRHCNuisXSecNormNC1piC:
-    return fRHCNormNC1piCTwkDial;
-    break;
-  case kRHCNuisXSecNormAntiNuToNu:
-    return fRHCNormAntiNuToNuTwkDial;
-    break;
-  case kNuisRHCToFHC:
-    return fNormRHCToFHCTwkDial;
-    break;
-    
-    // banff parameters
-  case kNuisXSecFermiMom:
-  case kNuisXSecShapeCCoth:
-  case kNuisXSecBindE:
-  case kNuisXSecNormCCcoh:
-  case kNuisXSecNormNCoth:
-  case kNuisXSecNormNCcoh:
-  case kNuisXSecNormNuEToNuMu:  
+
+    // new banff parameters
+  case kNuisBANFFFermiMom:
+  case kNuisBANFFShapeCCoth:
+  case kNuisBANFFBindE:
+  case kNuisBANFFNormCCcoh:
+  case kNuisBANFFNormNCoth:
+  case kNuisBANFFNormNCcoh:
+  case kNuisBANFFNormNuEToNuMu:  
   case kNuisBANFFMAQE:
   case kNuisBANFFMARES:
   case kNuisBANFFMEC: 
@@ -1241,36 +1208,18 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   case kNuisBANFFBgRES:
   case kNuisBANFFSCCA:
   case kNuisBANFFSCCV:
-
-    // banff paramters not used at all
-  case kNuisBANFFCCQEE0:
-#if BANFF_BINS != 3
-  case kNuisBANFFCCQEE1:
-  case kNuisBANFFCCQEE2:
-#endif
-  case kNuisBANFFCC1piE0:
-#if BANFF_BINS != 3
-  case kNuisBANFFCC1piE1:
-#endif
-#if (BANFF_BINS != 2)
-  case kNuisBANFFNC1pi0:
-#endif
-#if BANFF_BINS == 4
-  case kNuisBANFFMECNorm:
-  case kNuisBANFFPDDDoubleCount:
-#endif
     
     return fBANFF->CurrentValue(p);
     break;
-
-    // banff parameters
-  case kRHCNuisXSecFermiMom:
-  case kRHCNuisXSecShapeCCoth:
-  case kRHCNuisXSecBindE:
-  case kRHCNuisXSecNormCCcoh:
-  case kRHCNuisXSecNormNCoth:
-  case kRHCNuisXSecNormNCcoh:
-  case kRHCNuisXSecNormNuEToNuMu:  
+    
+    // new banff parameters
+  case kRHCNuisBANFFFermiMom:
+  case kRHCNuisBANFFShapeCCoth:
+  case kRHCNuisBANFFBindE:
+  case kRHCNuisBANFFNormCCcoh:
+  case kRHCNuisBANFFNormNCoth:
+  case kRHCNuisBANFFNormNCcoh:
+  case kRHCNuisBANFFNormNuEToNuMu:  
   case kRHCNuisBANFFMAQE:
   case kRHCNuisBANFFMARES:
   case kRHCNuisBANFFMEC: 
@@ -1278,20 +1227,6 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   case kRHCNuisBANFFBgRES:
   case kRHCNuisBANFFSCCA:
   case kRHCNuisBANFFSCCV:
-
-    // banff parameters not used at all
-  case kRHCNuisBANFFCCQEE0:
-#if BANFF_BINS != 3
-  case kRHCNuisBANFFCCQEE1:
-  case kRHCNuisBANFFCCQEE2:
-#endif
-  case kRHCNuisBANFFCC1piE0:
-#if BANFF_BINS != 3
-  case kRHCNuisBANFFCC1piE1:
-#endif
-#if (BANFF_BINS != 2)
-  case kRHCNuisBANFFNC1pi0:
-#endif
     
     return fBANFF->RHCCurrentValue(p);
     break;
@@ -1307,50 +1242,52 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 double NuXSec::RelativeError(PhysParamId_t p) const
 {
   // NEW XSEC --> xsec syst now in BANFF output are commented 
- 
+  //
+  // not commented any longer, but uncorrelated systematics are not used
+  //
   switch(p) {
-    // case kNuisXSecNormCCcoh:
-    //   return fNormCCcohRelErr;
-    //   break;
-    case kNuisXSecNormNC1piC:
-      return fNormNC1piCRelErr;
-      break;
-    // case kNuisXSecNormNCcoh:
-    //   return fNormNCcohRelErr;
-    //   break;
-    // case kNuisXSecNormNCoth:
-    //   return fNormNCothRelErr;
-    //   break;
-    // case kNuisXSecNormNuEToNuMu:
-    //   return fNormNuEToNuMuRelErr;
-    //   break;
-    case kNuisXSecNormAntiNuToNu:
-      return fNormAntiNuToNuRelErr;
-      break;
-    // case kRHCNuisXSecNormCCcoh:
-    //   return fRHCNormCCcohRelErr;
-    //   break;
-    case kRHCNuisXSecNormNC1piC:
-      return fRHCNormNC1piCRelErr;
-      break;
-    // case kRHCNuisXSecNormNCcoh:
-    //   return fRHCNormNCcohRelErr;
-    //   break;
-    // case kRHCNuisXSecNormNCoth:
-    //   return fRHCNormNCothRelErr;
-    //   break;
-    // case kRHCNuisXSecNormNuEToNuMu:
-    //   return fRHCNormNuEToNuMuRelErr;
-    //   break;
-    case kRHCNuisXSecNormAntiNuToNu:
-      return fRHCNormAntiNuToNuRelErr;
-      break;
-    case kNuisRHCToFHC:
-      return fNormRHCToFHCRelErr;
-      break;
-    default:
-      cout << "Relative error is not defined for xsec parameter: " << AsString(p) << endl;
-      return 0;
+  case kNuisXSecNormCCcoh:
+    return fNormCCcohRelErr;
+    break;
+  case kNuisXSecNormNC1piC:
+    return fNormNC1piCRelErr;
+    break;
+  case kNuisXSecNormNCcoh:
+    return fNormNCcohRelErr;
+    break;
+  case kNuisXSecNormNCoth:
+    return fNormNCothRelErr;
+    break;
+  case kNuisXSecNormNuEToNuMu:
+    return fNormNuEToNuMuRelErr;
+    break;
+  case kNuisXSecNormAntiNuToNu:
+    return fNormAntiNuToNuRelErr;
+    break;
+  case kRHCNuisXSecNormCCcoh:
+    return fRHCNormCCcohRelErr;
+    break;
+  case kRHCNuisXSecNormNC1piC:
+    return fRHCNormNC1piCRelErr;
+    break;
+  case kRHCNuisXSecNormNCcoh:
+    return fRHCNormNCcohRelErr;
+    break;
+  case kRHCNuisXSecNormNCoth:
+    return fRHCNormNCothRelErr;
+    break;
+  case kRHCNuisXSecNormNuEToNuMu:
+    return fRHCNormNuEToNuMuRelErr;
+    break;
+  case kRHCNuisXSecNormAntiNuToNu:
+    return fRHCNormAntiNuToNuRelErr;
+    break;
+  case kNuisRHCToFHC:
+    return fNormRHCToFHCRelErr;
+    break;
+  default:
+    cout << "Relative error is not defined for xsec parameter: " << AsString(p) << endl;
+    return 0;
   }
   return 0;
 }
@@ -1358,42 +1295,46 @@ double NuXSec::RelativeError(PhysParamId_t p) const
 void NuXSec::PrintSystematicVariations(std::ostream & stream) const
 {
   // NEW XSEC --> xsec syst now in BANFF output are commented 
-
+  //
+  // not commented any longer, but uncorrelated systematics are not used
+  //
   stream << "Exp/XSec >> XSec parameters:"                              << endl; 
-  //stream << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
+  stream << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
   stream << "         >> Spectral function   " << fSpecFuncTwkDial      << endl;
   stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
-  //stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
+  stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
   stream << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
-  //stream << "         >> Binding energy      " << fBindETwkDial         << endl;
-  //stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
+  stream << "         >> Binding energy      " << fBindETwkDial         << endl;
+  stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
   stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
 #ifndef __NUMUONLY__ 
-  //stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
+  stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
 #endif
-  //stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
-  //stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
+  stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
+  stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
   stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
 }
 //________________________________________________________________________________________
 void NuXSec::PrintRHCSystematicVariations(std::ostream & stream) const
 {
   // NEW XSEC --> xsec syst now in BANFF output are commented 
-
+  //
+  // not commented any longer, but uncorrelated systematics are not used
+  //
   stream << "Exp/XSec >> RHC XSec parameters:"                              << endl;
-  //stream << "         >> RHC Fermi momentum      " << fRHCFermiMomTwkDial      << endl;
+  stream << "         >> RHC Fermi momentum      " << fRHCFermiMomTwkDial      << endl;
   stream << "         >> RHC spectral function   " << fRHCSpecFuncTwkDial      << endl;
   stream << "         >> RHC W-shape             " << fRHCWshapeTwkDial        << endl;
-  //stream << "         >> RHC CC-oth shape        " << fRHCShapeCCothTwkDial    << endl;
+  stream << "         >> RHC CC-oth shape        " << fRHCShapeCCothTwkDial    << endl;
   stream << "         >> RHC pi-less delta decay " << fRHCPiLessDeltaTwkDial   << endl;
-  //stream << "         >> RHC binding energy      " << fRHCBindETwkDial         << endl;
-  //stream << "         >> RHC CC-coh norm         " << fRHCNormCCcohTwkDial     << endl;
+  stream << "         >> RHC binding energy      " << fRHCBindETwkDial         << endl;
+  stream << "         >> RHC CC-coh norm         " << fRHCNormCCcohTwkDial     << endl;
   stream << "         >> RHC NC-1piC norm        " << fRHCNormNC1piCTwkDial    << endl;
 #ifndef __NUMUONLY__
-  //stream << "         >> RHC NC-coh norm         " << fRHCNormNCcohTwkDial     << endl;
+  stream << "         >> RHC NC-coh norm         " << fRHCNormNCcohTwkDial     << endl;
 #endif
-  //stream << "         >> RHC NC-oth norm         " << fRHCNormNCothTwkDial     << endl;
-  //stream << "         >> RHC NuE to NuMu norm    " << fRHCNormNuEToNuMuTwkDial << endl;
+  stream << "         >> RHC NC-oth norm         " << fRHCNormNCothTwkDial     << endl;
+  stream << "         >> RHC NuE to NuMu norm    " << fRHCNormNuEToNuMuTwkDial << endl;
   stream << "         >> RHC antiNu to Nu norm   " << fRHCNormAntiNuToNuTwkDial<< endl;
   stream << "         >> RHC to FHC norm         " << fNormRHCToFHCTwkDial     << endl;
 }

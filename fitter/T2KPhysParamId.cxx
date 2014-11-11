@@ -108,7 +108,15 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
     case ( kNuisBANFFSCCA  ) : return "BANFF; Second current class axial";      break;
     case ( kNuisBANFFSCCV  ) : return "BANFF; Second current class vector";     break;
-      //
+ 
+    case ( kNuisBANFFFermiMom   ) : return "BANFF; Fermi Momentum";                  break; // uncorrelated in the past
+    case ( kNuisBANFFShapeCCoth ) : return "BANFF; Shape; CC Oth";                   break; // uncorrelated in the past
+    case ( kNuisBANFFBindE      ) : return "BANFF; Binding energy";                  break; // uncorrelated in the past
+    case ( kNuisBANFFNormCCcoh  ) : return "BANFF; Norm; CC Coh";                    break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCcoh  ) : return "BANFF; Norm; NC Coh";                    break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCoth  ) : return "BANFF; Norm; NC Oth";                    break; // uncorrelated in the past
+    case ( kNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm; NuE To NuMu";           break; // uncorrelated in the past
+     //
 
     //
     // XSec params not correlated with flux
@@ -380,6 +388,14 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
   case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current class axial; RHC";      break;
   case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current class vector; RHC";     break;
+
+  case ( kRHCNuisBANFFFermiMom   ) : return "BANFF; Fermi Momentum; RHC";                  break; // uncorrelated in the past
+  case ( kRHCNuisBANFFShapeCCoth ) : return "BANFF; Shape; CC Oth; RHC";                   break; // uncorrelated in the past
+  case ( kRHCNuisBANFFBindE      ) : return "BANFF; Binding energy; RHC";                  break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormCCcoh  ) : return "BANFF; Norm; CC Coh; RHC";                    break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCcoh  ) : return "BANFF; Norm; NC Coh; RHC";                    break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCoth  ) : return "BANFF; Norm; NC Oth; RHC";                    break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm; NuE To NuMu; RHC";           break; // uncorrelated in the past
     //
 
     //
@@ -850,7 +866,15 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
     case ( kNuisBANFFSCCA  ) : return "BANFF; Second current class axial";      break;
     case ( kNuisBANFFSCCV  ) : return "BANFF; Second current class vector";     break;
-      //
+ 
+    case ( kNuisBANFFFermiMom   ) : return "BANFF; Fermi Momentum";                  break; // uncorrelated in the past
+    case ( kNuisBANFFShapeCCoth ) : return "BANFF; Shape; CC Oth";                   break; // uncorrelated in the past
+    case ( kNuisBANFFBindE      ) : return "BANFF; Binding energy";                  break; // uncorrelated in the past
+    case ( kNuisBANFFNormCCcoh  ) : return "BANFF; Norm, CC Coh";                    break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCcoh  ) : return "BANFF; Norm, NC Coh";                    break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCoth  ) : return "BANFF; Norm, NC Oth";                    break; // uncorrelated in the past
+    case ( kNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_\\{mu}}$";  break; // uncorrelated in the past
+     //
 
     //
     // XSec params not correlated with flux
@@ -1122,6 +1146,14 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
     case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current class axial; RHC";      break;
     case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current class vector; RHC";     break;
+
+    case ( kRHCNuisBANFFFermiMom   ) : return "BANFF; Fermi Momentum; RHC";                  break; // uncorrelated in the past
+    case ( kRHCNuisBANFFShapeCCoth ) : return "BANFF; Shape; CC Oth; RHC";                   break; // uncorrelated in the past
+    case ( kRHCNuisBANFFBindE      ) : return "BANFF; Binding energy; RHC";                  break; // uncorrelated in the past
+    case ( kRHCNuisBANFFNormCCcoh  ) : return "BANFF; Norm, CC Coh; RHC";                    break; // uncorrelated in the past
+    case ( kRHCNuisBANFFNormNCcoh  ) : return "BANFF; Norm, NC Coh; RHC";                    break; // uncorrelated in the past
+    case ( kRHCNuisBANFFNormNCoth  ) : return "BANFF; Norm, NC Oth; RHC";                    break; // uncorrelated in the past
+    case ( kRHCNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_\\{mu}}$; RHC";  break; // uncorrelated in the past
       //
 
     //
@@ -1713,6 +1745,14 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFFBgRES ) : return "f_banffbgres";           break;
     case ( kNuisBANFFSCCA  ) : return "f_banffscca";            break;
     case ( kNuisBANFFSCCV  ) : return "f_banffsccv";            break;
+
+    case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi";       break; // uncorrelated in the past
+    case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth";   break; // uncorrelated in the past
+    case ( kNuisBANFFBindE             ) : return "f_banffbindE";        break; // uncorrelated in the past
+    case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh";   break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh";   break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth";   break; // uncorrelated in the past
+    case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu";  break; // uncorrelated in the past
       //
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
@@ -1838,7 +1878,15 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisBANFFBgRES ) : return "f_banffbgres_rhc";           break;
   case ( kRHCNuisBANFFSCCA  ) : return "f_banffscca_rhc";            break;
   case ( kRHCNuisBANFFSCCV  ) : return "f_banffsccv_rhc";            break;
-    //
+ 
+  case ( kRHCNuisBANFFFermiMom          ) : return "f_banffpfermi_rhc";       break;
+  case ( kRHCNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_rhc";   break;
+  case ( kRHCNuisBANFFBindE             ) : return "f_banffbindE_rhc";        break;
+  case ( kRHCNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh_rhc";   break;
+  case ( kRHCNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh_rhc";   break;
+  case ( kRHCNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth_rhc";   break;
+  case ( kRHCNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu_rhc";  break;
+   //
 
   case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi_rhc";       break;
   case ( kRHCNuisXSecSpecFunc          ) : return "f_specfunc_rhc";     break;
@@ -2242,6 +2290,14 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFFBgRES ) :
   case ( kNuisBANFFSCCA  ) : 
   case ( kNuisBANFFSCCV  ) :
+
+  case ( kNuisBANFFFermiMom   ) :     // uncorrelated in the past
+  case ( kNuisBANFFShapeCCoth ) :     // uncorrelated in the past
+  case ( kNuisBANFFBindE      ) :     // uncorrelated in the past
+  case ( kNuisBANFFNormCCcoh  ) :     // uncorrelated in the past
+  case ( kNuisBANFFNormNCcoh  ) :     // uncorrelated in the past
+  case ( kNuisBANFFNormNCoth  ) :     // uncorrelated in the past
+  case ( kNuisBANFFNormNuEToNuMu  ) : // uncorrelated in the past
     //
 
     {
@@ -2389,6 +2445,14 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisBANFFBgRES ) : 
   case ( kRHCNuisBANFFSCCA  ) : 
   case ( kRHCNuisBANFFSCCV  ) : 
+
+  case ( kRHCNuisBANFFFermiMom   ) :     // uncorrelated in the past
+  case ( kRHCNuisBANFFShapeCCoth ) :     // uncorrelated in the past
+  case ( kRHCNuisBANFFBindE      ) :     // uncorrelated in the past
+  case ( kRHCNuisBANFFNormCCcoh  ) :     // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCcoh  ) :     // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCoth  ) :     // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNuEToNuMu  ) : // uncorrelated in the past
     //
 
     {
@@ -2636,6 +2700,25 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
 #ifndef __NUEONLY__
   case ( kRHCNuisXSecNormAntiNuToNu    ) : return "f_norm_antinutonu"; break;
 #endif
+
+    
+    // NEW XSEC
+  case ( kRHCNuisBANFFMEC   ) : return "f_banffmec_rhc";             break; 
+  case ( kRHCNuisBANFFCA5   ) : return "f_banffca5_rhc";             break;
+  case ( kRHCNuisBANFFBgRES ) : return "f_banffbgres_rhc";           break;
+  case ( kRHCNuisBANFFSCCA  ) : return "f_banffscca_rhc";            break;
+  case ( kRHCNuisBANFFSCCV  ) : return "f_banffsccv_rhc";            break;
+    
+  case ( kRHCNuisBANFFFermiMom   ) : return "f_banffpfermi_rhc";     break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFShapeCCoth ) : return "f_banffshapeCCoth_rhc"; break;     // uncorrelated in the past
+  case ( kRHCNuisBANFFBindE      ) : return "f_banffbindE_rhc";        break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFNormCCcoh  ) : return "f_banffnorm_cccoh_rhc";   break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCcoh  ) : return "f_banffnorm_nccoh_rhc";   break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCoth  ) : return "f_banffnorm_ncoth_rhc";   break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNuEToNuMu  ) : return "f_banffnorm_nuetonumu_rhc";  break; // uncorrelated in the past
+    //
+
+
 //#ifdef SKFSITOGETHER
 #if FSI_BINS != 3
   case ( kRHCNuisSKDetFSI000 ) : return "f_skdetfsi000"; break;
@@ -2828,27 +2911,14 @@ bool valor::util::IsMultiRingSystematic(PhysParamId_t p)
 //____________________________________________________________________________
 bool valor::util::IsXSec(PhysParamId_t p)
 {
-  //if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
-  //  return true;
-  //if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecNormAntiNuToNu)
-  //  return true;
-  
-  // NEW XSEC
-  if(
-     p == kNuisXSecSpecFunc ||
-     p == kNuisXSecWshape ||
-     p == kNuisXSecPiLessDelta ||
-     p == kNuisXSecNormNC1piC ||
-     p == kNuisXSecNormAntiNuToNu ||
+  // N.B. Leave the old uncorrelated systematics that will not be used, since now they are all banff (kNuisBANFF*)
 
-     p == kRHCNuisXSecSpecFunc ||
-     p == kRHCNuisXSecWshape ||
-     p == kRHCNuisXSecPiLessDelta ||
-     p == kRHCNuisXSecNormNC1piC ||
-     p == kRHCNuisXSecNormAntiNuToNu
-     )
-    return true; 
-    
+  //Old uncorr xsec syst (as in the old code)
+  if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
+   return true;
+  if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecNormAntiNuToNu)
+   return true;
+     
   return false;
 }
 //____________________________________________________________________________
@@ -2862,6 +2932,24 @@ bool valor::util::IsUsingSplines(PhysParamId_t p)
     return true;
   if(p == kNuisBANFFMAQE || p == kRHCNuisBANFFMAQE)
     return true;
+
+  // NEW XSEC
+  if(p == kNuisBANFFMARES || p == kRHCNuisBANFFMARES)
+    return true;
+
+  if(p == kNuisBANFFCA5 || p == kRHCNuisBANFFCA5)
+    return true;
+  if(p == kNuisBANFFSCCA || p == kRHCNuisBANFFSCCA)
+    return true;
+  if(p == kNuisBANFFSCCV || p == kRHCNuisBANFFSCCV)
+    return true;
+  if(p == kNuisBANFFFermiMom || p == kRHCNuisBANFFFermiMom)
+    return true;
+  if(p == kNuisBANFFShapeCCoth || p == kRHCNuisBANFFShapeCCoth)
+    return true;
+  if(p == kNuisBANFFBindE || p == kRHCNuisBANFFBindE)
+    return true;
+  //
 
   return false;
 }
@@ -2987,16 +3075,35 @@ string valor::util::AsStringSpline(PhysParamId_t p)
   switch(p) {
     case ( kNuisBANFFMAQE             ) :
     case ( kRHCNuisBANFFMAQE          ) :
-      return "maqe";     
+      return "banff_maqe";     
     case ( kNuisBANFFMARES            ) :
     case ( kRHCNuisBANFFMARES         ) :
-      return "manff";    
+      return "banff_manff";    
+
+    // NEW XSEC
     case ( kNuisBANFFCA5              ) :
     case ( kRHCNuisBANFFCA5           ) :
-      return "ca5";      
-    case ( kNuisBANFFBgRES            ) :
-    case ( kRHCNuisBANFFBgRES         ) :
-      return "bgscl";    
+      return "banff_ca5";      
+    // case ( kNuisBANFFBgRES            ) :
+    // case ( kRHCNuisBANFFBgRES         ) :
+    //   return "bgscl";
+    case ( kNuisBANFFSCCV             ) :
+    case ( kRHCNuisBANFFSCCV             ) :
+      return "banff_sccvec";
+    case ( kNuisBANFFSCCA             ) :
+    case ( kRHCNuisBANFFSCCA             ) :
+      return "banff_sccaxl";
+    case ( kNuisBANFFFermiMom             ) :
+    case ( kRHCNuisBANFFFermiMom             ) :
+      return "banff_pfo";
+    case ( kNuisBANFFShapeCCoth             ) :
+    case ( kRHCNuisBANFFShapeCCoth             ) :
+      return "banff_dismpishp";
+    case ( kNuisBANFFBindE             ) :
+    case ( kRHCNuisBANFFBindE             ) :
+      return "banff_ebo";
+   //
+
     case ( kNuisXSecBindE             ) :
     case ( kRHCNuisXSecBindE          ) :
       return "ebo";      
@@ -3006,15 +3113,18 @@ string valor::util::AsStringSpline(PhysParamId_t p)
     case ( kNuisXSecShapeCCoth           ) :
     case ( kRHCNuisXSecShapeCCoth           ) :
       return "dismpishp";
+    case ( kNuisXSecPiLessDelta           ) :
+    case ( kRHCNuisXSecPiLessDelta           ) :
+      return "piless";
+    case ( kNuisXSecSpecFunc           ) :
+    case ( kRHCNuisXSecSpecFunc           ) :
+      return "sf";
+    case ( kNuisXSecWshape           ) :
+    case ( kRHCNuisXSecWshape           ) :
+      return "wshape";
       
     //~ case ( kNuisXSecRPA               ) :
       //~ return "rpa";   
-    case ( kNuisBANFFSCCV             ) :
-    case ( kRHCNuisBANFFSCCV             ) :
-      return "sccvec";
-    case ( kNuisBANFFSCCA             ) :
-    case ( kRHCNuisBANFFSCCA             ) :
-      return "sccaxl";
     
     default:
       break;
@@ -3026,6 +3136,8 @@ string valor::util::AsStringSpline(PhysParamId_t p)
 //____________________________________________________________________________
 string valor::util::AsStringCompact_KDI(PhysParamId_t p)
 {
+  //Todo: update with new systematics
+
   //Uses the KDI conventions (where different)
 
   switch(p) {

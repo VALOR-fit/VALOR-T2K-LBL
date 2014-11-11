@@ -396,7 +396,6 @@ void SuperkDetectorFSI::TweakMultiRingEnergyScale(double twkdial)
 double SuperkDetectorFSI::SystWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
 {
-
   // find SuperkDetector+FSI param which corresponds to the current Ereco param
   int iparam = -1;
   int nSKDetFSIParams;
@@ -422,12 +421,11 @@ double SuperkDetectorFSI::SystWght(
     ///
     else
       p = conv::kListOfSKDetFSIParams[ip];
-      
-    // Is the current systematic parameter applied to current sample/mode end energy bin?
     
+    // Is the current systematic parameter applied to current sample/mode end energy bin?
     bool apply = this->ApplySyst(p,s,m,Ereco);
     if(!apply) continue;
-
+    
     if(iparam != -1) {
       if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
       {
@@ -465,17 +463,19 @@ double SuperkDetectorFSI::SystWght(
       exit(1);
     } //iparam != -1
     
-    if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
+    if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike){
       iparam = arr_index->RHCSKDetFSISystIdx(p);
+    }
     /// NEW MULTIRING 2
-    else if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
+    else if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike){
       iparam = arr_index->MultiRingSKDetFSISystIdx(p);
+    }
     ///
     else {
       iparam = arr_index->SKDetFSISystIdx(p);
     }
   } //ip
-
+  
   if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
   {
     int np = conv::kNumOfSKDetFSIParams;
@@ -502,7 +502,7 @@ double SuperkDetectorFSI::SystWght(
     if(iparam < 0 || iparam >= np) {
       cerr << "Exp/SuperkDetectorFSI/SystWght >> Found no RHCSuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
            << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl;
-      //exit(1);
+      
       return 1;
     }
   }
@@ -523,7 +523,6 @@ double SuperkDetectorFSI::SystWght(
   if(!tweaked) {
     return 1.;
   }
-
   double skdetfsi_wght = skdetfsi_param_value;
   return skdetfsi_wght;
 }
@@ -1788,6 +1787,7 @@ bool SuperkDetectorFSI::ApplySyst(
   bool apply2mode = this->ApplySystToSKMode(p,s,m);
   if (not apply2mode) return false;
   bool apply2bin  = this->ApplySystToEnergyBin(p,Ereco);
+  
   return apply2bin;
 }
 //________________________________________________________________________________________
@@ -1813,9 +1813,6 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
   // //bool apply = conv::kSKDetFSIApplySKDetFSIParamToSKMode[is][im][idx]; // updated with multiring sample
   //bool apply = conv::kSKDetFSIParamToSKMode[is][im][idx]; // updated with multiring sample
 
- 
-
-
 
   /// NEW MULTIRING 2 
   int idx;
@@ -1831,7 +1828,7 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
     idx = arr_index->RHCSKDetFSISystIdx(p);
     if (idx == -1) return false;
     apply = conv::kSKDetFSIParamToSKMode[idxRing][im][idx];             // FULLY CORRELATED RHC FOR NOW
-    //apply = conv::kRHCSKDetFSIParamToSKMode[idxRing][im][idx]; 
+    //apply = conv::kRHCSKDetFSIParamToSKMode[idxRing][im][idx];
   }
   else if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike) {
     idx = arr_index->MultiRingSKDetFSISystIdx(p);

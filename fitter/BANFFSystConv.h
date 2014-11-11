@@ -158,14 +158,20 @@ namespace valor {
 	kNuisBANFFMARES        ,
 	kNuisBANFFSCCA         ,
 	kNuisBANFFSCCV         ,
-
-	kNuisXSecFermiMom      ,
-	kNuisXSecShapeCCoth    ,
-	kNuisXSecBindE         ,
-	kNuisXSecNormCCcoh     ,
-	kNuisXSecNormNCcoh     ,
-	kNuisXSecNormNCoth     ,
-	kNuisXSecNormNuEToNuMu ,
+	/* kNuisXSecFermiMom      , */
+	/* kNuisXSecShapeCCoth    , */
+	/* kNuisXSecBindE         , */
+	/* kNuisXSecNormCCcoh     , */
+	/* kNuisXSecNormNCcoh     , */
+	/* kNuisXSecNormNCoth     , */
+	/* kNuisXSecNormNuEToNuMu , */
+	kNuisBANFFFermiMom      ,
+	kNuisBANFFShapeCCoth    ,
+	kNuisBANFFBindE         ,
+	kNuisBANFFNormCCcoh     ,
+	kNuisBANFFNormNCcoh     ,
+	kNuisBANFFNormNCoth     ,
+	kNuisBANFFNormNuEToNuMu ,
 
 	//
 
@@ -267,14 +273,21 @@ namespace valor {
 	kRHCNuisBANFFMARES  ,
 	kRHCNuisBANFFSCCA   ,
 	kRHCNuisBANFFSCCV   ,
+	/* kRHCNuisXSecFermiMom      , */
+	/* kRHCNuisXSecShapeCCoth    , */
+	/* kRHCNuisXSecBindE         , */
+	/* kRHCNuisXSecNormCCcoh     , */
+	/* kRHCNuisXSecNormNCcoh     , */
+	/* kRHCNuisXSecNormNCoth     , */
+	/* kRHCNuisXSecNormNuEToNuMu , */
+	kRHCNuisBANFFFermiMom      ,
+	kRHCNuisBANFFShapeCCoth    ,
+	kRHCNuisBANFFBindE         ,
+	kRHCNuisBANFFNormCCcoh     ,
+	kRHCNuisBANFFNormNCcoh     ,
+	kRHCNuisBANFFNormNCoth     ,
+	kRHCNuisBANFFNormNuEToNuMu ,
 
-	kRHCNuisXSecFermiMom      ,
-	kRHCNuisXSecShapeCCoth    ,
-	kRHCNuisXSecBindE         ,
-	kRHCNuisXSecNormCCcoh     ,
-	kRHCNuisXSecNormNCcoh     ,
-	kRHCNuisXSecNormNCoth     ,
-	kRHCNuisXSecNormNuEToNuMu ,
    
 	//
 
@@ -432,14 +445,21 @@ namespace valor {
 	kNuisBANFFMARES  ,
 	kNuisBANFFSCCA   ,
 	kNuisBANFFSCCV   ,
+	/* kNuisXSecFermiMom      , */
+	/* kNuisXSecShapeCCoth    , */
+	/* kNuisXSecBindE         , */
+	/* kNuisXSecNormCCcoh     , */
+	/* kNuisXSecNormNCcoh     , */
+	/* kNuisXSecNormNCoth     , */
+	/* kNuisXSecNormNuEToNuMu , */
+	kNuisBANFFFermiMom      ,
+	kNuisBANFFShapeCCoth    ,
+	kNuisBANFFBindE         ,
+	kNuisBANFFNormCCcoh     ,
+	kNuisBANFFNormNCcoh     ,
+	kNuisBANFFNormNCoth     ,
+	kNuisBANFFNormNuEToNuMu ,
 
-	kNuisXSecFermiMom      ,
-	kNuisXSecShapeCCoth    ,
-	kNuisXSecBindE         ,
-	kNuisXSecNormCCcoh     ,
-	kNuisXSecNormNCcoh     ,
-	kNuisXSecNormNCoth     ,
-	kNuisXSecNormNuEToNuMu ,
 
 	//
       };
@@ -535,13 +555,13 @@ namespace valor {
 	false,                // kNuisBANFFSCCA   
 	false,                // kNuisBANFFSCCV  
 
-	false,                // kNuisXSecFermiMom      
-	false,                // kNuisXSecShapeCCoth    
-	false,                // kNuisXSecBindE         
-	false,                // kNuisXSecNormCCcoh     
-	false,                // kNuisXSecNormNCcoh     
-	false,                // kNuisXSecNormNCoth     
-	false,                // kNuisXSecNormNuEToNuMu 
+	false,                // kNuisBANFFFermiMom      
+	false,                // kNuisBANFFShapeCCoth    
+	false,                // kNuisBANFFBindE         
+	false,                // kNuisBANFFNormCCcoh     
+	false,                // kNuisBANFFNormNCcoh     
+	false,                // kNuisBANFFNormNCoth     
+	false,                // kNuisBANFFNormNuEToNuMu 
 	//
 
       };
@@ -626,13 +646,13 @@ namespace valor {
 	false,                // kRHCNuisBANFFSCCA   
 	false,                // kRHCNuisBANFFSCCV  
 
-	false,                // kRHCNuisXSecFermiMom      
-	false,                // kRHCNuisXSecShapeCCoth    
-	false,                // kRHCNuisXSecBindE         
-	false,                // kRHCNuisXSecNormCCcoh     
-	false,                // kRHCNuisXSecNormNCcoh     
-	false,                // kRHCNuisXSecNormNCoth     
-	false,                // kRHCNuisXSecNormNuEToNuMu 
+	false,                // kRHCNuisBANFFFermiMom      
+	false,                // kRHCNuisBANFFShapeCCoth    
+	false,                // kRHCNuisBANFFBindE         
+	false,                // kRHCNuisBANFFNormCCcoh     
+	false,                // kRHCNuisBANFFNormNCcoh     
+	false,                // kRHCNuisBANFFNormNCoth     
+	false,                // kRHCNuisBANFFNormNuEToNuMu 
 	//
       };
 
@@ -771,21 +791,21 @@ namespace valor {
 	true,                 // kRHCNuisBANFF23
 	true,                 // kRHCNuisBANFF24
 
-	false,                // kNuisBANFFMEC
-	false,                // kNuisBANFFCA5
-	false,                // kNuisBANFFBgRES
-	false,                // kNuisBANFFMAQE   
-	false,                // kNuisBANFFMARES 
-	false,                // kNuisBANFFSCCA   
-	false,                // kNuisBANFFSCCV  
+	false,                // kRHCNuisBANFFMEC
+	false,                // kRHCNuisBANFFCA5
+	false,                // kRHCNuisBANFFBgRES
+	false,                // kRHCNuisBANFFMAQE   
+	false,                // kRHCNuisBANFFMARES 
+	false,                // kRHCNuisBANFFSCCA   
+	false,                // kRHCNuisBANFFSCCV  
  
-	false,                // kNuisXSecFermiMom      
-	false,                // kNuisXSecShapeCCoth    
-	false,                // kNuisXSecBindE         
-	false,                // kNuisXSecNormCCcoh     
-	false,                // kNuisXSecNormNCcoh     
-	false,                // kNuisXSecNormNCoth     
-	false,                // kNuisXSecNormNuEToNuMu 
+	false,                // kRHCNuisBANFFFermiMom      
+	false,                // kRHCNuisBANFFShapeCCoth    
+	false,                // kRHCNuisBANFFBindE         
+	false,                // kRHCNuisBANFFNormCCcoh     
+	false,                // kRHCNuisBANFFNormNCcoh     
+	false,                // kRHCNuisBANFFNormNCoth     
+	false,                // kRHCNuisBANFFNormNuEToNuMu 
 	//
       };
     //
@@ -915,13 +935,13 @@ namespace valor {
 	0,                    // kNuisBANFFSCCA         
 	0,                    // kNuisBANFFSCCV        
 
-	0,                    // kNuisXSecFermiMom      
-	0,                    // kNuisXSecShapeCCoth    
-	0,                    // kNuisXSecBindE        
-	0,                    // kNuisXSecNormCCcoh     
-	0,                    // kNuisXSecNormNCcoh     
-	0,                    // kNuisXSecNormNCoth     
-	0,                    // kNuisXSecNormNuEToNuMu 
+	0,                    // kNuisBANFFFermiMom      
+	0,                    // kNuisBANFFShapeCCoth    
+	0,                    // kNuisBANFFBindE        
+	0,                    // kNuisBANFFNormCCcoh     
+	0,                    // kNuisBANFFNormNCcoh     
+	0,                    // kNuisBANFFNormNCoth     
+	0,                    // kNuisBANFFNormNuEToNuMu 
    
 	//
       };
@@ -1050,13 +1070,13 @@ namespace valor {
 	0,                    // kRHCNuisBANFFSCCA         
 	0,                    // kRHCNuisBANFFSCCV
         
-	0,                    // kRHCNuisXSecFermiMom      
-	0,                    // kRHCNuisXSecShapeCCoth    
-	0,                    // kRHCNuisXSecBindE        
-	0,                    // kRHCNuisXSecNormCCcoh     
-	0,                    // kRHCNuisXSecNormNCcoh     
-	0,                    // kRHCNuisXSecNormNCoth     
-	0,                    // kRHCNuisXSecNormNuEToNuMu 
+	0,                    // kRHCNuisBANFFFermiMom      
+	0,                    // kRHCNuisBANFFShapeCCoth    
+	0,                    // kRHCNuisBANFFBindE        
+	0,                    // kRHCNuisBANFFNormCCcoh     
+	0,                    // kRHCNuisBANFFNormNCcoh     
+	0,                    // kRHCNuisBANFFNormNCoth     
+	0,                    // kRHCNuisBANFFNormNuEToNuMu 
 	//
       };
     ///
@@ -1267,21 +1287,21 @@ namespace valor {
 	kPdgNuEBar,           // kRHCNuisBANFF23
 	kPdgNuEBar,           // kRHCNuisBANFF24
 
-	0,                    // kNuisBANFFMEC          
-	0,                    // kNuisBANFFCA5          
-	0,                    // kNuisBANFFBgRES        
-	0,                    // kNuisBANFFMAQE         
-	0,                    // kNuisBANFFMARES        
-	0,                    // kNuisBANFFSCCA         
-	0,                    // kNuisBANFFSCCV        
+	0,                    // kRHCNuisBANFFMEC          
+	0,                    // kRHCNuisBANFFCA5          
+	0,                    // kRHCNuisBANFFBgRES        
+	0,                    // kRHCNuisBANFFMAQE         
+	0,                    // kRHCNuisBANFFMARES        
+	0,                    // kRHCNuisBANFFSCCA         
+	0,                    // kRHCNuisBANFFSCCV        
 
-	0,                    // kNuisXSecFermiMom      
-	0,                    // kNuisXSecShapeCCoth    
-	0,                    // kNuisXSecBindE        
-	0,                    // kNuisXSecNormCCcoh     
-	0,                    // kNuisXSecNormNCcoh     
-	0,                    // kNuisXSecNormNCoth     
-	0,                    // kNuisXSecNormNuEToNuMu 
+	0,                    // kRHCNuisBANFFFermiMom      
+	0,                    // kRHCNuisBANFFShapeCCoth    
+	0,                    // kRHCNuisBANFFBindE        
+	0,                    // kRHCNuisBANFFNormCCcoh     
+	0,                    // kRHCNuisBANFFNormNCcoh     
+	0,                    // kRHCNuisBANFFNormNCoth     
+	0,                    // kRHCNuisBANFFNormNuEToNuMu 
     
 	//
       };
@@ -1415,13 +1435,13 @@ namespace valor {
 	{  -1,   -1 },        // kNuisBANFFSCCA, not a flux param
 	{  -1,   -1 },        // kNuisBANFFSCCV, not a flux param
 
-	{  -1,   -1 },        // kNuisXSecFermiMom, not a flux param
-	{  -1,   -1 },        // kNuisXSecShapeCCoth, not a flux param
-	{  -1,   -1 },        // kNuisXSecBindE, not a flux param
-	{  -1,   -1 },        // kNuisXSecNormCCcoh, not a flux param
-	{  -1,   -1 },        // kNuisXSecNormNCcoh, not a flux param
-	{  -1,   -1 },        // kNuisXSecNormNCoth, not a flux param
-	{  -1,   -1 },        // kNuisXSecNormNuEToNuMu, not a flux param
+	{  -1,   -1 },        // kNuisBANFFFermiMom, not a flux param
+	{  -1,   -1 },        // kNuisBANFFShapeCCoth, not a flux param
+	{  -1,   -1 },        // kNuisBANFFBindE, not a flux param
+	{  -1,   -1 },        // kNuisBANFFNormCCcoh, not a flux param
+	{  -1,   -1 },        // kNuisBANFFNormNCcoh, not a flux param
+	{  -1,   -1 },        // kNuisBANFFNormNCoth, not a flux param
+	{  -1,   -1 },        // kNuisBANFFNormNuEToNuMu, not a flux param
 	//
       };
  
@@ -1565,13 +1585,13 @@ namespace valor {
 	{  -1,   -1 },        // kRHCNuisBANFFSCCA, not a flux param
 	{  -1,   -1 },        // kRHCNuisBANFFSCCV, not a flux param
 
-	{  -1,   -1 },        // kRHCNuisXSecFermiMom, not a flux param
-	{  -1,   -1 },        // kRHCNuisXSecShapeCCoth, not a flux param
-	{  -1,   -1 },        // kRHCNuisXSecBindE, not a flux param
-	{  -1,   -1 },        // kRHCNuisXSecNormCCcoh, not a flux param
-	{  -1,   -1 },        // kRHCNuisXSecNormNCcoh, not a flux param
-	{  -1,   -1 },        // kRHCNuisXSecNormNCoth, not a flux param
-	{  -1,   -1 },        // kRHCNuisXSecNormNuEToNuMu, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFFermiMom, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFShapeCCoth, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFBindE, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFNormCCcoh, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFNormNCcoh, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFNormNCoth, not a flux param
+	{  -1,   -1 },        // kRHCNuisBANFFNormNuEToNuMu, not a flux param
 	//
       };
  
@@ -1816,13 +1836,13 @@ namespace valor {
 	{  -1,   -1 },        // kNuisBANFFSCCA, not a flux param
 	{  -1,   -1 },        // kNuisBANFFSCCV, not a flux param
 
-	{  -1,   -1 },        // kNuisXSecFermiMom, not a flux param
-	{  -1,   -1 },        // kNuisXSecShapeCCoth, not a flux param
-	{  -1,   -1 },        // kNuisXSecBindE, not a flux param
-	{  -1,   -1 },        // kNuisXSecNormCCcoh, not a flux param
-	{  -1,   -1 },        // kNuisXSecNormNCcoh, not a flux param
-	{  -1,   -1 },        // kNuisXSecNormNCoth, not a flux param
-	{  -1,   -1 },        // kNuisXSecNormNuEToNuMu, not a flux param
+	{  -1,   -1 },        // kNuisBANFFFermiMom, not a flux param
+	{  -1,   -1 },        // kNuisBANFFShapeCCoth, not a flux param
+	{  -1,   -1 },        // kNuisBANFFBindE, not a flux param
+	{  -1,   -1 },        // kNuisBANFFNormCCcoh, not a flux param
+	{  -1,   -1 },        // kNuisBANFFNormNCcoh, not a flux param
+	{  -1,   -1 },        // kNuisBANFFNormNCoth, not a flux param
+	{  -1,   -1 },        // kNuisBANFFNormNuEToNuMu, not a flux param
 	//
       };
     //
