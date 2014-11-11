@@ -2269,42 +2269,59 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFF23 ) :
   case ( kNuisBANFF24 ) :
 #endif
+    {
+      int ip = (int)p - (int)kNuisBANFF00;
+      return Form("$f_{%d; t, r}^{banff}$", ip);
+    }
+    
   case ( kNuisBANFFMAQE ) :
+    return "$f_{M_A^{QE}}^{banff}$";
   case ( kNuisBANFFMARES ) :
+    return "$f_{M_A^{RES}}^{banff}$";
   case ( kNuisBANFFCCQEE0 ) :
 #if BANFF_BINS != 3
   case ( kNuisBANFFCCQEE1 ) :
   case ( kNuisBANFFCCQEE2 ) :
 #endif
+    return Form("$f_{CCQE E%d}^{banff}$", p-kNuisBANFFCCQEE0);
   case ( kNuisBANFFCC1piE0 ) :
 #if BANFF_BINS != 3
   case ( kNuisBANFFCC1piE1 ) :
 #endif
+    return Form("$f_{CC1\\pi E%d}^{banff}$", p-kNuisBANFFCC1piE1);
 #if (BANFF_BINS != 2)
   case ( kNuisBANFFNC1pi0 ) :
 #endif
+    return "$f_{NC1\\pi0}^{banff}$";
     
     // NEW XSEC
   case ( kNuisBANFFMEC   ) : 
-  case ( kNuisBANFFCA5   ) : 
-  case ( kNuisBANFFBgRES ) :
-  case ( kNuisBANFFSCCA  ) : 
+      return "$f_{Norm_{MEC}}^{banff}$";
+  case ( kNuisBANFFCA5   ) :
+    return "$f_{C^{A}_{5}}^{banff}$";
+  case ( kNuisBANFFBgRES ):
+    return "$f_{Bg_{RES}}^{banff}$";
+  case ( kNuisBANFFSCCA  ) :
+    return "$f_{SCCA}^{banff}$";
   case ( kNuisBANFFSCCV  ) :
+    return "$f_{SCCV}^{banff}$";
 
   case ( kNuisBANFFFermiMom   ) :     // uncorrelated in the past
+    return "$f_{p_{f}}^{banff}$";
   case ( kNuisBANFFShapeCCoth ) :     // uncorrelated in the past
+    return "$f_{Shape_{CCoth}}^{banff}$";
   case ( kNuisBANFFBindE      ) :     // uncorrelated in the past
+    return "$f_{E_{B}}^{banff}$";
   case ( kNuisBANFFNormCCcoh  ) :     // uncorrelated in the past
+    return "$f_{Norm_{CCcoh}}^{banff}$";
   case ( kNuisBANFFNormNCcoh  ) :     // uncorrelated in the past
+    return "$f_{Norm_{NCcoh}}^{banff}$";
   case ( kNuisBANFFNormNCoth  ) :     // uncorrelated in the past
+    return "$f_{Norm_{NCother}}^{banff}$";
   case ( kNuisBANFFNormNuEToNuMu  ) : // uncorrelated in the past
+    return "$f_{Norm_{\\nu_e \\rightarrow \\nu_\\mu}}^{banff}$";
+    
     //
-
-    {
-      int ip = (int)p - (int)kNuisBANFF00;
-      return Form("$f_{%d; t, r}^{banff}$", ip);
-      break;
-    }
     
     //
     // XSec params not correlated with flux 
@@ -2326,7 +2343,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisXSecNormNC1piC ) : return "$f_{NC1\\pi^\\pm; t}$";           break;
 #endif
   case ( kNuisXSecNormNCoth  ) : return "$f_{NCoth; t}$";                  break;
-  case ( kNuisXSecNormNuEToNuMu  ) : return "$f_{CC\\nu_{e}; t}$";           break;
+  case ( kNuisXSecNormNuEToNuMu  ) : return "$f_{CC\\nu_{e}; t}$";         break;
 #ifndef __NUEONLY__
   case ( kNuisXSecNormAntiNuToNu ) : return "$f_{CC\\bar{\\nu}; t}$";      break;
 #endif
@@ -2424,42 +2441,57 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisBANFF23 ) :
   case ( kRHCNuisBANFF24 ) :
 #endif
+    {
+      int ip = (int)p - (int)kRHCNuisBANFF00;
+      return Form("$f_{%d; t, r}^{banff} RHC$", ip);
+    }
+    
   case ( kRHCNuisBANFFMAQE ) :
+    return "$f_{M_A^{QE}}^{banff} RHC$";
   case ( kRHCNuisBANFFMARES ) :
+    return "$f_{M_A^{RES}}^{banff} RHC$";
   case ( kRHCNuisBANFFCCQEE0 ) :
 #if BANFF_BINS != 3
   case ( kRHCNuisBANFFCCQEE1 ) :
   case ( kRHCNuisBANFFCCQEE2 ) :
 #endif
+    return Form("$f_{CCQE E%d}^{banff} RHC$", p-kRHCNuisBANFFCCQEE0);
   case ( kRHCNuisBANFFCC1piE0 ) :
 #if BANFF_BINS != 3
   case ( kRHCNuisBANFFCC1piE1 ) :
 #endif
+    return Form("$f_{CC1\\pi E%d}^{banff RHC}$", p-kRHCNuisBANFFCC1piE1);
 #if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0 ) :
 #endif
-
+    return "$f_{NC1\\pi0}^{banff} RHC$";
+    
     // NEW XSEC
   case ( kRHCNuisBANFFMEC   ) : 
-  case ( kRHCNuisBANFFCA5   ) : 
-  case ( kRHCNuisBANFFBgRES ) : 
-  case ( kRHCNuisBANFFSCCA  ) : 
-  case ( kRHCNuisBANFFSCCV  ) : 
+      return "$f_{Norm_{MEC}}^{banff} RHC$";
+  case ( kRHCNuisBANFFCA5   ) :
+    return "$f_{C^{A}_{5}}^{banff} RHC$";
+  case ( kRHCNuisBANFFBgRES ):
+    return "$f_{Bg_{RES}}^{banff} RHC$";
+  case ( kRHCNuisBANFFSCCA  ) :
+    return "$f_{SCCA}^{banff} RHC$";
+  case ( kRHCNuisBANFFSCCV  ) :
+    return "$f_{SCCV}^{banff} RHC$";
 
   case ( kRHCNuisBANFFFermiMom   ) :     // uncorrelated in the past
+    return "$f_{p_{f}}^{banff} RHC$";
   case ( kRHCNuisBANFFShapeCCoth ) :     // uncorrelated in the past
+    return "$f_{Shape_{CCoth}}^{banff} RHC$";
   case ( kRHCNuisBANFFBindE      ) :     // uncorrelated in the past
+    return "$f_{E_{B}}^{banff} RHC$";
   case ( kRHCNuisBANFFNormCCcoh  ) :     // uncorrelated in the past
+    return "$f_{Norm_{CCcoh}}^{banff} RHC$";
   case ( kRHCNuisBANFFNormNCcoh  ) :     // uncorrelated in the past
+    return "$f_{Norm_{NCcoh}}^{banff} RHC$";
   case ( kRHCNuisBANFFNormNCoth  ) :     // uncorrelated in the past
+    return "$f_{Norm_{NCother}}^{banff} RHC$";
   case ( kRHCNuisBANFFNormNuEToNuMu  ) : // uncorrelated in the past
-    //
-
-    {
-      int ip = (int)p - (int)kRHCNuisBANFF00;
-      return Form("$f_{%d; t, r}^{banff}RHC$", ip);
-      break;
-    }
+    return "$f_{Norm_{\\nu_e \\rightarrow \\nu_\\mu}}^{banff} RHC$";
     
     //
     // XSec params not correlated with flux 
