@@ -103,19 +103,18 @@ string valor::util::AsString(PhysParamId_t p)
 #endif
 
       // NEW XSEC
-    case ( kNuisBANFFMEC   ) : return "BANFF; Norm; MEC";                 break;
-    case ( kNuisBANFFCA5   ) : return "BANFF; CA5 RES";                   break;
-    case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
-    case ( kNuisBANFFSCCA  ) : return "BANFF; Second current class axial";      break;
-    case ( kNuisBANFFSCCV  ) : return "BANFF; Second current class vector";     break;
- 
-    case ( kNuisBANFFFermiMom   ) : return "BANFF; Fermi Momentum";                  break; // uncorrelated in the past
-    case ( kNuisBANFFShapeCCoth ) : return "BANFF; Shape; CC Oth";                   break; // uncorrelated in the past
-    case ( kNuisBANFFBindE      ) : return "BANFF; Binding energy";                  break; // uncorrelated in the past
-    case ( kNuisBANFFNormCCcoh  ) : return "BANFF; Norm; CC Coh";                    break; // uncorrelated in the past
-    case ( kNuisBANFFNormNCcoh  ) : return "BANFF; Norm; NC Coh";                    break; // uncorrelated in the past
-    case ( kNuisBANFFNormNCoth  ) : return "BANFF; Norm; NC Oth";                    break; // uncorrelated in the past
-    case ( kNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm; NuE To NuMu";           break; // uncorrelated in the past
+    case ( kNuisBANFFMEC            ) : return "BANFF; Norm; MEC";                    break;
+    case ( kNuisBANFFCA5            ) : return "BANFF; CA5 RES";                      break;
+    case ( kNuisBANFFBgRES          ) : return "BANFF; Norm; BgRES Isospin 1/2";      break;
+    case ( kNuisBANFFSCCA           ) : return "BANFF; Second current class axial";   break;
+    case ( kNuisBANFFSCCV           ) : return "BANFF; Second current class vector";  break; 
+    case ( kNuisBANFFFermiMom       ) : return "BANFF; Fermi Momentum";               break; // uncorrelated in the past
+    case ( kNuisBANFFShapeCCoth     ) : return "BANFF; Shape; CC Oth";                break; // uncorrelated in the past
+    case ( kNuisBANFFBindE          ) : return "BANFF; Binding energy";               break; // uncorrelated in the past
+    case ( kNuisBANFFNormCCcoh      ) : return "BANFF; Norm; CC Coh";                 break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCcoh      ) : return "BANFF; Norm; NC Coh";                 break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCoth      ) : return "BANFF; Norm; NC Oth";                 break; // uncorrelated in the past
+    case ( kNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm; NuE To NuMu";            break; // uncorrelated in the past
      //
 
     //
@@ -383,19 +382,18 @@ string valor::util::AsString(PhysParamId_t p)
 #endif
 
     // NEW XSEC
-  case ( kRHCNuisBANFFMEC   ) : return "BANFF; Norm; MEC; RHC";                 break;
-  case ( kRHCNuisBANFFCA5   ) : return "BANFF; CA5 RES; RHC";                   break;
-  case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
-  case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current class axial; RHC";      break;
-  case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current class vector; RHC";     break;
-
-  case ( kRHCNuisBANFFFermiMom   ) : return "BANFF; Fermi Momentum; RHC";                  break; // uncorrelated in the past
-  case ( kRHCNuisBANFFShapeCCoth ) : return "BANFF; Shape; CC Oth; RHC";                   break; // uncorrelated in the past
-  case ( kRHCNuisBANFFBindE      ) : return "BANFF; Binding energy; RHC";                  break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormCCcoh  ) : return "BANFF; Norm; CC Coh; RHC";                    break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNCcoh  ) : return "BANFF; Norm; NC Coh; RHC";                    break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNCoth  ) : return "BANFF; Norm; NC Oth; RHC";                    break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm; NuE To NuMu; RHC";           break; // uncorrelated in the past
+  case ( kRHCNuisBANFFMEC           ) : return "BANFF; Norm; MEC; RHC";                    break;
+  case ( kRHCNuisBANFFCA5           ) : return "BANFF; CA5 RES; RHC";                      break;
+  case ( kRHCNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";      break;
+  case ( kRHCNuisBANFFSCCA          ) : return "BANFF; Second current class axial; RHC";   break;
+  case ( kRHCNuisBANFFSCCV          ) : return "BANFF; Second current class vector; RHC";  break;
+  case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";               break; // uncorrelated in the past
+  case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                break; // uncorrelated in the past
+  case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";               break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm; CC Coh; RHC";                 break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm; NC Coh; RHC";                 break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm; NC Oth; RHC";                 break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm; NuE To NuMu; RHC";            break; // uncorrelated in the past
     //
 
     //
@@ -777,8 +775,6 @@ string valor::util::AsString(PhysParamId_t p)
 #endif
     ////
 
-
-
     default : 
       return "--";
   }
@@ -861,19 +857,18 @@ string valor::util::AsStringTex(PhysParamId_t p)
 #endif
 
       // NEW XSEC
-    case ( kNuisBANFFMEC   ) : return "BANFF; Norm; MEC";                 break;
-    case ( kNuisBANFFCA5   ) : return "BANFF; CA5 RES";                   break;
-    case ( kNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2";   break;
-    case ( kNuisBANFFSCCA  ) : return "BANFF; Second current class axial";      break;
-    case ( kNuisBANFFSCCV  ) : return "BANFF; Second current class vector";     break;
- 
-    case ( kNuisBANFFFermiMom   ) : return "BANFF; Fermi Momentum";                  break; // uncorrelated in the past
-    case ( kNuisBANFFShapeCCoth ) : return "BANFF; Shape; CC Oth";                   break; // uncorrelated in the past
-    case ( kNuisBANFFBindE      ) : return "BANFF; Binding energy";                  break; // uncorrelated in the past
-    case ( kNuisBANFFNormCCcoh  ) : return "BANFF; Norm, CC Coh";                    break; // uncorrelated in the past
-    case ( kNuisBANFFNormNCcoh  ) : return "BANFF; Norm, NC Coh";                    break; // uncorrelated in the past
-    case ( kNuisBANFFNormNCoth  ) : return "BANFF; Norm, NC Oth";                    break; // uncorrelated in the past
-    case ( kNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_\\{mu}}$";  break; // uncorrelated in the past
+    case ( kNuisBANFFMEC           ) : return "BANFF; Norm; MEC";                           break;
+    case ( kNuisBANFFCA5           ) : return "BANFF; CA5 RES";                             break;
+    case ( kNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2";             break;
+    case ( kNuisBANFFSCCA          ) : return "BANFF; Second current class axial";          break;
+    case ( kNuisBANFFSCCV          ) : return "BANFF; Second current class vector";         break;
+    case ( kNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum";                      break; // uncorrelated in the past
+    case ( kNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth";                       break; // uncorrelated in the past
+    case ( kNuisBANFFBindE         ) : return "BANFF; Binding energy";                      break; // uncorrelated in the past
+    case ( kNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh";                        break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh";                        break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth";                        break; // uncorrelated in the past
+    case ( kNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_\\{mu}}$";  break; // uncorrelated in the past
      //
 
     //
@@ -1141,19 +1136,18 @@ string valor::util::AsStringTex(PhysParamId_t p)
 #endif
 
       // NEW XSEC
-    case ( kRHCNuisBANFFMEC   ) : return "BANFF; Norm; MEC; RHC";                 break;
-    case ( kRHCNuisBANFFCA5   ) : return "BANFF; CA5 RES; RHC";                   break;
-    case ( kRHCNuisBANFFBgRES ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";   break;
-    case ( kRHCNuisBANFFSCCA  ) : return "BANFF; Second current class axial; RHC";      break;
-    case ( kRHCNuisBANFFSCCV  ) : return "BANFF; Second current class vector; RHC";     break;
-
-    case ( kRHCNuisBANFFFermiMom   ) : return "BANFF; Fermi Momentum; RHC";                  break; // uncorrelated in the past
-    case ( kRHCNuisBANFFShapeCCoth ) : return "BANFF; Shape; CC Oth; RHC";                   break; // uncorrelated in the past
-    case ( kRHCNuisBANFFBindE      ) : return "BANFF; Binding energy; RHC";                  break; // uncorrelated in the past
-    case ( kRHCNuisBANFFNormCCcoh  ) : return "BANFF; Norm, CC Coh; RHC";                    break; // uncorrelated in the past
-    case ( kRHCNuisBANFFNormNCcoh  ) : return "BANFF; Norm, NC Coh; RHC";                    break; // uncorrelated in the past
-    case ( kRHCNuisBANFFNormNCoth  ) : return "BANFF; Norm, NC Oth; RHC";                    break; // uncorrelated in the past
-    case ( kRHCNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_\\{mu}}$; RHC";  break; // uncorrelated in the past
+    case ( kRHCNuisBANFFMEC           ) : return "BANFF; Norm; MEC; RHC";                           break;
+    case ( kRHCNuisBANFFCA5           ) : return "BANFF; CA5 RES; RHC";                             break;
+    case ( kRHCNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";             break;
+    case ( kRHCNuisBANFFSCCA          ) : return "BANFF; Second current class axial; RHC";          break;
+    case ( kRHCNuisBANFFSCCV          ) : return "BANFF; Second current class vector; RHC";         break;
+    case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";                      break; // uncorrelated in the past
+    case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                       break; // uncorrelated in the past
+    case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";                      break; // uncorrelated in the past
+    case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh; RHC";                        break; // uncorrelated in the past
+    case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh; RHC";                        break; // uncorrelated in the past
+    case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth; RHC";                        break; // uncorrelated in the past
+    case ( kRHCNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_\\{mu}}$; RHC";  break; // uncorrelated in the past
       //
 
     //
@@ -1740,19 +1734,18 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #endif
 
       // NEW XSEC
-    case ( kNuisBANFFMEC   ) : return "f_banffmec";             break;
-    case ( kNuisBANFFCA5   ) : return "f_banffca5";             break;
-    case ( kNuisBANFFBgRES ) : return "f_banffbgres";           break;
-    case ( kNuisBANFFSCCA  ) : return "f_banffscca";            break;
-    case ( kNuisBANFFSCCV  ) : return "f_banffsccv";            break;
-
-    case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi";       break; // uncorrelated in the past
-    case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth";   break; // uncorrelated in the past
-    case ( kNuisBANFFBindE             ) : return "f_banffbindE";        break; // uncorrelated in the past
-    case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh";   break; // uncorrelated in the past
-    case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh";   break; // uncorrelated in the past
-    case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth";   break; // uncorrelated in the past
-    case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu";  break; // uncorrelated in the past
+    case ( kNuisBANFFMEC               ) : return "f_banffmec";            break;
+    case ( kNuisBANFFCA5               ) : return "f_banffca5";            break;
+    case ( kNuisBANFFBgRES             ) : return "f_banffbgres";          break;
+    case ( kNuisBANFFSCCA              ) : return "f_banffscca";           break;
+    case ( kNuisBANFFSCCV              ) : return "f_banffsccv";           break;
+    case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi";         break; // uncorrelated in the past
+    case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth";     break; // uncorrelated in the past
+    case ( kNuisBANFFBindE             ) : return "f_banffbindE";          break; // uncorrelated in the past
+    case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh";     break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh";     break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth";     break; // uncorrelated in the past
+    case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu"; break; // uncorrelated in the past
       //
 
     case ( kNuisXSecFermiMom          ) : return "f_pfermi";       break;
@@ -1873,19 +1866,18 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #endif
 
     // NEW XSEC
-  case ( kRHCNuisBANFFMEC   ) : return "f_banffmec_rhc";             break;
-  case ( kRHCNuisBANFFCA5   ) : return "f_banffca5_rhc";             break;
-  case ( kRHCNuisBANFFBgRES ) : return "f_banffbgres_rhc";           break;
-  case ( kRHCNuisBANFFSCCA  ) : return "f_banffscca_rhc";            break;
-  case ( kRHCNuisBANFFSCCV  ) : return "f_banffsccv_rhc";            break;
- 
-  case ( kRHCNuisBANFFFermiMom          ) : return "f_banffpfermi_rhc";       break;
-  case ( kRHCNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_rhc";   break;
-  case ( kRHCNuisBANFFBindE             ) : return "f_banffbindE_rhc";        break;
-  case ( kRHCNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh_rhc";   break;
-  case ( kRHCNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh_rhc";   break;
-  case ( kRHCNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth_rhc";   break;
-  case ( kRHCNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu_rhc";  break;
+  case ( kRHCNuisBANFFMEC               ) : return "f_banffmec_rhc";            break;
+  case ( kRHCNuisBANFFCA5               ) : return "f_banffca5_rhc";            break;
+  case ( kRHCNuisBANFFBgRES             ) : return "f_banffbgres_rhc";          break;
+  case ( kRHCNuisBANFFSCCA              ) : return "f_banffscca_rhc";           break;
+  case ( kRHCNuisBANFFSCCV              ) : return "f_banffsccv_rhc";           break;
+  case ( kRHCNuisBANFFFermiMom          ) : return "f_banffpfermi_rhc";         break;
+  case ( kRHCNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_rhc";     break;
+  case ( kRHCNuisBANFFBindE             ) : return "f_banffbindE_rhc";          break;
+  case ( kRHCNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh_rhc";     break;
+  case ( kRHCNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh_rhc";     break;
+  case ( kRHCNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth_rhc";     break;
+  case ( kRHCNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu_rhc"; break;
    //
 
   case ( kRHCNuisXSecFermiMom          ) : return "f_pfermi_rhc";       break;
@@ -2305,7 +2297,6 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
     return "$f_{SCCA}^{banff}$";
   case ( kNuisBANFFSCCV  ) :
     return "$f_{SCCV}^{banff}$";
-
   case ( kNuisBANFFFermiMom   ) :     // uncorrelated in the past
     return "$f_{p_{f}}^{banff}$";
   case ( kNuisBANFFShapeCCoth ) :     // uncorrelated in the past
@@ -2477,7 +2468,6 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
     return "$f_{SCCA}^{banff} RHC$";
   case ( kRHCNuisBANFFSCCV  ) :
     return "$f_{SCCV}^{banff} RHC$";
-
   case ( kRHCNuisBANFFFermiMom   ) :     // uncorrelated in the past
     return "$f_{p_{f}}^{banff} RHC$";
   case ( kRHCNuisBANFFShapeCCoth ) :     // uncorrelated in the past
@@ -2735,19 +2725,18 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
 
     
     // NEW XSEC
-  case ( kRHCNuisBANFFMEC   ) : return "f_banffmec_rhc";             break; 
-  case ( kRHCNuisBANFFCA5   ) : return "f_banffca5_rhc";             break;
-  case ( kRHCNuisBANFFBgRES ) : return "f_banffbgres_rhc";           break;
-  case ( kRHCNuisBANFFSCCA  ) : return "f_banffscca_rhc";            break;
-  case ( kRHCNuisBANFFSCCV  ) : return "f_banffsccv_rhc";            break;
-    
-  case ( kRHCNuisBANFFFermiMom   ) : return "f_banffpfermi_rhc";     break;    // uncorrelated in the past
-  case ( kRHCNuisBANFFShapeCCoth ) : return "f_banffshapeCCoth_rhc"; break;     // uncorrelated in the past
-  case ( kRHCNuisBANFFBindE      ) : return "f_banffbindE_rhc";        break;    // uncorrelated in the past
-  case ( kRHCNuisBANFFNormCCcoh  ) : return "f_banffnorm_cccoh_rhc";   break;    // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNCcoh  ) : return "f_banffnorm_nccoh_rhc";   break;    // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNCoth  ) : return "f_banffnorm_ncoth_rhc";   break;    // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNuEToNuMu  ) : return "f_banffnorm_nuetonumu_rhc";  break; // uncorrelated in the past
+  case ( kRHCNuisBANFFMEC           ) : return "f_banffmec_rhc";            break; 
+  case ( kRHCNuisBANFFCA5           ) : return "f_banffca5_rhc";            break;
+  case ( kRHCNuisBANFFBgRES         ) : return "f_banffbgres_rhc";          break;
+  case ( kRHCNuisBANFFSCCA          ) : return "f_banffscca_rhc";           break;
+  case ( kRHCNuisBANFFSCCV          ) : return "f_banffsccv_rhc";           break;
+  case ( kRHCNuisBANFFFermiMom      ) : return "f_banffpfermi_rhc";         break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFShapeCCoth    ) : return "f_banffshapeCCoth_rhc";     break;     // uncorrelated in the past
+  case ( kRHCNuisBANFFBindE         ) : return "f_banffbindE_rhc";          break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFNormCCcoh     ) : return "f_banffnorm_cccoh_rhc";     break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCcoh     ) : return "f_banffnorm_nccoh_rhc";     break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCoth     ) : return "f_banffnorm_ncoth_rhc";     break;    // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNuEToNuMu ) : return "f_banffnorm_nuetonumu_rhc"; break; // uncorrelated in the past
     //
 
 
@@ -2968,7 +2957,6 @@ bool valor::util::IsUsingSplines(PhysParamId_t p)
   // NEW XSEC
   if(p == kNuisBANFFMARES || p == kRHCNuisBANFFMARES)
     return true;
-
   if(p == kNuisBANFFCA5 || p == kRHCNuisBANFFCA5)
     return true;
   if(p == kNuisBANFFSCCA || p == kRHCNuisBANFFSCCA)

@@ -494,35 +494,38 @@ void SuperkExpectation::ResetSystematics(void)
   // BANFF
   this->GetBANFF()->Tweak(true,0);
 
-  // NEW XSEC --> comment xsec syst that now are in banff or not used any longer
-
   // X Section
-  //this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , 0.);
-  //this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , 0.);
-  //this->GetNuXSec()->Tweak(kNuisXSecWshape        , 0.);
-  //this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , 0.);
-  //this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , 0.);
-  //#ifndef __NUEONLY__
-  //this->GetNuXSec()->Tweak(kNuisXSecBindE         , 0.);
-  //#endif
-  //this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , 0.);
-  //#ifndef __NUEONLY__
-  //this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , 0.);
-  //#endif
-  //#ifndef __NUMUONLY__
-  //this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , 0.);
-  //#endif
-  //this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , 0.);
-  //this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , 0.);
-  //#ifndef __NUEONLY__
-  //this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, 0.);
-  //#endif
-  //
+
+  // NEW XSEC --> comment xsec syst that now are in banff or not used any longer
+  // --> not commented any longer
+
+  // NEW XSEC NIWG
+#if defined(__USE_NIWG2013__)
+  this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecWshape        , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , 0.);
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kNuisXSecBindE         , 0.);
+  #endif
+  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , 0.);
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , 0.);
+  #endif
+  #ifndef __NUMUONLY__
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , 0.);
+  #endif
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , 0.);
+  this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , 0.);
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, 0.);
+  #endif
   //RHC
-  //
-  //this->GetNuXSec()->Tweak(kNuisRHCToFHC, 0.);
-
-
+  this->GetNuXSec()->Tweak(kNuisRHCToFHC, 0.);
+#elif defined(__USE_NIWG2015__)
+  // No uncorrelated NIWG2015 xsec systematics 
+#endif
 
   // SK det + FSI
   this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(0.);
@@ -531,29 +534,36 @@ void SuperkExpectation::ResetSystematics(void)
   // BANFF
   this->GetBANFF()->TweakRHC(true,0);
 
-  // NEW XSEC --> comment xsec syst that now are in banff or not used any longer
-
   // X Section
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecFermiMom      , 0.);
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecSpecFunc      , 0.);
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecWshape        , 0.);
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecShapeCCoth    , 0.);
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecPiLessDelta   , 0.);
-  //#ifndef __NUEONLY__
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecBindE         , 0.);
-  //#endif
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecNormCCcoh     , 0.);
-  //#ifndef __NUEONLY__
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecNormNC1piC    , 0.);
-  //#endif
-  //#ifndef __NUMUONLY__
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCcoh     , 0.);
-  //#endif
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCoth     , 0.);
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecNormNuEToNuMu , 0.);
-  //#ifndef __NUEONLY__
-  //this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, 0.);
-  //#endif
+
+  // NEW XSEC --> comment xsec syst that now are in banff or not used any longer
+  // --> not commented any longer
+
+  // NEW XSEC NIWG
+#if defined(__USE_NIWG2013__)
+  this->GetNuXSec()->Tweak(kRHCNuisXSecFermiMom      , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecSpecFunc      , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecWshape        , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecShapeCCoth    , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecPiLessDelta   , 0.);
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kRHCNuisXSecBindE         , 0.);
+  #endif
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormCCcoh     , 0.);
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNC1piC    , 0.);
+  #endif
+  #ifndef __NUMUONLY__
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCcoh     , 0.);
+  #endif
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCoth     , 0.);
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNuEToNuMu , 0.);
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, 0.);
+  #endif
+#elif defined(__USE_NIWG2015__)
+  // No uncorrelated NIWG2015 xsec systematics
+#endif
   
   /// NEW MULTIRING 2
   //
@@ -592,7 +602,6 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
     }
   }
   
-
 //
 // Valid systematic parameter names:
 // 
@@ -803,79 +812,89 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
     }//!is_rhc
   }//banff
 
+
+
   //
   // XSec
   //
 
   // NEW XSEC --> comment xsec syst that now are in banff or not used any longer
+  // --> not commented any longer
 
-  //   else if(systematic == "pfermi")
-  //     this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , twkdial);
-  //   else if(systematic == "specfunc")
-  //     this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , twkdial);
-  //   else if(systematic == "wshape")
-  //     this->GetNuXSec()->Tweak(kNuisXSecWshape        , twkdial);
-  //   else if(systematic == "shapeccoth")
-  //     this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , twkdial);
-  //   else if(systematic == "pilessdelta")
-  //     this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , twkdial);
-  // #ifndef __NUEONLY__
-  //   else if(systematic == "bindE")
-  //     this->GetNuXSec()->Tweak(kNuisXSecBindE         , twkdial);
-  // #endif
-  //   else if(systematic == "norm_cccoh")
-  //     this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , twkdial);
-  // #ifndef __NUMUONLY__
-  //   else if(systematic == "norm_nccoh")
-  //     this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , twkdial);
-  // #endif
-  // #ifndef __NUEONLY__
-  //   else if(systematic == "norm_nc1piC")
-  //     this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , twkdial);
-  // #endif
-  //   else if(systematic == "norm_ncoth")
-  //     this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , twkdial);
-  //   else if(systematic == "norm_nuetonumu")
-  //     this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , twkdial);
-  // #ifndef __NUEONLY__
-  //   else if(systematic == "norm_antinutonu")
-  //     this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, twkdial);
-  // #endif
-  //   else if(systematic == "pfermi_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecFermiMom      , twkdial);
-  //   else if(systematic == "specfunc_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecSpecFunc      , twkdial);
-  //   else if(systematic == "wshape_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecWshape        , twkdial);
-  //   else if(systematic == "shapeccoth_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecShapeCCoth    , twkdial);
-  //   else if(systematic == "pilessdelta_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecPiLessDelta   , twkdial);
-  // #ifndef __NUEONLY__
-  //   else if(systematic == "bindE_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecBindE         , twkdial);
-  // #endif
-  //   else if(systematic == "norm_cccoh_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecNormCCcoh     , twkdial);
-  // #ifndef __NUMUONLY__
-  //   else if(systematic == "norm_nccoh_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCcoh     , twkdial);
-  // #endif
-  // #ifndef __NUEONLY__
-  //   else if(systematic == "norm_nc1piC_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecNormNC1piC    , twkdial);
-  // #endif
-  //   else if(systematic == "norm_ncoth_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCoth     , twkdial);
-  //   else if(systematic == "norm_nuetonumu_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecNormNuEToNuMu , twkdial);
-  // #ifndef __NUEONLY__
-  //   else if(systematic == "norm_antinutonu_rhc")
-  //     this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, twkdial);
-  // #endif
-  //   else if(systematic == "rhcfhcnorm")
-  //     this->GetNuXSec()->Tweak(kNuisRHCToFHC, twkdial);
+  // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+
+    else if(systematic == "pfermi")
+      this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , twkdial);
+    else if(systematic == "specfunc")
+      this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , twkdial);
+    else if(systematic == "wshape")
+      this->GetNuXSec()->Tweak(kNuisXSecWshape        , twkdial);
+    else if(systematic == "shapeccoth")
+      this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , twkdial);
+    else if(systematic == "pilessdelta")
+      this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , twkdial);
+    #ifndef __NUEONLY__
+    else if(systematic == "bindE")
+      this->GetNuXSec()->Tweak(kNuisXSecBindE         , twkdial);
+    #endif
+    else if(systematic == "norm_cccoh")
+      this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , twkdial);
+    #ifndef __NUMUONLY__
+    else if(systematic == "norm_nccoh")
+      this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , twkdial);
+    #endif
+    #ifndef __NUEONLY__
+    else if(systematic == "norm_nc1piC")
+      this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , twkdial);
+    #endif
+    else if(systematic == "norm_ncoth")
+      this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , twkdial);
+    else if(systematic == "norm_nuetonumu")
+      this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , twkdial);
+    #ifndef __NUEONLY__
+    else if(systematic == "norm_antinutonu")
+      this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, twkdial);
+    #endif
+    else if(systematic == "pfermi_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecFermiMom      , twkdial);
+    else if(systematic == "specfunc_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecSpecFunc      , twkdial);
+    else if(systematic == "wshape_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecWshape        , twkdial);
+    else if(systematic == "shapeccoth_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecShapeCCoth    , twkdial);
+    else if(systematic == "pilessdelta_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecPiLessDelta   , twkdial);
+    #ifndef __NUEONLY__
+    else if(systematic == "bindE_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecBindE         , twkdial);
+    #endif
+    else if(systematic == "norm_cccoh_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecNormCCcoh     , twkdial);
+    #ifndef __NUMUONLY__
+    else if(systematic == "norm_nccoh_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCcoh     , twkdial);
+    #endif
+    #ifndef __NUEONLY__
+    else if(systematic == "norm_nc1piC_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecNormNC1piC    , twkdial);
+    #endif
+    else if(systematic == "norm_ncoth_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCoth     , twkdial);
+    else if(systematic == "norm_nuetonumu_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecNormNuEToNuMu , twkdial);
+    #ifndef __NUEONLY__
+    else if(systematic == "norm_antinutonu_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, twkdial);
+    #endif
+    else if(systematic == "rhcfhcnorm")
+      this->GetNuXSec()->Tweak(kNuisRHCToFHC, twkdial);
   
+#elif defined(__USE_NIWG2015__)
+  // No uncorrelated NIWG2015 xsec systematics
+#endif
   
   else {
      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
@@ -1007,8 +1026,15 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
      cerr << "Exp/Tweak>> Unhandled systematic parameter (" << util::AsString(p) << ")" << endl;
      exit(1);
   }   
-     
+         
 }
+
+
+
+
+
+
+
 //________________________________________________________________________________________
 void SuperkExpectation::RandomizeSystematics(void)
 {
@@ -1017,12 +1043,20 @@ void SuperkExpectation::RandomizeSystematics(void)
 #endif
 
 #ifdef HKHACK
-  // NEW XSEC --> comment all old non-banff 
-  // this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  // NEW XSEC --> comment all old non-banff --> Not commented any longer
+  // NEW XSEC NIWG
+#if defined(__USE_NIWG2015__)
+  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+#elif defined(__USE_NIWG2015__)
+  // No uncorrelated NIWG2015 xsec systematics
+#endif
+
 #else
+
+
 
 //   // common to all the samples
 //   this->TweakAllBANFFSystematics();
@@ -1052,6 +1086,8 @@ void SuperkExpectation::RandomizeSystematics(void)
 // #endif
 
 
+  // Don't need to comment TweakAllUncorrelatedXSecSystematics() cause there could be 
+  // future NIWG uncorrelated xsec systematics
 
   // NEW FLUX
   
@@ -1059,6 +1095,7 @@ void SuperkExpectation::RandomizeSystematics(void)
 #ifdef __FHC_RUNNING__
   this->TweakAllBANFFSystematics();
   this->TweakAllSKDetectorFSISystematics();
+  this->TweakAllUncorrelatedXSecSystematics();  // NEW XSEC NIWG
 #endif
   
 #ifdef __RHC_RUNNING__   /// NEW MULTIRING 3
@@ -1164,34 +1201,41 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   cout << "Exp >> Generating random variations of all Uncorrelated XSec systematic params." << endl;
 #endif
 
-  // NEW XSEC --> comment all old non-banff xsec systematics
- 
-  //   // XSec
-  //   this->GetNuXSec()->Tweak(kNuisXSecFermiMom       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  //   double tweak = 2;
-  //   while(tweak > 1 || tweak < 0)
-  //     tweak = Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.);
-  //   this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , tweak);
-  //   //this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
-  //   //  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  //   this->GetNuXSec()->Tweak(kNuisXSecWshape         , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  //   this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  //   this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta    , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // #ifndef __NUEONLY__
-  //   this->GetNuXSec()->Tweak(kNuisXSecBindE          , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // #endif
-  //   this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // #ifndef __NUEONLY__
-  //   this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // #endif
-  // #ifndef __NUMUONLY__
-  //   this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // #endif
-  //   this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  //   this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu  , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // #ifndef __NUEONLY__
-  //   this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  // #endif
+  // NEW XSEC --> comment all old non-banff xsec systematics --> not needed anylonger
+
+  // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+  this->GetNuXSec()->Tweak(kNuisXSecFermiMom       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  double tweak = 2;
+  while(tweak > 1 || tweak < 0)
+    tweak = Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.);
+  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , tweak);
+  //this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
+  //  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecWshape         , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta    , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kNuisXSecBindE          , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  #endif
+  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  #endif
+  #ifndef __NUMUONLY__
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  #endif
+  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu  , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  #ifndef __NUEONLY__
+  this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  #endif
+
+#elif defined(__USE_NIWG2015__)
+    // No uncorrelated NIWG2015 xsec systematics
+#endif
+
 }
 //________________________________________________________________________________________
 PhysParamList SuperkExpectation::Tweaks(void) 
@@ -1209,31 +1253,39 @@ PhysParamList SuperkExpectation::Tweaks(void)
   }
 
 
-  // NEW XSEC --> comment old non-banff systematics
+  // 
+  //  Uncorrelated xsec
+  // 
+
+  // NEW XSEC --> comment old non-banff systematics --> Not needed anylonger
   
-  //   // 
-  //   //  Uncorrelated xsec
-  //   // 
-  //   pl.SetValue( kNuisXSecFermiMom,        this->GetNuXSec()->CurrentValue(kNuisXSecFermiMom)       );
-  //   pl.SetValue( kNuisXSecSpecFunc,        this->GetNuXSec()->CurrentValue(kNuisXSecSpecFunc)       );
-  //   pl.SetValue( kNuisXSecWshape,          this->GetNuXSec()->CurrentValue(kNuisXSecWshape)         );
-  //   pl.SetValue( kNuisXSecShapeCCoth,      this->GetNuXSec()->CurrentValue(kNuisXSecShapeCCoth)     );
-  //   pl.SetValue( kNuisXSecPiLessDelta,     this->GetNuXSec()->CurrentValue(kNuisXSecPiLessDelta)    );
-  // #ifndef __NUEONLY__
-  //   pl.SetValue( kNuisXSecBindE,           this->GetNuXSec()->CurrentValue(kNuisXSecBindE)          );
-  // #endif
-  //   pl.SetValue( kNuisXSecNormCCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormCCcoh)      );
-  // #ifndef __NUEONLY__
-  //   pl.SetValue( kNuisXSecNormNC1piC,      this->GetNuXSec()->CurrentValue(kNuisXSecNormNC1piC)     );
-  // #endif
-  // #ifndef __NUMUONLY__
-  //   pl.SetValue( kNuisXSecNormNCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCcoh)      );
-  // #endif
-  //   pl.SetValue( kNuisXSecNormNCoth,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCoth)      );
-  //   pl.SetValue( kNuisXSecNormNuEToNuMu,   this->GetNuXSec()->CurrentValue(kNuisXSecNormNuEToNuMu)  );
-  // #ifndef __NUEONLY__
-  //   pl.SetValue( kNuisXSecNormAntiNuToNu,  this->GetNuXSec()->CurrentValue(kNuisXSecNormAntiNuToNu) );
-  // #endif
+  // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+  pl.SetValue( kNuisXSecFermiMom,        this->GetNuXSec()->CurrentValue(kNuisXSecFermiMom)       );
+  pl.SetValue( kNuisXSecSpecFunc,        this->GetNuXSec()->CurrentValue(kNuisXSecSpecFunc)       );
+  pl.SetValue( kNuisXSecWshape,          this->GetNuXSec()->CurrentValue(kNuisXSecWshape)         );
+  pl.SetValue( kNuisXSecShapeCCoth,      this->GetNuXSec()->CurrentValue(kNuisXSecShapeCCoth)     );
+  pl.SetValue( kNuisXSecPiLessDelta,     this->GetNuXSec()->CurrentValue(kNuisXSecPiLessDelta)    );
+  #ifndef __NUEONLY__
+  pl.SetValue( kNuisXSecBindE,           this->GetNuXSec()->CurrentValue(kNuisXSecBindE)          );
+  #endif
+  pl.SetValue( kNuisXSecNormCCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormCCcoh)      );
+  #ifndef __NUEONLY__
+  pl.SetValue( kNuisXSecNormNC1piC,      this->GetNuXSec()->CurrentValue(kNuisXSecNormNC1piC)     );
+  #endif
+  #ifndef __NUMUONLY__
+  pl.SetValue( kNuisXSecNormNCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCcoh)      );
+  #endif
+  pl.SetValue( kNuisXSecNormNCoth,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCoth)      );
+  pl.SetValue( kNuisXSecNormNuEToNuMu,   this->GetNuXSec()->CurrentValue(kNuisXSecNormNuEToNuMu)  );
+  #ifndef __NUEONLY__
+  pl.SetValue( kNuisXSecNormAntiNuToNu,  this->GetNuXSec()->CurrentValue(kNuisXSecNormAntiNuToNu) );
+  #endif
+
+#elif defined(__USE_NIWG2015__)
+  // No uncorrelated NIWG2015 xsec systematics
+#endif
 
   // 
   // SuperK detector + FSI systematics
@@ -1763,7 +1815,6 @@ double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
   // Add penalty term for BANFF params 
   //
   
-
   //double dchisq_penalty_banff = fBANFF->ChisqPenalty() + fBANFF->RHCChisqPenalty();
     
   // NEW FLUX
