@@ -37,24 +37,26 @@ types = [("nuebar_x_nuebar"  ,"nuebar"    ),  # First entry is new-style names, 
          ("numu_x_numu"      ,"numu"      ),
         ]
 
-systematics = ["maqe_ccqe",
-               "pfo_ccqe",
-               "ebo_ccqe",
-               "ca5_cc1pi",
-               "ca5_ncpiz",
-               "ca5_ncpipm",
-               "manff_cc1pi",
-               "manff_ncpiz",
-               "manff_ncpipm",
-               "bgscl_cc1pi",
-               "bgscl_ncpiz",
-               "bgscl_ncpipm",
-               "dismpishp_ccoth",
-               "sccvec_ccqe",
-               "sccvec_ncoth",
-               "sccaxl_ccqe",
-               "sccaxl_ncoth",
-               "rpa_ccqe",]
+# Name/mode as first entry, whether or not to reformat the spline to use sigmas is in second
+systematics = [("maqe_ccqe"       , True  ),
+               ("pfo_ccqe"        , True  ),
+               ("ebo_ccqe"        , True  ),
+               ("ca5_cc1pi"       , True  ),
+               ("ca5_ncpiz"       , True  ),
+               ("ca5_ncpipm"      , True  ),
+               ("manff_cc1pi"     , True  ),
+               ("manff_ncpiz"     , True  ),
+               ("manff_ncpipm"    , True  ),
+               ("bgscl_cc1pi"     , True  ),
+               ("bgscl_ncpiz"     , True  ),
+               ("bgscl_ncpipm"    , True  ),
+               ("dismpishp_ccoth" , True  ),
+               ("sccvec_ccqe"     , True  ),
+               ("sccvec_ncoth"    , True  ),
+               ("sccaxl_ccqe"     , True  ),
+               ("sccaxl_ncoth"    , True  ),
+               ("rpa_ccqe"        , False )
+]
                
 samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
 
@@ -70,6 +72,12 @@ currents["1Re"]     = "250ka"
 currents["RHC1Rmu"] = "m250ka"
 currents["RHC1Re" ] = "m250ka"
 
+
+replacements = [("pipm","piC"),
+                ("piz" ,"pi0") ] # VALOR modes have pi0 instead of piz
+
+nknots_sigma = 13
+sigmas = np.array([0.5*i - 3. for i in xrange(nknots_sigma)])
 #______________________________________________________________________________________________________________________________
 
 def main():
@@ -94,11 +102,12 @@ def main():
       if not tf: print "Failed to open file:\n",path
       
       # Loop over spline types - systematic+mode
-      for syst in systematics:
+      for syst, change_spline_limits in systematics:
         
         par,mode = syst.split("_")
         
-        mode = mode.replace("piz","pi0") # VALOR modes have pi0 instead of piz
+        for (old,new) in replacements:
+          mode = mode.replace(old,new)
         
         # Get all the splines for this systematic+mode
         spline_dict = dict()
@@ -113,9 +122,30 @@ def main():
         for orig_spl_name, spline in spline_dict.iteritems():
           
           junk,bins = orig_spl_name.rsplit("_sp_")
+          
           new_spl_name = "spl_"+sample+"_"+par+"_"+valor_type+mode+"_"+bins
           
-          spline.Write(new_spl_name)
+          nknots = spline.GetNp()
+          knots = np.zeros(nknots,dtype=float)
+          
+          if change_spline_limits:
+            if nknots != nknots_sigma:
+              print "Warning: trying to attempt to remake splint with wrong number of knots: ",par,nknots
+              
+            x = ROOT.Double()
+            y = ROOT.Double()
+            
+            for i in xrange(nknots):
+              spline.GetKnot(i,x,y)
+              knots[i] = y
+          
+            new_spline = ROOT.TSpline3(new_spl_name,sigmas,knots,nknots)
+          
+          else:
+            new_spline = ROOT.TSpline3(spline)
+            new_spline.SetName(new_spl_name)
+            
+          new_spline.Write(new_spl_name)
       
       tf.Close()
       # end of input file loop
