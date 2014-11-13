@@ -22,6 +22,7 @@ Added samples, modes and systematics for reverse horn current running
 //#define __show_find_wght_spline_mesg_debug__
 //#define __save_ori_templates_init_debug__
 #define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
+//#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong.
 
 
 #define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
@@ -356,6 +357,24 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                  << idx << "  for spline: " << splname << endl;
             cout << "Exp/NuXSec >> Spline thinks there are " 
                  << spl->GetTitle() << endl;
+#endif
+
+#ifdef __check_splines_not_flat_on_read__
+            if (spl!=flatspline) {
+              int n_points_to_check = 11;
+              double zero_point = spl->Eval(0);
+              bool flat=true;
+              for (int ipoint = 0 ; ipoint < n_points_to_check ; ipoint++) {
+                double val = spl->GetXmin()+(spl->GetXmax()-spl->GetXmin()*ipoint/n_points_to_check);
+                if (TMath::Abs(spl->Eval(val)-zero_point) > 1E-3){
+                  flat=false;
+                  break;
+                }
+              }
+              if (flat) {
+                std::cerr<<"Exp/NuXSec >> Warning, input spline from file is flat: "<<splname<<std::endl;
+              }
+            }
 #endif
 
             if     (s == kSKsFCFV1RingMuLike)    fXSecWghtSpl1Rmu   [idx] = new TSpline3(*spl);
