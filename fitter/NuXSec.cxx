@@ -27,8 +27,6 @@ Added samples, modes and systematics for reverse horn current running
 #define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
-//#define OLD_SPLINE_NAMING 
-
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -179,10 +177,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   spline_files[kSKsFCFV1RingMuLike    ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
   spline_files[kSKsFCFV1RingELike     ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring" );
 
-#ifndef OLD_SPLINE_NAMING
+#if defined(__USE_NIWG2015__)
   spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring_rhc");
   spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring_rhc" );
-#else
+#elif defined(__USE_NIWG2013__)
   spline_files[kSKsRHCFCFV1RingMuLike ] = spline_files[kSKsFCFV1RingMuLike];
   spline_files[kSKsRHCFCFV1RingELike  ] = spline_files[kSKsFCFV1RingELike ]; 
 #endif
@@ -391,6 +389,19 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   return true;  
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //________________________________________________________________________________________
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -1891,7 +1902,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
 {
   ostringstream splname;
   splname << "spl_";
-#ifdef OLD_SPLINE_NAMING
+#if defined(__USE_NIWG2013__)
   if(IsMultiRMuSample(s))
     splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
   else if(IsMultiRESample(s))
@@ -1901,14 +1912,15 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
   
   splname   << util::AsStringCompact_splinehack(m) << "_"
             << util::AsStringCompact_splinehack(p) << "_"
-#else
+	    << reco_bin << "_" 
+	    << true_bin;
+#elif defined(__USE_NIWG2015__)
   splname << util::AsStringCompact(s) <<"_"
           << util::AsStringSpline(p)  <<"_"
           << util::AsStringCompact(m) <<"_"
-#endif
           << true_bin << "_" 
           << reco_bin;
-          
+#endif
   return splname.str();
 }
 //________________________________________________________________________________________
