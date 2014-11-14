@@ -154,21 +154,54 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kNuisSKDetFSI003 ) :
     case ( kNuisSKDetFSI004 ) :
     case ( kNuisSKDetFSI005 ) :
-    {
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+    case ( kNuisSKDetFSI006 ) :
+    case ( kNuisSKDetFSI007 ) :
+    case ( kNuisSKDetFSI008 ) :
+    case ( kNuisSKDetFSI009 ) :
+    case ( kNuisSKDetFSI010 ) :
+    case ( kNuisSKDetFSI011 ) :
+#endif
+
+      {
       int ip = (int)p - (int)kNuisSKDetFSI000;
       string nutypes = "";
       switch(p) {
-        case (kNuisSKDetFSI000) :
-        case (kNuisSKDetFSI001) :
-        case (kNuisSKDetFSI002) :
-          nutypes = "numu/numubar CCQE (1Rmu)"; break;
-        case (kNuisSKDetFSI003) :
-          nutypes = "numu/numubar CCnQE (1Rmu)"; break;
-        case (kNuisSKDetFSI004) :
-          nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
-        case (kNuisSKDetFSI005) :
-          nutypes = "all NC (1Rmu)"; break;
-        default : nutypes = "--";
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
+      case (kNuisSKDetFSI000) :
+      case (kNuisSKDetFSI001) :
+      case (kNuisSKDetFSI002) :
+	nutypes = "numu/numubar CCQE (1Rmu)"; break;
+      case (kNuisSKDetFSI003) :
+	nutypes = "numu/numubar CCnQE (1Rmu)"; break;
+      case (kNuisSKDetFSI004) :
+	nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
+      case (kNuisSKDetFSI005) :
+	nutypes = "all NC (1Rmu)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+      case (kNuisSKDetFSI000) :
+      case (kNuisSKDetFSI001) :
+      case (kNuisSKDetFSI002) :
+	nutypes = "numu/numubar CCQE (1Rmu)"; break;
+      case (kNuisSKDetFSI003) :
+      case (kNuisSKDetFSI004) :
+      case (kNuisSKDetFSI005) :
+	nutypes = "numu/numubar CCnQE (1Rmu)"; break;
+      case (kNuisSKDetFSI006) :
+      case (kNuisSKDetFSI007) :
+      case (kNuisSKDetFSI008) :
+	nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
+      case (kNuisSKDetFSI009) :
+      case (kNuisSKDetFSI010) :
+      case (kNuisSKDetFSI011) :
+	nutypes = "all NC (1Rmu)"; break;
+#endif
+      
+      default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
                   kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
@@ -176,50 +209,100 @@ string valor::util::AsString(PhysParamId_t p)
     }//FSI for 1Rmu
 #endif
 #if FSI_BINS != 2
-    case ( kNuisSKDetFSI006 ) :
-    case ( kNuisSKDetFSI007 ) :
-    case ( kNuisSKDetFSI008 ) :
-    case ( kNuisSKDetFSI009 ) :
-    case ( kNuisSKDetFSI010 ) :
-    case ( kNuisSKDetFSI011 ) :
-    case ( kNuisSKDetFSI012 ) :
-    case ( kNuisSKDetFSI013 ) :
-    case ( kNuisSKDetFSI014 ) :
-    case ( kNuisSKDetFSI015 ) :
-    case ( kNuisSKDetFSI016 ) :
-    case ( kNuisSKDetFSI017 ) :
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
+  case ( kNuisSKDetFSI006 ) :
+  case ( kNuisSKDetFSI007 ) :
+  case ( kNuisSKDetFSI008 ) :
+  case ( kNuisSKDetFSI009 ) :
+  case ( kNuisSKDetFSI010 ) :
+  case ( kNuisSKDetFSI011 ) :
+  case ( kNuisSKDetFSI012 ) :
+  case ( kNuisSKDetFSI013 ) :
+  case ( kNuisSKDetFSI014 ) :
+  case ( kNuisSKDetFSI015 ) :
+  case ( kNuisSKDetFSI016 ) :
+  case ( kNuisSKDetFSI017 ) :
+#elif defined(__USE_SKDETFSI2015__)
+  case ( kNuisSKDetFSI012 ) :
+  case ( kNuisSKDetFSI013 ) :
+  case ( kNuisSKDetFSI014 ) :
+  case ( kNuisSKDetFSI015 ) :
+  case ( kNuisSKDetFSI016 ) :
+  case ( kNuisSKDetFSI017 ) :
+  case ( kNuisSKDetFSI018 ) :
+  case ( kNuisSKDetFSI019 ) :
+  case ( kNuisSKDetFSI020 ) :
+  case ( kNuisSKDetFSI021 ) :
+  case ( kNuisSKDetFSI022 ) :
+  case ( kNuisSKDetFSI023 ) :
+#endif
+
       {   
 #if FSI_BINS == 3
+
+	// NEW SKDETFSI
+      #if defined(__USE_SKDETFSI2013__)
       int ip = (int)p - (int)kNuisSKDetFSI006;
+      #elif defined(__USE_SKDETFSI2015__)
+      int ip = (int)p - (int)kNuisSKDetFSI012;
+      #endif
+
 #elif FSI_BINS ==1
       int ip = (int)p - (int)kNuisSKDetFSI000;
 #endif
       string nutypes = "";
-        switch(p) {
-        case (kNuisSKDetFSI006) :
-        case (kNuisSKDetFSI007) :
-        case (kNuisSKDetFSI008) :
-          nutypes = "oscillated nue CC (1Re)"; break;
-        case (kNuisSKDetFSI009) :
-        case (kNuisSKDetFSI010) :
-        case (kNuisSKDetFSI011) :
-          nutypes = "numu/numubar CC (1Re)"; break;
-        case (kNuisSKDetFSI012) :
-        case (kNuisSKDetFSI013) :
-        case (kNuisSKDetFSI014) :
-          nutypes = "nue/nuebar CC (1Re)"; break;
-        case (kNuisSKDetFSI015) :
-        case (kNuisSKDetFSI016) :
-        case (kNuisSKDetFSI017) :
-          nutypes = "all NC (1Re)"; break;
-        default : nutypes = "--";
-        }
+      switch(p) {
+	
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
+      case (kNuisSKDetFSI006) :
+      case (kNuisSKDetFSI007) :
+      case (kNuisSKDetFSI008) :
+	nutypes = "oscillated nue CC (1Re)"; break;
+      case (kNuisSKDetFSI009) :
+      case (kNuisSKDetFSI010) :
+      case (kNuisSKDetFSI011) :
+	nutypes = "numu/numubar CC (1Re)"; break;
+      case (kNuisSKDetFSI012) :
+      case (kNuisSKDetFSI013) :
+      case (kNuisSKDetFSI014) :
+	nutypes = "nue/nuebar CC (1Re)"; break;
+      case (kNuisSKDetFSI015) :
+      case (kNuisSKDetFSI016) :
+      case (kNuisSKDetFSI017) :
+	nutypes = "all NC (1Re)"; break;      
+#elif defined(__USE_SKDETFSI2015__)
+      case (kNuisSKDetFSI012) :
+      case (kNuisSKDetFSI013) :
+      case (kNuisSKDetFSI014) :
+	nutypes = "oscillated nue CC (1Re)"; break;
+      case (kNuisSKDetFSI015) :
+      case (kNuisSKDetFSI016) :
+      case (kNuisSKDetFSI017) :
+	nutypes = "numu/numubar CC (1Re)"; break;
+      case (kNuisSKDetFSI018) :
+      case (kNuisSKDetFSI019) :
+      case (kNuisSKDetFSI020) :
+	nutypes = "nue/nuebar CC (1Re)"; break;
+      case (kNuisSKDetFSI021) :
+      case (kNuisSKDetFSI022) :
+      case (kNuisSKDetFSI023) :
+	nutypes = "all NC (1Re)"; break;
+#endif
+      
+      default : nutypes = "--";
+      }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
                   kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
       }
 #endif
 #else
+
+      // OTHER FSI_BINS THAN 1,2,3 
+
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
     case ( kNuisSKDetFSI002 ) :
@@ -312,7 +395,7 @@ string valor::util::AsString(PhysParamId_t p)
                   kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
       }
-#endif
+#endif // FSI_BINS
 //#endif //SKDETFSI  
 
   case ( kNuisRHCToFHC ) : return "RHC to FHC normalisation"; break;
@@ -432,10 +515,24 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI003 ) :
   case ( kRHCNuisSKDetFSI004 ) :
   case ( kRHCNuisSKDetFSI005 ) :
+	
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+  case ( kRHCNuisSKDetFSI006 ) :
+  case ( kRHCNuisSKDetFSI007 ) :
+  case ( kRHCNuisSKDetFSI008 ) :
+  case ( kRHCNuisSKDetFSI009 ) :
+  case ( kRHCNuisSKDetFSI010 ) :
+  case ( kRHCNuisSKDetFSI011 ) :
+#endif
+
     {
       int ip = (int)p - (int)kRHCNuisSKDetFSI000;
       string nutypes = "";
       switch(p) {
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
       case (kRHCNuisSKDetFSI000) :
       case (kRHCNuisSKDetFSI001) :
       case (kRHCNuisSKDetFSI002) :
@@ -446,6 +543,25 @@ string valor::util::AsString(PhysParamId_t p)
         nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
       case (kRHCNuisSKDetFSI005) :
         nutypes = "all NC (1Rmu)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+      case (kRHCNuisSKDetFSI000) :
+      case (kRHCNuisSKDetFSI001) :
+      case (kRHCNuisSKDetFSI002) :
+	nutypes = "numu/numubar CCQE (1Rmu)"; break;
+      case (kRHCNuisSKDetFSI003) :
+      case (kRHCNuisSKDetFSI004) :
+      case (kRHCNuisSKDetFSI005) :
+	nutypes = "numu/numubar CCnQE (1Rmu)"; break;
+      case (kRHCNuisSKDetFSI006) :
+      case (kRHCNuisSKDetFSI007) :
+      case (kRHCNuisSKDetFSI008) :
+	nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
+      case (kRHCNuisSKDetFSI009) :
+      case (kRHCNuisSKDetFSI010) :
+      case (kRHCNuisSKDetFSI011) :
+	nutypes = "all NC (1Rmu)"; break;
+#endif
+      
       default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
@@ -454,6 +570,9 @@ string valor::util::AsString(PhysParamId_t p)
     }//FSI for 1Rmu
 #endif
 #if FSI_BINS != 2
+
+  // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   case ( kRHCNuisSKDetFSI006 ) :
   case ( kRHCNuisSKDetFSI007 ) :
   case ( kRHCNuisSKDetFSI008 ) :
@@ -466,14 +585,39 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI015 ) :
   case ( kRHCNuisSKDetFSI016 ) :
   case ( kRHCNuisSKDetFSI017 ) :
+#elif defined(__USE_SKDETFSI2015__)
+  case ( kRHCNuisSKDetFSI012 ) :
+  case ( kRHCNuisSKDetFSI013 ) :
+  case ( kRHCNuisSKDetFSI014 ) :
+  case ( kRHCNuisSKDetFSI015 ) :
+  case ( kRHCNuisSKDetFSI016 ) :
+  case ( kRHCNuisSKDetFSI017 ) :
+  case ( kRHCNuisSKDetFSI018 ) :
+  case ( kRHCNuisSKDetFSI019 ) :
+  case ( kRHCNuisSKDetFSI020 ) :
+  case ( kRHCNuisSKDetFSI021 ) :
+  case ( kRHCNuisSKDetFSI022 ) :
+  case ( kRHCNuisSKDetFSI023 ) :
+#endif
+
     {
 #if FSI_BINS == 3
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
       int ip = (int)p - (int)kRHCNuisSKDetFSI006;
+#elif defined(__USE_SKDETFSI2015__)
+      int ip = (int)p - (int)kRHCNuisSKDetFSI012;
+#endif
+
 #elif FSI_BINS ==1
       int ip = (int)p - (int)kRHCNuisSKDetFSI000;
 #endif
       string nutypes = "";
       switch(p) {
+	
+	// NEW SKDETFSI 
+#if defined(__USE_SKDETFSI2013__)
       case (kRHCNuisSKDetFSI006) :
       case (kRHCNuisSKDetFSI007) :
       case (kRHCNuisSKDetFSI008) :
@@ -490,6 +634,25 @@ string valor::util::AsString(PhysParamId_t p)
       case (kRHCNuisSKDetFSI016) :
       case (kRHCNuisSKDetFSI017) :
         nutypes = "all NC (1Re)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+      case (kRHCNuisSKDetFSI012) :
+      case (kRHCNuisSKDetFSI013) :
+      case (kRHCNuisSKDetFSI014) :
+	nutypes = "oscillated nue CC (1Re)"; break;
+      case (kRHCNuisSKDetFSI015) :
+      case (kRHCNuisSKDetFSI016) :
+      case (kRHCNuisSKDetFSI017) :
+	nutypes = "numu/numubar CC (1Re)"; break;
+      case (kRHCNuisSKDetFSI018) :
+      case (kRHCNuisSKDetFSI019) :
+      case (kRHCNuisSKDetFSI020) :
+	nutypes = "nue/nuebar CC (1Re)"; break;
+      case (kRHCNuisSKDetFSI021) :
+      case (kRHCNuisSKDetFSI022) :
+      case (kRHCNuisSKDetFSI023) :
+	nutypes = "all NC (1Re)"; break;
+#endif
+
       default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
@@ -498,6 +661,9 @@ string valor::util::AsString(PhysParamId_t p)
     }
 #endif
 #else
+
+  // OTHER FSI_BINS THAN 1,2,3 
+
   case ( kRHCNuisSKDetFSI000 ) :
   case ( kRHCNuisSKDetFSI001 ) :
   case ( kRHCNuisSKDetFSI002 ) :
@@ -613,10 +779,24 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kMultiRingNuisSKDetFSI003 ) :
     case ( kMultiRingNuisSKDetFSI004 ) :
     case ( kMultiRingNuisSKDetFSI005 ) :
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+    case ( kMultiRingNuisSKDetFSI006 ) :
+    case ( kMultiRingNuisSKDetFSI007 ) :
+    case ( kMultiRingNuisSKDetFSI008 ) :
+    case ( kMultiRingNuisSKDetFSI009 ) :
+    case ( kMultiRingNuisSKDetFSI010 ) :
+    case ( kMultiRingNuisSKDetFSI011 ) :
+#endif
+
       {
 	int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
 	string nutypes = "";
 	switch(p) {
+
+	  // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
 	case (kMultiRingNuisSKDetFSI000) :
 	case (kMultiRingNuisSKDetFSI001) :
 	case (kMultiRingNuisSKDetFSI002) :
@@ -627,6 +807,25 @@ string valor::util::AsString(PhysParamId_t p)
 	  nutypes = "nue/nuebar/signue CC (MultiRmu)"; break;
 	case (kMultiRingNuisSKDetFSI005) :
 	  nutypes = "all NC (MultiRmu)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+	case (kMultiRingNuisSKDetFSI000) :
+	case (kMultiRingNuisSKDetFSI001) :
+	case (kMultiRingNuisSKDetFSI002) :
+	  nutypes = "numu/numubar CCQE (1Rmu)"; break;
+	case (kMultiRingNuisSKDetFSI003) :
+	case (kMultiRingNuisSKDetFSI004) :
+	case (kMultiRingNuisSKDetFSI005) :
+	  nutypes = "numu/numubar CCnQE (1Rmu)"; break;
+	case (kMultiRingNuisSKDetFSI006) :
+	case (kMultiRingNuisSKDetFSI007) :
+	case (kMultiRingNuisSKDetFSI008) :
+	  nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
+	case (kMultiRingNuisSKDetFSI009) :
+	case (kMultiRingNuisSKDetFSI010) :
+	case (kMultiRingNuisSKDetFSI011) :
+	  nutypes = "all NC (1Rmu)"; break;
+#endif
+
 	default : nutypes = "--";
 	}
 	return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; MultiRing",ip,
@@ -635,26 +834,54 @@ string valor::util::AsString(PhysParamId_t p)
       }//FSI for MultiRmu
 #endif
 #if FSI_BINS != 2
-  case ( kMultiRingNuisSKDetFSI006 ) :
-  case ( kMultiRingNuisSKDetFSI007 ) :
-  case ( kMultiRingNuisSKDetFSI008 ) :
-  case ( kMultiRingNuisSKDetFSI009 ) :
-  case ( kMultiRingNuisSKDetFSI010 ) :
-  case ( kMultiRingNuisSKDetFSI011 ) :
-  case ( kMultiRingNuisSKDetFSI012 ) :
-  case ( kMultiRingNuisSKDetFSI013 ) :
-  case ( kMultiRingNuisSKDetFSI014 ) :
-  case ( kMultiRingNuisSKDetFSI015 ) :
-  case ( kMultiRingNuisSKDetFSI016 ) :
-  case ( kMultiRingNuisSKDetFSI017 ) :
+  
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
+      case ( kMultiRingNuisSKDetFSI006 ) :
+      case ( kMultiRingNuisSKDetFSI007 ) :
+      case ( kMultiRingNuisSKDetFSI008 ) :
+      case ( kMultiRingNuisSKDetFSI009 ) :
+      case ( kMultiRingNuisSKDetFSI010 ) :
+      case ( kMultiRingNuisSKDetFSI011 ) :
+      case ( kMultiRingNuisSKDetFSI012 ) :
+      case ( kMultiRingNuisSKDetFSI013 ) :
+      case ( kMultiRingNuisSKDetFSI014 ) :
+      case ( kMultiRingNuisSKDetFSI015 ) :
+      case ( kMultiRingNuisSKDetFSI016 ) :
+      case ( kMultiRingNuisSKDetFSI017 ) :
+#elif defined(__USE_SKDETFSI2015__)
+      case ( kMultiRingNuisSKDetFSI012 ) :
+      case ( kMultiRingNuisSKDetFSI013 ) :
+      case ( kMultiRingNuisSKDetFSI014 ) :
+      case ( kMultiRingNuisSKDetFSI015 ) :
+      case ( kMultiRingNuisSKDetFSI016 ) :
+      case ( kMultiRingNuisSKDetFSI017 ) :
+      case ( kMultiRingNuisSKDetFSI018 ) :
+      case ( kMultiRingNuisSKDetFSI019 ) :
+      case ( kMultiRingNuisSKDetFSI020 ) :
+      case ( kMultiRingNuisSKDetFSI021 ) :
+      case ( kMultiRingNuisSKDetFSI022 ) :
+      case ( kMultiRingNuisSKDetFSI023 ) :
+#endif
+
     {
 #if FSI_BINS == 3
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
       int ip = (int)p - (int)kMultiRingNuisSKDetFSI006;
+#elif defined(__USE_SKDETFSI2015__)
+      int ip = (int)p - (int)kMultiRingNuisSKDetFSI012;
+#endif
+
 #elif FSI_BINS ==1
       int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
 #endif
       string nutypes = "";
       switch(p) {
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
       case (kMultiRingNuisSKDetFSI006) :
       case (kMultiRingNuisSKDetFSI007) :
       case (kMultiRingNuisSKDetFSI008) :
@@ -671,6 +898,25 @@ string valor::util::AsString(PhysParamId_t p)
       case (kMultiRingNuisSKDetFSI016) :
       case (kMultiRingNuisSKDetFSI017) :
         nutypes = "all NC (MultiRe)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+      case (kMultiRingNuisSKDetFSI012) :
+      case (kMultiRingNuisSKDetFSI013) :
+      case (kMultiRingNuisSKDetFSI014) :
+	nutypes = "oscillated nue CC (1Re)"; break;
+      case (kMultiRingNuisSKDetFSI015) :
+      case (kMultiRingNuisSKDetFSI016) :
+      case (kMultiRingNuisSKDetFSI017) :
+	nutypes = "numu/numubar CC (1Re)"; break;
+      case (kMultiRingNuisSKDetFSI018) :
+      case (kMultiRingNuisSKDetFSI019) :
+      case (kMultiRingNuisSKDetFSI020) :
+	nutypes = "nue/nuebar CC (1Re)"; break;
+      case (kMultiRingNuisSKDetFSI021) :
+      case (kMultiRingNuisSKDetFSI022) :
+      case (kMultiRingNuisSKDetFSI023) :
+	nutypes = "all NC (1Re)"; break;
+#endif
+
       default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; MultiRing",ip,
@@ -679,6 +925,9 @@ string valor::util::AsString(PhysParamId_t p)
     }
 #endif
 #else
+
+      // OTHER FSI_BINS THAN 1,2,3 
+
   case ( kMultiRingNuisSKDetFSI000 ) :
   case ( kMultiRingNuisSKDetFSI001 ) :
   case ( kMultiRingNuisSKDetFSI002 ) :
@@ -895,6 +1144,10 @@ string valor::util::AsStringTex(PhysParamId_t p)
 #ifndef __NUEONLY__
     case ( kNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$";  break;
 #endif
+
+    //
+    // SKDET+FSI
+    //
 //#ifdef SKFSITOGETHER
 #ifndef SKCORRELATIONS
 #if FSI_BINS != 3
@@ -904,10 +1157,24 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisSKDetFSI003 ) :
     case ( kNuisSKDetFSI004 ) :
     case ( kNuisSKDetFSI005 ) :
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+    case ( kNuisSKDetFSI006 ) :
+    case ( kNuisSKDetFSI007 ) :
+    case ( kNuisSKDetFSI008 ) :
+    case ( kNuisSKDetFSI009 ) :
+    case ( kNuisSKDetFSI010 ) :
+    case ( kNuisSKDetFSI011 ) :
+#endif
+
     {
       string nutypes = "";
       int ip = (int)p - (int)kNuisSKDetFSI000;
       switch(p) {
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
         case (kNuisSKDetFSI000) :
         case (kNuisSKDetFSI001) :
         case (kNuisSKDetFSI002) :
@@ -918,6 +1185,25 @@ string valor::util::AsStringTex(PhysParamId_t p)
           nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
         case (kNuisSKDetFSI005) :
           nutypes = "all NC ($1R_{\\mu}$)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+        case (kNuisSKDetFSI000) :
+        case (kNuisSKDetFSI001) :
+        case (kNuisSKDetFSI002) :
+          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CCQE ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI003) :
+        case (kNuisSKDetFSI004) :
+        case (kNuisSKDetFSI005) :
+          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CCnQE ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI006) :
+        case (kNuisSKDetFSI007) :
+        case (kNuisSKDetFSI008) :
+          nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+        case (kNuisSKDetFSI009) :
+        case (kNuisSKDetFSI010) :
+        case (kNuisSKDetFSI011) :
+          nutypes = "all NC ($1R_{\\mu}$)"; break;
+#endif
+
         default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
@@ -926,6 +1212,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
     }//FSI for 1Rmu
 #endif
 #if FSI_BINS != 2
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
     case ( kNuisSKDetFSI006 ) :
     case ( kNuisSKDetFSI007 ) :
     case ( kNuisSKDetFSI008 ) :
@@ -938,31 +1227,74 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisSKDetFSI015 ) :
     case ( kNuisSKDetFSI016 ) :
     case ( kNuisSKDetFSI017 ) :
+#elif defined(__USE_SKDETFSI2015__)
+    case ( kNuisSKDetFSI012 ) :
+    case ( kNuisSKDetFSI013 ) :
+    case ( kNuisSKDetFSI014 ) :
+    case ( kNuisSKDetFSI015 ) :
+    case ( kNuisSKDetFSI016 ) :
+    case ( kNuisSKDetFSI017 ) :
+    case ( kNuisSKDetFSI018 ) :
+    case ( kNuisSKDetFSI019 ) :
+    case ( kNuisSKDetFSI020 ) :
+    case ( kNuisSKDetFSI021 ) :
+    case ( kNuisSKDetFSI022 ) :
+    case ( kNuisSKDetFSI023 ) :
+#endif
 
     {
       string nutypes = "";
 #if FSI_BINS != 3
       int ip = (int)p - (int)kNuisSKDetFSI000;
 #else
+
+      // NEW SKDETFSI
+      #if defined(__USE_SKDETFSI2013__)
       int ip = (int)p - (int)kNuisSKDetFSI006;
+      #elif defined(__USE_SKDETFSI2015__)
+      int ip = (int)p - (int)kNuisSKDetFSI012;
+      #endif
+
 #endif
       switch(p) {
-        case (kNuisSKDetFSI006) :
-        case (kNuisSKDetFSI007) :
-        case (kNuisSKDetFSI008) :
-          nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-        case (kNuisSKDetFSI009) :
-        case (kNuisSKDetFSI010) :
-        case (kNuisSKDetFSI011) :
-          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($1R_{e}$)"; break;
-        case (kNuisSKDetFSI012) :
-        case (kNuisSKDetFSI013) :
-        case (kNuisSKDetFSI014) :
-          nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($1R_{e}$)"; break;
-        case (kNuisSKDetFSI015) :
-        case (kNuisSKDetFSI016) :
-        case (kNuisSKDetFSI017) :
-          nutypes = "all NC ($1R_{e}$)"; break;
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
+      case (kNuisSKDetFSI006) :
+      case (kNuisSKDetFSI007) :
+      case (kNuisSKDetFSI008) :
+	nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI009) :
+      case (kNuisSKDetFSI010) :
+      case (kNuisSKDetFSI011) :
+	nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI012) :
+      case (kNuisSKDetFSI013) :
+      case (kNuisSKDetFSI014) :
+	nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI015) :
+      case (kNuisSKDetFSI016) :
+      case (kNuisSKDetFSI017) :
+	nutypes = "all NC ($1R_{e}$)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+      case (kNuisSKDetFSI012) :
+      case (kNuisSKDetFSI013) :
+      case (kNuisSKDetFSI014) :
+	nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI015) :
+      case (kNuisSKDetFSI016) :
+      case (kNuisSKDetFSI017) :
+	nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI018) :
+      case (kNuisSKDetFSI019) :
+      case (kNuisSKDetFSI020) :
+	nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI021) :
+      case (kNuisSKDetFSI022) :
+      case (kNuisSKDetFSI023) :
+	nutypes = "all NC ($1R_{e}$)"; break;
+#endif
+
         default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
@@ -971,6 +1303,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
     }//FSI for 1Re
 #endif
 #else
+
+	// OTHER FSI_BINS THAN 1,2,3 
+
     case ( kNuisSKDetFSI000 ) :
     case ( kNuisSKDetFSI001 ) :
     case ( kNuisSKDetFSI002 ) :
@@ -1175,7 +1510,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$; RHC";  break;
 #endif
 
-
+    //
+    // SKDET+FSI
+    //
 //#ifdef SKFSITOGETHER
 #ifndef SKCORRELATIONS
 #if FSI_BINS != 3
@@ -1185,10 +1522,24 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisSKDetFSI003 ) :
     case ( kRHCNuisSKDetFSI004 ) :
     case ( kRHCNuisSKDetFSI005 ) :
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+    case ( kRHCNuisSKDetFSI006 ) :
+    case ( kRHCNuisSKDetFSI007 ) :
+    case ( kRHCNuisSKDetFSI008 ) :
+    case ( kRHCNuisSKDetFSI009 ) :
+    case ( kRHCNuisSKDetFSI010 ) :
+    case ( kRHCNuisSKDetFSI011 ) :
+#endif
+
     {
       string nutypes = "";
       int ip = (int)p - (int)kRHCNuisSKDetFSI000;
       switch(p) {
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
         case (kRHCNuisSKDetFSI000) :
         case (kRHCNuisSKDetFSI001) :
         case (kRHCNuisSKDetFSI002) :
@@ -1199,6 +1550,25 @@ string valor::util::AsStringTex(PhysParamId_t p)
           nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
         case (kRHCNuisSKDetFSI005) :
           nutypes = "all NC ($1R_{\\mu}$)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+        case (kRHCNuisSKDetFSI000) :
+        case (kRHCNuisSKDetFSI001) :
+        case (kRHCNuisSKDetFSI002) :
+          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CCQE ($1R_{\\mu}$)"; break;
+        case (kRHCNuisSKDetFSI003) :
+        case (kRHCNuisSKDetFSI004) :
+        case (kRHCNuisSKDetFSI005) :
+          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CCnQE ($1R_{\\mu}$)"; break;
+        case (kRHCNuisSKDetFSI006) :
+        case (kRHCNuisSKDetFSI007) :
+        case (kRHCNuisSKDetFSI008) :
+          nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+        case (kRHCNuisSKDetFSI009) :
+        case (kRHCNuisSKDetFSI010) :
+        case (kRHCNuisSKDetFSI011) :
+          nutypes = "all NC ($1R_{\\mu}$)"; break;
+#endif
+
         default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
@@ -1207,6 +1577,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
     }//FSI for 1Rmu
 #endif
 #if FSI_BINS != 2
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
     case ( kRHCNuisSKDetFSI006 ) :
     case ( kRHCNuisSKDetFSI007 ) :
     case ( kRHCNuisSKDetFSI008 ) :
@@ -1219,31 +1592,72 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisSKDetFSI015 ) :
     case ( kRHCNuisSKDetFSI016 ) :
     case ( kRHCNuisSKDetFSI017 ) :
+#elif defined(__USE_SKDETFSI2015__)
+    case ( kRHCNuisSKDetFSI012 ) :
+    case ( kRHCNuisSKDetFSI013 ) :
+    case ( kRHCNuisSKDetFSI014 ) :
+    case ( kRHCNuisSKDetFSI015 ) :
+    case ( kRHCNuisSKDetFSI016 ) :
+    case ( kRHCNuisSKDetFSI017 ) :
+    case ( kRHCNuisSKDetFSI018 ) :
+    case ( kRHCNuisSKDetFSI019 ) :
+    case ( kRHCNuisSKDetFSI020 ) :
+    case ( kRHCNuisSKDetFSI021 ) :
+    case ( kRHCNuisSKDetFSI022 ) :
+    case ( kRHCNuisSKDetFSI023 ) :
+#endif
 
     {
       string nutypes = "";
 #if FSI_BINS != 3
       int ip = (int)p - (int)kRHCNuisSKDetFSI000;
 #else
+      // NEW SKDETFSI
+      #if defined(__USE_SKDETFSI2013__)
       int ip = (int)p - (int)kRHCNuisSKDetFSI006;
+      #elif defined(__USE_SKDETFSI2015__)
+      int ip = (int)p - (int)kRHCNuisSKDetFSI012;
+      #endif
 #endif
       switch(p) {
-        case (kRHCNuisSKDetFSI006) :
-        case (kRHCNuisSKDetFSI007) :
-        case (kRHCNuisSKDetFSI008) :
-          nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-        case (kRHCNuisSKDetFSI009) :
-        case (kRHCNuisSKDetFSI010) :
-        case (kRHCNuisSKDetFSI011) :
-          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($1R_{e}$)"; break;
-        case (kRHCNuisSKDetFSI012) :
-        case (kRHCNuisSKDetFSI013) :
-        case (kRHCNuisSKDetFSI014) :
-          nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($1R_{e}$)"; break;
-        case (kRHCNuisSKDetFSI015) :
-        case (kRHCNuisSKDetFSI016) :
-        case (kRHCNuisSKDetFSI017) :
-          nutypes = "all NC ($1R_{e}$)"; break;
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
+      case (kRHCNuisSKDetFSI006) :
+      case (kRHCNuisSKDetFSI007) :
+      case (kRHCNuisSKDetFSI008) :
+	nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI009) :
+      case (kRHCNuisSKDetFSI010) :
+      case (kRHCNuisSKDetFSI011) :
+	nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI012) :
+      case (kRHCNuisSKDetFSI013) :
+      case (kRHCNuisSKDetFSI014) :
+	nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI015) :
+      case (kRHCNuisSKDetFSI016) :
+      case (kRHCNuisSKDetFSI017) :
+	nutypes = "all NC ($1R_{e}$)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+      case (kRHCNuisSKDetFSI012) :
+      case (kRHCNuisSKDetFSI013) :
+      case (kRHCNuisSKDetFSI014) :
+	nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI015) :
+      case (kRHCNuisSKDetFSI016) :
+      case (kRHCNuisSKDetFSI017) :
+	nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI018) :
+      case (kRHCNuisSKDetFSI019) :
+      case (kRHCNuisSKDetFSI020) :
+	nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI021) :
+      case (kRHCNuisSKDetFSI022) :
+      case (kRHCNuisSKDetFSI023) :
+	nutypes = "all NC ($1R_{e}$)"; break;
+#endif
+
         default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
@@ -1252,6 +1666,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
     }//FSI for 1Re
 #endif
 #else
+
+    // OTHER FSI_BINS THAN 1,2,3 
+
     case ( kRHCNuisSKDetFSI000 ) :
     case ( kRHCNuisSKDetFSI001 ) :
     case ( kRHCNuisSKDetFSI002 ) :
@@ -1357,6 +1774,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
 
 /// NEW MULTIRING 2
 
+    //
+    // SKDET+FSI
+    //
 //#ifdef SKFSITOGETHER
 #ifndef SKCORRELATIONS
 #if FSI_BINS != 3
@@ -1366,10 +1786,24 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kMultiRingNuisSKDetFSI003 ) :
     case ( kMultiRingNuisSKDetFSI004 ) :
     case ( kMultiRingNuisSKDetFSI005 ) :
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+    case ( kMultiRingNuisSKDetFSI006 ) :
+    case ( kMultiRingNuisSKDetFSI007 ) :
+    case ( kMultiRingNuisSKDetFSI008 ) :
+    case ( kMultiRingNuisSKDetFSI009 ) :
+    case ( kMultiRingNuisSKDetFSI010 ) :
+    case ( kMultiRingNuisSKDetFSI011 ) :
+#endif
+
     {
       string nutypes = "";
       int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
       switch(p) {
+
+	// NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
         case (kMultiRingNuisSKDetFSI000) :
         case (kMultiRingNuisSKDetFSI001) :
         case (kMultiRingNuisSKDetFSI002) :
@@ -1380,6 +1814,25 @@ string valor::util::AsStringTex(PhysParamId_t p)
           nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$/sig$\\nu_{e}$ CC ($MultiR_{\\mu}$)"; break;
         case (kMultiRingNuisSKDetFSI005) :
           nutypes = "all NC ($MultiR_{\\mu}$)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+        case (kMultiRingNuisSKDetFSI000) :
+        case (kMultiRingNuisSKDetFSI001) :
+        case (kMultiRingNuisSKDetFSI002) :
+          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CCQE ($1R_{\\mu}$)"; break;
+        case (kMultiRingNuisSKDetFSI003) :
+        case (kMultiRingNuisSKDetFSI004) :
+        case (kMultiRingNuisSKDetFSI005) :
+          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CCnQE ($1R_{\\mu}$)"; break;
+        case (kMultiRingNuisSKDetFSI006) :
+        case (kMultiRingNuisSKDetFSI007) :
+        case (kMultiRingNuisSKDetFSI008) :
+          nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+        case (kMultiRingNuisSKDetFSI009) :
+        case (kMultiRingNuisSKDetFSI010) :
+        case (kMultiRingNuisSKDetFSI011) :
+          nutypes = "all NC ($1R_{\\mu}$)"; break;
+#endif
+
         default : nutypes = "--";
       }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; MultiRing",ip,
@@ -1388,6 +1841,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
     }//FSI for MultiRmu
 #endif
 #if FSI_BINS != 2
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
     case ( kMultiRingNuisSKDetFSI006 ) :
     case ( kMultiRingNuisSKDetFSI007 ) :
     case ( kMultiRingNuisSKDetFSI008 ) :
@@ -1400,39 +1856,83 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kMultiRingNuisSKDetFSI015 ) :
     case ( kMultiRingNuisSKDetFSI016 ) :
     case ( kMultiRingNuisSKDetFSI017 ) :
+#elif defined(__USE_SKDETFSI2015__)
+    case ( kMultiRingNuisSKDetFSI012 ) :
+    case ( kMultiRingNuisSKDetFSI013 ) :
+    case ( kMultiRingNuisSKDetFSI014 ) :
+    case ( kMultiRingNuisSKDetFSI015 ) :
+    case ( kMultiRingNuisSKDetFSI016 ) :
+    case ( kMultiRingNuisSKDetFSI017 ) :
+    case ( kMultiRingNuisSKDetFSI018 ) :
+    case ( kMultiRingNuisSKDetFSI019 ) :
+    case ( kMultiRingNuisSKDetFSI020 ) :
+    case ( kMultiRingNuisSKDetFSI021 ) :
+    case ( kMultiRingNuisSKDetFSI022 ) :
+    case ( kMultiRingNuisSKDetFSI023 ) :
+#endif
 
     {
       string nutypes = "";
 #if FSI_BINS != 3
       int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
 #else
+      // NEW SKDETFSI
+      #if defined(__USE_SKDETFSI2013__)
       int ip = (int)p - (int)kMultiRingNuisSKDetFSI006;
+      #elif defined(__USE_SKDETFSI2015__)
+      int ip = (int)p - (int)kMultiRingNuisSKDetFSI012;
+      #endif
 #endif
       switch(p) {
-        case (kMultiRingNuisSKDetFSI006) :
-        case (kMultiRingNuisSKDetFSI007) :
-        case (kMultiRingNuisSKDetFSI008) :
-          nutypes = "Osc. $\\nu_{e}$ CC ($MultiR_{e}$)"; break;
-        case (kMultiRingNuisSKDetFSI009) :
-        case (kMultiRingNuisSKDetFSI010) :
-        case (kMultiRingNuisSKDetFSI011) :
-          nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($MultiR_{e}$)"; break;
-        case (kMultiRingNuisSKDetFSI012) :
-        case (kMultiRingNuisSKDetFSI013) :
-        case (kMultiRingNuisSKDetFSI014) :
-          nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($MultiR_{e}$)"; break;
-        case (kMultiRingNuisSKDetFSI015) :
-        case (kMultiRingNuisSKDetFSI016) :
-        case (kMultiRingNuisSKDetFSI017) :
-          nutypes = "all NC ($MultiR_{e}$)"; break;
-        default : nutypes = "--";
-      }
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
+    case (kMultiRingNuisSKDetFSI006) :
+    case (kMultiRingNuisSKDetFSI007) :
+    case (kMultiRingNuisSKDetFSI008) :
+      nutypes = "Osc. $\\nu_{e}$ CC ($MultiR_{e}$)"; break;
+    case (kMultiRingNuisSKDetFSI009) :
+    case (kMultiRingNuisSKDetFSI010) :
+    case (kMultiRingNuisSKDetFSI011) :
+      nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($MultiR_{e}$)"; break;
+    case (kMultiRingNuisSKDetFSI012) :
+    case (kMultiRingNuisSKDetFSI013) :
+    case (kMultiRingNuisSKDetFSI014) :
+      nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($MultiR_{e}$)"; break;
+    case (kMultiRingNuisSKDetFSI015) :
+    case (kMultiRingNuisSKDetFSI016) :
+    case (kMultiRingNuisSKDetFSI017) :
+      nutypes = "all NC ($MultiR_{e}$)"; break;
+#elif defined(__USE_SKDETFSI2015__)
+    case (kMultiRingNuisSKDetFSI012) :
+    case (kMultiRingNuisSKDetFSI013) :
+    case (kMultiRingNuisSKDetFSI014) :
+      nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+    case (kMultiRingNuisSKDetFSI015) :
+    case (kMultiRingNuisSKDetFSI016) :
+    case (kMultiRingNuisSKDetFSI017) :
+      nutypes = "$\\nu_\\{mu}}$/$\\bar{\\nu_\\{mu}}}$ CC ($1R_{e}$)"; break;
+    case (kMultiRingNuisSKDetFSI018) :
+    case (kMultiRingNuisSKDetFSI019) :
+    case (kMultiRingNuisSKDetFSI020) :
+      nutypes = "$\\nu_{e}$/$\\bar{\\nu_{e}}$ CC ($1R_{e}$)"; break;
+    case (kMultiRingNuisSKDetFSI021) :
+    case (kMultiRingNuisSKDetFSI022) :
+    case (kMultiRingNuisSKDetFSI023) :
+      nutypes = "all NC ($1R_{e}$)"; break;
+#endif
+
+    default : nutypes = "--";
+    }
       return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; MultiRing",ip,
                   kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
       break;
     }//FSI for MultiRe
 #endif
 #else
+
+	// OTHER FSI_BINS THAN 1,2,3 
+
     case ( kMultiRingNuisSKDetFSI000 ) :
     case ( kMultiRingNuisSKDetFSI001 ) :
     case ( kMultiRingNuisSKDetFSI002 ) :
@@ -1776,10 +2276,23 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSKDetFSI003 ) : return "f_skdetfsi003"; break;
     case ( kNuisSKDetFSI004 ) : return "f_skdetfsi004"; break;
     case ( kNuisSKDetFSI005 ) : return "f_skdetfsi005"; break;
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+    case ( kNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
+    case ( kNuisSKDetFSI007 ) : return "f_skdetfsi007"; break;
+    case ( kNuisSKDetFSI008 ) : return "f_skdetfsi008"; break;
+    case ( kNuisSKDetFSI009 ) : return "f_skdetfsi009"; break;
+    case ( kNuisSKDetFSI010 ) : return "f_skdetfsi010"; break;
+    case ( kNuisSKDetFSI011 ) : return "f_skdetfsi011"; break;
+#endif
+
 #endif
 #if FSI_BINS != 2
-    case ( kNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
 
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
+    case ( kNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
     case ( kNuisSKDetFSI007 ) : return "f_skdetfsi007"; break;
     case ( kNuisSKDetFSI008 ) : return "f_skdetfsi008"; break;
     case ( kNuisSKDetFSI009 ) : return "f_skdetfsi009"; break;
@@ -1791,14 +2304,23 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisSKDetFSI015 ) : return "f_skdetfsi015"; break;
     case ( kNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
     case ( kNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
+#elif defined(__USE_SKDETFSI2013__)
+    case ( kNuisSKDetFSI012 ) : return "f_skdetfsi012"; break;
+    case ( kNuisSKDetFSI013 ) : return "f_skdetfsi013"; break;
+    case ( kNuisSKDetFSI014 ) : return "f_skdetfsi014"; break;
+    case ( kNuisSKDetFSI015 ) : return "f_skdetfsi015"; break;
+    case ( kNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
+    case ( kNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
+    case ( kNuisSKDetFSI018 ) : return "f_skdetfsi018"; break;
+    case ( kNuisSKDetFSI019 ) : return "f_skdetfsi019"; break;
+    case ( kNuisSKDetFSI020 ) : return "f_skdetfsi020"; break;
+    case ( kNuisSKDetFSI021 ) : return "f_skdetfsi021"; break;
+    case ( kNuisSKDetFSI022 ) : return "f_skdetfsi022"; break;
+    case ( kNuisSKDetFSI023 ) : return "f_skdetfsi023"; break;
 #endif
+#endif
+      // NEW SKDETFSI (start indices from 24 instead of 18)
 #ifdef SKCORRELATIONS
-  case ( kNuisSKDetFSI018 ) : return "f_skdetfsi018"; break;
-  case ( kNuisSKDetFSI019 ) : return "f_skdetfsi019"; break;
-  case ( kNuisSKDetFSI020 ) : return "f_skdetfsi020"; break;
-  case ( kNuisSKDetFSI021 ) : return "f_skdetfsi021"; break;
-  case ( kNuisSKDetFSI022 ) : return "f_skdetfsi022"; break;
-  case ( kNuisSKDetFSI023 ) : return "f_skdetfsi023"; break;
   case ( kNuisSKDetFSI024 ) : return "f_skdetfsi024"; break;
   case ( kNuisSKDetFSI025 ) : return "f_skdetfsi025"; break;
   case ( kNuisSKDetFSI026 ) : return "f_skdetfsi026"; break;
@@ -1807,6 +2329,12 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisSKDetFSI029 ) : return "f_skdetfsi029"; break;
   case ( kNuisSKDetFSI030 ) : return "f_skdetfsi030"; break;
   case ( kNuisSKDetFSI031 ) : return "f_skdetfsi031"; break;
+  case ( kNuisSKDetFSI032 ) : return "f_skdetfsi032"; break;
+  case ( kNuisSKDetFSI033 ) : return "f_skdetfsi033"; break;
+  case ( kNuisSKDetFSI034 ) : return "f_skdetfsi034"; break;
+  case ( kNuisSKDetFSI035 ) : return "f_skdetfsi035"; break;
+  case ( kNuisSKDetFSI036 ) : return "f_skdetfsi036"; break;
+  case ( kNuisSKDetFSI037 ) : return "f_skdetfsi037"; break;
 #endif
 //#endif //SKDETFSITOGETHER
 
@@ -1908,8 +2436,21 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI003 ) : return "f_skdetfsi003_rhc"; break;
   case ( kRHCNuisSKDetFSI004 ) : return "f_skdetfsi004_rhc"; break;
   case ( kRHCNuisSKDetFSI005 ) : return "f_skdetfsi005_rhc"; break;
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+  case ( kRHCNuisSKDetFSI006 ) : return "f_skdetfsi006_rhc"; break;
+  case ( kRHCNuisSKDetFSI007 ) : return "f_skdetfsi007_rhc"; break;
+  case ( kRHCNuisSKDetFSI008 ) : return "f_skdetfsi008_rhc"; break;
+  case ( kRHCNuisSKDetFSI009 ) : return "f_skdetfsi009_rhc"; break;
+  case ( kRHCNuisSKDetFSI010 ) : return "f_skdetfsi010_rhc"; break;
+  case ( kRHCNuisSKDetFSI011 ) : return "f_skdetfsi011_rhc"; break;
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   case ( kRHCNuisSKDetFSI006 ) : return "f_skdetfsi006_rhc"; break;
   case ( kRHCNuisSKDetFSI007 ) : return "f_skdetfsi007_rhc"; break;
   case ( kRHCNuisSKDetFSI008 ) : return "f_skdetfsi008_rhc"; break;
@@ -1922,14 +2463,24 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI015 ) : return "f_skdetfsi015_rhc"; break;
   case ( kRHCNuisSKDetFSI016 ) : return "f_skdetfsi016_rhc"; break;
   case ( kRHCNuisSKDetFSI017 ) : return "f_skdetfsi017_rhc"; break;
-#endif
-#ifdef SKCORRELATIONS
+#elif defined(__USE_SKDETFSI2013__)
+  case ( kRHCNuisSKDetFSI012 ) : return "f_skdetfsi012_rhc"; break;
+  case ( kRHCNuisSKDetFSI013 ) : return "f_skdetfsi013_rhc"; break;
+  case ( kRHCNuisSKDetFSI014 ) : return "f_skdetfsi014_rhc"; break;
+  case ( kRHCNuisSKDetFSI015 ) : return "f_skdetfsi015_rhc"; break;
+  case ( kRHCNuisSKDetFSI016 ) : return "f_skdetfsi016_rhc"; break;
+  case ( kRHCNuisSKDetFSI017 ) : return "f_skdetfsi017_rhc"; break;
   case ( kRHCNuisSKDetFSI018 ) : return "f_skdetfsi018_rhc"; break;
   case ( kRHCNuisSKDetFSI019 ) : return "f_skdetfsi019_rhc"; break;
   case ( kRHCNuisSKDetFSI020 ) : return "f_skdetfsi020_rhc"; break;
   case ( kRHCNuisSKDetFSI021 ) : return "f_skdetfsi021_rhc"; break;
   case ( kRHCNuisSKDetFSI022 ) : return "f_skdetfsi022_rhc"; break;
   case ( kRHCNuisSKDetFSI023 ) : return "f_skdetfsi023_rhc"; break;
+#endif
+#endif
+
+    // NEW SKDETFSI (start indices from 24 instead of 18)
+#ifdef SKCORRELATIONS
   case ( kRHCNuisSKDetFSI024 ) : return "f_skdetfsi024_rhc"; break;
   case ( kRHCNuisSKDetFSI025 ) : return "f_skdetfsi025_rhc"; break;
   case ( kRHCNuisSKDetFSI026 ) : return "f_skdetfsi026_rhc"; break;
@@ -1938,13 +2489,18 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI029 ) : return "f_skdetfsi029_rhc"; break;
   case ( kRHCNuisSKDetFSI030 ) : return "f_skdetfsi030_rhc"; break;
   case ( kRHCNuisSKDetFSI031 ) : return "f_skdetfsi031_rhc"; break;
+  case ( kRHCNuisSKDetFSI032 ) : return "f_skdetfsi032_rhc"; break;
+  case ( kRHCNuisSKDetFSI033 ) : return "f_skdetfsi033_rhc"; break;
+  case ( kRHCNuisSKDetFSI034 ) : return "f_skdetfsi034_rhc"; break;
+  case ( kRHCNuisSKDetFSI035 ) : return "f_skdetfsi035_rhc"; break;
+  case ( kRHCNuisSKDetFSI036 ) : return "f_skdetfsi036_rhc"; break;
+  case ( kRHCNuisSKDetFSI037 ) : return "f_skdetfsi037_rhc"; break;
 #endif
 //#endif //SKDETFSITOGETHER
 
 //
 
-  
-
+ 
   //***************************** MULTIRING FORWARD HORN CURRENT *************************
     
     /// NEW MULTIRING 3
@@ -1961,8 +2517,22 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI003 ) : return "f_skdetfsi003_multiring"; break;
   case ( kMultiRingNuisSKDetFSI004 ) : return "f_skdetfsi004_multiring"; break;
   case ( kMultiRingNuisSKDetFSI005 ) : return "f_skdetfsi005_multiring"; break;
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+  case ( kMultiRingNuisSKDetFSI006 ) : return "f_skdetfsi006_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI007 ) : return "f_skdetfsi007_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI008 ) : return "f_skdetfsi008_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI009 ) : return "f_skdetfsi009_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI010 ) : return "f_skdetfsi010_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI011 ) : return "f_skdetfsi011_multiring"; break;
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   case ( kMultiRingNuisSKDetFSI006 ) : return "f_skdetfsi006_multiring"; break;
   case ( kMultiRingNuisSKDetFSI007 ) : return "f_skdetfsi007_multiring"; break;
   case ( kMultiRingNuisSKDetFSI008 ) : return "f_skdetfsi008_multiring"; break;
@@ -1975,14 +2545,25 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI015 ) : return "f_skdetfsi015_multiring"; break;
   case ( kMultiRingNuisSKDetFSI016 ) : return "f_skdetfsi016_multiring"; break;
   case ( kMultiRingNuisSKDetFSI017 ) : return "f_skdetfsi017_multiring"; break;
-#endif
-#ifdef SKCORRELATIONS
+#elif defined(__USE_SKDETFSI2013__)
+  case ( kMultiRingNuisSKDetFSI012 ) : return "f_skdetfsi012_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI013 ) : return "f_skdetfsi013_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI014 ) : return "f_skdetfsi014_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI015 ) : return "f_skdetfsi015_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI016 ) : return "f_skdetfsi016_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI017 ) : return "f_skdetfsi017_multiring"; break;
   case ( kMultiRingNuisSKDetFSI018 ) : return "f_skdetfsi018_multiring"; break;
   case ( kMultiRingNuisSKDetFSI019 ) : return "f_skdetfsi019_multiring"; break;
   case ( kMultiRingNuisSKDetFSI020 ) : return "f_skdetfsi020_multiring"; break;
   case ( kMultiRingNuisSKDetFSI021 ) : return "f_skdetfsi021_multiring"; break;
   case ( kMultiRingNuisSKDetFSI022 ) : return "f_skdetfsi022_multiring"; break;
   case ( kMultiRingNuisSKDetFSI023 ) : return "f_skdetfsi023_multiring"; break;
+#endif
+
+#endif
+
+    // NEW SKDETFSI (start indices from 24 instead of 18)
+#ifdef SKCORRELATIONS
   case ( kMultiRingNuisSKDetFSI024 ) : return "f_skdetfsi024_multiring"; break;
   case ( kMultiRingNuisSKDetFSI025 ) : return "f_skdetfsi025_multiring"; break;
   case ( kMultiRingNuisSKDetFSI026 ) : return "f_skdetfsi026_multiring"; break;
@@ -1991,6 +2572,12 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI029 ) : return "f_skdetfsi029_multiring"; break;
   case ( kMultiRingNuisSKDetFSI030 ) : return "f_skdetfsi030_multiring"; break;
   case ( kMultiRingNuisSKDetFSI031 ) : return "f_skdetfsi031_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI032 ) : return "f_skdetfsi032_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI033 ) : return "f_skdetfsi033_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI034 ) : return "f_skdetfsi034_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI035 ) : return "f_skdetfsi035_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI036 ) : return "f_skdetfsi036_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI037 ) : return "f_skdetfsi037_multiring"; break;
 #endif
 //#endif //SKDETFSITOGETHER
 
@@ -2001,6 +2588,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   }
   return "--";
 }
+
 //____________________________________________________________________________
 string valor::util::AsStringPaperTex(PhysParamId_t p)
 {
@@ -2339,6 +2927,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisXSecNormAntiNuToNu ) : return "$f_{CC\\bar{\\nu}; t}$";      break;
 #endif
 
+
+    
 #if FSI_BINS != 3                
   case ( kNuisSKDetFSI000 ) :
   case ( kNuisSKDetFSI001 ) :
@@ -2346,8 +2936,22 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSKDetFSI003 ) :
   case ( kNuisSKDetFSI004 ) :
   case ( kNuisSKDetFSI005 ) :
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+  case ( kNuisSKDetFSI006 ) :
+  case ( kNuisSKDetFSI007 ) :
+  case ( kNuisSKDetFSI008 ) :
+  case ( kNuisSKDetFSI009 ) :
+  case ( kNuisSKDetFSI010 ) :
+  case ( kNuisSKDetFSI011 ) :
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   case ( kNuisSKDetFSI006 ) :
   case ( kNuisSKDetFSI007 ) :
   case ( kNuisSKDetFSI008 ) :
@@ -2360,14 +2964,24 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSKDetFSI015 ) :
   case ( kNuisSKDetFSI016 ) :
   case ( kNuisSKDetFSI017 ) :
-#endif
-#ifdef SKCORRELATIONS
+#elif defined(__USE_SKDETFSI2013__)
+  case ( kNuisSKDetFSI012 ) :
+  case ( kNuisSKDetFSI013 ) :
+  case ( kNuisSKDetFSI014 ) :
+  case ( kNuisSKDetFSI015 ) :
+  case ( kNuisSKDetFSI016 ) :
+  case ( kNuisSKDetFSI017 ) :
   case ( kNuisSKDetFSI018 ) :
   case ( kNuisSKDetFSI019 ) :
   case ( kNuisSKDetFSI020 ) :
   case ( kNuisSKDetFSI021 ) :
   case ( kNuisSKDetFSI022 ) :
   case ( kNuisSKDetFSI023 ) :
+#endif
+
+#endif
+    // NEW SKDETFSI (start indices from 24 instead of 18)
+#ifdef SKCORRELATIONS
   case ( kNuisSKDetFSI024 ) :
   case ( kNuisSKDetFSI025 ) :
   case ( kNuisSKDetFSI026 ) :
@@ -2376,6 +2990,12 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisSKDetFSI029 ) :
   case ( kNuisSKDetFSI030 ) :
   case ( kNuisSKDetFSI031 ) :
+  case ( kNuisSKDetFSI032 ) :
+  case ( kNuisSKDetFSI033 ) :
+  case ( kNuisSKDetFSI034 ) :
+  case ( kNuisSKDetFSI035 ) :
+  case ( kNuisSKDetFSI036 ) :
+  case ( kNuisSKDetFSI037 ) :
 #endif
 
     {
@@ -2515,8 +3135,22 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI003 ) :
   case ( kRHCNuisSKDetFSI004 ) :
   case ( kRHCNuisSKDetFSI005 ) :
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+  case ( kRHCNuisSKDetFSI006 ) :
+  case ( kRHCNuisSKDetFSI007 ) :
+  case ( kRHCNuisSKDetFSI008 ) :
+  case ( kRHCNuisSKDetFSI009 ) :
+  case ( kRHCNuisSKDetFSI010 ) :
+  case ( kRHCNuisSKDetFSI011 ) :
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   case ( kRHCNuisSKDetFSI006 ) :
   case ( kRHCNuisSKDetFSI007 ) :
   case ( kRHCNuisSKDetFSI008 ) :
@@ -2529,14 +3163,25 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI015 ) :
   case ( kRHCNuisSKDetFSI016 ) :
   case ( kRHCNuisSKDetFSI017 ) :
-#endif
-#ifdef SKCORRELATIONS
+#elif defined(__USE_SKDETFSI2013__)
+  case ( kRHCNuisSKDetFSI012 ) :
+  case ( kRHCNuisSKDetFSI013 ) :
+  case ( kRHCNuisSKDetFSI014 ) :
+  case ( kRHCNuisSKDetFSI015 ) :
+  case ( kRHCNuisSKDetFSI016 ) :
+  case ( kRHCNuisSKDetFSI017 ) :
   case ( kRHCNuisSKDetFSI018 ) :
   case ( kRHCNuisSKDetFSI019 ) :
   case ( kRHCNuisSKDetFSI020 ) :
   case ( kRHCNuisSKDetFSI021 ) :
   case ( kRHCNuisSKDetFSI022 ) :
   case ( kRHCNuisSKDetFSI023 ) :
+#endif
+
+#endif
+
+    // NEW SKDETFSI (start indices from 24 instead of 18)
+#ifdef SKCORRELATIONS
   case ( kRHCNuisSKDetFSI024 ) :
   case ( kRHCNuisSKDetFSI025 ) :
   case ( kRHCNuisSKDetFSI026 ) :
@@ -2545,6 +3190,12 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI029 ) :
   case ( kRHCNuisSKDetFSI030 ) :
   case ( kRHCNuisSKDetFSI031 ) :
+  case ( kRHCNuisSKDetFSI032 ) :
+  case ( kRHCNuisSKDetFSI033 ) :
+  case ( kRHCNuisSKDetFSI034 ) :
+  case ( kRHCNuisSKDetFSI035 ) :
+  case ( kRHCNuisSKDetFSI036 ) :
+  case ( kRHCNuisSKDetFSI037 ) :
 #endif
 
     {
@@ -2577,8 +3228,22 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI003 ) :
   case ( kMultiRingNuisSKDetFSI004 ) :
   case ( kMultiRingNuisSKDetFSI005 ) :
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+  case ( kMultiRingNuisSKDetFSI000 ) :
+  case ( kMultiRingNuisSKDetFSI001 ) :
+  case ( kMultiRingNuisSKDetFSI002 ) :
+  case ( kMultiRingNuisSKDetFSI003 ) :
+  case ( kMultiRingNuisSKDetFSI004 ) :
+  case ( kMultiRingNuisSKDetFSI005 ) :
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   case ( kMultiRingNuisSKDetFSI006 ) :
   case ( kMultiRingNuisSKDetFSI007 ) :
   case ( kMultiRingNuisSKDetFSI008 ) :
@@ -2591,14 +3256,25 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI015 ) :
   case ( kMultiRingNuisSKDetFSI016 ) :
   case ( kMultiRingNuisSKDetFSI017 ) :
-#endif
-#ifdef SKCORRELATIONS
+#elif defined(__USE_SKDETFSI2013__)
+  case ( kMultiRingNuisSKDetFSI012 ) :
+  case ( kMultiRingNuisSKDetFSI013 ) :
+  case ( kMultiRingNuisSKDetFSI014 ) :
+  case ( kMultiRingNuisSKDetFSI015 ) :
+  case ( kMultiRingNuisSKDetFSI016 ) :
+  case ( kMultiRingNuisSKDetFSI017 ) :
   case ( kMultiRingNuisSKDetFSI018 ) :
   case ( kMultiRingNuisSKDetFSI019 ) :
   case ( kMultiRingNuisSKDetFSI020 ) :
   case ( kMultiRingNuisSKDetFSI021 ) :
   case ( kMultiRingNuisSKDetFSI022 ) :
   case ( kMultiRingNuisSKDetFSI023 ) :
+#endif
+
+#endif
+
+    // NEW SKDETFSI (start indices from 24 instead of 18)
+#ifdef SKCORRELATIONS
   case ( kMultiRingNuisSKDetFSI024 ) :
   case ( kMultiRingNuisSKDetFSI025 ) :
   case ( kMultiRingNuisSKDetFSI026 ) :
@@ -2607,6 +3283,12 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI029 ) :
   case ( kMultiRingNuisSKDetFSI030 ) :
   case ( kMultiRingNuisSKDetFSI031 ) :
+  case ( kMultiRingNuisSKDetFSI032 ) :
+  case ( kMultiRingNuisSKDetFSI033 ) :
+  case ( kMultiRingNuisSKDetFSI034 ) :
+  case ( kMultiRingNuisSKDetFSI035 ) :
+  case ( kMultiRingNuisSKDetFSI036 ) :
+  case ( kMultiRingNuisSKDetFSI037 ) :
 #endif
 
     {
@@ -2748,8 +3430,22 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI003 ) : return "f_skdetfsi003"; break;
   case ( kRHCNuisSKDetFSI004 ) : return "f_skdetfsi004"; break;
   case ( kRHCNuisSKDetFSI005 ) : return "f_skdetfsi005"; break;
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+  case ( kRHCNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
+  case ( kRHCNuisSKDetFSI007 ) : return "f_skdetfsi007"; break;
+  case ( kRHCNuisSKDetFSI008 ) : return "f_skdetfsi008"; break;
+  case ( kRHCNuisSKDetFSI009 ) : return "f_skdetfsi009"; break;
+  case ( kRHCNuisSKDetFSI010 ) : return "f_skdetfsi010"; break;
+  case ( kRHCNuisSKDetFSI011 ) : return "f_skdetfsi011"; break;
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   case ( kRHCNuisSKDetFSI006 ) : return "f_skdetfsi006"; break;
   case ( kRHCNuisSKDetFSI007 ) : return "f_skdetfsi007"; break;
   case ( kRHCNuisSKDetFSI008 ) : return "f_skdetfsi008"; break;
@@ -2762,14 +3458,24 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI015 ) : return "f_skdetfsi015"; break;
   case ( kRHCNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
   case ( kRHCNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
-#endif
-#ifdef SKCORRELATIONS
+#elif defined(__USE_SKDETFSI2013__)
+  case ( kRHCNuisSKDetFSI012 ) : return "f_skdetfsi012"; break;
+  case ( kRHCNuisSKDetFSI013 ) : return "f_skdetfsi013"; break;
+  case ( kRHCNuisSKDetFSI014 ) : return "f_skdetfsi014"; break;
+  case ( kRHCNuisSKDetFSI015 ) : return "f_skdetfsi015"; break;
+  case ( kRHCNuisSKDetFSI016 ) : return "f_skdetfsi016"; break;
+  case ( kRHCNuisSKDetFSI017 ) : return "f_skdetfsi017"; break;
   case ( kRHCNuisSKDetFSI018 ) : return "f_skdetfsi018"; break;
   case ( kRHCNuisSKDetFSI019 ) : return "f_skdetfsi019"; break;
   case ( kRHCNuisSKDetFSI020 ) : return "f_skdetfsi020"; break;
   case ( kRHCNuisSKDetFSI021 ) : return "f_skdetfsi021"; break;
   case ( kRHCNuisSKDetFSI022 ) : return "f_skdetfsi022"; break;
   case ( kRHCNuisSKDetFSI023 ) : return "f_skdetfsi023"; break;
+#endif
+
+#endif
+    // NEW SKDETFSI (start indices from 24 instead of 18)
+#ifdef SKCORRELATIONS
   case ( kRHCNuisSKDetFSI024 ) : return "f_skdetfsi024"; break;
   case ( kRHCNuisSKDetFSI025 ) : return "f_skdetfsi025"; break;
   case ( kRHCNuisSKDetFSI026 ) : return "f_skdetfsi026"; break;
@@ -2778,6 +3484,12 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kRHCNuisSKDetFSI029 ) : return "f_skdetfsi029"; break;
   case ( kRHCNuisSKDetFSI030 ) : return "f_skdetfsi030"; break;
   case ( kRHCNuisSKDetFSI031 ) : return "f_skdetfsi031"; break;
+  case ( kRHCNuisSKDetFSI032 ) : return "f_skdetfsi032"; break;
+  case ( kRHCNuisSKDetFSI033 ) : return "f_skdetfsi033"; break;
+  case ( kRHCNuisSKDetFSI034 ) : return "f_skdetfsi034"; break;
+  case ( kRHCNuisSKDetFSI035 ) : return "f_skdetfsi035"; break;
+  case ( kRHCNuisSKDetFSI036 ) : return "f_skdetfsi036"; break;
+  case ( kRHCNuisSKDetFSI037 ) : return "f_skdetfsi037"; break;
 #endif
 //#endif //SKDETFSITOGETHER
 
@@ -2798,8 +3510,22 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI003 ) : return "f_skdetfsi003_multiring"; break;
   case ( kMultiRingNuisSKDetFSI004 ) : return "f_skdetfsi004_multiring"; break;
   case ( kMultiRingNuisSKDetFSI005 ) : return "f_skdetfsi005_multiring"; break;
+
+      // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2015__)
+  case ( kMultiRingNuisSKDetFSI006 ) : return "f_skdetfsi006_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI007 ) : return "f_skdetfsi007_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI008 ) : return "f_skdetfsi008_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI009 ) : return "f_skdetfsi009_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI010 ) : return "f_skdetfsi010_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI011 ) : return "f_skdetfsi011_multiring"; break;
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+    // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   case ( kMultiRingNuisSKDetFSI006 ) : return "f_skdetfsi006_multiring"; break;
   case ( kMultiRingNuisSKDetFSI007 ) : return "f_skdetfsi007_multiring"; break;
   case ( kMultiRingNuisSKDetFSI008 ) : return "f_skdetfsi008_multiring"; break;
@@ -2812,14 +3538,24 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI015 ) : return "f_skdetfsi015_multiring"; break;
   case ( kMultiRingNuisSKDetFSI016 ) : return "f_skdetfsi016_multiring"; break;
   case ( kMultiRingNuisSKDetFSI017 ) : return "f_skdetfsi017_multiring"; break;
-#endif
-#ifdef SKCORRELATIONS
+#elif defined(__USE_SKDETFSI2013__)
+  case ( kMultiRingNuisSKDetFSI012 ) : return "f_skdetfsi012_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI013 ) : return "f_skdetfsi013_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI014 ) : return "f_skdetfsi014_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI015 ) : return "f_skdetfsi015_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI016 ) : return "f_skdetfsi016_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI017 ) : return "f_skdetfsi017_multiring"; break;
   case ( kMultiRingNuisSKDetFSI018 ) : return "f_skdetfsi018_multiring"; break;
   case ( kMultiRingNuisSKDetFSI019 ) : return "f_skdetfsi019_multiring"; break;
   case ( kMultiRingNuisSKDetFSI020 ) : return "f_skdetfsi020_multiring"; break;
   case ( kMultiRingNuisSKDetFSI021 ) : return "f_skdetfsi021_multiring"; break;
   case ( kMultiRingNuisSKDetFSI022 ) : return "f_skdetfsi022_multiring"; break;
   case ( kMultiRingNuisSKDetFSI023 ) : return "f_skdetfsi023_multiring"; break;
+#endif
+
+#endif
+#ifdef SKCORRELATIONS
+    // NEW SKDETFSI (start indices from 24 instead of 18)
   case ( kMultiRingNuisSKDetFSI024 ) : return "f_skdetfsi024_multiring"; break;
   case ( kMultiRingNuisSKDetFSI025 ) : return "f_skdetfsi025_multiring"; break;
   case ( kMultiRingNuisSKDetFSI026 ) : return "f_skdetfsi026_multiring"; break;
@@ -2828,6 +3564,12 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kMultiRingNuisSKDetFSI029 ) : return "f_skdetfsi029_multiring"; break;
   case ( kMultiRingNuisSKDetFSI030 ) : return "f_skdetfsi030_multiring"; break;
   case ( kMultiRingNuisSKDetFSI031 ) : return "f_skdetfsi031_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI032 ) : return "f_skdetfsi032_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI033 ) : return "f_skdetfsi033_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI034 ) : return "f_skdetfsi034_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI035 ) : return "f_skdetfsi035_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI036 ) : return "f_skdetfsi036_multiring"; break;
+  case ( kMultiRingNuisSKDetFSI037 ) : return "f_skdetfsi037_multiring"; break;
 #endif
 //#endif //SKDETFSITOGETHER
 
@@ -3019,16 +3761,33 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
 {
   //fhc
 #ifdef SKCORRELATIONS
-  if(p >= kNuisSKDetFSI000 && p <= kNuisSKDetFSI031)
+  // NEW SKDETFSI (increase number)
+  if(p >= kNuisSKDetFSI000 && p <= kNuisSKDetFSI037)
     return true;
 #else
 #if FSI_BINS != 3
+
+  // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   if(p >= kNuisSKDetFSI000 && p <= kNuisSKDetFSI005)
     return true;
+#elif defined(__USE_SKDETFSI2015__)
+  if(p >= kNuisSKDetFSI000 && p <= kNuisSKDetFSI011)
+    return true;
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+  // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   if(p >= kNuisSKDetFSI006 && p <= kNuisSKDetFSI017)
     return true;
+#elif defined(__USE_SKDETFSI2015__)
+  if(p >= kNuisSKDetFSI012 && p <= kNuisSKDetFSI023)
+    return true;
+#endif
+
 #endif
 #endif
   if(p == kNuisSuperkEnergyScale)
@@ -3036,16 +3795,33 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
     
   //rhc
 #ifdef SKCORRELATIONS
-  if(p >= kRHCNuisSKDetFSI000 && p <= kRHCNuisSKDetFSI031)
+  // NEW SKDETFSI (increase number)
+  if(p >= kRHCNuisSKDetFSI000 && p <= kRHCNuisSKDetFSI037)
     return true;
 #else
 #if FSI_BINS != 3
+
+  // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   if(p >= kRHCNuisSKDetFSI000 && p <= kRHCNuisSKDetFSI005)
     return true;
+#elif defined(__USE_SKDETFSI2015__)
+  if(p >= kRHCNuisSKDetFSI000 && p <= kRHCNuisSKDetFSI011)
+    return true;
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+  // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   if(p >= kRHCNuisSKDetFSI006 && p <= kRHCNuisSKDetFSI017)
     return true;
+#elif defined(__USE_SKDETFSI2015__)
+  if(p >= kRHCNuisSKDetFSI012 && p <= kRHCNuisSKDetFSI023)
+    return true;
+#endif
+
 #endif
 #endif
   if(p == kRHCNuisSuperkEnergyScale)
@@ -3055,16 +3831,33 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
   /// NEW MULTIRING 2
   //multiring
 #ifdef SKCORRELATIONS
-  if(p >= kMultiRingNuisSKDetFSI000 && p <= kMultiRingNuisSKDetFSI031)
+  // NEW SKDETFSI (shift number)
+  if(p >= kMultiRingNuisSKDetFSI000 && p <= kMultiRingNuisSKDetFSI037)
     return true;
 #else
 #if FSI_BINS != 3
+
+  // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   if(p >= kMultiRingNuisSKDetFSI000 && p <= kMultiRingNuisSKDetFSI005)
     return true;
+#elif defined(__USE_SKDETFSI2015__)
+  if(p >= kMultiRingNuisSKDetFSI000 && p <= kMultiRingNuisSKDetFSI011)
+    return true;
+#endif
+
 #endif
 #if FSI_BINS != 2
+
+  // NEW SKDETFSI
+#if defined(__USE_SKDETFSI2013__)
   if(p >= kMultiRingNuisSKDetFSI006 && p <= kMultiRingNuisSKDetFSI017)
     return true;
+#elif defined(__USE_SKDETFSI2015__)
+  if(p >= kMultiRingNuisSKDetFSI012 && p <= kMultiRingNuisSKDetFSI023)
+    return true;
+#endif
+
 #endif
 #endif
   //if(p == kNuisSuperkEnergyScale)   // still to update
