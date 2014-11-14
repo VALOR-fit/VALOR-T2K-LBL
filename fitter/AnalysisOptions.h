@@ -40,6 +40,12 @@ Split valor::conv namespace into several smaller files
 #define __USE_NIWG2013__
 #endif
 
+// NEW SKDETFSI (either 2013 or 2015)
+#define __USE_SKDETFSI2015__
+#ifndef __USE_SKDETFSI2015__
+#define __USE_SKDETFSI2013__
+#endif
+
 
 #ifndef __BANFF_UNCORRELATED__
 //#define __BANFF_UNCORRELATED__

@@ -160,30 +160,64 @@ static const PhysParamId_t kLastXSecParam = kNuis078;   // Utility, should alway
     * SK reaction mode (or the total? to be defined)
     */
 
-   // SKDET+FSI matrix 18x18
-#if FSI_BINS != 3
-static const PhysParamId_t kNuisSKDetFSI000 = kNuis080;
-static const PhysParamId_t kNuisSKDetFSI001 = kNuis081;
-static const PhysParamId_t kNuisSKDetFSI002 = kNuis082;
-static const PhysParamId_t kNuisSKDetFSI003 = kNuis083;
-static const PhysParamId_t kNuisSKDetFSI004 = kNuis084;
-static const PhysParamId_t kNuisSKDetFSI005 = kNuis085;
-#endif
-#if FSI_BINS != 2
-static const PhysParamId_t kNuisSKDetFSI006 = kNuis086;
-static const PhysParamId_t kNuisSKDetFSI007 = kNuis087;
-static const PhysParamId_t kNuisSKDetFSI008 = kNuis088;
-static const PhysParamId_t kNuisSKDetFSI009 = kNuis089;
-static const PhysParamId_t kNuisSKDetFSI010 = kNuis090;
-static const PhysParamId_t kNuisSKDetFSI011 = kNuis091;
-static const PhysParamId_t kNuisSKDetFSI012 = kNuis092;
-static const PhysParamId_t kNuisSKDetFSI013 = kNuis093;
-static const PhysParamId_t kNuisSKDetFSI014 = kNuis094;
-static const PhysParamId_t kNuisSKDetFSI015 = kNuis095;
-static const PhysParamId_t kNuisSKDetFSI016 = kNuis096;
-static const PhysParamId_t kNuisSKDetFSI017 = kNuis097;
-#endif
+// NEW SKDETFSI
 
+#if defined(__USE_SKDETFSI2013__)
+ // SKDET+FSI matrix 18x18
+ #if FSI_BINS != 3
+ static const PhysParamId_t kNuisSKDetFSI000 = kNuis080;
+ static const PhysParamId_t kNuisSKDetFSI001 = kNuis081;
+ static const PhysParamId_t kNuisSKDetFSI002 = kNuis082;
+ static const PhysParamId_t kNuisSKDetFSI003 = kNuis083;
+ static const PhysParamId_t kNuisSKDetFSI004 = kNuis084;
+ static const PhysParamId_t kNuisSKDetFSI005 = kNuis085;
+ #endif
+ #if FSI_BINS != 2
+ static const PhysParamId_t kNuisSKDetFSI006 = kNuis086;
+ static const PhysParamId_t kNuisSKDetFSI007 = kNuis087;
+ static const PhysParamId_t kNuisSKDetFSI008 = kNuis088;
+ static const PhysParamId_t kNuisSKDetFSI009 = kNuis089;
+ static const PhysParamId_t kNuisSKDetFSI010 = kNuis090;
+ static const PhysParamId_t kNuisSKDetFSI011 = kNuis091;
+ static const PhysParamId_t kNuisSKDetFSI012 = kNuis092;
+ static const PhysParamId_t kNuisSKDetFSI013 = kNuis093;
+ static const PhysParamId_t kNuisSKDetFSI014 = kNuis094;
+ static const PhysParamId_t kNuisSKDetFSI015 = kNuis095;
+ static const PhysParamId_t kNuisSKDetFSI016 = kNuis096;
+ static const PhysParamId_t kNuisSKDetFSI017 = kNuis097;
+ #endif
+
+#elif defined(__USE_SKDETFSI2015__)
+ // SKDET+FSI matrix 24x24
+ #if FSI_BINS != 3
+ static const PhysParamId_t kNuisSKDetFSI000 = kNuis080;
+ static const PhysParamId_t kNuisSKDetFSI001 = kNuis081;
+ static const PhysParamId_t kNuisSKDetFSI002 = kNuis082;
+ static const PhysParamId_t kNuisSKDetFSI003 = kNuis083;
+ static const PhysParamId_t kNuisSKDetFSI004 = kNuis084;
+ static const PhysParamId_t kNuisSKDetFSI005 = kNuis085;
+ static const PhysParamId_t kNuisSKDetFSI006 = kNuis086;
+ static const PhysParamId_t kNuisSKDetFSI007 = kNuis087;
+ static const PhysParamId_t kNuisSKDetFSI008 = kNuis088;
+ static const PhysParamId_t kNuisSKDetFSI009 = kNuis089;
+ static const PhysParamId_t kNuisSKDetFSI010 = kNuis090;
+ static const PhysParamId_t kNuisSKDetFSI011 = kNuis091;
+ #endif
+ #if FSI_BINS != 2
+ static const PhysParamId_t kNuisSKDetFSI012 = kNuis092;
+ static const PhysParamId_t kNuisSKDetFSI013 = kNuis093;
+ static const PhysParamId_t kNuisSKDetFSI014 = kNuis094;
+ static const PhysParamId_t kNuisSKDetFSI015 = kNuis095;
+ static const PhysParamId_t kNuisSKDetFSI016 = kNuis096;
+ static const PhysParamId_t kNuisSKDetFSI017 = kNuis097;
+ static const PhysParamId_t kNuisSKDetFSI018 = kNuis098;
+ static const PhysParamId_t kNuisSKDetFSI019 = kNuis099;
+ static const PhysParamId_t kNuisSKDetFSI020 = kNuis100;
+ static const PhysParamId_t kNuisSKDetFSI021 = kNuis101;
+ static const PhysParamId_t kNuisSKDetFSI022 = kNuis102;
+ static const PhysParamId_t kNuisSKDetFSI023 = kNuis103;
+ #endif
+#endif
 
 
    //********* REVERSE HORN CURRENT **************************
@@ -192,7 +226,7 @@ static const PhysParamId_t kNuisSKDetFSI017 = kNuis097;
     * Special RHC to FHC errors
     */
 
-static const PhysParamId_t kNuisRHCToFHC = kNuis098;
+static const PhysParamId_t kNuisRHCToFHC = kNuis109;
 
    /*
     * SuperK detector errors (energy scale and efficiencies)
@@ -201,118 +235,118 @@ static const PhysParamId_t kNuisRHCToFHC = kNuis098;
    /*
     * SuperK detector errors (energy scale and efficiencies)
    */   
-static const PhysParamId_t kRHCNuisSuperkEnergyScale     = kNuis100;     // SK energy scale
+static const PhysParamId_t kRHCNuisSuperkEnergyScale     = kNuis110;     // SK energy scale
 #if FSI_BINS != 3
-static const PhysParamId_t kRHCNuisSuperkEff1RmuCCQEoth  = kNuis101; // SK 1Rmu CCQE efficiency (other)
-static const PhysParamId_t kRHCNuisSuperkEff1RmuCCQErc0u = kNuis102; // SK 1Rmu CCQE efficiency (ring counting; Ereco bin 1)
-static const PhysParamId_t kRHCNuisSuperkEff1RmuCCQErc1u = kNuis103; // SK 1Rmu CCQE efficiency (ring counting; Ereco bin 2)
-static const PhysParamId_t kRHCNuisSuperkEff1RmuCCQErc2u = kNuis104; // SK 1Rmu CCQE efficiency (ring counting; Ereco bin 3)
-static const PhysParamId_t kRHCNuisSuperkEff1RmuCCnonQE  = kNuis105; // SK 1Rmu CCnonQE efficiency
-static const PhysParamId_t kRHCNuisSuperkEff1RmuNC       = kNuis106; // SK 1Rmu NC efficiency
-static const PhysParamId_t kRHCNuisSuperkEff1RmuNueCC    = kNuis107; // SK 1Rmu nue CC efficiency
+static const PhysParamId_t kRHCNuisSuperkEff1RmuCCQEoth  = kNuis111; // SK 1Rmu CCQE efficiency (other)
+static const PhysParamId_t kRHCNuisSuperkEff1RmuCCQErc0u = kNuis112; // SK 1Rmu CCQE efficiency (ring counting; Ereco bin 1)
+static const PhysParamId_t kRHCNuisSuperkEff1RmuCCQErc1u = kNuis113; // SK 1Rmu CCQE efficiency (ring counting; Ereco bin 2)
+static const PhysParamId_t kRHCNuisSuperkEff1RmuCCQErc2u = kNuis114; // SK 1Rmu CCQE efficiency (ring counting; Ereco bin 3)
+static const PhysParamId_t kRHCNuisSuperkEff1RmuCCnonQE  = kNuis115; // SK 1Rmu CCnonQE efficiency
+static const PhysParamId_t kRHCNuisSuperkEff1RmuNC       = kNuis116; // SK 1Rmu NC efficiency
+static const PhysParamId_t kRHCNuisSuperkEff1RmuNueCC    = kNuis117; // SK 1Rmu nue CC efficiency
 #endif
 
 #if FSI_BINS != 2
-static const PhysParamId_t kRHCNuisSuperkEff1ReNueSigCC0 = kNuis101;    // SK 1Re CC eff for osc nue Ereco bin 0
-static const PhysParamId_t kRHCNuisSuperkEff1ReNueSigCC1 = kNuis102;    // SK 1Re CC eff for osc nue Ereco bin 1
-static const PhysParamId_t kRHCNuisSuperkEff1ReNueSigCC2 = kNuis103;    // SK 1Re CC eff for osc nue Ereco bin 2
-static const PhysParamId_t kRHCNuisSuperkEff1ReNumuCC0   = kNuis104;    // SK 1Re CC eff for numu Ereco bin 0
-static const PhysParamId_t kRHCNuisSuperkEff1ReNumuCC1   = kNuis105;    // SK 1Re CC eff for numu Ereco bin 1
-static const PhysParamId_t kRHCNuisSuperkEff1ReNumuCC2   = kNuis106;    // SK 1Re CC eff for numu Ereco bin 2
-static const PhysParamId_t kRHCNuisSuperkEff1ReNueCC0    = kNuis107;    // SK 1Re CC eff for nue Ereco bin 0
-static const PhysParamId_t kRHCNuisSuperkEff1ReNueCC1    = kNuis108;    // SK 1Re CC eff for nue Ereco bin 1
-static const PhysParamId_t kRHCNuisSuperkEff1ReNueCC2    = kNuis109;    // SK 1Re CC eff for nue Ereco bin 2
-static const PhysParamId_t kRHCNuisSuperkEff1ReNC0       = kNuis110;    // SK 1Re NC eff Ereco bin 0
-static const PhysParamId_t kRHCNuisSuperkEff1ReNC1       = kNuis111;    // SK 1Re NC eff Ereco bin 1
-static const PhysParamId_t kRHCNuisSuperkEff1ReNC2       = kNuis112;    // SK 1Re NC eff Ereco bin 2
+static const PhysParamId_t kRHCNuisSuperkEff1ReNueSigCC0 = kNuis111;    // SK 1Re CC eff for osc nue Ereco bin 0
+static const PhysParamId_t kRHCNuisSuperkEff1ReNueSigCC1 = kNuis112;    // SK 1Re CC eff for osc nue Ereco bin 1
+static const PhysParamId_t kRHCNuisSuperkEff1ReNueSigCC2 = kNuis113;    // SK 1Re CC eff for osc nue Ereco bin 2
+static const PhysParamId_t kRHCNuisSuperkEff1ReNumuCC0   = kNuis114;    // SK 1Re CC eff for numu Ereco bin 0
+static const PhysParamId_t kRHCNuisSuperkEff1ReNumuCC1   = kNuis115;    // SK 1Re CC eff for numu Ereco bin 1
+static const PhysParamId_t kRHCNuisSuperkEff1ReNumuCC2   = kNuis116;    // SK 1Re CC eff for numu Ereco bin 2
+static const PhysParamId_t kRHCNuisSuperkEff1ReNueCC0    = kNuis117;    // SK 1Re CC eff for nue Ereco bin 0
+static const PhysParamId_t kRHCNuisSuperkEff1ReNueCC1    = kNuis118;    // SK 1Re CC eff for nue Ereco bin 1
+static const PhysParamId_t kRHCNuisSuperkEff1ReNueCC2    = kNuis119;    // SK 1Re CC eff for nue Ereco bin 2
+static const PhysParamId_t kRHCNuisSuperkEff1ReNC0       = kNuis120;    // SK 1Re NC eff Ereco bin 0
+static const PhysParamId_t kRHCNuisSuperkEff1ReNC1       = kNuis121;    // SK 1Re NC eff Ereco bin 1
+static const PhysParamId_t kRHCNuisSuperkEff1ReNC2       = kNuis122;    // SK 1Re NC eff Ereco bin 2
 #endif
 
    /*
     * (flux and cross-section) correlated parameters used in the BANFF fit
    */   
-static const PhysParamId_t kRHCNuisBANFF00 = kNuis120; // # 00; SK numu
-static const PhysParamId_t kRHCNuisBANFF01 = kNuis121; // # 01; SK numu
-static const PhysParamId_t kRHCNuisBANFF02 = kNuis122; // # 02; SK numu
-static const PhysParamId_t kRHCNuisBANFF03 = kNuis123; // # 03; SK numu 
-static const PhysParamId_t kRHCNuisBANFF04 = kNuis124; // # 04; SK numu
-static const PhysParamId_t kRHCNuisBANFF05 = kNuis125; // # 05; SK numu 
-static const PhysParamId_t kRHCNuisBANFF06 = kNuis126; // # 06; SK anti-numu
-static const PhysParamId_t kRHCNuisBANFF07 = kNuis127; // # 07; SK anti-numu
-static const PhysParamId_t kRHCNuisBANFF08 = kNuis128; // # 08; SK anti-numu 
-static const PhysParamId_t kRHCNuisBANFF09 = kNuis129; // # 09; SK anti-numu 
-static const PhysParamId_t kRHCNuisBANFF10 = kNuis130; // # 10; SK anti-numu 
-static const PhysParamId_t kRHCNuisBANFF11 = kNuis131; // # 11; SK anti-numu (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF12 = kNuis132; // # 12; SK anti-numu (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF13 = kNuis133; // # 13; SK anti-numu (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF14 = kNuis134; // # 14; SK anti-numu (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF15 = kNuis135; // # 15; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF00 = kNuis130; // # 00; SK numu
+static const PhysParamId_t kRHCNuisBANFF01 = kNuis131; // # 01; SK numu
+static const PhysParamId_t kRHCNuisBANFF02 = kNuis132; // # 02; SK numu
+static const PhysParamId_t kRHCNuisBANFF03 = kNuis133; // # 03; SK numu 
+static const PhysParamId_t kRHCNuisBANFF04 = kNuis134; // # 04; SK numu
+static const PhysParamId_t kRHCNuisBANFF05 = kNuis135; // # 05; SK numu 
+static const PhysParamId_t kRHCNuisBANFF06 = kNuis136; // # 06; SK anti-numu
+static const PhysParamId_t kRHCNuisBANFF07 = kNuis137; // # 07; SK anti-numu
+static const PhysParamId_t kRHCNuisBANFF08 = kNuis138; // # 08; SK anti-numu 
+static const PhysParamId_t kRHCNuisBANFF09 = kNuis139; // # 09; SK anti-numu 
+static const PhysParamId_t kRHCNuisBANFF10 = kNuis140; // # 10; SK anti-numu 
+static const PhysParamId_t kRHCNuisBANFF11 = kNuis141; // # 11; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF12 = kNuis142; // # 12; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF13 = kNuis143; // # 13; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF14 = kNuis144; // # 14; SK anti-numu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF15 = kNuis145; // # 15; SK anti-numu (different meanings depending on samples defined)
 #if (BANFF_BINS != 2)
-static const PhysParamId_t kRHCNuisBANFF16 = kNuis136; // # 16; SK nue (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF17 = kNuis137; // # 17; SK nue (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF18 = kNuis138; // # 18; SK anti-nue (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF19 = kNuis139; // # 19; SK anti-nu (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF20 = kNuis140; // # 20; SK anti-nue (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF21 = kNuis141; // # 21; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF16 = kNuis146; // # 16; SK nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF17 = kNuis147; // # 17; SK nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF18 = kNuis148; // # 18; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF19 = kNuis149; // # 19; SK anti-nu (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF20 = kNuis150; // # 20; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF21 = kNuis151; // # 21; SK anti-nue (different meanings depending on samples defined)
 #endif
 #if BANFF_BINS == 1
-static const PhysParamId_t kRHCNuisBANFF22 = kNuis142; // # 22; SK anti-nue (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF23 = kNuis143; // # 23; SK anti-nue (different meanings depending on samples defined)
-static const PhysParamId_t kRHCNuisBANFF24 = kNuis144; // # 24; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF22 = kNuis152; // # 22; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF23 = kNuis153; // # 23; SK anti-nue (different meanings depending on samples defined)
+static const PhysParamId_t kRHCNuisBANFF24 = kNuis154; // # 24; SK anti-nue (different meanings depending on samples defined)
 #endif
-static const PhysParamId_t kRHCNuisBANFFMAQE    = kNuis145;  // # M_{A}  QE
-static const PhysParamId_t kRHCNuisBANFFMARES   = kNuis146;  // # M_{A}  RES
-static const PhysParamId_t kRHCNuisBANFFCCQEE0  = kNuis147;  // # CCQE   normalization; 0 - 1.5 GeV
+static const PhysParamId_t kRHCNuisBANFFMAQE    = kNuis155;  // # M_{A}  QE
+static const PhysParamId_t kRHCNuisBANFFMARES   = kNuis156;  // # M_{A}  RES
+static const PhysParamId_t kRHCNuisBANFFCCQEE0  = kNuis157;  // # CCQE   normalization; 0 - 1.5 GeV
 #if BANFF_BINS != 3
-static const PhysParamId_t kRHCNuisBANFFCCQEE1  = kNuis148;  // # CCQE   normalization; 1.5 -  3.5 GeV
-static const PhysParamId_t kRHCNuisBANFFCCQEE2  = kNuis149;  // # CCQE   normalization; 3.5 - 30.0 GeV
+static const PhysParamId_t kRHCNuisBANFFCCQEE1  = kNuis158;  // # CCQE   normalization; 1.5 -  3.5 GeV
+static const PhysParamId_t kRHCNuisBANFFCCQEE2  = kNuis159;  // # CCQE   normalization; 3.5 - 30.0 GeV
 #endif
-static const PhysParamId_t kRHCNuisBANFFCC1piE0 = kNuis150; // # CC1pi  normalization; 0 - 2.5 GeV
+static const PhysParamId_t kRHCNuisBANFFCC1piE0 = kNuis160; // # CC1pi  normalization; 0 - 2.5 GeV
 #if BANFF_BINS != 3
-static const PhysParamId_t kRHCNuisBANFFCC1piE1 = kNuis151; // # CC1pi  normalization; 2.5 - 30.0 GeV
+static const PhysParamId_t kRHCNuisBANFFCC1piE1 = kNuis161; // # CC1pi  normalization; 2.5 - 30.0 GeV
 #endif
 #if (BANFF_BINS != 2)
-static const PhysParamId_t kRHCNuisBANFFNC1pi0  = kNuis152; // # NC1pi0 normalization; 0 - 30.0 GeV
+static const PhysParamId_t kRHCNuisBANFFNC1pi0  = kNuis162; // # NC1pi0 normalization; 0 - 30.0 GeV
 #endif
 
 // NEW XSEC
-static const PhysParamId_t kRHCNuisBANFFMEC     = kNuis153;  // MEC normalization
-static const PhysParamId_t kRHCNuisBANFFCA5     = kNuis154;  // CA5 RES 
-static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis155;  // Isospin 1/2 normalization
-static const PhysParamId_t kRHCNuisBANFFSCCA    = kNuis156;  // Second current axial
-static const PhysParamId_t kRHCNuisBANFFSCCV    = kNuis157;  // Second current vector
+static const PhysParamId_t kRHCNuisBANFFMEC     = kNuis163;  // MEC normalization
+static const PhysParamId_t kRHCNuisBANFFCA5     = kNuis164;  // CA5 RES 
+static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis165;  // Isospin 1/2 normalization
+static const PhysParamId_t kRHCNuisBANFFSCCA    = kNuis166;  // Second current axial
+static const PhysParamId_t kRHCNuisBANFFSCCV    = kNuis167;  // Second current vector
 
-static const PhysParamId_t kRHCNuisBANFFFermiMom       = kNuis158;   // Fermi momentum
-static const PhysParamId_t kRHCNuisBANFFShapeCCoth     = kNuis159;   // CC other shape
-static const PhysParamId_t kRHCNuisBANFFBindE          = kNuis160;   // Binding energy
+static const PhysParamId_t kRHCNuisBANFFFermiMom       = kNuis168;   // Fermi momentum
+static const PhysParamId_t kRHCNuisBANFFShapeCCoth     = kNuis169;   // CC other shape
+static const PhysParamId_t kRHCNuisBANFFBindE          = kNuis170;   // Binding energy
 
-static const PhysParamId_t kRHCNuisBANFFNormCCcoh      = kNuis161;   // CC coherent norm
-static const PhysParamId_t kRHCNuisBANFFNormNCcoh      = kNuis162;   // NC coh norm
-static const PhysParamId_t kRHCNuisBANFFNormNCoth      = kNuis163;   // NC other norm
-static const PhysParamId_t kRHCNuisBANFFNormNuEToNuMu  = kNuis164;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisBANFFNormCCcoh      = kNuis171;   // CC coherent norm
+static const PhysParamId_t kRHCNuisBANFFNormNCcoh      = kNuis172;   // NC coh norm
+static const PhysParamId_t kRHCNuisBANFFNormNCoth      = kNuis173;   // NC other norm
+static const PhysParamId_t kRHCNuisBANFFNormNuEToNuMu  = kNuis174;   // nue / numu cross section
 //
 
-static const PhysParamId_t kRHCLastBANFFParam  = kNuis165; // Utility, should always come after last RHC BANFF
+static const PhysParamId_t kRHCLastBANFFParam  = kNuis175; // Utility, should always come after last RHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
     * These other paramers are taken to be uncorrelated and are applied to SK only.
    */   
    //systematics which use splines
-static const PhysParamId_t kRHCNuisXSecFermiMom       = kNuis166;   // Fermi momentum
-static const PhysParamId_t kRHCNuisXSecSpecFunc       = kNuis167;   // spectral function on/off
-static const PhysParamId_t kRHCNuisXSecWshape         = kNuis168;   // W-shape
-static const PhysParamId_t kRHCNuisXSecShapeCCoth     = kNuis169;   // CC other shape
-static const PhysParamId_t kRHCNuisXSecPiLessDelta    = kNuis170;   // Pion-less delta decay
-static const PhysParamId_t kRHCNuisXSecBindE          = kNuis171;   // Binding energy
+static const PhysParamId_t kRHCNuisXSecFermiMom       = kNuis176;   // Fermi momentum
+static const PhysParamId_t kRHCNuisXSecSpecFunc       = kNuis177;   // spectral function on/off
+static const PhysParamId_t kRHCNuisXSecWshape         = kNuis178;   // W-shape
+static const PhysParamId_t kRHCNuisXSecShapeCCoth     = kNuis179;   // CC other shape
+static const PhysParamId_t kRHCNuisXSecPiLessDelta    = kNuis180;   // Pion-less delta decay
+static const PhysParamId_t kRHCNuisXSecBindE          = kNuis181;   // Binding energy
    //systematics that are normalisations
-static const PhysParamId_t kRHCNuisXSecNormCCcoh      = kNuis172;   // CC coherent norm
-static const PhysParamId_t kRHCNuisXSecNormNC1piC     = kNuis173;   // NC 1piC norm
-static const PhysParamId_t kRHCNuisXSecNormNCcoh      = kNuis174;   // NC coh norm
-static const PhysParamId_t kRHCNuisXSecNormNCoth      = kNuis175;   // NC other norm
-static const PhysParamId_t kRHCNuisXSecNormNuEToNuMu  = kNuis176;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisXSecNormAntiNuToNu = kNuis177;   // antinu / nu cross section
+static const PhysParamId_t kRHCNuisXSecNormCCcoh      = kNuis182;   // CC coherent norm
+static const PhysParamId_t kRHCNuisXSecNormNC1piC     = kNuis183;   // NC 1piC norm
+static const PhysParamId_t kRHCNuisXSecNormNCcoh      = kNuis184;   // NC coh norm
+static const PhysParamId_t kRHCNuisXSecNormNCoth      = kNuis185;   // NC other norm
+static const PhysParamId_t kRHCNuisXSecNormNuEToNuMu  = kNuis186;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisXSecNormAntiNuToNu = kNuis187;   // antinu / nu cross section
 
-static const PhysParamId_t kRHCLastXSecParam = kNuis178;   // Utility, should always come after last RHC Xsec param
+static const PhysParamId_t kRHCLastXSecParam = kNuis188;   // Utility, should always come after last RHC Xsec param
 
    /*
     * FSI parameters.
@@ -321,31 +355,67 @@ static const PhysParamId_t kRHCLastXSecParam = kNuis178;   // Utility, should al
     * SK reaction mode (or the total? to be defined)
     */
 
-   // SKDET+FSI matrix 18x18
-#if FSI_BINS != 3
-static const PhysParamId_t kRHCNuisSKDetFSI000 = kNuis180;
-static const PhysParamId_t kRHCNuisSKDetFSI001 = kNuis181;
-static const PhysParamId_t kRHCNuisSKDetFSI002 = kNuis182;
-static const PhysParamId_t kRHCNuisSKDetFSI003 = kNuis183;
-static const PhysParamId_t kRHCNuisSKDetFSI004 = kNuis184;
-static const PhysParamId_t kRHCNuisSKDetFSI005 = kNuis185;
-#endif
-#if FSI_BINS != 2
-static const PhysParamId_t kRHCNuisSKDetFSI006 = kNuis186;
-static const PhysParamId_t kRHCNuisSKDetFSI007 = kNuis187;
-static const PhysParamId_t kRHCNuisSKDetFSI008 = kNuis188;
-static const PhysParamId_t kRHCNuisSKDetFSI009 = kNuis189;
-static const PhysParamId_t kRHCNuisSKDetFSI010 = kNuis190;
-static const PhysParamId_t kRHCNuisSKDetFSI011 = kNuis191;
-static const PhysParamId_t kRHCNuisSKDetFSI012 = kNuis192;
-static const PhysParamId_t kRHCNuisSKDetFSI013 = kNuis193;
-static const PhysParamId_t kRHCNuisSKDetFSI014 = kNuis194;
-static const PhysParamId_t kRHCNuisSKDetFSI015 = kNuis195;
-static const PhysParamId_t kRHCNuisSKDetFSI016 = kNuis196;
-static const PhysParamId_t kRHCNuisSKDetFSI017 = kNuis197;
-#endif
+// NEW SKDETFSI
+ 
 
-static const PhysParamId_t kRHCLastParam = kNuis198;
+#if defined(__USE_SKDETFSI2013__)
+ // SKDET+FSI matrix 18x18
+ #if FSI_BINS != 3
+ static const PhysParamId_t kRHCNuisSKDetFSI000 = kNuis190;
+ static const PhysParamId_t kRHCNuisSKDetFSI001 = kNuis191;
+ static const PhysParamId_t kRHCNuisSKDetFSI002 = kNuis192;
+ static const PhysParamId_t kRHCNuisSKDetFSI003 = kNuis193;
+ static const PhysParamId_t kRHCNuisSKDetFSI004 = kNuis194;
+ static const PhysParamId_t kRHCNuisSKDetFSI005 = kNuis195;
+ #endif
+ #if FSI_BINS != 2
+ static const PhysParamId_t kRHCNuisSKDetFSI006 = kNuis196;
+ static const PhysParamId_t kRHCNuisSKDetFSI007 = kNuis197;
+ static const PhysParamId_t kRHCNuisSKDetFSI008 = kNuis198;
+ static const PhysParamId_t kRHCNuisSKDetFSI009 = kNuis199;
+ static const PhysParamId_t kRHCNuisSKDetFSI010 = kNuis200;
+ static const PhysParamId_t kRHCNuisSKDetFSI011 = kNuis201;
+ static const PhysParamId_t kRHCNuisSKDetFSI012 = kNuis202;
+ static const PhysParamId_t kRHCNuisSKDetFSI013 = kNuis203;
+ static const PhysParamId_t kRHCNuisSKDetFSI014 = kNuis204;
+ static const PhysParamId_t kRHCNuisSKDetFSI015 = kNuis205;
+ static const PhysParamId_t kRHCNuisSKDetFSI016 = kNuis206;
+ static const PhysParamId_t kRHCNuisSKDetFSI017 = kNuis207;
+ #endif
+
+#elif defined(__USE_SKDETFSI2015__) 
+ // SKDET+FSI matrix 24x24
+ #if FSI_BINS != 3
+ static const PhysParamId_t kRHCNuisSKDetFSI000 = kNuis190;
+ static const PhysParamId_t kRHCNuisSKDetFSI001 = kNuis191;
+ static const PhysParamId_t kRHCNuisSKDetFSI002 = kNuis192;
+ static const PhysParamId_t kRHCNuisSKDetFSI003 = kNuis193;
+ static const PhysParamId_t kRHCNuisSKDetFSI004 = kNuis194;
+ static const PhysParamId_t kRHCNuisSKDetFSI005 = kNuis195;
+ static const PhysParamId_t kRHCNuisSKDetFSI006 = kNuis196;
+ static const PhysParamId_t kRHCNuisSKDetFSI007 = kNuis197;
+ static const PhysParamId_t kRHCNuisSKDetFSI008 = kNuis198;
+ static const PhysParamId_t kRHCNuisSKDetFSI009 = kNuis199;
+ static const PhysParamId_t kRHCNuisSKDetFSI010 = kNuis200;
+ static const PhysParamId_t kRHCNuisSKDetFSI011 = kNuis201;
+ #endif
+ #if FSI_BINS != 2
+ static const PhysParamId_t kRHCNuisSKDetFSI012 = kNuis202;
+ static const PhysParamId_t kRHCNuisSKDetFSI013 = kNuis203;
+ static const PhysParamId_t kRHCNuisSKDetFSI014 = kNuis204;
+ static const PhysParamId_t kRHCNuisSKDetFSI015 = kNuis205;
+ static const PhysParamId_t kRHCNuisSKDetFSI016 = kNuis206;
+ static const PhysParamId_t kRHCNuisSKDetFSI017 = kNuis207;
+ static const PhysParamId_t kRHCNuisSKDetFSI018 = kNuis208;
+ static const PhysParamId_t kRHCNuisSKDetFSI019 = kNuis209;
+ static const PhysParamId_t kRHCNuisSKDetFSI020 = kNuis210;
+ static const PhysParamId_t kRHCNuisSKDetFSI021 = kNuis211;
+ static const PhysParamId_t kRHCNuisSKDetFSI022 = kNuis212;
+ static const PhysParamId_t kRHCNuisSKDetFSI023 = kNuis213;
+ #endif
+#endif 
+
+static const PhysParamId_t kRHCLastParam = kNuis214;
 
 
 
@@ -360,36 +430,72 @@ static const PhysParamId_t kRHCLastParam = kNuis198;
  */   
 
 /// NEW MULTIRING 3
-static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis199;   // SK energy scale
+static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis215;   // SK energy scale
 ///
 
 /// NEW MULTIRING 2
 
-// SKDET+FSI matrix 18x18 
-#if FSI_BINS != 3
-static const PhysParamId_t kMultiRingNuisSKDetFSI000 = kNuis200;
-static const PhysParamId_t kMultiRingNuisSKDetFSI001 = kNuis201;
-static const PhysParamId_t kMultiRingNuisSKDetFSI002 = kNuis202;
-static const PhysParamId_t kMultiRingNuisSKDetFSI003 = kNuis203;
-static const PhysParamId_t kMultiRingNuisSKDetFSI004 = kNuis204;
-static const PhysParamId_t kMultiRingNuisSKDetFSI005 = kNuis205;
-#endif
-#if FSI_BINS != 2
-static const PhysParamId_t kMultiRingNuisSKDetFSI006 = kNuis206;
-static const PhysParamId_t kMultiRingNuisSKDetFSI007 = kNuis207;
-static const PhysParamId_t kMultiRingNuisSKDetFSI008 = kNuis208;
-static const PhysParamId_t kMultiRingNuisSKDetFSI009 = kNuis209;
-static const PhysParamId_t kMultiRingNuisSKDetFSI010 = kNuis210;
-static const PhysParamId_t kMultiRingNuisSKDetFSI011 = kNuis211;
-static const PhysParamId_t kMultiRingNuisSKDetFSI012 = kNuis212;
-static const PhysParamId_t kMultiRingNuisSKDetFSI013 = kNuis213;
-static const PhysParamId_t kMultiRingNuisSKDetFSI014 = kNuis214;
-static const PhysParamId_t kMultiRingNuisSKDetFSI015 = kNuis215;
-static const PhysParamId_t kMultiRingNuisSKDetFSI016 = kNuis216;
-static const PhysParamId_t kMultiRingNuisSKDetFSI017 = kNuis217;
+// NEW SKDETFSI
+
+#if defined(__USE_SKDETFSI2013__)
+ // SKDET+FSI matrix 18x18 
+ #if FSI_BINS != 3
+ static const PhysParamId_t kMultiRingNuisSKDetFSI000 = kNuis216;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI001 = kNuis217;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI002 = kNuis218;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI003 = kNuis219;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI004 = kNuis220;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI005 = kNuis221;
+ #endif
+ #if FSI_BINS != 2
+ static const PhysParamId_t kMultiRingNuisSKDetFSI006 = kNuis222;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI007 = kNuis223;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI008 = kNuis224;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI009 = kNuis225;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI010 = kNuis226;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI011 = kNuis227;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI012 = kNuis228;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI013 = kNuis229;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI014 = kNuis230;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI015 = kNuis231;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI016 = kNuis232;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI017 = kNuis233;
+ #endif
+
+#elif defined(__USE_SKDETFSI2015__)
+ // SKDET+FSI matrix 24x24
+ #if FSI_BINS != 3
+ static const PhysParamId_t kMultiRingNuisSKDetFSI000 = kNuis216;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI001 = kNuis217;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI002 = kNuis218;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI003 = kNuis219;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI004 = kNuis220;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI005 = kNuis221;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI006 = kNuis222;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI007 = kNuis223;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI008 = kNuis224;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI009 = kNuis225;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI010 = kNuis226;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI011 = kNuis227;
+ #endif
+ #if FSI_BINS != 2
+ static const PhysParamId_t kMultiRingNuisSKDetFSI012 = kNuis228;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI013 = kNuis229;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI014 = kNuis230;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI015 = kNuis231;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI016 = kNuis232;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI017 = kNuis233;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI018 = kNuis234;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI019 = kNuis235;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI020 = kNuis236;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI021 = kNuis237;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI022 = kNuis238;
+ static const PhysParamId_t kMultiRingNuisSKDetFSI023 = kNuis239;
+ #endif
 #endif
 
-static const PhysParamId_t kMultiRingLastParam = kNuis218;
+ 
+static const PhysParamId_t kMultiRingLastParam = kNuis240;
 ////
 
 } // conv
