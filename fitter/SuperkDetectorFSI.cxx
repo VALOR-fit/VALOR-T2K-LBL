@@ -410,8 +410,6 @@ double SuperkDetectorFSI::SystWght(
   else
     nSKDetFSIParams = conv::kNumOfSKDetFSIParams;
 
-
-
   for(int ip = 0; ip < nSKDetFSIParams; ip++) {
     if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
       p = conv::kListOfRHCSKDetFSIParams[ip];
@@ -432,9 +430,20 @@ double SuperkDetectorFSI::SystWght(
         cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple RHC SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
              << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
 #if FSI_BINS != 3
-             << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+
+	     // NEW SKDETFSI
+	     //<< util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+             << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI_first)) << "\t" <<  util::AsString(p) << endl;
 #else
-             << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+	     // // NEW SKDETFSI
+             // #if defined(__USE_SKDETFSI2013__)
+	     // << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+             // #elif defined(__USE_SKDETFSI2015__)
+             // << util::AsString((conv::PhysParamId_t)(iparam+conv::kRHCNuisSKDetFSI012)) << "\t" <<  util::AsString(p) << endl;
+	     // #endif
+	     << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI_first)) << "\t" <<  util::AsString(p) << endl;
+
+      
 #endif
       }
       
@@ -444,20 +453,36 @@ double SuperkDetectorFSI::SystWght(
         cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple MultiRing SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
              << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
 #if FSI_BINS != 3
-             << util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+	     // NEW SKDETFSI
+	     //<< util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+	     << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI_first)) << "\t" <<  util::AsString(p) << endl;
 #else
-             << util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+	     // NEW SKDETFSI
+             // #if defined(__USE_SKDETFSI2013__)
+             // << util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+             // #elif defined(__USE_SKDETFSI2015__)
+             // << util::AsString((conv::PhysParamId_t)(iparam+conv::kMultiRingNuisSKDetFSI012)) << "\t" <<  util::AsString(p) << endl;
+	     // #endif
+	     << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI_first)) << "\t" <<  util::AsString(p) << endl;
 #endif
       }
       ///
       else
       {
         cerr << "Exp/SuperkDetectorFSI/SystWght >> Found multiple SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
-           << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
+	     << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl
 #if FSI_BINS != 3
-           << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+	     // NEW SKDETFSI
+	     //<< util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI000)) << "\t" <<  util::AsString(p) << endl;
+	     << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI_first)) << "\t" <<  util::AsString(p) << endl;
 #else
-           << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+	   // // NEW SKDETFSI
+           // #if defined(__USE_SKDETFSI2013__)
+	   // << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI006)) << "\t" <<  util::AsString(p) << endl;
+           // #elif defined(__USE_SKDETFSI2015__)
+	   // << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI012)) << "\t" <<  util::AsString(p) << endl;
+           // #endif
+	   << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI_first)) << "\t" <<  util::AsString(p) << endl;
 #endif
       }
       exit(1);
@@ -528,16 +553,6 @@ double SuperkDetectorFSI::SystWght(
 }
 
 
-
-
-
-
-
-
-
-
-
-
 // //________________________________________________________________________________________
 // double SuperkDetectorFSI::CurrentValue(conv::PhysParamId_t p) const
 // {
@@ -596,18 +611,6 @@ double SuperkDetectorFSI::MultiRingCurrentValue(conv::PhysParamId_t p) const
   return current_values[idx];
 }
 ///
-
-
-
-
-
-
-
-
-
-
-
-
 
 //________________________________________________________________________________________
 double SuperkDetectorFSI::OneSigmaError(PhysParamId_t p) const
@@ -1565,7 +1568,7 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
 
   //covariance matrix
   const TMatrixD cov    (this->CovMatrix());
-  const TMatrixD    covInv (this->CovMatrixInv());
+  const TMatrixD covInv (this->CovMatrixInv());
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> SuperkDetector+FSI covariance matrix: " << endl;
@@ -1628,7 +1631,7 @@ double SuperkDetectorFSI::RHCChisqPenalty(void) const
 
   //covariance matrix
   const TMatrixD cov    (this->RHCCovMatrix());
-  const TMatrixD    covInv (this->RHCCovMatrixInv());
+  const TMatrixD covInv (this->RHCCovMatrixInv());
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> RHC SuperkDetector+FSI covariance matrix: " << endl;
@@ -1717,17 +1720,10 @@ double SuperkDetectorFSI::MultiRingChisqPenalty(void) const
   TMatrixD chisqpenalty =  dev * covInv * devT;
   double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
 
-
-
-
   /// NEW MULTIRING 3
   // now add the contribution from energy scale
   if (fMultiRingEnergyScaleTwkDial   ) chisq_penalty += fMultiRingEnergyScaleTwkDial*fMultiRingEnergyScaleTwkDial;
   ///
-
-
-
-
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> MultiRing chisqPenalty = " << chisq_penalty << endl;

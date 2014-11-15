@@ -678,22 +678,34 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   #if defined (__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) 
   fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale) );   // FHC SK escale
   for(int i = 0; i < kNumOfSKDetFSIParams; i++) {
-    #if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
-    #else
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
-    #endif
+
+  
+    // NEW SKDETFSI
+    //
+    // #if FSI_BINS != 3
+    // PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+    // #else
+    // PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+    // #endif
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+
+
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
   fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale) );   // MultiRing SK escale
   for(int i = 0; i < kNumOfSKDetFSIParamsMultiRing; i++) {
-    #if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
-    #else
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
-    #endif
+
+    // NEW SKDETFSI
+    //
+    // #if FSI_BINS != 3
+    // PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+    // #else
+    // PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+    // #endif
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + i);
+
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -704,11 +716,16 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) 
   fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale) );   // FHC SK escale
   for(int i = 0; i < kNumOfSKDetFSIParams; i++) {
-    #if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
-    #else
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
-    #endif
+
+    // NEW SKDETFSI
+    //
+    // #if FSI_BINS != 3
+    // PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+    // #else
+    // PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+    // #endif
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -719,11 +736,16 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   #elif defined(__FHC_RUNNING__)    
   fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale) );   // FHC SK escale
   for(int i = 0; i < kNumOfSKDetFSIParams; i++) {
-    #if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
-    #else
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
-    #endif
+
+    // NEW SKDETFSI
+    //
+    // #if FSI_BINS != 3
+    // PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+    // #else
+    // PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+    // #endif
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+    
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -734,11 +756,16 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   #elif defined(__RHC_RUNNING__)  
   fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale) );   // RHC SK escale
   for(int i = 0; i < kNumOfRHCSKDetFSIParams; i++) {
-    #if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + i);
-    #else
-    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + i);
-    #endif
+
+    // NEW SKDETFSI
+    //
+    // #if FSI_BINS != 3
+    // PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + i);
+    // #else
+    // PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + i);
+    // #endif
+    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
+    
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -753,11 +780,16 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   
   fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale) );   // MultiRing SK escale
   for(int i = 0; i < kNumOfSKDetFSIParamsMultiRing; i++) {
-    #if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
-    #else
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
-    #endif
+
+    // NEW SKDETFSI
+    //
+    // #if FSI_BINS != 3
+    // PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+    // #else
+    // PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+    // #endif
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + i);
+    
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -831,14 +863,22 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   #if defined (__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) 
     fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
     for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
     }
     fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
     for(int i = 0; i < kNumOfSKDetFSIParamsMultiRmu; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+
+      // NEW SKDETFSI 
+      //PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -849,7 +889,11 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
    #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) 
     fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
     for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -860,7 +904,11 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
    #elif defined(__FHC_RUNNING__) 
     fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
     for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -870,7 +918,11 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
    #elif defined(__RHC_RUNNING__) // rhc only 
     fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale));  // RHC SK escale
     for(int i = 0; i < kNumOfRHCSKDetFSIParams1Rmu; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + i);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -884,7 +936,11 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   // multiring fhc only 
   fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
   for(int i = 0; i < kNumOfSKDetFSIParamsMultiRmu; i++) {
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+
+    // NEW SKDETFSI
+    //PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + i);
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + i);
+
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -892,9 +948,6 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   #endif
 #endif // sample analysis option
   ///
-
-
-
 }
 #endif // #ifdef __NUMUONLY__
 
@@ -934,7 +987,6 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   //  xml->FreeDoc(xmldoc);
   xml->FreeNode(root_node);
   delete xml;
-
  
   ///////////////////////////////////////////////////////////////
   //                                                           //
@@ -959,14 +1011,22 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   #if defined (__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) 
     fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
     for(int i = 0; i < kNumOfSKDetFSIParams1Re; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
     }
     fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
     for(int i = 0; i < kNumOfSKDetFSIParamsMultiRe; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+
+      // NEW SKDETFSI 
+      //PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -978,7 +1038,11 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)  
     fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
     for(int i = 0; i < kNumOfSKDetFSIParams1Re; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -988,7 +1052,11 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   #elif defined(__FHC_RUNNING__) // fhc only 
     fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
     for(int i = 0; i < kNumOfSKDetFSIParams1Re; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -998,7 +1066,11 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   #elif defined(__RHC_RUNNING__) // rhc only 
     fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale));  // FHC SK escale
     for(int i = 0; i < kNumOfRHCSKDetFSIParams1Re; i++) {
-      PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + i);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + i);
+      PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
+
       double err = sqrt(SKDetFSICov[i][i]);
       double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -1012,7 +1084,11 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   
   fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
   for(int i = 0; i < kNumOfSKDetFSIParamsMultiRe; i++) {
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+
+    // NEW SKDETFSI
+    //PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + i);
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + i);
+
     double err = sqrt(SKDetFSICov[i][i]);
     double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
     fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
@@ -1073,8 +1149,6 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
     //PhysParamId_t p = kListOfBANFFParams[i];
 
-
-
     // TODO: implement flux FHC+RHC w/ correlations
 
      // NEW FLUX
@@ -1086,7 +1160,6 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
     PhysParamId_t p = kListOfRHCBANFFParams[i];
 #endif
     //
-
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
     double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));

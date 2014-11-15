@@ -238,33 +238,46 @@ void valor::util::PrintCompact(
      }
      if(printing_fsi_params) {
          stream << " [ ";
-#if FSI_BINS != 3
 
-         //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 
-	 // NEW FLUX
+       // #if FSI_BINS != 3
+       //   //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+       // 	 // NEW FLUX
+       // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+       // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+       // #elif defined(__FHC_RUNNING__) // fhc only
+       //   PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+       // #elif defined(__RHC_RUNNING__) // rhc only
+       //   PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
+       // #endif
+       // 	 //
+       // #else
+       // 	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+       // 	 // NEW FLUX
+       // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+       // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+       // #elif defined(__FHC_RUNNING__) // fhc only
+       // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+       // #elif defined(__RHC_RUNNING__) // rhc only
+       // 	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
+       // #endif
+       // 	 //
+       // #endif
+ 
+       	 // NEW FLUX
+
+	 // NEW SKDETFSI (use kNuisSKDetFSI_first)
+
+         //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__FHC_RUNNING__) // fhc only
-         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__RHC_RUNNING__) // rhc only
-         PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
+         PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI_first + ip );
        #endif
 	 //
-#else
-	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
 
-	 // NEW FLUX
-       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-       #elif defined(__FHC_RUNNING__) // fhc only
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-       #elif defined(__RHC_RUNNING__) // rhc only
-	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
-       #endif
-	 //
-
-#endif
          stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
@@ -272,11 +285,16 @@ void valor::util::PrintCompact(
      /// NEW MULTIRING 2
      if(printing_multiring_fsi_params) {
          stream << " [ ";
-#if FSI_BINS != 3
-         PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI000 + ip );
-#else
-	 PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI006 + ip );
-#endif
+
+	 // #if FSI_BINS != 3
+	 //          PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI000 + ip );
+	 // #else
+	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI006 + ip );
+	 // #endif
+
+	 // NEW SKDETFSI (use kMultiRingNuisSKDetFSI_first)
+	 PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI_first + ip );
+
          stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
@@ -336,33 +354,47 @@ void valor::util::PrintCompact(
      }
      if(printing_fsi_params) {
          stream << " [ ";
-#if FSI_BINS != 3
+
+
+	 // #if FSI_BINS != 3
+	 //          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+	 // 	 // NEW FLUX
+	 //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+	 //          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+	 //        #elif defined(__FHC_RUNNING__)
+	 //          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+	 //        #elif defined(__RHC_RUNNING__)
+	 //          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
+	 //        #endif
+	 // 	 //
+	 // #else
+	 // 	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );	 
+	 // 	 // NEW FLUX
+	 //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+	 //        #elif defined(__FHC_RUNNING__)	 
+	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+	 //        #elif defined(__RHC_RUNNING__)
+	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
+	 //        #endif
+	 // 	 //	 
+	 // #endif
+
+
+
+	 // NEW FLUX
 
          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 
-	 // NEW FLUX
+	 // NEW SKDETFSI (use kNuisSKDetFSI_first)
        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__FHC_RUNNING__)
-         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__RHC_RUNNING__)
-         PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
+         PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI_first + ip );
        #endif
-	 //
-#else
-	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-	 
-	 // NEW FLUX
-       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-       #elif defined(__FHC_RUNNING__)	 
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-       #elif defined(__RHC_RUNNING__)
-	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
-       #endif
-	 //
-	 
-#endif
+
          stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
@@ -370,11 +402,16 @@ void valor::util::PrintCompact(
      /// NEW MULTIRING 2
      if(printing_multiring_fsi_params) {
        stream << " [ ";
-#if FSI_BINS != 3
-       PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI000 + ip );
-#else
-       PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI006 + ip );
-#endif
+
+       // #if FSI_BINS != 3
+       //        PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI000 + ip );
+       // #else
+       //        PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI006 + ip );
+       // #endif
+       
+       // NEW SKDETFSI (use kMultiRingSKDetFSI_first)
+       PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI_first + ip );
+
        stream << setw(30) << util::AsString(p);
        stream << " ]";
      }
@@ -829,11 +866,17 @@ void valor::util::ArrIdx::Init(void)
     fSKDetFSISystIdx[i] = -1;
   }
   for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
-#if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
-#else
-    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
-#endif
+
+
+    // #if FSI_BINS != 3
+    //     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+    // #else
+    //     PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+    // #endif
+
+    // NEW SKDETFSI (use kNuisSKDetFSI_first)
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+    
     if(p == kPhypUndefined) continue;
     fSKDetFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
@@ -847,11 +890,16 @@ void valor::util::ArrIdx::Init(void)
     fRHCSKDetFSISystIdx[i] = -1;
   }
   for(int ip = 0; ip < kNumOfRHCSKDetFSIParams; ip++) {
-#if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + ip);
-#else
-    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + ip);
-#endif
+
+    // #if FSI_BINS != 3
+    //     PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + ip);
+    // #else
+    //     PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + ip);
+    // #endif
+
+    // NEW SKDETFSI (use kRHCNuisSKDetFSI_first)
+    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + ip);
+
     if(p == kPhypUndefined) continue;
     fRHCSKDetFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
@@ -868,11 +916,16 @@ void valor::util::ArrIdx::Init(void)
     fMultiRingSKDetFSISystIdx[i] = -1;
   }
   for(int ip = 0; ip < kNumOfSKDetFSIParamsMultiRing; ip++) {
-#if FSI_BINS != 3
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + ip);
-#else
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + ip);
-#endif
+
+    // #if FSI_BINS != 3
+    //     PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + ip);
+    // #else
+    //     PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + ip);
+    // #endif
+    
+    // NEW SKDETFSI
+    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + ip);
+
     if(p == kPhypUndefined) continue;
     fMultiRingSKDetFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__

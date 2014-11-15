@@ -1030,11 +1030,6 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
 }
 
 
-
-
-
-
-
 //________________________________________________________________________________________
 void SuperkExpectation::RandomizeSystematics(void)
 {
@@ -1055,8 +1050,6 @@ void SuperkExpectation::RandomizeSystematics(void)
 #endif
 
 #else
-
-
 
 //   // common to all the samples
 //   this->TweakAllBANFFSystematics();
@@ -1174,10 +1167,7 @@ void SuperkExpectation::TweakAllRHCSKDetectorFSISystematics(void)
 
 //________________________________________________________________________________________
 
-
-
 /// NEW MULTIRING 2
-
 void SuperkExpectation::TweakAllMultiRingSKDetectorFSISystematics(void)
 {
 #ifdef __show_syst_tweak_mesg__
@@ -1188,12 +1178,6 @@ void SuperkExpectation::TweakAllMultiRingSKDetectorFSISystematics(void)
   ///
   this->GetSuperkDetectorFSI()->TweakMultiRing(); // <-- Cholesky method
 }
-///
-
-
-
-
-
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 {
@@ -1252,7 +1236,6 @@ PhysParamList SuperkExpectation::Tweaks(void)
      pl.SetValue(p,v);
   }
 
-
   // 
   //  Uncorrelated xsec
   // 
@@ -1300,8 +1283,22 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kNuisSKDetFSI003,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI003) );
   pl.SetValue( kNuisSKDetFSI004,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI004) );
   pl.SetValue( kNuisSKDetFSI005,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI005) );
+  
+  // NEW SKDETFSI
+  #if defined(__USE_SKDETFSI2015__)
+  pl.SetValue( kNuisSKDetFSI006,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI006) );
+  pl.SetValue( kNuisSKDetFSI007,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI007) );
+  pl.SetValue( kNuisSKDetFSI008,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI008) );
+  pl.SetValue( kNuisSKDetFSI009,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI009) );
+  pl.SetValue( kNuisSKDetFSI010,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI010) );
+  pl.SetValue( kNuisSKDetFSI011,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI011) );
+  #endif
+
 #endif
 #if FSI_BINS != 2
+
+  // NEW SKDETFSI
+  #if defined(__USE_SKDETFSI2013__)
   pl.SetValue( kNuisSKDetFSI006,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI006) );
   pl.SetValue( kNuisSKDetFSI007,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI007) );
   pl.SetValue( kNuisSKDetFSI008,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI008) );
@@ -1314,7 +1311,25 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kNuisSKDetFSI015,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI015) );
   pl.SetValue( kNuisSKDetFSI016,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI016) );
   pl.SetValue( kNuisSKDetFSI017,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI017) );
+  #elif defined(__USE_SKDETFSI2015__)
+  pl.SetValue( kNuisSKDetFSI012,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI012) );
+  pl.SetValue( kNuisSKDetFSI013,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI013) );
+  pl.SetValue( kNuisSKDetFSI014,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI014) );
+  pl.SetValue( kNuisSKDetFSI015,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI015) );
+  pl.SetValue( kNuisSKDetFSI016,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI016) );
+  pl.SetValue( kNuisSKDetFSI017,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI017) );
+  pl.SetValue( kNuisSKDetFSI018,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI018) );
+  pl.SetValue( kNuisSKDetFSI019,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI019) );
+  pl.SetValue( kNuisSKDetFSI020,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI020) );
+  pl.SetValue( kNuisSKDetFSI021,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI021) );
+  pl.SetValue( kNuisSKDetFSI022,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI022) );
+  pl.SetValue( kNuisSKDetFSI023,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI023) );
+  #endif
+
 #ifdef SKCORRELATIONS
+
+  // NEW SKDETFSI
+  #if defined(__USE_SKDETFSI2013__)
   pl.SetValue( kNuisSKDetFSI018,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI018) );
   pl.SetValue( kNuisSKDetFSI019,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI019) );
   pl.SetValue( kNuisSKDetFSI020,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI020) );
@@ -1329,9 +1344,25 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kNuisSKDetFSI029,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI029) );
   pl.SetValue( kNuisSKDetFSI030,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI030) );
   pl.SetValue( kNuisSKDetFSI031,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI031) );
+  #elif defined(__USE_SKDETFSI2015__)
+  pl.SetValue( kNuisSKDetFSI024,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI024) );
+  pl.SetValue( kNuisSKDetFSI025,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI025) );
+  pl.SetValue( kNuisSKDetFSI026,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI026) );
+  pl.SetValue( kNuisSKDetFSI027,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI027) );
+  pl.SetValue( kNuisSKDetFSI028,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI028) );
+  pl.SetValue( kNuisSKDetFSI029,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI029) );
+  pl.SetValue( kNuisSKDetFSI030,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI030) );
+  pl.SetValue( kNuisSKDetFSI031,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI031) );
+  pl.SetValue( kNuisSKDetFSI032,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI032) );
+  pl.SetValue( kNuisSKDetFSI033,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI033) );
+  pl.SetValue( kNuisSKDetFSI034,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI034) );
+  pl.SetValue( kNuisSKDetFSI035,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI035) );
+  pl.SetValue( kNuisSKDetFSI036,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI036) );
+  pl.SetValue( kNuisSKDetFSI037,  this->GetSuperkDetectorFSI()->CurrentValue(kNuisSKDetFSI037) );
+  #endif
+
 #endif
 #endif // FSI_BINS=1
-
 
 #ifdef __MULTIRING_FHC_RUNNING__
   /// NEW MULTIRING 2
@@ -1348,8 +1379,22 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kMultiRingNuisSKDetFSI003,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI003) );
   pl.SetValue( kMultiRingNuisSKDetFSI004,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI004) );
   pl.SetValue( kMultiRingNuisSKDetFSI005,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI005) );
+
+  // NEW SKDETFSI
+  #if defined(__USE_SKDETFSI2015__)
+  pl.SetValue( kMultiRingNuisSKDetFSI006,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI006) );
+  pl.SetValue( kMultiRingNuisSKDetFSI007,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI007) );
+  pl.SetValue( kMultiRingNuisSKDetFSI008,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI008) );
+  pl.SetValue( kMultiRingNuisSKDetFSI009,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI009) );
+  pl.SetValue( kMultiRingNuisSKDetFSI010,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI010) );
+  pl.SetValue( kMultiRingNuisSKDetFSI011,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI011) );
+  #endif
+
 #endif
 #if FSI_BINS != 2
+
+  // NEW SKDETFSI
+  #if defined(__USE_SKDETFSI2013__)
   pl.SetValue( kMultiRingNuisSKDetFSI006,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI006) );
   pl.SetValue( kMultiRingNuisSKDetFSI007,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI007) );
   pl.SetValue( kMultiRingNuisSKDetFSI008,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI008) );
@@ -1362,7 +1407,24 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kMultiRingNuisSKDetFSI015,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI015) );
   pl.SetValue( kMultiRingNuisSKDetFSI016,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI016) );
   pl.SetValue( kMultiRingNuisSKDetFSI017,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI017) );
+  #elif defined(__USE_SKDETFSI2015__)
+  pl.SetValue( kMultiRingNuisSKDetFSI012,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI012) );
+  pl.SetValue( kMultiRingNuisSKDetFSI013,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI013) );
+  pl.SetValue( kMultiRingNuisSKDetFSI014,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI014) );
+  pl.SetValue( kMultiRingNuisSKDetFSI015,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI015) );
+  pl.SetValue( kMultiRingNuisSKDetFSI016,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI016) );
+  pl.SetValue( kMultiRingNuisSKDetFSI017,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI017) );
+  pl.SetValue( kMultiRingNuisSKDetFSI018,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI018) );
+  pl.SetValue( kMultiRingNuisSKDetFSI019,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI019) );
+  pl.SetValue( kMultiRingNuisSKDetFSI020,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI020) );
+  pl.SetValue( kMultiRingNuisSKDetFSI021,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI021) );
+  pl.SetValue( kMultiRingNuisSKDetFSI022,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI022) );
+  pl.SetValue( kMultiRingNuisSKDetFSI023,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI023) );
+  #endif
+
 #ifdef SKCORRELATIONS
+  // NEW SKDETFSI
+  #if defined(__USE_SKDETFSI2013__)
   pl.SetValue( kMultiRingNuisSKDetFSI018,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI018) );
   pl.SetValue( kMultiRingNuisSKDetFSI019,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI019) );
   pl.SetValue( kMultiRingNuisSKDetFSI020,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI020) );
@@ -1377,6 +1439,23 @@ PhysParamList SuperkExpectation::Tweaks(void)
   pl.SetValue( kMultiRingNuisSKDetFSI029,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI029) );
   pl.SetValue( kMultiRingNuisSKDetFSI030,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI030) );
   pl.SetValue( kMultiRingNuisSKDetFSI031,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI031) );
+  #elif defined(__USE_SKDETFSI2015__)
+  pl.SetValue( kMultiRingNuisSKDetFSI024,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI024) );
+  pl.SetValue( kMultiRingNuisSKDetFSI025,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI025) );
+  pl.SetValue( kMultiRingNuisSKDetFSI026,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI026) );
+  pl.SetValue( kMultiRingNuisSKDetFSI027,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI027) );
+  pl.SetValue( kMultiRingNuisSKDetFSI028,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI028) );
+  pl.SetValue( kMultiRingNuisSKDetFSI029,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI029) );
+  pl.SetValue( kMultiRingNuisSKDetFSI030,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI030) );
+  pl.SetValue( kMultiRingNuisSKDetFSI031,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI031) );
+  pl.SetValue( kMultiRingNuisSKDetFSI032,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI032) );
+  pl.SetValue( kMultiRingNuisSKDetFSI033,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI033) );
+  pl.SetValue( kMultiRingNuisSKDetFSI034,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI034) );
+  pl.SetValue( kMultiRingNuisSKDetFSI035,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI035) );
+  pl.SetValue( kMultiRingNuisSKDetFSI036,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI036) );
+  pl.SetValue( kMultiRingNuisSKDetFSI037,  this->GetSuperkDetectorFSI()->MultiRingCurrentValue(kMultiRingNuisSKDetFSI037) );
+  #endif
+
 #endif
 #endif // FSI_BINS=1
   ///
@@ -1404,7 +1483,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     //   this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
     // }
 
-    
     // NEW FLUX
 
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
@@ -1446,7 +1524,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     // to tweak the SKDET + FSI object
 #if FSI_BINS == 2
 
-
 // #ifdef __RHC_RUNNING__
 //     //Todo: fix this so that FHC and RHC can have different tweaks
 //     //Also that FHC and RHC can have different numbers of parameters
@@ -1468,7 +1545,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
       TVectorD twkv(nskdetfsi_1Rmu);
       for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+
+        // NEW SKDETFSI 
+	//PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+	
 	twkv[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
@@ -1478,7 +1559,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi_1Rmu_rhc = conv::kNumOfSKDetFSIParams1Rmu; // same FHC
       TVectorD twkv_rhc(nskdetfsi_1Rmu_rhc);
       for(int ip = 0; ip < nskdetfsi_1Rmu_rhc; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip); // same FHC
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip); // same FHC
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip); // same FHC
+
 	twkv_rhc[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->TweakOnlyRHC1Rmu(true,&twkv_rhc); // same FHC
@@ -1498,7 +1583,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     const int nskdetfsi_1Rmu = conv::kNumOfSKDetFSIParams1Rmu;
     TVectorD twkv(nskdetfsi_1Rmu);
     for(int ip = 0; ip < nskdetfsi_1Rmu; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+
       twkv[ip] = fp.CurrValue(p);
     }
     this->GetSuperkDetectorFSI()->TweakOnly1Rmu(true,&twkv);
@@ -1509,7 +1598,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     const int nskdetfsi_1Rmu_rhc = conv::kNumOfRHCSKDetFSIParams1Rmu; 
     TVectorD twkv_rhc(nskdetfsi_1Rmu_rhc);
     for(int ip = 0; ip < nskdetfsi_1Rmu_rhc; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + ip); 
+
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + ip); 
+      PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + ip); 
+
       twkv_rhc[ip] = fp.CurrValue(p);
     }
     this->GetSuperkDetectorFSI()->TweakOnlyRHC1Rmu(true,&twkv_rhc); 
@@ -1521,7 +1614,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     const int nskdetfsi_MultiRmu = conv::kNumOfSKDetFSIParamsMultiRmu;
     TVectorD twkv_multiring(nskdetfsi_MultiRmu);
     for(int ip = 0; ip < nskdetfsi_MultiRmu; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + ip);
+      
+      // NEW SKDETFSI
+      //PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + ip);
+      PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + ip);
+      
       twkv_multiring[ip] = fp.CurrValue(p);
     }
     this->GetSuperkDetectorFSI()->TweakOnlyMultiRmu(true,&twkv_multiring);
@@ -1530,8 +1627,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 
 #else
 #if FSI_BINS == 3
-
-
 
 // #ifdef __RHC_RUNNING__
 //       //Todo: fix this so that FHC and RHC can have different tweaks
@@ -1555,7 +1650,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
       TVectorD twkv(nskdetfsi_1Re);
       for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
-        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+  
+        // NEW SKDETFSI
+        //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+
         twkv[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
@@ -1564,8 +1663,12 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi_1Re_rhc = conv::kNumOfSKDetFSIParams1Re; // same as FHC
       TVectorD twkv_rhc(nskdetfsi_1Re_rhc);
       for(int ip = 0; ip < nskdetfsi_1Re_rhc; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip); // same as FHC
-      twkv_rhc[ip] = fp.CurrValue(p);
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip); // same as FHC
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip); // same as FHC
+
+	twkv_rhc[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->TweakOnlyRHC1Re(true,&twkv_rhc); // same as FHC
    #else
@@ -1581,7 +1684,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     const int nskdetfsi_1Re = conv::kNumOfSKDetFSIParams1Re;
       TVectorD twkv(nskdetfsi_1Re);
       for(int ip = 0; ip < nskdetfsi_1Re; ip++) {
-        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+
+	// NEW SKDETFSI
+        //PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI006 + ip);
+        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+
         twkv[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->TweakOnly1Re(true,&twkv);
@@ -1592,7 +1699,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi_1Re_rhc = conv::kNumOfRHCSKDetFSIParams1Re; // same as FHC
       TVectorD twkv_rhc(nskdetfsi_1Re_rhc);
       for(int ip = 0; ip < nskdetfsi_1Re_rhc; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + ip); // same as FHC
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI006 + ip); // same as FHC
+	PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + ip); // same as FHC
+
       twkv_rhc[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->TweakOnlyRHC1Re(true,&twkv_rhc); // same as FHC
@@ -1604,14 +1715,15 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi_MultiRe = conv::kNumOfSKDetFSIParamsMultiRe;
       TVectorD twkv_multiring(nskdetfsi_MultiRe);
       for(int ip = 0; ip < nskdetfsi_MultiRe; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + ip);
-      twkv_multiring[ip] = fp.CurrValue(p);
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI006 + ip);
+	PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + ip);
+	
+	twkv_multiring[ip] = fp.CurrValue(p);
       }
       this->GetSuperkDetectorFSI()->TweakOnlyMultiRe(true,&twkv_multiring);
 #endif
-
-
-
 
 #else // JOINT FIT
             
@@ -1631,7 +1743,6 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       //       this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv_rhc); // same as FHC    
       // #endif 
 
-
    // NEW FLUX
     
     // fhc+rhc 
@@ -1641,7 +1752,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi = conv::kNumOfSKDetFSIParams;
       TVectorD twkv(nskdetfsi);
       for(int ip = 0; ip < nskdetfsi; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+
 	twkv[ip] = fp.CurrValue(p); 
       }
       this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
@@ -1650,8 +1765,12 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi_rhc = conv::kNumOfSKDetFSIParams; // same as FHC
       TVectorD twkv_rhc(nskdetfsi_rhc);
       for(int ip = 0; ip < nskdetfsi_rhc; ip++) {
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip); // same as FHC
-      twkv_rhc[ip] = fp.CurrValue(p); 
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip); // same as FHC
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip); // same as FHC
+	
+	twkv_rhc[ip] = fp.CurrValue(p); 
       }
       // N.B. You have to tweak the FHC syst since RHC SKDetFSI doesn't exist!!!
       this->GetSuperkDetectorFSI()->Tweak(true,&twkv_rhc); // same as FHC    
@@ -1669,7 +1788,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi = conv::kNumOfSKDetFSIParams;
       TVectorD twkv(nskdetfsi);
       for(int ip = 0; ip < nskdetfsi; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI000 + ip);
+	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+	
 	twkv[ip] = fp.CurrValue(p); 
       }
       this->GetSuperkDetectorFSI()->Tweak(true,&twkv);    
@@ -1680,7 +1803,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi_rhc = conv::kNumOfRHCSKDetFSIParams; // same as FHC
       TVectorD twkv_rhc(nskdetfsi_rhc);
       for(int ip = 0; ip < nskdetfsi_rhc; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + ip); // same as FHC
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI000 + ip); // same as FHC
+	PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + ip); // same as FHC
+
 	twkv_rhc[ip] = fp.CurrValue(p); 
       }
       this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv_rhc); // same as FHC    
@@ -1692,7 +1819,11 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
       const int nskdetfsi_multiring = conv::kNumOfSKDetFSIParamsMultiRing;
       TVectorD twkv_multiring(nskdetfsi_multiring);
       for(int ip = 0; ip < nskdetfsi_multiring; ip++) {
-	PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + ip);
+
+	// NEW SKDETFSI
+	//PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI000 + ip);
+	PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + ip);
+
 	twkv_multiring[ip] = fp.CurrValue(p); 
       }
       this->GetSuperkDetectorFSI()->TweakMultiRing(true,&twkv_multiring);    
