@@ -6,15 +6,17 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Data POT for analysis
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  6.811e+20
+  0.506e+20
   -->
 
   <data_pot>
      <superk> 
        <fhc>
-        6.811e+20
+         6.811e+20
        </fhc>
        <rhc>
-        0.506e+20
+          6.811e+20
        </rhc>       
      </superk> 
   </data_pot>
@@ -377,21 +379,27 @@
 	Central values from BANFF fit                                        
    -->
    <best_fit_values>
-     <!-- <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
-	  <objname>    postfit_params   </objname> -->
-     <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
-     <objname>    prelim_par_fhc   </objname>
+     
+     <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
+	  <objname>    postfit_params   </objname>
+     <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
+     <objname>    prelim_par_fhc   </objname> -->
      <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root   </filename>
 	  <objname>    prelim_par_all   </objname> -->
+     
      <objtype>    TVectorD         </objtype>
    </best_fit_values>
    <!--                                                                                                                      
 	Covariance of fit parameters                 
    -->
    <covariance_matrix>
+     
+     <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
+     <objname>    postfit_cov      </objname>
      <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename> -->
-     <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
-     <objname>    prelim_cov_fhc      </objname>
+     <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
+     <objname>    prelim_cov_fhc      </objname> --> 
+     
      <objtype>    TMatrixD         </objtype>
    </covariance_matrix>
    
@@ -405,24 +413,36 @@
          Covariance of fit parameters
        -->
      <covariance_matrix>
-       <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename>
-       <objname>    prelim_cov_fhc      </objname>
+       
+       <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
+       <objname>    postfit_cov   </objname>
+       <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename>
+	    <objname>    prelim_cov_fhc      </objname> -->
+       
        <objtype>    TMatrixD         </objtype>
      </covariance_matrix>
    </disap>
    
    <app>
      <best_fit_values>
+
        <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
        <objname>    postfit_params   </objname>
+       <!-- <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
+	    <objname>    postfit_params   </objname> -->
+
        <objtype>    TVectorD         </objtype>
      </best_fit_values>
      <!--                                                                                                                                                                          
       Covariance of fit parameters                                                                                                                                              
        -->
      <covariance_matrix>
-       <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename>
-       <objname>    prelim_cov_fhc   </objname>
+
+       <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
+       <objname>    postfit_cov      </objname>
+       <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename>
+	    <objname>    prelim_cov_fhc   </objname> -->
+       
        <objtype>    TMatrixD         </objtype>
      </covariance_matrix>
    </app>
@@ -459,12 +479,14 @@
           
           <one_mu_ring_rhc>
                 <filename>
-                    official/2015/xsec/splines_v1_RHC1Rmu.root
+                   official/2013/xsec/XSecSplines2013Run1to4.root
+                   <!-- official/2015/xsec/splines_v1_RHC1Rmu.root -->
                 </filename>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
                 <filename>
-                    official/2015/xsec/splines_v1_RHC1Re.root
+                    official/2013/xsec/XSecSplines1Re2013v5_rebin.root
+                    <!-- official/2015/xsec/splines_v1_RHC1Re.root -->
                 </filename>
           </one_e_ring_rhc>
           
@@ -568,23 +590,35 @@
         Covariance matrix of SKDet FSI parameters
       -->
     <covariance_matrix>
-      <filename>   official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
-      <objname>    skfsipn_cov             </objname>
+ 
+      <!--<filename>   official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
+	  <objname>    skfsipn_cov             </objname> -->
+      <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
+      <objname> cov_diag_all </objname>
+
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
     
     <disap>
       <covariance_matrix>
-	<filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
-	<objname>    covmat_sk_fsi         </objname>
+
+	<!-- <filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
+	     <objname>    covmat_sk_fsi         </objname> --> 
+	<filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
+	<objname> cov_diag_dis </objname>
+	
 	<objtype>    TMatrixD              </objtype>
       </covariance_matrix>
     </disap>
     
     <app>
       <covariance_matrix>
-	<filename>   official/2013/skdetfsi/covariance_matrices_2013full_appearance.root  </filename>
-	<objname>    cov_total             </objname>
+	
+	<!-- <filename>   official/2013/skdetfsi/covariance_matrices_2013full_appearance.root  </filename>
+	     <objname>    cov_total             </objname> -->
+	<filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
+	<objname> cov_diag_app </objname>	
+	
 	<objtype>    TMatrixD              </objtype>
       </covariance_matrix>
     </app>
