@@ -32,6 +32,7 @@ Added samples, modes and systematics for reverse horn current running
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 
 #include <TMath.h>
 
@@ -44,6 +45,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::ostringstream;
+using std::setprecision;
 
 using namespace valor;
 using namespace valor::conv;
@@ -323,13 +325,14 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                      << splname 
                      << " Ereco: "  << Ereco_min << "-" << Ereco_max 
                      << ", Etrue: " << Etrue_min << "-" << Etrue_max 
-                     << ". Spline thinks there are " << spl->GetTitle()
+                     //<< ". Spline thinks there are " << spl->GetTitle()
                      << endl;
                 // exit(1);
               }
             }
             
 #ifndef __skip_unexpected_spline_test_in_readsplines__
+#ifndef __USE_NIWG2015__
             string spln(spl->GetTitle());
             spln.erase(spln.end()-7,spln.end());
             int nevents_spl = atoi(spln.c_str());
@@ -344,7 +347,8 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                    << endl;
               //exit(1);
             }
-#endif      
+#endif
+#endif
             // Get index for current weight spline
             int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
             if(idx < 0) {
@@ -362,7 +366,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 
 #ifdef __check_splines_not_flat_on_read__
-            if (spl!=flatspline) {
+            if (spl!=flatspline && bin_is_not_empty) {
               int n_points_to_check = 11;
               double zero_point = spl->Eval(0);
               bool flat=true;
@@ -374,7 +378,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 }
               }
               if (flat) {
-                std::cerr<<"Exp/NuXSec >> Warning, input spline from file is flat: "<<splname<<std::endl;
+                cerr<<"Exp/NuXSec >> Warning, input spline from file is flat: "<<std::setw(40)<<std::left<<splname
+                     <<std::fixed
+                     << "( Ereco: " << setprecision(2) << Ereco_min << "-" << setprecision(2) << Ereco_max 
+                     << ", Etrue: " << setprecision(2) << Etrue_min << "-" << setprecision(2) << Etrue_max <<")"<<endl;
               }
             }
 #endif
