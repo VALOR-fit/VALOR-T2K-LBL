@@ -6,10 +6,12 @@
 // ------------------------------------------------------------------------------------------------
 //
  
+#include "AnalysisOptions.h"
+
 void run_fit_xml_joint
 (
- const char * xmlfile = "data_newstruct.xml",                                                /* input XML file Run1-4 data */
- //const char * xmlfile = "data_newstruct_rhc.xml",                                         /* input XML file Run1-4 data (used by RHC analysis) */
+ //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file Run1-4 data */ 
+ const char * xmlfile = "data_newstruct_rhc.xml",                                         /* input XML file Run1-4 data (used by RHC analysis) */
 
  //const char * xmlfile = "data_newstruct_multiring.xml",                                                /* input XML file Run1-4 data (used by RHC analysis) */
  //const char * xmlfile = "toymc/toymc_FHCpRHC_DataRun1to4_MCRun5and6_th13DB_NH-0.xml",                 /* input XML file with toy MC experiments */
@@ -21,6 +23,7 @@ void run_fit_xml_joint
  int          first_experiment = 0,                                   /* */
  int          last_experiment  = 0,                                   /* */
  
+ const char * config_file      = "analysis_configuration_run1to5_test.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to5.xml",        /* analysis configuration file */
 
  //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
@@ -28,7 +31,7 @@ void run_fit_xml_joint
  //const char * config_file      = "analysis_configuration_run1to6_multiring_test.xml",
  //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
  
- const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
  
  //const char * config_file      = "analysis_configuration_test_multiring.xml",        /* analysis configuration file */
@@ -84,7 +87,9 @@ void run_fit_xml_joint
     }
   }
 
-  T2KOpt::Instance()->ReadXmlPath(config.Data()); // Read xml config file path/name
+  // Get superk spectrum predictor & configure
+  SuperkExpectation * skexp = new SuperkExpectation;
+  skexp->Read(config.Data());
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -106,8 +111,7 @@ void run_fit_xml_joint
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Toy-MC" << endl;
   cout << "   - Reading experiments from: " << xmlfile2 << endl; 
-  cout << "   - Using experiments in
- range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
+  cout << "   - Using experiments in range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
   cout << "- Fit" << endl;
   cout << "   - Fit param list: " << fit_param_list << endl;
   cout << "   - Fitter option: " << fit_option << endl;
@@ -145,8 +149,6 @@ void run_fit_xml_joint
 
 
 
-
-
   // Fit param list
   FitParamList * fparm  = util::NamedParameterList(fit_param_list); //only used to initialise branch
   FitParamList * fparm1 = util::NamedParameterList(fit_param_list);
@@ -162,10 +164,27 @@ void run_fit_xml_joint
     fparm2->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
   }
 
-  // Get superk spectrum predictor & configure
-  SuperkExpectation * skexp = new SuperkExpectation;
-  //skexp->Read(config.Data());
-  skexp->Read();
+
+
+
+
+
+  //Set RPA value (discrete, so fixed in the fit)
+  double RPAvalue = 0.;
+  //#ifdef __FHC_RUNNING__
+  fparm->Update(conv::kNuisXSecRPA, RPAvalue); //init value of RPA to 0
+  fparm1->Update(conv::kNuisXSecRPA, RPAvalue); //init value of RPA to 0
+  fparm2->Update(conv::kNuisXSecRPA, RPAvalue);
+  //#endif
+  //#ifdef __RHC_RUNNING
+  //fparm->Update(conv::kRHCNuisXSecRPA, RPAvalue); //init value of RPA to 0
+  //fparm1->Update(conv::kRHCNuisXSecRPA, RPAvalue); //init value of RPA to 0
+  //fparm2->Update(conv::kRHCNuisXSecRPA, RPAvalue);
+  //#endif
+
+
+
+
 
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
@@ -228,15 +247,17 @@ void run_fit_xml_joint
 
   // Loop over toy-MC experiments
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
-
+    
     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
     
-    // Reset output spectra
-     dat_array ->Clear();
-     pdf_array ->Clear();
-     pdf_array1->Clear();
-     pdf_array2->Clear();
+    cout << *fparm << endl;
 
+    // Reset output spectra
+    dat_array ->Clear();
+    pdf_array ->Clear();
+    pdf_array1->Clear();
+    pdf_array2->Clear();
+    
      // Re-seed fitter (reset current values to specified init values)
      fparm1->ResetCurrToInitValues();
     

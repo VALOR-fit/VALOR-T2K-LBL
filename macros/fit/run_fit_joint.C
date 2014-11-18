@@ -19,21 +19,22 @@ void run_fit_joint
   double       input_dm12sq            = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
   double       input_dm23sq            = -99, //2.32E-3,                             /* |Dm^2_{23}| */
 
-  //const char * config_file             = "analysis_configuration_run1to5_test.xml",        /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_run1to5_test.xml",        /* analysis configuration file */
   //const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
   
   //const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
-  const char * config_file             = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
+  //const char * config_file             = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
 
   //const char * config_file             = "analysis_configuration_test_multiring.xml",        /* analysis configuration file */
   //const char * config_file             = "analysis_configuration_test_multiring_mrmc.xml",        /* analysis configuration file */
 
-  bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
+  bool         stat_fluctuations       = true,                                /* include s
+tatistical fluctuation in toy MC expts? */
   int          tweak_systematics       = true,                                /* generate toy MC with randomized systematics? */
 
   //const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */ 
-  //const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
-  const char * fit_param_list          = "nuosc3fbar_fixnonbar_12fix",
+  const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+  //const char * fit_param_list          = "nuosc3fbar_fixnonbar_12fix",
   //const char * fit_param_list          = "nuosc3fbar_fixnonbar_12fix+nuisance",
 
   const char * fit_option              = "minuit",                            /* fitter option */
@@ -121,6 +122,10 @@ void run_fit_joint
   cout << *Opt::Instance() << endl;
   cout << *Rnd::Instance() << endl;
 
+  // Get superk spectrum predictor & configure
+  SuperkExpectation * skexp = new SuperkExpectation;
+  skexp->Read(config.Data());
+
   // Fit parameter list
   FitParamList * fparm  = util::NamedParameterList(fit_param_list); //only used to initialise branch
   FitParamList * fparm1 = util::NamedParameterList(fit_param_list);
@@ -136,9 +141,30 @@ void run_fit_joint
     fparm2->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
    }
 
-  // Get superk spectrum predictor & configure
-  SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(config.Data());
+
+
+
+
+  //Set RPA value (discrete, so fixed in the fit)
+  double RPAvalue = 0.;
+  //#ifdef __FHC_RUNNING__
+  fparm->Update(conv::kNuisXSecRPA, RPAvalue); //init value of RPA to 0
+  fparm1->Update(conv::kNuisXSecRPA, RPAvalue); //init value of RPA to 0
+  fparm2->Update(conv::kNuisXSecRPA, RPAvalue);
+  //#endif
+  //#ifdef __RHC_RUNNING
+  //fparm->Update(conv::kRHCNuisXSecRPA, RPAvalue); //init value of RPA to 0
+  //fparm1->Update(conv::kRHCNuisXSecRPA, RPAvalue); //init value of RPA to 0
+  //fparm2->Update(conv::kRHCNuisXSecRPA, RPAvalue);
+  //#endif
+
+
+
+
+
+  // // Get superk spectrum predictor & configure
+  // SuperkExpectation * skexp = new SuperkExpectation;
+  // skexp->Read(config.Data());
 
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
