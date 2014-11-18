@@ -524,7 +524,7 @@ void SuperkExpectation::ResetSystematics(void)
   //RHC
   this->GetNuXSec()->Tweak(kNuisRHCToFHC, 0.);
 #elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics 
+  this->GetNuXSec()->Tweak(kNuisXSecRPA , 0.); // NEW XSEC 
 #endif
 
   // SK det + FSI
@@ -562,9 +562,9 @@ void SuperkExpectation::ResetSystematics(void)
   this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, 0.);
   #endif
 #elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics
+  this->GetNuXSec()->Tweak(kRHCNuisXSecRPA           , 0.); // NEW XSEC
 #endif
-  
+
   /// NEW MULTIRING 2
   //
   //FHC MULTIRING
@@ -812,8 +812,6 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
     }//!is_rhc
   }//banff
 
-
-
   //
   // XSec
   //
@@ -893,14 +891,17 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
       this->GetNuXSec()->Tweak(kNuisRHCToFHC, twkdial);
   
 #elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics
+    // NEW XSEC
+    else if(systematic == "rpa")
+      this->GetNuXSec()->Tweak(kNuisXSecRPA      , twkdial);
+    else if(systematic == "rpa_rhc")
+      this->GetNuXSec()->Tweak(kRHCNuisXSecRPA   , twkdial); 
 #endif
   
   else {
      cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
      exit(1);
   }   
-     
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, Option_t * opt)
@@ -1025,8 +1026,7 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
   else {
      cerr << "Exp/Tweak>> Unhandled systematic parameter (" << util::AsString(p) << ")" << endl;
      exit(1);
-  }   
-         
+  }           
 }
 
 
@@ -1098,6 +1098,7 @@ void SuperkExpectation::RandomizeSystematics(void)
   this->GetSuperkDetectorFSI()->SyncRHCToFHCSystematics();   
   #else
   this->TweakAllRHCBANFFSystematics();
+  this->TweakAllUncorrelatedXSecSystematics();  // NEW XSEC
   this->GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
   this->TweakAllRHCSKDetectorFSISystematics();
 
@@ -1107,7 +1108,7 @@ void SuperkExpectation::RandomizeSystematics(void)
   #endif
 #endif
   
-  //
+//
   
   /// NEW MULTIRING 2
 #ifdef __MULTIRING_FHC_RUNNING__
@@ -1217,7 +1218,11 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
   #endif
 
 #elif defined(__USE_NIWG2015__)
-    // No uncorrelated NIWG2015 xsec systematics
+  // NEW XSEC
+  double tweak_discr = Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.);
+  if(tweak_discr < 0.5) tweak_discr = 0.;
+  else tweak_discr = 1.;
+  this->GetNuXSec()->Tweak(kNuisXSecRPA             , tweak_discr);
 #endif
 
 }
@@ -1267,7 +1272,7 @@ PhysParamList SuperkExpectation::Tweaks(void)
   #endif
 
 #elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics
+  pl.SetValue( kNuisXSecRPA,             this->GetNuXSec()->CurrentValue(kNuisXSecRPA)            ); // NEW XSEC
 #endif
 
   // 

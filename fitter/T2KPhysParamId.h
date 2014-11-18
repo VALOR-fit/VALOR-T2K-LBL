@@ -119,11 +119,9 @@ static const PhysParamId_t kNuisBANFFCA5      = kNuis054;  // CA5 RES
 static const PhysParamId_t kNuisBANFFBgRES    = kNuis055;  // Isospin 1/2 normalization
 static const PhysParamId_t kNuisBANFFSCCA     = kNuis056;  // Second current axial
 static const PhysParamId_t kNuisBANFFSCCV     = kNuis057;  // Second current vector
-
 static const PhysParamId_t kNuisBANFFFermiMom       = kNuis058;   // Fermi momentum
 static const PhysParamId_t kNuisBANFFShapeCCoth     = kNuis059;   // CC other shape
 static const PhysParamId_t kNuisBANFFBindE          = kNuis060;   // Binding energy
-
 static const PhysParamId_t kNuisBANFFNormCCcoh      = kNuis061;   // CC coherent norm
 static const PhysParamId_t kNuisBANFFNormNCcoh      = kNuis062;   // NC coh norm
 static const PhysParamId_t kNuisBANFFNormNCoth      = kNuis063;   // NC other norm
@@ -137,21 +135,25 @@ static const PhysParamId_t kLastBANFFParam  = kNuis065; // Utility, should alway
     * These other paramers are taken to be uncorrelated and are applied to SK only.
    */   
    //systematics which use splines
-static const PhysParamId_t kNuisXSecFermiMom       = kNuis066;   // Fermi momentum
-static const PhysParamId_t kNuisXSecSpecFunc       = kNuis067;   // spectral function on/off
-static const PhysParamId_t kNuisXSecWshape         = kNuis068;   // W-shape
-static const PhysParamId_t kNuisXSecShapeCCoth     = kNuis069;   // CC other shape
-static const PhysParamId_t kNuisXSecPiLessDelta    = kNuis070;   // Pion-less delta decay
-static const PhysParamId_t kNuisXSecBindE          = kNuis071;   // Binding energy
-   //systematics that are normalisations
-static const PhysParamId_t kNuisXSecNormCCcoh      = kNuis072;   // CC coherent norm
-static const PhysParamId_t kNuisXSecNormNC1piC     = kNuis073;   // NC 1piC norm
-static const PhysParamId_t kNuisXSecNormNCcoh      = kNuis074;   // NC coh norm
-static const PhysParamId_t kNuisXSecNormNCoth      = kNuis075;   // NC other norm
-static const PhysParamId_t kNuisXSecNormNuEToNuMu  = kNuis076;   // nue / numu cross section
-static const PhysParamId_t kNuisXSecNormAntiNuToNu = kNuis077;   // antinu / nu cross section
 
-static const PhysParamId_t kLastXSecParam = kNuis078;   // Utility, should always come after last FHC Xsec param
+// NEW XSEC
+static const PhysParamId_t kNuisXSecRPA            = kNuis066;   // RPA tuning
+
+static const PhysParamId_t kNuisXSecFermiMom       = kNuis067;   // Fermi momentum
+static const PhysParamId_t kNuisXSecSpecFunc       = kNuis068;   // spectral function on/off
+static const PhysParamId_t kNuisXSecWshape         = kNuis069;   // W-shape
+static const PhysParamId_t kNuisXSecShapeCCoth     = kNuis070;   // CC other shape
+static const PhysParamId_t kNuisXSecPiLessDelta    = kNuis071;   // Pion-less delta decay
+static const PhysParamId_t kNuisXSecBindE          = kNuis072;   // Binding energy
+   //systematics that are normalisations
+static const PhysParamId_t kNuisXSecNormCCcoh      = kNuis073;   // CC coherent norm
+static const PhysParamId_t kNuisXSecNormNC1piC     = kNuis074;   // NC 1piC norm
+static const PhysParamId_t kNuisXSecNormNCcoh      = kNuis075;   // NC coh norm
+static const PhysParamId_t kNuisXSecNormNCoth      = kNuis076;   // NC other norm
+static const PhysParamId_t kNuisXSecNormNuEToNuMu  = kNuis077;   // nue / numu cross section
+static const PhysParamId_t kNuisXSecNormAntiNuToNu = kNuis078;   // antinu / nu cross section
+
+static const PhysParamId_t kLastXSecParam = kNuis079;   // Utility, should always come after last FHC Xsec param
 
    /*
     * FSI parameters.
@@ -330,11 +332,9 @@ static const PhysParamId_t kRHCNuisBANFFCA5     = kNuis164;  // CA5 RES
 static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis165;  // Isospin 1/2 normalization
 static const PhysParamId_t kRHCNuisBANFFSCCA    = kNuis166;  // Second current axial
 static const PhysParamId_t kRHCNuisBANFFSCCV    = kNuis167;  // Second current vector
-
 static const PhysParamId_t kRHCNuisBANFFFermiMom       = kNuis168;   // Fermi momentum
 static const PhysParamId_t kRHCNuisBANFFShapeCCoth     = kNuis169;   // CC other shape
 static const PhysParamId_t kRHCNuisBANFFBindE          = kNuis170;   // Binding energy
-
 static const PhysParamId_t kRHCNuisBANFFNormCCcoh      = kNuis171;   // CC coherent norm
 static const PhysParamId_t kRHCNuisBANFFNormNCcoh      = kNuis172;   // NC coh norm
 static const PhysParamId_t kRHCNuisBANFFNormNCoth      = kNuis173;   // NC other norm
@@ -348,21 +348,25 @@ static const PhysParamId_t kRHCLastBANFFParam  = kNuis175; // Utility, should al
     * These other paramers are taken to be uncorrelated and are applied to SK only.
    */   
    //systematics which use splines
-static const PhysParamId_t kRHCNuisXSecFermiMom       = kNuis176;   // Fermi momentum
-static const PhysParamId_t kRHCNuisXSecSpecFunc       = kNuis177;   // spectral function on/off
-static const PhysParamId_t kRHCNuisXSecWshape         = kNuis178;   // W-shape
-static const PhysParamId_t kRHCNuisXSecShapeCCoth     = kNuis179;   // CC other shape
-static const PhysParamId_t kRHCNuisXSecPiLessDelta    = kNuis180;   // Pion-less delta decay
-static const PhysParamId_t kRHCNuisXSecBindE          = kNuis181;   // Binding energy
-   //systematics that are normalisations
-static const PhysParamId_t kRHCNuisXSecNormCCcoh      = kNuis182;   // CC coherent norm
-static const PhysParamId_t kRHCNuisXSecNormNC1piC     = kNuis183;   // NC 1piC norm
-static const PhysParamId_t kRHCNuisXSecNormNCcoh      = kNuis184;   // NC coh norm
-static const PhysParamId_t kRHCNuisXSecNormNCoth      = kNuis185;   // NC other norm
-static const PhysParamId_t kRHCNuisXSecNormNuEToNuMu  = kNuis186;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisXSecNormAntiNuToNu = kNuis187;   // antinu / nu cross section
 
-static const PhysParamId_t kRHCLastXSecParam = kNuis188;   // Utility, should always come after last RHC Xsec param
+// NEW XSEC
+static const PhysParamId_t kRHCNuisXSecRPA            = kNuis176;   // RPA tuning
+
+static const PhysParamId_t kRHCNuisXSecFermiMom       = kNuis177;   // Fermi momentum
+static const PhysParamId_t kRHCNuisXSecSpecFunc       = kNuis178;   // spectral function on/off
+static const PhysParamId_t kRHCNuisXSecWshape         = kNuis179;   // W-shape
+static const PhysParamId_t kRHCNuisXSecShapeCCoth     = kNuis180;   // CC other shape
+static const PhysParamId_t kRHCNuisXSecPiLessDelta    = kNuis181;   // Pion-less delta decay
+static const PhysParamId_t kRHCNuisXSecBindE          = kNuis182;   // Binding energy
+   //systematics that are normalisations
+static const PhysParamId_t kRHCNuisXSecNormCCcoh      = kNuis183;   // CC coherent norm
+static const PhysParamId_t kRHCNuisXSecNormNC1piC     = kNuis184;   // NC 1piC norm
+static const PhysParamId_t kRHCNuisXSecNormNCcoh      = kNuis185;   // NC coh norm
+static const PhysParamId_t kRHCNuisXSecNormNCoth      = kNuis186;   // NC other norm
+static const PhysParamId_t kRHCNuisXSecNormNuEToNuMu  = kNuis187;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisXSecNormAntiNuToNu = kNuis188;   // antinu / nu cross section
+
+static const PhysParamId_t kRHCLastXSecParam = kNuis189;   // Utility, should always come after last RHC Xsec param
 
    /*
     * FSI parameters.

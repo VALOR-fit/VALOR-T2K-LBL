@@ -50,29 +50,37 @@ public:
   // Tweak systematic parameters held in this object.
   // Note: BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 
   // correlated with the flux systematic params.
-  void TweakFermiMom         (double twkdial) { fFermiMomTwkDial         = twkdial; } // now used constrained by banff
+
+  // NEW XSEC
+  void TweakRPA              (double twkdial) { fRPATwkDial              = twkdial; } 
+
+  void TweakFermiMom         (double twkdial) { fFermiMomTwkDial         = twkdial; } 
   void TweakSpecFunc         (double twkdial) { fSpecFuncTwkDial         = twkdial; } 
   void TweakWshape           (double twkdial) { fWshapeTwkDial           = twkdial; }
-  void TweakShapeCCoth       (double twkdial) { fShapeCCothTwkDial       = twkdial; } // now used constrained by banff
+  void TweakShapeCCoth       (double twkdial) { fShapeCCothTwkDial       = twkdial; } 
   void TweakPiLessDelta      (double twkdial) { fPiLessDeltaTwkDial      = twkdial; }
-  void TweakBindE            (double twkdial) { fBindETwkDial            = twkdial; } // now used constrained by banff
-  void TweakNormCCcoh        (double twkdial) { fNormCCcohTwkDial        = twkdial; } // now used constrained by banff
+  void TweakBindE            (double twkdial) { fBindETwkDial            = twkdial; } 
+  void TweakNormCCcoh        (double twkdial) { fNormCCcohTwkDial        = twkdial; } 
   void TweakNormNC1piC       (double twkdial) { fNormNC1piCTwkDial       = twkdial; }
-  void TweakNormNCcoh        (double twkdial) { fNormNCcohTwkDial        = twkdial; } // now used constrained by banff
-  void TweakNormNCoth        (double twkdial) { fNormNCothTwkDial        = twkdial; } // now used constrained by banff
-  void TweakNormNuEToNuMu    (double twkdial) { fNormNuEToNuMuTwkDial    = twkdial; } // now used constrained by banff
+  void TweakNormNCcoh        (double twkdial) { fNormNCcohTwkDial        = twkdial; } 
+  void TweakNormNCoth        (double twkdial) { fNormNCothTwkDial        = twkdial; } 
+  void TweakNormNuEToNuMu    (double twkdial) { fNormNuEToNuMuTwkDial    = twkdial; } 
   void TweakNormAntiNuToNu   (double twkdial) { fNormAntiNuToNuTwkDial   = twkdial; }
-  void TweakRHCFermiMom      (double twkdial) { fRHCFermiMomTwkDial      = twkdial; } // now used constrained by banff
+
+  // NEW XSEC
+  void TweakRHCRPA           (double twkdial) { fRHCRPATwkDial           = twkdial; } 
+
+  void TweakRHCFermiMom      (double twkdial) { fRHCFermiMomTwkDial      = twkdial; } 
   void TweakRHCSpecFunc      (double twkdial) { fRHCSpecFuncTwkDial      = twkdial; }
   void TweakRHCWshape        (double twkdial) { fRHCWshapeTwkDial        = twkdial; }
-  void TweakRHCShapeCCoth    (double twkdial) { fRHCShapeCCothTwkDial    = twkdial; } // now used constrained by banff
+  void TweakRHCShapeCCoth    (double twkdial) { fRHCShapeCCothTwkDial    = twkdial; } 
   void TweakRHCPiLessDelta   (double twkdial) { fRHCPiLessDeltaTwkDial   = twkdial; }
-  void TweakRHCBindE         (double twkdial) { fRHCBindETwkDial         = twkdial; } // now used constrained by banff
-  void TweakRHCNormCCcoh     (double twkdial) { fRHCNormCCcohTwkDial     = twkdial; } // now used constrained by banff
+  void TweakRHCBindE         (double twkdial) { fRHCBindETwkDial         = twkdial; } 
+  void TweakRHCNormCCcoh     (double twkdial) { fRHCNormCCcohTwkDial     = twkdial; } 
   void TweakRHCNormNC1piC    (double twkdial) { fRHCNormNC1piCTwkDial    = twkdial; }
-  void TweakRHCNormNCcoh     (double twkdial) { fRHCNormNCcohTwkDial     = twkdial; } // now used constrained by banff
-  void TweakRHCNormNCoth     (double twkdial) { fRHCNormNCothTwkDial     = twkdial; } // now used constrained by banff
-  void TweakRHCNormNuEToNuMu (double twkdial) { fRHCNormNuEToNuMuTwkDial = twkdial; } // now used constrained by banff
+  void TweakRHCNormNCcoh     (double twkdial) { fRHCNormNCcohTwkDial     = twkdial; } 
+  void TweakRHCNormNCoth     (double twkdial) { fRHCNormNCothTwkDial     = twkdial; } 
+  void TweakRHCNormNuEToNuMu (double twkdial) { fRHCNormNuEToNuMuTwkDial = twkdial; } 
   void TweakRHCNormAntiNuToNu(double twkdial) { fRHCNormAntiNuToNuTwkDial= twkdial; }
   
   void Tweak(conv::PhysParamId_t p , double twkdial);
@@ -174,6 +182,7 @@ private:
   TH2D *      fXsBinningTempl[conv::kns][conv::knm]; ///< Ereco-Etrue templates in XSec binning scheme
 
   // tweaking dials
+  double fRPATwkDial; // NEW XSEC
   double fFermiMomTwkDial;
   double fSpecFuncTwkDial;
   double fWshapeTwkDial;
@@ -186,6 +195,7 @@ private:
   double fNormNCothTwkDial;
   double fNormNuEToNuMuTwkDial;
   double fNormAntiNuToNuTwkDial;
+  double fRHCRPATwkDial; // NEW XSEC
   double fRHCFermiMomTwkDial;
   double fRHCSpecFuncTwkDial;
   double fRHCWshapeTwkDial;

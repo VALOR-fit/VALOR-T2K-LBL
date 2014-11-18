@@ -114,6 +114,16 @@ FitParamList * util::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq  );
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+    
+    // NEW XSEC
+#if defined(__USE_NIWG2015__)
+    //#ifdef __FHC_RUNNING__
+    fp -> FixParameter (kNuisXSecRPA ); 
+    //#endif
+    //#ifdef __RHC_RUNNING__    
+    //fp -> FixParameter (kRHCNuisXSecRPA );  // xsec syst are fully RHC-FHC correlated
+    //#endif
+#endif
     return fp;
    }
 
@@ -148,6 +158,17 @@ FitParamList * util::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+
+    // NEW XSEC
+#if defined(__USE_NIWG2015__)
+    //#ifdef __FHC_RUNNING__
+    fp -> FixParameter (kNuisXSecRPA ); 
+    //#endif
+    //#ifdef __RHC_RUNNING__    
+    //fp -> FixParameter (kRHCNuisXSecRPA );  // xsec syst are fully RHC-FHC correlated
+    //#endif
+#endif
+
     return fp;
   }
   
@@ -539,7 +560,9 @@ void util::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, int start)
   fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNuEToNuMu));
 
 #elif defined(__USE_NIWG2015__)
-    // No uncorrelated NIWG2015 xsec systematics
+  // NEW XSEC
+  fparm->AddParam( ip++, kNuisXSecRPA,           0., 0.,                1.,              SYST_STEP,  false, true, AsString(kNuisXSecRPA) );
+  //fparm->AddParam( ip++, kRHCNuisXSecRPA,           0., 0.,                1.,              SYST_STEP,  false, true, AsString(kRHCNuisXSecRPA) );
 #endif
 
 }
@@ -571,7 +594,8 @@ void util::AppendUncorrelatedXSecSystematicsDisap(FitParamList * fparm, int star
   fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNuEToNuMu) );
 
 #elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics
+  // NEW XSEC
+  fparm->AddParam( ip++, kNuisXSecRPA,           0., 0.,               1.,            , SYST_STEP,  false, true, AsString(kNuisXSecRPA) );
 #endif
 
 }
@@ -604,7 +628,8 @@ void util::AppendUncorrelatedXSecSystematicsApp(FitParamList * fparm, int start)
   //  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormAntiNuToNu) );
 
 #elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics
+  // NEW XSEC
+  fparm->AddParam( ip++, kNuisXSecRPA,           0., 0.,               1.,              SYST_STEP,  false, true, AsString(kNuisXSecRPA) );
 #endif
 
 }

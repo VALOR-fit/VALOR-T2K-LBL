@@ -97,6 +97,7 @@ void NuXSec::Init(void)
   }
   ////
 
+  fRPATwkDial            = 0; // NEW XSEC
   fFermiMomTwkDial       = 0;
   fSpecFuncTwkDial       = 0;
   fWshapeTwkDial         = 0;
@@ -109,6 +110,7 @@ void NuXSec::Init(void)
   fNormNCothTwkDial      = 0;
   fNormNuEToNuMuTwkDial  = 0;
   fNormAntiNuToNuTwkDial = 0;
+  fRHCRPATwkDial            = 0; // NEW XSEC
   fRHCFermiMomTwkDial       = 0;
   fRHCSpecFuncTwkDial       = 0;
   fRHCWshapeTwkDial         = 0;
@@ -409,19 +411,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   return true;  
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
@@ -454,7 +443,6 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 
   // NEW XSEC --> comment old xsec systematics --> not commented any longer because used
-
   fNormCCcohRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
   fNormNC1piCRelErr =
@@ -773,7 +761,6 @@ cout <<
 	  break;
 	}
     }
-
     cout << "Exp/NuXSec/FinTuningWght >> Got an absurd weight! "
 	 << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
 	 << ", Ereco = " << Ereco << " GeV" 
@@ -784,7 +771,6 @@ cout <<
 	 << endl;   
     exit(1);
   }
-
   return wght;
 }
 //________________________________________________________________________________________
@@ -1055,11 +1041,23 @@ double NuXSec::SystWght_1p(
       wght = wght_spl->Eval(tc);
     }
 
-#elif defined(__USE_NIWG2015__)
-  // NEW XSEC
-  // No uncorrelated NIWG2015 xsec systematics
-#endif
+  // NEW XSEC 
 
+#elif defined(__USE_NIWG2015__)
+  //
+  // RPA tuning
+  //
+  else if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
+    {
+      #if SPLINE_TYPE == -1
+      return wght;
+      #endif
+      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      assert(wght_spl);
+      tc = this->CurrentValue(p);
+      wght = wght_spl->Eval(tc);
+    }    
+#endif
 
 #ifdef __show_syst_var_wght_mesg_debug__
   if (wght != 1.)
@@ -1235,6 +1233,11 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   // NEW XSEC
 
   switch(p) {
+
+  case kNuisXSecRPA:
+    return fRPATwkDial;
+    break;
+
   case kNuisBANFFFermiMom:
   case kNuisBANFFShapeCCoth:
   case kNuisBANFFBindE:
@@ -1252,6 +1255,10 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     return fBANFF->CurrentValue(p);
     break;
     
+  case kRHCNuisXSecRPA:
+    return fRHCRPATwkDial;
+    break;
+
   case kRHCNuisBANFFFermiMom:
   case kRHCNuisBANFFShapeCCoth:
   case kRHCNuisBANFFBindE:
@@ -1335,7 +1342,7 @@ double NuXSec::RelativeError(PhysParamId_t p) const
   }
 #elif defined(__USE_NIWG2015__)
   // NEW XSEC
-  // No uncorrelated NIWG2015 xsec systematics
+  // No uncorrelated "NORMALIZATION" NIWG2015 xsec systematics
 #endif
   return 0;
 }
@@ -1349,8 +1356,9 @@ void NuXSec::PrintSystematicVariations(std::ostream & stream) const
   // not commented any longer, but uncorrelated systematics are not used
   //
 
-#if defined(__USE_NIWG2013__)
   stream << "Exp/XSec >> XSec parameters:"                              << endl; 
+
+#if defined(__USE_NIWG2013__)
   stream << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
   stream << "         >> Spectral function   " << fSpecFuncTwkDial      << endl;
   stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
@@ -1366,7 +1374,7 @@ void NuXSec::PrintSystematicVariations(std::ostream & stream) const
   stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
   stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
 #elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics
+  stream << "         >> RPA tuning          " << fRPATwkDial      << endl;
 #endif
 }
 //________________________________________________________________________________________
@@ -1394,7 +1402,7 @@ void NuXSec::PrintRHCSystematicVariations(std::ostream & stream) const
   stream << "         >> RHC antiNu to Nu norm   " << fRHCNormAntiNuToNuTwkDial<< endl;
   stream << "         >> RHC to FHC norm         " << fNormRHCToFHCTwkDial     << endl;
 #elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics
+  stream << "         >> RHC RPA tuning          " << fRHCRPATwkDial      << endl;
 #endif
 }
 
@@ -1811,6 +1819,7 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
     return chisq_penalty;
   }
   //#ifdef __FHC_RUNNING__
+
   if (fFermiMomTwkDial)       chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
   if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
   if (fWshapeTwkDial)         chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
@@ -1832,6 +1841,7 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
   if (fNormAntiNuToNuTwkDial) chisq_penalty += fNormAntiNuToNuTwkDial*fNormAntiNuToNuTwkDial;
 #endif
   if (fNormRHCToFHCTwkDial)   chisq_penalty += fNormRHCToFHCTwkDial*fNormRHCToFHCTwkDial;
+
   //#endif
   /*
 #ifdef __RHC_RUNNING__
@@ -1857,8 +1867,10 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
 #endif
 #endif
   */
+
 #elif defined(__USE_NIWG2015__)
-  // No NIWG2015 uncorrelated systematics
+  if (fRPATwkDial)       chisq_penalty += fRPATwkDial    * fRPATwkDial;
+  //if (fRHCRPATwkDial)    chisq_penalty += fRHCRPATwkDial * fRHCRPATwkDial;
 #endif
 
   return chisq_penalty;
@@ -1895,14 +1907,21 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
   else if (p==kRHCNuisXSecNormNuEToNuMu ) fRHCNormNuEToNuMuTwkDial = twkdial;
   else if (p==kRHCNuisXSecNormAntiNuToNu) fRHCNormAntiNuToNuTwkDial= twkdial;
   else if (p==kNuisRHCToFHC             ) fNormRHCToFHCTwkDial     = twkdial;
-  else cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;
+
+  // NEW XSEC
 #elif defined(__USE_NIWG2015__)
-  // No NIWG2015 uncorrelated systematics
+  if      (p==kNuisXSecRPA      ) fRPATwkDial      = twkdial; 
+  else if (p==kRHCNuisXSecRPA   ) fRHCRPATwkDial   = twkdial;
 #endif
+  else {
+    cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;
+    exit(1);
+  }
 }
 //________________________________________________________________________________________
 void NuXSec::SyncRHCToFHCSystematics()
 {
+  fRHCRPATwkDial            = fRPATwkDial           ; // NEW XSEC
   fRHCFermiMomTwkDial       = fFermiMomTwkDial      ;
   fRHCSpecFuncTwkDial       = fSpecFuncTwkDial      ;
   fRHCWshapeTwkDial         = fWshapeTwkDial        ;

@@ -784,13 +784,6 @@ void BANFF::TweakFHCpRHC(
     }
 }
 
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 void BANFF::TweakFluxOnly(
   bool       force_inputs, /* force the input params or generate random ones internally  */
@@ -1029,10 +1022,6 @@ void BANFF::TweakFHCpRHCFluxOnly(
 }
 //
 
-
-
-
-
 //________________________________________________________________________________________
 void BANFF::CholeskyDecomposeMatrix()
 {
@@ -1102,10 +1091,6 @@ void BANFF::CholeskyDecomposeFHCpRHCMatrix()
 #endif
 }
 //
-
-
-
-
 
 //________________________________________________________________________________________
 void BANFF::RestoreNominalMC(void)
@@ -1180,11 +1165,6 @@ void BANFF::RestoreFHCpRHCNominalMC(void)
     //bestfit_values[i] = 1.;
   }
 }
-
-
-
-
-
 
 //________________________________________________________________________________________
 double BANFF::ChisqPenalty(bool /*all_syst*/) const
