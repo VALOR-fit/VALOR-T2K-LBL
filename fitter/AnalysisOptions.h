@@ -27,6 +27,8 @@ Split valor::conv namespace into several smaller files
 #include "Rtypes.h"
 #endif
 
+#define NUMOFTOYSTOMARGINALIZE 5 // Ntoys
+
 #define SYST_NSIGMA   3   // number of sigma away from nominal nuisance parameters are allowed to be
 #define SYST_STEP     0.1 // step size (in units of sigma)
 
