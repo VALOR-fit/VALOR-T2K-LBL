@@ -57,6 +57,9 @@ public:
   const double* CurrErecoSpectrumArray   (conv::SuperkSample_t s) const;
   double*       CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m);
   const double* CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  
+  VALORArray * CurrSpectrumVArray        (conv::SuperkSample_t s);
+  const VALORArray * CurrSpectrumVArray  (conv::SuperkSample_t s) const;
       
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (conv::SuperkSample_t s, conv::SuperkMode_t m);

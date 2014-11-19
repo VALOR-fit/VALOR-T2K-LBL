@@ -54,8 +54,6 @@
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
 #define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
 
-#define METHOD_FOR_ESCALE 1 // 1 = new linear method, 0 = old (should be deprecated and removed once new method fully validated)
-
 //#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
@@ -1291,6 +1289,26 @@ double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s)
   }
   
   return fMCErecoSpectrumTotArray[sidx].GetArray();
+}
+//________________________________________________________________________________________
+const VALORArray * SuperkMC::CurrSpectrumVArray(SuperkSample_t s) const  
+{ 
+  int sidx = arr_index->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  
+  return &(fMCTemplArrayFin[sidx]);
+}
+//________________________________________________________________________________________
+VALORArray * SuperkMC::CurrSpectrumVArray(SuperkSample_t s)  
+{ 
+  int sidx = arr_index->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  
+  return &(fMCTemplArrayFin[sidx]);
 }
 //________________________________________________________________________________________
 const double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m) const
