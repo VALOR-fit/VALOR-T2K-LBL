@@ -45,12 +45,18 @@ ClassImp(SuperkToyArray)
 //________________________________________________________________________________________
 SuperkToyArray::SuperkToyArray(SuperkExpectation * master_skexp)
 {
+  for (int is = 0 ; is < conv::kns ; is++) {
+    fMasterSpectrumUnoscillated     [is] = 0;
+    fMasterErecoSpectrumUnoscillated[is] = 0;
+  }
+  
   for (int itoy = 0 ; itoy < NUMOFTOYSTOMARGINALIZE ; itoy++) {
     for (int is = 0 ; is < conv::kns ; is++) {
       fPredictErecoSpectrumArrayMode  [itoy][is] = 0;
       fPredictErecoSpectrumArrayTot   [itoy][is] = 0;
-      fPredictSpectrumArrayOriginal   [itoy][is] = 0;
-      fPredictSpectrumArrayWithPhysics[itoy][is] = 0;
+      
+      fPredictErecoSpectrumArrayUnosc [itoy][is] = 0;
+      
     }
   }
     
@@ -69,6 +75,15 @@ void SuperkToyArray::Init(SuperkExpectation * master_skexp)
   
   SuperkMC * skmc = fMasterExpectation->GetSuperkMC();
   
+  for (int is = 0 ; is < conv::kns ; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if (s == conv::kSKsUndefined) continue;
+    
+    fMasterSpectrumUnoscillated[is] = skmc->CurrSpectrumVArray(s);
+    
+    fMasterErecoSpectrumUnoscillated[is] = new VALORArray(fMasterSpectrumUnoscillated[is]->GetSlice(1));
+  }
+    
   // Apply no physics hypothesis.
   PhysHypothesis ph(kHypVoid);
   
@@ -82,13 +97,12 @@ void SuperkToyArray::Init(SuperkExpectation * master_skexp)
       SuperkSample_t s = kSKSamples[is];
       if (s == conv::kSKsUndefined) continue;
         
-      VALORArray * arr = new VALORArray(*skmc->CurrSpectrumVArray(s));
+      const VALORArray * full_arr = skmc->CurrSpectrumVArray(s);
       
-      fPredictSpectrumArrayOriginal   [itoy][is] = arr;
-      fPredictSpectrumArrayWithPhysics[itoy][is] = new VALORArray(*arr);
-      fPredictSpectrumArrayWithPhysics[itoy][is]->SetAll(0);
+      fPredictErecoSpectrumArrayUnosc [itoy][is] = new VALORArray(full_arr->GetSlice(1));
       
       int n_ereco_bins = kNErecoBins[is];
+      //int n_etrue_bins = kNEtrueBins[is];
       
       fPredictErecoSpectrumArrayTot  [itoy][is] = new VALORArray(n_ereco_bins);
       fPredictErecoSpectrumArrayMode [itoy][is] = new VALORArray(conv::knm, n_ereco_bins);
@@ -97,10 +111,10 @@ void SuperkToyArray::Init(SuperkExpectation * master_skexp)
       fPredictErecoSpectrumArrayMode [itoy][is]->SetDimensionName(0,"Mode");
       fPredictErecoSpectrumArrayMode [itoy][is]->SetDimensionName(1,"Ereco");
       
-      fPredictSpectrumArrayOriginal   [itoy][is]->SetName(Form("spectrum_original_%s_%d"   ,util::AsStringCompact(s).c_str(),itoy));
-      fPredictSpectrumArrayWithPhysics[itoy][is]->SetName(Form("spectrum_physics_%s_%d"    ,util::AsStringCompact(s).c_str(),itoy));
-      fPredictErecoSpectrumArrayTot   [itoy][is]->SetName(Form("spectrum_ereco_total_%s_%d",util::AsStringCompact(s).c_str(),itoy));
-      fPredictErecoSpectrumArrayMode  [itoy][is]->SetName(Form("spectrum_ereco_mode_%s_%d" ,util::AsStringCompact(s).c_str(),itoy));
+      fPredictErecoSpectrumArrayUnosc [itoy][is]->SetName(Form("spectrum_original_%s_%d"         ,util::AsStringCompact(s).c_str(),itoy));
+      fPredictErecoSpectrumArrayTot   [itoy][is]->SetName(Form("spectrum_ereco_total_%s_%d"      ,util::AsStringCompact(s).c_str(),itoy));
+      fPredictErecoSpectrumArrayMode  [itoy][is]->SetName(Form("spectrum_ereco_mode_%s_%d"       ,util::AsStringCompact(s).c_str(),itoy));
+      
     }
   }
   
@@ -116,12 +130,19 @@ void SuperkToyArray::Book(void)
 //________________________________________________________________________________________
 void SuperkToyArray::CleanUp(void)
 {
+  for (int is = 0 ; is < conv::kns ; is++) {
+    //~ if (fMasterSpectrumUnoscillated      [is]) { delete fMasterSpectrumUnoscillated      [is]; fMasterSpectrumUnoscillated      [is] = 0; } // Owned by SKMC
+    if (fMasterErecoSpectrumUnoscillated [is]) { delete fMasterErecoSpectrumUnoscillated [is]; fMasterErecoSpectrumUnoscillated [is] = 0; }
+  }
+    
   for (int itoy = 0 ; itoy < NUMOFTOYSTOMARGINALIZE ; itoy++) {
     for (int is = 0 ; is < conv::kns ; is++) {
-      if (fPredictSpectrumArrayWithPhysics[itoy][is]) delete fPredictSpectrumArrayWithPhysics[itoy][is];
-      if (fPredictSpectrumArrayOriginal   [itoy][is]) delete fPredictSpectrumArrayOriginal   [itoy][is];
-      if (fPredictErecoSpectrumArrayTot   [itoy][is]) delete fPredictErecoSpectrumArrayTot   [itoy][is];
-      if (fPredictErecoSpectrumArrayMode  [itoy][is]) delete fPredictErecoSpectrumArrayMode  [itoy][is];
+      //std::cerr<<"About to delete unosc "<<itoy<<"\t"<<util::AsString(conv::kSKSamples[is])<<"\t"<<fPredictErecoSpectrumArrayUnosc [itoy][is]<<std::endl;
+      if (fPredictErecoSpectrumArrayUnosc [itoy][is]) { delete fPredictErecoSpectrumArrayUnosc [itoy][is]; fPredictErecoSpectrumArrayUnosc [itoy][is] = 0;}
+      //std::cerr<<"About to delete total "<<itoy<<"\t"<<util::AsString(conv::kSKSamples[is])<<"\t"<<fPredictErecoSpectrumArrayTot   [itoy][is]<<std::endl;
+      if (fPredictErecoSpectrumArrayTot   [itoy][is]) { delete fPredictErecoSpectrumArrayTot   [itoy][is]; fPredictErecoSpectrumArrayTot   [itoy][is] = 0;}
+      //std::cerr<<"About to delete mode "<<itoy<<"\t"<<util::AsString(conv::kSKSamples[is])<<"\t"<<fPredictErecoSpectrumArrayMode  [itoy][is]<<std::endl;
+      if (fPredictErecoSpectrumArrayMode  [itoy][is]) { delete fPredictErecoSpectrumArrayMode  [itoy][is]; fPredictErecoSpectrumArrayMode  [itoy][is] = 0;}
     }
   }
 }
@@ -211,12 +232,16 @@ bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
       
       int n_ereco_bins = kNErecoBins[is];
       int n_etrue_bins = kNEtrueBins[is];
-        
+      
+      // Make a map of oscillation probabilities per mode/etrue/ereco bin.
+      
+      VALORArray oscillatedMasterSpectrum(*fMasterSpectrumUnoscillated[is]);
+      
       // loop over Etrue
-      for(int it = 1; it <= n_etrue_bins; it++) {
+      for(int it = 0; it < n_etrue_bins; it++) {
          
         // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
-        double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
+        double Etrue = (util::EtrueBinEdges(s,it) + util::EtrueBinEdges(s,it+1) ) / 2;
          
         osc.CalcMatterOscProbAll(false, Etrue, p_osc    );
         osc.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
@@ -229,52 +254,79 @@ bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
         double p_numubar_nuebar  = p_osc_bar[1][0];
         double p_nue_numu        = p_osc    [0][1];
         double p_nuebar_numubar  = p_osc_bar[0][1];
-
-        // Loop over the toy experiments
-        for (int itoy = 0 ; itoy < NUMOFTOYSTOMARGINALIZE ; itoy++) {
+        
+        // loop over modes
+        for(int im=0; im < knm; im++) {
+          SuperkMode_t m = kSKReactionModes[is][im];
+          if(m == kSKmUndefined) continue;
           
-          // loop over modes
-          for(int im=0; im < knm; im++) {
-            SuperkMode_t m = kSKReactionModes[is][im];
-            if(m == kSKmUndefined) continue;
+          double posc = 1.;
+          
+          if(kIsCC[is][im])
+          {
+            if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+            else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+            else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
+            else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+            else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+            else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+            else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+            else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+          }
+          // loop over Ereco
+          for(int ir = 0; ir < n_ereco_bins ; ir++) {
+            oscillatedMasterSpectrum.GetEntryRef(im, it, ir) *= posc;
+          }//ereco
+        }//mode
+      }//etrue
+      
+      // Get oscillation probability per ereco bin (start with oscillated spectrum, divide by unoscillated
+      VALORArray oscProbPerErecoBin = oscillatedMasterSpectrum.GetSlice(1);
+      
+      for(int im=0; im < knm; im++) {
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
+        for(int ir = 0; ir < n_ereco_bins ; ir++) {
+          double n_events = fMasterErecoSpectrumUnoscillated[is]->GetEntry(im,ir);
+          if (n_events) {
+            oscProbPerErecoBin.GetEntryRef(im,ir) /= fMasterErecoSpectrumUnoscillated[is]->GetEntry(im,ir);
+          }
+        }//ir
+      }//im
             
-            // Get a pointer to the beginning of the ereco array for this toy/sample/mode/truebin
-            const double * orig_array = &(fPredictSpectrumArrayOriginal   [itoy][is]->GetEntryRef(im,it-1,0));
-            double * physics_array    = &(fPredictSpectrumArrayWithPhysics[itoy][is]->GetEntryRef(im,it-1,0));
-            // osc. probability
-            double posc = 1.;
-            if(kIsCC[is][im])
-            {
-              if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-              else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-              else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
-              else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-              else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-              else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-              else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-              else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-            }
-            // loop over Ereco
-            for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-              // number of events in (Ereco,Etrue) bin (systematics applied)
-              double nev = 0;
-              
-              nev = orig_array[ir-1];
-              
+        
+      // Loop over the toy experiments
+      for (int itoy = 0 ; itoy < NUMOFTOYSTOMARGINALIZE ; itoy++) {
+        
+        // loop over modes
+        for(int im=0; im < knm; im++) {
+          SuperkMode_t m = kSKReactionModes[is][im];
+          if(m == kSKmUndefined) continue;
+          
+          // Get a pointer to the beginning of the ereco array for this toy/sample/mode
+          const double * prob_array = &(oscProbPerErecoBin.GetEntryRef(im,0));
+          const double * orig_array = &(fPredictErecoSpectrumArrayUnosc [itoy][is]->GetEntryRef(im,0));
+          double * physics_array    = &(fPredictErecoSpectrumArrayMode  [itoy][is]->GetEntryRef(im,0));
+          
+          // loop over Ereco
+          for(int ir = 0; ir < n_ereco_bins ; ir++) {
+            // number of events in (Ereco,Etrue) bin (systematics applied)
+            double nev  = orig_array[ir];
+            double posc = prob_array[ir];
+            
 #ifdef PHYSHYPWEIGHTSAREONE
-              posc = 1;
+            posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-              if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+            if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
 #endif
 #endif
-              // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-              double nev_osc = nev * posc;
-              
-              physics_array[ir-1] = nev_osc;
-            } // ireco
-          }//imode
-        }//itoy
-      }//itrue
+            // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+            double nev_osc = nev * posc;
+            
+            physics_array[ir] = nev_osc;
+          } // ireco
+        }//imode
+      }//itoy
     }//isample
   }//hyp==NuOsc3f
   else {
@@ -304,19 +356,17 @@ void SuperkToyArray::UpdateErecoSpectra(void)
       if(s == kSKsUndefined) continue;
 
       int n_ereco_bins = kNErecoBins[is];
-      int n_etrue_bins = kNEtrueBins[is];
+      //int n_etrue_bins = kNEtrueBins[is];
       
       // Recast VALORArray blocks so they can be used addressed like normal arrays (fast).
       // Hard to read, so should only be used in code for which speed is essential.
-      typedef double (templmtype)[knm][n_etrue_bins][n_ereco_bins];
       typedef double (ermtype)   [knm][n_ereco_bins];
-      const templmtype & templFin = *reinterpret_cast< const templmtype * > (fPredictSpectrumArrayWithPhysics [itoy][is]->GetArray());
-      ermtype & erecoMode         = *reinterpret_cast< ermtype          * > (fPredictErecoSpectrumArrayMode   [itoy][is]->GetArray());
+      const ermtype & erecoMode = *reinterpret_cast< ermtype * > (fPredictErecoSpectrumArrayMode[itoy][is]->GetArray());
       
       double * erecoTot = fPredictErecoSpectrumArrayTot[itoy][is]->GetArray();
 
       // loop over Ereco
-      for(int ir = 1; ir <= n_ereco_bins; ir++) {
+      for(int ir = 0; ir < n_ereco_bins; ir++) {
         double nev_tot = 0;
         // loop over modes
         for(int im = 0; im < knm; im++) { 
@@ -325,9 +375,8 @@ void SuperkToyArray::UpdateErecoSpectra(void)
           
           // loop over Etrue
           double nev = 0;
-          for(int it = 1; it <= n_etrue_bins; it++) {
-            nev += templFin[im][it-1][ir-1];
-          }//it
+          
+          nev = erecoMode[im][ir];
           nev_tot += nev;
 #ifdef __apply_minevents_to_individual_modes__
           if(nev < 0) {
@@ -339,10 +388,9 @@ void SuperkToyArray::UpdateErecoSpectra(void)
           } // if nev < 0
 #endif //__apply_minevents_to_individual_modes__
 
-          erecoMode[im][ir-1] = nev;   
         }//im
         
-        erecoTot[ir-1] = nev_tot;
+        erecoTot[ir] = nev_tot;
         
       }//ir
     }//is
@@ -402,7 +450,7 @@ VALORArray * SuperkToyArray::CurrPredictedErecoVArray(int itoy, valor::conv::Sup
 VALORArray * SuperkToyArray::CurrPredictedErecoVArrayMode(int itoy, valor::conv::SuperkSample_t s) 
 {
   assert(itoy >= 0 && itoy < NUMOFTOYSTOMARGINALIZE);
-  VALORArray * arr = fPredictSpectrumArrayWithPhysics[itoy][s];
+  VALORArray * arr = fPredictErecoSpectrumArrayMode[itoy][s];
   if (!arr) {
     std::cerr<<"SKToyArray/CurrPredictedErecoVArraMode could not find array for toy "<<itoy <<" and sample "<<util::AsString(s)<<std::endl;
     exit(-1);
@@ -488,7 +536,7 @@ const VALORArray * SuperkToyArray::CurrPredictedVArrayMode (int itoy, valor::con
     return 0;
   }
   
-  return fPredictSpectrumArrayWithPhysics[itoy][sidx];
+  return fPredictErecoSpectrumArrayMode[itoy][sidx];
 }
 //________________________________________________________________________________________
 VALORArray *       SuperkToyArray::CurrPredictedVArrayMode (int itoy, valor::conv::SuperkSample_t s)
@@ -498,7 +546,7 @@ VALORArray *       SuperkToyArray::CurrPredictedVArrayMode (int itoy, valor::con
     return 0;
   }
   
-  return fPredictSpectrumArrayWithPhysics[itoy][sidx];
+  return fPredictErecoSpectrumArrayMode[itoy][sidx];
 }
 //________________________________________________________________________________________
 

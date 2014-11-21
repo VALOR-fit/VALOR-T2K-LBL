@@ -122,8 +122,10 @@ private:
   
   VALORArray * fPredictErecoSpectrumArrayTot   [NUMOFTOYSTOMARGINALIZE][conv::kns];
   VALORArray * fPredictErecoSpectrumArrayMode  [NUMOFTOYSTOMARGINALIZE][conv::kns];
-  VALORArray * fPredictSpectrumArrayWithPhysics[NUMOFTOYSTOMARGINALIZE][conv::kns];
-  VALORArray * fPredictSpectrumArrayOriginal   [NUMOFTOYSTOMARGINALIZE][conv::kns];
+  VALORArray * fPredictErecoSpectrumArrayUnosc [NUMOFTOYSTOMARGINALIZE][conv::kns];
+  
+  VALORArray * fMasterSpectrumUnoscillated     [conv::kns];
+  VALORArray * fMasterErecoSpectrumUnoscillated[conv::kns];
   
 ClassDef(SuperkToyArray, 1)
 };
