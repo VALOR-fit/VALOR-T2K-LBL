@@ -80,6 +80,9 @@ namespace util {
 
   conv::OscChannelId_t GetOscChannel(int nu_start, int nu_end);
   
+  // Apply the energy scale systematic (used in both SKMC and SKToyArray)
+  void ApplyEnergyScaleSystematic(conv::SuperkSample_t s, double * events_per_bin, double escale_tweak);
+  
   //
   // Reaction mode utilities etc
   //

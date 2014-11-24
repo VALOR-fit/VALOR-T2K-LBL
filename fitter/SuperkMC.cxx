@@ -1693,68 +1693,7 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     
     double * events_per_bin = this->CurrErecoSpectrumArray(s);
     
-    const double * bin_edges = util::ErecoBinEdges(s);
-    
-    double new_events_per_bin [n_ereco_bins+1];// With overflow bin
-    double scaled_bin_edges   [n_ereco_bins+1];
-    double unscaled_bin_edges [n_ereco_bins+2];// With overflow bin
-    
-    // Calculate bin information
-    double total_events = 0;
-    for (int ibin = 0 ; ibin <= n_ereco_bins; ibin++) {
-      if (ibin  != n_ereco_bins) {
-        total_events += events_per_bin[ibin];
-      }
-      unscaled_bin_edges[ibin] = bin_edges[ibin];
-      scaled_bin_edges  [ibin] = bin_edges[ibin] * escale;
-      new_events_per_bin[ibin] = 0;
-    }
-    
-    unscaled_bin_edges[n_ereco_bins+1] = 1E4; //Overflow bin (no underflow unless we start binning from something other than zero).
-    
-    if (total_events < kASmallNum) continue;
-    
-    double overlap = 0;
-        
-    for (int ibin_s = 0 ; ibin_s < n_ereco_bins ; ibin_s++) { // Loop over scaled bins
-      double bin_min_s = scaled_bin_edges[ibin_s];
-      double bin_max_s = scaled_bin_edges[ibin_s+1];
-      for (int ibin_u = 0 ; ibin_u < n_ereco_bins+1 ; ibin_u++) {
-        double bin_min_u = unscaled_bin_edges[ibin_u];
-        double bin_max_u = unscaled_bin_edges[ibin_u+1];
-        
-        if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
-        else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
-        else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
-        else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
-        else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
-        else overlap = -999; // No crossover
-        
-        if (overlap <= 0) continue;
-        
-        double new_events = events_per_bin[ibin_s] * overlap / (scaled_bin_edges[ibin_s+1]-scaled_bin_edges[ibin_s]);
-        new_events_per_bin[ibin_u] += new_events;
-      }
-    }
-    // Move events back into main array.
-    for (int i = 0 ; i < n_ereco_bins ; i++) {
-      events_per_bin[i] = new_events_per_bin[i];
-    }
-    events_per_bin[n_ereco_bins-1] += new_events_per_bin[n_ereco_bins]; //Put events from overflow bin back into top bin
-    
-#ifndef NDEBUG
-    double new_total_events = 0;
-    for (int i = 0 ; i < n_ereco_bins ; i++) {
-      new_total_events+=events_per_bin[i];
-    }
-    if ( fabs((new_total_events/total_events)-1) > conv::kASmallNum ) {
-      cerr<<"SuperkMC/ApplyEnergyScaleSystematicToTotalSpectrum - failed normalisation check for sample "<<AsString(s)<<endl;
-      cerr<<"Events: "<<total_events<<" ==> "<<new_total_events<<"\t"<<new_total_events/total_events
-          <<"\t"<<fabs((new_total_events/total_events)-1)<<"\t at scale "<<escale<<endl;
-      assert(!"Broken");
-    }
-#endif //NDEBUG
-
+    util::ApplyEnergyScaleSystematic(s,events_per_bin,escale);
   }//is
   return applied_negevents_condition;
 }
