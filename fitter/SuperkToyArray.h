@@ -127,6 +127,8 @@ private:
   VALORArray * fMasterSpectrumUnoscillated     [conv::kns];
   VALORArray * fMasterErecoSpectrumUnoscillated[conv::kns];
   
+  PhysParamList * fToyPhysParams[NUMOFTOYSTOMARGINALIZE];
+  
 ClassDef(SuperkToyArray, 1)
 };
 

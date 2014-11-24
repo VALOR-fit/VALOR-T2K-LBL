@@ -51,6 +51,9 @@ SuperkToyArray::SuperkToyArray(SuperkExpectation * master_skexp)
   }
   
   for (int itoy = 0 ; itoy < NUMOFTOYSTOMARGINALIZE ; itoy++) {
+    
+    fToyPhysParams[itoy] = 0;
+    
     for (int is = 0 ; is < conv::kns ; is++) {
       fPredictErecoSpectrumArrayMode  [itoy][is] = 0;
       fPredictErecoSpectrumArrayTot   [itoy][is] = 0;
@@ -93,10 +96,20 @@ void SuperkToyArray::Init(SuperkExpectation * master_skexp)
     fMasterExpectation->RandomizeSystematics();
     fMasterExpectation->Generate(ph);
     
+    fToyPhysParams[itoy] = new PhysParamList(fMasterExpectation->Tweaks());
+    // Make randomized physics parameters for that toy. Random values will be generated for all physics parameters
+    // But only used for nuisance parameters
+    for (int ip = 0 ; ip < kNuis000 ; ip++) {
+      PhysParamId_t p = (PhysParamId_t) ip;
+      fToyPhysParams[itoy]->SetValue(p, util::RandomizeParameter(p));
+    }//ip
+    
     for (int is = 0 ; is < conv::kns ; is++) {
       SuperkSample_t s = kSKSamples[is];
       if (s == conv::kSKsUndefined) continue;
-        
+      
+      // Get the SKMC array
+      // This has all systematics except energy scale applied to it.
       const VALORArray * full_arr = skmc->CurrSpectrumVArray(s);
       
       fPredictErecoSpectrumArrayUnosc [itoy][is] = new VALORArray(full_arr->GetSlice(1));
@@ -115,8 +128,9 @@ void SuperkToyArray::Init(SuperkExpectation * master_skexp)
       fPredictErecoSpectrumArrayTot   [itoy][is]->SetName(Form("spectrum_ereco_total_%s_%d"      ,util::AsStringCompact(s).c_str(),itoy));
       fPredictErecoSpectrumArrayMode  [itoy][is]->SetName(Form("spectrum_ereco_mode_%s_%d"       ,util::AsStringCompact(s).c_str(),itoy));
       
-    }
-  }
+    }//is
+    
+  } //itoy
   
   fMasterExpectation->ResetSystematics();
   
@@ -175,8 +189,6 @@ bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
     double mixing12 = ph.CurrValue(kPhypMixing12);
     double mixing13 = ph.CurrValue(kPhypMixing13);
     double mixing23 = ph.CurrValue(kPhypMixing23);
-    //    double dm12sq   = ph.CurrValue(kPhypDm12sq);
-    //double dm23sq   = ph.CurrValue(kPhypDm23sq);
     double dmsq     = ph.CurrValue(kPhypDm12sq);
     double Dmsq     = ph.CurrValue(kPhypDm23sq);
     double delta_cp = ph.CurrValue(kPhypCPV   );
@@ -334,7 +346,21 @@ bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
     exit(-1);
   }
   
+  // Make the Ereco spectra
   this->UpdateErecoSpectra();
+  
+  // Apply the energy scale systematic.
+  for (int itoy = 0 ; itoy < NUMOFTOYSTOMARGINALIZE ; itoy++) {
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = kSKSamples[is];
+      if(s == kSKsUndefined) continue;
+      
+      double escale = fToyPhysParams[itoy]->Value(conv::kNuisSuperkEnergyScale);
+      double * events_per_bin = this->CurrPredictedErecoSpectrumArray(itoy,s);
+      util::ApplyEnergyScaleSystematic(s,events_per_bin,escale);
+    }
+  }
+        
   
   return applied_negevents_condition;
 }
