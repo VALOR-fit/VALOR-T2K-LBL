@@ -118,6 +118,9 @@ private:
   void Book    (void);
   void CleanUp (void);
   
+  // Generate a specific hypothesis, to keep separate code
+  bool GenerateWithHypOsc3f(const PhysHypothesis & ph, Option_t * opt = 0);
+  
   SuperkExpectation * fMasterExpectation;
   
   VALORArray * fPredictErecoSpectrumArrayTot   [NUMOFTOYSTOMARGINALIZE][conv::kns];

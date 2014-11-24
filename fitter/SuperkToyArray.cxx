@@ -168,36 +168,48 @@ bool SuperkToyArray::Read(string /*config_file*/, Option_t * /*opt*/)
   return true;
 }
 //________________________________________________________________________________________
-bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
+bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * opt)
 {
   // Calculate oscillation probabilities
+  PhysHypothesis_t hyp = ph.Hypothesis();
   
+  if(hyp == kHypOsc3F)
+  {
+    return this->GenerateWithHypOsc3f(ph,opt);
+  }
+  else {
+    std::cerr<<"Unimplemented hypothesis: "<<util::AsString(hyp);
+    exit(-1);
+  }
+  return false;
+}
+//________________________________________________________________________________________
+bool SuperkToyArray::GenerateWithHypOsc3f(const PhysHypothesis & ph, Option_t * opt)
+{
   bool applied_negevents_condition = false;
   
   PhysHypothesis_t hyp = ph.Hypothesis();
+  assert(hyp==kHypOsc3F);
       
   double p_osc[3][3];
   double p_osc_bar[3][3];
-
-  //
-  // 3-flavour oscillations
-  //
-  if(hyp == kHypOsc3F)
-  {
-    NuOsc3Flavour osc;
-    // set oscillation parameters to the oscillation probability calculation code
-    double mixing12 = ph.CurrValue(kPhypMixing12);
-    double mixing13 = ph.CurrValue(kPhypMixing13);
-    double mixing23 = ph.CurrValue(kPhypMixing23);
-    double dmsq     = ph.CurrValue(kPhypDm12sq);
-    double Dmsq     = ph.CurrValue(kPhypDm23sq);
-    double delta_cp = ph.CurrValue(kPhypCPV   );
-#ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
-#endif
-    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-    NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
   
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+  
+  NuOsc3Flavour osc;
+        
+  // Loop over the toy experiments
+  for (int itoy = 0 ; itoy < NUMOFTOYSTOMARGINALIZE ; itoy++) {
+    
+    // set oscillation parameters to the oscillation probability calculation code
+    double mixing12 = ph.IsNuisance(kPhypMixing12) ? fToyPhysParams[itoy]->Value(kPhypMixing12) : ph.CurrValue(kPhypMixing12);
+    double mixing13 = ph.IsNuisance(kPhypMixing13) ? fToyPhysParams[itoy]->Value(kPhypMixing13) : ph.CurrValue(kPhypMixing13);
+    double mixing23 = ph.IsNuisance(kPhypMixing23) ? fToyPhysParams[itoy]->Value(kPhypMixing23) : ph.CurrValue(kPhypMixing23);
+    double dmsq     = ph.IsNuisance(kPhypDm12sq  ) ? fToyPhysParams[itoy]->Value(kPhypDm12sq  ) : ph.CurrValue(kPhypDm12sq   );
+    double Dmsq     = ph.IsNuisance(kPhypDm23sq  ) ? fToyPhysParams[itoy]->Value(kPhypDm23sq  ) : ph.CurrValue(kPhypDm23sq   );
+    double delta_cp = ph.IsNuisance(kPhypCPV     ) ? fToyPhysParams[itoy]->Value(kPhypCPV     ) : ph.CurrValue(kPhypCPV      );
+    
     // mixing params are: sin^2(2*theta)
     // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
     if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta) {
@@ -236,17 +248,20 @@ bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
            << endl;
       exit(1);
     }
-  
+    
+#ifdef __show_hypothesis__
+       cout << "**  SuperkToyArray/GenerateOsc3f >> " << fPhysHypothesis;
+#endif
+        
     // loop over samples
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
       if(s == kSKsUndefined) continue;
-      
+        
       int n_ereco_bins = kNErecoBins[is];
       int n_etrue_bins = kNEtrueBins[is];
       
       // Make a map of oscillation probabilities per mode/etrue/ereco bin.
-      
       VALORArray oscillatedMasterSpectrum(*fMasterSpectrumUnoscillated[is]);
       
       // loop over Etrue
@@ -307,44 +322,37 @@ bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
       }//im
             
         
-      // Loop over the toy experiments
-      for (int itoy = 0 ; itoy < NUMOFTOYSTOMARGINALIZE ; itoy++) {
+      // loop over modes
+      for(int im=0; im < knm; im++) {
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
         
-        // loop over modes
-        for(int im=0; im < knm; im++) {
-          SuperkMode_t m = kSKReactionModes[is][im];
-          if(m == kSKmUndefined) continue;
-          
-          // Get a pointer to the beginning of the ereco array for this toy/sample/mode
-          const double * prob_array = &(oscProbPerErecoBin.GetEntryRef(im,0));
-          const double * orig_array = &(fPredictErecoSpectrumArrayUnosc [itoy][is]->GetEntryRef(im,0));
-          double * physics_array    = &(fPredictErecoSpectrumArrayMode  [itoy][is]->GetEntryRef(im,0));
-          
-          // loop over Ereco
-          for(int ir = 0; ir < n_ereco_bins ; ir++) {
-            // number of events in (Ereco,Etrue) bin (systematics applied)
-            double nev  = orig_array[ir];
-            double posc = prob_array[ir];
+        // Get a pointer to the beginning of the ereco array for this toy/sample/mode
+        const double * prob_array = &(oscProbPerErecoBin.GetEntryRef(im,0));
+        const double * orig_array = &(fPredictErecoSpectrumArrayUnosc [itoy][is]->GetEntryRef(im,0));
+        double * physics_array    = &(fPredictErecoSpectrumArrayMode  [itoy][is]->GetEntryRef(im,0));
+        
+        // loop over Ereco
+        for(int ir = 0; ir < n_ereco_bins ; ir++) {
+          // number of events in (Ereco,Etrue) bin (systematics applied)
+          double nev  = orig_array[ir];
+          double posc = prob_array[ir];
             
 #ifdef PHYSHYPWEIGHTSAREONE
-            posc = 1;
+          posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-            if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+          if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
 #endif
 #endif
-            // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-            double nev_osc = nev * posc;
+          // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+          double nev_osc = nev * posc;
             
-            physics_array[ir] = nev_osc;
-          } // ireco
-        }//imode
-      }//itoy
+          physics_array[ir] = nev_osc;
+        } // ireco
+      }//imode
     }//isample
-  }//hyp==NuOsc3f
-  else {
-    std::cerr<<"Unimplemented hypothesis: "<<util::AsString(hyp);
-    exit(-1);
-  }
+  }//itoy
+  
   
   // Make the Ereco spectra
   this->UpdateErecoSpectra();
@@ -360,7 +368,6 @@ bool SuperkToyArray::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
       util::ApplyEnergyScaleSystematic(s,events_per_bin,escale);
     }
   }
-        
   
   return applied_negevents_condition;
 }
