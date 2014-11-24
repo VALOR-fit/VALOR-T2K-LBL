@@ -1689,8 +1689,6 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     
     double escale = fSKDetFSI->EnergyScale(s);
     
-    const int n_ereco_bins = kNErecoBins[is];
-    
     double * events_per_bin = this->CurrErecoSpectrumArray(s);
     
     util::ApplyEnergyScaleSystematic(s,events_per_bin,escale);

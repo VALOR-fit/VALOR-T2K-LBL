@@ -1037,20 +1037,6 @@ void SuperkExpectation::RandomizeSystematics(void)
   cout << "Exp >> Generating random variations of all systematic params." << endl;
 #endif
 
-#ifdef HKHACK
-  // NEW XSEC --> comment all old non-banff --> Not commented any longer
-  // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
-  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-#elif defined(__USE_NIWG2015__)
-  // No uncorrelated NIWG2015 xsec systematics
-#endif
-
-#else
-
 //   // common to all the samples
 //   this->TweakAllBANFFSystematics();
 //   this->TweakAllUncorrelatedXSecSystematics();
@@ -1119,8 +1105,6 @@ void SuperkExpectation::RandomizeSystematics(void)
   #endif
 #endif
   ///
-
-#endif//HKHACK
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllRHCBANFFSystematics(void)
