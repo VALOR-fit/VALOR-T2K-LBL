@@ -25,9 +25,9 @@ rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
 
-pattern = "spline2015v1_t2ksk.14a.neut5.3.2.13a_tuned_v1r0.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
+pattern = "spline2015v3_fine_t2ksk.14a.neut5.3.2.13a_tuned_v1r0.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
 
-location = os.environ[env_var]+"/inputs/official/2015/xsec/splines_v1/" # Location of the spline files
+location = os.environ[env_var]+"/inputs/official/2015/xsec/splines_v3/" # Location of the spline files
 
 types = [("nuebar_x_nuebar"  ,"nuebar"    ),  # First entry is new-style names, second entry is VALOR type names.
          ("nue_x_nue"        ,"nue"       ),
@@ -72,6 +72,11 @@ currents["1Re"]     = "250ka"
 currents["RHC1Rmu"] = "m250ka"
 currents["RHC1Re" ] = "m250ka"
 
+ereco_bin_offsets = dict()
+ereco_bin_offsets["1Rmu"]    = 0
+ereco_bin_offsets["RHC1Rmu"] = 0
+ereco_bin_offsets["1Re"]     = -1 # bin 0 of the 1Re samples from Kirsty are negative energy, remove it.
+ereco_bin_offsets["RHC1Re" ] = -1 # bin 0 of the 1Re samples from Kirsty are negative energy, remove it.
 
 replacements = [("pipm","piC"),
                 ("piz" ,"pi0") ] # VALOR modes have pi0 instead of piz
@@ -123,7 +128,12 @@ def main():
           
           junk,bins = orig_spl_name.rsplit("_sp_")
           
-          new_spl_name = "spl_"+sample+"_"+par+"_"+valor_type+mode+"_"+bins
+          true_bin,reco_bin = map(int,bins.split("_"))
+          
+          reco_bin += ereco_bin_offsets[sample]
+          if reco_bin < 0: continue
+          
+          new_spl_name = "spl_"+sample+"_"+par+"_"+valor_type+mode+"_"+`true_bin`+"_"+`reco_bin`
           
           nknots = spline.GetNp()
           knots = np.zeros(nknots,dtype=float)
