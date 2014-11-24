@@ -468,25 +468,23 @@
       <weight_splines>
           <one_mu_ring>
                 <filename>
-                    official/2013/xsec/XSecSplines2013Run1to4.root
+                    official/2015/xsec/splines_v3_1Rmu.root
                 </filename>
           </one_mu_ring>
           <one_e_ring>
                 <filename>
-                    official/2013/xsec/XSecSplines1Re2013v5_rebin.root
+                    official/2015/xsec/splines_v3_1Re.root
                 </filename>
           </one_e_ring>
           
           <one_mu_ring_rhc>
                 <filename>
-                   official/2013/xsec/XSecSplines2013Run1to4.root
-                   <!-- official/2015/xsec/splines_v1_RHC1Rmu.root -->
+                   official/2015/xsec/splines_v3_RHC1Rmu.root
                 </filename>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
                 <filename>
-                    official/2013/xsec/XSecSplines1Re2013v5_rebin.root
-                    <!-- official/2015/xsec/splines_v1_RHC1Re.root -->
+                    official/2015/xsec/splines_v3_RHC1Re.root
                 </filename>
           </one_e_ring_rhc>
           
