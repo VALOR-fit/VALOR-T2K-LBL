@@ -33,6 +33,8 @@
 #include "Conventions/Opt.h"
 #include "Utilities/Rnd.h"
 
+//#define PHYSHYPWEIGHTSAREONE
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -82,7 +84,7 @@ void SuperkToyArray::Init(SuperkExpectation * master_skexp)
     SuperkSample_t s = kSKSamples[is];
     if (s == conv::kSKsUndefined) continue;
     
-    fMasterSpectrumUnoscillated[is] = skmc->CurrSpectrumVArray(s);
+    fMasterSpectrumUnoscillated[is] = new VALORArray(*skmc->CurrSpectrumVArray(s));
     
     fMasterErecoSpectrumUnoscillated[is] = new VALORArray(fMasterSpectrumUnoscillated[is]->GetSlice(1));
   }
@@ -145,7 +147,7 @@ void SuperkToyArray::Book(void)
 void SuperkToyArray::CleanUp(void)
 {
   for (int is = 0 ; is < conv::kns ; is++) {
-    //~ if (fMasterSpectrumUnoscillated      [is]) { delete fMasterSpectrumUnoscillated      [is]; fMasterSpectrumUnoscillated      [is] = 0; } // Owned by SKMC
+    if (fMasterSpectrumUnoscillated      [is]) { delete fMasterSpectrumUnoscillated      [is]; fMasterSpectrumUnoscillated      [is] = 0; }
     if (fMasterErecoSpectrumUnoscillated [is]) { delete fMasterErecoSpectrumUnoscillated [is]; fMasterErecoSpectrumUnoscillated [is] = 0; }
   }
     
@@ -716,5 +718,10 @@ SuperkExpectation * valor::SuperkToyArray::GetMasterExpectation(void){
 const SuperkExpectation * valor::SuperkToyArray::GetMasterExpectation(void) const
 {
   return fMasterExpectation;
+}
+//________________________________________________________________________________________
+const PhysParamList * valor::SuperkToyArray::GetToyPhysParams(int itoy) const
+{
+  return fToyPhysParams[itoy];
 }
 //________________________________________________________________________________________

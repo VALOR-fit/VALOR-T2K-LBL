@@ -100,6 +100,8 @@ public:
   
   const double* CurrPredictedErecoSpectrumArray     (int itoy, valor::conv::SuperkSample_t s) const;
   const double* CurrPredictedErecoSpectrumArrayMode (int itoy, valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const;
+  
+  const PhysParamList * GetToyPhysParams(int itoy) const;
 
   // Print
   void PrintSystematicVariations(std::ostream & stream = std::cout) const;
