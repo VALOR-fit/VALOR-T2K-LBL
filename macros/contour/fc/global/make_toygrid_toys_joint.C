@@ -9,11 +9,8 @@
 void make_toygrid_toys_joint
 (
  const char * xmlfile = "Asimov/toymc_Asimov_dcp0_NH-0.xml",             /* input XML file with toy MC experiments */
- //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
- //const char * xmlfile = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                 /* input XML file with toy MC experiments */
  
- //const char * tag = "prova_fewfits_MultiRing_FHCMC",                                                    /* */
- const char * tag = "prova_Asimov",                                                    /* */
+ const char * tag = "Run1to6_joint_OA2p5_NH_dcp_51_statonly",                               
 
  int          run = 0,                                                    /* */
  int          first_experiment = 0,                                   /* */
@@ -30,13 +27,18 @@ void make_toygrid_toys_joint
  int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
  bool         using_xml_file      = false,                                   /* if false, skobs reads xmlfile as a root file */
 
- const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+ const char * config_file      = "analysis_configuration_run1to5_test.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_run1to6_oa2p25.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_run1to6_oa2p0.xml",        /* analysis configuration file */
+
  //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
  //const char * config_file        = "analysis_configuration_test_multiring.xml",   /* analysis configuration file */
  //const char * config_file        = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
 
- const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
+ const char * fit_param_list   = "nuosc3fbar_fixnonbar_12fix",
+ //const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
  //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
  //const char * fit_option = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",
  //const char * fit_option = "nuosc3f_numudisapp_nuis3fixdcp",
@@ -59,15 +61,15 @@ void make_toygrid_toys_joint
  //const char * param2                  = "dmsq",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  //const char * param3                  = "mixing13",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  const char * param1                  = "deltacp",                        /* first parameter to be fitting vs - default: none for a single fit */ 
- const char * param2                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
- const char * param3                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
+ const char * param2                  = "mixing13",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
+ const char * param3                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */  
  
  int          nbins_tot_param1            = 51,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int          nbins_tot_param2            = 1,                              /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int          nbins_tot_param3            = 1,                              /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
 
  int          min_bin_param1          = 1,                                /* minimum bin for param1 */
- int          max_bin_param1          = 51,                                /* maximum bin for param1 */
+ int          max_bin_param1          = 1,                                /* maximum bin for param1 */
  int          min_bin_param2          = 1,                                /* minimum bin for param2 */
  int          max_bin_param2          = 1,                                  /* maximum bin for param2 */
  int          min_bin_param3          = 1,                                /* minimum bin for param2 */
@@ -77,6 +79,8 @@ void make_toygrid_toys_joint
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+
+  TString opt(fit_param_list); 
 
   double bestfit_chisq,bestfit_chisq2;
 
@@ -453,16 +457,22 @@ void make_toygrid_toys_joint
     else if(param2 == "mixing13") mixing13_step = (mixing13_max-mixing13_min)/(nbins_tot_param2-1);     
     else if(param3 == "mixing13") mixing13_step = (mixing13_max-mixing13_min)/(nbins_tot_param3-1);     
     
-    double mixing23_min = 0.3;
-    double mixing23_max = 0.7;
-    double mixing23_step = 0.01;
+    // double mixing23_min = 0.3;
+    // double mixing23_max = 0.7;
+    // double mixing23_step = 0.01;
+    double mixing23_min = 0.;
+    double mixing23_max = 1.;
+    double mixing23_step = 0.02;
     if(param1 == "mixing23")      mixing23_step = (mixing23_max-mixing23_min)/(nbins_tot_param1-1);
     else if(param2 == "mixing23") mixing23_step = (mixing23_max-mixing23_min)/(nbins_tot_param2-1);
     else if(param3 == "mixing23") mixing23_step = (mixing23_max-mixing23_min)/(nbins_tot_param3-1);
     
-    double dmsq_min = 2.0E-3;
-    double dmsq_max = 3.0E-3;
-    double dmsq_step = 0.05E-3;
+    // double dmsq_min = 2.0E-3;
+    // double dmsq_max = 3.0E-3;
+    // double dmsq_step = 0.05E-3;
+    double dmsq_min = 2.0E-4;
+    double dmsq_max = 2.0E-2;
+    double dmsq_step = 0.0E-3;
     if(param1 == "dmsq")      dmsq_step = (dmsq_max-dmsq_min)/(nbins_tot_param1-1);
     else if(param2 == "dmsq") dmsq_step = (dmsq_max-dmsq_min)/(nbins_tot_param2-1);          
     else if(param3 == "dmsq") dmsq_step = (dmsq_max-dmsq_min)/(nbins_tot_param3-1);          
@@ -618,149 +628,190 @@ void make_toygrid_toys_joint
     
     //
     
-    int parvalue1 = -999;
-    int parvalue2 = -999;
-    int parvalue3 = -999;
+    EPhysParamId parvalue1 = -999;
+    EPhysParamId parvalue2 = -999;
+    EPhysParamId parvalue3 = -999;
     //loop for the first parameter (if any)
     for (int i = min_bin_param1; i <= max_bin_param1; i++){
+      
       if(param1 == "mixing13") {
-	parvalue1 = conv::kPhypMixing13;
+	if(opt.Contains("fixnonbar")) parvalue1 = conv::kPhypMixing13Bar;
+	else parvalue1 = conv::kPhypMixing13;
 	double currval = mixing13_min + (i-1)*mixing13_step;
-	fparm1->SetInitValue(conv::kPhypMixing13,currval);
-	fparm1->Update(conv::kPhypMixing13,currval);
-	fparm1->FixParameter(conv::kPhypMixing13);
-	fparm2->SetInitValue(conv::kPhypMixing13,currval);
-	fparm2->Update(conv::kPhypMixing13,currval);
-	fparm2->FixParameter(conv::kPhypMixing13);
+	fparm1->SetInitValue(parvalue1,currval);
+	fparm1->Update(parvalue1,currval);
+	fparm1->FixParameter(parvalue1);
+	fparm2->SetInitValue(parvalue1,currval);
+	fparm2->Update(parvalue1,currval);
+	fparm2->FixParameter(parvalue1);	
       }
+      
       if(param1 == "mixing23") {
-	parvalue1 = conv::kPhypMixing23;
+	if(opt.Contains("fixnonbar")) parvalue1 = conv::kPhypMixing23Bar;
+	else parvalue1 = conv::kPhypMixing23;	
 	double currval = mixing23_min + (i-1)*mixing23_step;
-	fparm1->SetInitValue(conv::kPhypMixing23,currval);
-	fparm1->Update(conv::kPhypMixing23,currval);
-	fparm1->FixParameter(conv::kPhypMixing23);
-	fparm2->SetInitValue(conv::kPhypMixing23,currval);
-	fparm2->Update(conv::kPhypMixing23,currval);
-	fparm2->FixParameter(conv::kPhypMixing23);
+	fparm1->SetInitValue(parvalue1,currval);
+	fparm1->Update(parvalue1,currval);
+	fparm1->FixParameter(parvalue1);
+	fparm2->SetInitValue(parvalue1,currval);
+	fparm2->Update(parvalue1,currval);
+	fparm2->FixParameter(parvalue1);
       }
+      
       if(param1 == "dmsq") {
-	parvalue1 = conv::kPhypDm23sq;
+	if(opt.Contains("fixnonbar")) parvalue1 = conv::kPhypDm23sqBar;
+	else parvalue1 = conv::kPhypDm23sq;	
 	double currval = dmsq_min + (i-1)*dmsq_step;
-      	fparm1->SetInitValue(conv::kPhypDm23sq,currval);
-      	fparm1->Update(conv::kPhypDm23sq,currval);
-      	fparm1->FixParameter(conv::kPhypDm23sq);
-      	fparm2->SetInitValue(conv::kPhypDm23sq,currval);
-      	fparm2->Update(conv::kPhypDm23sq,currval);
-      	fparm2->FixParameter(conv::kPhypDm23sq);
+	fparm1->SetInitValue(parvalue1,currval);
+	fparm1->Update(parvalue1,currval);
+	fparm1->FixParameter(parvalue1);
+	fparm2->SetInitValue(parvalue1,currval);
+	fparm2->Update(parvalue1,currval);
+	fparm2->FixParameter(parvalue1);	
       }
+
       if(param1 == "deltacp") {
-	parvalue1 = conv::kPhypCPV;
+	if(opt.Contains("fixnonbar")) parvalue1 = conv::kPhypCPVBar;
+	else parvalue1 = conv::kPhypCPV;	
 	double currval = deltacp_min + (i-1)*deltacp_step;
-	fparm1->SetInitValue(conv::kPhypCPV,currval);
-	fparm1->Update(conv::kPhypCPV,currval);
-	fparm1->FixParameter(conv::kPhypCPV);
-	fparm2->SetInitValue(conv::kPhypCPV,currval);
-	fparm2->Update(conv::kPhypCPV,currval);
-	fparm2->FixParameter(conv::kPhypCPV);
+	fparm1->SetInitValue(parvalue1,currval);
+	fparm1->Update(parvalue1,currval);
+	fparm1->FixParameter(parvalue1);
+	fparm2->SetInitValue(parvalue1,currval);
+	fparm2->Update(parvalue1,currval);
+	fparm2->FixParameter(parvalue1);
       }
+
       //loop for the second parameter (if any)
       for (int j = min_bin_param2; j <= max_bin_param2; j++){
+	
 	if(param2 == "mixing13") {
-	  parvalue2 = conv::kPhypMixing13;
+	  if(opt.Contains("fixnonbar")) parvalue2 = conv::kPhypMixing13Bar;
+	  else parvalue2 = conv::kPhypMixing13;	
 	  double currval = mixing13_min + (j-1)*mixing13_step;
-	  fparm1->SetInitValue(conv::kPhypMixing13,currval);
-	  fparm1->Update(conv::kPhypMixing13,currval);
-	  fparm1->FixParameter(conv::kPhypMixing13);
-	  fparm2->SetInitValue(conv::kPhypMixing13,currval);
-	  fparm2->Update(conv::kPhypMixing13,currval);
-	  fparm2->FixParameter(conv::kPhypMixing13);
+	  fparm1->SetInitValue(parvalue2,currval);
+	  fparm1->Update(parvalue2,currval);
+	  fparm1->FixParameter(parvalue2);
+	  fparm2->SetInitValue(parvalue2,currval);
+	  fparm2->Update(parvalue2,currval);
+	  fparm2->FixParameter(parvalue2);
 	}
+
 	if(param2 == "mixing23") {
-	  parvalue2 = conv::kPhypMixing23;
+	  if(opt.Contains("fixnonbar")) parvalue2 = conv::kPhypMixing23Bar;
+	  else parvalue2 = conv::kPhypMixing23;	
 	  double currval = mixing23_min + (j-1)*mixing23_step;
-	  fparm1->SetInitValue(conv::kPhypMixing23,currval);
-	  fparm1->Update(conv::kPhypMixing23,currval);
-	  fparm1->FixParameter(conv::kPhypMixing23);
-	  fparm2->SetInitValue(conv::kPhypMixing23,currval);
-	  fparm2->Update(conv::kPhypMixing23,currval);
-	  fparm2->FixParameter(conv::kPhypMixing23);
+	  fparm1->SetInitValue(parvalue2,currval);
+	  fparm1->Update(parvalue2,currval);
+	  fparm1->FixParameter(parvalue2);
+	  fparm2->SetInitValue(parvalue2,currval);
+	  fparm2->Update(parvalue2,currval);
+	  fparm2->FixParameter(parvalue2);
 	}
+	
 	if(param2 == "dmsq") {
-	  parvalue2 = conv::kPhypDm23sq;
+	  if(opt.Contains("fixnonbar")) parvalue2 = conv::kPhypDm23sqBar;
+	  else parvalue2 = conv::kPhypDm23sq;	
 	  double currval = dmsq_min + (j-1)*dmsq_step;
-	  fparm1->SetInitValue(conv::kPhypDm23sq,currval);
-	  fparm1->Update(conv::kPhypDm23sq,currval);
-	  fparm1->FixParameter(conv::kPhypDm23sq);
-	  fparm2->SetInitValue(conv::kPhypDm23sq,currval);
-	  fparm2->Update(conv::kPhypDm23sq,currval);
-	  fparm2->FixParameter(conv::kPhypDm23sq);
+	  fparm1->SetInitValue(parvalue2,currval);
+	  fparm1->Update(parvalue2,currval);
+	  fparm1->FixParameter(parvalue2);
+	  fparm2->SetInitValue(parvalue2,currval);
+	  fparm2->Update(parvalue2,currval);
+	  fparm2->FixParameter(parvalue2);
 	}
+
 	if(param2 == "deltacp")	 {
-	  parvalue2 = conv::kPhypCPV; 
+	  if(opt.Contains("fixnonbar")) parvalue2 = conv::kPhypCPVBar;
+	  else parvalue2 = conv::kPhypCPV;	
 	  double currval = deltacp_min + (j-1)*deltacp_step;
-	  fparm1->SetInitValue(conv::kPhypCPV,currval);
-	  fparm1->Update(conv::kPhypCPV,currval);
-	  fparm1->FixParameter(conv::kPhypCPV);
-	  fparm2->SetInitValue(conv::kPhypCPV,currval);
-	  fparm2->Update(conv::kPhypCPV,currval);
-	  fparm2->FixParameter(conv::kPhypCPV);
+	  fparm1->SetInitValue(parvalue2,currval);
+	  fparm1->Update(parvalue2,currval);
+	  fparm1->FixParameter(parvalue2);
+	  fparm2->SetInitValue(parvalue2,currval);
+	  fparm2->Update(parvalue2,currval);
+	  fparm2->FixParameter(parvalue2);
 	}
+
+
 	//loop for the third parameter (if any)
 	for (int k = min_bin_param3; k <= max_bin_param3; k++){
+	 
 	  if(param3 == "mixing13") {
-	    parvalue3 = conv::kPhypMixing13;
+	    if(opt.Contains("fixnonbar")) parvalue3 = conv::kPhypMixing13Bar;
+	    else parvalue3 = conv::kPhypMixing13;		    
 	    double currval = mixing13_min + (k-1)*mixing13_step;
-	    fparm1->SetInitValue(conv::kPhypMixing13,currval);
-	    fparm1->Update(conv::kPhypMixing13,currval);
-	    fparm1->FixParameter(conv::kPhypMixing13);
-	    fparm2->SetInitValue(conv::kPhypMixing13,currval);
-	    fparm2->Update(conv::kPhypMixing13,currval);
-	    fparm2->FixParameter(conv::kPhypMixing13);
+	    fparm1->SetInitValue(parvalue3,currval);
+	    fparm1->Update(parvalue3,currval);
+	    fparm1->FixParameter(parvalue3);
+	    fparm2->SetInitValue(parvalue3,currval);
+	    fparm2->Update(parvalue3,currval);
+	    fparm2->FixParameter(parvalue3);
 	  }
+	  
 	  if(param3 == "mixing23") {
-	    parvalue3 = conv::kPhypMixing23;
+	    if(opt.Contains("fixnonbar")) parvalue3 = conv::kPhypMixing23Bar;
+	    else parvalue3 = conv::kPhypMixing23;		    
 	    double currval = mixing23_min + (k-1)*mixing23_step;
-	    fparm1->SetInitValue(conv::kPhypMixing23,currval);
-	    fparm1->Update(conv::kPhypMixing23,currval);
-	    fparm1->FixParameter(conv::kPhypMixing23);
-	    fparm2->SetInitValue(conv::kPhypMixing23,currval);
-	    fparm2->Update(conv::kPhypMixing23,currval);
-	    fparm2->FixParameter(conv::kPhypMixing23);
+	    fparm1->SetInitValue(parvalue3,currval);
+	    fparm1->Update(parvalue3,currval);
+	    fparm1->FixParameter(parvalue3);
+	    fparm2->SetInitValue(parvalue3,currval);
+	    fparm2->Update(parvalue3,currval);
+	    fparm2->FixParameter(parvalue3);
 	  }
+
 	  if(param3 == "dmsq") {
-	    parvalue3 = conv::kPhypDm23sq;
+	    if(opt.Contains("fixnonbar")) parvalue3 = conv::kPhypDm23sqBar;
+	    else parvalue3 = conv::kPhypDm23sq;		    
 	    double currval = dmsq_min + (k-1)*dmsq_step;
-	    fparm1->SetInitValue(conv::kPhypDm23sq,currval);
-	    fparm1->Update(conv::kPhypDm23sq,currval);
-	    fparm1->FixParameter(conv::kPhypDm23sq);
-	    fparm2->SetInitValue(conv::kPhypDm23sq,currval);
-	    fparm2->Update(conv::kPhypDm23sq,currval);
-	    fparm2->FixParameter(conv::kPhypDm23sq);
+	    fparm1->SetInitValue(parvalue3,currval);
+	    fparm1->Update(parvalue3,currval);
+	    fparm1->FixParameter(parvalue3);
+	    fparm2->SetInitValue(parvalue3,currval);
+	    fparm2->Update(parvalue3,currval);
+	    fparm2->FixParameter(parvalue3);
 	  }
+
 	  if(param3 == "deltacp") {
-	    parvalue3 = conv::kPhypCPV;
-	    double currval = deltacp_min + (k-1)*deltacp_step;
-	    fparm1->SetInitValue(conv::kPhypCPV,currval);
-	    fparm1->Update(conv::kPhypCPV,currval);
-	    fparm1->FixParameter(conv::kPhypCPV);
-	    fparm2->SetInitValue(conv::kPhypCPV,currval);
-	    fparm2->Update(conv::kPhypCPV,currval);
-	    fparm2->FixParameter(conv::kPhypCPV);
+	    if(opt.Contains("fixnonbar")) parvalue3 = conv::kPhypCPVBar;
+	    else parvalue3 = conv::kPhypCPV;		    
+	    fparm1->SetInitValue(parvalue3,currval);
+	    fparm1->Update(parvalue3,currval);
+	    fparm1->FixParameter(parvalue3);
+	    fparm2->SetInitValue(parvalue3,currval);
+	    fparm2->Update(parvalue3,currval);
+	    fparm2->FixParameter(parvalue3);
 	  }
 
 	  //if theta23 is not fixed then initialize to 0.4 for the first fit (first octant) and 0.6 for the second one
-	  if(!(fparm1->IsFixed(conv::kPhypMixing23))) {     
-	    fparm1->SetInitValue(conv::kPhypMixing23,0.4);
-	    fparm1->Update(conv::kPhypMixing23,0.4);
-	    fparm2->SetInitValue(conv::kPhypMixing23,0.6);
-	    fparm2->Update(conv::kPhypMixing23,0.6);
+	  if(opt.Contains("fixnonbar")){	      
+	    if(!(fparm1->IsFixed(conv::kPhypMixing23Bar))) {     
+	      fparm1->SetInitValue(conv::kPhypMixing23Bar,0.4);
+	      fparm1->Update(conv::kPhypMixing23Bar,0.4);
+	      fparm2->SetInitValue(conv::kPhypMixing23Bar,0.6);
+	      fparm2->Update(conv::kPhypMixing23Bar,0.6);
+	    }
+	    //if reactor constraint enabled and th13 not fixed (e.g. sensi), set nuisance
+	    if( reactor && !(fparm1->IsFixed(conv::kPhypMixing13Bar)) ) {
+	      fparm1->SetNuisance(conv::kPhypMixing13Bar,true);
+	      fparm2->SetNuisance(conv::kPhypMixing13Bar,true);
+	    }
 	  }
-	  //if reactor constraint enabled, set nuisance
-	  if(reactor) {
-	    fparm1->SetNuisance(conv::kPhypMixing13,true);
-	    fparm2->SetNuisance(conv::kPhypMixing13,true);
+	  else{
+	    if(!(fparm1->IsFixed(conv::kPhypMixing23))) {     
+	      fparm1->SetInitValue(conv::kPhypMixing23,0.4);
+	      fparm1->Update(conv::kPhypMixing23,0.4);
+	      fparm2->SetInitValue(conv::kPhypMixing23,0.6);
+	      fparm2->Update(conv::kPhypMixing23,0.6);
+	    }
+	    //if reactor constraint enabled and th13 not fixed (e.g. sensi), set nuisance
+	    if( reactor && !(fparm1->IsFixed(conv::kPhypMixing13)) ) {
+	      fparm1->SetNuisance(conv::kPhypMixing13,true);
+	      fparm2->SetNuisance(conv::kPhypMixing13,true);
+	    }
 	  }
-
+	  
 	  conv::PhysParamId_t p1;
 	  conv::PhysParamId_t p2;
 	  conv::PhysParamId_t p3;
@@ -858,10 +909,22 @@ void make_toygrid_toys_joint
 	    skexp->Write(pdf_array1, "pdf");
 	  }
 
-	  //Do the fit again
-	  if(((Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)||(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta2Theta)) 
-	     && (!(fparm1->IsFixed(conv::kPhypMixing23))) ) {
 
+
+
+
+
+
+
+
+
+	  //Do the fit again
+	  if(((Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta)||(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta2Theta)) && 
+	     ( 
+	      !(fparm1->IsFixed(conv::kPhypMixing23Bar) && opt.Contains("fixnonbar")) ||  
+	      !(fparm1->IsFixed(conv::kPhypMixing23) && !opt.Contains("fixnonbar"))  
+	       ) ) {
+	    
 	    cout << endl;
 	    cout << endl;
 	    cout << "Second Octant" << endl;
@@ -979,8 +1042,12 @@ void make_toygrid_toys_joint
 	  //if(using_xml_file) delete skobs;
 	  delete fit_inputs;
 	  delete fitter;
-	  if((Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta ||Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)  &&
-	     (!(fparm1->IsFixed(conv::kPhypMixing23)))) {
+	  if((Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta ||Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)  &&   
+	     ( 
+	      !(fparm1->IsFixed(conv::kPhypMixing23Bar) && opt.Contains("fixnonbar")) ||  
+	      !(fparm1->IsFixed(conv::kPhypMixing23) && !opt.Contains("fixnonbar"))  
+	       ) ) {
+	    
 	    delete fit_inputs2;
 	    delete fitter2;
 	  }    
