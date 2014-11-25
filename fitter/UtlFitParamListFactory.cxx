@@ -305,9 +305,47 @@ FitParamList * util::NamedParameterList(string name)
     }
     
 
+  if(name == "nuosc3fbar_numudisapp_constrainall") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourBarFit();
+    fp -> SetNuisance  (kPhypMixing13 , true);
+    fp -> SetNuisance  (kPhypMixing23 , true);
+    fp -> SetNuisance  (kPhypMixing12 , true);
+    fp -> SetNuisance  (kPhypCPV      , true);
+    fp -> SetNuisance  (kPhypDm12sq   , true);
+    fp -> SetNuisance  (kPhypDm23sq   , true);
+    
+    fp -> SetNuisance  (kPhypMixing13Bar , true);
+    fp -> SetNuisance  (kPhypMixing12Bar , true);
+    fp -> SetNuisance  (kPhypCPVBar      , true);
+    fp -> SetNuisance  (kPhypDm12sqBar   , true);
+    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+
+  if(name == "nuosc3fbar_numudisapp_constrainall+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourBarFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 12);
+    fp -> SetNuisance  (kPhypMixing13 , true);
+    fp -> SetNuisance  (kPhypMixing23 , true);
+    fp -> SetNuisance  (kPhypMixing12 , true);
+    fp -> SetNuisance  (kPhypCPV      , true);
+    fp -> SetNuisance  (kPhypDm12sq   , true);
+    fp -> SetNuisance  (kPhypDm23sq   , true);
+    
+    fp -> SetNuisance  (kPhypMixing13Bar , true);
+    fp -> SetNuisance  (kPhypMixing12Bar , true);
+    fp -> SetNuisance  (kPhypCPVBar      , true);
+    fp -> SetNuisance  (kPhypDm12sqBar   , true);
+    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    return fp;
+  }
+  
   if(name == "nuosc3fbar_numudisapp_fixnonbar_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourBarFit();
-    util::AppendAllSystematicsTo(fp, 12);
     fp -> FixParameter (kPhypMixing13);
     fp -> FixParameter (kPhypMixing23);
     fp -> FixParameter (kPhypMixing12);
