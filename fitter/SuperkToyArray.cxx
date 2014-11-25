@@ -363,7 +363,8 @@ bool SuperkToyArray::GenerateWithHypOsc3f(const PhysHypothesis & ph, Option_t * 
       SuperkSample_t s = kSKSamples[is];
       if(s == kSKsUndefined) continue;
       
-      double escale = fToyPhysParams[itoy]->Value(conv::kNuisSuperkEnergyScale);
+      double escale_twk = fToyPhysParams[itoy]->Value(conv::kNuisSuperkEnergyScale);
+      double escale = 1+escale_twk*fMasterExpectation->GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE);
       double * events_per_bin = this->CurrPredictedErecoSpectrumArray(itoy,s);
       util::ApplyEnergyScaleSystematic(s,events_per_bin,escale);
     }
