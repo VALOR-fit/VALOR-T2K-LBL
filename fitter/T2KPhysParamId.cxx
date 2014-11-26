@@ -2184,6 +2184,64 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         }
       }
     break;
+    
+    case ( kPhypMixing23Bar ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta23Bar";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta23Bar";   break;
+           default                 : return "--";                break;
+         }
+    }
+    break;
+    case ( kPhypMixing13Bar ) : 
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta13Bar";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta13Bar";   break;
+           default                 : return "--";                break;
+         }
+    }
+    break;
+    case ( kPhypMixing12Bar ) :      
+    {
+        NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+        switch(omp) {
+           case(kNuMixSinsq2Theta) : return "sinsq2theta12Bar";  break;
+           case(kNuMixSinsqTheta ) : return "sinsqtheta12Bar";   break;
+           default                 : return "--";                break;
+         }
+    }
+    break;
+
+    case ( kPhypCPVBar                ) : return "delta_cpbar";            break;
+    case ( kPhypDm23sqBar             ) :
+      {
+        NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+        switch(dmscheme) {
+          case(kNuDmsq12andAbs23) : return "|dm32sqbar|";                  break;
+          case(kNuDmsq12andAbs31) : return "|dm31sqbar|";                  break;
+          case(kNuDmsqFogliLisi ) : return "|Dmsqbar|";                    break;
+          default                 : return "--";                           break;  
+        }
+      }
+    break;
+    case ( kPhypDm12sqBar              ) :
+      {
+        NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+        switch(dmscheme) {
+          case(kNuDmsq12andAbs23) :
+          case(kNuDmsq12andAbs31) :
+            return "dm12sqbar";                  break;
+          case(kNuDmsqFogliLisi ) :
+            return "dmsqbar";                    break;
+          default                 :
+            return "--";                         break;  
+        }
+      }
+    break;
 
     case ( kPhypAlphaDecay            ) : return "alpha_decay";                 break;
     case ( kPhypSinsq2ThetaDecay      ) : return "sinsq2theta_decay";           break;
