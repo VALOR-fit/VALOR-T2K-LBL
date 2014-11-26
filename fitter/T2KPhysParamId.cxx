@@ -2791,9 +2791,9 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-        case(kNuDmsqFogliLisi) :        return "$|\\Deltam^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|$";                  break;
-        case(kNuDmsq12andAbs23):        return "$|\\Deltam^{2}_{32}|$";                  break;
-        case(kNuDmsq12andAbs31):        return "$|\\Deltam^{2}_{31}|$";                  break;
+        case(kNuDmsqFogliLisi) :        return "$|\\Delta m^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|$";                  break;
+        case(kNuDmsq12andAbs23):        return "$|\\Delta m^{2}_{32}|$";                  break;
+        case(kNuDmsq12andAbs31):        return "$|\\Delta m^{2}_{31}|$";                  break;
         default                :        return "--";                                   break;
       }
     }
@@ -2856,9 +2856,9 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
     {
       NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
       switch(omp) {
-        case(kNuDmsqFogliLisi) :        return "$|\\bar{Deltam^{2}}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|$";                  break;
-        case(kNuDmsq12andAbs23):        return "$|\\bar{Deltam^{2}_{32}}|$";                  break;
-        case(kNuDmsq12andAbs31):        return "$|\\bar{Deltam^{2}_{31}}|$";                  break;
+        case(kNuDmsqFogliLisi) :        return "$|\\bar{\\Delta m^{2}}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|$";                  break;
+        case(kNuDmsq12andAbs23):        return "$|\\bar{\\Delta m^{2}_{32}}|$";                  break;
+        case(kNuDmsq12andAbs31):        return "$|\\bar{\\Delta m^{2}_{31}}|$";                  break;
         default                :        return "--";                                   break;
       }
     }
