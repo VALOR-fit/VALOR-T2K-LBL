@@ -1842,7 +1842,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
       cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
       cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
       cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
 #endif
       
       // loop over modes
@@ -1928,42 +1930,42 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
   // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
   if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta)
   {
-    fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3Flavour   .SetOscParameters(mixing12,   mixing13,   mixing23,   dmsq   ,Dmsq   ,delta_cp);
     fNuOsc3FlavourBar.SetOscParameters(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
   }
   // mixing params are: sin^2(theta)                                                                                                                                         
   // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                              
   else if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta)
   {
-    fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3Flavour   .SetOscParametersSinSqTAll(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
     fNuOsc3FlavourBar.SetOscParametersSinSqTAll(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
   }
   // mixing params are: sin^2(2*theta)                                                                                                                                        
   // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                        
   else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta)
   {
-    fNuOsc3Flavour.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3Flavour   .SetOscParametersSSq2TDmAtmSol(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
     fNuOsc3FlavourBar.SetOscParametersSSq2TDmAtmSol(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
   }
   // mixing params are: sin^2(theta)                                                                                                                                             
   // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                         
   else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta)
   {
-    fNuOsc3Flavour.SetOscParametersDmsqAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3Flavour   .SetOscParametersDmsqAtmSol(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
     fNuOsc3FlavourBar.SetOscParametersDmsqAtmSol(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
   }
   // mixing paras are: sin^2(2*theta)
   // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
   else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta)
   {
-    fNuOsc3Flavour.SetOscParametersSSq2TDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3Flavour   .SetOscParametersSSq2TDmsq13(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
     fNuOsc3FlavourBar.SetOscParametersSSq2TDmsq13(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
   }
   // mixing paras are: sin^2(theta)
   // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
   else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta)
   {
-    fNuOsc3Flavour.SetOscParametersDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3Flavour   .SetOscParametersDmsq13(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
     fNuOsc3FlavourBar.SetOscParametersDmsq13(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
   }
   //unknown
@@ -2010,13 +2012,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
       double p_nuebar_numubar  = p_osc_bar[0][1];
       
 #ifdef __show_hypothesis_probabilities__
-      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;        
+      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
       cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
       cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
       cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
       cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
       cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
 #endif
 
       // loop over modes
@@ -2174,7 +2178,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
       double p_nuebar_nc  = p_osc_bar[0][0]+p_osc_bar[0][1]+p_osc_bar[0][2];
       
 #ifdef __show_hypothesis_probabilities__
-      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
+      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
       cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
       cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
       cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
