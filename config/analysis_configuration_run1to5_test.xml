@@ -13,10 +13,10 @@
   <data_pot>
      <superk> 
        <fhc>
-         6.811e+20
+         7.3e+20
        </fhc>
        <rhc>
-          6.811e+20
+         1.7e+20
        </rhc>       
      </superk> 
   </data_pot>
@@ -104,23 +104,23 @@
        
        <tuning_weights_rhc>
          <numu>
-            <filename>   flux_reweight/reweight_13aMC_to_13aFlux_RHC_fine.root </filename>
-            <objname>    enu_sk_tuned13a_numu_11a_ratio   </objname>
+            <filename>   official/2014/flux/sk_tuned13av1.0_13anom_run5c_antinumode_fine.root </filename>
+            <objname>    enu_sk_tuned13a_numu_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </numu>
          <numubar>
-            <filename>   flux_reweight/reweight_13aMC_to_13aFlux_RHC_fine.root </filename>
-            <objname>    enu_sk_tuned13a_numub_11a_ratio  </objname>
+            <filename>   official/2014/flux/sk_tuned13av1.0_13anom_run5c_antinumode_fine.root </filename>
+            <objname>    enu_sk_tuned13a_numub_ratio  </objname>
             <objtype>    TH1D                         </objtype>
          </numubar>
          <nue>
-            <filename>   flux_reweight/reweight_13aMC_to_13aFlux_RHC_fine.root </filename>
-            <objname>    enu_sk_tuned13a_nue_11a_ratio    </objname>
+            <filename>   official/2014/flux/sk_tuned13av1.0_13anom_run5c_antinumode_fine.root </filename>
+            <objname>    enu_sk_tuned13a_nue_ratio    </objname>
             <objtype>    TH1D                         </objtype>
          </nue>
          <nuebar>
-            <filename>   flux_reweight/reweight_13aMC_to_13aFlux_RHC_fine.root </filename>
-            <objname>    enu_sk_tuned13a_nueb_11a_ratio   </objname>
+            <filename>   official/2014/flux/sk_tuned13av1.0_13anom_run5c_antinumode_fine.root </filename>
+            <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </nuebar>
        </tuning_weights_rhc>
