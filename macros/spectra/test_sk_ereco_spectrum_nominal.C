@@ -10,33 +10,54 @@
 
 void test_sk_ereco_spectrum_nominal
 (
-  const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
-  const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+ const char * tag                   = "fiTQun",
+ 
+ const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+ const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+ //const char * hypothesis           = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc" */
 
-  //~ double       input_mixing12       = 0.,                            /* */
-  //~ double       input_mixing13       = 0.,                            /* */
-  //~ double       input_mixing23       = 0.,                            /* */
-  //~ double       input_deltacp        = 0.,                            /* */
-  //~ double       input_dm12sq         = 0.,                            /* */
-  //~ double       input_dm23sq         = 0.,                            /* */
-  //~ 
-  //~ double       input_mixing12       = 0.846,                            /* DOUBLE ANGLE*/
-  //~ double       input_mixing13       = 0.093,                            /* DOUBLE ANGLE*/
-  //~ double       input_mixing23       = 0.999,                            /* DOUBLE ANGLE*/
-  //~ double       input_deltacp        = 0.,                               /* DOUBLE ANGLE*/
-  //~ double       input_dm12sq         = 7.53E-5,                          /* DOUBLE ANGLE*/
-  //~ double       input_dm23sq         = 2.44E-3,                          /* DOUBLE ANGLE*/
-
+ // double       input_mixing12       = 0.,                            /* */
+ // double       input_mixing13       = 0.,                            /* */
+ // double       input_mixing23       = 0.,                            /* */
+ // double       input_deltacp        = 0.,                            /* */
+ // double       input_dm12sq         = 0.,                            /* */
+ // double       input_dm23sq         = 0.,                            /* */
+ 
+ 
+  // double       input_mixing12       = 0.311,                           
+ // double       input_mixing13       = 0.0251,                           
+ // double       input_mixing23       = 0.5,                        
+ // double       input_deltacp        = 0,                           
+ // double       input_dm12sq         = 7.5e-05,                     
+ // double       input_dm23sq         = 0.0024,                        
+  
   double       input_mixing12       = -99,                            /* */
   double       input_mixing13       = -99,                            /* */
   double       input_mixing23       = -99,                            /* */
   double       input_deltacp        = -99,                            /* */
   double       input_dm12sq         = -99,                            /* */
   double       input_dm23sq         = -99,                            /* */
-
+  
   bool         disable_banff_tuning = false,                          /* */
-  //~ const char * config_file          = "analysis_configuration.xml",   /* */
-  const char * config_file      = "analysis_configuration_run1to5.xml",        /* analysis configuration file */
+ 
+ //const char * config_file          = "analysis_configuration_test.xml",   /* */
+ 
+  //const char * config_file      = "analysis_configuration_run1to6.xml",      
+  //const char * config_file      = "analysis_configuration_run1to5_oldmc.xml",      
+ //const char * config_file      = "analysis_configuration_run1to5.xml",      
+  const char * config_file      = "analysis_configuration_run1to5_test.xml",      
+
+  //const char * config_file          = "analysis_configuration_run1to6_oa2p0.xml",   /* */
+  //const char * config_file          = "analysis_configuration_run1to6_oa2p25.xml",   /* */
+  
+  //const char * config_file            = "analysis_configuration_2.00deg.xml",
+  //const char * config_file            = "analysis_configuration_2.25deg.xml",
+  //const char * config_file            = "analysis_configuration_2.50deg.xml",
+ 
+  //const char * config_file          = "analysis_configuration_test_multiring.xml",   /* */
+ //const char * config_file          = "analysis_configuration_test_multiring_mrmc.xml",   /* */
+  //const char * config_file          = "analysis_configuration_test_multiring_mrmc_fitqun.xml",   /* */
+  
   bool         print_spectrum       = false,                          /* */
   const char * mixparamchoice       = "sinsqtheta",
   const char * hierarchy            = "normal"   ,
@@ -83,6 +104,20 @@ void test_sk_ereco_spectrum_nominal
     ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3FBar){
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
   }
 
   string oscparams = util::AsString(ph.Hypothesis(),
@@ -132,7 +167,7 @@ void test_sk_ereco_spectrum_nominal
   cout << "- Generating predictions..." << endl;
   skexp.GetSuperkMC()->SetXMEC(1);
   skexp.Generate(ph);
-  
+
   // Get energy spectra
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
@@ -178,6 +213,7 @@ void test_sk_ereco_spectrum_nominal
 
   streamer << "Total number of events: " 
        << setw(10) << setfill(' ') << setprecision(6) << ntot << endl;
+
   const int nslices=6;
   double slice_max[nslices] = { 0.50, 0.75, 1.00, 1.25, 1.50, 2.00 };
   for(int islice=0; islice<nslices; islice++) {
@@ -194,6 +230,7 @@ void test_sk_ereco_spectrum_nominal
           << setw(15) << setfill(' ') << setprecision(6) << nmode << " events ("
           << setw(10) << setfill(' ') << setprecision(6) << 100*nmode/ntot << " %)" << endl;
   }
+
 
   //combine modes
   double nccqe = 0, nccnqe = 0, nnuecc = 0, nnc = 0, nmec = 0;
@@ -354,7 +391,7 @@ void test_sk_ereco_spectrum_nominal
   // Save histograms in a ROOT file
   //
 
-  TFile f(Form("sk_ereco_spectrum-%s%s-%s.root",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : ""),sk_sample) ,"recreate");
+  TFile f(Form("sk_ereco_spectrum_%s_%s-%s%s-%s.root",sk_sample,tag,oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : ""),sk_sample) ,"recreate");
   nuisance_params.Write("nuisance_params");
   hErecoTot -> Write(util::AsStringCompact(s,conv::kSKmUndefined,"sk_","total").c_str());
   hErecoTot -> Write("erec_sk"); //KDI
@@ -370,6 +407,7 @@ void test_sk_ereco_spectrum_nominal
   stack_coarse->Write();
   legend_coarse->Write();
   f.Close();
+
 
   //
   // Print-out numbers requested during the analysis review
@@ -414,7 +452,7 @@ void test_sk_ereco_spectrum_nominal
   streamer.seekg(0);
 
   //write to file
-  ofstream outfile (Form("sk_ereco_spectrum-%s%s-%s.txt",oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : ""),sk_sample));
+  ofstream outfile (Form("sk_ereco_spectrum_%s_%s-%s%s-%s.txt",sk_sample,tag,oscparams.c_str(),(disable_banff_tuning ? "_nobanff" : ""),sk_sample));
   outfile.write (streamer.str().c_str(),size);
   outfile.close();
 
