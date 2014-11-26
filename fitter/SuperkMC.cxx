@@ -29,7 +29,7 @@
 //#define __show_banfftun_syst_var_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__ 
 //#define __show_spectra_update_mesg_debug__
-//#define __show_skipped_templates__
+#define __show_skipped_templates__
 //#define __show_isanevent_mesg_debug__
 //#define __show_negative_events_mesg_debug__
 //#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
@@ -2827,14 +2827,16 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
 {
 // ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
 
-  bool mode_is_nuesig = util::IsOscNuE(m);
-  bool mode_is_nuebarsig = util::IsOscNuEBar(m);
-
-
-  PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
-  bool hyp_is_not_3flavour_osc = (hyp != kHypOsc3F);
-
-  bool skip = ((mode_is_nuesig || mode_is_nuebarsig) && hyp_is_not_3flavour_osc );
+  //~ bool mode_is_nuesig    = util::IsOscNuE(m);
+  //~ bool mode_is_nuebarsig = util::IsOscNuEBar(m);
+//~ 
+//~ 
+  //~ PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
+  //~ bool hyp_is_not_3flavour_osc = (hyp != kHypOsc3F);
+//~ 
+  //~ bool skip = ((mode_is_nuesig || mode_is_nuebarsig) && hyp_is_not_3flavour_osc );
+  
+  bool skip = false;
 
 #ifdef __show_skipped_templates__
   if(skip) {
