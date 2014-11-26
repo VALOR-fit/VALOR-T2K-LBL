@@ -1712,511 +1712,545 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
   // 3-flavour oscillations
   //
   if(hyp == kHypOsc3F)
-    {
-    // set oscillation parameters to the oscillation probability calculation code
-    double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
-    double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
-    double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
-    //    double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
-    //double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
-    double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
-    double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
-    double delta_cp = fPhysHypothesis.CurrValue(kPhypCPV    );
-#ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
-#endif
-    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-    NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
-    
-    double p_osc[3][3];
-    double p_osc_bar[3][3];
-
-    // mixing params are: sin^2(2*theta)
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
-    if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta)
-      {
-	fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      }
-    // mixing params are: sin^2(theta)                                                                                                                                         
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                              
-    else if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta)
-      {
-	fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      }
-    // mixing params are: sin^2(2*theta)                                                                                                                                        
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                        
-    else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta)
-      {
-	fNuOsc3Flavour.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      }
-    // mixing params are: sin^2(theta)                                                                                                                                             
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                         
-    else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta)
-      {
-	fNuOsc3Flavour.SetOscParametersDmsqAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      }
-    // mixing paras are: sin^2(2*theta)
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
-    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta)
-      {
-	fNuOsc3Flavour.SetOscParametersSSq2TDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      }
-    // mixing paras are: sin^2(theta)
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
-    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta)
-      {
-	fNuOsc3Flavour.SetOscParametersDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      }
-    //unknown
-    else {
-      cerr << "**  Exp/SKMC >> Can't handle choice of "
-	   << "\n oscillation mixing params: " << util::AsString(omp)
-	   << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
-	   << endl;
-      exit(1);
-    }
-
-    // loop over samples
-    for(int is = 0; is < kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
-
-     int n_ereco_bins = kNErecoBins[is];
-     int n_etrue_bins = kNEtrueBins[is];
-
-     //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
-     //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
-     //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis(); 
-
-     // loop over Etrue
-     for(int it = 1; it <= n_etrue_bins; it++) {
-
-        // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
-       double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
-
-	// skip unnecessary calculations
-	//bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
-	//if(!bin_is_not_empty) continue;
-	
-	fNuOsc3Flavour.CalcMatterOscProbAll(false, Etrue, p_osc    );
-	fNuOsc3Flavour.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
-	
-	double p_numu_numu       = p_osc    [1][1];
-	double p_numubar_numubar = p_osc_bar[1][1];
-	double p_nue_nue         = p_osc    [0][0];
-	double p_nuebar_nuebar   = p_osc_bar[0][0];
-	double p_numu_nue        = p_osc    [1][0];
-	double p_numubar_nuebar  = p_osc_bar[1][0];
-	double p_nue_numu        = p_osc    [0][1];
-	double p_nuebar_numubar  = p_osc_bar[0][1];
-	
-#ifdef __show_hypothesis_probabilities__
-        cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
-        cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-        cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-        cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-        cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-        cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-        cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
-#endif
-
-
-	// loop over modes
-	for(int im=0; im < knm; im++) {
-	  SuperkMode_t m = kSKReactionModes[is][im];
-	  if(m == kSKmUndefined) continue;
-	  double * array = &(fMCTemplArrayFin[is].GetEntryRef(im,it-1,0));
-	  // osc. probability
-	  double posc = 1.;
-	  if(kIsCC[is][im])
-	  {
-	    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-	    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-	    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
-	    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-	    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-	    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-	    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-	    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-	  }
-	  // loop over Ereco
-	  for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-	    // number of events in (Ereco,Etrue) bin (systematics applied)
-	    double nev = 0;
-	    
-	    nev = array[ir-1];
-	    ////
-	    
-#ifdef PHYSHYPWEIGHTSAREONE
-	    posc = 1;
-#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-	    if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
-#endif
-#endif
-	    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-	    double nev_osc = nev * posc;
-	    
-	    array[ir-1] = nev_osc;
-	    ////
-	  }//ir
-	}//im
-     }//it
-   }//is
+  {
+    this->ApplyPhysHypothesisToTemplates_3fOsc();
   }
+  else if(hyp == kHypOsc3FBar)
+  {
+    this->ApplyPhysHypothesisToTemplates_3fOscBar();
+  }
+  else if(hyp == kHypOscSterile4F || hyp == kHypOscSterile5F) 
+  {
+    this->ApplyPhysHypothesisToTemplates_Sterile();
+  }
+  else
+  {
+    std::cerr<<"Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
+    exit(-1);
+  }
+  
+#ifdef __save_templates_debug__
+  this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_phys");
+#endif
+
+  return;
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
+{
+  // set oscillation parameters to the oscillation probability calculation code
+  double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
+  double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
+  double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
+  //    double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
+  //double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
+  double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
+  double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
+  double delta_cp = fPhysHypothesis.CurrValue(kPhypCPV    );
+#ifdef __show_hypothesis__
+  cout << "**  SKMC/ApplyPhysHypothesisToTemplates_3fOsc >> " << fPhysHypothesis;
+#endif
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+  
+  double p_osc[3][3];
+  double p_osc_bar[3][3];
+
+  // mixing params are: sin^2(2*theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
+  if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+  }
+  // mixing params are: sin^2(theta)                                                                                                                                         
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                              
+  else if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+  }
+  // mixing params are: sin^2(2*theta)                                                                                                                                        
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                        
+  else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+  }
+  // mixing params are: sin^2(theta)                                                                                                                                             
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                         
+  else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour.SetOscParametersDmsqAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+  }
+  // mixing paras are: sin^2(2*theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
+  else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour.SetOscParametersSSq2TDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+  }
+  // mixing paras are: sin^2(theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
+  else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour.SetOscParametersDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+  }
+  //unknown
+  else {
+    cerr << "**  Exp/SKMC >> Can't handle choice of "
+         << "\n oscillation mixing params: " << util::AsString(omp)
+         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
+         << endl;
+    exit(1);
+  }
+
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    
+    int n_ereco_bins = kNErecoBins[is];
+    int n_etrue_bins = kNEtrueBins[is];
+    
+    //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
+    //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
+    //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis(); 
+    
+    // loop over Etrue
+    for(int it = 1; it <= n_etrue_bins; it++) {
+    
+      // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
+      double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
+      
+      // skip unnecessary calculations
+      //bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
+      //if(!bin_is_not_empty) continue;
+      
+      fNuOsc3Flavour.CalcMatterOscProbAll(false, Etrue, p_osc    );
+      fNuOsc3Flavour.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
+      
+      double p_numu_numu       = p_osc    [1][1];
+      double p_numubar_numubar = p_osc_bar[1][1];
+      double p_nue_nue         = p_osc    [0][0];
+      double p_nuebar_nuebar   = p_osc_bar[0][0];
+      double p_numu_nue        = p_osc    [1][0];
+      double p_numubar_nuebar  = p_osc_bar[1][0];
+      double p_nue_numu        = p_osc    [0][1];
+      double p_nuebar_numubar  = p_osc_bar[0][1];
+      
+#ifdef __show_hypothesis_probabilities__
+      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
+      cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
+      cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
+#endif
+      
+      // loop over modes
+      for(int im=0; im < knm; im++) {
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
+        double * array = &(fMCTemplArrayFin[is].GetEntryRef(im,it-1,0));
+        // osc. probability
+        double posc = 1.;
+        if(kIsCC[is][im])
+        {
+          if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+          else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+          else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
+          else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+          else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+          else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+          else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+          else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+        }
+        // loop over Ereco
+        for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+          // number of events in (Ereco,Etrue) bin (systematics applied)
+          double nev = 0;
+          
+          nev = array[ir-1];
+          ////
+          
+#ifdef PHYSHYPWEIGHTSAREONE
+          posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+          if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+#endif
+#endif
+          // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+          double nev_osc = nev * posc;
+          
+          array[ir-1] = nev_osc;
+          ////
+        }//ir
+      }//im
+    }//it
+  }//is
+  
+  return;
+}
+
+//________________________________________________________________________________________
+void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
+{
   //
   // 3-flavour oscillations, separate nu and nubar
   //
-  if(hyp == kHypOsc3FBar)
-    {
-    // set oscillation parameters to the oscillation probability calculation code
-    double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
-    double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
-    double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
-    //double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
-    //double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
-    double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
-    double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
-    double delta_cp = fPhysHypothesis.CurrValue(kPhypCPV    );
-    
-    double mixing12bar = fPhysHypothesis.CurrValue(kPhypMixing12Bar);
-    double mixing13bar = fPhysHypothesis.CurrValue(kPhypMixing13Bar);
-    double mixing23bar = fPhysHypothesis.CurrValue(kPhypMixing23Bar);
-    //double dm12sqbar   = fPhysHypothesis.CurrValue(kPhypDm12sqBar);
-    //double dm23sqbar   = fPhysHypothesis.CurrValue(kPhypDm23sqBar);
-    double dmsqbar     = fPhysHypothesis.CurrValue(kPhypDm12sqBar);
-    double Dmsqbar     = fPhysHypothesis.CurrValue(kPhypDm23sqBar);
-    double delta_cpbar = fPhysHypothesis.CurrValue(kPhypCPVBar );
+
+  // set oscillation parameters to the oscillation probability calculation code
+  double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
+  double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
+  double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
+  //double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
+  //double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
+  double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
+  double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
+  double delta_cp = fPhysHypothesis.CurrValue(kPhypCPV    );
+  
+  double mixing12bar = fPhysHypothesis.CurrValue(kPhypMixing12Bar);
+  double mixing13bar = fPhysHypothesis.CurrValue(kPhypMixing13Bar);
+  double mixing23bar = fPhysHypothesis.CurrValue(kPhypMixing23Bar);
+  //double dm12sqbar   = fPhysHypothesis.CurrValue(kPhypDm12sqBar);
+  //double dm23sqbar   = fPhysHypothesis.CurrValue(kPhypDm23sqBar);
+  double dmsqbar     = fPhysHypothesis.CurrValue(kPhypDm12sqBar);
+  double Dmsqbar     = fPhysHypothesis.CurrValue(kPhypDm23sqBar);
+  double delta_cpbar = fPhysHypothesis.CurrValue(kPhypCPVBar );
 #ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
+  cout << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
-    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-    NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
-    
-    double p_osc[3][3];
-    double p_osc_bar[3][3];
-
-    // mixing params are: sin^2(2*theta)
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
-    if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta)
-    {
-      fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      fNuOsc3FlavourBar.SetOscParameters(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
-    }
-    // mixing params are: sin^2(theta)                                                                                                                                         
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                              
-    else if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta)
-    {
-      fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      fNuOsc3FlavourBar.SetOscParametersSinSqTAll(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
-    }
-    // mixing params are: sin^2(2*theta)                                                                                                                                        
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                        
-    else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta)
-    {
-      fNuOsc3Flavour.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      fNuOsc3FlavourBar.SetOscParametersSSq2TDmAtmSol(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
-    }
-    // mixing params are: sin^2(theta)                                                                                                                                             
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                         
-    else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta)
-    {
-      fNuOsc3Flavour.SetOscParametersDmsqAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      fNuOsc3FlavourBar.SetOscParametersDmsqAtmSol(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
-    }
-    // mixing paras are: sin^2(2*theta)
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
-    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta)
-    {
-      fNuOsc3Flavour.SetOscParametersSSq2TDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      fNuOsc3FlavourBar.SetOscParametersSSq2TDmsq13(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
-    }
-    // mixing paras are: sin^2(theta)
-    // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
-    else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta)
-    {
-      fNuOsc3Flavour.SetOscParametersDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
-      fNuOsc3FlavourBar.SetOscParametersDmsq13(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
-    }
-    //unknown
-    else {
-      cerr << "**  Exp/SKMC >> Can't handle choice of "
-           << "\n oscillation mixing params: " << util::AsString(omp)
-           << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
-           << endl;
-      exit(1);
-    }
-
-    // loop over samples
-    for(int is = 0; is < kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
-
-     int n_ereco_bins = kNErecoBins[is];
-     int n_etrue_bins = kNEtrueBins[is];
-
-     //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
-     //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
-     //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis(); 
-
-     // loop over Etrue
-     for(int it = 1; it <= n_etrue_bins; it++) {
-
-        // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
-        double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
-
-        // skip unnecessary calculations
-        //bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
-        //if(!bin_is_not_empty) continue;
-        
-        fNuOsc3Flavour   .CalcMatterOscProbAll(false, Etrue, p_osc    );
-        fNuOsc3FlavourBar.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
-        
-        double p_numu_numu       = p_osc    [1][1];
-        double p_numubar_numubar = p_osc_bar[1][1];
-        double p_nue_nue         = p_osc    [0][0];
-        double p_nuebar_nuebar   = p_osc_bar[0][0];
-        double p_numu_nue        = p_osc    [1][0];
-        double p_numubar_nuebar  = p_osc_bar[1][0];
-        double p_nue_numu        = p_osc    [0][1];
-        double p_nuebar_numubar  = p_osc_bar[0][1];
-        
-#ifdef __show_hypothesis_probabilities__
-        cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;        
-        cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-        cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-        cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-        cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-        cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-        cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
-#endif
-
-
-        // loop over modes
-        for(int im=0; im < knm; im++) {
-          SuperkMode_t m = kSKReactionModes[is][im];
-          if(m == kSKmUndefined) continue;
-          double * array = &(fMCTemplArrayFin[is].GetEntryRef(im,it-1,0));
-          // osc. probability
-          double posc = 1.;
-          if(kIsCC[is][im])
-          {
-            if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-            else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-            else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
-            else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-            else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-            else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-            else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-            else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-          }
-          // loop over Ereco
-          for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-            // number of events in (Ereco,Etrue) bin (systematics applied)
-            double nev = 0;
-            
-            nev = array[ir-1];
-            ////
-            
-#ifdef PHYSHYPWEIGHTSAREONE
-            posc = 1;
-#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-            if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
-#endif
-#endif
-            // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-            double nev_osc = nev * posc;
-            
-            array[ir-1] = nev_osc;
-            ////
-          }//ir
-        }//im
-     }//it
-   }//is
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+  
+  double p_osc[3][3];
+  double p_osc_bar[3][3];
+  
+  // mixing params are: sin^2(2*theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                             
+  if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3FlavourBar.SetOscParameters(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
   }
+  // mixing params are: sin^2(theta)                                                                                                                                         
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|                                                                                              
+  else if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersSinSqTAll(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
+  }
+  // mixing params are: sin^2(2*theta)                                                                                                                                        
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                        
+  else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersSSq2TDmAtmSol(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
+  }
+  // mixing params are: sin^2(theta)                                                                                                                                             
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|                                                                         
+  else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour.SetOscParametersDmsqAtmSol(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersDmsqAtmSol(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
+  }
+  // mixing paras are: sin^2(2*theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
+  else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour.SetOscParametersSSq2TDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersSSq2TDmsq13(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
+  }
+  // mixing paras are: sin^2(theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
+  else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour.SetOscParametersDmsq13(mixing12,mixing13,mixing23,dmsq,Dmsq,delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersDmsq13(mixing12bar,mixing13bar,mixing23bar,dmsqbar,Dmsqbar,delta_cpbar);
+  }
+  //unknown
+  else {
+    cerr << "**  Exp/SKMC >> Can't handle choice of "
+         << "\n oscillation mixing params: " << util::AsString(omp)
+         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
+         << endl;
+    exit(1);
+  }
+
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+   SuperkSample_t s = kSKSamples[is];
+   if(s == kSKsUndefined) continue;
+
+   int n_ereco_bins = kNErecoBins[is];
+   int n_etrue_bins = kNEtrueBins[is];
+
+   //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
+   //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
+   //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis(); 
+
+   // loop over Etrue
+   for(int it = 1; it <= n_etrue_bins; it++) {
+
+      // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
+      double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
+
+      // skip unnecessary calculations
+      //bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
+      //if(!bin_is_not_empty) continue;
+      
+      fNuOsc3Flavour   .CalcMatterOscProbAll(false, Etrue, p_osc    );
+      fNuOsc3FlavourBar.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
+      
+      double p_numu_numu       = p_osc    [1][1];
+      double p_numubar_numubar = p_osc_bar[1][1];
+      double p_nue_nue         = p_osc    [0][0];
+      double p_nuebar_nuebar   = p_osc_bar[0][0];
+      double p_numu_nue        = p_osc    [1][0];
+      double p_numubar_nuebar  = p_osc_bar[1][0];
+      double p_nue_numu        = p_osc    [0][1];
+      double p_nuebar_numubar  = p_osc_bar[0][1];
+      
+#ifdef __show_hypothesis_probabilities__
+      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;        
+      cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
+      cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu      << endl;
+#endif
+
+      // loop over modes
+      for(int im=0; im < knm; im++) {
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
+        double * array = &(fMCTemplArrayFin[is].GetEntryRef(im,it-1,0));
+        // osc. probability
+        double posc = 1.;
+        if(kIsCC[is][im])
+        {
+          if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+          else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+          else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
+          else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+          else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+          else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+          else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+          else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+        }
+        // loop over Ereco
+        for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+          // number of events in (Ereco,Etrue) bin (systematics applied)
+          double nev = 0;
+          
+          nev = array[ir-1];
+          ////
+          
+#ifdef PHYSHYPWEIGHTSAREONE
+          posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+          if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+#endif
+#endif
+          // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+          double nev_osc = nev * posc;
+          
+          array[ir-1] = nev_osc;
+          ////
+        }//ir
+      }//im
+    }//it
+  }//is
+  return;
+}
+//________________________________________________________________________________________
+void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
+{
   //
   // 3+n flavour sterile oscillations
   //
-  if(hyp == kHypOscSterile4F || hyp == kHypOscSterile5F) 
-  {
+  
+  PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
+  
+  NuOscSterile osc;
+  
+  // set oscillation parameters to the oscillation probability calculation code
+  double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
+  double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
+  double mixing14 = fPhysHypothesis.CurrValue(kPhypMixing14);
+  double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
+  double mixing24 = fPhysHypothesis.CurrValue(kPhypMixing24);
+  double mixing34 = fPhysHypothesis.CurrValue(kPhypMixing34);
+  double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
+  double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
+  double dm41sq   = fPhysHypothesis.CurrValue(kPhypDm41sq);
+  double delta_12 = fPhysHypothesis.CurrValue(kPhypDelta12);
+  double delta_13 = fPhysHypothesis.CurrValue(kPhypDelta13);
+  double delta_34 = fPhysHypothesis.CurrValue(kPhypDelta34);
+  
+  double dm51sq=dm41sq,mixing15=0,mixing25=0,mixing35=0,delta_15=0,delta_35=0;
+  if (hyp == kHypOscSterile5F) {
+    mixing15 = fPhysHypothesis.CurrValue(kPhypMixing15);
+    mixing25 = fPhysHypothesis.CurrValue(kPhypMixing25);
+    mixing35 = fPhysHypothesis.CurrValue(kPhypMixing35);
+    dm51sq   = fPhysHypothesis.CurrValue(kPhypDm51sq);
+    delta_15 = fPhysHypothesis.CurrValue(kPhypDelta15);
+    delta_35 = fPhysHypothesis.CurrValue(kPhypDelta35);
+  }
     
-    NuOscSterile osc;
-    
-    // set oscillation parameters to the oscillation probability calculation code
-    double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
-    double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
-    double mixing14 = fPhysHypothesis.CurrValue(kPhypMixing14);
-    double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
-    double mixing24 = fPhysHypothesis.CurrValue(kPhypMixing24);
-    double mixing34 = fPhysHypothesis.CurrValue(kPhypMixing34);
-    double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
-    double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
-    double dm41sq   = fPhysHypothesis.CurrValue(kPhypDm41sq);
-    double delta_12 = fPhysHypothesis.CurrValue(kPhypDelta12);
-    double delta_13 = fPhysHypothesis.CurrValue(kPhypDelta13);
-    double delta_34 = fPhysHypothesis.CurrValue(kPhypDelta34);
-    
-    double dm51sq=dm41sq,mixing15=0,mixing25=0,mixing35=0,delta_15=0,delta_35=0;
-    if (hyp == kHypOscSterile5F) {
-      mixing15 = fPhysHypothesis.CurrValue(kPhypMixing15);
-      mixing25 = fPhysHypothesis.CurrValue(kPhypMixing25);
-      mixing35 = fPhysHypothesis.CurrValue(kPhypMixing35);
-      dm51sq   = fPhysHypothesis.CurrValue(kPhypDm51sq);
-      delta_15 = fPhysHypothesis.CurrValue(kPhypDelta15);
-      delta_35 = fPhysHypothesis.CurrValue(kPhypDelta35);
-    }
-      
 #ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
+  cout << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
-    NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-    
-    if (omp == kNuMixSinsqTheta) {
-      osc.SetMixingAngles(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  
+  if (omp == kNuMixSinsqTheta) {
+    osc.SetMixingAngles(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
+  }
+  else if (omp == kNuMixSinsq2Theta) {
+    if (Opt::Instance()->gOscOctantChoice == conv::kNuOctantOne) {
+      osc.SetMixingDoubleAnglesOct1(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
     }
-    else if (omp == kNuMixSinsq2Theta) {
-      if (Opt::Instance()->gOscOctantChoice == conv::kNuOctantOne) {
-	osc.SetMixingDoubleAnglesOct1(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
-      }
-      else if (Opt::Instance()->gOscOctantChoice == conv::kNuOctantTwo) {
-	osc.SetMixingDoubleAnglesOct2(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
-      }
-      else {
-	  cerr << "**  Exp/SKMC >> Can't handle choice of "
-	   << "\n octant: " << util::AsString(Opt::Instance()->gOscOctantChoice)
-	   << endl;
-	exit(1);
-      }
+    else if (Opt::Instance()->gOscOctantChoice == conv::kNuOctantTwo) {
+      osc.SetMixingDoubleAnglesOct2(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
     }
     else {
       cerr << "**  Exp/SKMC >> Can't handle choice of "
-	   << "\n oscillation mixing params: " << util::AsString(omp)
-	   << endl;
+           << "\n octant: " << util::AsString(Opt::Instance()->gOscOctantChoice)
+           << endl;
       exit(1);
     }
+  }
+  else {
+    cerr << "**  Exp/SKMC >> Can't handle choice of "
+         << "\n oscillation mixing params: " << util::AsString(omp)
+         << endl;
+    exit(1);
+  }
+  
+  // May need to put some decision on mass splitting convention here.
+  //~ NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+  
+  osc.SetDmsq(dmsq, Dmsq, dm41sq, dm51sq);
+  osc.SetDeltaCP(delta_12, delta_13, delta_15, delta_34, delta_35);
+
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+
+    int n_ereco_bins = kNErecoBins[is];
+    int n_etrue_bins = kNEtrueBins[is];
+
+    //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
+    //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
+    //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis(); 
     
-    // May need to put some decision on mass splitting convention here.
-    //~ NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
-    
-    osc.SetDmsq(dmsq, Dmsq, dm41sq, dm51sq);
-    osc.SetDeltaCP(delta_12, delta_13, delta_15, delta_34, delta_35);
-
-    // loop over samples
-    for(int is = 0; is < kns; is++) {
-     SuperkSample_t s = kSKSamples[is];
-     if(s == kSKsUndefined) continue;
-
-     int n_ereco_bins = kNErecoBins[is];
-     int n_etrue_bins = kNEtrueBins[is];
-
-     //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
-     //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis(); 
-     //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis(); 
-
-     // loop over Etrue
-     for(int it = 1; it <= n_etrue_bins; it++) {
-
-        // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
-       double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
-
-	// skip unnecessary calculations
-	bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
-	if(!bin_is_not_empty) continue;
-	
-	double p_osc    [NuOscSterile::nFlav][NuOscSterile::nFlav] = {};
-	double p_osc_bar[NuOscSterile::nFlav][NuOscSterile::nFlav] = {};
-	
-	osc.CalcMatterOscProbAll(false, Etrue, &p_osc    [0][0]);
-	osc.CalcMatterOscProbAll(true , Etrue, &p_osc_bar[0][0]);
-	
-	double p_numu_numu       = p_osc    [1][1];
-	double p_numubar_numubar = p_osc_bar[1][1];
-	double p_nue_nue         = p_osc    [0][0];
-	double p_nuebar_nuebar   = p_osc_bar[0][0];
-	double p_numu_nue        = p_osc    [1][0];
-	double p_numubar_nuebar  = p_osc_bar[1][0];
-	double p_nue_numu        = p_osc    [0][1];
-	double p_nuebar_numubar  = p_osc_bar[0][1];
-	
-	double p_numu_nc    = p_osc    [1][0]+p_osc    [1][1]+p_osc    [1][2];
-	double p_numubar_nc = p_osc_bar[1][0]+p_osc_bar[1][1]+p_osc_bar[1][2];
-	double p_nue_nc     = p_osc    [0][0]+p_osc    [0][1]+p_osc    [0][2];
-	double p_nuebar_nc  = p_osc_bar[0][0]+p_osc_bar[0][1]+p_osc_bar[0][2];
-	
+    // loop over Etrue
+    for(int it = 1; it <= n_etrue_bins; it++) {
+      // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
+      double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
+      
+      // skip unnecessary calculations
+      bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
+      if(!bin_is_not_empty) continue;
+      
+      double p_osc    [NuOscSterile::nFlav][NuOscSterile::nFlav] = {};
+      double p_osc_bar[NuOscSterile::nFlav][NuOscSterile::nFlav] = {};
+      
+      osc.CalcMatterOscProbAll(false, Etrue, &p_osc    [0][0]);
+      osc.CalcMatterOscProbAll(true , Etrue, &p_osc_bar[0][0]);
+      
+      double p_numu_numu       = p_osc    [1][1];
+      double p_numubar_numubar = p_osc_bar[1][1];
+      double p_nue_nue         = p_osc    [0][0];
+      double p_nuebar_nuebar   = p_osc_bar[0][0];
+      double p_numu_nue        = p_osc    [1][0];
+      double p_numubar_nuebar  = p_osc_bar[1][0];
+      double p_nue_numu        = p_osc    [0][1];
+      double p_nuebar_numubar  = p_osc_bar[0][1];
+      
+      double p_numu_nc    = p_osc    [1][0]+p_osc    [1][1]+p_osc    [1][2];
+      double p_numubar_nc = p_osc_bar[1][0]+p_osc_bar[1][1]+p_osc_bar[1][2];
+      double p_nue_nc     = p_osc    [0][0]+p_osc    [0][1]+p_osc    [0][2];
+      double p_nuebar_nc  = p_osc_bar[0][0]+p_osc_bar[0][1]+p_osc_bar[0][2];
+      
 #ifdef __show_hypothesis_probabilities__
-	cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-	cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-	cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-	cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-	cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-	cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-	cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
-	cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
-	cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
-	
-	cout << "Exp/SKMC >>  * P (numu     -> active ) = " << p_numu_nc         << endl;
-	cout << "Exp/SKMC >>  * P (numubar  -> active ) = " << p_numubar_nc      << endl;
-	cout << "Exp/SKMC >>  * P (nue      -> active ) = " << p_nue_nc          << endl;
-	cout << "Exp/SKMC >>  * P (nuebar   -> active ) = " << p_nuebar_nc       << endl;
-	
+      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
+      cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
+      cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
+      
+      cout << "Exp/SKMC >>  * P (numu     -> active ) = " << p_numu_nc         << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> active ) = " << p_numubar_nc      << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> active ) = " << p_nue_nc          << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> active ) = " << p_nuebar_nc       << endl;
+      
 #endif
-        
-	// loop over modes
-	for(int im=0; im < knm; im++) {
-	  SuperkMode_t m = kSKReactionModes[is][im];
-	  if(m == kSKmUndefined) continue;
-	  // osc. probability
-	  double posc = 1.;
-	  if(kIsCC[is][im])
-	  {
-	    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-	    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-	    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
-	    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-	    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-	    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-	    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-	    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-	  }
-	  else { // NC oscillations to sterile
-	    if (util::IsNuMu(m)) {
-	      posc = p_numu_nc;
-	    }
-	    else if (util::IsNuMuBar(m)) {
-	      posc = p_numubar_nc;
-	    }
-	    else if (util::IsNuE(m)) {
-	      posc = p_nue_nc;
-	    }
-	    else if (util::IsNuEBar(m)) {
-	      posc = p_nuebar_nc;
-	    }
-	  }
-	      
-	  // loop over Ereco
-	  for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-	    // number of events in (Ereco,Etrue) bin (systematics applied)
-	    double nev = 0;
-	    
-	    nev = fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1); 
-	    ////
-	    
+      
+      // loop over modes
+      for(int im=0; im < knm; im++) {
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
+        // osc. probability
+        double posc = 1.;
+        if(kIsCC[is][im])
+        {
+          if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+          else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+          else if( util::IsNuE(m)       ) { posc = p_nue_nue;         } 
+          else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+          else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+          else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+          else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+          else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+        }
+        else { // NC oscillations to sterile
+          if (util::IsNuMu(m)) {
+            posc = p_numu_nc;
+          }
+          else if (util::IsNuMuBar(m)) {
+            posc = p_numubar_nc;
+          }
+          else if (util::IsNuE(m)) {
+            posc = p_nue_nc;
+          }
+          else if (util::IsNuEBar(m)) {
+            posc = p_nuebar_nc;
+          }
+        }
+            
+        // loop over Ereco
+        for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+          // number of events in (Ereco,Etrue) bin (systematics applied)
+          double nev = 0;
+          
+          nev = fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1); 
+          ////
+          
 #ifdef PHYSHYPWEIGHTSAREONE
-	    posc = 1;
+          posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-	    if(util::IsOscNuE(m)) posc = 0;
+          if(util::IsOscNuE(m)) posc = 0;
 #endif
 #endif
-	    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-	    double nev_osc = nev * posc;
-	    
-	    fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1) = nev_osc;
-	    ////
-	  }//ir
-	}//im
+          // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+          double nev_osc = nev * posc;
+          
+          fMCTemplArrayFin[is].GetEntryRef(im, it-1, ir-1) = nev_osc;
+          ////
+        }//ir
+      }//im
      }//it
-   }//is
-  } // end of angle/splitting/phase sterile hypotheses
+  }//is
+  return;
+}
+//________________________________________________________________________________________
 /*
+void SuperkMC::ApplyPhysHypothesisToTemplates_Other(void)
   //
   // 2-flavour oscillations / numu disappearance
   //
@@ -2357,12 +2391,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
          }//it
       }//im
     }//is
-  }
-  * */
-#ifdef __save_templates_debug__
-  this->NevDebug(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_phys");
-#endif
 }
+  * */
 //________________________________________________________________________________________
 bool SuperkMC::UpdateErecoSpectra(void)
 {

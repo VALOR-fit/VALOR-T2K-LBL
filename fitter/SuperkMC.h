@@ -126,7 +126,11 @@ private:
   bool ApplyEnergyScaleSystematicToTotalSpectrum     (void);
 
   // Apply physics hypothesis (oscillations,...) to MC templates
-  void ApplyPhysHypothesisToTemplates (void); 
+  void ApplyPhysHypothesisToTemplates (void); // Master function, picks one of the following functions to call based on fPhysHypothesis
+  
+  void ApplyPhysHypothesisToTemplates_3fOsc(void); 
+  void ApplyPhysHypothesisToTemplates_3fOscBar(void); 
+  void ApplyPhysHypothesisToTemplates_Sterile(void); 
 
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
   bool SkipTemplate(conv::SuperkMode_t m);
@@ -222,7 +226,7 @@ private:
   double     fMCPOTMultiRingOscNuEBar;              ///< MC event sample POT : nuebar (signal)
 
   ////
-  float     fBrPtrue[10];                 ///< branch var for reading input MC Minituple
+  float      fBrPtrue[10];                 ///< branch var for reading input MC Minituple
   double     fBrEreco;                     ///< branch var for reading input MC mini-DST
   //~ double     fBrEtrue;                     ///< branch var for reading input MC mini-DST
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
