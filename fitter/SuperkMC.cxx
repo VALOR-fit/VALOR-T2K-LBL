@@ -33,13 +33,13 @@
 //#define __show_isanevent_mesg_debug__
 //#define __show_negative_events_mesg_debug__
 //#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
-// 1 number of events
-// 2 number of events, weighted by pot & mc normalisation
-// 3 number of events, weighted by pot & mc normalisation, flux tuning
-// 4 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning
-// 5 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations
-// 6 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations
-// 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
+  // 1 number of events
+  // 2 number of events, weighted by pot & mc normalisation
+  // 3 number of events, weighted by pot & mc normalisation, flux tuning
+  // 4 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning
+  // 5 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations
+  // 6 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations
+  // 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
 #ifdef __save_templates_debug__
 //#define __save_templates_debug_mcstat__ //do the extra MCStatErrDebug
 #endif
@@ -538,9 +538,12 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
 #endif
 
   //filled in FillSpecialTemplates()
-  //~ if(util::IsOscNuMu(m) || util::IsOscNuMuBar(m) || util::IsOscNuEBar(m))
   if(util::IsOscNuMu(m) || util::IsOscNuMuBar(m))
     return;
+    
+#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+  if (util::IsOscNuEBar(m)) return;// with that flag, these are filled in FillSpecial
+#endif
 
   int sidx = arr_index->SuperkSampleIdx(s);
   int midx = arr_index->SuperkModeIdx(s,m);
@@ -2857,14 +2860,14 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
     if(s == kSKsUndefined) continue;
       
     TFile* oute = new TFile(Form("Template_%s%s.root", name.c_str(),util::AsStringCompact(s).c_str()),"RECREATE");
-    static const int erecobins = util::NumErecoBins(s);//70;
-    static const double * erecobinedges = util::ErecoBinEdges(s);
+    const int erecobins = util::NumErecoBins(s);//70;
+    const double * erecobinedges = util::ErecoBinEdges(s);
     
     //if(s == kSKsFCFV1RingELike) continue;
-   // if(s == kSKsFCFV1RingMuLike) continue;
-   // if(s == kSKsRHCFCFV1RingMuLike) continue;    // ANTINU
-   // if(s == kSKsRHCFCFV1RingELike) continue;     // ANTINU
-
+    // if(s == kSKsFCFV1RingMuLike) continue;
+    // if(s == kSKsRHCFCFV1RingMuLike) continue;    // ANTINU
+    // if(s == kSKsRHCFCFV1RingELike) continue;     // ANTINU
+   
     double nsk = 0;
     for(int im = 0; im < knm; im++) {
       SuperkMode_t m = kSKReactionModes[is][im];
@@ -2878,7 +2881,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       nsk += mctempl->Integral();
 
       //fill a 1D ereco spectrum
-      TH1D * hrec = new TH1D(Form("erec_int_%s",AsStringCompact_KDI(m).c_str()), Form("erec_int_%s",AsStringCompact_KDI(m).c_str()), erecobins, erecobinedges);
+      TH1D * hrec = new TH1D(Form("erec_int_%s",AsStringCompact(m).c_str()), Form("erec_int_%s",AsStringCompact(m).c_str()), erecobins, erecobinedges);
       // loop over Ereco
       for(int ir = 1; ir <= hrec->GetNbinsX(); ir++) {
         //find low and high of ereco for current bin
@@ -2895,7 +2898,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       delete hrec;
 
       //fill a 1D ereco spectrum (fine binning)
-      TH1D * hrecf = new TH1D(Form("erec_int_%s_fine",AsStringCompact_KDI(m).c_str()), Form("erec_int_%s",AsStringCompact_KDI(m).c_str()), mctempl->GetNbinsX(), mctempl->GetXaxis()->GetXbins()->GetArray());
+      TH1D * hrecf = new TH1D(Form("erec_int_%s_fine",AsStringCompact(m).c_str()), Form("erec_int_%s",AsStringCompact(m).c_str()), mctempl->GetNbinsX(), mctempl->GetXaxis()->GetXbins()->GetArray());
       // loop over Ereco
       for(int ir = 1; ir <= hrecf->GetNbinsX(); ir++) {
         //find low and high of ereco for current bin
@@ -2912,7 +2915,7 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
       delete hrecf;
 
       //fill a 1D etrue spectrum
-      TH1D * htru = new TH1D(Form("enu_int_%s",AsStringCompact_KDI(m).c_str()), Form("enu_int_%s",AsStringCompact_KDI(m).c_str()), util::NumVariableMCEtrueBins(s,m), util::VariableMCEtrueBinEdges(s,m));
+      TH1D * htru = new TH1D(Form("enu_int_%s",AsStringCompact(m).c_str()), Form("enu_int_%s",AsStringCompact(m).c_str()), util::NumVariableMCEtrueBins(s,m), util::VariableMCEtrueBinEdges(s,m));
       // loop over Etrue
       for(int it = 1; it <= htru->GetNbinsX(); it++) {
         //find low and high of etrue for current bin
