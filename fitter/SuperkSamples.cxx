@@ -95,22 +95,22 @@ bool valor::util::IsMultiRESample(conv::SuperkSample_t s)
 string valor::util::GetXMLMCTreeName(valor::conv::SuperkSample_t s)
 {
   switch(s) {
-  case ( kSKsFCFV1RingMuLike     ) : return "one_mu_ring";
-  case ( kSKsFCFV1RingELike      ) : return "one_e_ring";
-    
-    //case ( kSKsRHCFCFV1RingMuLike  ) : return "one_mu_ring_rhc";  // rhc not available yet
-    //case ( kSKsRHCFCFV1RingELike   ) : return "one_e_ring_rhc";   // rhc not available yet
-  case ( kSKsRHCFCFV1RingMuLike  ) : return "one_mu_ring";
-  case ( kSKsRHCFCFV1RingELike   ) : return "one_e_ring";
-    
-    /// NEW MULTIRING
-  case ( kSKsFCFVMultiRingMuLike ) : return "multi_mu_ring";    // multiring not available yet
-  case ( kSKsFCFVMultiRingELike  ) : return "multi_e_ring";     // multiring not available yet
-    //case ( kSKsFCFVMultiRingMuLike ) : return "one_mu_ring";    
-    //case ( kSKsFCFVMultiRingELike  ) : return "one_e_ring";
-    ////
-    
-  default                          : return "--";
+    case ( kSKsFCFV1RingMuLike     ) : return "one_mu_ring";
+    case ( kSKsFCFV1RingELike      ) : return "one_e_ring";
+      
+    case ( kSKsRHCFCFV1RingMuLike  ) : return "one_mu_ring_rhc";  
+    case ( kSKsRHCFCFV1RingELike   ) : return "one_e_ring_rhc" ;  
+    //~ case ( kSKsRHCFCFV1RingMuLike  ) : return "one_mu_ring"; // For when using old MC
+    //~ case ( kSKsRHCFCFV1RingELike   ) : return "one_e_ring";
+      
+      /// NEW MULTIRING
+    case ( kSKsFCFVMultiRingMuLike ) : return "multi_mu_ring";    // multiring not available yet
+    case ( kSKsFCFVMultiRingELike  ) : return "multi_e_ring";     // multiring not available yet
+      //case ( kSKsFCFVMultiRingMuLike ) : return "one_mu_ring";    
+      //case ( kSKsFCFVMultiRingELike  ) : return "one_e_ring";
+      ////
+      
+    default                          : return "--";
   }
   return "";
 }
@@ -197,4 +197,9 @@ string valor::util::SampleAsString       (conv::SuperkSample_t s) { return AsStr
 string valor::util::SampleAsStringCompact(conv::SuperkSample_t s) { return AsStringCompact(s);}
 string valor::util::SampleAsStringTex    (conv::SuperkSample_t s) { return AsStringTex    (s);}
 string valor::util::SampleAsStringRooTex (conv::SuperkSample_t s) { return AsStringRooTex (s);}
+//________________________________________________________________________________________
+int valor::util::GetSample(int isample)
+{
+  return (int) conv::kSKSamples[isample];
+}
 //________________________________________________________________________________________
