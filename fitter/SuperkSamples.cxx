@@ -198,8 +198,3 @@ string valor::util::SampleAsStringCompact(conv::SuperkSample_t s) { return AsStr
 string valor::util::SampleAsStringTex    (conv::SuperkSample_t s) { return AsStringTex    (s);}
 string valor::util::SampleAsStringRooTex (conv::SuperkSample_t s) { return AsStringRooTex (s);}
 //________________________________________________________________________________________
-int valor::util::GetSample(int isample)
-{
-  return (int) conv::kSKSamples[isample];
-}
-//________________________________________________________________________________________
