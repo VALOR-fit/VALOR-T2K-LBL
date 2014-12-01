@@ -694,7 +694,7 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    cerr << "util/AppendAllSuperkDetectorFSISystematics >> " << "Can not parse input: " << config_file << endl;
     delete xml;
     exit(1);  
   }
@@ -710,7 +710,7 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
   
   if(!SKDetFSICovMtrx) {
-    cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
+    cerr << "util/AppendAllSuperkDetectorFSISystematics >> " << "No SKDET+FSI covariance matrix was found." << endl;
     exit(1);
   }
   const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
@@ -883,7 +883,7 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    cerr << "util/AppendSuperkDetectorFSISystematicsDisap >> " << "Can not parse input: " << config_file << endl;
     delete xml;
     exit(1);  
   }
@@ -893,7 +893,7 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
 
   if(!SKDetFSICovMtrx) {
-    cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
+    cerr << "util/AppendSuperkDetectorFSISystematicsDisap >> " << "No SKDET+FSI covariance matrix was found." << endl;
     exit(1);
   }
   const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
@@ -1032,7 +1032,7 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    cerr << "util/AppendSuperkDetectorFSISystematicsApp >> " << "Can not parse input: " << config_file << endl;
     delete xml;
     exit(1);  
   }
@@ -1042,7 +1042,7 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
   
   if(!SKDetFSICovMtrx) {
-    cerr << "FitParamList/AppendSystematics >> No SKDET+FSI covariance matrix was found." << endl;
+    cerr << "util/AppendSuperkDetectorFSISystematicsApp >> " << "No SKDET+FSI covariance matrix was found." << endl;
     exit(1);
   }
   const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
@@ -1182,7 +1182,7 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << "Can not parse input: " << config_file << endl;
     delete xml;
     exit(1);  
   }
@@ -1191,7 +1191,7 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
 
   if(!BANFFBestFitValues) {
-    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << " No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
   const TVectorD & BANFFBestFit = *BANFFBestFitValues;
@@ -1199,7 +1199,7 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
 
   if(!BANFFCovMtrx) {
-    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << " No BANFF covariance matrix was found." << endl;
     exit(1);
   }
   const TMatrixD & BANFFCov = *BANFFCovMtrx;
@@ -1247,7 +1247,7 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
     TXMLEngine* xml = new TXMLEngine;
     XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
     if (xmldoc==0) {
-        cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+        cerr << "util/AppendAllCorrelatedBANFFSystematicsRHC >> " << "Can not parse input: " << config_file << endl;
         delete xml;
         exit(1);
     }
@@ -1256,7 +1256,7 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
     TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathRHCBanffParam.c_str());
 
     if(!BANFFBestFitValues) {
-        cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+        cerr << "util/AppendAllCorrelatedBANFFSystematicsRHC >> "<<" No BANFF best-fit parameter vector was found." << endl;
         exit(1);
     }
     const TVectorD & BANFFBestFit = *BANFFBestFitValues;
@@ -1264,7 +1264,7 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
     TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathRHCBanffCovMatr.c_str());
 
     if(!BANFFCovMtrx) {
-        cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+        cerr << "util/AppendAllCorrelatedBANFFSystematicsRHC >> "<<" No BANFF covariance matrix was found." << endl;
         exit(1);
     }
     const TMatrixD & BANFFCov = *BANFFCovMtrx;
@@ -1300,7 +1300,7 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    cerr << "util/AppendCorrelatedBANFFSystematicsDisap >> " << "Can not parse input: " << config_file << endl;
     delete xml;
     exit(1);  
   }
@@ -1310,7 +1310,7 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
 
 
   if(!BANFFBestFitValues) {
-    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    cerr << "util/AppendCorrelatedBANFFSystematicsDisap >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
   const TVectorD & BANFFBestFit = *BANFFBestFitValues;
@@ -1318,7 +1318,7 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
   TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
 
   if(!BANFFCovMtrx) {
-    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    cerr << "util/AppendCorrelatedBANFFSystematicsDisap >> No BANFF covariance matrix was found." << endl;
     exit(1);
   }
   const TMatrixD & BANFFCov = *BANFFCovMtrx;
@@ -1366,7 +1366,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    cerr << "util/AppendCorrelatedBANFFSystematicsApp >> " << "Can not parse input: " << config_file << endl;
     delete xml;
     exit(1);  
   }
@@ -1375,7 +1375,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
 
   if(!BANFFBestFitValues) {
-    cerr << "FitParamList/AppendSystematics >> No BANFF best-fit parameter vector was found." << endl;
+    cerr << "util/AppendCorrelatedBANFFSystematicsApp >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
   }
   const TVectorD & BANFFBestFit = *BANFFBestFitValues;
@@ -1383,7 +1383,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
 
   if(!BANFFCovMtrx) {
-    cerr << "FitParamList/AppendSystematics >> No BANFF covariance matrix was found." << endl;
+    cerr << "util/AppendCorrelatedBANFFSystematicsApp >> No BANFF covariance matrix was found." << endl;
     exit(1);
   }
   const TMatrixD & BANFFCov = *BANFFCovMtrx;

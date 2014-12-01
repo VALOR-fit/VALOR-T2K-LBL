@@ -123,7 +123,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     TXMLEngine* xml = new TXMLEngine;
     XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
     if (xmldoc==0) {
-      cerr << "Obs >> " << "Can not parse input: " << config_file << endl;
+      cerr << "SKObs/Read >> " << "Can not parse input: " << config_file << endl;
       delete xml;
       exit(1);
     }

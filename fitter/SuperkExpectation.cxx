@@ -110,7 +110,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
 {  
   T2KOpt::Instance()->ReadXmlPath(config_file); 
   
-  cout << "Exp >> Reading config file: " << config_file << endl;
+  cout << "SKExp/Read >> Reading config file: " << config_file << endl;
 
   if(fIsConfigured) {
     this->CleanUp();
@@ -139,7 +139,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
   if (xmldoc==0) {
-    cerr << "Exp >> " << "Can not parse input: " << config_file << endl;
+    cerr << "SKExp/Read >> " << "Can not parse input: " << config_file << endl;
     delete xml;
     return false;  
   }
