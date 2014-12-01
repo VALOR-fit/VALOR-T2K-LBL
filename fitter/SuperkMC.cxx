@@ -1726,9 +1726,12 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
   {
     this->ApplyPhysHypothesisToTemplates_Sterile();
   }
+  else if (hyp == kHypVoid) {
+    // Do not apply PhysHypothesis
+  }
   else
   {
-    std::cerr<<"Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
+    std::cerr<<"SKMC/ApplyPhysHypothesisToTemplates >> Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
     exit(-1);
   }
   
