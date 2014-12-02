@@ -123,6 +123,22 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   skexp.Read(os.environ[env_var]+"/config/"+config_file)
   skmc = skexp.GetSuperkMC()
   
+  if mixing12 < 0.:
+    mixing12 = opt.GetGlobalBestFit(conv.kPhypMixing12)
+    print "Using default value for ",util.ParamAsString(conv.kPhypMixing12),": ",mixing12
+  if mixing13 < 0.:
+    mixing13 = opt.GetGlobalBestFit(conv.kPhypMixing13)
+    print "Using default value for ",util.ParamAsString(conv.kPhypMixing13),": ",mixing13
+  if mixing23 < 0.:
+    mixing23 = opt.GetGlobalBestFit(conv.kPhypMixing23)
+    print "Using default value for ",util.ParamAsString(conv.kPhypMixing23),": ",mixing23
+  if dm12sq < 0.:
+    dm12sq = opt.GetGlobalBestFit(conv.kPhypDm12sq)
+    print "Using default value for ",util.ParamAsString(conv.kPhypDm12sq),": ",dm12sq
+  if dm23sq < 0.:
+    dm23sq = opt.GetGlobalBestFit(conv.kPhypDm23sq)
+    print "Using default value for ",util.ParamAsString(conv.kPhypDm23sq),": ",dm23sq
+  
   phyp.SetCurrValue(conv.kPhypMixing12,  mixing12);
   phyp.SetCurrValue(conv.kPhypMixing13,  mixing13);
   phyp.SetCurrValue(conv.kPhypMixing23,  mixing23);
