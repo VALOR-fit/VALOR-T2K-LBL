@@ -8,8 +8,10 @@
  
 void run_fit_xml_joint_bar
 (
+ const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_D.xml",                      /* input XML file Run5-6 fakedata */ 
+
  //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file Run1-4 data */
- const char * xmlfile = "data_newstruct_rhc.xml",                                         /* input XML file Run1-4 data (used by RHC analysis) */
+ //const char * xmlfile = "data_newstruct_rhc.xml",                                         /* input XML file Run1-4 data (used by RHC analysis) */
 
  //const char * xmlfile = "data_newstruct_multiring.xml",                                                /* input XML file Run1-4 data (used by RHC analysis) */
  //const char * xmlfile = "toymc/toymc_FHCpRHC_DataRun1to4_MCRun5and6_th13DB_NH-0.xml",                 /* input XML file with toy MC experiments */
@@ -21,21 +23,16 @@ void run_fit_xml_joint_bar
  int          first_experiment = 0,                                   /* */
  int          last_experiment  = 0,                                   /* */
  
- //const char * config_file      = "analysis_configuration_run1to5.xml",        /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_run1to6_oa2p0.xml",        /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_run1to6_multiring_test.xml",
- //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
-
+ const char * config_file      = "analysis_configuration_run1to5_test.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
- const char * config_file      = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
   //const char * config_file      = "analysis_configuration_test_multiring.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test_multiring_mrmc.xml",        /* analysis configuration file */
  
+ const char * fit_param_list          = "nuosc3fbar_fixnonbar_12fix",
  //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
  //const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
  //const char * fit_param_list          = "nuosc3fbar_fixnonbar_12fix+nuisance",
- const char * fit_param_list          = "nuosc3fbar_fixnonbar_12fix",
 
  const char * fit_option       = "minuit",                            /* fitter option */
  //const char * fit_option       = "minuit+hesse",                            /* fitter option */
@@ -52,6 +49,9 @@ void run_fit_xml_joint_bar
   bool         using_xml_file      = true,                                   /* if false, skobs reads xmlfile as a root file */
   bool         reactor             = true,                               /* enable this if you want to apply the reactor constraint */
   double       tolerance           = 0.1,                                 /* value for the fitter tolerance */
+
+ TString optfixparams         = "mixing13, dmsq12"  // list of the params to be fixed in the fit   
+ //TString optfixparams         = "mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
 )
 {
   using namespace std;
@@ -196,6 +196,74 @@ void run_fit_xml_joint_bar
       exit(1);
     }
   }
+
+
+
+
+  ////////////////////////
+  //                    //
+  //   Fix parameters   //
+  //                    //
+  ////////////////////////
+  
+  if(hyp == kHypOsc3F){	
+    if(optfixparams.Contains("mixing23")){ 
+      fparm->FixParameter(kPhypMixing23);
+      fparm1->FixParameter(kPhypMixing23);
+      fparm2->FixParameter(kPhypMixing23);
+    }
+    if(optfixparams.Contains("mixing13")){ 
+      fparm->FixParameter(kPhypMixing13);
+      fparm1->FixParameter(kPhypMixing13);
+      fparm2->FixParameter(kPhypMixing13);
+    }
+    if(optfixparams.Contains("dmsq")){ 
+      fparm->FixParameter(kPhypDm23sq);
+      fparm1->FixParameter(kPhypDm23sq);
+      fparm2->FixParameter(kPhypDm23sq);
+    }
+    if(optfixparams.Contains("dmsq12")){ 
+      fparm->FixParameter(kPhypDm12sq);
+      fparm1->FixParameter(kPhypDm12sq);
+      fparm2->FixParameter(kPhypDm12sq);
+    }
+    if(optfixparams.Contains("deltacp")){ 
+      fparm->FixParameter(kPhypCPV);
+      fparm1->FixParameter(kPhypCPV);
+      fparm2->FixParameter(kPhypCPV);
+    }
+  }
+  else if(hyp == kHypOsc3FBar){	
+    if(optfixparams.Contains("mixing23")){ 
+      fparm->FixParameter(kPhypMixing23Bar);
+      fparm1->FixParameter(kPhypMixing23Bar);
+      fparm2->FixParameter(kPhypMixing23Bar);
+    }
+    if(optfixparams.Contains("mixing13")){ 
+      fparm->FixParameter(kPhypMixing13Bar);
+      fparm1->FixParameter(kPhypMixing13Bar);
+      fparm2->FixParameter(kPhypMixing13Bar);
+    }
+    if(optfixparams.Contains("dmsq")){ 
+      fparm->FixParameter(kPhypDm23sqBar);
+      fparm1->FixParameter(kPhypDm23sqBar);
+      fparm2->FixParameter(kPhypDm23sqBar);
+    }
+    if(optfixparams.Contains("dmsq12")){ 
+      fparm->FixParameter(kPhypDm12sqBar);
+      fparm1->FixParameter(kPhypDm12sqBar);
+      fparm2->FixParameter(kPhypDm12sqBar);
+    }
+    if(optfixparams.Contains("deltacp")){ 
+      fparm->FixParameter(kPhypCPVBar);
+      fparm1->FixParameter(kPhypCPVBar);
+      fparm2->FixParameter(kPhypCPVBar);
+    }
+  }
+  
+
+
+
 
   // Loop over toy-MC experiments
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
