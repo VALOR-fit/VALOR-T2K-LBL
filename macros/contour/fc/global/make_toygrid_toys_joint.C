@@ -1006,12 +1006,23 @@ void make_toygrid_toys_joint
 	  cout << endl;
 
 	  //skexp->PrintSystematicVariations();
+	  double bestfit_chisq = -999.;
 	  fitter->SetTol(tolerance);
-	  fitter->DoTheFit();
-	  fitstatus1 = fitter->FitStatusCode("migrad_min");
-	  fitstatus_err1 = fitter->FitStatusCode("hesse_err");     
-
-	  double bestfit_chisq  = fparm1->GetBestFitStatistic();
+    
+    if (fparm->GetNumberFreeParameters()) {
+	    fitter->DoTheFit();
+	    fitstatus1 = fitter->FitStatusCode("migrad_min");
+	    fitstatus_err1 = fitter->FitStatusCode("hesse_err");     
+	    bestfit_chisq  = fparm1->GetBestFitStatistic();
+	  }
+	  else {
+	    skexp->Generate(*fparm1);
+	    bestfit_chisq = skobs->Statistic(skexp);
+	    fparm->CopyCurrToBestFitValues();
+	    fparm->SetBestFitStatistic(bestfit_chisq);
+	    fparm1->CopyCurrToBestFitValues();
+	    fparm1->SetBestFitStatistic(bestfit_chisq);
+	  }
 	  chisq1 = bestfit_chisq;
 	  double bestfit_chisq2 = 9999.;
 
@@ -1057,10 +1068,21 @@ void make_toygrid_toys_joint
 	    FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
 	    FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
 	    fitter2->SetTol(tolerance);
-	    fitter2->DoTheFit();
-	    fitstatus2 = fitter->FitStatusCode("migrad_min");
-	    fitstatus_err2 = fitter->FitStatusCode("hesse_err");     
-	    bestfit_chisq2 = fparm2->GetBestFitStatistic();
+      
+	    if (fparm2->GetNumberFreeParameters()) {
+	      fitter2->DoTheFit();
+	      fitstatus2 = fitter2->FitStatusCode("migrad_min");
+	      fitstatus_err2 = fitter2->FitStatusCode("hesse_err");     
+	      bestfit_chisq2 = fparm2->GetBestFitStatistic();
+	    }
+	    else {
+        fit_inputs2->UpdateParamList(fparm2);
+	      skexp->Generate(*fparm2);
+        fparm2->CopyCurrToBestFitValues();
+	      bestfit_chisq2 = skobs->Statistic(skexp);
+        fparm2->SetBestFitStatistic(bestfit_chisq2);
+	    }
+	    
 	    chisq2 = bestfit_chisq2;
 
 	    // Save spectra (best-fit prediction)
