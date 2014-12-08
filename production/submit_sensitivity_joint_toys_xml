@@ -116,7 +116,7 @@ $xmlfile                 = "inputs/toymc-0.xml"                  unless defined 
 $using_xmlfile           = 1                                     unless defined $using_xmlfile;
 
 if( !defined $cput ) {
-  if($resource eq "RAL"   ) { $cput = "6:00:00";  }
+  if($resource eq "RAL"   ) { $cput = "08:00:00";  }
   if($resource eq "Oxford") { $cput = "11:50:00"; }
 }
 
@@ -134,8 +134,10 @@ while($irun < $nruns) {
   $last  = $firstexpt + $nexpts - 1;  # last toy of the job
 
   print "Jobs w/ toys from $first to $last \n";
-
-  $command = "root2k -l -b -q \'$softw_dir/macros/sensitivity/run_sensitivity_joint_toys_xml.C(\"$xmlfile\",$first,$last,$using_xmlfile,\"$tag\",$irun,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",$min_bin_param1,$max_bin_param1,$min_bin_param2,$max_bin_param2)\'";
+  
+  $program = "root2k ";
+  $arguments = "-l -b -q \'$softw_dir/macros/sensitivity/run_sensitivity_joint_toys_xml.C(\"$xmlfile\",$first,$last,$using_xmlfile,\"$tag\",$irun,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",$min_bin_param1,$max_bin_param1,$min_bin_param2,$max_bin_param2)\'";
+  $command = "$program $arguments";
 
   print "$command \n";
        
@@ -162,19 +164,23 @@ while($irun < $nruns) {
   # RAL
   #
   if($resource eq "RAL") {
-     open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
-     print PBS "#!/bin/bash \n";
-     print PBS "#PBS -N $tag-$irun \n";
-     print PBS "#PBS -l cput=$cput \n";
-     print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-     print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-     print PBS "#PBS -q prod \n";
-     print PBS "#PBS -l walltime=$cput \n";
-     print PBS "cd $job_dir \n";
-     print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
-     print PBS "$command \n";
-     close(PBS);
-     `qsub -q prod $job_dir/$tag-$irun.pbs`;
+     $fullprogram = `which root2k`;
+     $fullprogram = `readlink -m $fullprogram`;
+     $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+     $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+     open(CND, ">$job_dir/$tag-$irun.condor") or die("Cannot create the Condor batch script");
+     print CND "Executable               = $fullprogram \n";
+     print CND "Arguments                = $arguments \n";
+     print CND "Error                    = $job_dir/toys_proc_$tag-${irun}_\$\(Process\).err \n";
+     print CND "Output                   = $job_dir/toys_proc_$tag-${irun}_\$\(Process\).out \n";
+     print CND "Universe                 = vanilla \n";
+     print CND "Getenv                   = True \n";
+     print CND "should_transfer_files    = YES \n";
+     print CND "when_to_transfer_output  = ON_EXIT \n";
+     print CND "\nqueue\n";
+     
+     close(CND);
+     `condor_submit $job_dir/$tag-$irun.condor`;
   }
   #
   # Oxford
