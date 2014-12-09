@@ -140,6 +140,8 @@ void draw_sensitivity_plots_toys(
 				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p0_IH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
 				 // const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p25_IH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
 				 // const char * name_ih = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p5_IH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
+
+				 const char * output_file = "toys_sensitivity_plots.root",
 				 )
 {
   using namespace std;
@@ -1219,6 +1221,20 @@ void draw_sensitivity_plots_toys(
 
   // 2-dimensional plots
   if(nDim==2){
+    
+    if (!NuBarMode) {
+      h_chisq_par2_par1_Ave_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+      h_chisq_par2_par1_Ave_nh->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+      h_chisq_par2_par1_Ave_ih->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+      h_chisq_par2_par1_Ave_ih->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+    }
+    else {
+      h_chisq_par2_par1_Ave_nh->GetXaxis()->SetTitle("sin^{2}#bar{#theta_{23}}");
+      h_chisq_par2_par1_Ave_nh->GetYaxis()->SetTitle("#bar{#Delta m^{2}_{32}}");
+      h_chisq_par2_par1_Ave_ih->GetXaxis()->SetTitle("sin^{2}#bar{#theta_{23}}");
+      h_chisq_par2_par1_Ave_ih->GetYaxis()->SetTitle("#bar{#Delta m^{2}_{32}}");
+    }
+    
     TCanvas *c_chisq_par2_par1_nh = new TCanvas("c_chisq_par2_par1_nh","c_chisq_par2_par1_nh");
     h_chisq_par2_par1_Ave_nh->Draw("colz");
     gPad->Update();
@@ -1251,8 +1267,6 @@ void draw_sensitivity_plots_toys(
     c_cont_par2_par1->SetGridy();
 
     h_chisq_par2_par1_Ave_nh_Cont = (TH2F*)h_chisq_par2_par1_Ave_nh->Clone("");
-    h_chisq_par2_par1_Ave_nh_Cont->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
-    h_chisq_par2_par1_Ave_nh_Cont->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
     h_chisq_par2_par1_Ave_nh_Cont->SetContour(1);
     h_chisq_par2_par1_Ave_nh_Cont->SetContourLevel(0,CLval);
     h_chisq_par2_par1_Ave_nh_Cont->SetLineColor(kBlue);
@@ -1350,6 +1364,23 @@ void draw_sensitivity_plots_toys(
     }
     
   }
+
+  // Write histograms to root file
+  if (output_file) {
+    TFile hist_file(output_file,"UPDATE");
+    hist_file.cd();
+    if(nDim==2){
+      h_chisq_par2_par1_Ave_nh->Write();
+      h_chisq_par2_par1_Ave_ih->Write();
+    }
+    if(nDim==1) {
+      h_chisq_par1_Ave_nh->Write();
+      h_chisq_par1_Ave_ih->Write();
+    }
+    
+    cout<<"Histograms written to "<<output_file<<endl;
+  }
+      
 
   return;
 }
