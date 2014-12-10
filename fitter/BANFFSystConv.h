@@ -32,7 +32,7 @@ namespace valor {
   
     //
     // Number of BANFF fit parameters
-    //
+    // 
 
     // NEW XSEC NIWG
 #if defined(__USE_NIWG2015__)
@@ -46,12 +46,12 @@ namespace valor {
     static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 14;
     //
     #elif BANFF_BINS == 2 //disap
-    static const int kNumOfParamsInBANFFfit = 39; 
+    static const int kNumOfParamsInBANFFfit = 30; //39; 
     static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 14; 
-    static const int kNumOfRHCParamsInBANFFfit = 39;
+    static const int kNumOfRHCParamsInBANFFfit = 30; //39;
     static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 14;
     // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 64; 
+    static const int kNumOfFHCpRHCParamsInBANFFfit = 46; //64; 
     static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 14; 
     //
     #elif BANFF_BINS == 3 //app
@@ -85,12 +85,12 @@ namespace valor {
     static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 7; 
     //
     #elif BANFF_BINS == 3 //app
-    static const int kNumOfParamsInBANFFfit = 27; 
+    static const int kNumOfParamsInBANFFfit = 30; //27; 
     static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 5; 
-    static const int kNumOfRHCParamsInBANFFfit = 27; 
+    static const int kNumOfRHCParamsInBANFFfit = 30; //27; 
     static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 5; 
     // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 49; 
+    static const int kNumOfFHCpRHCParamsInBANFFfit = 55; //49; 
     static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 5; 
     //
     #endif
@@ -124,12 +124,14 @@ namespace valor {
 	kNuisBANFF19 ,
 	kNuisBANFF20 ,
 	kNuisBANFF21 ,
-        #endif
-        #if BANFF_BINS == 1
+	// NEW SPLIT ANA
+        //#endif
+        //#if BANFF_BINS == 1
 	kNuisBANFF22 , 
 	kNuisBANFF23 , 
 	kNuisBANFF24 , 
         #endif
+
 	kNuisBANFFMAQE   ,
 	kNuisBANFFMARES  ,
 	kNuisBANFFCCQEE0 ,
@@ -163,15 +165,21 @@ namespace valor {
 	kNuisBANFF13 ,
 	kNuisBANFF14 ,
 	kNuisBANFF15 ,
+        #if (BANFF_BINS != 2)
 	kNuisBANFF16 ,
 	kNuisBANFF17 ,
 	kNuisBANFF18 ,
 	kNuisBANFF19 ,
 	kNuisBANFF20 ,
 	kNuisBANFF21 ,
+	// NEW SPLIT ANA
+        //#endif
+        //#if BANFF_BINS == 1
 	kNuisBANFF22 , 
 	kNuisBANFF23 , 
 	kNuisBANFF24 , 
+        #endif
+
 	kNuisBANFFMEC          ,
 	kNuisBANFFCA5          ,
 	kNuisBANFFBgRES        ,
@@ -215,12 +223,14 @@ namespace valor {
 	kRHCNuisBANFF19 ,
 	kRHCNuisBANFF20 ,
 	kRHCNuisBANFF21 ,
-	#endif
-	#if BANFF_BINS == 1
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	kRHCNuisBANFF22 ,
 	kRHCNuisBANFF23 ,
 	kRHCNuisBANFF24 ,
 	#endif
+
 	kRHCNuisBANFFMAQE   ,
 	kRHCNuisBANFFMARES  ,
 	kRHCNuisBANFFCCQEE0 ,
@@ -254,15 +264,21 @@ namespace valor {
 	kRHCNuisBANFF13 ,
 	kRHCNuisBANFF14 ,
 	kRHCNuisBANFF15 ,
+	#if (BANFF_BINS != 2)
 	kRHCNuisBANFF16 ,
 	kRHCNuisBANFF17 ,
 	kRHCNuisBANFF18 ,
 	kRHCNuisBANFF19 ,
 	kRHCNuisBANFF20 ,
 	kRHCNuisBANFF21 ,
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	kRHCNuisBANFF22 , 
 	kRHCNuisBANFF23 , 
 	kRHCNuisBANFF24 , 
+	#endif
+
 	kRHCNuisBANFFMEC   ,
 	kRHCNuisBANFFCA5   ,
 	kRHCNuisBANFFBgRES ,
@@ -306,12 +322,15 @@ namespace valor {
 	kNuisBANFF19 ,
 	kNuisBANFF20 ,
 	kNuisBANFF21 ,
-	#endif
-	#if BANFF_BINS == 1
+
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	kNuisBANFF22 ,
 	kNuisBANFF23 ,
 	kNuisBANFF24 ,
 	#endif
+
 	//
        	kRHCNuisBANFF00 ,
 	kRHCNuisBANFF01 ,
@@ -336,12 +355,15 @@ namespace valor {
 	kRHCNuisBANFF19 ,
 	kRHCNuisBANFF20 ,
 	kRHCNuisBANFF21 ,
-	#endif
-	#if BANFF_BINS == 1
+
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	kRHCNuisBANFF22 ,
 	kRHCNuisBANFF23 ,
 	kRHCNuisBANFF24 ,
 	#endif
+
 	//
 	kNuisBANFFMAQE   ,
 	kNuisBANFFMARES  ,
@@ -376,15 +398,21 @@ namespace valor {
 	kNuisBANFF13 ,
 	kNuisBANFF14 ,
 	kNuisBANFF15 ,
+	#if (BANFF_BINS != 2)
 	kNuisBANFF16 ,
 	kNuisBANFF17 ,
 	kNuisBANFF18 ,
 	kNuisBANFF19 ,
 	kNuisBANFF20 ,
 	kNuisBANFF21 ,
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	kNuisBANFF22 , 
 	kNuisBANFF23 , 
 	kNuisBANFF24 , 
+	#endif
+
 	//
 	kRHCNuisBANFF00 ,
 	kRHCNuisBANFF01 ,
@@ -402,15 +430,22 @@ namespace valor {
 	kRHCNuisBANFF13 ,
 	kRHCNuisBANFF14 ,
 	kRHCNuisBANFF15 ,
+	#if (BANFF_BINS != 2)
 	kRHCNuisBANFF16 ,
 	kRHCNuisBANFF17 ,
 	kRHCNuisBANFF18 ,
 	kRHCNuisBANFF19 ,
 	kRHCNuisBANFF20 ,
 	kRHCNuisBANFF21 ,
+
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	kRHCNuisBANFF22 , 
 	kRHCNuisBANFF23 , 
 	kRHCNuisBANFF24 , 
+	#endif
+
 	//
 	kNuisBANFFMEC,
 	kNuisBANFFCA5,
@@ -461,8 +496,9 @@ namespace valor {
 	true,                 // kNuisBANFF19
 	true,                 // kNuisBANFF20
 	true,                 // kNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	true,                 // kNuisBANFF22
 	true,                 // kNuisBANFF23
 	true,                 // kNuisBANFF24
@@ -500,15 +536,20 @@ namespace valor {
 	true,                 // kNuisBANFF13
 	true,                 // kNuisBANFF14
 	true,                 // kNuisBANFF15
+        #if (BANFF_BINS != 2)
 	true,                 // kNuisBANFF16
 	true,                 // kNuisBANFF17
 	true,                 // kNuisBANFF18
 	true,                 // kNuisBANFF19
 	true,                 // kNuisBANFF20
 	true,                 // kNuisBANFF21
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	true,                 // kNuisBANFF22
 	true,                 // kNuisBANFF23
 	true,                 // kNuisBANFF24
+	#endif
 	//
 	false,                // kNuisBANFFMEC
 	false,                // kNuisBANFFCA5
@@ -555,12 +596,14 @@ namespace valor {
 	true,                 // kRHCNuisBANFF19
 	true,                 // kRHCNuisBANFF20
 	true,                 // kRHCNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	true,                 // kRHCNuisBANFF22
 	true,                 // kRHCNuisBANFF23
 	true,                 // kRHCNuisBANFF24
 	#endif
+	//
 	false,                // kRHCNuisBANFFMAQE
 	false,                // kRHCNuisBANFFMARES
 	false,                // kRHCNuisBANFFCCQEE0
@@ -594,15 +637,20 @@ namespace valor {
 	true,                 // kRHCNuisBANFF13
 	true,                 // kRHCNuisBANFF14
 	true,                 // kRHCNuisBANFF15
+	#if (BANFF_BINS != 2)
 	true,                 // kRHCNuisBANFF16
 	true,                 // kRHCNuisBANFF17
 	true,                 // kRHCNuisBANFF18
 	true,                 // kRHCNuisBANFF19
 	true,                 // kRHCNuisBANFF20
 	true,                 // kRHCNuisBANFF21
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	true,                 // kRHCNuisBANFF22
 	true,                 // kRHCNuisBANFF23
 	true,                 // kRHCNuisBANFF24
+	#endif
 	//
 	false,                // kRHCNuisBANFFMEC
 	false,                // kRHCNuisBANFFCA5
@@ -652,8 +700,9 @@ namespace valor {
 	true,                 // kNuisBANFF19
 	true,                 // kNuisBANFF20
 	true,                 // kNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	true,                 // kNuisBANFF22
 	true,                 // kNuisBANFF23
 	true,                 // kNuisBANFF24
@@ -682,8 +731,9 @@ namespace valor {
 	true,                 // kRHCNuisBANFF19
 	true,                 // kRHCNuisBANFF20
 	true,                 // kRHCNuisBANFF21
-	#endif
-        #if BANFF_BINS == 1
+	// NEW SPLIT ANA
+	//#endif
+        //#if BANFF_BINS == 1
 	true,                 // kRHCNuisBANFF22
 	true,                 // kRHCNuisBANFF23
 	true,                 // kRHCNuisBANFF24
@@ -722,15 +772,20 @@ namespace valor {
 	true,                 // kNuisBANFF13
 	true,                 // kNuisBANFF14
 	true,                 // kNuisBANFF15
+	#if (BANFF_BINS != 2)
 	true,                 // kNuisBANFF16
 	true,                 // kNuisBANFF17
 	true,                 // kNuisBANFF18
 	true,                 // kNuisBANFF19
 	true,                 // kNuisBANFF20
 	true,                 // kNuisBANFF21
+	// NEW SPLIT ANA
+	//#endif
+	//#if BANFF_BINS == 1
 	true,                 // kNuisBANFF22
 	true,                 // kNuisBANFF23
 	true,                 // kNuisBANFF24
+	#endif
 	//
 	true,                 // kRHCNuisBANFF00
 	true,                 // kRHCNuisBANFF01
@@ -748,15 +803,20 @@ namespace valor {
 	true,                 // kRHCNuisBANFF13
 	true,                 // kRHCNuisBANFF14
 	true,                 // kRHCNuisBANFF15
+	#if (BANFF_BINS != 2)
 	true,                 // kRHCNuisBANFF16
 	true,                 // kRHCNuisBANFF17
 	true,                 // kRHCNuisBANFF18
 	true,                 // kRHCNuisBANFF19
 	true,                 // kRHCNuisBANFF20
 	true,                 // kRHCNuisBANFF21
+	// NEW SPLIT ANA
+	//#endif
+        //#if BANFF_BINS == 1
 	true,                 // kRHCNuisBANFF22
 	true,                 // kRHCNuisBANFF23
 	true,                 // kRHCNuisBANFF24
+	#endif
 	//
 	false,                // kRHCNuisBANFFMEC
 	false,                // kRHCNuisBANFFCA5
@@ -798,32 +858,35 @@ namespace valor {
 	kPdgNuMuBar,          // kNuisBANFF13
 	kPdgNuMuBar,          // kNuisBANFF14
 	kPdgNuMuBar,          // kNuisBANFF15
-	#endif
-	#if BANFF_BINS == 3
-	kPdgNuMu,             // kNuisBANFF00
-	kPdgNuMu,             // kNuisBANFF01
-	kPdgNuMu,             // kNuisBANFF02
-	kPdgNuMu,             // kNuisBANFF03
-	kPdgNuMu,             // kNuisBANFF04
-	kPdgNuMu,             // kNuisBANFF05
-	kPdgNuMu,             // kNuisBANFF06
-	kPdgNuMu,             // kNuisBANFF07
-	kPdgNuMu,             // kNuisBANFF08
-	kPdgNuMu,             // kNuisBANFF09
-	kPdgNuMu,             // kNuisBANFF10
-	kPdgNuMuBar,          // kNuisBANFF11
-	kPdgNuMuBar,          // kNuisBANFF12
-	kPdgNuE,              // kNuisBANFF13
-	kPdgNuE,              // kNuisBANFF14
-	kPdgNuE,              // kNuisBANFF15
-	kPdgNuE,              // kNuisBANFF16
-	kPdgNuE,              // kNuisBANFF17
-	kPdgNuE,              // kNuisBANFF18
-	kPdgNuE,              // kNuisBANFF19
-	kPdgNuEBar,           // kNuisBANFF20
-	kPdgNuEBar,           // kNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	
+	// NEW SPLIT ANA
+	//#endif
+	/* #if BANFF_BINS == 3 */
+	/* kPdgNuMu,             // kNuisBANFF00 */
+	/* kPdgNuMu,             // kNuisBANFF01 */
+	/* kPdgNuMu,             // kNuisBANFF02 */
+	/* kPdgNuMu,             // kNuisBANFF03 */
+	/* kPdgNuMu,             // kNuisBANFF04 */
+	/* kPdgNuMu,             // kNuisBANFF05 */
+	/* kPdgNuMu,             // kNuisBANFF06 */
+	/* kPdgNuMu,             // kNuisBANFF07 */
+	/* kPdgNuMu,             // kNuisBANFF08 */
+	/* kPdgNuMu,             // kNuisBANFF09 */
+	/* kPdgNuMu,             // kNuisBANFF10 */
+	/* kPdgNuMuBar,          // kNuisBANFF11 */
+	/* kPdgNuMuBar,          // kNuisBANFF12 */
+	/* kPdgNuE,              // kNuisBANFF13 */
+	/* kPdgNuE,              // kNuisBANFF14 */
+	/* kPdgNuE,              // kNuisBANFF15 */
+	/* kPdgNuE,              // kNuisBANFF16 */
+	/* kPdgNuE,              // kNuisBANFF17 */
+	/* kPdgNuE,              // kNuisBANFF18 */
+	/* kPdgNuE,              // kNuisBANFF19 */
+	/* kPdgNuEBar,           // kNuisBANFF20 */
+	/* kPdgNuEBar,           // kNuisBANFF21 */
+	/* #endif */
+	//#if BANFF_BINS == 1
+	#else
 	kPdgNuMu,             // kNuisBANFF00
 	kPdgNuMu,             // kNuisBANFF01
 	kPdgNuMu,             // kNuisBANFF02
@@ -883,6 +946,7 @@ namespace valor {
 	kPdgNuMuBar,          // kNuisBANFF13
 	kPdgNuMuBar,          // kNuisBANFF14
 	kPdgNuMuBar,          // kNuisBANFF15
+        #if (BANFF_BINS != 2)
 	kPdgNuE,              // kNuisBANFF16
 	kPdgNuE,              // kNuisBANFF17
 	kPdgNuE,              // kNuisBANFF18
@@ -892,6 +956,7 @@ namespace valor {
 	kPdgNuE,              // kNuisBANFF22
 	kPdgNuEBar,           // kNuisBANFF23
 	kPdgNuEBar,           // kNuisBANFF24
+	#endif
 	//
 	0,                    // kNuisBANFFMEC          
 	0,                    // kNuisBANFFCA5          
@@ -932,32 +997,35 @@ namespace valor {
 	kPdgNuMuBar,          // kRHCNuisBANFF13
 	kPdgNuMuBar,          // kRHCNuisBANFF14
 	kPdgNuMuBar,          // kRHCNuisBANFF15
-	#endif
-	#if BANFF_BINS == 3
-	kPdgNuMu,             // kRHCNuisBANFF00
-	kPdgNuMu,             // kRHCNuisBANFF01
-	kPdgNuMu,             // kRHCNuisBANFF02
-	kPdgNuMu,             // kRHCNuisBANFF03
-	kPdgNuMu,             // kRHCNuisBANFF04
-	kPdgNuMuBar,          // kRHCNuisBANFF05
-	kPdgNuMuBar,          // kRHCNuisBANFF06
-	kPdgNuMuBar,          // kRHCNuisBANFF07
-	kPdgNuMuBar,          // kRHCNuisBANFF08
-	kPdgNuMuBar,          // kRHCNuisBANFF09
-	kPdgNuMuBar,          // kRHCNuisBANFF10
-	kPdgNuMuBar,          // kRHCNuisBANFF11
-	kPdgNuMuBar,          // kRHCNuisBANFF12
-	kPdgNuE,              // kRHCNuisBANFF13
-	kPdgNuE,              // kRHCNuisBANFF14
-	kPdgNuEBar,           // kRHCNuisBANFF15
-	kPdgNuEBar,           // kRHCNuisBANFF16
-	kPdgNuEBar,           // kRHCNuisBANFF17
-	kPdgNuEBar,           // kRHCNuisBANFF18
-	kPdgNuEBar,           // kRHCNuisBANFF19
-	kPdgNuEBar,           // kRHCNuisBANFF20
-	kPdgNuEBar,           // kRHCNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	
+	// NEW SPLIT ANA
+	//#endif
+	/* #if BANFF_BINS == 3 */
+	/* kPdgNuMu,             // kRHCNuisBANFF00 */
+	/* kPdgNuMu,             // kRHCNuisBANFF01 */
+	/* kPdgNuMu,             // kRHCNuisBANFF02 */
+	/* kPdgNuMu,             // kRHCNuisBANFF03 */
+	/* kPdgNuMu,             // kRHCNuisBANFF04 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF05 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF06 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF07 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF08 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF09 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF10 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF11 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF12 */
+	/* kPdgNuE,              // kRHCNuisBANFF13 */
+	/* kPdgNuE,              // kRHCNuisBANFF14 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF15 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF16 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF17 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF18 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF19 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF20 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF21 */
+	/* #endif */
+	//#if BANFF_BINS == 1
+	#else
 	kPdgNuMu,             // kRHCNuisBANFF00
 	kPdgNuMu,             // kRHCNuisBANFF01
 	kPdgNuMu,             // kRHCNuisBANFF02
@@ -1017,6 +1085,8 @@ namespace valor {
 	kPdgNuMuBar,          // kRHCNuisBANFF13
 	kPdgNuMuBar,          // kRHCNuisBANFF14
 	kPdgNuMuBar,          // kRHCNuisBANFF15
+
+        #if (BANFF_BINS != 2) // NEW SPLIT ANA
 	kPdgNuE,              // kRHCNuisBANFF16
 	kPdgNuE,              // kRHCNuisBANFF17
 	kPdgNuEBar,           // kRHCNuisBANFF18
@@ -1026,6 +1096,7 @@ namespace valor {
 	kPdgNuEBar,           // kRHCNuisBANFF22
 	kPdgNuEBar,           // kRHCNuisBANFF23
 	kPdgNuEBar,           // kRHCNuisBANFF24
+        #endif
 	//
 	0,                    // kRHCNuisBANFFMEC          
 	0,                    // kRHCNuisBANFFCA5          
@@ -1069,32 +1140,36 @@ namespace valor {
 	kPdgNuMuBar,          // kNuisBANFF13
 	kPdgNuMuBar,          // kNuisBANFF14
 	kPdgNuMuBar,          // kNuisBANFF15
-	#endif
-	#if BANFF_BINS == 3
-	kPdgNuMu,             // kNuisBANFF00
-	kPdgNuMu,             // kNuisBANFF01
-	kPdgNuMu,             // kNuisBANFF02
-	kPdgNuMu,             // kNuisBANFF03
-	kPdgNuMu,             // kNuisBANFF04
-	kPdgNuMu,             // kNuisBANFF05
-	kPdgNuMu,             // kNuisBANFF06
-	kPdgNuMu,             // kNuisBANFF07
-	kPdgNuMu,             // kNuisBANFF08
-	kPdgNuMu,             // kNuisBANFF09
-	kPdgNuMu,             // kNuisBANFF10
-	kPdgNuMuBar,          // kNuisBANFF11
-	kPdgNuMuBar,          // kNuisBANFF12
-	kPdgNuE,              // kNuisBANFF13
-	kPdgNuE,              // kNuisBANFF14
-	kPdgNuE,              // kNuisBANFF15
-	kPdgNuE,              // kNuisBANFF16
-	kPdgNuE,              // kNuisBANFF17
-	kPdgNuE,              // kNuisBANFF18
-	kPdgNuE,              // kNuisBANFF19
-	kPdgNuEBar,           // kNuisBANFF20
-	kPdgNuEBar,           // kNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	
+	// NEW SPLIT ANA
+	//#endif
+	/* #if BANFF_BINS == 3 */
+	/* kPdgNuMu,             // kNuisBANFF00 */
+	/* kPdgNuMu,             // kNuisBANFF01 */
+	/* kPdgNuMu,             // kNuisBANFF02 */
+	/* kPdgNuMu,             // kNuisBANFF03 */
+	/* kPdgNuMu,             // kNuisBANFF04 */
+	/* kPdgNuMu,             // kNuisBANFF05 */
+	/* kPdgNuMu,             // kNuisBANFF06 */
+	/* kPdgNuMu,             // kNuisBANFF07 */
+	/* kPdgNuMu,             // kNuisBANFF08 */
+	/* kPdgNuMu,             // kNuisBANFF09 */
+	/* kPdgNuMu,             // kNuisBANFF10 */
+	/* kPdgNuMuBar,          // kNuisBANFF11 */
+	/* kPdgNuMuBar,          // kNuisBANFF12 */
+	/* kPdgNuE,              // kNuisBANFF13 */
+	/* kPdgNuE,              // kNuisBANFF14 */
+	/* kPdgNuE,              // kNuisBANFF15 */
+	/* kPdgNuE,              // kNuisBANFF16 */
+	/* kPdgNuE,              // kNuisBANFF17 */
+	/* kPdgNuE,              // kNuisBANFF18 */
+	/* kPdgNuE,              // kNuisBANFF19 */
+	/* kPdgNuEBar,           // kNuisBANFF20 */
+	/* kPdgNuEBar,           // kNuisBANFF21 */
+	/* #endif */
+	//#if BANFF_BINS == 1
+	
+        #else
 	kPdgNuMu,             // kNuisBANFF00
 	kPdgNuMu,             // kNuisBANFF01
 	kPdgNuMu,             // kNuisBANFF02
@@ -1139,32 +1214,36 @@ namespace valor {
 	kPdgNuMuBar,          // kRHCNuisBANFF13
 	kPdgNuMuBar,          // kRHCNuisBANFF14
 	kPdgNuMuBar,          // kRHCNuisBANFF15
-	#endif
-	#if BANFF_BINS == 3
-	kPdgNuMu,             // kRHCNuisBANFF00
-	kPdgNuMu,             // kRHCNuisBANFF01
-	kPdgNuMu,             // kRHCNuisBANFF02
-	kPdgNuMu,             // kRHCNuisBANFF03
-	kPdgNuMu,             // kRHCNuisBANFF04
-	kPdgNuMuBar,          // kRHCNuisBANFF05
-	kPdgNuMuBar,          // kRHCNuisBANFF06
-	kPdgNuMuBar,          // kRHCNuisBANFF07
-	kPdgNuMuBar,          // kRHCNuisBANFF08
-	kPdgNuMuBar,          // kRHCNuisBANFF09
-	kPdgNuMuBar,          // kRHCNuisBANFF10
-	kPdgNuMuBar,          // kRHCNuisBANFF11
-	kPdgNuMuBar,          // kRHCNuisBANFF12
-	kPdgNuE,              // kRHCNuisBANFF13
-	kPdgNuE,              // kRHCNuisBANFF14
-	kPdgNuEBar,           // kRHCNuisBANFF15
-	kPdgNuEBar,           // kRHCNuisBANFF16
-	kPdgNuEBar,           // kRHCNuisBANFF17
-	kPdgNuEBar,           // kRHCNuisBANFF18
-	kPdgNuEBar,           // kRHCNuisBANFF19
-	kPdgNuEBar,           // kRHCNuisBANFF20
-	kPdgNuEBar,           // kRHCNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	
+	// NEW SPLIT ANA
+	//#endif
+        /* #if BANFF_BINS == 3 */
+	/* kPdgNuMu,             // kRHCNuisBANFF00 */
+	/* kPdgNuMu,             // kRHCNuisBANFF01 */
+	/* kPdgNuMu,             // kRHCNuisBANFF02 */
+	/* kPdgNuMu,             // kRHCNuisBANFF03 */
+	/* kPdgNuMu,             // kRHCNuisBANFF04 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF05 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF06 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF07 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF08 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF09 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF10 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF11 */
+	/* kPdgNuMuBar,          // kRHCNuisBANFF12 */
+	/* kPdgNuE,              // kRHCNuisBANFF13 */
+	/* kPdgNuE,              // kRHCNuisBANFF14 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF15 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF16 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF17 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF18 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF19 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF20 */
+	/* kPdgNuEBar,           // kRHCNuisBANFF21 */
+	/* #endif */
+	//#if BANFF_BINS == 1
+	
+         #else 
 	kPdgNuMu,             // kRHCNuisBANFF00
 	kPdgNuMu,             // kRHCNuisBANFF01
 	kPdgNuMu,             // kRHCNuisBANFF02
@@ -1210,6 +1289,8 @@ namespace valor {
 	kPdgNuMuBar,          // kNuisBANFF13
 	kPdgNuMuBar,          // kNuisBANFF14
 	kPdgNuMuBar,          // kNuisBANFF15
+
+        #if (BANFF_BINS != 2) // NEW SPLIT ANA
 	kPdgNuE,              // kNuisBANFF16
 	kPdgNuE,              // kNuisBANFF17
 	kPdgNuE,              // kNuisBANFF18
@@ -1219,6 +1300,7 @@ namespace valor {
 	kPdgNuE,              // kNuisBANFF22
 	kPdgNuEBar,           // kNuisBANFF23
 	kPdgNuEBar,           // kNuisBANFF24
+	#endif
 	//
 	kPdgNuMu,             // kRHCNuisBANFF00
 	kPdgNuMu,             // kRHCNuisBANFF01
@@ -1236,6 +1318,7 @@ namespace valor {
 	kPdgNuMuBar,          // kRHCNuisBANFF13
 	kPdgNuMuBar,          // kRHCNuisBANFF14
 	kPdgNuMuBar,          // kRHCNuisBANFF15
+        #if (BANFF_BINS != 2)
 	kPdgNuE,              // kRHCNuisBANFF16
 	kPdgNuE,              // kRHCNuisBANFF17
 	kPdgNuEBar,           // kRHCNuisBANFF18
@@ -1245,6 +1328,7 @@ namespace valor {
 	kPdgNuEBar,           // kRHCNuisBANFF22
 	kPdgNuEBar,           // kRHCNuisBANFF23
 	kPdgNuEBar,           // kRHCNuisBANFF24
+	#endif
 	//
 	0,                    // kRHCNuisBANFFMEC          
 	0,                    // kRHCNuisBANFFCA5          
@@ -1288,32 +1372,36 @@ namespace valor {
 	{ 1.0,  1.5 },        // kNuisBANFF13
 	{ 1.5,  2.5 },        // kNuisBANFF14
 	{ 2.5, 30.0 },        // kNuisBANFF15
-	#endif
-	#if BANFF_BINS == 3
-	{ 0.0,  0.4 },        // kNuisBANFF00
-	{ 0.4,  0.5 },        // kNuisBANFF01
-	{ 0.5,  0.6 },        // kNuisBANFF02
-	{ 0.6,  0.7 },        // kNuisBANFF03
-	{ 0.7,  1.0 },        // kNuisBANFF04
-	{ 1.0,  1.5 },        // kNuisBANFF05
-	{ 1.5,  2.5 },        // kNuisBANFF06
-	{ 2.5,  3.5 },        // kNuisBANFF07
-	{ 3.5,  5.0 },        // kNuisBANFF08
-	{ 5.0,  7.0 },        // kNuisBANFF09
-	{ 7.0, 30.0 },        // kNuisBANFF10
-	{ 0.0,  1.5 },        // kNuisBANFF11
-	{ 1.5, 30.0 },        // kNuisBANFF12
-	{ 0.0,  0.5 },        // kNuisBANFF13
-	{ 0.5,  0.7 },        // kNuisBANFF14
-	{ 0.7,  0.8 },        // kNuisBANFF15
-	{ 0.8,  1.5 },        // kNuisBANFF16
-	{ 1.5,  2.5 },        // kNuisBANFF17
-	{ 2.5,  4.0 },        // kNuisBANFF18
-	{ 4.0, 30.0 },        // kNuisBANFF19
-	{ 0.0,  2.5 },        // kNuisBANFF20
-	{ 2.5, 30.0 },        // kNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	
+	// NEW SPLIT ANA
+	//#endif
+	/* #if BANFF_BINS == 3 */
+	/* { 0.0,  0.4 },        // kNuisBANFF00 */
+	/* { 0.4,  0.5 },        // kNuisBANFF01 */
+	/* { 0.5,  0.6 },        // kNuisBANFF02 */
+	/* { 0.6,  0.7 },        // kNuisBANFF03 */
+	/* { 0.7,  1.0 },        // kNuisBANFF04 */
+	/* { 1.0,  1.5 },        // kNuisBANFF05 */
+	/* { 1.5,  2.5 },        // kNuisBANFF06 */
+	/* { 2.5,  3.5 },        // kNuisBANFF07 */
+	/* { 3.5,  5.0 },        // kNuisBANFF08 */
+	/* { 5.0,  7.0 },        // kNuisBANFF09 */
+	/* { 7.0, 30.0 },        // kNuisBANFF10 */
+	/* { 0.0,  1.5 },        // kNuisBANFF11 */
+	/* { 1.5, 30.0 },        // kNuisBANFF12 */
+	/* { 0.0,  0.5 },        // kNuisBANFF13 */
+	/* { 0.5,  0.7 },        // kNuisBANFF14 */
+	/* { 0.7,  0.8 },        // kNuisBANFF15 */
+	/* { 0.8,  1.5 },        // kNuisBANFF16 */
+	/* { 1.5,  2.5 },        // kNuisBANFF17 */
+	/* { 2.5,  4.0 },        // kNuisBANFF18 */
+	/* { 4.0, 30.0 },        // kNuisBANFF19 */
+	/* { 0.0,  2.5 },        // kNuisBANFF20 */
+	/* { 2.5, 30.0 },        // kNuisBANFF21 */
+	/* #endif */
+	//#if BANFF_BINS == 1
+
+	#else
 	{ 0.0,  0.4 },        // kNuisBANFF00
 	{ 0.4,  0.5 },        // kNuisBANFF01
 	{ 0.5,  0.6 },        // kNuisBANFF02
@@ -1373,6 +1461,8 @@ namespace valor {
 	{ 1.0,  1.5 },        // kNuisBANFF13
 	{ 1.5,  2.5 },        // kNuisBANFF14
 	{ 2.5, 30.0 },        // kNuisBANFF15
+
+	#if (BANFF_BINS != 2) // NEW SPLIT ANA
 	{ 0.0,  0.5 },        // kNuisBANFF16
 	{ 0.5,  0.7 },        // kNuisBANFF17
 	{ 0.7,  0.8 },        // kNuisBANFF18
@@ -1382,6 +1472,7 @@ namespace valor {
 	{ 4.0, 30.0 },        // kNuisBANFF22
 	{ 0.0,  2.5 },        // kNuisBANFF23
 	{ 2.5, 30.0 },        // kNuisBANFF24
+	#endif
 	//
 	{  -1,   -1 },        // kNuisBANFFMEC not a flux param
 	{  -1,   -1 },        // kNuisBANFFCA5 not a flux param  
@@ -1426,36 +1517,40 @@ namespace valor {
 	{ 3.5,  5.0 },        // kRHCNuisBANFF13
 	{ 5.0,  7.0 },        // kRHCNuisBANFF14
 	{ 7.0, 30.0 },        // kRHCNuisBANFF15
-	#endif
-	#if BANFF_BINS == 3
-	// numu
-	{ 0.0,  1.5 },        // kRHCNuisBANFF00
-	{ 1.5, 30.0 },        // kRHCNuisBANFF01
-	// anti-numu
-	{ 0.0,  0.4 },        // kRHCNuisBANFF02
-	{ 0.4,  0.5 },        // kRHCNuisBANFF03
-	{ 0.5,  0.6 },        // kRHCNuisBANFF04
-	{ 0.6,  0.7 },        // kRHCNuisBANFF05
-	{ 0.7,  1.0 },        // kRHCNuisBANFF06
-	{ 1.0,  1.5 },        // kRHCNuisBANFF07
-	{ 1.5,  2.5 },        // kRHCNuisBANFF08
-	{ 2.5,  3.5 },        // kRHCNuisBANFF09
-	{ 3.5,  5.0 },        // kRHCNuisBANFF10
-	{ 5.0,  7.0 },        // kRHCNuisBANFF11
-	{ 7.0, 30.0 },        // kRHCNuisBANFF12
-	// nue
-	{ 0.0,  2.5 },        // kRHCNuisBANFF13
-	{ 2.5, 30.0 },        // kRHCNuisBANFF14
-	// anti-nue
-	{ 0.0,  0.5 },        // kRHCNuisBANFF15
-	{ 0.5,  0.7 },        // kRHCNuisBANFF16
-	{ 0.7,  0.8 },        // kRHCNuisBANFF17
-	{ 0.8,  1.5 },        // kRHCNuisBANFF18
-	{ 1.5,  2.5 },        // kRHCNuisBANFF19
-	{ 2.5,  4.0 },        // kRHCNuisBANFF20
-	{ 4.0, 30.0 },        // kRHCNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	
+	// NEW SPLIT ANA
+	//#endif
+	/* #if BANFF_BINS == 3 */
+	/* // numu */
+	/* { 0.0,  1.5 },        // kRHCNuisBANFF00 */
+	/* { 1.5, 30.0 },        // kRHCNuisBANFF01 */
+	/* // anti-numu */
+	/* { 0.0,  0.4 },        // kRHCNuisBANFF02 */
+	/* { 0.4,  0.5 },        // kRHCNuisBANFF03 */
+	/* { 0.5,  0.6 },        // kRHCNuisBANFF04 */
+	/* { 0.6,  0.7 },        // kRHCNuisBANFF05 */
+	/* { 0.7,  1.0 },        // kRHCNuisBANFF06 */
+	/* { 1.0,  1.5 },        // kRHCNuisBANFF07 */
+	/* { 1.5,  2.5 },        // kRHCNuisBANFF08 */
+	/* { 2.5,  3.5 },        // kRHCNuisBANFF09 */
+	/* { 3.5,  5.0 },        // kRHCNuisBANFF10 */
+	/* { 5.0,  7.0 },        // kRHCNuisBANFF11 */
+	/* { 7.0, 30.0 },        // kRHCNuisBANFF12 */
+	/* // nue */
+	/* { 0.0,  2.5 },        // kRHCNuisBANFF13 */
+	/* { 2.5, 30.0 },        // kRHCNuisBANFF14 */
+	/* // anti-nue */
+	/* { 0.0,  0.5 },        // kRHCNuisBANFF15 */
+	/* { 0.5,  0.7 },        // kRHCNuisBANFF16 */
+	/* { 0.7,  0.8 },        // kRHCNuisBANFF17 */
+	/* { 0.8,  1.5 },        // kRHCNuisBANFF18 */
+	/* { 1.5,  2.5 },        // kRHCNuisBANFF19 */
+	/* { 2.5,  4.0 },        // kRHCNuisBANFF20 */
+	/* { 4.0, 30.0 },        // kRHCNuisBANFF21 */
+	/* #endif */
+	//#if BANFF_BINS == 1
+
+	#else
 	// numu
 	{ 0.0,  0.7 },        // kRHCNuisBANFF00
 	{ 0.7,  1.0 },        // kRHCNuisBANFF01
@@ -1521,6 +1616,8 @@ namespace valor {
 	{ 3.5,  5.0 },        // kRHCNuisBANFF13
 	{ 5.0,  7.0 },        // kRHCNuisBANFF14
 	{ 7.0, 30.0 },        // kRHCNuisBANFF15
+
+        #if (BANFF_BINS != 2) // NEW SPLIT ANA
 	// nue
 	{ 0.0,  2.5 },        // kRHCNuisBANFF16
 	{ 2.5, 30.0 },        // kRHCNuisBANFF17
@@ -1532,6 +1629,7 @@ namespace valor {
 	{ 1.5,  2.5 },        // kRHCNuisBANFF22
 	{ 2.5,  4.0 },        // kRHCNuisBANFF23
 	{ 4.0, 30.0 },        // kRHCNuisBANFF24
+	#endif
 	//
 	{  -1,   -1 },        // kRHCNuisBANFFMEC not a flux param
 	{  -1,   -1 },        // kRHCNuisBANFFCA5 not a flux param  
@@ -1576,32 +1674,36 @@ namespace valor {
 	{ 1.0,  1.5 },        // kNuisBANFF13
 	{ 1.5,  2.5 },        // kNuisBANFF14
 	{ 2.5, 30.0 },        // kNuisBANFF15
-	#endif
-	#if BANFF_BINS == 3
-	{ 0.0,  0.4 },        // kNuisBANFF00
-	{ 0.4,  0.5 },        // kNuisBANFF01
-	{ 0.5,  0.6 },        // kNuisBANFF02
-	{ 0.6,  0.7 },        // kNuisBANFF03
-	{ 0.7,  1.0 },        // kNuisBANFF04
-	{ 1.0,  1.5 },        // kNuisBANFF05
-	{ 1.5,  2.5 },        // kNuisBANFF06
-	{ 2.5,  3.5 },        // kNuisBANFF07
-	{ 3.5,  5.0 },        // kNuisBANFF08
-	{ 5.0,  7.0 },        // kNuisBANFF09
-	{ 7.0, 30.0 },        // kNuisBANFF10
-	{ 0.0,  1.5 },        // kNuisBANFF11
-	{ 1.5, 30.0 },        // kNuisBANFF12
-	{ 0.0,  0.5 },        // kNuisBANFF13
-	{ 0.5,  0.7 },        // kNuisBANFF14
-	{ 0.7,  0.8 },        // kNuisBANFF15
-	{ 0.8,  1.5 },        // kNuisBANFF16
-	{ 1.5,  2.5 },        // kNuisBANFF17
-	{ 2.5,  4.0 },        // kNuisBANFF18
-	{ 4.0, 30.0 },        // kNuisBANFF19
-	{ 0.0,  2.5 },        // kNuisBANFF20
-	{ 2.5, 30.0 },        // kNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	
+	// NEW SPLIT ANA
+	//#endif	
+	/* #if BANFF_BINS == 3 */
+	/* { 0.0,  0.4 },        // kNuisBANFF00 */
+	/* { 0.4,  0.5 },        // kNuisBANFF01 */
+	/* { 0.5,  0.6 },        // kNuisBANFF02 */
+	/* { 0.6,  0.7 },        // kNuisBANFF03 */
+	/* { 0.7,  1.0 },        // kNuisBANFF04 */
+	/* { 1.0,  1.5 },        // kNuisBANFF05 */
+	/* { 1.5,  2.5 },        // kNuisBANFF06 */
+	/* { 2.5,  3.5 },        // kNuisBANFF07 */
+	/* { 3.5,  5.0 },        // kNuisBANFF08 */
+	/* { 5.0,  7.0 },        // kNuisBANFF09 */
+	/* { 7.0, 30.0 },        // kNuisBANFF10 */
+	/* { 0.0,  1.5 },        // kNuisBANFF11 */
+	/* { 1.5, 30.0 },        // kNuisBANFF12 */
+	/* { 0.0,  0.5 },        // kNuisBANFF13 */
+	/* { 0.5,  0.7 },        // kNuisBANFF14 */
+	/* { 0.7,  0.8 },        // kNuisBANFF15 */
+	/* { 0.8,  1.5 },        // kNuisBANFF16 */
+	/* { 1.5,  2.5 },        // kNuisBANFF17 */
+	/* { 2.5,  4.0 },        // kNuisBANFF18 */
+	/* { 4.0, 30.0 },        // kNuisBANFF19 */
+	/* { 0.0,  2.5 },        // kNuisBANFF20 */
+	/* { 2.5, 30.0 },        // kNuisBANFF21 */
+	/* #endif */
+	//#if BANFF_BINS == 1
+	
+	#else 
 	{ 0.0,  0.4 },        // kNuisBANFF00
 	{ 0.4,  0.5 },        // kNuisBANFF01
 	{ 0.5,  0.6 },        // kNuisBANFF02
@@ -1628,6 +1730,7 @@ namespace valor {
 	{ 0.0,  2.5 },        // kNuisBANFF23
 	{ 2.5, 30.0 },        // kNuisBANFF24
 	#endif
+	
 	// RHC
 	#if BANFF_BINS == 2
 	// numu
@@ -1648,36 +1751,40 @@ namespace valor {
 	{ 3.5,  5.0 },        // kRHCNuisBANFF13
 	{ 5.0,  7.0 },        // kRHCNuisBANFF14
 	{ 7.0, 30.0 },        // kRHCNuisBANFF15
-	#endif
-	#if BANFF_BINS == 3
-	// numu
-	{ 0.0,  1.5 },        // kRHCNuisBANFF00
-	{ 1.5, 30.0 },        // kRHCNuisBANFF01
-	// anti-numu
-	{ 0.0,  0.4 },        // kRHCNuisBANFF02
-	{ 0.4,  0.5 },        // kRHCNuisBANFF03
-	{ 0.5,  0.6 },        // kRHCNuisBANFF04
-	{ 0.6,  0.7 },        // kRHCNuisBANFF05
-	{ 0.7,  1.0 },        // kRHCNuisBANFF06
-	{ 1.0,  1.5 },        // kRHCNuisBANFF07
-	{ 1.5,  2.5 },        // kRHCNuisBANFF08
-	{ 2.5,  3.5 },        // kRHCNuisBANFF09
-	{ 3.5,  5.0 },        // kRHCNuisBANFF10
-	{ 5.0,  7.0 },        // kRHCNuisBANFF11
-	{ 7.0, 30.0 },        // kRHCNuisBANFF12
-	// nue
-	{ 0.0,  2.5 },        // kRHCNuisBANFF13
-	{ 2.5, 30.0 },        // kRHCNuisBANFF14
-	// anti-nue
-	{ 0.0,  0.5 },        // kRHCNuisBANFF15
-	{ 0.5,  0.7 },        // kRHCNuisBANFF16
-	{ 0.7,  0.8 },        // kRHCNuisBANFF17
-	{ 0.8,  1.5 },        // kRHCNuisBANFF18
-	{ 1.5,  2.5 },        // kRHCNuisBANFF19
-	{ 2.5,  4.0 },        // kRHCNuisBANFF20
-	{ 4.0, 30.0 },        // kRHCNuisBANFF21
-	#endif
-	#if BANFF_BINS == 1
+	//#endif
+	
+	// NEW SPLIT ANA
+	/* #if BANFF_BINS == 3 */
+	/* // numu */
+	/* { 0.0,  1.5 },        // kRHCNuisBANFF00 */
+	/* { 1.5, 30.0 },        // kRHCNuisBANFF01 */
+	/* // anti-numu */
+	/* { 0.0,  0.4 },        // kRHCNuisBANFF02 */
+	/* { 0.4,  0.5 },        // kRHCNuisBANFF03 */
+	/* { 0.5,  0.6 },        // kRHCNuisBANFF04 */
+	/* { 0.6,  0.7 },        // kRHCNuisBANFF05 */
+	/* { 0.7,  1.0 },        // kRHCNuisBANFF06 */
+	/* { 1.0,  1.5 },        // kRHCNuisBANFF07 */
+	/* { 1.5,  2.5 },        // kRHCNuisBANFF08 */
+	/* { 2.5,  3.5 },        // kRHCNuisBANFF09 */
+	/* { 3.5,  5.0 },        // kRHCNuisBANFF10 */
+	/* { 5.0,  7.0 },        // kRHCNuisBANFF11 */
+	/* { 7.0, 30.0 },        // kRHCNuisBANFF12 */
+	/* // nue */
+	/* { 0.0,  2.5 },        // kRHCNuisBANFF13 */
+	/* { 2.5, 30.0 },        // kRHCNuisBANFF14 */
+	/* // anti-nue */
+	/* { 0.0,  0.5 },        // kRHCNuisBANFF15 */
+	/* { 0.5,  0.7 },        // kRHCNuisBANFF16 */
+	/* { 0.7,  0.8 },        // kRHCNuisBANFF17 */
+	/* { 0.8,  1.5 },        // kRHCNuisBANFF18 */
+	/* { 1.5,  2.5 },        // kRHCNuisBANFF19 */
+	/* { 2.5,  4.0 },        // kRHCNuisBANFF20 */
+	/* { 4.0, 30.0 },        // kRHCNuisBANFF21 */
+	/* #endif */
+	//#if BANFF_BINS == 1
+
+	#else 
 	// numu
 	{ 0.0,  0.7 },        // kRHCNuisBANFF00
 	{ 0.7,  1.0 },        // kRHCNuisBANFF01
@@ -1742,6 +1849,8 @@ namespace valor {
 	{ 1.0,  1.5 },        // kNuisBANFF13
 	{ 1.5,  2.5 },        // kNuisBANFF14
 	{ 2.5, 30.0 },        // kNuisBANFF15
+
+	#if (BANFF_BINS != 2) // NEW SPLIT ANA
 	{ 0.0,  0.5 },        // kNuisBANFF16
 	{ 0.5,  0.7 },        // kNuisBANFF17
 	{ 0.7,  0.8 },        // kNuisBANFF18
@@ -1751,6 +1860,7 @@ namespace valor {
 	{ 4.0, 30.0 },        // kNuisBANFF22
 	{ 0.0,  2.5 },        // kNuisBANFF23
 	{ 2.5, 30.0 },        // kNuisBANFF24
+	#endif
 	// RHC
 	// numu
 	{ 0.0,  0.7 },        // kRHCNuisBANFF00
@@ -1770,6 +1880,7 @@ namespace valor {
 	{ 3.5,  5.0 },        // kRHCNuisBANFF13
 	{ 5.0,  7.0 },        // kRHCNuisBANFF14
 	{ 7.0, 30.0 },        // kRHCNuisBANFF15
+        #if (BANFF_BINS != 2)
 	// nue
 	{ 0.0,  2.5 },        // kRHCNuisBANFF16
 	{ 2.5, 30.0 },        // kRHCNuisBANFF17
@@ -1781,6 +1892,7 @@ namespace valor {
 	{ 1.5,  2.5 },        // kRHCNuisBANFF22
 	{ 2.5,  4.0 },        // kRHCNuisBANFF23
 	{ 4.0, 30.0 },        // kRHCNuisBANFF24
+	#endif
 	//
 	{  -1,   -1 },        // kNuisBANFFMEC not a flux param
 	{  -1,   -1 },        // kNuisBANFFCA5 not a flux param  

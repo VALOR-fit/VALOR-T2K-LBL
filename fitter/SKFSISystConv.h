@@ -242,7 +242,7 @@ static const PhysParamId_t kListOfRHCSKDetFSIParams[kNumOfRHCSKDetFSIParams] =
 static const PhysParamId_t kListOfMultiRingSKDetFSIParams[kNumOfSKDetFSIParamsMultiRing] = 
 {
     // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2015__)
+#if defined(__USE_SKDETFSI2013__)
     #if FSI_BINS != 3
     kMultiRingNuisSKDetFSI000,
     kMultiRingNuisSKDetFSI001,

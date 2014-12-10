@@ -69,8 +69,9 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF19 ) :
     case ( kNuisBANFF20 ) :
     case ( kNuisBANFF21 ) :
-#endif
-#if BANFF_BINS == 1
+      // NEW SPLIT ANA
+      //#endif
+      //#if BANFF_BINS == 1
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
@@ -447,8 +448,9 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFF19 ) :
   case ( kRHCNuisBANFF20 ) :
   case ( kRHCNuisBANFF21 ) :
-#endif
-#if BANFF_BINS == 1
+    // NEW SPLIT ANA
+    //#endif
+    //#if BANFF_BINS == 1
   case ( kRHCNuisBANFF22 ) :
   case ( kRHCNuisBANFF23 ) :
   case ( kRHCNuisBANFF24 ) :
@@ -1111,8 +1113,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFF19 ) :
     case ( kNuisBANFF20 ) :
     case ( kNuisBANFF21 ) :
-#endif
-#if BANFF_BINS == 1
+      // NEW SPLIT ANA
+      //#endif
+      //#if BANFF_BINS == 1
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
@@ -1491,8 +1494,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisBANFF19 ) :
     case ( kRHCNuisBANFF20 ) :
     case ( kRHCNuisBANFF21 ) :
-#endif
-#if BANFF_BINS == 1
+      // NEW SPLIT ANA
+      //#endif
+      //#if BANFF_BINS == 1
     case ( kRHCNuisBANFF22 ) :
     case ( kRHCNuisBANFF23 ) :
     case ( kRHCNuisBANFF24 ) :
@@ -2352,8 +2356,9 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF19               ) : return "f_banff19";      break;
     case ( kNuisBANFF20               ) : return "f_banff20";      break;
     case ( kNuisBANFF21               ) : return "f_banff21";      break;
-#endif
-#if BANFF_BINS == 1
+      // NEW SPLIT ANA
+      //#endif
+      //#if BANFF_BINS == 1
     case ( kNuisBANFF22               ) : return "f_banff22";      break;
     case ( kNuisBANFF23               ) : return "f_banff23";      break;
     case ( kNuisBANFF24               ) : return "f_banff24";      break;
@@ -2515,8 +2520,9 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisBANFF19               ) : return "f_banff19_rhc";      break;
   case ( kRHCNuisBANFF20               ) : return "f_banff20_rhc";      break;
   case ( kRHCNuisBANFF21               ) : return "f_banff21_rhc";      break;
-#endif
-#if BANFF_BINS == 1
+    // NEW SPLIT ANA
+    //#endif
+    //#if BANFF_BINS == 1
   case ( kRHCNuisBANFF22               ) : return "f_banff22_rhc";      break;
   case ( kRHCNuisBANFF23               ) : return "f_banff23_rhc";      break;
   case ( kRHCNuisBANFF24               ) : return "f_banff24_rhc";      break;
@@ -2996,8 +3002,9 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFF19 ) :
   case ( kNuisBANFF20 ) :
   case ( kNuisBANFF21 ) :
-#endif
-#if BANFF_BINS == 1
+    // NEW SPLIT ANA
+    //#endif
+    //#if BANFF_BINS == 1
   case ( kNuisBANFF22 ) :
   case ( kNuisBANFF23 ) :
   case ( kNuisBANFF24 ) :
@@ -3021,7 +3028,9 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 #if BANFF_BINS != 3
   case ( kNuisBANFFCC1piE1 ) :
 #endif
-    return Form("$f_{CC1\\pi E%d}^{banff}$", p-kNuisBANFFCC1piE1);
+    return Form("$f_{CC1\\pi E%d}^{banff}$", p-kNuisBANFFCC1piE0);
+  //return Form("$f_{CC1\\pi E%d}^{banff}$", p-kNuisBANFFCC1piE1); // NEW SPLIT ANA
+
 #if (BANFF_BINS != 2)
   case ( kNuisBANFFNC1pi0 ) :
 #endif
@@ -3205,8 +3214,9 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisBANFF19 ) :
   case ( kRHCNuisBANFF20 ) :
   case ( kRHCNuisBANFF21 ) :
-#endif
-#if BANFF_BINS == 1
+    // NEW SPLIT ANA
+    //#endif
+    //#if BANFF_BINS == 1
   case ( kRHCNuisBANFF22 ) :
   case ( kRHCNuisBANFF23 ) :
   case ( kRHCNuisBANFF24 ) :
@@ -3230,7 +3240,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 #if BANFF_BINS != 3
   case ( kRHCNuisBANFFCC1piE1 ) :
 #endif
-    return Form("$f_{CC1\\pi E%d}^{banff RHC}$", p-kRHCNuisBANFFCC1piE1);
+    return Form("$f_{CC1\\pi E%d}^{banff RHC}$", p-kRHCNuisBANFFCC1piE0);
+  //return Form("$f_{CC1\\pi E%d}^{banff RHC}$", p-kRHCNuisBANFFCC1piE1); // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFNC1pi0 ) :
 #endif
@@ -3525,8 +3536,9 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kRHCNuisBANFF19               ) : return "f_banff19";      break;
   case ( kRHCNuisBANFF20               ) : return "f_banff20";      break;
   case ( kRHCNuisBANFF21               ) : return "f_banff21";      break;
-#endif
-#if BANFF_BINS == 1
+    // NEW SPLIT ANA
+    //#endif
+    //#if BANFF_BINS == 1
   case ( kRHCNuisBANFF22               ) : return "f_banff22";      break;
   case ( kRHCNuisBANFF23               ) : return "f_banff23";      break;
   case ( kRHCNuisBANFF24               ) : return "f_banff24";      break;

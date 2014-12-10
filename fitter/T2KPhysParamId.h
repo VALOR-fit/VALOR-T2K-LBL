@@ -92,12 +92,13 @@ static const PhysParamId_t kNuisBANFF18 = kNuis038; // # 18; different meanings 
 static const PhysParamId_t kNuisBANFF19 = kNuis039; // # 19; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF20 = kNuis040; // # 20; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF21 = kNuis041; // # 21; different meanings depending on samples defined
-#endif
-#if BANFF_BINS == 1
+//#endif
+//#if BANFF_BINS == 1
 static const PhysParamId_t kNuisBANFF22 = kNuis042; // # 22; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF23 = kNuis043; // # 23; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF24 = kNuis044; // # 24; different meanings depending on samples defined
 #endif
+
 static const PhysParamId_t kNuisBANFFMAQE    = kNuis045;  // # M_{A}  QE
 static const PhysParamId_t kNuisBANFFMARES   = kNuis046;  // # M_{A}  RES
 static const PhysParamId_t kNuisBANFFCCQEE0  = kNuis047;  // # CCQE   normalization; 0 - 1.5 GeV
@@ -305,12 +306,13 @@ static const PhysParamId_t kRHCNuisBANFF18 = kNuis148; // # 18; SK anti-nue (dif
 static const PhysParamId_t kRHCNuisBANFF19 = kNuis149; // # 19; SK anti-nu (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF20 = kNuis150; // # 20; SK anti-nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF21 = kNuis151; // # 21; SK anti-nue (different meanings depending on samples defined)
-#endif
-#if BANFF_BINS == 1
+//#endif
+//#if BANFF_BINS == 1
 static const PhysParamId_t kRHCNuisBANFF22 = kNuis152; // # 22; SK anti-nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF23 = kNuis153; // # 23; SK anti-nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF24 = kNuis154; // # 24; SK anti-nue (different meanings depending on samples defined)
 #endif
+
 static const PhysParamId_t kRHCNuisBANFFMAQE    = kNuis155;  // # M_{A}  QE
 static const PhysParamId_t kRHCNuisBANFFMARES   = kNuis156;  // # M_{A}  RES
 static const PhysParamId_t kRHCNuisBANFFCCQEE0  = kNuis157;  // # CCQE   normalization; 0 - 1.5 GeV

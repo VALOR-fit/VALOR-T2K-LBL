@@ -55,6 +55,11 @@ FitParamList * util::NamedParameterList(string name)
     util::AppendAllSystematicsTo(fp, 6);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
     return fp;
   }
   if(name == "nuosc3f_12constrain+escale") {
@@ -96,6 +101,11 @@ FitParamList * util::NamedParameterList(string name)
     fp -> SetNuisance (kPhypDm12sq,   true);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
     return fp;
   }
   if(name == "nuosc3f_12fix") {
@@ -114,16 +124,11 @@ FitParamList * util::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq  );
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
-    
     // NEW XSEC
-#if defined(__USE_NIWG2015__)
-    //#ifdef __FHC_RUNNING__
+    #if defined(__USE_NIWG2015__)
     fp -> FixParameter (kNuisXSecRPA ); 
-    //#endif
-    //#ifdef __RHC_RUNNING__    
-    //fp -> FixParameter (kRHCNuisXSecRPA );  // xsec syst are fully RHC-FHC correlated
-    //#endif
-#endif
+    #endif
+    //
     return fp;
    }
 
@@ -146,6 +151,11 @@ FitParamList * util::NamedParameterList(string name)
     fp -> FixParameter (kPhypCPV);
     fp -> SetParListName(name);
     fp -> SetSystMode(0);
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
     return fp;
   }
   
@@ -181,6 +191,11 @@ FitParamList * util::NamedParameterList(string name)
     fp -> FixParameter (kPhypCPV);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
     return fp;
   }
 
@@ -203,6 +218,11 @@ FitParamList * util::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
     return fp;
   }
 
@@ -261,6 +281,11 @@ FitParamList * util::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq);
     fp -> SetParListName(name);
     fp -> SetSystMode(5);//use future osc errors
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
     return fp;
   }
 
@@ -274,36 +299,41 @@ FitParamList * util::NamedParameterList(string name)
     fp -> SetNuisance  (kPhypDm12sq,   true);
     fp -> SetParListName(name);
     fp -> SetSystMode(6);//use current osc errors
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
     return fp;
   }
-    
-    if(name == "nuosc3f_dcpsensitivity_allsyst") {
-        FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
-        util::AppendAllSystematicsTo(fp, 6);
-	//        fp -> SetNuisance  (kPhypDm23sq,   true);
-	//        fp -> SetNuisance  (kPhypMixing13, true);
-        fp -> FixParameter (kPhypMixing12      );
-        fp -> FixParameter (kPhypDm12sq        );
-        //fp -> FixParameter (kPhypCPV);
-        fp -> SetParListName(name);
-        fp -> SetSystMode(1);//future oscillation
-        return fp;
-    }
-    
-    if(name == "nuosc3f_dcpsensitivity_HK") {
-        FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams + kNumOfParamsInBANFFfit);
-        AppendAllSuperkDetectorFSISystematics      (fp, 6);
-        AppendAllUncorrelatedXSecSystematics       (fp, 6 + kNumOfSKDetFSIParams+1);
-        AppendAllCorrelatedBANFFSystematics        (fp,6 + kNumOfSKDetFSIParams+1 + kNumOfUncXSecSyst);
-        AppendAllCorrelatedBANFFSystematicsRHC     (fp,6 + kNumOfSKDetFSIParams+1 + kNumOfUncXSecSyst + kNumOfParamsInBANFFfit);
-        fp -> SetNuisance  (kPhypMixing13, true);
-        fp -> FixParameter (kPhypMixing12      );
-        fp -> FixParameter (kPhypDm12sq        );
-        fp -> SetParListName(name);
-        fp -> SetSystMode(3);//RHC banff
-        return fp;
-    }
-    
+  
+  if(name == "nuosc3f_dcpsensitivity_allsyst") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 6);
+    //        fp -> SetNuisance  (kPhypDm23sq,   true);
+    //        fp -> SetNuisance  (kPhypMixing13, true);
+    fp -> FixParameter (kPhypMixing12      );
+    fp -> FixParameter (kPhypDm12sq        );
+    //fp -> FixParameter (kPhypCPV);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);//future oscillation
+    return fp;
+  }
+  
+  if(name == "nuosc3f_dcpsensitivity_HK") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams + kNumOfParamsInBANFFfit);
+    AppendAllSuperkDetectorFSISystematics      (fp, 6);
+    AppendAllUncorrelatedXSecSystematics       (fp, 6 + kNumOfSKDetFSIParams+1);
+    AppendAllCorrelatedBANFFSystematics        (fp,6 + kNumOfSKDetFSIParams+1 + kNumOfUncXSecSyst);
+    AppendAllCorrelatedBANFFSystematicsRHC     (fp,6 + kNumOfSKDetFSIParams+1 + kNumOfUncXSecSyst + kNumOfParamsInBANFFfit);
+    fp -> SetNuisance  (kPhypMixing13, true);
+    fp -> FixParameter (kPhypMixing12      );
+    fp -> FixParameter (kPhypDm12sq        );
+    fp -> SetParListName(name);
+    fp -> SetSystMode(3);//RHC banff
+    return fp;
+  }
+  
 
   if(name == "nuosc3fbar_numudisapp_constrainall") {
     FitParamList * fp = FitParamList::NuOsc3FlavourBarFit();
@@ -341,6 +371,13 @@ FitParamList * util::NamedParameterList(string name)
     
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
+
     return fp;
   }
   
@@ -380,6 +417,13 @@ FitParamList * util::NamedParameterList(string name)
     
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
+
     return fp;
   }
 
@@ -416,6 +460,11 @@ FitParamList * util::NamedParameterList(string name)
 
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
     return fp;
   }
   
@@ -633,7 +682,7 @@ void util::AppendUncorrelatedXSecSystematicsDisap(FitParamList * fparm, int star
 
 #elif defined(__USE_NIWG2015__)
   // NEW XSEC
-  fparm->AddParam( ip++, kNuisXSecRPA,           0., 0.,               1.,            , SYST_STEP,  false, true, AsString(kNuisXSecRPA) );
+  fparm->AddParam( ip++, kNuisXSecRPA,           0., 0.,               1.,             SYST_STEP,  false, true, AsString(kNuisXSecRPA) );
 #endif
 
 }
