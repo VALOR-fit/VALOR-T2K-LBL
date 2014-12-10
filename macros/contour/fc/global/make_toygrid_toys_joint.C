@@ -15,8 +15,11 @@ void make_toygrid_toys_joint
  const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",                      /* input XML file Run5-6 fakedata */ 
  //const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p051e21_A.xml",                      /* input XML file Run5-6 fakedata */ 
  
- //const char * tag = "NuOscBar_0p170e21_Asimov",                               
- const char * tag = "NuOscBar_0p170e21_fakedata_A",                               
+ //const char * tag = "NuOscBar_0p170e21_Asimov_IH",                               
+ //const char * tag = "NuOscBar_0p170e21_fakedata_F_IH",                               
+
+ //const char * tag = "NuOscBar_0p170e21_Asimov_NH",                               
+ const char * tag = "NuOscBar_0p170e21_fakedata_A_NH",                               
 
  int          run = 0,                                                    /* */
  int          first_experiment = 0,                                   /* */
@@ -62,21 +65,21 @@ void make_toygrid_toys_joint
  bool         reactor             = false,                    /* enable this if you want to apply the reactor constraint */
  double       tolerance           = 0.1,                      /* value for the fitter tolerance */
  
- const char * param1              = "mixing13",           /* 1st param, mixing23, dmsq, mixing13, deltacp, none */ 
- const char * param2              = "none",               /* 2nd param, mixing23, dmsq, mixing13, deltacp, none */ 
+ const char * param1              = "mixing23",           /* 1st param, mixing23, dmsq, mixing13, deltacp, none */ 
+ const char * param2              = "dmsq",               /* 2nd param, mixing23, dmsq, mixing13, deltacp, none */ 
  //const char * param3            = "mixing13",           /* 3rd param, mixing23, dmsq, mixing13, deltacp, none */ 
  //const char * param1            = "deltacp",            /* 1st param, mixing23, dmsq, mixing13, deltacp, none */ 
  //const char * param2            = "mixing13",           /* 2nd param, mixing23, dmsq, mixing13, deltacp, none */ 
  const char * param3              = "none",               /* 3rd param, mixing23, dmsq, mixing13, deltacp, none */  
  
  int  nbins_tot_param1            = 51,               /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
- int  nbins_tot_param2            = 1,               /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int  nbins_tot_param2            = 51,               /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int  nbins_tot_param3            = 1,                /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
 
  int  min_bin_param1          = 1,                    /* minimum bin for param1 */
  int  max_bin_param1          = 51,                   /* maximum bin for param1 */
  int  min_bin_param2          = 1,                    /* minimum bin for param2 */
- int  max_bin_param2          = 1,                   /* maximum bin for param2 */
+ int  max_bin_param2          = 51,                   /* maximum bin for param2 */
  int  min_bin_param3          = 1,                    /* minimum bin for param2 */
  int  max_bin_param3          = 1,                    /* maximum bin for param2 */
 
@@ -597,7 +600,9 @@ void make_toygrid_toys_joint
     // double dmsq_min = 2.0E-3;
     // double dmsq_max = 3.0E-3;
     // double dmsq_step = 0.05E-3;
+
     double dmsq_min = 2.0E-4;
+    //double dmsq_max = 4.0E-2;
     double dmsq_max = 2.0E-2;
     double dmsq_step = 0.1E-3;
     if(param1 == "dmsq")      dmsq_step = (dmsq_max-dmsq_min)/(nbins_tot_param1-1);
