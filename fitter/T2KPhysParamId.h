@@ -118,8 +118,11 @@ static const PhysParamId_t kNuisBANFFNC1pi0  = kNuis052; // # NC1pi0 normalizati
 static const PhysParamId_t kNuisBANFFMEC      = kNuis053;  // MEC normalization
 static const PhysParamId_t kNuisBANFFCA5      = kNuis054;  // CA5 RES 
 static const PhysParamId_t kNuisBANFFBgRES    = kNuis055;  // Isospin 1/2 normalization
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2)
 static const PhysParamId_t kNuisBANFFSCCA     = kNuis056;  // Second current axial
 static const PhysParamId_t kNuisBANFFSCCV     = kNuis057;  // Second current vector
+#endif
 static const PhysParamId_t kNuisBANFFFermiMom       = kNuis058;   // Fermi momentum
 static const PhysParamId_t kNuisBANFFShapeCCoth     = kNuis059;   // CC other shape
 static const PhysParamId_t kNuisBANFFBindE          = kNuis060;   // Binding energy
@@ -332,8 +335,11 @@ static const PhysParamId_t kRHCNuisBANFFNC1pi0  = kNuis162; // # NC1pi0 normaliz
 static const PhysParamId_t kRHCNuisBANFFMEC     = kNuis163;  // MEC normalization
 static const PhysParamId_t kRHCNuisBANFFCA5     = kNuis164;  // CA5 RES 
 static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis165;  // Isospin 1/2 normalization
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2)
 static const PhysParamId_t kRHCNuisBANFFSCCA    = kNuis166;  // Second current axial
 static const PhysParamId_t kRHCNuisBANFFSCCV    = kNuis167;  // Second current vector
+#endif
 static const PhysParamId_t kRHCNuisBANFFFermiMom       = kNuis168;   // Fermi momentum
 static const PhysParamId_t kRHCNuisBANFFShapeCCoth     = kNuis169;   // CC other shape
 static const PhysParamId_t kRHCNuisBANFFBindE          = kNuis170;   // Binding energy

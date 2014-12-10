@@ -557,8 +557,8 @@ double NuXSec::FinTuningWght_1p(
 // - NIWG2015 BANFF param, BgRES      normalization
 // - NIWG2015 BANFF param, M_{A} QE
 // - NIWG2015 BANFF param, M_{A} RES
-// - NIWG2015 BANFF param, SCCA      
-// - NIWG2015 BANFF param, SCCV      
+// - NIWG2015 BANFF param, SCCA (not for numu disappearance)      
+// - NIWG2015 BANFF param, SCCV (not for numu disappearance)     
 // - NIWG2015 BANFF param, Pf    
 // - NIWG2015 BANFF param, CCothShape
 // - NIWG2015 BANFF param, Eb 
@@ -613,8 +613,8 @@ cout <<
   // BANFF param, M_{A} QE
   // BANFF param, M_{A} RES
   // BANFF param, CA5    
-  // BANFF param, SCCA   
-  // BANFF param, SCCV    
+  // BANFF param, SCCA (not for numu disappearance)   
+  // BANFF param, SCCV (not for numu disappearance)   
   // BANFF param, Pf   
   // BANFF param, CCothShape
   // BANFF param, Eb 
@@ -623,8 +623,11 @@ cout <<
   if( p == kNuisBANFFMAQE         || 
       p == kNuisBANFFMARES        || 
       p == kNuisBANFFCA5          ||
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
       p == kNuisBANFFSCCA         ||
       p == kNuisBANFFSCCV         ||
+#endif
       p == kNuisBANFFFermiMom      ||
       p == kNuisBANFFShapeCCoth    ||
       p == kNuisBANFFBindE         ||
@@ -632,8 +635,11 @@ cout <<
       p == kRHCNuisBANFFMAQE      || 
       p == kRHCNuisBANFFMARES     ||
       p == kRHCNuisBANFFCA5       ||
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
       p == kRHCNuisBANFFSCCA      ||
       p == kRHCNuisBANFFSCCV      ||
+#endif
       p == kRHCNuisBANFFFermiMom   ||
       p == kRHCNuisBANFFShapeCCoth ||
       p == kRHCNuisBANFFBindE      
@@ -648,7 +654,19 @@ cout <<
         //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
       assert(wght_spl);
       // NEW XSEC
-      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisBANFFFermiMom || p == kRHCNuisBANFFShapeCCoth || p == kRHCNuisBANFFBindE || p == kRHCNuisBANFFCA5 || p == kRHCNuisBANFFSCCA || p == kRHCNuisBANFFSCCV) 
+      if(
+	 p == kRHCNuisBANFFMAQE       || 
+	 p == kRHCNuisBANFFMARES      || 
+	 p == kRHCNuisBANFFFermiMom   || 
+	 p == kRHCNuisBANFFShapeCCoth || 
+	 p == kRHCNuisBANFFBindE      || 
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
+	 p == kRHCNuisBANFFSCCA       || 
+	 p == kRHCNuisBANFFSCCV       ||
+#endif
+	 p == kRHCNuisBANFFCA5        
+	 ) 
 	tb = fBANFF->RHCBestFitValue(p);
       else
         tb = fBANFF->BestFitValue(p);
@@ -858,8 +876,8 @@ double NuXSec::SystWght_1p(
   // BANFF param, M_{A} QE
   // BANFF param, M_{A} RES
   // BANFF param, CA5 
-  // BANFF param, SCCA
-  // BANFF param, SCCV
+  // BANFF param, SCCA (not for numu disappearance)
+  // BANFF param, SCCV (not for numu disappearance)
   // BANFF param, Pf   
   // BANFF param, CCothShape
   // BANFF param, Eb 
@@ -867,8 +885,11 @@ double NuXSec::SystWght_1p(
   if( p == kNuisBANFFMAQE         || 
       p == kNuisBANFFMARES        || 
       p == kNuisBANFFCA5          ||
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
       p == kNuisBANFFSCCA         ||
       p == kNuisBANFFSCCV         ||
+#endif
       p == kNuisBANFFFermiMom      ||
       p == kNuisBANFFShapeCCoth    ||
       p == kNuisBANFFBindE         ||
@@ -876,8 +897,11 @@ double NuXSec::SystWght_1p(
       p == kRHCNuisBANFFMAQE      || 
       p == kRHCNuisBANFFMARES     ||
       p == kRHCNuisBANFFCA5       ||
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
       p == kRHCNuisBANFFSCCA      ||
       p == kRHCNuisBANFFSCCV      ||
+#endif
       p == kRHCNuisBANFFFermiMom   ||
       p == kRHCNuisBANFFShapeCCoth ||
       p == kRHCNuisBANFFBindE      
@@ -896,7 +920,19 @@ double NuXSec::SystWght_1p(
       if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
 #elif defined(__USE_NIWG2015__)
       // NEW XSEC
-      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES || p == kRHCNuisBANFFFermiMom || p == kRHCNuisBANFFShapeCCoth || p == kRHCNuisBANFFBindE || p == kRHCNuisBANFFCA5 || p == kRHCNuisBANFFSCCA || p == kRHCNuisBANFFSCCV) 
+      if(
+	 p == kRHCNuisBANFFMAQE       || 
+	 p == kRHCNuisBANFFMARES      || 
+	 p == kRHCNuisBANFFFermiMom   ||
+	 p == kRHCNuisBANFFShapeCCoth || 
+	 p == kRHCNuisBANFFBindE      || 
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
+	 p == kRHCNuisBANFFSCCA       || 
+	 p == kRHCNuisBANFFSCCV       ||
+#endif
+	 p == kRHCNuisBANFFCA5        
+	 ) 
 #endif
 	{
 	  tb = fBANFF->RHCBestFitValue(p);
@@ -1257,8 +1293,11 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   case kNuisBANFFMEC: 
   case kNuisBANFFCA5:
   case kNuisBANFFBgRES:
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)    
   case kNuisBANFFSCCA:
   case kNuisBANFFSCCV:
+#endif
     return fBANFF->CurrentValue(p);
     break;
     
@@ -1278,8 +1317,11 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   case kRHCNuisBANFFMEC: 
   case kRHCNuisBANFFCA5:
   case kRHCNuisBANFFBgRES:
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
   case kRHCNuisBANFFSCCA:
   case kRHCNuisBANFFSCCV:    
+#endif
     return fBANFF->RHCCurrentValue(p);
     break;
     

@@ -107,8 +107,11 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kNuisBANFFMEC            ) : return "BANFF; Norm; MEC";                    break;
     case ( kNuisBANFFCA5            ) : return "BANFF; CA5 RES";                      break;
     case ( kNuisBANFFBgRES          ) : return "BANFF; Norm; BgRES Isospin 1/2";      break;
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
     case ( kNuisBANFFSCCA           ) : return "BANFF; Second current class axial";   break;
     case ( kNuisBANFFSCCV           ) : return "BANFF; Second current class vector";  break; 
+#endif
     case ( kNuisBANFFFermiMom       ) : return "BANFF; Fermi Momentum";               break; // uncorrelated in the past
     case ( kNuisBANFFShapeCCoth     ) : return "BANFF; Shape; CC Oth";                break; // uncorrelated in the past
     case ( kNuisBANFFBindE          ) : return "BANFF; Binding energy";               break; // uncorrelated in the past
@@ -486,8 +489,11 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFMEC           ) : return "BANFF; Norm; MEC; RHC";                    break;
   case ( kRHCNuisBANFFCA5           ) : return "BANFF; CA5 RES; RHC";                      break;
   case ( kRHCNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";      break;
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFSCCA          ) : return "BANFF; Second current class axial; RHC";   break;
   case ( kRHCNuisBANFFSCCV          ) : return "BANFF; Second current class vector; RHC";  break;
+#endif
   case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";               break; // uncorrelated in the past
   case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                break; // uncorrelated in the past
   case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";               break; // uncorrelated in the past
@@ -1151,8 +1157,11 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFFMEC           ) : return "BANFF; Norm; MEC";                           break;
     case ( kNuisBANFFCA5           ) : return "BANFF; CA5 RES";                             break;
     case ( kNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2";             break;
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
     case ( kNuisBANFFSCCA          ) : return "BANFF; Second current class axial";          break;
     case ( kNuisBANFFSCCV          ) : return "BANFF; Second current class vector";         break;
+#endif
     case ( kNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum";                      break; // uncorrelated in the past
     case ( kNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth";                       break; // uncorrelated in the past
     case ( kNuisBANFFBindE         ) : return "BANFF; Binding energy";                      break; // uncorrelated in the past
@@ -1532,8 +1541,11 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisBANFFMEC           ) : return "BANFF; Norm; MEC; RHC";                           break;
     case ( kRHCNuisBANFFCA5           ) : return "BANFF; CA5 RES; RHC";                             break;
     case ( kRHCNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";             break;
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
     case ( kRHCNuisBANFFSCCA          ) : return "BANFF; Second current class axial; RHC";          break;
     case ( kRHCNuisBANFFSCCV          ) : return "BANFF; Second current class vector; RHC";         break;
+#endif
     case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";                      break; // uncorrelated in the past
     case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                       break; // uncorrelated in the past
     case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";                      break; // uncorrelated in the past
@@ -2387,8 +2399,11 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFFMEC               ) : return "f_banffmec";            break;
     case ( kNuisBANFFCA5               ) : return "f_banffca5";            break;
     case ( kNuisBANFFBgRES             ) : return "f_banffbgres";          break;
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
     case ( kNuisBANFFSCCA              ) : return "f_banffscca";           break;
     case ( kNuisBANFFSCCV              ) : return "f_banffsccv";           break;
+#endif
     case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi";         break; // uncorrelated in the past
     case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth";     break; // uncorrelated in the past
     case ( kNuisBANFFBindE             ) : return "f_banffbindE";          break; // uncorrelated in the past
@@ -2551,8 +2566,11 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisBANFFMEC               ) : return "f_banffmec_rhc";            break;
   case ( kRHCNuisBANFFCA5               ) : return "f_banffca5_rhc";            break;
   case ( kRHCNuisBANFFBgRES             ) : return "f_banffbgres_rhc";          break;
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFSCCA              ) : return "f_banffscca_rhc";           break;
   case ( kRHCNuisBANFFSCCV              ) : return "f_banffsccv_rhc";           break;
+#endif
   case ( kRHCNuisBANFFFermiMom          ) : return "f_banffpfermi_rhc";         break;
   case ( kRHCNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_rhc";     break;
   case ( kRHCNuisBANFFBindE             ) : return "f_banffbindE_rhc";          break;
@@ -3043,10 +3061,13 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
     return "$f_{C^{A}_{5}}^{banff}$";
   case ( kNuisBANFFBgRES ):
     return "$f_{Bg_{RES}}^{banff}$";
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
   case ( kNuisBANFFSCCA  ) :
     return "$f_{SCCA}^{banff}$";
   case ( kNuisBANFFSCCV  ) :
     return "$f_{SCCV}^{banff}$";
+#endif
   case ( kNuisBANFFFermiMom   ) :     // uncorrelated in the past
     return "$f_{p_{f}}^{banff}$";
   case ( kNuisBANFFShapeCCoth ) :     // uncorrelated in the past
@@ -3254,10 +3275,13 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
     return "$f_{C^{A}_{5}}^{banff} RHC$";
   case ( kRHCNuisBANFFBgRES ):
     return "$f_{Bg_{RES}}^{banff} RHC$";
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFSCCA  ) :
     return "$f_{SCCA}^{banff} RHC$";
   case ( kRHCNuisBANFFSCCV  ) :
     return "$f_{SCCV}^{banff} RHC$";
+#endif
   case ( kRHCNuisBANFFFermiMom   ) :     // uncorrelated in the past
     return "$f_{p_{f}}^{banff} RHC$";
   case ( kRHCNuisBANFFShapeCCoth ) :     // uncorrelated in the past
@@ -3590,8 +3614,11 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kRHCNuisBANFFMEC           ) : return "f_banffmec_rhc";            break; 
   case ( kRHCNuisBANFFCA5           ) : return "f_banffca5_rhc";            break;
   case ( kRHCNuisBANFFBgRES         ) : return "f_banffbgres_rhc";          break;
+    // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
   case ( kRHCNuisBANFFSCCA          ) : return "f_banffscca_rhc";           break;
   case ( kRHCNuisBANFFSCCV          ) : return "f_banffsccv_rhc";           break;
+#endif
   case ( kRHCNuisBANFFFermiMom      ) : return "f_banffpfermi_rhc";         break;    // uncorrelated in the past
   case ( kRHCNuisBANFFShapeCCoth    ) : return "f_banffshapeCCoth_rhc";     break;     // uncorrelated in the past
   case ( kRHCNuisBANFFBindE         ) : return "f_banffbindE_rhc";          break;    // uncorrelated in the past
@@ -3874,10 +3901,13 @@ bool valor::util::IsUsingSplines(PhysParamId_t p)
     return true;
   if(p == kNuisBANFFCA5 || p == kRHCNuisBANFFCA5)
     return true;
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
   if(p == kNuisBANFFSCCA || p == kRHCNuisBANFFSCCA)
     return true;
   if(p == kNuisBANFFSCCV || p == kRHCNuisBANFFSCCV)
     return true;
+#endif
   if(p == kNuisBANFFFermiMom || p == kRHCNuisBANFFFermiMom)
     return true;
   if(p == kNuisBANFFShapeCCoth || p == kRHCNuisBANFFShapeCCoth)
@@ -4073,12 +4103,15 @@ string valor::util::AsStringSpline(PhysParamId_t p)
     case ( kNuisBANFFBgRES            ) :
     case ( kRHCNuisBANFFBgRES         ) :
       return "bgscl";
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
     case ( kNuisBANFFSCCV             ) :
     case ( kRHCNuisBANFFSCCV             ) :
       return "sccvec";
     case ( kNuisBANFFSCCA             ) :
     case ( kRHCNuisBANFFSCCA             ) :
       return "sccaxl";
+#endif
     case ( kNuisBANFFFermiMom             ) :
     case ( kRHCNuisBANFFFermiMom             ) :
       return "pfo";
