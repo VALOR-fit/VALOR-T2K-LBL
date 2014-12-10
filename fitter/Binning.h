@@ -2545,8 +2545,7 @@ static const double kErecoBinEdgesMultiRe[kNErecoBinsMultiRe+1] =
 // mask = kBigIndex * xbin + ybin
 // ybin = mask % kBigIndex;
 // xbin = (mask-ybin)/kBigIndex;
-static const int kBigIndex = 1000000;
-
+static const int kBigIndex = 100000;
 
 //Number of cross-section weight splines
 static const int kNumOfXSecSystWghtSpl1Rmu = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBins1Rmu * kXsNEtrueBins;

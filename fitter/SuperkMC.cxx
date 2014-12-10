@@ -63,6 +63,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <climits>
 
 #include <TTree.h>
 #include <TH2D.h>
@@ -114,6 +115,10 @@ void SuperkMC::Init(void)
     int n_ereco_bins = kNErecoBins[is];
     int n_mc_etrue_bins = kMCNEtrueBins;//not sample dependent
     int n_xs_ereco_bins = kNXsErecoBins[is];
+    
+    assert(n_etrue_bins < conv::kBigIndex);
+    assert(n_ereco_bins < conv::kBigIndex);
+    assert( (long) n_ereco_bins * (long)conv::kBigIndex + (long)n_etrue_bins < INT_MAX);
     
     fMCVariableTemplArray   .push_back( VALORArray(knm, n_mc_etrue_bins, n_xs_ereco_bins) );
     fMCTemplArrayOri        .push_back( VALORArray(knm, n_etrue_bins   , n_ereco_bins   ) );
@@ -344,29 +349,29 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 #ifdef __show_init_mesg_info__
   // FHC
-  cout << "Exp/SKMC >> " << "POT {MC; numu}    = "    << fMCPOTNuMu       << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; numubar} = "    << fMCPOTNuMuBar    << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; nue}     = "    << fMCPOTNuE        << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; nuebar}  = "    << fMCPOTNuEBar     << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; osc_nue} = "    << fMCPOTOscNuE     << endl;
-  cout << "Exp/SKMC >> " << "POT {MC; osc_nuebar} = " << fMCPOTOscNuEBar  << endl;
+  cout << "Exp/SKMC >> " << "FHC POT {MC; numu}    = "    << fMCPOTNuMu       << endl;
+  cout << "Exp/SKMC >> " << "FHC POT {MC; numubar} = "    << fMCPOTNuMuBar    << endl;
+  cout << "Exp/SKMC >> " << "FHC POT {MC; nue}     = "    << fMCPOTNuE        << endl;
+  cout << "Exp/SKMC >> " << "FHC POT {MC; nuebar}  = "    << fMCPOTNuEBar     << endl;
+  cout << "Exp/SKMC >> " << "FHC POT {MC; osc_nue} = "    << fMCPOTOscNuE     << endl;
+  cout << "Exp/SKMC >> " << "FHC POT {MC; osc_nuebar} = " << fMCPOTOscNuEBar  << endl;
   
   // RHC
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; numu}    = "    << fMCPOTRHCNuMu       << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; numubar} = "    << fMCPOTRHCNuMuBar    << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; nue}     = "    << fMCPOTRHCNuE        << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; nuebar}  = "    << fMCPOTRHCNuEBar     << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nue} = "    << fMCPOTRHCOscNuE     << endl;
-  cout << "RHC: Exp/SKMC >> " << "POT {MC; osc_nuebar} = " << fMCPOTRHCOscNuEBar  << endl;
+  cout << "Exp/SKMC >> " << "RHC POT {MC; numu}    = "    << fMCPOTRHCNuMu       << endl;
+  cout << "Exp/SKMC >> " << "RHC POT {MC; numubar} = "    << fMCPOTRHCNuMuBar    << endl;
+  cout << "Exp/SKMC >> " << "RHC POT {MC; nue}     = "    << fMCPOTRHCNuE        << endl;
+  cout << "Exp/SKMC >> " << "RHC POT {MC; nuebar}  = "    << fMCPOTRHCNuEBar     << endl;
+  cout << "Exp/SKMC >> " << "RHC POT {MC; osc_nue} = "    << fMCPOTRHCOscNuE     << endl;
+  cout << "Exp/SKMC >> " << "RHC POT {MC; osc_nuebar} = " << fMCPOTRHCOscNuEBar  << endl;
 
   // NEW MULTIRING 
 #ifdef __MULTIRING_FHC_RUNNING__
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numu}       = " << fMCPOTMultiRingNuMu      << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; numubar}    = " << fMCPOTMultiRingNuMuBar   << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nue}        = " << fMCPOTMultiRingNuE       << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; nuebar}     = " << fMCPOTMultiRingNuEBar    << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; osc_nue}    = " << fMCPOTMultiRingOscNuE    << endl;
-  cout << "MultiRing: Exp/SKMC >> " << "POT {MC; osc_nuebar} = " << fMCPOTMultiRingOscNuEBar << endl;
+  cout << "Exp/SKMC >> " << "MultiRing: POT {MC; numu}       = " << fMCPOTMultiRingNuMu      << endl;
+  cout << "Exp/SKMC >> " << "MultiRing: POT {MC; numubar}    = " << fMCPOTMultiRingNuMuBar   << endl;
+  cout << "Exp/SKMC >> " << "MultiRing: POT {MC; nue}        = " << fMCPOTMultiRingNuE       << endl;
+  cout << "Exp/SKMC >> " << "MultiRing: POT {MC; nuebar}     = " << fMCPOTMultiRingNuEBar    << endl;
+  cout << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nue}    = " << fMCPOTMultiRingOscNuE    << endl;
+  cout << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nuebar} = " << fMCPOTMultiRingOscNuEBar << endl;
 #endif
   ////
 
