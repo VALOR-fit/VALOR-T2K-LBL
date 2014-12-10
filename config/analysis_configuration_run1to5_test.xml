@@ -8,15 +8,18 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   6.811e+20
   0.506e+20
-  -->
 
+  7.3e+20
+  1.7e+20 
+  -->
+ 
   <data_pot>
      <superk> 
        <fhc>
          7.3e+20
        </fhc>
        <rhc>
-         1.7e+20
+	 1.7e+20 
        </rhc>       
      </superk> 
   </data_pot>
@@ -378,71 +381,68 @@
    <!--                                       
 	Central values from BANFF fit                                        
    -->
-   <best_fit_values>
-     
+
+   <best_fit_values>     
      <!-- <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
-	  <objname>    postfit_params   </objname> -->
+	  <objname>    postfit_params   </objname> -->   
      <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
      <objname>    prelim_par_fhc   </objname>
+     <!-- <objname>    prelim_par_all   </objname> -->
      <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root   </filename>
-	  <objname>    prelim_par_all   </objname> -->
-     
+	  <objname>    prelim_par_all   </objname> -->    
      <objtype>    TVectorD         </objtype>
    </best_fit_values>
    <!--                                                                                                                      
 	Covariance of fit parameters                 
    -->
    <covariance_matrix>
-     
      <!-- <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
 	  <objname>    postfit_cov      </objname> --> 
      <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename> -->
      <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
      <objname>    prelim_cov_fhc      </objname>
-     
+     <!-- <objname>    prelim_cov_all      </objname> -->
      <objtype>    TMatrixD         </objtype>
    </covariance_matrix>
    
+
    <disap>
      <best_fit_values>
-       <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
-       <objname>    postfit_params   </objname>
+       <!-- <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
+       <objname>    postfit_params   </objname> -->
+       <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim_numudisap.root </filename>
+       <objname>    prelim_par_fhc   </objname>
        <objtype>    TVectorD         </objtype>
      </best_fit_values>
      <!--
          Covariance of fit parameters
-       -->
+     -->
      <covariance_matrix>
-       
-       <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
-       <objname>    postfit_cov   </objname>
-       <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename>
-	    <objname>    prelim_cov_fhc      </objname> -->
-       
+       <!-- <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
+       <objname>    postfit_cov   </objname> -->
+       <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim_numudisap.root </filename>
+       <objname>    prelim_cov_fhc      </objname>       
        <objtype>    TMatrixD         </objtype>
      </covariance_matrix>
    </disap>
    
+
    <app>
      <best_fit_values>
-
-       <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
-       <objname>    postfit_params   </objname>
        <!-- <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
-	    <objname>    postfit_params   </objname> -->
-
+       <objname>    postfit_params   </objname> -->
+       <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
+       <objname>    prelim_par_fhc   </objname>
        <objtype>    TVectorD         </objtype>
      </best_fit_values>
-     <!--                                                                                                                                                                          
-      Covariance of fit parameters                                                                                                                                              
-       -->
+     <!--           
+	  Covariance of fit parameters                          
+     -->
      <covariance_matrix>
-
-       <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
-       <objname>    postfit_cov      </objname>
-       <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename>
-	    <objname>    prelim_cov_fhc   </objname> -->
-       
+       <!-- <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
+       <objname>    postfit_cov      </objname> -->
+       <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
+       <objname>    prelim_cov_fhc   </objname>
        <objtype>    TMatrixD         </objtype>
      </covariance_matrix>
    </app>
