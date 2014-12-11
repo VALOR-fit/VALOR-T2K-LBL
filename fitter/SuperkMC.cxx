@@ -54,7 +54,7 @@
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
 #define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
 
-//#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
+#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
