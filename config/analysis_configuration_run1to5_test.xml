@@ -19,7 +19,7 @@
          6.811e+20
        </fhc>
        <rhc>
-         1.7e+20 
+         0.506e+20 
        </rhc>       
      </superk> 
   </data_pot>
@@ -36,22 +36,22 @@
        -->
        <tuned>
          <numu>
-            <filename>   official/2015/flux/sk_tuned13av1.0_11anom_run1-5b_fine.root </filename>
+            <filename>   official/2015/flux/sk_tuned13av1.0_13anom_run1-5b_fine.root </filename>
             <objname>    enu_sk_tuned13a_numu  </objname>
             <objtype>    TH1D                  </objtype>
          </numu>
          <numubar>
-            <filename>   official/2015/flux/sk_tuned13av1.0_11anom_run1-5b_fine.root </filename>
+            <filename>   official/2015/flux/sk_tuned13av1.0_13anom_run1-5b_fine.root </filename>
             <objname>    enu_sk_tuned13a_numub </objname>
             <objtype>    TH1D                  </objtype>
          </numubar>
          <nue>
-            <filename>   official/2015/flux/sk_tuned13av1.0_11anom_run1-5b_fine.root </filename>
+            <filename>   official/2015/flux/sk_tuned13av1.0_13anom_run1-5b_fine.root </filename>
             <objname>    enu_sk_tuned13a_nue   </objname>
             <objtype>    TH1D                  </objtype>
          </nue>
          <nuebar>
-            <filename>   official/2015/flux/sk_tuned13av1.0_11anom_run1-5b_fine.root </filename>
+            <filename>   official/2015/flux/sk_tuned13av1.0_13anom_run1-5b_fine.root </filename>
             <objname>    enu_sk_tuned13a_nueb  </objname>
             <objtype>    TH1D                  </objtype>
          </nuebar>
@@ -84,22 +84,22 @@
        
        <tuning_weights>
          <numu>
-            <filename>   official/2015/flux/sk_tuned13av1.0_11anom_run1-5b_fine.root </filename>
+            <filename>   official/2015/flux/sk_tuned13av1.0_13anom_run1-5b_fine.root </filename>
             <objname>    enu_sk_tuned13a_numu_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </numu>
          <numubar>
-            <filename>   official/2015/flux/sk_tuned13av1.0_11anom_run1-5b_fine.root </filename>
+            <filename>   official/2015/flux/sk_tuned13av1.0_13anom_run1-5b_fine.root </filename>
             <objname>    enu_sk_tuned13a_numub_ratio  </objname>
             <objtype>    TH1D                         </objtype>
          </numubar>
          <nue>
-            <filename>   official/2015/flux/sk_tuned13av1.0_11anom_run1-5b_fine.root </filename>
+            <filename>   official/2015/flux/sk_tuned13av1.0_13anom_run1-5b_fine.root </filename>
             <objname>    enu_sk_tuned13a_nue_ratio    </objname>
             <objtype>    TH1D                         </objtype>
          </nue>
          <nuebar>
-            <filename>   official/2015/flux/sk_tuned13av1.0_11anom_run1-5b_fine.root </filename>
+            <filename>   official/2015/flux/sk_tuned13av1.0_13anom_run1-5b_fine.root </filename>
             <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
             <objtype>    TH1D                         </objtype>
          </nuebar>
