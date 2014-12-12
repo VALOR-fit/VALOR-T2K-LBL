@@ -43,7 +43,7 @@ Split valor::conv namespace into several smaller files
 #endif
 
 // NEW SKDETFSI (either 2013 or 2015)
-#define __USE_SKDETFSI2015__
+//#define __USE_SKDETFSI2015__
 #ifndef __USE_SKDETFSI2015__
 #define __USE_SKDETFSI2013__
 #endif
