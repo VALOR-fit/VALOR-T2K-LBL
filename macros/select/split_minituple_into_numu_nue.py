@@ -32,7 +32,7 @@ scales_RHC["nuebar_x_nuebar"    ] = (   6.811 , 127013. )
 scales_RHC["numu_x_nue"         ] = ( 215.099 , 127278. )
 scales_RHC["numubar_x_nuebar"   ] = ( 376.420 , 126812. )
 
-orig_treename = "minituple"
+orig_treename = "mtuple"
 #______________________________________________________________________________________________________________________________
 
 def main(input_dir):
@@ -73,14 +73,16 @@ def main(input_dir):
   for typename,ourtype in types:
     
     appropriate_files = [f for f in files if typename in f]
-    assert(len(appropriate_files)==1)
+    print appropriate_files
+    #~ assert(len(appropriate_files)==1)
     
-    tf = ROOT.TFile(appropriate_files[0])
     ROOT.gROOT.cd()
-    in_tree = tf.Get(orig_treename)
+    in_tree = ROOT.TChain(orig_treename)
     assert(in_tree)
+    for fn in appropriate_files:
+      in_tree.AddFile(fn)
     
-    print "Reading "+ourtype+" from tree "+orig_treename+" in "+tf.GetName()
+    print "Reading "+ourtype+" from tree "+orig_treename+" in "+`appropriate_files`
     
     n_entries = in_tree.GetEntries()
     
@@ -132,7 +134,6 @@ def main(input_dir):
     trpi0.Write(out_tree_name)
     norm_hist.Write(out_hist_name)
     
-    tf.Close()
     print
     
   
