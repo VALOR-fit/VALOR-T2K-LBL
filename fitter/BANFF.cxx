@@ -564,6 +564,28 @@ void BANFF::SyncRHCToFHCSystematics()
   this->TweakRHC(true, fCurrentValues);
 }
 //________________________________________________________________________________________
+
+
+
+void BANFF::TweakSample(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+#ifdef __FHC_RUNNING__
+  this->Tweak(force_inputs, input_vec);
+#endif
+#ifdef __RHC_RUNNING__
+  this->TweakRHC(force_inputs, input_vec);
+#endif
+#ifdef __MULTIRING_FHC_RUNNING__
+  this->TweakFHCpRHC(force_inputs, input_vec);
+#endif
+}
+
+
+
+//________________________________________________________________________________________
 void BANFF::Tweak(
   bool       force_inputs, /* force the input params or generate random ones internally  */
   TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */

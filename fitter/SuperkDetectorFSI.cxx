@@ -370,7 +370,19 @@ bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_nod
 
 
 
-
+//________________________________________________________________________________________                                                                                    
+void SuperkDetectorFSI::TweakSampleEnergyScale(double twkdial)
+{
+#ifdef __FHC_RUNNING__  
+  this->TweakEnergyScale(twkdial);
+#endif
+#ifdef __RHC_RUNNING__
+  this->TweakRHCEnergyScale(twkdial);
+#endif
+#ifdef __MULTIRING_RUNNING__
+  this->TweakMultiRingEnergyScale(twkdial);
+#endif
+}
 //________________________________________________________________________________________                                                                                        
 void SuperkDetectorFSI::TweakEnergyScale(double twkdial)
 {
@@ -382,8 +394,6 @@ void SuperkDetectorFSI::TweakRHCEnergyScale(double twkdial)
   fRHCEnergyScaleTwkDial = twkdial;
 }
 //________________________________________________________________________________________
-
-
 /// NEW MULTIRING 3
 void SuperkDetectorFSI::TweakMultiRingEnergyScale(double twkdial)
 {
@@ -681,6 +691,22 @@ void SuperkDetectorFSI::SyncMultiRingToFHCSystematics()
 
 
 
+//________________________________________________________________________________________
+void SuperkDetectorFSI::TweakSample(
+  bool       force_inputs,    /* force the input params or generate random ones internally  */
+  TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
+)
+{
+#ifdef __FHC_RUNNING__  
+  this->Tweak(force_inputs,input_skdetfsi_params);
+#endif
+#ifdef __RHC_RUNNING__
+  this->TweakRHC(force_inputs,input_skdetfsi_params);
+#endif
+#ifdef __MULTIRING_RUNNING__
+  this->TweakMultiRing(force_inputs,input_skdetfsi_params);
+#endif
+}
 
 //________________________________________________________________________________________
 void SuperkDetectorFSI::Tweak(

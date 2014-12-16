@@ -588,6 +588,7 @@ void SuperkExpectation::TweakSystematic(string systematic, double twkdial, Optio
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial, bool best_banff)
 {
+
 #ifdef __show_syst_tweak_mesg__
   cout << "Exp >> Setting systematic parameter: " << systematic 
        << " to value = " << twkdial << endl;
@@ -596,11 +597,13 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
  {
     PhysParamId_t p = util::PhysParamIdFromString(systematic);
     if (p!=kPhypUndefined) {
+
+      cout << util::AsString(p) << endl;
       if(best_banff) this->TweakSystematic(p, twkdial,"best_banff");
       else this->TweakSystematic(p, twkdial);
       return;
     }
-  }
+ }
   
 //
 // Valid systematic parameter names:
@@ -795,6 +798,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
       if(!best_banff) {
         for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
       }
+
       PhysParamId_t p = util::PhysParamIdFromString(systematic);
       int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
       if(ip < 0) {
@@ -802,6 +806,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
         exit(1);
       }
       twkv[ip] = twkdial;
+
 #ifdef __show_syst_tweak_debug__
       cout << "Exp >> Tweaking systematic string: " << systematic
            << ", NuisParam: " << util::AsString(p)
@@ -1071,6 +1076,9 @@ void SuperkExpectation::RandomizeSystematics(void)
   // NEW FLUX
   
   // common to all the samples
+  this->TweakAllUncorrelatedXSecSystematics();  // NEW XSEC NIWG
+  this->GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
+
 #ifdef __FHC_RUNNING__
   this->TweakAllBANFFSystematics();
   this->TweakAllSKDetectorFSISystematics();
@@ -1080,12 +1088,12 @@ void SuperkExpectation::RandomizeSystematics(void)
 #ifdef __RHC_RUNNING__   /// NEW MULTIRING 3
   #if defined(__FULLY_CORRELATED__) && defined(__FHC_RUNNING__) // RHC && FHC fully correlated
   this->GetBANFF() ->SyncRHCToFHCSystematics();
-  this->GetNuXSec()->SyncRHCToFHCSystematics();
+  //this->GetNuXSec()->SyncRHCToFHCSystematics();
   this->GetSuperkDetectorFSI()->SyncRHCToFHCSystematics();   
   #else
   this->TweakAllRHCBANFFSystematics();
-  this->TweakAllUncorrelatedXSecSystematics();  // NEW XSEC
-  this->GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
+  //this->TweakAllUncorrelatedXSecSystematics();  // NEW XSEC
+  //this->GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
   this->TweakAllRHCSKDetectorFSISystematics();
 
   //#ifdef __BANFF_UNCORRELATED__
@@ -1106,6 +1114,23 @@ void SuperkExpectation::RandomizeSystematics(void)
 #endif
   ///
 }
+
+
+
+
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllSampleBANFFSystematics(void)
+{
+#ifdef __FHC_RUNNING__
+  this->TweakAllBANFFSystematics();
+#endif
+#ifdef __RHC_RUNNING__
+  this->TweakAllRHCBANFFSystematics();
+#endif
+#ifdef __MULTIRING_RUNNING__
+  this->TweakAllMultiRingBANFFSystematics();
+#endif
+}
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllRHCBANFFSystematics(void)
 {
@@ -1124,6 +1149,20 @@ void SuperkExpectation::TweakAllBANFFSystematics(void)
 #endif
     // BANFF
     this->GetBANFF()->Tweak(false,0); // <-- Cholesky method
+}
+
+//________________________________________________________________________________________
+void SuperkExpectation::TweakAllSampleSKDetectorFSISystematics(void)
+{
+#ifdef __FHC_RUNNING__
+  this->TweakAllSKDetectorFSISystematics();
+#endif
+#ifdef __RHC_RUNNING__
+  this->TweakAllRHCSKDetectorFSISystematics();
+#endif
+#ifdef __MULTIRING_RUNNING__
+  this->TweakAllMultiRingSKDetectorFSISystematics();
+#endif
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)

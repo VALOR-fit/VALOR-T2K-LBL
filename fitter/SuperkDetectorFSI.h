@@ -48,41 +48,34 @@ public:
 
   // Tweak FSI params (either force the input params or generate correlated params using the Cholesky method)
   void TweakEnergyScale                    (double twkdial);
-  void TweakRHCEnergyScale                    (double twkdial);
-  /// NEW MULTIRING 3
-  void TweakMultiRingEnergyScale                    (double twkdial);
-  ///
+  void TweakRHCEnergyScale                 (double twkdial);
+  void TweakMultiRingEnergyScale           (double twkdial); /// NEW MULTIRING 3
+  void TweakSampleEnergyScale              (double twkdial); 
+
   void Tweak (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakRHC (bool force_inputs = false, TVectorD * input_params = 0);
-  /// NEW MULTIRING 2
-  void TweakMultiRing (bool force_inputs = false, TVectorD * input_params = 0);
-  ///
+  void TweakMultiRing (bool force_inputs = false, TVectorD * input_params = 0);  /// NEW MULTIRING 2
+  void TweakSample (bool force_inputs = false, TVectorD * input_params = 0); 
+  
   void TweakOnly1Rmu (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakOnlyRHC1Rmu (bool force_inputs = false, TVectorD * input_params = 0);
-  /// NEW MULTIRING 2
-  void TweakOnlyMultiRmu (bool force_inputs = false, TVectorD * input_params = 0);
-  ///
+  void TweakOnlyMultiRmu (bool force_inputs = false, TVectorD * input_params = 0); /// NEW MULTIRING 2
+  
   void TweakOnly1Re (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakOnlyRHC1Re (bool force_inputs = false, TVectorD * input_params = 0);
-  /// NEW MULTIRING 2
-  void TweakOnlyMultiRe (bool force_inputs = false, TVectorD * input_params = 0);
-  ///
+  void TweakOnlyMultiRe (bool force_inputs = false, TVectorD * input_params = 0); /// NEW MULTIRING 2
+ 
   void SyncRHCToFHCSystematics();
-  /// NEW MULTIRING 2
-  void SyncMultiRingToFHCSystematics();
-  ///
+  void SyncMultiRingToFHCSystematics(); /// NEW MULTIRING 2
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
   double RHCCurrentValue (conv::PhysParamId_t p) const;
-  /// NEW MULTIRING 2
-  double MultiRingCurrentValue (conv::PhysParamId_t p) const;
-  ///
+  double MultiRingCurrentValue (conv::PhysParamId_t p) const; /// NEW MULTIRING 2
+  
   double OneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
   double RHCOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
-  /// NEW MULTIRING 2
-  double MultiRingOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
-  ///
+  double MultiRingOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix   /// NEW MULTIRING 2
 
   // Get input FSI covariance matrix and its Cholesky decomposition
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }

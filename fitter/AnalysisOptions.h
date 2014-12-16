@@ -37,7 +37,7 @@ Split valor::conv namespace into several smaller files
 #endif
 
 // NEW XSEC (either niwg2013 or niwg2015)
-#define __USE_NIWG2015__
+//#define __USE_NIWG2015__
 #ifndef __USE_NIWG2015__
 #define __USE_NIWG2013__
 #endif
@@ -138,7 +138,9 @@ Split valor::conv namespace into several smaller files
 
 #ifndef ERECO_BINS_1RMU
 //#define ERECO_BINS_1RMU 1 // 50 MeV binning 0-30 GeV
+
 #define ERECO_BINS_1RMU 2 // DEFAULT 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins)
+
 //#define ERECO_BINS_1RMU 4 //Same as Linda's binning scheme
 //#define ERECO_BINS_1RMU 3 // 41 bins, same as ERECO_XSEC_BINS_1RMU 1
 #endif
