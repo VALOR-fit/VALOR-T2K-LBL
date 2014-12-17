@@ -95,15 +95,18 @@ public:
   void Tweak             (bool force_inputs = false, TVectorD * input_vec = 0); 
   void TweakRHC          (bool force_inputs = false, TVectorD * input_vec = 0);  
   void TweakFHCpRHC      (bool force_inputs = false, TVectorD * input_vec = 0); // NEW FLUX FHC+RHC
-
   void TweakSample       (bool force_inputs = false, TVectorD * input_vec = 0);   
 
-  void TweakFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0);
-  void TweakRHCFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0); 
+  void TweakFluxOnly        (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakRHCFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0); 
+  void TweakFHCpRHCFluxOnly (bool force_inputs = false, TVectorD * input_vec = 0); // NEW FLUX FHC+RHC
+  void TweakSampleFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
 
-  // NEW FLUX FHC+RHC
-  void TweakFHCpRHCFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0); 
-  //
+  void TweakXSecOnly        (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakRHCXSecOnly     (bool force_inputs = false, TVectorD * input_vec = 0); 
+  void TweakFHCpRHCXSecOnly (bool force_inputs = false, TVectorD * input_vec = 0); // NEW FLUX FHC+RHC
+  void TweakSampleXSecOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
+    
 
   void SyncRHCToFHCSystematics();
 
