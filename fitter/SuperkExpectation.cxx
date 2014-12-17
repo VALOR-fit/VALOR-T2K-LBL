@@ -594,11 +594,13 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
        << " to value = " << twkdial << endl;
 #endif
 
+ cout << "CIAO" << endl;
+
  {
     PhysParamId_t p = util::PhysParamIdFromString(systematic);
     if (p!=kPhypUndefined) {
 
-      cout << util::AsString(p) << endl;
+      //cout << util::AsString(p) << endl;
       if(best_banff) this->TweakSystematic(p, twkdial,"best_banff");
       else this->TweakSystematic(p, twkdial);
       return;
@@ -828,9 +830,13 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 
 #if defined(__USE_NIWG2013__)
 
-    else if(systematic == "pfermi")
-      this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , twkdial);
-    else if(systematic == "specfunc")
+  else if(systematic == "pfermi"){
+      
+    cout << "CIAO 2" << endl;
+    this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , twkdial);
+      
+  }
+  else if(systematic == "specfunc")
       this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , twkdial);
     else if(systematic == "wshape")
       this->GetNuXSec()->Tweak(kNuisXSecWshape        , twkdial);
@@ -911,6 +917,10 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 //________________________________________________________________________________________
 void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, Option_t * opt)
 {
+
+  cout << "SuperkExpectation::TweakSystematic(p) 1" << endl;
+
+      
 #ifdef __show_syst_tweak_mesg__
   cout << "Exp >> Setting systematic parameter: " << util::AsString(p) 
        << " to value = " << twkdial << endl;
@@ -940,13 +950,6 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
     bool is_fhc = util::IsFHCSystematic(p);
     bool is_multiring = util::IsMultiRingSystematic(p);
     ///
-
-    // // OLD
-    // int nskdetfsi = 0;
-    // if(is_rhc)
-    //   nskdetfsi = conv::kNumOfRHCSKDetFSIParams;
-    // else 
-    //   nskdetfsi = conv::kNumOfSKDetFSIParams;
   
     /// NEW MULTIRING 2
     int nskdetfsi = 0;
