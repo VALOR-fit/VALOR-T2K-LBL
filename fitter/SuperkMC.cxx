@@ -56,6 +56,9 @@
 
 #define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
+//#define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
+#define USE_RPA_NONREL      // use the wgtRPA_nr weight in the trees
+
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
 #include <cassert>
@@ -204,6 +207,11 @@ void SuperkMC::Init(void)
 
   fBrEreco             = 0;
   fBrGenCode           = 0;
+  fBrWghtFlx           = 1;
+  fBrWghtSFRFG         = 1;
+  fBrWghtRPArel        = 1;
+  fBrWghtRPAnonrel     = 1;
+  
   
   fNuFlux              = 0;
   fNuXSec              = 0;  
@@ -579,59 +587,84 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
      exit(1);
   }
   
-  const char * erec_branch      = "erec";
-  const char * etrue_branch     = "pnu";
-  const char * mode_branch      = "mode";
-  const char * flux_wght_branch = "wgtflx";
+  const char * erec_branch          = "erec";
+  const char * etrue_branch         = "pnu";
+  const char * mode_branch          = "mode";
+  const char * flux_wght_branch     = "wgtflx";
+  const char * rpa_nrel_wght_branch = "wgtRPA_nr";
+  const char * rpa_rel_wght_branch  = "wgtRPA_r";
+  const char * sf_rfg_wght_branch   = "wgtsfrfg";
   //~ const char * flux_wght_branch = "wgt";
 
   TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
   TBranch * branchEtrue   = mctree->GetBranch(etrue_branch     );
   TBranch * branchGenCode = mctree->GetBranch(mode_branch      );
-  TBranch * branchWght    = mctree->GetBranch(flux_wght_branch );
+  TBranch * branchWghtFlx = mctree->GetBranch(flux_wght_branch );
   
-  branchEreco   -> SetAddress(&fBrEreco);
-  branchEtrue   -> SetAddress(&fBrPtrue);
-  branchGenCode -> SetAddress(&fBrGenCode);
-  branchWght    -> SetAddress(&fBrWght);  
+  branchEreco    -> SetAddress(&fBrEreco);
+  branchEtrue    -> SetAddress(&fBrPtrue);
+  branchGenCode  -> SetAddress(&fBrGenCode);
+  branchWghtFlx  -> SetAddress(&fBrWghtFlx);  
 
   mctree->SetBranchStatus("*",0);
   mctree->SetBranchStatus(erec_branch      , 1 );
   mctree->SetBranchStatus(etrue_branch     , 1 );
   mctree->SetBranchStatus(mode_branch      , 1 );
   mctree->SetBranchStatus(flux_wght_branch , 1 );
+  
+#ifdef USE_SFRFG_WEIGHT
+  TBranch * branchSfRfg   = mctree->GetBranch(sf_rfg_wght_branch);
+  mctree->SetBranchStatus(sf_rfg_wght_branch , 1 );
+  branchSfRfg->SetAddress(&fBrWghtSFRFG);  
+#endif
+#ifdef USE_RPA_NONREL
+  TBranch * branchRPAnr   = mctree->GetBranch(rpa_nrel_wght_branch);
+  mctree->SetBranchStatus(rpa_nrel_wght_branch , 1 );
+  branchRPAnr->SetAddress(&fBrWghtRPAnonrel);  
+  
+  TBranch * branchRPAr   = mctree->GetBranch(rpa_rel_wght_branch);
+  mctree->SetBranchStatus(rpa_rel_wght_branch , 1 );
+  branchRPAr->SetAddress(&fBrWghtRPArel);  
+#endif
 
   for(int iev = 0; iev < mctree->GetEntries(); iev++) 
   {
-     mctree->GetEntry(iev);
+    mctree->GetEntry(iev);
+    
+    if(fBrEreco<0) continue;
+    
+    // use current entry for mode m template?
+    bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
+    if(!use_it) continue;
 
-     if(fBrEreco<0) continue;
-     
-     // use current entry for mode m template?
-     bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
-     if(!use_it) continue;
-
-     double ereco_fill = fBrEreco/1000.;
-     
-     double Etrue = fBrPtrue[0];
-     
-     //if(util::IsRHCSample(s))
+    double ereco_fill = fBrEreco/1000.;
+    
+    double Etrue = fBrPtrue[0];
+    
+    //if(util::IsRHCSample(s))
 #ifdef USE_FLUX_EXT_WEIGHT
-     fBrWght = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
+    fBrWghtFlx = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
+#endif
+
+#ifdef FLUXWEIGHTSAREONE
+    fBrWghtFlx = 1.;
 #endif
      
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
-     ereco_fill = TMath::Min(29.9, ereco_fill);
+    ereco_fill = TMath::Min(29.9, ereco_fill);
 #endif
-     this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, Etrue);
-     fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, Etrue);
-#ifndef FLUXWEIGHTSAREONE
-     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, fBrWght * pot_wght);
-     
-#else
-     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_wght);
-#endif//FLUXWEIGHTSAREONE
-     
+    this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, Etrue);
+    fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, Etrue);
+    
+    double total_weight = pot_wght * fBrWghtFlx * fBrWghtSFRFG;
+#ifdef USE_RPA_NONREL
+    total_weight *= fBrWghtRPAnonrel;
+#endif
+    
+    // Actually fill the template
+    this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, total_weight);
+    
+    
 #ifdef __show_init_mesg_debug__
      if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
        cout << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue 

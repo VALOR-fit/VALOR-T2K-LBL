@@ -230,9 +230,13 @@ private:
   double     fBrEreco;                     ///< branch var for reading input MC mini-DST
   //~ double     fBrEtrue;                     ///< branch var for reading input MC mini-DST
   int        fBrGenCode;                   ///< branch var for reading input MC mini-DST
-  double     fBrWght;                      ///< branch var for reading input MC mini-DST
-  float      fBrWght1Re;                      ///< branch var for reading input MC mini-DST
-  int        fBrEvFlag;                      ///< branch var for reading input MC mini-DST
+  //~ double     fBrWght;                      ///< branch var for reading input MC mini-DST
+  //~ float      fBrWght1Re;                   ///< branch var for reading input MC mini-DST
+  double     fBrWghtFlx;                   ///< branch var for reading input MC mini-DST
+  double     fBrWghtSFRFG;                 ///< branch var for reading input MC mini-DST
+  double     fBrWghtRPArel;                ///< branch var for reading input MC mini-DST
+  double     fBrWghtRPAnonrel;             ///< branch var for reading input MC mini-DST
+  int        fBrEvFlag;                    ///< branch var for reading input MC mini-DST
   
   static const int kMaxVarBins = 1000;
   
