@@ -73,7 +73,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_dm23sq       = -99,                                         /* */
   bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
   const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
-  const int    nexp               = 1,                                           /* number of experiments to make */
+  const int    nexp               = 500,                                           /* number of experiments to make */
   const char * mixparamchoice     = "sinsqtheta",
   const char * hierarchy          = "normal"
 )
@@ -95,7 +95,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
-
+    string sample_name = util::AsStringCompact(s);
+    const char * sname = sample_name.c_str();
   //Check if the mode is valid
   string modetitle = "";
   switch(mode) {
@@ -248,11 +249,12 @@ void test_sk_ereco_spectrum_twk_sys_throw
   //
   SuperkObservation skobs;
   
-  // Output histograms
-  TH1D * hErecoNominal = 0;
-  TH1D * hEreco[nexp] = {0};
-  TH1D * hNsk = new TH1D(Form("%s_nsk",modetitle.c_str()),Form("%s_nsk",modetitle.c_str()),10000,0,1000);
-  int nbanff = conv::kNumOfParamsInBANFFfit;
+  
+    // Output histograms
+    TH1D * hErecoNominal = 0;
+    TH1D * hEreco[nexp] = {0};
+    TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),10000,0,1000);
+    int nbanff = conv::kNumOfParamsInBANFFfit;
   
   int nfsi = conv::kNumOfSKDetFSIParams;
   const int nsys = nbanff + nfsi + 8 + 13;
@@ -308,22 +310,23 @@ void test_sk_ereco_spectrum_twk_sys_throw
           sysstr = ""; break;
       }//switch(isys2)
     }//isys>=nbanff+nfsi
-    hSysThrown[isys] = new TH1D(Form("%s_tweak_throws_%s",modetitle.c_str(),sysstr.c_str()),Form("%s_tweak_throws_%s",modetitle.c_str(),sysstr.c_str()),1000,-5,5);
+      string hname(Form("%s_%s_tweak_throws_%s",sname,modetitle.c_str(),sysstr.c_str()));
+      hSysThrown[isys] = new TH1D(hname.c_str(),hname.c_str(),1000,-5,5);
     hSysThrown[isys]->SetDirectory(0);
   }
 
-  // Open output files
-  string rootmode = "update";
-  if(!update_rootfile)
-    rootmode = "recreate";
-  string oscparams = util::AsString(ph.Hypothesis(),
-     input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-  TFile f(Form("sk_ereco_spectrum-twk_sys_throw_%s.root",oscparams.c_str()),rootmode.c_str());
+    // Open output files
+    string rootmode = "update";
+    if(!update_rootfile)
+      rootmode = "recreate";
+    string oscparams = util::AsString(ph.Hypothesis(),
+       input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+    TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
 
-  if(!update_rootfile)
-    ofstream outfile(Form("sk_ereco_spectrum-twk_sys_throw_%s.txt",oscparams.c_str()),ios_base::trunc);
-  else
-    ofstream outfile(Form("sk_ereco_spectrum-twk_sys_throw_%s.txt",oscparams.c_str()),ios_base::app);
+    if(!update_rootfile)
+      ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::trunc);
+    else
+      ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::app);
 
   //remove the [] so can use it in SaveAs
   while(oscparams.find_first_of("[]") != string::npos) {
@@ -341,10 +344,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoNominal->GetYaxis()->SetTitle("Events per bin");
   hErecoNominal->SetLineWidth(2);
   if(!update_rootfile)
-    hErecoNominal->Write("nominal");
+    hErecoNominal->Write("%s_nominal",sname);
     
   TH1D * hErecoNominal_per50MeV = spectrum_to_per_50mev(hErecoNominal);
-  hErecoNominal_per50MeV->Write("nominal_per_50MeV");
+  hErecoNominal_per50MeV->Write(Form("%s_nominal_per_50MeV",sname));
 
   TStopwatch w;
   w.Start();
@@ -519,13 +522,13 @@ void test_sk_ereco_spectrum_twk_sys_throw
     }
 
     hEreco[iexp]->SetDirectory(0);
-    hEreco[iexp]->SetTitle(Form("%s_exp%d",modetitle.c_str(),iexp));
+    hEreco[iexp]->SetTitle(Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));
     if(save_toy_expts)
-      hEreco[iexp]->Write(Form("%s_exp%d",modetitle.c_str(),iexp));                    
+      hEreco[iexp]->Write(Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));                    
 
     //store Nsk
     double nskint = 0;
-    for(int ir = 1; ir <= conv::kNErecoBins1Rmu; ir++)
+    for(int ir = 1; ir <= util::NumErecoBins(s); ir++)
       if(mode != 999)
         nskint += skexp.CurrPredictedErecoSpectrumArray(s)[ir-1];
       else
@@ -576,7 +579,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMinEnv = new TH1D(*hErecoNominal);
   hErecoMaxEnv->SetDirectory(0);
   hErecoMinEnv->SetDirectory(0);
-  for(int ibin=1; ibin <= conv::kNErecoBins1Rmu; ibin++) {
+  for(int ibin=1; ibin <= util::NumErecoBins(s); ibin++) {
     double nom   = hErecoNominal->GetBinContent(ibin);
     double sumsq = 0;
     for(int iexp = 0; iexp < nexp; iexp++) {
@@ -595,19 +598,19 @@ void test_sk_ereco_spectrum_twk_sys_throw
       hErecoMinEnv -> SetBinContent (ibin,  min);
     }
   }//ibin
-  hErecoMax->Write(Form("%s_pluserr",modetitle.c_str()));
-  hErecoMin->Write(Form("%s_minuserr",modetitle.c_str()));
-  hErecoMaxEnv->Write(Form("%s_envpluserr",modetitle.c_str()));
-  hErecoMinEnv->Write(Form("%s_envminuserr",modetitle.c_str()));
+  hErecoMax   ->Write(Form("%s_%s_pluserr" ,sname,modetitle.c_str()));
+  hErecoMin   ->Write(Form("%s_%s_minuserr",sname,modetitle.c_str()));
+  hErecoMaxEnv->Write(Form("%s_envpluserr" ,sname,modetitle.c_str()));
+  hErecoMinEnv->Write(Form("%s_envminuserr",sname,modetitle.c_str()));
 
   //Draw & save
   TCanvas * c = new TCanvas();
   hNsk->Draw();
-  c->SaveAs(Form("%s_nsk_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_%s_nsk_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   hErecoMax->Draw();
-  c->SaveAs(Form("%s_pluserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_%s_pluserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   hErecoMin->Draw();
-  c->SaveAs(Form("%s_minuserr_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_%s_minuserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   hErecoMaxEnv->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
   hErecoMaxEnv->SetLineStyle(2);
   hErecoMinEnv->SetLineStyle(2);
@@ -616,7 +619,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMaxEnv->Draw();
   hErecoMinEnv->Draw("same");
   hErecoNominal->Draw("same");
-  c->SaveAs(Form("%s_envelope_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_%s_envelope_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
   TH1D * hErecoMaxEnv_per50MeV = spectrum_to_per_50mev(hErecoMaxEnv);
   TH1D * hErecoMinEnv_per50MeV = spectrum_to_per_50mev(hErecoMinEnv);
@@ -625,7 +628,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMaxEnv_per50MeV->Draw();
   hErecoMinEnv_per50MeV->Draw("same");
   hErecoNominal_per50MeV->Draw("same");
-  c->SaveAs(Form("%s_envelope_per_50MeV_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
 
   TCanvas * csys = new TCanvas();
@@ -635,7 +638,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hSysThrown[isys]->Draw();
     cout << isys << "\t" << hSysThrown[isys]->GetTitle() << endl;
   }
-  csys->SaveAs(Form("%s_throws_%s.eps",modetitle.c_str(),oscparams.c_str()));
+  csys->SaveAs(Form("%s_%s_throws_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   delete c;
   delete csys;
 
