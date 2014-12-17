@@ -61,7 +61,7 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw
 (
-  int          mode               = 999,                                           /* options: see above */
+  int          mode               = 0,                                           /* options: see above */
   bool         update_rootfile    = true,                                        /* "update" ROOT output file? If false, will "recreate" */
   const char * sk_sample            = "RHC1Rmu",                                 /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
   const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
@@ -73,13 +73,18 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_dm23sq       = -99,                                         /* */
   bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
   const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
-  const int    nexp               = 500,                                           /* number of experiments to make */
+  const int    nexp               = 50,                                           /* number of experiments to make */
   const char * mixparamchoice     = "sinsqtheta",
   const char * hierarchy          = "normal"
 )
 {
   using namespace std;
   using namespace valor;
+
+  bool RHCFlag = false;
+  TString str_sk_sample(sk_sample);
+  if(str_sk_sample.Contains("RHC"))
+    RHCFlag = true;
 
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {
@@ -250,14 +255,34 @@ void test_sk_ereco_spectrum_twk_sys_throw
   SuperkObservation skobs;
   
   
-    // Output histograms
-    TH1D * hErecoNominal = 0;
-    TH1D * hEreco[nexp] = {0};
-    TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),10000,0,1000);
-    int nbanff = conv::kNumOfParamsInBANFFfit;
+  // Output histograms
+  TH1D * hErecoNominal = 0;
+  TH1D * hEreco[nexp] = {0};
+  TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),10000,0,1000);
   
-  int nfsi = conv::kNumOfSKDetFSIParams;
+  
+  int nbanff;
+  if(RHCFlag) nbanff = conv::kNumOfRHCParamsInBANFFfit;
+  else        nbanff = conv::kNumOfParamsInBANFFfit;
+  
+  int nfsi;
+  if(RHCFlag) nfsi = conv::kNumOfRHCSKDetFSIParams;
+  else        nfsi = conv::kNumOfRHCSKDetFSIParams;
+
+  int nxsecuncorr;
+  if(RHCFlag) nxsecuncorr = conv::kNumOfRHCXSecSyst;
+  else        nxsecuncorr = conv::kNumOfXSecSyst;
+
   const int nsys = nbanff + nfsi + 8 + 13;
+
+
+  // cout << "nbanff = " << nbanff << endl;
+  // cout << "nfsi = " << nfsi << endl;
+  // cout << "nxsecuncorr = " << nxsecuncorr << endl;
+
+  // return;
+
+  
   TH1D * hSysThrown[nsys];
   for(int isys = 0; isys < nsys; isys++) {
     string sysstr = "";
@@ -270,41 +295,41 @@ void test_sk_ereco_spectrum_twk_sys_throw
       switch(isys2) {
         case(0) :
           sysstr = "sk_e_scale"; break;
+        // case(1) :
+        //   sysstr = "sk_ccqe_rc_eff_0"; break;
+        // case(2) :
+        //   sysstr = "sk_ccqe_rc_eff_1"; break;
+        // case(3) :
+        //   sysstr = "sk_ccqe_rc_eff_2"; break;
+        // case(4) :
+        //   sysstr = "sk_1Rmu_ccqe_other_eff"; break;
+        // case(5) :
+        //   sysstr = "sk_1Rmu_ccnonqe_eff"; break;
+        // case(6) :
+        //   sysstr = "sk_1Rmu_nc_eff"; break;
+        // case(7) :
+        //   sysstr = "sk_1Rmu_nuecc_eff"; break;
         case(1) :
-          sysstr = "sk_ccqe_rc_eff_0"; break;
-        case(2) :
-          sysstr = "sk_ccqe_rc_eff_1"; break;
-        case(3) :
-          sysstr = "sk_ccqe_rc_eff_2"; break;
-        case(4) :
-          sysstr = "sk_1Rmu_ccqe_other_eff"; break;
-        case(5) :
-          sysstr = "sk_1Rmu_ccnonqe_eff"; break;
-        case(6) :
-          sysstr = "sk_1Rmu_nc_eff"; break;
-        case(7) :
-          sysstr = "sk_1Rmu_nuecc_eff"; break;
-        case(8) :
           sysstr = "pfermi"; break;
-        case(9) :
+        case(2) :
           sysstr = "specfunc"; break;
-        case(10) :
+        case(3) :
           sysstr = "wshape"; break;
-        case(11) :
+        case(4) :
           sysstr = "shapeCCoth"; break;
-        case(12) :
+        case(5) :
           sysstr = "pilessdelta"; break;
-        case(14) :
+        case(6) :
           sysstr = "norm_cccoh"; break;
-        case(15) :
+        case(7) :
           sysstr = "norm_nc1piC"; break;
-        case(17) :
+        case(8) :
           sysstr = "norm_ncoth"; break;
-        case(18) :
+        case(9) :
           sysstr = "norm_nuetonumu"; break;
-        case(19) :
+        case(10) :
           sysstr = "norm_antinutonu"; break;
-        case(20) :
+        case(11) :
           sysstr = "bindE"; break;
         default:
           sysstr = ""; break;
@@ -535,29 +560,61 @@ void test_sk_ereco_spectrum_twk_sys_throw
         nskint += skobs.ErecoSpectrumArray(s)[ir-1];
     hNsk->Fill(nskint);
 
-    // //store thrown parameter values
-    // for(int isys = 0; isys < nbanff; isys++) {
-    //   hSysThrown[isys]->Fill(skexp.GetBANFF()->CurrentValue(conv::kNuisBANFF00 + isys));
-    // }
-    // //for(int isys = 0; isys < nfsi; isys++) {
-    //   //hSysThrown[isys+nbanff]->Fill(skexp.GetFSI()->CurrentValue(util::PhysParamIdFromString(Form("fsi_%03d",isys))));
-    // for(int isys = 0; isys < nfsi-1; isys++) {
-    //   hSysThrown[isys+nbanff]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString(Form("skdetfsi%03d",isys))));
-    // }
-    // hSysThrown[nbanff+nfsi ]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString("sk_e_scale")));
-    
-    // hSysThrown[nbanff+nfsi+8 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pfermi")));
-    // hSysThrown[nbanff+nfsi+9 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("specfunc")));
-    // hSysThrown[nbanff+nfsi+10]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("wshape")));
-    // hSysThrown[nbanff+nfsi+11]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("shapeCCoth")));
-    // hSysThrown[nbanff+nfsi+12]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pilessdelta")));
-    // hSysThrown[nbanff+nfsi+13]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_cccoh")));
-    // hSysThrown[nbanff+nfsi+14]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nc1piC")));
-    // hSysThrown[nbanff+nfsi+15]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_ncoth")));
-    // hSysThrown[nbanff+nfsi+16]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nuetonumu")));
-    // hSysThrown[nbanff+nfsi+17]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_antinutonu")));
-    // hSysThrown[nbanff+nfsi+18]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("bindE")));
 
+
+
+
+    //store thrown parameter values
+
+   
+    for(int isys = 0; isys < nbanff; isys++) {
+      if(RHCFlag)
+	hSysThrown[isys]->Fill(skexp.GetBANFF()->RHCCurrentValue(conv::kRHCNuisBANFF00 + isys));
+      else 
+	hSysThrown[isys]->Fill(skexp.GetBANFF()->CurrentValue(conv::kNuisBANFF00 + isys));	
+    }
+    
+    //for(int isys = 0; isys < nfsi-1; isys++) {
+    for(int isys = 0; isys < nfsi; isys++) {
+      if(RHCFlag)
+	hSysThrown[isys+nbanff]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(util::PhysParamIdFromString(Form("skdetfsi%03d_rhc",isys))));
+      else
+	hSysThrown[isys+nbanff]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString(Form("skdetfsi%03d",isys))));
+    }
+    
+    if(RHCFlag)
+      hSysThrown[nbanff+nfsi ]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(util::PhysParamIdFromString("sk_e_scale_rhc")));
+    else
+      hSysThrown[nbanff+nfsi ]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString("sk_e_scale")));
+      
+      
+    if(RHCFlag){
+      hSysThrown[nbanff+nfsi+1 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pfermi_rhc")));
+      hSysThrown[nbanff+nfsi+2 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("specfunc_rhc")));
+      hSysThrown[nbanff+nfsi+3 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("wshape_rhc")));
+      hSysThrown[nbanff+nfsi+4 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("shapeCCoth_rhc")));
+      hSysThrown[nbanff+nfsi+5 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pilessdelta_rhc")));
+      hSysThrown[nbanff+nfsi+6 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_cccoh_rhc")));
+      hSysThrown[nbanff+nfsi+7 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nc1piC_rhc")));
+      hSysThrown[nbanff+nfsi+8 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_ncoth_rhc")));
+      hSysThrown[nbanff+nfsi+10]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nuetonumu_rhc")));
+      hSysThrown[nbanff+nfsi+11]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_antinutonu_rhc")));
+      hSysThrown[nbanff+nfsi+12]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("bindE_rhc")));
+    }
+    else{
+      hSysThrown[nbanff+nfsi+1 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pfermi")));
+      hSysThrown[nbanff+nfsi+2 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("specfunc")));
+      hSysThrown[nbanff+nfsi+3 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("wshape")));
+      hSysThrown[nbanff+nfsi+4 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("shapeCCoth")));
+      hSysThrown[nbanff+nfsi+5 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pilessdelta")));
+      hSysThrown[nbanff+nfsi+6 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_cccoh")));
+      hSysThrown[nbanff+nfsi+7 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nc1piC")));
+      hSysThrown[nbanff+nfsi+8 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_ncoth")));
+      hSysThrown[nbanff+nfsi+10]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nuetonumu")));
+      hSysThrown[nbanff+nfsi+11]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_antinutonu")));
+      hSysThrown[nbanff+nfsi+12]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("bindE")));
+    }
+      
   }//end loop over experiments
   w.Stop();
   cout << iskip << " experiments skipped due to min events" << endl;
