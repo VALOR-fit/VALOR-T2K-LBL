@@ -19,14 +19,13 @@
 // 202 tweak xsec_wshape
 // 203 tweak xsec_shape_ccoth
 // 204 tweak xsec_pilessdelta
-// 209 tweak xsec_norm_cccoh
-// 210 tweak xsec_norm_nc1piC
-// 212 tweak xsec_norm_ncoth
-// 213 tweak xsec_norm_nuetonumu
-// 214 tweak xsec_norm_antinutonu
-// 215 tweak xsec_bindE
-//
-// 220 tweak xsec_rpa (0 or 1)
+// 205 tweak xsec_norm_cccoh
+// 206 tweak xsec_norm_nc1piC
+// 207 tweak xsec_norm_ncoth
+// 208 tweak xsec_norm_nuetonumu
+// 209 tweak xsec_norm_antinutonu
+// 210 tweak xsec_bindE
+// 210 tweak xsec_rpa (0 or 1)
 //
 // 400 tweak banff00
 // 401 tweak banff01
@@ -63,9 +62,9 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw
 (
-  int          mode               = 0,                                           /* options: see above */
+  int          mode               = 200,                                         /* options: see above */
   bool         update_rootfile    = true,                                        /* "update" ROOT output file? If false, will "recreate" */
-  const char * sk_sample            = "RHC1Rmu",                                 /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+  const char * sk_sample          = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
   const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
   double       input_mixing12     = -99,                                         /* */
   double       input_mixing13     = -99,                                         /* */
@@ -75,7 +74,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_dm23sq       = -99,                                         /* */
   bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
   const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
-  const int    nexp               = 50,                                           /* number of experiments to make */
+  const int    nexp               = 50,                                          /* number of experiments to make */
   const char * mixparamchoice     = "sinsqtheta",
   const char * hierarchy          = "normal"
 )
@@ -139,21 +138,21 @@ void test_sk_ereco_spectrum_twk_sys_throw
       modetitle = "shapeCoth"; break;
     case 204:
       modetitle = "pilessdelta"; break;
-    case 209:
+    case 205:
       modetitle = "norm_cccoh"; break;
-    case 210:
+    case 206:
       modetitle = "norm_nc1piC"; break;
-    case 212:
+    case 207:
       modetitle = "norm_ncoth";
       break;
-    case 213:
+    case 208:
       modetitle = "norm_nuetonumu"; break;
-    case 214:
+    case 209:
       modetitle = "norm_antinutonu"; break;
-    case 215:
+    case 210:
       modetitle = "bindE"; break;
 
-    case 220:
+    case 211:
       modetitle = "rpa"; break;
       
     case 700:
@@ -403,51 +402,63 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
       switch(mode) {
         case 200:
+	  if( !util::IsXSec(util::PhysParamIdFromString("pfermi")) ) break; 
           skexp.TweakSystematic("pfermi",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
         case 201:
+	  if( !util::IsXSec(util::PhysParamIdFromString("specfunc")) ) break; 
           skexp.TweakSystematic("specfunc",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
         case 202:
+	  if( !util::IsXSec(util::PhysParamIdFromString("wshape")) ) break; 
           skexp.TweakSystematic("wshape",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
         case 203:
+	  if( !util::IsXSec(util::PhysParamIdFromString("shapeCCoth")) ) break; 
           skexp.TweakSystematic("shapeCCoth",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
         case 204:
+	  if( !util::IsXSec(util::PhysParamIdFromString("pilessdelta")) ) break; 
           skexp.TweakSystematic("pilessdelta",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
-        case 209:
+        case 205:
+	  if( !util::IsXSec(util::PhysParamIdFromString("norm_cccoh")) ) break; 
           skexp.TweakSystematic("norm_cccoh",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
-        case 210:
+        case 206:
+	  if( !util::IsXSec(util::PhysParamIdFromString("norm_nc1piC")) ) break; 
           skexp.TweakSystematic("norm_nc1piC",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
-        case 212:
+        case 207:
+	  if( !util::IsXSec(util::PhysParamIdFromString("norm_ncoth")) ) break; 
           skexp.TweakSystematic("norm_ncoth",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
-        case 213:
+        case 208:
+	  if( !util::IsXSec(util::PhysParamIdFromString("norm_nuetonumu")) ) break; 
           skexp.TweakSystematic("norm_nuetonumu",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
-        case 214:
+        case 209:
+	  if( !util::IsXSec(util::PhysParamIdFromString("norm_antinutonu")) ) break; 
           skexp.TweakSystematic("norm_antinutonu",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
-        case 215:
+        case 210:
+	  if( !util::IsXSec(util::PhysParamIdFromString("bindE")) ) break; 
           skexp.TweakSystematic("bindE",tweak); 
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
 
-        case 220:
+        case 211:
+	  if( !util::IsXSec(util::PhysParamIdFromString("rpa")) ) break; 
 	  tweak = rand.Uniform(0.,1.);
 	  skexp.TweakSystematic("rpa",tweak); // Automatically set at 0 or 1 in the Tweak
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
