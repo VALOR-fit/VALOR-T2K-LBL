@@ -3874,12 +3874,17 @@ bool valor::util::IsXSec(PhysParamId_t p)
   // N.B. Leave the old uncorrelated systematics that will not be used, since now they are all banff (kNuisBANFF*)
 
   //Old uncorr xsec syst (as in the old code)
+
+#if defined(__USE_NIWG2013__)
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
     return true;
   if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecNormAntiNuToNu)
     return true;
+
+#elif defined(__USE_NIWG2015__)
   if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
     return true;
+#endif
   
   return false;
 }
