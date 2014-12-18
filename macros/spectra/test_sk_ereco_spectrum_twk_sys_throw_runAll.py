@@ -23,8 +23,11 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_throw_runAll.py [--all] (you
 It will then create the .root in the current working directory
 """
     
-postfit_config = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5_sk+fsi.xml"
-prefit_config  = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5prefit_sk+fsi.xml"
+#postfit_config = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5_sk+fsi.xml"
+postfit_config  = "analysis_configuration_run1to6_test.xml"
+
+#prefit_config  = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5prefit_sk+fsi.xml"
+prefit_config  = "analysis_configuration_run1to6_test.xml"
 
 
 class T2KAnaError(Exception): pass
@@ -37,21 +40,41 @@ optionParser.add_option("-a","--all", action="store_true", dest="do_all", defaul
 optionParser.add_option("-i","--important", action="store_true", dest="do_imp", default=False, help="If set, will run the spline/osc param indiviudal systematics, as well as the categories")
 optionParser.add_option("-n","--nexp", action="store", dest="nexp", type="int", default=-1, help="How many experiments to generate at each point. Required")
 optionParser.add_option("--no-table", action="store_true", dest="notable", default=False, help="Don't make a table summarising the results for a tech note")
+optionParser.add_option("-s","--sksample", action="store", dest="sksample", type="string", default="1Rmu", help="Choose the SK sample: 1Rmu, 1Re, RHC1Rmu, RHC1Re")
+optionParser.add_option("-e","--hierarchy", action="store", dest="hierarchy", type="string", default="normal", help="Mass Hierarchy: normal, inverted")
+optionParser.add_option("-m","--mixparamchoice", action="store", dest="mixparamchoice", type="string", default="sinsqtheta", help="Mixing param choice: sinsqtheta")
+
 (opt, args) = optionParser.parse_args()
 
 make_summary = not opt.notable
 nexp = opt.nexp
 if nexp <= 0:
     sys.exit("specify number of events")
+sksample = opt.sksample
+hierarchy = opt.hierarchy
+mixparamchoice = opt.mixparamchoice
 
 save_toy_expts = "false"
 
 modes1 = [0,1,2,9,11] #combinations
-modes2 = range(100,126) #banff
-modes3 = range(200,216) #unconstranied xsec
-modes4 = range(300,309) #sk detector
-modes5 = range(400,406) #fsi
-modes6 = range(700,705) #osc param
+
+#modes2 = range(400,422) #banff fhc (niwg2013 - numudisap)
+#modes2 = range(500,422) #banff rhc (niwg2013 - numudisap)
+#modes2 = range(500,527) #banff fhc (niwg2015 - numudisap)
+modes2 = range(500,527) #banff rhc (niwg2015 - numudisap)
+
+#modes3 = range(200,210) #unconstranied xsec (niwg2013)
+modes3 = range(211,211) #unconstranied xsec (niwg2015)
+
+#modes4 = range(800,805) #sk detector (skdetfsi 2013 - numudisap - fhc)
+#modes4 = range(806,817) #sk detector (skdetfsi 2013 - nue - fhc)
+#modes4 = range(800,817) #sk detector (skdetfsi 2013 - joint - fhc)
+modes4 = range(900,905) #sk detector (skdetfsi 2013 - numudisap - rhc)
+#modes4 = range(906,917) #sk detector (skdetfsi 2013 - nue - rhc)
+#modes4 = range(900,917) #sk detector (skdetfsi 2013 - joint - rhc)
+
+modes6 = range(700,703) #osc param
+
 modes7 = [7,8] #banff flux / banff xsec individually
 
 modes = modes1
@@ -61,6 +84,7 @@ elif opt.do_imp: #combinations + splines + oscparams
     modes = modes + modes6 + [200,201,202,203,204,215]
     
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
+
 oscparams.append([  0,   0,   0,   0,   -99,   -99]) #no oscillations!
 oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
@@ -75,8 +99,10 @@ for osc in oscparams:
         #changing osc params doesn't affect anything if there are no oscillations
         if mode == 11 and osc == [0,   0,   0,   0,   0,   0]:
             continue
+        if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99]:
+            continue
 
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+')\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
         print command
         if os.system(command) == 1:
             sys.exit(1)
@@ -84,7 +110,8 @@ for osc in oscparams:
             update = "true"
 
         #repeat for the banff prefit (its a different spectrum, so erros have different effects)
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+prefit_config+'",'+str(nexp)+')\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
         print command
         if os.system(command) == 1:
             sys.exit(1)

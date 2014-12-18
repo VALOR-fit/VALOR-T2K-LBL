@@ -25,7 +25,7 @@
 // 208 tweak xsec_norm_nuetonumu
 // 209 tweak xsec_norm_antinutonu
 // 210 tweak xsec_bindE
-// 210 tweak xsec_rpa (0 or 1)
+// 211 tweak xsec_rpa (0 or 1)
 //
 // 400 tweak banff00
 // 401 tweak banff01
@@ -62,8 +62,8 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw
 (
-  int          mode               = 200,                                         /* options: see above */
-  bool         update_rootfile    = true,                                        /* "update" ROOT output file? If false, will "recreate" */
+  int          mode               = 0,                                         /* options: see above */
+  bool         update_rootfile    = false,                                        /* "update" ROOT output file? If false, will "recreate" */
   const char * sk_sample          = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
   const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
   double       input_mixing12     = -99,                                         /* */
@@ -326,7 +326,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoNominal->GetYaxis()->SetTitle("Events per bin");
   hErecoNominal->SetLineWidth(2);
   if(!update_rootfile)
-    hErecoNominal->Write("%s_nominal",sname);
+    hErecoNominal->Write(Form("%s_nominal",sname));
     
   TH1D * hErecoNominal_per50MeV = spectrum_to_per_50mev(hErecoNominal);
   hErecoNominal_per50MeV->Write(Form("%s_nominal_per_50MeV",sname));
