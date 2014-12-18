@@ -3875,10 +3875,12 @@ bool valor::util::IsXSec(PhysParamId_t p)
 
   //Old uncorr xsec syst (as in the old code)
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecNormAntiNuToNu)
-   return true;
+    return true;
   if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecNormAntiNuToNu)
-   return true;
-     
+    return true;
+  if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
+    return true;
+  
   return false;
 }
 //____________________________________________________________________________

@@ -1918,8 +1918,8 @@ double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
   */
 
 #elif defined(__USE_NIWG2015__)
-  if (fRPATwkDial)       chisq_penalty += fRPATwkDial    * fRPATwkDial;
-  //if (fRHCRPATwkDial)    chisq_penalty += fRHCRPATwkDial * fRHCRPATwkDial;
+  //if (fRPATwkDial)       chisq_penalty += fRPATwkDial    * fRPATwkDial;
+  // //if (fRHCRPATwkDial)    chisq_penalty += fRHCRPATwkDial * fRHCRPATwkDial;
 #endif
 
   return chisq_penalty;
@@ -1959,8 +1959,27 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
 
   // NEW XSEC
 #elif defined(__USE_NIWG2015__)
-  if      (p==kNuisXSecRPA      ) fRPATwkDial      = twkdial; 
-  else if (p==kRHCNuisXSecRPA   ) fRHCRPATwkDial   = twkdial;
+  // RPA is a discrete value (0 or 1)
+  if      (p==kNuisXSecRPA      ){
+    if(twkdial!=0 && twkdial !=1){
+      if(twkdial < 0.5) twkdial = 0.;
+      else              twkdial = 1.;
+      std::cout << std::endl; 
+      std::cout << "Tweak Dial RPA must be 0 or 1 " << std::endl; 
+      std::cout << "Tweak Dial RPA restored to " << twkdial << std::endl; 
+      std::cout << std::endl; 
+    }
+    fRPATwkDial      = twkdial; 
+  }
+  else if (p==kRHCNuisXSecRPA   ){
+    if(twkdial < 0.5) twkdial = 0.;
+    else              twkdial = 1.;
+    fRHCRPATwkDial   = twkdial;
+    std::cout << std::endl; 
+    std::cout << "Tweak Dial RPA must be 0 or 1 " << std::endl; 
+    std::cout << "Tweak Dial RPA restored to " << twkdial << std::endl; 
+    std::cout << std::endl; 
+  }
 #endif
   else {
     cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;

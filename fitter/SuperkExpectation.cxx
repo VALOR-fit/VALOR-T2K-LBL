@@ -594,8 +594,6 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
        << " to value = " << twkdial << endl;
 #endif
 
- cout << "CIAO" << endl;
-
  {
     PhysParamId_t p = util::PhysParamIdFromString(systematic);
     if (p!=kPhypUndefined) {
@@ -830,15 +828,11 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 
 #if defined(__USE_NIWG2013__)
 
-  else if(systematic == "pfermi"){
-      
-    cout << "CIAO 2" << endl;
-    this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , twkdial);
-      
-  }
+  else if(systematic == "pfermi")
+    this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , twkdial);  
   else if(systematic == "specfunc")
-      this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , twkdial);
-    else if(systematic == "wshape")
+    this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , twkdial);
+  else if(systematic == "wshape")
       this->GetNuXSec()->Tweak(kNuisXSecWshape        , twkdial);
     else if(systematic == "shapeccoth")
       this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , twkdial);
