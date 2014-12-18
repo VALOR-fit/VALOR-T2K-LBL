@@ -26,6 +26,8 @@
 // 214 tweak xsec_norm_antinutonu
 // 215 tweak xsec_bindE
 //
+// 220 tweak xsec_rpa (0 or 1)
+//
 // 400 tweak banff00
 // 401 tweak banff01
 // 400+kNumOfParamsInBANFFfit tweak last banff parameter
@@ -80,6 +82,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
 {
   using namespace std;
   using namespace valor;
+  using namespace valor::conv;
 
   bool RHCFlag = false;
   TString str_sk_sample(sk_sample);
@@ -141,13 +144,17 @@ void test_sk_ereco_spectrum_twk_sys_throw
     case 210:
       modetitle = "norm_nc1piC"; break;
     case 212:
-      modetitle = "norm_ncoth"; break;
+      modetitle = "norm_ncoth";
+      break;
     case 213:
       modetitle = "norm_nuetonumu"; break;
     case 214:
       modetitle = "norm_antinutonu"; break;
     case 215:
       modetitle = "bindE"; break;
+
+    case 220:
+      modetitle = "rpa"; break;
       
     case 700:
       modetitle = "mixing13"; break;
@@ -273,86 +280,37 @@ void test_sk_ereco_spectrum_twk_sys_throw
   if(RHCFlag) nxsecuncorr = conv::kNumOfRHCXSecSyst;
   else        nxsecuncorr = conv::kNumOfXSecSyst;
 
-  const int nsys = nbanff + nfsi + 8 + 13;
+  const int sys = nbanff + nfsi + nxsecuncorr;
 
-
-  // cout << "nbanff = " << nbanff << endl;
-  // cout << "nfsi = " << nfsi << endl;
-  // cout << "nxsecuncorr = " << nxsecuncorr << endl;
-
-  // return;
-
+  FitParamList * fparm = util::NamedParameterList("nuosc3f_12fix+nuisance"); 
+  const int np = fparm->GetNumberParameters();
+  TH1D * hSysThrown[np];
   
-  TH1D * hSysThrown[nsys];
-  for(int isys = 0; isys < nsys; isys++) {
-    string sysstr = "";
-    if(isys < nbanff)
-      sysstr = Form("banff%02i",isys);
-    else if(isys < nbanff + nfsi)
-      sysstr = Form("fsi_%03i",isys - nbanff);
-    else {
-      int isys2 = isys - nbanff - nfsi;
-      switch(isys2) {
-        case(0) :
-          sysstr = "sk_e_scale"; break;
-        // case(1) :
-        //   sysstr = "sk_ccqe_rc_eff_0"; break;
-        // case(2) :
-        //   sysstr = "sk_ccqe_rc_eff_1"; break;
-        // case(3) :
-        //   sysstr = "sk_ccqe_rc_eff_2"; break;
-        // case(4) :
-        //   sysstr = "sk_1Rmu_ccqe_other_eff"; break;
-        // case(5) :
-        //   sysstr = "sk_1Rmu_ccnonqe_eff"; break;
-        // case(6) :
-        //   sysstr = "sk_1Rmu_nc_eff"; break;
-        // case(7) :
-        //   sysstr = "sk_1Rmu_nuecc_eff"; break;
-        case(1) :
-          sysstr = "pfermi"; break;
-        case(2) :
-          sysstr = "specfunc"; break;
-        case(3) :
-          sysstr = "wshape"; break;
-        case(4) :
-          sysstr = "shapeCCoth"; break;
-        case(5) :
-          sysstr = "pilessdelta"; break;
-        case(6) :
-          sysstr = "norm_cccoh"; break;
-        case(7) :
-          sysstr = "norm_nc1piC"; break;
-        case(8) :
-          sysstr = "norm_ncoth"; break;
-        case(9) :
-          sysstr = "norm_nuetonumu"; break;
-        case(10) :
-          sysstr = "norm_antinutonu"; break;
-        case(11) :
-          sysstr = "bindE"; break;
-        default:
-          sysstr = ""; break;
-      }//switch(isys2)
-    }//isys>=nbanff+nfsi
-      string hname(Form("%s_%s_tweak_throws_%s",sname,modetitle.c_str(),sysstr.c_str()));
-      hSysThrown[isys] = new TH1D(hname.c_str(),hname.c_str(),1000,-5,5);
-    hSysThrown[isys]->SetDirectory(0);
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = fparm->WhichParam(ip);
+    //if(!fparm->IsNuisance(p)) continue; 
+    
+    string sysstr = util::AsStringCompact(p);
+    //cout << sysstr << endl;
+    string hname(Form("%s_%s_tweak_throws_%s",sname,modetitle.c_str(),sysstr.c_str()));
+    hSysThrown[ip] = new TH1D(hname.c_str(),hname.c_str(),1000,-5,5);
+    hSysThrown[ip]->SetDirectory(0);
   }
 
-    // Open output files
-    string rootmode = "update";
-    if(!update_rootfile)
-      rootmode = "recreate";
-    string oscparams = util::AsString(ph.Hypothesis(),
-       input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-    TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
-
-    if(!update_rootfile)
-      ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::trunc);
-    else
-      ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::app);
-
+  
+  // Open output files
+  string rootmode = "update";
+  if(!update_rootfile)
+    rootmode = "recreate";
+  string oscparams = util::AsString(ph.Hypothesis(),
+				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+  TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
+  
+  if(!update_rootfile)
+    ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::trunc);
+  else
+    ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::app);
+  
   //remove the [] so can use it in SaveAs
   while(oscparams.find_first_of("[]") != string::npos) {
     oscparams.erase(oscparams.find_first_of("[]"), 1);
@@ -434,6 +392,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
     }//mode<100
 
+
+
+    
+
     else if(mode < 999) {//everything else but the stat
       
       TRandom3 rand(0);
@@ -445,25 +407,51 @@ void test_sk_ereco_spectrum_twk_sys_throw
 	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	  break;
         case 201:
-          skexp.TweakSystematic("specfunc",tweak); break;
+          skexp.TweakSystematic("specfunc",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 202:
-          skexp.TweakSystematic("wshape",tweak); break;
+          skexp.TweakSystematic("wshape",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 203:
-          skexp.TweakSystematic("shapeCCoth",tweak); break;
+          skexp.TweakSystematic("shapeCCoth",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 204:
-          skexp.TweakSystematic("pilessdelta",tweak); break;
+          skexp.TweakSystematic("pilessdelta",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 209:
-          skexp.TweakSystematic("norm_cccoh",tweak); break;
+          skexp.TweakSystematic("norm_cccoh",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 210:
-          skexp.TweakSystematic("norm_nc1piC",tweak); break;
+          skexp.TweakSystematic("norm_nc1piC",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 212:
-          skexp.TweakSystematic("norm_ncoth",tweak); break;
+          skexp.TweakSystematic("norm_ncoth",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 213:
-          skexp.TweakSystematic("norm_nuetonumu",tweak); break;
+          skexp.TweakSystematic("norm_nuetonumu",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 214:
-          skexp.TweakSystematic("norm_antinutonu",tweak); break;
+          skexp.TweakSystematic("norm_antinutonu",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
         case 215:
-          skexp.TweakSystematic("bindE",tweak); break;
+          skexp.TweakSystematic("bindE",tweak); 
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
+
+        case 220:
+	  tweak = rand.Uniform(0.,1.);
+	  skexp.TweakSystematic("rpa",tweak); // Automatically set at 0 or 1 in the Tweak
+	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+	  break;
 
         case 300:
           skexp.TweakSystematic("sk_e_scale",tweak); break;
@@ -478,7 +466,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
           ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV()); break;
 
         default:
-
+	  
 	  // banff fhc
           if(mode >= 400 && mode < 400+conv::kNumOfParamsInBANFFfit) {
             TVectorD v(conv::kNumOfParamsInBANFFfit);
@@ -561,69 +549,42 @@ void test_sk_ereco_spectrum_twk_sys_throw
     hNsk->Fill(nskint);
 
 
-
-
-
     //store thrown parameter values
-
-   
-    for(int isys = 0; isys < nbanff; isys++) {
-      if(RHCFlag)
-	hSysThrown[isys]->Fill(skexp.GetBANFF()->RHCCurrentValue(conv::kRHCNuisBANFF00 + isys));
-      else 
-	hSysThrown[isys]->Fill(skexp.GetBANFF()->CurrentValue(conv::kNuisBANFF00 + isys));	
-    }
-    
-    //for(int isys = 0; isys < nfsi-1; isys++) {
-    for(int isys = 0; isys < nfsi; isys++) {
-      if(RHCFlag)
-	hSysThrown[isys+nbanff]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(util::PhysParamIdFromString(Form("skdetfsi%03d_rhc",isys))));
-      else
-	hSysThrown[isys+nbanff]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString(Form("skdetfsi%03d",isys))));
-    }
-    
-    if(RHCFlag)
-      hSysThrown[nbanff+nfsi ]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(util::PhysParamIdFromString("sk_e_scale_rhc")));
-    else
-      hSysThrown[nbanff+nfsi ]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(util::PhysParamIdFromString("sk_e_scale")));
+     
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      //if(!fparm->IsNuisance(p)) continue; 
       
+      string sysstr = util::AsStringCompact(p);
       
-    if(RHCFlag){
-      hSysThrown[nbanff+nfsi+1 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pfermi_rhc")));
-      hSysThrown[nbanff+nfsi+2 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("specfunc_rhc")));
-      hSysThrown[nbanff+nfsi+3 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("wshape_rhc")));
-      hSysThrown[nbanff+nfsi+4 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("shapeCCoth_rhc")));
-      hSysThrown[nbanff+nfsi+5 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pilessdelta_rhc")));
-      hSysThrown[nbanff+nfsi+6 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_cccoh_rhc")));
-      hSysThrown[nbanff+nfsi+7 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nc1piC_rhc")));
-      hSysThrown[nbanff+nfsi+8 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_ncoth_rhc")));
-      hSysThrown[nbanff+nfsi+10]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nuetonumu_rhc")));
-      hSysThrown[nbanff+nfsi+11]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_antinutonu_rhc")));
-      hSysThrown[nbanff+nfsi+12]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("bindE_rhc")));
-    }
-    else{
-      hSysThrown[nbanff+nfsi+1 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pfermi")));
-      hSysThrown[nbanff+nfsi+2 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("specfunc")));
-      hSysThrown[nbanff+nfsi+3 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("wshape")));
-      hSysThrown[nbanff+nfsi+4 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("shapeCCoth")));
-      hSysThrown[nbanff+nfsi+5 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("pilessdelta")));
-      hSysThrown[nbanff+nfsi+6 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_cccoh")));
-      hSysThrown[nbanff+nfsi+7 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nc1piC")));
-      hSysThrown[nbanff+nfsi+8 ]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_ncoth")));
-      hSysThrown[nbanff+nfsi+10]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_nuetonumu")));
-      hSysThrown[nbanff+nfsi+11]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("norm_antinutonu")));
-      hSysThrown[nbanff+nfsi+12]->Fill(skexp.GetNuXSec()->CurrentValue(util::PhysParamIdFromString("bindE")));
-    }
-      
+      if(util::IsBANFF(p)){
+	if(RHCFlag)
+	  hSysThrown[ip]->Fill(skexp.GetBANFF()->RHCCurrentValue(p));
+	else 
+	  hSysThrown[ip]->Fill(skexp.GetBANFF()->CurrentValue(p));
+      }
+      else if(util::IsXSec(p)){
+	hSysThrown[ip]->Fill(skexp.GetNuXSec()->CurrentValue(p));
+      }
+      if(util::IsSKDetFSI(p)){
+	if(RHCFlag)
+	  hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(p));
+	else 
+	  hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(p));
+      }
+    }      
   }//end loop over experiments
   w.Stop();
   cout << iskip << " experiments skipped due to min events" << endl;
 
   //save some histograms
-  for(int isys = 0; isys < nsys; isys++) {
-    hSysThrown[isys]->Write();
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = fparm->WhichParam(ip);
+    //if(!fparm->IsNuisance(p)) continue; 
+    hSysThrown[ip]->Write();
   }
   hNsk->Write();
+
 
   // Find min/max and calculate fractional deviation from nominal
   hErecoMax = new TH1D(*hErecoNominal);
@@ -686,16 +647,16 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMinEnv_per50MeV->Draw("same");
   hErecoNominal_per50MeV->Draw("same");
   c->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
-  
 
   TCanvas * csys = new TCanvas();
-  csys->Divide(ceil(sqrt(nsys)),ceil(sqrt(nsys)));
-  for(int isys=0; isys < nsys; isys++) {
-    csys->cd(isys+1);
-    hSysThrown[isys]->Draw();
-    cout << isys << "\t" << hSysThrown[isys]->GetTitle() << endl;
+  csys->Divide(ceil(sqrt(np)),ceil(sqrt(np)));
+  for(int ip=0; ip < np; ip++) {
+    //if(!fparm->IsNuisance(p)) continue; 
+    csys->cd(ip+1);
+    hSysThrown[ip]->Draw();
+    cout << ip << "\t" << hSysThrown[ip]->GetTitle() << endl;
   }
-  csys->SaveAs(Form("%s_%s_throws_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+ 
   delete c;
   delete csys;
 
