@@ -608,9 +608,8 @@ void generate_toymc_ensemble_joint
        ftxt << endl;
        fxml << "          </ereco_values> " << endl;
        fxml << "        </multi_e_ring>    " << endl;
-       fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;
 #endif
-       
+       fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;       
      }//xml
 
      // If a ROOT filename was specified, save the ROOT histogram too
