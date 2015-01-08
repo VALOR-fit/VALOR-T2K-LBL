@@ -19,7 +19,7 @@
          7.3e+20
        </fhc>
        <rhc>
-         1.7e+20 
+         1.796e+20 
        </rhc>       
      </superk> 
   </data_pot>
@@ -468,23 +468,23 @@
       <weight_splines>
           <one_mu_ring>
                 <filename>
-                    official/2015/xsec/splines_v3_1Rmu.root
+                    official/2015/xsec/splines_v4_1Rmu.root
                 </filename>
           </one_mu_ring>
           <one_e_ring>
                 <filename>
-                    official/2015/xsec/splines_v3_1Re.root
+                    official/2015/xsec/splines_v4_1Re.root
                 </filename>
           </one_e_ring>
           
           <one_mu_ring_rhc>
                 <filename>
-                   official/2015/xsec/splines_v3_RHC1Rmu.root
+                   official/2015/xsec/splines_v4_RHC1Rmu.root
                 </filename>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
                 <filename>
-                    official/2015/xsec/splines_v3_RHC1Re.root
+                    official/2015/xsec/splines_v4_RHC1Re.root
                 </filename>
           </one_e_ring_rhc>
           
@@ -589,21 +589,21 @@
       -->
     <covariance_matrix>
  
-      <!--<filename>   official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
-	  <objname>    skfsipn_cov             </objname> -->
-      <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
-      <objname> cov_diag_all </objname> 
-
+      <filename>   official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
+      <objname>    skfsipn_cov             </objname>
+      <!-- <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
+	   <objname> cov_diag_all </objname> -->
+      
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
     
     <disap>
       <covariance_matrix>
 
-	<!-- <filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
-	     <objname>    covmat_sk_fsi         </objname> --> 
-	<filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
-	<objname> cov_diag_dis </objname>
+	<filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
+	<objname>    covmat_sk_fsi         </objname> 
+	<!-- <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
+	     <objname> cov_diag_dis </objname> -->
 	
 	<objtype>    TMatrixD              </objtype>
       </covariance_matrix>
@@ -612,10 +612,10 @@
     <app>
       <covariance_matrix>
 	
-	<!-- <filename>   official/2013/skdetfsi/covariance_matrices_2013full_appearance.root  </filename>
-	     <objname>    cov_total             </objname> -->
-	<filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
-	<objname> cov_diag_app </objname>	
+	<filename>   official/2013/skdetfsi/covariance_matrices_2013full_appearance.root  </filename>
+	<objname>    cov_total             </objname>
+	<!-- <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
+	     <objname> cov_diag_app </objname> -->	
 	
 	<objtype>    TMatrixD              </objtype>
       </covariance_matrix>
