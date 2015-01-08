@@ -1,6 +1,6 @@
 {
   TString libs0 = gSystem->GetDynamicPath();
-  TString libs  = libs0 + ":/usr/lib:/usr/local/lib:/opt/lib:/opt/local/lib";
+  TString libs  = libs0 + ":/usr/lib:/usr/lib64:/usr/local/lib:/opt/lib:/opt/local/lib";
   gSystem->SetDynamicPath(libs.Data());
 
   gSystem->Load("libGpad");
