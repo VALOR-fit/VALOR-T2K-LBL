@@ -360,9 +360,8 @@ bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_nod
   cout << "Exp/SuperkDetectorFSI >> Done reading MultiRing SuperkDetector+FSI inputs!" << endl;
 #endif
 
-  return true;  
-
 #endif
+  return true;  
 }
 ////
 
