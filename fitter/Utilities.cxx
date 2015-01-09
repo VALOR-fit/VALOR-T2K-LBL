@@ -739,79 +739,81 @@ bool valor::util::UseEventToFillInTemplate(
   bool is_nue     = (nu_pdg_code == kPdgNuE);
   bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
   bool is_nuebar  = (nu_pdg_code == kPdgNuEBar);
+  
+  int abs_mode = TMath::Abs(neut_reaction_mode);
 
   switch (m) {
     // Numu
-    case kSKmNuMuCCQE    :  return ( IsCCQE    ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuCC1pi   :  return ( IsCC1pi   ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuCCcoh   :  return ( IsCCcoh   ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuCCMEC   :  return ( IsMEC     ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuCCoth   :  return ( IsCCoth   ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuNC1piC  :  return ( IsNC1piC  ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuNC1pi0  :  return ( IsNC1pi0  ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuNCcoh   :  return ( IsNCcoh   ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuNCoth_e :  return ( IsNCoth_e ( neut_reaction_mode) && is_numu   );
-    case kSKmNuMuNCoth_mu:  return ( IsNCoth_mu( neut_reaction_mode) && is_numu   );
+    case kSKmNuMuCCQE         :  return ( IsCCQE    (abs_mode) && is_numu    );
+    case kSKmNuMuCC1pi        :  return ( IsCC1pi   (abs_mode) && is_numu    );
+    case kSKmNuMuCCcoh        :  return ( IsCCcoh   (abs_mode) && is_numu    );
+    case kSKmNuMuCCMEC        :  return ( IsMEC     (abs_mode) && is_numu    );
+    case kSKmNuMuCCoth        :  return ( IsCCoth   (abs_mode) && is_numu    );
+    case kSKmNuMuNC1piC       :  return ( IsNC1piC  (abs_mode) && is_numu    );
+    case kSKmNuMuNC1pi0       :  return ( IsNC1pi0  (abs_mode) && is_numu    );
+    case kSKmNuMuNCcoh        :  return ( IsNCcoh   (abs_mode) && is_numu    );
+    case kSKmNuMuNCoth_e      :  return ( IsNCoth_e (abs_mode) && is_numu    );
+    case kSKmNuMuNCoth_mu     :  return ( IsNCoth_mu(abs_mode) && is_numu    );
     
-    case kSKmNuMuBarCCQE    :  return ( IsCCQE    (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarCC1pi   :  return ( IsCC1pi   (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarCCcoh   :  return ( IsCCcoh   (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarCCMEC   :  return ( IsMEC     (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarCCoth   :  return ( IsCCoth   (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarNC1piC  :  return ( IsNC1piC  (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarNC1pi0  :  return ( IsNC1pi0  (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarNCcoh   :  return ( IsNCcoh   (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarNCoth_e :  return ( IsNCoth_e (-neut_reaction_mode) && is_numubar );
-    case kSKmNuMuBarNCoth_mu:  return ( IsNCoth_mu(-neut_reaction_mode) && is_numubar );
+    case kSKmNuMuBarCCQE      :  return ( IsCCQE    (abs_mode) && is_numubar );
+    case kSKmNuMuBarCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numubar );
+    case kSKmNuMuBarCCcoh     :  return ( IsCCcoh   (abs_mode) && is_numubar );
+    case kSKmNuMuBarCCMEC     :  return ( IsMEC     (abs_mode) && is_numubar );
+    case kSKmNuMuBarCCoth     :  return ( IsCCoth   (abs_mode) && is_numubar );
+    case kSKmNuMuBarNC1piC    :  return ( IsNC1piC  (abs_mode) && is_numubar );
+    case kSKmNuMuBarNC1pi0    :  return ( IsNC1pi0  (abs_mode) && is_numubar );
+    case kSKmNuMuBarNCcoh     :  return ( IsNCcoh   (abs_mode) && is_numubar );
+    case kSKmNuMuBarNCoth_e   :  return ( IsNCoth_e (abs_mode) && is_numubar );
+    case kSKmNuMuBarNCoth_mu  :  return ( IsNCoth_mu(abs_mode) && is_numubar );
     
     // Osc Numu
-    case kSKmOscNuMuCCQE    :  return ( IsCCQE    ( neut_reaction_mode) && is_numu   );
-    case kSKmOscNuMuCC1pi   :  return ( IsCC1pi   ( neut_reaction_mode) && is_numu   );
-    case kSKmOscNuMuCCcoh   :  return ( IsCCcoh   ( neut_reaction_mode) && is_numu   );
-    case kSKmOscNuMuCCMEC   :  return ( IsMEC     ( neut_reaction_mode) && is_numu   );
-    case kSKmOscNuMuCCoth   :  return ( IsCCoth   ( neut_reaction_mode) && is_numu   );
+    case kSKmOscNuMuCCQE      :  return ( IsCCQE    (abs_mode) && is_numu    );
+    case kSKmOscNuMuCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numu    );
+    case kSKmOscNuMuCCcoh     :  return ( IsCCcoh   (abs_mode) && is_numu    );
+    case kSKmOscNuMuCCMEC     :  return ( IsMEC     (abs_mode) && is_numu    );
+    case kSKmOscNuMuCCoth     :  return ( IsCCoth   (abs_mode) && is_numu    );
     
-    case kSKmOscNuMuBarCCQE    :  return ( IsCCQE    (-neut_reaction_mode) && is_numubar );
-    case kSKmOscNuMuBarCC1pi   :  return ( IsCC1pi   (-neut_reaction_mode) && is_numubar );
-    case kSKmOscNuMuBarCCcoh   :  return ( IsCCcoh   (-neut_reaction_mode) && is_numubar );
-    case kSKmOscNuMuBarCCMEC   :  return ( IsMEC     (-neut_reaction_mode) && is_numubar );
-    case kSKmOscNuMuBarCCoth   :  return ( IsCCoth   (-neut_reaction_mode) && is_numubar );
+    case kSKmOscNuMuBarCCQE   :  return ( IsCCQE    (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCC1pi  :  return ( IsCC1pi   (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCCcoh  :  return ( IsCCcoh   (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCCMEC  :  return ( IsMEC     (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCCoth  :  return ( IsCCoth   (abs_mode) && is_numubar );
     
     //NuE
-    case kSKmNuECCQE    :  return ( IsCCQE    ( neut_reaction_mode) && is_nue    );
-    case kSKmNuECC1pi   :  return ( IsCC1pi   ( neut_reaction_mode) && is_nue    );
-    case kSKmNuECCcoh   :  return ( IsCCcoh   ( neut_reaction_mode) && is_nue    );
-    case kSKmNuECCMEC   :  return ( IsMEC     ( neut_reaction_mode) && is_nue    );
-    case kSKmNuECCoth   :  return ( IsCCoth   ( neut_reaction_mode) && is_nue    );
-    case kSKmNuENC1piC  :  return ( IsNC1piC  ( neut_reaction_mode) && is_nue    );
-    case kSKmNuENC1pi0  :  return ( IsNC1pi0  ( neut_reaction_mode) && is_nue    );
-    case kSKmNuENCcoh   :  return ( IsNCcoh   ( neut_reaction_mode) && is_nue    );
-    case kSKmNuENCoth_e :  return ( IsNCoth_e ( neut_reaction_mode) && is_nue    );
-    case kSKmNuENCoth_mu:  return ( IsNCoth_mu( neut_reaction_mode) && is_nue    );
-    
-    case kSKmNuEBarCCQE    :  return ( IsCCQE    (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarCC1pi   :  return ( IsCC1pi   (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarCCcoh   :  return ( IsCCcoh   (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarCCMEC   :  return ( IsMEC     (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarCCoth   :  return ( IsCCoth   (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarNC1piC  :  return ( IsNC1piC  (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarNC1pi0  :  return ( IsNC1pi0  (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarNCcoh   :  return ( IsNCcoh   (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarNCoth_e :  return ( IsNCoth_e (-neut_reaction_mode) && is_nuebar );
-    case kSKmNuEBarNCoth_mu:  return ( IsNCoth_mu(-neut_reaction_mode) && is_nuebar );
+    case kSKmNuECCQE          :  return ( IsCCQE    (abs_mode) && is_nue     );
+    case kSKmNuECC1pi         :  return ( IsCC1pi   (abs_mode) && is_nue     );
+    case kSKmNuECCcoh         :  return ( IsCCcoh   (abs_mode) && is_nue     );
+    case kSKmNuECCMEC         :  return ( IsMEC     (abs_mode) && is_nue     );
+    case kSKmNuECCoth         :  return ( IsCCoth   (abs_mode) && is_nue     );
+    case kSKmNuENC1piC        :  return ( IsNC1piC  (abs_mode) && is_nue     );
+    case kSKmNuENC1pi0        :  return ( IsNC1pi0  (abs_mode) && is_nue     );
+    case kSKmNuENCcoh         :  return ( IsNCcoh   (abs_mode) && is_nue     );
+    case kSKmNuENCoth_e       :  return ( IsNCoth_e (abs_mode) && is_nue     );
+    case kSKmNuENCoth_mu      :  return ( IsNCoth_mu(abs_mode) && is_nue     );
+                                                                             
+    case kSKmNuEBarCCQE       :  return ( IsCCQE    (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCC1pi      :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCCcoh      :  return ( IsCCcoh   (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCCMEC      :  return ( IsMEC     (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCCoth      :  return ( IsCCoth   (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNC1piC     :  return ( IsNC1piC  (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNC1pi0     :  return ( IsNC1pi0  (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNCcoh      :  return ( IsNCcoh   (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNCoth_e    :  return ( IsNCoth_e (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNCoth_mu   :  return ( IsNCoth_mu(abs_mode) && is_nuebar  );
     
     // Osc NuE
-    case kSKmOscNuECCQE    :  return ( IsCCQE    ( neut_reaction_mode) && is_nue    );
-    case kSKmOscNuECC1pi   :  return ( IsCC1pi   ( neut_reaction_mode) && is_nue    );
-    case kSKmOscNuECCcoh   :  return ( IsCCcoh   ( neut_reaction_mode) && is_nue    );
-    case kSKmOscNuECCMEC   :  return ( IsMEC     ( neut_reaction_mode) && is_nue    );
-    case kSKmOscNuECCoth   :  return ( IsCCoth   ( neut_reaction_mode) && is_nue    );
-    
-    case kSKmOscNuEBarCCQE    :  return ( IsCCQE    (-neut_reaction_mode) && is_nuebar );
-    case kSKmOscNuEBarCC1pi   :  return ( IsCC1pi   (-neut_reaction_mode) && is_nuebar );
-    case kSKmOscNuEBarCCcoh   :  return ( IsCCcoh   (-neut_reaction_mode) && is_nuebar );
-    case kSKmOscNuEBarCCMEC   :  return ( IsMEC     (-neut_reaction_mode) && is_nuebar );
-    case kSKmOscNuEBarCCoth   :  return ( IsCCoth   (-neut_reaction_mode) && is_nuebar );
+    case kSKmOscNuECCQE       :  return ( IsCCQE    (abs_mode) && is_nue     );
+    case kSKmOscNuECC1pi      :  return ( IsCC1pi   (abs_mode) && is_nue     );
+    case kSKmOscNuECCcoh      :  return ( IsCCcoh   (abs_mode) && is_nue     );
+    case kSKmOscNuECCMEC      :  return ( IsMEC     (abs_mode) && is_nue     );
+    case kSKmOscNuECCoth      :  return ( IsCCoth   (abs_mode) && is_nue     );
+                                                                             
+    case kSKmOscNuEBarCCQE    :  return ( IsCCQE    (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCC1pi   :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCCcoh   :  return ( IsCCcoh   (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCCMEC   :  return ( IsMEC     (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCCoth   :  return ( IsCCoth   (abs_mode) && is_nuebar  );
     
     
     case kSKmUndefined: break;
