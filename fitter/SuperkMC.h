@@ -45,6 +45,10 @@ class SuperkMC: public TObject
 public:
   SuperkMC();
  ~SuperkMC();
+ 
+ 
+  using TObject::Read; // Suppress clang warnings
+  using TObject::Draw; // Suppress clang warnings
 
   // Apply systematic variations + oscillations (,decay,decoherence) to MC templates
   void UpdateTemplates(void);

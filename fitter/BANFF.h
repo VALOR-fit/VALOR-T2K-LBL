@@ -41,6 +41,9 @@ class BANFF: public TObject
 public:
   BANFF();   
  ~BANFF();
+ 
+  using TObject::Read; // Suppress clang warnings
+  using TObject::Draw; // Suppress clang warnings
 
   // Get BANFF fit param values (nominal + tweaked)
   double BestFitValue (conv::PhysParamId_t p) const;

@@ -39,6 +39,9 @@ public:
 
   NuXSec();
  ~NuXSec();
+ 
+  using TObject::Read; // Suppress clang warnings
+  using TObject::Draw; // Suppress clang warnings
 
   // Reweight to best-fit values of the BANFF cross-section related params
   double FinTuningWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;

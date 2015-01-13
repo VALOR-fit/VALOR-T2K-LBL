@@ -37,6 +37,9 @@ public:
 
   SuperkDetectorFSI();
  ~SuperkDetectorFSI();
+ 
+  using TObject::Read; // Suppress clang warnings
+  using TObject::Draw; // Suppress clang warnings
 
   // Calculate weight in response to systematic parameter variations of FSI parameters
   double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;

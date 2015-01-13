@@ -1052,6 +1052,9 @@ void NuFlux::ApplyFHCpRHCBANFFWeights(bool get_current) const
 	  iflxCurrent= conv::kRHCFlxCurrent;
 	  iflxFinalTuning= conv::kRHCFlxFinalTuning;
 	}
+  else {
+    assert(!"Failed to get flux type");
+  }
 
         TH1D * flux_spectrum_orig = this->SuperkFluxSpectrum(nu_pdg, iflxExtTuning); 
 

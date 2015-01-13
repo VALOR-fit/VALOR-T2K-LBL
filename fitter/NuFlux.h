@@ -36,6 +36,9 @@ class NuFlux: public TObject
 public:
   NuFlux();   
  ~NuFlux();
+ 
+  using TObject::Read; // Suppress clang warnings
+  using TObject::Draw; // Suppress clang warnings
 
   // SK flux tuning and systematic variation weights
   double SuperkFluxExtTuningWght     (int neutrino_pdg, double Etrue) const;  // wght: nominal --> ext/tuned flux
