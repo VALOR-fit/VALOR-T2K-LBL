@@ -99,9 +99,7 @@ namespace util {
   bool IsNC1pi0   (int neut_reaction_mode);
   bool IsNC1piC   (int neut_reaction_mode);
   bool IsNCcoh    (int neut_reaction_mode); 
-  bool IsNCoth    (int neut_reaction_mode); // this is a catch all. if new categories are added, please alter this method too 
-  bool IsNCoth_e  (int neut_reaction_mode);
-  bool IsNCoth_mu (int neut_reaction_mode);
+  bool IsNCoth    (int neut_reaction_mode);
 
   //
   // Etc

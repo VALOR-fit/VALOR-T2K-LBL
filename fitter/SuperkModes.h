@@ -28,7 +28,7 @@ namespace conv   {
   
 // Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
 // Actual choice for current analysis is given in `Configuration' section.
-static const int kNSuperkModes = 60;  // number of reaction modes kept track of within each sample
+static const int kNSuperkModes = 56;  // number of reaction modes kept track of within each sample
 static const int knm = kNSuperkModes; // as above - shorter name
 typedef enum ESuperkMode 
 {
@@ -41,8 +41,7 @@ typedef enum ESuperkMode
    kSKmNuMuNC1piC,       // numu NC 1 charged pi
    kSKmNuMuNC1pi0,       // numu NC 1pi0
    kSKmNuMuNCcoh,        // numu NC coherent
-   kSKmNuMuNCoth_mu,     // numu NC other, nu_mu appearance analysis definition
-   kSKmNuMuNCoth_e,      // numu NC other, nu_e appearance analysis definition
+   kSKmNuMuNCoth,        // numu NC other
    kSKmOscNuMuCCQE,      // oscillated numu CCQE
    kSKmOscNuMuCC1pi,     // oscillated numu CC 1pi
    kSKmOscNuMuCCcoh,     // oscillated numu coh
@@ -56,8 +55,7 @@ typedef enum ESuperkMode
    kSKmNuMuBarNC1piC,    // numubar NC 1 charged pi
    kSKmNuMuBarNC1pi0,    // numubar NC 1pi0
    kSKmNuMuBarNCcoh,     // numubar NC coherent
-   kSKmNuMuBarNCoth_mu,  // numubar NC other, nu_mu appearance analysis definition
-   kSKmNuMuBarNCoth_e,   // numubar NC other, nu_e appearance analysis definition
+   kSKmNuMuBarNCoth,     // numubar NC other
    kSKmOscNuMuBarCCQE,   // oscillated numubar CCQE
    kSKmOscNuMuBarCC1pi,  // oscillated numubar CC 1pi
    kSKmOscNuMuBarCCcoh,  // oscillated numubar CC coh
@@ -71,8 +69,7 @@ typedef enum ESuperkMode
    kSKmNuENC1piC,        // nue NC 1 charged pi
    kSKmNuENC1pi0,        // nue NC 1pi0
    kSKmNuENCcoh,         // nue NC coherent
-   kSKmNuENCoth_mu,      // nue NC other, nu_mu appearance analysis definition
-   kSKmNuENCoth_e,       // nue NC other, nu_e appearance analysis definition
+   kSKmNuENCoth,         // nue NC other, nu_mu appearance analysis definition
    kSKmOscNuEBarCCQE,    // oscillated nuebar CC QE
    kSKmOscNuEBarCC1pi,   // oscillated nuebar CC 1pi
    kSKmOscNuEBarCCcoh,   // oscillated nuebar CC coherent
@@ -86,8 +83,7 @@ typedef enum ESuperkMode
    kSKmNuEBarNC1piC,     // nuebar NC 1 charged pi
    kSKmNuEBarNC1pi0,     // nuebar NC 1pi0
    kSKmNuEBarNCcoh,      // nuebar NC coherent
-   kSKmNuEBarNCoth_mu,   // nuebar NC other, nu_mu appearance analysis definition
-   kSKmNuEBarNCoth_e,    // nuebar NC other, nu_e appearance analysis definition
+   kSKmNuEBarNCoth,      // nuebar NC other
    kSKmOscNuECCQE,       // oscillated nue CCQE
    kSKmOscNuECC1pi,      // oscillated nue CC 1pi
    kSKmOscNuECCcoh,      // oscillated nue CC coh

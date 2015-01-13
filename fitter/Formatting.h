@@ -7,12 +7,12 @@
 
 \author   Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
           STFC, Rutherford Appleton Laboratory
-          
+
 \created  Oct 20, 2010
 
 Changes since 2011_v0.9.0:
 
-17-12-2013  Nick  
+17-12-2013  Nick
 Split valor::conv namespace into several smaller files
 
 */
@@ -28,16 +28,16 @@ namespace valor {
 namespace conv   {
 
 // Indices for array with default graphic attributes (see below)
-static const int kNGraphicAttributes = 5; 
+static const int kNGraphicAttributes = 5;
 typedef enum EGraphicAttributeIdx
-{   
-   kGrAttUndefined  = -1, 
-   kGrAttFillStyle  =  0, 
-   kGrAttFillColour =  1, 
-   kGrAttLineStyle  =  2, 
-   kGrAttLineWidth  =  3, 
-   kGrAttLineColour =  4 
-} 
+{
+   kGrAttUndefined  = -1,
+   kGrAttFillStyle  =  0,
+   kGrAttFillColour =  1,
+   kGrAttLineStyle  =  2,
+   kGrAttLineWidth  =  3,
+   kGrAttLineColour =  4
+}
 GraphicAttributeIdx_t;
 
 //
@@ -52,7 +52,7 @@ GraphicAttributeIdx_t;
 // The 5 listed attributes for each sample are fill style, fill colour, line style, line width, line colour.
 //
 static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
-  // > 1 muon-like ring 
+  // > 1 muon-like ring
   {
     {   -1,  kWhite,    1,  1,  kBlack}, // kSKmNuMuCCQE
     { 3544,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCC1pi
@@ -60,7 +60,9 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3016,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCMEC
     { 3006,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCoth
     { 3554,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC1piC
-    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCoth_mu
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC1pi0
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCcoh
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCoth
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
     { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE
     { 3544,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCC1pi
@@ -74,7 +76,9 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3016,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCMEC
     { 3354,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCoth
     { 3544,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC1piC
-    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCoth_mu
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC1pi0
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCcoh
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCoth
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     { 3001,  kAzure-5,  1,  1,  kBlack}, // kSKmOscNuMuBarCCQE
     { 3345,  kAzure-5,  1,  1,  kBlack}, // kSKmOscNuMuBarCC1pi
@@ -87,8 +91,10 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3244,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCcoh
     { 3016,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCMEC
     { 3354,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCoth
-    { 3544,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1pic
-    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCoth_mu
+    { 3544,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1piC
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1pi0
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCcoh
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCoth
 
     { 3001,  kGreen-3,  1,  1,  kBlack}, // kSKmOscNuECCQE
     { 3345,  kGreen-3,  1,  1,  kBlack}, // kSKmOscNuECC1pi
@@ -101,9 +107,11 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3244,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCcoh
     { 3016,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCMEC
     { 3354,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCoth
-    { 3544,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1pic
-    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCoth_mu
-    
+    { 3544,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1piC
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1pi0
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCcoh
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCoth
+
     { 3001,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCCQE
     { 3345,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCC1pi
     { 3244,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCCcoh
@@ -124,45 +132,35 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
 #endif
 
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
   }//1Rmu
   ,
-  // > 1 electron-like ring 
+  // > 1 electron-like ring
   {
     {   -1,    kWhite,  1,  1, kBlack }, // kSKmNuMuCCQE
     { 3544,    kBlack,  1,  1, kBlack }, // kSKmNuMuCC1pi
     { 3244,    kGreen,  1,  1, kBlack }, // kSKmNuMuCCcoh
     { 3016,    kGreen,  1,  1, kBlack }, // kSKmNuMuCCMEC
     { 3244,     kBlue,  1,  1, kBlack }, // kSKmNuMuCCoth
+    { 3554,      kRed,  1,  1, kBlack }, // kSKmNuMuNC1piC
     { 3006,      kRed,  1,  1, kBlack }, // kSKmNuMuNC1pi0
     { 3006,    kRed-1,  1,  1, kBlack }, // kSKmNuMuNCcoh
-    { 3006,    kRed-2,  1,  1, kBlack }, // kSKmNuMuNCoth_e
+    { 3006,    kRed-2,  1,  1, kBlack }, // kSKmNuMuNCoth
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE     
+    { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE
     { 3544,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCC1pi
-    { 3244,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCcoh 
-    { 3016,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCMEC 
-    { 3006,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCoth     
+    { 3244,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCcoh
+    { 3016,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCMEC
+    { 3006,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCoth
 #endif
     { 3001,  kAzure-3,  1,  1, kBlack }, // kSKmNuMuBarCCQE
     { 3345,  kAzure-4,  1,  1, kBlack }, // kSKmNuMuBarCC1pi
     { 3354,  kAzure-6,  1,  1, kBlack }, // kSKmNuMuBarCCcoh
     { 3016,  kAzure-6,  1,  1, kBlack }, // kSKmNuMuBarCCMEC
     { 3354,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarCCoth
+    { 3554,  kAzure-7,  1,  1, kBlack }, // kSKmNuMuBarNC1piC
     { 3006,  kAzure-7,  1,  1, kBlack }, // kSKmNuMuBarNC1pi0
     { 3006,  kAzure-9,  1,  1, kBlack }, // kSKmNuMuBarNCcoh
-    { 3006,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarNCoth_e
+    { 3006,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarNCoth
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     { 3001,  kAzure-7,  1,  1, kBlack }, // kSKmOscNuMuBarCCQE
     { 3345,  kAzure-8,  1,  1, kBlack }, // kSKmOscNuMuBarCC1pi
@@ -175,9 +173,10 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3354,  kGreen+2,  1,  1, kBlack }, // kSKmNuECCcoh
     { 3016,  kGreen+2,  1,  1, kBlack }, // kSKmNuECCMEC
     { 3354,    kBlack,  1,  1, kBlack }, // kSKmNuECCoth
+    { 3554,  kGreen+5,  1,  1, kBlack }, // kSKmNuENC1piC
     { 3006,  kGreen+5,  1,  1, kBlack }, // kSKmNuENC1pi0
     { 3006,  kGreen+7,  1,  1, kBlack }, // kSKmNuENCcoh
-    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuENCoth_e
+    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuENCoth
 
     { 3001,  kGreen+8,  1,  1, kBlack }, // kSKmOscNuECCQE
     { 3345, kGreen+10,  1,  1, kBlack }, // kSKmOscNuECC1pi
@@ -190,10 +189,11 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3354,  kBlue+2,   1,  1, kBlack }, // kSKmNuEBarCCcoh
     { 3016,  kBlue+2,   1,  1, kBlack }, // kSKmNuEBarCCMEC
     { 3354,    kBlack,  1,  1, kBlack }, // kSKmNuEBarCCoth
+    { 3006,  kBlue+5,   1,  1, kBlack }, // kSKmNuEBarNC1piC
     { 3006,  kBlue+5,   1,  1, kBlack }, // kSKmNuEBarNC1pi0
     { 3006,  kBlue+7,   1,  1, kBlack }, // kSKmNuEBarNCcoh
-    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth_e
-    
+    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth
+
     { 3001,  kBlue+3,   1,  1, kBlack }, // kSKmOscNuEBarCCQE
     { 3345,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCC1pi
     { 3354,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCCcoh
@@ -213,14 +213,6 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
 #endif
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
   }//1Re
   ,
   // > 1 muon-like ring RHC
@@ -231,7 +223,9 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3016,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCMEC
     { 3006,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCoth
     { 3554,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC1piC
-    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCoth_mu
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC1pi0
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCcoh
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCoth
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
     { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE
     { 3544,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCC1pi
@@ -245,7 +239,9 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3016,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCMEC
     { 3354,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCoth
     { 3544,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC1piC
-    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCoth_mu
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC1pi0
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCcoh
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCoth
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     { 3001,  kAzure-5,  1,  1,  kBlack}, // kSKmOscNuMuBarCCQE
     { 3345,  kAzure-5,  1,  1,  kBlack}, // kSKmOscNuMuBarCC1pi
@@ -258,8 +254,10 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3244,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCcoh
     { 3016,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCMEC
     { 3354,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCoth
-    { 3544,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1pic
-    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCoth_mu
+    { 3544,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1piC
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1pi0
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCcoh
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCoth
 
     { 3001,  kGreen-3,  1,  1,  kBlack}, // kSKmOscNuECCQE
     { 3345,  kGreen-3,  1,  1,  kBlack}, // kSKmOscNuECC1pi
@@ -272,9 +270,11 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3244,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCcoh
     { 3016,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCMEC
     { 3354,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCoth
-    { 3544,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1pic
-    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCoth_mu
-    
+    { 3544,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1piC
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1pi0
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCcoh
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCoth
+
     { 3001,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCCQE
     { 3345,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCC1pi
     { 3244,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCCcoh
@@ -294,18 +294,6 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
 #endif
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
   }//1Rmu RHC
   ,
   // > 1 electron-like ring RHC
@@ -315,24 +303,26 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3244,    kGreen,  1,  1, kBlack }, // kSKmNuMuCCcoh
     { 3016,    kGreen,  1,  1, kBlack }, // kSKmNuMuCCMEC
     { 3244,     kBlue,  1,  1, kBlack }, // kSKmNuMuCCoth
+    { 3554,      kRed,  1,  1, kBlack }, // kSKmNuMuNC1piC
     { 3006,      kRed,  1,  1, kBlack }, // kSKmNuMuNC1pi0
     { 3006,    kRed-1,  1,  1, kBlack }, // kSKmNuMuNCcoh
-    { 3006,    kRed-2,  1,  1, kBlack }, // kSKmNuMuNCoth_e
+    { 3006,    kRed-2,  1,  1, kBlack }, // kSKmNuMuNCoth
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE     
+    { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE
     { 3544,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCC1pi
-    { 3244,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCcoh 
-    { 3016,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCMEC 
-    { 3006,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCoth     
+    { 3244,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCcoh
+    { 3016,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCMEC
+    { 3006,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCoth
 #endif
     { 3001,  kAzure-3,  1,  1, kBlack }, // kSKmNuMuBarCCQE
     { 3345,  kAzure-4,  1,  1, kBlack }, // kSKmNuMuBarCC1pi
     { 3354,  kAzure-6,  1,  1, kBlack }, // kSKmNuMuBarCCcoh
     { 3016,  kAzure-6,  1,  1, kBlack }, // kSKmNuMuBarCCMEC
     { 3354,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarCCoth
+    { 3554,  kAzure-7,  1,  1, kBlack }, // kSKmNuMuBarNC1piC
     { 3006,  kAzure-7,  1,  1, kBlack }, // kSKmNuMuBarNC1pi0
     { 3006,  kAzure-9,  1,  1, kBlack }, // kSKmNuMuBarNCcoh
-    { 3006,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarNCoth_e
+    { 3006,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarNCoth
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     { 3001,  kAzure-7,  1,  1, kBlack }, // kSKmOscNuMuBarCCQE
     { 3345,  kAzure-8,  1,  1, kBlack }, // kSKmOscNuMuBarCC1pi
@@ -345,9 +335,10 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3354,  kGreen+2,  1,  1, kBlack }, // kSKmNuECCcoh
     { 3016,  kGreen+2,  1,  1, kBlack }, // kSKmNuECCMEC
     { 3354,    kBlack,  1,  1, kBlack }, // kSKmNuECCoth
+    { 3554,  kGreen+5,  1,  1, kBlack }, // kSKmNuENC1piC
     { 3006,  kGreen+5,  1,  1, kBlack }, // kSKmNuENC1pi0
     { 3006,  kGreen+7,  1,  1, kBlack }, // kSKmNuENCcoh
-    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuENCoth_e
+    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuENCoth
 
     { 3001,  kGreen+8,  1,  1, kBlack }, // kSKmOscNuECCQE
     { 3345, kGreen+10,  1,  1, kBlack }, // kSKmOscNuECC1pi
@@ -360,10 +351,11 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3354,  kBlue+2,   1,  1, kBlack }, // kSKmNuEBarCCcoh
     { 3016,  kBlue+2,   1,  1, kBlack }, // kSKmNuEBarCCMEC
     { 3354,    kBlack,  1,  1, kBlack }, // kSKmNuEBarCCoth
+    { 3554,  kBlue+5,   1,  1, kBlack }, // kSKmNuEBarNC1piC
     { 3006,  kBlue+5,   1,  1, kBlack }, // kSKmNuEBarNC1pi0
     { 3006,  kBlue+7,   1,  1, kBlack }, // kSKmNuEBarNCcoh
-    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth_e
-    
+    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth
+
     { 3001,  kBlue+3,   1,  1, kBlack }, // kSKmOscNuEBarCCQE
     { 3345,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCC1pi
     { 3354,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCCcoh
@@ -383,17 +375,9 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
 #endif
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
   }//1Re RHC
   ,
-  // > Multi muon-like ring 
+  // > Multi muon-like ring
   {
     {   -1,  kWhite,    1,  1,  kBlack}, // kSKmNuMuCCQE
     { 3544,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCC1pi
@@ -401,7 +385,9 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3016,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCMEC
     { 3006,  kBlack,    1,  1,  kBlack}, // kSKmNuMuCCoth
     { 3554,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC1piC
-    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCoth_mu
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNC1pi0
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCcoh
+    { 3006,  kRed,      1,  1,  kBlack}, // kSKmNuMuNCoth
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
     { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE
     { 3544,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCC1pi
@@ -415,7 +401,9 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3016,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCMEC
     { 3354,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarCCoth
     { 3544,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC1piC
-    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCoth_mu
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNC1pi0
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCcoh
+    { 3006,  kAzure-3,  1,  1,  kBlack}, // kSKmNuMuBarNCoth
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     { 3001,  kAzure-5,  1,  1,  kBlack}, // kSKmOscNuMuBarCCQE
     { 3345,  kAzure-5,  1,  1,  kBlack}, // kSKmOscNuMuBarCC1pi
@@ -428,8 +416,10 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3244,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCcoh
     { 3016,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCMEC
     { 3354,  kGreen+1,  1,  1,  kBlack}, // kSKmNuECCoth
-    { 3544,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1pic
-    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCoth_mu
+    { 3544,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1piC
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENC1pi0
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCcoh
+    { 3006,  kGreen+1,  1,  1,  kBlack}, // kSKmNuENCoth
 
     { 3001,  kGreen-3,  1,  1,  kBlack}, // kSKmOscNuECCQE
     { 3345,  kGreen-3,  1,  1,  kBlack}, // kSKmOscNuECC1pi
@@ -442,9 +432,11 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3244,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCcoh
     { 3016,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCMEC
     { 3354,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarCCoth
-    { 3544,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1pic
-    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCoth_mu
-    
+    { 3544,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1piC
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNC1pi0
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCcoh
+    { 3006,  kBlue,     1,  1,  kBlack}, // kSKmNuEBarNCoth
+
     { 3001,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCCQE
     { 3345,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCC1pi
     { 3244,  kBlue-3,     1,  1,  kBlack}, // kSKmOscNuEBarCCcoh
@@ -464,45 +456,36 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
 #endif
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
+
   }//MultiRmu
   ,
-  // > Multi electron-like ring 
+  // > Multi electron-like ring
   {
     {   -1,    kWhite,  1,  1, kBlack }, // kSKmNuMuCCQE
     { 3544,    kBlack,  1,  1, kBlack }, // kSKmNuMuCC1pi
     { 3244,    kGreen,  1,  1, kBlack }, // kSKmNuMuCCcoh
     { 3016,    kGreen,  1,  1, kBlack }, // kSKmNuMuCCMEC
     { 3244,     kBlue,  1,  1, kBlack }, // kSKmNuMuCCoth
+    { 3554,      kRed,  1,  1, kBlack }, // kSKmNuMuNC1piC
     { 3006,      kRed,  1,  1, kBlack }, // kSKmNuMuNC1pi0
     { 3006,    kRed-1,  1,  1, kBlack }, // kSKmNuMuNCcoh
-    { 3006,    kRed-2,  1,  1, kBlack }, // kSKmNuMuNCoth_e
+    { 3006,    kRed-2,  1,  1, kBlack }, // kSKmNuMuNCoth
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE     
+    { 3001,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCQE
     { 3544,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCC1pi
-    { 3244,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCcoh 
-    { 3016,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCMEC 
-    { 3006,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCoth     
+    { 3244,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCcoh
+    { 3016,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCMEC
+    { 3006,  kGray,     1,  1,  kBlack}, // kSKmOscNuMuCCoth
 #endif
     { 3001,  kAzure-3,  1,  1, kBlack }, // kSKmNuMuBarCCQE
     { 3345,  kAzure-4,  1,  1, kBlack }, // kSKmNuMuBarCC1pi
     { 3354,  kAzure-6,  1,  1, kBlack }, // kSKmNuMuBarCCcoh
     { 3016,  kAzure-6,  1,  1, kBlack }, // kSKmNuMuBarCCMEC
     { 3354,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarCCoth
+    { 3554,  kAzure-7,  1,  1, kBlack }, // kSKmNuMuBarNC1piC
     { 3006,  kAzure-7,  1,  1, kBlack }, // kSKmNuMuBarNC1pi0
     { 3006,  kAzure-9,  1,  1, kBlack }, // kSKmNuMuBarNCcoh
-    { 3006,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarNCoth_e
+    { 3006,  kMagenta,  1,  1, kBlack }, // kSKmNuMuBarNCoth
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     { 3001,  kAzure-7,  1,  1, kBlack }, // kSKmOscNuMuBarCCQE
     { 3345,  kAzure-8,  1,  1, kBlack }, // kSKmOscNuMuBarCC1pi
@@ -515,9 +498,10 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3354,  kGreen+2,  1,  1, kBlack }, // kSKmNuECCcoh
     { 3016,  kGreen+2,  1,  1, kBlack }, // kSKmNuECCMEC
     { 3354,    kBlack,  1,  1, kBlack }, // kSKmNuECCoth
+    { 3554,  kGreen+5,  1,  1, kBlack }, // kSKmNuENC1piC
     { 3006,  kGreen+5,  1,  1, kBlack }, // kSKmNuENC1pi0
     { 3006,  kGreen+7,  1,  1, kBlack }, // kSKmNuENCcoh
-    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuENCoth_e
+    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuENCoth
 
     { 3001,  kGreen+8,  1,  1, kBlack }, // kSKmOscNuECCQE
     { 3345, kGreen+10,  1,  1, kBlack }, // kSKmOscNuECC1pi
@@ -530,10 +514,11 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3354,  kBlue+2,   1,  1, kBlack }, // kSKmNuEBarCCcoh
     { 3016,  kBlue+2,   1,  1, kBlack }, // kSKmNuEBarCCMEC
     { 3354,    kBlack,  1,  1, kBlack }, // kSKmNuEBarCCoth
+    { 3554,  kBlue+5,   1,  1, kBlack }, // kSKmNuEBarNC1piC
     { 3006,  kBlue+5,   1,  1, kBlack }, // kSKmNuEBarNC1pi0
     { 3006,  kBlue+7,   1,  1, kBlack }, // kSKmNuEBarNCcoh
-    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth_e
-    
+    { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth
+
     { 3001,  kBlue+3,   1,  1, kBlack }, // kSKmOscNuEBarCCQE
     { 3345,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCC1pi
     { 3354,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCCcoh
@@ -553,14 +538,6 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
 #endif
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
-    {   -1,        -1, -1, -1,     -1 }  // kSKmUndefined
   }//MultiRe
 
 };
@@ -572,66 +549,74 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
 
 static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
 
-  // > 1 muon-like ring (numu disappearance) 
+  // > 1 muon-like ring (numu disappearance)
   {
-    kSKmOscNuECCcoh, 
-    kSKmOscNuECCMEC, 
+    kSKmOscNuECCcoh,
+    kSKmOscNuECCMEC,
     kSKmOscNuECC1pi,
     kSKmOscNuECCoth,
-    kSKmOscNuECCQE, 
-    kSKmOscNuEBarCCcoh, 
-    kSKmOscNuEBarCCMEC, 
+    kSKmOscNuECCQE,
+    kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCoth,
-    kSKmOscNuEBarCCQE, 
+    kSKmOscNuEBarCCQE,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmOscNuMuBarCCcoh, 
-    kSKmOscNuMuBarCCMEC, 
+    kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCoth,
-    kSKmOscNuMuBarCCQE, 
+    kSKmOscNuMuBarCCQE,
 #endif
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmOscNuMuCCcoh, 
-    kSKmOscNuMuCCMEC, 
+    kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCoth,
-    kSKmOscNuMuCCQE, 
+    kSKmOscNuMuCCQE,
 #endif
     kSKmNuEBarNC1piC,
-    kSKmNuEBarNCoth_mu,
+    kSKmNuEBarNC1pi0,
+    kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth,
     kSKmNuEBarCCcoh,
     kSKmNuEBarCCMEC,
     kSKmNuEBarCC1pi,
-    kSKmNuEBarCCoth,                                
-    kSKmNuEBarCCQE, 
+    kSKmNuEBarCCoth,
+    kSKmNuEBarCCQE,
     kSKmNuENC1piC,
-    kSKmNuENCoth_mu,
+    kSKmNuENC1pi0,
+    kSKmNuENCcoh,
+    kSKmNuENCoth,
     kSKmNuECCcoh,
     kSKmNuECCMEC,
     kSKmNuECC1pi,
-    kSKmNuECCoth,                                
-    kSKmNuECCQE, 
-    kSKmNuMuBarNC1piC, 
-    kSKmNuMuBarNCoth_mu,
-    kSKmNuMuBarCCcoh, 
-    kSKmNuMuBarCCMEC, 
-    kSKmNuMuBarCC1pi, 
-    kSKmNuMuBarCCoth,                  
-    kSKmNuMuBarCCQE,      
+    kSKmNuECCoth,
+    kSKmNuECCQE,
+    kSKmNuMuBarNC1piC,
+    kSKmNuMuBarNC1pi0,
+    kSKmNuMuBarNCcoh,
+    kSKmNuMuBarNCoth,
+    kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCMEC,
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCoth,
+    kSKmNuMuBarCCQE,
     kSKmNuMuNC1piC,
-    kSKmNuMuNCoth_mu,
-    kSKmNuMuCCoth,                      
-    kSKmNuMuCCcoh, 
-    kSKmNuMuCCMEC, 
-    kSKmNuMuCC1pi, 
-    kSKmNuMuCCQE,  
+    kSKmNuMuNC1pi0,
+    kSKmNuMuNCcoh,
+    kSKmNuMuNCoth,
+    kSKmNuMuCCoth,
+    kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCQE,
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-    kSKmUndefined,    
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     kSKmUndefined,
@@ -639,76 +624,68 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif      
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
+#endif
   }//1Rmu
   ,
-  // > 1 electron-like ring (nue appearance) 
+  // > 1 electron-like ring (nue appearance)
   {
-    kSKmOscNuEBarCCcoh, 
-    kSKmOscNuEBarCCMEC, 
+    kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCoth,
-    kSKmOscNuEBarCCQE, 
+    kSKmOscNuEBarCCQE,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmOscNuMuBarCCcoh, 
-    kSKmOscNuMuBarCCMEC, 
+    kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCoth,
-    kSKmOscNuMuBarCCQE, 
+    kSKmOscNuMuBarCCQE,
 #endif
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmOscNuMuCCcoh, 
-    kSKmOscNuMuCCMEC, 
+    kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCoth,
-    kSKmOscNuMuCCQE, 
+    kSKmOscNuMuCCQE,
 #endif
-    kSKmNuMuCCQE, 
-    kSKmNuMuCC1pi, 
-    kSKmNuMuCCcoh, 
-    kSKmNuMuCCMEC, 
-    kSKmNuMuCCoth, 
-    kSKmNuMuNC1pi0, 
-    kSKmNuMuNCcoh, 
-    kSKmNuMuNCoth_e,                            
-    kSKmNuMuBarCCQE, 
-    kSKmNuMuBarCC1pi, 
-    kSKmNuMuBarCCcoh, 
-    kSKmNuMuBarCCMEC, 
-    kSKmNuMuBarCCoth,  
-    kSKmNuMuBarNC1pi0, 
-    kSKmNuMuBarNCcoh, 
-    kSKmNuMuBarNCoth_e,
-    kSKmNuEBarCCQE, 
-    kSKmNuEBarCC1pi, 
-    kSKmNuEBarCCcoh, 
-    kSKmNuEBarCCMEC, 
+    kSKmNuMuCCQE,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
+    kSKmNuMuCCoth,
+    kSKmNuMuNC1piC,
+    kSKmNuMuNC1pi0,
+    kSKmNuMuNCcoh,
+    kSKmNuMuNCoth,
+    kSKmNuMuBarCCQE,
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCMEC,
+    kSKmNuMuBarCCoth,
+    kSKmNuMuBarNC1piC,
+    kSKmNuMuBarNC1pi0,
+    kSKmNuMuBarNCcoh,
+    kSKmNuMuBarNCoth,
+    kSKmNuEBarCCQE,
+    kSKmNuEBarCC1pi,
+    kSKmNuEBarCCcoh,
+    kSKmNuEBarCCMEC,
     kSKmNuEBarCCoth,
-    kSKmNuEBarNC1pi0,  
-    kSKmNuEBarNCcoh, 
-    kSKmNuEBarNCoth_e,
-    kSKmNuECCQE, 
-    kSKmNuECC1pi, 
-    kSKmNuECCcoh, 
-    kSKmNuECCMEC, 
+    kSKmNuEBarNC1piC,
+    kSKmNuEBarNC1pi0,
+    kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth,
+    kSKmNuECCQE,
+    kSKmNuECC1pi,
+    kSKmNuECCcoh,
+    kSKmNuECCMEC,
     kSKmNuECCoth,
-    kSKmNuENC1pi0,  
-    kSKmNuENCcoh, 
-    kSKmNuENCoth_e,
-    kSKmOscNuECCQE,  
-    kSKmOscNuECC1pi,  
+    kSKmNuENC1piC,
+    kSKmNuENC1pi0,
+    kSKmNuENCcoh,
+    kSKmNuENCoth,
+    kSKmOscNuECCQE,
+    kSKmOscNuECC1pi,
     kSKmOscNuECCcoh,
     kSKmOscNuECCMEC,
     kSKmOscNuECCoth,
@@ -717,7 +694,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-    kSKmUndefined,    
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     kSKmUndefined,
@@ -725,77 +702,77 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif  
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
+#endif
   }//1Re
   ,
   // > 1 muon-like ring (numu disappearance) RHC
   {
-    kSKmOscNuECCcoh, 
-    kSKmOscNuECCMEC, 
+    kSKmOscNuECCcoh,
+    kSKmOscNuECCMEC,
     kSKmOscNuECC1pi,
     kSKmOscNuECCoth,
-    kSKmOscNuECCQE, 
-    kSKmOscNuEBarCCcoh, 
-    kSKmOscNuEBarCCMEC, 
+    kSKmOscNuECCQE,
+    kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCoth,
-    kSKmOscNuEBarCCQE, 
+    kSKmOscNuEBarCCQE,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmOscNuMuBarCCcoh, 
-    kSKmOscNuMuBarCCMEC, 
+    kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCoth,
-    kSKmOscNuMuBarCCQE, 
+    kSKmOscNuMuBarCCQE,
 #endif
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmOscNuMuCCcoh, 
-    kSKmOscNuMuCCMEC, 
+    kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCoth,
-    kSKmOscNuMuCCQE, 
+    kSKmOscNuMuCCQE,
 #endif
     kSKmNuEBarNC1piC,
-    kSKmNuEBarNCoth_mu,
+    kSKmNuEBarNC1pi0,
+    kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth,
     kSKmNuEBarCCcoh,
     kSKmNuEBarCCMEC,
     kSKmNuEBarCC1pi,
-    kSKmNuEBarCCoth,                                
-    kSKmNuEBarCCQE, 
+    kSKmNuEBarCCoth,
+    kSKmNuEBarCCQE,
     kSKmNuENC1piC,
-    kSKmNuENCoth_mu,
+    kSKmNuENC1pi0,
+    kSKmNuENCcoh,
+    kSKmNuENCoth,
     kSKmNuECCcoh,
     kSKmNuECCMEC,
     kSKmNuECC1pi,
-    kSKmNuECCoth,                                
-    kSKmNuECCQE, 
-    kSKmNuMuBarNC1piC, 
-    kSKmNuMuBarNCoth_mu,
-    kSKmNuMuBarCCcoh, 
-    kSKmNuMuBarCCMEC, 
-    kSKmNuMuBarCC1pi, 
-    kSKmNuMuBarCCoth,                  
-    kSKmNuMuBarCCQE,      
+    kSKmNuECCoth,
+    kSKmNuECCQE,
+    kSKmNuMuBarNC1piC,
+    kSKmNuMuBarNC1pi0,
+    kSKmNuMuBarNCcoh,
+    kSKmNuMuBarNCoth,
+    kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCMEC,
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCoth,
+    kSKmNuMuBarCCQE,
     kSKmNuMuNC1piC,
-    kSKmNuMuNCoth_mu,
-    kSKmNuMuCCoth,                      
-    kSKmNuMuCCcoh, 
-    kSKmNuMuCCMEC, 
-    kSKmNuMuCC1pi, 
-    kSKmNuMuCCQE,  
+    kSKmNuMuNC1pi0,
+    kSKmNuMuNCcoh,
+    kSKmNuMuNCoth,
+    kSKmNuMuCCoth,
+    kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCQE,
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-    kSKmUndefined,    
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     kSKmUndefined,
@@ -803,76 +780,68 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif      
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
+#endif
   }//1Rmu RHC
   ,
   // > 1 electron-like ring (nue appearance) RHC
   {
-    kSKmOscNuEBarCCcoh, 
-    kSKmOscNuEBarCCMEC, 
+    kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCoth,
-    kSKmOscNuEBarCCQE, 
+    kSKmOscNuEBarCCQE,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmOscNuMuBarCCcoh, 
-    kSKmOscNuMuBarCCMEC, 
+    kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCoth,
-    kSKmOscNuMuBarCCQE, 
+    kSKmOscNuMuBarCCQE,
 #endif
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmOscNuMuCCcoh, 
-    kSKmOscNuMuCCMEC, 
+    kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCoth,
-    kSKmOscNuMuCCQE, 
+    kSKmOscNuMuCCQE,
 #endif
-    kSKmNuMuCCQE, 
-    kSKmNuMuCC1pi, 
-    kSKmNuMuCCcoh, 
-    kSKmNuMuCCMEC, 
-    kSKmNuMuCCoth, 
-    kSKmNuMuNC1pi0, 
-    kSKmNuMuNCcoh, 
-    kSKmNuMuNCoth_e,                            
-    kSKmNuMuBarCCQE, 
-    kSKmNuMuBarCC1pi, 
-    kSKmNuMuBarCCcoh, 
-    kSKmNuMuBarCCMEC, 
-    kSKmNuMuBarCCoth,  
-    kSKmNuMuBarNC1pi0, 
-    kSKmNuMuBarNCcoh, 
-    kSKmNuMuBarNCoth_e,
-    kSKmNuEBarCCQE, 
-    kSKmNuEBarCC1pi, 
-    kSKmNuEBarCCcoh, 
-    kSKmNuEBarCCMEC, 
+    kSKmNuMuCCQE,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
+    kSKmNuMuCCoth,
+    kSKmNuMuNC1piC,
+    kSKmNuMuNC1pi0,
+    kSKmNuMuNCcoh,
+    kSKmNuMuNCoth,
+    kSKmNuMuBarCCQE,
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCMEC,
+    kSKmNuMuBarCCoth,
+    kSKmNuMuBarNC1piC,
+    kSKmNuMuBarNC1pi0,
+    kSKmNuMuBarNCcoh,
+    kSKmNuMuBarNCoth,
+    kSKmNuEBarCCQE,
+    kSKmNuEBarCC1pi,
+    kSKmNuEBarCCcoh,
+    kSKmNuEBarCCMEC,
     kSKmNuEBarCCoth,
-    kSKmNuEBarNC1pi0,  
-    kSKmNuEBarNCcoh, 
-    kSKmNuEBarNCoth_e,
-    kSKmNuECCQE, 
-    kSKmNuECC1pi, 
-    kSKmNuECCcoh, 
-    kSKmNuECCMEC, 
+    kSKmNuEBarNC1piC,
+    kSKmNuEBarNC1pi0,
+    kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth,
+    kSKmNuECCQE,
+    kSKmNuECC1pi,
+    kSKmNuECCcoh,
+    kSKmNuECCMEC,
     kSKmNuECCoth,
-    kSKmNuENC1pi0,  
-    kSKmNuENCcoh, 
-    kSKmNuENCoth_e,
-    kSKmOscNuECCQE,  
-    kSKmOscNuECC1pi,  
+    kSKmNuENC1piC,
+    kSKmNuENC1pi0,
+    kSKmNuENCcoh,
+    kSKmNuENCoth,
+    kSKmOscNuECCQE,
+    kSKmOscNuECC1pi,
     kSKmOscNuECCcoh,
     kSKmOscNuECCMEC,
     kSKmOscNuECCoth,
@@ -881,7 +850,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-    kSKmUndefined,    
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     kSKmUndefined,
@@ -889,77 +858,77 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif  
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
+#endif
   }//1Re RHC
   ,
-  // > Multi muon-like ring (numu disappearance) 
+  // > Multi muon-like ring (numu disappearance)
   {
-    kSKmOscNuECCcoh, 
-    kSKmOscNuECCMEC, 
+    kSKmOscNuECCcoh,
+    kSKmOscNuECCMEC,
     kSKmOscNuECC1pi,
     kSKmOscNuECCoth,
-    kSKmOscNuECCQE, 
-    kSKmOscNuEBarCCcoh, 
-    kSKmOscNuEBarCCMEC, 
+    kSKmOscNuECCQE,
+    kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCoth,
-    kSKmOscNuEBarCCQE, 
+    kSKmOscNuEBarCCQE,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmOscNuMuBarCCcoh, 
-    kSKmOscNuMuBarCCMEC, 
+    kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCoth,
-    kSKmOscNuMuBarCCQE, 
+    kSKmOscNuMuBarCCQE,
 #endif
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmOscNuMuCCcoh, 
-    kSKmOscNuMuCCMEC, 
+    kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCoth,
-    kSKmOscNuMuCCQE, 
+    kSKmOscNuMuCCQE,
 #endif
     kSKmNuEBarNC1piC,
-    kSKmNuEBarNCoth_mu,
+    kSKmNuEBarNC1pi0,
+    kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth,
     kSKmNuEBarCCcoh,
     kSKmNuEBarCCMEC,
     kSKmNuEBarCC1pi,
-    kSKmNuEBarCCoth,                                
-    kSKmNuEBarCCQE, 
+    kSKmNuEBarCCoth,
+    kSKmNuEBarCCQE,
     kSKmNuENC1piC,
-    kSKmNuENCoth_mu,
+    kSKmNuENC1pi0,
+    kSKmNuENCcoh,
+    kSKmNuENCoth,
     kSKmNuECCcoh,
     kSKmNuECCMEC,
     kSKmNuECC1pi,
-    kSKmNuECCoth,                                
-    kSKmNuECCQE, 
-    kSKmNuMuBarNC1piC, 
-    kSKmNuMuBarNCoth_mu,
-    kSKmNuMuBarCCcoh, 
-    kSKmNuMuBarCCMEC, 
-    kSKmNuMuBarCC1pi, 
-    kSKmNuMuBarCCoth,                  
-    kSKmNuMuBarCCQE,      
+    kSKmNuECCoth,
+    kSKmNuECCQE,
+    kSKmNuMuBarNC1piC,
+    kSKmNuMuBarNC1pi0,
+    kSKmNuMuBarNCcoh,
+    kSKmNuMuBarNCoth,
+    kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCMEC,
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCoth,
+    kSKmNuMuBarCCQE,
     kSKmNuMuNC1piC,
-    kSKmNuMuNCoth_mu,
-    kSKmNuMuCCoth,                      
-    kSKmNuMuCCcoh, 
-    kSKmNuMuCCMEC, 
-    kSKmNuMuCC1pi, 
-    kSKmNuMuCCQE,  
+    kSKmNuMuNC1pi0,
+    kSKmNuMuNCcoh,
+    kSKmNuMuNCoth,
+    kSKmNuMuCCoth,
+    kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCQE,
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-    kSKmUndefined,    
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     kSKmUndefined,
@@ -967,76 +936,68 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif      
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
+#endif
   }//MultiRmu
   ,
-  // > Multi electron-like ring (nue appearance) 
+  // > Multi electron-like ring (nue appearance)
   {
-    kSKmOscNuEBarCCcoh, 
-    kSKmOscNuEBarCCMEC, 
+    kSKmOscNuEBarCCcoh,
+    kSKmOscNuEBarCCMEC,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCoth,
-    kSKmOscNuEBarCCQE, 
+    kSKmOscNuEBarCCQE,
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-    kSKmOscNuMuBarCCcoh, 
-    kSKmOscNuMuBarCCMEC, 
+    kSKmOscNuMuBarCCcoh,
+    kSKmOscNuMuBarCCMEC,
     kSKmOscNuMuBarCC1pi,
     kSKmOscNuMuBarCCoth,
-    kSKmOscNuMuBarCCQE, 
+    kSKmOscNuMuBarCCQE,
 #endif
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-    kSKmOscNuMuCCcoh, 
-    kSKmOscNuMuCCMEC, 
+    kSKmOscNuMuCCcoh,
+    kSKmOscNuMuCCMEC,
     kSKmOscNuMuCC1pi,
     kSKmOscNuMuCCoth,
-    kSKmOscNuMuCCQE, 
+    kSKmOscNuMuCCQE,
 #endif
-    kSKmNuMuCCQE, 
-    kSKmNuMuCC1pi, 
-    kSKmNuMuCCcoh, 
-    kSKmNuMuCCMEC, 
-    kSKmNuMuCCoth, 
-    kSKmNuMuNC1pi0, 
-    kSKmNuMuNCcoh, 
-    kSKmNuMuNCoth_e,                            
-    kSKmNuMuBarCCQE, 
-    kSKmNuMuBarCC1pi, 
-    kSKmNuMuBarCCcoh, 
-    kSKmNuMuBarCCMEC, 
-    kSKmNuMuBarCCoth,  
-    kSKmNuMuBarNC1pi0, 
-    kSKmNuMuBarNCcoh, 
-    kSKmNuMuBarNCoth_e,
-    kSKmNuEBarCCQE, 
-    kSKmNuEBarCC1pi, 
-    kSKmNuEBarCCcoh, 
-    kSKmNuEBarCCMEC, 
+    kSKmNuMuCCQE,
+    kSKmNuMuCC1pi,
+    kSKmNuMuCCcoh,
+    kSKmNuMuCCMEC,
+    kSKmNuMuCCoth,
+    kSKmNuMuNC1piC,
+    kSKmNuMuNC1pi0,
+    kSKmNuMuNCcoh,
+    kSKmNuMuNCoth,
+    kSKmNuMuBarCCQE,
+    kSKmNuMuBarCC1pi,
+    kSKmNuMuBarCCcoh,
+    kSKmNuMuBarCCMEC,
+    kSKmNuMuBarCCoth,
+    kSKmNuMuBarNC1piC,
+    kSKmNuMuBarNC1pi0,
+    kSKmNuMuBarNCcoh,
+    kSKmNuMuBarNCoth,
+    kSKmNuEBarCCQE,
+    kSKmNuEBarCC1pi,
+    kSKmNuEBarCCcoh,
+    kSKmNuEBarCCMEC,
     kSKmNuEBarCCoth,
-    kSKmNuEBarNC1pi0,  
-    kSKmNuEBarNCcoh, 
-    kSKmNuEBarNCoth_e,
-    kSKmNuECCQE, 
-    kSKmNuECC1pi, 
-    kSKmNuECCcoh, 
-    kSKmNuECCMEC, 
+    kSKmNuEBarNC1piC,
+    kSKmNuEBarNC1pi0,
+    kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth,
+    kSKmNuECCQE,
+    kSKmNuECC1pi,
+    kSKmNuECCcoh,
+    kSKmNuECCMEC,
     kSKmNuECCoth,
-    kSKmNuENC1pi0,  
-    kSKmNuENCcoh, 
-    kSKmNuENCoth_e,
-    kSKmOscNuECCQE,  
-    kSKmOscNuECC1pi,  
+    kSKmNuENC1piC,
+    kSKmNuENC1pi0,
+    kSKmNuENCcoh,
+    kSKmNuENCoth,
+    kSKmOscNuECCQE,
+    kSKmOscNuECC1pi,
     kSKmOscNuECCcoh,
     kSKmOscNuECCMEC,
     kSKmOscNuECCoth,
@@ -1045,7 +1006,7 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-    kSKmUndefined,    
+    kSKmUndefined,
 #endif
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     kSKmUndefined,
@@ -1053,22 +1014,14 @@ static const SuperkMode_t kSKReactionModesOrderInStack[kns][knm] = {
     kSKmUndefined,
     kSKmUndefined,
     kSKmUndefined,
-#endif  
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined,
-    kSKmUndefined
+#endif
   }//MultiRe
 
 
 };
-  
+
 } // conv
 } // valor
-  
-#endif 
+
+#endif
 

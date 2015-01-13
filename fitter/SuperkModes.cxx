@@ -51,7 +51,7 @@ int valor::util::SuperkMode2SKMCPdg(valor::conv::SuperkMode_t m)
 bool valor::util::IsNuMu(valor::conv::SuperkMode_t  m)
 {
 
-  if(m >= kSKmNuMuCCQE && m <= kSKmNuMuNCoth_e)
+  if(m >= kSKmNuMuCCQE && m <= kSKmNuMuNCoth)
     return true;
     
   return false;
@@ -63,20 +63,6 @@ bool valor::util::IsOscNuMu(valor::conv::SuperkMode_t  m)
   if(m >= kSKmOscNuMuCCQE && m <= kSKmOscNuMuCCoth)
     return true;
 #endif
-  /*
-  switch(m) {
-     case ( kSKmOscNuMuCCQE     ) : 
-     case ( kSKmOscNuMuCC1pi    ) :
-     case ( kSKmOscNuMuCCcoh    ) :
-       //     case ( kSKmOscNuMuCCoth ) :
-     case ( kSKmOscNuMuCCoth  ) :
-       return true;
-       break;
-     default :                
-       return false;
-       break;
-  }
-  */
   return false;
 }
 //____________________________________________________________________________
@@ -86,19 +72,6 @@ bool valor::util::IsOscNuMuBar(valor::conv::SuperkMode_t  m)
   if(m >= kSKmOscNuMuBarCCQE && m <= kSKmOscNuMuBarCCoth)
     return true;
 #endif
-  /*
-  switch(m) {
-     case ( kSKmOscNuMuBarCCQE     ) : 
-     case ( kSKmOscNuMuBarCC1pi    ) :
-     case ( kSKmOscNuMuBarCCcoh    ) :
-       //     case ( kSKmOscNuMuCCoth ) :
-     case ( kSKmOscNuMuBarCCoth  ) :
-       return true;
-       break;
-     default :                
-       return false;
-       break;
-       }*/
   return false;
 }
 //____________________________________________________________________________
@@ -112,79 +85,25 @@ bool valor::util::IsOscNuEBar(valor::conv::SuperkMode_t  m)
 //____________________________________________________________________________
 bool valor::util::IsNuMuBar(valor::conv::SuperkMode_t m)
 {
-  if(m >= kSKmNuMuBarCCQE && m <= kSKmNuMuBarNCoth_e)
+  if(m >= kSKmNuMuBarCCQE && m <= kSKmNuMuBarNCoth)
     return true;
-  /*
-  switch(m) {
-     case (kSKmNuMuBarCCQE    ):
-     case (kSKmNuMuBarCC1pi   ):
-     case (kSKmNuMuBarCCcoh   ):
-       //     case (kSKmNuMuBarCCoth):
-     case (kSKmNuMuBarCCoth ):
-     case (kSKmNuMuBarNC1piC  ):
-     case (kSKmNuMuBarNC1pi0  ):
-     case (kSKmNuMuBarNCcoh   ):
-     case (kSKmNuMuBarNCoth_e ):
-     case (kSKmNuMuBarNCoth_mu):
-       return true;
-       break;
-     default :                
-       return false;
-       break;
-  }
-  */
+    
   return false;
 }
 //____________________________________________________________________________
 bool valor::util::IsNuE(valor::conv::SuperkMode_t m)
 {
-  if(m >= kSKmNuECCQE && m <= kSKmNuENCoth_e)
+  if(m >= kSKmNuECCQE && m <= kSKmNuENCoth)
     return true;
-  /*
-  switch(m) {
-     case (kSKmNuECCQE    ):
-     case (kSKmNuECC1pi   ):
-     case (kSKmNuECCcoh   ):
-       //     case (kSKmNuECCoth):
-     case (kSKmNuECCoth ):
-     case (kSKmNuENC1piC  ):
-     case (kSKmNuENC1pi0  ):
-     case (kSKmNuENCcoh   ):
-     case (kSKmNuENCoth_e ):
-     case (kSKmNuENCoth_mu):
-       return true;
-       break;
-     default :                
-       return false;
-       break;
-  }
-  */
+    
   return false;
 }
 //____________________________________________________________________________
 bool valor::util::IsNuEBar(valor::conv::SuperkMode_t m)
 {
-  if(m >= kSKmNuEBarCCQE && m <= kSKmNuEBarNCoth_e)
+  if(m >= kSKmNuEBarCCQE && m <= kSKmNuEBarNCoth)
     return true;
-  /*
-  switch(m) {
-     case (kSKmNuEBarCCQE    ):
-     case (kSKmNuEBarCC1pi   ):
-     case (kSKmNuEBarCCcoh   ):
-       //     case (kSKmNuEBarCCoth):
-     case (kSKmNuEBarCCoth ):
-     case (kSKmNuEBarNC1piC  ):
-     case (kSKmNuEBarNC1pi0  ):
-     case (kSKmNuEBarNCcoh   ):
-     case (kSKmNuEBarNCoth_e ):
-     case (kSKmNuEBarNCoth_mu):
-       return true;
-       break;
-     default :                
-       return false;
-       break;
-  }
-  */
+    
   return false;
 }
 //____________________________________________________________________________
@@ -206,23 +125,19 @@ bool valor::util::IsNC(valor::conv::SuperkMode_t m)
      case ( kSKmNuMuNC1piC      ) : 
      case ( kSKmNuMuNC1pi0      ) : 
      case ( kSKmNuMuNCcoh       ) : 
-     case ( kSKmNuMuNCoth_e     ) : 
-     case ( kSKmNuMuNCoth_mu    ) : 
+     case ( kSKmNuMuNCoth       ) : 
      case ( kSKmNuMuBarNC1piC   ) : 
      case ( kSKmNuMuBarNC1pi0   ) : 
      case ( kSKmNuMuBarNCcoh    ) : 
-     case ( kSKmNuMuBarNCoth_e  ) : 
-     case ( kSKmNuMuBarNCoth_mu ) : 
+     case ( kSKmNuMuBarNCoth    ) : 
      case ( kSKmNuENC1piC       ) : 
      case ( kSKmNuENC1pi0       ) : 
      case ( kSKmNuENCcoh        ) : 
-     case ( kSKmNuENCoth_e      ) : 
-     case ( kSKmNuENCoth_mu     ) : 
+     case ( kSKmNuENCoth        ) : 
      case ( kSKmNuEBarNC1piC    ) : 
      case ( kSKmNuEBarNC1pi0    ) : 
      case ( kSKmNuEBarNCcoh     ) : 
-     case ( kSKmNuEBarNCoth_e   ) : 
-     case ( kSKmNuEBarNCoth_mu  ) : 
+     case ( kSKmNuEBarNCoth     ) : 
         return true;
         break;
      default: 
@@ -250,8 +165,7 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
      case ( kSKmNuMuNC1piC      ) : return "numu_ncpi";       break;
      case ( kSKmNuMuNC1pi0      ) : return "numu_nc1pi0";     break;
      case ( kSKmNuMuNCcoh       ) : return "numu_nccoh";      break;
-     case ( kSKmNuMuNCoth_e     ) : return "numu_ncoth";      break;
-     case ( kSKmNuMuNCoth_mu    ) : return "numu_ncoth";      break;
+     case ( kSKmNuMuNCoth       ) : return "numu_ncoth";      break;
      case ( kSKmOscNuMuCCQE     ) : return "do_not_know_kdi_name_numu_ccqe";       break;
      case ( kSKmOscNuMuCC1pi    ) : return "do_not_know_kdi_name_numu_ccpi";       break;
      case ( kSKmOscNuMuCCcoh    ) : return "do_not_know_kdi_name_numu_cccoh";      break;
@@ -263,8 +177,7 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
      case ( kSKmNuMuBarNC1piC   ) : return "numb_ncpi";       break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numb_nc1pi0";     break;
      case ( kSKmNuMuBarNCcoh    ) : return "numb_nccoh";      break;
-     case ( kSKmNuMuBarNCoth_e  ) : return "numb_ncoth";      break;
-     case ( kSKmNuMuBarNCoth_mu ) : return "numb_ncoth";      break;
+     case ( kSKmNuMuBarNCoth    ) : return "numb_ncoth";      break;
      case ( kSKmNuECCQE         ) : return "nue_ccqe";        break;
      case ( kSKmNuECC1pi        ) : return "nue_ccpi";        break;
      case ( kSKmNuECCcoh        ) : return "nue_cccoh";       break;
@@ -272,8 +185,7 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
      case ( kSKmNuENC1piC       ) : return "nue_ncpi";        break;
      case ( kSKmNuENC1pi0       ) : return "nue_nc1pi0";      break;
      case ( kSKmNuENCcoh        ) : return "nue_nccoh";       break;
-     case ( kSKmNuENCoth_e      ) : return "nue_ncoth";       break;
-     case ( kSKmNuENCoth_mu     ) : return "nue_ncoth";       break;
+     case ( kSKmNuENCoth        ) : return "nue_ncoth";       break;
      case ( kSKmNuEBarCCQE      ) : return "nueb_ccqe";       break;
      case ( kSKmNuEBarCC1pi     ) : return "nueb_ccpi";       break;
      case ( kSKmNuEBarCCcoh     ) : return "nueb_cccoh";      break;
@@ -281,8 +193,7 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
      case ( kSKmNuEBarNC1piC    ) : return "nueb_ncpi";       break;
      case ( kSKmNuEBarNC1pi0    ) : return "nueb_nc1pi0";     break;
      case ( kSKmNuEBarNCcoh     ) : return "nueb_nccoh";      break;
-     case ( kSKmNuEBarNCoth_e   ) : return "nueb_ncoth";      break;
-     case ( kSKmNuEBarNCoth_mu  ) : return "nueb_ncoth";      break;
+     case ( kSKmNuEBarNCoth     ) : return "nueb_ncoth";      break;
      case ( kSKmOscNuECCQE      ) : return "signue_ccqe";     break;
      case ( kSKmOscNuECC1pi     ) : return "signue_ccpi";     break;
      case ( kSKmOscNuECCcoh     ) : return "signue_cccoh";    break;
@@ -303,8 +214,7 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
      case ( kSKmNuMuNC1piC      ) : return "numu NC 1piC";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "numu/nutau NC 1pi0";                break;
      case ( kSKmNuMuNCcoh       ) : return "numu/nutau NC coh";                 break;
-     case ( kSKmNuMuNCoth_e     ) : return "numu/nutau NC oth (nue app)";       break;
-     case ( kSKmNuMuNCoth_mu    ) : return "numu/nutau NC oth (numu disapp)";   break;
+     case ( kSKmNuMuNCoth       ) : return "numu/nutau NC oth";                 break;
      case ( kSKmOscNuMuCCQE     ) : return "oscillated numu CC QE";             break;
      case ( kSKmOscNuMuCC1pi    ) : return "oscillated numu CC 1pi";            break;  
      case ( kSKmOscNuMuCCcoh    ) : return "oscillated numu CC coh";            break;
@@ -318,8 +228,7 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
      case ( kSKmNuMuBarNC1piC   ) : return "numubar/nutaubar NC 1piC";          break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0";          break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubar/nutaubar NC coh";           break;
-     case ( kSKmNuMuBarNCoth_e  ) : return "numubar/nutaubar NC oth (nue app)"; break;
-     case ( kSKmNuMuBarNCoth_mu ) : return "numubar/nutaubar NC oth (numu disapp)"; break;
+     case ( kSKmNuMuBarNCoth    ) : return "numubar/nutaubar NC oth";           break;
      case ( kSKmOscNuMuBarCCQE  ) : return "oscillated numubar CC QE";          break;
      case ( kSKmOscNuMuBarCC1pi ) : return "oscillated numubar CC 1pi";         break;  
      case ( kSKmOscNuMuBarCCcoh ) : return "oscillated numubar CC coh";         break;
@@ -333,8 +242,7 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
      case ( kSKmNuENC1piC       ) : return "nue NC 1piC";                       break;
      case ( kSKmNuENC1pi0       ) : return "nue NC 1pi0";                       break;
      case ( kSKmNuENCcoh        ) : return "nue NC coh";                        break;
-     case ( kSKmNuENCoth_e      ) : return "nue NC oth (nue app)";              break;
-     case ( kSKmNuENCoth_mu     ) : return "nue NC oth (numu disapp)";          break;
+     case ( kSKmNuENCoth        ) : return "nue NC oth";                        break;
      case ( kSKmOscNuECCQE      ) : return "oscillated nue CC QE";              break;
      case ( kSKmOscNuECC1pi     ) : return "oscillated nue CC 1pi";             break;
      case ( kSKmOscNuECCcoh     ) : return "oscillated nue CC coh";             break;
@@ -348,8 +256,7 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
      case ( kSKmNuEBarNC1piC    ) : return "nuebar NC 1piC";                    break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebar NC 1pi0";                    break;
      case ( kSKmNuEBarNCcoh     ) : return "nuebar NC coh";                     break;
-     case ( kSKmNuEBarNCoth_e   ) : return "nuebar NC oth (nue app)";           break;
-     case ( kSKmNuEBarNCoth_mu  ) : return "nuebar NC oth (numu disapp)";       break;
+     case ( kSKmNuEBarNCoth     ) : return "nuebar NC oth";                     break;
      case ( kSKmOscNuEBarCCQE   ) : return "oscillated nuebar CC QE";           break;
      case ( kSKmOscNuEBarCC1pi  ) : return "oscillated nuebar CC 1pi";          break;  
      case ( kSKmOscNuEBarCCcoh  ) : return "oscillated nuebar CC coh";          break;
@@ -381,8 +288,7 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
      case ( kSKmNuMuNC1piC      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^{+/-}$";                      break;
      case ( kSKmNuMuNC1pi0      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^0$";                          break;
      case ( kSKmNuMuNCcoh       ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC coherent";                           break;
-     case ( kSKmNuMuNCoth_e     ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_e$ app)";               break;
-     case ( kSKmNuMuNCoth_mu    ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other ($\\nu_\\mu$ disap)";          break;
+     case ( kSKmNuMuNCoth       ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC other";                              break;
      case ( kSKmOscNuMuCCQE     ) : return "Osc. $\\nu_\\mu$ CCQE";                                          break;
      case ( kSKmOscNuMuCC1pi    ) : return "Osc. $\\nu_\\mu$ CC 1$\\pi$";                                    break;
      case ( kSKmOscNuMuCCcoh    ) : return "Osc. $\\nu_\\mu$ CC coherent";                                   break; 
@@ -396,8 +302,7 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
      case ( kSKmNuMuBarNC1piC   ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC 1$\\pi^{+/-}$";        break;
      case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC 1$\\pi^0$";            break;
      case ( kSKmNuMuBarNCcoh    ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC coherent";             break;
-     case ( kSKmNuMuBarNCoth_e  ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC other ($\\nu_e$ app)"; break;
-     case ( kSKmNuMuBarNCoth_mu ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC other ($\\nu_\\mu$ disap)"; break;
+     case ( kSKmNuMuBarNCoth    ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC other";                break;
      case ( kSKmOscNuMuBarCCQE  ) : return "Osc. $\\bar{\\nu}_\\mu$ CCQE";                                   break;
      case ( kSKmOscNuMuBarCC1pi ) : return "Osc. $\\bar{\\nu}_\\mu$ CC 1$\\pi$";                             break;
      case ( kSKmOscNuMuBarCCcoh ) : return "Osc. $\\bar{\\nu}_\\mu$ CC coherent";                            break; 
@@ -411,8 +316,7 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
      case ( kSKmNuENC1piC       ) : return "$\\nu_e$ NC 1$\\pi^{+/-}$";                                      break;
      case ( kSKmNuENC1pi0       ) : return "$\\nu_e$ NC 1$\\pi^0$";                                          break;
      case ( kSKmNuENCcoh        ) : return "$\\nu_e$ NC coherent";                                           break;
-     case ( kSKmNuENCoth_e      ) : return "$\\nu_e$ NC other ($\\nu_e$ app)";                               break;
-     case ( kSKmNuENCoth_mu     ) : return "$\\nu_e$ NC other ($\\nu_\\mu$ disap)";                          break;
+     case ( kSKmNuENCoth        ) : return "$\\nu_e$ NC other";                                              break;
      case ( kSKmOscNuECCQE      ) : return "Osc. $\\nu_e$ CCQE";                                             break;
      case ( kSKmOscNuECC1pi     ) : return "Osc. $\\nu_e$ CC 1$\\pi$";                                       break;
      case ( kSKmOscNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                      break;
@@ -426,8 +330,7 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
      case ( kSKmNuEBarNC1piC    ) : return "$\\bar{\\nu}_e$ NC 1$\\pi^{+/-}$";                               break;
      case ( kSKmNuEBarNC1pi0    ) : return "$\\bar{\\nu}_e$ NC 1$\\pi^0$";                                   break;
      case ( kSKmNuEBarNCcoh     ) : return "$\\bar{\\nu}_e$ NC coherent";                                    break;
-     case ( kSKmNuEBarNCoth_e   ) : return "$\\bar{\\nu}_e$ NC other ($\\nu_e$ app)";                        break;
-     case ( kSKmNuEBarNCoth_mu  ) : return "$\\bar{\\nu}_e$ NC other ($\\nu_\\mu$ disap)";                   break;
+     case ( kSKmNuEBarNCoth     ) : return "$\\bar{\\nu}_e$ NC other";                                       break;
      case ( kSKmOscNuEBarCCQE   ) : return "Osc. $\\bar{\\nu}_e$ CCQE";                                      break;
      case ( kSKmOscNuEBarCC1pi  ) : return "Osc. $\\bar{\\nu}_e$ CC 1$\\pi$";                                break;
      case ( kSKmOscNuEBarCCcoh  ) : return "Osc. $\\bar{\\nu}_e$ CC coherent";                               break;
@@ -452,8 +355,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
      case ( kSKmNuMuNC1piC      ) : return "numunc1piC";        break;
      case ( kSKmNuMuNC1pi0      ) : return "numunc1pi0";        break;
      case ( kSKmNuMuNCcoh       ) : return "numunccoh";         break;
-     case ( kSKmNuMuNCoth_e     ) : return "numuncoth";         break;
-     case ( kSKmNuMuNCoth_mu    ) : return "numuncoth";         break;
+     case ( kSKmNuMuNCoth       ) : return "numuncoth";         break;
      case ( kSKmOscNuMuCCQE     ) : return "oscnumuccqe";       break;
      case ( kSKmOscNuMuCC1pi    ) : return "oscnumucc1pi";      break;
      case ( kSKmOscNuMuCCcoh    ) : return "oscnumucccoh";      break;
@@ -467,8 +369,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
      case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1piC";     break;
      case ( kSKmNuMuBarNC1pi0   ) : return "numubarnc1pi0";     break;
      case ( kSKmNuMuBarNCcoh    ) : return "numubarnccoh";      break;
-     case ( kSKmNuMuBarNCoth_e  ) : return "numubarncoth";      break;
-     case ( kSKmNuMuBarNCoth_mu ) : return "numubarncoth";      break;
+     case ( kSKmNuMuBarNCoth    ) : return "numubarncoth";      break;
      case ( kSKmOscNuMuBarCCQE  ) : return "oscnumubarccqe";    break;
      case ( kSKmOscNuMuBarCC1pi ) : return "oscnumubarcc1pi";   break;
      case ( kSKmOscNuMuBarCCcoh ) : return "oscnumubarcccoh";   break;
@@ -482,8 +383,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
      case ( kSKmNuENC1piC       ) : return "nuenc1piC";         break;
      case ( kSKmNuENC1pi0       ) : return "nuenc1pi0";         break;
      case ( kSKmNuENCcoh        ) : return "nuenccoh";          break;
-     case ( kSKmNuENCoth_e      ) : return "nuencoth";          break;
-     case ( kSKmNuENCoth_mu     ) : return "nuencoth";          break;
+     case ( kSKmNuENCoth        ) : return "nuencoth";          break;
      case ( kSKmOscNuECCQE      ) : return "oscnueccqe";        break;
      case ( kSKmOscNuECC1pi     ) : return "oscnuecc1pi";       break;
      case ( kSKmOscNuECCcoh     ) : return "oscnuecccoh";       break;
@@ -497,8 +397,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
      case ( kSKmNuEBarNC1piC    ) : return "nuebarnc1piC";      break;
      case ( kSKmNuEBarNC1pi0    ) : return "nuebarnc1pi0";      break;
      case ( kSKmNuEBarNCcoh     ) : return "nuebarnccoh";       break;
-     case ( kSKmNuEBarNCoth_e   ) : return "nuebarncoth";       break;
-     case ( kSKmNuEBarNCoth_mu  ) : return "nuebarncoth";       break;
+     case ( kSKmNuEBarNCoth     ) : return "nuebarncoth";       break;
      case ( kSKmOscNuEBarCCQE   ) : return "oscnuebarccqe";     break;
      case ( kSKmOscNuEBarCC1pi  ) : return "oscnuebarcc1pi";    break;
      case ( kSKmOscNuEBarCCcoh  ) : return "oscnuebarcccoh";    break;

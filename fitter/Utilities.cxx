@@ -717,21 +717,6 @@ bool valor::util::IsNCoth(int neut_reaction_mode)
   return is_ncoth;
 }
 //___________________________________________________________________________
-bool valor::util::IsNCoth_mu(int neut_reaction_mode) 
-{
-  bool is_ncoth_mu = ( IsNCoth (neut_reaction_mode) ||
-		       IsNCcoh (neut_reaction_mode) ||
-		       IsNC1pi0(neut_reaction_mode) );
-  return is_ncoth_mu;
-}
-//___________________________________________________________________________
-bool valor::util::IsNCoth_e(int neut_reaction_mode) 
-{
-  bool is_ncoth_e = ( IsNCoth (neut_reaction_mode) ||
-		      IsNC1piC(neut_reaction_mode) );
-  return is_ncoth_e;
-}
-//___________________________________________________________________________
 bool valor::util::UseEventToFillInTemplate(
   SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode)
 {
@@ -752,8 +737,7 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmNuMuNC1piC       :  return ( IsNC1piC  (abs_mode) && is_numu    );
     case kSKmNuMuNC1pi0       :  return ( IsNC1pi0  (abs_mode) && is_numu    );
     case kSKmNuMuNCcoh        :  return ( IsNCcoh   (abs_mode) && is_numu    );
-    case kSKmNuMuNCoth_e      :  return ( IsNCoth_e (abs_mode) && is_numu    );
-    case kSKmNuMuNCoth_mu     :  return ( IsNCoth_mu(abs_mode) && is_numu    );
+    case kSKmNuMuNCoth        :  return ( IsNCoth   (abs_mode) && is_numu    );
     
     case kSKmNuMuBarCCQE      :  return ( IsCCQE    (abs_mode) && is_numubar );
     case kSKmNuMuBarCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numubar );
@@ -763,8 +747,7 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmNuMuBarNC1piC    :  return ( IsNC1piC  (abs_mode) && is_numubar );
     case kSKmNuMuBarNC1pi0    :  return ( IsNC1pi0  (abs_mode) && is_numubar );
     case kSKmNuMuBarNCcoh     :  return ( IsNCcoh   (abs_mode) && is_numubar );
-    case kSKmNuMuBarNCoth_e   :  return ( IsNCoth_e (abs_mode) && is_numubar );
-    case kSKmNuMuBarNCoth_mu  :  return ( IsNCoth_mu(abs_mode) && is_numubar );
+    case kSKmNuMuBarNCoth     :  return ( IsNCoth   (abs_mode) && is_numubar );
     
     // Osc Numu
     case kSKmOscNuMuCCQE      :  return ( IsCCQE    (abs_mode) && is_numu    );
@@ -788,8 +771,7 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmNuENC1piC        :  return ( IsNC1piC  (abs_mode) && is_nue     );
     case kSKmNuENC1pi0        :  return ( IsNC1pi0  (abs_mode) && is_nue     );
     case kSKmNuENCcoh         :  return ( IsNCcoh   (abs_mode) && is_nue     );
-    case kSKmNuENCoth_e       :  return ( IsNCoth_e (abs_mode) && is_nue     );
-    case kSKmNuENCoth_mu      :  return ( IsNCoth_mu(abs_mode) && is_nue     );
+    case kSKmNuENCoth         :  return ( IsNCoth   (abs_mode) && is_nue     );
                                                                              
     case kSKmNuEBarCCQE       :  return ( IsCCQE    (abs_mode) && is_nuebar  );
     case kSKmNuEBarCC1pi      :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
@@ -799,8 +781,7 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmNuEBarNC1piC     :  return ( IsNC1piC  (abs_mode) && is_nuebar  );
     case kSKmNuEBarNC1pi0     :  return ( IsNC1pi0  (abs_mode) && is_nuebar  );
     case kSKmNuEBarNCcoh      :  return ( IsNCcoh   (abs_mode) && is_nuebar  );
-    case kSKmNuEBarNCoth_e    :  return ( IsNCoth_e (abs_mode) && is_nuebar  );
-    case kSKmNuEBarNCoth_mu   :  return ( IsNCoth_mu(abs_mode) && is_nuebar  );
+    case kSKmNuEBarNCoth      :  return ( IsNCoth   (abs_mode) && is_nuebar  );
     
     // Osc NuE
     case kSKmOscNuECCQE       :  return ( IsCCQE    (abs_mode) && is_nue     );

@@ -37,7 +37,7 @@ Split valor::conv namespace into several smaller files
 #endif
 
 // NEW XSEC (either niwg2013 or niwg2015)
-//#define __USE_NIWG2015__
+#define __USE_NIWG2015__
 #ifndef __USE_NIWG2015__
 #define __USE_NIWG2013__
 #endif
