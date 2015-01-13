@@ -25,7 +25,7 @@ Added samples, modes and systematics for reverse horn current running
 //#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong.
 
 
-#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+//#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
 #include <cassert>
@@ -255,6 +255,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
           if(!need_splines) continue;
         }
         // is the current systematic parameter going to be applied to current sample/mode?
+        //~ bool is_applied = this->ApplySystToSKMode(p,s,m);
         bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
         if(!is_applied) continue;
         // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
@@ -572,13 +573,13 @@ double NuXSec::FinTuningWght_1p(
 
   double wght = 1.;
   double tb;
-    /*
-cout <<
-    "\nEtrue: " << Etrue <<
-    "Ereco: " << Ereco <<
-    "\np :" << AsString(p) <<
-    "mode: " << AsString(m) << endl;
-    */
+  
+  //~ cout << "\nEtrue: " << Etrue
+       //~ << "\tEreco: " << Ereco
+       //~ << "\np :" << AsString(p)
+       //~ << "mode: " << AsString(m)
+       //~ << "\nEvents: "<<this->HowManyEvents(s,m,Ereco,Etrue)
+       //~ << endl;
 
 
   // RESPONSE FUNCTION PARAMETERS
@@ -1499,14 +1500,14 @@ TSpline3 * NuXSec::FindWghtSpline(
   }
 
 #ifdef __show_find_wght_spline_mesg_debug__
-  cout << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
+  cout << "Exp/NuXSec/FindWghtSpline >> Looking for spline: "
          << "sample = "      << util::AsString(s) 
          << ", mode = "      << util::AsString(m)
          << ", parameter = " << util::AsString(p)
          << ", Ereco = "     << Ereco << " GeV"
          << ", Etrue = "     << Etrue << " GeV!"
-	 << " idx = " << idx 
-	 << endl;
+         << " idx = " << idx 
+         << endl;
 #endif
 
   //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
@@ -1636,7 +1637,7 @@ int NuXSec::WghtSplineIdx(
 	 << " in sample " << s << " "
 	 << util::AsString(s)
 	 << endl;
-#endif//__show_wght_spline_idx_mesg_debug__
+#endif //__show_wght_spline_idx_mesg_debug__
     return -2;
   }
   
@@ -1645,6 +1646,18 @@ int NuXSec::WghtSplineIdx(
     + ip    * kXsNEtrueBins * nErecoBins
     + im    * kXsNEtrueBins * nErecoBins * kNumOfXSecSyst;
     //    + is    * kXsNEtrueBins * util::NumXsecErecoBins(s) * kNumOfXSecSyst * kNSuperkModes;
+    
+    
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Spline information:"
+         << "\tEtrue: "<<Etrue<<" ("<<itrue<<") , Ereco: "<<Ereco<<" ("<<ireco<<") \n"
+         << " in mode " << m << " "
+         << util::AsString(m)
+         << " in sample " << s << " "
+         << util::AsString(s)
+         << " has index "<<idx<<"\n"
+         << endl;
+#endif //__show_wght_spline_idx_mesg_debug__
   
   return idx;
 }
