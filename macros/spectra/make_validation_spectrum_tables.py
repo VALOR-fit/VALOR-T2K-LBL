@@ -50,8 +50,9 @@ modes_to_species_and_process[conv.kSKmNuMuCCoth]        = ("numu", "CCother")
 modes_to_species_and_process[conv.kSKmNuMuNC1piC]       = ("numu", "NC1piPM")
 modes_to_species_and_process[conv.kSKmNuMuNC1pi0]       = ("numu", "NC1pi0")
 modes_to_species_and_process[conv.kSKmNuMuNCcoh]        = ("numu", "NCcoherent")
-modes_to_species_and_process[conv.kSKmNuMuNCoth_mu]     = ("numu", "NCother")  #nu_mu appearance analysis definition
-modes_to_species_and_process[conv.kSKmNuMuNCoth_e]      = ("numu", "NCother")  #nu_e appearance analysis definition
+modes_to_species_and_process[conv.kSKmNuMuNCoth]        = ("numu", "NCother")  # unified definition
+#~ modes_to_species_and_process[conv.kSKmNuMuNCoth_mu]     = ("numu", "NCother")  #nu_mu appearance analysis definition
+#~ modes_to_species_and_process[conv.kSKmNuMuNCoth_e]      = ("numu", "NCother")  #nu_e appearance analysis definition
 #~ modes_to_species_and_process[conv.kSKmOscNuMuCCQE]      = ("oscillated numu CCQE
 #~ modes_to_species_and_process[conv.kSKmOscNuMuCC1pi]     = ("oscillated numu CC 1pi
 #~ modes_to_species_and_process[conv.kSKmOscNuMuCCcoh]     = ("oscillated numu coh
@@ -64,8 +65,9 @@ modes_to_species_and_process[conv.kSKmNuMuBarCCoth]     = ("numubar", "CCother")
 modes_to_species_and_process[conv.kSKmNuMuBarNC1piC]    = ("numubar", "NC1piPM")
 modes_to_species_and_process[conv.kSKmNuMuBarNC1pi0]    = ("numubar", "NC1pi0")
 modes_to_species_and_process[conv.kSKmNuMuBarNCcoh]     = ("numubar", "NCcoherent")
-modes_to_species_and_process[conv.kSKmNuMuBarNCoth_mu]  = ("numubar", "NCother")  #nu_mu appearance analysis definition"
-modes_to_species_and_process[conv.kSKmNuMuBarNCoth_e]   = ("numubar", "NCother")  #nu_e appearance analysis definition"
+modes_to_species_and_process[conv.kSKmNuMuBarNCoth]     = ("numubar", "NCother") #unified definition
+#~ modes_to_species_and_process[conv.kSKmNuMuBarNCoth_mu]  = ("numubar", "NCother")  #nu_mu appearance analysis definition"
+#~ modes_to_species_and_process[conv.kSKmNuMuBarNCoth_e]   = ("numubar", "NCother")  #nu_e appearance analysis definition"
 #~ modes_to_species_and_process[conv.kSKmOscNuMuBarCCQE]   = ("oscillated numubar CCQE")
 #~ modes_to_species_and_process[conv.kSKmOscNuMuBarCC1pi]  = ("oscillated numubar CC 1pi")
 #~ modes_to_species_and_process[conv.kSKmOscNuMuBarCCcoh]  = ("oscillated numubar CC coh")
@@ -78,8 +80,9 @@ modes_to_species_and_process[conv.kSKmNuECCoth]         = ("nue","CCother")
 modes_to_species_and_process[conv.kSKmNuENC1piC]        = ("nue","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuENC1pi0]        = ("nue","NC1pi0")
 modes_to_species_and_process[conv.kSKmNuENCcoh]         = ("nue","NCcoherent")
-modes_to_species_and_process[conv.kSKmNuENCoth_mu]      = ("nue","NCother") # nu_mu appearance analysis definition
-modes_to_species_and_process[conv.kSKmNuENCoth_e]       = ("nue","NCother") #nu_e appearance analysis definition"
+modes_to_species_and_process[conv.kSKmNuENCoth]         = ("nue","NCother") #unified definition
+#~ modes_to_species_and_process[conv.kSKmNuENCoth_mu]      = ("nue","NCother") # nu_mu appearance analysis definition
+#~ modes_to_species_and_process[conv.kSKmNuENCoth_e]       = ("nue","NCother") #nu_e appearance analysis definition"
 modes_to_species_and_process[conv.kSKmOscNuEBarCCQE]    = ("signuebar","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuEBarCC1pi]   = ("signuebar","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuEBarCCcoh]   = ("signuebar","CCcoherent")
@@ -93,8 +96,9 @@ modes_to_species_and_process[conv.kSKmNuEBarCCoth]      = ("nuebar","CCother")
 modes_to_species_and_process[conv.kSKmNuEBarNC1piC]     = ("nuebar","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuEBarNC1pi0]     = ("nuebar","NC1pi0")
 modes_to_species_and_process[conv.kSKmNuEBarNCcoh]      = ("nuebar","NCcoherent")
-modes_to_species_and_process[conv.kSKmNuEBarNCoth_mu]   = ("nuebar","NCother") #nu_mu appearance analysis definition
-modes_to_species_and_process[conv.kSKmNuEBarNCoth_e]    = ("nuebar","NCother") #nu_e appearance analysis definition
+modes_to_species_and_process[conv.kSKmNuEBarNCoth]      = ("nuebar","NCother") #unified definition
+#~ modes_to_species_and_process[conv.kSKmNuEBarNCoth_mu]   = ("nuebar","NCother") #nu_mu appearance analysis definition
+#~ modes_to_species_and_process[conv.kSKmNuEBarNCoth_e]    = ("nuebar","NCother") #nu_e appearance analysis definition
 modes_to_species_and_process[conv.kSKmOscNuECCQE]       = ("signue","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuECC1pi]      = ("signue","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuECCcoh]      = ("signue","CCcoherent")
@@ -211,8 +215,8 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     # Count events
     for mode,(spec,proc) in modes_to_species_and_process.iteritems():
       
-      if util.Is1RESample (s) and (mode in [conv.kSKmNuMuNCoth_mu, conv.kSKmNuMuBarNCoth_mu, conv.kSKmNuENCoth_mu,  conv.kSKmNuEBarNCoth_mu ]): continue  
-      if util.Is1RMuSample(s) and (mode in [conv.kSKmNuMuNCoth_e , conv.kSKmNuMuBarNCoth_e , conv.kSKmNuENCoth_e ,  conv.kSKmNuEBarNCoth_e  ]): continue  
+      #~ if util.Is1RESample (s) and (mode in [conv.kSKmNuMuNCoth_mu, conv.kSKmNuMuBarNCoth_mu, conv.kSKmNuENCoth_mu,  conv.kSKmNuEBarNCoth_mu ]): continue  
+      #~ if util.Is1RMuSample(s) and (mode in [conv.kSKmNuMuNCoth_e , conv.kSKmNuMuBarNCoth_e , conv.kSKmNuENCoth_e ,  conv.kSKmNuEBarNCoth_e  ]): continue  
       
       spectrum = skexp.CurrPredictedErecoSpectrum(s,mode)
       if not spectrum:

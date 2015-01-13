@@ -51,13 +51,13 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex"):
   root_loop += ";for (int i = 0 ; i < valor::conv::knm;i++){arr[i]=valor::conv::kSKReactionModes["+`sample`+"][i];};};"
   ROOT.gROOT.ProcessLine(root_loop)
   
-  modes = [m for m in modes_array if m != conv.kSKsUndefined]
+  modes = [m for m in modes_array if m != conv.kSKmUndefined]
   
   #~ soff = sample*conv.knm
   
   tex_output = open(output_file,"w")
   
-  tex_output.write("""\documentclass[10pt,a4paper]{article}
+  tex_output.write("""\documentclass[10pt]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage{amsmath}
 \\usepackage{amsfonts}
@@ -65,6 +65,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex"):
 \\usepackage{fullpage}
 \\usepackage{rotate}  
 \\usepackage{rotating}
+\\usepackage[paperwidth=300mm,paperheight=198mm]{geometry}
 
 \\newcommand{\ck}{$\\checkmark$}
 \\begin{document}
@@ -119,7 +120,8 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex"):
     if not util.IsBANFF(param): continue
     entries = [util.ParamAsStringPaperTex(param).ljust(col1_width)]
     row = False
-    ip = arridx.BANFFSystIdx(param)
+    if util.IsRHCSample(sample): ip = arridx.RHCBANFFSystIdx(param)
+    else:                        ip = arridx.BANFFSystIdx(param)
     if ip < 0: continue
     
     if conv.kParamInBANFFfitIsSuperkFluxParam[ip]: # flux parameters
@@ -169,11 +171,11 @@ if __name__=="__main__":
   
   parser.add_option('-f', '--file', dest='output_file', default="syst_applied_table.tex", help="Name for output TeX file.")
   
-  parser.add_option('-s', '--sample', dest='sample', default="analysis_configuration.xml", help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
+  parser.add_option('-s', '--sample', dest='sample', default="1Rmu", help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
   
   o,other = parser.parse_args()
-  
-  main(conv.kSKsFCFV1RingMuLike,o.output_file)
+  sample = util.SKSampleFromString(o.sample)
+  main(sample,o.output_file)
   
   if other:
     print "Warning - ignored arguments: ",other
