@@ -866,6 +866,7 @@ void valor::util::ArrIdx::Init(void)
     fXSecSystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
          cout << "Util/ArrIdx >> FHC Systematic: " 
+              << p << "\t" 
               << util::AsString(p) 
               << " is at slot: " << fXSecSystIdx[p] << endl;
 #endif
@@ -879,6 +880,7 @@ void valor::util::ArrIdx::Init(void)
     fRHCXSecSystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
          cout << "Util/ArrIdx >> RHC Systematic: " 
+              << p << "\t" 
               << util::AsString(p) 
               << " is at slot: " << fRHCXSecSystIdx[p] << endl;
 #endif
@@ -894,6 +896,7 @@ void valor::util::ArrIdx::Init(void)
     fBANFFSystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
      cout << "Util/ArrIdx >> BANFF: " 
+          << p << "\t" 
           << util::AsString(p)
           << " is at slot: " << fBANFFSystIdx [p] << endl;
 #endif
@@ -902,13 +905,14 @@ void valor::util::ArrIdx::Init(void)
     fRHCBANFFSystIdx[i] = -1;
   }
   for(int ip = 0; ip < kNumOfRHCParamsInBANFFfit; ip++) {
-    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisBANFF00 + ip);
+    PhysParamId_t p = kListOfRHCBANFFParams[ip];
     if(p == kPhypUndefined) continue;
     fRHCBANFFSystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
     cout << "Util/ArrIdx >> RHC BANFF: "
-	 << util::AsString(p)
-	 << " is at slot: " << fRHCBANFFSystIdx [p] << endl;
+         << p << "\t" 
+         << util::AsString(p)
+         << " is at slot: " << fRHCBANFFSystIdx [p] << endl;
 #endif
   }
 
@@ -932,7 +936,8 @@ void valor::util::ArrIdx::Init(void)
     if(p == kPhypUndefined) continue;
     fSKDetFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
-     cout << "Util/ArrIdx >> SKDet+FSI: " 
+     cout << "Util/ArrIdx >> SKDet+FSI: "
+          << p << "\t"  
           << util::AsString(p)
           << " is at slot: " << fSKDetFSISystIdx [p] << endl;
 #endif
@@ -956,8 +961,9 @@ void valor::util::ArrIdx::Init(void)
     fRHCSKDetFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
     cout << "Util/ArrIdx >> RHC SKDet+FSI: "
-	 << util::AsString(p)
-	 << " is at slot: " << fRHCSKDetFSISystIdx [p] << endl;
+         << p << "\t" 
+         << util::AsString(p)
+         << " is at slot: " << fRHCSKDetFSISystIdx [p] << endl;
 #endif
   }
 
