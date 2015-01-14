@@ -19,7 +19,8 @@
 #define _t2k_phys_param_id_h_
 
 #include <string>
-#include <AnalysisOptions.h>
+
+#include "AnalysisOptions.h"
 
 #include "Conventions/PhysParamId.h"
 
