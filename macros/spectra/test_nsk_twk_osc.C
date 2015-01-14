@@ -12,16 +12,27 @@ void test_nsk_twk_osc
 (
   bool         thrownon23  = false,
   const int    nthrows     = 100,
-  const char * hypothesis  = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+  const char * sk_sample   = "RHC1Rmu",          /* options: "1Rmu", "1Re", "MultiRmu" */
+  const char * hypothesis  = "3f_oscbar",                 /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
   const char * mixparamchoice       = "sinsqtheta",
   const char * hierarchy            = "normal",
-  const char * config_file = "analysis_configuration.xml"
+  const char * config_file = "analysis_configuration_run1to6_test.xml",
+
+  double       input_mixing12       = -99,                            /* */
+  double       input_mixing13       = -99,                            /* */
+  double       input_mixing23       = -99,                            /* */
+  double       input_deltacp        = -99,                            /* */
+  double       input_dm12sq         = -99,                            /* */
+  double       input_dm23sq         = -99,                            /* */
 )
 {
   using namespace std;
   using namespace valor;
 
-  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+  //conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
+  //conv::SuperkSample_t s = conv::kSKsFCFVRHC1RingMuLike;
+  conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
+
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
   if(Opt::Instance()->Undefined()) {
@@ -36,8 +47,10 @@ void test_nsk_twk_osc
   double mixing23_min  =  0.00;
   double mixing23_max  =  1.00;
   double mixing23_step =  0.005;
-  double dm23sq_min    =  1.0E-3;
-  double dm23sq_max    =  4.0E-3;
+  //double dm23sq_min    =  1.0E-3;
+  //double dm23sq_max    =  4.0E-3;
+  double dm23sq_min    =  2.00001E-4;
+  double dm23sq_max    =  3.99999E-2;
   double dm23sq_step   =  5E-5;
 
  // make sure that min and max are at the bin centre
@@ -65,20 +78,58 @@ void test_nsk_twk_osc
     for(int j = 1; j <= nsk_vs_osc_params->GetNbinsY(); j++) {
        double mixing23 = nsk_vs_osc_params->GetXaxis()->GetBinCenter(i);
        double dm23sq   = nsk_vs_osc_params->GetYaxis()->GetBinCenter(j);
-       ph.SetCurrValue(valor::conv::kPhypMixing23, mixing23);
-       ph.SetCurrValue(valor::conv::kPhypDm23sq,   dm23sq);
-       if(ph.Hypothesis() == conv::kHypOsc3F) {
-	 if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
-	   ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsq2Theta12);
-	   ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsq2Theta13);
-	 }
-	 else {
-	   ph.SetCurrValue(conv::kPhypMixing12,  conv::kGlobFitSinsqTheta12);
-	   ph.SetCurrValue(conv::kPhypMixing13,  conv::kGlobFitSinsqTheta13);
-	 }
-	 ph.SetCurrValue(conv::kPhypCPV    ,   conv::kGlobFitDeltaCP);
-	 ph.SetCurrValue(conv::kPhypDm12sq,    conv::kGlobFitDm12sq);
+       
+       // Set physics hypothesis
+       if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+	 if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+	 if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+	 if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
        }
+       else {
+	 if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+	 if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+	 if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+       }
+       if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+       if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+       if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
+       PhysHypothesis ph(hypothesis);
+       if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+	 ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+	 ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+       } else
+	 if(ph.Hypothesis() == conv::kHypOsc3F) {
+	   ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+	   ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+	   ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+	   ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+
+	   //ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+	   //ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+
+	   ph.SetCurrValue(valor::conv::kPhypMixing23, mixing23);
+	   ph.SetCurrValue(valor::conv::kPhypDm23sq,   dm23sq);
+	   
+	 } else
+	   if(ph.Hypothesis() == conv::kHypOsc3FBar){
+	     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+	     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+	     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+	     ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+	     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+	     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+	     ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
+	     ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+	     ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
+	     ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
+	    
+	     //ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+	     //ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+
+	     ph.SetCurrValue(valor::conv::kPhypMixing23Bar, mixing23);
+	     ph.SetCurrValue(valor::conv::kPhypDm23sqBar,   dm23sq);
+	   }
+
 
        // generate predictions
        skexp.Generate(ph);
