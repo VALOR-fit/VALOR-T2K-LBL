@@ -29,8 +29,6 @@ void test_nsk_twk_osc
   using namespace std;
   using namespace valor;
 
-  //conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
-  //conv::SuperkSample_t s = conv::kSKsFCFVRHC1RingMuLike;
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
 
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -47,8 +45,6 @@ void test_nsk_twk_osc
   double mixing23_min  =  0.00;
   double mixing23_max  =  1.00;
   double mixing23_step =  0.005;
-  //double dm23sq_min    =  1.0E-3;
-  //double dm23sq_max    =  4.0E-3;
   double dm23sq_min    =  2.00001E-4;
   double dm23sq_max    =  3.99999E-2;
   double dm23sq_step   =  5E-5;
@@ -103,10 +99,6 @@ void test_nsk_twk_osc
 	   ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
 	   ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
 	   ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
-
-	   //ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-	   //ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-
 	   ph.SetCurrValue(valor::conv::kPhypMixing23, mixing23);
 	   ph.SetCurrValue(valor::conv::kPhypDm23sq,   dm23sq);
 	   
@@ -122,10 +114,6 @@ void test_nsk_twk_osc
 	     ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
 	     ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
 	     ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
-	    
-	     //ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
-	     //ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
-
 	     ph.SetCurrValue(valor::conv::kPhypMixing23Bar, mixing23);
 	     ph.SetCurrValue(valor::conv::kPhypDm23sqBar,   dm23sq);
 	   }
