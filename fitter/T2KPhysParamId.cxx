@@ -4185,6 +4185,49 @@ string valor::util::AsStringCompact_KDI(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
+string valor::util::AsStringNIWG(PhysParamId_t p)
+{
+  
+  switch(p) {
+    
+    case (kNuisBANFFMEC              ): return "MEC_O";
+    case (kNuisBANFFCA5              ): return "CA5";
+    case (kNuisBANFFBgRES            ): return "BgRES";
+    case (kNuisBANFFMAQE             ): return "MAQE";
+    case (kNuisBANFFMARES            ): return "MANFFRES";
+#if (BANFF_BINS != 2)
+    case (kNuisBANFFSCCA             ): return "SCCA";
+    case (kNuisBANFFSCCV             ): return "SCCV";
+#endif
+    case (kNuisBANFFFermiMom         ): return "pF_O";
+    case (kNuisBANFFShapeCCoth       ): return "DISMPISHP";
+    case (kNuisBANFFBindE            ): return "EB_O";
+    case (kNuisBANFFNormCCcoh        ): return "CCCOH_O_0";
+    case (kNuisBANFFNormNCcoh        ): return "NCCOH_0";
+    case (kNuisBANFFNormNCoth        ): return "NCOTHER_0";
+    case (kNuisBANFFNormNuEToNuMu    ): return "CCNUE_0";
+    
+    case (kRHCNuisBANFFMEC           ): return "MEC_O";
+    case (kRHCNuisBANFFCA5           ): return "CA5";
+    case (kRHCNuisBANFFBgRES         ): return "BgRES";
+    case (kRHCNuisBANFFMAQE          ): return "MAQE";
+    case (kRHCNuisBANFFMARES         ): return "MANFFRES";
+#if (BANFF_BINS != 2)
+    case (kRHCNuisBANFFSCCA          ): return "SCCA";
+    case (kRHCNuisBANFFSCCV          ): return "SCCV";
+#endif
+    case (kRHCNuisBANFFFermiMom      ): return "pF_O";
+    case (kRHCNuisBANFFShapeCCoth    ): return "DISMPISHP";
+    case (kRHCNuisBANFFBindE         ): return "EB_O";
+    case (kRHCNuisBANFFNormCCcoh     ): return "CCCOH_O_0";
+    case (kRHCNuisBANFFNormNCcoh     ): return "NCCOH_0";
+    case (kRHCNuisBANFFNormNCoth     ): return "NCOTHER_0";
+    case (kRHCNuisBANFFNormNuEToNuMu ): return "CCNUE_0";
+    
+    default                           : return "--";
+  }
+}
+//____________________________________________________________________________
 valor::conv::PhysParamId_t
   valor::util::PhysParamIdFromString(string sh) 
 {
@@ -4222,4 +4265,5 @@ string valor::util::ParamAsStringCompact            (conv::PhysParamId_t p) { re
 string valor::util::ParamAsStringCompact_splinehack (conv::PhysParamId_t p) { return util::AsStringCompact_splinehack(p);}
 string valor::util::ParamAsStringCompact_KDI        (conv::PhysParamId_t p) { return util::AsStringCompact_KDI       (p);}
 string valor::util::ParamAsStringSpline             (conv::PhysParamId_t p) { return util::AsStringSpline            (p);}
+string valor::util::ParamAsStringNIWG               (conv::PhysParamId_t p) { return util::AsStringNIWG              (p);}
 //____________________________________________________________________________
