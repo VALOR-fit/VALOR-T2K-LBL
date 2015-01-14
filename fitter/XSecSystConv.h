@@ -3063,10 +3063,6 @@ namespace valor {
 	{  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
-	{  0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0,  0 }, // kSKmUndefined
       }//1Rmu
       ,
       // > 1 electron-like ring 
