@@ -160,6 +160,7 @@ private:
   // input MC templates (nominal, nominal + systematics, nominal + systematics + physics hypothesis) and Ereco spectra
   TH2D *     fMCTemplOri[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
   TH2D *     fMCTemplNom[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
+  TH2D *     fMCTemplRPA[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + with rel RPA
 
   TH2D *     fMCVariableTempl[conv::kns][conv::knm];
   
@@ -169,6 +170,8 @@ private:
   std::vector<VALORArray> fMCTemplArrayNom; //sample -> (mode, etrue, observable)
   std::vector<VALORArray> fMCTemplArrayTun; //sample -> (mode, etrue, observable)
   std::vector<VALORArray> fMCTemplArrayFin; //sample -> (mode, etrue, observable)
+  
+  std::vector<VALORArray> fMCTemplArrayRPAWght; //sample -> (mode, etrue, observable) - contains weight RPA_rel / weight RPA_nonrel
   
   std::vector<VALORArray> fMCStatFracErr;           // sample -> (mode, etrue, observable)
   std::vector<VALORArray> fMCEtrueSpectrumTotArray; // sample -> etrue

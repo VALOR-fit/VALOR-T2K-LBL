@@ -48,7 +48,7 @@
 
 //#define POTWEIGHTSAREONE
 //#define FLUXWEIGHTSAREONE
-//#define BANFFWEIGHTSAREONE
+#define BANFFWEIGHTSAREONE
 //#define SYSTWEIGHTSAREONE
 //#define PHYSHYPWEIGHTSAREONE
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
@@ -56,8 +56,8 @@
 
 #define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
-//#define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
-#define USE_RPA_NONREL      // use the wgtRPA_nr weight in the trees
+#define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
+#define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
@@ -128,6 +128,7 @@ void SuperkMC::Init(void)
     fMCTemplArrayNom        .push_back( VALORArray(knm, n_etrue_bins   , n_ereco_bins   ) );
     fMCTemplArrayTun        .push_back( VALORArray(knm, n_etrue_bins   , n_ereco_bins   ) );
     fMCTemplArrayFin        .push_back( VALORArray(knm, n_etrue_bins   , n_ereco_bins   ) );
+    fMCTemplArrayRPAWght    .push_back( VALORArray(knm, n_etrue_bins   , n_ereco_bins   ) );
     fMCStatFracErr          .push_back( VALORArray(knm, n_etrue_bins   , n_ereco_bins   ) );
     fMCEtrueSpectrumTotArray.push_back( VALORArray(n_etrue_bins) );
     fMCErecoSpectrumTotArray.push_back( VALORArray(n_ereco_bins) );
@@ -142,6 +143,7 @@ void SuperkMC::Init(void)
     fMCEtrueSpectrumTotArray[is].SetName( Form("mc_spectrum_etrue_tot_%s", util::AsStringCompact(s).c_str()));
     fMCErecoSpectrumTotArray[is].SetName( Form("mc_spectrum_obs_tot_%s"  , util::AsStringCompact(s).c_str()));
     fMCErecoSpectrumArray   [is].SetName( Form("mc_spectrum_obs_%s"      , util::AsStringCompact(s).c_str()));
+    fMCTemplArrayRPAWght    [is].SetName( Form("mc_rpa_weight_%s"        , util::AsStringCompact(s).c_str()));
     
     fMCVariableTemplArray   [is].SetTitle( Form("MC variable template  %s"     , util::AsString(s).c_str()));
     fMCTemplArrayOri        [is].SetTitle( Form("MC template ori %s"           , util::AsString(s).c_str()));
@@ -152,6 +154,9 @@ void SuperkMC::Init(void)
     fMCEtrueSpectrumTotArray[is].SetTitle( Form("MC Spectrum Etrue_Total %s"   , util::AsString(s).c_str()));
     fMCErecoSpectrumTotArray[is].SetTitle( Form("MC Spectrum Ereco Total %s"   , util::AsString(s).c_str()));
     fMCErecoSpectrumArray   [is].SetTitle( Form("MC Spectrum Ereco per mode %s", util::AsString(s).c_str()));
+    fMCTemplArrayRPAWght    [is].SetTitle( Form("Rel_RPA/Nonrel_RPA Weight %s" , util::AsString(s).c_str()));
+    
+    fMCTemplArrayRPAWght    [is].SetAll(1);
     
     fMCErecoSpectrumTot[is] = 0;
     fMCEtrueSpectrumTot[is] = 0;
@@ -418,10 +423,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __save_templates_debug__
   this->NevDebug(kSKMCtOri, "nevents");
   this->NevDebug(kSKMCtNom, "mcnorm");
-#endif
-
-#ifdef __save_templates_debug__
-    this->NevDebug(kSKMCtNom, "mcnorm_fluxtuned");
+  this->NevDebug(kSKMCtRPA, "mcnorm_rpa");
 #endif
 
   this->CalculateMCStatError();
@@ -450,6 +452,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     for(int im = 0; im < knm; im++) {
       if(fMCTemplOri[is][im]) delete fMCTemplOri[is][im];
       if(fMCTemplNom[is][im]) delete fMCTemplNom[is][im];
+      if(fMCTemplRPA[is][im]) delete fMCTemplRPA[is][im];
     }
   }
 
@@ -521,20 +524,27 @@ void SuperkMC::Book(void)
        const double * var_etrue_bin_edges = util::VariableMCEtrueBinEdges(s,m);
        fMCTemplOri[is][im] = new TH2D(
           Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
-	  n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+          n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
        fMCTemplNom[is][im] = new TH2D(
-	  Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
-	  n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-	  
+          Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
+          n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+       fMCTemplRPA[is][im] = new TH2D(
+          Form("nsk_rpa_%d_%d",is,im), util::AsString(m).c_str(),
+          n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+         
        fMCTemplOri[is][im]->SetDirectory(0);
        fMCTemplOri[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        fMCTemplOri[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
        fMCTemplNom[is][im]->SetDirectory(0);
        fMCTemplNom[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        fMCTemplNom[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+       fMCTemplRPA[is][im]->SetDirectory(0);
+       fMCTemplRPA[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fMCTemplRPA[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+       
        fMCVariableTempl[is][im] = new TH2D(
           Form("nsk_ori_var_%d_%d",is,im), util::AsString(m).c_str(),
-	  var_n_ereco_bins, var_ereco_bin_edges, var_n_etrue_bins,  var_etrue_bin_edges);
+          var_n_ereco_bins, var_ereco_bin_edges, var_n_etrue_bins,  var_etrue_bin_edges);
        fMCVariableTempl[is][im]->SetDirectory(0);
        fMCVariableTempl[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        fMCVariableTempl[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
@@ -617,7 +627,7 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
   mctree->SetBranchStatus(sf_rfg_wght_branch , 1 );
   branchSfRfg->SetAddress(&fBrWghtSFRFG);  
 #endif
-#ifdef USE_RPA_NONREL
+#ifdef USE_RPA_WEIGHTS
   TBranch * branchRPAnr   = mctree->GetBranch(rpa_nrel_wght_branch);
   mctree->SetBranchStatus(rpa_nrel_wght_branch , 1 );
   branchRPAnr->SetAddress(&fBrWghtRPAnonrel);  
@@ -657,12 +667,15 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
     fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, Etrue);
     
     double total_weight = pot_wght * fBrWghtFlx * fBrWghtSFRFG;
-#ifdef USE_RPA_NONREL
-    total_weight *= fBrWghtRPAnonrel;
-#endif
     
     // Actually fill the template
+#ifdef USE_RPA_WEIGHTS
+    this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, total_weight * fBrWghtRPAnonrel);
+    this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, total_weight * fBrWghtRPArel   );
+#else
     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, total_weight);
+    this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, total_weight);
+#endif
     
     
 #ifdef __show_init_mesg_debug__
@@ -693,9 +706,24 @@ void SuperkMC::FillTemplate(SuperkSample_t s, SuperkMode_t m)
         ////
 
         double nev = this->Template(s,m,kSKMCtNom)->GetBinContent(ir,it);
+        
         fMCTemplArrayNom[sidx].GetEntryRef(midx, it-1 , ir-1) = nev;
         fMCTemplArrayTun[sidx].GetEntryRef(midx, it-1 , ir-1) = nev;
         fMCTemplArrayFin[sidx].GetEntryRef(midx, it-1 , ir-1) = nev;
+        
+#ifdef USE_RPA_WEIGHTS
+        double nev_relrpa = this->Template(s,m,kSKMCtRPA)->GetBinContent(ir,it);
+        if (nev_relrpa < conv::kASmallNum && nev < conv::kASmallNum) {
+          fMCTemplArrayRPAWght[sidx].GetEntryRef(midx, it-1 , ir-1) = 1.;
+        }
+        else if  (nev < conv::kASmallNum) {
+          std::cerr<<"Warning: divide by zero in RPA rel weighting, setting weight of 1"<<std::endl;
+          fMCTemplArrayRPAWght[sidx].GetEntryRef(midx, it-1 , ir-1) = 1.;
+        }
+        else{
+          fMCTemplArrayRPAWght[sidx].GetEntryRef(midx, it-1 , ir-1) = nev_relrpa/nev;
+        }
+#endif
         ////
 
       }//ir
@@ -1400,6 +1428,9 @@ TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t t
    case (kSKMCtNom) : 
      h = fMCTemplNom[sidx][midx]; 
      break;
+   case (kSKMCtRPA) : 
+     h = fMCTemplRPA[sidx][midx]; 
+     break;
    default:
      return 0;
   }
@@ -1575,6 +1606,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
   cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
 #endif
 
+  double rpa_tweakval = fNuXSec->CurrentValue(conv::kNuisXSecRPA);
+  bool relativisticRPA = (bool) rpa_tweakval;
+  assert ( fabs ( (double)relativisticRPA - rpa_tweakval) < conv::kASmallNum); // Check RPA was exactly 1 or 0
+
   // Loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -1587,6 +1622,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
       bool skip = this->SkipTemplate(m);
       if(skip) continue;
       
+      bool applyRPAtoThisMode = false;
+      if (util::IsRHCSample(s)) applyRPAtoThisMode = fNuXSec->ApplySystToSKMode(conv::kRHCNuisXSecRPA, s, m) ;
+      else                      applyRPAtoThisMode = fNuXSec->ApplySystToSKMode(conv::kNuisXSecRPA   , s, m) ;
+      
       const double * variableMCEtrueBinEdges = util::VariableMCEtrueBinEdges(s,m);
       
       // Recast VALORArray blocks so they can be used addressed like normal arrays (fast).
@@ -1594,8 +1633,9 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
       int n_ereco_bins = kNErecoBins[is];
       int n_etrue_bins = kNEtrueBins[is];
       typedef double (templtype)[n_etrue_bins][n_ereco_bins];
-      const templtype & templTun = *reinterpret_cast<const templtype * >(&(fMCTemplArrayTun[is].GetEntryRef(im,0,0)));
-      templtype       & templFin = *reinterpret_cast<templtype       * >(&(fMCTemplArrayFin[is].GetEntryRef(im,0,0)));
+      const templtype & templTun = *reinterpret_cast<const templtype * >(&(fMCTemplArrayTun    [is].GetEntryRef(im,0,0)));
+      const templtype & templRPA = *reinterpret_cast<const templtype * >(&(fMCTemplArrayRPAWght[is].GetEntryRef(im,0,0)));
+      templtype       & templFin = *reinterpret_cast<templtype       * >(&(fMCTemplArrayFin    [is].GetEntryRef(im,0,0)));
       
       //~ const double(&templTun)[n_etrue_bins][n_ereco_bins] = *reinterpret_cast< const double (*) [n_etrue_bins][n_ereco_bins]> (&(fMCTemplArrayTun[is].GetEntryRef(im,0,0)));
       //~ double      (&templFin)[n_etrue_bins][n_ereco_bins] = *reinterpret_cast< double       (*) [n_etrue_bins][n_ereco_bins]> (&(fMCTemplArrayFin[is].GetEntryRef(im,0,0)));
@@ -1611,95 +1651,98 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
       int last_itv = -1;
       double flux_wght = -1;
       for (int ivb = 0 ; ivb < fNNonEmptyVariableBins[is][im] ; ivb++ ) {
-	int itv =  fNonEmptyVariableBins[is][im][ivb] % conv::kBigIndex;
-	int irv = (fNonEmptyVariableBins[is][im][ivb] - itv)/conv::kBigIndex;
+        int itv =  fNonEmptyVariableBins[is][im][ivb] % conv::kBigIndex;
+        int irv = (fNonEmptyVariableBins[is][im][ivb] - itv)/conv::kBigIndex;
 
-	double EtrueVarMin = variableMCEtrueBinEdges[itv-1] + kOneMeV;
+        double EtrueVarMin = variableMCEtrueBinEdges[itv-1] + kOneMeV;
 
-	// Plug-in BANFF flux systematics
-	if (itv!=last_itv) {
-	  flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
-	  last_itv = itv;
-	}
-	
-	//assert(fMCVariableTemplArray[is].GetEntryRef(im, itv-1, irv-1) > 0);
-	
-	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+        // Plug-in BANFF flux systematics
+        if (itv!=last_itv) {
+          flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+          last_itv = itv;
+        }
+        
+        //assert(fMCVariableTemplArray[is].GetEntryRef(im, itv-1, irv-1) > 0);
+        
+        double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
 
-	// Plug-in BANFF & other xsec systematics 
-	double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
+        // Plug-in BANFF & other xsec systematics 
+        double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
+
+        // Plug-in SK efficiency + FSI uncertainties
+        double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
   
-	////////// HERE IT CRASHES //////////
+        // if(s==kSKsFCFVMultiRingMuLike || s==kSKsFCFVMultiRingELike){
+        //   exit(1);
+        // }
 
-	// Plug-in SK efficiency + FSI uncertainties
-	double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
-  
-	// if(s==kSKsFCFVMultiRingMuLike || s==kSKsFCFVMultiRingELike){
-	//   exit(1);
-	// }
-
-	
-	// Combined weight
-	double wght = skfsi_wght * flux_wght * xsec_wght;
+        
+        // Combined weight
+        double wght = skfsi_wght * flux_wght * xsec_wght;
   
 #ifdef SYSTWEIGHTSAREONE
-	wght = 1;
+        wght = 1;
 #endif
-	/*
-	   if(util::IsMEC(m))
-	   cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
-	 */
-	// loop over 50MeV Ereco
-	for (int ifb = 0 ; ifb < fNNonEmptyFixedBins[is][im][ivb] ; ifb++ ) {
-	  int it =  fNonEmptyFixedBins[is][im][ivb][ifb] % conv::kBigIndex;
-	  int ir = (fNonEmptyFixedBins[is][im][ivb][ifb] - it)/conv::kBigIndex;
-	  //check for empty bins
-	  
-	  //assert(fMCTemplOri[is].GetEntryRef(im, itv-1, irv-1) > 0);
+        /*
+           if(util::IsMEC(m))
+           cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
+         */
+        // loop over 50MeV Ereco
+        for (int ifb = 0 ; ifb < fNNonEmptyFixedBins[is][im][ivb] ; ifb++ ) {
+          int it =  fNonEmptyFixedBins[is][im][ivb][ifb] % conv::kBigIndex;
+          int ir = (fNonEmptyFixedBins[is][im][ivb][ifb] - it)/conv::kBigIndex;
+          //check for empty bins
+          
+          //assert(fMCTemplOri[is].GetEntryRef(im, itv-1, irv-1) > 0);
     
-	  ////
-	  //double Etrue = util::ErecoBinEdges(s)(s,it-1) + kOneMeV;
-	  
-	  // get number of events in current bin of source MC template
-	  double nev = templTun[it-1][ir-1];
-	  
-	  nev = TMath::Max(0.,nev);
-	  double nev_systm = nev * wght;
+          ////
+          //double Etrue = util::ErecoBinEdges(s)(s,it-1) + kOneMeV;
+          
+          // get number of events in current bin of source MC template
+          double nev = templTun[it-1][ir-1];
+          
+          nev = TMath::Max(0.,nev);
+          double nev_systm = nev * wght;
+#ifndef SYSTWEIGHTSAREONE
+          if (relativisticRPA && applyRPAtoThisMode) {
+            nev_systm *= templRPA[it-1][ir-1]; // apply nonrel to rel RPA tune
+          }
+#endif
 
 #ifdef __show_syst_var_wght_mesg_debug__ 
-	    // Get the energy of the current bin
-	  double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
-	  double Ereco = util::ErecoBinEdges(s,it-1) + kOneMeV;
-	  if( skfsi_wght != 1. ||
-	      flux_wght  != 1. ||
-	      xsec_wght  != 1. )
-	  {
-	    cout << "Exp/SKMC/SystVarWght >> "
-	      << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
-	      << ", Ereco = " << Ereco << " GeV"
-	      << ", Etrue = " << Etrue << " GeV => Weights: "
-	      << "SK+FSI = "  << skfsi_wght
-	      << ", Flux = "  << flux_wght
-	      << ", XSec = "  << xsec_wght
-	      << " (total = " << wght << ")"
-	      << endl;
-	  }
+            // Get the energy of the current bin
+          double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+          double Ereco = util::ErecoBinEdges(s,it-1) + kOneMeV;
+          if( skfsi_wght != 1. ||
+              flux_wght  != 1. ||
+              xsec_wght  != 1. )
+          {
+            cout << "Exp/SKMC/SystVarWght >> "
+              << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+              << ", Ereco = " << Ereco << " GeV"
+              << ", Etrue = " << Etrue << " GeV => Weights: "
+              << "SK+FSI = "  << skfsi_wght
+              << ", Flux = "  << flux_wght
+              << ", XSec = "  << xsec_wght
+              << " (total = " << wght << ")"
+              << endl;
+          }
 #endif//__show_syst_var_wght_mesg_debug__ 
 
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
-	  if(nev_systm < 0) {
+          if(nev_systm < 0) {
 #ifdef __show_negative_events_mesg_debug__
-	    cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
-	      << " to " << 0 << "\t" << " Ereco: " << Ereco << endl;
+            cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
+              << " to " << 0 << "\t" << " Ereco: " << Ereco << endl;
 #endif//__show_negative_events_mesg_debug__
-	    nev_systm = 0;
-	  }
+            nev_systm = 0;
+          }
 #endif// NO_EVENTS_CAN_BE_NEGATIVE
-	  // Update target MC template
-	  
-	  templFin[it-1][ir-1] = nev_systm;
-	  
-	}//ifb
+          // Update target MC template
+          
+          templFin[it-1][ir-1] = nev_systm;
+          
+        }//ifb
       }//ivb
     }//im
       

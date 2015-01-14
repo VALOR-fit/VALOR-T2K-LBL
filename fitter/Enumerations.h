@@ -97,6 +97,7 @@ typedef enum ESKMCTemplateType
    kSKMCtUndefined = -1, 
    kSKMCtOri, // nominal MC
    kSKMCtNom, // nominal MC + tuning (ext) weights 
+   kSKMCtRPA, // same as above, but with relativistic rather than nonrelativistic RPA
    kSKMCtTun, // nominal MC + tuning (ext) weights + tuning (T2K) weights
    kSKMCtSys, // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations
    kSKMCtFin  // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations + physics hypothesis 

@@ -84,6 +84,9 @@ string valor::util::AsString(conv::SKMCTemplateType_t t)
     case ( kSKMCtNom ) : 
       return "nominal";          
       break;
+    case ( kSKMCtRPA ) : 
+      return "nominal + rel RPA";          
+      break;
     case ( kSKMCtTun ) : 
       return "tuned"; 
       break;
@@ -195,6 +198,7 @@ valor::conv::SKMCTemplateType_t
 {
   if(sh == "ori")        return kSKMCtOri;
   if(sh == "nom")        return kSKMCtNom;
+  if(sh == "rpa")        return kSKMCtRPA;
   if(sh == "tun")        return kSKMCtTun;
   if(sh == "sys")        return kSKMCtSys;
   if(sh == "fin")        return kSKMCtFin;
