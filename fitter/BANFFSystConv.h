@@ -46,13 +46,13 @@ namespace valor {
     static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 14;
     //
     #elif BANFF_BINS == 2 //disap (no scca and sccv)
-    static const int kNumOfParamsInBANFFfit = 28; //30 //39; 
-    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 12; //14
-    static const int kNumOfRHCParamsInBANFFfit = 28; //30 //39;
-    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 12; //14
+    static const int kNumOfParamsInBANFFfit = 37;
+    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 12; //25
+    static const int kNumOfRHCParamsInBANFFfit = 37;
+    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 12; //25
     // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 44; //46; //64; 
-    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 12; //14; 
+    static const int kNumOfFHCpRHCParamsInBANFFfit = 62;
+    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 12; //50; 
     //
     #elif BANFF_BINS == 3 //app
     static const int kNumOfParamsInBANFFfit = 39; 
@@ -165,21 +165,16 @@ namespace valor {
 	kNuisBANFF13 ,
 	kNuisBANFF14 ,
 	kNuisBANFF15 ,
-        #if (BANFF_BINS != 2)
 	kNuisBANFF16 ,
 	kNuisBANFF17 ,
 	kNuisBANFF18 ,
 	kNuisBANFF19 ,
 	kNuisBANFF20 ,
 	kNuisBANFF21 ,
-	// NEW SPLIT ANA
-        //#endif
-        //#if BANFF_BINS == 1
 	kNuisBANFF22 , 
 	kNuisBANFF23 , 
 	kNuisBANFF24 , 
-        #endif
-
+	
 	kNuisBANFFMEC          ,
 	kNuisBANFFCA5          ,
 	kNuisBANFFBgRES        ,
@@ -268,31 +263,26 @@ namespace valor {
 	kRHCNuisBANFF13 ,
 	kRHCNuisBANFF14 ,
 	kRHCNuisBANFF15 ,
-	#if (BANFF_BINS != 2)
 	kRHCNuisBANFF16 ,
 	kRHCNuisBANFF17 ,
 	kRHCNuisBANFF18 ,
 	kRHCNuisBANFF19 ,
 	kRHCNuisBANFF20 ,
 	kRHCNuisBANFF21 ,
-	// NEW SPLIT ANA
-	//#endif
-	//#if BANFF_BINS == 1
 	kRHCNuisBANFF22 , 
 	kRHCNuisBANFF23 , 
 	kRHCNuisBANFF24 , 
-	#endif
-
+	
 	kRHCNuisBANFFMEC   ,
 	kRHCNuisBANFFCA5   ,
 	kRHCNuisBANFFBgRES ,
 	kRHCNuisBANFFMAQE   ,
 	kRHCNuisBANFFMARES  ,
-	// NEW SPLIT ANA
-        #if (BANFF_BINS != 2)
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2)
 	kRHCNuisBANFFSCCA   ,
 	kRHCNuisBANFFSCCV   ,
-	#endif
+#endif
 	//
 	kRHCNuisBANFFFermiMom      ,
 	kRHCNuisBANFFShapeCCoth    ,
@@ -406,20 +396,15 @@ namespace valor {
 	kNuisBANFF13 ,
 	kNuisBANFF14 ,
 	kNuisBANFF15 ,
-	#if (BANFF_BINS != 2)
 	kNuisBANFF16 ,
 	kNuisBANFF17 ,
 	kNuisBANFF18 ,
 	kNuisBANFF19 ,
 	kNuisBANFF20 ,
 	kNuisBANFF21 ,
-	// NEW SPLIT ANA
-	//#endif
-	//#if BANFF_BINS == 1
 	kNuisBANFF22 , 
 	kNuisBANFF23 , 
 	kNuisBANFF24 , 
-	#endif
 
 	//
 	kRHCNuisBANFF00 ,
@@ -438,22 +423,16 @@ namespace valor {
 	kRHCNuisBANFF13 ,
 	kRHCNuisBANFF14 ,
 	kRHCNuisBANFF15 ,
-	#if (BANFF_BINS != 2)
 	kRHCNuisBANFF16 ,
 	kRHCNuisBANFF17 ,
 	kRHCNuisBANFF18 ,
 	kRHCNuisBANFF19 ,
 	kRHCNuisBANFF20 ,
 	kRHCNuisBANFF21 ,
-
-	// NEW SPLIT ANA
-	//#endif
-	//#if BANFF_BINS == 1
 	kRHCNuisBANFF22 , 
 	kRHCNuisBANFF23 , 
 	kRHCNuisBANFF24 , 
-	#endif
-
+	
 	//
 	kNuisBANFFMEC,
 	kNuisBANFFCA5,
@@ -547,20 +526,15 @@ namespace valor {
 	true,                 // kNuisBANFF13
 	true,                 // kNuisBANFF14
 	true,                 // kNuisBANFF15
-        #if (BANFF_BINS != 2)
 	true,                 // kNuisBANFF16
 	true,                 // kNuisBANFF17
 	true,                 // kNuisBANFF18
 	true,                 // kNuisBANFF19
 	true,                 // kNuisBANFF20
 	true,                 // kNuisBANFF21
-	// NEW SPLIT ANA
-	//#endif
-	//#if BANFF_BINS == 1
 	true,                 // kNuisBANFF22
 	true,                 // kNuisBANFF23
 	true,                 // kNuisBANFF24
-	#endif
 	//
 	false,                // kNuisBANFFMEC
 	false,                // kNuisBANFFCA5
@@ -651,32 +625,27 @@ namespace valor {
 	true,                 // kRHCNuisBANFF13
 	true,                 // kRHCNuisBANFF14
 	true,                 // kRHCNuisBANFF15
-	#if (BANFF_BINS != 2)
 	true,                 // kRHCNuisBANFF16
 	true,                 // kRHCNuisBANFF17
 	true,                 // kRHCNuisBANFF18
 	true,                 // kRHCNuisBANFF19
 	true,                 // kRHCNuisBANFF20
 	true,                 // kRHCNuisBANFF21
-	// NEW SPLIT ANA
-	//#endif
-	//#if BANFF_BINS == 1
 	true,                 // kRHCNuisBANFF22
 	true,                 // kRHCNuisBANFF23
 	true,                 // kRHCNuisBANFF24
-	#endif
 	//
 	false,                // kRHCNuisBANFFMEC
 	false,                // kRHCNuisBANFFCA5
 	false,                // kRHCNuisBANFFBgRES
 	false,                // kRHCNuisBANFFMAQE   
 	false,                // kRHCNuisBANFFMARES
-	// NEW SPLIT ANA
-        #if (BANFF_BINS != 2)
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2)
 	false,                // kRHCNuisBANFFSCCA   
 	false,                // kRHCNuisBANFFSCCV
-	#endif
-      	false,                // kRHCNuisBANFFFermiMom      
+#endif
+	false,                // kRHCNuisBANFFFermiMom      
 	false,                // kRHCNuisBANFFShapeCCoth    
 	false,                // kRHCNuisBANFFBindE         
 	false,                // kRHCNuisBANFFNormCCcoh     
@@ -789,21 +758,16 @@ namespace valor {
 	true,                 // kNuisBANFF13
 	true,                 // kNuisBANFF14
 	true,                 // kNuisBANFF15
-	#if (BANFF_BINS != 2)
 	true,                 // kNuisBANFF16
 	true,                 // kNuisBANFF17
 	true,                 // kNuisBANFF18
 	true,                 // kNuisBANFF19
 	true,                 // kNuisBANFF20
 	true,                 // kNuisBANFF21
-	// NEW SPLIT ANA
-	//#endif
-	//#if BANFF_BINS == 1
 	true,                 // kNuisBANFF22
 	true,                 // kNuisBANFF23
 	true,                 // kNuisBANFF24
-	#endif
-	//
+    
 	true,                 // kRHCNuisBANFF00
 	true,                 // kRHCNuisBANFF01
 	true,                 // kRHCNuisBANFF02
@@ -820,31 +784,27 @@ namespace valor {
 	true,                 // kRHCNuisBANFF13
 	true,                 // kRHCNuisBANFF14
 	true,                 // kRHCNuisBANFF15
-	#if (BANFF_BINS != 2)
 	true,                 // kRHCNuisBANFF16
 	true,                 // kRHCNuisBANFF17
 	true,                 // kRHCNuisBANFF18
 	true,                 // kRHCNuisBANFF19
 	true,                 // kRHCNuisBANFF20
 	true,                 // kRHCNuisBANFF21
-	// NEW SPLIT ANA
-	//#endif
-        //#if BANFF_BINS == 1
 	true,                 // kRHCNuisBANFF22
 	true,                 // kRHCNuisBANFF23
 	true,                 // kRHCNuisBANFF24
-	#endif
+    
 	//
 	false,                // kRHCNuisBANFFMEC
 	false,                // kRHCNuisBANFFCA5
 	false,                // kRHCNuisBANFFBgRES
 	false,                // kRHCNuisBANFFMAQE   
 	false,                // kRHCNuisBANFFMARES
-	// NEW SPLIT ANA
-        #if (BANFF_BINS != 2) 
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2) 
 	false,                // kRHCNuisBANFFSCCA   
 	false,                // kRHCNuisBANFFSCCV
-	#endif
+#endif
 	false,                // kRHCNuisBANFFFermiMom      
 	false,                // kRHCNuisBANFFShapeCCoth    
 	false,                // kRHCNuisBANFFBindE         
@@ -966,7 +926,7 @@ namespace valor {
 	kPdgNuMuBar,          // kNuisBANFF13
 	kPdgNuMuBar,          // kNuisBANFF14
 	kPdgNuMuBar,          // kNuisBANFF15
-        #if (BANFF_BINS != 2)
+    
 	kPdgNuE,              // kNuisBANFF16
 	kPdgNuE,              // kNuisBANFF17
 	kPdgNuE,              // kNuisBANFF18
@@ -976,15 +936,15 @@ namespace valor {
 	kPdgNuE,              // kNuisBANFF22
 	kPdgNuEBar,           // kNuisBANFF23
 	kPdgNuEBar,           // kNuisBANFF24
-	#endif
+	
 	//
 	0,                    // kNuisBANFFMEC          
 	0,                    // kNuisBANFFCA5          
 	0,                    // kNuisBANFFBgRES        
 	0,                    // kNuisBANFFMAQE         
 	0,                    // kNuisBANFFMARES 
-	// NEW SPLIT ANA
-        #if (BANFF_BINS != 2)
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2)
 	0,                    // kNuisBANFFSCCA         
 	0,                    // kNuisBANFFSCCV
 	#endif
@@ -1109,8 +1069,6 @@ namespace valor {
 	kPdgNuMuBar,          // kRHCNuisBANFF13
 	kPdgNuMuBar,          // kRHCNuisBANFF14
 	kPdgNuMuBar,          // kRHCNuisBANFF15
-
-        #if (BANFF_BINS != 2) // NEW SPLIT ANA
 	kPdgNuE,              // kRHCNuisBANFF16
 	kPdgNuE,              // kRHCNuisBANFF17
 	kPdgNuEBar,           // kRHCNuisBANFF18
@@ -1120,19 +1078,18 @@ namespace valor {
 	kPdgNuEBar,           // kRHCNuisBANFF22
 	kPdgNuEBar,           // kRHCNuisBANFF23
 	kPdgNuEBar,           // kRHCNuisBANFF24
-        #endif
 	//
 	0,                    // kRHCNuisBANFFMEC          
 	0,                    // kRHCNuisBANFFCA5          
 	0,                    // kRHCNuisBANFFBgRES        
 	0,                    // kRHCNuisBANFFMAQE         
 	0,                    // kRHCNuisBANFFMARES
-	// NEW SPLIT ANA
-        #if (BANFF_BINS != 2)
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2)
 	0,                    // kRHCNuisBANFFSCCA         
 	0,                    // kRHCNuisBANFFSCCV
-	#endif
-       	0,                    // kRHCNuisBANFFFermiMom      
+#endif
+    0,                    // kRHCNuisBANFFFermiMom      
 	0,                    // kRHCNuisBANFFShapeCCoth    
 	0,                    // kRHCNuisBANFFBindE        
 	0,                    // kRHCNuisBANFFNormCCcoh     
@@ -1196,7 +1153,7 @@ namespace valor {
 	/* #endif */
 	//#if BANFF_BINS == 1
 	
-        #else
+    #else
 	kPdgNuMu,             // kNuisBANFF00
 	kPdgNuMu,             // kNuisBANFF01
 	kPdgNuMu,             // kNuisBANFF02
@@ -1316,8 +1273,7 @@ namespace valor {
 	kPdgNuMuBar,          // kNuisBANFF13
 	kPdgNuMuBar,          // kNuisBANFF14
 	kPdgNuMuBar,          // kNuisBANFF15
-
-        #if (BANFF_BINS != 2) // NEW SPLIT ANA
+	
 	kPdgNuE,              // kNuisBANFF16
 	kPdgNuE,              // kNuisBANFF17
 	kPdgNuE,              // kNuisBANFF18
@@ -1327,7 +1283,6 @@ namespace valor {
 	kPdgNuE,              // kNuisBANFF22
 	kPdgNuEBar,           // kNuisBANFF23
 	kPdgNuEBar,           // kNuisBANFF24
-	#endif
 	//
 	kPdgNuMu,             // kRHCNuisBANFF00
 	kPdgNuMu,             // kRHCNuisBANFF01
@@ -1345,7 +1300,7 @@ namespace valor {
 	kPdgNuMuBar,          // kRHCNuisBANFF13
 	kPdgNuMuBar,          // kRHCNuisBANFF14
 	kPdgNuMuBar,          // kRHCNuisBANFF15
-        #if (BANFF_BINS != 2)
+	
 	kPdgNuE,              // kRHCNuisBANFF16
 	kPdgNuE,              // kRHCNuisBANFF17
 	kPdgNuEBar,           // kRHCNuisBANFF18
@@ -1355,18 +1310,18 @@ namespace valor {
 	kPdgNuEBar,           // kRHCNuisBANFF22
 	kPdgNuEBar,           // kRHCNuisBANFF23
 	kPdgNuEBar,           // kRHCNuisBANFF24
-	#endif
+	
 	//
 	0,                    // kRHCNuisBANFFMEC          
 	0,                    // kRHCNuisBANFFCA5          
 	0,                    // kRHCNuisBANFFBgRES        
 	0,                    // kRHCNuisBANFFMAQE         
 	0,                    // kRHCNuisBANFFMARES 
-	// NEW SPLIT ANA       
-        #if (BANFF_BINS != 2)
+// NEW SPLIT ANA       
+#if (BANFF_BINS != 2)
 	0,                    // kRHCNuisBANFFSCCA         
 	0,                    // kRHCNuisBANFFSCCV
-	#endif
+#endif
 	0,                    // kRHCNuisBANFFFermiMom      
 	0,                    // kRHCNuisBANFFShapeCCoth    
 	0,                    // kRHCNuisBANFFBindE        
@@ -1397,6 +1352,7 @@ namespace valor {
 	{ 3.5,  5.0 },        // kNuisBANFF08
 	{ 5.0,  7.0 },        // kNuisBANFF09
 	{ 7.0, 30.0 },        // kNuisBANFF10
+    
 	{ 0.0,  0.7 },        // kNuisBANFF11
 	{ 0.7,  1.0 },        // kNuisBANFF12
 	{ 1.0,  1.5 },        // kNuisBANFF13
@@ -1475,7 +1431,7 @@ namespace valor {
     
 #elif defined(__USE_NIWG2015__)
 	// NEW XSEC
-	{ 0.0,  0.4 },        // kNuisBANFF00
+	{ 0.0,  0.4 },        // kNuisBANFF00 //numu
 	{ 0.4,  0.5 },        // kNuisBANFF01
 	{ 0.5,  0.6 },        // kNuisBANFF02
 	{ 0.6,  0.7 },        // kNuisBANFF03
@@ -1486,35 +1442,36 @@ namespace valor {
 	{ 3.5,  5.0 },        // kNuisBANFF08
 	{ 5.0,  7.0 },        // kNuisBANFF09
 	{ 7.0, 30.0 },        // kNuisBANFF10
-	{ 0.0,  0.7 },        // kNuisBANFF11
+    
+	{ 0.0,  0.7 },        // kNuisBANFF11 //numub
 	{ 0.7,  1.0 },        // kNuisBANFF12
 	{ 1.0,  1.5 },        // kNuisBANFF13
 	{ 1.5,  2.5 },        // kNuisBANFF14
 	{ 2.5, 30.0 },        // kNuisBANFF15
-
-	#if (BANFF_BINS != 2) // NEW SPLIT ANA
-	{ 0.0,  0.5 },        // kNuisBANFF16
+    
+	{ 0.0,  0.5 },        // kNuisBANFF16 //nue
 	{ 0.5,  0.7 },        // kNuisBANFF17
 	{ 0.7,  0.8 },        // kNuisBANFF18
 	{ 0.8,  1.5 },        // kNuisBANFF19
 	{ 1.5,  2.5 },        // kNuisBANFF20
 	{ 2.5,  4.0 },        // kNuisBANFF21
 	{ 4.0, 30.0 },        // kNuisBANFF22
-	{ 0.0,  2.5 },        // kNuisBANFF23
+    
+	{ 0.0,  2.5 },        // kNuisBANFF23 //nueb
 	{ 2.5, 30.0 },        // kNuisBANFF24
-	#endif
+    
 	//
 	{  -1,   -1 },        // kNuisBANFFMEC not a flux param
 	{  -1,   -1 },        // kNuisBANFFCA5 not a flux param  
 	{  -1,   -1 },        // kNuisBANFFBgRES not a flux param
 	{  -1,   -1 },        // kNuisBANFFMAQE, not a flux param
 	{  -1,   -1 },        // kNuisBANFFMARES, not a flux param
-	// NEW SPLIT ANA
-        #if (BANFF_BINS != 2)
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2)
 	{  -1,   -1 },        // kNuisBANFFSCCA, not a flux param
 	{  -1,   -1 },        // kNuisBANFFSCCV, not a flux param
-	#endif
-       	{  -1,   -1 },        // kNuisBANFFFermiMom, not a flux param
+#endif
+	{  -1,   -1 },        // kNuisBANFFFermiMom, not a flux param
 	{  -1,   -1 },        // kNuisBANFFShapeCCoth, not a flux param
 	{  -1,   -1 },        // kNuisBANFFBindE, not a flux param
 	{  -1,   -1 },        // kNuisBANFFNormCCcoh, not a flux param
@@ -1649,8 +1606,6 @@ namespace valor {
 	{ 3.5,  5.0 },        // kRHCNuisBANFF13
 	{ 5.0,  7.0 },        // kRHCNuisBANFF14
 	{ 7.0, 30.0 },        // kRHCNuisBANFF15
-
-        #if (BANFF_BINS != 2) // NEW SPLIT ANA
 	// nue
 	{ 0.0,  2.5 },        // kRHCNuisBANFF16
 	{ 2.5, 30.0 },        // kRHCNuisBANFF17
@@ -1662,7 +1617,7 @@ namespace valor {
 	{ 1.5,  2.5 },        // kRHCNuisBANFF22
 	{ 2.5,  4.0 },        // kRHCNuisBANFF23
 	{ 4.0, 30.0 },        // kRHCNuisBANFF24
-	#endif
+	
 	//
 	{  -1,   -1 },        // kRHCNuisBANFFMEC not a flux param
 	{  -1,   -1 },        // kRHCNuisBANFFCA5 not a flux param  
@@ -1880,13 +1835,14 @@ namespace valor {
 	{ 3.5,  5.0 },        // kNuisBANFF08
 	{ 5.0,  7.0 },        // kNuisBANFF09
 	{ 7.0, 30.0 },        // kNuisBANFF10
+	
 	{ 0.0,  0.7 },        // kNuisBANFF11
 	{ 0.7,  1.0 },        // kNuisBANFF12
 	{ 1.0,  1.5 },        // kNuisBANFF13
 	{ 1.5,  2.5 },        // kNuisBANFF14
+	
 	{ 2.5, 30.0 },        // kNuisBANFF15
-
-	#if (BANFF_BINS != 2) // NEW SPLIT ANA
+	
 	{ 0.0,  0.5 },        // kNuisBANFF16
 	{ 0.5,  0.7 },        // kNuisBANFF17
 	{ 0.7,  0.8 },        // kNuisBANFF18
@@ -1896,7 +1852,7 @@ namespace valor {
 	{ 4.0, 30.0 },        // kNuisBANFF22
 	{ 0.0,  2.5 },        // kNuisBANFF23
 	{ 2.5, 30.0 },        // kNuisBANFF24
-	#endif
+	
 	// RHC
 	// numu
 	{ 0.0,  0.7 },        // kRHCNuisBANFF00
@@ -1916,7 +1872,7 @@ namespace valor {
 	{ 3.5,  5.0 },        // kRHCNuisBANFF13
 	{ 5.0,  7.0 },        // kRHCNuisBANFF14
 	{ 7.0, 30.0 },        // kRHCNuisBANFF15
-        #if (BANFF_BINS != 2)
+	
 	// nue
 	{ 0.0,  2.5 },        // kRHCNuisBANFF16
 	{ 2.5, 30.0 },        // kRHCNuisBANFF17
@@ -1928,18 +1884,18 @@ namespace valor {
 	{ 1.5,  2.5 },        // kRHCNuisBANFF22
 	{ 2.5,  4.0 },        // kRHCNuisBANFF23
 	{ 4.0, 30.0 },        // kRHCNuisBANFF24
-	#endif
+	
 	//
 	{  -1,   -1 },        // kNuisBANFFMEC not a flux param
 	{  -1,   -1 },        // kNuisBANFFCA5 not a flux param  
 	{  -1,   -1 },        // kNuisBANFFBgRES not a flux param
 	{  -1,   -1 },        // kNuisBANFFMAQE, not a flux param
 	{  -1,   -1 },        // kNuisBANFFMARES, not a flux param
-	// NEW SPLIT ANA
-        #if (BANFF_BINS != 2)
+// NEW SPLIT ANA
+#if (BANFF_BINS != 2)
 	{  -1,   -1 },        // kNuisBANFFSCCA, not a flux param
 	{  -1,   -1 },        // kNuisBANFFSCCV, not a flux param
-	#endif
+#endif
 	{  -1,   -1 },        // kNuisBANFFFermiMom, not a flux param
 	{  -1,   -1 },        // kNuisBANFFShapeCCoth, not a flux param
 	{  -1,   -1 },        // kNuisBANFFBindE, not a flux param

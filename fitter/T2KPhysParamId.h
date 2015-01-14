@@ -85,15 +85,13 @@ static const PhysParamId_t kNuisBANFF12 = kNuis032; // # 12; different meanings 
 static const PhysParamId_t kNuisBANFF13 = kNuis033; // # 13; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF14 = kNuis034; // # 14; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF15 = kNuis035; // # 15; different meanings depending on samples defined
-#if (BANFF_BINS != 2)
+#if ( !(defined(__USE_NIWG2013__) && BANFF_BINS == 2))
 static const PhysParamId_t kNuisBANFF16 = kNuis036; // # 16; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF17 = kNuis037; // # 17; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF18 = kNuis038; // # 18; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF19 = kNuis039; // # 19; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF20 = kNuis040; // # 20; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF21 = kNuis041; // # 21; different meanings depending on samples defined
-//#endif
-//#if BANFF_BINS == 1
 static const PhysParamId_t kNuisBANFF22 = kNuis042; // # 22; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF23 = kNuis043; // # 23; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF24 = kNuis044; // # 24; different meanings depending on samples defined
@@ -302,15 +300,13 @@ static const PhysParamId_t kRHCNuisBANFF12 = kNuis142; // # 12; SK anti-numu (di
 static const PhysParamId_t kRHCNuisBANFF13 = kNuis143; // # 13; SK anti-numu (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF14 = kNuis144; // # 14; SK anti-numu (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF15 = kNuis145; // # 15; SK anti-numu (different meanings depending on samples defined)
-#if (BANFF_BINS != 2)
+#if (!(defined(__USE_NIWG2013__) && BANFF_BINS == 2))
 static const PhysParamId_t kRHCNuisBANFF16 = kNuis146; // # 16; SK nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF17 = kNuis147; // # 17; SK nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF18 = kNuis148; // # 18; SK anti-nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF19 = kNuis149; // # 19; SK anti-nu (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF20 = kNuis150; // # 20; SK anti-nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF21 = kNuis151; // # 21; SK anti-nue (different meanings depending on samples defined)
-//#endif
-//#if BANFF_BINS == 1
 static const PhysParamId_t kRHCNuisBANFF22 = kNuis152; // # 22; SK anti-nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF23 = kNuis153; // # 23; SK anti-nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF24 = kNuis154; // # 24; SK anti-nue (different meanings depending on samples defined)
