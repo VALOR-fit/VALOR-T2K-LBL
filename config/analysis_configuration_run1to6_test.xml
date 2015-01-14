@@ -377,57 +377,45 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
- <banff>
-   <!--                                       
-	Central values from BANFF fit                                        
-   -->
-
-   <best_fit_values>     
-     <!-- <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
-	  <objname>    postfit_params   </objname> -->   
-     <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
-     <objname>    prelim_par_fhc   </objname>
-     <!-- <objname>    prelim_par_all   </objname> -->
-     <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root   </filename>
-	  <objname>    prelim_par_all   </objname> -->    
-     <objtype>    TVectorD         </objtype>
-   </best_fit_values>
-   <!--                                                                                                                      
-	Covariance of fit parameters                 
-   -->
-   <covariance_matrix>
-     <!-- <filename>   official/2013/banff/postfit_banff_2013_joint_v5.root  </filename>
-	  <objname>    postfit_cov      </objname> --> 
-     <!-- <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_postbanff2013.root  </filename> -->
-     <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
-     <objname>    prelim_cov_fhc      </objname>
-     <!-- <objname>    prelim_cov_all      </objname> -->
-     <objtype>    TMatrixD         </objtype>
-   </covariance_matrix>
-   
-
-   <disap>
-     <best_fit_values>
-       <!-- <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
-       <objname>    postfit_params   </objname> -->
-       <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim_numudisap.root </filename>
-       <objname>    prelim_par_fhc   </objname>
-       <objtype>    TVectorD         </objtype>
-     </best_fit_values>
-     <!--
-         Covariance of fit parameters
+  <banff>
+     <!--                                       
+       Central values from BANFF fit                                        
      -->
-     <covariance_matrix>
-       <!-- <filename>   official/2013/banff/postfit_banff_2013_disappearance_v5.root  </filename>
-       <objname>    postfit_cov   </objname> -->
-       <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim_numudisap.root </filename>
-       <objname>    prelim_cov_fhc      </objname>       
-       <objtype>    TMatrixD         </objtype>
-     </covariance_matrix>
-   </disap>
+
+    <best_fit_values>     
+      <filename>   official/2015/banff/postfit_banff_2015_postfit-equals-prefit_v1_valor_order_rhc.root </filename>
+      <objname>    prefit_params   </objname>
+      <objtype>    TVectorD        </objtype>
+    </best_fit_values>
+    
+    <!--                                                                                                                      
+      Covariance of fit parameters                 
+    -->
+    <covariance_matrix>
+      <filename>   official/2015/banff/postfit_banff_2015_postfit-equals-prefit_v1_valor_order_rhc.root </filename>
+      <objname>    prefit_cov       </objname>
+      <objtype>    TMatrixD         </objtype>
+    </covariance_matrix>
    
 
-   <app>
+    <disap>
+      <best_fit_values>
+        <filename>   official/2015/banff/postfit_banff_2015_postfit-equals-prefit_v1_valor_order_rhc.root </filename>
+        <objname>    prefit_params   </objname>
+        <objtype>    TVectorD        </objtype>
+      </best_fit_values>
+      <!--
+        Covariance of fit parameters
+      -->
+      <covariance_matrix>
+        <filename>   official/2015/banff/postfit_banff_2015_postfit-equals-prefit_v1_valor_order_rhc.root </filename>
+        <objname>    prefit_cov       </objname>    
+        <objtype>    TMatrixD         </objtype>
+      </covariance_matrix>
+    </disap>
+   
+
+    <app>
      <best_fit_values>
        <!-- <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
        <objname>    postfit_params   </objname> -->
