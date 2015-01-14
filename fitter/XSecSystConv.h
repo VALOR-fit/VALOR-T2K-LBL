@@ -2450,10 +2450,10 @@ namespace valor {
       }//MultiRe
 
 
-#elif defined(__USE_NIWG2015__)		  
+#elif defined(__USE_NIWG2015__)
 
-      // > 1 muon-like ring 
-      {
+// > 1 muon-like ring 
+{
 	// NEW XSEC 
 	// NB: banffscca and banffsccv are not applied to muon-like ring
 	// rpa 
@@ -3537,10 +3537,6 @@ namespace valor {
 	{  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
 	{  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         #endif
-	{  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
-	{  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
-	{  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
-	{  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
       }//1Rmu
       ,
       // > 1 electron-like ring
