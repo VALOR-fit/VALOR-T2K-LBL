@@ -109,6 +109,9 @@ namespace util {
   void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, std::ostream & stream = std::cout);
   void PrintCompact (const TMatrixD & m, int w=15, int prec=9, std::ostream & stream = std::cout);
   void PrintCompactTex (const TMatrixD & m, int w=20, int prec=9, std::ostream & stream = std::cout, TString opt = "");
+  
+  // For python, hack
+  conv::PhysParamId_t GetBANFFParam(int FHCpRHC_param_no);
 
   //
   //

@@ -1014,3 +1014,9 @@ void valor::util::ArrIdx::Init(void)
   }
 }
 //____________________________________________________________________________
+valor::conv::PhysParamId_t valor::util::GetBANFFParam(int FHCpRHC_param_no)
+{
+  assert(FHCpRHC_param_no >= 0 && FHCpRHC_param_no < kNumOfFHCpRHCParamsInBANFFfit);
+  return conv::kListOfFHCpRHCBANFFParams[FHCpRHC_param_no];
+}
+//____________________________________________________________________________
