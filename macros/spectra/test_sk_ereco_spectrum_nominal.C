@@ -12,9 +12,9 @@ void test_sk_ereco_spectrum_nominal
 (
  const char * tag                   = "fiTQun",
  
- const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
- const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
- //const char * hypothesis           = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc" */
+ const char * sk_sample            = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+ //const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+ const char * hypothesis           = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc" */
 
  // double       input_mixing12       = 0.,                            /* */
  // double       input_mixing13       = 0.,                            /* */
@@ -30,22 +30,22 @@ void test_sk_ereco_spectrum_nominal
  // double       input_deltacp        = 0,                           
  // double       input_dm12sq         = 7.5e-05,                     
  // double       input_dm23sq         = 0.0024,                        
-  
-  double       input_mixing12       = -99,                            /* */
-  double       input_mixing13       = -99,                            /* */
-  double       input_mixing23       = -99,                            /* */
-  double       input_deltacp        = -99,                            /* */
-  double       input_dm12sq         = -99,                            /* */
-  double       input_dm23sq         = -99,                            /* */
-  
-  bool         disable_banff_tuning = false,                          /* */
+ 
+ double       input_mixing12       = -99,                            /* */
+ double       input_mixing13       = -99,                            /* */
+ double       input_mixing23       = -99,                            /* */
+ double       input_deltacp        = -99,                            /* */
+ double       input_dm12sq         = -99,                            /* */
+ double       input_dm23sq         = -99,                            /* */
+ 
+ bool         disable_banff_tuning = false,                          /* */
  
  //const char * config_file          = "analysis_configuration_test.xml",   /* */
  
   //const char * config_file      = "analysis_configuration_run1to6.xml",      
   //const char * config_file      = "analysis_configuration_run1to5_oldmc.xml",      
  //const char * config_file      = "analysis_configuration_run1to5.xml",      
-  const char * config_file      = "analysis_configuration_run1to5_test.xml",      
+  const char * config_file      = "analysis_configuration_run1to6_test.xml",      
 
   //const char * config_file          = "analysis_configuration_run1to6_oa2p0.xml",   /* */
   //const char * config_file          = "analysis_configuration_run1to6_oa2p25.xml",   /* */
@@ -168,6 +168,7 @@ void test_sk_ereco_spectrum_nominal
   skexp.GetSuperkMC()->SetXMEC(1);
   skexp.Generate(ph);
 
+
   // Get energy spectra
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
@@ -232,6 +233,8 @@ void test_sk_ereco_spectrum_nominal
   }
 
 
+ 
+
   //combine modes
   double nccqe = 0, nccnqe = 0, nnuecc = 0, nnc = 0, nmec = 0;
   double nnc1pic = 0, n1pi;
@@ -256,10 +259,13 @@ void test_sk_ereco_spectrum_nominal
        || m == conv::kSKmNuEBarNC1piC
        )
       nnc1pic += nmode;
-    if(m == conv::kSKmNuMuNCoth_mu
-       || m == conv::kSKmNuMuBarNCoth_mu
-       || m == conv::kSKmNuENCoth_mu
-       || m == conv::kSKmNuEBarNCoth_mu
+    
+
+
+    if(m == conv::kSKmNuMuNCoth
+       || m == conv::kSKmNuMuBarNCoth
+       || m == conv::kSKmNuENCoth
+       || m == conv::kSKmNuEBarNCoth
        || m == conv::kSKmNuMuNC1piC
        || m == conv::kSKmNuMuBarNC1piC
        || m == conv::kSKmNuENC1piC
@@ -272,6 +278,8 @@ void test_sk_ereco_spectrum_nominal
        || m == conv::kSKmOscNuECC1pi
        )
       n1pi += nmode;
+
+
   }
   streamer << endl;
   streamer << "Contrib from modes: " 
