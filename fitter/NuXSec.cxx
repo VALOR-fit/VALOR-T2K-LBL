@@ -592,20 +592,20 @@ double NuXSec::FinTuningWght_1p(
   // BANFF param, M_{A} RES
   //
   if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES || p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-    {
-      #if SPLINE_TYPE == -1
-      return wght;
-      #endif
-      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-      //if(!wght_spl)
-      //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
-      assert(wght_spl);
-      if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-        tb = fBANFF->RHCBestFitValue(p);
-      else
-        tb = fBANFF->BestFitValue(p);
-      wght = wght_spl->Eval(tb);
-    }
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    //if(!wght_spl)
+    //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
+    assert(wght_spl);
+    if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
+      tb = fBANFF->RHCBestFitValue(p);
+    else
+      tb = fBANFF->BestFitValue(p);
+    wght = wght_spl->Eval(tb);
+  }
 
 #elif defined(__USE_NIWG2015__)
   
@@ -645,32 +645,34 @@ double NuXSec::FinTuningWght_1p(
       p == kRHCNuisBANFFShapeCCoth ||
       p == kRHCNuisBANFFBindE      
       ) 
-    {
-      //
-      #if SPLINE_TYPE == -1
-      return wght;
-      #endif
-      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-      //~ if(!wght_spl)
-        //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
-      assert(wght_spl);
-      // NEW XSEC
-      if(
-	 p == kRHCNuisBANFFMAQE       || 
-	 p == kRHCNuisBANFFMARES      || 
-	 p == kRHCNuisBANFFFermiMom   || 
-	 p == kRHCNuisBANFFShapeCCoth || 
-	 p == kRHCNuisBANFFBindE      || 
-      // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-	 p == kRHCNuisBANFFSCCA       || 
-	 p == kRHCNuisBANFFSCCV       ||
+  {
+    //
+#if SPLINE_TYPE == -1
+    return wght;
 #endif
-	 p == kRHCNuisBANFFCA5        
-	 ) 
-	tb = fBANFF->RHCBestFitValue(p);
+    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    //~ if(!wght_spl)
+      //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
+    assert(wght_spl);
+    // NEW XSEC
+    if(p == kRHCNuisBANFFMAQE       || 
+       p == kRHCNuisBANFFMARES      || 
+       p == kRHCNuisBANFFFermiMom   || 
+       p == kRHCNuisBANFFShapeCCoth || 
+       p == kRHCNuisBANFFBindE      || 
+       // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
+       p == kRHCNuisBANFFSCCA       || 
+       p == kRHCNuisBANFFSCCV       ||
+#endif
+       p == kRHCNuisBANFFCA5        ) 
+      {
+        tb = fBANFF->RHCBestFitValue(p);
+      }
       else
+      {
         tb = fBANFF->BestFitValue(p);
+      }
       wght = wght_spl->Eval(tb);
     }
 #endif
@@ -1092,15 +1094,16 @@ double NuXSec::SystWght_1p(
   // RPA tuning
   //
   else if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
-    {
-      #if SPLINE_TYPE == -1
-      return wght;
-      #endif
-      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-      assert(wght_spl);
-      tc = this->CurrentValue(p);
-      wght = wght_spl->Eval(tc);
-    }    
+  {
+    return 1; // This is implented in SKMC for now
+    //~ #if SPLINE_TYPE == -1
+    //~ return wght;
+    //~ #endif
+    //~ TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    //~ assert(wght_spl);
+    //~ tc = this->CurrentValue(p);
+    //~ wght = wght_spl->Eval(tc);
+  }    
 #endif
 
 #ifdef __show_syst_var_wght_mesg_debug__
