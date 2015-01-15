@@ -120,15 +120,17 @@ namespace util {
   class ArrIdx {
   public:
     static ArrIdx * Instance();
-    int SuperkSampleIdx (conv::SuperkSample_t s)                       { return fSuperkSampleIdx[s];    }
-    int SuperkModeIdx   (conv::SuperkSample_t s, conv::SuperkMode_t m) { return fSuperkModeIdx  [s][m]; }
-    int XSecSystIdx     (conv::PhysParamId_t p)                        { return fXSecSystIdx    [p];    }
-    int RHCXSecSystIdx  (conv::PhysParamId_t p)                        { return fRHCXSecSystIdx    [p]; }
-    int BANFFSystIdx    (conv::PhysParamId_t p)                        { return fBANFFSystIdx   [p];    }
-    int RHCBANFFSystIdx (conv::PhysParamId_t p)                        { return fRHCBANFFSystIdx   [p]; }
-    int FSISystIdx      (conv::PhysParamId_t p)                        { return fFSISystIdx     [p];    }
-    int SKDetFSISystIdx (conv::PhysParamId_t p)                        { return fSKDetFSISystIdx[p];    }
-    int RHCSKDetFSISystIdx (conv::PhysParamId_t p)                     { return fRHCSKDetFSISystIdx[p]; }
+    int SuperkSampleIdx     (conv::SuperkSample_t s)                       { return fSuperkSampleIdx[s];    }
+    int SuperkModeIdx       (conv::SuperkSample_t s, conv::SuperkMode_t m) { return fSuperkModeIdx  [s][m]; }
+    int XSecSystIdx         (conv::PhysParamId_t p)                        { return fXSecSystIdx        [p]; }
+    int RHCXSecSystIdx      (conv::PhysParamId_t p)                        { return fRHCXSecSystIdx     [p]; }
+    int BANFFSystIdx        (conv::PhysParamId_t p)                        { return fBANFFSystIdx       [p]; }
+    int BANFFXSecSystIdx    (conv::PhysParamId_t p)                        { return fBANFFXSecSystIdx   [p]; }
+    int RHCBANFFSystIdx     (conv::PhysParamId_t p)                        { return fRHCBANFFSystIdx    [p]; }
+    int RHCBANFFXSecSystIdx (conv::PhysParamId_t p)                        { return fRHCBANFFXSecSystIdx[p]; }
+    int FSISystIdx          (conv::PhysParamId_t p)                        { return fFSISystIdx         [p]; }
+    int SKDetFSISystIdx     (conv::PhysParamId_t p)                        { return fSKDetFSISystIdx    [p]; }
+    int RHCSKDetFSISystIdx  (conv::PhysParamId_t p)                        { return fRHCSKDetFSISystIdx [p]; }
     /// NEW MULTIRING 2
     int MultiRingSKDetFSISystIdx (conv::PhysParamId_t p)               { return fMultiRingSKDetFSISystIdx[p]; }
     ///
@@ -141,13 +143,15 @@ namespace util {
     void Init();
     int fSuperkSampleIdx [2*conv::kns];                  ///< maps sample to kSKSamples array index
     int fSuperkModeIdx   [2*conv::kns][2*conv::knm];     ///< maps sample/mode to kSKReactionModes array index
-    int fXSecSystIdx     [conv::knppmax];                ///< maps physics param to kListOfXSecSyst array index
-    int fRHCXSecSystIdx  [conv::knppmax];                ///< maps physics param to kListOfRHCXSecSyst array index
-    int fBANFFSystIdx    [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
-    int fRHCBANFFSystIdx [conv::knppmax];                ///< maps physics param to BANFF covariance matrix
-    int fFSISystIdx      [conv::knppmax];                ///< maps physics param to FSI covariance matrix
-    int fSKDetFSISystIdx [conv::knppmax];                ///< maps physics param to FSI covariance matrix
-    int fRHCSKDetFSISystIdx [conv::knppmax];             ///< maps physics param to FSI covariance matrix
+    int fXSecSystIdx         [conv::knppmax];            ///< maps physics param to kListOfXSecSyst array index
+    int fRHCXSecSystIdx      [conv::knppmax];            ///< maps physics param to kListOfRHCXSecSyst array index
+    int fBANFFSystIdx        [conv::knppmax];            ///< maps physics param to BANFF covariance matrix
+    int fRHCBANFFSystIdx     [conv::knppmax];            ///< maps physics param to BANFF covariance matrix
+    int fBANFFXSecSystIdx    [conv::knppmax];            ///< maps physics param to BANFF covariance matrix, xsec only
+    int fRHCBANFFXSecSystIdx [conv::knppmax];            ///< maps physics param to BANFF covariance matrix, xsec only
+    int fFSISystIdx          [conv::knppmax];            ///< maps physics param to FSI covariance matrix
+    int fSKDetFSISystIdx     [conv::knppmax];            ///< maps physics param to FSI covariance matrix
+    int fRHCSKDetFSISystIdx  [conv::knppmax];            ///< maps physics param to FSI covariance matrix
     /// NEW MULTIRING 2
     int fMultiRingSKDetFSISystIdx [conv::knppmax];       ///< maps physics param to FSI covariance matrix
     ///

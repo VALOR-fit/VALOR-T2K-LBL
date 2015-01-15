@@ -919,6 +919,38 @@ void valor::util::ArrIdx::Init(void)
          << " is at slot: " << fRHCBANFFSystIdx [p] << endl;
 #endif
   }
+  
+  //BANFF xsec
+  for(int i = 0; i < knppmax; i++) {
+    fBANFFXSecSystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit; ip++) {
+    PhysParamId_t p = kListOfBANFFParams[ip+kNumOfFluxParamsInBANFFfit];
+    if(p == kPhypUndefined) continue;
+    fBANFFXSecSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+     cout << "Util/ArrIdx >> BANFF XSec: " 
+          << p << "\t" 
+          << util::AsString(p)
+          << " is at slot: " << fBANFFXSecSystIdx [p] << endl;
+#endif
+  }
+  
+  //BANFF xsec
+  for(int i = 0; i < knppmax; i++) {
+    fRHCBANFFXSecSystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit; ip++) {
+    PhysParamId_t p = kListOfRHCBANFFParams[ip+kNumOfFluxParamsInBANFFfit];
+    if(p == kPhypUndefined) continue;
+    fRHCBANFFXSecSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+     cout << "Util/ArrIdx >> RHC BANFF XSec: " 
+          << p << "\t" 
+          << util::AsString(p)
+          << " is at slot: " << fRHCBANFFXSecSystIdx [p] << endl;
+#endif
+  }
 
   //SKDET + FSI
   // fhc
