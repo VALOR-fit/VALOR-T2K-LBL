@@ -62,16 +62,13 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
     case ( kNuisBANFF19 ) :
     case ( kNuisBANFF20 ) :
     case ( kNuisBANFF21 ) :
-      // NEW SPLIT ANA
-      //#endif
-      //#if BANFF_BINS == 1
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
@@ -444,16 +441,13 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFF13 ) :
   case ( kRHCNuisBANFF14 ) :
   case ( kRHCNuisBANFF15 ) :
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
   case ( kRHCNuisBANFF16 ) :
   case ( kRHCNuisBANFF17 ) :
   case ( kRHCNuisBANFF18 ) :
   case ( kRHCNuisBANFF19 ) :
   case ( kRHCNuisBANFF20 ) :
   case ( kRHCNuisBANFF21 ) :
-    // NEW SPLIT ANA
-    //#endif
-    //#if BANFF_BINS == 1
   case ( kRHCNuisBANFF22 ) :
   case ( kRHCNuisBANFF23 ) :
   case ( kRHCNuisBANFF24 ) :
@@ -1112,16 +1106,13 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kNuisBANFF13 ) :
     case ( kNuisBANFF14 ) :
     case ( kNuisBANFF15 ) :
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
     case ( kNuisBANFF16 ) :
     case ( kNuisBANFF17 ) :
     case ( kNuisBANFF18 ) :
     case ( kNuisBANFF19 ) :
     case ( kNuisBANFF20 ) :
     case ( kNuisBANFF21 ) :
-      // NEW SPLIT ANA
-      //#endif
-      //#if BANFF_BINS == 1
     case ( kNuisBANFF22 ) :
     case ( kNuisBANFF23 ) :
     case ( kNuisBANFF24 ) :
@@ -1496,16 +1487,13 @@ string valor::util::AsStringTex(PhysParamId_t p)
     case ( kRHCNuisBANFF13 ) :
     case ( kRHCNuisBANFF14 ) :
     case ( kRHCNuisBANFF15 ) :
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
     case ( kRHCNuisBANFF16 ) :
     case ( kRHCNuisBANFF17 ) :
     case ( kRHCNuisBANFF18 ) :
     case ( kRHCNuisBANFF19 ) :
     case ( kRHCNuisBANFF20 ) :
     case ( kRHCNuisBANFF21 ) :
-      // NEW SPLIT ANA
-      //#endif
-      //#if BANFF_BINS == 1
     case ( kRHCNuisBANFF22 ) :
     case ( kRHCNuisBANFF23 ) :
     case ( kRHCNuisBANFF24 ) :
@@ -2361,16 +2349,13 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF13               ) : return "f_banff13";      break;
     case ( kNuisBANFF14               ) : return "f_banff14";      break;
     case ( kNuisBANFF15               ) : return "f_banff15";      break;
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
     case ( kNuisBANFF16               ) : return "f_banff16";      break;
     case ( kNuisBANFF17               ) : return "f_banff17";      break;
     case ( kNuisBANFF18               ) : return "f_banff18";      break;
     case ( kNuisBANFF19               ) : return "f_banff19";      break;
     case ( kNuisBANFF20               ) : return "f_banff20";      break;
     case ( kNuisBANFF21               ) : return "f_banff21";      break;
-      // NEW SPLIT ANA
-      //#endif
-      //#if BANFF_BINS == 1
     case ( kNuisBANFF22               ) : return "f_banff22";      break;
     case ( kNuisBANFF23               ) : return "f_banff23";      break;
     case ( kNuisBANFF24               ) : return "f_banff24";      break;
@@ -2528,16 +2513,13 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kRHCNuisBANFF13               ) : return "f_banff13_rhc";      break;
   case ( kRHCNuisBANFF14               ) : return "f_banff14_rhc";      break;
   case ( kRHCNuisBANFF15               ) : return "f_banff15_rhc";      break;
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
   case ( kRHCNuisBANFF16               ) : return "f_banff16_rhc";      break;
   case ( kRHCNuisBANFF17               ) : return "f_banff17_rhc";      break;
   case ( kRHCNuisBANFF18               ) : return "f_banff18_rhc";      break;
   case ( kRHCNuisBANFF19               ) : return "f_banff19_rhc";      break;
   case ( kRHCNuisBANFF20               ) : return "f_banff20_rhc";      break;
   case ( kRHCNuisBANFF21               ) : return "f_banff21_rhc";      break;
-    // NEW SPLIT ANA
-    //#endif
-    //#if BANFF_BINS == 1
   case ( kRHCNuisBANFF22               ) : return "f_banff22_rhc";      break;
   case ( kRHCNuisBANFF23               ) : return "f_banff23_rhc";      break;
   case ( kRHCNuisBANFF24               ) : return "f_banff24_rhc";      break;
@@ -3013,16 +2995,13 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFF13 ) :
   case ( kNuisBANFF14 ) :
   case ( kNuisBANFF15 ) :
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
   case ( kNuisBANFF16 ) :
   case ( kNuisBANFF17 ) :
   case ( kNuisBANFF18 ) :
   case ( kNuisBANFF19 ) :
   case ( kNuisBANFF20 ) :
   case ( kNuisBANFF21 ) :
-    // NEW SPLIT ANA
-    //#endif
-    //#if BANFF_BINS == 1
   case ( kNuisBANFF22 ) :
   case ( kNuisBANFF23 ) :
   case ( kNuisBANFF24 ) :
@@ -3228,16 +3207,13 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kRHCNuisBANFF13 ) :
   case ( kRHCNuisBANFF14 ) :
   case ( kRHCNuisBANFF15 ) :
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
   case ( kRHCNuisBANFF16 ) :
   case ( kRHCNuisBANFF17 ) :
   case ( kRHCNuisBANFF18 ) :
   case ( kRHCNuisBANFF19 ) :
   case ( kRHCNuisBANFF20 ) :
   case ( kRHCNuisBANFF21 ) :
-    // NEW SPLIT ANA
-    //#endif
-    //#if BANFF_BINS == 1
   case ( kRHCNuisBANFF22 ) :
   case ( kRHCNuisBANFF23 ) :
   case ( kRHCNuisBANFF24 ) :
@@ -3553,16 +3529,13 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
   case ( kRHCNuisBANFF13               ) : return "f_banff13";      break;
   case ( kRHCNuisBANFF14               ) : return "f_banff14";      break;
   case ( kRHCNuisBANFF15               ) : return "f_banff15";      break;
-#if (BANFF_BINS != 2)
+#if (!(BANFF_BINS == 2 && defined(__USE_NIWG_2013__)))
   case ( kRHCNuisBANFF16               ) : return "f_banff16";      break;
   case ( kRHCNuisBANFF17               ) : return "f_banff17";      break;
   case ( kRHCNuisBANFF18               ) : return "f_banff18";      break;
   case ( kRHCNuisBANFF19               ) : return "f_banff19";      break;
   case ( kRHCNuisBANFF20               ) : return "f_banff20";      break;
   case ( kRHCNuisBANFF21               ) : return "f_banff21";      break;
-    // NEW SPLIT ANA
-    //#endif
-    //#if BANFF_BINS == 1
   case ( kRHCNuisBANFF22               ) : return "f_banff22";      break;
   case ( kRHCNuisBANFF23               ) : return "f_banff23";      break;
   case ( kRHCNuisBANFF24               ) : return "f_banff24";      break;
