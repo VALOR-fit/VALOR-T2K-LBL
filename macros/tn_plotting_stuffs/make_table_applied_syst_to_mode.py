@@ -65,7 +65,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex"):
 \\usepackage{fullpage}
 \\usepackage{rotate}  
 \\usepackage{rotating}
-\\usepackage[paperwidth=300mm,paperheight=198mm]{geometry}
+\\usepackage[paperwidth=300mm,paperheight=450mm]{geometry}
 
 \\newcommand{\ck}{$\\checkmark$}
 \\begin{document}
