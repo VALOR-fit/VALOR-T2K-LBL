@@ -24,10 +24,12 @@ It will then create the .root in the current working directory
 """
     
 #postfit_config = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5_sk+fsi.xml"
-postfit_config  = "analysis_configuration_run1to6_test.xml"
+#postfit_config  = "analysis_configuration_run1to6_test.xml"
+postfit_config  = "analysis_configuration.xml"
 
 #prefit_config  = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5prefit_sk+fsi.xml"
-prefit_config  = "analysis_configuration_run1to6_test.xml"
+#prefit_config  = "analysis_configuration_run1to6_test.xml"
+prefit_config  = "analysis_configuration_prefit.xml"
 
 
 class T2KAnaError(Exception): pass
@@ -43,6 +45,7 @@ optionParser.add_option("--no-table", action="store_true", dest="notable", defau
 optionParser.add_option("-s","--sksample", action="store", dest="sksample", type="string", default="1Rmu", help="Choose the SK sample: 1Rmu, 1Re, RHC1Rmu, RHC1Re")
 optionParser.add_option("-e","--hierarchy", action="store", dest="hierarchy", type="string", default="normal", help="Mass Hierarchy: normal, inverted")
 optionParser.add_option("-m","--mixparamchoice", action="store", dest="mixparamchoice", type="string", default="sinsqtheta", help="Mixing param choice: sinsqtheta")
+optionParser.add_option("-f","--fitparamlist", action="store", dest="fitparamlist", type="string", default="nuosc3f_12fix+nuisance", help="Mixing param choice: sinsqtheta")
 
 (opt, args) = optionParser.parse_args()
 
@@ -53,6 +56,7 @@ if nexp <= 0:
 sksample = opt.sksample
 hierarchy = opt.hierarchy
 mixparamchoice = opt.mixparamchoice
+fitparamlist = opt.fitparamlist
 
 save_toy_expts = "false"
 
@@ -61,7 +65,7 @@ modes1 = [0,1,2,9,11] #combinations
 #modes2 = range(400,422) #banff fhc (niwg2013 - numudisap)
 #modes2 = range(500,422) #banff rhc (niwg2013 - numudisap)
 #modes2 = range(500,527) #banff fhc (niwg2015 - numudisap)
-modes2 = range(500,527) #banff rhc (niwg2015 - numudisap)
+modes2 = range(500,536) #banff rhc (niwg2015 - numudisap)
 
 #modes3 = range(200,210) #unconstranied xsec (niwg2013)
 modes3 = range(211,211) #unconstranied xsec (niwg2015)
@@ -83,6 +87,7 @@ if opt.do_all: #combinations + everything
 elif opt.do_imp: #combinations + splines + oscparams
     modes = modes + modes6 + [200,201,202,203,204,215]
     
+
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 
 oscparams.append([  0,   0,   0,   0,   -99,   -99]) #no oscillations!
@@ -93,7 +98,7 @@ oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 for osc in oscparams:
 
     update = "false"
-    
+
     for mode in modes:
 
         #changing osc params doesn't affect anything if there are no oscillations
@@ -101,26 +106,28 @@ for osc in oscparams:
             continue
         if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99]:
             continue
-
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
+        
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+',"'+fitparamlist+'","'+mixparamchoice+'","'+hierarchy+'")\''
         print command
         if os.system(command) == 1:
             sys.exit(1)
         if update == "false":
             update = "true"
 
+
         #repeat for the banff prefit (its a different spectrum, so erros have different effects)
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
+
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+prefit_config+'",'+str(nexp)+',"'+fitparamlist+'","'+mixparamchoice+'","'+hierarchy+'")\''
         print command
         if os.system(command) == 1:
             sys.exit(1)
+
 
 if make_summary:
   # Synthesise nsk summary table
   # Eg table 6 in TN-155
   # Uses outputs from previous macro runs, but calculates 'all' values using quadrature.
-  files = glob.glob("sk_ereco_spectrum-twk_sys_throw_*txt")
+  files = glob.glob("sk_ereco_spectrum_*-twk_sys_throw_*txt")
   l = [x for x in files if "12_0.000,13_0.000,23_0.000" in x]
   if not len(l)==1:
     raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
@@ -132,8 +139,7 @@ if make_summary:
 
   col_titles = ["(no oscillations)","(oscillations with typical parameter values)"]
   col_files = [no_osc_info,osc_info]
-  
-  
+
   out_cols = []
   
   for title,infile in zip(col_titles,col_files):
@@ -145,6 +151,7 @@ if make_summary:
         row_id = row_id.strip()
         val = val.strip().partition(" ")[0]
         input_rows[row_id] = val
+        
       except ValueError:
         pass
     f.close()
@@ -158,6 +165,7 @@ if make_summary:
     
     all_postfit = ["SKDet_FSI","BANFF","unconstrained_xsec"]
     all_with_banff_prefit = ["SKDet_FSI","BANFFprefit","unconstrained_xsec"]
+
     if "no oscillations" not in title:
       all_postfit.append("Osc_param")
       all_with_banff_prefit.append("Osc_param")
