@@ -1965,6 +1965,33 @@ double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m 
     
   return 0;
 }
+//________________________________________________________________________________________
+double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s) const
+{
+  // energy scale relative error
+  //Todo: add separate energy scale error for RHC running if necessary
+  if(s == kSKsFCFV1RingMuLike)
+    return fEnergyScale1RmuRelErr;
+  else if (s == kSKsFCFV1RingELike) 
+    return fEnergyScale1RmuRelErr;
+  else if(s == kSKsRHCFCFV1RingMuLike)
+    return fEnergyScale1RmuRelErr;
+  else if (s == kSKsRHCFCFV1RingELike)
+    return fEnergyScale1RmuRelErr;
+  
+  /// NEW MULTIRING 3
+  else if (s == kSKsFCFVMultiRingMuLike)
+    //return fEnergyScale1RmuRelErr;
+    return fEnergyScaleMultiRmuRelErr;
+  else if (s == kSKsFCFVMultiRingELike)
+    //return fEnergyScale1RmuRelErr; 
+    return fEnergyScaleMultiRmuRelErr; 
+  else {
+    cerr << "EnergyScaleRelErr --> No sample is identified!" << endl;
+    exit(1);
+  }
+  return 0;
+}
 //________________________________________________________________________________________                                                                                       
 double SuperkDetectorFSI::EnergyScale(SuperkSample_t s, SuperkMode_t m) const
 {
@@ -1995,7 +2022,7 @@ double SuperkDetectorFSI::EnergyScale(SuperkSample_t s) const
   ///
   else       
     twkdial = fEnergyScaleTwkDial;
-  double err     = this->EnergyScaleRelErr(s,kSKmNuMuCCQE);
+  double err     = this->EnergyScaleRelErr(s);
   double scale   = 1. + twkdial * err;
   return scale;
 }
