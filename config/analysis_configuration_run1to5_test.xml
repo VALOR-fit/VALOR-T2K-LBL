@@ -462,6 +462,13 @@
       <nu_to_antinu>      0.20  </nu_to_antinu>
       <rhc_to_fhc>        0.00  </rhc_to_fhc>
     </normalisations>
+    
+    <mc_nominal_values>
+       <filename>   test/MC_nominal_values.root </filename>
+       <objname>    neut_5_3_2_disap   </objname>
+       <objtype>    TVectorD           </objtype>
+    </mc_nominal_values>
+      
   </xsec>
 
 

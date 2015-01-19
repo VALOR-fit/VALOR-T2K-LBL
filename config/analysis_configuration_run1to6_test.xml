@@ -514,12 +514,13 @@
     
     <disap>
       <covariance_matrix>
-        <!--
+
         <filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
         <objname>    covmat_sk_fsi         </objname> 
-        -->
+        <!--
         <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
         <objname> cov_diag_dis </objname>
+        -->
         <objtype>    TMatrixD              </objtype>
       </covariance_matrix>
     </disap>
