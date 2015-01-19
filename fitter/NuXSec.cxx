@@ -29,6 +29,8 @@ Added samples, modes and systematics for reverse horn current running
 //#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
+#define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
+
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -262,6 +264,11 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
           need_splines = kXSecSystHasWghtSplines[ip];
           if(!need_splines) continue;
         }
+#ifdef DISABLE_SCC
+        if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+            p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
+          continue;
+#endif
         // is the current systematic parameter going to be applied to current sample/mode?
         //~ bool is_applied = this->ApplySystToSKMode(p,s,m);
         bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
@@ -557,6 +564,11 @@ double NuXSec::FinTuningWght(
 double NuXSec::FinTuningWght_1p(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
+#ifdef DISABLE_SCC
+  if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+      p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
+    return 1;
+#endif
   
   // NEW XSEC
 
@@ -897,6 +909,11 @@ double NuXSec::SystWght(
 double NuXSec::SystWght_1p(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
+#ifdef DISABLE_SCC
+  if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+      p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
+    return 1;
+#endif
 //
 // This method provides weights to account for systematic variations to the XSec params.
 // The weights are relative to MC reweighted to the BANFF best-fit point.
