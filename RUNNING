@@ -219,20 +219,22 @@ Make the FC contour:
 8. TN plot-macro cross reference
 Figure & table numbers refer to TN155 template, as of midday June 4th
 ............................................................................................................................
-Fig1.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. No throws & make sure it's 3 flavour
-Fig2.  $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C gives all modes, not sure where all mode break-down is
-Fig3.  $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C gives all modes, not sure where corresponding macro for grouped modes is
-Fig4.  Need to tweak things in SuperkMC (turn Syst & Banff weights off, run with & without Flux weights on (to get flux tuned & nominal respectively)). Use $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_nsk_ratios.C to make the plot
-Fig5.  Need to tweak things in SuperkMC (turn Syst weights off, run with & without BANFF weights on (to get banff tuned & flux tuned respectively)). Use $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_nsk_ratios.C to make the plot
-Fig6.  Need to tweak things in SuperkMC (turn Syst & Banff weights off, run with & without Flux weights on (to get flux tuned & nominal respectively)). Use $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_spectra.C to make the plots
-Fig7.  Need to tweak things in SuperkMC (turn Syst weights off, run with & without BANFF weights on (to get banff tuned & flux tuned respectively)). Use $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_spectra.C to make the plots
-Fig8.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use throws & make sure it's 3 flavour. Need to analyse to make a 'maximum fractional difference' plot
-Fig9.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. No throws & make sure it's 3 flavour. Need to analyse to make a 'fractional difference' plot
-Fig10. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
-Fig11. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
-Fig12. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
-Fig13. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
-Fig14. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+(DONE) Fig1.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. No throws & make sure it's 3 flavour
+(DONE) Fig2.  $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C gives all modes, not sure where all mode break-down is
+(DONE) Fig3.  $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C gives all modes, not sure where corresponding macro for grouped modes is
+(DONE) Fig4.  Need to tweak things in SuperkMC (turn Syst & Banff weights off, run with & without Flux weights on (to get flux tuned & nominal respectively)). Use $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use $T2KOSCANA/macros/tn_plotting_stuffs/plot_tuning_steps_nsk_ratios.C to make the plot
+(DONE) Fig5.  Need to tweak things in SuperkMC (turn Syst weights off, run with & without BANFF weights on (to get banff tuned & flux tuned respectively)). Use $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use $T2KOSCANA/macros/tn_plotting_stuffs/plot_tuning_steps_nsk_ratios.C to make the plot
+(DONE) Fig6.  Need to tweak things in SuperkMC (turn Syst & Banff weights off, run with & without Flux weights on (to get flux tuned & nominal respectively)). Use $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_spectra.C to make the plots
+(DONE) Fig7.  Need to tweak things in SuperkMC (turn Syst weights off, run with & without BANFF weights on (to get banff tuned & flux tuned respectively)). Use $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_nominal.C. Use $T2KOSCANA/macros/misc/toms_plotting_stuff/plot_tuning_steps_spectra.C to make the plots
+(DONE) Fig8.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. Use throws & make sure it's 3 flavour. Need to analyse to make a 'maximum fractional difference' plot
+(DONE) Fig9.  $T2KOSCANA/macros/spectra/test_nsk_twk_osc.C. No throws & make sure it's 3 flavour. Need to analyse to make a 'fractional difference' plot
+
+(DONE) Fig10. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+(DONE) Fig11. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+(DONE) Fig12. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+(DONE) Fig13. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+(DONE) Fig14. $T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_runAll.py -n 100000 (or more)
+
 Fig15. See section 3
 Fig16. See section 3. CHECK config file. RECOMMEND to use final T2K POT: 7.8E21 (reference TN151v2.2)
 Fig17. See section 3
