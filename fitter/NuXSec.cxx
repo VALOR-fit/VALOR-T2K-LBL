@@ -664,20 +664,20 @@ double NuXSec::FinTuningWght_1p(
     //~ if(!wght_spl)
       //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
     assert(wght_spl);
-    double nominal_value = 0;
+    //~ double nominal_value = 0;
     if(p == kRHCNuisBANFFMAQE       || 
        p == kRHCNuisBANFFMARES       )
     {
       tb = fBANFF->RHCBestFitValue(p);
-      nominal_value = (*fRHCMCNominalValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+      //~ nominal_value = (*fRHCMCNominalValues)[arr_index->RHCBANFFXSecSystIdx(p)];
     }
     else
     {
       tb = fBANFF->BestFitValue(p);
-      nominal_value = (*fMCNominalValues)[arr_index->BANFFXSecSystIdx(p)];
+      //~ nominal_value = (*fMCNominalValues)[arr_index->BANFFXSecSystIdx(p)];
     }
       
-      double spline_point = nominal_value * (tb-1);
+      double spline_point = (tb-1) /* * nominal_value */; // current splines are relative, not nominal
 #ifdef check_spline_limits
       if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
         std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tcf: "<<wght_spl->GetXmax()<<std::endl;
@@ -704,7 +704,7 @@ double NuXSec::FinTuningWght_1p(
     //~ if(!wght_spl)
       //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
     assert(wght_spl);
-    double nominal_value = 0;
+    //~ double nominal_value = 0;
     // NEW XSEC
     if(p == kRHCNuisBANFFMAQE       || 
        p == kRHCNuisBANFFMARES      || 
@@ -727,7 +727,7 @@ double NuXSec::FinTuningWght_1p(
         //~ nominal_value = (*fMCNominalValues)[arr_index->BANFFXSecSystIdx(p)];
       }
       
-      double spline_point = nominal_value * (tb-1);
+      double spline_point = tb-1.;
 #ifdef check_spline_limits
       if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
         std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tcf: "<<wght_spl->GetXmax()<<std::endl;
@@ -1013,7 +1013,7 @@ double NuXSec::SystWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    double nominal_value = 0;
+    //~ double nominal_value = 1;
     TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
 
@@ -1024,15 +1024,15 @@ double NuXSec::SystWght_1p(
     {
       tb = fBANFF->RHCBestFitValue(p);
       tc = fBANFF->RHCCurrentValue(p);
-      nominal_value = (*fRHCMCNominalValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+      //~ nominal_value = (*fRHCMCNominalValues)[arr_index->RHCBANFFXSecSystIdx(p)];
     }
     else {
       tb = fBANFF->BestFitValue(p);
       tc = fBANFF->CurrentValue(p);
-      nominal_value = (*fRHCMCNominalValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+      //~ nominal_value = (*fRHCMCNominalValues)[arr_index->RHCBANFFXSecSystIdx(p)];
     }
-    double spl_tb = nominal_value * (tb-1);
-    double spl_tc = nominal_value * (tc-1);
+    double spl_tb = (tb-1) /* * nominal value */; // current splines are relative errors
+    double spl_tc = (tc-1) /* * nominal value */; // current splines are relative errors
 #ifdef check_spline_limits
     if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
       std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tcf: "<<wght_spl->GetXmax()<<std::endl;
@@ -1079,8 +1079,8 @@ double NuXSec::SystWght_1p(
       tc = fBANFF->CurrentValue(p);
       //~ nominal_value = (*fRHCMCNominalValues)[arr_index->RHCBANFFXSecSystIdx(p)];
     }
-    double spl_tb = nominal_value * (tb-1);
-    double spl_tc = nominal_value * (tc-1);
+    double spl_tb = tb-1;
+    double spl_tc = tc-1;
 #ifdef check_spline_limits
     if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
       std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tcf: "<<wght_spl->GetXmax()<<std::endl;
