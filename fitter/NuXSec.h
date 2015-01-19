@@ -235,6 +235,11 @@ private:
   double fRHCSplineMARESRelErr;
   double fNormRHCToFHCRelErr;
   
+  double fMCNominalMAQE;
+  
+  TVectorD * fMCNominalValues;
+  TVectorD * fRHCMCNominalValues;
+  
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
 ClassDef(NuXSec, 5);
