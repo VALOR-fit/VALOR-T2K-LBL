@@ -330,7 +330,7 @@ namespace valor {
 	#endif
 
 	//
-       	kRHCNuisBANFF00 ,
+	kRHCNuisBANFF00 ,
 	kRHCNuisBANFF01 ,
 	kRHCNuisBANFF02 ,
 	kRHCNuisBANFF03 ,
@@ -453,6 +453,11 @@ namespace valor {
 	kNuisBANFFNormNuEToNuMu ,
 #endif
       };
+      
+      
+    //static const PhysParamId_t kFirstBANFFXsecParam        = kListOfBANFFParams       [kNumOfFluxParamsInBANFFfit];
+    //static const PhysParamId_t kFirstRHCBANFFXsecParam     = kListOfRHCBANFFParams    [kNumOfRHCFluxParamsInBANFFfit];
+    //static const PhysParamId_t kFirstFHCpRHCBANFFXsecParam = kListOfFHCpRHCBANFFParams[kNumOfFHCpRHCFluxParamsInBANFFfit];
 
     //
     // ** Flux systematics
