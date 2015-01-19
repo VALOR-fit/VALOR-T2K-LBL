@@ -264,7 +264,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
           need_splines = kXSecSystHasWghtSplines[ip];
           if(!need_splines) continue;
         }
-#ifdef DISABLE_SCC
+#if defined(DISABLE_SCC) && BANFF_BINS != 2
         if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
             p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
           continue;
@@ -564,7 +564,7 @@ double NuXSec::FinTuningWght(
 double NuXSec::FinTuningWght_1p(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
-#ifdef DISABLE_SCC
+#if defined(DISABLE_SCC) && BANFF_BINS != 2
   if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
       p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
     return 1;
@@ -909,7 +909,7 @@ double NuXSec::SystWght(
 double NuXSec::SystWght_1p(
   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
-#ifdef DISABLE_SCC
+#if defined(DISABLE_SCC) && BANFF_BINS != 2
   if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
       p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
     return 1;
