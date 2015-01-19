@@ -116,10 +116,12 @@ public:
   // A special systematic variation which cancels the effect of BANFF tuning and reverts back to the nominal MC
   void RestoreNominalMC(void);
   void RestoreRHCNominalMC(void);
-
-  // NEW FLUX FHC+RHC
   void RestoreFHCpRHCNominalMC(void);
-  //
+ 
+  void RestoreTunedMC(void);
+  void RestoreRHCTunedMC(void);
+  void RestoreFHCpRHCTunedMC(void);
+
 
   // Penalty term included in the chisq if the BANFF fit parameters are included in the oscillation fit.
   double ChisqPenalty             (bool all_syst = true) const;

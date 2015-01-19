@@ -1446,8 +1446,6 @@ void BANFF::RestoreRHCNominalMC(void)
 }
 //________________________________________________________________________________________
 
-
-
 // NEW FLUX FHC+RHC
 void BANFF::RestoreFHCpRHCNominalMC(void)
 {
@@ -1471,6 +1469,78 @@ void BANFF::RestoreFHCpRHCNominalMC(void)
     //bestfit_values[i] = 1.;
   }
 }
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
+void BANFF::RestoreTunedMC(void)
+{
+// A special tweak method
+
+  cout << "Exp/BANFF >> ** Applying special tweak applying the effect of BANFF tuning "
+       << "and restoring tuned MC..." << endl; 
+
+  fIsTweaked         = false;
+  fIsFluxWghtUpdated = true;
+
+  TVectorD & bestfit_values = *fBestFitValues;
+  TVectorD & current_values = *fCurrentValues;
+  current_values = bestfit_values;
+}
+
+//________________________________________________________________________________________
+void BANFF::RestoreRHCTunedMC(void)
+{
+// A special tweak method
+
+  cout << "Exp/BANFF >> ** Applying special tweak applying the effect of RHC BANFF tuning "
+       << "and restoring RHC tuned MC..." << endl; 
+
+  fIsTweakedRHC         = false;
+  fIsFluxWghtUpdatedRHC = true;
+
+  TVectorD & bestfit_values = *fRHCBestFitValues;
+  TVectorD & current_values = *fRHCCurrentValues;
+  current_values = bestfit_values;
+}
+//________________________________________________________________________________________
+void BANFF::RestoreFHCpRHCTunedMC(void)
+{
+// A special tweak method
+
+  cout << "Exp/BANFF >> ** Applying special tweak applying the effect of BANFF tuning "
+       << "and restoring tuned MC..." << endl; 
+
+  fIsTweaked            = false;
+  fIsFluxWghtUpdated    = true;
+  fIsTweakedRHC         = false;
+  fIsFluxWghtUpdatedRHC = true;
+
+  TVectorD & bestfit_values = *fBestFitValues;
+  TVectorD & current_values = *fCurrentValues;
+  current_values = bestfit_values;
+
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  current_values_rhc = bestfit_values_rhc;
+ }
+
+
+
+
+
+
+
+
+
+
+
 
 //________________________________________________________________________________________
 double BANFF::ChisqPenalty(bool /*all_syst*/) const
