@@ -253,17 +253,13 @@ void test_systematic_error_propagation_all_2015
     sprintf(name,"hErecoTun_m1sigma_%s",sysstr.c_str());
     hErecoTun_m1sigma[ip]->SetName(name);
     
-    tot = hErecoTun->Integral();
-    tot_p = hErecoTun_p1sigma[ip]->Integral();
-    tot_m = hErecoTun_m1sigma[ip]->Integral();
-    
-    //cout << idx << " " << bestfit << " " << tweak_p << " " << tweak_m << endl;
-    //cout << tot << " " << tot_p << " " << tot_m << endl;
-
+    //tot = hErecoTun->Integral();
+    //tot_p = hErecoTun_p1sigma[ip]->Integral();
+    //tot_m = hErecoTun_m1sigma[ip]->Integral();
   }
 
+  // Write the table 
 
-  
   string pctsymbol  = " \\% " ;
   string endcolumn  = " & "   ;
   string endrow     = " \\\\ ";
@@ -288,7 +284,6 @@ void test_systematic_error_propagation_all_2015
   	   << endl;
   streamer << "\\hline" << endl;
 
-  
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     if(!fparm->IsNuisance(p)) continue; 
@@ -298,42 +293,35 @@ void test_systematic_error_propagation_all_2015
     double totnom = hErecoNom->Integral();
     double tot    = hErecoTun->Integral();
     double tot_p  = hErecoTun_p1sigma[ip]->Integral();
-    double tot_m  = hErecoTun_m1sigma[ip]->Integral();
-    
+    double tot_m  = hErecoTun_m1sigma[ip]->Integral();    
     double frac_p = (tot_p - tot)/tot * 100;
     double frac_m = (tot_m - tot)/tot * 100;
 
     streamer         << setw(ncol1)  << setfill(' ')
 		     << util::AsStringPaperTex(util::PhysParamIdFromString(sysstr))
 		     << endcolumn
-		     << setw(ncolnev)  << setfill(' ') << setprecision(5)
-		     << totnom
+		     << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
 		     << endcolumn
 		     << tot
 		     << endcolumn
 		     << tot_p 
 		     << endcolumn
-		     << frac_p << pctsymbol
+		     << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
 		     << endcolumn
-		     << tot_m
+		     << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
 		     << endcolumn
-		     << frac_m << pctsymbol
+		     << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
 		     << endrow
 		     << endl; 
   
     if(sysstr=="f_banffnorm_nuetonumu_rhc")
-      streamer << "\\hline" << endl;
-    
+      streamer << "\\hline" << endl;    
   }
   streamer << "\\hline" << endl;
-
   streamer << "\\end{tabular}" << endl;
   streamer << "\\end{table}" << endl;
   streamer << "\\clearpage" << endl;
   cout << streamer.str() << endl;
-
-  
-
   
   // get size of file
   long size;
@@ -345,15 +333,11 @@ void test_systematic_error_propagation_all_2015
   outfile.write (streamer.str().c_str(),size);
   outfile.close();
   
-
-
   ofstream outfile (output_file.c_str(),ios_base::trunc&&ios_base::out);
   string f;
   f += ("\\end{document}\n");
   outfile.write (f.c_str(),f.size());
   outfile.close();
-
-
 
   return;
 }
