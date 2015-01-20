@@ -1028,7 +1028,7 @@ double NuXSec::SystWght_1p(
     else {
       tb = fBANFF->BestFitValue(p);
       tc = fBANFF->CurrentValue(p);
-      untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+      untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
     }
     double spl_tb = (tb-untuned_value);
     double spl_tc = (tc-untuned_value);
@@ -1076,7 +1076,7 @@ double NuXSec::SystWght_1p(
     else {
       tb = fBANFF->BestFitValue(p);
       tc = fBANFF->CurrentValue(p);
-      untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+      untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
     }
     double spl_tb = tb-untuned_value;
     double spl_tc = tc-untuned_value;
