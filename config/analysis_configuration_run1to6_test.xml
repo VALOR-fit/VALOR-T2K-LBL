@@ -425,9 +425,6 @@
   -->
 
   <xsec>
-  
-    <!-- The MAQE value used for the MC generation -->
-    <nominal_maqe> 1.2 </nominal_maqe> <!-- neut5.3.2 -->
     
     <weight_splines>
       <one_mu_ring>
@@ -463,11 +460,11 @@
       <rhc_to_fhc>        0.00  </rhc_to_fhc>
     </normalisations>
     
-    <mc_nominal_values>
-       <filename>   test/MC_nominal_values.root </filename>
-       <objname>    neut_5_3_2_disap   </objname>
+    <untuned_parameter_central_values>
+       <filename>   official/2015/banff/banff_systematic_central_values.root  </filename>
+       <objname>    banff_central_values_2015_disap                           </objname>
        <objtype>    TVectorD           </objtype>
-    </mc_nominal_values>
+    </untuned_parameter_central_values>
       
   </xsec>
 

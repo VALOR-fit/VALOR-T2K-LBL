@@ -140,8 +140,7 @@ public:
   bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const; 
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
-
-
+  
 private:
 
   void Init    (void);
@@ -235,10 +234,8 @@ private:
   double fRHCSplineMARESRelErr;
   double fNormRHCToFHCRelErr;
   
-  double fMCNominalMAQE;
-  
-  TVectorD * fMCNominalValues;
-  TVectorD * fRHCMCNominalValues;
+  TVectorD * fUntunedCentralValues;
+  TVectorD * fRHCUntunedCentralValues;
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 

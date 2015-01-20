@@ -219,6 +219,9 @@ private:
   //
 
   int fParam2Idx[conv::knppmax];
+  
+  TVectorD * fUntunedCentralValues;    // Store the untuned values of the params (for RestoreNominalMC methods)
+  TVectorD * fRHCUntunedCentralValues; // Store the untuned values of the params (for RestoreNominalMC methods)
 
 ClassDef(BANFF, 1)
 };
