@@ -1018,8 +1018,8 @@ double NuXSec::SystWght_1p(
 
     // NEW XSEC NIWG
     // NEW XSEC
-    if(p == kNuisBANFFMAQE          || 
-       p == kNuisBANFFMARES          )
+    if(p == kRHCNuisBANFFMAQE          || 
+       p == kRHCNuisBANFFMARES          )
     {
       tb = fBANFF->RHCBestFitValue(p);
       tc = fBANFF->RHCCurrentValue(p);
