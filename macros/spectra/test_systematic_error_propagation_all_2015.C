@@ -131,9 +131,32 @@ void test_systematic_error_propagation_all_2015
   const int np = fparm->GetNumberParameters();
   //fparm->Print();
 
+
+
+
   // Define the tweak histograms
+  TH1D *hErecoTun_p1sigma_all;
+  TH1D *hErecoTun_m1sigma_all;
   TH1D *hErecoTun_p1sigma[np];
   TH1D *hErecoTun_m1sigma[np];
+
+  const double nskdetfsi     = conv::kNumOfSKDetFSIParams;
+  const double nskdetfsi_rhc = conv::kNumOfRHCSKDetFSIParams;
+  const int nbanff           = conv::kNumOfParamsInBANFFfit;
+  const int nbanff_rhc       = conv::kNumOfRHCParamsInBANFFfit;
+
+  double vp1sigma_skdetfsi[nskdetfsi];
+  double vp1sigma_skdetfsi_rhc[nskdetfsi_rhc];
+  double vp1sigma_banff[nbanff];
+  double vp1sigma_banff_rhc[nbanff_rhc];
+  
+  double vm1sigma_skdetfsi[nskdetfsi];
+  double vm1sigma_skdetfsi_rhc[nskdetfsi_rhc];
+  double vm1sigma_banff[nbanff];
+  double vm1sigma_banff_rhc[nbanff_rhc];
+ 
+  double vp1sigma_skescale;
+  double vm1sigma_skescale;
 
   // Get tuned MC - with BANFF tuning
   skexp.GetBANFF()->RestoreTunedMC();
@@ -149,12 +172,18 @@ void test_systematic_error_propagation_all_2015
   TH1D *hErecoNom = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   hErecoNom->SetName("hErecoNom");
 
-  // Loop over systematics  
+
+  // Loop over systematics 
+
+  int ip_banff = 0;
+  int ip_banff_rhc = 0;
+  int ip_skdetfsi = 0;
+  int ip_skdetfsi_rhc = 0;
+
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     if(!fparm->IsNuisance(p)) continue; 
-    string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!!
-
+    string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
 
     cout << endl;
@@ -171,7 +200,11 @@ void test_systematic_error_propagation_all_2015
       	if(idx>=0){
 	  bestfit = 1.;
 	  tweak_p = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
-	  tweak_m = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
+	  tweak_m = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));	 
+
+	  vp1sigma_skdetfsi_rhc[ip_skdetfsi_rhc] = tweak_p;
+	  vm1sigma_skdetfsi_rhc[ip_skdetfsi_rhc] = tweak_m;
+	  ip_skdetfsi_rhc++;
 	}
       }
       else if(util::IsBANFF(p)){
@@ -180,13 +213,17 @@ void test_systematic_error_propagation_all_2015
 	  bestfit = skexp.GetBANFF()->RHCBestFitValue(p);
 	  tweak_p = bestfit + (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
 	  tweak_m = bestfit - (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
+
+	  vp1sigma_banff_rhc[ip_banff_rhc] = tweak_p;
+	  vm1sigma_banff_rhc[ip_banff_rhc] = tweak_m;
+	  ip_banff_rhc++;
 	}
       }
       else if(util::IsXSec(p)){
 	if(idx>=0){
-	  bestfit = 0;
-	  tweak_p = skexp.GetNuXSec()->Tweak(kRHCNuisXSecRPA , 1.);
-	  tweak_m = skexp.GetNuXSec()->Tweak(kRHCNuisXSecRPA , 0.);
+	  // bestfit = 0;
+	  // tweak_p = skexp.GetNuXSec()->Tweak(kRHCNuisXSecRPA , 1.);
+	  // tweak_m = skexp.GetNuXSec()->Tweak(kRHCNuisXSecRPA , 0.);
 	}
       }
       else{
@@ -202,6 +239,10 @@ void test_systematic_error_propagation_all_2015
 	  bestfit = 1;
     	  tweak_p = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
     	  tweak_m = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
+
+	  vp1sigma_skdetfsi[ip_skdetfsi] = tweak_p;
+	  vm1sigma_skdetfsi[ip_skdetfsi] = tweak_m;
+	  ip_skdetfsi++;
     	}
       }
       else if(util::IsBANFF(p)){
@@ -210,13 +251,17 @@ void test_systematic_error_propagation_all_2015
 	  bestfit = skexp.GetBANFF()->BestFitValue(p);
     	  tweak_p = bestfit + (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
     	  tweak_m = bestfit - (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
+
+	  vp1sigma_banff[ip_banff] = tweak_p;
+	  vm1sigma_banff[ip_banff] = tweak_m;
+	  ip_banff++;
     	}   
       }
       else if(util::IsXSec(p)){
       	if(idx>=0){
-	  bestfit = 0;
-    	  tweak_p = skexp.GetNuXSec()->Tweak(kNuisXSecRPA , 1.);
-    	  tweak_m = skexp.GetNuXSec()->Tweak(kNuisXSecRPA , 0.);
+	  // bestfit = 0;
+    	  // tweak_p = skexp.GetNuXSec()->Tweak(kNuisXSecRPA , 1.);
+    	  // tweak_m = skexp.GetNuXSec()->Tweak(kNuisXSecRPA , 0.);
     	}
       }
       else{
@@ -231,6 +276,8 @@ void test_systematic_error_propagation_all_2015
     if(sysstr.find("sk_e_scale") && idx<0){ 
       tweak_p = 1 + skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE);
       tweak_m = 1 - skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE);
+      vp1sigma_skescale = tweak_p;
+      vm1sigma_skescale = tweak_m;
     }
 
     // +1 sigma tweak systematic
@@ -252,11 +299,108 @@ void test_systematic_error_propagation_all_2015
     char name[200];
     sprintf(name,"hErecoTun_m1sigma_%s",sysstr.c_str());
     hErecoTun_m1sigma[ip]->SetName(name);
-    
-    //tot = hErecoTun->Integral();
-    //tot_p = hErecoTun_p1sigma[ip]->Integral();
-    //tot_m = hErecoTun_m1sigma[ip]->Integral();
+
+  } // end loop over systematics
+
+
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << endl;
+
+
+  // Get total +1 sigma tweak (all parameters)
+ 
+  skexp.GetBANFF()->RestoreTunedMC();
+  skexp.GetBANFF()->RestoreRHCTunedMC();
+  
+  TVectorD *twkv_banff_p1sigma;
+  TVectorD *twkv_banff_rhc_p1sigma;
+  TVectorD *twkv_skdetfsi_p1sigma;
+  TVectorD *twkv_skdetfsi_rhc_p1sigma;
+  
+  if(util::IsRHCSample(s)){
+    twkv_banff_rhc_p1sigma = new TVectorD(nbanff_rhc,vp1sigma_banff_rhc);
+    twkv_skdetfsi_rhc_p1sigma= new TVectorD(nskdetfsi_rhc,vp1sigma_skdetfsi_rhc);
+    skexp.GetBANFF()->TweakRHC(true,twkv_banff_rhc_p1sigma);
+    skexp.GetSuperkDetectorFSI()->TweakRHC(true,twkv_skdetfsi_rhc_p1sigma);
+    skexp.TweakSystematic("sk_e_scale",vp1sigma_skescale);
+    skexp.Generate(ph);
   }
+  else if(util::IsFHCSample(s)){
+    twkv_banff_p1sigma = new TVectorD(nbanff,vp1sigma_banff);
+    twkv_skdetfsi_p1sigma= new TVectorD(nskdetfsi,vp1sigma_skdetfsi);
+    skexp.GetBANFF()->Tweak(true,twkv_banff_p1sigma);
+    skexp.GetSuperkDetectorFSI()->Tweak(true,twkv_skdetfsi_p1sigma);
+    skexp.TweakSystematic("sk_e_scale",vp1sigma_skescale);
+    skexp.Generate(ph);
+  }
+  else{
+    cout << endl;
+    cout << "Sample " << util::AsString(s) << " is not supported !!!" << endl;
+    exit(1);
+  }
+  
+  hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  char name[200];
+  sprintf(name,"hErecoTun_p1sigma_all");
+  hErecoTun_p1sigma_all->SetName(name);
+
+  // skexp.GetBANFF()->PrintRHCSystematicVariations();
+  // skexp.GetSuperkDetectorFSI()->PrintRHCSystematicVariations();  
+  // return;
+
+
+
+
+
+
+  // Get total -1 sigma tweak (all parameters)
+ 
+  skexp.GetBANFF()->RestoreTunedMC();
+  skexp.GetBANFF()->RestoreRHCTunedMC();
+  
+  TVectorD *twkv_banff_m1sigma;
+  TVectorD *twkv_banff_rhc_m1sigma;
+  TVectorD *twkv_skdetfsi_m1sigma;
+  TVectorD *twkv_skdetfsi_rhc_m1sigma;
+  
+  if(util::IsRHCSample(s)){
+    twkv_banff_rhc_m1sigma = new TVectorD(nbanff_rhc,vm1sigma_banff_rhc);
+    twkv_skdetfsi_rhc_m1sigma= new TVectorD(nskdetfsi_rhc,vm1sigma_skdetfsi_rhc);
+    skexp.GetBANFF()->TweakRHC(true,twkv_banff_rhc_m1sigma);
+    skexp.GetSuperkDetectorFSI()->TweakRHC(true,twkv_skdetfsi_rhc_m1sigma);
+    skexp.TweakSystematic("sk_e_scale",vm1sigma_skescale);
+    skexp.Generate(ph);
+  }
+  else if(util::IsFHCSample(s)){
+    twkv_banff_m1sigma = new TVectorD(nbanff,vm1sigma_banff);
+    twkv_skdetfsi_m1sigma= new TVectorD(nskdetfsi,vm1sigma_skdetfsi);
+    skexp.GetBANFF()->Tweak(true,twkv_banff_m1sigma);
+    skexp.GetSuperkDetectorFSI()->Tweak(true,twkv_skdetfsi_m1sigma);
+    skexp.TweakSystematic("sk_e_scale",vm1sigma_skescale);
+    skexp.Generate(ph);
+  }
+  else{
+    cout << endl;
+    cout << "Sample " << util::AsString(s) << " is not supported !!!" << endl;
+    exit(1);
+  }
+  
+  hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  char name[200];
+  sprintf(name,"hErecoTun_m1sigma_all");
+  hErecoTun_m1sigma_all->SetName(name);
+
+  //skexp.GetBANFF()->PrintRHCSystematicVariations();
+  //skexp.GetSuperkDetectorFSI()->PrintRHCSystematicVariations();  
+  //return;
+
+
 
   // Write the table 
 
@@ -284,14 +428,39 @@ void test_systematic_error_propagation_all_2015
   	   << endl;
   streamer << "\\hline" << endl;
 
+  double totnom = hErecoNom->Integral();
+  double tot    = hErecoTun->Integral();
+
+  double tot_all_p = hErecoTun_p1sigma_all->Integral();
+  double tot_all_m = hErecoTun_m1sigma_all->Integral(); 
+  double frac_all_p = (tot_all_p - tot)/tot * 100;
+  double frac_all_m = (tot_all_m - tot)/tot * 100;
+
+  streamer         << setw(ncol1)  << setfill(' ')
+		   << "All syst"
+		   << endcolumn
+		   << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+		   << endcolumn
+		   << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot
+		   << endcolumn
+		   << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot_all_p
+		   << endcolumn
+		   << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_p << pctsymbol
+		   << endcolumn
+		   << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_all_m
+		   << endcolumn
+		   << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_m << pctsymbol
+		   << endrow
+		   << endl; 
+  streamer << "\\hline" << endl;    
+
+
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     if(!fparm->IsNuisance(p)) continue; 
     string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
 
-    double totnom = hErecoNom->Integral();
-    double tot    = hErecoTun->Integral();
     double tot_p  = hErecoTun_p1sigma[ip]->Integral();
     double tot_m  = hErecoTun_m1sigma[ip]->Integral();    
     double frac_p = (tot_p - tot)/tot * 100;
