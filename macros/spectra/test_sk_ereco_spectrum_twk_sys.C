@@ -1,97 +1,108 @@
 //
 // ------------------------------------------------------------------------------------------------
 // Calculate SuperK Ereco spectrum error envelope due to systematic parameter variations,
-// for +3, +1, -1 sigma variations.
-// Correlated parameter variations generated using diagonal of covariance matrix
+// randomised using Gaussians or Cholesky decomposition (for FSI/BANFF/CCQERingCounting)
 //
 // There are many run modes:
 //
 //   0 tweak all parameters
 //   1 tweak all BANFF
-//   2 tweak all BANFF flux
-//   3 tweak all BANFF xsec
-//   4 tweak all unconstrained xsec
-//   5 tweak all xsec (BANFF + unconstrained)
-//   6 tweak all sk detector (without energy scale)
-//   7 tweak all sk ccqe ring counting efficiency
-//   8 tweak all sk detector
-//   9 tweak all fsi
-//  10 tweak all (except energy scale!)
+//   2 tweak all unconstrained xsec
+//   7 tweak BANFF flux only
+//   8 tweak BANFF xsec only
+//   9 tweak SKdet + FSI
+//  10 tweak BANFF + unconstrained xsec
+//  11 oscillation parameters
 //
-// 100 tweak banff00
-// 101 tweak banff01
-// ...
-// 100+kNumOfParamsInBANFFfit tweak last banff parameter
-//
-// 200 tweak xsec_pf
-// 201 tweak xsec_sf
+// 200 tweak pfermi
+// 201 tweak specfunc
 // 202 tweak xsec_wshape
 // 203 tweak xsec_shape_ccoth
 // 204 tweak xsec_pilessdelta
-// 209 tweak xsec_norm_cccoh
-// 210 tweak xsec_norm_nc1piC
-// 212 tweak xsec_norm_ncoth
-// 213 tweak xsec_norm_nuetonumu
-// 214 tweak xsec_norm_antinutonumu
-// 215 tweak xsec_bindE
+// 205 tweak xsec_norm_cccoh
+// 206 tweak xsec_norm_nc1piC
+// 207 tweak xsec_norm_ncoth
+// 208 tweak xsec_norm_nuetonumu
+// 209 tweak xsec_norm_antinutonu
+// 210 tweak xsec_bindE
+// 211 tweak xsec_rpa (0 or 1)
 //
-// 300 tweak sk_energy_scale
-// 301 tweak sk_1Rmu_ccqe_other_eff
-// 302 tweak sk_1Rmu_ccnonqe_eff
-// 303 tweak sk_1Rmu_nc_eff
-// 304 tweak sk_1Rmu_nuecc_eff
-// 305 tweak sk_1Rmu_ccqe_ring_counting_eff_0
-// 306 tweak sk_1Rmu_ccqe_ring_counting_eff_1
-// 307 tweak sk_1Rmu_ccqe_ring_counting_eff_2
+// 400 tweak banff00
+// 401 tweak banff01
+// 400+kNumOfParamsInBANFFfit tweak last banff parameter
 //
-// 400 tweak fsi00
-// 401 tweak fsi01
-// ...
-// 400+kNumOfFSIParams tweak last fsi parameter
+// 500 tweak banff00_rhc
+// 501 tweak banff01_rhc
+// 500+kNumOfRHCParamsInBANFFfit tweak last banff parameter
 //
-// SPECIAL COMPARISON TWEAKS
-// 500 ring counting 0 + other
-// 501 ring counting 1 + other
-// 502 ring counting 2 + other
-// 503 all ring counting + other
-// 504 tweak xsec_pilessdelta, put name it fsiabs
+// 800 tweak skdetfsi00
+// 801 tweak skdetfsi01
+// 800+kNumOfSKDetFSIParams tweak last skdetfsi parameter
 //
-// 600 tweak skdetfsi00
-// 601 tweak skdetfsi01
-// ...
-// 600+kNumOfSKDetFSIParams tweak last skdetfsi parameter
+// 900 tweak skdetfsi00_rhc
+// 901 tweak skdetfsi01_rhc
+// 900+kNumOfRHCSKDetFSIParams tweak last skdetfsi parameter
 //
+// 999 stat only
 //
 // Tom Dealtry
 // ------------------------------------------------------------------------------------------------
 //
-#define NTWEAKS 4 //2 or 4 or 6!
+
+#include<typeinfo.h>
+
+TH1D * spectrum_to_per_50mev(TH1D * h) {
+  TH1D * hout = new TH1D(*h);
+  for(int ix = 1; ix <= hout->GetNbinsX(); ix++) {
+    hout->SetBinContent(ix, 0.05 * h->GetBinContent(ix) / h->GetBinWidth(ix));
+  }
+  hout->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  return hout;
+}
+
 void test_sk_ereco_spectrum_twk_sys
 (
-  int          mode,                                                /* options: see above */
-  bool         update_rootfile    = true,                           /* "update" ROOT output file? If false, will "recreate" */
-  const char * hypothesis         = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
-  double       input_mixing12     = -99,                            /* */
-  double       input_mixing13     = -99,                            /* */
-  double       input_mixing23     = -99,                            /* */
-  double       input_deltacp      = -99,                            /* */
-  double       input_dm12sq       = -99,                            /* */
-  double       input_dm23sq       = -99,                            /* */
-  double       ereco_max_plot     = 7,                              /* maximum of the ereco axis (in GeV) to plot */
-  const char * config_file        = "analysis_configuration.xml",   /* */
-  bool         save_all_canvases  = false                           /* if false, will not save the individual mode plots, or the 'fullrange' plots */
+  int          mode               = 0,                                         /* options: see above */
+  bool         update_rootfile    = false,                                        /* "update" ROOT output file? If false, will "recreate" */
+  const char * sk_sample          = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+  const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
+  double       input_mixing12     = -99,                                         /* */
+  double       input_mixing13     = -99,                                         /* */
+  double       input_mixing23     = -99,                                         /* */
+  double       input_deltacp      = -99,                                         /* */
+  double       input_dm12sq       = -99,                                         /* */
+  double       input_dm23sq       = -99,                                         /* */
+  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
+  const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
+  const char * mixparamchoice     = "sinsqtheta",
+  const char * hierarchy          = "normal"
 )
 {
   using namespace std;
   using namespace valor;
+  using namespace valor::conv;
+
+  bool RHCFlag = false;
+  TString str_sk_sample(sk_sample);
+  if(str_sk_sample.Contains("RHC"))
+    RHCFlag = true;
+
+  conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
+  if(s == conv::kSKsUndefined) {
+    cerr << "** Undefined sample!" << endl;
+    return;
+  }
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
-  Opt::Instance()->gMassHierarchyAssumed = conv::kNmhNormal;
-
-  conv::SuperkSample_t s = conv::kSKsFCFV1RingMuLike;
-  int is = (int)s;
-
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
+    string sample_name = util::AsStringCompact(s);
+    const char * sname = sample_name.c_str();
   //Check if the mode is valid
   string modetitle = "";
   switch(mode) {
@@ -100,87 +111,49 @@ void test_sk_ereco_spectrum_twk_sys
     case 1:
       modetitle = "BANFF"; break;
     case 2:
-      modetitle = "BANFF-flux"; break;
-    case 3:
-      modetitle = "BANFF-xsec"; break;
+      modetitle = "unconstrained_xsec"; break;
     case 4:
-      modetitle = "unconstrained-xsec"; break;
-    case 5:
-      modetitle = "xsec-all(BANFF+unconstrained)"; break;
-    case 6:
-      modetitle = "sk-detector(without-energy-scale)"; break;
+      char fsibins[40] = "";
+      sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
+      modetitle = fsibins; break;
     case 7:
-      modetitle = "sk-ccqe-ring-counting-efficiency"; break;
+      modetitle = "BANFF_flux"; break;
     case 8:
-      modetitle = "sk-detector"; break;
+      modetitle = "BANFF_xsec"; break;
     case 9:
-      modetitle = "fsi"; break;
+      modetitle = "SKDet_FSI"; break;
     case 10:
-      modetitle = "all(without-energy-scale)"; break;
+      modetitle = "BANFF_unconstrained_xsec"; break;
     case 11:
-      modetitle = "skdetfsi"; break;
+      modetitle = "Osc_param"; break;
 
     case 200:
-      modetitle = "xsec_pf"; break;
+      modetitle = "pfermi"; break;
     case 201:
-      modetitle = "xsec_sf"; break;
+      modetitle = "specfunc"; break;
     case 202:
-      modetitle = "xsec_wshape"; break;
+      modetitle = "wshape"; break;
     case 203:
-      modetitle = "xsec_shape_ccoth"; break;
+      modetitle = "shapeCoth"; break;
     case 204:
-      modetitle = "xsec_pilessdelta"; break;
+      modetitle = "pilessdelta"; break;
     case 205:
-      modetitle = "xsec_enushape"; break;
+      modetitle = "norm_cccoh"; break;
     case 206:
-      modetitle = "xsec_norm_ccqeE1"; break;
+      modetitle = "norm_nc1piC"; break;
     case 207:
-      modetitle = "xsec_norm_ccqeE2"; break;
+      modetitle = "norm_ncoth";
+      break;
     case 208:
-      modetitle = "xsec_norm_cc1piE1"; break;
+      modetitle = "norm_nuetonumu"; break;
     case 209:
-      modetitle = "xsec_norm_cccoh"; break;
+      modetitle = "norm_antinutonu"; break;
     case 210:
-      modetitle = "xsec_norm_nc1piC"; break;
+      modetitle = "bindE"; break;
+
     case 211:
-      modetitle = "xsec_norm_nccoh"; break;
-    case 212:
-      modetitle = "xsec_norm_ncoth"; break;
-    case 213:
-      modetitle = "xsec_norm_nuetonumu"; break;
-    case 214:
-      modetitle = "xsec_norm_antinutonu"; break;
-    case 215:
-      modetitle = "xsec_bindE"; break;
-
-    case 300:
-      modetitle = "sk_energy_scale"; break;
-    case 301:
-      modetitle = "sk_1Rmu_ccqe_other_eff"; break;
-    case 302:
-      modetitle = "sk_1Rmu_ccnonqe_eff"; break;
-    case 303:
-      modetitle = "sk_1Rmu_nc_eff"; break;
-    case 304:
-      modetitle = "sk_1Rmu_nuecc_eff"; break;
-    case 305:
-      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_0"; break;
-    case 306:
-      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_1"; break;
-    case 307:
-      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2"; break;
-
-    case 500:
-      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_0+other"; break;
-    case 501:
-      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_1+other"; break;
-    case 502:
-      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_2+other"; break;
-    case 503:
-      modetitle = "sk_1Rmu_ccqe_ring_counting_eff_all+other"; break;
-    case 504:
-      modetitle = "xsec_fsiabs"; break;
-
+      modetitle = "rpa"; break;
+      
     case 700:
       modetitle = "mixing13"; break;
     case 701:
@@ -190,28 +163,37 @@ void test_sk_ereco_spectrum_twk_sys
     case 703:
       modetitle = "deltacp"; break;
 
+    case 999:
+      modetitle = "statonly"; break;
+
     default:
-      if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
-	modetitle = Form("banff_%02d",mode-100); break;
+
+      // banff fhc
+      if(mode >= 400 && mode < 400+conv::kNumOfParamsInBANFFfit) {
+        modetitle = Form("banff%02d",mode-400); break;
       }
-      else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
-	modetitle = Form("fsi_%03d",mode-400); break;
+      // banff rhc
+      if(mode >= 500 && mode < 500+conv::kNumOfRHCParamsInBANFFfit) {
+        modetitle = Form("banff%02d_rhc",mode-500); break;
       }
-      else if(mode >= 600 && mode < 600+conv::kNumOfSKDetFSIParams) {
-	modetitle = Form("skdetfsi_%03d",mode-600); break;
+      // skdetfsi fhc
+      else if(mode >= 800 && mode < 800+conv::kNumOfSKDetFSIParams) {
+        modetitle = Form("skdetfsi%03d",mode-800); break;
       }
-      else {
-	cout << "Unknown mode " << mode << endl; exit(1); break;
+      // skdetfsi rhc
+      else if(mode >= 900 && mode < 900+conv::kNumOfRHCSKDetFSIParams) {
+        modetitle = Form("skdetfsi%03d_rhc",mode-900); break;
       }
+      cout << "Unknown mode " << mode << endl; exit(1); break;
   }//switch mode
-  //name for the output plots
-  conv::PhysParamId_t p = util::PhysParamIdFromString(modetitle);
-  string modetitleplot = modetitle;
-  if(p != conv::kPhypUndefined)
-    modetitleplot = util::AsStringCompact(p);
+
+  TString config_str(config_file);
+  if(config_str.Contains("prefit"))
+    modetitle += "prefit";
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  T2KOpt::Instance()->ReadXmlPath(config);
     
   // Set physics hypothesis
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
@@ -224,8 +206,8 @@ void test_sk_ereco_spectrum_twk_sys
     if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
     if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
   }
-  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
-  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_dm23sq < -1)   input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)   input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
@@ -239,7 +221,31 @@ void test_sk_ereco_spectrum_twk_sys
     ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3FBar){
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
   }
+
+  //return if tweaking osc params & there are no oscillations
+  if(mode >= 700 && mode <= 799
+     && input_mixing23 < conv::kASmallNum 
+     && input_mixing13 < conv::kASmallNum
+     && input_mixing12 < conv::kASmallNum
+     && input_deltacp  < conv::kASmallNum
+     && input_dm12sq   < conv::kASmallNum
+     && input_dm23sq   < conv::kASmallNum)
+    return;
 
   // Print options
   cout << "\n[Job inputs]" << endl;
@@ -250,641 +256,484 @@ void test_sk_ereco_spectrum_twk_sys
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
   skexp.Read(config);
+  //
+  SuperkObservation skobs;
   
-  // Output histograms and graphs
-#if NTWEAKS == 4
-  const int ntweaks = 4;
-  int tweaks[ntweaks] = {+3, +1, -1, -3};
-#elif NTWEAKS == 2
-  const int ntweaks = 2;
-  int tweaks[ntweaks] = {+1, -1};
-#elif NTWEAKS == 6
-  const int ntweaks = 6;
-  //  double tweaks[ntweaks] = {+1., +0.4545, +0.2273, -0.2273, -0.4545, -1.};
-  double tweaks[ntweaks] = {+3., +1, +0.5, -0.5, -1., -3.};
-#else
-  cerr << "Unknown NTWEAKS" << endl;
-  exit(1);
-#endif
-
+  const int nexp = 4; //first down 1 sigma, then up 1 sigma
+  
+  // Output histograms
   TH1D * hErecoNominal = 0;
-  TH1D * hEreco[ntweaks];
-  TH1D * hErecoRatio[ntweaks];
-  TH1D * hErecoModeNominal[conv::knm];
-  TH1D * hErecoMode[conv::knm][ntweaks];
-  TH1D * hErecoModeRatio[conv::knm][ntweaks];
+  TH1D * hEreco[nexp] = {0};
+  TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),10000,0,1000);
+  
+  
+  int nbanff;
+  if(RHCFlag) nbanff = conv::kNumOfRHCParamsInBANFFfit;
+  else        nbanff = conv::kNumOfParamsInBANFFfit;
+  
+  int nfsi;
+  if(RHCFlag) nfsi = conv::kNumOfRHCSKDetFSIParams;
+  else        nfsi = conv::kNumOfRHCSKDetFSIParams;
 
-  // Open output file
+  int nxsecuncorr;
+  if(RHCFlag) nxsecuncorr = conv::kNumOfRHCXSecSyst;
+  else        nxsecuncorr = conv::kNumOfXSecSyst;
+
+  const int sys = nbanff + nfsi + nxsecuncorr;
+
+  FitParamList * fparm = util::NamedParameterList("nuosc3f_12fix+nuisance"); 
+  const int np = fparm->GetNumberParameters();
+  TH1D * hSysThrown[np];
+  
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = fparm->WhichParam(ip);
+    //if(!fparm->IsNuisance(p)) continue; 
+    
+    string sysstr = util::AsStringCompact(p);
+    //cout << sysstr << endl;
+    string hname(Form("%s_%s_tweak_%s",sname,modetitle.c_str(),sysstr.c_str()));
+    hSysThrown[ip] = new TH1D(hname.c_str(),hname.c_str(),1000,-5,5);
+    hSysThrown[ip]->SetDirectory(0);
+  }
+
+  
+  // Open output files
   string rootmode = "update";
   if(!update_rootfile)
     rootmode = "recreate";
   string oscparams = util::AsString(ph.Hypothesis(),
-     input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-  TFile f(Form("sk_ereco_spectrum-twk_sys_%s.root",oscparams.c_str()),rootmode.c_str());
+                                    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+  TFile f(Form("sk_ereco_spectrum_%s-twk_sys_%s.root",sname,oscparams.c_str()),rootmode.c_str());
+  
+  if(!update_rootfile)
+    ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_%s.txt",sname,oscparams.c_str()),ios_base::trunc);
+  else
+    ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_%s.txt",sname,oscparams.c_str()),ios_base::app);
+  
+  //remove the [] so can use it in SaveAs
+  while(oscparams.find_first_of("[]") != string::npos) {
+    oscparams.erase(oscparams.find_first_of("[]"), 1);
+  }
 
   // Get the nominal
   skexp.Generate(ph);
   hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  for(int ir = 1; ir <= hErecoNominal->GetNbinsX(); ir++) {
+    hErecoNominal->SetBinContent(ir, skexp.CurrPredictedErecoSpectrumArray(s)[ir-1]);
+  }
   hErecoNominal->SetDirectory(0);
   hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoNominal->GetYaxis()->SetTitle("Events per bin");
   hErecoNominal->SetLineWidth(2);
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == conv::kSKmUndefined) continue;
-    cout << "- Retrieving spectrum prediction for mode: " << util::AsString(m) << endl;
-    TH1D * h = skexp.CurrPredictedErecoSpectrum(s, m);  
-    assert(h);
-    hErecoModeNominal[im] = new TH1D(*h);
-    hErecoModeNominal[im]->SetDirectory(0);
-    hErecoModeNominal[im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-    hErecoModeNominal[im]->GetYaxis()->SetTitle("Events per bin");
-    hErecoModeNominal[im]->SetFillStyle(0);
-  }
-  if(!update_rootfile) {
-    hErecoNominal->Write("nominal");
-    for(int im = 0; im < conv::knm; im++) {
-      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-      if(m == conv::kSKmUndefined) continue;
-      hErecoModeNominal[im]->Write(Form("nominal_%s",util::AsStringCompact(m).c_str()));
-    }
-  }
+  if(!update_rootfile)
+    hErecoNominal->Write(Form("%s_nominal",sname));
+    
+  TH1D * hErecoNominal_per50MeV = spectrum_to_per_50mev(hErecoNominal);
+  hErecoNominal_per50MeV->Write(Form("%s_nominal_per_50MeV",sname));
+
+  TStopwatch w;
+  w.Start();
 
   // Tweak!
-  for(int itweak = 0; itweak < ntweaks; itweak++) {
-#if NTWEAKS == 6
-    double tweak = tweaks[itweak];
-#else
-    int tweak = tweaks[itweak];
-#endif
-
-    cout << endl << "Tweaking by " << tweak << " sigma for systematics: " << modetitle << endl;
-
-    //set histogram color
-    Color_t histcolor = kBlack;
-    switch(itweak) {
-      case 0:
-	histcolor = kRed;
-	break;
-      case 1:
-        histcolor = kBlue;
-        break;
-      case 2:
-        histcolor = kGreen+3;
-        break;
-      case 3:
-        histcolor = kOrange+7;
-        break;
-      case 4:
-	histcolor = kYellow-4;
-	break;
-      case 5:
-	histcolor = kMagenta+1;
-	break;
-      default:
-	histcolor = kBlack;
-    }
-
+  
+  int iskip = 0;
+  for(int iexp = 0; iexp < nexp; iexp++) {
+    
+    bool tweak_up = iexp%2;
+    int n_sigma   = (iexp>=2 ? 3 : 1) ;
+    
+    //~ if (iexp == 0) { tweak_up = false; n_sigma = 1 };
+    //~ if (iexp == 1) { tweak_up = true ; n_sigma = 1 };
+    //~ if (iexp == 2) { tweak_up = false; n_sigma = 3 };
+    //~ if (iexp == 3) { tweak_up = true ; n_sigma = 3 };
+    
+    string tweak_name(Form("%s%dsigma","tweak_up"?"plus":"minus",n_sigma));
+    
     if(mode < 100) {
       
-      //all BANFF correlated
-      if(mode == 0 || mode == 1 || mode == 10) {
-	TVectorD v(conv::kNumOfParamsInBANFFfit);
-	v = skexp.GetBANFF()->BestFitValues();
-	for(int ib = 0; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
-	}
-	skexp.GetBANFF()->Tweak(true,&v);
+      std::cerr<<"Not implemented"<<std::endl;
+      exit(-1);
+
+      // All
+      if(mode == 0) {
+        skexp.TweakAllSystematics();
       }
 
-      //BANFF flux only correlated
+      // BANFF
+      if(mode == 1) {
+        skexp.TweakAllSampleBANFFSystematics();
+      }
+
+      // Uncorrelated XSec
       if(mode == 2) {
-	TVectorD v(conv::kNumOfParamsInBANFFfit);
-	v = skexp.GetBANFF()->BestFitValues();
-	for(int ib = 0; ib < conv::kNumOfFluxParamsInBANFFfit; ib++) {
-	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
-	}
-	skexp.GetBANFF()->Tweak(true,&v);
+        skexp.TweakAllUncorrelatedXSecSystematics();
+        skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+      }
+      
+      //BANFF (flux only)
+      if(mode == 7) {
+        skexp.GetBANFF()->TweakSampleFluxOnly(false,0); // cholesky w/ full cov matrix
       }
 
-      //BANFF xsec only correlated
-      if(mode == 3 || mode == 5) {
-	TVectorD v(conv::kNumOfParamsInBANFFfit);
-	v = skexp.GetBANFF()->BestFitValues();
-	for(int ib = conv::kNumOfFluxParamsInBANFFfit; ib < conv::kNumOfParamsInBANFFfit; ib++) {
-	  v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
-	}
-	skexp.GetBANFF()->Tweak(true,&v);
+      //BANFF (xsec only)
+      if(mode == 8) {
+        skexp.GetBANFF()->TweakSampleXSecOnly(false,0); // cholesky w/ full cov matrix
       }
 
-      //Uncorrelated xsec
-      if(mode == 0 || mode == 4 || mode == 5 || mode == 10) {
-	skexp.TweakSystematic("xsec_pf",tweak);
-	skexp.TweakSystematic("xsec_sf",tweak);
-	skexp.TweakSystematic("xsec_wshape",tweak);
-	skexp.TweakSystematic("xsec_shape_ccoth",tweak);
-	skexp.TweakSystematic("xsec_pilessdelta",tweak);
-	skexp.TweakSystematic("xsec_bindE",tweak);
-	skexp.TweakSystematic("xsec_norm_cccoh",tweak);
-	skexp.TweakSystematic("xsec_norm_nc1piC",tweak);
-	skexp.TweakSystematic("xsec_norm_ncoth",tweak);
-	skexp.TweakSystematic("xsec_norm_nuetonumu",tweak);
-	skexp.TweakSystematic("xsec_norm_antinutonu",tweak);
+      //SK det + FSI
+      if(mode == 9) {
+        skexp.TweakAllSampleSKDetectorFSISystematics();
       }
 
-      //SK det uncorrelated
-      if(mode == 6 || mode == 8 || mode == 10) {
-	if(mode == 8)
-	  skexp.TweakSystematic("sk_energy_scale",tweak);
-	skexp.TweakSystematic("sk_1Rmu_ccqe_other_eff",tweak);
-	skexp.TweakSystematic("sk_1Rmu_ccnonqe_eff",tweak);
-	skexp.TweakSystematic("sk_1Rmu_nc_eff",tweak);
-	skexp.TweakSystematic("sk_1Rmu_nuecc_eff",tweak);
+     //unconstrained xsec + BANFF
+      if(mode == 10) {
+        skexp.TweakAllUncorrelatedXSecSystematics();
+        skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+        skexp.TweakAllBANFFSystematics();
       }
 
-      //SK det ring counting
-      if(mode == 6 || mode == 7 || mode == 8 || mode == 10) {
-	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak);
-	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak);
-	skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak);
-      }
-
-      //FSI
-      if(mode == 9 || mode == 10) {
-	TVectorD v(conv::kNumOfFSIParams);
-	v.Zero();
-	for(int ib = 0; ib < conv::kNumOfFSIParams; ib++) {
-	  v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
-	}
-	skexp.GetFSI()->Tweak(true,&v);
-      }
-
-      //SKDET FSI
-      if(mode == 11 || mode == 0) {
-	TVectorD v(conv::kNumOfSuperKDetectorFSIParams);
-	v.Zero();
-	for(int ib = 0; ib < conv::kNumOfSuperKDetectorFSIParams; ib++) {
-	  v[ib] = 1 + (tweak * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()[ib][ib]));
-	}
-	skexp.GetSuperkDetectorFSI()->Tweak(true,&v);
+      //non-23 oscillation parameters
+      if(mode == 11) {
+        std::cerr<<"Not yet implemented"<<std::endl;
+        ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
+        ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
+        ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV());
+        ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
       }
 
     }//mode<100
-
-    else {
-
+    
+    else if(mode < 999) {//everything else but the stat
+      
+      double tweak;
+      if (tweak_up) tweak =  n_sigma;
+      else          tweak = -n_sigma;
+      
       switch(mode) {
         case 200:
-	  skexp.TweakSystematic("xsec_pf",tweak); break;
+          if( !util::IsXSec(util::PhysParamIdFromString("pfermi")) ) break; 
+          skexp.TweakSystematic("pfermi",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 201:
-	  skexp.TweakSystematic("xsec_sf",tweak); break;
+          if( !util::IsXSec(util::PhysParamIdFromString("specfunc")) ) break; 
+          skexp.TweakSystematic("specfunc",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 202:
-	  skexp.TweakSystematic("xsec_wshape",tweak); break;
+          if( !util::IsXSec(util::PhysParamIdFromString("wshape")) ) break; 
+          skexp.TweakSystematic("wshape",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 203:
-	  skexp.TweakSystematic("xsec_shape_ccoth",tweak); break;
+          if( !util::IsXSec(util::PhysParamIdFromString("shapeCCoth")) ) break; 
+          skexp.TweakSystematic("shapeCCoth",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 204:
-	  skexp.TweakSystematic("xsec_pilessdelta",tweak); break;
+          if( !util::IsXSec(util::PhysParamIdFromString("pilessdelta")) ) break; 
+          skexp.TweakSystematic("pilessdelta",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
+        case 205:
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_cccoh")) ) break; 
+          skexp.TweakSystematic("norm_cccoh",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
+        case 206:
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_nc1piC")) ) break; 
+          skexp.TweakSystematic("norm_nc1piC",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
+        case 207:
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_ncoth")) ) break; 
+          skexp.TweakSystematic("norm_ncoth",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
+        case 208:
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_nuetonumu")) ) break; 
+          skexp.TweakSystematic("norm_nuetonumu",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 209:
-	  skexp.TweakSystematic("xsec_norm_cccoh",tweak); break;
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_antinutonu")) ) break; 
+          skexp.TweakSystematic("norm_antinutonu",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 210:
-	  skexp.TweakSystematic("xsec_norm_nc1piC",tweak); break;
-        case 212:
-	  skexp.TweakSystematic("xsec_norm_ncoth",tweak); break;
-        case 213:
-	  skexp.TweakSystematic("xsec_norm_nuetonumu",tweak); break;
-        case 214:
-	  skexp.TweakSystematic("xsec_norm_antinutonu",tweak); break;
-        case 215:
-	  skexp.TweakSystematic("xsec_bindE",tweak); break;
+          if( !util::IsXSec(util::PhysParamIdFromString("bindE")) ) break; 
+          skexp.TweakSystematic("bindE",tweak); 
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
+
+        case 211:
+          if( !util::IsXSec(util::PhysParamIdFromString("rpa")) ) break; 
+          tweak = 1;
+          skexp.TweakSystematic("rpa",tweak); // Automatically set at 0 or 1 in the Tweak
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
 
         case 300:
-	  skexp.TweakSystematic("sk_energy_scale",tweak); break;
-        case 301:
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_other_eff",tweak); break;
-        case 302:
-	  skexp.TweakSystematic("sk_1Rmu_ccnonqe_eff",tweak); break;
-        case 303:
-	  skexp.TweakSystematic("sk_1Rmu_nc_eff",tweak); break;
-        case 304:
-	  skexp.TweakSystematic("sk_1Rmu_nuecc_eff",tweak); break;
-        case 305:
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak); break;
-        case 306:
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak); break;
-        case 307:
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
-
-        case 500: 
-	  skexp.TweakSystematic("sk_energy_scale",tweak);
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak); break;
-        case 501: 
-	  skexp.TweakSystematic("sk_energy_scale",tweak);
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak); break;
-        case 502: 
-	  skexp.TweakSystematic("sk_energy_scale",tweak);
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
-        case 503: 
-	  skexp.TweakSystematic("sk_energy_scale",tweak);
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_0",tweak);
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_1",tweak);
-	  skexp.TweakSystematic("sk_1Rmu_ccqe_ring_counting_eff_2",tweak); break;
-        case 504:
-	  skexp.TweakSystematic("xsec_pilessdelta",tweak); break;
-
+          skexp.TweakSystematic("sk_e_scale",tweak); break;
+    
         case 700:
-	  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
-	    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13 * (1 + (tweak * conv::kGlobFitErrSinsq2Theta13)));
-	  else
-	    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13 * (1 + (tweak * conv::kGlobFitErrSinsqTheta13)));
-	  cout << ph << endl;
-	  break;
+          ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13()); break;
         case 701:
-	  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta)
-	    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12 * (1 + (tweak * conv::kGlobFitErrSinsq2Theta12)));
-	  else
-	    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12 * (1 + (tweak * conv::kGlobFitErrSinsqTheta12)));
-	  cout << ph << endl;
-	  break;
+          ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12()); break;
         case 702:
-	  ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq * (1 + (tweak * conv::kGlobFitDm12sq)));
-	  cout << ph << endl;
-	  break;
+          ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq()); break;
         case 703:
-	  ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp + (tweak * conv::kpi/2));
-	  cout << ph << endl;
-	  break;
+          ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV()); break;
 
         default:
-	  if(mode >= 100 && mode < 100+conv::kNumOfParamsInBANFFfit) {
-	    TVectorD v(conv::kNumOfParamsInBANFFfit);
-	    v = skexp.GetBANFF()->BestFitValues();
-	    int ib = mode - 100;
-	    v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
-	    skexp.GetBANFF()->Tweak(true,&v);
-	    break;
-	  }
-	  else if(mode >= 400 && mode < 400+conv::kNumOfFSIParams) {
-	    TVectorD v(conv::kNumOfFSIParams);
-	    for (int ipf = 0; ipf < conv::kNumOfFSIParams; ipf++) {
-	      v[ipf] = 1;
-	    }
-	    int ib = mode - 400;
-	    v[ib] = 1 + (tweak * sqrt(skexp.GetFSI()->CovMatrix()[ib][ib]));
-	    skexp.GetFSI()->Tweak(true,&v);
-	    break;
-	  }
-	  else if(mode >= 600 && mode < 600+conv::kNumOfSKDetFSIParams) {
-	    TVectorD v(conv::kNumOfSKDetFSIParams);
-	    for (int ipf = 0; ipf < conv::kNumOfSKDetFSIParams; ipf++) {
-	      v[ipf] = 1;
-	    }
-	    int ib = mode - 600;
-	    v[ib] = 1 + (tweak * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()[ib][ib]));
-	    skexp.GetSuperkDetectorFSI()->Tweak(true,&v);
-	    break;
-	  }
-	  else {
-	    cout << "Unknown mode " << mode << endl; exit(1); break;
-	  }
+          
+          // banff fhc
+          if(mode >= 400 && mode < 400+conv::kNumOfParamsInBANFFfit) {
+            TVectorD v(conv::kNumOfParamsInBANFFfit);
+            v = skexp.GetBANFF()->BestFitValues();
+            int ib = mode - 400;
+            v[ib] = skexp.GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->CovMatrix()[ib][ib]));
+            skexp.GetBANFF()->TweakSample(true,&v);
+            break;
+          }
+          // banff rhc
+          else if(mode >= 500 && mode < 500+conv::kNumOfRHCParamsInBANFFfit) {
+            TVectorD v(conv::kNumOfRHCParamsInBANFFfit);
+            v = skexp.GetBANFF()->RHCBestFitValues();
+            int ib = mode - 500;
+            v[ib] = skexp.GetBANFF()->RHCBestFitValues()[ib] + (tweak * sqrt(skexp.GetBANFF()->RHCCovMatrix()[ib][ib]));
+            skexp.GetBANFF()->TweakSample(true,&v);
+            break;
+          }
+          // skdetfsi fhc
+          else if(mode >= 800 && mode < 800+conv::kNumOfSKDetFSIParams) {
+            TVectorD v(conv::kNumOfSKDetFSIParams);
+            for (int ipf = 0; ipf < conv::kNumOfSKDetFSIParams; ipf++) {
+              v[ipf] = 1;
+            }
+            int ib = mode - 800;
+            v[ib] = 1 + (tweak * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()[ib][ib]));
+            skexp.GetSuperkDetectorFSI()->Tweak(true,&v);
+            break;
+          }
+          // skdetfsi rhc
+          else if(mode >= 900 && mode < 900+conv::kNumOfRHCSKDetFSIParams) {
+            TVectorD v(conv::kNumOfRHCSKDetFSIParams);
+            for (int ipf = 0; ipf < conv::kNumOfRHCSKDetFSIParams; ipf++) {
+              v[ipf] = 1;
+            }
+            int ib = mode - 900;
+            v[ib] = 1 + (tweak * sqrt(skexp.GetSuperkDetectorFSI()->RHCCovMatrix()[ib][ib]));
+            skexp.GetSuperkDetectorFSI()->TweakRHC(true,&v);
+            break;
+          }
+
+          cout << "Unknown mode " << mode << endl; exit(1); break;
       }//switch(mode)
     }//mode>=100
 
     // generate predictions
-    skexp.PrintSystematicVariations();
-    skexp.Generate(ph);
-    //store spectrum
-    hEreco[itweak] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-    hEreco[itweak]->SetDirectory(0);
-    if(ntweaks != 6)
-      hEreco[itweak]->SetTitle(Form("%s_%d_sigma",modetitle.c_str(),tweak));
-    else
-      hEreco[itweak]->SetTitle(Form("%s_%f_sigma",modetitle.c_str(),tweak));
-    hEreco[itweak]->SetLineColor(histcolor);
-    if(ntweaks != 6)
-      hEreco[itweak]->Write(Form("%s_%d_sigma",modetitle.c_str(),tweak));		    
-    else
-      hEreco[itweak]->Write(Form("%s_%f_sigma",modetitle.c_str(),tweak));		    
-    hErecoRatio[itweak] = new TH1D(*hEreco[itweak]);
-    hErecoRatio[itweak]->Divide(hErecoNominal);
-    if(ntweaks != 6)
-       hErecoRatio[itweak]->Write(Form("%s_%d_sigma_ratio",modetitle.c_str(),tweak));
-    else
-      hErecoRatio[itweak]->Write(Form("%s_%f_sigma_ratio",modetitle.c_str(),tweak));
-    for(int im = 0; im < conv::knm; im++) {
-      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-      if(m == conv::kSKmUndefined) continue;
-      hErecoMode[im][itweak] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
-      hErecoMode[im][itweak]->SetDirectory(0);
-      if(ntweaks != 6)
-	hErecoMode[im][itweak]->SetTitle(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
-      else
-	hErecoMode[im][itweak]->SetTitle(Form("%s_%f_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
-      hErecoMode[im][itweak]->SetLineColor(histcolor);
-      hErecoMode[im][itweak]->SetFillStyle(0);
-      if(ntweaks != 6)
-	hErecoMode[im][itweak]->Write(Form("%s_%d_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
-      else
-	hErecoMode[im][itweak]->Write(Form("%s_%f_sigma_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
-      hErecoModeRatio[im][itweak] = new TH1D(*hErecoMode[im][itweak]);
-      hErecoModeRatio[im][itweak]->Divide(hErecoModeNominal[im]);
-      if(ntweaks != 6)
-	hErecoModeRatio[im][itweak]->Write(Form("%s_%d_sigma_ratio_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
-      else
-	hErecoModeRatio[im][itweak]->Write(Form("%s_%f_sigma_ratio_%s",modetitle.c_str(),tweak,util::AsStringCompact(m).c_str()));
-    }
-  }//end loop over tweaks
-
-  //
-  // Draw
-  //
-  TCanvas * c = new TCanvas("c","",20,20,500,500);
-  gStyle->SetOptStat(0);
-  c->Divide(1,2);
-  c->cd(1);
-  TLegend * legend = new TLegend(0.75, 0.53, 0.95, 0.9);
-  legend->SetFillStyle(0);
-  legend->SetFillColor(0);
-  legend->SetBorderSize(0);
-  legend->AddEntry(hErecoNominal, "nominal", "L" );
-  hErecoNominal->SetTitle(Form("%s",modetitle.c_str()));
-  hErecoNominal->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
-  hErecoNominal->Draw();
-  double maxy = hErecoNominal->GetMaximum();
-  for(int itweak = 0; itweak < ntweaks; itweak++) {
-    if(mode == 201 && itweak != 1) continue; //SF is only +1 sigma!
-    hEreco[itweak]->Draw("same");
-    maxy = TMath::Max(maxy, hEreco[itweak]->GetMaximum());
-    if(ntweaks != 6)
-      legend->AddEntry(hEreco[itweak], Form("%d sigma",tweaks[itweak]), "L" );
-    else
-      legend->AddEntry(hEreco[itweak], Form("%f sigma",tweaks[itweak]), "L" );
-  }
-  maxy *= 1.1;
-  hErecoNominal->GetYaxis()->SetRangeUser(0,maxy);
-  legend->Draw();
-  c->cd(2);
-  //find the relevant y axis range for the ratio
-  double yminratio = 0.75, ymaxratio = 1.25;
-  bool foundbig = false;
-  for(int itweak = 0; itweak < ntweaks; itweak++) {
-    if(mode == 201 && itweak != 1) continue; //SF is only +1 sigma!
-    if(foundbig) break;
-    for(int ibin = 1; ibin < hErecoRatio[itweak]->GetNbinsX(); ibin++) {
-      if(hErecoRatio[itweak]->GetBinContent(ibin) > ymaxratio) {
-	ymaxratio = 1.75;
-	yminratio = 0.25;
-	foundbig = true;
-	break;
-      }
-    }
-  }
-  for(int itweak = 0; itweak < ntweaks; itweak++) {
-    if(itweak==0){
-      if(mode == 201) itweak++; //SF is only +1 sigma!
-      hErecoRatio[itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
-      hErecoRatio[itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-      hErecoRatio[itweak]->GetYaxis()->SetTitle("Ratio to nominal");
-      hErecoRatio[itweak]->GetYaxis()->SetRangeUser(yminratio,ymaxratio);
-      hErecoRatio[itweak]->SetTitle("Ratio");
-      hErecoRatio[itweak]->Draw();
-      if(mode == 201) break; //SF is only +1 sigma!
+    bool applied_negevents_condition = skexp.Generate(ph);
+    if(applied_negevents_condition) {
+      cout << "skipping" << endl;
+      iskip++;
       continue;
     }
-    hErecoRatio[itweak]->Draw("same");
-  }
-  c->SaveAs(Form("ereco_twk_%s.eps",modetitleplot.c_str()));
-  hErecoNominal->GetXaxis()->UnZoom();
-  hErecoRatio[0]->GetXaxis()->UnZoom();
-  if(save_all_canvases)
-    c->SaveAs(Form("ereco_twk_%s_fullrange.eps",modetitleplot.c_str()));
-  // Draw mode by mode
-  TCanvas * cm = new TCanvas("cm","",20,20,500,500);
-  gStyle->SetOptStat(0);
-  cm->Divide(1,2);
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == conv::kSKmUndefined) continue;
-    cm->cd(1);
-    TLegend * legend = new TLegend(0.7, 0.4, 0.9, 0.85);
-    legend->SetFillColor(0);
-    legend->SetBorderSize(0);
-    legend->AddEntry(hErecoModeNominal[im], "nominal", "L" );
-    hErecoModeNominal[im]->SetTitle(Form("%s_%s",modetitle.c_str(),util::AsStringCompact(m).c_str()));
-    hErecoModeNominal[im]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
-    hErecoModeNominal[im]->Draw();
-    for(int itweak = 0; itweak < ntweaks; itweak++) {
-      hErecoMode[im][itweak]->Draw("same");
-      if(ntweaks != 6)
-	legend->AddEntry(hErecoMode[im][itweak], Form("%d sigma",tweaks[itweak]), "L" );
+
+    if(mode == 999) {
+      bool fluctuate = true;
+      skobs.CreateMockData(skexp,ph,fluctuate);
+    }
+
+    //store spectrum
+    hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    for(int ir = 1; ir <= hEreco[iexp]->GetNbinsX(); ir++) {
+      if(mode != 999)
+        hEreco[iexp]->SetBinContent(ir, skexp.CurrPredictedErecoSpectrumArray(s)[ir-1]);
       else
-	legend->AddEntry(hErecoMode[im][itweak], Form("%f sigma",tweaks[itweak]), "L" );
+        hEreco[iexp]->SetBinContent(ir, skobs.ErecoSpectrumArray(s)[ir-1]);
     }
-    legend->Draw();
-    cm->cd(2);
-    for(int itweak = 0; itweak < ntweaks; itweak++) {
-      if(itweak==0){
-	hErecoModeRatio[im][itweak]->GetXaxis()->SetRangeUser(0,ereco_max_plot-conv::kOneMeV);
-	hErecoModeRatio[im][itweak]->GetXaxis()->SetTitle("E_{reco} (GeV)");
-	hErecoModeRatio[im][itweak]->GetYaxis()->SetTitle("Ratio to nominal");
-	hErecoModeRatio[im][itweak]->SetTitle("Ratio");
-	hErecoModeRatio[im][itweak]->Draw();
-	continue;
+
+    hEreco[iexp]->SetDirectory(0);
+    hEreco[iexp]->SetTitle(Form("%s_%s_%s",sname,modetitle.c_str(),tweak_name));
+    if(save_toy_expts)
+      hEreco[iexp]->Write(Form("%s_%s_%s",sname,modetitle.c_str(),tweak_name));                    
+
+    //store Nsk
+    double nskint = 0;
+    for(int ir = 1; ir <= util::NumErecoBins(s); ir++)
+      if(mode != 999)
+        nskint += skexp.CurrPredictedErecoSpectrumArray(s)[ir-1];
+      else
+        nskint += skobs.ErecoSpectrumArray(s)[ir-1];
+    hNsk->Fill(nskint);
+
+
+    //store thrown parameter values
+     
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      //if(!fparm->IsNuisance(p)) continue; 
+      
+      string sysstr = util::AsStringCompact(p);
+      
+      if(util::IsBANFF(p)){
+        if(RHCFlag)
+          hSysThrown[ip]->Fill(skexp.GetBANFF()->RHCCurrentValue(p));
+        else 
+          hSysThrown[ip]->Fill(skexp.GetBANFF()->CurrentValue(p));
       }
-      hErecoModeRatio[im][itweak]->Draw("same");
+      else if(util::IsXSec(p)){
+        hSysThrown[ip]->Fill(skexp.GetNuXSec()->CurrentValue(p));
+      }
+      if(util::IsSKDetFSI(p)){
+        if(RHCFlag)
+          hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(p));
+        else 
+          hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(p));
+      }
+    }      
+  }//end loop over experiments
+  w.Stop();
+  cout << iskip << " experiments skipped due to min events" << endl;
+
+  //save some histograms
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = fparm->WhichParam(ip);
+    //if(!fparm->IsNuisance(p)) continue; 
+    hSysThrown[ip]->Write();
+  }
+  hNsk->Write();
+
+
+  // Find min/max and calculate fractional deviation from nominal
+  hErecoPlus1Sigma  = new TH1D(*hErecoNominal);
+  hErecoMinus1Sigma = new TH1D(*hErecoNominal);
+  hErecoPlus3Sigma  = new TH1D(*hErecoNominal);
+  hErecoMinus3Sigma = new TH1D(*hErecoNominal);
+  hErecoPlus1Sigma ->SetDirectory(0);
+  hErecoMinus1Sigma->SetDirectory(0);
+  hErecoPlus3Sigma ->SetDirectory(0);
+  hErecoMinus3Sigma->SetDirectory(0);
+  hErecoPlus1Sigma ->GetYaxis()->SetTitle("Ratio of events");
+  hErecoMinus1Sigma->GetYaxis()->SetTitle("Ratio of events");
+  hErecoPlus3Sigma ->GetYaxis()->SetTitle("Ratio of events");
+  hErecoMinus3Sigma->GetYaxis()->SetTitle("Ratio of events");
+  hErecoPlus1SigmaEnv  = new TH1D(*hErecoNominal);
+  hErecoMinus1SigmaEnv = new TH1D(*hErecoNominal);
+  hErecoPlus1SigmaEnv ->SetDirectory(0);
+  hErecoMinus1SigmaEnv->SetDirectory(0);
+  for(int ibin=1; ibin <= util::NumErecoBins(s); ibin++) {
+    double nom   = hErecoNominal->GetBinContent(ibin);
+    double min    = hEreco[0]->GetBinContent(ibin);
+    double max    = hEreco[1]->GetBinContent(ibin);
+    double min3   = hEreco[2]->GetBinContent(ibin);
+    double max3   = hEreco[3]->GetBinContent(ibin);
+    if(nom>0){
+      hErecoPlus1Sigma     -> SetBinContent (ibin,  (max -nom)/nom);
+      hErecoMinus1Sigma    -> SetBinContent (ibin,  (min -nom)/nom);
+      hErecoPlus3Sigma     -> SetBinContent (ibin,  (max3-nom)/nom);
+      hErecoMinus3Sigma    -> SetBinContent (ibin,  (min3-nom)/nom);
+      hErecoPlus1SigmaEnv  -> SetBinContent (ibin,  max);
+      hErecoMinus1SigmaEnv -> SetBinContent (ibin,  min);
     }
-    if(save_all_canvases)
-      cm->SaveAs(Form("ereco_twk_%s_%s.eps",modetitleplot.c_str(),util::AsStringCompact(m).c_str()));
-    hErecoModeNominal[im]->GetXaxis()->UnZoom();
-    hErecoModeRatio[im][0]->GetXaxis()->UnZoom();
-    if(save_all_canvases)
-      cm->SaveAs(Form("ereco_twk_%s_%s_fullrange.eps",modetitleplot.c_str(),util::AsStringCompact(m).c_str()));
-  }//loop over modes
+  }//ibin
+  hErecoPlus1Sigma    ->Write(Form("%s_%s_plus1err" ,sname,modetitle.c_str()));
+  hErecoMinus1Sigma   ->Write(Form("%s_%s_minus1err",sname,modetitle.c_str()));
+  hErecoPlus3Sigma    ->Write(Form("%s_%s_plus3err" ,sname,modetitle.c_str()));
+  hErecoMinus3Sigma   ->Write(Form("%s_%s_minus3err",sname,modetitle.c_str()));
+  hErecoPlus1SigmaEnv ->Write(Form("%s_envplus1err" ,sname,modetitle.c_str()));
+  hErecoMinus1SigmaEnv->Write(Form("%s_envminus1err",sname,modetitle.c_str()));
 
-  //
-  // Save the change in nsk
-  //
-  double nsk_0 = hErecoNominal->Integral(1,hErecoNominal->GetNbinsX());
-  double nsk_p  = hEreco[ntweaks/2 - 1]->Integral(1,hEreco[ntweaks/2 - 1]->GetNbinsX());
-  double nsk_m  = hEreco[ntweaks/2    ]->Integral(1,hEreco[ntweaks/2    ]->GetNbinsX());
-  double frac_nsk_p = (nsk_0 > 0) ? 100.*(nsk_p - nsk_0) / nsk_0 : 0.;
-  double frac_nsk_m = (nsk_0 > 0) ? 100.*(nsk_m - nsk_0) / nsk_0 : 0.;
-  double nskmode_p[conv::knm] = {0}, nskmode_m[conv::knm] = {0};
-  double frac_nskmode_p[conv::knm] = {0}, frac_nskmode_m[conv::knm] = {0};
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == conv::kSKmUndefined) continue;
-    nskmode_p[im] = hErecoMode[im][ntweaks/2 - 1]->Integral(1,hErecoMode[im][ntweaks/2 - 1]->GetNbinsX());
-    nskmode_m[im] = hErecoMode[im][ntweaks/2    ]->Integral(1,hErecoMode[im][ntweaks/2    ]->GetNbinsX());
-    frac_nskmode_p[im] = (nsk_0 > 0) ? 100.*(nskmode_p[im] - nsk_0) / nsk_0 : 0.;
-    frac_nskmode_m[im] = (nsk_0 > 0) ? 100.*(nskmode_m[im] - nsk_0) / nsk_0 : 0.;
-  }
-
-  cout << endl << "Nominal number of events: " << nsk_0 << endl
-       << "   +1 sigma:              " << nsk_p << "\t" << frac_nsk_p << "%" << endl
-       << "   -1 sigma:              " << nsk_m << "\t" << frac_nsk_m << "%" << endl;
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == conv::kSKmUndefined) continue;
-    cout << util::AsString(m) << "\t" 
-	 << nskmode_p[im] << "   " << frac_nskmode_p[im] << "%" << "\t"
-	 << nskmode_m[im] << "   " << frac_nskmode_m[im] << "%" << endl;
-  }
-
-  TH1D * summary_p = 0, * summary_m = 0, * categories_p = 0, * categories_m = 0;
-  TH1D * summarymode_p[conv::knm], * summarymode_m[conv::knm], * categoriesmode_p[conv::knm], * categoriesmode_m[conv::knm];
-  f.GetObject("summary_p",summary_p);
-  f.GetObject("summary_m",summary_m);
-  f.GetObject("categories_p",categories_p);
-  f.GetObject("categories_m",categories_m);
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == conv::kSKmUndefined) continue;
-    summarymode_p[im] = 0;
-    summarymode_m[im] = 0;
-    categoriesmode_p[im] = 0;
-    categoriesmode_m[im] = 0;
-    f.GetObject(Form("summary_p_%s",util::AsStringCompact(m).c_str()),summarymode_p[im]);
-    f.GetObject(Form("summary_m_%s",util::AsStringCompact(m).c_str()),summarymode_m[im]);
-    f.GetObject(Form("categories_p_%s",util::AsStringCompact(m).c_str()),categoriesmode_p[im]);
-    f.GetObject(Form("categories_m_%s",util::AsStringCompact(m).c_str()),categoriesmode_m[im]);
-  }
-
-  cout << conv::kNumOfNuisanceParams1Rmu << " summary bins" << endl;
-
-  TH1D * summary_temp = new TH1D("","",conv::kNumOfNuisanceParams1Rmu,0,conv::kNumOfNuisanceParams1Rmu);
-  summary_temp->GetYaxis()->SetTitle("% change");
-  int i = 0;
-  for(; i < conv::kNumOfParamsInBANFFfit; i++)
-    summary_temp->GetXaxis()->SetBinLabel(i+1,Form("banff_%02d",i));
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_pf"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_sf"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_bindE"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_wshape"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_shape_ccoth"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_pilessdelta"); i++; 
-  //summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_enushape"); i++; 
-  //summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ccqeE1"); i++; 
-  //summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ccqeE2"); i++; 
-  //summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_cc1piE1"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_cccoh"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nc1piC"); i++; 
-  //summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nccoh"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_ncoth"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_nuetonumu"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"xsec_norm_antinutonu"); i++; 
-  summary_temp->GetXaxis()->SetBinLabel(i+1,"sk_energy_scale"); i++; 
-  /*
-    summary_temp->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_other_eff"); i++;
-    summary_temp->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccnonqe_eff"); i++;
-    summary_temp->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_nc_eff"); i++;
-    summary_temp->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_nuecc_eff"); i++;
-    summary_temp->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_0"); i++;
-    summary_temp->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_1"); i++;
-    summary_temp->GetXaxis()->SetBinLabel(i+1,"sk_1Rmu_ccqe_ring_counting_eff_2"); i++;
-    for(int j = 0; j < conv::kNumOfFSIParams; j++, i++)
-      summary_temp->GetXaxis()->SetBinLabel(i+1,Form("fsi_%03d",j));
-  */
-  for(int j = 0; j < conv::kNumOfSKDetFSIParams; j++, i++)
-    summary_temp->GetXaxis()->SetBinLabel(i+1,Form("skdetfsi_%03d",j));
-
-  TH1D * categories_temp = new TH1D("categories_temp","categories_temp",11,0,11);
-  categories_temp->GetYaxis()->SetTitle("% change");
-  i = 0;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"all"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"all(without-energy-scale)"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"BANFF"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"BANFF-flux"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"BANFF-xsec"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"unconstrained-xsec"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"xsec-all(BANFF+unconstrained)"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"sk-detector"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"sk-detector(without-energy-scale)"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"sk-ccqe-ring-counting-efficiency"); i++;
-  categories_temp->GetXaxis()->SetBinLabel(i+1,"fsi"); i++;
-
-  if(!summary_p) {
-    summary_p = new TH1D(*summary_temp);
-    summary_p->SetLineColor(kRed);
-    summary_p->SetName ("summary_p");
-    summary_p->SetTitle("summary_p");
-  }
-  if(!summary_m) {
-    summary_m = new TH1D(*summary_temp);
-    summary_m->SetLineColor(kBlue);
-    summary_m->SetName ("summary_m");
-    summary_m->SetTitle("summary_m");
-  }
-  if(!categories_p) {
-    categories_p = new TH1D(*categories_temp);
-    categories_p->SetLineColor(kRed);
-    categories_p->SetName ("categories_p");
-    categories_p->SetTitle("categories_p");
-  }
-  if(!categories_m) {
-    categories_m = new TH1D(*categories_temp);
-    categories_m->SetLineColor(kBlue);
-    categories_m->SetName ("categories_m");
-    categories_m->SetTitle("categories_m");
-  }
-  for(int im = 0; im < conv::knm; im++) {
-    conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-    if(m == conv::kSKmUndefined) continue;
-    if(!summarymode_p[im]) {
-      summarymode_p[im] = new TH1D(*summary_temp);
-      summarymode_p[im]->SetLineColor(kRed);
-      summarymode_p[im]->SetName (Form("summarymode_p_%s",util::AsStringCompact(m).c_str()));
-      summarymode_p[im]->SetTitle(Form("summarymode_p_%s",util::AsStringCompact(m).c_str()));
-    }
-    if(!summarymode_m[im]) {
-      summarymode_m[im] = new TH1D(*summary_temp);
-      summarymode_m[im]->SetLineColor(kBlue);
-      summarymode_m[im]->SetName (Form("summarymode_m_%s",util::AsStringCompact(m).c_str()));
-      summarymode_m[im]->SetTitle(Form("summarymode_m_%s",util::AsStringCompact(m).c_str()));
-    }
-    if(!categoriesmode_p[im]) {
-      categoriesmode_p[im] = new TH1D(*categories_temp);
-      categoriesmode_p[im]->SetLineColor(kRed);
-      categoriesmode_p[im]->SetName (Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()));
-      categoriesmode_p[im]->SetTitle(Form("categoriesmode_p_%s",util::AsStringCompact(m).c_str()));
-    }
-    if(!categoriesmode_m[im]) {
-      categoriesmode_m[im] = new TH1D(*categories_temp);
-      categoriesmode_m[im]->SetLineColor(kBlue);
-      categoriesmode_m[im]->SetName (Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()));
-      categoriesmode_m[im]->SetTitle(Form("categoriesmode_m_%s",util::AsStringCompact(m).c_str()));
-    }
-  }//im
-
-
-  if(mode >= 100) {
-    summary_p->Fill(modetitle.c_str(),frac_nsk_p);
-    summary_m->Fill(modetitle.c_str(),frac_nsk_m);
-    summary_p->Write();
-    summary_m->Write();
-    for(int im = 0; im < conv::knm; im++) {
-      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-      if(m == conv::kSKmUndefined) continue;
-      summarymode_p[im]->Fill(modetitle.c_str(),frac_nskmode_p[im]);
-      summarymode_m[im]->Fill(modetitle.c_str(),frac_nskmode_m[im]);
-      summarymode_p[im]->Write();
-      summarymode_m[im]->Write();
-    }
-  }
-  else{
-    categories_p->Fill(modetitle.c_str(),frac_nsk_p);
-    categories_m->Fill(modetitle.c_str(),frac_nsk_m);
-    categories_p->Write();
-    categories_m->Write();
-    for(int im = 0; im < conv::knm; im++) {
-      conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
-      if(m == conv::kSKmUndefined) continue;
-      categoriesmode_p[im]->Fill(modetitle.c_str(),frac_nskmode_p[im]);
-      categoriesmode_m[im]->Fill(modetitle.c_str(),frac_nskmode_m[im]);
-      categoriesmode_p[im]->Write();
-      categoriesmode_m[im]->Write();
-
-    }
-  }
-  f.Close();
-}
+  //Draw & save
+  TCanvas * c = new TCanvas();
+  hNsk->Draw();
+  c->SaveAs(Form("%s_%s_nsk_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  hErecoPlus1Sigma->Draw();
+  c->SaveAs(Form("%s_%s_pluserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  hErecoMinus1Sigma->Draw();
+  c->SaveAs(Form("%s_%s_minuserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  hErecoPlus1SigmaEnv->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
+  hErecoPlus1SigmaEnv ->SetLineStyle(2);
+  hErecoMinus1SigmaEnv->SetLineStyle(2);
+  hErecoPlus1SigmaEnv  ->SetLineColor(kCyan);
+  hErecoPlus1Sigma     ->SetLineColor(kCyan);
+  hErecoPlus3Sigma     ->SetLineColor(kBlue);
+  hErecoMinus1SigmaEnv ->SetLineColor(kViolet);
+  hErecoMinus1Sigma    ->SetLineColor(kViolet);
+  hErecoMinus3Sigma    ->SetLineColor(kRed);
+  hErecoPlus1SigmaEnv ->Draw();
+  hErecoMinus1SigmaEnv->Draw("same");
+  hErecoNominal->Draw("same");
+  c->SaveAs(Form("%s_%s_envelope_per_bin_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
+  TH1D * hErecoPlus1SigmaEnv_per50MeV = spectrum_to_per_50mev(hErecoPlus1SigmaEnv);
+  TH1D * hErecoMinus1SigmaEnv_per50MeV = spectrum_to_per_50mev(hErecoMinus1SigmaEnv);
+  
+  TCanvas * c = new TCanvas();
+  hErecoPlus1SigmaEnv_per50MeV->Draw();
+  hErecoMinus1SigmaEnv_per50MeV->Draw("same");
+  hErecoNominal_per50MeV->Draw("same");
+  c->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  
+  TCanvas * c = new TCanvas();
+  c->cd();
+  double max_limit = 1.1*TMath::Max(hErecoPlus3Sigma->GetMaximum(),hErecoMinus3Sigma->GetMaximum());
+  double min_limit = 1.1*TMath::Min(hErecoPlus3Sigma->GetMinimum(),hErecoMinus3Sigma->GetMinimum());
+  max_limit = TMath::Max(fabs(max_limit),fabs(min_limit));
+  min_limit = -max_limit;
+  hErecoPlus1Sigma->SetMaximum(max_limit);
+  hErecoPlus1Sigma->SetMinimum(min_limit);
+  hErecoPlus1Sigma ->Draw();
+  hErecoMinus1Sigma->Draw("same");
+  hErecoPlus3Sigma ->Draw("same");
+  hErecoMinus3Sigma->Draw("same");
+  
+  TLine zeroline(hErecoPlus1Sigma->GetXaxis()->GetXmin(),0,hErecoPlus1Sigma->GetXaxis()->GetXmax(),0);
+  zeroline.Draw();
+  c->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+
+  TCanvas * csys = new TCanvas();
+  csys->Divide(ceil(sqrt(np)),ceil(sqrt(np)));
+  for(int ip=0; ip < np; ip++) {
+    //if(!fparm->IsNuisance(p)) continue; 
+    csys->cd(ip+1);
+    hSysThrown[ip]->Draw();
+    cout << ip << "\t" << hSysThrown[ip]->GetTitle() << endl;
+  }
+ 
+  delete c;
+  delete csys;
+
+  f.Close();
+
+  // format info to write
+  stringstream streamer;
+  if(!update_rootfile) {
+    streamer << "\\begin{table}"   << endl;
+    streamer << "\\begin{tabular}{| c | c c |}" << endl;
+    streamer << "\\hline" << endl;
+    streamer << "Nsk RMS/Mean &  "
+             << "BANFF pre "
+             << "BANFF post "
+             << endl;
+    streamer << "\\hline" << endl;
+  }
+  string banffpre = "-";
+  if(mode == 0 || mode == 1)
+    banffpre = "?";
+  streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline" << endl;
+  cout << streamer.str() << endl;
+
+  // get size of file
+  long size;
+  streamer.seekg(0,ifstream::end);
+  size=streamer.tellg();
+  streamer.seekg(0);
+  // write to outfile
+  outfile.write (streamer.str().c_str(),size);
+  outfile.close();
+
+  cout << "Tweaks performed in " 
+       << w.CpuTime() << " sec." << endl;
+}
