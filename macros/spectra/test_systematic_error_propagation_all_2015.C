@@ -27,7 +27,7 @@ void test_systematic_error_propagation_all_2015
   const char * fit_param_list     = "nuosc3f_12fix+nuisance",
   const char * mixparamchoice     = "sinsqtheta",
   const char * hierarchy          = "normal",
-  int    tablesyst_idx            = 10,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
+  int    tablesyst_idx            = -99,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
   const bool   drawplots          = false
 )
 {
@@ -882,7 +882,7 @@ void test_systematic_error_propagation_all_2015
 
   // Write mode table for a single systematic
 
-  else{
+  else if(tablesyst_idx>=0){
 
     // Check if param is right
     bool NotRightPar = false;
@@ -919,11 +919,11 @@ void test_systematic_error_propagation_all_2015
     streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
     streamer << "\\hline \\hline" << endl;
     streamer << "{\\bf Component} &  "
-	     << "{\\bf Nominal}   &  "
-	     << "{\\bf BANFF tuned} &  "
-	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
-	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
-	     << endl;
+  	     << "{\\bf Nominal}   &  "
+  	     << "{\\bf BANFF tuned} &  "
+  	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
+  	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
+  	     << endl;
     streamer << "\\hline" << endl;
     
     for (int im = 0; im < conv::knm; im++) {
@@ -940,30 +940,30 @@ void test_systematic_error_propagation_all_2015
       double frac_m = (tot_m - tot)/tot * 100;
 
       streamer         << setw(ncol1)  << setfill(' ')
-		       << util::AsStringTex(m)
-		       << endcolumn
-		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
-		       << endcolumn
-		       << tot
-		       << endcolumn
-		       << tot_p 
-		       << endcolumn
-		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
-		       << endcolumn
-		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
-		       << endcolumn
-		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
-		       << endrow
-		       << endl; 
+  		       << util::AsStringTex(m)
+  		       << endcolumn
+  		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+  		       << endcolumn
+  		       << tot
+  		       << endcolumn
+  		       << tot_p 
+  		       << endcolumn
+  		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
+  		       << endcolumn
+  		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
+  		       << endcolumn
+  		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
+  		       << endrow
+  		       << endl; 
 
-    } // loop over modes
+      } // loop over modes
 
     streamer << "\\hline" << endl;
     streamer << "\\end{tabular}" << endl;
     streamer << "\\caption{$\\pm 1 \\sigma$ effect of " 
-	     << util::AsStringPaperTex(p) 
-	     << ".}"
-	     << endl;
+  	     << util::AsStringPaperTex(p) 
+  	     << ".}"
+  	     << endl;
     streamer << "\\end{table}" << endl;
     streamer << "\\clearpage" << endl;
     cout << streamer.str() << endl;
@@ -985,8 +985,131 @@ void test_systematic_error_propagation_all_2015
     outfile.close();
 
   } // end if table
-    
 
+
+
+
+
+
+
+
+
+
+
+
+
+  // Write mode table for a single systematic
+
+  else if(tablesyst_idx==-99){
+
+      //output file name
+      string output_file_mode (Form("systematic_tables-%s-%s-AllModes.tex",oscparams.c_str(),sk_sample));
+    
+      // write document header to outfile
+      ofstream outfile (output_file_mode.c_str());
+      string f;
+      f += "\\documentclass[10pt,a4paper]{article}\n";
+      f += ("\\usepackage{amsmath}\n");
+      f += ("\\usepackage{graphicx}\n");
+      f += ("\\usepackage{dcolumn}\n");
+      f += ("\\usepackage[cm]{fullpage}\n");
+      f += ("\\begin{document}\n");
+      outfile.write (f.c_str(),f.size());
+      outfile.close();
+
+      
+      stringstream streamer;
+
+      // produce a table for each systematic parameter
+
+      for(int ip = 0; ip < np; ip++) {
+      	conv::PhysParamId_t p = fparm->WhichParam(ip);
+      	if(!fparm->IsNuisance(p)) continue; 
+      	string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
+      	if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter		
+      	streamer << "\\begin{table}"   << endl;
+	streamer << "\\tiny" << endl;
+	streamer << "\\center" << endl;
+	streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
+	streamer << "\\hline \\hline" << endl;
+	streamer << "{\\bf Component} &  "
+		 << "{\\bf Nominal}   &  "
+      		 << "{\\bf BANFF tuned} &  "
+      		 << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
+      		 << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
+      		 << endl;
+	streamer << "\\hline" << endl;
+	
+      	for (int im = 0; im < conv::knm; im++) {
+      	  conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+      	  if(m == conv::kSKmUndefined) continue;
+      	  if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+      	  string modestr = util::AsStringCompact(m);
+	  
+      	  double totnom = hErecoNomMode[im]->Integral();
+      	  double tot = hErecoTunMode[im]->Integral();
+      	  double tot_p = hErecoTunMode_p1sigma[ip][im]->Integral();
+      	  double tot_m = hErecoTunMode_m1sigma[ip][im]->Integral();
+      	  double frac_p = (tot_p - tot)/tot * 100;
+      	  double frac_m = (tot_m - tot)/tot * 100;
+	  
+      	  streamer         << setw(ncol1)  << setfill(' ')
+      			   << util::AsStringTex(m)
+      			   << endcolumn
+      			   << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+      			   << endcolumn
+      			   << tot
+      			   << endcolumn
+      			   << tot_p 
+      			   << endcolumn
+      			   << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
+      			   << endcolumn
+      			   << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
+      			   << endcolumn
+      			   << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
+      			   << endrow
+      			   << endl; 
+	  
+      	} // loop over modes
+	
+      	streamer << "\\hline" << endl;
+      	streamer << "\\end{tabular}" << endl;
+      	streamer << "\\caption{$\\pm 1 \\sigma$ effect of " 
+		 << util::AsStringPaperTex(p) 
+      		 << ".}"
+      		 << endl;
+      	streamer << "\\end{table}" << endl;
+      	streamer << "\\clearpage" << endl;
+      	cout << streamer.str() << endl;
+	
+      } // end loop over systematics
+
+
+
+
+      // get size of file
+      long size;
+      streamer.seekg(0,ifstream::end);
+      size=streamer.tellg();
+      streamer.seekg(0);
+      ofstream outfile (output_file_mode.c_str(),ios_base::app);
+      // write to outfile
+      outfile.write (streamer.str().c_str(),size);
+      outfile.close();
+      
+      ofstream outfile (output_file_mode.c_str(),ios_base::trunc&&ios_base::out);
+      string f;
+      f += ("\\end{document}\n");
+      outfile.write (f.c_str(),f.size());
+      outfile.close();
+  }
+  else{
+    cout << endl;
+    cout << "You didn't choose any table option" << endl;
+    cout << "tablesyst_idx = " << tablesyst_idx << endl;
+    cout << endl;      
+  } // end if table
+    
 
 
   return;
