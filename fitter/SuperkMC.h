@@ -108,6 +108,8 @@ public:
   void SetMassHierarchy(conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
     
   void NevDebug(conv::SKMCTemplateType_t t, string name);
+  
+  void FillTemplateArrays(bool with_tuning_weights = false);
 
 private:
 
@@ -117,7 +119,7 @@ private:
   void Book    (void);
 
   // Fill MC templates from the input SK event tree or from other sources
-  void FillTemplate (conv::SuperkSample_t s, conv::SuperkMode_t m);
+  void FillTemplateHistogram(conv::SuperkSample_t s, conv::SuperkMode_t m);
   void FillSpecialTemplates (void);
   
   // Apply BANFF flux + cross section tuning (based on ND280 data) on top of NA61-based flux tuned MC
@@ -161,6 +163,7 @@ private:
   TH2D *     fMCTemplOri[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
   TH2D *     fMCTemplNom[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning
   TH2D *     fMCTemplRPA[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + with rel RPA
+  TH2D *     fMCTemplPOT[conv::kns][conv::knm];        ///< Ereco-Etrue MC template(sample,mode): nominal + ext/tuning + with rel RPA
 
   TH2D *     fMCVariableTempl[conv::kns][conv::knm];
   

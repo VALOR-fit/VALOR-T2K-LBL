@@ -81,11 +81,17 @@ string valor::util::AsString(valor::conv::OscAnaType_t a)
 string valor::util::AsString(conv::SKMCTemplateType_t t)
 {
   switch(t) {
+    case ( kSKMCtOri ) : 
+      return "straight from the MC trees";
+      break;
+    case ( kSKMCtPOT ) : 
+      return "flux and POT weighted, no NIWG weights";
+      break;
     case ( kSKMCtNom ) : 
-      return "nominal";          
+      return "nominal with weights from SKMC branches";
       break;
     case ( kSKMCtRPA ) : 
-      return "nominal + rel RPA";          
+      return "nominal + rel RPA";
       break;
     case ( kSKMCtTun ) : 
       return "tuned"; 
@@ -198,6 +204,7 @@ valor::conv::SKMCTemplateType_t
 {
   if(sh == "ori")        return kSKMCtOri;
   if(sh == "nom")        return kSKMCtNom;
+  if(sh == "pot")        return kSKMCtPOT;
   if(sh == "rpa")        return kSKMCtRPA;
   if(sh == "tun")        return kSKMCtTun;
   if(sh == "sys")        return kSKMCtSys;
