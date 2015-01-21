@@ -1,6 +1,14 @@
 #include <iomanip.h>
 #include <TXMLEngine.h>
 
+void SetRatioNullTo1(TH1D *hratiomy){
+  for(int ibin=0;ibin<hratiomy->GetNbinsX();ibin++){
+    double cont = hratiomy->GetBinContent(ibin+1);
+    if(cont==0) 
+      hratiomy->SetBinContent(ibin+1,1.);
+  }
+}
+
 void test_systematic_error_propagation_all_2015
 (
   int          mode               = 0,                                         /* options: see above */
@@ -18,7 +26,9 @@ void test_systematic_error_propagation_all_2015
   //const char * fit_param_list     = "nuosc3fbar_fixnonbar_12fix+nuisance", 
   const char * fit_param_list     = "nuosc3f_12fix+nuisance",
   const char * mixparamchoice     = "sinsqtheta",
-  const char * hierarchy          = "normal"
+  const char * hierarchy          = "normal",
+  int    tablesyst_idx            = 10,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
+  const bool   drawplots          = false
 )
 {
   using namespace std;
@@ -102,20 +112,6 @@ void test_systematic_error_propagation_all_2015
  //output file name
   string oscparams = 
     util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
-  string output_file (Form("systematic_tables-%s-%s.tex",oscparams.c_str(),sk_sample));
-
-  // write document header to outfile
-  ofstream outfile (output_file.c_str());
-  string f;
-  f += "\\documentclass[10pt,a4paper]{article}\n";
-  f += ("\\usepackage{amsmath}\n");
-  
-  f += ("\\usepackage{graphicx}\n");
-  f += ("\\usepackage{dcolumn}\n");
-  f += ("\\usepackage[cm]{fullpage}\n");
-  f += ("\\begin{document}\n");
-  outfile.write (f.c_str(),f.size());
-  outfile.close();
 
   // Precison for printed-out numerical results
   int nprecisionnev = 4; // <-- for number of events
@@ -136,25 +132,40 @@ void test_systematic_error_propagation_all_2015
 
   // Define the tweak histograms
 
+  TH1D *hErecoTun;
+  TH1D *hErecoTunMode[conv::knm];
+  TH1D *hRatioTun;
+  TH1D *hRatioTunMode[conv::knm];
+  TH1D *hErecoNom;
+  TH1D *hErecoNomMode[conv::knm];
+
   TH1D *hErecoTun_p1sigma_all;
   TH1D *hErecoTun_m1sigma_all;
   TH1D *hErecoTun_p1sigma[np];
   TH1D *hErecoTun_m1sigma[np];
+  TH1D *hErecoTunMode_p1sigma[np][conv::knm];
+  TH1D *hErecoTunMode_m1sigma[np][conv::knm];
 
   TH1D *hErecoTun_p3sigma_all;
   TH1D *hErecoTun_m3sigma_all;
   TH1D *hErecoTun_p3sigma[np];
   TH1D *hErecoTun_m3sigma[np];
+  TH1D *hErecoTunMode_p3sigma[np][conv::knm];
+  TH1D *hErecoTunMode_m3sigma[np][conv::knm];
 
   TH1D *hRatioTun_p1sigma_all;
   TH1D *hRatioTun_m1sigma_all;
   TH1D *hRatioTun_p1sigma[np];
   TH1D *hRatioTun_m1sigma[np];
+  TH1D *hRatioTunMode_p1sigma[np][conv::knm];
+  TH1D *hRatioTunMode_m1sigma[np][conv::knm];
 
   TH1D *hRatioTun_p3sigma_all;
   TH1D *hRatioTun_m3sigma_all;
   TH1D *hRatioTun_p3sigma[np];
   TH1D *hRatioTun_m3sigma[np];
+  TH1D *hRatioTunMode_p3sigma[np][conv::knm];
+  TH1D *hRatioTunMode_m3sigma[np][conv::knm];
 
   const double nskdetfsi     = conv::kNumOfSKDetFSIParams;
   const double nskdetfsi_rhc = conv::kNumOfRHCSKDetFSIParams;
@@ -193,33 +204,69 @@ void test_systematic_error_propagation_all_2015
   for(int ip = 0; ip < nskdetfsi_rhc; ip++) 
       (*vcentral_skdetfsi_rhc)[ip] = 1.;    
 
+
+
   // Get tuned MC - with BANFF tuning
+
   skexp.GetBANFF()->RestoreTunedMC();
   skexp.GetBANFF()->RestoreRHCTunedMC();
-  skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-  skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
-  skexp.TweakSystematic("sk_e_scale",0.);
+  // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
+  // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
+  // skexp.TweakSystematic("sk_e_scale",0.);
+  // skexp.TweakSystematic("sk_e_scale_rhc",0.);
+  skexp.ResetSystematics();
   skexp.Generate(ph);
-  TH1D *hErecoTun = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  hErecoTun = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   hErecoTun->SetName("hErecoTun");
+  
+  for (int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+    if(m == conv::kSKmUndefined) continue;
+    if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+    string modestr = util::AsStringCompact(m);
+    hErecoTunMode[im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+    char name[200];
+    sprintf(name,"hErecoTun_%s",modestr.c_str());
+    hErecoTunMode[im]->SetName(name);
+  }
 
   // Get tweaked ratio histograms - with BANFF tuning
   char name[200];
   sprintf(name,"hRatioTun");
-  TH1D *hRatioTun = (TH1D*)hErecoTun->Clone(name);
+  hRatioTun = (TH1D*)hErecoTun->Clone(name);
   hRatioTun->Divide(hErecoTun);
-  
+  SetRatioNullTo1(hRatioTun);
+
   // Get nominal MC - No BANFF tuning
+  skexp.ResetSystematics();
   skexp.GetBANFF()->RestoreNominalMC();
   skexp.GetBANFF()->RestoreRHCNominalMC();
-  skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-  skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
-  skexp.TweakSystematic("sk_e_scale",0.);
+  // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
+  // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
+  // skexp.TweakSystematic("sk_e_scale",0.);
+  // skexp.TweakSystematic("sk_e_scale_rhc",0.);
   skexp.Generate(ph);
-  TH1D *hErecoNom = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  hErecoNom = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   hErecoNom->SetName("hErecoNom");
 
+  for (int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+    if(m == conv::kSKmUndefined) continue;
+    if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+    string modestr = util::AsStringCompact(m);
+    hErecoNomMode[im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+    char name[200];
+    sprintf(name,"hErecoNomMode_%s",modestr.c_str());
+    hErecoNomMode[im]->SetName(name);
+  }
 
+  for (int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+    if(m == conv::kSKmUndefined) continue;
+    if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+    string modestr = util::AsStringCompact(m);
+  }
+ 
   // Loop over systematics 
 
   int ip_banff = 0;
@@ -251,15 +298,15 @@ void test_systematic_error_propagation_all_2015
 
 	  tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
 	  tweak_m1 = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));	 
-	  tweak_p1 = TMath::Max(tweak_p1,0.);
-	  tweak_m1 = TMath::Max(tweak_m1,0.);
+	  //tweak_p1 = TMath::Max(tweak_p1,0.);
+	  //tweak_m1 = TMath::Max(tweak_m1,0.);
 	  vp1sigma_skdetfsi_rhc[ip_skdetfsi_rhc] = tweak_p1;
 	  vm1sigma_skdetfsi_rhc[ip_skdetfsi_rhc] = tweak_m1;
 
 	  tweak_p3 = bestfit + (3 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
 	  tweak_m3 = bestfit - (3 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));	 
-	  tweak_p3 = TMath::Max(tweak_p3,0.);
-	  tweak_m3 = TMath::Max(tweak_m3,0.);
+	  //tweak_p3 = TMath::Max(tweak_p3,0.);
+	  //tweak_m3 = TMath::Max(tweak_m3,0.);
 	  vp3sigma_skdetfsi_rhc[ip_skdetfsi_rhc] = tweak_p3;
 	  vm3sigma_skdetfsi_rhc[ip_skdetfsi_rhc] = tweak_m3;
 
@@ -273,15 +320,15 @@ void test_systematic_error_propagation_all_2015
 
 	  tweak_p1 = bestfit + (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
 	  tweak_m1 = bestfit - (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
-	  tweak_p1 = TMath::Max(tweak_p1,0.);
-	  tweak_m1 = TMath::Max(tweak_m1,0.);
+	  //tweak_p1 = TMath::Max(tweak_p1,0.);
+	  //tweak_m1 = TMath::Max(tweak_m1,0.);
 	  vp1sigma_banff_rhc[ip_banff_rhc] = tweak_p1;
 	  vm1sigma_banff_rhc[ip_banff_rhc] = tweak_m1;
 
 	  tweak_p3 = bestfit + (3 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
 	  tweak_m3 = bestfit - (3 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
-	  tweak_p3 = TMath::Max(tweak_p3,0.);
-	  tweak_m3 = TMath::Max(tweak_m3,0.);
+	  //tweak_p3 = TMath::Max(tweak_p3,0.);
+	  //tweak_m3 = TMath::Max(tweak_m3,0.);
 	  vp3sigma_banff_rhc[ip_banff_rhc] = tweak_p3;
 	  vm3sigma_banff_rhc[ip_banff_rhc] = tweak_m3;
 
@@ -309,15 +356,15 @@ void test_systematic_error_propagation_all_2015
 
     	  tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
     	  tweak_m1 = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
-	  tweak_p1 = TMath::Max(tweak_p1,0.);
-	  tweak_m1 = TMath::Max(tweak_m1,0.);
+	  //tweak_p1 = TMath::Max(tweak_p1,0.);
+	  //tweak_m1 = TMath::Max(tweak_m1,0.);
 	  vp1sigma_skdetfsi[ip_skdetfsi] = tweak_p1;
 	  vm1sigma_skdetfsi[ip_skdetfsi] = tweak_m1;
 
     	  tweak_p3 = bestfit + (3 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
     	  tweak_m3 = bestfit - (3 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
-	  tweak_p3 = TMath::Max(tweak_p3,0.);
-	  tweak_m3 = TMath::Max(tweak_m3,0.);
+	  //tweak_p3 = TMath::Max(tweak_p3,0.);
+	  //tweak_m3 = TMath::Max(tweak_m3,0.);
 	  vp3sigma_skdetfsi[ip_skdetfsi] = tweak_p3;
 	  vm3sigma_skdetfsi[ip_skdetfsi] = tweak_m3;
 	  
@@ -331,15 +378,15 @@ void test_systematic_error_propagation_all_2015
 
     	  tweak_p1 = bestfit + (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
     	  tweak_m1 = bestfit - (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
-	  tweak_p1 = TMath::Max(tweak_p1,0.);
-	  tweak_m1 = TMath::Max(tweak_m1,0.);
+	  //tweak_p1 = TMath::Max(tweak_p1,0.);
+	  //tweak_m1 = TMath::Max(tweak_m1,0.);
 	  vp1sigma_banff[ip_banff] = tweak_p1;
 	  vm1sigma_banff[ip_banff] = tweak_m1;
 
     	  tweak_p3 = bestfit + (3 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
     	  tweak_m3 = bestfit - (3 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
-	  tweak_p3 = TMath::Max(tweak_p3,0.);
-	  tweak_m3 = TMath::Max(tweak_m3,0.);
+	  //tweak_p3 = TMath::Max(tweak_p3,0.);
+	  //tweak_m3 = TMath::Max(tweak_m3,0.);
 	  vp3sigma_banff[ip_banff] = tweak_p3;
 	  vm3sigma_banff[ip_banff] = tweak_m3;
 
@@ -364,41 +411,35 @@ void test_systematic_error_propagation_all_2015
     // RHC/FHC sample is treated inside the function
     if(sysstr.find("sk_e_scale") && idx<0){ 
       double bestfit = 0.;
-
       tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
       tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-      tweak_p1 = TMath::Max(tweak_p1,0.);
-      tweak_m1 = TMath::Max(tweak_m1,0.);
+      //tweak_p1 = TMath::Max(tweak_p1,0.);
+      //tweak_m1 = TMath::Max(tweak_m1,0.);
       vp1sigma_skescale = tweak_p1;
       vm1sigma_skescale = tweak_m1;
 
       tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
       tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-      tweak_p3 = TMath::Max(tweak_p3,0.);
-      tweak_m3 = TMath::Max(tweak_m3,0.);
+      //tweak_p3 = TMath::Max(tweak_p3,0.);
+      //tweak_m3 = TMath::Max(tweak_m3,0.);
       vp3sigma_skescale = tweak_p3;
       vm3sigma_skescale = tweak_m3;
     }
-
-
-
-
-
+    
 
     // Get the tweaked spectrum histograms
 
     // +1 sigma tweak systematic
     skexp.GetBANFF()->RestoreTunedMC();
     skexp.GetBANFF()->RestoreRHCTunedMC();
-    skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-    skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
-    skexp.TweakSystematic("sk_e_scale",0.);
+    // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
+    // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
+    // skexp.TweakSystematic("sk_e_scale",0.);
+    // skexp.TweakSystematic("sk_e_scale_rhc",0.);
+    skexp.ResetSystematics();
     skexp.TweakSystematic(sysstr,tweak_p1);
     skexp.Generate(ph);
- 
-    //skexp.GetBANFF()->PrintRHCSystematicVariations();
-    //skexp.GetSuperkDetectorFSI()->PrintRHCSystematicVariations();
-   
+  
     hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     char name[200];
     sprintf(name,"hErecoTun_p1sigma_%s",sysstr.c_str());
@@ -408,19 +449,30 @@ void test_systematic_error_propagation_all_2015
     sprintf(name,"hRatioTun_p1sigma_%s",sysstr.c_str());
     hRatioTun_p1sigma[ip] = (TH1D*)hErecoTun_p1sigma[ip]->Clone(name);
     hRatioTun_p1sigma[ip]->Divide(hErecoTun);
+    SetRatioNullTo1(hRatioTun_p1sigma[ip]);
+
+    for (int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+      if(m == conv::kSKmUndefined) continue;
+      if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+      string modestr = util::AsStringCompact(m);
+      hErecoTunMode_p1sigma[ip][im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      char name[200];
+      sprintf(name,"hErecoTun_p1sigma_%s_%s",sysstr.c_str(),modestr.c_str());
+      hErecoTunMode_p1sigma[ip][im]->SetName(name);
+    }
+
 
     // -1 sigma tweak systematic
     skexp.GetBANFF()->RestoreTunedMC();
     skexp.GetBANFF()->RestoreRHCTunedMC();
-    skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-    skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
-    skexp.TweakSystematic("sk_e_scale",0.);
+    // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
+    // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
+    // skexp.TweakSystematic("sk_e_scale",0.);
+    // skexp.TweakSystematic("sk_e_scale_rhc",0.);
+    skexp.ResetSystematics();
     skexp.TweakSystematic(sysstr,tweak_m1);
     skexp.Generate(ph);
-    
-    //skexp.GetBANFF()->PrintRHCSystematicVariations();
-    //skexp.GetSuperkDetectorFSI()->PrintRHCSystematicVariations();
-
 
     hErecoTun_m1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     char name[200];
@@ -431,18 +483,29 @@ void test_systematic_error_propagation_all_2015
     sprintf(name,"hRatioTun_m1sigma_%s",sysstr.c_str());
     hRatioTun_m1sigma[ip] = (TH1D*)hErecoTun_m1sigma[ip]->Clone(name);
     hRatioTun_m1sigma[ip]->Divide(hErecoTun);
+    SetRatioNullTo1(hRatioTun_m1sigma[ip]);
 
+    for (int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+      if(m == conv::kSKmUndefined) continue;
+      if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+      string modestr = util::AsStringCompact(m);
+      hErecoTunMode_m1sigma[ip][im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      char name[200];
+      sprintf(name,"hErecoTun_m1sigma_%s_%s",sysstr.c_str(),modestr.c_str());
+      hErecoTunMode_m1sigma[ip][im]->SetName(name);
+    }
+    
     // +3 sigma tweak systematic
     skexp.GetBANFF()->RestoreTunedMC();
     skexp.GetBANFF()->RestoreRHCTunedMC();
-    skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-    skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
-    skexp.TweakSystematic("sk_e_scale",0.);
+    // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
+    // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
+    // skexp.TweakSystematic("sk_e_scale",0.);
+    // skexp.TweakSystematic("sk_e_scale_rhc",0.);
+    skexp.ResetSystematics();
     skexp.TweakSystematic(sysstr,tweak_p3);
     skexp.Generate(ph);
-
-    //skexp.GetBANFF()->PrintRHCSystematicVariations();
-    //skexp.GetSuperkDetectorFSI()->PrintRHCSystematicVariations();
 
     hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     char name[200];
@@ -453,19 +516,29 @@ void test_systematic_error_propagation_all_2015
     sprintf(name,"hRatioTun_p3sigma_%s",sysstr.c_str());
     hRatioTun_p3sigma[ip] = (TH1D*)hErecoTun_p3sigma[ip]->Clone(name);
     hRatioTun_p3sigma[ip]->Divide(hErecoTun);
+    SetRatioNullTo1(hRatioTun_p3sigma[ip]);
+
+    for (int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+      if(m == conv::kSKmUndefined) continue;
+      if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+      string modestr = util::AsStringCompact(m);
+      hErecoTunMode_p3sigma[ip][im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      char name[200];
+      sprintf(name,"hErecoTun_p3sigma_%s_%s",sysstr.c_str(),modestr.c_str());
+      hErecoTunMode_p3sigma[ip][im]->SetName(name);
+    }
 
     // -3 sigma tweak systematic
     skexp.GetBANFF()->RestoreTunedMC();
     skexp.GetBANFF()->RestoreRHCTunedMC();
-    skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-    skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
-    skexp.TweakSystematic("sk_e_scale",0);
+    // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
+    // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
+    // skexp.TweakSystematic("sk_e_scale",0.);
+    // skexp.TweakSystematic("sk_e_scale_rhc",0.);
+    skexp.ResetSystematics();
     skexp.TweakSystematic(sysstr,tweak_m3);
     skexp.Generate(ph);
-    
-    skexp.GetBANFF()->PrintRHCSystematicVariations();
-    skexp.GetSuperkDetectorFSI()->PrintRHCSystematicVariations();
-
 
     hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     char name[200];
@@ -476,30 +549,22 @@ void test_systematic_error_propagation_all_2015
     sprintf(name,"hRatioTun_m3sigma_%s",sysstr.c_str());
     hRatioTun_m3sigma[ip] = (TH1D*)hErecoTun_m3sigma[ip]->Clone(name);
     hRatioTun_m3sigma[ip]->Divide(hErecoTun);
-
-    cout << hErecoTun_m3sigma[ip]->GetName() << " "
-	 << hErecoTun_m1sigma[ip]->GetName() << " "
-	 << hErecoTun->GetName() << " "
-	 << hErecoTun_p1sigma[ip]->GetName() << " "
-	 << hErecoTun_p3sigma[ip]->GetName() << " "
-	 << endl;
-
-    cout << hErecoTun_m3sigma[ip]->Integral() << " "
-	 << hErecoTun_m1sigma[ip]->Integral() << " "
-	 << hErecoTun->Integral() << " "
-	 << hErecoTun_p1sigma[ip]->Integral() << " "
-	 << hErecoTun_p3sigma[ip]->Integral() << " "
-	 << endl;
-
-    cout << hRatioTun_m3sigma[ip]->Integral() << " "
-	 << hRatioTun_m1sigma[ip]->Integral() << " "
-	 << hRatioTun->Integral() << " "
-	 << hRatioTun_p1sigma[ip]->Integral() << " "
-	 << hRatioTun_p3sigma[ip]->Integral() << " "
-	 << endl;
+    SetRatioNullTo1(hRatioTun_m3sigma[ip]);
    
+    for (int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+      if(m == conv::kSKmUndefined) continue;
+      if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+      string modestr = util::AsStringCompact(m);
+      hErecoTunMode_m3sigma[ip][im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      char name[200];
+      sprintf(name,"hErecoTun_m3sigma_%s_%s",sysstr.c_str(),modestr.c_str());
+      hErecoTunMode_m3sigma[ip][im]->SetName(name);
+    }
+    
   } // end loop over systematics
- 
+    
+   
 
   cout << endl;
   cout << endl;
@@ -508,10 +573,12 @@ void test_systematic_error_propagation_all_2015
  
   skexp.GetBANFF()->RestoreTunedMC();
   skexp.GetBANFF()->RestoreRHCTunedMC();
-  skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-  skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
-  skexp.TweakSystematic("sk_e_scale",0.);
-  
+  // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
+  // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
+  // skexp.TweakSystematic("sk_e_scale",0.);
+  // skexp.TweakSystematic("sk_e_scale_rhc",0.);
+  skexp.ResetSystematics();
+
   TVectorD *twkv_banff_p1sigma;
   TVectorD *twkv_banff_rhc_p1sigma;
   TVectorD *twkv_skdetfsi_p1sigma;
@@ -523,6 +590,7 @@ void test_systematic_error_propagation_all_2015
     skexp.GetBANFF()->TweakRHC(true,twkv_banff_rhc_p1sigma);
     skexp.GetSuperkDetectorFSI()->TweakRHC(true,twkv_skdetfsi_rhc_p1sigma);
     skexp.TweakSystematic("sk_e_scale",vp1sigma_skescale);
+    skexp.TweakSystematic("sk_e_scale_rhc",vp1sigma_skescale);
     skexp.Generate(ph);
   }
   else if(util::IsFHCSample(s)){
@@ -531,6 +599,7 @@ void test_systematic_error_propagation_all_2015
     skexp.GetBANFF()->Tweak(true,twkv_banff_p1sigma);
     skexp.GetSuperkDetectorFSI()->Tweak(true,twkv_skdetfsi_p1sigma);
     skexp.TweakSystematic("sk_e_scale",vp1sigma_skescale);
+    skexp.TweakSystematic("sk_e_scale_rhc",vp1sigma_skescale);
     skexp.Generate(ph);
   }
   else{
@@ -552,10 +621,12 @@ void test_systematic_error_propagation_all_2015
  
   skexp.GetBANFF()->RestoreTunedMC();
   skexp.GetBANFF()->RestoreRHCTunedMC();
-  skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-  skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
-  skexp.TweakSystematic("sk_e_scale",.0);
-  
+  // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
+  // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi_rhc);
+  // skexp.TweakSystematic("sk_e_scale",.0);
+  // skexp.TweakSystematic("sk_e_scale_rhc",.0);
+  skexp.ResetSystematics();
+
   TVectorD *twkv_banff_m1sigma;
   TVectorD *twkv_banff_rhc_m1sigma;
   TVectorD *twkv_skdetfsi_m1sigma;
@@ -567,6 +638,7 @@ void test_systematic_error_propagation_all_2015
     skexp.GetBANFF()->TweakRHC(true,twkv_banff_rhc_m1sigma);
     skexp.GetSuperkDetectorFSI()->TweakRHC(true,twkv_skdetfsi_rhc_m1sigma);
     skexp.TweakSystematic("sk_e_scale",vm1sigma_skescale);
+    skexp.TweakSystematic("sk_e_scale_rhc",vm1sigma_skescale);
     skexp.Generate(ph);
   }
   else if(util::IsFHCSample(s)){
@@ -575,6 +647,7 @@ void test_systematic_error_propagation_all_2015
     skexp.GetBANFF()->Tweak(true,twkv_banff_m1sigma);
     skexp.GetSuperkDetectorFSI()->Tweak(true,twkv_skdetfsi_m1sigma);
     skexp.TweakSystematic("sk_e_scale",vm1sigma_skescale);
+    skexp.TweakSystematic("sk_e_scale_rhc",vm1sigma_skescale);
     skexp.Generate(ph);
   }
   else{
@@ -595,75 +668,80 @@ void test_systematic_error_propagation_all_2015
 
 
 
-
-  // Draw +-1 sigma and +-3 sigma plots
-  
-  for(int ip = 0; ip < np; ip++) {
-    conv::PhysParamId_t p = fparm->WhichParam(ip);
-    if(!fparm->IsNuisance(p)) continue; 
-    string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
-    if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+  if(drawplots){
     
-    string sample_name = util::AsStringCompact(s);
-    const char * sname = sample_name.c_str();
-
-    // Spectra 
-    sprintf(name,"cspectra_%s",sysstr.c_str());
-    TCanvas *cspectra = new TCanvas(name,name);
-
-    double max_limit = 1.1*TMath::Max(hRatioTun_m3sigma[ip]->GetMaximum(),hRatioTun_m3sigma[ip]->GetMaximum());
-    double min_limit = 1.1*TMath::Min(hRatioTun_m3sigma[ip]->GetMaximum(),hRatioTun_m3sigma[ip]->GetMaximum());
-    max_limit = TMath::Max(fabs(max_limit),fabs(min_limit));
-    min_limit = -max_limit;
-    hErecoTun->SetMaximum(max_limit);
-    hErecoTun->SetMinimum(0.);
-
-    hErecoTun->Draw();
-    hErecoTun_m1sigma[ip]->Draw("same");
-    hErecoTun_m3sigma[ip]->Draw("same");
-    hErecoTun_p1sigma[ip]->Draw("same");
-    hErecoTun_p3sigma[ip]->Draw("same");
-
-    hErecoTun            ->SetLineWidth(0.8);
-    hErecoTun_m1sigma[ip]->SetLineWidth(0.8);
-    hErecoTun_m3sigma[ip]->SetLineWidth(0.8);
-    hErecoTun_p1sigma[ip]->SetLineWidth(0.8);
-    hErecoTun_p3sigma[ip]->SetLineWidth(0.8);
-
-    hErecoTun_m1sigma[ip]->SetLineColor(kRed);
-    hErecoTun_p1sigma[ip]->SetLineColor(kRed);
-    hErecoTun_m3sigma[ip]->SetLineColor(kGreen);
-    hErecoTun_p3sigma[ip]->SetLineColor(kGreen);
-    cspectra->SaveAs(Form("Spectrum_%s_%s_nsk_%s.eps",sname,sysstr.c_str(),oscparams.c_str()));
-
-    // Ratios
-
-    char name[200];
-    sprintf(name,"cratio_%s",sysstr.c_str());
-    TCanvas *cratio = new TCanvas(name,name);
-    hRatioTun->SetMaximum(3.);
-    hRatioTun->SetMinimum(0.);
-
-    hRatioTun->Draw();
-    hRatioTun_m1sigma[ip]->Draw("same");
-    hRatioTun_m3sigma[ip]->Draw("same");
-    hRatioTun_p1sigma[ip]->Draw("same");
-    hRatioTun_p3sigma[ip]->Draw("same");
-
-    hRatioTun            ->SetLineWidth(0.8);
-    hRatioTun_m1sigma[ip]->SetLineWidth(0.8);
-    hRatioTun_m3sigma[ip]->SetLineWidth(0.8);
-    hRatioTun_p1sigma[ip]->SetLineWidth(0.8);
-    hRatioTun_p3sigma[ip]->SetLineWidth(0.8);
-
-    hRatioTun_m1sigma[ip]->SetLineColor(kRed);
-    hRatioTun_p1sigma[ip]->SetLineColor(kRed);
-    hRatioTun_m3sigma[ip]->SetLineColor(kGreen);
-    hRatioTun_p3sigma[ip]->SetLineColor(kGreen);
-    cratio->SaveAs(Form("Ratio_%s_%s_nsk_%s.eps",sname,sysstr.c_str(),oscparams.c_str()));
+    // Draw +-1 sigma and +-3 sigma plots
     
-  } // end loop over systematics
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      if(!fparm->IsNuisance(p)) continue; 
+      string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
+      if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+      
+      string sample_name = util::AsStringCompact(s);
+      const char * sname = sample_name.c_str();
+      
+      // Spectra 
+      sprintf(name,"cspectra_%s",sysstr.c_str());
+      TCanvas *cspectra = new TCanvas(name,name);
+      
+      double max_limit = 1.1 * TMath::Max(hErecoTun_p3sigma[ip]->GetMaximum(),hErecoTun_m3sigma[ip]->GetMaximum());
+      hErecoTun_m1sigma[ip]->SetMaximum(max_limit);
+      hErecoTun_m1sigma[ip]->SetMinimum(0.);
+      
+      hErecoTun_m1sigma[ip]->Draw();
+      hErecoTun_m3sigma[ip]->Draw("same");
+      hErecoTun_p1sigma[ip]->Draw("same");
+      hErecoTun_p3sigma[ip]->Draw("same");
+      hErecoTun->Draw("same");
+      
+      hErecoTun            ->SetLineWidth(0.8);
+      hErecoTun_m1sigma[ip]->SetLineWidth(0.8);
+      hErecoTun_m3sigma[ip]->SetLineWidth(0.8);
+      hErecoTun_p1sigma[ip]->SetLineWidth(0.8);
+      hErecoTun_p3sigma[ip]->SetLineWidth(0.8);
+      
+      hErecoTun_m1sigma[ip]->SetLineColor(kRed);
+      hErecoTun_p1sigma[ip]->SetLineColor(kRed);
+      hErecoTun_m3sigma[ip]->SetLineColor(kGreen);
+      hErecoTun_p3sigma[ip]->SetLineColor(kGreen);
+      cspectra->SaveAs(Form("Spectrum_%s_%s_nsk_%s.eps",sname,sysstr.c_str(),oscparams.c_str()));
+      
+      // Ratios
+      
+      char name[200];
+      sprintf(name,"cratio_%s",sysstr.c_str());
+      TCanvas *cratio = new TCanvas(name,name);
+      
+      double max_limit = TMath::Max(hRatioTun_p3sigma[ip]->GetMaximum(),hRatioTun_m3sigma[ip]->GetMaximum());
+      double min_limit = TMath::Min(hRatioTun_p3sigma[ip]->GetMinimum(),hRatioTun_m3sigma[ip]->GetMinimum());
+      max_limit *= 1.1;
+      min_limit /= 1.1;
+      
+      hRatioTun_m1sigma[ip]->SetMaximum(max_limit);
+      hRatioTun_m1sigma[ip]->SetMinimum(min_limit);
+      
+      hRatioTun_m1sigma[ip]->Draw();
+      hRatioTun_m3sigma[ip]->Draw("same");
+      hRatioTun_p1sigma[ip]->Draw("same");
+      hRatioTun_p3sigma[ip]->Draw("same");
+      hRatioTun->Draw("same");
+      
+      hRatioTun            ->SetLineWidth(0.8);
+      hRatioTun_m1sigma[ip]->SetLineWidth(0.8);
+      hRatioTun_m3sigma[ip]->SetLineWidth(0.8);
+      hRatioTun_p1sigma[ip]->SetLineWidth(0.8);
+      hRatioTun_p3sigma[ip]->SetLineWidth(0.8);
+      
+      hRatioTun_m1sigma[ip]->SetLineColor(kRed);
+      hRatioTun_p1sigma[ip]->SetLineColor(kRed);
+      hRatioTun_m3sigma[ip]->SetLineColor(kGreen);
+      hRatioTun_p3sigma[ip]->SetLineColor(kGreen);
+      cratio->SaveAs(Form("Ratio_%s_%s_nsk_%s.eps",sname,sysstr.c_str(),oscparams.c_str()));
+    
+    } // end loop over systematics
 
+  } // end draw plots
 
 
 
@@ -684,101 +762,234 @@ void test_systematic_error_propagation_all_2015
   int ncolnev = 15;
   int ncolfrc =  8;
 
-  stringstream streamer;
-  streamer << "\\begin{table}"   << endl;
-  //streamer << "\\centering"     << endl;
-  streamer << "\\tiny" << endl;
-  streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
-  streamer << "\\hline \\hline" << endl;
-  streamer << "{\\bf Component} &  "
-  	   << "{\\bf Nominal}   &  "
-  	   << "{\\bf BANFF tuned} &  "
-    //<< "{\\bf BANFF tuned +1$\\sigma$} &  "
-    //<< "{\\bf BANFF tuned -1$\\sigma$} &  "
-	   << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
-	   << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
-  	   << endl;
-  streamer << "\\hline" << endl;
 
-  double totnom = hErecoNom->Integral();
-  double tot    = hErecoTun->Integral();
+  if(tablesyst_idx==-999){  // full table merged modes, all systematics
+    
+    // write document header to outfile
 
-  double tot_all_p = hErecoTun_p1sigma_all->Integral();
-  double tot_all_m = hErecoTun_m1sigma_all->Integral(); 
-  double frac_all_p = (tot_all_p - tot)/tot * 100;
-  double frac_all_m = (tot_all_m - tot)/tot * 100;
+    string output_file (Form("systematic_tables-%s-%s.tex",oscparams.c_str(),sk_sample));
+    ofstream outfile (output_file.c_str());
+    string f;
+    f += "\\documentclass[10pt,a4paper]{article}\n";
+    f += ("\\usepackage{amsmath}\n");
+    
+    f += ("\\usepackage{graphicx}\n");
+    f += ("\\usepackage{dcolumn}\n");
+    f += ("\\usepackage[cm]{fullpage}\n");
+    f += ("\\begin{document}\n");
+    outfile.write (f.c_str(),f.size());
+    outfile.close();
 
-  streamer         << setw(ncol1)  << setfill(' ')
-		   << "All syst"
-		   << endcolumn
-		   << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
-		   << endcolumn
-		   << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot
-		   << endcolumn
-		   << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot_all_p
-		   << endcolumn
-		   << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_p << pctsymbol
-		   << endcolumn
-		   << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_all_m
-		   << endcolumn
-		   << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_m << pctsymbol
-		   << endrow
-		   << endl; 
-  streamer << "\\hline" << endl;    
-
-
-  for(int ip = 0; ip < np; ip++) {
-    conv::PhysParamId_t p = fparm->WhichParam(ip);
-    if(!fparm->IsNuisance(p)) continue; 
-    string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
-    if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-
-    double tot_p  = hErecoTun_p1sigma[ip]->Integral();
-    double tot_m  = hErecoTun_m1sigma[ip]->Integral();    
-    double frac_p = (tot_p - tot)/tot * 100;
-    double frac_m = (tot_m - tot)/tot * 100;
-
+    stringstream streamer;
+    streamer << "\\begin{table}"   << endl;
+    streamer << "\\tiny" << endl;
+    streamer << "\\center" << endl;
+    streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
+    streamer << "\\hline \\hline" << endl;
+    streamer << "{\\bf Parameter} &  "
+	     << "{\\bf Nominal}   &  "
+	     << "{\\bf BANFF tuned} &  "
+	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
+	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
+	     << endl;
+    streamer << "\\hline" << endl;
+    
+    double totnom = hErecoNom->Integral();
+    double tot    = hErecoTun->Integral();
+    
+    double tot_all_p = hErecoTun_p1sigma_all->Integral();
+    double tot_all_m = hErecoTun_m1sigma_all->Integral(); 
+    double frac_all_p = (tot_all_p - tot)/tot * 100;
+    double frac_all_m = (tot_all_m - tot)/tot * 100;
+    
     streamer         << setw(ncol1)  << setfill(' ')
-		     << util::AsStringPaperTex(util::PhysParamIdFromString(sysstr))
+		     << "All syst"
 		     << endcolumn
 		     << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
 		     << endcolumn
-		     << tot
+		     << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot
 		     << endcolumn
-		     << tot_p 
+		     << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot_all_p
 		     << endcolumn
-		     << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
+		     << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_p << pctsymbol
 		     << endcolumn
-		     << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
+		     << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_all_m
 		     << endcolumn
-		     << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
+		     << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_m << pctsymbol
 		     << endrow
 		     << endl; 
-  
-    if(sysstr=="f_banffnorm_nuetonumu_rhc")
-      streamer << "\\hline" << endl;    
+    streamer << "\\hline" << endl;    
+    
+    
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      if(!fparm->IsNuisance(p)) continue; 
+      string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
+      if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+      
+      double tot_p  = hErecoTun_p1sigma[ip]->Integral();
+      double tot_m  = hErecoTun_m1sigma[ip]->Integral();    
+      double frac_p = (tot_p - tot)/tot * 100;
+      double frac_m = (tot_m - tot)/tot * 100;
+      
+      streamer         << setw(ncol1)  << setfill(' ')
+		       << util::AsStringPaperTex(util::PhysParamIdFromString(sysstr))
+		       << endcolumn
+		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+		       << endcolumn
+		       << tot
+		       << endcolumn
+		       << tot_p 
+		       << endcolumn
+		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
+		       << endcolumn
+		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
+		       << endcolumn
+		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
+		       << endrow
+		       << endl; 
+      
+      if(sysstr=="f_banffnorm_nuetonumu_rhc")
+	streamer << "\\hline" << endl;    
+    }
+    streamer << "\\hline" << endl;
+    streamer << "\\end{tabular}" << endl;
+    streamer << "\\caption{$\\pm 1 \\sigma$ effect of the systematic parameters on the total number of events.}"
+	     << endl;
+    streamer << "\\end{table}" << endl;
+    streamer << "\\clearpage" << endl;
+    cout << streamer.str() << endl;
+    
+    // get size of file
+    long size;
+    streamer.seekg(0,ifstream::end);
+    size=streamer.tellg();
+    streamer.seekg(0);
+    ofstream outfile (output_file.c_str(),ios_base::app);
+    // write to outfile
+    outfile.write (streamer.str().c_str(),size);
+    outfile.close();
+    
+    ofstream outfile (output_file.c_str(),ios_base::trunc&&ios_base::out);
+    string f;
+    f += ("\\end{document}\n");
+    outfile.write (f.c_str(),f.size());
+    outfile.close();
+
   }
-  streamer << "\\hline" << endl;
-  streamer << "\\end{tabular}" << endl;
-  streamer << "\\end{table}" << endl;
-  streamer << "\\clearpage" << endl;
-  cout << streamer.str() << endl;
   
-  // get size of file
-  long size;
-  streamer.seekg(0,ifstream::end);
-  size=streamer.tellg();
-  streamer.seekg(0);
-  ofstream outfile (output_file.c_str(),ios_base::app);
-  // write to outfile
-  outfile.write (streamer.str().c_str(),size);
-  outfile.close();
-  
-  ofstream outfile (output_file.c_str(),ios_base::trunc&&ios_base::out);
-  string f;
-  f += ("\\end{document}\n");
-  outfile.write (f.c_str(),f.size());
-  outfile.close();
+
+
+  // Write mode table for a single systematic
+
+  else{
+
+    // Check if param is right
+    bool NotRightPar = false;
+    conv::PhysParamId_t p = fparm->WhichParam(tablesyst_idx);
+    if(!fparm->IsNuisance(p)) NotRightPar = true; 
+    string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
+    if(sysstr=="f_rpa") NotRightPar = true;  // no tweaks for RPA, which is a discrete parameter
+    
+    if(NotRightPar){
+      cout << "The systematic parameter has no tweaks!!!" << endl;
+      cout << "terminate the script without the mode table" << endl;
+      return;
+    }
+
+    //output file name
+    string output_file_mode (Form("systematic_tables-%s-%s-%s.tex",oscparams.c_str(),sk_sample,sysstr.c_str()));
+    
+    // write document header to outfile
+    ofstream outfile (output_file_mode.c_str());
+    string f;
+    f += "\\documentclass[10pt,a4paper]{article}\n";
+    f += ("\\usepackage{amsmath}\n");
+    f += ("\\usepackage{graphicx}\n");
+    f += ("\\usepackage{dcolumn}\n");
+    f += ("\\usepackage[cm]{fullpage}\n");
+    f += ("\\begin{document}\n");
+    outfile.write (f.c_str(),f.size());
+    outfile.close();
+
+    stringstream streamer;
+    streamer << "\\begin{table}"   << endl;
+    streamer << "\\tiny" << endl;
+    steramer << "\\center" << endl;
+    streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
+    streamer << "\\hline \\hline" << endl;
+    streamer << "{\\bf Component} &  "
+	     << "{\\bf Nominal}   &  "
+	     << "{\\bf BANFF tuned} &  "
+	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
+	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
+	     << endl;
+    streamer << "\\hline" << endl;
+    
+    for (int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+      if(m == conv::kSKmUndefined) continue;
+      if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+      string modestr = util::AsStringCompact(m);
+      
+      double totnom = hErecoNomMode[im]->Integral();
+      double tot = hErecoTunMode[im]->Integral();
+      double tot_p = hErecoTunMode_p1sigma[tablesyst_idx][im]->Integral();
+      double tot_m = hErecoTunMode_m1sigma[tablesyst_idx][im]->Integral();
+      double frac_p = (tot_p - tot)/tot * 100;
+      double frac_m = (tot_m - tot)/tot * 100;
+
+      streamer         << setw(ncol1)  << setfill(' ')
+		       << util::AsStringTex(m)
+		       << endcolumn
+		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+		       << endcolumn
+		       << tot
+		       << endcolumn
+		       << tot_p 
+		       << endcolumn
+		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
+		       << endcolumn
+		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
+		       << endcolumn
+		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
+		       << endrow
+		       << endl; 
+
+    } // loop over modes
+
+    streamer << "\\hline" << endl;
+    streamer << "\\end{tabular}" << endl;
+    streamer << "\\caption{$\\pm 1 \\sigma$ effect of " 
+	     << util::AsStringPaperTex(p) 
+	     << ".}"
+	     << endl;
+    streamer << "\\end{table}" << endl;
+    streamer << "\\clearpage" << endl;
+    cout << streamer.str() << endl;
+    
+    // get size of file
+    long size;
+    streamer.seekg(0,ifstream::end);
+    size=streamer.tellg();
+    streamer.seekg(0);
+    ofstream outfile (output_file_mode.c_str(),ios_base::app);
+    // write to outfile
+    outfile.write (streamer.str().c_str(),size);
+    outfile.close();
+    
+    ofstream outfile (output_file_mode.c_str(),ios_base::trunc&&ios_base::out);
+    string f;
+    f += ("\\end{document}\n");
+    outfile.write (f.c_str(),f.size());
+    outfile.close();
+
+  } // end if table
+    
+
+
 
   return;
 }
+
+
