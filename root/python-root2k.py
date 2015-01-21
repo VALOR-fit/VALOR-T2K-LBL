@@ -38,4 +38,6 @@ conv = valor.conv
 util = valor.util
 Opt  = valor.Opt.Instance()
 Rnd  = valor.Rnd.Instance()
+arr_idx = util.ArrIdx.Instance()
+
 
