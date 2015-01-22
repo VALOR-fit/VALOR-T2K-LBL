@@ -2913,6 +2913,31 @@ static const double kErecoBinEdgesMultiRmu[kNErecoBinsMultiRmu+1] =
         2.500,  2.600,  2.700,  2.800,  2.900,  3.000,  3.500,  4.000,  5.000,  7.000,
         10.000, 30.000
     };
+#elif ERECO_BINS_1RMU == 5
+    static const int kNErecoBins1Rmu = 39;
+    static const double kErecoBinEdges1Rmu[kNErecoBins1Rmu+1] =
+      {
+	0, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7,
+	0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.2, 1.3,
+	1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.4,
+	2.6, 2.8, 3.0, 3.25, 3.5, 3.75, 4.0, 4.5, 5.0, 30.0
+      };
+    static const int kRHCNErecoBins1Rmu = 39;
+    static const double kRHCErecoBinEdges1Rmu[kRHCNErecoBins1Rmu+1] =
+      {
+	0, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7,
+	0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.2, 1.3,
+	1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.4,
+	2.6, 2.8, 3.0, 3.25, 3.5, 3.75, 4.0, 4.5, 5.0, 30.0
+      };
+    static const int kNErecoBinsMultiRmu = 39;
+    static const double kErecoBinEdgesMultiRmu[kNErecoBinsMultiRmu+1] =
+      {
+	0, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7,
+	0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.2, 1.3,
+	1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.4,
+	2.6, 2.8, 3.0, 3.25, 3.5, 3.75, 4.0, 4.5, 5.0, 30.0
+      };
 #endif
 
 //
