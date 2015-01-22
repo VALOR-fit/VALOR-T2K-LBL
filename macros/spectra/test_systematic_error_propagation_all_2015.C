@@ -27,7 +27,9 @@ void test_systematic_error_propagation_all_2015
  const char * fit_param_list     = "nuosc3f_12fix+nuisance",
  const char * mixparamchoice     = "sinsqtheta",
  const char * hierarchy          = "normal",
- int    tablesyst_idx            = -999,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
+ 
+ int    tablesyst_idx            = -99,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
+ string tablesyst_name           = "f_banff17_rhc", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false
  )
 {
@@ -879,125 +881,6 @@ void test_systematic_error_propagation_all_2015
   }
   
 
-
-  // // Write mode table for a single systematic
-
-  // else if(tablesyst_idx>=0){
-
-  //   // Check if param is right
-  //   bool NotRightPar = false;
-  //   conv::PhysParamId_t p = fparm->WhichParam(tablesyst_idx);
-  //   if(!fparm->IsNuisance(p)) NotRightPar = true; 
-  //   string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
-  //   if(sysstr=="f_rpa") NotRightPar = true;  // no tweaks for RPA, which is a discrete parameter
-    
-  //   if(NotRightPar){
-  //     cout << "The systematic parameter has no tweaks!!!" << endl;
-  //     cout << "terminate the script without the mode table" << endl;
-  //     return;
-  //   }
-
-  //   //output file name
-  //   string output_file_mode (Form("systematic_tables-%s-%s-%s.tex",oscparams.c_str(),sk_sample,sysstr.c_str()));
-    
-  //   // write document header to outfile
-  //   ofstream outfile (output_file_mode.c_str());
-  //   string f;
-  //   f += "\\documentclass[10pt,a4paper]{article}\n";
-  //   f += ("\\usepackage{amsmath}\n");
-  //   f += ("\\usepackage{graphicx}\n");
-  //   f += ("\\usepackage{dcolumn}\n");
-  //   f += ("\\usepackage[cm]{fullpage}\n");
-  //   f += ("\\begin{document}\n");
-  //   outfile.write (f.c_str(),f.size());
-  //   outfile.close();
-
-  //   stringstream streamer;
-  //   streamer << "\\begin{table}"   << endl;
-  //   streamer << "\\tiny" << endl;
-  //   steramer << "\\center" << endl;
-  //   streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
-  //   streamer << "\\hline \\hline" << endl;
-  //   streamer << "{\\bf Component} &  "
-  // 	     << "{\\bf Nominal}   &  "
-  // 	     << "{\\bf BANFF tuned} &  "
-  // 	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
-  // 	     << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
-  // 	     << endl;
-  //   streamer << "\\hline" << endl;
-    
-  //   for (int im = 0; im < conv::knm; im++) {
-  //     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
-  //     if(m == conv::kSKmUndefined) continue;
-  //     if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
-  //     string modestr = util::AsStringCompact(m);
-      
-  //     double totnom = hErecoNomMode[im]->Integral();
-  //     double tot = hErecoTunMode[im]->Integral();
-  //     double tot_p = hErecoTunMode_p1sigma[tablesyst_idx][im]->Integral();
-  //     double tot_m = hErecoTunMode_m1sigma[tablesyst_idx][im]->Integral();
-  //     double frac_p = (tot_p - tot)/tot * 100;
-  //     double frac_m = (tot_m - tot)/tot * 100;
-
-  //     streamer         << setw(ncol1)  << setfill(' ')
-  // 		       << util::AsStringTex(m)
-  // 		       << endcolumn
-  // 		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
-  // 		       << endcolumn
-  // 		       << tot
-  // 		       << endcolumn
-  // 		       << tot_p 
-  // 		       << endcolumn
-  // 		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
-  // 		       << endcolumn
-  // 		       << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
-  // 		       << endcolumn
-  // 		       << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
-  // 		       << endrow
-  // 		       << endl; 
-
-  //   } // loop over modes
-
-  //   streamer << "\\hline" << endl;
-  //   streamer << "\\end{tabular}" << endl;
-  //   streamer << "\\caption{$\\pm 1 \\sigma$ effect of " 
-  // 	     << util::AsStringPaperTex(p) 
-  // 	     << ".}"
-  // 	     << endl;
-  //   streamer << "\\end{table}" << endl;
-  //   streamer << "\\clearpage" << endl;
-  //   cout << streamer.str() << endl;
-    
-  //   // get size of file
-  //   long size;
-  //   streamer.seekg(0,ifstream::end);
-  //   size=streamer.tellg();
-  //   streamer.seekg(0);
-  //   ofstream outfile (output_file_mode.c_str(),ios_base::app);
-  //   // write to outfile
-  //   outfile.write (streamer.str().c_str(),size);
-  //   outfile.close();
-    
-  //   ofstream outfile (output_file_mode.c_str(),ios_base::trunc&&ios_base::out);
-  //   string f;
-  //   f += ("\\end{document}\n");
-  //   outfile.write (f.c_str(),f.size());
-  //   outfile.close();
-
-  // } // end if table
-
-
-
-
-
-
-
-
-
-
-
-
-
   // Write mode table for a single systematic
 
   else if(tablesyst_idx==-99 || tablesyst_idx>0){
@@ -1024,12 +907,19 @@ void test_systematic_error_propagation_all_2015
 
     for(int ip = 0; ip < np; ip++) {
 
-      if( (tablesyst_idx != -99) && (tablesyst_idx != ip) ) continue;
+      if( (tablesyst_idx != -99) && (tablesyst_name == "") ){
+	cout << endl;
+	cout << "You chose the single systematic mode table w/o selecting the paramter" << endl;
+	cout << endl;
+	exit(1);
+      }
       
       conv::PhysParamId_t p = fparm->WhichParam(ip);
       if(!fparm->IsNuisance(p)) continue; 
       string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter		
+      if( (tablesyst_idx != -99) && (tablesyst_name != sysstr) ) continue;
+      
       streamer << "\\begin{table}"   << endl;
       streamer << "\\tiny" << endl;
       streamer << "\\center" << endl;
@@ -1072,7 +962,15 @@ void test_systematic_error_propagation_all_2015
 			 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
 			 << endrow
 			 << endl; 
-	  
+
+	if(modestr=="numuncoth" ||
+	   modestr=="numubarncoth" ||
+	   modestr=="nuencoth" ||
+	   modestr=="oscnueccoth" ||
+	   modestr=="nuebarncoth" )
+	  streamer << "\\hline" << endl;    
+	
+	
       } // loop over modes
 	
       streamer << "\\hline" << endl;
@@ -1086,11 +984,8 @@ void test_systematic_error_propagation_all_2015
       cout << streamer.str() << endl;
 	
     } // end loop over systematics
-
-
-
-
-      // get size of file
+    
+    // get size of file
     long size;
     streamer.seekg(0,ifstream::end);
     size=streamer.tellg();
