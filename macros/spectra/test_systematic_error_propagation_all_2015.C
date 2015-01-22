@@ -58,6 +58,8 @@ void test_systematic_error_propagation_all_2015
     return;
   }
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
+  string sample_name = util::AsStringCompact(s);
+  const char * sname = sample_name.c_str();
   
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -74,8 +76,8 @@ void test_systematic_error_propagation_all_2015
     if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
     if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
   }
-  if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
-  if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  if(input_dm23sq < -1)   input_dm23sq  = conv::kGlobFitDm23sq;
+  if(input_dm12sq < -1)   input_dm12sq  = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
@@ -680,9 +682,6 @@ void test_systematic_error_propagation_all_2015
       string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
       
-      string sample_name = util::AsStringCompact(s);
-      const char * sname = sample_name.c_str();
-      
       // Spectra 
       sprintf(name,"cspectra_%s",sysstr.c_str());
       TCanvas *cspectra = new TCanvas(name,name);
@@ -703,10 +702,11 @@ void test_systematic_error_propagation_all_2015
       hErecoTun_p1sigma[ip]->SetLineWidth(0.8);
       hErecoTun_p3sigma[ip]->SetLineWidth(0.8);
       
-      hErecoTun_m1sigma[ip]->SetLineColor(kRed);
-      hErecoTun_p1sigma[ip]->SetLineColor(kRed);
-      hErecoTun_m3sigma[ip]->SetLineColor(kGreen);
-      hErecoTun_p3sigma[ip]->SetLineColor(kGreen);
+      hErecoTun_m1sigma[ip]->SetLineColor(kViolet);
+      hErecoTun_p1sigma[ip]->SetLineColor(kCyan);
+      hErecoTun_m3sigma[ip]->SetLineColor(kRed);
+      hErecoTun_p3sigma[ip]->SetLineColor(kBlue);
+      
       cspectra->SaveAs(Form("Spectrum_%s_%s_nsk_%s.eps",sname,sysstr.c_str(),oscparams.c_str()));
       
       // Ratios
@@ -715,13 +715,13 @@ void test_systematic_error_propagation_all_2015
       sprintf(name,"cratio_%s",sysstr.c_str());
       TCanvas *cratio = new TCanvas(name,name);
       
-      double max_limit = TMath::Max(hRatioTun_p3sigma[ip]->GetMaximum(),hRatioTun_m3sigma[ip]->GetMaximum());
-      double min_limit = TMath::Min(hRatioTun_p3sigma[ip]->GetMinimum(),hRatioTun_m3sigma[ip]->GetMinimum());
-      max_limit *= 1.1;
-      min_limit /= 1.1;
+      double max_limit = 1.1 * fabs(TMath::Max(hRatioTun_p3sigma[ip]->GetMaximum(),hRatioTun_m3sigma[ip]->GetMaximum())-1);
+      double min_limit = 1.1 * fabs(TMath::Min(hRatioTun_p3sigma[ip]->GetMinimum(),hRatioTun_m3sigma[ip]->GetMinimum())-1);
       
-      hRatioTun_m1sigma[ip]->SetMaximum(max_limit);
-      hRatioTun_m1sigma[ip]->SetMinimum(min_limit);
+      max_limit = TMath::Max(max_limit,min_limit);
+      
+      hRatioTun_m1sigma[ip]->SetMaximum(1+max_limit);
+      hRatioTun_m1sigma[ip]->SetMinimum(1-max_limit);
       
       hRatioTun_m1sigma[ip]->Draw();
       hRatioTun_m3sigma[ip]->Draw("same");
@@ -735,10 +735,10 @@ void test_systematic_error_propagation_all_2015
       hRatioTun_p1sigma[ip]->SetLineWidth(0.8);
       hRatioTun_p3sigma[ip]->SetLineWidth(0.8);
       
-      hRatioTun_m1sigma[ip]->SetLineColor(kRed);
-      hRatioTun_p1sigma[ip]->SetLineColor(kRed);
-      hRatioTun_m3sigma[ip]->SetLineColor(kGreen);
-      hRatioTun_p3sigma[ip]->SetLineColor(kGreen);
+      hRatioTun_m1sigma[ip]->SetLineColor(kViolet);
+      hRatioTun_p1sigma[ip]->SetLineColor(kCyan);
+      hRatioTun_m3sigma[ip]->SetLineColor(kRed);
+      hRatioTun_p3sigma[ip]->SetLineColor(kBlue);
       cratio->SaveAs(Form("Ratio_%s_%s_nsk_%s.eps",sname,sysstr.c_str(),oscparams.c_str()));
     
     } // end loop over systematics
@@ -747,12 +747,29 @@ void test_systematic_error_propagation_all_2015
 
 
 
+  // Write ROOT file output
   
-
-
-
-
-
+  string file_mode = (update_rootfile ? "UPDATE" : "RECREATE");
+  TFile * output_rootfile = new TFile(Form("systematic_variations_%s.root",sname),file_mode.c_str());
+  output_rootfile->cd();
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = fparm->WhichParam(ip);
+    if(!fparm->IsNuisance(p)) continue; 
+    string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
+    if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+    
+    hErecoTun_m1sigma[ip]->Write(Form("Spectrum_%s_%s_m1",sname,sysstr.c_str()));
+    hErecoTun_m3sigma[ip]->Write(Form("Spectrum_%s_%s_m3",sname,sysstr.c_str()));
+    hErecoTun_p1sigma[ip]->Write(Form("Spectrum_%s_%s_p1",sname,sysstr.c_str()));
+    hErecoTun_p3sigma[ip]->Write(Form("Spectrum_%s_%s_p3",sname,sysstr.c_str()));
+    
+    hErecoTun_m1sigma[ip]->Write(Form("Ratio_%s_%s_m1",sname,sysstr.c_str()));
+    hErecoTun_m3sigma[ip]->Write(Form("Ratio_%s_%s_m3",sname,sysstr.c_str()));
+    hErecoTun_p1sigma[ip]->Write(Form("Ratio_%s_%s_p1",sname,sysstr.c_str()));
+    hErecoTun_p3sigma[ip]->Write(Form("Ratio_%s_%s_p3",sname,sysstr.c_str()));
+    
+  }
+  output_rootfile->Close();
 
   // Write the table 
 
