@@ -1266,7 +1266,7 @@ double NuXSec::SystWght_1p(
   }
 #endif
 
-  if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
+  if(fabs(wght) > conv::kMaxAllowedWght) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < kNXsErecoBins[s]; i++) {
