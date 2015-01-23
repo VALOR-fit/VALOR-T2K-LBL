@@ -160,6 +160,23 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __USE_NIWG2015__
   fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
+  
+  if (not (fUntunedCentralValues && fRHCUntunedCentralValues) ) {
+    cerr<<"Failed to read <untuned_parameter_central_values>"<<endl;
+    exit(-1);
+  }
+  if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
+    cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
+         << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
+         << endl;
+    exit(-1);
+  }
+  if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
+    cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
+         << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
+         << endl;
+    exit(-1);
+  }
 #endif
 
   // Get BANFF fit central values
@@ -1427,17 +1444,20 @@ void BANFF::RestoreNominalMC(void)
   //are still reading bestfit values from fBestFitValues
   //we need to modify BestFitValue(p) 
   TVectorD & current_values = *fCurrentValues;
-  //TVectorD & bestfit_values = *fBestFitValues;
+  //~ TVectorD & bestfit_values = *fBestFitValues;
 
   const int nfp = conv::kNumOfFluxParamsInBANFFfit;
   for(int i=0; i<nfp; i++) {
     current_values[i] = 1.;
-    //bestfit_values[i] = 1.;
   }
   const int nxsp = conv::kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit;
   for (int i = 0 ; i < nxsp ; i++) {
     current_values[nfp+i] = (*fUntunedCentralValues)[i];
   }
+  
+  //~ for (int i = 0 ; i < conv::kNumOfParamsInBANFFfit ; i++) {
+    //~ bestfit_values[i] = current_values[i];
+  //~ }
 }
 //________________________________________________________________________________________
 void BANFF::RestoreRHCNominalMC(void)
@@ -1454,17 +1474,20 @@ void BANFF::RestoreRHCNominalMC(void)
   //are still reading bestfit values from fBestFitValues
   //we need to modify BestFitValue(p) 
   TVectorD & current_values = *fRHCCurrentValues;
-  //TVectorD & bestfit_values = *fRHCBestFitValues;
+  //~ TVectorD & bestfit_values = *fRHCBestFitValues;
 
   const int nfp = conv::kNumOfRHCFluxParamsInBANFFfit;
   for(int i=0; i<nfp; i++) {
     current_values[i] = 1.;
-    //bestfit_values[i] = 1.;
   }
   const int nxsp = conv::kNumOfRHCParamsInBANFFfit - kNumOfRHCFluxParamsInBANFFfit;
   for (int i = 0 ; i < nxsp ; i++) {
     current_values[nfp+i] = (*fRHCUntunedCentralValues)[i];
   }
+  
+  //~ for (int i = 0 ; i < conv::kNumOfRHCParamsInBANFFfit ; i++) {
+  //~   bestfit_values[i] = current_values[i];
+  //~ }
 }
 //________________________________________________________________________________________
 
@@ -1483,17 +1506,20 @@ void BANFF::RestoreFHCpRHCNominalMC(void)
   //are still reading bestfit values from fBestFitValues
   //we need to modify BestFitValue(p) 
   TVectorD & current_values = *fFHCpRHCCurrentValues;
-  //TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  //~ TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
 
   const int nfp = conv::kNumOfFHCpRHCFluxParamsInBANFFfit;
   for(int i=0; i<nfp; i++) {
     current_values[i] = 1.;
-    //bestfit_values[i] = 1.;
   }
   const int nxsp = conv::kNumOfFHCpRHCParamsInBANFFfit - kNumOfFHCpRHCFluxParamsInBANFFfit;
   for (int i = 0 ; i < nxsp ; i++) {
     current_values[nfp+i] = (*fUntunedCentralValues)[i];
   }
+  
+  //~ for (int i = 0 ; i < conv::kNumOfFHCpRHCParamsInBANFFfit ; i++) {
+    //~ bestfit_values[i] = current_values[i];
+  //~ }
 }
 
 
