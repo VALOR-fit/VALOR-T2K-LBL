@@ -1,3 +1,4 @@
+
 <?xml version="1.0"?>
 
 <analysis_inputs analysis="T2K/VaLOR/joint" data="run1to5_prelim" flux="tun13av1.1" mc="neut/14a" ndfit="banff/prelim" oth="sk+fsi">
@@ -505,7 +506,7 @@
       -->
       
       <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
-      <objname>    covmat_skdetfsi_nue </objname>
+      <objname>    covmat_skdetfsi_rhc_nue </objname>
       
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
@@ -517,7 +518,7 @@
         <objname>    covmat_sk_fsi         </objname> 
         -->
          <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
-         <objname>    covmat_skdetfsi_numu </objname>
+         <objname>    covmat_skdetfsi_rhc_numu </objname>
         
         <objtype>    TMatrixD              </objtype>
       </covariance_matrix>
@@ -526,7 +527,7 @@
     <app>
       <covariance_matrix>
          <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
-         <objname>    covmat_skdetfsi_nue </objname>
+         <objname>    covmat_skdetfsi_rhc_nue </objname>
          
          <objtype>    TMatrixD              </objtype>
       </covariance_matrix>
