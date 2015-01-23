@@ -497,40 +497,38 @@
   <skdetfsi>
     <!--
         Covariance matrix of SKDet FSI parameters
-      -->
+    -->
     <covariance_matrix>
- 
+      <!--
       <filename>   official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
       <objname>    skfsipn_cov             </objname>
-      <!--
-      <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
-      <objname> cov_diag_all </objname>
       -->
+      
+      <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
+      <objname>    covmat_skdetfsi_nue </objname>
+      
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
     
     <disap>
       <covariance_matrix>
-
+        <!--
         <filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
         <objname>    covmat_sk_fsi         </objname> 
-        <!--
-        <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
-        <objname> cov_diag_dis </objname>
         -->
+         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
+         <objname>    covmat_skdetfsi_numu </objname>
+        
         <objtype>    TMatrixD              </objtype>
       </covariance_matrix>
     </disap>
     
     <app>
       <covariance_matrix>
-        <filename>   official/2013/skdetfsi/covariance_matrices_2013full_appearance.root  </filename>
-        <objname>    cov_total             </objname>
-        <!--
-        <filename> test/PrelimCovMatrix/cov_flux_prelim_diag_2015_skdetfsi.root </filename>
-             <objname> cov_diag_app </objname>
-        -->
-        <objtype>    TMatrixD              </objtype>
+         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
+         <objname>    covmat_skdetfsi_nue </objname>
+         
+         <objtype>    TMatrixD              </objtype>
       </covariance_matrix>
     </app>
     
