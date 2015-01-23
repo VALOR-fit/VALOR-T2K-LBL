@@ -102,7 +102,7 @@ void NuXSec::Init(void)
   }
   ////
 
-  fRPATwkDial            = 0; // NEW XSEC
+  fRPATwkDial            = 1.; // nonrelRPA is the default parameter
   fFermiMomTwkDial       = 0;
   fSpecFuncTwkDial       = 0;
   fWshapeTwkDial         = 0;
@@ -2065,7 +2065,7 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
 #elif defined(__USE_NIWG2015__)
   // RPA is a discrete value (0 or 1)
   if      (p==kNuisXSecRPA      ){
-    if(twkdial!=0 && twkdial !=1){
+    if( fabs(twkdial)>conv::kASmallNum && fabs(twkdial-1)>conv::kASmallNum ){
       if(twkdial < 0.5) twkdial = 0.;
       else              twkdial = 1.;
       std::cout << std::endl; 

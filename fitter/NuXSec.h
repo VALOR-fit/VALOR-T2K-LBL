@@ -55,7 +55,7 @@ public:
   // correlated with the flux systematic params.
 
   // NEW XSEC
-  void TweakRPA              (double twkdial) { fRPATwkDial              = twkdial; } 
+  void TweakRPA              (double twkdial) { this->Tweak(conv::kNuisXSecRPA, twkdial); } 
 
   void TweakFermiMom         (double twkdial) { fFermiMomTwkDial         = twkdial; } 
   void TweakSpecFunc         (double twkdial) { fSpecFuncTwkDial         = twkdial; } 
@@ -71,7 +71,7 @@ public:
   void TweakNormAntiNuToNu   (double twkdial) { fNormAntiNuToNuTwkDial   = twkdial; }
 
   // NEW XSEC
-  void TweakRHCRPA           (double twkdial) { fRHCRPATwkDial           = twkdial; } 
+  void TweakRHCRPA           (double twkdial) { this->Tweak(conv::kRHCNuisXSecRPA, twkdial); } 
 
   void TweakRHCFermiMom      (double twkdial) { fRHCFermiMomTwkDial      = twkdial; } 
   void TweakRHCSpecFunc      (double twkdial) { fRHCSpecFuncTwkDial      = twkdial; }
