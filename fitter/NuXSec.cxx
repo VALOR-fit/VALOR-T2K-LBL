@@ -697,7 +697,7 @@ double NuXSec::FinTuningWght_1p(
       double spline_point = (tb-untuned_value);
 #ifdef check_spline_limits
       if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
-        std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tcf: "<<wght_spl->GetXmax()<<std::endl;
+        std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
       }
 #endif
       wght = wght_spl->Eval(spline_point);
@@ -748,7 +748,7 @@ double NuXSec::FinTuningWght_1p(
       
 #ifdef check_spline_limits
       if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
-        std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tcf: "<<wght_spl->GetXmax()<<std::endl;
+        std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
       }
 #endif
       wght = wght_spl->Eval(spline_point);
@@ -1034,6 +1034,7 @@ double NuXSec::SystWght_1p(
   // BANFF param, CCothShape
   // BANFF param, Eb 
   
+  // Axial masses
   if (p == kNuisBANFFMAQE          || p == kRHCNuisBANFFMAQE       ||
       p == kNuisBANFFMARES         || p == kRHCNuisBANFFMARES      )
   {
@@ -1062,21 +1063,20 @@ double NuXSec::SystWght_1p(
     double spl_tc = (tc-untuned_value);
 #ifdef check_spline_limits
     if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
-      std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tcf: "<<wght_spl->GetXmax()<<std::endl;
+      std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
     }
 #endif
     wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
   } // end of MAQE
   
-  if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
+  // Other systematics where we check spline limits
+  else if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
       // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
-      p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
-      p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCA       ||
+           p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+           p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCA       ||
 #endif
-      p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
-      p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
-      p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE      )
+           p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth )
   {
 #if SPLINE_TYPE == -1
     return wght;
@@ -1087,9 +1087,7 @@ double NuXSec::SystWght_1p(
 
     // NEW XSEC NIWG
     // NEW XSEC
-    if(p == kRHCNuisBANFFFermiMom   || // select only RHC
-       p == kRHCNuisBANFFShapeCCoth || 
-       p == kRHCNuisBANFFBindE      || 
+    if(p == kRHCNuisBANFFShapeCCoth || 
       // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
        p == kRHCNuisBANFFSCCA       || 
@@ -1110,9 +1108,43 @@ double NuXSec::SystWght_1p(
     double spl_tc = tc-untuned_value;
 #ifdef check_spline_limits
     if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
-      std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tcf: "<<wght_spl->GetXmax()<<std::endl;
+      std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
     }
 #endif
+    wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+  }
+    
+  // Response functions where we expect to exceed the splines range.
+  else if (p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
+           p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE      )
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    double untuned_value = 0;
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+
+    // NEW XSEC NIWG
+    // NEW XSEC
+    if(p == kRHCNuisBANFFFermiMom   ||
+       p == kRHCNuisBANFFBindE       ) 
+    {
+      tb = fBANFF->RHCBestFitValue(p);
+      tc = fBANFF->RHCCurrentValue(p);
+      untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+    }
+    else {
+      tb = fBANFF->BestFitValue(p);
+      tc = fBANFF->CurrentValue(p);
+      untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
+    }
+    double spl_tb = tb-untuned_value;
+    double spl_tc = tc-untuned_value;
+    
+    if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax()-conv::kASmallNum;
+    if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin()+conv::kASmallNum;
+    
     wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
   } // end of response functions
 
