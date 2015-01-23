@@ -505,7 +505,7 @@
       -->
       
       <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
-      <objname>    covmat_skdetfsi_rhc_nue </objname>
+      <objname>    covmat_skdetfsi_rhc_joint </objname>
       
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
