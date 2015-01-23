@@ -356,10 +356,14 @@ static const int kSKHistoAttributes[kns][knm][kNGraphicAttributes] = {
     { 3006,  kBlue+7,   1,  1, kBlack }, // kSKmNuEBarNCcoh
     { 3006,    kBlack,  1,  1, kBlack }, // kSKmNuEBarNCoth
 
-    { 3001,  kBlue+3,   1,  1, kBlack }, // kSKmOscNuEBarCCQE
-    { 3345,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCC1pi
-    { 3354,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCCcoh
-    { 3016,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCCMEC
+    { 3001,  kBlue+1,   1,  1, kBlack }, // kSKmOscNuEBarCCQE
+    //{ 3345,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCC1pi
+    //{ 3354,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCCcoh
+    //{ 3016,  kBlue+5,   1,  1, kBlack }, // kSKmOscNuEBarCCMEC
+    { 3345,  kBlue-5,   1,  1, kBlack }, // kSKmOscNuEBarCC1pi
+    { 3354,  kBlue-3,   1,  1, kBlack }, // kSKmOscNuEBarCCcoh
+    { 3016,  kBlue+3,   1,  1, kBlack }, // kSKmOscNuEBarCCMEC
+
     { 3354,  kBlack-3,  1,  1, kBlack }, // kSKmOscNuEBarCCoth
 #ifndef __USE_OSC_NUMU_MC_TEMPLATES__
     {   -1,        -1, -1, -1,     -1 }, // kSKmUndefined
