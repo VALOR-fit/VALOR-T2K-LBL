@@ -1640,14 +1640,20 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
   cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
 #endif
 
-  double rpa_tweakval = fNuXSec->CurrentValue(conv::kNuisXSecRPA);
-  bool relativisticRPA = (bool) rpa_tweakval;
-  assert ( fabs ( (double)relativisticRPA - rpa_tweakval) < conv::kASmallNum); // Check RPA was exactly 1 or 0
-
   // Loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+    
+    bool is_rhc = util::IsRHCSample(s);
+    
+    double rpa_tweakval = fNuXSec->CurrentValue( is_rhc ? conv::kRHCNuisXSecRPA : conv::kNuisXSecRPA);
+    
+    bool relativisticRPA = (bool) rpa_tweakval;
+    assert ( fabs ( (double)relativisticRPA - rpa_tweakval) < conv::kASmallNum); // Check RPA was exactly 1 or 0
+    
+    //~ std::cerr<<util::AsString(s)<<"\t"<<is_rhc<<"\t"<<rpa_tweakval<<"\t"<<relativisticRPA<<std::endl;
+    
     // Loop over sample modes
     for(int im = 0; im < knm; im++) { 
       SuperkMode_t m = kSKReactionModes[is][im];

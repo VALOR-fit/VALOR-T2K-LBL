@@ -55,15 +55,15 @@ namespace valor {
     static const int kNumOfRHCXSecSyst = 15;
     #endif
     #ifdef __NUMUONLY__
-    static const int kNumOfUncXSecSyst = 1; // no uncorr xsec
-    static const int kNumOfRHCUncXSecSyst = 1; // no uncorr xsec
+    static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
+    static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
     #else
     #ifdef __NUEONLY__
-    static const int kNumOfUncXSecSyst = 1; // no uncorr xsec
-    static const int kNumOfRHCUncXSecSyst = 1; // no uncorr xsec
+    static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
+    static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
     #else
-    static const int kNumOfUncXSecSyst = 1; // no uncorr xsec
-    static const int kNumOfRHCUncXSecSyst = 1; // no uncorr xsec
+    static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
+    static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
     #endif
     #endif
     
@@ -98,7 +98,7 @@ namespace valor {
     static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] = 
       {
 	// NEW XSEC NIWG
-#if defined(__USE_NIWG2013__)	
+#if defined(__USE_NIWG2013__)
 	kNuisBANFFMAQE,             // BANFF, M_{A}  QE
 	kNuisBANFFMARES,            // BANFF, M_{A}  RES
 	kNuisBANFFCCQEE0,           // BANFF, CCQE   normalization, 0 - 1.5 GeV

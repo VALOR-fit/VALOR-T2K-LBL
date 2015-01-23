@@ -524,7 +524,7 @@ void SuperkExpectation::ResetSystematics(void)
   //RHC
   this->GetNuXSec()->Tweak(kNuisRHCToFHC, 0.);
 #elif defined(__USE_NIWG2015__)
-  this->GetNuXSec()->Tweak(kNuisXSecRPA , 0.); // NEW XSEC 
+  this->GetNuXSec()->Tweak(kNuisXSecRPA , 1.); // NEW XSEC 
 #endif
 
   // SK det + FSI
@@ -562,7 +562,7 @@ void SuperkExpectation::ResetSystematics(void)
   this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, 0.);
   #endif
 #elif defined(__USE_NIWG2015__)
-  this->GetNuXSec()->Tweak(kRHCNuisXSecRPA           , 0.); // NEW XSEC
+  this->GetNuXSec()->Tweak(kRHCNuisXSecRPA           , 1.); // NEW XSEC
 #endif
 
   /// NEW MULTIRING 2
@@ -1239,10 +1239,11 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 
 #elif defined(__USE_NIWG2015__)
   // NEW XSEC
-  double tweak_discr = Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.);
-  if(tweak_discr < 0.5) tweak_discr = 0.;
-  else tweak_discr = 1.;
-  this->GetNuXSec()->Tweak(kNuisXSecRPA             , tweak_discr);
+  // No longer tweak RPA
+  //~ double tweak_discr = Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.);
+  //~ if(tweak_discr < 0.5) tweak_discr = 0.;
+  //~ else tweak_discr = 1.;
+  //~ this->GetNuXSec()->Tweak(kNuisXSecRPA             , tweak_discr);
 #endif
 
 }

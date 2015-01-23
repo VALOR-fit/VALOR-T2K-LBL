@@ -102,7 +102,7 @@ void NuXSec::Init(void)
   }
   ////
 
-  fRPATwkDial            = 1.; // nonrelRPA is the default parameter
+  fRPATwkDial            = 1.; // relRPA is the default parameter
   fFermiMomTwkDial       = 0;
   fSpecFuncTwkDial       = 0;
   fWshapeTwkDial         = 0;
@@ -115,7 +115,8 @@ void NuXSec::Init(void)
   fNormNCothTwkDial      = 0;
   fNormNuEToNuMuTwkDial  = 0;
   fNormAntiNuToNuTwkDial = 0;
-  fRHCRPATwkDial            = 0; // NEW XSEC
+  
+  fRHCRPATwkDial            = 1; // NEW XSEC //relRPA is the default parameter
   fRHCFermiMomTwkDial       = 0;
   fRHCSpecFuncTwkDial       = 0;
   fRHCWshapeTwkDial         = 0;
@@ -2076,13 +2077,15 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
     fRPATwkDial      = twkdial; 
   }
   else if (p==kRHCNuisXSecRPA   ){
-    if(twkdial < 0.5) twkdial = 0.;
-    else              twkdial = 1.;
+    if( fabs(twkdial)>conv::kASmallNum && fabs(twkdial-1)>conv::kASmallNum ){
+      if(twkdial < 0.5) twkdial = 0.;
+      else              twkdial = 1.;
+      std::cout << std::endl; 
+      std::cout << "Tweak Dial RHC RPA must be 0 or 1 " << std::endl; 
+      std::cout << "Tweak Dial RHC RPA restored to " << twkdial << std::endl; 
+      std::cout << std::endl;
+    }
     fRHCRPATwkDial   = twkdial;
-    std::cout << std::endl; 
-    std::cout << "Tweak Dial RPA must be 0 or 1 " << std::endl; 
-    std::cout << "Tweak Dial RPA restored to " << twkdial << std::endl; 
-    std::cout << std::endl; 
   }
 #endif
   else {
