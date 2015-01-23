@@ -218,7 +218,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   double x[5] = {-5,-2,0,+2,+5};
   double y[5] = {1,1,1,1,1};
   int n = 5;
-  TSpline3 *flatspline = new TSpline3("",x,y,n);
+  TSpline3 *flatspline = new TSpline3("Missing spline",x,y,n);
 #endif //__use_flat_splines_for_missing_splines__
 
   PhysParamId_t p;
@@ -468,6 +468,23 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __USE_NIWG2015__
   fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
+  
+  if (not (fUntunedCentralValues && fRHCUntunedCentralValues) ) {
+    cerr<<"Failed to read <untuned_parameter_central_values>"<<endl;
+    exit(-1);
+  }
+  if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
+    cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
+         << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
+         << endl;
+    exit(-1);
+  }
+  if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
+    cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
+         << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
+         << endl;
+    exit(-1);
+  }
 #endif
 
   //DEBUG
@@ -602,7 +619,8 @@ double NuXSec::FinTuningWght_1p(
 //
   
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
-
+  TSpline3 * wght_spl = 0;
+  
   double wght = 1.;
   double tb;
   
@@ -628,7 +646,7 @@ double NuXSec::FinTuningWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     //if(!wght_spl)
     //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
     assert(wght_spl);
@@ -659,7 +677,7 @@ double NuXSec::FinTuningWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     //~ if(!wght_spl)
       //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
     assert(wght_spl);
@@ -699,7 +717,7 @@ double NuXSec::FinTuningWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     //~ if(!wght_spl)
       //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
     assert(wght_spl);
@@ -827,7 +845,7 @@ double NuXSec::FinTuningWght_1p(
          << endl;   
 #endif
 
-  if(fabs(wght) > conv::kMaxAllowedWght) {
+  if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < kNXsErecoBins[s]; i++) {
@@ -856,7 +874,14 @@ double NuXSec::FinTuningWght_1p(
          << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
          << " Weight [" << util::AsString(p) << "] = " << wght
          << " Current value = " << this->CurrentValue(p)
-         << endl;   
+         << endl;
+    if (wght_spl) {
+      cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
+           << endl;
+    }
+    else {
+      cout <<"Not using spline"<<std::endl;
+    }
     exit(1);
   }
   return wght;
@@ -921,6 +946,8 @@ double NuXSec::SystWght_1p(
 //
 
   // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
+  
+  TSpline3 * wght_spl = 0;
 
   double wght = 1.;
   double tb, tc;
@@ -939,7 +966,7 @@ double NuXSec::SystWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
     if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
       tb = fBANFF->RHCBestFitValue(p);
@@ -1014,7 +1041,7 @@ double NuXSec::SystWght_1p(
     return wght;
 #endif
     double untuned_value = 1;
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
 
     // NEW XSEC NIWG
@@ -1055,7 +1082,7 @@ double NuXSec::SystWght_1p(
     return wght;
 #endif
     double untuned_value = 0;
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
 
     // NEW XSEC NIWG
@@ -1142,7 +1169,7 @@ double NuXSec::SystWght_1p(
 #if SPLINE_TYPE == -1
     return wght;
 #endif
-    TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     assert(wght_spl);
     tc = this->CurrentValue(p);
     wght = wght_spl->Eval(tc);
@@ -1170,7 +1197,7 @@ double NuXSec::SystWght_1p(
       #if SPLINE_TYPE == -1
       return wght;
       #endif
-      TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
       assert(wght_spl);
       tc = TMath::Max(this->CurrentValue(p), -1.);
       wght = wght_spl->Eval(tc);
@@ -1188,7 +1215,7 @@ double NuXSec::SystWght_1p(
     //~ #if SPLINE_TYPE == -1
     //~ return wght;
     //~ #endif
-    //~ TSpline3 * wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    //~ wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
     //~ assert(wght_spl);
     //~ tc = this->CurrentValue(p);
     //~ wght = wght_spl->Eval(tc);
@@ -1207,7 +1234,7 @@ double NuXSec::SystWght_1p(
   }
 #endif
 
-  if(fabs(wght) > conv::kMaxAllowedWght) {
+  if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < kNXsErecoBins[s]; i++) {
@@ -1237,6 +1264,13 @@ double NuXSec::SystWght_1p(
          << " Weight [" << util::AsString(p) << "] = " << wght
          << " Current value = " << this->CurrentValue(p)
          << endl;
+    if (wght_spl) {
+      cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
+           << endl;
+    }
+    else {
+      cout <<"Not using spline"<<std::endl;
+    }
     exit(1);
   }
   
