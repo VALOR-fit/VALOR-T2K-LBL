@@ -752,6 +752,7 @@ void test_systematic_error_propagation_all_2015
   string file_mode = (update_rootfile ? "UPDATE" : "RECREATE");
   TFile * output_rootfile = new TFile(Form("systematic_variations_%s.root",sname),file_mode.c_str());
   output_rootfile->cd();
+  hErecoTun->Write(Form("Spectrum_%s_nominal",sname));
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     if(!fparm->IsNuisance(p)) continue; 
@@ -763,10 +764,10 @@ void test_systematic_error_propagation_all_2015
     hErecoTun_p1sigma[ip]->Write(Form("Spectrum_%s_%s_p1",sname,sysstr.c_str()));
     hErecoTun_p3sigma[ip]->Write(Form("Spectrum_%s_%s_p3",sname,sysstr.c_str()));
     
-    hErecoTun_m1sigma[ip]->Write(Form("Ratio_%s_%s_m1",sname,sysstr.c_str()));
-    hErecoTun_m3sigma[ip]->Write(Form("Ratio_%s_%s_m3",sname,sysstr.c_str()));
-    hErecoTun_p1sigma[ip]->Write(Form("Ratio_%s_%s_p1",sname,sysstr.c_str()));
-    hErecoTun_p3sigma[ip]->Write(Form("Ratio_%s_%s_p3",sname,sysstr.c_str()));
+    hRatioTun_m1sigma[ip]->Write(Form("Ratio_%s_%s_m1",sname,sysstr.c_str()));
+    hRatioTun_m3sigma[ip]->Write(Form("Ratio_%s_%s_m3",sname,sysstr.c_str()));
+    hRatioTun_p1sigma[ip]->Write(Form("Ratio_%s_%s_p1",sname,sysstr.c_str()));
+    hRatioTun_p3sigma[ip]->Write(Form("Ratio_%s_%s_p3",sname,sysstr.c_str()));
     
   }
   output_rootfile->Close();
