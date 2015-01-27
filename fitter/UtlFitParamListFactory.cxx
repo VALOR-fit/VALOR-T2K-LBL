@@ -1216,6 +1216,7 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
 //________________________________________________________________________________________
 void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 {
+
 // Add nuisance params
 //
 
@@ -1274,7 +1275,15 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
     //
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
-    double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    //double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    double lowerr=0;
+    if(p==kNuisBANFFShapeCCoth || p==kRHCNuisBANFFShapeCCoth){
+      lowerr = bf-(err*SYST_NSIGMA);
+    }
+    else lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+
+
+
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
 }
@@ -1327,7 +1336,13 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
         PhysParamId_t p = PhysParamId_t ((int) kRHCNuisBANFF00 + i);
         double bf = BANFFBestFit[i];
         double err = sqrt(BANFFCov[i][i]);
-        double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+        //double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+	double lowerr=0;
+	if(p==kNuisBANFFShapeCCoth || p==kRHCNuisBANFFShapeCCoth){
+	  lowerr = bf-(err*SYST_NSIGMA);
+	}
+	else lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+	
         fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true,AsString(p));
     }    
 }
@@ -1392,7 +1407,13 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
 
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
-    double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    //double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    double lowerr=0;
+    if(p==kNuisBANFFShapeCCoth || p==kRHCNuisBANFFShapeCCoth){
+      lowerr = bf-(err*SYST_NSIGMA);
+    }
+    else lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
 }
@@ -1401,6 +1422,7 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
 //________________________________________________________________________________________
 void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
 {
+
 // Add nuisance params
 //
   int ip = start; // first unallocated element in the param list
@@ -1457,7 +1479,13 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
 
     double bf = BANFFBestFit[i];
     double err = sqrt(BANFFCov[i][i]);
-    double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    //double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+    double lowerr=0;
+    if(p==kNuisBANFFShapeCCoth || p==kRHCNuisBANFFShapeCCoth){
+      lowerr = bf-(err*SYST_NSIGMA);
+    }
+    else lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
+
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
 }
