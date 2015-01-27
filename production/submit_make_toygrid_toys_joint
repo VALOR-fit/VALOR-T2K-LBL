@@ -94,29 +94,23 @@ $store_toy_expts        = 0                                      unless defined 
 $store_bestfit_spectra  = 0                                      unless defined $store_bestfit_spectra;
 
 #$fitparamlist           = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;
-$fitparamlist           = "nuosc3f_12fix"                    unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3f_12fix"                    unless defined $fitparamlist;
 #$fitparamlist           = "nuosc3fbar_fixnonbar_12fix"       unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3fbar_fixnonbar_12fix+nuisance"       unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3fbar_fixnonbar_fix5"       unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3fbar_fixnonbar_fix5+nuisance"       unless defined $fitparamlist;
+$fitparamlist           = "nuosc3fbar_numudisapp_fixnonbar_fix4"       unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"       unless defined $fitparamlist;
 
 $fitoption              = "minuit"                               unless defined $fitoption;
 #$fitoption              = "minuit+hesse"                               unless defined $fitoption;
 #$fitoption              = "minuit+minos"                               unless defined $fitoption;
 
-$tag                    = "NuOscBar_0p506_fakedata_B"          unless defined $tag;
+$tag                    = "NuOscBar_Asimov"                   unless defined $tag;
 $job_dir                = "."                                  unless defined $job_dir;
 $softw_dir              = "."                                  unless defined $softw_dir;
 
-$config_file            = "analysis_configuration_run1to5_test.xml"           unless defined $config_file;
-#$config_file            = "analysis_configuration_test.xml"           unless defined $config_file;
-#$config_file            = "analysis_configuration_Run4.xml"           unless defined $config_file;
-#$config_file            = "analysis_configuration_test_multiring_mrmc.xml"      unless defined $config_file; 
-
-#$config_file            = "analysis_configuration_run1to6.xml"           unless defined $config_file; 
-#$config_file            = "analysis_configuration_run1to6_oa2p0.xml"           unless defined $config_file; 
-#$config_file            = "analysis_configuration_run1to6_oa2p25.xml"           unless defined $config_file; 
-
-#$config_file             = "analysis_configuration_2.00deg.xml"        unless defined $config_file;
-#$config_file         = "analysis_configuration_2.25deg.xml"       unless defined $config_file;
-#$config_file         = "analysis_configuration_2.50deg.xml"       unless defined $config_file;
+$config_file            = "analysis_configuration_run1to6_test.xml"           unless defined $config_file;
 
 $input_mixing12         = -99                         unless defined $input_mixing12;
 $input_mixing13         = -99                         unless defined $input_mixing13;
@@ -139,10 +133,10 @@ $tweak_systematics       = 0                                    unless defined $
 #$xmlfile                 = "inputs/data.xml"                  unless defined $xmlfile;
 $xmlfile                 = "fakedata/201411.fakedata/fakedata_201411_B.xml"     unless defined $xmlfile;
 
-$using_xmlfile           = 1                                     unless defined $using_xmlfile;
+$using_xmlfile           = 0                                     unless defined $using_xmlfile;
  
-$optfixparams            = "mixing23,dmsq,dmsq12,mixing13"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
-#$optfixparams            = "mixing23, dmsq, dmsq12, mixing13, deltacp"    unless defined $optfixparams;  # list of the params to be fixed in the fit   
+$optfixparams            = "mixing23,dmsq,dmsq12,mixing13,mixing12,deltacp"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
+#$optfixparams            = "mixing23,dmsq,dmsq12,mixing13,deltacp"    unless defined $optfixparams;  # list of the params to be fixed in the fit   
 
 #$param1                 = "mixing23"                              unless defined $param1;
 #$param2                 = "dmsq"                                 unless defined $param2;
@@ -163,17 +157,17 @@ $optfixparams            = "mixing23,dmsq,dmsq12,mixing13"      unless defined $
 $param1                 = "mixing23"                              unless defined $param1;
 $param2                 = "dmsq"                                 unless defined $param2;
 $param3                 = "none"                                 unless defined $param3;
-$nbins_tot_param1        = 21                                    unless defined $nbins_tot_param1;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-$nbins_tot_param2        = 21                                    unless defined $nbins_tot_param2;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
+$nbins_tot_param1        = 51                                    unless defined $nbins_tot_param1;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
+$nbins_tot_param2        = 51                                    unless defined $nbins_tot_param2;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
 $nbins_tot_param3        = 1                                    unless defined $nbins_tot_param3;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
 $min_bin_param1          = 1                                      unless defined $min_bin_param1;     # total range to loop over (first bin, param1)
-$max_bin_param1          = 21                                      unless defined $max_bin_param1;    # total range to loop over (last bin, param1)
+$max_bin_param1          = 51                                      unless defined $max_bin_param1;    # total range to loop over (last bin, param1)
 $min_bin_param2          = 1                                      unless defined $min_bin_param2;     # total range to loop over (first bin, param2)
-$max_bin_param2          = 21                                      unless defined $max_bin_param2;    # total range to loop over (last bin, param2)
+$max_bin_param2          = 51                                      unless defined $max_bin_param2;    # total range to loop over (last bin, param2)
 $min_bin_param3          = 1                                      unless defined $min_bin_param3;     # total range to loop over (first bin, param3)
 $max_bin_param3          = 1                                      unless defined $max_bin_param3;    # total range to loop over (last bin, param3)
-$step_grid_1               = 21                                    unless defined $step_grid_1;     # step for each job for param1
-$step_grid_2               = 21                                    unless defined $step_grid_2;     # step for each job for param2
+$step_grid_1               = 51                                    unless defined $step_grid_1;     # step for each job for param1
+$step_grid_2               = 51                                    unless defined $step_grid_2;     # step for each job for param2
 $step_grid_3               = 1                                    unless defined $step_grid_3;     # step for each job for param3
  
 #$param1                 = "mixing13"                              unless defined $param1;
@@ -276,7 +270,8 @@ for($imin1 = $min_bin_param1; $imin1 <= $max_bin_param1; $imin1 = $imin1+$step_g
 		close(PBS);
 		#`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 		#`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-		`sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+		#`sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+		`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 	    }
 
 	    #
