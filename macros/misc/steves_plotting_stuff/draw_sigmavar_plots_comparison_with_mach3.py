@@ -5,7 +5,7 @@ import os
 
 env_var = "T2KOSCANA"
 
-mach3_filename = '/home/steve/analysis/systematic_variations/mach3_sigmavar_all.root'
+mach3_filename = '/home/steve/analysis/systematic_variations/sigmavar2014SK.root'
 valor_filename = '/home/steve/analysis/systematic_variations/systematic_variations_RHC1Rmu.root'
 
 mach3_nom_pattern = "[CURRENT]h[SELECTION]_nom"
@@ -21,30 +21,30 @@ variations = [ ("p1","p1"),
 mach3_current = "anu_"
 mach3_selection = "sknumubar"
 
-parameters = [#( ,  'xsec_par_0'  ) ,
-              #( ,  'xsec_par_1'  ) ,
-              #( ,  'xsec_par_2'  ) ,
-              #( ,  'xsec_par_3'  ) ,
-              #( ,  'xsec_par_4'  ) ,
-              #( ,  'xsec_par_5'  ) ,
-              #( ,  'xsec_par_6'  ) ,
-              #( ,  'xsec_par_7'  ) ,
-              #( ,  'xsec_par_8'  ) ,
-              #( ,  'xsec_par_9'  ) ,
-              #( ,  'xsec_par_10' ) ,
-              #( ,  'xsec_par_11' ) ,
-              ( 'f_banffmec_rhc'            ,  'xsec_par_12' ) ,
-              ( 'f_banffca5_rhc'            ,  'xsec_par_13' ) ,
-              ( 'f_banffbgres_rhc'          ,  'xsec_par_14' ) ,
-              ( 'f_banffmaqe_rhc'           ,  'xsec_par_15' ) ,
-              ( 'f_banffmares_rhc'          ,  'xsec_par_16' ) ,
-              ( 'f_banffpfermi_rhc'         ,  'xsec_par_17' ) ,
-              ( 'f_banffshapeCCoth_rhc'     ,  'xsec_par_18' ) ,
-              ( 'f_banffbindE_rhc'          ,  'xsec_par_19' ) , 
-              ( 'f_banffnorm_cccoh_rhc'     ,  'xsec_par_20' ) , 
-              ( 'f_banffnorm_nccoh_rhc'     ,  'xsec_par_21' ) , 
-              ( 'f_banffnorm_ncoth_rhc'     ,  'xsec_par_22' ) , 
-              ( 'f_banffnorm_nuetonumu_rhc' ,  'xsec_par_23' ) , 
+parameters = [( 'f_banffmaqe_rhc'          ,  'xsec_par_0'  ) ,
+            #(                             ,  'xsec_par_1'  ) ,       # pF carbon
+            #(                             ,  'xsec_par_2'  ) ,       # MEC carbon
+            #(                             ,  'xsec_par_3'  ) ,       # Eb carbon
+              ( 'f_banffpfermi_rhc'        ,  'xsec_par_4'  ) ,
+              ( 'f_banffmec_rhc'           ,  'xsec_par_5'  ) ,
+              ( 'f_banffbindE_rhc'         ,  'xsec_par_6'  ) ,
+              ( 'f_banffca5_rhc'           ,  'xsec_par_7'  ) ,
+              ( 'f_banffmares_rhc'         ,  'xsec_par_8'  ) ,
+              ( 'f_banffbgres_rhc'         ,  'xsec_par_9'  ) ,
+              ( 'f_banffnorm_nuetonumu_rhc',  'xsec_par_10' ) ,
+              ( 'f_banffshapeCCoth_rhc'    ,  'xsec_par_11' ) ,
+             #(                            ,  'xsec_par_12' ) ,       # CCcoh carbon
+              ( 'f_banffnorm_cccoh_rhc'    ,  'xsec_par_13' ) ,
+              ( 'f_banffnorm_nccoh_rhc'    ,  'xsec_par_14' ) ,
+              ( 'f_banffnorm_ncoth_rhc'    ,  'xsec_par_15' ) ,
+             #(                            ,  'xsec_par_16' ) ,
+             #(                            ,  'xsec_par_17' ) ,
+             #(                            ,  'xsec_par_18' ) ,
+             #(                            ,  'xsec_par_19' ) , 
+             #(                            ,  'xsec_par_20' ) , 
+             #(                            ,  'xsec_par_21' ) , 
+             #(                            ,  'xsec_par_22' ) , 
+             #(                            ,  'xsec_par_23' ) , 
               # ( ,  'flux_par_50' ) , 
               # ( ,  'flux_par_51' ) , 
               # ( ,  'flux_par_52' ) , 
@@ -139,6 +139,7 @@ parameters = [#( ,  'xsec_par_0'  ) ,
 def main():
   
   ROOT.gROOT.SetBatch(1)
+  ROOT.gStyle.SetOptStat(0)
   
   mach3_file = ROOT.TFile(mach3_filename)
   valor_file = ROOT.TFile(valor_filename)
@@ -197,9 +198,11 @@ def main():
       if not mach3_hists[valor_param][valor_var]:
         print "Failed to get MaCh3 histogram ",mach3_histname
         
+      valor_hists[valor_param][valor_var].SetLineWidth(1)
+        
       mach3_hists[valor_param][valor_var].SetName(valor_hists[valor_param][valor_var].GetName()+"_mach3")
       mach3_hists[valor_param][valor_var].SetLineStyle(2)
-      mach3_hists[valor_param][valor_var].SetLineColor(valor_hists[valor_param][valor_var].GetLineColor()+1)
+      mach3_hists[valor_param][valor_var].SetLineColor(valor_hists[valor_param][valor_var].GetLineColor()-2)
       
       valor_hists_binno[valor_param][valor_var] = hist_to_bin_number(valor_hists[valor_param][valor_var])
       mach3_hists_binno[valor_param][valor_var] = hist_to_bin_number(mach3_hists[valor_param][valor_var])
@@ -207,8 +210,13 @@ def main():
       mach3_ratio_hists      [valor_param][valor_var] = ratio_hist(mach3_hists      [valor_param][valor_var],mach3_nom_hist)
       mach3_ratio_hists_binno[valor_param][valor_var] = ratio_hist(mach3_hists_binno[valor_param][valor_var],mach3_nom_hist_binno)
       
-    hist_limits =      [abs(h.GetMaximum()-1) for h in valor_hists[valor_param].values()+mach3_ratio_hists[valor_param].values()]
-    hist_limits.extend([abs(h.GetMinimum()-1) for h in valor_hists[valor_param].values()+mach3_ratio_hists[valor_param].values() if h.GetMinimum()])
+    hist_limits = []
+    for valor_var,mach3_var in variations:
+      for bin_content in (hist_to_list(valor_hists[valor_param][valor_var])+hist_to_list(mach3_ratio_hists[valor_param][valor_var])):
+        if abs(bin_content) > 1E-5:
+          hist_limits.append(abs(bin_content-1))
+    
+    print hist_limits
     hist_var = 1.1*max(hist_limits)
     hist_max = hist_var + 1
     hist_min = 1-hist_var
@@ -247,7 +255,6 @@ def main():
     canvases[valor_param+"_binno"].Update()
     canvases[valor_param+"_binno"].Print("syst_var_binno"+".pdf"+pdf_printing[iparam])
     
-    
 
 def hist_to_bin_number(h):
   nbins = h.GetXaxis().GetNbins()
@@ -256,7 +263,7 @@ def hist_to_bin_number(h):
   hnew.SetLineColor(h.GetLineColor())
   hnew.SetLineStyle(h.GetLineStyle())
   
-  for ibin in xrange(nbins+1):
+  for ibin in xrange(1,nbins+1):
     hnew.Fill(ibin-0.5, h.GetBinContent(ibin))
     
   hnew.GetXaxis().SetTitle("Bin number")
@@ -272,8 +279,10 @@ def ratio_hist(hvar,hnom):
   hratio.Divide(hnom)
   return hratio
   
-  for ibin in xrange(nbins+1):
-    h2.Fill(h.GetBinContent(ibin)+0.5)
+
+def hist_to_list(h):
+  nbins = h.GetXaxis().GetNbins()
+  return [h.GetBinContent(ibin) for ibin in xrange(1,nbins+1)]
   
 if __name__=="__main__":
   main()
