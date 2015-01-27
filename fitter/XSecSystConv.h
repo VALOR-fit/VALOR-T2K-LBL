@@ -954,7 +954,7 @@ namespace valor {
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNC1pi0
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCcoh
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCoth
-        #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCQE        
 	{  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCC1pi
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCcoh
@@ -975,7 +975,7 @@ namespace valor {
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
         #endif
-        #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifndef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
@@ -1135,7 +1135,7 @@ namespace valor {
 	{  0, 1, 0, 0, 0,  0, 0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuEBarNC1pi0 
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 1, 0, 0, 0,  0 }, // kSKmNuEBarNCcoh 
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCoth
-        #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCQE        
 	{  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCC1pi
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCcoh
@@ -1156,7 +1156,7 @@ namespace valor {
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
         #endif
-        #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifndef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
@@ -1314,7 +1314,7 @@ namespace valor {
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNC1pi0
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCcoh
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCoth
-        #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCQE        
 	{  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCC1pi
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCcoh
@@ -1335,7 +1335,7 @@ namespace valor {
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
         #endif
-        #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifndef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
@@ -1495,7 +1495,7 @@ namespace valor {
 	{  0, 1, 0, 0, 0,  0, 0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuEBarNC1pi0
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 1, 0, 0, 0,  0 }, // kSKmNuEBarNCcoh 
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCoth
-        #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCQE        
 	{  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCC1pi
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCcoh
@@ -1516,7 +1516,7 @@ namespace valor {
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
         #endif
-        #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifndef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
@@ -1676,7 +1676,7 @@ namespace valor {
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNC1pi0
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCcoh
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCoth
-        #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCQE        
 	{  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCC1pi
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCcoh
@@ -1697,7 +1697,7 @@ namespace valor {
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
         #endif
-        #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifndef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
@@ -1856,7 +1856,7 @@ namespace valor {
 	{  0, 1, 0, 0, 0,  0, 0, 1,   0, 0, 1, 0, 1, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmNuEBarNC1pi0 
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 1, 0, 0, 0,  0 }, // kSKmNuEBarNCcoh 
 	{  0, 1, 0, 0, 0,  0, 0, 0,   0, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0,  0 }, // kSKmNuEBarNCoth
-        #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  1, 0, 1, 1, 1,  0, 0, 0,   1, 1, 0, 0, 0, 1,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCQE        
 	{  0, 1, 0, 0, 0,  1, 1, 0,   0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCC1pi
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   1, 0, 0, 0, 1, 1,  0 }, // kSKmOscNuEBarCCcoh
@@ -1877,7 +1877,7 @@ namespace valor {
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
         #endif
-        #ifndef __USE_OSC_NUEBAR_MC_TEMPLATES__
+        #ifndef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined
 	{  0, 0, 0, 0, 0,  0, 0, 0,   0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0,  0 }, // kSKmUndefined

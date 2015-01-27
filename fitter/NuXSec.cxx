@@ -244,7 +244,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
       if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
 
       // NEW XSEC
-      #ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+      #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
       if(util::IsOscNuEBar(m))  continue; //using NuEBar splines
       #endif
       
@@ -1634,7 +1634,7 @@ TSpline3 * NuXSec::FindWghtSpline(
   else if ( mp == kSKmOscNuMuBarCC1pi    ) { m = kSKmNuMuBarCC1pi;    }
   else if ( mp == kSKmOscNuMuBarCCcoh    ) { m = kSKmNuMuBarCCcoh;    }
   else if ( mp == kSKmOscNuMuBarCCoth    ) { m = kSKmNuMuBarCCoth;  }
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+#ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
   else if ( mp == kSKmOscNuEBarCCQE     ) { m = kSKmNuEBarCCQE;     }//problem if they dont use the same binning?
   else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }//fewer bins then numubar
   else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }

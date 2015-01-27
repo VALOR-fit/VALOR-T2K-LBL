@@ -576,7 +576,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
   if(util::IsOscNuMu(m) || util::IsOscNuMuBar(m))
     return;
     
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+#ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
   if (util::IsOscNuEBar(m)) return;// with that flag, these are filled in FillSpecial
 #endif
 
@@ -1126,7 +1126,7 @@ void SuperkMC::FillSpecialTemplates(void)
     }//i
 #endif
 
-#ifdef __USE_OSC_NUEBAR_MC_TEMPLATES__
+#ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
     
     cout << "SKMC/FillSpecialTemplates >> Filling osc nuebar templates for " << util::AsString(s) << " sample" << endl;
   

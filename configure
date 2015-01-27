@@ -80,9 +80,9 @@ foreach (@ARGV) {
       print BLD "#define __USE_OSC_NUMUBAR_MC_TEMPLATES__\n\n";
   }
  
-  elsif($_ eq '--use_osc_nuebar') {
-      print BLD " // Use osc nuebar mc templates \n";
-      print BLD "#define __USE_OSC_NUEBAR_MC_TEMPLATES__\n\n";
+  elsif($_ eq '--use_old_osc_nuebar') {
+      print BLD " // Use 2013 osc nuebar mc templates \n";
+      print BLD "#define __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__\n\n";
   }
 
   else {
