@@ -8,21 +8,29 @@
  
 void make_toygrid_xml_joint
 (
- const char * xmlfile = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
- // const char * xmlfile = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                 /* input XML file with toy MC experiments */
+ const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_D.xml",                      /* input XML file Run5-6 fakedata */ 
+ //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file with toy MC experiments */
+ 
  const char * tag = "prova",                                                    /* */
  int          run = 0,                                                    /* */
  int          first_experiment = 0,                                   /* */
  int          last_experiment  = 0,                                   /* */
+ 
+ const char * config_file      = "analysis_configuration_run1to6_test.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
- const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
+ //const char * config_file        = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
+
  const char * fit_param_list   = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
  //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
- const char * fit_option       = "minuit+hesse",                            /* fitter option */
+
+ //const char * fit_option       = "minuit+hesse",                            /* fitter option */
+ const char * fit_option       = "minuit",                            /* fitter option */
+ 
  bool         store_toy_expts         = true,                         /* disable this if you don't want to store the toy MC expts     */
  bool         store_bestfit_spectrum  = false,                         /* disable this if you don't want to store the best-fit spectra */
- //const char * dmsqscheme          = "fogli",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ 
  const char * dmsqscheme          = "abs23",                               /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy           = "normal",                              /* normal or inverted */
  const char * mixparamchoice      = "sinsqtheta",                          /* sinsq2theta or sinsqtheta */
@@ -30,27 +38,31 @@ void make_toygrid_xml_joint
  //bool         apply_2nu_boundary  = true                                   /* if using the 2nu flavour osc prob, apply the physical boundary? */
  double       dcp_value           = 0,                                      /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
  bool         using_xml_file      = true,                                   /* if false, skobs reads xmlfile as a root file */
- bool         reactor             = true,                               /* enable this if you want to apply the reactor constraint */
+ bool         reactor             = false,                               /* enable this if you want to apply the reactor constraint */
  double       tolerance           = 0.1,                                 /* value for the fitter tolerance */
  
  const char * param1                  = "mixing23",                        /* first parameter to be fitting vs - default: none for a single fit */ 
  const char * param2                  = "dmsq",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
- const char * param3                  = "mixing13",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
+ //const char * param3                  = "mixing13",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
+ //const char * param1                  = "deltacp",                        /* first parameter to be fitting vs - default: none for a single fit */ 
+ //const char * param2                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
+ const char * param3                  = "none",                        /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
  
- int          nbins_tot_param1            = 5,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
- int          nbins_tot_param2            = 5,                              /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
- int          nbins_tot_param3            = 5,                              /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int          nbins_tot_param1            = 11,                              /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int          nbins_tot_param2            = 11,                              /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int          nbins_tot_param3            = 1,                              /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
 
  int          min_bin_param1          = 1,                                /* minimum bin for param1 */
- int          max_bin_param1          = 5,                                /* maximum bin for param1 */
+ int          max_bin_param1          = 11,                                /* maximum bin for param1 */
  int          min_bin_param2          = 1,                                /* minimum bin for param2 */
- int          max_bin_param2          = 5,                                  /* maximum bin for param2 */
+ int          max_bin_param2          = 11,                                  /* maximum bin for param2 */
  int          min_bin_param3          = 1,                                /* minimum bin for param2 */
- int          max_bin_param3          = 5                                  /* maximum bin for param2 */
+ int          max_bin_param3          = 1                                  /* maximum bin for param2 */
  )
 {
   using namespace std;
   using namespace valor;
+  using namespace valor::conv;
 
   double bestfit_chisq,bestfit_chisq2;
 
@@ -107,6 +119,11 @@ void make_toygrid_xml_joint
   cout << endl;
   cout << *Opt::Instance() << endl;
 
+
+  // Get superk spectrum predictor & configure
+  SuperkExpectation * skexp = new SuperkExpectation;
+  skexp->Read(config.Data());
+
   // Fit param list
   FitParamList * fparm  = util::NamedParameterList(fit_param_list); //only used to initialise branch
   FitParamList * fparm1 = util::NamedParameterList(fit_param_list);
@@ -120,10 +137,6 @@ void make_toygrid_xml_joint
     fparm1->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
     fparm2->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
   }
-
-  // Get superk spectrum predictor & configure
-  SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(config.Data());
     
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
@@ -280,16 +293,22 @@ void make_toygrid_xml_joint
     else if(param2 == "mixing13") mixing13_step = (mixing13_max-mixing13_min)/(nbins_tot_param2-1);     
     else if(param3 == "mixing13") mixing13_step = (mixing13_max-mixing13_min)/(nbins_tot_param3-1);     
     
-    double mixing23_min = 0.3;
-    double mixing23_max = 0.7;
-    double mixing23_step = 0.01;
+    // double mixing23_min = 0.3;
+    // double mixing23_max = 0.7;
+    // double mixing23_step = 0.01;
+    double mixing23_min = 0.;
+    double mixing23_max = 1.;
+    double mixing23_step = 0.02;
     if(param1 == "mixing23")      mixing23_step = (mixing23_max-mixing23_min)/(nbins_tot_param1-1);
     else if(param2 == "mixing23") mixing23_step = (mixing23_max-mixing23_min)/(nbins_tot_param2-1);
     else if(param3 == "mixing23") mixing23_step = (mixing23_max-mixing23_min)/(nbins_tot_param3-1);
     
-    double dmsq_min = 2.0E-3;
-    double dmsq_max = 3.0E-3;
-    double dmsq_step = 0.05E-3;
+    // double dmsq_min = 2.0E-3;
+    // double dmsq_max = 3.0E-3;
+    // double dmsq_step = 0.05E-3;
+    double dmsq_min = 2.0E-4;
+    double dmsq_max = 2.0E-2;
+    double dmsq_step = 0.1E-3;
     if(param1 == "dmsq")      dmsq_step = (dmsq_max-dmsq_min)/(nbins_tot_param1-1);
     else if(param2 == "dmsq") dmsq_step = (dmsq_max-dmsq_min)/(nbins_tot_param2-1);          
     else if(param3 == "dmsq") dmsq_step = (dmsq_max-dmsq_min)/(nbins_tot_param3-1);          
@@ -643,7 +662,7 @@ void make_toygrid_xml_joint
 	  // Get superk spectrum observation (toy experiment)
 	  SuperkObservation * skobs = new SuperkObservation;
 	  skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
-		
+
 	  //reset systematic variations, otherwise fit is initialized at
 	  //best fit values of systematics from previous fit
 	  skexp->ResetSystematicVariations();
