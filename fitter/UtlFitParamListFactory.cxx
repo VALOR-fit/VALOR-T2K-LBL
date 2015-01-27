@@ -469,6 +469,61 @@ FitParamList * util::NamedParameterList(string name)
   }
   
   
+
+
+
+
+  if(name == "nuosc3fbar_fixnonbar_fix5") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourBarFit();
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> FixParameter (kPhypDm23sq);
+    
+    fp -> FixParameter (kPhypMixing12Bar);
+    fp -> FixParameter (kPhypDm12sqBar  );
+    fp -> FixParameter (kPhypMixing23Bar);
+    fp -> FixParameter (kPhypDm23sqBar);
+    fp -> FixParameter (kPhypCPVBar);
+
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+ 
+  if(name == "nuosc3fbar_fixnonbar_fix5+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourBarFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 12);
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> FixParameter (kPhypDm23sq);
+    
+    fp -> FixParameter (kPhypMixing12Bar);
+    fp -> FixParameter (kPhypDm12sqBar  );
+    fp -> FixParameter (kPhypMixing23Bar);
+    fp -> FixParameter (kPhypDm23sqBar);
+    fp -> FixParameter (kPhypCPVBar);
+
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    //~ fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
+    return fp;
+  }
+  
+
+
+
+
+
   cerr<<"FitParamListFactory/NamedParamList >> Unable to make: "<<name<<endl;
   exit(-1); 
 }
@@ -1360,7 +1415,7 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
   
   //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
   const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
-  
+
   TXMLEngine* xml = new TXMLEngine;   
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
   if (xmldoc==0) {
