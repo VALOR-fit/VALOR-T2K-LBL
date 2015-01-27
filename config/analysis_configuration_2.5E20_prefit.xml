@@ -359,7 +359,7 @@
     -->
     
     <best_fit_values>     
-      <filename>   official/2015/banff/postfit_banff_2015_postfit-equals-prefit_v1_valor_order_rhc.root </filename>
+      <filename>   official/2015/banff/postfit_banff_2015_post-nominal-fit_v3_valor_order_rhc.root </filename>
       <objname>    prefit_params   </objname>
       <objtype>    TVectorD        </objtype>
     </best_fit_values>
@@ -368,7 +368,7 @@
       Covariance of fit parameters                 
     -->
     <covariance_matrix>
-      <filename>   official/2015/banff/postfit_banff_2015_postfit-equals-prefit_v1_valor_order_rhc.root </filename>
+      <filename>   official/2015/banff/postfit_banff_2015_post-nominal-fit_v3_valor_order_rhc.root </filename>
       <objname>    prefit_cov       </objname>
       <objtype>    TMatrixD         </objtype>
     </covariance_matrix>
@@ -376,7 +376,7 @@
    
     <disap>
       <best_fit_values>
-        <filename>   official/2015/banff/postfit_banff_2015_postfit-equals-prefit_v1_valor_order_rhc.root </filename>
+        <filename>   official/2015/banff/postfit_banff_2015_post-nominal-fit_v3_valor_order_rhc.root </filename>
         <objname>    prefit_params   </objname>
         <objtype>    TVectorD        </objtype>
       </best_fit_values>
@@ -384,7 +384,7 @@
         Covariance of fit parameters
       -->
       <covariance_matrix>
-        <filename>   official/2015/banff/postfit_banff_2015_postfit-equals-prefit_v1_valor_order_rhc.root </filename>
+        <filename>   official/2015/banff/postfit_banff_2015_post-nominal-fit_v3_valor_order_rhc.root </filename>
         <objname>    prefit_cov       </objname>    
         <objtype>    TMatrixD         </objtype>
       </covariance_matrix>
@@ -504,7 +504,7 @@
       <objname>    skfsipn_cov             </objname>
       -->
       
-      <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
+      <filename>   official/2015/skdetfsi/SKDetFSI_valor_SK_v2_FSIv1.root </filename>
       <objname>    covmat_skdetfsi_rhc_nue </objname>
       
       <objtype>    TMatrixD              </objtype>
@@ -516,7 +516,7 @@
         <filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
         <objname>    covmat_sk_fsi         </objname> 
         -->
-         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
+         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SK_v2_FSIv1.root </filename>
          <objname>    covmat_skdetfsi_rhc_numu </objname>
         
         <objtype>    TMatrixD              </objtype>
@@ -525,7 +525,7 @@
     
     <app>
       <covariance_matrix>
-         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv1_FSI_v1.root </filename>
+         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SK_v2_FSIv1.root </filename>
          <objname>    covmat_skdetfsi_rhc_nue </objname>
          
          <objtype>    TMatrixD              </objtype>
