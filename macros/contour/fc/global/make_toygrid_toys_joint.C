@@ -12,14 +12,15 @@
 
 void make_toygrid_toys_joint
 (
- const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",                      /* input XML file Run5-6 fakedata */ 
+ //const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",                      /* input XML file Run5-6 fakedata */ 
  //const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p051e21_A.xml",                      /* input XML file Run5-6 fakedata */ 
+ const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p250e21_D.xml",                      /* input XML file Run5-6 fakedata */ 
  
  //const char * tag = "NuOscBar_0p170e21_Asimov_IH",                               
  //const char * tag = "NuOscBar_0p170e21_fakedata_F_IH",                               
 
- //const char * tag = "NuOscBar_0p170e21_Asimov_NH",                               
- const char * tag = "NuOscBar_0p170e21_fakedata_A_NH",                               
+ const char * tag = "NuOscBar_0p170e21_Asimov_NH_41BinsDm2",                               
+ //const char * tag = "NuOscBar_0p250e21_fakedata_D_NH",                               
 
  int          run = 0,                                                    /* */
  int          first_experiment = 0,                                   /* */
@@ -34,9 +35,9 @@ void make_toygrid_toys_joint
 
  bool         stat_fluctuations       = false,                             /* include statistical fluctuation in toy MC expts? */
  int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
- bool         using_xml_file      = true,                                   /* if false, skobs reads xmlfile as a root file */
+ bool         using_xml_file      = false,                                   /* if false, skobs reads xmlfile as a root file */
 
- const char * config_file      = "analysis_configuration_run1to5_test.xml",        /* analysis configuration file */
+ const char * config_file      = "analysis_configuration_run1to6_test.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6_oa2p25.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6_oa2p0.xml",        /* analysis configuration file */
@@ -45,11 +46,13 @@ void make_toygrid_toys_joint
  //const char * config_file        = "analysis_configuration_test_multiring.xml",   /* analysis configuration file */
  //const char * config_file        = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
 
- const char * fit_param_list   = "nuosc3fbar_fixnonbar_12fix",
+ //const char * fit_param_list   = "nuosc3fbar_fixnonbar_fix5",
+ //const char * fit_param_list   = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ //const char * fit_param_list   = "nuosc3fbar_fixnonbar_12fix+nuisance",
  //const char * fit_param_list   = "nuosc3f_12fix",  /* fit param list for physics hypothesis (see FitParamList.h) */
  //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit param list for physics hypothesis (see FitParamList.h) */
- //const char * fit_option = "nuosc3f_numudisapp_nuis3fixdcp+nuisance",
- //const char * fit_option = "nuosc3f_numudisapp_nuis3fixdcp",
+ const char * fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4",
+ //const char * fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
   
  //const char * fit_option       = "minuit+hesse",            /* fitter option */
  const char * fit_option       = "minuit",                    /* fitter option */
@@ -72,14 +75,14 @@ void make_toygrid_toys_joint
  //const char * param2            = "mixing13",           /* 2nd param, mixing23, dmsq, mixing13, deltacp, none */ 
  const char * param3              = "none",               /* 3rd param, mixing23, dmsq, mixing13, deltacp, none */  
  
- int  nbins_tot_param1            = 51,               /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
- int  nbins_tot_param2            = 51,               /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int  nbins_tot_param1            = 21,               /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
+ int  nbins_tot_param2            = 21,               /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int  nbins_tot_param3            = 1,                /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
 
  int  min_bin_param1          = 1,                    /* minimum bin for param1 */
- int  max_bin_param1          = 51,                   /* maximum bin for param1 */
+ int  max_bin_param1          = 21,                   /* maximum bin for param1 */
  int  min_bin_param2          = 1,                    /* minimum bin for param2 */
- int  max_bin_param2          = 51,                   /* maximum bin for param2 */
+ int  max_bin_param2          = 21,                   /* maximum bin for param2 */
  int  min_bin_param3          = 1,                    /* minimum bin for param2 */
  int  max_bin_param3          = 1,                    /* maximum bin for param2 */
 
@@ -202,9 +205,9 @@ void make_toygrid_toys_joint
   cout << *Rnd::Instance() << endl;
 
 
-
-
-
+  // Get superk spectrum predictor & configure
+  SuperkExpectation * skexp = new SuperkExpectation;
+  skexp->Read(config.Data());
 
   // Fit param list
   FitParamList * fparm  = util::NamedParameterList(fit_param_list); //only used to initialise branch
@@ -213,20 +216,6 @@ void make_toygrid_toys_joint
   conv::PhysHypothesis_t hyp = fparm1->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
-
-  // ///// TO REMOVE ????
-  // //make an assumption for deltacp
-  // if(fparm->IsFixed(conv::kPhypCPV    )) {
-  //   fparm ->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
-  //   fparm1->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
-  //   fparm2->SetInitValue(conv::kPhypCPV    , dcp_value * conv::kpi);
-  // }
-  // /////////////////////
-
-  // Get superk spectrum predictor & configure
-  SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(config.Data());
-    
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
 
