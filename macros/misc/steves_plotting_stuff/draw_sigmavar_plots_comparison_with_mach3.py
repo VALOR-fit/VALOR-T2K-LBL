@@ -45,31 +45,31 @@ parameters = [( 'f_banffmaqe_rhc'          ,  'xsec_par_0'  ) ,
              #(                            ,  'xsec_par_21' ) , 
              #(                            ,  'xsec_par_22' ) , 
              #(                            ,  'xsec_par_23' ) , 
-              # ( ,  'flux_par_50' ) , 
-              # ( ,  'flux_par_51' ) , 
-              # ( ,  'flux_par_52' ) , 
-              # ( ,  'flux_par_53' ) , 
-              # ( ,  'flux_par_54' ) , 
-              # ( ,  'flux_par_55' ) , 
-              # ( ,  'flux_par_56' ) , 
-              # ( ,  'flux_par_57' ) , 
-              # ( ,  'flux_par_58' ) , 
-              # ( ,  'flux_par_59' ) , 
-              # ( ,  'flux_par_60' ) , 
-              # ( ,  'flux_par_61' ) , 
-              # ( ,  'flux_par_62' ) , 
-              # ( ,  'flux_par_63' ) , 
-              # ( ,  'flux_par_64' ) , 
-              # ( ,  'flux_par_65' ) , 
-              # ( ,  'flux_par_66' ) , 
-              # ( ,  'flux_par_67' ) , 
-              # ( ,  'flux_par_68' ) , 
-              # ( ,  'flux_par_69' ) , 
-              # ( ,  'flux_par_70' ) , 
-              # ( ,  'flux_par_71' ) , 
-              # ( ,  'flux_par_72' ) , 
-              # ( ,  'flux_par_73' ) , 
-              # ( ,  'flux_par_74' ) , 
+             # ( ,  'flux_par_50' ) , 
+             # ( ,  'flux_par_51' ) , 
+             # ( ,  'flux_par_52' ) , 
+             # ( ,  'flux_par_53' ) , 
+             # ( ,  'flux_par_54' ) , 
+             # ( ,  'flux_par_55' ) , 
+             # ( ,  'flux_par_56' ) , 
+             # ( ,  'flux_par_57' ) , 
+             # ( ,  'flux_par_58' ) , 
+             # ( ,  'flux_par_59' ) , 
+             # ( ,  'flux_par_60' ) , 
+             # ( ,  'flux_par_61' ) , 
+             # ( ,  'flux_par_62' ) , 
+             # ( ,  'flux_par_63' ) , 
+             # ( ,  'flux_par_64' ) , 
+             # ( ,  'flux_par_65' ) , 
+             # ( ,  'flux_par_66' ) , 
+             # ( ,  'flux_par_67' ) , 
+             # ( ,  'flux_par_68' ) , 
+             # ( ,  'flux_par_69' ) , 
+             # ( ,  'flux_par_70' ) , 
+             # ( ,  'flux_par_71' ) , 
+             # ( ,  'flux_par_72' ) , 
+             # ( ,  'flux_par_73' ) , 
+             # ( ,  'flux_par_74' ) , 
               ( 'f_banff00_rhc',  'flux_par_75' ) , 
               ( 'f_banff01_rhc',  'flux_par_76' ) , 
               ( 'f_banff02_rhc',  'flux_par_77' ) , 
@@ -95,46 +95,47 @@ parameters = [( 'f_banffmaqe_rhc'          ,  'xsec_par_0'  ) ,
               ( 'f_banff22_rhc',  'flux_par_97' ) , 
               ( 'f_banff23_rhc',  'flux_par_98' ) , 
               ( 'f_banff24_rhc',  'flux_par_99' ) , 
-              #( ,  'skdet_par_0' ) , 
-              #( ,  'skdet_par_1' ) , 
-              #( ,  'skdet_par_2' ) , 
-              #( ,  'skdet_par_3' ) , 
-              #( ,  'skdet_par_4' ) , 
-              #( ,  'skdet_par_5' ) , 
-              #( ,  'skdet_par_6' ) , 
-              #( ,  'skdet_par_7' ) , 
-              #( ,  'skdet_par_8' ) , 
-              #( ,  'skdet_par_9' ) , 
-              #( ,  'skdet_par_10') , 
-              #( ,  'skdet_par_11') , 
+             #( ,  'skdet_par_0' ) , 
+             #( ,  'skdet_par_1' ) , 
+             #( ,  'skdet_par_2' ) , 
+             #( ,  'skdet_par_3' ) , 
+             #( ,  'skdet_par_4' ) , 
+             #( ,  'skdet_par_5' ) , 
+             #( ,  'skdet_par_6' ) , 
+             #( ,  'skdet_par_7' ) , 
+             #( ,  'skdet_par_8' ) , 
+             #( ,  'skdet_par_9' ) , 
+             #( ,  'skdet_par_10') , 
+             #( ,  'skdet_par_11') , 
+             
+             # ( ,  'skdet_par_12') , 
+             # ( ,  'skdet_par_13') , 
+             # ( ,  'skdet_par_14') , 
+             # ( ,  'skdet_par_15') , 
+             # ( ,  'skdet_par_16') , 
+             # ( ,  'skdet_par_17') , 
+             
+             # ( ,  'skdet_par_18') , 
+             # ( ,  'skdet_par_19') , 
+             # ( ,  'skdet_par_20') , 
+             # ( ,  'skdet_par_21') , 
+             # ( ,  'skdet_par_22') , 
+             # ( ,  'skdet_par_23') , 
+             # ( ,  'skdet_par_24') , 
+             # ( ,  'skdet_par_25') , 
+             # ( ,  'skdet_par_26') , 
+             # ( ,  'skdet_par_27') , 
+             # ( ,  'skdet_par_28') , 
+             # ( ,  'skdet_par_29') , 
               
-              # ( ,  'skdet_par_12') , 
-              # ( ,  'skdet_par_13') , 
-              # ( ,  'skdet_par_14') , 
-              # ( ,  'skdet_par_15') , 
-              # ( ,  'skdet_par_16') , 
-              # ( ,  'skdet_par_17') , 
+              ( 'f_skdetfsi000_rhc',  'skdet_par_30') , 
+              ( 'f_skdetfsi001_rhc',  'skdet_par_31') , 
+              ( 'f_skdetfsi002_rhc',  'skdet_par_32') , 
+              ( 'f_skdetfsi003_rhc',  'skdet_par_33') , 
+              ( 'f_skdetfsi004_rhc',  'skdet_par_34') , 
+              ( 'f_skdetfsi005_rhc',  'skdet_par_35') ,
               
-              # ( ,  'skdet_par_18') , 
-              # ( ,  'skdet_par_19') , 
-              # ( ,  'skdet_par_20') , 
-              # ( ,  'skdet_par_21') , 
-              # ( ,  'skdet_par_22') , 
-              # ( ,  'skdet_par_23') , 
-              # ( ,  'skdet_par_24') , 
-              # ( ,  'skdet_par_25') , 
-              # ( ,  'skdet_par_26') , 
-              # ( ,  'skdet_par_27') , 
-              # ( ,  'skdet_par_28') , 
-              # ( ,  'skdet_par_29') , 
-              # ( ,  'skdet_par_30') , 
-              
-              ( 'f_skdetfsi000_rhc',  'skdet_par_31') , 
-              ( 'f_skdetfsi001_rhc',  'skdet_par_32') , 
-              ( 'f_skdetfsi002_rhc',  'skdet_par_33') , 
-              ( 'f_skdetfsi003_rhc',  'skdet_par_34') , 
-              ( 'f_skdetfsi004_rhc',  'skdet_par_35') , 
-              ( 'f_skdetfsi005_rhc',  'skdet_par_36') ]
+              ( 'f_sk_e_scale_rhc' ,  'skdet_par_36') ]
 
 def main():
   
@@ -202,7 +203,8 @@ def main():
         
       mach3_hists[valor_param][valor_var].SetName(valor_hists[valor_param][valor_var].GetName()+"_mach3")
       mach3_hists[valor_param][valor_var].SetLineStyle(2)
-      mach3_hists[valor_param][valor_var].SetLineColor(valor_hists[valor_param][valor_var].GetLineColor()-2)
+      mach3_hists[valor_param][valor_var].SetLineWidth(2)
+      mach3_hists[valor_param][valor_var].SetLineColor(valor_hists[valor_param][valor_var].GetLineColor()+2)
       
       valor_hists_binno[valor_param][valor_var] = hist_to_bin_number(valor_hists[valor_param][valor_var])
       mach3_hists_binno[valor_param][valor_var] = hist_to_bin_number(mach3_hists[valor_param][valor_var])
@@ -216,7 +218,6 @@ def main():
         if abs(bin_content) > 1E-5:
           hist_limits.append(abs(bin_content-1))
     
-    print hist_limits
     hist_var = 1.1*max(hist_limits)
     hist_max = hist_var + 1
     hist_min = 1-hist_var
@@ -262,6 +263,7 @@ def hist_to_bin_number(h):
   
   hnew.SetLineColor(h.GetLineColor())
   hnew.SetLineStyle(h.GetLineStyle())
+  hnew.SetLineWidth(h.GetLineWidth())
   
   for ibin in xrange(1,nbins+1):
     hnew.Fill(ibin-0.5, h.GetBinContent(ibin))
