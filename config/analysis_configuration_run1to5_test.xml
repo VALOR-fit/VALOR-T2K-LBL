@@ -505,7 +505,7 @@
       <objname>    skfsipn_cov             </objname>
       -->
       
-      <filename>   official/2015/skdetfsi/SKDetFSI_valor_SK_v2_FSIv1.root </filename>
+      <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv2_FSIv1.root </filename>
       <objname>    covmat_skdetfsi_rhc_joint </objname>
       
       <objtype>    TMatrixD              </objtype>
@@ -517,7 +517,7 @@
         <filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
         <objname>    covmat_sk_fsi         </objname> 
         -->
-         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SK_v2_FSIv1.root </filename>
+         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv2_FSIv1.root </filename>
          <objname>    covmat_skdetfsi_rhc_numu </objname>
         
         <objtype>    TMatrixD              </objtype>
@@ -526,7 +526,7 @@
     
     <app>
       <covariance_matrix>
-         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SK_v2_FSIv1.root </filename>
+         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv2_FSIv1.root </filename>
          <objname>    covmat_skdetfsi_rhc_nue </objname>
          
          <objtype>    TMatrixD              </objtype>
