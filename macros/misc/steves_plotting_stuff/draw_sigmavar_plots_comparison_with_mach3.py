@@ -17,7 +17,7 @@ variations = [ ("p1","p1"),
                ("p3","p3"),
                ("m1","n1"),
                ("m3","n3") ]
-
+               
 mach3_current = "anu_"
 mach3_selection = "sknumubar"
 
@@ -136,6 +136,13 @@ parameters = [( 'f_banffmaqe_rhc'          ,  'xsec_par_0'  ) ,
               ( 'f_skdetfsi005_rhc',  'skdet_par_35') ,
               
               ( 'f_sk_e_scale_rhc' ,  'skdet_par_36') ]
+              
+      
+line_colors = dict()
+line_colors["m1"] = ROOT.kViolet
+line_colors["p1"] = ROOT.kCyan
+line_colors["m3"] = ROOT.kRed
+line_colors["p3"] = ROOT.kBlue
 
 def main():
   
@@ -200,6 +207,7 @@ def main():
         print "Failed to get MaCh3 histogram ",mach3_histname
         
       valor_hists[valor_param][valor_var].SetLineWidth(1)
+      valor_hists[valor_param][valor_var].SetLineColor(line_colors[valor_var])
         
       mach3_hists[valor_param][valor_var].SetName(valor_hists[valor_param][valor_var].GetName()+"_mach3")
       mach3_hists[valor_param][valor_var].SetLineStyle(2)
