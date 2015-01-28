@@ -30,12 +30,16 @@ void test_systematic_error_propagation_all_2015
  
  int    tablesyst_idx            = -99,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
  string tablesyst_name           = "f_banff17_rhc", /* follow util::AsStringCompact() convention */
- const bool   drawplots          = false
+ const bool   drawplots          = false,
+ const bool   per_mode           = false
  )
 {
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+  
+  double spectrum_line_width = 0.8;
+  double ratio_line_width    = 1.0;
 
   bool RHCFlag = false;
   TString str_sk_sample(sk_sample);
@@ -228,7 +232,8 @@ void test_systematic_error_propagation_all_2015
     if(m == conv::kSKmUndefined) continue;
     if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     string modestr = util::AsStringCompact(m);
-    hErecoTunMode[im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+    hErecoTunMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
+    hErecoTunMode[im]->SetFillStyle(0);
     char name[200];
     sprintf(name,"hErecoTun_%s",modestr.c_str());
     hErecoTunMode[im]->SetName(name);
@@ -258,10 +263,20 @@ void test_systematic_error_propagation_all_2015
     if(m == conv::kSKmUndefined) continue;
     if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     string modestr = util::AsStringCompact(m);
-    hErecoNomMode[im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+    const char * mname = modestr.c_str();
+    
+    hErecoNomMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
+    hErecoNomMode[im]->SetFillStyle(0);
     char name[200];
     sprintf(name,"hErecoNomMode_%s",modestr.c_str());
     hErecoNomMode[im]->SetName(name);
+    
+    // Get tweaked ratio histograms - with BANFF tuning
+    char name[200];
+    sprintf(name,"hRatioTunMode_%s",mname);
+    hRatioTunMode[im] = (TH1D*)hErecoTunMode[im]->Clone(name);
+    hRatioTunMode[im]->Divide(hErecoTunMode[im]);
+    SetRatioNullTo1(hRatioTunMode[im]);
   }
 
   for (int im = 0; im < conv::knm; im++) {
@@ -465,13 +480,25 @@ void test_systematic_error_propagation_all_2015
       if(m == conv::kSKmUndefined) continue;
       if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
       string modestr = util::AsStringCompact(m);
-      hErecoTunMode_p1sigma[ip][im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      const char * mname = modestr.c_str();
+      
+      hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      hErecoTunMode_p1sigma[ip][im]->SetFillStyle(0);
+      
       char name[200];
       sprintf(name,"hErecoTun_p1sigma_%s_%s",sysstr.c_str(),modestr.c_str());
       char name[200];
       sprintf(title,"E reco, %s, %s, +1 sigma = %.3lf",sysstr.c_str(),modestr.c_str(),tweak_p1);
       hErecoTunMode_p1sigma[ip][im]->SetName (name);
       hErecoTunMode_p1sigma[ip][im]->SetTitle(title);
+      
+      char name[200];
+      sprintf(name,"hRatioTun_p1sigma_%s_%s",sysstr.c_str(),mname);
+      char title[200];
+      sprintf(title,"Ratio, %s, %s, +1 sigma = %.3lf",sysstr.c_str(),mname,tweak_p1);
+      hRatioTunMode_p1sigma[ip][im] = (TH1D*)hErecoTunMode_p1sigma[ip][im]->Clone(name);
+      hRatioTunMode_p1sigma[ip][im]->Divide(hErecoTunMode[im]);
+      SetRatioNullTo1(hRatioTunMode_p1sigma[ip][im]);
     }
     
     // -1 sigma tweak systematic
@@ -506,13 +533,25 @@ void test_systematic_error_propagation_all_2015
       if(m == conv::kSKmUndefined) continue;
       if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
       string modestr = util::AsStringCompact(m);
-      hErecoTunMode_m1sigma[ip][im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      const char * mname = modestr.c_str();
+      
+      hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      hErecoTunMode_m1sigma[ip][im]->SetFillStyle(0);
+            
       char name[200];
       sprintf(name,"hErecoTun_m1sigma_%s_%s",sysstr.c_str(),modestr.c_str());
       char name[200];
       sprintf(title,"E reco, %s, %s, -1 sigma = %.3lf",sysstr.c_str(),modestr.c_str()),tweak_m1;
       hErecoTunMode_m1sigma[ip][im]->SetName (name);
       hErecoTunMode_m1sigma[ip][im]->SetTitle(title);
+      
+      char name[200];
+      sprintf(name,"hRatioTun_m1sigma_%s_%s",sysstr.c_str(),mname);
+      char title[200];
+      sprintf(title,"Ratio, %s, %s, -1 sigma = %.3lf",sysstr.c_str(),mname,tweak_m1);
+      hRatioTunMode_m1sigma[ip][im] = (TH1D*)hErecoTunMode_m1sigma[ip][im]->Clone(name);
+      hRatioTunMode_m1sigma[ip][im]->Divide(hErecoTunMode[im]);
+      SetRatioNullTo1(hRatioTunMode_m1sigma[ip][im]);
     }
     
     // +3 sigma tweak systematic
@@ -547,13 +586,25 @@ void test_systematic_error_propagation_all_2015
       if(m == conv::kSKmUndefined) continue;
       if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
       string modestr = util::AsStringCompact(m);
-      hErecoTunMode_p3sigma[ip][im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      const char * mname = modestr.c_str();
+      
+      hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      hErecoTunMode_p3sigma[ip][im]->SetFillStyle(0);
+      
       char name[200];
       sprintf(name,"hErecoTun_p3sigma_%s_%s",sysstr.c_str(),modestr.c_str());
       char name[200];
       sprintf(title,"E reco, %s, %s, +3 sigma = %.3lf",sysstr.c_str(),modestr.c_str(),tweak_p3);
       hErecoTunMode_p3sigma[ip][im]->SetName (name);
       hErecoTunMode_p3sigma[ip][im]->SetTitle(title);
+      
+      char name[200];
+      sprintf(name,"hRatioTun_p3sigma_%s_%s",sysstr.c_str(),mname);
+      char title[200];
+      sprintf(title,"Ratio, %s, %s, +3 sigma = %.3lf",sysstr.c_str(),mname,tweak_p3);
+      hRatioTunMode_p3sigma[ip][im] = (TH1D*)hErecoTunMode_p3sigma[ip][im]->Clone(name);
+      hRatioTunMode_p3sigma[ip][im]->Divide(hErecoTunMode[im]);
+      SetRatioNullTo1(hRatioTunMode_p3sigma[ip][im]);
     }
     
     // -3 sigma tweak systematic
@@ -588,13 +639,25 @@ void test_systematic_error_propagation_all_2015
       if(m == conv::kSKmUndefined) continue;
       if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
       string modestr = util::AsStringCompact(m);
-      hErecoTunMode_m3sigma[ip][im] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s,m));
+      const char * mname = modestr.c_str();
+      
+      hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      hErecoTunMode_m3sigma[ip][im]->SetFillStyle(0);
+      
       char name[200];
       sprintf(name,"hErecoTun_m3sigma_%s_%s",sysstr.c_str(),modestr.c_str());
       char name[200];
       sprintf(title,"E reco, %s, %s, -3 sigma = %.3lf",sysstr.c_str(),modestr.c_str(),tweak_m3);
       hErecoTunMode_m3sigma[ip][im]->SetName (name);
       hErecoTunMode_m3sigma[ip][im]->SetTitle(title);
+      
+      char name[200];
+      sprintf(name,"hRatioTun_m3sigma_%s_%s",sysstr.c_str(),mname);
+      char title[200];
+      sprintf(title,"Ratio, %s, %s, -3 sigma = %.3lf",sysstr.c_str(),mname,tweak_m3);
+      hRatioTunMode_m3sigma[ip][im] = (TH1D*)hErecoTunMode_m3sigma[ip][im]->Clone(name);
+      hRatioTunMode_m3sigma[ip][im]->Divide(hErecoTunMode[im]);
+      SetRatioNullTo1(hRatioTunMode_m3sigma[ip][im]);
     }
     
   } // end loop over systematics
@@ -727,11 +790,11 @@ void test_systematic_error_propagation_all_2015
       hErecoTun_p3sigma[ip]->Draw("same");
       hErecoTun->Draw("same");
       
-      hErecoTun            ->SetLineWidth(0.8);
-      hErecoTun_m1sigma[ip]->SetLineWidth(0.8);
-      hErecoTun_m3sigma[ip]->SetLineWidth(0.8);
-      hErecoTun_p1sigma[ip]->SetLineWidth(0.8);
-      hErecoTun_p3sigma[ip]->SetLineWidth(0.8);
+      hErecoTun            ->SetLineWidth(spectrum_line_width);
+      hErecoTun_m1sigma[ip]->SetLineWidth(spectrum_line_width);
+      hErecoTun_m3sigma[ip]->SetLineWidth(spectrum_line_width);
+      hErecoTun_p1sigma[ip]->SetLineWidth(spectrum_line_width);
+      hErecoTun_p3sigma[ip]->SetLineWidth(spectrum_line_width);
       
       hErecoTun_m1sigma[ip]->SetLineColor(kViolet);
       hErecoTun_p1sigma[ip]->SetLineColor(kCyan);
@@ -760,11 +823,11 @@ void test_systematic_error_propagation_all_2015
       hRatioTun_p3sigma[ip]->Draw("same");
       hRatioTun->Draw("same");
       
-      hRatioTun            ->SetLineWidth(0.8);
-      hRatioTun_m1sigma[ip]->SetLineWidth(0.8);
-      hRatioTun_m3sigma[ip]->SetLineWidth(0.8);
-      hRatioTun_p1sigma[ip]->SetLineWidth(0.8);
-      hRatioTun_p3sigma[ip]->SetLineWidth(0.8);
+      hRatioTun            ->SetLineWidth(ratio_line_width);
+      hRatioTun_m1sigma[ip]->SetLineWidth(ratio_line_width);
+      hRatioTun_m3sigma[ip]->SetLineWidth(ratio_line_width);
+      hRatioTun_p1sigma[ip]->SetLineWidth(ratio_line_width);
+      hRatioTun_p3sigma[ip]->SetLineWidth(ratio_line_width);
       
       hRatioTun_m1sigma[ip]->SetLineColor(kViolet);
       hRatioTun_p1sigma[ip]->SetLineColor(kCyan);
@@ -773,6 +836,83 @@ void test_systematic_error_propagation_all_2015
       cratio->SaveAs(Form("Ratio_%s_%s_nsk_%s.eps",sname,sysstr.c_str(),oscparams.c_str()));
     
     } // end loop over systematics
+    
+    if (per_mode) {
+      for (int im = 0; im < conv::knm; im++) {
+        conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+        if(m == conv::kSKmUndefined) continue;
+        if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+        string modestr = util::AsStringCompact(m);
+        const char * mname = modestr.c_str();
+        
+        for(int ip = 0; ip < np; ip++) {
+          conv::PhysParamId_t p = fparm->WhichParam(ip);
+          if(!fparm->IsNuisance(p)) continue; 
+          string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
+          if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+          
+          // Spectra 
+          sprintf(name,"cspectra_%s_%s",mname,sysstr.c_str());
+          TCanvas *cspectra = new TCanvas(name,name);
+          
+          double max_limit = 1.1 * TMath::Max(hErecoTunMode_p3sigma[ip][im]->GetMaximum(),hErecoTunMode_m3sigma[ip][im]->GetMaximum());
+          hErecoTunMode_m1sigma[ip][im]->SetMaximum(max_limit);
+          hErecoTunMode_m1sigma[ip][im]->SetMinimum(0.);
+          
+          hErecoTunMode_m1sigma[ip][im]->Draw();
+          hErecoTunMode_m3sigma[ip][im]->Draw("same");
+          hErecoTunMode_p1sigma[ip][im]->Draw("same");
+          hErecoTunMode_p3sigma[ip][im]->Draw("same");
+          hErecoTunMode[im]            ->Draw("same");
+          
+          hErecoTunMode[im]            ->SetLineWidth(spectrum_line_width);
+          hErecoTunMode_m1sigma[ip][im]->SetLineWidth(spectrum_line_width);
+          hErecoTunMode_m3sigma[ip][im]->SetLineWidth(spectrum_line_width);
+          hErecoTunMode_p1sigma[ip][im]->SetLineWidth(spectrum_line_width);
+          hErecoTunMode_p3sigma[ip][im]->SetLineWidth(spectrum_line_width);
+          
+          hErecoTunMode_m1sigma[ip][im]->SetLineColor(kViolet);
+          hErecoTunMode_p1sigma[ip][im]->SetLineColor(kCyan);
+          hErecoTunMode_m3sigma[ip][im]->SetLineColor(kRed);
+          hErecoTunMode_p3sigma[ip][im]->SetLineColor(kBlue);
+          
+          cspectra->SaveAs(Form("Spectrum_%s_%s_%s_nsk_%s.eps",sname,mname,sysstr.c_str(),oscparams.c_str()));
+          
+          // Ratios
+          
+          char name[200];
+          sprintf(name,"cratio_%s",sysstr.c_str());
+          TCanvas *cratio = new TCanvas(name,name);
+          
+          double max_limit = 1.1 * fabs(TMath::Max(hRatioTunMode_p3sigma[ip][im]->GetMaximum(),hRatioTunMode_m3sigma[ip][im]->GetMaximum())-1);
+          double min_limit = 1.1 * fabs(TMath::Min(hRatioTunMode_p3sigma[ip][im]->GetMinimum(),hRatioTunMode_m3sigma[ip][im]->GetMinimum())-1);
+          
+          max_limit = TMath::Max(max_limit,min_limit);
+          
+          hRatioTunMode_m1sigma[ip][im]->SetMaximum(1+max_limit);
+          hRatioTunMode_m1sigma[ip][im]->SetMinimum(1-max_limit);
+          
+          hRatioTunMode_m1sigma[ip][im]->Draw();
+          hRatioTunMode_m3sigma[ip][im]->Draw("same");
+          hRatioTunMode_p1sigma[ip][im]->Draw("same");
+          hRatioTunMode_p3sigma[ip][im]->Draw("same");
+          hRatioTunMode[im]            ->Draw("same");
+          
+          hRatioTunMode[im]            ->SetLineWidth(ratio_line_width);
+          hRatioTunMode_m1sigma[ip][im]->SetLineWidth(ratio_line_width);
+          hRatioTunMode_m3sigma[ip][im]->SetLineWidth(ratio_line_width);
+          hRatioTunMode_p1sigma[ip][im]->SetLineWidth(ratio_line_width);
+          hRatioTunMode_p3sigma[ip][im]->SetLineWidth(ratio_line_width);
+          
+          hRatioTunMode_m1sigma[ip][im]->SetLineColor(kViolet);
+          hRatioTunMode_p1sigma[ip][im]->SetLineColor(kCyan);
+          hRatioTunMode_m3sigma[ip][im]->SetLineColor(kRed);
+          hRatioTunMode_p3sigma[ip][im]->SetLineColor(kBlue);
+          cratio->SaveAs(Form("Ratio_%s_%s_%s_nsk_%s.eps",sname,mname,sysstr.c_str(),oscparams.c_str()));
+        
+        } // ip
+      } //im
+    } // per_mode
 
   } // end draw plots
 
@@ -801,6 +941,36 @@ void test_systematic_error_propagation_all_2015
     hRatioTun_p3sigma[ip]->Write(Form("Ratio_%s_%s_p3",sname,sysstr.c_str()));
     
   }
+  
+  if (per_mode) {
+    for (int im = 0; im < conv::knm; im++) {
+      conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+      if(m == conv::kSKmUndefined) continue;
+      if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+      string modestr = util::AsStringCompact(m);
+      const char * mname = modestr.c_str();
+      
+      hErecoTunMode[im]->Write(Form("Spectrum_%s_%s_nominal",sname,mname));
+      
+      for(int ip = 0; ip < np; ip++) {
+        conv::PhysParamId_t p = fparm->WhichParam(ip);
+        if(!fparm->IsNuisance(p)) continue; 
+        string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
+        if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+        
+        hErecoTunMode_m1sigma[ip][im]->Write(Form("Spectrum_%s_%s_%s_m1",sname,mname,sysstr.c_str()));
+        hErecoTunMode_m3sigma[ip][im]->Write(Form("Spectrum_%s_%s_%s_m3",sname,mname,sysstr.c_str()));
+        hErecoTunMode_p1sigma[ip][im]->Write(Form("Spectrum_%s_%s_%s_p1",sname,mname,sysstr.c_str()));
+        hErecoTunMode_p3sigma[ip][im]->Write(Form("Spectrum_%s_%s_%s_p3",sname,mname,sysstr.c_str()));
+        
+        hRatioTunMode_m1sigma[ip][im]->Write(Form("Ratio_%s_%s_%s_m1",sname,mname,sysstr.c_str()));
+        hRatioTunMode_m3sigma[ip][im]->Write(Form("Ratio_%s_%s_%s_m3",sname,mname,sysstr.c_str()));
+        hRatioTunMode_p1sigma[ip][im]->Write(Form("Ratio_%s_%s_%s_p1",sname,mname,sysstr.c_str()));
+        hRatioTunMode_p3sigma[ip][im]->Write(Form("Ratio_%s_%s_%s_p3",sname,mname,sysstr.c_str()));
+      } //ip
+    } //im
+  } // per_mode
+  
   output_rootfile->Close();
 
   // Write the table 
