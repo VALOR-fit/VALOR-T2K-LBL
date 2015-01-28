@@ -70,31 +70,31 @@ parameters = [( 'f_banffmaqe_rhc'          ,  'xsec_par_0'  ) ,
              # ( ,  'flux_par_72' ) , 
              # ( ,  'flux_par_73' ) , 
              # ( ,  'flux_par_74' ) , 
-              ( 'f_banff00_rhc',  'flux_par_75' ) , 
-              ( 'f_banff01_rhc',  'flux_par_76' ) , 
-              ( 'f_banff02_rhc',  'flux_par_77' ) , 
-              ( 'f_banff03_rhc',  'flux_par_78' ) , 
-              ( 'f_banff04_rhc',  'flux_par_79' ) , 
-              ( 'f_banff05_rhc',  'flux_par_80' ) , 
-              ( 'f_banff06_rhc',  'flux_par_81' ) , 
-              ( 'f_banff07_rhc',  'flux_par_82' ) , 
-              ( 'f_banff08_rhc',  'flux_par_83' ) , 
-              ( 'f_banff09_rhc',  'flux_par_84' ) , 
-              ( 'f_banff10_rhc',  'flux_par_85' ) , 
-              ( 'f_banff11_rhc',  'flux_par_86' ) , 
-              ( 'f_banff12_rhc',  'flux_par_87' ) , 
-              ( 'f_banff13_rhc',  'flux_par_88' ) , 
-              ( 'f_banff14_rhc',  'flux_par_89' ) , 
-              ( 'f_banff15_rhc',  'flux_par_90' ) , 
-              ( 'f_banff16_rhc',  'flux_par_91' ) , 
-              ( 'f_banff17_rhc',  'flux_par_92' ) , 
-              ( 'f_banff18_rhc',  'flux_par_93' ) , 
-              ( 'f_banff19_rhc',  'flux_par_94' ) , 
-              ( 'f_banff20_rhc',  'flux_par_95' ) , 
-              ( 'f_banff21_rhc',  'flux_par_96' ) , 
-              ( 'f_banff22_rhc',  'flux_par_97' ) , 
-              ( 'f_banff23_rhc',  'flux_par_98' ) , 
-              ( 'f_banff24_rhc',  'flux_par_99' ) , 
+              #~ ( 'f_banff00_rhc',  'flux_par_75' ) , 
+              #~ ( 'f_banff01_rhc',  'flux_par_76' ) , 
+              #~ ( 'f_banff02_rhc',  'flux_par_77' ) , 
+              #~ ( 'f_banff03_rhc',  'flux_par_78' ) , 
+              #~ ( 'f_banff04_rhc',  'flux_par_79' ) , 
+              #~ ( 'f_banff05_rhc',  'flux_par_80' ) , 
+              #~ ( 'f_banff06_rhc',  'flux_par_81' ) , 
+              #~ ( 'f_banff07_rhc',  'flux_par_82' ) , 
+              #~ ( 'f_banff08_rhc',  'flux_par_83' ) , 
+              #~ ( 'f_banff09_rhc',  'flux_par_84' ) , 
+              #~ ( 'f_banff10_rhc',  'flux_par_85' ) , 
+              #~ ( 'f_banff11_rhc',  'flux_par_86' ) , 
+              #~ ( 'f_banff12_rhc',  'flux_par_87' ) , 
+              #~ ( 'f_banff13_rhc',  'flux_par_88' ) , 
+              #~ ( 'f_banff14_rhc',  'flux_par_89' ) , 
+              #~ ( 'f_banff15_rhc',  'flux_par_90' ) , 
+              #~ ( 'f_banff16_rhc',  'flux_par_91' ) , 
+              #~ ( 'f_banff17_rhc',  'flux_par_92' ) , 
+              #~ ( 'f_banff18_rhc',  'flux_par_93' ) , 
+              #~ ( 'f_banff19_rhc',  'flux_par_94' ) , 
+              #~ ( 'f_banff20_rhc',  'flux_par_95' ) , 
+              #~ ( 'f_banff21_rhc',  'flux_par_96' ) , 
+              #~ ( 'f_banff22_rhc',  'flux_par_97' ) , 
+              #~ ( 'f_banff23_rhc',  'flux_par_98' ) , 
+              #~ ( 'f_banff24_rhc',  'flux_par_99' ) , 
              #( ,  'skdet_par_0' ) , 
              #( ,  'skdet_par_1' ) , 
              #( ,  'skdet_par_2' ) , 
@@ -290,6 +290,9 @@ def main():
         mach3_ratio_hists      [valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists      [valor_mode][valor_param][valor_var],mach3_nom_hists[valor_mode])
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists_binno[valor_mode][valor_param][valor_var],mach3_nom_hists_binno[valor_mode])
         
+        set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
+        set_zero_to_one(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var])
+        
       hist_limits = []
       for valor_var,mach3_var in variations:
         for bin_content in (hist_to_list(valor_hists[valor_mode][valor_param][valor_var])+hist_to_list(mach3_ratio_hists[valor_mode][valor_param][valor_var])):
@@ -360,6 +363,13 @@ def ratio_hist(hvar,hnom):
   hratio.GetYaxis().SetTitle("Ratio")
   hratio.Divide(hnom)
   return hratio
+  
+def set_zero_to_one(h):
+  nbins = h.GetXaxis().GetNbins()
+  for ibin in xrange(1,nbins+1):
+    if abs(h.GetBinContent(ibin) < 1E-10):
+      h.SetBinContent(ibin,1)
+  return
   
 
 def hist_to_list(h):
