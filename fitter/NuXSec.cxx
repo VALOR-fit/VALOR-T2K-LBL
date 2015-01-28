@@ -711,6 +711,7 @@ double NuXSec::FinTuningWght_1p(
 #endif
       p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
       p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
+      p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
       p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE       )
   {
     //
@@ -733,7 +734,8 @@ double NuXSec::FinTuningWght_1p(
        p == kRHCNuisBANFFSCCA       || 
        p == kRHCNuisBANFFSCCV       ||
 #endif
-       p == kRHCNuisBANFFCA5        ) 
+       p == kRHCNuisBANFFCA5        ||
+       p == kRHCNuisBANFFBgRES       ) 
       {
         tb = fBANFF->RHCBestFitValue(p);
         untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
@@ -1076,7 +1078,8 @@ double NuXSec::SystWght_1p(
            p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
            p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCA       ||
 #endif
-           p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth )
+           p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
+           p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES       )
   {
 #if SPLINE_TYPE == -1
     return wght;
@@ -1093,7 +1096,8 @@ double NuXSec::SystWght_1p(
        p == kRHCNuisBANFFSCCA       || 
        p == kRHCNuisBANFFSCCV       ||
 #endif
-       p == kRHCNuisBANFFCA5         ) 
+       p == kRHCNuisBANFFCA5        ||
+       p == kRHCNuisBANFFBgRES       ) 
     {
       tb = fBANFF->RHCBestFitValue(p);
       tc = fBANFF->RHCCurrentValue(p);
@@ -1173,7 +1177,6 @@ double NuXSec::SystWght_1p(
     wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
   else if( p == kRHCNuisBANFFMEC          || 
-           p == kRHCNuisBANFFBgRES        ||
            p == kRHCNuisBANFFNormCCcoh    ||
            p == kRHCNuisBANFFNormNCcoh    ||
            p == kRHCNuisBANFFNormNCoth    ||

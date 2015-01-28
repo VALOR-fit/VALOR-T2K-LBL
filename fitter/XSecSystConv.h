@@ -273,7 +273,7 @@ namespace valor {
 
 	false,                     // kNuisBANFFMEC
 	true,                      // kNuisBANFFCA5
-	false,                     // kNuisBANFFBgRES
+	true,                      // kNuisBANFFBgRES
 	true,                      // kNuisBANFFMAQE
 	true,                      // kNuisBANFFMARES
 	// NEW SPLIT ANA
@@ -337,7 +337,7 @@ namespace valor {
 
 	false,                     // kRHCNuisBANFFMEC
 	true,                      // kRHCNuisBANFFCA5
-	false,                     // kRHCNuisBANFFBgRES
+	true,                      // kRHCNuisBANFFBgRES
 	true,                      // kRHCNuisBANFFMAQE
 	true,                      // kRHCNuisBANFFMARES
 	// NEW SPLIT ANA
