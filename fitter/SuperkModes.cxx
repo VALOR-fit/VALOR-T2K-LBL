@@ -190,7 +190,7 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
      case ( kSKmNuEBarCC1pi     ) : return "nueb_ccpi";       break;
      case ( kSKmNuEBarCCcoh     ) : return "nueb_cccoh";      break;
      case ( kSKmNuEBarCCoth     ) : return "nueb_ccoth";      break;
-     case ( kSKmNuEBarNC1piC    ) : return "nueb_ncpi";       break;
+     case ( kSKmNuEBarNC1piC    ) : return "nueb_nc1piC";       break;
      case ( kSKmNuEBarNC1pi0    ) : return "nueb_nc1pi0";     break;
      case ( kSKmNuEBarNCcoh     ) : return "nueb_nccoh";      break;
      case ( kSKmNuEBarNCoth     ) : return "nueb_ncoth";      break;
