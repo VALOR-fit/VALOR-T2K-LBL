@@ -22,16 +22,20 @@ void test_systematic_error_propagation_all_2015
  double       input_dm12sq       = -99,                                         /* */
  double       input_dm23sq       = -99,                                         /* */
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
- const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
+ 
+ //const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
+ const char * config_file        = "analysis_configuration_2.5E20_prefit.xml",
+ //const char * config_file        = "analysis_configuration_2.5E20.xml",
+  
  //const char * fit_param_list     = "nuosc3fbar_fixnonbar_12fix+nuisance", 
  const char * fit_param_list     = "nuosc3f_12fix+nuisance",
  const char * mixparamchoice     = "sinsqtheta",
  const char * hierarchy          = "normal",
  
- int    tablesyst_idx            = -99,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
+ int    tablesyst_idx            = -999,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
  string tablesyst_name           = "f_banff17_rhc", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
- const bool   per_mode           = false
+ const bool   per_mode           = true
  )
 {
   using namespace std;
@@ -331,6 +335,26 @@ void test_systematic_error_propagation_all_2015
         
           ip_skdetfsi_rhc++;
         }
+	else if(sysstr=="f_sk_e_scale_rhc" && idx<0){
+	  double bestfit = 0.;
+	  //tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+	  //tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+	  tweak_p1 = bestfit + 1;
+	  tweak_m1 = bestfit - 1;
+	  //tweak_p1 = TMath::Max(tweak_p1,0.);
+	  //tweak_m1 = TMath::Max(tweak_m1,0.);
+	  vp1sigma_skescale = tweak_p1;
+	  vm1sigma_skescale = tweak_m1;
+	  
+	  //tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+	  //tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+	  tweak_p3 = bestfit + 3;
+	  tweak_m3 = bestfit - 3;
+	  //tweak_p3 = TMath::Max(tweak_p3,0.);
+	  //tweak_m3 = TMath::Max(tweak_m3,0.);
+	  vp3sigma_skescale = tweak_p3;
+	  vm3sigma_skescale = tweak_m3;
+	}
       }
       else if(util::IsBANFF(p)){
         idx = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);
@@ -369,12 +393,12 @@ void test_systematic_error_propagation_all_2015
     }
     else if(util::IsFHCSystematic(p)){
       if(util::IsSKDetFSI(p)){
-            idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);     
-            if(idx>=0){
+	idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);     
+	if(idx>=0){
           bestfit = 1;
-
-              tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
-              tweak_m1 = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
+	  
+	  tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
+	  tweak_m1 = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
           //tweak_p1 = TMath::Max(tweak_p1,0.);
           //tweak_m1 = TMath::Max(tweak_m1,0.);
           vp1sigma_skdetfsi[ip_skdetfsi] = tweak_p1;
@@ -389,6 +413,27 @@ void test_systematic_error_propagation_all_2015
           
           ip_skdetfsi++;
         }
+	else if(sysstr=="f_sk_e_scale") && idx<0){
+	  //tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+	  //tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+	  tweak_p1 = bestfit + 1;
+	  tweak_m1 = bestfit - 1;
+	  //tweak_p1 = TMath::Max(tweak_p1,0.);
+	  //tweak_m1 = TMath::Max(tweak_m1,0.);
+	  vp1sigma_skescale = tweak_p1;
+	  vm1sigma_skescale = tweak_m1;
+	  
+	  //tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+	  //tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+	  tweak_p3 = bestfit + 3;
+	  tweak_m3 = bestfit - 3;
+	  //tweak_p3 = TMath::Max(tweak_p3,0.);
+	  //tweak_m3 = TMath::Max(tweak_m3,0.);
+	  vp3sigma_skescale = tweak_p3;
+	  vm3sigma_skescale = tweak_m3;
+	}
+
+
       }
       else if(util::IsBANFF(p)){
         idx = util::ArrIdx::Instance()->BANFFSystIdx(p);
@@ -426,27 +471,8 @@ void test_systematic_error_propagation_all_2015
       }
     }
     
-    // sk_e_scale is treated in a different way: not in the cov. matrix so no SystIdx() --> idx = -1 
-    // RHC/FHC sample is treated inside the function
-    if(sysstr.find("sk_e_scale") && idx<0){ 
-      double bestfit = 0.;
-      tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-      tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-      //tweak_p1 = TMath::Max(tweak_p1,0.);
-      //tweak_m1 = TMath::Max(tweak_m1,0.);
-      vp1sigma_skescale = tweak_p1;
-      vm1sigma_skescale = tweak_m1;
 
-      tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-      tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-      //tweak_p3 = TMath::Max(tweak_p3,0.);
-      //tweak_m3 = TMath::Max(tweak_m3,0.);
-      vp3sigma_skescale = tweak_p3;
-      vm3sigma_skescale = tweak_m3;
-    }
-    
-
-    // Get the tweaked spectrum histograms
+  // Get the tweaked spectrum histograms
 
     // +1 sigma tweak systematic
     skexp.GetBANFF()->RestoreTunedMC();
@@ -458,6 +484,17 @@ void test_systematic_error_propagation_all_2015
     skexp.ResetSystematics();
     skexp.TweakSystematic(sysstr,tweak_p1);
     skexp.Generate(ph);
+
+
+    // if(sysstr=="f_sk_e_scale_rhc"){
+    //   cout << sysstr << endl;
+    //   cout << skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE) << endl;
+    //   cout << vp1sigma_skescale << " " << tweak_p1 << endl;
+    //   cout << "Escale Weight = " << skexp.GetSuperkDetectorFSI()->EnergyScale(s,kSKmNuMuCCQE) << endl;
+    //   return;
+    // }
+
+
   
     hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     char name[200];
@@ -658,11 +695,10 @@ void test_systematic_error_propagation_all_2015
       hRatioTunMode_m3sigma[ip][im] = (TH1D*)hErecoTunMode_m3sigma[ip][im]->Clone(name);
       hRatioTunMode_m3sigma[ip][im]->Divide(hErecoTunMode[im]);
       SetRatioNullTo1(hRatioTunMode_m3sigma[ip][im]);
+ 
     }
     
-  } // end loop over systematics
-    
-   
+  } // end loop over systematics 
 
   cout << endl;
   cout << endl;
@@ -776,6 +812,8 @@ void test_systematic_error_propagation_all_2015
       string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
       
+      cout << sysstr << endl;
+
       // Spectra 
       sprintf(name,"cspectra_%s",sysstr.c_str());
       TCanvas *cspectra = new TCanvas(name,name);
@@ -836,7 +874,7 @@ void test_systematic_error_propagation_all_2015
       cratio->SaveAs(Form("Ratio_%s_%s_nsk_%s.eps",sname,sysstr.c_str(),oscparams.c_str()));
     
     } // end loop over systematics
-    
+  
     if (per_mode) {
       for (int im = 0; im < conv::knm; im++) {
         conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
@@ -851,6 +889,31 @@ void test_systematic_error_propagation_all_2015
           string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
           if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
           
+
+
+
+	  // if( !(modestr == "nuebarnccoh" && sysstr=="f_banffnorm_nccoh_rhc") ){
+	  //   continue;
+	  // }
+	 
+	  // // if( !(modestr == "nuebarnccoh" && sysstr=="f_banffnorm_nccoh_rhc") ){
+	  // //   cout << modestr << " " << sysstr << endl;
+	  // //   continue;	    
+	  // // }
+
+
+	  // cout << "per mode --> " << modestr << " " << sysstr << endl;
+
+
+
+
+
+
+
+
+
+
+
           // Spectra 
           sprintf(name,"cspectra_%s_%s",mname,sysstr.c_str());
           TCanvas *cspectra = new TCanvas(name,name);
@@ -909,13 +972,12 @@ void test_systematic_error_propagation_all_2015
           hRatioTunMode_m3sigma[ip][im]->SetLineColor(kRed);
           hRatioTunMode_p3sigma[ip][im]->SetLineColor(kBlue);
           cratio->SaveAs(Form("Ratio_%s_%s_%s_nsk_%s.eps",sname,mname,sysstr.c_str(),oscparams.c_str()));
-        
+	  
         } // ip
       } //im
     } // per_mode
 
   } // end draw plots
-
 
 
   // Write ROOT file output
@@ -1139,6 +1201,9 @@ void test_systematic_error_propagation_all_2015
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
       if( (tablesyst_idx != -99) && (tablesyst_name != sysstr) ) continue;
       
+
+      cout << "Make table " << sysstr << endl;
+
       streamer << "\\begin{table}"   << endl;
       streamer << "\\tiny" << endl;
       streamer << "\\center" << endl;
@@ -1200,9 +1265,11 @@ void test_systematic_error_propagation_all_2015
                << endl;
       streamer << "\\end{table}" << endl;
       streamer << "\\clearpage" << endl;
-      cout << streamer.str() << endl;
       
     } // end loop over systematics
+
+    
+cout << streamer.str() << endl;
     
     // get size of file
     long size;
