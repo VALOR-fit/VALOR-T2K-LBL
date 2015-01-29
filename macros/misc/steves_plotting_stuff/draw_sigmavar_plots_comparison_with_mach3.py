@@ -1,12 +1,14 @@
 #!/usr/bin/python
 import sys
-import ROOT
+import ROOT 
 import os
 
 env_var = "T2KOSCANA"
 
-mach3_filename = '/home/steve/analysis/systematic_variations/sigmavar2014SK.root'
-valor_filename = '/home/steve/analysis/systematic_variations/systematic_variations_RHC1Rmu.root'
+mach3_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/systematic_variations/mach3/sigmavar2014SK.root'
+
+#valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/systematic_variations/systematic_variations_RHC1Rmu.root'
+valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/systematic_variations_RHC1Rmu.root'
 
 mach3_nom_pattern = "[CURRENT]h[SELECTION]_nom"
 mach3_pattern     = "[CURRENT][SELECTION]_[PARAM]_sig_[VAR]"
