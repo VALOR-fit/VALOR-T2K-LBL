@@ -43,11 +43,11 @@ void draw_sensitivity_plots_toys_NEW(
 				 
 				 // Asimov - NuOscBar Fix NuOsc - Stat only
 				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/Asimov/fitgrid_Asimov_statonly_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
-				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/Asimov/fitgrid_Asimov_statonly_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",     
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/Asimov/fitgrid_Asimov_statonly_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",     
 
 				 //  Asimov - NuOscBar Fix NuOsc - Stat + Syst
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/Asimov/fitgrid_Asimov_all_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
-				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/Asimov/fitgrid_Asimov_all_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",		  
+				 const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/Asimov/fitgrid_Asimov_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/Asimov/fitgrid_Asimov_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",		  
 				 
 				 // Fake data set A - NuOscBar Fix NuOsc - Stat only
 				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_A_statonly_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
@@ -58,10 +58,42 @@ void draw_sensitivity_plots_toys_NEW(
 
 				 // Fake data set B - NuOscBar Fix NuOsc - Stat only
 				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_B_statonly_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
-				 const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_B_statonly_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_B_statonly_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
 				 // Fake data set B - NuOscBar Fix NuOsc - Stat + Syst
 				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_B_all_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
-				 const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_B_all_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_B_all_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+
+				 // Fake data set C - NuOscBar Fix NuOsc - Stat only
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_C_statonly_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_C_statonly_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 // Fake data set C - NuOscBar Fix NuOsc - Stat + Syst
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_C_all_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_C_all_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+
+				 // Fake data set D - NuOscBar Fix NuOsc - Stat only
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_D_statonly_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_D_statonly_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 // Fake data set D - NuOscBar Fix NuOsc - Stat + Syst
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_D_all_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_D_all_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+
+				 // Fake data set E - NuOscBar Fix NuOsc - Stat only
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_E_statonly_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_E_statonly_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 // Fake data set E - NuOscBar Fix NuOsc - Stat + Syst
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_E_all_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_E_all_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+
+
+				 // Fake data set F - NuOscBar Fix NuOsc - Stat only
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_F_statonly_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_F_statonly_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 // Fake data set F - NuOscBar Fix NuOsc - Stat + Syst
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_F_all_nh_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+				 //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p250e21_201411/fitgrid_Fakedata_F_all_ih_mixing23_dmsq_none_BinsTot_51_BinsTot_51_BinsTot_1",
+
+
+
 
 
 
