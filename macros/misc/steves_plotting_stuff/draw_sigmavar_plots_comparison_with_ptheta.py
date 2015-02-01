@@ -5,12 +5,12 @@ import os
 
 env_var = "T2KOSCANA"
 
-pthet_filename = '/home/steve/analysis/systematic_variations/ptheta_variation_newformat.root'
+pthet_filename = '/home/steve/analysis/systematic_variations/systvariation.root'
 
 valor_filename = '/home/steve/analysis/systematic_variations/systematic_variations_RHC1Rmu.root'
 
 pthet_nom_pattern = "[CURRENT]h[SELECTION]_nom"
-pthet_pattern     = "[CURRENT]h[SELECTION]_[PARAM]_sig_[VAR]"
+pthet_pattern     = "[CURRENT][SELECTION]_[PARAM]_sig_[VAR]"
 valor_pattern     = "Ratio_RHC1Rmu_[PARAM]_[VAR]"
 
 # paired things have valor, then pthet
@@ -71,31 +71,31 @@ parameters = [( 'f_banffmaqe_rhc'          ,  'xsec_par_0'  ) ,
              # ( ,  'flux_par_72' ) , 
              # ( ,  'flux_par_73' ) , 
              # ( ,  'flux_par_74' ) , 
-              ( 'f_banff00_rhc',  'flux_par_76' ) , 
-              ( 'f_banff01_rhc',  'flux_par_77' ) , 
-              ( 'f_banff02_rhc',  'flux_par_78' ) , 
-              ( 'f_banff03_rhc',  'flux_par_79' ) , 
-              ( 'f_banff04_rhc',  'flux_par_80' ) , 
-              ( 'f_banff05_rhc',  'flux_par_81' ) , 
-              ( 'f_banff06_rhc',  'flux_par_82' ) , 
-              ( 'f_banff07_rhc',  'flux_par_83' ) , 
-              ( 'f_banff08_rhc',  'flux_par_84' ) , 
-              ( 'f_banff09_rhc',  'flux_par_85' ) , 
-              ( 'f_banff10_rhc',  'flux_par_86' ) , 
-              ( 'f_banff11_rhc',  'flux_par_87' ) , 
-              ( 'f_banff12_rhc',  'flux_par_88' ) , 
-              ( 'f_banff13_rhc',  'flux_par_89' ) , 
-              ( 'f_banff14_rhc',  'flux_par_90' ) , 
-              ( 'f_banff15_rhc',  'flux_par_91' ) , 
-              ( 'f_banff16_rhc',  'flux_par_92' ) , 
-              ( 'f_banff17_rhc',  'flux_par_93' ) , 
-              ( 'f_banff18_rhc',  'flux_par_94' ) , 
-              ( 'f_banff19_rhc',  'flux_par_95' ) , 
-              ( 'f_banff20_rhc',  'flux_par_96' ) , 
-              ( 'f_banff21_rhc',  'flux_par_97' ) , 
-              ( 'f_banff22_rhc',  'flux_par_98' ) , 
-              ( 'f_banff23_rhc',  'flux_par_99' ) , 
-              ( 'f_banff24_rhc',  'flux_par_100') , 
+              ( 'f_banff00_rhc',  'flux_par_75' ) , 
+              ( 'f_banff01_rhc',  'flux_par_76' ) , 
+              ( 'f_banff02_rhc',  'flux_par_77' ) , 
+              ( 'f_banff03_rhc',  'flux_par_78' ) , 
+              ( 'f_banff04_rhc',  'flux_par_79' ) , 
+              ( 'f_banff05_rhc',  'flux_par_80' ) , 
+              ( 'f_banff06_rhc',  'flux_par_81' ) , 
+              ( 'f_banff07_rhc',  'flux_par_82' ) , 
+              ( 'f_banff08_rhc',  'flux_par_83' ) , 
+              ( 'f_banff09_rhc',  'flux_par_84' ) , 
+              ( 'f_banff10_rhc',  'flux_par_85' ) , 
+              ( 'f_banff11_rhc',  'flux_par_86' ) , 
+              ( 'f_banff12_rhc',  'flux_par_87' ) , 
+              ( 'f_banff13_rhc',  'flux_par_88' ) , 
+              ( 'f_banff14_rhc',  'flux_par_89' ) , 
+              ( 'f_banff15_rhc',  'flux_par_90' ) , 
+              ( 'f_banff16_rhc',  'flux_par_91' ) , 
+              ( 'f_banff17_rhc',  'flux_par_92' ) , 
+              ( 'f_banff18_rhc',  'flux_par_93' ) , 
+              ( 'f_banff19_rhc',  'flux_par_94' ) , 
+              ( 'f_banff20_rhc',  'flux_par_95' ) , 
+              ( 'f_banff21_rhc',  'flux_par_96' ) , 
+              ( 'f_banff22_rhc',  'flux_par_97' ) , 
+              ( 'f_banff23_rhc',  'flux_par_98' ) , 
+              ( 'f_banff24_rhc',  'flux_par_99' ) , 
              #( ,  'skdet_par_0' ) , 
              #( ,  'skdet_par_1' ) , 
              #( ,  'skdet_par_2' ) , 
@@ -211,7 +211,7 @@ def main():
       valor_hists[valor_param][valor_var].SetLineColor(line_colors[valor_var])
         
       pthet_hists[valor_param][valor_var].SetName(valor_hists[valor_param][valor_var].GetName()+"_pthet")
-      pthet_hists[valor_param][valor_var].SetLineStyle(2)
+      pthet_hists[valor_param][valor_var].SetLineStyle(3)
       pthet_hists[valor_param][valor_var].SetLineWidth(2)
       pthet_hists[valor_param][valor_var].SetLineColor(valor_hists[valor_param][valor_var].GetLineColor()+2)
       
