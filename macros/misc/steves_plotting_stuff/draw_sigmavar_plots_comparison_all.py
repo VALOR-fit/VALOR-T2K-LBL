@@ -269,7 +269,8 @@ def main():
     # Plot mach3 vs valor
     hist_limits = []
     for valor_var,mach3_var in variations:
-      for bin_content in (hist_to_list(valor_hists[valor_param][valor_var])+hist_to_list(mach3_ratio_hists[valor_param][valor_var])):
+      for bin_content in (hist_to_list(valor_hists      [valor_param][valor_var])+
+                          hist_to_list(mach3_ratio_hists[valor_param][valor_var])):
         hist_limits.append(abs(bin_content-1))
     
     hist_var = 1.1*max(hist_limits)
@@ -355,7 +356,8 @@ def main():
     # Plot pthet vs mach3
     hist_limits = []
     for valor_var,mach3_var in variations:
-      for bin_content in (hist_to_list(mach3_hists[valor_param][valor_var])+hist_to_list(pthet_ratio_hists[valor_param][valor_var])):
+      for bin_content in (hist_to_list(mach3_ratio_hists[valor_param][valor_var])+
+                          hist_to_list(pthet_ratio_hists[valor_param][valor_var])):
         hist_limits.append(abs(bin_content-1))
     
     hist_var = 1.1*max(hist_limits)
@@ -398,7 +400,7 @@ def main():
     # Plot all
     hist_limits = []
     for valor_var,mach3_var in variations:
-      for bin_content in (hist_to_list(valor_hists[valor_param][valor_var]) +
+      for bin_content in (hist_to_list(valor_hists      [valor_param][valor_var]) +
                           hist_to_list(mach3_ratio_hists[valor_param][valor_var]) +
                           hist_to_list(pthet_ratio_hists[valor_param][valor_var])):
           hist_limits.append(abs(bin_content-1))
@@ -406,8 +408,6 @@ def main():
     hist_var = 1.1*max(hist_limits)
     hist_max = hist_var + 1
     hist_min = 1-hist_var
-    
-    print hist_limits
     
     canv_key = valor_param+"_valor_vs_mach3_vs_pthet"
     canv_key_binno = canv_key+"_binno"
