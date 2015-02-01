@@ -249,7 +249,7 @@ def main():
       mach3_ratio_hists[valor_param][valor_var].Draw(option)
     
     canvases[valor_param].Update()
-    canvases[valor_param].Print("syst_var_ereco"+".pdf"+pdf_printing[iparam])
+    canvases[valor_param].Print("syst_var_valor_vs_mach3_ereco"+".pdf"+pdf_printing[iparam])
     
     canvases[valor_param+"_binno"] = ROOT.TCanvas(valor_param+"_binno",valor_param+"_binno",1280,720)
     option=""
@@ -264,7 +264,7 @@ def main():
       mach3_ratio_hists_binno[valor_param][valor_var].Draw(option)
     
     canvases[valor_param+"_binno"].Update()
-    canvases[valor_param+"_binno"].Print("syst_var_binno"+".pdf"+pdf_printing[iparam])
+    canvases[valor_param+"_binno"].Print("syst_var_valor_vs_mach3_binno"+".pdf"+pdf_printing[iparam])
     
 
 def hist_to_bin_number(h):
