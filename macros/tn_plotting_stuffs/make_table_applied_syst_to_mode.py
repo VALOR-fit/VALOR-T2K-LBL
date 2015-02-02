@@ -35,7 +35,7 @@ coln_width = 3
 
 #______________________________________________________________________________________________________________________________
 
-def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex"):
+def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", skipflux=False, skipskdet=False):
   
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/analysis_configuration.xml")
@@ -103,17 +103,18 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex"):
   tex_output.write("& ".join(entries) + " \\\\ \hline \n")
       
   # SKDetFSI
-  for param in xrange(conv.kNuis000,conv.kLastNuisParam):
-    if not util.IsSKDetFSI(param): continue
-    entries = [util.ParamAsStringPaperTex(param).ljust(col1_width)]
-    row = False
-    for m in modes:
-      if skdetfsi.ApplySystToSKMode(param,sample,m):
-        entries.append("\\ck".ljust(coln_width))
-        row = True
-      else:
-        entries.append("".ljust(coln_width))
-    if row: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
+  if not skipskdet:
+    for param in xrange(conv.kNuis000,conv.kLastNuisParam):
+      if not util.IsSKDetFSI(param): continue
+      entries = [util.ParamAsStringPaperTex(param).ljust(col1_width)]
+      row = False
+      for m in modes:
+        if skdetfsi.ApplySystToSKMode(param,sample,m):
+          entries.append("\\ck".ljust(coln_width))
+          row = True
+        else:
+          entries.append("".ljust(coln_width))
+      if row: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
     
   # BANFF
   for param in xrange(conv.kNuis000,conv.kLastNuisParam):
@@ -125,6 +126,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex"):
     if ip < 0: continue
     
     if conv.kParamInBANFFfitIsSuperkFluxParam[ip]: # flux parameters
+      if skipflux: continue
       nupdg = conv.kNuPdgCodeOfFluxParamInBANFFfit[ip]
       assert(nupdg)
       for m in modes:
@@ -171,11 +173,13 @@ if __name__=="__main__":
   
   parser.add_option('-f', '--file', dest='output_file', default="syst_applied_table.tex", help="Name for output TeX file.")
   
-  parser.add_option('-s', '--sample', dest='sample', default="1Rmu", help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
+  parser.add_option('-s', '--sample' , dest='sample'      , default="1Rmu"                    , help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
+  parser.add_option('--skip-skdetfsi', dest='skipskdetfsi', action="store_true", default=False, help="Skip the SKdetFSI parameters")
+  parser.add_option('--skip-flux'    , dest='skipflux'    , action="store_true", default=False, help="Skip the flux parameters")
   
   o,other = parser.parse_args()
   sample = util.SKSampleFromString(o.sample)
-  main(sample,o.output_file)
+  main(sample,o.output_file, o.skipflux, o.skipskdetfsi)
   
   if other:
     print "Warning - ignored arguments: ",other
