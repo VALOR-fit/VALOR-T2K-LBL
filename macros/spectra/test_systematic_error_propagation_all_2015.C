@@ -23,10 +23,14 @@ void test_systematic_error_propagation_all_2015
  double       input_dm23sq       = -99,                                         /* */
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
+ //const char * config_file        = "analysis_configuration_run1to6_test_app.xml",   /* */
  //const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
- const char * config_file        = "analysis_configuration_2.5E20_prefit.xml",
+ //const char * config_file        = "analysis_configuration_2.5E20_prefit.xml",
  //const char * config_file        = "analysis_configuration_2.5E20.xml",
+ const char * config_file        = "analysis_configuration_1.7E20_prefit.xml",
+ //const char * config_file        = "analysis_configuration_1.7E20.xml",
   
+
  //const char * fit_param_list     = "nuosc3fbar_fixnonbar_12fix+nuisance", 
  const char * fit_param_list     = "nuosc3f_12fix+nuisance",
  const char * mixparamchoice     = "sinsqtheta",
@@ -36,14 +40,15 @@ void test_systematic_error_propagation_all_2015
  string tablesyst_name           = "f_banff17_rhc", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
  const bool   per_mode           = true
- )
-{
+ ){
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
   
   double spectrum_line_width = 0.8;
   double ratio_line_width    = 1.0;
+
+  int NtotParam=0;
 
   bool RHCFlag = false;
   TString str_sk_sample(sk_sample);
@@ -469,7 +474,7 @@ void test_systematic_error_propagation_all_2015
         cout << "FHC systematic parameter not found!!!" << endl;
         exit(1);
       }
-    }
+  }
     
 
   // Get the tweaked spectrum histograms
@@ -484,17 +489,6 @@ void test_systematic_error_propagation_all_2015
     skexp.ResetSystematics();
     skexp.TweakSystematic(sysstr,tweak_p1);
     skexp.Generate(ph);
-
-
-    // if(sysstr=="f_sk_e_scale_rhc"){
-    //   cout << sysstr << endl;
-    //   cout << skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE) << endl;
-    //   cout << vp1sigma_skescale << " " << tweak_p1 << endl;
-    //   cout << "Escale Weight = " << skexp.GetSuperkDetectorFSI()->EnergyScale(s,kSKmNuMuCCQE) << endl;
-    //   return;
-    // }
-
-
   
     hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
     char name[200];
@@ -503,6 +497,14 @@ void test_systematic_error_propagation_all_2015
     sprintf(title,"E reco, %s, +1 sigma = %.3lf",sysstr.c_str(),tweak_p1);
     hErecoTun_p1sigma[ip]->SetName (name);
     hErecoTun_p1sigma[ip]->SetTitle(title);
+
+    cout << endl;
+    cout << "/////////" << endl;
+    cout << endl;
+    cout << sysstr << " --> " << (hErecoTun_p1sigma[ip]->Integral() - hErecoTun->Integral()) / hErecoTun->Integral() << endl;
+    cout << endl;
+    cout << "/////////" << endl;
+    cout << endl;
 
     char name[200];
     sprintf(name,"hRatioTun_p1sigma_%s",sysstr.c_str());
@@ -698,6 +700,8 @@ void test_systematic_error_propagation_all_2015
  
     }
     
+    NtotParam++;
+
   } // end loop over systematics 
 
   cout << endl;
@@ -888,32 +892,7 @@ void test_systematic_error_propagation_all_2015
           if(!fparm->IsNuisance(p)) continue; 
           string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
           if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-          
-
-
-
-	  // if( !(modestr == "nuebarnccoh" && sysstr=="f_banffnorm_nccoh_rhc") ){
-	  //   continue;
-	  // }
-	 
-	  // // if( !(modestr == "nuebarnccoh" && sysstr=="f_banffnorm_nccoh_rhc") ){
-	  // //   cout << modestr << " " << sysstr << endl;
-	  // //   continue;	    
-	  // // }
-
-
-	  // cout << "per mode --> " << modestr << " " << sysstr << endl;
-
-
-
-
-
-
-
-
-
-
-
+	  
           // Spectra 
           sprintf(name,"cspectra_%s_%s",mname,sysstr.c_str());
           TCanvas *cspectra = new TCanvas(name,name);
@@ -1032,8 +1011,81 @@ void test_systematic_error_propagation_all_2015
       } //ip
     } //im
   } // per_mode
-  
+
   output_rootfile->Close();
+
+
+
+
+// Save histo with fractional and total variation of the number of events
+
+cout << endl;
+cout << "NtotParam = " << NtotParam << endl;
+cout << endl;
+
+TH1D *hVarFrac_p1s = new TH1D("hVarFrac_p1s","+1sigma fractional variation",NtotParam,0,NtotParam); // store the +1sigma errors 
+TH1D *hVarFrac_m1s = new TH1D("hVarFrac_m1s","-1sigma fractional variation",NtotParam,0,NtotParam); // store the -1sigma errors 
+TH1D *hVarFrac_p3s = new TH1D("hVarFrac_p3s","+3sigma fractional variation",NtotParam,0,NtotParam); // store the +3sigma errors 
+TH1D *hVarFrac_m3s = new TH1D("hVarFrac_m3s","-3sigma fractional variation",NtotParam,0,NtotParam); // store the -3sigma errors 
+
+TH1D *hVarTot_p1s = new TH1D("hVarTot_p1s","+1sigma total variation",NtotParam,0,NtotParam); // store the +1sigma errors 
+TH1D *hVarTot_m1s = new TH1D("hVarTot_m1s","-1sigma total variation",NtotParam,0,NtotParam); // store the -1sigma errors 
+TH1D *hVarTot_p3s = new TH1D("hVarTot_p3s","+3sigma total variation",NtotParam,0,NtotParam); // store the +3sigma errors 
+TH1D *hVarTot_m3s = new TH1D("hVarTot_m3s","-3sigma total variation",NtotParam,0,NtotParam); // store the -3sigma errors 
+
+int iparhisto=0;
+
+for(int ip = 0; ip < np; ip++) {
+  conv::PhysParamId_t p = fparm->WhichParam(ip);
+  if(!fparm->IsNuisance(p)) continue; 
+  string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
+  if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+  
+  double totnom = hErecoNom->Integral();
+  double tot    = hErecoTun->Integral();
+
+  double tot_p1  = fabs( hErecoTun_p1sigma[ip]->Integral() );
+  double tot_m1  = fabs( hErecoTun_m1sigma[ip]->Integral() );    
+  double frac_p1 = fabs( (tot_p1 - tot)/tot );
+  double frac_m1 = fabs( (tot_m1 - tot)/tot );
+  
+  double tot_p3  = fabs( hErecoTun_p3sigma[ip]->Integral() );
+  double tot_m3  = fabs( hErecoTun_m3sigma[ip]->Integral() );    
+  double frac_p3 = fabs( (tot_p3 - tot)/tot );
+  double frac_m3 = fabs( (tot_m3 - tot)/tot );
+  
+  hVarFrac_p1s->SetBinContent(iparhisto+1,frac_p1);
+  hVarFrac_m1s->SetBinContent(iparhisto+1,frac_m1);
+  hVarTot_p1s->SetBinContent(iparhisto+1,tot_p1);
+  hVarTot_m1s->SetBinContent(iparhisto+1,tot_m1);
+  
+  hVarFrac_p3s->SetBinContent(iparhisto+1,frac_p3);
+  hVarFrac_m3s->SetBinContent(iparhisto+1,frac_m3);
+  hVarTot_p3s->SetBinContent(iparhisto+1,tot_p3);
+  hVarTot_m3s->SetBinContent(iparhisto+1,tot_m3);
+  
+  iparhisto++;
+ }
+
+string config_file_str(config_file);
+char fname[200];
+if( config_file_str.find("prefit") == string::npos ) sprintf(fname,"%s","_postfit"); // prefit
+ else sprintf(fname,"%s","_prefit"); // postfit
+string file_mode = (update_rootfile ? "UPDATE" : "RECREATE");
+TFile * fouterr = new TFile(Form("fouterr%s.root",fname),file_mode.c_str());
+fouterr->cd();
+hVarFrac_p1s->Write();
+hVarFrac_m1s->Write();
+hVarTot_p1s->Write();
+hVarTot_m1s->Write();
+hVarFrac_p3s->Write();
+hVarFrac_m3s->Write();
+hVarTot_p3s->Write();
+hVarTot_m3s->Write();
+hErecoNom->Write();
+hErecoTun->Write();
+fouterr->Close();
+
 
   // Write the table 
 
@@ -1045,11 +1097,10 @@ void test_systematic_error_propagation_all_2015
   int ncolnev = 15;
   int ncolfrc =  8;
 
-
   if(tablesyst_idx==-999){  // full table merged modes, all systematics
     
     // write document header to outfile
-
+    
     string output_file (Form("systematic_tables-%s-%s.tex",oscparams.c_str(),sk_sample));
     ofstream outfile (output_file.c_str());
     string f;
@@ -1110,11 +1161,16 @@ void test_systematic_error_propagation_all_2015
       string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
       
-      double tot_p  = hErecoTun_p1sigma[ip]->Integral();
-      double tot_m  = hErecoTun_m1sigma[ip]->Integral();    
-      double frac_p = (tot_p - tot)/tot * 100;
-      double frac_m = (tot_m - tot)/tot * 100;
-      
+      double tot_p1  = hErecoTun_p1sigma[ip]->Integral();
+      double tot_m1  = hErecoTun_m1sigma[ip]->Integral();    
+      double frac_p1 = (tot_p1 - tot)/tot * 100;
+      double frac_m1 = (tot_m1 - tot)/tot * 100;
+
+      double tot_p3  = hErecoTun_p3sigma[ip]->Integral();
+      double tot_m3  = hErecoTun_m3sigma[ip]->Integral();    
+      double frac_p3 = (tot_p3 - tot)/tot * 100;
+      double frac_m3 = (tot_m3 - tot)/tot * 100;
+
       streamer   << setw(ncol1)  << setfill(' ')
                  << util::AsStringPaperTex(util::PhysParamIdFromString(sysstr))
                  << endcolumn
@@ -1122,13 +1178,13 @@ void test_systematic_error_propagation_all_2015
                  << endcolumn
                  << tot
                  << endcolumn
-                 << tot_p 
+                 << tot_p1 
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p1 << pctsymbol
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
+                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m1
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m1 << pctsymbol
                  << endrow
                  << endl; 
       
@@ -1225,10 +1281,10 @@ void test_systematic_error_propagation_all_2015
           
         double totnom = hErecoNomMode[im]->Integral();
         double tot = hErecoTunMode[im]->Integral();
-        double tot_p = hErecoTunMode_p1sigma[ip][im]->Integral();
-        double tot_m = hErecoTunMode_m1sigma[ip][im]->Integral();
-        double frac_p = (tot_p - tot)/tot * 100;
-        double frac_m = (tot_m - tot)/tot * 100;
+        double tot_p1 = hErecoTunMode_p1sigma[ip][im]->Integral();
+        double tot_m1 = hErecoTunMode_m1sigma[ip][im]->Integral();
+        double frac_p1 = (tot_p1 - tot)/tot * 100;
+        double frac_m1 = (tot_m1 - tot)/tot * 100;
           
         streamer << setw(ncol1)  << setfill(' ')
                  << util::AsStringTex(m)
@@ -1237,13 +1293,13 @@ void test_systematic_error_propagation_all_2015
                  << endcolumn
                  << tot
                  << endcolumn
-                 << tot_p 
+                 << tot_p1 
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p1 << pctsymbol
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m
+                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m1
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m1 << pctsymbol
                  << endrow
                  << endl; 
 
@@ -1269,8 +1325,9 @@ void test_systematic_error_propagation_all_2015
     } // end loop over systematics
 
     
-cout << streamer.str() << endl;
-    
+    cout << streamer.str() << endl;
+
+
     // get size of file
     long size;
     streamer.seekg(0,ifstream::end);
