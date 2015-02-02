@@ -29,7 +29,7 @@ processes = ["CCQE", "CC1pi", "CCcoherent","MEC", "CCother", "NC1pi0" , "NC1piPM
 processes_used = ["CCQE", "CC1pi", "CCcoherent", "MEC","CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
 #~ processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother" , "NC1piPM", "NCother"]
 
-#~ samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
+#samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
 samples   = []
 if t2kopt.fFit_1Rmu    : samples.append("1Rmu")
 if t2kopt.fFit_1Re     : samples.append("1Re")
@@ -162,12 +162,12 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   phyp.SetCurrValue(conv.kPhypDm12sq  ,    dm12sq);
   phyp.SetCurrValue(conv.kPhypDm23sq  ,    dm23sq);
   
-  #~ print mixing12
-  #~ print mixing13
-  #~ print mixing23
-  #~ print deltacp 
-  #~ print dm12sq  
-  #~ print dm23sq  
+  print mixing12
+  print mixing13
+  print mixing23
+  print deltacp 
+  print dm12sq  
+  print dm23sq  
   
   # Disable BANFF tuning if requested
   if(nobanff):
@@ -301,20 +301,40 @@ if __name__=="__main__":
   
   import optparse
   parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of validation spectra")
-  
-  parser.add_option('--mixing12', dest='mixing12',default=0.    ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  parser.add_option('--mixing13', dest='mixing13',default=0.    ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  parser.add_option('--mixing23', dest='mixing23',default=0.    ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
-  parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.5E-5,type=float, help='Value of small mass splitting')
-  parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.4E-3,type=float, help='Value of large mass splitting')
-  parser.add_option('--deltacp' , dest='deltacp' ,default=0.    ,type=float, help='Value of delta CP')
+
+
+
+  #parser.add_option('--mixing12', dest='mixing12',default=0.    ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
+  #parser.add_option('--mixing13', dest='mixing13',default=0.    ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  #parser.add_option('--mixing23', dest='mixing23',default=0.    ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  #parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.5E-5,type=float, help='Value of small mass splitting')
+  #parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.4E-3,type=float, help='Value of large mass splitting')
+  #parser.add_option('--deltacp' , dest='deltacp' ,default=0.    ,type=float, help='Value of delta CP')
+
+  parser.add_option('--mixing12', dest='mixing12',default=0.304    ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
+  parser.add_option('--mixing13', dest='mixing13',default=0.0422    ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  parser.add_option('--mixing23', dest='mixing23',default=0.524    ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5,type=float, help='Value of small mass splitting')
+  parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.51E-3,type=float, help='Value of large mass splitting')
+  parser.add_option('--deltacp' , dest='deltacp' ,default=1.91    ,type=float, help='Value of delta CP')
+
   
   parser.add_option(     '--hierarchy'          , dest="hierarchy"     , default="normal"    , help='Mass hierarchy: "normal" or "inverted"')
   parser.add_option('-m','--mixing-param-choice', dest="mixparamchoice", default="sinsqtheta", help='Mixing param coice: "sinsqtheta" or "sinsq2theta"')
   
-  parser.add_option('-f', '--file', dest='output_file', default="validation.tex", help="Name for output TeX file.")
+  #parser.add_option('-f', '--file', dest='output_file', default="validation.tex", help="Name for output TeX file.")
+  parser.add_option('-f', '--file', dest='output_file', default="validation_osc.tex", help="Name for output TeX file.")
   
-  parser.add_option('-c', '--config', dest='config', default="analysis_configuration.xml", help="Configuration file")
+  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_1.7E20_prefit.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_1.7E20.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_2.5E20_prefit.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_2.5E20.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_run1to6_test_app.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_run1to6_test.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_run1to5_test.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_test_multiring_mrmc.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration.xml", help="Configuration file")
+
   parser.add_option('-l', '--label' , dest='label' , default=None, help="Label to put in file.")
   
   parser.add_option('-d', '--disable-banff', dest='nobanff', action="store_true",default=False)
