@@ -362,53 +362,53 @@ void make_toygrid_toys_joint
 
      // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
      if(hyp == kHypOsc3F) {
-       fparm1->Update(kPhypMixing12, input_mixing12);
-       fparm1->Update(kPhypMixing13, input_mixing13);
-       fparm1->Update(kPhypMixing23, input_mixing23);
-       fparm1->Update(kPhypCPV    ,  input_deltacp);
-       fparm1->Update(kPhypDm12sq,   input_dm12sq);
-       fparm1->Update(kPhypDm23sq,   input_dm23sq);
+       fparm1->SetInitValue(kPhypMixing12, input_mixing12);
+       fparm1->SetInitValue(kPhypMixing13, input_mixing13);
+       fparm1->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1->SetInitValue(kPhypCPV    ,  input_deltacp);
+       fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
        //////////////////////////////////////////////
-       fparm2->Update(kPhypMixing12, input_mixing12);
-       fparm2->Update(kPhypMixing13, input_mixing13);
-       fparm2->Update(kPhypMixing23, input_mixing23);
-       fparm2->Update(kPhypCPV    ,  input_deltacp);
-       fparm2->Update(kPhypDm12sq,   input_dm12sq);
-       fparm2->Update(kPhypDm23sq,   input_dm23sq);
+       fparm2->SetInitValue(kPhypMixing12, input_mixing12);
+       fparm2->SetInitValue(kPhypMixing13, input_mixing13);
+       fparm2->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm2->SetInitValue(kPhypCPV    ,  input_deltacp);
+       fparm2->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
      }
      else if(hyp == kHypOsc3FBar) {
-       fparm1->Update(kPhypMixing12, input_mixing12);
-       fparm1->Update(kPhypMixing13, input_mixing13);
-       fparm1->Update(kPhypMixing23, input_mixing23);
-       fparm1->Update(kPhypCPV    ,  input_deltacp);
-       fparm1->Update(kPhypDm12sq,   input_dm12sq);
-       fparm1->Update(kPhypDm23sq,   input_dm23sq);
-       fparm2->Update(kPhypMixing12, input_mixing12);
-       fparm2->Update(kPhypMixing13, input_mixing13);
-       fparm2->Update(kPhypMixing23, input_mixing23);
-       fparm2->Update(kPhypCPV    ,  input_deltacp);
-       fparm2->Update(kPhypDm12sq,   input_dm12sq);
-       fparm2->Update(kPhypDm23sq,   input_dm23sq);
+       fparm1->SetInitValue(kPhypMixing12, input_mixing12);
+       fparm1->SetInitValue(kPhypMixing13, input_mixing13);
+       fparm1->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1->SetInitValue(kPhypCPV    ,  input_deltacp);
+       fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
+       fparm2->SetInitValue(kPhypMixing12, input_mixing12);
+       fparm2->SetInitValue(kPhypMixing13, input_mixing13);
+       fparm2->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm2->SetInitValue(kPhypCPV    ,  input_deltacp);
+       fparm2->SetInitValue(kPhypDm12sq,   input_dm12sq);
+       fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
        //////////////////////////////////////////////
-       fparm1->Update(kPhypMixing12Bar, input_mixing12);
-       fparm1->Update(kPhypMixing13Bar, input_mixing13);
-       fparm1->Update(kPhypMixing23Bar, input_mixing23);
-       fparm1->Update(kPhypCPVBar     , input_deltacp);
-       fparm1->Update(kPhypDm12sqBar  , input_dm12sq);
-       fparm1->Update(kPhypDm23sqBar  , input_dm23sq);
-       fparm2->Update(kPhypMixing12Bar, input_mixing12);
-       fparm2->Update(kPhypMixing13Bar, input_mixing13);
-       fparm2->Update(kPhypMixing23Bar, input_mixing23);
-       fparm2->Update(kPhypCPVBar     , input_deltacp);
-       fparm2->Update(kPhypDm12sqBar  , input_dm12sq);
-       fparm2->Update(kPhypDm23sqBar  , input_dm23sq);
+       fparm1->SetInitValue(kPhypMixing12Bar, input_mixing12);
+       fparm1->SetInitValue(kPhypMixing13Bar, input_mixing13);
+       fparm1->SetInitValue(kPhypMixing23Bar, input_mixing23);
+       fparm1->SetInitValue(kPhypCPVBar     , input_deltacp);
+       fparm1->SetInitValue(kPhypDm12sqBar  , input_dm12sq);
+       fparm1->SetInitValue(kPhypDm23sqBar  , input_dm23sq);
+       fparm2->SetInitValue(kPhypMixing12Bar, input_mixing12);
+       fparm2->SetInitValue(kPhypMixing13Bar, input_mixing13);
+       fparm2->SetInitValue(kPhypMixing23Bar, input_mixing23);
+       fparm2->SetInitValue(kPhypCPVBar     , input_deltacp);
+       fparm2->SetInitValue(kPhypDm12sqBar  , input_dm12sq);
+       fparm2->SetInitValue(kPhypDm23sqBar  , input_dm23sq);
      }
      else if(hyp == kHypNuMuDisapp2F) {
-       fparm1->Update(kPhypMixing23, input_mixing23);
-       fparm1->Update(kPhypDm23sq,   input_dm23sq);
+       fparm1->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
        //////////////////////////////////////////////
-       fparm2->Update(kPhypMixing23, input_mixing23);
-       fparm2->Update(kPhypDm23sq,   input_dm23sq);
+       fparm2->SetInitValue(kPhypMixing23, input_mixing23);
+       fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
      }
 
      ////////////////////////
