@@ -114,6 +114,12 @@ fancy_species ["signue"    ] = "Osc. $\\nu_e$"
 fancy_species ["signuebar" ] = "Osc. $\\bar{\\nu_e}$"
 fancy_species ["total"     ] = "Total"
 
+signal_for_sample = dict()
+signal_for_sample["1Rmu"   ] = "numu"
+signal_for_sample["1Re"    ] = "signue"
+signal_for_sample["RHC1Rmu"] = "numubar"
+signal_for_sample["RHC1Re" ] = "signuebar"
+
 #______________________________________________________________________________________________________________________________
 
 def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,angle_scheme,output_file,nobanff, label):
@@ -131,8 +137,10 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     mixing12 = opt.GetGlobalBestFit(conv.kPhypMixing12)
     print "Using default value for ",util.ParamAsString(conv.kPhypMixing12),": ",mixing12
   if mixing13 < 0.:
-    mixing13 = opt.GetGlobalBestFit(conv.kPhypMixing13)
-    print "Using default value for ",util.ParamAsString(conv.kPhypMixing13),": ",mixing13
+    #~ mixing13 = opt.GetGlobalBestFit(conv.kPhypMixing13)
+    if hierarchy=="normal": mixing13 = conv.kT2KBestFitTheta13_NH
+    else:                   mixing13 = conv.kT2KBestFitTheta13_IH
+    print "Using default ("+hierarchy+") value for ",util.ParamAsString(conv.kPhypMixing13),": ",mixing13
   if mixing23 < 0.:
     mixing23 = opt.GetGlobalBestFit(conv.kPhypMixing23)
     print "Using default value for ",util.ParamAsString(conv.kPhypMixing23),": ",mixing23
@@ -142,6 +150,10 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   if dm23sq < 0.:
     dm23sq = opt.GetGlobalBestFit(conv.kPhypDm23sq)
     print "Using default value for ",util.ParamAsString(conv.kPhypDm23sq),": ",dm23sq
+  if deltacp <= -9:
+    if hierarchy=="normal": deltacp = conv.kT2KBestFitDeltaCP_NH
+    else:                   deltacp = conv.kT2KBestFitDeltaCP_IH
+    print "Using default ("+hierarchy+") value for ",util.ParamAsString(conv.kPhypCPV),": ",deltacp
   
   phyp.SetCurrValue(conv.kPhypMixing12,  mixing12);
   phyp.SetCurrValue(conv.kPhypMixing13,  mixing13);
@@ -160,6 +172,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   # Disable BANFF tuning if requested
   if(nobanff):
     print "- Performing special systematic parameter variation which cancels the effect of BANFF tuning..."
+    skexp.GetSuperkMC().FillTemplateArrays(False)
     skexp.GetBANFF().RestoreNominalMC()
     skexp.GetBANFF().RestoreRHCNominalMC()
     
@@ -211,6 +224,8 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
       total_event_counts_per_species[spec] = 0.
   
     s = util.SKSampleFromString(sample_name)
+    signal_events     = 0.
+    background_events = 0.
     
     # Count events
     for mode,(spec,proc) in modes_to_species_and_process.iteritems():
@@ -229,6 +244,9 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
       total_event_counts_per_species[spec] += nev
       total_event_counts_per_process[proc] += nev
       event_counts_per_species[proc][spec] = to3dp.format(nev)
+      
+      if (signal_for_sample[sample_name]==spec): signal_events+=nev
+      else: background_events+=nev
       
       #~ print spec,"\t",proc,"\t",event_counts_per_species[proc][spec]
       
@@ -264,7 +282,12 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     total_spectrum  = skexp.CurrPredictedErecoSpectrum(s)
     total_events = total_spectrum.Integral()
     
-    tex_output.write("\nTotal: "+to3dp.format(total_events)+"    ("+to3dp.format(nev_tot)+")\n\n")
+    print util.SampleAsString(s),total_events
+    
+    tex_output.write("\nTotal: "           +to3dp.format(total_events)     +"    ("+to3dp.format(nev_tot)+")\n\n")
+    tex_output.write("\nTotal signal: "    +to3dp.format(signal_events)    +"\n\n")
+    tex_output.write("\nTotal background: "+to3dp.format(background_events)+"\n\n")
+    
     tex_output.write("POT: "+to3dp.format(skmc.AnalyzedSamplePOT(s)*1E-20)+"E20\n\n")
     
     if (isample%2): tex_output.write("\n\n\\clearpage\n\n")
