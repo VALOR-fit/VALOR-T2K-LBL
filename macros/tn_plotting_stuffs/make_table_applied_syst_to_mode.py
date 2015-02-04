@@ -5,7 +5,6 @@ import math
 import array
 import sys
 import os
-import ctypes
 
 env_var = "T2KOSCANA"
 try:
