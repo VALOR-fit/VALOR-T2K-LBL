@@ -1059,3 +1059,9 @@ valor::conv::PhysParamId_t valor::util::GetBANFFParam(int FHCpRHC_param_no)
   return conv::kListOfFHCpRHCBANFFParams[FHCpRHC_param_no];
 }
 //____________________________________________________________________________
+int valor::util::GetSystNSigma()
+{
+  int nsig = SYST_NSIGMA;
+  return nsig;
+}
+//____________________________________________________________________________

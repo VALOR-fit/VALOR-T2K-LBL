@@ -112,6 +112,9 @@ namespace util {
   
   // For python, hack
   conv::PhysParamId_t GetBANFFParam(int FHCpRHC_param_no);
+  
+  // Access compiler macro from interpreter
+  int GetSystNSigma();
 
   //
   //
