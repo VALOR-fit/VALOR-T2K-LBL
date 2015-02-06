@@ -102,8 +102,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
-    string sample_name = util::AsStringCompact(s);
-    const char * sname = sample_name.c_str();
+  string sample_name = util::AsStringCompact(s);
+  const char * sname = sample_name.c_str();
+  
   //Check if the mode is valid
   string modetitle = "";
   switch(mode) {
@@ -187,9 +188,12 @@ void test_sk_ereco_spectrum_twk_sys_throw
       }
       cout << "Unknown mode " << mode << endl; exit(1); break;
   }//switch mode
+  
+  int syst_nsigma = util::GetSystNSigma();
 
   TString config_str(config_file);
-  if(config_str.Contains("prefit"))
+  bool isprefit = config_str.Contains("prefit");
+  if(isprefit)
     modetitle += "prefit";
 
   // Analysis configuration
@@ -292,7 +296,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     string sysstr = util::AsStringCompact(p);
     //cout << sysstr << endl;
     string hname(Form("%s_%s_tweak_throws_%s",sname,modetitle.c_str(),sysstr.c_str()));
-    hSysThrown[ip] = new TH1D(hname.c_str(),hname.c_str(),1000,-5,5);
+    hSysThrown[ip] = new TH1D(hname.c_str(),hname.c_str(),1000,syst_nsigma,syst_nsigma);
     hSysThrown[ip]->SetDirectory(0);
   }
 
@@ -302,7 +306,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   if(!update_rootfile)
     rootmode = "recreate";
   string oscparams = util::AsString(ph.Hypothesis(),
-				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+        			    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
   
   if(!update_rootfile)
@@ -356,17 +360,17 @@ void test_sk_ereco_spectrum_twk_sys_throw
       // Uncorrelated XSec
       if(mode == 2) {
         skexp.TweakAllUncorrelatedXSecSystematics();
-	skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+        skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
       }
       
       //BANFF (flux only)
       if(mode == 7) {
-	skexp.GetBANFF()->TweakSampleFluxOnly(false,0); // cholesky w/ full cov matrix
+        skexp.GetBANFF()->TweakSampleFluxOnly(false,0); // cholesky w/ full cov matrix
       }
 
       //BANFF (xsec only)
       if(mode == 8) {
-	skexp.GetBANFF()->TweakSampleXSecOnly(false,0); // cholesky w/ full cov matrix
+        skexp.GetBANFF()->TweakSampleXSecOnly(false,0); // cholesky w/ full cov matrix
       }
 
       //SK det + FSI
@@ -377,7 +381,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
      //unconstrained xsec + BANFF
       if(mode == 10) {
         skexp.TweakAllUncorrelatedXSecSystematics();
-	skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+        skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
         skexp.TweakAllBANFFSystematics();
       }
 
@@ -391,10 +395,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
     }//mode<100
 
-
-
-    
-
     else if(mode < 999) {//everything else but the stat
       
       TRandom3 rand(0);
@@ -402,67 +402,67 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
       switch(mode) {
         case 200:
-	  if( !util::IsXSec(util::PhysParamIdFromString("pfermi")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("pfermi")) ) break; 
           skexp.TweakSystematic("pfermi",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 201:
-	  if( !util::IsXSec(util::PhysParamIdFromString("specfunc")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("specfunc")) ) break; 
           skexp.TweakSystematic("specfunc",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 202:
-	  if( !util::IsXSec(util::PhysParamIdFromString("wshape")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("wshape")) ) break; 
           skexp.TweakSystematic("wshape",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 203:
-	  if( !util::IsXSec(util::PhysParamIdFromString("shapeCCoth")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("shapeCCoth")) ) break; 
           skexp.TweakSystematic("shapeCCoth",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 204:
-	  if( !util::IsXSec(util::PhysParamIdFromString("pilessdelta")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("pilessdelta")) ) break; 
           skexp.TweakSystematic("pilessdelta",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 205:
-	  if( !util::IsXSec(util::PhysParamIdFromString("norm_cccoh")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_cccoh")) ) break; 
           skexp.TweakSystematic("norm_cccoh",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 206:
-	  if( !util::IsXSec(util::PhysParamIdFromString("norm_nc1piC")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_nc1piC")) ) break; 
           skexp.TweakSystematic("norm_nc1piC",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 207:
-	  if( !util::IsXSec(util::PhysParamIdFromString("norm_ncoth")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_ncoth")) ) break; 
           skexp.TweakSystematic("norm_ncoth",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 208:
-	  if( !util::IsXSec(util::PhysParamIdFromString("norm_nuetonumu")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_nuetonumu")) ) break; 
           skexp.TweakSystematic("norm_nuetonumu",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 209:
-	  if( !util::IsXSec(util::PhysParamIdFromString("norm_antinutonu")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_antinutonu")) ) break; 
           skexp.TweakSystematic("norm_antinutonu",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
         case 210:
-	  if( !util::IsXSec(util::PhysParamIdFromString("bindE")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("bindE")) ) break; 
           skexp.TweakSystematic("bindE",tweak); 
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
 
         case 211:
-	  if( !util::IsXSec(util::PhysParamIdFromString("rpa")) ) break; 
-	  tweak = rand.Uniform(0.,1.);
-	  skexp.TweakSystematic("rpa",tweak); // Automatically set at 0 or 1 in the Tweak
-	  skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
-	  break;
+          if( !util::IsXSec(util::PhysParamIdFromString("rpa")) ) break; 
+          tweak = rand.Uniform(0.,1.);
+          skexp.TweakSystematic("rpa",tweak); // Automatically set at 0 or 1 in the Tweak
+          skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+          break;
 
         case 300:
           skexp.TweakSystematic("sk_e_scale",tweak); break;
@@ -477,8 +477,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
           ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV()); break;
 
         default:
-	  
-	  // banff fhc
+          
+          // banff fhc
           if(mode >= 400 && mode < 400+conv::kNumOfParamsInBANFFfit) {
             TVectorD v(conv::kNumOfParamsInBANFFfit);
             v = skexp.GetBANFF()->BestFitValues();
@@ -487,7 +487,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
             skexp.GetBANFF()->TweakSample(true,&v);
             break;
           }
-	  // banff rhc
+          // banff rhc
           else if(mode >= 500 && mode < 500+conv::kNumOfRHCParamsInBANFFfit) {
             TVectorD v(conv::kNumOfRHCParamsInBANFFfit);
             v = skexp.GetBANFF()->RHCBestFitValues();
@@ -496,7 +496,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
             skexp.GetBANFF()->TweakSample(true,&v);
             break;
           }
-	  // skdetfsi fhc
+          // skdetfsi fhc
           else if(mode >= 800 && mode < 800+conv::kNumOfSKDetFSIParams) {
             TVectorD v(conv::kNumOfSKDetFSIParams);
             for (int ipf = 0; ipf < conv::kNumOfSKDetFSIParams; ipf++) {
@@ -507,7 +507,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
             skexp.GetSuperkDetectorFSI()->Tweak(true,&v);
             break;
           }
-	  // skdetfsi rhc
+          // skdetfsi rhc
           else if(mode >= 900 && mode < 900+conv::kNumOfRHCSKDetFSIParams) {
             TVectorD v(conv::kNumOfRHCSKDetFSIParams);
             for (int ipf = 0; ipf < conv::kNumOfRHCSKDetFSIParams; ipf++) {
@@ -569,21 +569,21 @@ void test_sk_ereco_spectrum_twk_sys_throw
       string sysstr = util::AsStringCompact(p);
       
       if(util::IsBANFF(p)){
-	if(RHCFlag)
-	  hSysThrown[ip]->Fill(skexp.GetBANFF()->RHCCurrentValue(p));
-	else 
-	  hSysThrown[ip]->Fill(skexp.GetBANFF()->CurrentValue(p));
+        if(RHCFlag)
+          hSysThrown[ip]->Fill(skexp.GetBANFF()->RHCCurrentValue(p));
+        else 
+          hSysThrown[ip]->Fill(skexp.GetBANFF()->CurrentValue(p));
       }
       else if(util::IsXSec(p)){
-	hSysThrown[ip]->Fill(skexp.GetNuXSec()->CurrentValue(p));
+        hSysThrown[ip]->Fill(skexp.GetNuXSec()->CurrentValue(p));
       }
       if(util::IsSKDetFSI(p)){
-	if(RHCFlag)
-	  hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(p));
-	else 
-	  hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(p));
+        if(RHCFlag)
+          hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(p));
+        else 
+          hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(p));
       }
-    }      
+    }
   }//end loop over experiments
   w.Stop();
   cout << iskip << " experiments skipped due to min events" << endl;
@@ -629,8 +629,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   }//ibin
   hErecoMax   ->Write(Form("%s_%s_pluserr" ,sname,modetitle.c_str()));
   hErecoMin   ->Write(Form("%s_%s_minuserr",sname,modetitle.c_str()));
-  hErecoMaxEnv->Write(Form("%s_envpluserr" ,sname,modetitle.c_str()));
-  hErecoMinEnv->Write(Form("%s_envminuserr",sname,modetitle.c_str()));
+  hErecoMaxEnv->Write(Form("%s_%s_envpluserr" ,sname,modetitle.c_str()));
+  hErecoMinEnv->Write(Form("%s_%s_envminuserr",sname,modetitle.c_str()));
 
   //Draw & save
   TCanvas * c = new TCanvas();
@@ -658,6 +658,18 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMinEnv_per50MeV->Draw("same");
   hErecoNominal_per50MeV->Draw("same");
   c->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  
+  
+  c.cd();
+  double max_limit = 1.1*TMath::Max(hErecoMax->GetMaximum(),hErecoMin->GetMaximum());
+  double min_limit = 1.1*TMath::Min(hErecoMax->GetMinimum(),hErecoMin->GetMinimum());
+  max_limit = TMath::Max(fabs(max_limit),fabs(min_limit));
+  min_limit = -max_limit;
+  hErecoMax->SetMaximum(max_limit);
+  hErecoMax->SetMinimum(min_limit);
+  hErecoMax->Draw();
+  hErecoMin->Draw("same");
+  c->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
 
   TCanvas * csys = new TCanvas();
   csys->Divide(ceil(sqrt(np)),ceil(sqrt(np)));
@@ -679,8 +691,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
     streamer << "\\begin{table}"   << endl;
     streamer << "\\begin{tabular}{| c | c c |}" << endl;
     streamer << "\\hline" << endl;
-    streamer << "Nsk RMS/Mean &  "
-             << "BANFF pre "
+    streamer << "Nsk RMS/Mean & "
+             << "BANFF pre & "
              << "BANFF post "
              << endl;
     streamer << "\\hline" << endl;
@@ -688,7 +700,14 @@ void test_sk_ereco_spectrum_twk_sys_throw
   string banffpre = "-";
   if(mode == 0 || mode == 1)
     banffpre = "?";
-  streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline" << endl;
+  
+  if (isprefit) {
+    streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline" << endl;
+  }
+  else {
+    streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline" << endl;
+  }
+    
   cout << streamer.str() << endl;
 
   // get size of file
