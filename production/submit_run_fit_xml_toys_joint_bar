@@ -93,9 +93,9 @@ $tag                    = "toyexptfits"                        unless defined $t
 # when making toys and fit together $nexpts = $lastexpt-$firstexpt + 1 (for each jobs)
 # and $nruns is the number of jobs
  
-$nruns                  = 2                                   unless defined $nruns;
-$firstexpt              = 0                                    unless defined $firstexpt;
-$lastexpt               = 10                                  unless defined $lastexpt; 
+$nruns                  = 200                                 unless defined $nruns;
+$firstexpt              = 0                                   unless defined $firstexpt;
+$lastexpt               = 20                                  unless defined $lastexpt; 
 
 $xmlfile                = "toymc/Asimov/toymc_Asimov_T2Konly_NH-0.xml"                  unless defined $xmlfile;
 $using_xml_file         = 0                                    unless defined $using_xml_file;
@@ -131,8 +131,8 @@ $input_dm23sq_bar       = 2.51E-3                              unless defined $i
  
 #$config_file            = "analysis_configuration_run1to6_test_app.xml"           unless defined $config_file;
 #$config_file            = "analysis_configuration_run1to6_test.xml"           unless defined $config_file;
-#$config_file            = "analysis_configuration_1.7E20.xml"           unless defined $config_file;
-$config_file            = "analysis_configuration_1.7E20_prefit.xml"           unless defined $config_file;
+$config_file            = "analysis_configuration_1.7E20.xml"           unless defined $config_file;
+#$config_file            = "analysis_configuration_1.7E20_prefit.xml"           unless defined $config_file;
 #$config_file            = "analysis_configuration_2.5E20.xml"           unless defined $config_file;
 #$config_file            = "analysis_configuration_2.5E20_prefit.xml"           unless defined $config_file;
  
@@ -201,9 +201,6 @@ while($irun < $nruns) {
 
 
   $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml_toys_joint_bar.C(\"$tag\",$irun,$first,$last,\"$xmlfile\",$using_xml_file,$dotoys,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$input_mixing12_bar,$input_mixing13_bar,$input_mixing23_bar,$input_deltacp_bar,$input_dm12sq_bar,$input_dm23sq_bar,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$optfixparams\")\'";
-
-  #$command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml_toys_joint_bar.C(\"$tag\",$irun,$firstexpt,$lastexpt,\"$xmlfile\",$using_xml_file,$dotoys,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$input_mixing12_bar,$input_mixing13_bar,$input_mixing23_bar,$input_deltacp_bar,$input_dm12sq_bar,$input_dm23sq_bar,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$optfixparams\")\'";
-
   
   
   print "$command \n";
@@ -212,6 +209,51 @@ while($irun < $nruns) {
 
   $first = $last  + 1;
   $last  = $first + $nexpts - 1;
+
+  $ijob=$ijob+1;
+
+  #
+  # ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
+  #
+  if($resource eq "ETH-Monch") {
+      open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
+      print PBS "#!/bin/bash -l  \n";
+      #print PBS "#SBATCH --partition=dphys_compute_wk  \n";
+      #print PBS "#SBATCH --partition=dphys_compute  \n";
+      print PBS "#SBATCH --partition=dphys_large  \n";
+      print PBS "#SBATCH --nodes=1  \n";
+      print PBS "#SBATCH --ntasks-per-node=1  \n";
+      print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
+      print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
+      print PBS "$command \n";
+      close(PBS);
+      #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      #`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      `sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      #`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+  }
+  
+  #
+  # ETH (Brutus cluster)
+  #
+  if($resource eq "ETH-Brutus") {
+      open(PBS, ">$job_dir/$tag-$ijob.sh") or die("Can not create the PBS batch script");
+      print PBS "#!/bin/bash \n";
+      #print PBS "#PBS -N $tag-$irun \n";
+      #print PBS "#PBS -l cput=$cput \n";
+      #print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+      #print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+      #print PBS "#PBS -q prod \n";
+      #print PBS "#PBS -l walltime=$cput \n";
+      #print PBS "cd $job_dir \n";
+      #print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
+      print PBS "$command \n";
+      close(PBS);
+      `bsub -W 3:59 < $job_dir/$tag-$ijob.sh`;
+      #`bsub -W 1:59 < $job_dir/$tag-$ijob.sh`;
+      #`bsub -W 0:29 < $job_dir/$tag-$ijob.sh`;
+  }
+  
 
   #
   # RAL
