@@ -16,7 +16,7 @@
 
 void run_fit_xml_toys_joint_bar
 (
- const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_F.xml",       /* input XML file Run5-6 fakedata */ 
+ const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_F_ciao.xml",       /* input XML file Run5-6 fakedata */ 
  bool         using_xml_file          = true,                                /* if false, skobs reads xmlfile as a root file */
  bool         dotoys                  = true,
 
@@ -106,7 +106,7 @@ void run_fit_xml_toys_joint_bar
     }
   }
   
-  if (gSystem->GetPathInfo(xmlfile2.Data(), dummy)) 
+  if (!dotoys && gSystem->GetPathInfo(xmlfile2.Data(), dummy)) 
   {
     xmlfile2 = xmlfile;
     if (gSystem->GetPathInfo(xmlfile2.Data(), dummy)) {
