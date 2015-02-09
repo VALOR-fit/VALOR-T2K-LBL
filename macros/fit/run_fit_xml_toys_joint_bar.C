@@ -18,12 +18,12 @@ void run_fit_xml_toys_joint_bar
 (
  const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_F.xml",       /* input XML file Run5-6 fakedata */ 
  bool         using_xml_file          = true,                                /* if false, skobs reads xmlfile as a root file */
- bool         dotoys                  = false,
+ bool         dotoys                  = true,
 
  const char * tag                     = "toyexptfits",    /* tag for output file */
  int          run                     = 0,                /* run number */
  int          first_experiment        = 0,                       /* */
- int          last_experiment         = 0,                       /* */
+ int          last_experiment         = 1,                       /* */
   
   double       input_mixing12          = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
   double       input_mixing13          = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -47,8 +47,8 @@ void run_fit_xml_toys_joint_bar
  //const char * config_file      = "analysis_configuration_run1to6_test_app",           
 
 
-  bool         stat_fluctuations       = false,                                /* include statistical fluctuation in toy MC expts? */
-  int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
+  bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
+  int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
 
 
  //const char * fit_param_list   = "nuosc3fbar_fixnonbar_12fix",
@@ -57,17 +57,17 @@ void run_fit_xml_toys_joint_bar
  //const char * fit_param_list   = "nuosc3fbar_fixnonbar_12fix+nuisance",
  //const char * fit_param_list   = "nuosc3fbar_fixnonbar_fix5",
  //const char * fit_param_list   = "nuosc3fbar_fixnonbar_fix5+nuisance",
- const char * fit_param_list    = "nuosc3fbar_numudisapp_fixnonbar_fix4",
- //const char * fit_param_list   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list    = "nuosc3fbar_numudisapp_fixnonbar_fix4",
+ const char * fit_param_list   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
 
 
-  const char * fit_option              = "minuit",                            /* fitter option */
-  //const char * fit_option              = "minuit+hesse",                    /* fitter option */
+ //const char * fit_option              = "minuit",                            /* fitter option */
+ const char * fit_option              = "minuit+hesse",                    /* fitter option */
 
   bool         store_toy_expts         = true,                                /* disable this if you don't want to store the toy MC expts     */
   bool         store_bestfit_spectrum  = false,                               /* disable this if you don't want to store the best-fit spectra */
   const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
-  const char * hierarchy               = "inverted",                            /* normal or inverted */
+  const char * hierarchy               = "normal",                            /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one",                               /* one==kNuOctantOne two==kNuOctantTwo */
   double       dcp_value               = 0.,                                  /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
@@ -75,7 +75,8 @@ void run_fit_xml_toys_joint_bar
   bool         reactor                 = false,                               /* enable this if you want to apply the reactor constraint */
   double       tolerance               = 0.01,                                /* value for the fitter tolerance */
 
- const char *optfixpar         = "mixing12, mixing13, mixing23, dmsq12, deltacp"  // list of the params to be fixed in the fit   
+ const char *optfixpar         = "mixing12,mixing13,deltacp,dmsq12",
+ //const char *optfixpar         = "mixing12, mixing13, mixing23, dmsq12, deltacp"  // list of the params to be fixed in the fit   
  //const char *optfixpar         = "mixing12, mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
 )
 {
@@ -737,7 +738,7 @@ void run_fit_xml_toys_joint_bar
      }
      else {
        cout << bestfit_chisq << endl;
-
+       
        fitstatus = fitstatus1;
        fitstatus_err = fitstatus_err1;
        chisq = chisq1;
