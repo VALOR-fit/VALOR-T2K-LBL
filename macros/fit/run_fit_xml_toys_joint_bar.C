@@ -16,27 +16,28 @@
 
 void run_fit_xml_toys_joint_bar
 (
- const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_F_ciao.xml",       /* input XML file Run5-6 fakedata */ 
- bool         using_xml_file          = true,                                /* if false, skobs reads xmlfile as a root file */
- bool         dotoys                  = true,
-
  const char * tag                     = "toyexptfits",    /* tag for output file */
  int          run                     = 0,                /* run number */
  int          first_experiment        = 0,                       /* */
- int          last_experiment         = 1,                       /* */
-  
-  double       input_mixing12          = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing13          = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing23          = -99, //0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-  double       input_deltacp           = -99, //0.,                                /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
-  double       input_dm12sq            = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
-  double       input_dm23sq            = -99, //2.32E-3,                             /* |Dm^2_{23}| */
+ int          last_experiment         = 0,                       /* */
+ 
+ 
+ const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_F.xml",       /* input XML file Run5-6 fakedata */ 
+ bool         using_xml_file          = true,                                /* if false, skobs reads xmlfile as a root file */
+ bool         dotoys                  = false,
 
-  double       input_mixing12_bar      = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
-  double       input_mixing13_bar      = -99, //0.02146, //0.0251,                    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing12          = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing13          = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing23          = -99, //0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp           = -99, //0.,                                /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
+ double       input_dm12sq            = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
+ double       input_dm23sq            = -99, //2.32E-3,                             /* |Dm^2_{23}| */
+ 
+ double       input_mixing12_bar      = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing13_bar      = -99, //0.02146, //0.0251,                    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing23_bar       = -99, //-99, //0.7, //0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
-  double       input_deltacp_bar       = -99, //0.,                                /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
-  double       input_dm12sq_bar        = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
+ double       input_deltacp_bar       = -99, //0.,                                /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
+ double       input_dm12sq_bar        = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq_bar         = -99, //-99, //2.7E-3, //2.32E-3,                             /* |Dm^2_{23}| */
 
 
@@ -75,7 +76,7 @@ void run_fit_xml_toys_joint_bar
   bool         reactor                 = false,                               /* enable this if you want to apply the reactor constraint */
   double       tolerance               = 0.01,                                /* value for the fitter tolerance */
 
- const char *optfixpar         = "mixing12,mixing13,deltacp,dmsq12",
+ const char *optfixpar         = "mixing12,mixing13,deltacp,dmsq12"
  //const char *optfixpar         = "mixing12, mixing13, mixing23, dmsq12, deltacp"  // list of the params to be fixed in the fit   
  //const char *optfixpar         = "mixing12, mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
 )
@@ -515,7 +516,9 @@ void run_fit_xml_toys_joint_bar
      // get toy MC with/without systematics
      
      SuperkObservation * skobs = new SuperkObservation;
-     if(!dotoys && using_xml_file) skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
+     if(!dotoys && using_xml_file){
+       skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
+     }
      else{
        bool applied_negevents_condition = true;
        while(applied_negevents_condition) {
