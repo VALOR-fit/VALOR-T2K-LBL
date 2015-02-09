@@ -573,10 +573,8 @@ void run_fit_xml_toys_joint_bar
      if(hyp == kHypOsc3F) {
        if(!(fparm1->IsFixed(conv::kPhypMixing23))) {     
      	 //fparm1->SetInitValue(conv::kPhypMixing23,0.4);
-     	 fparm1->SetCurrentValue(conv::kPhypMixing23,0.4);
      	 fparm1->Update(conv::kPhypMixing23,0.4);
      	 //fparm2->SetInitValue(conv::kPhypMixing23,0.6);
-     	 fparm2->SetCurrentValue(conv::kPhypMixing23,0.6);
      	 fparm2->Update(conv::kPhypMixing23,0.6);
        }
        //if reactor constraint enabled, set nuisance
@@ -587,11 +585,9 @@ void run_fit_xml_toys_joint_bar
      }
      else if(hyp == kHypOsc3FBar){
        if(!(fparm1->IsFixed(conv::kPhypMixing23Bar))) {     
-     	 //fparm1->SetCurrentValue(conv::kPhypMixing23Bar,0.4);
-     	 fparm1->SetInitValue(conv::kPhypMixing23Bar,0.4);
+     	 //fparm1->SetInitValue(conv::kPhypMixing23Bar,0.4);
      	 fparm1->Update(conv::kPhypMixing23Bar,0.4);
-     	 //fparm2->SetCurrentValue(conv::kPhypMixing23Bar,0.6);
-     	 fparm2->SetInitValue(conv::kPhypMixing23Bar,0.6);
+     	 //fparm2->SetInitValue(conv::kPhypMixing23Bar,0.6);
      	 fparm2->Update(conv::kPhypMixing23Bar,0.6);
        }
        //if reactor constraint enabled, set nuisance
