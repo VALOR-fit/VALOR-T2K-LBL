@@ -165,8 +165,8 @@ $dcp_value              = 0                                      unless defined 
 $reactor                = 0                                      unless defined $reactor;
 $tolerance              = 0.01                                   unless defined $tolerance;
 
-#$optfixparams            = "mixing23,dmsq23,dmsq12,mixing13,mixing12"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
-#$optfixparams            = "mixing23,dmsq23,dmsq12,mixing13,mixing12,deltacp"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
+#$optfixparams            = "mixing23,dmsq32,dmsq12,mixing13,mixing12"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
+#$optfixparams            = "mixing23,dmsq32,dmsq12,mixing13,mixing12,deltacp"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
 $optfixparams            = "dmsq12,mixing12,deltacp,mixing13"    unless defined $optfixparams;  # list of the params to be fixed in the fit   
 
 $softw_dir              = `pwd`                                unless defined $softw_dir;
@@ -219,8 +219,8 @@ while($irun < $nruns) {
       open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
       print PBS "#!/bin/bash -l  \n";
       #print PBS "#SBATCH --partition=dphys_compute_wk  \n";
-      #print PBS "#SBATCH --partition=dphys_compute  \n";
-      print PBS "#SBATCH --partition=dphys_large  \n";
+      print PBS "#SBATCH --partition=dphys_compute  \n";
+      #print PBS "#SBATCH --partition=dphys_largemem  \n";
       print PBS "#SBATCH --nodes=1  \n";
       print PBS "#SBATCH --ntasks-per-node=1  \n";
       print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
