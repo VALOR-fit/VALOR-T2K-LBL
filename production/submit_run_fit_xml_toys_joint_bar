@@ -199,8 +199,9 @@ while($irun < $nruns) {
   if( $resource eq "Grid") { $macro_dir = "\$T2KOSCANA"; }
   else                     { $macro_dir = $softw_dir;    }
 
-
-  $command = "root2k -l -b -q \'$macro_dir/macros/fit/run_fit_xml_toys_joint_bar.C(\"$tag\",$irun,$first,$last,\"$xmlfile\",$using_xml_file,$dotoys,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$input_mixing12_bar,$input_mixing13_bar,$input_mixing23_bar,$input_deltacp_bar,$input_dm12sq_bar,$input_dm23sq_bar,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$optfixparams\")\'";
+  $program = "root2k ";
+  $arguments = "-q -l -b \'$macro_dir/macros/fit/run_fit_xml_toys_joint_bar.C(\"$tag\",$irun,$first,$last,\"$xmlfile\",$using_xml_file,$dotoys,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$input_mixing12_bar,$input_mixing13_bar,$input_mixing23_bar,$input_deltacp_bar,$input_dm12sq_bar,$input_dm23sq_bar,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$optfixparams\")\'";
+  $command = "$program $arguments";
   
   
   print "$command \n";
@@ -254,11 +255,33 @@ while($irun < $nruns) {
       #`bsub -W 0:29 < $job_dir/$tag-$ijob.sh`;
   }
   
-
   #
   # RAL
   #
   if($resource eq "RAL") {
+     $fullprogram = `which root2k`;
+     $fullprogram = `readlink -m $fullprogram`;
+     $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+     $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+     open(CND, ">$job_dir/$tag-$ijob.condor") or die("Cannot create the Condor batch script");
+     print CND "Executable               = $fullprogram \n";
+     print CND "Arguments                = $arguments \n";
+     print CND "Error                    = $job_dir/toys_proc_$tag-${ijob}_\$\(Process\).err \n";
+     print CND "Output                   = $job_dir/toys_proc_$tag-${ijob}_\$\(Process\).out \n";
+     print CND "Universe                 = vanilla \n";
+     print CND "Getenv                   = True \n";
+     print CND "should_transfer_files    = YES \n";
+     print CND "when_to_transfer_output  = ON_EXIT \n";
+     print CND "\nqueue\n";
+     
+     close(CND);
+     `condor_submit $job_dir/$tag-$ijob.condor`;
+  }
+  
+  #
+  # RAL (SL5 system)
+  #
+  if($resource eq "OLDRAL") {
      open(PBS, ">$job_dir/$batch_script") or die("Can not create the PBS batch script");
      print PBS "#!/bin/bash \n";
      print PBS "#PBS -N $job_name \n";
