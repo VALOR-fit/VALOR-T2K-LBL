@@ -191,6 +191,7 @@ $step_grid_3               = 1                                    unless defined
 
 if( !defined $cput ) {
     if($resource eq "RAL"   ) { $cput = "6:00:00";  }
+    if($resource eq "OLDRAL") { $cput = "6:00:00";  }
     if($resource eq "Oxford") { $cput = "11:50:00"; }
 }
 
@@ -245,10 +246,10 @@ for($imin1 = $min_bin_param1; $imin1 <= $max_bin_param1; $imin1 = $imin1+$step_g
 	    print "nbins_tot_param3 = $nbins_tot_param3 - bin_param_3 = $min_bin_3 - $max_bin_3 \n";
 	    print "# point fits = $nfits \n";
 	    
-	    #$command = "root2k -l -b -q \'$softw_dir/macros/contour/fc/global/make_toygrid_toys_joint.C(\"$xmlfile\",\"$tag\",$irun,$first,$last,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$stat_fluctuations,$tweak_systematics,$using_xmlfile,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",\"$param3\",$nbins_tot_param1,$nbins_tot_param2,$nbins_tot_param3,$min_bin_1,$max_bin_1,$min_bin_2,$max_bin_2,$min_bin_3,$max_bin_3)\'";
-
-	    $command = "root2k -l -b -q \'$softw_dir/macros/contour/fc/global/make_toygrid_toys_joint.C(\"$xmlfile\",\"$tag\",$irun,$first,$last,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$stat_fluctuations,$tweak_systematics,$using_xmlfile,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",\"$param3\",$nbins_tot_param1,$nbins_tot_param2,$nbins_tot_param3,$min_bin_1,$max_bin_1,$min_bin_2,$max_bin_2,$min_bin_3,$max_bin_3,\"$optfixparams\")\'";
-    
+        $program = "root2k ";
+	    $arguments = " -l -b -q \'$softw_dir/macros/contour/fc/global/make_toygrid_toys_joint.C(\"$xmlfile\",\"$tag\",$irun,$first,$last,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$stat_fluctuations,$tweak_systematics,$using_xmlfile,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",\"$param3\",$nbins_tot_param1,$nbins_tot_param2,$nbins_tot_param3,$min_bin_1,$max_bin_1,$min_bin_2,$max_bin_2,$min_bin_3,$max_bin_3)\'";
+		$command = "$program $arguments";
+        
 
 	    print "$command \n";
 
@@ -293,12 +294,36 @@ for($imin1 = $min_bin_param1; $imin1 <= $max_bin_param1; $imin1 = $imin1+$step_g
 		`bsub -W 3:59 < $job_dir/$tag-$ijob.sh`;
 		#`bsub -W 1:59 < $job_dir/$tag-$ijob.sh`;
 		#`bsub -W 0:29 < $job_dir/$tag-$ijob.sh`;
-	    }
-	    
-	    #
-	    # RAL
-	    #
-	    if($resource eq "RAL") {
+		}
+		
+		#
+		# RAL
+		#
+		if($resource eq "RAL") {
+		   $fullprogram = `which root2k`;
+		   $fullprogram = `readlink -m $fullprogram`;
+		   $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+		   $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+		   open(CND, ">$job_dir/$tag-$ijob.condor") or die("Cannot create the Condor batch script");
+		   print CND "Executable               = $fullprogram \n";
+		   print CND "Arguments                = $arguments \n";
+		   print CND "Error                    = $job_dir/toys_proc_$tag-${ijob}_\$\(Process\).err \n";
+		   print CND "Output                   = $job_dir/toys_proc_$tag-${ijob}_\$\(Process\).out \n";
+		   print CND "Universe                 = vanilla \n";
+		   print CND "Getenv                   = True \n";
+		   print CND "should_transfer_files    = YES \n";
+		   print CND "when_to_transfer_output  = ON_EXIT \n";
+		   print CND "\nqueue\n";
+		   
+		   close(CND);
+		   `condor_submit $job_dir/$tag-$ijob.condor`;
+		}
+
+		
+		#
+		# RAL (SL5)
+		#
+		if($resource eq "OLDRAL") {
 		open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
 		print PBS "#!/bin/bash \n";
 		print PBS "#PBS -N $tag-$irun \n";
@@ -313,6 +338,7 @@ for($imin1 = $min_bin_param1; $imin1 <= $max_bin_param1; $imin1 = $imin1+$step_g
 		close(PBS);
 		#`qsub -q prod $job_dir/$tag-$irun.pbs`;
 	    }
+
 	    #
 	    # Oxford
 	    #
