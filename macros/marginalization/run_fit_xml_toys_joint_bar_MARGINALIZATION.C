@@ -1,11 +1,9 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Run fits to toy MC experiments generated on-the-fly and store the toy MC, the best-fit parameter
-// values and the best-fit spectra, and the true input parameter values.
-//
-// Costas Andreopoulos
-//
-// Fit for nubar mode analysis: different oscillation parameters and probabilities are used to
+// 
+// 
+// Macro to test the feasibility of marginalization in the T2K-VALOR framework.
+// Start from the macro for nubar mode analysis: different oscillation parameters and probabilities are used to
 // oscillate neutrinos and anti-neutrinos. Used in general for the RHC-only mode to search for 
 // anti-nue appearance and anti-numu disappearance 
 //
@@ -14,6 +12,65 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+
+
+
+
+//
+// STRATEGY TO FOLLOW FOR A SINGLE FIT
+//
+// 1) Store toys in binary files 
+// 
+// - run the macro N times to produce N binary files, for a total of 10k toys 
+// - a binary files differs between each other for the contained toys and/or 
+//   for the osc parameter values contained 
+// - each binary file must be tagged consistently with the contained toys, i.e. number
+// - each binary file must be tagged consistently with the osc parameter values contained
+// - need a bash script to do this in parallel on cluster 
+//
+// 2) Read 
+//
+// - run the macro to read the N binary files, for a total of 10k toys
+// - the macro can be run for sub-groups of osc parameter values and compute the 
+//   the marginalized likelihood for some vales of the osc parameters, stored in a histogram. 
+//   Then merge the histogram results obtained by running the macro for all the sub-groups.
+//   This is also the only possible approach for a 2D fit, that otherwise takes too long.
+// - Probably 2D Feldman-Cousins is hard to do, since averaging the likelihood over 
+//   10k x 200 x 200 toys for a single fit takes too much. 
+//   Also splitting by sub-groups needs probably too many jobs and time. 
+//   In this case the Minuit minimization should be faster.
+//
+// 3) Marginalization of the oscillation parameters
+//
+// - It should be trivial, since they are done in the same way as the systematic parameters
+// - Need to provide a particular distribution (e.g. dcp T2K w/ reactors) if not simply 
+//   treated as gaussian or flat. Once done, in a single toy the osc param values are fixed
+//   to the extracted value. The output is the distribution of the same kind as when only
+//   systematic parameters are extracted. 
+//
+// 5) 1D Feldman-Cousins
+//
+// - 1D Feldman-Cousins should take much about the same time of a Minuit minimization (a bit more???), 
+//   but any multiple scan due to local minima (e.g. along dm2) is not needed any longer.
+//   e.g. Single fit w/ 1k x 200 toys takes about 10s. 
+// - Maybe a smart approach is to implement an algorithm that performs the scan of the osc parameter
+//   only for the region around the minimum (a kind of Minuit minimization). 
+//   Such method could avoid to skip many of the 200 iterations of the osc param grid scan.  
+//
+// 6) Todo
+//
+// - Move the code to the framework
+// - Allow to either fix the oscillation parameters or fit, i.e. make the scan of the grid
+// - Marginalize oscillation parameters as well
+// - Think and implement approach to reduce the number iterations in the scan of the osc param grid
+//
+//
+//
+
+
+
+
+
 #include <stdio.h>
 
 void run_fit_xml_toys_joint_bar_MARGINALIZATION
@@ -21,11 +78,11 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION
  const int    ntoys_marg             = 1000,
  const int    nbins_tot_param1       = 200,
 
- const char * outfilename            = "ToyMarginalization_1k_x_200.bin",
+ const char * outfilename            = "ToyMarginalization_10k_x_200.bin",
  const char * infilename             = "ToyMarginalization_1k_x_200.bin",
- const bool readtoys                 = false,  // true->read binary, false-> make toys        
+ const bool readtoys                 = true,  // true->read binary, false-> make toys        
 
- const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_F.xml",       /* input XML file Run5-6 fakedata */ 
+ const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",       /* input XML file Run5-6 fakedata */ 
  bool using_xml_file = true,
  
 
@@ -315,9 +372,9 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION
     
     like[ipar]=0;
     chisq_marg[ipar]=0.;
-
+    
     for(int iexperiment = 0; iexperiment < ntoys_marg; iexperiment++) {
-
+      
       // compute the likelihood for a single marginalization toy
       double chisq = 0.;
       for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
@@ -334,11 +391,13 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION
     }
     //cout << endl;
     
-    chisq_marg[ipar] = -2*TMath::Log(like[ipar]);
+    //chisq_marg[ipar] = -2*TMath::Log(like[ipar]);
+    chisq_marg[ipar] = -2*log(like[ipar]);
     
     hchisq_marg->SetBinContent(ipar+1,chisq_marg[ipar]);
   }
-
+  
+  
   
   hchisq_marg->Draw();
 
@@ -346,3 +405,8 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION
     
   return;
 }
+
+
+
+
+
