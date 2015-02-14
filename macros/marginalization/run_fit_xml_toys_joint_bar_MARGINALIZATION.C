@@ -21,17 +21,18 @@
 //
 // 1) Store toys in binary files 
 // 
-// - run the macro N times to produce N binary files, for a total of 10k toys 
-// - a binary files differs between each other for the contained toys and/or 
+// - Run the macro N times to produce N binary files, for a total of 10k toys 
+// - A binary files differs between each other for the contained toys and/or 
 //   for the osc parameter values contained 
-// - each binary file must be tagged consistently with the contained toys, i.e. number
-// - each binary file must be tagged consistently with the osc parameter values contained
-// - need a bash script to do this in parallel on cluster 
-//
+// - Each binary file must be tagged consistently with the contained toys, i.e. number
+// - Each binary file must be tagged consistently with the osc parameter values contained
+// - Need a bash script to do this in parallel on cluster 
+// - Marginalization toys must be always performed w/o statistical fluctuations 
+// 
 // 2) Read 
 //
-// - run the macro to read the N binary files, for a total of 10k toys
-// - the macro can be run for sub-groups of osc parameter values and compute the 
+// - Run the macro to read the N binary files, for a total of 10k toys
+// - The macro can be run for sub-groups of osc parameter values and compute the 
 //   the marginalized likelihood for some vales of the osc parameters, stored in a histogram. 
 //   Then merge the histogram results obtained by running the macro for all the sub-groups.
 //   This is also the only possible approach for a 2D fit, that otherwise takes too long.
@@ -45,17 +46,22 @@
 // - It should be trivial, since they are done in the same way as the systematic parameters
 // - Need to provide a particular distribution (e.g. dcp T2K w/ reactors) if not simply 
 //   treated as gaussian or flat. Once done, in a single toy the osc param values are fixed
-//   to the extracted value. The output is the distribution of the same kind as when only
+//   to the extracted values. The output is the distribution of the same kind as when only
 //   systematic parameters are extracted. 
 //
 // 5) 1D Feldman-Cousins
 //
-// - 1D Feldman-Cousins should take much about the same time of a Minuit minimization (a bit more???), 
+// - 1D Feldman-Cousins should take about the same time of a Minuit minimization (a bit more???), 
 //   but any multiple scan due to local minima (e.g. along dm2) is not needed any longer.
-//   e.g. Single fit w/ 1k x 200 toys takes about 10s. 
+//   e.g. Single fit w/ 1k x 200 toys takes about 10s and we need 10k x 200 toys.
 // - Maybe a smart approach is to implement an algorithm that performs the scan of the osc parameter
 //   only for the region around the minimum (a kind of Minuit minimization). 
-//   Such method could avoid to skip many of the 200 iterations of the osc param grid scan.  
+//   Such method could avoid to skip many of the 200 iterations of the osc param grid scan. 
+//   Otherwise we can start with a coarser scan and detect the region where most probably the minimum is. 
+//   Then the full scan is performed only for a reduced number of points around the minimum.
+//   To check the feasibility comparing the full scan with reduced one.
+//   Reduced scan in 1D fit, like mixing23, mixing13 or dcp should be safe. More complicated for dmsq where 
+//   there could be several minima. Such reduced scan in 2D fit needs to best carefully tested.
 //
 // 6) Todo
 //
@@ -64,9 +70,6 @@
 // - Marginalize oscillation parameters as well
 // - Think and implement approach to reduce the number iterations in the scan of the osc param grid
 //
-//
-//
-
 
 
 
