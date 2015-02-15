@@ -48,6 +48,11 @@
 //   treated as gaussian or flat. Once done, in a single toy the osc param values are fixed
 //   to the extracted values. The output is the distribution of the same kind as when only
 //   systematic parameters are extracted. 
+// - Randomize all the nuisance parameters. If 1D fit the other free parameters which has to be 
+//   marginalized (e.g. fit only mixing23 implies marginalization of dmsq32, flat) 
+// - Add method MarginalizeParameter() and IsMarginalized to FitParamList
+// - Add randomizing methods: RandomizeFlat(), RandomizeGaus() and RandomizePrior() 
+//
 //
 // 5) 1D Feldman-Cousins
 //
@@ -68,10 +73,10 @@
 //
 // - Move the code to the framework
 //
-// - Allow to either fix the oscillation parameters or fit, i.e. make the scan of the grid (DONE)
+// - Allow to either fix the oscillation parameters or fit, i.e. make the scan of the grid (DONE, mixing23 or dmsq32)
 //
 // - Marginalize oscillation parameters using a predefined prior probability distribution 
-//   (e.g. dcp T2K w/ reactors) or as gaussian
+//   (e.g. dcp T2K w/ reactors) or as flat/gaussian
 //
 // - Think and implement approach to reduce the number iterations in the scan of the osc param grid
 //
@@ -96,15 +101,48 @@
 #define mixing23Bar_max 1.           // last value of param1 
 #define nbins_tot_mixing23Bar 21     // tot # grid values for param1
 
+#define dmsq32Bar_min 2.0E-4           // first value of param1 
+#define dmsq32Bar_max 2.0E-2           // last value of param1 
+#define nbins_tot_dmsq32Bar 41     // tot # grid values for param1
+
+
+
+
+
+
+using namespace std;
+using namespace valor;
+using namespace valor::conv;
+
+double RandomizeGaus(EPhysParamId oscpar,double mean,double sigma){
+  //double mean  = Opt::Instance()->GetGlobalBestFit(oscpar); 
+  //double sigma = mean * Opt::Instance()->GetGlobalFitError(oscpar);
+  double dm    = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+  // return if a physical value was generated
+  if(dm >= 0.){
+    return dm;
+  }
+  //or try again
+  return RandomizeGaus();
+}
+double RandomizeFlat(EPhysParamId oscpar,double min,double max){
+  return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
+}
+double RandomizePrior(TH1F *hprior){  // Todo
+}
+
+
+
 
 void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
 (
- const int    nfiles_marg          = 2,     // number of files where marginalization toys are stored
+ const int    nfiles_marg          = 1,     // number of files where marginalization toys are stored
  const int    ntoys_marg           = 10,    // total number of marginalization toys
 
  const int    idfile               = 1,    // ID of the margin toy file
 
  const char * param1               = "mixing23Bar",         // 1st param, mixing23, dmsq, mixing13, deltacp,  
+ //const char * param1               = "dmsq32Bar",         // 1st param, mixing23, dmsq32, mixing13, deltacp,  
 
  int  min_bin_sub_param1          = 0,     // min bin for param1 (read only). Start from 0 
  int  max_bin_sub_param1          = 20,  // max bin for param1 (read only). Last nbins_tot_param1 - 1
@@ -132,16 +170,11 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
  const char * mixparamchoice          = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant          = "one",                               /* one==kNuOctantOne two==kNuOctantTwo */
  
- const char *optfixpar         = "mixing12Bar, dmsqBar, dmsq12Bar, mixing13Bar, deltacpBar"  // list of the params to be fixed in the fit   
- //const char *optfixpar         = "mixing12, mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
 )
 {
-  using namespace std;
-  using namespace valor;
-  using namespace valor::conv;
 
   TString opt(fit_param_list); 
-  TString optfixparams(optfixpar);
+  TString nameparam1(param1);
 
   double bestfit_chisq,bestfit_chisq2;
 
@@ -207,51 +240,88 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
   //                    //
   ////////////////////////
   
+
+
+
+
+
+  //
+  // Randomize all the nuisance parameters and the 
+  // other free parameter which has to be marginalized
+
+  //input_mixing12_bar = util::RandomizeMixing12Bar()
+  
+  double input_dmsq32_bar = RandomizeFlat(kPhypDm23sq,dmsq32Bar_min,dmsq32Bar_max);
+  double input_mixing23_bar = RandomizeFlat(kPhypMixing23,mixing23Bar_min,mixing23Bar_max);
+  //cout << "input_dmsq32_bar = " << input_dmsq32_bar << endl;
+  //cout << "input_mixing23_bar = " << input_mixing23_bar << endl;
+  //return;
+
+
+  
+
+
+
+
+
   if(hyp == kHypOsc3F){	
-    if(optfixparams.Contains("mixing23")){ 
+    if( !nameparam1.Contains("mixing12") ){ 
+      fparm1->FixParameter(kPhypMixing12);
+    }	
+    if( !nameparam1.Contains("mixing23") ){ 
       fparm1->FixParameter(kPhypMixing23);
     }
-    if(optfixparams.Contains("mixing13")){ 
+    if( !nameparam1.Contains("mixing13") ){ 
       fparm1->FixParameter(kPhypMixing13);
     }
-    if(optfixparams.Contains("dmsq32")){ 
+    if( !nameparam1.Contains("dmsq32") ){ 
       fparm1->FixParameter(kPhypDm23sq);
     }
-    if(optfixparams.Contains("dmsq12")){ 
+    if( !nameparam1.Contains("dmsq12") ){ 
       fparm1->FixParameter(kPhypDm12sq);
     }
-    if(optfixparams.Contains("deltacp")){ 
+    if( !nameparam1.Contains("deltacp") ){ 
       fparm1->FixParameter(kPhypCPV);
     }
   }
   else if(hyp == kHypOsc3FBar){	
-    if(optfixparams.Contains("mixing12Bar")){ 
+    if( !nameparam1.Contains("mixing12Bar") ){ 
       fparm1->FixParameter(kPhypMixing12Bar);
     }	
-    if(optfixparams.Contains("mixing23Bar")){ 
+    if( !nameparam1.Contains("mixing23Bar") ){ 
       fparm1->FixParameter(kPhypMixing23Bar);
     }
-    if(optfixparams.Contains("mixing13Bar")){ 
+    if( !nameparam1.Contains("mixing13Bar") ){ 
       fparm1->FixParameter(kPhypMixing13Bar);
     }
-    if(optfixparams.Contains("dmsq32Bar")){ 
+    if( !nameparam1.Contains("dmsq32Bar") ){ 
       fparm1->FixParameter(kPhypDm23sqBar);
     }
-    if(optfixparams.Contains("dmsq12Bar")){ 
+    if( !nameparam1.Contains("dmsq12Bar") ){ 
       fparm1->FixParameter(kPhypDm12sqBar);
     }
-    if(optfixparams.Contains("deltacpBar")){ 
+    if( !nameparam1.Contains("deltacpBar") ){ 
       fparm1->FixParameter(kPhypCPVBar);
     }
   }
+
+
+
    
 
 
 
+  // generalize in order to initialize arrays/vectors w/o any problem
 
   //int nbins_tot_param1 = -999;
   const int nbins_tot_param1 = nbins_tot_mixing23Bar;
+  //const int nbins_tot_param1 = nbins_tot_dmsq32Bar;
 
+  ///////////////////////
+
+
+
+  
   EPhysParamId parvalue1;
   double param1_min = -999.;
   double param1_max = -999.;
@@ -263,14 +333,24 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
   else if(hyp == kHypOsc3FBar){
  
     if( !fparm1->IsFixed(kPhypMixing23Bar) ){
-     
       parvalue1 = kPhypMixing23Bar;
-      
       param1_min = mixing23Bar_min;
       param1_max = mixing23Bar_max;
       step1 = (param1_max-param1_min)/(nbins_tot_param1-1);
       //nbins_tot_param1 = nbins_tot_mixing23Bar;
-      
+      cout << endl;
+      cout << "Minimize oscillation parameter " << param1 << endl;
+      cout << "Range: " << param1_min << " - " << param1_max << endl;
+      cout << "# grid points: " << nbins_tot_param1 << endl; 
+      cout << "step: " << step1 << endl;
+      cout << endl;
+    }
+    else if( !fparm1->IsFixed(kPhypDm23sqBar) ){
+      parvalue1 = kPhypDm23sqBar;
+      param1_min = dmsq32Bar_min;
+      param1_max = dmsq32Bar_max;
+      step1 = (param1_max-param1_min)/(nbins_tot_param1-1);
+      //nbins_tot_param1 = nbins_tot_dmsq32Bar;
       cout << endl;
       cout << "Minimize oscillation parameter " << param1 << endl;
       cout << "Range: " << param1_min << " - " << param1_max << endl;
