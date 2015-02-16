@@ -453,11 +453,17 @@ void test_sk_ereco_spectrum_nominal
 
   TCanvas *cErecoTotFlavMode = new TCanvas("cErecoTotFlavMode","cErecoTotFlavMode");
   sErecoTotFlavMode->Draw();
+  if (hErecoMode_NC->GetXaxis()->GetXmax() > 7) {
+    sErecoTotFlavMode->GetXaxis()->SetRangeUser(0,7);
+  }
+  sErecoTotFlavMode->Draw();
   sErecoTotFlavMode->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   sErecoTotFlavMode->GetYaxis()->SetTitle("Events per 0.050 GeV");
   cErecoTotFlavMode->Modified();
 
   gStyle->SetOptStat(0);
+  gStyle->SetOptTitle(0);
+  
   TLegend *leg = new TLegend(0.6, 0.4, 0.9, 0.9);
   leg->SetFillColor(0);
   leg->SetBorderSize(0);
