@@ -119,6 +119,49 @@ bool valor::util::IsCC(valor::conv::SuperkMode_t m)
   return !(IsNC(m));
 }
 //____________________________________________________________________________
+bool valor::util::IsCCQE(valor::conv::SuperkMode_t m){
+  switch(m) {
+  case ( kSKmNuMuCCQE       ) : 
+  case ( kSKmNuMuBarCCQE    ) : 
+  case ( kSKmOscNuMuCCQE    ) : 
+  case ( kSKmOscNuMuBarCCQE ) : 
+  case ( kSKmNuECCQE        ) : 
+  case ( kSKmNuEBarCCQE     ) : 
+  case ( kSKmOscNuECCQE     ) : 
+  case ( kSKmOscNuEBarCCQE  ) : 
+    return true;
+    break;
+  default: 
+    return false;
+    break;
+  }
+  return false; 
+}
+//____________________________________________________________________________
+bool valor::util::IsCCnQE(valor::conv::SuperkMode_t m){
+  return ( IsCC(m) && !IsCCQE(m) && !IsMEC(m) );
+}
+//____________________________________________________________________________
+bool valor::util::IsMEC(valor::conv::SuperkMode_t m)
+{
+  switch(m) {
+     case ( kSKmNuMuCCMEC        ) :
+     case ( kSKmNuMuBarCCMEC     ) :
+     case ( kSKmNuECCMEC         ) :
+     case ( kSKmNuEBarCCMEC      ) :
+     case ( kSKmOscNuMuCCMEC        ) :
+     case ( kSKmOscNuMuBarCCMEC     ) :
+     case ( kSKmOscNuECCMEC         ) :
+     case ( kSKmOscNuEBarCCMEC      ) :
+        return true;
+        break;
+     default: 
+        return false;
+        break;
+  }
+  return false;
+}
+//____________________________________________________________________________
 bool valor::util::IsNC(valor::conv::SuperkMode_t m)
 {
   switch(m) {
@@ -420,26 +463,6 @@ valor::conv::SuperkMode_t valor::util::SuperkModeFromString(string sh)
   }
   std::cerr<<"SuperkModeFromString >> Did not get mode for string: "<<sh<<std::endl;
   return kSKmUndefined;
-}
-//____________________________________________________________________________
-bool valor::util::IsMEC(valor::conv::SuperkMode_t m)
-{
-  switch(m) {
-     case ( kSKmNuMuCCMEC        ) :
-     case ( kSKmNuMuBarCCMEC     ) :
-     case ( kSKmNuECCMEC         ) :
-     case ( kSKmNuEBarCCMEC      ) :
-     case ( kSKmOscNuMuCCMEC        ) :
-     case ( kSKmOscNuMuBarCCMEC     ) :
-     case ( kSKmOscNuECCMEC         ) :
-     case ( kSKmOscNuEBarCCMEC      ) :
-        return true;
-        break;
-     default: 
-        return false;
-        break;
-  }
-  return false;
 }
 //____________________________________________________________________________
 string valor::util::AsStringCompact_splinehack (valor::conv::SuperkMode_t m)

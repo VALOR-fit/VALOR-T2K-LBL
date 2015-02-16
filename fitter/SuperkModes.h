@@ -107,6 +107,8 @@ namespace util {
   bool IsOscNuEBar        (conv::SuperkMode_t  m);
   bool IsOscNuE           (conv::SuperkMode_t  m);
   bool IsCC               (conv::SuperkMode_t  m);
+  bool IsCCQE             (conv::SuperkMode_t  m);
+  bool IsCCnQE            (conv::SuperkMode_t  m);
   bool IsNC               (conv::SuperkMode_t  m);
   bool IsMEC              (conv::SuperkMode_t  m);
   
