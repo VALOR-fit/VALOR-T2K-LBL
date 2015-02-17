@@ -13,6 +13,7 @@ except:
   ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
   
 ROOT.gROOT.SetBatch(1)
+ROOT.gStyle.SetOptStat(0)
   
 valor = ROOT.valor
 util =  valor.util
@@ -26,18 +27,44 @@ samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
 
 col_width = 30
 
+line_width = 1
+
 to3dp = "{0:.3f}"
 
 #______________________________________________________________________________________________________________________________
 
 def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   
-  nominal_modes      = dict()
-  NA61_flux_modes    = dict()
-  prefit_tuned_modes = dict()
+  phyp_osc = valor.PhysHypothesis("3f_osc")
+  mixing12 = opt.GetGlobalBestFit(conv.kPhypMixing12)
+  mixing13 = conv.kT2KBestFitTheta13_NH
+  mixing23 = opt.GetGlobalBestFit(conv.kPhypMixing23)
+  dm12sq   = opt.GetGlobalBestFit(conv.kPhypDm12sq)
+  dm23sq   = opt.GetGlobalBestFit(conv.kPhypDm23sq)
+  deltacp  = conv.kT2KBestFitDeltaCP_NH
+  
+  phyp_osc.SetCurrValue(conv.kPhypMixing12,  mixing12);
+  phyp_osc.SetCurrValue(conv.kPhypMixing13,  mixing13);
+  phyp_osc.SetCurrValue(conv.kPhypMixing23,  mixing23);
+  phyp_osc.SetCurrValue(conv.kPhypCPV     ,   deltacp);
+  phyp_osc.SetCurrValue(conv.kPhypDm12sq  ,    dm12sq);
+  phyp_osc.SetCurrValue(conv.kPhypDm23sq  ,    dm23sq);
+  
+  phyp_void = valor.PhysHypothesis(conv.kHypVoid)
+  
+  
+  nominal_modes        = dict()
+  NA61_flux_modes      = dict()
+  prefit_tuned_modes   = dict()
   postfit_tuned_modes  = dict()
   
-  all_dicts = [nominal_modes,NA61_flux_modes,prefit_tuned_modes,postfit_tuned_modes]
+  osc_nominal_modes        = dict()
+  osc_NA61_flux_modes      = dict()
+  osc_prefit_tuned_modes   = dict()
+  osc_postfit_tuned_modes  = dict()
+  
+  all_dicts_unosc = [nominal_modes, NA61_flux_modes, prefit_tuned_modes, postfit_tuned_modes]
+  all_dicts_osc   = [osc_nominal_modes, osc_NA61_flux_modes, osc_prefit_tuned_modes, osc_postfit_tuned_modes]
   
   #  Make no flux SKExp
   skexp = valor.SuperkExpectation()
@@ -49,16 +76,22 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   #~ skexp.GetBANFF().RestoreFHCpRHCNominalMC()
   skexp.GetSuperkMC().FillTemplateArrays(False)
   
-  #~ fparm = util.NamedParameterList("nuosc3f")
-  phyp = valor.PhysHypothesis(conv.kHypVoid)
-  skexp.Generate(phyp)
   
+  skexp.Generate(phyp_void)
   nominal_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  nominal_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
-    
     nominal_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
+    
+  skexp.Generate(phyp_osc)
+  osc_nominal_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  osc_nominal_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
+  for im in xrange(conv.knm):
+    m = util.GetMode(sample,im)
+    if m == conv.kSKmUndefined or m > conv.knm: continue
+    osc_nominal_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
   
   del skexp
   
@@ -70,42 +103,64 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   skexp.GetBANFF().RestoreRHCNominalMC()
   #~ skexp.GetBANFF().RestoreFHCpRHCNominalMC()
   skexp.GetSuperkMC().FillTemplateArrays(False)
-  skexp.Generate(phyp)
   
+  skexp.Generate(phyp_void)
   NA61_flux_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  flux_tuned_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
-    
     NA61_flux_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
+    
+  skexp.Generate(phyp_osc)
+  osc_NA61_flux_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  osc_flux_tuned_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
+  for im in xrange(conv.knm):
+    m = util.GetMode(sample,im)
+    if m == conv.kSKmUndefined or m > conv.knm: continue
+    osc_NA61_flux_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
   
   del skexp
   
   # NIWG tune
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file_prefit)
-  skexp.Generate(phyp)
   
+  skexp.Generate(phyp_void)
   prefit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
-    
     prefit_tuned_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral("")
+    
+  skexp.Generate(phyp_osc)
+  osc_prefit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  for im in xrange(conv.knm):
+    m = util.GetMode(sample,im)
+    if m == conv.kSKmUndefined or m > conv.knm: continue
+    osc_prefit_tuned_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral("")
   
   del skexp
   
   # postfit tune
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file)
-  skexp.Generate(phyp)
   
+  skexp.Generate(phyp_void)
   postfit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  postfit_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
-    
     postfit_tuned_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral("")
+    
+  skexp.Generate(phyp_osc)
+  osc_postfit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  osc_postfit_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
+  for im in xrange(conv.knm):
+    m = util.GetMode(sample,im)
+    if m == conv.kSKmUndefined or m > conv.knm: continue
+    osc_postfit_tuned_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral("")
   
   del skexp
   
@@ -122,9 +177,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
 
 \\begin{document}
 
-{
 """)
-  
   tex_output.write("\\begin{table}\n")
   #~ tex_output.write("\\centering\n")
   tex_output.write("\n\n\\begin{tabular} { | c ||"+("c | "*4)+" | }\n\\hline\n")
@@ -137,27 +190,189 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   entries = [x.ljust(col_width) for x in cols]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
-  cols = ["Total"] + [to3dp.format(d["total"]) for d in all_dicts]
+  cols = ["Total"] + [to3dp.format(d["total"]) for d in all_dicts_unosc]
   entries = [x.ljust(col_width) for x in cols]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   tex_output.write("\\hline \n")
   
-  print all_dicts
+  for im in xrange(conv.knm):
+    m = util.GetMode(sample,im)
+    if m == conv.kSKmUndefined or m > conv.knm: continue
+    cols = [util.ModeAsStringTex(m)] + [to3dp.format(d[m]) for d in all_dicts_unosc]
+    entries = [x.ljust(col_width) for x in cols]
+    tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
+  
+  tex_output.write("\n\\end{tabular}")
+  tex_output.write("\n\\caption{Unoscillated}\n")
+  tex_output.write("\\end{table}\n\n")
+  
+  # Oscillated
+  tex_output.write("\\begin{table}\n")
+  #~ tex_output.write("\\centering\n")
+  tex_output.write("\n\n\\begin{tabular} { | c ||"+("c | "*4)+" | }\n\\hline\n")
+  
+  cols = ["","$N_{SK}$","$N_{SK}$","$N_{SK}$","$N_{SK}$"]
+  entries = [x.ljust(col_width) for x in cols]
+  tex_output.write("& ".join(entries) + " \\\\ \n")
+  
+  cols = ["","Nominal MC","Flux-tuned MC","BANFF prefit MC","BANFF postfit MC"]
+  entries = [x.ljust(col_width) for x in cols]
+  tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
+  
+  cols = ["Total"] + [to3dp.format(d["total"]) for d in all_dicts_osc]
+  entries = [x.ljust(col_width) for x in cols]
+  tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
+  tex_output.write("\\hline \n")
   
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
-    cols = [util.ModeAsString(m)] + [to3dp.format(d[m]) for d in all_dicts]
+    cols = [util.ModeAsStringTex(m)] + [to3dp.format(d[m]) for d in all_dicts_osc]
     entries = [x.ljust(col_width) for x in cols]
     tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
+  tex_output.write("\n\\end{tabular}")
+  tex_output.write("\n\\caption{Oscillated}\n")
+  tex_output.write("\\end{table}\n\n")
   
-  tex_output.write("\n\\end{tabular}\n")
-  tex_output.write("\\end{table}\n}\n")
+  
   tex_output.write("\\end{document}\n")
   
   print "Table output written to ",output_file
+  
+  
+  
+  # Now make some figures
+  
+  # First - flux tuning effect compared to nominal
+  canv = ROOT.TCanvas("c","c",1280,1024)
+  canv.Divide(2,2)
+  
+  canv.cd(1)
+  if nominal_hist.GetXaxis().GetXmax() > 7:
+    nominal_hist.GetXaxis().SetRangeUser(0,7)
+  nominal_hist.SetLineColor(ROOT.kBlue)
+  nominal_hist.SetLineWidth(line_width)
+  nominal_hist.SetMaximum(1.1*max([nominal_hist.GetMaximum(),flux_tuned_hist.GetMaximum()]))
+  nominal_hist.SetTitle("")
+  nominal_hist.Draw()
+  flux_tuned_hist.SetLineColor(ROOT.kRed)
+  flux_tuned_hist.SetLineWidth(line_width)
+  flux_tuned_hist.SetTitle("")
+  flux_tuned_hist.Draw("same")
+  fluxnom_leg = ROOT.TLegend(0.4,0.6,0.9,0.9)
+  fluxnom_leg.AddEntry(nominal_hist,"Nominal")
+  fluxnom_leg.AddEntry(flux_tuned_hist,"Flux tuning applied")
+  fluxnom_leg.Draw()
+  
+  canv.cd(2)
+  if osc_nominal_hist.GetXaxis().GetXmax() > 7:
+    osc_nominal_hist.GetXaxis().SetRangeUser(0,7)
+  osc_nominal_hist.SetLineColor(ROOT.kBlue)
+  osc_nominal_hist.SetLineWidth(line_width)
+  osc_nominal_hist.SetMaximum(1.1*max([osc_nominal_hist.GetMaximum(),osc_flux_tuned_hist.GetMaximum()]))
+  osc_nominal_hist.SetTitle("")
+  osc_nominal_hist.Draw()
+  osc_flux_tuned_hist.SetLineColor(ROOT.kRed)
+  osc_flux_tuned_hist.SetLineWidth(line_width)
+  osc_flux_tuned_hist.SetTitle("")
+  osc_flux_tuned_hist.Draw("same")
+  fluxnom_leg.Draw()
+  
+  canv.cd(3)
+  ratio = ROOT.TH1D(flux_tuned_hist)
+  ratio.Divide(nominal_hist)
+  ratio.GetYaxis().SetTitle("Flux tuned/nominal")
+  ratio.SetLineColor(ROOT.kBlack)
+  if ratio.GetXaxis().GetXmax() > 7:
+    ratio.GetXaxis().SetRangeUser(0,7)
+  ratio.Draw()
+  
+  canv.cd(4)
+  osc_ratio = ROOT.TH1D(osc_flux_tuned_hist)
+  osc_ratio.Divide(osc_nominal_hist)
+  osc_ratio.GetYaxis().SetTitle("Flux tuned/nominal")
+  osc_ratio.SetLineColor(ROOT.kBlack)
+  if osc_ratio.GetXaxis().GetXmax() > 7:
+    osc_ratio.GetXaxis().SetRangeUser(0,7)
+  osc_ratio.Draw()
+  
+  canv.cd(0)
+  canv.Print("flux_tuning_effect.eps")
+  
+  del canv
+  
+  # Second - BANFF tuning effect compared to flux tuned
+  canv = ROOT.TCanvas("cc","cc",1280,1024)
+  canv.Divide(2,2)
+  
+  pf_ratio = ROOT.TH1D(postfit_hist)                 # do these copies up here before we set the limits
+  pf_ratio.Divide(flux_tuned_hist)
+  osc_pf_ratio = ROOT.TH1D(osc_postfit_hist)
+  osc_pf_ratio.Divide(osc_flux_tuned_hist)
+  
+  canv.cd(1)
+  if postfit_hist.GetXaxis().GetXmax() > 7:
+    postfit_hist.GetXaxis().SetRangeUser(0,7)
+  postfit_hist.SetLineColor(ROOT.kBlack)
+  postfit_hist.SetLineWidth(line_width)
+  postfit_hist.SetMaximum(1.1*max([postfit_hist.GetMaximum(),flux_tuned_hist.GetMaximum()]))
+  postfit_hist.SetTitle("")
+  postfit_hist.Draw()
+  flux_tuned_hist.SetLineColor(ROOT.kRed)
+  flux_tuned_hist.SetLineWidth(line_width)
+  flux_tuned_hist.SetTitle("")
+  flux_tuned_hist.Draw("same")
+  postfit_leg = ROOT.TLegend(0.4,0.6,0.9,0.9)
+  postfit_leg.AddEntry(flux_tuned_hist,"Flux tuning applied")
+  postfit_leg.AddEntry(postfit_hist,"BANFF tune applied")
+  postfit_leg.Draw()
+  
+  canv.cd(2)
+  if osc_postfit_hist.GetXaxis().GetXmax() > 7:
+    osc_postfit_hist.GetXaxis().SetRangeUser(0,7)
+  osc_postfit_hist.SetLineColor(ROOT.kBlack)
+  osc_postfit_hist.SetLineWidth(line_width)
+  osc_postfit_hist.SetMaximum(1.1*max([osc_postfit_hist.GetMaximum(),osc_flux_tuned_hist.GetMaximum()]))
+  osc_postfit_hist.SetTitle("")
+  osc_postfit_hist.Draw()
+  osc_flux_tuned_hist.SetLineColor(ROOT.kRed)
+  osc_flux_tuned_hist.SetLineWidth(line_width)
+  osc_flux_tuned_hist.SetTitle("")
+  osc_flux_tuned_hist.Draw("same")
+  postfit_leg.Draw()
+  
+  canv.cd(3)
+  pf_ratio.GetYaxis().SetTitle("BANFF tuned / flux tuned")
+  pf_ratio.SetLineColor(ROOT.kBlack)
+  pf_ratio.SetLineWidth(line_width)
+  pf_ratio.SetTitle("")
+  if pf_ratio.GetXaxis().GetXmax() > 7:
+    pf_ratio.GetXaxis().SetRangeUser(0,7)
+  pf_ratio.Draw()
+  
+  canv.cd(4)
+  osc_pf_ratio.GetYaxis().SetTitle("BANFF tuned / flux tuned")
+  osc_pf_ratio.SetLineColor(ROOT.kBlack)
+  osc_pf_ratio.SetLineWidth(line_width)
+  osc_pf_ratio.SetTitle("")
+  if osc_pf_ratio.GetXaxis().GetXmax() > 7:
+    osc_pf_ratio.GetXaxis().SetRangeUser(0,7)
+  osc_pf_ratio.Draw()
+  
+  canv.cd(0)
+  canv.Print("banff_tuning_effect.eps")
+  
+  del canv
+  
 
+def hist_to_50MeV(h):
+  hout = ROOT.TH1D(h)
+  for ix in xrange(1,hout.GetNbinsX()+1):
+    hout.SetBinContent(ix, 0.05 * h.GetBinContent(ix) / h.GetBinWidth(ix));
+  hout.GetYaxis().SetTitle("Events per 0.050 GeV");
+  return hout
+  
 if __name__=="__main__":
   
   import optparse
