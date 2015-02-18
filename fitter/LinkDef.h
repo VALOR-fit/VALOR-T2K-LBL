@@ -16,6 +16,7 @@
 
 #pragma link C++ class valor::util::ArrIdx;
 
+#pragma link C++ class valor::T2KPhysicalParameterLimits;
 #pragma link C++ class valor::T2KOpt;
 
 #pragma link C++ class valor::SuperkObservation;

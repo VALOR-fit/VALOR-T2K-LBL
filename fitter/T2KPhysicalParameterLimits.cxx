@@ -1,0 +1,154 @@
+//________________________________________________________________________________________
+/*
+
+Copyright (c) 2010-2015, The VALOR group. All rights reserved.
+
+ChangeLog:
+
+*/
+//________________________________________________________________________________________
+
+#include <string>
+#include <algorithm>
+#include <iostream>
+
+#include <TROOT.h>
+
+#include "T2KPhysicalParameterLimits.h"
+#include "Utilities.h"
+#include "Enumerations.h"
+
+using namespace valor;
+using namespace valor::conv;
+
+using std::endl;
+using std::cout;
+using std::cerr;
+using std::map;
+
+//____________________________________________________________________________
+T2KPhysicalParameterLimits * T2KPhysicalParameterLimits::fInstance = 0;
+//____________________________________________________________________________
+valor::T2KPhysicalParameterLimits::T2KPhysicalParameterLimits()
+{
+  this->SetDefaults();
+  fInstance = 0;
+}
+//____________________________________________________________________________
+valor::T2KPhysicalParameterLimits::~T2KPhysicalParameterLimits()
+{
+  return;
+}
+//____________________________________________________________________________
+T2KPhysicalParameterLimits * T2KPhysicalParameterLimits::Instance()
+{
+  if(fInstance == 0) {
+    static T2KPhysicalParameterLimits::Cleaner cleaner;
+    cleaner.DummyMethodAndSilentCompiler();
+    fInstance = new T2KPhysicalParameterLimits;
+  }
+  return fInstance;
+}
+//____________________________________________________________________________
+double  valor::T2KPhysicalParameterLimits::MinValue    (conv::PhysParamId_t p) const
+{
+  map<int,double>::const_iterator it = fParamMinima.find(p);
+  if(it == fParamMinima.end()) {
+     cerr << "T2KPhysicalParameterLimits >> Parameter [" 
+          << util::RawParamAsString(p) << "] was not set!" << endl;
+     return -99999;
+  } 
+  return it->second;
+}
+//____________________________________________________________________________
+void    valor::T2KPhysicalParameterLimits::SetMinValue (conv::PhysParamId_t p, double v)
+{
+  fParamMinima[p] = v;
+}
+//____________________________________________________________________________
+double  valor::T2KPhysicalParameterLimits::MaxValue    (conv::PhysParamId_t p) const
+{
+  map<int,double>::const_iterator it = fParamMaxima.find(p);
+  if(it == fParamMaxima.end()) {
+     cerr << "T2KPhysicalParameterLimits >> Parameter [" 
+          << util::RawParamAsString(p) << "] was not set!" << endl;
+     return -99999;
+  } 
+  return it->second;
+}
+//____________________________________________________________________________
+void    valor::T2KPhysicalParameterLimits::SetMaxValue (conv::PhysParamId_t p, double v)
+{
+  fParamMaxima[p] = v;
+}
+//____________________________________________________________________________
+bool valor::T2KPhysicalParameterLimits::IsWithinLimits(conv::PhysParamId_t p, double v) const
+{
+  return (v >= this->MinValue(p) && v <= this->MaxValue(p));
+}
+//____________________________________________________________________________
+bool valor::T2KPhysicalParameterLimits::AllWithinLimits(const FitParamList & fparm) const
+{
+  for (int iparam = 0 ; iparam < fparm.Size(); iparam++) {
+    PhysParamId_t p = fparm.WhichParam(iparam);
+    double value = fparm.CurrValueByIndex(iparam);
+    if (not this->IsWithinLimits(p,value)) {
+      return false;
+    }
+  }
+  return true;
+}
+//____________________________________________________________________________
+const map<int,double> & valor::T2KPhysicalParameterLimits::Minima(void) const
+{
+  return fParamMinima;
+}
+//____________________________________________________________________________
+const map<int,double> & valor::T2KPhysicalParameterLimits::Maxima(void) const
+{
+  return fParamMaxima;
+}
+//____________________________________________________________________________
+void valor::T2KPhysicalParameterLimits::SetDefaults(void)
+{
+  for (int ip = 0 ; ip < knppmax; ip++) {
+    PhysParamId_t p = (PhysParamId_t)ip;
+    fParamMinima[p] = -9999;
+    fParamMaxima[p] =  9999;
+    
+    if (util::IsNormalisation(p)) {fParamMinima[p] = 0;}
+    if (util::IsEnergyScale  (p)) {fParamMinima[p] = 0;}
+    if (util::IsMixingAngle  (p)) {fParamMinima[p] = 0; fParamMaxima[p] = 1;}
+  }
+  
+  // Parameter limits from Asher's email (27th Jan 2015)
+  
+  // MA
+  fParamMinima[conv::kNuisBANFFMAQE    ] = 0;
+  fParamMinima[conv::kRHCNuisBANFFMAQE ] = 0;
+  fParamMinima[conv::kNuisBANFFMARES   ] = 0;
+  fParamMinima[conv::kRHCNuisBANFFMARES] = 0;
+  
+  // EBO
+  fParamMinima[conv::kNuisBANFFBindE    ] = 0.48;
+  fParamMaxima[conv::kNuisBANFFBindE    ] = 1.68;
+  fParamMinima[conv::kRHCNuisBANFFBindE ] = 0.48;
+  fParamMaxima[conv::kRHCNuisBANFFBindE ] = 1.68;
+  
+  // PFO
+  fParamMinima[conv::kNuisBANFFFermiMom    ] = 0.89;
+  fParamMaxima[conv::kNuisBANFFFermiMom    ] = 1.22;
+  fParamMinima[conv::kRHCNuisBANFFFermiMom ] = 0.89;
+  fParamMaxima[conv::kRHCNuisBANFFFermiMom ] = 1.22;
+  
+  // isospin
+  fParamMinima[conv::kNuisBANFFBgRES    ] = 0.;
+  fParamMinima[conv::kRHCNuisBANFFBgRES ] = 0.;
+  
+  // ca5
+  fParamMinima[conv::kNuisBANFFCA5    ] = 0.;
+  fParamMinima[conv::kRHCNuisBANFFCA5 ] = 0.;
+  
+  
+  return;
+}
