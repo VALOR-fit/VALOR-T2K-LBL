@@ -105,7 +105,7 @@ class FitMarginalization: public TObject
   void WriteToys2Binary(int idfile,char *tag);
   void ReadToysFromBinary(int idfile, char *tag);
   
-  void FillChisqMarg(SuperkObservation *skobs_data,int min_bin_sub_param,int max_bin_sub_param);
+  void ResetChisqMarg(int min_bin_sub_param,int max_bin_sub_param);
   void FillChisqMarg(SuperkObservation *skobs_data);
   
   void Minimize(TH1F *hInChisqMarg);
@@ -120,11 +120,16 @@ class FitMarginalization: public TObject
 
   VALORArrayF * GetToyMargErecoVArray(SuperkSample_t s);
 
-  void SetMargOscParam(PhysParamId_t physpar,string randmod,TH1F *hprior);
 
-  void RandomizeFlat(PhysParamId_t physpar);
-  void RandomizeGaus(PhysParamId_t physpar);
-  void RandomizePrior(PhysParamId_t physpar,TH1F *hprior);
+
+  void SetMargOscParam();
+
+  void SetPrior(PhysParamId_t physpar,string priorname,double par1,double par2);
+  void SetPrior(PhysParamId_t physpar,string priorname,TH1F *hprior);
+  string GetPrior(PhysParamId_t physpar);
+
+  double Randomize(PhysParamId_t physpar);
+  
 
  private:
   

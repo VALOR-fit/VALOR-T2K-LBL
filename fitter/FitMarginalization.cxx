@@ -6,7 +6,6 @@
 */
 //________________________________________________________________________________________
 
-
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -164,6 +163,9 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     
     fparm->ResetCurrToInitValues();
     
+    // Extract oscillation parameters to be marginalized
+    this->SetMargOscParam();
+      
     SuperkObservation * skobs = new SuperkObservation;
     
     bool applied_negevents_condition = true;
@@ -204,7 +206,15 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	double currval = fmin_param + ipar*fstep_param;
 	//cout << "currval = " << currval << endl;
 	
-	fparm->Update(fPhysParamFree,currval);
+
+
+
+
+	fparm->Update(fPhysParamFree,currval); // NOT THE SAME FITPARAMLIST AS THE ONE USED FOR THE TOYS
+
+
+
+
 	
 	applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
 	
@@ -423,34 +433,111 @@ VALORArrayF * FitMarginalization::GetToyMargErecoVArray(SuperkSample_t s){
     exit(1);
   }
 }
+//________________________________________________________________________________________
+void FitMarginalization::ResetChisqMarg(int min_bin_sub_param,int max_bin_sub_param){
+  for(int ipar=fmin_bin_sub_param;ipar<=fmax_bin_sub_param;ipar++){
+    double bincont = 0;
+    fChisqMargVArray->SetEntry(bincont,ipar);
+    hchisq_marg->SetBinContent(ipar+1,bincont);
+  }
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,double par1,double par2){
+  fparm->SetPriorMode(physpar,priorname);
 
+  if(priorname=="flat"){
+    fparm->SetMinValueFlat(physpar,par1);
+    fparm->SetMaxValueFlat(physpar,par2);
+  }
+  else if(priorname=="gaus"){
+    fparm->SetMeanGaus(physpar,par1);
+    fparm->SetSigmaGaus(physpar,par2);
+  }
+  else if(priorname=="user"){
+    cout << "You chose a user prior but you didn't give any histogram as input" << endl;
+    exit(1);
+  }
+  else{
+    cout << "You chose the wrong prior option" << endl;
+    exit(1);
+  }
 
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1F *hprior){
+  fparm->SetPriorMode(physpar,priorname);
 
+  if(priorname=="user"){
+    fparm->SetPriorHisto(physpar,hprior);
+  }
+  else if(priorname=="flat" || priorname=="gaus"){
+    cout << "You chose a " << priorname << " prior, but you gave as input an histogram" << endl;
+    exit(1);
+  }
+  else{
+    cout << "You chose the wrong prior option" << endl;
+    exit(1);
+  }
 
+  return;
+}
+//________________________________________________________________________________________
+string FitMarginalization::GetPrior(PhysParamId_t physpar){
+  return fparm->GetPriorModeName(physpar);
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetMargOscParam(){
+  
+  // Loop over the fit parameter list
+  int np = fparm->GetNumberParameters();
+  int npfree = 0;
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = fparm->WhichParam(ip);
+    
+    bool doMarginalize = true;
+    
+    if(p!=fPhysParamFree) 
+      fparm->SetDoMarg(fPhysParamFree,true); 
+    else{
+      fparm->SetDoMarg(fPhysParamFree,false);  // Do not marginalize if free parameter
+      continue; 
+    }
 
+    if(util::IsSystematic(p)) continue; // not oscillation parameters 
+    if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
 
+    // Now extract the oscillation parameter to marginalize 
+    double currval = Randomize(p);
+    
+    fparm->Update(p,currval); // Update current values of parameters 
 
-// // TO COMPLETE
+    //cout << util::AsString(p) << " " << currval << endl;
+   }
 
-// //________________________________________________________________________________________
-// void FitMarginalization::SetMargOscParam(PhysParamId_t physpar,string randmod,TH1F *hprior){
-//   if(physpar==kPhypMixing23Bar){
-//   }
-// }
-// //________________________________________________________________________________________
-// void FitMarginalization::RandomizeGaus(PhysParamId_t physpar,double mean,double sigma){
-//   double dm    = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-//   if(dm >= 0.)
-//     return dm;
-//   //or try again
-//   return RandomizeGaus();
-// }
-// //________________________________________________________________________________________
-// void FitMarginalization::RandomizeFlat(PhysParamId_t physpar,double min,double max){
-//   return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
-// }
-// //________________________________________________________________________________________
-// void FitMarginalization::RandomizePrior(PhysParamId_t physpar,TH1F *hprior){
-//   return hprior->GetRandom();
-// }
-// //________________________________________________________________________________________
+}
+//________________________________________________________________________________________
+double FitMarginalization::Randomize(PhysParamId_t physpar){
+
+  if(fparm->GetPriorModeName(physpar)=="flat"){
+    double min = fparm->GetMinValueFlat(physpar);
+    double max = fparm->GetMaxValueFlat(physpar);
+    return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
+  }
+  else if(fparm->GetPriorModeName(physpar)=="gaus"){
+    double mean = fparm->GetMeanGaus(physpar);
+    double sigma = fparm->GetSigmaGaus(physpar);
+    return Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+  }
+  else if(fparm->GetPriorModeName(physpar)=="user"){
+    return fparm->GetPriorHisto(physpar)->GetRandom();
+  }
+  else{
+    cout << "Used prior is: " << fparm->GetPriorModeName(physpar) << endl;
+    cout << "Prior not well defined for " << util::AsString(physpar) << endl;
+    exit(1);
+  }
+  
+}
+//________________________________________________________________________________________
