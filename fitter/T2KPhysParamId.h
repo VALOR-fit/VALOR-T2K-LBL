@@ -589,6 +589,9 @@ namespace util {
   bool IsEff1Re           (conv::PhysParamId_t p);
   bool IsFSI              (conv::PhysParamId_t p);
   bool IsSKDetFSI         (conv::PhysParamId_t p);
+  bool IsFlux             (conv::PhysParamId_t p);
+  bool IsNormalisation    (conv::PhysParamId_t p);
+  bool IsEnergyScale      (conv::PhysParamId_t p);
   
   conv::PhysParamId_t      PhysParamIdFromString     (string h);
   conv::PhysParamId_t      PhysParamIdFromLongString (string h);

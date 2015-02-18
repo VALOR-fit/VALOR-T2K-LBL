@@ -3878,38 +3878,43 @@ bool valor::util::IsXSec(PhysParamId_t p)
 //____________________________________________________________________________
 bool valor::util::IsUsingSplines(PhysParamId_t p)
 {
-  assert(!"IsUsingSplines Currently unimplemented");
-
   if(p >= kNuisXSecFermiMom && p <= kNuisXSecBindE)
     return true;
   if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecBindE)
     return true;
   if(p == kNuisBANFFMAQE || p == kRHCNuisBANFFMAQE)
     return true;
-
-  // NEW XSEC
-  if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
-    return true;
-
-  if(p == kNuisBANFFMARES || p == kRHCNuisBANFFMARES)
-    return true;
-  if(p == kNuisBANFFCA5 || p == kRHCNuisBANFFCA5)
-    return true;
-      // NEW SPLIT ANA
+    
+  switch (p) {
+    case kNuisBANFFMAQE:
+    case kNuisBANFFMARES:
 #if (BANFF_BINS != 2)
-  if(p == kNuisBANFFSCCA || p == kRHCNuisBANFFSCCA)
-    return true;
-  if(p == kNuisBANFFSCCV || p == kRHCNuisBANFFSCCV)
-    return true;
+    case kNuisBANFFSCCA:
+    case kNuisBANFFSCCV:
 #endif
-  if(p == kNuisBANFFFermiMom || p == kRHCNuisBANFFFermiMom)
-    return true;
-  if(p == kNuisBANFFShapeCCoth || p == kRHCNuisBANFFShapeCCoth)
-    return true;
-  if(p == kNuisBANFFBindE || p == kRHCNuisBANFFBindE)
-    return true;
-  //
-
+    case kNuisBANFFCA5:
+    case kNuisBANFFShapeCCoth:
+    case kNuisBANFFFermiMom:
+    case kNuisBANFFBindE:
+    case kNuisBANFFBgRES:
+      return true;
+      
+    case kRHCNuisBANFFMAQE:
+    case kRHCNuisBANFFMARES:
+#if (BANFF_BINS != 2)
+    case kRHCNuisBANFFSCCA:
+    case kRHCNuisBANFFSCCV:
+#endif
+    case kRHCNuisBANFFCA5:
+    case kRHCNuisBANFFShapeCCoth:
+    case kRHCNuisBANFFFermiMom:
+    case kRHCNuisBANFFBindE:
+    case kRHCNuisBANFFBgRES:
+      return true;
+    
+    default:
+      return false;
+  }
   return false;
 }
 //____________________________________________________________________________
@@ -4065,6 +4070,37 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
   if(p == kMultiRingNuisSuperkEnergyScale)
     return true;
 
+  return false;
+}
+//____________________________________________________________________________   
+bool valor::util::IsFlux(PhysParamId_t p)
+{
+  if ( (p >= kNuisBANFF00    && p < kNuisBANFFMAQE) ||
+       (p >= kRHCNuisBANFF00 && p < kRHCNuisBANFFMAQE) ) {
+    return true;
+  }
+    
+  return false;
+}
+//____________________________________________________________________________   
+bool valor::util::IsEnergyScale(PhysParamId_t p)
+{
+  if (p == kNuisSuperkEnergyScale          ||
+      p == kRHCNuisSuperkEnergyScale       || 
+      p == kMultiRingNuisSuperkEnergyScale)
+    return true;
+  return false;
+}
+//____________________________________________________________________________   
+bool valor::util::IsNormalisation(PhysParamId_t p)
+{
+  if (util::IsEnergyScale(p)                                              ) return false;
+    
+  if (p==kNuisRHCToFHC                                                    ) return true;
+  
+  if (util::IsSKDetFSI(p)                                                 ) return true;
+  if (util::IsFlux(p)                                                     ) return true;
+  if ( (util::IsXSec(p) || util::IsBANFF(p) ) && !util::IsUsingSplines(p) ) return true;
   return false;
 }
 //____________________________________________________________________________   
