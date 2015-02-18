@@ -139,7 +139,7 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
  const int    nfiles_marg          = 1,     // number of files where marginalization toys are stored
  const int    ntoys_marg           = 10,    // total number of marginalization toys
 
- const int    idfile               = 1,    // ID of the margin toy file
+ const int    idfile               = 0,    // ID of the margin toy file
 
  const char * param1               = "mixing23Bar",         // 1st param, mixing23, dmsq, mixing13, deltacp,  
  //const char * param1               = "dmsq32Bar",         // 1st param, mixing23, dmsq32, mixing13, deltacp,  
@@ -149,8 +149,10 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
 
 
  
- const char * outfilename            = "prova",
- const char * infilename             = "prova",
+ const char * outfilename            = "framework",
+ const char * infilename             = "framework",
+ //const char * outfilename            = "prova",
+ //const char * infilename             = "prova",
  //const char * outfilename            = "ToyMarginalization_1k_x_200.bin",
  //const char * infilename             = "ToyMarginalization_1k_x_200.bin",
  
@@ -322,7 +324,7 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
 
 
   
-  EPhysParamId parvalue1;
+  PhysParamId_t parvalue1;
   double param1_min = -999.;
   double param1_max = -999.;
   double step1 = -999.;
@@ -387,7 +389,9 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
   double chisq_marg[nbins_tot_param1]; // convert to vector
   
   TH1F *hToyMarg[ntoys_marg][nbins_tot_param1];
-  double vToyMarg[ntoys_marg][util::NumErecoBins(kSKsRHCFCFV1RingMuLike)][nbins_tot_param1];
+
+  //double vToyMarg[ntoys_marg][util::NumErecoBins(kSKsRHCFCFV1RingMuLike)][nbins_tot_param1];
+  double vToyMarg[ntoys_marg][nbins_tot_param1][util::NumErecoBins(kSKsRHCFCFV1RingMuLike)];
 
 
   // Get toys for marginalization (statistical fluctuations must be turned off!!!)
@@ -452,7 +456,8 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
 	  applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
 	  
 	  for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){ 
-	    vToyMarg[iexperiment][ib][ipar] = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib];
+	    //vToyMarg[iexperiment][ib][ipar] = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib];
+	    vToyMarg[iexperiment][ipar][ib] = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib];
 	  }
 	  
 	} // nbins_tot_param
@@ -502,7 +507,9 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
 
       // Read the file
       
-      double vToyMarg[ntoys_marg][util::NumErecoBins(kSKsRHCFCFV1RingMuLike)][nbins_tot_param1];
+      //double vToyMarg[ntoys_marg][util::NumErecoBins(kSKsRHCFCFV1RingMuLike)][nbins_tot_param1];
+      double vToyMarg[ntoys_marg][nbins_tot_param1][util::NumErecoBins(kSKsRHCFCFV1RingMuLike)];
+      
       int ok = 0;
       char inname[200];
       sprintf(inname,"%s_file%d_toy%d_x_oscpar%d.bin",infilename,ifile,ntoys_marg,nbins_tot_param1);
@@ -524,7 +531,8 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
 	  // compute the likelihood for a single marginalization toy
 	  double chisq = 0.;
 	  for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-	    double nexp = vToyMarg[iexperiment][ibin][ipar];
+	    //double nexp = vToyMarg[iexperiment][ibin][ipar];
+	    double nexp = vToyMarg[iexperiment][ipar][ibin];
 	    double nobs = skobs_fakedata->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ibin];
 	    chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
 	    
