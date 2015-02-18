@@ -120,6 +120,8 @@ void test_marginalization_class
     fitmarg->MakeToysMarginalization(tweak_systematics,skexp,15,20);
     fitmarg->WriteToys2Binary(2,infilename);
     
+    // Now all the toys are stored in files but also already available in the object
+
     // Once all the toys are extracted (attention not to make any overlap in the indices) 
     // the marginalized chisq is computed by averaging over all the stored toys. 
     // The fake data set is taken as input.
