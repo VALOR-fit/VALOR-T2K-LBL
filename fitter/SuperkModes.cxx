@@ -485,3 +485,7 @@ string valor::util::ModeAsStringCompact(conv::SuperkMode_t m) { return AsStringC
 string valor::util::ModeAsStringTex    (conv::SuperkMode_t m) { return AsStringTex    (m); }
 string valor::util::ModeAsStringRooTex (conv::SuperkMode_t m) { return AsStringRooTex (m); }
 //___________________________________________________________________________
+valor::conv::SuperkMode_t valor::util::GetMode(int is, int im){
+  return valor::conv::kSKReactionModes[is][im];
+}
+//___________________________________________________________________________

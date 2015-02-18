@@ -124,6 +124,8 @@ namespace util {
   string ModeAsStringTex        (conv::SuperkMode_t       m);
   string ModeAsStringRooTex     (conv::SuperkMode_t       m);
   
+  conv::SuperkMode_t GetMode(int is, int im);
+  
 } // util
 } // valor
   
