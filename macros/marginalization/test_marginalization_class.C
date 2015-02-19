@@ -11,8 +11,8 @@ void test_marginalization_class
 
  const char * config_file      = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
 
- const char * fit_param_list   = "nuosc3fbar_fixnonbar_12fix+nuisance",  
- //const char * fit_param_list    = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list   = "nuosc3fbar_numudisapp_constrainall+nuisance",  
+ const char * fit_param_list    = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
 
  int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
 
@@ -85,8 +85,14 @@ void test_marginalization_class
   // Take a prior distribution
   TH1F *hprior = (TH1F*) skobs_fakedata->ErecoSpectrum(kSKsRHCFCFV1RingMuLike)->Clone("");
 
+  // Implement the constructor giving the following input parameters:
+  // free param, ntoys, # pt to scan, min par, max par (if min and max not passed, use default ones for that par)
+  //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,21); 
+  FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,201); 
+  //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,21,0,0.5);
+  //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypDm23sqBar,100,201,2.0E-4,2E-2); 
+  //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypCPVBar,10,201,-TMath::Pi(),+TMath::Pi()); 
 
-  FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,21); // free param, ntoys, npt param scan
   //fitmarg->Init();
   //fitmarg->CleanUp();
  
@@ -97,22 +103,37 @@ void test_marginalization_class
   
   // Set priors for not fixed oscillation parameters
   
+  fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
   fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,1);
   fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
   fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
   fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
   fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
-    
   
+  //
+  // To check marginalization of Nu parameters
+  //
+  // fitmarg->SetPrior(kPhypMixing13,"flat",0,1);
+  // fitmarg->SetPrior(kPhypMixing12,"flat",0,1);
+  // fitmarg->SetPrior(kPhypMixing23,"flat",0,1);
+  // fitmarg->SetPrior(kPhypDm23sq,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
+  // fitmarg->SetPrior(kPhypDm12sq,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
+  // fitmarg->SetPrior(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
+  //
+
 
   if(!readtoys){
     
+    //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,0,0); 
+    //fitmarg->FillChisqMarg(skobs_fakedata);
+
     // Make toys and store in binary files
     
     // Produce toys for different sub-ranges of the free parameter and store in different files.
     // Useful for running on cluster when many toys are needed (e.g. 10k x 200)
     
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,0,10); 
+    //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,0,10); 
+    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,0,100); 
     
     // Toys for marginalization are stored in binary files (reading and writing very fast)
     // Several files can be written for different sub-ranges of the free parameter each
@@ -124,11 +145,13 @@ void test_marginalization_class
     // This method doesn't minimize yet
     fitmarg->FillChisqMarg(skobs_fakedata);
 
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,11,14);
+    //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,11,14);
+    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,101,140);
     fitmarg->WriteToys2Binary(1,infilename);
     fitmarg->FillChisqMarg(skobs_fakedata);
 	
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,15,20);
+    //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,15,20);
+    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,141,200);
     fitmarg->WriteToys2Binary(2,infilename);
     fitmarg->FillChisqMarg(skobs_fakedata);
     
