@@ -165,7 +165,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     
     // Extract oscillation parameters to be marginalized
     this->SetMargOscParam();
-      
+
     SuperkObservation * skobs = new SuperkObservation;
     
     bool applied_negevents_condition = true;
@@ -206,18 +206,10 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	double currval = fmin_param + ipar*fstep_param;
 	//cout << "currval = " << currval << endl;
 	
-
-
-
-
 	fparm->Update(fPhysParamFree,currval); // NOT THE SAME FITPARAMLIST AS THE ONE USED FOR THE TOYS
-
-
-
-
-	
 	applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
-	
+	//cout << *fparm << endl;
+
 	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
 	  double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib]; 
 	  fToyMargErecoVArray_RHCNumu->SetEntry(bincont,iexperiment,ipar,ib); 
@@ -329,9 +321,8 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
   cout << endl;
 
-  cout << "fmin_bin_sub_param = " << fmin_bin_sub_param << endl;
-  cout << "fmax_bin_sub_param = " << fmax_bin_sub_param << endl;
-
+  //cout << "fmin_bin_sub_param = " << fmin_bin_sub_param << endl;
+  //cout << "fmax_bin_sub_param = " << fmax_bin_sub_param << endl;
 }
 //________________________________________________________________________________________
 void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){ 
@@ -513,7 +504,7 @@ void FitMarginalization::SetMargOscParam(){
     
     fparm->Update(p,currval); // Update current values of parameters 
 
-    //cout << util::AsString(p) << " " << currval << endl;
+    cout << util::AsString(p) << " " << currval << endl;
    }
 
 }
