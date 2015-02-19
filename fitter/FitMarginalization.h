@@ -22,19 +22,42 @@
 
 
 
-#define mixing23Bar_min 0.           // first value of param1 
-#define mixing23Bar_max 1.           // last value of param1 
-#define nbins_tot_mixing23Bar 21     // tot # grid values for param1
+// NuBar mode
 
-#define dmsq32Bar_min 2.0E-4           // first value of param1 
-#define dmsq32Bar_max 2.0E-2           // last value of param1 
-#define nbins_tot_dmsq32Bar 41     // tot # grid values for param1
+#define mixing23Bar_min 0.           // both sinsq2theta and sinsqtheta
+#define mixing23Bar_max 1.           
+
+#define dmsq32Bar_min valor::conv::kMinFitDm23sqBar  
+#define dmsq32Bar_max valor::conv::kMaxFitDm23sqBar 
+
+#define mixing12Bar_min 0.           // both sinsq2theta and sinsqtheta
+#define mixing12Bar_max 1.           
+
+#define dmsq12Bar_min valor::conv::kMinFitDm12sqBar  
+#define dmsq12Bar_max valor::conv::kMaxFitDm12sqBar 
+
+#define deltacpBar_min -3.14159265358979312
+#define deltacpBar_max +3.14159265358979312
+
+// Nu mode
+
+#define mixing23_min 0.           // both sinsq2theta and sinsqtheta
+#define mixing23_max 1.           
+
+#define dmsq32_min valor::conv::kMinFitDm23sq  
+#define dmsq32_max valor::conv::kMaxFitDm23sq 
+
+#define mixing12_min 0.           // both sinsq2theta and sinsqtheta
+#define mixing12_max 1.           
+
+#define dmsq12_min valor::conv::kMinFitDm12sq  
+#define dmsq12_max valor::conv::kMaxFitDm12sq 
+
+#define deltacp_min -3.14159265358979312
+#define deltacp_max +3.14159265358979312
 
 
 
-#define NFILES_MARG 1     // number of files where marginalization toys are stored
-#define NTOYS_MARG 10     // total number of marginalization toys
-//#define NBINS_TOT_PARAM1 nbins_tot_mixing23Bar
 
 
 
@@ -66,6 +89,7 @@
 #include "Utilities/VALORArrayI.h"
 #include "Utilities/VALORArrayF.h"
 #include "FitCore/PhysHypothesis.h"
+#include "Utilities/Rnd.h"
 
 using std::string;
 using std::vector;
@@ -82,15 +106,16 @@ class FitMarginalization: public TObject
 {
  public:
   
-  FitMarginalization(PhysParamId_t parfree, int ntoys_marg, int nbins_param);
+
+  FitMarginalization(PhysParamId_t parfree, int ntoys_marg,int nbins_param,double minpar=0,double maxpar=0);
   ~FitMarginalization(void);
-  
-  void Init(PhysParamId_t parfree, int ntoys_marg, int nbins_param);
+
+  void Init(PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar);
   void CleanUp();
   
   void SetConfigFile();
 
-  void SetFreeParam(PhysParamId_t parfree);
+  void SetFreeParam(PhysParamId_t parfree,double minpar,double maxpar);
   
   void SetFitParamList(char * fit_param_list);
   FitParamList * GetFitParamList(void) {return fparm;};
@@ -140,6 +165,8 @@ class FitMarginalization: public TObject
 
   double fchisq_bf;
   double fparam_bf;
+
+  UInt_t fSeed;
 
   int fnbins_param;
   int fntoys_marg;

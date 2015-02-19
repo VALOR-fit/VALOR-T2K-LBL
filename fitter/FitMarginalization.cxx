@@ -43,9 +43,9 @@ using namespace valor::conv;
 ClassImp(FitMarginalization)
 
 //________________________________________________________________________________________
-FitMarginalization::FitMarginalization(conv::PhysParamId_t parfree, int ntoys_marg, int nbins_param)
+FitMarginalization::FitMarginalization(conv::PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar)
 {
-  this->Init(parfree,ntoys_marg,nbins_param);
+  this->Init(parfree,ntoys_marg,nbins_param,minpar,maxpar);
 }
 //________________________________________________________________________________________
 FitMarginalization::~FitMarginalization(void)
@@ -53,7 +53,7 @@ FitMarginalization::~FitMarginalization(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int nbins_param){
+void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar){
    
   fntoys_marg = ntoys_marg;
   fnbins_param = nbins_param;  
@@ -61,7 +61,9 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   fmin_bin_sub_param = 0; // scan all the range by default
   fmax_bin_sub_param = 0;
 
-  this->SetFreeParam(parfree);
+  fSeed = 999;
+
+  this->SetFreeParam(parfree,minpar,maxpar);
  
   cout << endl;
   cout << endl;
@@ -69,14 +71,18 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   cout << "# toys for marginalization: " << fntoys_marg << endl;
   cout << "# bins of free parameter to scan: " << fnbins_param << endl;
   cout << "# free parameter step size: " << fstep_param << endl;
+  cout << "Interval: [" << fmin_param << "," << fmax_param << "]" << endl;
   cout << endl;
 
   hchisq_marg = new TH1F("hchisq_marg","hchisq_marg",fnbins_param,fmin_param,fmax_param+fstep_param);
 
   fToyMargErecoVArray_RHCNumu = new VALORArrayF(ntoys_marg, nbins_param, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
+  fToyMargErecoVArray_RHCNumu->SetAll(0.);
   fChisqMargVArray            = new VALORArrayF(nbins_param);
+  fChisqMargVArray->SetAll(0.);
   flikeVArray                 = new VALORArrayF(nbins_param);
-  
+  flikeVArray->SetAll(0.);
+
   fToyMargErecoVArray_RHCNumu->SetDimensionName(0, "# toys marginalization");
   fToyMargErecoVArray_RHCNumu->SetDimensionName(1, "# bins free parameter");
   fToyMargErecoVArray_RHCNumu->SetDimensionName(2, "# bins ereco");
@@ -90,26 +96,58 @@ void FitMarginalization::CleanUp(void){
   if(hchisq_marg) delete hchisq_marg; hchisq_marg=0;
 }
 //________________________________________________________________________________________
-void FitMarginalization::SetFreeParam(conv::PhysParamId_t parfree){
+void FitMarginalization::SetFreeParam(conv::PhysParamId_t parfree,double minpar,double maxpar){
   
   fPhysParamFree = parfree;
   fnamefreeparam=util::AsString(fPhysParamFree);    
 
-  if(fPhysParamFree==kPhypMixing23Bar){ // mixing23Bar
-    fmin_param = mixing23Bar_min;
-    fmax_param = mixing23Bar_max;
-    fstep_param = (fmax_param-fmin_param)/(fnbins_param-1);
-  }    
-  else{
-    cout << "Free parameter has not well set" << endl;
-    exit(1);
+  if(minpar==0 && maxpar==0){ // if limits are not given use the default ones
+    
+    if(fPhysParamFree==kPhypMixing23Bar){ // mixing23Bar
+      fmin_param = mixing23Bar_min;
+      fmax_param = mixing23Bar_max;
+    }    
+    else if(fPhysParamFree==kPhypDm23sqBar){ // Dm23sqBar
+      fmin_param = dmsq32Bar_min;
+      fmax_param = dmsq32Bar_max;
+    }    
+    else if(fPhysParamFree==kPhypCPVBar){ // deltaCPBar
+      fmin_param = deltacpBar_min;
+      fmax_param = deltacpBar_max;
+    }    
+    else{
+      cout << "Free parameter has not well set" << endl;
+      exit(1);
+    }
   }
+  
+  else{
+    fmin_param = minpar;
+    fmax_param = maxpar;
+  }
+
+  fstep_param = (fmax_param-fmin_param)/(double)(fnbins_param-1);
+
   return;
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetFitParamList(char * fit_param_list){
   fparm  = util::NamedParameterList(fit_param_list);
   fhypothesis = fparm->PhysicsHypothesis();
+
+  if( fparm->IsFixed(fPhysParamFree) ){
+    cerr << "The free parameter " << fnamefreeparam 
+	 << " is fixed in FitParamList " << fit_param_list
+	 << endl << endl;
+    exit(1);
+  }
+  else if( fparm->IsNuisance(fPhysParamFree) ){
+    cerr << "The free parameter " << fnamefreeparam 
+	 << " is nuisance in FitParamList " << fit_param_list
+	 << endl << endl;
+    exit(1);
+  }
+
 }
 //________________________________________________________________________________________
 void FitMarginalization::PrintPhysHypothesis(){
@@ -157,6 +195,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 
   for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
     
+    // Initialize the seed to the experiment number. fSeed is 999
+
+    UInt_t myseed = 99;
+    //Rnd::Instance()->SetSeeds(fSeed+iexperiment+10, fSeed+iexperiment+20, fSeed+iexperiment+30, fSeed+iexperiment+40, fSeed+iexperiment+50); // stat, syst, osc, fitter, other
+    Rnd::Instance()->SetSeeds(myseed+iexperiment+10,myseed+iexperiment+20,myseed+iexperiment+30,myseed+iexperiment+40,fSeed+iexperiment+50); // stat, syst, osc, fitter, other
+
     cout << endl;
     cout << "iexperiment " << iexperiment << endl;
     cout << "# params " << fnbins_param << endl;
@@ -164,7 +208,19 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     fparm->ResetCurrToInitValues();
     
     // Extract oscillation parameters to be marginalized
+    
     this->SetMargOscParam();
+
+    // Set seed after oscillation parameter extraction
+
+    UInt_t seedstat = Rnd::Instance()->RndToyMCstat().GetSeed();
+    UInt_t seedsyst = Rnd::Instance()->RndToyMCsyst().GetSeed();
+    UInt_t seedosc = Rnd::Instance()->RndToyMCosc().GetSeed();    
+    UInt_t seedfit = Rnd::Instance()->RndFitter().GetSeed();
+    UInt_t seedoth = Rnd::Instance()->RndOther().GetSeed();
+    Rnd::Instance()->SetSeeds(seedstat+1,seedsyst+1,seedosc+1,seedfit+1,seedoth+1); // stat, syst, osc, fitter, other
+    
+    //
 
     SuperkObservation * skobs = new SuperkObservation;
     
@@ -189,22 +245,39 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  cout << "- Randomizing SKDetFSI systematic params in pdf..." << endl;
 	  skexp->TweakAllSKDetectorFSISystematics();
 	}
-	//skexp->PrintSystematicVariations();
-	//cout << "- Reseting all systematic params in pdf..." << endl;
-	//skexp->ResetSystematicVariations();
       }
       else { // no toys
 	skexp->ResetSystematicVariations();
 	cout << "- Generating toy-MC without systematic variation" << endl;
       }
 
+
+      // Set seeds after systematic paramter extraction
+
+      seedstat = Rnd::Instance()->RndToyMCstat().GetSeed();
+      seedsyst = Rnd::Instance()->RndToyMCsyst().GetSeed();
+      seedosc = Rnd::Instance()->RndToyMCosc().GetSeed();    
+      seedfit = Rnd::Instance()->RndFitter().GetSeed();
+      seedoth = Rnd::Instance()->RndOther().GetSeed();
+      Rnd::Instance()->SetSeeds(seedstat+1,seedsyst+1,seedosc+1,seedfit+1,seedoth+1); // stat, syst, osc, fitter, other
+    
+      // cout << endl;
+      // cout << "seedstat = " << seedstat+1 << endl;
+      // cout << "seedsyst = " << seedsyst+1 << endl;
+      // cout << "seedosc = " << seedosc+1 << endl;
+      // cout << "seedfit = " << seedfit+1 << endl;
+      // cout << "seedoth = " << seedoth+1 << endl;
+      // Rnd::Instance()->Print(std::cout);
+      
+      //
+
+
       // Produce toys for each osc param value
       
-      //for(int ipar=0; ipar<fnbins_param; ipar++){ 
       for(int ipar=min_bin_sub_param;ipar<=max_bin_sub_param;ipar++){
 
 	double currval = fmin_param + ipar*fstep_param;
-	//cout << "currval = " << currval << endl;
+	//cout << "currval = " << currval << ", ";
 	
 	fparm->Update(fPhysParamFree,currval); // NOT THE SAME FITPARAMLIST AS THE ONE USED FOR THE TOYS
 	applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
@@ -251,18 +324,22 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   // fmin_bin_sub_param and fmax_bin_sub_param read from the binary file
 
   for(int ipar=fmin_bin_sub_param;ipar<=fmax_bin_sub_param;ipar++){
+    
+    double currval = fmin_param + ipar*fstep_param;
+    //cout << "currval = " << currval << endl;
+
     for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
       
       // compute the likelihood for a single marginalization toy
       double chisq = 0.;
       for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-	double nexp = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar,ibin);;
+	double nexp = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar,ibin);
 	double nobs = skobs_data->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ibin];
 	chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
       }
-
-      double like = exp(-chisq/2.) / fntoys_marg;
       
+      double like = exp(-chisq/2.) / fntoys_marg;
+           
       flikeVArray->AddToEntry(like,ipar); // this is correct if binary files differ only for free param sub-ranges
       
       NtoysTot++;
@@ -459,7 +536,7 @@ void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,double 
 //________________________________________________________________________________________
 void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1F *hprior){
   fparm->SetPriorMode(physpar,priorname);
-
+  
   if(priorname=="user"){
     fparm->SetPriorHisto(physpar,hprior);
   }
