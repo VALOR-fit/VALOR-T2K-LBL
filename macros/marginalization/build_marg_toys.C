@@ -18,8 +18,8 @@ using namespace valor::conv;
 void build_marg_toys
 (
  const int    fileid               = 0,   // file id
- const int    first_bin_freepar    = 0,   // first freepar of the sub-range
- const int    last_bin_freepar     = 100, // last freepar of the sub-range
+ const int    first_bin_freepar    =-999,   // first freepar of the sub-range
+ const int    last_bin_freepar     =-999, // last freepar of the sub-range
 
  const char * tag                  = "FitMarg_mixing23_1p7E20_prefit",
  const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
@@ -31,8 +31,8 @@ void build_marg_toys
  const int    freeparmin           = 0,     // minimum value of free parameter
  const int    freeparmax           = 1,     // maxinum value of free parameter
 
- const int       NtoysMarg         = 100,   // # toys marginalization 
- const int       NptScan           = 201,   // # pts of free parameter to scan
+ const int    NtoysMarg            = 10,   // # toys marginalization 
+ const int    NptScan              = 201,   // # pts of free parameter to scan
 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
