@@ -24,6 +24,9 @@
 
 // NuBar mode
 
+#define mixing13Bar_min 0.          
+#define mixing13Bar_max 1.           
+
 #define mixing23Bar_min 0.           // both sinsq2theta and sinsqtheta
 #define mixing23Bar_max 1.           
 
@@ -40,6 +43,9 @@
 #define deltacpBar_max +3.14159265358979312
 
 // Nu mode
+
+#define mixing13_min 0.          
+#define mixing13_max 1.           
 
 #define mixing23_min 0.           // both sinsq2theta and sinsqtheta
 #define mixing23_max 1.           
@@ -107,7 +113,7 @@ class FitMarginalization: public TObject
  public:
   
 
-  FitMarginalization(PhysParamId_t parfree, int ntoys_marg,int nbins_param,double minpar=0,double maxpar=0);
+  FitMarginalization(PhysParamId_t parfree, int ntoys_marg,int nbins_param,double minpar=-999,double maxpar=-999);
   ~FitMarginalization(void);
 
   void Init(PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar);
@@ -125,7 +131,7 @@ class FitMarginalization: public TObject
 
   TH1F * GetChisqMarg (void) { return hchisq_marg; };
 
-  void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int min_bin_sub_param,int max_bin_sub_param);
+  void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int min_bin_sub_param=-999,int max_bin_sub_param=-999);
 
   void WriteToys2Binary(int idfile,char *tag);
   void ReadToysFromBinary(int idfile, char *tag);
@@ -184,7 +190,11 @@ class FitMarginalization: public TObject
   
   VALORArrayF *flikeVArray;
   VALORArrayF *fChisqMargVArray;
+  
   VALORArrayF *fToyMargErecoVArray_RHCNumu;
+  VALORArrayF *fToyMargErecoVArray_RHCNue;
+  VALORArrayF *fToyMargErecoVArray_Numu;
+  VALORArrayF *fToyMargErecoVArray_Nue;
 
   FitParamList * fparm;
   PhysHypothesis_t fhypothesis;

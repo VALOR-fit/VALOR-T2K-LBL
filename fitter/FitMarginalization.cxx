@@ -58,8 +58,8 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   fntoys_marg = ntoys_marg;
   fnbins_param = nbins_param;  
 
-  fmin_bin_sub_param = 0; // scan all the range by default
-  fmax_bin_sub_param = 0;
+  fmin_bin_sub_param = -999; // scan all the range by default
+  fmax_bin_sub_param = -999;
 
   fSeed = 999;
 
@@ -101,9 +101,14 @@ void FitMarginalization::SetFreeParam(conv::PhysParamId_t parfree,double minpar,
   fPhysParamFree = parfree;
   fnamefreeparam=util::AsString(fPhysParamFree);    
 
-  if(minpar==0 && maxpar==0){ // if limits are not given use the default ones
-    
-    if(fPhysParamFree==kPhypMixing23Bar){ // mixing23Bar
+  if(minpar==-999 && maxpar==-999){ // if limits are not given use the default ones
+ 
+    // NuBar Osc parameters
+    if(fPhysParamFree==kPhypMixing13Bar){ // mixing13Bar
+      fmin_param = mixing13Bar_min;
+      fmax_param = mixing13Bar_max;
+    }    
+    else if(fPhysParamFree==kPhypMixing23Bar){ // mixing23Bar
       fmin_param = mixing23Bar_min;
       fmax_param = mixing23Bar_max;
     }    
@@ -115,10 +120,52 @@ void FitMarginalization::SetFreeParam(conv::PhysParamId_t parfree,double minpar,
       fmin_param = deltacpBar_min;
       fmax_param = deltacpBar_max;
     }    
+    else if(fPhysParamFree==kPhypMixing12Bar){ // mixing12Bar
+      fmin_param = mixing12Bar_min;
+      fmax_param = mixing12Bar_max;
+    }    
+    else if(fPhysParamFree==kPhypDm12sqBar){ // Dm12sqBar
+      fmin_param = dmsq12Bar_min;
+      fmax_param = dmsq12Bar_max;
+    }    
+    // Nu Osc parameters
+    else if(fPhysParamFree==kPhypMixing13){ // mixing13
+      fmin_param = mixing13_min;
+      fmax_param = mixing13_max;
+    }    
+    else if(fPhysParamFree==kPhypMixing23){ // mixing23
+      fmin_param = mixing23_min;
+      fmax_param = mixing23_max;
+    }    
+    else if(fPhysParamFree==kPhypDm23sq){ // Dm23sq
+      fmin_param = dmsq32_min;
+      fmax_param = dmsq32_max;
+    }    
+    else if(fPhysParamFree==kPhypCPV){ // deltaCP
+      fmin_param = deltacp_min;
+      fmax_param = deltacp_max;
+    }    
+    else if(fPhysParamFree==kPhypMixing12){ // mixing12
+      fmin_param = mixing12_min;
+      fmax_param = mixing12_max;
+    }    
+    else if(fPhysParamFree==kPhypDm12sq){ // Dm12sq
+      fmin_param = dmsq12_min;
+      fmax_param = dmsq12_max;
+    }    
     else{
       cout << "Free parameter has not well set" << endl;
       exit(1);
     }
+  }
+  
+  else if(minpar > maxpar){
+    cerr << endl
+	 << "minpar >= maxpar && minpar!=-999 && maxpar!=-999" << endl
+	 << " - minpar = " << minpar << endl
+	 << " - maxpar = " << maxpar << endl
+	 << endl;
+    exit(1);
   }
   
   else{
@@ -163,7 +210,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   cout << "Make toys for marginalization and store in a binary file" << endl;
   cout << endl;
 
-  if(min_bin_sub_param==0 && max_bin_sub_param==0){ // scan all the range
+  if(min_bin_sub_param==-999 && max_bin_sub_param==-999){ // scan all the range
+    min_bin_sub_param = 0;
     max_bin_sub_param = fnbins_param-1;
   }
   
@@ -198,7 +246,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     // Initialize the seed to the experiment number. fSeed is 999
 
     UInt_t myseed = 99;
-    //Rnd::Instance()->SetSeeds(fSeed+iexperiment+10, fSeed+iexperiment+20, fSeed+iexperiment+30, fSeed+iexperiment+40, fSeed+iexperiment+50); // stat, syst, osc, fitter, other
     Rnd::Instance()->SetSeeds(myseed+iexperiment+10,myseed+iexperiment+20,myseed+iexperiment+30,myseed+iexperiment+40,fSeed+iexperiment+50); // stat, syst, osc, fitter, other
 
     cout << endl;
@@ -398,6 +445,15 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
   cout << endl;
 
+  sprintf(outname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.txt",tag,idfile,fntoys_marg,fnbins_param);
+  ofstream ostext(outname_range,ios::out);
+  ostext << "Used sub-range of the free parameter " << fnamefreeparam << endl;
+  ostext << "First bin of free param: " << fmin_bin_sub_param << endl;
+  ostext << "Last bin of free param: " << fmax_bin_sub_param << endl;  
+  ostext.close();
+  
+
+
   //cout << "fmin_bin_sub_param = " << fmin_bin_sub_param << endl;
   //cout << "fmax_bin_sub_param = " << fmax_bin_sub_param << endl;
 }
@@ -407,6 +463,10 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
   char inname[200];
   sprintf(inname,"%s_file%d_toy%d_x_oscpar%d.bin",tag,idfile,fntoys_marg,fnbins_param);
   std::string sinname(inname);
+
+
+  cout << sinname << endl;
+
 
   fToyMargErecoVArray_RHCNumu->ReadFile(sinname);
 
