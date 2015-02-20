@@ -137,9 +137,6 @@ for($imin = 0; $imin < $npt_freepar; $imin = $imin_p1) {
     
     $fileid = $fileid+1;
     
-    
-    #$arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys.C(\"$xmlfile\",\"$tag\",$irun,$first,$last,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$stat_fluctuations,$tweak_systematics,$using_xmlfile,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",\"$param3\",$nbins_tot_param1,$nbins_tot_param2,$nbins_tot_param3,$min_bin_1,$max_bin_1,$min_bin_2,$max_bin_2,$min_bin_3,$max_bin_3)\'";
-
     #
     # ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
     #
