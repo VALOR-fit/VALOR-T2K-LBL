@@ -83,12 +83,18 @@ void test_marginalization_class
   skexp->Read(config.Data());
  
   // Take a prior distribution
-  TH1F *hprior = (TH1F*) skobs_fakedata->ErecoSpectrum(kSKsRHCFCFV1RingMuLike)->Clone("");
+  //TH1F *hprior = (TH1F*) skobs_fakedata->ErecoSpectrum(kSKsRHCFCFV1RingMuLike)->Clone("");
+  TH1F *hprior = new TH1F("hprior","hprior",100,0,1);
+  TRandom3 *rnd = new TRandom3(0); 
+  for(int ievt=0;ievt<10000;ievt++){
+    hprior->Fill(rnd->Landau(0.4,0.01));
+  }    
+  
 
   // Implement the constructor giving the following input parameters:
   // free param, ntoys, # pt to scan, min par, max par (if min and max not passed, use default ones for that par)
   //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,21); 
-  FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,201); 
+  FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,1000,201); 
   //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,21,0,0.5);
   //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypDm23sqBar,100,201,2.0E-4,2E-2); 
   //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypCPVBar,10,201,-TMath::Pi(),+TMath::Pi()); 
