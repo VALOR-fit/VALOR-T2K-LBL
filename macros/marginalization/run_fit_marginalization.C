@@ -7,7 +7,7 @@ void run_fit_marginalization
 (
  const bool   readtoys             = true,
  const char * infilename           = "framework_cluster",
- const int    nfiles               = 4,         // # of files to read
+ const int    nfiles               = 11,         // # of files to read
 
  const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
 
@@ -18,13 +18,13 @@ void run_fit_marginalization
  const int    freeparmin           = 0,     // minimum value of free parameter
  const int    freeparmax           = 1,     // maxinum value of free parameter
 
- const int    NtoysMarg            = 100,   // # toys marginalization 
- const int    NptScan              = 201,   // # pts of free parameter to scan
+ const int    NtoysMarg            = 10,   // # toys marginalization 
+ const int    NptScan              = 21,   // # pts of free parameter to scan
 
  int          tweak_systematics    = 1,                                /* generate toy MC with randomized systematics? */
 
  const char * dmsqscheme           = "abs23",                             /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy            = "inverted",                            /* normal or inverted */
+ const char * hierarchy            = "normal",                            /* normal or inverted */
  const char * mixparamchoice       = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant        = "one",                               /* one==kNuOctantOne two==kNuOctantTwo */
 
