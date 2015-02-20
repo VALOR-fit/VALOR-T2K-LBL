@@ -73,14 +73,12 @@ $config_file   = "analysis_configuration_1.7E20_prefit.xml"     unless defined $
 $fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
 
 $freepar                = "mixing23Bar"                unless defined $freepar;
+$minfreepar             = 0                           unless defined $minfreepar;
+$maxfreepar             = 1                           unless defined $maxfreepar; 
 
-# If both 0 use default limits
-$minfreepar             = 0                            unless defined $minfreepar;
-$maxfreepar             = 0                            unless defined $maxfreepar;
-
-$nexpts_marg            = 100                          unless defined $nexpts_marg;
-$npt_freepar            = 201                          unless defined $npt_freepar;
-$step_freepar           = 51                           unless defined $step_freepar;
+$nexpts_marg            = 10                          unless defined $nexpts_marg;
+$npt_freepar            = 21                          unless defined $npt_freepar;
+$step_freepar           = 2                           unless defined $step_freepar;
 
 $tweak_systematics      = 1                            unless defined $tweak_systematics;
 
@@ -111,7 +109,7 @@ for($imin = 0; $imin < $npt_freepar; $imin = $imin_p1) {
     $imax = $imin + $step_freepar-1;
     
     # if exceed maximum allowed number set it to limit
-    if( $imax > $npt_freepar ){
+    if( $imax >= $npt_freepar ){
 	$imax = $npt_freepar-1; # loop in build_marg_toy is min <= bin <= max
      }
         
