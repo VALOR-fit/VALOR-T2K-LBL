@@ -6,6 +6,8 @@
 */
 //________________________________________________________________________________________
 
+//#define __print_array_toy__
+
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -63,6 +65,9 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
 
   fSeed = 999;
 
+  //sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d.bin");
+  sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d%s%s");
+
   this->SetFreeParam(parfree,minpar,maxpar);
  
   cout << endl;
@@ -75,6 +80,7 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   cout << endl;
 
   hchisq_marg = new TH1F("hchisq_marg","hchisq_marg",fnbins_param,fmin_param,fmax_param+fstep_param);
+  hToyMargCurr = new TH1F("hToyMargCurr","hToyMargCurr",util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
 
   fToyMargErecoVArray_RHCNumu = new VALORArrayF(ntoys_marg, nbins_param, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
   fToyMargErecoVArray_RHCNumu->SetAll(0.);
@@ -335,6 +341,17 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  fToyMargErecoVArray_RHCNumu->SetEntry(bincont,iexperiment,ipar,ib); 
 	}
 	
+
+#ifdef __print_array_toy__
+	cout << endl;
+	cout << "toy=" << iexperiment << " - ipar=" << ipar << " : ";
+	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
+	  double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib]; 
+	  cout << bincont << " "; 
+	}
+	cout << endl;	
+#endif
+
       } // fnbins_param
     } // applied_negevents_condition
   } // iexperiment
@@ -420,7 +437,8 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   cout << "Write marginalization toys in a binary file:" << endl;
   
   char outname[200];
-  sprintf(outname,"%s_file%d_toy%d_x_oscpar%d.bin",tag,idfile,fntoys_marg,fnbins_param);
+  //sprintf(outname,"%s_file%d_toy%d_x_oscpar%d.bin",tag,idfile,fntoys_marg,fnbins_param);
+  sprintf(outname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"",".bin");
   
   std::string soutname(outname);
   fToyMargErecoVArray_RHCNumu->WriteFile(soutname);
@@ -433,7 +451,8 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   int max_bin_sub_param = fmax_bin_sub_param;
 
   char outname_range[200];
-  sprintf(outname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.bin",tag,idfile,fntoys_marg,fnbins_param);
+  //sprintf(outname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.bin",tag,idfile,fntoys_marg,fnbins_param);
+  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"_subrange",".bin");
   std::string soutname_range(outname_range);
   
   ofstream os(soutname_range.c_str(),ios::binary|ios::out);
@@ -445,28 +464,25 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
   cout << endl;
 
-  sprintf(outname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.txt",tag,idfile,fntoys_marg,fnbins_param);
+  //sprintf(outname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.txt",tag,idfile,fntoys_marg,fnbins_param);
+  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"_subrange",".txt");
+
   ofstream ostext(outname_range,ios::out);
   ostext << "Used sub-range of the free parameter " << fnamefreeparam << endl;
   ostext << "First bin of free param: " << fmin_bin_sub_param << endl;
   ostext << "Last bin of free param: " << fmax_bin_sub_param << endl;  
   ostext.close();
-  
-
-
-  //cout << "fmin_bin_sub_param = " << fmin_bin_sub_param << endl;
-  //cout << "fmax_bin_sub_param = " << fmax_bin_sub_param << endl;
 }
 //________________________________________________________________________________________
 void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){ 
 
   char inname[200];
-  sprintf(inname,"%s_file%d_toy%d_x_oscpar%d.bin",tag,idfile,fntoys_marg,fnbins_param);
+  //sprintf(inname,"%s_file%d_toy%d_x_oscpar%d.bin",tag,idfile,fntoys_marg,fnbins_param);
+  sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"",".bin");
+
   std::string sinname(inname);
 
-
   cout << sinname << endl;
-
 
   fToyMargErecoVArray_RHCNumu->ReadFile(sinname);
 
@@ -556,6 +572,23 @@ void FitMarginalization::PrintBestFit(void){
 VALORArrayF * FitMarginalization::GetToyMargErecoVArray(SuperkSample_t s){
 
   if(s==kSKsRHCFCFV1RingMuLike) return fToyMargErecoVArray_RHCNumu;
+  else{
+    cout << "You have chosen a wrong Superk Sample" << endl;
+    exit(1);
+  }
+}
+//________________________________________________________________________________________
+TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar){
+
+  if(s==kSKsRHCFCFV1RingMuLike){ 
+    for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
+      double bincont = fToyMargErecoVArray_RHCNumu->GetEntry(itoy,ifreepar,ibin);
+      hToyMargCurr->SetBinContent(ibin+1,bincont);
+      //cout << bincont << " ";
+    }
+    //cout << endl;
+    return hToyMargCurr;
+  }
   else{
     cout << "You have chosen a wrong Superk Sample" << endl;
     exit(1);

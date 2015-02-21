@@ -150,8 +150,7 @@ class FitMarginalization: public TObject
   void PrintBestFit(void);
 
   VALORArrayF * GetToyMargErecoVArray(SuperkSample_t s);
-
-
+  TH1F * GetToyMargHisto(SuperkSample_t s,int iexpt,int ifreepar);
 
   void SetMargOscParam();
 
@@ -165,9 +164,13 @@ class FitMarginalization: public TObject
  private:
   
   TH1F *hchisq_marg; 
-  
+
+  TH1F *hToyMargCurr;
+
   string fnamefreeparam;
   PhysParamId_t fPhysParamFree;
+
+  char fnamefilebinary[200];
 
   double fchisq_bf;
   double fparam_bf;
