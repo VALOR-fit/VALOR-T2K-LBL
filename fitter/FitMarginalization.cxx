@@ -66,8 +66,9 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   fSeed = 999;
 
   //sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d.bin");
-  sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d%s%s");
-
+  //sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d%s%s");   // OK
+  sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d%s%s");  
+  
   this->SetFreeParam(parfree,minpar,maxpar);
  
   cout << endl;
@@ -78,6 +79,8 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   cout << "# free parameter step size: " << fstep_param << endl;
   cout << "Interval: [" << fmin_param << "," << fmax_param << "]" << endl;
   cout << endl;
+
+  fnerecobins_RHCNumu = util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike);
 
   hchisq_marg = new TH1F("hchisq_marg","hchisq_marg",fnbins_param,fmin_param,fmax_param+fstep_param);
   hToyMargCurr = new TH1F("hToyMargCurr","hToyMargCurr",util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
@@ -467,10 +470,34 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   //sprintf(outname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.txt",tag,idfile,fntoys_marg,fnbins_param);
   sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"_subrange",".txt");
 
+
+  fmin_sub_param = hchisq_marg->GetBinLowEdge(fmin_bin_sub_param+1);    
+  fmax_sub_param = hchisq_marg->GetBinLowEdge(fmax_bin_sub_param+1);    
+
   ofstream ostext(outname_range,ios::out);
-  ostext << "Used sub-range of the free parameter " << fnamefreeparam << endl;
+  ostext << "Used sub-range of the free parameter: " << fnamefreeparam << endl;
   ostext << "First bin of free param: " << fmin_bin_sub_param << endl;
   ostext << "Last bin of free param: " << fmax_bin_sub_param << endl;  
+  ostext << endl;
+  ostext << "fnamefreeparam: " << endl
+	 << " - " << soutname << endl
+	 << " - " << soutname_range << endl;
+  ostext << "fnbins_param = " << fnbins_param << endl;
+  ostext << "fntoys_marg = " << fntoys_marg << endl;
+  ostext << "fnerecobins_RHCNumu = " << fnerecobins_RHCNumu << endl;
+  ostext << "fmin_bin_sub_param = " << fmin_bin_sub_param << endl;
+  ostext << "fmax_bin_sub_param = " << fmax_bin_sub_param << endl;
+  ostext << "fmin_sub_param = " << fmin_sub_param << endl;
+  ostext << "fmax_sub_param = " << fmax_sub_param << endl;
+  ostext << "fmin_param = " << fmin_param << endl;
+  ostext << "fmax_param = " << fmax_param << endl;
+  ostext << "fstep_param = " << fstep_param << endl;
+  ostext << endl;
+  ostext << "fhypothesis = " << util::AsString(fhypothesis) << endl;
+  ostext << endl;
+  ostext << "FitParamList:" << endl;
+  ostext << *fparm << endl;
+  
   ostext.close();
 }
 //________________________________________________________________________________________
