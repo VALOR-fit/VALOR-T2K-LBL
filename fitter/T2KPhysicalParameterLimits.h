@@ -26,6 +26,7 @@
 
 #include "Conventions/PhysParamId.h"
 #include "FitCore/FitParamList.h"
+#include "FitCore/PhysParamList.h"
 
 namespace valor {
 
@@ -42,6 +43,7 @@ public:
   
   bool IsWithinLimits(conv::PhysParamId_t p, double v) const;
   bool AllWithinLimits(const FitParamList & fparm) const;
+  bool AllWithinLimits(const PhysParamList & fparm) const;
 
   const map<int,double> & Minima(void) const;
   const map<int,double> & Maxima(void) const;

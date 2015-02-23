@@ -26,6 +26,8 @@ using std::cout;
 using std::cerr;
 using std::map;
 
+//#define show_debug_limits
+
 //____________________________________________________________________________
 T2KPhysicalParameterLimits * T2KPhysicalParameterLimits::fInstance = 0;
 //____________________________________________________________________________
@@ -84,7 +86,13 @@ void    valor::T2KPhysicalParameterLimits::SetMaxValue (conv::PhysParamId_t p, d
 //____________________________________________________________________________
 bool valor::T2KPhysicalParameterLimits::IsWithinLimits(conv::PhysParamId_t p, double v) const
 {
-  return (v >= this->MinValue(p) && v <= this->MaxValue(p));
+  if (v >= this->MinValue(p) && v <= this->MaxValue(p)) {
+    return true;
+  }
+#ifdef show_debug_limits
+  std::cout<<"T2KPhysicalParameterLimits/IsWithinLimits >> False for param "<<util::AsString(p)<<" with value "<<v<<std::endl;
+#endif
+  return false;
 }
 //____________________________________________________________________________
 bool valor::T2KPhysicalParameterLimits::AllWithinLimits(const FitParamList & fparm) const
@@ -92,6 +100,19 @@ bool valor::T2KPhysicalParameterLimits::AllWithinLimits(const FitParamList & fpa
   for (int iparam = 0 ; iparam < fparm.Size(); iparam++) {
     PhysParamId_t p = fparm.WhichParam(iparam);
     double value = fparm.CurrValueByIndex(iparam);
+    if (not this->IsWithinLimits(p,value)) {
+      return false;
+    }
+  }
+  return true;
+}
+//____________________________________________________________________________
+bool valor::T2KPhysicalParameterLimits::AllWithinLimits(const PhysParamList & pparm) const
+{
+  for (int iparam = 0 ; iparam < conv::knppmax; iparam++) {
+    PhysParamId_t p = PhysParamId_t(iparam);
+    if (not pparm.Contains(p)) continue;
+    double value = pparm.Value(p);
     if (not this->IsWithinLimits(p,value)) {
       return false;
     }
@@ -117,7 +138,7 @@ void valor::T2KPhysicalParameterLimits::SetDefaults(void)
     fParamMaxima[p] =  9999;
     
     if (util::IsNormalisation(p)) {fParamMinima[p] = 0;}
-    if (util::IsEnergyScale  (p)) {fParamMinima[p] = 0;}
+    //if (util::IsEnergyScale  (p)) {fParamMinima[p] = 0;}
     if (util::IsMixingAngle  (p)) {fParamMinima[p] = 0; fParamMaxima[p] = 1;}
   }
   
