@@ -631,6 +631,8 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   if( this->doMargMassHierarchy ) ostext << " Marginalize";
   else ostext << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
   ostext << endl;
+  if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
+  else ostext << "Don't rethrow unphysical systematic toys" << endl;
   ostext << "fnbins_param = " << fnbins_param << endl;
   ostext << "fntoys_marg = " << fntoys_marg << endl;
   ostext << "fnerecobins_RHCNumu = " << fnerecobins_RHCNumu << endl;
