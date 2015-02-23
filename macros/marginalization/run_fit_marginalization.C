@@ -6,8 +6,13 @@ using namespace valor::conv;
 void run_fit_marginalization
 (
  const bool   readtoys             = true,
- const char * infilename           = "framework_cluster",
- const int    nfiles               = 11,         // # of files to read
+
+ //const char * infilename           = "../../inputs/marginalization/toys/margtoys_cluster",
+ //const char * infilename           = "DEV_FitMarg_mixing23_1p7E20_prefit",
+ //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
+ const char * infilename           = "ciao",
+
+ const int    nfiles               = 21,         // # of files to read
 
  const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
 
@@ -21,12 +26,14 @@ void run_fit_marginalization
  const int    NtoysMarg            = 10,   // # toys marginalization 
  const int    NptScan              = 21,   // # pts of free parameter to scan
 
- int          tweak_systematics    = 1,                                /* generate toy MC with randomized systematics? */
+ int          tweak_systematics    = 1,       /* generate toy MC with randomized systematics? */
 
- const char * dmsqscheme           = "abs23",                             /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy            = "normal",                            /* normal or inverted */
- const char * mixparamchoice       = "sinsqtheta",                        /* sinsq2theta or sinsqtheta */
- const char * mixparamoctant        = "one",                               /* one==kNuOctantOne two==kNuOctantTwo */
+ const bool   doMargMH             = true,    // marginalize Mass Hierarchy
+
+ const char * dmsqscheme           = "abs23",      /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * hierarchy            = "inverted",     /* normal or inverted */
+ const char * mixparamchoice       = "sinsqtheta", /* sinsq2theta or sinsqtheta */
+ const char * mixparamoctant        = "one",       /* one==kNuOctantOne two==kNuOctantTwo */
 
  const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",  // input XML file 
  bool using_xml_file  = true
@@ -111,7 +118,10 @@ void run_fit_marginalization
   fitmarg->SetFitParamList(fit_param_list);
   fitmarg->PrintPhysHypothesis();
       
-  
+  // Set Mass Hierarchy marginalization
+  fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
+ 
+
   if(!readtoys){
 
     // Produce toys and fill marginalized chisq

@@ -21,7 +21,9 @@ void build_marg_toys
  const int    first_bin_freepar    =-999,   // first freepar of the sub-range
  const int    last_bin_freepar     =-999, // last freepar of the sub-range
 
- const char * tag                  = "FitMarg_mixing23_1p7E20_prefit",
+ //const char * tag                  = "DEV_FitMarg_mixing23_1p7E20_prefit",
+ const char * tag                  = "MH_FitMarg_mixing23_1p7E20_prefit",
+
  const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
 
  //const char * fit_param_list     = "nuosc3fbar_numudisapp_constrainall+nuisance",  
@@ -32,12 +34,14 @@ void build_marg_toys
  const int    freeparmax           = 1,     // maxinum value of free parameter
 
  const int    NtoysMarg            = 10,   // # toys marginalization 
- const int    NptScan              = 201,   // # pts of free parameter to scan
+ const int    NptScan              = 201,  // # pts of free parameter to scan
 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
+ const bool   doMargMH             = true,    // marginalize Mass Hierarchy
+
  const char * dmsqscheme              = "abs23",       /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy               = "inverted",    /* normal or inverted */
+ const char * hierarchy               = "normal",    /* normal or inverted */
  const char * mixparamchoice          = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant          = "one"         /* one==kNuOctantOne two==kNuOctantTwo */
  )
@@ -104,6 +108,9 @@ void build_marg_toys
   fitmarg->SetFitParamList(fit_param_list);
   fitmarg->PrintPhysHypothesis();      
   
+  // Set Mass Hierarchy marginalization
+  fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
+
   // Set priors for not fixed oscillation parameters
   fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
   fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,1);
