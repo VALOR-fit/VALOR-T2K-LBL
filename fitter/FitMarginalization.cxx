@@ -7,6 +7,7 @@
 //________________________________________________________________________________________
 
 //#define __print_array_toy__
+//#define __print_masshierarchy__
 
 #include <cassert>
 #include <cstdlib>
@@ -57,6 +58,8 @@ FitMarginalization::~FitMarginalization(void)
 //________________________________________________________________________________________
 void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar){
    
+  doMargMassHierarchy = false;
+
   fntoys_marg = ntoys_marg;
   fnbins_param = nbins_param;  
 
@@ -85,8 +88,10 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   hchisq_marg = new TH1F("hchisq_marg","hchisq_marg",fnbins_param,fmin_param,fmax_param+fstep_param);
   hToyMargCurr = new TH1F("hToyMargCurr","hToyMargCurr",util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
 
-  fToyMargErecoVArray_RHCNumu = new VALORArrayF(ntoys_marg, nbins_param, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
+  const int nmh=2; // mass hierarchy
+  fToyMargErecoVArray_RHCNumu = new VALORArrayF(ntoys_marg, nbins_param, nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
   fToyMargErecoVArray_RHCNumu->SetAll(0.);
+
   fChisqMargVArray            = new VALORArrayF(nbins_param);
   fChisqMargVArray->SetAll(0.);
   flikeVArray                 = new VALORArrayF(nbins_param);
@@ -94,7 +99,8 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
 
   fToyMargErecoVArray_RHCNumu->SetDimensionName(0, "# toys marginalization");
   fToyMargErecoVArray_RHCNumu->SetDimensionName(1, "# bins free parameter");
-  fToyMargErecoVArray_RHCNumu->SetDimensionName(2, "# bins ereco");
+  fToyMargErecoVArray_RHCNumu->SetDimensionName(2, "# mass hierarchies");
+  fToyMargErecoVArray_RHCNumu->SetDimensionName(3, "# bins ereco");
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
@@ -335,15 +341,76 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	double currval = fmin_param + ipar*fstep_param;
 	//cout << "currval = " << currval << ", ";
 	
-	fparm->Update(fPhysParamFree,currval); // NOT THE SAME FITPARAMLIST AS THE ONE USED FOR THE TOYS
-	applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
-	//cout << *fparm << endl;
 
-	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	  double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib]; 
-	  fToyMargErecoVArray_RHCNumu->SetEntry(bincont,iexperiment,ipar,ib); 
-	}
-	
+	// Marginalize the Mass Hierarchy
+
+	conv::NuMassHierarchy_t hier;
+	conv::NuMassHierarchy_t hierBar;
+
+	int nMassHierarchy = 2;
+	for(int iMH=0;iMH<nMassHierarchy;iMH++){
+	  
+	  // Don't marginalize Mass Hierarchy. Only the assumed one
+	  if(this->doMargMassHierarchy == false){
+	    
+	    hier    = Opt::Instance()->gMassHierarchyAssumed;
+	    hierBar = Opt::Instance()->gMassHierarchyAssumed;
+	    
+	    // Break the loop after the first iteration
+	    nMassHierarchy = 1; 
+	    
+	    // Used convention in MakeToysMarginalization(): 
+	    //  - iMH=0 --> kNmhNormal
+	    //  - iMH=1 --> kNmhInverted	
+	    if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+	    else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+
+	    // Mass Hierarchy has to be already defined
+	    else {
+	      cerr << endl;
+	      cerr << "Mass Hierarchy is not defined" << endl;
+	      cerr << endl;
+	      exit(1);
+	    }	      
+	  }
+
+	  // Loop over both MH hypotheses and assign a different MH
+	  else{
+	    if( iMH==0 ){
+	      hier    = kNmhNormal;
+	      hierBar = kNmhNormal;
+	      skexp->GetSuperkMC()->SetMassHierarchy(hier);
+	      skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	    }
+	    else if( iMH==1 ){
+	      hier    = kNmhInverted;
+	      hierBar = kNmhInverted;
+	      skexp->GetSuperkMC()->SetMassHierarchy(hier);
+	      skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	    }
+	  }
+	  
+#ifdef __print_masshierarchy__
+	  cout << endl;
+	  cout << "iMH = " << iMH << " - MH: " << util::HierarchyAsString(hier) 
+	       << " - MHbar: " << util::HierarchyAsString(hierBar)
+	       << endl;
+#endif	  
+
+
+	  // Update the expectation and produce the mock data
+	  fparm->Update(fPhysParamFree,currval); 
+	  applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
+
+
+	  // Build toy Ereco distributions
+
+	  for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
+	    double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib]; 
+	    fToyMargErecoVArray_RHCNumu->SetEntry(bincont,iexperiment,ipar,iMH,ib); 
+	  }
+	 
+	  
 
 #ifdef __print_array_toy__
 	cout << endl;
@@ -355,7 +422,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	cout << endl;	
 #endif
 
-      } // fnbins_param
+	} // loop Mass Hierarchy
+      } // loop ipar (free parameter)
     } // applied_negevents_condition
   } // iexperiment
   
@@ -387,35 +455,73 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
        << "]"
        << endl;
 
-  // It can marginalized sub-ranges of the free parameter
+  // It can marginalize sub-ranges of the free parameter
   // fmin_bin_sub_param and fmax_bin_sub_param read from the binary file
 
   for(int ipar=fmin_bin_sub_param;ipar<=fmax_bin_sub_param;ipar++){
     
     double currval = fmin_param + ipar*fstep_param;
     //cout << "currval = " << currval << endl;
+    
 
-    for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+
+
+
+    // Marginalize the Mass Hierarchy
+    int nMassHierarchy = 2;
+        
+    for(int iMH=0;iMH<nMassHierarchy;iMH++){
       
-      // compute the likelihood for a single marginalization toy
-      double chisq = 0.;
-      for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-	double nexp = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar,ibin);
-	double nobs = skobs_data->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ibin];
-	chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+      // Don't marginalize Mass Hierarchy. Only the assumed one
+      if(this->doMargMassHierarchy == false){
+		
+	// Break the loop after the first iteration
+	nMassHierarchy = 1; 
+	
+	// Used convention in MakeToysMarginalization(): 
+	//  - iMH=0 --> kNmhNormal
+	//  - iMH=1 --> kNmhInverted	
+	if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+	else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+
+	// Mass Hierarchy has to be already defined
+	else {
+	  cerr << endl;
+	  cerr << "Mass Hierarchy is not defined" << endl;
+	  cerr << endl;
+	  exit(1);
+	}
       }
       
+#ifdef __print_masshierarchy__
+      cout << "iMH = " << iMH << endl;
+#endif	  
+      
+      for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+	
+	// compute the likelihood for a single marginalization toy
+	double chisq = 0.;
+	for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
+	  double nexp = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar,iMH,ibin);
+	  double nobs = skobs_data->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ibin];
+	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+	}
+	
       double like = exp(-chisq/2.) / fntoys_marg;
-           
+      
+      if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
+      
       flikeVArray->AddToEntry(like,ipar); // this is correct if binary files differ only for free param sub-ranges
       
       NtoysTot++;
-
-    } // iexperiment
-
+      
+      } // iexperiment
+      
+    } // iMH (mass hierarchy)
+    
     NparTot++;
 
-  } // ipar
+  } // ipar (free parameter)
   
   cout << endl;
   cout << "# of scanned free parameters: " << NparTot << endl; 
@@ -605,11 +711,11 @@ VALORArrayF * FitMarginalization::GetToyMargErecoVArray(SuperkSample_t s){
   }
 }
 //________________________________________________________________________________________
-TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar){
+TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar,int iMassHierarchy){
 
   if(s==kSKsRHCFCFV1RingMuLike){ 
     for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-      double bincont = fToyMargErecoVArray_RHCNumu->GetEntry(itoy,ifreepar,ibin);
+      double bincont = fToyMargErecoVArray_RHCNumu->GetEntry(itoy,ifreepar,iMassHierarchy,ibin);
       hToyMargCurr->SetBinContent(ibin+1,bincont);
       //cout << bincont << " ";
     }
@@ -729,3 +835,9 @@ double FitMarginalization::Randomize(PhysParamId_t physpar){
   
 }
 //________________________________________________________________________________________
+void FitMarginalization::SetMargMassHierarchy(bool domargMH){
+  doMargMassHierarchy = domargMH;
+  return;
+}
+//________________________________________________________________________________________
+ 

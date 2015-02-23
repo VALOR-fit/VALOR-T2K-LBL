@@ -150,7 +150,7 @@ class FitMarginalization: public TObject
   void PrintBestFit(void);
 
   VALORArrayF * GetToyMargErecoVArray(SuperkSample_t s);
-  TH1F * GetToyMargHisto(SuperkSample_t s,int iexpt,int ifreepar);
+  TH1F * GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar,int iMassHierarchy);
 
   void SetMargOscParam();
 
@@ -159,6 +159,8 @@ class FitMarginalization: public TObject
   string GetPrior(PhysParamId_t physpar);
 
   double Randomize(PhysParamId_t physpar);
+  
+  void SetMargMassHierarchy(bool domargMH);  
   
 
  private:
@@ -170,6 +172,12 @@ class FitMarginalization: public TObject
   string fnamefreeparam;
   PhysParamId_t fPhysParamFree;
 
+
+
+  bool doMargMassHierarchy; // marginalize MH. Not by default     
+
+
+ 
   char fnamefilebinary[200];
 
   double fchisq_bf;

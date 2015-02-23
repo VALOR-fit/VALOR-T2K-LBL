@@ -2205,8 +2205,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
   
   PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
   
-  NuOscSterile osc;
-  
+  //NuOscSterile osc;
+  // Use fNuOscSterile
+
   // set oscillation parameters to the oscillation probability calculation code
   double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
   double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
@@ -2237,14 +2238,14 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
   
   if (omp == kNuMixSinsqTheta) {
-    osc.SetMixingAngles(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
+    fNuOscSterile.SetMixingAngles(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
   }
   else if (omp == kNuMixSinsq2Theta) {
     if (Opt::Instance()->gOscOctantChoice == conv::kNuOctantOne) {
-      osc.SetMixingDoubleAnglesOct1(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
+      fNuOscSterile.SetMixingDoubleAnglesOct1(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
     }
     else if (Opt::Instance()->gOscOctantChoice == conv::kNuOctantTwo) {
-      osc.SetMixingDoubleAnglesOct2(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
+      fNuOscSterile.SetMixingDoubleAnglesOct2(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
     }
     else {
       cerr << "**  Exp/SKMC >> Can't handle choice of "
@@ -2263,8 +2264,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
   // May need to put some decision on mass splitting convention here.
   //~ NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
   
-  osc.SetDmsq(dmsq, Dmsq, dm41sq, dm51sq);
-  osc.SetDeltaCP(delta_12, delta_13, delta_15, delta_34, delta_35);
+  fNuOscSterile.SetDmsq(dmsq, Dmsq, dm41sq, dm51sq);
+  fNuOscSterile.SetDeltaCP(delta_12, delta_13, delta_15, delta_34, delta_35);
 
   // loop over samples
   for(int is = 0; is < kns; is++) {
@@ -2290,8 +2291,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
       double p_osc    [NuOscSterile::nFlav][NuOscSterile::nFlav] = {};
       double p_osc_bar[NuOscSterile::nFlav][NuOscSterile::nFlav] = {};
       
-      osc.CalcMatterOscProbAll(false, Etrue, &p_osc    [0][0]);
-      osc.CalcMatterOscProbAll(true , Etrue, &p_osc_bar[0][0]);
+      fNuOscSterile.CalcMatterOscProbAll(false, Etrue, &p_osc    [0][0]);
+      fNuOscSterile.CalcMatterOscProbAll(true , Etrue, &p_osc_bar[0][0]);
       
       double p_numu_numu       = p_osc    [1][1];
       double p_numubar_numubar = p_osc_bar[1][1];

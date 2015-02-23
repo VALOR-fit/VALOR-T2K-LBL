@@ -105,8 +105,13 @@ public:
   void SetUnphysicalOscProb(bool unphys) { fUnphysicalOscProb = unphys; }
 
   // Allow changing the mass hierarchy
-  void SetMassHierarchy(conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
-    
+  void SetMassHierarchy       (conv::NuMassHierarchy_t hier) { fNuOsc3Flavour.SetMassHierarchy(hier); }
+  // NEW
+  void SetMassHierarchyBar    (conv::NuMassHierarchy_t hier) { fNuOsc3FlavourBar.SetMassHierarchy(hier); }
+  void SetMassHierarchySterile(conv::NuMassHierarchy_t hier) { fNuOscSterile.SetMassHierarchy(hier); }
+  //
+
+
   void NevDebug(conv::SKMCTemplateType_t t, string name);
   
   void FillTemplateArrays(bool with_tuning_weights = false);
@@ -265,7 +270,11 @@ private:
   // utility objects for defining physics hypothesis (oscillations, decay, ...) & computing probabilities
   PhysHypothesis fPhysHypothesis;          ///< Physics hypothesis 
   NuOsc3Flavour  fNuOsc3Flavour;           ///< 3-flavour neutrino osc. probability calculations
-  NuOsc3Flavour  fNuOsc3FlavourBar;           ///< 3-flavour neutrino osc. probability calculations
+  NuOsc3Flavour  fNuOsc3FlavourBar;        ///< 3-flavour anti-neutrino osc. probability calculations
+  
+  // NEW 
+  NuOscSterile  fNuOscSterile;            ///< sterile osc. probability calculations  
+  //
 
   double fXMEC; //hack x_mec until we have a parameter we can use
 
