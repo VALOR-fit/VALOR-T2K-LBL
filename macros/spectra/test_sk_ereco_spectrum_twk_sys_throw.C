@@ -306,7 +306,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   if(!update_rootfile)
     rootmode = "recreate";
   string oscparams = util::AsString(ph.Hypothesis(),
-        			    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+                       input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
   
   if(!update_rootfile)
@@ -321,10 +321,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
   // Get the nominal
   skexp.Generate(ph);
-  hErecoNominal = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  for(int ir = 1; ir <= hErecoNominal->GetNbinsX(); ir++) {
-    hErecoNominal->SetBinContent(ir, skexp.CurrPredictedErecoSpectrumArray(s)[ir-1]);
-  }
+  hErecoNominal = skexp.CurrPredictedErecoSpectrum(s);
   hErecoNominal->SetDirectory(0);
   hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoNominal->GetYaxis()->SetTitle("Events per bin");
@@ -342,7 +339,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   int iskip = 0;
   for(int iexp = 0; iexp < nexp; iexp++) {
 
-    if((iexp % 1000) == 0)
+    if((iexp % 100) == 0)
       cout << endl << "Experiment " << iexp << " for systematics: " << modetitle << endl;
 
     if(mode < 100) {
@@ -522,12 +519,22 @@ void test_sk_ereco_spectrum_twk_sys_throw
           cout << "Unknown mode " << mode << endl; exit(1); break;
       }//switch(mode)
     }//mode>=100
-
+    
+    PhysParamList pparm = skexp.Tweaks();
+    bool within_limits = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(pparm);
+    if (!within_limits) {
+      cout<<"Systematic thrown outside physical limits, regenerating"<<std::endl;
+      iskip++;
+      iexp--;
+      continue;
+    }
+    
     // generate predictions
     bool applied_negevents_condition = skexp.Generate(ph);
     if(applied_negevents_condition) {
       cout << "skipping" << endl;
       iskip++;
+      iexp--;
       continue;
     }
 
@@ -537,12 +544,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
     }
 
     //store spectrum
-    hEreco[iexp] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    hEreco[iexp] = skexp.CurrPredictedErecoSpectrum(s);
     for(int ir = 1; ir <= hEreco[iexp]->GetNbinsX(); ir++) {
-      if(mode != 999)
-        hEreco[iexp]->SetBinContent(ir, skexp.CurrPredictedErecoSpectrumArray(s)[ir-1]);
-      else
+      if(mode == 999 ) {
         hEreco[iexp]->SetBinContent(ir, skobs.ErecoSpectrumArray(s)[ir-1]);
+      }
     }
 
     hEreco[iexp]->SetDirectory(0);
@@ -586,7 +592,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     }
   }//end loop over experiments
   w.Stop();
-  cout << iskip << " experiments skipped due to min events" << endl;
+  cout << iskip << " experiments skipped due to limits" << endl;
 
   //save some histograms
   for(int ip = 0; ip < np; ip++) {
