@@ -76,9 +76,11 @@ void run_fit_xml_toys_joint_bar
   bool         reactor                 = false,                               /* enable this if you want to apply the reactor constraint */
   double       tolerance               = 0.01,                                /* value for the fitter tolerance */
 
- const char *optfixpar         = "mixing12,mixing13,deltacp,dmsq12"
+ const char *optfixpar         = "mixing12,mixing13,deltacp,dmsq12",
  //const char *optfixpar         = "mixing12, mixing13, mixing23, dmsq12, deltacp"  // list of the params to be fixed in the fit   
  //const char *optfixpar         = "mixing12, mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
+ 
+ bool rethrow_if_parameters_unphysical = true
 )
 {
   using namespace std;
@@ -91,8 +93,8 @@ void run_fit_xml_toys_joint_bar
   double bestfit_chisq,bestfit_chisq2;
 
   // Analysis configuration
-  TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  TString xmlfile2 = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile);
+  TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file));
+  TString xmlfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile));
 
   FileStat_t dummy;
 
@@ -336,8 +338,8 @@ void run_fit_xml_toys_joint_bar
     if(!using_xml_file) {
       f_sysparm = new TFile(xmlfile2.Data(),"READ");
       if(f_sysparm->IsZombie()) {
-	cerr << "ROOT file not found. Exiting..." << endl;
-	exit(1);
+        cerr << "ROOT file not found. Exiting..." << endl;
+        exit(1);
       }
     }
   }
@@ -423,342 +425,350 @@ void run_fit_xml_toys_joint_bar
   // Loop over toy-MC experiments
   //for(int iexperiment = 0; iexperiment < nexperiments; iexperiment++) {
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
+    cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
 
-     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
+    // randomize specified osc params for current toy MC expt
+    if(hyp == kHypOsc3F){
+      if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
+      if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
+      if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();  }
+      if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
+    }
+    else if(hyp == kHypOsc3FBar){ // randomize nu osc params only if not fixed
+      if (randomize_mixing12_bar) { input_mixing12_bar = util::RandomizeMixing12Bar(); }
+      if (randomize_mixing13_bar) { input_mixing13_bar = util::RandomizeMixing13Bar(); }
+      if (randomize_deltacp_bar ) { input_deltacp_bar  = util::RandomizeCPVBar();  }
+      if (randomize_dm12sq_bar  ) { input_dm12sq_bar   = util::RandomizeDm12sqBar();   }
+    }
 
-     // randomize specified osc params for current toy MC expt
-     if(hyp == kHypOsc3F){
-       if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
-       if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
-       if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();  }
-       if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
-     }
-     else if(hyp == kHypOsc3FBar){ // randomize nu osc params only if not fixed
-       if (randomize_mixing12_bar) { input_mixing12_bar = util::RandomizeMixing12Bar(); }
-       if (randomize_mixing13_bar) { input_mixing13_bar = util::RandomizeMixing13Bar(); }
-       if (randomize_deltacp_bar ) { input_deltacp_bar  = util::RandomizeCPVBar();  }
-       if (randomize_dm12sq_bar  ) { input_dm12sq_bar   = util::RandomizeDm12sqBar();   }
-     }
+    // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
+    if(hyp == kHypOsc3F) {
+      fparm1->SetInitValue(kPhypMixing12, input_mixing12);
+      fparm1->SetInitValue(kPhypMixing13, input_mixing13);
+      fparm1->SetInitValue(kPhypMixing23, input_mixing23);
+      fparm1->SetInitValue(kPhypCPV    ,  input_deltacp);
+      fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
+      fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
 
-     // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
-     if(hyp == kHypOsc3F) {
-       fparm1->SetInitValue(kPhypMixing12, input_mixing12);
-       fparm1->SetInitValue(kPhypMixing13, input_mixing13);
-       fparm1->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1->SetInitValue(kPhypCPV    ,  input_deltacp);
-       fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
-       fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
+      fparm2->SetInitValue(kPhypMixing12, input_mixing12);
+      fparm2->SetInitValue(kPhypMixing13, input_mixing13);
+      fparm2->SetInitValue(kPhypMixing23, input_mixing23);
+      fparm2->SetInitValue(kPhypCPV    ,  input_deltacp);
+      fparm2->SetInitValue(kPhypDm12sq,   input_dm12sq);
+      fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
+    }
+    else if(hyp == kHypOsc3FBar) {
+      fparm1->SetInitValue(kPhypMixing12, input_mixing12);
+      fparm1->SetInitValue(kPhypMixing13, input_mixing13);
+      fparm1->SetInitValue(kPhypMixing23, input_mixing23);
+      fparm1->SetInitValue(kPhypCPV    ,  input_deltacp);
+      fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
+      fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
 
-       fparm2->SetInitValue(kPhypMixing12, input_mixing12);
-       fparm2->SetInitValue(kPhypMixing13, input_mixing13);
-       fparm2->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm2->SetInitValue(kPhypCPV    ,  input_deltacp);
-       fparm2->SetInitValue(kPhypDm12sq,   input_dm12sq);
-       fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
-     }
-     else if(hyp == kHypOsc3FBar) {
-       fparm1->SetInitValue(kPhypMixing12, input_mixing12);
-       fparm1->SetInitValue(kPhypMixing13, input_mixing13);
-       fparm1->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1->SetInitValue(kPhypCPV    ,  input_deltacp);
-       fparm1->SetInitValue(kPhypDm12sq,   input_dm12sq);
-       fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
+      fparm1->SetInitValue(kPhypMixing12Bar, input_mixing12_bar);
+      fparm1->SetInitValue(kPhypMixing13Bar, input_mixing13_bar);
+      fparm1->SetInitValue(kPhypMixing23Bar, input_mixing23_bar);
+      fparm1->SetInitValue(kPhypCPVBar    ,  input_deltacp_bar);
+      fparm1->SetInitValue(kPhypDm12sqBar,   input_dm12sq_bar);
+      fparm1->SetInitValue(kPhypDm23sqBar,   input_dm23sq_bar);
 
-       fparm1->SetInitValue(kPhypMixing12Bar, input_mixing12_bar);
-       fparm1->SetInitValue(kPhypMixing13Bar, input_mixing13_bar);
-       fparm1->SetInitValue(kPhypMixing23Bar, input_mixing23_bar);
-       fparm1->SetInitValue(kPhypCPVBar    ,  input_deltacp_bar);
-       fparm1->SetInitValue(kPhypDm12sqBar,   input_dm12sq_bar);
-       fparm1->SetInitValue(kPhypDm23sqBar,   input_dm23sq_bar);
+      fparm2->SetInitValue(kPhypMixing12, input_mixing12);
+      fparm2->SetInitValue(kPhypMixing13, input_mixing13);
+      fparm2->SetInitValue(kPhypMixing23, input_mixing23);
+      fparm2->SetInitValue(kPhypCPV    ,  input_deltacp);
+      fparm2->SetInitValue(kPhypDm12sq,   input_dm12sq);
+      fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
 
-       fparm2->SetInitValue(kPhypMixing12, input_mixing12);
-       fparm2->SetInitValue(kPhypMixing13, input_mixing13);
-       fparm2->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm2->SetInitValue(kPhypCPV    ,  input_deltacp);
-       fparm2->SetInitValue(kPhypDm12sq,   input_dm12sq);
-       fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
+      fparm2->SetInitValue(kPhypMixing12Bar, input_mixing12_bar);
+      fparm2->SetInitValue(kPhypMixing13Bar, input_mixing13_bar);
+      fparm2->SetInitValue(kPhypMixing23Bar, input_mixing23_bar);
+      fparm2->SetInitValue(kPhypCPVBar    ,  input_deltacp_bar);
+      fparm2->SetInitValue(kPhypDm12sqBar,   input_dm12sq_bar);
+      fparm2->SetInitValue(kPhypDm23sqBar,   input_dm23sq_bar);
+    }
+    else if(hyp == kHypNuMuDisapp2F) {
+      fparm1->SetInitValue(kPhypMixing23, input_mixing23);
+      fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
 
-       fparm2->SetInitValue(kPhypMixing12Bar, input_mixing12_bar);
-       fparm2->SetInitValue(kPhypMixing13Bar, input_mixing13_bar);
-       fparm2->SetInitValue(kPhypMixing23Bar, input_mixing23_bar);
-       fparm2->SetInitValue(kPhypCPVBar    ,  input_deltacp_bar);
-       fparm2->SetInitValue(kPhypDm12sqBar,   input_dm12sq_bar);
-       fparm2->SetInitValue(kPhypDm23sqBar,   input_dm23sq_bar);
-     }
-     else if(hyp == kHypNuMuDisapp2F) {
-       fparm1->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm1->SetInitValue(kPhypDm23sq,   input_dm23sq);
-
-       fparm2->SetInitValue(kPhypMixing23, input_mixing23);
-       fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
-     }
+      fparm2->SetInitValue(kPhypMixing23, input_mixing23);
+      fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
+    }
    
-     cout << *fparm1 << endl;
+    cout << *fparm1 << endl;
 
-     
+    
 
-     // Reset all output spectra
-     dat_array ->Clear();
-     pdf_array ->Clear();
-     pdf_array1->Clear();
-     pdf_array2->Clear();
+    // Reset all output spectra
+    dat_array ->Clear();
+    pdf_array ->Clear();
+    pdf_array1->Clear();
+    pdf_array2->Clear();
 
-     // Re-seed fitter (reset current values to specified init values)
-     fparm1->ResetCurrToInitValues();
+    // Re-seed fitter (reset current values to specified init values)
+    fparm1->ResetCurrToInitValues();
 
-     cout << *fparm1 << endl;
+    cout << *fparm1 << endl;
 
-     // Reset input true params and add true oscillation params
-     iparm->Clear();
-     PhysParamList true_oscillation_params = fparm1->AsPhysParamList("current");
-     iparm->Append(true_oscillation_params);
+    // Reset input true params and add true oscillation params
+    iparm->Clear();
+    PhysParamList true_oscillation_params = fparm1->AsPhysParamList("current");
+    iparm->Append(true_oscillation_params);
 
-     // get toy MC with/without systematics
-     
-     SuperkObservation * skobs = new SuperkObservation;
-     if(!dotoys && using_xml_file){
-       skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
-     }
-     else{
-       bool applied_negevents_condition = true;
-       while(applied_negevents_condition) {
-	 if(tweak_systematics) {
-	   // tweak all sources of systematic error
-	   if(tweak_systematics == 1) {
-	     cout << "- Randomizing all systematic params in pdf..." << endl;
-	     skexp->TweakAllSystematics(); 
-	   }
-	   else if(tweak_systematics == 2) {
-	     cout << "- Randomizing BANFF systematic params in pdf..." << endl;
-	     skexp->TweakAllBANFFSystematics();
-	   }
-	   else if(tweak_systematics == 3) {
-	     cout << "- Randomizing uncorrelated-xsec systematic params in pdf..." << endl;
-	     skexp->TweakAllUncorrelatedXSecSystematics();
-	   }
-	   else if(tweak_systematics == 4) {
-	     cout << "- Randomizing SKDetFSI systematic params in pdf..." << endl;
-	     skexp->TweakAllSKDetectorFSISystematics();
-	   }
-	   skexp->PrintSystematicVariations();
-	   
-	   // generate mock data using the current PDF (incl. systematic variations) 
-	   // + statistical fluctuations if requested (Poisson fluctuation in each bin)
-	   cout << "- Generating toy-MC..." << endl;
-	   //note that fparm does not contain the tweaks, so use only the PhysHyp here
-	   applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
-	   
-	   if(!applied_negevents_condition) {
-	     // keep track of all nuisance params set so as to add in output tree
-	     PhysParamList true_nuisance_params = skexp->Tweaks();
-	     iparm->Append(true_nuisance_params);
-	   }
-	   // reset all systematics so that the PDF used in the fitter is the nominal one
-	   cout << "- Reseting all systematic params in pdf..." << endl;
-	   skexp->ResetSystematicVariations();
-	   //skexp->PrintSystematicVariations();
-	 }
-	 else {
-	   //make sure systematics are reset
-	   skexp->ResetSystematicVariations();
-	   // generate mock data using the current PDF (without systematic variations) 
-	   // with statistical fluctuations if requested (Poisson fluctuation in each bin)
-	   cout << "- Generating toy-MC..." << endl;
-	   applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
-	 }
-       }//applied_negevents_condition
-     }
+    // get toy MC with/without systematics
+    
+    SuperkObservation * skobs = new SuperkObservation;
+    if(!dotoys && using_xml_file){
+      skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
+    }
+    else{
+      bool applied_negevents_condition = true;
+      bool unphysical_tweak = true;
+      while(applied_negevents_condition || unphysical_tweak) {
+        if(tweak_systematics) {
+          // tweak all sources of systematic error
+          if(tweak_systematics == 1) {
+            cout << "- Randomizing all systematic params in pdf..." << endl;
+            skexp->TweakAllSystematics(); 
+          }
+          else if(tweak_systematics == 2) {
+            cout << "- Randomizing BANFF systematic params in pdf..." << endl;
+            skexp->TweakAllBANFFSystematics();
+          }
+          else if(tweak_systematics == 3) {
+            cout << "- Randomizing uncorrelated-xsec systematic params in pdf..." << endl;
+            skexp->TweakAllUncorrelatedXSecSystematics();
+          }
+          else if(tweak_systematics == 4) {
+            cout << "- Randomizing SKDetFSI systematic params in pdf..." << endl;
+            skexp->TweakAllSKDetectorFSISystematics();
+          }
+          skexp->PrintSystematicVariations();
+          
+          PhysParamList true_nuisance_params = skexp->Tweaks();
+          if (rethrow_if_parameters_unphysical) {
+            unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
+            if (unphysical_tweak) {cout<<"Parameters are unphysical - rethrowing"<<std::endl;}
+          }
+          else {
+            unphysical_tweak = false;
+          }
+          
+          // generate mock data using the current PDF (incl. systematic variations) 
+          // + statistical fluctuations if requested (Poisson fluctuation in each bin)
+          cout << "- Generating toy-MC..." << endl;
+          //note that fparm does not contain the tweaks, so use only the PhysHyp here
+          applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
+          
+          if(!(applied_negevents_condition || unphysical_tweak)) {
+            // keep track of all nuisance params set so as to add in output tree
+            iparm->Append(true_nuisance_params);
+          }
+          // reset all systematics so that the PDF used in the fitter is the nominal one
+          cout << "- Reseting all systematic params in pdf..." << endl;
+          skexp->ResetSystematicVariations();
+          //skexp->PrintSystematicVariations();
+        }
+        else {
+          //make sure systematics are reset
+          skexp->ResetSystematicVariations();
+          // generate mock data using the current PDF (without systematic variations) 
+          // with statistical fluctuations if requested (Poisson fluctuation in each bin)
+          cout << "- Generating toy-MC..." << endl;
+          applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
+        }
+      }//applied_negevents_condition
+    }
 
     
 
     //if theta23 is not fixed then initialize to 0.4 for the first fit (first octant) and 0.6 for the second one
 
-     if(hyp == kHypOsc3F) {
-       if(!(fparm1->IsFixed(conv::kPhypMixing23))) {     
-     	 //fparm1->SetInitValue(conv::kPhypMixing23,0.4);
-     	 fparm1->Update(conv::kPhypMixing23,0.4);
-     	 //fparm2->SetInitValue(conv::kPhypMixing23,0.6);
-     	 fparm2->Update(conv::kPhypMixing23,0.6);
-       }
-       //if reactor constraint enabled, set nuisance
-       if(reactor) {
-     	 fparm1->SetNuisance(conv::kPhypMixing13,true);
-     	 fparm2->SetNuisance(conv::kPhypMixing13,true);
-       }
-     }
-     else if(hyp == kHypOsc3FBar){
-       if(!(fparm1->IsFixed(conv::kPhypMixing23Bar))) {     
-     	 //fparm1->SetInitValue(conv::kPhypMixing23Bar,0.4);
-     	 fparm1->Update(conv::kPhypMixing23Bar,0.4);
-     	 //fparm2->SetInitValue(conv::kPhypMixing23Bar,0.6);
-     	 fparm2->Update(conv::kPhypMixing23Bar,0.6);
-       }
-       //if reactor constraint enabled, set nuisance
-       if(reactor) {
-     	 fparm1->SetNuisance(conv::kPhypMixing13Bar,true);
-     	 fparm2->SetNuisance(conv::kPhypMixing13Bar,true);
-       }
-     }
+    if(hyp == kHypOsc3F) {
+      if(!(fparm1->IsFixed(conv::kPhypMixing23))) {     
+      //fparm1->SetInitValue(conv::kPhypMixing23,0.4);
+      fparm1->Update(conv::kPhypMixing23,0.4);
+      //fparm2->SetInitValue(conv::kPhypMixing23,0.6);
+      fparm2->Update(conv::kPhypMixing23,0.6);
+      }
+      //if reactor constraint enabled, set nuisance
+      if(reactor) {
+        fparm1->SetNuisance(conv::kPhypMixing13,true);
+        fparm2->SetNuisance(conv::kPhypMixing13,true);
+      }
+    }
+    else if(hyp == kHypOsc3FBar){
+      if(!(fparm1->IsFixed(conv::kPhypMixing23Bar))) {     
+        //fparm1->SetInitValue(conv::kPhypMixing23Bar,0.4);
+        fparm1->Update(conv::kPhypMixing23Bar,0.4);
+        //fparm2->SetInitValue(conv::kPhypMixing23Bar,0.6);
+        fparm2->Update(conv::kPhypMixing23Bar,0.6);
+      }
+      //if reactor constraint enabled, set nuisance
+      if(reactor) {
+        fparm1->SetNuisance(conv::kPhypMixing13Bar,true);
+        fparm2->SetNuisance(conv::kPhypMixing13Bar,true);
+      }
+    }
 
 
-     //reset systematic variations, otherwise fit is initialized at
-     //best fit values of systematics from previous fit
-     skexp->ResetSystematicVariations();
+    //reset systematic variations, otherwise fit is initialized at
+    //best fit values of systematics from previous fit
+    skexp->ResetSystematicVariations();
 
-     // Get fitter
-     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);
-     FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
+    // Get fitter
+    FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);
+    FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
-     // Set SF Initial value to 0
-     if(fparm1->Exists(conv::kNuisXSecSpecFunc))
-	fparm1->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
-     
-     // Chisq for true (input) params
-     double true_chisq = fit_inputs->Statistic();
+    // Set SF Initial value to 0
+    if(fparm1->Exists(conv::kNuisXSecSpecFunc))
+       fparm1->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
+    
+    // Chisq for true (input) params
+    double true_chisq = fit_inputs->Statistic();
 
-     // Print-out true params
-     fparm1->ShowOnlyCurrValuesInNextPrint();
-     cout << "- True oscillation params (below) yield chisq = " << true_chisq
-          << *fparm1;
+    // Print-out true params
+    fparm1->ShowOnlyCurrValuesInNextPrint();
+    cout << "- True oscillation params (below) yield chisq = " << true_chisq
+         << *fparm1;
   
 
-     // Do the fit
+    // Do the fit
 
-     cout << endl;
-     cout << endl;
-     cout << "First Octant" << endl;
-     cout << endl;
-     cout << endl;
+    cout << endl;
+    cout << endl;
+    cout << "First Octant" << endl;
+    cout << endl;
+    cout << endl;
 
-     fparm1->ResetCurrToInitValues(); // reset osc params
-     //skexp->PrintSystematicVariations();
-     fitter->SetTol(tolerance);
-     fitter->DoTheFit();
-     fitstatus1 = fitter->FitStatusCode("migrad_min");
-     fitstatus_err1 = fitter->FitStatusCode("hesse_err");     
-     fittime1 = fitter->FitTime();
+    fparm1->ResetCurrToInitValues(); // reset osc params
+    //skexp->PrintSystematicVariations();
+    fitter->SetTol(tolerance);
+    fitter->DoTheFit();
+    fitstatus1 = fitter->FitStatusCode("migrad_min");
+    fitstatus_err1 = fitter->FitStatusCode("hesse_err");     
+    fittime1 = fitter->FitTime();
 
-     double bestfit_chisq  = fparm1->GetBestFitStatistic();
-     chisq1 = bestfit_chisq;
-     double bestfit_chisq2 = 0;
+    double bestfit_chisq  = fparm1->GetBestFitStatistic();
+    chisq1 = bestfit_chisq;
+    double bestfit_chisq2 = 0;
 
-     // Save spectra (data and best-fit prediction)
-     if(store_toy_expts) {
-        skobs->Write(dat_array, "obs");
-     }
-     if(store_bestfit_spectrum) {
-        skexp->Write(pdf_array1, "pdf");
-     }
+    // Save spectra (data and best-fit prediction)
+    if(store_toy_expts) {
+       skobs->Write(dat_array, "obs");
+    }
+    if(store_bestfit_spectrum) {
+       skexp->Write(pdf_array1, "pdf");
+    }
 
-     //Do the fit again at the mirror point
-     // if( Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta &&
-     // 	 (!(fparm2->IsFixed(conv::kPhypMixing23)) && hyp == kHypOsc3F) || 
-     // 	 (!(fparm2->IsFixed(conv::kPhypMixing23Bar)) && hyp == kHypOsc3FBar)
-     // 	 )
-       
-     if(doFitMirror){
-       cout << endl;
-       cout << endl;
-       cout << "Second Octant" << endl;
-       cout << endl;
-       cout << endl;
+    //Do the fit again at the mirror point
+    // if( Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta &&
+    // 	 (!(fparm2->IsFixed(conv::kPhypMixing23)) && hyp == kHypOsc3F) || 
+    // 	 (!(fparm2->IsFixed(conv::kPhypMixing23Bar)) && hyp == kHypOsc3FBar)
+    // 	 )
+      
+    if(doFitMirror){
+      cout << endl;
+      cout << endl;
+      cout << "Second Octant" << endl;
+      cout << endl;
+      cout << endl;
 
-       // Print-out true params
-       fparm2->ShowOnlyCurrValuesInNextPrint();
-       cout << "- True oscillation params (below) yield chisq = " << true_chisq
-	    << *fparm2;
+      // Print-out true params
+      fparm2->ShowOnlyCurrValuesInNextPrint();
+      cout << "- True oscillation params (below) yield chisq = " << true_chisq
+           << *fparm2;
 
-       skexp->ResetSystematicVariations();
+      skexp->ResetSystematicVariations();
 
-       //get the correct intial values (best fit points from first fit)
-       //fparm2->CopyBestFitToInitValues(*fparm1); // SF=0 not needed!!!
-       fparm2->ResetCurrToInitValues(); // reset osc params
-       if(fparm2->Exists(conv::kNuisXSecSpecFunc))
-	 fparm2->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
+      //get the correct intial values (best fit points from first fit)
+      //fparm2->CopyBestFitToInitValues(*fparm1); // SF=0 not needed!!!
+      fparm2->ResetCurrToInitValues(); // reset osc params
+      if(fparm2->Exists(conv::kNuisXSecSpecFunc))
+        fparm2->Update(conv::kNuisXSecSpecFunc, 0); //init value of SpecFunc is 0.5
 
-       cout << *fparm2 << endl;
+      cout << *fparm2 << endl;
 
-       // //set the mixing23 seed to be the mirror point of the initial best fit
-       // double sinsqtheta23_bestfit = fparm1->BestFitValue(conv::kPhypMixing23);
-       // double sinsqtheta13_bestfit = fparm1->BestFitValue(conv::kPhypMixing13);
-       // double centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
-       // double reseed = sinsqtheta23_bestfit;
-       // if     (reseed < centre)
-       // 	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
-       // else if(reseed > centre)
-       // 	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
-       // fparm2->SetInitValue(conv::kPhypMixing23, reseed);
+      // //set the mixing23 seed to be the mirror point of the initial best fit
+      // double sinsqtheta23_bestfit = fparm1->BestFitValue(conv::kPhypMixing23);
+      // double sinsqtheta13_bestfit = fparm1->BestFitValue(conv::kPhypMixing13);
+      // double centre = 1 / (2 * (1 - sinsqtheta13_bestfit));
+      // double reseed = sinsqtheta23_bestfit;
+      // if     (reseed < centre)
+      // 	 reseed = centre + TMath::Abs(centre - sinsqtheta23_bestfit);
+      // else if(reseed > centre)
+      // 	 reseed = centre - TMath::Abs(centre - sinsqtheta23_bestfit);
+      // fparm2->SetInitValue(conv::kPhypMixing23, reseed);
 
 
-       // Get fitter
-       FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
-       FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
-       fitter2->SetTol(tolerance);
-       fitter2->DoTheFit();
-       fitstatus2 = fitter->FitStatusCode("migrad_min");
-       fitstatus_err2 = fitter->FitStatusCode("hesse_err");     
-       bestfit_chisq2 =  fparm2->GetBestFitStatistic();
-       chisq2 = bestfit_chisq2;
+      // Get fitter
+      FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
+      FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
+      fitter2->SetTol(tolerance);
+      fitter2->DoTheFit();
+      fitstatus2 = fitter->FitStatusCode("migrad_min");
+      fitstatus_err2 = fitter->FitStatusCode("hesse_err");     
+      bestfit_chisq2 =  fparm2->GetBestFitStatistic();
+      chisq2 = bestfit_chisq2;
 
-       // Save spectra (best-fit prediction)
-       if(store_bestfit_spectrum) {
-	 skexp->Write(pdf_array2, "pdf");
-       }
-     }
+      // Save spectra (best-fit prediction)
+      if(store_bestfit_spectrum) {
+        skexp->Write(pdf_array2, "pdf");
+      }
+    }
 
-     // Print-out best-fit params, and set the "best of the two fits" branches correctly
-     cout << "- Best-fit oscillation params (below) yield chisq = ";
-     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && doFitMirror) {
-       
-       if(bestfit_chisq2 < bestfit_chisq) {
-	 
-	 fitstatus = fitstatus2;
-	 fitstatus_err = fitstatus_err2;
-	 chisq = chisq2;
-	 
-	 cout << bestfit_chisq2 << " from the second seed fit" << endl;
-	 fparm2->ShowOnlyBestFitValuesInNextPrint();
-	 cout << *fparm2;
-	 br_fparm->SetAddress(&fparm2);
-	 br_bf_array->SetAddress(&pdf_array2);
-       }
-       else {
+    // Print-out best-fit params, and set the "best of the two fits" branches correctly
+    cout << "- Best-fit oscillation params (below) yield chisq = ";
+    if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && doFitMirror) {
+      
+      if(bestfit_chisq2 < bestfit_chisq) {
+        
+        fitstatus = fitstatus2;
+        fitstatus_err = fitstatus_err2;
+        chisq = chisq2;
+        
+        cout << bestfit_chisq2 << " from the second seed fit" << endl;
+        fparm2->ShowOnlyBestFitValuesInNextPrint();
+        cout << *fparm2;
+        br_fparm->SetAddress(&fparm2);
+        br_bf_array->SetAddress(&pdf_array2);
+      }
+      else {
 
-	 fitstatus = fitstatus1;
-	 fitstatus_err = fitstatus_err1;
-	 chisq = chisq1;
+        fitstatus = fitstatus1;
+        fitstatus_err = fitstatus_err1;
+        chisq = chisq1;
 
-	 cout << bestfit_chisq << " from the first seed fit" << endl;
-	 fparm1->ShowOnlyBestFitValuesInNextPrint();
-	 cout << *fparm1;
-	 br_fparm->SetAddress(&fparm1);
-	 br_bf_array->SetAddress(&pdf_array1);
-       }
-     }
-     else {
-       cout << bestfit_chisq << endl;
-       
-       fitstatus = fitstatus1;
-       fitstatus_err = fitstatus_err1;
-       chisq = chisq1;
+        cout << bestfit_chisq << " from the first seed fit" << endl;
+        fparm1->ShowOnlyBestFitValuesInNextPrint();
+        cout << *fparm1;
+        br_fparm->SetAddress(&fparm1);
+        br_bf_array->SetAddress(&pdf_array1);
+      }
+    }
+    else {
+      cout << bestfit_chisq << endl;
+      
+      fitstatus = fitstatus1;
+      fitstatus_err = fitstatus_err1;
+      chisq = chisq1;
 
-       fparm1->ShowOnlyBestFitValuesInNextPrint();
-       cout << *fparm1;
-       br_fparm->SetAddress(&fparm1);
-       br_bf_array->SetAddress(&pdf_array1);
-     }
+      fparm1->ShowOnlyBestFitValuesInNextPrint();
+      cout << *fparm1;
+      br_fparm->SetAddress(&fparm1);
+      br_bf_array->SetAddress(&pdf_array1);
+    }
 
-     // Add all results in the tree
-     fitnt->Fill();
+    // Add all results in the tree
+    fitnt->Fill();
 
-     // Clean-up
-     delete skobs;
-     delete fit_inputs;
-     delete fitter;
-     if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && doFitMirror) {
-       delete fit_inputs2;
-       delete fitter2;
-     }
+    // Clean-up
+    delete skobs;
+    delete fit_inputs;
+    delete fitter;
+    if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta && doFitMirror) {
+      delete fit_inputs2;
+      delete fitter2;
+    }
   }
 
   // Store ntuple with best-fit results
