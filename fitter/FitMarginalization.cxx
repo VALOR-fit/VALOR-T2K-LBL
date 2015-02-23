@@ -8,6 +8,7 @@
 
 //#define __print_array_toy__
 //#define __print_masshierarchy__
+//#define __print_systematic_variations__
 
 #include <cassert>
 #include <cstdlib>
@@ -59,6 +60,7 @@ FitMarginalization::~FitMarginalization(void)
 void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar){
    
   doMargMassHierarchy = false;
+  fRethrowSystUnphysical = true; // rethrow toys if systematics are unphysical
 
   fntoys_marg = ntoys_marg;
   fnbins_param = nbins_param;  
@@ -296,7 +298,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     SuperkObservation * skobs = new SuperkObservation;
     
     bool applied_negevents_condition = true;
-    while(applied_negevents_condition) {
+    bool unphysical_tweak = true;
+    while(applied_negevents_condition || unphysical_tweak) {
       if(tweak_systematics) {
 	
 	// tweak all sources of systematic error
@@ -316,6 +319,22 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  cout << "- Randomizing SKDetFSI systematic params in pdf..." << endl;
 	  skexp->TweakAllSKDetectorFSISystematics();
 	}
+
+#ifdef __print_systematic_variations__
+	skexp->PrintSystematicVariations();
+#endif
+
+	// Re-throw the systematics if at least one in the unphysical region
+	PhysParamList true_nuisance_params = skexp->Tweaks();
+	if (this->fRethrowSystUnphysical) {
+	  unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
+	  if (unphysical_tweak) {cout<<"Parameters are unphysical - rethrowing"<<std::endl;}
+	}
+	else {
+	  unphysical_tweak = false;
+	}
+	
+	
       }
       else { // no toys
 	skexp->ResetSystematicVariations();
@@ -875,6 +894,11 @@ double FitMarginalization::Randomize(PhysParamId_t physpar){
 //________________________________________________________________________________________
 void FitMarginalization::SetMargMassHierarchy(bool domargMH){
   doMargMassHierarchy = domargMH;
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetRethrowSystUnphysical(bool dorethrow){
+  fRethrowSystUnphysical = dorethrow;
   return;
 }
 //________________________________________________________________________________________

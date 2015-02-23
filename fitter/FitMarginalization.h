@@ -96,6 +96,7 @@
 #include "Utilities/VALORArrayF.h"
 #include "FitCore/PhysHypothesis.h"
 #include "Utilities/Rnd.h"
+#include "T2KPhysicalParameterLimits.h"
 
 using std::string;
 using std::vector;
@@ -161,8 +162,8 @@ class FitMarginalization: public TObject
   double Randomize(PhysParamId_t physpar);
   
   void SetMargMassHierarchy(bool domargMH);  
+  void SetRethrowSystUnphysical(bool dorethrow);
   
-
  private:
   
   TH1F *hchisq_marg; 
@@ -173,6 +174,7 @@ class FitMarginalization: public TObject
   PhysParamId_t fPhysParamFree;
 
   bool doMargMassHierarchy; // marginalize MH. Not by default     
+  bool fRethrowSystUnphysical; // rethrow toys with unphysical systematics. True by default
 
   char fnamefilebinary[200];
 
