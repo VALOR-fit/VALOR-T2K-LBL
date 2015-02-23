@@ -68,9 +68,10 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
 
   fSeed = 999;
 
-  //sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d.bin");
-  //sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d%s%s");   // OK
-  sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d%s%s");  
+  //sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d%s%s");  
+  sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_MH%s%s%s");  
+  
+  
   
   this->SetFreeParam(parfree,minpar,maxpar);
  
@@ -81,6 +82,14 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   cout << "# bins of free parameter to scan: " << fnbins_param << endl;
   cout << "# free parameter step size: " << fstep_param << endl;
   cout << "Interval: [" << fmin_param << "," << fmax_param << "]" << endl;
+
+
+  cout << "MH: "; 
+  if(doMargMassHierarchy) cout << "Marginalized" << endl;
+  else{ 
+    if (Opt::Instance()->gMassHierarchyAssumed == kNmhNormal) cout << "Normal Hierarchy" << endl;
+    else if (Opt::Instance()->gMassHierarchyAssumed == kNmhInverted) cout << "Inverted Hierarchy" << endl;
+  }
   cout << endl;
 
   fnerecobins_RHCNumu = util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike);
@@ -507,14 +516,14 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
 	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
 	}
 	
-      double like = exp(-chisq/2.) / fntoys_marg;
-      
-      if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
-      
-      flikeVArray->AddToEntry(like,ipar); // this is correct if binary files differ only for free param sub-ranges
-      
-      NtoysTot++;
-      
+	double like = exp(-chisq/2.) / fntoys_marg;
+	
+	if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
+	
+	flikeVArray->AddToEntry(like,ipar); // this is correct if binary files differ only for free param sub-ranges
+	
+	NtoysTot++;
+	
       } // iexperiment
       
     } // iMH (mass hierarchy)
@@ -545,10 +554,23 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
   
+
+  char namemh[200];
+  if(doMargMassHierarchy) sprintf(namemh,"%s","marg");
+  else{ 
+    if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
+      sprintf(namemh,"%s","NH");
+    else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
+      sprintf(namemh,"%s","IH");
+    else{
+      cerr << "Mass Hierarchy not defined" << endl;
+      exit(1);
+    }
+  }	    
+
   char outname[200];
-  //sprintf(outname,"%s_file%d_toy%d_x_oscpar%d.bin",tag,idfile,fntoys_marg,fnbins_param);
-  sprintf(outname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"",".bin");
-  
+  sprintf(outname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,namemh,"",".bin");
+
   std::string soutname(outname);
   fToyMargErecoVArray_RHCNumu->WriteFile(soutname);
   
@@ -560,8 +582,8 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   int max_bin_sub_param = fmax_bin_sub_param;
 
   char outname_range[200];
-  //sprintf(outname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.bin",tag,idfile,fntoys_marg,fnbins_param);
-  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"_subrange",".bin");
+  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,namemh,"_subrange",".bin");
+  
   std::string soutname_range(outname_range);
   
   ofstream os(soutname_range.c_str(),ios::binary|ios::out);
@@ -573,9 +595,7 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
   cout << endl;
 
-  //sprintf(outname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.txt",tag,idfile,fntoys_marg,fnbins_param);
-  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"_subrange",".txt");
-
+  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,namemh,"_subrange",".txt");
 
   fmin_sub_param = hchisq_marg->GetBinLowEdge(fmin_bin_sub_param+1);    
   fmax_sub_param = hchisq_marg->GetBinLowEdge(fmax_bin_sub_param+1);    
@@ -588,6 +608,10 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   ostext << "fnamefreeparam: " << endl
 	 << " - " << soutname << endl
 	 << " - " << soutname_range << endl;
+  ostext << "Mass hierarchy: "; 
+  if( this->doMargMassHierarchy ) ostext << " Marginalize";
+  else ostext << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
+  ostext << endl;
   ostext << "fnbins_param = " << fnbins_param << endl;
   ostext << "fntoys_marg = " << fntoys_marg << endl;
   ostext << "fnerecobins_RHCNumu = " << fnerecobins_RHCNumu << endl;
@@ -609,9 +633,22 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
 //________________________________________________________________________________________
 void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){ 
 
+  char namemh[200];
+  if(doMargMassHierarchy) sprintf(namemh,"%s","marg");
+  else{ 
+    if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
+      sprintf(namemh,"%s","NH");
+    else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
+      sprintf(namemh,"%s","IH");
+    else{
+      cerr << "Mass Hierarchy not defined" << endl;
+      exit(1);
+    }
+  }	    
+
   char inname[200];
-  //sprintf(inname,"%s_file%d_toy%d_x_oscpar%d.bin",tag,idfile,fntoys_marg,fnbins_param);
-  sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"",".bin");
+  //sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,"",".bin");
+  sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,namemh,"",".bin");
 
   std::string sinname(inname);
 
@@ -628,7 +665,8 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
   int max_bin_sub_param=0;
 
   char inname_range[200];
-  sprintf(inname_range,"%s_file%d_toy%d_x_oscpar%d_subrange.bin",tag,idfile,fntoys_marg,fnbins_param);
+  sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param,namemh,"_subrange",".bin");
+
   std::string sinname_range(inname_range);
 
   cout << "Read free param sub-range from binary file:" << sinname_range << endl;

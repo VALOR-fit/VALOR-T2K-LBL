@@ -172,12 +172,8 @@ class FitMarginalization: public TObject
   string fnamefreeparam;
   PhysParamId_t fPhysParamFree;
 
-
-
   bool doMargMassHierarchy; // marginalize MH. Not by default     
 
-
- 
   char fnamefilebinary[200];
 
   double fchisq_bf;
