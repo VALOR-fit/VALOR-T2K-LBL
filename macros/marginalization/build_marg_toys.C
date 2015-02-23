@@ -24,7 +24,8 @@ void build_marg_toys
  //const char * tag                  = "DEV_FitMarg_mixing23_1p7E20_prefit",
  const char * tag                  = "MH_FitMarg_mixing23_1p7E20_prefit",
 
- const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
+ //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
+ const char * config_file          = "analysis_configuration_1.7E20.xml",   
 
  //const char * fit_param_list     = "nuosc3fbar_numudisapp_constrainall+nuisance",  
  const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
@@ -39,6 +40,7 @@ void build_marg_toys
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
+ const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
 
  const char * dmsqscheme              = "abs23",       /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy               = "normal",    /* normal or inverted */
@@ -110,6 +112,9 @@ void build_marg_toys
   
   // Set Mass Hierarchy marginalization
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
+  
+  // Decide whether to rethrow or not the unphysical systematic toys 
+  fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
 
   // Set priors for not fixed oscillation parameters
   fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);

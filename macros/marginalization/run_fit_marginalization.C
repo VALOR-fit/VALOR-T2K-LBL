@@ -29,6 +29,7 @@ void run_fit_marginalization
  int          tweak_systematics    = 1,       /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
+ const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
 
  const char * dmsqscheme           = "abs23",      /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy            = "inverted",     /* normal or inverted */
@@ -120,10 +121,12 @@ void run_fit_marginalization
       
   // Set Mass Hierarchy marginalization
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
- 
-
+  
   if(!readtoys){
 
+    // Decide whether to rethrow or not the unphysical systematic toys 
+    fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
+    
     // Produce toys and fill marginalized chisq
 
     // Set priors for not fixed oscillation parameters
