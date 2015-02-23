@@ -41,7 +41,8 @@ foreach (@ARGV) {
   if($_ eq '--nexpts-marg'            ) { $nexpts_marg           = $ARGV[$iarg+1]; }
   if($_ eq '--npt-freepar'            ) { $npt_freepar           = $ARGV[$iarg+1]; }
   if($_ eq '--step-freepar'           ) { $step_freepar          = $ARGV[$iarg+1]; }
-  if($_ eq '--tweak_systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
+  if($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
+  if($_ eq '--marginalize-hierarchy'  ) { $marg_hierarchy = $ARGV[$iarg+1]; }
   if($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
   if($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
   if($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
@@ -72,23 +73,24 @@ $config_file   = "analysis_configuration_1.7E20_prefit.xml"     unless defined $
 #$fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4"       unless defined $fitparamlist;
 $fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
 
-$freepar                = "mixing23Bar"                unless defined $freepar;
-$minfreepar             = 0                           unless defined $minfreepar;
-$maxfreepar             = 1                           unless defined $maxfreepar; 
+$freepar                = "mixing23Bar"               unless defined $freepar;
+$minfreepar             = 0                           unless defined $minfreepar;     # Minimum free parameter allowed value
+$maxfreepar             = 1                           unless defined $maxfreepar;     # Maximum free parameter allowed value 
 
-$nexpts_marg            = 10                          unless defined $nexpts_marg;
-$npt_freepar            = 21                          unless defined $npt_freepar;
-$step_freepar           = 2                           unless defined $step_freepar;
+$nexpts_marg            = 10                          unless defined $nexpts_marg;    # of toys
+$npt_freepar            = 21                          unless defined $npt_freepar;    # of free parameter points to scan
+$step_freepar           = 1                           unless defined $step_freepar;   # of points for each job
 
-$tweak_systematics      = 1                            unless defined $tweak_systematics;
+$tweak_systematics      = 1                           unless defined $tweak_systematics;
+$marg_hierarchy  = 0                                  unless defined $marg_hierarchy;
 
-$job_dir                = "."                          unless defined $job_dir;
-$softw_dir              = "."                          unless defined $softw_dir;
+$job_dir                = "."                         unless defined $job_dir;
+$softw_dir              = "."                         unless defined $softw_dir;
 
-$dmsqscheme             = "abs23"                      unless defined $dmsqscheme;
-$masshierarchy          = "normal"                     unless defined $masshierarchy;
-$mixparamchoice         = "sinsqtheta"                 unless defined $mixparamchoice;
-$mixparamoctant         = "one"                        unless defined $mixparamoctant;
+$dmsqscheme             = "abs23"                     unless defined $dmsqscheme;
+$masshierarchy          = "normal"                    unless defined $masshierarchy;
+$mixparamchoice         = "sinsqtheta"                unless defined $mixparamchoice;
+$mixparamoctant         = "one"                       unless defined $mixparamoctant;
 
 
 if( !defined $cput ) {
@@ -128,7 +130,7 @@ for($imin = 0; $imin < $npt_freepar; $imin = $imin_p1) {
     
     
     $program = "root2k ";
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys.C($fileid,$imin,$imax,\"$tag\",\"$config_file\",\"$fitparamlist\",\"$freepar\",$minfreepar,$maxfreepar,$nexpts_marg,$npt_freepar,$tweak_systematics,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys.C($fileid,$imin,$imax,\"$tag\",\"$config_file\",\"$fitparamlist\",\"$freepar\",$minfreepar,$maxfreepar,$nexpts_marg,$npt_freepar,$tweak_systematics,$marg_hierarchy,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
     
     $command = "$program $arguments";
     print "$command \n";
