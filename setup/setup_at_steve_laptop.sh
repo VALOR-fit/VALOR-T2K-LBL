@@ -8,7 +8,12 @@
 #
 
 if [ -z ${VALOR_FWMK} ] ; then
-  source /home/steve/analysis/fmwk/setup/setup_at_steve_laptop.sh 
+  if [ $USER == steve ] ; then 
+    source /home/steve/analysis/fmwk/setup/setup_at_steve_laptop.sh 
+  fi
+  if [ $USER == phrhbq ] ; then 
+    source /home/epp/phrhbq/analysis/fmwk/setup/setup_at_steve_laptop.sh
+  fi
 fi
 
 export T2KOSCANA=$1
