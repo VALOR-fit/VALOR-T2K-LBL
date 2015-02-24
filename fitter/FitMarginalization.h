@@ -130,7 +130,7 @@ class FitMarginalization: public TObject
   void PrintPhysHypothesis(void);
   void PrintFitParamList(void);
 
-  TH1F * GetChisqMarg (void) { return hchisq_marg; };
+  TH1F * GetChisqMarg (void) { return hchisq_marg_1D; };
 
   void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int min_bin_sub_param=-999,int max_bin_sub_param=-999);
 
@@ -144,7 +144,7 @@ class FitMarginalization: public TObject
   void Minimize(void);
 
   double GetChisqBestFit(void){ return fchisq_bf;};
-  double GetParamBestFit(void){ return fparam_bf;};
+  double GetParamBestFit(void){ return fparam_1_bf;};
   
   void SetSubRange();
 
@@ -166,12 +166,17 @@ class FitMarginalization: public TObject
   
  private:
   
-  TH1F *hchisq_marg; 
+  TH1F *hchisq_marg_1D; 
+  TH2F *hchisq_marg_2D; // 2D 
+  
+  TH1F *hToyMargCurr_1D;
+  TH2F *hToyMargCurr_2D; // 2D
 
-  TH1F *hToyMargCurr;
+  string fnamefreeparam_1;
+  string fnamefreeparam_2; // 2D
 
-  string fnamefreeparam;
-  PhysParamId_t fPhysParamFree;
+  PhysParamId_t fPhysParamFree_1;
+  PhysParamId_t fPhysParamFree_2; // 2D
 
   bool doMargMassHierarchy; // marginalize MH. Not by default     
   bool fRethrowSystUnphysical; // rethrow toys with unphysical systematics. True by default
@@ -179,31 +184,52 @@ class FitMarginalization: public TObject
   char fnamefilebinary[200];
 
   double fchisq_bf;
-  double fparam_bf;
+  double fparam_1_bf;
+  double fparam_2_bf; // 2D
 
   UInt_t fSeed;
 
-  int fnbins_param;
+  int fnbins_param_1;
+  int fnbins_param_2; // 2D
+  
   int fntoys_marg;
   int fnerecobins_RHCNumu;
   
-  int fmin_bin_sub_param; // first bin of sub-range to scan (for partial toys and chisq marg)
-  int fmax_bin_sub_param; // last bin of sub-range to scan (for partial toys and chisq marg)
+  int fmin_bin_sub_param_1; // first bin of sub-range to scan (for partial toys and chisq marg)
+  int fmax_bin_sub_param_1; // last bin of sub-range to scan (for partial toys and chisq marg)
 
-  double fmin_sub_param; // first value of sub-range to scan (for partial toys and chisq marg)
-  double fmax_sub_param; // last value of sub-range to scan (for partial toys and chisq marg)
+  int fmin_bin_sub_param_2; // 2D // first bin of sub-range to scan (for partial toys and chisq marg)
+  int fmax_bin_sub_param_2; // 2D // last bin of sub-range to scan (for partial toys and chisq marg)
 
-  double fmin_param;
-  double fmax_param;
-  double fstep_param;
+  double fmin_sub_param_1; // first value of sub-range to scan (for partial toys and chisq marg)
+  double fmax_sub_param_1; // last value of sub-range to scan (for partial toys and chisq marg)
+
+  double fmin_sub_param_2; // 2D // first value of sub-range to scan (for partial toys and chisq marg)
+  double fmax_sub_param_2; // 2D // last value of sub-range to scan (for partial toys and chisq marg)
+
+  double fmin_param_1;
+  double fmax_param_1;
+  double fstep_param_1;
+
+  double fmin_param_2;  // 2D
+  double fmax_param_2;  // 2D
+  double fstep_param_2; // 2D
   
-  VALORArrayF *flikeVArray;
-  VALORArrayF *fChisqMargVArray;
-  
-  VALORArrayF *fToyMargErecoVArray_RHCNumu;
-  VALORArrayF *fToyMargErecoVArray_RHCNue;
-  VALORArrayF *fToyMargErecoVArray_Numu;
-  VALORArrayF *fToyMargErecoVArray_Nue;
+  VALORArrayF *flikeVArray_1D;
+  VALORArrayF *fChisqMargVArray_1D;
+
+  VALORArrayF *flikeVArray_2D;      // 2D
+  VALORArrayF *fChisqMargVArray_2D; // 2D
+   
+  VALORArrayF *fToyMargErecoVArray_1D_RHCNumu;
+  VALORArrayF *fToyMargErecoVArray_1D_RHCNue;
+  VALORArrayF *fToyMargErecoVArray_1D_Numu;
+  VALORArrayF *fToyMargErecoVArray_1D_Nue;
+
+  VALORArrayF *fToyMargErecoVArray_2D_RHCNumu; // 2D
+  VALORArrayF *fToyMargErecoVArray_2D_RHCNue;  // 2D
+  VALORArrayF *fToyMargErecoVArray_2D_Numu;    // 2D
+  VALORArrayF *fToyMargErecoVArray_2D_Nue;     // 2D
 
   FitParamList * fparm;
   PhysHypothesis_t fhypothesis;
