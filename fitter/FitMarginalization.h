@@ -30,11 +30,11 @@
 #define mixing23Bar_min 0.           // both sinsq2theta and sinsqtheta
 #define mixing23Bar_max 1.           
 
-#define dmsq32Bar_min valor::conv::kMinFitDm23sqBar  
-#define dmsq32Bar_max valor::conv::kMaxFitDm23sqBar 
-
 #define mixing12Bar_min 0.           // both sinsq2theta and sinsqtheta
 #define mixing12Bar_max 1.           
+
+#define dmsq32Bar_min valor::conv::kMinFitDm23sqBar  
+#define dmsq32Bar_max valor::conv::kMaxFitDm23sqBar 
 
 #define dmsq12Bar_min valor::conv::kMinFitDm12sqBar  
 #define dmsq12Bar_max valor::conv::kMaxFitDm12sqBar 
@@ -160,6 +160,7 @@ class FitMarginalization: public TObject
   string GetPrior(PhysParamId_t physpar);
 
   double Randomize(PhysParamId_t physpar);
+  bool RethrowOscUnphysical(conv::PhysParamId_t p,double oscval); // NEW 
   
   void SetMargMassHierarchy(bool domargMH);  
   void SetRethrowSystUnphysical(bool dorethrow);

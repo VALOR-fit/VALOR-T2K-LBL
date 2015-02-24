@@ -557,7 +557,8 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   
   cout << endl;
   cout << "# of scanned free parameters: " << NparTot << endl; 
-  cout << "# of toys used: " << (double)NtoysTot / (double)NparTot << endl;
+  if(doMargMassHierarchy) cout << "# of toys used: " << (double)NtoysTot / (double)NparTot / 2. << endl;
+  else cout << "# of toys used: " << (double)NtoysTot / (double)NparTot << endl;
   cout << endl;
 
   // Now the marginalized likelihood is computed using toys from all the binary files
@@ -819,7 +820,7 @@ void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,double 
     cout << "You chose the wrong prior option" << endl;
     exit(1);
   }
-
+  
   return;
 }
 //________________________________________________________________________________________
@@ -852,7 +853,8 @@ void FitMarginalization::SetMargOscParam(){
   int npfree = 0;
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
-    
+    //cout << p << " " << util::AsString(p) << endl;
+
     bool doMarginalize = true;
     
     if(p!=fPhysParamFree_1) 
@@ -866,14 +868,76 @@ void FitMarginalization::SetMargOscParam(){
     if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
 
     // Now extract the oscillation parameter to marginalize 
-    double currval = Randomize(p);
-    
-    fparm->Update(p,currval); // Update current values of parameters 
+    double currval = -999;
+
+    bool rethrow=true;
+    while(rethrow){
+      currval = Randomize(p);
+      rethrow = RethrowOscUnphysical(p,currval);
+      if(rethrow) cout << "Rethrow " << util::AsString(p) << " " << currval << endl;
+    }
+
+    // Update current values of parameters 
+    fparm->Update(p,currval); 
 
     cout << util::AsString(p) << " " << currval << endl;
    }
 
 }
+//________________________________________________________________________________________
+bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscval){
+  
+  // NuBar 
+  if(p == conv::kPhypMixing13Bar){
+    if(oscval < mixing13Bar_min || oscval > mixing13Bar_max) return true;
+  }
+  else if(p == conv::kPhypMixing23Bar){
+    if(oscval < mixing23Bar_min || oscval > mixing23Bar_max) return true;
+  }
+  else if(p == conv::kPhypMixing12Bar){
+    if(oscval < mixing12Bar_min || oscval > mixing12Bar_max) return true;
+  }
+  else if(p == conv::kPhypDm23sqBar){
+    if(oscval < dmsq32Bar_min || oscval > dmsq32Bar_max) return true;
+  }
+  else if(p == conv::kPhypDm12sqBar){
+    if(oscval < dmsq12Bar_min || oscval > dmsq12Bar_max) return true;
+  }
+  else if(p == conv::kPhypCPVBar){
+    return false;
+  }
+
+  // Nu 
+  else if(p == conv::kPhypMixing13){
+    if(oscval < mixing13_min || oscval > mixing13_max) return true;
+  }
+  else if(p == conv::kPhypMixing23){
+    if(oscval < mixing23_min || oscval > mixing23_max) return true;
+  }
+  else if(p == conv::kPhypMixing12){
+    if(oscval < mixing12_min || oscval > mixing12_max) return true;
+  }
+  else if(p == conv::kPhypDm23sq){
+    if(oscval < dmsq32_min || oscval > dmsq32_max) return true;
+  }
+  else if(p == conv::kPhypDm12sq){
+    if(oscval < dmsq12_min || oscval > dmsq12_max) return true;
+  }
+  else if(p == conv::kPhypCPV){
+    return false;
+  }
+
+  else{
+    cerr << endl;
+    cerr << "Parameter " << util::AsString(p) << " is not in the physics list" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  
+  return false;
+}
+
+
 //________________________________________________________________________________________
 double FitMarginalization::Randomize(PhysParamId_t physpar){
 
