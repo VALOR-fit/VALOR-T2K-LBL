@@ -135,6 +135,8 @@ class FitMarginalization: public TObject
   void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int min_bin_sub_param=-999,int max_bin_sub_param=-999);
 
   void WriteToys2Binary(int idfile,char *tag);
+  void WriteToys2BinaryMerge(char *tag);
+
   void ReadToysFromBinary(int idfile, char *tag);
   
   void ResetChisqMarg(int min_bin_sub_param,int max_bin_sub_param);
@@ -165,6 +167,8 @@ class FitMarginalization: public TObject
   void SetMargMassHierarchy(bool domargMH);  
   void SetRethrowSystUnphysical(bool dorethrow);
   
+  void MergeInputFiles();
+
  private:
   
   TH1F *hchisq_marg_1D; 
@@ -222,6 +226,16 @@ class FitMarginalization: public TObject
   VALORArrayF *flikeVArray_2D;      // 2D
   VALORArrayF *fChisqMargVArray_2D; // 2D
    
+
+
+
+
+  VALORArrayF *fToyMargErecoVArray_1D_RHCNumu_Clone; // NEW
+  bool MergeInputFiles_Called;
+  int fNmergedFiles;
+
+
+
   VALORArrayF *fToyMargErecoVArray_1D_RHCNumu;
   VALORArrayF *fToyMargErecoVArray_1D_RHCNue;
   VALORArrayF *fToyMargErecoVArray_1D_Numu;

@@ -6,9 +6,12 @@
 */
 //________________________________________________________________________________________
 
-//#define __print_array_toy__
+//#define __print_array_toy_maketoys__
+//#define __print_array_toy_fillchisq__
+//#define __print_array_toy_merge__
 //#define __print_masshierarchy__
 //#define __print_systematic_variations__
+#define __print_chisqmarg__
 
 #include <cassert>
 #include <cstdlib>
@@ -72,8 +75,9 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
 
   sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_MH%s%s%s");  
   
-  
-  
+  MergeInputFiles_Called = true; // false the first time MergeInputFiles() is calles
+  fNmergedFiles = 0; // ++ everytime MergeInputFiles() is called (after reading each file)
+
   this->SetFreeParam(parfree,minpar,maxpar);
  
   cout << endl;
@@ -85,19 +89,6 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
   cout << "Interval: [" << fmin_param_1 << "," << fmax_param_1 << "]" << endl;
 
 
-
-
-  // cout << "MH: "; 
-  // if(doMargMassHierarchy) cout << "Marginalized" << endl;
-  // else{ 
-  //   if (Opt::Instance()->gMassHierarchyAssumed == kNmhNormal) cout << "Normal Hierarchy" << endl;
-  //   else if (Opt::Instance()->gMassHierarchyAssumed == kNmhInverted) cout << "Inverted Hierarchy" << endl;
-  // }
-  // cout << endl;
-
-
-
-
   fnerecobins_RHCNumu = util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike);
 
   hchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param_1,fmin_param_1,fmax_param_1+fstep_param_1);
@@ -105,7 +96,8 @@ void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int n
 
   const int nmh=2; // mass hierarchy
   fToyMargErecoVArray_1D_RHCNumu = new VALORArrayF(ntoys_marg, nbins_param, nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
-  fToyMargErecoVArray_1D_RHCNumu->SetAll(0.);
+  //fToyMargErecoVArray_1D_RHCNumu->SetAll(0.);
+  fToyMargErecoVArray_1D_RHCNumu->SetAll(-1.);   // needed for MergeInputFiles()
 
   fChisqMargVArray_1D            = new VALORArrayF(nbins_param);
   fChisqMargVArray_1D->SetAll(0.);
@@ -332,7 +324,10 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	PhysParamList true_nuisance_params = skexp->Tweaks();
 	if (this->fRethrowSystUnphysical) {
 	  unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
-	  if (unphysical_tweak) {cout<<"Parameters are unphysical - rethrowing"<<std::endl;}
+	  if (unphysical_tweak) {
+	    cout<<"Parameters are unphysical - rethrowing"<<std::endl;
+	    continue; // repeat the loop
+	  }
 	}
 	else {
 	  unphysical_tweak = false;
@@ -444,7 +439,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	 
 	  
 
-#ifdef __print_array_toy__
+#ifdef __print_array_toy_maketoys__
 	cout << endl;
 	cout << "toy=" << iexperiment << " - ipar=" << ipar << " : ";
 	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
@@ -495,10 +490,6 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
     double currval = fmin_param_1 + ipar*fstep_param_1;
     //cout << "currval = " << currval << endl;
     
-
-
-
-
     // Marginalize the Mass Hierarchy
     int nMassHierarchy = 2;
         
@@ -538,6 +529,18 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
 	  double nobs = skobs_data->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ibin];
 	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
 	}
+
+      
+#ifdef __print_array_toy_fillchisq__
+	cout << endl;
+	cout << "toy=" << iexperiment << " - ipar=" << ipar << " : ";
+	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
+	  double bincont = fToyMargErecoVArray_1D_RHCNumu->GetEntry(iexperiment,ipar,iMH,ib);
+	  cout << bincont << " "; 
+	}
+	cout << endl;	
+#endif
+
 	
 	double like = exp(-chisq/2.) / fntoys_marg;
 	
@@ -570,6 +573,17 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
     hchisq_marg_1D->SetBinContent(ipar+1,bincont);
   }
 
+#ifdef __print_chisqmarg__
+  cout << endl;
+  cout << "Marginalized Chisq distribution:" << endl; 
+  cout << "fmin_bin_sub_param_1 = " << fmin_bin_sub_param_1 << endl;
+  cout << "fmax_bin_sub_param_1 = " << fmax_bin_sub_param_1 << endl;
+  for(int ipar=fmin_bin_sub_param_1;ipar<=fmax_bin_sub_param_1;ipar++){
+    cout << fChisqMargVArray_1D->GetEntry(ipar) << ", ";
+  }
+  cout << endl;
+#endif
+
   return;
 }
 //________________________________________________________________________________________
@@ -578,7 +592,6 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
   
-
   char namemh[200];
   if(doMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
@@ -619,6 +632,8 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
   cout << endl;
 
+  //
+
   sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param_1,namemh,"_subrange",".txt");
 
   fmin_sub_param_1 = hchisq_marg_1D->GetBinLowEdge(fmin_bin_sub_param_1 + 1);    
@@ -656,6 +671,90 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   
   ostext.close();
 }
+
+
+
+//________________________________________________________________________________________
+void FitMarginalization::WriteToys2BinaryMerge(char *tag){
+
+  cout << endl;
+  cout << "Write marginalization toys in a binary file:" << endl;
+  
+  char namemh[200];
+  if(doMargMassHierarchy) sprintf(namemh,"%s","marg");
+  else{ 
+    if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
+      sprintf(namemh,"%s","NH");
+    else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
+      sprintf(namemh,"%s","IH");
+    else{
+      cerr << "Mass Hierarchy not defined" << endl;
+      exit(1);
+    }
+  }	    
+
+  char outtag[200] = "%s_%s";
+  sprintf(outtag,"%s_%s",tag,"Merged");
+
+  char outname[200];
+  sprintf(outname,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param_1,namemh,"",".bin");
+
+  std::string soutname(outname);
+  fToyMargErecoVArray_1D_RHCNumu_Clone->WriteFile(soutname);
+
+  // Write store sub-range of the free parameter
+
+  int min_bin_sub_param = fmin_bin_sub_param_1;
+  int max_bin_sub_param = fmax_bin_sub_param_1;
+
+  char outname_range[200];
+  sprintf(outname_range,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param_1,namemh,"_subrange",".bin");
+  
+  std::string soutname_range(outname_range);
+  
+  int min_bin = 0;
+  int max_bin = fnbins_param_1 - 1;
+
+  ofstream os(soutname_range.c_str(),ios::binary|ios::out);
+  assert(os);
+  os.write( (char*)&min_bin,sizeof(int));
+  os.write( (char*)&max_bin,sizeof(int));
+  os.close();
+
+  cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
+  cout << endl;
+
+  //
+
+  char outname_text[200];
+  std::string soutname_text(outname_text);
+  sprintf(outname_text,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param_1,namemh,"",".txt");
+
+  ofstream ostext(outname_text,ios::out);
+  ostext << "fnamefreeparam_1: " << fnamefreeparam_1 << endl;
+  ostext << "Mass hierarchy: "; 
+  if( this->doMargMassHierarchy ) ostext << " Marginalize";
+  else ostext << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
+  ostext << endl;
+  if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
+  else ostext << "Don't rethrow unphysical systematic toys" << endl;
+  ostext << "# of merged files: " << fNmergedFiles << endl;
+  ostext << "fnbins_param_1 = " << fnbins_param_1 << endl;
+  ostext << "fntoys_marg = " << fntoys_marg << endl;
+  ostext << "fnerecobins_RHCNumu = " << fnerecobins_RHCNumu << endl;
+  ostext << "min_bin = " << min_bin << endl;
+  ostext << "max_bin = " << max_bin << endl;
+  ostext << "fmin_param_1 = " << fmin_param_1 << endl;
+  ostext << "fmax_param_1 = " << fmax_param_1 << endl;
+  ostext << "fstep_param_1 = " << fstep_param_1 << endl;
+  ostext << endl;
+  ostext << "fhypothesis = " << util::AsString(fhypothesis) << endl;
+  ostext << endl;
+  ostext << "FitParamList:" << endl;
+  ostext << *fparm << endl;
+  
+  ostext.close();
+}
 //________________________________________________________________________________________
 void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){ 
 
@@ -673,11 +772,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
   }	    
 
   char inname[200];
-  //sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param_1,"",".bin");
   sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param_1,namemh,"",".bin");
 
   std::string sinname(inname);
-
   cout << sinname << endl;
 
   fToyMargErecoVArray_1D_RHCNumu->ReadFile(sinname);
@@ -972,4 +1069,81 @@ void FitMarginalization::SetRethrowSystUnphysical(bool dorethrow){
   return;
 }
 //________________________________________________________________________________________
- 
+void FitMarginalization::MergeInputFiles(){
+
+  // Initialize the clone VALORArray only the first time MergeInputFiles() is called
+  const int nmh=2; // mass hierarchy
+  if(MergeInputFiles_Called){
+    fToyMargErecoVArray_1D_RHCNumu_Clone = new VALORArrayF(fntoys_marg, fnbins_param_1, nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
+    
+    fToyMargErecoVArray_1D_RHCNumu_Clone->SetAll(-1.);
+
+    MergeInputFiles_Called = false;
+  }
+
+  cout << endl;
+  cout << "Merge toys of input file:" << endl
+       << "bin: ["  
+       << fmin_bin_sub_param_1
+       << ","
+       << fmax_bin_sub_param_1
+       << "]"
+       << endl
+       << fnamefreeparam_1 << ": " 
+       << "[" 
+       << hchisq_marg_1D->GetBinLowEdge(fmin_bin_sub_param_1 + 1)
+       << ","
+       << hchisq_marg_1D->GetBinLowEdge(fmax_bin_sub_param_1 + 1)
+       << "]"
+       << endl;
+
+  // Copy read array elements to the clone one. Same loop as in FillChisqMarg()
+  for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+    for(int ipar=fmin_bin_sub_param_1;ipar<=fmax_bin_sub_param_1;ipar++){
+      int nMassHierarchy = 2;
+      for(int iMH=0;iMH<nMassHierarchy;iMH++){
+	for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
+	  
+	  float bincont = fToyMargErecoVArray_1D_RHCNumu->GetEntry(iexperiment,ipar,iMH,ibin); // bincont = -1 by default
+	  if(bincont >= 0.){
+	    float bincont_clone = fToyMargErecoVArray_1D_RHCNumu_Clone->GetEntry(iexperiment,ipar,iMH,ibin); 
+	    if(bincont_clone >= 0.){
+	      cerr << endl;
+	      cerr << "Following bin has been already filled:" << endl;
+	      cerr << " - iexperiment = " << iexperiment << endl;
+	      cerr << " - ipar = " << ipar << endl;
+	      cerr << " - iMH = " << iMH << endl;
+	      cerr << " - iereco = " << ibin << endl;
+	      exit(1);
+	    }
+	    else{
+	      fToyMargErecoVArray_1D_RHCNumu_Clone->SetEntry(bincont,iexperiment,ipar,iMH,ibin); 
+	    }
+
+	    //cout << fToyMargErecoVArray_1D_RHCNumu_Clone->GetEntry(iexperiment,ipar,iMH,ibin) << ", ";
+	  }
+	  
+	} // loop ibin
+
+
+#ifdef __print_array_toy_merge__
+	cout << endl;
+	cout << "toy=" << iexperiment << " - ipar=" << ipar << " : ";
+	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
+	  double bincont = fToyMargErecoVArray_1D_RHCNumu_Clone->GetEntry(iexperiment,ipar,iMH,ib);
+	  cout << bincont << " "; 
+	}
+	cout << endl;	
+#endif
+
+
+      } // loop iMH
+    } // loop sub-range
+  } // loop iexperiment
+    
+  fNmergedFiles++;
+
+  return;
+}
+//________________________________________________________________________________________
+
