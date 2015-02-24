@@ -56,7 +56,7 @@ foreach (@ARGV) {
 
 
 $resource        = "interactive"                    unless defined $resource;
-$tag             = "marg_cluster"                   unless defined $tag;
+$tag             = "mixing23_1p7E20_postfit_NoRethrow"        unless defined $tag;
 
 #$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
 #$config_file   = "analysis_configuration_run1to6_test.xml"      unless defined $config_file;
@@ -78,9 +78,9 @@ $freepar                = "mixing23Bar"               unless defined $freepar;
 $minfreepar             = 0                           unless defined $minfreepar;     # Minimum free parameter allowed value
 $maxfreepar             = 1                           unless defined $maxfreepar;     # Maximum free parameter allowed value 
 
-$nexpts_marg            = 10                          unless defined $nexpts_marg;    # of toys
-$npt_freepar            = 21                          unless defined $npt_freepar;    # of free parameter points to scan
-$step_freepar           = 1                           unless defined $step_freepar;   # of points for each job
+$nexpts_marg            = 10000                       unless defined $nexpts_marg;    # of toys
+$npt_freepar            = 201                         unless defined $npt_freepar;    # of free parameter points to scan
+$step_freepar           = 11                          unless defined $step_freepar;   # of points for each job
 
 $tweak_systematics      = 1                           unless defined $tweak_systematics;
 $marg_hierarchy         = 1                           unless defined $marg_hierarchy;
@@ -146,7 +146,8 @@ for($imin = 0; $imin < $npt_freepar; $imin = $imin_p1) {
 	open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
 	print PBS "#!/bin/bash -l  \n";
 	#print PBS "#SBATCH --partition=dphys_compute_wk  \n";
-	print PBS "#SBATCH --partition=dphys_compute  \n";
+	#print PBS "#SBATCH --partition=dphys_compute  \n";
+	print PBS "#SBATCH --partition=dphys_largemem  \n";
 	print PBS "#SBATCH --nodes=1  \n";
 	print PBS "#SBATCH --ntasks-per-node=1  \n";
 	print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
@@ -155,7 +156,7 @@ for($imin = 0; $imin < $npt_freepar; $imin = $imin_p1) {
 	close(PBS);
 	#`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 	#`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-	`sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+	`sbatch -t 05:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 	#`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
     }
     
