@@ -114,15 +114,15 @@ class FitMarginalization: public TObject
  public:
   
 
-  FitMarginalization(PhysParamId_t parfree, int ntoys_marg,int nbins_param,double minpar=-999,double maxpar=-999);
+  FitMarginalization(PhysParamId_t *parfree, int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
   ~FitMarginalization(void);
 
-  void Init(PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar);
+  void Init(PhysParamId_t *parfree, int ntoys_marg, int *nbins_param,double *minpar,double *maxpar);
   void CleanUp();
   
   void SetConfigFile();
 
-  void SetFreeParam(PhysParamId_t parfree,double minpar,double maxpar);
+  void SetFreeParam(int ParID,PhysParamId_t *parfree,double *minpar,double *maxpar);
   
   void SetFitParamList(char * fit_param_list);
   FitParamList * GetFitParamList(void) {return fparm;};
@@ -131,29 +131,33 @@ class FitMarginalization: public TObject
   void PrintFitParamList(void);
 
   TH1F * GetChisqMarg (void) { return hchisq_marg_1D; };
+  TH2F * GetChisqMarg2D (void) { return hchisq_marg_2D; };
 
-  void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int min_bin_sub_param=-999,int max_bin_sub_param=-999);
+  bool IsFit2D(){ return fIsFit2D;}
+
+  void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int *min_bin_sub_param,int *max_bin_sub_param);
 
   void WriteToys2Binary(int idfile,char *tag);
   void WriteToys2BinaryMerge(char *tag);
 
   void ReadToysFromBinary(int idfile, char *tag);
   
-  void ResetChisqMarg(int min_bin_sub_param,int max_bin_sub_param);
+  void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
   void FillChisqMarg(SuperkObservation *skobs_data);
   
   void Minimize(TH1F *hInChisqMarg);
+  void Minimize(TH2F *hInChisqMarg);
   void Minimize(void);
 
   double GetChisqBestFit(void){ return fchisq_bf;};
-  double GetParamBestFit(void){ return fparam_1_bf;};
+  double GetParamBestFit(int ParId){ return fparam_bf[ParId];};
   
   void SetSubRange();
 
   void PrintBestFit(void);
 
   VALORArrayF * GetToyMargErecoVArray(SuperkSample_t s);
-  TH1F * GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar,int iMassHierarchy);
+  TH1F * GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
 
   void SetMargOscParam();
 
@@ -174,14 +178,13 @@ class FitMarginalization: public TObject
   TH1F *hchisq_marg_1D; 
   TH2F *hchisq_marg_2D; // 2D 
   
-  TH1F *hToyMargCurr_1D;
-  TH2F *hToyMargCurr_2D; // 2D
+  TH1F *hToyMargCurr;
 
-  string fnamefreeparam_1;
-  string fnamefreeparam_2; // 2D
+  string fnamefreeparam[2]; // Use param 1 only for 2D fits
 
-  PhysParamId_t fPhysParamFree_1;
-  PhysParamId_t fPhysParamFree_2; // 2D
+  PhysParamId_t fPhysParamFree[2]; // 2D
+
+  bool fIsFit2D;
 
   bool doMargMassHierarchy; // marginalize MH. Not by default     
   bool fRethrowSystUnphysical; // rethrow toys with unphysical systematics. True by default
@@ -189,62 +192,36 @@ class FitMarginalization: public TObject
   char fnamefilebinary[200];
 
   double fchisq_bf;
-  double fparam_1_bf;
-  double fparam_2_bf; // 2D
-
+  double fparam_bf[2]; // 2D
+  
   UInt_t fSeed;
 
-  int fnbins_param_1;
-  int fnbins_param_2; // 2D
+  int fnbins_param[2]; // 2D
   
   int fntoys_marg;
   int fnerecobins_RHCNumu;
   
-  int fmin_bin_sub_param_1; // first bin of sub-range to scan (for partial toys and chisq marg)
-  int fmax_bin_sub_param_1; // last bin of sub-range to scan (for partial toys and chisq marg)
+  int fmin_bin_sub_param[2]; // 2D // first bin of sub-range to scan (for partial toys and chisq marg)
+  int fmax_bin_sub_param[2]; // 2D // last bin of sub-range to scan (for partial toys and chisq marg)
 
-  int fmin_bin_sub_param_2; // 2D // first bin of sub-range to scan (for partial toys and chisq marg)
-  int fmax_bin_sub_param_2; // 2D // last bin of sub-range to scan (for partial toys and chisq marg)
+  double fmin_sub_param[2]; // 2D // first value of sub-range to scan (for partial toys and chisq marg)
+  double fmax_sub_param[2]; // 2D // last value of sub-range to scan (for partial toys and chisq marg)
 
-  double fmin_sub_param_1; // first value of sub-range to scan (for partial toys and chisq marg)
-  double fmax_sub_param_1; // last value of sub-range to scan (for partial toys and chisq marg)
-
-  double fmin_sub_param_2; // 2D // first value of sub-range to scan (for partial toys and chisq marg)
-  double fmax_sub_param_2; // 2D // last value of sub-range to scan (for partial toys and chisq marg)
-
-  double fmin_param_1;
-  double fmax_param_1;
-  double fstep_param_1;
-
-  double fmin_param_2;  // 2D
-  double fmax_param_2;  // 2D
-  double fstep_param_2; // 2D
+  double fmin_param[2];  // 2D
+  double fmax_param[2];  // 2D
+  double fstep_param[2]; // 2D
   
-  VALORArrayF *flikeVArray_1D;
-  VALORArrayF *fChisqMargVArray_1D;
-
-  VALORArrayF *flikeVArray_2D;      // 2D
-  VALORArrayF *fChisqMargVArray_2D; // 2D
-   
-
-
-
-
-  VALORArrayF *fToyMargErecoVArray_1D_RHCNumu_Clone; // NEW
+  VALORArrayF *flikeVArray;
+  VALORArrayF *fChisqMargVArray;
+  
+  VALORArrayF *fToyMargErecoVArray_RHCNumu_Clone; 
   bool MergeInputFiles_Called;
   int fNmergedFiles;
 
-
-
-  VALORArrayF *fToyMargErecoVArray_1D_RHCNumu;
-  VALORArrayF *fToyMargErecoVArray_1D_RHCNue;
-  VALORArrayF *fToyMargErecoVArray_1D_Numu;
-  VALORArrayF *fToyMargErecoVArray_1D_Nue;
-
-  VALORArrayF *fToyMargErecoVArray_2D_RHCNumu; // 2D
-  VALORArrayF *fToyMargErecoVArray_2D_RHCNue;  // 2D
-  VALORArrayF *fToyMargErecoVArray_2D_Numu;    // 2D
-  VALORArrayF *fToyMargErecoVArray_2D_Nue;     // 2D
+  VALORArrayF *fToyMargErecoVArray_RHCNumu; // 2D
+  VALORArrayF *fToyMargErecoVArray_RHCNue;  // 2D
+  VALORArrayF *fToyMargErecoVArray_Numu;    // 2D
+  VALORArrayF *fToyMargErecoVArray_Nue;     // 2D
 
   FitParamList * fparm;
   PhysHypothesis_t fhypothesis;

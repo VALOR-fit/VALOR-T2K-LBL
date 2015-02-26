@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <iomanip> 
 
 #include <TSystem.h>
 #include <TFile.h>
@@ -50,7 +51,7 @@ using namespace valor::conv;
 ClassImp(FitMarginalization)
 
 //________________________________________________________________________________________
-FitMarginalization::FitMarginalization(conv::PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar)
+FitMarginalization::FitMarginalization(conv::PhysParamId_t *parfree, int ntoys_marg, int *nbins_param,double *minpar,double *maxpar)
 {
   this->Init(parfree,ntoys_marg,nbins_param,minpar,maxpar);
 }
@@ -60,142 +61,195 @@ FitMarginalization::~FitMarginalization(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-void FitMarginalization::Init(conv::PhysParamId_t parfree, int ntoys_marg, int nbins_param,double minpar,double maxpar){
+void FitMarginalization::Init(conv::PhysParamId_t *parfree, int ntoys_marg, int *nbins_param,double *minpar,double *maxpar){
    
   doMargMassHierarchy = false;
   fRethrowSystUnphysical = true; // rethrow toys if systematics are unphysical
 
-  fntoys_marg = ntoys_marg;
-  fnbins_param_1 = nbins_param;  
+  fIsFit2D = false; // 1D fit by default
 
-  fmin_bin_sub_param_1 = -999; // scan all the range by default
-  fmax_bin_sub_param_1 = -999;
+  fntoys_marg = ntoys_marg;
+  fnbins_param[0] = nbins_param[0];  
+  fnbins_param[1] = nbins_param[1];  
+
+  // scan all the range by default
+  fmin_bin_sub_param[0] = -999; 
+  fmin_bin_sub_param[1] = -999; 
+  fmax_bin_sub_param[0] = -999;
+  fmax_bin_sub_param[1] = -999;
 
   fSeed = 999;
 
-  sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_MH%s%s%s");  
+  sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_oscpar%d_MH%s%s%s");  
   
   MergeInputFiles_Called = true; // false the first time MergeInputFiles() is calles
-  fNmergedFiles = 0; // ++ everytime MergeInputFiles() is called (after reading each file)
+  fNmergedFiles = 0; // fNmergedFiles++ everytime MergeInputFiles() is called (after reading each file)
 
-  this->SetFreeParam(parfree,minpar,maxpar);
- 
-  cout << endl;
-  cout << endl;
-  cout << "Minimize " << fnamefreeparam_1 << endl;
-  cout << "# toys for marginalization: " << fntoys_marg << endl;
-  cout << "# bins of free parameter to scan: " << fnbins_param_1 << endl;
-  cout << "# free parameter step size: " << fstep_param_1 << endl;
-  cout << "Interval: [" << fmin_param_1 << "," << fmax_param_1 << "]" << endl;
-
+  this->SetFreeParam(0,parfree,minpar,maxpar);
+  this->SetFreeParam(1,parfree,minpar,maxpar);
 
   fnerecobins_RHCNumu = util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike);
 
-  hchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param_1,fmin_param_1,fmax_param_1+fstep_param_1);
-  hToyMargCurr_1D = new TH1F("hToyMargCurr_1D","hToyMargCurr_1D",util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
+  hchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0]);
+  hchisq_marg_2D = new TH2F("hchisq_marg_2D","hchisq_marg_2D",
+			    fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0],
+			    fnbins_param[1],fmin_param[1],fmax_param[1]+fstep_param[1] );
+
+  hToyMargCurr = new TH1F("hToyMargCurr","hToyMargCurr",util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
 
   const int nmh=2; // mass hierarchy
-  fToyMargErecoVArray_1D_RHCNumu = new VALORArrayF(ntoys_marg, nbins_param, nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
-  //fToyMargErecoVArray_1D_RHCNumu->SetAll(0.);
-  fToyMargErecoVArray_1D_RHCNumu->SetAll(-1.);   // needed for MergeInputFiles()
+  fToyMargErecoVArray_RHCNumu = new VALORArrayF(ntoys_marg, fnbins_param[0], fnbins_param[1], nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
+  fToyMargErecoVArray_RHCNumu->SetAll(-1.);   // needed for MergeInputFiles()
 
-  fChisqMargVArray_1D            = new VALORArrayF(nbins_param);
-  fChisqMargVArray_1D->SetAll(0.);
-  flikeVArray_1D                 = new VALORArrayF(nbins_param);
-  flikeVArray_1D->SetAll(0.);
+  fChisqMargVArray            = new VALORArrayF(fnbins_param[0], fnbins_param[1]);
+  fChisqMargVArray->SetAll(0.);
+  flikeVArray                 = new VALORArrayF(fnbins_param[0], fnbins_param[1]);
+  flikeVArray->SetAll(0.);
 
-  fToyMargErecoVArray_1D_RHCNumu->SetDimensionName(0, "# toys marginalization");
-  fToyMargErecoVArray_1D_RHCNumu->SetDimensionName(1, "# bins free parameter");
-  fToyMargErecoVArray_1D_RHCNumu->SetDimensionName(2, "# mass hierarchies");
-  fToyMargErecoVArray_1D_RHCNumu->SetDimensionName(3, "# bins ereco");
+  fToyMargErecoVArray_RHCNumu->SetDimensionName(0, "# toys marginalization");
+  fToyMargErecoVArray_RHCNumu->SetDimensionName(1, "# bins free parameter 0");
+  fToyMargErecoVArray_RHCNumu->SetDimensionName(2, "# bins free parameter 1");
+  fToyMargErecoVArray_RHCNumu->SetDimensionName(3, "# mass hierarchies");
+  fToyMargErecoVArray_RHCNumu->SetDimensionName(4, "# bins ereco");
+
+
+  cout << endl;
+  cout << "# of bins parameter 0: " << fnbins_param[0] << endl;
+  cout << "# of bins parameter 1: " << fnbins_param[1] << endl;
+  cout << endl;
+
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
 
-  if(fToyMargErecoVArray_1D_RHCNumu) delete fToyMargErecoVArray_1D_RHCNumu; fToyMargErecoVArray_1D_RHCNumu=0;
-  if(fChisqMargVArray_1D) delete fChisqMargVArray_1D; fChisqMargVArray_1D=0;
-  if(flikeVArray_1D) delete flikeVArray_1D; flikeVArray_1D=0;
+  if(fToyMargErecoVArray_RHCNumu) delete fToyMargErecoVArray_RHCNumu; fToyMargErecoVArray_RHCNumu=0;
+  if(fChisqMargVArray) delete fChisqMargVArray; fChisqMargVArray=0;
+  if(flikeVArray) delete flikeVArray; flikeVArray=0;
   if(hchisq_marg_1D) delete hchisq_marg_1D; hchisq_marg_1D=0;
+  if(hchisq_marg_2D) delete hchisq_marg_2D; hchisq_marg_2D=0;
 }
 //________________________________________________________________________________________
-void FitMarginalization::SetFreeParam(conv::PhysParamId_t parfree,double minpar,double maxpar){
+void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,double *minpar,double *maxpar){
   
-  fPhysParamFree_1 = parfree;
-  fnamefreeparam_1=util::AsString(fPhysParamFree_1);    
+  fPhysParamFree[ParId] = parfree[ParId];
+  fnamefreeparam[ParId] = util::AsString(fPhysParamFree[ParId]);    
+  
+  fmin_param[ParId] = minpar[ParId];
+  fmax_param[ParId] = maxpar[ParId];
+  
+  // NuBar Osc parameters
+  if(fPhysParamFree[ParId]==kPhypMixing13Bar){ // mixing13Bar
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = mixing13Bar_min;
+      fmax_param[ParId] = mixing13Bar_max;
+    }    
+  }
+  else if(fPhysParamFree[ParId]==kPhypMixing23Bar){ // mixing23Bar
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = mixing23Bar_min;
+      fmax_param[ParId] = mixing23Bar_max;
+    } 
+  }
+  else if(fPhysParamFree[ParId]==kPhypDm23sqBar){ // Dm23sqBar
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = dmsq32Bar_min;
+      fmax_param[ParId] = dmsq32Bar_max;
+    }    
+  }
+  else if(fPhysParamFree[ParId]==kPhypCPVBar){ // deltaCPBar
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = deltacpBar_min;
+      fmax_param[ParId] = deltacpBar_max;
+    }    
+  }
+  else if(fPhysParamFree[ParId]==kPhypMixing12Bar){ // mixing12Bar
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = mixing12Bar_min;
+      fmax_param[ParId] = mixing12Bar_max;
+    }    
+  }
+  else if(fPhysParamFree[ParId]==kPhypDm12sqBar){ // Dm12sqBar
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = dmsq12Bar_min;
+      fmax_param[ParId] = dmsq12Bar_max;
+    }    
+  }
 
-  if(minpar==-999 && maxpar==-999){ // if limits are not given use the default ones
- 
-    // NuBar Osc parameters
-    if(fPhysParamFree_1==kPhypMixing13Bar){ // mixing13Bar
-      fmin_param_1 = mixing13Bar_min;
-      fmax_param_1 = mixing13Bar_max;
+  // Nu Osc parameters
+  else if(fPhysParamFree[ParId]==kPhypMixing13){ // mixing13
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = mixing13_min;
+      fmax_param[ParId] = mixing13_max;
     }    
-    else if(fPhysParamFree_1==kPhypMixing23Bar){ // mixing23Bar
-      fmin_param_1 = mixing23Bar_min;
-      fmax_param_1 = mixing23Bar_max;
+  }
+  else if(fPhysParamFree[ParId]==kPhypMixing23){ // mixing23
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = mixing23_min;
+      fmax_param[ParId] = mixing23_max;
     }    
-    else if(fPhysParamFree_1==kPhypDm23sqBar){ // Dm23sqBar
-      fmin_param_1 = dmsq32Bar_min;
-      fmax_param_1 = dmsq32Bar_max;
+  }
+  else if(fPhysParamFree[ParId]==kPhypDm23sq){ // Dm23sq
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = dmsq32_min;
+      fmax_param[ParId] = dmsq32_max;
     }    
-    else if(fPhysParamFree_1==kPhypCPVBar){ // deltaCPBar
-      fmin_param_1 = deltacpBar_min;
-      fmax_param_1 = deltacpBar_max;
+  }
+  else if(fPhysParamFree[ParId]==kPhypCPV){ // deltaCP
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = deltacp_min;
+      fmax_param[ParId] = deltacp_max;
     }    
-    else if(fPhysParamFree_1==kPhypMixing12Bar){ // mixing12Bar
-      fmin_param_1 = mixing12Bar_min;
-      fmax_param_1 = mixing12Bar_max;
+  }
+  else if(fPhysParamFree[ParId]==kPhypMixing12){ // mixing12
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = mixing12_min;
+      fmax_param[ParId] = mixing12_max;
     }    
-    else if(fPhysParamFree_1==kPhypDm12sqBar){ // Dm12sqBar
-      fmin_param_1 = dmsq12Bar_min;
-      fmax_param_1 = dmsq12Bar_max;
-    }    
-    // Nu Osc parameters
-    else if(fPhysParamFree_1==kPhypMixing13){ // mixing13
-      fmin_param_1 = mixing13_min;
-      fmax_param_1 = mixing13_max;
-    }    
-    else if(fPhysParamFree_1==kPhypMixing23){ // mixing23
-      fmin_param_1 = mixing23_min;
-      fmax_param_1 = mixing23_max;
-    }    
-    else if(fPhysParamFree_1==kPhypDm23sq){ // Dm23sq
-      fmin_param_1 = dmsq32_min;
-      fmax_param_1 = dmsq32_max;
-    }    
-    else if(fPhysParamFree_1==kPhypCPV){ // deltaCP
-      fmin_param_1 = deltacp_min;
-      fmax_param_1 = deltacp_max;
-    }    
-    else if(fPhysParamFree_1==kPhypMixing12){ // mixing12
-      fmin_param_1 = mixing12_min;
-      fmax_param_1 = mixing12_max;
-    }    
-    else if(fPhysParamFree_1==kPhypDm12sq){ // Dm12sq
-      fmin_param_1 = dmsq12_min;
-      fmax_param_1 = dmsq12_max;
-    }    
-    else{
-      cout << "Free parameter has not well set" << endl;
+  }
+  else if(fPhysParamFree[ParId]==kPhypDm12sq){ // Dm12sq
+    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+      fmin_param[ParId] = dmsq12_min;
+      fmax_param[ParId] = dmsq12_max;
+    } 
+  }
+
+  // The parameter is not selected
+  else{
+    if(ParId==0){
+      cerr << endl;
+      cerr << "The parameter 0 has not been chosen. Always do 1D fit with parameter 0" << endl;
+      cerr << endl;
       exit(1);
+    }
+    else{
+      fmin_param[ParId] = 0.;
+      fmax_param[ParId] = 0.;    
+      fnbins_param[ParId] = 1; // dimension of parameter ParId
     }
   }
   
-  else if(minpar > maxpar){
+  // Wrong assignement of the free parameter limit
+  if(minpar[ParId] > maxpar[ParId]){
     cerr << endl
+	 << "ParID = " << ParId << endl
 	 << "minpar >= maxpar && minpar!=-999 && maxpar!=-999" << endl
-	 << " - minpar = " << minpar << endl
-	 << " - maxpar = " << maxpar << endl
+	 << " - minpar = " << minpar[ParId] << endl
+	 << " - maxpar = " << maxpar[ParId] << endl
 	 << endl;
     exit(1);
   }
-  
-  else{
-    fmin_param_1 = minpar;
-    fmax_param_1 = maxpar;
-  }
 
-  fstep_param_1 = (fmax_param_1-fmin_param_1)/(double)(fnbins_param_1 - 1);
+  // Define the grid step size
+  if(fPhysParamFree[ParId] == conv::kPhypUndefined) fstep_param[ParId] = 0.;
+  else fstep_param[ParId] = (fmax_param[ParId]-fmin_param[ParId])/(double)(fnbins_param[ParId] - 1);
+
+  cout << endl;
+  cout << "Minimize " << fnamefreeparam[ParId] << endl;
+  cout << "# toys for marginalization: " << fntoys_marg << endl;
+  cout << "# bins of free parameter to scan: " << fnbins_param[ParId] << endl;
+  cout << "# free parameter step size: " << fstep_param[ParId] << endl;
+  cout << "Interval: [" << fmin_param[ParId] << "," << fmax_param[ParId] << "]" << endl;
+  cout << endl;
 
   return;
 }
@@ -204,19 +258,68 @@ void FitMarginalization::SetFitParamList(char * fit_param_list){
   fparm  = util::NamedParameterList(fit_param_list);
   fhypothesis = fparm->PhysicsHypothesis();
 
-  if( fparm->IsFixed(fPhysParamFree_1) ){
-    cerr << "The free parameter " << fnamefreeparam_1 
+  if( fPhysParamFree[0] == conv::kPhypUndefined && 
+      fPhysParamFree[1] == conv::kPhypUndefined ){  
+    cerr << endl;
+    cerr << "Both free parameters are not defined" << endl;
+    cerr << endl;
+    exit(1);
+  }
+ 
+  if(fPhysParamFree[0]!=conv::kPhypUndefined && fPhysParamFree[1]!=conv::kPhypUndefined){      
+    fIsFit2D = true;
+    cout << endl;
+    cout << "Perform a fit 2D" << endl;
+    cout << endl;
+  }
+  else if(fPhysParamFree[0]!=conv::kPhypUndefined){
+    fIsFit2D = false;
+    cout << endl;
+    cout << "Perform a fit 1D" << endl;
+    cout << endl;
+  }
+  else{
+    cerr << endl;
+    cerr << "Define correctly parameter 0 for 1D fit and parameter 1 for 2D fit" << endl;
+    cerr << endl;
+    exit(1);    
+  }
+
+
+  // Parameter 0
+  if( fparm->IsFixed(fPhysParamFree[0]) ){
+    cerr << "The free parameter " << fnamefreeparam[0] 
 	 << " is fixed in FitParamList " << fit_param_list
 	 << endl << endl;
     exit(1);
   }
-  else if( fparm->IsNuisance(fPhysParamFree_1) ){
-    cerr << "The free parameter " << fnamefreeparam_1 
+  else if( fparm->IsNuisance(fPhysParamFree[0]) ){
+    cerr << "The free parameter " << fnamefreeparam[0] 
 	 << " is nuisance in FitParamList " << fit_param_list
 	 << endl << endl;
     exit(1);
   }
 
+  // Parameter 1
+  if( fPhysParamFree[1] == conv::kPhypUndefined ){  
+    cout << endl;
+    cout << "Parameter 1 is undefined" << endl;
+    cout << endl;
+  }
+  else if( fparm->IsFixed(fPhysParamFree[1]) ){
+    cerr << "The free parameter " << fnamefreeparam[1] 
+	 << " is fixed in FitParamList " << fit_param_list
+	 << endl << endl;
+    exit(1);
+  }
+  else if( fparm->IsNuisance(fPhysParamFree[1]) ){
+    cerr << "The free parameter " << fnamefreeparam[1] 
+	 << " is nuisance in FitParamList " << fit_param_list
+	 << endl << endl;
+    exit(1);
+  }
+
+  return;
 }
 //________________________________________________________________________________________
 void FitMarginalization::PrintPhysHypothesis(){
@@ -225,41 +328,85 @@ void FitMarginalization::PrintPhysHypothesis(){
   cout << endl;
 }
 //________________________________________________________________________________________
-void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int min_bin_sub_param,int max_bin_sub_param){
+void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int *min_bin_sub_param,int *max_bin_sub_param){
 
   cout << "////////////////////////////////////////////////////////" << endl;
   cout << endl;
   cout << "Make toys for marginalization and store in a binary file" << endl;
   cout << endl;
 
-  if(min_bin_sub_param==-999 && max_bin_sub_param==-999){ // scan all the range
-    min_bin_sub_param = 0;
-    max_bin_sub_param = fnbins_param_1 - 1;
+  if(min_bin_sub_param[0]==-999 && max_bin_sub_param[0]==-999){ // scan all the range
+    min_bin_sub_param[0] = 0;
+    max_bin_sub_param[0] = fnbins_param[0] - 1;
+  }
+  if(min_bin_sub_param[1]==-999 && max_bin_sub_param[1]==-999){ // scan all the range
+    min_bin_sub_param[1] = 0;
+    max_bin_sub_param[1] = fnbins_param[1] - 1;
   }
   
   // Get free param sub-range
-  fmin_bin_sub_param_1 = min_bin_sub_param;
-  fmax_bin_sub_param_1 = max_bin_sub_param;
+  fmin_bin_sub_param[0] = min_bin_sub_param[0];
+  fmax_bin_sub_param[0] = max_bin_sub_param[0];
+  fmin_bin_sub_param[1] = min_bin_sub_param[1];
+  fmax_bin_sub_param[1] = max_bin_sub_param[1];
 
+  //if( fPhysParamFree[0] != conv::kPhypUndefined ){  
   cout << endl;
-  cout << "Scan the parameter range:" << endl
+  cout << "Scan the parameter 0 range:" << endl
        << "bin: ["  
-       << fmin_bin_sub_param_1
+       << fmin_bin_sub_param[0]
        << ","
-       << fmax_bin_sub_param_1
+       << fmax_bin_sub_param[0]
        << "]"
        << endl
-       << fnamefreeparam_1 << ": " 
-       << "[" 
-       << hchisq_marg_1D->GetBinLowEdge(fmin_bin_sub_param_1 + 1)
+       << fnamefreeparam[0] << ": " 
+       << "["; 
+  cout << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
        << ","
-       << hchisq_marg_1D->GetBinLowEdge(fmax_bin_sub_param_1 + 1)
-       << "]"
+       << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1);
+  cout << "]"
        << endl;
-
+  //}
+  
+  //if( fIsFit2D && fPhysParamFree[1] != conv::kPhypUndefined ){  
+  cout << endl;
+  cout << "Scan the parameter 1 range:" << endl
+       << "bin: ["  
+       << fmin_bin_sub_param[1]
+       << ","
+       << fmax_bin_sub_param[1]
+       << "]"
+       << endl
+       << fnamefreeparam[1] << ": " 
+       << "["; 
+  cout << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+       << ","
+       << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1);
+  cout << "]"
+       << endl;
+  //}
+  
   // Initialize the free param sub-range to scan
-  fmin_bin_sub_param_1 = min_bin_sub_param;
-  fmax_bin_sub_param_1 = max_bin_sub_param;
+  fmin_bin_sub_param[0] = min_bin_sub_param[0];
+  fmax_bin_sub_param[0] = max_bin_sub_param[0];
+  fmin_bin_sub_param[1] = min_bin_sub_param[1];
+  fmax_bin_sub_param[1] = max_bin_sub_param[1];
+  
+  if(!fIsFit2D){
+    fmin_bin_sub_param[1] = 0.;
+    fmax_bin_sub_param[1] = 0.;
+  }
+
+  cout << "fmin_bin_sub_param 0 = " << fmin_bin_sub_param[0] 
+       << " - fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
+  cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1] 
+       << " - fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
+  cout << endl;
+  // cout << "param 0: " << "min = " << fmin_bin_sub_param[0] 
+  //      << " - max = " << fmax_bin_sub_param[0] << endl;
+  // cout << "param 1: " << "min = " << fmin_bin_sub_param[1] 
+  //      << " - max = " << fmax_bin_sub_param[1] << endl;
+  // cout << endl;
 
   // It can extract toys for sub-ranges of the free parameter
 
@@ -269,15 +416,15 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 
     UInt_t myseed = 99;
     Rnd::Instance()->SetSeeds(myseed+iexperiment+10,myseed+iexperiment+20,myseed+iexperiment+30,myseed+iexperiment+40,fSeed+iexperiment+50); // stat, syst, osc, fitter, other
-
+    
     cout << endl;
     cout << "iexperiment " << iexperiment << endl;
-    cout << "# params " << fnbins_param_1 << endl;
+    cout << "# params 0: " << fnbins_param[0] << endl;
+    cout << "# params 1: " << fnbins_param[1] << endl;
     
     fparm->ResetCurrToInitValues();
     
     // Extract oscillation parameters to be marginalized
-    
     this->SetMargOscParam();
 
     // Set seed after oscillation parameter extraction
@@ -350,110 +497,106 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       seedoth = Rnd::Instance()->RndOther().GetSeed();
       Rnd::Instance()->SetSeeds(seedstat+1,seedsyst+1,seedosc+1,seedfit+1,seedoth+1); // stat, syst, osc, fitter, other
     
-      // cout << endl;
-      // cout << "seedstat = " << seedstat+1 << endl;
-      // cout << "seedsyst = " << seedsyst+1 << endl;
-      // cout << "seedosc = " << seedosc+1 << endl;
-      // cout << "seedfit = " << seedfit+1 << endl;
-      // cout << "seedoth = " << seedoth+1 << endl;
-      // Rnd::Instance()->Print(std::cout);
-      
-      //
-
 
       // Produce toys for each osc param value
       
-      for(int ipar=min_bin_sub_param;ipar<=max_bin_sub_param;ipar++){
-
-	double currval = fmin_param_1 + ipar*fstep_param_1;
-	//cout << "currval = " << currval << ", ";
+      for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+	for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
 	
-
-	// Marginalize the Mass Hierarchy
-
-	conv::NuMassHierarchy_t hier;
-	conv::NuMassHierarchy_t hierBar;
-
-	int nMassHierarchy = 2;
-	for(int iMH=0;iMH<nMassHierarchy;iMH++){
+	  double currval0 = fmin_param[0] + ipar0*fstep_param[0];
+	  double currval1 = fmin_param[1] + ipar1*fstep_param[1];
+	  //cout << "currval0 = " << currval0 << ", ";
+	  //cout << "currval1 = " << currval1 << ", ";
+	
+	  // Marginalize the Mass Hierarchy
 	  
-	  // Don't marginalize Mass Hierarchy. Only the assumed one
-	  if(this->doMargMassHierarchy == false){
-	    
-	    hier    = Opt::Instance()->gMassHierarchyAssumed;
-	    hierBar = Opt::Instance()->gMassHierarchyAssumed;
-	    
-	    // Break the loop after the first iteration
-	    nMassHierarchy = 1; 
-	    
-	    // Used convention in MakeToysMarginalization(): 
-	    //  - iMH=0 --> kNmhNormal
-	    //  - iMH=1 --> kNmhInverted	
-	    if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
-	    else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
-
-	    // Mass Hierarchy has to be already defined
-	    else {
-	      cerr << endl;
-	      cerr << "Mass Hierarchy is not defined" << endl;
-	      cerr << endl;
-	      exit(1);
-	    }	      
-	  }
-
-	  // Loop over both MH hypotheses and assign a different MH
-	  else{
-	    if( iMH==0 ){
-	      hier    = kNmhNormal;
-	      hierBar = kNmhNormal;
-	      skexp->GetSuperkMC()->SetMassHierarchy(hier);
-	      skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
-	    }
-	    else if( iMH==1 ){
-	      hier    = kNmhInverted;
-	      hierBar = kNmhInverted;
-	      skexp->GetSuperkMC()->SetMassHierarchy(hier);
-	      skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
-	    }
-	  }
+	  conv::NuMassHierarchy_t hier;
+	  conv::NuMassHierarchy_t hierBar;
 	  
+	  int nMassHierarchy = 2;
+	  for(int iMH=0;iMH<nMassHierarchy;iMH++){
+	    
+	    // Don't marginalize Mass Hierarchy. Only the assumed one
+	    if(this->doMargMassHierarchy == false){
+	      
+	      hier    = Opt::Instance()->gMassHierarchyAssumed;
+	      hierBar = Opt::Instance()->gMassHierarchyAssumed;
+	      
+	      // Break the loop after the first iteration
+	      nMassHierarchy = 1; 
+	      
+	      // Used convention in MakeToysMarginalization(): 
+	      //  - iMH=0 --> kNmhNormal
+	      //  - iMH=1 --> kNmhInverted	
+	      if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+	      else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+	      
+	      // Mass Hierarchy has to be already defined
+	      else {
+		cerr << endl;
+		cerr << "Mass Hierarchy is not defined" << endl;
+		cerr << endl;
+		exit(1);
+	      }	      
+	    }
+	    
+	    // Loop over both MH hypotheses and assign a different MH
+	    else{
+	      if( iMH==0 ){
+		hier    = kNmhNormal;
+		hierBar = kNmhNormal;
+		skexp->GetSuperkMC()->SetMassHierarchy(hier);
+		skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	      }
+	      else if( iMH==1 ){
+		hier    = kNmhInverted;
+		hierBar = kNmhInverted;
+		skexp->GetSuperkMC()->SetMassHierarchy(hier);
+		skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	      }
+	    }
+	    
 #ifdef __print_masshierarchy__
-	  cout << endl;
-	  cout << "iMH = " << iMH << " - MH: " << util::HierarchyAsString(hier) 
-	       << " - MHbar: " << util::HierarchyAsString(hierBar)
-	       << endl;
+	    cout << endl;
+	    cout << "iMH = " << iMH << " - MH: " << util::HierarchyAsString(hier) 
+		 << " - MHbar: " << util::HierarchyAsString(hierBar)
+		 << endl;
 #endif	  
+	    	    
+	    // Update the expectation and produce the mock data
+	    fparm->Update(fPhysParamFree[0],currval0); 
+	    if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
+	    
+	    applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
+	    
+	    
+	    // Build toy Ereco distributions
+	    
+	    for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
+	      double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib];
+	      fToyMargErecoVArray_RHCNumu->SetEntry(bincont,iexperiment,ipar0,ipar1,iMH,ib); 
+	    }
+	    
 
-
-	  // Update the expectation and produce the mock data
-	  fparm->Update(fPhysParamFree_1,currval); 
-	  applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
-
-
-	  // Build toy Ereco distributions
-
-	  for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	    double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib]; 
-	    fToyMargErecoVArray_1D_RHCNumu->SetEntry(bincont,iexperiment,ipar,iMH,ib); 
-	  }
-	 
-	  
 
 #ifdef __print_array_toy_maketoys__
-	cout << endl;
-	cout << "toy=" << iexperiment << " - ipar=" << ipar << " : ";
-	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	  double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib]; 
-	  cout << bincont << " "; 
-	}
-	cout << endl;	
+	    cout << endl;
+	    cout << "toy=" << iexperiment 
+		 << " - ipar0 = " << ipar0 
+		 << " - ipar1 = " << ipar1 << " : ";
+	    for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
+	      double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib]; 
+	      cout << bincont << " "; 
+	    }
+	    cout << endl;	
 #endif
-
-	} // loop Mass Hierarchy
-      } // loop ipar (free parameter)
+	    
+	  } // loop Mass Hierarchy
+	} // loop ipar1 (free parameter)
+      } // loop ipar0 (free parameter)
     } // applied_negevents_condition
   } // iexperiment
-  
+
   cout << endl;
   cout << "Toys for marginalization are extracted" << endl;
   cout << endl;
@@ -464,122 +607,149 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   
   int NtoysTot=0;
-  int NparTot=0;
+  int NparTot0=0;
+  int NparTot1=0;
  
   cout << endl;
   cout << "Fill marginalized Chisq in the parameter range:" << endl
        << "bin: ["  
-       << fmin_bin_sub_param_1
+       << fmin_bin_sub_param[0]
        << ","
-       << fmax_bin_sub_param_1
+       << fmax_bin_sub_param[0]
        << "]"
        << endl
-       << fnamefreeparam_1 << ": " 
+       << fnamefreeparam[0] << ": " 
        << "[" 
-       << hchisq_marg_1D->GetBinLowEdge(fmin_bin_sub_param_1 + 1)
+       << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
        << ","
-       << hchisq_marg_1D->GetBinLowEdge(fmax_bin_sub_param_1 + 1)
+       << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
        << "]"
        << endl;
+  cout << "bin: ["  
+       << fmin_bin_sub_param[1]
+       << ","
+       << fmax_bin_sub_param[1]
+       << "]"
+       << endl
+       << fnamefreeparam[1] << ": " 
+       << "[" 
+       << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+       << ","
+       << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
+       << "]"
+       << endl;
+
 
   // It can marginalize sub-ranges of the free parameter
   // fmin_bin_sub_param_1 and fmax_bin_sub_param_1 read from the binary file
 
-  for(int ipar=fmin_bin_sub_param_1;ipar<=fmax_bin_sub_param_1;ipar++){
-    
-    double currval = fmin_param_1 + ipar*fstep_param_1;
-    //cout << "currval = " << currval << endl;
-    
-    // Marginalize the Mass Hierarchy
-    int nMassHierarchy = 2;
-        
-    for(int iMH=0;iMH<nMassHierarchy;iMH++){
+  NparTot0=0;
+  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    NparTot1=0;
+    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
       
-      // Don't marginalize Mass Hierarchy. Only the assumed one
-      if(this->doMargMassHierarchy == false){
-		
-	// Break the loop after the first iteration
-	nMassHierarchy = 1; 
+      double currval0 = fmin_param[0] + ipar0*fstep_param[0];
+      double currval1 = fmin_param[1] + ipar1*fstep_param[1];
+      //cout << "currval0 = " << currval0 << endl;
+      //cout << "currval1 = " << currval1 << endl;
+      
+      // Marginalize the Mass Hierarchy
+      int nMassHierarchy = 2;
+      
+      for(int iMH=0;iMH<nMassHierarchy;iMH++){
 	
-	// Used convention in MakeToysMarginalization(): 
-	//  - iMH=0 --> kNmhNormal
-	//  - iMH=1 --> kNmhInverted	
-	if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
-	else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
-
-	// Mass Hierarchy has to be already defined
-	else {
-	  cerr << endl;
-	  cerr << "Mass Hierarchy is not defined" << endl;
-	  cerr << endl;
-	  exit(1);
+	// Don't marginalize Mass Hierarchy. Only the assumed one
+	if(this->doMargMassHierarchy == false){
+	  
+	  // Break the loop after the first iteration
+	  nMassHierarchy = 1; 
+	  
+	  // Used convention in MakeToysMarginalization(): 
+	  //  - iMH=0 --> kNmhNormal
+	  //  - iMH=1 --> kNmhInverted	
+	  if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+	  else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+	  
+	  // Mass Hierarchy has to be already defined
+	  else {
+	    cerr << endl;
+	    cerr << "Mass Hierarchy is not defined" << endl;
+	    cerr << endl;
+	    exit(1);
+	  }
 	}
-      }
-      
+	
 #ifdef __print_masshierarchy__
-      cout << "iMH = " << iMH << endl;
+	cout << "iMH = " << iMH << endl;
 #endif	  
-      
-      for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
 	
-	// compute the likelihood for a single marginalization toy
-	double chisq = 0.;
-	for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-	  double nexp = fToyMargErecoVArray_1D_RHCNumu->GetEntry(iexperiment,ipar,iMH,ibin);
-	  double nobs = skobs_data->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ibin];
-	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
-	}
-
-      
+	for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+	  
+	  // compute the likelihood for a single marginalization toy
+	  double chisq = 0.;
+	  for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
+	    double nexp = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar0,ipar1,iMH,ibin);
+	    double nobs = skobs_data->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ibin];
+	    chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+	  }
+	  
+	  
 #ifdef __print_array_toy_fillchisq__
-	cout << endl;
-	cout << "toy=" << iexperiment << " - ipar=" << ipar << " : ";
-	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	  double bincont = fToyMargErecoVArray_1D_RHCNumu->GetEntry(iexperiment,ipar,iMH,ib);
-	  cout << bincont << " "; 
-	}
-	cout << endl;	
+	  cout << endl;
+	  cout << "toy=" << iexperiment << " - ipar0=" << ipar0 << " - ipar1=" << ipar1 << " : ";
+	  for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
+	    double bincont = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar0,ipar1,iMH,ib);
+	    cout << bincont << " "; 
+	  }
+	  cout << endl;	
 #endif
-
+	  
+	  double like = exp(-chisq/2.) / fntoys_marg;
+	  
+	  if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
+	  
+	  flikeVArray->AddToEntry(like,ipar0,ipar1); // this is correct if binary files differ only for free param sub-ranges
+	  
+	  NtoysTot++;
+	} // iexperiment
 	
-	double like = exp(-chisq/2.) / fntoys_marg;
-	
-	if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
-	
-	flikeVArray_1D->AddToEntry(like,ipar); // this is correct if binary files differ only for free param sub-ranges
-	
-	NtoysTot++;
-	
-      } // iexperiment
+      } // iMH (mass hierarchy)
       
-    } // iMH (mass hierarchy)
-    
-    NparTot++;
+      NparTot1++;
+    } // ipar1 (free parameter)
+    NparTot0++;
+  } // ipar0 (free parameter)
 
-  } // ipar (free parameter)
-  
   cout << endl;
-  cout << "# of scanned free parameters: " << NparTot << endl; 
-  if(doMargMassHierarchy) cout << "# of toys used: " << (double)NtoysTot / (double)NparTot / 2. << endl;
-  else cout << "# of toys used: " << (double)NtoysTot / (double)NparTot << endl;
+  cout << "# of scanned free parameters 0: " << NparTot0 << endl; 
+  cout << "# of scanned free parameters 1: " << NparTot1 << endl; 
+  if(doMargMassHierarchy) cout << "# of toys used: " << (double)NtoysTot / 2. / (double)NparTot0 / (double)NparTot1 << endl;
+  else cout << "# of toys used: " << (double)NtoysTot / (double)NparTot1 /  (double)NparTot0 << endl;
   cout << endl;
 
   // Now the marginalized likelihood is computed using toys from all the binary files
   // Compute the chisq for each free osc parameter value
   
-  for(int ipar=fmin_bin_sub_param_1;ipar<=fmax_bin_sub_param_1;ipar++){
-    double bincont = -2*log( flikeVArray_1D->GetEntry(ipar) );
-    fChisqMargVArray_1D->SetEntry(bincont,ipar);
-    hchisq_marg_1D->SetBinContent(ipar+1,bincont);
+  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      double bincont = -2*log( flikeVArray->GetEntry(ipar0,ipar1) );
+      fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
+      if(!fIsFit2D) hchisq_marg_1D->SetBinContent(ipar0+1,bincont);
+      else          hchisq_marg_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
+    }
   }
 
 #ifdef __print_chisqmarg__
   cout << endl;
   cout << "Marginalized Chisq distribution:" << endl; 
-  cout << "fmin_bin_sub_param_1 = " << fmin_bin_sub_param_1 << endl;
-  cout << "fmax_bin_sub_param_1 = " << fmax_bin_sub_param_1 << endl;
-  for(int ipar=fmin_bin_sub_param_1;ipar<=fmax_bin_sub_param_1;ipar++){
-    cout << fChisqMargVArray_1D->GetEntry(ipar) << ", ";
+  cout << "fmin_bin_sub_param 0 = " << fmin_bin_sub_param[0] << endl;
+  cout << "fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
+  cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1] << endl;
+  cout << "fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
+  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      cout << fChisqMargVArray->GetEntry(ipar0,ipar1) << ", ";
+    }
   }
   cout << endl;
 #endif
@@ -606,27 +776,32 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   }	    
 
   char outname[200];
-  sprintf(outname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param_1,namemh,"",".bin");
+  sprintf(outname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string soutname(outname);
-  fToyMargErecoVArray_1D_RHCNumu->WriteFile(soutname);
+  fToyMargErecoVArray_RHCNumu->WriteFile(soutname);
   
   cout << " - Toy for marginalization are stored in " << soutname << endl;
 
   // Write store sub-range of the free parameter
 
-  int min_bin_sub_param = fmin_bin_sub_param_1;
-  int max_bin_sub_param = fmax_bin_sub_param_1;
+  int min_bin_sub_param0 = fmin_bin_sub_param[0];
+  int max_bin_sub_param0 = fmax_bin_sub_param[0];
+  int min_bin_sub_param1 = fmin_bin_sub_param[1];
+  int max_bin_sub_param1 = fmax_bin_sub_param[1];
+
 
   char outname_range[200];
-  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param_1,namemh,"_subrange",".bin");
+  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
   
   std::string soutname_range(outname_range);
   
   ofstream os(soutname_range.c_str(),ios::binary|ios::out);
   assert(os);
-  os.write( (char*)&fmin_bin_sub_param_1,sizeof(int));
-  os.write( (char*)&fmax_bin_sub_param_1,sizeof(int));
+  os.write( (char*)&fmin_bin_sub_param[0],sizeof(int));
+  os.write( (char*)&fmax_bin_sub_param[0],sizeof(int));
+  os.write( (char*)&fmin_bin_sub_param[1],sizeof(int));
+  os.write( (char*)&fmax_bin_sub_param[1],sizeof(int));
   os.close();
 
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
@@ -634,35 +809,55 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
 
   //
 
-  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param_1,namemh,"_subrange",".txt");
+  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".txt");
 
-  fmin_sub_param_1 = hchisq_marg_1D->GetBinLowEdge(fmin_bin_sub_param_1 + 1);    
-  fmax_sub_param_1 = hchisq_marg_1D->GetBinLowEdge(fmax_bin_sub_param_1 + 1);    
-
+  fmin_sub_param[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1);    
+  fmax_sub_param[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1);    
+  fmin_sub_param[1] = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1);    
+  fmax_sub_param[1] = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1);    
+  
   ofstream ostext(outname_range,ios::out);
-  ostext << "Used sub-range of the free parameter: " << fnamefreeparam_1 << endl;
-  ostext << "First bin of free param: " << fmin_bin_sub_param_1 << endl;
-  ostext << "Last bin of free param: " << fmax_bin_sub_param_1 << endl;  
   ostext << endl;
-  ostext << "fnamefreeparam_1: " << endl
+  ostext << "Used sub-range of the free parameter 0: " << fnamefreeparam[0] << endl;
+  ostext << "First bin of free param: " << fmin_bin_sub_param[0] << endl;
+  ostext << "Last bin of free param: " << fmax_bin_sub_param[0] << endl;  
+  ostext << "fnamefreeparam0: " << endl
 	 << " - " << soutname << endl
 	 << " - " << soutname_range << endl;
+  ostext << endl;
+  ostext << "Used sub-range of the free parameter 1: " << fnamefreeparam[1] << endl;
+  ostext << "First bin of free param: " << fmin_bin_sub_param[1] << endl;
+  ostext << "Last bin of free param: " << fmax_bin_sub_param[1] << endl;  
+  ostext << "fnamefreeparam1: " << endl
+	 << " - " << soutname << endl
+	 << " - " << soutname_range << endl;
+  ostext << endl;
   ostext << "Mass hierarchy: "; 
   if( this->doMargMassHierarchy ) ostext << " Marginalize";
   else ostext << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
   ostext << endl;
   if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
   else ostext << "Don't rethrow unphysical systematic toys" << endl;
-  ostext << "fnbins_param_1 = " << fnbins_param_1 << endl;
   ostext << "fntoys_marg = " << fntoys_marg << endl;
   ostext << "fnerecobins_RHCNumu = " << fnerecobins_RHCNumu << endl;
-  ostext << "fmin_bin_sub_param_1 = " << fmin_bin_sub_param_1 << endl;
-  ostext << "fmax_bin_sub_param_1 = " << fmax_bin_sub_param_1 << endl;
-  ostext << "fmin_sub_param_1 = " << fmin_sub_param_1 << endl;
-  ostext << "fmax_sub_param_1 = " << fmax_sub_param_1 << endl;
-  ostext << "fmin_param_1 = " << fmin_param_1 << endl;
-  ostext << "fmax_param_1 = " << fmax_param_1 << endl;
-  ostext << "fstep_param_1 = " << fstep_param_1 << endl;
+  ostext << endl;
+  ostext << "fnbins_param0 = " << fnbins_param[0] << endl;
+  ostext << "fmin_bin_sub_param0 = " << fmin_bin_sub_param[0] << endl;
+  ostext << "fmax_bin_sub_param0 = " << fmax_bin_sub_param[0] << endl;
+  ostext << "fmin_sub_param0 = " << fmin_sub_param[0] << endl;
+  ostext << "fmax_sub_param0 = " << fmax_sub_param[0] << endl;
+  ostext << "fmin_param0 = " << fmin_param[0] << endl;
+  ostext << "fmax_param0 = " << fmax_param[0] << endl;
+  ostext << "fstep_param0 = " << fstep_param[0] << endl;
+  ostext << endl;
+  ostext << "fnbins_param1 = " << fnbins_param[1] << endl;
+  ostext << "fmin_bin_sub_param1 = " << fmin_bin_sub_param[1] << endl;
+  ostext << "fmax_bin_sub_param1 = " << fmax_bin_sub_param[1] << endl;
+  ostext << "fmin_sub_param1 = " << fmin_sub_param[1] << endl;
+  ostext << "fmax_sub_param1 = " << fmax_sub_param[1] << endl;
+  ostext << "fmin_param1 = " << fmin_param[1] << endl;
+  ostext << "fmax_param1 = " << fmax_param[1] << endl;
+  ostext << "fstep_param1 = " << fstep_param[1] << endl;
   ostext << endl;
   ostext << "fhypothesis = " << util::AsString(fhypothesis) << endl;
   ostext << endl;
@@ -697,28 +892,34 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   sprintf(outtag,"%s_%s",tag,"Merged");
 
   char outname[200];
-  sprintf(outname,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param_1,namemh,"",".bin");
+  sprintf(outname,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string soutname(outname);
-  fToyMargErecoVArray_1D_RHCNumu_Clone->WriteFile(soutname);
+  fToyMargErecoVArray_RHCNumu_Clone->WriteFile(soutname);
 
   // Write store sub-range of the free parameter
 
-  int min_bin_sub_param = fmin_bin_sub_param_1;
-  int max_bin_sub_param = fmax_bin_sub_param_1;
+  int min_bin_sub_param0 = fmin_bin_sub_param[0];
+  int max_bin_sub_param0 = fmax_bin_sub_param[0];
+  int min_bin_sub_param1 = fmin_bin_sub_param[1];
+  int max_bin_sub_param1 = fmax_bin_sub_param[1];
 
   char outname_range[200];
-  sprintf(outname_range,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param_1,namemh,"_subrange",".bin");
+  sprintf(outname_range,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param[0],fnbins_param[0],namemh,"_subrange",".bin");
   
   std::string soutname_range(outname_range);
   
-  int min_bin = 0;
-  int max_bin = fnbins_param_1 - 1;
+  int min_bin0 = 0;
+  int max_bin0 = fnbins_param[0] - 1;
+  int min_bin1 = 0;
+  int max_bin1 = fnbins_param[1] - 1;
 
   ofstream os(soutname_range.c_str(),ios::binary|ios::out);
   assert(os);
-  os.write( (char*)&min_bin,sizeof(int));
-  os.write( (char*)&max_bin,sizeof(int));
+  os.write( (char*)&min_bin0,sizeof(int));
+  os.write( (char*)&max_bin0,sizeof(int));
+  os.write( (char*)&min_bin1,sizeof(int));
+  os.write( (char*)&max_bin1,sizeof(int));
   os.close();
 
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
@@ -728,10 +929,11 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
 
   char outname_text[200];
   std::string soutname_text(outname_text);
-  sprintf(outname_text,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param_1,namemh,"",".txt");
+  sprintf(outname_text,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".txt");
 
   ofstream ostext(outname_text,ios::out);
-  ostext << "fnamefreeparam_1: " << fnamefreeparam_1 << endl;
+  ostext << "fnamefreeparam0: " << fnamefreeparam[0] << endl;
+  ostext << "fnamefreeparam1: " << fnamefreeparam[1] << endl;
   ostext << "Mass hierarchy: "; 
   if( this->doMargMassHierarchy ) ostext << " Marginalize";
   else ostext << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
@@ -739,14 +941,22 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
   else ostext << "Don't rethrow unphysical systematic toys" << endl;
   ostext << "# of merged files: " << fNmergedFiles << endl;
-  ostext << "fnbins_param_1 = " << fnbins_param_1 << endl;
   ostext << "fntoys_marg = " << fntoys_marg << endl;
   ostext << "fnerecobins_RHCNumu = " << fnerecobins_RHCNumu << endl;
-  ostext << "min_bin = " << min_bin << endl;
-  ostext << "max_bin = " << max_bin << endl;
-  ostext << "fmin_param_1 = " << fmin_param_1 << endl;
-  ostext << "fmax_param_1 = " << fmax_param_1 << endl;
-  ostext << "fstep_param_1 = " << fstep_param_1 << endl;
+  ostext << endl;
+  ostext << "fnbins_param0 = " << fnbins_param[0] << endl;
+  ostext << "min_bin0 = " << min_bin0 << endl;
+  ostext << "max_bin0 = " << max_bin0 << endl;
+  ostext << "fmin_param[0] = " << fmin_param[0] << endl;
+  ostext << "fmax_param[0] = " << fmax_param[0] << endl;
+  ostext << "fstep_param[0] = " << fstep_param[0] << endl;
+  ostext << endl;
+  ostext << "fnbins_param1 = " << fnbins_param[1] << endl;
+  ostext << "min_bin1 = " << min_bin1 << endl;
+  ostext << "max_bin1 = " << max_bin1 << endl;
+  ostext << "fmin_param[1] = " << fmin_param[1] << endl;
+  ostext << "fmax_param[1] = " << fmax_param[1] << endl;
+  ostext << "fstep_param[1] = " << fstep_param[1] << endl;
   ostext << endl;
   ostext << "fhypothesis = " << util::AsString(fhypothesis) << endl;
   ostext << endl;
@@ -772,23 +982,25 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
   }	    
 
   char inname[200];
-  sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param_1,namemh,"",".bin");
+  sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string sinname(inname);
   cout << sinname << endl;
 
-  fToyMargErecoVArray_1D_RHCNumu->ReadFile(sinname);
+  fToyMargErecoVArray_RHCNumu->ReadFile(sinname);
 
   cout << endl;
   cout << "Read toys for marginalization from binary file:" << sinname << endl;  
   
   // Write store sub-range of the free parameter
 
-  int min_bin_sub_param=0;
-  int max_bin_sub_param=0;
+  int min_bin_sub_param0=0;
+  int max_bin_sub_param0=0;
+  int min_bin_sub_param1=0;
+  int max_bin_sub_param1=0;
 
   char inname_range[200];
-  sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param_1,namemh,"_subrange",".bin");
+  sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
 
   std::string sinname_range(inname_range);
 
@@ -796,36 +1008,72 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
 
   ifstream is(sinname_range.c_str(),ios::binary|ios::in);
   assert(is);
-  is.read( (char*)&min_bin_sub_param,sizeof(int));
-  is.read( (char*)&max_bin_sub_param,sizeof(int));
+  is.read( (char*)&min_bin_sub_param0,sizeof(int));
+  is.read( (char*)&max_bin_sub_param0,sizeof(int));
+  is.read( (char*)&min_bin_sub_param1,sizeof(int));
+  is.read( (char*)&max_bin_sub_param1,sizeof(int));
   is.close();
 
-  fmin_bin_sub_param_1 = min_bin_sub_param;
-  fmax_bin_sub_param_1 = max_bin_sub_param;
+  fmin_bin_sub_param[0] = min_bin_sub_param0;
+  fmax_bin_sub_param[0] = max_bin_sub_param0;
+  fmin_bin_sub_param[1] = min_bin_sub_param1;
+  fmax_bin_sub_param[1] = max_bin_sub_param1;
 
-  fmin_sub_param_1 = hchisq_marg_1D->GetBinLowEdge(fmin_bin_sub_param_1 + 1);    
-  fmax_sub_param_1 = hchisq_marg_1D->GetBinLowEdge(fmax_bin_sub_param_1 + 1);
+  fmin_sub_param[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1);    
+  fmax_sub_param[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1);
+  fmin_sub_param[1] = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1);    
+  fmax_sub_param[1] = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1);
     
-  if(fmin_sub_param_1<fmin_param_1 || fmax_sub_param_1>fmax_param_1){
+  //if(fmin_sub_param[0]<fmin_param[0] || fmax_sub_param[0]>fmax_param[0]){
+  if(fmin_sub_param[0]<(fmin_param[0]-conv::kASmallNum) || fmax_sub_param[0]>(fmax_param[0]+conv::kASmallNum)){
     cerr << endl 
-	 << "The free parameter sub-range ["
-	 << fmin_sub_param_1 << "," << fmax_sub_param_1 << "] " 
-	 << "provided by the files"
+	 << "The free parameter 0 sub-range ["
+	 << fmin_sub_param[0] << "," << fmax_sub_param[0] << "] " 
+	 << "provided by the files "
 	 << inname << endl
-	 << "and" 
+	 << " and " 
 	 << inname_range << endl
-	 << "exceeds the total range set for" 
-	 << fnamefreeparam_1
-	 << " --> [" << fmin_param_1 << "," << fmax_param_1 << "]"
+	 << " exceeds the total range set for" 
+	 << fnamefreeparam[0]
+	 << " --> [" << fmin_param[0] << "," << fmax_param[0] << "]"
+	 << endl;
+    exit(1);
+  }
+  
+
+  // cout << endl;
+  // cout << std::setprecision(10) 
+  //      << fmin_sub_param[1] << ", " << fmax_sub_param[1] << endl
+  //      << fmin_param[1] << ", " << fmax_param[1] << endl
+  //      << endl;  
+
+  if(fmin_sub_param[1]<(fmin_param[1]-conv::kASmallNum) || fmax_sub_param[1]>(fmax_param[1]+conv::kASmallNum)){  // w/o conv::kASmallNum it enters the loop if bounds are identical. To check
+    cerr << endl 
+	 << "The free parameter 1 sub-range ["
+	 << fmin_sub_param[1] << "," << fmax_sub_param[1] << "] " 
+	 << "provided by the files "
+	 << inname << endl
+	 << " and " 
+	 << inname_range << endl
+	 << " exceeds the total range set for" 
+	 << fnamefreeparam[1]
+	 << " --> [" << fmin_param[1] << "," << fmax_param[1] << "]"
 	 << endl;
     exit(1);
   }
   
   cout << "File sub-range: ["
-       << fmin_sub_param_1 << "," << fmax_sub_param_1 
+       << fmin_sub_param[0] << "," << fmax_sub_param[0] 
        << "]" << endl;
   cout << "File bin sub-range: ["
-       << fmin_bin_sub_param_1 << "," << fmax_bin_sub_param_1 
+       << fmin_bin_sub_param[0] << "," << fmax_bin_sub_param[0] 
+       << "]" << endl << endl;
+
+  cout << "File sub-range: ["
+       << fmin_sub_param[1] << "," << fmax_sub_param[1] 
+       << "]" << endl;
+  cout << "File bin sub-range: ["
+       << fmin_bin_sub_param[1] << "," << fmax_bin_sub_param[1] 
        << "]" << endl << endl;
  
   return;
@@ -834,10 +1082,26 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
 void FitMarginalization::Minimize(){
   
   int minbin = -999;
+  int minbinX = -999;
+  int minbinY = -999;
+  int minbinZ = -999;
 
-  fchisq_bf = hchisq_marg_1D->GetMinimum();
-  minbin = hchisq_marg_1D->GetMinimumBin();
-  fparam_1_bf = hchisq_marg_1D->GetBinLowEdge(minbin);;
+  cout << endl;
+  cout << "Find minimum of marginalized chisq" << endl;
+  cout << endl;
+
+  if(!fIsFit2D){
+    fchisq_bf = hchisq_marg_1D->GetMinimum();
+    minbin = hchisq_marg_1D->GetMinimumBin();
+    fparam_bf[0] = hchisq_marg_1D->GetBinLowEdge(minbin);
+    fparam_bf[1] = -999.;
+  }
+  else{
+    fchisq_bf = hchisq_marg_2D->GetMinimum();
+    hchisq_marg_2D->GetMinimumBin(minbinX,minbinY,minbinZ);
+    fparam_bf[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(minbinX);
+    fparam_bf[1] = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(minbinY);
+  }
 
   return;
 }
@@ -848,16 +1112,30 @@ void FitMarginalization::Minimize(TH1F *hInChisqMarg){
   
   fchisq_bf = hInChisqMarg->GetMinimum();
   minbin = hInChisqMarg->GetMinimumBin();
-  fparam_1_bf = hInChisqMarg->GetBinLowEdge(minbin);
+  fparam_bf[0] = hInChisqMarg->GetBinLowEdge(minbin);
   
   return;
 }
 //________________________________________________________________________________________
-void FitMarginalization::PrintBestFit(void){
+void FitMarginalization::Minimize(TH2F *hInChisqMarg){
+  
+  int minbin = -999;
+  
+  fchisq_bf = hInChisqMarg->GetMinimum();
+  minbin = hInChisqMarg->GetMinimumBin();
+  fparam_bf[0] = hInChisqMarg->GetXaxis()->GetBinLowEdge(minbin);
+  fparam_bf[1] = hInChisqMarg->GetYaxis()->GetBinLowEdge(minbin);
+  
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::PrintBestFit(){
 
   cout << endl;
   cout << "Best fit ChisqMarg = " << this->GetChisqBestFit() << endl;
-  cout << "Best fit " << fnamefreeparam_1 << " = " << this->GetParamBestFit() << endl;
+  cout << "Best fit param 0: " << fnamefreeparam[0] << " = " << this->GetParamBestFit(0) << endl;
+  if(fIsFit2D)
+    cout << "Best fit param 1: " << fnamefreeparam[1] << " = " << this->GetParamBestFit(1) << endl;
   cout << endl;
 
   return;
@@ -865,23 +1143,23 @@ void FitMarginalization::PrintBestFit(void){
 //________________________________________________________________________________________
 VALORArrayF * FitMarginalization::GetToyMargErecoVArray(SuperkSample_t s){
 
-  if(s==kSKsRHCFCFV1RingMuLike) return fToyMargErecoVArray_1D_RHCNumu;
+  if(s==kSKsRHCFCFV1RingMuLike) return fToyMargErecoVArray_RHCNumu;
   else{
     cout << "You have chosen a wrong Superk Sample" << endl;
     exit(1);
   }
 }
 //________________________________________________________________________________________
-TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar,int iMassHierarchy){
+TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy){
 
   if(s==kSKsRHCFCFV1RingMuLike){ 
     for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-      double bincont = fToyMargErecoVArray_1D_RHCNumu->GetEntry(itoy,ifreepar,iMassHierarchy,ibin);
-      hToyMargCurr_1D->SetBinContent(ibin+1,bincont);
+      double bincont = fToyMargErecoVArray_RHCNumu->GetEntry(itoy,ifreepar0,ifreepar1,iMassHierarchy,ibin);
+      hToyMargCurr->SetBinContent(ibin+1,bincont);
       //cout << bincont << " ";
     }
     //cout << endl;
-    return hToyMargCurr_1D;
+    return hToyMargCurr;
   }
   else{
     cout << "You have chosen a wrong Superk Sample" << endl;
@@ -889,11 +1167,14 @@ TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepa
   }
 }
 //________________________________________________________________________________________
-void FitMarginalization::ResetChisqMarg(int min_bin_sub_param,int max_bin_sub_param){
-  for(int ipar=fmin_bin_sub_param_1;ipar<=fmax_bin_sub_param_1;ipar++){
-    double bincont = 0;
-    fChisqMargVArray_1D->SetEntry(bincont,ipar);
-    hchisq_marg_1D->SetBinContent(ipar+1,bincont);
+void FitMarginalization::ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param){
+  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      double bincont = 0;
+      fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
+      hchisq_marg_1D->SetBinContent(ipar0+1,bincont);
+      hchisq_marg_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
+    }
   }
   return;
 }
@@ -954,11 +1235,20 @@ void FitMarginalization::SetMargOscParam(){
 
     bool doMarginalize = true;
     
-    if(p!=fPhysParamFree_1) 
-      fparm->SetDoMarg(fPhysParamFree_1,true); 
+    if(p!=fPhysParamFree[0]) 
+      fparm->SetDoMarg(fPhysParamFree[0],true); 
     else{
-      fparm->SetDoMarg(fPhysParamFree_1,false);  // Do not marginalize if free parameter
+      fparm->SetDoMarg(fPhysParamFree[0],false);  // Do not marginalize if free parameter
       continue; 
+    }
+    
+    if(fIsFit2D){
+      if(p!=fPhysParamFree[1]) 
+	fparm->SetDoMarg(fPhysParamFree[1],true); 
+      else{
+	fparm->SetDoMarg(fPhysParamFree[1],false);  // Do not marginalize if free parameter
+	continue; 
+      }
     }
 
     if(util::IsSystematic(p)) continue; // not oscillation parameters 
@@ -1074,9 +1364,9 @@ void FitMarginalization::MergeInputFiles(){
   // Initialize the clone VALORArray only the first time MergeInputFiles() is called
   const int nmh=2; // mass hierarchy
   if(MergeInputFiles_Called){
-    fToyMargErecoVArray_1D_RHCNumu_Clone = new VALORArrayF(fntoys_marg, fnbins_param_1, nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
+    fToyMargErecoVArray_RHCNumu_Clone = new VALORArrayF(fntoys_marg, fnbins_param[0],fnbins_param[1], nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
     
-    fToyMargErecoVArray_1D_RHCNumu_Clone->SetAll(-1.);
+    fToyMargErecoVArray_RHCNumu_Clone->SetAll(-1.);
 
     MergeInputFiles_Called = false;
   }
@@ -1084,61 +1374,74 @@ void FitMarginalization::MergeInputFiles(){
   cout << endl;
   cout << "Merge toys of input file:" << endl
        << "bin: ["  
-       << fmin_bin_sub_param_1
+       << fmin_bin_sub_param[0]
        << ","
-       << fmax_bin_sub_param_1
+       << fmax_bin_sub_param[0]
        << "]"
        << endl
-       << fnamefreeparam_1 << ": " 
+       << fnamefreeparam[0] << ": " 
        << "[" 
-       << hchisq_marg_1D->GetBinLowEdge(fmin_bin_sub_param_1 + 1)
+       << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
        << ","
-       << hchisq_marg_1D->GetBinLowEdge(fmax_bin_sub_param_1 + 1)
+       << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
+       << "]"
+       << endl;
+  cout << "bin: ["  
+       << fmin_bin_sub_param[1]
+       << ","
+       << fmax_bin_sub_param[1]
+       << "]"
+       << endl
+       << fnamefreeparam[1] << ": " 
+       << "[" 
+       << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+       << ","
+       << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
        << "]"
        << endl;
 
   // Copy read array elements to the clone one. Same loop as in FillChisqMarg()
   for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
-    for(int ipar=fmin_bin_sub_param_1;ipar<=fmax_bin_sub_param_1;ipar++){
-      int nMassHierarchy = 2;
-      for(int iMH=0;iMH<nMassHierarchy;iMH++){
-	for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-	  
-	  float bincont = fToyMargErecoVArray_1D_RHCNumu->GetEntry(iexperiment,ipar,iMH,ibin); // bincont = -1 by default
-	  if(bincont >= 0.){
-	    float bincont_clone = fToyMargErecoVArray_1D_RHCNumu_Clone->GetEntry(iexperiment,ipar,iMH,ibin); 
-	    if(bincont_clone >= 0.){
-	      cerr << endl;
-	      cerr << "Following bin has been already filled:" << endl;
-	      cerr << " - iexperiment = " << iexperiment << endl;
-	      cerr << " - ipar = " << ipar << endl;
-	      cerr << " - iMH = " << iMH << endl;
-	      cerr << " - iereco = " << ibin << endl;
-	      exit(1);
+    for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+      for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+	int nMassHierarchy = 2;
+	for(int iMH=0;iMH<nMassHierarchy;iMH++){
+	  for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
+	    
+	    float bincont = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar0,ipar1,iMH,ibin); // bincont = -1 by default
+	    if(bincont >= 0.){
+	      float bincont_clone = fToyMargErecoVArray_RHCNumu_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,ibin); 
+	      if(bincont_clone >= 0.){
+		cerr << endl;
+		cerr << "Following bin has been already filled:" << endl;
+		cerr << " - iexperiment = " << iexperiment << endl;
+		cerr << " - ipar0 = " << ipar0 << endl;
+		cerr << " - ipar1 = " << ipar1 << endl;
+		cerr << " - iMH = " << iMH << endl;
+		cerr << " - iereco = " << ibin << endl;
+		exit(1);
+	      }
+	      else{
+		fToyMargErecoVArray_RHCNumu_Clone->SetEntry(bincont,iexperiment,ipar0,ipar1,iMH,ibin); 
+	      }
 	    }
-	    else{
-	      fToyMargErecoVArray_1D_RHCNumu_Clone->SetEntry(bincont,iexperiment,ipar,iMH,ibin); 
-	    }
-
-	    //cout << fToyMargErecoVArray_1D_RHCNumu_Clone->GetEntry(iexperiment,ipar,iMH,ibin) << ", ";
-	  }
+	    
+	  } // loop ibin
 	  
-	} // loop ibin
-
-
+	  
 #ifdef __print_array_toy_merge__
-	cout << endl;
-	cout << "toy=" << iexperiment << " - ipar=" << ipar << " : ";
-	for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	  double bincont = fToyMargErecoVArray_1D_RHCNumu_Clone->GetEntry(iexperiment,ipar,iMH,ib);
-	  cout << bincont << " "; 
-	}
-	cout << endl;	
+	  cout << endl;
+	  cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << " : ";
+	  for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
+	    double bincont = fToyMargErecoVArray_RHCNumu_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,ib);
+	    cout << bincont << " "; 
+	  }
+	  cout << endl;	
 #endif
-
-
-      } // loop iMH
-    } // loop sub-range
+	  
+	} // loop iMH
+      } // loop ipar1
+    } // loop ipar0
   } // loop iexperiment
     
   fNmergedFiles++;
