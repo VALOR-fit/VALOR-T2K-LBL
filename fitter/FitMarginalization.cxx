@@ -715,7 +715,7 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
 #endif
 	  
 	  double like = exp(-chisq/2.) / fntoys_marg;
-	  
+
 	  if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
 	  
 	  flikeVArray->AddToEntry(like,ipar0,ipar1); // this is correct if binary files differ only for free param sub-ranges
