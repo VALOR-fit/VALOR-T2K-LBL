@@ -7,40 +7,42 @@ void run_fit_marginalization
 (
  const bool   readtoys             = true,
 
- //const char * infilename           = "../../inputs/marginalization/toys/margtoys_cluster",
- //const char * infilename           = "DEV_FitMarg_mixing23_1p7E20_prefit",
+ //const char * infilename           = "../../inputs/marginalization/toys/mixing23_1p7E20_postfit_NoRethrow_Merged",
+ //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
  //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
- const char * infilename           = "ciao_Merged",
+ //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
+ const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
 
- const int    nfiles               = 1,         // # of files to read
+ const int    nfiles               = 1
+,         // # of files to read
 
- const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
+ //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
+ const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
 
  //const char * fit_param_list      = "nuosc3fbar_numudisapp_constrainall+nuisance",  
  const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
 
  const int    NtoysMarg            = 10,   // # toys marginalization 
 
- const char * freeparname_1        = "mixing23Bar",  // free parameter
- const int    NptScan_1            = 201,            // # pts of free parameter to scan
- const int    freeparmin_1         = 0,              // minimum value of free parameter
- const int    freeparmax_1         = 1,              // maxinum value of free parameter
+ const char * freeparname0        = "mixing23Bar",  // free parameter
+ const double freeparmin0         = 0,              // minimum value of free parameter
+ const double freeparmax0         = 1,              // maxinum value of free parameter
+ const int    NptScan0            = 21,            // # pts of free parameter to scan
 
- const char * freeparname_2        = "dmsq23Bar",  // free parameter
- const int    NptScan_2            = 201,          // # pts of free parameter to scan
- const int    freeparmin_2         = conv::kMinFitDm23sq, // minimum value of free parameter
- const int    freeparmax_2         = conv::kMaxFitDm23sq, // maxinum value of free parameter
+ const char * freeparname1        = "dmsq23Bar",  // free parameter
+ const double freeparmin1         = 0.0002, // minimum value of free parameter
+ const double freeparmax1         = 0.02, // maxinum value of free parameter
+ const int    NptScan1            = 21,          // # pts of free parameter to scan
 
+ int         tweak_systematics    = 1,       /* generate toy MC with randomized systematics? */
 
- int          tweak_systematics    = 1,       /* generate toy MC with randomized systematics? */
+ const bool  doMargMH             = true,    // marginalize Mass Hierarchy
+ const bool  doRethrowUnphysical  = false,    // rethrow unphysical systematic toys
 
- const bool   doMargMH             = true,    // marginalize Mass Hierarchy
- const bool   doRethrowUnphysical  = false,    // rethrow unphysical systematic toys
-
- const char * dmsqscheme           = "abs23",      /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy            = "inverted",     /* normal or inverted */
- const char * mixparamchoice       = "sinsqtheta", /* sinsq2theta or sinsqtheta */
- const char * mixparamoctant        = "one",       /* one==kNuOctantOne two==kNuOctantTwo */
+ const char * dmsqscheme          = "abs23",      /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * hierarchy           = "inverted",     /* normal or inverted */
+ const char * mixparamchoice      = "sinsqtheta", /* sinsq2theta or sinsqtheta */
+ const char * mixparamoctant      = "one",       /* one==kNuOctantOne two==kNuOctantTwo */
 
  const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",  // input XML file 
  bool using_xml_file  = true
@@ -93,34 +95,71 @@ void run_fit_marginalization
   skexp->Read(config.Data());
  
   
-  PhysParamId_t freepar_1;
-  string sfreeparname_1(freeparname_1);
-  
+  PhysParamId_t freepar0;
+  string sfreeparname0(freeparname0);  
   // NuBar mode
-  if(sfreeparname_1=="mixing23Bar")      freepar_1 = conv::kPhypMixing23Bar;
-  else if(sfreeparname_1=="mixing13Bar") freepar_1 = conv::kPhypMixing13Bar;
-  else if(sfreeparname_1=="dmsq23Bar")   freepar_1 = conv::kPhypDm23sqBar;
-  else if(sfreeparname_1=="dmsq12Bar")   freepar_1 = conv::kPhypDm12sqBar;
-  else if(sfreeparname_1=="mixing12Bar") freepar_1 = conv::kPhypMixing12Bar;
-  else if(sfreeparname_1=="deltacpBar")  freepar_1 = conv::kPhypCPVBar;
+  if(sfreeparname0=="mixing23Bar")      freepar0 = conv::kPhypMixing23Bar;
+  else if(sfreeparname0=="mixing13Bar") freepar0 = conv::kPhypMixing13Bar;
+  else if(sfreeparname0=="dmsq23Bar")   freepar0 = conv::kPhypDm23sqBar;
+  else if(sfreeparname0=="dmsq12Bar")   freepar0 = conv::kPhypDm12sqBar;
+  else if(sfreeparname0=="mixing12Bar") freepar0 = conv::kPhypMixing12Bar;
+  else if(sfreeparname0=="deltacpBar")  freepar0 = conv::kPhypCPVBar;
   // Nu mode
-  else if(sfreeparname_1=="mixing23")    freepar_1 = conv::kPhypMixing23;
-  else if(sfreeparname_1=="mixing13")    freepar_1 = conv::kPhypMixing13;
-  else if(sfreeparname_1=="dmsq23")      freepar_1 = conv::kPhypDm23sq;
-  else if(sfreeparname_1=="dmsq12")      freepar_1 = conv::kPhypDm12sq;
-  else if(sfreeparname_1=="mixing12")    freepar_1 = conv::kPhypMixing12;
-  else if(sfreeparname_1=="deltacp")     freepar_1 = conv::kPhypCPV;
+  else if(sfreeparname0=="mixing23")    freepar0 = conv::kPhypMixing23;
+  else if(sfreeparname0=="mixing13")    freepar0 = conv::kPhypMixing13;
+  else if(sfreeparname0=="dmsq23")      freepar0 = conv::kPhypDm23sq;
+  else if(sfreeparname0=="dmsq12")      freepar0 = conv::kPhypDm12sq;
+  else if(sfreeparname0=="mixing12")    freepar0 = conv::kPhypMixing12;
+  else if(sfreeparname0=="deltacp")     freepar0 = conv::kPhypCPV;
   //
   else{
-    cout << "Wrong PhysParamId" << endl;
+    cout << "Param 0 is not defined" << endl;
     exit(1);
   }
 
+  PhysParamId_t freepar1;
+  string sfreeparname1(freeparname1);  
+  // NuBar mode
+  if(sfreeparname1=="mixing23Bar")      freepar1 = conv::kPhypMixing23Bar;
+  else if(sfreeparname1=="mixing13Bar") freepar1 = conv::kPhypMixing13Bar;
+  else if(sfreeparname1=="dmsq23Bar")   freepar1 = conv::kPhypDm23sqBar;
+  else if(sfreeparname1=="dmsq12Bar")   freepar1 = conv::kPhypDm12sqBar;
+  else if(sfreeparname1=="mixing12Bar") freepar1 = conv::kPhypMixing12Bar;
+  else if(sfreeparname1=="deltacpBar")  freepar1 = conv::kPhypCPVBar;
+  // Nu mode
+  else if(sfreeparname1=="mixing23")    freepar1 = conv::kPhypMixing23;
+  else if(sfreeparname1=="mixing13")    freepar1 = conv::kPhypMixing13;
+  else if(sfreeparname1=="dmsq23")      freepar1 = conv::kPhypDm23sq;
+  else if(sfreeparname1=="dmsq12")      freepar1 = conv::kPhypDm12sq;
+  else if(sfreeparname1=="mixing12")    freepar1 = conv::kPhypMixing12;
+  else if(sfreeparname1=="deltacp")     freepar1 = conv::kPhypCPV;
+  //
+  else{
+    cout << "Param 1 is not defined" << endl;
+    exit(1);
+  }
 
+  
   // Implement the constructor giving the following input parameters:
   // free param, ntoys, # pt to scan, min par, max par (if min and max not passed, use default ones for that par)
-  //FitMarginalization *fitmarg = new FitMarginalization(NtoysMarg,freepar_1,NptScan_1,freeparmin_1,freeparmax_1); 
-  FitMarginalization *fitmarg = new FitMarginalization(freepar_1,NtoysMarg,NptScan_1,freeparmin_1,freeparmax_1); 
+
+  PhysParamId_t parfree[2];
+  parfree[0] = freepar0;
+  parfree[1] = freepar1;
+  
+  int ntoys = NtoysMarg;
+
+  int nbinspar[2];
+  nbinspar[0] = NptScan0;
+  nbinspar[1] = NptScan1;
+
+  double minpar[2];
+  double maxpar[2];
+  minpar[0] = freeparmin0;
+  maxpar[0] = freeparmax0;
+  minpar[1] = freeparmin1;
+  maxpar[1] = freeparmax1;
+  FitMarginalization *fitmarg = new FitMarginalization(parfree,ntoys,nbinspar,minpar,maxpar);   
 
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);
@@ -134,7 +173,6 @@ void run_fit_marginalization
     // Decide whether to rethrow or not the unphysical systematic toys 
     fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
     
-
     // Produce toys and fill marginalized chisq
 
     // Set priors for not fixed oscillation parameters
@@ -145,8 +183,12 @@ void run_fit_marginalization
     fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
     fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
 
-    // Make toys and store in binary files
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp);   // scan all free parameter range
+    // Make toys and store in binary files    
+    int min_bin[2];
+    int max_bin[2];
+    min_bin[0] = -999; max_bin[0] = -999;
+    min_bin[1] = -999; max_bin[1] = -999;
+    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,min_bin,max_bin); 
     fitmarg->FillChisqMarg(skobs_fakedata);
   }
 
@@ -171,7 +213,14 @@ void run_fit_marginalization
   // Find minimum of marginalized chisq and find best-fit values
   fitmarg->Minimize(); // Find the minimum of the TH1F chisqmarg
   fitmarg->PrintBestFit();
-  fitmarg->GetChisqMarg()->Draw();
+  
+
+  if(fitmarg->IsFit2D()){
+    fitmarg->GetChisqMarg2D()->Draw("colz");
+  }
+  else{
+    fitmarg->GetChisqMarg()->Draw();
+  }
   
   return;
 }

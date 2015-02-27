@@ -64,7 +64,7 @@
 //
 // 6) Todo
 //
-// - Move the code to the framework
+// - Move the code to the valor framework
 //
 // - Allow to either fix the oscillation parameters or fit, i.e. make the scan of the grid (DONE)
 //
@@ -94,7 +94,7 @@ using namespace valor::conv;
 
 void test_marginalization_class
 (
- const bool   readtoys               = false,
+ const bool   readtoys               = true,
  const char * outfilename            = "framework",
  const char * infilename             = "framework",
 
@@ -148,12 +148,6 @@ void test_marginalization_class
   //skobs_fakedata->ErecoSpectrum(kSKsRHCFCFV1RingMuLike)->Draw();
   //return;
 
-
-
-
-
-
-
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
@@ -182,22 +176,28 @@ void test_marginalization_class
 
   // Implement the constructor giving the following input parameters:
   // free param, ntoys, # pt to scan, min par, max par (if min and max not passed, use default ones for that par)
-  //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,21); 
-  FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,201); 
-  //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypMixing23Bar,10,21,0,0.5);
-  //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypDm23sqBar,100,201,2.0E-4,2E-2); 
-  //FitMarginalization *fitmarg = new FitMarginalization(conv::kPhypCPVBar,10,201,-TMath::Pi(),+TMath::Pi()); 
-
+  
+  PhysParamId_t parfree[2] = { conv::kPhypMixing23Bar, conv::kPhypUndefined};
+  //PhysParamId_t parfree[2] = { conv::kPhypMixing23Bar, conv::kPhypDm23sqBar};
+  int ntoys = 10;
+  int nbinspar[2] = {21, 21};
+  double minpar[2] = {0, conv::kMinFitDm23sq  };
+  //double maxpar[2] = {1, conv::kMaxFitDm23sq  };
+  double maxpar[2] = {1, 0.02 };
+  
+  FitMarginalization *fitmarg = new FitMarginalization(parfree,ntoys,nbinspar,minpar,maxpar); 
   //fitmarg->Init();
   //fitmarg->CleanUp();
- 
+
+  
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);
   fitmarg->PrintPhysHypothesis();
-      
-  
+
+  // Set Mass Hierarchy marginalization
+  fitmarg->SetMargMassHierarchy(true); // false by default 
+ 
   // Set priors for not fixed oscillation parameters
-  
   fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
   fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,1);
   fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
@@ -222,26 +222,35 @@ void test_marginalization_class
     //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,0,0); 
     //fitmarg->FillChisqMarg(skobs_fakedata);
 
-    
-// Make toys and store in binary files
+    // Decide whether to rethrow or not the unphysical systematic toys 
+    fitmarg->SetRethrowSystUnphysical(false);
+
+    // Make toys and store in binary files
     
     // Produce toys for different sub-ranges of the free parameter and store in different files.
     // Useful for running on cluster when many toys are needed (e.g. 10k x 200)
+
+    int min_bin[2];
+    int max_bin[2];
     
-    //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,0,10); 
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,0,100); 
+    min_bin[0] = 0; max_bin[0] = 10;
+    min_bin[1] = 0; max_bin[1] = 20;
+    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,min_bin,max_bin); 
     
+
     // Toys for marginalization are stored in binary files (reading and writing very fast)
     // Several files can be written for different sub-ranges of the free parameter each
     // Sub-range bins are given as input in MakeToysMarginalization() and stored in a second binary file for now
+    
     fitmarg->WriteToys2Binary(0,infilename);
+    
     // Once the toys of the sub-range are extracted (attention not to make any overlap in the indices) 
     // the marginalized chisq is computed by averaging over all the stored toys. 
     // The fake data set is taken as input.
     // This method doesn't minimize yet
+    
     fitmarg->FillChisqMarg(skobs_fakedata);
 
-	
     // fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingMuLike,0,0)->DrawCopy("");
     // for(int itoy=0;itoy<10;itoy++){
     //   for(int ipar=9;ipar<10;ipar++){
@@ -250,9 +259,10 @@ void test_marginalization_class
     //   }
     // }
 
+    min_bin[0] = 11; max_bin[0] = 20;
+    min_bin[1] = 0; max_bin[1] = 20;
+    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,min_bin,max_bin);
 
-    //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,11,14);
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,101,140);
     fitmarg->WriteToys2Binary(1,infilename);
     fitmarg->FillChisqMarg(skobs_fakedata);
 	
@@ -261,28 +271,15 @@ void test_marginalization_class
     //   for(int ipar=0;ipar<201;ipar++){
     // 	fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingMuLike,itoy,ipar)->DrawCopy("same");
     //   }
-    // }
+    // }    
 
-    //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,15,20);
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,141,200);
-    fitmarg->WriteToys2Binary(2,infilename);
-    fitmarg->FillChisqMarg(skobs_fakedata);
-    
-
-    // for(int itoy=0;itoy<10;itoy++){
-    //   for(int ipar=0;ipar<201;ipar++){
-    // 	fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingMuLike,itoy,ipar)->DrawCopy("same");	
-    //   }
-    // }
-    
-        
     // Now all the toys are stored in files but also already available in the object
     // The marginalized chisq is filled and ready to be minimized
     
   }
 
   else{
-    
+     
     // Read toys from output binary files 
     // When reading different files for free param sub-ranges, ChisqMarg must be filled after reading each file 
     // Not needed when making toys
@@ -296,10 +293,6 @@ void test_marginalization_class
     cout << "/////////////////////////" << endl;
     fitmarg->ReadToysFromBinary(1,infilename);
     fitmarg->FillChisqMarg(skobs_fakedata);
-
-    cout << "/////////////////////////" << endl;
-    fitmarg->ReadToysFromBinary(2,infilename);
-    fitmarg->FillChisqMarg(skobs_fakedata); 
     
   }
   
@@ -308,6 +301,7 @@ void test_marginalization_class
   fitmarg->Minimize(); // Find the minimum of the TH1F chisqmarg
   fitmarg->PrintBestFit();
   fitmarg->GetChisqMarg()->Draw();
+  //fitmarg->GetChisqMarg2D()->Draw("colz");
   
 
 
