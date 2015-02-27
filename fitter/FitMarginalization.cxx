@@ -90,10 +90,20 @@ void FitMarginalization::Init(conv::PhysParamId_t *parfree, int ntoys_marg, int 
 
   fnerecobins_RHCNumu = util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike);
 
-  hchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0]);
+  char Xtitle[200];
+  char Ytitle[200];
+  sprintf(Xtitle,"%s",util::AsStringPaperRooTex(parfree[0]).c_str()); 
+  sprintf(Ytitle,"%s",util::AsStringPaperRooTex(parfree[1]).c_str()); 
+  
+  hchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0]);  
+  hchisq_marg_1D->GetXaxis()->SetTitle(Xtitle);
+  hchisq_marg_1D->GetYaxis()->SetTitle("#Delta #chi^{2}");
+  
   hchisq_marg_2D = new TH2F("hchisq_marg_2D","hchisq_marg_2D",
 			    fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0],
 			    fnbins_param[1],fmin_param[1],fmax_param[1]+fstep_param[1] );
+  hchisq_marg_2D->GetXaxis()->SetTitle(Xtitle);
+  hchisq_marg_2D->GetYaxis()->SetTitle(Ytitle);
 
   hToyMargCurr = new TH1F("hToyMargCurr","hToyMargCurr",util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
 
@@ -892,7 +902,7 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   sprintf(outtag,"%s_%s",tag,"Merged");
 
   char outname[200];
-  sprintf(outname,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
+  sprintf(outname,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string soutname(outname);
   fToyMargErecoVArray_RHCNumu_Clone->WriteFile(soutname);
@@ -905,7 +915,7 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   int max_bin_sub_param1 = fmax_bin_sub_param[1];
 
   char outname_range[200];
-  sprintf(outname_range,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param[0],fnbins_param[0],namemh,"_subrange",".bin");
+  sprintf(outname_range,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[0],namemh,"_subrange",".bin");
   
   std::string soutname_range(outname_range);
   
@@ -929,7 +939,7 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
 
   char outname_text[200];
   std::string soutname_text(outname_text);
-  sprintf(outname_text,fnamefilebinary,outtag,fNmergedFiles,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".txt");
+  sprintf(outname_text,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".txt");
 
   ofstream ostext(outname_text,ios::out);
   ostext << "fnamefreeparam0: " << fnamefreeparam[0] << endl;
