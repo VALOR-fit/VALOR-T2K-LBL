@@ -5,16 +5,24 @@ using namespace valor::conv;
 
 void run_fit_marginalization
 (
- const bool   readtoys             = true,
+ const bool   readtoys             = false,
+
+ const char * outfilename          = "ChisqMarg",
+ 
+ const int    IDoutfile            = 0,
+ const int    first_bin_freepar0   = -999,   // first freepar of the sub-range
+ const int    last_bin_freepar0    = -999, // last freepar of the sub-range
+ const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
+ const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_1p7E20_postfit_NoRethrow_Merged",
  //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
  //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
- const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
+ //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
+ const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
 
- const int    nfiles               = 1
-,         // # of files to read
+ const int    nfiles               = 1,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
  const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
@@ -23,10 +31,10 @@ void run_fit_marginalization
  const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
 
  const int    NtoysMarg            = 10,   // # toys marginalization 
-
+ 
  const char * freeparname0        = "mixing23Bar",  // free parameter
  const double freeparmin0         = 0,              // minimum value of free parameter
- const double freeparmax0         = 1,              // maxinum value of free parameter
+ const double freeparmax0         = 1,            // maxinum value of free parameter
  const int    NptScan0            = 21,            // # pts of free parameter to scan
 
  const char * freeparname1        = "dmsq23Bar",  // free parameter
@@ -186,8 +194,10 @@ void run_fit_marginalization
     // Make toys and store in binary files    
     int min_bin[2];
     int max_bin[2];
-    min_bin[0] = -999; max_bin[0] = -999;
-    min_bin[1] = -999; max_bin[1] = -999;
+    min_bin[0] = first_bin_freepar0;
+    max_bin[0] = last_bin_freepar0;
+    min_bin[1] = first_bin_freepar1; 
+    max_bin[1] = last_bin_freepar1;
     fitmarg->MakeToysMarginalization(tweak_systematics,skexp,min_bin,max_bin); 
     fitmarg->FillChisqMarg(skobs_fakedata);
   }
@@ -209,18 +219,30 @@ void run_fit_marginalization
     }
   
   }
-    
+ 
   // Find minimum of marginalized chisq and find best-fit values
-  fitmarg->Minimize(); // Find the minimum of the TH1F chisqmarg
+  fitmarg->Minimize(); 
   fitmarg->PrintBestFit();
   
-
   if(fitmarg->IsFit2D()){
     fitmarg->GetChisqMarg2D()->Draw("colz");
   }
   else{
     fitmarg->GetChisqMarg()->Draw();
   }
+  
+  
+  // Store ChisqMarg (full or partial) in output file
+  
+  char outname[200];
+  sprintf(outname,"%s_%d.root",outfilename,IDoutfile);
+  
+  cout << outname << endl;
+
+  TFile *fout = new TFile(outname,"RECREATE");
+  fitmarg->GetChisqMarg()->Write();
+  fitmarg->GetChisqMarg2D()->Write();
+  fout->Close();
   
   return;
 }

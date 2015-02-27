@@ -22,7 +22,7 @@ void MergeInputFiles(
  //const char * tag                  = "MH_FitMarg_mixing23_1p7E20_prefit",
  const char * tag                  = "submit_mixing23_1p7E20_postfit_NoRethrow",
 
- const int    nfiles               = 2,         // # of files to read
+ const int    nfiles               = 4,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
  const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
@@ -43,7 +43,7 @@ void MergeInputFiles(
  const int    NptScan1              = 21,  // # pts of free parameter to scan
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
- const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
+ const bool   doRethrowUnphysical  = false,    // rethrow unphysical systematic toys
 )
 {
 
