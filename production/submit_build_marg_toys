@@ -87,17 +87,17 @@ $fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance" unless defined
 $freepar0               = "mixing23Bar"              unless defined $freepar0;
 $minfreepar0            = 0                          unless defined $minfreepar0;     # Minimum free parameter allowed value
 $maxfreepar0            = 1                          unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-$npt_freepar0           = 21                         unless defined $npt_freepar0;    # of free parameter points to scan
+$npt_freepar0           = 201                         unless defined $npt_freepar0;    # of free parameter points to scan
 
 $freepar1               = "dmsq23Bar"                unless defined $freepar1;
 $minfreepar1            = 0.0002                     unless defined $minfreepar1;     # Minimum free parameter allowed value
 $maxfreepar1            = 0.02                       unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-$npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
+$npt_freepar1           = 201                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-$nexpts_marg            = 10                         unless defined $nexpts_marg;    # of toys
+$nexpts_marg            = 1                         unless defined $nexpts_marg;    # of toys
 
 $step_freepar0          = 11                          unless defined $step_freepar;   # of points for each job param0
-$step_freepar1          = 21                          unless defined $step_freepar;   # of points for each job param1
+$step_freepar1          = 201                          unless defined $step_freepar;   # of points for each job param1
 
 $tweak_systematics      = 1                           unless defined $tweak_systematics;
 $marg_hierarchy         = 1                           unless defined $marg_hierarchy;
