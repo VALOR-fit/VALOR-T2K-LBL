@@ -161,8 +161,20 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
   fnbins_sub_param[0] = fmax_bin_sub_param[0] - fmin_bin_sub_param[0] + 1;
   fnbins_sub_param[1] = fmax_bin_sub_param[1] - fmin_bin_sub_param[1] + 1;
 
+  if(fPhysParamFree[0] == conv::kPhypUndefined){
+    fmin_bin_sub_param[0] = 0.;
+    fmax_bin_sub_param[0] = 0.;    
+    fnbins_param[0] = 1; // dimension of parameter ParId
+  }
+  if(fPhysParamFree[1] == conv::kPhypUndefined){
+    fmin_bin_sub_param[1] = 0.;
+    fmax_bin_sub_param[1] = 0.;    
+    fnbins_param[1] = 1; // dimension of parameter ParId
+  }
+
   // checks
-  if( (fnbins_sub_param[0] > fnbins_param[0]) ||
+  if( (fPhysParamFree[0] != conv::kPhypUndefined) &&
+      (fnbins_sub_param[0] > fnbins_param[0]) ||
       (fmin_bin_sub_param[0] < 0) || 
       (fmax_bin_sub_param[0] > fnbins_param[0] - 1) )
     {
@@ -176,7 +188,8 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
       exit(1);
     }
 
-  if( (fnbins_sub_param[1] > fnbins_param[1]) ||
+  if( (fPhysParamFree[1] != conv::kPhypUndefined) &&
+      (fnbins_sub_param[1] > fnbins_param[1]) ||
       (fmin_bin_sub_param[1] < 0) || 
       (fmax_bin_sub_param[1] > fnbins_param[1] - 1) )
     {
@@ -302,6 +315,7 @@ void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,dou
       fmin_param[ParId] = 0.;
       fmax_param[ParId] = 0.;    
       fnbins_param[ParId] = 1; // dimension of parameter ParId
+      fPhysParamFree[ParId] = conv::kPhypUndefined;
     }
   }
   
