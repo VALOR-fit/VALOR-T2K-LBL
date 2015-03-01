@@ -983,7 +983,7 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   int max_bin_sub_param1 = fmax_bin_sub_param[1];
 
   char outname_range[200];
-  sprintf(outname_range,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[0],namemh,"_subrange",".bin");
+  sprintf(outname_range,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
   
   std::string soutname_range(outname_range);
   
