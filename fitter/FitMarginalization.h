@@ -114,16 +114,23 @@ class FitMarginalization: public TObject
  public:
   
 
-  FitMarginalization(PhysParamId_t *parfree, int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
+  //FitMarginalization(PhysParamId_t *parfree, int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
+  FitMarginalization();
+
   ~FitMarginalization(void);
 
-  void Init(PhysParamId_t *parfree, int ntoys_marg, int *nbins_param,double *minpar,double *maxpar);
+  //void Init(PhysParamId_t *parfree, int ntoys_marg, int *nbins_param,double *minpar,double *maxpar);
+  void Init();
+
   void CleanUp();
   
   void SetConfigFile();
 
+  void SetPhysParFree(PhysParamId_t *parfree,int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
   void SetFreeParam(int ParID,PhysParamId_t *parfree,double *minpar,double *maxpar);
-  
+  void SetSubRange(int *submin,int *submax);
+
+   
   void SetFitParamList(char * fit_param_list);
   FitParamList * GetFitParamList(void) {return fparm;};
   
@@ -135,7 +142,8 @@ class FitMarginalization: public TObject
 
   bool IsFit2D(){ return fIsFit2D;}
 
-  void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int *min_bin_sub_param,int *max_bin_sub_param);
+  //void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int *min_bin_sub_param,int *max_bin_sub_param);
+  void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp);
 
   void WriteToys2Binary(int idfile,char *tag);
   void WriteToys2BinaryMerge(char *tag);
@@ -152,8 +160,6 @@ class FitMarginalization: public TObject
   double GetChisqBestFit(void){ return fchisq_bf;};
   double GetParamBestFit(int ParId){ return fparam_bf[ParId];};
   
-  void SetSubRange();
-
   void PrintBestFit(void);
 
   VALORArrayF * GetToyMargErecoVArray(SuperkSample_t s);
@@ -197,6 +203,7 @@ class FitMarginalization: public TObject
   UInt_t fSeed;
 
   int fnbins_param[2]; // 2D
+  int fnbins_sub_param[2]; // 2D
   
   int fntoys_marg;
   int fnerecobins_RHCNumu;
