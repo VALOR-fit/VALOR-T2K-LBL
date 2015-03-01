@@ -5,7 +5,7 @@ using namespace valor::conv;
 
 void run_fit_marginalization
 (
- const bool   readtoys             = true,
+ const bool   readtoys             = false,
 
  const char * outfilename          = "ChisqMarg",
  
@@ -16,8 +16,8 @@ void run_fit_marginalization
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_1p7E20_postfit_NoRethrow_Merged",
- //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
- const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
+ const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
+ //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
@@ -37,7 +37,8 @@ void run_fit_marginalization
  const double freeparmax0         = 1,            // maxinum value of free parameter
  const int    NptScan0            = 21,            // # pts of free parameter to scan
 
- const char * freeparname1        = "dmsq23Bar",  // free parameter
+ const char * freeparname1        = "",  // free parameter
+ //const char * freeparname1        = "dmsq23Bar",  // free parameter
  const double freeparmin1         = 0.0002, // minimum value of free parameter
  const double freeparmax1         = 0.02, // maxinum value of free parameter
  const int    NptScan1            = 21,          // # pts of free parameter to scan
@@ -121,11 +122,12 @@ void run_fit_marginalization
   else if(sfreeparname0=="deltacp")     freepar0 = conv::kPhypCPV;
   //
   else{
+    freepar0 = conv::kPhypUndefined;
     cout << "Param 0 is not defined" << endl;
     exit(1);
   }
 
-  PhysParamId_t freepar1;
+  PhysParamId_t freepar1 = conv::kPhypUndefined;
   string sfreeparname1(freeparname1);  
   // NuBar mode
   if(sfreeparname1=="mixing23Bar")      freepar1 = conv::kPhypMixing23Bar;
@@ -143,8 +145,8 @@ void run_fit_marginalization
   else if(sfreeparname1=="deltacp")     freepar1 = conv::kPhypCPV;
   //
   else{
-    cout << "Param 1 is not defined" << endl;
-    exit(1);
+    freepar1 = conv::kPhypUndefined;
+    cout << "1D fit" << endl;
   }
 
   
