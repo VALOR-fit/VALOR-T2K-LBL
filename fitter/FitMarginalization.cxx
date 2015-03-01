@@ -96,6 +96,17 @@ void FitMarginalization::Init(){
 
   const int nmh=2; // mass hierarchy
   //fToyMargErecoVArray_RHCNumu = new VALORArrayF(fntoys_marg, fnbins_param[0], fnbins_param[1], nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
+
+  cout << endl;
+  cout << "Initialize VALORArray fToyMargErecoVArray_RHCNumu with:"<< endl;
+  cout << "fntoys_marg = " << fntoys_marg << endl;
+  cout << "fnbins_sub_param[0] = " << fnbins_sub_param[0] << endl;
+  cout << "fnbins_sub_param[1] = " << fnbins_sub_param[1] << endl;
+  cout << "nmh = " << nmh << endl;
+  cout << "Ereco bins = " << util::NumErecoBins(kSKsRHCFCFV1RingMuLike) << endl;
+  cout << endl;
+
+
   fToyMargErecoVArray_RHCNumu = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike)); // initialize the sub-range to use less memory
   fToyMargErecoVArray_RHCNumu->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargErecoVArray_RHCNumu->SetDimensionName(0, "# toys marginalization");
@@ -164,12 +175,12 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
   if(fPhysParamFree[0] == conv::kPhypUndefined){
     fmin_bin_sub_param[0] = 0.;
     fmax_bin_sub_param[0] = 0.;    
-    fnbins_param[0] = 1; // dimension of parameter ParId
+    fnbins_sub_param[0] = 1; // dimension of parameter ParId
   }
   if(fPhysParamFree[1] == conv::kPhypUndefined){
     fmin_bin_sub_param[1] = 0.;
     fmax_bin_sub_param[1] = 0.;    
-    fnbins_param[1] = 1; // dimension of parameter ParId
+    fnbins_sub_param[1] = 1; // dimension of parameter ParId
   }
 
   // checks
