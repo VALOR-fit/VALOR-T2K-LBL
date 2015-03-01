@@ -27,7 +27,7 @@ void MergeInputFiles(
  const char * tag                  = "MH_FitMarg_mixing23_1p7E20_prefit",
  //const char * tag                  = "submit_mixing23_1p7E20_postfit_NoRethrow",
 
- const int    nfiles               = 3,         // # of files to read
+ const int    nfiles               = 2,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
  const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
@@ -41,8 +41,8 @@ void MergeInputFiles(
  const int    freeparmax0         = 1,              // maxinum value of free parameter
  const int    NptScan0            = 21,            // # pts of free parameter to scan
 
- const char * freeparname1          = "dmsq23Bar",  // free parameter
- //const char * freeparname1          = "",  // free parameter
+ //const char * freeparname1          = "dmsq23Bar",  // free parameter
+ const char * freeparname1          = "",  // free parameter
  const double freeparmin1           = 0.0002,     // minimum value of free parameter
  const double freeparmax1           = 0.02,     // maxinum value of free parameter
  const int    NptScan1              = 21,  // # pts of free parameter to scan

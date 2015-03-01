@@ -17,12 +17,12 @@ using namespace valor::conv;
 
 void build_marg_toys
 (
- const int    fileid               = 2,   // file id
+ const int    fileid               = 1,   // file id
 
- const int    first_bin_freepar0   = 18,   // first freepar of the sub-range
+ const int    first_bin_freepar0   = 10,   // first freepar of the sub-range
  const int    last_bin_freepar0    = 20, // last freepar of the sub-range
- const int    first_bin_freepar1   =-999,   // first freepar of the sub-range
- const int    last_bin_freepar1    =-999, // last freepar of the sub-range
+ const int    first_bin_freepar1   = 0,   // first freepar of the sub-range
+ const int    last_bin_freepar1    = 12, // last freepar of the sub-range
 
  const char * tag                  = "MH_FitMarg_mixing23_1p7E20_prefit",
  //const char * tag                  = "submit_mixing23_1p7E20_postfit_NoRethrow",
@@ -38,8 +38,8 @@ void build_marg_toys
  const double freeparmax0           = 1,     // maxinum value of free parameter
   const int   NptScan0              = 21,  // # pts of free parameter to scan
 
- const char * freeparname1          = "dmsq23Bar",  // free parameter
- //const char * freeparname1          = "",  // free parameter
+ //const char * freeparname1          = "dmsq23Bar",  // free parameter
+ const char * freeparname1          = "",  // free parameter
  const double freeparmin1           = 0.0002,     // minimum value of free parameter
  const double freeparmax1           = 0.02,     // maxinum value of free parameter
  const int    NptScan1              = 21,  // # pts of free parameter to scan

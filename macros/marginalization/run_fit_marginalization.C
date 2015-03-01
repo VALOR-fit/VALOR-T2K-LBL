@@ -5,7 +5,7 @@ using namespace valor::conv;
 
 void run_fit_marginalization
 (
- const bool   readtoys             = false,
+ const bool   readtoys             = true,
 
  const char * outfilename          = "ChisqMarg",
  
@@ -22,7 +22,7 @@ void run_fit_marginalization
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
 
- const int    nfiles               = 1,         // # of files to read
+ const int    nfiles               = 2,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
  const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
