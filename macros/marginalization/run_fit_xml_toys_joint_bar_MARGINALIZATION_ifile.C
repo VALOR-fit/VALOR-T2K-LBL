@@ -165,7 +165,11 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
  
  int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
  
- const char * fit_param_list    = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ const char * fit_param_list   = "nuosc3fbar_fixnonbar_12fix+nuisance",  
+ //const char * fit_param_list   = "nuosc3fbar_fixnonbar_fix5",  
+ //const char * fit_param_list   = "nuosc3fbar_fixnonbar_fix5+nuisance", 
+ //const char * fit_param_list    = "nuosc3fbar_numudisapp_fixnonbar_fix4",
+ //const char * fit_param_list   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",                                                                                                                         
 
  const char * dmsqscheme              = "abs23",                             /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy               = "inverted",                            /* normal or inverted */
@@ -453,6 +457,7 @@ void run_fit_xml_toys_joint_bar_MARGINALIZATION_ifile
 	  
 	  fparm1->Update(parvalue1,currval);
 	  
+
 	  applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
 	  
 	  for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){ 

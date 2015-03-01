@@ -5,7 +5,7 @@ using namespace valor::conv;
 
 void run_fit_marginalization
 (
- const bool   readtoys             = false,
+ const bool   readtoys             = true,
 
  const char * outfilename          = "ChisqMarg",
  
@@ -17,10 +17,10 @@ void run_fit_marginalization
 
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_1p7E20_postfit_NoRethrow_Merged",
  //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
- //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
+ const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
- const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
+ //const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
 
  const int    nfiles               = 1,         // # of files to read
 
@@ -148,26 +148,42 @@ void run_fit_marginalization
   }
 
   
-  // Implement the constructor giving the following input parameters:
-  // free param, ntoys, # pt to scan, min par, max par (if min and max not passed, use default ones for that par)
+  // Set free param, ntoys, # pt to scan, min par, max par (if min and max not passed, use default ones for that par)
 
+  // free parameter 
   PhysParamId_t parfree[2];
   parfree[0] = freepar0;
   parfree[1] = freepar1;
   
+  // # of toys for marginalization
   int ntoys = NtoysMarg;
 
+  // # of free parameter pts to scan 
   int nbinspar[2];
   nbinspar[0] = NptScan0;
   nbinspar[1] = NptScan1;
 
+  // free parameter range
   double minpar[2];
   double maxpar[2];
   minpar[0] = freeparmin0;
   maxpar[0] = freeparmax0;
   minpar[1] = freeparmin1;
   maxpar[1] = freeparmax1;
-  FitMarginalization *fitmarg = new FitMarginalization(parfree,ntoys,nbinspar,minpar,maxpar);   
+
+  // free parameter sub-range 
+  int subminbin[2];
+  int submaxbin[2];
+  subminbin[0] = first_bin_freepar0; submaxbin[0] = last_bin_freepar0;
+  subminbin[1] = first_bin_freepar1; submaxbin[1] = last_bin_freepar1;
+
+  
+  // Implement the constructor giving the following input parameters:
+  FitMarginalization *fitmarg = new FitMarginalization();   
+  fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
+  fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
+  fitmarg->Init(); // Before need SetPhysParFree() to initialize the arrays
+  
 
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);
@@ -191,14 +207,7 @@ void run_fit_marginalization
     fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
     fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
 
-    // Make toys and store in binary files    
-    int min_bin[2];
-    int max_bin[2];
-    min_bin[0] = first_bin_freepar0;
-    max_bin[0] = last_bin_freepar0;
-    min_bin[1] = first_bin_freepar1; 
-    max_bin[1] = last_bin_freepar1;
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp,min_bin,max_bin); 
+    fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
     fitmarg->FillChisqMarg(skobs_fakedata);
   }
 
@@ -207,7 +216,7 @@ void run_fit_marginalization
     // Read toys from binary files and fill marginalized chisq
 
     for(int ifile=0;ifile<nfiles;ifile++){
-      
+    
       cout << endl;
       cout << "////////////////////////////////" << endl;
       cout << endl;

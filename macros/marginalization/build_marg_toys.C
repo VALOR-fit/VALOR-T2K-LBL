@@ -17,10 +17,10 @@ using namespace valor::conv;
 
 void build_marg_toys
 (
- const int    fileid               = 0,   // file id
+ const int    fileid               = 2,   // file id
 
- const int    first_bin_freepar0   = 0,   // first freepar of the sub-range
- const int    last_bin_freepar0    = 10, // last freepar of the sub-range
+ const int    first_bin_freepar0   = 18,   // first freepar of the sub-range
+ const int    last_bin_freepar0    = 20, // last freepar of the sub-range
  const int    first_bin_freepar1   =-999,   // first freepar of the sub-range
  const int    last_bin_freepar1    =-999, // last freepar of the sub-range
 
@@ -139,23 +139,41 @@ void build_marg_toys
   // free param, ntoys, # pt to scan, min par, max par.
   // If min and max not passed, use default ones for that parameter (see FitMarginalization.h)
   
+  // Set free param, ntoys, # pt to scan, min par, max par (if min and max not passed, use default ones for that par)
+
+  // free parameter 
   PhysParamId_t parfree[2];
   parfree[0] = freepar0;
   parfree[1] = freepar1;
   
+  // # of toys for marginalization
   int ntoys = NtoysMarg;
 
+  // # of free parameter pts to scan 
   int nbinspar[2];
   nbinspar[0] = NptScan0;
   nbinspar[1] = NptScan1;
 
+  // free parameter range
   double minpar[2];
   double maxpar[2];
   minpar[0] = freeparmin0;
   maxpar[0] = freeparmax0;
   minpar[1] = freeparmin1;
   maxpar[1] = freeparmax1;
-  FitMarginalization *fitmarg = new FitMarginalization(parfree,ntoys,nbinspar,minpar,maxpar); 
+
+  // free parameter sub-range 
+  int subminbin[2];
+  int submaxbin[2];
+  subminbin[0] = first_bin_freepar0; submaxbin[0] = last_bin_freepar0;
+  subminbin[1] = first_bin_freepar1; submaxbin[1] = last_bin_freepar1;
+
+  // Implement the constructor giving the following input parameters:
+  FitMarginalization *fitmarg = new FitMarginalization();   
+  fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
+  fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
+  fitmarg->Init(); // Before need SetPhysParFree() to initialize the arrays
+
 
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);
@@ -181,14 +199,14 @@ void build_marg_toys
   // Produce toys for different sub-ranges of the free parameter and store in different files.
   // Useful for running on cluster when many toys are needed (e.g. 10k x 200)
 
-  int min_bin[2];
-  int max_bin[2];    
-  min_bin[0] = first_bin_freepar0;
-  max_bin[0] = last_bin_freepar0;
-  min_bin[1] = first_bin_freepar1; 
-  max_bin[1] = last_bin_freepar1;
-
-  fitmarg->MakeToysMarginalization(tweak_systematics,skexp,min_bin,max_bin); 
+  // int min_bin[2];
+  // int max_bin[2];    
+  // min_bin[0] = first_bin_freepar0;
+  // max_bin[0] = last_bin_freepar0;
+  // min_bin[1] = first_bin_freepar1; 
+  // max_bin[1] = last_bin_freepar1;
+  //fitmarg->MakeToysMarginalization(tweak_systematics,skexp,min_bin,max_bin); 
+  fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
   fitmarg->WriteToys2Binary(fileid,tag);
 
   return;
