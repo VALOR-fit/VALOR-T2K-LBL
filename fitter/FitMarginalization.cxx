@@ -811,10 +811,10 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   // Now the marginalized likelihood is computed using toys from all the binary files
   // Compute the chisq for each free osc parameter value
   
-  //for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-  //for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-  for(int ipar0=0;ipar0<fnbins_sub_param[0];ipar0++){
-    for(int ipar1=0;ipar1<fnbins_sub_param[1];ipar1++){
+  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      //for(int ipar0=0;ipar0<fnbins_sub_param[0];ipar0++){
+      //for(int ipar1=0;ipar1<fnbins_sub_param[1];ipar1++){
       double bincont = -2*log( flikeVArray->GetEntry(ipar0,ipar1) );
       fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
       if(!fIsFit2D) hchisq_marg_1D->SetBinContent(ipar0+1,bincont);
@@ -829,10 +829,10 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   cout << "fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
   cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1] << endl;
   cout << "fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
-  //for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-  //for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-  for(int ipar0=0;ipar0<fnbins_sub_param[0];ipar0++){
-    for(int ipar1=0;ipar1<fnbins_sub_param[1];ipar1++){
+  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      //for(int ipar0=0;ipar0<fnbins_sub_param[0];ipar0++){
+      //for(int ipar1=0;ipar1<fnbins_sub_param[1];ipar1++){
       cout << fChisqMargVArray->GetEntry(ipar0,ipar1) << ", ";
     }
   }
