@@ -418,7 +418,7 @@ void analyse_run_fit_xml_toys_joint_bar
       // Pulls oscillation paramters
       
       if(!best_fit_params->IsNuisance(p)) { // free  params
-	pull = calc_pull_osc(initval,bestfitval,bestfiterr);
+	pull = calc_pull_osc(extrval,bestfitval,bestfiterr);
 	hPullAll[ip]->Fill(pull);
       }	
 
