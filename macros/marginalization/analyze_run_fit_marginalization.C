@@ -14,26 +14,39 @@ void analyze_run_fit_marginalization
   TH1F *hChisqMarg_1D = (TH1F*) filein->Get("hchisq_marg_1D");
   TH2F *hChisqMarg_2D = (TH2F*) filein->Get("hchisq_marg_2D");
   
-  TCanvas *cChisqMarg_1D = new TCanvas("cChisqMarg_1D","cChisqMarg_1D");
-  hChisqMarg_1D->Draw("");
-  
-  TCanvas *cChisqMarg_2D = new TCanvas("cChisqMarg_2D","cChisqMarg_2D");
-  hChisqMarg_2D->Draw("colz");
+  if(!Fit2D){
+    TCanvas *cChisqMarg_1D = new TCanvas("cChisqMarg_1D","cChisqMarg_1D");
+    hChisqMarg_1D->Draw("");
+  }
+  else{
+    TCanvas *cChisqMarg_2D = new TCanvas("cChisqMarg_2D","cChisqMarg_2D");
+    hChisqMarg_2D->Draw("colz");
+  }
 
   // Print out marginalized chisq
   cout << endl;
   cout << "Marginalized Chisq:" << endl;
   cout << endl;
-  int nbinsX = hChisqMarg_2D->GetNbinsX();
-  int nbinsY = hChisqMarg_2D->GetNbinsY();
-  for(int ibinX=0;ibinX<nbinsX;ibinX++){
-    for(int ibinY=0;ibinY<nbinsY;ibinY++){
-      cout << hChisqMarg_2D->GetBinContent(ibinX+1,ibinY+1) << ", ";
+  if(Fit2D){
+    int nbinsX = hChisqMarg_2D->GetNbinsX();
+    int nbinsY = hChisqMarg_2D->GetNbinsY();
+    for(int ibinX=0;ibinX<nbinsX;ibinX++){
+      for(int ibinY=0;ibinY<nbinsY;ibinY++){
+	cout << hChisqMarg_2D->GetBinContent(ibinX+1,ibinY+1) << ", ";
+      }
+      cout << endl;
     }
     cout << endl;
   }
-  cout << endl;
-
+  else{
+    int nbinsX = hChisqMarg_2D->GetNbinsX();
+    for(int ibinX=0;ibinX<nbinsX;ibinX++){
+      cout << hChisqMarg_1D->GetBinContent(ibinX+1) << ", ";
+    }
+    cout << endl;
+  }
+  
+  
   
   // Find best fit
 
@@ -50,7 +63,7 @@ void analyze_run_fit_marginalization
   cout << endl;
 
   if(!Fit2D){
-    chisq_bf_1D = hchisq_marg_1D->GetMinimum();
+    chisq_bf = hchisq_marg_1D->GetMinimum();
     minbin = hchisq_marg_1D->GetMinimumBin();
     param0_bf = hchisq_marg_1D->GetBinLowEdge(minbin);
     param1_bf = -999.;
@@ -63,14 +76,13 @@ void analyze_run_fit_marginalization
   }
 
   // Print out best fit values
-    cout << "Best-fit marginalized Chisq = " << chisq_bf << endl;
+  cout << endl;
+  cout << "Best-fit marginalized Chisq = " << chisq_bf << endl;
   if(!Fit2D){
-    cout << endl;
     cout << "Best-fit param 0 = " << param0_bf << endl;
     cout << endl;
   }
   else{
-    cout << endl;
     cout << "Best-fit param 0 = " << param0_bf << endl;
     cout << "Best-fit param 1 = " << param1_bf << endl;
     cout << endl;
