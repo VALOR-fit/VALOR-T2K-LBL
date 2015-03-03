@@ -440,10 +440,10 @@ FitParamList * util::NamedParameterList(string name)
     
     fp -> FixParameter (kPhypMixing12Bar);
     fp -> FixParameter (kPhypDm12sqBar  );
-    fp -> FixParameter (kPhypCPVBar  );
-
-    fp -> SetNuisance  (kPhypMixing23Bar , true);
-    fp -> SetNuisance  (kPhypDm23sqBar   , true);
+    
+    //fp -> FixParameter (kPhypCPVBar  );
+    //fp -> SetNuisance  (kPhypMixing23Bar , true);
+    //fp -> SetNuisance  (kPhypDm23sqBar   , true);
 
     fp -> SetParListName(name);
     fp -> SetSystMode(0);
@@ -462,10 +462,11 @@ FitParamList * util::NamedParameterList(string name)
     
     fp -> FixParameter (kPhypMixing12Bar);
     fp -> FixParameter (kPhypDm12sqBar  );
-    fp -> FixParameter (kPhypCPVBar  );
-
-    fp -> SetNuisance  (kPhypMixing23Bar , true);
-    fp -> SetNuisance  (kPhypDm23sqBar   , true);
+    
+    //fp -> FixParameter (kPhypMixing13Bar);
+    //fp -> FixParameter (kPhypCPVBar  );
+    //fp -> SetNuisance  (kPhypMixing23Bar , true);
+    //fp -> SetNuisance  (kPhypDm23sqBar   , true);
 
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
