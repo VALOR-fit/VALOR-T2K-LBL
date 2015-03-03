@@ -162,7 +162,7 @@ class FitMarginalization: public TObject
   
   void PrintBestFit(void);
 
-  VALORArrayF * GetToyMargErecoVArray(SuperkSample_t s);
+  VALORArrayF * GetToyMargErecoVArray(){return fToyMargErecoVArray;};
   TH1F * GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
 
   void SetMargOscParam();
@@ -179,16 +179,18 @@ class FitMarginalization: public TObject
   
   void MergeInputFiles();
 
+  void SetNSKsamples();
+  int GetNSKsamples(){return fNSKsamples;};
+  conv::SuperkSample_t GetSKSamples(int isksample); 
+ 
  private:
   
   TH1F *hchisq_marg_1D; 
-  TH2F *hchisq_marg_2D; // 2D 
+  TH2F *hchisq_marg_2D;  
   
-  TH1F *hToyMargCurr;
-
   string fnamefreeparam[2]; // Use param 1 only for 2D fits
 
-  PhysParamId_t fPhysParamFree[2]; // 2D
+  PhysParamId_t fPhysParamFree[2]; 
 
   bool fIsFit2D;
 
@@ -198,37 +200,49 @@ class FitMarginalization: public TObject
   char fnamefilebinary[200];
 
   double fchisq_bf;
-  double fparam_bf[2]; // 2D
+  double fparam_bf[2]; 
   
   UInt_t fSeed;
 
-  int fnbins_param[2]; // 2D
-  int fnbins_sub_param[2]; // 2D
+  int fnbins_param[2]; 
+  int fnbins_sub_param[2]; 
   
   int fntoys_marg;
-  int fnerecobins_RHCNumu;
-  
-  int fmin_bin_sub_param[2]; // 2D // first bin of sub-range to scan (for partial toys and chisq marg)
-  int fmax_bin_sub_param[2]; // 2D // last bin of sub-range to scan (for partial toys and chisq marg)
 
-  double fmin_sub_param[2]; // 2D // first value of sub-range to scan (for partial toys and chisq marg)
-  double fmax_sub_param[2]; // 2D // last value of sub-range to scan (for partial toys and chisq marg)
+  int fmin_bin_sub_param[2]; // first bin of sub-range to scan (for partial toys and chisq marg)
+  int fmax_bin_sub_param[2]; // last bin of sub-range to scan (for partial toys and chisq marg)
 
-  double fmin_param[2];  // 2D
-  double fmax_param[2];  // 2D
-  double fstep_param[2]; // 2D
+  double fmin_sub_param[2];  // first value of sub-range to scan (for partial toys and chisq marg)
+  double fmax_sub_param[2];  // last value of sub-range to scan (for partial toys and chisq marg)
+
+  double fmin_param[2];  
+  double fmax_param[2];  
+  double fstep_param[2]; 
   
   VALORArrayF *flikeVArray;
   VALORArrayF *fChisqMargVArray;
   
+  int fNSKsamples;
+  VALORArrayI *fnerecobins;
+  VALORArrayI *fsksamples; // pointer of SuperkSample_t doesn't work. Then use kSKSamples[]
+  VALORArrayF *fToyMargErecoVArray;
+  VALORArrayF *fToyMargErecoVArray_Clone;
+  TH1F *hToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usal by looping over all the samples and skipping the undefined ones 
+
+  int fnerecobins_RHCNumu;
   VALORArrayF *fToyMargErecoVArray_RHCNumu_Clone; 
+  VALORArrayF *fToyMargErecoVArray_RHCNue_Clone; 
+  VALORArrayF *fToyMargErecoVArray_Numu_Clone; 
+  VALORArrayF *fToyMargErecoVArray_Nue_Clone; 
   bool MergeInputFiles_Called;
   int fNmergedFiles;
 
-  VALORArrayF *fToyMargErecoVArray_RHCNumu; // 2D
-  VALORArrayF *fToyMargErecoVArray_RHCNue;  // 2D
-  VALORArrayF *fToyMargErecoVArray_Numu;    // 2D
-  VALORArrayF *fToyMargErecoVArray_Nue;     // 2D
+  TH1F *hToyMargCurr_RHCNumu;
+
+  VALORArrayF *fToyMargErecoVArray_RHCNumu; 
+  VALORArrayF *fToyMargErecoVArray_RHCNue;  
+  VALORArrayF *fToyMargErecoVArray_Numu;    
+  VALORArrayF *fToyMargErecoVArray_Nue;     
 
   FitParamList * fparm;
   PhysHypothesis_t fhypothesis;

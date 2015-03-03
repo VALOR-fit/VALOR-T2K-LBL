@@ -75,8 +75,43 @@ void FitMarginalization::Init(){
   MergeInputFiles_Called = true; // false the first time MergeInputFiles() is calles
   fNmergedFiles = 0; // fNmergedFiles++ everytime MergeInputFiles() is called (after reading each file)
 
-  fnerecobins_RHCNumu = util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike);
+  const int nmh=2; // mass hierarchy  
 
+
+  // Get number of sk samples used in the fit
+  // Needed to initialize the Ereco arrays
+
+  this->SetNSKsamples(); // also defines fnerecobins
+  for(int is=0;is<fNSKsamples;is++) fToyMargErecoVArray = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fnerecobins->GetEntry(is)); 
+  fToyMargErecoVArray->SetAll(-1.);   // needed for MergeInputFiles()
+  fToyMargErecoVArray->SetDimensionName(0,"# toys marginalization");
+  fToyMargErecoVArray->SetDimensionName(1,"# bins free parameter 0");
+  fToyMargErecoVArray->SetDimensionName(2,"# bins free parameter 1");
+  fToyMargErecoVArray->SetDimensionName(3,"# mass hierarchies");
+  fToyMargErecoVArray->SetDimensionName(4,"# sk samples");
+  fToyMargErecoVArray->SetDimensionName(5,"# bins ereco");
+
+  // need to declare array of histogram (then set to 0) because
+  // problems with ROOT when declaring double pointers as global in header file 
+  for(int is=0;is<conv::kns;is++){
+    if(is<fNSKsamples){
+      char name[200];
+      SuperkSample_t s = this->GetSKSamples(is);    
+      sprintf(name,"hToyMargCurr_%s",util::AsStringCompact(s).c_str());
+      hToyMargCurr[is] = new TH1F(name,name,util::NumErecoBins(s),util::ErecoBinEdges(s));   
+      cout << name << endl;
+    }
+    else{
+      hToyMargCurr[is] = 0;
+    }
+  }
+  //
+  
+  fChisqMargVArray            = new VALORArrayF(fnbins_param[0], fnbins_param[1]);
+  fChisqMargVArray->SetAll(0.);
+  flikeVArray                 = new VALORArrayF(fnbins_param[0], fnbins_param[1]);
+  flikeVArray->SetAll(0.);
+  
   char Xtitle[200];
   char Ytitle[200];
   sprintf(Xtitle,"%s",util::AsStringPaperRooTex(fPhysParamFree[0]).c_str()); 
@@ -92,36 +127,27 @@ void FitMarginalization::Init(){
   hchisq_marg_2D->GetXaxis()->SetTitle(Xtitle);
   hchisq_marg_2D->GetYaxis()->SetTitle(Ytitle);
 
-  hToyMargCurr = new TH1F("hToyMargCurr","hToyMargCurr",util::NumErecoBins(kSKsRHCFCFV1RingMuLike),util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
-
-  const int nmh=2; // mass hierarchy
-  //fToyMargErecoVArray_RHCNumu = new VALORArrayF(fntoys_marg, fnbins_param[0], fnbins_param[1], nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike));
-
   cout << endl;
-  cout << "Initialize VALORArray fToyMargErecoVArray_RHCNumu with:"<< endl;
+  cout << "Initialize VALORArray fToyMargErecoVArray with:"<< endl;
   cout << "fntoys_marg = " << fntoys_marg << endl;
+  cout << endl;
+  cout << "fNSKsamples = " << fNSKsamples << endl;
+  cout << "Used sub-samples:" << endl;
+  //for(int is = 0; is < kns; is++) {
+  //SuperkSample_t s = kSKSamples[is];
+  //if(s == kSKsUndefined) continue;
+  for(int is=0;is<fNSKsamples;is++){
+    SuperkSample_t s = this->GetSKSamples(is);
+    cout << "   - " << util::AsStringCompact(s) 
+	 << " - # bins = " << this->fnerecobins->GetEntry(is)
+	 << endl;
+  }
+  cout << endl;
   cout << "fnbins_sub_param[0] = " << fnbins_sub_param[0] << endl;
   cout << "fnbins_sub_param[1] = " << fnbins_sub_param[1] << endl;
   cout << "nmh = " << nmh << endl;
-  cout << "Ereco bins = " << util::NumErecoBins(kSKsRHCFCFV1RingMuLike) << endl;
   cout << endl;
 
-
-  fToyMargErecoVArray_RHCNumu = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike)); // initialize the sub-range to use less memory
-  fToyMargErecoVArray_RHCNumu->SetAll(-1.);   // needed for MergeInputFiles()
-  fToyMargErecoVArray_RHCNumu->SetDimensionName(0, "# toys marginalization");
-  fToyMargErecoVArray_RHCNumu->SetDimensionName(1, "# bins free parameter 0");
-  fToyMargErecoVArray_RHCNumu->SetDimensionName(2, "# bins free parameter 1");
-  fToyMargErecoVArray_RHCNumu->SetDimensionName(3, "# mass hierarchies");
-  fToyMargErecoVArray_RHCNumu->SetDimensionName(4, "# bins ereco");
-  //fToyMargErecoVArray_RHCNumu = new VALORArrayF();
-
-  fChisqMargVArray            = new VALORArrayF(fnbins_param[0], fnbins_param[1]);
-  fChisqMargVArray->SetAll(0.);
-  flikeVArray                 = new VALORArrayF(fnbins_param[0], fnbins_param[1]);
-  flikeVArray->SetAll(0.);
-
- 
   fmin_sub_param[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0]+1);
   fmax_sub_param[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0]+1);
   fmin_sub_param[1] = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1]+1);
@@ -137,17 +163,16 @@ void FitMarginalization::Init(){
   cout << "# of bins parameter 1 = " << fnbins_sub_param[1] << endl;
   cout << endl;
 
-  
   cout << "fmin_bin_sub_param[0] = " << fmin_bin_sub_param[0] << endl;
   cout << "fmax_bin_sub_param[0] = " << fmax_bin_sub_param[0] << endl;
-
   cout << "fmin_bin_sub_param[1] = " << fmin_bin_sub_param[1] << endl;
   cout << "fmax_bin_sub_param[1] = " << fmax_bin_sub_param[1] << endl;
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
 
-  //if(fToyMargErecoVArray_RHCNumu) fToyMargErecoVArray_RHCNumu->Cleanup();
+  if(fToyMargErecoVArray) delete fToyMargErecoVArray; fToyMargErecoVArray=0;
+  if(fToyMargErecoVArray_RHCNumu) delete fToyMargErecoVArray_RHCNumu; fToyMargErecoVArray_RHCNumu=0;  
   if(fChisqMargVArray) delete fChisqMargVArray; fChisqMargVArray=0;
   if(flikeVArray) delete flikeVArray; flikeVArray=0;
   if(hchisq_marg_1D) delete hchisq_marg_1D; hchisq_marg_1D=0;
@@ -572,8 +597,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       
       for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
 	for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-	  //for(int ipar0=0;ipar0<fnbins_sub_param[0];ipar0++){
-	  //for(int ipar1=0;ipar1<fnbins_sub_param[1];ipar1++){
 	
 	  //cout << ipar0 << " - " << ipar1 << endl;
 
@@ -640,28 +663,55 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	    // Update the expectation and produce the mock data
 	    fparm->Update(fPhysParamFree[0],currval0); 
 	    if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
-	    
+
 	    applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
 	    	    
-	    // Build toy Ereco distributions
-	    for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	      double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib];
-	      //fToyMargErecoVArray_RHCNumu->SetEntry(bincont,iexperiment,ipar0,ipar1,iMH,ib); 
-	      fToyMargErecoVArray_RHCNumu->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,ib); 
-	    }
+	    
+	    // Loop over the used SK samples (This loop can be improved. Loop only over the used SK samples, pre-stored)
+	    int iscount=0;
+	    //for(int is = 0; is < kns; is++) {
+	    //SuperkSample_t s = kSKSamples[is];
+	    //if(s == kSKsUndefined) continue;
+	    for(int is=0;is<fNSKsamples;is++){
+	      SuperkSample_t s = this->GetSKSamples(is);
+	      
+	      // Build toy Ereco distributions
+	      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+		double bincont = skobs->ErecoSpectrumArray(s)[ib];		
+		fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+	      }
+	      
+	      iscount++; // index of the toy array
+	    } // loop SK samples
+
 	    
 #ifdef __print_array_toy_maketoys__
-	    cout << endl;
-	    cout << "toy=" << iexperiment 
-		 << " - ipar0 = " << ipar0 
-		 << " - ipar1 = " << ipar1 << " : ";
-	    for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	      double bincont = skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib]; 
-	      cout << bincont << " "; 
-	    }
-	    cout << endl;	
+	      cout << endl;
+	      cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << " : ";
+	      
+	      // Build toy Ereco distributions
+
+	      iscount=0;
+	      //for(int is = 0; is < kns; is++) {
+	      //SuperkSample_t s = kSKSamples[is];
+	      //if(s == kSKsUndefined) continue;
+	      for(int is=0;is<fNSKsamples;is++){
+		SuperkSample_t s = this->GetSKSamples(is);
+		
+		cout << util::AsStringCompact(s) << endl;
+
+		for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+		  double bincont = skobs->ErecoSpectrumArray(s)[ib];
+		  fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+		  cout << bincont << " ";
+		}
+		cout << endl;
+		cout << endl;
+		
+		iscount++; // index of the toy array
+	      } // loop SK samples
 #endif
-	    
+	      	      
 	  } // loop Mass Hierarchy
 	} // loop ipar1 (free parameter)
       } // loop ipar0 (free parameter)
@@ -718,10 +768,6 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
     NparTot1=0;
     for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-      // NparTot0=0;
-      // for(int ipar0=0;ipar0<fnbins_sub_param[0];ipar0++){
-      //   NparTot1=0;
-      //   for(int ipar1=0;ipar1<fnbins_sub_param[1];ipar1++){
       
       //cout << ipar0 << "-" << ipar1 << "   ";
 
@@ -761,28 +807,50 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
 #endif	  
 	
 	for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
-	  
 	  //cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << endl;;
 
 	  // compute the likelihood for a single marginalization toy
 	  double chisq = 0.;
-	  for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-	    //double nexp = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar0,ipar1,iMH,ibin);
-	    double nexp = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,ibin);
-	    double nobs = skobs_data->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ibin];
-	    chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
-	  }
 	  
-	  
+	  // Loop over the used SK samples
+	    int iscount=0;
+	    //for(int is = 0; is < kns; is++) {
+	    //SuperkSample_t s = kSKSamples[is];
+	    //if(s == kSKsUndefined) continue;
+	    for(int is=0;is<fNSKsamples;is++){
+	      SuperkSample_t s = this->GetSKSamples(is);
+	      
+	      for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+		double nexp = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+		double nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
+		chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+	      }	  
+	      iscount++;
+	    } // loop SK samples
+	      
 #ifdef __print_array_toy_fillchisq__
 	  cout << endl;
 	  cout << "toy=" << iexperiment << " - ipar0=" << ipar0 << " - ipar1=" << ipar1 << " : ";
-	  for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	    //double bincont = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar0,ipar1,iMH,ib);
-	    double bincont = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,ib);
-	    cout << bincont << " "; 
-	  }
-	  cout << endl;	
+	  
+	  iscount=0;
+	  //for(int is = 0; is < kns; is++) {
+	  //SuperkSample_t s = kSKSamples[is];
+	  //if(s == kSKsUndefined) continue;
+	  for(int is=0;is<fNSKsamples;is++){
+	    SuperkSample_t s = this->GetSKSamples(is);
+	    
+	    cout << util::AsStringCompact(s) << endl;
+
+	    for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+	      double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib);
+	      cout << bincont << " "; 
+	    }
+	    cout << endl;
+	    cout << endl;
+	    
+	    iscount++;
+	  } // loop SK samples
+
 #endif
 	  
 	  double like = exp(-chisq/2.) / fntoys_marg;
@@ -813,8 +881,6 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   
   for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
     for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-      //for(int ipar0=0;ipar0<fnbins_sub_param[0];ipar0++){
-      //for(int ipar1=0;ipar1<fnbins_sub_param[1];ipar1++){
       double bincont = -2*log( flikeVArray->GetEntry(ipar0,ipar1) );
       fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
       if(!fIsFit2D) hchisq_marg_1D->SetBinContent(ipar0+1,bincont);
@@ -831,8 +897,6 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   cout << "fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
   for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
     for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-      //for(int ipar0=0;ipar0<fnbins_sub_param[0];ipar0++){
-      //for(int ipar1=0;ipar1<fnbins_sub_param[1];ipar1++){
       cout << fChisqMargVArray->GetEntry(ipar0,ipar1) << ", ";
     }
   }
@@ -864,7 +928,7 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   sprintf(outname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string soutname(outname);
-  fToyMargErecoVArray_RHCNumu->WriteFile(soutname);
+  fToyMargErecoVArray->WriteFile(soutname);
   
   cout << " - Toy for marginalization are stored in " << soutname << endl;
 
@@ -884,10 +948,8 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   assert(os);
   os.write( (char*)&fmin_bin_sub_param[0],sizeof(int));
   os.write( (char*)&fmax_bin_sub_param[0],sizeof(int));
-  //os.write( (char*)&fnbins_param[0],sizeof(int));
   os.write( (char*)&fmin_bin_sub_param[1],sizeof(int));
   os.write( (char*)&fmax_bin_sub_param[1],sizeof(int));
-  //os.write( (char*)&fnbins_param[1],sizeof(int));
   os.close();
 
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
@@ -920,7 +982,22 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
   else ostext << "Don't rethrow unphysical systematic toys" << endl;
   ostext << "fntoys_marg = " << fntoys_marg << endl;
-  ostext << "fnerecobins_RHCNumu = " << fnerecobins_RHCNumu << endl;
+  ostext << endl;
+  ostext << "Initialize VALORArray fToyMargErecoVArray with:"<< endl;
+  ostext << "fntoys_marg = " << fntoys_marg << endl;
+
+  ostext << "fNSKsamples = " << fNSKsamples << endl;
+  ostext << "Used sub-samples:" << endl;
+  int iscount=0;
+  //for(int is = 0; is < kns; is++) {
+  //SuperkSample_t s = kSKSamples[is];
+  //if(s == kSKsUndefined) continue;
+  for(int is=0;is<fNSKsamples;is++){
+    SuperkSample_t s = this->GetSKSamples(is);
+    ostext << "   - " << util::AsStringCompact(s) << endl;
+    ostext << "     fnerecobins = " << fnerecobins->GetEntry(iscount) << endl;
+    iscount++;
+  }
   ostext << endl;
   ostext << "fnbins_param0 = " << fnbins_param[0] << endl;
   ostext << "fmin_bin_sub_param0 = " << fmin_bin_sub_param[0] << endl;
@@ -973,7 +1050,7 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   sprintf(outname,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string soutname(outname);
-  fToyMargErecoVArray_RHCNumu_Clone->WriteFile(soutname);
+  fToyMargErecoVArray_Clone->WriteFile(soutname);
 
   // Write store sub-range of the free parameter
 
@@ -996,10 +1073,8 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   assert(os);
   os.write( (char*)&min_bin0,sizeof(int));
   os.write( (char*)&max_bin0,sizeof(int));
-  //os.write( (char*)&fnbins_param[0],sizeof(int));
   os.write( (char*)&min_bin1,sizeof(int));
   os.write( (char*)&max_bin1,sizeof(int));
-  //os.write( (char*)&fnbins_param[1],sizeof(int));
   os.close();
 
   cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
@@ -1022,7 +1097,20 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   else ostext << "Don't rethrow unphysical systematic toys" << endl;
   ostext << "# of merged files: " << fNmergedFiles << endl;
   ostext << "fntoys_marg = " << fntoys_marg << endl;
-  ostext << "fnerecobins_RHCNumu = " << fnerecobins_RHCNumu << endl;
+
+  ostext << "fNSKsamples = " << fNSKsamples << endl;
+  ostext << "Used sub-samples:" << endl;
+  int iscount=0;
+  //for(int is = 0; is < kns; is++) {
+  //SuperkSample_t s = kSKSamples[is];
+  //if(s == kSKsUndefined) continue;
+  for(int is=0;is<fNSKsamples;is++){
+    SuperkSample_t s = this->GetSKSamples(is);
+    ostext << "   - " << util::AsStringCompact(s) << endl;
+    ostext << "     fnerecobins = " << fnerecobins->GetEntry(iscount) << endl;
+    iscount++;
+  }
+
   ostext << endl;
   ostext << "fnbins_param0 = " << fnbins_param[0] << endl;
   ostext << "min_bin0 = " << min_bin0 << endl;
@@ -1067,8 +1155,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
   std::string sinname(inname);
   cout << sinname << endl;
 
-  //fToyMargErecoVArray_RHCNumu->Cleanup();
-  fToyMargErecoVArray_RHCNumu->ReadFile(sinname);
+  fToyMargErecoVArray->ReadFile(sinname);
 
   cout << endl;
   cout << "Read toys for marginalization from binary file:" << sinname << endl;  
@@ -1093,18 +1180,14 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
   assert(is);
   is.read( (char*)&min_bin_sub_param0,sizeof(int));
   is.read( (char*)&max_bin_sub_param0,sizeof(int));
-  //is.read( (char*)&nbins_param0,sizeof(int));
   is.read( (char*)&min_bin_sub_param1,sizeof(int));
   is.read( (char*)&max_bin_sub_param1,sizeof(int));
-  //is.read( (char*)&nbins_param0,sizeof(int));
   is.close();
 
   fmin_bin_sub_param[0] = min_bin_sub_param0;
   fmax_bin_sub_param[0] = max_bin_sub_param0;
-  //fnbins_param[0] = nbins_param0;
   fmin_bin_sub_param[1] = min_bin_sub_param1;
   fmax_bin_sub_param[1] = max_bin_sub_param1;
-  //fnbins_param[1] = nbins_param1;
 
   fmin_sub_param[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1);    
   fmax_sub_param[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1);
@@ -1126,13 +1209,6 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
     exit(1);
   }
   
-
-  // cout << endl;
-  // cout << std::setprecision(10) 
-  //      << fmin_sub_param[1] << ", " << fmax_sub_param[1] << endl
-  //      << fmin_param[1] << ", " << fmax_param[1] << endl
-  //      << endl;  
-
   if(fmin_sub_param[1]<(fmin_param[1]-conv::kASmallNum) || fmax_sub_param[1]>(fmax_param[1]+conv::kASmallNum)){  // w/o conv::kASmallNum it enters the loop if bounds are identical. To check
     cerr << endl 
 	 << "The free parameter 1 sub-range ["
@@ -1227,30 +1303,32 @@ void FitMarginalization::PrintBestFit(){
   return;
 }
 //________________________________________________________________________________________
-VALORArrayF * FitMarginalization::GetToyMargErecoVArray(SuperkSample_t s){
-
-  if(s==kSKsRHCFCFV1RingMuLike) return fToyMargErecoVArray_RHCNumu;
-  else{
-    cout << "You have chosen a wrong Superk Sample" << endl;
-    exit(1);
-  }
-}
-//________________________________________________________________________________________
-TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy){
-
-  if(s==kSKsRHCFCFV1RingMuLike){ 
-    for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
-      double bincont = fToyMargErecoVArray_RHCNumu->GetEntry(itoy,ifreepar0,ifreepar1,iMassHierarchy,ibin);
-      hToyMargCurr->SetBinContent(ibin+1,bincont);
-      //cout << bincont << " ";
+TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t sksample,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy){
+        
+  for(int is=0;is<fNSKsamples;is++){
+    SuperkSample_t s = this->GetSKSamples(is);    
+    if(sksample == s){
+      for(int ibin=0;ibin<fnerecobins->GetEntry(is);ibin++){
+	double bincont = fToyMargErecoVArray->GetEntry(itoy,ifreepar0,ifreepar1,iMassHierarchy,is,ibin);
+	hToyMargCurr[is]->SetBinContent(ibin+1,bincont);
+	//cout << bincont << " ";
+      }     
+      //cout << endl;
+      return hToyMargCurr[is];
     }
-    //cout << endl;
-    return hToyMargCurr;
   }
-  else{
-    cout << "You have chosen a wrong Superk Sample" << endl;
-    exit(1);
+  
+  cerr << endl;
+  cerr << "You have chosen a wrong Superk Sample: " 
+       << util::AsStringCompact(sksample) 
+       << endl;
+  cerr << "The samples used in the analysis are:" << endl;
+  for(int is=0;is<fNSKsamples;is++){
+    SuperkSample_t s = this->GetSKSamples(is);    
+    cerr << "  - " << util::AsStringCompact(s) << endl;
   }
+  cerr << endl;
+  exit(1);
 }
 //________________________________________________________________________________________
 void FitMarginalization::ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param){
@@ -1450,9 +1528,10 @@ void FitMarginalization::MergeInputFiles(){
   // Initialize the clone VALORArray only the first time MergeInputFiles() is called
   const int nmh=2; // mass hierarchy
   if(MergeInputFiles_Called){
-    fToyMargErecoVArray_RHCNumu_Clone = new VALORArrayF(fntoys_marg, fnbins_param[0],fnbins_param[1], nmh, util::NumErecoBins(kSKsRHCFCFV1RingMuLike)); // total range of free parameter
+    for(int is=0;is<fNSKsamples;is++)
+      fToyMargErecoVArray_Clone = new VALORArrayF(fntoys_marg, fnbins_param[0],fnbins_param[1], nmh, fNSKsamples, fnerecobins->GetEntry(is)); // total range of free parameter
     
-    fToyMargErecoVArray_RHCNumu_Clone->SetAll(-1.);
+    fToyMargErecoVArray_Clone->SetAll(-1.);
 
     MergeInputFiles_Called = false;
   }
@@ -1494,37 +1573,63 @@ void FitMarginalization::MergeInputFiles(){
 
 	int nMassHierarchy = 2;
 	for(int iMH=0;iMH<nMassHierarchy;iMH++){
-	  for(int ibin=0;ibin<util::NumErecoBins(kSKsRHCFCFV1RingMuLike);ibin++){
+
+
+	  // Loop over the used SK samples
+	  int iscount=0;
+	  //for(int is = 0; is < kns; is++) {
+	  //SuperkSample_t s = kSKSamples[is];
+	  //if(s == kSKsUndefined) continue;
+	  for(int is=0;is<fNSKsamples;is++){
+	    SuperkSample_t s = this->GetSKSamples(is);
 	    
-	    float bincont = fToyMargErecoVArray_RHCNumu->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,ibin); // shift to sub-range // bincont = -1 by default
-	    if(bincont >= 0.){
-	      float bincont_clone = fToyMargErecoVArray_RHCNumu_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,ibin);  // total range
-	      if(bincont_clone >= 0.){
-		cerr << endl;
-		cerr << "Following bin has been already filled:" << endl;
-		cerr << " - iexperiment = " << iexperiment << endl;
-		cerr << " - ipar0 = " << ipar0 << endl;
-		cerr << " - ipar1 = " << ipar1 << endl;
-		cerr << " - iMH = " << iMH << endl;
-		cerr << " - iereco = " << ibin << endl;
-		exit(1);
+	    for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+	      float bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ibin); // shift to sub-range // bincont = -1 by default
+	      if(bincont >= 0.){
+		float bincont_clone = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,iscount,ibin);  // total range
+		if(bincont_clone >= 0.){
+		  cerr << endl;
+		  cerr << "Following bin has been already filled:" << endl;
+		  cerr << " - iexperiment = " << iexperiment << endl;
+		  cerr << " - ipar0 = " << ipar0 << endl;
+		  cerr << " - ipar1 = " << ipar1 << endl;
+		  cerr << " - iMH = " << iMH << endl;
+		  cerr << " - sample = " << util::AsStringCompact(s) << endl;
+		  cerr << " - iereco = " << ibin << endl;
+		  exit(1);
+		}
+		else{
+		  fToyMargErecoVArray_Clone->SetEntry(bincont,iexperiment,ipar0,ipar1,iMH,iscount,ibin); 
+		}
 	      }
-	      else{
-		fToyMargErecoVArray_RHCNumu_Clone->SetEntry(bincont,iexperiment,ipar0,ipar1,iMH,ibin); 
-	      }
-	    }
-	    
-	  } // loop ibin
-	  
+
+	    } // loop ibin
+	  } // loop SK samples
+
 	  
 #ifdef __print_array_toy_merge__
 	  cout << endl;
 	  cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << " : ";
-	  for(int ib = 0; ib < util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++){
-	    double bincont = fToyMargErecoVArray_RHCNumu_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,ib);
-	    cout << bincont << " "; 
-	  }
-	  cout << endl;	
+	  
+	  // Loop over the used SK samples
+	  iscount=0;
+	  //for(int is = 0; is < kns; is++) {
+	  //SuperkSample_t s = kSKSamples[is];
+	  //if(s == kSKsUndefined) continue;
+	  for(int is=0;is<fNSKsamples;is++){
+	    SuperkSample_t s = this->GetSKSamples(is);
+	    
+	    cout << util::AsStringCompact(s) << endl;
+
+	    for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+	      double bincont = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,iscount,ib);
+	      cout << bincont << " "; 
+	    }
+	    cout << endl;
+	    cout << endl;
+	    
+	    iscount++;
+	  } // loop SK samples
 #endif
 	  
 	} // loop iMH
@@ -1537,4 +1642,45 @@ void FitMarginalization::MergeInputFiles(){
   return;
 }
 //________________________________________________________________________________________
+void FitMarginalization::SetNSKsamples(){
 
+  fNSKsamples = 0; // # of sk samples used in the fit
+
+  cout << endl;
+  cout << "Use the following SK samples:" << endl;
+
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     cout << "    " << util::AsStringCompact(s) << endl;
+     fNSKsamples++;
+  }
+  cout << "Total # of samples = " << fNSKsamples << endl;
+  cout << endl;
+
+  // Take the Ereco binning for each SK samples
+  this->fnerecobins = new VALORArrayI(fNSKsamples);
+  this->fsksamples = new VALORArrayI(fNSKsamples);
+
+  int iscount=0;
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     
+     this->fsksamples->SetEntry(is,iscount);
+     this->fnerecobins->SetEntry(util::NumErecoBins(s),iscount); 
+     
+     //cout << "is " << is << " - iscount " << iscount << endl;
+     //cout << fnerecobins->GetEntry(iscount) << endl;
+     
+     iscount++;
+  }
+  return;
+}
+//________________________________________________________________________________________
+conv::SuperkSample_t FitMarginalization::GetSKSamples(int isksample){
+  int is = this->fsksamples->GetEntry(isksample);
+  SuperkSample_t s = kSKSamples[is];
+  return s;
+}
+//________________________________________________________________________________________
