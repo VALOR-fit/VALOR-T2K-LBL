@@ -19,7 +19,7 @@ void build_marg_toys
 (
  const int    fileid               = 1,   // file id
 
- const int    first_bin_freepar0   = 10,   // first freepar of the sub-range
+ const int    first_bin_freepar0   = 0,   // first freepar of the sub-range
  const int    last_bin_freepar0    = 20, // last freepar of the sub-range
  const int    first_bin_freepar1   = 0,   // first freepar of the sub-range
  const int    last_bin_freepar1    = 12, // last freepar of the sub-range

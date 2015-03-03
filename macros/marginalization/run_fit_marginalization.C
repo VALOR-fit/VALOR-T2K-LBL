@@ -5,7 +5,7 @@ using namespace valor::conv;
 
 void run_fit_marginalization
 (
- const bool   readtoys             = true,
+ const bool   readtoys             = false,
 
  const char * outfilename          = "ChisqMarg",
  
@@ -16,40 +16,46 @@ void run_fit_marginalization
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_1p7E20_postfit_NoRethrow_Merged",
- const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
+ //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
  //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
- //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
+ const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
 
- const int    nfiles               = 2,         // # of files to read
+ const int    nfiles               = 1,         // # of files to read
 
- //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
- const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
-
- //const char * fit_param_list      = "nuosc3fbar_numudisapp_constrainall+nuisance",  
- const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
-
- const int    NtoysMarg            = 10,   // # toys marginalization 
+ //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",  
+ //const char * config_file          = "analysis_configuration_1.7E20.xml",  
+ const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
  
- const char * freeparname0        = "mixing23Bar",  // free parameter
- const double freeparmin0         = 0,              // minimum value of free parameter
- const double freeparmax0         = 1,            // maxinum value of free parameter
+ //const char * fit_param_list       = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
+ //const char * fit_param_list      = "nuosc3fbar_numudisapp_constrainall+nuisance",  
+ //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+
+ const int    NtoysMarg            = 1,   // # toys marginalization 
+ 
+ const char * freeparname0        = "mixing13Bar",  // free parameter
+ //const char * freeparname0        = "mixing23Bar",  // free parameter
+ const double freeparmin0         = 0.,              // minimum value of free parameter
+ const double freeparmax0         = 0.3,            // maxinum value of free parameter
  const int    NptScan0            = 21,            // # pts of free parameter to scan
 
- const char * freeparname1        = "",  // free parameter
+ const char * freeparname1        = "deltacpBar",  // free parameter
+ const double freeparmin1         = -TMath::Pi(), // minimum value of free parameter
+ const double freeparmax1         = +TMath::Pi(), // maxinum value of free parameter
  //const char * freeparname1        = "dmsq23Bar",  // free parameter
- const double freeparmin1         = 0.0002, // minimum value of free parameter
- const double freeparmax1         = 0.02, // maxinum value of free parameter
+ //const double freeparmin1         = 0.0002, // minimum value of free parameter
+ //const double freeparmax1         = 0.02, // maxinum value of free parameter
  const int    NptScan1            = 21,          // # pts of free parameter to scan
 
  int         tweak_systematics    = 1,       /* generate toy MC with randomized systematics? */
 
- const bool  doMargMH             = true,    // marginalize Mass Hierarchy
+ const bool  doMargMH             = false,    // marginalize Mass Hierarchy
  const bool  doRethrowUnphysical  = false,    // rethrow unphysical systematic toys
 
  const char * dmsqscheme          = "abs23",      /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy           = "inverted",     /* normal or inverted */
+ const char * hierarchy           = "normal",     /* normal or inverted */
  const char * mixparamchoice      = "sinsqtheta", /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant      = "one",       /* one==kNuOctantOne two==kNuOctantTwo */
 
@@ -186,7 +192,6 @@ void run_fit_marginalization
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->Init(); // Before need SetPhysParFree() to initialize the arrays
   
-
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);
   fitmarg->PrintPhysHypothesis();
@@ -203,13 +208,17 @@ void run_fit_marginalization
 
     // Set priors for not fixed oscillation parameters
     fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
-    fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,1);
+    fitmarg->SetPrior(kPhypMixing13Bar,"flat",0.07,0.15);
     fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
     fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
     fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
     fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
 
     fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
+
+    //fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingMuLike,0,0,0,0)->Draw();
+    //fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingELike,0,0,0,0)->Draw();
+    
     fitmarg->FillChisqMarg(skobs_fakedata);
   }
 
