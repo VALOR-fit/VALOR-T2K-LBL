@@ -76,7 +76,7 @@ foreach (@ARGV) {
 $resource        = "interactive"               unless defined     $resource;
 $read_toys       = 0                           unless defined     $read_toys;  # Useless: parallelization not needed 
 
-$tag_out         = "ChisqMarg_cluster_partial"   unless defined $tag_out;
+$tag_out         = "ChisqMarg_cluster_partial_2D"   unless defined $tag_out;
 $tag_in          = "ciao"                        unless defined $tag_in;  # Useless: parallelization not needed 
 
 #$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
@@ -95,7 +95,7 @@ $config_file   = "analysis_configuration_1.7E20.xml"            unless defined $
 #$fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4"       unless defined $fitparamlist;
 $fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
 
-$nexpts_marg            = 10                     unless defined $nexpts_marg;    # of toys
+$nexpts_marg            = 2                     unless defined $nexpts_marg;    # of toys
 
 $nfiles                 = 1                      unless defined $nfiles;    # Useless: parallelization not needed 
 
@@ -104,12 +104,13 @@ $minfreepar0            = 0                      unless defined $minfreepar0;   
 $maxfreepar0            = 1                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
 $npt_freepar0           = 21                    unless defined $npt_freepar0;    # of free parameter points to scan
 
+#$freepar1               = ""            unless defined $freepar1;
 $freepar1               = "dmsq23Bar"            unless defined $freepar1;
 $minfreepar1            = 0.0002                 unless defined $minfreepar1;     # Minimum free parameter allowed value
 $maxfreepar1            = 0.02                   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 $npt_freepar1           = 21                    unless defined $npt_freepar1;    # of free parameter points to scan
 
-$step_freepar0          = 5                     unless defined $step_freepar;   # of points for each job param0
+$step_freepar0          = 2                     unless defined $step_freepar;   # of points for each job param0
 $step_freepar1          = 21                    unless defined $step_freepar;   # of points for each job param1
 
 $tweak_systematics      = 1                      unless defined $tweak_systematics;
