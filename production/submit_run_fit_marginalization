@@ -72,6 +72,8 @@ foreach (@ARGV) {
   elsif($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
   elsif($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
   
+  elsif($_ eq '--xml-file'               ) { $xml_file              = $ARGV[$iarg+1]; }
+  
   else {
       print "Unrecognised argument ".$_."\n"; exit;
   }
@@ -116,8 +118,8 @@ $minfreepar1            = 0.0002                 unless defined $minfreepar1;   
 $maxfreepar1            = 0.02                   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 $npt_freepar1           = 21                    unless defined $npt_freepar1;    # of free parameter points to scan
 
-$step_freepar0          = 2                     unless defined $step_freepar;   # of points for each job param0
-$step_freepar1          = 21                    unless defined $step_freepar;   # of points for each job param1
+$step_freepar0          = 2                     unless defined $step_freepar0;   # of points for each job param0
+$step_freepar1          = 21                    unless defined $step_freepar1;   # of points for each job param1
 
 $tweak_systematics      = 1                      unless defined $tweak_systematics;
 $marg_hierarchy         = 1                      unless defined $marg_hierarchy;
@@ -130,6 +132,9 @@ $dmsqscheme             = "abs23"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"           unless defined $mixparamchoice;
 $mixparamoctant         = "one"                  unless defined $mixparamoctant;
+
+$using_xml_file = (defined $xml_file ? "true" : "false" );
+$xml_file = "" unless defined $xml_file;
 
 
 if( !defined $cput ) {
@@ -145,6 +150,8 @@ $fileid=0;
 
 $imin0_p1=0; # param 0
 $imin1_p1=0; # param 1
+
+$ijob = 0;
 
 for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) { 
     for($imin1 = 0; $imin1 < $npt_freepar1; $imin1 = $imin1_p1) { 
@@ -180,12 +187,13 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	
 	$program = "root2k ";
 		
-	$arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization.C($read_toys,\"$tag_out\",$fileid,$imin0,$imax0,$imin1,$imax1,\"$tag_in\",$nfiles,\"$config_file\",\"$fitparamlist\",$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$tweak_systematics,$marg_hierarchy,$rethrow_unphysical,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\")\'";
+	$arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization.C($read_toys,\"$tag_out\",$fileid,$imin0,$imax0,$imin1,$imax1,\"$tag_in\",$nfiles,\"$config_file\",\"$fitparamlist\",$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$tweak_systematics,$marg_hierarchy,$rethrow_unphysical,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$xml_file\",$using_xml_file)\'";
 	
 	$command = "$program $arguments";
 	print "$command \n";
 	
 	$fileid = $fileid+1;
+	
 	
 	#
 	# ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
@@ -233,23 +241,36 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	# RAL
 	#
 	if($resource eq "RAL") {
+	    $source = `which bash`;
 	    $fullprogram = `which root2k`;
 	    $fullprogram = `readlink -m $fullprogram`;
 	    $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
 	    $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
-	    open(CND, ">$job_dir/$tag-$ijob.condor") or die("Cannot create the Condor batch script");
-	    print CND "Executable               = $fullprogram \n";
-	    print CND "Arguments                = $arguments \n";
-	    print CND "Error                    = $job_dir/toys_proc_$tag-${ijob}_\$\(Process\).err \n";
-	    print CND "Output                   = $job_dir/toys_proc_$tag-${ijob}_\$\(Process\).out \n";
+	    
+	    $consh   = "$job_dir/$tag_in-run_fit_marg-$ijob.consh";
+	    $cndname = "$job_dir/$tag_in-run_fit_marg-$ijob.condor";
+	    
+	    open(CONSH,">$consh") or die("Cannot make shell script for Condor");
+	    print CONSH "cd $job_dir \n";
+	    print CONSH "$command \n";
+	    close(CONSH);
+	    
+	    open(CND, ">$cndname") or die("Cannot create the Condor file");
+	    print CND "Executable               = $source \n";
+	    print CND "Arguments                = $consh \n";
+	    print CND "Error                    = $job_dir/fit_marg_$tag_in-${ijob}_\$\(Process\).err \n";
+	    print CND "Output                   = $job_dir/fit_marg_$tag_in-${ijob}_\$\(Process\).out \n";
 	    print CND "Universe                 = vanilla \n";
 	    print CND "Getenv                   = True \n";
 	    print CND "should_transfer_files    = YES \n";
 	    print CND "when_to_transfer_output  = ON_EXIT \n";
+	    
+	    print CND "InitialDir               = $job_dir \n";
+	    
 	    print CND "\nqueue\n";
 	    
 	    close(CND);
-	    `condor_submit $job_dir/$tag-$ijob.condor`;
+	    `condor_submit $cndname`;
 	}
 	
 	
@@ -301,6 +322,8 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	    system($command);
 	}
 	
+	$ijob++;
+    
     } # freepar 0
 } # freepar 1
 
