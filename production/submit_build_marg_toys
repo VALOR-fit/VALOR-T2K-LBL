@@ -103,9 +103,9 @@ $npt_freepar1           = 21                         unless defined $npt_freepar
 
 $nexpts_marg            = 2                         unless defined $nexpts_marg;    # of toys
 
-$step_freepar0          = 2                           unless defined $step_freepar;   # of points for each job param0
-#$step_freepar1          = 1                          unless defined $step_freepar;   # of points for each job param1
-$step_freepar1          = 21                          unless defined $step_freepar;   # of points for each job param1
+$step_freepar0          = 2                           unless defined $step_freepar0;   # of points for each job param0
+#$step_freepar1          = 1                          unless defined $step_freepar0;   # of points for each job param1
+$step_freepar1          = 21                          unless defined $step_freepar1;   # of points for each job param1
 
 $tweak_systematics      = 1                           unless defined $tweak_systematics;
 $marg_hierarchy         = 1                           unless defined $marg_hierarchy;
