@@ -63,6 +63,7 @@ foreach (@ARGV) {
   elsif($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
   elsif($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
   elsif($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fmwk-dir'               ) { $fmwk_dir              = $ARGV[$iarg+1]; }
   
   else {
       print "Unrecognised argument ".$_."\n"; exit;
@@ -76,6 +77,7 @@ $tag             = "submit_mixing23_1p7E20_postfit_NoRethrow"        unless defi
 #$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
 #$config_file   = "analysis_configuration_run1to6_test.xml"      unless defined $config_file;
 $config_file   = "analysis_configuration_1.7E20.xml"            unless defined $config_file;
+
 #$config_file   = "analysis_configuration_1.7E20_prefit.xml"     unless defined $config_file;
 #$config_file   = "analysis_configuration_2.5E20.xml"            unless defined $config_file;
 #$config_file   = "analysis_configuration_2.5E20_prefit.xml"     unless defined $config_file;
@@ -113,7 +115,7 @@ $rethrow_unphysical     = 0                           unless defined $rethrow_un
 
 $job_dir                = "."                         unless defined $job_dir;
 $softw_dir              = $ENV{'T2KOSCANA'}           unless defined $softw_dir;
-
+$fmwk_dir               = $ENV{'VALOR_FMWK'}          unless defined $fmwk_dir;
 $dmsqscheme             = "abs23"                     unless defined $dmsqscheme;
 $masshierarchy          = "normal"                    unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"                unless defined $mixparamchoice;
@@ -275,6 +277,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	    print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
 	    print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
 	    print PBS "cd $job_dir \n";
+	    print PBS "source $fmwk_dir
 	    print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
 	    print PBS "$command \n";
 	    close(PBS);
