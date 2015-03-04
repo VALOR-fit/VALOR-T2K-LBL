@@ -169,7 +169,7 @@ $tolerance              = 0.01                                   unless defined 
 #$optfixparams            = "mixing23,dmsq32,dmsq12,mixing13,mixing12,deltacp"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
 $optfixparams            = "dmsq12,mixing12,deltacp,mixing13"    unless defined $optfixparams;  # list of the params to be fixed in the fit   
 
-$softw_dir              = `pwd`                                unless defined $softw_dir;
+$softw_dir              = $ENV{'T2KOSCANA'}                    unless defined $softw_dir;
 $job_dir                = `pwd`                                unless defined $job_dir;
 $proxy_id               = "valor"                              unless defined $proxy_id;
 $grid_local_dir         = `pwd`                                unless defined $grid_local_dir;

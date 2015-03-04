@@ -64,7 +64,7 @@ $twk_oth_osc            = 0                             unless defined $twk_oth_
 $fitparamlist           = "nuosc3f_nueapp_fix4"         unless defined $fitparamlist;
 $fitoption              = "minuit"                      unless defined $fitoption;
 $job_dir                = `pwd`                         unless defined $job_dir;
-$softw_dir              = `pwd`                         unless defined $softw_dir;
+$softw_dir              = $ENV{'T2KOSCANA'}             unless defined $softw_dir;
 $config_file            = "analysis_configuration.xml"  unless defined $config_file;
 
 if( !defined $cput) {

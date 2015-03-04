@@ -31,44 +31,50 @@ use File::Path;
 
 $iarg=0;
 foreach (@ARGV) {
-  if($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
+  if($iarg % 2 == 1) {$iarg++; next;}
+      
+  if   ($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
 
-  if($_ eq '--read-toys'              ) { $read_toys             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--read-toys'              ) { $read_toys             = $ARGV[$iarg+1]; }
   
-  if($_ eq '--tag-out'                ) { $tag_out               = $ARGV[$iarg+1]; }
-  if($_ eq '--tag-in'                 ) { $tag_in                = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag-out'                ) { $tag_out               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag-in'                 ) { $tag_in                = $ARGV[$iarg+1]; }
 
-  if($_ eq '--nfiles'                 ) { $nfiles                = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nfiles'                 ) { $nfiles                = $ARGV[$iarg+1]; }
 
-  if($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
-  if($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
 
-  if($_ eq '--nexpts-marg'            ) { $nexpts_marg           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nexpts-marg'            ) { $nexpts_marg           = $ARGV[$iarg+1]; }
 
-  if($_ eq '--freepar0'               ) { $freepar0               = $ARGV[$iarg+1]; }
-  if($_ eq '--minfreepar0'            ) { $minfreepar0            = $ARGV[$iarg+1]; }
-  if($_ eq '--maxfreepar0'            ) { $maxfreepar0            = $ARGV[$iarg+1]; }
-  if($_ eq '--npt-freepar0'           ) { $npt_freepar0           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--freepar0'               ) { $freepar0               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--minfreepar0'            ) { $minfreepar0            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--maxfreepar0'            ) { $maxfreepar0            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--npt-freepar0'           ) { $npt_freepar0           = $ARGV[$iarg+1]; }
 
-  if($_ eq '--freepar1'               ) { $freepar1               = $ARGV[$iarg+1]; }
-  if($_ eq '--minfreepar1'            ) { $minfreepar1            = $ARGV[$iarg+1]; }
-  if($_ eq '--maxfreepar1'            ) { $maxfreepar1            = $ARGV[$iarg+1]; }
-  if($_ eq '--npt-freepar1'           ) { $npt_freepar1           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--freepar1'               ) { $freepar1               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--minfreepar1'            ) { $minfreepar1            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--maxfreepar1'            ) { $maxfreepar1            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--npt-freepar1'           ) { $npt_freepar1           = $ARGV[$iarg+1]; }
   
-  if($_ eq '--step-freepar0'          ) { $step_freepar0          = $ARGV[$iarg+1]; }
-  if($_ eq '--step-freepar1'          ) { $step_freepar1          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--step-freepar0'          ) { $step_freepar0          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--step-freepar1'          ) { $step_freepar1          = $ARGV[$iarg+1]; }
 
-  if($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
-  if($_ eq '--marginalize-hierarchy'  ) { $marg_hierarchy        = $ARGV[$iarg+1]; }
-  if($_ eq '--rethrow-unphysical'     ) { $rethrow_unphysical    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--marginalize-hierarchy'  ) { $marg_hierarchy        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--rethrow-unphysical'     ) { $rethrow_unphysical    = $ARGV[$iarg+1]; }
 
-  if($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
-  if($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
-  if($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
-  if($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
-  if($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
-  if($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
-  if($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
+  
+  else {
+      print "Unrecognised argument ".$_."\n"; exit;
+  }
   $iarg++;
 }
 
@@ -118,7 +124,7 @@ $marg_hierarchy         = 1                      unless defined $marg_hierarchy;
 $rethrow_unphysical     = 0                      unless defined $rethrow_unphysical;
 
 $job_dir                = "."                    unless defined $job_dir;
-$softw_dir              = "."                    unless defined $softw_dir;
+$softw_dir              = $ENV{'T2KOSCANA'}      unless defined $softw_dir;
 
 $dmsqscheme             = "abs23"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;

@@ -33,7 +33,7 @@ $iarg=0;
 foreach (@ARGV) {
   if($iarg % 2 == 1) {$iarg++; next;}
   
-  if($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
+  if   ($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
   elsif($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
   elsif($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
   elsif($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
@@ -112,7 +112,7 @@ $marg_hierarchy         = 1                           unless defined $marg_hiera
 $rethrow_unphysical     = 0                           unless defined $rethrow_unphysical;
 
 $job_dir                = "."                         unless defined $job_dir;
-$softw_dir              = "."                         unless defined $softw_dir;
+$softw_dir              = $ENV{'T2KOSCANA'}           unless defined $softw_dir;
 
 $dmsqscheme             = "abs23"                     unless defined $dmsqscheme;
 $masshierarchy          = "normal"                    unless defined $masshierarchy;

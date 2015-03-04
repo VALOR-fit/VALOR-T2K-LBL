@@ -30,7 +30,7 @@
 use File::Path;
 $resource               = "RAL"    ;
 $job_dir                = "/opt/ppd/t2k/users/lorena/OscAna/repos/t2k/t2kana/nuosc/trunk/"   ;
-$softw_dir              = "/opt/ppd/t2k/users/lorena/OscAna/repos/t2k/t2kana/nuosc/trunk/"    ;
+$softw_dir              = $ENV{'T2KOSCANA'};
 $config_file            = "analysis_configuration.xml" ;
 $data_file              = "inputs/data.xml";#"toymc_goal-0.xml";#"fake_data_joint.xml";#"inputs/data.xml";#"fake_data_joint.xml";#"inputs/data.xml";
 $data_id                = 0;

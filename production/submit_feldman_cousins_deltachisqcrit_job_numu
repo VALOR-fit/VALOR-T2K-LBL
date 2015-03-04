@@ -36,13 +36,20 @@ use File::Path;
 
 $iarg=0;
 foreach (@ARGV) {
-  if($_ eq '--resource'                      ) { $resource      = $ARGV[$iarg+1]; }
-  if($_ eq '--cpu-time'                      ) { $cput          = $ARGV[$iarg+1]; }
-  if($_ eq '--fit-results'                   ) { $inputdir      = $ARGV[$iarg+1]; }
-  if($_ eq '--tag'                           ) { $tag           = $ARGV[$iarg+1]; }
-  if($_ eq '--num-sinsq2theta23-bins-per-job') { $nbins_per_job = $ARGV[$iarg+1]; }
-  if($_ eq '--job-dir'                       ) { $job_dir       = $ARGV[$iarg+1]; }
-  if($_ eq '--softw-dir'                     ) { $softw_dir     = $ARGV[$iarg+1]; }
+  if($iarg % 2 == 1) {$iarg++; next;}
+    
+  if   ($_ eq '--resource'                      ) { $resource      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cpu-time'                      ) { $cput          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fit-results'                   ) { $inputdir      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                           ) { $tag           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--num-sinsq2theta23-bins-per-job') { $nbins_per_job = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'                       ) { $job_dir       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--softw-dir'                     ) { $softw_dir     = $ARGV[$iarg+1]; }
+  
+  else {
+      print "Unrecognised argument ".$_."\n"; exit;
+  }
+  
   $iarg++;
 }
 $resource       = "RAL" unless defined $resource;
