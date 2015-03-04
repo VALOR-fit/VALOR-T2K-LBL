@@ -116,7 +116,7 @@ bool SuperkObservation::Read(string config_file, Option_t * opt)
 //________________________________________________________________________________________
 bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 {
-  cout << "Obs >> " << "Reading config file: " << config_file << endl;
+  cout << "Obs >> " << "Reading data file: " << config_file << endl;
 
   if(is_xml) { 
     // Parse the input configuration file
