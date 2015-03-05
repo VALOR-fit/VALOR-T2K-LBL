@@ -23,10 +23,10 @@ Added samples, modes and systematics for reverse horn current running
 //#define __save_ori_templates_init_debug__
 #define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
 //#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong.
-#define check_spline_limits       //slow, but should be used when testing
+//#define check_spline_limits       //slow, but should be used when testing
 
 
-//#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
 #define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
