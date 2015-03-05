@@ -23,6 +23,7 @@
 
 //#define __show_num_of_events_mesg_debug__
 //#define __show_bin_contributions_to_chisq__
+//#define __announce_generate__
 
 #include <cassert>
 #include <cstdlib>
@@ -330,8 +331,10 @@ bool SuperkObservation::Generate(
 // Get observed reconstructed energy distribution
   
   fp.ShowOnlyCurrValuesInNextPrint();
+#ifdef __announce_generate__
   cout << "Obs >> Generating a toy-MC expt with the following fitparamlist: " << fp;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
+#endif
   
   // Should do this properly.
   SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
@@ -358,9 +361,10 @@ bool SuperkObservation::Generate(
 {
 
 // Get observed reconstructed energy distribution
-  
+#ifdef __announce_generate__
   cout << "Obs >> Generating a toy-MC expt with the following physics hypothesis: " << ph;
   cout << "Obs >> Stat. fluctuations are turned-" << ((fluctuate)? "ON" : "OFF") << endl;
+#endif
   
   // Should do this properly.
   SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
@@ -409,6 +413,7 @@ bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag
     }
     else {
       VALORArray * data = this->ErecoSpectrumVArray(s);
+      data -> SetName( Form( "%s_%s", data_tag, util::AsStringCompact(s).c_str() ) );
       data_collection -> Add(data);
     }
 

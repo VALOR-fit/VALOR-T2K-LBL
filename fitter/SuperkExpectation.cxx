@@ -12,8 +12,8 @@ Added samples for multiring forward horn current
 */
 //________________________________________________________________________________________
 
-#define __show_syst_reset_mesg__
-#define __show_syst_tweak_mesg__
+//#define __show_syst_reset_mesg__
+//#define __show_syst_tweak_mesg__
 //#define __show_syst_tweak_debug__
 
 #include <cassert>
@@ -419,6 +419,7 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t 
   }
   
   bool hist_mode = (write_opt && string(write_opt).find("hist")!=string::npos);
+  //bool per_mode  = (write_opt && string(write_opt).find("mode")!=string::npos);
   
   string append_begin(Form("%s_", pdf_tag));
   
@@ -453,9 +454,11 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t 
       }//im
     } // hist mode
     else {
-      VALORArray * total = this->CurrPredictedErecoVArray(s);
+      VALORArray * total = new VALORArray(*(this->CurrPredictedErecoVArray(s)));
+      total->SetName(Form("%s%s",append_begin.c_str(),total->GetName()));
       array->Add(total);
-      VALORArray * bymode = this->CurrPredictedErecoVArrayMode(s);
+      VALORArray * bymode = new VALORArray(*(this->CurrPredictedErecoVArrayMode(s)));
+      bymode->SetName(Form("%s%s",append_begin.c_str(),bymode->GetName()));
       array->Add(bymode);
     }
   }//is

@@ -6,7 +6,7 @@
 */
 //________________________________________________________________________________________
 
-//#define __print_array_toy_maketoys__
+#define __print_array_toy_maketoys__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_masshierarchy__
@@ -512,14 +512,18 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
     
     // Initialize the seed to the experiment number. fSeed is 999
-
+    
     UInt_t myseed = 99;
     Rnd::Instance()->SetSeeds(myseed+iexperiment+10,myseed+iexperiment+20,myseed+iexperiment+30,myseed+iexperiment+40,fSeed+iexperiment+50); // stat, syst, osc, fitter, other
     
+#ifdef __show_each_experiment__
     cout << endl;
     cout << "iexperiment " << iexperiment << endl;
     cout << "# params 0: " << fnbins_param[0] << endl;
     cout << "# params 1: " << fnbins_param[1] << endl;
+#else
+    if (iexperiment%100 == 0) { cout << "iexperiment " << iexperiment << endl; }
+#endif
     
     fparm->ResetCurrToInitValues();
     
@@ -546,19 +550,19 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	
 	// tweak all sources of systematic error
 	if(tweak_systematics == 1) {
-	  cout << "- Randomizing all systematic params in pdf..." << endl;
+	  //~ cout << "- Randomizing all systematic params in pdf..." << endl;
 	  skexp->TweakAllSystematics(); 
 	}
 	else if(tweak_systematics == 2) {
-	  cout << "- Randomizing BANFF systematic params in pdf..." << endl;
+	  //~ cout << "- Randomizing BANFF systematic params in pdf..." << endl;
 	  skexp->TweakAllBANFFSystematics();
 	}
 	else if(tweak_systematics == 3) {
-	  cout << "- Randomizing uncorrelated-xsec systematic params in pdf..." << endl;
+	  //~ cout << "- Randomizing uncorrelated-xsec systematic params in pdf..." << endl;
 	  skexp->TweakAllUncorrelatedXSecSystematics();
 	}
 	else if(tweak_systematics == 4) {
-	  cout << "- Randomizing SKDetFSI systematic params in pdf..." << endl;
+	  //~ cout << "- Randomizing SKDetFSI systematic params in pdf..." << endl;
 	  skexp->TweakAllSKDetectorFSISystematics();
 	}
 
@@ -571,7 +575,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	if (this->fRethrowSystUnphysical) {
 	  unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
 	  if (unphysical_tweak) {
-	    cout<<"Parameters are unphysical - rethrowing"<<std::endl;
+	    //~ cout<<"Parameters are unphysical - rethrowing"<<std::endl;
 	    continue; // repeat the loop
 	  }
 	}
@@ -579,7 +583,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       }
       else { // no toys
 	skexp->ResetSystematicVariations();
-	cout << "- Generating toy-MC without systematic variation" << endl;
+	//~ cout << "- Generating toy-MC without systematic variation" << endl;
       }
 
 
@@ -658,8 +662,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	    cout << "iMH = " << iMH << " - MH: " << util::HierarchyAsString(hier) 
 		 << " - MHbar: " << util::HierarchyAsString(hierBar)
 		 << endl;
-#endif	  
-	    	    
+#endif
+	    
 	    // Update the expectation and produce the mock data
 	    fparm->Update(fPhysParamFree[0],currval0); 
 	    if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
@@ -677,7 +681,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	      
 	      // Build toy Ereco distributions
 	      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-		double bincont = skobs->ErecoSpectrumArray(s)[ib];		
+		double bincont = skobs->ErecoSpectrumArray(s)[ib];
 		fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
 	      }
 	      
@@ -698,8 +702,9 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	      for(int is=0;is<fNSKsamples;is++){
 		SuperkSample_t s = this->GetSKSamples(is);
 		
-		cout << util::AsStringCompact(s) << endl;
+		cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral()<< endl;
 
+#ifdef __print_array_toy_maketoys_verbose__
 		for(int ib = 0; ib < util::NumErecoBins(s); ib++){
 		  double bincont = skobs->ErecoSpectrumArray(s)[ib];
 		  fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
@@ -707,11 +712,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 		}
 		cout << endl;
 		cout << endl;
+#endif // verbose
 		
 		iscount++; // index of the toy array
 	      } // loop SK samples
-#endif
-	      	      
+#endif //__print_array_toy_maketoys__
+	
 	  } // loop Mass Hierarchy
 	} // loop ipar1 (free parameter)
       } // loop ipar0 (free parameter)
@@ -1154,11 +1160,10 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
 
   std::string sinname(inname);
   cout << sinname << endl;
-
+  
+  cout << "Reading toys for marginalization from binary file: " << sinname << endl;  
   fToyMargErecoVArray->ReadFile(sinname);
-
-  cout << endl;
-  cout << "Read toys for marginalization from binary file:" << sinname << endl;  
+  cout << "Done!"<<endl;
   
   // Write store sub-range of the free parameter
 
@@ -1174,7 +1179,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
 
   std::string sinname_range(inname_range);
 
-  cout << "Read free param sub-range from binary file:" << sinname_range << endl;
+  cout << "Reading free param sub-range from binary file:" << sinname_range << endl;
 
   ifstream is(sinname_range.c_str(),ios::binary|ios::in);
   assert(is);
@@ -1183,6 +1188,8 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
   is.read( (char*)&min_bin_sub_param1,sizeof(int));
   is.read( (char*)&max_bin_sub_param1,sizeof(int));
   is.close();
+  
+  cout<<"Done!"<<endl;
 
   fmin_bin_sub_param[0] = min_bin_sub_param0;
   fmax_bin_sub_param[0] = max_bin_sub_param0;
@@ -1199,9 +1206,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
 	 << "The free parameter 0 sub-range ["
 	 << fmin_sub_param[0] << "," << fmax_sub_param[0] << "] " 
 	 << "provided by the files "
-	 << inname << endl
+	 << sinname << endl
 	 << " and " 
-	 << inname_range << endl
+	 << sinname_range << endl
 	 << " exceeds the total range set for" 
 	 << fnamefreeparam[0]
 	 << " --> [" << fmin_param[0] << "," << fmax_param[0] << "]"
@@ -1214,9 +1221,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){
 	 << "The free parameter 1 sub-range ["
 	 << fmin_sub_param[1] << "," << fmax_sub_param[1] << "] " 
 	 << "provided by the files "
-	 << inname << endl
+	 << sinname << endl
 	 << " and " 
-	 << inname_range << endl
+	 << sinname_range << endl
 	 << " exceeds the total range set for" 
 	 << fnamefreeparam[1]
 	 << " --> [" << fmin_param[1] << "," << fmax_param[1] << "]"
