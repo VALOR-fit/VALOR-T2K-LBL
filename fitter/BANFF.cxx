@@ -148,6 +148,13 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 // Read BANFF inputs to oscillation analysis
 //
+  if (fBestFitValues)           delete fBestFitValues;
+  if (fCurrentValues)           delete fCurrentValues;
+  if (fUntunedCentralValues)    delete fUntunedCentralValues;
+  if (fRHCUntunedCentralValues) delete fRHCUntunedCentralValues;
+  if (fCovMtrx)                 delete fCovMtrx;
+  if (fCovMtrxInv)              delete fCovMtrxInv;
+  
   const char * banff_param_path = T2KOpt::Instance()->fPathBanffParam.c_str();
 #ifdef __show_init_mesg_info__
   cout << "Exp/BANFF >> Reading BANFF inputs from XML configuration file." << endl;
@@ -158,6 +165,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   const int np = conv::kNumOfParamsInBANFFfit;
   
 #ifdef __USE_NIWG2015__
+  
   fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   
@@ -265,6 +273,11 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 //________________________________________________________________________________________
 bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
+  if (fRHCBestFitValues)           delete fRHCBestFitValues;
+  if (fRHCCurrentValues)           delete fRHCCurrentValues;
+  if (fRHCCovMtrx)                 delete fRHCCovMtrx;
+  if (fRHCCovMtrxInv)              delete fRHCCovMtrxInv;
+  
   // Read BANFF inputs to oscillation analysis
   //
 #ifdef __show_init_mesg_info__
@@ -374,6 +387,11 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
+  
+  if (fFHCpRHCBestFitValues)           delete fFHCpRHCBestFitValues;
+  if (fFHCpRHCCurrentValues)           delete fFHCpRHCCurrentValues;
+  if (fFHCpRHCCovMtrx)                 delete fFHCpRHCCovMtrx;
+  if (fFHCpRHCCovMtrxInv)              delete fFHCpRHCCovMtrxInv;
 // Read BANFF inputs to oscillation analysis
 //
 #ifdef __show_init_mesg_info__

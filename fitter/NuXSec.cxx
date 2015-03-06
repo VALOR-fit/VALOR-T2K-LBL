@@ -466,6 +466,9 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
   
 #ifdef __USE_NIWG2015__
+  if (fUntunedCentralValues    ) delete fUntunedCentralValues   ;
+  if (fRHCUntunedCentralValues ) delete fRHCUntunedCentralValues;
+  
   fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   

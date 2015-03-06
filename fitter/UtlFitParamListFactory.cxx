@@ -829,8 +829,8 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   }
   const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
   // Release memory
-  //  xml->FreeDoc(xmldoc);
-  xml->FreeNode(root_node);
+  //~ xml->FreeNode(root_node);
+  xml->FreeDoc(xmldoc);
   delete xml;
   
   ///////////////////////////////////////////////////////////////
@@ -975,6 +975,8 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
 #endif // sample analysis option
 ///
 
+  if (SKDetFSICovMtrx) delete SKDetFSICovMtrx;
+
 }
 
 #ifdef __NUMUONLY__
@@ -1012,8 +1014,8 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   }
   const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
   // Release memory
-  //  xml->FreeDoc(xmldoc);
-  xml->FreeNode(root_node);
+  //~ xml->FreeNode(root_node);
+  xml->FreeDoc(xmldoc);
   delete xml;
 
   
@@ -1125,6 +1127,7 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
   #endif
 #endif // sample analysis option
   ///
+  if (SKDetFSICovMtrx) delete SKDetFSICovMtrx;
 }
 #endif // #ifdef __NUMUONLY__
 
@@ -1161,8 +1164,8 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   }
   const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
   // Release memory
-  //  xml->FreeDoc(xmldoc);
-  xml->FreeNode(root_node);
+  //~ xml->FreeNode(root_node);
+  xml->FreeDoc(xmldoc);
   delete xml;
  
   ///////////////////////////////////////////////////////////////
@@ -1272,7 +1275,8 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   }
   #endif
 #endif // sample analysis option
- ///
+
+  if (SKDetFSICovMtrx) delete SKDetFSICovMtrx;
 }
 #endif // #ifdef __NUEONLY__
 
@@ -1319,8 +1323,8 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   }
   const TMatrixD & BANFFCov = *BANFFCovMtrx;
   // Release memory
-  //  xml->FreeDoc(xmldoc);
-  xml->FreeNode(root_node);
+  //~ xml->FreeNode(root_node);
+  xml->FreeDoc(xmldoc);
   delete xml;
 
   // BANFF 
@@ -1351,6 +1355,9 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
+  
+  if(BANFFBestFitValues ) delete BANFFBestFitValues;
+  if(BANFFCovMtrx       ) delete BANFFCovMtrx;
 }
 //_______________________________________________________added by raj_________________________________
 void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int start)
@@ -1392,8 +1399,8 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
     }
     const TMatrixD & BANFFCov = *BANFFCovMtrx;
     // Release memory
-    //  xml->FreeDoc(xmldoc);
-    xml->FreeNode(root_node);
+    //~ xml->FreeNode(root_node);
+    xml->FreeDoc(xmldoc);
     delete xml;
     
     // BANFF
@@ -1409,7 +1416,10 @@ void util::AppendAllCorrelatedBANFFSystematicsRHC(FitParamList * fparm, int star
 	else lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
 	
         fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true,AsString(p));
-    }    
+    }
+    
+    if(BANFFBestFitValues ) delete BANFFBestFitValues;
+    if(BANFFCovMtrx       ) delete BANFFCovMtrx;
 }
 #ifdef __NUMUONLY__
 //________________________________________________________________________________________
@@ -1452,8 +1462,8 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
   }
   const TMatrixD & BANFFCov = *BANFFCovMtrx;
   // Release memory
-  //  xml->FreeDoc(xmldoc);
-  xml->FreeNode(root_node);
+  //~ xml->FreeNode(root_node);
+  xml->FreeDoc(xmldoc);
   delete xml;
 
   // BANFF 
@@ -1481,6 +1491,9 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
 
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
+  
+  if(BANFFBestFitValues ) delete BANFFBestFitValues;
+  if(BANFFCovMtrx       ) delete BANFFCovMtrx;
 }
 #endif
 #ifdef __NUEONLY__
@@ -1524,8 +1537,8 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   }
   const TMatrixD & BANFFCov = *BANFFCovMtrx;
   // Release memory
-  //  xml->FreeDoc(xmldoc);
-  xml->FreeNode(root_node);
+  //~ xml->FreeNode(root_node);
+  xml->FreeDoc(xmldoc);
   delete xml;
 
   // BANFF 
@@ -1553,5 +1566,8 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
 
     fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
   }
+  
+  if(BANFFBestFitValues ) delete BANFFBestFitValues;
+  if(BANFFCovMtrx       ) delete BANFFCovMtrx;
 }
 #endif
