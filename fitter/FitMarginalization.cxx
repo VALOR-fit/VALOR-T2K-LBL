@@ -6,7 +6,7 @@
 */
 //________________________________________________________________________________________
 
-#define __print_array_toy_maketoys__
+//#define __print_array_toy_maketoys__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_masshierarchy__
@@ -28,15 +28,22 @@
 #include <TSpline.h>
 #include <TRandom3.h>
 
-#include "FitMarginalization.h"
+#include "Conventions/Opt.h"
+#include "Utilities/Rnd.h"
+
+#include "AnalysisOptions.h"
+#include "Build.h"
+#include "T2KPhysicalParameterLimits.h"
+#include "SuperkExpectation.h"
+#include "SuperkObservation.h"
 #include "SuperkMC.h"
 #include "SuperkDetectorFSI.h"
 #include "NuFlux.h"
 #include "NuXSec.h"
 #include "BANFF.h"
 #include "Utilities.h"
-#include "Conventions/Opt.h"
-#include "Utilities/Rnd.h"
+#include "UtlFitParamListFactory.h"
+#include "FitMarginalization.h"
 
 using std::cout;
 using std::cerr;
@@ -381,7 +388,7 @@ void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,dou
   return;
 }
 //________________________________________________________________________________________
-void FitMarginalization::SetFitParamList(char * fit_param_list){
+void FitMarginalization::SetFitParamList(const char * fit_param_list){
   fparm  = util::NamedParameterList(fit_param_list);
   fhypothesis = fparm->PhysicsHypothesis();
 
@@ -722,6 +729,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	} // loop ipar1 (free parameter)
       } // loop ipar0 (free parameter)
     } // applied_negevents_condition
+    
+    delete skobs;
   } // iexperiment
 
   cout << endl;
@@ -912,7 +921,7 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   return;
 }
 //________________________________________________________________________________________
-void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
+void FitMarginalization::WriteToys2Binary(int idfile,const char *tag){
 
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
@@ -1031,7 +1040,7 @@ void FitMarginalization::WriteToys2Binary(int idfile,char *tag){
   ostext.close();
 }
 //________________________________________________________________________________________
-void FitMarginalization::WriteToys2BinaryMerge(char *tag){
+void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
 
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
@@ -1140,7 +1149,7 @@ void FitMarginalization::WriteToys2BinaryMerge(char *tag){
   ostext.close();
 }
 //________________________________________________________________________________________
-void FitMarginalization::ReadToysFromBinary(int idfile, char *tag){ 
+void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){ 
 
   char namemh[200];
   if(doMargMassHierarchy) sprintf(namemh,"%s","marg");
@@ -1690,4 +1699,14 @@ conv::SuperkSample_t FitMarginalization::GetSKSamples(int isksample){
   SuperkSample_t s = kSKSamples[is];
   return s;
 }
+//________________________________________________________________________________________
+TH1F * FitMarginalization::GetChisqMarg   (void)
+{
+  return hchisq_marg_1D;
+};
+//________________________________________________________________________________________
+TH2F * FitMarginalization::GetChisqMarg2D (void)
+{
+  return hchisq_marg_2D;
+};
 //________________________________________________________________________________________

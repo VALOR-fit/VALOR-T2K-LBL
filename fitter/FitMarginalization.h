@@ -19,8 +19,15 @@
 #define _valor_fitmarginalization__h_
 
 
+#include <string>
 
+#include <TH1F.h>
+#include <TH2F.h>
 
+#include "Enumerations.h"
+
+#include "Utilities/VALORArrayI.h"
+#include "Utilities/VALORArrayF.h"
 
 // NuBar mode
 
@@ -62,93 +69,51 @@
 #define deltacp_min -3.14159265358979312
 #define deltacp_max +3.14159265358979312
 
-
-
-
-
-
-
-#include <string>
-
-#include <TObject.h>
-#include <TAxis.h>
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TSpline.h>
-#include <TVirtualPad.h>
-#include <TMatrixTSym.h>
-#include <TVectorD.h>
-#include <TXMLEngine.h>
-
-#include "AnalysisOptions.h"
-#include "Enumerations.h"
-#include "Conventions.h"
-#include "Utilities.h"
-#include "SuperkExpectation.h"
-#include "SuperkObservation.h"
-
-#include "FitCore/FitModelABC.h"
-#include "UtlFitParamListFactory.h"
-#include "FitCore/FitParamList.h"
-#include "FitCore/PhysParamList.h"
-#include "Utilities/VALORArray.h"
-#include "Utilities/VALORArrayI.h"
-#include "Utilities/VALORArrayF.h"
-#include "FitCore/PhysHypothesis.h"
-#include "Utilities/Rnd.h"
-#include "T2KPhysicalParameterLimits.h"
-
-using std::string;
-using std::vector;
-
-using namespace valor;
-using namespace valor::conv;
-
 namespace valor {
   
   class FitParamList;
   class SuperkObservation;
+  class SuperkExpectation;
   
 class FitMarginalization: public TObject
 {
  public:
   
-
-  //FitMarginalization(PhysParamId_t *parfree, int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
+  //FitMarginalization(conv::PhysParamId_t *parfree, int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
   FitMarginalization();
 
   ~FitMarginalization(void);
 
-  //void Init(PhysParamId_t *parfree, int ntoys_marg, int *nbins_param,double *minpar,double *maxpar);
+  //void Init(conv::PhysParamId_t *parfree, int ntoys_marg, int *nbins_param,double *minpar,double *maxpar);
   void Init();
 
   void CleanUp();
   
-  void SetConfigFile();
+  //void SetConfigFile();
 
-  void SetPhysParFree(PhysParamId_t *parfree,int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
-  void SetFreeParam(int ParID,PhysParamId_t *parfree,double *minpar,double *maxpar);
+  void SetPhysParFree(conv::PhysParamId_t *parfree,int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
+  void SetFreeParam(int ParID,conv::PhysParamId_t *parfree,double *minpar,double *maxpar);
   void SetSubRange(int *submin,int *submax);
 
    
-  void SetFitParamList(char * fit_param_list);
+  void SetFitParamList(const char * fit_param_list);
   FitParamList * GetFitParamList(void) {return fparm;};
   
   void PrintPhysHypothesis(void);
-  void PrintFitParamList(void);
+  //void PrintFitParamList(void);
 
-  TH1F * GetChisqMarg (void) { return hchisq_marg_1D; };
-  TH2F * GetChisqMarg2D (void) { return hchisq_marg_2D; };
+  TH1F * GetChisqMarg   (void);
+  TH2F * GetChisqMarg2D (void);
 
   bool IsFit2D(){ return fIsFit2D;}
 
   //void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int *min_bin_sub_param,int *max_bin_sub_param);
   void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp);
 
-  void WriteToys2Binary(int idfile,char *tag);
-  void WriteToys2BinaryMerge(char *tag);
+  void WriteToys2Binary(int idfile, const char *tag);
+  void WriteToys2BinaryMerge(const char *tag);
 
-  void ReadToysFromBinary(int idfile, char *tag);
+  void ReadToysFromBinary(int idfile, const char *tag);
   
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
   void FillChisqMarg(SuperkObservation *skobs_data);
@@ -162,16 +127,16 @@ class FitMarginalization: public TObject
   
   void PrintBestFit(void);
 
-  VALORArrayF * GetToyMargErecoVArray(){return fToyMargErecoVArray;};
-  TH1F * GetToyMargHisto(SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
+  VALORArrayF * GetToyMargErecoVArray() {return fToyMargErecoVArray;};
+  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
 
   void SetMargOscParam();
 
-  void SetPrior(PhysParamId_t physpar,string priorname,double par1,double par2);
-  void SetPrior(PhysParamId_t physpar,string priorname,TH1F *hprior);
-  string GetPrior(PhysParamId_t physpar);
+  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
+  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1F *hprior);
+  std::string GetPrior(conv::PhysParamId_t physpar);
 
-  double Randomize(PhysParamId_t physpar);
+  double Randomize(conv::PhysParamId_t physpar);
   bool RethrowOscUnphysical(conv::PhysParamId_t p,double oscval); // NEW 
   
   void SetMargMassHierarchy(bool domargMH);  
@@ -188,9 +153,9 @@ class FitMarginalization: public TObject
   TH1F *hchisq_marg_1D; 
   TH2F *hchisq_marg_2D;  
   
-  string fnamefreeparam[2]; // Use param 1 only for 2D fits
+  std::string fnamefreeparam[2]; // Use param 1 only for 2D fits
 
-  PhysParamId_t fPhysParamFree[2]; 
+  conv::PhysParamId_t fPhysParamFree[2]; 
 
   bool fIsFit2D;
 
@@ -245,10 +210,10 @@ class FitMarginalization: public TObject
   VALORArrayF *fToyMargErecoVArray_Nue;     
 
   FitParamList * fparm;
-  PhysHypothesis_t fhypothesis;
+  conv::PhysHypothesis_t fhypothesis;
 
   ClassDef(FitMarginalization, 1)
-    };
+};
  
 } // valor
 #endif
