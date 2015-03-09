@@ -172,19 +172,19 @@ private:
 
   TH2D *     fMCVariableTempl[conv::kns][conv::knm];
   
-  std::vector<VALORArray> fMCVariableTemplArray; // sample -> (mode, MCetrue,Xsereco)
-  std::vector<VALORArray> fMCTemplArrayOri;      // sample -> (mode, etrue, ereco)   
+  std::vector<VALORArray * > fMCVariableTemplArray; // sample -> (mode, MCetrue,Xsereco)
+  std::vector<VALORArray * > fMCTemplArrayOri;      // sample -> (mode, etrue, ereco)   
   
-  std::vector<VALORArray> fMCTemplArrayNom; //sample -> (mode, etrue, observable)
-  std::vector<VALORArray> fMCTemplArrayTun; //sample -> (mode, etrue, observable)
-  std::vector<VALORArray> fMCTemplArrayFin; //sample -> (mode, etrue, observable)
+  std::vector<VALORArray * > fMCTemplArrayNom; //sample -> (mode, etrue, observable)
+  std::vector<VALORArray * > fMCTemplArrayTun; //sample -> (mode, etrue, observable)
+  std::vector<VALORArray * > fMCTemplArrayFin; //sample -> (mode, etrue, observable)
   
-  std::vector<VALORArray> fMCTemplArrayRPAWght; //sample -> (mode, etrue, observable) - contains weight RPA_rel / weight RPA_nonrel
+  std::vector<VALORArray * > fMCTemplArrayRPAWght; //sample -> (mode, etrue, observable) - contains weight RPA_rel / weight RPA_nonrel
   
-  std::vector<VALORArray> fMCStatFracErr;           // sample -> (mode, etrue, observable)
-  std::vector<VALORArray> fMCEtrueSpectrumTotArray; // sample -> etrue
-  std::vector<VALORArray> fMCErecoSpectrumTotArray; // sample -> observable
-  std::vector<VALORArray> fMCErecoSpectrumArray   ; // sample -> (mode, observable)
+  std::vector<VALORArray * > fMCStatFracErr;           // sample -> (mode, etrue, observable)
+  std::vector<VALORArray * > fMCEtrueSpectrumTotArray; // sample -> etrue
+  std::vector<VALORArray * > fMCErecoSpectrumTotArray; // sample -> observable
+  std::vector<VALORArray * > fMCErecoSpectrumArray   ; // sample -> (mode, observable)
   
   TH1D *     fMCErecoSpectrum[conv::kns][conv::knm];   ///< Ereco MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCErecoSpectrumTot[conv::kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
