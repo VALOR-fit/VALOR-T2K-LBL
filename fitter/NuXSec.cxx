@@ -229,6 +229,11 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+    
+    #ifdef __show_init_mesg_info__
+    cout << "Exp/NuXSec >> Reading splines for " << util::AsString(s)<< endl;
+    #endif
+
     bool is_rhc = util::IsRHCSample(s);
 
     if(is_rhc)
