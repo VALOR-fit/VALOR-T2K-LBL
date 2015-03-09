@@ -56,17 +56,20 @@ void BANFF::Init(void)
 {
   fBestFitValues        = 0; 
   fCurrentValues        = 0; 
-  fCovMtrx              = 0; 
+  fCovMtrx              = 0;
+  fCovMtrxInv           = 0;
   fCovMtrxChoL          = 0; 
   fRHCBestFitValues     = 0;
   fRHCCurrentValues     = 0;
   fRHCCovMtrx           = 0;
+  fRHCCovMtrxInv        = 0;
   fRHCCovMtrxChoL       = 0;
- 
+  
   // NEW FLUX FHC+RHC
   fFHCpRHCBestFitValues     = 0;
   fFHCpRHCCurrentValues     = 0;
   fFHCpRHCCovMtrx           = 0;
+  fFHCpRHCCovMtrxInv        = 0;
   fFHCpRHCCovMtrxChoL       = 0;
   //
 
@@ -148,12 +151,12 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 // Read BANFF inputs to oscillation analysis
 //
-  if (fBestFitValues)           delete fBestFitValues;
-  if (fCurrentValues)           delete fCurrentValues;
-  if (fUntunedCentralValues)    delete fUntunedCentralValues;
-  if (fRHCUntunedCentralValues) delete fRHCUntunedCentralValues;
-  if (fCovMtrx)                 delete fCovMtrx;
-  if (fCovMtrxInv)              delete fCovMtrxInv;
+  if (fBestFitValues)           {delete fBestFitValues;           fBestFitValues           = 0 ; }
+  if (fCurrentValues)           {delete fCurrentValues;           fCurrentValues           = 0 ; }
+  if (fUntunedCentralValues)    {delete fUntunedCentralValues;    fUntunedCentralValues    = 0 ; }
+  if (fRHCUntunedCentralValues) {delete fRHCUntunedCentralValues; fRHCUntunedCentralValues = 0 ; }
+  if (fCovMtrx)                 {delete fCovMtrx;                 fCovMtrx                 = 0 ; }
+  if (fCovMtrxInv)              {delete fCovMtrxInv;              fCovMtrxInv              = 0 ; }
   
   const char * banff_param_path = T2KOpt::Instance()->fPathBanffParam.c_str();
 #ifdef __show_init_mesg_info__
@@ -273,10 +276,10 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 //________________________________________________________________________________________
 bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
-  if (fRHCBestFitValues)           delete fRHCBestFitValues;
-  if (fRHCCurrentValues)           delete fRHCCurrentValues;
-  if (fRHCCovMtrx)                 delete fRHCCovMtrx;
-  if (fRHCCovMtrxInv)              delete fRHCCovMtrxInv;
+  if (fRHCBestFitValues)         { delete fRHCBestFitValues; fRHCBestFitValues = 0; }
+  if (fRHCCurrentValues)         { delete fRHCCurrentValues; fRHCCurrentValues = 0; }
+  if (fRHCCovMtrx)               { delete fRHCCovMtrx;       fRHCCovMtrx       = 0; }
+  if (fRHCCovMtrxInv)            { delete fRHCCovMtrxInv;    fRHCCovMtrxInv    = 0; }
   
   // Read BANFF inputs to oscillation analysis
   //
@@ -388,10 +391,10 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
   
-  if (fFHCpRHCBestFitValues)           delete fFHCpRHCBestFitValues;
-  if (fFHCpRHCCurrentValues)           delete fFHCpRHCCurrentValues;
-  if (fFHCpRHCCovMtrx)                 delete fFHCpRHCCovMtrx;
-  if (fFHCpRHCCovMtrxInv)              delete fFHCpRHCCovMtrxInv;
+  if (fFHCpRHCBestFitValues)  { delete fFHCpRHCBestFitValues; fFHCpRHCBestFitValues = 0;}
+  if (fFHCpRHCCurrentValues)  { delete fFHCpRHCCurrentValues; fFHCpRHCCurrentValues = 0;}
+  if (fFHCpRHCCovMtrx)        { delete fFHCpRHCCovMtrx;       fFHCpRHCCovMtrx       = 0;}
+  if (fFHCpRHCCovMtrxInv)     { delete fFHCpRHCCovMtrxInv;    fFHCpRHCCovMtrxInv    = 0;}
 // Read BANFF inputs to oscillation analysis
 //
 #ifdef __show_init_mesg_info__
