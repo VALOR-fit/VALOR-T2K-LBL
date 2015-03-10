@@ -1,12 +1,22 @@
 
+//
+// ------------------------------------------------------------------------------------------------           
+//
+// Check the extraction of the systematic and oscillation parameters done for marginalization
+// as well as the Ereco distributions.
+//
+// Davide Sgalaberna                    
+//                                                                                           
+// ------------------------------------------------------------------------------------------------
+
+
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
 void Check_toys_marginalization
 (
- const bool   readtoys             = false,
-
  const char * outfilename          = "ChisqMarg",
  
  const int    IDoutfile            = 0,
@@ -21,24 +31,25 @@ void Check_toys_marginalization
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
  const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
-
- const int    nfiles               = 1,         // # of files to read
-
+ 
+ const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
- const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
+ //const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
 
+ //const char * fit_param_list       = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
  //const char * fit_param_list      = "nuosc3fbar_numudisapp_constrainall+nuisance",  
- const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
 
- const int    NtoysMarg            = 2,   // # toys marginalization 
+ const int    NtoysMarg            = 10,   // # toys marginalization 
  
  const char * freeparname0        = "mixing23Bar",  // free parameter
  const double freeparmin0         = 0,              // minimum value of free parameter
  const double freeparmax0         = 1,            // maxinum value of free parameter
  const int    NptScan0            = 21,            // # pts of free parameter to scan
 
- //const char * freeparname1        = "",  // free parameter
- const char * freeparname1        = "dmsq23Bar",  // free parameter
+ const char * freeparname1        = "",  // free parameter
+ //const char * freeparname1        = "dmsq23Bar",  // free parameter
  const double freeparmin1         = 0.0002, // minimum value of free parameter
  const double freeparmax1         = 0.02, // maxinum value of free parameter
  const int    NptScan1            = 21,          // # pts of free parameter to scan
@@ -158,7 +169,8 @@ void Check_toys_marginalization
   parfree[1] = freepar1;
   
   // # of toys for marginalization
-  int ntoys = NtoysMarg;
+  //int ntoys = NtoysMarg;
+  int ntoys = 1;
 
   // # of free parameter pts to scan 
   int nbinspar[2];
@@ -193,70 +205,42 @@ void Check_toys_marginalization
   // Set Mass Hierarchy marginalization
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
   
-  if(!readtoys){
-
-    // Decide whether to rethrow or not the unphysical systematic toys 
-    fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
-    
-    // Produce toys and fill marginalized chisq
-
-    // Set priors for not fixed oscillation parameters
-    fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
-    fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,1);
-    fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
-    fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
-    fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
-    fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
-
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
-
-    //fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingMuLike,0,0,0,0)->Draw();
-    //fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingELike,0,0,0,0)->Draw();
-    
-    fitmarg->FillChisqMarg(skobs_fakedata);
-  }
-
-  else{
-       
-    // Read toys from binary files and fill marginalized chisq
-
-    for(int ifile=0;ifile<nfiles;ifile++){
-    
-      cout << endl;
-      cout << "////////////////////////////////" << endl;
-      cout << endl;
-      cout << "Read file ID " << ifile << endl; 
-      cout << endl;
-
-      fitmarg->ReadToysFromBinary(ifile,infilename);
-      fitmarg->FillChisqMarg(skobs_fakedata); 
-    }
+  // Decide whether to rethrow or not the unphysical systematic toys 
+  fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
   
-  }
- 
-  // Find minimum of marginalized chisq and find best-fit values
-  fitmarg->Minimize(); 
-  fitmarg->PrintBestFit();
+  // Produce toys and fill marginalized chisq
   
-  if(fitmarg->IsFit2D()){
-    fitmarg->GetChisqMarg2D()->Draw("colz");
-  }
-  else{
-    fitmarg->GetChisqMarg()->Draw();
-  }
+  // Set priors for not fixed oscillation parameters
+  fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
+  fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,1);
+  fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
+  fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
+  fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
+  fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
+  
+
+  // In order to get toy extraction you need to 
+  //for(int itoy=0;itoy<NtoysMarg;itoy++){
+
+  fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
   
   
-  // Store ChisqMarg (full or partial) in output file
-  
-  char outname[200];
-  sprintf(outname,"%s_%d.root",outfilename,IDoutfile);
-  
-  cout << outname << endl;
+  //}
 
-  TFile *fout = new TFile(outname,"RECREATE");
-  fitmarg->GetChisqMarg()->Write();
-  fitmarg->GetChisqMarg2D()->Write();
-  fout->Close();
+  fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingMuLike,0,0,0,0)->Draw();
+  //fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingELike,0,0,0,0)->Draw();
+  
+  
+  
+  
+  // // Store ChisqMarg (full or partial) in output file  
+  // char outname[200];
+  // sprintf(outname,"%s_%d.root",outfilename,IDoutfile);
+  // cout << outname << endl;
+  // TFile *fout = new TFile(outname,"RECREATE");
+  // fitmarg->GetChisqMarg()->Write();
+  // fitmarg->GetChisqMarg2D()->Write();
+  // fout->Close();
   
   return;
 }
