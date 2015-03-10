@@ -12,7 +12,7 @@ if [ -z ${VALOR_FWMK} ] ; then
     source /home/steve/analysis/fmwk/setup/setup_at_steve_laptop.sh 
   fi
   if [ $USER == phrhbq ] ; then 
-    source /home/epp/phrhbq/analysis/fmwk/setup/setup_at_steve_laptop.sh
+    source /storage/epp2/phrhbq/analysis/fmwk/setup/setup_at_steve_laptop.sh
   fi
 fi
 
