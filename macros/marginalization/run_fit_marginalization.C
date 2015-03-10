@@ -1,13 +1,43 @@
 
+// ------------------------------------------------------------------------------------------------           
+//
+// Macro to perform fit marginalizing the systematic and oscillation parameters
+// Run toys for marginalization for all or sub-range of the free parameter and fill the Chisq.
+// In the end the minimum of the marginalized Chisq distribution is found.
+// Toys for different sub-ranges of the free paramters can be run in parallel jobs.
+// The other possibility is to produce toys with build_marg_toys.C and store in binary files.
+// Then this macro reads the toys from binary files, fill the marginalized Chisq and minimize. 
+//
+// Davide Sgalaberna                                                                                              
+//                                                                                           
+// ------------------------------------------------------------------------------------------------
+
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
 void run_fit_marginalization
 (
- const bool   readtoys             = false,
+ const bool   readtoys             = true,
 
- const char * outfilename          = "ChisqMarg",
+ // Parameter for chisq minimization
+ const bool   minimizeHisto        = true,     // if not all the chisq histo is filled
+ const double Prec                 = 0.0000001, // not used any longer
+ const bool   doUncorrXY             = true,
+ const int    MaxIterFit           = 50,
+ const int    MaxNfit              = 3,
+ const bool   RedoBorderFit        = true,
+ const int    MaxNfitBorder        = 3,
+ const double MinStep0             = 0.,     // min x value for fit steps
+ const double MaxStep0             = 1.,     // max x value for fit steps
+ const double MinStep1             = 0.0002, // min y value for fit steps
+ const double MaxStep1             = 0.02,   // max y value for fit steps
+ //
+
+ //const char * outfilename          = "ChisqMarg_mixing23_Vs_dmsq23_Nbins201x201",
+ const char * outfilename          = "ChisqMarg_mixing23_Vs_dmsq23_Nbins21x21",
+ //const char * outfilename          = "ChisqMarg_prova",
  
  const int    IDoutfile            = 0,
  const int    first_bin_freepar0   = -999,   // first freepar of the sub-range
@@ -16,6 +46,7 @@ void run_fit_marginalization
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_1p7E20_postfit_NoRethrow_Merged",
+ //const char * infilename           = "MH_FitMarg_mixing13Vsdeltacp_1p7E20_prefit",
  //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
  //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
@@ -25,33 +56,36 @@ void run_fit_marginalization
  const int    nfiles               = 1,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",  
- //const char * config_file          = "analysis_configuration_1.7E20.xml",  
- const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
+ const char * config_file          = "analysis_configuration_1.7E20.xml",  
+ //const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
  
  //const char * fit_param_list       = "nuosc3fbar_fixnonbar_fix5+nuisance",
- const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
  //const char * fit_param_list      = "nuosc3fbar_numudisapp_constrainall+nuisance",  
- //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
 
- const int    NtoysMarg            = 1,   // # toys marginalization 
+ const int    NtoysMarg            = 2,   // # toys marginalization 
  
- const char * freeparname0        = "mixing13Bar",  // free parameter
- //const char * freeparname0        = "mixing23Bar",  // free parameter
+ const char * freeparname0        = "mixing23Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
- const double freeparmax0         = 0.3,            // maxinum value of free parameter
- const int    NptScan0            = 21,            // # pts of free parameter to scan
+ const double freeparmax0         = 1.,            // maxinum value of free parameter
+ // const char * freeparname0        = "mixing13Bar",  // free parameter
+ // const double freeparmin0         = 0.,              // minimum value of free parameter
+ // const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
+ const int    NptScan0            = 21, //2, //21,        // # pts of free parameter to scan
 
- const char * freeparname1        = "deltacpBar",  // free parameter
- const double freeparmin1         = -TMath::Pi(), // minimum value of free parameter
- const double freeparmax1         = +TMath::Pi(), // maxinum value of free parameter
- //const char * freeparname1        = "dmsq23Bar",  // free parameter
- //const double freeparmin1         = 0.0002, // minimum value of free parameter
- //const double freeparmax1         = 0.02, // maxinum value of free parameter
- const int    NptScan1            = 21,          // # pts of free parameter to scan
+ //const char * freeparname1        = "",  // free parameter
+ // const char * freeparname1        = "deltacpBar",  // free parameter
+ // const double freeparmin1         = -TMath::Pi(), // minimum value of free parameter
+ // const double freeparmax1         = +TMath::Pi(), // maxinum value of free parameter
+ const char * freeparname1        = "dmsq23Bar",  // free parameter
+ const double freeparmin1         = 0.0002, // minimum value of free parameter
+ const double freeparmax1         = 0.02, // maxinum value of free parameter
+ const int    NptScan1            = 21,      // # pts of free parameter to scan
 
  int         tweak_systematics    = 1,       /* generate toy MC with randomized systematics? */
 
- const bool  doMargMH             = false,    // marginalize Mass Hierarchy
+ const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  const bool  doRethrowUnphysical  = false,    // rethrow unphysical systematic toys
 
  const char * dmsqscheme          = "abs23",      /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -214,12 +248,35 @@ void run_fit_marginalization
     fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
     fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
 
-    fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
+    fitmarg->MakeToysMarginalization(tweak_systematics,skexp);     
 
-    //fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingMuLike,0,0,0,0)->Draw();
-    //fitmarg->GetToyMargHisto(conv::kSKsRHCFCFV1RingELike,0,0,0,0)->Draw();
-    
-    fitmarg->FillChisqMarg(skobs_fakedata);
+    if(!minimizeHisto){
+      fitmarg->FillChisqMarg(skobs_fakedata);
+      fitmarg->Minimize();
+    }
+    else{
+      fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+      fitmarg->SetMinimPrecision(Prec);
+      fitmarg->SetMinimUncorrXY(doUncorrXY);
+      // Max # of iterations per fit
+      fitmarg->SetMaxIterationSingleFit(MaxIterFit); 
+      // Max # of fits max # of iterations
+      fitmarg->SetMaxFitNumber(MaxNfit);   
+      // Redo the fit if minimum on the border  
+      fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
+      // Max # of fits max # of iterations if the first minimum is on the border
+      fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
+      fitmarg->MinimizeChisqHisto(skobs_fakedata);      
+      
+      cout << "# of calls of CalcChisqMargPt(): " 
+	   << fitmarg->GetNCallsCalcChisqMargPt() << endl;
+      
+      TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+      if(fitmarg->IsFit2D())
+	fitmarg->GetChisqStep_2D()->DrawCopy("colz");
+      else
+	fitmarg->GetChisqStep_1D()->DrawCopy("");
+    }
   }
 
   else{
@@ -235,23 +292,61 @@ void run_fit_marginalization
       cout << endl;
 
       fitmarg->ReadToysFromBinary(ifile,infilename);
-      fitmarg->FillChisqMarg(skobs_fakedata); 
-    }
-  
+
+      if(!minimizeHisto){
+	fitmarg->FillChisqMarg(skobs_fakedata);
+	fitmarg->Minimize();
+      }
+      else{
+	fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	fitmarg->SetMinimPrecision(Prec);
+	fitmarg->SetMinimUncorrXY(doUncorrXY);
+	// Max # of iterations per fit
+	fitmarg->SetMaxIterationSingleFit(MaxIterFit); 
+	// Max # of fits max # of iterations
+	fitmarg->SetMaxFitNumber(MaxNfit);   
+	// Redo the fit if minimum on the border  
+	fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
+	// Max # of fits max # of iterations if the first minimum is on the border
+	fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
+	fitmarg->MinimizeChisqHisto(skobs_fakedata);
+
+	cout << "# of calls of CalcChisqMargPt(): " 
+	     << fitmarg->GetNCallsCalcChisqMargPt() << endl;
+
+	TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+	if(fitmarg->IsFit2D())
+	  fitmarg->GetChisqStep_2D()->DrawCopy("colz");
+	else
+	  fitmarg->GetChisqStep_1D()->DrawCopy("");
+      }
+
+    }  
   }
  
   // Find minimum of marginalized chisq and find best-fit values
-  fitmarg->Minimize(); 
+  //fitmarg->Minimize(); 
   fitmarg->PrintBestFit();
   
+  TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
   if(fitmarg->IsFit2D()){
-    fitmarg->GetChisqMarg2D()->Draw("colz");
+    //fitmarg->GetChisqMarg2D()->DrawCopy("colz");
+    fitmarg->GetChisqMarg2D()->DrawCopy("colz text");
+    //fitmarg->GetChisqMarg2D()->DrawCopy("LEGO");
   }
   else{
-    fitmarg->GetChisqMarg()->Draw();
+    double min = fitmarg->GetChisqBestFit();
+    fitmarg->GetChisqMarg()->SetMinimum(min);
+    fitmarg->GetChisqMarg()->DrawCopy();
   }
   
+
   
+
+
+
+
+
   // Store ChisqMarg (full or partial) in output file
   
   char outname[200];
