@@ -138,10 +138,30 @@ $xml_file = "" unless defined $xml_file;
 
 
 if( !defined $cput ) {
+    if( ! $read_toys ) {
+        #takes approx 0.03 sec per spectra
+        $sec = int ( $step_freepar0 *  $step_freepar1 * $nexpts_marg * 0.04 );
+        $sec_mins = $sec % 3600;
+        $seconds = $sec % 60;
+        $minutes = int($sec_mins/60);
+        $hours = int($sec/3600);
+        
+        if($hours > 1){
+            $cput = "$hours:$minutes:$seconds";
+        }
+        else{
+            $cput = "01:00:00";
+        }
+    }
+    else{
     if($resource eq "RAL"   ) { $cput = "6:00:00";  }
     if($resource eq "OLDRAL") { $cput = "6:00:00";  }
     if($resource eq "Oxford") { $cput = "11:50:00"; }
+    }
 }
+
+
+
 
 mkpath ($job_dir, {verbose => 1, mode=>0777}); 
 die("$job_dir doesn't exist") unless -d $job_dir;
