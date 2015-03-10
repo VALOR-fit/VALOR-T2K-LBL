@@ -6,7 +6,8 @@
 */
 //________________________________________________________________________________________
 
-//#define __print_array_toy_maketoys__
+#define __print_array_toy_maketoys__
+#define __print_minimization_steps__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_masshierarchy__
@@ -77,13 +78,16 @@ void FitMarginalization::Init(){
 
   fSeed = 999;
 
+  fchisq_bf = 9999999.;
+  
   sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_oscpar%d_MH%s%s%s");  
   
   MergeInputFiles_Called = true; // false the first time MergeInputFiles() is calles
   fNmergedFiles = 0; // fNmergedFiles++ everytime MergeInputFiles() is called (after reading each file)
 
-  const int nmh=2; // mass hierarchy  
+  fNCallsCalcChisqMargPt = 0; // Get track of the # of calls to CalcChisqMargPt
 
+  const int nmh=2; // mass hierarchy  
 
   // Get number of sk samples used in the fit
   // Needed to initialize the Ereco arrays
@@ -174,6 +178,25 @@ void FitMarginalization::Init(){
   cout << "fmax_bin_sub_param[0] = " << fmax_bin_sub_param[0] << endl;
   cout << "fmin_bin_sub_param[1] = " << fmin_bin_sub_param[1] << endl;
   cout << "fmax_bin_sub_param[1] = " << fmax_bin_sub_param[1] << endl;
+
+
+
+  // Variables for minimization of the marginalized Chisq
+  fUncorrXY = true; // by default if minimum found in Y keep it fixed and vary only X (viceversa)
+  fEPS = 0.000001; // precision of the fit by default
+  fMaxIterationSingleFit = 1000; 
+  fMaxFitNumber = 10;
+
+  fBorderDoFit = true;
+  if(fIsFit2D) fBorderMaxFitNumber = 4; // 2dim x 2 borders  
+  else         fBorderMaxFitNumber = 2; // 1dim x 2 borders
+
+
+  // Set the interval where to find the minimum (bin numbers)
+  fFirstBin_X = 1;
+  fLastBin_X = hchisq_marg_2D->GetNbinsX();
+  fFirstBin_Y = 1;
+  fLastBin_Y = hchisq_marg_2D->GetNbinsY();
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
@@ -501,10 +524,10 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   cout << "]"
        << endl;
   
-  if(!fIsFit2D){
-    fmin_bin_sub_param[1] = 0.;
-    fmax_bin_sub_param[1] = 0.;
-  }
+  // if(!fIsFit2D){
+  //   fmin_bin_sub_param[1] = 0.;
+  //   fmax_bin_sub_param[1] = 0.;
+  // }
 
   cout << endl;
   cout << "fmin_bin_sub_param 0 = " << fmin_bin_sub_param[0] 
@@ -739,6 +762,235 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 
   return;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// //________________________________________________________________________________________
+// void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
+  
+//   int NtoysTot=0;
+//   int NparTot0=0;
+//   int NparTot1=0;
+ 
+//   cout << endl;
+//   cout << "Fill marginalized Chisq in the parameter range:" << endl
+//        << "bin: ["  
+//        << fmin_bin_sub_param[0]
+//        << ","
+//        << fmax_bin_sub_param[0]
+//        << "]"
+//        << endl
+//        << fnamefreeparam[0] << ": " 
+//        << "[" 
+//        << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
+//        << ","
+//        << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
+//        << "]"
+//        << endl;
+//   cout << "bin: ["  
+//        << fmin_bin_sub_param[1]
+//        << ","
+//        << fmax_bin_sub_param[1]
+//        << "]"
+//        << endl
+//        << fnamefreeparam[1] << ": " 
+//        << "[" 
+//        << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+//        << ","
+//        << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
+//        << "]"
+//        << endl;
+
+
+//   // It can marginalize sub-ranges of the free parameter
+//   // fmin_bin_sub_param_1 and fmax_bin_sub_param_1 read from the binary file
+
+//   NparTot0=0;
+//   for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+//     NparTot1=0;
+//     for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      
+//       //cout << ipar0 << "-" << ipar1 << "   ";
+
+//       double currval0 = fmin_param[0] + ipar0*fstep_param[0];
+//       double currval1 = fmin_param[1] + ipar1*fstep_param[1];
+//       //cout << "currval0 = " << currval0 << endl;
+//       //cout << "currval1 = " << currval1 << endl;
+      
+//       // Marginalize the Mass Hierarchy
+//       int nMassHierarchy = 2;
+      
+//       for(int iMH=0;iMH<nMassHierarchy;iMH++){
+	
+// 	// Don't marginalize Mass Hierarchy. Only the assumed one
+// 	if(this->doMargMassHierarchy == false){
+	  
+// 	  // Break the loop after the first iteration
+// 	  nMassHierarchy = 1; 
+	  
+// 	  // Used convention in MakeToysMarginalization(): 
+// 	  //  - iMH=0 --> kNmhNormal
+// 	  //  - iMH=1 --> kNmhInverted	
+// 	  if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+// 	  else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+	  
+// 	  // Mass Hierarchy has to be already defined
+// 	  else {
+// 	    cerr << endl;
+// 	    cerr << "Mass Hierarchy is not defined" << endl;
+// 	    cerr << endl;
+// 	    exit(1);
+// 	  }
+// 	}
+	
+// #ifdef __print_masshierarchy__
+// 	cout << "iMH = " << iMH << endl;
+// #endif	  
+	
+// 	for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+// 	  //cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << endl;;
+
+// 	  // compute the likelihood for a single marginalization toy
+// 	  double chisq = 0.;
+	  
+// 	  // Loop over the used SK samples
+// 	    int iscount=0;
+// 	    //for(int is = 0; is < kns; is++) {
+// 	    //SuperkSample_t s = kSKSamples[is];
+// 	    //if(s == kSKsUndefined) continue;
+// 	    for(int is=0;is<fNSKsamples;is++){
+// 	      SuperkSample_t s = this->GetSKSamples(is);
+	      
+// 	      for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+// 		double nexp = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+// 		double nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
+// 		chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+// 	      }	  
+// 	      iscount++;
+// 	    } // loop SK samples
+	      
+// #ifdef __print_array_toy_fillchisq__
+// 	  cout << endl;
+// 	  cout << "toy=" << iexperiment << " - ipar0=" << ipar0 << " - ipar1=" << ipar1 << " : ";
+	  
+// 	  iscount=0;
+// 	  //for(int is = 0; is < kns; is++) {
+// 	  //SuperkSample_t s = kSKSamples[is];
+// 	  //if(s == kSKsUndefined) continue;
+// 	  for(int is=0;is<fNSKsamples;is++){
+// 	    SuperkSample_t s = this->GetSKSamples(is);
+	    
+// 	    cout << util::AsStringCompact(s) << endl;
+
+// 	    for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+// 	      double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib);
+// 	      cout << bincont << " "; 
+// 	    }
+// 	    cout << endl;
+// 	    cout << endl;
+	    
+// 	    iscount++;
+// 	  } // loop SK samples
+
+// #endif
+	  
+// 	  double like = exp(-chisq/2.) / fntoys_marg;
+
+// 	  if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
+	  
+// 	  flikeVArray->AddToEntry(like,ipar0,ipar1); // this is correct if binary files differ only for free param sub-ranges
+	  
+// 	  NtoysTot++;
+// 	} // iexperiment
+	
+//       } // iMH (mass hierarchy)
+      
+
+//       // Now the marginalized likelihood is computed using toys from all the binary files
+//       // Compute the chisq for each free osc parameter value
+//       double bincont = -2*log( flikeVArray->GetEntry(ipar0,ipar1) );
+//       fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
+//       if(!fIsFit2D) hchisq_marg_1D->SetBinContent(ipar0+1,bincont);
+//       else          hchisq_marg_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
+      
+//       NparTot1++;
+//     } // ipar1 (free parameter)
+//     NparTot0++;
+//   } // ipar0 (free parameter)
+
+//   cout << endl;
+//   cout << "# of scanned free parameters 0: " << NparTot0 << endl; 
+//   cout << "# of scanned free parameters 1: " << NparTot1 << endl; 
+//   if(doMargMassHierarchy) cout << "# of toys used: " << (double)NtoysTot / 2. / (double)NparTot0 / (double)NparTot1 << endl;
+//   else cout << "# of toys used: " << (double)NtoysTot / (double)NparTot1 /  (double)NparTot0 << endl;
+//   cout << endl;
+
+//   // Now the marginalized likelihood is computed using toys from all the binary files
+//   // Compute the chisq for each free osc parameter value  
+//   // for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+//   //   for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+//   //     double bincont = -2*log( flikeVArray->GetEntry(ipar0,ipar1) );
+//   //     fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
+//   //     if(!fIsFit2D) hchisq_marg_1D->SetBinContent(ipar0+1,bincont);
+//   //     else          hchisq_marg_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
+//   //   }
+//   // }
+
+// #ifdef __print_chisqmarg__
+//   cout << endl;
+//   cout << "Marginalized Chisq distribution:" << endl; 
+//   cout << "fmin_bin_sub_param 0 = " << fmin_bin_sub_param[0] << endl;
+//   cout << "fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
+//   cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1] << endl;
+//   cout << "fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
+//   for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+//     for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+//       cout << fChisqMargVArray->GetEntry(ipar0,ipar1) << ", ";
+//     }
+//   }
+//   cout << endl;
+// #endif
+
+//   return;
+// }
+// //________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //________________________________________________________________________________________
 void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   
@@ -784,124 +1036,24 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
     NparTot1=0;
     for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
       
-      //cout << ipar0 << "-" << ipar1 << "   ";
-
-      double currval0 = fmin_param[0] + ipar0*fstep_param[0];
-      double currval1 = fmin_param[1] + ipar1*fstep_param[1];
-      //cout << "currval0 = " << currval0 << endl;
-      //cout << "currval1 = " << currval1 << endl;
       
-      // Marginalize the Mass Hierarchy
-      int nMassHierarchy = 2;
+      CalcChisqMargPt(skobs_data,ipar0,ipar1);
       
-      for(int iMH=0;iMH<nMassHierarchy;iMH++){
-	
-	// Don't marginalize Mass Hierarchy. Only the assumed one
-	if(this->doMargMassHierarchy == false){
-	  
-	  // Break the loop after the first iteration
-	  nMassHierarchy = 1; 
-	  
-	  // Used convention in MakeToysMarginalization(): 
-	  //  - iMH=0 --> kNmhNormal
-	  //  - iMH=1 --> kNmhInverted	
-	  if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
-	  else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
-	  
-	  // Mass Hierarchy has to be already defined
-	  else {
-	    cerr << endl;
-	    cerr << "Mass Hierarchy is not defined" << endl;
-	    cerr << endl;
-	    exit(1);
-	  }
-	}
-	
-#ifdef __print_masshierarchy__
-	cout << "iMH = " << iMH << endl;
-#endif	  
-	
-	for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
-	  //cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << endl;;
 
-	  // compute the likelihood for a single marginalization toy
-	  double chisq = 0.;
-	  
-	  // Loop over the used SK samples
-	    int iscount=0;
-	    //for(int is = 0; is < kns; is++) {
-	    //SuperkSample_t s = kSKSamples[is];
-	    //if(s == kSKsUndefined) continue;
-	    for(int is=0;is<fNSKsamples;is++){
-	      SuperkSample_t s = this->GetSKSamples(is);
-	      
-	      for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-		double nexp = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
-		double nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
-		chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
-	      }	  
-	      iscount++;
-	    } // loop SK samples
-	      
-#ifdef __print_array_toy_fillchisq__
-	  cout << endl;
-	  cout << "toy=" << iexperiment << " - ipar0=" << ipar0 << " - ipar1=" << ipar1 << " : ";
-	  
-	  iscount=0;
-	  //for(int is = 0; is < kns; is++) {
-	  //SuperkSample_t s = kSKSamples[is];
-	  //if(s == kSKsUndefined) continue;
-	  for(int is=0;is<fNSKsamples;is++){
-	    SuperkSample_t s = this->GetSKSamples(is);
-	    
-	    cout << util::AsStringCompact(s) << endl;
-
-	    for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-	      double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib);
-	      cout << bincont << " "; 
-	    }
-	    cout << endl;
-	    cout << endl;
-	    
-	    iscount++;
-	  } // loop SK samples
-
-#endif
-	  
-	  double like = exp(-chisq/2.) / fntoys_marg;
-
-	  if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
-	  
-	  flikeVArray->AddToEntry(like,ipar0,ipar1); // this is correct if binary files differ only for free param sub-ranges
-	  
-	  NtoysTot++;
-	} // iexperiment
-	
-      } // iMH (mass hierarchy)
-      
       NparTot1++;
     } // ipar1 (free parameter)
     NparTot0++;
   } // ipar0 (free parameter)
 
+
+
+  NtoysTot = fntoys_marg * 2;
+
   cout << endl;
   cout << "# of scanned free parameters 0: " << NparTot0 << endl; 
   cout << "# of scanned free parameters 1: " << NparTot1 << endl; 
-  if(doMargMassHierarchy) cout << "# of toys used: " << (double)NtoysTot / 2. / (double)NparTot0 / (double)NparTot1 << endl;
-  else cout << "# of toys used: " << (double)NtoysTot / (double)NparTot1 /  (double)NparTot0 << endl;
+  cout << "# of toys per point: " << NtoysTot << endl;
   cout << endl;
-
-  // Now the marginalized likelihood is computed using toys from all the binary files
-  // Compute the chisq for each free osc parameter value
-  
-  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-      double bincont = -2*log( flikeVArray->GetEntry(ipar0,ipar1) );
-      fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
-      if(!fIsFit2D) hchisq_marg_1D->SetBinContent(ipar0+1,bincont);
-      else          hchisq_marg_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
-    }
-  }
 
 #ifdef __print_chisqmarg__
   cout << endl;
@@ -921,7 +1073,136 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   return;
 }
 //________________________________________________________________________________________
-void FitMarginalization::WriteToys2Binary(int idfile,const char *tag){
+float FitMarginalization::CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1){
+
+  fNCallsCalcChisqMargPt++;
+
+  //cout << "iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << "   ";
+  
+  double currval0 = fmin_param[0] + iterpar0*fstep_param[0];
+  double currval1 = fmin_param[1] + iterpar1*fstep_param[1];
+  //cout << "currval0 = " << currval0 << endl;
+  //cout << "currval1 = " << currval1 << endl;
+  
+  // Marginalize the Mass Hierarchy
+  int nMassHierarchy = 2;
+  
+  for(int iMH=0;iMH<nMassHierarchy;iMH++){
+    
+    // Don't marginalize Mass Hierarchy. Only the assumed one
+    if(this->doMargMassHierarchy == false){
+      
+      // Break the loop after the first iteration
+      nMassHierarchy = 1; 
+      
+      // Used convention in MakeToysMarginalization(): 
+      //  - iMH=0 --> kNmhNormal
+      //  - iMH=1 --> kNmhInverted	
+      if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+      else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+      
+      // Mass Hierarchy has to be already defined
+      else {
+	cerr << endl;
+	cerr << "Mass Hierarchy is not defined" << endl;
+	cerr << endl;
+	exit(1);
+      }
+    }
+    
+#ifdef __print_masshierarchy__
+    cout << "iMH = " << iMH << endl;
+#endif	  
+    
+    for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+      //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;;
+      
+      // compute the likelihood for a single marginalization toy
+      float chisq = 0.;
+      
+      // Loop over the used SK samples
+      int iscount=0;
+      //for(int is = 0; is < kns; is++) {
+      //SuperkSample_t s = kSKSamples[is];
+      //if(s == kSKsUndefined) continue;
+      for(int is=0;is<fNSKsamples;is++){
+	SuperkSample_t s = this->GetSKSamples(is);
+	
+	for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+	  float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	  float nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
+	  //cout << "nexp = " << nexp << " - nobs = " << nobs << endl;
+	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+	}	  
+	iscount++;
+      } // loop SK samples
+      
+#ifdef __print_array_toy_fillchisq__
+      cout << endl;
+      cout << "toy=" << iexperiment << " - iterpar0=" << iterpar0 << " - iterpar1=" << iterpar1 << " : ";
+      
+      iscount=0;
+      //for(int is = 0; is < kns; is++) {
+      //SuperkSample_t s = kSKSamples[is];
+      //if(s == kSKsUndefined) continue;
+      for(int is=0;is<fNSKsamples;is++){
+	SuperkSample_t s = this->GetSKSamples(is);
+	
+	cout << util::AsStringCompact(s) << endl;
+	
+	for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+	  float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ib);
+	  cout << bincont << " "; 
+	}
+	cout << endl;
+	cout << endl;
+	
+	iscount++;
+      } // loop SK samples
+      
+#endif
+      
+      float like = exp(-chisq/2.) / fntoys_marg;
+      
+      if(this->doMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
+      
+      flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
+      
+    } // iexperiment
+  } // iMH (mass hierarchy)
+  
+  // Now the marginalized likelihood is computed using toys from all the binary files
+  // Compute the chisq for each free osc parameter value and fill the array and histo
+  float bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) );
+  fChisqMargVArray->SetEntry(bincont,iterpar0,iterpar1);
+  if(!fIsFit2D) hchisq_marg_1D->SetBinContent(iterpar0+1,bincont);
+  else          hchisq_marg_2D->SetBinContent(iterpar0+1,iterpar1+1,bincont);
+      
+  return bincont;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
+void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
 
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
@@ -1709,4 +1990,804 @@ TH2F * FitMarginalization::GetChisqMarg2D (void)
 {
   return hchisq_marg_2D;
 };
+//________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
+void FitMarginalization::SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast){
+
+  double fFirstVal_X = XvalFirst;
+  double fLastVal_X = XvalLast;;
+  double fFirstVal_Y = YvalFirst;
+  double fLastVal_Y = YvalLast;
+
+  fFirstBin_X = hchisq_marg_2D->GetXaxis()->FindBin(fFirstVal_X);
+  fLastBin_X = hchisq_marg_2D->GetXaxis()->FindBin(fLastVal_X);
+  fFirstBin_Y = hchisq_marg_2D->GetYaxis()->FindBin(fFirstVal_Y);
+  fLastBin_Y = hchisq_marg_2D->GetYaxis()->FindBin(fLastVal_Y);
+
+  int nbins_X = fnbins_param[0];
+  int nbins_Y = fnbins_param[1];
+
+  // Don't exceed the allowed bins
+  if(fFirstBin_X < 1){
+    cerr << endl;
+    cerr << "The first bin of the X interval is outside the histogram limit" << endl;
+    cerr << "Set it to 1" << endl;
+    cerr << endl;
+    fFirstBin_X = 1;
+    fFirstVal_X = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fFirstBin_X);
+  }
+  if(fFirstBin_Y < 1){
+    cerr << endl;
+    cerr << "The first bin of the Y interval is outside the histogram limit" << endl;
+    cerr << "Set it to 1" << endl;
+    cerr << endl;
+    fFirstBin_Y = 1;
+    fFirstVal_Y = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstBin_Y);
+  }
+  if(fLastBin_X > nbins_X){
+    cerr << endl;
+    cerr << "The last bin of the X interval is outside the histogram limit" << endl;
+    cerr << "Set it to the number of bins in the histogram:" << nbins_X << endl;
+    cerr << endl;
+    fLastBin_X = nbins_X;
+    fLastVal_X = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(fLastBin_X);
+  }
+  if(fLastBin_Y > nbins_Y){
+    cerr << endl;
+    cerr << "The last bin of the Y interval is outside the histogram limit" << endl;
+    cerr << "Set it to the number of bins in the histogram:" << nbins_Y << endl;
+    cerr << endl;
+    fLastBin_Y = nbins_Y;
+    fLastVal_Y = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastBin_Y);
+  }
+
+  cout << endl;
+  cout << "Minimization interval set to:" << endl;
+  cout << "  - X: [" << fFirstVal_X << "," << fLastVal_X << "]" << endl;
+  cout << "  - X Bin: [" << fFirstBin_X << "," << fLastBin_X << "]" << endl;
+  cout << "  - Y: [" << fFirstVal_Y << "," << fLastVal_Y << "]" << endl;
+  cout << "  - Y Bin: [" << fFirstBin_Y << "," << fLastBin_Y << "]" << endl;
+  cout << endl;
+
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetMinimPrecision(double eps){
+  fEPS = eps;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetMinimUncorrXY(bool flaguncorr){ 
+  fUncorrXY = flaguncorr;
+}
+//________________________________________________________________________________________
+void FitMarginalization::MinimizeChisqHisto(SuperkObservation *skobs_data){
+
+  float bigvalueUOflow = 99999999.; 
+
+  // 1D
+  hchisq_marg_1D_Step = (TH1F*)hchisq_marg_1D->Clone("hchisq_marg_1D_Step");
+  for(int ibinX=0;ibinX<hchisq_marg_1D_Step->GetNbinsX();ibinX++){
+    hchisq_marg_1D_Step->SetBinContent(ibinX+1,0.);
+  }
+  // Set under and over flow of X to very high value
+  for(int ibinX=0;ibinX<hchisq_marg_1D->GetNbinsX();ibinX++){    
+    hchisq_marg_1D->SetBinContent(0,bigvalueUOflow);
+    hchisq_marg_1D->SetBinContent(hchisq_marg_2D->GetNbinsX()+1,bigvalueUOflow);
+  }
+
+  // 2D
+  hchisq_marg_2D_Step = (TH2F*)hchisq_marg_2D->Clone("hchisq_marg_2D_Step");
+  for(int ibinX=0;ibinX<hchisq_marg_2D_Step->GetNbinsX();ibinX++){
+    for(int ibinY=0;ibinY<hchisq_marg_2D_Step->GetNbinsY();ibinY++){
+      hchisq_marg_2D_Step->SetBinContent(ibinX+1,ibinY+1,0.);
+    }
+  }
+  // Set under and over flow of X and Y to very high value
+  for(int ibinX=0;ibinX<hchisq_marg_2D->GetNbinsX();ibinX++){    
+    hchisq_marg_2D->SetBinContent(ibinX+1,0,bigvalueUOflow);
+    hchisq_marg_2D->SetBinContent(ibinX+1,hchisq_marg_2D->GetNbinsY()+1,bigvalueUOflow);
+  }
+  for(int ibinY=0;ibinY<hchisq_marg_2D->GetNbinsY();ibinY++){    
+    hchisq_marg_2D->SetBinContent(0,ibinY+1,bigvalueUOflow);
+    hchisq_marg_2D->SetBinContent(hchisq_marg_2D->GetNbinsX()+1,ibinY+1,bigvalueUOflow);
+  }
+ 
+  
+
+  TRandom3 *r = new TRandom3(0); // needed to randomly scan the distribution
+  
+  // Get the interval
+  
+  double UniFirstBin_X = fFirstBin_X; 
+  double UniLastBin_X  = fLastBin_X; 
+  double UniFirstBin_Y = fFirstBin_Y; 
+  double UniLastBin_Y  = fLastBin_Y; 
+  
+  double binF_X = UniFirstBin_X; // first value of the free parameter
+  double binL_X = UniLastBin_X; // last value of the free parameter
+  double binF_Y = UniFirstBin_Y; // first value of the free parameter
+  double binL_Y = UniLastBin_Y; // last value of the free parameter
+
+  double bincont = 0.;
+  
+  double chisq_X[3] = {0., 0., 0.};  // Chisq(N-1), Chisq(N) and Chisq(N+1)
+  double chisq_Y[3] = {0., 0., 0.};  // Chisq(N-1), Chisq(N) and Chisq(N+1)
+  
+  double like_X[3] = {0., 0., 0.};   // L(N-1), L(N) and L(N+1)
+  double like_Y[3] = {0., 0., 0.};   // L(N-1), L(N) and L(N+1)
+  
+  const int ilike_N = 1;
+  const int ilike_Nm1 = 0;
+  const int ilike_Np1 = 2;
+  
+  int Niterations=0;
+  int Niterations_Part=0;
+  int Nminima=0;
+
+#if defined __print_minimization_steps__ 
+  cout << "Extract Uniform [ " << binF_X << " , " << binL_X << " ] " << endl;       
+  if(fIsFit2D)
+    cout << "Extract Uniform [ " << binF_Y << " , " << binL_Y << " ] " << endl;      	
+#endif
+
+  // Throw the bin number
+  double r_X = r->Uniform(binF_X,binL_X+1); // +1 because it's then truncated into a int. Extract 21th bin as well
+  double r_Y = r->Uniform(binF_Y,binL_Y+1); // +1 because it's then truncated into a int. Extract 21th bin as well
+  int bin_X = (int)r_X; 
+  int bin_Y = (int)r_Y;
+
+  bool doNewFit = true;
+
+  int Nfits=1; // number of fits performed 
+
+  
+  while(1){
+    
+    if(Nfits > fMaxFitNumber){
+      cout << endl;
+      cout << "Starting fit # " << Nfits << endl;
+      cout << "Maximum allowed # of fits: " << fMaxFitNumber << endl;
+      cout << "Convergence has not found" << endl;
+      cout << "# of found minima: " << Nminima << endl;
+      cout << endl;
+      return;
+    }
+    else if(doNewFit){
+      cout << endl;
+      cout << "/////////////// Fit " << Nfits << " ///////////////" << endl;
+      cout << endl;
+      doNewFit = false;
+    }
+
+    
+    bin_X = r->Uniform(binF_X,binL_X+1); // add 1 because it will be truncated to get the bin number
+    if(fIsFit2D)
+      bin_Y = r->Uniform(binF_Y,binL_Y+1); // add 1 because it will be truncated to get the bin number
+    
+    int binN_X = -999;
+    int binN_Y = -999;
+
+    // same point
+    binN_X = bin_X; 
+    if(fIsFit2D) binN_Y = bin_Y;
+    
+    double binlowedge_X = -999;
+    double binlowedge_Y = -999;
+
+    // Find direction along X axis     
+    
+    // L(N)
+    if(fIsFit2D) 
+      bincont = fChisqMargVArray->GetEntry(binN_X-1,binN_Y-1);
+    else 
+      bincont = fChisqMargVArray->GetEntry(binN_X-1,fmin_bin_sub_param[1]);
+    if( bincont<=0.){
+      if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binN_X-1,binN_Y-1); // CalcChisqMargPt takes the point not bin
+      else bincont = CalcChisqMargPt(skobs_data,binN_X-1,fmin_bin_sub_param[1]);
+    }
+    chisq_X[ilike_N] = bincont;
+   
+    // L(N-1)
+    int binNm1_X = binN_X - 1;
+    if(binNm1_X < fFirstBin_X) 
+      binNm1_X = binN_X;  // should happens only when binN = binF
+    if(fIsFit2D) 
+      bincont = fChisqMargVArray->GetEntry(binNm1_X-1,binN_Y-1);
+    else 
+      bincont = fChisqMargVArray->GetEntry(binNm1_X-1,fmin_bin_sub_param[1]);
+    if( bincont<=0.){
+      if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNm1_X-1,binN_Y-1);
+      else bincont = CalcChisqMargPt(skobs_data,binNm1_X-1,fmin_bin_sub_param[1]);
+    }
+    chisq_X[ilike_Nm1] = bincont;
+    
+    // L(N+1)
+    int binNp1_X = binN_X + 1;
+    if(binNp1_X > fLastBin_X) 
+      binNp1_X = binN_X;  // should happens only when binN = binL
+    if(fIsFit2D) 
+      bincont = fChisqMargVArray->GetEntry(binNp1_X-1,binN_Y-1);
+    else 
+      bincont = fChisqMargVArray->GetEntry(binNp1_X-1,fmin_bin_sub_param[1]);
+    if( bincont<=0.){
+      if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNp1_X-1,binN_Y-1);
+      else bincont = CalcChisqMargPt(skobs_data,binNp1_X-1,fmin_bin_sub_param[1]); // bin_y = 0
+    }
+    chisq_X[ilike_Np1] = bincont;
+    
+    binlowedge_X = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(bin_X);
+
+        
+    
+    // Find direction along Y axis
+    
+    int binNm1_Y = -999;
+    int binNp1_Y = -999;
+    
+    if(fIsFit2D){
+      // L(N)
+      bincont = fChisqMargVArray->GetEntry(binN_X-1,binN_Y-1);
+      if( bincont<=0.)
+	bincont = CalcChisqMargPt(skobs_data,binN_X-1,binN_Y-1);
+      chisq_Y[ilike_N] = bincont;
+      
+      // L(N-1)
+      binNm1_Y = binN_Y - 1;
+      if(binNm1_Y < fFirstBin_Y) binNm1_Y = binN_Y;  // should happens only when binN = binF
+      bincont = fChisqMargVArray->GetEntry(binN_X-1,binNm1_Y-1);
+      if( bincont<=0.)
+	bincont = CalcChisqMargPt(skobs_data,binN_X-1,binNm1_Y-1);
+      chisq_Y[ilike_Nm1] = bincont;
+      
+      // L(N+1)
+      binNp1_Y = binN_Y + 1;
+      if(binNp1_Y > fLastBin_Y) binNp1_Y = binN_Y;  // should happens only when binL = binL
+      bincont = fChisqMargVArray->GetEntry(binN_X-1,binNp1_Y-1);
+      if( bincont<=0.)
+	bincont = CalcChisqMargPt(skobs_data,binN_X-1,binNp1_Y-1);
+      chisq_Y[ilike_Np1] = bincont;
+      
+      binlowedge_Y = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(bin_Y);
+    }
+
+
+#if defined __print_minimization_steps__
+    cout << endl;
+    cout << "# iteration = " << Niterations << endl;
+    cout << "# iteration current = " << Niterations_Part << endl;
+    cout << bin_X << " - " << binlowedge_X << " --> "
+	 << binNm1_X << " " 
+	 << binN_X << " " 
+	 << binNp1_X
+	 << " -> chisq_X = " 
+	 << chisq_X[ilike_Nm1] << " " 
+	 << chisq_X[ilike_N] << " " 
+	 << chisq_X[ilike_Np1]
+	 << endl;
+    if(fIsFit2D){
+      cout << bin_Y << " - " << binlowedge_Y << " --> "
+	   << binNm1_Y << " " 
+	   << binN_Y << " " 
+	   << binNp1_Y
+	   << " -> chisq_Y = " 
+	   << chisq_Y[ilike_Nm1] << " " 
+	   << chisq_Y[ilike_N] << " " 
+	   << chisq_Y[ilike_Np1] 
+	   << endl;
+    }
+#endif
+
+    double bincent_X = -999;
+    double bincent_Y = -999;
+
+    if(!fIsFit2D){
+      bincent_X = hchisq_marg_2D_Step->GetXaxis()->GetBinCenter(bin_X);
+      hchisq_marg_1D_Step->Fill(bincent_X);
+    }
+    else{
+      bincent_X = hchisq_marg_2D_Step->GetXaxis()->GetBinCenter(bin_X);
+      bincent_Y = hchisq_marg_2D_Step->GetYaxis()->GetBinCenter(bin_Y);
+      hchisq_marg_2D_Step->Fill(bincent_X,bincent_Y);
+    }
+    
+    // Best fit bin is found
+    // this condition contains the case with the boundary, when
+    // z(N-1) = Z(N) or Z(N+1) = Z(N)
+ 
+    // if( 
+    //    chisq_X[ilike_N] <= (chisq_X[ilike_Np1]+fEPS) && 
+    //    chisq_X[ilike_N] <= (chisq_X[ilike_Nm1]+fEPS) && 
+    //    ( !fIsFit2D ||
+    // 	 ( chisq_Y[ilike_N] <= (chisq_Y[ilike_Np1]+fEPS) && 
+    // 	   chisq_Y[ilike_N] <= (chisq_Y[ilike_Nm1]+fEPS) )
+    // 	 )	
+    // 	){ 
+
+    if( 
+       chisq_X[ilike_N] <= chisq_X[ilike_Np1] && 
+       chisq_X[ilike_N] <= chisq_X[ilike_Nm1] && 
+       ( !fIsFit2D ||
+    	 ( chisq_Y[ilike_N] <= chisq_Y[ilike_Np1] && 
+	   chisq_Y[ilike_N] <= chisq_Y[ilike_Nm1] )
+    	 )	
+    	){
+      
+      if( !fIsFit2D || (chisq_X[ilike_N] == chisq_Y[ilike_N]) ){
+	
+	// Check if it's a real minimum
+	
+	cout << "A minimum is found" << endl;
+	cout << "Best fit Chisq = " << chisq_X[ilike_N] << endl;
+	cout << "Best fit X = " << hchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
+	cout << "Best fit Y = " << hchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+	cout << "Total # of iterations = " << Niterations << endl;
+	cout << "Total # of performed fits = " << Nfits << endl;
+	cout << "Check if it's a real minimum" << endl;
+
+	int binNm2_X = -999;
+	double chisq_X_Nm2 = -999;
+	int binNp2_X = -999;
+	double chisq_X_Np2 = -999;
+	int binNm2_Y = -999;
+	double chisq_Y_Nm2 = -999;
+	int binNp2_Y = -999;
+	double chisq_Y_Np2 = -999;
+
+	// L(N-2) X
+	binNm2_X = binN_X - 2;
+	if(binNm2_X < fFirstBin_X) 
+	  binNm2_X = fFirstBin_X;  // should happens only when Xn = Xf
+	if(fIsFit2D) 
+	  bincont = fChisqMargVArray->GetEntry(binNm2_X-1,binN_Y-1);
+	else 
+	  bincont = fChisqMargVArray->GetEntry(binNm2_X-1,fmin_bin_sub_param[1]);
+	if( bincont<=0.)
+	  if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNm2_X-1,binN_Y-1);
+	  else bincont = CalcChisqMargPt(skobs_data,binNm2_X-1,fmin_bin_sub_param[1]);
+	chisq_X_Nm2 = bincont;
+	
+	// L(N+2) X
+	binNp2_X = binN_X + 2;
+	if(binNp2_X > fLastBin_X) 
+	  binNp2_X = fLastBin_X;  // should happens only when Xn = Xl
+	if(fIsFit2D)
+	  bincont = fChisqMargVArray->GetEntry(binNp2_X-1,binN_Y-1);
+	else 
+	  bincont = fChisqMargVArray->GetEntry(binNp2_X-1,fmin_bin_sub_param[1]);
+	if( bincont<=0.)
+	  if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNp2_X-1,binN_Y-1);
+	  else bincont = CalcChisqMargPt(skobs_data,binNp2_X-1,fmin_bin_sub_param[1]);
+	chisq_X_Np2 = bincont;
+
+	if(fIsFit2D){
+	  
+	  // L(N-2) Y
+	  binNm2_Y = binN_Y - 2;
+	  if(binNm2_Y < fFirstBin_Y) 
+	    binNm2_Y = fFirstBin_Y;  // should happens only when Xn = Xf
+	  bincont = fChisqMargVArray->GetEntry(binN_X-1,binNm2_Y-1);
+	  if( bincont<=0.)
+	    bincont = CalcChisqMargPt(skobs_data,binN_X-1,binNm2_Y-1);
+	  chisq_Y_Nm2 = bincont;
+	  
+	  // L(N+2) Y
+	  binNp2_Y = binN_Y + 2;
+	  if(binNp2_Y > fLastBin_Y) binNp2_Y = fLastBin_Y;  // should happens only when Xn = Xl
+	  bincont = fChisqMargVArray->GetEntry(binN_X-1,binNp2_Y-1);
+	  if( bincont<=0.)
+	    bincont = CalcChisqMargPt(skobs_data,binN_X-1,binNp2_Y-1);
+	  chisq_Y_Np2 = bincont;
+	}
+	  
+#if defined __print_minimization_steps__
+	cout << endl
+	     << "chisq_X = " 
+	     << chisq_X_Nm2 << " " 
+	     << chisq_X[ilike_Nm1] << " " 
+	     << chisq_X[ilike_N] << " " 
+	     << chisq_X[ilike_Np1] << " "
+	     << chisq_X_Np2 << " " 
+	     << endl; 
+	if(fIsFit2D){
+	  cout << "chisq_Y = " 
+	       << chisq_Y_Nm2 << " " 
+	       << chisq_Y[ilike_Nm1] << " " 
+	       << chisq_Y[ilike_N] << " " 
+	       << chisq_Y[ilike_Np1] << " "
+	       << chisq_Y_Np2 << " " 
+	       << endl;
+	}
+#endif
+
+	if( chisq_X[ilike_N] <= chisq_X_Nm2 && 
+	    chisq_X[ilike_N] <= chisq_X_Np2 &&
+	    (!fIsFit2D ||
+	     (chisq_Y[ilike_N] <= chisq_Y_Nm2 && 
+	      chisq_Y[ilike_N] <= chisq_Y_Np2)
+	     )
+	    ){
+	  
+	  Nminima++;
+	  
+	  // It's a real minimum
+	  cout << "It's a real minimum" << endl;
+	  
+	  // Check if another minimum was found before
+	  if(chisq_X[ilike_N] <= fchisq_bf){
+	    
+	    // It's a global minimum. Stop the fit.
+
+	    cout << "It's a global minimum" << endl;
+
+	    fchisq_bf = chisq_X[ilike_N];
+	    
+	    if(fIsFit2D){
+	      fparam_bf[0] = hchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
+	      fparam_bf[1] = hchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y);
+	    }
+	    else{
+	      fparam_bf[0] = hchisq_marg_1D->GetBinLowEdge(binN_X);
+	    }
+	    
+	  }
+
+	  else{
+	    
+	    // If it's a local minimum the fit has to be restarted otherwise 
+	    // after the first minimum the fit should be stopped.
+	    // Indeed this case can happen only if the first minimum was on the border.
+	    // Restart the fit and look for another minimum not on the border
+
+	    cout << endl;
+	    cout << "A new minimum is found but it's local" << endl;
+	    cout << "The previous minimum is deeper:" << endl;
+	    cout << "Global Chisq = " << fchisq_bf << endl;
+	    cout << "Local Chisq = " << chisq_X[ilike_N] << endl; 
+	    cout << "Restart the fit" << endl;
+	    cout << endl;
+	    
+	    binF_X = UniFirstBin_X;
+	    binL_X = UniLastBin_X;
+	
+	    if(fIsFit2D){
+	      binF_Y = UniFirstBin_Y;
+	      binL_Y = UniLastBin_Y;
+	    }
+
+	    Niterations_Part = 0; // Reset # of iterations per fit
+	    Nfits++;
+	    doNewFit=true;
+
+	    continue;
+	  }
+
+
+	  // If on the border do the fit again 
+	  // The reached best fit is stored and will be the global 
+	  // one if nothing better is found
+	  if(fBorderDoFit && 
+	     ( binN_X == UniFirstBin_X ||
+	       binN_X == UniLastBin_X ||
+	       binN_Y == UniFirstBin_Y ||
+	       binN_Y == UniLastBin_Y )
+	     ){ 	    
+	    
+	    binF_X = UniFirstBin_X;
+	    binL_X = UniLastBin_X;
+
+	    if(fIsFit2D){
+	      binF_Y = UniFirstBin_Y;
+	      binL_Y = UniLastBin_Y;
+	    }
+
+	    // Set the new interval for uniform extraction 
+	    // excluding the border where the minimum was found
+	 
+	    if(binN_X == UniFirstBin_X){ // on the first bin X	    
+	      // next fit will not account the first bin X for the minimization
+	      if( (UniFirstBin_X+1) > UniLastBin_X)
+		cout << "Don't exclude the border, otherwise FirstBin_X > LastBin_X" << endl;
+	      else
+		UniFirstBin_X = UniFirstBin_X+1;
+	      binF_X = UniFirstBin_X;
+	    }
+	    else if(binN_X == fLastBin_X){ // on the first bin X
+	      // next fit will not account the last bin X for the minimization
+	      if( (UniLastBin_X-1) < UniFirstBin_X)
+		cout << "Don't exclude the border, otherwise LastBin_X < FirstBin_X" << endl;
+	      else
+		UniLastBin_X = UniLastBin_X-1;
+	      binL_X = UniLastBin_X;
+	    }
+
+	    if( !fIsFit2D || (binN_Y == fFirstBin_Y) ){ // on the first bin Y	    
+	      // next fit will not account the first bin Y for the minimization
+	      if( (UniFirstBin_Y+1) > UniLastBin_Y)
+		cout << "Don't exclude the border, otherwise FirstBin_Y > LastBin_Y" << endl;
+	      else
+		UniFirstBin_Y = UniFirstBin_Y+1;
+	      binF_Y = UniFirstBin_Y;
+	    }
+	    else if( !fIsFit2D || (binN_Y == fLastBin_Y) ){ // on the first bin Y
+	      // next fit will not account the last bin Y for the minimization
+	      if( (UniLastBin_Y-1) < UniFirstBin_Y)
+		cout << "Don't exclude the border, otherwise LastBin_Y < FirstBin_Y" << endl;
+	      else
+		UniLastBin_Y = UniLastBin_Y-1;
+	      binL_Y = UniLastBin_Y;
+	    }
+	   
+	    cout << endl;
+	    cout << "The reached minimum is on the border" << endl;
+	    cout << "To be sure it's the global minimum restart the fit" << endl;
+	    cout << "The border is excluded from the next fit" << endl;
+	    cout << "Uniform [ " << binF_X << " , " << binL_X << " ] " << endl;      
+	    if(fIsFit2D) 
+	      cout << "Uniform [ " << binF_Y << " , " << binL_Y << " ] " << endl;      
+
+	    fMaxFitNumber = TMath::Min(fBorderMaxFitNumber,fMaxFitNumber);
+
+	    cout << "Repeat the fit until " << fMaxFitNumber << " times" << endl;
+	    cout << "# of performed fits = " << Nfits << endl; 
+	    cout << endl;
+     
+	    Niterations_Part = 0; // Reset # of iterations per fit
+	    Nfits++; // Increment Nfits. A minimum is found	    
+	    doNewFit = true; // The next one is a new fit
+
+	    continue;
+	  } // if border fit
+	
+	  break;
+
+	} // if it's a real minimum and not a fluctuation
+	
+       	else{
+	  cout << endl;
+	  cout << "The reached minimum is a fluctuation of the bin" << endl; 
+	  cout << "Restart the fit" << endl;
+	  cout << endl;
+	 
+	  binF_X = UniFirstBin_X;
+	  binL_X = UniLastBin_X;
+	  
+	  if(fIsFit2D){
+	    binF_Y = UniFirstBin_Y;
+	    binL_Y = UniLastBin_Y;
+	  }
+	 
+	  // Don't increment Nfits but continue the fit
+
+	  continue;
+	}
+      } // if chisq_X == chisq_Y 
+      else {
+	cout << endl;
+	cout << "Problem with convergence" << endl;
+	cout << "Minimum is found but chisq_X != chisq_Y" << endl;
+	cout << "Restart the fit" << endl;
+	cout << endl;
+	
+	binF_X = UniFirstBin_X;
+	binL_X = UniLastBin_X;
+	
+	if(fIsFit2D){
+	  binF_Y = UniFirstBin_Y;
+	  binL_Y = UniLastBin_Y;
+	}
+
+	// Don't increment Nfits but continue the fit	
+
+	continue;
+      }
+    } // if chisq_X<=chisq_X[Np1] && chisq_Y<=chisq_Y[Np1] ... 
+    
+    else {
+      
+      // Gradient along X
+      
+      // If minimum along one direction (X), keep it fixed
+      if( fUncorrXY &&
+	  chisq_X[ilike_N] <= chisq_X[ilike_Np1] && 
+	  chisq_X[ilike_N] <= chisq_X[ilike_Nm1] 	  
+	  )
+	{
+	  binF_X = bin_X;
+	  binL_X = bin_X;
+	}
+      
+      // Move toward binL (right)
+      else if( 
+	      chisq_X[ilike_N] > chisq_X[ilike_Np1] && 
+	      chisq_X[ilike_N] < chisq_X[ilike_Nm1] 
+	       ){
+#if defined __print_minimization_steps__
+	cout << "X: Move toward last bin (right)"<< endl;	  
+#endif
+	binF_X = bin_X; // the extracted bin --> use bin_X as limit which doesn't contain the entire bin values
+      }
+      // Move toward Xf (left)
+      else if( 
+	      chisq_X[ilike_N] < chisq_X[ilike_Np1] && 
+	      chisq_X[ilike_N] > chisq_X[ilike_Nm1] 
+	       ){
+#if defined __print_minimization_steps__
+	cout << "X: Move toward first bin (left)"<< endl;
+#endif
+	binL_X = bin_X; 
+      }
+
+      // Case chisq[ilike_N] is in the maximum
+      else if(
+	      chisq_X[ilike_N] >= chisq_X[ilike_Np1] && 
+	      chisq_X[ilike_N] >= chisq_X[ilike_Nm1] 
+	      ){
+#if defined __print_minimization_steps__
+	cout << "X: chisq in the maximum" << endl;
+#endif
+	
+	// Move toward Xl (right) 
+	if ( chisq_X[ilike_Np1] < chisq_X[ilike_Nm1] ){
+#if defined __print_minimization_steps__
+	  cout << "X: Move toward last bin (right)"<< endl;
+#endif
+	  binF_X = bin_X;
+	}
+	
+	// Move toward Xf (left) 
+	else if ( chisq_X[ilike_Np1] > chisq_X[ilike_Nm1] ){
+#if defined __print_minimization_steps__
+	  cout << "X: Move toward first bin (left)"<< endl;
+#endif
+	  binL_X = bin_X;
+	}
+      }
+
+      
+      // Gradient along Y
+      
+      if(fIsFit2D){
+	
+	// If minimum along one direction (Y), keep it fixed
+	if( fUncorrXY &&
+	    chisq_Y[ilike_N] <= chisq_Y[ilike_Np1] && 
+	    chisq_Y[ilike_N] <= chisq_Y[ilike_Nm1] 	  
+	    )
+	  {
+	    binF_Y = bin_Y;
+	    binL_Y = bin_Y;
+	  }
+	
+	// Move toward Xl (right)
+	else if( 
+		chisq_Y[ilike_N] > chisq_Y[ilike_Np1] && 
+		chisq_Y[ilike_N] < chisq_Y[ilike_Nm1] 
+		 ){
+#if defined __print_minimization_steps__
+	  cout << "Y: Move toward last bin (up)"<< endl;
+#endif
+	  binF_Y = bin_Y;
+	}
+	// Move toward Xf (left)
+	else if( 
+		chisq_Y[ilike_N] < chisq_Y[ilike_Np1] && 
+		chisq_Y[ilike_N] > chisq_Y[ilike_Nm1] 
+		 ){
+#if defined __print_minimization_steps__
+	  cout << "Y: Move toward first bin (down)"<< endl;
+#endif
+	  binL_Y = bin_Y;
+	}
+	// Case chisq[ilike_N] is in the 
+	else if(
+		chisq_Y[ilike_N] >= chisq_Y[ilike_Np1] && 
+		chisq_Y[ilike_N] >= chisq_Y[ilike_Nm1] 
+		){
+#if defined __print_minimization_steps__	
+	  cout << "Y: chisq in the maximum" << endl;
+#endif
+	  // Move toward Xl (right) 
+	  if ( chisq_Y[ilike_Np1] < chisq_Y[ilike_Nm1] ){
+#if defined __print_minimization_steps__
+	    cout << "Y: Move toward last bin (up)"<< endl;
+#endif
+	    binF_Y = bin_Y;
+	  }
+	  // Move toward Xf (left) 
+	  else if ( chisq_Y[ilike_Np1] > chisq_Y[ilike_Nm1] ){
+#if defined __print_minimization_steps__
+	    cout << "Y: Move toward first bin (down)"<< endl;
+#endif
+	    binL_Y = bin_Y;
+	  }
+	}
+      }
+
+#if defined __print_minimization_steps__
+      cout << "Uniform [ " << binF_X << " , " << binL_X << " ] " << endl;      
+      if(fIsFit2D)
+	cout << "Uniform [ " << binF_Y << " , " << binL_Y << " ] " << endl;      
+#endif
+      
+    } // end move to next steps
+    
+    
+    // Saddle point is reached and the fit doesn't move --> restart the fit
+    //if( binF_X == binL_X && binF_Y == binL_Y ){	
+    if( binF_X == binL_X ){	
+      binF_X = UniFirstBin_X;
+      binL_X = UniLastBin_X;
+     
+      if(fIsFit2D && binF_Y == binL_Y){
+	binF_Y = UniFirstBin_Y;
+	binL_Y = UniLastBin_Y;
+      }
+    }
+    
+    // Partial maximum # of iterations. If exceeded restart the fit
+    if(Niterations_Part > fMaxIterationSingleFit){
+      cout << endl;
+      cout << "Partial # of iterations > " << fMaxIterationSingleFit << endl;
+      cout << "Convergence has not found --> restart the fit" << endl;
+      cout << endl;
+      //
+      binF_X = UniFirstBin_X;
+      binL_X = UniLastBin_X;
+
+      if(fIsFit2D){
+	binF_Y = UniFirstBin_Y;
+	binL_Y = UniLastBin_Y;
+      }
+      //
+      Niterations_Part = 0;
+      Nfits++;
+      doNewFit = true; // The next one is a new fit
+    }
+        
+    Niterations++;
+    Niterations_Part++;
+    
+  } // end while
+  
+  cout << "The fit is well performed" << endl;
+
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetMaxIterationSingleFit(int maxiter){
+  fMaxIterationSingleFit = maxiter;
+  cout << "Set maximum # of iterations per fit to " << fMaxIterationSingleFit << endl;
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetMaxFitNumber(int nfit){
+  fMaxFitNumber = nfit;
+  cout << "Set maximum # of fits to " << fMaxFitNumber << endl;
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetBorderDoFit(bool dofit){
+  fBorderDoFit = dofit;
+  cout << "If minimum is found on the border, redo the fit" << endl;
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetBorderMaxFitNumber(int nfit){
+  fBorderMaxFitNumber = nfit;
+  cout << "Set maximum # of fits after border minimum to " << fBorderMaxFitNumber << endl;
+  return;
+}
 //________________________________________________________________________________________

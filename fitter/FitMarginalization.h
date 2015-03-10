@@ -78,13 +78,10 @@ namespace valor {
 class FitMarginalization: public TObject
 {
  public:
-  
-  //FitMarginalization(conv::PhysParamId_t *parfree, int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
-  FitMarginalization();
 
+  FitMarginalization();
   ~FitMarginalization(void);
 
-  //void Init(conv::PhysParamId_t *parfree, int ntoys_marg, int *nbins_param,double *minpar,double *maxpar);
   void Init();
 
   void CleanUp();
@@ -107,7 +104,6 @@ class FitMarginalization: public TObject
 
   bool IsFit2D(){ return fIsFit2D;}
 
-  //void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp,int *min_bin_sub_param,int *max_bin_sub_param);
   void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp);
 
   void WriteToys2Binary(int idfile, const char *tag);
@@ -116,14 +112,18 @@ class FitMarginalization: public TObject
   void ReadToysFromBinary(int idfile, const char *tag);
   
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
-  void FillChisqMarg(SuperkObservation *skobs_data);
+
+  void FillChisqMarg(SuperkObservation *skobs_data); // Loop over the free params and call CalcChisqMargPt()
+  float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1);
   
+  int GetNCallsCalcChisqMargPt(void) { return fNCallsCalcChisqMargPt;};
+
   void Minimize(TH1F *hInChisqMarg);
   void Minimize(TH2F *hInChisqMarg);
   void Minimize(void);
 
-  double GetChisqBestFit(void){ return fchisq_bf;};
-  double GetParamBestFit(int ParId){ return fparam_bf[ParId];};
+  float GetChisqBestFit(void){ return fchisq_bf;};
+  float GetParamBestFit(int ParId){ return fparam_bf[ParId];};
   
   void PrintBestFit(void);
 
@@ -148,6 +148,33 @@ class FitMarginalization: public TObject
   int GetNSKsamples(){return fNSKsamples;};
   conv::SuperkSample_t GetSKSamples(int isksample); 
  
+
+
+
+
+
+
+
+  // Histogram minimization
+
+  void MinimizeChisqHisto(SuperkObservation *skobs_data);
+  //void MinimizeChisqHisto(); // Minimize the filled histogram
+  void SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
+  void SetMinimPrecision(double eps);
+  void SetMinimUncorrXY(bool flaguncorr);
+  void SetMaxIterationSingleFit(int maxiter); // by default is the tot # of histo bins
+  void SetMaxFitNumber(int nfit);
+  void SetBorderDoFit(bool dofit);
+  void SetBorderMaxFitNumber(int nfit);
+  TH1F *GetChisqStep_1D(void){ return hchisq_marg_1D_Step;};  
+  TH2F *GetChisqStep_2D(void){ return hchisq_marg_2D_Step;};  
+  //
+
+
+
+
+
+  
  private:
   
   TH1F *hchisq_marg_1D; 
@@ -183,6 +210,8 @@ class FitMarginalization: public TObject
   double fmin_param[2];  
   double fmax_param[2];  
   double fstep_param[2]; 
+
+  int fNCallsCalcChisqMargPt; // # of calls of CalcChisqMargPt
   
   VALORArrayF *flikeVArray;
   VALORArrayF *fChisqMargVArray;
@@ -211,6 +240,49 @@ class FitMarginalization: public TObject
 
   FitParamList * fparm;
   conv::PhysHypothesis_t fhypothesis;
+
+
+
+
+
+
+
+
+
+  // Histogram minimization
+  
+  TH1F *hchisq_marg_1D_Step; // Get track of the minimization steps
+  TH2F *hchisq_marg_2D_Step; // Get track of the minimization steps
+  
+  int fMaxIterationSingleFit; // Partial # of iterations before restarting the fit
+  int fMaxFitNumber;        // Maximum # of fits
+
+  int fBorderDoFit; // if the best-fit is on the border, the fit is done again (default = true)
+  int fBorderMaxFitNumber; // if the best-fit is on the border, the fit is redone fBorderMaxFitNumber times (default = # of borders = 2 x NDim)
+
+  bool fUncorrXY; // if minimum found in Y, keep it fixed and vary only X (viceversa)
+  double fEPS; // precision of the fit
+  
+  // Set the interval where to find the minimum (bin numbers)
+  double fFirstVal_X;
+  double fLastVal_X;
+  double fFirstVal_Y;
+  double fLastVal_Y;
+
+  int fFirstBin_X;
+  int fLastBin_X;
+  int fFirstBin_Y;
+  int fLastBin_Y;
+  
+  //
+
+
+
+
+
+
+
+
 
   ClassDef(FitMarginalization, 1)
 };
