@@ -22,11 +22,10 @@
 #pragma link C++ class valor::SuperkObservation;
 #pragma link C++ class valor::SuperkExpectation;
 #pragma link C++ class valor::SuperkDetectorFSI;
-#pragma link C++ class valor::SuperkToyArray;
 #pragma link C++ class valor::SuperkMC;
 #pragma link C++ class valor::BANFF;
 #pragma link C++ class valor::NuXSec;
 #pragma link C++ class valor::NuFlux;
-#pragma link C++ class valor::FitMarginalization;
+#pragma link C++ class valor::FitMarginalization+;
 
 #endif
