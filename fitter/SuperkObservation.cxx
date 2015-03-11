@@ -44,7 +44,6 @@
 #include "AnalysisOptions.h"
 
 #include "SuperkObservation.h"
-#include "SuperkToyArray.h"
 #include "Utilities.h"
 #include "Utilities/Rnd.h"
 
@@ -300,15 +299,6 @@ bool SuperkObservation::Generate(
      FitModelABC * model, bool fluctuate)
 {
   SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
-  if (not skexp) {
-    SuperkToyArray * skta = dynamic_cast<SuperkToyArray*>(model);
-    if (not skta) {
-      std::cerr<<"SKObs/Generate >> Failed to cast to SuperkExpectation or SuperkToyArray with class:";
-      std::cerr<<model->Name()<<std::endl;
-      exit(-1);
-    }
-    skexp = skta->GetMasterExpectation();
-  }
   
   assert(skexp);
  
@@ -338,15 +328,6 @@ bool SuperkObservation::Generate(
   
   // Should do this properly.
   SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
-  if (not skexp) {
-    SuperkToyArray * skta = dynamic_cast<SuperkToyArray*>(model);
-    if (not skta) {
-      std::cerr<<"SKObs/Generate >> Failed to cast to SuperkExpectation or SuperkToyArray with class:";
-      std::cerr<<model->Name()<<std::endl;
-      exit(-1);
-    }
-    skexp = skta->GetMasterExpectation();
-  }
   
   assert(skexp);
   
@@ -368,15 +349,6 @@ bool SuperkObservation::Generate(
   
   // Should do this properly.
   SuperkExpectation * skexp = dynamic_cast<SuperkExpectation*>(model);
-  if (not skexp) {
-    SuperkToyArray * skta = dynamic_cast<SuperkToyArray*>(model);
-    if (not skta) {
-      std::cerr<<"SKObs/Generate >> Failed to cast to SuperkExpectation or SuperkToyArray with class:";
-      std::cerr<<model->Name()<<std::endl;
-      exit(-1);
-    }
-    skexp = skta->GetMasterExpectation();
-  }
 
   assert(skexp);
   
@@ -547,107 +519,6 @@ double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
     
     return total_chisq;
   } // end of SKExp cast
-  
-  // If that didn't work, try casting to a SuperkToyArray
-  SuperkToyArray * skta = dynamic_cast<SuperkToyArray*>(model);
-  //std::cerr<<"Tried casting "<<model->Name()<<"to SuperkToyArray, got "<<skta<<std::endl;
-  if (skta) {
-      
-    bool gauss   = false;
-    bool gof     = false; //goodness of fit
-    if (stat_opt) {
-      string stopt(stat_opt);
-      if (stopt.find("gauss") != string::npos) gauss = true;
-      if (stopt.find("gof")   != string::npos) gof   = true;
-    }
-    
-    double total_likelihood = 0;
-    
-    for (int itoy = 0 ; itoy < skta->GetNToys(); itoy++) {
-      
-      double toy_chisq = 0.;
-      
-      double nobs,nexp,delta_chisq;
-      
-      for (int is = 0 ; is < kns ; is++) {
-        SuperkSample_t s = kSKSamples[is];
-        // current sample is undefined: skip
-        if (s == conv::kSKsUndefined) continue;
-        int n_ereco_bins = kNErecoBins[is];
-        
-        const VALORArray * obs_v = this->ErecoSpectrumVArray(s);
-        const VALORArray * exp_v = skta->CurrPredictedErecoVArray(itoy,s);
-        const double * obs_arr = obs_v->GetArray();
-        const double * exp_arr = exp_v->GetArray();
-        
-        if (not gof) {
-            
-          for (int ibin = 0 ; ibin < n_ereco_bins ; ibin++) {
-            nobs = obs_arr[ibin];
-            nexp = exp_arr[ibin];
-            
-            if    (gauss) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
-            else          { delta_chisq = util::ChisqPoisson(nobs,nexp); }
-            
-            toy_chisq += exp (-0.5 * delta_chisq);
-          
-#ifdef __show_bin_contributions_to_chisq__
-            double xlo = util::ErecoBinEdges(s,ibin);
-            double xup = util::ErecoBinEdges(s,ibin+1);
-              cout << "SuperkObservation::Statistic >> delta_chisq (s = "<<util::AsString(s)<<", bin = " << ibin 
-                   << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
-              cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
-#endif
-          }//ibin
-        }// not goodness of fit
-        else {
-          const int nbins = 5;
-          double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0}; 
-        
-          //loop over Ereco bins
-          for(int ibin = 0; ibin < nbins; ibin++) {
-
-            int ErecoMinBin = TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedges[ibin]);
-            int ErecoMaxBin = TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedges[ibin+1]);
-            nobs = 0;
-            nexp = 0;
-            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
-              nobs += obs_arr[ir];
-              nexp += exp_arr[ir];
-            }
-            
-            if    (gauss) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
-            else          { delta_chisq = util::ChisqPoisson(nobs,nexp); }
-            
-            toy_chisq += delta_chisq;
-              
-#ifdef __show_bin_contributions_to_chisq__
-            double xlo = util::ErecoBinEdges(s,ibin);
-            double xup = util::ErecoBinEdges(s,ibin+1);
-            cout << "FitInputs::Chisquare()> delta_chisq (s = "<<util::AsString(s)<<", bin = " << ibin 
-               << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
-            cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
-#endif
-          }//ibin
-        } //goodness of fit
-      }//is
-      
-      double toy_likelihood = exp (-0.5 * toy_chisq);
-      total_likelihood += toy_likelihood;
-      //std::cerr<<itoy<<"\t"<<toy_chisq<<"\t"<<toy_likelihood<<"\t"<<total_likelihood<<endl;
-    } //itoy
-    
-    
-    //double syst_chisq_pen = model->GetFitStatisticPenalty();
-    //total_chisq += syst_chisq_pen;
-    
-    double mean_likelihood = total_likelihood/skta->GetNToys();
-    
-    double mean_chisq = -2. * log(mean_likelihood);
-    
-    //std::cerr<<"Mean: "<<mean_likelihood<<"\t"<<mean_chisq<<std::endl;
-    return mean_chisq;
-  }
   
   // If we get here, the cast has failed.
   std::cerr<<"SuperkOberservation/Generate >> Failed to interpret model: "<<model->Name()<<std::endl;
