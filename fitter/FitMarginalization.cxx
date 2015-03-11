@@ -31,6 +31,7 @@
 
 #include "Conventions/Opt.h"
 #include "Utilities/Rnd.h"
+#include "Utilities/UtlHist.h"
 
 #include "AnalysisOptions.h"
 #include "Build.h"
@@ -93,7 +94,10 @@ void FitMarginalization::Init(){
   // Needed to initialize the Ereco arrays
 
   this->SetNSKsamples(); // also defines fnerecobins
-  for(int is=0;is<fNSKsamples;is++) fToyMargErecoVArray = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fnerecobins->GetEntry(is)); 
+  
+  //for(int is=0;is<fNSKsamples;is++)
+  int is = 0;
+  fToyMargErecoVArray = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fnerecobins->GetEntry(is)); 
   fToyMargErecoVArray->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargErecoVArray->SetDimensionName(0,"# toys marginalization");
   fToyMargErecoVArray->SetDimensionName(1,"# bins free parameter 0");
@@ -207,6 +211,15 @@ void FitMarginalization::CleanUp(void){
   if(flikeVArray) delete flikeVArray; flikeVArray=0;
   if(hchisq_marg_1D) delete hchisq_marg_1D; hchisq_marg_1D=0;
   if(hchisq_marg_2D) delete hchisq_marg_2D; hchisq_marg_2D=0;
+  
+  if (fSavedToyParamLists) {
+    for (int i = 0 ; i < fntoys_marg ; i++) {
+      if (fSavedToyParamLists[i]) { delete fSavedToyParamLists[i];}
+    }
+    delete fSavedToyParamLists;
+    fSavedToyParamLists = 0;
+  }
+  
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetSubRange(int *submin,int *submax){
@@ -609,7 +622,37 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	    continue; // repeat the loop
 	  }
 	}
-	else unphysical_tweak = false;
+	else {
+	  unphysical_tweak = false;
+	}
+	
+	// If we need to and haven't already save the toy param list
+	if (fShouldSaveToyParamLists && (!fSavedToyParamLists[iexperiment])) {
+	  // Get Syst tweaks
+	  PhysParamList * pparm = new PhysParamList (true_nuisance_params);
+	  
+	  // Loop over all parameters to check we have enough info
+	  for (int ip = 0 ; ip < conv::knppmax ; ip++) {
+	    PhysParamId_t p = (PhysParamId_t)ip;
+	    if (fparm->Exists(p)) {
+	      if (not pparm->Contains(p)) {
+	        // Add parameters that are in fitparamlist but not physparamlist (eg Osc)
+	        pparm->SetValue(p,fparm->CurrValue(p));
+	      }
+	      //~ if (fparm->IsFixed(p)) { // remove fixed parameters
+	        //~ pparm->Remove(p);
+	      //~ }
+	    }
+	    else { //And remove things not in the fitparamlist
+	      pparm->Remove(p);
+	    }
+	  }
+	  fSavedToyParamLists[iexperiment] = pparm;
+	  //~ cerr<<*fparm<<std::endl;
+	  //~ cerr<<"\n\n===\n\n"<<*pparm<<std::endl;
+	  //~ exit(-1);
+	}
+      
       }
       else { // no toys
 	skexp->ResetSystematicVariations();
@@ -668,7 +711,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 		cerr << "Mass Hierarchy is not defined" << endl;
 		cerr << endl;
 		exit(1);
-	      }	      
+	      }
 	    }
 	    
 	    // Loop over both MH hypotheses and assign a different MH
@@ -699,7 +742,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	    if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
 
 	    applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
-	    	    
 	    
 	    // Loop over the used SK samples (This loop can be improved. Loop only over the used SK samples, pre-stored)
 	    int iscount=0;
@@ -708,10 +750,11 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	    //if(s == kSKsUndefined) continue;
 	    for(int is=0;is<fNSKsamples;is++){
 	      SuperkSample_t s = this->GetSKSamples(is);
+	      double * obsErec = skobs->ErecoSpectrumArray(s);
 	      
 	      // Build toy Ereco distributions
 	      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-		double bincont = skobs->ErecoSpectrumArray(s)[ib];
+		double bincont = obsErec[ib];
 		fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
 	      }
 	      
@@ -1991,10 +2034,47 @@ TH2F * FitMarginalization::GetChisqMarg2D (void)
   return hchisq_marg_2D;
 };
 //________________________________________________________________________________________
-
-
-
-
+void FitMarginalization::SetSaveParamLists(bool should_save_lists)
+{
+  if (fSavedToyParamLists) {
+    for (int i = 0 ; i < fntoys_marg ; i++) {
+      if (fSavedToyParamLists[i]) { delete fSavedToyParamLists[i];}
+    }
+    delete fSavedToyParamLists;
+    fSavedToyParamLists = 0;
+  }
+  fShouldSaveToyParamLists = should_save_lists;
+  if (should_save_lists) {
+    fSavedToyParamLists = (PhysParamList **) calloc(fntoys_marg,sizeof(PhysParamList*));
+  }
+}
+//________________________________________________________________________________________
+PhysParamList *const* FitMarginalization::GetParamListArray(void) const
+{
+  return fSavedToyParamLists;
+}
+//________________________________________________________________________________________
+TObjArray * FitMarginalization::GetToyParamThrowHistograms(int nbins)const
+{
+  if (fShouldSaveToyParamLists) {
+    TObjArray * o = util::MakeHistogramsOfParameterValues(fntoys_marg,fSavedToyParamLists,nbins,fparm);
+    for (int i = 0 ; i < o->GetEntries();i++) {
+      TH1D * h = dynamic_cast<TH1D*>(o->At(i));
+      if (not h) continue;
+      const char * name = h->GetName();
+      string pname(util::ReplaceAll(name,"param_values_",""));
+      PhysParamId_t p = util::PhysParamIdFromRawString(pname);
+      if (p==conv::kPhypUndefined) continue;
+      h->SetName (Form("param_values_%s",util::ParamAsStringCompact(p).c_str()));
+      h->SetTitle(Form("%s Values",util::ReplaceAll(util::ParamAsString(p),";","").c_str()));
+    }
+    return o;
+  }
+  else {
+    return 0;
+  }
+}
+//________________________________________________________________________________________
 
 
 

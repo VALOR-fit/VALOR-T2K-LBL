@@ -72,6 +72,7 @@
 namespace valor {
   
   class FitParamList;
+  class PhysParamList;
   class SuperkObservation;
   class SuperkExpectation;
   
@@ -147,9 +148,10 @@ class FitMarginalization: public TObject
   void SetNSKsamples();
   int GetNSKsamples(){return fNSKsamples;};
   conv::SuperkSample_t GetSKSamples(int isksample); 
- 
-
-
+  
+  void SetSaveParamLists(bool save_lists = true);
+  PhysParamList * const * GetParamListArray() const;
+  TObjArray * GetToyParamThrowHistograms(int nbins = -1) const;
 
 
 
@@ -240,8 +242,9 @@ class FitMarginalization: public TObject
 
   FitParamList * fparm;
   conv::PhysHypothesis_t fhypothesis;
-
-
+  
+  bool             fShouldSaveToyParamLists;
+  PhysParamList ** fSavedToyParamLists; //[fntoys_marg]
 
 
 
