@@ -4208,6 +4208,25 @@ string valor::util::AsStringCompact_KDI(PhysParamId_t p)
   return "--";
 }
 //____________________________________________________________________________
+string valor::util::AsStringSimple(PhysParamId_t p)
+{
+  if      (p==conv::kPhypMixing12   ) { return "mixing12"   ;}
+  else if (p==conv::kPhypMixing23   ) { return "mixing23"   ;}
+  else if (p==conv::kPhypMixing13   ) { return "mixing13"   ;}
+  else if (p==conv::kPhypCPV        ) { return "deltacp"    ;}
+  else if (p==conv::kPhypDm12sq     ) { return "dmsq12"     ;}
+  else if (p==conv::kPhypDm23sq     ) { return "dmsq23"     ;}
+  
+  else if (p==conv::kPhypMixing12Bar) { return "mixing12bar";}
+  else if (p==conv::kPhypMixing23Bar) { return "mixing23bar";}
+  else if (p==conv::kPhypMixing13Bar) { return "mixing13bar";}
+  else if (p==conv::kPhypCPVBar     ) { return "deltacpbar" ;}
+  else if (p==conv::kPhypDm12sqBar  ) { return "dmsq12bar"  ;}
+  else if (p==conv::kPhypDm23sqBar  ) { return "dmsq23bar"  ;}
+  
+  return util::AsStringCompact(p);
+}
+//____________________________________________________________________________
 string valor::util::AsStringNIWG(PhysParamId_t p)
 {
   
@@ -4255,13 +4274,15 @@ valor::conv::PhysParamId_t
   valor::util::PhysParamIdFromString(string sh) 
 {
   string lsh = util::ToLowerCase(sh);
+  
   for (int i = 0 ; i < knppmax ; i++) {
     PhysParamId_t k = (PhysParamId_t) i ;
     string s = util::ToLowerCase(AsStringCompact(k));
     string s2;
     if (s.find("f_") == 0) s2 = s.substr(2);
     else s2 = "Bad string";
-    if (k != kPhypUndefined && (lsh == s || lsh == s2) ) return k;
+    string s3 = util::ToLowerCase(AsStringSimple(k));
+    if (k != kPhypUndefined && (lsh == s || lsh == s2 || lsh==s3) ) return k;
   }
   std::cerr<<"util::PhysParamIdFromString >> Unmatched string: "<<sh<<std::endl;
   return kPhypUndefined;
@@ -4284,6 +4305,7 @@ string valor::util::ParamAsStringTex                (conv::PhysParamId_t p) { re
 string valor::util::ParamAsStringPaperTexNoDollar   (conv::PhysParamId_t p) { return util::AsStringPaperTexNoDollar  (p);}
 string valor::util::ParamAsStringPaperTex           (conv::PhysParamId_t p) { return util::AsStringPaperTex          (p);}
 string valor::util::ParamAsStringPaperRooTex        (conv::PhysParamId_t p) { return util::AsStringPaperRooTex       (p);}
+string valor::util::ParamAsStringSimple             (conv::PhysParamId_t p) { return util::AsStringSimple           (p);}
 string valor::util::ParamAsStringCompact            (conv::PhysParamId_t p) { return util::AsStringCompact           (p);}
 string valor::util::ParamAsStringCompact_splinehack (conv::PhysParamId_t p) { return util::AsStringCompact_splinehack(p);}
 string valor::util::ParamAsStringCompact_KDI        (conv::PhysParamId_t p) { return util::AsStringCompact_KDI       (p);}

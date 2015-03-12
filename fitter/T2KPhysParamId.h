@@ -565,6 +565,7 @@ namespace util {
   string AsStringPaperTexNoDollar   (conv::PhysParamId_t p);
   string AsStringPaperTex           (conv::PhysParamId_t p);
   string AsStringPaperRooTex        (conv::PhysParamId_t p);
+  string AsStringSimple             (conv::PhysParamId_t p);
   string AsStringCompact            (conv::PhysParamId_t p);
   string AsStringCompact_splinehack (conv::PhysParamId_t p);
   string AsStringCompact_KDI        (conv::PhysParamId_t p);
@@ -602,6 +603,7 @@ namespace util {
   string ParamAsStringPaperTexNoDollar   (conv::PhysParamId_t p);
   string ParamAsStringPaperTex           (conv::PhysParamId_t p);
   string ParamAsStringPaperRooTex        (conv::PhysParamId_t p);
+  string ParamAsStringSimple             (conv::PhysParamId_t p);
   string ParamAsStringCompact            (conv::PhysParamId_t p);
   string ParamAsStringCompact_splinehack (conv::PhysParamId_t p);
   string ParamAsStringCompact_KDI        (conv::PhysParamId_t p);
