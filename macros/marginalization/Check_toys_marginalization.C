@@ -17,7 +17,7 @@ using namespace valor::conv;
 
 void Check_toys_marginalization
 (
- const char * outfilename          = "ChisqMarg",
+ const char * outfilename          = "check_toys",
  
  const int    IDoutfile            = 0,
  const int    first_bin_freepar0   = -999,   // first freepar of the sub-range
@@ -169,8 +169,7 @@ void Check_toys_marginalization
   parfree[1] = freepar1;
   
   // # of toys for marginalization
-  //int ntoys = NtoysMarg;
-  int ntoys = 1;
+  int ntoys = NtoysMarg;
 
   // # of free parameter pts to scan 
   int nbinspar[2];
@@ -208,6 +207,8 @@ void Check_toys_marginalization
   // Decide whether to rethrow or not the unphysical systematic toys 
   fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
   
+  fitmarg->SetSaveParamLists();
+  
   // Produce toys and fill marginalized chisq
   
   // Set priors for not fixed oscillation parameters
@@ -232,15 +233,19 @@ void Check_toys_marginalization
   
   
   
+  // Store toy distributions in output file  
+  char outname[200];
+  sprintf(outname,"%s_%d.root",outfilename,IDoutfile);
+  //~ cout << outname << endl;
+  TFile *fout = new TFile(outname,"RECREATE");
+  fout->cd();
   
-  // // Store ChisqMarg (full or partial) in output file  
-  // char outname[200];
-  // sprintf(outname,"%s_%d.root",outfilename,IDoutfile);
-  // cout << outname << endl;
-  // TFile *fout = new TFile(outname,"RECREATE");
-  // fitmarg->GetChisqMarg()->Write();
-  // fitmarg->GetChisqMarg2D()->Write();
-  // fout->Close();
+  TObjArray * arr = fitmarg->GetToyParamThrowHistograms();
+  arr->Write();
   
+  //~ fitmarg->GetChisqMarg()->Write();
+  //~ fitmarg->GetChisqMarg2D()->Write();
+  
+  fout->Close();
   return;
 }
