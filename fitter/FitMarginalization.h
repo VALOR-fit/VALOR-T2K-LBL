@@ -76,7 +76,7 @@ namespace valor {
   class SuperkObservation;
   class SuperkExpectation;
   
-class FitMarginalization: public TObject
+class FitMarginalization
 {
  public:
 
@@ -287,7 +287,6 @@ class FitMarginalization: public TObject
 
 
 
-  ClassDef(FitMarginalization, 1)
 };
  
 } // valor
