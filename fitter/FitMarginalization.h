@@ -151,7 +151,7 @@ class FitMarginalization
   
   void SetSaveParamLists(bool save_lists = true);
   PhysParamList * const * GetParamListArray() const;
-  TObjArray * GetToyParamThrowHistograms(int nbins = -1) const;
+  TObjArray * GetToyParamThrowHistograms(int nbins = -1) const; // Array needs deleting after call, histograms don't.
 
 
 
@@ -224,6 +224,7 @@ class FitMarginalization
   VALORArrayF *fToyMargErecoVArray;
   VALORArrayF *fToyMargErecoVArray_Clone;
   TH1F *hToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usal by looping over all the samples and skipping the undefined ones 
+  int fMaxSampleErecoBins;
 
   int fnerecobins_RHCNumu;
   VALORArrayF *fToyMargErecoVArray_RHCNumu_Clone; 

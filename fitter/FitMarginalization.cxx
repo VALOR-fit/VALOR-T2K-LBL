@@ -61,6 +61,31 @@ ClassImp(FitMarginalization)
 //________________________________________________________________________________________
 FitMarginalization::FitMarginalization()
 {
+  flikeVArray                        = 0;
+  fChisqMargVArray                   = 0;
+  fnerecobins                        = 0;
+  fsksamples                         = 0;
+  fToyMargErecoVArray                = 0;
+  fToyMargErecoVArray_Clone          = 0;
+  fToyMargErecoVArray_RHCNumu_Clone  = 0;
+  fToyMargErecoVArray_RHCNue_Clone   = 0;
+  fToyMargErecoVArray_Numu_Clone     = 0;
+  fToyMargErecoVArray_Nue_Clone      = 0;
+  hToyMargCurr_RHCNumu               = 0;
+  fToyMargErecoVArray_RHCNumu        = 0;
+  fToyMargErecoVArray_RHCNue         = 0;
+  fToyMargErecoVArray_Numu           = 0;
+  fToyMargErecoVArray_Nue            = 0;
+  hchisq_marg_1D                     = 0;
+  hchisq_marg_2D                     = 0;
+  hchisq_marg_1D_Step                = 0;
+  hchisq_marg_2D_Step                = 0;
+  fparm                              = 0;
+  fSavedToyParamLists                = 0;
+  
+  
+  fShouldSaveToyParamLists           = false;
+  fMaxSampleErecoBins                = 1;
 }
 //________________________________________________________________________________________
 FitMarginalization::~FitMarginalization(void)
@@ -95,9 +120,7 @@ void FitMarginalization::Init(){
 
   this->SetNSKsamples(); // also defines fnerecobins
   
-  //for(int is=0;is<fNSKsamples;is++)
-  int is = 0;
-  fToyMargErecoVArray = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fnerecobins->GetEntry(is)); 
+  fToyMargErecoVArray = new VALORArrayF(1,1,1,1,1,1); 
   fToyMargErecoVArray->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargErecoVArray->SetDimensionName(0,"# toys marginalization");
   fToyMargErecoVArray->SetDimensionName(1,"# bins free parameter 0");
@@ -204,14 +227,6 @@ void FitMarginalization::Init(){
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
-
-  if(fToyMargErecoVArray) delete fToyMargErecoVArray; fToyMargErecoVArray=0;
-  if(fToyMargErecoVArray_RHCNumu) delete fToyMargErecoVArray_RHCNumu; fToyMargErecoVArray_RHCNumu=0;  
-  if(fChisqMargVArray) delete fChisqMargVArray; fChisqMargVArray=0;
-  if(flikeVArray) delete flikeVArray; flikeVArray=0;
-  if(hchisq_marg_1D) delete hchisq_marg_1D; hchisq_marg_1D=0;
-  if(hchisq_marg_2D) delete hchisq_marg_2D; hchisq_marg_2D=0;
-  
   if (fSavedToyParamLists) {
     for (int i = 0 ; i < fntoys_marg ; i++) {
       if (fSavedToyParamLists[i]) { delete fSavedToyParamLists[i];}
@@ -219,6 +234,28 @@ void FitMarginalization::CleanUp(void){
     delete fSavedToyParamLists;
     fSavedToyParamLists = 0;
   }
+  
+  if (flikeVArray                       ) { delete flikeVArray                       ; flikeVArray                        = 0;}
+  if (fChisqMargVArray                  ) { delete fChisqMargVArray                  ; fChisqMargVArray                   = 0;}
+  if (fnerecobins                       ) { delete fnerecobins                       ; fnerecobins                        = 0;}
+  if (fsksamples                        ) { delete fsksamples                        ; fsksamples                         = 0;}
+  if (fToyMargErecoVArray               ) { delete fToyMargErecoVArray               ; fToyMargErecoVArray                = 0;}
+  if (fToyMargErecoVArray_Clone         ) { delete fToyMargErecoVArray_Clone         ; fToyMargErecoVArray_Clone          = 0;}
+  if (fToyMargErecoVArray_RHCNumu_Clone ) { delete fToyMargErecoVArray_RHCNumu_Clone ; fToyMargErecoVArray_RHCNumu_Clone  = 0;}
+  if (fToyMargErecoVArray_RHCNue_Clone  ) { delete fToyMargErecoVArray_RHCNue_Clone  ; fToyMargErecoVArray_RHCNue_Clone   = 0;}
+  if (fToyMargErecoVArray_Numu_Clone    ) { delete fToyMargErecoVArray_Numu_Clone    ; fToyMargErecoVArray_Numu_Clone     = 0;}
+  if (fToyMargErecoVArray_Nue_Clone     ) { delete fToyMargErecoVArray_Nue_Clone     ; fToyMargErecoVArray_Nue_Clone      = 0;}
+  if (hToyMargCurr_RHCNumu              ) { delete hToyMargCurr_RHCNumu              ; hToyMargCurr_RHCNumu               = 0;}
+  if (fToyMargErecoVArray_RHCNumu       ) { delete fToyMargErecoVArray_RHCNumu       ; fToyMargErecoVArray_RHCNumu        = 0;}
+  if (fToyMargErecoVArray_RHCNue        ) { delete fToyMargErecoVArray_RHCNue        ; fToyMargErecoVArray_RHCNue         = 0;}
+  if (fToyMargErecoVArray_Numu          ) { delete fToyMargErecoVArray_Numu          ; fToyMargErecoVArray_Numu           = 0;}
+  if (fToyMargErecoVArray_Nue           ) { delete fToyMargErecoVArray_Nue           ; fToyMargErecoVArray_Nue            = 0;}
+  if (hchisq_marg_1D                    ) { delete hchisq_marg_1D                    ; hchisq_marg_1D                     = 0;}
+  if (hchisq_marg_2D                    ) { delete hchisq_marg_2D                    ; hchisq_marg_2D                     = 0;}
+  if (hchisq_marg_1D_Step               ) { delete hchisq_marg_1D_Step               ; hchisq_marg_1D_Step                = 0;}
+  if (hchisq_marg_2D_Step               ) { delete hchisq_marg_2D_Step               ; hchisq_marg_2D_Step                = 0;}
+  if (fparm                             ) { delete fparm                             ; fparm                              = 0;}
+  if (fSavedToyParamLists               ) { delete fSavedToyParamLists               ; fSavedToyParamLists                = 0;}
   
 }
 //________________________________________________________________________________________
@@ -499,7 +536,9 @@ void FitMarginalization::PrintPhysHypothesis(){
 }
 //________________________________________________________________________________________
 void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp){
-
+  const int nmh=2; // mass hierarchy  
+  fToyMargErecoVArray->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fMaxSampleErecoBins);
+    
   cout << "////////////////////////////////////////////////////////" << endl;
   cout << endl;
   cout << "Make toys for marginalization and store in a binary file" << endl;
@@ -1985,7 +2024,7 @@ void FitMarginalization::MergeInputFiles(){
 void FitMarginalization::SetNSKsamples(){
 
   fNSKsamples = 0; // # of sk samples used in the fit
-
+  fMaxSampleErecoBins = 1;
   cout << endl;
   cout << "Use the following SK samples:" << endl;
 
@@ -2007,8 +2046,12 @@ void FitMarginalization::SetNSKsamples(){
     SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
      
+     int nbins = util::NumErecoBins(s);
+     
      this->fsksamples->SetEntry(is,iscount);
-     this->fnerecobins->SetEntry(util::NumErecoBins(s),iscount); 
+     this->fnerecobins->SetEntry(nbins,iscount);
+     
+     if (nbins > fMaxSampleErecoBins) { fMaxSampleErecoBins = nbins; }
      
      //cout << "is " << is << " - iscount " << iscount << endl;
      //cout << fnerecobins->GetEntry(iscount) << endl;
@@ -2088,15 +2131,15 @@ TObjArray * FitMarginalization::GetToyParamThrowHistograms(int nbins)const
 //________________________________________________________________________________________
 void FitMarginalization::SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast){
 
-  double fFirstVal_X = XvalFirst;
-  double fLastVal_X = XvalLast;;
-  double fFirstVal_Y = YvalFirst;
-  double fLastVal_Y = YvalLast;
+  fFirstVal_X = XvalFirst;
+  fLastVal_X = XvalLast;;
+  fFirstVal_Y = YvalFirst;
+  fLastVal_Y = YvalLast;
 
   fFirstBin_X = hchisq_marg_2D->GetXaxis()->FindBin(fFirstVal_X);
-  fLastBin_X = hchisq_marg_2D->GetXaxis()->FindBin(fLastVal_X);
+  fLastBin_X  = hchisq_marg_2D->GetXaxis()->FindBin(fLastVal_X);
   fFirstBin_Y = hchisq_marg_2D->GetYaxis()->FindBin(fFirstVal_Y);
-  fLastBin_Y = hchisq_marg_2D->GetYaxis()->FindBin(fLastVal_Y);
+  fLastBin_Y  = hchisq_marg_2D->GetYaxis()->FindBin(fLastVal_Y);
 
   int nbins_X = fnbins_param[0];
   int nbins_Y = fnbins_param[1];
