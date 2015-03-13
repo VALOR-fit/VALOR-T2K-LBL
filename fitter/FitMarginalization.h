@@ -92,7 +92,11 @@ class FitMarginalization
   void SetPhysParFree(conv::PhysParamId_t *parfree,int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
   void SetFreeParam(int ParID,conv::PhysParamId_t *parfree,double *minpar,double *maxpar);
   void SetSubRange(int *submin,int *submax);
-
+  
+  int GetFirstBinInSubRange(int par=0) const {return fmin_bin_sub_param[par];}
+  int GetLastBinInSubRange (int par=0) const {return fmax_bin_sub_param[par];}
+  
+  double GetBinParameterValue(int par, int ibin) const {return fmin_param[par] + ibin*fstep_param[par];}
    
   void SetFitParamList(const char * fit_param_list);
   FitParamList * GetFitParamList(void) {return fparm;};
