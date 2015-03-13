@@ -22,17 +22,34 @@ void run_fit_marginalization
  const bool   readtoys             = true,
 
  // Parameter for chisq minimization
- const bool   minimizeHisto        = true,     // if not all the chisq histo is filled
- const double Prec                 = 0.0000001, // not used any longer
- const bool   doUncorrXY             = true,
- const int    MaxIterFit           = 50,
+ const bool   minimizeHisto        = true, // if not all the chisq histo is filled
+ const int    MaxIterFit           = 2, 
  const int    MaxNfit              = 3,
+ 
+ const int    strategy             = 0,    // 0 --> use steps, 1 --> use intervals
+
+ // Step strategy
+ const double start_X              = 0.102,
+ const double start_Y              = -1.66504,
+ const string StrategyStartPt      = "GridFix", //"Single", // "GridRnd", "GridFix"
+ const int    NStartPt_X           = 12,  // # of throws for starting pt extraction
+ const int    NStartPt_Y           = 4,  // # of throws for starting pt extraction
+
+ // Interval strategy
+ const bool   doUncorrXY           = false, // DON'T USE FOR sin2th13 Vs dcp
  const bool   RedoBorderFit        = true,
- const int    MaxNfitBorder        = 3,
+ const int    MaxNfitBorder        = 1,
+
+ //const double MinStep0             = 0.,     // min x value for fit steps
+ //const double MaxStep0             = 1.,     // max x value for fit steps
  const double MinStep0             = 0.,     // min x value for fit steps
- const double MaxStep0             = 1.,     // max x value for fit steps
- const double MinStep1             = 0.0002, // min y value for fit steps
- const double MaxStep1             = 0.02,   // max y value for fit steps
+ const double MaxStep0             = 0.3,     // max x value for fit steps
+ 
+ //const double MinStep1             = 0.0002, // min y value for fit steps
+ //const double MaxStep1             = 0.02,   // max y value for fit steps
+ //const double MinStep1             = -TMath::Pi(), // min y value for fit steps
+ const double MinStep1             = -TMath::Pi(), // min y value for fit steps
+ const double MaxStep1             = +TMath::Pi(),   // max y value for fit steps
  //
 
  //const char * outfilename          = "ChisqMarg_mixing23_Vs_dmsq23_Nbins201x201",
@@ -46,42 +63,44 @@ void run_fit_marginalization
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_1p7E20_postfit_NoRethrow_Merged",
- //const char * infilename           = "MH_FitMarg_mixing13Vsdeltacp_1p7E20_prefit",
- //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit",
- //const char * infilename           = "MH_FitMarg_mixing23_1p7E20_prefit_Merged",
  //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
- const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged",
+ //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged", // test
  //const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
+ //const char * infilename           = "MH_FitMarg_mixing13Vsdeltacp_1p7E20_prefit",
+ const char * infilename           = "MH_FitMarg_mixing13Vsdeltacp_1p7E20_201x201_prefit",
 
  const int    nfiles               = 1,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",  
- const char * config_file          = "analysis_configuration_1.7E20.xml",  
- //const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
+ //const char * config_file          = "analysis_configuration_1.7E20.xml",  
+ const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
  
  //const char * fit_param_list       = "nuosc3fbar_fixnonbar_fix5+nuisance",
- //const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
  //const char * fit_param_list      = "nuosc3fbar_numudisapp_constrainall+nuisance",  
- const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
 
- const int    NtoysMarg            = 2,   // # toys marginalization 
+ const int    NtoysMarg            = 1,   // # toys marginalization 
+ //const int    NtoysMarg            = 2,   // # toys marginalization 
  
- const char * freeparname0        = "mixing23Bar",  // free parameter
+ //const char * freeparname0        = "mixing23Bar",  // free parameter
+ //const double freeparmin0         = 0.,              // minimum value of free parameter
+ //const double freeparmax0         = 1.,            // maxinum value of free parameter
+ //const int    NptScan0            = 21, //2, //21,        // # pts of free parameter to scan
+ const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
- const double freeparmax0         = 1.,            // maxinum value of free parameter
- // const char * freeparname0        = "mixing13Bar",  // free parameter
- // const double freeparmin0         = 0.,              // minimum value of free parameter
- // const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
- const int    NptScan0            = 21, //2, //21,        // # pts of free parameter to scan
-
+ const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
+ const int    NptScan0            = 201, //2, //21,        // # pts of free parameter to scan
+ 
  //const char * freeparname1        = "",  // free parameter
- // const char * freeparname1        = "deltacpBar",  // free parameter
- // const double freeparmin1         = -TMath::Pi(), // minimum value of free parameter
- // const double freeparmax1         = +TMath::Pi(), // maxinum value of free parameter
- const char * freeparname1        = "dmsq23Bar",  // free parameter
- const double freeparmin1         = 0.0002, // minimum value of free parameter
- const double freeparmax1         = 0.02, // maxinum value of free parameter
- const int    NptScan1            = 21,      // # pts of free parameter to scan
+ const char * freeparname1        = "deltacpBar",  // free parameter
+ const double freeparmin1         = -TMath::Pi(), // minimum value of free parameter
+ const double freeparmax1         = +TMath::Pi(), // maxinum value of free parameter
+ const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
+ //const char * freeparname1        = "dmsq23Bar",  // free parameter
+ //const double freeparmin1         = 0.0002, // minimum value of free parameter
+ //const double freeparmax1         = 0.02, // maxinum value of free parameter
+ //const int    NptScan1            = 21, //21,      // # pts of free parameter to scan
 
  int         tweak_systematics    = 1,       /* generate toy MC with randomized systematics? */
 
@@ -252,22 +271,34 @@ void run_fit_marginalization
 
     if(!minimizeHisto){
       fitmarg->FillChisqMarg(skobs_fakedata);
-      fitmarg->Minimize();
+      fitmarg->MinimizeHisto();
     }
     else{
-      fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
-      fitmarg->SetMinimPrecision(Prec);
-      fitmarg->SetMinimUncorrXY(doUncorrXY);
       // Max # of iterations per fit
       fitmarg->SetMaxIterationSingleFit(MaxIterFit); 
       // Max # of fits max # of iterations
       fitmarg->SetMaxFitNumber(MaxNfit);   
-      // Redo the fit if minimum on the border  
-      fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
-      // Max # of fits max # of iterations if the first minimum is on the border
-      fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
-      fitmarg->MinimizeChisqHisto(skobs_fakedata);      
-      
+
+      // Use chisq minimization with steps
+      if(strategy==0){
+	fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	fitmarg->SetStartBin(start_X,start_Y); 
+	fitmarg->SetNumStartBin(NStartPt_X,NStartPt_Y);
+	fitmarg->SetExtractStartPt(StrategyStartPt);
+	fitmarg->MinimizeChisqStep(skobs_fakedata);      
+      }
+
+      // Use chisq minimization with intervals
+      else if(strategy==1){
+	// Redo the fit if minimum on the border  
+	fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
+	// Max # of fits max # of iterations if the first minimum is on the border
+	fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
+	fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	fitmarg->SetMinimUncorrXY(doUncorrXY);
+	fitmarg->MinimizeChisqInterval(skobs_fakedata);      
+      }
+
       cout << "# of calls of CalcChisqMargPt(): " 
 	   << fitmarg->GetNCallsCalcChisqMargPt() << endl;
       
@@ -295,22 +326,34 @@ void run_fit_marginalization
 
       if(!minimizeHisto){
 	fitmarg->FillChisqMarg(skobs_fakedata);
-	fitmarg->Minimize();
+	fitmarg->MinimizeHisto();
       }
       else{
-	fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
-	fitmarg->SetMinimPrecision(Prec);
-	fitmarg->SetMinimUncorrXY(doUncorrXY);
 	// Max # of iterations per fit
 	fitmarg->SetMaxIterationSingleFit(MaxIterFit); 
 	// Max # of fits max # of iterations
 	fitmarg->SetMaxFitNumber(MaxNfit);   
-	// Redo the fit if minimum on the border  
-	fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
-	// Max # of fits max # of iterations if the first minimum is on the border
-	fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
-	fitmarg->MinimizeChisqHisto(skobs_fakedata);
+	
+	// Use chisq minimization with steps
+	if(strategy==0){
+	  fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	  fitmarg->SetStartBin(start_X,start_Y); 
+	  fitmarg->SetNumStartBin(NStartPt_X,NStartPt_Y);
+	  fitmarg->SetExtractStartPt(StrategyStartPt);
+	  fitmarg->MinimizeChisqStep(skobs_fakedata);      
+	}
 
+	// Use chisq minimization with intervals
+	else if(strategy==1){
+	  // Redo the fit if minimum on the border  
+	  fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
+	  // Max # of fits max # of iterations if the first minimum is on the border
+	  fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
+	  fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	  fitmarg->SetMinimUncorrXY(doUncorrXY);
+	  fitmarg->MinimizeChisqInterval(skobs_fakedata);      
+	}
+	
 	cout << "# of calls of CalcChisqMargPt(): " 
 	     << fitmarg->GetNCallsCalcChisqMargPt() << endl;
 
@@ -320,18 +363,17 @@ void run_fit_marginalization
 	else
 	  fitmarg->GetChisqStep_1D()->DrawCopy("");
       }
-
+      
     }  
   }
  
   // Find minimum of marginalized chisq and find best-fit values
-  //fitmarg->Minimize(); 
   fitmarg->PrintBestFit();
   
   TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
   if(fitmarg->IsFit2D()){
-    //fitmarg->GetChisqMarg2D()->DrawCopy("colz");
-    fitmarg->GetChisqMarg2D()->DrawCopy("colz text");
+    fitmarg->GetChisqMarg2D()->DrawCopy("colz");
+    //fitmarg->GetChisqMarg2D()->DrawCopy("colz text");
     //fitmarg->GetChisqMarg2D()->DrawCopy("LEGO");
   }
   else{
@@ -343,7 +385,7 @@ void run_fit_marginalization
 
   
 
-
+  
 
 
 
