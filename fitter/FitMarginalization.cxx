@@ -1592,6 +1592,8 @@ void FitMarginalization::BuildDefaultPriors(void)
   for (int ip = 0 ; ip < conv::kNuis000 ; ip++) {
     PhysParamId_t p = (PhysParamId_t)ip;
     
+    if (not fparm->Exists(p)) {continue;}
+    
     if (util::IsMixingAngle(p) || util::IsMassSplitting(p)) {
       double mean  = Opt::Instance()->GetGlobalBestFit(p);
       double sigma = Opt::Instance()->GetGlobalFitError(p);
