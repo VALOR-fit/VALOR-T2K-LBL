@@ -9,9 +9,61 @@
 // ------------------------------------------------------------------------------------------------
 
 
-using namespace std;
-using namespace valor;
-using namespace valor::conv;
+#ifndef __CINT__
+#include "TROOT.h"
+#include "TSystem.h"
+#include "TH1D.h"
+#include "TStopwatch.h"
+#include "TString.h"
+#include "TFile.h"
+#include "TCanvas.h"
+#include "TVectorD.h"
+#include "TRandom3.h"
+#include "TSystem.h"
+#include "TMath.h"
+#include "TAxis.h"
+#include "TXMLEngine.h"
+#include "TTree.h"
+#include "TBranch.h"
+
+#include "Conventions/Opt.h"
+#include "Conventions.h"
+#include "Utilities.h"
+#include "Utilities/Rnd.h"
+#include "Utilities/Env.h"
+#include "FitCore/PhysHypothesis.h"
+#include "FitCore/FitInputs.h"
+#include "FitCore/FitterMinuit.h"
+#include "FitCore/UtlFit.h"
+
+#include "AnalysisOptions.h"
+#include "BANFF.h"
+#include "BANFFSystConv.h"
+#include "Binning.h"
+#include "Build.h"
+#include "Conventions.h"
+#include "Enumerations.h"
+#include "FitMarginalization.h"
+#include "Formatting.h"
+#include "NuFlux.h"
+#include "NuXSec.h"
+#include "SamplesAndModes.h"
+#include "SKFSISystConv.h"
+#include "SuperkDetectorFSI.h"
+#include "SuperkExpectation.h"
+#include "SuperkMC.h"
+#include "SuperkModes.h"
+#include "SuperkObservation.h"
+#include "SuperkSamples.h"
+#include "T2KOpt.h"
+#include "T2KPhysicalParameterLimits.h"
+#include "T2KPhysParamId.h"
+#include "Utilities.h"
+#include "UtlFitParamListFactory.h"
+#include "UtlT2KStyle.h"
+#include "XSecSystConv.h"
+
+#endif
 
 void run_toy_fits_marginalization_for_critical_delta_chisq
 (
@@ -51,13 +103,19 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   const bool  doMargMH             = true,    // marginalize Mass Hierarchy
   const bool  doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
   
+  const bool  doSaveFakedataTree   = true,    // keep spectra and parameters for fakedata
+  
   const char * dmsqscheme          = "abs23",      /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy           = "normal",     /* normal or inverted */
   const char * mixparamchoice      = "sinsqtheta", /* sinsq2theta or sinsqtheta */
-  const char * mixparamoctant      = "one"         /* one==kNuOctantOne two==kNuOctantTwo */
+  const char * mixparamoctant      = "one"       /* one==kNuOctantOne two==kNuOctantTwo */
 )
 {
   
+  using namespace std;
+  using namespace valor;
+  using namespace valor::conv;
+
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
@@ -142,7 +200,6 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   int submaxbin[2];
   subminbin[0] = first_bin_freepar0; submaxbin[0] = last_bin_freepar0;
   subminbin[1] = first_bin_freepar1; submaxbin[1] = last_bin_freepar1;
-
   
   // Implement the constructor giving the following input parameters:
   FitMarginalization *fitmarg = new FitMarginalization();   
@@ -157,49 +214,139 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   // Set Mass Hierarchy marginalization
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
   
-  const FitParamList fparm = fitmarg->FitParamList();
+  fitmarg->BuildDefaultPriors();
+  
+  const FitParamList * fparm = fitmarg->GetFitParamList();
+  
+  // Update the variables with the actual bin numbers
+  int real_first_bin_freepar0 = fitmarg->GetFirstBinInSubRange(0);
+  int real_first_bin_freepar1 = fitmarg->GetFirstBinInSubRange(1);
+  int real_last_bin_freepar0  = fitmarg->GetLastBinInSubRange (0);
+  int real_last_bin_freepar1  = fitmarg->GetLastBinInSubRange (1);
+  
+  int n_bins_this_job_par0 = real_last_bin_freepar0-real_first_bin_freepar0+1;
+  int n_bins_this_job_par1 = 1;
+  
+  if (freepar1!=conv::kPhypUndefined) {
+    n_bins_this_job_par1 = real_last_bin_freepar1-real_first_bin_freepar1+1;
+  }
+  
+  int n_bins_this_job = n_bins_this_job_par0*n_bins_this_job_par1;
+  
+  // Set up output file for toys
+  TFile * outfile = new TFile(Form("%s_%d.root",outfile_tag,IDoutfile),"RECREATE");
+  
+  
+  TTree * fakedata_tree = (doSaveFakedataTree ? new TTree("fakedata","fakedata") : 0);
+  
+  VALORArrayF   fillva[conv::kns]; // Used for filling branch
+  PhysParamList fillpp   ; // Used for initialising branch
+  
+  TBranch * spectrum_branches[conv::kns] = {};
+  TBranch * params_branch = 0;
+  
+  int ibin,ipar0,ipar1;
+  double value=-999;
+  
+  if (doSaveFakedataTree) {
+    params_branch  = fakedata_tree->Branch("parameters"   ,"valor::PhysParamList",&fillpp);
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s==conv::kSKsUndefined) {continue;}
+      string branch_name(Form("ErecoSpectrum%s",util::AsStringCompact(s).c_str()));
+      spectrum_branches[is] = fakedata_tree->Branch(branch_name.c_str(),"valor::VALORArrayF"   ,&fillva[is]);
+    }
+    
+    fakedata_tree->Branch("ibin_par0" ,&ipar0   ,"ibin_par_0/I");
+    fakedata_tree->Branch("ibin_par1" ,&ipar1   ,"ibin_par_1/I");
+    fakedata_tree->Branch("freepar0"  ,&freepar0,"freepar0/I");
+    fakedata_tree->Branch("freepar1"  ,&freepar1,"freepar1/I");
+  }
   
   // Start generating fake datasets
   SuperkObservation * skobs = new SuperkObservation;
   
-  VALORArrayF   * fFakeDataEreco[conv::kns][NFakedata];
-  PhysParamList * fTrueValues   [NFakedata];
-  double        * fTrueChisq    [NFakedata];
+  VALORArrayF   ** fFakeDataEreco = (VALORArrayF  **) calloc(n_bins_this_job*Nfakedata*conv::kns, sizeof(VALORArrayF   *));
+  PhysParamList ** fTrueValues    = (PhysParamList**) calloc(n_bins_this_job*Nfakedata          , sizeof(PhysParamList *));
   
   PhysHypothesis ph(*fparm);
   
-  for(int ifakedata = 0 ; ifakedata < Nfakedata; ifakedata++) {
-    bool got_good_tweaks = false;
-    while (true) {
-      skexp->RandomizeSystematics();
-      PhysParamList true_nuisance_params = skexp->Tweaks();
-      got_good_tweaks = (not doRethrowUnphysical) || T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params);
-      if (got_good_tweaks) {
-        fTrueValues[ifakedata] = new PhysParamList(true_nuisance_params);
-        break;
-      }
-    }
-    
-    for (ip = 0 ; ip < conv::kNuis000; i++) {// loop over physics parameters
-      PhysParamId_t p = (PhysParamId_t)ip;
-      if (not fparm->Exists(p)) {continue}
-      if (fparm->IsFixed(p) and (p!=freepar0) (p!=freepar1) ) {continue}
-      double value = fparm->Randomize(p);
-      fTrueValues[ifakedata]->SetValue(p,value);
-      ph.SetValue(p,value);
-    }
-    
-    skobs->Generate(skexp,ph);
-    
-    for (int is = 0; is < conv::kns ; is++) {
-        SuperkSample_t s = conv::kSKsamples[is];
-        if (s==conv::kSKsUndefined) {continue;}
-        fFakeDataEreco[is][ifakedata] = new VALORArrayF(skobs->ErecoSpectrumVArray(s));
-    }
-    
-    fTrueChisq[NFakeData] = skobs->Statistic(skexp,fparm);
-  }
+  std::cout<<"Generating "<<Nfakedata<<" fake datasets each for "<<n_bins_this_job<<" bins"<<std::endl;
   
+  ibin = 0;
+  for (ipar0 = real_first_bin_freepar0 ; ipar0 <= real_last_bin_freepar0 ; ipar0++) {
+    for (ipar1 = real_first_bin_freepar1 ; ipar1 <= real_last_bin_freepar1 ; ipar1++) {
+      for(int ifakedata = 0 ; ifakedata < Nfakedata; ifakedata++) {
+        bool got_good_tweaks = false;
+        while (true) {
+          skexp->RandomizeSystematics();
+          PhysParamList true_nuisance_params = skexp->Tweaks();
+          got_good_tweaks = (!doRethrowUnphysical) || T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params);
+          if (got_good_tweaks) {
+            fTrueValues[ifakedata] = new PhysParamList(true_nuisance_params);
+            break;
+          }
+        }
+        
+        for (int ip = 0 ; ip < conv::kNuis000; ip++) {// loop over physics parameters
+          PhysParamId_t p = (PhysParamId_t)ip;
+          
+          if (!(fparm->Exists(p))) {continue;}
+          
+          if (p==freepar0) {
+            value = fitmarg->GetBinParameterValue(0,ipar0);
+          }
+          else if (p==freepar1){
+            value = fitmarg->GetBinParameterValue(1,ipar1);
+          }
+          else if (!fparm->IsFixed(p)) {
+            value = fitmarg->Randomize(p);
+          }
+          else {
+            value = fparm->CurrValue(p);
+          }
+          
+          fTrueValues[ifakedata]->SetValue(p,value);
+          
+          ph.SetCurrValue(p,value);
+        }
+        
+        skobs->Generate(skexp,ph);
+        
+        for (int is = 0; is < conv::kns ; is++) {
+          int index = ibin*Nfakedata*conv::kns + conv::kns*ifakedata+is;
+          SuperkSample_t s = conv::kSKSamples[is];
+          if (s==conv::kSKsUndefined) {
+            fFakeDataEreco[index] = new VALORArrayF(1);
+          }
+          else {
+            fFakeDataEreco[index] = new VALORArrayF(*(skobs->ErecoSpectrumVArray(s)));
+          }
+        }
+        
+        if (doSaveFakedataTree) {
+          for (int is = 0; is < conv::kns ; is++) {
+            int index = ibin*Nfakedata*conv::kns + conv::kns*ifakedata+is;
+            if (spectrum_branches[is]) {
+              fillva[is].CopyFrom(*fFakeDataEreco[index]);
+            }
+          }
+          fillpp.CopyFrom(*fTrueValues[ifakedata]);
+          fakedata_tree->Fill();
+        } //save
+        
+        //~ cout<<"Filled fakedata "<<ifakedata<<" for bin "<<ipar0<<","<<ipar1<<endl;
+      } //ifakedata
+      ibin++;
+      cout<<"Made all fakedata for bin "<<ipar0<<","<<ipar1<<endl;
+    } //ipar1
+  } //ipar0
+  
+  outfile->cd();
+  if (doSaveFakedataTree) {fakedata_tree->Write();}
+  
+  std::cout<<"Fake data generation complete"<<std::endl;
+  exit(0);
   // 
   
   // Read toys from binary files and fill marginalized chisq
@@ -214,7 +361,7 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
     fitmarg->ReadToysFromBinary(ifile,infilename);
 
     fitmarg->FillChisqMarg(skobs);
-    fitmarg->Minimize();
+    fitmarg->MinimizeHisto();
 
   }  
   
@@ -222,3 +369,19 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   
   return;
 }
+
+
+
+#ifndef __CINT__
+int main()
+{
+  valor::Env::Instance()->AutoSet("t2xk");
+  TString conf_dir  = valor::Env::Instance()->TopLevelConfDir();
+  TString verbosity = conf_dir + "/verbosity.xml";
+  valor::util::Verbosity(verbosity.Data());
+
+  run_toy_fits_marginalization_for_critical_delta_chisq(true,"marginalization_toys",1000,0,-999,-999,-999,-999,"toys",1,"analysis_configuration_2.5E20.xml","nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",10000,"mixing23Bar",0,1,21,"dmsq23bar",2E-4,2E-2,21,1);
+  
+  return 0;
+}
+#endif
