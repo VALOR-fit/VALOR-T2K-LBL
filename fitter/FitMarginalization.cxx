@@ -1595,14 +1595,16 @@ void FitMarginalization::BuildDefaultPriors(void)
     if (not fparm->Exists(p)) {continue;}
     
     if (util::IsMixingAngle(p) || util::IsMassSplitting(p)) {
-      double mean  = Opt::Instance()->GetGlobalBestFit(p);
-      double sigma = Opt::Instance()->GetGlobalFitError(p);
+      double mean    = Opt::Instance()->GetGlobalBestFit(p);
+      double fracerr = Opt::Instance()->GetGlobalFitError(p);
       
       if ( ( fabs(mean -conv::kBadResult) < conv::kASmallNum ) || 
-           ( fabs(sigma-conv::kBadResult) < conv::kASmallNum ) ) {
+           ( fabs(fracerr-conv::kBadResult) < conv::kASmallNum ) ) {
         this->SetPrior(p,"flat",badmin,badmax);
       }
       else {
+        double sigma = fracerr*mean;
+        //~ std::cout<<"Setting default prior: "<<util::AsString(p)<<"\tGaus("<<mean<<","<<sigma<<")"<<std::endl;
         this->SetPrior(p,"gaus",mean,sigma);
       }
     }
