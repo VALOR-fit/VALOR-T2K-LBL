@@ -120,9 +120,15 @@ class FitMarginalization
   
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
-  void Minimize(TH1F *hInChisqMarg);
-  void Minimize(TH2F *hInChisqMarg);
-  void Minimize(void);
+  void CalcBestFitErrors(void); // calculate the best-fit errors
+
+
+
+
+  void MinimizeHisto(TH1F *hInChisqMarg);
+  void MinimizeHisto(TH2F *hInChisqMarg);
+  void MinimizeHisto(void);
+
 
   float GetChisqBestFit(void) const      { return fchisq_bf;};
   float GetParamBestFit(int ParId) const { return fparam_bf[ParId];};
@@ -158,26 +164,29 @@ class FitMarginalization
   PhysParamList * const * GetParamListArray() const;
   TObjArray * GetToyParamThrowHistograms(int nbins = -1) const; // Array needs deleting after call, histograms don't.
 
-
-
-
-
   // Histogram minimization
+  void MinimizeChisqInterval(SuperkObservation *skobs_data);
+  void MinimizeChisqStep(SuperkObservation *skobs_data);
 
-  void MinimizeChisqHisto(SuperkObservation *skobs_data);
-  //void MinimizeChisqHisto(); // Minimize the filled histogram
   void SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
-  void SetMinimPrecision(double eps);
-  void SetMinimUncorrXY(bool flaguncorr);
   void SetMaxIterationSingleFit(int maxiter); // by default is the tot # of histo bins
   void SetMaxFitNumber(int nfit);
+
+  // Step (descent gradient)
+  void GridStartBin(SuperkObservation *skobs_data);
+  void SetStartBin(double start_X,double start_Y); // if <0 --> throw random
+  void SetNumStartBin(int Nthrows_X,int Nthrows_Y);
+  void SetExtractStartPt(string doextract);
+  
+  // Interval (descent gradient)
+  void SetMinimUncorrXY(bool flaguncorr);
   void SetBorderDoFit(bool dofit);
   void SetBorderMaxFitNumber(int nfit);
+
   TH1F *GetChisqStep_1D(void){ return hchisq_marg_1D_Step;};  
   TH2F *GetChisqStep_2D(void){ return hchisq_marg_2D_Step;};  
-  //
-
-
+  
+ 
 
 
 
@@ -254,10 +263,6 @@ class FitMarginalization
 
 
 
-
-
-
-
   // Histogram minimization
   
   TH1F *hchisq_marg_1D_Step; // Get track of the minimization steps
@@ -283,14 +288,15 @@ class FitMarginalization
   int fFirstBin_Y;
   int fLastBin_Y;
   
+  // Histogram minimization with steps (descent gradient)
+  int fStep;
+  int fStartBin_X;
+  int fStartBin_Y;
+  int fNumStartBin_X;
+  int fNumStartBin_Y;
+
+  string fExtractStartPt;
   //
-
-
-
-
-
-
-
 
 
 };
