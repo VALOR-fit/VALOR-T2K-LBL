@@ -96,6 +96,7 @@ class FitMarginalization
    
   void SetFitParamList(const char * fit_param_list);
   FitParamList * GetFitParamList(void) {return fparm;};
+  const FitParamList * GetFitParamList(void) const {return fparm;};
   
   void PrintPhysHypothesis(void);
   //void PrintFitParamList(void);
@@ -117,28 +118,32 @@ class FitMarginalization
   void FillChisqMarg(SuperkObservation *skobs_data); // Loop over the free params and call CalcChisqMargPt()
   float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1);
   
-  int GetNCallsCalcChisqMargPt(void) { return fNCallsCalcChisqMargPt;};
+  int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
   void Minimize(TH1F *hInChisqMarg);
   void Minimize(TH2F *hInChisqMarg);
   void Minimize(void);
 
-  float GetChisqBestFit(void){ return fchisq_bf;};
-  float GetParamBestFit(int ParId){ return fparam_bf[ParId];};
+  float GetChisqBestFit(void) const      { return fchisq_bf;};
+  float GetParamBestFit(int ParId) const { return fparam_bf[ParId];};
   
   void PrintBestFit(void);
 
-  VALORArrayF * GetToyMargErecoVArray() {return fToyMargErecoVArray;};
+  VALORArrayF * GetToyMargErecoVArray()             {return fToyMargErecoVArray;};
+  const VALORArrayF * GetToyMargErecoVArray() const {return fToyMargErecoVArray;};
+  
   TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
-
+  
   void SetMargOscParam();
 
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1F *hprior);
-  std::string GetPrior(conv::PhysParamId_t physpar);
+  std::string GetPrior(conv::PhysParamId_t physpar) const;
+  
+  void BuildDefaultPriors();
 
-  double Randomize(conv::PhysParamId_t physpar);
-  bool RethrowOscUnphysical(conv::PhysParamId_t p,double oscval); // NEW 
+  double Randomize(conv::PhysParamId_t physpar) const;
+  bool RethrowOscUnphysical(conv::PhysParamId_t p,double oscval) const; // NEW 
   
   void SetMargMassHierarchy(bool domargMH);  
   void SetRethrowSystUnphysical(bool dorethrow);
@@ -146,8 +151,8 @@ class FitMarginalization
   void MergeInputFiles();
 
   void SetNSKsamples();
-  int GetNSKsamples(){return fNSKsamples;};
-  conv::SuperkSample_t GetSKSamples(int isksample); 
+  int GetNSKsamples ()  const {return fNSKsamples;};
+  conv::SuperkSample_t GetSKSamples (int isksample) const ; 
   
   void SetSaveParamLists(bool save_lists = true);
   PhysParamList * const * GetParamListArray() const;

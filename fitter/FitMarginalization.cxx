@@ -1763,7 +1763,8 @@ void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1F *h
   return;
 }
 //________________________________________________________________________________________
-string FitMarginalization::GetPrior(PhysParamId_t physpar){
+string FitMarginalization::GetPrior(PhysParamId_t physpar) const
+{
   return fparm->GetPriorModeName(physpar);
 }
 //________________________________________________________________________________________
@@ -1815,7 +1816,46 @@ void FitMarginalization::SetMargOscParam(){
 
 }
 //________________________________________________________________________________________
-bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscval){
+void FitMarginalization::BuildDefaultPriors(void)
+{
+  double badmin = -conv::kBadResult;
+  double badmax =  conv::kBadResult;
+  
+  double dcp_min = -conv::kpi;
+  double dcp_max =  conv::kpi;
+  
+  if (Opt::Instance()->gOscDeltaCP==kNuDeltaCPSin) {
+    dcp_min = -1;
+    dcp_max =  1;
+  }
+  
+  for (int ip = 0 ; ip < conv::kNuis000 ; ip++) {
+    PhysParamId_t p = (PhysParamId_t)ip;
+    
+    if (util::IsMixingAngle(p) || util::IsMassSplitting(p)) {
+      double mean  = Opt::Instance()->GetGlobalBestFit(p);
+      double sigma = Opt::Instance()->GetGlobalFitError(p);
+      
+      if ( ( fabs(mean -conv::kBadResult) < conv::kASmallNum ) || 
+           ( fabs(sigma-conv::kBadResult) < conv::kASmallNum ) ) {
+        this->SetPrior(p,"flat",badmin,badmax);
+      }
+      else {
+        this->SetPrior(p,"gaus",mean,sigma);
+      }
+    }
+    else if (util::IsPhase(p)) {
+      this->SetPrior(p,"flat",dcp_min,dcp_max);
+    }
+        
+    else {
+      this->SetPrior(p,"flat",badmin,badmax);
+    }
+  }
+  return;
+}
+//________________________________________________________________________________________
+bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscval) const{
   
   // NuBar 
   if(p == conv::kPhypMixing13Bar){
@@ -1869,7 +1909,7 @@ bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscva
 
 
 //________________________________________________________________________________________
-double FitMarginalization::Randomize(PhysParamId_t physpar){
+double FitMarginalization::Randomize(PhysParamId_t physpar) const{
 
   if(fparm->GetPriorModeName(physpar)=="flat"){
     double min = fparm->GetMinValueFlat(physpar);
@@ -2061,7 +2101,7 @@ void FitMarginalization::SetNSKsamples(){
   return;
 }
 //________________________________________________________________________________________
-conv::SuperkSample_t FitMarginalization::GetSKSamples(int isksample){
+conv::SuperkSample_t FitMarginalization::GetSKSamples(int isksample) const {
   int is = this->fsksamples->GetEntry(isksample);
   SuperkSample_t s = kSKSamples[is];
   return s;
@@ -2097,7 +2137,7 @@ PhysParamList *const* FitMarginalization::GetParamListArray(void) const
   return fSavedToyParamLists;
 }
 //________________________________________________________________________________________
-TObjArray * FitMarginalization::GetToyParamThrowHistograms(int nbins)const
+TObjArray * FitMarginalization::GetToyParamThrowHistograms(int nbins) const
 {
   if (fShouldSaveToyParamLists) {
     TObjArray * o = util::MakeHistogramsOfParameterValues(fntoys_marg,fSavedToyParamLists,nbins,fparm);
@@ -2117,6 +2157,20 @@ TObjArray * FitMarginalization::GetToyParamThrowHistograms(int nbins)const
     return 0;
   }
 }
+//________________________________________________________________________________________
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
+//________________________________________________________________________________________
+//________________________________________________________________________________________
+//________________________________________________________________________________________
+//________________________________________________________________________________________
 //________________________________________________________________________________________
 
 
