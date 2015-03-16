@@ -3206,8 +3206,8 @@ void FitMarginalization::MinimizeChisqStep(SuperkObservation *skobs_data){
 	if( bincont<=0.) {
 	  if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNp2_X-1,binN_Y-1);
 	  else bincont = CalcChisqMargPt(skobs_data,binNp2_X-1,fmin_bin_sub_param[1]);
-	chisq_X_Np2 = bincont;
 	}
+	chisq_X_Np2 = bincont;
       }
 
       if(fIsFit2D){
