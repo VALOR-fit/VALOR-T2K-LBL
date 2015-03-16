@@ -385,12 +385,11 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
 
     fitmarg->ReadToysFromBinary(ifile,infilename);
     
+    int i_chisq_calculations = 0;
+    
     for (int ifakedata = 0 ; ifakedata < Nfakedata; ifakedata++) {
       
       ibin=0;
-      if (ifakedata % 500 == 0) {
-        cout<<"Calculating chi-square for fake data set "<<ifakedata<<std::endl;
-      }
       
       if (fitIs1D) {
         for (ipar0 = real_first_bin_freepar0 ; ipar0 <= real_last_bin_freepar0 ; ipar0++) {
@@ -408,7 +407,11 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
           this_chisq   = fitmarg->CalcChisqMargPt(skobs,ipar0,0,false);
           
           ibin++;
+          i_chisq_calculations++;
           fit_result_tree->Fill();
+          if (i_chisq_calculations % 500==0) {
+            cout<<"Calculating "<<i_chisq_calculations<<"th chi-square, for fake data set "<<ifakedata<<" bin "<<ibin<<std::endl;
+          }
         }//ipar0
       }//fitIs1D
       else {
@@ -428,7 +431,11 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
             this_chisq = fitmarg->CalcChisqMargPt(skobs,ipar0,ipar1,false);
             
             ibin++;
+            i_chisq_calculations++;
             fit_result_tree->Fill();
+            if (i_chisq_calculations % 500==0) {
+              cout<<"Calculating "<<i_chisq_calculations<<"th chi-square, for fake data set "<<ifakedata<<" bin "<<ibin<<std::endl;
+            } 
           }//ipar1
         }//ipar0
       }//2d fit
@@ -440,6 +447,8 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   fit_result_tree->Write();
   
   std::cout<<"Job finished, CPU time is "<<Form("%.2lf",w3.CpuTime())<<" seconds, walltime is "<<Form("%.2lf",w3.RealTime())<<" seconds"<<std::endl;
+  
+  outfile->Close();
   
   return;
 }
