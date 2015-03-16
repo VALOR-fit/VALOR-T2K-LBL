@@ -120,7 +120,7 @@ class FitMarginalization
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
 
   void FillChisqMarg(SuperkObservation *skobs_data); // Loop over the free params and call CalcChisqMargPt()
-  float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1);
+  float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
   
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
@@ -150,7 +150,7 @@ class FitMarginalization
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1F *hprior);
   std::string GetPrior(conv::PhysParamId_t physpar) const;
   
-  void BuildDefaultPriors();
+  void BuildDefaultPriors(void);
 
   double Randomize(conv::PhysParamId_t physpar) const;
   bool RethrowOscUnphysical(conv::PhysParamId_t p,double oscval) const; // NEW 

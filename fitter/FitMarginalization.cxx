@@ -296,9 +296,9 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
 
   // checks
   if( (fPhysParamFree[0] != conv::kPhypUndefined) &&
-      (fnbins_sub_param[0] > fnbins_param[0]) ||
-      (fmin_bin_sub_param[0] < 0) || 
-      (fmax_bin_sub_param[0] > fnbins_param[0] - 1) )
+      ((fnbins_sub_param[0] > fnbins_param[0]) ||
+       (fmin_bin_sub_param[0] < 0) || 
+       (fmax_bin_sub_param[0] > fnbins_param[0] - 1) ))
     {
       cerr << endl;
       cerr << "Param 0 sub-range outside the entire free parameter range" << endl;
@@ -311,9 +311,9 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
     }
 
   if( (fPhysParamFree[1] != conv::kPhypUndefined) &&
-      (fnbins_sub_param[1] > fnbins_param[1]) ||
-      (fmin_bin_sub_param[1] < 0) || 
-      (fmax_bin_sub_param[1] > fnbins_param[1] - 1) )
+      ((fnbins_sub_param[1] > fnbins_param[1]) ||
+       (fmin_bin_sub_param[1] < 0) || 
+       (fmax_bin_sub_param[1] > fnbins_param[1] - 1) ))
     {
       cerr << endl;
       cerr << "Param 1 sub-range outside the entire free parameter range" << endl;
@@ -932,18 +932,18 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
   return;
 }
 //________________________________________________________________________________________
-float FitMarginalization::CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1){
+float FitMarginalization::CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool allow_cached){
   
   // If chisq already colculated return the stored value and break
   float chisq = fChisqMargVArray->GetEntry(iterpar0,iterpar1); 
-  if(chisq > 0.) return chisq;
+  if(allow_cached && chisq > 0.) {return chisq;}
 
   fNCallsCalcChisqMargPt++;
 
   //cout << "iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << "   ";
   
-  double currval0 = fmin_param[0] + iterpar0*fstep_param[0];
-  double currval1 = fmin_param[1] + iterpar1*fstep_param[1];
+  //double currval0 = fmin_param[0] + iterpar0*fstep_param[0];
+  //double currval1 = fmin_param[1] + iterpar1*fstep_param[1];
   //cout << "currval0 = " << currval0 << endl;
   //cout << "currval1 = " << currval1 << endl;
   
@@ -981,7 +981,7 @@ float FitMarginalization::CalcChisqMargPt(SuperkObservation *skobs_data,int iter
       //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;;
       
       // compute the likelihood for a single marginalization toy
-      float chisq = 0.;
+      chisq = 0.;
       
       // Loop over the used SK samples
       int iscount=0;
@@ -1072,10 +1072,10 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
 
   // Write store sub-range of the free parameter
 
-  int min_bin_sub_param0 = fmin_bin_sub_param[0];
-  int max_bin_sub_param0 = fmax_bin_sub_param[0];
-  int min_bin_sub_param1 = fmin_bin_sub_param[1];
-  int max_bin_sub_param1 = fmax_bin_sub_param[1];
+  //int min_bin_sub_param0 = fmin_bin_sub_param[0];
+  //int max_bin_sub_param0 = fmax_bin_sub_param[0];
+  //int min_bin_sub_param1 = fmin_bin_sub_param[1];
+  //int max_bin_sub_param1 = fmax_bin_sub_param[1];
 
   char outname_range[200];
   sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
@@ -1192,10 +1192,10 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
 
   // Write store sub-range of the free parameter
 
-  int min_bin_sub_param0 = fmin_bin_sub_param[0];
-  int max_bin_sub_param0 = fmax_bin_sub_param[0];
-  int min_bin_sub_param1 = fmin_bin_sub_param[1];
-  int max_bin_sub_param1 = fmax_bin_sub_param[1];
+  //int min_bin_sub_param0 = fmin_bin_sub_param[0];
+  //int max_bin_sub_param0 = fmax_bin_sub_param[0];
+  //int min_bin_sub_param1 = fmin_bin_sub_param[1];
+  //int max_bin_sub_param1 = fmax_bin_sub_param[1];
 
   char outname_range[200];
   sprintf(outname_range,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
@@ -1537,7 +1537,7 @@ void FitMarginalization::SetMargOscParam(){
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     //cout << p << " " << util::AsString(p) << endl;
 
-    bool doMarginalize = true;
+    //bool doMarginalize = true;
     
     if(p!=fPhysParamFree[0]) 
       fparm->SetDoMarg(fPhysParamFree[0],true); 
@@ -2351,26 +2351,33 @@ void FitMarginalization::MinimizeChisqInterval(SuperkObservation *skobs_data){
 	binNm2_X = binN_X - 2;
 	if(binNm2_X < fFirstBin_X) 
 	  binNm2_X = fFirstBin_X;  // should happens only when Xn = Xf
-	if(fIsFit2D) 
+	if(fIsFit2D) {
 	  bincont = fChisqMargVArray->GetEntry(binNm2_X-1,binN_Y-1);
-	else 
+	}
+	else { 
 	  bincont = fChisqMargVArray->GetEntry(binNm2_X-1,fmin_bin_sub_param[1]);
-	if( bincont<=0.)
+	}
+	if( bincont<=0.) {
 	  if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNm2_X-1,binN_Y-1);
 	  else bincont = CalcChisqMargPt(skobs_data,binNm2_X-1,fmin_bin_sub_param[1]);
+	}
 	chisq_X_Nm2 = bincont;
 	
 	// L(N+2) X
 	binNp2_X = binN_X + 2;
-	if(binNp2_X > fLastBin_X) 
+	if(binNp2_X > fLastBin_X) {
 	  binNp2_X = fLastBin_X;  // should happens only when Xn = Xl
-	if(fIsFit2D)
+	}
+	if(fIsFit2D) {
 	  bincont = fChisqMargVArray->GetEntry(binNp2_X-1,binN_Y-1);
-	else 
+	}
+	else {
 	  bincont = fChisqMargVArray->GetEntry(binNp2_X-1,fmin_bin_sub_param[1]);
-	if( bincont<=0.)
+	}
+	if( bincont<=0.){
 	  if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNp2_X-1,binN_Y-1);
 	  else bincont = CalcChisqMargPt(skobs_data,binNp2_X-1,fmin_bin_sub_param[1]);
+	}
 	chisq_X_Np2 = bincont;
 
 	if(fIsFit2D){
@@ -3127,13 +3134,16 @@ void FitMarginalization::MinimizeChisqStep(SuperkObservation *skobs_data){
       }
       // normal situation
       else{
-	if(fIsFit2D) 
+	if(fIsFit2D) {
 	  bincont = fChisqMargVArray->GetEntry(binNm2_X-1,binN_Y-1);
-	else 
+	}
+	else {
 	  bincont = fChisqMargVArray->GetEntry(binNm2_X-1,fmin_bin_sub_param[1]);
-	if( bincont<=0.)
+	}
+	if( bincont<=0.) {
 	  if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNm2_X-1,binN_Y-1);
 	  else bincont = CalcChisqMargPt(skobs_data,binNm2_X-1,fmin_bin_sub_param[1]);
+	}
 	chisq_X_Nm2 = bincont;
       }
       
@@ -3146,14 +3156,17 @@ void FitMarginalization::MinimizeChisqStep(SuperkObservation *skobs_data){
       }
       // normal situation
       else{
-	if(fIsFit2D)
+	if(fIsFit2D) {
 	  bincont = fChisqMargVArray->GetEntry(binNp2_X-1,binN_Y-1);
-	else 
+	}
+	else { 
 	  bincont = fChisqMargVArray->GetEntry(binNp2_X-1,fmin_bin_sub_param[1]);
-	if( bincont<=0.)
+	}
+	if( bincont<=0.) {
 	  if(fIsFit2D) bincont = CalcChisqMargPt(skobs_data,binNp2_X-1,binN_Y-1);
 	  else bincont = CalcChisqMargPt(skobs_data,binNp2_X-1,fmin_bin_sub_param[1]);
 	chisq_X_Np2 = bincont;
+	}
       }
 
       if(fIsFit2D){
