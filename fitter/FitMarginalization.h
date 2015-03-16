@@ -121,18 +121,15 @@ class FitMarginalization
 
   void FillChisqMarg(SuperkObservation *skobs_data); // Loop over the free params and call CalcChisqMargPt()
   float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
-  
+  float GetChisqMargTrue(double valpar0,double valpar1,SuperkObservation *skobs);
+
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
   void CalcBestFitErrors(void); // calculate the best-fit errors
 
-
-
-
   void MinimizeHisto(TH1F *hInChisqMarg);
   void MinimizeHisto(TH2F *hInChisqMarg);
   void MinimizeHisto(void);
-
 
   float GetChisqBestFit(void) const      { return fchisq_bf;};
   float GetParamBestFit(int ParId) const { return fparam_bf[ParId];};
@@ -190,7 +187,9 @@ class FitMarginalization
   TH1F *GetChisqStep_1D(void){ return hchisq_marg_1D_Step;};  
   TH2F *GetChisqStep_2D(void){ return hchisq_marg_2D_Step;};  
   
- 
+  int GetNumFit(void){ return fNFits;};
+  int GetNumIterations(void){ return fNiterations;};
+  int GetFitStatus(void){ return fFitStatus;};
 
 
 
@@ -241,7 +240,7 @@ class FitMarginalization
   VALORArrayI *fsksamples; // pointer of SuperkSample_t doesn't work. Then use kSKSamples[]
   VALORArrayF *fToyMargErecoVArray;
   VALORArrayF *fToyMargErecoVArray_Clone;
-  TH1F *hToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usal by looping over all the samples and skipping the undefined ones 
+  TH1F *hToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
   int fMaxSampleErecoBins;
 
   int fnerecobins_RHCNumu;
@@ -279,18 +278,17 @@ class FitMarginalization
   int fBorderMaxFitNumber; // if the best-fit is on the border, the fit is redone fBorderMaxFitNumber times (default = # of borders = 2 x NDim)
 
   bool fUncorrXY; // if minimum found in Y, keep it fixed and vary only X (viceversa)
-  double fEPS; // precision of the fit
   
   // Set the interval where to find the minimum (bin numbers)
-  double fFirstVal_X;
-  double fLastVal_X;
-  double fFirstVal_Y;
-  double fLastVal_Y;
+  double fFirstMinimVal_X;
+  double fLastMinimVal_X;
+  double fFirstMinimVal_Y;
+  double fLastMinimVal_Y;
 
-  int fFirstBin_X;
-  int fLastBin_X;
-  int fFirstBin_Y;
-  int fLastBin_Y;
+  int fFirstMinimBin_X;
+  int fLastMinimBin_X;
+  int fFirstMinimBin_Y;
+  int fLastMinimBin_Y;
   
   // Histogram minimization with steps (descent gradient)
   int fStep;
@@ -300,6 +298,10 @@ class FitMarginalization
   int fNumStartBin_Y;
 
   string fExtractStartPt;
+  
+  int fNFits;
+  int fNiterations;
+  int fFitStatus; // 1 --> OK, 0 --> it didn't converge
   //
 
 
