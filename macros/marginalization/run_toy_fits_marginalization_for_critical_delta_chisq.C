@@ -2,7 +2,8 @@
 // ------------------------------------------------------------------------------------------------           
 //
 // Intended to calculate a critical delta Chi-square surface for the marginalized toys.
-// Currently wildly unfinished.
+// Fits N random fakedata sets at each grid point.
+// Saves both toy spectra and fit results.
 // 
 // Steve Dennis, March 2015
 //                                                                                           
@@ -360,14 +361,10 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   fit_result_tree->Branch("ibin_par1"    ,&ipar1        ,"ibin_par_1/I");
   fit_result_tree->Branch("freepar0"     ,&freepar0     ,"freepar0/I");
   fit_result_tree->Branch("freepar1"     ,&freepar1     ,"freepar1/I");
-  fit_result_tree->Branch("min_chisq"    ,&min_chisq    ,"min_chisq/D");
+  //fit_result_tree->Branch("min_chisq"    ,&min_chisq    ,"min_chisq/D");
   fit_result_tree->Branch("chisq"        ,&this_chisq   ,"chisq/D    ");
   fit_result_tree->Branch("freepar0_val" ,&freepar0_val ,"freepar0_val/D");
   fit_result_tree->Branch("freepar1_val" ,&freepar1_val ,"freepar1_val/D");
-    
-  
-  TH1F * chisq_1d_hist = 0;
-  TH2F * chisq_2d_hist = 0;
   
   // Read toys from binary files and fill marginalized chisq
   for(int ifile=0;ifile<nfiles;ifile++){
@@ -382,44 +379,53 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
     fitmarg->ReadToysFromBinary(ifile,infilename);
     
     for (int ifakedata = 0 ; ifakedata < Nfakedata; ifakedata++) {
-      cerr<<"Fakedata "<<ifakedata<<endl;
-      for (int is = 0; is < conv::kns ; is++) {
-        int index = ibin*Nfakedata*conv::kns + conv::kns*ifakedata+is;
-        SuperkSample_t s = conv::kSKSamples[is];
-        if (s==conv::kSKsUndefined) {continue;}
-        skobs->ErecoSpectrumVArray(s)->CopyFrom(*fFakeDataEreco[index]);
-      }//is
       
-      cerr<<"Copied"<<endl;
-
-      fitmarg->FillChisqMarg(skobs);
-      fitmarg->MinimizeHisto();
-      
-      min_chisq=fitmarg->GetChisqBestFit();
-      cerr<<"min_chisq: "<<min_chisqendl;
+      ibin=0;
+      if (ifakedata % 500 == 0) {
+        cout<<"Calculating chi-square for fake data set "<<ifakedata<<std::endl;
+      }
       
       if (fitIs1D) {
-        chisq_1d_hist = fitmarg->GetChisqMarg();
         for (ipar0 = real_first_bin_freepar0 ; ipar0 <= real_last_bin_freepar0 ; ipar0++) {
-          freepar0_val = chisq_1d_hist->GetXaxis()->GetBinCenter(ipar0);
-          this_chisq = chisq_1d_hist->GetBinContent(ipar0);
           
+          // Copy the right fakedata into SKobs
+          for (int is = 0; is < conv::kns ; is++) {
+            int index = ibin*Nfakedata*conv::kns + conv::kns*ifakedata+is;
+            SuperkSample_t s = conv::kSKSamples[is];
+            if (s==conv::kSKsUndefined) {continue;}
+            skobs->ErecoSpectrumVArray(s)->CopyFrom(*fFakeDataEreco[index]);
+          }//is
+          
+          // Get the fit point
+          freepar0_val = fitmarg->GetBinParameterValue(0,ipar0);
+          this_chisq   = fitmarg->CalcChisqMargPt(skobs,ipar0,0,false);
+          
+          ibin++;
           fit_result_tree->Fill();
         }//ipar0
       }//fitIs1D
       else {
-        chisq_2d_hist = fitmarg->GetChisqMarg2D();
         for (ipar0 = real_first_bin_freepar0 ; ipar0 <= real_last_bin_freepar0 ; ipar0++) {
           for (ipar1 = real_first_bin_freepar1 ; ipar1 <= real_last_bin_freepar1 ; ipar1++) {
-            freepar0_val = chisq_2d_hist->GetXaxis()->GetBinCenter(ipar0);
-            freepar1_val = chisq_2d_hist->GetYaxis()->GetBinCenter(ipar1);
-            this_chisq   = chisq_2d_hist->GetBinContent(ipar0,ipar1);
             
+            // Copy the right fakedata into SKobs
+            for (int is = 0; is < conv::kns ; is++) {
+              int index = ibin*Nfakedata*conv::kns + conv::kns*ifakedata+is;
+              SuperkSample_t s = conv::kSKSamples[is];
+              if (s==conv::kSKsUndefined) {continue;}
+              skobs->ErecoSpectrumVArray(s)->CopyFrom(*fFakeDataEreco[index]);
+            }//is
+          
+            freepar0_val = fitmarg->GetBinParameterValue(0,ipar0);
+            freepar1_val = fitmarg->GetBinParameterValue(1,ipar1);
+            this_chisq = fitmarg->CalcChisqMargPt(skobs,ipar0,ipar1,false);
+            
+            ibin++;
             fit_result_tree->Fill();
           }//ipar1
         }//ipar0
       }//2d fit
-      fit_result_tree->AutoSave();
+      //fit_result_tree->AutoSave();
     }//ifakedata
   }  //ifile
   
