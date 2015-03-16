@@ -32,7 +32,7 @@ void run_fit_marginalization
  const char * tag                      = "toyexptmarg",    /* tag for output file */
  int          run                      = 0,                /* run number */
  int          first_experiment         = 1,                       /* */
- int          last_experiment          = 1,                       /* */
+ int          last_experiment          = 9,                       /* */
 
  //const char * xmlfile        = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",  
  const char * xmlfile        = "toymc/toymc_nueapp-0.xml",  
@@ -58,7 +58,7 @@ void run_fit_marginalization
  //const char * config_file              = "analysis_configuration_1.7E20.xml",  
  const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  
- bool         stat_fluctuations        = true,                                /* include statistical fluctuation in toy MC expts? (not for marginalization) */
+ bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 1,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
  //const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
@@ -85,7 +85,7 @@ void run_fit_marginalization
 
  const bool   readtoys             = true,
 
- // Parameter for chisq minimization
+ //////////////////// Parameter for chisq minimization //////////////////////
  const bool   minimizeHisto        = true, // if not all the chisq histo is filled
  const int    MaxIterFit           = 2, 
  const int    MaxNfit              = 3,
@@ -96,7 +96,7 @@ void run_fit_marginalization
  const double start_X              = 0.102,
  const double start_Y              = -1.66504,
  const string StrategyStartPt      = "GridRnd", //"Single", "GridRnd", "GridFix"
- const int    NStartPt_X           = 12,  // # of throws for starting pt extraction
+ const int    NStartPt_X           = 4, //12,  // # of throws for starting pt extraction
  const int    NStartPt_Y           = 4,  // # of throws for starting pt extraction
 
  // Interval strategy
@@ -111,14 +111,9 @@ void run_fit_marginalization
  
  //const double MinStep1             = 0.0002, // min y value for fit steps
  //const double MaxStep1             = 0.02,   // max y value for fit steps
- //const double MinStep1             = -TMath::Pi(), // min y value for fit steps
- const double MinStep1             = -TMath::Pi(), // min y value for fit steps
- const double MaxStep1             = +TMath::Pi(),   // max y value for fit steps
- //
-
- //const char * outfilename          = "ChisqMarg_mixing23_Vs_dmsq23_Nbins201x201",
- const char * outfilename          = "ChisqMarg_mixing23_Vs_dmsq23_Nbins21x21",
- //const char * outfilename          = "ChisqMarg_prova",
+ const double MinStep1             = -3.14159265358979312e+00, // min y value for fit steps
+ const double MaxStep1             = +3.14159265358979312e+00,   // max y value for fit steps
+ ///////////////////////////////////////////////////////////////////////////////
  
  const int    IDoutfile            = 0,
  const int    first_bin_freepar0   = -999,   // first freepar of the sub-range
@@ -126,17 +121,13 @@ void run_fit_marginalization
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- //const char * infilename           = "../../inputs/marginalization/toys/mixing23_1p7E20_postfit_NoRethrow_Merged",
- //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow",
- //const char * infilename           = "submit_mixing23_1p7E20_postfit_NoRethrow_Merged", // test
- //const char * infilename           = "../../inputs/marginalization/toys/mixing23_dmsq32_1p7E20_postfit_NoRethrow_Merged",
- //const char * infilename           = "MH_FitMarg_mixing13Vsdeltacp_1p7E20_prefit",
- const char * infilename           = "MH_FitMarg_mixing13Vsdeltacp_1p7E20_201x201_prefit",
+ //const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit_Merged",
+ const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
 
- const int    nfiles               = 1,         // # of files to read
+ //const int    nfiles               = 1,         // # of files to read
+ const int    nfiles               = 11,         // # of files to read
 
  const int    NtoysMarg            = 1,   // # toys marginalization 
- //const int    NtoysMarg            = 2,   // # toys marginalization 
  
  //const char * freeparname0        = "mixing23Bar",  // free parameter
  //const double freeparmin0         = 0.,              // minimum value of free parameter
@@ -149,8 +140,8 @@ void run_fit_marginalization
  
  //const char * freeparname1        = "",  // free parameter
  const char * freeparname1        = "deltacpBar",  // free parameter
- const double freeparmin1         = -TMath::Pi(), // minimum value of free parameter
- const double freeparmax1         = +TMath::Pi(), // maxinum value of free parameter
+ const double freeparmin1         = -3.14159265358979312e+00, // minimum value of free parameter
+ const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
  const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
  //const char * freeparname1        = "dmsq23Bar",  // free parameter
  //const double freeparmin1         = 0.0002, // minimum value of free parameter
@@ -350,18 +341,29 @@ void run_fit_marginalization
   string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);  
   TFile f(Form("%s-run_%d-%s_%d_%d.root", tag, run, oscstr.c_str(), first_experiment, last_experiment), "recreate");
 
+
+  vector<double> chisqmin_subrange;
+  vector<double> chisqtrue_subrange;
+  vector<int> niterations_subrange;
+  vector<int> nfits_subrange;
+  vector<int> fitstatus_subrange;
+  vector<double> bestfit0_subrange;
+  vector<double> bestfit1_subrange;
+  
+  double truepar0=-999;
+  double truepar1=-999;    
   int nfits=-999;
   int nchisqcalls=-999;
   int niterations=-999;
   int fitstatus=-999;
-  double chisqmin=-999;
-  double chisqtrue=-999;
+  double chisqmin=conv::kALargeNum;
+  double chisqtrue=conv::kALargeNum;
   TH2F *hchisq2D_out;
   TH1F *hchisq1D_out;
   TH2F *hstep2D_out;
   TH1F *hstep1D_out;
-  float bestfit0=-999;
-  float bestfit1=-999;
+  double bestfit0=-999;
+  double bestfit1=-999;
   
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
@@ -379,7 +381,14 @@ void run_fit_marginalization
   fitnt->Branch("nfits",&nfits,"nfits/I");
   fitnt->Branch("nchisqcalls",&nchisqcalls,"nchisqcalls/I");
   fitnt->Branch("niterations",&niterations,"niterations/I");
-
+  fitnt->Branch("chisqmin_subrange",&chisqmin_subrange);
+  fitnt->Branch("chisqtrue_subrange",&chisqtrue_subrange);
+  fitnt->Branch("niterations_subrange",&niterations_subrange);
+  fitnt->Branch("nfits_subrange",&nfits_subrange);
+  fitnt->Branch("fitstatus_subrange",&fitstatus_subrange);
+  fitnt->Branch("bestfit0_subrange",&bestfit0_subrange);
+  fitnt->Branch("bestfit1_subrange",&bestfit1_subrange);
+  
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
 
@@ -507,10 +516,7 @@ void run_fit_marginalization
         }
       }//applied_negevents_condition
     }
-
     
-
-
   
     /////////////////// SET MARGINALIZATION FIT ////////////////
     
@@ -684,36 +690,83 @@ void run_fit_marginalization
 	    fitmarg->SetNumStartBin(NStartPt_X,NStartPt_Y);
 	    fitmarg->SetExtractStartPt(StrategyStartPt);
 	    fitmarg->MinimizeChisqStep(skobs_fakedata);      
+
+
+	    double chisqmin_curr = (double)fitmarg->GetChisqBestFit();
+	    chisqmin_subrange.push_back(chisqmin_curr);
+	    
+	    double bestfit0_curr = (double)fitmarg->GetParamBestFit(0);
+	    bestfit0_subrange.push_back(bestfit0_curr);
+	    
+	    if(fitmarg->IsFit2D()){
+	      double bestfit1_curr = (double)fitmarg->GetParamBestFit(1);
+	      bestfit1_subrange.push_back(bestfit1_curr);
+	    }
+	      
+	    int nfits_curr = fitmarg->GetNumFit();
+	    nfits_subrange.push_back(nfits_curr);
+
+	    int niterations_curr = fitmarg->GetNumIterations();
+	    niterations_subrange.push_back(niterations_curr);
+
+	    int fitstatus_curr = fitmarg->GetFitStatus();
+	    fitstatus_subrange.push_back(fitstatus_curr);
+	    
+	    
+
+	    if( chisqmin_curr < chisqmin ){
+	      
+	      chisqmin = chisqmin_curr;
+	      nfits = fitmarg->GetNumFit();
+	      nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
+	      niterations = fitmarg->GetNumIterations();
+	      fitstatus = fitmarg->GetFitStatus();
+	      
+	      bestfit0 = fitmarg->GetParamBestFit(0); 
+	      if(fitmarg->IsFit2D()) bestfit1 = fitmarg->GetParamBestFit(1); 
+	      
+	    } // if chisq min   
 	  }
-	  
 	  // Use chisq minimization with intervals
 	  else if(strategy==1){
-	    // Redo the fit if minimum on the border  
-	    fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
-	    // Max # of fits max # of iterations if the first minimum is on the border
-	    fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
-	    fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
-	    fitmarg->SetMinimUncorrXY(doUncorrXY);
-	    fitmarg->MinimizeChisqInterval(skobs_fakedata);      
-	  }
-	  
-	}
-	
-      }
-    }
-    
+	    //   // Redo the fit if minimum on the border  
+	    //   fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
+	    //   // Max # of fits max # of iterations if the first minimum is on the border
+	    //   fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
+	    //   fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	    //   fitmarg->SetMinimUncorrXY(doUncorrXY);
+	    //   fitmarg->MinimizeChisqInterval(skobs_fakedata);      
+	  } // if strategy
 
-    
+
+	} // if minimizeHisto
+
+	// Get true marginalized chisq if included in the sub-range
+	truepar0 = fparm->InitValue(freepar0);
+	if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
+	double chisqtrue_curr = (double)fitmarg->GetChisqMargTrue(truepar0,truepar1,skobs_fakedata);
+	if(chisqtrue_curr < conv::kALargeNum) chisqtrue = chisqtrue_curr;	
+	chisqtrue_subrange.push_back(chisqtrue_curr);
+
+      } // for binary files
+    } // if readtoys marginalization
+
+
+
     // Find minimum of marginalized chisq and find best-fit values
+
+    cout << endl;
+    cout << "Minimum Marginalized Chisq = " << chisqmin << endl;
+    cout << "bestfit 0 = " << bestfit0 << endl;
+    cout << "bestfit 1 = " << bestfit1 << endl;
+    cout << endl;
+
     cout << endl;
     cout << "# of calls of CalcChisqMargPt(): " 
-	 << fitmarg->GetNCallsCalcChisqMargPt() << endl;
-    cout << "Fit status " << fitmarg->GetFitStatus() << endl;
-    fitmarg->PrintBestFit();
+     	 << fitmarg->GetNCallsCalcChisqMargPt() << endl;
+     
     
-
     // Fill the output tree
-
     if(fitmarg->IsFit2D()){
       hchisq2D_out = (TH2F*)fitmarg->GetChisqMarg2D()->Clone("hchisq2D");
       if(minimizeHisto) hstep2D_out = (TH2F*)fitmarg->GetChisqStep_2D()->Clone("hstep2D");
@@ -722,25 +775,13 @@ void run_fit_marginalization
       hchisq1D_out = (TH1F*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
       if(minimizeHisto) hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
     }
-
     chisqmin = (double)fitmarg->GetChisqBestFit();
     nfits = fitmarg->GetNumFit();
     nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
     niterations = fitmarg->GetNumIterations();
     fitstatus = fitmarg->GetFitStatus();
-
     bestfit0 = fitmarg->GetParamBestFit(0); 
     if(fitmarg->IsFit2D()) bestfit1 = fitmarg->GetParamBestFit(0); 
-    
-
-    // Get true marginalized chisq
-
-    double truepar0=-999;
-    double truepar1=-999;
-    
-    truepar0 = fparm->InitValue(freepar0);
-    if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);
-    chisqtrue = (double)fitmarg->GetChisqMargTrue(truepar0,truepar1,skobs_fakedata);
     
     cout << endl;
     cout << "True Marginalized Chisq for: " << endl;
