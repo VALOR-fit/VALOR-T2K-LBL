@@ -116,6 +116,11 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+  
+  TStopwatch w1,w2,w3;
+  w1.Start();
+  w2.Start();
+  w3.Start();
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -274,6 +279,8 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   
   PhysHypothesis ph(*fparm);
   
+  std::cout<<"Setup is complete, CPU time is "<<Form("%.2lf",w1.CpuTime())<<" seconds, walltime is "<<Form("%.2lf",w1.RealTime())<<" seconds"<<std::endl;
+  
   std::cout<<"Generating "<<Nfakedata<<" fake datasets each for "<<n_bins_this_job<<" bins"<<std::endl;
   
   ibin = 0;
@@ -348,7 +355,7 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   outfile->cd();
   if (doSaveFakedataTree) {fakedata_tree->Write();}
   
-  std::cout<<"Fake data generation complete"<<std::endl;
+  std::cout<<"Fake data generation is complete, CPU time is "<<Form("%.2lf",w2.CpuTime())<<" seconds, walltime is "<<Form("%.2lf",w2.RealTime())<<" seconds"<<std::endl;
   // 
   
   
@@ -431,6 +438,8 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   
   outfile->cd();
   fit_result_tree->Write();
+  
+  std::cout<<"Job finished, CPU time is "<<Form("%.2lf",w3.CpuTime())<<" seconds, walltime is "<<Form("%.2lf",w3.RealTime())<<" seconds"<<std::endl;
   
   return;
 }
