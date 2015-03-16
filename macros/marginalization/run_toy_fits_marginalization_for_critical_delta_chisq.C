@@ -147,7 +147,8 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config.Data());
   
-  
+  // Work out the parameters
+  bool fitIs1D = false;
   PhysParamId_t freepar0 = util::PhysParamIdFromString(freeparname0);
   if (freepar0 < 0 || util::IsSystematic(freepar0))
   {
@@ -161,6 +162,7 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   {
     cout << "1D fit" << endl;
     freepar1 = conv::kPhypUndefined;
+    fitIs1D = true;
   }
   else {
     freepar1 = util::PhysParamIdFromString(freeparname1);
@@ -311,7 +313,7 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
           ph.SetCurrValue(p,value);
         }
         
-        skobs->Generate(skexp,ph);
+        skobs->Generate(skexp,ph,true);
         
         for (int is = 0; is < conv::kns ; is++) {
           int index = ibin*Nfakedata*conv::kns + conv::kns*ifakedata+is;
@@ -346,11 +348,30 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
   if (doSaveFakedataTree) {fakedata_tree->Write();}
   
   std::cout<<"Fake data generation complete"<<std::endl;
-  exit(0);
   // 
+  
+  
+  //Set up fit output tree.
+  double min_chisq=-999,this_chisq=-999,freepar0_val=-999,freepar1_val=-999;
+  outfile->cd();
+  TTree * fit_result_tree = new TTree("fit_results","fit_results");
+  
+  fit_result_tree->Branch("ibin_par0"    ,&ipar0        ,"ibin_par_0/I");
+  fit_result_tree->Branch("ibin_par1"    ,&ipar1        ,"ibin_par_1/I");
+  fit_result_tree->Branch("freepar0"     ,&freepar0     ,"freepar0/I");
+  fit_result_tree->Branch("freepar1"     ,&freepar1     ,"freepar1/I");
+  fit_result_tree->Branch("min_chisq"    ,&min_chisq    ,"min_chisq/D");
+  fit_result_tree->Branch("chisq"        ,&this_chisq   ,"chisq/D    ");
+  fit_result_tree->Branch("freepar0_val" ,&freepar0_val ,"freepar0_val/D");
+  fit_result_tree->Branch("freepar1_val" ,&freepar1_val ,"freepar1_val/D");
+    
+  
+  TH1F * chisq_1d_hist = 0;
+  TH2F * chisq_2d_hist = 0;
   
   // Read toys from binary files and fill marginalized chisq
   for(int ifile=0;ifile<nfiles;ifile++){
+    
   
     cout << endl;
     cout << "////////////////////////////////" << endl;
@@ -359,13 +380,51 @@ void run_toy_fits_marginalization_for_critical_delta_chisq
     cout << endl;
 
     fitmarg->ReadToysFromBinary(ifile,infilename);
+    
+    for (int ifakedata = 0 ; ifakedata < Nfakedata; ifakedata++) {
+      cerr<<"Fakedata "<<ifakedata<<endl;
+      for (int is = 0; is < conv::kns ; is++) {
+        int index = ibin*Nfakedata*conv::kns + conv::kns*ifakedata+is;
+        SuperkSample_t s = conv::kSKSamples[is];
+        if (s==conv::kSKsUndefined) {continue;}
+        skobs->ErecoSpectrumVArray(s)->CopyFrom(*fFakeDataEreco[index]);
+      }//is
+      
+      cerr<<"Copied"<<endl;
 
-    fitmarg->FillChisqMarg(skobs);
-    fitmarg->MinimizeHisto();
-
-  }  
+      fitmarg->FillChisqMarg(skobs);
+      fitmarg->MinimizeHisto();
+      
+      min_chisq=fitmarg->GetChisqBestFit();
+      cerr<<"min_chisq: "<<min_chisqendl;
+      
+      if (fitIs1D) {
+        chisq_1d_hist = fitmarg->GetChisqMarg();
+        for (ipar0 = real_first_bin_freepar0 ; ipar0 <= real_last_bin_freepar0 ; ipar0++) {
+          freepar0_val = chisq_1d_hist->GetXaxis()->GetBinCenter(ipar0);
+          this_chisq = chisq_1d_hist->GetBinContent(ipar0);
+          
+          fit_result_tree->Fill();
+        }//ipar0
+      }//fitIs1D
+      else {
+        chisq_2d_hist = fitmarg->GetChisqMarg2D();
+        for (ipar0 = real_first_bin_freepar0 ; ipar0 <= real_last_bin_freepar0 ; ipar0++) {
+          for (ipar1 = real_first_bin_freepar1 ; ipar1 <= real_last_bin_freepar1 ; ipar1++) {
+            freepar0_val = chisq_2d_hist->GetXaxis()->GetBinCenter(ipar0);
+            freepar1_val = chisq_2d_hist->GetYaxis()->GetBinCenter(ipar1);
+            this_chisq   = chisq_2d_hist->GetBinContent(ipar0,ipar1);
+            
+            fit_result_tree->Fill();
+          }//ipar1
+        }//ipar0
+      }//2d fit
+      fit_result_tree->AutoSave();
+    }//ifakedata
+  }  //ifile
   
-  
+  outfile->cd();
+  fit_result_tree->Write();
   
   return;
 }
