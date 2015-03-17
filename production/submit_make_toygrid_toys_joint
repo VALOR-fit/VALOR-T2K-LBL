@@ -34,59 +34,64 @@ use File::Path;
 
 $iarg=0;
 foreach (@ARGV) {
-  if($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
-  if($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
-  if($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
-  if($_ eq '--store-toy-expts'        ) { $store_toy_expts       = 1;              }
-  if($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = 1;              }
-  if($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
-  if($_ eq '--fit-option'             ) { $fitoption             = $ARGV[$iarg+1]; }
-  if($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
-  if($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
-  if($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
-  if($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
-  if($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
-  if($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
-  if($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
-  if($_ eq '--dcp-value'              ) { $dcp_value             = $ARGV[$iarg+1]; }
+  if($iarg % 2 == 1) {$iarg++; next;}
+      
+  if      ($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--store-toy-expts'        ) { $store_toy_expts       = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--fit-option'             ) { $fitoption             = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
+  elsif   ($_ eq '--dcp-value'              ) { $dcp_value             = $ARGV[$iarg+1]; }
 
-  if($_ eq '--input_mixing12'         ) { $input_mixing12        = $ARGV[$iarg+1]; }
-  if($_ eq '--input_mixing13'         ) { $input_mixing13        = $ARGV[$iarg+1]; }
-  if($_ eq '--input_mixing23'         ) { $input_mixing23        = $ARGV[$iarg+1]; }
-  if($_ eq '--input_deltacp'          ) { $input_deltacp         = $ARGV[$iarg+1]; }
-  if($_ eq '--input_dm12sq'           ) { $input_dm12sq          = $ARGV[$iarg+1]; }
-  if($_ eq '--input_dm23sq'           ) { $input_dm23sq          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_mixing12'         ) { $input_mixing12        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_mixing13'         ) { $input_mixing13        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_mixing23'         ) { $input_mixing23        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_deltacp'          ) { $input_deltacp         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_dm12sq'           ) { $input_dm12sq          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_dm23sq'           ) { $input_dm23sq          = $ARGV[$iarg+1]; }
 
-  if($_ eq '--stat_fluctuations'      ) { $stat_fluctuations     = $ARGV[$iarg+1]; }
-  if($_ eq '--tweak_systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--stat_fluctuations'      ) { $stat_fluctuations     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tweak_systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
 
-  if($_ eq '--reactor'             ) { $reactor            = $ARGV[$iarg+1]; }
-  if($_ eq '--tolerance'           ) { $tolerance          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--reactor'             ) { $reactor            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tolerance'           ) { $tolerance          = $ARGV[$iarg+1]; }
   
-  if($_ eq '--xmlfile'             ) { $xmlfile            = $ARGV[$iarg+1]; }
-  if($_ eq '--using-xmlfile'       ) { $using_xmlfile      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--xmlfile'             ) { $xmlfile            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--using-xmlfile'       ) { $using_xmlfile      = $ARGV[$iarg+1]; }
 
-  if($_ eq '--optfixparams'        ) { $optfixparams      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--optfixparams'        ) { $optfixparams      = $ARGV[$iarg+1]; }
 
-  if($_ eq '--param1'              ) { $param1             = $ARGV[$iarg+1]; }
-  if($_ eq '--param2'              ) { $param2             = $ARGV[$iarg+1]; }
-  if($_ eq '--param3'              ) { $param3             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--param1'              ) { $param1             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--param2'              ) { $param2             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--param3'              ) { $param3             = $ARGV[$iarg+1]; }
   
-  if($_ eq '--nbins-tot-param1'      ) { $min_bin_param1     = $ARGV[$iarg+1]; }
-  if($_ eq '--nbins-tot-param2'      ) { $min_bin_param2     = $ARGV[$iarg+1]; }
-  if($_ eq '--nbins-tot-param3'      ) { $min_bin_param3     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nbins-tot-param1'      ) { $min_bin_param1     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nbins-tot-param2'      ) { $min_bin_param2     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nbins-tot-param3'      ) { $min_bin_param3     = $ARGV[$iarg+1]; }
 
-  if($_ eq '--min-bin-param1'      ) { $min_bin_param1     = $ARGV[$iarg+1]; }
-  if($_ eq '--min-bin-param2'      ) { $min_bin_param2     = $ARGV[$iarg+1]; }
-  if($_ eq '--min-bin-param3'      ) { $min_bin_param3     = $ARGV[$iarg+1]; }
-  if($_ eq '--max-bin-param1'      ) { $max_bin_param1     = $ARGV[$iarg+1]; }
-  if($_ eq '--max-bin-param2'      ) { $max_bin_param2     = $ARGV[$iarg+1]; }
-  if($_ eq '--max-bin-param3'      ) { $max_bin_param3     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--min-bin-param1'      ) { $min_bin_param1     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--min-bin-param2'      ) { $min_bin_param2     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--min-bin-param3'      ) { $min_bin_param3     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--max-bin-param1'      ) { $max_bin_param1     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--max-bin-param2'      ) { $max_bin_param2     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--max-bin-param3'      ) { $max_bin_param3     = $ARGV[$iarg+1]; }
 
-  if($_ eq '--step-grid-1'           ) { $step_grid_1          = $ARGV[$iarg+1]; }
-  if($_ eq '--step-grid-2'           ) { $step_grid_2          = $ARGV[$iarg+1]; }
-  if($_ eq '--step-grid-3'           ) { $step_grid_3          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--step-grid-1'           ) { $step_grid_1          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--step-grid-2'           ) { $step_grid_2          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--step-grid-3'           ) { $step_grid_3          = $ARGV[$iarg+1]; }
 
+  else {
+    print "Unrecognised argument ".$_."\n"; exit;
+  }
   $iarg++;
 }
 $resource               = "interactive"                          unless defined $resource;
