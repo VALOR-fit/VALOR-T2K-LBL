@@ -62,21 +62,23 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw
 (
-  int          mode               = 0,                                         /* options: see above */
-  bool         update_rootfile    = false,                                        /* "update" ROOT output file? If false, will "recreate" */
-  const char * sk_sample          = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
-  const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
-  double       input_mixing12     = -99,                                         /* */
-  double       input_mixing13     = -99,                                         /* */
-  double       input_mixing23     = -99,                                         /* */
-  double       input_deltacp      = -99,                                         /* */
-  double       input_dm12sq       = -99,                                         /* */
-  double       input_dm23sq       = -99,                                         /* */
-  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
-  const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
-  const int    nexp               = 50,                                          /* number of experiments to make */
-  const char * mixparamchoice     = "sinsqtheta",
-  const char * hierarchy          = "normal"
+  int          mode                     = 0,                                         /* options: see above */
+  bool         update_rootfile          = false,                                        /* "update" ROOT output file? If false, will "recreate" */
+  const char * sk_sample                = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
+  double       input_mixing12           = -99,                                         /* */
+  double       input_mixing13           = -99,                                         /* */
+  double       input_mixing23           = -99,                                         /* */
+  double       input_deltacp            = -99,                                         /* */
+  double       input_dm12sq             = -99,                                         /* */
+  double       input_dm23sq             = -99,                                         /* */
+  bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
+  bool         save_throws              = true,                                        /* save the thrown parameter values*/
+  const char * config_file              = "analysis_configuration_run1to6_test.xml",   /* */
+  const int    nexp                     = 50,                                          /* number of experiments to make */
+  const char * mixparamchoice           = "sinsqtheta",
+  const char * hierarchy                = "normal",
+  bool         reject_unphysical_throws = true
 )
 {
   using namespace std;
@@ -267,7 +269,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   
   // Output histograms
   TH1D * hErecoNominal = 0;
-  TH1D * hEreco[nexp] = {0};
+  VALORArray * obsEreco[nexp] = {0};
   TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),10000,0,1000);
   
   
@@ -289,15 +291,17 @@ void test_sk_ereco_spectrum_twk_sys_throw
   const int np = fparm->GetNumberParameters();
   TH1D * hSysThrown[np];
   
-  for(int ip = 0; ip < np; ip++) {
-    conv::PhysParamId_t p = fparm->WhichParam(ip);
-    //if(!fparm->IsNuisance(p)) continue; 
-    
-    string sysstr = util::AsStringCompact(p);
-    //cout << sysstr << endl;
-    string hname(Form("%s_%s_tweak_throws_%s",sname,modetitle.c_str(),sysstr.c_str()));
-    hSysThrown[ip] = new TH1D(hname.c_str(),hname.c_str(),1000,syst_nsigma,syst_nsigma);
-    hSysThrown[ip]->SetDirectory(0);
+  if (save_throws) {
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      //if(!fparm->IsNuisance(p)) continue; 
+      
+      string sysstr = util::AsStringCompact(p);
+      //cout << sysstr << endl;
+      string hname(Form("%s_%s_tweak_throws_%s",sname,modetitle.c_str(),sysstr.c_str()));
+      hSysThrown[ip] = new TH1D(hname.c_str(),hname.c_str(),1000,syst_nsigma,syst_nsigma);
+      hSysThrown[ip]->SetDirectory(0);
+    }
   }
 
   
@@ -334,13 +338,25 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
   TStopwatch w;
   w.Start();
+  TStopwatch w2;
+  w2.Start();
+  
+  bool done_print = false;
+  
+  int n_ereco_bins = util::NumErecoBins(s);
+  
+  double * sumsq_per_bin = calloc(n_ereco_bins,sizeof(double));
 
   // Tweak!
   int iskip = 0;
   for(int iexp = 0; iexp < nexp; iexp++) {
 
-    if((iexp % 100) == 0)
+    if((iexp % 100) == 0 && (!done_print)) {
+      done_print = true;
       cout << endl << "Experiment " << iexp << " for systematics: " << modetitle << endl;
+      cout << "Last 100 experiments took "<<w2.RealTime()<<" seconds"<<endl;
+      w2.Start();
+    }
 
     if(mode < 100) {
 
@@ -521,12 +537,15 @@ void test_sk_ereco_spectrum_twk_sys_throw
     }//mode>=100
     
     PhysParamList pparm = skexp.Tweaks();
+    if (reject_unphysical_throws) {
     bool within_limits = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(pparm);
-    if (!within_limits) {
-      cout<<"Systematic thrown outside physical limits, regenerating"<<std::endl;
-      iskip++;
-      iexp--;
-      continue;
+      if (!within_limits) {
+        cout<<"Systematic thrown outside physical limits, regenerating"<<std::endl;
+        iskip++;
+        iexp--;
+        continue;
+      }
+      else {done_print = false;}
     }
     
     // generate predictions
@@ -542,63 +561,78 @@ void test_sk_ereco_spectrum_twk_sys_throw
       bool fluctuate = true;
       skobs.CreateMockData(skexp,ph,fluctuate);
     }
+    
+    VALORArray * spectrum = 0;
 
     //store spectrum
-    hEreco[iexp] = skexp.CurrPredictedErecoSpectrum(s);
-    for(int ir = 1; ir <= hEreco[iexp]->GetNbinsX(); ir++) {
+    if (save_toy_expts) {
       if(mode == 999 ) {
-        hEreco[iexp]->SetBinContent(ir, skobs.ErecoSpectrumArray(s)[ir-1]);
+        spectrum = new VALORArray(*skobs.ErecoSpectrumVArray(s));
+      }
+      else {
+        spectrum = new VALORArray(*skexp.CurrPredictedErecoVArray(s));
+      }
+      
+      spectrum->SetTitle(Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));
+      spectrum->Write   (Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));
+    }
+    else {
+      if(mode == 999 ) {
+        spectrum = skobs.ErecoSpectrumVArray(s);
+      }
+      else {
+        spectrum = skexp.CurrPredictedErecoVArray(s);
       }
     }
 
-    hEreco[iexp]->SetDirectory(0);
-    hEreco[iexp]->SetTitle(Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));
-    if(save_toy_expts)
-      hEreco[iexp]->Write(Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));                    
-
     //store Nsk
-    double nskint = 0;
-    for(int ir = 1; ir <= util::NumErecoBins(s); ir++)
-      if(mode != 999)
-        nskint += skexp.CurrPredictedErecoSpectrumArray(s)[ir-1];
-      else
-        nskint += skobs.ErecoSpectrumArray(s)[ir-1];
+    double nskint = spectrum->Integral();
     hNsk->Fill(nskint);
+    
+    for (int ibin = 0 ; ibin < n_ereco_bins ; ibin++) {
+      double nom   = hErecoNominal->GetBinContent(ibin+1);
+      double N = spectrum->GetArray()[ibin];
+      sumsq_per_bin[ibin] += (N-nom)*(N-nom);
+    }
 
 
     //store thrown parameter values
-     
-    for(int ip = 0; ip < np; ip++) {
-      conv::PhysParamId_t p = fparm->WhichParam(ip);
-      //if(!fparm->IsNuisance(p)) continue; 
-      
-      string sysstr = util::AsStringCompact(p);
-      
-      if(util::IsBANFF(p)){
-        if(RHCFlag)
-          hSysThrown[ip]->Fill(skexp.GetBANFF()->RHCCurrentValue(p));
-        else 
-          hSysThrown[ip]->Fill(skexp.GetBANFF()->CurrentValue(p));
+    
+    if (save_throws) {
+      for(int ip = 0; ip < np; ip++) {
+        conv::PhysParamId_t p = fparm->WhichParam(ip);
+        //if(!fparm->IsNuisance(p)) continue; 
+        
+        string sysstr = util::AsStringCompact(p);
+        
+        if(util::IsBANFF(p)){
+          if(RHCFlag)
+            hSysThrown[ip]->Fill(skexp.GetBANFF()->RHCCurrentValue(p));
+          else 
+            hSysThrown[ip]->Fill(skexp.GetBANFF()->CurrentValue(p));
+        }
+        else if(util::IsXSec(p)){
+          hSysThrown[ip]->Fill(skexp.GetNuXSec()->CurrentValue(p));
+        }
+        if(util::IsSKDetFSI(p)){
+          if(RHCFlag)
+            hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(p));
+          else 
+            hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(p));
+        }
       }
-      else if(util::IsXSec(p)){
-        hSysThrown[ip]->Fill(skexp.GetNuXSec()->CurrentValue(p));
-      }
-      if(util::IsSKDetFSI(p)){
-        if(RHCFlag)
-          hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->RHCCurrentValue(p));
-        else 
-          hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(p));
-      }
-    }
+    }//throws
   }//end loop over experiments
   w.Stop();
   cout << iskip << " experiments skipped due to limits" << endl;
 
   //save some histograms
-  for(int ip = 0; ip < np; ip++) {
-    conv::PhysParamId_t p = fparm->WhichParam(ip);
-    //if(!fparm->IsNuisance(p)) continue; 
-    hSysThrown[ip]->Write();
+  if (save_throws) {
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      //if(!fparm->IsNuisance(p)) continue; 
+      hSysThrown[ip]->Write();
+    }
   }
   hNsk->Write();
 
@@ -617,13 +651,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   for(int ibin=1; ibin <= util::NumErecoBins(s); ibin++) {
     double nom   = hErecoNominal->GetBinContent(ibin);
     double sumsq = 0;
-    for(int iexp = 0; iexp < nexp; iexp++) {
-      if(hEreco[iexp]) {
-        double N = hEreco[iexp]->GetBinContent(ibin);
-        sumsq += TMath::Power(N-nom,2);
-      }
-    }//iexp
-    double sig = TMath::Sqrt(sumsq/nexp);
+    double sig = TMath::Sqrt(sumsq_per_bin[ibin-1]/nexp);
     double min = nom-sig;
     double max = nom+sig;
     if(nom>0){
@@ -676,18 +704,20 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMax->Draw();
   hErecoMin->Draw("same");
   c->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
-
-  TCanvas * csys = new TCanvas();
-  csys->Divide(ceil(sqrt(np)),ceil(sqrt(np)));
-  for(int ip=0; ip < np; ip++) {
-    //if(!fparm->IsNuisance(p)) continue; 
-    csys->cd(ip+1);
-    hSysThrown[ip]->Draw();
-    cout << ip << "\t" << hSysThrown[ip]->GetTitle() << endl;
+  
+  if (save_throws) {
+    TCanvas * csys = new TCanvas();
+    csys->Divide(ceil(sqrt(np)),ceil(sqrt(np)));
+    for(int ip=0; ip < np; ip++) {
+      //if(!fparm->IsNuisance(p)) continue; 
+      csys->cd(ip+1);
+      hSysThrown[ip]->Draw();
+      cout << ip << "\t" << hSysThrown[ip]->GetTitle() << endl;
+    }
+    delete csys;
   }
  
   delete c;
-  delete csys;
 
   f.Close();
 
