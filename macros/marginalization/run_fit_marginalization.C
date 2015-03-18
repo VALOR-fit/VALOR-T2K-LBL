@@ -32,12 +32,12 @@ void run_fit_marginalization
  const char * tag                      = "toyexptmarg",    /* tag for output file */
  int          run                      = 0,                /* run number */
  int          first_experiment         = 1,                       /* */
- int          last_experiment          = 9,                       /* */
+ int          last_experiment          = 1,                       /* */
 
  //const char * xmlfile        = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",  
  const char * xmlfile        = "toymc/toymc_nueapp-0.xml",  
  
- bool using_xml_file                   = true,
+ bool         using_xml_file           = true,
  bool         dotoys                   = false,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -86,7 +86,7 @@ void run_fit_marginalization
  const bool   readtoys             = true,
 
  //////////////////// Parameter for chisq minimization //////////////////////
- const bool   minimizeHisto        = true, // if not all the chisq histo is filled
+ const bool   minimizeHisto        = false, // if not all the chisq histo is filled
  const int    MaxIterFit           = 2, 
  const int    MaxNfit              = 3,
  
@@ -96,8 +96,8 @@ void run_fit_marginalization
  const double start_X              = 0.102,
  const double start_Y              = -1.66504,
  const string StrategyStartPt      = "GridRnd", //"Single", "GridRnd", "GridFix"
- const int    NStartPt_X           = 4, //12,  // # of throws for starting pt extraction
- const int    NStartPt_Y           = 4,  // # of throws for starting pt extraction
+ const int    NStartPt_X           = 1, //4, //12,  // # of throws for starting pt extraction
+ const int    NStartPt_Y           = 1,  // # of throws for starting pt extraction
 
  // Interval strategy
  const bool   doUncorrXY           = false, // DON'T USE FOR sin2th13 Vs dcp
@@ -122,10 +122,13 @@ void run_fit_marginalization
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
  //const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit_Merged",
- const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
+ //const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
+ const char * infilename           = "PROVA_Merged",
+ //const char * infilename           = "PROVA",
 
- //const int    nfiles               = 1,         // # of files to read
- const int    nfiles               = 11,         // # of files to read
+ const int    nfiles               = 1,         // # of files to read
+ //const int    nfiles               = 11,         // # of files to read
+ //const int    nfiles               = 22, //2, //1, //22,         // # of files to read
 
  const int    NtoysMarg            = 1,   // # toys marginalization 
  
@@ -136,13 +139,13 @@ void run_fit_marginalization
  const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
  const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
- const int    NptScan0            = 201, //2, //21,        // # pts of free parameter to scan
+ const int    NptScan0            = 21, //2, //21,        // # pts of free parameter to scan
  
  //const char * freeparname1        = "",  // free parameter
  const char * freeparname1        = "deltacpBar",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00, // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
- const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
+ const int    NptScan1            = 21, //21,      // # pts of free parameter to scan
  //const char * freeparname1        = "dmsq23Bar",  // free parameter
  //const double freeparmin1         = 0.0002, // minimum value of free parameter
  //const double freeparmax1         = 0.02, // maxinum value of free parameter
@@ -369,6 +372,8 @@ void run_fit_marginalization
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
   fitnt->Branch("best_fit_params",      "valor::FitParamList",  &fparm,      1280000,0);
   fitnt->Branch("input_params",         "valor::PhysParamList", &iparm,      1280000,0);
+  fitnt->Branch("truepar0", &truepar0 );
+  fitnt->Branch("truepar1", &truepar1 );
   fitnt->Branch("bestfit0", &bestfit0 );
   fitnt->Branch("bestfit1", &bestfit1 );
   fitnt->Branch("hchisq2D", &hchisq2D_out );
@@ -439,10 +444,7 @@ void run_fit_marginalization
       fparm->SetInitValue(kPhypMixing23, input_mixing23);
       fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
     }
-   
-    cout << *fparm << endl;
-    
-
+       
     // Reset all output spectra
     dat_array->Clear();
     pdf_array->Clear();
@@ -517,7 +519,11 @@ void run_fit_marginalization
       }//applied_negevents_condition
     }
     
-  
+    cout << *fparm << endl;
+
+
+
+
     /////////////////// SET MARGINALIZATION FIT ////////////////
     
     PhysParamId_t freepar0;
@@ -611,13 +617,13 @@ void run_fit_marginalization
     if(!readtoys){
       
       // Decide whether to rethrow or not the unphysical systematic toys 
-      fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
+      fitmarg->SetRethrowSystUnphysical(rethrow_if_parameters_unphysical);
       
       // Produce toys and fill marginalized chisq
       
       // Set priors for not fixed oscillation parameters
       fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
-      if(reactor) fitmarg->SetPrior(kPhypMixing13Bar,"gaus",0.02146;0.059); // Daya Bay 2014
+      if(reactor) fitmarg->SetPrior(kPhypMixing13Bar,"gaus",0.02146,0.059); // Daya Bay 2014
       else        fitmarg->SetPrior(kPhypMixing13Bar,"flat",0.,1.);
       fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
       fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
@@ -712,8 +718,6 @@ void run_fit_marginalization
 	    int fitstatus_curr = fitmarg->GetFitStatus();
 	    fitstatus_subrange.push_back(fitstatus_curr);
 	    
-	    
-
 	    if( chisqmin_curr < chisqmin ){
 	      
 	      chisqmin = chisqmin_curr;
@@ -793,8 +797,7 @@ void run_fit_marginalization
     fitnt->Fill();
 
 
-
-
+      
     TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
     if(fitmarg->IsFit2D()){
       fitmarg->GetChisqMarg2D()->DrawCopy("colz");
@@ -806,16 +809,18 @@ void run_fit_marginalization
       fitmarg->GetChisqMarg()->SetMinimum(min);
       fitmarg->GetChisqMarg()->DrawCopy();
     }
-
-
+      
+      
     if(minimizeHisto){
       TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
       if(fitmarg->IsFit2D())
-	fitmarg->GetChisqStep_2D()->DrawCopy("colz");
+    	fitmarg->GetChisqStep_2D()->DrawCopy("colz");
       else
-	fitmarg->GetChisqStep_1D()->DrawCopy("");
+    	fitmarg->GetChisqStep_1D()->DrawCopy("");
     }
 
+
+    if(!minimizeHisto) fitmarg->PrintBestFit();
 
     // Clean-up
     delete skobs_fakedata;  
