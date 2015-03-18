@@ -22,32 +22,44 @@ void MergeInputFiles(
  const int    last_bin_freepar0    = -999, // last freepar of the sub-range
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
+ //const int    first_bin_freepar0   = 0,   // first freepar of the sub-range
+ //const int    last_bin_freepar0    = 10, // last freepar of the sub-range
+ //const int    first_bin_freepar1   = 0,   // first freepar of the sub-range
+ //const int    last_bin_freepar1    = 10, // last freepar of the sub-range
 
- //const char * tag                  = "MH_FitMarg_mixing23_1p7E20_prefit",
- const char * tag                  = "submit_mixing23_1p7E20_postfit_NoRethrow",
+ //const char * tag                  = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
+ const  char * tag                   = "PROVA",
 
- const int    nfiles               = 11,         // # of files to read
+ const int    nfiles               = 22,         // # of files to read
 
- //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
- const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
+ //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
+ //const char * config_file          = "analysis_configuration_1.7E20.xml",   
+ const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
 
- const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
 
- const int    NtoysMarg            = 2,   // # toys marginalization 
+ const int    NtoysMarg            = 1,   // # toys marginalization 
 
- const char * freeparname0        = "mixing23Bar",  // free parameter
- const int    freeparmin0         = 0,              // minimum value of free parameter
- const int    freeparmax0         = 1,              // maxinum value of free parameter
+ const char * freeparname0        = "mixing13Bar",  // free parameter
+ const double freeparmin0         = 0,              // minimum value of free parameter
+ const double freeparmax0         = 0.3,              // maxinum value of free parameter
+ //const char * freeparname0        = "mixing23Bar",  // free parameter
+ //const double freeparmin0         = 0,              // minimum value of free parameter
+ //const double freeparmax0         = 1,              // maxinum value of free parameter
  const int    NptScan0            = 21,            // # pts of free parameter to scan
 
- const char * freeparname1          = "dmsq23Bar",  // free parameter
  //const char * freeparname1          = "",  // free parameter
- const double freeparmin1           = 0.0002,     // minimum value of free parameter
- const double freeparmax1           = 0.02,     // maxinum value of free parameter
+ const char * freeparname1          = "deltacpBar",  // free parameter
+ const double freeparmin1           = -3.14159265358979312e+00,  // minimum value of free parameter
+ const double freeparmax1           = +3.14159265358979312e+00,  // maxinum value of free parameter
+ //const char * freeparname1          = "dmsq23Bar",  // free parameter
+ //const double freeparmin1           = 0.0002,     // minimum value of free parameter
+ //const double freeparmax1           = 0.02,     // maxinum value of free parameter
  const int    NptScan1              = 21,  // # pts of free parameter to scan
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
- const bool   doRethrowUnphysical  = false,    // rethrow unphysical systematic toys
+ const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
 )
 {
 
@@ -169,6 +181,8 @@ void MergeInputFiles(
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
 
   for(int ifile=0;ifile<nfiles;ifile++){
+  //for(int ifile=10;ifile<22;ifile++){
+  //for(int ifile=0;ifile<10;ifile++){
     
     cout << endl;
     cout << "////////////////////////////////" << endl;
