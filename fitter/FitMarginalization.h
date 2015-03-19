@@ -122,27 +122,15 @@ class FitMarginalization
   void FillChisqMarg(SuperkObservation *skobs_data); // Loop over the free params and call CalcChisqMargPt()
   
 
-
+  
   float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
-  // MAP 
-  float CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary = true,bool allow_cached = true);
-  // 
+  float CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary = false,bool allow_cached = true); // MAP
 
 
-
-
-
-  float GetChisqMargTrue(double valpar0,double valpar1,SuperkObservation *skobs);
-
-
-
-  // MAP
-  float GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs);
-  //
-
-
-
-
+  
+  //float GetChisqMargTrue(double valpar0,double valpar1,SuperkObservation *skobs);
+  float GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs,bool readbinary = false); // MAP
+  
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
   void CalcBestFitErrors(void); // calculate the best-fit errors
@@ -187,22 +175,15 @@ class FitMarginalization
 
   // Histogram minimization
   void MinimizeChisqInterval(SuperkObservation *skobs_data);
-  void MinimizeChisqStep(SuperkObservation *skobs_data);
 
 
-
-  // MAP
-  void MinimizeChisqStepRead(SuperkObservation *skobs_data);
-  //
-
-
-  void SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
-
-
-
-  // MAP
-  void SetMinimIntervalRead(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
-  //
+  
+  //void MinimizeChisqStep(SuperkObservation *skobs_data);
+  void MinimizeChisqStepRead(SuperkObservation *skobs_data,bool readbinary = false);  // MAP
+  
+  //void SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
+  void SetMinimIntervalRead(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast,bool readbinary = false); // MAP
+  
 
 
 
@@ -210,12 +191,8 @@ class FitMarginalization
   void SetMaxFitNumber(int nfit);
 
   // Step (descent gradient)
-  void GridStartBin(SuperkObservation *skobs_data);
-
-
-
-  // MAP
-  void GridStartBinRead(SuperkObservation *skobs_data);
+  //void GridStartBin(SuperkObservation *skobs_data);
+  void GridStartBinRead(SuperkObservation *skobs_data,bool readbinary = false); // MAP
   void SetGridStartRange(double minX,double maxX,double minY,double maxY);
   //
 
