@@ -5,7 +5,7 @@
 GOPT_WITH_CXX_DEBUG_FLAG    = -g
 #GOPT_WITH_CXX_OPTIMIZ_FLAG = -O3
 GOPT_WITH_CXX_OPTIMIZ_FLAG  =
-GOPT_WITH_CXX_USERDEF_FLAGS = ${T2KCOMPILE}
+GOPT_WITH_CXX_USERDEF_FLAGS = 
 
 #-------------------------------------------------------------------
 #                           ARCHITECTURE 
@@ -105,7 +105,7 @@ CXXFLAGS      = -pipe -W -Wall -Wno-long-double \
 		$(GOPT_WITH_CXX_OPTIMIZ_FLAG) \
 		$(GOPT_WITH_CXX_USERDEF_FLAGS) 
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
-  CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+  CXXFLAGS += -Wno-strict-aliasing 
 endif
 LDFLAGS       = -bind_at_load
 SOFLAGS       = -dynamiclib -flat_namespace \
@@ -144,7 +144,7 @@ ifeq ($(strip $(GCC_GE_4_1_0)), YES)
   ifeq ($(strip $(GCC_GE_4_2_1)), YES) 
     CXXFLAGS += -Wno-strict-aliasing
   else
-    CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+    CXXFLAGS += -Wno-strict-aliasing 
   endif
 endif
 LDFLAGS       = -bind_at_load
@@ -176,7 +176,7 @@ CXXFLAGS      = -Wall -fPIC \
 		$(GOPT_WITH_CXX_OPTIMIZ_FLAG) \
 		$(GOPT_WITH_CXX_USERDEF_FLAGS) 
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
-  CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+  CXXFLAGS += -Wno-strict-aliasing 
 endif
 LDFLAGS       = -g
 SOFLAGS       = -shared
@@ -203,7 +203,7 @@ CXXFLAGS      = -Wall -fPIC \
 		$(GOPT_WITH_CXX_OPTIMIZ_FLAG) \
 		$(GOPT_WITH_CXX_USERDEF_FLAGS) 
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
-  CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+  CXXFLAGS += -Wno-strict-aliasing 
 endif
 LDFLAGS       = -g
 SOFLAGS       = -shared
@@ -253,10 +253,10 @@ CFLAGS    = -g
 #	$(CXX) -c -o $@ $(CXXFLAGS) $(CPPFLAGS) $<
 
 .cc.o:
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $<
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -O0 $<
 
 .cxx.o:
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $<
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) ${T2KCOMPILE} $<
 
 .C.o:
 	$(CXX) -c -o $@ $(CXXFLAGS) $(CPPFLAGS) $<
