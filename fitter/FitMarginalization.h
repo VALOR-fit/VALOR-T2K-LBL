@@ -120,8 +120,28 @@ class FitMarginalization
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
 
   void FillChisqMarg(SuperkObservation *skobs_data); // Loop over the free params and call CalcChisqMargPt()
+  
+
+
   float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
+  // MAP 
+  float CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary = true,bool allow_cached = true);
+  // 
+
+
+
+
+
   float GetChisqMargTrue(double valpar0,double valpar1,SuperkObservation *skobs);
+
+
+
+  // MAP
+  float GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs);
+  //
+
+
+
 
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
@@ -169,12 +189,37 @@ class FitMarginalization
   void MinimizeChisqInterval(SuperkObservation *skobs_data);
   void MinimizeChisqStep(SuperkObservation *skobs_data);
 
+
+
+  // MAP
+  void MinimizeChisqStepRead(SuperkObservation *skobs_data);
+  //
+
+
   void SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
+
+
+
+  // MAP
+  void SetMinimIntervalRead(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
+  //
+
+
+
   void SetMaxIterationSingleFit(int maxiter); // by default is the tot # of histo bins
   void SetMaxFitNumber(int nfit);
 
   // Step (descent gradient)
   void GridStartBin(SuperkObservation *skobs_data);
+
+
+
+  // MAP
+  void GridStartBinRead(SuperkObservation *skobs_data);
+  void SetGridStartRange(double minX,double maxX,double minY,double maxY);
+  //
+
+
   void SetStartBin(double start_X,double start_Y); // if <0 --> throw random
   void SetNumStartBin(int Nthrows_X,int Nthrows_Y);
   void SetExtractStartPt(string doextract);
@@ -184,8 +229,8 @@ class FitMarginalization
   void SetBorderDoFit(bool dofit);
   void SetBorderMaxFitNumber(int nfit);
 
-  TH1F *GetChisqStep_1D(void){ return hchisq_marg_1D_Step;};  
-  TH2F *GetChisqStep_2D(void){ return hchisq_marg_2D_Step;};  
+  TH1F *GetChisqStep_1D(void){ return fhchisq_marg_1D_Step;};  
+  TH2F *GetChisqStep_2D(void){ return fhchisq_marg_2D_Step;};  
   
   int GetNumFit(void){ return fNFits;};
   int GetNumIterations(void){ return fNiterations;};
@@ -193,19 +238,58 @@ class FitMarginalization
 
 
 
+
+  // MAP
+  TH1F *GetMapChisqRangeFileID_1D(void){ return fhmap_chisqrange_fileid_1D;};  
+  TH2F *GetMapChisqRangeFileID_2D(void){ return fhmap_chisqrange_fileid_2D;};  
+
+  void SetTagFileName(const char *tag);
+  void SetFileID(int nfiles);
+  int GetFileIDRead(int binpar0,int binpar1); // need histogram bin number as input
+ 
+  int GetCurrentFileID(void){ return fCurrentFileIDminim;};
+  //
+
+
+
+
+
   
  private:
   
-  TH1F *hchisq_marg_1D; 
-  TH2F *hchisq_marg_2D;  
+  TH1F *fhchisq_marg_1D; 
+  TH2F *fhchisq_marg_2D;  
   
+
+  // MAP
+  TH1F *fhmap_chisqrange_fileid_1D;
+  TH2F *fhmap_chisqrange_fileid_2D;
+
+  int fCurrentFileIDminim;
+
+  string ftagfile;       // tag of the binary file name
+  string *fnamefile; // all the binary file names (done in SetFileID), read during minimization
+
+  double fGridStartMinBin_X;
+  double fGridStartMaxBin_X;
+  double fGridStartMinBin_Y;
+  double fGridStartMaxBin_Y;
+
+  double fGridStartMinVal_X;
+  double fGridStartMaxVal_X;
+  double fGridStartMinVal_Y;
+  double fGridStartMaxVal_Y;
+  //
+
+
+
   std::string fnamefreeparam[2]; // Use param 1 only for 2D fits
 
   conv::PhysParamId_t fPhysParamFree[2]; 
 
   bool fIsFit2D;
 
-  bool doMargMassHierarchy; // marginalize MH. Not by default     
+  bool fdoMargMassHierarchy; // marginalize MH. Not by default     
   bool fRethrowSystUnphysical; // rethrow toys with unphysical systematics. True by default
 
   char fnamefilebinary[200];
@@ -240,7 +324,7 @@ class FitMarginalization
   VALORArrayI *fsksamples; // pointer of SuperkSample_t doesn't work. Then use kSKSamples[]
   VALORArrayF *fToyMargErecoVArray;
   VALORArrayF *fToyMargErecoVArray_Clone;
-  TH1F *hToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
+  TH1F *fhToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
   int fMaxSampleErecoBins;
 
   int fnerecobins_RHCNumu;
@@ -248,10 +332,10 @@ class FitMarginalization
   VALORArrayF *fToyMargErecoVArray_RHCNue_Clone; 
   VALORArrayF *fToyMargErecoVArray_Numu_Clone; 
   VALORArrayF *fToyMargErecoVArray_Nue_Clone; 
-  bool MergeInputFiles_Called;
+  bool fMergeInputFiles_Called;
   int fNmergedFiles;
 
-  TH1F *hToyMargCurr_RHCNumu;
+  TH1F *fhToyMargCurr_RHCNumu;
 
   VALORArrayF *fToyMargErecoVArray_RHCNumu; 
   VALORArrayF *fToyMargErecoVArray_RHCNue;  
@@ -268,8 +352,8 @@ class FitMarginalization
 
   // Histogram minimization
   
-  TH1F *hchisq_marg_1D_Step; // Get track of the minimization steps
-  TH2F *hchisq_marg_2D_Step; // Get track of the minimization steps
+  TH1F *fhchisq_marg_1D_Step; // Get track of the minimization steps
+  TH2F *fhchisq_marg_2D_Step; // Get track of the minimization steps
   
   int fMaxIterationSingleFit; // Partial # of iterations before restarting the fit
   int fMaxFitNumber;        // Maximum # of fits
