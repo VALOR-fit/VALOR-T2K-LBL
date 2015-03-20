@@ -540,7 +540,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     if (reject_unphysical_throws) {
     bool within_limits = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(pparm);
       if (!within_limits) {
-        cout<<"Systematic thrown outside physical limits, regenerating"<<std::endl;
+        //~ cout<<"Systematic thrown outside physical limits, regenerating"<<std::endl;
         iskip++;
         iexp--;
         continue;
@@ -594,8 +594,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
       double N = spectrum->GetArray()[ibin];
       sumsq_per_bin[ibin] += (N-nom)*(N-nom);
     }
-
-
+    
     //store thrown parameter values
     
     if (save_throws) {
@@ -675,10 +674,14 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMin->Draw();
   c->SaveAs(Form("%s_%s_minuserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   hErecoMaxEnv->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
-  hErecoMaxEnv->SetLineStyle(2);
-  hErecoMinEnv->SetLineStyle(2);
-  hErecoMaxEnv->SetLineColor(kBlue+3);
-  hErecoMinEnv->SetLineColor(kBlue+3);
+  hErecoMaxEnv->SetLineStyle(3);
+  hErecoMinEnv->SetLineStyle(3);
+  hErecoMaxEnv->SetLineColor(kRed);
+  hErecoMinEnv->SetLineColor(kRed);
+  hErecoMaxEnv->SetFillColor(kRed);
+  hErecoMinEnv->SetFillColor(10); //white, to unfill the lower area
+  hErecoMaxEnv->SetFillStyle(3244); // hatched
+  hErecoMinEnv->SetFillStyle(1001); // solid (white, to unfill the lower area)
   hErecoMaxEnv->Draw();
   hErecoMinEnv->Draw("same");
   hErecoNominal->Draw("same");

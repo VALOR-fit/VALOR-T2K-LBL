@@ -23,13 +23,11 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_throw_runAll.py [--all] (you
 It will then create the .root in the current working directory
 """
     
-#postfit_config = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5_sk+fsi.xml"
-#postfit_config  = "analysis_configuration_run1to6_test.xml"
-postfit_config  = "analysis_configuration.xml"
+postfit_config  = "analysis_configuration_2.5E20.xml"
+#~ postfit_config  = "analysis_configuration.xml"
 
-#prefit_config  = "2013a_numu_run1+2+3+4_flux11bv3.2_neut13a_banff13v5prefit_sk+fsi.xml"
-#prefit_config  = "analysis_configuration_run1to6_test.xml"
-prefit_config  = "analysis_configuration_prefit.xml"
+prefit_config  = "analysis_configuration_2.5E20_prefit.xml"
+#~ prefit_config  = "analysis_configuration_prefit.xml"
 
 
 class T2KAnaError(Exception): pass
@@ -46,6 +44,7 @@ optionParser.add_option("-s","--sksample", action="store", dest="sksample", type
 optionParser.add_option("-e","--hierarchy", action="store", dest="hierarchy", type="string", default="normal", help="Mass Hierarchy: normal, inverted")
 optionParser.add_option("-m","--mixparamchoice", action="store", dest="mixparamchoice", type="string", default="sinsqtheta", help="Mixing param choice: sinsqtheta")
 optionParser.add_option("-f","--fitparamlist", action="store", dest="fitparamlist", type="string", default="nuosc3f_12fix+nuisance", help="Mixing param choice: sinsqtheta")
+optionParser.add_option("-t","--storethrows", action="store_true", dest="storethrows", default=False, help="Store the thrown parameter values")
 
 (opt, args) = optionParser.parse_args()
 
@@ -57,6 +56,7 @@ sksample = opt.sksample
 hierarchy = opt.hierarchy
 mixparamchoice = opt.mixparamchoice
 fitparamlist = opt.fitparamlist
+store_throws = "true" if opt.storethrows else "false" 
 
 save_toy_expts = "false"
 
@@ -87,6 +87,8 @@ if opt.do_all: #combinations + everything
 elif opt.do_imp: #combinations + splines + oscparams
     modes = modes + modes6 + [200,201,202,203,204,215]
     
+modes = [0,1,7,8,9]
+#~ modes = [7]
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 
@@ -107,7 +109,7 @@ for osc in oscparams:
         if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99]:
             continue
         
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+postfit_config+'",'+str(nexp)+',"'+fitparamlist+'","'+mixparamchoice+'","'+hierarchy+'")\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
         print command
         if os.system(command) == 1:
             sys.exit(1)
@@ -117,7 +119,7 @@ for osc in oscparams:
 
         #repeat for the banff prefit (its a different spectrum, so erros have different effects)
 
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+',"'+prefit_config+'",'+str(nexp)+',"'+fitparamlist+'","'+mixparamchoice+'","'+hierarchy+'")\''
+        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
         print command
         if os.system(command) == 1:
             sys.exit(1)
@@ -161,10 +163,13 @@ if make_summary:
     d["skdet"]      = float(input_rows["SKDet_FSI"])
     d["banff_pre"]  = float(input_rows["BANFFprefit"])
     d["banff_post"] = float(input_rows["BANFF"])
-    d["xsec"]       = float(input_rows["unconstrained_xsec"])
+    #~ d["xsec"]       = float(input_rows["unconstrained_xsec"])
     
-    all_postfit = ["SKDet_FSI","BANFF","unconstrained_xsec"]
-    all_with_banff_prefit = ["SKDet_FSI","BANFFprefit","unconstrained_xsec"]
+    #~ all_postfit = ["SKDet_FSI","BANFF","unconstrained_xsec"]
+    #~ all_with_banff_prefit = ["SKDet_FSI","BANFFprefit","unconstrained_xsec"]
+    
+    all_postfit = ["SKDet_FSI","BANFF"]
+    all_with_banff_prefit = ["SKDet_FSI","BANFFprefit"]
 
     if "no oscillations" not in title:
       all_postfit.append("Osc_param")
@@ -211,8 +216,8 @@ if make_summary:
   f.write(make_row(["BANFF (postfit)"]+[percent_2dp(d["banff_post"]) for d in out_cols]))
   f.write("\\\\\n")
 
-  f.write(make_row(["Uncorrelated XSec"]+[percent_2dp(d["xsec"]) for d in out_cols]))
-  f.write("\\\\\n")
+  #~ f.write(make_row(["Uncorrelated XSec"]+[percent_2dp(d["xsec"]) for d in out_cols]))
+  #~ f.write("\\\\\n")
 
   f.write(make_row(["\emph{Non-23-sector} oscillation parameters"]+[percent_2dp(d["osc"]) for d in out_cols]))
   f.write("\\\\\n\\hline\n")
