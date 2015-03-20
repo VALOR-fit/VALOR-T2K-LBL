@@ -38,7 +38,7 @@ void run_fit_marginalization
  const char * xmlfile        = "toymc/toymc_nueapp-0.xml",  
  
  bool         using_xml_file           = true,
- bool         dotoys                   = false,
+ bool         dotoys                   = true,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -96,8 +96,8 @@ void run_fit_marginalization
  const double start_X              = 0.102,
  const double start_Y              = -1.66504,
  const string StrategyStartPt      = "GridRnd", //"Single", "GridRnd", "GridFix"
- const int    NStartPt_X           = 1, //4, //12,  // # of throws for starting pt extraction
- const int    NStartPt_Y           = 1,  // # of throws for starting pt extraction
+ const int    NStartPt_X           = 4, //4, //12,  // # of throws for starting pt extraction
+ const int    NStartPt_Y           = 12,  // # of throws for starting pt extraction
 
  // Interval strategy
  const bool   doUncorrXY           = false, // DON'T USE FOR sin2th13 Vs dcp
@@ -120,14 +120,14 @@ void run_fit_marginalization
  const int    last_bin_freepar0    = -999, // last freepar of the sub-range
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
-
+ 
  //const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit_Merged",
- //const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
- const char * infilename           = "PROVA_Merged",
+ const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
+ //const char * infilename           = "PROVA_Merged",
  //const char * infilename           = "PROVA",
 
- const int    nfiles               = 1,         // # of files to read
- //const int    nfiles               = 11,         // # of files to read
+ //const int    nfiles               = 1,         // # of files to read
+ const int    nfiles               = 11,         // # of files to read
  //const int    nfiles               = 22, //2, //1, //22,         // # of files to read
 
  const int    NtoysMarg            = 1,   // # toys marginalization 
@@ -139,13 +139,13 @@ void run_fit_marginalization
  const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
  const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
- const int    NptScan0            = 21, //2, //21,        // # pts of free parameter to scan
+ const int    NptScan0            = 201, //2, //21,        // # pts of free parameter to scan
  
  //const char * freeparname1        = "",  // free parameter
  const char * freeparname1        = "deltacpBar",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00, // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
- const int    NptScan1            = 21, //21,      // # pts of free parameter to scan
+ const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
  //const char * freeparname1        = "dmsq23Bar",  // free parameter
  //const double freeparmin1         = 0.0002, // minimum value of free parameter
  //const double freeparmax1         = 0.02, // maxinum value of free parameter
@@ -285,7 +285,7 @@ void run_fit_marginalization
   cout << "- Job: " << tag << "/" << run << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
 
-  if(!dotoys){
+  if(dotoys){
     cout << "- Toy-MC generation" << endl;
     cout << "   - Number of toy experiments: " << nexperiments << endl; 
     cout << "   - Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
@@ -644,22 +644,24 @@ void run_fit_marginalization
 	
 	// Use chisq minimization with steps
 	if(strategy==0){
-	  fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	  //fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	  fitmarg->SetMinimIntervalRead(MinStep0,MaxStep0,MinStep1,MaxStep1,false);
 	  fitmarg->SetStartBin(start_X,start_Y); 
 	  fitmarg->SetNumStartBin(NStartPt_X,NStartPt_Y);
 	  fitmarg->SetExtractStartPt(StrategyStartPt);
-	  fitmarg->MinimizeChisqStep(skobs_fakedata);      
+	  //fitmarg->MinimizeChisqStep(skobs_fakedata);      
+	  fitmarg->MinimizeChisqStepRead(skobs_fakedata,false);      
 	}
 	
 	// Use chisq minimization with intervals
 	else if(strategy==1){
-	  // Redo the fit if minimum on the border  
-	  fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
-	  // Max # of fits max # of iterations if the first minimum is on the border
-	  fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
-	  fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
-	  fitmarg->SetMinimUncorrXY(doUncorrXY);
-	  fitmarg->MinimizeChisqInterval(skobs_fakedata);      
+	  // // Redo the fit if minimum on the border  
+	  // fitmarg->SetBorderDoFit(RedoBorderFit); // true by default
+	  // // Max # of fits max # of iterations if the first minimum is on the border
+	  // fitmarg->SetBorderMaxFitNumber(MaxNfitBorder); // 2*Ndim by default
+	  // fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	  // fitmarg->SetMinimUncorrXY(doUncorrXY);
+	  // fitmarg->MinimizeChisqInterval(skobs_fakedata);      
 	}
 	
       }
@@ -691,12 +693,14 @@ void run_fit_marginalization
 	  
 	  // Use chisq minimization with steps
 	  if(strategy==0){
-	    fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	    //fitmarg->SetMinimInterval(MinStep0,MaxStep0,MinStep1,MaxStep1);
+	    fitmarg->SetMinimIntervalRead(MinStep0,MaxStep0,MinStep1,MaxStep1,false);
 	    fitmarg->SetStartBin(start_X,start_Y); 
 	    fitmarg->SetNumStartBin(NStartPt_X,NStartPt_Y);
 	    fitmarg->SetExtractStartPt(StrategyStartPt);
-	    fitmarg->MinimizeChisqStep(skobs_fakedata);      
-
+	    //fitmarg->MinimizeChisqStep(skobs_fakedata);      
+	    fitmarg->MinimizeChisqStepRead(skobs_fakedata,false);      
+	    
 
 	    double chisqmin_curr = (double)fitmarg->GetChisqBestFit();
 	    chisqmin_subrange.push_back(chisqmin_curr);
@@ -748,7 +752,8 @@ void run_fit_marginalization
 	// Get true marginalized chisq if included in the sub-range
 	truepar0 = fparm->InitValue(freepar0);
 	if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
-	double chisqtrue_curr = (double)fitmarg->GetChisqMargTrue(truepar0,truepar1,skobs_fakedata);
+	//double chisqtrue_curr = (double)fitmarg->GetChisqMargTrue(truepar0,truepar1,skobs_fakedata);
+	double chisqtrue_curr = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,false);
 	if(chisqtrue_curr < conv::kALargeNum) chisqtrue = chisqtrue_curr;	
 	chisqtrue_subrange.push_back(chisqtrue_curr);
 
