@@ -105,7 +105,7 @@ class FitMarginalization
   void PrintPhysHypothesis(void);
   //void PrintFitParamList(void);
 
-  TH1F * GetChisqMarg   (void);
+  TH1F * GetChisqMarg1D (void);
   TH2F * GetChisqMarg2D (void);
 
   bool IsFit2D(){ return fIsFit2D;}
@@ -123,7 +123,7 @@ class FitMarginalization
   
 
   
-  float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
+  //float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
   float CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary = false,bool allow_cached = true); // MAP
 
 
@@ -174,7 +174,8 @@ class FitMarginalization
   TObjArray * GetToyParamThrowHistograms(int nbins = -1) const; // Array needs deleting after call, histograms don't.
 
   // Histogram minimization
-  void MinimizeChisqInterval(SuperkObservation *skobs_data);
+  //void MinimizeChisqInterval(SuperkObservation *skobs_data);
+  void MinimizeChisqIntervalRead(SuperkObservation *skobs_data,bool readbinary = false);
 
 
   
