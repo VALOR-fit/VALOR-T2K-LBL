@@ -1082,7 +1082,14 @@ float FitMarginalization::CalcChisqMargPt(SuperkObservation *skobs_data,int iter
 //________________________________________________________________________________________
 float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary,bool allow_cached){
   
+
+  // If chisq already colculated return the stored value and break
+  float chisq = fChisqMargVArray->GetEntry(iterpar0,iterpar1); 
+  if(allow_cached && chisq > 0.) {return chisq;}
+
+  fNCallsCalcChisqMargPt++;
   
+  // Read binary file
   if(readbinary){ // don't do it when all the chisq distribution has to be filled
 
     // Get file ID corresponding to the input free parameters
@@ -1096,12 +1103,6 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
     }
   }
   
-  // If chisq already colculated return the stored value and break
-  float chisq = fChisqMargVArray->GetEntry(iterpar0,iterpar1); 
-  if(allow_cached && chisq > 0.) {return chisq;}
-
-  fNCallsCalcChisqMargPt++;
-
   //cout << "iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << "   ";
   //double currval0 = fmin_param[0] + iterpar0*fstep_param[0];
   //double currval1 = fmin_param[1] + iterpar1*fstep_param[1];
