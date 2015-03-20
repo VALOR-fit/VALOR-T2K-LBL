@@ -209,6 +209,9 @@ void Check_toys_marginalization
     // Decide whether to rethrow or not the unphysical systematic toys
     fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
     
+    // Save parameter throws
+    fitmarg->SetSaveParamLists();
+    
     // Produce toys and fill marginalized chisq
     
     // Set priors for not fixed oscillation parameters
@@ -316,6 +319,17 @@ void Check_toys_marginalization
         c->SaveAs("draw_marg_toys.root");
         
     }
+    
+    // Store toy distributions in output file  
+    char outname[200];
+    sprintf(outname,"check_toy_throws_%d.root",outfilename,IDoutfile);
+    //~ cout << outname << endl;
+    TFile *fout = new TFile(outname,"RECREATE");
+    fout->cd();
+    TObjArray * arr = fitmarg->GetToyParamThrowHistograms();
+    arr->Write();
+    fout->Close();
+  
     
     // // Store ChisqMarg (full or partial) in output file
     // char outname[200];
