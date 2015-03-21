@@ -49,7 +49,48 @@
 // ------------------------------------------------------------------------------------------------
 //
 
-#include<typeinfo.h>
+//#include<typeinfo.h>
+
+
+
+#ifndef __CINT__
+#include <iostream>
+#include <fstream>
+
+#include "TROOT.h"
+#include "TTree.h"
+#include "TSystem.h"
+#include "TH1D.h"
+#include "TStopwatch.h"
+#include "TString.h"
+#include "TFile.h"
+#include "TCanvas.h"
+#include "TVectorD.h"
+#include "TRandom3.h"
+#include "TSystem.h"
+#include "TMath.h"
+#include "TMatrixD.h"
+#include "TAxis.h"
+#include "TXMLEngine.h"
+
+#include "Conventions/Opt.h"
+#include "Conventions.h"
+#include "Utilities.h"
+#include "Utilities/Rnd.h"
+#include "Utilities/Env.h"
+#include "FitCore/PhysHypothesis.h"
+#include "SuperkExpectation.h"
+#include "SuperkObservation.h"
+#include "FitCore/FitInputs.h"
+#include "FitCore/FitterMinuit.h"
+#include "FitCore/UtlFit.h"
+#include "BANFF.h"
+#include "SuperkDetectorFSI.h"
+#include "NuXSec.h"
+#include "UtlFitParamListFactory.h"
+#include "T2KPhysicalParameterLimits.h"
+#endif
+
 
 TH1D * spectrum_to_per_50mev(TH1D * h) {
   TH1D * hout = new TH1D(*h);
@@ -117,9 +158,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
     case 2:
       modetitle = "unconstrained_xsec"; break;
     case 4:
-      char fsibins[40] = "";
-      sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
-      modetitle = fsibins; break;
+      std::cerr<<"FSI only no longer implemented"<<std::endl;
+      exit(-1);
+      //~ char fsibins[40] = "";
+      //~ sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
+      //~ modetitle = fsibins; break;
     case 7:
       modetitle = "BANFF_flux"; break;
     case 8:
@@ -269,7 +312,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   
   // Output histograms
   TH1D * hErecoNominal = 0;
-  VALORArray * obsEreco[nexp] = {0};
+  VALORArray * obsEreco[nexp];
+  for (int i = 0 ; i < nexp; i++) {obsEreco[i]=0;}
   TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),10000,0,1000);
   
   
@@ -313,10 +357,16 @@ void test_sk_ereco_spectrum_twk_sys_throw
                        input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
   
-  if(!update_rootfile)
-    ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::trunc);
-  else
-    ofstream outfile(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::app);
+  ofstream * outfilep = 0;
+  
+  if(!update_rootfile){
+    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::trunc);
+  }
+  else {
+    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::app);
+  }
+  
+  ofstream & outfile = *outfilep;
   
   //remove the [] so can use it in SaveAs
   while(oscparams.find_first_of("[]") != string::npos) {
@@ -341,11 +391,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
   TStopwatch w2;
   w2.Start();
   
-  bool done_print = false;
+  bool done_print = true;
   
   int n_ereco_bins = util::NumErecoBins(s);
   
-  double * sumsq_per_bin = calloc(n_ereco_bins,sizeof(double));
+  double * sumsq_per_bin = (double*)calloc(n_ereco_bins,sizeof(double));
 
   // Tweak!
   int iskip = 0;
@@ -637,14 +687,14 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
 
   // Find min/max and calculate fractional deviation from nominal
-  hErecoMax = new TH1D(*hErecoNominal);
-  hErecoMin = new TH1D(*hErecoNominal);
+  TH1D * hErecoMax = new TH1D(*hErecoNominal);
+  TH1D * hErecoMin = new TH1D(*hErecoNominal);
   hErecoMax->SetDirectory(0);
   hErecoMin->SetDirectory(0);
   hErecoMax->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
   hErecoMin->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
-  hErecoMaxEnv = new TH1D(*hErecoNominal);
-  hErecoMinEnv = new TH1D(*hErecoNominal);
+  TH1D * hErecoMaxEnv = new TH1D(*hErecoNominal);
+  TH1D * hErecoMinEnv = new TH1D(*hErecoNominal);
   hErecoMaxEnv->SetDirectory(0);
   hErecoMinEnv->SetDirectory(0);
   for(int ibin=1; ibin <= util::NumErecoBins(s); ibin++) {
@@ -690,14 +740,14 @@ void test_sk_ereco_spectrum_twk_sys_throw
   TH1D * hErecoMaxEnv_per50MeV = spectrum_to_per_50mev(hErecoMaxEnv);
   TH1D * hErecoMinEnv_per50MeV = spectrum_to_per_50mev(hErecoMinEnv);
   
-  TCanvas * c = new TCanvas();
+  TCanvas * c2 = new TCanvas();
   hErecoMaxEnv_per50MeV->Draw();
   hErecoMinEnv_per50MeV->Draw("same");
   hErecoNominal_per50MeV->Draw("same");
-  c->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  c2->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
   
-  c.cd();
+  c2->cd();
   double max_limit = 1.1*TMath::Max(hErecoMax->GetMaximum(),hErecoMin->GetMaximum());
   double min_limit = 1.1*TMath::Min(hErecoMax->GetMinimum(),hErecoMin->GetMinimum());
   max_limit = TMath::Max(fabs(max_limit),fabs(min_limit));
@@ -706,7 +756,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoMax->SetMinimum(min_limit);
   hErecoMax->Draw();
   hErecoMin->Draw("same");
-  c->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  c2->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
   if (save_throws) {
     TCanvas * csys = new TCanvas();
@@ -720,7 +770,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     delete csys;
   }
  
-  delete c;
+  delete c2;
 
   f.Close();
 
@@ -761,3 +811,18 @@ void test_sk_ereco_spectrum_twk_sys_throw
   cout << "Tweaks performed in " 
        << w.CpuTime() << " sec." << endl;
 }
+
+
+#ifndef __CINT__
+int main()
+{
+  valor::Env::Instance()->AutoSet("t2xk");
+  TString conf_dir  = valor::Env::Instance()->TopLevelConfDir();
+  TString verbosity = conf_dir + "/verbosity.xml";
+  valor::util::Verbosity(verbosity.Data());
+  test_sk_ereco_spectrum_twk_sys_throw(0,false,"RHC1Rmu","3f_osc",0,0,0,0,-99,-99,false,false,"analysis_configuration_2.5E20.xml",100000,"sinsqtheta","normal");
+  return 0;
+}
+#endif
+
+
