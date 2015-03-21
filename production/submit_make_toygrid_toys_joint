@@ -59,8 +59,8 @@ foreach (@ARGV) {
   elsif($_ eq '--input_dm12sq'           ) { $input_dm12sq          = $ARGV[$iarg+1]; }
   elsif($_ eq '--input_dm23sq'           ) { $input_dm23sq          = $ARGV[$iarg+1]; }
 
-  elsif($_ eq '--stat_fluctuations'      ) { $stat_fluctuations     = $ARGV[$iarg+1]; }
-  elsif($_ eq '--tweak_systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--stat-fluctuations'      ) { $stat_fluctuations     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--reactor'             ) { $reactor            = $ARGV[$iarg+1]; }
   elsif($_ eq '--tolerance'           ) { $tolerance          = $ARGV[$iarg+1]; }
