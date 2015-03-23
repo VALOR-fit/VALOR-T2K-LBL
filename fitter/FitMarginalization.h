@@ -105,9 +105,6 @@ class FitMarginalization
   void PrintPhysHypothesis(void);
   //void PrintFitParamList(void);
 
-  TH1F * GetChisqMarg1D (void);
-  TH2F * GetChisqMarg2D (void);
-
   bool IsFit2D(){ return fIsFit2D;}
 
   void MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp);
@@ -119,7 +116,9 @@ class FitMarginalization
   
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
 
-  void FillChisqMarg(SuperkObservation *skobs_data); // Loop over the free params and call CalcChisqMargPt()
+  void BuildDeltaChisqMarg(void);
+
+  void FillChisqMarg(SuperkObservation *skobs_data,bool readbinary = false); // Loop over the free params and call CalcChisqMargPt()
   
 
   
@@ -133,7 +132,9 @@ class FitMarginalization
   
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
-  void CalcBestFitErrors(void); // calculate the best-fit errors
+  double CalcBestFitErrors(SuperkObservation *skobs,string method="MINOS",bool readbinary=false); // calculate the best-fit errors
+  double CalcBestFitErrorsMINOS(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
+  double CalcBestFitErrorsHESSE(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
 
   void MinimizeHisto(TH1F *hInChisqMarg);
   void MinimizeHisto(TH2F *hInChisqMarg);
@@ -141,6 +142,9 @@ class FitMarginalization
 
   float GetChisqBestFit(void) const      { return fchisq_bf;};
   float GetParamBestFit(int ParId) const { return fparam_bf[ParId];};
+  float GetParamBestFitErrNeg(int ParId) const { return fparam_bf_errneg[ParId];};
+  float GetParamBestFitErrPos(int ParId) const { return fparam_bf_errpos[ParId];};
+  float GetParamBestFitErrSym(int ParId) const { return fparam_bf_errsym[ParId];};
   
   void PrintBestFit(void);
 
@@ -207,13 +211,20 @@ class FitMarginalization
   void SetBorderDoFit(bool dofit);
   void SetBorderMaxFitNumber(int nfit);
 
+  TH1F *GetChisqMarg1D (void){ return fhchisq_marg_1D;};
+  TH2F *GetChisqMarg2D (void){ return fhchisq_marg_2D;};
+  
+  TH1F *GetDeltaChisqMarg1D (void){ return fhdeltachisq_marg_1D;};
+  TH2F *GetDeltaChisqMarg2D (void){ return fhdeltachisq_marg_2D;};
+
   TH1F *GetChisqStep_1D(void){ return fhchisq_marg_1D_Step;};  
   TH2F *GetChisqStep_2D(void){ return fhchisq_marg_2D_Step;};  
-  
+
   int GetNumFit(void){ return fNFits;};
   int GetNumIterations(void){ return fNiterations;};
   int GetFitStatus(void){ return fFitStatus;};
 
+  double GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin);
 
 
 
@@ -237,6 +248,8 @@ class FitMarginalization
   
   TH1F *fhchisq_marg_1D; 
   TH2F *fhchisq_marg_2D;  
+  TH1F *fhdeltachisq_marg_1D; 
+  TH2F *fhdeltachisq_marg_2D;  
   
 
   // MAP
@@ -274,6 +287,9 @@ class FitMarginalization
 
   double fchisq_bf;
   double fparam_bf[2]; 
+  double fparam_bf_errpos[2]; 
+  double fparam_bf_errneg[2]; 
+  double fparam_bf_errsym[2]; 
   
   UInt_t fSeed;
 
