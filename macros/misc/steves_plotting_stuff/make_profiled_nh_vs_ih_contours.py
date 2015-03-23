@@ -31,6 +31,8 @@ opt.SetDefaultParameterValues()
 image_format = "eps"
 conf90 = 4.61
 conf68 = 2.71
+
+to3dp = "{0:.3f}"
   
 def main(marg_file, tag=None):
   
@@ -132,6 +134,7 @@ def main(marg_file, tag=None):
   h_contour_m.Draw("AXIS")
   for cont_list in contours_p + contours_m:
     for cont in cont_list:
+      print cont.GetName()
       cont.Draw("same")
       
   # Draw markers
@@ -171,11 +174,16 @@ def GetContours(h):
   dummy_canv.Update()
   obj_array = ROOT.gROOT.GetListOfSpecials().FindObject("contours")
   del dummy_canv
-  tlists = [obj_array[i] for i in xrange(obj_array.GetEntries())]
-  l = []
-  for tl in tlists:
-    l.append([ROOT.TGraph(tl[i]) for i in xrange(tl.GetEntries())])
-  return l
+  tlists         = [obj_array[i]         for i in xrange(obj_array.GetEntries())]
+  contour_levels = [h.GetContourLevel(i) for i in xrange(obj_array.GetEntries())]
+  to_return = []
+  for tl,level in zip(tlists,contour_levels):
+    cont_list = [ROOT.TGraph(tl[i]) for i in xrange(tl.GetEntries())]
+    for c in cont_list:
+      c.SetName ("contour_"+to3dp.format(level))
+      c.SetTitle("Contour "+to3dp.format(level))
+    to_return.append(cont_list)
+  return to_return
   
 def CopyMarkerToHist(marker,histogram):
   histogram.SetMarkerSize (marker.GetMarkerSize ())
