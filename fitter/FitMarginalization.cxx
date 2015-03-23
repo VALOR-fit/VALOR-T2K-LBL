@@ -5745,6 +5745,31 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
   int bin0 = -999;
   int bin1 = -999;
 
+  int nbinsX = fnbins_param[0];
+  int nbinsY = fnbins_param[1];
+  double min_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(1);
+  double max_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(nbinsX);
+  double min_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(1);
+  double max_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(nbinsY);
+  
+
+  if(valpar0<min_X || valpar0>max_X){
+    cerr << endl;
+    cerr << "Parameter0 " << fnamefreeparam[0] << " is outside the total allowed range" << endl;
+    cerr << "Allowed range: " << min_X << " - " << max_X << endl;
+    cerr << "Param0 value: " << valpar0 << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if(valpar1<min_Y || valpar1>max_Y){
+    cerr << endl;
+    cerr << "Parameter1 " << fnamefreeparam[1] << " is outside the total allowed range" << endl;
+    cerr << "Allowed range: " << min_Y << " - " << max_Y << endl;
+    cerr << "Param1 value: " << valpar1 << endl;
+    cerr << endl;
+    exit(1);
+  }
+
   if(!fIsFit2D){
     bin0 = fhchisq_marg_1D->GetXaxis()->FindBin(valpar0+conv::kASmallNum);
   }
