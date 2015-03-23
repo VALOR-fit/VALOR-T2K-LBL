@@ -34,22 +34,20 @@ conf68 = 2.71
 
 to3dp = "{0:.3f}"
   
-def main(marg_file, tag=None):
+def main(file1, file2, tag=None):
   
   ROOT.gStyle.SetPalette(56);
+  ROOT.gStyle.SetOptStat(0)
+  ROOT.gStyle.SetOptTitle(0)
   
-  mf = ROOT.TFile(marg_file)
-  h_m = mf.Get("h_chisq_dmsq_mixing23_Ave_nh")
+  m_f = ROOT.TFile(file1)
+  h_m = m_f.Get("h_chisq_dmsq_mixing23_Ave_nh")
   assert(h_m)
   h_m.Print()
   min_m = h_m.GetMinimum()
   print min_m
   
-  h_delta_m = ROOT.TH2D(h_m)
-  h_delta_m.Clear()
-  for ix in xrange(h_delta_m.GetXaxis().GetNbins()):
-    for iy in xrange(h_delta_m.GetYaxis().GetNbins()):
-      h_delta_m.SetBinContent(ix,iy,h_m.GetBinContent(ix,iy)-min_m)
+  h_delta_m = GetDeltaHist(h_m)
   
   h_contour_m = ROOT.TH2D(h_delta_m)
   h_contour_m.SetContour(2)
@@ -58,18 +56,18 @@ def main(marg_file, tag=None):
   h_contour_m.SetLineWidth(1)
   h_contour_m.SetLineColor(R.kBlack)
   
-  
-  h_p = mf.Get("h_chisq_dmsq_mixing23_Ave_ih")
+  if file2:
+    m_p = ROOT.TFile(file2)
+  else:
+    m_p=m_f
+    
+  h_p = m_p.Get("h_chisq_dmsq_mixing23_Ave_ih")
   assert(h_p)
   h_p.Print()
   min_p = h_p.GetMinimum()
   print min_p
   
-  h_delta_p = ROOT.TH2D(h_p)
-  h_delta_p.Clear()
-  for ix in xrange(h_delta_p.GetXaxis().GetNbins()):
-    for iy in xrange(h_delta_p.GetYaxis().GetNbins()):
-      h_delta_p.SetBinContent(ix,iy,h_p.GetBinContent(ix,iy)-min_p)
+  h_delta_p = GetDeltaHist(h_p)
   
   h_contour_p = ROOT.TH2D(h_delta_p)
   h_contour_p.SetContour(2)
@@ -134,7 +132,6 @@ def main(marg_file, tag=None):
   h_contour_m.Draw("AXIS")
   for cont_list in contours_p + contours_m:
     for cont in cont_list:
-      print cont.GetName()
       cont.Draw("same")
       
   # Draw markers
@@ -189,6 +186,16 @@ def CopyMarkerToHist(marker,histogram):
   histogram.SetMarkerSize (marker.GetMarkerSize ())
   histogram.SetMarkerStyle(marker.GetMarkerStyle())
   histogram.SetMarkerColor(marker.GetMarkerColor())
+  
+def GetDeltaHist(h):
+  h_delta = ROOT.TH2D(h)
+  h_delta.Reset()
+  minval = h.GetMinimum()
+  for ix in xrange(h_delta.GetXaxis().GetNbins()):
+    for iy in xrange(h_delta.GetYaxis().GetNbins()):
+      h_delta.SetBinContent(ix+1,iy+1,h.GetBinContent(ix+1,iy+1)-minval)
+      
+  return h_delta
   
 if __name__=="__main__":
   main(*sys.argv[1:])
