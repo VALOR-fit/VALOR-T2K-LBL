@@ -151,6 +151,18 @@ def main(marg_file, tag=None):
     plot_name = tag
   
   canv.Print(plot_name+"."+image_format)
+  
+  canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
+  canv_nh.cd()
+  h_delta_m.Draw("colz")
+  marker_m.Draw()
+  canv_nh.Print(plot_name+"_nh."+image_format)
+  
+  canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
+  canv_ih.cd()
+  h_delta_p.Draw("colz")
+  marker_p.Draw()
+  canv_ih.Print(plot_name+"_ih."+image_format)
 
 def GetContours(h):
   dummy_canv = ROOT.TCanvas()
