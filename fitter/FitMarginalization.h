@@ -211,8 +211,8 @@ class FitMarginalization
   void SetBorderDoFit(bool dofit);
   void SetBorderMaxFitNumber(int nfit);
 
-  TH1F *GetChisqMarg1D (void){ return fhchisq_marg_1D;};
-  TH2F *GetChisqMarg2D (void){ return fhchisq_marg_2D;};
+  TH1F *GetChisqMarg1D (void);
+  TH2F *GetChisqMarg2D (void);
   
   TH1F *GetDeltaChisqMarg1D (void){ return fhdeltachisq_marg_1D;};
   TH2F *GetDeltaChisqMarg2D (void){ return fhdeltachisq_marg_2D;};
