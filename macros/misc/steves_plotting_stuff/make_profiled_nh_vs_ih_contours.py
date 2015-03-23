@@ -34,7 +34,7 @@ conf68 = 2.71
 
 to3dp = "{0:.3f}"
   
-def main(file1, file2, tag=None):
+def main(file1, file2=None, tag=None):
   
   ROOT.gStyle.SetPalette(56);
   ROOT.gStyle.SetOptStat(0)
@@ -154,14 +154,24 @@ def main(file1, file2, tag=None):
   
   canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
   canv_nh.cd()
+  h_delta_m.SetContour(100)
   h_delta_m.Draw("colz")
   marker_m.Draw()
+  for g in contours_m[1]:
+    g.SetLineStyle(1)
+    g.SetLineColor(R.kBlue)
+    g.Draw("same")
   canv_nh.Print(plot_name+"_nh."+image_format)
   
   canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
   canv_ih.cd()
+  h_delta_p.SetContour(100)
   h_delta_p.Draw("colz")
   marker_p.Draw()
+  for g in contours_p[1]:
+    g.SetLineStyle(1)
+    g.SetLineColor(R.kBlue)
+    g.Draw("same")
   canv_ih.Print(plot_name+"_ih."+image_format)
 
 def GetContours(h):
