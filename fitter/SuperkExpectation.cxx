@@ -1254,7 +1254,13 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 PhysParamList SuperkExpectation::Tweaks(void) 
 {
   PhysParamList pl;
-
+  this->CopyTweaksTo(pl);
+  return pl;
+}
+//________________________________________________________________________________________
+void SuperkExpectation::CopyTweaksTo(PhysParamList & pl) 
+{
+  pl.Clear();
   //
   // BANFF
   //
@@ -1591,7 +1597,7 @@ PhysParamList SuperkExpectation::Tweaks(void)
 #endif // FSI_BINS=1 
 #endif // MULTIRING FHC
 
-  return pl;
+  return;
 }
 //________________________________________________________________________________________
 void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_banff_fit*/, bool /*all_1Re_eff*/)

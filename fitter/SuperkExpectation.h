@@ -74,6 +74,7 @@ public:
    void PrintSystematics (std::ostream & stream = std::cout) const;
    
    PhysParamList Tweaks(void);
+   void CopyTweaksTo(PhysParamList & pl);
    
    bool Generate (const FitParamList & fp, Option_t * opt = 0);
    
