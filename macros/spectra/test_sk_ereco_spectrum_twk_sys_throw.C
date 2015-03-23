@@ -309,6 +309,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
   //
   SuperkObservation skobs;
   
+      
+  string oscparams = util::AsString(ph.Hypothesis(),
+                       input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+  
   
   // Output histograms
   TH1D * hErecoNominal = 0;
@@ -353,8 +357,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
   string rootmode = "update";
   if(!update_rootfile)
     rootmode = "recreate";
-  string oscparams = util::AsString(ph.Hypothesis(),
-                       input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+
   TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
   
   ofstream * outfilep = 0;
@@ -396,7 +399,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
   int n_ereco_bins = util::NumErecoBins(s);
   
   double * sumsq_per_bin = (double*)calloc(n_ereco_bins,sizeof(double));
-
+  
+  TRandom3 rand(0);
+  
+  PhysParamList pparm;
+  
   // Tweak!
   int iskip = 0;
   for(int iexp = 0; iexp < nexp; iexp++) {
@@ -407,9 +414,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
       cout << "Last 100 experiments took "<<w2.RealTime()<<" seconds"<<endl;
       w2.Start();
     }
-
+    
     if(mode < 100) {
-
+      
       // All
       if(mode == 0) {
         skexp.TweakAllSystematics();
@@ -460,7 +467,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
 
     else if(mode < 999) {//everything else but the stat
       
-      TRandom3 rand(0);
       double tweak = rand.Gaus(0.,1.);
 
       switch(mode) {
@@ -586,17 +592,20 @@ void test_sk_ereco_spectrum_twk_sys_throw
       }//switch(mode)
     }//mode>=100
     
-    PhysParamList pparm = skexp.Tweaks();
+    skexp.CopyTweaksTo(pparm);
+    
     if (reject_unphysical_throws) {
-    bool within_limits = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(pparm);
+      bool within_limits = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(pparm);
       if (!within_limits) {
-        //~ cout<<"Systematic thrown outside physical limits, regenerating"<<std::endl;
+        //cout<<"Systematic thrown outside physical limits, regenerating"<<std::endl;
         iskip++;
         iexp--;
         continue;
       }
       else {done_print = false;}
     }
+    else {done_print = false;}
+    
     
     // generate predictions
     bool applied_negevents_condition = skexp.Generate(ph);
@@ -639,11 +648,14 @@ void test_sk_ereco_spectrum_twk_sys_throw
     double nskint = spectrum->Integral();
     hNsk->Fill(nskint);
     
+    // Store tweaks.
     for (int ibin = 0 ; ibin < n_ereco_bins ; ibin++) {
       double nom   = hErecoNominal->GetBinContent(ibin+1);
       double N = spectrum->GetArray()[ibin];
       sumsq_per_bin[ibin] += (N-nom)*(N-nom);
     }
+    
+    if (save_toy_expts) { delete spectrum; }
     
     //store thrown parameter values
     
@@ -670,8 +682,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
             hSysThrown[ip]->Fill(skexp.GetSuperkDetectorFSI()->CurrentValue(p));
         }
       }
-    }//throws
+    }// save throws
+    
   }//end loop over experiments
+  
   w.Stop();
   cout << iskip << " experiments skipped due to limits" << endl;
 
