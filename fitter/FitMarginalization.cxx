@@ -2254,14 +2254,25 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
   fFirstMinimVal_Y = YvalFirst;
   fLastMinimVal_Y = YvalLast;
 
-  fFirstMinimBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(fFirstMinimVal_X);
-  fLastMinimBin_X  = fhchisq_marg_2D->GetXaxis()->FindBin(fLastMinimVal_X);
-  fFirstMinimBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(fFirstMinimVal_Y);
-  fLastMinimBin_Y  = fhchisq_marg_2D->GetYaxis()->FindBin(fLastMinimVal_Y);
+  if(fIsFit2D){
+    fFirstMinimBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(fFirstMinimVal_X);
+    fLastMinimBin_X  = fhchisq_marg_2D->GetXaxis()->FindBin(fLastMinimVal_X);
+    fFirstMinimBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(fFirstMinimVal_Y);
+    fLastMinimBin_Y  = fhchisq_marg_2D->GetYaxis()->FindBin(fLastMinimVal_Y);
+  }
+  else{
+    fFirstMinimBin_X = fhchisq_marg_1D->FindBin(fFirstMinimVal_X);
+    fLastMinimBin_X  = fhchisq_marg_1D->FindBin(fLastMinimVal_X);
+    fFirstMinimBin_Y = -999;
+    fLastMinimBin_Y  = -999;
+  }
 
-  int nbins_X = fnbins_param[0];
-  int nbins_Y = fnbins_param[1];
-
+  int nbins_X = -999;
+  int nbins_Y = -999;
+  nbins_X= fnbins_param[0];
+  if(fIsFit2D)
+    nbins_Y= fnbins_param[1];
+  
   // If read binary file at each grid point step, the range must be contained in full range
   // while if binary files are first stored and then the chisq is computed, since a binary 
   // file is read and then the corresponding part of chisq is filled, the range must 
@@ -2277,15 +2288,8 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
       cerr << "Set it to " << fmin_bin_sub_param[0]+1 << endl;
       cerr << endl;
       fFirstMinimBin_X = fmin_bin_sub_param[0]+1;
-      fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fFirstMinimBin_X);
-    }
-    if(fFirstMinimBin_Y < fmin_bin_sub_param[1]+1){
-      cerr << endl;
-      cerr << "The first bin of the Y interval is outside the sub-range limit" << endl;
-      cerr << "Set it to " << fmin_bin_sub_param[1]+1 << endl;
-      cerr << endl;
-      fFirstMinimBin_Y = fmin_bin_sub_param[1]+1;
-      fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstMinimBin_Y);
+    if(fIsFit2D) fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fFirstMinimBin_X);
+    else         fFirstMinimVal_X = fhchisq_marg_1D->GetBinLowEdge(fFirstMinimBin_X);
     }
     if(fLastMinimBin_X > fmax_bin_sub_param[0]+1){
       cerr << endl;
@@ -2293,15 +2297,28 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
       cerr << "Set it to " << fmax_bin_sub_param[0]+1 << endl;
       cerr << endl;
       fLastMinimBin_X = fmax_bin_sub_param[0]+1;
-      fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fLastMinimBin_X);
+      if(fIsFit2D) fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fLastMinimBin_X);
+      else         fLastMinimVal_X = fhchisq_marg_1D->GetBinLowEdge(fLastMinimBin_X);
     }
-    if(fLastMinimBin_Y > fmax_bin_sub_param[1]+1){
-      cerr << endl;
-      cerr << "The last bin of the Y interval is outside the sub-range limit" << endl;
-      cerr << "Set it to " << fmax_bin_sub_param[1]+1 << endl;
-      cerr << endl;
-      fLastMinimBin_Y = fmax_bin_sub_param[1]+1;
-      fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastMinimBin_Y);
+    if(fIsFit2D){
+      if(fFirstMinimBin_Y < fmin_bin_sub_param[1]+1){
+	cerr << endl;
+	cerr << "The first bin of the Y interval is outside the sub-range limit" << endl;
+	cerr << "Set it to " << fmin_bin_sub_param[1]+1 << endl;
+	cerr << endl;
+	fFirstMinimBin_Y = fmin_bin_sub_param[1]+1;
+	if(fIsFit2D) fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstMinimBin_Y);
+	else         fFirstMinimVal_Y = fhchisq_marg_1D->GetBinLowEdge(fFirstMinimBin_Y);
+      }
+      if(fLastMinimBin_Y > fmax_bin_sub_param[1]+1){
+	cerr << endl;
+	cerr << "The last bin of the Y interval is outside the sub-range limit" << endl;
+	cerr << "Set it to " << fmax_bin_sub_param[1]+1 << endl;
+	cerr << endl;
+	fLastMinimBin_Y = fmax_bin_sub_param[1]+1;
+	if(fIsFit2D) fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastMinimBin_Y);
+	else         fLastMinimVal_Y = fhchisq_marg_1D->GetBinLowEdge(fLastMinimBin_Y);
+      }
     }
   }
 
@@ -2315,14 +2332,6 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
       fFirstMinimBin_X = 1;
       fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fFirstMinimBin_X);
     }
-    if(fFirstMinimBin_Y < 1){
-      cerr << endl;
-      cerr << "The first bin of the Y interval is outside the histogram limit" << endl;
-      cerr << "Set it to 1" << endl;
-      cerr << endl;
-      fFirstMinimBin_Y = 1;
-      fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstMinimBin_Y);
-    }
     if(fLastMinimBin_X > nbins_X){
       cerr << endl;
       cerr << "The last bin of the X interval is outside the histogram limit" << endl;
@@ -2331,13 +2340,23 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
       fLastMinimBin_X = nbins_X;
       fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fLastMinimBin_X);
     }
-    if(fLastMinimBin_Y > nbins_Y){
-      cerr << endl;
-      cerr << "The last bin of the Y interval is outside the histogram limit" << endl;
-      cerr << "Set it to the number of bins in the histogram:" << nbins_Y << endl;
-      cerr << endl;
-      fLastMinimBin_Y = nbins_Y;
-      fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastMinimBin_Y);
+    if(fIsFit2D){
+      if(fFirstMinimBin_Y < 1){
+	cerr << endl;
+	cerr << "The first bin of the Y interval is outside the histogram limit" << endl;
+	cerr << "Set it to 1" << endl;
+	cerr << endl;
+	fFirstMinimBin_Y = 1;
+	fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstMinimBin_Y);
+      }
+      if(fLastMinimBin_Y > nbins_Y){
+	cerr << endl;
+	cerr << "The last bin of the Y interval is outside the histogram limit" << endl;
+	cerr << "Set it to the number of bins in the histogram:" << nbins_Y << endl;
+	cerr << endl;
+	fLastMinimBin_Y = nbins_Y;
+	fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastMinimBin_Y);
+      }
     }
   }
   
@@ -5394,10 +5413,18 @@ void FitMarginalization::SetGridStartRange(double minX,double maxX,double minY,d
   fGridStartMinVal_Y = minY+conv::kASmallNum;
   fGridStartMaxVal_Y = maxY+conv::kASmallNum;
 
-  fGridStartMinBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(minX+conv::kASmallNum);
-  fGridStartMaxBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(maxX+conv::kASmallNum);
-  fGridStartMinBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(minY+conv::kASmallNum);
-  fGridStartMaxBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(maxY+conv::kASmallNum);
+  if(!fIsFit2D){
+    fGridStartMinBin_X = fhchisq_marg_1D->FindBin(minX+conv::kASmallNum);
+    fGridStartMaxBin_X = fhchisq_marg_1D->FindBin(maxX+conv::kASmallNum);
+    fGridStartMinBin_Y = -999;
+    fGridStartMaxBin_Y = -999;
+  }
+  else{
+    fGridStartMinBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(minX+conv::kASmallNum);
+    fGridStartMaxBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(maxX+conv::kASmallNum);
+    fGridStartMinBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(minY+conv::kASmallNum);
+    fGridStartMaxBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(maxY+conv::kASmallNum);
+  }
   return;
 }
 //________________________________________________________________________________________
@@ -5454,18 +5481,33 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
     if( (fGridStartMinBin_X < fFirstMinimBin_X) || 
 	(fGridStartMinBin_X > fLastMinimBin_X) ||
 	(fGridStartMaxBin_X < fFirstMinimBin_X) || 
-	(fGridStartMaxBin_X > fLastMinimBin_X) ||
-	
-	(fGridStartMinBin_Y < fFirstMinimBin_Y) || 
-	(fGridStartMinBin_Y > fLastMinimBin_Y) ||
-	(fGridStartMaxBin_Y < fFirstMinimBin_Y) || 
-	(fGridStartMaxBin_Y > fLastMinimBin_Y) )
+	(fGridStartMaxBin_X > fLastMinimBin_X) 
+	)
       {
 	cerr << endl;
-	cerr << "Wrong input range to get the minimization starting points" << endl;
+	cerr << "Wrong input range param0 to get the minimization starting points" << endl;
 	cerr << endl;
 	exit(1);
       }
+
+
+    if(fIsFit2D){
+      if( (fGridStartMinBin_Y < fFirstMinimBin_Y) || 
+	  (fGridStartMinBin_Y > fLastMinimBin_Y)  ||
+	  (fGridStartMaxBin_Y < fFirstMinimBin_Y) || 
+	  (fGridStartMaxBin_Y > fLastMinimBin_Y) )
+	{
+	  cerr << endl;
+	  cerr << "Wrong input range param1 to get the minimization starting points" << endl;
+	  cerr << endl;
+	  exit(1);
+	}
+    }
+  
+
+
+
+
   }
 
   cout << endl;
@@ -5510,16 +5552,11 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
       int bs_y = (int)r_Y;
       //cout << "bs_x = " << bs_x << " - bs_y = " << bs_y << endl;
       
-      if(!fIsFit2D){
-	//bincont = fChisqMargVArray->GetEntry(bs_x-1,fmin_bin_sub_param[1]);
-	//if(bincont<=0.) bincont = CalcChisqMargPt(skobs_data,bs_x-1,fmin_bin_sub_param[1],readbinary);
+      if(!fIsFit2D) 
 	bincont = CalcChisqMargPtRead(skobs_data,bs_x-1,fmin_bin_sub_param[1],readbinary);
-      }
-      else{
-	//bincont = fChisqMargVArray->GetEntry(bs_x-1,bs_y-1);
-	//if(bincont<=0.) bincont = CalcChisqMargPt(skobs_data,bs_x-1,bs_y-1,readbinary);
+      else
 	bincont = CalcChisqMargPtRead(skobs_data,bs_x-1,bs_y-1,readbinary);
-      }
+      
       if(bincont < ChisqMinStart){
 	ChisqMinStart = bincont;
 	binStart_X = bs_x;
@@ -5761,7 +5798,7 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
     cerr << endl;
     exit(1);
   }
-  if(valpar1<min_Y || valpar1>max_Y){
+  if( fIsFit2D && (valpar1<min_Y || valpar1>max_Y) ){
     cerr << endl;
     cerr << "Parameter1 " << fnamefreeparam[1] << " is outside the total allowed range" << endl;
     cerr << "Allowed range: " << min_Y << " - " << max_Y << endl;
@@ -5786,10 +5823,8 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
   // read binary file.
   if(!readbinary){
     if(
-       bin0 < (fmin_bin_sub_param[0]+1) || 
-       bin1 < (fmin_bin_sub_param[1]+1) || 
-       bin0 > (fmax_bin_sub_param[0]+1) || 
-       bin1 > (fmax_bin_sub_param[1]+1) 
+       (bin0 < (fmin_bin_sub_param[0]+1) || bin0 > (fmax_bin_sub_param[0]+1)) || 
+       ( fIsFit2D && ( bin1<(fmin_bin_sub_param[1]+1) || bin1>(fmax_bin_sub_param[1]+1) ) ) 
        ){
       
       cout << endl;
@@ -5799,8 +5834,10 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
     }
   }
 
-  double chisqtrue = CalcChisqMargPtRead(skobs,bin0-1,bin1-1,readbinary);
-  
+  double chisqtrue = -999.;
+  if(fIsFit2D) chisqtrue = CalcChisqMargPtRead(skobs,bin0-1,bin1-1,readbinary);
+  else chisqtrue = CalcChisqMargPtRead(skobs,bin0-1,fmin_bin_sub_param[1],readbinary);
+
   return chisqtrue;
 }
 //________________________________________________________________________________________
@@ -5915,16 +5952,60 @@ int FitMarginalization::GetFileIDRead(int ipar0,int ipar1){
 
 
 
-void FitMarginalization::CalcBestFitErrors(){
+double FitMarginalization::CalcBestFitErrors(string method){
   
-  // Calculate the best-fit errors as the interval between the points
-  // ChisqMarg = 
+  double error = -999.;
+
+  if(method=="HESSE"){
+    cout << endl;
+    cout << "Compute HESSE fit errors" << endl;
+    cout << endl;
+    
+    //return this->CalcBestFitErrorsMINOS();
+ }
+  else if(method=="MINOS"){
+    cout << endl;
+    cout << "Compute MINOS fit errors" << endl;
+    cout << endl;
+
+    //return this->CalcBestFitErrorsHESSE();
+  }
+  else{
+    cerr << endl;
+    cerr << "Method " << method << " is not available for fit error computation" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  return -999.;
+}
+//________________________________________________________________________________________
+
+
+
+
+
+double FitMarginalization::CalcBestFitErrorsMINOS(){
+
+  double error = -999.;
+
   if(fIsFit2D){
   }
-
   else{
   }
 
-  return;
+  return error;
+}
+
+
+
+
+
+//________________________________________________________________________________________
+double FitMarginalization::CalcBestFitErrorsHESSE(){
+  double error = -999.;
+  return error;
 }
 //________________________________________________________________________________________
+
+
+
