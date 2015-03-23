@@ -27,6 +27,7 @@
 #  --mix-param-choice       : sinsq2theta or sinsqtheta
 #  --mix-param-octant       : one or two
 #  --dcp-value              : Number of pi to use as value of deltacp (when deltacp is not fit for). Default 0.
+#  --rethrow-unphysical     : Check toys are physical and rethrow if not. Default true.
 #
 # C.Andreopoulos
 #---------------------------------------------------------------------------------------------------------------------------- 
@@ -36,52 +37,60 @@ use File::Path;
 
 $iarg=0;
 foreach (@ARGV) {
-  if($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
-  if($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
-  if($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
-  if($_ eq '--firstexpt'              ) { $firstexpt             = $ARGV[$iarg+1]; }
-  if($_ eq '--lastexpt'               ) { $lastexpt              = $ARGV[$iarg+1]; }
-  if($_ eq '--xml-file'               ) { $xmlfile               = $ARGV[$iarg+1]; }
-  if($_ eq '--use-xml-file'           ) { $using_xml_file        = 0;              }
-  if($_ eq '--dotoys'                 ) { $dotoys                = $ARGV[$iarg+1]; }
+  if($iarg % 2 == 1) {$iarg++; next;}
+    
+  if   ($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--firstexpt'              ) { $firstexpt             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--lastexpt'               ) { $lastexpt              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--xml-file'               ) { $xmlfile               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--use-xml-file'           ) { $using_xml_file        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dotoys'                 ) { $dotoys                = $ARGV[$iarg+1]; }
 
-  if($_ eq '--input_mixing12'         ) { $input_mixing12        = $ARGV[$iarg+1]; }
-  if($_ eq '--input_mixing13'         ) { $input_mixing13        = $ARGV[$iarg+1]; }
-  if($_ eq '--input_mixing23'         ) { $input_mixing23        = $ARGV[$iarg+1]; }
-  if($_ eq '--input_deltacp'          ) { $input_deltacp         = $ARGV[$iarg+1]; }
-  if($_ eq '--input_dm12sq'           ) { $input_dm12sq          = $ARGV[$iarg+1]; }
-  if($_ eq '--input_dm23sq'           ) { $input_dm23sq          = $ARGV[$iarg+1]; }
-  if($_ eq '--input_mixing12_bar'     ) { $input_mixing12_bar    = $ARGV[$iarg+1]; }
-  if($_ eq '--input_mixing13_bar'     ) { $input_mixing13_bar    = $ARGV[$iarg+1]; }
-  if($_ eq '--input_mixing23_bar'     ) { $input_mixing23_bar    = $ARGV[$iarg+1]; }
-  if($_ eq '--input_deltacp_bar'      ) { $input_deltacp_bar     = $ARGV[$iarg+1]; }
-  if($_ eq '--input_dm12sq_bar'       ) { $input_dm12sq_bar      = $ARGV[$iarg+1]; }
-  if($_ eq '--input_dm23sq_bar'       ) { $input_dm23sq_bar      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-mixing12'         ) { $input_mixing12        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-mixing13'         ) { $input_mixing13        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-mixing23'         ) { $input_mixing23        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-deltacp'          ) { $input_deltacp         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-dm12sq'           ) { $input_dm12sq          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-dm23sq'           ) { $input_dm23sq          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-mixing12-bar'     ) { $input_mixing12_bar    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-mixing13-bar'     ) { $input_mixing13_bar    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-mixing23-bar'     ) { $input_mixing23_bar    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-deltacp-bar'      ) { $input_deltacp_bar     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-dm12sq-bar'       ) { $input_dm12sq_bar      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-dm23sq-bar'       ) { $input_dm23sq_bar      = $ARGV[$iarg+1]; }
 
-  if($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
 
-  if($_ eq '--stat_fluctuations'      ) { $stat_fluctuations     = $ARGV[$iarg+1]; }
-  if($_ eq '--tweak_systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
-  if($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
-  if($_ eq '--fit-option'             ) { $fitoption             = $ARGV[$iarg+1]; }
-  if($_ eq '--store-toy-expts'        ) { $store_toy_expts       = 1;              }
-  if($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = 1;              }
-  if($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
-  if($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
-  if($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
-  if($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
-  if($_ eq '--dcp-value'              ) { $dcp_value             = $ARGV[$iarg+1]; }
-  if($_ eq '--reactor'                ) { $reactor               = $ARGV[$iarg+1]; }
-  if($_ eq '--tolerance'              ) { $tolerance             = $ARGV[$iarg+1]; }
-  if($_ eq '--optfixparams'           ) { $optfixparams          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--stat-fluctuations'      ) { $stat_fluctuations     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fit-option'             ) { $fitoption             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--store-toy-expts'        ) { $store_toy_expts       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--store-bestfit-spectra'  ) { $store_bestfit_spectra = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dcp-value'              ) { $dcp_value             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--reactor'                ) { $reactor               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tolerance'              ) { $tolerance             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--optfixparams'           ) { $optfixparams          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--rethrow-unphysical'     ) { $rethrow_unphysical    = $ARGV[$iarg+1]; }
 
-  if($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
-  if($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
-  if($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
-  if($_ eq '--grid-local-dir'         ) { $grid_local_dir        = $ARGV[$iarg+1]; }
-  if($_ eq '--proxy-id'               ) { $proxy_id              = $ARGV[$iarg+1]; }
-  if($_ eq '--gridpath'               ) { $gridpath              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--grid-local-dir'         ) { $grid_local_dir        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--proxy-id'               ) { $proxy_id              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--gridpath'               ) { $gridpath              = $ARGV[$iarg+1]; }
+  
+  else {
+    print "Unrecognised argument ".$_."\n"; exit;
+  }
   $iarg++;
+  
 }
 
 #die("Please specify a toy experiment file using --toy-expts-file") unless defined $toyexptsfile;
@@ -116,12 +125,13 @@ $dotoys                 = 1                                    unless defined $d
 #$input_dm23sq_bar       = 2.51E-3                              unless defined $input_dm23sq_bar;
 
 # joint fit w/ reactors
-$input_mixing12         = -99                                  unless defined $input_mixing12_bar;
-$input_mixing13         = 0.0248                               unless defined $input_mixing13_bar;
-$input_mixing23         = 0.527                                unless defined $input_mixing23_bar;
-$input_deltacp          = -1.55                                unless defined $input_deltacp_bar;
-$input_dm12sq           = -99                                  unless defined $input_dm12sq_bar;
-$input_dm23sq           = 2.51E-3                              unless defined $input_dm23sq_bar;
+$input_mixing12         = -99                                  unless defined $input_mixing12;
+$input_mixing13         = 0.0248                               unless defined $input_mixing13;
+$input_mixing23         = 0.527                                unless defined $input_mixing23;
+$input_deltacp          = -1.55                                unless defined $input_deltacp;
+$input_dm12sq           = -99                                  unless defined $input_dm12sq;
+$input_dm23sq           = 2.51E-3                              unless defined $input_dm23sq;
+
 $input_mixing12_bar     = -99                                  unless defined $input_mixing12_bar;
 $input_mixing13_bar     = 0.0248                               unless defined $input_mixing13_bar;
 $input_mixing23_bar     = 0.527                                unless defined $input_mixing23_bar;
@@ -136,8 +146,8 @@ $config_file            = "analysis_configuration_1.7E20.xml"           unless d
 #$config_file            = "analysis_configuration_2.5E20.xml"           unless defined $config_file;
 #$config_file            = "analysis_configuration_2.5E20_prefit.xml"           unless defined $config_file;
  
-$stat_fluct              = 1                                    unless defined $stat_fluctuations;
-$twk_systematics         = 1                                    unless defined $tweak_systematics;
+$stat_fluctuations       = 1                                    unless defined $stat_fluctuations;
+$tweak_systematics       = 1                                    unless defined $tweak_systematics;
 
 #$fitparamlist           = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;
 #$fitparamlist           = "nuosc3f_12fix"                    unless defined $fitparamlist;
@@ -164,6 +174,7 @@ $mixparamoctant         = "one"                                  unless defined 
 $dcp_value              = 0                                      unless defined $dcp_value;
 $reactor                = 0                                      unless defined $reactor;
 $tolerance              = 0.01                                   unless defined $tolerance;
+$rethrow_unphysical     = true                                   unless defined $rethrow_unphysical;
 
 #$optfixparams            = "mixing23,dmsq32,dmsq12,mixing13,mixing12"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
 #$optfixparams            = "mixing23,dmsq32,dmsq12,mixing13,mixing12,deltacp"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
@@ -200,7 +211,7 @@ while($irun < $nruns) {
   else                     { $macro_dir = $softw_dir;    }
 
   $program = "root2k ";
-  $arguments = "-q -l -b \'$macro_dir/macros/fit/run_fit_xml_toys_joint_bar.C(\"$tag\",$irun,$first,$last,\"$xmlfile\",$using_xml_file,$dotoys,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$input_mixing12_bar,$input_mixing13_bar,$input_mixing23_bar,$input_deltacp_bar,$input_dm12sq_bar,$input_dm23sq_bar,\"$config_file\",$stat_fluct,$twk_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$optfixparams\")\'";
+  $arguments = "-q -l -b \'$macro_dir/macros/fit/run_fit_xml_toys_joint_bar.C(\"$tag\",$irun,$first,$last,\"$xmlfile\",$using_xml_file,$dotoys,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$input_mixing12_bar,$input_mixing13_bar,$input_mixing23_bar,$input_deltacp_bar,$input_dm12sq_bar,$input_dm23sq_bar,\"$config_file\",$stat_fluctuations,$tweak_systematics,\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$optfixparams\",$rethrow_unphysical)\'";
   $command = "$program $arguments";
   
   
