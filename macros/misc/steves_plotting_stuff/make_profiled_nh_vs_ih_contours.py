@@ -75,7 +75,7 @@ def main(marg_file, tag=None):
   h_contour_p.SetContourLevel(0,conf68)
   h_contour_p.SetLineWidth(1)
   h_contour_p.SetLineStyle(2)
-  h_contour_m.SetLineColor(R.kBlack)
+  h_contour_p.SetLineColor(R.kBlack)
   
   contours_p = GetContours(h_contour_p)
   contours_m = GetContours(h_contour_m)
@@ -90,6 +90,41 @@ def main(marg_file, tag=None):
   for g in contours_m[0]: g.SetLineStyle(2)
   for g in contours_m[1]: g.SetLineStyle(2)
   
+  # Pick bestfit points
+  bf_bin_p = h_contour_p.GetMinimumBin()
+  bf_bin_m = h_contour_m.GetMinimumBin()
+  
+  bf_chisq_p = h_contour_p.GetBinContent(bf_bin_p)
+  bf_chisq_m = h_contour_p.GetBinContent(bf_bin_m)
+  
+  x_bin_p = ROOT.Long() ; y_bin_p = ROOT.Long()
+  x_bin_m = ROOT.Long() ; y_bin_m = ROOT.Long()
+  dummy = ROOT.Long()
+  
+  h_contour_p.GetBinXYZ(bf_bin_p,x_bin_p,y_bin_p,dummy)
+  h_contour_m.GetBinXYZ(bf_bin_m,x_bin_m,y_bin_m,dummy)
+  
+  bf_x_p = h_contour_p.GetXaxis().GetBinCenter(x_bin_p)
+  bf_x_m = h_contour_m.GetXaxis().GetBinCenter(x_bin_m)
+  bf_y_p = h_contour_p.GetYaxis().GetBinCenter(y_bin_p)
+  bf_y_m = h_contour_m.GetYaxis().GetBinCenter(y_bin_m)
+  
+  marker_p = ROOT.TMarker(bf_x_p,bf_y_p,ROOT.kFullStar)
+  marker_m = ROOT.TMarker(bf_x_m,bf_y_m,ROOT.kFullStar)
+  
+  if (bf_chisq_p > bf_chisq_m):
+    marker_m.SetMarkerStyle(ROOT.kOpenStar)
+  else:
+    marker_p.SetMarkerStyle(ROOT.kOpenStar)
+    
+  marker_p.SetMarkerColor(ROOT.kViolet);
+  marker_m.SetMarkerColor(ROOT.kBlue+1);
+  marker_p.SetMarkerSize(1.5);
+  marker_m.SetMarkerSize(1.5);
+  
+  CopyMarkerToHist(marker_p,h_contour_p)
+  CopyMarkerToHist(marker_m,h_contour_m)
+  
   # Start drawing
   canv = ROOT.TCanvas("canv1","canv1",1280,720)
   canv.cd()
@@ -98,13 +133,16 @@ def main(marg_file, tag=None):
   for cont_list in contours_p + contours_m:
     for cont in cont_list:
       cont.Draw("same")
+      
+  # Draw markers
+  marker_p.Draw()
+  marker_m.Draw()
   
   # Make legend
   
-  
   legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
-  legend.AddEntry(h_contour_m,"NH")
-  legend.AddEntry(h_contour_p,"IH")
+  legend.AddEntry(h_contour_m,"NH","lp")
+  legend.AddEntry(h_contour_p,"IH","lp")
   legend.Draw()
   
   if tag is None:
@@ -126,6 +164,11 @@ def GetContours(h):
   for tl in tlists:
     l.append([ROOT.TGraph(tl[i]) for i in xrange(tl.GetEntries())])
   return l
+  
+def CopyMarkerToHist(marker,histogram):
+  histogram.SetMarkerSize (marker.GetMarkerSize ())
+  histogram.SetMarkerStyle(marker.GetMarkerStyle())
+  histogram.SetMarkerColor(marker.GetMarkerColor())
   
 if __name__=="__main__":
   main(*sys.argv[1:])
