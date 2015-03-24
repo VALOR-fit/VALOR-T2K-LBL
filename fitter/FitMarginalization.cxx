@@ -1245,6 +1245,12 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 //________________________________________________________________________________________
 void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
 
+
+
+  //const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();  
+
+
+
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
   
@@ -6120,6 +6126,7 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
   double error = -999.;
   const double CritChisq_1D = 1.;
+  const double CritChisq_2D = 2.3;
   const int Nh = 1.;
 
   this->BuildDeltaChisqMarg();
@@ -6128,15 +6135,21 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
   if(!fIsFit2D){
     
-    // 1D discrete derivative: [ d2X^2 = X(xbf+h) - 2X^2(xbf) + X^2(xbf-h) ] / h^2
+    // 1D discrete deriv: d2X^2/dx^2 = [ X^2(xbf+h) - 2X^2(xbf) + X^2(xbf-h) ] / h^2
     
-    double chisq_bf = this->GetChisqBestFit(); // X(xbf+h) 
-    int bin_bf = fhchisq_marg_1D->FindBin(fparam_bf[0]+conv::kASmallNum);    
-    double chisq_minus = fhchisq_marg_1D->GetBinContent(bin_bf-Nh); // X^2(xbf-h)
-    double chisq_plus = fhchisq_marg_1D->GetBinContent(bin_bf+Nh); // X^2(xbf-h)
-    double h = Nh*fhchisq_marg_1D->GetBinWidth(bin_bf);    
+    int bin_bf = fhdeltachisq_marg_1D->FindBin(fparam_bf[0]+conv::kASmallNum);    
+    double chisq_bf = fhdeltachisq_marg_1D->GetBinContent(bin_bf); // X^2(xbf) 
+    double chisq_minus = fhdeltachisq_marg_1D->GetBinContent(bin_bf-Nh); // X^2(xbf-h)
+    double chisq_plus = fhdeltachisq_marg_1D->GetBinContent(bin_bf+Nh); // X^2(xbf+h)
+    double h = Nh*fhdeltachisq_marg_1D->GetBinWidth(bin_bf);    
     double deriv2nd = (chisq_plus - 2*chisq_bf + chisq_minus) / ( (double)Nh*h * (double)Nh*h );
 
+    // cout << endl;
+    // cout << "chisq_bf = " << chisq_bf << endl;
+    // cout << "chisq_minus = " << chisq_minus << endl;
+    // cout << "chisq_plus = " << chisq_plus << endl;
+    // cout << endl;
+    
     // A = 0.5 * (1D discrete derivative)
     double A = 0.5 * deriv2nd;
     
@@ -6149,6 +6162,70 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
   // 2D HESSE error
 
   else{
+    
+    cout << endl;
+    cout << "2D HESSE error" << endl;
+    cout << endl;    
+
+    int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
+    int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
+
+    double chisq_bf = fhdeltachisq_marg_2D->GetBinContent      (bin_bf0,    bin_bf1);     // X^2( x0bf   , x1bf    ) 
+    
+    double chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);     // X^2( x0bf-h0, x1bf    )
+    double chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);     // X^2( x0bf+h0, x1bf    )
+    
+    double chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);  // X^2( x0bf   , x1bf-h1 )
+    double chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);  // X^2( x0bf   , x1bf+h1 )
+    
+    double chisq_minus01 = fhdeltachisq_marg_2D->GetBinContent (bin_bf0-Nh, bin_bf1-Nh);  // X^2( x0bf-h1, x1bf-h1 )
+    double chisq_plus01 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);  // X^2( x0bf+h1, x1bf+h1 )
+    
+    double h0 = Nh*fhdeltachisq_marg_2D->GetXaxis()->GetBinWidth(bin_bf0);    
+    double h1 = Nh*fhdeltachisq_marg_2D->GetYaxis()->GetBinWidth(bin_bf1);    
+
+    cout << endl;
+    cout << "bin_bf0 = " << bin_bf0 << endl;
+    cout << "bin_bf1 = " << bin_bf1 << endl;
+    cout << "chisq_bf = " << chisq_bf << endl;
+    cout << "chisq_minus0 = " << chisq_minus0 << endl;
+    cout << "chisq_plus0 = " << chisq_plus0 << endl;
+    cout << "chisq_minus1 = " << chisq_minus1 << endl;
+    cout << "chisq_plus1 = " << chisq_plus1 << endl;
+    cout << "chisq_minus01 = " << chisq_minus01 << endl;
+    cout << "chisq_plus01 = " << chisq_plus01 << endl;
+    cout << "h0 = " << h0 << endl;
+    cout << "h1 = " << h1 << endl;
+    cout << endl;
+
+    // 2D discrete deriv 0: d2X^2/dx0^2 = [ X^2(x0bf+h0,x1bf) - 2X^2(x0bf,x1bf) + X^2(x0bf-h0,x1bf) ] / h0^2
+    
+    double deriv2nd_0 = (chisq_plus0 - 2*chisq_bf + chisq_minus0) / ( (double)Nh*h0 * (double)Nh*h0 );
+    
+    // 2D discrete deriv 1: d2X^2/dx1^2 = [ X^2(x0bf,x1bf+h1) - 2X^2(x0bf,x1bf) + X^2(x0bf,x1bf-h1) ] / h1^2
+
+    double deriv2nd_1 = (chisq_plus1 - 2*chisq_bf + chisq_minus1) / ( (double)Nh*h1 * (double)Nh*h1 );
+
+    // 2D discrete deriv 01: d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h,x0bf) - X^2(x0bf,x1bf+h1) + X^2(x0bf,x1bf)] / h0*h1
+    
+    double deriv2nd_01 = (chisq_plus01 - chisq_plus0 - chisq_plus1 + chisq_bf) / ( (double)Nh*h0 * (double)Nh*h1 );
+	
+    // A = 0.5 * deriv2nd_0
+    // B = 0.5 * deriv2nd_1
+    // 2C = deriv2nd_1
+
+    double A = 0.5 * deriv2nd_0;
+    double B = 0.5 * deriv2nd_1;
+    double C = 0.5 * deriv2nd_01;
+
+    // 
+    
+    double x0err = sqrt( CritChisq_2D ) / sqrt( A - C*C/B );
+    double x1err = sqrt( CritChisq_2D ) / sqrt( B - C*C/A );
+
+    fparam_bf_errsym[0] = x0err; // symmetric error
+    fparam_bf_errsym[1] = x1err; 
+
   }
 
   return;
