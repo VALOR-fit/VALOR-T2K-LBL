@@ -132,19 +132,19 @@ class FitMarginalization
   
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
-  double CalcBestFitErrors(SuperkObservation *skobs,string method="MINOS",bool readbinary=false); // calculate the best-fit errors
-  double CalcBestFitErrorsMINOS(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
-  double CalcBestFitErrorsHESSE(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
+  void CalcBestFitErrors(SuperkObservation *skobs,string method="MINOS",bool readbinary=false); // calculate the best-fit errors
+  void CalcBestFitErrorsMINOS(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
+  void CalcBestFitErrorsHESSE(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
 
   void MinimizeHisto(TH1F *hInChisqMarg);
   void MinimizeHisto(TH2F *hInChisqMarg);
   void MinimizeHisto(void);
-
-  float GetChisqBestFit(void) const      { return fchisq_bf;};
-  float GetParamBestFit(int ParId) const { return fparam_bf[ParId];};
-  float GetParamBestFitErrNeg(int ParId) const { return fparam_bf_errneg[ParId];};
-  float GetParamBestFitErrPos(int ParId) const { return fparam_bf_errpos[ParId];};
-  float GetParamBestFitErrSym(int ParId) const { return fparam_bf_errsym[ParId];};
+  
+  double GetChisqBestFit(void) const      { return fchisq_bf;};
+  double GetParamBestFit(int ParId) const { return fparam_bf[ParId];};
+  double GetParamBestFitErrNeg(int ParId) const { return fparam_bf_errneg[ParId];};
+  double GetParamBestFitErrPos(int ParId) const { return fparam_bf_errpos[ParId];};
+  double GetParamBestFitErrSym(int ParId) const { return fparam_bf_errsym[ParId];};
   
   void PrintBestFit(void);
 
@@ -211,8 +211,8 @@ class FitMarginalization
   void SetBorderDoFit(bool dofit);
   void SetBorderMaxFitNumber(int nfit);
 
-  TH1F *GetChisqMarg1D (void);
-  TH2F *GetChisqMarg2D (void);
+  TH1F *GetChisqMarg1D (void){ return fhchisq_marg_1D;};
+  TH2F *GetChisqMarg2D (void){ return fhchisq_marg_2D;};
   
   TH1F *GetDeltaChisqMarg1D (void){ return fhdeltachisq_marg_1D;};
   TH2F *GetDeltaChisqMarg2D (void){ return fhdeltachisq_marg_2D;};

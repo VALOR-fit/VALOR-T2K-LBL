@@ -82,6 +82,8 @@ FitMarginalization::FitMarginalization()
   fhchisq_marg_2D                     = 0;
   fhchisq_marg_1D_Step                = 0;
   fhchisq_marg_2D_Step                = 0;
+  fhdeltachisq_marg_1D                = 0;
+  fhdeltachisq_marg_2D                = 0;
   fhmap_chisqrange_fileid_1D          = 0;
   fhmap_chisqrange_fileid_2D          = 0;
   fparm                              = 0;
@@ -108,8 +110,16 @@ void FitMarginalization::Init(){
 
   fSeed = 999;
 
-  fchisq_bf = 9999999.;
-  
+  fchisq_bf = conv::kALargeNum;
+  fparam_bf_errpos[0] = -999;
+  fparam_bf_errpos[1] = -999;
+  fparam_bf_errneg[0] = -999;
+  fparam_bf_errneg[1] = -999;
+  fparam_bf_errsym[0] = -999;
+  fparam_bf_errsym[1] = -999;
+  fparam_bf[0] = -999;
+  fparam_bf[1] = -999;
+
   sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_oscpar%d_MH%s%s%s");  
   
   fMergeInputFiles_Called = true; // false the first time MergeInputFiles() is calles
@@ -169,6 +179,9 @@ void FitMarginalization::Init(){
   fhchisq_marg_2D->GetXaxis()->SetTitle(Xtitle);
   fhchisq_marg_2D->GetYaxis()->SetTitle(Ytitle);
 
+  fhdeltachisq_marg_1D = 0;
+  fhdeltachisq_marg_2D = 0;
+  
   cout << endl;
   cout << "Initialize VALORArray fToyMargErecoVArray with:"<< endl;
   cout << "fntoys_marg = " << fntoys_marg << endl;
@@ -272,6 +285,8 @@ void FitMarginalization::CleanUp(void){
   if (fhchisq_marg_2D                   ) { delete fhchisq_marg_2D                   ; fhchisq_marg_2D                    = 0;}
   if (fhchisq_marg_1D_Step              ) { delete fhchisq_marg_1D_Step              ; fhchisq_marg_1D_Step               = 0;}
   if (fhchisq_marg_2D_Step              ) { delete fhchisq_marg_2D_Step              ; fhchisq_marg_2D_Step               = 0;}
+  if (fhdeltachisq_marg_1D              ) { delete fhdeltachisq_marg_1D              ; fhdeltachisq_marg_1D               = 0;}
+  if (fhdeltachisq_marg_2D              ) { delete fhdeltachisq_marg_2D              ; fhdeltachisq_marg_2D               = 0;}
   if (fhmap_chisqrange_fileid_1D        ) { delete fhmap_chisqrange_fileid_1D        ; fhmap_chisqrange_fileid_1D         = 0;}
   if (fhmap_chisqrange_fileid_2D        ) { delete fhmap_chisqrange_fileid_2D        ; fhmap_chisqrange_fileid_2D         = 0;}
   if (fparm                             ) { delete fparm                             ; fparm                              = 0;}
@@ -865,80 +880,83 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   return;
 }
 //________________________________________________________________________________________
-//~ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data){
-  //~ 
-  //~ int NtoysTot=0;
-  //~ int NparTot0=0;
-  //~ int NparTot1=0;
- //~ 
-  //~ cout << endl;
-  //~ cout << "Fill marginalized Chisq in the parameter range:" << endl
-       //~ << "bin: ["  
-       //~ << fmin_bin_sub_param[0]
-       //~ << ","
-       //~ << fmax_bin_sub_param[0]
-       //~ << "]"
-       //~ << endl
-       //~ << fnamefreeparam[0] << ": " 
-       //~ << "[" 
-       //~ << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
-       //~ << ","
-       //~ << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
-       //~ << "]"
-       //~ << endl;
-  //~ cout << "bin: ["  
-       //~ << fmin_bin_sub_param[1]
-       //~ << ","
-       //~ << fmax_bin_sub_param[1]
-       //~ << "]"
-       //~ << endl
-       //~ << fnamefreeparam[1] << ": " 
-       //~ << "[" 
-       //~ << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
-       //~ << ","
-       //~ << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
-       //~ << "]"
-       //~ << endl;
-//~ 
-//~ 
-  //~ // It can marginalize sub-ranges of the free parameter
-  //~ // fmin_bin_sub_param_1 and fmax_bin_sub_param_1 read from the binary file
-//~ 
-  //~ NparTot0=0;
-  //~ for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-    //~ NparTot1=0;
-    //~ for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-      //~ CalcChisqMargPtRead(skobs_data,ipar0,ipar1,false);
-      //~ NparTot1++;
-    //~ } // ipar1 (free parameter)
-    //~ NparTot0++;
-  //~ } // ipar0 (free parameter)
-  //~ 
-  //~ NtoysTot = fntoys_marg * 2;
-//~ 
-  //~ cout << endl;
-  //~ cout << "# of scanned free parameters 0: " << NparTot0 << endl; 
-  //~ cout << "# of scanned free parameters 1: " << NparTot1 << endl; 
-  //~ cout << "# of toys per point: " << NtoysTot << endl;
-  //~ cout << endl;
-//~ 
-//~ #ifdef __print_chisqmarg__
-  //~ cout << endl;
-  //~ cout << "Marginalized Chisq distribution:" << endl; 
-  //~ cout << "fmin_bin_sub_param 0 = " << fmin_bin_sub_param[0] << endl;
-  //~ cout << "fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
-  //~ cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1] << endl;
-  //~ cout << "fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
-  //~ for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-    //~ for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-      //~ cout << fChisqMargVArray->GetEntry(ipar0,ipar1) << ", ";
-    //~ }
-  //~ }
-  //~ cout << endl;
-//~ #endif
-//~ 
-  //~ return;
-//~ }
+void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbinary){
+  
+  int NtoysTot=0;
+  int NparTot0=0;
+  int NparTot1=0;
+ 
+  cout << endl;
+  cout << "Fill marginalized Chisq in the parameter range:" << endl
+       << "bin: ["  
+       << fmin_bin_sub_param[0]
+       << ","
+       << fmax_bin_sub_param[0]
+       << "]"
+       << endl
+       << fnamefreeparam[0] << ": " 
+       << "[" 
+       << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
+       << ","
+       << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
+       << "]"
+       << endl;
+  cout << "bin: ["  
+       << fmin_bin_sub_param[1]
+       << ","
+       << fmax_bin_sub_param[1]
+       << "]"
+       << endl
+       << fnamefreeparam[1] << ": " 
+       << "[" 
+       << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+       << ","
+       << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
+       << "]"
+       << endl;
+
+
+  // It can marginalize sub-ranges of the free parameter
+  // fmin_bin_sub_param_1 and fmax_bin_sub_param_1 read from the binary file
+
+  NparTot0=0;
+  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    NparTot1=0;
+    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      
+      CalcChisqMargPtRead(skobs_data,ipar0,ipar1,readbinary);
+      //CalcChisqMargPtRead(skobs_data,ipar0,ipar1,false);
+      
+      NparTot1++;
+    } // ipar1 (free parameter)
+    NparTot0++;
+  } // ipar0 (free parameter)
+  
+  NtoysTot = fntoys_marg * 2;
+
+  cout << endl;
+  cout << "# of scanned free parameters 0: " << NparTot0 << endl; 
+  cout << "# of scanned free parameters 1: " << NparTot1 << endl; 
+  cout << "# of toys per point: " << NtoysTot << endl;
+  cout << endl;
+
+#ifdef __print_chisqmarg__
+  cout << endl;
+  cout << "Marginalized Chisq distribution:" << endl; 
+  cout << "fmin_bin_sub_param 0 = " << fmin_bin_sub_param[0] << endl;
+  cout << "fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
+  cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1] << endl;
+  cout << "fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
+  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      cout << fChisqMargVArray->GetEntry(ipar0,ipar1) << ", ";
+    }
+  }
+  cout << endl;
+#endif
+
+  return;
+}
 
 
 
@@ -1658,8 +1676,52 @@ void FitMarginalization::ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_
       fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
       fhchisq_marg_1D->SetBinContent(ipar0+1,bincont);
       fhchisq_marg_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
+      fhchisq_marg_1D_Step->SetBinContent(ipar0+1,bincont);
+      fhchisq_marg_2D_Step->SetBinContent(ipar0+1,ipar1+1,bincont);
+      fhdeltachisq_marg_1D->SetBinContent(ipar0+1,bincont);
+      fhdeltachisq_marg_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
     }
   }
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::BuildDeltaChisqMarg(){
+
+  if(fchisq_bf==conv::kALargeNum){
+    cerr << endl;
+    cerr << "The best-fit has not been found" << endl;
+    cerr << "Can't get the marginalized DeltaChisq distribution" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  
+  // 1D
+  if(!fIsFit2D){
+    fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
+    
+    for(int ibin=0;ibin<fhdeltachisq_marg_1D->GetNbinsX();ibin++){
+      double bincont = fhdeltachisq_marg_1D->GetBinContent(ibin+1);
+      if(bincont>0.){
+	bincont -= this->GetChisqBestFit();
+      }
+
+      if(bincont<0.){
+	cerr << endl;
+	cerr << "Delta Chisq content is negative" << endl;
+	cerr << "   - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(ibin+1);
+	cerr << "   - chisq = " << bincont << endl; 
+	cerr << endl;
+	exit(1);
+      }
+      fhdeltachisq_marg_1D->SetBinContent(ibin+1,bincont);    
+    }
+  }
+  // 2D
+  else{
+    // TODO
+    fhdeltachisq_marg_2D = (TH2F*) fhchisq_marg_2D->Clone("fhdeltachisq_marg_2D");
+  }
+
   return;
 }
 //________________________________________________________________________________________
@@ -2055,16 +2117,6 @@ conv::SuperkSample_t FitMarginalization::GetSKSamples(int isksample) const
   return s;
 }
 //________________________________________________________________________________________
-TH1F * FitMarginalization::GetChisqMarg1D (void)
-{
-  return fhchisq_marg_1D;
-};
-//________________________________________________________________________________________
-TH2F * FitMarginalization::GetChisqMarg2D (void)
-{
-  return fhchisq_marg_2D;
-};
-//________________________________________________________________________________________
 void FitMarginalization::SetSaveParamLists(bool should_save_lists)
 {
   if (fSavedToyParamLists) {
@@ -2255,14 +2307,14 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
   fLastMinimVal_Y = YvalLast;
 
   if(fIsFit2D){
-    fFirstMinimBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(fFirstMinimVal_X);
-    fLastMinimBin_X  = fhchisq_marg_2D->GetXaxis()->FindBin(fLastMinimVal_X);
-    fFirstMinimBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(fFirstMinimVal_Y);
-    fLastMinimBin_Y  = fhchisq_marg_2D->GetYaxis()->FindBin(fLastMinimVal_Y);
+    fFirstMinimBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(fFirstMinimVal_X+conv::kASmallNum);
+    fLastMinimBin_X  = fhchisq_marg_2D->GetXaxis()->FindBin(fLastMinimVal_X+conv::kASmallNum);
+    fFirstMinimBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(fFirstMinimVal_Y+conv::kASmallNum);
+    fLastMinimBin_Y  = fhchisq_marg_2D->GetYaxis()->FindBin(fLastMinimVal_Y+conv::kASmallNum);
   }
   else{
-    fFirstMinimBin_X = fhchisq_marg_1D->FindBin(fFirstMinimVal_X);
-    fLastMinimBin_X  = fhchisq_marg_1D->FindBin(fLastMinimVal_X);
+    fFirstMinimBin_X = fhchisq_marg_1D->FindBin(fFirstMinimVal_X+conv::kASmallNum);
+    fLastMinimBin_X  = fhchisq_marg_1D->FindBin(fLastMinimVal_X+conv::kASmallNum);
     fFirstMinimBin_Y = -999;
     fLastMinimBin_Y  = -999;
   }
@@ -4889,8 +4941,13 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
  
       cout << "A minimum is found" << endl;
       cout << "Best fit Chisq = " << chisq_X[ilike_N] << endl;
-      cout << "Best fit X = " << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
-      cout << "Best fit Y = " << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+      if(!fIsFit2D){
+	cout << "Best fit X = " << fhchisq_marg_1D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
+      }
+      else{
+	cout << "Best fit X = " << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
+	cout << "Best fit Y = " << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+      }
       cout << "Total # of iterations = " << Niterations << endl;
       cout << "Total # of performed fits = " << Nfits << endl;
       cout << "Check if it's a real minimum" << endl;
@@ -5657,12 +5714,12 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 void FitMarginalization::SetStartBin(double start_X,double start_Y){
   
   if(!fIsFit2D){
-    fStartBin_X = fhchisq_marg_1D->GetXaxis()->FindBin(start_X);
+    fStartBin_X = fhchisq_marg_1D->GetXaxis()->FindBin(start_X+conv::kASmallNum);
     fStartBin_Y = 1;
   }
   else{
-    fStartBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(start_X);
-    fStartBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(start_Y);
+    fStartBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(start_X+conv::kASmallNum);
+    fStartBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(start_Y+conv::kASmallNum);
   }
 
   bool GoodStartBin = true;
@@ -5764,19 +5821,6 @@ void FitMarginalization::SetBorderMaxFitNumber(int nfit){
 //   return chisqtrue;
 // }
 // //________________________________________________________________________________________
-
-
-
-
-
-
-
-
-
-
-
-
-//________________________________________________________________________________________
 float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs,bool readbinary){
 
   int bin0 = -999;
@@ -5840,20 +5884,6 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
 
   return chisqtrue;
 }
-//________________________________________________________________________________________
-
-
-
-
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 void FitMarginalization::SetTagFileName(const char *tag){
   ftagfile = string(tag); // Get the file tag name 
@@ -5943,69 +5973,187 @@ int FitMarginalization::GetFileIDRead(int ipar0,int ipar1){
   return fileid;
 }
 //________________________________________________________________________________________
+void FitMarginalization::CalcBestFitErrors(SuperkObservation *skobs,string method,bool readbinary){
+  
+  double error = -999.;
 
+  if(method=="MINOS"){
+    this->CalcBestFitErrorsMINOS(skobs,readbinary);
+  }
+  else if(method=="HESSE"){
+    this->CalcBestFitErrorsHESSE(skobs,readbinary);
+  }
+  else{
+    cerr << endl;
+    cerr << "Method " << method << " is not available for fit error computation" << endl;
+    cerr << endl;
+    exit(1);
+  }
 
+  return;
+}
+//________________________________________________________________________________________
+double FitMarginalization::GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin){
+  double slope = (Y2-Y1)/(X2-X1);
+  double Xout = (Yin-Y1)/slope + X1;
+  return Xout;
+  
+  // cout << "Yin = " << Yin << endl;
+  // cout << "X1 = " << X1 << " - X2 = " << X2 << endl;
+  // cout << "Y1 = " << Y1 << " - Y2 = " << Y2 << endl;
+  // cout << "Xout = " << Xout << endl;
+  // cout << endl;
+  // double Xin = Xout;
+  // Yin = (Y2-Y1)/(X2-X1)*(Xin-X1) + Y1;
+  // cout << "Yin = " << Yin << endl;
+  //TGraph *gr = new TGraph();
+  //gr->SetPoint(0,X1,Y1);
+  //gr->SetPoint(1,X2,Y2);
+  //cout << "Eval = " << gr->Eval(Xin) << endl;
+}
+//________________________________________________________________________________________
+void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bool readbinary){
+  
+  double error = -999.;
 
+  // Get the full chisq distribution 
+  //this->FillChisqMarg(skobs_data,true);  
+  
+  // Get Delta Chisq distribution
+  this->BuildDeltaChisqMarg();
+  //fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
 
+  
+  // Find 68.27% CL contour (1sigma)
 
-//~ 
-//~ 
-//~ 
-//~ 
-//~ double FitMarginalization::CalcBestFitErrors(string method){
-  //~ 
-  //~ double error = -999.;
-//~ 
-  //~ if(method=="HESSE"){
-    //~ cout << endl;
-    //~ cout << "Compute HESSE fit errors" << endl;
-    //~ cout << endl;
-    //~ 
-    //~ //return this->CalcBestFitErrorsMINOS();
- //~ }
-  //~ else if(method=="MINOS"){
-    //~ cout << endl;
-    //~ cout << "Compute MINOS fit errors" << endl;
-    //~ cout << endl;
-//~ 
-    //~ //return this->CalcBestFitErrorsHESSE();
-  //~ }
-  //~ else{
-    //~ cerr << endl;
-    //~ cerr << "Method " << method << " is not available for fit error computation" << endl;
-    //~ cerr << endl;
-    //~ exit(1);
-  //~ }
-  //~ return -999.;
-//~ }
-//~ //________________________________________________________________________________________
-//~ 
-//~ 
-//~ 
-//~ 
-//~ 
-//~ double FitMarginalization::CalcBestFitErrorsMINOS(){
-//~ 
-  //~ double error = -999.;
-//~ 
-  //~ if(fIsFit2D){
-  //~ }
-  //~ else{
-  //~ }
-//~ 
-  //~ return error;
-//~ }
-//~ 
-//~ 
-//~ 
-//~ 
-//~ 
-//~ //________________________________________________________________________________________
-//~ double FitMarginalization::CalcBestFitErrorsHESSE(){
-  //~ double error = -999.;
-  //~ return error;
-//~ }
-//~ //________________________________________________________________________________________
-//~ 
+  if(!fIsFit2D){   // 1D
+
+    const double CritChisq_1D = 1.;
+        
+    int bin_bf = fhchisq_marg_1D->FindBin(this->GetParamBestFit(0)+conv::kASmallNum); // best-fit bin
+    int bin_negsigma_a = -999;
+    int bin_negsigma_b = -999;
+    int bin_possigma_a = -999;
+    int bin_possigma_b = -999;
+
+    // Find param value at DeltaChisq=1 (negative error)
+    
+    for(int ibin=bin_bf;ibin>=0;ibin--){ // histogram convention     
+ 
+      double bincont = fhdeltachisq_marg_1D->GetBinContent(ibin);
+      if(bincont<=0.){
+	bincont = this->CalcChisqMargPtRead(skobs_data,ibin-1,fmin_bin_sub_param[1],readbinary);
+	bincont -= this->GetChisqBestFit();
+	fhdeltachisq_marg_1D->SetBinContent(ibin,bincont);
+      }
+      
+      // cout << "ibin = " << ibin 
+      // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(ibin)
+      // 	   << " - bincont = " << bincont << endl;
+      
+      if(bincont>CritChisq_1D){
+	// bins before (b) and after (a) DeltaChisq=1 (following x direction)
+	bin_negsigma_b = ibin; 
+	bin_negsigma_a = bin_negsigma_b+1; 
+	break;
+      }
+    }
+    // cout << "bin_negsigma_b = " << bin_negsigma_b << endl;
+    // cout << "bin_negsigma_a = " << bin_negsigma_a << endl;
+
+    double X1 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_negsigma_b);
+    double Y1 = fhdeltachisq_marg_1D->GetBinContent(bin_negsigma_b);
+    double X2 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_negsigma_a);
+    double Y2 = fhdeltachisq_marg_1D->GetBinContent(bin_negsigma_a);
+    double Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
+    
+    fparam_bf_errneg[0] = fabs(this->GetParamBestFit(0) - Xout); 
+    fparam_bf_errneg[1] = -999.; 
+    
+    //cout << "fparam_bf_errneg[0] = " << fparam_bf_errneg[0] << endl;
+    
+    
+    // Positive error
+    
+    // cout << endl;
+    // cout << "Positive error" << endl;
+    // cout << endl;
+
+    for(int ibin=bin_bf;ibin<=fhdeltachisq_marg_1D->GetNbinsX();ibin++){ // histogram convention     
+      double bincont = fhdeltachisq_marg_1D->GetBinContent(ibin);
+      if(bincont<=0.){
+	bincont = this->CalcChisqMargPtRead(skobs_data,ibin-1,fmin_bin_sub_param[1],readbinary);
+	bincont -= this->GetChisqBestFit();
+	fhdeltachisq_marg_1D->SetBinContent(ibin,bincont);
+      }
+
+      // cout << "ibin = " << ibin
+      // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(ibin)
+      //  	   << " - bincont = " << bincont << endl;
+
+      if(bincont>CritChisq_1D){
+	// bins before (b) and after (a) DeltaChisq=1
+	bin_possigma_a = ibin; 
+	bin_possigma_b = bin_possigma_a-1; 
+	break;
+      }
+    }
+    //cout << "bin_possigma_b = " << bin_possigma_b << endl;
+    //cout << "bin_possigma_a = " << bin_possigma_a << endl;
+
+    X1 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_possigma_b);
+    Y1 = fhdeltachisq_marg_1D->GetBinContent(bin_possigma_b);
+    X2 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_possigma_a);
+    Y2 = fhdeltachisq_marg_1D->GetBinContent(bin_possigma_a);
+    Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
+    
+    fparam_bf_errpos[0] = fabs(this->GetParamBestFit(0) - Xout); 
+    fparam_bf_errpos[1] = -999.; 
+    //cout << "fparam_bf_errpos[0] = " << fparam_bf_errpos[0] << endl;
+    
+  }
+  
+  return;
+}
+//________________________________________________________________________________________
+void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bool readbinary){
+
+  double error = -999.;
+  const double CritChisq_1D = 1.;
+  const int Nh = 1.;
+
+  this->BuildDeltaChisqMarg();
+
+  // 1D HESSE error
+
+  if(!fIsFit2D){
+    
+    // 1D discrete derivative: [ d2X^2 = X(xbf+h) - 2X^2(xbf) + X^2(xbf-h) ] / h^2
+    
+    double chisq_bf = this->GetChisqBestFit(); // X(xbf+h) 
+    int bin_bf = fhchisq_marg_1D->FindBin(fparam_bf[0]+conv::kASmallNum);    
+    double chisq_minus = fhchisq_marg_1D->GetBinContent(bin_bf-Nh); // X^2(xbf-h)
+    double chisq_plus = fhchisq_marg_1D->GetBinContent(bin_bf+Nh); // X^2(xbf-h)
+    double h = Nh*fhchisq_marg_1D->GetBinWidth(bin_bf);    
+    double deriv2nd = (chisq_plus - 2*chisq_bf + chisq_minus) / ( (double)Nh*h * (double)Nh*h );
+
+    // A = 0.5 * (1D discrete derivative)
+    double A = 0.5 * deriv2nd;
+    
+    double xerr = sqrt( CritChisq_1D / A );
+    
+    fparam_bf_errsym[0] = xerr; // symmetric error
+    fparam_bf_errsym[1] = -999; 
+  }
+
+  // 2D HESSE error
+
+  else{
+  }
+
+  return;
+}
+//________________________________________________________________________________________
+
 
 
