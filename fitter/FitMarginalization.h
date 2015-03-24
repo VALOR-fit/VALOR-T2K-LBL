@@ -95,6 +95,9 @@ class FitMarginalization
   
   int GetFirstBinInSubRange(int par=0) const {return fmin_bin_sub_param[par];}
   int GetLastBinInSubRange (int par=0) const {return fmax_bin_sub_param[par];}
+
+  //int GetFirstBinInTotRange(int par=0) const {return fmin_bin_sub_param[par];}
+  //int GetLastBinInTotRange (int par=0) const {return fmax_bin_sub_param[par];}
   
   double GetBinParameterValue(int par, int ibin) const {return fmin_param[par] + ibin*fstep_param[par];}
    
@@ -297,6 +300,9 @@ class FitMarginalization
   int fnbins_sub_param[2]; 
   
   int fntoys_marg;
+  
+  int fmin_bin_param[2]; // first bin of sub-range to scan (for partial toys and chisq marg)
+  int fmax_bin_param[2]; // last bin of sub-range to scan (for partial toys and chisq marg)
 
   int fmin_bin_sub_param[2]; // first bin of sub-range to scan (for partial toys and chisq marg)
   int fmax_bin_sub_param[2]; // last bin of sub-range to scan (for partial toys and chisq marg)

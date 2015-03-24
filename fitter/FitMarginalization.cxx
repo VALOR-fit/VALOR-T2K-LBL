@@ -353,7 +353,10 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
       cerr << endl;
       exit(1);
     }
-
+  
+  //fmin_bin_param[0] = fmin_bin_sub_param[0];
+  //fmin_bin_param[1] = fmin_bin_sub_param[1];
+  
   return;
 }
 //________________________________________________________________________________________
@@ -1722,10 +1725,31 @@ void FitMarginalization::BuildDeltaChisqMarg(){
       fhdeltachisq_marg_1D->SetBinContent(ibin+1,bincont);    
     }
   }
+
   // 2D
   else{
-    // TODO
     fhdeltachisq_marg_2D = (TH2F*) fhchisq_marg_2D->Clone("fhdeltachisq_marg_2D");
+
+    for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
+      for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){
+
+	double bincont = fhdeltachisq_marg_2D->GetBinContent(ibinX+1,ibinY+1);
+	if(bincont>0.){
+	  bincont -= this->GetChisqBestFit();
+	}
+	
+	if(bincont<0.){
+	  cerr << endl;
+	  cerr << "Delta Chisq content is negative" << endl;
+	  cerr << "   - X = " << fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(ibinX+1);
+	  cerr << "   - Y = " << fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(ibinY+1);
+	  cerr << "   - chisq = " << bincont << endl; 
+	  cerr << endl;
+	  exit(1);
+	}
+	fhdeltachisq_marg_2D->SetBinContent(ibinX+1,ibinY+1,bincont);    
+      }
+    }
   }
 
   return;
@@ -6135,6 +6159,14 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
   if(!fIsFit2D){
     
+    //
+    // Make a 1D Taylor expansion of the chisq function X^2 around the best fit. 
+    // Critical value for 1sigma (68.27% CL) is dX^2 = 1 
+    //
+    // xerr = +- sqrt( 1. / A ) 
+    // A = 0.5 * d^2 X^2 / dx^2
+    //
+
     // 1D discrete deriv: d2X^2/dx^2 = [ X^2(xbf+h) - 2X^2(xbf) + X^2(xbf-h) ] / h^2
     
     int bin_bf = fhdeltachisq_marg_1D->FindBin(fparam_bf[0]+conv::kASmallNum);    
@@ -6163,9 +6195,16 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
   else{
     
-    cout << endl;
-    cout << "2D HESSE error" << endl;
-    cout << endl;    
+    //
+    // Make a 2D Taylor expansion of the chisq function X^2 around the best fit. 
+    // Critical value for 1sigma (68.27% CL) is dX^2 = 2.3  
+    //
+    // x0err = +- sqrt( 2.3 / (A-C^2/B) ) 
+    // x1err = +- sqrt( 2.3 / (B-C^2/A) ) 
+    // A = 0.5 * d^2 X^2 / dx0^2
+    // B = 0.5 * d^2 X^2 / dx1^2
+    // 2C = d^2 X^2 / dx0dx1
+    //
 
     int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
     int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
@@ -6198,25 +6237,33 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     cout << "h1 = " << h1 << endl;
     cout << endl;
 
-    // 2D discrete deriv 0: d2X^2/dx0^2 = [ X^2(x0bf+h0,x1bf) - 2X^2(x0bf,x1bf) + X^2(x0bf-h0,x1bf) ] / h0^2
-    
+    // 2D discrete deriv 0: d2X^2/dx0^2 = [ X^2(x0bf+h0,x1bf) - 2X^2(x0bf,x1bf) + X^2(x0bf-h0,x1bf) ] / h0^2    
     double deriv2nd_0 = (chisq_plus0 - 2*chisq_bf + chisq_minus0) / ( (double)Nh*h0 * (double)Nh*h0 );
     
     // 2D discrete deriv 1: d2X^2/dx1^2 = [ X^2(x0bf,x1bf+h1) - 2X^2(x0bf,x1bf) + X^2(x0bf,x1bf-h1) ] / h1^2
-
     double deriv2nd_1 = (chisq_plus1 - 2*chisq_bf + chisq_minus1) / ( (double)Nh*h1 * (double)Nh*h1 );
 
-    // 2D discrete deriv 01: d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h,x0bf) - X^2(x0bf,x1bf+h1) + X^2(x0bf,x1bf)] / h0*h1
+    // 2D discrete deriv 01: d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf) - X^2(x0bf,x1bf+h1) + 2*X^2(x0bf,x1bf) - X^2(x0bf-h0,x1bf) 
+    //                                      - X^2(x0bf,x1bf-h1) + X^2(x0bf-h0,x1bf-h1)] / (2*h0*h1)
+    double deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h1*h1);    
     
-    double deriv2nd_01 = (chisq_plus01 - chisq_plus0 - chisq_plus1 + chisq_bf) / ( (double)Nh*h0 * (double)Nh*h1 );
-	
+    // cout << "deriv2nd_0 = " << deriv2nd_0 << endl;
+    // cout << "deriv2nd_1 = " << deriv2nd_1 << endl;
+    // cout << "deriv2nd_01 = " << deriv2nd_01 << endl;
+    // cout << endl;
+    
     // A = 0.5 * deriv2nd_0
     // B = 0.5 * deriv2nd_1
-    // 2C = deriv2nd_1
+    // 2C = deriv2nd_01
 
     double A = 0.5 * deriv2nd_0;
     double B = 0.5 * deriv2nd_1;
     double C = 0.5 * deriv2nd_01;
+    // cout << endl;
+    // cout << "A = " << A << endl;
+    // cout << "B = " << B << endl;
+    // cout << "C = " << C << endl;
+    // cout << endl;
 
     // 
     
