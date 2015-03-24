@@ -45,6 +45,9 @@
 
 #define SaveCombinedPullPlots false
 
+#define MarkerSize 1
+#define LabelBottomMargin 0.3
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
@@ -135,11 +138,14 @@ void analyse_run_fit_xml_toys_joint_bar
  const char * mixparamchoice = "sinsqtheta",
  const char * mixparamoctant = "one",                               /* one==kNuOctantOne two==kNuOctantTwo */
  const char * config_file = "analysis_configuration_1.796E20.xml",   /* analysis configuration file */
- const char * hypothesis = "3f_oscbar",   // "3f_osc", "3f_osc_bar", "4f_sterile_osc", "5f_sterile_osc 
- //const char * fit_param_list   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"
+ const char * hypothesis = "3f_oscbar"   // "3f_osc", "3f_osc_bar", "4f_sterile_osc", "5f_sterile_osc 
+ //,const char * fit_param_list   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"
  )
 {  
-
+  
+  gStyle->SetOptStat (0);
+  gStyle->SetOptTitle(0);
+  
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
@@ -190,27 +196,30 @@ void analyse_run_fit_xml_toys_joint_bar
   FitParamList * best_fit_params_fit1; //first fit (first octant)
   FitParamList * best_fit_params_fit2; //second fit (second octant)
 
-  TFile *filein = new TFile(infile,"READ");
-  TTree *fitnt = (TTree*) filein->Get("fitnt");
+  //~ TFile *filein = new TFile(infile,"READ");
+  //~ TTree *fitnt = (TTree*) filein->Get("fitnt");
   
-
+  TChain * fitnt = new TChain("fitnt");
+  fitnt->Add(infile);
+  
   // Create tree to get outputs
-  fitnt->SetBranchAddress("input_params",&input_params);
-  fitnt->SetBranchAddress("best_fit_params",&best_fit_params);
+  fitnt->SetBranchAddress("input_params",        &input_params);
+  fitnt->SetBranchAddress("best_fit_params",     &best_fit_params);
   fitnt->SetBranchAddress("best_fit_params_fit1",&best_fit_params_fit1);
   fitnt->SetBranchAddress("best_fit_params_fit2",&best_fit_params_fit2);
-  fitnt->SetBranchAddress("fitstatus1",&fitstatus1);
-  fitnt->SetBranchAddress("fitstatus2",&fitstatus2);
-  fitnt->SetBranchAddress("fitstatus",&fitstatus);
-  fitnt->SetBranchAddress("fitstatus_err1",&fitstatus_err1);
-  fitnt->SetBranchAddress("fitstatus_err2",&fitstatus_err2);
-  fitnt->SetBranchAddress("fitstatus_err",&fitstatus_err);
-  fitnt->SetBranchAddress("chisq1",&chisq1);
-  fitnt->SetBranchAddress("chisq2",&chisq2);
-  fitnt->SetBranchAddress("chisq",&chisq);
+  fitnt->SetBranchAddress("fitstatus1",          &fitstatus1);
+  fitnt->SetBranchAddress("fitstatus2",          &fitstatus2);
+  fitnt->SetBranchAddress("fitstatus",           &fitstatus);
+  fitnt->SetBranchAddress("fitstatus_err1",      &fitstatus_err1);
+  fitnt->SetBranchAddress("fitstatus_err2",      &fitstatus_err2);
+  fitnt->SetBranchAddress("fitstatus_err",       &fitstatus_err);
+  fitnt->SetBranchAddress("chisq1",              &chisq1);
+  fitnt->SetBranchAddress("chisq2",              &chisq2);
+  fitnt->SetBranchAddress("chisq",               &chisq);
 
   // PhysHypothesis ph(hypothesis); //initialisation is to no oscillations
   // skexp->Generate(ph);
+  fitnt->GetEntry(0);
   PhysHypothesis_t ph = best_fit_params->PhysicsHypothesis();
 
   // Initialize Histograms
@@ -220,38 +229,45 @@ void analyse_run_fit_xml_toys_joint_bar
   cout << endl;
   
   fitnt->GetEntry(0); // Get Tree general informations
-  int np = best_fit_params->GetNumberParameters();
+  int np  = best_fit_params->GetNumberParameters();
   int nph = input_params->NParams();
+  int npfree_nuisance = 0;
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = best_fit_params->WhichParam(ip);
+    if(best_fit_params->IsNuisance(p) && !best_fit_params->IsFixed(p)) {
+      npfree_nuisance++;
+    }
+  }
  
-  NameFitParAll = new TString[np];
-  cExtrParAll = new TCanvas* [np];
-  cFitParAll = new TCanvas* [np];
-  cErrParAll = new TCanvas* [np];
+  NameFitParAll   = new TString[np];
+  cExtrParAll     = new TCanvas* [np];
+  cFitParAll      = new TCanvas* [np];
+  cErrParAll      = new TCanvas* [np];
   cErrMinosParAll = new TCanvas* [np];
-  cPullAll = new TCanvas* [np];
-  cExtrPullAll = new TCanvas* [np];
-  cPullOsc = new TCanvas* [np];
-  cResAll = new TCanvas* [np];
-  cResOsc = new TCanvas* [np];
-  hPullAll = new TH1F*[np];
-  hExtrPullAll = new TH1F*[np];
-  hPullOsc = new TH1F*[np];
-  hPullNuis = new TH1F*[np];
-  hResAll = new TH1F*[np];
-  hResOsc = new TH1F*[np];
-  hResNuis = new TH1F*[np];
-  hFitParAll = new TH1F*[np];
-  hFitParOsc = new TH1F*[np];
-  hFitParNuis = new TH1F*[np];
-  hExtrParAll = new TH1F*[np];
-  hErrParAll = new TH1F*[np];
-  hErrPlusParAll = new TH1F*[np];
+  cPullAll        = new TCanvas* [np];
+  cExtrPullAll    = new TCanvas* [np];
+  cPullOsc        = new TCanvas* [np];
+  cResAll         = new TCanvas* [np];
+  cResOsc         = new TCanvas* [np];
+  hPullAll        = new TH1F*[np];
+  hExtrPullAll    = new TH1F*[np];
+  hPullOsc        = new TH1F*[np];
+  hPullNuis       = new TH1F*[np];
+  hResAll         = new TH1F*[np];
+  hResOsc         = new TH1F*[np];
+  hResNuis        = new TH1F*[np];
+  hFitParAll      = new TH1F*[np];
+  hFitParOsc      = new TH1F*[np];
+  hFitParNuis     = new TH1F*[np];
+  hExtrParAll     = new TH1F*[np];
+  hErrParAll      = new TH1F*[np];
+  hErrPlusParAll  = new TH1F*[np];
   hErrMinusParAll = new TH1F*[np];
   
-  hPullMean = new TH1F("hPullMean","hPullMean",np,0,np);
-  hPullWidth = new TH1F("hPullWitdh","hPullWidth",np,0,np);
-  hExtrPullMean = new TH1F("hExtrPullMean","hExtrPullMean",np,0,np);
-  hExtrPullWidth = new TH1F("hExtrPullWitdh","hExtrPullWidth",np,0,np);
+  hPullMean      = new TH1F("hPullMean"     ,"hPullMean"     ,npfree_nuisance,0,npfree_nuisance);
+  hPullWidth     = new TH1F("hPullWitdh"    ,"hPullWidth"    ,npfree_nuisance,0,npfree_nuisance);
+  hExtrPullMean  = new TH1F("hExtrPullMean" ,"hExtrPullMean" ,npfree_nuisance,0,npfree_nuisance);
+  hExtrPullWidth = new TH1F("hExtrPullWitdh","hExtrPullWidth",npfree_nuisance,0,npfree_nuisance);
 
   double max=-999.;
   double min=-999.;
@@ -319,13 +335,13 @@ void analyse_run_fit_xml_toys_joint_bar
     sprintf(name,resname.c_str());
     hResAll[ip] = new TH1F(name,name,NBinsPull,-5,5);        
   }
-
-
-
-
+  
   // Loop on the tree events
   
-  int NEntries = fitnt->GetEntries();  
+  int NEntries = fitnt->GetEntries();
+  
+  std::cout<<"NEntries total: "<<NEntries<<std::endl;
+  
   for(int itoy=0; itoy<NEntries; itoy++) {
     fitnt->GetEntry(itoy);
     
@@ -349,18 +365,18 @@ void analyse_run_fit_xml_toys_joint_bar
       bestfitval = best_fit_params->BestFitValue(p);
       
       if(best_fit_params->HesseErrorsSet()){
-	//cout << "Take Hesse error" << endl;
-	bestfiterr = best_fit_params->HesseError(p);
+        //cout << "Take Hesse error" << endl;
+        bestfiterr = best_fit_params->HesseError(p);
       }
       else if(best_fit_params->MinosErrorsSet()){
-	//cout << "Take Minos error" << endl;
-	bestfiterrM = TMath::Abs(best_fit_params->MinusError(p));
-	bestfiterrP = TMath::Abs(best_fit_params->PlusError(p));
-	//cout << bestfiterrM << " " << bestfiterrP << endl;
+        //cout << "Take Minos error" << endl;
+        bestfiterrM = TMath::Abs(best_fit_params->MinusError(p));
+        bestfiterrP = TMath::Abs(best_fit_params->PlusError(p));
+        //cout << bestfiterrM << " " << bestfiterrP << endl;
       }
       else{
-	//cout << "Hesse was not run. Take Migrad error" << endl;
-	bestfiterr = best_fit_params->MigradError(p);
+        //cout << "Hesse was not run. Take Migrad error" << endl;
+        bestfiterr = best_fit_params->MigradError(p);
       }
       
       initval = best_fit_params->InitValue(p);
@@ -382,137 +398,137 @@ void analyse_run_fit_xml_toys_joint_bar
       // Take the parameter names
       
       if(p == conv::kPhypMixing13) {      
-	if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
-	  NameFitParAll[ip] = Form("sin^{2} 2 #theta_{13} = %0.4f",initval);	    
-	}
-	else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
-	  NameFitParAll[ip] = Form("sin^{2} #theta_{13} = %0.4f",initval);	    
-	}
+        if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+          NameFitParAll[ip] = Form("sin^{2} 2 #theta_{13} = %0.4f",initval);	    
+        }
+        else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+          NameFitParAll[ip] = Form("sin^{2} #theta_{13} = %0.4f",initval);	    
+        }
       }
       else if(p == conv::kPhypMixing12) {
-	if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
-	  NameFitParAll[ip] = Form("sin^{2} 2 #theta_{12} = %0.1f",initval);	    
-	}
-	else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
-	  NameFitParAll[ip] = Form("sin^{2} #theta_{12} = %0.1f",initval);	    
-	}
+        if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+          NameFitParAll[ip] = Form("sin^{2} 2 #theta_{12} = %0.1f",initval);	    
+        }
+        else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+          NameFitParAll[ip] = Form("sin^{2} #theta_{12} = %0.1f",initval);	    
+        }
       }
       else if(p == conv::kPhypMixing23) {
-	if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
-	  NameFitParAll[ip] = Form("sin^{2} 2 #theta_{23} = %0.1f",initval);	    
-	}
-	else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
-	  NameFitParAll[ip] = Form("sin^{2} #theta_{23} = %0.1f",initval);	    
-	}
+        if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+          NameFitParAll[ip] = Form("sin^{2} 2 #theta_{23} = %0.1f",initval);	    
+        }
+        else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+          NameFitParAll[ip] = Form("sin^{2} #theta_{23} = %0.1f",initval);	    
+        }
       }
       else if(p == conv::kPhypDm23sq) {
-	NameFitParAll[ip] = Form("|#Delta m^{2}_{23}| = %0.4f",initval);	    
+        NameFitParAll[ip] = Form("|#Delta m^{2}_{23}| = %0.4f",initval);	    
       }
       else if(p == conv::kPhypDm12sq) {
-	NameFitParAll[ip] = Form("|#Delta m^{2}_{12}| = %0.1f",initval);	    
+        NameFitParAll[ip] = Form("|#Delta m^{2}_{12}| = %0.1f",initval);	    
       }
       else if(p == conv::kPhypCPV) {
-	NameFitParAll[ip] = Form("#delta_{CP} = %0.1f",initval);
+        NameFitParAll[ip] = Form("#delta_{CP} = %0.1f",initval);
       }
       
       // Pulls oscillation paramters
       
       if(!best_fit_params->IsNuisance(p)) { // free  params
-	pull = calc_pull_osc(extrval,bestfitval,bestfiterr);
-	hPullAll[ip]->Fill(pull);
-      }	
+        pull = calc_pull_osc(extrval,bestfitval,bestfiterr);
+        hPullAll[ip]->Fill(pull);
+      }
 
       else { // nuisance  params
-	
-	// Oscillation params
-	
-	if(p == conv::kPhypMixing13) {      
-	  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
-	    centerr = conv::kGlobFitErrSinsq2Theta13;
-	  }
-	  else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
-	    centerr = conv::kGlobFitErrSinsqTheta13;
-	  }
-	}
-	else if(p == conv::kPhypMixing12) {
-	  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
-	    centerr = conv::kGlobFitErrSinsq2Theta12;
-	  }
-	  else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
-	    centerr = conv::kGlobFitErrSinsqTheta12;
-	  }
-	}
-	else if(p == conv::kPhypMixing23) {
-	  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
-	    centerr = conv::kGlobFitErrSinsq2Theta23;
-	  }
-	  else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
-	    centerr = conv::kGlobFitErrSinsqTheta23;
-	  }
-	}
-	else if(p == conv::kPhypDm23sq) {
-	  centerr = conv::kGlobFitErrDm23sq;
-	}
-	else if(p == conv::kPhypDm12sq) {
-	  centerr = conv::kGlobFitErrDm12sq;
-	}
-	else if(p == conv::kPhypCPV) {
-	  centerr = conv::kGlobFitErrDeltaCP;
-	}
-	
-	else if(util::IsBANFF(p)){
-	  if(util::IsRHCSystematic(p))
-	    centerr = skexp->GetBANFF()->RHCOneSigmaError(p);
-	  else if(util::IsFHCSystematic(p))
-	    centerr = skexp->GetBANFF()->OneSigmaError(p);
-	}	  
-	else if(util::IsXSec(p)) {
-	  //"nominal best fit" is 0
-	  //"1 sigma error" is 1
-	  centerr = 1;
-	}
-	else if(p == conv::kNuisSuperkEnergyScale) {
-	  //"nominal best fit" is 0
-	  //"1 sigma error" is 1
-	  centerr = 1;
-	}
-	else if(util::IsSKDetFSI(p)) {
-	  //"nominal best fit" is 1
-	  if(util::IsRHCSystematic(p))
-	    centerr = skexp->GetSuperkDetectorFSI()->RHCOneSigmaError(p);
-	  else if(util::IsFHCSystematic(p))
-	    centerr = skexp->GetSuperkDetectorFSI()->RHCOneSigmaError(p);
-	}	
-	else {
-	  cerr << "Unknown pull for parameter " << util::AsStringCompact(p) << endl;
-	}
-		
-	// Fit pull
-	if(UseBANFFpull) pull = calc_pull_nuis_banff(initval,centerr,bestfitval,bestfiterr);
-	else             pull = calc_pull_nuis(extrval,bestfitval,bestfiterr);
-	hPullAll[ip]->Fill(pull);
+        
+        // Oscillation params
+        
+        if(p == conv::kPhypMixing13) {      
+          if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+            centerr = conv::kGlobFitErrSinsq2Theta13;
+          }
+          else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+            centerr = conv::kGlobFitErrSinsqTheta13;
+          }
+        }
+        else if(p == conv::kPhypMixing12) {
+          if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+            centerr = conv::kGlobFitErrSinsq2Theta12;
+          }
+          else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+            centerr = conv::kGlobFitErrSinsqTheta12;
+          }
+        }
+        else if(p == conv::kPhypMixing23) {
+          if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta){
+            centerr = conv::kGlobFitErrSinsq2Theta23;
+          }
+          else if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsqTheta){
+            centerr = conv::kGlobFitErrSinsqTheta23;
+          }
+        }
+        else if(p == conv::kPhypDm23sq) {
+          centerr = conv::kGlobFitErrDm23sq;
+        }
+        else if(p == conv::kPhypDm12sq) {
+          centerr = conv::kGlobFitErrDm12sq;
+        }
+        else if(p == conv::kPhypCPV) {
+          centerr = conv::kGlobFitErrDeltaCP;
+        }
+        
+        else if(util::IsBANFF(p)){
+          if(util::IsRHCSystematic(p))
+            centerr = skexp->GetBANFF()->RHCOneSigmaError(p);
+          else if(util::IsFHCSystematic(p))
+            centerr = skexp->GetBANFF()->OneSigmaError(p);
+        }	  
+        else if(util::IsXSec(p)) {
+          //"nominal best fit" is 0
+          //"1 sigma error" is 1
+          centerr = 1;
+        }
+        else if(p == conv::kNuisSuperkEnergyScale) {
+          //"nominal best fit" is 0
+          //"1 sigma error" is 1
+          centerr = 1;
+        }
+        else if(util::IsSKDetFSI(p)) {
+          //"nominal best fit" is 1
+          if(util::IsRHCSystematic(p))
+            centerr = skexp->GetSuperkDetectorFSI()->RHCOneSigmaError(p);
+          else if(util::IsFHCSystematic(p))
+            centerr = skexp->GetSuperkDetectorFSI()->RHCOneSigmaError(p);
+        }
+        else {
+          cerr << "Unknown pull for parameter " << util::AsStringCompact(p) << endl;
+        }
+        
+        // Fit pull
+        if(UseBANFFpull) pull = calc_pull_nuis_banff(initval,centerr,bestfitval,bestfiterr);
+        else             pull = calc_pull_nuis(extrval,bestfitval,bestfiterr);
+        hPullAll[ip]->Fill(pull);
 
-	// Extraction pull
-	pull = calc_pull_nuis(initval,extrval,centerr); 
-	hExtrPullAll[ip]->Fill(pull);
+        // Extraction pull
+        pull = calc_pull_nuis(initval,extrval,centerr); 
+        hExtrPullAll[ip]->Fill(pull);
 
 
       
-	if(itoy==0){
-	  cout << util::AsString(p) << " --> "    
-	    // if( best_fit_params->IsFixed(p) ){
-	    //   cout << " --> fixed" << endl;
-	    //   continue;
-	    // }
-	    // cout << endl;
-	    
-	       << initval << ", " 
-	    //      << extrval << " "
-	       << centerr << " " 
-	    //      << bestfitval << " "
-	    //      << bestfiterr << " "
-	       << endl;
-	}
+        if(itoy==0){
+          cout << util::AsString(p) << " --> "    
+            // if( best_fit_params->IsFixed(p) ){
+            //   cout << " --> fixed" << endl;
+            //   continue;
+            // }
+            // cout << endl;
+            
+               << initval << ", " 
+            //      << extrval << " "
+               << centerr << " " 
+            //      << bestfitval << " "
+            //      << bestfiterr << " "
+               << endl;
+        }
 
 
       } // end pulls oscillation params
@@ -526,7 +542,7 @@ void analyse_run_fit_xml_toys_joint_bar
 
   double mean=0.;
   double rms=0.;
-  int ibin=0;
+  int ibin=1;
 
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = best_fit_params->WhichParam(ip);
@@ -538,22 +554,35 @@ void analyse_run_fit_xml_toys_joint_bar
     mean = hPullAll[ip]->GetMean();
     rms  = hPullAll[ip]->GetRMS();
 
-    hPullMean ->SetBinContent(ibin+2,mean);
-    hPullWidth->SetBinContent(ibin+2,rms);
+    hPullMean ->SetBinContent(ibin,mean);
+    hPullWidth->SetBinContent(ibin,rms);
     
-    hPullMean ->GetXaxis()->SetBinLabel(ibin+2, util::AsStringPaperRooTex(p).c_str());
-    hPullWidth->GetXaxis()->SetBinLabel(ibin+2, util::AsStringPaperRooTex(p).c_str());
+    string bin_label = util::AsStringPaperRooTex(p);
+
+    
+    // Get rid of RHC for xsec parameters.
+    if (util::IsBANFF(p) && !util::IsFlux(p)) {
+      bin_label = util::TrimSpaces(util::ReplaceAll(bin_label,"RHC",""));
+    }
+    
+    string offset = "                  ";
+    if (ibin%2) { // Add spaces to the end of every other bin to get two-rowed labels.
+      bin_label.append(offset);
+    }
+    
+    hPullMean ->GetXaxis()->SetBinLabel(ibin, bin_label.c_str());
+    hPullWidth->GetXaxis()->SetBinLabel(ibin, bin_label.c_str());
 
     // Extraction pulls    
 
     mean = hExtrPullAll[ip]->GetMean();
     rms  = hExtrPullAll[ip]->GetRMS();
 
-    hExtrPullMean ->SetBinContent(ibin+2,mean);
-    hExtrPullWidth->SetBinContent(ibin+2,rms);
+    hExtrPullMean ->SetBinContent(ibin,mean);
+    hExtrPullWidth->SetBinContent(ibin,rms);
     
-    hExtrPullMean ->GetXaxis()->SetBinLabel(ibin+2, util::AsStringPaperRooTex(p).c_str());
-    hExtrPullWidth->GetXaxis()->SetBinLabel(ibin+2, util::AsStringPaperRooTex(p).c_str());
+    hExtrPullMean ->GetXaxis()->SetBinLabel(ibin, bin_label.c_str());
+    hExtrPullWidth->GetXaxis()->SetBinLabel(ibin, bin_label.c_str());
 
     ibin++;
   }
@@ -840,15 +869,23 @@ void analyse_run_fit_xml_toys_joint_bar
   //style
   hPullMean->   GetYaxis()->SetRangeUser(-0.5,1.5);
   hPullMean->   GetXaxis()->LabelsOption("v");
-  TLine * lpull = new TLine(0,0,hPullMean->GetXaxis()->GetLast(),0);
+  TLine * lpull  = new TLine(0,0,hPullMean->GetXaxis()->GetLast(),0);
   TLine * lpull2 = new TLine(0,1,hPullMean->GetXaxis()->GetLast(),1);
   //color
   hPullWidth->SetMarkerColor(kRed);
   hPullWidth->SetLineColor(kRed);
+  hPullWidth->SetMarkerSize(MarkerSize);
+  hPullWidth->SetMarkerStyle(kFullCircle);
+  
+  hPullMean ->SetMarkerColor (kBlack);
+  hPullMean ->SetLineColor   (kBlack);
+  hPullMean ->SetMarkerSize  (MarkerSize);
+  hPullMean ->SetMarkerStyle (kFullCircle);
   //title
   hPullMean-> GetYaxis()->SetTitle("Pull = (bestfit - input) / #sigma_{bf}");
   //draw
   TCanvas * cpull = new TCanvas();
+  cpull->SetBottomMargin(LabelBottomMargin);
   cpull->SetGridx(1);
   cpull->cd();
   hPullMean->Draw("P");
@@ -877,19 +914,27 @@ void analyse_run_fit_xml_toys_joint_bar
   //style
   hExtrPullMean->   GetYaxis()->SetRangeUser(-0.5,1.5);
   hExtrPullMean->   GetXaxis()->LabelsOption("v");
-  TLine * lextrpull = new TLine(0,0,hExtrPullMean->GetXaxis()->GetLast(),0);
+  TLine * lextrpull  = new TLine(0,0,hExtrPullMean->GetXaxis()->GetLast(),0);
   TLine * lextrpull2 = new TLine(0,1,hExtrPullMean->GetXaxis()->GetLast(),1);
   //color
   hExtrPullWidth->SetMarkerColor(kRed);
   hExtrPullWidth->SetLineColor(kRed);
+  hExtrPullWidth->SetMarkerSize(MarkerSize);
+  hExtrPullWidth->SetMarkerStyle(kFullCircle);
+  
+  hExtrPullMean ->SetMarkerColor (kBlack);
+  hExtrPullMean ->SetLineColor   (kBlack);
+  hExtrPullMean ->SetMarkerSize  (MarkerSize);
+  hExtrPullMean ->SetMarkerStyle (kFullCircle);
   //title
   hExtrPullMean-> GetYaxis()->SetTitle("Pull = (toy - input) / #sigma");
   //draw
   TCanvas * cextrpull = new TCanvas();
   cextrpull->SetGridx(1);
   cextrpull->cd();
+  cextrpull->SetBottomMargin(LabelBottomMargin);
   hExtrPullMean->Draw("P");
-  hExtrPullWidth->Draw("Psame");
+  hExtrPullWidth->Draw("P same");
   lextrpull->Draw();
   lextrpull2->Draw();
   //if(SaveExtrPull) save_canvas(cextrpull,"extr pulls",tag);
@@ -1039,6 +1084,7 @@ void analyse_run_fit_xml_toys_joint_bar
     pulls_unfit->Multiply(errratio);
     pulls_unfit->SetMarkerStyle(kOpenSquare);
     pulls_unfit->SetMarkerColor(kRed);
+    pulls_unfit->SetMarkerSize(MarkerSize);
     
     //draw
     TCanvas * cpull = new TCanvas();
