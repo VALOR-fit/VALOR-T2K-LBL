@@ -637,6 +637,8 @@ void run_fit_marginalization_readbinary_sin2th23
     bestfiterrNeg1 = fitmarg->GetParamBestFitErrNeg(1);
     bestfiterrPos0 = fitmarg->GetParamBestFitErrPos(0);
     bestfiterrPos1 = fitmarg->GetParamBestFitErrPos(1);
+
+    fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
     bestfiterrSym0 = fitmarg->GetParamBestFitErrSym(0);
     bestfiterrSym1 = fitmarg->GetParamBestFitErrSym(1);
 
@@ -649,8 +651,7 @@ void run_fit_marginalization_readbinary_sin2th23
     chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
 
     nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
-    
-	
+    	
     // Fill the output tree
    
     chisqmin_subrange.push_back(chisqmin_1);
@@ -681,27 +682,39 @@ void run_fit_marginalization_readbinary_sin2th23
     }
         
     fitnt->Fill();
-
       
     // Print output
     
     cout << endl;
     cout << "chisqmin_1 = " << chisqmin_1 << endl; 
-    cout << "chisqmin_1 = " << chisqmin_2 << endl; 
+    cout << "chisqmin_2 = " << chisqmin_2 << endl; 
     cout << endl;
     cout << "Minimum Marginalized Chisq = " << chisqmin << endl;
-    cout << "bestfit 0 = " << bestfit0 
-	 << " -" << bestfiterrNeg0
-	 << " +" << bestfiterrPos0 << endl;
+    cout << "bestfit 0 = " << bestfit0;
+    cout << " +" << bestfiterrPos0 
+	 << " -" << bestfiterrNeg0 
+	 << " (MINOS)"
+	 << endl;
+    cout << "bestfit 0 = " << bestfit0
+	 << " +" << bestfiterrSym0 
+	 << " -" << bestfiterrSym0 
+	 << " (HESSE)"
+	 << endl;
     if(fitmarg->IsFit2D()){
-      cout << "bestfit 1 = " << bestfit1 
-	   << " -" << bestfiterrNeg1
-	   << " +" << bestfiterrPos1 << endl;
+      cout << "bestfit 1 = " << bestfit1; 
+      cout << " +" << bestfiterrPos1
+	   << " -" << bestfiterrNeg1 
+	   << " (MINOS)"
+	   << endl;
+      cout << "bestfit 1 = " << bestfit1
+	   << " +" << bestfiterrSym1
+	   << " -" << bestfiterrSym1 
+	   << " (HESSE)"
+	   << endl;
     }
+    cout << endl;
     cout << "# of calls of CalcChisqMargPt(): " 
 	 << fitmarg->GetNCallsCalcChisqMargPt() << endl;
-    cout << endl;
-    cout << "Chisq True = " << chisqtrue << endl;
     cout << endl;
     
     // Clean-up
@@ -728,14 +741,6 @@ void run_fit_marginalization_readbinary_sin2th23
     fitmarg->GetDeltaChisqMarg2D()->DrawCopy();
   else 
     fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
-
-
-
-
-
-
-
-
 
 
   // Store ntuple with best-fit results
