@@ -432,7 +432,7 @@ void valor::util::PrintCompact(
           << setw(w) << setprecision(prec) << current[ip];
      stream << " - nominal = " 
           << setw(w) << setprecision(prec) << nominal[ip];
-     if(nominal[ip] != 0) {
+     if(fabs(nominal[ip]) > conv::kASmallNum) {
        stream << " - current/nominal = " 
             << setw(w) << setprecision(prec) << current[ip]/nominal[ip];
      }
