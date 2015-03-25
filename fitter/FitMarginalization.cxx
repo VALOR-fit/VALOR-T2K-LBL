@@ -182,6 +182,7 @@ void FitMarginalization::Init(){
   fhdeltachisq_marg_1D = 0;
   fhdeltachisq_marg_2D = 0;
   
+
   cout << endl;
   cout << "Initialize VALORArray fToyMargErecoVArray with:"<< endl;
   cout << "fntoys_marg = " << fntoys_marg << endl;
@@ -293,6 +294,47 @@ void FitMarginalization::CleanUp(void){
   if (fSavedToyParamLists               ) { delete fSavedToyParamLists               ; fSavedToyParamLists                = 0;}
   
 }
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
+void FitMarginalization::SetFullRange(){
+  
+  // Default values
+  
+  fmin_bin_param[0] = 0; 
+  fmax_bin_param[0] = fnbins_param[0] - 1; 
+  fmin_bin_param[1] = 0; 
+  fmax_bin_param[1] = fnbins_param[1] - 1; 
+
+  if(fPhysParamFree[0] == conv::kPhypUndefined){
+    fmin_bin_param[0] = 0.;
+    fmax_bin_param[0] = 0.;    
+    fnbins_param[0] = 1; // dimension of parameter ParId
+    cerr << endl;
+    cerr << "Param 0 is undefined" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if(fPhysParamFree[1] == conv::kPhypUndefined){
+    fmin_bin_param[1] = 0.;
+    fmax_bin_param[1] = 0.;    
+    fnbins_param[1] = 1; // dimension of parameter ParId
+  }
+  
+  return;
+}
+
+
+
+
+
 //________________________________________________________________________________________
 void FitMarginalization::SetSubRange(int *submin,int *submax){
   
@@ -353,10 +395,7 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
       cerr << endl;
       exit(1);
     }
-  
-  //fmin_bin_param[0] = fmin_bin_sub_param[0];
-  //fmin_bin_param[1] = fmin_bin_sub_param[1];
-  
+   
   return;
 }
 //________________________________________________________________________________________
@@ -370,6 +409,9 @@ void FitMarginalization::SetPhysParFree(PhysParamId_t *parfree,int ntoys_marg,in
   // Set free parameters
   this->SetFreeParam(0,parfree,minpar,maxpar);
   this->SetFreeParam(1,parfree,minpar,maxpar);
+
+  this->SetFullRange();
+  
   return;
 }
 //________________________________________________________________________________________
@@ -922,19 +964,48 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
   // It can marginalize sub-ranges of the free parameter
   // fmin_bin_sub_param_1 and fmax_bin_sub_param_1 read from the binary file
 
-  NparTot0=0;
-  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-    NparTot1=0;
-    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-      
-      CalcChisqMargPtRead(skobs_data,ipar0,ipar1,readbinary);
-      //CalcChisqMargPtRead(skobs_data,ipar0,ipar1,false);
-      
-      NparTot1++;
-    } // ipar1 (free parameter)
-    NparTot0++;
-  } // ipar0 (free parameter)
+
+  // Partial Chisq
   
+  if(!readbinary){ // old approach: fill range of the read binary file
+    NparTot0=0;
+    for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+      NparTot1=0;
+      for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+	
+	CalcChisqMargPtRead(skobs_data,ipar0,ipar1,readbinary);
+	
+	NparTot1++;
+      } // ipar1 (free parameter)
+      NparTot0++;
+    } // ipar0 (free parameter)
+  }
+
+
+  // Full Chisq loop over files
+  
+  else{ // new approach: fill full range reading new binary file at each point
+
+    NparTot0=0;
+    for(int ipar0=fmin_bin_param[0];ipar0<=fmax_bin_param[0];ipar0++){
+      NparTot1=0;
+      for(int ipar1=fmin_bin_param[1];ipar1<=fmax_bin_param[1];ipar1++){
+	
+	CalcChisqMargPtRead(skobs_data,ipar0,ipar1,readbinary);
+	
+	NparTot1++;
+      } // ipar1 (free parameter)
+      NparTot0++;
+    } // ipar0 (free parameter)
+  }
+
+
+
+
+
+
+
+
   NtoysTot = fntoys_marg * 2;
 
   cout << endl;
