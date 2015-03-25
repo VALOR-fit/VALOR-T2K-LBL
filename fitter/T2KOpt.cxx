@@ -65,6 +65,7 @@ void T2KOpt::ReadXmlPath(std::string config_file){
 //____________________________________________________________________________
 void T2KOpt::SetDefaults(void) 
 {
+  fConfigFileName = "T2KOpt - No config file set";
   // Get path to banff param values FHC
 #if BANFF_BINS == 1
   fPathBanffParam = "banff/best_fit_values";
