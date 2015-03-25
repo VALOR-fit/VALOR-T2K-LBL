@@ -23,6 +23,7 @@
 #include <TRandom3.h>
 #include <TMath.h>
 
+#include "Build.h"
 #include "Enumerations.h"
 #include "Utilities.h"
 #include "BANFF.h" 
@@ -1957,5 +1958,48 @@ int BANFF::Param2Idx(PhysParamId_t p) const
 {
   assert(p!=kPhypUndefined);
   return fParam2Idx[p];  
+}
+//________________________________________________________________________________________
+
+const TVectorD & BANFF::SampleBestFitValues (void) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return *fFHCpRHCBestFitValues;
+#elif defined(__FHC_RUNNING__)
+  return *fBestFitValues;
+#elif defined(__RHC_RUNNING__)
+  return *fRHCBestFitValues;
+#else
+  std::cerr<<"BANFF/SampleBestFitValues >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
+}
+//________________________________________________________________________________________
+const TMatrixD & BANFF::SampleCovMatrix  (void) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return *fFHCpRHCCovMtrx;
+#elif defined(__FHC_RUNNING__)
+  return *fCovMtrx;
+#elif defined(__RHC_RUNNING__)
+  return *fRHCCovMtrx;
+#else
+  std::cerr<<"BANFF/SampleCovMtrx >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
+}
+//________________________________________________________________________________________
+const TMatrixD & BANFF::SampleCovMatrixInv (void) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return *fFHCpRHCCovMtrxInv;
+#elif defined(__FHC_RUNNING__)
+  return *fCovMtrxInv;
+#elif defined(__RHC_RUNNING__)
+  return *fRHCCovMtrxInv;
+#else
+  std::cerr<<"BANFF/SampleCovMtrxInv >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
 }
 //________________________________________________________________________________________
