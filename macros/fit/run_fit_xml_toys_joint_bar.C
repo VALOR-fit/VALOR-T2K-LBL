@@ -531,7 +531,7 @@ void run_fit_xml_toys_joint_bar
     }
     else{
       bool applied_negevents_condition = true;
-      bool unphysical_tweak = true;
+      bool unphysical_tweak = tweak_systematics;
       while(applied_negevents_condition || unphysical_tweak) {
         if(tweak_systematics) {
           // tweak all sources of systematic error
@@ -564,7 +564,7 @@ void run_fit_xml_toys_joint_bar
           
           // generate mock data using the current PDF (incl. systematic variations) 
           // + statistical fluctuations if requested (Poisson fluctuation in each bin)
-          cout << "- Generating toy-MC..." << endl;
+          cout << "- Generating toy-MC (tweaked systematics)..." << endl;
           //note that fparm does not contain the tweaks, so use only the PhysHyp here
           applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations);
           
@@ -582,7 +582,7 @@ void run_fit_xml_toys_joint_bar
           skexp->ResetSystematicVariations();
           // generate mock data using the current PDF (without systematic variations) 
           // with statistical fluctuations if requested (Poisson fluctuation in each bin)
-          cout << "- Generating toy-MC..." << endl;
+          cout << "- Generating toy-MC (no syst tweak)..." << endl;
           applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
         }
       }//applied_negevents_condition
