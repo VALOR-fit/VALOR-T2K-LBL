@@ -6269,6 +6269,7 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     //
     // Make a 2D Taylor expansion of the chisq function X^2 around the best fit. 
     // Critical value for 1sigma (68.27% CL) is dX^2 = 2.3  
+    // Discrete derivatives at the best-fit are used
     //
     // x0err = +- sqrt( 2.3 / (A-C^2/B) ) 
     // x1err = +- sqrt( 2.3 / (B-C^2/A) ) 
@@ -6290,23 +6291,26 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     
     double chisq_minus01 = fhdeltachisq_marg_2D->GetBinContent (bin_bf0-Nh, bin_bf1-Nh);  // X^2( x0bf-h1, x1bf-h1 )
     double chisq_plus01 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);  // X^2( x0bf+h1, x1bf+h1 )
+
+    double chisq_plus0_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1-Nh);  // X^2( x0bf+h1, x1bf-h1 )
+    double chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h1, x1bf+h1 )
     
     double h0 = Nh*fhdeltachisq_marg_2D->GetXaxis()->GetBinWidth(bin_bf0);    
     double h1 = Nh*fhdeltachisq_marg_2D->GetYaxis()->GetBinWidth(bin_bf1);    
 
-    cout << endl;
-    cout << "bin_bf0 = " << bin_bf0 << endl;
-    cout << "bin_bf1 = " << bin_bf1 << endl;
-    cout << "chisq_bf = " << chisq_bf << endl;
-    cout << "chisq_minus0 = " << chisq_minus0 << endl;
-    cout << "chisq_plus0 = " << chisq_plus0 << endl;
-    cout << "chisq_minus1 = " << chisq_minus1 << endl;
-    cout << "chisq_plus1 = " << chisq_plus1 << endl;
-    cout << "chisq_minus01 = " << chisq_minus01 << endl;
-    cout << "chisq_plus01 = " << chisq_plus01 << endl;
-    cout << "h0 = " << h0 << endl;
-    cout << "h1 = " << h1 << endl;
-    cout << endl;
+    // cout << endl;
+    // cout << "bin_bf0 = " << bin_bf0 << endl;
+    // cout << "bin_bf1 = " << bin_bf1 << endl;
+    // cout << "chisq_bf = " << chisq_bf << endl;
+    // cout << "chisq_minus0 = " << chisq_minus0 << endl;
+    // cout << "chisq_plus0 = " << chisq_plus0 << endl;
+    // cout << "chisq_minus1 = " << chisq_minus1 << endl;
+    // cout << "chisq_plus1 = " << chisq_plus1 << endl;
+    // cout << "chisq_minus01 = " << chisq_minus01 << endl;
+    // cout << "chisq_plus01 = " << chisq_plus01 << endl;
+    // cout << "h0 = " << h0 << endl;
+    // cout << "h1 = " << h1 << endl;
+    // cout << endl;
 
     // 2D discrete deriv 0: d2X^2/dx0^2 = [ X^2(x0bf+h0,x1bf) - 2X^2(x0bf,x1bf) + X^2(x0bf-h0,x1bf) ] / h0^2    
     double deriv2nd_0 = (chisq_plus0 - 2*chisq_bf + chisq_minus0) / ( (double)Nh*h0 * (double)Nh*h0 );
@@ -6316,7 +6320,10 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
     // 2D discrete deriv 01: d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf) - X^2(x0bf,x1bf+h1) + 2*X^2(x0bf,x1bf) - X^2(x0bf-h0,x1bf) 
     //                                      - X^2(x0bf,x1bf-h1) + X^2(x0bf-h0,x1bf-h1)] / (2*h0*h1)
-    double deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h1*h1);    
+    //double deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h0*h1);    
+    //
+    // 2D discrete deriv 01: d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
+    double deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
     
     // cout << "deriv2nd_0 = " << deriv2nd_0 << endl;
     // cout << "deriv2nd_1 = " << deriv2nd_1 << endl;
