@@ -6116,20 +6116,16 @@ double FitMarginalization::GetInterpolationX(double X1,double Y1,double X2, doub
 void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bool readbinary){
   
   double error = -999.;
+  const double CritChisq_1D = 1.;
+  const double CritChisq_2D = 2.3;
 
-  // Get the full chisq distribution 
-  //this->FillChisqMarg(skobs_data,true);  
-  
-  // Get Delta Chisq distribution
-  this->BuildDeltaChisqMarg();
-  //fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
-
-  
   // Find 68.27% CL contour (1sigma)
 
   if(!fIsFit2D){   // 1D
-
-    const double CritChisq_1D = 1.;
+        
+    // Get Delta Chisq distribution
+    this->BuildDeltaChisqMarg();
+    //fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
         
     int bin_bf = fhchisq_marg_1D->FindBin(this->GetParamBestFit(0)+conv::kASmallNum); // best-fit bin
     int bin_negsigma_a = -999;
@@ -6213,6 +6209,173 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     //cout << "fparam_bf_errpos[0] = " << fparam_bf_errpos[0] << endl;
     
   }
+
+  // 2D fit
+
+  else{
+
+    // Get the full chisq distribution, since in 2D it's much more difficult to implement
+    // an algorithm which stops at DeltaChisq = 2.3, since you need the full contour
+    
+    this->FillChisqMarg(skobs_data,true);  // read a new binary file at each step and fill the full range
+        
+    // Get Delta Chisq distribution
+    this->BuildDeltaChisqMarg();
+    //fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
+
+    int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
+    int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
+    
+
+
+    // X error: find the X interval with extremes the bins at X^2crit = 2.3
+    
+    int binleftX_x=-999;
+    int binleftX_y=-999;
+    
+    int binrightX_x=-999;
+    int binrightX_y=-999;
+
+    int binleftY_x=-999;
+    int binleftY_y=-999;
+
+    int binrightY_x=-999;
+    int binrightY_y=-999;
+
+    for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
+      for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){
+	
+	int bincurrX = ibinX+1;
+	int bincurrY = ibinY+1;
+	double bincont = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY);
+	
+	// Find the most left extreme bin of 1sigma interval along X
+	double bincont_leftprevX = fhdeltachisq_marg_2D->GetBinContent(bincurrX+1,bincurrY); // must be on the right of bincurr
+	if(bincont>=CritChisq_2D && bincont_leftprevX<=CritChisq_2D){
+	  if(binleftX_x == -999 || (bincurrX) < binleftX_x ){
+	    binleftX_x = bincurrX;
+	    binleftX_y = bincurrY;
+	  }
+	}
+
+	// Find the most right extreme bin of 1sigma interval along X
+	double bincont_rightprevX = fhdeltachisq_marg_2D->GetBinContent(bincurrX-1,bincurrY); // must be on the left of bincurr
+	if(bincont>=CritChisq_2D && bincont_rightprevX<=CritChisq_2D){
+	  if(binrightX_x == -999 || (bincurrX) > binrightX_x ){
+	    binrightX_x = bincurrX;
+	    binrightX_y = bincurrY;
+	  }
+	}
+	
+	// Find the most left extreme bin of 1sigma interval along Y (down)
+	double bincont_leftprevY = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY+1); // must be on the right of bincurr
+	if(bincont>=CritChisq_2D && bincont_leftprevY<=CritChisq_2D){
+	  if(binleftY_y == -999 || (bincurrY) < binleftY_y ){
+	    binleftY_x = bincurrX;
+	    binleftY_y = bincurrY;
+	  }
+	}
+
+	// Find the most right extreme bin of 1sigma interval along Y
+	double bincont_rightprevY = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY-1); // must be on the left of bincurr
+	if(bincont>=CritChisq_2D && bincont_rightprevY<=CritChisq_2D){
+	  if(binrightY_y == -999 || (bincurrY) > binrightY_y ){
+	    binrightY_x = bincurrX;
+	    binrightY_y = bincurrY;
+	  }
+	}
+	
+      } // for binY
+    } // for binX
+    
+    double valleftX = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x);
+    double valrightX = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x);
+    double valleftY = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y);
+    double valrightY = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y);
+
+    // cout << "binrightX = " << binrightX_x << endl;
+    // cout << "valrightX = " << valrightX << endl;
+    // cout << endl;
+    // cout << "binleftY = " << binleftY_y << endl;
+    // cout << "valleftY = " << valleftY << endl;
+    // cout << "binrightY = " << binrightY_y << endl;
+    // cout << "valrightY = " << valrightY << endl;
+    // cout << endl;
+
+    // Interpolate between adjacent bins with bincont>2.3 and bincont<2.3
+    // Do it independently for X and Y
+
+    double X1 = -999.;
+    double Y1 = -999.;
+    double X2 = -999.;
+    double Y2 = -999.;
+
+    // X extrapolation (left extreme)
+    X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x); // left side
+    Y1 = fhdeltachisq_marg_2D->GetBinContent(binleftX_x,binleftX_y); // left side
+    X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x+1); // right side
+    Y2 = fhdeltachisq_marg_2D->GetBinContent(binleftX_x+1,binleftX_y); // right side
+    double Xout_left = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+
+    // cout << endl;
+    // cout << "binleftX_x = " << binleftX_x << endl;
+    // cout << "valleftX = " << valleftX << endl;
+    // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
+    // cout << " --> Xout_left = " << Xout_left << endl;
+
+    // X extrapolation (right extreme)
+    X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x-1); // left side
+    Y1 = fhdeltachisq_marg_2D->GetBinContent(binrightX_x-1,binrightX_y); // left side
+    X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x); // right side
+    Y2 = fhdeltachisq_marg_2D->GetBinContent(binrightX_x,binrightX_y); // right side
+    double Xout_right = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+
+    // cout << endl;
+    // cout << "binrightX_x = " << binrightX_x << endl;
+    // cout << "valrightX = " << valrightX << endl;
+    // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
+    // cout << " --> Xout_right = " << Xout_right << endl;
+        
+    // Y extrapolation (left extreme, down)
+    X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y); // left side
+    Y1 = fhdeltachisq_marg_2D->GetBinContent(binleftY_x,binleftY_y); // left side
+    X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y+1); // right side
+    Y2 = fhdeltachisq_marg_2D->GetBinContent(binleftY_x,binleftY_y+1); // right side
+    double Yout_left = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+ 
+    // cout << endl;
+    // cout << "binleftY_y = " << binleftY_y << endl;
+    // cout << "valleftY = " << valleftY << endl;
+    // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
+    // cout << " --> Yout_left = " << Yout_left << endl;
+   
+    // Y extrapolation (right extreme, up)
+    X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y-1); // left side
+    Y1 = fhdeltachisq_marg_2D->GetBinContent(binrightY_x,binrightY_y-1); // left side
+    X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y); // right side
+    Y2 = fhdeltachisq_marg_2D->GetBinContent(binrightY_x,binrightY_y); // right side
+    double Yout_right = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+ 
+    // cout << endl;
+    // cout << "binrightY_y = " << binrightY_y << endl;
+    // cout << "valrightY = " << valrightY << endl;
+    // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
+    // cout << " --> Yout_right = " << Yout_right << endl;
+   
+    // Use the bin low edge as 1sigma extremes
+    // fparam_bf_errneg[0] = fabs(this->GetParamBestFit(0) - valleftX); 
+    // fparam_bf_errpos[0] = fabs(this->GetParamBestFit(0) - valrightX); 
+    // fparam_bf_errneg[1] = fabs(this->GetParamBestFit(1) - valleftY); 
+    // fparam_bf_errpos[1] = fabs(this->GetParamBestFit(1) - valrightY); 
+
+    // Use the extrapolation between bin low edges of the adjacent bins 
+    // which include the 1sigma extreme
+    fparam_bf_errneg[0] = fabs(this->GetParamBestFit(0) - Xout_left); 
+    fparam_bf_errpos[0] = fabs(this->GetParamBestFit(0) - Xout_right); 
+    fparam_bf_errneg[1] = fabs(this->GetParamBestFit(1) - Yout_left); 
+    fparam_bf_errpos[1] = fabs(this->GetParamBestFit(1) - Yout_right); 
+
+  } // if 2D fit
   
   return;
 }
