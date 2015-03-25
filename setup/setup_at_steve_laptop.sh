@@ -26,6 +26,5 @@ fi
 export LD_LIBRARY_PATH=${T2KOSCANA}/fitter:${LD_LIBRARY_PATH}
 export PATH=${T2KOSCANA}/root:${T2KOSCANA}/production:${PATH}
 
-alias root2k="root2k -l"
 
 
