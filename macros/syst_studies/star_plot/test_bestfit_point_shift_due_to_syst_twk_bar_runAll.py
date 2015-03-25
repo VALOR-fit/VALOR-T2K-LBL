@@ -146,17 +146,18 @@ def main(options):
       os.chdir(dirname)
       
       if options.do_stat:
+        stat_only_fitparam_list = fitparamlist.replace("+nuisance","")
         farmname = "RAL"
         if options.isoxford:
           farmname = "Oxford"
         command = ('"${T2KOSCANA}/production/submit_run_fit_xml_toys_joint_bar" --resource RAL '+
            ' --tag star_plot_stat --config-file '+conffile+' --job-dir "${PWD}" --softw-dir "${T2KOSCANA}"'+
-           ' --nruns 250 --firstexpt 1 --lastexpt 40 --xml-file "dummy.xml" --use-xml-file false --dotoys true '+
+           ' --nruns 25 --firstexpt 1 --lastexpt 400 --xml-file "dummy.xml" --use-xml-file false --dotoys true '+
            ' --input-mixing12 '+`nonbar_osc[0]`+' --input-mixing13 '+`nonbar_osc[1]`+' --input-mixing23 '+`nonbar_osc[2]`+
            ' --input-dm23sq '  +`nonbar_osc[5]`+' --input-dm12sq '  +`nonbar_osc[4]`+' --input-deltacp ' +`nonbar_osc[3]`+
            ' --input-mixing12-bar '+`osc[0]`   +' --input-mixing13-bar '+`osc[1]`   +' --input-mixing23-bar '+`osc[2]`+
            ' --input-dm23sq-bar '  +`osc[5]`   +' --input-dm12sq-bar '  +`osc[4]`   +' --input-deltacp-bar ' +`osc[3]`+
-           ' --stat-fluctuations true --tweak-systematics false --fit-param-list '+fitparamlist +
+           ' --stat-fluctuations true --tweak-systematics false --fit-param-list '+stat_only_fitparam_list +
            ' --fit-option "minuit" --store-toy-expts true --store-bestfit-spectra true '
            ' --dcp-value '+`osc[3]`+' --hierarchy normal --reactor false --rethrow-unphysical false')
         print command
