@@ -30,8 +30,8 @@ void run_fit_marginalization_readbinary_sin2th23
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "toyexptmarg",    /* tag for output file */
- int          first_experiment         = 9,                       /* */
- int          last_experiment          = 9,                       /* */
+ int          first_experiment         = 7,                       /* */
+ int          last_experiment          = 7,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_numudisap-0.xml",  
  
