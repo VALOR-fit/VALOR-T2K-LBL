@@ -6257,7 +6257,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 	    binleftX_y = bincurrY;
 	  }
 	}
-
+	
 	// Find the most right extreme bin of 1sigma interval along X
 	double bincont_rightprevX = fhdeltachisq_marg_2D->GetBinContent(bincurrX-1,bincurrY); // must be on the left of bincurr
 	if(bincont>=CritChisq_2D && bincont_rightprevX<=CritChisq_2D){
@@ -6288,11 +6288,163 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       } // for binY
     } // for binX
     
+    
+    
+
+
+
+
+
+
+
+
+
+    //
+    // Case when +-1sigma contour correspond to the full left range:
+    // check if for some values all the full range is included within +-1sigma;
+    // it could happen that for certain chisq shapes, for some point the condition
+    // bincont>2.3 && bincont_prev<2.3 is satisfied, but it's a open contour
+    // e.g.: sin2th23 Vs deltaCP, when DeltaChisq is low and for some values
+    //       of sin2th23 all the deltaCP values are inside the +-1sigma interval
+    // If there is not a +-1sigma contour in the considered total parameter range
+    // set +-1sigma errors to the full range (left and right parameter extremes)
+    //
+
+	
+
+    // Fix Y to a bin and loop over X. Left side.
+    for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){	
+      bool NoRangeErr_curr = true;
+      for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
+	int bincurrX = ibinX+1;
+	int bincurrY = ibinY+1;
+	double bincont = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY);
+	double bincont_leftprev = fhdeltachisq_marg_2D->GetBinContent(bincurrX+1,bincurrY); // must be on the right of bincurr
+	if( (bincont>=CritChisq_2D && bincont_leftprev<=CritChisq_2D) ||
+	    (bincont>=CritChisq_2D) ){
+	  NoRangeErr_curr = false;
+	}
+      } // for Y      
+      if(NoRangeErr_curr){
+	binleftX_x = 1; 
+	break;
+      }
+    } // for X
+
+    // Fix Y to a bin and loop over X. Right side.
+    for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){	
+      bool NoRangeErr_curr = true;
+      for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
+	int bincurrX = ibinX+1;
+	int bincurrY = ibinY+1;
+	double bincont = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY);
+	double bincont_rightprev = fhdeltachisq_marg_2D->GetBinContent(bincurrX-1,bincurrY); // must be on the left of bincurr
+	if( (bincont>=CritChisq_2D && bincont_rightprev<=CritChisq_2D) ||
+	    (bincont>=CritChisq_2D) ){
+	  NoRangeErr_curr = false;
+	}
+      } // for Y      
+      if(NoRangeErr_curr){
+	binrightX_x = fhdeltachisq_marg_2D->GetNbinsX(); 
+	break;
+      }
+    } // for X
+    
+
+
+    // Fix X to a bin and loop over Y. Left side (down).
+    for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
+      bool NoRangeErr_curr = true;
+      for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){	
+	int bincurrX = ibinX+1;
+	int bincurrY = ibinY+1;
+	double bincont = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY);
+	double bincont_leftprev = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY+1); // must be on the right of bincurr
+	if( (bincont>=CritChisq_2D && bincont_leftprev<=CritChisq_2D) ||
+	    (bincont>=CritChisq_2D) ){
+	  NoRangeErr_curr = false;
+	}
+      } // for Y      
+      if(NoRangeErr_curr){
+	binleftY_y = 1; 
+	break;
+      }
+    } // for X
+
+    // Fix X to a bin and loop over Y. Right side (up).
+    for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
+      bool NoRangeErr_curr = true;
+      for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){	
+	int bincurrX = ibinX+1;
+	int bincurrY = ibinY+1;
+	double bincont = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY);
+	double bincont_rightprev = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY-1); // must be on the left of bincurr
+	if( (bincont>=CritChisq_2D && bincont_rightprev<=CritChisq_2D) ||
+	    (bincont>=CritChisq_2D) ){
+	  NoRangeErr_curr = false;
+	}
+      } // for Y      
+      if(NoRangeErr_curr){
+	binrightY_y = fhdeltachisq_marg_2D->GetNbinsY(); 
+	break;
+      }
+    } // for X
+
+
+    // Check if the interval bins are correctly found
+    if(binleftX_x > binrightX_x){
+      cerr << endl;
+      cerr << "X left extreme bin is higher than right extreme bin" << endl;
+      cerr << "The 1sigma error interval is messed up:" << endl;
+      cerr << "binleftX = " << binleftX_x << endl;
+      cerr << "binrightX = " << binrightX_x << endl;
+      cerr << endl;      
+      exit(1);
+    }
+    if(binleftY_y > binrightY_y){
+      cerr << endl;
+      cerr << "Y left extreme bin is higher than right extreme bin" << endl;
+      cerr << "The 1sigma error interval is messed up:" << endl;
+      cerr << "binleftY = " << binleftY_y << endl;
+      cerr << "binrightY = " << binrightY_y << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+
+    // If no bin is found it means the 1sigma bin is outside the physical region
+    // and bin variables are still set to default value.
+    // If so set left extreme to 1 (first bin of the histogram) and right extreme
+    // to Nbins (last bin of the histogram)
+    
+    if(binleftX_x == -999){
+      binleftX_x = 1;
+      binleftX_y = bin_bf1;
+    }
+    if(binrightX_x == -999){
+      binrightX_x = fhdeltachisq_marg_2D->GetNbinsX();
+      binrightX_y = bin_bf1;
+    }
+    if(binleftY_y == -999){
+      binleftY_x = bin_bf0;
+      binleftY_y = 1;
+    }
+    if(binrightY_y == -999){
+      binrightY_x = bin_bf0;
+      binrightY_y = fhdeltachisq_marg_2D->GetNbinsY();
+    }
+
+
+    //
+
     double valleftX = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x);
     double valrightX = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x);
     double valleftY = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y);
     double valrightY = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y);
 
+    // cout << endl;
+    // cout << "binleftX = " << binleftX_x << endl;
+    // cout << "valleftX = " << valleftX << endl;
     // cout << "binrightX = " << binrightX_x << endl;
     // cout << "valrightX = " << valrightX << endl;
     // cout << endl;
@@ -6310,52 +6462,96 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     double X2 = -999.;
     double Y2 = -999.;
 
-    // X extrapolation (left extreme)
-    X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x); // left side
-    Y1 = fhdeltachisq_marg_2D->GetBinContent(binleftX_x,binleftX_y); // left side
-    X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x+1); // right side
-    Y2 = fhdeltachisq_marg_2D->GetBinContent(binleftX_x+1,binleftX_y); // right side
-    double Xout_left = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
-
+    // X extrapolation (left extreme). Do it only if 1sigma bin is in the physical region
+    double Xout_left = -999;
+    if(binleftX_x>1){
+      X1 = -999.;
+      Y1 = -999.;
+      X2 = -999.;
+      Y2 = -999.;
+  
+      X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x); // left side
+      Y1 = fhdeltachisq_marg_2D->GetBinContent(binleftX_x,binleftX_y); // left side
+      X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x+1); // right side
+      Y2 = fhdeltachisq_marg_2D->GetBinContent(binleftX_x+1,binleftX_y); // right side
+      Xout_left = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+    }
+    else{
+      Xout_left = valleftX; 
+    }
+      
     // cout << endl;
     // cout << "binleftX_x = " << binleftX_x << endl;
     // cout << "valleftX = " << valleftX << endl;
     // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
     // cout << " --> Xout_left = " << Xout_left << endl;
 
-    // X extrapolation (right extreme)
-    X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x-1); // left side
-    Y1 = fhdeltachisq_marg_2D->GetBinContent(binrightX_x-1,binrightX_y); // left side
-    X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x); // right side
-    Y2 = fhdeltachisq_marg_2D->GetBinContent(binrightX_x,binrightX_y); // right side
-    double Xout_right = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+    // X extrapolation (right extreme). Do it only if 1sigma bin is in the physical region
+    double Xout_right = -999;
+    if(binrightX_x < fhdeltachisq_marg_2D->GetNbinsX()){
+      X1 = -999.;
+      Y1 = -999.;
+      X2 = -999.;
+      Y2 = -999.;
 
+      X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x-1); // left side
+      Y1 = fhdeltachisq_marg_2D->GetBinContent(binrightX_x-1,binrightX_y); // left side
+      X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x); // right side
+      Y2 = fhdeltachisq_marg_2D->GetBinContent(binrightX_x,binrightX_y); // right side
+      Xout_right = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+    }
+    else{
+      Xout_right = valrightX;
+    }
+    
     // cout << endl;
     // cout << "binrightX_x = " << binrightX_x << endl;
     // cout << "valrightX = " << valrightX << endl;
     // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
     // cout << " --> Xout_right = " << Xout_right << endl;
-        
-    // Y extrapolation (left extreme, down)
-    X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y); // left side
-    Y1 = fhdeltachisq_marg_2D->GetBinContent(binleftY_x,binleftY_y); // left side
-    X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y+1); // right side
-    Y2 = fhdeltachisq_marg_2D->GetBinContent(binleftY_x,binleftY_y+1); // right side
-    double Yout_left = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
- 
+    
+    // Y extrapolation (left extreme, down). Do it only if 1sigma bin is in the physical region
+    double Yout_left = -999;
+    if(binleftY_y > 1){
+      X1 = -999.;
+      Y1 = -999.;
+      X2 = -999.;
+      Y2 = -999.;
+
+      X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y); // left side
+      Y1 = fhdeltachisq_marg_2D->GetBinContent(binleftY_x,binleftY_y); // left side
+      X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y+1); // right side
+      Y2 = fhdeltachisq_marg_2D->GetBinContent(binleftY_x,binleftY_y+1); // right side
+      Yout_left = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+    }
+    else{
+      Yout_left = valleftY;
+    }
+
     // cout << endl;
     // cout << "binleftY_y = " << binleftY_y << endl;
     // cout << "valleftY = " << valleftY << endl;
     // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
     // cout << " --> Yout_left = " << Yout_left << endl;
    
-    // Y extrapolation (right extreme, up)
-    X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y-1); // left side
-    Y1 = fhdeltachisq_marg_2D->GetBinContent(binrightY_x,binrightY_y-1); // left side
-    X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y); // right side
-    Y2 = fhdeltachisq_marg_2D->GetBinContent(binrightY_x,binrightY_y); // right side
-    double Yout_right = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
- 
+    // Y extrapolation (right extreme, up). Do it only if 1sigma bin is in the physical region
+    double Yout_right = -999;
+    if(binrightY_y < fhdeltachisq_marg_2D->GetNbinsX()){
+      X1 = -999.;
+      Y1 = -999.;
+      X2 = -999.;
+      Y2 = -999.;
+
+      X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y-1); // left side
+      Y1 = fhdeltachisq_marg_2D->GetBinContent(binrightY_x,binrightY_y-1); // left side
+      X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y); // right side
+      Y2 = fhdeltachisq_marg_2D->GetBinContent(binrightY_x,binrightY_y); // right side
+      Yout_right = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
+    }
+    else{
+      Yout_right = valrightY;
+    }
+
     // cout << endl;
     // cout << "binrightY_y = " << binrightY_y << endl;
     // cout << "valrightY = " << valrightY << endl;
