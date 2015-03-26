@@ -622,6 +622,33 @@ double SuperkDetectorFSI::MultiRingCurrentValue(conv::PhysParamId_t p) const
 ///
 
 //________________________________________________________________________________________
+double SuperkDetectorFSI::SampleCurrentValue(PhysParamId_t p) const
+{
+  if (util::IsRHCSystematic(p)) {
+    return this->RHCCurrentValue(p);
+  }
+  else if (util::IsMultiRingSystematic(p)) {
+    return this->MultiRingCurrentValue(p);
+  }
+  else {
+    return this->CurrentValue(p);
+  }
+}
+
+//________________________________________________________________________________________
+double SuperkDetectorFSI::SampleOneSigmaError(PhysParamId_t p) const
+{
+  if (util::IsRHCSystematic(p)) {
+    return this->RHCOneSigmaError(p);
+  }
+  else if (util::IsMultiRingSystematic(p)) {
+    return this->MultiRingOneSigmaError(p);
+  }
+  else {
+    return this->OneSigmaError(p);
+  }
+}
+//________________________________________________________________________________________
 double SuperkDetectorFSI::OneSigmaError(PhysParamId_t p) const
 {
   if(p == kNuisSuperkEnergyScale)

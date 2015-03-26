@@ -50,6 +50,8 @@ public:
   double BestFitValue (int idx) const;
   double RHCBestFitValue (conv::PhysParamId_t p) const;
   double RHCBestFitValue (int idx) const;
+  double SampleBestFitValue (conv::PhysParamId_t p) const;
+  double SampleBestFitValue (int idx) const;
 
   // NEW FLUX FHC+RHC
   double FHCpRHCBestFitValue (conv::PhysParamId_t p) const;
@@ -60,6 +62,8 @@ public:
   double CurrentValue (int idx) const;
   double RHCCurrentValue (conv::PhysParamId_t p) const;
   double RHCCurrentValue (int idx) const;
+  double SampleCurrentValue (conv::PhysParamId_t p) const;
+  double SampleCurrentValue (int idx) const;
 
   // NEW FLUX FHC+RHC
   double FHCpRHCCurrentValue (conv::PhysParamId_t p) const;
@@ -70,6 +74,8 @@ public:
   double OneSigmaError(int idx) const;
   double RHCOneSigmaError(conv::PhysParamId_t p) const;
   double RHCOneSigmaError(int idx) const;
+  double SampleOneSigmaError(conv::PhysParamId_t p) const;
+  double SampleOneSigmaError(int idx) const;
 
   // NEW FLUX FHC+RHC
   double FHCpRHCOneSigmaError(conv::PhysParamId_t p) const;

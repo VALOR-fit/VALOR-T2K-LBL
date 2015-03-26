@@ -76,10 +76,12 @@ public:
   double CurrentValue (conv::PhysParamId_t p) const;
   double RHCCurrentValue (conv::PhysParamId_t p) const;
   double MultiRingCurrentValue (conv::PhysParamId_t p) const; /// NEW MULTIRING 2
+  double SampleCurrentValue(conv::PhysParamId_t p) const; // Picks the right one of the above methods
   
   double OneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
   double RHCOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
   double MultiRingOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix   /// NEW MULTIRING 2
+  double SampleOneSigmaError(conv::PhysParamId_t p) const; // Picks the right one of the above methods
 
   // Get input FSI covariance matrix and its Cholesky decomposition
   const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }

@@ -608,8 +608,93 @@ double BANFF::FHCpRHCOneSigmaError(int idx) const
   const TMatrixD & cov = *fFHCpRHCCovMtrx;
   return TMath::Sqrt(cov[idx][idx]);
 }
-//
+//________________________________________________________________________________________
 
+//________________________________________________________________________________________
+double BANFF::SampleOneSigmaError(PhysParamId_t p) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return this->FHCpRHCOneSigmaError(p);
+#elif defined(__FHC_RUNNING__)
+  return this->OneSigmaError(p);
+#elif defined(__RHC_RUNNING__)
+  return this->RHCOneSigmaError(p);
+#else
+  std::cerr<<"BANFF/SampleOneSigmaError >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
+}
+//________________________________________________________________________________________
+double BANFF::SampleOneSigmaError(int idx) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return this->FHCpRHCOneSigmaError(idx);
+#elif defined(__FHC_RUNNING__)
+  return this->OneSigmaError(idx);
+#elif defined(__RHC_RUNNING__)
+  return this->RHCOneSigmaError(idx);
+#else
+  std::cerr<<"BANFF/SampleOneSigmaError >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
+}
+//________________________________________________________________________________________
+double BANFF::SampleCurrentValue(PhysParamId_t p) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return this->FHCpRHCCurrentValue(p);
+#elif defined(__FHC_RUNNING__)
+  return this->CurrentValue(p);
+#elif defined(__RHC_RUNNING__)
+  return this->RHCCurrentValue(p);
+#else
+  std::cerr<<"BANFF/SampleCurrentValue >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
+}
+//________________________________________________________________________________________
+double BANFF::SampleCurrentValue(int idx) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return this->FHCpRHCCurrentValue(idx);
+#elif defined(__FHC_RUNNING__)
+  return this->CurrentValue(idx);
+#elif defined(__RHC_RUNNING__)
+  return this->RHCCurrentValue(idx);
+#else
+  std::cerr<<"BANFF/SampleCurrentValue >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
+}
+//________________________________________________________________________________________
+double BANFF::SampleBestFitValue(PhysParamId_t p) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return this->FHCpRHCBestFitValue(p);
+#elif defined(__FHC_RUNNING__)
+  return this->BestFitValue(p);
+#elif defined(__RHC_RUNNING__)
+  return this->RHCBestFitValue(p);
+#else
+  std::cerr<<"BANFF/SampleBestFitValue >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
+}
+//________________________________________________________________________________________
+double BANFF::SampleBestFitValue(int idx) const
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  return this->FHCpRHCBestFitValue(idx);
+#elif defined(__FHC_RUNNING__)
+  return this->BestFitValue(idx);
+#elif defined(__RHC_RUNNING__)
+  return this->RHCBestFitValue(idx);
+#else
+  std::cerr<<"BANFF/SampleBestFitValue >> Cannot find right matrix."<<endl;
+  exit(-1);
+#endif
+}
+//________________________________________________________________________________________
 
 //________________________________________________________________________________________
 void BANFF::SyncRHCToFHCSystematics()
