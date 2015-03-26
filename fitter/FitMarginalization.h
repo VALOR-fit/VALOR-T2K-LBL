@@ -151,6 +151,13 @@ class FitMarginalization
   double GetParamBestFitErrSym(int ParId) const { return fparam_bf_errsym[ParId];};
   
   void PrintBestFit(void);
+  
+  void SetChisqBestFit(double chisq) { fchisq_bf = chisq;};
+  void SetParamBestFit(int ParId,double val) { fparam_bf[ParId] = val;};
+  void SetParamBestFitErrNeg(int ParId,double val) { fparam_bf_errneg[ParId] = val;};
+  void SetParamBestFitErrPos(int ParId,double val) { fparam_bf_errpos[ParId] = val;};
+  void SetParamBestFitErrSym(int ParId,double val) { fparam_bf_errsym[ParId] = val;};
+  
 
   VALORArrayF * GetToyMargErecoVArray()             {return fToyMargErecoVArray;};
   const VALORArrayF * GetToyMargErecoVArray() const {return fToyMargErecoVArray;};
