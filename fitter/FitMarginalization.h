@@ -107,7 +107,6 @@ class FitMarginalization
   const FitParamList * GetFitParamList(void) const {return fparm;};
   
   void PrintPhysHypothesis(void);
-  //void PrintFitParamList(void);
 
   bool IsFit2D(){ return fIsFit2D;}
 
@@ -178,6 +177,8 @@ class FitMarginalization
   void SetMargMassHierarchy(bool domargMH);  
   void SetRethrowSystUnphysical(bool dorethrow);
   
+  double OscPhysicalRegion(conv::PhysParamId_t p,double oscval);
+
   void MergeInputFiles();
 
   void SetNSKsamples();
@@ -248,9 +249,7 @@ class FitMarginalization
   int GetFileIDRead(int binpar0,int binpar1); // need histogram bin number as input
  
   int GetCurrentFileID(void){ return fCurrentFileIDminim;};
-  //
-
-
+  
 
 
 
@@ -281,9 +280,8 @@ class FitMarginalization
   double fGridStartMaxVal_X;
   double fGridStartMinVal_Y;
   double fGridStartMaxVal_Y;
+ 
   //
-
-
 
   std::string fnamefreeparam[2]; // Use param 1 only for 2D fits
 

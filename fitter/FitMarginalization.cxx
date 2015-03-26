@@ -5661,11 +5661,6 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 	  exit(1);
 	}
     }
-  
-
-
-
-
   }
 
   cout << endl;
@@ -5797,20 +5792,6 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
     
   return;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 void FitMarginalization::SetStartBin(double start_X,double start_Y){
   
@@ -6287,16 +6268,6 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 	
       } // for binY
     } // for binX
-    
-    
-    
-
-
-
-
-
-
-
 
 
     //
@@ -6308,9 +6279,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     //       of sin2th23 all the deltaCP values are inside the +-1sigma interval
     // If there is not a +-1sigma contour in the considered total parameter range
     // set +-1sigma errors to the full range (left and right parameter extremes)
-    //
-
-	
+    //	
 
     // Fix Y to a bin and loop over X. Left side.
     for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){	
@@ -6616,6 +6585,17 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     double A = 0.5 * deriv2nd;
     
     double xerr = sqrt( CritChisq_1D / A );
+
+
+    // // Check that best-fit errors are in the physical region.
+    // // If not restrict them to the physical region
+    // double x_p1sigma = fparam_bf[0] + xerr;
+    // double x_m1sigma = fparam_bf[0] - xerr;
+    // x_p1sigma = this->OscPhysicalRegion(fPhysParamFree[0],x_p1sigma);
+    // x_m1sigma = this->OscPhysicalRegion(fPhysParamFree[0],x_m1sigma);
+    // double xerr_p1sigma = fabs(x_p1sigma - fparam_bf[0]);
+    // double xerr_m1sigma = fabs(x_m1sigma - fparam_bf[0]);
+    // xerr = TMath::Max(xerr_p1sigma,xerr_m1sigma);
     
     fparam_bf_errsym[0] = xerr; // symmetric error
     fparam_bf_errsym[1] = -999; 
@@ -6702,13 +6682,30 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     // cout << "C = " << C << endl;
     // cout << endl;
 
-    // 
-    
-    double x0err = sqrt( CritChisq_2D ) / sqrt( A - C*C/B );
-    double x1err = sqrt( CritChisq_2D ) / sqrt( B - C*C/A );
 
-    fparam_bf_errsym[0] = x0err; // symmetric error
-    fparam_bf_errsym[1] = x1err; 
+    // Get best-fit errors
+    
+    double bf0err = sqrt( CritChisq_2D ) / sqrt( A - C*C/B );
+    double bf1err = sqrt( CritChisq_2D ) / sqrt( B - C*C/A );
+
+    // // Check that best-fit errors are in the physical region.
+    // // If not restrict them to the physical region
+    // double bf0_p1sigma = fparam_bf[0] + bf0err;
+    // double bf0_m1sigma = fparam_bf[0] - bf0err;
+    // double bf1_p1sigma = fparam_bf[1] + bf1err;
+    // double bf1_m1sigma = fparam_bf[1] - bf1err;    
+    // bf0_p1sigma = this->OscPhysicalRegion(fPhysParamFree[0],bf0_p1sigma);
+    // bf0_m1sigma = this->OscPhysicalRegion(fPhysParamFree[0],bf0_m1sigma);
+    // bf1_p1sigma = this->OscPhysicalRegion(fPhysParamFree[1],bf1_p1sigma);
+    // bf1_m1sigma = this->OscPhysicalRegion(fPhysParamFree[1],bf1_m1sigma);
+    // double bf0err_p1sigma = fabs(bf0_p1sigma - fparam_bf[0]);
+    // double bf0err_m1sigma = fabs(bf0_m1sigma - fparam_bf[0]);
+    // double bf1err_p1sigma = fabs(bf1_p1sigma - fparam_bf[1]);
+    // double bf1err_m1sigma = fabs(bf1_m1sigma - fparam_bf[1]);    
+    // bf0err = TMath::Max(bf0err_p1sigma,bf0err_m1sigma);
+    // bf1err = TMath::Max(bf1err_p1sigma,bf1err_m1sigma);
+    // fparam_bf_errsym[0] = bf0err; // symmetric error
+    // fparam_bf_errsym[1] = bf1err; 
 
   }
 
@@ -6718,3 +6715,84 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
 
 
+
+
+
+
+double FitMarginalization::OscPhysicalRegion(conv::PhysParamId_t p,double oscval)
+{  
+  // NuBar 
+  if(p == conv::kPhypMixing13Bar){
+    if(oscval < mixing13Bar_min) return mixing13Bar_min;
+    else if(oscval > mixing13Bar_max) return mixing13Bar_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypMixing23Bar){
+    if(oscval < mixing23Bar_min) return mixing23Bar_min;
+    else if(oscval > mixing23Bar_max) return mixing23Bar_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypMixing12Bar){
+    if(oscval < mixing12Bar_min) return mixing12Bar_min;
+    else if(oscval > mixing12Bar_max) return mixing12Bar_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypDm23sqBar){
+    if(oscval < dmsq32Bar_min) return dmsq32Bar_min;
+    else if(oscval > dmsq32Bar_max) return dmsq32Bar_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypDm12sqBar){
+    if(oscval < dmsq12Bar_min) return dmsq12Bar_min; 
+    else if(oscval > dmsq12Bar_max) return dmsq12Bar_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypCPVBar){
+    // Though CPV is periodic it's better to return errors in 2 Pi-Greek period
+    if(oscval < deltacpBar_min) return deltacpBar_min;
+    else if(oscval > deltacpBar_max) return deltacpBar_max;
+    else return oscval;
+  }
+
+  // Nu 
+  else if(p == conv::kPhypMixing13){
+    if(oscval < mixing13_min) return mixing13_min;
+    else if(oscval > mixing13_max) return mixing13_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypMixing23){
+    if(oscval < mixing23_min) return mixing23_min;
+    else if(oscval > mixing23_max) return mixing23_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypMixing12){
+    if(oscval < mixing12_min) return mixing12_min;
+    else if(oscval > mixing12_max) return mixing12_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypDm23sq){
+    if(oscval < dmsq32_min) return dmsq32_min;
+    else if(oscval > dmsq32_max) return dmsq32_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypDm12sq){
+    if(oscval < dmsq12_min) return dmsq12_min;
+    else if(oscval > dmsq12_max) return dmsq12_max;
+    else return oscval;
+  }
+  else if(p == conv::kPhypCPV){
+    // Though CPV is periodic it's better to return errors in 2 * Pi-Greek period
+    if(oscval < deltacp_min) return deltacp_min;
+    else if(oscval > deltacp_max) return deltacp_max;
+    else return oscval;
+  }
+
+  else{
+    cerr << endl;
+    cerr << "Parameter " << util::AsString(p) << " is not in the physics list" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  
+  return -999;
+}
