@@ -19,14 +19,37 @@ conv =  valor.conv
 opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
 
+to3dp = "{0:.3f}"
 
-def main(file_patterns,do_systematics=False):
+text_entry_height = 0.08
+
+def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
   ch = ROOT.TChain("fitnt")
   ch.Add(file_patterns[0])
   assert(ch.GetEntries())
   ch.GetEntry(0)
   
   fparm0 = ch.best_fit_params
+  
+  while len(labels)<len(file_patterns):
+    labels.append("")
+    
+  draw_legend = any(labels)
+  ymax = 0.9
+  ymin = ymax
+  for l in labels:
+    if l: ymin -= text_entry_height
+  legend = ROOT.TLegend(0.7,ymin,0.9,0.9)
+  
+  stat_boxes = []
+  ymin = ymax
+  for ipattern,pattern in enumerate(file_patterns):
+    this_ymax = ymin
+    ymin -= text_entry_height
+    box = ROOT.TPaveText(0.1,ymin,0.4,this_ymax,"ndc")
+    box.SetTextColor(colors[ipattern])
+    box.SetShadowColor(0)
+    stat_boxes.append(box)
   
   params_to_plot = []
   for p in xrange(conv.knppmax):
@@ -60,8 +83,10 @@ def main(file_patterns,do_systematics=False):
         pull = (bf_val-in_val)/hesse_error
         pull_hists[ipattern][p].Fill(pull)
   
-  
   for p in params_to_plot:
+    legend.Clear()
+    for box in stat_boxes: box.Clear()
+    
     cname = "canv_"+util.ParamAsStringSimple(p)
     canv = ROOT.TCanvas(cname,cname,1280,720)
     canv.cd()
@@ -71,15 +96,27 @@ def main(file_patterns,do_systematics=False):
       h = pull_hists[ipattern][p]
       h.SetLineColor(colors[ipattern])
       h.Draw(plot_opt)
-      plot_opt = "same"
       
+      legend.AddEntry(h,labels[ipattern],"l")
+      stat_boxes[ipattern].AddText("mean="+to3dp.format(h.GetMean())+", sigma="+to3dp.format(h.GetRMS()))
+      
+      plot_opt = "same"
+    
+    if draw_legend: legend.Draw()
+    if print_stats:
+      for box in stat_boxes:
+        box.Draw()
+    
     canv.Print("pull_"+util.ParamAsStringSimple(p)+".eps")
 
 if __name__=="__main__":
   import optparse
   parser = optparse.OptionParser(usage="%prog [options] pattern1 [pattern2] ...",description="Make plots of physics parameter pulls")
   parser.add_option('-s','--do-systematics', dest='do_systematics'    , action="store_true", default=False, help="Draw the systematic parameters as well")
+  parser.add_option('-l','--labels', dest='labels', default="", help="Legend entries, comma seperated")
+  parser.add_option('-p','--print_stats', dest='do_stats', action="store_true", default=False, help="Draw the Gaussian fit parameters as well")
   
   options,patterns = parser.parse_args()
+  labels = options.labels.split(",")
   
-  main(patterns,options.do_systematics)
+  main(patterns,labels,options.do_systematics,options.do_stats)
