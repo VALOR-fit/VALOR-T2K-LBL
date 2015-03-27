@@ -20,6 +20,7 @@ opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
 
 to3dp = "{0:.3f}"
+orig_plot_opt = ""
 
 text_entry_height = 0.08
 
@@ -68,10 +69,13 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
       hname = "pulls_f"+`ipattern`+"_"+util.ParamAsStringSimple(p)
       h = ROOT.TH1D(hname,hname,50,-5,5)
       h.GetXaxis().SetTitle("Pull")
+      h.GetYaxis().SetTitle("Fraction of fits")
       pull_hists[ipattern][p] = h
       
     ch = ROOT.TChain("fitnt")
     ch.Add(file_patterns[ipattern])
+    
+    entries = ch.GetEntries()
       
     for entry in ch:
       fparm = entry.best_fit_params
@@ -83,6 +87,9 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
         pull = (bf_val-in_val)/hesse_error
         pull_hists[ipattern][p].Fill(pull)
   
+    #~ for h in pull_hists[ipattern].itervalues():
+      #~ h.Scale(1./entries)
+      
   for p in params_to_plot:
     legend.Clear()
     for box in stat_boxes: box.Clear()
@@ -90,17 +97,19 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
     cname = "canv_"+util.ParamAsStringSimple(p)
     canv = ROOT.TCanvas(cname,cname,1280,720)
     canv.cd()
-    plot_opt = ""
+    
+    plot_opt = orig_plot_opt
     histmax = 1.1*max([h[p].GetMaximum() for h in pull_hists.itervalues()])
     for ipattern,pattern in enumerate(file_patterns):
       h = pull_hists[ipattern][p]
+      #~ h.SetMaximum(histmax)
       h.SetLineColor(colors[ipattern])
-      h.Draw(plot_opt)
+      h.DrawNormalized(plot_opt)
       
       legend.AddEntry(h,labels[ipattern],"l")
       stat_boxes[ipattern].AddText("mean="+to3dp.format(h.GetMean())+", sigma="+to3dp.format(h.GetRMS()))
       
-      plot_opt = "same"
+      plot_opt = orig_plot_opt+"same"
     
     if draw_legend: legend.Draw()
     if print_stats:
