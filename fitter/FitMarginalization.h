@@ -184,7 +184,7 @@ class FitMarginalization
   void SetNSKsamples();
   int GetNSKsamples ()  const {return fNSKsamples;};
   conv::SuperkSample_t GetSKSamples (int isksample) const ; 
-  
+
   void SetSaveParamLists(bool save_lists = true);
   PhysParamList * const * GetParamListArray() const;
   TObjArray * GetToyParamThrowHistograms(int nbins = -1) const; // Array needs deleting after call, histograms don't.
@@ -250,7 +250,7 @@ class FitMarginalization
  
   int GetCurrentFileID(void){ return fCurrentFileIDminim;};
   
-
+  
 
 
   
@@ -354,6 +354,7 @@ class FitMarginalization
   bool             fShouldSaveToyParamLists;
   PhysParamList ** fSavedToyParamLists; //[fntoys_marg]
 
+  SuperkExpectation *fskexp;
 
 
   // Histogram minimization
@@ -392,6 +393,9 @@ class FitMarginalization
   int fNFits;
   int fNiterations;
   int fFitStatus; // 1 --> OK, 0 --> it didn't converge
+
+  double fPOT[conv::kns]; // POT of each sk sample to print in the output text file with marg toys
+
   //
 
 

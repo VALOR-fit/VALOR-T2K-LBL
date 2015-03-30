@@ -618,7 +618,14 @@ void FitMarginalization::PrintPhysHypothesis(){
 void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp){
   const int nmh=2; // mass hierarchy  
   fToyMargErecoVArray->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fMaxSampleErecoBins);
-    
+
+  // Store # of POT for each used sample
+  for(int is=0;is<fNSKsamples;is++){
+    SuperkSample_t s = this->GetSKSamples(is);
+    fPOT[is] = skexp->GetSuperkMC()->AnalyzedSamplePOT(s);
+    //cout << "POT ( " << util::AsString(s) << " ) = " << fPOT[is] << endl;
+  }
+  
   cout << "////////////////////////////////////////////////////////" << endl;
   cout << endl;
   cout << "Make toys for marginalization and store in a binary file" << endl;
@@ -999,13 +1006,6 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
     } // ipar0 (free parameter)
   }
 
-
-
-
-
-
-
-
   NtoysTot = fntoys_marg * 2;
 
   cout << endl;
@@ -1031,13 +1031,6 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
 
   return;
 }
-
-
-
-
-
-
-
 
 
 // //________________________________________________________________________________________
@@ -1182,7 +1175,7 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
   fNCallsCalcChisqMargPt++;
   
   // Read binary file
-  if(readbinary){ // don't do it when all the chisq distribution has to be filled
+  if(readbinary){ 
 
     // Get file ID corresponding to the input free parameters
     
@@ -1319,12 +1312,6 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 //________________________________________________________________________________________
 void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
 
-
-
-  //const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();  
-
-
-
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
   
@@ -1377,6 +1364,16 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
   sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".txt");
   
   ofstream ostext(outname_range,ios::out);
+  ostext << endl;
+
+  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();  
+  ostext << "Configuration file: " << config_file << endl;
+  
+  for(int is=0;is<fNSKsamples;is++){
+    SuperkSample_t s = this->GetSKSamples(is);
+    ostext << "  - POT ( " << util::AsString(s) << " ) = " << fPOT[is] << endl;
+  }
+
   ostext << endl;
   ostext << "Used sub-range of the free parameter 0: " << fnamefreeparam[0] << endl;
   ostext << "First bin of free param: " << fmin_bin_sub_param[0] << endl;
@@ -6704,21 +6701,16 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     // double bf1err_m1sigma = fabs(bf1_m1sigma - fparam_bf[1]);    
     // bf0err = TMath::Max(bf0err_p1sigma,bf0err_m1sigma);
     // bf1err = TMath::Max(bf1err_p1sigma,bf1err_m1sigma);
-    // fparam_bf_errsym[0] = bf0err; // symmetric error
-    // fparam_bf_errsym[1] = bf1err; 
+   
 
+    fparam_bf_errsym[0] = bf0err; // symmetric error
+    fparam_bf_errsym[1] = bf1err; 
+    
   }
 
   return;
 }
 //________________________________________________________________________________________
-
-
-
-
-
-
-
 double FitMarginalization::OscPhysicalRegion(conv::PhysParamId_t p,double oscval)
 {  
   // NuBar 
