@@ -8,12 +8,13 @@
 
 //#define __print_build_map_fileid__
 #define __print_array_toy_maketoys__
-#define __print_minimization_steps__
+//#define __print_minimization_steps__ //
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_masshierarchy__
 //#define __print_systematic_variations__
 #define __print_chisqmarg__
+//#define __readtoys_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -1567,12 +1568,18 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string sinname(inname);
-  cout << sinname << endl;
+  //cout << sinname << endl;
   
+#ifdef __readtoys_debug__
   cout << "Reading toys for marginalization from binary file: " << sinname << endl;  
+#endif
+
   fToyMargErecoVArray->ReadFile(sinname);
+
+#ifdef __readtoys_debug__
   cout << "Done!"<<endl;
-  
+#endif
+
   // Write store sub-range of the free parameter
 
   int min_bin_sub_param0=0;
@@ -1587,7 +1594,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
 
   std::string sinname_range(inname_range);
 
+#ifdef __readtoys_debug__
   cout << "Reading free param sub-range from binary file:" << sinname_range << endl;
+#endif
 
   ifstream is(sinname_range.c_str(),ios::binary|ios::in);
   assert(is);
@@ -1597,7 +1606,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   is.read( (char*)&max_bin_sub_param1,sizeof(int));
   is.close();
   
+#ifdef __readtoys_debug__
   cout<<"Done!"<<endl;
+#endif
 
   fmin_bin_sub_param[0] = min_bin_sub_param0;
   fmax_bin_sub_param[0] = max_bin_sub_param0;
@@ -1638,7 +1649,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
 	 << endl;
     exit(1);
   }
-  
+
+
+#ifdef __readtoys_debug__  
   cout << "File sub-range: ["
        << fmin_sub_param[0] << "," << fmax_sub_param[0] 
        << "]" << endl;
@@ -1652,6 +1665,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   cout << "File bin sub-range: ["
        << fmin_bin_sub_param[1]+1 << "," << fmax_bin_sub_param[1]+1 
        << "]" << endl << endl;
+#endif
  
   return;
 }
