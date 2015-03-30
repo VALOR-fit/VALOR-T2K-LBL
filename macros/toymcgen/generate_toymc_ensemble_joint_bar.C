@@ -12,14 +12,14 @@
 void generate_toymc_ensemble_joint_bar
 (
  //const char * tag                     = "toymc_nueapp",
- const char * tag                     = "toymc_numudisap",                        /* */
+ const char * tag                     = "toymc_numubardisap_fixosc_rethrowunphysical_2p5E20POT",                        /* */
  //const char * tag                     = "toymc_FHCpRHCpMultiRing",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_ResultsRun1to4_IH",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_MCRun1to6_th13DB_NH",                        /* */
 
  int          run                     = 0,                              /* */
- double       nexperiments            = 10,                             /* number of toy-MC expts to generate */
+ double       nexperiments            = 5000,                             /* number of toy-MC expts to generate */
  const char * hypothesis              = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
@@ -40,8 +40,7 @@ void generate_toymc_ensemble_joint_bar
  //const char * config_file      = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",
 
-  bool rethrow_if_parameters_unphysical = true, // rethrow unphysical toys
- 
+  bool rethrow_if_parameters_unphysical = true,                          // rethrow unphysical toys
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
 
@@ -94,13 +93,17 @@ void generate_toymc_ensemble_joint_bar
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12      = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
   bool randomize_mixing13      = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
+  bool randomize_mixing23      = (TMath::Abs(input_mixing23 + 999) < kASmallNum);
   bool randomize_deltacp       = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
   bool randomize_dm12sq        = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
+  bool randomize_dm23sq        = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
 
   bool randomize_mixing12_bar  = (TMath::Abs(input_mixing12_bar + 999) < kASmallNum);
   bool randomize_mixing13_bar  = (TMath::Abs(input_mixing13_bar + 999) < kASmallNum);
+  bool randomize_mixing23_bar  = (TMath::Abs(input_mixing23_bar + 999) < kASmallNum);
   bool randomize_deltacp_bar   = (TMath::Abs(input_deltacp_bar  + 999) < kASmallNum);
   bool randomize_dm12sq_bar    = (TMath::Abs(input_dm12sq_bar   + 999) < kASmallNum);
+  bool randomize_dm23sq_bar    = (TMath::Abs(input_dm23sq_bar   + 999) < kASmallNum);
 
   //Set to defaults
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
@@ -216,18 +219,18 @@ void generate_toymc_ensemble_joint_bar
   cout << "   - True oscillation parameters Nu mode: " << endl;
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
   cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
-  cout << "       > " << util::AsString(kPhypMixing23) << " = " << input_mixing23 << endl;
+  cout << "       > " << util::AsString(kPhypMixing23) << " = " << ((randomize_mixing23) ? "* randomized *" : input_mixing23) << endl;
   cout << "       > " << util::AsString(kPhypCPV    )  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
   cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
-  cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << ((randomize_dm23sq)  ? "* randomized *" : input_dm23sq ) << " eV^2/c^4" << endl;
 
   cout << "   - True oscillation parameters NuBar mode: " << endl;
   cout << "       > " << util::AsString(kPhypMixing12Bar) << " = " << ((randomize_mixing12_bar) ? "* randomized *" : input_mixing12_bar) << endl;
   cout << "       > " << util::AsString(kPhypMixing13Bar) << " = " << ((randomize_mixing13_bar) ? "* randomized *" : input_mixing13_bar) << endl;
-  cout << "       > " << util::AsString(kPhypMixing23Bar) << " = " << input_mixing23_bar << endl;
+  cout << "       > " << util::AsString(kPhypMixing23Bar) << " = " << ((randomize_mixing23_bar) ? "* randomized *" : input_mixing23_bar) << endl;
   cout << "       > " << util::AsString(kPhypCPVBar    )  << " = " << ((randomize_deltacp_bar) ? "* randomized *" : input_deltacp_bar) << endl;
   cout << "       > " << util::AsString(kPhypDm12sqBar)   << " = " << ((randomize_dm12sq_bar)  ? "* randomized *" : input_dm12sq_bar ) << " eV^2/c^4" << endl;
-  cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << input_dm23sq_bar << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << ((randomize_dm23sq_bar)  ? "* randomized *" : input_dm23sq_bar ) << " eV^2/c^4" << endl;
 
   cout << "   - Adding the following data-points in each toy-MC expt: " << endl;
   cout << "    For 1R mu-like: "     << ((full_points_to_add_1Rmu)     ? *full_points_to_add_1Rmu     : "*None*") << endl;
@@ -293,13 +296,17 @@ void generate_toymc_ensemble_joint_bar
        // Randomize specified osc params for current toy MC expt
        if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
        if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
+       if (randomize_mixing23) { input_mixing23 = util::RandomizeMixing23(); }
        if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();      }
        if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
+       if (randomize_dm23sq  ) { input_dm23sq   = util::RandomizeDm23sq();   }
        
        if (randomize_mixing12_bar) { input_mixing12_bar = util::RandomizeMixing12Bar(); }
        if (randomize_mixing13_bar) { input_mixing13_bar = util::RandomizeMixing13Bar(); }
+       if (randomize_mixing23_bar) { input_mixing23_bar = util::RandomizeMixing23Bar(); }
        if (randomize_deltacp_bar ) { input_deltacp_bar  = util::RandomizeCPVBar();      }
        if (randomize_dm12sq_bar  ) { input_dm12sq_bar   = util::RandomizeDm12sqBar();   }
+       if (randomize_dm23sq_bar  ) { input_dm23sq_bar   = util::RandomizeDm23sqBar();   }
 
 
        // Set physics hypothesis
