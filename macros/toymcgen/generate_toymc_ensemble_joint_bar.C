@@ -11,6 +11,7 @@
 
 void generate_toymc_ensemble_joint_bar
 (
+ //const char * tag                     = "toymc_nueapp",
  const char * tag                     = "toymc_numudisap",                        /* */
  //const char * tag                     = "toymc_FHCpRHCpMultiRing",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_ResultsRun1to4_IH",                        /* */
@@ -18,7 +19,7 @@ void generate_toymc_ensemble_joint_bar
  //const char * tag                     = "toymc_FHCpRHC_MCRun1to6_th13DB_NH",                        /* */
 
  int          run                     = 0,                              /* */
- double       nexperiments            = 1,                             /* number of toy-MC expts to generate */
+ double       nexperiments            = 10,                             /* number of toy-MC expts to generate */
  const char * hypothesis              = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
@@ -35,8 +36,12 @@ void generate_toymc_ensemble_joint_bar
  double       input_dm12sq_bar        = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq_bar        = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
  
- const char * config_file      = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
+ const char * config_file      = "analysis_configuration_2.5E20.xml",   /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",
 
+  bool rethrow_if_parameters_unphysical = true, // rethrow unphysical toys
+ 
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
 
@@ -205,6 +210,7 @@ void generate_toymc_ensemble_joint_bar
   cout << "- Toy-MC generation" << endl;
   cout << "   - Number of toy experiments: " << nexperiments << endl;
   cout << "   - Randomize systematics : "      << tweak_sys_str << endl;
+  cout << "   - Rethrow unphysical : " << ((rethrow_if_parameters_unphysical) ? "YES " : "NO") << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ? "YES " : "NO") << endl;
 
   cout << "   - True oscillation parameters Nu mode: " << endl;
@@ -277,8 +283,13 @@ void generate_toymc_ensemble_joint_bar
      PhysHypothesis ph(hypothesis);
 
      bool applied_negevents_condition = true;
-     while(applied_negevents_condition) {
+     bool unphysical_tweak = true;
 
+     //while(applied_negevents_condition) {
+     while(applied_negevents_condition || unphysical_tweak) {
+
+       // To update for nuebar appearance analysis
+       
        // Randomize specified osc params for current toy MC expt
        if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
        if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
@@ -289,9 +300,6 @@ void generate_toymc_ensemble_joint_bar
        if (randomize_mixing13_bar) { input_mixing13_bar = util::RandomizeMixing13Bar(); }
        if (randomize_deltacp_bar ) { input_deltacp_bar  = util::RandomizeCPVBar();      }
        if (randomize_dm12sq_bar  ) { input_dm12sq_bar   = util::RandomizeDm12sqBar();   }
-
-
-
 
 
        // Set physics hypothesis
@@ -382,12 +390,21 @@ void generate_toymc_ensemble_joint_bar
          skexp->TweakAllSKDetectorFSISystematics();
          skexp->PrintSystematicVariations();
        }
+
+       // Rethrow unphysical parameters
+       PhysParamList true_nuisance_params = skexp->Tweaks();
+       if (rethrow_if_parameters_unphysical) {
+	 unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
+	 if (unphysical_tweak) {cout<<"Parameters are unphysical - rethrowing"<<std::endl;}
+       }
+       else {
+	 unphysical_tweak = false;
+       }
+       
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
      }//applied_negevents_condition
   
-
-     
      double escale=0.;
 #ifdef __FHC_RUNNING__
      escale = skexp->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale);
@@ -797,10 +814,10 @@ void generate_toymc_ensemble_joint_bar
        iparm->Append(true_nuisance_params_multiring);
 #endif  
      iparm->Write(Form("iparm_%d",iexperiment));
-       
-       delete iparm;
+     
+     delete iparm;
      }
-
+     
   }//iexperiment
 
   h_0->Write();

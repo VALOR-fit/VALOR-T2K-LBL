@@ -11,7 +11,7 @@
 
 void generate_toymc_ensemble_joint
 (
- const char * tag                     = "toymc_Asimov_dcpm1p566_NH",                        /* */
+ const char * tag                     = "toymc_numudisap",                        /* */
  //const char * tag                     = "toymc_FHCpRHCpMultiRing",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_ResultsRun1to4_IH",                        /* */
  //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH",                        /* */
@@ -19,20 +19,18 @@ void generate_toymc_ensemble_joint
 
  int          run                     = 0,                              /* */
  double       nexperiments            = 1,                             /* number of toy-MC expts to generate */
- const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
+ const char * hypothesis              = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
  double       input_mixing13          = -99, //0.0252, //-99, //0.02146 , // 0.0251,    /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
  double       input_mixing23          = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
- double       input_deltacp           = -1.556, //-99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
+ double       input_deltacp           = -99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
  double       input_dm12sq            = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq            = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
  
-//const char * config_file             = "analysis_configuration_run5and6.xml",   /* analysis configuration file */
- //const char * config_file             = "analysis_configuration_test.xml",   /* analysis configuration file */
- //const char * config_file             = "analysis_configuration_test_multiring.xml",   /* analysis configuration file */
- const char * config_file             = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
- //const char * config_file             = "analysis_configuration_run1to6.xml",
+ const char * config_file      = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
+
+ bool rethrow_if_parameters_unphysical = true, // rethrow unphysical toys
 
   bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
@@ -182,6 +180,7 @@ void generate_toymc_ensemble_joint
   cout << "- Toy-MC generation" << endl;
   cout << "   - Number of toy experiments: " << nexperiments << endl;
   cout << "   - Randomize systematics : "      << tweak_sys_str << endl;
+  cout << "   - Rethrow unphysical : " << ((rethrow_if_parameters_unphysical) ? "YES " : "NO") << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ? "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
@@ -263,6 +262,27 @@ void generate_toymc_ensemble_joint
          ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
          ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
        cout << "- Physics hypothesis set: " << ph << endl;
 
        if(tweak_systematics == 1) {
@@ -321,6 +341,17 @@ void generate_toymc_ensemble_joint
          skexp->TweakAllSKDetectorFSISystematics();
          skexp->PrintSystematicVariations();
        }
+
+       // Rethrow unphysical parameters
+       PhysParamList true_nuisance_params = skexp->Tweaks();
+       if (rethrow_if_parameters_unphysical) {
+	 unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
+	 if (unphysical_tweak) {cout<<"Parameters are unphysical - rethrowing"<<std::endl;}
+       }
+       else {
+	 unphysical_tweak = false;
+       }
+
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
      }//applied_negevents_condition
