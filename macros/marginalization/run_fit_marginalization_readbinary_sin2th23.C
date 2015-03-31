@@ -31,7 +31,7 @@ void run_fit_marginalization_readbinary_sin2th23
 
  const char * tag                      = "fitmarg_sin2th23",    /* tag for output file */
  int          first_experiment         = 0,                       /* */
- int          last_experiment          = 3500,                       /* */
+ int          last_experiment          = 1,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_numubardisap_fixosc_rethrowunphysical_2p5E20POT-0.xml",  
  
@@ -60,6 +60,7 @@ void run_fit_marginalization_readbinary_sin2th23
 
  const char * dmsqscheme               = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
+ const char * hierarchy                = "normal",     /* normal or inverted */
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
@@ -81,7 +82,7 @@ void run_fit_marginalization_readbinary_sin2th23
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
- const TString TypeError          = "HESSE MINOS",  // HESSE, MINOS (contained by the string)  
+ const TString TypeError          = "HESSE-MINOS",  // HESSE, MINOS (contained by the string)  
  const bool DrawFullChisq         = true
 )
 {
@@ -119,7 +120,6 @@ void run_fit_marginalization_readbinary_sin2th23
   }
   
   // Global options
-  const char * hierarchy = "normal";     /* normal or inverted */
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
   Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
