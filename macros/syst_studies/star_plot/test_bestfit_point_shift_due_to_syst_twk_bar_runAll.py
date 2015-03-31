@@ -7,6 +7,7 @@ import math # cos, log, pi etc
 import string
 import logging
 import ROOT
+import operator
 
 """
 This script will run the macro test_bestfit_point_shift_due_to_syst_twk.C for all systematic possiblities, producing
@@ -41,7 +42,6 @@ arridx  = util.ArrIdx.Instance()
 
 param_of_interest_1 = "mixing23bar"
 param_of_interest_2 = "dmsq23bar"
-
 
 def main(options):
 
@@ -129,6 +129,8 @@ def main(options):
   
   nonbar_osc = [-99,-99,-99,-99,-99,-99]
   
+  dirnames = []
+  
   for osc in oscparams:
     
     for sam in samples:
@@ -139,6 +141,8 @@ def main(options):
           os.makedirs(dirname)
         except:
           sys.exit("Could not make installation directory")
+          
+      dirnames.append(dirname)
 
       if options.do_staterr:
         file_names = dirname+"/star_plot_stat*root"
@@ -352,34 +356,106 @@ def main(options):
           
       #end systematic loop
       
-      if options.do_table:
-        os.chdir(basedir)
-        file = open(dirname+'/stat.data', 'r')
-        errmixing23 = file.readline().strip('\n')
-        errdm23sq   = file.readline().strip('\n')
-        file.close()
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-all.data")\''
-        print command
-        os.system(command)
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-alluncorrelated.data","uncorr")\''
-        print command
-        os.system(command)
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-allcorrelated.data","corr")\''
-        print command
-        os.system(command)
+      #~ if options.do_table:
+        #~ os.chdir(basedir)
+        #~ file = open(dirname+'/stat.data', 'r')
+        #~ errmixing23 = file.readline().strip('\n')
+        #~ errdm23sq   = file.readline().strip('\n')
+        #~ file.close()
+        #~ command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-all.data")\''
+        #~ print command
+        #~ os.system(command)
+        #~ command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-alluncorrelated.data","uncorr")\''
+        #~ print command
+        #~ os.system(command)
+        #~ command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/text_to_root.C('+str(osc[2])+','+str(osc[5])+','+errmixing23+','+errdm23sq+',"'+dirname+'/combined-allcorrelated.data","corr")\''
+        #~ print command
+        #~ os.system(command)
 
-
-  if options.do_table:
-    command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("readfile*.root")\''
-    print command
-    os.system(command)
-    command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("corr*.root")\''
-    print command
-    os.system(command)
-    command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("uncorr*.root")\''
-    print command
-    os.system(command)
+  # end oscparams loop
+  
+  #~ if options.do_table:
+    #~ command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("readfile*.root")\''
+    #~ print command
+    #~ os.system(command)
+    #~ command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("corr*.root")\''
+    #~ print command
+    #~ os.system(command)
+    #~ command = 'root2k -l -b -q \'$T2KOSCANA/macros/syst_studies/star_plot/max_deviation_table.C("uncorr*.root")\''
+    #~ print command
+    #~ os.system(command)
     
+  if options.do_table:
+    make_star_plot_table(dirnames,"stat.data","combined-all.data")
+    
+#________________________________________________________________________________________________________
+def make_star_plot_table(directories, statfile_name, systfile_name):
+  param_order = [conv.kPhypMixing23,conv.kPhypMixing13, conv.kPhypMixing12,
+                 conv.kPhypCPV, conv.kPhypDm23sq, conv.kPhypDm12sq,
+                 conv.kPhypMixing23Bar,conv.kPhypMixing13Bar, conv.kPhypMixing12Bar,
+                 conv.kPhypCPVBar, conv.kPhypDm23sqBar, conv.kPhypDm12sqBar]
+  
+  p1 = util.PhysParamIdFromString(param_of_interest_1)
+  p2 = util.PhysParamIdFromString(param_of_interest_2)
+  
+  deviations_p1 = dict()
+  deviations_p2 = dict()
+  for d in directories:
+    deviations_p1[d] = dict()
+    deviations_p2[d] = dict()
+    nominals = dict()
+    bf_per_syst_parameter = dict()
+    statfile = open(d+'/'+statfile_name, 'r')
+    err_p1 = float(statfile.readline().strip('\n'))
+    err_p2 = float(statfile.readline().strip('\n'))
+    statfile.close()
+    
+    systfile = open(d+'/'+systfile_name, 'r')
+    for l in systfile:
+      if not l: continue
+      items = l.split("\t")
+      if items[0] == "nominal":
+        for ip,p in enumerate(param_order):
+          nominals[p] = float(items[ip+1])
+      else:
+        syst_p = util.PhysParamIdFromString(items[0])
+        if syst_p == conv.kPhypUndefined:
+          print "Bad row:",l
+          exit(-1)
+          
+        bf_per_syst_parameter[syst_p] = dict()
+        for ip,p in enumerate(param_order):
+          bf_per_syst_parameter[syst_p][p] = float(items[ip+1])
+    
+    syst_params = deviations_p1[d].keys()
+    for syst_p in syst_params:
+      deviations_p1[d][syst_p] = fabs((nominals[p1]-bf_per_syst_parameter[syst_p][p1])/err_p1)
+      deviations_p2[d][syst_p] = fabs((nominals[p2]-bf_per_syst_parameter[syst_p][p2])/err_p2)
+  
+  max_deviations_p1 = dict()
+  max_deviations_p2 = dict()
+  for syst_p in syst_params:
+    max_deviations_p1[syst_p] = max([deviations_p1[d][syst_p] for d in directories])
+    max_deviations_p2[syst_p] = max([deviations_21[d][syst_p] for d in directories])
+    
+  rows = []
+  for syst_p in syst_params:
+    rows.append([util.ParamAsStringRooTex(syst_p),max_deviations_p1[syst_p],max_deviations_p2[syst_p]])
+    
+  rows_sorted_by_p1_dev = sorted(rows,operator.itemgetter(1),reverse=True)
+  rows_sorted_by_p2_dev = sorted(rows,operator.itemgetter(2),reverse=True)
+  
+  out_p1 = open("star_plot_table_sorted_by_"+util.ParamAsStringSimple(p1)+".txt","w")
+  for r in rows_sorted_by_p1_dev:
+    out_p1.write(" & ".join([r[0].ljust(30),to3dp.format(r[1]),to3dp.format(r[2])]))
+    out_p1.write(" \\\\ \hline \n")
+  out_p1.close()
+    
+  out_p2 = open("star_plot_table_sorted_by_"+util.ParamAsStringSimple(p2)+".txt","w")
+  for r in rows_sorted_by_p2_dev:
+    out_p2.write(" & ".join([r[0].ljust(30),to3dp.format(r[1]),to3dp.format(r[2])]))
+    out_p2.write(" \\\\ \hline \n")
+  out_p2.close()
 #________________________________________________________________________________________________________
 def macro_prep(args):
   formatted_args = []
