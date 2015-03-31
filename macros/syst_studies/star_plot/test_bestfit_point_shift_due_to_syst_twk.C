@@ -140,10 +140,10 @@ void test_bestfit_point_shift_due_to_syst_twk
     return;
   }
   
-  PhysParamId_t p = util::PhysParamIdFromString(systematic);
+  PhysParamId_t p = (do_nominal ? kPhypUndefined : util::PhysParamIdFromString(systematic));
   
-  int first_banff = (int) (util::IsRHCSample(s) ? kRHCNuisBANFF00 : kNuisBANFF00 );
-  int first_skdet_fsi  = (util::IsRHCSample(s) ? kRHCNuisSKDetFSI000 : kNuisSKDetFSI000 );
+  //~ int first_banff = (int) (util::IsRHCSample(s) ? kRHCNuisBANFF00 : kNuisBANFF00 );
+  //~ int first_skdet_fsi  = (util::IsRHCSample(s) ? kRHCNuisSKDetFSI000 : kNuisSKDetFSI000 );
   
   const TMatrixD & cov_skdetfsi = (util::IsRHCSample(s) ? skexp->GetSuperkDetectorFSI()->RHCCovMatrix() : skexp->GetSuperkDetectorFSI()->CovMatrix() );
   
@@ -198,7 +198,10 @@ void test_bestfit_point_shift_due_to_syst_twk
       }
       
       cout << "\n\nApplying "<<tweak_size<<" sigma tweak" << endl;
-      if (util::IsBANFF(p)) {
+      if(do_nominal) {
+        //do nothing
+      }
+      else if (util::IsBANFF(p)) {
         //find parameter to tweak
         int ip = -1;
         if (util::IsRHCSample(s)) { ip = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);}
@@ -213,15 +216,17 @@ void test_bestfit_point_shift_due_to_syst_twk
         //if we're tweaking the other parameters in a correlated way too
         double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
         for(int ipp = 0; ipp < nbanff; ipp++) {
-          int position = first_banff + ipp;
-          PhysParamId_t pp = (PhysParamId_t)position;
-          if(pp == p)
-            continue;
+          PhysParamId_t pp = conv::kPhypUndefined;
+          if (util::IsRHCSample(s)) {pp = conv::kListOfRHCBANFFParams[ipp];}
+          else {pp = conv::kListOfBANFFParams[ipp];}
+          if(pp == p) { continue; }
           //set non-tweaked values to best fit
-          twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
+          int index=-1;
+          if (util::IsRHCSample(s)) {index = util::ArrIdx::Instance()->RHCBANFFSystIdx(pp);}
+          else {index = util::ArrIdx::Instance()->BANFFSystIdx(pp);}
+          twkv[index] = skexp->GetBANFF()->BestFitValue(pp);
           //now, tweak the other parameters according to the correlations between them and the fitted parameters
-          if(correlated_parameters)
-            twkv[ipp] += sigma * cov[ip][ipp];
+          if(correlated_parameters) { twkv[index] += sigma * cov[ip][index];}
         }
         skexp->GetBANFF()->TweakSample(true,&twkv);
       } //isBANFF
@@ -242,15 +247,17 @@ void test_bestfit_point_shift_due_to_syst_twk
         //if we're tweaking the other parameters in a correlated way too
         double sigma = (twkv[ip] - 1) / cov[ip][ip];
         for(int ipp = 0; ipp < nskdetfsi; ipp++) {
-          int position = first_skdet_fsi + ipp;
-          PhysParamId_t pp = (PhysParamId_t)position;
-          if(pp == p)
-            continue;
+          PhysParamId_t pp = conv::kPhypUndefined;
+          if (util::IsRHCSample(s)) {pp = conv::kListOfRHCBANFFParams[ipp];}
+          else {pp = conv::kListOfBANFFParams[ipp];}
+          if(pp == p) { continue; }
           //set non-tweaked values to best fit
-          twkv[ipp] = 1;
+          int index;
+          if (util::IsRHCSample(s)) {index = util::ArrIdx::Instance()->RHCBANFFSystIdx(pp);}
+          else {index = util::ArrIdx::Instance()->BANFFSystIdx(pp);}
+          twkv[index] = skexp->GetBANFF()->BestFitValue(pp);
           //now, tweak the other parameters according to the correlations between them and the fitted parameters
-          if(correlated_parameters)
-            twkv[ipp] += sigma * cov[ip][ipp];
+          if(correlated_parameters) { twkv[index] += sigma * cov[ip][index];}
         }
         skexp->GetSuperkDetectorFSI()->Tweak(true,&twkv);
       } //isSKDetFSI
@@ -260,9 +267,6 @@ void test_bestfit_point_shift_due_to_syst_twk
         if(tweak >  fparm->MaxValue(p)) { tweak = fparm->MaxValue(p); }
         if(tweak <  fparm->MinValue(p)) { tweak = fparm->MinValue(p); }
         fparm->SetInitValue(p, tweak);
-      }
-      else if(do_nominal) {
-        //do nothing
       }
       else {
         cerr<<"test_bestfit_point_shift_due_to_syst_twk >> Unrecognised systematic: "<<util::AsString(p)<<std::endl;
@@ -377,7 +381,10 @@ void test_bestfit_point_shift_due_to_syst_twk
       //apply the tweak
       bool applied_negevents_condition = true;
       while(applied_negevents_condition) {
-        if(util::IsBANFF(p)) {
+        if(do_nominal) {
+          //do nothing
+        }
+        else if(util::IsBANFF(p)) {
           int ip = -1;
           if (util::IsRHCSample(s)) { ip = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);}
           else                      { ip = util::ArrIdx::Instance()->BANFFSystIdx   (p);}
@@ -394,15 +401,17 @@ void test_bestfit_point_shift_due_to_syst_twk
           //if we're tweaking the other parameters in a correlated way too
           double sigma = (twkv[ip] - skexp->GetBANFF()->BestFitValue(p)) / cov[ip][ip];
           for(int ipp = 0; ipp < nbanff; ipp++) {
-            int position = first_banff + ipp;
-            PhysParamId_t pp = (PhysParamId_t)position;
-            if(pp == p)
-              continue;
+            PhysParamId_t pp = conv::kPhypUndefined;
+            if (util::IsRHCSample(s)) {pp = conv::kListOfRHCBANFFParams[ipp];}
+            else {pp = conv::kListOfBANFFParams[ipp];}
+            if(pp == p) { continue; }
             //set non-tweaked values to best fit
-            twkv[ipp] = skexp->GetBANFF()->BestFitValue(pp);
+            int index;
+            if (util::IsRHCSample(s)) {index = util::ArrIdx::Instance()->RHCBANFFSystIdx(pp);}
+            else {index = util::ArrIdx::Instance()->BANFFSystIdx(pp);}
+            twkv[index] = 1;
             //now, tweak the other parameters according to the correlations between them and the fitted parameters
-            if(correlated_parameters)
-              twkv[ipp] += sigma * cov[ip][ipp];
+            if(correlated_parameters) { twkv[index] += sigma * cov[ip][index];}
           }
           skexp->GetBANFF()->TweakSample(true,&twkv);
         }
@@ -424,15 +433,17 @@ void test_bestfit_point_shift_due_to_syst_twk
           //if we're tweaking the other parameters in a correlated way too
           double sigma = (twkv[ip] - 1) / cov[ip][ip];
           for(int ipp = 0; ipp < nskdetfsi; ipp++) {
-            int position = first_skdet_fsi + ipp;
-            PhysParamId_t pp = (PhysParamId_t)position;
-            if(pp == p)
-              continue;
+            PhysParamId_t pp = conv::kPhypUndefined;
+            if (util::IsRHCSample(s)) {pp = conv::kListOfRHCBANFFParams[ipp];}
+            else {pp = conv::kListOfBANFFParams[ipp];}
+            if(pp == p) { continue; }
             //set non-tweaked values to best fit
-            twkv[ipp] = 1;
+            int index;
+            if (util::IsRHCSample(s)) {index = util::ArrIdx::Instance()->RHCBANFFSystIdx(pp);}
+            else {index = util::ArrIdx::Instance()->BANFFSystIdx(pp);}
+            twkv[index] = 1;
             //now, tweak the other parameters according to the correlations between them and the fitted parameters
-            if(correlated_parameters)
-              twkv[ipp] += sigma * cov[ip][ipp];
+            if(correlated_parameters) { twkv[index] += sigma * cov[ip][index];}
           }
           skexp->GetSuperkDetectorFSI()->Tweak(true,&twkv);
         }
@@ -441,9 +452,6 @@ void test_bestfit_point_shift_due_to_syst_twk
           if(tweak >  fparm->MaxValue(p)) { tweak = fparm->MaxValue(p); }
           if(tweak <  fparm->MinValue(p)) { tweak = fparm->MinValue(p); }
           fparm->SetInitValue(p, tweak);
-        }
-        else if(do_nominal) {
-          //do nothing
         }
         else {
           cerr<<"test_bestfit_point_shift_due_to_syst_twk >> Unrecognised systematic: "<<util::AsString(p)<<std::endl;
@@ -567,7 +575,7 @@ void test_bestfit_point_shift_due_to_syst_twk
   outfilename << "star_plot_line-" << cor << simple_p_name << ".data";
   ofstream outfile;
   outfile.open(outfilename.str().c_str());
-  outfile << tex_p_name;
+  outfile << simple_p_name;
   for (int isigma = 0 ; isigma < 2 ; isigma++) {
     for (int ip = 0 ; ip < kNuis000 ; ip++) {
       PhysParamId_t pp = (PhysParamId_t) ip;
