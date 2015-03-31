@@ -319,6 +319,7 @@ void FitMarginalization::SetFullRange(){
     fmax_bin_param[0] = 0.;    
     fnbins_param[0] = 1; // dimension of parameter ParId
     cerr << endl;
+    cerr << "FitMarginalization::SetFullRange" << endl;
     cerr << "Param 0 is undefined" << endl;
     cerr << endl;
     exit(1);
@@ -373,6 +374,7 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
        (fmax_bin_sub_param[0] > fnbins_param[0] - 1) ))
     {
       cerr << endl;
+      cerr << "FitMarginalization::SetSubRange" << endl;
       cerr << "Param 0 sub-range outside the entire free parameter range" << endl;
       cerr << "fnbins_param[0] = " << fnbins_param[0] << endl;
       cerr << "fnbins_sub_param[0] = " << fnbins_sub_param[0] << endl;
@@ -388,6 +390,7 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
        (fmax_bin_sub_param[1] > fnbins_param[1] - 1) ))
     {
       cerr << endl;
+      cerr << "FitMarginalization::SetSubRange" << endl;
       cerr << "Param 1 sub-range outside the entire free parameter range" << endl;
       cerr << "fnbins_param[1] = " << fnbins_param[1] << endl;
       cerr << "fnbins_sub_param[1] = " << fnbins_sub_param[1] << endl;
@@ -503,6 +506,7 @@ void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,dou
   // The parameter is not selected
   else{
     if(ParId==0){
+      cerr << "FitMarginalization::SetFreeParam" << endl;
       cerr << endl;
       cerr << "The parameter 0 has not been chosen. Always do 1D fit with parameter 0" << endl;
       cerr << endl;
@@ -518,8 +522,9 @@ void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,dou
   
   // Wrong assignement of the free parameter limit
   if(minpar[ParId] > maxpar[ParId]){
-    cerr << endl
-	 << "ParID = " << ParId << endl
+    cerr << endl;
+    cerr << "FitMarginalization::SetFreeParam" << endl;
+    cerr << "ParID = " << ParId << endl
 	 << "minpar >= maxpar && minpar!=-999 && maxpar!=-999" << endl
 	 << " - minpar = " << minpar[ParId] << endl
 	 << " - maxpar = " << maxpar[ParId] << endl
@@ -549,6 +554,7 @@ void FitMarginalization::SetFitParamList(const char * fit_param_list){
   if( fPhysParamFree[0] == conv::kPhypUndefined && 
       fPhysParamFree[1] == conv::kPhypUndefined ){  
     cerr << endl;
+    cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "Both free parameters are not defined" << endl;
     cerr << endl;
     exit(1);
@@ -568,6 +574,7 @@ void FitMarginalization::SetFitParamList(const char * fit_param_list){
   }
   else{
     cerr << endl;
+    cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "Define correctly parameter 0 for 1D fit and parameter 1 for 2D fit" << endl;
     cerr << endl;
     exit(1);    
@@ -576,12 +583,14 @@ void FitMarginalization::SetFitParamList(const char * fit_param_list){
 
   // Parameter 0
   if( fparm->IsFixed(fPhysParamFree[0]) ){
+    cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "The free parameter " << fnamefreeparam[0] 
 	 << " is fixed in FitParamList " << fit_param_list
 	 << endl << endl;
     exit(1);
   }
   else if( fparm->IsNuisance(fPhysParamFree[0]) ){
+    cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "The free parameter " << fnamefreeparam[0] 
 	 << " is nuisance in FitParamList " << fit_param_list
 	 << endl << endl;
@@ -595,12 +604,14 @@ void FitMarginalization::SetFitParamList(const char * fit_param_list){
     cout << endl;
   }
   else if( fparm->IsFixed(fPhysParamFree[1]) ){
+    cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "The free parameter " << fnamefreeparam[1] 
 	 << " is fixed in FitParamList " << fit_param_list
 	 << endl << endl;
     exit(1);
   }
   else if( fparm->IsNuisance(fPhysParamFree[1]) ){
+    cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "The free parameter " << fnamefreeparam[1] 
 	 << " is nuisance in FitParamList " << fit_param_list
 	 << endl << endl;
@@ -835,6 +846,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	      // Mass Hierarchy has to be already defined
 	      else {
 		cerr << endl;
+		cerr << "FitMarginalization::MakeToysMarginalization" << endl;
 		cerr << "Mass Hierarchy is not defined" << endl;
 		cerr << endl;
 		exit(1);
@@ -1216,6 +1228,7 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
       // Mass Hierarchy has to be already defined
       else {
 	cerr << endl;
+	cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
 	cerr << "Mass Hierarchy is not defined" << endl;
 	cerr << endl;
 	exit(1);
@@ -1324,6 +1337,7 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
     else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
       sprintf(namemh,"%s","IH");
     else{
+      cerr << "FitMarginalization::WriteToys2Binary" << endl;
       cerr << "Mass Hierarchy not defined" << endl;
       exit(1);
     }
@@ -1453,6 +1467,7 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
     else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
       sprintf(namemh,"%s","IH");
     else{
+      cerr << "FitMarginalization::WriteToys2BinaryMerge" << endl;
       cerr << "Mass Hierarchy not defined" << endl;
       exit(1);
     }
@@ -1559,6 +1574,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
     else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
       sprintf(namemh,"%s","IH");
     else{
+      cerr << "FitMarginalization::ReadToysFromBinary" << endl;
       cerr << "Mass Hierarchy not defined" << endl;
       exit(1);
     }
@@ -1621,8 +1637,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1);
     
   if(fmin_sub_param[0]<(fmin_param[0]-conv::kASmallNum) || fmax_sub_param[0]>(fmax_param[0]+conv::kASmallNum)){
-    cerr << endl 
-	 << "The free parameter 0 sub-range ["
+    cerr << endl; 
+    cerr << "FitMarginalization::ReadToysFromBinary" << endl;
+    cerr << "The free parameter 0 sub-range ["
 	 << fmin_sub_param[0] << "," << fmax_sub_param[0] << "] " 
 	 << "provided by the files "
 	 << sinname << endl
@@ -1636,8 +1653,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   }
   
   if(fmin_sub_param[1]<(fmin_param[1]-conv::kASmallNum) || fmax_sub_param[1]>(fmax_param[1]+conv::kASmallNum)){  // w/o conv::kASmallNum it enters the loop if bounds are identical. To check
-    cerr << endl 
-	 << "The free parameter 1 sub-range ["
+    cerr << endl; 
+    cerr << "FitMarginalization::ReadToysFromBinary" << endl;
+    cerr << "The free parameter 1 sub-range ["
 	 << fmin_sub_param[1] << "," << fmax_sub_param[1] << "] " 
 	 << "provided by the files "
 	 << sinname << endl
@@ -1748,6 +1766,7 @@ TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t sksample,int itoy,int 
   }
   
   cerr << endl;
+  cerr << "FitMarginalization::GetToyMargHisto" << endl;
   cerr << "You have chosen a wrong Superk Sample: " 
        << util::AsStringCompact(sksample) 
        << endl;
@@ -1780,6 +1799,7 @@ void FitMarginalization::BuildDeltaChisqMarg(){
 
   if(fchisq_bf==conv::kALargeNum){
     cerr << endl;
+    cerr << "FitMarginalization::BuildDeltaChisqMarg" << endl;
     cerr << "The best-fit has not been found" << endl;
     cerr << "Can't get the marginalized DeltaChisq distribution" << endl;
     cerr << endl;
@@ -1798,6 +1818,7 @@ void FitMarginalization::BuildDeltaChisqMarg(){
 
       if(bincont<0.){
 	cerr << endl;
+	cerr << "FitMarginalization::BuildDeltaChisqMarg" << endl;
 	cerr << "Delta Chisq content is negative" << endl;
 	cerr << "   - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(ibin+1);
 	cerr << "   - chisq = " << bincont << endl; 
@@ -1822,6 +1843,7 @@ void FitMarginalization::BuildDeltaChisqMarg(){
 	
 	if(bincont<0.){
 	  cerr << endl;
+	  cerr << "FitMarginalization::BuildDeltaChisqMarg" << endl;
 	  cerr << "Delta Chisq content is negative" << endl;
 	  cerr << "   - X = " << fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(ibinX+1);
 	  cerr << "   - Y = " << fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(ibinY+1);
@@ -1849,11 +1871,15 @@ void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,double 
     fparm->SetSigmaGaus(physpar,par2);
   }
   else if(priorname=="user"){
-    cout << "You chose a user prior but you didn't give any histogram as input" << endl;
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose a user prior but you didn't give any histogram as input" << endl;
     exit(1);
   }
   else{
-    cout << "You chose the wrong prior option" << endl;
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose the wrong prior option" << endl;
     exit(1);
   }
   
@@ -1867,11 +1893,15 @@ void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1F *h
     fparm->SetPriorHisto(physpar,hprior);
   }
   else if(priorname=="flat" || priorname=="gaus"){
-    cout << "You chose a " << priorname << " prior, but you gave as input an histogram" << endl;
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose a " << priorname << " prior, but you gave as input an histogram" << endl;
     exit(1);
   }
   else{
-    cout << "You chose the wrong prior option" << endl;
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose the wrong prior option" << endl;
     exit(1);
   }
 
@@ -2046,8 +2076,10 @@ double FitMarginalization::Randomize(PhysParamId_t physpar) const
     return fparm->GetPriorHisto(physpar)->GetRandom();
   }
   else{
-    cout << "Used prior is: " << fparm->GetPriorModeName(physpar) << endl;
-    cout << "Prior not well defined for " << util::AsString(physpar) << endl;
+    cerr << endl;
+    cerr << "FitMarginalization::Randomize" << endl;
+    cerr << "Used prior is: " << fparm->GetPriorModeName(physpar) << endl;
+    cerr << "Prior not well defined for " << util::AsString(physpar) << endl;
     exit(1);
   }
   
@@ -2129,6 +2161,7 @@ void FitMarginalization::MergeInputFiles(){
 		float bincont_clone = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,iscount,ibin);  // total range
 		if(bincont_clone >= 0.){
 		  cerr << endl;
+		  cerr << "FitMarginalization::MergeInputFiles" << endl;
 		  cerr << "Following bin has been already filled:" << endl;
 		  cerr << " - iexperiment = " << iexperiment << endl;
 		  cerr << " - ipar0 = " << ipar0 << endl;
@@ -5289,6 +5322,7 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 	 (fIsFit2D && NewDir_X == ilike_N && NewDir_Y == ilike_N)
 	 ){
 	cerr << endl;
+	cerr << "FitMarginalization::MinimizeChisqStepRead" << endl;
 	cerr << "It's a minimum, you cannot find a new direction" << endl;
 	cerr << "There's something wrong" << endl;
 	cerr << endl;
@@ -5654,6 +5688,7 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 	)
       {
 	cerr << endl;
+	cerr << "FitMarginalization::GridStartBinRead" << endl;
 	cerr << "Wrong input range param0 to get the minimization starting points" << endl;
 	cerr << endl;
 	exit(1);
@@ -5667,6 +5702,7 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 	  (fGridStartMaxBin_Y > fLastMinimBin_Y) )
 	{
 	  cerr << endl;
+	  cerr << "FitMarginalization::GridStartBinRead" << endl;
 	  cerr << "Wrong input range param1 to get the minimization starting points" << endl;
 	  cerr << endl;
 	  exit(1);
@@ -5787,6 +5823,7 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
   
   else {
     cerr << endl;
+    cerr << "FitMarginalization::GridStartBinRead" << endl;
     cerr << "The chosen strategy " << fExtractStartPt;
     cerr << " for the chisq minimization starting point  is not available" << endl;
     cerr << endl;
@@ -5800,7 +5837,7 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
   cout << "X = " << startX << " - Y = " << startY << endl;
   cout << "Starting Chisq = " << ChisqMinStart << endl;
   cout << endl;
-    
+   
   return;
 }
 //________________________________________________________________________________________
@@ -5842,7 +5879,12 @@ void FitMarginalization::SetStartBin(double start_X,double start_Y){
       GoodStartBin = false;
     }
   }
-  if(!GoodStartBin) exit(1);
+  if(!GoodStartBin){
+    cerr << endl;
+    cerr << "FitMarginalization::SetStartBin" << endl;
+    cerr << "The starting bin is not good" << endl;
+    exit(1);
+  }
 
   // cout << endl;
   // cout << "Starting point: " << endl;
@@ -5929,6 +5971,7 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
 
   if(valpar0<min_X || valpar0>max_X){
     cerr << endl;
+    cerr << "FitMarginalization::GetChisqMargTrueRead" << endl;
     cerr << "Parameter0 " << fnamefreeparam[0] << " is outside the total allowed range" << endl;
     cerr << "Allowed range: " << min_X << " - " << max_X << endl;
     cerr << "Param0 value: " << valpar0 << endl;
@@ -5937,6 +5980,7 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
   }
   if( fIsFit2D && (valpar1<min_Y || valpar1>max_Y) ){
     cerr << endl;
+    cerr << "FitMarginalization::GetChisqMargTrueRead" << endl;
     cerr << "Parameter1 " << fnamefreeparam[1] << " is outside the total allowed range" << endl;
     cerr << "Allowed range: " << min_Y << " - " << max_Y << endl;
     cerr << "Param1 value: " << valpar1 << endl;
@@ -5997,6 +6041,8 @@ void FitMarginalization::SetFileID(int nfiles){
     else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
       sprintf(namemh,"%s","IH");
     else{
+      cerr << endl;
+      cerr << "FitMarginalization::SetFileID" << endl;
       cerr << "Mass Hierarchy not defined" << endl;
       exit(1);
     }
@@ -6078,6 +6124,7 @@ void FitMarginalization::CalcBestFitErrors(SuperkObservation *skobs,string metho
   }
   else{
     cerr << endl;
+    cerr << "FitMarginalization::CalcBestFitErrors" << endl;
     cerr << "Method " << method << " is not available for fit error computation" << endl;
     cerr << endl;
     exit(1);
@@ -6146,6 +6193,15 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 	bin_negsigma_a = bin_negsigma_b+1; 
 	break;
       }
+      else if(bincont<0.){
+	cerr << endl;
+	cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
+	cerr << "Negative DeltaChisq 1D:" << endl;
+	cerr << "DeltaChisq_1D = " << fhdeltachisq_marg_1D->GetBinContent(ibin) << endl;
+	cerr << endl;
+	exit(1);
+      }
+
     }
     // cout << "bin_negsigma_b = " << bin_negsigma_b << endl;
     // cout << "bin_negsigma_a = " << bin_negsigma_a << endl;
@@ -6210,7 +6266,12 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     // an algorithm which stops at DeltaChisq = 2.3, since you need the full contour
     
     this->FillChisqMarg(skobs_data,true);  // read a new binary file at each step and fill the full range
-        
+
+
+    // If the global minimum was not found, replace the best-fit with the global one
+    this->MinimizeHisto();
+
+  
     // Get Delta Chisq distribution
     this->BuildDeltaChisqMarg();
     //fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
@@ -6374,6 +6435,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     // Check if the interval bins are correctly found
     if(binleftX_x > binrightX_x){
       cerr << endl;
+      cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
       cerr << "X left extreme bin is higher than right extreme bin" << endl;
       cerr << "The 1sigma error interval is messed up:" << endl;
       cerr << "binleftX = " << binleftX_x << endl;
@@ -6383,6 +6445,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     }
     if(binleftY_y > binrightY_y){
       cerr << endl;
+      cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
       cerr << "Y left extreme bin is higher than right extreme bin" << endl;
       cerr << "The 1sigma error interval is messed up:" << endl;
       cerr << "binleftY = " << binleftY_y << endl;
@@ -6795,6 +6858,7 @@ double FitMarginalization::OscPhysicalRegion(conv::PhysParamId_t p,double oscval
 
   else{
     cerr << endl;
+    cerr << "FitMarginalization::OscPhysicalRegion" << endl;
     cerr << "Parameter " << util::AsString(p) << " is not in the physics list" << endl;
     cerr << endl;
     exit(1);
