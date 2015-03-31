@@ -90,7 +90,11 @@ FitMarginalization::FitMarginalization()
   fparm                              = 0;
   fSavedToyParamLists                = 0;
   
-  
+  // to be removed once the sk sample issue is fixed
+  for(int ikns=0;ikns<conv::kns;ikns++){
+    fhToyMargCurr[ikns] = 0;
+  }
+      
   fShouldSaveToyParamLists           = false;
   fMaxSampleErecoBins                = 1;
 }
@@ -174,7 +178,7 @@ void FitMarginalization::Init(){
   fhchisq_marg_1D->GetXaxis()->SetTitle(Xtitle);
   fhchisq_marg_1D->GetYaxis()->SetTitle("#Delta #chi^{2}");
   
-  fhchisq_marg_2D = new TH2F("fhchisq_marg_2D","fhchisq_marg_2D",
+  fhchisq_marg_2D = new TH2F("hchisq_marg_2D","hchisq_marg_2D",
 			    fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0],
 			    fnbins_param[1],fmin_param[1],fmax_param[1]+fstep_param[1] );
   fhchisq_marg_2D->GetXaxis()->SetTitle(Xtitle);
@@ -294,6 +298,12 @@ void FitMarginalization::CleanUp(void){
   if (fparm                             ) { delete fparm                             ; fparm                              = 0;}
   if (fSavedToyParamLists               ) { delete fSavedToyParamLists               ; fSavedToyParamLists                = 0;}
   
+
+  // to be removed once the sk sample issue is fixed
+  for(int ikns=0;ikns<conv::kns;ikns++){
+    if (fhToyMargCurr[ikns]              ) { delete fhToyMargCurr[ikns]               ; fhToyMargCurr[ikns]                = 0;} 
+  }
+
 }
 
 
