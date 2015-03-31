@@ -223,6 +223,7 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     cout << "- Toy-MC generation" << endl;
     cout << "   - Number of toy experiments: " << nexperiments << endl; 
     cout << "   - Randomize systematics : "      << ((tweak_systematics) ?      "YES " : "NO") << endl;
+    cout << "   - Rethrow unphysical : " << *(rethrow_unphysical) ? "YES " : "NO") << end;
     cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ?      "YES " : "NO") << endl;
     cout << "   - True oscillation parameters: " << endl;
     cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
@@ -727,7 +728,7 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     // must adopt the same approach for error computations as well.
     //
     
-    fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+    //fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
     bestfiterrNeg0 = fitmarg->GetParamBestFitErrNeg(0);
     bestfiterrNeg1 = fitmarg->GetParamBestFitErrNeg(1);
     bestfiterrPos0 = fitmarg->GetParamBestFitErrPos(0);
@@ -833,6 +834,9 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
      
     // Clean-up
     delete skobs_fakedata;  
+
+    fitmarg->CleanUp();
+    delete fitmarg;
 
   } // for iexperiment
 

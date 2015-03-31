@@ -30,8 +30,8 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "fitmarg_sin2th23Vsdmsq",    /* tag for output file */
- int          first_experiment         = 2,                       /* */
- int          last_experiment          = 3,                       /* */
+ int          first_experiment         = 3204,                       /* */
+ int          last_experiment          = 3214,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_numubardisap_fixosc_rethrowunphysical_2p5E20POT-0.xml",  
  
@@ -85,7 +85,7 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
- const TString TypeError          = "HESSE",  // HESSE, MINOS (contained by the string)  
+ const TString TypeError          = "HESSE-MINOS",  // HESSE, MINOS (contained by the string)  
  const bool DrawFullChisq         = true
  )
 {
@@ -493,7 +493,7 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
     chisqminFullChisq=conv::kALargeNum;
     
     //
-
+  
     PhysParamId_t freepar0;
     string sfreeparname0(freeparname0);  
     // NuBar mode
@@ -781,6 +781,9 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
  
     // Clean-up
     delete skobs_fakedata;  
+
+    fitmarg->CleanUp();
+    delete fitmarg;
 
   } // for iexperiment
 

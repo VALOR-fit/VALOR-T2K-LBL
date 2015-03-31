@@ -718,6 +718,9 @@ void run_fit_marginalization_readbinary_sin2th13
     // Clean-up
     delete skobs_fakedata;  
 
+    fitmarg->CleanUp();
+    delete fitmarg;
+
   } // for iexperiment
 
    
