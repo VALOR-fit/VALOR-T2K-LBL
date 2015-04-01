@@ -43,6 +43,8 @@ arridx  = util.ArrIdx.Instance()
 param_of_interest_1 = "mixing23bar"
 param_of_interest_2 = "dmsq23bar"
 
+to3dp = "{0:.3f}"
+
 def main(options):
 
   conffile = options.config
@@ -398,6 +400,8 @@ def make_star_plot_table(directories, statfile_name, systfile_name):
   p1 = util.PhysParamIdFromString(param_of_interest_1)
   p2 = util.PhysParamIdFromString(param_of_interest_2)
   
+  syst_params = []
+  
   deviations_p1 = dict()
   deviations_p2 = dict()
   for d in directories:
@@ -410,6 +414,7 @@ def make_star_plot_table(directories, statfile_name, systfile_name):
     err_p2 = float(statfile.readline().strip('\n'))
     statfile.close()
     
+    print "Reading systematics file: ",d+'/'+systfile_name
     systfile = open(d+'/'+systfile_name, 'r')
     for l in systfile:
       if not l: continue
@@ -422,38 +427,39 @@ def make_star_plot_table(directories, statfile_name, systfile_name):
         if syst_p == conv.kPhypUndefined:
           print "Bad row:",l
           exit(-1)
+        if syst_p not in syst_params:
+          syst_params.append(syst_p)
           
         bf_per_syst_parameter[syst_p] = dict()
         for ip,p in enumerate(param_order):
           bf_per_syst_parameter[syst_p][p] = float(items[ip+1])
-    
-    syst_params = deviations_p1[d].keys()
+          
     for syst_p in syst_params:
-      deviations_p1[d][syst_p] = fabs((nominals[p1]-bf_per_syst_parameter[syst_p][p1])/err_p1)
-      deviations_p2[d][syst_p] = fabs((nominals[p2]-bf_per_syst_parameter[syst_p][p2])/err_p2)
+      deviations_p1[d][syst_p] = abs((nominals[p1]-bf_per_syst_parameter[syst_p][p1])/err_p1)
+      deviations_p2[d][syst_p] = abs((nominals[p2]-bf_per_syst_parameter[syst_p][p2])/err_p2)
   
   max_deviations_p1 = dict()
   max_deviations_p2 = dict()
   for syst_p in syst_params:
     max_deviations_p1[syst_p] = max([deviations_p1[d][syst_p] for d in directories])
-    max_deviations_p2[syst_p] = max([deviations_21[d][syst_p] for d in directories])
+    max_deviations_p2[syst_p] = max([deviations_p2[d][syst_p] for d in directories])
     
   rows = []
   for syst_p in syst_params:
-    rows.append([util.ParamAsStringRooTex(syst_p),max_deviations_p1[syst_p],max_deviations_p2[syst_p]])
+    rows.append([util.ParamAsStringPaperTex(syst_p),max_deviations_p1[syst_p],max_deviations_p2[syst_p]])
     
-  rows_sorted_by_p1_dev = sorted(rows,operator.itemgetter(1),reverse=True)
-  rows_sorted_by_p2_dev = sorted(rows,operator.itemgetter(2),reverse=True)
+  rows_sorted_by_p1_dev = sorted(rows,key=operator.itemgetter(1),reverse=True)
+  rows_sorted_by_p2_dev = sorted(rows,key=operator.itemgetter(2),reverse=True)
   
   out_p1 = open("star_plot_table_sorted_by_"+util.ParamAsStringSimple(p1)+".txt","w")
   for r in rows_sorted_by_p1_dev:
-    out_p1.write(" & ".join([r[0].ljust(30),to3dp.format(r[1]),to3dp.format(r[2])]))
+    out_p1.write(" & ".join([r[0].rjust(50),to3dp.format(r[1]),to3dp.format(r[2])]))
     out_p1.write(" \\\\ \hline \n")
   out_p1.close()
     
   out_p2 = open("star_plot_table_sorted_by_"+util.ParamAsStringSimple(p2)+".txt","w")
   for r in rows_sorted_by_p2_dev:
-    out_p2.write(" & ".join([r[0].ljust(30),to3dp.format(r[1]),to3dp.format(r[2])]))
+    out_p2.write(" & ".join([r[0].rjust(50),to3dp.format(r[1]),to3dp.format(r[2])]))
     out_p2.write(" \\\\ \hline \n")
   out_p2.close()
 #________________________________________________________________________________________________________
