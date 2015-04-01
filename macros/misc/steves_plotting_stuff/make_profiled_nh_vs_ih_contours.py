@@ -33,6 +33,7 @@ conf90 = 4.61
 conf68 = 2.71
 
 to3dp = "{0:.3f}"
+to6dp = "{0:.6f}"
   
 def main(file1, file2=None, tag=None):
   
@@ -94,8 +95,8 @@ def main(file1, file2=None, tag=None):
   bf_bin_p = h_contour_p.GetMinimumBin()
   bf_bin_m = h_contour_m.GetMinimumBin()
   
-  bf_chisq_p = h_contour_p.GetBinContent(bf_bin_p)
-  bf_chisq_m = h_contour_p.GetBinContent(bf_bin_m)
+  bf_chisq_p = h_p.GetBinContent(bf_bin_p)
+  bf_chisq_m = h_m.GetBinContent(bf_bin_m)
   
   x_bin_p = ROOT.Long() ; y_bin_p = ROOT.Long()
   x_bin_m = ROOT.Long() ; y_bin_m = ROOT.Long()
@@ -113,8 +114,10 @@ def main(file1, file2=None, tag=None):
   marker_m = ROOT.TMarker(bf_x_m,bf_y_m,ROOT.kFullStar)
   
   if (bf_chisq_p > bf_chisq_m):
+    bf_is_normal = True
     marker_m.SetMarkerStyle(ROOT.kOpenStar)
   else:
+    bf_is_normal = False
     marker_p.SetMarkerStyle(ROOT.kOpenStar)
     
   marker_p.SetMarkerColor(ROOT.kViolet);
@@ -124,6 +127,16 @@ def main(file1, file2=None, tag=None):
   
   CopyMarkerToHist(marker_p,h_contour_p)
   CopyMarkerToHist(marker_m,h_contour_m)
+  
+  print "Bestfit point (normal)  : ",bf_x_m,bf_y_m,"\twith chisq: ",bf_chisq_m
+  print "Bestfit point (inverted): ",bf_x_p,bf_y_p,"\twith chisq: ",bf_chisq_p
+  
+  if bf_is_normal:
+    print "\n",to3dp.format(bf_x_m), " & ",to6dp.format(bf_y_m)," & Normal"
+  else:
+    print "\n",to3dp.format(bf_x_p), " & ",to6dp.format(bf_y_p)," & Inverted"
+    
+  print "\n\n"
   
   # Start drawing
   canv = ROOT.TCanvas("canv1","canv1",1280,720)
