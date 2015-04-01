@@ -248,18 +248,16 @@ void test_bestfit_point_shift_due_to_syst_twk
         double sigma = (twkv[ip] - 1) / cov[ip][ip];
         for(int ipp = 0; ipp < nskdetfsi; ipp++) {
           PhysParamId_t pp = conv::kPhypUndefined;
-          if (util::IsRHCSample(s)) {pp = conv::kListOfRHCBANFFParams[ipp];}
-          else {pp = conv::kListOfBANFFParams[ipp];}
+          if (util::IsRHCSample(s)) {pp = conv::kListOfRHCSKDetFSIParams[ipp];}
+          else {pp = conv::kListOfSKDetFSIParams[ipp];}
           if(pp == p) { continue; }
           //set non-tweaked values to best fit
-          int index;
-          if (util::IsRHCSample(s)) {index = util::ArrIdx::Instance()->RHCBANFFSystIdx(pp);}
-          else {index = util::ArrIdx::Instance()->BANFFSystIdx(pp);}
-          twkv[index] = skexp->GetBANFF()->BestFitValue(pp);
+          int index = ipp;
+          twkv[index] = skexp->GetSuperkDetectorFSI()->SampleCurrentValue(pp);
           //now, tweak the other parameters according to the correlations between them and the fitted parameters
           if(correlated_parameters) { twkv[index] += sigma * cov[ip][index];}
         }
-        skexp->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+        skexp->GetSuperkDetectorFSI()->TweakSample(true,&twkv);
       } //isSKDetFSI
       else if (!util::IsSystematic(p)) {
         double input_val = fparm->InitValue(p);
@@ -434,18 +432,17 @@ void test_bestfit_point_shift_due_to_syst_twk
           double sigma = (twkv[ip] - 1) / cov[ip][ip];
           for(int ipp = 0; ipp < nskdetfsi; ipp++) {
             PhysParamId_t pp = conv::kPhypUndefined;
-            if (util::IsRHCSample(s)) {pp = conv::kListOfRHCBANFFParams[ipp];}
-            else {pp = conv::kListOfBANFFParams[ipp];}
+            if (util::IsRHCSample(s)) {pp = conv::kListOfRHCSKDetFSIParams[ipp];}
+            else {pp = conv::kListOfSKDetFSIParams[ipp];}
             if(pp == p) { continue; }
             //set non-tweaked values to best fit
-            int index;
-            if (util::IsRHCSample(s)) {index = util::ArrIdx::Instance()->RHCBANFFSystIdx(pp);}
-            else {index = util::ArrIdx::Instance()->BANFFSystIdx(pp);}
+            int index = ipp;
+            twkv[index] = skexp->GetSuperkDetectorFSI()->SampleCurrentValue(pp);
             twkv[index] = 1;
             //now, tweak the other parameters according to the correlations between them and the fitted parameters
             if(correlated_parameters) { twkv[index] += sigma * cov[ip][index];}
           }
-          skexp->GetSuperkDetectorFSI()->Tweak(true,&twkv);
+          skexp->GetSuperkDetectorFSI()->TweakSample(true,&twkv);
         }
         else if (!util::IsSystematic(p)) {
           double tweak  = util::RandomizeParameter(p);
