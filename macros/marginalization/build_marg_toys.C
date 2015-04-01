@@ -36,7 +36,8 @@ void build_marg_toys
  //const char * fit_param_list     = "nuosc3fbar_numudisapp_constrainall+nuisance",  
  //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
- const char * fit_param_list       = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
 
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -212,7 +213,6 @@ void build_marg_toys
 
   FitParamList *fparm = fitmarg->GetFitParamList();
   PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
-  cout << "- The following physics hypothesis is used for fakedata sets: " << util::AsString(hyp) << endl;
 
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13 == -99) input_mixing13 = conv::kGlobFitSinsq2Theta13;
