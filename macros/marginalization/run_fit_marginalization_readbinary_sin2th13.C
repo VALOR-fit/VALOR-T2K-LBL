@@ -30,12 +30,12 @@ void run_fit_marginalization_readbinary_sin2th13
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "fitmarg_sin2th13",    /* tag for output file */
- int          first_experiment         = 24,                       /* */
- int          last_experiment          = 24,                       /* */
+ int          first_experiment         = 0,                       /* */
+ int          last_experiment          = 3500,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
- bool         dotoys                   = true,
+ bool         dotoys                   = false,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -65,9 +65,8 @@ void run_fit_marginalization_readbinary_sin2th13
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- //const char * infilename           = "submit_mixing13_2p5E20_postfit",
- const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_2p5E20POT_fix12_10toys/submit_mixing13_4p0E20_postfit",
- const int    nfiles               = 10,         // # of files to read
+ const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fix5_10toys/submit_mixing13_4p0E20_postfit",
+ const int    nfiles               = 1,         // # of files to read
 
  const int    NtoysMarg            = 10,   // # toys marginalization 
  
@@ -306,6 +305,7 @@ void run_fit_marginalization_readbinary_sin2th13
   double bestfitFullChisq0=-999;
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
+  int ToyID=-999;
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
@@ -340,6 +340,7 @@ void run_fit_marginalization_readbinary_sin2th13
   fitnt->Branch("bestfitFullChisq0", &bestfitFullChisq0 );
   fitnt->Branch("bestfitFullChisq1", &bestfitFullChisq1 );
   fitnt->Branch("chisqminFullChisq",&chisqminFullChisq);
+  fitnt->Branch("ToyID",&ToyID);
 
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
@@ -349,6 +350,8 @@ void run_fit_marginalization_readbinary_sin2th13
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
     
+    ToyID = iexperiment; // Store the ToyID in the output tree
+
     // randomize specified osc params for current toy MC expt
     if(hyp == kHypOsc3F){
       if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
@@ -743,14 +746,14 @@ void run_fit_marginalization_readbinary_sin2th13
     cout << endl;
 
      
-    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    fitmarg->GetChisqMarg1D()->DrawCopy();    
+    // TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+    // fitmarg->GetChisqMarg1D()->DrawCopy();    
     
-    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-    fitmarg->GetChisqStep_1D()->DrawCopy();
+    // TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+    // fitmarg->GetChisqStep_1D()->DrawCopy();
     
-    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-    fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
+    // TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+    // fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
 
     // Clean-up

@@ -305,6 +305,7 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
   double bestfiterrPos1=-999;
   double bestfiterrSym0=-999;
   double bestfiterrSym1=-999;
+  int ToyID=-999;
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
@@ -336,6 +337,7 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
   fitnt->Branch("bestfiterrPos1",&bestfiterrPos1);
   fitnt->Branch("bestfiterrSym0",&bestfiterrSym0);
   fitnt->Branch("bestfiterrSym1",&bestfiterrSym1);
+  fitnt->Branch("ToyID",&ToyID);
 
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
@@ -345,6 +347,8 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
     
+    ToyID = iexperiment; // Store the ToyID in the output tree
+
     // randomize specified osc params for current toy MC expt
     if(hyp == kHypOsc3F){
       if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }

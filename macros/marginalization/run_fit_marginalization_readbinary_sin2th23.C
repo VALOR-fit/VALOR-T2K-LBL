@@ -305,6 +305,7 @@ void run_fit_marginalization_readbinary_sin2th23
   double bestfitFullChisq0=-999;
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
+  int ToyID=-999;
 
 
   // Create tree to store outputs
@@ -340,6 +341,7 @@ void run_fit_marginalization_readbinary_sin2th23
   fitnt->Branch("bestfitFullChisq0", &bestfitFullChisq0 );
   fitnt->Branch("bestfitFullChisq1", &bestfitFullChisq1 );
   fitnt->Branch("chisqminFullChisq",&chisqminFullChisq);
+  fitnt->Branch("ToyID",&ToyID);
 
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
@@ -349,6 +351,8 @@ void run_fit_marginalization_readbinary_sin2th23
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
     cout << "\n\n *** Pseudo-experiment = " << iexperiment << endl;
     
+    ToyID = iexperiment; // Store the ToyID in the output tree
+
     // randomize specified osc params for current toy MC expt
     if(hyp == kHypOsc3F){
       if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
