@@ -29,13 +29,13 @@ void run_fit_marginalization_readbinary_sin2th13
 
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
- const char * tag                      = "toyexptmarg",    /* tag for output file */
- int          first_experiment         = 4,                       /* */
- int          last_experiment          = 4,                       /* */
+ const char * tag                      = "fitmarg_sin2th13",    /* tag for output file */
+ int          first_experiment         = 24,                       /* */
+ int          last_experiment          = 24,                       /* */
 
- const char * xmlfile                  = "toymc/toymc_nueapp-0.xml",  
+ const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
- bool         dotoys                   = false,
+ bool         dotoys                   = true,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -56,23 +56,20 @@ void run_fit_marginalization_readbinary_sin2th13
  bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 1,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
- //const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
- const char * fit_param_list           = "nuosc3fbar_fixnonbar_12fix+nuisance",
+ const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ //const char * fit_param_list           = "nuosc3fbar_fixnonbar_12fix+nuisance",
 
  const char * dmsqscheme               = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
+ const char * hierarchy                = "normal",     /* normal or inverted */
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
-  
- const int    first_bin_freepar0   = -999,   // first freepar of the sub-range
- const int    last_bin_freepar0    = -999, // last freepar of the sub-range
- const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
- const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * infilename           = "submit_mixing13_2p5E20_postfit",
- const int    nfiles               = 1,         // # of files to read
+ //const char * infilename           = "submit_mixing13_2p5E20_postfit",
+ const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_2p5E20POT_fix12_10toys/submit_mixing13_4p0E20_postfit",
+ const int    nfiles               = 10,         // # of files to read
 
- const int    NtoysMarg            = 1,   // # toys marginalization 
+ const int    NtoysMarg            = 10,   // # toys marginalization 
  
  const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
@@ -84,7 +81,10 @@ void run_fit_marginalization_readbinary_sin2th13
  const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
  const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
 
- const bool  doMargMH             = true    // marginalize Mass Hierarchy
+ const bool  doMargMH             = true,    // marginalize Mass Hierarchy
+ 
+ const TString TypeError          = "HESSE-MINOS",  // HESSE, MINOS (contained by the string)  
+ const bool DrawFullChisq         = true
 )
 {
 
@@ -121,7 +121,6 @@ void run_fit_marginalization_readbinary_sin2th13
   }
   
   // Global options
-  const char * hierarchy = "normal";     /* normal or inverted */
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
   Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
@@ -137,13 +136,17 @@ void run_fit_marginalization_readbinary_sin2th13
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12 = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
   bool randomize_mixing13 = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
+  bool randomize_mixing23 = (TMath::Abs(input_mixing23 + 999) < kASmallNum);
   bool randomize_deltacp  = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
   bool randomize_dm12sq   = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
+  bool randomize_dm23sq   = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
 
   bool randomize_mixing12_bar = (TMath::Abs(input_mixing12_bar + 999) < kASmallNum);
   bool randomize_mixing13_bar = (TMath::Abs(input_mixing13_bar + 999) < kASmallNum);
+  bool randomize_mixing23_bar = (TMath::Abs(input_mixing23_bar + 999) < kASmallNum);
   bool randomize_deltacp_bar  = (TMath::Abs(input_deltacp_bar  + 999) < kASmallNum);
   bool randomize_dm12sq_bar   = (TMath::Abs(input_dm12sq_bar   + 999) < kASmallNum);
+  bool randomize_dm23sq_bar   = (TMath::Abs(input_dm23sq_bar   + 999) < kASmallNum);
 
   //Set to defaults
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
@@ -227,18 +230,18 @@ void run_fit_marginalization_readbinary_sin2th13
     cout << "   - True oscillation parameters: " << endl;
     cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
     cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
-    cout << "       > " << util::AsString(kPhypMixing23) << " = " << input_mixing23 << endl;
+    cout << "       > " << util::AsString(kPhypMixing23) << " = " << ((randomize_mixing23) ? "* randomized *" : input_mixing23) << endl;
     cout << "       > " << util::AsString(kPhypCPV    )  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
     cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
-    cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
+    cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << ((randomize_dm23sq)  ? "* randomized *" : input_dm23sq ) << " eV^2/c^4" << endl;
     if(hyp == kHypOsc3FBar){
       cout << "   - True oscillation parameters bar: " << endl;
       cout << "       > " << util::RawParamAsString(kPhypMixing12Bar) << " = " << ((randomize_mixing12_bar) ? "* randomized *" : input_mixing12_bar) << endl;
       cout << "       > " << util::AsString(kPhypMixing13Bar) << " = " << ((randomize_mixing13_bar) ? "* randomized *" : input_mixing13_bar) << endl;
-      cout << "       > " << util::AsString(kPhypMixing23Bar) << " = " << input_mixing23_bar << endl;
+      cout << "       > " << util::AsString(kPhypMixing23Bar) << " = " << ((randomize_mixing23_bar) ? "* randomized *" : input_mixing23_bar) << endl;
       cout << "       > " << util::AsString(kPhypCPVBar    )  << " = " << ((randomize_deltacp_bar) ? "* randomized *" : input_deltacp_bar) << endl;
       cout << "       > " << util::AsString(kPhypDm12sqBar)   << " = " << ((randomize_dm12sq_bar)  ? "* randomized *" : input_dm12sq_bar ) << " eV^2/c^4" << endl;
-      cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << input_dm23sq_bar << " eV^2/c^4" << endl;
+      cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << ((randomize_dm23sq_bar)  ? "* randomized *" : input_dm23sq_bar ) << " eV^2/c^4" << endl;
     }
   }
   else{
@@ -300,6 +303,9 @@ void run_fit_marginalization_readbinary_sin2th13
   double bestfiterrPos1=-999;
   double bestfiterrSym0=-999;
   double bestfiterrSym1=-999;
+  double bestfitFullChisq0=-999;
+  double bestfitFullChisq1=-999;
+  double chisqminFullChisq=conv::kALargeNum;
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
@@ -331,6 +337,9 @@ void run_fit_marginalization_readbinary_sin2th13
   fitnt->Branch("bestfiterrPos1",&bestfiterrPos1);
   fitnt->Branch("bestfiterrSym0",&bestfiterrSym0);
   fitnt->Branch("bestfiterrSym1",&bestfiterrSym1);
+  fitnt->Branch("bestfitFullChisq0", &bestfitFullChisq0 );
+  fitnt->Branch("bestfitFullChisq1", &bestfitFullChisq1 );
+  fitnt->Branch("chisqminFullChisq",&chisqminFullChisq);
 
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
@@ -344,14 +353,18 @@ void run_fit_marginalization_readbinary_sin2th13
     if(hyp == kHypOsc3F){
       if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
       if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
+      if (randomize_mixing23) { input_mixing23 = util::RandomizeMixing23(); }
       if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();  }
       if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
+      if (randomize_dm23sq  ) { input_dm23sq   = util::RandomizeDm23sq();   }
     }
     else if(hyp == kHypOsc3FBar){ // randomize nu osc params only if not fixed
       if (randomize_mixing12_bar) { input_mixing12_bar = util::RandomizeMixing12Bar(); }
       if (randomize_mixing13_bar) { input_mixing13_bar = util::RandomizeMixing13Bar(); }
+      if (randomize_mixing23_bar) { input_mixing23_bar = util::RandomizeMixing23Bar(); }
       if (randomize_deltacp_bar ) { input_deltacp_bar  = util::RandomizeCPVBar();  }
       if (randomize_dm12sq_bar  ) { input_dm12sq_bar   = util::RandomizeDm12sqBar();   }
+      if (randomize_dm23sq_bar  ) { input_dm23sq_bar   = util::RandomizeDm23sqBar();   }
     }
 
     // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
@@ -464,6 +477,29 @@ void run_fit_marginalization_readbinary_sin2th13
 
     /////////////////// SET MARGINALIZATION FIT ////////////////
     
+    // Reset all the variables
+    truepar0=-999;
+    truepar1=-999;    
+    nfits=-999;
+    nchisqcalls=-999;
+    niterations=-999;
+    fitstatus=-999;
+    chisqmin=conv::kALargeNum;
+    chisqtrue=conv::kALargeNum;
+    bestfit0=-999;
+    bestfit1=-999;
+    bestfiterrNeg0=-999;
+    bestfiterrNeg1=-999;
+    bestfiterrPos0=-999;
+    bestfiterrPos1=-999;
+    bestfiterrSym0=-999;
+    bestfiterrSym1=-999;  
+    bestfitFullChisq0=-999;
+    bestfitFullChisq1=-999;
+    chisqminFullChisq=conv::kALargeNum;
+
+    //
+
     PhysParamId_t freepar0;
     string sfreeparname0(freeparname0);  
     // NuBar mode
@@ -533,7 +569,13 @@ void run_fit_marginalization_readbinary_sin2th13
     minpar[1] = freeparmin1;
     maxpar[1] = freeparmax1;
     
-    // free parameter sub-range 
+    // free parameter sub-range
+    
+    const int    first_bin_freepar0   = -999; // first freepar of the sub-range
+    const int    last_bin_freepar0    = -999; // last freepar of the sub-range
+    const int    first_bin_freepar1   = -999; // first freepar of the sub-range
+    const int    last_bin_freepar1    = -999; // last freepar of the sub-range
+ 
     int subminbin[2];
     int submaxbin[2];
     subminbin[0] = first_bin_freepar0; submaxbin[0] = last_bin_freepar0;
@@ -560,31 +602,6 @@ void run_fit_marginalization_readbinary_sin2th13
 
     fitmarg->SetTagFileName(infilename);
     fitmarg->SetFileID(nfiles);
-
-
-
-    // // Draw Full Chisq
-    // fitmarg->FillChisqMarg(skobs_fakedata,true);
-    // //fitmarg->BuildDeltaChisqMarg();
-    // fitmarg->MinimizeHisto();
-    // double chisqmin_tot = (double)fitmarg->GetChisqBestFit();
-    // double bestfit0_tot = fitmarg->GetParamBestFit(0);
-    // double bestfit1_tot = -999.;
-    // if(fitmarg->IsFit2D()) bestfit1_tot = fitmarg->GetParamBestFit(1); 
-    // cout << endl;
-    // cout << "Total distribution minimum:" << endl;
-    // cout << "Minimum Marginalized Chisq = " << chisqmin_tot << endl;        
-    // cout << "bestfit 0 = " << bestfit0_tot << endl;
-    // if(fitmarg->IsFit2D()) cout << "bestfit 1 = " << bestfit1_tot << endl; 
-    // cout << endl;
-    // return;
-
-
-
-    // TCanvas *cmap = new TCanvas("cmap","cmap");
-    // fitmarg->GetMapChisqRangeFileID_2D()->DrawCopy("colz");
-    // //cout << fitmarg->CalcChisqMargPtRead(skobs_fakedata,52,130) << endl;
-    // return;
     
     double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinLowEdge(2);
     double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(2);
@@ -627,7 +644,7 @@ void run_fit_marginalization_readbinary_sin2th13
     // Otherwise error computation is done with respect to a wrong minimum
     fitmarg->SetChisqBestFit(chisqmin);
     fitmarg->SetParamBestFit(0,bestfit0);
-    fitmarg->SetParamBestFit(1,bestfit1);
+    if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
 
 
     //
@@ -637,13 +654,14 @@ void run_fit_marginalization_readbinary_sin2th13
     // must adopt the same approach for error computations as well.
     //
     
-    fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+    if(TypeError.Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+    if(TypeError.Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
+
     bestfiterrNeg0 = fitmarg->GetParamBestFitErrNeg(0);
     bestfiterrNeg1 = fitmarg->GetParamBestFitErrNeg(1);
     bestfiterrPos0 = fitmarg->GetParamBestFitErrPos(0);
     bestfiterrPos1 = fitmarg->GetParamBestFitErrPos(1);
     
-    fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
     bestfiterrSym0 = fitmarg->GetParamBestFitErrSym(0);
     bestfiterrSym1 = fitmarg->GetParamBestFitErrSym(1);
 
@@ -656,7 +674,17 @@ void run_fit_marginalization_readbinary_sin2th13
 
     nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
 
-    //fitmarg->FillChisqMarg(skobs_fakedata,true);
+
+   // Draw Full Chisq
+    if(DrawFullChisq){
+      fitmarg->FillChisqMarg(skobs_fakedata,true);
+      fitmarg->MinimizeHisto();
+      bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
+      if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
+      chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
+      //fitmarg->BuildDeltaChisqMarg();
+    }
+
 
     // Fill the output tree
    
@@ -715,6 +743,16 @@ void run_fit_marginalization_readbinary_sin2th13
     cout << endl;
 
      
+    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+    fitmarg->GetChisqMarg1D()->DrawCopy();    
+    
+    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+    fitmarg->GetChisqStep_1D()->DrawCopy();
+    
+    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+    fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
+
+
     // Clean-up
     delete skobs_fakedata;  
 
@@ -725,14 +763,6 @@ void run_fit_marginalization_readbinary_sin2th13
 
    
 
-  TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-  fitmarg->GetChisqMarg1D()->DrawCopy();    
-  
-  TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-  fitmarg->GetChisqStep_1D()->DrawCopy();
-  
-  TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-  fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
 
   // Store ntuple with best-fit results
