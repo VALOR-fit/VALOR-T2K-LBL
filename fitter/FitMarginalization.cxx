@@ -6768,8 +6768,11 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
     int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
     int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
-    double chisq_bf = fhdeltachisq_marg_2D->GetBinContent      (bin_bf0,    bin_bf1);     // X^2( x0bf   , x1bf    ) 
-    
+    double chisq_bf = fhdeltachisq_marg_2D->GetBinContent(bin_bf0,bin_bf1);     // X^2( x0bf, x1bf ) 
+
+    double h0 = fhdeltachisq_marg_2D->GetXaxis()->GetBinWidth(bin_bf0) * (double)Nh;    
+    double h1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinWidth(bin_bf1) * (double)Nh;    
+
     double chisq_minus0 = -999;
     double chisq_plus0 = -999;
     double chisq_minus1 = -999;
@@ -6779,103 +6782,224 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     double chisq_plus0_minus1 = -999;
     double chisq_minus0_plus1 = -999;
 
-    chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);     // X^2( x0bf-h0, x1bf    )
-    chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);     // X^2( x0bf+h0, x1bf    )
-    chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);  // X^2( x0bf   , x1bf-h1 )
-    chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);  // X^2( x0bf   , x1bf+h1 )
-    chisq_minus01 = fhdeltachisq_marg_2D->GetBinContent (bin_bf0-Nh, bin_bf1-Nh);  // X^2( x0bf-h1, x1bf-h1 )
-    chisq_plus01 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);  // X^2( x0bf+h1, x1bf+h1 )
-    chisq_plus0_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1-Nh);  // X^2( x0bf+h1, x1bf-h1 )
-    chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h1, x1bf+h1 )
+    double deriv2nd_0 = -999;
+    double deriv2nd_1 = -999;
+    double deriv2nd_01 = -999;
 
-    // if(bin_bf0==1){
-    // }
-    // else if(){
-    // }
-    // else{
-    //   chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);     // X^2( x0bf-h0, x1bf    )
-    //   chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);     // X^2( x0bf+h0, x1bf    )
-    // }
-    
-    // if(bin_bf1==1){
-    // }
-    // else if(){
-    // }
-    // else{
-    //   chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);  // X^2( x0bf   , x1bf-h1 )
-    //   chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);  // X^2( x0bf   , x1bf+h1 )
-    // }
+    //
+    // Treat cases when the best-fit is on the physical boundary. 
+    // Assume the chisq to be symmetric around the minimum 
+    // --> symmetrically copy and paste the chisq values to the bins in the unphysical region 
+    //
 
-    // if(bin_bf0==1){
-    // }
-    // else if(){
-    // }
-    // else{
-    //   chisq_minus01 = fhdeltachisq_marg_2D->GetBinContent (bin_bf0-Nh, bin_bf1-Nh);  // X^2( x0bf-h1, x1bf-h1 )
-    //   chisq_plus01 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);  // X^2( x0bf+h1, x1bf+h1 )
-    // }
+    if( bin_bf0==1 &&  // Only Par0 on the lowery boundary
+	(bin_bf1>1 && bin_bf1<fhdeltachisq_marg_2D->GetNbinsY()) ){
+      
+      chisq_plus0_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1-Nh);  // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus0_plus1 = chisq_plus0_minus1;  // symmetric                               // X^2( x0bf-h0, x1bf+h1 ) 
+      chisq_plus0  = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);          // X^2( x0bf+h0, x1bf    )
+      chisq_minus0 = chisq_plus0;               // symmetric                               // X^2( x0bf-h0, x1bf    )
+      chisq_plus01  = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);       // X^2( x0bf+h0, x1bf+h1 )
+      chisq_minus01 = chisq_plus01;             // symmetric                               // X^2( x0bf-h0, x1bf-h1 )
+      chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
+      chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);        // X^2( x0bf   , x1bf+h1 )
 
-    // if(bin_bf1==1){
-    // }
-    // else if(){
-    // }
-    // else{
-    //   chisq_plus0_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1-Nh);  // X^2( x0bf+h1, x1bf-h1 )
-    //   chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h1, x1bf+h1 )
-    // }
+      // All the bins are available
+      // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
 
+    }
+    else if( bin_bf0==fhdeltachisq_marg_2D->GetNbinsX() && // Only Par0 on the upper boundary 
+	     (bin_bf1>1 && bin_bf1<fhdeltachisq_marg_2D->GetNbinsY()) ){ 
+      
+      chisq_minus01 = fhdeltachisq_marg_2D->GetBinContent (bin_bf0-Nh, bin_bf1-Nh);        // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus01 = chisq_minus01;            // symmetric                                // X^2( x0bf+h0, x1bf+h1 )
+      chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);           // X^2( x0bf-h0, x1bf    )
+      chisq_plus0 = chisq_minus0;              // symmetric                                // X^2( x0bf+h0, x1bf    )
+      chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h0, x1bf+h1 )
+      chisq_plus0_minus1 = chisq_minus0_plus1; // symmetric                                // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
+      chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);        // X^2( x0bf   , x1bf+h1 )
 
+      // All the bins are available  
+      // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
 
+    }
+    else if( (bin_bf0>1 && bin_bf0<fhdeltachisq_marg_2D->GetNbinsX()) && // Only Par1 on the lower boundary 
+	     bin_bf1==1 ){ 
 
+      chisq_plus01 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);        // X^2( x0bf+h0, x1bf+h1 )
+      chisq_minus01 = chisq_plus01;            // symmetric                                // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);           // X^2( x0bf+h0, x1bf    )
+      chisq_minus0 = chisq_plus0;              // symmetric                                // X^2( x0bf-h0, x1bf    )
+      chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h0, x1bf+h1 )
+      chisq_plus0_minus1 = chisq_minus0_plus1; // symmetric                                // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
+      chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);        // X^2( x0bf   , x1bf+h1 )
 
+      // All the bins are available
+      // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
 
-    double h0 = fhdeltachisq_marg_2D->GetXaxis()->GetBinWidth(bin_bf0) * (double)Nh;    
-    double h1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinWidth(bin_bf1) * (double)Nh;    
+    }
+    else if( (bin_bf0>1 && bin_bf0<fhdeltachisq_marg_2D->GetNbinsX()) && // Only Par1 on the upper boundary 
+	     bin_bf1==fhdeltachisq_marg_2D->GetNbinsY() ){ 
+      chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
+      chisq_plus1 = chisq_minus1;              // symmetric                                // X^2( x0bf   , x1bf+h1 )
+      chisq_plus0_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1-Nh);  // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus0_plus1 = chisq_plus0_minus1; // symmetric                                // X^2( x0bf-h0, x1bf+h1 )
+      chisq_minus01 = fhdeltachisq_marg_2D->GetBinContent (bin_bf0-Nh, bin_bf1-Nh);        // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus01 = chisq_minus01;            // symmetric                                // X^2( x0bf+h0, x1bf+h1 )
+      chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);           // X^2( x0bf-h0, x1bf    )
+      chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);           // X^2( x0bf+h0, x1bf    )
 
-    // cout << endl;
-    // cout << "bin_bf0 = " << bin_bf0 << endl;
-    // cout << "bin_bf1 = " << bin_bf1 << endl;
-    // cout << "chisq_bf = " << chisq_bf << endl;
-    // cout << "chisq_minus0 = " << chisq_minus0 << endl;
-    // cout << "chisq_plus0 = " << chisq_plus0 << endl;
-    // cout << "chisq_minus1 = " << chisq_minus1 << endl;
-    // cout << "chisq_plus1 = " << chisq_plus1 << endl;
-    // cout << "chisq_minus01 = " << chisq_minus01 << endl;
-    // cout << "chisq_plus01 = " << chisq_plus01 << endl;
-    // cout << "h0 = " << h0 << endl;
-    // cout << "h1 = " << h1 << endl;
-    // cout << endl;
+      // All the bins are available
+      // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
+
+    }
+    else if(bin_bf0==1 && bin_bf1==1){ // Par0 and Par1 on the lowery boundary 
+      chisq_plus01 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);        // X^2( x0bf+h0, x1bf+h1 )
+      chisq_minus01 = chisq_plus01; // symmetric                                           // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);           // X^2( x0bf+h0, x1bf    )
+      chisq_minus0 = chisq_plus0;   // symmetric                                           // X^2( x0bf-h0, x1bf    )
+      chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);        // X^2( x0bf   , x1bf+h1 )
+      chisq_minus1 = chisq_plus1;   // symmetric                                           // X^2( x0bf   , x1bf-h1 )
+
+      // Set to -999 bins when also its symmetric is in the unphysical region
+      chisq_plus0_minus1 = -999.;  // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus0_plus1 = -999.;  // X^2( x0bf-h0, x1bf+h1 )
+      
+      // Both X^2( x0bf+h0, x0bf-h1 ) and X^2( x0bf-h0, x0bf+h1 ), which are symmetric, 
+      // are in the unphysical region and cannot be used
+      // --> use alternative function to compute the second derivative d2X^2/dx0dx1
+      // 2D discrete deriv 01 (1A): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf) - X^2(x0bf,x1bf+h1) + 2*X^2(x0bf,x1bf) - X^2(x0bf-h0,x1bf) 
+      //                                      - X^2(x0bf,x1bf-h1) + X^2(x0bf-h0,x1bf-h1)] / (2*h0*h1)
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h0*h1);    
+      
+    }
+    else if(bin_bf0==1 && bin_bf1==fhdeltachisq_marg_2D->GetNbinsY()){ // Par0 on the lowery boundary and Par1 on the upper boundary 
+      chisq_plus0_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1-Nh);  // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus0_plus1 = chisq_plus0_minus1; // symmetric                                // X^2( x0bf-h0, x1bf+h1 )
+      chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);           // X^2( x0bf+h0, x1bf    )
+      chisq_minus0 = chisq_plus0;              // symmetric                                // X^2( x0bf-h0, x1bf    )
+      chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
+      chisq_plus1 = chisq_minus1;              // symmetric                                // X^2( x0bf   , x1bf+h1 )
+ 
+      // Set to -999 bins when also its symmetric is in the unphysical region
+      chisq_minus01 = -999.;  // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus01 = -999.;   // X^2( x0bf+h0, x1bf+h1 )
+
+      // Both X^2( x0bf-h0, x0bf-h1 ) and X^2( x0bf+h0, x0bf+h1 ), which are symmetric, 
+      // are in the unphysical region and cannot be used
+      // --> use alternative function to compute the second derivative d2X^2/dx0dx1
+      // 2D discrete deriv 01 (1B): d2X^2/dx0dx1 = [ X^2(x0bf-h0,x1bf+h1) - X^2(x0bf,x1bf+h1) - X^2(x0bf-h0,x1bf) + 2*X^2(x0bf,x1bf) - X^2(x0bf,x1bf-h1) 
+      //                                      - X^2(x0bf+h0,x1bf) + X^2(x0bf+h0,x1bf-h1)] / (2*h0*h1)
+      deriv2nd_01 = ( chisq_minus0_plus1 - chisq_plus1 - chisq_minus0 + 2*chisq_bf - chisq_minus1 - chisq_plus0 + chisq_plus0_minus1 ) / (2*h0*h1);    
+
+    }
+    else if(bin_bf0==fhdeltachisq_marg_2D->GetNbinsX() && bin_bf1==fhdeltachisq_marg_2D->GetNbinsY()){ // Par0 and Par1 on the upper boundary 
+      chisq_minus01 = fhdeltachisq_marg_2D->GetBinContent (bin_bf0-Nh, bin_bf1-Nh);        // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus01 = chisq_minus01; // symmetric                                           // X^2( x0bf+h0, x1bf+h1 )
+      chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);           // X^2( x0bf-h0, x1bf    )
+      chisq_plus0 = chisq_minus0;   // symmetric                                           // X^2( x0bf+h0, 
+      chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
+      chisq_plus1 = chisq_minus1;   // symmetric                                           // X^2( x0bf   , x1bf+h1 )      
+
+      // Set to -999 bins when also its symmetric is in the unphysical region
+      chisq_plus0_minus1 = -999.;  // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus0_plus1 = -999;  // X^2( x0bf-h0, x1bf+h1 )
+
+      // Both X^2( x0bf+h0, x0bf-h1 ) and X^2( x0bf-h0, x0bf+h1 ), which are symmetric, 
+      // are in the unphysical region and cannot be used
+      // --> use alternative function to compute the second derivative d2X^2/dx0dx1
+      // 2D discrete deriv 01 (1A): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf) - X^2(x0bf,x1bf+h1) + 2*X^2(x0bf,x1bf) - X^2(x0bf-h0,x1bf) 
+      //                                      - X^2(x0bf,x1bf-h1) + X^2(x0bf-h0,x1bf-h1)] / (2*h0*h1)
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h0*h1);    
+
+    }
+    else if(bin_bf0==fhdeltachisq_marg_2D->GetNbinsX() && bin_bf1==1){ // Par0 on the upper boundary and Par1 on the lower boundary 
+      chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h0, x1bf+h1 )
+      chisq_plus0_minus1 = chisq_minus0_plus1; // symmetric                                // X^2( x0bf+h0, x1bf-h1 )
+      chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);        // X^2( x0bf   , x1bf+h1 )
+      chisq_minus1 = chisq_plus1;              // symmetric                                // X^2( x0bf   , x1bf-h1 )
+      chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);           // X^2( x0bf-h0, x1bf    )
+      chisq_plus0 = chisq_minus0;              // symmetric                                // X^2( x0bf+h0, x1bf    )
+
+      // Set to -999 bins when also its symmetric is in the unphysical region
+      chisq_minus01 = -999.;        // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus01 = -999.;        // X^2( x0bf+h0, x1bf+h1 )
+
+      // Both X^2( x0bf-h0, x0bf-h1 ) and X^2( x0bf+h0, x0bf+h1 ), which are symmetric, 
+      // are in the unphysical region and cannot be used
+      // --> use alternative function to compute the second derivative d2X^2/dx0dx1
+      // 2D discrete deriv 01 (1B): d2X^2/dx0dx1 = [ X^2(x0bf-h0,x1bf+h1) - X^2(x0bf,x1bf+h1) - X^2(x0bf-h0,x1bf) + 2*X^2(x0bf,x1bf) - X^2(x0bf,x1bf-h1) 
+      //                                      - X^2(x0bf+h0,x1bf) + X^2(x0bf+h0,x1bf-h1)] / (2*h0*h1)
+      deriv2nd_01 = ( chisq_minus0_plus1 - chisq_plus1 - chisq_minus0 + 2*chisq_bf - chisq_minus1 - chisq_plus0 + chisq_plus0_minus1 ) / (2*h0*h1);    
+
+    }
+    else if( (bin_bf0>1 && bin_bf0<fhdeltachisq_marg_2D->GetNbinsX()) &&  // Standard case
+	     (bin_bf1>1 && bin_bf1<fhdeltachisq_marg_2D->GetNbinsY()) ){ 
+      
+      chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);           // X^2( x0bf-h0, x1bf    )
+      chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);           // X^2( x0bf+h0, x1bf    )
+      chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
+      chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);        // X^2( x0bf   , x1bf+h1 )
+      chisq_minus01 = fhdeltachisq_marg_2D->GetBinContent (bin_bf0-Nh, bin_bf1-Nh);        // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus01 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);        // X^2( x0bf+h0, x1bf+h1 )
+      chisq_plus0_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1-Nh);  // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h0, x1bf+h1 )
+ 
+      // All the bins are available
+      // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
+
+    }
+    else{
+      cerr << endl;
+      cerr << "FitMarginalization::CalcBestFitErrorsHESSE" << endl;
+      cerr << "The best-fit in the physical boundary is not treated correctly" << endl;
+      cerr << "bin_bf0 = " << bin_bf0 << endl;
+      cerr << "bin_bf1 = " << bin_bf1 << endl;
+      cerr << endl;
+      exit(1);
+    }
 
     // 2D discrete deriv 0: d2X^2/dx0^2 = [ X^2(x0bf+h0,x1bf) - 2X^2(x0bf,x1bf) + X^2(x0bf-h0,x1bf) ] / h0^2    
-    double deriv2nd_0 = (chisq_plus0 - 2*chisq_bf + chisq_minus0) / ( h0*h0 );
+    deriv2nd_0 = (chisq_plus0 - 2*chisq_bf + chisq_minus0) / ( h0*h0 );
     
     // 2D discrete deriv 1: d2X^2/dx1^2 = [ X^2(x0bf,x1bf+h1) - 2X^2(x0bf,x1bf) + X^2(x0bf,x1bf-h1) ] / h1^2
-    double deriv2nd_1 = (chisq_plus1 - 2*chisq_bf + chisq_minus1) / ( h1*h1 );
+    deriv2nd_1 = (chisq_plus1 - 2*chisq_bf + chisq_minus1) / ( h1*h1 );
 
-    // 2D discrete deriv 01: d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf) - X^2(x0bf,x1bf+h1) + 2*X^2(x0bf,x1bf) - X^2(x0bf-h0,x1bf) 
-    //                                      - X^2(x0bf,x1bf-h1) + X^2(x0bf-h0,x1bf-h1)] / (2*h0*h1)
-    //double deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h0*h1);    
+
+    // // 2D discrete deriv 0: d2X^2/dx0^2 = [ X^2(x0bf+h0,x1bf) - 2X^2(x0bf,x1bf) + X^2(x0bf-h0,x1bf) ] / h0^2    
+    // double deriv2nd_0 = (chisq_plus0 - 2*chisq_bf + chisq_minus0) / ( h0*h0 );  
+    // // 2D discrete deriv 1: d2X^2/dx1^2 = [ X^2(x0bf,x1bf+h1) - 2X^2(x0bf,x1bf) + X^2(x0bf,x1bf-h1) ] / h1^2
+    // double deriv2nd_1 = (chisq_plus1 - 2*chisq_bf + chisq_minus1) / ( h1*h1 );
+    // // 2D discrete deriv 01 (1): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf) - X^2(x0bf,x1bf+h1) + 2*X^2(x0bf,x1bf) - X^2(x0bf-h0,x1bf) 
+    // //                                      - X^2(x0bf,x1bf-h1) + X^2(x0bf-h0,x1bf-h1)] / (2*h0*h1)
+    // //double deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h0*h1);    
+    // //
+    // // 2D discrete deriv 01 (1A): d2X^2/dx0dx1 = [ X^2(x0bf-h0,x1bf+h1) - X^2(x0bf,x1bf+h1) - X^2(x0bf-h0,x1bf) + 2*X^2(x0bf,x1bf) - X^2(x0bf,x1bf-h1) 
+    // //                                      - X^2(x0bf+h0,x1bf) + X^2(x0bf+h0,x1bf+h1)] / (2*h0*h1)
+    // //double deriv2nd_01 = ( chisq_minus0_plus1 - chisq_plus1 - chisq_minus0 + 2*chisq_bf - chisq_minus1 - chisq_plus0 + chisq_plus0_minus1 ) / (2*h0*h1);    
+    // //
+    // // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
+    // double deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
+    
+
+
     //
-    // 2D discrete deriv 01: d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
-    double deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
-    
-    // cout << "deriv2nd_0 = " << deriv2nd_0 << endl;
-    // cout << "deriv2nd_1 = " << deriv2nd_1 << endl;
-    // cout << "deriv2nd_01 = " << deriv2nd_01 << endl;
-    // cout << endl;
-    
-    // A = 0.5 * deriv2nd_0
-    // B = 0.5 * deriv2nd_1
-    // 2C = deriv2nd_01
+    // Compute the intermediate coefficients:
+    // - A = 0.5 * deriv2nd_0
+    // - B = 0.5 * deriv2nd_1
+    // - 2C = deriv2nd_01
+    //
 
     double A = 0.5 * deriv2nd_0;
     double B = 0.5 * deriv2nd_1;
     double C = 0.5 * deriv2nd_01;
-    // cout << endl;
-    // cout << "A = " << A << endl;
-    // cout << "B = " << B << endl;
-    // cout << "C = " << C << endl;
-    // cout << endl;
 
 
     // Get best-fit errors
