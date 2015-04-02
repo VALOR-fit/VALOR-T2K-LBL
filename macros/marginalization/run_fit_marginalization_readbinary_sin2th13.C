@@ -30,8 +30,17 @@ void run_fit_marginalization_readbinary_sin2th13
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "fitmarg_sin2th13",    /* tag for output file */
- int          first_experiment         = 0,                       /* */
- int          last_experiment          = 3500,                       /* */
+ 
+ //int          first_experiment         = 3449,                       /* */
+ //int          last_experiment          = 3449,                       /* */
+ //int          first_experiment         = 3482,                       /* */
+ //int          last_experiment          = 3482,                       /* */
+ //int          first_experiment         = 0,                       /* */
+ //int          last_experiment          = 3500,                       /* */
+ //int          first_experiment         = 1611,                       /* */
+ //int          last_experiment          = 1611,                       /* */
+ int          first_experiment         = 10,                       /* */
+ int          last_experiment          = 10,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
@@ -65,7 +74,7 @@ void run_fit_marginalization_readbinary_sin2th13
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fix5_10toys/submit_mixing13_4p0E20_postfit",
+ const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_10toys/submit_mixing13_4p0E20_postfit",
  const int    nfiles               = 1,         // # of files to read
 
  const int    NtoysMarg            = 10,   // # toys marginalization 
@@ -746,14 +755,14 @@ void run_fit_marginalization_readbinary_sin2th13
     cout << endl;
 
      
-    // TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    // fitmarg->GetChisqMarg1D()->DrawCopy();    
+    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+    fitmarg->GetChisqMarg1D()->DrawCopy();    
     
-    // TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-    // fitmarg->GetChisqStep_1D()->DrawCopy();
+    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+    fitmarg->GetChisqStep_1D()->DrawCopy();
     
-    // TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-    // fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
+    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+    fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
 
     // Clean-up
