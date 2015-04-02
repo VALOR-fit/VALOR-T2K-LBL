@@ -305,15 +305,6 @@ void FitMarginalization::CleanUp(void){
   }
 
 }
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 void FitMarginalization::SetFullRange(){
   
@@ -342,11 +333,6 @@ void FitMarginalization::SetFullRange(){
   
   return;
 }
-
-
-
-
-
 //________________________________________________________________________________________
 void FitMarginalization::SetSubRange(int *submin,int *submax){
   
@@ -1315,23 +1301,6 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
       
   return bincont;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //________________________________________________________________________________________
 void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
@@ -2581,23 +2550,13 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
   return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 void FitMarginalization::SetMinimUncorrXY(bool flaguncorr){ 
   fUncorrXY = flaguncorr;
 }
+
+
+
 // //________________________________________________________________________________________
 // void FitMarginalization::MinimizeChisqInterval(SuperkObservation *skobs_data){
 
@@ -6249,20 +6208,6 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     //cout << "bin_possigma_a = " << bin_possigma_a << endl;
 
 
-
-    // Check if the interval bins are correctly found
-    if(bin_negsigma_a > bin_possigma_b){
-      cerr << endl;
-      cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
-      cerr << "Left extreme bin is higher than right extreme bin" << endl;
-      cerr << "The 1sigma error interval is messed up:" << endl;
-      cerr << "bin_possigma_a = " << bin_possigma_a << endl;
-      cerr << "bin_negsigma_a = " << bin_negsigma_a << endl;
-      cerr << endl;      
-      exit(1);
-    }
-
-
     // If no bin is found it means the 1sigma bin is outside the physical region
     // and bin variables are still set to default value.
     // If so set left extreme to 1 (first bin of the histogram) and right extreme
@@ -6275,6 +6220,18 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     if(bin_possigma_b == -999){
       bin_possigma_a = fhdeltachisq_marg_1D->GetNbinsX();
       bin_possigma_b = fhdeltachisq_marg_1D->GetNbinsX();
+    }
+
+    // Check if the interval bins are correctly found
+    if(bin_negsigma_a > bin_possigma_b){
+      cerr << endl;
+      cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
+      cerr << "Left extreme bin is higher than right extreme bin" << endl;
+      cerr << "The 1sigma error interval is messed up:" << endl;
+      cerr << "bin_possigma_a = " << bin_possigma_a << endl;
+      cerr << "bin_negsigma_a = " << bin_negsigma_a << endl;
+      cerr << endl;      
+      exit(1);
     }
 
     double X1 = -999;
@@ -6324,11 +6281,9 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     
     this->FillChisqMarg(skobs_data,true);  // read a new binary file at each step and fill the full range
 
-
     // If the global minimum was not found, replace the best-fit with the global one
     this->MinimizeHisto();
 
-  
     // Get Delta Chisq distribution
     this->BuildDeltaChisqMarg();
     //fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
@@ -6336,8 +6291,6 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
     int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
     
-
-
     // X error: find the X interval with extremes the bins at X^2crit = 2.3
     
     int binleftX_x=-999;
@@ -6447,8 +6400,6 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 	break;
       }
     } // for X
-    
-
 
     // Fix X to a bin and loop over Y. Left side (down).
     for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
@@ -6488,30 +6439,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       }
     } // for X
 
-
-    // Check if the interval bins are correctly found
-    if(binleftX_x > binrightX_x){
-      cerr << endl;
-      cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
-      cerr << "X left extreme bin is higher than right extreme bin" << endl;
-      cerr << "The 1sigma error interval is messed up:" << endl;
-      cerr << "binleftX = " << binleftX_x << endl;
-      cerr << "binrightX = " << binrightX_x << endl;
-      cerr << endl;      
-      exit(1);
-    }
-    if(binleftY_y > binrightY_y){
-      cerr << endl;
-      cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
-      cerr << "Y left extreme bin is higher than right extreme bin" << endl;
-      cerr << "The 1sigma error interval is messed up:" << endl;
-      cerr << "binleftY = " << binleftY_y << endl;
-      cerr << "binrightY = " << binrightY_y << endl;
-      cerr << endl;
-      exit(1);
-    }
     
-
     // If no bin is found it means the 1sigma bin is outside the physical region
     // and bin variables are still set to default value.
     // If so set left extreme to 1 (first bin of the histogram) and right extreme
@@ -6534,6 +6462,27 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       binrightY_y = fhdeltachisq_marg_2D->GetNbinsY();
     }
 
+    // Check if the interval bins are correctly found
+    if(binleftX_x > binrightX_x){
+      cerr << endl;
+      cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
+      cerr << "X left extreme bin is higher than right extreme bin" << endl;
+      cerr << "The 1sigma error interval is messed up:" << endl;
+      cerr << "binleftX = " << binleftX_x << endl;
+      cerr << "binrightX = " << binrightX_x << endl;
+      cerr << endl;      
+      exit(1);
+    }
+    if(binleftY_y > binrightY_y){
+      cerr << endl;
+      cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
+      cerr << "Y left extreme bin is higher than right extreme bin" << endl;
+      cerr << "The 1sigma error interval is messed up:" << endl;
+      cerr << "binleftY = " << binleftY_y << endl;
+      cerr << "binrightY = " << binrightY_y << endl;
+      cerr << endl;
+      exit(1);
+    }
 
     //
 
