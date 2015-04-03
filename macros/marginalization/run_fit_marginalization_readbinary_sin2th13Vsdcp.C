@@ -30,8 +30,10 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "fitmarg_sin2th13Vsdcp",    /* tag for output file */
- int          first_experiment         = 0,                       /* */
- int          last_experiment          = 1,                       /* */
+ int          first_experiment         = 2,                       /* */
+ int          last_experiment          = 2,                       /* */
+ //int          first_experiment         = 0,                       /* */
+ //int          last_experiment          = 0,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
@@ -826,10 +828,22 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     // Print output
     
     cout << endl;
-    cout << "chisqmin_1 = " << chisqmin_1 << endl; 
-    cout << "chisqmin_2 = " << chisqmin_2 << endl; 
-    cout << "chisqmin_3 = " << chisqmin_3 << endl; 
-    cout << "chisqmin_4 = " << chisqmin_4 << endl; 
+    cout << "chisqmin_1 = " << chisqmin_1 
+	 << " - bestfit0_1 = " << bestfit0_1 
+	 << " - bestfit1_1 = " << bestfit1_1 
+	 << endl; 
+    cout << "chisqmin_2 = " << chisqmin_2 
+	 << " - bestfit0_2 = " << bestfit0_2 
+	 << " - bestfit1_2 = " << bestfit1_2 
+	 << endl; 
+    cout << "chisqmin_3 = " << chisqmin_3 
+	 << " - bestfit0_3 = " << bestfit0_3 
+	 << " - bestfit1_3 = " << bestfit1_3 
+	 << endl; 
+    cout << "chisqmin_4 = " << chisqmin_4 
+	 << " - bestfit0_4 = " << bestfit0_4 
+	 << " - bestfit1_4 = " << bestfit1_4 
+	 << endl; 
     cout << endl;
     cout << "Minimum Marginalized Chisq = " << chisqmin << endl;        
     cout << "bestfit 0 = " << bestfit0;
@@ -868,19 +882,19 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     cout << endl;
 
 
-    // TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    // if(fitmarg->IsFit2D())
-    //   fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
+    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+    if(fitmarg->IsFit2D())
+      fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
     
-    // TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-    // if(fitmarg->IsFit2D())
-    //   fitmarg->GetChisqStep_2D()->DrawCopy("colz");
+    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+    if(fitmarg->IsFit2D())
+      fitmarg->GetChisqStep_2D()->DrawCopy("colz");
     
-    // TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-    // if(fitmarg->IsFit2D())
-    //   fitmarg->GetDeltaChisqMarg2D()->DrawCopy("colz");
-    // else 
-    //   fitmarg->GetDeltaChisqMarg1D()->DrawCopy("colz");
+    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+    if(fitmarg->IsFit2D())
+      fitmarg->GetDeltaChisqMarg2D()->DrawCopy("colz");
+    else 
+      fitmarg->GetDeltaChisqMarg1D()->DrawCopy("colz");
 
      
     // Clean-up
