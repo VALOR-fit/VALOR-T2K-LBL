@@ -338,6 +338,9 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
   fitnt->Branch("bestfiterrPos1",&bestfiterrPos1);
   fitnt->Branch("bestfiterrSym0",&bestfiterrSym0);
   fitnt->Branch("bestfiterrSym1",&bestfiterrSym1);
+  fitnt->Branch("bestfitFullChisq0", &bestfitFullChisq0 );
+  fitnt->Branch("bestfitFullChisq1", &bestfitFullChisq1 );
+  fitnt->Branch("chisqminFullChisq",&chisqminFullChisq);
   fitnt->Branch("ToyID",&ToyID);
 
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
