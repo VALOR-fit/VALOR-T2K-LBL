@@ -857,21 +857,27 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     cout << endl;
     cout << "Chisq True = " << chisqtrue << endl;
     cout << endl;
+    cout << "Minimum of full Chisq histogram:" << endl;
+    cout << "  - chisqmin = " << chisqminFullChisq << endl; 
+    cout << "  - bestfit0 = " << bestfitFullChisq0 << endl; 
+    if(fitmarg->IsFit2D())
+      cout << "  - bestfit1 = " << bestfitFullChisq1 << endl; 
+    cout << endl;
 
 
-    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    if(fitmarg->IsFit2D())
-      fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
+    // TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+    // if(fitmarg->IsFit2D())
+    //   fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
     
-    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-    if(fitmarg->IsFit2D())
-      fitmarg->GetChisqStep_2D()->DrawCopy("colz");
+    // TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+    // if(fitmarg->IsFit2D())
+    //   fitmarg->GetChisqStep_2D()->DrawCopy("colz");
     
-    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-    if(fitmarg->IsFit2D())
-      fitmarg->GetDeltaChisqMarg2D()->DrawCopy("colz");
-    else 
-      fitmarg->GetDeltaChisqMarg1D()->DrawCopy("colz");
+    // TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+    // if(fitmarg->IsFit2D())
+    //   fitmarg->GetDeltaChisqMarg2D()->DrawCopy("colz");
+    // else 
+    //   fitmarg->GetDeltaChisqMarg1D()->DrawCopy("colz");
 
      
     // Clean-up
