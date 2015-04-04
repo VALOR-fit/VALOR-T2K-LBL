@@ -6529,11 +6529,11 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       Xout_left = valleftX; 
     }
       
-    // cout << endl;
-    // cout << "binleftX_x = " << binleftX_x << endl;
-    // cout << "valleftX = " << valleftX << endl;
-    // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
-    // cout << " --> Xout_left = " << Xout_left << endl;
+    cout << endl;
+    cout << "binleftX_x = " << binleftX_x << endl;
+    cout << "valleftX = " << valleftX << endl;
+    cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
+    cout << " --> Xout_left = " << Xout_left << endl;
 
     // X extrapolation (right extreme). Do it only if 1sigma bin is in the physical region
     double Xout_right = -999;
@@ -6553,11 +6553,11 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       Xout_right = valrightX;
     }
     
-    // cout << endl;
-    // cout << "binrightX_x = " << binrightX_x << endl;
-    // cout << "valrightX = " << valrightX << endl;
-    // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
-    // cout << " --> Xout_right = " << Xout_right << endl;
+    cout << endl;
+    cout << "binrightX_x = " << binrightX_x << endl;
+    cout << "valrightX = " << valrightX << endl;
+    cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
+    cout << " --> Xout_right = " << Xout_right << endl;
     
     // Y extrapolation (left extreme, down). Do it only if 1sigma bin is in the physical region
     double Yout_left = -999;
@@ -6577,15 +6577,15 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       Yout_left = valleftY;
     }
 
-    // cout << endl;
-    // cout << "binleftY_y = " << binleftY_y << endl;
-    // cout << "valleftY = " << valleftY << endl;
-    // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
-    // cout << " --> Yout_left = " << Yout_left << endl;
+    cout << endl;
+    cout << "binleftY_y = " << binleftY_y << endl;
+    cout << "valleftY = " << valleftY << endl;
+    cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
+    cout << " --> Yout_left = " << Yout_left << endl;
    
     // Y extrapolation (right extreme, up). Do it only if 1sigma bin is in the physical region
     double Yout_right = -999;
-    if(binrightY_y < fhdeltachisq_marg_2D->GetNbinsX()){
+    if(binrightY_y < fhdeltachisq_marg_2D->GetNbinsY()){
       X1 = -999.;
       Y1 = -999.;
       X2 = -999.;
@@ -6601,11 +6601,11 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       Yout_right = valrightY;
     }
 
-    // cout << endl;
-    // cout << "binrightY_y = " << binrightY_y << endl;
-    // cout << "valrightY = " << valrightY << endl;
-    // cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
-    // cout << " --> Yout_right = " << Yout_right << endl;
+    cout << endl;
+    cout << "binrightY_y = " << binrightY_y << endl;
+    cout << "valrightY = " << valrightY << endl;
+    cout << "X1 = " << X1 << ", Y1 = " << Y1 << ", X2 = " << X2 << ", Y2 = " << Y2;
+    cout << " --> Yout_right = " << Yout_right << endl;
    
     // Use the bin low edge as 1sigma extremes
     // fparam_bf_errneg[0] = fabs(this->GetParamBestFit(0) - valleftX); 
@@ -6777,20 +6777,19 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     }
     else if( (bin_bf0>1 && bin_bf0<fhdeltachisq_marg_2D->GetNbinsX()) && // Only Par1 on the lower boundary 
 	     bin_bf1==1 ){ 
-
       chisq_plus01 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1+Nh);        // X^2( x0bf+h0, x1bf+h1 )
       chisq_minus01 = chisq_plus01;            // symmetric                                // X^2( x0bf-h0, x1bf-h1 )
-      chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);           // X^2( x0bf+h0, x1bf    )
-      chisq_minus0 = chisq_plus0;              // symmetric                                // X^2( x0bf-h0, x1bf    )
+      chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0, bin_bf1+Nh);           // X^2( x0bf, x1bf+h0    )
+      chisq_minus1 = chisq_plus1;              // symmetric                                // X^2( x0bf, x1bf-h0    )
       chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h0, x1bf+h1 )
       chisq_plus0_minus1 = chisq_minus0_plus1; // symmetric                                // X^2( x0bf+h0, x1bf-h1 )
-      chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
-      chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);        // X^2( x0bf   , x1bf+h1 )
+      chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh,    bin_bf1);        // X^2( x0bf-h0, x1bf    )
+      chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh,    bin_bf1);        // X^2( x0bf+h0, x1bf    )
 
       // All the bins are available
       // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
-      deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
-
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);
+      deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h0*h1);    
     }
     else if( (bin_bf0>1 && bin_bf0<fhdeltachisq_marg_2D->GetNbinsX()) && // Only Par1 on the upper boundary 
 	     bin_bf1==fhdeltachisq_marg_2D->GetNbinsY() ){ 
@@ -6936,8 +6935,6 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     // //
     // // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
     // double deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
-    
-
 
     //
     // Compute the intermediate coefficients:
@@ -6949,7 +6946,6 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     double A = 0.5 * deriv2nd_0;
     double B = 0.5 * deriv2nd_1;
     double C = 0.5 * deriv2nd_01;
-
 
     // Get best-fit errors
     
