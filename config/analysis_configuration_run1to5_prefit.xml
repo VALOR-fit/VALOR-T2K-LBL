@@ -59,22 +59,22 @@
       </tuned>
       <tuned_rhc>
         <numu>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu  </objname>
            <objtype>    TH1D                  </objtype>
         </numu>
         <numubar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub </objname>
            <objtype>    TH1D                  </objtype>
         </numubar>
         <nue>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue   </objname>
            <objtype>    TH1D                  </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb  </objname>
            <objtype>    TH1D                  </objtype>
         </nuebar>
@@ -108,22 +108,22 @@
     
       <tuning_weights_rhc>
         <numu>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </numu>
         <numubar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub_ratio  </objname>
            <objtype>    TH1D                         </objtype>
         </numubar>
         <nue>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue_ratio    </objname>
            <objtype>    TH1D                         </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </nuebar>
