@@ -23,12 +23,13 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_throw_runAll.py [--all] (you
 It will then create the .root in the current working directory
 """
     
-postfit_config  = "analysis_configuration_2.5E20.xml"
+postfit_config  = "analysis_configuration_2.315E20.xml"
 #~ postfit_config  = "analysis_configuration.xml"
 
-prefit_config  = "analysis_configuration_2.5E20_prefit.xml"
+prefit_config  = "analysis_configuration_2.315E20_prefit.xml"
 #~ prefit_config  = "analysis_configuration_prefit.xml"
 
+table_fn = "nsk_systematic_table_summary.tex"
 
 class T2KAnaError(Exception): pass
 
@@ -45,6 +46,7 @@ optionParser.add_option("-e","--hierarchy", action="store", dest="hierarchy", ty
 optionParser.add_option("-m","--mixparamchoice", action="store", dest="mixparamchoice", type="string", default="sinsqtheta", help="Mixing param choice: sinsqtheta")
 optionParser.add_option("-f","--fitparamlist", action="store", dest="fitparamlist", type="string", default="nuosc3f_12fix+nuisance", help="Mixing param choice: sinsqtheta")
 optionParser.add_option("-t","--storethrows", action="store_true", dest="storethrows", default=False, help="Store the thrown parameter values")
+optionParser.add_option("--do-not-run", action="store_true", dest="do_not_run", default=False, help="If you've already got the files and just want to use them rather than running again.")
 
 (opt, args) = optionParser.parse_args()
 
@@ -56,7 +58,16 @@ sksample = opt.sksample
 hierarchy = opt.hierarchy
 mixparamchoice = opt.mixparamchoice
 fitparamlist = opt.fitparamlist
-store_throws = "true" if opt.storethrows else "false" 
+do_not_run_jobs = opt.do_not_run
+store_throws = "true" if opt.storethrows else "false"
+
+
+do_oscillation_parameters = False
+do_uncorrelated_xsec      = False
+
+if args:
+  print "Unrecognised arguments: ",args
+  exit(-1)
 
 save_toy_expts = "false"
 
@@ -86,9 +97,24 @@ if opt.do_all: #combinations + everything
     modes = modes + modes2 + modes3 + modes4 + modes5 + modes6 + modes7
 elif opt.do_imp: #combinations + splines + oscparams
     modes = modes + modes6 + [200,201,202,203,204,215]
-    
+
+
+#  0 tweak all parameters
+#  1 tweak all BANFF
+#  2 tweak all unconstrained xsec
+#  7 tweak BANFF flux only
+#  8 tweak BANFF xsec only
+#  9 tweak SKdet + FSI
+# 10 tweak BANFF + unconstrained xsec
+# 11 oscillation parameters
+
 modes = [0,1,7,8,9]
-#~ modes = [7]
+
+if do_uncorrelated_xsec:
+  modes.append(2)
+  
+if do_oscillation_parameters:
+  modes.append(11)
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 
@@ -97,32 +123,33 @@ oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
 
-for osc in oscparams:
+if not do_not_run_jobs:
+  for osc in oscparams:
 
-    update = "false"
+      update = "false"
 
-    for mode in modes:
+      for mode in modes:
 
-        #changing osc params doesn't affect anything if there are no oscillations
-        if mode == 11 and osc == [0,   0,   0,   0,   0,   0]:
-            continue
-        if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99]:
-            continue
-        
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
-        print command
-        if os.system(command) == 1:
-            sys.exit(1)
-        if update == "false":
-            update = "true"
+          #changing osc params doesn't affect anything if there are no oscillations
+          if mode == 11 and osc == [0,   0,   0,   0,   0,   0]:
+              continue
+          if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99]:
+              continue
+          
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
+          print command
+          if os.system(command) == 1:
+              sys.exit(1)
+          if update == "false":
+              update = "true"
 
 
-        #repeat for the banff prefit (its a different spectrum, so erros have different effects)
+          #repeat for the banff prefit (its a different spectrum, so erros have different effects)
 
-        command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
-        print command
-        if os.system(command) == 1:
-            sys.exit(1)
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
+          print command
+          if os.system(command) == 1:
+              sys.exit(1)
 
 
 if make_summary:
@@ -163,17 +190,20 @@ if make_summary:
     d["skdet"]      = float(input_rows["SKDet_FSI"])
     d["banff_pre"]  = float(input_rows["BANFFprefit"])
     d["banff_post"] = float(input_rows["BANFF"])
-    #~ d["xsec"]       = float(input_rows["unconstrained_xsec"])
+    
+    if do_uncorrelated_xsec:
+      d["xsec"]       = float(input_rows["unconstrained_xsec"])
     
     #~ all_postfit = ["SKDet_FSI","BANFF","unconstrained_xsec"]
     #~ all_with_banff_prefit = ["SKDet_FSI","BANFFprefit","unconstrained_xsec"]
     
     all_postfit = ["SKDet_FSI","BANFF"]
     all_with_banff_prefit = ["SKDet_FSI","BANFFprefit"]
-
-    if "no oscillations" not in title:
-      all_postfit.append("Osc_param")
-      all_with_banff_prefit.append("Osc_param")
+    
+    if do_oscillation_parameters:
+      if "no oscillations" not in title:
+        all_postfit.append("Osc_param")
+        all_with_banff_prefit.append("Osc_param")
       
     all_prefit = [x+"prefit" for x in all_postfit]
     
@@ -187,7 +217,7 @@ if make_summary:
     except KeyError:
       d["osc"] = 0.
       
-  f = open("nsk_systematic_table_summary.txt","w")
+  f = open(table_fn,"w")
   f.write("""\\begin{table}[htb]
 \\centering
 \\begin{tabular}{| c | D{.}{.}{-1} | D{.}{.}{-1} |}
@@ -215,13 +245,17 @@ if make_summary:
 
   f.write(make_row(["BANFF (postfit)"]+[percent_2dp(d["banff_post"]) for d in out_cols]))
   f.write("\\\\\n")
-
-  #~ f.write(make_row(["Uncorrelated XSec"]+[percent_2dp(d["xsec"]) for d in out_cols]))
-  #~ f.write("\\\\\n")
-
-  f.write(make_row(["\emph{Non-23-sector} oscillation parameters"]+[percent_2dp(d["osc"]) for d in out_cols]))
-  f.write("\\\\\n\\hline\n")
-
+  
+  if do_uncorrelated_xsec: 
+    f.write(make_row(["Uncorrelated XSec"]+[percent_2dp(d["xsec"]) for d in out_cols]))
+    f.write("\\\\\n")
+    
+  if do_oscillation_parameters:
+    f.write(make_row(["\emph{Non-23-sector} oscillation parameters"]+[percent_2dp(d["osc"]) for d in out_cols]))
+    f.write("\\\\\n")
+    
+  f.write("\\hline\n")
+  
   f.write(make_row(["Total (BANFF prefit)"]+[percent_2dp(d["total_prefit"]) for d in out_cols]))
   f.write("\\\\\n")
 
@@ -235,4 +269,6 @@ if make_summary:
 
 
   f.close()
+  
+  print "Printed LaTeX table to ",table_fn
 
