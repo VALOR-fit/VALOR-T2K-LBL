@@ -455,7 +455,8 @@ void run_fit_marginalization_readbinary_sin2th23
           cout << "- Generating toy-MC..." << endl;
           //note that fparm does not contain the tweaks, so use only the PhysHyp here
           applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
-          
+	  cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+
           if(!(applied_negevents_condition || unphysical_tweak)) {
             // keep track of all nuisance params set so as to add in output tree
             iparm->Append(true_nuisance_params);
@@ -472,6 +473,9 @@ void run_fit_marginalization_readbinary_sin2th23
           // with statistical fluctuations if requested (Poisson fluctuation in each bin)
           cout << "- Generating toy-MC..." << endl;
           applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
+	  cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+
+	  unphysical_tweak = false; // Otherwise it doesn't exit the loop
         }
       }//applied_negevents_condition
     }
@@ -666,6 +670,7 @@ void run_fit_marginalization_readbinary_sin2th23
       niterations = niterations_2;
     }
 
+    nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
 
     // Set best-fit parameters in FitMarginalization object
     // Otherwise error computation is done with respect to a wrong minimum
@@ -697,10 +702,7 @@ void run_fit_marginalization_readbinary_sin2th23
 
     truepar0 = fparm->InitValue(freepar0);
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
-    chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
-
-    nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
-    	
+    chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);    	
 
     // Draw Full Chisq
     if(DrawFullChisq){

@@ -31,7 +31,7 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
 
  const char * tag                      = "fitmarg_sin2th23Vsdmsq",    /* tag for output file */
  int          first_experiment         = 0,                       /* */
- int          last_experiment          = 3500,                       /* */
+ int          last_experiment          = 0,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_numubardisap_fixosc_rethrowunphysical_2p5E20POT-0.xml",  
  
@@ -457,7 +457,8 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
           cout << "- Generating toy-MC..." << endl;
           //note that fparm does not contain the tweaks, so use only the PhysHyp here
           applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
-          
+	  cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+
           if(!(applied_negevents_condition || unphysical_tweak)) {
             // keep track of all nuisance params set so as to add in output tree
             iparm->Append(true_nuisance_params);
@@ -474,6 +475,9 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
           // with statistical fluctuations if requested (Poisson fluctuation in each bin)
           cout << "- Generating toy-MC..." << endl;
           applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
+	  cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+
+	  unphysical_tweak = false; // Otherwise it doesn't exit the loop
         }
       }//applied_negevents_condition
     }
@@ -672,6 +676,8 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
     }
 
 
+    nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
+
     // Set best-fit parameters in FitMarginalization object
     // Otherwise error computation is done with respect to a wrong minimum
     fitmarg->SetChisqBestFit(chisqmin);
@@ -702,10 +708,7 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
 
     truepar0 = fparm->InitValue(freepar0);
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
-    chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
-
-    nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
-    
+    chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);    
 
     // Draw Full Chisq
     if(DrawFullChisq){
@@ -791,15 +794,6 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
       cout << "  - bestfit1 = " << bestfitFullChisq1 << endl; 
     cout << endl;
  
-    // Clean-up
-    delete skobs_fakedata;  
-
-    fitmarg->CleanUp();
-    delete fitmarg;
-
-  } // for iexperiment
-
-   
 
   // TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
   // if(fitmarg->IsFit2D())
@@ -816,6 +810,16 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
   //   fitmarg->GetDeltaChisqMarg1D()->DrawCopy("colz");
 
   
+    // Clean-up
+    delete skobs_fakedata;  
+
+    fitmarg->CleanUp();
+    delete fitmarg;
+
+  } // for iexperiment
+
+   
+
   // Store ntuple with best-fit results
   f.cd();
   fitnt->Write();

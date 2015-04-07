@@ -44,7 +44,7 @@ void run_fit_marginalization_readbinary_sin2th13
 
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
- bool         dotoys                   = false,
+ bool         dotoys                   = true,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -463,6 +463,8 @@ void run_fit_marginalization_readbinary_sin2th13
           cout << "- Generating toy-MC..." << endl;
           //note that fparm does not contain the tweaks, so use only the PhysHyp here
           applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
+	  cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+
           
           if(!(applied_negevents_condition || unphysical_tweak)) {
             // keep track of all nuisance params set so as to add in output tree
@@ -480,6 +482,9 @@ void run_fit_marginalization_readbinary_sin2th13
           // with statistical fluctuations if requested (Poisson fluctuation in each bin)
           cout << "- Generating toy-MC..." << endl;
           applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
+	  cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+	  
+	  unphysical_tweak = false; // Otherwise it doesn't exit the loop
         }
       }//applied_negevents_condition
     }
@@ -651,6 +656,7 @@ void run_fit_marginalization_readbinary_sin2th13
     }
 
 
+    nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
   
     // Set best-fit parameters in FitMarginalization object
     // Otherwise error computation is done with respect to a wrong minimum
@@ -683,9 +689,6 @@ void run_fit_marginalization_readbinary_sin2th13
     truepar0 = fparm->InitValue(freepar0);
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
     chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
-
-    nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
-
 
    // Draw Full Chisq
     if(DrawFullChisq){
@@ -755,14 +758,14 @@ void run_fit_marginalization_readbinary_sin2th13
     cout << endl;
 
      
-    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    fitmarg->GetChisqMarg1D()->DrawCopy();    
+    // TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+    // fitmarg->GetChisqMarg1D()->DrawCopy();    
     
-    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-    fitmarg->GetChisqStep_1D()->DrawCopy();
+    // TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+    // fitmarg->GetChisqStep_1D()->DrawCopy();
     
-    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-    fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
+    // TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+    // fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
 
     // Clean-up

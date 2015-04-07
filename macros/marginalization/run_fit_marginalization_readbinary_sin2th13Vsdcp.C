@@ -30,14 +30,17 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "fitmarg_sin2th13Vsdcp",    /* tag for output file */
- int          first_experiment         = 2,                       /* */
- int          last_experiment          = 2,                       /* */
- //int          first_experiment         = 0,                       /* */
- //int          last_experiment          = 0,                       /* */
+ //int          first_experiment         = 3420,                       /* */
+ //int          last_experiment          = 3420,                       /* */
+ //int          first_experiment         = 996,                       /* */
+ //int          last_experiment          = 996,                       /* */
+ int          first_experiment         = 0,                       /* */
+ int          last_experiment          = 0,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
+ //const char * xmlfile                  = "toymc/toymc_nuebarapp_fix4_rethrowunphysical_7p8E21POT-0.xml",  
  
- bool         dotoys                   = false,
+ bool         dotoys                   = true,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -55,8 +58,8 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
 
  const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  
- bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
- int          tweak_systematics        = 1,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
+ bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
+ int          tweak_systematics        = 0,       /* generate toy (fakedata sets) MC with randomized systematics? */
  
  //const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
  //const char * fit_param_list           = "nuosc3fbar_fixnonbar_12fix+nuisance",
@@ -68,8 +71,13 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_4p0E20POT_fixosc_10toys/submit_mixing13Vsdcp_4p0E20_postfit",
- const int    nfiles               = 804,         // # of files to read
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_4p0E20POT_fixosc_10toys/submit_mixing13Vsdcp_4p0E20_postfit",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_7p8E21POT_fixosc_10toys/submit_mixing13Vsdcp_7p8E21_postfit",
+ const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_4p0E20POT_fixosc_10toys_dcpcoarser/submit_mixing13Vsdcp_4p0E20_postfit",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_4p0E20POT_fixosc_10toys_sin2th13finer/submit_mixing13Vsdcp_4p0E20_postfit",
+
+ const int    nfiles               = 201,         // # of files to read
+ //const int    nfiles               = 804,         // # of files to read
 
  const int    NtoysMarg            = 10,   // # toys marginalization 
  
@@ -77,11 +85,13 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
  const double freeparmin0         = 0.,              // minimum value of free parameter
  const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
  const int    NptScan0            = 201, //2, //21,        // # pts of free parameter to scan
+ //const int    NptScan0            = 801, //2, //21,        // # pts of free parameter to scan
  
  const char * freeparname1        = "deltacpBar",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00, // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
- const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
+ //const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
+ const int    NptScan1            = 51, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
 
@@ -423,6 +433,7 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
       bool unphysical_tweak = true;
       bool rethrow_if_parameters_unphysical = true;// both marginalization and fakedata sets
       while(applied_negevents_condition || unphysical_tweak) {
+	
         if(tweak_systematics) {
           // tweak all sources of systematic error
           if(tweak_systematics == 1) {
@@ -451,13 +462,14 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
           else {
             unphysical_tweak = false;
           }
-          
+	
           // generate mock data using the current PDF (incl. systematic variations) 
           // + statistical fluctuations if requested (Poisson fluctuation in each bin)
           cout << "- Generating toy-MC..." << endl;
           //note that fparm does not contain the tweaks, so use only the PhysHyp here
           applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations);
-          
+	  cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+
           if(!(applied_negevents_condition || unphysical_tweak)) {
             // keep track of all nuisance params set so as to add in output tree
             iparm->Append(true_nuisance_params);
@@ -474,6 +486,9 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
           // with statistical fluctuations if requested (Poisson fluctuation in each bin)
           cout << "- Generating toy-MC..." << endl;
           applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, PhysHypothesis(*fparm), stat_fluctuations); 
+	  cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+	  
+	  unphysical_tweak = false; // Otherwise it doesn't exit the loop
         }
       }//applied_negevents_condition
     }
@@ -736,6 +751,8 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     }
 
   
+    nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
+
     // Set best-fit parameters in FitMarginalization object
     // Otherwise error computation is done with respect to a wrong minimum
     fitmarg->SetChisqBestFit(chisqmin);
@@ -767,9 +784,6 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     truepar0 = fparm->InitValue(freepar0);
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
     chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
-
-    nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
-
 
     // Draw Full Chisq
     if(DrawFullChisq){
