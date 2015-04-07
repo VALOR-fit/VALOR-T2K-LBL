@@ -40,7 +40,7 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  //const char * xmlfile                  = "toymc/toymc_nuebarapp_fix4_rethrowunphysical_7p8E21POT-0.xml",  
  
- bool         dotoys                   = true,
+ bool         dotoys                   = false,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -58,8 +58,8 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
 
  const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  
- bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
- int          tweak_systematics        = 0,       /* generate toy (fakedata sets) MC with randomized systematics? */
+ bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
+ int          tweak_systematics        = 1,       /* generate toy (fakedata sets) MC with randomized systematics? */
  
  //const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
  //const char * fit_param_list           = "nuosc3fbar_fixnonbar_12fix+nuisance",
@@ -634,11 +634,14 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     fitmarg->SetTagFileName(infilename);
     fitmarg->SetFileID(nfiles);
     
-    double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinLowEdge(2);
-    double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(2);
-
+    //double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinLowEdge(2);
+    //double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(2);
+    double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
+    double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
+    
     int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
-    double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(nbinsY);
+    //double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(nbinsY);
+    double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
 
     
     // Fit 1
@@ -697,7 +700,8 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     cout << "/////////////// Fit 3 (mixing13>0, start dcp = 0.) ////////////////" << endl;
 
     int bindcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->FindBin(0.);
-    double valdcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(bindcp0_Y);
+    //double valdcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(bindcp0_Y);
+    double valdcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(bindcp0_Y);
     double binwidth = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinWidth(1);
     fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),+TMath::Pi(),true);
     fitmarg->SetStartBin(0.1,-TMath::Pi()); 

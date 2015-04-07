@@ -22,15 +22,10 @@ void MergeInputFiles(
  const int    last_bin_freepar0    = -999, // last freepar of the sub-range
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
- //const int    first_bin_freepar0   = 0,   // first freepar of the sub-range
- //const int    last_bin_freepar0    = 10, // last freepar of the sub-range
- //const int    first_bin_freepar1   = 0,   // first freepar of the sub-range
- //const int    last_bin_freepar1    = 10, // last freepar of the sub-range
 
- //const char * tag                  = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
- const  char * tag                   = "PROVA",
+ const char * tag                  = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
 
- const int    nfiles               = 22,         // # of files to read
+ const int    nfiles               = 11,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
  //const char * config_file          = "analysis_configuration_1.7E20.xml",   
@@ -47,7 +42,7 @@ void MergeInputFiles(
  //const char * freeparname0        = "mixing23Bar",  // free parameter
  //const double freeparmin0         = 0,              // minimum value of free parameter
  //const double freeparmax0         = 1,              // maxinum value of free parameter
- const int    NptScan0            = 21,            // # pts of free parameter to scan
+ const int    NptScan0            = 201,            // # pts of free parameter to scan
 
  //const char * freeparname1          = "",  // free parameter
  const char * freeparname1          = "deltacpBar",  // free parameter
@@ -56,7 +51,7 @@ void MergeInputFiles(
  //const char * freeparname1          = "dmsq23Bar",  // free parameter
  //const double freeparmin1           = 0.0002,     // minimum value of free parameter
  //const double freeparmax1           = 0.02,     // maxinum value of free parameter
- const int    NptScan1              = 21,  // # pts of free parameter to scan
+ const int    NptScan1              = 201,  // # pts of free parameter to scan
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys

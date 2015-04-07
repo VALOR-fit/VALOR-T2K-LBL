@@ -14,11 +14,15 @@ using namespace valor::conv;
 
 void analyze_run_fit_marginalization_readbinary
 (
- //char infilename[200] = "fitmarg_sin2th23-3f+3fbar_10margtoys_3500toys.root",         // 1D (sin2th23)
- //char infilename[200] = "fitmarg_sin2th23Vsdmsq-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
- //char infilename[200] = "fitmarg_sin2th23Vsdmsq_MINOSHESS-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
+ //char infilename[200] = "fitmarg_sin2th23_2p5E20POT-3f+3fbar_10margtoys_3500toys.root",         // 1D (sin2th23)
+ //char infilename[200] = "fitmarg_sin2th23Vsdmsq_2p5E20POT-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
+ //char infilename[200] = "fitmarg_sin2th23Vsdmsq_2p5E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
 
- char infilename[200] = "fitmarg_sin2th13_MINOSHESSE-3f+3fbar_10margtoys_3500toys.root", // 1D (sin2th13)
+ //char infilename[200] = "fitmarg_sin2th13_4p0E20POT_MINOSHESSE-3f+3fbar_10margtoys_3500toys.root", // 1D (sin2th13)
+ //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp) 
+ //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_dcpcoarser.root" // 2D (sin2th13 Vs dcp) 
+ //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_sin2th13finer.root" // 2D (sin2th13 Vs dcp) 
+ char infilename[200] = "fitmarg_sin2th13Vsdcp_7p8E21POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp)
  )
 {
   TFile *filein = new TFile(infilename,"READ");
@@ -55,6 +59,7 @@ void analyze_run_fit_marginalization_readbinary
   double bestfitFullChisq0=-999;
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
+  int ToyID=-999;
 
   treein->SetBranchAddress("best_fit_params",&fparm);
   treein->SetBranchAddress("input_params",&iparm);
@@ -87,6 +92,7 @@ void analyze_run_fit_marginalization_readbinary
   treein->SetBranchAddress("bestfitFullChisq0", &bestfitFullChisq0 );
   treein->SetBranchAddress("bestfitFullChisq1", &bestfitFullChisq1 );
   treein->SetBranchAddress("chisqminFullChisq",&chisqminFullChisq);
+  treein->SetBranchAddress("ToyID",&ToyID);
 
 
   // Declare histograms
@@ -94,20 +100,29 @@ void analyze_run_fit_marginalization_readbinary
   TH1F *hbestfitFullChisq_1D = new TH1F("hbestfitFullChisq_1D","hbestfitFullChisq_1D",201,0,1);
   TH1F *hbestfit_1D = new TH1F("hbestfit_1D","hbestfit_1D",201,0,1);
 
-  TH2F *hbestfitFullChisq_2D = new TH2F("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,1,201,0.0002,0.02);
-  TH2F *hbestfit_2D = new TH2F("hbestfit_2D","hbestfit_2D",201,0,1,201,0.0002,0.02);
+  //TH2F *hbestfitFullChisq_2D = new TH2F("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,1,201,0.0002,0.02);
+  TH2F *hbestfitFullChisq_2D = new TH2F("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,0.3,201,-3.15,3.15);
+
+  //TH2F *hbestfit_2D = new TH2F("hbestfit_2D","hbestfit_2D",201,0,1,201,0.0002,0.02);
+  TH2F *hbestfit_2D = new TH2F("hbestfit_2D","hbestfit_2D",201,0,0.3,201,-3.15,3.15);
 
   TH1F *hdeltachisqDiff = new TH1F("hdeltachisqDiff","hdeltachisqDiff",100,0,20);
   TH1F *hchisqminDiff = new TH1F("hchisqminDiff","hchisqminDiff",100,0.,0.3);
   TH1F *hchisqmin = new TH1F("hchisqmin","hchisqmin",100,0,100);
   TH1F *hchisqminFullChisq = new TH1F("hchisqminFullChisq","hchisqminFullChisq",100,0,100);
 
-  TH1F *hErrMINOSneg0 = new TH1F("hErrMINOSneg0","hErrMINOSneg0",100,0,1.);
-  TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",100,0,0.01);
-  TH1F *hErrMINOSpos0 = new TH1F("hErrMINOSpos0","hErrMINOSpos0",100,0,1.);
-  TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",100,0,0.01);
-  TH1F *hErrHESSEsym0 = new TH1F("hErrHESSEsym0","hErrHESSEsym0",100,0,1.);
-  TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",100,0,0.01);
+  // TH1F *hErrMINOSneg0 = new TH1F("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
+  // TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",1000,0,0.002);
+  // TH1F *hErrMINOSpos0 = new TH1F("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
+  // TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",1000,0,0.002);
+  // TH1F *hErrHESSEsym0 = new TH1F("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
+  // TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",1000,0,0.002);
+  TH1F *hErrMINOSneg0 = new TH1F("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
+  TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",1000,0.,6.28);
+  TH1F *hErrMINOSpos0 = new TH1F("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
+  TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",1000,0.,6.28);
+  TH1F *hErrHESSEsym0 = new TH1F("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
+  TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",1000,0.,20);
 
   TH1F *hnchisqcalls = new TH1F("hnchisqcalls","hnchisqcalls",100,0,700);
   TH1F *hfitstatus = new TH1F("hfitstatus","hfitstatus",5,0,5);
@@ -121,7 +136,9 @@ void analyze_run_fit_marginalization_readbinary
   else               IsFit2D = true;
 
   // loop over the tree  
+  
   int Nentries = treein->GetEntries();
+  //int Nentries = 2;
   for(int ientry=0;ientry<Nentries;ientry++){
 
     treein->GetEntry(ientry);
@@ -134,28 +151,54 @@ void analyze_run_fit_marginalization_readbinary
     //}
     hnchisqcalls->Fill(nchisqcalls);
 
-    if(bestfitFullChisq1>0.006) continue; // Only first minimum
+    //if(bestfitFullChisq1>0.006) continue; // Only first minimum
 
     double diff = chisqmin-chisqminFullChisq;
     //if(diff<0.04) continue;  // select large chisq difference
 
-    if(chisqmin!=chisqminFullChisq){
-      cout << endl;
-      cout << "Toy " << ientry << endl;
-      cout << "chisqmin = " << chisqmin
-    	   << " - bestfit0 = " << bestfit0
-    	   << " - bestfit1 = " << bestfit1 << endl;
-      cout << "chisqminFullChisq = " << chisqminFullChisq 
-    	   << " - bestfitFullChisq0 = " << bestfitFullChisq0 
-    	   << " - bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
-      cout << "Difference = " << diff << endl;
-      cout << endl; 
-      
-      NdiffChisq++;
-    }
-    else{
-      continue;
-    }
+    // if(chisqmin!=chisqminFullChisq){
+    //   cout << endl;
+    //   cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
+    //   cout << "chisqmin = " << chisqmin
+    // 	   << " - bestfit0 = " << bestfit0
+    // 	   << " - bestfit1 = " << bestfit1 << endl;
+    //   cout << "chisqminFullChisq = " << chisqminFullChisq 
+    // 	   << " - bestfitFullChisq0 = " << bestfitFullChisq0 
+    // 	   << " - bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
+    //   cout << "Difference = " << diff << endl;
+    //   cout << endl; 
+    //   NdiffChisq++;
+    // }
+    // else{
+    //   continue;
+    // }
+
+
+    // if(1){
+    // //if(bestfiterrSym1<=0.01){
+    // //if(bestfiterrSym0<=0.01){
+    // //if(bestfiterrNeg0<=0.012){
+    // //if( fabs(bestfit1-(-3.14159)) < 0.0001 ){
+    // //if( fabs(bestfit1-(+3.14159)) < 0.0001 ){
+    //   cout << endl;
+    //   cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
+    //   cout << "chisqmin = " << chisqmin << endl;
+    //   cout << " - bestfit0 = " << bestfit0
+    // 	   << " - bestfiterrSym0 = " << bestfiterrSym0
+    // 	   << " - bestfiterrNeg0 = " << bestfiterrNeg0 
+    // 	   << " - bestfiterrPos0 = " << bestfiterrPos0 << endl;
+    //   cout << " - bestfit1 = " << bestfit1
+    // 	   << " - bestfiterrSym1 = " << bestfiterrSym1
+    // 	   << " - bestfiterrNeg1 = " << bestfiterrNeg1 
+    // 	   << " - bestfiterrPos1 = " << bestfiterrPos1 << endl;
+    //   //cout << "chisqminFullChisq = " << chisqminFullChisq 
+    //   //<< " - bestfitFullChisq0 = " << bestfitFullChisq0 
+    //   //cout << "Difference = " << diff << endl;
+    //   cout << endl; 
+    // }
+    // else{
+    //   continue;
+    // }
 
     hErrMINOSneg0->Fill(bestfiterrNeg0);
     hErrMINOSpos0->Fill(bestfiterrPos0);
@@ -165,10 +208,10 @@ void analyze_run_fit_marginalization_readbinary
     hErrHESSEsym1->Fill(bestfiterrSym1);
 
     double diff_deltachisq = chisqtrue - chisqmin;
-    if(diff_deltachisq>20){
-      cout << "chisqtrue - chisqmin = " << diff_deltachisq << endl;
-      exit(1);
-    }
+    //if(diff_deltachisq>20){
+    //cout << "chisqtrue - chisqmin = " << diff_deltachisq << endl;
+    //exit(1);
+    //}
     hdeltachisqDiff->Fill(diff_deltachisq);
     
     hchisqminDiff->Fill(diff);
@@ -178,20 +221,20 @@ void analyze_run_fit_marginalization_readbinary
     hbestfit_2D->Fill(bestfit0,bestfit1);
     hbestfit_1D->Fill(bestfit0);
 
-    if(bestfit0>0.6){
-      cout << endl;
-      cout << "Toy " << ientry << endl;
-      cout << "bestfit0 = " << bestfit0 
-	   << " + " << bestfiterrPos0 
-	   << " - " << bestfiterrNeg0 
-	   << endl;
-      cout << "bestfit1 = " << bestfit1 
-	   << " + " << bestfiterrPos1 
-	   << " - " << bestfiterrNeg1 
-	   << endl;
-      cout << "chisqmin = " << chisqmin << endl;
-      cout << endl;
-    }
+    // if(bestfit0>0.6){
+    //   cout << endl;
+    //   cout << "Toy " << ientry << endl;
+    //   cout << "bestfit0 = " << bestfit0 
+    // 	   << " + " << bestfiterrPos0 
+    // 	   << " - " << bestfiterrNeg0 
+    // 	   << endl;
+    //   cout << "bestfit1 = " << bestfit1 
+    // 	   << " + " << bestfiterrPos1 
+    // 	   << " - " << bestfiterrNeg1 
+    // 	   << endl;
+    //   cout << "chisqmin = " << chisqmin << endl;
+    //   cout << endl;
+    // }
       
     // Full chisq distribution
     hchisqminFullChisq->Fill(chisqminFullChisq);
@@ -257,30 +300,40 @@ void analyze_run_fit_marginalization_readbinary
 
   TCanvas *cErrMINOSneg0 = new TCanvas("cErrMINOSneg0","cErrMINOSneg0");
   hErrMINOSneg0->GetYaxis()->SetTitle("# entries");
-  hErrMINOSneg0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{23} (MINOS negative)");
+  //hErrMINOSneg0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{23} (MINOS negative)");
+  hErrMINOSneg0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{13} (MINOS negative)");
   hErrMINOSneg0->DrawCopy();
   TCanvas *cErrMINOSpos0 = new TCanvas("cErrMINOSpos0","cErrMINOSpos0");
   hErrMINOSpos0->GetYaxis()->SetTitle("# entries");
-  hErrMINOSpos0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{23} (MINOS positive)");
+  //hErrMINOSpos0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{23} (MINOS positive)");
+  hErrMINOSpos0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{13} (MINOS positive)");
   hErrMINOSpos0->DrawCopy();
 
   TCanvas *cErrMINOSneg1 = new TCanvas("cErrMINOSneg1","cErrMINOSneg1");
   hErrMINOSneg1->GetYaxis()->SetTitle("# entries");
-  hErrMINOSneg1->GetXaxis()->SetTitle("#Delta #bar{m}^{2}_{32} (MINOS positive)");
+  //hErrMINOSneg1->GetXaxis()->SetTitle("#Delta #bar{m}^{2}_{32} (MINOS positive)");
+  hErrMINOSneg1->GetXaxis()->SetTitle("#delta_{CP} (MINOS positive)");
   hErrMINOSneg1->DrawCopy();
   TCanvas *cErrMINOSpos1 = new TCanvas("cErrMINOSpos1","cErrMINOSpos1");
   hErrMINOSpos1->GetYaxis()->SetTitle("# entries");
-  hErrMINOSpos1->GetXaxis()->SetTitle("#Delta #bar{m}^{2}_{32} (MINOS negative)");
+  //hErrMINOSpos1->GetXaxis()->SetTitle("#Delta #bar{m}^{2}_{32} (MINOS negative)");
+  hErrMINOSpos1->GetXaxis()->SetTitle("#delta_{CP} (MINOS negative)");
   hErrMINOSpos1->DrawCopy();
 
   TCanvas *cErrHESSEsym0 = new TCanvas("cErrHESSEsym0","cErrHESSEsym0");
   hErrHESSEsym0->GetYaxis()->SetTitle("# entries");
-  hErrHESSEsym0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{23} (HESSE)");
+  //hErrHESSEsym0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{23} (HESSE)");
+  hErrHESSEsym0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{13} (HESSE)");
   hErrHESSEsym0->DrawCopy();
   TCanvas *cErrHESSEsym1 = new TCanvas("cErrHESSEsym1","cErrHESSEsym1");
   hErrHESSEsym1->GetYaxis()->SetTitle("# entries");
-  hErrHESSEsym1->GetXaxis()->SetTitle("#Delta #bar{m}^{2}_{32} (HESSE)");
+  //hErrHESSEsym1->GetXaxis()->SetTitle("#Delta #bar{m}^{2}_{32} (HESSE)");
+  hErrHESSEsym1->GetXaxis()->SetTitle("#delta_{CP} (HESSE)");
   hErrHESSEsym1->DrawCopy();
+
+  return;
+
+
 
   TCanvas *cchisqminDiff = new TCanvas("hchisqminDiff","hchisqminDiff");
   hchisqminDiff->GetYaxis()->SetTitle("# entries");
@@ -293,7 +346,8 @@ void analyze_run_fit_marginalization_readbinary
 
   //treein->GetEntry(1707);
   //treein->GetEntry(1824);
-  treein->GetEntry(3429);
+  //treein->GetEntry(3424);
+  treein->GetEntry(3302);
   TCanvas *cchisq_out_GetEntry = new TCanvas("cchisq_out_GetEntry","cchisq_out_GetEntry");
   if(IsFit2D) hchisq2D_out->DrawCopy("colz");
   else        hchisq1D_out->DrawCopy();

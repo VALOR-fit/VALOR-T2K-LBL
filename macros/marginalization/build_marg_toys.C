@@ -24,7 +24,7 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "mixing13Vsdcp_2p5E20POT",
+ const char * tag                  = "mixing13Vsdcp_4p0E20POT",
  //const char * tag                  = "MH_FitMarg_mixing13Vsdeltacp_1p7E20_201x201_prefit",
  //const char * tag                  = "MH_FitMarg_mixing23_1p7E20_prefit",
  //const char * tag                  = "submit_mixing23_1p7E20_postfit_NoRethrow",
@@ -70,7 +70,6 @@ void build_marg_toys
  const int    NptScan1              = 21,  // # pts of free parameter to scan
 
  const int    NtoysMarg            = 1,   // # toys marginalization 
-
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy

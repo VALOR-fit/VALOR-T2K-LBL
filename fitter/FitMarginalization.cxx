@@ -7,7 +7,7 @@
 //________________________________________________________________________________________
 
 //#define __print_build_map_fileid__
-//#define __print_array_toy_maketoys__
+#define __print_array_toy_maketoys__
 //#define __print_minimization_steps__ //
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
@@ -116,14 +116,14 @@ void FitMarginalization::Init(){
   fSeed = 999;
 
   fchisq_bf = conv::kALargeNum;
-  fparam_bf_errpos[0] = -999;
-  fparam_bf_errpos[1] = -999;
-  fparam_bf_errneg[0] = -999;
-  fparam_bf_errneg[1] = -999;
-  fparam_bf_errsym[0] = -999;
-  fparam_bf_errsym[1] = -999;
-  fparam_bf[0] = -999;
-  fparam_bf[1] = -999;
+  fparam_bf_errpos[0] = conv::kBadResult;
+  fparam_bf_errpos[1] = conv::kBadResult;
+  fparam_bf_errneg[0] = conv::kBadResult;
+  fparam_bf_errneg[1] = conv::kBadResult;
+  fparam_bf_errsym[0] = conv::kBadResult;
+  fparam_bf_errsym[1] = conv::kBadResult;
+  fparam_bf[0] = conv::kBadResult;
+  fparam_bf[1] = conv::kBadResult;
 
   sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_oscpar%d_MH%s%s%s");  
   
@@ -174,19 +174,44 @@ void FitMarginalization::Init(){
   sprintf(Xtitle,"%s",util::AsStringPaperRooTex(fPhysParamFree[0]).c_str()); 
   sprintf(Ytitle,"%s",util::AsStringPaperRooTex(fPhysParamFree[1]).c_str()); 
 
-  fhchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0]);  
+
+
+  // cout << "fmin_param[0] = " << fmin_param[0] << endl;
+  // cout << "fmax_param[0] = " << fmax_param[0] << endl;
+  // cout << "fstep_param[0] = " << fstep_param[0] << endl;
+  // cout << "fmin_param[1] = " << fmin_param[1] << endl;
+  // cout << "fmax_param[1] = " << fmax_param[1] << endl;
+  // cout << "fstep_param[1] = " << fstep_param[1] << endl;
+
+
+  //fhchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0]);  
+  fhchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param[0],fmin_param[0]-fstep_param[0]/2.,fmax_param[0]+fstep_param[0]/2.);  
   fhchisq_marg_1D->GetXaxis()->SetTitle(Xtitle);
   fhchisq_marg_1D->GetYaxis()->SetTitle("#Delta #chi^{2}");
+
+  cout << endl;
+  cout << "Initialize histogram fchisq_marg_1D:" << endl;
+  cout << "BinCenter(1) = " << fhchisq_marg_1D->GetXaxis()->GetBinCenter(1) << endl;
+  cout << "BinCenter(Nbins) = " << fhchisq_marg_1D->GetXaxis()->GetBinCenter(fnbins_param[0]) << endl;
   
+  //fhchisq_marg_2D = new TH2F("hchisq_marg_2D","hchisq_marg_2D",
+  //fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0],
+  //fnbins_param[1],fmin_param[1],fmax_param[1]+fstep_param[1] );
   fhchisq_marg_2D = new TH2F("hchisq_marg_2D","hchisq_marg_2D",
-			    fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0],
-			    fnbins_param[1],fmin_param[1],fmax_param[1]+fstep_param[1] );
+			     fnbins_param[0],fmin_param[0]-fstep_param[0]/2.,fmax_param[0]+fstep_param[0]/2.,
+			     fnbins_param[1],fmin_param[1]-fstep_param[1]/2.,fmax_param[1]+fstep_param[1]/2. );
   fhchisq_marg_2D->GetXaxis()->SetTitle(Xtitle);
   fhchisq_marg_2D->GetYaxis()->SetTitle(Ytitle);
 
-  fhdeltachisq_marg_1D = 0;
-  fhdeltachisq_marg_2D = 0;
+  cout << endl;
+  cout << "Initialize histogram fchisq_marg_2D:" << endl;
+  cout << "X: BinCenter(1) = " << fhchisq_marg_2D->GetXaxis()->GetBinCenter(1) << endl;
+  cout << "X: BinCenter(Nbins) = " << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fnbins_param[1]) << endl;
+  cout << "Y: BinCenter(1) = " << fhchisq_marg_2D->GetYaxis()->GetBinCenter(1) << endl;
+  cout << "Y: BinCenter(Nbins) = " << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fnbins_param[1]) << endl;
   
+  fhdeltachisq_marg_1D = 0;
+  fhdeltachisq_marg_2D = 0; 
 
   cout << endl;
   cout << "Initialize VALORArray fToyMargErecoVArray with:"<< endl;
@@ -209,10 +234,14 @@ void FitMarginalization::Init(){
   cout << "nmh = " << nmh << endl;
   cout << endl;
 
-  fmin_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0]+1);
-  fmax_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0]+1);
-  fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1]+1);
-  fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1]+1);
+  // fmin_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0]+1);
+  // fmax_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0]+1);
+  // fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1]+1);
+  // fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1]+1);
+  fmin_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0]+1);
+  fmax_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0]+1);
+  fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1]+1);
+  fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1]+1);
 
   cout << endl;
   cout << "Free parameter 0 sub-range: ";
@@ -260,7 +289,7 @@ void FitMarginalization::Init(){
   fhmap_chisqrange_fileid_1D = (TH1F*) fhchisq_marg_1D->Clone("hmap_chisqrange_fileid_1D");
   fhmap_chisqrange_fileid_2D = (TH2F*) fhchisq_marg_2D->Clone("hmap_chisqrange_fileid_2D");
 
-  fCurrentFileIDminim = -999; // current file ID during the chisq minimization process
+  fCurrentFileIDminim = conv::kBadResult; // current file ID during the chisq minimization process
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
@@ -343,10 +372,10 @@ void FitMarginalization::SetSubRange(int *submin,int *submax){
   fmax_bin_sub_param[1] = submax[1];
 
   // default values
-  if(fmin_bin_sub_param[0] == -999) fmin_bin_sub_param[0] = 0; 
-  if(fmax_bin_sub_param[0] == -999) fmax_bin_sub_param[0] = fnbins_param[0] - 1; 
-  if(fmin_bin_sub_param[1] == -999) fmin_bin_sub_param[1] = 0; 
-  if(fmax_bin_sub_param[1] == -999) fmax_bin_sub_param[1] = fnbins_param[1] - 1; 
+  if(fmin_bin_sub_param[0] == conv::kBadResult) fmin_bin_sub_param[0] = 0; 
+  if(fmax_bin_sub_param[0] == conv::kBadResult) fmax_bin_sub_param[0] = fnbins_param[0] - 1; 
+  if(fmin_bin_sub_param[1] == conv::kBadResult) fmin_bin_sub_param[1] = 0; 
+  if(fmax_bin_sub_param[1] == conv::kBadResult) fmax_bin_sub_param[1] = fnbins_param[1] - 1; 
 
   // # of bins
   fnbins_sub_param[0] = fmax_bin_sub_param[0] - fmin_bin_sub_param[0] + 1;
@@ -425,37 +454,37 @@ void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,dou
   
   // NuBar Osc parameters
   if(fPhysParamFree[ParId]==kPhypMixing13Bar){ // mixing13Bar
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = mixing13Bar_min;
       fmax_param[ParId] = mixing13Bar_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypMixing23Bar){ // mixing23Bar
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = mixing23Bar_min;
       fmax_param[ParId] = mixing23Bar_max;
     } 
   }
   else if(fPhysParamFree[ParId]==kPhypDm23sqBar){ // Dm23sqBar
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = dmsq32Bar_min;
       fmax_param[ParId] = dmsq32Bar_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypCPVBar){ // deltaCPBar
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = deltacpBar_min;
       fmax_param[ParId] = deltacpBar_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypMixing12Bar){ // mixing12Bar
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = mixing12Bar_min;
       fmax_param[ParId] = mixing12Bar_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypDm12sqBar){ // Dm12sqBar
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = dmsq12Bar_min;
       fmax_param[ParId] = dmsq12Bar_max;
     }    
@@ -463,37 +492,37 @@ void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,dou
 
   // Nu Osc parameters
   else if(fPhysParamFree[ParId]==kPhypMixing13){ // mixing13
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = mixing13_min;
       fmax_param[ParId] = mixing13_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypMixing23){ // mixing23
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = mixing23_min;
       fmax_param[ParId] = mixing23_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypDm23sq){ // Dm23sq
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = dmsq32_min;
       fmax_param[ParId] = dmsq32_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypCPV){ // deltaCP
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = deltacp_min;
       fmax_param[ParId] = deltacp_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypMixing12){ // mixing12
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = mixing12_min;
       fmax_param[ParId] = mixing12_max;
     }    
   }
   else if(fPhysParamFree[ParId]==kPhypDm12sq){ // Dm12sq
-    if(minpar[ParId]==-999 && maxpar[ParId]==-999){ // if limits are not given use the default ones
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
       fmin_param[ParId] = dmsq12_min;
       fmax_param[ParId] = dmsq12_max;
     } 
@@ -649,9 +678,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
        << endl
        << fnamefreeparam[0] << ": " 
        << "["; 
-  cout << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
+  // cout << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
+  //      << ","
+  //      << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1);
+  cout << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0] + 1)
        << ","
-       << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1);
+       << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0] + 1);
   cout << "]"
        << endl;
 
@@ -665,9 +697,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
        << endl
        << fnamefreeparam[1] << ": " 
        << "["; 
-  cout << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+  // cout << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+  //      << ","
+  //      << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1);
+  cout << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1)
        << ","
-       << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1);
+       << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1);
   cout << "]"
        << endl;
   
@@ -957,9 +992,12 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
        << endl
        << fnamefreeparam[0] << ": " 
        << "[" 
-       << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
+       // << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
+       // << ","
+       // << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
+       << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0] + 1)
        << ","
-       << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
+       << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0] + 1)
        << "]"
        << endl;
   cout << "bin: ["  
@@ -970,9 +1008,12 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
        << endl
        << fnamefreeparam[1] << ": " 
        << "[" 
-       << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+       // << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+       // << ","
+       // << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
+       << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1)
        << ","
-       << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
+       << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1)
        << "]"
        << endl;
 
@@ -1057,8 +1098,8 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
     int fileid = GetFileIDRead(iterpar0,iterpar1);
     const char *tag = ftagfile.c_str();
     
-    if( (fCurrentFileIDminim==-999) || (fCurrentFileIDminim!=fileid) ){
-      //if( (fileid==-999) || (fCurrentFileIDminim!=fileid) ){
+    if( (fCurrentFileIDminim==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
+      //if( (fileid==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
       fCurrentFileIDminim = fileid;
       this->ReadToysFromBinary(fileid,tag);
     }
@@ -1482,10 +1523,14 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   fmin_bin_sub_param[1] = min_bin_sub_param1;
   fmax_bin_sub_param[1] = max_bin_sub_param1;
 
-  fmin_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1);    
-  fmax_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1);
-  fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1);    
-  fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1);
+  // fmin_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1);    
+  // fmax_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1);
+  // fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1);    
+  // fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1);
+  fmin_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0] + 1);    
+  fmax_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0] + 1);
+  fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1);    
+  fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1);
     
   if(fmin_sub_param[0]<(fmin_param[0]-conv::kASmallNum) || fmax_sub_param[0]>(fmax_param[0]+conv::kASmallNum)){
     cerr << endl; 
@@ -1541,10 +1586,10 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
 //________________________________________________________________________________________
 void FitMarginalization::MinimizeHisto(){
   
-  int minbin = -999;
-  int minbinX = -999;
-  int minbinY = -999;
-  int minbinZ = -999;
+  int minbin = conv::kBadResult;
+  int minbinX = conv::kBadResult;
+  int minbinY = conv::kBadResult;
+  int minbinZ = conv::kBadResult;
 
   cout << endl;
   cout << "Find minimum of marginalized chisq" << endl;
@@ -1553,14 +1598,17 @@ void FitMarginalization::MinimizeHisto(){
   if(!fIsFit2D){
     fchisq_bf = fhchisq_marg_1D->GetMinimum();
     minbin = fhchisq_marg_1D->GetMinimumBin();
-    fparam_bf[0] = fhchisq_marg_1D->GetBinLowEdge(minbin);
-    fparam_bf[1] = -999.;
+    //fparam_bf[0] = fhchisq_marg_1D->GetBinLowEdge(minbin);
+    fparam_bf[0] = fhchisq_marg_1D->GetBinCenter(minbin);
+    fparam_bf[1] = conv::kBadResult;
   }
   else{
     fchisq_bf = fhchisq_marg_2D->GetMinimum();
     fhchisq_marg_2D->GetMinimumBin(minbinX,minbinY,minbinZ);
-    fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(minbinX);
-    fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(minbinY);
+    // fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(minbinX);
+    // fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(minbinY);
+    fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(minbinX);
+    fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(minbinY);
   }
 
   return;
@@ -1568,23 +1616,26 @@ void FitMarginalization::MinimizeHisto(){
 //________________________________________________________________________________________
 void FitMarginalization::MinimizeHisto(TH1F *hInChisqMarg){
   
-  int minbin = -999;
+  int minbin = conv::kBadResult;
   
   fchisq_bf = hInChisqMarg->GetMinimum();
   minbin = hInChisqMarg->GetMinimumBin();
-  fparam_bf[0] = hInChisqMarg->GetBinLowEdge(minbin);
+  //fparam_bf[0] = hInChisqMarg->GetBinLowEdge(minbin);
+  fparam_bf[0] = hInChisqMarg->GetBinCenter(minbin);
   
   return;
 }
 //________________________________________________________________________________________
 void FitMarginalization::MinimizeHisto(TH2F *hInChisqMarg){
   
-  int minbin = -999;
+  int minbin = conv::kBadResult;
   
   fchisq_bf = hInChisqMarg->GetMinimum();
   minbin = hInChisqMarg->GetMinimumBin();
-  fparam_bf[0] = hInChisqMarg->GetXaxis()->GetBinLowEdge(minbin);
-  fparam_bf[1] = hInChisqMarg->GetYaxis()->GetBinLowEdge(minbin);
+  //fparam_bf[0] = hInChisqMarg->GetXaxis()->GetBinLowEdge(minbin);
+  //fparam_bf[1] = hInChisqMarg->GetYaxis()->GetBinLowEdge(minbin);
+  fparam_bf[0] = hInChisqMarg->GetXaxis()->GetBinCenter(minbin);
+  fparam_bf[1] = hInChisqMarg->GetYaxis()->GetBinCenter(minbin);
   
   return;
 }
@@ -1671,7 +1722,8 @@ void FitMarginalization::BuildDeltaChisqMarg(){
 	cerr << endl;
 	cerr << "FitMarginalization::BuildDeltaChisqMarg" << endl;
 	cerr << "Delta Chisq content is negative" << endl;
-	cerr << "   - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(ibin+1);
+	//cerr << "   - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(ibin+1);
+	cerr << "   - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(ibin+1);
 	cerr << "   - chisq = " << bincont << endl; 
 	cerr << endl;
 	exit(1);
@@ -1696,8 +1748,10 @@ void FitMarginalization::BuildDeltaChisqMarg(){
 	  cerr << endl;
 	  cerr << "FitMarginalization::BuildDeltaChisqMarg" << endl;
 	  cerr << "Delta Chisq content is negative" << endl;
-	  cerr << "   - X = " << fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(ibinX+1);
-	  cerr << "   - Y = " << fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(ibinY+1);
+	  // cerr << "   - X = " << fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(ibinX+1);
+	  // cerr << "   - Y = " << fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(ibinY+1);
+	  cerr << "   - X = " << fhdeltachisq_marg_2D->GetXaxis()->GetBinCenter(ibinX+1);
+	  cerr << "   - Y = " << fhdeltachisq_marg_2D->GetYaxis()->GetBinCenter(ibinY+1);
 	  cerr << "   - chisq = " << bincont << endl; 
 	  cerr << endl;
 	  exit(1);
@@ -1794,11 +1848,8 @@ void FitMarginalization::SetMargOscParam(){
     if(util::IsSystematic(p)) continue; // not oscillation parameters 
     if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
 
-    cout << " --> Marginalized" << endl;
-    cout << endl;
-
     // Now extract the oscillation parameter to marginalize 
-    double currval = -999;
+    double currval = conv::kBadResult;
 
     bool rethrow=true;
     while(rethrow){
@@ -1807,12 +1858,11 @@ void FitMarginalization::SetMargOscParam(){
       if(rethrow) cout << "Rethrow " << util::AsString(p) << " " << currval << endl;
     }
 
+    //cout << "Marginalize " << util::AsString(p) << " --> " << currval << endl;
+
     // Update current values of parameters 
     fparm->Update(p,currval); 
-
-    cout << util::AsString(p) << " " << currval << endl;
-   }
-
+  }
 }
 //________________________________________________________________________________________
 void FitMarginalization::BuildDefaultPriors(void)
@@ -1972,9 +2022,12 @@ void FitMarginalization::MergeInputFiles(){
        << endl
        << fnamefreeparam[0] << ": " 
        << "[" 
-       << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
+       // << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmin_bin_sub_param[0] + 1)
+       // << ","
+       // << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
+       << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0] + 1)
        << ","
-       << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fmax_bin_sub_param[0] + 1)
+       << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0] + 1)
        << "]"
        << endl;
   cout << "bin: ["  
@@ -1985,9 +2038,12 @@ void FitMarginalization::MergeInputFiles(){
        << endl
        << fnamefreeparam[1] << ": " 
        << "[" 
-       << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+       // << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmin_bin_sub_param[1] + 1)
+       // << ","
+       // << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
+       << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1)
        << ","
-       << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fmax_bin_sub_param[1] + 1)
+       << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1)
        << "]"
        << endl;
 
@@ -2165,20 +2221,26 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
   fLastMinimVal_Y = YvalLast;
 
   if(fIsFit2D){
-    fFirstMinimBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(fFirstMinimVal_X+conv::kASmallNum);
-    fLastMinimBin_X  = fhchisq_marg_2D->GetXaxis()->FindBin(fLastMinimVal_X+conv::kASmallNum);
-    fFirstMinimBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(fFirstMinimVal_Y+conv::kASmallNum);
-    fLastMinimBin_Y  = fhchisq_marg_2D->GetYaxis()->FindBin(fLastMinimVal_Y+conv::kASmallNum);
+    // fFirstMinimBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(fFirstMinimVal_X+conv::kASmallNum);
+    // fLastMinimBin_X  = fhchisq_marg_2D->GetXaxis()->FindBin(fLastMinimVal_X+conv::kASmallNum);
+    // fFirstMinimBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(fFirstMinimVal_Y+conv::kASmallNum);
+    // fLastMinimBin_Y  = fhchisq_marg_2D->GetYaxis()->FindBin(fLastMinimVal_Y+conv::kASmallNum);
+    fFirstMinimBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(fFirstMinimVal_X);
+    fLastMinimBin_X  = fhchisq_marg_2D->GetXaxis()->FindBin(fLastMinimVal_X);
+    fFirstMinimBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(fFirstMinimVal_Y);
+    fLastMinimBin_Y  = fhchisq_marg_2D->GetYaxis()->FindBin(fLastMinimVal_Y);
   }
   else{
-    fFirstMinimBin_X = fhchisq_marg_1D->FindBin(fFirstMinimVal_X+conv::kASmallNum);
-    fLastMinimBin_X  = fhchisq_marg_1D->FindBin(fLastMinimVal_X+conv::kASmallNum);
-    fFirstMinimBin_Y = -999;
-    fLastMinimBin_Y  = -999;
+    // fFirstMinimBin_X = fhchisq_marg_1D->FindBin(fFirstMinimVal_X+conv::kASmallNum);
+    // fLastMinimBin_X  = fhchisq_marg_1D->FindBin(fLastMinimVal_X+conv::kASmallNum);
+    fFirstMinimBin_X = fhchisq_marg_1D->FindBin(fFirstMinimVal_X);
+    fLastMinimBin_X  = fhchisq_marg_1D->FindBin(fLastMinimVal_X);
+    fFirstMinimBin_Y = conv::kBadResult;
+    fLastMinimBin_Y  = conv::kBadResult;
   }
 
-  int nbins_X = -999;
-  int nbins_Y = -999;
+  int nbins_X = conv::kBadResult;
+  int nbins_Y = conv::kBadResult;
   nbins_X= fnbins_param[0];
   if(fIsFit2D)
     nbins_Y= fnbins_param[1];
@@ -2198,8 +2260,10 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
       cerr << "Set it to " << fmin_bin_sub_param[0]+1 << endl;
       cerr << endl;
       fFirstMinimBin_X = fmin_bin_sub_param[0]+1;
-    if(fIsFit2D) fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fFirstMinimBin_X);
-    else         fFirstMinimVal_X = fhchisq_marg_1D->GetBinLowEdge(fFirstMinimBin_X);
+      //if(fIsFit2D) fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fFirstMinimBin_X);
+      //else         fFirstMinimVal_X = fhchisq_marg_1D->GetBinLowEdge(fFirstMinimBin_X);
+      if(fIsFit2D) fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fFirstMinimBin_X);
+      else         fFirstMinimVal_X = fhchisq_marg_1D->GetBinCenter(fFirstMinimBin_X);
     }
     if(fLastMinimBin_X > fmax_bin_sub_param[0]+1){
       cerr << endl;
@@ -2207,8 +2271,10 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
       cerr << "Set it to " << fmax_bin_sub_param[0]+1 << endl;
       cerr << endl;
       fLastMinimBin_X = fmax_bin_sub_param[0]+1;
-      if(fIsFit2D) fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fLastMinimBin_X);
-      else         fLastMinimVal_X = fhchisq_marg_1D->GetBinLowEdge(fLastMinimBin_X);
+      // if(fIsFit2D) fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fLastMinimBin_X);
+      // else         fLastMinimVal_X = fhchisq_marg_1D->GetBinLowEdge(fLastMinimBin_X);
+      if(fIsFit2D) fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fLastMinimBin_X);
+      else         fLastMinimVal_X = fhchisq_marg_1D->GetBinCenter(fLastMinimBin_X);
     }
     if(fIsFit2D){
       if(fFirstMinimBin_Y < fmin_bin_sub_param[1]+1){
@@ -2217,8 +2283,10 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
 	cerr << "Set it to " << fmin_bin_sub_param[1]+1 << endl;
 	cerr << endl;
 	fFirstMinimBin_Y = fmin_bin_sub_param[1]+1;
-	if(fIsFit2D) fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstMinimBin_Y);
-	else         fFirstMinimVal_Y = fhchisq_marg_1D->GetBinLowEdge(fFirstMinimBin_Y);
+	// if(fIsFit2D) fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstMinimBin_Y);
+	// else         fFirstMinimVal_Y = fhchisq_marg_1D->GetBinLowEdge(fFirstMinimBin_Y);
+	if(fIsFit2D) fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fFirstMinimBin_Y);
+	else         fFirstMinimVal_Y = fhchisq_marg_1D->GetBinCenter(fFirstMinimBin_Y);
       }
       if(fLastMinimBin_Y > fmax_bin_sub_param[1]+1){
 	cerr << endl;
@@ -2226,8 +2294,10 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
 	cerr << "Set it to " << fmax_bin_sub_param[1]+1 << endl;
 	cerr << endl;
 	fLastMinimBin_Y = fmax_bin_sub_param[1]+1;
-	if(fIsFit2D) fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastMinimBin_Y);
-	else         fLastMinimVal_Y = fhchisq_marg_1D->GetBinLowEdge(fLastMinimBin_Y);
+	// if(fIsFit2D) fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastMinimBin_Y);
+	// else         fLastMinimVal_Y = fhchisq_marg_1D->GetBinLowEdge(fLastMinimBin_Y);
+	if(fIsFit2D) fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fLastMinimBin_Y);
+	else         fLastMinimVal_Y = fhchisq_marg_1D->GetBinCenter(fLastMinimBin_Y);
       }
     }
   }
@@ -2240,7 +2310,8 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
       cerr << "Set it to 1" << endl;
       cerr << endl;
       fFirstMinimBin_X = 1;
-      fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fFirstMinimBin_X);
+      //fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fFirstMinimBin_X);
+      fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fFirstMinimBin_X);
     }
     if(fLastMinimBin_X > nbins_X){
       cerr << endl;
@@ -2248,7 +2319,8 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
       cerr << "Set it to the number of bins in the histogram:" << nbins_X << endl;
       cerr << endl;
       fLastMinimBin_X = nbins_X;
-      fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fLastMinimBin_X);
+      //fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fLastMinimBin_X);
+      fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fLastMinimBin_X);
     }
     if(fIsFit2D){
       if(fFirstMinimBin_Y < 1){
@@ -2257,7 +2329,8 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
 	cerr << "Set it to 1" << endl;
 	cerr << endl;
 	fFirstMinimBin_Y = 1;
-	fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstMinimBin_Y);
+	//fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fFirstMinimBin_Y);
+	fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fFirstMinimBin_Y);
       }
       if(fLastMinimBin_Y > nbins_Y){
 	cerr << endl;
@@ -2265,7 +2338,8 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
 	cerr << "Set it to the number of bins in the histogram:" << nbins_Y << endl;
 	cerr << endl;
 	fLastMinimBin_Y = nbins_Y;
-	fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastMinimBin_Y);
+	//fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fLastMinimBin_Y);
+	fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fLastMinimBin_Y);
       }
     }
   }
@@ -2388,15 +2462,15 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
     if(fIsFit2D)
       bin_Y = r->Uniform(binF_Y,binL_Y+1); // add 1 because it will be truncated to get the bin number
     
-    int binN_X = -999;
-    int binN_Y = -999;
+    int binN_X = conv::kBadResult;
+    int binN_Y = conv::kBadResult;
 
     // same point
     binN_X = bin_X; 
     if(fIsFit2D) binN_Y = bin_Y;
     
-    double binlowedge_X = -999;
-    double binlowedge_Y = -999;
+    double binlowedge_X = conv::kBadResult;
+    double binlowedge_Y = conv::kBadResult;
 
     // Find direction along X axis     
     
@@ -2442,13 +2516,14 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
     chisq_X[ilike_Np1] = bincont;
     chisq[ilike_Np1][ilike_N] = bincont;
     
-    binlowedge_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(bin_X);
+    //binlowedge_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(bin_X);
+    binlowedge_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(bin_X);
 
         
     // Find direction along Y axis
     
-    int binNm1_Y = -999;
-    int binNp1_Y = -999;
+    int binNm1_Y = conv::kBadResult;
+    int binNp1_Y = conv::kBadResult;
     
     if(fIsFit2D){
       // L(N,N) already computed for 2D chisq
@@ -2475,7 +2550,8 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
       chisq_Y[ilike_Np1] = bincont;
       chisq[ilike_N][ilike_Np1] = bincont;
       
-      binlowedge_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(bin_Y);
+      //binlowedge_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(bin_Y);
+      binlowedge_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(bin_Y);
     }
 
     // Find off-diagonal directions     
@@ -2541,8 +2617,8 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
     }
 #endif
 
-    double bincent_X = -999;
-    double bincent_Y = -999;
+    double bincent_X = conv::kBadResult;
+    double bincent_Y = conv::kBadResult;
 
     if(!fIsFit2D){
       bincent_X = fhchisq_marg_1D_Step->GetXaxis()->GetBinCenter(bin_X);
@@ -2582,20 +2658,22 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
 	
 	cout << "A minimum is found" << endl;
 	cout << "Best fit Chisq = " << chisq_X[ilike_N] << endl;
-	cout << "Best fit X = " << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
-	cout << "Best fit Y = " << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+	// cout << "Best fit X = " << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
+	// cout << "Best fit Y = " << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+	cout << "Best fit X = " << fhchisq_marg_2D->GetXaxis()->GetBinCenter(binN_X) << endl;
+	cout << "Best fit Y = " << fhchisq_marg_2D->GetYaxis()->GetBinCenter(binN_Y) << endl;
 	cout << "Total # of iterations = " << Niterations << endl;
 	cout << "Total # of performed fits = " << Nfits << endl;
 	cout << "Check if it's a real minimum" << endl;
 
-	int binNm2_X = -999;
-	double chisq_X_Nm2 = -999;
-	int binNp2_X = -999;
-	double chisq_X_Np2 = -999;
-	int binNm2_Y = -999;
-	double chisq_Y_Nm2 = -999;
-	int binNp2_Y = -999;
-	double chisq_Y_Np2 = -999;
+	int binNm2_X = conv::kBadResult;
+	double chisq_X_Nm2 = conv::kBadResult;
+	int binNp2_X = conv::kBadResult;
+	double chisq_X_Np2 = conv::kBadResult;
+	int binNm2_Y = conv::kBadResult;
+	double chisq_Y_Nm2 = conv::kBadResult;
+	int binNp2_Y = conv::kBadResult;
+	double chisq_Y_Np2 = conv::kBadResult;
 
 
 	// L(N-2) X
@@ -2690,11 +2768,14 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
 	    fchisq_bf = chisq_X[ilike_N];
 	    
 	    if(fIsFit2D){
-	      fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
-	      fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y);
+	      //fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
+	      //fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y);
+	      fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(binN_X);
+	      fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(binN_Y);
 	    }
 	    else{
-	      fparam_bf[0] = fhchisq_marg_1D->GetBinLowEdge(binN_X);
+	      //fparam_bf[0] = fhchisq_marg_1D->GetBinLowEdge(binN_X);
+	      fparam_bf[0] = fhchisq_marg_1D->GetBinCenter(binN_X);
 	    }
 	    
 	  }
@@ -2852,8 +2933,8 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
     
     else {
       
-      int offdiagbin_X = -999; // X off-diagonal bin in the gradient direction
-      int offdiagbin_Y = -999; // Y off-diagonal bin in the gradient direction
+      int offdiagbin_X = conv::kBadResult; // X off-diagonal bin in the gradient direction
+      int offdiagbin_Y = conv::kBadResult; // Y off-diagonal bin in the gradient direction
 
       // Gradient along X      
 
@@ -3135,8 +3216,8 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       doNewFit = false;
     }
 
-    double binlowedge_X = -999;
-    double binlowedge_Y = -999;
+    double binlowedge_X = conv::kBadResult;
+    double binlowedge_Y = conv::kBadResult;
     
     // L(N,N)
     if(fIsFit2D) 
@@ -3194,13 +3275,14 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       chisq[ilike_Np1][ilike_N] = bincont;
     }
     
-    binlowedge_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
+    //binlowedge_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
+    binlowedge_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(binN_X);
   
         
     // Find direction along Y axis
     
-    int binNm1_Y = -999;
-    int binNp1_Y = -999;
+    int binNm1_Y = conv::kBadResult;
+    int binNp1_Y = conv::kBadResult;
     
     if(fIsFit2D){
       
@@ -3244,7 +3326,8 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 	chisq[ilike_N][ilike_Np1] = bincont;
       }
 
-      binlowedge_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y);
+      //binlowedge_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y);
+      binlowedge_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(binN_Y);
     }
 
 
@@ -3326,8 +3409,8 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
     }
 #endif
     
-    double bincent_X = -999;
-    double bincent_Y = -999;
+    double bincent_X = conv::kBadResult;
+    double bincent_Y = conv::kBadResult;
 
     if(!fIsFit2D){
       bincent_X = fhchisq_marg_1D_Step->GetXaxis()->GetBinCenter(binN_X);
@@ -3363,24 +3446,27 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       cout << "A minimum is found" << endl;
       cout << "Best fit Chisq = " << chisq_X[ilike_N] << endl;
       if(!fIsFit2D){
-	cout << "Best fit X = " << fhchisq_marg_1D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
+	//cout << "Best fit X = " << fhchisq_marg_1D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
+	cout << "Best fit X = " << fhchisq_marg_1D->GetXaxis()->GetBinCenter(binN_X) << endl;
       }
       else{
-	cout << "Best fit X = " << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
-	cout << "Best fit Y = " << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+	// cout << "Best fit X = " << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X) << endl;
+	// cout << "Best fit Y = " << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+	cout << "Best fit X = " << fhchisq_marg_2D->GetXaxis()->GetBinCenter(binN_X) << endl;
+	cout << "Best fit Y = " << fhchisq_marg_2D->GetYaxis()->GetBinCenter(binN_Y) << endl;
       }
       cout << "Total # of iterations = " << Niterations << endl;
       cout << "Total # of performed fits = " << Nfits << endl;
       cout << "Check if it's a real minimum" << endl;
       
-      int binNm2_X = -999;
-      double chisq_X_Nm2 = -999;
-      int binNp2_X = -999;
-      double chisq_X_Np2 = -999;
-      int binNm2_Y = -999;
-      double chisq_Y_Nm2 = -999;
-      int binNp2_Y = -999;
-      double chisq_Y_Np2 = -999;
+      int binNm2_X = conv::kBadResult;
+      double chisq_X_Nm2 = conv::kBadResult;
+      int binNp2_X = conv::kBadResult;
+      double chisq_X_Np2 = conv::kBadResult;
+      int binNm2_Y = conv::kBadResult;
+      double chisq_Y_Nm2 = conv::kBadResult;
+      int binNp2_Y = conv::kBadResult;
+      double chisq_Y_Np2 = conv::kBadResult;
       
       // L(N-2) X
       binNm2_X = binN_X - 2;
@@ -3498,11 +3584,14 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 	  if(fIsFit2D) fchisq_bf = chisq[ilike_N][ilike_N];
 	  
 	  if(fIsFit2D){
-	    fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
-	    fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y);
+	    // fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
+	    // fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y);
+	    fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(binN_X);
+	    fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(binN_Y);
 	  }
 	  else{
-	    fparam_bf[0] = fhchisq_marg_1D->GetBinLowEdge(binN_X);
+	    //fparam_bf[0] = fhchisq_marg_1D->GetBinLowEdge(binN_X);
+	    fparam_bf[0] = fhchisq_marg_1D->GetBinCenter(binN_X);
 	  }
 
 	  Nminima++;
@@ -3529,9 +3618,11 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 	
 	cout << "Restart the fit from a new starting point:" << endl;
 	cout << "binN_X = " << binN_X << " - binN_Y = " << binN_Y << endl;
-	cout << "X = " << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
+	//cout << "X = " << fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(binN_X);
+	cout << "X = " << fhchisq_marg_2D->GetXaxis()->GetBinCenter(binN_X);
 	if(fIsFit2D)
-	  cout << " - Y = " << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+	  //cout << " - Y = " << fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(binN_Y) << endl;
+	  cout << " - Y = " << fhchisq_marg_2D->GetYaxis()->GetBinCenter(binN_Y) << endl;
 	cout << endl;
 	
        	continue;
@@ -3546,14 +3637,14 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 
     else {
       
-      int offdiagbin_X = -999; // X off-diagonal bin in the gradient direction
-      int offdiagbin_Y = -999; // Y off-diagonal bin in the gradient direction
+      int offdiagbin_X = conv::kBadResult; // X off-diagonal bin in the gradient direction
+      int offdiagbin_Y = conv::kBadResult; // Y off-diagonal bin in the gradient direction
       
       // Move toward the lowest adjacent Chisq bin
       
-      int NewDir_X = -999; // It's not the bin number but an array index
-      int NewDir_Y = -999; // It's not the bin number but an array index
-      float min = 999999;
+      int NewDir_X = conv::kBadResult; // It's not the bin number but an array index
+      int NewDir_Y = conv::kBadResult; // It's not the bin number but an array index
+      float min = conv::kALargeNum;
 
       if(!fIsFit2D){
 	for(int i=0;i<3;i++){
@@ -3618,9 +3709,11 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       if(!fIsFit2D){
 
 	int NextBin_X = binN_X + (NewDir_X-1); // NewDir=0,1,2. NewDir=1 if binN
-	double NextVal_X = fhchisq_marg_1D->GetXaxis()->GetBinLowEdge(NextBin_X);
+	//double NextVal_X = fhchisq_marg_1D->GetXaxis()->GetBinLowEdge(NextBin_X);
+	double NextVal_X = fhchisq_marg_1D->GetXaxis()->GetBinCenter(NextBin_X);
 	double BinVal_X = binlowedge_X; 
-	double NewVal_X = fhchisq_marg_1D->GetXaxis()->GetBinLowEdge(NextBin_X);
+	//double NewVal_X = fhchisq_marg_1D->GetXaxis()->GetBinLowEdge(NextBin_X);
+	double NewVal_X = fhchisq_marg_1D->GetXaxis()->GetBinCenter(NextBin_X);
 
 #if defined __print_minimization_steps__
 	cout << "binN_X = " << binN_X << " -  NextBin_X = " << NextBin_X << endl;
@@ -3641,14 +3734,18 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 	int NextBin_X = binN_X + (NewDir_X-1); // NewDir=0,1,2. NewDir=1 if binN
 	int NextBin_Y = binN_Y + (NewDir_Y-1);
 	
-	double NextVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(NextBin_X);
-	double NextVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(NextBin_Y);
+	// double NextVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(NextBin_X);
+	// double NextVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(NextBin_Y);
+	double NextVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(NextBin_X);
+	double NextVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(NextBin_Y);
 	
 	double BinVal_X = binlowedge_X; 
 	double BinVal_Y = binlowedge_Y;
 	
-	double NewVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(NextBin_X);
-	double NewVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(NextBin_Y);
+	// double NewVal_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(NextBin_X);
+	// double NewVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(NextBin_Y);
+	double NewVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(NextBin_X);
+	double NewVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(NextBin_Y);
 		
 #if defined __print_minimization_steps__
 	cout << "binN_X = " << binN_X << " -  NextBin_X = " << NextBin_X << endl;
@@ -3704,22 +3801,32 @@ void FitMarginalization::SetExtractStartPt(string doextract){
 //________________________________________________________________________________________
 void FitMarginalization::SetGridStartRange(double minX,double maxX,double minY,double maxY){
 
-  fGridStartMinVal_X = minX+conv::kASmallNum;
-  fGridStartMaxVal_X = maxX+conv::kASmallNum;
-  fGridStartMinVal_Y = minY+conv::kASmallNum;
-  fGridStartMaxVal_Y = maxY+conv::kASmallNum;
+  // fGridStartMinVal_X = minX+conv::kASmallNum;
+  // fGridStartMaxVal_X = maxX+conv::kASmallNum;
+  // fGridStartMinVal_Y = minY+conv::kASmallNum;
+  // fGridStartMaxVal_Y = maxY+conv::kASmallNum;
+  fGridStartMinVal_X = minX;
+  fGridStartMaxVal_X = maxX;
+  fGridStartMinVal_Y = minY;
+  fGridStartMaxVal_Y = maxY;
 
   if(!fIsFit2D){
-    fGridStartMinBin_X = fhchisq_marg_1D->FindBin(minX+conv::kASmallNum);
-    fGridStartMaxBin_X = fhchisq_marg_1D->FindBin(maxX+conv::kASmallNum);
-    fGridStartMinBin_Y = -999;
-    fGridStartMaxBin_Y = -999;
+    //fGridStartMinBin_X = fhchisq_marg_1D->FindBin(minX+conv::kASmallNum);
+    //fGridStartMaxBin_X = fhchisq_marg_1D->FindBin(maxX+conv::kASmallNum);
+    fGridStartMinBin_X = fhchisq_marg_1D->FindBin(minX);
+    fGridStartMaxBin_X = fhchisq_marg_1D->FindBin(maxX);
+    fGridStartMinBin_Y = conv::kBadResult;
+    fGridStartMaxBin_Y = conv::kBadResult;
   }
   else{
-    fGridStartMinBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(minX+conv::kASmallNum);
-    fGridStartMaxBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(maxX+conv::kASmallNum);
-    fGridStartMinBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(minY+conv::kASmallNum);
-    fGridStartMaxBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(maxY+conv::kASmallNum);
+    // fGridStartMinBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(minX+conv::kASmallNum);
+    // fGridStartMaxBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(maxX+conv::kASmallNum);
+    // fGridStartMinBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(minY+conv::kASmallNum);
+    // fGridStartMaxBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(maxY+conv::kASmallNum);
+    fGridStartMinBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(minX);
+    fGridStartMaxBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(maxX);
+    fGridStartMinBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(minY);
+    fGridStartMaxBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(maxY);
   }
   return;
 }
@@ -3732,15 +3839,15 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 
   const int NThrowsExtrBin = fNumStartBin_X*fNumStartBin_Y;  
 
-  int UniFirstBin_X = -999;
-  int UniLastBin_X = -999; 
-  int UniFirstBin_Y = -999; 
-  int UniLastBin_Y = -999; 
+  int UniFirstBin_X = conv::kBadResult;
+  int UniLastBin_X = conv::kBadResult; 
+  int UniFirstBin_Y = conv::kBadResult; 
+  int UniLastBin_Y = conv::kBadResult; 
 
-  double UniFirstVal_X = -999;
-  double UniLastVal_X = -999; 
-  double UniFirstVal_Y = -999; 
-  double UniLastVal_Y = -999; 
+  double UniFirstVal_X = conv::kBadResult;
+  double UniLastVal_X = conv::kBadResult; 
+  double UniFirstVal_Y = conv::kBadResult; 
+  double UniLastVal_Y = conv::kBadResult; 
 
   // If read binary file at each grid point step, the range must be contained in full range
   // while if binary files are first stored and then the chisq is computed, since a binary 
@@ -3808,7 +3915,7 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
   cout << "Y: " << UniFirstBin_Y << " " << UniLastBin_Y << endl;
   cout << endl;
 
-  double bincont = -999;
+  double bincont = conv::kBadResult;
   
   double ChisqMinStart = conv::kALargeNum;
   int binStart_X = fStartBin_X;
@@ -3816,8 +3923,8 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 
   TRandom3 *r = new TRandom3(0); 
 
-  double like_iter = -999.;
-  double like_prev = -999.;
+  double like_iter = conv::kBadResult;
+  double like_prev = conv::kBadResult;
   
 
   // Single starting point
@@ -3892,14 +3999,16 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 	double currval0 = UniFirstVal_X + iStartPt_X*step_X;
 	double currval1 = UniFirstVal_Y + iStartPt_Y*step_Y;
 	
-	int binX = -999;
-	int binY = -999;
+	int binX = conv::kBadResult;
+	int binY = conv::kBadResult;
 	
-	binX = fhchisq_marg_2D->GetXaxis()->FindBin(currval0+conv::kASmallNum);
-	if(fIsFit2D) binY = fhchisq_marg_2D->GetYaxis()->FindBin(currval1+conv::kASmallNum);
+	// binX = fhchisq_marg_2D->GetXaxis()->FindBin(currval0+conv::kASmallNum);
+	// if(fIsFit2D) binY = fhchisq_marg_2D->GetYaxis()->FindBin(currval1+conv::kASmallNum);
+	binX = fhchisq_marg_2D->GetXaxis()->FindBin(currval0);
+	if(fIsFit2D) binY = fhchisq_marg_2D->GetYaxis()->FindBin(currval1);
 	//cout << binX << " " << binY << endl;
 
-	bincont = -999;
+	bincont = conv::kBadResult;
 
 	if(!fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binX-1,fmin_bin_sub_param[1],readbinary);
 	else bincont = CalcChisqMargPtRead(skobs_data,binX-1,binY-1,readbinary);
@@ -3923,8 +4032,10 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
     exit(1);
   }
 
-  float startX = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fStartBin_X);
-  float startY = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fStartBin_Y);
+  // float startX = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(fStartBin_X);
+  // float startY = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(fStartBin_Y);
+  float startX = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fStartBin_X);
+  float startY = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fStartBin_Y);
 
   cout << "fStartBin_X = " << fStartBin_X << " - fStartBin_Y = " << fStartBin_Y << endl;
   cout << "X = " << startX << " - Y = " << startY << endl;
@@ -3937,12 +4048,15 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 void FitMarginalization::SetStartBin(double start_X,double start_Y){
   
   if(!fIsFit2D){
-    fStartBin_X = fhchisq_marg_1D->GetXaxis()->FindBin(start_X+conv::kASmallNum);
+    //fStartBin_X = fhchisq_marg_1D->GetXaxis()->FindBin(start_X+conv::kASmallNum);
+    fStartBin_X = fhchisq_marg_1D->GetXaxis()->FindBin(start_X);
     fStartBin_Y = 1;
   }
   else{
-    fStartBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(start_X+conv::kASmallNum);
-    fStartBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(start_Y+conv::kASmallNum);
+    // fStartBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(start_X+conv::kASmallNum);
+    // fStartBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(start_Y+conv::kASmallNum);
+    fStartBin_X = fhchisq_marg_2D->GetXaxis()->FindBin(start_X);
+    fStartBin_Y = fhchisq_marg_2D->GetYaxis()->FindBin(start_Y);
   }
 
   bool GoodStartBin = true;
@@ -4014,15 +4128,19 @@ void FitMarginalization::SetBorderMaxFitNumber(int nfit){
 //________________________________________________________________________________________
 float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs,bool readbinary){
 
-  int bin0 = -999;
-  int bin1 = -999;
+  int bin0 = conv::kBadResult;
+  int bin1 = conv::kBadResult;
 
   int nbinsX = fnbins_param[0];
   int nbinsY = fnbins_param[1];
-  double min_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(1);
-  double max_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(nbinsX);
-  double min_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(1);
-  double max_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(nbinsY);
+  // double min_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(1);
+  // double max_X = fhchisq_marg_2D->GetXaxis()->GetBinLowEdge(nbinsX);
+  // double min_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(1);
+  // double max_Y = fhchisq_marg_2D->GetYaxis()->GetBinLowEdge(nbinsY);
+  double min_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(1);
+  double max_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(nbinsX);
+  double min_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(1);
+  double max_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(nbinsY);
   
 
   if(valpar0<min_X || valpar0>max_X){
@@ -4045,11 +4163,14 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
   }
 
   if(!fIsFit2D){
-    bin0 = fhchisq_marg_1D->GetXaxis()->FindBin(valpar0+conv::kASmallNum);
+    //bin0 = fhchisq_marg_1D->GetXaxis()->FindBin(valpar0+conv::kASmallNum);
+    bin0 = fhchisq_marg_1D->GetXaxis()->FindBin(valpar0);
   }
   else{ 
-    bin0 = fhchisq_marg_2D->GetXaxis()->FindBin(valpar0+conv::kASmallNum);
-    bin1 = fhchisq_marg_2D->GetYaxis()->FindBin(valpar1+conv::kASmallNum);
+    // bin0 = fhchisq_marg_2D->GetXaxis()->FindBin(valpar0+conv::kASmallNum);
+    // bin1 = fhchisq_marg_2D->GetYaxis()->FindBin(valpar1+conv::kASmallNum);
+    bin0 = fhchisq_marg_2D->GetXaxis()->FindBin(valpar0);
+    bin1 = fhchisq_marg_2D->GetYaxis()->FindBin(valpar1);
   }
   
   // Check if the true point is included by the sub-range
@@ -4071,7 +4192,7 @@ float FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Sup
     }
   }
 
-  double chisqtrue = -999.;
+  double chisqtrue = conv::kBadResult;
   if(fIsFit2D) chisqtrue = CalcChisqMargPtRead(skobs,bin0-1,bin1-1,readbinary);
   else chisqtrue = CalcChisqMargPtRead(skobs,bin0-1,fmin_bin_sub_param[1],readbinary);
 
@@ -4163,14 +4284,14 @@ void FitMarginalization::SetFileID(int nfiles){
 }
 //________________________________________________________________________________________
 int FitMarginalization::GetFileIDRead(int ipar0,int ipar1){
-  int fileid=-999;
+  int fileid=conv::kBadResult;
   fileid = fhmap_chisqrange_fileid_2D->GetBinContent(ipar0+1,ipar1+1);
   return fileid;
 }
 //________________________________________________________________________________________
 void FitMarginalization::CalcBestFitErrors(SuperkObservation *skobs,string method,bool readbinary){
   
-  double error = -999.;
+  double error = conv::kBadResult;
 
   if(method=="MINOS"){
     this->CalcBestFitErrorsMINOS(skobs,readbinary);
@@ -4210,7 +4331,7 @@ double FitMarginalization::GetInterpolationX(double X1,double Y1,double X2, doub
 //________________________________________________________________________________________
 void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bool readbinary){
   
-  double error = -999.;
+  double error = conv::kBadResult;
   const double CritChisq_1D = 1.;
   const double CritChisq_2D = 2.3;
 
@@ -4222,11 +4343,12 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     this->BuildDeltaChisqMarg();
     //fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
         
-    int bin_bf = fhchisq_marg_1D->FindBin(this->GetParamBestFit(0)+conv::kASmallNum); // best-fit bin
-    int bin_negsigma_a = -999;
-    int bin_negsigma_b = -999;
-    int bin_possigma_a = -999;
-    int bin_possigma_b = -999;
+    //int bin_bf = fhchisq_marg_1D->FindBin(this->GetParamBestFit(0)+conv::kASmallNum); // best-fit bin
+    int bin_bf = fhchisq_marg_1D->FindBin(this->GetParamBestFit(0)); // best-fit bin
+    int bin_negsigma_a = conv::kBadResult;
+    int bin_negsigma_b = conv::kBadResult;
+    int bin_possigma_a = conv::kBadResult;
+    int bin_possigma_b = conv::kBadResult;
 
     // Find param value at DeltaChisq=1 (negative error)
     
@@ -4240,7 +4362,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       }
       
       // cout << "ibin = " << ibin 
-      // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(ibin)
+      // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(ibin)
       // 	   << " - bincont = " << bincont << endl;
       
       if(bincont>CritChisq_1D){
@@ -4297,11 +4419,11 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     // If so set left extreme to 1 (first bin of the histogram) and right extreme
     // to Nbins (last bin of the histogram)
     
-    if(bin_negsigma_a == -999){
+    if(bin_negsigma_a == conv::kBadResult){
       bin_negsigma_a = 1;
       bin_negsigma_b = 1;
     }
-    if(bin_possigma_b == -999){
+    if(bin_possigma_b == conv::kBadResult){
       bin_possigma_a = fhdeltachisq_marg_1D->GetNbinsX();
       bin_possigma_b = fhdeltachisq_marg_1D->GetNbinsX();
     }
@@ -4318,40 +4440,46 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       exit(1);
     }
 
-    double X1 = -999;
-    double Y1 = -999;
-    double X2 = -999;
-    double Y2 = -999;
-    double Xout = -999;
+    double X1 = conv::kBadResult;
+    double Y1 = conv::kBadResult;
+    double X2 = conv::kBadResult;
+    double Y2 = conv::kBadResult;
+    double Xout = conv::kBadResult;
     
     // Extrapolation (left extreme). Do it only if 1sigma bin is in the physical region
     if(bin_negsigma_a>1){
-      X1 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_negsigma_b);
+      //X1 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_negsigma_b);
+      X1 = fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(bin_negsigma_b);
       Y1 = fhdeltachisq_marg_1D->GetBinContent(bin_negsigma_b);
-      X2 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_negsigma_a);
+      //X2 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_negsigma_a);
+      X2 = fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(bin_negsigma_a);
       Y2 = fhdeltachisq_marg_1D->GetBinContent(bin_negsigma_a);
       Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
     }
     else{
-      Xout = fhdeltachisq_marg_1D->GetBinLowEdge(bin_negsigma_a);
+      //Xout = fhdeltachisq_marg_1D->GetBinLowEdge(bin_negsigma_a);
+      Xout = fhdeltachisq_marg_1D->GetBinCenter(bin_negsigma_a);
     }
     fparam_bf_errneg[0] = fabs(this->GetParamBestFit(0) - Xout); 
-    fparam_bf_errneg[1] = -999.; 
+    fparam_bf_errneg[1] = conv::kBadResult; 
    //cout << "fparam_bf_errneg[0] = " << fparam_bf_errneg[0] << endl;
     
     // Extrapolation (right extreme). Do it only if 1sigma bin is in the physical region
     if(bin_possigma_b < fhdeltachisq_marg_1D->GetNbinsX()){
-      X1 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_possigma_b);
+      //X1 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_possigma_b);
+      X1 = fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(bin_possigma_b);
       Y1 = fhdeltachisq_marg_1D->GetBinContent(bin_possigma_b);
-      X2 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_possigma_a);
+      //X2 = fhdeltachisq_marg_1D->GetXaxis()->GetBinLowEdge(bin_possigma_a);
+      X2 = fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(bin_possigma_a);
       Y2 = fhdeltachisq_marg_1D->GetBinContent(bin_possigma_a);
       Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
     }
     else{
-      Xout = fhdeltachisq_marg_1D->GetBinLowEdge(bin_possigma_b);
+      //Xout = fhdeltachisq_marg_1D->GetBinLowEdge(bin_possigma_b);
+      Xout = fhdeltachisq_marg_1D->GetBinCenter(bin_possigma_b);
     }
     fparam_bf_errpos[0] = fabs(this->GetParamBestFit(0) - Xout); 
-    fparam_bf_errpos[1] = -999.; 
+    fparam_bf_errpos[1] = conv::kBadResult; 
     //cout << "fparam_bf_errpos[0] = " << fparam_bf_errpos[0] << endl;
     
   }
@@ -4372,22 +4500,24 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     this->BuildDeltaChisqMarg();
     //fhdeltachisq_marg_1D = (TH1F*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D");
 
-    int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
-    int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
+    // int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
+    // int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
+    int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]);    
+    int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]);
     
     // X error: find the X interval with extremes the bins at X^2crit = 2.3
     
-    int binleftX_x=-999;
-    int binleftX_y=-999;
+    int binleftX_x=conv::kBadResult;
+    int binleftX_y=conv::kBadResult;
     
-    int binrightX_x=-999;
-    int binrightX_y=-999;
+    int binrightX_x=conv::kBadResult;
+    int binrightX_y=conv::kBadResult;
 
-    int binleftY_x=-999;
-    int binleftY_y=-999;
+    int binleftY_x=conv::kBadResult;
+    int binleftY_y=conv::kBadResult;
 
-    int binrightY_x=-999;
-    int binrightY_y=-999;
+    int binrightY_x=conv::kBadResult;
+    int binrightY_y=conv::kBadResult;
 
     for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
       for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){
@@ -4399,7 +4529,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 	// Find the most left extreme bin of 1sigma interval along X
 	double bincont_leftprevX = fhdeltachisq_marg_2D->GetBinContent(bincurrX+1,bincurrY); // must be on the right of bincurr
 	if(bincont>=CritChisq_2D && bincont_leftprevX<=CritChisq_2D){
-	  if(binleftX_x == -999 || (bincurrX) < binleftX_x ){
+	  if(binleftX_x == conv::kBadResult || (bincurrX) < binleftX_x ){
 	    binleftX_x = bincurrX;
 	    binleftX_y = bincurrY;
 	  }
@@ -4408,7 +4538,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 	// Find the most right extreme bin of 1sigma interval along X
 	double bincont_rightprevX = fhdeltachisq_marg_2D->GetBinContent(bincurrX-1,bincurrY); // must be on the left of bincurr
 	if(bincont>=CritChisq_2D && bincont_rightprevX<=CritChisq_2D){
-	  if(binrightX_x == -999 || (bincurrX) > binrightX_x ){
+	  if(binrightX_x == conv::kBadResult || (bincurrX) > binrightX_x ){
 	    binrightX_x = bincurrX;
 	    binrightX_y = bincurrY;
 	  }
@@ -4417,7 +4547,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 	// Find the most left extreme bin of 1sigma interval along Y (down)
 	double bincont_leftprevY = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY+1); // must be on the right of bincurr
 	if(bincont>=CritChisq_2D && bincont_leftprevY<=CritChisq_2D){
-	  if(binleftY_y == -999 || (bincurrY) < binleftY_y ){
+	  if(binleftY_y == conv::kBadResult || (bincurrY) < binleftY_y ){
 	    binleftY_x = bincurrX;
 	    binleftY_y = bincurrY;
 	  }
@@ -4426,7 +4556,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 	// Find the most right extreme bin of 1sigma interval along Y
 	double bincont_rightprevY = fhdeltachisq_marg_2D->GetBinContent(bincurrX,bincurrY-1); // must be on the left of bincurr
 	if(bincont>=CritChisq_2D && bincont_rightprevY<=CritChisq_2D){
-	  if(binrightY_y == -999 || (bincurrY) > binrightY_y ){
+	  if(binrightY_y == conv::kBadResult || (bincurrY) > binrightY_y ){
 	    binrightY_x = bincurrX;
 	    binrightY_y = bincurrY;
 	  }
@@ -4529,19 +4659,19 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     // If so set left extreme to 1 (first bin of the histogram) and right extreme
     // to Nbins (last bin of the histogram)
     
-    if(binleftX_x == -999){
+    if(binleftX_x == conv::kBadResult){
       binleftX_x = 1;
       binleftX_y = bin_bf1;
     }
-    if(binrightX_x == -999){
+    if(binrightX_x == conv::kBadResult){
       binrightX_x = fhdeltachisq_marg_2D->GetNbinsX();
       binrightX_y = bin_bf1;
     }
-    if(binleftY_y == -999){
+    if(binleftY_y == conv::kBadResult){
       binleftY_x = bin_bf0;
       binleftY_y = 1;
     }
-    if(binrightY_y == -999){
+    if(binrightY_y == conv::kBadResult){
       binrightY_x = bin_bf0;
       binrightY_y = fhdeltachisq_marg_2D->GetNbinsY();
     }
@@ -4570,10 +4700,14 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 
     //
 
-    double valleftX = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x);
-    double valrightX = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x);
-    double valleftY = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y);
-    double valrightY = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y);
+    // double valleftX = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x);
+    // double valrightX = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x);
+    // double valleftY = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y);
+    // double valrightY = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y);
+    double valleftX = fhdeltachisq_marg_2D->GetXaxis()->GetBinCenter(binleftX_x);
+    double valrightX = fhdeltachisq_marg_2D->GetXaxis()->GetBinCenter(binrightX_x);
+    double valleftY = fhdeltachisq_marg_2D->GetYaxis()->GetBinCenter(binleftY_y);
+    double valrightY = fhdeltachisq_marg_2D->GetYaxis()->GetBinCenter(binrightY_y);
 
     // cout << endl;
     // cout << "binleftX = " << binleftX_x << endl;
@@ -4590,22 +4724,24 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     // Interpolate between adjacent bins with bincont>2.3 and bincont<2.3
     // Do it independently for X and Y
 
-    double X1 = -999.;
-    double Y1 = -999.;
-    double X2 = -999.;
-    double Y2 = -999.;
-    double Xout_left = -999;
+    double X1 = conv::kBadResult;
+    double Y1 = conv::kBadResult;
+    double X2 = conv::kBadResult;
+    double Y2 = conv::kBadResult;
+    double Xout_left = conv::kBadResult;
 
     // X extrapolation (left extreme). Do it only if 1sigma bin is in the physical region
     if(binleftX_x>1){
-      X1 = -999.;
-      Y1 = -999.;
-      X2 = -999.;
-      Y2 = -999.;
+      X1 = conv::kBadResult;
+      Y1 = conv::kBadResult;
+      X2 = conv::kBadResult;
+      Y2 = conv::kBadResult;
   
-      X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x); // left side
+      //X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x); // left side
+      X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinCenter(binleftX_x); // left side
       Y1 = fhdeltachisq_marg_2D->GetBinContent(binleftX_x,binleftX_y); // left side
-      X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x+1); // right side
+      //X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binleftX_x+1); // right side
+      X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinCenter(binleftX_x+1); // right side
       Y2 = fhdeltachisq_marg_2D->GetBinContent(binleftX_x+1,binleftX_y); // right side
       Xout_left = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
     }
@@ -4620,16 +4756,18 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     cout << " --> Xout_left = " << Xout_left << endl;
 
     // X extrapolation (right extreme). Do it only if 1sigma bin is in the physical region
-    double Xout_right = -999;
+    double Xout_right = conv::kBadResult;
     if(binrightX_x < fhdeltachisq_marg_2D->GetNbinsX()){
-      X1 = -999.;
-      Y1 = -999.;
-      X2 = -999.;
-      Y2 = -999.;
+      X1 = conv::kBadResult;
+      Y1 = conv::kBadResult;
+      X2 = conv::kBadResult;
+      Y2 = conv::kBadResult;
 
-      X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x-1); // left side
+      //X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x-1); // left side
+      X1 = fhdeltachisq_marg_2D->GetXaxis()->GetBinCenter(binrightX_x-1); // left side
       Y1 = fhdeltachisq_marg_2D->GetBinContent(binrightX_x-1,binrightX_y); // left side
-      X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x); // right side
+      //X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinLowEdge(binrightX_x); // right side
+      X2 = fhdeltachisq_marg_2D->GetXaxis()->GetBinCenter(binrightX_x); // right side
       Y2 = fhdeltachisq_marg_2D->GetBinContent(binrightX_x,binrightX_y); // right side
       Xout_right = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
     }
@@ -4644,16 +4782,18 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     cout << " --> Xout_right = " << Xout_right << endl;
     
     // Y extrapolation (left extreme, down). Do it only if 1sigma bin is in the physical region
-    double Yout_left = -999;
+    double Yout_left = conv::kBadResult;
     if(binleftY_y > 1){
-      X1 = -999.;
-      Y1 = -999.;
-      X2 = -999.;
-      Y2 = -999.;
+      X1 = conv::kBadResult;
+      Y1 = conv::kBadResult;
+      X2 = conv::kBadResult;
+      Y2 = conv::kBadResult;
 
-      X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y); // left side
+      //X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y); // left side
+      X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinCenter(binleftY_y); // left side
       Y1 = fhdeltachisq_marg_2D->GetBinContent(binleftY_x,binleftY_y); // left side
-      X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y+1); // right side
+      //X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binleftY_y+1); // right side
+      X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinCenter(binleftY_y+1); // right side
       Y2 = fhdeltachisq_marg_2D->GetBinContent(binleftY_x,binleftY_y+1); // right side
       Yout_left = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
     }
@@ -4668,16 +4808,18 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     cout << " --> Yout_left = " << Yout_left << endl;
    
     // Y extrapolation (right extreme, up). Do it only if 1sigma bin is in the physical region
-    double Yout_right = -999;
+    double Yout_right = conv::kBadResult;
     if(binrightY_y < fhdeltachisq_marg_2D->GetNbinsY()){
-      X1 = -999.;
-      Y1 = -999.;
-      X2 = -999.;
-      Y2 = -999.;
+      X1 = conv::kBadResult;
+      Y1 = conv::kBadResult;
+      X2 = conv::kBadResult;
+      Y2 = conv::kBadResult;
 
-      X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y-1); // left side
+      //X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y-1); // left side
+      X1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinCenter(binrightY_y-1); // left side
       Y1 = fhdeltachisq_marg_2D->GetBinContent(binrightY_x,binrightY_y-1); // left side
-      X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y); // right side
+      //X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinLowEdge(binrightY_y); // right side
+      X2 = fhdeltachisq_marg_2D->GetYaxis()->GetBinCenter(binrightY_y); // right side
       Y2 = fhdeltachisq_marg_2D->GetBinContent(binrightY_x,binrightY_y); // right side
       Yout_right = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_2D);
     }
@@ -4711,7 +4853,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 //________________________________________________________________________________________
 void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bool readbinary){
 
-  double error = -999.;
+  double error = conv::kBadResult;
   const double CritChisq_1D = 1.;
   const double CritChisq_2D = 2.3;
   const int Nh = 1.;
@@ -4732,12 +4874,13 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
     // 1D discrete deriv: d2X^2/dx^2 = [ X^2(xbf+h) - 2X^2(xbf) + X^2(xbf-h) ] / h^2
  
-    int bin_bf = -999;
-    double chisq_bf = -999;
-    double chisq_minus = -999;
-    double chisq_plus = -999;
+    int bin_bf = conv::kBadResult;
+    double chisq_bf = conv::kBadResult;
+    double chisq_minus = conv::kBadResult;
+    double chisq_plus = conv::kBadResult;
     
-    bin_bf = fhdeltachisq_marg_1D->FindBin(fparam_bf[0]+conv::kASmallNum);    
+    //bin_bf = fhdeltachisq_marg_1D->FindBin(fparam_bf[0]+conv::kASmallNum);    
+    bin_bf = fhdeltachisq_marg_1D->FindBin(fparam_bf[0]);    
     chisq_bf = fhdeltachisq_marg_1D->GetBinContent(bin_bf); // X^2(xbf) 
  
     // If best-fit is on the border, assume the chisq to be symmetric around the minimum
@@ -4780,7 +4923,7 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     // xerr = TMath::Max(xerr_p1sigma,xerr_m1sigma);
     
     fparam_bf_errsym[0] = xerr; // symmetric error
-    fparam_bf_errsym[1] = -999; 
+    fparam_bf_errsym[1] = conv::kBadResult; 
   }
 
   // 2D HESSE error
@@ -4799,25 +4942,27 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     // 2C = d^2 X^2 / dx0dx1
     //
 
-    int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
-    int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
+    // int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kASmallNum);    
+    // int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kASmallNum);
+    int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]);    
+    int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]);
     double chisq_bf = fhdeltachisq_marg_2D->GetBinContent(bin_bf0,bin_bf1);     // X^2( x0bf, x1bf ) 
 
     double h0 = fhdeltachisq_marg_2D->GetXaxis()->GetBinWidth(bin_bf0) * (double)Nh;    
     double h1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinWidth(bin_bf1) * (double)Nh;    
 
-    double chisq_minus0 = -999;
-    double chisq_plus0 = -999;
-    double chisq_minus1 = -999;
-    double chisq_plus1 = -999;
-    double chisq_minus01 = -999;
-    double chisq_plus01 = -999;
-    double chisq_plus0_minus1 = -999;
-    double chisq_minus0_plus1 = -999;
+    double chisq_minus0 = conv::kBadResult;
+    double chisq_plus0 = conv::kBadResult;
+    double chisq_minus1 = conv::kBadResult;
+    double chisq_plus1 = conv::kBadResult;
+    double chisq_minus01 = conv::kBadResult;
+    double chisq_plus01 = conv::kBadResult;
+    double chisq_plus0_minus1 = conv::kBadResult;
+    double chisq_minus0_plus1 = conv::kBadResult;
 
-    double deriv2nd_0 = -999;
-    double deriv2nd_1 = -999;
-    double deriv2nd_01 = -999;
+    double deriv2nd_0 = conv::kBadResult;
+    double deriv2nd_1 = conv::kBadResult;
+    double deriv2nd_01 = conv::kBadResult;
 
     //
     // Treat cases when the best-fit is on the physical boundary. 
@@ -4899,9 +5044,9 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
       chisq_plus1 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0,    bin_bf1+Nh);        // X^2( x0bf   , x1bf+h1 )
       chisq_minus1 = chisq_plus1;   // symmetric                                           // X^2( x0bf   , x1bf-h1 )
 
-      // Set to -999 bins when also its symmetric is in the unphysical region
-      chisq_plus0_minus1 = -999.;  // X^2( x0bf+h0, x1bf-h1 )
-      chisq_minus0_plus1 = -999.;  // X^2( x0bf-h0, x1bf+h1 )
+      // Set to conv::kBadResult bins when also its symmetric is in the unphysical region
+      chisq_plus0_minus1 = conv::kBadResult;  // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus0_plus1 = conv::kBadResult;  // X^2( x0bf-h0, x1bf+h1 )
       
       // Both X^2( x0bf+h0, x0bf-h1 ) and X^2( x0bf-h0, x0bf+h1 ), which are symmetric, 
       // are in the unphysical region and cannot be used
@@ -4919,9 +5064,9 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
       chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
       chisq_plus1 = chisq_minus1;              // symmetric                                // X^2( x0bf   , x1bf+h1 )
  
-      // Set to -999 bins when also its symmetric is in the unphysical region
-      chisq_minus01 = -999.;  // X^2( x0bf-h0, x1bf-h1 )
-      chisq_plus01 = -999.;   // X^2( x0bf+h0, x1bf+h1 )
+      // Set to conv::kBadResult bins when also its symmetric is in the unphysical region
+      chisq_minus01 = conv::kBadResult;  // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus01 = conv::kBadResult;   // X^2( x0bf+h0, x1bf+h1 )
 
       // Both X^2( x0bf-h0, x0bf-h1 ) and X^2( x0bf+h0, x0bf+h1 ), which are symmetric, 
       // are in the unphysical region and cannot be used
@@ -4939,9 +5084,9 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
       chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
       chisq_plus1 = chisq_minus1;   // symmetric                                           // X^2( x0bf   , x1bf+h1 )      
 
-      // Set to -999 bins when also its symmetric is in the unphysical region
-      chisq_plus0_minus1 = -999.;  // X^2( x0bf+h0, x1bf-h1 )
-      chisq_minus0_plus1 = -999;  // X^2( x0bf-h0, x1bf+h1 )
+      // Set to conv::kBadResult bins when also its symmetric is in the unphysical region
+      chisq_plus0_minus1 = conv::kBadResult;  // X^2( x0bf+h0, x1bf-h1 )
+      chisq_minus0_plus1 = conv::kBadResult;  // X^2( x0bf-h0, x1bf+h1 )
 
       // Both X^2( x0bf+h0, x0bf-h1 ) and X^2( x0bf-h0, x0bf+h1 ), which are symmetric, 
       // are in the unphysical region and cannot be used
@@ -4959,9 +5104,9 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
       chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);           // X^2( x0bf-h0, x1bf    )
       chisq_plus0 = chisq_minus0;              // symmetric                                // X^2( x0bf+h0, x1bf    )
 
-      // Set to -999 bins when also its symmetric is in the unphysical region
-      chisq_minus01 = -999.;        // X^2( x0bf-h0, x1bf-h1 )
-      chisq_plus01 = -999.;        // X^2( x0bf+h0, x1bf+h1 )
+      // Set to conv::kBadResult bins when also its symmetric is in the unphysical region
+      chisq_minus01 = conv::kBadResult;        // X^2( x0bf-h0, x1bf-h1 )
+      chisq_plus01 = conv::kBadResult;        // X^2( x0bf+h0, x1bf+h1 )
 
       // Both X^2( x0bf-h0, x0bf-h1 ) and X^2( x0bf+h0, x0bf+h1 ), which are symmetric, 
       // are in the unphysical region and cannot be used
@@ -5138,5 +5283,5 @@ double FitMarginalization::OscPhysicalRegion(conv::PhysParamId_t p,double oscval
     exit(1);
   }
   
-  return -999;
+  return conv::kBadResult;
 }

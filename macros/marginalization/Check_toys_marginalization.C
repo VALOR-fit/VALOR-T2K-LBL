@@ -37,11 +37,11 @@ void Check_toys_marginalization
  //const char * config_file          = "analysis_configuration_1.7E20.xml",   /* analysis configuration file */
  
  //const char * fit_param_list       = "nuosc3fbar_fixnonbar_fix5+nuisance",
- const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
  //const char * fit_param_list      = "nuosc3fbar_numudisapp_constrainall+nuisance",
- //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
  
- const int    NtoysMarg            = 1000,   // # toys marginalization
+ const int    NtoysMarg            = 100,   // # toys marginalization
  
  const char * freeparname0        = "mixing23Bar",  // free parameter
  const double freeparmin0         = 0,              // minimum value of free parameter

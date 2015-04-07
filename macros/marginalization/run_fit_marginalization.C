@@ -31,12 +31,13 @@ void run_fit_marginalization
 
  const char * tag                      = "toyexptmarg",    /* tag for output file */
  int          run                      = 0,                /* run number */
- int          first_experiment         = 1,                       /* */
- int          last_experiment          = 1,                       /* */
+ int          first_experiment         = 5,                       /* */
+ int          last_experiment          = 5,                       /* */
 
  //const char * xmlfile        = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",  
- const char * xmlfile        = "toymc/toymc_nueapp-0.xml",  
- 
+ //const char * xmlfile        = "toymc/toymc_nueapp-0.xml",  
+ const char * xmlfile        = "toymc/toymc_numudisap-0.xml",  
+
  bool         using_xml_file           = true,
  bool         dotoys                   = false,
  
@@ -54,9 +55,9 @@ void run_fit_marginalization
  double       input_dm12sq_bar         = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq_bar         = -99, //-99, //2.7E-3, //2.32E-3,                             /* |Dm^2_{23}| */
 
- //const char * config_file              = "analysis_configuration_1.7E20_prefit.xml",  
- //const char * config_file              = "analysis_configuration_1.7E20.xml",  
- const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
+ //const char * config_file              = "analysis_configuration_2.5E20_prefit.xml",  
+ const char * config_file              = "analysis_configuration_2.5E20.xml",  
+ //const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  
  bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 1,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
@@ -87,10 +88,10 @@ void run_fit_marginalization
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const bool   readtoys             = false,
+ const bool   readtoys             = true,
 
  //////////////////// Parameter for chisq minimization //////////////////////
- const bool   minimizeHisto        = true, // if not all the chisq histo is filled
+ const bool   minimizeHisto        = false, // if not all the chisq histo is filled
  const int    MaxIterFit           = 2, 
  const int    MaxNfit              = 3,
  
@@ -125,35 +126,35 @@ void run_fit_marginalization
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
  
- const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit_Merged",
+ //const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit_Merged",
  //const char * infilename           = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
- //const char * infilename           = "PROVA_Merged",
- //const char * infilename           = "PROVA",
+ //const char * infilename           = "submit_mixing23Vsdmsq_2p5E20_postfit",
+ const char * infilename           = "submit_mixing23_2p5E20_postfit",
 
  const int    nfiles               = 1,         // # of files to read
  //const int    nfiles               = 11,         // # of files to read
- //const int    nfiles               = 22, //2, //1, //22,         // # of files to read
+ //const int    nfiles               = 20, //2, //1, //22,         // # of files to read
 
  const int    NtoysMarg            = 1,   // # toys marginalization 
  
- //const char * freeparname0        = "mixing23Bar",  // free parameter
- //const double freeparmin0         = 0.,              // minimum value of free parameter
- //const double freeparmax0         = 1.,            // maxinum value of free parameter
- //const int    NptScan0            = 21, //2, //21,        // # pts of free parameter to scan
- const char * freeparname0        = "mixing13Bar",  // free parameter
+ const char * freeparname0        = "mixing23Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
- const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
- const int    NptScan0            = 21, //2, //21,        // # pts of free parameter to scan
+ const double freeparmax0         = 1.,            // maxinum value of free parameter
+ const int    NptScan0            = 201, //2, //21,        // # pts of free parameter to scan
+ //const char * freeparname0        = "mixing13Bar",  // free parameter
+ //const double freeparmin0         = 0.,              // minimum value of free parameter
+ //const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
+ //const int    NptScan0            = 201, //2, //21,        // # pts of free parameter to scan
  
- //const char * freeparname1        = "",  // free parameter
- const char * freeparname1        = "deltacpBar",  // free parameter
- const double freeparmin1         = -3.14159265358979312e+00, // minimum value of free parameter
- const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
- const int    NptScan1            = 21, //21,      // # pts of free parameter to scan
+ const char * freeparname1        = "",  // free parameter
+ //const char * freeparname1        = "deltacpBar",  // free parameter
+ //const double freeparmin1         = -3.14159265358979312e+00, // min val of free parameter
+ //const double freeparmax1         = +3.14159265358979312e+00, // max val of free parameter
+ //const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
  //const char * freeparname1        = "dmsq23Bar",  // free parameter
- //const double freeparmin1         = 0.0002, // minimum value of free parameter
- //const double freeparmax1         = 0.02, // maxinum value of free parameter
- //const int    NptScan1            = 21, //21,      // # pts of free parameter to scan
+ const double freeparmin1         = 0.0002, // minimum value of free parameter
+ const double freeparmax1         = 0.02, // maxinum value of free parameter
+ const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = true    // marginalize Mass Hierarchy
 )
@@ -749,8 +750,7 @@ void run_fit_marginalization
 	    //   fitmarg->SetMinimUncorrXY(doUncorrXY);
 	    //   fitmarg->MinimizeChisqInterval(skobs_fakedata);      
 	  } // if strategy
-
-
+	  
 	} // if minimizeHisto
 
 	// Get true marginalized chisq if included in the sub-range
