@@ -86,8 +86,8 @@ foreach (@ARGV) {
 $resource        = "interactive"               unless defined $resource;
 $tag             = "fitmarg_sin2th13"          unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
-$nexpts          = 2                           unless defined $nexpts;  # number of toy experiments per job 
-$xml_file         = "toymc/toymc_numubardisap_fixosc_rethrowunphysical_2p5E20POT-0.xml" unless defined $xml_file;
+$nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job 
+$xml_file         = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml" unless defined $xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
 
@@ -114,14 +114,11 @@ $config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined 
 $tweak_systematics      = 1                    unless defined $tweak_systematics;
 $stat_fluct             = 1                    unless defined $stat_fluct;
 
-#$fitparamlist   = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;
-#$fitparamlist   = "nuosc3f_12fix"                    unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_fixnonbar_12fix"       unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_fixnonbar_12fix+nuisance"       unless defined $fitparamlist;
 #$fitparamlist    = "nuosc3fbar_fixnonbar_fix5"       unless defined $fitparamlist;
-$fitparamlist   = "nuosc3fbar_fixnonbar_fix5+nuisance"       unless defined $fitparamlist;
-#$fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4"       unless defined $fitparamlist;
-#$fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
+#$fitparamlist   = "nuosc3fbar_fixnonbar_fix5+nuisance"       unless defined $fitparamlist;
+$fitparamlist   = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
 
 $dmsqscheme             = "abs23"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
@@ -130,10 +127,11 @@ $mixparamchoice         = "sinsqtheta"           unless defined $mixparamchoice;
 
 #### marginalization
 
-$marg_file         = "../../inputs/marginalization/toys/numudisap_1D_2p5E20POT_fixosc_10toys/submit_mixing23_2p5E20_10toys_fixosc_postfit"  unless defined $marg_file;
+#$marg_file         = "../../inputs/marginalization/toys/numudisap_1D_2p5E20POT_fixosc_10toys/submit_mixing23_2p5E20_10toys_fixosc_postfit"  unless defined $marg_file;
+$marg_file         = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit" unless defined $marg_file;
 
 $nfiles_marg       = 201           unless defined $nfiles_marg;     # of marginalization files
-$nexpts_marg       = 10            unless defined $nexpts_marg;    # of marginalization toys 
+$nexpts_marg       = 10000         unless defined $nexpts_marg;    # of marginalization toys 
 
 $freepar0          = "mixing13Bar" unless defined $freepar0;
 $minfreepar0       = 0             unless defined $minfreepar0;  # Min free param allowed value
@@ -187,9 +185,7 @@ while($irun < $nruns) {
     
     $program = "root2k ";
         
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_sin2th23.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12bar,$mix13bar,$mix23bar,$deltacpbar,$dm12sqbar,$dm23sqbar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq)\'";
-
-    #$arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_sin2th23Vsdmsq.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12bar,$mix13bar,$mix23bar,$deltacpbar,$dm12sqbar,$dm23sqbar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq)\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_sin2th13.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12bar,$mix13bar,$mix23bar,$deltacpbar,$dm12sqbar,$dm23sqbar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq)\'";
     
     $command = "$program $arguments";
     print "$command \n";
