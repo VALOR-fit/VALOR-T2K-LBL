@@ -50,13 +50,15 @@ void test_sk_ereco_spectrum_nominal
   bool         print_spectrum       = false,                          /* */
   const char * mixparamchoice       = "sinsqtheta",
   const char * hierarchy            = "normal"   ,
-  bool plot_per_50MeV = true
+  bool plot_per_50MeV = true,
+  bool group_mec_as_ccqe = true
 )
 {
   using namespace std;
   using namespace valor;
   
   const char * plot_format = "eps";
+  double max_energy_for_plots = 6;
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -328,6 +330,7 @@ void test_sk_ereco_spectrum_nominal
   TH1D * hErecoMode_NumuBar_CCnQE = new TH1D("hErecoMode_NumuBar_CCnQE","hErecoMode_NumuBar_CCnQE",nbins,ereco_bin_edges);
   TH1D * hErecoMode_Numu_CC = new TH1D("hErecoMode_Numu_CC","hErecoMode_Numu_CC",nbins,ereco_bin_edges);
   TH1D * hErecoMode_NueNueBar_CC = new TH1D("hErecoMode_NueNueBar_CC","hErecoMode_NueNueBar_CC",nbins,ereco_bin_edges);
+  TH1D * hErecoMode_NumuBar_MEC = new TH1D("hErecoMode_NumuBar_MEC","hErecoMode_NumuBar_MEC",nbins,ereco_bin_edges);
 
   // flavor only
   TH1D * hErecoFlav_Numu = new TH1D("hErecoFlav_Numu","hErecoFlav_Numu",nbins,ereco_bin_edges);
@@ -382,16 +385,23 @@ void test_sk_ereco_spectrum_nominal
     if(util::IsNC(m))
       hErecoMode_NC->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NC
     else if(util::IsNuMuBar(m) || util::IsOscNuMuBar(m)){
-      if(util::IsCCQE(m) || util::IsMEC(m))
-	hErecoMode_NumuBar_CCQE->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NumuBar CCQE/MEC
-      else if(util::IsCCnQE(m))
-	hErecoMode_NumuBar_CCnQE->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NumuBar CCnQE
+      if(util::IsCCQE(m)) {
+        hErecoMode_NumuBar_CCQE->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NumuBar CCQE/MEC
+      }
+      else if(util::IsMEC(m)) {
+        if (group_mec_as_ccqe) {hErecoMode_NumuBar_CCQE->Add(skexp.CurrPredictedErecoSpectrum(s,m));}
+        else {hErecoMode_NumuBar_MEC->Add(skexp.CurrPredictedErecoSpectrum(s,m));}
+      }
+      else if(util::IsCCnQE(m)) {
+        hErecoMode_NumuBar_CCnQE->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NumuBar CCnQE
+      }
     }
-    else if(util::IsNuMu(m) || util::IsOscNuMu(m))
+    else if(util::IsNuMu(m) || util::IsOscNuMu(m)) {
       hErecoMode_Numu_CC->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // Numu CC
-    else if(util::IsNuEBar(m) || util::IsNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuE(m))
+    }
+    else if(util::IsNuEBar(m) || util::IsNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuE(m)){
       hErecoMode_NueNueBar_CC->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // Nue/NueBar CC
-    
+    }
     else{
       cout << modestr << endl;
       cout << "No mode / flavors are selected!!!" << endl;
@@ -406,6 +416,7 @@ void test_sk_ereco_spectrum_nominal
     hErecoMode_NumuBar_CCnQE = spectrum_to_per_50mev(hErecoMode_NumuBar_CCnQE); 
     hErecoMode_Numu_CC = spectrum_to_per_50mev(hErecoMode_Numu_CC); 
     hErecoMode_NueNueBar_CC = spectrum_to_per_50mev(hErecoMode_NueNueBar_CC); 
+    if (!group_mec_as_ccqe) {    hErecoMode_NumuBar_MEC = spectrum_to_per_50mev(hErecoMode_NumuBar_MEC); }
   }
 
   hErecoMode_NC->SetFillStyle(1001);
@@ -416,8 +427,14 @@ void test_sk_ereco_spectrum_nominal
   hErecoMode_NumuBar_CCQE->SetLineColor(kBlack);
   hErecoMode_NumuBar_CCQE->SetLineWidth(2);
   //hErecoMode_NumuBar_CCQE->SetFillColor(kWhite);
+  
+  hErecoMode_NumuBar_MEC->SetFillStyle(3004);
+  hErecoMode_NumuBar_MEC->SetLineColor(kBlack);
+  hErecoMode_NumuBar_MEC->SetLineWidth(2);
+  hErecoMode_NumuBar_MEC->SetFillColor(kGray+3);
+  //hErecoMode_NumuBar_MEC->SetFillColor(kWhite);
 
-  hErecoMode_NumuBar_CCnQE->SetFillStyle(3004);
+  hErecoMode_NumuBar_CCnQE->SetFillStyle(3001);
   hErecoMode_NumuBar_CCnQE->SetLineColor(kGray+3);
   hErecoMode_NumuBar_CCnQE->SetLineWidth(2.);
   hErecoMode_NumuBar_CCnQE->SetFillColor(kGray+3);
@@ -449,12 +466,13 @@ void test_sk_ereco_spectrum_nominal
   sErecoTotFlavMode->Add(hErecoMode_NueNueBar_CC);
   sErecoTotFlavMode->Add(hErecoMode_Numu_CC);
   sErecoTotFlavMode->Add(hErecoMode_NumuBar_CCnQE);
+  if (!group_mec_as_ccqe) {sErecoTotFlavMode->Add(hErecoMode_NumuBar_MEC);}
   sErecoTotFlavMode->Add(hErecoMode_NumuBar_CCQE);
 
   TCanvas *cErecoTotFlavMode = new TCanvas("cErecoTotFlavMode","cErecoTotFlavMode");
   sErecoTotFlavMode->Draw();
-  if (hErecoMode_NC->GetXaxis()->GetXmax() > 7) {
-    sErecoTotFlavMode->GetXaxis()->SetRangeUser(0,7);
+  if (hErecoMode_NC->GetXaxis()->GetXmax() > max_energy_for_plots) {
+    sErecoTotFlavMode->GetXaxis()->SetRangeUser(0,max_energy_for_plots);
   }
   sErecoTotFlavMode->Draw();
   sErecoTotFlavMode->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -469,11 +487,15 @@ void test_sk_ereco_spectrum_nominal
   leg->SetBorderSize(0);
   leg->AddEntry(hErecoMode_NumuBar_CCQE,"1 #bar{#mu}-like (Total)","L");
   leg->AddEntry(hErecoMode_NumuBar_CCQE,"1 #bar{#mu}-like (#bar{#nu}_{#mu} CCQE)","F");
+  if (!group_mec_as_ccqe) { leg->AddEntry(hErecoMode_NumuBar_MEC,"1 #bar{#mu}-like (#bar{#nu}_{#mu} MEC)","F"); }
   leg->AddEntry(hErecoMode_NumuBar_CCnQE,"1 #bar{#mu}-like (#bar{#nu}_{#mu} CCnQE)","F");
-  leg->AddEntry(hErecoMode_Numu_CC,"1 #bar{#mu}-like (#nu_{#mu} CC","F");
+  leg->AddEntry(hErecoMode_Numu_CC,"1 #bar{#mu}-like (#nu_{#mu} CC)","F");
   leg->AddEntry(hErecoMode_NueNueBar_CC,"1 #bar{#mu}-like (#nu_{e},#bar{#nu_{e}} CC)","F");
   leg->AddEntry(hErecoMode_NC,"1 #bar{#mu}-like (NC)","F");
   leg->Draw();
+  
+  cErecoTotFlavMode->Update();
+  cErecoTotFlavMode->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s_grouped.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
 
   // // Draw Histo by flavor
 
@@ -527,7 +549,7 @@ void test_sk_ereco_spectrum_nominal
   TLegend * legend = new TLegend(0.6, 0.4, 0.9, 0.9);
   legend->SetFillColor(0);
   legend->SetBorderSize(0);
-  hErecoTot_draw->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
+  hErecoTot_draw->GetXaxis()->SetRangeUser(0,max_energy_for_plots-conv::kOneMeV);
   hErecoTot_draw->Draw();
   THStack * stack = new THStack("stack","spectrum contributions");
   // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
@@ -548,7 +570,7 @@ void test_sk_ereco_spectrum_nominal
   legend->Draw();
   c->Update();
   c->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
-  hErecoTot_draw->GetXaxis()->UnZoom();
+  //hErecoTot_draw->GetXaxis()->UnZoom();
 
   //draw coarse binned histograms
   TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);
@@ -556,7 +578,7 @@ void test_sk_ereco_spectrum_nominal
   legend_coarse->SetName("legend_coarse");
   legend_coarse->SetFillColor(0);
   legend_coarse->SetBorderSize(0);
-  hErecoTot_draw_coarse->GetXaxis()->SetRangeUser(0,7-conv::kASmallNum);
+  hErecoTot_draw_coarse->GetXaxis()->SetRangeUser(0,max_energy_for_plots-conv::kASmallNum);
   hErecoTot_draw_coarse->Draw();
   THStack * stack_coarse = new THStack("stack_coarse","spectrum contributions");
   // Get spectrum of each component mode as defined in kSKReactionModesOrderInStack array
