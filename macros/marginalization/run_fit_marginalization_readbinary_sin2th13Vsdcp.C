@@ -634,13 +634,10 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     fitmarg->SetTagFileName(infilename);
     fitmarg->SetFileID(nfiles);
     
-    //double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinLowEdge(2);
-    //double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(2);
     double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
     double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
     
     int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
-    //double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(nbinsY);
     double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
 
     
@@ -700,7 +697,6 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     cout << "/////////////// Fit 3 (mixing13>0, start dcp = 0.) ////////////////" << endl;
 
     int bindcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->FindBin(0.);
-    //double valdcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(bindcp0_Y);
     double valdcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(bindcp0_Y);
     double binwidth = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinWidth(1);
     fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),+TMath::Pi(),true);
@@ -888,7 +884,8 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
     }
     cout << endl;
     cout << "# of calls of CalcChisqMargPt(): " 
-	 << fitmarg->GetNCallsCalcChisqMargPt() << endl;
+	 << nchisqcalls << endl;
+    //<< fitmarg->GetNCallsCalcChisqMargPt() << endl;
     cout << endl;
     cout << "Chisq True = " << chisqtrue << endl;
     cout << endl;

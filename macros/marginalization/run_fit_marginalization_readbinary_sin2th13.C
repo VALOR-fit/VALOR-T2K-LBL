@@ -35,16 +35,16 @@ void run_fit_marginalization_readbinary_sin2th13
  //int          last_experiment          = 3449,                       /* */
  //int          first_experiment         = 3482,                       /* */
  //int          last_experiment          = 3482,                       /* */
- //int          first_experiment         = 0,                       /* */
- //int          last_experiment          = 3500,                       /* */
+ int          first_experiment         = 0,                       /* */
+ int          last_experiment          = 3500,                       /* */
  //int          first_experiment         = 1611,                       /* */
  //int          last_experiment          = 1611,                       /* */
- int          first_experiment         = 10,                       /* */
- int          last_experiment          = 10,                       /* */
+ //int          first_experiment         = 10,                       /* */
+ //int          last_experiment          = 10,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
- bool         dotoys                   = true,
+ bool         dotoys                   = false,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -62,10 +62,11 @@ void run_fit_marginalization_readbinary_sin2th13
 
  const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  
- bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
- int          tweak_systematics        = 1,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
+ bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
+ int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
- const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ const char * fit_param_list           = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
  //const char * fit_param_list           = "nuosc3fbar_fixnonbar_12fix+nuisance",
 
  const char * dmsqscheme               = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -74,10 +75,15 @@ void run_fit_marginalization_readbinary_sin2th13
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_10toys/submit_mixing13_4p0E20_postfit",
- const int    nfiles               = 1,         // # of files to read
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_10toys/submit_mixing13_4p0E20_postfit",
+ const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys/submit_mixing13_4p0E20_postfit",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit_Merged",
 
- const int    NtoysMarg            = 10,   // # toys marginalization 
+ const int    nfiles               = 201,         // # of files to read
+ //const int    nfiles               = 1,         // # of files to read
+
+ const int    NtoysMarg            = 10000,   // # toys marginalization 
  
  const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
@@ -87,12 +93,12 @@ void run_fit_marginalization_readbinary_sin2th13
  const char * freeparname1        = "",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00, // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
- const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
+ const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
- const TString TypeError          = "HESSE-MINOS",  // HESSE, MINOS (contained by the string)  
- const bool DrawFullChisq         = true
+ const TString TypeError          = "HESSE",  // HESSE, MINOS (contained by the string)  
+ const bool DrawFullChisq         = false
 )
 {
 
@@ -620,13 +626,10 @@ void run_fit_marginalization_readbinary_sin2th13
     fitmarg->SetTagFileName(infilename);
     fitmarg->SetFileID(nfiles);
     
-    //double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinLowEdge(2);
-    //double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(2);
     double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
     double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
 
     int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
-    //double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinLowEdge(nbinsY);
     double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
 
     
@@ -666,7 +669,6 @@ void run_fit_marginalization_readbinary_sin2th13
     fitmarg->SetChisqBestFit(chisqmin);
     fitmarg->SetParamBestFit(0,bestfit0);
     if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
-
 
     //
     // Get fit errors
@@ -755,9 +757,16 @@ void run_fit_marginalization_readbinary_sin2th13
     }
     cout << endl;
     cout << "# of calls of CalcChisqMargPt(): " 
-	 << fitmarg->GetNCallsCalcChisqMargPt() << endl;
+	 << nchisqcalls << endl;
+    //<< fitmarg->GetNCallsCalcChisqMargPt() << endl;
     cout << endl;
     cout << "Chisq True = " << chisqtrue << endl;
+    cout << endl;
+    cout << "Minimum of full Chisq histogram:" << endl;
+    cout << "  - chisqmin = " << chisqminFullChisq << endl; 
+    cout << "  - bestfit0 = " << bestfitFullChisq0 << endl; 
+    if(fitmarg->IsFit2D())
+      cout << "  - bestfit1 = " << bestfitFullChisq1 << endl; 
     cout << endl;
 
      

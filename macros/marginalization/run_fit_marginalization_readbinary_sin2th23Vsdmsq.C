@@ -783,7 +783,8 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
     }
     cout << endl;
     cout << "# of calls of CalcChisqMargPt(): " 
-	 << fitmarg->GetNCallsCalcChisqMargPt() << endl;
+	 << nchisqcalls << endl;
+    //<< fitmarg->GetNCallsCalcChisqMargPt() << endl;
     cout << endl;
     cout << "Chisq True = " << chisqtrue << endl;
     cout << endl;
