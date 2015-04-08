@@ -80,7 +80,8 @@ void run_fit_xml_toys_joint_bar
  //const char *optfixpar         = "mixing12, mixing13, mixing23, dmsq12, deltacp"  // list of the params to be fixed in the fit   
  //const char *optfixpar         = "mixing12, mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
  
- bool rethrow_if_parameters_unphysical = true
+ bool rethrow_if_parameters_unphysical = true,
+ bool goodness_of_fit_binning = false
 )
 {
   using namespace std;
@@ -622,6 +623,7 @@ void run_fit_xml_toys_joint_bar
 
     // Get fitter
     FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);
+    fit_inputs->SetChisqDefinition(goodness_of_fit_binning);
     FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
 
     // Set SF Initial value to 0
@@ -707,6 +709,7 @@ void run_fit_xml_toys_joint_bar
 
       // Get fitter
       FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
+      fit_inputs2->SetChisqDefinition(goodness_of_fit_binning);
       FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
       fitter2->SetTol(tolerance);
       fitter2->DoTheFit();
