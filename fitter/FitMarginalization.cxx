@@ -7,9 +7,9 @@
 //________________________________________________________________________________________
 
 //#define __print_build_map_fileid__
-#define __print_array_toy_maketoys__
+//#define __print_array_toy_maketoys__
 //#define __print_minimization_steps__ //
-#define __print_array_toy_fillchisq__
+//#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_masshierarchy__
 //#define __print_systematic_variations__
