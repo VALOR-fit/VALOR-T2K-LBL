@@ -1861,7 +1861,9 @@ void FitMarginalization::SetMargOscParam(){
     //cout << "Marginalize " << util::AsString(p) << " --> " << currval << endl;
 
     // Update current values of parameters 
-    fparm->Update(p,currval); 
+    //fparm->Update(p,currval);
+    fparm->SetInitValue(p,currval);
+    
   }
 }
 //________________________________________________________________________________________
