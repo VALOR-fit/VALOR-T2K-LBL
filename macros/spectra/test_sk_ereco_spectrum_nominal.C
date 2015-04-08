@@ -51,7 +51,8 @@ void test_sk_ereco_spectrum_nominal
   const char * mixparamchoice       = "sinsqtheta",
   const char * hierarchy            = "normal"   ,
   bool plot_per_50MeV = true,
-  bool group_mec_as_ccqe = true
+  bool group_mec_as_ccqe = true,
+  bool print_total_events_on_plot = false
 )
 {
   using namespace std;
@@ -224,6 +225,13 @@ void test_sk_ereco_spectrum_nominal
   }
 
 
+  // Make a pave to draw the event count.
+  TPaveText * events_count_pave = new TPaveText(0.3, 0.75, 0.6, 0.85,"ndc");
+  events_count_pave->AddText(Form("Total events: %.2lf",ntot));
+  events_count_pave->SetShadowColor(0);
+  events_count_pave->SetFillColor(0);
+  events_count_pave->SetFillStyle(0);
+  events_count_pave->SetLineColor(0);
  
 
   //combine modes
@@ -494,8 +502,10 @@ void test_sk_ereco_spectrum_nominal
   leg->AddEntry(hErecoMode_NC,"1 #bar{#mu}-like (NC)","F");
   leg->Draw();
   
+  if(print_total_events_on_plot) {events_count_pave->Draw();}
+  
   cErecoTotFlavMode->Update();
-  cErecoTotFlavMode->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s_grouped.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
+  cErecoTotFlavMode->SaveAs(Form("sk_ereco_spectrum_%s_%s_%f_%f%s_grouped.%s",sk_sample,input_mixing23,tag, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
 
   // // Draw Histo by flavor
 
@@ -568,8 +578,9 @@ void test_sk_ereco_spectrum_nominal
     legend->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
   }
   legend->Draw();
+  if(print_total_events_on_plot) {events_count_pave->Draw();}
   c->Update();
-  c->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
+  c->SaveAs(Form("sk_ereco_spectrum_%s_%s_%f_%f%s.%s",sk_sample,input_mixing23,tag, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
   //hErecoTot_draw->GetXaxis()->UnZoom();
 
   //draw coarse binned histograms
@@ -597,8 +608,9 @@ void test_sk_ereco_spectrum_nominal
     legend_coarse->AddEntry(hErecoMode[im], util::AsStringRooTex(s,m).c_str(), "LF");
   }
   legend_coarse->Draw();
+  if(print_total_events_on_plot) {events_count_pave->Draw();}
   c_coarse->Update();
-  c_coarse->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s_coarse.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
+  c_coarse->SaveAs(Form("sk_ereco_spectrum_%s_%s_%f_%f%s_coarse.%s",sk_sample,input_mixing23,tag, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
 
   // get tweaks
   PhysParamList nuisance_params = skexp.Tweaks();
