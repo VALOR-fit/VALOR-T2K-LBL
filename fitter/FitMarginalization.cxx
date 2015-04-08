@@ -6,8 +6,8 @@
 */
 //________________________________________________________________________________________
 
-#define __print_build_map_fileid__
-#define __print_array_toy_maketoys__
+//#define __print_build_map_fileid__
+//#define __print_array_toy_maketoys__
 //#define __print_minimization_steps__ //
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
@@ -1071,8 +1071,8 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
   cout << "fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
   cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1] << endl;
   cout << "fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
-  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+  for(int ipar0=fmin_bin_param[0];ipar0<=fmax_bin_param[0];ipar0++){
+    for(int ipar1=fmin_bin_param[1];ipar1<=fmax_bin_param[1];ipar1++){
       cout << fChisqMargVArray->GetEntry(ipar0,ipar1) << ", ";
     }
   }
