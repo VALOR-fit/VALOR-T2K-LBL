@@ -908,8 +908,10 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 #endif
 	    
 	    // Update the expectation and produce the mock data
-	    fparm->Update(fPhysParamFree[0],currval0); 
-	    if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
+	    // fparm->Update(fPhysParamFree[0],currval0); 
+	    // if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
+	    fparm->SetInitValue(fPhysParamFree[0],currval0); 
+	    if(fIsFit2D) fparm->SetInitValue(fPhysParamFree[1],currval1); 
 
 	    applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
 	    
