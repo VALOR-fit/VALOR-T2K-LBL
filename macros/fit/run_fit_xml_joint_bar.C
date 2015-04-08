@@ -8,7 +8,7 @@
  
 void run_fit_xml_joint_bar
 (
- const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_D.xml",                      /* input XML file Run5-6 fakedata */ 
+ const char * xmlfile = "data.xml",                      /* input XML file Run5-6 fakedata */ 
 
  //const char * xmlfile = "data_newstruct.xml",                                                /* input XML file Run1-4 data */
  //const char * xmlfile = "data_newstruct_rhc.xml",                                         /* input XML file Run1-4 data (used by RHC analysis) */
@@ -23,7 +23,7 @@ void run_fit_xml_joint_bar
  int          first_experiment = 0,                                   /* */
  int          last_experiment  = 0,                                   /* */
  
- const char * config_file      = "analysis_configuration_run1to5_test.xml",        /* analysis configuration file */
+ const char * config_file      = "analysis_configuration_2.315E20.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_test_rhc.xml",        /* analysis configuration file */
   //const char * config_file      = "analysis_configuration_test_multiring.xml",        /* analysis configuration file */
@@ -50,8 +50,9 @@ void run_fit_xml_joint_bar
   bool         reactor             = true,                               /* enable this if you want to apply the reactor constraint */
   double       tolerance           = 0.1,                                 /* value for the fitter tolerance */
 
- TString optfixparams         = "mixing13, dmsq12"  // list of the params to be fixed in the fit   
- //TString optfixparams         = "mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
+ TString optfixparams         = "mixing13, dmsq12",  // list of the params to be fixed in the fit   
+ //TString optfixparams         = "mixing23, dmsq, dmsq12, mixing13, deltacp",  // list of the params to be fixed in the fit
+ bool goodness_of_fit_binning = false
 )
 {
   using namespace std;
@@ -319,6 +320,7 @@ void run_fit_xml_joint_bar
      // Get fitter
      FitInputs * fit_inputs = new FitInputs(skobs,skexp,fparm1);
      FitterABC * fitter = util::GetFitter(fit_inputs,fit_option);
+     fit_inputs->SetChisqDefinition(goodness_of_fit_binning);
 
      // Set SF Initial value to 0
      if(fparm1->Exists(conv::kNuisXSecSpecFunc)){
@@ -387,6 +389,7 @@ void run_fit_xml_joint_bar
        
        // Get fitter
        FitInputs * fit_inputs2 = new FitInputs(skobs,skexp,fparm2);
+       fit_inputs2->SetChisqDefinition(goodness_of_fit_binning);
        FitterABC * fitter2 = util::GetFitter(fit_inputs2,fit_option);
        fitter2->SetTol(tolerance);
        fitter2->DoTheFit();
