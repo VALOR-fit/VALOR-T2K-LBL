@@ -595,7 +595,7 @@ void run_fit_marginalization_readbinary_sin2th23Vsdmsq
     FitMarginalization *fitmarg = new FitMarginalization();   
     fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
     fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
-    fitmarg->Init(); // Before need SetPhysParFree() to initialize the arrays
+    fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
     
     // Set Mass Hierarchy marginalization
     fitmarg->SetMargMassHierarchy(doMargMH); // false by default 

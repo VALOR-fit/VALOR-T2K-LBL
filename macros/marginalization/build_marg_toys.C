@@ -198,7 +198,7 @@ void build_marg_toys
   FitMarginalization *fitmarg = new FitMarginalization();   
   fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
-  fitmarg->Init(); // Before need SetPhysParFree() to initialize the arrays
+  fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
 
 
   // Set fit parameter list

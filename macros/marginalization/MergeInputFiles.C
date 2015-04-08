@@ -23,18 +23,20 @@ void MergeInputFiles(
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
+ //const char * tag                  = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
+ const char * tag                  = "submit_mixing13_4p0E20_postfit",
 
- const int    nfiles               = 11,         // # of files to read
+ const int    nfiles               = 201,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
  //const char * config_file          = "analysis_configuration_1.7E20.xml",   
  const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
 
  //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
- const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
 
- const int    NtoysMarg            = 1,   // # toys marginalization 
+ const int    NtoysMarg            = 10000,   // # toys marginalization 
 
  const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0,              // minimum value of free parameter
@@ -51,7 +53,8 @@ void MergeInputFiles(
  //const char * freeparname1          = "dmsq23Bar",  // free parameter
  //const double freeparmin1           = 0.0002,     // minimum value of free parameter
  //const double freeparmax1           = 0.02,     // maxinum value of free parameter
- const int    NptScan1              = 201,  // # pts of free parameter to scan
+ //const int    NptScan1              = 201,  // # pts of free parameter to scan
+ const int    NptScan1              = 1,  // # pts of free parameter to scan
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
@@ -165,7 +168,7 @@ void MergeInputFiles(
   FitMarginalization *fitmarg = new FitMarginalization();   
   fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
-  fitmarg->Init(); // Before need SetPhysParFree() to initialize the arrays
+  fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
 
   
   // Set fit parameter list

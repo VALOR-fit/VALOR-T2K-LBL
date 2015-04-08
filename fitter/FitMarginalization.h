@@ -83,7 +83,7 @@ class FitMarginalization
   FitMarginalization();
   ~FitMarginalization(void);
 
-  void Init();
+  void Init(SuperkExpectation *skexp);
 
   void CleanUp();
   
@@ -395,7 +395,8 @@ class FitMarginalization
   int fFitStatus; // 1 --> OK, 0 --> it didn't converge
 
   double fPOT[conv::kns]; // POT of each sk sample to print in the output text file with marg toys
-
+  double fNormPOT[conv::kns]; // POT of each sk sample to print in the output text file with marg toys. Normalized to 1E+20
+  
   //
 
 

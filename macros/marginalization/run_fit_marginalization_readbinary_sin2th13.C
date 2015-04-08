@@ -35,16 +35,16 @@ void run_fit_marginalization_readbinary_sin2th13
  //int          last_experiment          = 3449,                       /* */
  //int          first_experiment         = 3482,                       /* */
  //int          last_experiment          = 3482,                       /* */
- int          first_experiment         = 0,                       /* */
- int          last_experiment          = 3500,                       /* */
+ //int          first_experiment         = 0,                       /* */
+ //int          last_experiment          = 3500,                       /* */
  //int          first_experiment         = 1611,                       /* */
  //int          last_experiment          = 1611,                       /* */
- //int          first_experiment         = 10,                       /* */
- //int          last_experiment          = 10,                       /* */
+ int          first_experiment         = 0,                       /* */
+ int          last_experiment          = 0,                       /* */
 
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
- bool         dotoys                   = false,
+ bool         dotoys                   = true,
  
  double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -75,15 +75,18 @@ void run_fit_marginalization_readbinary_sin2th13
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_10toys/submit_mixing13_4p0E20_postfit",
- const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit",
- //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys/submit_mixing13_4p0E20_postfit",
- //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit_Merged",
+ // //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_10toys/submit_mixing13_4p0E20_postfit",
+ // const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit",
+ // //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys/submit_mixing13_4p0E20_postfit",
+ // //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit_Merged",
 
- const int    nfiles               = 201,         // # of files to read
- //const int    nfiles               = 1,         // # of files to read
+ const char * infilename           = "submit_mixing13_4p0E20_postfit_NormPOT",
 
- const int    NtoysMarg            = 10000,   // # toys marginalization 
+ //const int    nfiles               = 201,         // # of files to read
+ const int    nfiles               = 1,         // # of files to read
+
+ const int    NtoysMarg            = 1,   // # toys marginalization 
+ //const int    NtoysMarg            = 10000,   // # toys marginalization 
  
  const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
@@ -97,8 +100,8 @@ void run_fit_marginalization_readbinary_sin2th13
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
- const TString TypeError          = "HESSE",  // HESSE, MINOS (contained by the string)  
- const bool DrawFullChisq         = false
+ const TString TypeError          = "HESSE-MINOS",  // HESSE, MINOS (contained by the string)  
+ const bool DrawFullChisq         = true
 )
 {
 
@@ -608,7 +611,7 @@ void run_fit_marginalization_readbinary_sin2th13
     FitMarginalization *fitmarg = new FitMarginalization();   
     fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
     fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
-    fitmarg->Init(); // Before need SetPhysParFree() to initialize the arrays
+    fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
     
     // Set Mass Hierarchy marginalization
     fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
@@ -702,7 +705,7 @@ void run_fit_marginalization_readbinary_sin2th13
       bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
       if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
       chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
-      //fitmarg->BuildDeltaChisqMarg();
+      fitmarg->BuildDeltaChisqMarg();
     }
 
 
@@ -770,14 +773,14 @@ void run_fit_marginalization_readbinary_sin2th13
     cout << endl;
 
      
-    // TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    // fitmarg->GetChisqMarg1D()->DrawCopy();    
+    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+    fitmarg->GetChisqMarg1D()->DrawCopy();    
     
-    // TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-    // fitmarg->GetChisqStep_1D()->DrawCopy();
+    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+    fitmarg->GetChisqStep_1D()->DrawCopy();
     
-    // TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-    // fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
+    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+    fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
 
     // Clean-up

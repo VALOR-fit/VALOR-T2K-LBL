@@ -14,6 +14,8 @@ using namespace valor::conv;
 
 void analyze_run_fit_marginalization_readbinary
 (
+
+ // Chisq Minimization algorithm validation
  //char infilename[200] = "fitmarg_sin2th23_2p5E20POT-3f+3fbar_10margtoys_3500toys.root",         // 1D (sin2th23)
  //char infilename[200] = "fitmarg_sin2th23Vsdmsq_2p5E20POT-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
  //char infilename[200] = "fitmarg_sin2th23Vsdmsq_2p5E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
@@ -22,9 +24,14 @@ void analyze_run_fit_marginalization_readbinary
  //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp) 
  //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_dcpcoarser.root" // 2D (sin2th13 Vs dcp) 
  //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_sin2th13finer.root" // 2D (sin2th13 Vs dcp) 
- char infilename[200] = "fitmarg_sin2th13Vsdcp_7p8E21POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp)
+ //char infilename[200] = "fitmarg_sin2th13Vsdcp_7p8E21POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp)
+
+ // Pull validation
+ char infilename[200] = "fitmarg_sin2th13_dcpflat_fixosc_T2Konly_10ktoys-3f+3fbar.root" // 1D (sin2th13) 
  )
 {
+  char name[200];
+
   TFile *filein = new TFile(infilename,"READ");
   TTree *treein = (TTree*)filein->Get("fitnt");
   
@@ -128,6 +135,10 @@ void analyze_run_fit_marginalization_readbinary
   TH1F *hfitstatus = new TH1F("hfitstatus","hfitstatus",5,0,5);
   int NdiffChisq = 0;
 
+  TH1F *hpullsHESSE0 = new TH1F("hpullsHESSE0","hpullsHESSE0",100,-5,5);
+  TH1F *hpullsHESSE1 = new TH1F("hpullsHESSE1","hpullsHESSE1",100,-5,5);
+  TH1F *hpullsMINOS0 = new TH1F("hpullsMINOS0","hpullsMINOS0",100,-5,5);
+  TH1F *hpullsMINOS1 = new TH1F("hpullsMINOS1","hpullsMINOS1",100,-5,5);
 
   // Check if 1D or 2D fit
   bool IsFit2D;
@@ -138,7 +149,6 @@ void analyze_run_fit_marginalization_readbinary
   // loop over the tree  
   
   int Nentries = treein->GetEntries();
-  //int Nentries = 2;
   for(int ientry=0;ientry<Nentries;ientry++){
 
     treein->GetEntry(ientry);
@@ -200,6 +210,25 @@ void analyze_run_fit_marginalization_readbinary
     //   continue;
     // }
 
+    double pullHESSE0 = -999;
+    double pullHESSE1 = -999;
+    pullHESSE0 = (truepar0 - bestfit0) / bestfiterrSym0;
+    hpullsHESSE0->Fill(pullHESSE0);
+    if(IsFit2D){
+      pullHESSE1 = (truepar0 - bestfit0) / bestfiterrSym0;
+      hpullsHESSE0->Fill(pullHESSE0);
+    }
+
+    double pullMINOS0 = -999;
+    double pullMINOS1 = -999;
+    if(bestfit0>truepar0) pullMINOS0 = (bestfit0 - truepar0) / (bestfiterrNeg0);
+    else                  pullMINOS0 = (bestfit0 - truepar0) / (bestfiterrPos0);
+    hpullsMINOS0->Fill(pullMINOS0);
+    if(IsFit2D){
+      if(bestfit1>truepar1) pullMINOS1 = (bestfit1 - truepar1) / (bestfiterrNeg1);
+      else                  pullMINOS1 = (bestfit1 - truepar1) / (bestfiterrPos1);
+    }
+
     hErrMINOSneg0->Fill(bestfiterrNeg0);
     hErrMINOSpos0->Fill(bestfiterrPos0);
     hErrMINOSneg1->Fill(bestfiterrNeg1);
@@ -241,44 +270,40 @@ void analyze_run_fit_marginalization_readbinary
     hbestfitFullChisq_2D->Fill(bestfitFullChisq0,bestfitFullChisq1);
     hbestfitFullChisq_1D->Fill(bestfitFullChisq0);
   }
-  
 
-  // Print informations
-  
-  cout << endl;
-  cout << "Difference between descent gradient and global minimum" << endl;
-  cout << "# of toys with different minim and full chisq minimum: "
-       << NdiffChisq << " / " << Nentries << " toys" << endl;
-  cout << "Mean difference = " << hchisqminDiff->GetMean() << endl;
-  cout << "RMS difference = " << hchisqminDiff->GetRMS() << endl;
-  cout << endl;
+  // Get pulls
 
-  cout << endl;
-  cout << "Informations on the fit errors" << endl;
-  cout << "Param0: " << endl;
-  cout << "  - average HESSE symmetric error = " 
-       << hErrHESSEsym0->GetMean() 
-       << " +- " << hErrHESSEsym0->GetRMS() << endl;
-  cout << "  - average MINOS positive error = " 
-       << hErrMINOSpos0->GetMean() 
-       << " +- " << hErrMINOSpos0->GetRMS() << endl;
-  cout << "  - average MINOS negative error = " 
-       << hErrMINOSneg0->GetMean() 
-       << " +- " << hErrMINOSneg0->GetRMS() << endl;
+  double FitMeanPar0_HESSE = -999;
+  double FitRMSPar0_HESSE = -999;
+  double FitMeanPar1_HESSE = -999;
+  double FitRMSPar1_HESSE = -999;
+  double FitMeanPar0_MINOS = -999;
+  double FitRMSPar0_MINOS = -999;
+  double FitMeanPar1_MINOS = -999;
+  double FitRMSPar1_MINOS = -999;
+
+  TF1 *fgaus = new TF1("fgaus","gaus",20,-20);
+  hpullsHESSE0->Fit(fgaus,"Q");
+  FitMeanPar0_HESSE = fgaus->GetParameter(1);
+  FitRMSPar0_HESSE = fgaus->GetParameter(2); 
   if(IsFit2D){
-    cout << "Param1: " << endl;
-    cout << "  - average HESSE symmetric error = " 
-	 << hErrHESSEsym1->GetMean() 
-	 << " +- " << hErrHESSEsym1->GetRMS() << endl;
-    cout << "  - average MINOS positive error = " 
-	 << hErrMINOSpos1->GetMean() 
-	 << " +- " << hErrMINOSpos1->GetRMS() << endl;
-    cout << "  - average MINOS negative error = " 
-	 << hErrMINOSneg1->GetMean() 
-	 << " +- " << hErrMINOSneg1->GetRMS() << endl;
-    cout << endl;
+    hpullsHESSE1->Fit(fgaus,"Q");
+    FitMeanPar1_HESSE = fgaus->GetParameter(1);
+    FitRMSPar1_HESSE = fgaus->GetParameter(2);
   }
 
+  hpullsMINOS0->Fit(fgaus,"Q");
+  FitMeanPar0_MINOS = fgaus->GetParameter(1);
+  FitRMSPar0_MINOS = fgaus->GetParameter(2);
+  if(IsFit2D){
+    hpullsMINOS1->Fit(fgaus,"Q");
+    FitMeanPar1_MINOS = fgaus->GetParameter(1);
+    FitRMSPar1_MINOS = fgaus->GetParameter(2);
+  }
+
+  
+
+  // Draw histograms
 
   TCanvas *cnchisqcalls = new TCanvas("cnchisqcalls","cnchisqcalls");
   hnchisqcalls->GetYaxis()->SetTitle("# entries");
@@ -291,12 +316,34 @@ void analyze_run_fit_marginalization_readbinary
   hfitstatus->DrawCopy();
 
   TCanvas *cbestfit = new TCanvas("hbestfit","hbestfit");
-  if(IsFit2D) hbestfit_2D->DrawCopy("colz");
-  else        hbestfit_1D->DrawCopy();
+  if(IsFit2D){
+    hbestfit_2D->GetYaxis()->SetTitle("#delta_{CP}");
+    hbestfit_2D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{13}");
+    //hbestfit_2D->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+    //hbestfit_2D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{23}");
+    hbestfit_2D->DrawCopy("colz");
+  }
+  else{
+    hbestfit_1D->GetYaxis()->SetTitle("# entries");
+    hbestfit_1D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{13}");
+    //hbestfit_1D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{23}");
+    hbestfit_1D->DrawCopy();
+  }
 
   TCanvas *cbestfitFullChisq = new TCanvas("hbestfitFullChisq","hbestfitFullChisq");
-  if(IsFit2D) hbestfitFullChisq_2D->DrawCopy("colz");
-  else        hbestfitFullChisq_1D->DrawCopy();
+  if(IsFit2D){
+    hbestfitFullChisq_2D->GetYaxis()->SetTitle("#delta_{CP}");
+    hbestfitFullChisq_2D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{13}");
+    //hbestfitFullChisq_2D->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+    //hbestfitFullChisq_2D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{23}");
+    hbestfitFullChisq_2D->DrawCopy("colz");
+  }
+  else{
+    hbestfitFullChisq_1D->GetYaxis()->SetTitle("# entries");
+    //hbestfitFullChisq_1D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{23}");
+    hbestfitFullChisq_1D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{13}");
+    hbestfitFullChisq_1D->DrawCopy();
+  }
 
   TCanvas *cErrMINOSneg0 = new TCanvas("cErrMINOSneg0","cErrMINOSneg0");
   hErrMINOSneg0->GetYaxis()->SetTitle("# entries");
@@ -331,10 +378,6 @@ void analyze_run_fit_marginalization_readbinary
   hErrHESSEsym1->GetXaxis()->SetTitle("#delta_{CP} (HESSE)");
   hErrHESSEsym1->DrawCopy();
 
-  return;
-
-
-
   TCanvas *cchisqminDiff = new TCanvas("hchisqminDiff","hchisqminDiff");
   hchisqminDiff->GetYaxis()->SetTitle("# entries");
   hchisqminDiff->GetXaxis()->SetTitle("#chi^{2}_{Descent} - #chi^{2}_{Global}");
@@ -344,13 +387,119 @@ void analyze_run_fit_marginalization_readbinary
   hdeltachisqDiff->GetXaxis()->SetTitle("#Delta #chi^{2}_{Descent} (no global)");
   hdeltachisqDiff->DrawCopy();
 
-  //treein->GetEntry(1707);
-  //treein->GetEntry(1824);
-  //treein->GetEntry(3424);
+  
+  TCanvas *cpullsHESSE0 = new TCanvas("cpullsHESSE0","cpullsHESSE0");
+  //hpullsHESSE0->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{23} (HESSE error)");
+  hpullsHESSE0->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (HESSE error)");
+  hpullsHESSE0->GetYaxis()->SetTitle("# entries");
+  hpullsHESSE0->DrawCopy();
+  sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsHESSE0->GetMean(),hpullsHESSE0->GetRMS(),FitMeanPar0_HESSE,FitRMSPar0_HESSE); 
+  TLatex *lpullsHESSE0 = new TLatex(0.90,hpullsHESSE0->GetMaximum()*0.8,name);
+  lpullsHESSE0->SetTextSize(0.07);
+  lpullsHESSE0->Draw("same");
+  
+  if(IsFit2D){
+    TCanvas *cpullsHESSE1 = new TCanvas("cpullsHESSE1","cpullsHESSE1");
+    //hpullsHESSE1->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{23} (HESSE error)");
+    hpullsHESSE1->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (HESSE error)");
+    hpullsHESSE1->GetYaxis()->SetTitle("# entries");
+    hpullsHESSE1->DrawCopy();
+    sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsHESSE1->GetMean(),hpullsHESSE1->GetRMS(),FitMeanPar1_HESSE,FitRMSPar1_HESSE); 
+    TLatex *lpullsHESSE1 = new TLatex(0.90,hpullsHESSE1->GetMaximum()*0.8,name);
+    lpullsHESSE1->SetTextSize(0.07);
+    lpullsHESSE1->Draw();
+  }
+
+  TCanvas *cpullsMINOS0 = new TCanvas("cpullsMINOS0","cpullsMINOS0");
+  //hpullsMINOS0->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{23} (MINOS error)");
+  hpullsMINOS0->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (MINOS error)");
+  hpullsMINOS0->GetYaxis()->SetTitle("# entries");
+  hpullsMINOS0->DrawCopy();
+  sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsMINOS0->GetMean(),hpullsMINOS0->GetRMS(),FitMeanPar0_MINOS,FitRMSPar0_MINOS); 
+  TLatex *lpullsMINOS0 = new TLatex(0.90,hpullsMINOS0->GetMaximum()*0.8,name);
+  lpullsMINOS0->SetTextSize(0.07);
+  lpullsMINOS0->Draw();
+
+  if(IsFit2D){
+    TCanvas *cpullsMINOS1 = new TCanvas("cpullsMINOS1","cpullsMINOS1");
+    //hpullsMINOS1->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{23} (MINOS error)");
+    hpullsMINOS1->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (MINOS error)");
+    hpullsMINOS1->GetYaxis()->SetTitle("# entries");
+    hpullsMINOS1->DrawCopy();
+    sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsMINOS1->GetMean(),hpullsMINOS1->GetRMS(),FitMeanPar1_MINOS,FitRMSPar1_MINOS); 
+    TLatex *lpullsMINOS1 = new TLatex(0.90,hpullsMINOS1->GetMaximum()*0.8,name);
+    lpullsMINOS1->SetTextSize(0.07);
+    lpullsMINOS1->Draw();
+  }
+
+  // 
+
   treein->GetEntry(3302);
   TCanvas *cchisq_out_GetEntry = new TCanvas("cchisq_out_GetEntry","cchisq_out_GetEntry");
   if(IsFit2D) hchisq2D_out->DrawCopy("colz");
   else        hchisq1D_out->DrawCopy();
+
+   
+  // Print results
+  
+  cout << endl;
+  cout << "Difference between descent gradient and global minimum" << endl;
+  cout << "# of toys with different minim and full chisq minimum: "
+       << NdiffChisq << " / " << Nentries << " toys" << endl;
+  cout << "Mean difference = " << hchisqminDiff->GetMean() << endl;
+  cout << "RMS difference = " << hchisqminDiff->GetRMS() << endl;
+  cout << endl;
+
+  cout << endl;
+  cout << "Informations on the fit errors" << endl;
+  cout << "Param0: " << endl;
+  cout << "  - average HESSE symmetric error = " 
+       << hErrHESSEsym0->GetMean() 
+       << " +- " << hErrHESSEsym0->GetRMS() << endl;
+  cout << "  - average MINOS positive error = " 
+       << hErrMINOSpos0->GetMean() 
+       << " +- " << hErrMINOSpos0->GetRMS() << endl;
+  cout << "  - average MINOS negative error = " 
+       << hErrMINOSneg0->GetMean() 
+       << " +- " << hErrMINOSneg0->GetRMS() << endl;
+  if(IsFit2D){
+    cout << "Param1: " << endl;
+    cout << "  - average HESSE symmetric error = " 
+	 << hErrHESSEsym1->GetMean() 
+	 << " +- " << hErrHESSEsym1->GetRMS() << endl;
+    cout << "  - average MINOS positive error = " 
+	 << hErrMINOSpos1->GetMean() 
+	 << " +- " << hErrMINOSpos1->GetRMS() << endl;
+    cout << "  - average MINOS negative error = " 
+	 << hErrMINOSneg1->GetMean() 
+	 << " +- " << hErrMINOSneg1->GetRMS() << endl;
+    cout << endl;
+  }
+  cout << endl;
+  cout << "Pulls w/ HESSE errors:" << endl;
+  cout << " - Mean Par0 = " << hpullsHESSE0->GetMean() << endl;
+  cout << " - RMS Par0 = " << hpullsHESSE0->GetRMS() << endl;
+  cout << " - Fit Mean Par0 = " << FitMeanPar0_HESSE << endl;
+  cout << " - Fit RMS Par0 = " << FitRMSPar0_HESSE << endl;
+  if(IsFit2D){
+    cout << " - Mean Par1 = " << hpullsHESSE1->GetMean() << endl;
+    cout << " - RMS Par1 = " << hpullsHESSE1->GetRMS() << endl;
+    cout << " - Fit Mean Par1 = " << FitMeanPar1_HESSE << endl;
+    cout << " - Fit RMS Par1 = " << FitRMSPar1_HESSE << endl;
+  }
+  cout << endl;
+  cout << "Pulls w/ MINOS errors:" << endl;
+  cout << " - Mean Par0 = " << hpullsMINOS0->GetMean() << endl;
+  cout << " - RMS Par0 = " << hpullsMINOS0->GetRMS() << endl;
+  cout << " - Fit Mean Par0 = " << FitMeanPar0_MINOS << endl;
+  cout << " - Fit RMS Par0 = " << FitRMSPar0_MINOS << endl;
+  if(IsFit2D){
+    cout << " - Mean Par1 = " << hpullsMINOS1->GetMean() << endl;
+    cout << " - RMS Par1 = " << hpullsMINOS1->GetRMS() << endl;
+    cout << " - Fit Mean Par1 = " << FitMeanPar1_MINOS << endl;
+    cout << " - Fit RMS Par1 = " << FitRMSPar1_MINOS << endl;
+  }
+  cout << endl;
 
   return;
 }

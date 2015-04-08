@@ -7,9 +7,9 @@
 //________________________________________________________________________________________
 
 //#define __print_build_map_fileid__
-//#define __print_array_toy_maketoys__
+#define __print_array_toy_maketoys__
 //#define __print_minimization_steps__ //
-//#define __print_array_toy_fillchisq__
+#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_masshierarchy__
 //#define __print_systematic_variations__
@@ -104,7 +104,7 @@ FitMarginalization::~FitMarginalization(void)
   this->CleanUp();
 }
 //________________________________________________________________________________________
-void FitMarginalization::Init(){
+void FitMarginalization::Init(SuperkExpectation *skexp){
    
   // Before Init() we need SetPhysParFree()
   
@@ -290,6 +290,17 @@ void FitMarginalization::Init(){
   fhmap_chisqrange_fileid_2D = (TH2F*) fhchisq_marg_2D->Clone("hmap_chisqrange_fileid_2D");
 
   fCurrentFileIDminim = conv::kBadResult; // current file ID during the chisq minimization process
+
+
+  // Store # of POT for each used sample
+  for(int is=0;is<fNSKsamples;is++){
+    SuperkSample_t s = this->GetSKSamples(is);
+    fPOT[is] = skexp->GetSuperkMC()->AnalyzedSamplePOT(s);
+    fNormPOT[is] = fPOT[is] / (1E+20);
+    cout << "POT ( " << util::AsString(s) << " ) = " << fPOT[is] << endl;
+    cout << "Norm POT ( " << util::AsString(s) << " ) = " << fNormPOT[is] << endl;
+  }
+
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
@@ -655,13 +666,6 @@ void FitMarginalization::PrintPhysHypothesis(){
 void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp){
   const int nmh=2; // mass hierarchy  
   fToyMargErecoVArray->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fMaxSampleErecoBins);
-
-  // Store # of POT for each used sample
-  for(int is=0;is<fNSKsamples;is++){
-    SuperkSample_t s = this->GetSKSamples(is);
-    fPOT[is] = skexp->GetSuperkMC()->AnalyzedSamplePOT(s);
-    //cout << "POT ( " << util::AsString(s) << " ) = " << fPOT[is] << endl;
-  }
   
   cout << "////////////////////////////////////////////////////////" << endl;
   cout << endl;
@@ -926,13 +930,14 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	      
 	      // Build toy Ereco distributions
 	      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-		double bincont = obsErec[ib];
+		
+		double bincont = obsErec[ib] / fNormPOT[is];
+		
 		fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
 	      }
 	      
 	      iscount++; // index of the toy array
 	    } // loop SK samples
-
 	    
 #ifdef __print_array_toy_maketoys__
 	      cout << endl;
@@ -947,16 +952,16 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	      for(int is=0;is<fNSKsamples;is++){
 		SuperkSample_t s = this->GetSKSamples(is);
 		
-		cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral()<< endl;
+		cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() / fNormPOT[is]<< endl;
 
 #ifdef __print_array_toy_maketoys_verbose__
 		for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-		  double bincont = skobs->ErecoSpectrumArray(s)[ib];
-		  fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+		  //double bincont = skobs->ErecoSpectrumArray(s)[ib];
+		  double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
 		  cout << bincont << " ";
 		}
 		cout << endl;
-		cout << endl;
+	        cout << endl;
 #endif // verbose
 		
 		iscount++; // index of the toy array
@@ -1160,6 +1165,9 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	
 	for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
 	  float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+
+	  nexp *= (float)fNormPOT[is];
+
 	  float nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
 	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
 
@@ -1184,7 +1192,7 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	
 	for(int ib = 0; ib < util::NumErecoBins(s); ib++){
 	  float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ib);
-	  cout << bincont << " "; 
+	  cout << bincont * (float)fNormPOT[is] << " "; 
 	}
 	cout << endl;
 	cout << endl;
@@ -1281,6 +1289,7 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
   for(int is=0;is<fNSKsamples;is++){
     SuperkSample_t s = this->GetSKSamples(is);
     ostext << "  - POT ( " << util::AsString(s) << " ) = " << fPOT[is] << endl;
+    ostext << "  - Norm POT ( " << util::AsString(s) << " ) = " << fNormPOT[is] << endl;
   }
 
   ostext << endl;
