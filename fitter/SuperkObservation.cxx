@@ -483,8 +483,13 @@ double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
         }//ibin
       }// not goodness of fit
       else {
+#ifndef __RHC_RUNNING__
         const int nbins = 5;
-        double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0}; 
+        double binedges[nbins+1] = {0.0,0.4,0.7,1.0,2.0,30.0};
+#else
+        const int nbins = 2;
+        double binedges[nbins+1] = {0.0,2.5,30.0};
+#endif
       
         //loop over Ereco bins
         for(int ibin = 0; ibin < nbins; ibin++) {
