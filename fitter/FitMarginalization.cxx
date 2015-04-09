@@ -8,6 +8,7 @@
 
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
+//#define __print_array_toy_maketoys_verbose__
 //#define __print_minimization_steps__ //
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
@@ -799,7 +800,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  unphysical_tweak = false;
 	}
 	
-	// If we need to and haven't already save the toy param list
+      	// If we need to and haven't already save the toy param list
 	if (fShouldSaveToyParamLists && (!fSavedToyParamLists[iexperiment])) {
 	  // Get Syst tweaks
 	  PhysParamList * pparm = new PhysParamList (true_nuisance_params);
@@ -829,9 +830,10 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       }
       else { // no toys
 	skexp->ResetSystematicVariations();
+	unphysical_tweak = false; // otherwise it doesn't exit the while
 	//~ cout << "- Generating toy-MC without systematic variation" << endl;
       }
-
+    
 
       // Set seeds after systematic paramter extraction
 
@@ -940,34 +942,35 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	    } // loop SK samples
 	    
 #ifdef __print_array_toy_maketoys__
-	      cout << endl;
-	      cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << " : ";
+	    cout << endl;
+	    cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << " : ";
+	    
+	    // Build toy Ereco distributions
+	    
+	    iscount=0;
+	    //for(int is = 0; is < kns; is++) {
+	    //SuperkSample_t s = kSKSamples[is];
+	    //if(s == kSKsUndefined) continue;
+	    for(int is=0;is<fNSKsamples;is++){
+	      SuperkSample_t s = this->GetSKSamples(is);
 	      
-	      // Build toy Ereco distributions
-
-	      iscount=0;
-	      //for(int is = 0; is < kns; is++) {
-	      //SuperkSample_t s = kSKSamples[is];
-	      //if(s == kSKsUndefined) continue;
-	      for(int is=0;is<fNSKsamples;is++){
-		SuperkSample_t s = this->GetSKSamples(is);
-		
-		cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() / fNormPOT[is]<< endl;
-
+	      //cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() / fNormPOT[is]<< endl;
+	      cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() << endl;
+	      
 #ifdef __print_array_toy_maketoys_verbose__
-		for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-		  //double bincont = skobs->ErecoSpectrumArray(s)[ib];
-		  double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
-		  cout << bincont << " ";
-		}
-		cout << endl;
-	        cout << endl;
+	      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+		//double bincont = skobs->ErecoSpectrumArray(s)[ib];
+		double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+		cout << bincont << " ";
+	      }
+	      cout << endl;
+	      cout << endl;
 #endif // verbose
-		
-		iscount++; // index of the toy array
-	      } // loop SK samples
+	      
+	      iscount++; // index of the toy array
+	    } // loop SK samples
 #endif //__print_array_toy_maketoys__
-	
+	    
 	  } // loop Mass Hierarchy
 	} // loop ipar1 (free parameter)
       } // loop ipar0 (free parameter)
