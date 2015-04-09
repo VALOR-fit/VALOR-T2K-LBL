@@ -19,30 +19,55 @@
 
 void plot_3f_osc_prob
 (
-  double       mixing23   = -99,                            /* */
-  double       dm23sq     = -99,                            /* */
-  double       mixing12   = -99,                            /* */
-  double       mixing13   = -99,                            /* */
+ // double       mixing23   = -99,                            /* */
+ // double       dm23sq     = -99,                            /* */
+ // double       mixing12   = -99,                            /* */
+ // double       mixing13   = -99,                            /* */
+ // double       deltacp    = -99,                            /* */
+ // double       dm12sq     = -99,                             /* */
 
-  double       deltacp    = +1.5,                            /* */
-  //double       deltacp    = -99,                            /* */
+ // sinsq2theta T2K only
+ double       mixing23   = 0.998,                            /* */
+ double       dm23sq     = 0.00251,                            /* */
+ double       mixing12   = 0.8495,                            /* */
+ double       mixing13   = 0.1617,                            /* */
+ double       deltacp    = 1.91,                            /* */
+ double       dm12sq     = 7.5E-5,                             /* */
 
-  double       dm12sq     = -99,                             /* */
-
-  const char * hierarchy           = "normal",                              /* normal or inverted */
+ // // sinsqtheta T2K only
+ // double       mixing23   = 0.524,                            /* */
+ // double       dm23sq     = 0.00251,                            /* */
+ // double       mixing12   = 0.306,                            /* */
+ // double       mixing13   = 0.0422,                            /* */
+ // double       deltacp    = 1.91,                            /* */
+ // double       dm12sq     = 7.5E-5,                             /* */
+ 
+ const char * hierarchy  = "normal",             /* normal or inverted */
+ TString    * mixparam   = "sinsq2theta"          // sinsq2theta or sinsqtheta
  )
 {
   using namespace std;
   using namespace valor;
 
   // Global options
-  Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
+
+  if(mixparam=="sinsqtheta")
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
+  else if(mixparam=="sinsq2theta")
+    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
   
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
 
-  if(mixing13 < -1) mixing13 = conv::kGlobFitSinsq2Theta13;
-  if(mixing23 < -1) mixing23 = conv::kGlobFitSinsq2Theta23;
-  if(mixing12 < -1) mixing12 = conv::kGlobFitSinsq2Theta12;
+  if(Opt::Instance()->gOscMixingParamChoice==conv::kNuMixSinsqTheta){
+    if(mixing13 < -1) mixing13 = conv::kGlobFitSinsqTheta13;
+    if(mixing23 < -1) mixing23 = conv::kGlobFitSinsqTheta23;
+    if(mixing12 < -1) mixing12 = conv::kGlobFitSinsqTheta12;
+  }
+  else if(Opt::Instance()->gOscMixingParamChoice==conv::kNuMixSinsq2Theta){
+    if(mixing13 < -1) mixing13 = conv::kGlobFitSinsq2Theta13;
+    if(mixing23 < -1) mixing23 = conv::kGlobFitSinsq2Theta23;
+    if(mixing12 < -1) mixing12 = conv::kGlobFitSinsq2Theta12;
+  }
   if(dm23sq < -1)   dm23sq   = conv::kGlobFitDm23sq;
   if(dm12sq < -1)   dm12sq   = conv::kGlobFitDm12sq;
   if(deltacp < -90) deltacp  = conv::kGlobFitDeltaCP;
@@ -52,15 +77,25 @@ void plot_3f_osc_prob
 	  mixing12,mixing13,mixing23,deltacp,dm12sq,dm23sq);
   TFile out(Form("osc_probs-%s.root",oscparams.c_str()),"RECREATE");
 
-  const int nbins = 44;
-  const double binedges[nbins+1] = {
-   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
-   0.300,  0.325,  0.350,  0.375,  0.400,  0.425,  0.450,  0.475,  0.500,  0.525,
-   0.550,  0.575,  0.600,  0.625,  0.650,  0.675,  0.700,  0.725,  0.750,  0.775,
-   0.800,  0.825,  0.850,  0.875,  0.900,  0.925,  0.950,  0.975,
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
-   1.500
-  };
+  // const int nbins = 44;
+  // const double binedges[nbins+1] = {
+  //  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
+  //  0.300,  0.325,  0.350,  0.375,  0.400,  0.425,  0.450,  0.475,  0.500,  0.525,
+  //  0.550,  0.575,  0.600,  0.625,  0.650,  0.675,  0.700,  0.725,  0.750,  0.775,
+  //  0.800,  0.825,  0.850,  0.875,  0.900,  0.925,  0.950,  0.975,
+  //  1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
+  //  1.500
+  // };
+
+  const int nbins = 2000;
+  double binedges[nbins+1];
+  for(int ibin=0;ibin<(nbins+1);ibin++){
+    binedges[ibin] = (double)ibin / ((double)nbins);
+    //cout << binedges[ibin] << endl;
+  }
+
+
+
 
   //axis, for the binning
   TAxis * axis = new TAxis(nbins,binedges);
@@ -77,6 +112,7 @@ void plot_3f_osc_prob
   double p_nue_nue        [nbins];
   double p_nuebar_nuebar  [nbins];
   double p_numu_nue       [nbins];
+  double p_numubar_nuebar [nbins];
 
   // loop over Etrue
   for(int it = 1; it <= nbins; it++) {
@@ -89,6 +125,7 @@ void plot_3f_osc_prob
     p_nue_nue        [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuE,     conv::kPdgNuE,     Etrue);
     p_nuebar_nuebar  [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuEBar,  conv::kPdgNuEBar,  Etrue);
     p_numu_nue       [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMu,    conv::kPdgNuE,     Etrue);
+    p_numubar_nuebar [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuEBar,  Etrue);
 
     /*
     cout << " >>  E = " << Etrue << " GeV" << endl;
@@ -107,23 +144,58 @@ void plot_3f_osc_prob
   TGraph * g_nue_nue         = new TGraph(nbins, binning, p_nue_nue);
   TGraph * g_nuebar_nuebar   = new TGraph(nbins, binning, p_nuebar_nuebar);
   TGraph * g_numu_nue        = new TGraph(nbins, binning, p_numu_nue);
+  TGraph * g_numubar_nuebar  = new TGraph(nbins, binning, p_numubar_nuebar);
 
   //Draw
   TCanvas *c_numu_numu = new TCanvas("c_numu_numu","c_numu_numu"); 
-  g_numu_numu->Draw("LPA");
+  //g_numu_numu->Draw("LPA");
+  g_numu_numu->Draw("LA");
   TCanvas *c_numubar_numubar = new TCanvas("c_numubar_numubar","c_numubar_numubar");
-  g_numubar_numubar->Draw("LPA");
+  //g_numubar_numubar->Draw("LPA");
+  g_numubar_numubar->Draw("LA");
   TCanvas *c_nue_nue = new TCanvas("c_nue_nue","c_nue_nue"); 
-  g_nue_nue->Draw("LPA");
+  //g_nue_nue->Draw("LPA");
+  g_nue_nue->Draw("LA");
   TCanvas *c_nuebar_nuebar = new TCanvas("c_nuebar_nuebar","c_nuebar_nuebar"); 
-  g_nuebar_nuebar->Draw("LPA");
+  //g_nuebar_nuebar->Draw("LPA");
+  g_nuebar_nuebar->Draw("LA");
   TCanvas *c_numu_nue = new TCanvas("c_numu_nue","c_numu_nue"); 
-  g_numu_nue->Draw("LPA");
-
+  //g_numu_nue->Draw("LPA");
+  g_numu_nue->Draw("LA");
+  TCanvas *c_numubar_nuebar = new TCanvas("c_numubar_nuebar","c_numubar_nuebar"); 
+  //g_numubar_nuebar->Draw("LPA");
+  g_numubar_nuebar->Draw("LA");
+  
   //Save
   g_numu_numu      ->Write("g_numu_numu");
   g_numubar_numubar->Write("g_numubar_numubar");
   g_nue_nue        ->Write("g_nue_nue");
   g_nuebar_nuebar  ->Write("g_nuebar_nuebar");
   g_numu_nue       ->Write("g_numu_nue");
+  g_numubar_nuebar ->Write("g_numubar_nuebar");
+
+
+
+  cout << endl;
+  cout << "Used set of oscillation parameters:" << endl;
+
+  if(Opt::Instance()->gOscMixingParamChoice==conv::kNuMixSinsqTheta){
+    cout << "sinsqth23 = " << mixing23 << endl;
+    cout << "dm23sq = " << dm23sq << endl;
+    cout << "sinsqth12 = " << mixing12 << endl;
+    cout << "dm12sq = " << dm12sq << endl;
+    cout << "sinsqth13 = " << mixing13 << endl;
+    cout << "deltacp = " << deltacp << endl;
+    cout << endl;
+  }
+  else if(Opt::Instance()->gOscMixingParamChoice==conv::kNuMixSinsq2Theta){
+    cout << "sinsq2th23 = " << mixing23 << endl;
+    cout << "dm23sq = " << dm23sq << endl;
+    cout << "sinsq2th12 = " << mixing12 << endl;
+    cout << "dm12sq = " << dm12sq << endl;
+    cout << "sinsq2th13 = " << mixing13 << endl;
+    cout << "deltacp = " << deltacp << endl;
+    cout << endl;
+  }
+
 }
