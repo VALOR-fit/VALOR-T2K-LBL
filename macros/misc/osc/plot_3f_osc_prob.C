@@ -104,7 +104,11 @@ void plot_3f_osc_prob
 
   NuOsc3Flavour  fNuOsc3Flavour;
   //parameters assumed to be sin^2(2theta)
-  fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp);
+  if(Opt::Instance()->gOscMixingParamChoice==conv::kNuMixSinsq2Theta)
+    fNuOsc3Flavour.SetOscParameters(mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp);
+  else if(Opt::Instance()->gOscMixingParamChoice==conv::kNuMixSinsqTheta)
+    fNuOsc3Flavour.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp);
+  
   
   //store the osc probs
   double p_numu_numu      [nbins];
