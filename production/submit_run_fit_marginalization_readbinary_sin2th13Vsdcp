@@ -62,6 +62,7 @@ foreach (@ARGV) {
   elsif($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
   elsif($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
   elsif($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
   elsif($_ eq '--margfilename'           ) { $margfilename          = $ARGV[$iarg+1]; }
   elsif($_ eq '--nfiles-marg'            ) { $nfiles_marg           = $ARGV[$iarg+1]; }
   elsif($_ eq '--nexpts-marg'            ) { $nexpts_marg           = $ARGV[$iarg+1]; }
@@ -126,7 +127,7 @@ $fitparamlist   = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance" unless defined $fi
 $dmsqscheme             = "abs23"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"           unless defined $mixparamchoice;
-
+$mixparamoctant         = "two"                  unless defined $mixparamoctant;
 
 #### marginalization
 
@@ -187,7 +188,7 @@ while($irun < $nruns) {
     
     $program = "root2k ";
         
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_sin2th13Vsdcp.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12bar,$mix13bar,$mix23bar,$deltacpbar,$dm12sqbar,$dm23sqbar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq)\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_sin2th13Vsdcp.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12bar,$mix13bar,$mix23bar,$deltacpbar,$dm12sqbar,$dm23sqbar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq)\'";
     
     $command = "$program $arguments";
     print "$command \n";

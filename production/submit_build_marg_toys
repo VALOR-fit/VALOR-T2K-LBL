@@ -87,11 +87,8 @@ foreach (@ARGV) {
 
 $resource        = "interactive"                    unless defined $resource;
 
-#$tag             = "submit_mixing13_2p5E20_postfit"        unless defined $tag;
 #$tag             = "submit_mixing23Vsdmsq_2p5E20_postfit"        unless defined $tag;
-#$tag             = "submit_mixing13Vsdcp_4p0E20_postfit"        unless defined $tag;
-$tag             = "submit_mixing13_4p0E20_postfit"        unless defined $tag;
-#$tag             = "PROVA"        unless defined $tag;
+$tag             = "submit_mixing13_NormPOT_postfit"        unless defined $tag;
 
 $config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
 #$config_file   = "analysis_configuration_run1to6_test.xml"      unless defined $config_file;
@@ -108,21 +105,50 @@ $config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined 
 $fitparamlist   = "nuosc3fbar_fixnonbar_fix5+nuisance"       unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4"       unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
+#$fitparamlist    = "nuosc3fbar_nueapp_fixnonbar_fix4"   unless defined $fitparamlist;
+#$fitparamlist    = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance"   unless defined $fitparamlist;
 
-$dm23sq          = -99                         unless defined $dm23sq; 
-$dm12sq          = -99                         unless defined $dm12sq; 
-$mix23           = -99                         unless defined $mix23;
-$mix13           = -99                         unless defined $mix13;
-$mix12           = -99                         unless defined $mix12;
+# Default
+#$dm23sq          = -99                         unless defined $dm23sq; 
+#$dm12sq          = -99                         unless defined $dm12sq; 
+#$mix23           = -99                         unless defined $mix23;
+#$mix13           = -99                         unless defined $mix13;
+#$mix12           = -99                         unless defined $mix12;
 #$deltacp         = -99                         unless defined $deltacp;
-$deltacp         = 0                         unless defined $deltacp;
-$dm23sqbar       = -99                         unless defined $dm23sqbar; 
-$dm12sqbar       = -99                         unless defined $dm12sqbar; 
-$mix23bar        = -99                         unless defined $mix23bar;
-$mix13bar        = -99                         unless defined $mix13bar;
-$mix12bar        = -99                         unless defined $mix12bar;
+#$dm23sqbar       = -99                         unless defined $dm23sqbar; 
+#$dm12sqbar       = -99                         unless defined $dm12sqbar; 
+#$mix23bar        = -99                         unless defined $mix23bar;
+#$mix13bar        = -99                         unless defined $mix13bar;
+#$mix12bar        = -99                         unless defined $mix12bar;
 #$deltacpbar      = -99                         unless defined $deltacpbar;
-$deltacpbar      = 0                         unless defined $deltacpbar;
+
+# T2K only - sinsq2theta
+$dm23sq          = 0.00251                  unless defined $dm23sq; 
+$dm12sq          = 7.5E-5                   unless defined $dm12sq; 
+$mix23           = 9.97696000000000027e-01                   unless defined $mix23;
+$mix13           = 1.61676640000000038e-01                   unless defined $mix13;
+$mix12           = 8.49455999999999989e-01                   unless defined $mix12;
+$deltacp         = 1.91                     unless defined $deltacp;
+$dm23sqbar       = 0.00251                  unless defined $dm23sqbar; 
+$dm12sqbar       = 7.5E-5                   unless defined $dm12sqbar; 
+$mix23bar        = 9.97696000000000027e-01                   unless defined $mix23bar;
+$mix13bar        = 1.61676640000000038e-01                   unless defined $mix13bar;
+$mix12bar        = 8.49455999999999989e-01                   unless defined $mix12bar;
+$deltacpbar      = 1.91                     unless defined $deltacpbar;
+
+# T2K only - sinsqtheta
+#$dm23sq          = 0.00251                  unless defined $dm23sq; 
+#$dm12sq          = 7.5E-5                   unless defined $dm12sq; 
+#$mix23           = 0.524                    unless defined $mix23;
+#$mix13           = 0.0422                   unless defined $mix13;
+#$mix12           = 0.306                    unless defined $mix12;
+#$deltacp         = 1.91                     unless defined $deltacp;
+#$dm23sqbar       = 0.00251                  unless defined $dm23sqbar; 
+#$dm12sqbar       = 7.5E-5                   unless defined $dm12sqbar; 
+#$mix23bar        = 0.524                    unless defined $mix23bar;
+#$mix13bar        = 0.0422                   unless defined $mix13bar;
+#$mix12bar        = 0.306                    unless defined $mix12bar;
+#$deltacpbar      = 1.91                     unless defined $deltacpbar;
 
 #$freepar0               = "mixing23Bar"              unless defined $freepar0;
 #$minfreepar0            = 0                          unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -132,7 +158,7 @@ $minfreepar0            = 0                          unless defined $minfreepar0
 $maxfreepar0            = 0.3                          unless defined $maxfreepar0;     # Maximum free parameter allowed value 
 #$npt_freepar0           = 2                         unless defined $npt_freepar0;    # of free parameter points to scan
 $npt_freepar0           = 201                         unless defined $npt_freepar0;    # of free parameter points to scan
-#$npt_freepar0           = 21                         unless defined $npt_freepar0;    # of free parameter points to scan
+#$npt_freepar0           = 801                         unless defined $npt_freepar0;    # of free parameter points to scan
 
 $freepar1               = ""                          unless defined $freepar1;
 #$freepar1               = "dmsq23Bar"               unless defined $freepar1;
@@ -145,12 +171,12 @@ $npt_freepar1           = 1                         unless defined $npt_freepar1
 #$npt_freepar1           = 201                         unless defined $npt_freepar1;    # of free parameter points to scan
 #$npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-$nexpts_marg            = 10                          unless defined $nexpts_marg;    # of toys
+$nexpts_marg            = 1                          unless defined $nexpts_marg;    # of toys
 
 $step_freepar0          = 201                           unless defined $step_freepar0;   # of points for each job param0
-#$step_freepar1          = 201                          unless defined $step_freepar1;   # of points for each job param1
+$step_freepar1          = 201                          unless defined $step_freepar1;   # of points for each job param1
 #$step_freepar0          = 21                           unless defined $step_freepar0;   # of points for each job param0
-$step_freepar1          = 1                          unless defined $step_freepar1;   # of points for each job param1
+#$step_freepar1          = 1                          unless defined $step_freepar1;   # of points for each job param1
 #$step_freepar0          = 1                           unless defined $step_freepar0;   # of points for each job param0
 #$step_freepar1          = 51                          unless defined $step_freepar1;   # of points for each job param1
 
@@ -163,8 +189,11 @@ $softw_dir              = $ENV{'T2KOSCANA'}           unless defined $softw_dir;
 $fmwk_dir               = $ENV{'VALOR_FMWK'}          unless defined $fmwk_dir;
 $dmsqscheme             = "abs23"                     unless defined $dmsqscheme;
 $masshierarchy          = "normal"                    unless defined $masshierarchy;
-$mixparamchoice         = "sinsqtheta"                unless defined $mixparamchoice;
-$mixparamoctant         = "one"                       unless defined $mixparamoctant;
+
+#$mixparamchoice         = "sinsqtheta"                unless defined $mixparamchoice;
+$mixparamchoice         = "sinsq2theta"                unless defined $mixparamchoice;
+
+$mixparamoctant         = "two"                       unless defined $mixparamoctant;
 
 
 if( !defined $cput ) {

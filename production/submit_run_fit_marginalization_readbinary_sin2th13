@@ -62,6 +62,7 @@ foreach (@ARGV) {
   elsif($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
   elsif($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
   elsif($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-octant'       ) { $mixparamoctant        = $ARGV[$iarg+1]; }
   elsif($_ eq '--margfilename'           ) { $margfilename          = $ARGV[$iarg+1]; }
   elsif($_ eq '--nfiles-marg'            ) { $nfiles_marg           = $ARGV[$iarg+1]; }
   elsif($_ eq '--nexpts-marg'            ) { $nexpts_marg           = $ARGV[$iarg+1]; }
@@ -117,18 +118,19 @@ $stat_fluct             = 1                    unless defined $stat_fluct;
 #$fitparamlist   = "nuosc3fbar_fixnonbar_12fix"       unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_fixnonbar_12fix+nuisance"       unless defined $fitparamlist;
 #$fitparamlist    = "nuosc3fbar_fixnonbar_fix5"       unless defined $fitparamlist;
-#$fitparamlist   = "nuosc3fbar_fixnonbar_fix5+nuisance"       unless defined $fitparamlist;
-$fitparamlist   = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
+$fitparamlist   = "nuosc3fbar_fixnonbar_fix5+nuisance"       unless defined $fitparamlist;
+#$fitparamlist   = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
 
 $dmsqscheme             = "abs23"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"           unless defined $mixparamchoice;
-
+$mixparamoctant         = "two"                  unless defined $mixparamoctant;
 
 #### marginalization
 
-#$marg_file         = "../../inputs/marginalization/toys/numudisap_1D_2p5E20POT_fixosc_10toys/submit_mixing23_2p5E20_10toys_fixosc_postfit"  unless defined $marg_file;
-$marg_file         = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit" unless defined $marg_file;
+$marg_file         = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_dcpflat_10000toys/submit_mixing13_4p0E20_postfit" unless defined $marg_file;
+#$marg_file         = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_10000toys_sinsqth13/submit_sinsq2th13_NormPOT_postfit" unless defined $marg_file;
+#$marg_file         = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_10000toys_sinsq2th13/submit_sinsq2th13_NormPOT_postfit" unless defined $marg_file;
 
 $nfiles_marg       = 201           unless defined $nfiles_marg;     # of marginalization files
 $nexpts_marg       = 10000         unless defined $nexpts_marg;    # of marginalization toys 
@@ -185,7 +187,7 @@ while($irun < $nruns) {
     
     $program = "root2k ";
         
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_sin2th13.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12bar,$mix13bar,$mix23bar,$deltacpbar,$dm12sqbar,$dm23sqbar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq)\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_sin2th13.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12bar,$mix13bar,$mix23bar,$deltacpbar,$dm12sqbar,$dm23sqbar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq)\'";
     
     $command = "$program $arguments";
     print "$command \n";
