@@ -30,7 +30,7 @@ opt.SetDefaultParameterValues()
 
 image_format = "eps"
 conf90 = 4.61
-conf68 = 2.71
+conf68 = 2.30
 
 to3dp = "{0:.3f}"
 to6dp = "{0:.6f}"

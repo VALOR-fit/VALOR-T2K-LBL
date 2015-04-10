@@ -30,7 +30,7 @@ opt.SetDefaultParameterValues()
 
 image_format = "eps"
 conf90 = 4.61
-conf68 = 2.71
+conf68 = 2.30
 
 to3dp = "{0:.3f}"
 to6dp = "{0:.6f}"
@@ -135,6 +135,22 @@ def main(file1, file2=None, tag=None):
   CopyMarkerToHist(marker_p,h_contour_p)
   CopyMarkerToHist(marker_m,h_contour_m)
   
+  # Dump graphs for Kirsty
+  outfile = ROOT.TFile("valor_fit_contours.root","RECREATE")
+  outfile.cd()
+  contours_p[0][0].Write("valor_nh_68_contour")
+  contours_p[1][0].Write("valor_nh_90_contour")
+  contours_m[0][0].Write("valor_ih_68_contour")
+  contours_m[1][0].Write("valor_ih_90_contour")
+  
+  bf_nh_graph = ROOT.TGraph(1)
+  bf_ih_graph = ROOT.TGraph(1)
+  bf_nh_graph.SetPoint(0,bf_x_p,bf_y_p)
+  bf_ih_graph.SetPoint(0,bf_x_m,bf_y_m)
+  bf_nh_graph.Write("valor_nh_bestfit")
+  bf_ih_graph.Write("valor_ih_bestfit")
+  outfile.Close()
+  
   print "Bestfit point (normal)  : ",bf_x_m,bf_y_m,"\twith chisq: ",bf_chisq_m
   print "Bestfit point (inverted): ",bf_x_p,bf_y_p,"\twith chisq: ",bf_chisq_p
   
@@ -149,10 +165,12 @@ def main(file1, file2=None, tag=None):
   canv = ROOT.TCanvas("canv1","canv1",1280,720)
   canv.cd()
   
+  h_contour_m.GetYaxis().SetRangeUser(1E-3,4.5E-3)
   h_contour_m.Draw("AXIS")
   for icont,cont_list in enumerate(contours_p + contours_m):
     if icont%2==0: continue
     for cont in cont_list:
+      cont
       cont.Draw("same")
       
   # Draw markers
