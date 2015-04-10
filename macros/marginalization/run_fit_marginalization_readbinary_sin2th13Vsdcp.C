@@ -67,6 +67,7 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
 
  const char * dmsqscheme               = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
+ const char * mixparamoctant           = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
  const char * hierarchy                = "normal",     /* normal or inverted */
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
@@ -136,7 +137,6 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
   Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
-  const char * mixparamoctant = "one";       /* one==kNuOctantOne two==kNuOctantTwo */
   Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
   if(Opt::Instance()->Undefined()) {
     cerr << "Global options not defined correctly. Exiting..." << endl;

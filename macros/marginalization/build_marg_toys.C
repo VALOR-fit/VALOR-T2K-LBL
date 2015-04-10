@@ -78,7 +78,7 @@ void build_marg_toys
  const char * dmsqscheme              = "abs23",       /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy               = "normal",    /* normal or inverted */
  const char * mixparamchoice          = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
- const char * mixparamoctant          = "one"         /* one==kNuOctantOne two==kNuOctantTwo */
+ const char * mixparamoctant          = "two"         /* one==kNuOctantOne two==kNuOctantTwo */
  )
 {
   FileStat_t dummy;

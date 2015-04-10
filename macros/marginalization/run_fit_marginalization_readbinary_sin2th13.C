@@ -29,7 +29,7 @@ void run_fit_marginalization_readbinary_sin2th13
 
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
- const char * tag                      = "fitmarg_sin2th13",    /* tag for output file */
+ const char * tag                      = "fitmarg_sinsqth13_Asimov",    /* tag for output file */
  
  //int          first_experiment         = 3449,                       /* */
  //int          last_experiment          = 3449,                       /* */
@@ -42,6 +42,7 @@ void run_fit_marginalization_readbinary_sin2th13
  int          first_experiment         = 0,                       /* */
  int          last_experiment          = 0,                       /* */
 
+ //const char * xmlfile                  = "toymc/toymc_nuebarapp_rethrowunphysical_4p0E20POT_sinsq2th13-0.xml",
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
  bool         dotoys                   = true,
@@ -65,32 +66,34 @@ void run_fit_marginalization_readbinary_sin2th13
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
- const char * fit_param_list           = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
- //const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ //const char * fit_param_list           = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
+ const char * fit_param_list           = "nuosc3fbar_fixnonbar_fix5+nuisance",
  //const char * fit_param_list           = "nuosc3fbar_fixnonbar_12fix+nuisance",
 
  const char * dmsqscheme               = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
+ //const char * mixparamchoice           = "sinsq2theta", /* sinsq2theta or sinsqtheta */
+
  const char * hierarchy                = "normal",     /* normal or inverted */
+ const char * mixparamoctant           = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- // //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_10toys/submit_mixing13_4p0E20_postfit",
- // const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit",
- // //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys/submit_mixing13_4p0E20_postfit",
- // //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_4p0E20POT_fixosc_dcpflat_10000toys_BinCenter/submit_mixing13_4p0E20_postfit_Merged",
+ const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_dcpflat_10000toys/submit_mixing13_4p0E20_postfit",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_10000toys_sinsqth13/submit_sinsq2th13_NormPOT_postfit",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_10000toys_sinsq2th13/submit_sinsq2th13_NormPOT_postfit",
 
- const char * infilename           = "submit_mixing13_4p0E20_postfit_NormPOT",
+ const int    nfiles               = 201,         // # of files to read
+ //const int    nfiles               = 1,         // # of files to read
 
- //const int    nfiles               = 201,         // # of files to read
- const int    nfiles               = 1,         // # of files to read
-
- const int    NtoysMarg            = 1,   // # toys marginalization 
- //const int    NtoysMarg            = 10000,   // # toys marginalization 
+ //const int    NtoysMarg            = 1,   // # toys marginalization 
+ const int    NtoysMarg            = 10000,   // # toys marginalization 
  
  const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
- const double freeparmax0         = 0.3, //0.05, //0.3,   // maxinum value of free parameter
+ const double freeparmax0         = 0.3,   // maxinum value of free parameter
+ //const double freeparmax0         = 0.5,     // maxinum value of free parameter
  const int    NptScan0            = 201, //2, //21,        // # pts of free parameter to scan
  
  const char * freeparname1        = "",  // free parameter
@@ -141,7 +144,6 @@ void run_fit_marginalization_readbinary_sin2th13
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
   Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
-  const char * mixparamoctant = "one";       /* one==kNuOctantOne two==kNuOctantTwo */
   Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
   if(Opt::Instance()->Undefined()) {
     cerr << "Global options not defined correctly. Exiting..." << endl;

@@ -27,8 +27,13 @@ void analyze_run_fit_marginalization_readbinary
  //char infilename[200] = "fitmarg_sin2th13Vsdcp_7p8E21POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp)
 
  // Pull validation
- char infilename[200] = "fitmarg_sin2th13_dcpflat_fixosc_T2Konly_10ktoys-3f+3fbar.root" // 1D (sin2th13) 
- )
+ //char infilename[200] = "fitmarg_sin2th13_dcpflat_fixosc_T2Konly_10ktoys_NormPOT-3f+3fbar.root" // 1D (sin2th13) 
+ //char infilename[200] = "fitmarg_sinsq2th13_dcpflat_fixosc_T2Konly_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsq2th13)
+ 
+ char infilename[200] = "fitmarg_sinsq2th13_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsq2th13)
+ //char infilename[200] = "fitmarg_sinsqth13_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsq2th13)
+ 
+)
 {
   char name[200];
 
@@ -166,24 +171,24 @@ void analyze_run_fit_marginalization_readbinary
     double diff = chisqmin-chisqminFullChisq;
     //if(diff<0.04) continue;  // select large chisq difference
 
-    // if(chisqmin!=chisqminFullChisq){
-    //   cout << endl;
-    //   cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
-    //   cout << "chisqmin = " << chisqmin
-    // 	   << " - bestfit0 = " << bestfit0
-    // 	   << " - bestfit1 = " << bestfit1 << endl;
-    //   cout << "chisqminFullChisq = " << chisqminFullChisq 
-    // 	   << " - bestfitFullChisq0 = " << bestfitFullChisq0 
-    // 	   << " - bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
-    //   cout << "Difference = " << diff << endl;
-    //   cout << endl; 
-    //   NdiffChisq++;
-    // }
-    // else{
-    //   continue;
-    // }
+    if(chisqmin!=chisqminFullChisq){
+      cout << endl;
+      cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
+      cout << "chisqmin = " << chisqmin
+    	   << " - bestfit0 = " << bestfit0
+    	   << " - bestfit1 = " << bestfit1 << endl;
+      cout << "chisqminFullChisq = " << chisqminFullChisq 
+    	   << " - bestfitFullChisq0 = " << bestfitFullChisq0 
+    	   << " - bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
+      cout << "Difference = " << diff << endl;
+      cout << endl; 
+      NdiffChisq++;
+    }
+    //else{
+    //continue;
+    //}
 
-
+    
     // if(1){
     // //if(bestfiterrSym1<=0.01){
     // //if(bestfiterrSym0<=0.01){
@@ -210,6 +215,8 @@ void analyze_run_fit_marginalization_readbinary
     //   continue;
     // }
 
+    //if( fabs(truepar0 - bestfit0) > 0.3 ) continue;
+    
     double pullHESSE0 = -999;
     double pullHESSE1 = -999;
     pullHESSE0 = (truepar0 - bestfit0) / bestfiterrSym0;
@@ -434,7 +441,7 @@ void analyze_run_fit_marginalization_readbinary
 
   // 
 
-  treein->GetEntry(3302);
+  treein->GetEntry(0);
   TCanvas *cchisq_out_GetEntry = new TCanvas("cchisq_out_GetEntry","cchisq_out_GetEntry");
   if(IsFit2D) hchisq2D_out->DrawCopy("colz");
   else        hchisq1D_out->DrawCopy();
@@ -442,6 +449,9 @@ void analyze_run_fit_marginalization_readbinary
    
   // Print results
   
+  cout << endl;
+  cout << "truepar0 = " << truepar0 << endl;
+  if(IsFit2D) cout << "truepar1 = " << truepar1 << endl;
   cout << endl;
   cout << "Difference between descent gradient and global minimum" << endl;
   cout << "# of toys with different minim and full chisq minimum: "
