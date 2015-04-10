@@ -26,38 +26,45 @@ void plot_3f_osc_prob
  // double       deltacp    = -99,                            /* */
  // double       dm12sq     = -99,                             /* */
 
- // sinsq2theta T2K only
- double       mixing23   = 0.998,                            /* */
+ // // sinsq2theta T2K only
+ // double       mixing23   = 9.97696000000000027e-01,            /* */
+ // double       dm23sq     = 0.00251,                            /* */
+ // double       mixing12   = 8.49455999999999989e-01,            /* */
+ // double       mixing13   = 1.61676640000000038e-01,            /* */
+ // double       deltacp    = 0, //1.91,                            /* */
+ // double       dm12sq     = 7.5E-5,                             /* */
+
+ // sinsqtheta T2K only
+ double       mixing23   = 0.524,                            /* */
  double       dm23sq     = 0.00251,                            /* */
- double       mixing12   = 0.8495,                            /* */
- double       mixing13   = 0.1617,                            /* */
+ double       mixing12   = 0.306,                            /* */
+ double       mixing13   = 0.0422,                            /* */
  double       deltacp    = 1.91,                            /* */
  double       dm12sq     = 7.5E-5,                             /* */
-
- // // sinsqtheta T2K only
- // double       mixing23   = 0.524,                            /* */
- // double       dm23sq     = 0.00251,                            /* */
- // double       mixing12   = 0.306,                            /* */
- // double       mixing13   = 0.0422,                            /* */
- // double       deltacp    = 1.91,                            /* */
- // double       dm12sq     = 7.5E-5,                             /* */
  
- const char * hierarchy  = "normal",             /* normal or inverted */
- TString    * mixparam   = "sinsq2theta"          // sinsq2theta or sinsqtheta
+ const char * dmsqscheme     = "abs23",      /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * hierarchy      = "normal",     /* normal or inverted */
+ const char * mixparamchoice = "sinsqtheta", /* sinsq2theta or sinsqtheta */
+ const char * mixparamoctant = "two"         /* one==kNuOctantOne two==kNuOctantTwo */
  )
 {
   using namespace std;
   using namespace valor;
 
+
   // Global options
-
-  if(mixparam=="sinsqtheta")
-    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsqTheta;
-  else if(mixparam=="sinsq2theta")
-    Opt::Instance()->gOscMixingParamChoice = conv::kNuMixSinsq2Theta;
-  
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
+  Opt::Instance()->SetDefaultParameterValues();
 
+  
   if(Opt::Instance()->gOscMixingParamChoice==conv::kNuMixSinsqTheta){
     if(mixing13 < -1) mixing13 = conv::kGlobFitSinsqTheta13;
     if(mixing23 < -1) mixing23 = conv::kGlobFitSinsqTheta23;
@@ -116,7 +123,9 @@ void plot_3f_osc_prob
   double p_nue_nue        [nbins];
   double p_nuebar_nuebar  [nbins];
   double p_numu_nue       [nbins];
+  double p_nue_numu       [nbins];
   double p_numubar_nuebar [nbins];
+  double p_nuebar_numubar [nbins];
 
   // loop over Etrue
   for(int it = 1; it <= nbins; it++) {
@@ -129,16 +138,23 @@ void plot_3f_osc_prob
     p_nue_nue        [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuE,     conv::kPdgNuE,     Etrue);
     p_nuebar_nuebar  [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuEBar,  conv::kPdgNuEBar,  Etrue);
     p_numu_nue       [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMu,    conv::kPdgNuE,     Etrue);
+    p_nue_numu       [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuE,    conv::kPdgNuMu,     Etrue);
     p_numubar_nuebar [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuEBar,  Etrue);
+    p_nuebar_numubar [it-1] = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuEBar, conv::kPdgNuMuBar,  Etrue);
 
-    /*
-    cout << " >>  E = " << Etrue << " GeV" << endl;
-    cout << "     P (numu     -> numu   ) = " << p_numu_numu      [it-1] << endl;
-    cout << "     P (numubar  -> numubar) = " << p_numubar_numubar[it-1] << endl;
-    cout << "     P (nue      -> nue    ) = " << p_nue_nue        [it-1] << endl;
-    cout << "     P (nuebar   -> nuebar ) = " << p_nuebar_nuebar  [it-1] << endl;
-    cout << "     P (numu     -> nue    ) = " << p_numu_nue       [it-1] << endl;
-    */
+    if( fabs(Etrue-0.6)<0.001 ){
+      cout << endl;
+      cout << " >>  E = " << Etrue << " GeV" << endl;
+      cout << "     P (numu     -> numu   ) = " << p_numu_numu      [it-1] << endl;
+      cout << "     P (numubar  -> numubar) = " << p_numubar_numubar[it-1] << endl;
+      cout << "     P (nue      -> nue    ) = " << p_nue_nue        [it-1] << endl;
+      cout << "     P (nuebar   -> nuebar ) = " << p_nuebar_nuebar  [it-1] << endl;
+      cout << "     P (numu     -> nue    ) = " << p_numu_nue       [it-1] << endl;
+      cout << "     P (nue      -> numu   ) = " << p_nue_numu       [it-1] << endl;
+      cout << "     P (numubar  -> nuebar ) = " << p_numubar_nuebar [it-1] << endl;
+      cout << "     P (nuebar   -> numubar) = " << p_nuebar_numubar [it-1] << endl;
+      cout << endl;
+    }
   }
 
 
