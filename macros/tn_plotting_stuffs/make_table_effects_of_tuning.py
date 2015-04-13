@@ -25,7 +25,8 @@ arridx= util.ArrIdx.Instance()
 
 samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
 
-col_width = 30
+col1_width = 50
+col_width = 20
 
 line_width = 1
 
@@ -34,24 +35,6 @@ to3dp = "{0:.3f}"
 #______________________________________________________________________________________________________________________________
 
 def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
-  
-  phyp_osc = valor.PhysHypothesis("3f_osc")
-  mixing12 = opt.GetGlobalBestFit(conv.kPhypMixing12)
-  mixing13 = conv.kT2KBestFitTheta13_NH
-  mixing23 = opt.GetGlobalBestFit(conv.kPhypMixing23)
-  dm12sq   = opt.GetGlobalBestFit(conv.kPhypDm12sq)
-  dm23sq   = opt.GetGlobalBestFit(conv.kPhypDm23sq)
-  deltacp  = conv.kT2KBestFitDeltaCP_NH
-  
-  phyp_osc.SetCurrValue(conv.kPhypMixing12,  mixing12);
-  phyp_osc.SetCurrValue(conv.kPhypMixing13,  mixing13);
-  phyp_osc.SetCurrValue(conv.kPhypMixing23,  mixing23);
-  phyp_osc.SetCurrValue(conv.kPhypCPV     ,   deltacp);
-  phyp_osc.SetCurrValue(conv.kPhypDm12sq  ,    dm12sq);
-  phyp_osc.SetCurrValue(conv.kPhypDm23sq  ,    dm23sq);
-  
-  phyp_void = valor.PhysHypothesis(conv.kHypVoid)
-  
   
   nominal_modes        = dict()
   NA61_flux_modes      = dict()
@@ -65,6 +48,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   
   all_dicts_unosc = [nominal_modes, NA61_flux_modes, prefit_tuned_modes, postfit_tuned_modes]
   all_dicts_osc   = [osc_nominal_modes, osc_NA61_flux_modes, osc_prefit_tuned_modes, osc_postfit_tuned_modes]
+
   
   #  Make no flux SKExp
   skexp = valor.SuperkExpectation()
@@ -76,8 +60,8 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   #~ skexp.GetBANFF().RestoreFHCpRHCNominalMC()
   skexp.GetSuperkMC().FillTemplateArrays(False)
   
-  
-  skexp.Generate(phyp_void)
+  fparm_unosc,fparm_osc = make_fit_param_lists()
+  skexp.Generate(fparm_unosc)
   nominal_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   nominal_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
@@ -85,7 +69,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     if m == conv.kSKmUndefined or m > conv.knm: continue
     nominal_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
     
-  skexp.Generate(phyp_osc)
+  skexp.Generate(fparm_osc)
   osc_nominal_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   osc_nominal_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
@@ -94,6 +78,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     osc_nominal_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
   
   del skexp
+  
   
   # Now do the NA61 tune
   skexp = valor.SuperkExpectation()
@@ -104,7 +89,9 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   #~ skexp.GetBANFF().RestoreFHCpRHCNominalMC()
   skexp.GetSuperkMC().FillTemplateArrays(False)
   
-  skexp.Generate(phyp_void)
+  fparm_unosc,fparm_osc = make_fit_param_lists()
+  
+  skexp.Generate(fparm_unosc)
   NA61_flux_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   flux_tuned_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
@@ -112,7 +99,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     if m == conv.kSKmUndefined or m > conv.knm: continue
     NA61_flux_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
     
-  skexp.Generate(phyp_osc)
+  skexp.Generate(fparm_osc)
   osc_NA61_flux_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   osc_flux_tuned_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
@@ -125,15 +112,16 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   # NIWG tune
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file_prefit)
+  fparm_unosc,fparm_osc = make_fit_param_lists()
   
-  skexp.Generate(phyp_void)
+  skexp.Generate(fparm_unosc)
   prefit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
     prefit_tuned_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral("")
     
-  skexp.Generate(phyp_osc)
+  skexp.Generate(fparm_osc)
   osc_prefit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
@@ -146,7 +134,9 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file)
   
-  skexp.Generate(phyp_void)
+  fparm_unosc,fparm_osc = make_fit_param_lists()
+  
+  skexp.Generate(fparm_unosc)
   postfit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   postfit_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
@@ -154,7 +144,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     if m == conv.kSKmUndefined or m > conv.knm: continue
     postfit_tuned_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral("")
     
-  skexp.Generate(phyp_osc)
+  skexp.Generate(fparm_osc)
   osc_postfit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   osc_postfit_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
@@ -183,15 +173,18 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   tex_output.write("\n\n\\begin{tabular} { | c ||"+("c | "*4)+" | }\n\\hline\n")
   
   cols = ["","$N_{SK}$","$N_{SK}$","$N_{SK}$","$N_{SK}$"]
-  entries = [x.ljust(col_width) for x in cols]
+  widths = [col1_width]+([col_width]*(len(cols)-1))
+  print widths
+    
+  entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \n")
   
   cols = ["","Nominal MC","Flux-tuned MC","BANFF prefit MC","BANFF postfit MC"]
-  entries = [x.ljust(col_width) for x in cols]
+  entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
   cols = ["Total"] + [to3dp.format(d["total"]) for d in all_dicts_unosc]
-  entries = [x.ljust(col_width) for x in cols]
+  entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   tex_output.write("\\hline \n")
   
@@ -199,7 +192,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
     cols = [util.ModeAsStringTex(m)] + [to3dp.format(d[m]) for d in all_dicts_unosc]
-    entries = [x.ljust(col_width) for x in cols]
+    entries = [x.ljust(w) for x,w in zip(cols,widths)]
     tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
   tex_output.write("\n\\end{tabular}")
@@ -212,15 +205,15 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   tex_output.write("\n\n\\begin{tabular} { | c ||"+("c | "*4)+" | }\n\\hline\n")
   
   cols = ["","$N_{SK}$","$N_{SK}$","$N_{SK}$","$N_{SK}$"]
-  entries = [x.ljust(col_width) for x in cols]
+  entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \n")
   
   cols = ["","Nominal MC","Flux-tuned MC","BANFF prefit MC","BANFF postfit MC"]
-  entries = [x.ljust(col_width) for x in cols]
+  entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
   cols = ["Total"] + [to3dp.format(d["total"]) for d in all_dicts_osc]
-  entries = [x.ljust(col_width) for x in cols]
+  entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   tex_output.write("\\hline \n")
   
@@ -228,7 +221,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
     cols = [util.ModeAsStringTex(m)] + [to3dp.format(d[m]) for d in all_dicts_osc]
-    entries = [x.ljust(col_width) for x in cols]
+    entries = [x.ljust(w) for x,w in zip(cols,widths)]
     tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
   tex_output.write("\n\\end{tabular}")
@@ -372,6 +365,34 @@ def hist_to_50MeV(h):
     hout.SetBinContent(ix, 0.05 * h.GetBinContent(ix) / h.GetBinWidth(ix));
   hout.GetYaxis().SetTitle("Events per 0.050 GeV");
   return hout
+  
+def  make_fit_param_lists():
+    
+  mixing12 = opt.GetGlobalBestFit(conv.kPhypMixing12)
+  mixing13 = conv.kT2KBestFitTheta13_NH
+  mixing23 = opt.GetGlobalBestFit(conv.kPhypMixing23)
+  dm12sq   = opt.GetGlobalBestFit(conv.kPhypDm12sq)
+  dm23sq   = opt.GetGlobalBestFit(conv.kPhypDm23sq)
+  deltacp  = conv.kT2KBestFitDeltaCP_NH
+  
+  fparm_osc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
+  
+  fparm_osc.SetInitValue(conv.kPhypMixing12,  0.304);
+  fparm_osc.SetInitValue(conv.kPhypMixing13,  0.0248);
+  fparm_osc.SetInitValue(conv.kPhypMixing23,  0.527);
+  fparm_osc.SetInitValue(conv.kPhypCPV     ,  -1.55);
+  fparm_osc.SetInitValue(conv.kPhypDm12sq  ,  7.53E-5);
+  fparm_osc.SetInitValue(conv.kPhypDm23sq  ,  2.51E-3);
+  
+  fparm_unosc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
+  fparm_unosc.SetInitValue(conv.kPhypMixing12,  0.0)
+  fparm_unosc.SetInitValue(conv.kPhypMixing13,  0.0)
+  fparm_unosc.SetInitValue(conv.kPhypMixing23,  0.0)
+  fparm_unosc.SetInitValue(conv.kPhypCPV     ,  0.0)
+  fparm_unosc.SetInitValue(conv.kPhypDm12sq  ,  0.0)
+  fparm_unosc.SetInitValue(conv.kPhypDm23sq  ,  0.0)
+  
+  return fparm_unosc,fparm_osc
   
 if __name__=="__main__":
   
