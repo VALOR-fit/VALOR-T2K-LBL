@@ -119,7 +119,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   const int    nexp                     = 50,                                          /* number of experiments to make */
   const char * mixparamchoice           = "sinsqtheta",
   const char * hierarchy                = "normal",
-  bool         reject_unphysical_throws = true
+  bool         reject_unphysical_throws = true    ,
+  bool         use_new_definition_of_dn_over_n = true
 )
 {
   using namespace std;
@@ -383,9 +384,16 @@ void test_sk_ereco_spectrum_twk_sys_throw
   hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoNominal->GetYaxis()->SetTitle("Events per bin");
   hErecoNominal->SetLineWidth(2);
-  if(!update_rootfile)
+  
+  if (modetitle.find("prefit")==string::npos) {
     hErecoNominal->Write(Form("%s_nominal",sname));
-    
+  }
+  else {
+    hErecoNominal->Write(Form("%s_nominalprefit",sname));
+  }
+  
+  double nominal_total_nsk = hErecoNominal->Integral();
+  
   TH1D * hErecoNominal_per50MeV = spectrum_to_per_50mev(hErecoNominal);
   hErecoNominal_per50MeV->Write(Form("%s_nominal_per_50MeV",sname));
 
@@ -399,6 +407,8 @@ void test_sk_ereco_spectrum_twk_sys_throw
   int n_ereco_bins = util::NumErecoBins(s);
   
   double * sumsq_per_bin = (double*)calloc(n_ereco_bins,sizeof(double));
+  VALORArray * nsk_per_toy = new VALORArray(nexp);
+  double * nsk_per_toy_arr = nsk_per_toy.GetArray();
   
   TRandom3 rand(0);
   
@@ -647,6 +657,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
     //store Nsk
     double nskint = spectrum->Integral();
     hNsk->Fill(nskint);
+    nsk_per_toy_arr[iexp] = nskint;
     
     // Store tweaks.
     for (int ibin = 0 ; ibin < n_ereco_bins ; ibin++) {
@@ -803,12 +814,36 @@ void test_sk_ereco_spectrum_twk_sys_throw
   string banffpre = "-";
   if(mode == 0 || mode == 1)
     banffpre = "?";
+    
+  double dn_over_n = hNsk->GetRMS() / hNsk->GetMean();
+  
+  if (use_new_definition_of_dn_over_n) {
+    double sum_nsk = 0;
+    for (int iexp = 0 ; iexp < nexp; iexp++) {
+      sum_nsk += nsk_per_toy_arr[iexp];
+    }
+    double mean_nsk = sum_nsk / nexp;
+    
+    double sumsq = 0;
+    for (int iexp = 0 ; iexp < nexp; iexp++) {
+      cerr<<nsk_per_toy_arr[iexp]<<"\t"<<mean_nsk<<endl;
+      sumsq += pow(nsk_per_toy_arr[iexp]-mean_nsk,2);
+    }
+    
+    double expected_deviation = sqrt(sumsq/nexp);
+    cerr<<"Expected deviation: "<<expected_deviation<<endl;
+    cerr<<"Nominal total SK: "<<nominal_total_nsk<<endl;
+    
+    dn_over_n = expected_deviation/nominal_total_nsk;
+    
+  }
+      
   
   if (isprefit) {
-    streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline" << endl;
+    streamer << modetitle << " & & " << dn_over_n << " \\\\ \\hline" << endl;
   }
   else {
-    streamer << modetitle << " & & " << hNsk->GetRMS() / hNsk->GetMean() << " \\\\ \\hline" << endl;
+    streamer << modetitle << " & & " << dn_over_n << " \\\\ \\hline" << endl;
   }
     
   cout << streamer.str() << endl;
