@@ -86,8 +86,10 @@ void make_toygrid_toys_joint
  int  min_bin_param3          = 1,                    /* minimum bin for param2 */
  int  max_bin_param3          = 1,                    /* maximum bin for param2 */
 
- const char *optfixpar         = "mixing12, mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
+ const char *optfixpar         = "mixing12, mixing23, dmsq, dmsq12, mixing13, deltacp",  // list of the params to be fixed in the fit   
  //const char *optfixpar         = "mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
+ 
+ const char * read_init_syst_values_from_file = 0
 
  )
 {
@@ -481,9 +483,36 @@ void make_toygrid_toys_joint
 	 fparm2->FixParameter(kPhypCPVBar);
        }
      }
-
-
      
+     
+     if (optfixparams.Contains("allsyst")) {
+       for (int ip = 0 ; ip < fparm->Size(); ip++) {
+         PhysParamId_t p = fparm->WhichParam(ip);
+         if (util::IsSystematic(p)) {
+           fparm ->FixParameter(p);
+           fparm1->FixParameter(p);
+           fparm2->FixParameter(p);
+         }
+       }
+     }
+       
+     
+     // Set initial parameter values
+     if (read_init_syst_values_from_file) {
+       TFile * init_syst_file = new TFile(read_init_syst_values_from_file);
+       assert(init_syst_file);
+       FitParamList * fparm_init = init_syst_file->Get("best_fit_params");
+       assert(fparm_init->GetParListName()==fparm->GetParListName());
+       for (int ip = 0 ; ip < fparm_init->Size(); ip++) {
+         PhysParamId_t p = fparm_init->WhichParam(ip);
+         if (fparm->IsNuisance(p)) {
+           double init_val = fparm_init->BestFitValue(p);
+           fparm ->SetInitValue(p,init_val);
+           fparm1->SetInitValue(p,init_val);
+           fparm2->SetInitValue(p,init_val);
+         }
+       }
+     }
 
      // Reset all output spectra
      dat_array ->Clear();
