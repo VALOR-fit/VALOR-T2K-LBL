@@ -34,8 +34,12 @@ conf68 = 2.30
 
 to3dp = "{0:.3f}"
 to6dp = "{0:.6f}"
-  
-def main(file1, file2=None, tag=None):
+
+p1 = conv.kPhypMixing23Bar
+p2 = conv.kPhypDm23sqBar
+
+# First file is stat-only, second is stat+syst
+def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=True,draw_68=False):
   
   ROOT.gStyle.SetPalette(56);
   ROOT.gStyle.SetOptStat(0)
@@ -48,14 +52,66 @@ def main(file1, file2=None, tag=None):
   minos_points.SetMarkerColor(ROOT.kGreen+3)
   minos_graph.SetMarkerColor(ROOT.kGreen+3)
   
-  m_f = ROOT.TFile(file1)
-  h_m = m_f.Get("h_chisq_dmsq_mixing23_Ave_nh")
+  
+  
+  
+  
+  m_f = ROOT.TFile(contour_file)
+  h_m = m_f.Get("h_chisq_dmsq_mixing23_Ave_"+"nh")
   assert(h_m)
   h_m.Print()
   min_m = h_m.GetMinimum()
-  print min_m
   
-  h_delta_m = GetDeltaHist(h_m)
+  m_p = m_f
+    
+  h_p = m_p.Get("h_chisq_dmsq_mixing23_Ave_"+"ih")
+  assert(h_p)
+  h_p.Print()
+  min_p = h_p.GetMinimum()
+  
+  print min_m
+  print min_p
+  
+  # Precalculate the best-fit points from the histogram
+  bf_bin_p = h_p.GetMinimumBin()
+  bf_bin_m = h_m.GetMinimumBin()
+  
+  bf_chisq_p = h_p.GetBinContent(bf_bin_p)
+  bf_chisq_m = h_m.GetBinContent(bf_bin_m)
+  
+  x_bin_p = ROOT.Long() ; y_bin_p = ROOT.Long()
+  x_bin_m = ROOT.Long() ; y_bin_m = ROOT.Long()
+  dummy = ROOT.Long()
+  
+  h_p.GetBinXYZ(bf_bin_p,x_bin_p,y_bin_p,dummy)
+  h_m.GetBinXYZ(bf_bin_m,x_bin_m,y_bin_m,dummy)
+  
+  bf_x_p = h_p.GetXaxis().GetBinCenter(x_bin_p)
+  bf_x_m = h_m.GetXaxis().GetBinCenter(x_bin_m)
+  bf_y_p = h_p.GetYaxis().GetBinCenter(y_bin_p)
+  bf_y_m = h_m.GetYaxis().GetBinCenter(y_bin_m)
+  
+  
+  # If we have files, go and get the bestfits from those instead.
+  if bf_normal is not None:
+    tf_normal = ROOT.TFile(bf_normal)
+    tr = tf_normal.Get("fitnt")
+    tr.GetEntry(0)
+    bf_x_m = tr.best_fit_params.BestFitValue(p1)
+    bf_y_m = tr.best_fit_params.BestFitValue(p2)
+    bf_chisq_m = tr.best_fit_params.GetBestFitStatistic()
+
+  if bf_inverted is not None:
+    tf_inverted = ROOT.TFile(bf_inverted)
+    tr = tf_inverted.Get("fitnt")
+    tr.GetEntry(0)
+    bf_x_m = tr.best_fit_params.BestFitValue(p1)
+    bf_y_m = tr.best_fit_params.BestFitValue(p2)
+    bf_chisq_m = tr.best_fit_params.GetBestFitStatistic()
+      
+  
+  h_delta_m = GetDeltaHist(h_m,bf_chisq_m)
+  h_delta_m.SetMinimum(0)
   
   h_contour_m = ROOT.TH2D(h_delta_m)
   h_contour_m.SetContour(2)
@@ -64,18 +120,8 @@ def main(file1, file2=None, tag=None):
   h_contour_m.SetLineWidth(1)
   h_contour_m.SetLineColor(R.kBlack)
   
-  if file2:
-    m_p = ROOT.TFile(file2)
-  else:
-    m_p=m_f
-    
-  h_p = m_p.Get("h_chisq_dmsq_mixing23_Ave_ih")
-  assert(h_p)
-  h_p.Print()
-  min_p = h_p.GetMinimum()
-  print min_p
-  
-  h_delta_p = GetDeltaHist(h_p)
+  h_delta_p = GetDeltaHist(h_p,bf_chisq_p)
+  h_delta_p.SetMinimum(0)
   
   h_contour_p = ROOT.TH2D(h_delta_p)
   h_contour_p.SetContour(2)
@@ -87,35 +133,6 @@ def main(file1, file2=None, tag=None):
   
   contours_p = GetContours(h_contour_p)
   contours_m = GetContours(h_contour_m)
-  
-  for g in contours_p[0]: g.SetLineColor(R.kBlack)
-  for g in contours_p[1]: g.SetLineColor(R.kRed)
-  for g in contours_p[0]: g.SetLineStyle(1)
-  for g in contours_p[1]: g.SetLineStyle(1)
-  
-  for g in contours_m[0]: g.SetLineColor(R.kBlack)
-  for g in contours_m[1]: g.SetLineColor(R.kRed)
-  for g in contours_m[0]: g.SetLineStyle(2)
-  for g in contours_m[1]: g.SetLineStyle(2)
-  
-  # Pick bestfit points
-  bf_bin_p = h_contour_p.GetMinimumBin()
-  bf_bin_m = h_contour_m.GetMinimumBin()
-  
-  bf_chisq_p = h_p.GetBinContent(bf_bin_p)
-  bf_chisq_m = h_m.GetBinContent(bf_bin_m)
-  
-  x_bin_p = ROOT.Long() ; y_bin_p = ROOT.Long()
-  x_bin_m = ROOT.Long() ; y_bin_m = ROOT.Long()
-  dummy = ROOT.Long()
-  
-  h_contour_p.GetBinXYZ(bf_bin_p,x_bin_p,y_bin_p,dummy)
-  h_contour_m.GetBinXYZ(bf_bin_m,x_bin_m,y_bin_m,dummy)
-  
-  bf_x_p = h_contour_p.GetXaxis().GetBinCenter(x_bin_p)
-  bf_x_m = h_contour_m.GetXaxis().GetBinCenter(x_bin_m)
-  bf_y_p = h_contour_p.GetYaxis().GetBinCenter(y_bin_p)
-  bf_y_m = h_contour_m.GetYaxis().GetBinCenter(y_bin_m)
   
   marker_p = ROOT.TMarker(bf_x_p,bf_y_p,ROOT.kFullStar)
   marker_m = ROOT.TMarker(bf_x_m,bf_y_m,ROOT.kFullStar)
@@ -143,6 +160,19 @@ def main(file1, file2=None, tag=None):
   contours_m[0][0].Write("valor_ih_68_contour")
   contours_m[1][0].Write("valor_ih_90_contour")
   
+  for c in contours_p[0]:
+    c.SetLineColor(ROOT.kRed)
+    c.SetLineStyle(1)
+  for c in contours_p[1]:
+    c.SetLineColor(ROOT.kBlack)
+    c.SetLineStyle(1)
+  for c in contours_m[0]:
+    c.SetLineColor(ROOT.kRed)
+    c.SetLineStyle(2)
+  for c in contours_m[1]:
+    c.SetLineColor(ROOT.kBlack)
+    c.SetLineStyle(2)
+  
   bf_nh_graph = ROOT.TGraph(1)
   bf_ih_graph = ROOT.TGraph(1)
   bf_nh_graph.SetPoint(0,bf_x_p,bf_y_p)
@@ -168,9 +198,8 @@ def main(file1, file2=None, tag=None):
   h_contour_m.GetYaxis().SetRangeUser(1E-3,4.5E-3)
   h_contour_m.Draw("AXIS")
   for icont,cont_list in enumerate(contours_p + contours_m):
-    if icont%2==0: continue
+    if icont%2==0 and not draw_68: continue
     for cont in cont_list:
-      cont
       cont.Draw("same")
       
   # Draw markers
@@ -178,15 +207,17 @@ def main(file1, file2=None, tag=None):
   marker_m.Draw()
   
   # Draw MINOS
-  minos_graph.Draw("l same")
-  minos_points.Draw("p same")
+  if draw_minos:
+    minos_graph.Draw("l same")
+    minos_points.Draw("p same")
   
   # Make legend
   
   legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
   legend.AddEntry(h_contour_m,"NH","lp")
   legend.AddEntry(h_contour_p,"IH","lp")
-  legend.AddEntry(minos_graph,"MINOS","lp")
+  if draw_minos:
+    legend.AddEntry(minos_graph,"MINOS","lp")
   legend.Draw()
   
   if tag is None:
@@ -246,10 +277,10 @@ def CopyMarkerToHist(marker,histogram):
   histogram.SetMarkerStyle(marker.GetMarkerStyle())
   histogram.SetMarkerColor(marker.GetMarkerColor())
   
-def GetDeltaHist(h):
+def GetDeltaHist(h,minval=None):
   h_delta = ROOT.TH2D(h)
   h_delta.Reset()
-  minval = h.GetMinimum()
+  if minval is None: minval = h.GetMinimum()
   for ix in xrange(h_delta.GetXaxis().GetNbins()):
     for iy in xrange(h_delta.GetYaxis().GetNbins()):
       h_delta.SetBinContent(ix+1,iy+1,h.GetBinContent(ix+1,iy+1)-minval)
@@ -257,5 +288,17 @@ def GetDeltaHist(h):
   return h_delta
   
 if __name__=="__main__":
-  main(*sys.argv[1:])
+  import optparse
+  parser = optparse.OptionParser(usage="%prog [options]..",description="Make contours")
+  
+  parser.add_option('--bf-nh' , dest='bf_normal' ,  default=None, help="File containing true best-fit (syst, NH)")
+  parser.add_option('--bf-ih' , dest='bf_inverted', default=None, help="File containing true best-fit (syst, IH)")
+  parser.add_option('-t','--tag' , dest='tag', default=None, help="Tag for output")
+  parser.add_option('-m','--minos' , dest='draw_minos', default=False,action="store_true", help="Should we add a MINOS contour")
+  parser.add_option('--no-68' , dest='no68', default=False,action="store_true", help="Should we add remove the 68% confidence region")
+  
+  o,args = parser.parse_args()
+  assert(len(args)==1)
+  
+  main(args[0], o.bf_normal, o.bf_inverted, o.tag,o.draw_minos, not o.no68)
 
