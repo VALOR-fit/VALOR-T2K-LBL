@@ -501,7 +501,12 @@ void make_toygrid_toys_joint
      if (read_init_syst_values_from_file) {
        TFile * init_syst_file = new TFile(read_init_syst_values_from_file);
        assert(init_syst_file);
-       FitParamList * fparm_init = init_syst_file->Get("best_fit_params");
+       TTree * init_tr = init_syst_file->Get("fitnt");
+       assert(init_tr);
+       FitParamList * fparm_init = new FitParamList();
+       init_tr->SetBranchAddress("best_fit_params",&fparm_init);
+       init_tr->GetEntry(0);
+       assert(fparm_init);
        assert(fparm_init->GetParListName()==fparm->GetParListName());
        for (int ip = 0 ; ip < fparm_init->Size(); ip++) {
          PhysParamId_t p = fparm_init->WhichParam(ip);
@@ -512,6 +517,7 @@ void make_toygrid_toys_joint
            fparm2->SetInitValue(p,init_val);
          }
        }
+       delete init_syst_file;
      }
 
      // Reset all output spectra
