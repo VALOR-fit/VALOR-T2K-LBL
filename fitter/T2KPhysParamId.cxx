@@ -3815,6 +3815,28 @@ bool valor::util::IsFHCSystematic(PhysParamId_t p)
   ///
 }
 //________________________________________________________________________________________
+bool valor::util::IsBANFFUnconstrained(PhysParamId_t p)
+{
+  switch (p) {
+    case (kNuisBANFFMEC        )   :
+    case (kNuisBANFFFermiMom   )   :
+    case (kNuisBANFFBindE      )   :
+    case (kNuisBANFFNormCCcoh  )   :
+    case (kNuisBANFFNormNuEToNuMu) :
+    
+    case (kRHCNuisBANFFMEC        )   :
+    case (kRHCNuisBANFFFermiMom   )   :
+    case (kRHCNuisBANFFBindE      )   :
+    case (kRHCNuisBANFFNormCCcoh  )   :
+    case (kRHCNuisBANFFNormNuEToNuMu) :
+      return true;
+    
+    default:
+      return false;
+  }
+  return false;
+}
+//________________________________________________________________________________________
 bool valor::util::IsRHCSystematic(PhysParamId_t p)
 {
   // if(!IsSystematic(p))
