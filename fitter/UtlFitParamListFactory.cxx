@@ -429,6 +429,38 @@ FitParamList * util::NamedParameterList(string name)
   }
 
 
+
+  if(name == "nuosc3fbar_numudisapp_fixnonbar_fix5+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourBarFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 12);
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> FixParameter (kPhypDm23sq);
+    
+    fp -> FixParameter (kPhypMixing13Bar);
+    fp -> FixParameter (kPhypMixing12Bar);
+    fp -> FixParameter (kPhypCPVBar);
+    fp -> FixParameter (kPhypDm12sqBar);
+    fp -> FixParameter (kPhypDm23sqBar);
+ 
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    //~ fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
+
+    return fp;
+  }
+
+
+
+
   if(name == "nuosc3fbar_fixnonbar_12fix") {
     FitParamList * fp = FitParamList::NuOsc3FlavourBarFit();
     fp -> FixParameter (kPhypMixing13);
