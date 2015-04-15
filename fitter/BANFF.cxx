@@ -945,6 +945,275 @@ void BANFF::TweakFHCpRHC(
     }
 }
 
+void BANFF::TweakSampleConstrainedOnly(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec   , /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+  bool   unconstrained     /* This function will either do all constrained parameters, or all unconstrained*/
+)
+{
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)
+  this->TweakFHCpRHCConstrainedOnly(force_inputs, input_vec,unconstrained);
+#else
+#ifdef __FHC_RUNNING__
+  this->TweakConstrainedOnly(force_inputs, input_vec,unconstrained);
+#endif
+#ifdef __RHC_RUNNING__
+  this->TweakRHCConstrainedOnly(force_inputs, input_vec,unconstrained);
+#endif
+#endif
+}
+
+
+
+//________________________________________________________________________________________
+void BANFF::TweakConstrainedOnly(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec   ,/* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+  bool       unconstrained
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/Tweak >> Tweaking BANFF fit parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweaked         = true;
+  fIsFluxWghtUpdated = false;
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+  if(fCovMtrxChoL == 0) 
+    this->CholeskyDecomposeMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  
+  TVectorD & bestfit_values = *fBestFitValues;
+  TVectorD & current_values = *fCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+  {
+     // Input vector is NULL.
+     // This resets the BANFF params to their best-fit values.
+     if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/Tweak >> Reset BANFF params to best-fit values." << endl;
+#endif
+        fIsTweaked = false;
+        current_values = bestfit_values;
+        return;
+     }
+     else     
+     {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/Tweak >> Forcing input BANFF parameters. " << endl;
+#endif
+        TVectorD & vec = *input_vec;
+        assert(vec.GetNoElements() == conv::kNumOfParamsInBANFFfit);
+        for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
+          PhysParamId_t p = conv::kListOfBANFFParams[ip];
+          if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+        }
+        current_values = vec;
+        return;
+     }
+  }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+  {
+#ifdef __show_tweak_mesg_debug__
+     cout << "Exp/BANFF/Tweak >> Generating random twk dials (correlated)! " << endl;
+#endif
+     TMatrixD & L = *fCovMtrxChoL;
+     TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+      for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
+        PhysParamId_t p = conv::kListOfBANFFParams[ip];
+        if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+      }
+     current_values = vec;
+     return;
+  }
+
+}
+//________________________________________________________________________________________
+void BANFF::TweakRHCConstrainedOnly(
+ bool       force_inputs, /* force the input params or generate random ones internally  */
+ TVectorD * input_vec    ,/* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+ bool       unconstrained
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/Tweak >> Tweaking RHC BANFF fit parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdatedRHC = false;
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fRHCCovMtrxChoL == 0) 
+    this->CholeskyDecomposeRHCMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  TVectorD & bestfit_values = *fRHCBestFitValues;
+  TVectorD & current_values = *fRHCCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+    {
+      // Input vector is NULL.
+      // This resets the BANFF params to their best-fit values.
+      if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/Tweak >> Reset RHC BANFF params to best-fit values." << endl;
+#endif
+        fIsTweakedRHC = false;
+        current_values = bestfit_values;
+        return;
+      }
+      else     
+	{
+#ifdef __show_tweak_mesg_debug__
+	  cout << "Exp/BANFF/Tweak >> Forcing RHC input BANFF parameters. " << endl;
+#endif
+        TVectorD & vec = *input_vec;
+        assert(vec.GetNoElements() == conv::kNumOfRHCParamsInBANFFfit);
+        for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
+          PhysParamId_t p = conv::kListOfRHCBANFFParams[ip];
+          if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+        }
+        current_values = vec;
+        return;
+      }
+    }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+    {
+#ifdef __show_tweak_mesg_debug__
+      cout << "Exp/BANFF/Tweak >> Generating RHC random twk dials (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fRHCCovMtrxChoL;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+        for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
+        PhysParamId_t p = conv::kListOfRHCBANFFParams[ip];
+        if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+      }
+      
+      current_values = vec;
+      return;
+    }
+
+}
+//________________________________________________________________________________________
+
+
+
+
+// NEW FLUX FHC+RHC
+void BANFF::TweakFHCpRHCConstrainedOnly(
+ bool       force_inputs, /* force the input params or generate random ones internally  */
+ TVectorD * input_vec   , /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+ bool       unconstrained
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/Tweak >> Tweaking FHC+RHC BANFF fit parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweakedFHCpRHC         = true;
+  fIsFluxWghtUpdatedFHCpRHC = false;
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fFHCpRHCCovMtrxChoL == 0) 
+    this->CholeskyDecomposeFHCpRHCMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  TVectorD & current_values = *fFHCpRHCCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+    {
+      // Input vector is NULL.
+      // This resets the BANFF params to their best-fit values.
+      if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/Tweak >> Reset FHC+RHC BANFF params to best-fit values." << endl;
+#endif
+        fIsTweakedFHCpRHC = false;
+        current_values = bestfit_values;
+        return;
+      }
+      else     
+	{
+#ifdef __show_tweak_mesg_debug__
+	  cout << "Exp/BANFF/Tweak >> Forcing FHC+RHC input BANFF parameters. " << endl;
+#endif
+        TVectorD & vec = *input_vec;
+        assert(vec.GetNoElements() == conv::kNumOfFHCpRHCParamsInBANFFfit);
+        for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
+          PhysParamId_t p = conv::kListOfFHCpRHCBANFFParams[ip];
+          if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+        }
+        current_values = vec;
+        return;
+	}
+    }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+    {
+#ifdef __show_tweak_mesg_debug__
+      cout << "Exp/BANFF/Tweak >> Generating RHC random twk dials (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fFHCpRHCCovMtrxChoL;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+      for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
+        PhysParamId_t p = conv::kListOfFHCpRHCBANFFParams[ip];
+        if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+      }
+      current_values = vec;
+      return;
+    }
+}
+
 
 //________________________________________________________________________________________
 void BANFF::TweakSampleXSecOnly(
