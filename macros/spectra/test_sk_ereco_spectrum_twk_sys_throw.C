@@ -8,6 +8,8 @@
 //   0 tweak all parameters
 //   1 tweak all BANFF
 //   2 tweak all unconstrained xsec
+//   5 tweak only BANFF unstrained parameters
+//   6 tweak all BANFF constrained parameters
 //   7 tweak BANFF flux only
 //   8 tweak BANFF xsec only
 //   9 tweak SKdet + FSI
@@ -164,6 +166,10 @@ void test_sk_ereco_spectrum_twk_sys_throw
       //~ char fsibins[40] = "";
       //~ sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
       //~ modetitle = fsibins; break;
+    case 5:
+      modetitle = "BANFF_unconstrained"; break;
+    case 6:
+      modetitle = "BANFF_constrained"; break;
     case 7:
       modetitle = "BANFF_flux"; break;
     case 8:
@@ -441,6 +447,15 @@ void test_sk_ereco_spectrum_twk_sys_throw
       if(mode == 2) {
         skexp.TweakAllUncorrelatedXSecSystematics();
         skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
+      }
+      
+      //BANFF (unconstrained only)
+      if(mode == 5) {
+        skexp.GetBANFF()->TweakSampleConstrainedOnly(false,0,true); // cholesky w/ full unconstrained matrix
+      }
+      //BANFF (constrained only)
+      if(mode == 6) {
+        skexp.GetBANFF()->TweakSampleConstrainedOnly(false,0, false); // cholesky w/ full cov matrix
       }
       
       //BANFF (flux only)

@@ -47,6 +47,12 @@ optionParser.add_option("-m","--mixparamchoice", action="store", dest="mixparamc
 optionParser.add_option("-f","--fitparamlist", action="store", dest="fitparamlist", type="string", default="nuosc3f_12fix+nuisance", help="Mixing param choice: sinsqtheta")
 optionParser.add_option("-t","--storethrows", action="store_true", dest="storethrows", default=False, help="Store the thrown parameter values")
 optionParser.add_option("--do-not-run", action="store_true", dest="do_not_run", default=False, help="If you've already got the files and just want to use them rather than running again.")
+optionParser.add_option("--mode",action="store",dest="mode",default=None,help="If you only want to run a single mode, specify its number here")
+optionParser.add_option("--skip-prefit" , action="store_true", dest="skip_prefit" , default=False, help="If don't want to run prefit jobs")
+optionParser.add_option("--skip-postfit", action="store_true", dest="skip_postfit", default=False, help="If don't want to run postfit jobs")
+optionParser.add_option("--skip-osc"  , action="store_true", dest="skip_osc"  , default=False, help="If don't want to run oscillated jobs")
+optionParser.add_option("--skip-unosc", action="store_true", dest="skip_unosc", default=False, help="If don't want to run unoscillated jobs")
+optionParser.add_option("--clear", action="store_true", dest="clear", default=False, help="Get rid of output of other jobs first.")
 
 (opt, args) = optionParser.parse_args()
 
@@ -108,25 +114,31 @@ elif opt.do_imp: #combinations + splines + oscparams
 # 10 tweak BANFF + unconstrained xsec
 # 11 oscillation parameters
 
-modes = [0,1,7,8,9]
+modes = [0,1,5,6,7,8,9]
 
 if do_uncorrelated_xsec:
   modes.append(2)
   
 if do_oscillation_parameters:
   modes.append(11)
+  
+if opt.mode is not None:
+  modes = [int(opt.mode)]
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23hypothesis
 
-oscparams.append([  0,   0,   0,   0,   -99,   -99]) #no oscillations!
-oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+if not opt.skip_unosc: oscparams.append([  0,   0,   0,   0,   -99,   -99]) #no oscillations!
+if not opt.skip_osc  : oscparams.append([-99, -99, -99, -99, -99, -99]) #use global best fits!
+
 #oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
 #oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
+
+update = "true"
 
 if not do_not_run_jobs:
   for osc in oscparams:
 
-      update = "false"
+      if opt.clear: update = "false"
 
       for mode in modes:
 
@@ -138,18 +150,19 @@ if not do_not_run_jobs:
           
           command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
           print command
-          if os.system(command) == 1:
-              sys.exit(1)
-          if update == "false":
-              update = "true"
+          if not opt.skip_postfit:
+            if os.system(command) == 1:
+                sys.exit(1)
+            if update == "false":
+                update = "true"
 
 
           #repeat for the banff prefit (its a different spectrum, so erros have different effects)
-
-          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
-          print command
-          if os.system(command) == 1:
-              sys.exit(1)
+          if not opt.skip_prefit:
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+mixparamchoice+'","'+hierarchy+'")\''
+            print command
+            if os.system(command) == 1:
+                sys.exit(1)
 
 
 if make_summary:
@@ -190,6 +203,8 @@ if make_summary:
     d["skdet"]      = float(input_rows["SKDet_FSI"])
     d["banff_pre"]  = float(input_rows["BANFFprefit"])
     d["banff_post"] = float(input_rows["BANFF"])
+    d["banff_cons"]   = float(input_rows["BANFF_constrained"])
+    d["banff_uncons"] = float(input_rows["BANFF_unconstrained"])
     
     if do_uncorrelated_xsec:
       d["xsec"]       = float(input_rows["unconstrained_xsec"])
@@ -244,6 +259,12 @@ if make_summary:
   f.write("\\\\\n")
 
   f.write(make_row(["BANFF (postfit)"]+[percent_2dp(d["banff_post"]) for d in out_cols]))
+  f.write("\\\\\n")
+  
+  f.write(make_row(["BANFF (constrained)"]+[percent_2dp(d["banff_cons"]) for d in out_cols]))
+  f.write("\\\\\n")
+
+  f.write(make_row(["BANFF (unconstrained)"]+[percent_2dp(d["banff_uncons"]) for d in out_cols]))
   f.write("\\\\\n")
   
   if do_uncorrelated_xsec: 
