@@ -62,6 +62,8 @@
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
+//#define __ALLOW_DIFFERING_HIERARCHIES__ // do we allow our oscillation calculators to have different mass hiearchies to the globals?
+
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
@@ -1897,6 +1899,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 //________________________________________________________________________________________
 void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
 {
+#ifndef __ALLOW_DIFFERING_HIERARCHIES__
+  assert(Opt::Instance()->gMassHierarchyAssumed==fNuOsc3Flavour.GetMassHierarchy());
+#endif
   // set oscillation parameters to the oscillation probability calculation code
   double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
   double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
@@ -2228,6 +2233,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
 //________________________________________________________________________________________
 void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
 {
+#ifndef __ALLOW_DIFFERING_HIERARCHIES__
+  assert(Opt::Instance()->gMassHierarchyAssumed==fNuOscSterile.GetMassHierarchy());
+#endif
   //
   // 3+n flavour sterile oscillations
   //
