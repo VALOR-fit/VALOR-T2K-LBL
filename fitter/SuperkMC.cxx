@@ -1910,7 +1910,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
   cout << "**  SKMC/ApplyPhysHypothesisToTemplates_3fOsc >> " << fPhysHypothesis;
 #endif
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-  NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+  NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
   
   double p_osc[3][3];
   double p_osc_bar[3][3];
@@ -2080,7 +2080,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
   cout << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
-  NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+  NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
   
   double p_osc[3][3];
   double p_osc_bar[3][3];
@@ -2291,7 +2291,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
   }
   
   // May need to put some decision on mass splitting convention here.
-  //~ NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->gOscDmsqScheme;
+  //~ NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
   
   fNuOscSterile.SetDmsq(dmsq, Dmsq, dm41sq, dm51sq);
   fNuOscSterile.SetDeltaCP(delta_12, delta_13, delta_15, delta_34, delta_35);

@@ -2179,7 +2179,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kPhypCPV                   ) : return "delta_cp";            break;
     case ( kPhypDm23sq                ) :
       {
-        NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+        NuOscDmsqScheme_t dmscheme = Opt::Instance()->GetEffectiveDmsqScheme();
         switch(dmscheme) {
           case(kNuDmsq12andAbs23) : return "|dm32sq|";                  break;
           case(kNuDmsq12andAbs31) : return "|dm31sq|";                  break;
@@ -2190,7 +2190,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     break;
     case ( kPhypDm12sq                ) :
       {
-        NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+        NuOscDmsqScheme_t dmscheme = Opt::Instance()->GetEffectiveDmsqScheme();
         switch(dmscheme) {
           case(kNuDmsq12andAbs23) :
           case(kNuDmsq12andAbs31) :
@@ -2237,7 +2237,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kPhypCPVBar                ) : return "delta_cpbar";            break;
     case ( kPhypDm23sqBar             ) :
       {
-        NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+        NuOscDmsqScheme_t dmscheme = Opt::Instance()->GetEffectiveDmsqScheme();
         switch(dmscheme) {
           case(kNuDmsq12andAbs23) : return "|dm32sqbar|";                  break;
           case(kNuDmsq12andAbs31) : return "|dm31sqbar|";                  break;
@@ -2248,7 +2248,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     break;
     case ( kPhypDm12sqBar              ) :
       {
-        NuOscDmsqScheme_t dmscheme = Opt::Instance()->gOscDmsqScheme;
+        NuOscDmsqScheme_t dmscheme = Opt::Instance()->GetEffectiveDmsqScheme();
         switch(dmscheme) {
           case(kNuDmsq12andAbs23) :
           case(kNuDmsq12andAbs31) :
@@ -2809,7 +2809,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
     }
   case ( kPhypDm23sq                ) : 
     {
-      NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
+      NuOscDmsqScheme_t omp = Opt::Instance()->GetEffectiveDmsqScheme();
       switch(omp) {
         case(kNuDmsqFogliLisi) :        return "$|\\Delta m^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|$";                  break;
         case(kNuDmsq12andAbs23):        return "$|\\Delta m^{2}_{32}|$";                  break;
@@ -2821,7 +2821,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 
   case ( kPhypDm12sq                ) : 
     {
-      NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
+      NuOscDmsqScheme_t omp = Opt::Instance()->GetEffectiveDmsqScheme();
       switch(omp) {
       case(kNuDmsqFogliLisi):
         return "$\\deltam^{2} = \\Delta m^{2}_{21}$";      break;
@@ -2874,7 +2874,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
     }
   case ( kPhypDm23sqBar                ) : 
     {
-      NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
+      NuOscDmsqScheme_t omp = Opt::Instance()->GetEffectiveDmsqScheme();
       switch(omp) {
         case(kNuDmsqFogliLisi) :        return "$|\\bar{\\Delta m^{2}}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2|$";                  break;
         case(kNuDmsq12andAbs23):        return "$|\\bar{\\Delta m^{2}_{32}}|$";                  break;
@@ -2886,7 +2886,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 
   case ( kPhypDm12sqBar                ) : 
     {
-      NuOscDmsqScheme_t omp = Opt::Instance()->gOscDmsqScheme;
+      NuOscDmsqScheme_t omp = Opt::Instance()->GetEffectiveDmsqScheme();
       switch(omp) {
       case(kNuDmsqFogliLisi):
         return "$\\bar{\\deltam^{2}} = \\bar{\\Delta m^{2}_{21}}$";      break;
