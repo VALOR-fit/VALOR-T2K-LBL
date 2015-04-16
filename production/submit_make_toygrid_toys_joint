@@ -125,7 +125,7 @@ $input_deltacp          = -99                         unless defined $input_delt
 $input_dm12sq           = -99                         unless defined $input_dm12sq;
 $input_dm23sq           = -99                         unless defined $input_dm23sq;
 
-$dmsqscheme             = "abs23"                                unless defined $dmsqscheme;
+$dmsqscheme             = "auto"                                 unless defined $dmsqscheme;
 $masshierarchy          = "normal"                               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"                           unless defined $mixparamchoice;
 $mixparamoctant         = "one"                                  unless defined $mixparamoctant;
