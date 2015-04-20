@@ -9,13 +9,15 @@
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
-#define __print_minimization_steps__ //
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_masshierarchy__
 //#define __print_systematic_variations__
 #define __print_chisqmarg__
 //#define __readtoys_debug__
+//#define __print_minimization_steps__ //
+//#define __print_hesseerror__
+//#define __print_hesseerror_verbose__
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
 
@@ -3178,8 +3180,6 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
   
   while(1){
     
-    cout << "Niterations = " << Niterations << endl;
-
     if(Nfits > fMaxFitNumber){
       cout << endl;
       cout << "Starting fit # " << Nfits << endl;
@@ -3640,10 +3640,7 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       cout << endl;
       cout << "Get the new direction" << endl;
       cout << endl;
-      
-      int offdiagbin_X = conv::kBadResult; // X off-diagonal bin in the gradient direction
-      int offdiagbin_Y = conv::kBadResult; // Y off-diagonal bin in the gradient direction
-      
+            
       // Move toward the lowest adjacent Chisq bin
       
       int NewDir_X = conv::kBadResult; // It's not the bin number but an array index
@@ -3717,10 +3714,7 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       }
 
       // Compute the gradient between the lowest bin and the opposite one and the new step size
-      
-      cout << "Compute the gradient between the lowest bin and the opposite one and the new step size" << endl;
-      
-
+           
       double grad_X=0.;
       double grad_Y=0.;
       double step_X=0.;
@@ -4845,13 +4839,20 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
   return;
 }
 //________________________________________________________________________________________
-void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bool readbinary){
+void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bool readbinary,int Nh){
+
+  cout << "Compute HESSE errors" << endl;
+#ifdef __print_hesseerror__
+  cout << "Bins far " << Nh << " from the best-fit bin are used" << endl;
+#endif
 
   double error = conv::kBadResult;
   const double CritChisq_1D = 1.;
   const double CritChisq_2D = 2.3;
-  const int Nh = 1.;
+ 
 
+  //const int Nh = 3;  
+  
   this->BuildDeltaChisqMarg();
 
   // 1D HESSE error
@@ -4879,7 +4880,7 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
  
     // If best-fit is on the border, assume the chisq to be symmetric around the minimum
     if(bin_bf==1){
-      chisq_plus = fhdeltachisq_marg_1D->GetBinContent(bin_bf+Nh); // X^2(xbf+h)
+      chisq_plus = fhdeltachisq_marg_1D->GetBinContent(bin_bf+Nh); // X^2(xbf+h)      
       chisq_minus = chisq_plus;
     }
     else if(bin_bf==fhdeltachisq_marg_1D->GetNbinsX()){
@@ -4924,6 +4925,41 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
   else{
     
+#ifdef __print_hesseerror__
+    cout << "2D HESSE error" << endl;
+#endif
+
+    
+
+    // Be sure the Chisq is computed for all the points are needed for the HESSE error
+    // TODO: I don't need all the grid for HESSE errors.
+    // for(int i=1;i<=Nh;i++){
+    //   for(int j=1;j<=Nh;j++){
+    // 	if( (bin_bf0+i <= fhdeltachisq_marg_2D->GetNbinsX()) &&
+    // 	    (bin_bf1+j <= fhdeltachisq_marg_2D->GetNbinsY()) ) 
+    // 	  CalcChisqMargPtRead(skobs_data,bin_bf0+i-1,bin_bf1+j-1,true);	
+    // 	if( (bin_bf0-i >= 1) &&
+    // 	    (bin_bf1-j >= 1) ) 
+    // 	  CalcChisqMargPtRead(skobs_data,bin_bf0-i-1,bin_bf1-j-1,true);	
+    // 	if( (bin_bf0-i >= 1) &&
+    // 	    (bin_bf1+j <= fhdeltachisq_marg_2D->GetNbinsY()) ) 
+    // 	CalcChisqMargPtRead(skobs_data,bin_bf0-i-1,bin_bf1+j-1,true);	
+    // 	if( (bin_bf0+i <= fhdeltachisq_marg_2D->GetNbinsX()) &&
+    // 	    (bin_bf1-j >= 1) ) 
+    // 	CalcChisqMargPtRead(skobs_data,bin_bf0+i-1,bin_bf1-j-1,true);
+    //   }
+    // }
+    // // Be sure the +-Nh bins are in the physical region
+    // if( (bin_bf0-Nh) < 1 ||
+    // 	(bin_bf0+Nh) > fhdeltachisq_marg_2D->GetNbinsX() ||
+    // 	(bin_bf1-Nh) < 1 ||
+    // 	(bin_bf1+Nh) > fhdeltachisq_marg_2D->GetNbinsY() 
+    // 	)
+    //   {
+    //   }
+
+    
+    
     //
     // Make a 2D Taylor expansion of the chisq function X^2 around the best fit. 
     // Critical value for 1sigma (68.27% CL) is dX^2 = 2.3  
@@ -4936,12 +4972,10 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     // 2C = d^2 X^2 / dx0dx1
     //
 
-    // int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]+conv::kAVerySmallNum);    
-    // int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]+conv::kAVerySmallNum);
     int bin_bf0 = fhdeltachisq_marg_2D->GetXaxis()->FindBin(fparam_bf[0]);    
     int bin_bf1 = fhdeltachisq_marg_2D->GetYaxis()->FindBin(fparam_bf[1]);
-    double chisq_bf = fhdeltachisq_marg_2D->GetBinContent(bin_bf0,bin_bf1);     // X^2( x0bf, x1bf ) 
 
+    double chisq_bf = fhdeltachisq_marg_2D->GetBinContent(bin_bf0,bin_bf1);     // X^2( x0bf, x1bf ) 
     double h0 = fhdeltachisq_marg_2D->GetXaxis()->GetBinWidth(bin_bf0) * (double)Nh;    
     double h1 = fhdeltachisq_marg_2D->GetYaxis()->GetBinWidth(bin_bf1) * (double)Nh;    
 
@@ -4963,7 +4997,7 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     // Assume the chisq to be symmetric around the minimum 
     // --> symmetrically copy and paste the chisq values to the bins in the unphysical region 
     //
-
+   
     if( bin_bf0==1 &&  // Only Par0 on the lowery boundary
 	(bin_bf1>1 && bin_bf1<fhdeltachisq_marg_2D->GetNbinsY()) ){
       
@@ -5112,7 +5146,7 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     }
     else if( (bin_bf0>1 && bin_bf0<fhdeltachisq_marg_2D->GetNbinsX()) &&  // Standard case
 	     (bin_bf1>1 && bin_bf1<fhdeltachisq_marg_2D->GetNbinsY()) ){ 
-      
+
       chisq_minus0 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1);           // X^2( x0bf-h0, x1bf    )
       chisq_plus0 = fhdeltachisq_marg_2D->GetBinContent   (bin_bf0+Nh, bin_bf1);           // X^2( x0bf+h0, x1bf    )
       chisq_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0,    bin_bf1-Nh);        // X^2( x0bf   , x1bf-h1 )
@@ -5122,10 +5156,23 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
       chisq_plus0_minus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0+Nh, bin_bf1-Nh);  // X^2( x0bf+h0, x1bf-h1 )
       chisq_minus0_plus1 = fhdeltachisq_marg_2D->GetBinContent  (bin_bf0-Nh, bin_bf1+Nh);  // X^2( x0bf-h0, x1bf+h1 )
  
+#ifdef __print_hesseerror_verbose__
+      cout << endl;
+      cout << "chisq_bf = " << chisq_bf << endl;
+      cout << "chisq_minus0 = " << chisq_minus0 << endl;
+      cout << "chisq_plus0 = " << chisq_plus0 << endl;
+      cout << "chisq_minus1 = " << chisq_minus1 << endl;
+      cout << "chisq_plus1 = " << chisq_plus1 << endl;
+      cout << "chisq_minus01 = " << chisq_minus01 << endl;
+      cout << "chisq_plus01 = " << chisq_plus01 << endl;
+      cout << "chisq_plus0_minus1 = " << chisq_plus0_minus1 << endl;
+      cout << "chisq_minus0_plus1 = " << chisq_minus0_plus1 << endl;
+      cout << endl;
+#endif
+
       // All the bins are available
       // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
       deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
-
     }
     else{
       cerr << endl;
@@ -5142,23 +5189,7 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     
     // 2D discrete deriv 1: d2X^2/dx1^2 = [ X^2(x0bf,x1bf+h1) - 2X^2(x0bf,x1bf) + X^2(x0bf,x1bf-h1) ] / h1^2
     deriv2nd_1 = (chisq_plus1 - 2*chisq_bf + chisq_minus1) / ( h1*h1 );
-
-
-    // // 2D discrete deriv 0: d2X^2/dx0^2 = [ X^2(x0bf+h0,x1bf) - 2X^2(x0bf,x1bf) + X^2(x0bf-h0,x1bf) ] / h0^2    
-    // double deriv2nd_0 = (chisq_plus0 - 2*chisq_bf + chisq_minus0) / ( h0*h0 );  
-    // // 2D discrete deriv 1: d2X^2/dx1^2 = [ X^2(x0bf,x1bf+h1) - 2X^2(x0bf,x1bf) + X^2(x0bf,x1bf-h1) ] / h1^2
-    // double deriv2nd_1 = (chisq_plus1 - 2*chisq_bf + chisq_minus1) / ( h1*h1 );
-    // // 2D discrete deriv 01 (1): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf) - X^2(x0bf,x1bf+h1) + 2*X^2(x0bf,x1bf) - X^2(x0bf-h0,x1bf) 
-    // //                                      - X^2(x0bf,x1bf-h1) + X^2(x0bf-h0,x1bf-h1)] / (2*h0*h1)
-    // //double deriv2nd_01 = ( chisq_plus01 - chisq_plus0 - chisq_plus1 + 2*chisq_bf - chisq_minus0 - chisq_minus1 + chisq_minus01 ) / (2*h0*h1);    
-    // //
-    // // 2D discrete deriv 01 (1A): d2X^2/dx0dx1 = [ X^2(x0bf-h0,x1bf+h1) - X^2(x0bf,x1bf+h1) - X^2(x0bf-h0,x1bf) + 2*X^2(x0bf,x1bf) - X^2(x0bf,x1bf-h1) 
-    // //                                      - X^2(x0bf+h0,x1bf) + X^2(x0bf+h0,x1bf+h1)] / (2*h0*h1)
-    // //double deriv2nd_01 = ( chisq_minus0_plus1 - chisq_plus1 - chisq_minus0 + 2*chisq_bf - chisq_minus1 - chisq_plus0 + chisq_plus0_minus1 ) / (2*h0*h1);    
-    // //
-    // // 2D discrete deriv 01 (2): d2X^2/dx0dx1 = [ X^2(x0bf+h0,x1bf+h1) - X^2(x0bf+h0,x0bf-h1) - X^2(x0bf-h0,x1bf+h1) + X^2(x0bf-h0,x1bf-h1) ] / (4*h0*h1)
-    // double deriv2nd_01 = ( chisq_plus01 - chisq_plus0_minus1 - chisq_minus0_plus1 + chisq_minus01) / (4*h0*h1);    
-
+ 
     //
     // Compute the intermediate coefficients:
     // - A = 0.5 * deriv2nd_0
@@ -5169,11 +5200,46 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
     double A = 0.5 * deriv2nd_0;
     double B = 0.5 * deriv2nd_1;
     double C = 0.5 * deriv2nd_01;
+    
+    double sqrtarg0 = A - C*C/B;
+    double sqrtarg1 = B - C*C/A;
+    
+    // Check that the derivatives make sense, otherwise 
+    // redo iteratively again HESSE error but with points 
+    // farther from  the minimum
+  
+
+    if( sqrtarg0<=0. || sqrtarg1<=0. ){
+
+#ifdef __print_hesseerror__
+      cout << "Bin number wrt to best fit is " << Nh << endl;
+      cout << "The second derivatives are not good:" << endl;
+      cout << " - deriv2nd_0 = " << deriv2nd_0 << endl;
+      cout << " - deriv2nd_1 = " << deriv2nd_1 << endl;
+      cout << " - deriv2nd_01 = " << deriv2nd_01 << endl;
+      cout << " - A = " << A << endl;
+      cout << " - B = " << B << endl;
+      cout << " - C = " << C << endl;
+      cout << " - A - C*C/B = " << A - C*C/B << endl;
+      cout << " - B - C*C/A = " << B - C*C/A << endl;
+#endif    
+
+      //const int newnbinaround = Nh+5;  
+      //cout << "Recompute the HESSE error using bin number " << newnbinaround << endl;
+      //cout << endl;
+      //return CalcBestFitErrorsHESSE(skobs_data,readbinary,newnbinaround);
+      
+      cout << "Recompute the HESSE error treating free parameters as independent 1D fits" << endl;
+      double deriv2nd_x = (chisq_plus0 - 2*chisq_bf + chisq_minus0) / ( h0*h0 );
+      sqrtarg0 = 0.5 * deriv2nd_x;
+      double deriv2nd_y = (chisq_plus1 - 2*chisq_bf + chisq_minus1) / ( h1*h1 );
+      sqrtarg1 = 0.5 * deriv2nd_y;
+    }
 
     // Get best-fit errors
-    
-    double bf0err = sqrt( CritChisq_2D ) / sqrt( A - C*C/B );
-    double bf1err = sqrt( CritChisq_2D ) / sqrt( B - C*C/A );
+        
+    double bf0err = sqrt( CritChisq_2D ) / sqrt( sqrtarg0 );
+    double bf1err = sqrt( CritChisq_2D ) / sqrt( sqrtarg1 );
 
     // // Check that best-fit errors are in the physical region.
     // // If not restrict them to the physical region
@@ -5195,7 +5261,11 @@ void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bo
 
     fparam_bf_errsym[0] = bf0err; // symmetric error
     fparam_bf_errsym[1] = bf1err; 
-    
+
+#ifdef __print_hesseerror__
+    cout << "bf0err = " << bf0err << endl;
+    cout << "bf1err = " << bf1err << endl;
+#endif   
   }
 
   return;

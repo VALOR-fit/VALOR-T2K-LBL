@@ -137,7 +137,7 @@ class FitMarginalization
 
   void CalcBestFitErrors(SuperkObservation *skobs,string method="MINOS",bool readbinary=false); // calculate the best-fit errors
   void CalcBestFitErrorsMINOS(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
-  void CalcBestFitErrorsHESSE(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
+  void CalcBestFitErrorsHESSE(SuperkObservation *skobs,bool readbinary = false,int Nh = 1); // calculate the best-fit errors
 
   void MinimizeHisto(TH1F *hInChisqMarg);
   void MinimizeHisto(TH2F *hInChisqMarg);
