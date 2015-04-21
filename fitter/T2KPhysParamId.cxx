@@ -3499,7 +3499,71 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   }
   return "--";
 }
-
+//________________________________________________________________________________________
+string valor::util::AsStringPaperTable(PhysParamId_t p)
+{
+  if (util::IsBANFF(p) && util::IsFlux(p)) {
+    if (util::IsRHCSystematic(p)) {
+      int ip = (int)p - (int)kRHCNuisBANFF00;
+      return Form("RHC %s flux normalisation, E = %.1f - %.1f GeV",
+                   util::Pdg2StringTex(kNuPdgCodeOfRHCFluxParamInBANFFfit[ip]).c_str(), 
+                   kEtrueRangeOfRHCFluxParamInBANFFfit[ip][0],
+                   kEtrueRangeOfRHCFluxParamInBANFFfit[ip][1]); 
+    }
+    else {
+      int ip = (int)p - (int)kNuisBANFF00;
+      return Form("FHC %s flux normalisation, E = %.1f - %.1f GeV",
+                   util::Pdg2StringTex(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(), 
+                   kEtrueRangeOfFluxParamInBANFFfit[ip][0],
+                   kEtrueRangeOfFluxParamInBANFFfit[ip][1]); 
+    }
+  }
+  else if (util::IsBANFF(p)) {
+    switch (p) {
+      case ( kNuisBANFFMAQE              ) :
+      case ( kRHCNuisBANFFMAQE           ) :
+        return "CCQE axial-mass scaling factor";
+      case ( kNuisBANFFMARES             ) :
+      case ( kRHCNuisBANFFMARES          ) :
+        return "Resonance-production axial-mass scaling factor";
+      case ( kNuisBANFFMEC               ) :
+      case ( kRHCNuisBANFFMEC            ) :
+        return "Meson exchange current normalisation for $^{16}$O";
+      case ( kNuisBANFFCA5               ) :
+      case ( kRHCNuisBANFFCA5            ) :
+        return "C$^{A}_{5}$ nucleon to $\\Delta$ transition axial form factor";
+      case ( kNuisBANFFBgRES             ) :
+      case ( kRHCNuisBANFFBgRES          ) :
+        return "Scale of isospin 1/2 nonresonant background";
+      case ( kNuisBANFFFermiMom          ) :
+      case ( kRHCNuisBANFFFermiMom       ) :
+        return "Fermi momentum for $^{16}$O";
+      case ( kNuisBANFFShapeCCoth        ) :
+      case ( kRHCNuisBANFFShapeCCoth     ) :
+        return "CC other shape";
+      case ( kNuisBANFFBindE             ) :
+      case ( kRHCNuisBANFFBindE          ) :
+        return "Binding energy for $^{16}$O";
+      case ( kNuisBANFFNormCCcoh         ) :
+      case ( kRHCNuisBANFFNormCCcoh      ) :
+        return "CC coherent for $^{16}$O normalisation";
+      case ( kNuisBANFFNormNCcoh         ) :
+      case ( kRHCNuisBANFFNormNCcoh      ) :
+        return "NC coherent normalisation";
+      case ( kNuisBANFFNormNCoth         ) :
+      case ( kRHCNuisBANFFNormNCoth      ) :
+        return "NC other normalisation";
+      case ( kNuisBANFFNormNuEToNuMu     ) :
+      case ( kRHCNuisBANFFNormNuEToNuMu  ) :
+        return "CC $\\nu_{e}$ normalisation";
+      
+      default:
+        return util::AsString(p);
+    }
+  }
+  return util::AsString(p);
+}
+//________________________________________________________________________________________
 //________________________________________________________________________________________
 string valor::util::AsStringPaperRooTex(PhysParamId_t p)
 {
@@ -4327,7 +4391,8 @@ string valor::util::ParamAsStringTex                (conv::PhysParamId_t p) { re
 string valor::util::ParamAsStringPaperTexNoDollar   (conv::PhysParamId_t p) { return util::AsStringPaperTexNoDollar  (p);}
 string valor::util::ParamAsStringPaperTex           (conv::PhysParamId_t p) { return util::AsStringPaperTex          (p);}
 string valor::util::ParamAsStringPaperRooTex        (conv::PhysParamId_t p) { return util::AsStringPaperRooTex       (p);}
-string valor::util::ParamAsStringSimple             (conv::PhysParamId_t p) { return util::AsStringSimple           (p);}
+string valor::util::ParamAsStringPaperTable         (conv::PhysParamId_t p) { return util::AsStringPaperTable        (p);}
+string valor::util::ParamAsStringSimple             (conv::PhysParamId_t p) { return util::AsStringSimple            (p);}
 string valor::util::ParamAsStringCompact            (conv::PhysParamId_t p) { return util::AsStringCompact           (p);}
 string valor::util::ParamAsStringCompact_splinehack (conv::PhysParamId_t p) { return util::AsStringCompact_splinehack(p);}
 string valor::util::ParamAsStringCompact_KDI        (conv::PhysParamId_t p) { return util::AsStringCompact_KDI       (p);}
