@@ -108,6 +108,8 @@ elif opt.do_imp: #combinations + splines + oscparams
 #  0 tweak all parameters
 #  1 tweak all BANFF
 #  2 tweak all unconstrained xsec
+#  5 tweak all BANFF oxygen
+#  6 tweak all BANFF non-oxygen
 #  7 tweak BANFF flux only
 #  8 tweak BANFF xsec only
 #  9 tweak SKdet + FSI
