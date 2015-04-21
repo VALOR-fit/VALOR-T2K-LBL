@@ -446,20 +446,22 @@ def make_star_plot_table(directories, statfile_name, systfile_name):
     
   rows = []
   for syst_p in syst_params:
-    rows.append([util.ParamAsStringPaperTex(syst_p),max_deviations_p1[syst_p],max_deviations_p2[syst_p]])
+    rows.append([util.ParamAsStringPaperTable(syst_p),max_deviations_p1[syst_p],max_deviations_p2[syst_p]])
     
   rows_sorted_by_p1_dev = sorted(rows,key=operator.itemgetter(1),reverse=True)
   rows_sorted_by_p2_dev = sorted(rows,key=operator.itemgetter(2),reverse=True)
   
+  max_row_width = max([len(r[0]) for r in rows_sorted_by_p1_dev])+4
+  
   out_p1 = open("star_plot_table_sorted_by_"+util.ParamAsStringSimple(p1)+".txt","w")
   for r in rows_sorted_by_p1_dev:
-    out_p1.write(" & ".join([r[0].rjust(50),to3dp.format(r[1]),to3dp.format(r[2])]))
+    out_p1.write(" & ".join([r[0].rjust(max_row_width),to3dp.format(r[1]),to3dp.format(r[2])]))
     out_p1.write(" \\\\ \hline \n")
   out_p1.close()
     
   out_p2 = open("star_plot_table_sorted_by_"+util.ParamAsStringSimple(p2)+".txt","w")
   for r in rows_sorted_by_p2_dev:
-    out_p2.write(" & ".join([r[0].rjust(50),to3dp.format(r[1]),to3dp.format(r[2])]))
+    out_p2.write(" & ".join([r[0].rjust(max_row_width),to3dp.format(r[1]),to3dp.format(r[2])]))
     out_p2.write(" \\\\ \hline \n")
   out_p2.close()
 #________________________________________________________________________________________________________
