@@ -95,8 +95,8 @@ def main(sample,output_file,config_file,prefit_config):
   
   for ip in xrange(conv.kNumOfRHCParamsInBANFFfit):
     p = getRHCBANFFparam(ip)
-    cols = [str(ip),util.ParamAsString(p),to3dp.format(banff_bestfit[ip])]
-    cols.append(to3dp.format(banff_prefit_error [ip])+"/"+to3dp.format(banff_postfit_error [ip]))
+    cols = [str(ip),util.ParamAsStringPaperTable(p),to3dp.format(banff_bestfit[ip])]
+    cols.append(to3dp.format(banff_prefit_error [ip])+" / "+to3dp.format(banff_postfit_error [ip]))
     entries = [x.ljust(w) for x,w in zip(cols,banff_col_widths)]
     tex_output.write("& ".join(entries) + " \\\\ \n")
   
@@ -116,7 +116,7 @@ def main(sample,output_file,config_file,prefit_config):
   
   for ip in xrange(conv.kNumOfRHCSKDetFSIParams):
     p = getRHCDetFSIparam(ip)
-    cols = [str(ip),util.ParamAsString(p),to3dp.format(detfsi_error[ip])]
+    cols = [str(ip),util.ParamAsStringPaperTable(p),to3dp.format(detfsi_error[ip])]
     entries = [x.ljust(w) for x,w in zip(cols,detfsi_col_widths)]
     tex_output.write("& ".join(entries) + " \\\\ \n")
   
