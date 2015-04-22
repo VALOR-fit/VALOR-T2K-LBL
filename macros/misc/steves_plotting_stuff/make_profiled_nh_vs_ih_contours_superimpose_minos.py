@@ -53,44 +53,42 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   minos_graph.SetMarkerColor(ROOT.kGreen+3)
   
   
-  # m = normal
-  # p = inverted
+  f_nh = ROOT.TFile(contour_file)
+  h_nh = f_nh.Get("h_chisq_dmsq_mixing23_Ave_"+"nh")
+  assert(h_nh)
+  h_nh.Print()
+  min_nh = h_nh.GetMinimum()
+  h_nh.SetTitle("Normal")
   
-  
-  m_f = ROOT.TFile(contour_file)
-  h_m = m_f.Get("h_chisq_dmsq_mixing23_Ave_"+"nh")
-  assert(h_m)
-  h_m.Print()
-  min_m = h_m.GetMinimum()
-  
-  m_p = m_f
+  f_ih = f_nh
     
-  h_p = m_p.Get("h_chisq_dmsq_mixing23_Ave_"+"ih")
-  assert(h_p)
-  h_p.Print()
-  min_p = h_p.GetMinimum()
+  h_ih = f_ih.Get("h_chisq_dmsq_mixing23_Ave_"+"ih")
+  assert(f_ih)
+  h_ih.Print()
+  min_ih = h_ih.GetMinimum()
+  h_ih.SetTitle("Inverted")
   
-  print min_m
-  print min_p
+  print min_nh
+  print min_ih
   
   # Precalculate the best-fit points from the histogram
-  bf_bin_p = h_p.GetMinimumBin()
-  bf_bin_m = h_m.GetMinimumBin()
+  bf_bin_ih = h_ih.GetMinimumBin()
+  bf_bin_nh = h_nh.GetMinimumBin()
   
-  bf_chisq_p = h_p.GetBinContent(bf_bin_p)
-  bf_chisq_m = h_m.GetBinContent(bf_bin_m)
+  bf_chisq_ih = h_ih.GetBinContent(bf_bin_ih)
+  bf_chisq_nh = h_nh.GetBinContent(bf_bin_nh)
   
-  x_bin_p = ROOT.Long() ; y_bin_p = ROOT.Long()
-  x_bin_m = ROOT.Long() ; y_bin_m = ROOT.Long()
+  x_bin_ih = ROOT.Long() ; y_bin_ih = ROOT.Long()
+  x_bin_nh = ROOT.Long() ; y_bin_nh = ROOT.Long()
   dummy = ROOT.Long()
   
-  h_p.GetBinXYZ(bf_bin_p,x_bin_p,y_bin_p,dummy)
-  h_m.GetBinXYZ(bf_bin_m,x_bin_m,y_bin_m,dummy)
+  h_ih.GetBinXYZ(bf_bin_ih,x_bin_ih,y_bin_ih,dummy)
+  h_nh.GetBinXYZ(bf_bin_nh,x_bin_nh,y_bin_nh,dummy)
   
-  bf_x_p = h_p.GetXaxis().GetBinCenter(x_bin_p)
-  bf_x_m = h_m.GetXaxis().GetBinCenter(x_bin_m)
-  bf_y_p = h_p.GetYaxis().GetBinCenter(y_bin_p)
-  bf_y_m = h_m.GetYaxis().GetBinCenter(y_bin_m)
+  bf_x_ih = h_ih.GetXaxis().GetBinCenter(x_bin_ih)
+  bf_x_nh = h_nh.GetXaxis().GetBinCenter(x_bin_nh)
+  bf_y_ih = h_ih.GetYaxis().GetBinCenter(y_bin_ih)
+  bf_y_nh = h_nh.GetYaxis().GetBinCenter(y_bin_nh)
   
   
   # If we have files, go and get the bestfits from those instead.
@@ -98,97 +96,99 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
     tf_normal = ROOT.TFile(bf_normal)
     tr = tf_normal.Get("fitnt")
     tr.GetEntry(0)
-    bf_x_m = tr.best_fit_params.BestFitValue(p1)
-    bf_y_m = tr.best_fit_params.BestFitValue(p2)
-    bf_chisq_m = tr.best_fit_params.GetBestFitStatistic()
+    bf_x_nh = tr.best_fit_params.BestFitValue(p1)
+    bf_y_nh = tr.best_fit_params.BestFitValue(p2)
+    bf_chisq_nh = tr.best_fit_params.GetBestFitStatistic()
 
   if bf_inverted is not None:
     tf_inverted = ROOT.TFile(bf_inverted)
     tr = tf_inverted.Get("fitnt")
     tr.GetEntry(0)
-    bf_x_p = tr.best_fit_params.BestFitValue(p1)
-    bf_y_p = tr.best_fit_params.BestFitValue(p2)
-    bf_chisq_p = tr.best_fit_params.GetBestFitStatistic()
+    bf_x_ih = tr.best_fit_params.BestFitValue(p1)
+    bf_y_ih = tr.best_fit_params.BestFitValue(p2)
+    bf_chisq_ih = tr.best_fit_params.GetBestFitStatistic()
       
   
-  h_delta_m = GetDeltaHist(h_m,bf_chisq_m)
-  h_delta_m.SetMinimum(0)
+  h_delta_nh = GetDeltaHist(h_nh,bf_chisq_nh)
+  h_delta_nh.SetMinimum(0)
   
-  h_contour_m = ROOT.TH2D(h_delta_m)
-  h_contour_m.SetContour(2)
-  h_contour_m.SetContourLevel(1,conf90)
-  h_contour_m.SetContourLevel(0,conf68)
-  h_contour_m.SetLineWidth(1)
-  h_contour_m.SetLineColor(R.kBlack)
+  h_contour_nh = ROOT.TH2D(h_delta_nh)
+  h_contour_nh.SetContour(2)
+  h_contour_nh.SetContourLevel(1,conf90)
+  h_contour_nh.SetContourLevel(0,conf68)
+  h_contour_nh.SetLineWidth(1)
+  h_contour_nh.SetLineColor(R.kBlack)
   
-  h_delta_p = GetDeltaHist(h_p,bf_chisq_p)
-  h_delta_p.SetMinimum(0)
+  h_delta_ih = GetDeltaHist(h_ih,bf_chisq_ih)
+  h_delta_ih.SetMinimum(0)
   
-  h_contour_p = ROOT.TH2D(h_delta_p)
-  h_contour_p.SetContour(2)
-  h_contour_p.SetContourLevel(1,conf90)
-  h_contour_p.SetContourLevel(0,conf68)
-  h_contour_p.SetLineWidth(1)
-  h_contour_p.SetLineStyle(2)
-  h_contour_p.SetLineColor(R.kBlack)
+  h_contour_ih = ROOT.TH2D(h_delta_ih)
+  h_contour_ih.SetContour(2)
+  h_contour_ih.SetContourLevel(1,conf90)
+  h_contour_ih.SetContourLevel(0,conf68)
+  h_contour_ih.SetLineWidth(1)
+  h_contour_ih.SetLineStyle(2)
+  h_contour_ih.SetLineColor(R.kBlack)
   
-  contours_p = GetContours(h_contour_p)
-  contours_m = GetContours(h_contour_m)
+  contours_ih = GetContours(h_contour_ih)
+  contours_nh = GetContours(h_contour_nh)
   
-  marker_p = ROOT.TMarker(bf_x_p,bf_y_p,ROOT.kFullStar)
-  marker_m = ROOT.TMarker(bf_x_m,bf_y_m,ROOT.kFullStar)
+  marker_ih = ROOT.TMarker(bf_x_ih,bf_y_ih,ROOT.kFullStar)
+  marker_nh = ROOT.TMarker(bf_x_nh,bf_y_nh,ROOT.kFullStar)
   
-  if (bf_chisq_p > bf_chisq_m):
+  if (bf_chisq_ih > bf_chisq_nh):
     bf_is_normal = True
-    marker_m.SetMarkerStyle(ROOT.kOpenStar)
+    marker_nh.SetMarkerStyle(ROOT.kOpenStar)
   else:
     bf_is_normal = False
-    marker_p.SetMarkerStyle(ROOT.kOpenStar)
+    marker_ih.SetMarkerStyle(ROOT.kOpenStar)
     
-  marker_p.SetMarkerColor(ROOT.kViolet);
-  marker_m.SetMarkerColor(ROOT.kBlue+1);
-  marker_p.SetMarkerSize(1.5);
-  marker_m.SetMarkerSize(1.5);
+  marker_ih.SetMarkerColor(ROOT.kViolet);
+  marker_nh.SetMarkerColor(ROOT.kBlue+1);
+  marker_ih.SetMarkerSize(1.5);
+  marker_nh.SetMarkerSize(1.5);
   
-  CopyMarkerToHist(marker_p,h_contour_p)
-  CopyMarkerToHist(marker_m,h_contour_m)
+  CopyMarkerToHist(marker_ih,h_contour_ih)
+  CopyMarkerToHist(marker_nh,h_contour_nh)
   
   # Dump graphs for Kirsty
   outfile = ROOT.TFile("valor_fit_contours.root","RECREATE")
   outfile.cd()
-  contours_p[0][0].Write("valor_nh_68_contour")
-  contours_p[1][0].Write("valor_nh_90_contour")
-  contours_m[0][0].Write("valor_ih_68_contour")
-  contours_m[1][0].Write("valor_ih_90_contour")
+  contours_nh[0][0].Write("valor_nh_68_contour")
+  contours_nh[1][0].Write("valor_nh_90_contour")
+  contours_ih[0][0].Write("valor_ih_68_contour")
+  contours_ih[1][0].Write("valor_ih_90_contour")
   
-  for c in contours_p[0]:
+  for c in contours_ih[0]:
     c.SetLineColor(ROOT.kRed)
     c.SetLineStyle(1)
-  for c in contours_p[1]:
+  for c in contours_ih[1]:
     c.SetLineColor(ROOT.kBlack)
     c.SetLineStyle(1)
-  for c in contours_m[0]:
+  for c in contours_nh[0]:
     c.SetLineColor(ROOT.kRed)
     c.SetLineStyle(2)
-  for c in contours_m[1]:
+  for c in contours_nh[1]:
     c.SetLineColor(ROOT.kBlack)
     c.SetLineStyle(2)
   
   bf_nh_graph = ROOT.TGraph(1)
   bf_ih_graph = ROOT.TGraph(1)
-  bf_nh_graph.SetPoint(0,bf_x_p,bf_y_p)
-  bf_ih_graph.SetPoint(0,bf_x_m,bf_y_m)
+  bf_nh_graph.SetTitle("Bestfit: Normal")
+  bf_ih_graph.SetTitle("Bestfit: Inverted")
+  bf_nh_graph.SetPoint(0,bf_x_nh,bf_y_nh)
+  bf_ih_graph.SetPoint(0,bf_x_ih,bf_y_ih)
   bf_nh_graph.Write("valor_nh_bestfit")
   bf_ih_graph.Write("valor_ih_bestfit")
   outfile.Close()
   
-  print "Bestfit point (normal)  : ",bf_x_m,bf_y_m,"\twith chisq: ",bf_chisq_m
-  print "Bestfit point (inverted): ",bf_x_p,bf_y_p,"\twith chisq: ",bf_chisq_p
+  print "Bestfit point (normal)  : ",bf_x_nh,bf_y_nh,"\twith chisq: ",bf_chisq_nh
+  print "Bestfit point (inverted): ",bf_x_ih,bf_y_ih,"\twith chisq: ",bf_chisq_ih
   
   if bf_is_normal:
-    print "\n",to3dp.format(bf_x_m), " & ",to6dp.format(bf_y_m)," & Normal"
+    print "\n",to3dp.format(bf_x_nh), " & ",to6dp.format(bf_y_nh)," & Normal"
   else:
-    print "\n",to3dp.format(bf_x_p), " & ",to6dp.format(bf_y_p)," & Inverted"
+    print "\n",to3dp.format(bf_x_ih), " & ",to6dp.format(bf_y_ih)," & Inverted"
     
   print "\n\n"
   
@@ -196,16 +196,16 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   canv = ROOT.TCanvas("canv1","canv1",1280,720)
   canv.cd()
   
-  h_contour_m.GetYaxis().SetRangeUser(1E-3,4.5E-3)
-  h_contour_m.Draw("AXIS")
-  for icont,cont_list in enumerate(contours_p + contours_m):
+  h_contour_nh.GetYaxis().SetRangeUser(1E-3,4.5E-3)
+  h_contour_nh.Draw("AXIS")
+  for icont,cont_list in enumerate(contours_ih + contours_nh):
     if icont%2==0 and not draw_68: continue
     for cont in cont_list:
       cont.Draw("same")
       
   # Draw markers
-  marker_p.Draw()
-  marker_m.Draw()
+  marker_ih.Draw()
+  marker_nh.Draw()
   
   # Draw MINOS
   if draw_minos:
@@ -215,8 +215,8 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   # Make legend
   
   legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
-  legend.AddEntry(h_contour_m,"NH","lp")
-  legend.AddEntry(h_contour_p,"IH","lp")
+  legend.AddEntry(h_contour_nh,"NH","lp")
+  legend.AddEntry(h_contour_ih,"IH","lp")
   if draw_minos:
     legend.AddEntry(minos_graph,"MINOS","lp")
   legend.Draw()
@@ -230,10 +230,10 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   
   canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
   canv_nh.cd()
-  h_delta_m.SetContour(100)
-  h_delta_m.Draw("colz")
-  marker_m.Draw()
-  for g in contours_m[1]:
+  h_delta_nh.SetContour(100)
+  h_delta_nh.Draw("colz")
+  marker_nh.Draw()
+  for g in contours_nh[1]:
     g.SetLineStyle(1)
     g.SetLineColor(R.kBlue)
     g.Draw("same")
@@ -244,10 +244,10 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   
   canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
   canv_ih.cd()
-  h_delta_p.SetContour(100)
-  h_delta_p.Draw("colz")
-  marker_p.Draw()
-  for g in contours_p[1]:
+  h_delta_ih.SetContour(100)
+  h_delta_ih.Draw("colz")
+  marker_ih.Draw()
+  for g in contours_ih[1]:
     g.SetLineStyle(1)
     g.SetLineColor(R.kBlue)
     g.Draw("same")
@@ -269,7 +269,7 @@ def GetContours(h):
     cont_list = [ROOT.TGraph(tl[i]) for i in xrange(tl.GetEntries())]
     for c in cont_list:
       c.SetName ("contour_"+to3dp.format(level))
-      c.SetTitle("Contour "+to3dp.format(level))
+      c.SetTitle(str(h.GetTitle())+" Contour "+to3dp.format(level))
     to_return.append(cont_list)
   return to_return
   
