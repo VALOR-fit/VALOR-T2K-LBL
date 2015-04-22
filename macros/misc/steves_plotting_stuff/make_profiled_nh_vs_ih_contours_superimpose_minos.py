@@ -53,7 +53,8 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   minos_graph.SetMarkerColor(ROOT.kGreen+3)
   
   
-  
+  # m = normal
+  # p = inverted
   
   
   m_f = ROOT.TFile(contour_file)
@@ -105,9 +106,9 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
     tf_inverted = ROOT.TFile(bf_inverted)
     tr = tf_inverted.Get("fitnt")
     tr.GetEntry(0)
-    bf_x_m = tr.best_fit_params.BestFitValue(p1)
-    bf_y_m = tr.best_fit_params.BestFitValue(p2)
-    bf_chisq_m = tr.best_fit_params.GetBestFitStatistic()
+    bf_x_p = tr.best_fit_params.BestFitValue(p1)
+    bf_y_p = tr.best_fit_params.BestFitValue(p2)
+    bf_chisq_p = tr.best_fit_params.GetBestFitStatistic()
       
   
   h_delta_m = GetDeltaHist(h_m,bf_chisq_m)
