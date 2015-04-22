@@ -241,8 +241,8 @@ class FitMarginalization
 
 
   // MAP
-  TH1F *GetMapChisqRangeFileID_1D(void){ return fhmap_chisqrange_fileid_1D;};  
-  TH2F *GetMapChisqRangeFileID_2D(void){ return fhmap_chisqrange_fileid_2D;};  
+  TH1I *GetMapChisqRangeFileID_1D(void){ return fhmap_chisqrange_fileid_1D;};  
+  TH2I *GetMapChisqRangeFileID_2D(void){ return fhmap_chisqrange_fileid_2D;};  
 
   void SetTagFileName(const char *tag);
   void SetFileID(int nfiles);
@@ -263,8 +263,8 @@ class FitMarginalization
   
 
   // MAP
-  TH1F *fhmap_chisqrange_fileid_1D;
-  TH2F *fhmap_chisqrange_fileid_2D;
+  TH1I *fhmap_chisqrange_fileid_1D;
+  TH2I *fhmap_chisqrange_fileid_2D;
 
   int fCurrentFileIDminim;
 

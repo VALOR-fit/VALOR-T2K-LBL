@@ -56,6 +56,8 @@
 #include "UtlFitParamListFactory.h"
 #include "FitMarginalization.h"
 
+#include <TSystemDirectory.h>
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -288,8 +290,8 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   fLastMinimBin_Y = fhchisq_marg_2D->GetNbinsY();
 
   // Set the default map
-  fhmap_chisqrange_fileid_1D = (TH1F*) fhchisq_marg_1D->Clone("hmap_chisqrange_fileid_1D");
-  fhmap_chisqrange_fileid_2D = (TH2F*) fhchisq_marg_2D->Clone("hmap_chisqrange_fileid_2D");
+  fhmap_chisqrange_fileid_1D = (TH1I*) fhchisq_marg_1D->Clone("hmap_chisqrange_fileid_1D");
+  fhmap_chisqrange_fileid_2D = (TH2I*) fhchisq_marg_2D->Clone("hmap_chisqrange_fileid_2D");
 
   fCurrentFileIDminim = conv::kBadResult; // current file ID during the chisq minimization process
 
@@ -1483,21 +1485,6 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
     }
   }	    
  
-  char inname[200];
-  sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
-
-  std::string sinname(inname);
-  //cout << sinname << endl;
-  
-#ifdef __readtoys_debug__
-  cout << "Reading toys for marginalization from binary file: " << sinname << endl;  
-#endif
-
-  fToyMargErecoVArray->ReadFile(sinname);
-
-#ifdef __readtoys_debug__
-  cout << "Done!"<<endl;
-#endif
 
   // Write store sub-range of the free parameter
 
@@ -1539,6 +1526,77 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1);    
   fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1);
     
+
+
+
+
+
+
+  // Check inputs
+  
+  if( !is.good() ){
+    cerr << endl;
+    cerr << "The input file " << sinname_range << " doesn't exist" << endl;
+    cerr << "Check the input parameters: " << endl;
+    cerr << "  - tag = " << tag << endl;
+    cerr << "  - fntoys_marg = " << fntoys_marg << endl;
+    cerr << "  - # of pt param 0 = " << fnbins_param[0] << endl;
+    cerr << "  - # of pt param 1 = " << fnbins_param[1] << endl;
+    cerr << "  - MH = " << namemh << endl;
+    //cerr << "  - # of binary files = " << << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  // cout << fToyMargErecoVArray->GetSize() << endl;
+  // cout << fToyMargErecoVArray->GetNDim() << endl;
+  // cout << fToyMargErecoVArray->GetSize(0) << endl; // # toys marginalization
+  // cout << fToyMargErecoVArray->GetSize(1) << endl; // # bins free parameter 0
+  // cout << fToyMargErecoVArray->GetSize(2) << endl; // # bins free parameter 1
+  // cout << fToyMargErecoVArray->GetSize(3) << endl; // # mass hierarchies
+  // cout << fToyMargErecoVArray->GetSize(4) << endl; // # sk samples
+  // cout << fToyMargErecoVArray->GetSize(5) << endl; // # bins ereco
+
+  // int NtoyVArray = fToyMargErecoVArray->GetSize(0); // # toys marginalization
+  // int Nbins0VArray = fToyMargErecoVArray->GetSize(1);  // # bins free parameter 0
+  // int Nbins1VArray = fToyMargErecoVArray->GetSize(2);  // # bins free parameter 1
+  // int NmhVArray = fToyMargErecoVArray->GetSize(3); // # mass hierarchies
+  // int NsksampleVArray = fToyMargErecoVArray->GetSize(4); // # sk samples
+  // int NbinserecoVArray = fToyMargErecoVArray->GetSize(5); // # bins ereco
+
+  // if(NtoyVArray != fntoys_marg){
+  //   cerr << endl;
+  //   cerr << "# of toys from file = " << NtoyVArray << endl;
+  //   cerr << "# of toys from input = " << fntoys_marg << endl;
+  //   cerr << "If the chosen binary file is correct, set # of toys to " << NtoyVArray << endl;
+  //   cerr << endl;
+  //   exit(1);
+  // }
+
+
+
+
+
+
+  char inname[200];
+  sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
+  
+  std::string sinname(inname);
+  //cout << sinname << endl;
+  
+#ifdef __readtoys_debug__
+  cout << "Reading toys for marginalization from binary file: " << sinname << endl;  
+#endif
+  
+  fToyMargErecoVArray->ReadFile(sinname);
+  
+#ifdef __readtoys_debug__
+  cout << "Done!"<<endl;
+#endif
+
+
+
+
   if(fmin_sub_param[0]<(fmin_param[0]-conv::kAVerySmallNum) || fmax_sub_param[0]>(fmax_param[0]+conv::kAVerySmallNum)){
     cerr << endl; 
     cerr << "FitMarginalization::ReadToysFromBinary" << endl;
@@ -1571,7 +1629,6 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
     exit(1);
   }
 
-
 #ifdef __readtoys_debug__  
   cout << "File sub-range: ["
        << fmin_sub_param[0] << "," << fmax_sub_param[0] 
@@ -1587,7 +1644,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
        << fmin_bin_sub_param[1]+1 << "," << fmax_bin_sub_param[1]+1 
        << "]" << endl << endl;
 #endif
- 
+
   return;
 }
 //________________________________________________________________________________________
@@ -3636,11 +3693,7 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
     // Get the new direction 
 
     else {
-
-      cout << endl;
-      cout << "Get the new direction" << endl;
-      cout << endl;
-            
+      
       // Move toward the lowest adjacent Chisq bin
       
       int NewDir_X = conv::kBadResult; // It's not the bin number but an array index
@@ -4231,6 +4284,14 @@ void FitMarginalization::SetFileID(int nfiles){
     }
   }	    
 
+   for(int iptX=0;iptX<fnbins_param[0];iptX++){
+      for(int iptY=0;iptY<fnbins_param[1];iptY++){
+    	fhmap_chisqrange_fileid_2D->SetBinContent(iptX+1,iptY+1,(int)conv::kBadResult);
+      }
+    }
+
+
+
   const char *tag = ftagfile.c_str(); // Get the file tag name 
 
   // Store file names in a vector
@@ -4249,6 +4310,40 @@ void FitMarginalization::SetFileID(int nfiles){
     cout << "Reading free param sub-range from binary file: " << fnamefile[idfile] << endl;
 #endif
 
+
+
+
+    // // Check # of binary files
+    // //cout << fnamefilebinary << endl;
+    // //cout << tag << endl;
+    // char numfiletag[200];
+    // char ext[200] = ".bin";
+    // sprintf(numfiletag,"%s","./");
+    // //sprintf(numfiletag,"../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys/submit_sinsqth13Vsdcp_NormPOT_postfit*");
+    // //TString snumfiletag(numfiletag);
+    // //TIter next(files);
+    // //exit(1);
+    // cout << numfiletag << endl;
+    // TSystemDirectory dir(numfiletag, numfiletag);
+    // TList *files = dir.GetListOfFiles();
+    // if (files) {
+    //   TSystemFile *file;
+    //   TString fname;
+    //   TIter next(files);
+    //   while ((file=(TSystemFile*)next())) {
+    // 	fname = file->GetName();
+    // 	if (!file->IsDirectory() && 
+    // 	    fname.BeginsWith("../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys/submit_sinsqth13Vsdcp_NormPOT_postfit") //&&
+    // 	    //fname.EndsWith(".bin")
+    // 	    ){
+    // 	  cout << fname.Data() << endl;
+    // 	}
+    //   }
+    // }    
+    // exit(1);
+
+
+
     char inname_range[200];
     sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");    
     std::string sinname_range(inname_range);    
@@ -4259,6 +4354,23 @@ void FitMarginalization::SetFileID(int nfiles){
     int max_bin_sub_param1=0;
 
     ifstream is(sinname_range.c_str(),ios::binary|ios::in);
+    
+    // Check inputs
+    
+    if( !is.good() ){
+      cerr << endl;
+      cerr << "The input file " << sinname_range << " doesn't exist" << endl;
+      cerr << "Check the input parameters: " << endl;
+      cerr << "  - tag = " << tag << endl;
+      cerr << "  - fntoys_marg = " << fntoys_marg << endl;
+      cerr << "  - # of pt param 0 = " << fnbins_param[0] << endl;
+      cerr << "  - # of pt param 1 = " << fnbins_param[1] << endl;
+      cerr << "  - MH = " << namemh << endl;
+      //cerr << "  - # of binary files = " << << endl;
+      cerr << endl;
+      exit(1);
+    }
+
     assert(is);
     is.read( (char*)&min_bin_sub_param0,sizeof(int));
     is.read( (char*)&max_bin_sub_param0,sizeof(int));
@@ -4279,11 +4391,31 @@ void FitMarginalization::SetFileID(int nfiles){
 	    iptX <= max_bin_sub_param0 &&
 	    iptY >= min_bin_sub_param1 && 
 	    iptY <= max_bin_sub_param1 ){
-	  fhmap_chisqrange_fileid_2D->SetBinContent(iptX+1,iptY+1,idfile);
+	  fhmap_chisqrange_fileid_2D->SetBinContent(iptX+1,iptY+1,(int)idfile);
 	}	
       }
     }
-
+    
+  } // loop id file
+  
+  // Check if all the grid points are filled with the file ID
+  
+  for(int iptX=0;iptX<fnbins_param[0];iptX++){
+    for(int iptY=0;iptY<fnbins_param[1];iptY++){
+      double bincont = (double)fhmap_chisqrange_fileid_2D->GetBinContent(iptX+1,iptY+1);
+      //cout << bincont << endl;
+      if(bincont==conv::kBadResult){
+  	cerr << endl;
+  	cerr << "The grid point " 
+  	     << fhmap_chisqrange_fileid_2D->GetXaxis()->GetBinCenter(iptX+1) << " - " 
+  	     << fhmap_chisqrange_fileid_2D->GetYaxis()->GetBinCenter(iptY+1) 
+  	     << " is not filled with file ID" << endl;
+	cout << "bincont = " << bincont << endl;
+  	cerr << "Check the input total # of binary files set to " << nfiles << endl;
+  	cerr << endl;
+  	exit(1);
+      }      
+    }
   }
   
   return;
@@ -4291,7 +4423,7 @@ void FitMarginalization::SetFileID(int nfiles){
 //________________________________________________________________________________________
 int FitMarginalization::GetFileIDRead(int ipar0,int ipar1){
   int fileid=conv::kBadResult;
-  fileid = fhmap_chisqrange_fileid_2D->GetBinContent(ipar0+1,ipar1+1);
+  fileid = (int)fhmap_chisqrange_fileid_2D->GetBinContent(ipar0+1,ipar1+1);
   return fileid;
 }
 //________________________________________________________________________________________
