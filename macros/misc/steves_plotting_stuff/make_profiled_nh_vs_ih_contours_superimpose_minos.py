@@ -71,6 +71,10 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   print min_nh
   print min_ih
   
+  # Set title offset for Y
+  h_nh.GetYaxis().SetTitleOffset(1.4)
+  h_ih.GetYaxis().SetTitleOffset(1.4)
+  
   # Precalculate the best-fit points from the histogram
   bf_bin_ih = h_ih.GetMinimumBin()
   bf_bin_nh = h_nh.GetMinimumBin()
@@ -151,6 +155,7 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   CopyMarkerToHist(marker_ih,h_contour_ih)
   CopyMarkerToHist(marker_nh,h_contour_nh)
   
+  
   # Dump graphs for Kirsty
   outfile = ROOT.TFile("valor_fit_contours.root","RECREATE")
   outfile.cd()
@@ -196,6 +201,16 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   canv = ROOT.TCanvas("canv1","canv1",1280,720)
   canv.cd()
   
+  # Set Axis labels
+  if (h_nh.GetXaxis().GetTitle()!=h_ih.GetXaxis().GetTitle()):
+    new_title = h_nh.GetXaxis().GetTitle() + " / "+h_ih.GetXaxis().GetTitle()
+    h_contour_nh.GetXaxis().SetTitle(new_title)
+    h_contour_ih.GetXaxis().SetTitle(new_title)
+  if (h_nh.GetYaxis().GetTitle()!=h_ih.GetYaxis().GetTitle()):
+    new_title = h_nh.GetYaxis().GetTitle() + " / "+h_ih.GetYaxis().GetTitle()
+    h_contour_nh.GetYaxis().SetTitle(new_title)
+    h_contour_ih.GetYaxis().SetTitle(new_title)
+  
   h_contour_nh.GetYaxis().SetRangeUser(1E-3,4.5E-3)
   h_contour_nh.Draw("AXIS")
   for icont,cont_list in enumerate(contours_ih + contours_nh):
@@ -233,13 +248,21 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   h_delta_nh.SetContour(100)
   h_delta_nh.Draw("colz")
   marker_nh.Draw()
+  if draw_68:
+    for g in contours_nh[0]:
+      g.SetLineStyle(2)
+      g.SetLineColor(R.kBlue)
+      g.Draw("same")
+    
   for g in contours_nh[1]:
     g.SetLineStyle(1)
     g.SetLineColor(R.kBlue)
     g.Draw("same")
-    
-  minos_graph.Draw("l same")
-  minos_points.Draw("p same")
+  
+  if draw_minos:  
+   minos_graph.Draw("l same")
+   minos_points.Draw("p same")
+   
   canv_nh.Print(plot_name+"_nh."+image_format)
   
   canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
@@ -247,12 +270,20 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   h_delta_ih.SetContour(100)
   h_delta_ih.Draw("colz")
   marker_ih.Draw()
+  
+  if draw_68:
+    for g in contours_ih[0]:
+      g.SetLineStyle(2)
+      g.SetLineColor(R.kBlue)
+      g.Draw("same")
+      
   for g in contours_ih[1]:
     g.SetLineStyle(1)
     g.SetLineColor(R.kBlue)
     g.Draw("same")
-  minos_graph.Draw("l same")
-  minos_points.Draw("p same")
+  if draw_minos:  
+    minos_graph.Draw("l same")
+    minos_points.Draw("p same")
   canv_ih.Print(plot_name+"_ih."+image_format)
 
 def GetContours(h):
