@@ -11,7 +11,7 @@ import math
 import os
 import glob
 
-max_energy = 3.
+max_energy = 4.5
 linewidth = 3
 title_offset = 0.8
 bottom_margin = 0.15
@@ -43,7 +43,7 @@ readable["BANFF_flux"        ] = "Flux"
 readable["all"               ] = "All systematics"
 
 is_constrained  = dict()
-is_constrained ["SKDet_FSI"         ] = False
+is_constrained ["SKDet_FSI"         ] = True
 is_constrained ["BANFF_xsec"        ] = True
 is_constrained ["BANFF_flux"        ] = True
 is_constrained ["all"               ] = True
@@ -61,18 +61,25 @@ except:
   
 
 def main(sample,unoscillated_input_filename, oscillated_input_filename):
-  f_osc   = ROOT.TFile(oscillated_input_filename)
   f_unosc = ROOT.TFile(unoscillated_input_filename)
-  if not f_osc and f_unosc:
-    raise T2KAnaError("Could not open input files")
+  if not f_unosc:
+    raise T2KAnaError("Could not open unoscillated input file")
     
   pre_and_postfit_envelope(sample,f_unosc,"unoscillated")
+  
+  f_osc   = ROOT.TFile(oscillated_input_filename)
+  if not f_unosc:
+    raise T2KAnaError("Could not open oscillated input file")
+    
   pre_and_postfit_envelope(sample,f_osc  ,"oscillated" )
   
 
 def pre_and_postfit_envelope(sample,rootfile,name):
   
-  nominal_hist = ROOT.TH1D(rootfile.Get(sample+"_nominal"))
+  assert(rootfile)
+  
+  nh = rootfile.Get(sample+"_nominal")
+  nominal_hist = ROOT.TH1D(nh)
   nominal_hist.SetTitle("")
   nominal_hist.GetXaxis().SetRangeUser(0.,max_energy)
   nominal_hist.GetXaxis().SetTitle("E_{reco}")
@@ -84,7 +91,12 @@ def pre_and_postfit_envelope(sample,rootfile,name):
   
   nom_events = nominal_hist.Integral()
   
-  all_hists = [nominal_hist]
+  prefit_nominal = ROOT.TH1D(rootfile.Get(sample+"_nominalprefit"))
+  prefit_nominal.SetLineStyle(1)
+  prefit_nominal.SetLineWidth(linewidth)
+  prefit_nominal.SetLineColor(ROOT.kBlue)
+  
+  all_hists = [nominal_hist,prefit_nominal]
   
   for ii,par_set in enumerate(param_sets):
     
@@ -152,6 +164,7 @@ def pre_and_postfit_envelope(sample,rootfile,name):
       h.SetMaximum(1.05*limit)
       
     hplus_prefit.GetYaxis().SetTitleOffset(0.8)
+    hplus_prefit.SetLineColor(ROOT.kBlue)
     
     hplus_prefit.Draw()
     hplus_postfit.SetFillColor(ROOT.kRed)
@@ -162,11 +175,27 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     hminus_postfit.Draw("same")
     hminus_prefit.SetFillColor(10)
     hminus_prefit.SetFillStyle(1001)
+    hminus_prefit.SetLineColor(ROOT.kBlue)
     hminus_prefit.Draw("same")
+    hplus_prefit.Draw("same")
     nominal_hist.Draw("same")
+    prefit_nominal.Draw("same")
+    hplus_prefit.Draw("same")
     
-    legend.AddEntry(hminus_prefit  ,"Prefit" ,)
-    legend.AddEntry(hplus_postfit  ,"Postfit","F")
+    legend_prefit = ROOT.TH1D(hminus_prefit)
+    legend_prefit.SetLineStyle(prefit_nominal.GetLineStyle())
+    legend_prefit.SetLineColor(prefit_nominal.GetLineColor())
+    legend_prefit.SetLineWidth(prefit_nominal.GetLineWidth())
+    
+    legend_postfit = ROOT.TH1D(hplus_postfit)
+    legend_postfit.SetLineStyle(nominal_hist.GetLineStyle())
+    legend_postfit.SetLineColor(nominal_hist.GetLineColor())
+    legend_postfit.SetLineWidth(nominal_hist.GetLineWidth())
+    
+    all_hists.extend([legend_prefit,legend_postfit])
+    
+    legend.AddEntry(legend_prefit   ,"Prefit" ,"FL")
+    legend.AddEntry(legend_postfit  ,"Postfit","FL")
     
     if is_constrained[par_set]: legend.Draw()
     
