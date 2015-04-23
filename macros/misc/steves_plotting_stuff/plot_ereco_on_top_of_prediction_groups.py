@@ -31,7 +31,7 @@ text_entry_height = 0.08
 
 def main(file_patterns,tag="data"):
   
-  max_energy = 4
+  max_energy = 3.5
   
   sample = conv.kSKsRHCFCFV1RingMuLike
   
@@ -155,7 +155,7 @@ def main(file_patterns,tag="data"):
   
   data_spectrum.Draw("e")
   histogram.Draw("same")
-  mach3_hist.Draw("same")
+  mach3_hist.Draw("hist same")
   pthet_hist.Draw("same")
   legend.Draw()
   #~ pave.Draw()
