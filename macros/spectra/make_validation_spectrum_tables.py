@@ -206,6 +206,8 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     phyp.SetCurrValue(conv.kPhypCPVBar      ,   deltacpBar);
     phyp.SetCurrValue(conv.kPhypDm12sqBar   ,    dm12sqBar);
     phyp.SetCurrValue(conv.kPhypDm23sqBar   ,    dm23sqBar);
+    
+    print
     print util.ParamAsString(conv.kPhypMixing12Bar).ljust(25), mixing12Bar
     print util.ParamAsString(conv.kPhypMixing13Bar).ljust(25), mixing13Bar
     print util.ParamAsString(conv.kPhypMixing23Bar).ljust(25), mixing23Bar
@@ -400,7 +402,16 @@ if __name__=="__main__":
   
   parser.add_option('-b', '--use-bar', dest='useBar', action="store_true",default=False,help="Use the 3f_osc_bar hypothesis. Without this, the bar mixing params will be ignored.")
   
+  v = optparse.Values()
+  parser.parse_args(values=v) # v contains only the values that were specified, not defaults
+  
   o,other = parser.parse_args()
+  
+  if not o.useBar: # Check we're not trying to specify a barred mixing parameter for without using the bar hypothesis
+    bar_par = ["mixing12Bar","mixing13Bar","mixing23Bar","dm12sqBar","dm23sqBar","deltacpBar"]
+    if any(i in bar_par for i in v.__dict__.keys()):
+      print "If you want to specify barred mixing parameters, you need -b as well"
+      exit(-1)
   
   main(o.config,o.mixing12,o.mixing13,o.mixing23,o.dm12sq,o.dm23sq,o.deltacp,o.hierarchy,o.mixparamchoice,o.output_file,o.nobanff, o.label,
        o.useBar, o.mixing12Bar,o.mixing13Bar,o.mixing23Bar,o.dm12sqBar,o.dm23sqBar,o.deltacpBar)
