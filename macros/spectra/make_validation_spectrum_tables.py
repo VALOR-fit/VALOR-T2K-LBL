@@ -7,6 +7,8 @@ import numpy as np
 import sys
 import os
 
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+
 env_var = "T2KOSCANA"
 try:
   ROOT.valor
@@ -394,9 +396,9 @@ if __name__=="__main__":
 
   parser.add_option('-l', '--label' , dest='label' , default=None, help="Label to put in file.")
   
-  parser.add_option('-d', '--disable-banff', dest='nobanff', action="store_true",default=False)
+  parser.add_option('-d', '--disable-banff', dest='nobanff', action="store_true",default=False,help="Disable the BANFF tune. This returns to flux tuned only, no NIWG tune")
   
-  parser.add_option('-b', '--use-bar', dest='useBar', action="store_true",default=False)
+  parser.add_option('-b', '--use-bar', dest='useBar', action="store_true",default=False,help="Use the 3f_osc_bar hypothesis. Without this, the bar mixing params will be ignored.")
   
   o,other = parser.parse_args()
   
