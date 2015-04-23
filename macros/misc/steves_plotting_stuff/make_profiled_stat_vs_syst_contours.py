@@ -54,40 +54,40 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
   print "Reading stat+SYST from ",syst_file
   
   for hierarchy in ["nh","ih"]:
-    m_f = ROOT.TFile(stat_file)
-    h_m = m_f.Get("h_chisq_dmsq_mixing23_Ave_"+hierarchy)
-    assert(h_m)
-    h_m.Print()
-    min_m = h_m.GetMinimum()
+    f_stat = ROOT.TFile(stat_file)
+    h_stat = f_stat.Get("h_chisq_dmsq_mixing23_Ave_"+hierarchy)
+    assert(h_stat)
+    h_stat.Print()
+    min_stat = h_stat.GetMinimum()
     
-    m_p = ROOT.TFile(syst_file)
+    f_syst = ROOT.TFile(syst_file)
       
-    h_p = m_p.Get("h_chisq_dmsq_mixing23_Ave_"+hierarchy)
-    assert(h_p)
-    h_p.Print()
-    min_p = h_p.GetMinimum()
+    h_syst = f_syst.Get("h_chisq_dmsq_mixing23_Ave_"+hierarchy)
+    assert(h_syst)
+    h_syst.Print()
+    min_syst = h_syst.GetMinimum()
     
-    print min_m
-    print min_p
+    print min_stat
+    print min_syst
     
     # Precalculate the best-fit points from the histogram
-    bf_bin_p = h_p.GetMinimumBin()
-    bf_bin_m = h_m.GetMinimumBin()
+    bf_bin_syst = h_syst.GetMinimumBin()
+    bf_bin_stat = h_stat.GetMinimumBin()
     
-    bf_chisq_p = h_p.GetBinContent(bf_bin_p)
-    bf_chisq_m = h_m.GetBinContent(bf_bin_m)
+    bf_chisq_syst = h_syst.GetBinContent(bf_bin_syst)
+    bf_chisq_stat = h_stat.GetBinContent(bf_bin_stat)
     
-    x_bin_p = ROOT.Long() ; y_bin_p = ROOT.Long()
-    x_bin_m = ROOT.Long() ; y_bin_m = ROOT.Long()
+    x_bin_syst = ROOT.Long() ; y_bin_syst = ROOT.Long()
+    x_bin_stat = ROOT.Long() ; y_bin_stat = ROOT.Long()
     dummy = ROOT.Long()
     
-    h_p.GetBinXYZ(bf_bin_p,x_bin_p,y_bin_p,dummy)
-    h_m.GetBinXYZ(bf_bin_m,x_bin_m,y_bin_m,dummy)
+    h_syst.GetBinXYZ(bf_bin_syst,x_bin_syst,y_bin_syst,dummy)
+    h_stat.GetBinXYZ(bf_bin_stat,x_bin_stat,y_bin_stat,dummy)
     
-    bf_x_p = h_p.GetXaxis().GetBinCenter(x_bin_p)
-    bf_x_m = h_m.GetXaxis().GetBinCenter(x_bin_m)
-    bf_y_p = h_p.GetYaxis().GetBinCenter(y_bin_p)
-    bf_y_m = h_m.GetYaxis().GetBinCenter(y_bin_m)
+    bf_x_syst = h_syst.GetXaxis().GetBinCenter(x_bin_syst)
+    bf_x_stat = h_stat.GetXaxis().GetBinCenter(x_bin_stat)
+    bf_y_syst = h_syst.GetYaxis().GetBinCenter(y_bin_syst)
+    bf_y_stat = h_stat.GetYaxis().GetBinCenter(y_bin_stat)
     
     
     # If we have files, go and get the bestfits from those instead.
@@ -96,110 +96,112 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
         tf_stat_normal = ROOT.TFile(stat_bf_normal)
         tr = tf_stat_normal.Get("fitnt")
         tr.GetEntry(0)
-        bf_x_m = tr.best_fit_params.BestFitValue(p1)
-        bf_y_m = tr.best_fit_params.BestFitValue(p2)
-        bf_chisq_m = tr.best_fit_params.GetBestFitStatistic()
+        bf_x_stat = tr.best_fit_params.BestFitValue(p1)
+        bf_y_stat = tr.best_fit_params.BestFitValue(p2)
+        bf_chisq_stat = tr.best_fit_params.GetBestFitStatistic()
       if syst_bf_normal is not None:
         tf_syst_normal = ROOT.TFile(syst_bf_normal)
         tr = tf_syst_normal.Get("fitnt")
         tr.GetEntry(0)
-        bf_x_p = tr.best_fit_params.BestFitValue(p1)
-        bf_y_p = tr.best_fit_params.BestFitValue(p2)
-        bf_chisq_p = tr.best_fit_params.GetBestFitStatistic()
+        bf_x_syst = tr.best_fit_params.BestFitValue(p1)
+        bf_y_syst = tr.best_fit_params.BestFitValue(p2)
+        bf_chisq_syst = tr.best_fit_params.GetBestFitStatistic()
     else:
       if stat_bf_inverted is not None:
         tf_stat_inverted = ROOT.TFile(stat_bf_inverted)
         tr = tf_stat_inverted.Get("fitnt")
         tr.GetEntry(0)
-        bf_x_m = tr.best_fit_params.BestFitValue(p1)
-        bf_y_m = tr.best_fit_params.BestFitValue(p2)
-        bf_chisq_m = tr.best_fit_params.GetBestFitStatistic()
+        bf_x_stat = tr.best_fit_params.BestFitValue(p1)
+        bf_y_stat = tr.best_fit_params.BestFitValue(p2)
+        bf_chisq_stat = tr.best_fit_params.GetBestFitStatistic()
       if syst_bf_inverted is not None:
         tf_syst_inverted = ROOT.TFile(syst_bf_inverted)
         tr = tf_syst_inverted.Get("fitnt")
         tr.GetEntry(0)
-        bf_x_p = tr.best_fit_params.BestFitValue(p1)
-        bf_y_p = tr.best_fit_params.BestFitValue(p2)
-        bf_chisq_p = tr.best_fit_params.GetBestFitStatistic()
+        bf_x_syst = tr.best_fit_params.BestFitValue(p1)
+        bf_y_syst = tr.best_fit_params.BestFitValue(p2)
+        bf_chisq_syst = tr.best_fit_params.GetBestFitStatistic()
         
     
-    h_delta_m = GetDeltaHist(h_m,bf_chisq_m)
+    h_delta_stat = GetDeltaHist(h_stat,bf_chisq_stat)
     
-    h_contour_m = ROOT.TH2D(h_delta_m)
-    h_contour_m.SetContour(2)
-    h_contour_m.SetContourLevel(1,conf90)
-    h_contour_m.SetContourLevel(0,conf68)
-    h_contour_m.SetLineWidth(1)
-    h_contour_m.SetLineColor(R.kBlack)
+    h_contour_stat = ROOT.TH2D(h_delta_stat)
+    h_contour_stat.SetContour(2)
+    h_contour_stat.SetContourLevel(1,conf90)
+    h_contour_stat.SetContourLevel(0,conf68)
+    h_contour_stat.SetLineWidth(1)
+    h_contour_stat.SetLineColor(R.kBlack)
     
-    h_delta_p = GetDeltaHist(h_p,bf_chisq_p)
+    h_delta_syst = GetDeltaHist(h_syst,bf_chisq_syst)
     
-    h_contour_p = ROOT.TH2D(h_delta_p)
-    h_contour_p.SetContour(2)
-    h_contour_p.SetContourLevel(1,conf90)
-    h_contour_p.SetContourLevel(0,conf68)
-    h_contour_p.SetLineWidth(1)
-    h_contour_p.SetLineStyle(2)
-    h_contour_p.SetLineColor(R.kBlack)
+    h_contour_syst = ROOT.TH2D(h_delta_syst)
+    h_contour_syst.SetContour(2)
+    h_contour_syst.SetContourLevel(1,conf90)
+    h_contour_syst.SetContourLevel(0,conf68)
+    h_contour_syst.SetLineWidth(1)
+    h_contour_syst.SetLineStyle(2)
+    h_contour_syst.SetLineColor(R.kBlack)
     
-    contours_p = GetContours(h_contour_p)
-    contours_m = GetContours(h_contour_m)
+    contours_syst = GetContours(h_contour_syst)
+    contours_stat = GetContours(h_contour_stat)
     
-    marker_p = ROOT.TMarker(bf_x_p,bf_y_p,ROOT.kFullStar)
-    marker_m = ROOT.TMarker(bf_x_m,bf_y_m,ROOT.kFullStar)
+    marker_syst = ROOT.TMarker(bf_x_syst,bf_y_syst,ROOT.kFullStar)
+    marker_stat = ROOT.TMarker(bf_x_stat,bf_y_stat,ROOT.kFullStar)
     
-    if (bf_chisq_p > bf_chisq_m):
+    if (bf_chisq_syst > bf_chisq_stat):
       bf_is_normal = True
-      marker_m.SetMarkerStyle(ROOT.kOpenStar)
+      marker_stat.SetMarkerStyle(ROOT.kOpenStar)
     else:
       bf_is_normal = False
-      marker_p.SetMarkerStyle(ROOT.kOpenStar)
+      marker_syst.SetMarkerStyle(ROOT.kOpenStar)
       
-    marker_p.SetMarkerColor(ROOT.kViolet);
-    marker_m.SetMarkerColor(ROOT.kBlue+1);
-    marker_p.SetMarkerSize(1.5);
-    marker_m.SetMarkerSize(1.5);
+    marker_syst.SetMarkerColor(ROOT.kViolet);
+    marker_stat.SetMarkerColor(ROOT.kBlue+1);
+    marker_syst.SetMarkerSize(1.5);
+    marker_stat.SetMarkerSize(1.5);
     
-    CopyMarkerToHist(marker_p,h_contour_p)
-    CopyMarkerToHist(marker_m,h_contour_m)
+    CopyMarkerToHist(marker_syst,h_contour_syst)
+    CopyMarkerToHist(marker_stat,h_contour_stat)
     
-    print "Bestfit point (stat)  : ",bf_x_m,bf_y_m,"\twith chisq: ",bf_chisq_m
-    print "Bestfit point (stat+syst): ",bf_x_p,bf_y_p,"\twith chisq: ",bf_chisq_p
+    print "Bestfit point (stat)  : "   ,bf_x_stat,bf_y_stat,"\twith chisq: ",bf_chisq_stat
+    print "Bestfit point (stat+syst): ",bf_x_syst,bf_y_syst,"\twith chisq: ",bf_chisq_syst
       
     print "\n\n"
     
     # Start drawing
-    for zoom in [False,True]:
-      if zoom: h_contour_m.GetYaxis().SetRangeUser(1E-3,4.5E-3)
+    
+    #~ for zoom in [False,True]:
+    for zoom in [True]:
+      if zoom: h_contour_stat.GetYaxis().SetRangeUser(1E-3,4.5E-3)
       
-      for g in contours_p[0]: g.SetLineColor(R.kBlack)
-      for g in contours_p[1]: g.SetLineColor(R.kRed)
-      for g in contours_p[0]: g.SetLineStyle(1)
-      for g in contours_p[1]: g.SetLineStyle(1)
+      for g in contours_syst[0]: g.SetLineColor(R.kBlack)
+      for g in contours_syst[1]: g.SetLineColor(R.kRed)
+      for g in contours_syst[0]: g.SetLineStyle(h_contour_syst.GetLineStyle())
+      for g in contours_syst[1]: g.SetLineStyle(h_contour_syst.GetLineStyle())
       
-      for g in contours_m[0]: g.SetLineColor(R.kBlack)
-      for g in contours_m[1]: g.SetLineColor(R.kRed)
-      for g in contours_m[0]: g.SetLineStyle(2)
-      for g in contours_m[1]: g.SetLineStyle(2)
+      for g in contours_stat[0]: g.SetLineColor(R.kBlack)
+      for g in contours_stat[1]: g.SetLineColor(R.kRed)
+      for g in contours_stat[0]: g.SetLineStyle(h_contour_stat.GetLineStyle())
+      for g in contours_stat[1]: g.SetLineStyle(h_contour_stat.GetLineStyle())
     
       
       canv = ROOT.TCanvas("canv1","canv1",1280,720)
       canv.cd()
       
-      h_contour_m.Draw("AXIS")
-      for cont_list in contours_p + contours_m:
+      h_contour_stat.Draw("AXIS")
+      for cont_list in contours_syst + contours_stat:
         for cont in cont_list:
           cont.Draw("same")
           
       # Draw markers
-      marker_p.Draw()
-      marker_m.Draw()
+      marker_syst.Draw()
+      marker_stat.Draw()
       
       # Make legend
       
       legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
-      legend.AddEntry(h_contour_m,"Stat only","lp")
-      legend.AddEntry(h_contour_p,"Stat+syst","lp")
+      legend.AddEntry(h_contour_stat,"Stat only","lp")
+      legend.AddEntry(h_contour_syst,"Stat+syst","lp")
       legend.Draw()
       
       if tag is None:
@@ -213,10 +215,10 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
       
       canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
       canv_nh.cd()
-      h_delta_m.SetContour(100)
-      h_delta_m.Draw("colz")
-      marker_m.Draw()
-      for g in contours_m[1]:
+      h_delta_stat.SetContour(100)
+      h_delta_stat.Draw("colz")
+      marker_stat.Draw()
+      for g in contours_stat[1]:
         g.SetLineStyle(1)
         g.SetLineColor(R.kBlue)
         g.Draw("same")
@@ -224,10 +226,10 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
       
       canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
       canv_ih.cd()
-      h_delta_p.SetContour(100)
-      h_delta_p.Draw("colz")
-      marker_p.Draw()
-      for g in contours_p[1]:
+      h_delta_syst.SetContour(100)
+      h_delta_syst.Draw("colz")
+      marker_syst.Draw()
+      for g in contours_syst[1]:
         g.SetLineStyle(1)
         g.SetLineColor(R.kBlue)
         g.Draw("same")
