@@ -6,6 +6,8 @@ import array
 import sys
 import os
 
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+
 env_var = "T2KOSCANA"
 try:
   ROOT.valor

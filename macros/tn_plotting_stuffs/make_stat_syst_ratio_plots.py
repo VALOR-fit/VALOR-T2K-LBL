@@ -11,6 +11,8 @@ import math
 import os
 import glob
 
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+
 linewidth = 1
 title_offset = 0.8
 bottom_margin = 0.15
@@ -25,7 +27,12 @@ ROOT.gROOT.SetBatch(1)
 
 colors = [ROOT.kBlack, ROOT.kRed, ROOT.kBlue, ROOT.kMagenta+1,  ROOT.kGreen+2, ROOT.kOrange+7, ROOT.kCyan+2,]
 
-param_sets = ["all","SKDet_FSI","BANFF","unconstrained_xsec","Osc_param"]
+param_sets = ["all",
+              "SKDet_FSI",
+              "BANFF",
+              #~ "unconstrained_xsec",
+              #~ "Osc_param"
+              ]
 readable = dict()
 readable["SKDet_FSI"         ] = "SK Detector + FSI"
 readable["BANFF"             ] = "BANFF"
