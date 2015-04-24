@@ -150,6 +150,11 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
   # XSec
   for param in xrange(conv.kNuis000,conv.kLastNuisParam):
     if not util.IsXSec(param): continue
+    
+    if util.IsRPA(param):
+      print "Skipping RPA param: ",util.ParamAsString(param)
+      continue
+      
     entries = [util.ParamAsStringPaperTex(param).ljust(col1_width)]
     row = False
     for m in modes:
@@ -164,7 +169,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
   tex_output.write("\\end{table}\n}\n")
   tex_output.write("\\end{document}\n")
   
-  print "Table output written to ",output_file
+  print "\n\nTable output written to ",output_file
 
 if __name__=="__main__":
   
