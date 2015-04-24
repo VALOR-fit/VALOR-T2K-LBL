@@ -41,6 +41,8 @@ public:
   double MaxValue    (conv::PhysParamId_t p) const;
   void   SetMaxValue (conv::PhysParamId_t p, double v);
   
+  double GetNearestPhysicalValue(conv::PhysParamId_t p, double v) const;
+  
   bool IsWithinLimits(conv::PhysParamId_t p, double v) const;
   bool AllWithinLimits(const FitParamList & fparm) const;
   bool AllWithinLimits(const PhysParamList & fparm) const;

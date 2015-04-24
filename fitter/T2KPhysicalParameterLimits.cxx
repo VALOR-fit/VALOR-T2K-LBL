@@ -130,6 +130,13 @@ const map<int,double> & valor::T2KPhysicalParameterLimits::Maxima(void) const
   return fParamMaxima;
 }
 //____________________________________________________________________________
+double valor::T2KPhysicalParameterLimits::GetNearestPhysicalValue(conv::PhysParamId_t p, double v) const
+{
+  if (this->IsWithinLimits(p,v)) {return v;}
+  if (v < this->MinValue(p))     {return this->MinValue(p);}
+  return this->MaxValue(p);
+}
+//____________________________________________________________________________
 void valor::T2KPhysicalParameterLimits::SetDefaults(void)
 {
   for (int ip = 0 ; ip < knppmax; ip++) {
