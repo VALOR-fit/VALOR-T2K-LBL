@@ -3561,6 +3561,21 @@ string valor::util::AsStringPaperTable(PhysParamId_t p)
         return util::AsString(p);
     }
   }
+  //~ else if(util::IsSKDetFSI(p) {
+    //~ if (util::IsRHCSystematic(p)) {
+      //~ int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
+      //~ }
+      //~ return Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+                  //~ kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());     
+      //~ break;
+      //~ }
+      //~ return Form("RHC");
+    //~ }
+    //~ else {
+      //~ int ip = (int)p - (int)kNuisSKDetFSI_first;
+      //~ return Form("FHC");
+    //~ }
+  //~ }
   return util::AsString(p);
 }
 //________________________________________________________________________________________
@@ -3893,6 +3908,19 @@ bool valor::util::IsBANFFUnconstrained(PhysParamId_t p)
     case (kRHCNuisBANFFBindE      )   :
     case (kRHCNuisBANFFNormCCcoh  )   :
     case (kRHCNuisBANFFNormNuEToNuMu) :
+      return true;
+    
+    default:
+      return false;
+  }
+  return false;
+}
+//________________________________________________________________________________________
+bool valor::util::IsRPA(PhysParamId_t p)
+{
+  switch (p) {
+    case (kNuisXSecRPA        )   :
+    case (kRHCNuisXSecRPA     )   :
       return true;
     
     default:
