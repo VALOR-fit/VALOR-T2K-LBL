@@ -1987,18 +1987,29 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
       //bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
       //if(!bin_is_not_empty) continue;
       
-      fNuOsc3Flavour.CalcMatterOscProbAll(false, Etrue, p_osc    );
-      fNuOsc3Flavour.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
+      // fNuOsc3Flavour.CalcMatterOscProbAll(false, Etrue, p_osc    );
+      // fNuOsc3Flavour.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
+      // double p_numu_numu       = p_osc    [1][1];
+      // double p_numubar_numubar = p_osc_bar[1][1];
+      // double p_nue_nue         = p_osc    [0][0];
+      // double p_nuebar_nuebar   = p_osc_bar[0][0];
+      // double p_numu_nue        = p_osc    [1][0];
+      // double p_numubar_nuebar  = p_osc_bar[1][0];
+      // double p_nue_numu        = p_osc    [0][1];
+      // double p_nuebar_numubar  = p_osc_bar[0][1];
       
-      double p_numu_numu       = p_osc    [1][1];
-      double p_numubar_numubar = p_osc_bar[1][1];
-      double p_nue_nue         = p_osc    [0][0];
-      double p_nuebar_nuebar   = p_osc_bar[0][0];
-      double p_numu_nue        = p_osc    [1][0];
-      double p_numubar_nuebar  = p_osc_bar[1][0];
-      double p_nue_numu        = p_osc    [0][1];
-      double p_nuebar_numubar  = p_osc_bar[0][1];
-      
+
+      double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuMu,    conv::kPdgNuMu,    Etrue);
+      double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuE,     conv::kPdgNuE,     Etrue);
+      double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuMu,    conv::kPdgNuE,     Etrue);
+      double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuE,    conv::kPdgNuMu,     Etrue);
+      double p_numubar_numubar = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuMuBar, Etrue);
+      double p_nuebar_nuebar   = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuEBar,  conv::kPdgNuEBar,  Etrue);
+      double p_numubar_nuebar  = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuEBar,  Etrue);
+      double p_nuebar_numubar  = fNuOsc3Flavour.CalcMatterOscProb(conv::kPdgNuEBar, conv::kPdgNuMuBar,  Etrue);
+
+
+
 #ifdef __show_hypothesis_probabilities__
       cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
       cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
@@ -2163,18 +2174,27 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
       //bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
       //if(!bin_is_not_empty) continue;
       
-      fNuOsc3Flavour   .CalcMatterOscProbAll(false, Etrue, p_osc    );
-      fNuOsc3FlavourBar.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
+      // fNuOsc3Flavour   .CalcMatterOscProbAll(false, Etrue, p_osc    );
+      // fNuOsc3FlavourBar.CalcMatterOscProbAll(true , Etrue, p_osc_bar); 
+      // double p_numu_numu       = p_osc    [1][1];
+      // double p_numubar_numubar = p_osc_bar[1][1];
+      // double p_nue_nue         = p_osc    [0][0];
+      // double p_nuebar_nuebar   = p_osc_bar[0][0];
+      // double p_numu_nue        = p_osc    [1][0];
+      // double p_numubar_nuebar  = p_osc_bar[1][0];
+      // double p_nue_numu        = p_osc    [0][1];
+      // double p_nuebar_numubar  = p_osc_bar[0][1];
       
-      double p_numu_numu       = p_osc    [1][1];
-      double p_numubar_numubar = p_osc_bar[1][1];
-      double p_nue_nue         = p_osc    [0][0];
-      double p_nuebar_nuebar   = p_osc_bar[0][0];
-      double p_numu_nue        = p_osc    [1][0];
-      double p_numubar_nuebar  = p_osc_bar[1][0];
-      double p_nue_numu        = p_osc    [0][1];
-      double p_nuebar_numubar  = p_osc_bar[0][1];
-      
+      double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuMu,    conv::kPdgNuMu,    Etrue);
+      double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuE,     conv::kPdgNuE,     Etrue);
+      double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuMu,    conv::kPdgNuE,     Etrue);
+      double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuE,    conv::kPdgNuMu,     Etrue);
+      double p_numubar_numubar = fNuOsc3FlavourBar.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuMuBar, Etrue);
+      double p_nuebar_nuebar   = fNuOsc3FlavourBar.CalcMatterOscProb(conv::kPdgNuEBar,  conv::kPdgNuEBar,  Etrue);
+      double p_numubar_nuebar  = fNuOsc3FlavourBar.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuEBar,  Etrue);
+      double p_nuebar_numubar  = fNuOsc3FlavourBar.CalcMatterOscProb(conv::kPdgNuEBar, conv::kPdgNuMuBar,  Etrue);
+
+
 #ifdef __show_hypothesis_probabilities__
       cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;	
       cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;

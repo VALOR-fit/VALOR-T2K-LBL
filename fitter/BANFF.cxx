@@ -891,7 +891,7 @@ void BANFF::TweakFHCpRHC(
   // If this is the first time this function is called, then run the Cholesky 
   // decomposition of the flux covariance matrix
   //
-
+  
   if(fFHCpRHCCovMtrxChoL == 0) 
     this->CholeskyDecomposeFHCpRHCMatrix();
 
