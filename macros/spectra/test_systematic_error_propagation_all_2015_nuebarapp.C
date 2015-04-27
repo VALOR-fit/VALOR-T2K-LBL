@@ -23,13 +23,16 @@ void test_systematic_error_propagation_all_2015_nuebarapp
  double       input_dm23sq       = -99,             /* */
  bool         save_toy_expts     = false,           /* save the ereco spectra? */
  
+ //const char * config_file        = "analysis_configuration_run1to6_test_prefit_app.xml",  
  const char * config_file        = "analysis_configuration_run1to6_test_app.xml",  
 
  const char * fit_param_list     = "nuosc3fbar_fixnonbar_fix5+nuisance",
 
- const char * mixparamchoice     = "sinsqtheta",
+ const char * mixparamchoice     = "sinsq2theta",
  const char * hierarchy          = "normal",
- 
+ const char * dmsqscheme          = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
+
  int    tablesyst_idx            = -999,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
  string tablesyst_name           = "f_banff17_rhc", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
@@ -51,7 +54,9 @@ void test_systematic_error_propagation_all_2015_nuebarapp
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
   Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
   if(Opt::Instance()->Undefined()) {
     cerr << "Global options not defined correctly. Exiting..." << endl;
     cerr << *Opt::Instance() << endl;
@@ -251,6 +256,7 @@ void test_systematic_error_propagation_all_2015_nuebarapp
   
   // NEW NUEBAR APPEARANCE
   hErecoTun_SigNueBarApp = (TH1D*) hErecoTun->Clone("hErecoTun_SigNueBarApp");
+  hErecoTun_SigNueBarApp->Reset();
   char name[200];
   sprintf(name,"hErecoTun_SigNueBarApp");
   hErecoTun_SigNueBarApp->SetName(name);
@@ -258,9 +264,9 @@ void test_systematic_error_propagation_all_2015_nuebarapp
   sprintf(title,"E reco Signal #bar{#nu_{#mu}} #to #bar{#nu_{e}} Nominal");
   hErecoTun_SigNueBarApp->SetName(name);
   hErecoTun_SigNueBarApp->SetName(title);
-  hErecoTun_SigNueBarApp->Reset();
 
   hErecoTun_BkgNueApp = (TH1D*) hErecoTun->Clone("hErecoTun_BkgNueApp");
+  hErecoTun_BkgNueApp->Reset();
   char name[200];
   sprintf(name,"hErecoTun_BkgNueApp");
   hErecoTun_BkgNueApp->SetName(name);
@@ -268,9 +274,9 @@ void test_systematic_error_propagation_all_2015_nuebarapp
   sprintf(title,"E reco Bkg #nu_{#mu} #to #nu_{e} Nominal");
   hErecoTun_BkgNueApp->SetName(name);
   hErecoTun_BkgNueApp->SetName(title);
-  hErecoTun_BkgNueApp->Reset();
 
   hErecoTun_BkgOth = (TH1D*) hErecoTun->Clone("hErecoTun_BkgOth");
+  hErecoTun_BkgOth->Reset();
   char name[200];
   sprintf(name,"hErecoTun_BkgOth");
   hErecoTun_BkgOth->SetName(name);
@@ -278,7 +284,6 @@ void test_systematic_error_propagation_all_2015_nuebarapp
   sprintf(title,"E reco Bkg Other Nominal");
   hErecoTun_BkgOth->SetName(name);
   hErecoTun_BkgOth->SetName(title);
-  hErecoTun_BkgOth->Reset();
   
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
