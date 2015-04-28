@@ -52,7 +52,8 @@ void test_sk_ereco_spectrum_nominal
   const char * hierarchy            = "normal"   ,
   bool plot_per_50MeV = true,
   bool group_mec_as_ccqe = true,
-  bool print_total_events_on_plot = false
+  bool print_total_events_on_plot = false,
+  int force_ymax = -1
 )
 {
   using namespace std;
@@ -182,6 +183,9 @@ void test_sk_ereco_spectrum_nominal
       
   }
   hErecoTot = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  
+  if (force_ymax>0) {hErecoTot->SetMaximum(force_ymax);}
+  
   hErecoTot_coarse = (TH1D)hErecoTot->Rebin(nbins_coarse,Form("%s_coarse",hErecoTot->GetName()),ereco_bin_edges_coarse);
   
   hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
@@ -476,6 +480,8 @@ void test_sk_ereco_spectrum_nominal
   sErecoTotFlavMode->Add(hErecoMode_NumuBar_CCnQE);
   if (!group_mec_as_ccqe) {sErecoTotFlavMode->Add(hErecoMode_NumuBar_MEC);}
   sErecoTotFlavMode->Add(hErecoMode_NumuBar_CCQE);
+  
+  if (force_ymax>0) {sErecoTotFlavMode->SetMaximum(force_ymax);}
 
   TCanvas *cErecoTotFlavMode = new TCanvas("cErecoTotFlavMode","cErecoTotFlavMode");
   sErecoTotFlavMode->Draw();
