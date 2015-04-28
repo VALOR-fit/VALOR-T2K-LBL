@@ -128,6 +128,7 @@ void SuperkMC::Init(void)
   fPOTRHC = 0;
   fXMEC = -1;
   fUnphysicalOscProb = false;
+  fTemplateArraysHaveNIWGTune = true;
 
   for(int is=0; is<kns; is++) {
     
@@ -752,6 +753,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template arrays, with or without NIWG weights
 {
   SKMCTemplateType_t template_to_use = (with_niwg_weights ? kSKMCtNom : kSKMCtPOT);
+  
+  fTemplateArraysHaveNIWGTune = with_niwg_weights;
   
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
@@ -1670,6 +1673,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #ifdef __show_update_mesg_info__
   cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
 #endif
+
+  //~ fNuXSec->SetSKMCArraysHaveNIWGTune(fTemplateArraysHaveNIWGTune);
 
   // Loop over samples
   for(int is = 0; is < kns; is++) {
@@ -3313,3 +3318,9 @@ TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SK
   
   return h;
 }
+//____________________________________________________________________________________
+bool SuperkMC::DoTemplateArraysHaveNIWGTune(void) const
+{
+  return fTemplateArraysHaveNIWGTune;
+}
+//____________________________________________________________________________________

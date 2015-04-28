@@ -115,6 +115,7 @@ public:
   void NevDebug(conv::SKMCTemplateType_t t, string name);
   
   void FillTemplateArrays(bool with_tuning_weights = false);
+  bool DoTemplateArraysHaveNIWGTune(void) const;
 
 private:
 
@@ -279,6 +280,8 @@ private:
   double fXMEC; //hack x_mec until we have a parameter we can use
 
   bool fUnphysicalOscProb; // Allow unphysical region (probs not in range [0,1]) in 2 flavour case
+  
+  bool fTemplateArraysHaveNIWGTune;
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
