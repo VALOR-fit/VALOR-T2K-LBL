@@ -1240,8 +1240,8 @@ void draw_sensitivity_plots_toys(
     NuOscDmsqScheme_t orig_scheme = Opt::Instance()->gOscDmsqScheme; // save the scheme so we can put it back later
     
     if (!NuBarMode) {
-      h_chisq_par2_par1_Ave_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
-      h_chisq_par2_par1_Ave_ih->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+      h_chisq_par2_par1_Ave_nh->GetXaxis()->SetTitle(util::ParamAsStringPaperRooTex(conv::kPhypMixing23).c_str());
+      h_chisq_par2_par1_Ave_ih->GetXaxis()->SetTitle(util::ParamAsStringPaperRooTex(conv::kPhypMixing23).c_str());
       
       Opt::Instance()->gOscDmsqScheme = dmsqscheme_nh;
       h_chisq_par2_par1_Ave_nh->GetYaxis()->SetTitle(util::ParamAsStringPaperRooTex(conv::kPhypDm23sq).c_str());
@@ -1250,8 +1250,8 @@ void draw_sensitivity_plots_toys(
       h_chisq_par2_par1_Ave_ih->GetYaxis()->SetTitle(util::ParamAsStringPaperRooTex(conv::kPhypDm23sq).c_str());
     }
     else {
-      h_chisq_par2_par1_Ave_nh->GetXaxis()->SetTitle("sin^{2}#bar{#theta_{23}}");
-      h_chisq_par2_par1_Ave_ih->GetXaxis()->SetTitle("sin^{2}#bar{#theta_{23}}");
+      h_chisq_par2_par1_Ave_nh->GetXaxis()->SetTitle(util::ParamAsStringPaperRooTex(conv::kPhypMixing23Bar).c_str());
+      h_chisq_par2_par1_Ave_ih->GetXaxis()->SetTitle(util::ParamAsStringPaperRooTex(conv::kPhypMixing23Bar).c_str());
       
       Opt::Instance()->gOscDmsqScheme = dmsqscheme_nh;
       h_chisq_par2_par1_Ave_nh->GetYaxis()->SetTitle(util::ParamAsStringPaperRooTex(conv::kPhypDm23sqBar).c_str());
