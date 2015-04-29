@@ -11,54 +11,50 @@
 
 void generate_toymc_ensemble_joint_bar
 (
- //const char * tag                     = "toymc_nueapp",
- const char * tag                     = "toymc_numubardisap_fixosc_rethrowunphysical_2p5E20POT",                        /* */
- //const char * tag                     = "toymc_FHCpRHCpMultiRing",                        /* */
- //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_ResultsRun1to4_IH",                        /* */
- //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH",                        /* */
- //const char * tag                     = "toymc_FHCpRHC_MCRun1to6_th13DB_NH",                        /* */
+ const char * tag                     = "toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT",   
 
- int          run                     = 0,                              /* */
- double       nexperiments            = 5000,                             /* number of toy-MC expts to generate */
- const char * hypothesis              = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
+ int          run                     = 0,                   
+ double       nexperiments            = 10000,               /* number of toy-MC expts to generate */
+ const char * hypothesis              = "3f_oscbar_normbar", /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar" */
 
- double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
- double       input_mixing13          = -99, //0.0252, //-99, //0.02146 , // 0.0251,    /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
- double       input_mixing23          = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
- double       input_deltacp           = -99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
- double       input_dm12sq            = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
- double       input_dm23sq            = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
-
- double       input_mixing12_bar      = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
- double       input_mixing13_bar      = -99, //0.0252, //-99, //0.02146 , // 0.0251,    /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
- double       input_mixing23_bar      = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
- double       input_deltacp_bar       = -99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
- double       input_dm12sq_bar        = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
- double       input_dm23sq_bar        = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
+ // Default
+ double       input_mixing12          = -99,     /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing13          = -99,     /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing23          = -99,     /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ double       input_deltacp           = -99,     /* deltacp, if -999 then randomize */
+ double       input_dm12sq            = -99,     /* Dm^2_{12}, if -999 then randomize */
+ double       input_dm23sq            = -99,     /* |Dm^2_{23}| */
+ double       input_mixing12_bar      = -99,     /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing13_bar      = -99,     /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing23_bar      = -99,     /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ double       input_deltacp_bar       = -99,     /* deltacp, if -999 then randomize */
+ double       input_dm12sq_bar        = -99,     /* Dm^2_{12}, if -999 then randomize */
+ double       input_dm23sq_bar        = -99,     /* |Dm^2_{23}| */
+ double       input_beta_bar          = -99,     /* betaBar */
  
- const char * config_file      = "analysis_configuration_2.5E20.xml",   /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",
+ const char * config_file      = "analysis_configuration_run1to6_test_app.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",
 
-  bool rethrow_if_parameters_unphysical = true,                          // rethrow unphysical toys
-  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
-  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
-
-  bool         save_in_xml_format      = true,                           /* also save in txt format */
-  bool         save_in_root_format     = true,                           /* */  
-  const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_1Re_RHC   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_MultiRmu  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_MultiRe   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
-  const char * xml_file_to_add         = 0,           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
-  bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
-  const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
-  const char * hierarchy               = "normal",                       /* normal or inverted */
-  const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
-  const char * mixparamoctant          = "one"                           /* one==kNuOctantOne two==kNuOctantTwo */
+ bool rethrow_if_parameters_unphysical = true,                          // rethrow unphysical toys
+ bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
+ int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
+ 
+ bool         save_in_xml_format      = true,                           /* also save in txt format */
+ bool         save_in_root_format     = true,                           /* */  
+ const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_1Re_RHC   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_MultiRmu  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_MultiRe   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
+ const char * xml_file_to_add         = 0,           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
+ bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
+ 
+ const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * hierarchy               = "normal",                       /* normal or inverted */
+ const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
+ const char * mixparamoctant          = "two"                           /* one==kNuOctantOne two==kNuOctantTwo */
 )
 {
   using namespace std;
@@ -105,6 +101,8 @@ void generate_toymc_ensemble_joint_bar
   bool randomize_dm12sq_bar    = (TMath::Abs(input_dm12sq_bar   + 999) < kASmallNum);
   bool randomize_dm23sq_bar    = (TMath::Abs(input_dm23sq_bar   + 999) < kASmallNum);
 
+  bool randomize_beta_bar      = (TMath::Abs(input_beta_bar     + 999) < kASmallNum);
+
   //Set to defaults
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsq2Theta13;
@@ -131,6 +129,7 @@ void generate_toymc_ensemble_joint_bar
   if(input_dm23sq_bar < -1 && input_dm23sq_bar > -900)  input_dm23sq_bar = conv::kGlobFitDm23sq;
   if(input_dm12sq_bar < -1 && input_dm12sq_bar > -900)  input_dm12sq_bar = conv::kGlobFitDm12sq;
   if(input_deltacp_bar < -90 && input_deltacp_bar > -900) input_deltacp_bar = conv::kGlobFitDeltaCP;
+  if(input_beta_bar < -90 && input_beta_bar > -900) input_beta_bar = conv::kGlobFitBetaBar;
 
 
 
@@ -231,6 +230,7 @@ void generate_toymc_ensemble_joint_bar
   cout << "       > " << util::AsString(kPhypCPVBar    )  << " = " << ((randomize_deltacp_bar) ? "* randomized *" : input_deltacp_bar) << endl;
   cout << "       > " << util::AsString(kPhypDm12sqBar)   << " = " << ((randomize_dm12sq_bar)  ? "* randomized *" : input_dm12sq_bar ) << " eV^2/c^4" << endl;
   cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << ((randomize_dm23sq_bar)  ? "* randomized *" : input_dm23sq_bar ) << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypBetaBar)   << " = " << ((randomize_beta_bar)  ? "* randomized *" : input_beta_bar ) << endl;
 
   cout << "   - Adding the following data-points in each toy-MC expt: " << endl;
   cout << "    For 1R mu-like: "     << ((full_points_to_add_1Rmu)     ? *full_points_to_add_1Rmu     : "*None*") << endl;
@@ -308,6 +308,8 @@ void generate_toymc_ensemble_joint_bar
        if (randomize_dm12sq_bar  ) { input_dm12sq_bar   = util::RandomizeDm12sqBar();   }
        if (randomize_dm23sq_bar  ) { input_dm23sq_bar   = util::RandomizeDm23sqBar();   }
 
+       if (randomize_beta_bar    ) { input_beta_bar     = util::RandomizeBetaBar();   }
+
 
        // Set physics hypothesis
        if(ph.Hypothesis() == kHypNuMuDisapp2F) {
@@ -336,6 +338,23 @@ void generate_toymc_ensemble_joint_bar
 	 ph.SetCurrValue(kPhypCPVBar    ,   input_deltacp_bar);
 	 ph.SetCurrValue(kPhypDm12sqBar,    input_dm12sq_bar);
 	 ph.SetCurrValue(kPhypDm23sqBar,    input_dm23sq_bar);
+       }
+       else if(ph.Hypothesis() == kHypOsc3FBarNormBar) {
+	 ph.SetCurrValue(kPhypMixing12,  input_mixing12);
+	 ph.SetCurrValue(kPhypMixing13,  input_mixing13);
+	 ph.SetCurrValue(kPhypMixing23,  input_mixing23);
+	 ph.SetCurrValue(kPhypCPV    ,   input_deltacp);
+	 ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
+	 ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
+	 
+	 ph.SetCurrValue(kPhypMixing12Bar,  input_mixing12_bar);
+	 ph.SetCurrValue(kPhypMixing13Bar,  input_mixing13_bar);
+	 ph.SetCurrValue(kPhypMixing23Bar,  input_mixing23_bar);
+	 ph.SetCurrValue(kPhypCPVBar    ,   input_deltacp_bar);
+	 ph.SetCurrValue(kPhypDm12sqBar,    input_dm12sq_bar);
+	 ph.SetCurrValue(kPhypDm23sqBar,    input_dm23sq_bar);
+
+	 ph.SetCurrValue(kPhypBetaBar,    input_beta_bar);
        }
 
 
