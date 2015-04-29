@@ -13,7 +13,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
  const char * tag                   = "prova",
  
  const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
- const char * hypothesis           = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc" */
+ const char * hypothesis           = "3f_oscbar_normbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar" */
  
  // double       input_mixing12       = 0.,                          
  // double       input_mixing13       = 0.,                          
@@ -28,6 +28,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
  double       input_deltacp        = -99,                         
  double       input_dm12sq         = -99,                         
  double       input_dm23sq         = -99,                       
+ double       input_betabar        = -99,
 
  // // T2K only - sinsqtheta
  // double       input_mixing12       = 0.306,                           
@@ -94,6 +95,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
+  if(input_betabar < -1) input_betabar = conv::kGlobFitBetaBar;
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -120,8 +122,25 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
     ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3FBarNormBar){
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
   }
-
+  
+  
+  
   string oscparams = util::AsString(ph.Hypothesis(),
      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
 
@@ -241,10 +260,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   // Build mode/flavor
 
   TH1D * hErecoMode_NC = new TH1D("hErecoMode_NC","hErecoMode_NC",nbins,ereco_bin_edges);
-  TH1D * hErecoMode_NumuBar_CCQE = new TH1D("hErecoMode_NumuBar_CCQE","hErecoMode_NumuBar_CCQE",nbins,ereco_bin_edges);
-  TH1D * hErecoMode_NumuBar_CCnQE = new TH1D("hErecoMode_NumuBar_CCnQE","hErecoMode_NumuBar_CCnQE",nbins,ereco_bin_edges);
-  TH1D * hErecoMode_Numu_CC = new TH1D("hErecoMode_Numu_CC","hErecoMode_Numu_CC",nbins,ereco_bin_edges);
-  TH1D * hErecoMode_NueNueBar_CC = new TH1D("hErecoMode_NueNueBar_CC","hErecoMode_NueNueBar_CC",nbins,ereco_bin_edges);
+  TH1D * hErecoMode_BkgOther = new TH1D("hErecoMode_BkgOther","hErecoMode_BkgOther",nbins,ereco_bin_edges);
+  TH1D * hErecoMode_NumuBarToNueBar = new TH1D("hErecoMode_NumuBarToNueBar","hErecoMode_NumuBarToNueBar",nbins,ereco_bin_edges);
+  TH1D * hErecoMode_NumuToNue = new TH1D("hErecoMode_NumuToNue","hErecoMode_NumuToNue",nbins,ereco_bin_edges);
 
   // flavor only
   TH1D * hErecoFlav_Numu = new TH1D("hErecoFlav_Numu","hErecoFlav_Numu",nbins,ereco_bin_edges);
@@ -258,10 +276,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   hErecoFlav_NueBar->SetFillStyle(0);
   
   hErecoMode_NC->SetFillStyle(0);
-  hErecoMode_NumuBar_CCQE->SetFillStyle(0);
-  hErecoMode_NumuBar_CCnQE->SetFillStyle(0);
-  hErecoMode_Numu_CC->SetFillStyle(0);
-  hErecoMode_NueNueBar_CC->SetFillStyle(0);
+  hErecoMode_BkgOther->SetFillStyle(0);
+  hErecoMode_NumuBarToNueBar->SetFillStyle(0);
+  hErecoMode_NumuToNue->SetFillStyle(0);
 
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
@@ -298,24 +315,19 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
     // Fill by flavor/mode
     if(util::IsNC(m))
       hErecoMode_NC->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NC
-
-    else if(util::IsNuMuBar(m) || util::IsOscNuMuBar(m)){
-      if(util::IsCCQE(m) || util::IsMEC(m))
-	hErecoMode_NumuBar_CCQE->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NumuBar CCQE/MEC
-      else if(util::IsCCnQE(m))
-	hErecoMode_NumuBar_CCnQE->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NumuBar CCnQE
-    }
-    else if(util::IsNuMu(m) || util::IsOscNuMu(m))
-      hErecoMode_Numu_CC->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // Numu CC
-
-    else if(util::IsNuEBar(m) || util::IsNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuE(m))
-      hErecoMode_NueNueBar_CC->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // Nue/NueBar CC
+    else if(util::IsOscNuEBar(m))
+      hErecoMode_NumuBarToNueBar->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // NumuBar->NueBar
+    else if(util::IsOscNuE(m))
+      hErecoMode_NumuToNue->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // Numu->Nue
+    else
+      hErecoMode_BkgOther->Add(skexp.CurrPredictedErecoSpectrum(s,m)); // Bkg Other
     
-    else{
-      cout << modestr << endl;
-      cout << "No mode / flavors are selected!!!" << endl;
-      exit(1);
-    }
+    //else{
+    //cout << modestr << endl;
+    //cout << "No mode / flavors are selected!!!" << endl;
+    //exit(1);
+    //}
+
   } // loop over modes
 
   // Draw Histo by mode/flavor
@@ -325,54 +337,48 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
 
   if(plot_per_50MeV){
     hErecoMode_NC = spectrum_to_per_50mev(hErecoMode_NC); 
-    hErecoMode_NumuBar_CCQE = spectrum_to_per_50mev(hErecoMode_NumuBar_CCQE); 
-    hErecoMode_NumuBar_CCnQE = spectrum_to_per_50mev(hErecoMode_NumuBar_CCnQE); 
-    hErecoMode_Numu_CC = spectrum_to_per_50mev(hErecoMode_Numu_CC); 
-    hErecoMode_NueNueBar_CC = spectrum_to_per_50mev(hErecoMode_NueNueBar_CC); 
+    hErecoMode_BkgOther = spectrum_to_per_50mev(hErecoMode_BkgOther); 
+    hErecoMode_NumuBarToNueBar = spectrum_to_per_50mev(hErecoMode_NumuBarToNueBar); 
+    hErecoMode_NumuToNue = spectrum_to_per_50mev(hErecoMode_NumuToNue); 
   }
 
   hErecoMode_NC->SetFillStyle(1001);
-  hErecoMode_NC->SetLineColor(kRed+2);
+  hErecoMode_NC->SetLineColor(kBlack);
+  //hErecoMode_NC->SetLineColor(kRed+2);
   hErecoMode_NC->SetFillColor(kRed);
+  hErecoMode_NC->SetLineWidth(2);
+  
+  hErecoMode_BkgOther->SetFillStyle(1001);
+  hErecoMode_BkgOther->SetLineColor(kBlack);
+  //hErecoMode_BkgOther->SetLineColor(kBlue+2);
+  hErecoMode_BkgOther->SetFillColor(kBlue);
+  hErecoMode_BkgOther->SetLineWidth(2);
 
-  hErecoMode_NumuBar_CCQE->SetFillStyle(1001);
-  hErecoMode_NumuBar_CCQE->SetLineColor(kBlack);
-  hErecoMode_NumuBar_CCQE->SetLineWidth(2);
-  //hErecoMode_NumuBar_CCQE->SetFillColor(kWhite);
+  hErecoMode_NumuBarToNueBar->SetFillStyle(1001);
+  hErecoMode_NumuBarToNueBar->SetLineColor(kBlack);
+  hErecoMode_NumuBarToNueBar->SetFillColor(kGreen);
+  hErecoMode_NumuBarToNueBar->SetLineWidth(2);
 
-  hErecoMode_NumuBar_CCnQE->SetFillStyle(3004);
-  hErecoMode_NumuBar_CCnQE->SetLineColor(kGray+3);
-  hErecoMode_NumuBar_CCnQE->SetLineWidth(2.);
-  hErecoMode_NumuBar_CCnQE->SetFillColor(kGray+3);
-  //hErecoMode_NumuBar_CCnQE->SetFillStyle(3004);
-
-  hErecoMode_Numu_CC->SetLineWidth(2);
-  hErecoMode_Numu_CC->SetFillStyle(1001);
-  hErecoMode_Numu_CC->SetLineColor(kGreen+2);
-  hErecoMode_Numu_CC->SetFillColor(kGreen);
-
-  hErecoMode_NueNueBar_CC->SetFillStyle(1001);
-  hErecoMode_NueNueBar_CC->SetLineWidth(1);
-  hErecoMode_NueNueBar_CC->SetLineColor(kBlue);
-  hErecoMode_NueNueBar_CC->SetFillColor(kBlue);
+  hErecoMode_NumuToNue->SetFillStyle(3004);
+  hErecoMode_NumuToNue->SetLineColor(kBlack);
+  hErecoMode_NumuToNue->SetFillColor(kGray+3);
+  hErecoMode_NumuToNue->SetLineWidth(2);
+  //hErecoMode_NumuToNue->SetFillStyle(3004);
 
   hErecoMode_NC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoMode_NC->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  hErecoMode_NueNueBar_CC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_NueNueBar_CC->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  hErecoMode_Numu_CC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_Numu_CC->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  hErecoMode_NumuBar_CCnQE->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_NumuBar_CCnQE->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  hErecoMode_NumuBar_CCQE->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_NumuBar_CCQE->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  hErecoMode_BkgOther->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
+  hErecoMode_BkgOther->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  hErecoMode_NumuToNue->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
+  hErecoMode_NumuToNue->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  hErecoMode_NumuBarToNueBar->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
+  hErecoMode_NumuBarToNueBar->GetYaxis()->SetTitle("Events per 0.050 GeV");
 
   THStack *sErecoTotFlavMode = new THStack("sErecoTotFlavMode","sErecoTotFlavMode");
   sErecoTotFlavMode->Add(hErecoMode_NC);
-  sErecoTotFlavMode->Add(hErecoMode_NueNueBar_CC);
-  sErecoTotFlavMode->Add(hErecoMode_Numu_CC);
-  sErecoTotFlavMode->Add(hErecoMode_NumuBar_CCnQE);
-  sErecoTotFlavMode->Add(hErecoMode_NumuBar_CCQE);
+  sErecoTotFlavMode->Add(hErecoMode_BkgOther);
+  sErecoTotFlavMode->Add(hErecoMode_NumuToNue);
+  sErecoTotFlavMode->Add(hErecoMode_NumuBarToNueBar);
 
   TCanvas *cErecoTotFlavMode = new TCanvas("cErecoTotFlavMode","cErecoTotFlavMode");
   sErecoTotFlavMode->Draw();
@@ -384,12 +390,11 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   TLegend *leg = new TLegend(0.6, 0.4, 0.9, 0.9);
   leg->SetFillColor(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(hErecoMode_NumuBar_CCQE,"1 #bar{#mu}-like (Total)","L");
-  leg->AddEntry(hErecoMode_NumuBar_CCQE,"1 #bar{#mu}-like (#bar{#nu}_{#mu} CCQE)","F");
-  leg->AddEntry(hErecoMode_NumuBar_CCnQE,"1 #bar{#mu}-like (#bar{#nu}_{#mu} CCnQE)","F");
-  leg->AddEntry(hErecoMode_Numu_CC,"1 #bar{#mu}-like (#nu_{#mu} CC","F");
-  leg->AddEntry(hErecoMode_NueNueBar_CC,"1 #bar{#mu}-like (#nu_{e},#bar{#nu_{e}} CC)","F");
-  leg->AddEntry(hErecoMode_NC,"1 #bar{#mu}-like (NC)","F");
+  leg->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu} mode, e-like Total","L");
+  leg->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","F");
+  leg->AddEntry(hErecoMode_NumuToNue,"#nu_{#mu} #rightarrow #nu_{e}","F");
+  leg->AddEntry(hErecoMode_NC,"NC","F");
+  leg->AddEntry(hErecoMode_BkgOther,"Bkg other","F");
   leg->Draw();
 
 
