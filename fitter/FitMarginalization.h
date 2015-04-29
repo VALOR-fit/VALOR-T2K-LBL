@@ -49,6 +49,11 @@
 #define deltacpBar_min -3.14159265358979312
 #define deltacpBar_max +3.14159265358979312
 
+// NEW BETABAR
+#define betaBar_min 0.
+#define betaBar_max 20.
+//
+
 // Nu mode
 
 #define mixing13_min 0.          

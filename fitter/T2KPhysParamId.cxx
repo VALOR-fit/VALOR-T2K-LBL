@@ -2261,6 +2261,13 @@ string valor::util::AsStringCompact(PhysParamId_t p)
       }
     break;
 
+
+    // NEW BETABAR
+   case ( kPhypBetaBar            ) : return "beta_bar";                 break;
+    //
+
+    
+
     case ( kPhypAlphaDecay            ) : return "alpha_decay";                 break;
     case ( kPhypSinsq2ThetaDecay      ) : return "sinsq2theta_decay";           break;
     case ( kPhypMusqDecoh             ) : return "musq_decoh";                  break;
@@ -2898,6 +2905,11 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
       }
     }
     
+
+    // NEW BETABAR
+  case ( kPhypBetaBar            ) : return "$\\beta{\\beta}$";                break;
+    //
+
   case ( kPhypAlphaDecay            ) : return "$\\alpha_{decay}$";                break;
   case ( kPhypSinsq2ThetaDecay      ) : return "$\\sin^{2}(2\\theta_{decay})$";      break;
   case ( kPhypMusqDecoh             ) : return "$\\mu^{2}_{decoh}$";                 break;
@@ -4338,6 +4350,10 @@ string valor::util::AsStringSimple(PhysParamId_t p)
   else if (p==conv::kPhypDm12sqBar  ) { return "dmsq12bar"  ;}
   else if (p==conv::kPhypDm23sqBar  ) { return "dmsq23bar"  ;}
   
+  // NEW BETABAR
+  else if (p==conv::kPhypBetaBar    ) { return "betabar"    ;}
+  //
+
   return util::AsStringCompact(p);
 }
 //____________________________________________________________________________

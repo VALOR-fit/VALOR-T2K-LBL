@@ -142,6 +142,7 @@ private:
   
   void ApplyPhysHypothesisToTemplates_3fOsc(void); 
   void ApplyPhysHypothesisToTemplates_3fOscBar(void); 
+  void ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void);  // NEW BETABAR
   void ApplyPhysHypothesisToTemplates_Sterile(void); 
 
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis

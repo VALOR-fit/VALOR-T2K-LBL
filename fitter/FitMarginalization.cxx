@@ -543,6 +543,15 @@ void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,dou
     } 
   }
 
+  // NEW BETABAR
+  else if(fPhysParamFree[ParId]==kPhypBetaBar){ // BetaBar (numubar->nuebar normalization)
+    if(minpar[ParId]==conv::kBadResult && maxpar[ParId]==conv::kBadResult){ // if limits are not given use the default ones
+      fmin_param[ParId] = betaBar_min;
+      fmax_param[ParId] = betaBar_max;
+    } 
+  }
+  //
+
   // The parameter is not selected
   else{
     if(ParId==0){
@@ -1985,6 +1994,12 @@ bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscva
   else if(p == conv::kPhypCPVBar){
     return false;
   }
+
+  // NEW BETABAR
+  else if(p == conv::kPhypBetaBar){
+    if(oscval < betaBar_min || oscval > betaBar_max) return true;
+  }
+  //
 
   // Nu 
   else if(p == conv::kPhypMixing13){
