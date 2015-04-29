@@ -7,8 +7,8 @@
 //________________________________________________________________________________________
 
 //#define __print_build_map_fileid__
-//#define __print_array_toy_maketoys__
-//#define __print_array_toy_maketoys_verbose__
+#define __print_array_toy_maketoys__
+#define __print_array_toy_maketoys_verbose__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_masshierarchy__
@@ -1722,8 +1722,19 @@ TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t sksample,int itoy,int 
   for(int is=0;is<fNSKsamples;is++){
     SuperkSample_t s = this->GetSKSamples(is);    
     if(sksample == s){
+      
+      // cout << "sksample = " << sksample << endl;
+      // cout << "itoy = " << itoy << endl;
+      // cout << "ifreepar0 = " << ifreepar0 << endl;
+      // cout << "ifreepar1 = " << ifreepar1 << endl;
+      // cout << "iMassHierarchy = " << iMassHierarchy << endl;
+      // cout << "bincont:" << endl;
+
       for(int ibin=0;ibin<fnerecobins->GetEntry(is);ibin++){
+	
 	float bincont = fToyMargErecoVArray->GetEntry(itoy,ifreepar0,ifreepar1,iMassHierarchy,is,ibin);
+	bincont *= (float)fNormPOT[is];
+
 	fhToyMargCurr[is]->SetBinContent(ibin+1,bincont);
 	//cout << bincont << " ";
       }     
