@@ -357,7 +357,7 @@ void run_fit_xml_toys_joint_bar
   //                    //
   ////////////////////////
   
-  if(hyp == kHypOsc3F){	
+  if(hyp == kHypOsc3F || hyp == kHypOsc3FBar){
     if(optfixparams.Contains("mixing23")){ 
       fparm->FixParameter(kPhypMixing23);
       fparm1->FixParameter(kPhypMixing23);
@@ -384,33 +384,34 @@ void run_fit_xml_toys_joint_bar
       fparm2->FixParameter(kPhypCPV);
     }
   }
-  else if(hyp == kHypOsc3FBar){	
-    if(optfixparams.Contains("mixing12")){ 
+  
+  if(hyp == kHypOsc3FBar){
+    if(optfixparams.Contains("mixing12bar")){ 
       fparm->FixParameter(kPhypMixing12Bar);
       fparm1->FixParameter(kPhypMixing12Bar);
       fparm2->FixParameter(kPhypMixing12Bar);
     }	
-    if(optfixparams.Contains("mixing23")){ 
+    if(optfixparams.Contains("mixing23bar")){ 
       fparm->FixParameter(kPhypMixing23Bar);
       fparm1->FixParameter(kPhypMixing23Bar);
       fparm2->FixParameter(kPhypMixing23Bar);
     }
-    if(optfixparams.Contains("mixing13")){ 
+    if(optfixparams.Contains("mixing13bar")){ 
       fparm->FixParameter(kPhypMixing13Bar);
       fparm1->FixParameter(kPhypMixing13Bar);
       fparm2->FixParameter(kPhypMixing13Bar);
     }
-    if(optfixparams.Contains("dmsq32")){ 
+    if(optfixparams.Contains("dmsq32bar")){ 
       fparm->FixParameter(kPhypDm23sqBar);
       fparm1->FixParameter(kPhypDm23sqBar);
       fparm2->FixParameter(kPhypDm23sqBar);
     }
-    if(optfixparams.Contains("dmsq12")){ 
+    if(optfixparams.Contains("dmsq12bar")){ 
       fparm->FixParameter(kPhypDm12sqBar);
       fparm1->FixParameter(kPhypDm12sqBar);
       fparm2->FixParameter(kPhypDm12sqBar);
     }
-    if(optfixparams.Contains("deltacp")){ 
+    if(optfixparams.Contains("deltacpbar")){ 
       fparm->FixParameter(kPhypCPVBar);
       fparm1->FixParameter(kPhypCPVBar);
       fparm2->FixParameter(kPhypCPVBar);
