@@ -4389,6 +4389,9 @@ valor::conv::PhysParamId_t
 {
   string lsh = util::ToLowerCase(sh);
   
+  if (lsh == "dmsq"   ) return conv::kPhypDm23sq;
+  if (lsh == "dmsqbar") return conv::kPhypDm23sqBar;
+  
   for (int i = 0 ; i < knppmax ; i++) {
     PhysParamId_t k = (PhysParamId_t) i ;
     string s = util::ToLowerCase(AsStringCompact(k));
@@ -4396,7 +4399,8 @@ valor::conv::PhysParamId_t
     if (s.find("f_") == 0) s2 = s.substr(2);
     else s2 = "Bad string";
     string s3 = util::ToLowerCase(AsStringSimple(k));
-    if (k != kPhypUndefined && (lsh == s || lsh == s2 || lsh==s3) ) return k;
+    string s4 = util::ToLowerCase(AsStringPaperRooTex(k));
+    if (k != kPhypUndefined && (lsh == s || lsh == s2 || lsh==s3|| lsh==s4) ) return k;
   }
   std::cerr<<"util::PhysParamIdFromString >> Unmatched string: "<<sh<<std::endl;
   return kPhypUndefined;
@@ -4411,6 +4415,22 @@ valor::conv::PhysParamId_t
     if (k != kPhypUndefined && lsh == util::ToLowerCase(AsString(k)) ) return k;
   }
   std::cerr<<"util::PhysParamIdFromString >> Unmatched string: "<<sh<<std::endl;
+  return kPhypUndefined;
+}
+//____________________________________________________________________________
+valor::conv::PhysParamId_t
+  valor::util::GetBarredVersionOfPhysParam(valor::conv::PhysParamId_t p) 
+{
+  switch(p) {
+    case conv::kPhypMixing12: return conv::kPhypMixing12Bar;
+    case conv::kPhypMixing13: return conv::kPhypMixing13Bar;
+    case conv::kPhypMixing23: return conv::kPhypMixing23Bar;
+    case conv::kPhypDm12sq  : return conv::kPhypDm12sqBar;
+    case conv::kPhypDm23sq  : return conv::kPhypDm23sqBar;
+    case conv::kPhypCPV     : return conv::kPhypCPVBar;
+    
+    default: return kPhypUndefined;
+  }
   return kPhypUndefined;
 }
 //____________________________________________________________________________
