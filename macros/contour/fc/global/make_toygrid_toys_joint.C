@@ -419,68 +419,69 @@ void make_toygrid_toys_joint
      //                    //
      ////////////////////////
 
-     if(hyp == kHypOsc3F){	
+     if(hyp == kHypOsc3F || hyp == kHypOsc3FBar){
        if(optfixparams.Contains("mixing12")){ 
-	 fparm->FixParameter(kPhypMixing12);
-	 fparm1->FixParameter(kPhypMixing12);
-	 fparm2->FixParameter(kPhypMixing12);
+         fparm->FixParameter(kPhypMixing12);
+         fparm1->FixParameter(kPhypMixing12);
+         fparm2->FixParameter(kPhypMixing12);
        }
        if(optfixparams.Contains("mixing23")){ 
-	 fparm->FixParameter(kPhypMixing23);
-	 fparm1->FixParameter(kPhypMixing23);
-	 fparm2->FixParameter(kPhypMixing23);
+         fparm->FixParameter(kPhypMixing23);
+         fparm1->FixParameter(kPhypMixing23);
+         fparm2->FixParameter(kPhypMixing23);
        }
        if(optfixparams.Contains("mixing13")){ 
-	 fparm->FixParameter(kPhypMixing13);
-	 fparm1->FixParameter(kPhypMixing13);
-	 fparm2->FixParameter(kPhypMixing13);
+         fparm->FixParameter(kPhypMixing13);
+         fparm1->FixParameter(kPhypMixing13);
+         fparm2->FixParameter(kPhypMixing13);
        }
        if(optfixparams.Contains("dmsq")){ 
-	 fparm->FixParameter(kPhypDm23sq);
-	 fparm1->FixParameter(kPhypDm23sq);
-	 fparm2->FixParameter(kPhypDm23sq);
+         fparm->FixParameter(kPhypDm23sq);
+         fparm1->FixParameter(kPhypDm23sq);
+         fparm2->FixParameter(kPhypDm23sq);
        }
        if(optfixparams.Contains("dmsq12")){ 
-	 fparm->FixParameter(kPhypDm12sq);
-	 fparm1->FixParameter(kPhypDm12sq);
-	 fparm2->FixParameter(kPhypDm12sq);
+         fparm->FixParameter(kPhypDm12sq);
+         fparm1->FixParameter(kPhypDm12sq);
+         fparm2->FixParameter(kPhypDm12sq);
        }
        if(optfixparams.Contains("deltacp")){ 
-	 fparm->FixParameter(kPhypCPV);
-	 fparm1->FixParameter(kPhypCPV);
-	 fparm2->FixParameter(kPhypCPV);
+         fparm->FixParameter(kPhypCPV);
+         fparm1->FixParameter(kPhypCPV);
+         fparm2->FixParameter(kPhypCPV);
        }
      }
-     else if(hyp == kHypOsc3FBar){
-       if(optfixparams.Contains("mixing12")){ 
-	 fparm->FixParameter(kPhypMixing12Bar);
-	 fparm1->FixParameter(kPhypMixing12Bar);
-	 fparm2->FixParameter(kPhypMixing12Bar);
-       }	
-       if(optfixparams.Contains("mixing23")){ 
-	 fparm->FixParameter(kPhypMixing23Bar);
-	 fparm1->FixParameter(kPhypMixing23Bar);
-	 fparm2->FixParameter(kPhypMixing23Bar);
+     
+     if(hyp == kHypOsc3FBar){
+       if(optfixparams.Contains("mixing12bar")){ 
+         fparm->FixParameter(kPhypMixing12Bar);
+         fparm1->FixParameter(kPhypMixing12Bar);
+         fparm2->FixParameter(kPhypMixing12Bar);
+       }        
+       if(optfixparams.Contains("mixing23bar")){ 
+         fparm->FixParameter(kPhypMixing23Bar);
+         fparm1->FixParameter(kPhypMixing23Bar);
+         fparm2->FixParameter(kPhypMixing23Bar);
        }
-       if(optfixparams.Contains("mixing13")){ 
-	 fparm->FixParameter(kPhypMixing13Bar);
-	 fparm1->FixParameter(kPhypMixing13Bar);
-	 fparm2->FixParameter(kPhypMixing13Bar);
+       if(optfixparams.Contains("mixing13bar")){ 
+         fparm->FixParameter(kPhypMixing13Bar);
+         fparm1->FixParameter(kPhypMixing13Bar);
+         fparm2->FixParameter(kPhypMixing13Bar);
        }
-       if(optfixparams.Contains("dmsq")){ 
-	 fparm->FixParameter(kPhypDm23sqBar);
-	 fparm1->FixParameter(kPhypDm23sqBar);
-	 fparm2->FixParameter(kPhypDm23sqBar);
+       if(optfixparams.Contains("dmsqbar")){ 
+         fparm->FixParameter(kPhypDm23sqBar);
+         fparm1->FixParameter(kPhypDm23sqBar);
+         fparm2->FixParameter(kPhypDm23sqBar);
        }
-       if(optfixparams.Contains("dmsq12")){ 
-	 fparm->FixParameter(kPhypDm12sqBar);
-	 fparm1->FixParameter(kPhypDm12sqBar);
-	 fparm2->FixParameter(kPhypDm12sqBar);
+       if(optfixparams.Contains("dmsq12bar")){ 
+         fparm->FixParameter(kPhypDm12sqBar);
+         fparm1->FixParameter(kPhypDm12sqBar);
+         fparm2->FixParameter(kPhypDm12sqBar);
        }
-       if(optfixparams.Contains("deltacp")){ 
-	 fparm->FixParameter(kPhypCPVBar);
-	 fparm1->FixParameter(kPhypCPVBar);
-	 fparm2->FixParameter(kPhypCPVBar);
+       if(optfixparams.Contains("deltacpbar")){ 
+         fparm->FixParameter(kPhypCPVBar);
+         fparm1->FixParameter(kPhypCPVBar);
+         fparm2->FixParameter(kPhypCPVBar);
        }
      }
      
