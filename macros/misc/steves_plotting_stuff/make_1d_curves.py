@@ -62,38 +62,38 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
             
   for param in ["mixing23","dmsq"]:
     
-    m_f = ROOT.TFile(data_files[param])
-    h_m = m_f.Get("h_chisq_"+param+"_Ave_nh")
-    assert(h_m)
-    h_m.Print()
-    min_m = h_m.GetMinimum()
+    f_nh = ROOT.TFile(data_files[param])
+    h_nh = f_nh.Get("h_chisq_"+param+"_Ave_nh")
+    assert(h_nh)
+    h_nh.Print()
+    min_nh = h_nh.GetMinimum()
     
-    m_p = ROOT.TFile(data_files[param])
+    f_ih = ROOT.TFile(data_files[param])
       
-    h_p = m_p.Get("h_chisq_"+param+"_Ave_ih")
-    assert(h_p)
-    h_p.Print()
-    min_p = h_p.GetMinimum()
+    h_ih = f_ih.Get("h_chisq_"+param+"_Ave_ih")
+    assert(h_ih)
+    h_ih.Print()
+    min_ih = h_ih.GetMinimum()
     
-    print min_m
-    print min_p
+    print min_nh
+    print min_ih
     
     # Precalculate the best-fit points from the histogram
-    bf_bin_p = h_p.GetMinimumBin()
-    bf_bin_m = h_m.GetMinimumBin()
+    bf_bin_ih = h_ih.GetMinimumBin()
+    bf_bin_nh = h_nh.GetMinimumBin()
     
-    bf_chisq_p = h_p.GetBinContent(bf_bin_p)
-    bf_chisq_m = h_m.GetBinContent(bf_bin_m)
+    bf_chisq_ih = h_ih.GetBinContent(bf_bin_ih)
+    bf_chisq_nh = h_nh.GetBinContent(bf_bin_nh)
     
-    x_bin_p = ROOT.Long()
-    x_bin_m = ROOT.Long()
+    x_bin_ih = ROOT.Long()
+    x_bin_nh = ROOT.Long()
     dummy = ROOT.Long()
     
-    h_p.GetBinXYZ(bf_bin_p,x_bin_p,dummy,dummy)
-    h_m.GetBinXYZ(bf_bin_m,x_bin_m,dummy,dummy)
+    h_ih.GetBinXYZ(bf_bin_ih,x_bin_ih,dummy,dummy)
+    h_nh.GetBinXYZ(bf_bin_nh,x_bin_nh,dummy,dummy)
     
-    bf_x_p = h_p.GetXaxis().GetBinCenter(x_bin_p)
-    bf_x_m = h_m.GetXaxis().GetBinCenter(x_bin_m)
+    bf_x_ih = h_ih.GetXaxis().GetBinCenter(x_bin_ih)
+    bf_x_nh = h_nh.GetXaxis().GetBinCenter(x_bin_nh)
     
     
     # If we have files, go and get the bestfits from those instead.
@@ -101,60 +101,60 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
       tf_data_normal = ROOT.TFile(bf_nh[param])
       tr = tf_data_normal.Get("fitnt")
       tr.GetEntry(0)
-      bf_x_p = tr.best_fit_params.BestFitValue(params[param])
+      bf_x_ih = tr.best_fit_params.BestFitValue(params[param])
       
-      bf_chisq_p = tr.best_fit_params.GetBestFitStatistic()
+      bf_chisq_nh = tr.best_fit_params.GetBestFitStatistic()
       
     if bf_ih[param] is not None:
       tf_data_inverted = ROOT.TFile(bf_ih[param])
       tr = tf_data_inverted.Get("fitnt")
       tr.GetEntry(0)
-      bf_x_p = tr.best_fit_params.BestFitValue(params[param])
-      bf_chisq_p = tr.best_fit_params.GetBestFitStatistic()
+      bf_x_ih = tr.best_fit_params.BestFitValue(params[param])
+      bf_chisq_ih = tr.best_fit_params.GetBestFitStatistic()
         
     
-    h_delta_m = GetDeltaHist(h_m,bf_chisq_m)
-    h_delta_p = GetDeltaHist(h_p,bf_chisq_p)
+    h_delta_nh = GetDeltaHist(h_nh,bf_chisq_nh)
+    h_delta_ih = GetDeltaHist(h_ih,bf_chisq_ih)
     
-    h_delta_m.SetLineColor(R.kBlack)
-    h_delta_p.SetLineColor(R.kBlack)
-    h_delta_m.SetLineStyle(1)
-    h_delta_p.SetLineStyle(2)
+    h_delta_nh.SetLineColor(R.kBlack)
+    h_delta_ih.SetLineColor(R.kBlack)
+    h_delta_nh.SetLineStyle(1)
+    h_delta_ih.SetLineStyle(2)
     
-    if (bf_chisq_p > bf_chisq_m):
+    if (bf_chisq_ih > bf_chisq_nh):
       bf_is_normal = True
     else:
       bf_is_normal = False
     
-    print "Bestfit point (nh)  : ",bf_x_m,"\twith chisq: ",bf_chisq_m
-    print "Bestfit point (ih)  : ",bf_x_p,"\twith chisq: ",bf_chisq_p
+    print "Bestfit point (nh)  : ",bf_x_nh,"\twith chisq: ",bf_chisq_nh
+    print "Bestfit point (ih)  : ",bf_x_ih,"\twith chisq: ",bf_chisq_ih
     
     neg_90_nh_x = None
-    ibin_nh = bf_bin_m
+    ibin_nh = bf_bin_nh
     while ibin_nh > 0 and neg_90_nh_x is None:
-      if h_delta_m.GetBinContent(ibin_nh) > conf90:
-        neg_90_nh_x = h_delta_m.GetXaxis().GetBinUpEdge(ibin_nh)
+      if h_delta_nh.GetBinContent(ibin_nh) > conf90:
+        neg_90_nh_x = h_delta_nh.GetXaxis().GetBinUpEdge(ibin_nh)
       ibin_nh -= 1
       
     pos_90_nh_x = None
-    ibin_nh = bf_bin_m
-    while ibin_nh < h_delta_m.GetXaxis().GetNbins()+1 and pos_90_nh_x is None:
-      if h_delta_m.GetBinContent(ibin_nh) > conf90:
-        pos_90_nh_x = h_delta_m.GetXaxis().GetBinLowEdge(ibin_nh)
+    ibin_nh = bf_bin_nh
+    while ibin_nh < h_delta_nh.GetXaxis().GetNbins()+1 and pos_90_nh_x is None:
+      if h_delta_nh.GetBinContent(ibin_nh) > conf90:
+        pos_90_nh_x = h_delta_nh.GetXaxis().GetBinLowEdge(ibin_nh)
       ibin_nh += 1
       
     neg_90_ih_x = None
-    ibin_ih = bf_bin_p
+    ibin_ih = bf_bin_ih
     while ibin_ih > 0 and neg_90_ih_x is None:
-      if h_delta_p.GetBinContent(ibin_ih) > conf90:
-        neg_90_ih_x = h_delta_p.GetXaxis().GetBinUpEdge(ibin_ih)
+      if h_delta_ih.GetBinContent(ibin_ih) > conf90:
+        neg_90_ih_x = h_delta_ih.GetXaxis().GetBinUpEdge(ibin_ih)
       ibin_ih -= 1
       
     pos_90_ih_x = None
-    ibin_ih = bf_bin_p
-    while ibin_ih < h_delta_p.GetXaxis().GetNbins()+1 and pos_90_ih_x is None:
-      if h_delta_p.GetBinContent(ibin_ih) > conf90:
-        pos_90_ih_x = h_delta_p.GetXaxis().GetBinLowEdge(ibin_ih)
+    ibin_ih = bf_bin_ih
+    while ibin_ih < h_delta_ih.GetXaxis().GetNbins()+1 and pos_90_ih_x is None:
+      if h_delta_ih.GetBinContent(ibin_ih) > conf90:
+        pos_90_ih_x = h_delta_ih.GetXaxis().GetBinLowEdge(ibin_ih)
       ibin_ih += 1
      
     print "\n\n"
@@ -162,21 +162,26 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
     canv = ROOT.TCanvas("canv1","canv1",1280,720)
     canv.cd()
     
-    h_delta_m.SetMinimum(0)
-    h_delta_p.SetMinimum(0)
+    h_delta_nh.SetMinimum(0)
+    h_delta_ih.SetMinimum(0)
     
-    param_title = util.ParamAsStringPaperRooTex(params[param])
-    h_delta_m.GetXaxis().SetTitle(param_title)
-    h_delta_p.GetXaxis().SetTitle(param_title)
+    param_title_nh = h_delta_nh.GetXaxis().GetTitle()
+    param_title_ih = h_delta_ih.GetXaxis().GetTitle()
+    if (param_title_nh != param_title_ih):
+      param_title = param_title_nh+" / "+param_title_ih
+      h_delta_nh.GetXaxis().SetTitle(param_title)
+      h_delta_ih.GetXaxis().SetTitle(param_title)
+    else:
+      param_title = param_title_nh
     
     ymin = 0
-    ymax = h_delta_m.GetMaximum()*1.1
+    ymax = h_delta_nh.GetMaximum()*1.1
     
-    h_delta_m.Draw();
-    h_delta_p.Draw("same")
+    h_delta_nh.Draw();
+    h_delta_ih.Draw("same")
     
-    h_delta_m.SetMaximum(ymax)
-    h_delta_p.SetMaximum(ymax)
+    h_delta_nh.SetMaximum(ymax)
+    h_delta_ih.SetMaximum(ymax)
     
     neg_line_nh = ROOT.TLine(neg_90_nh_x,ymin,neg_90_nh_x,ymax)
     pos_line_nh = ROOT.TLine(pos_90_nh_x,ymin,pos_90_nh_x,ymax)
@@ -187,7 +192,7 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
     neg_line_ih.SetLineStyle(2)
     pos_line_ih.SetLineStyle(2)
     
-    line_h90 = ROOT.TLine(h_delta_m.GetXaxis().GetXmin(),conf90,h_delta_m.GetXaxis().GetXmax(),conf90)
+    line_h90 = ROOT.TLine(h_delta_nh.GetXaxis().GetXmin(),conf90,h_delta_nh.GetXaxis().GetXmax(),conf90)
     line_h90.SetLineColor(R.kRed)
     line_h90.Draw("same")
     
@@ -198,19 +203,20 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
     # Make legend
     
     legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
-    legend.AddEntry(h_delta_m,"NH","l")
-    legend.AddEntry(h_delta_p,"IH","l")
+    legend.AddEntry(h_delta_nh,"NH","l")
+    legend.AddEntry(h_delta_ih,"IH","l")
     legend.Draw()
     
     prec = precision[param]
     
-    pave = ROOT.TPaveText(0.4,0.6,0.6,0.89,"ndc")
+    pave = ROOT.TPaveText(0.43,0.7,0.65,0.89,"ndc")
+    pave.SetTextFont(22)
     pave.SetShadowColor(0)
     pave.SetFillColor(0)
     pave.SetFillStyle(0)
     pave.SetLineColor(0)
-    pave.AddText("NH: "+prec.format(neg_90_nh_x)+" < "+param_title+" "+prec.format(pos_90_nh_x)+" (at 90%)")
-    pave.AddText("IH: "+prec.format(neg_90_ih_x)+" < "+param_title+" "+prec.format(pos_90_ih_x)+" (at 90%)")
+    pave.AddText("NH: "+prec.format(neg_90_nh_x)+" < "+param_title_nh+" < "+prec.format(pos_90_nh_x)+" (at 90%)")
+    pave.AddText("IH: "+prec.format(neg_90_ih_x)+" < "+param_title_ih+" < "+prec.format(pos_90_ih_x)+" (at 90%)")
     pave.Draw("same")
     
     if tag is None:
@@ -224,14 +230,14 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
     
     canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
     canv_nh.cd()
-    h_delta_m.SetContour(100)
-    h_delta_m.Draw("")
+    h_delta_nh.SetContour(100)
+    h_delta_nh.Draw("")
     canv_nh.Print(plot_name+"_"+param+"_nh."+image_format)
     
     canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
     canv_ih.cd()
-    h_delta_p.SetContour(100)
-    h_delta_p.Draw("")
+    h_delta_ih.SetContour(100)
+    h_delta_ih.Draw("")
     canv_ih.Print(plot_name+"_"+param+"_ih."+image_format)
   
 def CopyMarkerToHist(marker,histogram):
