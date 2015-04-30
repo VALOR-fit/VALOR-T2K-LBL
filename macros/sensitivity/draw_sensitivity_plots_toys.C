@@ -24,123 +24,13 @@ void draw_sensitivity_plots_toys(
   const bool ChangeOrder_ih = false, // change order of params (2D plots) 
   
   const bool DrawLeg = false,
-  const char * LegendName_ih = "Fix NuOsc, Stat-Only", 
+  
   const char * LegendName_nh = "Fix NuOsc, Stat-Only",
+  const char * LegendName_ih = "Fix NuOsc, Stat-Only", 
   
  
-  // th23 Vs dmsq - Fix NuOsc - Stat only
- 
-  // const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fitgrid_MY_Run1to6_joint_OA2p5_NH_dcp_51_statonly_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fitgrid_MY_Run1to6_joint_OA2p5_NH_dcp_51_statonly_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  
-  // fakedataset A NuOsc
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_A_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_A_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset B NuOsc
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_B_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_B_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //fakedataset C NuOsc
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_C_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_C_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset D NuOsc
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_D_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_D_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset E NuOsc
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_E_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_E_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset F NuOsc
   const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_F_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
   const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOsc_0p506_fakedata_F_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
- 
-  // fakedataset A NuOscBar
-  // const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_A_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_A_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset B NuOscBar
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_B_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_B_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset C NuOscBar
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_C_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_C_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset D NuOscBar
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_D_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_D_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset E NuOscBar
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_E_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_E_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  // fakedataset F NuOscBar
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_F_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/RHCmode_FixNu/fakedataset_0p506_201411/fitgrid_NuOscBar_0p506_fakedata_F_mixing23_dmsq_none_BinsTot_21_BinsTot_21_BinsTot_1_BinsPart_1_21_BinsPart_1_21_BinsPart_1_1",
- 
- 
- 
- 
-  // Fit systematics
-  
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_th13DB_NH_500_all",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_th13DB_IH_500_all",
- 
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_ResultsRun1to4_NH_500",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/sensi-Sensi_FHCpRHC_DataRun1to4_MCRun5to6_ResultsRun1to4_IH_500",
- 
- 
-  // 1 ring studies
- 
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/SystEffVsStat/fitgrid_Run1to4_1ring13a_Asimov_NH_dcp_Stat_deltacp_none_none",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/SystEffVsStat/fitgrid_Run1to4_1ring13a_Asimov_NH_dcp_StatSyst_deltacp_none_none",
- 
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/SystEffVsStat/fitgrid_Run1to4_1ring13a_Asimov_NH_th23Vsdmsq_Stat_mixing23_dmsq_none",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/SystEffVsStat/fitgrid_Run1to4_1ring13a_Asimov_NH_th23Vsdmsq_StatSyst_mixing23_dmsq_none",
- 
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/1ring13a_15_9_14/fitgrid_Run1to4_1ring13a_Asimov_NH_mixing230p4_dmsq_7p8x21_mixing23_dmsq_none",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/1ring13a_15_9_14/fitgrid_Run1to4_1ring13a_Asimov_IH_mixing230p4_dmsq_7p8x21_mixing23_dmsq_none",
- 
- 
-  // MultiRing studies w/ Asimov data set - deltacp only
- 
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_nr_Asimov_NH_Run14_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_nr_Asimov_NH_Run14_erecdelta_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_Asimov_NH_Run14_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_ElikeMue_Asimov_NH_Run14_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2rpi0_2rMulike_Asimov_NH_Run14_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_Asimov_NH_FullT2K_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_ElikeFitQun_2rMulike_Asimov_NH_FullT2K_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_ElikeMue_2rMulike_Asimov_NH_FullT2K_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_ElikeFitQun_2rMulike_Asimov_NH_FullT2K_deltacp_none_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/7_10_14/fitgrid_1r_2r_ElikeMue_fiTQun_Asimov_NH_FullT2K_deltacp_none_none", 
-  
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1rOnly_Asimov_NH_Run14_deltacp_none_none",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1rOnly_Asimov_NH_FullT2K_deltacp_none_none",
-  
-  
-  // MultiRing studies w/ Asimov data set - sinsqth23 Vs dmsq32
-  
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_nr_Asimov_NH_Run14_sin2th23Vsdmsq_mixing23_dmsq_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_nr_Asimov_NH_Run14_erecdelta_mixing23_dmsq_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_Asimov_NH_Run14_mixing23_dmsq_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_ElikeMue_Asimov_NH_Run14_mixing23_dmsq_none",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1r_2r_Asimov_NH_FullT2K_mixing23_dmsq_none",
-  
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1rOnly_Asimov_NH_Run14_mixing23_dmsq_none",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/MultiRing/2_10_14/fitgrid_1rOnly_Asimov_NH_FullT2K_mixing23_dmsq_none",
- 
- 
- 
- 
- 
-  // MultiRing studies w/ Asimov data set - sinsqth23 Vs dmsq32 (numu disapp only)
-  // OFF-AXIS OK
-  // //const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p0_NH_dcp_51_deltacp_none_none_Asimov_FluxOK",
-  // const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p25_NH_dcp_51_deltacp_none_none_Asimov_FluxOK",
-  // const char * name_ih = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p5_NH_dcp_51_deltacp_none_none_Asimov_FluxOK",
-  // const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p0_NH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
-  // //const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p25_NH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
-  // const char * name_ih = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p5_NH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p0_IH_dcp_51_deltacp_none_none_Asimov_FluxOK",
-  // //const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p25_IH_dcp_51_deltacp_none_none_Asimov_FluxOK",
-  //const char * name_ih = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p5_IH_dcp_51_deltacp_none_none_Asimov_FluxOK",
-  //const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p0_IH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
-  // const char * name_nh = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p25_IH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
-  // const char * name_ih = "$T2KOSCANA/outputs/sensi/OffAxis/NEWTEST_OFFFLUX/fitgrid_Run1to6_joint_OA2p5_IH_dcp_51_deltacp_none_none_Asimov_FluxOK_Steve",
  
   const char * output_file = "toys_sensitivity_plots.root"
   )
@@ -178,6 +68,16 @@ void draw_sensitivity_plots_toys(
   int max_bin_param1, min_bin_param1, max_bin_param2, min_bin_param2;
   double max_val_param1, min_val_param1, max_val_param2, min_val_param2;
   double step1, step2;
+  
+  PhysParamId_t param1,param2;
+  
+  param1 = util::PhysParamIdFromString(parname1_def);
+  param2 = util::PhysParamIdFromString(parname2_def);
+  
+  if (NuBarMode) {
+    param1 = util::GetBarredVersionOfPhysParam(param1);
+    param2 = util::GetBarredVersionOfPhysParam(param2);
+  }
 
   // 1D: dChi2 vs param1  (Normal Hierarchy)
 
@@ -569,6 +469,14 @@ void draw_sensitivity_plots_toys(
   h_chisq_par1_Ave_nh->Scale(1./ntoys_nh);
   h_chisq_par2_par1_Ave_nh->Scale(1./ntoys_nh);
   
+  
+  // Set plot title
+  {
+  NuOscDmsqScheme_t orig_scheme = Opt::Instance()->gOscDmsqScheme; // save the scheme so we can put it back later
+  Opt::Instance()->gOscDmsqScheme = dmsqscheme_nh;
+  h_chisq_par1_Ave_nh->GetXaxis()->SetTitle(util::AsStringPaperRooTex(param1).c_str());
+  Opt::Instance()->gOscDmsqScheme = orig_scheme;
+  }
   // Find the minimum chi2 (global scan)
   
   cout << endl;
@@ -595,6 +503,7 @@ void draw_sensitivity_plots_toys(
       if (bin < min_chisq_Ave_nh) min_chisq_Ave_nh = bin;
     }
     cout << "Global scanned chi2 minimum = " << min_chisq_Ave_nh << endl;     
+    
   }
   else if(nDim==2){
     for(int itoy=0;itoy<ntoys_nh;itoy++){
@@ -1079,6 +988,8 @@ void draw_sensitivity_plots_toys(
   h_chisq_par1_Ave_ih->Scale(1./ntoys_ih);
   h_chisq_par2_par1_Ave_ih->Scale(1./ntoys_ih);
   
+  h_chisq_par1_Ave_ih->GetXaxis()->SetTitle(util::AsStringPaperRooTex(param1).c_str());
+  
   // Find the minimum chi2 (global scan)
   
   cout << endl;
@@ -1105,6 +1016,15 @@ void draw_sensitivity_plots_toys(
       if (bin < min_chisq_Ave_ih) min_chisq_Ave_ih = bin;
     }
     cout << "Global scanned chi2 minimum = " << min_chisq_Ave_ih << endl;     
+    
+    // Set plot title
+    {
+    NuOscDmsqScheme_t orig_scheme = Opt::Instance()->gOscDmsqScheme; // save the scheme so we can put it back later
+    Opt::Instance()->gOscDmsqScheme = dmsqscheme_ih;
+    h_chisq_par1_Ave_ih->GetXaxis()->SetTitle(util::AsStringPaperRooTex(param1).c_str());
+    Opt::Instance()->gOscDmsqScheme = orig_scheme;
+    }
+    
   } // nDim==1
   else if(nDim==2){
     for(int itoy=0;itoy<ntoys_ih;itoy++){
