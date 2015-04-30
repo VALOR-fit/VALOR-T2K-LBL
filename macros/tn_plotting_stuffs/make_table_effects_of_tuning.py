@@ -50,6 +50,10 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   
   all_dicts_unosc = [nominal_modes, NA61_flux_modes, prefit_tuned_modes, postfit_tuned_modes]
   all_dicts_osc   = [osc_nominal_modes, osc_NA61_flux_modes, osc_prefit_tuned_modes, osc_postfit_tuned_modes]
+  
+  min_energy_spectrum = 0.0
+  min_energy_ratio    = 0.3
+  max_energy          = 7.0
 
   
   #  Make no flux SKExp
@@ -239,13 +243,16 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   
   # Now make some figures
   
+  line_at_one = ROOT.TLine(min_energy_ratio,1,max_energy,1)
+  line_at_one.SetLineColor(ROOT.kBlue)
+  
   # First - flux tuning effect compared to nominal
   canv = ROOT.TCanvas("c","c",1280,1024)
   canv.Divide(2,2)
   
   canv.cd(1)
-  if nominal_hist.GetXaxis().GetXmax() > 7:
-    nominal_hist.GetXaxis().SetRangeUser(0,7)
+  if nominal_hist.GetXaxis().GetXmax() > max_energy:
+    nominal_hist.GetXaxis().SetRangeUser(min_energy_spectrum,max_energy)
   nominal_hist.SetLineColor(ROOT.kBlue)
   nominal_hist.SetLineWidth(line_width)
   nominal_hist.SetMaximum(1.1*max([nominal_hist.GetMaximum(),flux_tuned_hist.GetMaximum()]))
@@ -261,8 +268,8 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   fluxnom_leg.Draw()
   
   canv.cd(2)
-  if osc_nominal_hist.GetXaxis().GetXmax() > 7:
-    osc_nominal_hist.GetXaxis().SetRangeUser(0,7)
+  if osc_nominal_hist.GetXaxis().GetXmax() > max_energy:
+    osc_nominal_hist.GetXaxis().SetRangeUser(min_energy_spectrum,max_energy)
   osc_nominal_hist.SetLineColor(ROOT.kBlue)
   osc_nominal_hist.SetLineWidth(line_width)
   osc_nominal_hist.SetMaximum(1.1*max([osc_nominal_hist.GetMaximum(),osc_flux_tuned_hist.GetMaximum()]))
@@ -279,18 +286,26 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   ratio.Divide(nominal_hist)
   ratio.GetYaxis().SetTitle("Flux tuned/nominal")
   ratio.SetLineColor(ROOT.kBlack)
-  if ratio.GetXaxis().GetXmax() > 7:
-    ratio.GetXaxis().SetRangeUser(0,7)
+  if ratio.GetXaxis().GetXmax() > max_energy:
+    ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
+  ratio_dev = max([abs(1.-x) for x in hist_to_list(ratio)[5:]])
+  ratio.SetMinimum(1-1.1*ratio_dev)
+  ratio.SetMaximum(1+1.1*ratio_dev)
   ratio.Draw()
+  line_at_one.Draw("same")
   
   canv.cd(4)
   osc_ratio = ROOT.TH1D(osc_flux_tuned_hist)
   osc_ratio.Divide(osc_nominal_hist)
   osc_ratio.GetYaxis().SetTitle("Flux tuned/nominal")
   osc_ratio.SetLineColor(ROOT.kBlack)
-  if osc_ratio.GetXaxis().GetXmax() > 7:
-    osc_ratio.GetXaxis().SetRangeUser(0,7)
+  if osc_ratio.GetXaxis().GetXmax() > max_energy:
+    osc_ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
+  osc_ratio_dev = max([abs(1.-x) for x in hist_to_list(osc_ratio)[5:]])
+  osc_ratio.SetMinimum(1-1.1*osc_ratio_dev)
+  osc_ratio.SetMaximum(1+1.1*osc_ratio_dev)
   osc_ratio.Draw()
+  line_at_one.Draw("same")
   
   canv.cd(0)
   canv.Print("flux_tuning_effect.eps")
@@ -307,8 +322,8 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   osc_pf_ratio.Divide(osc_flux_tuned_hist)
   
   canv.cd(1)
-  if postfit_hist.GetXaxis().GetXmax() > 7:
-    postfit_hist.GetXaxis().SetRangeUser(0,7)
+  if postfit_hist.GetXaxis().GetXmax() > max_energy:
+    postfit_hist.GetXaxis().SetRangeUser(min_energy_spectrum,max_energy)
   postfit_hist.SetLineColor(ROOT.kBlack)
   postfit_hist.SetLineWidth(line_width)
   postfit_hist.SetMaximum(1.1*max([postfit_hist.GetMaximum(),flux_tuned_hist.GetMaximum()]))
@@ -324,8 +339,8 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   postfit_leg.Draw()
   
   canv.cd(2)
-  if osc_postfit_hist.GetXaxis().GetXmax() > 7:
-    osc_postfit_hist.GetXaxis().SetRangeUser(0,7)
+  if osc_postfit_hist.GetXaxis().GetXmax() > max_energy:
+    osc_postfit_hist.GetXaxis().SetRangeUser(min_energy_spectrum,max_energy)
   osc_postfit_hist.SetLineColor(ROOT.kBlack)
   osc_postfit_hist.SetLineWidth(line_width)
   osc_postfit_hist.SetMaximum(1.1*max([osc_postfit_hist.GetMaximum(),osc_flux_tuned_hist.GetMaximum()]))
@@ -342,18 +357,26 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   pf_ratio.SetLineColor(ROOT.kBlack)
   pf_ratio.SetLineWidth(line_width)
   pf_ratio.SetTitle("")
-  if pf_ratio.GetXaxis().GetXmax() > 7:
-    pf_ratio.GetXaxis().SetRangeUser(0,7)
+  if pf_ratio.GetXaxis().GetXmax() > max_energy:
+    pf_ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
+  pf_ratio_dev = max([abs(1.-x) for x in hist_to_list(pf_ratio)[5:]])
+  pf_ratio.SetMinimum(1-1.1*pf_ratio_dev)
+  pf_ratio.SetMaximum(1+1.1*pf_ratio_dev)
   pf_ratio.Draw()
+  line_at_one.Draw("same")
   
   canv.cd(4)
   osc_pf_ratio.GetYaxis().SetTitle("BANFF tuned / flux tuned")
   osc_pf_ratio.SetLineColor(ROOT.kBlack)
   osc_pf_ratio.SetLineWidth(line_width)
   osc_pf_ratio.SetTitle("")
-  if osc_pf_ratio.GetXaxis().GetXmax() > 7:
-    osc_pf_ratio.GetXaxis().SetRangeUser(0,7)
+  if osc_pf_ratio.GetXaxis().GetXmax() > max_energy:
+    osc_pf_ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
+  osc_pf_ratio_dev = max([abs(1.-x) for x in hist_to_list(osc_pf_ratio)[5:]])
+  osc_pf_ratio.SetMinimum(1-1.1*osc_pf_ratio_dev)
+  osc_pf_ratio.SetMaximum(1+1.1*osc_pf_ratio_dev)
   osc_pf_ratio.Draw()
+  line_at_one.Draw("same")
   
   canv.cd(0)
   canv.Print("banff_tuning_effect.eps")
@@ -395,6 +418,10 @@ def  make_fit_param_lists():
   fparm_unosc.SetInitValue(conv.kPhypDm23sq  ,  0.0)
   
   return fparm_unosc,fparm_osc
+  
+def hist_to_list(h):
+  nbins = h.GetXaxis().GetNbins()
+  return [h.GetBinContent(ibin) for ibin in xrange(1,nbins+1)]
   
 if __name__=="__main__":
   
