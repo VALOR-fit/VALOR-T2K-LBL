@@ -8,19 +8,14 @@
  
 
 // TODO: allow to randomize the NuBar osc parameters as well
-// TODO: allow to use new input values for NuBar osc parameters
+
+// TODO: at the moment, fixing a barred parameter also fixes the equivalent non-barred parameter. Fix that.
 
 void make_toygrid_toys_joint
 (
- //const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",                      /* input XML file Run5-6 fakedata */ 
- //const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p051e21_A.xml",                      /* input XML file Run5-6 fakedata */ 
- const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p250e21_D.xml",                      /* input XML file Run5-6 fakedata */ 
+ const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p250e21_D.xml",                      /* input XML file Run5-6 fakedata */                          
  
- //const char * tag = "NuOscBar_0p170e21_Asimov_IH",                               
- //const char * tag = "NuOscBar_0p170e21_fakedata_F_IH",                               
-
- const char * tag = "NuOscBar_0p170e21_Asimov_NH_41BinsDm2",                               
- //const char * tag = "NuOscBar_0p250e21_fakedata_D_NH",                               
+ const char * tag = "NuOscBar_0p170e21_Asimov_NH_41BinsDm2",                                                
 
  int          run = 0,                                                    /* */
  int          first_experiment = 0,                                   /* */
@@ -32,62 +27,49 @@ void make_toygrid_toys_joint
  double       input_deltacp           = -99, //-3.1,                                /* deltacp, if -999 then randomize */
  double       input_dm12sq            = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq            = -99, //2.32E-3,                             /* |Dm^2_{23}| */
+ 
+ double       input_mixing12Bar       = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing13Bar       = -99, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing23Bar       = -99, //0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacpBar        = -99, //-3.1,                                /* deltacp, if -999 then randomize */
+ double       input_dm12sqBar         = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
+ double       input_dm23sqBar         = -99, //2.32E-3,                             /* |Dm^2_{23}| */
 
  bool         stat_fluctuations       = false,                             /* include statistical fluctuation in toy MC expts? */
  int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
  bool         using_xml_file      = false,                                   /* if false, skobs reads xmlfile as a root file */
 
  const char * config_file      = "analysis_configuration_run1to6_test.xml",        /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_run1to6_oa2p25.xml",        /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_run1to6_oa2p0.xml",        /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
- //const char * config_file      = "analysis_configuration_test.xml",        /* analysis configuration file */
- //const char * config_file        = "analysis_configuration_test_multiring.xml",   /* analysis configuration file */
- //const char * config_file        = "analysis_configuration_test_multiring_mrmc.xml",   /* analysis configuration file */
-
- //const char * fit_param_list   = "nuosc3fbar_fixnonbar_fix5",
- //const char * fit_param_list   = "nuosc3fbar_fixnonbar_fix5+nuisance",
- //const char * fit_param_list   = "nuosc3fbar_fixnonbar_12fix+nuisance",
- //const char * fit_param_list   = "nuosc3f_12fix",  /* fit param list for physics hypothesis (see FitParamList.h) */
- //const char * fit_param_list   = "nuosc3f_12fix+nuisance",  /* fit param list for physics hypothesis (see FitParamList.h) */
+ 
  const char * fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4",
  //const char * fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
   
  //const char * fit_option       = "minuit+hesse",            /* fitter option */
  const char * fit_option       = "minuit",                    /* fitter option */
 
- bool         store_toy_expts         = false,                /* disable this if you don't want to store the toy MC expts     */
- bool         store_bestfit_spectrum  = false,                /* disable this if you don't want to store the best-fit spectra */
+ //~ bool         store_toy_expts         = false,                /* disable this if you don't want to store the toy MC expts     */
+ //~ bool         store_bestfit_spectrum  = false,                /* disable this if you don't want to store the best-fit spectra */
  
- const char * dmsqscheme          = "abs23",                  /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ //~ const char * dmsqscheme          = "abs23",                  /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy           = "normal",                 /* normal or inverted */
  const char * mixparamchoice      = "sinsqtheta",             /* sinsq2theta or sinsqtheta */
- const char * mixparamoctant      = "one",                    /* one==kNuOctantOne two==kNuOctantTwo */
+ //~ const char * mixparamoctant      = "one",                    /* one==kNuOctantOne two==kNuOctantTwo */
  double       dcp_value           = 0,                        /* value of deltacp (in units of PI) to assume (when deltacp is not a free parameter) */
  bool         reactor             = false,                    /* enable this if you want to apply the reactor constraint */
  double       tolerance           = 0.1,                      /* value for the fitter tolerance */
  
  const char * param1              = "mixing23",           /* 1st param, mixing23, dmsq, mixing13, deltacp, none */ 
  const char * param2              = "dmsq",               /* 2nd param, mixing23, dmsq, mixing13, deltacp, none */ 
- //const char * param3            = "mixing13",           /* 3rd param, mixing23, dmsq, mixing13, deltacp, none */ 
- //const char * param1            = "deltacp",            /* 1st param, mixing23, dmsq, mixing13, deltacp, none */ 
- //const char * param2            = "mixing13",           /* 2nd param, mixing23, dmsq, mixing13, deltacp, none */ 
- const char * param3              = "none",               /* 3rd param, mixing23, dmsq, mixing13, deltacp, none */  
  
  int  nbins_tot_param1            = 21,               /* tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 */
  int  nbins_tot_param2            = 21,               /* tot # grid values for param2 (start from bin=1) --> part of the grid --> step = nbins-1 */
- int  nbins_tot_param3            = 1,                /* tot # grid values for param3 (start from bin=1) --> part of the grid --> step = nbins-1 */
 
  int  min_bin_param1          = 1,                    /* minimum bin for param1 */
  int  max_bin_param1          = 21,                   /* maximum bin for param1 */
  int  min_bin_param2          = 1,                    /* minimum bin for param2 */
  int  max_bin_param2          = 21,                   /* maximum bin for param2 */
- int  min_bin_param3          = 1,                    /* minimum bin for param2 */
- int  max_bin_param3          = 1,                    /* maximum bin for param2 */
 
- const char *optfixpar         = "mixing12, mixing23, dmsq, dmsq12, mixing13, deltacp",  // list of the params to be fixed in the fit   
- //const char *optfixpar         = "mixing23, dmsq, dmsq12, mixing13, deltacp"  // list of the params to be fixed in the fit   
+ const char *optfixpar         = "mixing12, mixing23, dmsq32, dmsq12, mixing13, deltacp",  // list of the params to be fixed in the fit   
  
  const char * read_init_syst_values_from_file = 0
 
@@ -96,6 +78,15 @@ void make_toygrid_toys_joint
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+  
+  bool store_toy_expts = false;
+  bool store_bestfit_spectrum = false;
+  const char * mixparamoctant = "one";
+  const char * dmsqscheme     = "auto";
+  const char * param3         = "none";
+  int nbins_tot_param3 = 1;
+  int min_bin_param3 = 1;
+  int max_bin_param3 = 1;
 
   TString opt(fit_param_list); 
   TString optfixparams(optfixpar);
@@ -161,10 +152,9 @@ void make_toygrid_toys_joint
   if(input_dm23sq < -1 && input_dm23sq > -900)  input_dm23sq = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1 && input_dm12sq > -900)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90 && input_deltacp > -900) input_deltacp = conv::kGlobFitDeltaCP;
-
-
-
-
+  
+  string fpl(fit_param_list);
+  bool isbar_hypothesis = fpl.find("bar")!=string::npos;
 
 
   // Print settings
@@ -182,17 +172,20 @@ void make_toygrid_toys_joint
   cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
   cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << input_dm23sq << " eV^2/c^4" << endl;
 
-  // cout << "   - True oscillation parameters (NuBar mode): " << endl;
-  // cout << "       > " << util::AsString(kPhypMixing12Bar) << " = " << input_mixing12Bar << endl;
-  // cout << "       > " << util::AsString(kPhypMixing13Bar) << " = " << input_mixing13Bar << endl;
-  // cout << "       > " << util::AsString(kPhypMixing23Bar) << " = " << input_mixing23 << endl;
-  // cout << "       > " << util::AsString(kPhypCPVBar    )  << " = " << input_deltacpBar << endl;
-  // cout << "       > " << util::AsString(kPhypDm12sqBar)   << " = " << input_dm12sqBar << " eV^2/c^4" << endl;
-  // cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << input_dm23sqBar << " eV^2/c^4" << endl;
+  if (isbar_hypothesis) {
+    cout << "   - True oscillation parameters (NuBar mode): " << endl;
+    cout << "       > " << util::AsString(kPhypMixing12Bar) << " = " << input_mixing12Bar << endl;
+    cout << "       > " << util::AsString(kPhypMixing13Bar) << " = " << input_mixing13Bar << endl;
+    cout << "       > " << util::AsString(kPhypMixing23Bar) << " = " << input_mixing23Bar << endl;
+    cout << "       > " << util::AsString(kPhypCPVBar    )  << " = " << input_deltacpBar << endl;
+    cout << "       > " << util::AsString(kPhypDm12sqBar)   << " = " << input_dm12sqBar << " eV^2/c^4" << endl;
+    cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << input_dm23sqBar << " eV^2/c^4" << endl;
+  }
 
   cout << "- Fit vs " << param1 << " and " << param2 << endl; 
   cout << "   - Fitter tolerance: " << tolerance << endl;
   cout << "  Applying reactor constraint: " << ((reactor)  ? "YES" : "NO" ) << endl;
+  cout << "Optional fixed parameters: "<<optfixpar<<endl;
   cout << endl;
   cout << *Opt::Instance() << endl;
   cout << *Rnd::Instance() << endl;
@@ -392,18 +385,18 @@ void make_toygrid_toys_joint
        fparm2->SetInitValue(kPhypDm12sq,   input_dm12sq);
        fparm2->SetInitValue(kPhypDm23sq,   input_dm23sq);
        //////////////////////////////////////////////
-       fparm1->SetInitValue(kPhypMixing12Bar, input_mixing12);
-       fparm1->SetInitValue(kPhypMixing13Bar, input_mixing13);
-       fparm1->SetInitValue(kPhypMixing23Bar, input_mixing23);
-       fparm1->SetInitValue(kPhypCPVBar     , input_deltacp);
-       fparm1->SetInitValue(kPhypDm12sqBar  , input_dm12sq);
-       fparm1->SetInitValue(kPhypDm23sqBar  , input_dm23sq);
-       fparm2->SetInitValue(kPhypMixing12Bar, input_mixing12);
-       fparm2->SetInitValue(kPhypMixing13Bar, input_mixing13);
-       fparm2->SetInitValue(kPhypMixing23Bar, input_mixing23);
-       fparm2->SetInitValue(kPhypCPVBar     , input_deltacp);
-       fparm2->SetInitValue(kPhypDm12sqBar  , input_dm12sq);
-       fparm2->SetInitValue(kPhypDm23sqBar  , input_dm23sq);
+       fparm1->SetInitValue(kPhypMixing12Bar, input_mixing12Bar);
+       fparm1->SetInitValue(kPhypMixing13Bar, input_mixing13Bar);
+       fparm1->SetInitValue(kPhypMixing23Bar, input_mixing23Bar);
+       fparm1->SetInitValue(kPhypCPVBar     , input_deltacpBar);
+       fparm1->SetInitValue(kPhypDm12sqBar  , input_dm12sqBar);
+       fparm1->SetInitValue(kPhypDm23sqBar  , input_dm23sqBar);
+       fparm2->SetInitValue(kPhypMixing12Bar, input_mixing12Bar);
+       fparm2->SetInitValue(kPhypMixing13Bar, input_mixing13Bar);
+       fparm2->SetInitValue(kPhypMixing23Bar, input_mixing23Bar);
+       fparm2->SetInitValue(kPhypCPVBar     , input_deltacpBar);
+       fparm2->SetInitValue(kPhypDm12sqBar  , input_dm12sqBar);
+       fparm2->SetInitValue(kPhypDm23sqBar  , input_dm23sqBar);
      }
      else if(hyp == kHypNuMuDisapp2F) {
        fparm1->SetInitValue(kPhypMixing23, input_mixing23);
@@ -421,32 +414,32 @@ void make_toygrid_toys_joint
 
      if(hyp == kHypOsc3F || hyp == kHypOsc3FBar){
        if(optfixparams.Contains("mixing12")){ 
-         fparm->FixParameter(kPhypMixing12);
+         fparm ->FixParameter(kPhypMixing12);
          fparm1->FixParameter(kPhypMixing12);
          fparm2->FixParameter(kPhypMixing12);
        }
        if(optfixparams.Contains("mixing23")){ 
-         fparm->FixParameter(kPhypMixing23);
+         fparm ->FixParameter(kPhypMixing23);
          fparm1->FixParameter(kPhypMixing23);
          fparm2->FixParameter(kPhypMixing23);
        }
        if(optfixparams.Contains("mixing13")){ 
-         fparm->FixParameter(kPhypMixing13);
+         fparm ->FixParameter(kPhypMixing13);
          fparm1->FixParameter(kPhypMixing13);
          fparm2->FixParameter(kPhypMixing13);
        }
-       if(optfixparams.Contains("dmsq")){ 
-         fparm->FixParameter(kPhypDm23sq);
+       if(optfixparams.Contains("dmsq32")){ 
+         fparm ->FixParameter(kPhypDm23sq);
          fparm1->FixParameter(kPhypDm23sq);
          fparm2->FixParameter(kPhypDm23sq);
        }
        if(optfixparams.Contains("dmsq12")){ 
-         fparm->FixParameter(kPhypDm12sq);
+         fparm ->FixParameter(kPhypDm12sq);
          fparm1->FixParameter(kPhypDm12sq);
          fparm2->FixParameter(kPhypDm12sq);
        }
        if(optfixparams.Contains("deltacp")){ 
-         fparm->FixParameter(kPhypCPV);
+         fparm ->FixParameter(kPhypCPV);
          fparm1->FixParameter(kPhypCPV);
          fparm2->FixParameter(kPhypCPV);
        }
@@ -454,32 +447,32 @@ void make_toygrid_toys_joint
      
      if(hyp == kHypOsc3FBar){
        if(optfixparams.Contains("mixing12bar")){ 
-         fparm->FixParameter(kPhypMixing12Bar);
+         fparm ->FixParameter(kPhypMixing12Bar);
          fparm1->FixParameter(kPhypMixing12Bar);
          fparm2->FixParameter(kPhypMixing12Bar);
        }        
        if(optfixparams.Contains("mixing23bar")){ 
-         fparm->FixParameter(kPhypMixing23Bar);
+         fparm ->FixParameter(kPhypMixing23Bar);
          fparm1->FixParameter(kPhypMixing23Bar);
          fparm2->FixParameter(kPhypMixing23Bar);
        }
        if(optfixparams.Contains("mixing13bar")){ 
-         fparm->FixParameter(kPhypMixing13Bar);
+         fparm ->FixParameter(kPhypMixing13Bar);
          fparm1->FixParameter(kPhypMixing13Bar);
          fparm2->FixParameter(kPhypMixing13Bar);
        }
-       if(optfixparams.Contains("dmsqbar")){ 
-         fparm->FixParameter(kPhypDm23sqBar);
+       if(optfixparams.Contains("dmsq32bar")){ 
+         fparm ->FixParameter(kPhypDm23sqBar);
          fparm1->FixParameter(kPhypDm23sqBar);
          fparm2->FixParameter(kPhypDm23sqBar);
        }
        if(optfixparams.Contains("dmsq12bar")){ 
-         fparm->FixParameter(kPhypDm12sqBar);
+         fparm ->FixParameter(kPhypDm12sqBar);
          fparm1->FixParameter(kPhypDm12sqBar);
          fparm2->FixParameter(kPhypDm12sqBar);
        }
        if(optfixparams.Contains("deltacpbar")){ 
-         fparm->FixParameter(kPhypCPVBar);
+         fparm ->FixParameter(kPhypCPVBar);
          fparm1->FixParameter(kPhypCPVBar);
          fparm2->FixParameter(kPhypCPVBar);
        }

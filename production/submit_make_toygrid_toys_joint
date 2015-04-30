@@ -59,6 +59,13 @@ foreach (@ARGV) {
   elsif($_ eq '--input_deltacp'          ) { $input_deltacp         = $ARGV[$iarg+1]; }
   elsif($_ eq '--input_dm12sq'           ) { $input_dm12sq          = $ARGV[$iarg+1]; }
   elsif($_ eq '--input_dm23sq'           ) { $input_dm23sq          = $ARGV[$iarg+1]; }
+  
+  elsif($_ eq '--input_mixing12bar'      ) { $input_mixing12bar        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_mixing13bar'      ) { $input_mixing13bar        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_mixing23bar'      ) { $input_mixing23bar        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_deltacpbar'       ) { $input_deltacpbar         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_dm12sqbar'        ) { $input_dm12sqbar          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input_dm23sqbar'        ) { $input_dm23sqbar          = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--stat-fluctuations'      ) { $stat_fluctuations     = $ARGV[$iarg+1]; }
   elsif($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
@@ -73,22 +80,17 @@ foreach (@ARGV) {
 
   elsif($_ eq '--param1'              ) { $param1             = $ARGV[$iarg+1]; }
   elsif($_ eq '--param2'              ) { $param2             = $ARGV[$iarg+1]; }
-  elsif($_ eq '--param3'              ) { $param3             = $ARGV[$iarg+1]; }
   
   elsif($_ eq '--nbins-tot-param1'      ) { $nbins_tot_param1    = $ARGV[$iarg+1]; }
   elsif($_ eq '--nbins-tot-param2'      ) { $nbins_tot_param2    = $ARGV[$iarg+1]; }
-  elsif($_ eq '--nbins-tot-param3'      ) { $nbins_tot_param3    = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--min-bin-param1'      ) { $min_bin_param1     = $ARGV[$iarg+1]; }
   elsif($_ eq '--min-bin-param2'      ) { $min_bin_param2     = $ARGV[$iarg+1]; }
-  elsif($_ eq '--min-bin-param3'      ) { $min_bin_param3     = $ARGV[$iarg+1]; }
   elsif($_ eq '--max-bin-param1'      ) { $max_bin_param1     = $ARGV[$iarg+1]; }
   elsif($_ eq '--max-bin-param2'      ) { $max_bin_param2     = $ARGV[$iarg+1]; }
-  elsif($_ eq '--max-bin-param3'      ) { $max_bin_param3     = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--step-grid-1'           ) { $step_grid_1          = $ARGV[$iarg+1]; }
   elsif($_ eq '--step-grid-2'           ) { $step_grid_2          = $ARGV[$iarg+1]; }
-  elsif($_ eq '--step-grid-3'           ) { $step_grid_3          = $ARGV[$iarg+1]; }
 
   else {
     print "Unrecognised argument ".$_."\n"; exit;
@@ -99,14 +101,7 @@ $resource               = "interactive"                          unless defined 
 $store_toy_expts        = 0                                      unless defined $store_toy_expts;
 $store_bestfit_spectra  = 0                                      unless defined $store_bestfit_spectra;
 
-#$fitparamlist           = "nuosc3f_12fix+nuisance"         unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3f_12fix"                    unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3fbar_fixnonbar_12fix"       unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3fbar_fixnonbar_12fix+nuisance"       unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3fbar_fixnonbar_fix5"       unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3fbar_fixnonbar_fix5+nuisance"       unless defined $fitparamlist;
 $fitparamlist           = "nuosc3fbar_numudisapp_fixnonbar_fix4"       unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"       unless defined $fitparamlist;
 
 $fitoption              = "minuit"                               unless defined $fitoption;
 #$fitoption              = "minuit+hesse"                               unless defined $fitoption;
@@ -125,13 +120,20 @@ $input_deltacp          = -99                         unless defined $input_delt
 $input_dm12sq           = -99                         unless defined $input_dm12sq;
 $input_dm23sq           = -99                         unless defined $input_dm23sq;
 
+$input_mixing12bar      = $input_mixing12             unless defined $input_mixing12bar;
+$input_mixing13bar      = $input_mixing13             unless defined $input_mixing13bar;
+$input_mixing23bar      = $input_mixing23             unless defined $input_mixing23bar;
+$input_deltacpbar       = $input_deltacp              unless defined $input_deltacpbar;
+$input_dm12sqbar        = $input_dm12sq               unless defined $input_dm12sqbar;
+$input_dm23sqbar        = $input_dm23sq               unless defined $input_dm23sqbar;
+
 $dmsqscheme             = "auto"                                 unless defined $dmsqscheme;
 $masshierarchy          = "normal"                               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"                           unless defined $mixparamchoice;
 $mixparamoctant         = "one"                                  unless defined $mixparamoctant;
 $dcp_value              = 0                                      unless defined $dcp_value;
 $reactor                = 0                                      unless defined $reactor;
-$tolerance              = 0.1                                   unless defined $tolerance;
+$tolerance              = 0.1                                    unless defined $tolerance;
  
 $stat_fluctuations       = 0                                    unless defined $stat_fluctuations;
 $tweak_systematics       = 0                                    unless defined $tweak_systematics;
@@ -141,57 +143,19 @@ $xmlfile                 = "fakedata/201411.fakedata/fakedata_201411_B.xml"     
 
 $using_xmlfile           = 0                                     unless defined $using_xmlfile;
  
-$optfixparams            = "mixing23,dmsq,dmsq12,mixing13,mixing12,deltacp"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
-#$optfixparams            = "mixing23,dmsq,dmsq12,mixing13,deltacp"    unless defined $optfixparams;  # list of the params to be fixed in the fit   
-
-#$param1                 = "mixing23"                              unless defined $param1;
-#$param2                 = "dmsq"                                 unless defined $param2;
-#$param3                 = "mixing13"                                 unless defined $param3;
-#$nbins_tot_param1        = 11,                                    unless defined $nbins_tot_param1;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-#$nbins_tot_param2        = 11,                                    unless defined $nbins_tot_param2;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-#$nbins_tot_param3        = 11,                                    unless defined $nbins_tot_param3;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-#$min_bin_param1          = 1                                      unless defined $min_bin_param1;     # total range to loop over (first bin, param1)
-#$max_bin_param1          = 11                                      unless defined $max_bin_param1;    # total range to loop over (last bin, param1)
-#$min_bin_param2          = 1                                      unless defined $min_bin_param2;     # total range to loop over (first bin, param2)
-#$max_bin_param2          = 11                                      unless defined $max_bin_param2;    # total range to loop over (last bin, param2)
-#$min_bin_param3          = 1                                      unless defined $min_bin_param3;     # total range to loop over (first bin, param3)
-#$max_bin_param3          = 11                                      unless defined $max_bin_param3;    # total range to loop over (last bin, param3)
-#$step_grid_1               = 11                                    unless defined $step_grid_1;     # step for each job for param1
-#$step_grid_2               = 11                                    unless defined $step_grid_2;     # step for each job for param2
-#$step_grid_3               = 11                                    unless defined $step_grid_3;     # step for each job for param3
+$optfixparams            = "mixing23,dmsq32,dmsq12,mixing13,mixing12,deltacp"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
         
 $param1                 = "mixing23"                             unless defined $param1;
 $param2                 = "dmsq"                                 unless defined $param2;
-$param3                 = "none"                                 unless defined $param3;
 $nbins_tot_param1        = 51                                    unless defined $nbins_tot_param1;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
 $nbins_tot_param2        = 51                                    unless defined $nbins_tot_param2;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-$nbins_tot_param3        = 1                                     unless defined $nbins_tot_param3;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
 $min_bin_param1          = 1                                     unless defined $min_bin_param1;     # total range to loop over (first bin, param1)
 $max_bin_param1          = $nbins_tot_param1                     unless defined $max_bin_param1;    # total range to loop over (last bin, param1)
 $min_bin_param2          = 1                                     unless defined $min_bin_param2;     # total range to loop over (first bin, param2)
 $max_bin_param2          = $nbins_tot_param2                     unless defined $max_bin_param2;    # total range to loop over (last bin, param2)
-$min_bin_param3          = 1                                     unless defined $min_bin_param3;     # total range to loop over (first bin, param3)
-$max_bin_param3          = $nbins_tot_param3                     unless defined $max_bin_param3;    # total range to loop over (last bin, param3)
 
 $step_grid_1             = $nbins_tot_param1                     unless defined $step_grid_1;     # step for each job for param1
 $step_grid_2             = $nbins_tot_param2                     unless defined $step_grid_2;     # step for each job for param2
-$step_grid_3             = $nbins_tot_param3                     unless defined $step_grid_3;     # step for each job for param3
- 
-#$param1                 = "mixing13"                              unless defined $param1;
-#$param2                 = "none"                                 unless defined $param2;
-#$param3                 = "none"                                 unless defined $param3;
-#$nbins_tot_param1        = 51                                    unless defined $nbins_tot_param1;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-#$nbins_tot_param2        = 1                                    unless defined $nbins_tot_param2;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-#$nbins_tot_param3        = 1                                    unless defined $nbins_tot_param3;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-#$min_bin_param1          = 1                                      unless defined $min_bin_param1;     # total range to loop over (first bin, param1)
-#$max_bin_param1          = 51                                      unless defined $max_bin_param1;    # total range to loop over (last bin, param1)
-#$min_bin_param2          = 1                                      unless defined $min_bin_param2;     # total range to loop over (first bin, param2)
-#$max_bin_param2          = 1                                      unless defined $max_bin_param2;    # total range to loop over (last bin, param2)
-#$min_bin_param3          = 1                                      unless defined $min_bin_param3;     # total range to loop over (first bin, param3)
-#$max_bin_param3          = 1                                      unless defined $max_bin_param3;    # total range to loop over (last bin, param3)
-#$step_grid_1               = 51                                    unless defined $step_grid_1;     # step for each job for param1
-#$step_grid_2               = 1                                    unless defined $step_grid_2;     # step for each job for param2
-#$step_grid_3               = 1                                    unless defined $step_grid_3;     # step for each job for param3
 
 $file_with_init_syst = 0                                   unless defined $file_with_init_syst;
 
@@ -238,28 +202,16 @@ for($imin1 = $min_bin_param1; $imin1 <= $max_bin_param1; $imin1 = $imin1+$step_g
 	    $max_bin_2 = $max_bin_param2;
 	}
 
-	for($imin3 = $min_bin_param3; $imin3 <= $max_bin_param3; $imin3 = $imin3+$step_grid_3) { 
-	    $min_bin_3 = $imin3;
-	    $max_bin_3 = $imin3-1 + $step_grid_3;
-	     	    
-	    if($min_bin_3 < $min_bin_param3) {
-		$min_bin_3 = $min_bin_param3;
-	    }
-	    if($max_bin_3 > $max_bin_param3) {
-		$max_bin_3 = $max_bin_param3;
-	    }
-
-	    $nfits = ($max_bin_1-$min_bin_1+1)*($max_bin_2-$min_bin_2+1)*($max_bin_3-$min_bin_3+1);
+	    $nfits = ($max_bin_1-$min_bin_1+1)*($max_bin_2-$min_bin_2+1);
 	    
 	    print "\n";
 	    print "Submitting job $ijob: \n";
 	    print "nbins_tot_param1 = $nbins_tot_param1 - bin_param_1 = $min_bin_1 - $max_bin_1 \n";
 	    print "nbins_tot_param2 = $nbins_tot_param2 - bin_param_2 = $min_bin_2 - $max_bin_2 \n";
-	    print "nbins_tot_param3 = $nbins_tot_param3 - bin_param_3 = $min_bin_3 - $max_bin_3 \n";
 	    print "# point fits = $nfits \n";
 	    
         $program = "root2k ";
-	    $arguments = " -l -b -q \'$softw_dir/macros/contour/fc/global/make_toygrid_toys_joint.C(\"$xmlfile\",\"$tag\",$irun,$first,$last,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$stat_fluctuations,$tweak_systematics,$using_xmlfile,\"$config_file\",\"$fitparamlist\",\"$fitoption\",$store_toy_expts,$store_bestfit_spectra,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",\"$param3\",$nbins_tot_param1,$nbins_tot_param2,$nbins_tot_param3,$min_bin_1,$max_bin_1,$min_bin_2,$max_bin_2,$min_bin_3,$max_bin_3,\"$optfixparams\",$file_with_init_syst)\'";
+	    $arguments = " -l -b -q \'$softw_dir/macros/contour/fc/global/make_toygrid_toys_joint.C(\"$xmlfile\",\"$tag\",$irun,$first,$last,$input_mixing12,$input_mixing13,$input_mixing23,$input_deltacp,$input_dm12sq,$input_dm23sq,$input_mixing12bar,$input_mixing13bar,$input_mixing23bar,$input_deltacpbar,$input_dm12sqbar,$input_dm23sqbar,$stat_fluctuations,$tweak_systematics,$using_xmlfile,\"$config_file\",\"$fitparamlist\",\"$fitoption\",\"$masshierarchy\",\"$mixparamchoice\",$dcp_value,$reactor,$tolerance,\"$param1\",\"$param2\",$nbins_tot_param1,$nbins_tot_param2,$min_bin_1,$max_bin_1,$min_bin_2,$max_bin_2,\"$optfixparams\",$file_with_init_syst)\'";
 		$command = "$program $arguments";
         
 
@@ -379,6 +331,5 @@ for($imin1 = $min_bin_param1; $imin1 <= $max_bin_param1; $imin1 = $imin1+$step_g
 	    if($resource eq "interactive") {
 		system($command);
 	    }
-	} # ibin3
     } # ibin2
 } # ibin1
