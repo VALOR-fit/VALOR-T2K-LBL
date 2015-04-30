@@ -14,6 +14,9 @@ if [ -z ${VALOR_FWMK} ] ; then
   if [ $USER == phrhbq ] ; then 
     source /storage/epp2/phrhbq/analysis/fmwk/setup/setup_at_steve_laptop.sh
   fi
+  if [ $USER == jat98257 ] ; then 
+    source /home/ppd/jat98257/steve/valor/fmwk_v1.1.0_evolution/setup/setup_at_ral.sh /home/ppd/jat98257/steve/valor/fmwk_v1.1.0_evolution/
+  fi
 fi
 
 export T2KOSCANA=$1
