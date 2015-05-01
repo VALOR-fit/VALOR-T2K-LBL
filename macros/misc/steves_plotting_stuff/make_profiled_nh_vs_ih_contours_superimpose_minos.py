@@ -168,18 +168,18 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   contours_ih[0][0].Write("valor_ih_68_contour")
   contours_ih[1][0].Write("valor_ih_90_contour")
   
-  for c in contours_ih[0]:
-    c.SetLineColor(ROOT.kRed)
-    c.SetLineStyle(1)
-  for c in contours_ih[1]:
-    c.SetLineColor(ROOT.kBlack)
-    c.SetLineStyle(1)
   for c in contours_nh[0]:
     c.SetLineColor(ROOT.kRed)
-    c.SetLineStyle(2)
+    c.SetLineStyle(h_contour_nh.GetLineStyle())
   for c in contours_nh[1]:
     c.SetLineColor(ROOT.kBlack)
-    c.SetLineStyle(2)
+    c.SetLineStyle(h_contour_nh.GetLineStyle())
+  for c in contours_ih[0]:
+    c.SetLineColor(ROOT.kRed)
+    c.SetLineStyle(h_contour_ih.GetLineStyle())
+  for c in contours_ih[1]:
+    c.SetLineColor(ROOT.kBlack)
+    c.SetLineStyle(h_contour_ih.GetLineStyle())
   
   bf_nh_graph = ROOT.TGraph(1)
   bf_ih_graph = ROOT.TGraph(1)
