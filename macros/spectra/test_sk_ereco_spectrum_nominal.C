@@ -53,7 +53,8 @@ void test_sk_ereco_spectrum_nominal
   bool plot_per_50MeV = true,
   bool group_mec_as_ccqe = true,
   bool print_total_events_on_plot = false,
-  int force_ymax = -1
+  int force_ymax = -1,
+  bool use_gof_binning = false
 )
 {
   using namespace std;
@@ -160,6 +161,9 @@ void test_sk_ereco_spectrum_nominal
   cout << "- Generating predictions..." << endl;
   skexp.GetSuperkMC()->SetXMEC(1);
   skexp.Generate(ph);
+  
+  const int      nbins_gof     = conv::kNbinsGoodnessOfFit;
+  const double * bin_edges_gof = conv::kBinEdgesGoodnessOfFit;
 
 
   // Get energy spectra
@@ -171,6 +175,12 @@ void test_sk_ereco_spectrum_nominal
     assert(h);
     hErecoMode[im] = new TH1D(*h);
     hErecoMode_coarse[im] = (TH1D)hErecoMode[im]->Rebin(nbins_coarse,Form("%s_coarse",hErecoMode[im]->GetName()),ereco_bin_edges_coarse);
+    
+    cerr<<nbins_gof<<endl;
+    
+    if (use_gof_binning) {
+      hErecoMode[im] = rebin_histogram_coarser(hErecoMode[im], nbins_gof , bin_edges_gof);
+    }
     
     if (plot_per_50MeV) {
       hErecoMode_draw[im]        = spectrum_to_per_50mev(hErecoMode[im]);
@@ -188,11 +198,21 @@ void test_sk_ereco_spectrum_nominal
   
   hErecoTot_coarse = (TH1D)hErecoTot->Rebin(nbins_coarse,Form("%s_coarse",hErecoTot->GetName()),ereco_bin_edges_coarse);
   
-  hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hErecoTot->GetYaxis()->SetTitle("Number of events");
-  hErecoTot_coarse->GetXaxis()->SetTitle("E_{reco} (GeV)");
-  hErecoTot_coarse->GetYaxis()->SetTitle("Number of events");
+  if (use_gof_binning) {hErecoTot = rebin_histogram_coarser(hErecoTot,nbins_gof,bin_edges_gof);}
   
+  hErecoTot->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoTot->GetYaxis()->SetTitle("Events per bin");
+  hErecoTot_coarse->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoTot_coarse->GetYaxis()->SetTitle("Events per bin");
+  
+  TH1D * frame = new TH1D(*hErecoTot);
+  if (force_ymax>0) {frame->SetMaximum(force_ymax);}
+  if (frame->GetXaxis()->GetXmax() > max_energy_for_plots) {
+    frame->GetXaxis()->SetRangeUser(0,max_energy_for_plots);
+  }
+  if (plot_per_50MeV) {
+    frame->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  }
   
   
   //can save this to file &/or print it
@@ -336,7 +356,7 @@ void test_sk_ereco_spectrum_nominal
 
 
   // Build mode/flavor
-
+  
   TH1D * hErecoMode_NC = new TH1D("hErecoMode_NC","hErecoMode_NC",nbins,ereco_bin_edges);
   TH1D * hErecoMode_NumuBar_CCQE = new TH1D("hErecoMode_NumuBar_CCQE","hErecoMode_NumuBar_CCQE",nbins,ereco_bin_edges);
   TH1D * hErecoMode_NumuBar_CCnQE = new TH1D("hErecoMode_NumuBar_CCnQE","hErecoMode_NumuBar_CCnQE",nbins,ereco_bin_edges);
@@ -420,6 +440,18 @@ void test_sk_ereco_spectrum_nominal
       exit(1);
     }
   } // loop over modes
+  
+    
+  
+  if (use_gof_binning) {
+    hErecoMode_NC            = rebin_histogram_coarser(hErecoMode_NC           , nbins_gof,bin_edges_gof);
+    hErecoMode_NumuBar_CCQE  = rebin_histogram_coarser(hErecoMode_NumuBar_CCQE , nbins_gof,bin_edges_gof);
+    hErecoMode_NumuBar_CCnQE = rebin_histogram_coarser(hErecoMode_NumuBar_CCnQE, nbins_gof,bin_edges_gof);
+    hErecoMode_Numu_CC       = rebin_histogram_coarser(hErecoMode_Numu_CC      , nbins_gof,bin_edges_gof);
+    hErecoMode_NueNueBar_CC  = rebin_histogram_coarser(hErecoMode_NueNueBar_CC , nbins_gof,bin_edges_gof);
+    
+    if (!group_mec_as_ccqe) {hErecoMode_NumuBar_MEC = rebin_histogram_coarser(hErecoMode_NumuBar_MEC, nbins_gof,bin_edges_gof);}
+  }
 
   // Draw Histo by mode/flavor
   if(plot_per_50MeV){
@@ -463,15 +495,15 @@ void test_sk_ereco_spectrum_nominal
   hErecoMode_NueNueBar_CC->SetFillColor(kBlue);
 
   hErecoMode_NC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_NC->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  //~ hErecoMode_NC->GetYaxis()->SetTitle("Events per 0.050 GeV");
   hErecoMode_NueNueBar_CC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_NueNueBar_CC->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  //~ hErecoMode_NueNueBar_CC->GetYaxis()->SetTitle("Events per 0.050 GeV");
   hErecoMode_Numu_CC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_Numu_CC->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  //~ hErecoMode_Numu_CC->GetYaxis()->SetTitle("Events per 0.050 GeV");
   hErecoMode_NumuBar_CCnQE->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_NumuBar_CCnQE->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  //~ hErecoMode_NumuBar_CCnQE->GetYaxis()->SetTitle("Events per 0.050 GeV");
   hErecoMode_NumuBar_CCQE->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  hErecoMode_NumuBar_CCQE->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  //~ hErecoMode_NumuBar_CCQE->GetYaxis()->SetTitle("Events per 0.050 GeV");
 
   THStack *sErecoTotFlavMode = new THStack("sErecoTotFlavMode","sErecoTotFlavMode");
   sErecoTotFlavMode->Add(hErecoMode_NC);
@@ -488,9 +520,16 @@ void test_sk_ereco_spectrum_nominal
   if (hErecoMode_NC->GetXaxis()->GetXmax() > max_energy_for_plots) {
     sErecoTotFlavMode->GetXaxis()->SetRangeUser(0,max_energy_for_plots);
   }
-  sErecoTotFlavMode->Draw();
+  
+  double ymax = (force_ymax > 0 ? force_ymax : 1.1*sErecoTotFlavMode->GetMaximum());
+  TH1F * drawn_frame = cErecoTotFlavMode->DrawFrame(0,0,TMath::Min(max_energy_for_plots,hErecoMode_NC->GetXaxis()->GetXmax()),ymax);
+  drawn_frame->GetXaxis()->SetTitle(frame->GetXaxis()->GetTitle());
+  drawn_frame->GetYaxis()->SetTitle(frame->GetYaxis()->GetTitle());
+  drawn_frame->Draw("AXIS");
+  sErecoTotFlavMode->Draw("same");
+  //~ sErecoTotFlavMode->Draw();
   sErecoTotFlavMode->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  sErecoTotFlavMode->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  //~ sErecoTotFlavMode->GetYaxis()->SetTitle("Events per 0.050 GeV");
   cErecoTotFlavMode->Modified();
 
   gStyle->SetOptStat(0);
@@ -704,4 +743,32 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
   return hout;
 }
 
+TH1D *  rebin_histogram_coarser(TH1D * h, int n_bins, const double * new_binning) {
+  TH1D * new_hist = new TH1D(h->GetName(),h->GetTitle(),n_bins,new_binning);
+  
+  for (int ibin = 1; ibin <= h->GetXaxis()->GetNbins() ; ibin++) {
+    new_hist->Fill(h->GetBinCenter(ibin),h->GetBinContent(ibin));
+  }
+  
+  copy_hist_style(h,new_hist);
+  new_hist->GetXaxis()->SetTitle(h->GetXaxis()->GetTitle());
+  new_hist->GetYaxis()->SetTitle(h->GetYaxis()->GetTitle());
+  
+  return new_hist;
+}
+  
+void copy_hist_style(TH1D * hfrom,TH1D * hto) {
+  hto->SetLineColor  (hfrom->GetLineColor());
+  hto->SetLineStyle  (hfrom->GetLineStyle());
+  hto->SetLineWidth  (hfrom->GetLineWidth());
+  
+  hto->SetFillColor  (hfrom->GetFillColor());
+  hto->SetFillStyle  (hfrom->GetFillStyle());
+  
+  hto->SetMarkerColor(hfrom->GetMarkerColor());
+  hto->SetMarkerStyle(hfrom->GetMarkerStyle());
+  hto->SetMarkerSize (hfrom->GetMarkerSize ());
+  
+  return;
+}
 
