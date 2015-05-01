@@ -53,6 +53,9 @@ namespace util   {
 }//conv  
 
 namespace conv   {
+    
+static const int kNbinsGoodnessOfFit = 5;
+static const double kBinEdgesGoodnessOfFit[kNbinsGoodnessOfFit+1] = {0.0,0.4,0.7,1.0,2.0,30.0};
 
 //
 // The weight splines are pre-computed for the following Ereco bins.
