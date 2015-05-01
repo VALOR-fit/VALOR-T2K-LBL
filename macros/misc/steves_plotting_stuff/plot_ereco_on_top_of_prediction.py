@@ -2,6 +2,7 @@
 import ROOT
 import os
 import math
+import array
 
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
@@ -29,9 +30,11 @@ orig_plot_opt = ""
 
 text_entry_height = 0.08
 
-def main(file_patterns,tag="data"):
+coarse_binning = [0.0,0.4,0.7,1.0,1.5,2.0,3.0,4.0,5.0,30]
+
+def main(file_patterns,tag="data",rebin=False,nopave=False):
   
-  max_energy = 7
+  max_energy = 5
   
   sample = conv.kSKsRHCFCFV1RingMuLike
   
@@ -77,6 +80,9 @@ def main(file_patterns,tag="data"):
   
   data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
   
+  if (rebin): data_spectrum = rebin_histogram_coarser(data_spectrum,coarse_binning)
+  data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
+  
   assert(abs(data_spectrum.Integral()-n_data)<conv.kASmallNum)
   
   data_max = data_spectrum.GetMaximum()
@@ -109,6 +115,9 @@ def main(file_patterns,tag="data"):
     histogram.SetLineWidth(2)
     n_pred = histogram.Integral()
     
+    if (rebin): histogram = rebin_histogram_coarser(histogram,coarse_binning)
+    histogram.GetXaxis().SetRangeUser(0,max_energy)
+    
     canvas.Clear()
     
     legend = ROOT.TLegend(0.7,0.7,0.89,0.89)
@@ -138,12 +147,14 @@ def main(file_patterns,tag="data"):
     pave3.AddText(util.ParamAsStringPaperRooTex(conv.kPhypMixing23Bar)+" = "+to3dp.format(fparm.BestFitValue(conv.kPhypMixing23Bar)))
     pave3.AddText(util.ParamAsStringPaperRooTex(conv.kPhypDm23sqBar  )+" = "+to4sf.format(fparm.BestFitValue(conv.kPhypDm23sqBar))+" eV^{2}")
     
+    data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
     data_spectrum.Draw("e")
     histogram.Draw("same")
     legend.Draw()
-    pave.Draw()
-    pave2.Draw()
-    pave3.Draw()
+    if not nopave:
+      pave.Draw()
+      pave2.Draw()
+      pave3.Draw()
     canvas.Print(tag+"_spectrum_"+`ientry`+".eps")
     
     
@@ -162,12 +173,41 @@ def main(file_patterns,tag="data"):
   print "Low  E ratio: ",to2dp.format(100.*n_data_low_energy /n_unosc_low_energy ),"%"
   print "Mid  E ratio: ",to2dp.format(100.*n_data_mid_energy /n_unosc_mid_energy ),"%"
   print "High E ratio: ",to2dp.format(100.*n_data_high_energy/n_unosc_high_energy),"%"
+  
+  
+def rebin_histogram_coarser(h,new_binning):
+  arr = array.array('d',new_binning)
+  new_hist = ROOT.TH1D(h.GetName(),h.GetTitle(),len(new_binning)-1,arr)
+  
+  for ibin in xrange(1,h.GetXaxis().GetNbins()+1):
+    new_hist.Fill(h.GetBinCenter(ibin),h.GetBinContent(ibin))
+  
+  copy_hist_style(h,new_hist)
+  new_hist.GetXaxis().SetTitle(h.GetXaxis().GetTitle())
+  new_hist.GetYaxis().SetTitle(h.GetYaxis().GetTitle())
+  
+  return new_hist
+  
+def copy_hist_style(hfrom,hto):
+  hto.SetLineColor  (hfrom.GetLineColor())
+  hto.SetLineStyle  (hfrom.GetLineStyle())
+  hto.SetLineWidth  (hfrom.GetLineWidth())
+  
+  hto.SetFillColor  (hfrom.GetFillColor())
+  hto.SetFillStyle  (hfrom.GetFillStyle())
+  
+  hto.SetMarkerColor(hfrom.GetMarkerColor())
+  hto.SetMarkerStyle(hfrom.GetMarkerStyle())
+  hto.SetMarkerSize (hfrom.GetMarkerSize ())
+  
 
 if __name__=="__main__":
   import optparse
   parser = optparse.OptionParser(usage="%prog [options] pattern1 [pattern2] ...",description="Make plots.")
-  parser.add_option('-t', dest='tag',default="data"  ,help='The filename')
+  parser.add_option('-t', dest='tag'    ,default="data"  ,help='The filename')
+  parser.add_option('-r', dest='rebin'  ,default=False,action="store_true"  ,help="Use the coarse binning")
+  parser.add_option('-n', dest='nopave' ,default=False,action="store_true"  ,help="Don't draw the paves")
   
   options,patterns = parser.parse_args()
   
-  main(patterns,options.tag)
+  main(patterns, options.tag, options.rebin, options.nopave)
