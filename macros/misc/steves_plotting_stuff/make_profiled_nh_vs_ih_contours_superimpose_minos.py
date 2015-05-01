@@ -72,8 +72,8 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   print min_ih
   
   # Set title offset for Y
-  h_nh.GetYaxis().SetTitleOffset(1.4)
-  h_ih.GetYaxis().SetTitleOffset(1.4)
+  h_nh.GetYaxis().SetTitleOffset(1.1)
+  h_ih.GetYaxis().SetTitleOffset(1.1)
   
   # Precalculate the best-fit points from the histogram
   bf_bin_ih = h_ih.GetMinimumBin()
@@ -203,15 +203,16 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   
   # Start drawing
   canv = ROOT.TCanvas("canv1","canv1",1280,720)
+  SetMargins(canv)
   canv.cd()
   
   # Set Axis labels
   if (h_nh.GetXaxis().GetTitle()!=h_ih.GetXaxis().GetTitle()):
-    new_title = h_nh.GetXaxis().GetTitle() + " / "+h_ih.GetXaxis().GetTitle()
+    new_title = h_nh.GetXaxis().GetTitle() + " or "+h_ih.GetXaxis().GetTitle()
     h_contour_nh.GetXaxis().SetTitle(new_title)
     h_contour_ih.GetXaxis().SetTitle(new_title)
   if (h_nh.GetYaxis().GetTitle()!=h_ih.GetYaxis().GetTitle()):
-    new_title = h_nh.GetYaxis().GetTitle() + " / "+h_ih.GetYaxis().GetTitle()
+    new_title = h_nh.GetYaxis().GetTitle() + " or "+h_ih.GetYaxis().GetTitle()
     h_contour_nh.GetYaxis().SetTitle(new_title)
     h_contour_ih.GetYaxis().SetTitle(new_title)
   
@@ -248,6 +249,7 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   canv.Print(plot_name+"."+image_format)
   
   canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
+  SetMargins(canv_nh)
   canv_nh.cd()
   h_delta_nh.SetContour(100)
   h_delta_nh.Draw("colz")
@@ -271,6 +273,7 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   
   canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
   canv_ih.cd()
+  SetMargins(canv_ih)
   h_delta_ih.SetContour(100)
   h_delta_ih.Draw("colz")
   marker_ih.Draw()
@@ -322,6 +325,10 @@ def GetDeltaHist(h,minval=None):
       h_delta.SetBinContent(ix+1,iy+1,h.GetBinContent(ix+1,iy+1)-minval)
       
   return h_delta
+  
+def SetMargins(canv):
+  canv.SetBottomMargin(0.14)
+  canv.SetLeftMargin  (0.14)
   
 if __name__=="__main__":
   import optparse

@@ -206,11 +206,11 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_kdi=Tru
   SetMargins(canv)
   canv.cd()
   
-  #~ # Set Axis labels
+  # Set Axis labels
   #~ if (h_nh.GetXaxis().GetTitle()!=h_ih.GetXaxis().GetTitle()):
-    #~ new_title = h_nh.GetXaxis().GetTitle() + " / "+h_ih.GetXaxis().GetTitle()
-    #~ h_contour_nh.GetXaxis().SetTitle(new_title)
-    #~ h_contour_ih.GetXaxis().SetTitle(new_title)
+  new_title = h_nh.GetYaxis().GetTitle() + " or "+util.ParamAsStringPaperRooTex(conv.kPhypDm23sq)
+  h_contour_nh.GetYaxis().SetTitle(new_title)
+  h_contour_ih.GetYaxis().SetTitle(new_title)
   #~ if (h_nh.GetYaxis().GetTitle()!=h_ih.GetYaxis().GetTitle()):
     #~ new_title = h_nh.GetYaxis().GetTitle() + " / "+h_ih.GetYaxis().GetTitle()
     #~ h_contour_nh.GetYaxis().SetTitle(new_title)
