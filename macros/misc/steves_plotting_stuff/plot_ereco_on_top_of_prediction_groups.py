@@ -2,6 +2,9 @@
 import ROOT
 import os
 import math
+import array
+
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
@@ -29,9 +32,11 @@ orig_plot_opt = ""
 
 text_entry_height = 0.08
 
-def main(file_patterns,tag="data"):
+coarse_binning = [0.0,0.4,0.7,1.0,1.5,2.0,3.0,4.0,5.0,30]
+
+def main(file_patterns,tag="data",rebin=False,nopave=False):
   
-  max_energy = 3.5
+  max_energy = 5
   
   sample = conv.kSKsRHCFCFV1RingMuLike
   
@@ -77,6 +82,9 @@ def main(file_patterns,tag="data"):
   
   data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
   
+  if (rebin): data_spectrum = rebin_histogram_coarser(data_spectrum,coarse_binning)
+  data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
+  
   assert(abs(data_spectrum.Integral()-n_data)<conv.kASmallNum)
   
   data_max = data_spectrum.GetMaximum()
@@ -108,59 +116,68 @@ def main(file_patterns,tag="data"):
   histogram.SetLineWidth(2)
   n_pred = histogram.Integral()
   
+  if (rebin): histogram = rebin_histogram_coarser(histogram,coarse_binning)
+  histogram.GetXaxis().SetRangeUser(0,max_energy)
+  
   canvas.Clear()
   
   # That's the VALOR contour done, let's get MaCh3
   m3_file = ROOT.TFile(file_patterns[1])
   assert(m3_file)
-  mach3_hist = m3_file.Get("hist_1d")
+  #~ mach3_hist = m3_file.Get("hist_1d")
+  mach3_hist = m3_file.Get("bestfit")
   assert(mach3_hist)
   mach3_hist.SetLineColor(ROOT.kBlue)
   
   # And P-theta
   pt_file = ROOT.TFile(file_patterns[2])
   assert(pt_file)
-  pthet_hist = pt_file.Get("hNumuPDF")
+  #~ pthet_hist = pt_file.Get("hNumuPDF")
+  pthet_hist = pt_file.Get("coarse_binning_spectrum")
   assert(pthet_hist)
   pthet_hist.SetLineColor(ROOT.kGreen+2)
   
-  legend = ROOT.TLegend(0.7,0.7,0.89,0.89)
+  legend = ROOT.TLegend(0.7,0.6,0.92,0.93)
   legend.AddEntry(data_spectrum,"Data"    )
   legend.AddEntry(histogram    ,"VALOR"   )
   legend.AddEntry(mach3_hist   ,"MaCh3"   )
   legend.AddEntry(pthet_hist   ,"P-theta" )
-    
-  #~ pave = ROOT.TPaveText(0.5,0.56,0.68,0.87,"ndc")
-  #~ pave.SetShadowColor(0)
-  #~ pave.SetFillColor(0)
-  #~ pave.SetFillStyle(0)
-  #~ pave.SetLineColor(0)
-  #~ pave.AddText("N_{data} = "+`ROOT.TMath.Nint(n_data)`)
-  #~ pave.AddText("N_{bf} = "+to3dp.format(histogram.Integral()))
-  #~ 
-  #~ pave2 = ROOT.TPaveText(0.71,0.63,0.89,0.68,"ndc")
-  #~ pave2.SetShadowColor(0)
-  #~ pave2.SetFillColor(0)
-  #~ pave2.SetFillStyle(0)
-  #~ pave2.SetLineColor(0)
-  #~ pave2.AddText("#chi^{2} = "+to3dp.format(fparm.GetBestFitStatistic()))
-  #~ 
-  #~ pave3 = ROOT.TPaveText(0.65,0.40,0.89,0.54,"ndc")
-  #~ pave3.SetShadowColor(0)
-  #~ pave3.SetFillColor(0)
-  #~ pave3.SetFillStyle(0)
-  #~ pave3.SetLineColor(0)
-  #~ pave3.AddText("#bar{sin^{2}#theta_{23}} = "+to3dp.format(fparm.BestFitValue(conv.kPhypMixing23Bar)))
-  #~ pave3.AddText("#bar{#Delta m^{2}_{23}} = " +to4sf.format(fparm.BestFitValue(conv.kPhypDm23sqBar))+" eV^{2}")
+  
+
+  pave = ROOT.TPaveText(0.5,0.56,0.68,0.87,"ndc")
+  pave.SetShadowColor(0)
+  pave.SetFillColor(0)
+  pave.SetFillStyle(0)
+  pave.SetLineColor(0)
+  pave.AddText("N_{data} = "+`ROOT.TMath.Nint(n_data)`)
+  pave.AddText("N_{bf} = "+to3dp.format(histogram.Integral()))
+  
+  pave2 = ROOT.TPaveText(0.71,0.63,0.89,0.68,"ndc")
+  pave2.SetShadowColor(0)
+  pave2.SetFillColor(0)
+  pave2.SetFillStyle(0)
+  pave2.SetLineColor(0)
+  pave2.AddText("#chi^{2} = "+to3dp.format(fparm.GetBestFitStatistic()))
+  
+  pave3 = ROOT.TPaveText(0.65,0.40,0.89,0.54,"ndc")
+  pave3.SetShadowColor(0)
+  pave3.SetFillColor(0)
+  pave3.SetFillStyle(0)
+  pave3.SetLineColor(0)
+  pave3.AddText("#bar{sin^{2}#theta_{23}} = "+to3dp.format(fparm.BestFitValue(conv.kPhypMixing23Bar)))
+  pave3.AddText("#bar{#Delta m^{2}_{23}} = " +to4sf.format(fparm.BestFitValue(conv.kPhypDm23sqBar))+" eV^{2}")
+  
+  data_spectrum.GetYaxis().SetTitle("Events per bin")
   
   data_spectrum.Draw("e")
-  histogram.Draw("same")
+  histogram .Draw("hist same")
   mach3_hist.Draw("hist same")
-  pthet_hist.Draw("same")
+  pthet_hist.Draw("hist same")
   legend.Draw()
-  #~ pave.Draw()
-  #~ pave2.Draw()
-  #~ pave3.Draw()
+  if not nopave:
+    pave.Draw()
+    pave2.Draw()
+    pave3.Draw()
   canvas.Print(tag+"_spectrum_groups"+".eps")
   
   
@@ -179,14 +196,71 @@ def main(file_patterns,tag="data"):
   print "Low  E ratio: ",to2dp.format(100.*n_data_low_energy /n_unosc_low_energy ),"%"
   print "Mid  E ratio: ",to2dp.format(100.*n_data_mid_energy /n_unosc_mid_energy ),"%"
   print "High E ratio: ",to2dp.format(100.*n_data_high_energy/n_unosc_high_energy),"%"
+  
+  # Plot per 100 MeV
+  histogram.GetXaxis().SetRangeUser(0.,30)
+  modify_histogram_to_events_per_width(data_spectrum,   0.5)
+  modify_histogram_to_events_per_width(histogram    ,   0.5)
+  modify_histogram_to_events_per_width(mach3_hist   ,   0.5)
+  modify_histogram_to_events_per_width(pthet_hist   ,   0.5)
+  data_spectrum.GetYaxis().SetTitle("Events per 0.5 GeV")
+  
+  canvas2 = ROOT.TCanvas("c2","c2",1280,720)
+  canvas2.cd()
+  data_spectrum.Draw("e")
+  histogram .Draw("hist same")
+  mach3_hist.Draw("hist same")
+  pthet_hist.Draw("hist same")
+  legend.Draw()
+  if not nopave:
+    pave.Draw()
+    pave2.Draw()
+    pave3.Draw()
+  canvas.Print(tag+"_spectrum_groups_per_energy"+".eps")
+
+def modify_histogram_to_events_per_width(h,width=0.1):
+  for ibin in xrange(1,h.GetXaxis().GetNbins()+1):
+    lower_edge = h.GetXaxis().GetBinLowEdge(ibin)
+    upper_edge = h.GetXaxis().GetBinUpEdge (ibin)
+    error = h.GetBinError(ibin)
+    h.SetBinContent(ibin,h.GetBinContent(ibin) * width/(upper_edge-lower_edge))
+    h.SetBinError(ibin, error * width/(upper_edge-lower_edge))
+  return
+  
+def rebin_histogram_coarser(h,new_binning):
+  arr = array.array('d',new_binning)
+  new_hist = ROOT.TH1D(h.GetName(),h.GetTitle(),len(new_binning)-1,arr)
+  
+  for ibin in xrange(1,h.GetXaxis().GetNbins()+1):
+    new_hist.Fill(h.GetBinCenter(ibin),h.GetBinContent(ibin))
+  
+  copy_hist_style(h,new_hist)
+  new_hist.GetXaxis().SetTitle(h.GetXaxis().GetTitle())
+  new_hist.GetYaxis().SetTitle(h.GetYaxis().GetTitle())
+  
+  return new_hist
+  
+def copy_hist_style(hfrom,hto):
+  hto.SetLineColor  (hfrom.GetLineColor())
+  hto.SetLineStyle  (hfrom.GetLineStyle())
+  hto.SetLineWidth  (hfrom.GetLineWidth())
+  
+  hto.SetFillColor  (hfrom.GetFillColor())
+  hto.SetFillStyle  (hfrom.GetFillStyle())
+  
+  hto.SetMarkerColor(hfrom.GetMarkerColor())
+  hto.SetMarkerStyle(hfrom.GetMarkerStyle())
+  hto.SetMarkerSize (hfrom.GetMarkerSize ())
 
 if __name__=="__main__":
   import optparse
-  parser = optparse.OptionParser(usage="%prog [options] pattern1 [pattern2] ...",description="Make plots.")
-  parser.add_option('-t', dest='tag',default="data"  ,help='The filename')
+  parser = optparse.OptionParser(usage="%prog [options] valor mach3 ptheta",description="Make plots.")
+  parser.add_option('-t', dest='tag'    ,default="data"  ,help='The filename')
+  parser.add_option('-r', dest='rebin'  ,default=False,action="store_true"  ,help="Use the coarse binning")
+  parser.add_option('-n', dest='nopave' ,default=False,action="store_true"  ,help="Don't draw the paves")
   
   options,patterns = parser.parse_args()
   
   assert(len(patterns)==3)
   
-  main(patterns,options.tag)
+  main(patterns, options.tag, options.rebin, options.nopave)

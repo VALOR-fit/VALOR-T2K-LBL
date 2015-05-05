@@ -4,6 +4,8 @@ import os
 import math
 import array
 
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 
@@ -120,11 +122,11 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
     
     canvas.Clear()
     
-    legend = ROOT.TLegend(0.7,0.7,0.89,0.89)
+    legend = ROOT.TLegend(0.7,0.7,0.92,0.93)
     legend.AddEntry(data_spectrum,"Data")
     legend.AddEntry(histogram,"Best-fit")
     
-    pave = ROOT.TPaveText(0.5,0.56,0.68,0.87,"ndc")
+    pave = ROOT.TPaveText(0.5,0.62,0.68,0.92,"ndc")
     pave.SetShadowColor(0)
     pave.SetFillColor(0)
     pave.SetFillStyle(0)
@@ -146,6 +148,8 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
     pave3.SetLineColor(0)
     pave3.AddText(util.ParamAsStringPaperRooTex(conv.kPhypMixing23Bar)+" = "+to3dp.format(fparm.BestFitValue(conv.kPhypMixing23Bar)))
     pave3.AddText(util.ParamAsStringPaperRooTex(conv.kPhypDm23sqBar  )+" = "+to4sf.format(fparm.BestFitValue(conv.kPhypDm23sqBar))+" eV^{2}")
+    
+    data_spectrum.GetYaxis().SetTitle("Events per bin")
     
     data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
     data_spectrum.Draw("e")
