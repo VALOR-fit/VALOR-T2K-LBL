@@ -31,11 +31,12 @@ void run_fit_marginalization_readbinary_betabar
 
  const char * tag                      = "fitmarg_betabar",    /* tag for output file */
 
- int          first_experiment         = 0,                       /* */
- int          last_experiment          = 0,                       /* */
+ int          first_experiment         = 4139, //4404, //4739,                       /* */
+ int          last_experiment          = 4139, //4404, //4739,                       /* */
 
- //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml",
- const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
+ const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml",
  
  bool         dotoys                   = false,
 
@@ -55,6 +56,7 @@ void run_fit_marginalization_readbinary_betabar
  double       input_beta_bar           = -99,
 
  const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_fullstat.xml",
  
  bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 1,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
@@ -336,7 +338,8 @@ void run_fit_marginalization_readbinary_betabar
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
   int ToyID=-999;
-
+  TH1D *hErecoToy;
+  
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
   fitnt->Branch("best_fit_params",      "valor::FitParamList",  &fparm,      1280000,0);
@@ -367,7 +370,8 @@ void run_fit_marginalization_readbinary_betabar
   fitnt->Branch("bestfitFullChisq1", &bestfitFullChisq1 );
   fitnt->Branch("chisqminFullChisq",&chisqminFullChisq);
   fitnt->Branch("ToyID",&ToyID);
-
+  fitnt->Branch("hErecoToy",&hErecoToy);
+  
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
 
@@ -534,7 +538,6 @@ void run_fit_marginalization_readbinary_betabar
         
     cout << *fparm << endl;
 
-
     /////////////////// SET MARGINALIZATION FIT ////////////////
     
     // Reset all the variables
@@ -649,7 +652,9 @@ void run_fit_marginalization_readbinary_betabar
     FitMarginalization *fitmarg = new FitMarginalization();   
     fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
     fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
+    fitmarg->SetTestStatistic("rate+shape");     // Set Test Statistic ("rate-only" or "rate+shape")
     fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
+    
     
     // Set Mass Hierarchy marginalization
     fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
@@ -744,6 +749,20 @@ void run_fit_marginalization_readbinary_betabar
     }
 
 
+    // Get the fakedata histogram
+
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = kSKSamples[is];
+      if(s == kSKsUndefined) continue;
+      else if(s == kSKsRHCFCFV1RingELike){
+	//cout << "    " << util::AsStringCompact(s) << endl;
+	hErecoToy = new TH1D(*skobs_fakedata->ErecoSpectrum(s));
+	//cout <<  skobs_fakedata->ErecoSpectrum(s)->Integral() << endl;
+      }
+    }
+    //cout << fitmarg->GetNSKsamples() << endl;
+
+
     // Fill the output tree
    
     if(fitmarg->IsFit2D()){
@@ -754,7 +773,7 @@ void run_fit_marginalization_readbinary_betabar
       hchisq1D_out = (TH1F*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
       //if(minimizeHisto) hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
     }
-        
+            
     fitnt->Fill();
 
          
@@ -800,6 +819,12 @@ void run_fit_marginalization_readbinary_betabar
     cout << endl;
 
      
+
+
+
+    TCanvas *cErecoToy = new TCanvas("cErecoToy","cErecoToy");
+    hErecoToy->DrawCopy();
+
     TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
     fitmarg->GetChisqMarg1D()->DrawCopy();    
     
