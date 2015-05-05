@@ -17,23 +17,32 @@ except:
   ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
   
 ROOT.gROOT.SetBatch(1)
+
+ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetOptTitle(0)
   
 valor = ROOT.valor
 util =  valor.util
 conv =  valor.conv
 opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
+rnd  =  valor.Rnd.Instance()
 
 opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
 opt.SetDefaultParameterValues()
 
-config_file = "analysis_configuration.xml"
-fit_param_list = "nuosc3f_numudisapp_nuis3fixdcp+nuisance"
+#~ fit_param_list = "nuosc3f_numudisapp_nuis3fixdcp+nuisance"
+#~ fit_param_list = "nuosc3fbar_numudisapp_constrainall+nuisance"
+fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"
 stat_fluctuations = True
-syst_tweaks = True
-nbins = 200
+syst_tweaks       = False
+nbins = 1000
 
-def main(params):
+write_bin_spectra = False
+
+python_undefined = 2L*sys.maxint+1
+
+def main(params,config_file,sample):
   
   # Set up superKexpectation and read config file
   config =  os.environ[env_var]+"/config/"+config_file
@@ -57,11 +66,13 @@ def main(params):
   
   hists = []
   
+  canv = ROOT.TCanvas("canv","canv",1280,1024)
+  canv.cd()
+  
   for param_name in params:
-    #~ param = util.PhysParamIdFromString(param_name)
-    param = conv.kPhypUndefined
-    print "param: ",param
-    if (param == conv.kPhypUndefined):
+    param = util.PhysParamIdFromString(param_name)
+    
+    if (param == conv.kPhypUndefined or param == python_undefined):
       try:
         param = getattr(conv,param_name)
         print param
@@ -78,12 +89,19 @@ def main(params):
     lower_limit = fparm.MinValue(param)
     upper_limit = fparm.MaxValue(param)
     
-    h = ROOT.TH1D(util.ParamAsStringCompact(param)+"_chisq","Chisq of "+util.ParamAsString(param),nbins,lower_limit,upper_limit)
+    h = ROOT.TH1D(util.ParamAsStringSimple(param)+"_chisq","Chisq of "+util.ParamAsStringSimple(param),nbins,lower_limit,upper_limit)
     
     for ibin in xrange(nbins):
       par_value = h.GetBinCenter(ibin+1)
       fparm.Update(param, par_value)
-      h.Fill(par_value , skobs.Statistic(skexp,fparm))
+      chisq = skobs.Statistic(skexp,fparm)
+      h.Fill(par_value , chisq )
+      
+      if (write_bin_spectra):
+        tmp_hist = skexp.CurrPredictedErecoSpectrum(s)
+        tmp_hist.Draw()
+        canv.Print(util.ParamAsStringSimple(param)+"_chisq_bin_"+(str(ibin).zfill(4))+"_chisq="+str(chisq)+".png")
+        del tmp_hist;
       
     hists.append(h)
     h.Write()
@@ -93,11 +111,21 @@ def main(params):
   for h in hists:
     h.Draw()
     canv.Update()
-    canv.Print(h.GetName()+".png")
+    canv.Print(h.GetName()+".eps")
     
 class T2KAnaError(Exception):
   pass
   
 if __name__=="__main__":
-  main(sys.argv[1:])
-
+  import optparse
+  parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of applied systematics")
+  
+  #~ parser.add_option('-f', '--file', dest='output_file', default="effects_of_tuning.tex", help="Name for output TeX file.")
+  
+  parser.add_option('-s', '--sample' , dest='sample'      , default="1Rmu"                    , help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
+  
+  parser.add_option('-c', '--config'        , dest='config' , default="analysis_configuration.xml", help="Configuration file")
+  
+  opt,params = parser.parse_args()
+  
+  main(params,opt.config,opt.sample)
