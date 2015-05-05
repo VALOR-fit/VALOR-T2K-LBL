@@ -20,7 +20,6 @@
 //#define __print_hesseerror_verbose__
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
-
  
 #include <cassert>
 #include <cstdlib>
@@ -114,6 +113,22 @@ FitMarginalization::~FitMarginalization(void)
 //________________________________________________________________________________________
 void FitMarginalization::Init(SuperkExpectation *skexp){
    
+  // Test statistic to be used in the fit
+  if( fteststatistic!="rate+shape" && fteststatistic!="rate-only" ){
+    cerr << endl;
+    cerr << "FitMarginalization::Init" << endl;
+    cerr << "The test statistic is not available: " << fteststatistic << endl;
+    cerr << endl;
+    exit(1);
+  }
+  else if( fteststatistic=="" ){
+    fteststatistic = "rate+shape";
+  }
+  cout << endl;
+  cout << "The used test statistic is: " << fteststatistic << endl;
+  cout << endl;
+
+  
   // Before Init() we need SetPhysParFree()
   
   fdoMargMassHierarchy = false;
@@ -1174,17 +1189,42 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
       for(int is=0;is<fNSKsamples;is++){
 	SuperkSample_t s = this->GetSKSamples(is);
 	
-	for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-	  float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
 
-	  nexp *= (float)fNormPOT[is];
-
-	  float nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
-	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
-
-	  //cout << "nexp = " << nexp << " - nobs = " << nobs << " - chisq = " << chisq << endl;
+	if( fteststatistic=="rate+shape"){ 
 	  
-	}	  
+	  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+	    float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	    nexp *= (float)fNormPOT[is];
+	    float nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
+	    
+	    chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+	    
+	  } // loop over ereco bins
+	}
+	
+	else if( fteststatistic=="rate-only" ){
+	  
+	  // Take the integral of the ereco distributions (rate-only)
+	  float nexp = 0.;
+	  float nobs = 0.;
+	  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+	    nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	    nobs += skobs_data->ErecoSpectrumArray(s)[ibin];
+	  }
+	  nexp *= (float)fNormPOT[is];
+	  
+	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+	}
+
+	else{
+	  cerr << endl;
+	  cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
+	  cerr << "The test statistic is not available: " << fteststatistic << endl;
+	  cerr << endl;
+	  exit(1); 
+	}
+
+	  
 	iscount++;
       } // loop SK samples
       
@@ -1235,6 +1275,29 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
       
   return bincont;
 }
+
+
+//________________________________________________________________________________________
+
+
+
+void FitMarginalization::SetTestStatistic(string teststatistic){
+
+  // "rate-only" or "rate+shape". Always use the log-likelihood ratio
+  
+  if( teststatistic!="rate+shape" && teststatistic!="rate-only" ){
+    cerr << endl;
+    cerr << "FitMarginalization::SetTestStatistic" << endl;
+    cerr << "The test statistic is not available: " << teststatistic << endl;
+    cerr << endl;
+    exit(1);
+  }
+  
+  fteststatistic = teststatistic;
+}
+
+
+
 
 //________________________________________________________________________________________
 void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){

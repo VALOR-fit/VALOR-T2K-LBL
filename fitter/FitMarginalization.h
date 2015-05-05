@@ -105,7 +105,7 @@ class FitMarginalization
   int GetFirstBinInFullRange(int par=0) const {return fmin_bin_param[par];}
   int GetLastBinInFullRange (int par=0) const {return fmax_bin_param[par];}
   
-  double GetBinParameterValue(int par, int ibin) const {return fmin_param[par] + ibin*fstep_param[par];}
+  double GetBinParameterValue(int par, int ibin) const {return fmin_param[par] + ibin*fstep_param[par];} // TO CHECK
    
   void SetFitParamList(const char * fit_param_list);
   FitParamList * GetFitParamList(void) {return fparm;};
@@ -195,25 +195,13 @@ class FitMarginalization
   TObjArray * GetToyParamThrowHistograms(int nbins = -1) const; // Array needs deleting after call, histograms don't.
 
   // Histogram minimization
-  //void MinimizeChisqInterval(SuperkObservation *skobs_data);
   void MinimizeChisqIntervalRead(SuperkObservation *skobs_data,bool readbinary = false);
-
-
-  
-  //void MinimizeChisqStep(SuperkObservation *skobs_data);
-  void MinimizeChisqStepRead(SuperkObservation *skobs_data,bool readbinary = false);  // MAP
-  
-  //void SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
-  void SetMinimIntervalRead(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast,bool readbinary = false); // MAP
-  
-
-
-
+  void MinimizeChisqStepRead(SuperkObservation *skobs_data,bool readbinary = false);  // MAP  
+  void SetMinimIntervalRead(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast,bool readbinary = false); // MAP  
   void SetMaxIterationSingleFit(int maxiter); // by default is the tot # of histo bins
   void SetMaxFitNumber(int nfit);
 
   // Step (descent gradient)
-  //void GridStartBin(SuperkObservation *skobs_data);
   void GridStartBinRead(SuperkObservation *skobs_data,bool readbinary = false); // MAP
   void SetGridStartRange(double minX,double maxX,double minY,double maxY);
   //
@@ -243,22 +231,17 @@ class FitMarginalization
 
   double GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin);
 
-
-
   // MAP
   TH1I *GetMapChisqRangeFileID_1D(void){ return fhmap_chisqrange_fileid_1D;};  
   TH2I *GetMapChisqRangeFileID_2D(void){ return fhmap_chisqrange_fileid_2D;};  
-
   void SetTagFileName(const char *tag);
   void SetFileID(int nfiles);
   int GetFileIDRead(int binpar0,int binpar1); // need histogram bin number as input
- 
   int GetCurrentFileID(void){ return fCurrentFileIDminim;};
+  //
   
-  
+  void SetTestStatistic(string teststatistic); // "rateonly" or "rate+shape". Always use the log-likelihood ratio
 
-
-  
  private:
   
   TH1F *fhchisq_marg_1D; 
@@ -401,9 +384,8 @@ class FitMarginalization
 
   double fPOT[conv::kns]; // POT of each sk sample to print in the output text file with marg toys
   double fNormPOT[conv::kns]; // POT of each sk sample to print in the output text file with marg toys. Normalized to 1E+20
-  
-  //
-
+ 
+  string fteststatistic; // "rateonly" or "rate+shape"
 
 };
  
