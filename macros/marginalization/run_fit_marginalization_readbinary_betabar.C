@@ -31,11 +31,11 @@ void run_fit_marginalization_readbinary_betabar
 
  const char * tag                      = "fitmarg_betabar",    /* tag for output file */
 
- int          first_experiment         = 4139, //4404, //4739,                       /* */
- int          last_experiment          = 4139, //4404, //4739,                       /* */
+ int          first_experiment         = 0, //4404, //4739,                       /* */
+ int          last_experiment          = 0, //4404, //4739,                       /* */
 
- const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml",
+ const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
  //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml",
  
  bool         dotoys                   = false,
@@ -84,21 +84,25 @@ void run_fit_marginalization_readbinary_betabar
  const double freeparmax0         = 10.,         // maxinum value of free parameter
  const int    NptScan0            = 801,          // # pts of free parameter to scan
  
- const char * freeparname1        = "",  // free parameter
- const double freeparmin1         = 0., // minimum value of free parameter
- const double freeparmax1         = 0., // maxinum value of free parameter
- const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
-
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
  const TString TypeError          = "HESSE-MINOS",  // HESSE, MINOS (contained by the string)  
- const bool DrawFullChisq         = true
+ const bool DrawFullChisq         = true,
+
+ const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
 )
 {
 
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+
+  // Set the second parameter (1D fit)
+  const char * freeparname1        = "";  // free parameter
+  const double freeparmin1         = 0.; // minimum value of free parameter
+  const double freeparmax1         = 0.; // maxinum value of free parameter
+  const int    NptScan1            = 1; //201, //21,      // # pts of free parameter to scan
+  //
 
   TString opt(fit_param_list); 
 
@@ -652,7 +656,7 @@ void run_fit_marginalization_readbinary_betabar
     FitMarginalization *fitmarg = new FitMarginalization();   
     fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
     fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
-    fitmarg->SetTestStatistic("rate+shape");     // Set Test Statistic ("rate-only" or "rate+shape")
+    fitmarg->SetTestStatistic(teststat);     // Set Test Statistic ("rate-only" or "rate+shape")
     fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
     
     
