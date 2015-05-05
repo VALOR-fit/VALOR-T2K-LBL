@@ -81,6 +81,8 @@ foreach (@ARGV) {
     elsif($_ eq '--marginalize-hierarchy'  ) { $marg_hierarchy        = $ARGV[$iarg+1]; }
     elsif($_ eq '--type-error'             ) { $type_error            = $ARGV[$iarg+1]; }
     elsif($_ eq '--draw-full-chisq'        ) { $draw_full_chisq       = $ARGV[$iarg+1]; }
+
+    elsif($_ eq '--test-stat'              ) { $test_stat             = $ARGV[$iarg+1]; }
     
     else {
         print "Unrecognised argument ".$_."\n"; exit;
@@ -91,7 +93,9 @@ $resource        = "interactive"               unless defined $resource;
 $tag             = "fitmarg_sin2th13"          unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
+
 $xml_file         = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
+#$xml_file         = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
 
@@ -144,6 +148,8 @@ $marg_hierarchy    = 1             unless defined $marg_hierarchy;
 $type_error        = "HESSE-MINOS" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
 $draw_full_chisq   = 1             unless defined $draw_full_chisq;
 
+$test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
+
 $job_dir           = "."               unless defined $job_dir;
 $softw_dir         = $ENV{'T2KOSCANA'} unless defined $softw_dir;
 $fmwk_dir          = $ENV{'VALOR_FMWK'} unless defined $fmwk_dir;
@@ -183,7 +189,9 @@ while($irun < $nruns) {
     
     $program = "root2k ";
     
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_betabar.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12Bar,$mix13Bar,$mix23Bar,$deltacpBar,$dm12sqBar,$dm23sqBar,$betaBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq)\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_betabar.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12Bar,$mix13Bar,$mix23Bar,$deltacpBar,$dm12sqBar,$dm23sqBar,$betaBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
+
+    #$arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_betabar.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12Bar,$mix13Bar,$mix23Bar,$deltacpBar,$dm12sqBar,$dm23sqBar,$betaBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
     
     $command = "$program $arguments";
     print "$command \n";
