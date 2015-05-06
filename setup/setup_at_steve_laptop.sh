@@ -12,7 +12,7 @@ if [ -z ${VALOR_FWMK} ] ; then
     source /home/steve/analysis/v1.1.0_evolution/setup/setup_at_steve_laptop.sh
   fi
   if [ $USER == phrhbq ] ; then 
-    source /storage/epp2/phrhbq/stor/analysis/v1.1.0_evolution/setup/setup_at_steve_laptop.sh
+    source /storage/epp2/phrhbq/analysis/v1.1.0_evolution/setup/setup_at_steve_laptop.sh
   fi
   if [ $USER == jat98257 ] ; then 
     source /home/ppd/jat98257/steve/valor/fmwk_v1.1.0_evolution/setup/setup_at_ral.sh /home/ppd/jat98257/steve/valor/fmwk_v1.1.0_evolution/
