@@ -16,8 +16,12 @@ except:
   ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
   
 R=ROOT
+
+#~ R.gROOT.Reset()
+#~ R.gROOT.SetStyle("T2Kcol")
+#~ R.gROOT.ForceStyle(True)
   
-ROOT.gROOT.SetBatch(1)
+R.gROOT.SetBatch(1)
   
 valor = ROOT.valor
 util =  valor.util
@@ -203,7 +207,8 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_kdi=Tru
   
   # Start drawing
   canv = ROOT.TCanvas("canv1","canv1",1280,720)
-  SetMargins(canv)
+  SetBLMargins(canv)
+  SetRMargins(canv,False)
   canv.cd()
   
   # Set Axis labels
@@ -250,7 +255,8 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_kdi=Tru
   canv.Print(plot_name+"."+image_format)
   
   canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
-  SetMargins(canv_nh)
+  SetBLMargins(canv_nh)
+  SetRMargins(canv_nh,True)
   canv_nh.cd()
   h_delta_nh.SetContour(100)
   h_delta_nh.Draw("colz")
@@ -274,7 +280,8 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_kdi=Tru
   
   #~ canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
   #~ canv_ih.cd()
-  #~ SetMargins(canv_ih)
+  #~ SetBLMargins(canv_ih)
+  #~ SetRMargins(canv_ih,True)
   #~ h_delta_ih.SetContour(100)
   #~ h_delta_ih.Draw("colz")
   #~ marker_ih.Draw()
@@ -327,9 +334,17 @@ def GetDeltaHist(h,minval=None):
       
   return h_delta
 
-def SetMargins(canv):
+def SetBLMargins(canv):
   canv.SetBottomMargin(0.14)
   canv.SetLeftMargin  (0.14)
+  return
+  
+def SetRMargins(canv,needZ = False):
+  if needZ: 
+    canv.SetRightMargin(0.1)
+  else: 
+    canv.SetRightMargin(0.05)
+  return
   
 if __name__=="__main__":
   import optparse

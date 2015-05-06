@@ -203,8 +203,9 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   
   # Start drawing
   canv = ROOT.TCanvas("canv1","canv1",1280,720)
-  SetMargins(canv)
   canv.cd()
+  SetBLMargins(canv)
+  SetRMargins (canv,False)
   
   # Set Axis labels
   if (h_nh.GetXaxis().GetTitle()!=h_ih.GetXaxis().GetTitle()):
@@ -249,8 +250,9 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   canv.Print(plot_name+"."+image_format)
   
   canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
-  SetMargins(canv_nh)
   canv_nh.cd()
+  SetBLMargins(canv_nh)
+  SetRMargins (canv_nh,True)
   h_delta_nh.SetContour(100)
   h_delta_nh.Draw("colz")
   marker_nh.Draw()
@@ -273,7 +275,8 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   
   canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
   canv_ih.cd()
-  SetMargins(canv_ih)
+  SetBLMargins(canv_ih)
+  SetRMargins (canv_ih,True)
   h_delta_ih.SetContour(100)
   h_delta_ih.Draw("colz")
   marker_ih.Draw()
@@ -326,9 +329,17 @@ def GetDeltaHist(h,minval=None):
       
   return h_delta
   
-def SetMargins(canv):
+def SetBLMargins(canv):
   canv.SetBottomMargin(0.14)
   canv.SetLeftMargin  (0.14)
+  return
+  
+def SetRMargins(canv,needZ = False):
+  if needZ: 
+    canv.SetRightMargin(0.1)
+  else: 
+    canv.SetRightMargin(0.05)
+  return
   
 if __name__=="__main__":
   import optparse

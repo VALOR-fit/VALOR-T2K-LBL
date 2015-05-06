@@ -186,6 +186,8 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
       
       canv = ROOT.TCanvas("canv1","canv1",1280,720)
       canv.cd()
+      SetBLMargins(canv)
+      SetRMargins (canv,False)
       
       h_contour_asim.Draw("AXIS")
       for cont_list in contours_data + contours_asim:
@@ -214,6 +216,8 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
       
       canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
       canv_nh.cd()
+      SetBLMargins(canv_nh)
+      SetRMargins (canv_nh,True)
       h_delta_asim.SetContour(100)
       h_delta_asim.Draw("colz")
       marker_asim.Draw()
@@ -225,6 +229,8 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
       
       canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
       canv_ih.cd()
+      SetBLMargins(canv_ih)
+      SetRMargins (canv_ih,True)
       h_delta_data.SetContour(100)
       h_delta_data.Draw("colz")
       marker_data.Draw()
@@ -266,6 +272,18 @@ def GetDeltaHist(h,minval=None):
       h_delta.SetBinContent(ix+1,iy+1,h.GetBinContent(ix+1,iy+1)-minval)
       
   return h_delta
+  
+def SetBLMargins(canv):
+  canv.SetBottomMargin(0.14)
+  canv.SetLeftMargin  (0.14)
+  return
+  
+def SetRMargins(canv,needZ = False):
+  if needZ: 
+    canv.SetRightMargin(0.1)
+  else: 
+    canv.SetRightMargin(0.05)
+  return
   
 if __name__=="__main__":
   import optparse

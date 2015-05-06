@@ -187,6 +187,8 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
       
       canv = ROOT.TCanvas("canv1","canv1",1280,720)
       canv.cd()
+      SetBLMargins(canv)
+      SetRMargins (canv,False)
       
       h_contour_stat.Draw("AXIS")
       for cont_list in contours_syst + contours_stat:
@@ -215,6 +217,8 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
       
       canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
       canv_nh.cd()
+      SetBLMargins(canv_nh)
+      SetRMargins (canv_nh,True)
       h_delta_stat.SetContour(100)
       h_delta_stat.Draw("colz")
       marker_stat.Draw()
@@ -226,6 +230,8 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
       
       canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
       canv_ih.cd()
+      SetBLMargins(canv_ih)
+      SetRMargins (canv_ih,True)
       h_delta_syst.SetContour(100)
       h_delta_syst.Draw("colz")
       marker_syst.Draw()
@@ -267,6 +273,18 @@ def GetDeltaHist(h,minval=None):
       h_delta.SetBinContent(ix+1,iy+1,h.GetBinContent(ix+1,iy+1)-minval)
       
   return h_delta
+  
+def SetBLMargins(canv):
+  canv.SetBottomMargin(0.14)
+  canv.SetLeftMargin  (0.14)
+  return
+  
+def SetRMargins(canv,needZ = False):
+  if needZ: 
+    canv.SetRightMargin(0.1)
+  else: 
+    canv.SetRightMargin(0.05)
+  return
   
 if __name__=="__main__":
   import optparse

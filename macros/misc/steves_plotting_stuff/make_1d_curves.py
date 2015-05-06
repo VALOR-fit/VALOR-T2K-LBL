@@ -43,7 +43,10 @@ precision = dict()
 precision["mixing23"] = to3dp
 precision["dmsq"    ] = to3sf
 
-def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_inverted_mixing =None, data_bf_normal_dmsq =None, data_bf_inverted_dmsq =None, tag=None):
+def main(data_file_mixing, data_file_dmsq,
+         data_bf_normal_mixing = None, data_bf_inverted_mixing = None,
+         data_bf_normal_dmsq   = None, data_bf_inverted_dmsq   = None,
+         tag=None,draw_hierarchies_individually = False):
   
   ROOT.gStyle.SetPalette(56);
   ROOT.gStyle.SetOptStat(0)
@@ -98,15 +101,17 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
     
     # If we have files, go and get the bestfits from those instead.
     if bf_nh[param] is not None:
+      print "NH BF: ",bf_nh[param]
       tf_data_normal = ROOT.TFile(bf_nh[param])
       tr = tf_data_normal.Get("fitnt")
       tr.GetEntry(0)
-      bf_x_ih = tr.best_fit_params.BestFitValue(params[param])
+      bf_x_nh = tr.best_fit_params.BestFitValue(params[param])
       
       bf_chisq_nh = tr.best_fit_params.GetBestFitStatistic()
       
     if bf_ih[param] is not None:
       tf_data_inverted = ROOT.TFile(bf_ih[param])
+      print "IH BF: ",bf_ih[param]
       tr = tf_data_inverted.Get("fitnt")
       tr.GetEntry(0)
       bf_x_ih = tr.best_fit_params.BestFitValue(params[param])
@@ -158,9 +163,13 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
       ibin_ih += 1
      
     print "\n\n"
+    
+    h_delta_nh.GetYaxis().SetTitleOffset(0.6)
   
     canv = ROOT.TCanvas("canv1","canv1",1280,720)
     canv.cd()
+    SetBLMargins(canv)
+    SetRMargins (canv,False)
     
     h_delta_nh.SetMinimum(0)
     h_delta_ih.SetMinimum(0)
@@ -228,14 +237,20 @@ def main(data_file_mixing, data_file_dmsq, data_bf_normal_mixing =None, data_bf_
     
     canv.Print(plot_name+"_"+param+"."+image_format)
     
+    if not draw_hierarchies_individually: continue
+    
     canv_nh = ROOT.TCanvas("canv_nh","canv_nh",1280,720)
     canv_nh.cd()
+    SetBLMargins(canv_nh)
+    SetRMargins (canv_nh,False)
     h_delta_nh.SetContour(100)
     h_delta_nh.Draw("")
     canv_nh.Print(plot_name+"_"+param+"_nh."+image_format)
     
     canv_ih = ROOT.TCanvas("canv_ih","canv_ih",1280,720)
     canv_ih.cd()
+    SetBLMargins(canv_ih)
+    SetRMargins (canv_ih,False)
     h_delta_ih.SetContour(100)
     h_delta_ih.Draw("")
     canv_ih.Print(plot_name+"_"+param+"_ih."+image_format)
@@ -255,6 +270,18 @@ def GetDeltaHist(h,minval=None):
       
   return h_delta
   
+def SetBLMargins(canv):
+  canv.SetBottomMargin(0.15)
+  canv.SetLeftMargin  (0.08)
+  return
+  
+def SetRMargins(canv,needZ = False):
+  if needZ: 
+    canv.SetRightMargin(0.1)
+  else: 
+    canv.SetRightMargin(0.05)
+  return
+  
 if __name__=="__main__":
   import optparse
   parser = optparse.OptionParser(usage="%prog [options]..",description="Make contours")
@@ -262,8 +289,9 @@ if __name__=="__main__":
   parser.add_option('--data-bf-nh' , dest='data_bf_normal' ,  default=None, help="File containing true best-fit (data, NH)")
   parser.add_option('--data-bf-ih' , dest='data_bf_inverted', default=None, help="File containing true best-fit (data, IH)")
   parser.add_option('-t','--tag' , dest='tag', default=None, help="Tag for output")
+  parser.add_option('-i','--individual-hierarchies' , dest='individual_hierarchy', default=False,action="store_true", help="Should we draw the independent hierarchy plots")
   
   o,args = parser.parse_args()
   
-  main(args[0],args[1],o.data_bf_normal,o.data_bf_normal,o.data_bf_inverted,o.data_bf_inverted,o.tag)
+  main(args[0],args[1],o.data_bf_normal,o.data_bf_inverted,o.data_bf_normal,o.data_bf_inverted,o.tag,o.individual_hierarchy)
 
