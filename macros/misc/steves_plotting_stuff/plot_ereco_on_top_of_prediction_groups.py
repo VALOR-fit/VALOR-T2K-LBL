@@ -90,12 +90,16 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   data_max = data_spectrum.GetMaximum()
   data_max = data_max+math.sqrt(data_max)
   
+  data_spectrum.GetYaxis().SetTitleOffset(0.8)
+  
   ch = ROOT.TChain("fitnt")
   ch.Add(file_patterns[0])
   assert(ch.GetEntries())
   ch.GetEntry(0)
   
   canvas = ROOT.TCanvas("c","c",1280,720)
+  SetBLMargins(canvas)
+  SetRMargins (canvas,False)
   
   ch.GetEntry(0)
   
@@ -251,6 +255,19 @@ def copy_hist_style(hfrom,hto):
   hto.SetMarkerColor(hfrom.GetMarkerColor())
   hto.SetMarkerStyle(hfrom.GetMarkerStyle())
   hto.SetMarkerSize (hfrom.GetMarkerSize ())
+  
+def SetBLMargins(canv):
+  canv.SetBottomMargin(0.14)
+  canv.SetLeftMargin  (0.11)
+  return
+  
+def SetRMargins(canv,needZ = False):
+  if needZ: 
+    canv.SetRightMargin(0.1)
+  else: 
+    canv.SetRightMargin(0.05)
+  return
+  
 
 if __name__=="__main__":
   import optparse

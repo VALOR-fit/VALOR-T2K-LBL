@@ -70,6 +70,10 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
     print min_stat
     print min_syst
     
+    # Set title offset for Y
+    h_stat.GetYaxis().SetTitleOffset(1.22)
+    h_syst.GetYaxis().SetTitleOffset(1.22)
+    
     # Precalculate the best-fit points from the histogram
     bf_bin_syst = h_syst.GetMinimumBin()
     bf_bin_stat = h_stat.GetMinimumBin()

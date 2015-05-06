@@ -70,6 +70,10 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
     print min_asim
     print min_asim_minos_bf
     
+    # Set title offset for Y
+    h_asim         .GetYaxis().SetTitleOffset(1.1)
+    h_asim_minos_bf.GetYaxis().SetTitleOffset(1.1)
+    
     # Precalculate the best-fit points from the histogram
     bf_bin_asim_minos_bf = h_asim_minos_bf.GetMinimumBin()
     bf_bin_asim = h_asim.GetMinimumBin()
@@ -124,6 +128,7 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
         
     
     h_delta_asim = GetDeltaHist(h_asim,bf_chisq_asim)
+    h_delta_asim.SetMinimum(0)
     
     h_contour_asim = ROOT.TH2D(h_delta_asim)
     h_contour_asim.SetContour(2)
@@ -131,8 +136,10 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
     h_contour_asim.SetContourLevel(0,conf68)
     h_contour_asim.SetLineWidth(1)
     h_contour_asim.SetLineColor(R.kBlack)
+    h_contour_asim.SetMinimum(0)
     
     h_delta_asim_minos_bf = GetDeltaHist(h_asim_minos_bf,bf_chisq_asim_minos_bf)
+    h_delta_asim_minos_bf.SetMinimum(0)
     
     h_contour_asim_minos_bf = ROOT.TH2D(h_delta_asim_minos_bf)
     h_contour_asim_minos_bf.SetContour(2)
@@ -141,9 +148,7 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
     h_contour_asim_minos_bf.SetLineWidth(1)
     h_contour_asim_minos_bf.SetLineStyle(2)
     h_contour_asim_minos_bf.SetLineColor(R.kBlack)
-    
-    h_contour_asim         .GetYaxis().SetTitleOffset(1.4)
-    h_contour_asim_minos_bf.GetYaxis().SetTitleOffset(1.4)
+    h_contour_asim_minos_bf.SetMinimum(0)
     
     contours_asim_minos_bf = GetContours(h_contour_asim_minos_bf)
     contours_asim = GetContours(h_contour_asim)
