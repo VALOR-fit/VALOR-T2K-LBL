@@ -62,6 +62,7 @@ void test_sk_ereco_spectrum_nominal
   
   const char * plot_format = "eps";
   double max_energy_for_plots = 6;
+  gStyle->SetPadRightMargin(0.05);
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
