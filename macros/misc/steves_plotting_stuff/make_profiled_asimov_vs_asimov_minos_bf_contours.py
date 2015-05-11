@@ -39,11 +39,17 @@ p1 = conv.kPhypMixing23Bar
 p2 = conv.kPhypDm23sqBar
 
 # First file is asim-only, second is asim+asim_minos_bf
-def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_normal =None, asim_bf_inverted = None, asim_minos_bf_bf_inverted =None, tag=None):
+def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_normal =None, asim_bf_inverted = None, asim_minos_bf_bf_inverted =None,
+         tag=None, draw_68 = True):
   
   ROOT.gStyle.SetPalette(56);
   ROOT.gStyle.SetOptStat(0)
   ROOT.gStyle.SetOptTitle(0)
+  
+  title_size = 0.08
+  
+  line_style_68 = ROOT.kDashed
+  line_style_90 = ROOT.kSolid
   
   # m = asim only
   # p = asim+asim_minos_bf
@@ -70,9 +76,16 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
     print min_asim
     print min_asim_minos_bf
     
-    # Set title offset for Y
-    h_asim         .GetYaxis().SetTitleOffset(1.1)
-    h_asim_minos_bf.GetYaxis().SetTitleOffset(1.1)
+    # Set title offset
+    h_asim         .GetXaxis().SetTitleOffset(0.8)
+    h_asim_minos_bf.GetXaxis().SetTitleOffset(0.8)
+    h_asim         .GetYaxis().SetTitleOffset(0.9)
+    h_asim_minos_bf.GetYaxis().SetTitleOffset(0.9)
+    
+    h_asim         .GetXaxis().SetTitleSize(title_size)
+    h_asim_minos_bf.GetXaxis().SetTitleSize(title_size)
+    h_asim         .GetYaxis().SetTitleSize(title_size)
+    h_asim_minos_bf.GetYaxis().SetTitleSize(title_size)
     
     # Precalculate the best-fit points from the histogram
     bf_bin_asim_minos_bf = h_asim_minos_bf.GetMinimumBin()
@@ -135,6 +148,7 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
     h_contour_asim.SetContourLevel(1,conf90)
     h_contour_asim.SetContourLevel(0,conf68)
     h_contour_asim.SetLineWidth(1)
+    h_contour_asim.SetLineStyle(line_style_90)
     h_contour_asim.SetLineColor(R.kBlack)
     h_contour_asim.SetMinimum(0)
     
@@ -146,7 +160,7 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
     h_contour_asim_minos_bf.SetContourLevel(1,conf90)
     h_contour_asim_minos_bf.SetContourLevel(0,conf68)
     h_contour_asim_minos_bf.SetLineWidth(1)
-    h_contour_asim_minos_bf.SetLineStyle(2)
+    h_contour_asim_minos_bf.SetLineStyle(line_style_90)
     h_contour_asim_minos_bf.SetLineColor(R.kBlack)
     h_contour_asim_minos_bf.SetMinimum(0)
     
@@ -176,20 +190,23 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
       
     print "\n\n"
     
+    h_contour_asim         .SetLineColor(R.kBlack)
+    h_contour_asim_minos_bf.SetLineColor(R.kRed  )
+    
     # Start drawing
     for zoom in [False,True]:
     #~ for zoom in [True]:
-      if zoom: h_contour_asim.GetYaxis().SetRangeUser(1E-3,4.5E-3)
+      if zoom: h_contour_asim.GetYaxis().SetRangeUser(1E-3,5.0E-3)
       
-      for g in contours_asim_minos_bf[0]: g.SetLineColor(R.kBlack)
-      for g in contours_asim_minos_bf[1]: g.SetLineColor(R.kRed)
-      for g in contours_asim_minos_bf[0]: g.SetLineStyle(h_contour_asim_minos_bf.GetLineStyle())
-      for g in contours_asim_minos_bf[1]: g.SetLineStyle(h_contour_asim_minos_bf.GetLineStyle())
+      for g in contours_asim_minos_bf[0]: g.SetLineColor(h_contour_asim_minos_bf.GetLineColor())
+      for g in contours_asim_minos_bf[1]: g.SetLineColor(h_contour_asim_minos_bf.GetLineColor())
+      for g in contours_asim_minos_bf[0]: g.SetLineStyle(line_style_68)
+      for g in contours_asim_minos_bf[1]: g.SetLineStyle(line_style_90)
       
-      for g in contours_asim[0]: g.SetLineColor(R.kBlack)
-      for g in contours_asim[1]: g.SetLineColor(R.kRed)
-      for g in contours_asim[0]: g.SetLineStyle(h_contour_asim.GetLineStyle())
-      for g in contours_asim[1]: g.SetLineStyle(h_contour_asim.GetLineStyle())
+      for g in contours_asim[0]: g.SetLineColor(h_contour_asim.GetLineColor())
+      for g in contours_asim[1]: g.SetLineColor(h_contour_asim.GetLineColor())
+      for g in contours_asim[0]: g.SetLineStyle(line_style_68)
+      for g in contours_asim[1]: g.SetLineStyle(line_style_90)
     
       
       canv = ROOT.TCanvas("canv1","canv1",1280,720)
@@ -198,7 +215,8 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
       SetRMargins(canv,False)
       
       h_contour_asim.Draw("AXIS")
-      for cont_list in contours_asim_minos_bf + contours_asim:
+      for icont,cont_list in enumerate(contours_asim_minos_bf + contours_asim):
+        if icont%2==0 and not draw_68: continue
         for cont in cont_list:
           cont.Draw("same")
           
@@ -208,9 +226,11 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
       
       # Make legend
       
-      legend = ROOT.TLegend(0.6,0.7,0.9,0.9)
-      legend.AddEntry(h_contour_asim,"T2K Asimov at T2K Run 1-4 Bestfit","lp")
-      legend.AddEntry(h_contour_asim_minos_bf,"T2K Asimov at MINOS Bestfit","lp")
+      legend = ROOT.TLegend(0.3,0.6,0.93,0.93)
+      legend.AddEntry(h_contour_asim,"T2K Sensitivity at T2K Run 1-4 Bestfit","lp")
+      legend.AddEntry(h_contour_asim_minos_bf,"T2K Sensitivity at MINOS Bestfit","lp")
+      legend.SetFillStyle(0)
+      legend.SetBorderSize(0)
       legend.Draw()
       
       if tag is None:
@@ -282,7 +302,7 @@ def GetDeltaHist(h,minval=None):
   return h_delta
   
 def SetBLMargins(canv):
-  canv.SetBottomMargin(0.14)
+  canv.SetBottomMargin(0.16)
   canv.SetLeftMargin  (0.14)
   return
   
@@ -302,10 +322,12 @@ if __name__=="__main__":
   parser.add_option('--asim-minos-bf-nh' , dest='asim_minos_bf_bf_normal' ,  default=None, help="File containing true best-fit (asim_minos_bf, NH)")
   parser.add_option('--asim-minos-bf-ih' , dest='asim_minos_bf_bf_inverted', default=None, help="File containing true best-fit (asim_minos_bf, IH)")
   parser.add_option('-t','--tag' , dest='tag', default=None, help="Tag for output")
+  parser.add_option('--no-68' , dest='no68', default=False,action="store_true", help="Should we remove the 68% confidence region")
+
   
   o,args = parser.parse_args()
   
   assert(len(args)==2)
   
-  main(args[0],args[1],o.asim_bf_normal,o.asim_minos_bf_bf_normal,o.asim_bf_inverted,o.asim_minos_bf_bf_inverted,o.tag)
+  main(args[0],args[1],o.asim_bf_normal,o.asim_minos_bf_bf_normal,o.asim_bf_inverted,o.asim_minos_bf_bf_inverted,o.tag, not o.no68)
 

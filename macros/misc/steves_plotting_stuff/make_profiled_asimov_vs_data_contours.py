@@ -39,11 +39,17 @@ p1 = conv.kPhypMixing23Bar
 p2 = conv.kPhypDm23sqBar
 
 # First file is asim-only, second is asim+data
-def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim_bf_inverted = None, data_bf_inverted =None, tag=None):
+def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim_bf_inverted = None, data_bf_inverted =None,
+         tag=None, draw_68=True):
   
   ROOT.gStyle.SetPalette(56);
   ROOT.gStyle.SetOptStat(0)
   ROOT.gStyle.SetOptTitle(0)
+  
+  title_size = 0.08
+  
+  line_style_68 = ROOT.kDashed
+  line_style_90 = ROOT.kSolid
   
   # m = asim only
   # p = asim+data
@@ -70,9 +76,16 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
     print min_asim
     print min_data
     
-    # Set title offset for Y
-    h_asim.GetYaxis().SetTitleOffset(1.1)
-    h_data.GetYaxis().SetTitleOffset(1.1)
+    # Set title offset
+    h_data.GetXaxis().SetTitleOffset(0.8)
+    h_asim.GetXaxis().SetTitleOffset(0.8)
+    h_asim.GetYaxis().SetTitleOffset(0.9)
+    h_data.GetYaxis().SetTitleOffset(0.9)
+    
+    h_asim.GetXaxis().SetTitleSize(title_size)
+    h_data.GetXaxis().SetTitleSize(title_size)
+    h_asim.GetYaxis().SetTitleSize(title_size)
+    h_data.GetYaxis().SetTitleSize(title_size)
     
     # Precalculate the best-fit points from the histogram
     bf_bin_data = h_data.GetMinimumBin()
@@ -135,7 +148,7 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
     h_contour_asim.SetContourLevel(1,conf90)
     h_contour_asim.SetContourLevel(0,conf68)
     h_contour_asim.SetLineWidth(1)
-    h_contour_asim.SetLineColor(R.kBlack)
+    h_contour_asim.SetLineColor(R.kRed)
     h_contour_asim.SetMinimum(0)
     
     h_delta_data = GetDeltaHist(h_data,bf_chisq_data)
@@ -181,15 +194,15 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
     #~ for zoom in [True]:
       if zoom: h_contour_asim.GetYaxis().SetRangeUser(1E-3,4.5E-3)
       
-      for g in contours_data[0]: g.SetLineColor(R.kBlack)
-      for g in contours_data[1]: g.SetLineColor(R.kRed)
-      for g in contours_data[0]: g.SetLineStyle(h_contour_data.GetLineStyle())
-      for g in contours_data[1]: g.SetLineStyle(h_contour_data.GetLineStyle())
+      for g in contours_data[0]: g.SetLineColor(h_contour_data.GetLineColor())
+      for g in contours_data[1]: g.SetLineColor(h_contour_data.GetLineColor())
+      for g in contours_data[0]: g.SetLineStyle(line_style_68)
+      for g in contours_data[1]: g.SetLineStyle(line_style_90)
       
-      for g in contours_asim[0]: g.SetLineColor(R.kBlack)
-      for g in contours_asim[1]: g.SetLineColor(R.kRed)
-      for g in contours_asim[0]: g.SetLineStyle(h_contour_asim.GetLineStyle())
-      for g in contours_asim[1]: g.SetLineStyle(h_contour_asim.GetLineStyle())
+      for g in contours_asim[0]: g.SetLineColor(h_contour_asim.GetLineColor())
+      for g in contours_asim[1]: g.SetLineColor(h_contour_asim.GetLineColor())
+      for g in contours_asim[0]: g.SetLineStyle(line_style_68)
+      for g in contours_asim[1]: g.SetLineStyle(line_style_90)
     
       
       canv = ROOT.TCanvas("canv1","canv1",1280,720)
@@ -198,7 +211,8 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
       SetRMargins (canv,False)
       
       h_contour_asim.Draw("AXIS")
-      for cont_list in contours_data + contours_asim:
+      for icont,cont_list in enumerate(contours_data + contours_asim):
+        if icont%2==0 and not draw_68: continue
         for cont in cont_list:
           cont.Draw("same")
           
@@ -208,9 +222,11 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
       
       # Make legend
       
-      legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
-      legend.AddEntry(h_contour_asim,"Asimov dataset","lp")
+      legend = ROOT.TLegend(0.6,0.7,0.9,0.9)
+      legend.AddEntry(h_contour_asim,"Sensitivity","lp")
       legend.AddEntry(h_contour_data,"Real data","lp")
+      legend.SetFillStyle(0)
+      legend.SetBorderSize(0)
       legend.Draw()
       
       if tag is None:
@@ -282,7 +298,7 @@ def GetDeltaHist(h,minval=None):
   return h_delta
   
 def SetBLMargins(canv):
-  canv.SetBottomMargin(0.14)
+  canv.SetBottomMargin(0.16)
   canv.SetLeftMargin  (0.14)
   return
   
@@ -302,8 +318,9 @@ if __name__=="__main__":
   parser.add_option('--data-bf-nh' , dest='data_bf_normal' ,  default=None, help="File containing true best-fit (data, NH)")
   parser.add_option('--data-bf-ih' , dest='data_bf_inverted', default=None, help="File containing true best-fit (data, IH)")
   parser.add_option('-t','--tag' , dest='tag', default=None, help="Tag for output")
+  parser.add_option('--no-68' , dest='no68', default=False,action="store_true", help="Should we remove the 68% confidence region")
   
   o,args = parser.parse_args()
   
-  main(args[0],args[1],o.asim_bf_normal,o.data_bf_normal,o.asim_bf_inverted,o.data_bf_inverted,o.tag)
+  main(args[0],args[1],o.asim_bf_normal,o.data_bf_normal,o.asim_bf_inverted,o.data_bf_inverted,o.tag,not o.no68)
 
