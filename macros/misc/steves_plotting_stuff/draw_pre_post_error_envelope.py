@@ -14,8 +14,12 @@ import glob
 max_energy = 4.5
 linewidth = 3
 title_offset = 0.8
-bottom_margin = 0.15
+left_margin   = 0.16
+bottom_margin = 0.18
+right_margin  = 0.05
 use_log_plots = False
+title_size = 0.08
+label_size = 0.07
 
 to3dp = "{0:.3f}"
 
@@ -53,8 +57,6 @@ plot_opt = ""
 try:
   ROOT.t2kana
 except:
-  #~ ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/loadincs.C")
-  #~ ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/loadlibs.C")
   ROOT.gROOT.ProcessLine(".L $T2KOSCANA/root/root2k.C");
   pass
 
@@ -131,6 +133,11 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     for h in hists:
       par_hists.append(h)
       all_hists.append(h)
+      
+      h.GetXaxis().SetTitleSize(title_size)
+      h.GetYaxis().SetTitleSize(title_size)
+      h.GetXaxis().SetLabelSize(label_size)
+      h.GetYaxis().SetLabelSize(label_size)
     
     for h in [hplus_prefit,hminus_prefit]:
       #~ h.SetLineColor(ROOT.kRed)
@@ -146,17 +153,18 @@ def pre_and_postfit_envelope(sample,rootfile,name):
       h.SetLineStyle(1)
       h.SetLineWidth(0)
       h.GetXaxis().SetRangeUser(0.,max_energy)
-      print h.GetTitle(),h.GetLineWidth()
       
-    legend = ROOT.TLegend(0.6,0.6,0.9,0.9);
+    legend = ROOT.TLegend(0.7,0.6,0.93,0.92);
     legend.SetFillStyle(0);
     legend.SetBorderSize(0);
-    legend.SetTextSize(0.04);
+    #~ legend.SetTextSize(0.04);
   
     limit = max([abs(h.GetMinimum()) for h in par_hists] + [abs(h.GetMaximum()) for h in par_hists])
     
     canv = ROOT.TCanvas()
+    canv.SetLeftMargin  (left_margin)
     canv.SetBottomMargin(bottom_margin)
+    canv.SetRightMargin (right_margin )
     if use_log_plots: canv.SetLogx()
     
     for h in par_hists:
