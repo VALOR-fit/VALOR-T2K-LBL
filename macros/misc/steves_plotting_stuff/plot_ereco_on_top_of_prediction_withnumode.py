@@ -39,6 +39,8 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   nopave = True
   
   max_energy = 5
+  title_size = 0.08
+  label_size = 0.07
   
   sample = conv.kSKsRHCFCFV1RingMuLike
   
@@ -92,7 +94,12 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   data_max = data_spectrum.GetMaximum()
   data_max = data_max+math.sqrt(data_max)
   
-  data_spectrum.GetYaxis().SetTitleOffset(0.8)
+  data_spectrum.GetXaxis().SetTitleOffset(0.8)
+  data_spectrum.GetYaxis().SetTitleOffset(0.6)
+  data_spectrum.GetXaxis().SetTitleSize(title_size)
+  data_spectrum.GetYaxis().SetTitleSize(title_size)
+  data_spectrum.GetXaxis().SetLabelSize(label_size)
+  data_spectrum.GetYaxis().SetLabelSize(label_size)
   
   ch = ROOT.TChain("fitnt")
   for pattern in file_patterns:
@@ -141,12 +148,14 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
     
   canvas.Clear()
   
-  legend = ROOT.TLegend(0.7,0.7,0.92,0.93)
+  legend = ROOT.TLegend(0.65,0.6,0.95,0.93)
   legend.AddEntry(data_spectrum,"Data")
-  legend.AddEntry(histogram ,"Best-fit")
-  legend.AddEntry(histogram2,"Nu-mode Best-fit")
+  legend.AddEntry(histogram ,"Best-fit"        ,"l")
+  legend.AddEntry(histogram2,"Nu-mode Best-fit","l")
+  legend.SetBorderSize(0)
+  legend.SetFillStyle (0)
   
-  pave = ROOT.TPaveText(0.5,0.62,0.68,0.92,"ndc")
+  pave = ROOT.TPaveText(0.5,0.62,0.63,0.92,"ndc")
   pave.SetShadowColor(0)
   pave.SetFillColor(0)
   pave.SetFillStyle(0)
@@ -226,7 +235,7 @@ def copy_hist_style(hfrom,hto):
   hto.SetMarkerSize (hfrom.GetMarkerSize ())
   
 def SetBLMargins(canv):
-  canv.SetBottomMargin(0.14)
+  canv.SetBottomMargin(0.16)
   canv.SetLeftMargin  (0.11)
   return
   

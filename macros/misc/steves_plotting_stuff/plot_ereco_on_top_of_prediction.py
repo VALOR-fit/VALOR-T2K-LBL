@@ -34,9 +34,11 @@ text_entry_height = 0.08
 
 coarse_binning = [0.0,0.4,0.7,1.0,1.5,2.0,3.0,4.0,5.0,30]
 
-def main(file_patterns,tag="data",rebin=False,nopave=False):
+def main(file_patterns,tag="data",rebin=False,nopave=False,draw_unosc=False):
   
   max_energy = 5
+  title_size = 0.08
+  label_size = 0.07
   
   sample = conv.kSKsRHCFCFV1RingMuLike
   
@@ -54,6 +56,8 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   fparm_unosc.SetInitValue(conv.kPhypDm23sq  ,  0.0)
   skexp.Generate(fparm_unosc);
   unosc_spectrum = skexp.CurrPredictedErecoSpectrum(sample);
+  unosc_spectrum.SetLineColor(ROOT.kGreen+2)
+  unosc_spectrum.SetLineWidth(2)
   
   unosc_spectrum.GetXaxis().SetRangeUser(0,0.5)
   n_unosc_low_energy  = unosc_spectrum.Integral()
@@ -80,8 +84,6 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   n_data_high_energy = data_spectrum.Integral()
   
   
-  data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
-  
   if (rebin): data_spectrum = rebin_histogram_coarser(data_spectrum,coarse_binning)
   data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
   
@@ -90,7 +92,12 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   data_max = data_spectrum.GetMaximum()
   data_max = data_max+math.sqrt(data_max)
   
-  data_spectrum.GetYaxis().SetTitleOffset(0.8)
+  data_spectrum.GetXaxis().SetTitleOffset(0.8)
+  data_spectrum.GetYaxis().SetTitleOffset(0.6)
+  data_spectrum.GetXaxis().SetTitleSize(title_size)
+  data_spectrum.GetYaxis().SetTitleSize(title_size)
+  data_spectrum.GetXaxis().SetLabelSize(label_size)
+  data_spectrum.GetYaxis().SetLabelSize(label_size)
   
   ch = ROOT.TChain("fitnt")
   for pattern in file_patterns:
@@ -116,19 +123,39 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
     
     skexp.Generate(fparm)
     histogram = skexp.CurrPredictedErecoSpectrum(sample)
-    histogram.SetMaximum(1.1*max(data_max,histogram.GetMaximum()))
     histogram.SetLineColor(ROOT.kRed)
     histogram.SetLineWidth(2)
     n_pred = histogram.Integral()
     
-    if (rebin): histogram = rebin_histogram_coarser(histogram,coarse_binning)
+    #~ tf = ROOT.TFile("bf_spectrum_"+tag+".root","RECREATE")
+    #~ tf.cd()
+    #~ histogram.Write("valor_bestfit")
+    #~ data_spectrum.Write("data")
+    #~ tf.Close()
+    
+    if (rebin):
+      histogram      = rebin_histogram_coarser(histogram     , coarse_binning)
+      unosc_spectrum = rebin_histogram_coarser(unosc_spectrum, coarse_binning)
+    
+    max_values = [data_max,histogram.GetMaximum()]
+    if draw_unosc:
+      max_values.append(unosc_spectrum.GetMaximum())
+    data_spectrum.SetMaximum(1.1*max(max_values))
+    
     histogram.GetXaxis().SetRangeUser(0,max_energy)
     
     canvas.Clear()
     
-    legend = ROOT.TLegend(0.7,0.7,0.92,0.93)
+    if nopave:
+      legend = ROOT.TLegend(0.6,0.6,0.92,0.93)
+    else:
+      legend = ROOT.TLegend(0.7,0.7,0.92,0.93)
+      
     legend.AddEntry(data_spectrum,"Data")
-    legend.AddEntry(histogram,"Best-fit")
+    legend.AddEntry(histogram,"Best-fit","l")
+    if (draw_unosc): legend.AddEntry(unosc_spectrum,"Unoscillated","l")
+    legend.SetBorderSize(0)
+    legend.SetFillStyle (0)
     
     pave = ROOT.TPaveText(0.5,0.62,0.68,0.92,"ndc")
     pave.SetShadowColor(0)
@@ -158,6 +185,9 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
     data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
     data_spectrum.Draw("e")
     histogram.Draw("same")
+    
+    if (draw_unosc): unosc_spectrum.Draw("same")
+    
     legend.Draw()
     if not nopave:
       pave.Draw()
@@ -209,7 +239,7 @@ def copy_hist_style(hfrom,hto):
   hto.SetMarkerSize (hfrom.GetMarkerSize ())
   
 def SetBLMargins(canv):
-  canv.SetBottomMargin(0.14)
+  canv.SetBottomMargin(0.16)
   canv.SetLeftMargin  (0.11)
   return
   
@@ -227,7 +257,8 @@ if __name__=="__main__":
   parser.add_option('-t', dest='tag'    ,default="data"  ,help='The filename')
   parser.add_option('-r', dest='rebin'  ,default=False,action="store_true"  ,help="Use the coarse binning")
   parser.add_option('-n', dest='nopave' ,default=False,action="store_true"  ,help="Don't draw the paves")
+  parser.add_option('-u', '--draw-unosc', dest='draw_unosc' ,default=False,action="store_true"  ,help="Draw the unoscillated prediction")
   
   options,patterns = parser.parse_args()
   
-  main(patterns, options.tag, options.rebin, options.nopave)
+  main(patterns, options.tag, options.rebin, options.nopave, options.draw_unosc)

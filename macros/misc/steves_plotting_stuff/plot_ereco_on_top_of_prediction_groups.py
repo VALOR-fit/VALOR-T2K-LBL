@@ -37,6 +37,8 @@ coarse_binning = [0.0,0.4,0.7,1.0,1.5,2.0,3.0,4.0,5.0,30]
 def main(file_patterns,tag="data",rebin=False,nopave=False):
   
   max_energy = 5
+  title_size = 0.08
+  label_size = 0.07
   
   sample = conv.kSKsRHCFCFV1RingMuLike
   
@@ -90,7 +92,12 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   data_max = data_spectrum.GetMaximum()
   data_max = data_max+math.sqrt(data_max)
   
-  data_spectrum.GetYaxis().SetTitleOffset(0.8)
+  data_spectrum.GetXaxis().SetTitleOffset(0.8)
+  data_spectrum.GetYaxis().SetTitleOffset(0.6)
+  data_spectrum.GetXaxis().SetTitleSize(title_size)
+  data_spectrum.GetYaxis().SetTitleSize(title_size)
+  data_spectrum.GetXaxis().SetLabelSize(label_size)
+  data_spectrum.GetYaxis().SetLabelSize(label_size)
   
   ch = ROOT.TChain("fitnt")
   ch.Add(file_patterns[0])
@@ -141,11 +148,14 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   assert(pthet_hist)
   pthet_hist.SetLineColor(ROOT.kGreen+2)
   
-  legend = ROOT.TLegend(0.7,0.6,0.92,0.93)
+  legend = ROOT.TLegend(0.65,0.55,0.93,0.93)
   legend.AddEntry(data_spectrum,"Data"    )
-  legend.AddEntry(histogram    ,"VALOR"   )
-  legend.AddEntry(mach3_hist   ,"MaCh3"   )
-  legend.AddEntry(pthet_hist   ,"P-theta" )
+  legend.AddEntry(histogram    ,"VALOR"   ,"l")
+  legend.AddEntry(mach3_hist   ,"MaCh3"   ,"l")
+  legend.AddEntry(pthet_hist   ,"P-theta" ,"l")
+  
+  legend.SetBorderSize(0)
+  legend.SetFillStyle (0)
   
 
   pave = ROOT.TPaveText(0.5,0.56,0.68,0.87,"ndc")
@@ -257,7 +267,7 @@ def copy_hist_style(hfrom,hto):
   hto.SetMarkerSize (hfrom.GetMarkerSize ())
   
 def SetBLMargins(canv):
-  canv.SetBottomMargin(0.14)
+  canv.SetBottomMargin(0.16)
   canv.SetLeftMargin  (0.11)
   return
   
