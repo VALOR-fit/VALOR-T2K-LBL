@@ -53,7 +53,7 @@ void test_sk_ereco_spectrum_nominal
   bool plot_per_50MeV = true,
   bool group_mec_as_ccqe = true,
   bool print_total_events_on_plot = false,
-  int force_ymax = -1,
+  double force_ymax = -1,
   bool use_gof_binning = false
 )
 {
@@ -63,6 +63,9 @@ void test_sk_ereco_spectrum_nominal
   const char * plot_format = "eps";
   double max_energy_for_plots = 6;
   gStyle->SetPadRightMargin(0.05);
+  
+  double title_size = 0.08;
+  double title_offset = 0.7;
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -205,6 +208,11 @@ void test_sk_ereco_spectrum_nominal
   hErecoTot->GetYaxis()->SetTitle("Events per bin");
   hErecoTot_coarse->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot_coarse->GetYaxis()->SetTitle("Events per bin");
+  
+  hErecoTot       ->GetXaxis()->SetTitleSize(title_size);
+  hErecoTot       ->GetYaxis()->SetTitleSize(title_size);
+  hErecoTot_coarse->GetXaxis()->SetTitleSize(title_size);
+  hErecoTot_coarse->GetYaxis()->SetTitleSize(title_size);
   
   TH1D * frame = new TH1D(*hErecoTot);
   if (force_ymax>0) {frame->SetMaximum(force_ymax);}
@@ -465,35 +473,43 @@ void test_sk_ereco_spectrum_nominal
   }
 
   hErecoMode_NC->SetFillStyle(1001);
-  hErecoMode_NC->SetLineColor(kRed+2);
-  hErecoMode_NC->SetFillColor(kRed);
+  //~ hErecoMode_NC->SetFillStyle(3006);
+  hErecoMode_NC->SetLineColor(kRed-2);
+  hErecoMode_NC->SetFillColor(kRed-2);
 
   hErecoMode_NumuBar_CCQE->SetFillStyle(1001);
   hErecoMode_NumuBar_CCQE->SetLineColor(kBlack);
+  hErecoMode_NumuBar_CCQE->SetLineStyle(1);
   hErecoMode_NumuBar_CCQE->SetLineWidth(2);
-  //hErecoMode_NumuBar_CCQE->SetFillColor(kWhite);
+  hErecoMode_NumuBar_CCQE->SetFillColor(kYellow);
   
-  hErecoMode_NumuBar_MEC->SetFillStyle(3004);
+  //~ hErecoMode_NumuBar_MEC->SetFillStyle(3004);
+  hErecoMode_NumuBar_MEC->SetFillStyle(1001);
   hErecoMode_NumuBar_MEC->SetLineColor(kBlack);
-  hErecoMode_NumuBar_MEC->SetLineWidth(2);
-  hErecoMode_NumuBar_MEC->SetFillColor(kGray+3);
-  //hErecoMode_NumuBar_MEC->SetFillColor(kWhite);
+  hErecoMode_NumuBar_MEC->SetLineStyle(0);
+  //~ hErecoMode_NumuBar_MEC->SetFillColor(kGray+3);
+  //~ hErecoMode_NumuBar_MEC->SetFillColor(kWhite);
+  hErecoMode_NumuBar_MEC->SetFillColor(kOrange);
 
-  hErecoMode_NumuBar_CCnQE->SetFillStyle(3001);
+  //~ hErecoMode_NumuBar_CCnQE->SetFillStyle(3001);
+  hErecoMode_NumuBar_CCnQE->SetFillStyle(1001);
   hErecoMode_NumuBar_CCnQE->SetLineColor(kGray+3);
-  hErecoMode_NumuBar_CCnQE->SetLineWidth(2.);
-  hErecoMode_NumuBar_CCnQE->SetFillColor(kGray+3);
+  hErecoMode_NumuBar_CCnQE->SetLineStyle(0);
+  hErecoMode_NumuBar_CCnQE->SetFillColor(kOrange+1);
   //hErecoMode_NumuBar_CCnQE->SetFillStyle(3004);
 
-  hErecoMode_Numu_CC->SetLineWidth(2);
+  hErecoMode_Numu_CC->SetLineWidth(1);
+  hErecoMode_Numu_CC->SetLineStyle(1);
+  //~ hErecoMode_Numu_CC->SetFillStyle(3007);
   hErecoMode_Numu_CC->SetFillStyle(1001);
-  hErecoMode_Numu_CC->SetLineColor(kGreen+2);
-  hErecoMode_Numu_CC->SetFillColor(kGreen);
+  hErecoMode_Numu_CC->SetLineColor(kBlack);
+  hErecoMode_Numu_CC->SetFillColor(kGreen-5);
 
   hErecoMode_NueNueBar_CC->SetFillStyle(1001);
+  //~ hErecoMode_NueNueBar_CC->SetFillStyle(3013);
   hErecoMode_NueNueBar_CC->SetLineWidth(1);
-  hErecoMode_NueNueBar_CC->SetLineColor(kBlue);
-  hErecoMode_NueNueBar_CC->SetFillColor(kBlue);
+  hErecoMode_NueNueBar_CC->SetLineColor(kBlue-3);
+  hErecoMode_NueNueBar_CC->SetFillColor(kBlue-6);
 
   hErecoMode_NC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   //~ hErecoMode_NC->GetYaxis()->SetTitle("Events per 0.050 GeV");
@@ -522,10 +538,17 @@ void test_sk_ereco_spectrum_nominal
     sErecoTotFlavMode->GetXaxis()->SetRangeUser(0,max_energy_for_plots);
   }
   
+  sErecoTotFlavMode->GetXaxis()->SetTitleSize(title_size);
+  sErecoTotFlavMode->GetYaxis()->SetTitleSize(title_size);
+  
   double ymax = (force_ymax > 0 ? force_ymax : 1.1*sErecoTotFlavMode->GetMaximum());
   TH1F * drawn_frame = cErecoTotFlavMode->DrawFrame(0,0,TMath::Min(max_energy_for_plots,hErecoMode_NC->GetXaxis()->GetXmax()),ymax);
   drawn_frame->GetXaxis()->SetTitle(frame->GetXaxis()->GetTitle());
   drawn_frame->GetYaxis()->SetTitle(frame->GetYaxis()->GetTitle());
+  drawn_frame->GetXaxis()->SetTitleSize(frame->GetXaxis()->GetTitleSize());
+  drawn_frame->GetYaxis()->SetTitleSize(frame->GetYaxis()->GetTitleSize());
+  drawn_frame->GetXaxis()->SetTitleOffset(title_offset);
+  drawn_frame->GetYaxis()->SetTitleOffset(title_offset);
   drawn_frame->Draw("AXIS");
   sErecoTotFlavMode->Draw("same");
   //~ sErecoTotFlavMode->Draw();
@@ -536,16 +559,17 @@ void test_sk_ereco_spectrum_nominal
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
   
-  TLegend *leg = new TLegend(0.6, 0.4, 0.9, 0.9);
+  TLegend *leg = new TLegend(0.6, 0.4, 0.93, 0.93);
   leg->SetFillColor(0);
+  leg->SetFillStyle(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(hErecoMode_NumuBar_CCQE,"1 #bar{#mu}-like (Total)","L");
-  leg->AddEntry(hErecoMode_NumuBar_CCQE,"1 #bar{#mu}-like (#bar{#nu}_{#mu} CCQE)","F");
-  if (!group_mec_as_ccqe) { leg->AddEntry(hErecoMode_NumuBar_MEC,"1 #bar{#mu}-like (#bar{#nu}_{#mu} MEC)","F"); }
-  leg->AddEntry(hErecoMode_NumuBar_CCnQE,"1 #bar{#mu}-like (#bar{#nu}_{#mu} CCnQE)","F");
-  leg->AddEntry(hErecoMode_Numu_CC,"1 #bar{#mu}-like (#nu_{#mu} CC)","F");
-  leg->AddEntry(hErecoMode_NueNueBar_CC,"1 #bar{#mu}-like (#nu_{e},#bar{#nu_{e}} CC)","F");
-  leg->AddEntry(hErecoMode_NC,"1 #bar{#mu}-like (NC)","F");
+  leg->AddEntry(hErecoMode_NumuBar_CCQE,"Total","L");
+  leg->AddEntry(hErecoMode_NumuBar_CCQE,"#bar{#nu}_{#mu} CCQE","F");
+  if (!group_mec_as_ccqe) { leg->AddEntry(hErecoMode_NumuBar_MEC,"#bar{#nu}_{#mu} MEC","F"); }
+  leg->AddEntry(hErecoMode_NumuBar_CCnQE,"#bar{#nu}_{#mu} CCnQE","F");
+  leg->AddEntry(hErecoMode_Numu_CC,"#nu_{#mu} CC","F");
+  leg->AddEntry(hErecoMode_NueNueBar_CC,"#nu_{e},#bar{#nu_{e}} CC","F");
+  leg->AddEntry(hErecoMode_NC,"NC","F");
   leg->Draw();
   
   if(print_total_events_on_plot) {events_count_pave->Draw();}
