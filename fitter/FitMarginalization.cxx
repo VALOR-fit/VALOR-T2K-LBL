@@ -114,7 +114,7 @@ FitMarginalization::~FitMarginalization(void)
 void FitMarginalization::Init(SuperkExpectation *skexp){
    
   // Test statistic to be used in the fit
-  if( fteststatistic!="rate+shape" && fteststatistic!="rate-only" ){
+  if( fteststatistic!="rate+shape" && fteststatistic!="rate-only" && fteststatistic!=""){
     cerr << endl;
     cerr << "FitMarginalization::Init" << endl;
     cerr << "The test statistic is not available: " << fteststatistic << endl;
