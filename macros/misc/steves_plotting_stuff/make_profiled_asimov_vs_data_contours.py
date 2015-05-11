@@ -47,6 +47,7 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
   ROOT.gStyle.SetOptTitle(0)
   
   title_size = 0.08
+  label_size = 0.07
   
   line_style_68 = ROOT.kDashed
   line_style_90 = ROOT.kSolid
@@ -86,6 +87,10 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
     h_data.GetXaxis().SetTitleSize(title_size)
     h_asim.GetYaxis().SetTitleSize(title_size)
     h_data.GetYaxis().SetTitleSize(title_size)
+    h_asim.GetXaxis().SetLabelSize(label_size)
+    h_data.GetXaxis().SetLabelSize(label_size)
+    #~ h_asim.GetYaxis().SetLabelSize(label_size)
+    #~ h_data.GetYaxis().SetLabelSize(label_size)
     
     # Precalculate the best-fit points from the histogram
     bf_bin_data = h_data.GetMinimumBin()

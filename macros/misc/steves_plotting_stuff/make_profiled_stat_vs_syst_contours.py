@@ -47,6 +47,7 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
   ROOT.gStyle.SetOptTitle(0)
   
   title_size = 0.08
+  label_size = 0.07
   
   line_style_68 = ROOT.kDashed
   line_style_90 = ROOT.kSolid
@@ -86,6 +87,10 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
     h_syst.GetXaxis().SetTitleSize(title_size)
     h_stat.GetYaxis().SetTitleSize(title_size)
     h_syst.GetYaxis().SetTitleSize(title_size)
+    h_stat.GetXaxis().SetLabelSize(label_size)
+    h_syst.GetXaxis().SetLabelSize(label_size)
+    #~ h_stat.GetYaxis().SetLabelSize(label_size)
+    #~ h_syst.GetYaxis().SetLabelSize(label_size)
     
     # Precalculate the best-fit points from the histogram
     bf_bin_syst = h_syst.GetMinimumBin()

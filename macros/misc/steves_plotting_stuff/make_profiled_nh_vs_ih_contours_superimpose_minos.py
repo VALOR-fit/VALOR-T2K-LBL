@@ -53,6 +53,7 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   minos_graph.SetMarkerColor(ROOT.kGreen+3)
   
   title_size = 0.08
+  label_size = 0.07
   
   line_style_68 = ROOT.kDashed
   line_style_90 = ROOT.kSolid
@@ -85,6 +86,10 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   h_ih.GetXaxis().SetTitleSize(title_size)
   h_nh.GetYaxis().SetTitleSize(title_size)
   h_ih.GetYaxis().SetTitleSize(title_size)
+  h_nh.GetXaxis().SetLabelSize(label_size)
+  h_ih.GetXaxis().SetLabelSize(label_size)
+  #~ h_nh.GetYaxis().SetLabelSize(label_size)
+  #~ h_ih.GetYaxis().SetLabelSize(label_size)
   
   # Precalculate the best-fit points from the histogram
   bf_bin_ih = h_ih.GetMinimumBin()
