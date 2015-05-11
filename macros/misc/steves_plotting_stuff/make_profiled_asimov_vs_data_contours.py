@@ -189,6 +189,9 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
       
     print "\n\n"
     
+    h_contour_data.SetLineStyle(line_style_90)
+    h_contour_asim.SetLineStyle(line_style_90)
+    
     # Start drawing
     for zoom in [False,True]:
     #~ for zoom in [True]:
@@ -222,9 +225,9 @@ def main(asim_file, data_file, asim_bf_normal = None, data_bf_normal =None, asim
       
       # Make legend
       
-      legend = ROOT.TLegend(0.6,0.7,0.9,0.9)
+      legend = ROOT.TLegend(0.6,0.7,0.93,0.93)
       legend.AddEntry(h_contour_asim,"Sensitivity","lp")
-      legend.AddEntry(h_contour_data,"Real data","lp")
+      legend.AddEntry(h_contour_data,"T2K data","lp")
       legend.SetFillStyle(0)
       legend.SetBorderSize(0)
       legend.Draw()

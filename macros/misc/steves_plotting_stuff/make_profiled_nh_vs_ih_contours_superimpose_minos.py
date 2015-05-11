@@ -52,6 +52,10 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   minos_points.SetMarkerColor(ROOT.kGreen+3)
   minos_graph.SetMarkerColor(ROOT.kGreen+3)
   
+  title_size = 0.08
+  
+  line_style_68 = ROOT.kDashed
+  line_style_90 = ROOT.kSolid
   
   f_nh = ROOT.TFile(contour_file)
   h_nh = f_nh.Get("h_chisq_dmsq_mixing23_Ave_"+"nh")
@@ -71,9 +75,16 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   print min_nh
   print min_ih
   
-  # Set title offset for Y
-  h_nh.GetYaxis().SetTitleOffset(1.1)
-  h_ih.GetYaxis().SetTitleOffset(1.1)
+  # Set title offset
+  h_nh.GetXaxis().SetTitleOffset(0.8)
+  h_ih.GetXaxis().SetTitleOffset(0.8)
+  h_nh.GetYaxis().SetTitleOffset(0.9)
+  h_ih.GetYaxis().SetTitleOffset(0.9)
+    
+  h_nh.GetXaxis().SetTitleSize(title_size)
+  h_ih.GetXaxis().SetTitleSize(title_size)
+  h_nh.GetYaxis().SetTitleSize(title_size)
+  h_ih.GetYaxis().SetTitleSize(title_size)
   
   # Precalculate the best-fit points from the histogram
   bf_bin_ih = h_ih.GetMinimumBin()
@@ -235,11 +246,13 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   
   # Make legend
   
-  legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
-  legend.AddEntry(h_contour_nh,"NH","lp")
-  legend.AddEntry(h_contour_ih,"IH","lp")
+  legend = ROOT.TLegend(0.7,0.7,0.93,0.93)
+  legend.AddEntry(h_contour_nh,"T2K NH","lp")
+  legend.AddEntry(h_contour_ih,"T2K IH","lp")
   if draw_minos:
     legend.AddEntry(minos_graph,"MINOS","lp")
+  legend.SetFillStyle(0)
+  legend.SetBorderSize(0)
   legend.Draw()
   
   if tag is None:
@@ -330,7 +343,7 @@ def GetDeltaHist(h,minval=None):
   return h_delta
   
 def SetBLMargins(canv):
-  canv.SetBottomMargin(0.14)
+  canv.SetBottomMargin(0.16)
   canv.SetLeftMargin  (0.14)
   return
   
@@ -349,7 +362,7 @@ if __name__=="__main__":
   parser.add_option('--bf-ih' , dest='bf_inverted', default=None, help="File containing true best-fit (syst, IH)")
   parser.add_option('-t','--tag' , dest='tag', default=None, help="Tag for output")
   parser.add_option('-m','--minos' , dest='draw_minos', default=False,action="store_true", help="Should we add a MINOS contour")
-  parser.add_option('--no-68' , dest='no68', default=False,action="store_true", help="Should we add remove the 68% confidence region")
+  parser.add_option('--no-68' , dest='no68', default=False,action="store_true", help="Should we remove the 68% confidence region")
   
   o,args = parser.parse_args()
   assert(len(args)==1)

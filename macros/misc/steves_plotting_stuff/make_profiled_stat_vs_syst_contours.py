@@ -39,11 +39,17 @@ p1 = conv.kPhypMixing23Bar
 p2 = conv.kPhypDm23sqBar
 
 # First file is stat-only, second is stat+syst
-def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat_bf_inverted = None, syst_bf_inverted =None, tag=None):
+def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat_bf_inverted = None, syst_bf_inverted =None,
+         tag=None,draw_68 = True):
   
   ROOT.gStyle.SetPalette(56);
   ROOT.gStyle.SetOptStat(0)
   ROOT.gStyle.SetOptTitle(0)
+  
+  title_size = 0.08
+  
+  line_style_68 = ROOT.kDashed
+  line_style_90 = ROOT.kSolid
   
   # m = stat only
   # p = stat+syst
@@ -70,9 +76,16 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
     print min_stat
     print min_syst
     
-    # Set title offset for Y
-    h_stat.GetYaxis().SetTitleOffset(1.22)
-    h_syst.GetYaxis().SetTitleOffset(1.22)
+    # Set title offset
+    h_stat.GetXaxis().SetTitleOffset(0.8)
+    h_syst.GetXaxis().SetTitleOffset(0.8)
+    h_stat.GetYaxis().SetTitleOffset(0.9)
+    h_syst.GetYaxis().SetTitleOffset(0.9)
+      
+    h_stat.GetXaxis().SetTitleSize(title_size)
+    h_syst.GetXaxis().SetTitleSize(title_size)
+    h_stat.GetYaxis().SetTitleSize(title_size)
+    h_syst.GetYaxis().SetTitleSize(title_size)
     
     # Precalculate the best-fit points from the histogram
     bf_bin_syst = h_syst.GetMinimumBin()
@@ -205,9 +218,11 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
       
       # Make legend
       
-      legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
+      legend = ROOT.TLegend(0.7,0.7,0.93,0.93)
       legend.AddEntry(h_contour_stat,"Stat only","lp")
       legend.AddEntry(h_contour_syst,"Stat+syst","lp")
+      legend.SetFillStyle(0)
+      legend.SetBorderSize(0)
       legend.Draw()
       
       if tag is None:
@@ -279,7 +294,7 @@ def GetDeltaHist(h,minval=None):
   return h_delta
   
 def SetBLMargins(canv):
-  canv.SetBottomMargin(0.14)
+  canv.SetBottomMargin(0.16)
   canv.SetLeftMargin  (0.14)
   return
   
@@ -299,8 +314,10 @@ if __name__=="__main__":
   parser.add_option('--syst-bf-nh' , dest='syst_bf_normal' ,  default=None, help="File containing true best-fit (syst, NH)")
   parser.add_option('--syst-bf-ih' , dest='syst_bf_inverted', default=None, help="File containing true best-fit (syst, IH)")
   parser.add_option('-t','--tag' , dest='tag', default=None, help="Tag for output")
+  parser.add_option('--no-68' , dest='no68', default=False,action="store_true", help="Should we remove the 68% confidence region")
+
   
   o,args = parser.parse_args()
   
-  main(args[0],args[1],o.stat_bf_normal,o.syst_bf_normal,o.stat_bf_inverted,o.syst_bf_inverted,o.tag)
+  main(args[0],args[1],o.stat_bf_normal,o.syst_bf_normal,o.stat_bf_inverted,o.syst_bf_inverted,o.tag, not o.no68)
 

@@ -192,6 +192,8 @@ def main(asim_file, asim_minos_bf_file, asim_bf_normal = None, asim_minos_bf_bf_
     
     h_contour_asim         .SetLineColor(R.kBlack)
     h_contour_asim_minos_bf.SetLineColor(R.kRed  )
+    h_contour_asim         .SetLineStyle(line_style_90)
+    h_contour_asim_minos_bf.SetLineStyle(line_style_90)
     
     # Start drawing
     for zoom in [False,True]:

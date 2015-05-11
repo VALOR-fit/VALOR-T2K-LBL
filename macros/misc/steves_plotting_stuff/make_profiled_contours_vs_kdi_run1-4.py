@@ -49,6 +49,11 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_kdi=Tru
   ROOT.gStyle.SetOptStat(0)
   ROOT.gStyle.SetOptTitle(0)
   
+  title_size = 0.08
+  
+  line_style_68 = ROOT.kDashed
+  line_style_90 = ROOT.kSolid
+  
   kdi_file = ROOT.TFile(os.environ["T2KOSCANA"]+"/inputs/contours/KDI_run1-4_nuis4_sintheta_normal_hist.root")
   kdi_graph = kdi_file.Get("contour90_constdchisq")
   kdi_points = kdi_file.Get("bestfit")
@@ -75,9 +80,16 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_kdi=Tru
   print min_nh
   print min_ih
   
-  # Set title offset for Y
-  h_nh.GetYaxis().SetTitleOffset(1.1)
-  h_ih.GetYaxis().SetTitleOffset(1.1)
+  # Set title offset
+  h_nh.GetXaxis().SetTitleOffset(0.8)
+  h_ih.GetXaxis().SetTitleOffset(0.8)
+  h_nh.GetYaxis().SetTitleOffset(0.9)
+  h_ih.GetYaxis().SetTitleOffset(0.9)
+    
+  h_nh.GetXaxis().SetTitleSize(title_size)
+  h_ih.GetXaxis().SetTitleSize(title_size)
+  h_nh.GetYaxis().SetTitleSize(title_size)
+  h_ih.GetYaxis().SetTitleSize(title_size)
   
   # Precalculate the best-fit points from the histogram
   bf_bin_ih = h_ih.GetMinimumBin()
@@ -155,9 +167,11 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_kdi=Tru
   marker_nh.SetMarkerColor(ROOT.kBlue+1);
   marker_ih.SetMarkerSize(1.5);
   marker_nh.SetMarkerSize(1.5);
+  kdi_points.SetMarkerSize(1.5)
   
   CopyMarkerToHist(marker_ih,h_contour_ih)
   CopyMarkerToHist(marker_nh,h_contour_nh)
+  CopyMarkerToHist(kdi_points,kdi_graph)
   
   
   # Dump graphs for Kirsty
@@ -240,11 +254,13 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_kdi=Tru
   
   # Make legend
   
-  legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
-  legend.AddEntry(h_contour_nh,"VALOR NH Run5-6","lp")
+  legend = ROOT.TLegend(0.55,0.6,0.93,0.93)
+  legend.AddEntry(h_contour_nh,"T2K Run 5-6","lp")
   #~ legend.AddEntry(h_contour_ih,"IH","lp")
   if draw_kdi:
-    legend.AddEntry(kdi_graph,"KDI Run1-4","lp")
+    legend.AddEntry(kdi_graph,"T2K Run 1-4","lp")
+  legend.SetFillStyle(0)
+  legend.SetBorderSize(0)
   legend.Draw()
   
   if tag is None:
@@ -335,7 +351,7 @@ def GetDeltaHist(h,minval=None):
   return h_delta
 
 def SetBLMargins(canv):
-  canv.SetBottomMargin(0.14)
+  canv.SetBottomMargin(0.16)
   canv.SetLeftMargin  (0.14)
   return
   
@@ -354,7 +370,7 @@ if __name__=="__main__":
   parser.add_option('--bf-ih' , dest='bf_inverted', default=None, help="File containing true best-fit (syst, IH)")
   parser.add_option('-t','--tag' , dest='tag', default=None, help="Tag for output")
   parser.add_option('-k','--kdi' , dest='draw_kdi', default=False,action="store_true", help="Should we add a MINOS contour")
-  parser.add_option('--no-68' , dest='no68', default=False,action="store_true", help="Should we add remove the 68% confidence region")
+  parser.add_option('--no-68' , dest='no68', default=False,action="store_true", help="Should we remove the 68% confidence region")
   
   o,args = parser.parse_args()
   assert(len(args)==1)
