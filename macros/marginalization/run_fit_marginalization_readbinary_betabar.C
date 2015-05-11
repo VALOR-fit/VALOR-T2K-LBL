@@ -35,8 +35,8 @@ void run_fit_marginalization_readbinary_betabar
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
  //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml",
- const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
+ const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml",
  
  bool         dotoys                   = false,
 
@@ -55,11 +55,11 @@ void run_fit_marginalization_readbinary_betabar
  double       input_dm23sq_bar         = -99,
  double       input_beta_bar           = -99,
 
- const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app_fullstat.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
+ const char * config_file              = "analysis_configuration_run1to6_test_app_fullstat.xml",
  
- bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
- int          tweak_systematics        = 1,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
+ bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
+ int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
  const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
@@ -73,23 +73,26 @@ void run_fit_marginalization_readbinary_betabar
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
- const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
+ //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
+ 
+ const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2KFullStat_T2Kreact_betabar_fixosc_10kToys/BetaBar_7p8E21POT",  // T2K+reactor T2K Full Stat (betabar=0,1) 
 
- const int    nfiles               = 401, // 1        // # of files to read
+
+ const int    nfiles               = 1, //401, 1        // # of files to read
 
  const int    NtoysMarg            = 10000,   // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter
- const double freeparmax0         = 10.,         // maxinum value of free parameter
- const int    NptScan0            = 801,          // # pts of free parameter to scan
+ const double freeparmax0         = 1, // 10., 1         // maxinum value of free parameter
+ const int    NptScan0            = 2, // 801, 2          // # pts of free parameter to scan
  
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
- const TString TypeError          = "HESSE-MINOS",  // HESSE, MINOS (contained by the string)  
- const bool DrawFullChisq         = true,
+ const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
+ const bool DrawFullChisq         = false,
 
- const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
+ const string teststat            = "rate-only"   // "rate-only" or "rate+shape"
 )
 {
 
@@ -326,6 +329,8 @@ void run_fit_marginalization_readbinary_betabar
   double chisqtrue0=conv::kALargeNum;
   double chisqtrue1=conv::kALargeNum;
   double deltachisqtrue=conv::kALargeNum;
+  double deltachisq01=conv::kALargeNum;
+  double deltachisq0BF=conv::kALargeNum;
   TH2F *hchisq2D_out;
   TH1F *hchisq1D_out;
   TH2F *hstep2D_out;
@@ -740,8 +745,7 @@ void run_fit_marginalization_readbinary_betabar
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
     chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(0.,truepar1,skobs_fakedata,true);
     chisqtrue1 = (double)fitmarg->GetChisqMargTrueRead(1.,truepar1,skobs_fakedata,true);
-    deltachisqtrue = chisqtrue0 - chisqtrue1;
-
+    
     // Draw Full Chisq
     if(DrawFullChisq){
       fitmarg->FillChisqMarg(skobs_fakedata,true);
@@ -752,7 +756,10 @@ void run_fit_marginalization_readbinary_betabar
       fitmarg->BuildDeltaChisqMarg();
     }
 
-
+    // Get delta chisq
+    deltachisq01 = chisqtrue0 - chisqtrue1;
+    deltachisq0BF = chisqtrue0 - chisqmin;
+ 
     // Get the fakedata histogram
 
     for(int is = 0; is < kns; is++) {
@@ -813,7 +820,8 @@ void run_fit_marginalization_readbinary_betabar
     cout << endl;
     cout << "Chisq True (beta=0) = " << chisqtrue0 << endl;
     cout << "Chisq True (beta=1) = " << chisqtrue1 << endl;
-    cout << "Delta Chisq = Chisq(beta=0) - Chisq(beta=1) = " << deltachisqtrue << endl;
+    cout << "Delta Chisq = Chisq(beta=0) - Chisq(beta=1) = " << deltachisq01 << endl;
+    cout << "Delta Chisq = Chisq(beta=0) - Chisq(betaBF) = " << deltachisq0BF << endl;
     cout << endl;
     cout << "Minimum of full Chisq histogram:" << endl;
     cout << "  - chisqmin = " << chisqminFullChisq << endl; 
