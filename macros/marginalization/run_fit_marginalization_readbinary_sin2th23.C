@@ -31,9 +31,10 @@ void run_fit_marginalization_readbinary_sin2th23
 
  const char * tag                      = "fitmarg_sin2th23",    /* tag for output file */
  int          first_experiment         = 0,                       /* */
- int          last_experiment          = 1,                       /* */
+ int          last_experiment          = 0,                       /* */
 
- const char * xmlfile                  = "toymc/toymc_numubardisap_fixosc_rethrowunphysical_2p5E20POT-0.xml",  
+ //const char * xmlfile                  = "toymc/toymc_numubardisap_fixosc_rethrowunphysical_2p5E20POT-0.xml",  
+ const char * xmlfile                  = "toymc/toymc_numubardisap_fixosc_rethrowunphysical_2p315E20POT-0.xml",  
  
  bool         dotoys                   = false,
  
@@ -51,12 +52,14 @@ void run_fit_marginalization_readbinary_sin2th23
  double       input_dm12sq_bar         = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq_bar         = -99, //-99, //2.7E-3, //2.32E-3,                             /* |Dm^2_{23}| */
 
- const char * config_file              = "analysis_configuration_2.5E20.xml",
+ //const char * config_file              = "analysis_configuration_2.5E20.xml",
+ const char * config_file              = "analysis_configuration_2.315E20.xml",
  
  bool         stat_fluctuations        = true,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 1,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
- const char * fit_param_list           = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list           = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
+ const char * fit_param_list           = "nuosc3fbar_numudisapp_fixnonbar_fix5+nuisance",
 
  const char * dmsqscheme               = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
@@ -65,10 +68,11 @@ void run_fit_marginalization_readbinary_sin2th23
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename           = "../../inputs/marginalization/toys/numudisap_1D_2p5E20POT_fixosc_10toys/submit_mixing23_2p5E20_10toys_fixosc_postfit",
+ const char * infilename           = "../../inputs/marginalization/toys/numudisap_1D_2p315E20POT_fixosc_10ktoys_sinsqth23/submit_sinsqth23_NormPOT_postfit",  // sinsq2theta, dcp flat, T2K+reactor
+
  const int    nfiles               = 201,         // # of files to read
 
- const int    NtoysMarg            = 10,   // # toys marginalization 
+ const int    NtoysMarg            = 10000,   // # toys marginalization 
  
  const char * freeparname0        = "mixing23Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
@@ -79,7 +83,7 @@ void run_fit_marginalization_readbinary_sin2th23
  //const char * freeparname1        = "dmsq23Bar",  // free parameter
  const double freeparmin1         = 0.0002, // minimum value of free parameter
  const double freeparmax1         = 0.02, // maxinum value of free parameter
- const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
+ const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
@@ -711,7 +715,7 @@ void run_fit_marginalization_readbinary_sin2th23
       bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
       if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
       chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
-      //fitmarg->BuildDeltaChisqMarg();
+      fitmarg->BuildDeltaChisqMarg();
     }
 
     // Fill the output tree
@@ -789,23 +793,23 @@ void run_fit_marginalization_readbinary_sin2th23
     cout << endl;
 
 
-    // TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    // if(fitmarg->IsFit2D())
-    //   fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
-    // else 
-    //   fitmarg->GetChisqMarg1D()->DrawCopy();
+    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+    if(fitmarg->IsFit2D())
+      fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
+    else 
+      fitmarg->GetChisqMarg1D()->DrawCopy();
     
-    // TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-    // if(fitmarg->IsFit2D())
-    //   fitmarg->GetChisqStep_2D()->DrawCopy("colz");
-    // else 
-    //   fitmarg->GetChisqStep_1D()->DrawCopy();
+    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
+    if(fitmarg->IsFit2D())
+      fitmarg->GetChisqStep_2D()->DrawCopy("colz");
+    else 
+      fitmarg->GetChisqStep_1D()->DrawCopy();
     
-    // TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-    // if(fitmarg->IsFit2D())
-    //   fitmarg->GetDeltaChisqMarg2D()->DrawCopy();
-    // else 
-    //   fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
+    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+    if(fitmarg->IsFit2D())
+      fitmarg->GetDeltaChisqMarg2D()->DrawCopy();
+    else 
+      fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
 
     // Clean-up

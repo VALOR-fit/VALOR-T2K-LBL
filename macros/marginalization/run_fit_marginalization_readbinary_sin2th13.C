@@ -30,15 +30,7 @@ void run_fit_marginalization_readbinary_sin2th13
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "fitmarg_sinsqth13_Asimov",    /* tag for output file */
- 
- //int          first_experiment         = 3449,                       /* */
- //int          last_experiment          = 3449,                       /* */
- //int          first_experiment         = 3482,                       /* */
- //int          last_experiment          = 3482,                       /* */
- //int          first_experiment         = 0,                       /* */
- //int          last_experiment          = 3500,                       /* */
- //int          first_experiment         = 1611,                       /* */
- //int          last_experiment          = 1611,                       /* */
+
  int          first_experiment         = 0,                       /* */
  int          last_experiment          = 0,                       /* */
 
@@ -46,20 +38,63 @@ void run_fit_marginalization_readbinary_sin2th13
  const char * xmlfile                  = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml",  
  
  bool         dotoys                   = true,
- 
- double       input_mixing12           = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13           = -99, //0.02146, //0.0251,                                /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing23           = -99, //0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp            = -99, //0.,                                /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
- double       input_dm12sq             = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
- double       input_dm23sq             = -99, //2.32E-3,                             /* |Dm^2_{23}| */
- 
- double       input_mixing12_bar       = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13_bar       = -99, //0.02146, //0.0251,                    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing23_bar       = -99, //-99, //0.7, //0.50,                                /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_bar        = -99, //0.,                                /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
- double       input_dm12sq_bar         = -99, //7.58E-5,                             /* Dm^2_{12}, if -999 then randomize */
- double       input_dm23sq_bar         = -99, //-99, //2.7E-3, //2.32E-3,                             /* |Dm^2_{23}| */
+
+ // // Default
+ // double       input_mixing12           = -99,           
+ // double       input_mixing13           = -99, 
+ // double       input_mixing23           = -99, 
+ // double       input_deltacp            = -99, 
+ // double       input_dm12sq             = -99,
+ // double       input_dm23sq             = -99,
+ // double       input_mixing12_bar       = -99, 
+ // double       input_mixing13_bar       = -99,
+ // double       input_mixing23_bar       = -99,
+ // double       input_deltacp_bar        = -99,
+ // double       input_dm12sq_bar         = -99,
+ // double       input_dm23sq_bar         = -99,
+
+ // T2K reactors - sinsq2theta
+ double       input_mixing12          = 0.8495,     /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing13          = 0.0967,     /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing23          = 0.997,     /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ double       input_deltacp           = -1.55,     /* deltacp, if -999 then randomize */
+ double       input_dm12sq            = 7.5E-5,     /* Dm^2_{12}, if -999 then randomize */
+ double       input_dm23sq            = 0.00251,     /* |Dm^2_{23}| */
+ double       input_mixing12_bar      = 0.8495,     /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing13_bar      = 0.0967,     /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ double       input_mixing23_bar      = 0.997,     /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ double       input_deltacp_bar       = -1.55,     /* deltacp, if -999 then randomize */
+ double       input_dm12sq_bar        = 7.5E-5,     /* Dm^2_{12}, if -999 then randomize */
+ double       input_dm23sq_bar        = 0.00251,     /* |Dm^2_{23}| */
+
+ // // T2K only - sinsq2theta
+ // double       input_mixing12          = 8.49455999999999989e-01,     /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ // double       input_mixing13          = 1.61676640000000038e-01,     /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ // double       input_mixing23          = 9.97696000000000027e-01,     /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ // double       input_deltacp           = 1.91,     /* deltacp, if -999 then randomize */
+ // double       input_dm12sq            = 7.5E-5,     /* Dm^2_{12}, if -999 then randomize */
+ // double       input_dm23sq            = 0.00251,     /* |Dm^2_{23}| */
+ // double       input_mixing12_bar      = 8.49455999999999989e-01,     /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ // double       input_mixing13_bar      = 1.61676640000000038e-01,     /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ // double       input_mixing23_bar      = 9.97696000000000027e-01,     /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ // double       input_deltacp_bar       = 1.91,     /* deltacp, if -999 then randomize */
+ // double       input_dm12sq_bar        = 7.5E-5,     /* Dm^2_{12}, if -999 then randomize */
+ // double       input_dm23sq_bar        = 0.00251,     /* |Dm^2_{23}| */
+
+ // // T2K only - sinsqtheta
+ // double       input_mixing12          = 0.306,     /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ // double       input_mixing13          = 0.0422,     /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ // double       input_mixing23          = 0.524,     /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ // double       input_deltacp           = 1.91,     /* deltacp, if -999 then randomize */
+ // double       input_dm12sq            = 7.5E-5,     /* Dm^2_{12}, if -999 then randomize */
+ // double       input_dm23sq            = 0.00251,     /* |Dm^2_{23}| */
+ // double       input_mixing12_bar      = 0.306,     /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ // double       input_mixing13_bar      = 0.0422,     /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
+ // double       input_mixing23_bar      = 0.524,     /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
+ // double       input_deltacp_bar       = 1.91,     /* deltacp, if -999 then randomize */
+ // double       input_dm12sq_bar        = 7.5E-5,     /* Dm^2_{12}, if -999 then randomize */
+ // double       input_dm23sq_bar        = 0.00251,     /* |Dm^2_{23}| */
+
 
  const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  
@@ -72,17 +107,24 @@ void run_fit_marginalization_readbinary_sin2th13
 
  const char * dmsqscheme               = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
 
- const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
- //const char * mixparamchoice           = "sinsq2theta", /* sinsq2theta or sinsqtheta */
+ //const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
+ const char * mixparamchoice           = "sinsq2theta", /* sinsq2theta or sinsqtheta */
 
  const char * hierarchy                = "normal",     /* normal or inverted */
  const char * mixparamoctant           = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_dcpflat_10000toys/submit_mixing13_4p0E20_postfit",
- //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_10000toys_sinsqth13/submit_sinsq2th13_NormPOT_postfit",
- //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_10000toys_sinsq2th13/submit_sinsq2th13_NormPOT_postfit",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_dcpflat_10000toys/submit_mixing13_4p0E20_postfit",            // sinsqtheta, dcp flat
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_10000toys_sinsqth13/submit_sinsq2th13_NormPOT_postfit",       // sinsqtheta, fixosc
+ //
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_fixosc_10000toys_sinsq2th13/submit_sinsq2th13_oct2_NormPOT_postfit", // sinsq2theta, fixosc, T2K only
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_NormPOT_dcpflat_10000toys_sinsq2th13/submit_sinsq2th13_oct2_NormPOT_postfit",  // sinsq2theta, dcp flat, T2K only
+ //
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_T2Kreact_fixosc_10ktoys_sinsq2th13/submit_sinsq2th13_oct2_fixosc_T2Kreact_NormPOT_postfit",  // sinsq2theta, dcp flat, T2K+reactor
+ const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_T2Kreact_dcpflat_10ktoys_sinsq2th13/submit_sinsq2th13_oct2_dcpflat_T2Kreact_NormPOT_postfit",  // sinsq2theta, dcp flat, T2K+reactor
+ //
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_1D_fixosc_10ktoys_sinsq2th13_small/submit_sinsqth23_NormPOT_postfit_small", // small range [0,0.01]
 
  const int    nfiles               = 201,         // # of files to read
  //const int    nfiles               = 1,         // # of files to read
@@ -92,8 +134,9 @@ void run_fit_marginalization_readbinary_sin2th13
  
  const char * freeparname0        = "mixing13Bar",  // free parameter
  const double freeparmin0         = 0.,              // minimum value of free parameter
- const double freeparmax0         = 0.3,   // maxinum value of free parameter
- //const double freeparmax0         = 0.5,     // maxinum value of free parameter
+ //const double freeparmax0         = 0.3,   // maxinum value of free parameter
+ //const double freeparmax0         = 0.01,     // maxinum value of free parameter
+ const double freeparmax0         = 0.5,     // maxinum value of free parameter
  const int    NptScan0            = 201, //2, //21,        // # pts of free parameter to scan
  
  const char * freeparname1        = "",  // free parameter
@@ -644,7 +687,7 @@ void run_fit_marginalization_readbinary_sin2th13
     cout << "/////////////// Fit 1 (all range) ////////////////" << endl;
 
     fitmarg->SetMinimIntervalRead(freeparmin0,freeparmax0,freeparmin1,freeparmax1,true);
-    fitmarg->SetStartBin(0.1,-TMath::Pi()); 
+    fitmarg->SetStartBin(0.0001,-TMath::Pi()); 
     fitmarg->SetNumStartBin(10,1);
     fitmarg->SetGridStartRange(freeparmin0,freeparmax0,freeparmin1,freeparmax1);
     fitmarg->SetExtractStartPt("GridFix");
@@ -698,8 +741,9 @@ void run_fit_marginalization_readbinary_sin2th13
 
     truepar0 = fparm->InitValue(freepar0);
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
-    chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
-
+    //chisqtrue = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
+    chisqtrue = (double)fitmarg->GetChisqMargTrueRead(0.000000001,truepar1,skobs_fakedata,true);
+    
    // Draw Full Chisq
     if(DrawFullChisq){
       fitmarg->FillChisqMarg(skobs_fakedata,true);
@@ -776,7 +820,7 @@ void run_fit_marginalization_readbinary_sin2th13
 
      
     TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    fitmarg->GetChisqMarg1D()->DrawCopy();    
+    fitmarg->GetChisqMarg1D()->DrawCopy("hist text");    
     
     TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
     fitmarg->GetChisqStep_1D()->DrawCopy();

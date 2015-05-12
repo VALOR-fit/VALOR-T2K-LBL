@@ -21,10 +21,15 @@ void analyze_run_fit_marginalization_readbinary
  //char infilename[200] = "fitmarg_sin2th23Vsdmsq_2p5E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
 
  //char infilename[200] = "fitmarg_sin2th13_4p0E20POT_MINOSHESSE-3f+3fbar_10margtoys_3500toys.root", // 1D (sin2th13)
+
  //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp) 
  //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_dcpcoarser.root" // 2D (sin2th13 Vs dcp) 
  //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_sin2th13finer.root" // 2D (sin2th13 Vs dcp) 
  //char infilename[200] = "fitmarg_sin2th13Vsdcp_7p8E21POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp)
+ 
+ //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_sinfiner_MoreBins3.root"
+ //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_MoreBins3.root"
+ //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_dcpcoarser_MoreBins3.root"
 
  // Pull validation
 
@@ -32,7 +37,7 @@ void analyze_run_fit_marginalization_readbinary
  //char infilename[200] = "fitmarg_sinsqth23_0p3_T2Konly_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsqth23)
  //char infilename[200] = "fitmarg_sinsqth23_0p7_T2Konly_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsqth23)
  //char infilename[200] = "fitmarg_sinsqth23_0p3_T2Konly_fixosc_10ktoys_FullStat-3f+3fbar.root" // 1D (sinsqth23, full stat)
- char infilename[200] = "fitmarg_sinsqth23_0p7_T2Konly_fixosc_10ktoys_FullStat-3f+3fbar.root" // 1D (sinsqth23, full stat)
+ //char infilename[200] = "fitmarg_sinsqth23_0p7_T2Konly_fixosc_10ktoys_FullStat-3f+3fbar.root" // 1D (sinsqth23, full stat)
 
  //char infilename[200] = "fitmarg_sin2th13_dcpflat_fixosc_T2Konly_10ktoys_NormPOT-3f+3fbar.root" // 1D (sin2th13) 
  //char infilename[200] = "fitmarg_sin2th13_dcpflat_fixosc_T2Konly_10ktoys-3f+3fbar.root" // 1D (sinsq2th13)
@@ -44,6 +49,11 @@ void analyze_run_fit_marginalization_readbinary
  //char infilename[200] = "fitmarg_sinsq2th13_oct2_dcpflat_10ktoys_NormPOT_fullstat-3f+3fbar.root" // 1D (sinsq2th13)
  
  //char infilename[200] = "fitmarg_sinsq2th13_oct2_fixosc_10ktoys_NormPOT_fullstat-3f+3fbar.root" // 1D (sinsq2th13, full stat)
+
+
+ // Raj
+ char infilename[200] = "analyze_output_raj.root"
+
 )
 {
   char name[200];
@@ -136,18 +146,18 @@ void analyze_run_fit_marginalization_readbinary
   TH1F *hchisqmin = new TH1F("hchisqmin","hchisqmin",100,0,100);
   TH1F *hchisqminFullChisq = new TH1F("hchisqminFullChisq","hchisqminFullChisq",100,0,100);
 
-  TH1F *hErrMINOSneg0 = new TH1F("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
-  TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",1000,0,0.002);
-  TH1F *hErrMINOSpos0 = new TH1F("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
-  TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",1000,0,0.002);
-  TH1F *hErrHESSEsym0 = new TH1F("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
-  TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",1000,0,0.002);
   // TH1F *hErrMINOSneg0 = new TH1F("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
-  // TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",1000,0.,6.28);
+  // TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",1000,0,0.002);
   // TH1F *hErrMINOSpos0 = new TH1F("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
-  // TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",1000,0.,6.28);
+  // TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",1000,0,0.002);
   // TH1F *hErrHESSEsym0 = new TH1F("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
-  // TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",1000,0.,20);
+  // TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",1000,0,0.002);
+  TH1F *hErrMINOSneg0 = new TH1F("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
+  TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",1000,0.,6.28);
+  TH1F *hErrMINOSpos0 = new TH1F("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
+  TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",1000,0.,6.28);
+  TH1F *hErrHESSEsym0 = new TH1F("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
+  TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",1000,0.,20);
 
   TH1F *hnchisqcalls = new TH1F("hnchisqcalls","hnchisqcalls",100,0,700);
   TH1F *hfitstatus = new TH1F("hfitstatus","hfitstatus",5,0,5);
@@ -176,7 +186,6 @@ void analyze_run_fit_marginalization_readbinary
 
     //if(bestfitFullChisq0>0.51) continue; // Only first octant minimum
     //if(bestfitFullChisq0<0.53) continue; // Only first octant minimum
-
 
     //truepar0 = 0.3;
     //truepar0 = 0.7;
@@ -250,29 +259,27 @@ void analyze_run_fit_marginalization_readbinary
     double diff = chisqmin-chisqminFullChisq;
    
 
+    //if(bestfit0!=bestfitFullChisq0){
+    //if(1){
     if(chisqmin!=chisqminFullChisq){
-      exit(1);
+      cout << std::setprecision(8);
+      cout << endl;
+      cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
+      cout << "chisqmin = " << chisqmin
+    	   << " - bestfit0 = " << bestfit0
+    	   << " - bestfit1 = " << bestfit1 << endl;
+      cout << "chisqminFullChisq = " << chisqminFullChisq 
+    	   << " - bestfitFullChisq0 = " << bestfitFullChisq0 
+    	   << " - bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
+      cout << "Difference = " << diff << endl;
+      cout << "# of Chisq calls = " << nchisqcalls << endl;
+      cout << endl; 
+      NdiffChisq++;
+    }
+    else{
+      continue;
     }
 
-
-
-    // if(bestfit0!=bestfitFullChisq0){
-    //   //if(chisqmin!=chisqminFullChisq){
-    //   cout << endl;
-    //   cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
-    //   cout << "chisqmin = " << chisqmin
-    // 	   << " - bestfit0 = " << bestfit0
-    // 	   << " - bestfit1 = " << bestfit1 << endl;
-    //   cout << "chisqminFullChisq = " << chisqminFullChisq 
-    // 	   << " - bestfitFullChisq0 = " << bestfitFullChisq0 
-    // 	   << " - bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
-    //   cout << "Difference = " << diff << endl;
-    //   cout << endl; 
-    //   NdiffChisq++;
-    // }
-    // else{
-    //   continue;
-    // }
     // if(1){
     // //if(bestfiterrSym1<=0.01){
     // //if(bestfiterrSym0<=0.01){
@@ -520,7 +527,7 @@ void analyze_run_fit_marginalization_readbinary
     hresidual1->GetYaxis()->SetTitle("# entries");
     hresidual1->DrawCopy();
     sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hresidual1->GetMean(),hresidual1->GetRMS()); 
-    TLatex *lresidual1 = new TLatex(0.90,lresidual1->GetMaximum()*0.8,name);
+    TLatex *lresidual1 = new TLatex(0.90,hresidual1->GetMaximum()*0.8,name);
     lresidual1->SetTextSize(0.07);
     lresidual1->Draw();
   }

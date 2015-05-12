@@ -30,8 +30,8 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "fitmarg_sin2th13Vsdcp",    /* tag for output file */
- int          first_experiment         = 0,                       /* */
- int          last_experiment          = 0,                       /* */
+ int          first_experiment         = 3420,                       /* */
+ int          last_experiment          = 3420,                       /* */
  //int          first_experiment         = 996,                       /* */
  //int          last_experiment          = 996,                       /* */
  //int          first_experiment         = 952,                       /* */
@@ -72,11 +72,12 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- //const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys/submit_sinsqth13Vsdcp_NormPOT_postfit",
- const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys_dcpcoarse/submit_sinsqth13Vsdcp_NormPOT_postfit_dcpcoarse",
+ const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys/submit_sinsqth13Vsdcp_NormPOT_postfit",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys_dcpcoarse/submit_sinsqth13Vsdcp_NormPOT_postfit_dcpcoarse",
+ //const char * infilename           = "../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys_sinfiner/submit_sinsqth13Vsdcp_NormPOT_postfit_sinfine",
 
- const int    nfiles               = 201,         // # of files to read
- //const int    nfiles               = 804,         // # of files to read
+ //const int    nfiles               = 201,         // # of files to read
+ const int    nfiles               = 804, //804,         // # of files to read
 
  const int    NtoysMarg            = 10,   // # toys marginalization 
  
@@ -89,8 +90,8 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
  const char * freeparname1        = "deltacpBar",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00, // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
- //const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
- const int    NptScan1            = 51, //21,      // # pts of free parameter to scan
+ const int    NptScan1            = 201, //21,      // # pts of free parameter to scan
+ //const int    NptScan1            = 51, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
 
@@ -886,7 +887,7 @@ void run_fit_marginalization_readbinary_sin2th13Vsdcp
 
     TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
     if(fitmarg->IsFit2D())
-      fitmarg->GetChisqMarg2D()->DrawCopy("colz text");    
+      fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
     
     TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
     if(fitmarg->IsFit2D())

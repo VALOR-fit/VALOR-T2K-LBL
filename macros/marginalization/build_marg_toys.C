@@ -24,7 +24,7 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "BetaBar_4p0E20POT",
+ const char * tag                  = "BetaBar_4p0E20POT_toydcp",
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
  //const char * config_file          = "analysis_configuration_1.7E20.xml",   
@@ -37,8 +37,8 @@ void build_marg_toys
  //const char * fit_param_list       = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
  
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
- const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
- //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
 
  double       input_mixing12           = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -53,7 +53,6 @@ void build_marg_toys
  double       input_dm12sq_bar         = -99,    /* Dm^2_{12}, if -999 then randomize */
  double       input_dm23sq_bar         = -99,    /* |Dm^2_{23}| */
  double       input_beta_bar           = -99,    // numubar->nuebar normalization
-
 
  // const char * freeparname0          = "mixing23Bar",  // free parameter
  // const double freeparmin0           = 0,     // minimum value of free parameter
@@ -75,7 +74,7 @@ void build_marg_toys
  const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
  const int    NptScan1              = 1,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 10,   // # toys marginalization 
+ const int    NtoysMarg            = 10000,   // # toys marginalization 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
@@ -84,7 +83,10 @@ void build_marg_toys
  const char * dmsqscheme           = "abs23",       /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy            = "normal",    /* normal or inverted */
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
- const char * mixparamoctant       = "two"         /* one==kNuOctantOne two==kNuOctantTwo */
+ const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
+ 
+ TString file_prior_dcp       = "../../inputs/marginalization/priors/deltaCP_T2Kreact_run14/Priors_deltaCP_run14_T2Kreact_NH.root" // Set to "" if no user priors are used
+
  )
 {
   FileStat_t dummy;
@@ -326,9 +328,39 @@ void build_marg_toys
   fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
   fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
   fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
-  fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
   fitmarg->SetPrior(kPhypBetaBar,"flat",conv::kMinFitBetaBar,conv::kMaxFitBetaBar);
-  
+
+  // Set deltaCP prior
+  TH1D *hPrior_dcp;
+  if(file_prior_dcp!=""){
+    
+    cout << endl;
+    cout << "Take prior for deltaCP from: " << file_prior_dcp << endl;
+    cout << endl;
+
+    TFile *fPrior_dcp = new TFile(file_prior_dcp.Data(),"READ");
+    if(!fPrior_dcp->IsOpen() || !fPrior_dcp){
+      cerr << endl;
+      cerr << "Error: the file is not open!" << endl;
+      cerr << endl;
+      exit(1);
+    }
+
+    hPrior_dcp = (TH1D*) fPrior_dcp->Get("hPrior_Ldcp"); 
+    if(hPrior_dcp->IsZombie() || !hPrior_dcp){
+      cerr << endl;
+      cerr << "Error: the histogram hPrior_Ldcp is not taken!" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    fitmarg->SetPrior(kPhypCPVBar,"user",hPrior_dcp);
+  }
+  else{
+    cout << endl;
+    cout << "Use flat prior for deltaCP" << endl;
+    cout << endl;
+    fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
+  }
 
   // Make toys and store in binary files
     
@@ -337,6 +369,14 @@ void build_marg_toys
 
   fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
   fitmarg->WriteToys2Binary(fileid,tag);
+
+  // Draw prior and toy histograms for marginalized oscillation parameters
+ 
+  TCanvas *cPriorHisto = new TCanvas("cPriorHisto","cPriorHisto");
+  fitmarg->GetFitParamList()->GetPriorHisto(conv::kPhypCPVBar)->Draw();
+  
+  TCanvas *cToyHisto = new TCanvas("cToyHisto","cToyHisto");
+  fitmarg->GetFitParamList()->GetToyHisto(conv::kPhypCPVBar)->Draw();
 
   return;
 }
