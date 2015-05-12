@@ -11,6 +11,8 @@ import math
 import os
 import glob
 
+R = ROOT
+
 max_energy = 4.5
 linewidth = 3
 title_offset = 0.8
@@ -55,12 +57,15 @@ is_constrained ["all"               ] = True
 plot_opt = ""
 
 try:
-  ROOT.t2kana
+  ROOT.valor
 except:
-  ROOT.gROOT.ProcessLine(".L $T2KOSCANA/root/root2k.C");
-  pass
-
+  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
   
+valor = ROOT.valor
+util =  valor.util
+conv =  valor.conv
+opt  =  valor.Opt.Instance()
+env  =  valor.Env.Instance()
 
 def main(sample,unoscillated_input_filename, oscillated_input_filename):
   f_unosc = ROOT.TFile(unoscillated_input_filename)
@@ -174,7 +179,7 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     hplus_prefit.GetYaxis().SetTitleOffset(0.8)
     hplus_prefit.SetLineColor(ROOT.kBlue)
     
-    hplus_prefit.Draw()
+    hplus_prefit.Draw("AXIS")
     hplus_postfit.SetFillColor(ROOT.kRed)
     hplus_postfit.SetFillStyle(1001)
     hplus_postfit.Draw("same")
@@ -205,10 +210,97 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     legend.AddEntry(legend_prefit   ,"Prefit" ,"FL")
     legend.AddEntry(legend_postfit  ,"Postfit","FL")
     
-    if is_constrained[par_set]: legend.Draw()
+    #~ if is_constrained[par_set]: legend.Draw()
     
     canv.Print(name+"_"+par_set+"_envelope.eps")
     
+    # Now do it with ratios
+    ratio_plus_prefit   = R.TH1D(hplus_prefit)
+    ratio_minus_prefit  = R.TH1D(hminus_prefit)
+    ratio_plus_postfit  = R.TH1D(hplus_postfit)
+    ratio_minus_postfit = R.TH1D(hminus_postfit)
+    
+    ratio_plus_prefit  .Divide(prefit_nominal)
+    ratio_minus_prefit .Divide(prefit_nominal)
+    ratio_plus_postfit .Divide(nominal_hist)
+    ratio_minus_postfit.Divide(nominal_hist)
+    for i in xrange(nominal_hist.GetXaxis().GetNbins()):
+      if abs(nominal_hist.GetBinContent(i+1))<conv.kASmallNum:
+        ratio_plus_postfit .SetBinContent(i+1,1)
+        ratio_minus_postfit.SetBinContent(i+1,1)
+      if abs(prefit_nominal.GetBinContent(i+1))<conv.kASmallNum:
+        ratio_plus_prefit .SetBinContent(i+1,1)
+        ratio_minus_prefit.SetBinContent(i+1,1)
+    
+    ratio_hists = [(ratio_plus_prefit  , ratio_minus_prefit ) ,
+                   (ratio_plus_postfit , ratio_minus_postfit)]
+    
+    ratio_graph_prefit  = ROOT.TGraphAsymmErrors(ratio_plus_prefit  .GetXaxis().GetNbins())
+    ratio_graph_postfit = ROOT.TGraphAsymmErrors(ratio_plus_postfit .GetXaxis().GetNbins())
+    
+    ratio_graphs = [ratio_graph_prefit  ,
+                    ratio_graph_postfit , ]
+    
+    for (hp,hm),g in zip(ratio_hists,ratio_graphs):
+      for i in xrange(h.GetXaxis().GetNbins()):
+        low_edge  = ratio_plus_prefit.GetBinLowEdge(i+1)
+        high_edge = low_edge + ratio_plus_prefit.GetBinWidth(i+1)
+        g.SetPoint      (i,ratio_plus_prefit.GetBinCenter(i+1),1)
+        g.SetPointEYlow (i,abs(hm.GetBinContent(i+1)-1))
+        g.SetPointEYhigh(i,abs(hp.GetBinContent(i+1)-1))
+        g.SetPointEXlow (i,ratio_plus_prefit.GetBinWidth(i+1)*0.5 - 0.005)
+        g.SetPointEXhigh(i,ratio_plus_prefit.GetBinWidth(i+1)*0.5 - 0.005)
+        
+      g.SetFillStyle(1001)
+      g.SetLineStyle(0)
+      g.SetLineWidth(0)
+      g.GetXaxis().SetRangeUser(0,max_energy)
+      CopyHistAxisFormatting(hplus_prefit,g)
+      g.GetYaxis().SetTitle("Ratio of # Total Events")
+      
+    ratio_graph_prefit .SetFillColor(R.kBlue)
+    ratio_graph_postfit.SetFillColor(R.kRed)
+    ratio_graph_prefit .SetLineColor(R.kBlue)
+    ratio_graph_postfit.SetLineColor(R.kRed)
+    
+    ratio_graph_prefit .SetLineWidth(3)
+    ratio_graph_postfit.SetLineWidth(3)
+    ratio_graph_prefit .SetFillStyle(1001)
+    ratio_graph_postfit.SetFillStyle(1001)
+    
+    canv2 = ROOT.TCanvas()
+    canv2.SetLeftMargin  (left_margin)
+    canv2.SetBottomMargin(bottom_margin)
+    canv2.SetRightMargin (right_margin )
+    if use_log_plots: canv2.SetLogx()
+    canv2.cd()
+    
+    ratio_max = 1.3*ratio_plus_prefit .GetMaximum()
+    
+    ratio_graph_postfit.SetMaximum(ratio_max)
+    ratio_graph_postfit.SetMinimum(2-ratio_max)
+    
+    ratio_graph_prefit .Draw("a2")
+    ratio_graph_postfit.Draw("2")
+    
+    legend2 = ROOT.TLegend(0.75,0.73,0.93,0.94);
+    legend2.SetFillStyle(0);
+    legend2.SetBorderSize(0);
+    legend2.AddEntry(ratio_graph_prefit  ,"Prefit" ,"F")
+    legend2.AddEntry(ratio_graph_postfit ,"Postfit","F")
+    
+    legend2.Draw("same")
+    
+    line_at_1 = ROOT.TLine(0,1,max_energy,1)
+    line_at_1.SetLineWidth(2)
+    line_at_1.Draw("same")
+    
+    canv2.Update()
+    
+    canv2.Print(name+"_"+par_set+"_envelope_ratio.eps")
+    
+    
+    # Print out some event rates
     nom_events     = nominal_hist  .Integral()
     p1_events_pre  = hplus_prefit  .Integral()
     m1_events_pre  = hminus_prefit .Integral()
@@ -231,6 +323,17 @@ def pre_and_postfit_envelope(sample,rootfile,name):
 
 class T2KAnaError(Exception):
   pass
+  
+def CopyHistAxisFormatting(hfrom,hto):
+  for (afrom,ato) in [(hfrom.GetXaxis(),hto.GetXaxis()),
+                      (hfrom.GetYaxis(),hto.GetYaxis())]:
+    ato.SetTitle      (afrom.GetTitle      ())
+    ato.SetTitleOffset(afrom.GetTitleOffset())
+    ato.SetTitleSize  (afrom.GetTitleSize  ())
+    ato.SetLabelSize  (afrom.GetLabelSize  ())
+    ato.SetLabelOffset(afrom.GetLabelOffset())
+    
+  return
 
 if __name__=="__main__":
   import optparse
