@@ -171,7 +171,7 @@ class FitMarginalization
   void SetMargOscParam();
 
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
-  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1F *hprior);
+  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
   std::string GetPrior(conv::PhysParamId_t physpar) const;
   
   void BuildDefaultPriors(void);
@@ -205,7 +205,6 @@ class FitMarginalization
   void GridStartBinRead(SuperkObservation *skobs_data,bool readbinary = false); // MAP
   void SetGridStartRange(double minX,double maxX,double minY,double maxY);
   //
-
 
   void SetStartBin(double start_X,double start_Y); // if <0 --> throw random
   void SetNumStartBin(int Nthrows_X,int Nthrows_Y);

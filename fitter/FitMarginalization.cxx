@@ -763,11 +763,17 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     if (iexperiment%100 == 0) { cout << "iexperiment " << iexperiment << endl; }
 #endif
     
-    fparm->ResetCurrToInitValues();
+    fparm->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue()
     
     // Extract oscillation parameters to be marginalized
     this->SetMargOscParam();
 
+    // cout << "Marginalize " << kPhypCPVBar << " " << util::AsString(kPhypCPVBar) 
+    // 	 << " --> " << fparm->InitValue(kPhypCPVBar) 
+    // 	 << " --> " << fparm->CurrValue(kPhypCPVBar) 
+    // 	 << " --> " << fparm->Value(kPhypCPVBar) 
+    // 	 << endl;
+    
     // Set seed after oscillation parameter extraction
 
     UInt_t seedstat = Rnd::Instance()->RndToyMCstat().GetSeed();
@@ -1927,11 +1933,12 @@ void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,double 
   return;
 }
 //________________________________________________________________________________________
-void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1F *hprior){
+void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1D *hprior){
   fparm->SetPriorMode(physpar,priorname);
   
   if(priorname=="user"){
     fparm->SetPriorHisto(physpar,hprior);
+    fparm->SetToyHisto(physpar,hprior);
   }
   else if(priorname=="flat" || priorname=="gaus"){
     cerr << endl;
@@ -1994,7 +2001,9 @@ void FitMarginalization::SetMargOscParam(){
       if(rethrow) cout << "Rethrow " << util::AsString(p) << " " << currval << endl;
     }
 
-    //cout << "Marginalize " << util::AsString(p) << " --> " << currval << endl;
+    //cout << "Marginalize " << p << " " << util::AsString(p) << " --> " << currval << endl;
+
+    fparm->GetToyHisto(p)->Fill(currval); // Fill toy histogram for checks
 
     // Update current values of parameters 
     //fparm->Update(p,currval);
