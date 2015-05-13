@@ -58,7 +58,7 @@ void generate_toymc_ensemble_joint
   
   int n_points_per_line_xml = 5;
 
-  TRandom rand(0);
+  TRandom3 rand(0);
 
   TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
   TH1D * h_1 = new TH1D ("h_1", "h_1", 100, 0, 10);

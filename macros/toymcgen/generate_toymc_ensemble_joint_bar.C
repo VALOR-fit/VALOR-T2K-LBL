@@ -58,6 +58,7 @@ void generate_toymc_ensemble_joint_bar
  const char * mixparamoctant          = "two",                           /* one==kNuOctantOne two==kNuOctantTwo */
 
  TString file_prior_dcp       = "../../inputs/marginalization/priors/deltaCP_T2Kreact_run14/Priors_deltaCP_run14_T2Kreact_NH.root" // Set to "" if no user priors are used
+ 
 )
 {
   using namespace std;
@@ -66,7 +67,12 @@ void generate_toymc_ensemble_joint_bar
   
   int n_points_per_line_xml = 5;
 
-  TRandom rand(0);
+
+  
+  // Use seed 0 for histo->GetRandom(), otherwise it extracts always the same distribution
+  gRandom = new TRandom3(0);
+
+  TRandom3 rand(0);
 
   TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
   TH1D * h_1 = new TH1D ("h_1", "h_1", 100, 0, 10);
@@ -135,8 +141,6 @@ void generate_toymc_ensemble_joint_bar
   if(input_deltacp_bar < -90 && input_deltacp_bar > -900) input_deltacp_bar = conv::kGlobFitDeltaCP;
   if(input_beta_bar < -90 && input_beta_bar > -900) input_beta_bar = conv::kGlobFitBetaBar;
 
-
-
   // Set user priors
   
   TH1D *hPrior_dcp;
@@ -167,6 +171,7 @@ void generate_toymc_ensemble_joint_bar
     }
 
     hToy_dcp = (TH1D*) hPrior_dcp->Clone("hToy_dcp");
+    hToy_dcp->Reset();
   }
   else{
     cout << endl;
@@ -319,41 +324,47 @@ void generate_toymc_ensemble_joint_bar
   int weird = 0;
   for(int iexperiment=0; iexperiment < nexperiments; iexperiment++) {
 
-     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
-
-     // Generate mock data
+    cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
+    
+    // Generate mock data
      cout << "- Generating toy-MC..." << endl;
      SuperkObservation * skobs = new SuperkObservation;
      PhysHypothesis ph(hypothesis);
+
+
+     // To update for nuebar appearance analysis
+       
+     // Randomize specified osc params for current toy MC expt
+     if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
+     if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
+     if (randomize_mixing23) { input_mixing23 = util::RandomizeMixing23(); }
+     if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
+     if (randomize_dm23sq  ) { input_dm23sq   = util::RandomizeDm23sq();   }
+     if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();      }
+     
+     if (randomize_mixing12_bar) { input_mixing12_bar = util::RandomizeMixing12Bar(); }
+     if (randomize_mixing13_bar) { input_mixing13_bar = util::RandomizeMixing13Bar(); }
+     if (randomize_mixing23_bar) { input_mixing23_bar = util::RandomizeMixing23Bar(); }
+     if (randomize_dm12sq_bar  ) { input_dm12sq_bar   = util::RandomizeDm12sqBar();   }
+     if (randomize_dm23sq_bar  ) { input_dm23sq_bar   = util::RandomizeDm23sqBar();   }
+     if (randomize_deltacp_bar ) { 
+       if(UsePrior_dcp) input_deltacp_bar  = util::RandomizeUser(hPrior_dcp);      
+       else input_deltacp_bar  = util::RandomizeCPVBar();   
+       hToy_dcp->Fill(input_deltacp_bar);
+     }
+     
+     if (randomize_beta_bar    ) { input_beta_bar     = util::RandomizeBetaBar();   }
+
+     
+
+
+
 
      bool applied_negevents_condition = true;
      bool unphysical_tweak = true;
 
      //while(applied_negevents_condition) {
      while(applied_negevents_condition || unphysical_tweak) {
-
-       // To update for nuebar appearance analysis
-       
-       // Randomize specified osc params for current toy MC expt
-       if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
-       if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
-       if (randomize_mixing23) { input_mixing23 = util::RandomizeMixing23(); }
-       if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }
-       if (randomize_dm23sq  ) { input_dm23sq   = util::RandomizeDm23sq();   }
-       if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();      }
-       
-       if (randomize_mixing12_bar) { input_mixing12_bar = util::RandomizeMixing12Bar(); }
-       if (randomize_mixing13_bar) { input_mixing13_bar = util::RandomizeMixing13Bar(); }
-       if (randomize_mixing23_bar) { input_mixing23_bar = util::RandomizeMixing23Bar(); }
-       if (randomize_dm12sq_bar  ) { input_dm12sq_bar   = util::RandomizeDm12sqBar();   }
-       if (randomize_dm23sq_bar  ) { input_dm23sq_bar   = util::RandomizeDm23sqBar();   }
-       if (randomize_deltacp_bar ) { 
-	 if(UsePrior_dcp) input_deltacp_bar  = util::RandomizeUser(hPrior_dcp);      
-	 else input_deltacp_bar  = util::RandomizeCPVBar();   
-	 hToy_dcp->Fill(input_deltacp_bar);
-       }
-
-       if (randomize_beta_bar    ) { input_beta_bar     = util::RandomizeBetaBar();   }
 
        // Set physics hypothesis
        if(ph.Hypothesis() == kHypNuMuDisapp2F) {
