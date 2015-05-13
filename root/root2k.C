@@ -27,7 +27,7 @@ void define_valor_style()
   // set the paper & margin sizes
   valorStyle->SetPaperSize(20,26);
   valorStyle->SetPadTopMargin(0.05);
-  valorStyle->SetPadRightMargin(0.05);
+  valorStyle->SetPadRightMargin(0.1);
   valorStyle->SetPadBottomMargin(0.16);
   valorStyle->SetPadLeftMargin(0.13);
 
