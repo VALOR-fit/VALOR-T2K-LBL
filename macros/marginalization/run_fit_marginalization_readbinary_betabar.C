@@ -29,17 +29,21 @@ void run_fit_marginalization_readbinary_betabar
 
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
- const char * tag                      = "fitmarg_betabar",    /* tag for output file */
+ const char * tag                      = "fitmarg_betabar_toydcp",    /* tag for output file */
 
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_statonly_4E20POT-0.xml",            // stat only
+ const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_toydcp_betabar_0_rethrowunphysical_4E20POT_NH-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_toydcp_betabar_0_rethrowunphysical_4E20POT_IH-0.xml",
+ 
+ //const char * xmlfile = "toymc/toymc_nuebarapp_toydcp_betabar_0_rethrowunphysical_4E20POT-0.xml",    // throw deltaCP from T2K+react joint prior  
+ //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_statonly_4E20POT-0.xml",           // stat only
  //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml",
  //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
  //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml",
  
- bool         dotoys                   = true,
+ bool         dotoys                   = false,
 
  // Default
  double       input_mixing12           = -99,           
@@ -63,20 +67,23 @@ void run_fit_marginalization_readbinary_betabar
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
- const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
- //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
 
- const char * dmsqscheme               = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * dmsqscheme               = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
  const char * hierarchy                = "normal",     /* normal or inverted */
  const char * mixparamoctant           = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
- const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
- //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
- //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2KFullStat_T2Kreact_betabar_fixosc_10kToys/BetaBar_7p8E21POT",  // T2K+reactor T2K Full Stat (betabar=0,1) 
+ const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), nuosc, dcp T2K+react joint
+ //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), dcpbar T2K+react joint
+ 
+ //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
+ //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
+ //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
+ //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2KFullStat_T2Kreact_betabar_fixosc_10kToys/BetaBar_7p8E21POT",  // T2K+reactor T2K Full Stat (betabar=0,1) 
 
  const int    nfiles               = 1, //401, 1        // # of files to read
 
@@ -92,7 +99,7 @@ void run_fit_marginalization_readbinary_betabar
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = false,
 
- const string teststat            = "rate-only"   // "rate-only" or "rate+shape"
+ const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
 )
 {
 
@@ -544,7 +551,7 @@ void run_fit_marginalization_readbinary_betabar
         }
       }//applied_negevents_condition
     }
-        
+    
     cout << *fparm << endl;
 
     /////////////////// SET MARGINALIZATION FIT ////////////////
@@ -768,7 +775,6 @@ void run_fit_marginalization_readbinary_betabar
       else if(s == kSKsRHCFCFV1RingELike){
 	//cout << "    " << util::AsStringCompact(s) << endl;
 	hErecoToy = new TH1D(*skobs_fakedata->ErecoSpectrum(s));
-	//cout <<  skobs_fakedata->ErecoSpectrum(s)->Integral() << endl;
       }
     }
     //cout << fitmarg->GetNSKsamples() << endl;
@@ -830,8 +836,15 @@ void run_fit_marginalization_readbinary_betabar
       cout << "  - bestfit1 = " << bestfitFullChisq1 << endl; 
     cout << endl;
 
-     
-
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = kSKSamples[is];
+      if(s == kSKsUndefined) continue;
+      else if(s == kSKsRHCFCFV1RingELike){
+	cout <<  "# of events in " << util::AsStringCompact(s) << " sample: " 
+	     << skobs_fakedata->ErecoSpectrum(s)->Integral() << endl;
+      }
+    }
+    cout << endl;
 
 
     TCanvas *cErecoToy = new TCanvas("cErecoToy","cErecoToy");

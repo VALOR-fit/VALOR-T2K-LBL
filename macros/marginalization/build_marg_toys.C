@@ -38,7 +38,8 @@ void build_marg_toys
  
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
- const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
+ const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
 
  double       input_mixing12           = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing13           = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -63,7 +64,7 @@ void build_marg_toys
  const char * freeparname0          = "betaBar",  // free parameter
  const double freeparmin0           = 0.,     // minimum value of free parameter
  const double freeparmax0           = 1.,     // maxinum value of free parameter
- const int   NptScan0              = 2.,  // # pts of free parameter to scan
+ const int   NptScan0               = 2.,  // # pts of free parameter to scan
 
  const char * freeparname1          = "",  // free parameter
  //const char * freeparname1          = "dmsq23Bar",  // free parameter
@@ -80,7 +81,7 @@ void build_marg_toys
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
 
- const char * dmsqscheme           = "abs23",       /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * dmsqscheme           = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy            = "normal",    /* normal or inverted */
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
@@ -211,13 +212,9 @@ void build_marg_toys
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
 
-
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);
   fitmarg->PrintPhysHypothesis();      
-  
-
-
 
   //Set marginalization oscillation parameters to defaults  
 
@@ -269,6 +266,15 @@ void build_marg_toys
     fparm->SetInitValue(kPhypCPVBar    ,  input_deltacp_bar);
     fparm->SetInitValue(kPhypDm12sqBar,   input_dm12sq_bar);
     fparm->SetInitValue(kPhypDm23sqBar,   input_dm23sq_bar);
+  }  
+  else if(hyp == kHypOsc3FNormBar) {
+    fparm->SetInitValue(kPhypMixing12, input_mixing12);
+    fparm->SetInitValue(kPhypMixing13, input_mixing13);
+    fparm->SetInitValue(kPhypMixing23, input_mixing23);
+    fparm->SetInitValue(kPhypCPV    ,  input_deltacp);
+    fparm->SetInitValue(kPhypDm12sq,   input_dm12sq);
+    fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);    
+    fparm->SetInitValue(kPhypBetaBar,     input_beta_bar);
   }
   else if(hyp == kHypOsc3FBarNormBar) {
     fparm->SetInitValue(kPhypMixing12, input_mixing12);
@@ -305,6 +311,9 @@ void build_marg_toys
     cout << "       > " << util::AsString(kPhypDm12sqBar)   << " = " << fitmarg->GetFitParamList()->InitValue(kPhypDm12sqBar  ) << " eV^2/c^4" << endl;
     cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << fitmarg->GetFitParamList()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
   }
+  else if(hyp == kHypOsc3FNormBar) {
+    cout << "       > " << util::AsString(kPhypBetaBar)      << " = " << fitmarg->GetFitParamList()->InitValue(kPhypBetaBar    ) << endl;
+  }  
   else if(hyp == kHypOsc3FBarNormBar) {
     cout << "       > " << util::AsString(kPhypMixing12Bar)  << " = " << fitmarg->GetFitParamList()->InitValue(kPhypMixing12Bar) << endl;
     cout << "       > " << util::AsString(kPhypMixing13Bar)  << " = " << fitmarg->GetFitParamList()->InitValue(kPhypMixing13Bar) << endl;
@@ -322,22 +331,14 @@ void build_marg_toys
   // Decide whether to rethrow or not the unphysical systematic toys 
   fitmarg->SetRethrowSystUnphysical(doRethrowUnphysical);
 
-  // Set priors for not fixed and not free oscillation parameters
-  fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
-  fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,0.3);
-  fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
-  fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
-  fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
-  fitmarg->SetPrior(kPhypBetaBar,"flat",conv::kMinFitBetaBar,conv::kMaxFitBetaBar);
-
-  // Set deltaCP prior
+  
+  // Take prior distributions
+  
   TH1D *hPrior_dcp;
   if(file_prior_dcp!=""){
-    
     cout << endl;
     cout << "Take prior for deltaCP from: " << file_prior_dcp << endl;
-    cout << endl;
-
+    cout << endl;    
     TFile *fPrior_dcp = new TFile(file_prior_dcp.Data(),"READ");
     if(!fPrior_dcp->IsOpen() || !fPrior_dcp){
       cerr << endl;
@@ -345,7 +346,6 @@ void build_marg_toys
       cerr << endl;
       exit(1);
     }
-
     hPrior_dcp = (TH1D*) fPrior_dcp->Get("hPrior_Ldcp"); 
     if(hPrior_dcp->IsZombie() || !hPrior_dcp){
       cerr << endl;
@@ -353,14 +353,50 @@ void build_marg_toys
       cerr << endl;
       exit(1);
     }
-    fitmarg->SetPrior(kPhypCPVBar,"user",hPrior_dcp);
+  }
+
+  // Set priors for not fixed and not free oscillation parameters
+    
+  fitmarg->SetPrior(kPhypMixing23,"flat",0,1);
+  fitmarg->SetPrior(kPhypMixing13,"flat",0,0.3);
+  fitmarg->SetPrior(kPhypMixing12,"flat",0,1);
+  fitmarg->SetPrior(kPhypDm23sq,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
+  fitmarg->SetPrior(kPhypDm12sq,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
+  
+  if(hyp == kHypOsc3FBar){
+    fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
+    fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,0.3);
+    fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
+    fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
+    fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
+  }
+  else if(hyp == kHypOsc3FBarNormBar){
+    fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
+    fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,0.3);
+    fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
+    fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
+    fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
+    fitmarg->SetPrior(kPhypBetaBar,"flat",conv::kMinFitBetaBar,conv::kMaxFitBetaBar);
+  }
+  else if(hyp == kHypOsc3FNormBar){
+    fitmarg->SetPrior(kPhypBetaBar,"flat",conv::kMinFitBetaBar,conv::kMaxFitBetaBar);
+  }
+    
+
+  // Set deltaCP prior
+  if(file_prior_dcp!=""){
+    fitmarg->SetPrior(kPhypCPV,"user",hPrior_dcp);
+    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar) fitmarg->SetPrior(kPhypCPVBar,"user",hPrior_dcp);
   }
   else{
     cout << endl;
     cout << "Use flat prior for deltaCP" << endl;
     cout << endl;
-    fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
+    fitmarg->SetPrior(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
+    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar) fitmarg->SetPrior(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
   }
+
+  
 
   // Make toys and store in binary files
     
@@ -372,11 +408,19 @@ void build_marg_toys
 
   // Draw prior and toy histograms for marginalized oscillation parameters
  
-  TCanvas *cPriorHisto = new TCanvas("cPriorHisto","cPriorHisto");
-  fitmarg->GetFitParamList()->GetPriorHisto(conv::kPhypCPVBar)->Draw();
-  
-  TCanvas *cToyHisto = new TCanvas("cToyHisto","cToyHisto");
-  fitmarg->GetFitParamList()->GetToyHisto(conv::kPhypCPVBar)->Draw();
+  TH1D *hPriorHisto = new TH1D(*fitmarg->GetFitParamList()->GetPriorHisto(conv::kPhypCPV));
+  TH1D *hToyHisto = new TH1D(*fitmarg->GetFitParamList()->GetToyHisto(conv::kPhypCPV));
 
+  // TCanvas *cPriorHisto = new TCanvas("cPriorHisto","cPriorHisto");
+  // hPriorHisto->Draw();
+  // TCanvas *cToyHisto = new TCanvas("cToyHisto","cToyHisto");
+  // hToyHisto->Draw();
+
+  char name[200];
+  sprintf(name,"%s.root",tag);
+  TFile *fout = new TFile(name,"RECREATE");
+  hPriorHisto->Write();
+  hToyHisto->Write();
+  
   return;
 }
