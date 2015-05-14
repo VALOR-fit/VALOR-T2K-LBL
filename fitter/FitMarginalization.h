@@ -172,6 +172,7 @@ class FitMarginalization
 
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
+  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
   std::string GetPrior(conv::PhysParamId_t physpar) const;
   
   void BuildDefaultPriors(void);

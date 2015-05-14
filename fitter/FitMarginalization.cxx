@@ -6,6 +6,7 @@
 */
 //________________________________________________________________________________________
 
+//#define __print_oscparam_all__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
@@ -21,6 +22,8 @@
 //#define __print_hesseerror_verbose__
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
+
+#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
  
 #include <cassert>
 #include <cstdlib>
@@ -768,13 +771,24 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     
     // Extract oscillation parameters to be marginalized
     this->SetMargOscParam();
-
-    // cout << "Marginalize " << kPhypCPVBar << " " << util::AsString(kPhypCPVBar) 
-    // 	 << " --> " << fparm->InitValue(kPhypCPVBar) 
-    // 	 << " --> " << fparm->CurrValue(kPhypCPVBar) 
-    // 	 << " --> " << fparm->Value(kPhypCPVBar) 
-    // 	 << endl;
     
+
+
+#ifdef  __print_oscparam_all__
+  int np = fparm->GetNumberParameters();
+  for(int ip = 0; ip < np; ip++) {
+    conv::PhysParamId_t p = fparm->WhichParam(ip);
+    if(util::IsSystematic(p)) continue; // not oscillation parameters 
+    if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
+    cout << "Osc param " << p << " " << util::AsString(p) << " --> " << fparm->InitValue(p) << endl;
+    //<< " --> " << fparm->InitValue(kPhypCPVBar) 
+    //<< " --> " << fparm->CurrValue(kPhypCPVBar) 
+    //<< " --> " << fparm->Value(kPhypCPVBar) 
+  }
+  cout << endl;
+#endif
+
+
     // Set seed after oscillation parameter extraction
 
     UInt_t seedstat = Rnd::Instance()->RndToyMCstat().GetSeed();
@@ -1940,6 +1954,31 @@ void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1D *h
   if(priorname=="user"){
     fparm->SetPriorHisto(physpar,hprior);
     fparm->SetToyHisto(physpar,hprior);
+  }  
+  else if(priorname=="flat" || priorname=="gaus"){
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose a " << priorname << " prior, but you gave as input an histogram" << endl;
+    exit(1);
+  }
+  else{
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose the wrong prior option" << endl;
+    exit(1);
+  }
+  return;
+}
+
+
+
+//________________________________________________________________________________________
+void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH2D *hprior){
+  fparm->SetPriorMode(physpar,priorname);
+    
+  if(priorname=="user"){
+    fparm->SetPriorHisto2D(physpar,hprior);
+    fparm->SetToyHisto2D(physpar,hprior);
   }
   else if(priorname=="flat" || priorname=="gaus"){
     cerr << endl;
@@ -1953,9 +1992,11 @@ void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1D *h
     cerr << "You chose the wrong prior option" << endl;
     exit(1);
   }
-
   return;
 }
+
+
+
 //________________________________________________________________________________________
 string FitMarginalization::GetPrior(PhysParamId_t physpar) const
 {
@@ -1964,6 +2005,8 @@ string FitMarginalization::GetPrior(PhysParamId_t physpar) const
 //________________________________________________________________________________________
 void FitMarginalization::SetMargOscParam(){
   
+  int Nparam_with_2Dprior = 0;
+
   // Loop over the fit parameter list
   int np = fparm->GetNumberParameters();
   int npfree = 0;
@@ -1992,7 +2035,13 @@ void FitMarginalization::SetMargOscParam(){
     if(util::IsSystematic(p)) continue; // not oscillation parameters 
     if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
 
-    // Now extract the oscillation parameter to marginalize 
+    // Now extract the oscillation parameter to marginalize from 1D prior
+
+    if(fparm->IsPrior2D(p)){
+      Nparam_with_2Dprior++;
+      continue;
+    }
+
     double currval = conv::kBadResult;
 
     bool rethrow=true;
@@ -2013,6 +2062,62 @@ void FitMarginalization::SetMargOscParam(){
     fparm->SetInitValue(p,currval);
     
   }
+
+
+  
+  // Marginalze 23 parameters with 2D priors if correlated
+
+#ifdef __MARGINALIZE_23PARAMS_CORR__
+  
+  if(Nparam_with_2Dprior==0){ // There are not 2D prior parameters
+    return; 
+  }
+  else if(Nparam_with_2Dprior!=2){
+    cerr << endl;
+    cerr << "FitMarginalization::SetMargOscParam" << endl;
+    cerr << "There are more/less marginalization parameters with 2D prior than expected" << endl;
+    cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
+    cerr << "We expect 2 parameters: " 
+	 << util::AsString(conv::kPhypDm23sq) 
+	 << util::AsString(conv::kPhypMixing23)
+	 << endl;
+    cerr << endl;
+    exit(1);
+  }
+  else{
+    
+    if( !( fparm->IsPrior2D(conv::kPhypDm23sq) && fparm->IsPrior2D(conv::kPhypMixing23) ) ){
+      
+      cerr << endl;
+      cerr << util::AsString(conv::kPhypDm23sq) << " and " << util::AsString(conv::kPhypMixing23) 
+	   << " don't have a 2D prior" << endl;
+      cerr << "There is something wrong" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+    double dmsq=0;
+    double mix23=0;
+    
+    fparm->GetPriorHisto2D(conv::kPhypDm23sq)->GetRandom2(mix23,dmsq);
+    
+#ifdef  __print_oscparam_marginalized__
+    cout << "Marginalize " << conv::kPhypMixing23 << " " << util::AsString(conv::kPhypMixing23) << " --> " << mix23 << endl; 
+    cout << "Marginalize " << conv::kPhypDm23sq << " " << util::AsString(conv::kPhypDm23sq) << " --> " << dmsq << endl; 
+    //cout << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
+#endif
+    
+    fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(mix23,dmsq); // Fill toy histogram for checks
+    fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(mix23,dmsq); // Fill toy histogram for checks
+    
+    fparm->SetInitValue(conv::kPhypDm23sq,dmsq);
+    fparm->SetInitValue(conv::kPhypMixing23,mix23);
+    //fparm->Update(p,currval);
+
+#endif
+    
+  }
+  
 }
 //________________________________________________________________________________________
 void FitMarginalization::BuildDefaultPriors(void)
@@ -2144,6 +2249,12 @@ double FitMarginalization::Randomize(PhysParamId_t physpar) const
   }
   
 }
+
+
+
+
+
+
 //________________________________________________________________________________________
 void FitMarginalization::SetMargMassHierarchy(bool domargMH){
   fdoMargMassHierarchy = domargMH;
