@@ -759,16 +759,52 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
   }
 
-  //
-  
-  
-  
-  
-  
-  cerr<<"FitParamListFactory/NamedParamList >> Unable to make: "<<name<<endl;
-  exit(-1); 
+    //
+    
+    // NEW BETABAR 2
+    
+    if(name == "nuosc3f_normbar_fitdcp") {
+      FitParamList * fp = FitParamList::NuOsc3FlavourNormBarFit();
+      fp -> FixParameter (kPhypMixing13);
+      fp -> FixParameter (kPhypMixing23);
+      fp -> FixParameter (kPhypMixing12);
+      fp -> FixParameter (kPhypDm12sq);
+      fp -> FixParameter (kPhypDm23sq);
+            
+      fp -> SetParListName(name);
+      fp -> SetSystMode(0);
+      return fp;
+    }
+    
+    if(name == "nuosc3f_normbar_fitdcp+nuisance") {
+      FitParamList * fp = FitParamList::NuOsc3FlavourNormBarFit(kNumOfNuisanceParams);
+      util::AppendAllSystematicsTo(fp, 7);
+      fp -> FixParameter (kPhypMixing13);
+      fp -> FixParameter (kPhypMixing23);
+      fp -> FixParameter (kPhypMixing12);
+      fp -> FixParameter (kPhypDm12sq);
+      fp -> FixParameter (kPhypDm23sq);
+        
+      fp -> SetParListName(name);
+      fp -> SetSystMode(1);
+      // NEW XSEC
+#if defined(__USE_NIWG2015__)
+      //~ fp -> FixParameter (kNuisXSecRPA ); 
+#endif
+      //
+      return fp;
+    }
+    
+    //  
+    
+    
+    
+    
+    
+    cerr<<"FitParamListFactory/NamedParamList >> Unable to make: "<<name<<endl;
+    exit(-1); 
 }
-
+    
 //________________________________________________________________________________________
 void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 {

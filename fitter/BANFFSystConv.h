@@ -1094,7 +1094,7 @@ namespace valor {
 	0,                    // kRHCNuisBANFFSCCA         
 	0,                    // kRHCNuisBANFFSCCV
 #endif
-    0,                    // kRHCNuisBANFFFermiMom      
+	0,                    // kRHCNuisBANFFFermiMom      
 	0,                    // kRHCNuisBANFFShapeCCoth    
 	0,                    // kRHCNuisBANFFBindE        
 	0,                    // kRHCNuisBANFFNormCCcoh     

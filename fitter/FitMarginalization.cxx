@@ -6,6 +6,7 @@
 */
 //________________________________________________________________________________________
 
+//#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
@@ -763,7 +764,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     if (iexperiment%100 == 0) { cout << "iexperiment " << iexperiment << endl; }
 #endif
     
-    fparm->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue()
+    fparm->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue
     
     // Extract oscillation parameters to be marginalized
     this->SetMargOscParam();
@@ -2001,7 +2002,9 @@ void FitMarginalization::SetMargOscParam(){
       if(rethrow) cout << "Rethrow " << util::AsString(p) << " " << currval << endl;
     }
 
-    //cout << "Marginalize " << p << " " << util::AsString(p) << " --> " << currval << endl;
+#ifdef  __print_oscparam_marginalized__
+    cout << "Marginalize " << p << " " << util::AsString(p) << " --> " << currval << endl;
+#endif
 
     fparm->GetToyHisto(p)->Fill(currval); // Fill toy histogram for checks
 
