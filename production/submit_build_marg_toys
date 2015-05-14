@@ -96,7 +96,8 @@ $config_file     = "analysis_configuration_run1to6_test_app.xml"  unless defined
 
 #$fitparamlist   = "nuosc3fbar_normbar_fixall+nuisance"       unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_normbar_fixosc+nuisance"       unless defined $fitparamlist;
-$fitparamlist   = "nuosc3fbar_normbar_fitdcpbar+nuisance"    unless defined $fitparamlist;
+#$fitparamlist   = "nuosc3fbar_normbar_fitdcpbar+nuisance"    unless defined $fitparamlist;
+$fitparamlist   = "nuosc3f_normbar_fitdcp+nuisance"    unless defined $fitparamlist;
 
 # Default
 $dm23sq          = -99                         unless defined $dm23sq; 
@@ -137,7 +138,7 @@ $file_prior_dcp         = "../../inputs/marginalization/priors/deltaCP_T2Kreact_
 $job_dir                = "."                  unless defined $job_dir;
 $softw_dir              = $ENV{'T2KOSCANA'}    unless defined $softw_dir;
 $fmwk_dir               = $ENV{'VALOR_FMWK'}   unless defined $fmwk_dir;
-$dmsqscheme             = "abs23"              unless defined $dmsqscheme;
+$dmsqscheme             = "auto"              unless defined $dmsqscheme;
 $masshierarchy          = "normal"             unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"         unless defined $mixparamchoice;
 $mixparamoctant         = "two"                unless defined $mixparamoctant;

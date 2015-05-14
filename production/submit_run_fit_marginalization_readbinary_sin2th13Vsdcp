@@ -88,7 +88,7 @@ foreach (@ARGV) {
 $resource        = "interactive"               unless defined $resource;
 $tag             = "fitmarg_sin2th13Vsdcp"     unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
-$nexpts          = 2                           unless defined $nexpts;  # number of toy experiments per job
+$nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
 $xml_file         = "toymc/toymc_nuebarapp_fix12_rethrowunphysical_4p0E20POT-0.xml" unless defined $xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
@@ -125,16 +125,20 @@ $stat_fluct             = 1                    unless defined $stat_fluct;
 #$fitparamlist   = "nuosc3fbar_nueapp_fixnonbar_fix4"       unless defined $fitparamlist;
 $fitparamlist   = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
 
-$dmsqscheme             = "abs23"                unless defined $dmsqscheme;
+$dmsqscheme             = "auto"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"           unless defined $mixparamchoice;
 $mixparamoctant         = "two"                  unless defined $mixparamoctant;
 
 #### marginalization
 
-$marg_file         = "../../inputs/marginalization/toys/nueapp_2D_4p0E20POT_fixosc_10toys/submit_mixing13Vsdcp_4p0E20_postfit"  unless defined $marg_file;
+#$marg_file         = "../../inputs/marginalization/toys/nueapp_2D_4p0E20POT_fixosc_10toys/submit_mixing13Vsdcp_4p0E20_postfit"  unless defined $marg_file;
+#$marg_file         = "../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys/submit_sinsqth13Vsdcp_NormPOT_postfit"  unless defined $marg_file;
+$marg_file         = "../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys_dcpcoarse/submit_sinsqth13Vsdcp_NormPOT_postfit_dcpcoarse"  unless defined $marg_file;
 
-$nfiles_marg       = 804           unless defined $nfiles_marg;     # of marginalization files
+#$nfiles_marg       = 804           unless defined $nfiles_marg;     # of marginalization files
+$nfiles_marg       = 201           unless defined $nfiles_marg;     # of marginalization files
+
 $nexpts_marg       = 10            unless defined $nexpts_marg;    # of marginalization toys
 
 $freepar0          = "mixing13Bar" unless defined $freepar0;
@@ -145,7 +149,8 @@ $npt_freepar0      = 201           unless defined $npt_freepar0; # of free param
 $freepar1          = "deltacpBar"  unless defined $freepar1;
 $minfreepar1       = -3.14159265358979312e+00 unless defined $minfreepar1;  # Min free param allowed value
 $maxfreepar1       = +3.14159265358979312e+00 unless defined $maxfreepar1;  # Max free param allowed value
-$npt_freepar1      = 201           unless defined $npt_freepar1; # of free param points to scan
+#$npt_freepar1      = 201           unless defined $npt_freepar1; # of free param points to scan
+$npt_freepar1      = 51           unless defined $npt_freepar1; # of free param points to scan
 
 $marg_hierarchy    = 1             unless defined $marg_hierarchy;
 $type_error        = "HESSE-MINOS" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)

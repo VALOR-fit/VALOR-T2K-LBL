@@ -94,8 +94,9 @@ $tag             = "fitmarg_sin2th13"          unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
 
-$xml_file         = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
+#$xml_file         = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
 #$xml_file         = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
+$xml_file        = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml" unless defined $xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
 
@@ -113,16 +114,18 @@ $mix12Bar        = -99                         unless defined $mix12Bar;
 $deltacpBar      = -99                         unless defined $deltacpBar;
 $betaBar         = -99                         unless defined $betaBar;
 
-$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
+$config_file    = "analysis_configuration_run1to6_test_app_fullstat.xml"  unless defined $config_file;
 
 $tweak_systematics      = 1                    unless defined $tweak_systematics;
 $stat_fluct             = 1                    unless defined $stat_fluct;
 
 #$fitparamlist   = "nuosc3fbar_normbar_fixall+nuisance"      unless defined $fitparamlist;
-$fitparamlist   = "nuosc3fbar_normbar_fixosc+nuisance"      unless defined $fitparamlist;
+#$fitparamlist   = "nuosc3fbar_normbar_fixosc+nuisance"      unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_normbar_fitdcpbar+nuisance"   unless defined $fitparamlist;
+$fitparamlist   = "nuosc3f_normbar_fitdcp+nuisance"      unless defined $fitparamlist;
 
-$dmsqscheme             = "abs23"                unless defined $dmsqscheme;
+$dmsqscheme             = "auto"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"           unless defined $mixparamchoice;
 $mixparamoctant         = "two"                  unless defined $mixparamoctant;

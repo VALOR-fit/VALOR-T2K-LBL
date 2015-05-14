@@ -122,7 +122,7 @@ $stat_fluct             = 1                    unless defined $stat_fluct;
 $fitparamlist   = "nuosc3fbar_fixnonbar_fix5+nuisance"       unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance" unless defined $fitparamlist;
 
-$dmsqscheme             = "abs23"                unless defined $dmsqscheme;
+$dmsqscheme             = "auto"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"           unless defined $mixparamchoice;
 $mixparamoctant         = "two"                  unless defined $mixparamoctant;
