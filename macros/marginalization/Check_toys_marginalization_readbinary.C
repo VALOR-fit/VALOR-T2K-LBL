@@ -19,8 +19,9 @@ void Check_toys_marginalization_readbinary
 (
  const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
 
- const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
-
+ //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
+ const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
 
  const char * sk_sample = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
@@ -43,7 +44,9 @@ void Check_toys_marginalization_readbinary
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
+ const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), dcp T2K+react joint
+
+ //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2KFullStat_T2Kreact_betabar_fixosc_10kToys/BetaBar_7p8E21POT",  // T2K+reactor T2K Full Stat (betabar=0,1) 
@@ -51,7 +54,7 @@ void Check_toys_marginalization_readbinary
  //const int    nfiles               = 201,         // # of files to read
  const int    nfiles               = 1,         // # of files to read
 
- const int    NtoysMarg            = 1,   // # toys marginalization 
+ const int    NtoysMarg            = 10000,   // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter
@@ -257,7 +260,7 @@ void Check_toys_marginalization_readbinary
       h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
     }
     
-    cout << "NH: " << h_marg_toy->Integral() << endl;
+    //cout << "NH: " << h_marg_toy->Integral() << endl;
       
     //Inverted Hierarchy
     h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1,1);
@@ -265,18 +268,10 @@ void Check_toys_marginalization_readbinary
       h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
     }
     
-    cout << "IH: " << h_marg_toy->Integral() << endl;
-    cout << endl;
-
+    //cout << "IH: " << h_marg_toy->Integral() << endl;
+    //cout << endl;
   }
   
-
-
-
-
-
-
-
   // Get tuned MC - with BANFF tuning
 
   // Global options
@@ -368,6 +363,7 @@ void Check_toys_marginalization_readbinary
   h_2d->Draw("colz");
   h_up->Draw("same");
   h_down->Draw("same");
+  h_nominal->SetLineColor(kYellow);
   h_nominal->Draw("same");
   
   //c->SaveAs("draw_marg_toys.root"); 

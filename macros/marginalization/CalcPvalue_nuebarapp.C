@@ -3,6 +3,8 @@
 // ------------------------------------------------------------------------------------------------           
 //
 // Read and analyze the output from run_fit_marginalization_readbinary_*.C
+// Compute p-values using deltaChisq_01, deltaChisq_0BF and # of events
+// Store final results in a output root file to be used by other macros
 //
 // Davide Sgalaberna                                                                                              
 //                                                                                           
@@ -14,6 +16,21 @@ using namespace valor::conv;
 
 void CalcPvalue_nuebarapp
 (
+ // rate+shape (current stat), dcp toys
+ TString tag = "ciao",
+ double data = 3.692, // # of data events
+ double deltachisq_beta01_data = 1.6006, // data deltachisq 01
+ double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ //char infilename[200] = "",
+ char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateshape_betabar_0_dcptoy-3f+3fbar+normbar_5kToys.root",
+
+ // // rate-only (current stat), dcp toys
+ // double data =  3.692, // # of data events
+ // double deltachisq_beta01_data = 1.30484, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // //char infilename[200] = "",
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateonly_betabar_0_dcptoy-3f+3fbar+normbar_5kToys.root", 
+
  // // rate+shape (current stat)
  // double data = 3.692, // # of data events (current stat)
  // double deltachisq_beta01_data = 1.75958, // data deltachisq 01
@@ -26,12 +43,12 @@ void CalcPvalue_nuebarapp
  // double deltachisq_beta0BF_data = 1.48771, // data deltachisq 0BF
  // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateonly_betabar_0-3f+3fbar+normbar_5kToys.root",
  
- // rate+shape (current stat), stat only
- double data =  3.692, // # of data events
- double deltachisq_beta01_data = 1.98537, // data deltachisq 01
- double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- //char infilename[200] = "",
- char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateshape_statonly_betabar_0-3f+3fbar+normbar_5kToys.root",
+ // // rate+shape (current stat), stat only
+ // double data =  3.692, // # of data events
+ // double deltachisq_beta01_data = 1.98537, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // //char infilename[200] = "",
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateshape_statonly_betabar_0-3f+3fbar+normbar_5kToys.root",
 
  // // rate-only (T2K full stat)
  // double data = 71.986826, // # of data events (T2K full stat)
@@ -402,6 +419,32 @@ void CalcPvalue_nuebarapp
   lPvalues_evt->AddEntry(ldata,name,"l");
   lPvalues_evt->Draw();
 
+
+  // Write output file
+  
+  TH1D *hNdata = new TH1D("hNdata","hNdata",1,0,1);
+  hNdata->SetBinContent(1,data);
+  TH1D *hdeltachisq_beta01 = new TH1D("hdeltachisq_beta01","hdeltachisq_beta01",1,0,1);
+  hdeltachisq_beta01->SetBinContent(1,deltachisq_beta01_data);
+  TH1D *hdeltachisq_beta0BF = new TH1D("hdeltachisq_beta0BF","hdeltachisq_beta0BF",1,0,1);
+  hdeltachisq_beta0BF->SetBinContent(1,deltachisq_beta0BF_data);
+  TH1D *hpvalue_rateonly = new TH1D("hpvalue_rateonly","hpvalue_rateonly",1,0,1);
+  hpvalue_rateonly->SetBinContent(1,pvalue_evt);
+  TH1D *hpvalue_rateshape01 = new TH1D("hpvalue_rateshape01","hpvalue_rateshape01",1,0,1);
+  hpvalue_rateshape01->SetBinContent(1,pvalue_01);
+  TH1D *hpvalue_rateshape0BF = new TH1D("hpvalue_rateshape0BF","hpvalue_rateshape0BF",1,0,1);
+  hpvalue_rateshape0BF->SetBinContent(1,pvalue_0BF);
+
+  char outname[200];
+  sprintf(outname,"%s.root",tag.Data());
+  TFile *outfile = new TFile(outname,"RECREATE");
+  hNdata->Write();
+  hdeltachisq_beta01->Write();
+  hdeltachisq_beta0BF->Write();
+  hpvalue_rateonly->Write();
+  hpvalue_rateshape01->Write();
+  hpvalue_rateshape0BF->Write();
+  outfile->Close();
 
   // Print results
   
