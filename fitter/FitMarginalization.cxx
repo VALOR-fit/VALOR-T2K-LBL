@@ -6,7 +6,7 @@
 */
 //________________________________________________________________________________________
 
-#define __print_oscparam_all__
+//#define __print_oscparam_all__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
@@ -2067,7 +2067,19 @@ void FitMarginalization::SetMargOscParam(){
   
   // Marginalze 23 parameters with 2D priors if correlated
 
-#ifdef __MARGINALIZE_23PARAMS_CORR__
+#ifndef __MARGINALIZE_23PARAMS_CORR__
+  
+  if(Nparam_with_2Dprior>0){
+    cerr << endl;
+    cerr << "FitMarginalization::SetMargOscParam" << endl;
+    cerr << "# of marginalization parameters with 2D prior > 0" << endl;
+    cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
+    cerr << "We don't expect parameters with 2D priors" << endl; 
+    cerr << endl;
+    exit(1);
+  }
+  
+#else
   
   if(Nparam_with_2Dprior==0){ // There are not 2D prior parameters
     return; 
@@ -2114,10 +2126,10 @@ void FitMarginalization::SetMargOscParam(){
     fparm->SetInitValue(conv::kPhypMixing23,mix23);
     //fparm->Update(p,currval);
 
+  }
+
 #endif
     
-  }
-  
 }
 //________________________________________________________________________________________
 void FitMarginalization::BuildDefaultPriors(void)
