@@ -9,7 +9,7 @@
 //#define __print_oscparam_all__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
-//#define __print_array_toy_maketoys__
+#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
