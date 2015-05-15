@@ -6,7 +6,7 @@
 */
 //________________________________________________________________________________________
 
-//#define __print_oscparam_all__
+#define __print_oscparam_all__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
@@ -779,8 +779,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     if(util::IsSystematic(p)) continue; // not oscillation parameters 
-    if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
-    cout << "Osc param " << p << " " << util::AsString(p) << " --> " << fparm->InitValue(p) << endl;
+    //if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
+    cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm->InitValue(p) << endl;
     //<< " --> " << fparm->InitValue(kPhypCPVBar) 
     //<< " --> " << fparm->CurrValue(kPhypCPVBar) 
     //<< " --> " << fparm->Value(kPhypCPVBar) 
