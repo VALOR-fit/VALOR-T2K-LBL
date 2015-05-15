@@ -84,17 +84,17 @@ $nruns                  = 1                                       unless defined
 $nexpts                 = 1                                       unless defined $nexpts;
 $stat_fluct             = 1                                       unless defined $stat_fluct;
 $twk_systematics        = 1                                       unless defined $twk_systematics;
-$store_toy_expts        = 1                                       unless defined $store_toy_expts;
-$store_bestfit_spectra  = 1                                       unless defined $store_bestfit_spectra;
-#$fitparamlist           = "nuosc3f_numudisapp_fix4+nuisance"      unless defined $fitparamlist;
-#$fitparamlist           = "nuosc3f_12constrain+nuisance"          unless defined $fitparamlist;
+$store_toy_expts        = 0                                       unless defined $store_toy_expts;
+$store_bestfit_spectra  = 0                                       unless defined $store_bestfit_spectra;
 $fitparamlist           = "nuosc3f_12fix+nuisance"                unless defined $fitparamlist;
+#$fitparamlist           = "nuosc3f_12fix"                unless defined $fitparamlist;
 $fitoption              = "minuit+hesse"                          unless defined $fitoption;
 $tag                    = "toyexptfits"                           unless defined $tag;
 $job_dir                = "."                                     unless defined $job_dir;
 $softw_dir              = $ENV{'T2KOSCANA'}                       unless defined $softw_dir;
+$config_file            = "analysis_configuration_run1to5_test.xml"       unless defined $config_file;
 #$config_file            = "analysis_configuration_test.xml"       unless defined $config_file;
-$config_file            = "analysis_configuration_test_multiring.xml"       unless defined $config_file;
+#$config_file            = "analysis_configuration_test_multiring.xml"       unless defined $config_file;
 $dmsqscheme             = "abs23"                                 unless defined $dmsqscheme;
 $masshierarchy          = "normal"                                unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"                            unless defined $mixparamchoice;
@@ -131,7 +131,7 @@ while($irun < $nruns) {
       print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
       print PBS "$command \n";
       close(PBS);
-      `sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      `sbatch -t 01:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
   }
       
   #

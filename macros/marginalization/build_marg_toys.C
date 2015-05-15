@@ -24,7 +24,7 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "BetaBar_4p0E20POT_toydcp",
+ const char * tag                  = "BetaBar_4p0E20POT_Toy23dcp",
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
  //const char * config_file          = "analysis_configuration_1.7E20.xml",   
@@ -42,17 +42,17 @@ void build_marg_toys
  //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
  const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
 
- double       input_mixing12           = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13           = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing12           = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13           = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23           = -99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp            = -99,    /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
- double       input_dm12sq             = -99,    /* Dm^2_{12}, if -999 then randomize */
+ double       input_deltacp            = -99,    /* deltacp, */
+ double       input_dm12sq             = -99,    /* Dm^2_{12},  */
  double       input_dm23sq             = -99,    /* |Dm^2_{23}| */
- double       input_mixing12_bar       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13_bar       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing12_bar       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13_bar       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23_bar       = -99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_bar        = -99,    /* deltacp, if -999 then randomize x TMath::Pi()!!!!*/
- double       input_dm12sq_bar         = -99,    /* Dm^2_{12}, if -999 then randomize */
+ double       input_deltacp_bar        = -99,    /* deltacp */
+ double       input_dm12sq_bar         = -99,    /* Dm^2_{12} */
  double       input_dm23sq_bar         = -99,    /* |Dm^2_{23}| */
  double       input_beta_bar           = -99,    // numubar->nuebar normalization
 
@@ -76,8 +76,8 @@ void build_marg_toys
  const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
  const int    NptScan1              = 1,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 10000,   // # toys marginalization 
- const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
+ const int    NtoysMarg            = 1,   // # toys marginalization 
+ const int tweak_systematics       = 0,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
@@ -87,8 +87,10 @@ void build_marg_toys
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
- TString file_prior_dcp    = "../../inputs/priors/joint_T2Kreact_run14/Priors_deltaCP_run14_T2Kreact_NH.root", // Set to "" if no user priors are used
- TString file_prior_23     = "../../inputs/priors/joint_T2Kreact_run14/parameters23_T2Kreact_run14_Mach3.root" // Set to "" if no user priors are used
+ //TString file_prior_dcp    = "../../inputs/priors/joint_T2Kreact_run14/Priors_deltaCP_run14_T2Kreact_NH.root", // Set to "" if no user priors are used (VALOR)
+ TString file_prior_dcp    = "../../inputs/priors/joint_T2Kreact_run14/deltacp_T2Kreact_run14_Mach3.root", // Set to "" if no user priors are used (Mach3)
+
+ TString file_prior_23     = "../../inputs/priors/joint_T2Kreact_run14/parameters23_T2Kreact_run14_Mach3.root" // Set to "" if no user priors are used (Mach3)
 
  )
 {
@@ -276,7 +278,7 @@ void build_marg_toys
     fparm->SetInitValue(kPhypCPV    ,  input_deltacp);
     fparm->SetInitValue(kPhypDm12sq,   input_dm12sq);
     fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);    
-    fparm->SetInitValue(kPhypBetaBar,     input_beta_bar);
+    fparm->SetInitValue(kPhypBetaBar,  input_beta_bar);
   }
   else if(hyp == kHypOsc3FBarNormBar) {
     fparm->SetInitValue(kPhypMixing12, input_mixing12);
@@ -349,7 +351,8 @@ void build_marg_toys
       cerr << endl;
       exit(1);
     }
-    hPrior_dcp = (TH1D*) fPrior_dcp->Get("hPrior_Ldcp"); 
+    hPrior_dcp = (TH1D*) fPrior_dcp->Get("dcp_hist");       // Mach3 
+    //hPrior_dcp = (TH1D*) fPrior_dcp->Get("hPrior_Ldcp");  // VALOR
     if(hPrior_dcp->IsZombie() || !hPrior_dcp){
       cerr << endl;
       cerr << "Error: the histogram hPrior_Ldcp is not taken!" << endl;

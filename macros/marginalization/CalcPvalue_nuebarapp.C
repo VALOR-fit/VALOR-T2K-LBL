@@ -17,12 +17,21 @@ using namespace valor::conv;
 void CalcPvalue_nuebarapp
 (
  // rate+shape (current stat), dcp toys
- TString tag = "ciao",
- double data = 3.692, // # of data events
- double deltachisq_beta01_data = 1.6006, // data deltachisq 01
+ TString tag = "pvalue_beta3",
+ double data = 7.55607, // # of data events
+ double deltachisq_beta01_data = 9.7843, // data deltachisq 01
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
  //char infilename[200] = "",
- char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateshape_betabar_0_dcptoy-3f+3fbar+normbar_5kToys.root",
+ char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_NuOsc_rateshape_betabar_0_dcptoy_AllMH-3f+normbar_6kToys.root",
+
+
+ // // rate+shape (current stat), dcp toys
+ // TString tag = "ciao",
+ // double data = 3.692, // # of data events
+ // double deltachisq_beta01_data = 1.6006, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // //char infilename[200] = "",
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateshape_betabar_0_dcptoy-3f+3fbar+normbar_5kToys.root",
 
  // // rate-only (current stat), dcp toys
  // double data =  3.692, // # of data events

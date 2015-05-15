@@ -1,7 +1,7 @@
 
 void DrawPvaluesVsBetaBar_nuebar
 (
- const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR/",
+ const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_NUOSC/",
 )
 {
   char name[200];

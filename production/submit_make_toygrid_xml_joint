@@ -109,20 +109,20 @@ $param1                 = "mixing23"                              unless defined
 $param2                 = "dmsq"                                 unless defined $param2;
 $param3                 = "mixing13"                                 unless defined $param3;
 
-$nbins_tot_param1        = 41,                                    unless defined $nbins_tot_param1;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-$nbins_tot_param2        = 21,                                    unless defined $nbins_tot_param2;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
-$nbins_tot_param3        = 21,                                    unless defined $nbins_tot_param3;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
+$nbins_tot_param1        = 11,                                    unless defined $nbins_tot_param1;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
+$nbins_tot_param2        = 11,                                    unless defined $nbins_tot_param2;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
+$nbins_tot_param3        = 11,                                    unless defined $nbins_tot_param3;   # tot # grid values for param1 (start from bin=1) --> part of the grid --> step = nbins-1 
 
 $min_bin_param1          = 1                                      unless defined $min_bin_param1;     # total range to loop over (first bin, param1)
-$max_bin_param1          = 41                                      unless defined $max_bin_param1;    # total range to loop over (last bin, param1)
+$max_bin_param1          = 11                                      unless defined $max_bin_param1;    # total range to loop over (last bin, param1)
 $min_bin_param2          = 1                                      unless defined $min_bin_param2;     # total range to loop over (first bin, param2)
-$max_bin_param2          = 21                                      unless defined $max_bin_param2;    # total range to loop over (last bin, param2)
+$max_bin_param2          = 11                                      unless defined $max_bin_param2;    # total range to loop over (last bin, param2)
 $min_bin_param3          = 1                                      unless defined $min_bin_param3;     # total range to loop over (first bin, param3)
-$max_bin_param3          = 21                                      unless defined $max_bin_param3;    # total range to loop over (last bin, param3)
+$max_bin_param3          = 11                                      unless defined $max_bin_param3;    # total range to loop over (last bin, param3)
 
-$step_grid_1               = 4                                    unless defined $step_grid_1;     # step for each job for param1
-$step_grid_2               = 2                                    unless defined $step_grid_2;     # step for each job for param2
-$step_grid_3               = 4                                    unless defined $step_grid_3;     # step for each job for param3
+$step_grid_1               = 11                                    unless defined $step_grid_1;     # step for each job for param1
+$step_grid_2               = 11                                    unless defined $step_grid_2;     # step for each job for param2
+$step_grid_3               = 11                                    unless defined $step_grid_3;     # step for each job for param3
 
 
 if( !defined $cput ) {

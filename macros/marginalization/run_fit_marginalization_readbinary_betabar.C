@@ -34,8 +34,8 @@ void run_fit_marginalization_readbinary_betabar
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_toydcp_betabar_0_rethrowunphysical_4E20POT_NH-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_toydcp_betabar_0_rethrowunphysical_4E20POT_IH-0.xml",
+ const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_betabar_0_rethrowunphysical_4E20POT_NH-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_betabar_0_rethrowunphysical_4E20POT_IH-0.xml",
  
  //const char * xmlfile = "toymc/toymc_nuebarapp_toydcp_betabar_0_rethrowunphysical_4E20POT-0.xml",    // throw deltaCP from T2K+react joint prior  
  //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_statonly_4E20POT-0.xml",           // stat only
@@ -68,7 +68,10 @@ void run_fit_marginalization_readbinary_betabar
  
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
- const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
+ //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
+ const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
+ 
 
  const char * dmsqscheme               = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
@@ -76,10 +79,11 @@ void run_fit_marginalization_readbinary_betabar
  const char * mixparamoctant           = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
-
- const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), nuosc, dcp T2K+react joint
- //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), dcpbar T2K+react joint
  
+ const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_10kToys/BetaBar_4p0E20POT_Toy23dcp", // (beta=0,1), nuosc, dcp/23 T2K+react joint
+ //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), nuosc, dcp T2K+react joint
+ 
+ //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), dcpbar T2K+react joint
  //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
  //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
  //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
@@ -252,6 +256,16 @@ void run_fit_marginalization_readbinary_betabar
     fparm->SetInitValue(kPhypBetaBar,     input_beta_bar);
   }
 
+  else if(hyp == kHypOsc3FNormBar) {
+    fparm->SetInitValue(kPhypMixing12, input_mixing12);
+    fparm->SetInitValue(kPhypMixing13, input_mixing13);
+    fparm->SetInitValue(kPhypMixing23, input_mixing23);
+    fparm->SetInitValue(kPhypCPV    ,  input_deltacp);
+    fparm->SetInitValue(kPhypDm12sq,   input_dm12sq);
+    fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
+    fparm->SetInitValue(kPhypBetaBar,  input_beta_bar);
+  }
+
   else if(hyp == kHypNuMuDisapp2F) {
     fparm->SetInitValue(kPhypMixing23, input_mixing23);
     fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
@@ -294,6 +308,10 @@ void run_fit_marginalization_readbinary_betabar
       cout << "       > " << util::AsString(kPhypCPVBar    )  << " = " << ((randomize_deltacp_bar) ? "* randomized *" : input_deltacp_bar) << endl;
       cout << "       > " << util::AsString(kPhypDm12sqBar)   << " = " << ((randomize_dm12sq_bar)  ? "* randomized *" : input_dm12sq_bar ) << " eV^2/c^4" << endl;
       cout << "       > " << util::AsString(kPhypDm23sqBar)   << " = " << ((randomize_dm23sq_bar)  ? "* randomized *" : input_dm23sq_bar ) << " eV^2/c^4" << endl;
+      cout << "       > " << util::AsString(kPhypBetaBar)     << " = " << ((randomize_beta_bar)  ? "* randomized *" : input_beta_bar ) << endl;
+    }
+    else if(hyp == kHypOsc3FNormBar){
+      cout << "   - True oscillation parameters bar: " << endl;
       cout << "       > " << util::AsString(kPhypBetaBar)     << " = " << ((randomize_beta_bar)  ? "* randomized *" : input_beta_bar ) << endl;
     }
   }

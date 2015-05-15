@@ -21,7 +21,9 @@ void Check_toys_marginalization_readbinary
 
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
- const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
+ //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
+ //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
+ const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
 
  const char * sk_sample = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
