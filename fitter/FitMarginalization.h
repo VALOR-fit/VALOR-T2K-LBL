@@ -108,9 +108,19 @@ class FitMarginalization
   double GetBinParameterValue(int par, int ibin) const {return fmin_param[par] + ibin*fstep_param[par];} // TO CHECK
    
   void SetFitParamList(const char * fit_param_list);
+
   FitParamList * GetFitParamList(void) {return fparm;};
-  const FitParamList * GetFitParamList(void) const {return fparm;};
+  // NEW MARG MH
+  FitParamList * GetFitParamList_NH(void) {return fparm_nh;};
+  FitParamList * GetFitParamList_IH(void) {return fparm_ih;};
+  //
   
+  const FitParamList * GetFitParamList(void) const {return fparm;};
+  // NEW MARG MH
+  const FitParamList * GetFitParamList_NH(void) const {return fparm_nh;};
+  const FitParamList * GetFitParamList_IH(void) const {return fparm_ih;};
+  //
+
   void PrintPhysHypothesis(void);
 
   bool IsFit2D(){ return fIsFit2D;}
@@ -169,15 +179,35 @@ class FitMarginalization
   TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
   
   void SetMargOscParam();
+  // NEW MARG MH
+  void SetMargOscParam(FitParamList * infparm);
+  //
 
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
+  // NEW MARG MH
+  void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
+  void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
+  void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
+  void SetPrior_IH(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
+  void SetPrior_IH(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
+  void SetPrior_IH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
+  //
+  
   std::string GetPrior(conv::PhysParamId_t physpar) const;
+  // NEW MARG MH
+  std::string GetPrior_NH(conv::PhysParamId_t physpar) const;
+  std::string GetPrior_IH(conv::PhysParamId_t physpar) const;
+  //
   
   void BuildDefaultPriors(void);
 
   double Randomize(conv::PhysParamId_t physpar) const;
+  // NEW MARG MH
+  double Randomize(conv::PhysParamId_t physpar, FitParamList * infparm) const;
+  //
+
   bool RethrowOscUnphysical(conv::PhysParamId_t p,double oscval) const; // NEW 
   
   void SetMargMassHierarchy(bool domargMH);  
@@ -337,6 +367,11 @@ class FitMarginalization
   VALORArrayF *fToyMargErecoVArray_Nue;     
 
   FitParamList * fparm;
+  // NEW MARG MH
+  FitParamList * fparm_nh;
+  FitParamList * fparm_ih;
+  //
+
   conv::PhysHypothesis_t fhypothesis;
   
   bool             fShouldSaveToyParamLists;
