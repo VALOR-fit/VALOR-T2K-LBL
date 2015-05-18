@@ -41,12 +41,15 @@ void Check_toys_marginalization_readbinary
  const char * mixparamchoice      = "sinsqtheta",
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
- const int InputBin0  = 1,
+ const int InputBin0  = 0,
  const int InputBin1  = 0,
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), dcp T2K+react joint
+ //const char * infilename           = "buildmarg_betabar",
+ const char * infilename           = "buildmarg_betabar_Merged",
+ //const char * infilename           = "PROVA_AFTER_CHANGES_10toys",
+ //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), dcp T2K+react joint
 
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
@@ -56,7 +59,7 @@ void Check_toys_marginalization_readbinary
  //const int    nfiles               = 201,         // # of files to read
  const int    nfiles               = 1,         // # of files to read
 
- const int    NtoysMarg            = 10000,   // # toys marginalization 
+ const int    NtoysMarg            = 10,   // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter
@@ -123,7 +126,6 @@ void Check_toys_marginalization_readbinary
   else if(sfreeparname0=="dmsq12Bar")   freepar0 = conv::kPhypDm12sqBar;
   else if(sfreeparname0=="mixing12Bar") freepar0 = conv::kPhypMixing12Bar;
   else if(sfreeparname0=="deltacpBar")  freepar0 = conv::kPhypCPVBar;
-  else if(sfreeparname0=="betaBar")     freepar0 = conv::kPhypBetaBar;
   // Nu mode
   else if(sfreeparname0=="mixing23")    freepar0 = conv::kPhypMixing23;
   else if(sfreeparname0=="mixing13")    freepar0 = conv::kPhypMixing13;
@@ -131,6 +133,8 @@ void Check_toys_marginalization_readbinary
   else if(sfreeparname0=="dmsq12")      freepar0 = conv::kPhypDm12sq;
   else if(sfreeparname0=="mixing12")    freepar0 = conv::kPhypMixing12;
   else if(sfreeparname0=="deltacp")     freepar0 = conv::kPhypCPV;
+  //
+  else if(sfreeparname0=="betaBar")     freepar0 = conv::kPhypBetaBar;
   //
   else{
     freepar0 = conv::kPhypUndefined;
@@ -147,7 +151,6 @@ void Check_toys_marginalization_readbinary
   else if(sfreeparname1=="dmsq12Bar")   freepar1 = conv::kPhypDm12sqBar;
   else if(sfreeparname1=="mixing12Bar") freepar1 = conv::kPhypMixing12Bar;
   else if(sfreeparname1=="deltacpBar")  freepar1 = conv::kPhypCPVBar;
-  else if(sfreeparname1=="betaBar")     freepar1 = conv::kPhypBetaBar;
   // Nu mode
   else if(sfreeparname1=="mixing23")    freepar1 = conv::kPhypMixing23;
   else if(sfreeparname1=="mixing13")    freepar1 = conv::kPhypMixing13;
@@ -155,6 +158,8 @@ void Check_toys_marginalization_readbinary
   else if(sfreeparname1=="dmsq12")      freepar1 = conv::kPhypDm12sq;
   else if(sfreeparname1=="mixing12")    freepar1 = conv::kPhypMixing12;
   else if(sfreeparname1=="deltacp")     freepar1 = conv::kPhypCPV;
+  //
+  else if(sfreeparname1=="betaBar")     freepar1 = conv::kPhypBetaBar;
   //
   else{
     freepar1 = conv::kPhypUndefined;
@@ -219,14 +224,7 @@ void Check_toys_marginalization_readbinary
   fitmarg->SetTagFileName(infilename);
   fitmarg->SetFileID(nfiles);
   
-  
-  // Get file ID corresponding to the input free parameters
-  
-  int fileid = fitmarg->GetFileIDRead(0,0);
-  fitmarg->ReadToysFromBinary(fileid,infilename);
-
-
-
+ 
   // Get Ereco toys
   
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
@@ -234,11 +232,6 @@ void Check_toys_marginalization_readbinary
     cerr << "** Undefined sample!" << endl;
     return;
   }
-
-  //fitmarg->GetToyMargHisto(s,0,0,0,0)->Draw();
-  //cout << fitmarg->GetToyMargHisto(s,0,0,0,1)->Integral() << endl;
-
-
   
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
   
@@ -255,23 +248,28 @@ void Check_toys_marginalization_readbinary
   TH2F* h_2d = new TH2F("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),1000,0,6);
   
   for(int itoy=0;itoy<NtoysMarg;itoy++){
+
+    h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
+   
     
-    //Normal Hierarchy
-    h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1,0);
     for(int i=1;i<=util::NumErecoBins(s);i++){
       h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
     }
-    
-    //cout << "NH: " << h_marg_toy->Integral() << endl;
-      
-    //Inverted Hierarchy
-    h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1,1);
-    for(int i=1;i<=util::NumErecoBins(s);i++){
-      h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
-    }
-    
-    //cout << "IH: " << h_marg_toy->Integral() << endl;
-    //cout << endl;
+    cout << h_marg_toy->Integral() << endl;
+
+    // //Normal Hierarchy
+    // h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1,0);
+    // for(int i=1;i<=util::NumErecoBins(s);i++){
+    //   h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
+    // }    
+    // //cout << "NH: " << h_marg_toy->Integral() << endl;
+    // //Inverted Hierarchy
+    // h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1,1);
+    // for(int i=1;i<=util::NumErecoBins(s);i++){
+    //   h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
+    // }   
+    // //cout << "IH: " << h_marg_toy->Integral() << endl;
+    // //cout << endl;
   }
   
   // Get tuned MC - with BANFF tuning

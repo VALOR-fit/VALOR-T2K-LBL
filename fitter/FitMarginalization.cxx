@@ -6,12 +6,12 @@
 */
 //________________________________________________________________________________________
 
-#define __print_oscparam_all__
-#define __print_oscparam_all_verbose__
-#define __print_masshierarchy__
+//#define __print_oscparam_all__
+//#define __print_oscparam_all_verbose__
+//#define __print_masshierarchy__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
-#define __print_array_toy_maketoys__
+//#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
@@ -114,6 +114,111 @@ FitMarginalization::FitMarginalization()
       
   fShouldSaveToyParamLists           = false;
   fMaxSampleErecoBins                = 1;
+
+
+  // NEW MARG MH 2
+  fCurrentFileIDminim = conv::kBadResult;
+  ftagfile = "";
+  fnamefile = 0;
+  fGridStartMinBin_X = conv::kBadResult;
+  fGridStartMaxBin_X = conv::kBadResult;
+  fGridStartMinBin_Y = conv::kBadResult;
+  fGridStartMaxBin_Y = conv::kBadResult;
+  fGridStartMinVal_X = conv::kBadResult;
+  fGridStartMaxVal_X = conv::kBadResult;
+  fGridStartMinVal_Y = conv::kBadResult;
+  fGridStartMaxVal_Y = conv::kBadResult;
+  fnamefreeparam[0] = "";
+  fnamefreeparam[1] = "";
+  fPhysParamFree[0] = conv::kPhypUndefined;
+  fPhysParamFree[1] = conv::kPhypUndefined;
+  fIsFit2D = false;
+  fdoMargMassHierarchy = false;
+  fRethrowSystUnphysical = false;
+  //fnamefilebinary = ;
+  fchisq_bf = conv::kALargeNum;
+  fparam_bf[0] = conv::kBadResult;
+  fparam_bf[1] = conv::kBadResult;
+  fparam_bf_errpos[0] = conv::kBadResult;
+  fparam_bf_errpos[1] = conv::kBadResult;
+  fparam_bf_errneg[0] = conv::kBadResult;
+  fparam_bf_errneg[1] = conv::kBadResult;
+  fparam_bf_errsym[0] = conv::kBadResult;
+  fparam_bf_errsym[1] = conv::kBadResult;
+  fSeed = 999;
+  fnbins_param[0] = 0;
+  fnbins_param[1] = 0;
+  fnbins_sub_param[0] = 0;
+  fnbins_sub_param[1] = 0;
+  fntoys_marg = 0;
+  fmin_bin_param[0] = 0;
+  fmin_bin_param[1] = 0;
+  fmin_bin_sub_param[0] = 0;
+  fmin_bin_sub_param[1] = 0;
+  fmin_sub_param[0] = 0;
+  fmin_sub_param[1] = 0;
+  fmin_param[0] = 0;
+  fmin_param[1] = 0;
+  fstep_param[0] = 0;
+  fstep_param[1] = 0;
+  fNCallsCalcChisqMargPt = 0;
+  flikeVArray = 0;
+  fChisqMargVArray = 0;
+  fNSKsamples = 0;
+  fnerecobins = 0;
+  fsksamples = 0;
+  fToyMargErecoVArray = 0;
+  fToyMargErecoVArray_Clone = 0;
+  for(int i=0;i<conv::kns;i++) fhToyMargCurr[i] = 0;
+  fMaxSampleErecoBins = 0;
+  fnerecobins_RHCNumu = 0;
+  fToyMargErecoVArray_RHCNumu_Clone = 0;
+  fToyMargErecoVArray_RHCNue_Clone = 0;
+  fToyMargErecoVArray_Numu_Clone = 0;
+  fToyMargErecoVArray_Nue_Clone = 0;
+  fMergeInputFiles_Called = true;
+  fNmergedFiles = 0;
+  fhToyMargCurr_RHCNumu = 0;
+  fToyMargErecoVArray_RHCNumu = 0;
+  fToyMargErecoVArray_RHCNue = 0;
+  fToyMargErecoVArray_Numu = 0;
+  fToyMargErecoVArray_Nue = 0;
+  fparm = 0;
+  fparm_nh = 0;
+  fparm_ih = 0;
+  fProbNormalHierarchy = 0;
+  //fhypothesis
+  fskexp = 0;
+  fhchisq_marg_1D_Step = 0;
+  fhchisq_marg_2D_Step = 0;
+  fMaxIterationSingleFit = 0;
+  fMaxFitNumber = 0;
+  fBorderDoFit = 0;
+  fBorderMaxFitNumber = 0;
+  fUncorrXY = false;
+  fFirstMinimVal_X = 0;
+  fLastMinimVal_X = 0;
+  fFirstMinimVal_Y = 0;
+  fLastMinimVal_Y = 0;
+  fFirstMinimBin_X = 0;
+  fLastMinimBin_X = 0;
+  fFirstMinimBin_Y = 0;
+  fLastMinimBin_Y = 0;
+  fStep = 0;
+  fStartBin_X = 0;
+  fStartBin_Y = 0;
+  fNumStartBin_X = 0;
+  fNumStartBin_Y = 0;
+  fExtractStartPt = "";
+  fNFits = 0;
+  fNiterations = 0;
+  fFitStatus = 0;
+  for(int i=0;i<conv::kns;i++) fPOT[i] = 0;
+  for(int i=0;i<conv::kns;i++) fNormPOT[i] = 0;
+  fteststatistic = "";
+  fhPriorMH = 0;
+  fhToyMH = 0;
+  //
 }
 //________________________________________________________________________________________
 FitMarginalization::~FitMarginalization(void)
@@ -160,7 +265,7 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
 
   sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_oscpar%d_MH%s%s%s");  
   
-  fMergeInputFiles_Called = true; // false the first time MergeInputFiles() is calles
+  fMergeInputFiles_Called = true; // false the first time MergeInputFiles() is called
   fNmergedFiles = 0; // fNmergedFiles++ everytime MergeInputFiles() is called (after reading each file)
 
   fNCallsCalcChisqMargPt = 0; // Get track of the # of calls to CalcChisqMargPt
@@ -172,14 +277,24 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
 
   this->SetNSKsamples(); // also defines fnerecobins
   
-  fToyMargErecoVArray = new VALORArrayF(1,1,1,1,1,1); 
+  // fToyMargErecoVArray = new VALORArrayF(1,1,1,1,1,1); 
+  // fToyMargErecoVArray->SetAll(-1.);   // needed for MergeInputFiles()
+  // fToyMargErecoVArray->SetDimensionName(0,"# toys marginalization");
+  // fToyMargErecoVArray->SetDimensionName(1,"# bins free parameter 0");
+  // fToyMargErecoVArray->SetDimensionName(2,"# bins free parameter 1");
+  // fToyMargErecoVArray->SetDimensionName(3,"# mass hierarchies");
+  // fToyMargErecoVArray->SetDimensionName(4,"# sk samples");
+  // fToyMargErecoVArray->SetDimensionName(5,"# bins ereco");
+  
+  // NEW MARG MH 2
+  fToyMargErecoVArray = new VALORArrayF(1,1,1,1,1); 
   fToyMargErecoVArray->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargErecoVArray->SetDimensionName(0,"# toys marginalization");
   fToyMargErecoVArray->SetDimensionName(1,"# bins free parameter 0");
   fToyMargErecoVArray->SetDimensionName(2,"# bins free parameter 1");
-  fToyMargErecoVArray->SetDimensionName(3,"# mass hierarchies");
-  fToyMargErecoVArray->SetDimensionName(4,"# sk samples");
-  fToyMargErecoVArray->SetDimensionName(5,"# bins ereco");
+  fToyMargErecoVArray->SetDimensionName(3,"# sk samples");
+  fToyMargErecoVArray->SetDimensionName(4,"# bins ereco");
+  //
 
   // need to declare array of histogram (then set to 0) because
   // problems with ROOT when declaring double pointers as global in header file 
@@ -216,8 +331,6 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   // cout << "fmax_param[1] = " << fmax_param[1] << endl;
   // cout << "fstep_param[1] = " << fstep_param[1] << endl;
 
-
-  //fhchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0]);  
   fhchisq_marg_1D = new TH1F("hchisq_marg_1D","hchisq_marg_1D",fnbins_param[0],fmin_param[0]-fstep_param[0]/2.,fmax_param[0]+fstep_param[0]/2.);  
   fhchisq_marg_1D->GetXaxis()->SetTitle(Xtitle);
   fhchisq_marg_1D->GetYaxis()->SetTitle("#Delta #chi^{2}");
@@ -227,9 +340,6 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   cout << "BinCenter(1) = " << fhchisq_marg_1D->GetXaxis()->GetBinCenter(1) << endl;
   cout << "BinCenter(Nbins) = " << fhchisq_marg_1D->GetXaxis()->GetBinCenter(fnbins_param[0]) << endl;
   
-  //fhchisq_marg_2D = new TH2F("hchisq_marg_2D","hchisq_marg_2D",
-  //fnbins_param[0],fmin_param[0],fmax_param[0]+fstep_param[0],
-  //fnbins_param[1],fmin_param[1],fmax_param[1]+fstep_param[1] );
   fhchisq_marg_2D = new TH2F("hchisq_marg_2D","hchisq_marg_2D",
 			     fnbins_param[0],fmin_param[0]-fstep_param[0]/2.,fmax_param[0]+fstep_param[0]/2.,
 			     fnbins_param[1],fmin_param[1]-fstep_param[1]/2.,fmax_param[1]+fstep_param[1]/2. );
@@ -330,6 +440,12 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
     cout << "Norm POT ( " << util::AsString(s) << " ) = " << fNormPOT[is] << endl;
   }
 
+  fProbNormalHierarchy = 0.5; // As default initialized to flat prior
+  fhPriorMH = new TH1D("hPriorMH","Prior MH: bin 1 --> P(NH), bin 2 --> P(IH)",2,0,2);
+  fhPriorMH->SetBinContent(1,fProbNormalHierarchy);
+  fhPriorMH->SetBinContent(2,1.-fProbNormalHierarchy);
+  
+  fhToyMH = new TH1D("hToyMH","Toy MH: bin 1 --> NH, bin 2 --> IH",2,0,2);
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
@@ -370,7 +486,10 @@ void FitMarginalization::CleanUp(void){
   if (fparm_ih                          ) { delete fparm_ih                          ; fparm_ih                           = 0;}
   //
   if (fSavedToyParamLists               ) { delete fSavedToyParamLists               ; fSavedToyParamLists                = 0;}
-  
+  // NEW MARG MH 2
+  if (fhPriorMH                         ) { delete fhPriorMH                         ; fhPriorMH                          = 0;}
+  if (fhToyMH                           ) { delete fhToyMH                           ; fhToyMH                            = 0;}
+  //
 
   // to be removed once the sk sample issue is fixed
   for(int ikns=0;ikns<conv::kns;ikns++){
@@ -711,8 +830,12 @@ void FitMarginalization::PrintPhysHypothesis(){
 }
 //________________________________________________________________________________________
 void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp){
-  const int nmh=2; // mass hierarchy  
-  fToyMargErecoVArray->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fMaxSampleErecoBins);
+  
+  //const int nmh=2; // mass hierarchy  
+  //fToyMargErecoVArray->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nmh, fNSKsamples, fMaxSampleErecoBins);
+  // NEW MARG MH 2
+  fToyMargErecoVArray->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], fNSKsamples, fMaxSampleErecoBins);
+  //
   
   cout << "////////////////////////////////////////////////////////" << endl;
   cout << endl;
@@ -793,16 +916,20 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     
     // NEW MARG MH
     this->SetMargOscParam(fparm_nh);
-
+    
 #ifndef __TOYS_SYNCHRONIZE_IH_TO_NH__
     this->SetMargOscParam(fparm_ih);
 #else
     fparm_ih->Copy(*fparm_nh);
 #endif 
 
-   ///
+    ///
 
 #ifdef  __print_oscparam_all__
+
+    cout << "toy=" << iexperiment << endl; 
+
+    cout << "Normal hierarchy parameters:" << endl;
     int np=0;
     np = fparm_nh->GetNumberParameters();
     for(int ip = 0; ip < np; ip++) {
@@ -810,7 +937,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       if(util::IsSystematic(p)) continue; // not oscillation parameters 
       cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_nh->InitValue(p) << endl;
     }
-    cout << endl;
+    cout << "Inverted hierarchy parameters:" << endl;
     np = fparm_ih->GetNumberParameters();
     for(int ip = 0; ip < np; ip++) {
       conv::PhysParamId_t p = fparm_ih->WhichParam(ip);
@@ -924,51 +1051,100 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       conv::NuMassHierarchy_t hier;
       conv::NuMassHierarchy_t hierBar;
       
-      int nMassHierarchy = 2;
-      for(int iMH=0;iMH<nMassHierarchy;iMH++){
-	
-	// Don't marginalize Mass Hierarchy. Only the assumed one
-	if(this->fdoMargMassHierarchy == false){
+
+      
+      // int nMassHierarchy = 2;
+      // for(int iMH=0;iMH<nMassHierarchy;iMH++){	
+      // 	// Don't marginalize Mass Hierarchy. Only the assumed one
+      // 	if(this->fdoMargMassHierarchy == false){	  
+      // 	  hier    = Opt::Instance()->gMassHierarchyAssumed;
+      // 	  hierBar = Opt::Instance()->gMassHierarchyAssumed;	  
+      // 	  // Break the loop after the first iteration
+      // 	  nMassHierarchy = 1; 	  
+      // 	  // Used convention in MakeToysMarginalization(): 
+      // 	  //  - iMH=0 --> kNmhNormal
+      // 	  //  - iMH=1 --> kNmhInverted	
+      // 	  if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+      // 	  else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1;  
+      // 	  // Mass Hierarchy has to be already defined
+      // 	  else {
+      // 	    cerr << endl;
+      // 	    cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+      // 	    cerr << "Mass Hierarchy is not defined" << endl;
+      // 	    cerr << endl;
+      // 	    exit(1);
+      // 	  }
+      // 	}	
+      // 	// Loop over both MH hypotheses and assign a different MH
+      // 	else{
+      // 	  if( iMH==0 ){
+      // 	    hier    = kNmhNormal;
+      // 	    hierBar = kNmhNormal;
+      // 	    skexp->GetSuperkMC()->SetMassHierarchy(hier);
+      // 	    skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+      // 	    fparm->Copy(*fparm_nh); // NEW MARG MH
+      // 	  }
+      // 	  else if( iMH==1 ){
+      // 	    hier    = kNmhInverted;
+      // 	    hierBar = kNmhInverted;
+      // 	    skexp->GetSuperkMC()->SetMassHierarchy(hier);
+      // 	    skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+      // 	    fparm->Copy(*fparm_ih); // NEW MARG MH
+      // 	  }
+      // 	}
+
+
+
+
+	// NEW MARG MH 2
+
+	int iMH = conv::kBadResult;  // Index of Mass Hierarchy: 0 --> NH, 1 --> IH
+
+      	// Don't marginalize Mass Hierarchy. Only the assumed one
+      	if(this->fdoMargMassHierarchy == false){
 	  
-	  hier    = Opt::Instance()->gMassHierarchyAssumed;
-	  hierBar = Opt::Instance()->gMassHierarchyAssumed;
-	  
-	  // Break the loop after the first iteration
-	  nMassHierarchy = 1; 
+      	  hier    = Opt::Instance()->gMassHierarchyAssumed;
+      	  hierBar = Opt::Instance()->gMassHierarchyAssumed;
 	  
 	  // Used convention in MakeToysMarginalization(): 
-	  //  - iMH=0 --> kNmhNormal
-	  //  - iMH=1 --> kNmhInverted	
-	  if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
-	  else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+      	  //  - iMH=0 --> kNmhNormal
+      	  //  - iMH=1 --> kNmhInverted	
+      	  if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+      	  else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
 	  
-	  // Mass Hierarchy has to be already defined
-	  else {
-	    cerr << endl;
-	    cerr << "FitMarginalization::MakeToysMarginalization" << endl;
-	    cerr << "Mass Hierarchy is not defined" << endl;
-	    cerr << endl;
-	    exit(1);
-	  }
+      	  // Mass Hierarchy has to be already defined
+      	  else {
+      	    cerr << endl;
+      	    cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+      	    cerr << "Mass Hierarchy is not defined" << endl;
+      	    cerr << endl;
+      	    exit(1);
+      	  }
 	}
 	
-	// Loop over both MH hypotheses and assign a different MH
-	else{
-	  if( iMH==0 ){
-	    hier    = kNmhNormal;
-	    hierBar = kNmhNormal;
-	    skexp->GetSuperkMC()->SetMassHierarchy(hier);
-	    skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
-	    fparm->Copy(*fparm_nh); // NEW MARG MH
-	  }
-	  else if( iMH==1 ){
-	    hier    = kNmhInverted;
-	    hierBar = kNmhInverted;
-	    skexp->GetSuperkMC()->SetMassHierarchy(hier);
-	    skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
-	    fparm->Copy(*fparm_ih); // NEW MARG MH
-	  }
+	// Extract randomly the Mass Hierarchy 
+	else	  
+	  iMH = this->RandomizeMH(fProbNormalHierarchy);   // iMH = 0 --> NH, iMH = 1 --> IH
+	
+	fhToyMH->Fill(iMH+conv::kASmallNum);
+	
+       	if( iMH==0 ){
+	  hier    = kNmhNormal;
+	  hierBar = kNmhNormal;
+	  skexp->GetSuperkMC()->SetMassHierarchy(hier);
+	  skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	  fparm->Copy(*fparm_nh); // NEW MARG MH
 	}
+	else if( iMH==1 ){
+	  hier    = kNmhInverted;
+	  hierBar = kNmhInverted;
+	  skexp->GetSuperkMC()->SetMassHierarchy(hier);
+	  skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	  fparm->Copy(*fparm_ih); // NEW MARG MH
+	}
+	
+	//
+
 	
 #ifdef __print_masshierarchy__
 	cout << endl;
@@ -986,7 +1162,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	}
 	cout << endl;
 #endif
-	
 	
 	// Produce toys for each osc param value
       
@@ -1024,7 +1199,10 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 		
 		double bincont = obsErec[ib] / fNormPOT[is];
 		
-		fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+		//fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+		// NEW MARG MH 2
+		fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib); 
+		//
 	      }
 	      
 	      iscount++; // index of the toy array
@@ -1056,18 +1234,27 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 #ifdef __print_array_toy_maketoys_verbose__
 	      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
 		//double bincont = skobs->ErecoSpectrumArray(s)[ib];
-		double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+		
+		//double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+		// NEW MARG MH 2
+		double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib); 
+		//
+		
 		cout << bincont << " ";
 	      }
-	      cout << endl;
-	      cout << endl;
+	      
 #endif // verbose
 	      
+	      cout << endl;
+
 	      iscount++; // index of the toy array
 	    } // loop SK samples
 #endif //__print_array_toy_maketoys__
+
+	    // NEW MARG MH 2
+	    //} // loop Mass Hierarchy
+	    //
 	    
-	  } // loop Mass Hierarchy
 	} // loop ipar1 (free parameter)
       } // loop ipar0 (free parameter)
     } // applied_negevents_condition
@@ -1081,6 +1268,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 
   return;
 }
+
 //________________________________________________________________________________________
 void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbinary){
   
@@ -1211,39 +1399,43 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
   //cout << "currval0 = " << currval0 << endl;
   //cout << "currval1 = " << currval1 << endl;
   
+
+
+
+
+
+  // NEW MARG MH 2
+
   // Marginalize the Mass Hierarchy
-  int nMassHierarchy = 2;
-  
-  for(int iMH=0;iMH<nMassHierarchy;iMH++){
+  // int nMassHierarchy = 2;
+  // for(int iMH=0;iMH<nMassHierarchy;iMH++){    
+  //   // Don't marginalize Mass Hierarchy. Only the assumed one
+  //   if(this->fdoMargMassHierarchy == false){      
+  //     // Break the loop after the first iteration
+  //     nMassHierarchy = 1;       
+  //     // Used convention in MakeToysMarginalization(): 
+  //     //  - iMH=0 --> kNmhNormal
+  //     //  - iMH=1 --> kNmhInverted	
+  //     if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+  //     else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1;       
+  //     // Mass Hierarchy has to be already defined
+  //     else {
+  // 	cerr << endl;
+  // 	cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
+  // 	cerr << "Mass Hierarchy is not defined" << endl;
+  // 	cerr << endl;
+  // 	exit(1);
+  //     }
+  //   }
+  //
+  // #ifdef __print_masshierarchy__
+  //     cout << "iMH = " << iMH << endl;
+  // #endif	  
     
-    // Don't marginalize Mass Hierarchy. Only the assumed one
-    if(this->fdoMargMassHierarchy == false){
-      
-      // Break the loop after the first iteration
-      nMassHierarchy = 1; 
-      
-      // Used convention in MakeToysMarginalization(): 
-      //  - iMH=0 --> kNmhNormal
-      //  - iMH=1 --> kNmhInverted	
-      if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
-      else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
-      
-      // Mass Hierarchy has to be already defined
-      else {
-	cerr << endl;
-	cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
-	cerr << "Mass Hierarchy is not defined" << endl;
-	cerr << endl;
-	exit(1);
-      }
-    }
-    
-#ifdef __print_masshierarchy__
-    cout << "iMH = " << iMH << endl;
-#endif	  
-    
+
+
     for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
-      //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;;
+      //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;
       
       // compute the likelihood for a single marginalization toy
       chisq = 0.;
@@ -1260,7 +1452,12 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	if( fteststatistic=="rate+shape"){ 
 	  
 	  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-	    float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	    
+	    //float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	    // NEW MARG MH 2
+	    float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
+	    //
+
 	    nexp *= (float)fNormPOT[is];
 	    float nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
 	    
@@ -1275,7 +1472,12 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	  float nexp = 0.;
 	  float nobs = 0.;
 	  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-	    nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	    
+	    //nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	    // NEW MARG MH 2
+	    nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
+	    //
+	    
 	    nobs += skobs_data->ErecoSpectrumArray(s)[ibin];
 	  }
 	  nexp *= (float)fNormPOT[is];
@@ -1309,7 +1511,11 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	cout << util::AsStringCompact(s) << endl;
 	
 	for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-	  float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ib);
+	  
+	  //float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ib);
+	  // NEW MARG MH 2
+	  float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ib);
+	  //
 	  cout << bincont * (float)fNormPOT[is] << " "; 
 	}
 	cout << endl;
@@ -1326,14 +1532,20 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
       cout << "chisq = " << chisq << " - like = " << like << endl; 
 #endif
 
-      if(this->fdoMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
+
+      // NEW MARG MH 2
+      //if(this->fdoMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
+      //
       
       flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
       
     } // iexperiment
-  } // iMH (mass hierarchy)
   
-  // Now the marginalized likelihood is computed using toys from all the binary files
+    // NEW MARG MH 2
+    //} // iMH (mass hierarchy)
+    //
+    
+    // Now the marginalized likelihood is computed using toys from all the binary files
   // Compute the chisq for each free osc parameter value and fill the array and histo
   float bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) );
   fChisqMargVArray->SetEntry(bincont,iterpar0,iterpar1);
@@ -1365,13 +1577,12 @@ void FitMarginalization::SetTestStatistic(string teststatistic){
 
 
 
-
 //________________________________________________________________________________________
 void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
 
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
-  
+
   char namemh[200];
   if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
@@ -1449,7 +1660,10 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
 	 << " - " << soutname_range << endl;
   ostext << endl;
   ostext << "Mass hierarchy: "; 
-  if( this->fdoMargMassHierarchy ) ostext << " Marginalize";
+  if( this->fdoMargMassHierarchy ){
+    ostext << " Marginalize" << endl;
+    ostext << " Prob Normal Hierarchy = " << this->GetProbNormalHierarchy() << endl; // NEW MARG MH 2
+  }
   else ostext << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
   ostext << endl;
   if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
@@ -1516,7 +1730,7 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
       exit(1);
     }
   }	    
-
+  
   char outtag[200] = "%s_%s";
   sprintf(outtag,"%s_%s",tag,"Merged");
 
@@ -1564,7 +1778,10 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
   ostext << "fnamefreeparam0: " << fnamefreeparam[0] << endl;
   ostext << "fnamefreeparam1: " << fnamefreeparam[1] << endl;
   ostext << "Mass hierarchy: "; 
-  if( this->fdoMargMassHierarchy ) ostext << " Marginalize";
+  if( this->fdoMargMassHierarchy ){
+    ostext << " Marginalize" << endl;
+    ostext << " Prob Normal Hierarchy = " << this->GetProbNormalHierarchy() << endl; // NEW MARG MH 2
+  }
   else ostext << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
   ostext << endl;
   if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
@@ -1623,8 +1840,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
       exit(1);
     }
   }	    
- 
-
+  
   // Write store sub-range of the free parameter
 
   int min_bin_sub_param0=0;
@@ -1636,7 +1852,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
 
   char inname_range[200];
   sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
-
+  
   std::string sinname_range(inname_range);
 
 #ifdef __readtoys_debug__
@@ -1681,7 +1897,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
     cerr << "  - fntoys_marg = " << fntoys_marg << endl;
     cerr << "  - # of pt param 0 = " << fnbins_param[0] << endl;
     cerr << "  - # of pt param 1 = " << fnbins_param[1] << endl;
-    cerr << "  - MH = " << namemh << endl;
+    //cerr << "  - MH = " << namemh << endl; // NEW MARG MH 2
     //cerr << "  - # of binary files = " << << endl;
     cerr << endl;
     exit(1);
@@ -1712,14 +1928,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   //   exit(1);
   // }
 
-
-
-
-
-
   char inname[200];
   sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
-  
+
   std::string sinname(inname);
   //cout << sinname << endl;
   
@@ -1847,8 +2058,26 @@ void FitMarginalization::PrintBestFit(){
   return;
 }
 //________________________________________________________________________________________
-TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t sksample,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy){
-        
+//TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t sksample,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy){
+TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t sksample,int itoy,int ifreepar0,int ifreepar1){  // NEW MARG MH 2
+  
+
+
+  // NEW MARG MH 2
+ 
+  // Get file ID corresponding to the input free parameters
+  
+  int fileid = GetFileIDRead(ifreepar0,ifreepar1);
+  const char *tag = ftagfile.c_str();
+  
+  if( (fCurrentFileIDminim==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
+    fCurrentFileIDminim = fileid;
+    this->ReadToysFromBinary(fileid,tag);
+  }
+  //
+
+
+
   for(int is=0;is<fNSKsamples;is++){
     SuperkSample_t s = this->GetSKSamples(is);    
     if(sksample == s){
@@ -1857,12 +2086,15 @@ TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t sksample,int itoy,int 
       // cout << "itoy = " << itoy << endl;
       // cout << "ifreepar0 = " << ifreepar0 << endl;
       // cout << "ifreepar1 = " << ifreepar1 << endl;
-      // cout << "iMassHierarchy = " << iMassHierarchy << endl;
       // cout << "bincont:" << endl;
 
       for(int ibin=0;ibin<fnerecobins->GetEntry(is);ibin++){
 	
-	float bincont = fToyMargErecoVArray->GetEntry(itoy,ifreepar0,ifreepar1,iMassHierarchy,is,ibin);
+	//float bincont = fToyMargErecoVArray->GetEntry(itoy,ifreepar0,ifreepar1,iMassHierarchy,is,ibin);
+	// NEW MARG MH 2
+	//float bincont = fToyMargErecoVArray->GetEntry(itoy,ifreepar0,ifreepar1,is,ibin);
+	float bincont = fToyMargErecoVArray->GetEntry(itoy,ifreepar0-fmin_bin_sub_param[0],ifreepar1-fmin_bin_sub_param[1],is,ibin); // FIXED BUG
+	//
 	bincont *= (float)fNormPOT[is];
 
 	fhToyMargCurr[is]->SetBinContent(ibin+1,bincont);
@@ -2271,13 +2503,6 @@ void FitMarginalization::SetPrior_IH(PhysParamId_t physpar,string priorname,TH2D
   return;
 }
 
-
-
-// //________________________________________________________________________________________
-// string FitMarginalization::GetPrior(PhysParamId_t physpar) const
-// {
-//   return fparm->GetPriorModeName(physpar);
-// }
 //________________________________________________________________________________________
 string FitMarginalization::GetPrior_NH(PhysParamId_t physpar) const
 {
@@ -2288,143 +2513,6 @@ string FitMarginalization::GetPrior_IH(PhysParamId_t physpar) const
 {
   return fparm_ih->GetPriorModeName(physpar);
 }
-
-
-
-// //________________________________________________________________________________________
-// void FitMarginalization::SetMargOscParam(){
-  
-//   int Nparam_with_2Dprior = 0;
-
-//   // Loop over the fit parameter list
-//   int np = fparm->GetNumberParameters();
-//   int npfree = 0;
-//   for(int ip = 0; ip < np; ip++) {
-//     conv::PhysParamId_t p = fparm->WhichParam(ip);
-//     //cout << p << " " << util::AsString(p) << endl;
-
-//     //bool fdoMarginalize = true;
-    
-//     if(p!=fPhysParamFree[0]) 
-//       fparm->SetDoMarg(fPhysParamFree[0],true); 
-//     else{
-//       fparm->SetDoMarg(fPhysParamFree[0],false);  // Do not marginalize if free parameter 
-//       continue; 
-//     }
-    
-//     if(fIsFit2D){
-//       if(p!=fPhysParamFree[1]) 
-// 	fparm->SetDoMarg(fPhysParamFree[1],true); 
-//       else{
-// 	fparm->SetDoMarg(fPhysParamFree[1],false);  // Do not marginalize if free parameter
-// 	continue; 
-//       }
-//     }
-
-//     if(util::IsSystematic(p)) continue; // not oscillation parameters 
-//     if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
-
-//     // Now extract the oscillation parameter to marginalize from 1D prior
-
-//     if(fparm->IsPrior2D(p)){
-//       Nparam_with_2Dprior++;
-//       continue;
-//     }
-
-//     double currval = conv::kBadResult;
-
-//     bool rethrow=true;
-//     while(rethrow){
-//       currval = Randomize(p);
-//       rethrow = RethrowOscUnphysical(p,currval);
-//       if(rethrow) cout << "Rethrow " << util::AsString(p) << " " << currval << endl;
-//     }
-
-// #ifdef  __print_oscparam_marginalized__
-//     cout << "Marginalize " << p << " " << util::AsString(p) << " --> " << currval << endl;
-// #endif
-
-//     fparm->GetToyHisto(p)->Fill(currval); // Fill toy histogram for checks
-
-//     // Update current values of parameters 
-//     //fparm->Update(p,currval);
-//     fparm->SetInitValue(p,currval);
-    
-//   }
-
-
-  
-//   // Marginalze 23 parameters with 2D priors if correlated
-
-// #ifndef __MARGINALIZE_23PARAMS_CORR__
-  
-//   if(Nparam_with_2Dprior>0){
-//     cerr << endl;
-//     cerr << "FitMarginalization::SetMargOscParam" << endl;
-//     cerr << "# of marginalization parameters with 2D prior > 0" << endl;
-//     cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
-//     cerr << "We don't expect parameters with 2D priors" << endl; 
-//     cerr << endl;
-//     exit(1);
-//   }
-  
-// #else
-  
-//   if(Nparam_with_2Dprior==0){ // There are not 2D prior parameters
-//     return; 
-//   }
-//   else if(Nparam_with_2Dprior!=2){
-//     cerr << endl;
-//     cerr << "FitMarginalization::SetMargOscParam" << endl;
-//     cerr << "There are more/less marginalization parameters with 2D prior than expected" << endl;
-//     cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
-//     cerr << "We expect 2 parameters: " 
-// 	 << util::AsString(conv::kPhypDm23sq) 
-// 	 << util::AsString(conv::kPhypMixing23)
-// 	 << endl;
-//     cerr << endl;
-//     exit(1);
-//   }
-//   else{
-    
-//     if( !( fparm->IsPrior2D(conv::kPhypDm23sq) && fparm->IsPrior2D(conv::kPhypMixing23) ) ){
-      
-//       cerr << endl;
-//       cerr << util::AsString(conv::kPhypDm23sq) << " and " << util::AsString(conv::kPhypMixing23) 
-// 	   << " don't have a 2D prior" << endl;
-//       cerr << "There is something wrong" << endl;
-//       cerr << endl;
-//       exit(1);
-//     }
-    
-//     double dmsq=0;
-//     double mix23=0;
-    
-//     fparm->GetPriorHisto2D(conv::kPhypDm23sq)->GetRandom2(mix23,dmsq);
-    
-// #ifdef  __print_oscparam_marginalized__
-//     cout << "Marginalize " << conv::kPhypMixing23 << " " << util::AsString(conv::kPhypMixing23) << " --> " << mix23 << endl; 
-//     cout << "Marginalize " << conv::kPhypDm23sq << " " << util::AsString(conv::kPhypDm23sq) << " --> " << dmsq << endl; 
-//     //cout << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
-// #endif
-    
-//     fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(mix23,dmsq); // Fill toy histogram for checks
-//     fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(mix23,dmsq); // Fill toy histogram for checks
-    
-//     fparm->SetInitValue(conv::kPhypDm23sq,dmsq);
-//     fparm->SetInitValue(conv::kPhypMixing23,mix23);
-//     //fparm->Update(p,currval);
-
-//   }
-
-// #endif
-    
-// }
-
-
-
-
-
 
 
 // NEW MARG MH
@@ -2666,33 +2754,6 @@ bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscva
 }
 
 
-// //________________________________________________________________________________________
-// double FitMarginalization::Randomize(PhysParamId_t physpar) const
-// {
-
-//   if(fparm->GetPriorModeName(physpar)=="flat"){
-//     double min = fparm->GetMinValueFlat(physpar);
-//     double max = fparm->GetMaxValueFlat(physpar);
-//     return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
-//   }
-//   else if(fparm->GetPriorModeName(physpar)=="gaus"){
-//     double mean = fparm->GetMeanGaus(physpar);
-//     double sigma = fparm->GetSigmaGaus(physpar);
-//     return Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
-//   }
-//   else if(fparm->GetPriorModeName(physpar)=="user"){
-//     return fparm->GetPriorHisto(physpar)->GetRandom();
-//   }
-//   else{
-//     cerr << endl;
-//     cerr << "FitMarginalization::Randomize" << endl;
-//     cerr << "Used prior is: " << fparm->GetPriorModeName(physpar) << endl;
-//     cerr << "Prior not well defined for " << util::AsString(physpar) << endl;
-//     exit(1);
-//   }  
-// }
-
-
 // NEW MARG MH
 
 //________________________________________________________________________________________
@@ -2721,11 +2782,58 @@ double FitMarginalization::Randomize(PhysParamId_t physpar, FitParamList * infpa
   }
   
 }
+//________________________________________________________________________________________
 
+// NEW MARG MH 2
 
+int FitMarginalization::RandomizeMH(const double probNH) const
+{
+  
+  const double min = 0.;
+  const double max = 1.;
+  double Pnh = probNH;
+  double Pih = 1 - probNH;
 
+  if(Pnh < 0. || Pnh > 1.){
+    cerr << endl;
+    cerr << "FitMarginalization::RandomizeMH" << endl;
+    cerr << "The input probability for NH is not possible" << endl;
+    cerr << "P(NH) = " << Pnh << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if(Pih < 0. || Pih > 1.){
+    cerr << endl;
+    cerr << "FitMarginalization::RandomizeMH" << endl;
+    cerr << "The input probability for IH is not possible" << endl;
+    cerr << "P(IH) = " << Pih << endl;
+    cerr << endl;
+    exit(1);
+  }
 
+  double rndm = Rnd::Instance()->RndToyMCosc().Uniform(min,max);
+  
+  int MH = conv::kBadResult;
+  if(rndm <= Pnh) MH = 0; // Normal Hierarchy
+  else            MH = 1; // Inverted Hierarchy
+  
+  return MH;
+}
 
+//
+//________________________________________________________________________________________
+
+// NEW MARG MH 2
+void FitMarginalization::SetProbNormalHierarchy(double probnh){
+  fProbNormalHierarchy = probnh;
+  cout << endl;
+  cout << "Set prior probability for Normal Hierarchy to " << fProbNormalHierarchy << endl;
+  cout << endl;
+
+  fhPriorMH->SetBinContent(1,fProbNormalHierarchy);
+  fhPriorMH->SetBinContent(2,1.-fProbNormalHierarchy);
+}
+//
 
 //________________________________________________________________________________________
 void FitMarginalization::SetMargMassHierarchy(bool domargMH){
@@ -2741,13 +2849,21 @@ void FitMarginalization::SetRethrowSystUnphysical(bool dorethrow){
 void FitMarginalization::MergeInputFiles(){
 
   // Initialize the clone VALORArray only the first time MergeInputFiles() is called
-  const int nmh=2; // mass hierarchy
+  
+  //const int nmh=2; // mass hierarchy // NEW MARG MH 2
+  
   if(fMergeInputFiles_Called){
-    for(int is=0;is<fNSKsamples;is++)
-      fToyMargErecoVArray_Clone = new VALORArrayF(fntoys_marg, fnbins_param[0],fnbins_param[1], nmh, fNSKsamples, fnerecobins->GetEntry(is)); // total range of free parameter
+    
+    for(int is=0;is<fNSKsamples;is++){
+      
+      //fToyMargErecoVArray_Clone = new VALORArrayF(fntoys_marg, fnbins_param[0],fnbins_param[1], nmh, fNSKsamples, fnerecobins->GetEntry(is)); // total range of free parameter
+      // NEW MARG MH 2
+      fToyMargErecoVArray_Clone = new VALORArrayF(fntoys_marg, fnbins_param[0],fnbins_param[1], fNSKsamples, fnerecobins->GetEntry(is)); // total range of free parameter
+      //
+    }
     
     fToyMargErecoVArray_Clone->SetAll(-1.);
-
+    
     fMergeInputFiles_Called = false;
   }
 
@@ -2779,6 +2895,8 @@ void FitMarginalization::MergeInputFiles(){
        << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1)
        << "]"
        << endl;
+  
+
 
   // Copy read array elements to the clone one. Same loop as in FillChisqMarg()
   for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
@@ -2786,9 +2904,12 @@ void FitMarginalization::MergeInputFiles(){
     for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
       for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
 
-	int nMassHierarchy = 2;
-	for(int iMH=0;iMH<nMassHierarchy;iMH++){
 
+	// NEW MARG MH 2
+	
+	//int nMassHierarchy = 2;
+	//for(int iMH=0;iMH<nMassHierarchy;iMH++){
+	//
 
 	  // Loop over the used SK samples
 	  int iscount=0;
@@ -2799,9 +2920,16 @@ void FitMarginalization::MergeInputFiles(){
 	    SuperkSample_t s = this->GetSKSamples(is);
 	    
 	    for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-	      float bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ibin); // shift to sub-range // bincont = -1 by default
+	      //float bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ibin); // shift to sub-range // bincont = -1 by default
+	      // NEW MARG MH 2
+	      float bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ibin); // shift to sub-range // bincont = -1 by default
+	      //
+	      
 	      if(bincont >= 0.){
-		float bincont_clone = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,iscount,ibin);  // total range
+		//float bincont_clone = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,iscount,ibin);  // total range
+		// NEW MARG MH 2
+		float bincont_clone = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ibin);  // total range
+		//
 		if(bincont_clone >= 0.){
 		  cerr << endl;
 		  cerr << "FitMarginalization::MergeInputFiles" << endl;
@@ -2809,16 +2937,18 @@ void FitMarginalization::MergeInputFiles(){
 		  cerr << " - iexperiment = " << iexperiment << endl;
 		  cerr << " - ipar0 = " << ipar0 << endl;
 		  cerr << " - ipar1 = " << ipar1 << endl;
-		  cerr << " - iMH = " << iMH << endl;
+		  //cerr << " - iMH = " << iMH << endl;  // NEW MARG MH 2
 		  cerr << " - sample = " << util::AsStringCompact(s) << endl;
 		  cerr << " - iereco = " << ibin << endl;
 		  exit(1);
 		}
 		else{
-		  fToyMargErecoVArray_Clone->SetEntry(bincont,iexperiment,ipar0,ipar1,iMH,iscount,ibin); 
+		  //fToyMargErecoVArray_Clone->SetEntry(bincont,iexperiment,ipar0,ipar1,iMH,iscount,ibin); // Set to 0 if negative 
+		  // NEW MARG MH 2
+		  fToyMargErecoVArray_Clone->SetEntry(bincont,iexperiment,ipar0,ipar1,iscount,ibin); // Set to 0 if negative 
+		  //
 		}
 	      }
-
 	    } // loop ibin
 	  } // loop SK samples
 
@@ -2838,7 +2968,10 @@ void FitMarginalization::MergeInputFiles(){
 	    cout << util::AsStringCompact(s) << endl;
 
 	    for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-	      double bincont = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,iscount,ib);
+	      //double bincont = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iMH,iscount,ib);
+	      // NEW MARG MH 2
+	      double bincont = fToyMargErecoVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ib);
+	      //
 	      cout << bincont << " "; 
 	    }
 	    cout << endl;
@@ -2848,15 +2981,17 @@ void FitMarginalization::MergeInputFiles(){
 	  } // loop SK samples
 #endif
 	  
-	} // loop iMH
+	  //} // loop iMH // NEW MARG MH 2
+	  
       } // loop ipar1
     } // loop ipar0
   } // loop iexperiment
-    
+  
   fNmergedFiles++;
-
+  
   return;
 }
+
 //________________________________________________________________________________________
 void FitMarginalization::SetNSKsamples(){
 
@@ -4959,7 +5094,7 @@ void FitMarginalization::SetFileID(int nfiles){
   cout << endl;
   cout << "Build the map between the binary file ID and the free parameters sub-range" << endl;
   cout << endl;
-
+  
   char namemh[200];
   if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
@@ -4975,14 +5110,12 @@ void FitMarginalization::SetFileID(int nfiles){
     }
   }	    
 
-   for(int iptX=0;iptX<fnbins_param[0];iptX++){
-      for(int iptY=0;iptY<fnbins_param[1];iptY++){
-    	fhmap_chisqrange_fileid_2D->SetBinContent(iptX+1,iptY+1,(int)conv::kBadResult);
-      }
+  for(int iptX=0;iptX<fnbins_param[0];iptX++){
+    for(int iptY=0;iptY<fnbins_param[1];iptY++){
+      fhmap_chisqrange_fileid_2D->SetBinContent(iptX+1,iptY+1,(int)conv::kBadResult);
     }
-
-
-
+  }
+  
   const char *tag = ftagfile.c_str(); // Get the file tag name 
 
   // Store file names in a vector
@@ -4994,6 +5127,7 @@ void FitMarginalization::SetFileID(int nfiles){
     
     char inname[200];
     sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
+
     std::string sinname(inname);
     fnamefile[idfile] = sinname;
 
@@ -5056,7 +5190,7 @@ void FitMarginalization::SetFileID(int nfiles){
       cerr << "  - fntoys_marg = " << fntoys_marg << endl;
       cerr << "  - # of pt param 0 = " << fnbins_param[0] << endl;
       cerr << "  - # of pt param 1 = " << fnbins_param[1] << endl;
-      cerr << "  - MH = " << namemh << endl;
+      //cerr << "  - MH = " << namemh << endl; // NEW MARG MH 2
       //cerr << "  - # of binary files = " << << endl;
       cerr << endl;
       exit(1);

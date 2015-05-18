@@ -176,7 +176,8 @@ class FitMarginalization
   VALORArrayF * GetToyMargErecoVArray()             {return fToyMargErecoVArray;};
   const VALORArrayF * GetToyMargErecoVArray() const {return fToyMargErecoVArray;};
   
-  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
+  //TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
+  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); // NEW MARG MH 2
   
   void SetMargOscParam();
   // NEW MARG MH
@@ -207,6 +208,16 @@ class FitMarginalization
   // NEW MARG MH
   double Randomize(conv::PhysParamId_t physpar, FitParamList * infparm) const;
   //
+  
+  // NEW MARG MH 2
+  int RandomizeMH(const double probNH) const; // input is the prob for NH. P(IH) is 1-P(NH) 
+  void SetProbNormalHierarchy(double probnh);
+  double GetProbNormalHierarchy(void) const { return fProbNormalHierarchy;};
+
+  TH1D *GetHistoPriorMH(void) const {return fhPriorMH;};
+  TH1D *GetHistoToyMH(void) const {return fhToyMH;};
+  //
+
 
   bool RethrowOscUnphysical(conv::PhysParamId_t p,double oscval) const; // NEW 
   
@@ -372,13 +383,16 @@ class FitMarginalization
   FitParamList * fparm_ih;
   //
 
+  // NEW MARG MH 2
+  double fProbNormalHierarchy; // Probability for Normal Hierarchy (for not flat prior)
+  //
+  
   conv::PhysHypothesis_t fhypothesis;
   
   bool             fShouldSaveToyParamLists;
   PhysParamList ** fSavedToyParamLists; //[fntoys_marg]
 
   SuperkExpectation *fskexp;
-
 
   // Histogram minimization
   
@@ -422,6 +436,10 @@ class FitMarginalization
  
   string fteststatistic; // "rateonly" or "rate+shape"
 
+  // NEW MARG MH 2
+  TH1D *fhPriorMH;
+  TH1D *fhToyMH;
+  //
 };
  
 } // valor

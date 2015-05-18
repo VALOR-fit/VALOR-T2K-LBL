@@ -43,7 +43,7 @@ void run_fit_marginalization_readbinary_betabar
  //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
  //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml",
  
- bool         dotoys                   = false,
+ bool         dotoys                   = true,
 
  // Default
  double       input_mixing12           = -99,           
@@ -80,18 +80,14 @@ void run_fit_marginalization_readbinary_betabar
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_10kToys/BetaBar_4p0E20POT_Toy23dcp", // (beta=0,1), nuosc, dcp/23 T2K+react joint
- //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), nuosc, dcp T2K+react joint
+ //const char * infilename    = "buildmarg_betabar_Merged",
+ const char * infilename    = "buildmarg_betabar",
+ //const char * infilename    = "PROVA_AFTER_CHANGES_10toys", // prova
+ //const char * infilename    = "PROVA_BEFORE_CHANGES_10toys", // prova
  
- //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), dcpbar T2K+react joint
- //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
- //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
- //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
- //const char * infilename    = "../../inputs/marginalization/toys/nuebarapp_1D_T2KFullStat_T2Kreact_betabar_fixosc_10kToys/BetaBar_7p8E21POT",  // T2K+reactor T2K Full Stat (betabar=0,1) 
+ const int    nfiles               = 2, //401, 1        // # of files to read
 
- const int    nfiles               = 1, //401, 1        // # of files to read
-
- const int    NtoysMarg            = 10000, //10000, 1  // # toys marginalization 
+ const int    NtoysMarg            = 10, //10000, 1  // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter

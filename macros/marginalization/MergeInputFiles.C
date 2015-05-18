@@ -23,33 +23,39 @@ void MergeInputFiles(
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- //const char * tag                  = "mixing13_Vs_dcp_4p0E20_MHmarg_postfit",
- const char * tag                  = "submit_mixing13_4p0E20_postfit",
-
- const int    nfiles               = 201,         // # of files to read
+ const char * tag                  = "buildmarg_betabar",
+ 
+ const int    nfiles               = 2, //201,         // # of files to read
 
  //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
  //const char * config_file          = "analysis_configuration_1.7E20.xml",   
  const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
 
  //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
- const char * fit_param_list       = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
+ const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
 
- const int    NtoysMarg            = 10000,   // # toys marginalization 
+ const int    NtoysMarg            = 10,   // # toys marginalization 
 
- const char * freeparname0        = "mixing13Bar",  // free parameter
- const double freeparmin0         = 0,              // minimum value of free parameter
- const double freeparmax0         = 0.3,              // maxinum value of free parameter
- //const char * freeparname0        = "mixing23Bar",  // free parameter
- //const double freeparmin0         = 0,              // minimum value of free parameter
- //const double freeparmax0         = 1,              // maxinum value of free parameter
- const int    NptScan0            = 201,            // # pts of free parameter to scan
+ const char * freeparname0        = "betaBar",  // free parameter
+ const double freeparmin0         = 0.,         // minimum value of free parameter
+ const double freeparmax0         = 1, // 10., 1         // maxinum value of free parameter
+ const int    NptScan0            = 2, // 801, 2          // # pts of free parameter to scan
+ // const char * freeparname0        = "mixing13Bar",  // free parameter
+ // const double freeparmin0         = 0,              // minimum value of free parameter
+ // const double freeparmax0         = 0.3,              // maxinum value of free parameter
+ // //const char * freeparname0        = "mixing23Bar",  // free parameter
+ // //const double freeparmin0         = 0,              // minimum value of free parameter
+ // //const double freeparmax0         = 1,              // maxinum value of free parameter
+ // const int    NptScan0            = 201,            // # pts of free parameter to scan
 
- //const char * freeparname1          = "",  // free parameter
- const char * freeparname1          = "deltacpBar",  // free parameter
- const double freeparmin1           = -3.14159265358979312e+00,  // minimum value of free parameter
- const double freeparmax1           = +3.14159265358979312e+00,  // maxinum value of free parameter
+ const char * freeparname1          = "",  // free parameter
+ const double freeparmin1           = 0,  // minimum value of free parameter
+ const double freeparmax1           = 0,  // maxinum value of free parameter
+ //const char * freeparname1          = "deltacpBar",  // free parameter
+ //const double freeparmin1           = -3.14159265358979312e+00,  // minimum value of free parameter
+ //const double freeparmax1           = +3.14159265358979312e+00,  // maxinum value of free parameter
  //const char * freeparname1          = "dmsq23Bar",  // free parameter
  //const double freeparmin1           = 0.0002,     // minimum value of free parameter
  //const double freeparmax1           = 0.02,     // maxinum value of free parameter
@@ -101,6 +107,8 @@ void MergeInputFiles(
   else if(sfreeparname0=="mixing12")    freepar0 = conv::kPhypMixing12;
   else if(sfreeparname0=="deltacp")     freepar0 = conv::kPhypCPV;
   //
+  else if(sfreeparname0=="betaBar")     freepar0 = conv::kPhypBetaBar;
+  //
   else{
     // Parameter 0 must be always defined
     cout << "Parameter 0 is not defined" << endl;
@@ -125,6 +133,8 @@ void MergeInputFiles(
   else if(sfreeparname1=="dmsq12")      freepar1 = conv::kPhypDm12sq;
   else if(sfreeparname1=="mixing12")    freepar1 = conv::kPhypMixing12;
   else if(sfreeparname1=="deltacp")     freepar1 = conv::kPhypCPV;
+  //
+  else if(sfreeparname1=="betaBar")     freepar1 = conv::kPhypBetaBar;
   //
   else{
     cout << "Parameter 1 is not defined" << endl;
@@ -170,17 +180,17 @@ void MergeInputFiles(
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
 
-  
-  // Set fit parameter list
-  fitmarg->SetFitParamList(fit_param_list);
-  fitmarg->PrintPhysHypothesis();
-      
   // Set Mass Hierarchy marginalization
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
 
+  // Set fit parameter list
+  fitmarg->SetFitParamList(fit_param_list);
+  fitmarg->PrintPhysHypothesis();
+
+  fitmarg->SetTagFileName(tag);
+  fitmarg->SetFileID(nfiles);
+      
   for(int ifile=0;ifile<nfiles;ifile++){
-  //for(int ifile=10;ifile<22;ifile++){
-  //for(int ifile=0;ifile<10;ifile++){
     
     cout << endl;
     cout << "////////////////////////////////" << endl;

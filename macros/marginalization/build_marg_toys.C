@@ -78,6 +78,8 @@ void build_marg_toys
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
+ const double PriorProbNH          = 0.5,     // Prior for MH --> give the prob. of Normal Hierarchy as input
+
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
 
  const char * dmsqscheme           = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -402,8 +404,9 @@ void build_marg_toys
     cout << "       > " << util::AsString(kPhypBetaBar)      << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypBetaBar    ) << endl;
   }  
 
+  // Set Prior for Mass Hierarchy (set it for NH and it's automatically done for IH as well)
+  fitmarg->SetProbNormalHierarchy(PriorProbNH);
   
-
   // Set Mass Hierarchy marginalization
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
   
@@ -565,7 +568,6 @@ void build_marg_toys
 
   fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
   fitmarg->WriteToys2Binary(fileid,tag);  
-
   
   // Draw prior and toy histograms for marginalized oscillation parameters
  
@@ -583,7 +585,11 @@ void build_marg_toys
   TH2D *hPriorHisto_Dm23_ih = new TH2D(*fitmarg->GetFitParamList_IH()->GetPriorHisto2D(conv::kPhypDm23sq));
   TH2D *hToyHisto_Dm23_ih = new TH2D(*fitmarg->GetFitParamList_IH()->GetToyHisto2D(conv::kPhypDm23sq));
 
+  TH1D *hPriorHisto_MH = new TH1D(*fitmarg->GetHistoPriorMH());
+  TH1D *hToyHisto_MH = new TH1D(*fitmarg->GetHistoToyMH());
   
+
+
   TCanvas *cPriorHisto_dcp_nh = new TCanvas("cPriorHisto_dcp_nh","cPriorHisto_dcp_nh");
   hPriorHisto_dcp_nh->Draw();
   TCanvas *cToyHisto_dcp_nh = new TCanvas("cToyHisto_dcp_nh","cToyHisto_dcp_nh");
@@ -618,6 +624,14 @@ void build_marg_toys
 
 
 
+  TCanvas *cPriorHisto_MH = new TCanvas("cPriorHisto_MH","cPriorHisto_MH");
+  hPriorHisto_MH->Draw();
+
+  TCanvas *cToyHisto_MH = new TCanvas("cToyHisto_MH","cToyHisto_MH");
+  hToyHisto_MH->Draw();
+  
+
+
   char name[200];
   sprintf(name,"%s.root",tag);
   TFile *fout = new TFile(name,"RECREATE");
@@ -635,6 +649,9 @@ void build_marg_toys
   hToyHisto_Mix23_ih->Write();
   hPriorHisto_Dm23_ih->Write();
   hToyHisto_Dm23_ih->Write();
+
+  hPriorHisto_MH->Write();
+  hToyHisto_MH->Write();
 
   fout->Close();
 
