@@ -38,18 +38,18 @@ foreach (@ARGV) {
   elsif($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
   elsif($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
 
-  elsif($_ eq '--dm23sq'                 ) { $dm23sq                = $ARGV[$iarg+1]; }
-  elsif($_ eq '--dm12sq'                 ) { $dm12sq                = $ARGV[$iarg+1]; }
-  elsif($_ eq '--mix23'                  ) { $mix23                 = $ARGV[$iarg+1]; }
-  elsif($_ eq '--mix13'                  ) { $mix13                 = $ARGV[$iarg+1]; }
-  elsif($_ eq '--mix12'                  ) { $mix12                 = $ARGV[$iarg+1]; }
-  elsif($_ eq '--deltacp'                ) { $deltacp               = $ARGV[$iarg+1]; }
-  elsif($_ eq '--dm23sqBar'              ) { $dm23sqBar             = $ARGV[$iarg+1]; }
-  elsif($_ eq '--dm12sqBar'              ) { $dm12sqBar             = $ARGV[$iarg+1]; }
-  elsif($_ eq '--mix23Bar'               ) { $mix23Bar              = $ARGV[$iarg+1]; }
-  elsif($_ eq '--mix13Bar'               ) { $mix13Bar              = $ARGV[$iarg+1]; }
-  elsif($_ eq '--mix12Bar'               ) { $mix12Bar              = $ARGV[$iarg+1]; }
-  elsif($_ eq '--deltacpBar'             ) { $deltacpBar            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm23sq-nh'              ) { $dm23sq_nh             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm12sq-nh'              ) { $dm12sq_nh             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix23-nh'               ) { $mix23_nh              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix13-nh'               ) { $mix13_nh              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix12-nh'               ) { $mix12_nh              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--deltacp-nh'             ) { $deltacp_nh            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm23sq-ih'              ) { $dm23sq_ih             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm12sq-ih'              ) { $dm12sq_ih             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix23-ih'               ) { $mix23_ih              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix13-ih'               ) { $mix13_ih              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix12-ih'               ) { $mix12_ih              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--deltacp-ih'             ) { $deltacp_ih            = $ARGV[$iarg+1]; }
   elsif($_ eq '--betaBar'                ) { $betaBar               = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--freepar0'               ) { $freepar0               = $ARGV[$iarg+1]; }
@@ -79,8 +79,7 @@ foreach (@ARGV) {
   elsif($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
   elsif($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
 
-  elsif($_ eq '--file-prior-dcp'         ) { $file_prior_dcp        = $ARGV[$iarg+1]; }
-  elsif($_ eq '--file-prior-23'          ) { $file_prior_23        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--file-prior'             ) { $file_prior            = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--fmwk-dir'               ) { $fmwk_dir              = $ARGV[$iarg+1]; }
   
@@ -92,7 +91,7 @@ foreach (@ARGV) {
 }
 
 $resource        = "interactive"               unless defined $resource;
-$tag             = "buildmarg_betabar"         unless defined $tag;
+$tag             = "submit_betabar"            unless defined $tag;
 
 $config_file     = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
 #$config_file     = "analysis_configuration_run1to6_test_app_fullstat.xml"  unless defined $config_file;
@@ -101,21 +100,22 @@ $config_file     = "analysis_configuration_run1to6_test_app.xml"  unless defined
 #$fitparamlist   = "nuosc3fbar_normbar_fixosc+nuisance"       unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3fbar_normbar_fitdcpbar+nuisance"    unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3f_normbar_fitdcp+nuisance"    unless defined $fitparamlist;
+#$fitparamlist   = "nuosc3f_normbar_fit23_fitdcp+nuisance"    unless defined $fitparamlist;
 $fitparamlist   = "nuosc3f_normbar_fit23_fitdcp+nuisance"    unless defined $fitparamlist;
 
 # Default
-$dm23sq          = -99                         unless defined $dm23sq; 
-$dm12sq          = -99                         unless defined $dm12sq; 
-$mix23           = -99                         unless defined $mix23;
-$mix13           = -99                         unless defined $mix13;
-$mix12           = -99                         unless defined $mix12;
-$deltacp         = -99                         unless defined $deltacp;
-$dm23sqBar       = -99                         unless defined $dm23sqBar; 
-$dm12sqBar       = -99                         unless defined $dm12sqBar; 
-$mix23Bar        = -99                         unless defined $mix23Bar;
-$mix13Bar        = -99                         unless defined $mix13Bar;
-$mix12Bar        = -99                         unless defined $mix12Bar;
-$deltacpBar      = -99                         unless defined $deltacpBar;
+$dm23sq_nh       = -99                         unless defined $dm23sq_nh; 
+$dm12sq_nh       = -99                         unless defined $dm12sq_nh; 
+$mix23_nh        = -99                         unless defined $mix23_nh;
+$mix13_nh        = -99                         unless defined $mix13_nh;
+$mix12_nh        = -99                         unless defined $mix12_nh;
+$deltacp_nh      = -99                         unless defined $deltacp_nh;
+$dm23sq_ih       = -99                         unless defined $dm23sq_ih; 
+$dm12sq_ih       = -99                         unless defined $dm12sq_ih; 
+$mix23_ih        = -99                         unless defined $mix23_ih;
+$mix13_ih        = -99                         unless defined $mix13_ih;
+$mix12_ih        = -99                         unless defined $mix12_ih;
+$deltacp_ih      = -99                         unless defined $deltacp_ih;
 $betaBar         = -99                         unless defined $betaBar;
 
 $freepar0               = "betaBar"            unless defined $freepar0;
@@ -139,8 +139,7 @@ $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 
-$file_prior_dcp         = "../../inputs/priors/joint_T2Kreact_run14/deltacp_T2Kreact_run14_Mach3.root" unless defined $file_prior_dcp;
-$file_prior_23          = "../../inputs/priors/joint_T2Kreact_run14/parameters23_T2Kreact_run14_Mach3.root" unless defined $file_prior_23;
+$file_prior             = "../../inputs/priors/joint_T2Kreact_run14/valor/Priors_T2Kreact_run14_Valor.root" unless defined $file_prior;
 
 $job_dir                = "."                  unless defined $job_dir;
 $softw_dir              = $ENV{'T2KOSCANA'}    unless defined $softw_dir;
@@ -210,7 +209,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	
 	$program = "root2k ";
 	
-	$arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys.C($fileid,$imin0,$imax0,$imin1,$imax1,\"$tag\",\"$config_file\",\"$fitparamlist\",$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12Bar,$mix13Bar,$mix23Bar,$deltacpBar,$dm12sqBar,$dm23sqBar,$betaBar,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$nexpts_marg,$tweak_systematics,$marg_hierarchy,$prior_prob_nh,$rethrow_unphysical,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$file_prior_dcp\",\"$file_prior_23\")\'";
+	$arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys.C($fileid,$imin0,$imax0,$imin1,$imax1,\"$tag\",\"$config_file\",\"$fitparamlist\",$mix12_nh,$mix13_nh,$mix23_nh,$deltacp_nh,$dm12sq_nh,$dm23sq_nh,$mix12_ih,$mix13_ih,$mix23_ih,$deltacp_ih,$dm12sq_ih,$dm23sq_ih,$betaBar,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$nexpts_marg,$tweak_systematics,$marg_hierarchy,$prior_prob_nh,$rethrow_unphysical,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$file_prior\")\'";
 		
 	$command = "$program $arguments";
 	print "$command \n";

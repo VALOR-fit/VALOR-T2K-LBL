@@ -27,7 +27,8 @@ void Check_toys_marginalization_readbinary
 
  const char * sk_sample = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
- const char * hypothesis           = "3f_oscbar_normbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar" */
+ const char * hypothesis           = "3f_osc_normbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
+
  double       input_mixing12       = -99,                         
  double       input_mixing13       = -99,                         
  double       input_mixing23       = -99,                         
@@ -36,21 +37,17 @@ void Check_toys_marginalization_readbinary
  double       input_dm23sq         = -99,                       
  double       input_betabar        = -99,
 
- const char * dmsqscheme          = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * dmsqscheme          = "auto",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy           = "normal"   ,
  const char * mixparamchoice      = "sinsqtheta",
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
- const int InputBin0  = 0,
+ const int InputBin0  = 1,
  const int InputBin1  = 0,
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- //const char * infilename           = "buildmarg_betabar",
- const char * infilename           = "buildmarg_betabar_Merged",
- //const char * infilename           = "PROVA_AFTER_CHANGES_10toys",
- //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_ToydcpJoint_10kToys/BetaBar_4p0E20POT_toydcp", // (beta=0,1), dcp T2K+react joint
-
+ const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
  //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
@@ -59,7 +56,7 @@ void Check_toys_marginalization_readbinary
  //const int    nfiles               = 201,         // # of files to read
  const int    nfiles               = 1,         // # of files to read
 
- const int    NtoysMarg            = 10,   // # toys marginalization 
+ const int    NtoysMarg            = 10000,   // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter
@@ -250,12 +247,11 @@ void Check_toys_marginalization_readbinary
   for(int itoy=0;itoy<NtoysMarg;itoy++){
 
     h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
-   
-    
+
     for(int i=1;i<=util::NumErecoBins(s);i++){
       h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
     }
-    cout << h_marg_toy->Integral() << endl;
+    //cout << "Tot # of events = " << h_marg_toy->Integral() << endl;
 
     // //Normal Hierarchy
     // h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1,0);
@@ -341,6 +337,15 @@ void Check_toys_marginalization_readbinary
     ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3FNormBar){
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
     ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
   }
  

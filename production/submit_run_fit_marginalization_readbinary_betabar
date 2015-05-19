@@ -94,9 +94,7 @@ $tag             = "fitmarg_sin2th13"          unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
 
-#$xml_file         = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
-#$xml_file         = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
-$xml_file        = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml" unless defined $xml_file;
+$xml_file        = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml" unless defined $xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
 
@@ -114,16 +112,14 @@ $mix12Bar        = -99                         unless defined $mix12Bar;
 $deltacpBar      = -99                         unless defined $deltacpBar;
 $betaBar         = -99                         unless defined $betaBar;
 
-#$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
-$config_file    = "analysis_configuration_run1to6_test_app_fullstat.xml"  unless defined $config_file;
+$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_run1to6_test_app_fullstat.xml"  unless defined $config_file;
 
 $tweak_systematics      = 1                    unless defined $tweak_systematics;
 $stat_fluct             = 1                    unless defined $stat_fluct;
 
-#$fitparamlist   = "nuosc3fbar_normbar_fixall+nuisance"      unless defined $fitparamlist;
-#$fitparamlist   = "nuosc3fbar_normbar_fixosc+nuisance"      unless defined $fitparamlist;
-#$fitparamlist   = "nuosc3fbar_normbar_fitdcpbar+nuisance"   unless defined $fitparamlist;
-$fitparamlist   = "nuosc3f_normbar_fitdcp+nuisance"      unless defined $fitparamlist;
+#$fitparamlist   = "nuosc3f_normbar_fitdcp+nuisance"      unless defined $fitparamlist;
+$fitparamlist   = "nuosc3f_normbar_fit23_fitdcp+nuisance"      unless defined $fitparamlist;
 
 $dmsqscheme             = "auto"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
@@ -132,15 +128,15 @@ $mixparamoctant         = "two"                  unless defined $mixparamoctant;
 
 #### marginalization
 
-$marg_file         = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg" unless defined $marg_file;
+$marg_file         = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor" unless defined $marg_file;
 
-$nfiles_marg       = 401           unless defined $nfiles_marg;     # of marginalization files
+$nfiles_marg       = 1             unless defined $nfiles_marg;     # of marginalization files
 $nexpts_marg       = 10000         unless defined $nexpts_marg;    # of marginalization toys
 
 $freepar0          = "betaBar"     unless defined $freepar0;
 $minfreepar0       = 0             unless defined $minfreepar0;  # Min free param allowed value
-$maxfreepar0       = 10            unless defined $maxfreepar0;  # Max free param allowed value
-$npt_freepar0      = 801           unless defined $npt_freepar0; # of free parameter points to scan
+$maxfreepar0       = 1             unless defined $maxfreepar0;  # Max free param allowed value
+$npt_freepar0      = 2             unless defined $npt_freepar0; # of free parameter points to scan
 
 $freepar1          = ""            unless defined $freepar1;
 $minfreepar1       = 0             unless defined $minfreepar1;  # Min free param allowed value
@@ -148,8 +144,8 @@ $maxfreepar1       = 0             unless defined $maxfreepar1;  # Max free para
 $npt_freepar1      = 1             unless defined $npt_freepar1; # of free param points to scan
 
 $marg_hierarchy    = 1             unless defined $marg_hierarchy;
-$type_error        = "HESSE-MINOS" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
-$draw_full_chisq   = 1             unless defined $draw_full_chisq;
+$type_error        = ""            unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
+$draw_full_chisq   = 0             unless defined $draw_full_chisq;
 
 $test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
 
@@ -168,9 +164,6 @@ if( !defined $cput ) {
 
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
-
-
-
 
 $ifile_first = 0;
 $ifile_last = 0;
@@ -193,8 +186,6 @@ while($irun < $nruns) {
     $program = "root2k ";
     
     $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_betabar.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12Bar,$mix13Bar,$mix23Bar,$deltacpBar,$dm12sqBar,$dm23sqBar,$betaBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
-
-    #$arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_betabar.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12Bar,$mix13Bar,$mix23Bar,$deltacpBar,$dm12sqBar,$dm23sqBar,$betaBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
     
     $command = "$program $arguments";
     print "$command \n";
@@ -216,8 +207,8 @@ while($irun < $nruns) {
         close(PBS);
         #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
         #`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-        `sbatch -t 05:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-        #`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+        #`sbatch -t 05:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+        `sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
     }
     
     #

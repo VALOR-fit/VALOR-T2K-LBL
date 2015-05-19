@@ -23,9 +23,9 @@
 //#define __print_hesseerror_verbose__
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
-
 #define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
 //#define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
+#define __FILL_OSCPARAM_TOY_HISTO__
 
 #include <cassert>
 #include <cstdlib>
@@ -1034,7 +1034,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	//~ cout << "- Generating toy-MC without systematic variation" << endl;
       }
     
-
       // Set seeds after systematic paramter extraction
 
       seedstat = Rnd::Instance()->RndToyMCstat().GetSeed();
@@ -1044,14 +1043,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       seedoth = Rnd::Instance()->RndOther().GetSeed();
       Rnd::Instance()->SetSeeds(seedstat+1,seedsyst+1,seedosc+1,seedfit+1,seedoth+1); // stat, syst, osc, fitter, other
     
+   
       
-
       // Marginalize the Mass Hierarchy
       
       conv::NuMassHierarchy_t hier;
       conv::NuMassHierarchy_t hierBar;
-      
-
       
       // int nMassHierarchy = 2;
       // for(int iMH=0;iMH<nMassHierarchy;iMH++){	
@@ -1092,176 +1089,256 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       // 	    fparm->Copy(*fparm_ih); // NEW MARG MH
       // 	  }
       // 	}
-
-
-
-
-	// NEW MARG MH 2
-
-	int iMH = conv::kBadResult;  // Index of Mass Hierarchy: 0 --> NH, 1 --> IH
-
-      	// Don't marginalize Mass Hierarchy. Only the assumed one
-      	if(this->fdoMargMassHierarchy == false){
-	  
-      	  hier    = Opt::Instance()->gMassHierarchyAssumed;
-      	  hierBar = Opt::Instance()->gMassHierarchyAssumed;
-	  
-	  // Used convention in MakeToysMarginalization(): 
-      	  //  - iMH=0 --> kNmhNormal
-      	  //  - iMH=1 --> kNmhInverted	
-      	  if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
-      	  else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
-	  
-      	  // Mass Hierarchy has to be already defined
-      	  else {
-      	    cerr << endl;
-      	    cerr << "FitMarginalization::MakeToysMarginalization" << endl;
-      	    cerr << "Mass Hierarchy is not defined" << endl;
-      	    cerr << endl;
-      	    exit(1);
-      	  }
-	}
-	
-	// Extract randomly the Mass Hierarchy 
-	else	  
-	  iMH = this->RandomizeMH(fProbNormalHierarchy);   // iMH = 0 --> NH, iMH = 1 --> IH
-	
-	fhToyMH->Fill(iMH+conv::kASmallNum);
-	
-       	if( iMH==0 ){
-	  hier    = kNmhNormal;
-	  hierBar = kNmhNormal;
-	  skexp->GetSuperkMC()->SetMassHierarchy(hier);
-	  skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
-	  fparm->Copy(*fparm_nh); // NEW MARG MH
-	}
-	else if( iMH==1 ){
-	  hier    = kNmhInverted;
-	  hierBar = kNmhInverted;
-	  skexp->GetSuperkMC()->SetMassHierarchy(hier);
-	  skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
-	  fparm->Copy(*fparm_ih); // NEW MARG MH
-	}
-	
-	//
-
-	
-#ifdef __print_masshierarchy__
-	cout << endl;
-	cout << "iMH = " << iMH << " - MH: " << util::HierarchyAsString(hier) 
-	     << " - MHbar: " << util::HierarchyAsString(hierBar)
-	     << endl;
-#endif
-	
-#ifdef  __print_oscparam_all_verbose__
-	int np = fparm->GetNumberParameters();
-	for(int ip = 0; ip < np; ip++) {
-	  conv::PhysParamId_t p = fparm->WhichParam(ip);
-	  if(util::IsSystematic(p)) continue; // not oscillation parameters 
-	  cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm->InitValue(p) << endl;
-	}
-	cout << endl;
-#endif
-	
-	// Produce toys for each osc param value
       
-	for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-	  for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-	    
-	    //cout << ipar0 << " - " << ipar1 << endl;
-	    
-	    double currval0 = fmin_param[0] + ipar0*fstep_param[0];
-	    double currval1 = fmin_param[1] + ipar1*fstep_param[1];
-	    //cout << "currval0 = " << currval0 << ", ";
-	    //cout << "currval1 = " << currval1 << ", ";
-	    
+      
+      // NEW MARG MH 2
+      
+      int iMH = conv::kBadResult;  // Index of Mass Hierarchy: 0 --> NH, 1 --> IH
+      
+      // Don't marginalize Mass Hierarchy. Only the assumed one
+      if(this->fdoMargMassHierarchy == false){
+	
+	hier    = Opt::Instance()->gMassHierarchyAssumed;
+	hierBar = Opt::Instance()->gMassHierarchyAssumed;
+	
+	// Used convention in MakeToysMarginalization(): 
+	//  - iMH=0 --> kNmhNormal
+	//  - iMH=1 --> kNmhInverted	
+	if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+	else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+	
+	// Mass Hierarchy has to be already defined
+	else {
+	  cerr << endl;
+	  cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+	  cerr << "Mass Hierarchy is not defined" << endl;
+	  cerr << endl;
+	  exit(1);
+	}
+      }
+      
+      // Extract randomly the Mass Hierarchy 
+      else	  
+	iMH = this->RandomizeMH(fProbNormalHierarchy);   // iMH = 0 --> NH, iMH = 1 --> IH
+      
+      if( iMH==0 ){
+	Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
+	hier    = kNmhNormal;
+	hierBar = kNmhNormal;
+	skexp->GetSuperkMC()->SetMassHierarchy(hier);
+	skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	fparm->Copy(*fparm_nh); // NEW MARG MH
+      }
+      else if( iMH==1 ){
+	Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
+	hier    = kNmhInverted;
+	hierBar = kNmhInverted;
+	skexp->GetSuperkMC()->SetMassHierarchy(hier);
+	skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	fparm->Copy(*fparm_ih); // NEW MARG MH
+      }
 
-	    // Update the expectation and produce the mock data
-	    //fparm->Update(fPhysParamFree[0],currval0); 
-	    //if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
-	    fparm->SetInitValue(fPhysParamFree[0],currval0); 
-	    if(fIsFit2D) fparm->SetInitValue(fPhysParamFree[1],currval1); 
-	    //cout << *fparm << endl;
 
-	    applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
-	    
-	    // Loop over the used SK samples (This loop can be improved. Loop only over the used SK samples, pre-stored)
-	    int iscount=0;
-	    //for(int is = 0; is < kns; is++) {
-	    //SuperkSample_t s = kSKSamples[is];
-	    //if(s == kSKsUndefined) continue;
-	    for(int is=0;is<fNSKsamples;is++){
-	      SuperkSample_t s = this->GetSKSamples(is);
-	      double * obsErec = skobs->ErecoSpectrumArray(s);
-	      
-	      // Build toy Ereco distributions
-	      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-		
-		double bincont = obsErec[ib] / fNormPOT[is];
-		
-		//fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
-		// NEW MARG MH 2
-		fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib); 
-		//
-	      }
-	      
-	      iscount++; // index of the toy array
-	    } // loop SK samples
-	    
-#ifdef __print_array_toy_maketoys__
-	    cout << endl;
-	    cout << "toy=" << iexperiment << endl; 
-	    cout << " - ipar0 = " << ipar0 
-		 << " - currval0 = " << currval0 << endl; 
-	    if(fIsFit2D){
-	      cout << " - ipar1 = " << ipar1 
-		   << " - currval1 = " << currval1 << endl; 
-	    }	 
-	    cout << " : ";
+#ifdef __FILL_OSCPARAM_TOY_HISTO__
+
+      // Fill toy osc parameter histograms
+
+      int np = fparm->GetNumberParameters();
+      int npfree = 0;
+      for(int ip = 0; ip < np; ip++) {
+	conv::PhysParamId_t p = fparm->WhichParam(ip);
+	//cout << p << " " << util::AsString(p) << endl;
+
+	if(p!=fPhysParamFree[0]) 
+	  fparm->SetDoMarg(fPhysParamFree[0],true); 
+	else{
+	  fparm->SetDoMarg(fPhysParamFree[0],false);  // Do not marginalize if free parameter 
+	  continue; 
+	}
+	
+	if(fIsFit2D){
+	  if(p!=fPhysParamFree[1]) 
+	    fparm->SetDoMarg(fPhysParamFree[1],true); 
+	  else{
+	    fparm->SetDoMarg(fPhysParamFree[1],false);  // Do not marginalize if free parameter
+	    continue; 
+	  }
+	}
+	
+	if(util::IsSystematic(p)) continue; // not oscillation parameters 
+	if(fparm->IsFixed(p))    continue; // do not marginalize if fixed
+	
+	if(fparm->IsPrior2D(p)){ // Fill it later as correlated (only mix23 and dm23)
+#ifdef __MARGINALIZE_23PARAMS_CORR__	  
+	  if(p==conv::kPhypDm23sq || p==conv::kPhypMixing23) continue;
+#endif
+	  cerr << endl;
+	  cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+	  cerr << "There are other parameters which are not 2D correlated" << endl;
+	  cerr << "Now the only 2D correlated parameters are "  
+	       << util::AsString(conv::kPhypDm23sq)
+	       << " and "
+	       << util::AsString(conv::kPhypMixing23)
+	       << endl;
+	  exit(1);
+	}
+	
+	double usedvalue = fparm->InitValue(p);
+	fparm->GetToyHisto(p)->Fill(usedvalue); 
+	
+	if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
+	  usedvalue = fparm_nh->InitValue(p);
+	  fparm_nh->GetToyHisto(p)->Fill(usedvalue); 
+	}
+	else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+	  usedvalue = fparm_ih->InitValue(p);
+	  fparm_ih->GetToyHisto(p)->Fill(usedvalue); 
+	}
+      } // loop over p
+
+#ifdef __MARGINALIZE_23PARAMS_CORR__
+      double usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
+      double usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
+
+      fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+      fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+
+      if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
+	fparm_nh->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+	fparm_nh->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+      }
+      else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+	fparm_ih->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+	fparm_ih->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+      }
+#endif
+
+      if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
+	fhToyMH->Fill(0.+conv::kASmallNum);
+      else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted)
+	fhToyMH->Fill(1.+conv::kASmallNum);
+      
+#endif // __FILL_OSCPARAM_TOY_HISTO__
+
+      //
+
+      
+#ifdef __print_masshierarchy__
+      cout << endl;
+      cout << "iMH = " << iMH << " - MH: " << util::HierarchyAsString(hier) 
+	   << " - MHbar: " << util::HierarchyAsString(hierBar)
+	   << endl;
+#endif
+      
+#ifdef  __print_oscparam_all_verbose__
+      int np = fparm->GetNumberParameters();
+      for(int ip = 0; ip < np; ip++) {
+	conv::PhysParamId_t p = fparm->WhichParam(ip);
+	if(util::IsSystematic(p)) continue; // not oscillation parameters 
+	cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm->InitValue(p) << endl;
+      }
+      cout << endl;
+#endif
+      
+      // Produce toys for each osc param value
+      
+      for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+	for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+	  
+	  //cout << ipar0 << " - " << ipar1 << endl;
+	  
+	  double currval0 = fmin_param[0] + ipar0*fstep_param[0];
+	  double currval1 = fmin_param[1] + ipar1*fstep_param[1];
+	  //cout << "currval0 = " << currval0 << ", ";
+	  //cout << "currval1 = " << currval1 << ", ";
+	  
+	  
+	  // Update the expectation and produce the mock data
+	  //fparm->Update(fPhysParamFree[0],currval0); 
+	  //if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
+	  fparm->SetInitValue(fPhysParamFree[0],currval0); 
+	  if(fIsFit2D) fparm->SetInitValue(fPhysParamFree[1],currval1); 
+	  //cout << *fparm << endl;
+	  
+	  applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
+	  
+	  // Loop over the used SK samples (This loop can be improved. Loop only over the used SK samples, pre-stored)
+	  int iscount=0;
+	  //for(int is = 0; is < kns; is++) {
+	  //SuperkSample_t s = kSKSamples[is];
+	  //if(s == kSKsUndefined) continue;
+	  for(int is=0;is<fNSKsamples;is++){
+	    SuperkSample_t s = this->GetSKSamples(is);
+	    double * obsErec = skobs->ErecoSpectrumArray(s);
 	    
 	    // Build toy Ereco distributions
+	    for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+	      
+	      double bincont = obsErec[ib] / fNormPOT[is];
+	      
+	      //fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+	      // NEW MARG MH 2
+	      fToyMargErecoVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib); 
+	      //
+	    }
 	    
-	    iscount=0;
-	    //for(int is = 0; is < kns; is++) {
-	    //SuperkSample_t s = kSKSamples[is];
-	    //if(s == kSKsUndefined) continue;
-	    for(int is=0;is<fNSKsamples;is++){
-	      SuperkSample_t s = this->GetSKSamples(is);
-	      
-	      //cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() / fNormPOT[is]<< endl;
-	      cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() << endl;
-	      
+	    iscount++; // index of the toy array
+	  } // loop SK samples
+	  
+#ifdef __print_array_toy_maketoys__
+	  cout << endl;
+	  cout << "toy=" << iexperiment << endl; 
+	  cout << " - ipar0 = " << ipar0 
+	       << " - currval0 = " << currval0 << endl; 
+	  if(fIsFit2D){
+	    cout << " - ipar1 = " << ipar1 
+		 << " - currval1 = " << currval1 << endl; 
+	  }	 
+	  cout << " : ";
+	  
+	  // Build toy Ereco distributions
+	  
+	  iscount=0;
+	  //for(int is = 0; is < kns; is++) {
+	  //SuperkSample_t s = kSKSamples[is];
+	  //if(s == kSKsUndefined) continue;
+	  for(int is=0;is<fNSKsamples;is++){
+	    SuperkSample_t s = this->GetSKSamples(is);
+	    
+	    //cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() / fNormPOT[is]<< endl;
+	    cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() << endl;
+	    
 #ifdef __print_array_toy_maketoys_verbose__
-	      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-		//double bincont = skobs->ErecoSpectrumArray(s)[ib];
-		
-		//double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
-		// NEW MARG MH 2
-		double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib); 
-		//
-		
-		cout << bincont << " ";
-	      }
+	    for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+	      //double bincont = skobs->ErecoSpectrumArray(s)[ib];
 	      
-#endif // verbose
+	      //double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iMH,iscount,ib); 
+	      // NEW MARG MH 2
+	      double bincont = fToyMargErecoVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib); 
+	      //
 	      
-	      cout << endl;
-
-	      iscount++; // index of the toy array
-	    } // loop SK samples
-#endif //__print_array_toy_maketoys__
-
-	    // NEW MARG MH 2
-	    //} // loop Mass Hierarchy
-	    //
+	      cout << bincont << " ";
+	    }
 	    
+#endif // verbose
+	    
+	    cout << endl;
+	    
+	    iscount++; // index of the toy array
+	  } // loop SK samples
+#endif //__print_array_toy_maketoys__
+	  
+	  // NEW MARG MH 2
+	  //} // loop Mass Hierarchy
+	  //
+	  
 	} // loop ipar1 (free parameter)
       } // loop ipar0 (free parameter)
     } // applied_negevents_condition
     
     delete skobs;
   } // iexperiment
-
+  
   cout << endl;
   cout << "Toys for marginalization are extracted" << endl;
   cout << endl;
@@ -2548,7 +2625,7 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     }
 
     if(util::IsSystematic(p)) continue; // not oscillation parameters 
-    if(infparm->IsFixed(p))     continue; // do not marginalize if fixed
+    if(infparm->IsFixed(p))   continue; // do not marginalize if fixed
 
     // Now extract the oscillation parameter to marginalize from 1D prior
 
@@ -2556,7 +2633,7 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
       Nparam_with_2Dprior++;
       continue;
     }
-
+    
     double currval = conv::kBadResult;
 
     bool rethrow=true;
@@ -2571,12 +2648,9 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     cout << "Marginalize " << p << " " << util::AsString(p) << " --> " << currval << endl;
 #endif
 
-    infparm->GetToyHisto(p)->Fill(currval); // Fill toy histogram for checks
-
     // Update current values of parameters 
     //infparm->Update(p,currval);
-    infparm->SetInitValue(p,currval);
-    
+    infparm->SetInitValue(p,currval);    
   }
   
   // Marginalze 23 parameters with 2D priors if correlated
@@ -2623,8 +2697,7 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     }
     
     double dmsq=0;
-    double mix23=0;
-    
+    double mix23=0; 
     infparm->GetPriorHisto2D(conv::kPhypDm23sq)->GetRandom2(mix23,dmsq);
     
 #ifdef  __print_oscparam_marginalized__
@@ -2632,10 +2705,7 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     cout << "Marginalize " << conv::kPhypDm23sq << " " << util::AsString(conv::kPhypDm23sq) << " --> " << dmsq << endl; 
     //cout << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
 #endif
-    
-    infparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(mix23,dmsq); // Fill toy histogram for checks
-    infparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(mix23,dmsq); // Fill toy histogram for checks
-    
+ 
     infparm->SetInitValue(conv::kPhypDm23sq,dmsq);
     infparm->SetInitValue(conv::kPhypMixing23,mix23);
     //infparm->Update(p,currval);

@@ -8,12 +8,16 @@
 
 #include <iomanip.h>
 
+using namespace std;
+using namespace valor;
+using namespace valor::conv;
+
 void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
 (
  const char * tag                   = "prova",
  
  const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
- const char * hypothesis           = "3f_oscbar_normbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar" */
+ const char * hypothesis           = "3f_osc_normbar",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
  
  // double       input_mixing12       = 0.,                          
  // double       input_mixing13       = 0.,                          
@@ -21,44 +25,43 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
  // double       input_deltacp        = 0.,                          
  // double       input_dm12sq         = 0.,                          
  // double       input_dm23sq         = 0.,                          
- 
- double       input_mixing12       = -99,                         
- double       input_mixing13       = -99,                         
- double       input_mixing23       = -99,                         
- double       input_deltacp        = -99,                         
- double       input_dm12sq         = -99,                         
- double       input_dm23sq         = -99,                       
- double       input_betabar        = -99,
+ // double       input_betabar        = 0.,
 
- // // T2K only - sinsqtheta
- // double       input_mixing12       = 0.306,                           
- // double       input_mixing13       = 0.0422,                           
- // double       input_mixing23       = 0.524,                        
- // double       input_deltacp        = 1.91,                           
- // double       input_dm12sq         = 7.5E-5,                     
- // double       input_dm23sq         = 0.00251,                        
+ // double       input_mixing12       = -99,                         
+ // double       input_mixing13       = -99,                         
+ // double       input_mixing23       = -99,                         
+ // double       input_deltacp        = -99,                         
+ // double       input_dm12sq         = -99,                         
+ // double       input_dm23sq         = -99,                       
+ // double       input_betabar        = -99,
 
- // // T2K only - sinsq2theta
- // double       input_mixing12       = 0.8495,                           
- // double       input_mixing13       = 0.1617,                           
- // double       input_mixing23       = 0.998,                        
- // double       input_deltacp        = 1.91,                           
- // double       input_dm12sq         = 7.5E-5,                     
- // double       input_dm23sq         = 0.00251,                        
+ // // Normal Hierarchy
+ // double       input_mixing12       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = conv::kT2KReacBestFitSinsqTheta13_NH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
+ // double       input_dm12sq         = -99,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
+ // double       input_betabar       = -99,
+
+ // Inverted Hierarchy
+ double       input_mixing12       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13       = conv::kT2KReacBestFitSinsqTheta13_IH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23       = conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp        = conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, */
+ double       input_dm12sq         = -99,    /* Dm^2_{12},  */
+ double       input_dm23sq         = conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}| */
+ double       input_betabar       = -99,
   
  bool         disable_banff_tuning = false,                          /* */
- 
- //const char * config_file        = "analysis_configuration_1.7E20_prefit.xml",
- //const char * config_file        = "analysis_configuration_1.7E20.xml",
- //const char * config_file        = "analysis_configuration_2.5E20_prefit.xml",
- //const char * config_file        = "analysis_configuration_2.5E20.xml",
- //const char * config_file     = "analysis_configuration_2.315E20_banff20150402.xml",
+
  const char * config_file      = "analysis_configuration_run1to6_test_app.xml",      
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app.xml",      
    
  bool         print_spectrum       = false,                          /* */
- const char * dmsqscheme          = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy           = "normal"   ,
+ const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * hierarchy           = "inverted"   ,
  const char * mixparamchoice      = "sinsqtheta",
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
@@ -96,6 +99,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   if(input_betabar < -1) input_betabar = conv::kGlobFitBetaBar;
+ 
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -123,6 +127,15 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
     ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
   } else
+  if(ph.Hypothesis() == conv::kHypOsc3FNormBar){
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
+  } else
   if(ph.Hypothesis() == conv::kHypOsc3FBarNormBar){
     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
@@ -142,7 +155,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   
   
   string oscparams = util::AsString(ph.Hypothesis(),
-     input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar);
 
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {

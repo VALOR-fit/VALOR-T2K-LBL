@@ -34,16 +34,9 @@ void run_fit_marginalization_readbinary_betabar
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_betabar_0_rethrowunphysical_4E20POT_NH-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_betabar_0_rethrowunphysical_4E20POT_IH-0.xml",
+ const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml",
  
- //const char * xmlfile = "toymc/toymc_nuebarapp_toydcp_betabar_0_rethrowunphysical_4E20POT-0.xml",    // throw deltaCP from T2K+react joint prior  
- //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_statonly_4E20POT-0.xml",           // stat only
- //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_4E20POT-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_0_rethrowunphysical_4E20POT-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_fixosc_betabar_1_rethrowunphysical_7p8E21POT-0.xml",
- 
- bool         dotoys                   = true,
+ bool         dotoys                   = false,
 
  // Default
  double       input_mixing12           = -99,           
@@ -72,7 +65,6 @@ void run_fit_marginalization_readbinary_betabar
  //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
  const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
  
-
  const char * dmsqscheme               = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
  const char * hierarchy                = "normal",     /* normal or inverted */
@@ -80,14 +72,11 @@ void run_fit_marginalization_readbinary_betabar
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- //const char * infilename    = "buildmarg_betabar_Merged",
- const char * infilename    = "buildmarg_betabar",
- //const char * infilename    = "PROVA_AFTER_CHANGES_10toys", // prova
- //const char * infilename    = "PROVA_BEFORE_CHANGES_10toys", // prova
+ const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
  
- const int    nfiles               = 2, //401, 1        // # of files to read
+ const int    nfiles               = 1, //401, 1        // # of files to read
 
- const int    NtoysMarg            = 10, //10000, 1  // # toys marginalization 
+ const int    NtoysMarg            = 10000,  // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter

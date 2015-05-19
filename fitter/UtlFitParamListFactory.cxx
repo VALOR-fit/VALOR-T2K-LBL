@@ -824,7 +824,24 @@ FitParamList * util::NamedParameterList(string name)
       return fp;
     }
     
-    //  
+
+
+ if(name == "nuosc3f_normbar_fixall+nuisance") {
+   FitParamList * fp = FitParamList::NuOsc3FlavourNormBarFit(kNumOfNuisanceParams);
+   util::AppendAllSystematicsTo(fp, 7);
+   fp -> FixParameter (kPhypMixing13);
+   fp -> FixParameter (kPhypMixing23);
+   fp -> FixParameter (kPhypMixing12);
+   fp -> FixParameter (kPhypCPV);
+   fp -> FixParameter (kPhypDm12sq);
+   fp -> FixParameter (kPhypDm23sq);
+      
+   fp -> SetParListName(name);
+   fp -> SetSystMode(0);
+   return fp;
+ }
+ 
+ //  
     
     
     
