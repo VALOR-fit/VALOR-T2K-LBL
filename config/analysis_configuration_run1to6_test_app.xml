@@ -20,7 +20,7 @@
        7.3e+20
      </fhc>
      <rhc>
-       4.0e+20
+       4.5e+20
      </rhc>       
     </superk> 
   </data_pot>
@@ -361,7 +361,7 @@
     
     <best_fit_values>     
       <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc_plus_scc.root </filename>
-      <objname>    prefit_params   </objname>
+      <objname>    postfit_params   </objname>
       <objtype>    TVectorD        </objtype>
     </best_fit_values>
     
@@ -370,7 +370,7 @@
     -->
     <covariance_matrix>
       <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc_plus_scc.root </filename>
-      <objname>    prefit_cov       </objname>
+      <objname>    postfit_cov       </objname>
       <objtype>    TMatrixD         </objtype>
     </covariance_matrix>
    
@@ -378,7 +378,7 @@
     <disap>
       <best_fit_values>
         <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc_plus_scc.root </filename>
-        <objname>    prefit_params   </objname>
+        <objname>    postfit_params   </objname>
         <objtype>    TVectorD        </objtype>
       </best_fit_values>
       <!--
@@ -386,7 +386,7 @@
       -->
       <covariance_matrix>
         <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc_plus_scc.root </filename>
-        <objname>    prefit_cov       </objname>    
+        <objname>    postfit_cov       </objname>    
         <objtype>    TMatrixD         </objtype>
       </covariance_matrix>
     </disap>
