@@ -94,7 +94,9 @@ $tag             = "fitmarg_sin2th13"          unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
 
-$xml_file        = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml" unless defined $xml_file;
+#$xml_file        = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml" unless defined $xml_file;
+#$xml_file        = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_2-0.xml" unless defined $xml_file;
+$xml_file        = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
 
@@ -110,9 +112,11 @@ $mix23Bar        = -99                         unless defined $mix23Bar;
 $mix13Bar        = -99                         unless defined $mix13Bar;
 $mix12Bar        = -99                         unless defined $mix12Bar;
 $deltacpBar      = -99                         unless defined $deltacpBar;
-$betaBar         = -99                         unless defined $betaBar;
+$betaBar         = 0                           unless defined $betaBar;
 
-$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_run1to6_test_app_4p5E20POT.xml"  unless defined $config_file;
+$config_file    = "analysis_configuration_run1to6_test_app_4E20POT.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
 #$config_file    = "analysis_configuration_run1to6_test_app_fullstat.xml"  unless defined $config_file;
 
 $tweak_systematics      = 1                    unless defined $tweak_systematics;

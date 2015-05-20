@@ -34,7 +34,9 @@ void run_fit_marginalization_readbinary_betabar
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_2-0.xml",
+ const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT-0.xml",
  
  bool         dotoys                   = false,
 
@@ -51,9 +53,11 @@ void run_fit_marginalization_readbinary_betabar
  double       input_deltacp_bar        = -99,
  double       input_dm12sq_bar         = -99,
  double       input_dm23sq_bar         = -99,
- double       input_beta_bar           = -99,
+ double       input_beta_bar           = 1,
 
- const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
+ const char * config_file              = "analysis_configuration_run1to6_test_app_4E20POT.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  //const char * config_file              = "analysis_configuration_run1to6_test_app_fullstat.xml",
  
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */

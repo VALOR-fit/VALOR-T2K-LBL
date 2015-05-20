@@ -24,14 +24,11 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- //const char * tag                  = "PROVA_BEFORE_CHANGES_10toys",
- //const char * tag                  = "PROVA_AFTER_CHANGES_10toys",
  const char * tag                  = "BetaBar_4p0E20POT_Toy23dcp_Valor",
- //const char * tag  = "PROVA",
 
- //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
- //const char * config_file          = "analysis_configuration_1.7E20.xml",   
- const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
+ const char * config_file          = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
+ //const char * config_file          = "analysis_configuration_run1to6_test_app_4E20POT.xml",
+ //const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
 
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
