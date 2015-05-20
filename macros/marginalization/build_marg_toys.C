@@ -25,7 +25,7 @@ void build_marg_toys
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
  const char * tag                  = "BetaBar_4p0E20POT_Toy23dcp_Valor",
-
+ 
  const char * config_file          = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4E20POT.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
@@ -673,23 +673,65 @@ void build_marg_toys
   sprintf(name,"%s.root",tag);
   TFile *fout = new TFile(name,"RECREATE");
 
-  if(hPriorHisto_dcp_nh)   hPriorHisto_dcp_nh->Write();
-  if(hToyHisto_dcp_nh)     hToyHisto_dcp_nh->Write();
-  if(hPriorHisto_Mix23_nh) hPriorHisto_Mix23_nh->Write();
-  if(hToyHisto_Mix23_nh)   hToyHisto_Mix23_nh->Write();
-  if(hPriorHisto_Dm23_nh)  hPriorHisto_Dm23_nh->Write();
-  if(hToyHisto_Dm23_nh)    hToyHisto_Dm23_nh->Write();
-
-  if(hPriorHisto_dcp_ih)   hPriorHisto_dcp_ih->Write();
-  if(hToyHisto_dcp_ih)     hToyHisto_dcp_ih->Write();
-  if(hPriorHisto_Mix23_ih) hPriorHisto_Mix23_ih->Write();
-  if(hToyHisto_Mix23_ih)   hToyHisto_Mix23_ih->Write();
-  if(hPriorHisto_Dm23_ih)  hPriorHisto_Dm23_ih->Write();
-  if(hToyHisto_Dm23_ih)    hToyHisto_Dm23_ih->Write();
-
-  if(hPriorHisto_MH)       hPriorHisto_MH->Write();
-  if(hToyHisto_MH)         hToyHisto_MH->Write();
-
+  if(hPriorHisto_dcp_nh){
+    hPriorHisto_dcp_nh->SetName("hPriorHisto_dcp_nh");
+    hPriorHisto_dcp_nh->Write();
+  }
+  if(hToyHisto_dcp_nh){
+    hToyHisto_dcp_nh->SetName("hToyHisto_dcp_nh");
+    hToyHisto_dcp_nh->Write();
+  }
+  if(hPriorHisto_Mix23_nh){
+    hPriorHisto_Mix23_nh->SetName("hPriorHisto_Mix23_nh");
+    hPriorHisto_Mix23_nh->Write();
+  }
+  if(hToyHisto_Mix23_nh){
+    hToyHisto_Mix23_nh->SetName("hToyHisto_Mix23_nh");
+    hToyHisto_Mix23_nh->Write();
+  }
+  if(hPriorHisto_Dm23_nh){
+    hPriorHisto_Dm23_nh->SetName("hPriorHisto_Dm23_nh");
+    hPriorHisto_Dm23_nh->Write();
+  }
+  if(hToyHisto_Dm23_nh){
+    hToyHisto_Dm23_nh->SetName("hToyHisto_Dm23_nh");
+    hToyHisto_Dm23_nh->Write();
+  }
+  
+  if(hPriorHisto_dcp_ih){
+    hPriorHisto_dcp_ih->SetName("hPriorHisto_dcp_ih");
+    hPriorHisto_dcp_ih->Write();
+  }
+  if(hToyHisto_dcp_ih){
+    hToyHisto_dcp_ih->SetName("hToyHisto_dcp_ih");
+    hToyHisto_dcp_ih->Write();
+  }
+  if(hPriorHisto_Mix23_ih){
+    hPriorHisto_Mix23_ih->SetName("hPriorHisto_Mix23_ih");
+    hPriorHisto_Mix23_ih->Write();
+  }
+  if(hToyHisto_Mix23_ih){
+    hToyHisto_Mix23_ih->SetName("hToyHisto_Mix23_ih");
+    hToyHisto_Mix23_ih->Write();
+  }
+  if(hPriorHisto_Dm23_ih){
+    hPriorHisto_Dm23_ih->SetName("hPriorHisto_Dm23_ih");
+    hPriorHisto_Dm23_ih->Write();
+  }
+  if(hToyHisto_Dm23_ih){
+    hToyHisto_Dm23_ih->SetName("hToyHisto_Dm23_ih");
+    hToyHisto_Dm23_ih->Write();
+  }
+  
+  if(hPriorHisto_MH){
+    hPriorHisto_MH->SetName("hPriorHisto_MH");
+    hPriorHisto_MH->Write();
+  }
+  if(hToyHisto_MH){
+    hToyHisto_MH->SetName("hToyHisto_MH");
+    hToyHisto_MH->Write();
+  }
+  
   fout->Close();
 
   return;
