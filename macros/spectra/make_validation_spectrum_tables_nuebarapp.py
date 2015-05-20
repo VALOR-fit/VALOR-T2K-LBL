@@ -125,7 +125,7 @@ signal_for_sample["RHC1Re" ] = "signuebar"
 #______________________________________________________________________________________________________________________________
 
 def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,angle_scheme,octant,dmsqscheme,output_file,nobanff,label,
-         useBar = False, mixing12Bar = 0, mixing13Bar = 0, mixing23Bar = 0,dm12sqBar = 0, dm23sqBar = 0, deltacpBar = 0 , betaBar = 0):
+         useBar = False, useNormBar = True,  mixing12Bar = 0, mixing13Bar = 0, mixing23Bar = 0,dm12sqBar = 0, dm23sqBar = 0, deltacpBar = 0 , betaBar = 0):
   
   opt.gMassHierarchyAssumed = util.HierarchyFromString(hierarchy)
   opt.gOscMixingParamChoice = util.MixingTypeFromString(angle_scheme)
@@ -135,10 +135,16 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   opt.SetDefaultParameterValues()
   
   if useBar:
-    phyp = valor.PhysHypothesis("3f_oscbar_normbar")
+    if useNormBar:
+      phyp = valor.PhysHypothesis("3f_oscbar_normbar")
+    else:
+      phyp = valor.PhysHypothesis("3f_oscbar")
   else:
-    phyp = valor.PhysHypothesis("3f_osc")
-    
+    if useNormBar:
+      phyp = valor.PhysHypothesis("3f_osc_normbar")
+    else:
+      phyp = valor.PhysHypothesis("3f_osc")
+
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file)
   skmc = skexp.GetSuperkMC()
@@ -187,6 +193,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     if hierarchy=="normal": deltacpBar = conv.kT2KBestFitDeltaCP_NH
     else:                   deltacpBar = conv.kT2KBestFitDeltaCP_IH
     print "Using default ("+hierarchy+") value for ",util.ParamAsString(conv.kPhypCPVBar),": ",deltacp
+
   if betaBar < 0.:
     betaBar = opt.GetGlobalBestFit(conv.kPhypBetaBar)
     print "Using default value for ",util.ParamAsString(conv.kPhypBetaBar),": ",betaBar
@@ -213,8 +220,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     phyp.SetCurrValue(conv.kPhypCPVBar      ,   deltacpBar);
     phyp.SetCurrValue(conv.kPhypDm12sqBar   ,    dm12sqBar);
     phyp.SetCurrValue(conv.kPhypDm23sqBar   ,    dm23sqBar);
-    phyp.SetCurrValue(conv.kPhypBetaBar     ,      betaBar);
-    
+  
     print
     print util.ParamAsString(conv.kPhypMixing12Bar).ljust(25), mixing12Bar
     print util.ParamAsString(conv.kPhypMixing13Bar).ljust(25), mixing13Bar
@@ -222,8 +228,12 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     print util.ParamAsString(conv.kPhypCPVBar     ).ljust(25), deltacpBar
     print util.ParamAsString(conv.kPhypDm12sqBar  ).ljust(25), dm12sqBar 
     print util.ParamAsString(conv.kPhypDm23sqBar  ).ljust(25), dm23sqBar 
-    print util.ParamAsString(conv.kPhypBetaBar    ).ljust(25), betaBar
   
+  if useNormBar:
+    phyp.SetCurrValue(conv.kPhypBetaBar     ,      betaBar);
+      
+    print util.ParamAsString(conv.kPhypBetaBar    ).ljust(25), betaBar
+
   print "\n"
   
   # Disable BANFF tuning if requested
@@ -254,6 +264,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   
   bar_params = [conv.kPhypMixing12Bar, conv.kPhypMixing13Bar, conv.kPhypMixing23Bar, conv.kPhypDm12sqBar , conv.kPhypDm23sqBar, conv.kPhypCPVBar, conv.kPhypBetaBar]
   
+  normbar_params = [conv.kPhypBetaBar]
   
   tex_output.write("\n\\section*{Job details}\n\n")
   
@@ -268,6 +279,14 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     tex_output.write("\n\\begin{minipage}[t]{0.5\\textwidth}")
     tex_output.write("\n\\begin{itemize}\n")
     for param in bar_params:
+      tex_output.write("\\item[] "+util.ParamAsStringTex(param)+" = "+str(phyp.CurrValue(param))+"\n")
+    
+    tex_output.write("\\end{itemize}\n\\end{minipage}")
+
+  if useNormBar:
+    tex_output.write("\n\\begin{minipage}[t]{0.5\\textwidth}")
+    tex_output.write("\n\\begin{itemize}\n")
+    for param in normbar_params:
       tex_output.write("\\item[] "+util.ParamAsStringTex(param)+" = "+str(phyp.CurrValue(param))+"\n")
     
     tex_output.write("\\end{itemize}\n\\end{minipage}")
@@ -374,75 +393,45 @@ if __name__=="__main__":
   import optparse
   parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of validation spectra")
 
-
-  # T2K+reactors (sinsqtheta)
-  #parser.add_option('--mixing12', dest='mixing12',default=0.   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  #parser.add_option('--mixing13', dest='mixing13',default=0.  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  #parser.add_option('--mixing23', dest='mixing23',default=0.   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
-  #parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5 ,type=float, help='Value of small mass splitting')
-  #parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.51E-3 ,type=float, help='Value of large mass splitting')
-  #parser.add_option('--deltacp' , dest='deltacp' ,default=0.    ,type=float, help='Value of delta CP')
-  #parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  #parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  #parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
-  #parser.add_option('--dm12sqbar'  , dest='dm12sqBar'  ,default=7.53E-5 ,type=float, help='Barred value of small mass splitting')
-  #parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=2.51E-3 ,type=float, help='Barred value of large mass splitting')
-  #parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=0.    ,type=float, help='Barred value of delta CP')
-  #parser.add_option('--betabar'    , dest='betaBar'    ,default=1.      ,type=float, help='Barred value of nuebar appearance normalization ')
-
-  # T2K only (sinsqtheta)
+  # T2K+reactors (sinsqtheta) - Normal Hierarchy
   #parser.add_option('--mixing12', dest='mixing12',default=0.304   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  #parser.add_option('--mixing13', dest='mixing13',default=0.0422  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  #parser.add_option('--mixing23', dest='mixing23',default=0.524   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
-  #parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5 ,type=float, help='Value of small mass splitting')
-  #parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.51E-3 ,type=float, help='Value of large mass splitting')
-  #parser.add_option('--deltacp' , dest='deltacp' ,default=1.91    ,type=float, help='Value of delta CP')
-  #parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.304   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  #parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.0422  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  #parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.524   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
-  #parser.add_option('--dm12sqbar'  , dest='dm12sqBar'  ,default=7.53E-5 ,type=float, help='Barred value of small mass splitting')
-  #parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=2.51E-3 ,type=float, help='Barred value of large mass splitting')
-  #parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=1.91    ,type=float, help='Barred value of delta CP')
-  #parser.add_option('--betabar'    , dest='betaBar'    ,default=1.      ,type=float, help='Barred value of nuebar appearance normalization ')
-
-  # T2K+reactors (sinsq2theta)
-  #parser.add_option('--mixing12', dest='mixing12',default=0.8495   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  #parser.add_option('--mixing13', dest='mixing13',default=0.0967  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  #parser.add_option('--mixing23', dest='mixing23',default=0.997   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  #parser.add_option('--mixing13', dest='mixing13',default=0.0248  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  #parser.add_option('--mixing23', dest='mixing23',default=0.527   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
   #parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5 ,type=float, help='Value of small mass splitting')
   #parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.51E-3 ,type=float, help='Value of large mass splitting')
   #parser.add_option('--deltacp' , dest='deltacp' ,default=-1.55    ,type=float, help='Value of delta CP')
-  #parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.8495   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  #parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.0967  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  #parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.997   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  #parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.304   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
+  #parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.0248  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  #parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.527   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
   #parser.add_option('--dm12sqbar'  , dest='dm12sqBar'  ,default=7.53E-5 ,type=float, help='Barred value of small mass splitting')
   #parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=2.51E-3 ,type=float, help='Barred value of large mass splitting')
-  #parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=-1.55    ,type=float, help='Barred value of delta CP')
+  #parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=-1.55   ,type=float, help='Barred value of delta CP')
   #parser.add_option('--betabar'    , dest='betaBar'    ,default=1.      ,type=float, help='Barred value of nuebar appearance normalization ')
 
-  # T2K+reactors (sinsqtheta)
+  # T2K+reactors (sinsqtheta) - Inverted Hierarchy
   parser.add_option('--mixing12', dest='mixing12',default=0.304   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  parser.add_option('--mixing13', dest='mixing13',default=0.0248  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  parser.add_option('--mixing23', dest='mixing23',default=0.527   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  parser.add_option('--mixing13', dest='mixing13',default=0.0252  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  parser.add_option('--mixing23', dest='mixing23',default=0.533   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
   parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5 ,type=float, help='Value of small mass splitting')
-  parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.51E-3 ,type=float, help='Value of large mass splitting')
-  parser.add_option('--deltacp' , dest='deltacp' ,default=-1.55    ,type=float, help='Value of delta CP')
+  parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=0.00248 ,type=float, help='Value of large mass splitting')
+  parser.add_option('--deltacp' , dest='deltacp' ,default=-1.56    ,type=float, help='Value of delta CP')
   parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.304   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.0248  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.527   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.0252  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.533   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
   parser.add_option('--dm12sqbar'  , dest='dm12sqBar'  ,default=7.53E-5 ,type=float, help='Barred value of small mass splitting')
-  parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=2.51E-3 ,type=float, help='Barred value of large mass splitting')
-  parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=-1.55   ,type=float, help='Barred value of delta CP')
+  parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=0.00248 ,type=float, help='Barred value of large mass splitting')
+  parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=-1.56   ,type=float, help='Barred value of delta CP')
   parser.add_option('--betabar'    , dest='betaBar'    ,default=1.      ,type=float, help='Barred value of nuebar appearance normalization ')
 
-  parser.add_option(     '--hierarchy'          , dest="hierarchy"     , default="normal"    , help='Mass hierarchy: "normal" or "inverted"')
+  parser.add_option(     '--hierarchy'          , dest="hierarchy"     , default="inverted"    , help='Mass hierarchy: "normal" or "inverted"')
   parser.add_option('-m','--mixing-param-choice', dest="mixparamchoice", default="sinsqtheta", help='Mixing param coice: "sinsqtheta" or "sinsq2theta"')
   parser.add_option('-t','--mixing-param-octant', dest="mixparamoctant", default="two"       , help='Mixing param octant: "one" or "two"')
-  parser.add_option('-a','--dmsq-scheme', dest="dmsqscheme", default="abs23"       , help='"abs23", "abs31" or "fogli"')
+  parser.add_option('-a','--dmsq-scheme', dest="dmsqscheme", default="auto"       , help='"abs23", "abs31", "auto" or "fogli"')
   
   parser.add_option('-f', '--file', dest='output_file', default="validation.tex", help="Name for output TeX file.")
   
-  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_run1to6_test_app.xml", help="Configuration file")
+  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_run1to6_test_app_4p5E20POT.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_run1to6_test_app.xml", help="Configuration file")
   #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_run1to6_test_prefit_app.xml", help="Configuration file")
   #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_2.315E20_banff20150402.xml", help="Configuration file")
   
@@ -451,20 +440,28 @@ if __name__=="__main__":
   parser.add_option('-d', '--disable-banff', dest='nobanff', action="store_true",default=False,help="Disable the BANFF tune. This returns to flux tuned only, no NIWG tune")
   
   parser.add_option('-b', '--use-bar', dest='useBar', action="store_true",default=False,help="Use the 3f_osc_bar hypothesis. Without this, the bar mixing params will be ignored.")
-  
+
+  parser.add_option('-z', '--use-normbar', dest='useNormBar', action="store_true",default=False,help="Use the normbar hypothesis. Without this, the norm bar will be ignored.")
+
   v = optparse.Values()
   parser.parse_args(values=v) # v contains only the values that were specified, not defaults
   
   o,other = parser.parse_args()
   
   if not o.useBar: # Check we're not trying to specify a barred mixing parameter for without using the bar hypothesis
-    bar_par = ["mixing12Bar","mixing13Bar","mixing23Bar","dm12sqBar","dm23sqBar","deltacpBar","betaBar"]
+    bar_par = ["mixing12Bar","mixing13Bar","mixing23Bar","dm12sqBar","dm23sqBar","deltacpBar"]
     if any(i in bar_par for i in v.__dict__.keys()):
       print "If you want to specify barred mixing parameters, you need -b as well"
       exit(-1)
+
+  if not o.useNormBar: # Check we're not trying to specify a barred mixing parameter for without using the bar hypothesis
+    normbar_par = ["betaBar"]
+    if any(i in normbar_par for i in v.__dict__.keys()):
+      print "If you want to specify barred mixing parameters, you need -z as well"
+      exit(-1)
   
   main(o.config,o.mixing12,o.mixing13,o.mixing23,o.dm12sq,o.dm23sq,o.deltacp,o.hierarchy,o.mixparamchoice,o.mixparamoctant,o.dmsqscheme,o.output_file,o.nobanff, o.label,
-       o.useBar, o.mixing12Bar,o.mixing13Bar,o.mixing23Bar,o.dm12sqBar,o.dm23sqBar,o.deltacpBar,o.betaBar)
+       o.useBar, o.useNormBar, o.mixing12Bar,o.mixing13Bar,o.mixing23Bar,o.dm12sqBar,o.dm23sqBar,o.deltacpBar,o.betaBar)
   
   if other:
     print "Warning - ignored arguments: ",other
