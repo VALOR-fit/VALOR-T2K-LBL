@@ -107,7 +107,7 @@ void test_sk_ereco_spectrum_twk_sys_throw
 (
   int          mode                     = 0,                                         /* options: see above */
   bool         update_rootfile          = false,                                        /* "update" ROOT output file? If false, will "recreate" */
-  const char * sk_sample                = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+  const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
   const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
   double       input_mixing12           = -99,                                         /* */
   double       input_mixing13           = -99,                                         /* */
@@ -117,8 +117,9 @@ void test_sk_ereco_spectrum_twk_sys_throw
   double       input_dm23sq             = -99,                                         /* */
   bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
   bool         save_throws              = true,                                        /* save the thrown parameter values*/
-  const char * config_file              = "analysis_configuration_run1to6_test.xml",   /* */
-  const int    nexp                     = 50,                                          /* number of experiments to make */
+  //const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
+  const char * config_file              = "analysis_configuration_run1to6_test_prefit_app.xml",   /* */
+  const int    nexp                     = 1000,                                          /* number of experiments to make */
   const char * mixparamchoice           = "sinsqtheta",
   const char * hierarchy                = "normal",
   bool         reject_unphysical_throws = true    ,
@@ -652,9 +653,11 @@ void test_sk_ereco_spectrum_twk_sys_throw
     if (save_toy_expts) {
       if(mode == 999 ) {
         spectrum = new VALORArray(*skobs.ErecoSpectrumVArray(s));
+        //spectrum = skobs.ErecoSpectrumVArray(s);
       }
       else {
         spectrum = new VALORArray(*skexp.CurrPredictedErecoVArray(s));
+        //spectrum = skexp.CurrPredictedErecoVArray(s);
       }
       
       spectrum->SetTitle(Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));

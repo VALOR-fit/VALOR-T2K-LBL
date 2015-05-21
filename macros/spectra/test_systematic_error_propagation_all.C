@@ -9,14 +9,15 @@
 
 void test_systematic_error_propagation_all
 (
-  const char * sksample         = "1Rmu",                         /* options: "1Rmu", "1Re" */
+  const char * sksample         = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re" */
   double       input_mixing12   = -99,                            /* */
   double       input_mixing13   = -99,                            /* */
   double       input_mixing23   = -99,                            /* */
   double       input_deltacp    = -99,                            /* */
   double       input_dm12sq     = -99,                            /* */
   double       input_dm23sq     = -99,                            /* */
-  const char * config_file      = "analysis_configuration.xml"    /* */
+  const char * config_file      = "analysis_configuration_run1to6_test.xml",    /* */
+  const char * hypothesis         = "3f_osc"        /* options: "3f_osc", "3f_oscbar" */
 )
 {
   using namespace std;
@@ -35,6 +36,32 @@ void test_systematic_error_propagation_all
   if(s == conv::kSKsUndefined)
     exit(1);
 
+  // // Set physics hypothesis
+  // if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+  //   if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
+  //   if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
+  //   if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+  // }
+  // else {
+  //   if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
+  //   if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
+  //   if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+  // }
+  // if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  // if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
+  // if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
+
+
+  // PhysHypothesis ph(hypothesis);
+  // ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+  // ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+  // ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+  // ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+  // ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+  // ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+
+
+
   // Set physics hypothesis
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
@@ -49,14 +76,34 @@ void test_systematic_error_propagation_all
   if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
-  char* hypothesis("3f_osc");
   PhysHypothesis ph(hypothesis);
-  ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-  ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
-  ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-  ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
-  ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
-  ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3F) {
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+  } else
+  if(ph.Hypothesis() == conv::kHypOsc3FBar){
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+  }
+
 
   //output file name
   string oscparams = util::AsString(ph.Hypothesis(),
@@ -97,7 +144,7 @@ void test_systematic_error_propagation_all
   Long64_t ErecoBin2NuMuBarCCQE = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuMuBarCCQE )->FindBin(1.1-conv::kASmallNum);
   Long64_t ErecoBin1NuECCQE     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuECCQE )->FindBin(0.35-conv::kASmallNum);
   Long64_t ErecoBin2NuECCQE     = skexp->CurrPredictedErecoSpectrum(s, conv::kSKmNuECCQE )->FindBin(0.80-conv::kASmallNum);
-  
+
   // Get the ETrue bin edges for XSec normalisation systematics
   Long64_t EtrueBin1CCQENorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(1.5-conv::kASmallNum);
   Long64_t EtrueBin2CCQENorm = skexp->GetSuperkMC()->Template(s, conv::kSKmNuMuCCQE, conv::kSKMCtFin)->GetYaxis()->FindBin(3.5-conv::kASmallNum);
@@ -3372,7 +3419,7 @@ void test_systematic_error_propagation_all
     skexp->ResetSystematicVariations();
     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
-    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+emac    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
     ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);

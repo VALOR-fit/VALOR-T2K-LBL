@@ -13,7 +13,7 @@ void test_systematic_error_propagation_all_2015
 (
  int          mode               = 0,                                         /* options: see above */
  bool         update_rootfile    = false,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample          = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  double       input_mixing12     = -99,                                         /* */
  double       input_mixing13     = -99,                                         /* */
@@ -23,16 +23,21 @@ void test_systematic_error_propagation_all_2015
  double       input_dm23sq       = -99,                                         /* */
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- //const char * config_file        = "analysis_configuration_run1to6_test_app.xml",   /* */
+ const char * config_file        = "analysis_configuration_run1to6_test_app.xml",   /* */
  //const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
  //const char * config_file        = "analysis_configuration_2.5E20_prefit.xml",
  //const char * config_file        = "analysis_configuration_2.5E20.xml",
- const char * config_file        = "analysis_configuration_1.7E20_prefit.xml",
+ //const char * config_file        = "analysis_configuration_1.7E20_prefit.xml",
  //const char * config_file        = "analysis_configuration_1.7E20.xml",
   
 
  //const char * fit_param_list     = "nuosc3fbar_fixnonbar_12fix+nuisance", 
- const char * fit_param_list     = "nuosc3f_12fix+nuisance",
+ //const char * fit_param_list     = "nuosc3f_12fix+nuisance",
+ //const char * fit_param_list     = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
+ const char * fit_param_list     = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ //const char * fit_param_list     = "nuosc3fbar_fixnonbar_12fix+nuisance",
+
+
  const char * mixparamchoice     = "sinsqtheta",
  const char * hierarchy          = "normal",
  

@@ -75,14 +75,16 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint
   double       input_dm12sq       = -99,                            /* */
   double       input_dm23sq       = -99,                            /* */
   bool         save_toy_expts     = false,                          /* save the ereco spectra? */
-  const char * config_file        = "analysis_configuration.xml",
+  //const char * config_file        = "analysis_configuration.xml",
+  const char * config_file        = "analysis_configuration_test_multiring_mrmc.xml",
   const int    nexp               = 2000,                          /* number of experiments to make */
   const char * mixparamchoice     = "sinsqtheta",
   const char * hierarchy          = "normal"
 )
 {
   using namespace std;
-  using namespace t2kana;
+  using namespace valor;
+  using namespace valor::conv;
 
   conv::SuperkSample_t s0 = conv::kSKsFCFV1RingMuLike;
   conv::SuperkSample_t s1 = conv::kSKsFCFV1RingELike;
@@ -221,7 +223,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint
     ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
     ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    //ph.SetCurrValue(conv::kPhypDeltaCP,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypCPV,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   }

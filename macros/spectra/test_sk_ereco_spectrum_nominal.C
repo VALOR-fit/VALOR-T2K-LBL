@@ -12,47 +12,84 @@ void test_sk_ereco_spectrum_nominal
 (
  const char * tag                   = "fiTQun",
  
- const char * sk_sample            = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
- //const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc" */
- const char * hypothesis           = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc" */
+ const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+ const char * hypothesis           = "3f_osc", // "3f_oscbar"            /* options: "2f_numu_disap", "3f_osc" */
 
- // double       input_mixing12       = 0.,                            /* */
- // double       input_mixing13       = 0.,                            /* */
- // double       input_mixing23       = 0.,                            /* */
- // double       input_deltacp        = 0.,                            /* */
- // double       input_dm12sq         = 0.,                            /* */
- // double       input_dm23sq         = 0.,                            /* */
- 
- 
-  // double       input_mixing12       = 0.311,                           
- // double       input_mixing13       = 0.0251,                           
- // double       input_mixing23       = 0.5,                        
- // double       input_deltacp        = 0,                           
- // double       input_dm12sq         = 7.5e-05,                     
- // double       input_dm23sq         = 0.0024,                        
- 
- double       input_mixing12       = 0, //-99,                            /* */
- double       input_mixing13       = 0, //-99,                            /* */
- double       input_mixing23       = 0, //-99,                            /* */
- double       input_deltacp        = -99,                            /* */
- double       input_dm12sq         = -99,                            /* */
- double       input_dm23sq         = -99,                            /* */
+ double       input_mixing12       = -99,                         
+ double       input_mixing13       = -99,                         
+ double       input_mixing23       = -99,                         
+ double       input_deltacp        = -99,                         
+ double       input_dm12sq         = -99,                         
+ double       input_dm23sq         = -99,                       
+ double       input_mixing12Bar    = -99,                         
+ double       input_mixing13Bar    = -99,                         
+ double       input_mixing23Bar    = -99,                         
+ double       input_deltacpBar     = -99,                         
+ double       input_dm12sqBar      = -99,                         
+ double       input_dm23sqBar      = -99,                       
+
+ // // T2K reactor - sinsq2theta
+ // double       input_mixing23   = 0.997,                         
+ // double       input_dm23sq     = 0.00251,                         
+ // double       input_mixing12   = 0.8495,                            
+ // double       input_mixing13   = 0.0967,                            
+ // double       input_deltacp    = -1.55,                            
+ // double       input_dm12sq     = 7.53E-5,                             
+ // double       input_mixing23Bar   = 0.997,                           
+ // double       input_dm23sqBar     = 0.00251,                           
+ // double       input_mixing12Bar   = 0.8495,                            
+ // double       input_mixing13Bar   = 0.0967, //0.0025, //0.0967,        
+ // double       input_deltacpBar    = -1.55,                            
+ // double       input_dm12sqBar     = 7.53E-5,                             
+
+ // // T2K reactor - sinsqtheta
+ // double       input_mixing23   = 0.527,                 
+ // double       input_dm23sq     = 0.00251,               
+ // double       input_mixing12   = 0.306,                 
+ // double       input_mixing13   = 0.0248,                    
+ // double       input_deltacp    = -1.55,                     
+ // double       input_dm12sq     = 7.5E-5,                    
+ // double       input_mixing23Bar   = 0.527,                  
+ // double       input_dm23sqBar     = 0.00251,                
+ // double       input_mixing12Bar   = 0.306,                  
+ // double       input_mixing13Bar   = 0.0248,    //1.25-03  //0.0248,   
+ // double       input_deltacpBar    = -1.55,                            
+ // double       input_dm12sqBar     = 7.5E-5,                     
+
+ // // T2K only - sinsqtheta
+ // double       input_mixing12       = 0.306,                           
+ // double       input_mixing13       = 0.0422,                           
+ // double       input_mixing23       = 0.524,                        
+ // double       input_deltacp        = 1.91,                           
+ // double       input_dm12sq         = 7.5E-5,                     
+ // double       input_dm23sq         = 0.00251,                        
+
+ // // T2K only - sinsq2theta
+ // double       input_mixing12       = 8.49455999999999989e-01,                           
+ // double       input_mixing13       = 1.61676640000000038e-01,                           
+ // double       input_mixing23       = 9.97696000000000027e-01,                        
+ // double       input_deltacp        = 1.91,                           
+ // double       input_dm12sq         = 7.5E-5,                     
+ // double       input_dm23sq         = 0.00251,                        
  
  bool         disable_banff_tuning = false,                          /* */
  
- const char * config_file        = "analysis_configuration_1.7E20_prefit.xml",
+ //const char * config_file        = "analysis_configuration_1.7E20_prefit.xml",
  //const char * config_file        = "analysis_configuration_1.7E20.xml",
  //const char * config_file        = "analysis_configuration_2.5E20_prefit.xml",
  //const char * config_file        = "analysis_configuration_2.5E20.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test.xml",
- //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",      
+ const char * config_file      = "analysis_configuration_run1to6_test_app.xml",      
    
-  bool         print_spectrum       = false,                          /* */
-  const char * mixparamchoice       = "sinsqtheta",
-  const char * hierarchy            = "normal"   ,
-  bool plot_per_50MeV = true,
-  bool group_mec_as_ccqe = true,
-  bool print_total_events_on_plot = false
+ bool         print_spectrum       = false,                          /* */
+ const char * dmsqscheme          = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * hierarchy           = "normal"   ,
+ const char * mixparamchoice      = "sinsq2theta",
+ const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
+ 
+ bool plot_per_50MeV = true,
+ bool group_mec_as_ccqe = true,
+ bool print_total_events_on_plot = false
 )
 {
   using namespace std;
@@ -63,7 +100,9 @@ void test_sk_ereco_spectrum_nominal
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
   Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
   if(Opt::Instance()->Undefined()) {
     cerr << "Global options not defined correctly. Exiting..." << endl;
     cerr << *Opt::Instance() << endl;
@@ -75,15 +114,26 @@ void test_sk_ereco_spectrum_nominal
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
     if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
     if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+    if(input_mixing13Bar < -1) input_mixing13Bar = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23Bar < -1) input_mixing23Bar = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12Bar < -1) input_mixing12Bar = conv::kGlobFitSinsq2Theta12;
   }
   else {
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
     if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
     if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+    if(input_mixing13Bar < -1) input_mixing13Bar = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23Bar < -1) input_mixing23Bar = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12Bar < -1) input_mixing12Bar = conv::kGlobFitSinsqTheta12;
   }
   if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
+
+  if(input_dm23sqBar < -1)  input_dm23sqBar = conv::kGlobFitDm23sq;
+  if(input_dm12sqBar < -1)  input_dm12sqBar = conv::kGlobFitDm12sq;
+  if(input_deltacpBar < -90) input_deltacpBar = conv::kGlobFitDeltaCP;
+
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -104,12 +154,19 @@ void test_sk_ereco_spectrum_nominal
     ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-    ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
-    ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
-    ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
-    ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
-    ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
-    ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+    
+    // ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
+    // ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+    // ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+    // ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
+    // ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
+    // ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12Bar);
+    ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13Bar);
+    ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23Bar);
+    ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacpBar);
+    ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sqBar);
+    ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sqBar);
   }
 
   string oscparams = util::AsString(ph.Hypothesis(),
@@ -188,8 +245,6 @@ void test_sk_ereco_spectrum_nominal
   hErecoTot->GetYaxis()->SetTitle("Number of events");
   hErecoTot_coarse->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoTot_coarse->GetYaxis()->SetTitle("Number of events");
-  
-  
   
   //can save this to file &/or print it
   stringstream streamer;
@@ -324,6 +379,8 @@ void test_sk_ereco_spectrum_nominal
 	   << setw(10) << setfill(' ') << setprecision(6) << 100*n1pi/ntot << " %)" << endl;
      
   
+  
+
   //
   // Draw
   //
@@ -378,16 +435,16 @@ void test_sk_ereco_spectrum_nominal
       exit(1);
     }
     
-    // cout << m << " " << modestr << " --> ";
-    // if(util::IsCCQE(m)) cout << "IsCCQE" << endl;
-    // else if(util::IsMEC(m)) cout << "IsMEC" << endl;
-    // else if(util::IsCCnQE(m)) cout << "IsCCnQE" << endl;
-    // else if(util::IsNC(m)) cout << "IsNC" << endl;
-    // else{
-    //   cout << "No modes!!!" << endl;
-    //   exit(1);
-    // }
-    // cout << endl;
+    cout << m << " " << modestr << " --> ";
+    if(util::IsCCQE(m)) cout << "IsCCQE" << endl;
+    else if(util::IsMEC(m)) cout << "IsMEC" << endl;
+    else if(util::IsCCnQE(m)) cout << "IsCCnQE" << endl;
+    else if(util::IsNC(m)) cout << "IsNC" << endl;
+    else{
+      cout << "No modes!!!" << endl;
+      exit(1);
+    }
+    cout << endl;
     
     // Fill by flavor/mode
     if(util::IsNC(m))

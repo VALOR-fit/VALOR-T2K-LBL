@@ -11,24 +11,38 @@ void SetRatioNullTo1(TH1D *hratiomy){
 
 void test_systematic_error_propagation_all_2015_nuebarapp
 (
- int          mode               = 0,               /* options: see above */
- bool         update_rootfile    = false,           /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "RHC1Re",        /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
- const char * hypothesis         = "3f_osc",        /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
- double       input_mixing12     = -99,             /* */
- double       input_mixing13     = -99,             /* */
- double       input_mixing23     = -99,             /* */
- double       input_deltacp      = -99,             /* */
- double       input_dm12sq       = -99,             /* */
- double       input_dm23sq       = -99,             /* */
- bool         save_toy_expts     = false,           /* save the ereco spectra? */
+ int          mode               = 0,                /* options: see above */
+ bool         update_rootfile    = false,            /* "update" ROOT output file? If false, will "recreate" */
+ const char * sk_sample          = "RHC1Re",         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * hypothesis         = "3f_oscbar_normbar", /* options: "2f_numu_disap", "3f_osc", "3f_oscbar, 3f_oscbar_normbar" */
+
+ // double       input_mixing12     = -99,              /* */
+ // double       input_mixing13     = -99,              /* */
+ // double       input_mixing23     = -99,              /* */
+ // double       input_deltacp      = -99,              /* */
+ // double       input_dm12sq       = -99,              /* */
+ // double       input_dm23sq       = -99,              /* */
+ // double       input_betabar      = -99,              /* */
+
+ double       input_mixing12     = 0.,              /* */
+ double       input_mixing13     = 0.,              /* */
+ double       input_mixing23     = 0.,              /* */
+ double       input_deltacp      = 0.,              /* */
+ double       input_dm12sq       = -99,              /* */
+ double       input_dm23sq       = -99,              /* */
+ double       input_betabar      = 0.,              /* */
+
+ bool         save_toy_expts     = false,            /* save the ereco spectra? */
  
  //const char * config_file        = "analysis_configuration_run1to6_test_prefit_app.xml",  
  const char * config_file        = "analysis_configuration_run1to6_test_app.xml",  
 
- const char * fit_param_list     = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ //const char * fit_param_list     = "nuosc3fbar_fixnonbar_fix5+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
+ const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
+ //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
 
- const char * mixparamchoice     = "sinsq2theta",
+ const char * mixparamchoice     = "sinsqtheta",
  const char * hierarchy          = "normal",
  const char * dmsqscheme          = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
@@ -36,7 +50,7 @@ void test_systematic_error_propagation_all_2015_nuebarapp
  int    tablesyst_idx            = -999,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
  string tablesyst_name           = "f_banff17_rhc", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
- const bool   per_mode           = false
+ const bool   per_mode           = true
  ){
   using namespace std;
   using namespace valor;
@@ -61,8 +75,9 @@ void test_systematic_error_propagation_all_2015_nuebarapp
     cerr << "Global options not defined correctly. Exiting..." << endl;
     cerr << *Opt::Instance() << endl;
     exit(1);
-  }
-  
+  }  
+  Opt::Instance()->SetDefaultParameterValues();
+
   // Get the sample
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {
@@ -91,6 +106,8 @@ void test_systematic_error_propagation_all_2015_nuebarapp
   if(input_dm23sq < -1)   input_dm23sq  = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1)   input_dm12sq  = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
+  if(input_betabar < -1) input_betabar = conv::kGlobFitBetaBar;
+  
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
     ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
@@ -118,7 +135,23 @@ void test_systematic_error_propagation_all_2015_nuebarapp
     ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
   }
-  
+  else if(ph.Hypothesis() == conv::kHypOsc3FBarNormBar){
+    ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
+    ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+    ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+    ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
+    ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
+    ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+    ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
+  }
+ 
+
   // Print options
   cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
@@ -127,7 +160,8 @@ void test_systematic_error_propagation_all_2015_nuebarapp
   
   //output file name
   string oscparams = 
-    util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+    util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar);
+  
 
   // Precison for printed-out numerical results
   int nprecisionnev = 4; // <-- for number of events
@@ -143,7 +177,7 @@ void test_systematic_error_propagation_all_2015_nuebarapp
   const int np = fparm->GetNumberParameters();
   //fparm->Print();
 
-
+ 
 
 
   // Define the tweak histograms
@@ -1257,7 +1291,7 @@ TH1D *hVarTot_m3s = new TH1D("hVarTot_m3s","-3sigma total variation",NtotParam,0
 
 int iparhisto=0;
 
-for(int ip = 0; ip < np; ip++) {
+for(int ip = 0; ip < np; ip++){
   conv::PhysParamId_t p = fparm->WhichParam(ip);
   if(!fparm->IsNuisance(p)) continue; 
   string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
