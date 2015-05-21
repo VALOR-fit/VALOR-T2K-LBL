@@ -47,12 +47,9 @@ void Check_toys_marginalization_readbinary
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
- //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_statonly_fixosc_10kToys/buildmarg_betabar",  // T2K+reactor (betabar=0,1), stat only
- //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys/BetaBar_4p0E20POT",  // T2K+reactor (betabar=0,1)
- //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2Kreact_betabar_fixosc_10kToys_grid/build_marg",  // T2K+reactor (betabar grid)
- //const char * infilename           = "../../inputs/marginalization/toys/nuebarapp_1D_T2KFullStat_T2Kreact_betabar_fixosc_10kToys/BetaBar_7p8E21POT",  // T2K+reactor T2K Full Stat (betabar=0,1) 
-
+ //const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
+ const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Mach3",
+ 
  //const int    nfiles               = 201,         // # of files to read
  const int    nfiles               = 1,         // # of files to read
 
@@ -70,9 +67,62 @@ void Check_toys_marginalization_readbinary
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
+ const char *FileToyOscParam       = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor.root"
  )
 {
   
+  TFile *fToyOscParam = new TFile(FileToyOscParam,"READ");
+  
+  TH1D *hPriorHisto_dcp_nh = (TH1D*) fToyOscParam->Get("hPriorHisto_dcp_nh");
+  TH1D *hPriorHisto_dcp_ih = (TH1D*) fToyOscParam->Get("hPriorHisto_dcp_ih");
+  TH1D *hToyHisto_dcp_nh = (TH1D*) fToyOscParam->Get("hToyHisto_dcp_nh");
+  TH1D *hToyHisto_dcp_ih = (TH1D*) fToyOscParam->Get("hToyHisto_dcp_ih");
+  
+  TH2D *hPriorHisto_Mix23_nh = (TH2D*) fToyOscParam->Get("hPriorHisto_Mix23_nh");
+  TH2D *hPriorHisto_Mix23_ih = (TH2D*) fToyOscParam->Get("hPriorHisto_Mix23_ih");
+  TH2D *hToyHisto_Mix23_nh = (TH2D*) fToyOscParam->Get("hToyHisto_Mix23_nh");
+  TH2D *hToyHisto_Mix23_ih = (TH2D*) fToyOscParam->Get("hToyHisto_Mix23_ih");
+
+  TH2D *hPriorHisto_Dm23_nh = (TH2D*) fToyOscParam->Get("hPriorHisto_Dm23_nh");
+  TH2D *hPriorHisto_Dm23_ih = (TH2D*) fToyOscParam->Get("hPriorHisto_Dm23_ih");
+  TH2D *hToyHisto_Dm23_nh = (TH2D*) fToyOscParam->Get("hToyHisto_Dm23_nh");
+  TH2D *hToyHisto_Dm23_ih = (TH2D*) fToyOscParam->Get("hToyHisto_Dm23_ih");
+  
+  TH1D *hPriorHisto_MH = (TH1D*) fToyOscParam->Get("hPriorHisto_MH");
+  TH1D *hToyHisto_MH = (TH1D*) fToyOscParam->Get("hToyHisto_MH");
+
+  TCanvas *cPriorHisto_dcp = new TCanvas("cPriorHisto_dcp","cPriorHisto");
+  hPriorHisto_dcp_ih->GetXaxis()->SetTitle("#delta_{CP}");
+  hPriorHisto_dcp_ih->GetYaxis()->SetTitle("L = e^{-#Delta #chi^{2} / 2}");
+  hPriorHisto_dcp_ih->SetLineColor(kRed);
+  hPriorHisto_dcp_nh->SetLineColor(kBlack);
+  hPriorHisto_dcp_ih->Draw();
+  hPriorHisto_dcp_nh->Draw("same");
+
+  TCanvas *cToyHisto_dcp = new TCanvas("cToyHisto_dcp","cToyHisto");
+  hToyHisto_dcp_ih->GetXaxis()->SetTitle("#delta_{CP}");
+  hToyHisto_dcp_ih->SetLineColor(kRed);
+  hToyHisto_dcp_nh->SetLineColor(kBlack);
+  hToyHisto_dcp_ih->Draw();
+  hToyHisto_dcp_nh->Draw("same");
+
+  TCanvas *cPriorHisto_Mix23_nh = new TCanvas("cPriorHisto_Mix23_nh","cPriorHisto_Mix23_nh");
+  hPriorHisto_Mix23_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  hPriorHisto_Mix23_nh->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+  hPriorHisto_Mix23_nh->Draw("colz");
+
+  TCanvas *cToyHisto_Mix23_nh = new TCanvas("cToyHisto_Mix23_nh","cToyHisto_Mix23_nh");
+  hToyHisto_Mix23_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  hToyHisto_Mix23_nh->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+  hToyHisto_Mix23_nh->Draw("colz");
+
+  TCanvas *cToyHisto_Mix23_ih = new TCanvas("cToyHisto_Mix23_ih","cToyHisto_Mix23_ih");
+  hToyHisto_Mix23_ih->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  hToyHisto_Mix23_ih->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+  hToyHisto_Mix23_ih->Draw("colz");
+
+  //
+
   FileStat_t dummy;
   
   TString opt(fit_param_list); 
@@ -230,6 +280,12 @@ void Check_toys_marginalization_readbinary
     return;
   }
   
+  int n_ereco_bins = util::NumErecoBins(s);  
+  double * sumsq_per_bin = (double*)calloc(n_ereco_bins,sizeof(double));
+  VALORArray * nsk_per_toy = new VALORArray(NtoysMarg);
+  double * nsk_per_toy_arr = nsk_per_toy->GetArray();
+  TH1D * hNsk = new TH1D("hNsk","hNsk",10000,0,1000);
+  
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
   
   int ipar0 = InputBin0;
@@ -246,26 +302,16 @@ void Check_toys_marginalization_readbinary
   
   for(int itoy=0;itoy<NtoysMarg;itoy++){
 
-    h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
+    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
 
     for(int i=1;i<=util::NumErecoBins(s);i++){
       h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
     }
-    //cout << "Tot # of events = " << h_marg_toy->Integral() << endl;
 
-    // //Normal Hierarchy
-    // h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1,0);
-    // for(int i=1;i<=util::NumErecoBins(s);i++){
-    //   h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
-    // }    
-    // //cout << "NH: " << h_marg_toy->Integral() << endl;
-    // //Inverted Hierarchy
-    // h_marg_toy = fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1,1);
-    // for(int i=1;i<=util::NumErecoBins(s);i++){
-    //   h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
-    // }   
-    // //cout << "IH: " << h_marg_toy->Integral() << endl;
-    // //cout << endl;
+    //store Nsk
+    double nskint = h_marg_toy->Integral();
+    hNsk->Fill(nskint);
+    nsk_per_toy_arr[itoy] = nskint;
   }
   
   // Get tuned MC - with BANFF tuning
@@ -351,10 +397,8 @@ void Check_toys_marginalization_readbinary
  
   skexp->Generate(ph);
   h_nominal = new TH1D(*skexp->CurrPredictedErecoSpectrum(s));
-  //cout << h_nominal->Integral() << endl;
- 
 
-
+  double nominal_total_nsk = h_nominal->Integral();
 
   for(int i=1;i<=util::NumErecoBins(s);i++){
     TH1D* h_proj = h_2d->ProjectionY("",i,i);
@@ -364,24 +408,44 @@ void Check_toys_marginalization_readbinary
     h_down->SetBinContent(i,average-rms);  
   }
   
+  double dn_over_n = hNsk->GetRMS() / hNsk->GetMean();
+  cout << endl;
+  cout << "RMS / Mean  = " << dn_over_n << endl;
+  cout << endl;
+
+  //if (use_new_definition_of_dn_over_n) {
+  if(1){
+    double sum_nsk = 0;
+    for (int iexp = 0 ; iexp < NtoysMarg; iexp++) {
+      sum_nsk += nsk_per_toy_arr[iexp];
+    }
+    double mean_nsk = sum_nsk / NtoysMarg;
+    
+    double sumsq = 0;
+    for (int iexp = 0 ; iexp < NtoysMarg; iexp++) {
+      //cerr<<nsk_per_toy_arr[iexp]<<"\t"<<mean_nsk<<endl;
+      sumsq += pow(nsk_per_toy_arr[iexp]-mean_nsk,2);
+    }
+    
+    double expected_deviation = sqrt(sumsq/NtoysMarg);
+    cerr<<"Expected deviation: "<<expected_deviation<<endl;
+    cerr<<"Nominal total SK: "<<nominal_total_nsk<<endl;
+    
+    dn_over_n = expected_deviation/nominal_total_nsk;
+    
+  }
+
+  cout << "dn / n = " << dn_over_n << endl;
+
+  // Draw histograms
+
   TCanvas * c = new TCanvas("c","",20,20,1000,1000);
   h_2d->Draw("colz");
   h_up->Draw("same");
   h_down->Draw("same");
   h_nominal->SetLineColor(kYellow);
   h_nominal->Draw("same");
-  
-  //c->SaveAs("draw_marg_toys.root"); 
-  // // Store toy distributions in output file  
-  // char outname[200];
-  // sprintf(outname,"check_toy_throws.root",outfilename);
-  // //~ cout << outname << endl;
-  // TFile *fout = new TFile(outname,"RECREATE");
-  // fout->cd();
-  // TObjArray * arr = fitmarg->GetToyParamThrowHistograms();
-  // arr->Write();
-  // fout->Close();
-    
+      
   return;
 }
 
