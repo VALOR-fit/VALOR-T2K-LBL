@@ -35,10 +35,10 @@ void run_fit_marginalization_readbinary_betabar
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
  //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_2-0.xml",
- const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT-0.xml",
- 
- bool         dotoys                   = false,
+ const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_2-0.xml",
+ //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT-0.xml",
+  
+ bool         dotoys                   = true,
 
  // Default
  double       input_mixing12           = -99,           
@@ -55,8 +55,8 @@ void run_fit_marginalization_readbinary_betabar
  double       input_dm23sq_bar         = -99,
  double       input_beta_bar           = 1,
 
- //const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
- const char * config_file              = "analysis_configuration_run1to6_test_app_4E20POT.xml",
+ const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_4E20POT.xml",
  //const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  //const char * config_file              = "analysis_configuration_run1to6_test_app_fullstat.xml",
  
@@ -76,11 +76,12 @@ void run_fit_marginalization_readbinary_betabar
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
+ //const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
+ const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Mach3",
  
  const int    nfiles               = 1, //401, 1        // # of files to read
 
- const int    NtoysMarg            = 10000,  // # toys marginalization 
+ const int    NtoysMarg            = 100,  // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter
@@ -92,7 +93,7 @@ void run_fit_marginalization_readbinary_betabar
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = false,
 
- const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
+ const string teststat            = "rate-only"   // "rate-only" or "rate+shape"
 )
 {
 
@@ -781,7 +782,8 @@ void run_fit_marginalization_readbinary_betabar
       if(s == kSKsUndefined) continue;
       else if(s == kSKsRHCFCFV1RingELike){
 	//cout << "    " << util::AsStringCompact(s) << endl;
-	hErecoToy = new TH1D(*skobs_fakedata->ErecoSpectrum(s));
+	//hErecoToy = new TH1D(*skobs_fakedata->ErecoSpectrum(s));
+	hErecoToy = skobs_fakedata->ErecoSpectrum(s);
       }
     }
     //cout << fitmarg->GetNSKsamples() << endl;
@@ -872,6 +874,7 @@ void run_fit_marginalization_readbinary_betabar
 
     fitmarg->CleanUp();
     delete fitmarg;
+    delete hErecoToy;
 
   } // for iexperiment
 

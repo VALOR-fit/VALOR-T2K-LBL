@@ -24,7 +24,8 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "BetaBar_4p0E20POT_Toy23dcp_Valor",
+ //const char * tag                  = "BetaBar_4p0E20POT_Toy23dcp_Valor",
+ const char * tag                  = "BetaBar_4p0E20POT_Toy23dcp_Mach3",
  
  const char * config_file          = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4E20POT.xml",
@@ -77,7 +78,8 @@ void build_marg_toys
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,      // marginalize Mass Hierarchy
- const double PriorProbNH          = 0.648861, // 0.5  // Prior for MH --> give the prob. of NH as input
+ //const double PriorProbNH          = 0.648861, // Valor  // Prior for MH --> give the prob. of NH as input
+ const double PriorProbNH          = 0.684, // Mach3 // Prior for MH --> give the prob. of NH as input
 
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
 
@@ -86,7 +88,8 @@ void build_marg_toys
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
- TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/valor/Priors_T2Kreact_run14_Valor.root" // Set to "" if no user priors are used (VALOR)
+ //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Valor.root" // Set to "" if no user priors are used (VALOR)
+ TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3.root" // Set to "" if no user priors are used (VALOR)
  //TString file_priors = "" // Set to "" if no user priors are used (VALOR)
  )
 {  

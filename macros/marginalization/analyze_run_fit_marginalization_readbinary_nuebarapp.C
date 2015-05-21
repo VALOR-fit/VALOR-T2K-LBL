@@ -14,10 +14,9 @@ using namespace valor::conv;
 
 void analyze_run_fit_marginalization_readbinary_nuebarapp
 (
- char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateshape_betabar_0-3f+3fbar+normbar_5kToys.root"
- 
- //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_rateonly_betabar_0-3f+3fbar+normbar_5kToys.root"
-)
+ //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT_2-3f+normbar_10kToys.root",
+ char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_4900Toys.root",
+ )
 {
   char name[200];
 

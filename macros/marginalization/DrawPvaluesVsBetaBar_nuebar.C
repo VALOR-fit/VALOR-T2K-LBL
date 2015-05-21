@@ -1,23 +1,26 @@
 
 void DrawPvaluesVsBetaBar_nuebar
 (
- const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_NUOSC/",
+ const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_NUOSC_MH_4p5E20POT/",
+ //const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_NUOSC_MH_4E20POT/",
+
+ const double Asimov = 4.15309 //3.69162
 )
 {
   char name[200];
 
-  const int Nfiles = 7;
+  const int Nfiles = 6; //7;
   TString file[Nfiles] = {
     "pvalue_beta0.root",
     "pvalue_beta0p5.root",
     "pvalue_beta1.root",
     "pvalue_beta1p5.root",
     "pvalue_beta2.root",
-    "pvalue_beta2p5.root",
-    "pvalue_beta3.root"
+    "pvalue_beta2p5.root"
+    //"pvalue_beta3.root"
   };
   
-  double betabar[Nfiles] = {0., 0.5, 1., 1.5, 2., 2.5, 3.};
+  double betabar[Nfiles] = {0., 0.5, 1., 1.5, 2., 2.5}; //, 3.};
 
   TGraph *gPvalue01_Vs_betabar = new TGraph();
   TGraph *gPvalueEvt_Vs_betabar = new TGraph();
@@ -111,7 +114,7 @@ void DrawPvaluesVsBetaBar_nuebar
   gPvalueEvt_Vs_nevents->SetLineWidth(2);
   gPvalue01_Vs_nevents->Draw("alp");
   gPvalueEvt_Vs_nevents->Draw("lp same");
-  TLine *lAsimov_nevents = new TLine(3.69162,0.,3.69162,0.6);
+  TLine *lAsimov_nevents = new TLine(Asimov,0.,Asimov,0.6);
   lAsimov_nevents->SetLineColor(kRed);
   lAsimov_nevents->SetLineWidth(2);
   lAsimov_nevents->Draw();  

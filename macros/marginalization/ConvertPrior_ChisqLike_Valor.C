@@ -87,7 +87,19 @@ void ConvertPrior_ChisqLike_Valor
   for(int ibinX=0;ibinX<nbins_x;ibinX++){
     for(int ibinY=0;ibinY<nbins_y;ibinY++){
       double bincont = hPrior_Chisq23_nh->GetBinContent(ibinX+1,ibinY+1);
+      double mincont = hPrior_Chisq23_nh->GetMinimum();
+      bincont -= mincont;
+      
       hPrior_Chisq23_newaxis_nh->SetBinContent(ibinX+1,ibinY+1,bincont);
+
+      // if(bincont<0){
+      // 	cout << bincont << " ";
+      // 	cout << "Bin: "
+      // 	     << hPrior_Chisq23_nh->GetXaxis()->GetBinCenter(ibinX+1) << " "
+      // 	     << hPrior_Chisq23_nh->GetYaxis()->GetBinCenter(ibinY+1) << " "
+      // 	     << endl;
+      // }
+      
     } 
   }
   hPrior_Like23_nh = (TH2D*) hPrior_Chisq23_newaxis_nh->Clone("hPrior_L23_nh");
@@ -97,6 +109,7 @@ void ConvertPrior_ChisqLike_Valor
     for(int ichisqY=0;ichisqY<hPrior_Chisq23_newaxis_nh->GetNbinsY();ichisqY++){
       double chisq = hPrior_Chisq23_newaxis_nh->GetBinContent(ichisqX+1,ichisqY+1);
       double like = exp(-chisq/2.);
+      //cout << ichisqX << " - " << ichisqY << " --> chisq = " << chisq << ", like = " << like << endl;
       hPrior_Like23_nh->SetBinContent(ichisqX+1,ichisqY+1,like);
     }
   }
@@ -158,7 +171,18 @@ void ConvertPrior_ChisqLike_Valor
   for(int ibinX=0;ibinX<nbins_x;ibinX++){
     for(int ibinY=0;ibinY<nbins_y;ibinY++){
       double bincont = hPrior_Chisq23_ih->GetBinContent(ibinX+1,ibinY+1);
+      double mincont = hPrior_Chisq23_ih->GetMinimum();
+      bincont -= mincont;
+
       hPrior_Chisq23_newaxis_ih->SetBinContent(ibinX+1,ibinY+1,bincont);
+
+      // if(bincont<0){
+      // 	cout << bincont << " ";
+      // 	cout << "Bin: "
+      // 	     << hPrior_Chisq23_ih->GetXaxis()->GetBinCenter(ibinX+1) << " "
+      // 	     << hPrior_Chisq23_ih->GetYaxis()->GetBinCenter(ibinY+1) << " "
+      // 	     << endl;
+      // }
     } 
   }
   hPrior_Like23_ih = (TH2D*) hPrior_Chisq23_newaxis_ih->Clone("hPrior_L23_ih");
