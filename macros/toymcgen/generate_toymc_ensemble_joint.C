@@ -46,7 +46,7 @@ void generate_toymc_ensemble_joint
   //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
   const char * xml_file_to_add         = 0,           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
   bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
-  const char * dmsqscheme              = "abs23",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+  const char * dmsqscheme              = "auto",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
   const char * hierarchy               = "normal",                       /* normal or inverted */
   const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
   const char * mixparamoctant          = "one"                           /* one==kNuOctantOne two==kNuOctantTwo */

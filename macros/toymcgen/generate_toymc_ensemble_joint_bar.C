@@ -15,10 +15,12 @@ using namespace valor::conv;
 
 void generate_toymc_ensemble_joint_bar
 (
- const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT",   
-
+ //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT",   
+ //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_1_rethrowunphysical_4p5E20POT_NoStatFluct",   
+ const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_Mach3",   
+ 
  int          run                     = 0,                   
- double       nexperiments            = 5000,               /* number of toy-MC expts to generate */
+ double       nexperiments            = 10000,               /* number of toy-MC expts to generate */
  const char * hypothesis              = "3f_osc_normbar", /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
 
  // double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -49,7 +51,9 @@ void generate_toymc_ensemble_joint_bar
  double       input_dm23sq_ih         = -999,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
  double       input_beta_bar          = 0,
 
- const char * config_file      = "analysis_configuration_run1to6_test_app.xml",
+ const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",
 
  bool rethrow_if_parameters_unphysical = true,                          // rethrow unphysical toys
@@ -57,8 +61,9 @@ void generate_toymc_ensemble_joint_bar
  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
  
  const bool   doMargMH                = true,      // marginalize Mass Hierarchy
- const double PriorProbNH             = 0.648861, // 0.5  // Prior for MH --> give the prob. of NH as input
-
+ //const double PriorProbNH             = 0.648861, // Valor  // Prior for MH --> give the prob. of NH as input
+ const double PriorProbNH             = 0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
+ 
  bool         save_in_xml_format      = true,     /* also save in txt format */
  bool         save_in_root_format     = true,                           /* */  
  const char * points_to_add_1Rmu      = 0,        /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
@@ -76,7 +81,8 @@ void generate_toymc_ensemble_joint_bar
  const char * mixparamchoice          = "sinsqtheta",    /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant          = "two",           /* one==kNuOctantOne two==kNuOctantTwo */
 
- TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/valor/Priors_T2Kreact_run14_Valor.root" // Set to "" if no user priors are used (VALOR) 
+ //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Valor.root" // Set to "" if no user priors are used (VALOR) 
+ TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3.root" // Set to "" if no user priors are used (VALOR) 
  )
 {
   using namespace std;
