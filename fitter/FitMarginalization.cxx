@@ -1554,10 +1554,13 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	    // NEW MARG MH 2
 	    nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
 	    //
-	    
+
 	    nobs += skobs_data->ErecoSpectrumArray(s)[ibin];
 	  }
 	  nexp *= (float)fNormPOT[is];
+
+	  //cout << "toy " << iexperiment << " --> " << nexp << endl;
+	  //cout << endl;
 	  
 	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
 	}
@@ -1570,7 +1573,6 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	  exit(1); 
 	}
 
-	  
 	iscount++;
       } // loop SK samples
       
