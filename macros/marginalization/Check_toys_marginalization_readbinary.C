@@ -48,7 +48,8 @@ void Check_toys_marginalization_readbinary
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
  //const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
- const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Mach3",
+ //const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Mach3",
+ const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toy_23_mix13dcp_Joint_MH_10kToys/BetaBar_4p0E20POT_Toy_23_th13dcp_Corr_Mach3",
  
  //const int    nfiles               = 201,         // # of files to read
  const int    nfiles               = 1,         // # of files to read
@@ -67,59 +68,75 @@ void Check_toys_marginalization_readbinary
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
- const char *FileToyOscParam       = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor.root"
+ const char *FileToyOscParam       = "../../inputs/marginalization/toys//nuebarapp_1D_NuOsc_T2Kreact_betabar_Toy_23_mix13dcp_Joint_MH_10kToys/BetaBar_4p0E20POT_Toy_23_th13dcp_Corr_Mach3.root"
  )
 {
   
-  TFile *fToyOscParam = new TFile(FileToyOscParam,"READ");
+  // TFile *fToyOscParam = new TFile(FileToyOscParam,"READ");
+
+  // TH2D *hPriorHisto_th13_nh = (TH2D*) fToyOscParam->Get("hPriorHisto_Mix13_nh");
+  // TH2D *hPriorHisto_th13_ih = (TH2D*) fToyOscParam->Get("hPriorHisto_Mix13_ih");
+  // TH2D *hToyHisto_th13_nh = (TH2D*) fToyOscParam->Get("hToyHisto_Mix13_nh");
+  // TH2D *hToyHisto_th13_ih = (TH2D*) fToyOscParam->Get("hToyHisto_Mix13_ih");
   
-  TH1D *hPriorHisto_dcp_nh = (TH1D*) fToyOscParam->Get("hPriorHisto_dcp_nh");
-  TH1D *hPriorHisto_dcp_ih = (TH1D*) fToyOscParam->Get("hPriorHisto_dcp_ih");
-  TH1D *hToyHisto_dcp_nh = (TH1D*) fToyOscParam->Get("hToyHisto_dcp_nh");
-  TH1D *hToyHisto_dcp_ih = (TH1D*) fToyOscParam->Get("hToyHisto_dcp_ih");
+  // TH2D *hPriorHisto_dcp_nh = (TH2D*) fToyOscParam->Get("hPriorHisto_dcp_nh");
+  // TH2D *hPriorHisto_dcp_ih = (TH2D*) fToyOscParam->Get("hPriorHisto_dcp_ih");
+  // TH2D *hToyHisto_dcp_nh = (TH2D*) fToyOscParam->Get("hToyHisto_dcp_nh");
+  // TH2D *hToyHisto_dcp_ih = (TH2D*) fToyOscParam->Get("hToyHisto_dcp_ih");
   
-  TH2D *hPriorHisto_Mix23_nh = (TH2D*) fToyOscParam->Get("hPriorHisto_Mix23_nh");
-  TH2D *hPriorHisto_Mix23_ih = (TH2D*) fToyOscParam->Get("hPriorHisto_Mix23_ih");
-  TH2D *hToyHisto_Mix23_nh = (TH2D*) fToyOscParam->Get("hToyHisto_Mix23_nh");
-  TH2D *hToyHisto_Mix23_ih = (TH2D*) fToyOscParam->Get("hToyHisto_Mix23_ih");
+  // TH2D *hPriorHisto_Mix23_nh = (TH2D*) fToyOscParam->Get("hPriorHisto_Mix23_nh");
+  // TH2D *hPriorHisto_Mix23_ih = (TH2D*) fToyOscParam->Get("hPriorHisto_Mix23_ih");
+  // TH2D *hToyHisto_Mix23_nh = (TH2D*) fToyOscParam->Get("hToyHisto_Mix23_nh");
+  // TH2D *hToyHisto_Mix23_ih = (TH2D*) fToyOscParam->Get("hToyHisto_Mix23_ih");
 
-  TH2D *hPriorHisto_Dm23_nh = (TH2D*) fToyOscParam->Get("hPriorHisto_Dm23_nh");
-  TH2D *hPriorHisto_Dm23_ih = (TH2D*) fToyOscParam->Get("hPriorHisto_Dm23_ih");
-  TH2D *hToyHisto_Dm23_nh = (TH2D*) fToyOscParam->Get("hToyHisto_Dm23_nh");
-  TH2D *hToyHisto_Dm23_ih = (TH2D*) fToyOscParam->Get("hToyHisto_Dm23_ih");
+  // TH2D *hPriorHisto_Dm23_nh = (TH2D*) fToyOscParam->Get("hPriorHisto_Dm23_nh");
+  // TH2D *hPriorHisto_Dm23_ih = (TH2D*) fToyOscParam->Get("hPriorHisto_Dm23_ih");
+  // TH2D *hToyHisto_Dm23_nh = (TH2D*) fToyOscParam->Get("hToyHisto_Dm23_nh");
+  // TH2D *hToyHisto_Dm23_ih = (TH2D*) fToyOscParam->Get("hToyHisto_Dm23_ih");
   
-  TH1D *hPriorHisto_MH = (TH1D*) fToyOscParam->Get("hPriorHisto_MH");
-  TH1D *hToyHisto_MH = (TH1D*) fToyOscParam->Get("hToyHisto_MH");
+  // TH1D *hPriorHisto_MH = (TH1D*) fToyOscParam->Get("hPriorHisto_MH");
+  // TH1D *hToyHisto_MH = (TH1D*) fToyOscParam->Get("hToyHisto_MH");
 
-  TCanvas *cPriorHisto_dcp = new TCanvas("cPriorHisto_dcp","cPriorHisto");
-  hPriorHisto_dcp_ih->GetXaxis()->SetTitle("#delta_{CP}");
-  hPriorHisto_dcp_ih->GetYaxis()->SetTitle("L = e^{-#Delta #chi^{2} / 2}");
-  hPriorHisto_dcp_ih->SetLineColor(kRed);
-  hPriorHisto_dcp_nh->SetLineColor(kBlack);
-  hPriorHisto_dcp_ih->Draw();
-  hPriorHisto_dcp_nh->Draw("same");
+  
+  // TCanvas *cPriorHisto_th13_dcp_nh = new TCanvas("cPriorHisto_th13_dcp_nh","cPriorHisto_th13_dcp_nh");
+  // hPriorHisto_th13_nh->GetXaxis()->SetTitle("sin^2 #theta_{13}");
+  // hPriorHisto_th13_nh->GetYaxis()->SetTitle("#delta_{CP}");
+  // hPriorHisto_th13_nh->Draw("colz");
 
-  TCanvas *cToyHisto_dcp = new TCanvas("cToyHisto_dcp","cToyHisto");
-  hToyHisto_dcp_ih->GetXaxis()->SetTitle("#delta_{CP}");
-  hToyHisto_dcp_ih->SetLineColor(kRed);
-  hToyHisto_dcp_nh->SetLineColor(kBlack);
-  hToyHisto_dcp_ih->Draw();
-  hToyHisto_dcp_nh->Draw("same");
+  // TCanvas *cToyHisto_th13_dcp_nh = new TCanvas("cToyHisto_th13_dcp_nh","cToyHisto_th13_dcp_nh");
+  // hToyHisto_th13_nh->GetXaxis()->SetTitle("sin^2 #theta_{13}");
+  // hToyHisto_th13_nh->GetYaxis()->SetTitle("#delta_{CP}");
+  // hToyHisto_th13_nh->Draw("colz");
 
-  TCanvas *cPriorHisto_Mix23_nh = new TCanvas("cPriorHisto_Mix23_nh","cPriorHisto_Mix23_nh");
-  hPriorHisto_Mix23_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
-  hPriorHisto_Mix23_nh->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
-  hPriorHisto_Mix23_nh->Draw("colz");
+  // TCanvas *cPriorHisto_th13_dcp_ih = new TCanvas("cPriorHisto_th13_dcp_ih","cPriorHisto_th13_dcp_ih");
+  // hPriorHisto_th13_ih->GetXaxis()->SetTitle("sin^2 #theta_{13}");
+  // hPriorHisto_th13_ih->GetYaxis()->SetTitle("#delta_{CP}");
+  // hPriorHisto_th13_ih->Draw("colz");
 
-  TCanvas *cToyHisto_Mix23_nh = new TCanvas("cToyHisto_Mix23_nh","cToyHisto_Mix23_nh");
-  hToyHisto_Mix23_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
-  hToyHisto_Mix23_nh->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
-  hToyHisto_Mix23_nh->Draw("colz");
+  // TCanvas *cToyHisto_th13_dcp_ih = new TCanvas("cToyHisto_th13_dcp_ih","cToyHisto_th13_dcp_ih");
+  // hToyHisto_th13_ih->GetXaxis()->SetTitle("sin^2 #theta_{13}");
+  // hToyHisto_th13_ih->GetYaxis()->SetTitle("#delta_{CP}");
+  // hToyHisto_th13_ih->Draw("colz");
 
-  TCanvas *cToyHisto_Mix23_ih = new TCanvas("cToyHisto_Mix23_ih","cToyHisto_Mix23_ih");
-  hToyHisto_Mix23_ih->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
-  hToyHisto_Mix23_ih->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
-  hToyHisto_Mix23_ih->Draw("colz");
+  // TCanvas *cPriorHisto_Mix23_nh = new TCanvas("cPriorHisto_Mix23_nh","cPriorHisto_Mix23_nh");
+  // hPriorHisto_Mix23_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  // hPriorHisto_Mix23_nh->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+  // hPriorHisto_Mix23_nh->Draw("colz");
+
+  // TCanvas *cToyHisto_Mix23_nh = new TCanvas("cToyHisto_Mix23_nh","cToyHisto_Mix23_nh");
+  // hToyHisto_Mix23_nh->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  // hToyHisto_Mix23_nh->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+  // hToyHisto_Mix23_nh->Draw("colz");
+
+  // TCanvas *cPriorHisto_Mix23_ih = new TCanvas("cPriorHisto_Mix23_ih","cPriorHisto_Mix23_ih");
+  // hPriorHisto_Mix23_ih->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  // hPriorHisto_Mix23_ih->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+  // hPriorHisto_Mix23_ih->Draw("colz");
+
+  // TCanvas *cToyHisto_Mix23_ih = new TCanvas("cToyHisto_Mix23_ih","cToyHisto_Mix23_ih");
+  // hToyHisto_Mix23_ih->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
+  // hToyHisto_Mix23_ih->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
+  // hToyHisto_Mix23_ih->Draw("colz");
 
   //
 

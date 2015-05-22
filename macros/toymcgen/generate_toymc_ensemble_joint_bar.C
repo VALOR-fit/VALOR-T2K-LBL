@@ -17,7 +17,7 @@ void generate_toymc_ensemble_joint_bar
 (
  //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT",   
  //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_1_rethrowunphysical_4p5E20POT_NoStatFluct",   
- const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_Mach3",   
+ const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_rethrowunphysical_4p5E20POT_Mach3_NoStatFluct",   
  
  int          run                     = 0,                   
  double       nexperiments            = 10000,               /* number of toy-MC expts to generate */
@@ -38,13 +38,13 @@ void generate_toymc_ensemble_joint_bar
  // double       input_beta_bar          = -99,
 
  double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13_nh       = conv::kT2KReacBestFitSinsqTheta13_NH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing13_nh       = -999,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing23_nh       = -999,   //conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_deltacp_nh        = -999,   //conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
  double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
  double       input_dm23sq_nh         = -999,   //conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
  double       input_mixing12_ih       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13_ih       = conv::kT2KReacBestFitSinsqTheta13_IH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing13_ih       = -999,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_mixing23_ih       = -999,   //conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  double       input_deltacp_ih        = -999,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
  double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
@@ -57,7 +57,7 @@ void generate_toymc_ensemble_joint_bar
  //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",
 
  bool rethrow_if_parameters_unphysical = true,                          // rethrow unphysical toys
- bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
+ bool         stat_fluctuations       = false,                           /* include statistical fluctuation in toy MC expts? */
  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
  
  const bool   doMargMH                = true,      // marginalize Mass Hierarchy
@@ -82,15 +82,15 @@ void generate_toymc_ensemble_joint_bar
  const char * mixparamoctant          = "two",           /* one==kNuOctantOne two==kNuOctantTwo */
 
  //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Valor.root" // Set to "" if no user priors are used (VALOR) 
- TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3.root" // Set to "" if no user priors are used (VALOR) 
+ TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR) 
  )
 {
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
   
-  TH1D *hToy_dcp_nh;
-  TH1D *hToy_dcp_ih;
+  TH2D *hToy_th13_dcp_nh;
+  TH2D *hToy_th13_dcp_ih;
   TH2D *hToy_23_nh;
   TH2D *hToy_23_ih;
   TH1D *hToy_MH = new TH1D("hToy_MH","0-->NH, 1-->IH",2,0,2);
@@ -171,24 +171,108 @@ void generate_toymc_ensemble_joint_bar
   if(input_beta_bar < -90 && input_beta_bar > -900) input_beta_bar = conv::kGlobFitBetaBar;
 
 
+
+
+
+
+
+
+  // // Take prior distributions
+ 
+  // TString name_prior_dcp_nh = "hPrior_Ldcp_nh";
+  // TString name_prior_dcp_ih = "hPrior_Ldcp_ih";
+  // TString name_prior_23_nh = "hPrior_L23_nh";
+  // TString name_prior_23_ih = "hPrior_L23_ih";
+ 
+  // TH1D *hPrior_dcp_nh = 0;
+  // TH2D *hPrior_23_nh = 0;
+  // TH1D *hPrior_dcp_ih = 0;
+  // TH2D *hPrior_23_ih = 0;
+ 
+  // bool UsePrior_dcp = false;
+  // bool UsePrior_23 = false;
+
+  // if(file_priors!=""){
+
+  //   UsePrior_dcp = true;
+  //   UsePrior_23 = true;
+    
+  //   cout << endl;
+  //   cout << "Take priors from: " << file_priors << endl;
+  //   TFile *fPrior = new TFile(file_priors.Data(),"READ");
+  //   if(!fPrior->IsOpen() || !fPrior){
+  //     cerr << endl;
+  //     cerr << "Error: the file " << file_priors << " is not open!" << endl;
+  //     cerr << endl;
+  //     exit(1);
+  //   }
+
+  //   hPrior_dcp_nh = (TH1D*) fPrior->Get(name_prior_dcp_nh.Data());        
+  //   if(hPrior_dcp_nh->IsZombie() || !hPrior_dcp_nh){
+  //     cerr << endl;
+  //     cerr << "Error: the histogram deltaCP normal hierarchy is not taken!" << endl;
+  //     cerr << endl;
+  //     exit(1);
+  //   }
+  //   hPrior_dcp_ih = (TH1D*) fPrior->Get(name_prior_dcp_ih.Data());       
+  //   if(hPrior_dcp_ih->IsZombie() || !hPrior_dcp_ih){
+  //     cerr << endl;
+  //     cerr << "Error: the histogram deltaCP inverted hierarchy is not taken!" << endl;
+  //     cerr << endl;
+  //     exit(1);
+  //   }
+
+  //   hPrior_23_nh = (TH2D*) fPrior->Get(name_prior_23_nh.Data()); 
+  //   if(hPrior_23_nh->IsZombie() || !hPrior_23_nh){
+  //     cerr << endl;
+  //     cerr << "Error: the histogram par23_hist_normal is not taken!" << endl;
+  //     cerr << endl;
+  //     exit(1);
+  //   }
+  //   hPrior_23_ih = (TH2D*) fPrior->Get(name_prior_23_ih.Data()); 
+  //   if(hPrior_23_ih->IsZombie() || !hPrior_23_ih){
+  //     cerr << endl;
+  //     cerr << "Error: the histogram par23_hist_inverted is not taken!" << endl;
+  //     cerr << endl;
+  //     exit(1);
+  //   }
+
+  //   hToy_dcp_nh = (TH1D*) hPrior_dcp_nh->Clone("hToy_dcp_nh");
+  //   hToy_dcp_nh->Reset();
+  //   hToy_dcp_ih = (TH1D*) hPrior_dcp_ih->Clone("hToy_dcp_ih");
+  //   hToy_dcp_ih->Reset();
+
+  //   hToy_23_nh = (TH2D*) hPrior_23_nh->Clone("hToy_23_nh");
+  //   hToy_23_nh->Reset();
+  //   hToy_23_ih = (TH2D*) hPrior_23_ih->Clone("hToy_23_ih");
+  //   hToy_23_ih->Reset();
+        
+  // } // if(file_priors)
+
+
+
+
+
+
+
   // Take prior distributions
  
-  TString name_prior_dcp_nh = "hPrior_Ldcp_nh";
-  TString name_prior_dcp_ih = "hPrior_Ldcp_ih";
+  TString name_prior_th13_dcp_nh = "hPrior_th13_dcp_nh";
+  TString name_prior_th13_dcp_ih = "hPrior_th13_dcp_ih";
   TString name_prior_23_nh = "hPrior_L23_nh";
   TString name_prior_23_ih = "hPrior_L23_ih";
  
-  TH1D *hPrior_dcp_nh = 0;
+  TH2D *hPrior_th13_dcp_nh = 0;
   TH2D *hPrior_23_nh = 0;
-  TH1D *hPrior_dcp_ih = 0;
+  TH2D *hPrior_th13_dcp_ih = 0;
   TH2D *hPrior_23_ih = 0;
  
-  bool UsePrior_dcp = false;
+  bool UsePrior_th13_dcp = false;
   bool UsePrior_23 = false;
 
   if(file_priors!=""){
 
-    UsePrior_dcp = true;
+    UsePrior_th13_dcp = true;
     UsePrior_23 = true;
     
     cout << endl;
@@ -201,17 +285,17 @@ void generate_toymc_ensemble_joint_bar
       exit(1);
     }
 
-    hPrior_dcp_nh = (TH1D*) fPrior->Get(name_prior_dcp_nh.Data());        
-    if(hPrior_dcp_nh->IsZombie() || !hPrior_dcp_nh){
+    hPrior_th13_dcp_nh = (TH2D*) fPrior->Get(name_prior_th13_dcp_nh.Data());        
+    if(hPrior_th13_dcp_nh->IsZombie() || !hPrior_th13_dcp_nh){
       cerr << endl;
-      cerr << "Error: the histogram deltaCP normal hierarchy is not taken!" << endl;
+      cerr << "Error: the histogram theta13 Vs deltaCP normal hierarchy is not taken!" << endl;
       cerr << endl;
       exit(1);
     }
-    hPrior_dcp_ih = (TH1D*) fPrior->Get(name_prior_dcp_ih.Data());       
-    if(hPrior_dcp_ih->IsZombie() || !hPrior_dcp_ih){
+    hPrior_th13_dcp_ih = (TH2D*) fPrior->Get(name_prior_th13_dcp_ih.Data());       
+    if(hPrior_th13_dcp_ih->IsZombie() || !hPrior_th13_dcp_ih){
       cerr << endl;
-      cerr << "Error: the histogram deltaCP inverted hierarchy is not taken!" << endl;
+      cerr << "Error: the histogram theta13 Vs deltaCP inverted hierarchy is not taken!" << endl;
       cerr << endl;
       exit(1);
     }
@@ -230,20 +314,29 @@ void generate_toymc_ensemble_joint_bar
       cerr << endl;
       exit(1);
     }
+    
 
-    hToy_dcp_nh = (TH1D*) hPrior_dcp_nh->Clone("hToy_dcp_nh");
-    hToy_dcp_nh->Reset();
-    hToy_dcp_ih = (TH1D*) hPrior_dcp_ih->Clone("hToy_dcp_ih");
-    hToy_dcp_ih->Reset();
-
+    hToy_th13_dcp_nh = (TH2D*) hPrior_th13_dcp_nh->Clone("hToy_th13_dcp_nh");
+    hToy_th13_dcp_nh->Reset();
+    hToy_th13_dcp_ih = (TH2D*) hPrior_th13_dcp_ih->Clone("hToy_th13_dcp_ih");
+    hToy_th13_dcp_ih->Reset();
+    
     hToy_23_nh = (TH2D*) hPrior_23_nh->Clone("hToy_23_nh");
     hToy_23_nh->Reset();
     hToy_23_ih = (TH2D*) hPrior_23_ih->Clone("hToy_23_ih");
     hToy_23_ih->Reset();
-        
+
+    // TCanvas *c0 = new TCanvas("c0","c0");
+    // hPrior_th13_dcp_nh->Draw("colz");
+    // TCanvas *c1 = new TCanvas("c1","c1");
+    // hPrior_th13_dcp_ih->Draw("colz");
+    // TCanvas *c2 = new TCanvas("c2","c2");
+    // hPrior_23_nh->Draw("colz");
+    // TCanvas *c3 = new TCanvas("c3","c3");
+    // hPrior_23_ih->Draw("colz");
+    // return;
+    
   } // if(file_priors)
-
-
 
   //
 
@@ -360,7 +453,6 @@ void generate_toymc_ensemble_joint_bar
   cout << endl;
   cout << *Opt::Instance() << endl;
 
-  
   // Open files
   TFile * f = 0;
   if(save_in_root_format) {
@@ -425,9 +517,9 @@ void generate_toymc_ensemble_joint_bar
        skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
        
        // Randomize specified osc params for current toy MC expt
-       if (randomize_mixing13_nh) { input_mixing13_nh = util::RandomizeMixing13(); }
        if (randomize_mixing12_nh) { input_mixing12_nh = util::RandomizeMixing12(); }
        if (randomize_dm12sq_nh  ) { input_dm12sq_nh   = util::RandomizeDm12sq();   }     
+
        if (randomize_dm23sq_nh && randomize_mixing23_nh && UsePrior_23){
 	 double dm=0;
 	 double mix23=0;
@@ -439,11 +531,19 @@ void generate_toymc_ensemble_joint_bar
 	 if (randomize_dm23sq_nh  ) { input_dm23sq_nh   = util::RandomizeDm23sq();   }
 	 if (randomize_mixing23_nh) { input_mixing23_nh = util::RandomizeMixing23(); }
        }
-       if (randomize_deltacp_nh ) { 
-	 if(UsePrior_dcp) input_deltacp_nh  = util::RandomizeUser(hPrior_dcp_nh);      
-	 else input_deltacp_nh  = util::RandomizeCPV();   
+       
+       if (randomize_mixing13_nh && randomize_deltacp_nh && UsePrior_th13_dcp){
+	 double mix13=0;
+	 double dcp=0;
+	 hPrior_th13_dcp_nh->GetRandom2(mix13,dcp);
+	 input_mixing13_nh = mix13;
+	 input_deltacp_nh = dcp;
        }
-
+       else{
+	 if (randomize_mixing13_nh) input_mixing13_nh  = util::RandomizeMixing13();   
+	 if (randomize_deltacp_nh)  input_deltacp_nh  = util::RandomizeCPV();      
+       }
+       
        input_mixing12_used = input_mixing12_nh;  
        input_mixing13_used = input_mixing13_nh;    
        input_mixing23_used = input_mixing23_nh;   
@@ -460,10 +560,10 @@ void generate_toymc_ensemble_joint_bar
        skexp->GetSuperkMC()->SetMassHierarchy(hier);
        skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
        
-       // Randomize specified osc params for current toy MC expt
-       if (randomize_mixing13_ih) { input_mixing13_ih = util::RandomizeMixing13(); }
+       // Randomize specified osc params for current toy MC expt 
        if (randomize_mixing12_ih) { input_mixing12_ih = util::RandomizeMixing12(); }
        if (randomize_dm12sq_ih  ) { input_dm12sq_ih   = util::RandomizeDm12sq();   }     
+
        if (randomize_dm23sq_ih && randomize_mixing23_ih && UsePrior_23){
 	 double dm=0;
 	 double mix23=0;
@@ -476,10 +576,17 @@ void generate_toymc_ensemble_joint_bar
 	 if (randomize_dm23sq_ih  ) { input_dm23sq_ih   = util::RandomizeDm23sq();   }
 	 if (randomize_mixing23_ih) { input_mixing23_ih = util::RandomizeMixing23(); }
        }
-       if (randomize_deltacp_ih ) { 
-	 if(UsePrior_dcp) input_deltacp_ih  = util::RandomizeUser(hPrior_dcp_ih);      
-	 else input_deltacp_ih  = util::RandomizeCPV();   
-	 //hToy_dcp_ih->Fill(input_deltacp_ih);
+       
+       if (randomize_mixing13_ih && randomize_deltacp_ih && UsePrior_th13_dcp){
+	 double mix13=0;
+	 double dcp=0;
+	 hPrior_th13_dcp_ih->GetRandom2(mix13,dcp);
+	 input_mixing13_ih = mix13;
+	 input_deltacp_ih = dcp;
+       }
+       else{
+	 if (randomize_mixing13_ih) input_mixing13_ih  = util::RandomizeMixing13();   
+	 if (randomize_deltacp_ih)  input_deltacp_ih  = util::RandomizeCPV();      
        }
 
        input_mixing12_used = input_mixing12_ih;  
@@ -570,11 +677,11 @@ void generate_toymc_ensemble_joint_bar
      double dcp = ph.CurrValue(kPhypCPV);
 
      if(iMH==0){
-       hToy_dcp_nh->Fill(dcp);
+       hToy_th13_dcp_nh->Fill(mix13,dcp);
        hToy_23_nh->Fill(mix23,dm23);
      }
      else if(iMH==1){
-       hToy_dcp_ih->Fill(dcp);
+       hToy_th13_dcp_ih->Fill(mix13,dcp);
        hToy_23_ih->Fill(mix23,dm23);
      }
   
@@ -1074,11 +1181,11 @@ void generate_toymc_ensemble_joint_bar
 
   // Draw histograms
 
-  TCanvas *cToy_dcp_nh = new TCanvas("cToy_dcp_nh","cToy_dcp_nh");
-  hToy_dcp_nh->Draw();
+  TCanvas *cToy_th13_dcp_nh = new TCanvas("cToy_th13_dcp_nh","cToy_th13_dcp_nh");
+  hToy_th13_dcp_nh->Draw("colz");
 
-  TCanvas *cToy_dcp_ih = new TCanvas("cToy_dcp_ih","cToy_dcp_ih");
-  hToy_dcp_ih->Draw();
+  TCanvas *cToy_th13_dcp_ih = new TCanvas("cToy_th13_dcp_ih","cToy_th13_dcp_ih");
+  hToy_th13_dcp_ih->Draw("colz");
 
   TCanvas *cToy_23_nh = new TCanvas("cToy_23_nh","cToy_23_nh");
   hToy_23_nh->Draw("colz");
@@ -1098,10 +1205,10 @@ void generate_toymc_ensemble_joint_bar
   h_4->Write();
   h_4_Escale->Write();
   
-  hPrior_dcp_nh->Write();  
-  hPrior_dcp_ih->Write();  
-  hToy_dcp_nh->Write();
-  hToy_dcp_ih->Write();
+  hPrior_th13_dcp_nh->Write();  
+  hPrior_th13_dcp_ih->Write();  
+  hToy_th13_dcp_nh->Write();
+  hToy_th13_dcp_ih->Write();
 
   hPrior_23_nh->Write();
   hPrior_23_ih->Write();

@@ -10,10 +10,12 @@ using namespace valor::conv;
 
 void ConvertPrior_ChisqLike_Mach3
 (
- const char * tag    = "Priors_T2Kreact_run14_Mach3",   
+ const char * tag    = "Priors_T2Kreact_run14_Mach3_22Maj15",   
  
- const char * filein_prior_chisq_dcp = "../../inputs/priors/joint_T2Kreact_run14/mach3/deltacp_T2Kreact_run14_Mach3.root",
+ //const char * filein_prior_chisq_dcp = "../../inputs/priors/joint_T2Kreact_run14/mach3/deltacp_T2Kreact_run14_Mach3.root",
+ const char * filein_prior_chisq_dcp = "../../inputs/priors/joint_T2Kreact_run14/mach3/jointprob2D.root",
  const char * filein_prior_chisq_23 = "../../inputs/priors/joint_T2Kreact_run14/mach3/parameters23_T2Kreact_run14_Mach3.root",
+ //const char * filein_prior_chisq_23 = "../../inputs/priors/joint_T2Kreact_run14/mach3/jointprob2D.root",
 
  const double prior_nh = 0.684
  )
@@ -21,23 +23,23 @@ void ConvertPrior_ChisqLike_Mach3
 
   // deltacp prior (Normal Hierarchy)
   
-  TH1D *hPrior_dcp_nh;
-  TH1D *hPrior_dcp_ih;
+  TH2D *hPrior_th13_dcp_nh;
   
-  TFile *fPrior_dcp_nh = new TFile(filein_prior_chisq_dcp,"READ");
-  hPrior_dcp_nh = (TH1D*) fPrior_dcp_nh->Get("dcp_hist");
-  hPrior_dcp_nh->SetName("hPrior_Ldcp_nh");
-  hPrior_dcp_nh->SetTitle("hPrior_Ldcp_nh");
-
+  TFile *fPrior_th13_dcp_nh = new TFile(filein_prior_chisq_dcp,"READ");
+  hPrior_th13_dcp_nh = (TH2D*) fPrior_th13_dcp_nh->Get("th13_dcp_n");
+  hPrior_th13_dcp_nh->SetName("hPrior_th13_dcp_nh");
+  hPrior_th13_dcp_nh->SetTitle("hPrior_th13_dcp_nh");
 
   // deltacp prior (Inverted Hierarchy)
-
-  TFile *fPrior_dcp_ih = new TFile(filein_prior_chisq_dcp,"READ");
-  hPrior_dcp_ih = (TH1D*) fPrior_dcp_ih->Get("dcp_hist");
-  hPrior_dcp_ih->SetName("hPrior_Ldcp_ih");
-  hPrior_dcp_ih->SetTitle("hPrior_Ldcp_ih");
-
   
+  TH2D *hPrior_th13_dcp_ih;
+  
+  TFile *fPrior_th13_dcp_ih = new TFile(filein_prior_chisq_dcp,"READ");
+  hPrior_th13_dcp_ih = (TH2D*) fPrior_th13_dcp_ih->Get("th13_dcp_i");
+  hPrior_th13_dcp_ih->SetName("hPrior_th13_dcp_ih");
+  hPrior_th13_dcp_ih->SetTitle("hPrior_th13_dcp_ih");
+
+
   // 23 prior (Normal Hierarchy)
   
   TH2D *hPrior_23_nh;
@@ -54,8 +56,6 @@ void ConvertPrior_ChisqLike_Mach3
 
   TFile *fPrior_23_ih = new TFile(filein_prior_chisq_23,"READ");
   TH2D *hPrior_23_ih_old = (TH2D*) fPrior_23_ih->Get("par23_hist_inverted");
-  hPrior_23_ih_old->SetName("hPrior_L23_ih");
-  hPrior_23_ih_old->SetTitle("hPrior_L23_ih");
 
   TAxis *axis_mix23 = (TAxis*) hPrior_23_ih_old->GetXaxis();
   TAxis *axis_dmsq  = (TAxis*) hPrior_23_ih_old->GetYaxis();
@@ -105,14 +105,11 @@ void ConvertPrior_ChisqLike_Mach3
 
   // Draw priors
 
-  TCanvas *cPrior_dcp = new TCanvas("cPrior_dcp","cPrior_dcp");
-  double max = TMath::Max(hPrior_dcp_nh->GetMaximum(),hPrior_dcp_ih->GetMaximum());
-  hPrior_dcp_nh->SetMaximum(max*1.2);
-  hPrior_dcp_ih->SetMaximum(max*1.2);
-  hPrior_dcp_nh->SetLineColor(kBlack);
-  hPrior_dcp_ih->SetLineColor(kRed);
-  hPrior_dcp_nh->Draw();
-  hPrior_dcp_ih->Draw("same");
+  TCanvas *cPrior_th13_dcp_nh = new TCanvas("cPrior_th13_dcp_nh","cPrior_th13_dcp_nh");
+  hPrior_th13_dcp_nh->Draw("colz");
+
+  TCanvas *cPrior_th13_dcp_ih = new TCanvas("cPrior_th13_dcp_ih","cPrior_th13_dcp_ih");
+  hPrior_th13_dcp_ih->Draw("colz");
 
   TCanvas *cPrior_23_nh = new TCanvas("cPrior_23_nh","cPrior_23_nh");
   hPrior_23_nh->Draw("colz");
@@ -132,8 +129,8 @@ void ConvertPrior_ChisqLike_Mach3
   sprintf(name,"%s.root",tag);
 
   TFile *fout_Likedcp = new TFile(name,"RECREATE");
-  hPrior_dcp_nh->Write();
-  hPrior_dcp_ih->Write();
+  hPrior_th13_dcp_nh->Write();
+  hPrior_th13_dcp_ih->Write();
   hPrior_23_nh->Write();
   hPrior_23_ih->Write();
   hPrior_Like_mh->Write();

@@ -23,7 +23,10 @@
 //#define __print_hesseerror_verbose__
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
+
 #define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
+#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
+
 //#define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
 #define __FILL_OSCPARAM_TOY_HISTO__
 
@@ -1168,18 +1171,32 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	if(util::IsSystematic(p)) continue; // not oscillation parameters 
 	if(fparm->IsFixed(p))    continue; // do not marginalize if fixed
 	
-	if(fparm->IsPrior2D(p)){ // Fill it later as correlated (only mix23 and dm23)
+	if(fparm->IsPrior2D(p)){ // Fill it later as correlated (only mix23 and dm23 and/or mix13 and dcp)
+
 #ifdef __MARGINALIZE_23PARAMS_CORR__	  
 	  if(p==conv::kPhypDm23sq || p==conv::kPhypMixing23) continue;
 #endif
+#ifdef __MARGINALIZE_TH13_DELTACP_CORR__	  
+	  if(p==conv::kPhypCPV || p==conv::kPhypMixing13) continue;
+#endif
+
 	  cerr << endl;
 	  cerr << "FitMarginalization::MakeToysMarginalization" << endl;
 	  cerr << "There are other parameters which are not 2D correlated" << endl;
-	  cerr << "Now the only 2D correlated parameters are "  
-	       << util::AsString(conv::kPhypDm23sq)
+	  cerr << "Now the only 2D correlated parameters are " << endl;  
+
+#ifdef __MARGINALIZE_23PARAMS_CORR__	  
+	  cerr << util::AsString(conv::kPhypDm23sq)
 	       << " and "
 	       << util::AsString(conv::kPhypMixing23)
 	       << endl;
+#endif
+#ifdef __MARGINALIZE_TH13_DELTACP_CORR__	  
+	  cerr << util::AsString(conv::kPhypCPV)
+	       << " and "
+	       << util::AsString(conv::kPhypMixing13)
+	       << endl;
+#endif
 	  exit(1);
 	}
 	
@@ -1196,9 +1213,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	}
       } // loop over p
 
+      double usedvalue_x = conv::kBadResult;
+      double usedvalue_y = conv::kBadResult;
+
 #ifdef __MARGINALIZE_23PARAMS_CORR__
-      double usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
-      double usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
+      usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
+      usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
 
       fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
       fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
@@ -1210,6 +1230,23 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
 	fparm_ih->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
 	fparm_ih->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+      }
+#endif
+
+#ifdef __MARGINALIZE_TH13_DELTACP_CORR__
+      usedvalue_x = fparm->InitValue(conv::kPhypMixing13);
+      usedvalue_y = fparm->InitValue(conv::kPhypCPV);
+
+      fparm->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+      fparm->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
+
+      if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
+	fparm_nh->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+	fparm_nh->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
+      }
+      else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+	fparm_ih->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+	fparm_ih->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
       }
 #endif
 
@@ -1231,7 +1268,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 #endif
       
 #ifdef  __print_oscparam_all_verbose__
-      int np = fparm->GetNumberParameters();
+      np = fparm->GetNumberParameters();
       for(int ip = 0; ip < np; ip++) {
 	conv::PhysParamId_t p = fparm->WhichParam(ip);
 	if(util::IsSystematic(p)) continue; // not oscillation parameters 
@@ -2632,6 +2669,7 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     // Now extract the oscillation parameter to marginalize from 1D prior
 
     if(infparm->IsPrior2D(p)){
+      //cout << p << " " << util::AsString(p) << " --> 2D prior --> skip it!" << endl;
       Nparam_with_2Dprior++;
       continue;
     }
@@ -2655,51 +2693,134 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     infparm->SetInitValue(p,currval);    
   }
   
+
+
+  // Extract correlated parameters
+
+#if defined(__MARGINALIZE_TH13_DELTACP_CORR__) && defined(__MARGINALIZE_23PARAMS_CORR__)
+
+  if(Nparam_with_2Dprior!=4){
+    cerr << endl;
+    cerr << "FitMarginalization::SetMargOscParam" << endl;
+    cerr << "# of marginalization parameters with 2D prior != 4" << endl;
+    cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
+    cerr << "We don't expect parameters with 2D priors for both 23 parameters and theta13 Vs dcp" << endl; 
+    cerr << endl;
+    exit(1);
+  }
+     
+  if( !( infparm->IsPrior2D(conv::kPhypDm23sq) ) ){     
+    cerr << endl;
+    cerr << util::AsString(conv::kPhypDm23sq) 
+	 << " don't have a 2D prior" << endl;
+    cerr << "There is something wrong!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if( !( infparm->IsPrior2D(conv::kPhypMixing23) ) ){     
+    cerr << endl;
+    cerr << util::AsString(conv::kPhypMixing23) 
+	 << " don't have a 2D prior" << endl;
+    cerr << "There is something wrong!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if( !( infparm->IsPrior2D(conv::kPhypCPV) ) ){     
+    cerr << endl;
+    cerr << util::AsString(conv::kPhypCPV) 
+	 << " don't have a 2D prior" << endl;
+    cerr << "There is something wrong!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if( !( infparm->IsPrior2D(conv::kPhypMixing13) ) ){     
+    cerr << endl;
+    cerr << util::AsString(conv::kPhypMixing13) 
+	 << " don't have a 2D prior" << endl;
+    cerr << "There is something wrong!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+
+#elif defined(__MARGINALIZE_TH13_DELTACP_CORR__) && !defined(__MARGINALIZE_23PARAMS_CORR__)  
+
+  if(Nparam_with_2Dprior!=2){
+    cerr << endl;
+    cerr << "FitMarginalization::SetMargOscParam" << endl;
+    cerr << "# of marginalization parameters with 2D prior != 2" << endl;
+    cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
+    cerr << "We expect 2 parameters with 2D priors for theta13 Vs dcp" << endl; 
+    cerr << endl;
+    exit(1);
+  }
+  
+  if( !( infparm->IsPrior2D(conv::kPhypCPV) ) ){     
+    cerr << endl;
+    cerr << util::AsString(conv::kPhypCPV) 
+	 << " don't have a 2D prior" << endl;
+    cerr << "There is something wrong!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if( !( infparm->IsPrior2D(conv::kPhypMixing13) ) ){     
+    cerr << endl;
+    cerr << util::AsString(conv::kPhypMixing13) 
+	 << " don't have a 2D prior" << endl;
+    cerr << "There is something wrong!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  
+#elif !defined(__MARGINALIZE_TH13_DELTACP_CORR__) && defined(__MARGINALIZE_23PARAMS_CORR__)  
+  if(Nparam_with_2Dprior!=2){
+    cerr << endl;
+    cerr << "FitMarginalization::SetMargOscParam" << endl;
+    cerr << "# of marginalization parameters with 2D prior != 2" << endl;
+    cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
+    cerr << "We expect 2 parameters with 2D priors for 23 parameters" << endl; 
+    cerr << endl;
+    exit(1);
+  }
+
+  if( !( infparm->IsPrior2D(conv::kPhypDm23sq) ) ){     
+    cerr << endl;
+    cerr << util::AsString(conv::kPhypDm23sq) 
+	 << " don't have a 2D prior" << endl;
+    cerr << "There is something wrong!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if( !( infparm->IsPrior2D(conv::kPhypMixing23) ) ){     
+    cerr << endl;
+    cerr << util::AsString(conv::kPhypMixing23) 
+	 << " don't have a 2D prior" << endl;
+    cerr << "There is something wrong!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+#endif
+  
+
+
   // Marginalze 23 parameters with 2D priors if correlated
 
-#ifndef __MARGINALIZE_23PARAMS_CORR__
-  
-  if(Nparam_with_2Dprior>0){
+#ifdef __MARGINALIZE_23PARAMS_CORR__
+    
+  if(Nparam_with_2Dprior==0){ // There are not 2D prior parameters  
     cerr << endl;
     cerr << "FitMarginalization::SetMargOscParam" << endl;
-    cerr << "# of marginalization parameters with 2D prior > 0" << endl;
+    cerr << "# of marginalization parameters with 2D prior = 0" << endl;
     cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
-    cerr << "We don't expect parameters with 2D priors" << endl; 
+    cerr << "We expect 2 parameters with 2D priors for 23 parameters" << endl; 
     cerr << endl;
-    exit(1);
-  }
-  
-#else
-  
-  if(Nparam_with_2Dprior==0){ // There are not 2D prior parameters
-    return; 
-  }
-  else if(Nparam_with_2Dprior!=2){
-    cerr << endl;
-    cerr << "FitMarginalization::SetMargOscParam" << endl;
-    cerr << "There are more/less marginalization parameters with 2D prior than expected" << endl;
-    cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
-    cerr << "We expect 2 parameters: " 
-	 << util::AsString(conv::kPhypDm23sq) 
-	 << util::AsString(conv::kPhypMixing23)
-	 << endl;
-    cerr << endl;
-    exit(1);
-  }
+    exit(1); 
+  } 
   else{
-    
-    if( !( infparm->IsPrior2D(conv::kPhypDm23sq) && infparm->IsPrior2D(conv::kPhypMixing23) ) ){
-      
-      cerr << endl;
-      cerr << util::AsString(conv::kPhypDm23sq) << " and " << util::AsString(conv::kPhypMixing23) 
-	   << " don't have a 2D prior" << endl;
-      cerr << "There is something wrong" << endl;
-      cerr << endl;
-      exit(1);
-    }
-    
-    double dmsq=0;
-    double mix23=0; 
+  
+    double dmsq=conv::kBadResult;
+    double mix23=conv::kBadResult; 
     infparm->GetPriorHisto2D(conv::kPhypDm23sq)->GetRandom2(mix23,dmsq);
     
 #ifdef  __print_oscparam_marginalized__
@@ -2711,11 +2832,45 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     infparm->SetInitValue(conv::kPhypDm23sq,dmsq);
     infparm->SetInitValue(conv::kPhypMixing23,mix23);
     //infparm->Update(p,currval);
-
   }
 
-#endif
+#endif // __MARGINALIZE_23PARAMS_CORR__
+ 
+
+
+  // Marginalze theta13 and deltaCP parameters with 2D priors if correlated
+  
+#ifdef __MARGINALIZE_TH13_DELTACP_CORR__
+
+  if(Nparam_with_2Dprior==0){ // There are not 2D prior parameters
+    cerr << endl;
+    cerr << "FitMarginalization::SetMargOscParam" << endl;
+    cerr << "# of marginalization parameters with 2D prior = 0" << endl;
+    cerr << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
+    cerr << "We expect 2 parameters with 2D priors for 23 parameters" << endl; 
+    cerr << endl;
+    exit(1); 
+  }
+
+  else{
     
+    double dcp=conv::kBadResult;
+    double mix13=conv::kBadResult; 
+    infparm->GetPriorHisto2D(conv::kPhypMixing13)->GetRandom2(mix13,dcp);
+    
+#ifdef  __print_oscparam_marginalized__
+    cout << "Marginalize " << conv::kPhypMixing13 << " " << util::AsString(conv::kPhypMixing13) << " --> " << mix13 << endl; 
+    cout << "Marginalize " << conv::kPhypCPV << " " << util::AsString(conv::kPhypCPV) << " --> " << dcp << endl; 
+    //cout << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
+#endif
+ 
+    infparm->SetInitValue(conv::kPhypMixing13,mix13);
+    infparm->SetInitValue(conv::kPhypCPV,dcp);
+    //infparm->Update(p,currval);
+  }
+
+#endif // __MARGINALIZE_TH13_DELTACP_CORR__
+   
 }
 
 //
