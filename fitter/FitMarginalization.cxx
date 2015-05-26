@@ -13,7 +13,7 @@
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
-//#define __print_array_toy_fillchisq__
+#//define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_systematic_variations__
 #define __print_chisqmarg__
@@ -24,8 +24,8 @@
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
 
-#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
-#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
+//#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
+//#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
 
 //#define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
 #define __FILL_OSCPARAM_TOY_HISTO__
@@ -1489,7 +1489,10 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
   // If chisq already colculated return the stored value and break
   float chisq = fChisqMargVArray->GetEntry(iterpar0,iterpar1); 
   if(allow_cached && chisq > 0.) {return chisq;}
-
+    
+  // Set to 0 in case it has been already calculated before, for example when fabs(chisq)<1.E-8.
+  flikeVArray->SetEntry(0.,iterpar0,iterpar1); 
+  
   fNCallsCalcChisqMargPt++;
   
   // Read binary file
@@ -1513,161 +1516,127 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
   //cout << "currval0 = " << currval0 << endl;
   //cout << "currval1 = " << currval1 << endl;
   
-
-
-
-
-
-  // NEW MARG MH 2
-
-  // Marginalize the Mass Hierarchy
-  // int nMassHierarchy = 2;
-  // for(int iMH=0;iMH<nMassHierarchy;iMH++){    
-  //   // Don't marginalize Mass Hierarchy. Only the assumed one
-  //   if(this->fdoMargMassHierarchy == false){      
-  //     // Break the loop after the first iteration
-  //     nMassHierarchy = 1;       
-  //     // Used convention in MakeToysMarginalization(): 
-  //     //  - iMH=0 --> kNmhNormal
-  //     //  - iMH=1 --> kNmhInverted	
-  //     if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
-  //     else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1;       
-  //     // Mass Hierarchy has to be already defined
-  //     else {
-  // 	cerr << endl;
-  // 	cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
-  // 	cerr << "Mass Hierarchy is not defined" << endl;
-  // 	cerr << endl;
-  // 	exit(1);
-  //     }
-  //   }
-  //
-  // #ifdef __print_masshierarchy__
-  //     cout << "iMH = " << iMH << endl;
-  // #endif	  
+  for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+    //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;
     
-
-
-    for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
-      //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;
+    // compute the likelihood for a single marginalization toy
+    chisq = 0.;
+    
+    // Loop over the used SK samples
+    int iscount=0;
+    //for(int is = 0; is < kns; is++) {
+    //SuperkSample_t s = kSKSamples[is];
+    //if(s == kSKsUndefined) continue;
+    for(int is=0;is<fNSKsamples;is++){
+      SuperkSample_t s = this->GetSKSamples(is);
       
-      // compute the likelihood for a single marginalization toy
-      chisq = 0.;
       
-      // Loop over the used SK samples
-      int iscount=0;
-      //for(int is = 0; is < kns; is++) {
-      //SuperkSample_t s = kSKSamples[is];
-      //if(s == kSKsUndefined) continue;
-      for(int is=0;is<fNSKsamples;is++){
-	SuperkSample_t s = this->GetSKSamples(is);
+      if( fteststatistic=="rate+shape"){ 
 	
-
-	if( fteststatistic=="rate+shape"){ 
+	for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
 	  
-	  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-	    
-	    //float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
-	    // NEW MARG MH 2
-	    float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
-	    //
+	  //float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	  // NEW MARG MH 2
+	  float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
+	  //
 
-	    nexp *= (float)fNormPOT[is];
-	    float nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
-	    
-	    chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
-	    
-	  } // loop over ereco bins
-	}
-	
-	else if( fteststatistic=="rate-only" ){
-	  
-	  // Take the integral of the ereco distributions (rate-only)
-	  float nexp = 0.;
-	  float nobs = 0.;
-	  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-	    
-	    //nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
-	    // NEW MARG MH 2
-	    nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
-	    //
-
-	    nobs += skobs_data->ErecoSpectrumArray(s)[ibin];
-	  }
 	  nexp *= (float)fNormPOT[is];
-
-	  //cout << "toy " << iexperiment << " --> " << nexp << endl;
-	  //cout << endl;
+	  float nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
 	  
 	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
-	}
-
-	else{
-	  cerr << endl;
-	  cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
-	  cerr << "The test statistic is not available: " << fteststatistic << endl;
-	  cerr << endl;
-	  exit(1); 
-	}
-
-	iscount++;
-      } // loop SK samples
-      
-#ifdef __print_array_toy_fillchisq__
-      cout << endl;
-      cout << "toy=" << iexperiment << " - iterpar0=" << iterpar0 << " - iterpar1=" << iterpar1 << " : ";
-      
-      iscount=0;
-      //for(int is = 0; is < kns; is++) {
-      //SuperkSample_t s = kSKSamples[is];
-      //if(s == kSKsUndefined) continue;
-      for(int is=0;is<fNSKsamples;is++){
-	SuperkSample_t s = this->GetSKSamples(is);
-	
-	cout << util::AsStringCompact(s) << endl;
-	
-	for(int ib = 0; ib < util::NumErecoBins(s); ib++){
 	  
-	  //float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ib);
-	  // NEW MARG MH 2
-	  float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ib);
-	  //
-	  cout << bincont * (float)fNormPOT[is] << " "; 
-	}
-	cout << endl;
-	cout << endl;
+	} // loop over ereco bins
+      }
+      
+      else if( fteststatistic=="rate-only" ){
 	
-	iscount++;
-      } // loop SK samples
+	// Take the integral of the ereco distributions (rate-only)
+	float nexp = 0.;
+	float nobs = 0.;
+	for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+	  
+	  //nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ibin);
+	  // NEW MARG MH 2
+	  nexp += fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
+	  //
+	  
+	  nobs += skobs_data->ErecoSpectrumArray(s)[ibin];
+	}
+	nexp *= (float)fNormPOT[is];
+	
+	//cout << "toy " << iexperiment << " --> " << nexp << endl;
+	//cout << endl;
+	
+	chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+      }
       
-#endif
+      else{
+	cerr << endl;
+	cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
+	cerr << "The test statistic is not available: " << fteststatistic << endl;
+	cerr << endl;
+	exit(1); 
+      }
       
-      float like = exp(-chisq/2.) / fntoys_marg;
-      
+      iscount++;
+    } // loop SK samples
+    
 #ifdef __print_array_toy_fillchisq__
-      cout << "chisq = " << chisq << " - like = " << like << endl; 
+    cout << endl;
+    cout << "toy=" << iexperiment << " - iterpar0=" << iterpar0 << " - iterpar1=" << iterpar1 << " : ";
+    
+    iscount=0;
+    //for(int is = 0; is < kns; is++) {
+    //SuperkSample_t s = kSKSamples[is];
+    //if(s == kSKsUndefined) continue;
+    for(int is=0;is<fNSKsamples;is++){
+      SuperkSample_t s = this->GetSKSamples(is);
+      
+      cout << util::AsStringCompact(s) << endl;
+      
+      for(int ib = 0; ib < util::NumErecoBins(s); ib++){
+	
+	//float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iMH,iscount,ib);
+	// NEW MARG MH 2
+	float bincont = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ib);
+	//
+	cout << bincont * (float)fNormPOT[is] << " "; 
+      }
+      cout << endl;
+      cout << endl;
+      
+      iscount++;
+    } // loop SK samples
+    
 #endif
-
-
-      // NEW MARG MH 2
-      //if(this->fdoMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
-      //
-      
-      flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
-      
-    } // iexperiment
-  
+    
+    float like = exp(-chisq/2.) / fntoys_marg;
+    
+#ifdef __print_array_toy_fillchisq__
+    cout << "chisq = " << chisq << " - like = " << like << endl; 
+#endif
+    
+    
     // NEW MARG MH 2
-    //} // iMH (mass hierarchy)
+    //if(this->fdoMargMassHierarchy) like /= 2.;  // if MH is marginalized, divide by 2
     //
     
-    // Now the marginalized likelihood is computed using toys from all the binary files
+    flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
+    
+  } // iexperiment
+  
+  // NEW MARG MH 2
+  //} // iMH (mass hierarchy)
+  //
+   
+  // Now the marginalized likelihood is computed using toys from all the binary files
   // Compute the chisq for each free osc parameter value and fill the array and histo
   float bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) );
+
   fChisqMargVArray->SetEntry(bincont,iterpar0,iterpar1);
   if(!fIsFit2D) fhchisq_marg_1D->SetBinContent(iterpar0+1,bincont);
   else          fhchisq_marg_2D->SetBinContent(iterpar0+1,iterpar1+1,bincont);
-      
+  
   return bincont;
 }
 
@@ -4309,15 +4278,22 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
     double binlowedge_X = conv::kBadResult;
     double binlowedge_Y = conv::kBadResult;
     
+    // Find direction along X axis
+    
+    //cout << "Find direction along X axis" << endl;
+    
+
     // L(N,N)
     if(fIsFit2D) 
       bincont = fChisqMargVArray->GetEntry(binN_X-1,binN_Y-1);
     else 
       bincont = fChisqMargVArray->GetEntry(binN_X-1,fmin_bin_sub_param[1]);
+    
     if( bincont<=0.){
       if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,binN_Y-1,readbinary); // CalcChisqMargPt takes the point not bin
       else bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,fmin_bin_sub_param[1],readbinary);
     }
+
     chisq_X[ilike_N] = bincont;
     chisq[ilike_N][ilike_N] = bincont;
 
@@ -4366,9 +4342,10 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
     }
     
     binlowedge_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(binN_X);
-  
-        
+
     // Find direction along Y axis
+    
+    //cout << "Find direction along Y axis" << endl;
     
     int binNm1_Y = conv::kBadResult;
     int binNp1_Y = conv::kBadResult;
@@ -4376,11 +4353,11 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
     if(fIsFit2D){
       
       // L(N,N) already computed for 2D chisq
-      bincont = fChisqMargVArray->GetEntry(binN_X-1,binN_Y-1);
+      bincont = fChisqMargVArray->GetEntry(binN_X-1,binN_Y-1);	
       if( bincont<=0.)
 	bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,binN_Y-1,readbinary);
       chisq_Y[ilike_N] = bincont;
-      
+      	
       // L(N,N-1)
       binNm1_Y = binN_Y - 1;
       // Bin is on the border, it should happens only when binN = binF
@@ -4392,6 +4369,7 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       // normal situation
       else{
 	bincont = fChisqMargVArray->GetEntry(binN_X-1,binNm1_Y-1);
+	
 	if( bincont<=0.)
 	  bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,binNm1_Y-1,readbinary);
 	chisq_Y[ilike_Nm1] = bincont;
