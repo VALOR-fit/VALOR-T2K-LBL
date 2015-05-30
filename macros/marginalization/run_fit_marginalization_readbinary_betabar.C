@@ -29,15 +29,13 @@ void run_fit_marginalization_readbinary_betabar
 
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
- const char * tag                      = "fitmarg_betabar_toydcp",    /* tag for output file */
+ const char * tag                      = "fitmarg_betabar_DEV",    /* tag for output file */
 
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml",
- const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_2-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT-0.xml",
-  
+ const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p5E20POT_DEV-0.xml",
+ 
  bool         dotoys                   = true,
 
  // Default
@@ -53,10 +51,10 @@ void run_fit_marginalization_readbinary_betabar
  double       input_deltacp_bar        = -99,
  double       input_dm12sq_bar         = -99,
  double       input_dm23sq_bar         = -99,
- double       input_beta_bar           = 1,
+ double       input_beta_bar           = 1., //0.2,
 
- const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app_4E20POT.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
+ const char * config_file              = "analysis_configuration_run1to6_test_app_4E20POT.xml",
  //const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
  //const char * config_file              = "analysis_configuration_run1to6_test_app_fullstat.xml",
  
@@ -67,7 +65,8 @@ void run_fit_marginalization_readbinary_betabar
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
  //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
- const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
+ //const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
+ const char * fit_param_list        = "nuosc3f_normbar_fix12+nuisance",
  
  const char * dmsqscheme               = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
@@ -76,12 +75,11 @@ void run_fit_marginalization_readbinary_betabar
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- //const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
- const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Mach3",
- 
+ const char * infilename = "../../inputs/marginalization/toys/nuebarapp_T2Kreact_10kToys_DEV/BetaBar_Toy_23_th13dcp_Corr_Mach3_DEV",
+
  const int    nfiles               = 1, //401, 1        // # of files to read
 
- const int    NtoysMarg            = 100,  // # toys marginalization 
+ const int    NtoysMarg            = 10000,  // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter
@@ -93,7 +91,7 @@ void run_fit_marginalization_readbinary_betabar
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = false,
 
- const string teststat            = "rate-only"   // "rate-only" or "rate+shape"
+ const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
 )
 {
 

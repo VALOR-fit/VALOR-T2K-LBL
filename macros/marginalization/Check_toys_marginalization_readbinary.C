@@ -17,7 +17,8 @@ using namespace valor::conv;
 
 void Check_toys_marginalization_readbinary
 (
- const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
+ const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
 
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
@@ -47,10 +48,8 @@ void Check_toys_marginalization_readbinary
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- //const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor",
- //const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Mach3",
- const char * infilename = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toy_23_mix13dcp_Joint_MH_10kToys/BetaBar_4p0E20POT_Toy_23_th13dcp_Corr_Mach3",
- 
+ const char * infilename = "../../inputs/marginalization/toys/nuebarapp_T2Kreact_10kToys_DEV/BetaBar_Toy_23_th13dcp_Corr_Mach3_DEV",
+
  //const int    nfiles               = 201,         // # of files to read
  const int    nfiles               = 1,         // # of files to read
 
@@ -137,6 +136,10 @@ void Check_toys_marginalization_readbinary
   // hToyHisto_Mix23_ih->GetXaxis()->SetTitle("sin^{2}#theta_{23}");
   // hToyHisto_Mix23_ih->GetYaxis()->SetTitle("#Delta m^{2}_{32}");
   // hToyHisto_Mix23_ih->Draw("colz");
+
+  //return;
+
+
 
   //
 
@@ -315,21 +318,7 @@ void Check_toys_marginalization_readbinary
   TH1F* h_up = new TH1F("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1F* h_down = new TH1F("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_nominal;
-  TH2F* h_2d = new TH2F("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),1000,0,6);
-  
-  for(int itoy=0;itoy<NtoysMarg;itoy++){
-
-    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
-
-    for(int i=1;i<=util::NumErecoBins(s);i++){
-      h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
-    }
-
-    //store Nsk
-    double nskint = h_marg_toy->Integral();
-    hNsk->Fill(nskint);
-    nsk_per_toy_arr[itoy] = nskint;
-  }
+  TH2F* h_2d = new TH2F("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,10);
   
   // Get tuned MC - with BANFF tuning
 
@@ -417,6 +406,64 @@ void Check_toys_marginalization_readbinary
 
   double nominal_total_nsk = h_nominal->Integral();
 
+
+  // Loop over marginalization toys
+
+  for(int itoy=0;itoy<NtoysMarg;itoy++){
+
+    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
+
+    for(int i=1;i<=util::NumErecoBins(s);i++){
+      h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
+    }
+	
+    //store Nsk
+    double nskint = h_marg_toy->Integral();
+    hNsk->Fill(nskint);
+    nsk_per_toy_arr[itoy] = nskint;
+    
+    // Store tweaks.
+    for (int ibin = 0 ; ibin < n_ereco_bins ; ibin++) {
+      double nom   = h_nominal->GetBinContent(ibin+1);
+      double N = h_marg_toy->GetBinContent(ibin+1);
+      sumsq_per_bin[ibin] += (N-nom)*(N-nom);
+    }
+  
+  } // loop itoy
+ 
+
+  // Assume symmetric errors
+
+  // Find min/max and calculate fractional deviation from nominal
+  TH1D * hErecoMax = new TH1D(*h_nominal);
+  TH1D * hErecoMin = new TH1D(*h_nominal);
+  hErecoMax->SetDirectory(0);
+  hErecoMin->SetDirectory(0);
+  hErecoMax->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
+  hErecoMin->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
+  TH1D * hErecoMaxEnv = new TH1D(*h_nominal);
+  TH1D * hErecoMinEnv = new TH1D(*h_nominal);
+  hErecoMaxEnv->SetDirectory(0);
+  hErecoMinEnv->SetDirectory(0);
+  for(int ibin=1; ibin <= util::NumErecoBins(s); ibin++) {
+    double nom   = h_nominal->GetBinContent(ibin);
+    double sumsq = 0;
+    double sig = TMath::Sqrt(sumsq_per_bin[ibin-1]/NtoysMarg);
+    double min = nom-sig;
+    double max = nom+sig;
+    if(nom>0){
+      hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
+      hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
+      hErecoMaxEnv -> SetBinContent (ibin,  max);
+      hErecoMinEnv -> SetBinContent (ibin,  min);
+    }
+  }//ibin
+
+
+
+
+  // Assume symmetric errors wrt the average (not nominal)
+
   for(int i=1;i<=util::NumErecoBins(s);i++){
     TH1D* h_proj = h_2d->ProjectionY("",i,i);
     double average = average(h_proj);
@@ -425,10 +472,19 @@ void Check_toys_marginalization_readbinary
     h_down->SetBinContent(i,average-rms);  
   }
   
+  //
+
   double dn_over_n = hNsk->GetRMS() / hNsk->GetMean();
   cout << endl;
+  cout << "Nominal = " << h_nominal->Integral() << endl;
+  cout << "Mean = " << hNsk->GetMean() << endl;
+  cout << "RMS = " << hNsk->GetRMS() << endl;
   cout << "RMS / Mean  = " << dn_over_n << endl;
   cout << endl;
+
+  double ave = average(hNsk);
+  double rms = rms(hNsk,ave);
+  cout << "ave = " << ave << " - rms = " << rms << endl;
 
   //if (use_new_definition_of_dn_over_n) {
   if(1){
@@ -448,17 +504,36 @@ void Check_toys_marginalization_readbinary
     cerr<<"Expected deviation: "<<expected_deviation<<endl;
     cerr<<"Nominal total SK: "<<nominal_total_nsk<<endl;
     
-    dn_over_n = expected_deviation/nominal_total_nsk;
-    
+    dn_over_n = expected_deviation/nominal_total_nsk; 
   }
+  cout << "RMS / Nominal = " << dn_over_n << endl;
+  cout << endl;
+  
 
-  cout << "dn / n = " << dn_over_n << endl;
 
+
+
+  //Draw & save
+  TCanvas * c = new TCanvas();
+  hErecoMaxEnv->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
+  hErecoMaxEnv->SetLineStyle(3);
+  hErecoMinEnv->SetLineStyle(3);
+  hErecoMaxEnv->SetLineColor(kRed);
+  hErecoMinEnv->SetLineColor(kRed);
+  hErecoMaxEnv->SetFillColor(kRed);
+  hErecoMinEnv->SetFillColor(10); //white, to unfill the lower area
+  hErecoMaxEnv->SetFillStyle(3244); // hatched
+  hErecoMinEnv->SetFillStyle(1001); // solid (white, to unfill the lower area)
+  hErecoMaxEnv->DrawCopy();
+  hErecoMinEnv->DrawCopy("same");
+  h_nominal->DrawCopy("same");
+
+  
   // Draw histograms
 
   TCanvas * c = new TCanvas("c","",20,20,1000,1000);
-  h_2d->Draw("colz");
-  h_up->Draw("same");
+  //h_2d->Draw("colz");
+  h_up->Draw("");
   h_down->Draw("same");
   h_nominal->SetLineColor(kYellow);
   h_nominal->Draw("same");
@@ -487,3 +562,13 @@ double rms(TH1D* h1,double avg){
   rms = rms**0.5;
   return rms;
 }
+
+TH1D * spectrum_to_per_50mev(TH1D * h) {
+  TH1D * hout = new TH1D(*h);
+  for(int ix = 1; ix <= hout->GetNbinsX(); ix++) {
+    hout->SetBinContent(ix, 0.05 * h->GetBinContent(ix) / h->GetBinWidth(ix));
+  }
+  hout->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  return hout;
+}
+

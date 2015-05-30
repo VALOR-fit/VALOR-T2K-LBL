@@ -17,111 +17,18 @@ using namespace valor::conv;
 void CalcPvalue_nuebarapp
 (
  // Mach3 - 4.5 x 10^20 POT
-
- // rate+shape (current stat), dcp toys
- TString tag = "pvalue_beta1_Mach3",
- double data = 4.15309, // # of data events
- double deltachisq_beta01_data = 1.9467, // data deltachisq 01
+ TString tag = "pvalue_beta1_Mach3_NH",
+ double data = 4.18289, // # of data events
+ double deltachisq_beta01_data = 1.93242, // data deltachisq 01
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Mach3_MargMH_4p5E20POT-3f+normbar_10kToys.root",
+ char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4p5E20POT_DEV-3f+normbar_10kToys.root",
 
-
- // 4 x 10^20 POT
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta0",
- // double data = 1.75941, // # of data events
- // double deltachisq_beta01_data = -2.04059, // data deltachisq 01
+ // // Mach3 - 4 x 10^20 POT
+ // TString tag = "pvalue_beta1_Mach3_NH",
+ // double data = 3.71812, // # of data events
+ // double deltachisq_beta01_data = 1.72185, // data deltachisq 01
  // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4E20POT-3f+normbar_10kToys.root",
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta0p5",
- // double data = 2.72552, // # of data events
- // double deltachisq_beta01_data = -0.145486, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4E20POT-3f+normbar_10kToys.root",
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta1",
- // double data = 3.69163, // # of data events
- // double deltachisq_beta01_data = 1.76424, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4E20POT-3f+normbar_10kToys.root",
- 
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta1p5",
- // double data = 4.65774, // # of data events
- // double deltachisq_beta01_data = 3.68919, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4E20POT-3f+normbar_10kToys.root",
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta2",
- // double data = 5.62385, // # of data events
- // double deltachisq_beta01_data = 5.62982, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4E20POT-3f+normbar_10kToys.root",
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta2p5",
- // double data = 6.58996, // # of data events
- // double deltachisq_beta01_data = 7.58645, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4E20POT-3f+normbar_10kToys.root",
-
-
-
-
- // 4.5 x 10^20 POT
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta0",
- // double data = 1.97934, // # of data events
- // double deltachisq_beta01_data = -2.2757, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_4900Toys.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_10kToys_2.root",
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta0p5",
- // double data = 3.06621, // # of data events
- // double deltachisq_beta01_data = -0.156778, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_4900Toys.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_10kToys_2.root",
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta1",
- // double data = 4.15309, // # of data events
- // double deltachisq_beta01_data = 1.98008, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_4900Toys.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_10kToys_2.root",
- 
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta1p5",
- // double data = 5.23996, // # of data events
- // double deltachisq_beta01_data = 4.13569, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_4900Toys.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_10kToys_2.root",
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta2",
- // double data = 6.32683, // # of data events
- // double deltachisq_beta01_data = 6.31073, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_4900Toys.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_10kToys_2.root",
-
- // // rate+shape (current stat), dcp toys
- // TString tag = "pvalue_beta2p5",
- // double data = 7.41371, // # of data events
- // double deltachisq_beta01_data = 8.50564, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_4900Toys.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT-3f+normbar_10kToys_2.root",
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4E20POT_DEV-3f+normbar_10kToys.root",
 
  )
 {
@@ -286,8 +193,8 @@ void CalcPvalue_nuebarapp
       cerr << endl;
       exit(1);
     }
-    hnevents->Fill(nevents);
-    
+
+    hnevents->Fill(nevents);    
     if(nevents<data) hnevents_data->Fill(nevents);
     
     //if(deltachisqtrue>-4) continue;

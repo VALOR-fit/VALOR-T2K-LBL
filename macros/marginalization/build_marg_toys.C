@@ -24,8 +24,10 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- //const char * tag                  = "BetaBar_4p0E20POT_Toy23dcp_Valor",
- const char * tag                  = "BetaBar_4p0E20POT_Toy_23_th13dcp_Corr_Mach3",
+ const char * tag                  = "BetaBar_Toy_23_th13dcp_Corr_Mach3_DEV",
+ //const char * tag                  = "BetaBar_FixOsc_sigmanuenumu0p03",
+ //const char * tag                  = "BetaBar_NoSyst",
+ //const char * tag                  = "PROVA",
  
  const char * config_file          = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4E20POT.xml",
@@ -39,20 +41,32 @@ void build_marg_toys
  //const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
  const char * fit_param_list        = "nuosc3f_normbar_fix12+nuisance",
  
- double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13_nh       = conv::kT2KReacBestFitSinsqTheta13_NH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23_nh       = conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_nh        = conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
- double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
- double       input_dm23sq_nh         = conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
+ // double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13_nh       = conv::kT2KReacBestFitSinsqTheta13_NH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23_nh       = conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp_nh        = conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
+ // double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
+ // double       input_dm23sq_nh         = conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
+ // double       input_mixing12_ih       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13_ih       = conv::kT2KReacBestFitSinsqTheta13_IH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23_ih       = conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp_ih        = conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, */
+ // double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
+ // double       input_dm23sq_ih         = conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}| */ 
+ // double       input_beta_bar          = -99,
 
+ double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13_nh       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23_nh       = -99, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp_nh        = -99, //-99,    /* deltacp, */
+ double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
+ double       input_dm23sq_nh         = -99, //-99,    /* |Dm^2_{23}| */
  double       input_mixing12_ih       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13_ih       = conv::kT2KReacBestFitSinsqTheta13_IH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23_ih       = conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_ih        = conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, */
+ double       input_mixing13_ih       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23_ih       = -99, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp_ih        = -99, //-99,    /* deltacp, */
  double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
- double       input_dm23sq_ih         = conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}| */
- 
+ double       input_dm23sq_ih         = -99, //-99,    /* |Dm^2_{23}| */ 
  double       input_beta_bar          = -99,
 
  // const char * freeparname0          = "mixing23Bar",  // free parameter
@@ -79,7 +93,6 @@ void build_marg_toys
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,      // marginalize Mass Hierarchy
- //const double PriorProbNH          = 0.648861, // Valor  // Prior for MH --> give the prob. of NH as input
  const double PriorProbNH          = 0.684, // Mach3 // Prior for MH --> give the prob. of NH as input
 
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
@@ -89,7 +102,6 @@ void build_marg_toys
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
- //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Valor.root" // Set to "" if no user priors are used (VALOR)
  TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR)
  //TString file_priors = "" // Set to "" if no user priors are used (VALOR)
  )
