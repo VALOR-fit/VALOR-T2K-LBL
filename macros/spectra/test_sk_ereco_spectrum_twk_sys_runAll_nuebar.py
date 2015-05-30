@@ -24,8 +24,7 @@ It will then create the .root in the current working directory
 """
     
 postfit_config  = "analysis_configuration_run1to6_test_app_4p5E20POT.xml"
-
-prefit_config  = "analysis_configuration_run1to6_test_prefit_app.xml"
+prefit_config  = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml"
 
 
 class T2KAnaError(Exception): pass

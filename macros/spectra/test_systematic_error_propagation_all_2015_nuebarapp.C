@@ -16,26 +16,27 @@ void test_systematic_error_propagation_all_2015_nuebarapp
  const char * sk_sample          = "RHC1Re",         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis         = "3f_oscbar_normbar", /* options: "2f_numu_disap", "3f_osc", "3f_oscbar, 3f_oscbar_normbar" */
 
- // double       input_mixing12     = -99,              /* */
- // double       input_mixing13     = -99,              /* */
- // double       input_mixing23     = -99,              /* */
- // double       input_deltacp      = -99,              /* */
- // double       input_dm12sq       = -99,              /* */
- // double       input_dm23sq       = -99,              /* */
- // double       input_betabar      = -99,              /* */
-
- double       input_mixing12     = 0.,              /* */
- double       input_mixing13     = 0.,              /* */
- double       input_mixing23     = 0.,              /* */
- double       input_deltacp      = 0.,              /* */
+ double       input_mixing12     = -99,              /* */
+ double       input_mixing13     = -99,              /* */
+ double       input_mixing23     = -99,              /* */
+ double       input_deltacp      = -99,              /* */
  double       input_dm12sq       = -99,              /* */
  double       input_dm23sq       = -99,              /* */
- double       input_betabar      = 0.,              /* */
+ double       input_betabar      = -99,              /* */
+
+ // double       input_mixing12     = 0.,              /* */
+ // double       input_mixing13     = 0.,              /* */
+ // double       input_mixing23     = 0.,              /* */
+ // double       input_deltacp      = 0.,              /* */
+ // double       input_dm12sq       = -99,              /* */
+ // double       input_dm23sq       = -99,              /* */
+ // double       input_betabar      = 0.,              /* */
 
  bool         save_toy_expts     = false,            /* save the ereco spectra? */
  
  //const char * config_file        = "analysis_configuration_run1to6_test_prefit_app.xml",  
- const char * config_file        = "analysis_configuration_run1to6_test_app.xml",  
+ //const char * config_file        = "analysis_configuration_run1to6_test_app.xml",  
+ const char * config_file        = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
 
  //const char * fit_param_list     = "nuosc3fbar_fixnonbar_fix5+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
@@ -46,6 +47,8 @@ void test_systematic_error_propagation_all_2015_nuebarapp
  const char * hierarchy          = "normal",
  const char * dmsqscheme          = "abs23",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
+
+ TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", // Set to "" if no user priors are used (VALOR) 
 
  int    tablesyst_idx            = -999,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
  string tablesyst_name           = "f_banff17_rhc", /* follow util::AsStringCompact() convention */
@@ -685,7 +688,7 @@ void test_systematic_error_propagation_all_2015_nuebarapp
 
 
 
-
+  
 
 
 
@@ -895,6 +898,16 @@ void test_systematic_error_propagation_all_2015_nuebarapp
   NtotParam++;
 
 } // end loop over systematics 
+
+
+
+
+
+
+
+
+
+
 
 cout << endl;
 cout << endl;

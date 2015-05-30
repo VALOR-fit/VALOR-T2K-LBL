@@ -105,33 +105,127 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_nuebar
 (
-  int          mode                     = 0,                                         /* options: see above */
+  int          mode                     = 1,                                         /* options: see above */
   bool         update_rootfile          = false,                                        /* "update" ROOT output file? If false, will "recreate" */
   const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
   const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
-  double       input_mixing12           = -99,                                         /* */
-  double       input_mixing13           = -99,                                         /* */
-  double       input_mixing23           = -99,                                         /* */
-  double       input_deltacp            = -99,                                         /* */
-  double       input_dm12sq             = -99,                                         /* */
-  double       input_dm23sq             = -99,                                         /* */
+  double       input_mixing12           = -99,                       
+  double       input_mixing13           = -999, //-999,               
+  double       input_mixing23           = -999, //-999,               
+  double       input_deltacp            = -999, //-999,               
+  double       input_dm12sq             = -99,                       
+  double       input_dm23sq             = -999, //-999,               
   double       input_betabar            = -99,
   bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
   bool         save_throws              = false,                                        /* save the thrown parameter values*/
-  //const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
-  const char * config_file              = "analysis_configuration_run1to6_test_prefit_app.xml",   /* */
+  const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
+  //const char * config_file              = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml",   /* */
   const int    nexp                     = 10000,                                          /* number of experiments to make */
   const char * dmsqscheme               = "auto",
   const char * mixparamchoice           = "sinsqtheta",
   const char * hierarchy                = "normal",
   const char * mixparamoctant           = "two",       
   bool         reject_unphysical_throws = true    ,
-  bool         use_new_definition_of_dn_over_n = true
-)
+  bool         use_new_definition_of_dn_over_n = true,
+  
+  const bool   doMargMH             = true,      // marginalize Mass Hierarchy
+  const double PriorProbNH          = 0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
+  TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR) 
+ )
 {
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+
+  // Take prior distributions
+ 
+  TH2D *hToy_th13_dcp_nh;
+  TH2D *hToy_th13_dcp_ih;
+  TH2D *hToy_23_nh;
+  TH2D *hToy_23_ih;
+  TH1D *hToy_MH = new TH1D("hToy_MH","0-->NH, 1-->IH",2,0,2);
+
+  TString name_prior_th13_dcp_nh = "hPrior_th13_dcp_nh";
+  TString name_prior_th13_dcp_ih = "hPrior_th13_dcp_ih";
+  TString name_prior_23_nh = "hPrior_L23_nh";
+  TString name_prior_23_ih = "hPrior_L23_ih";
+ 
+  TH2D *hPrior_th13_dcp_nh = 0;
+  TH2D *hPrior_23_nh = 0;
+  TH2D *hPrior_th13_dcp_ih = 0;
+  TH2D *hPrior_23_ih = 0;
+ 
+  bool UsePrior_th13_dcp = false;
+  bool UsePrior_23 = false;
+
+  if(file_priors!=""){
+
+    UsePrior_th13_dcp = true;
+    UsePrior_23 = true;
+    
+    cout << endl;
+    cout << "Take priors from: " << file_priors << endl;
+    TFile *fPrior = new TFile(file_priors.Data(),"READ");
+    if(!fPrior->IsOpen() || !fPrior){
+      cerr << endl;
+      cerr << "Error: the file " << file_priors << " is not open!" << endl;
+      cerr << endl;
+      exit(1);
+    }
+
+    hPrior_th13_dcp_nh = (TH2D*) fPrior->Get(name_prior_th13_dcp_nh.Data());        
+    if(hPrior_th13_dcp_nh->IsZombie() || !hPrior_th13_dcp_nh){
+      cerr << endl;
+      cerr << "Error: the histogram theta13 Vs deltaCP normal hierarchy is not taken!" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    hPrior_th13_dcp_ih = (TH2D*) fPrior->Get(name_prior_th13_dcp_ih.Data());       
+    if(hPrior_th13_dcp_ih->IsZombie() || !hPrior_th13_dcp_ih){
+      cerr << endl;
+      cerr << "Error: the histogram theta13 Vs deltaCP inverted hierarchy is not taken!" << endl;
+      cerr << endl;
+      exit(1);
+    }
+
+    hPrior_23_nh = (TH2D*) fPrior->Get(name_prior_23_nh.Data()); 
+    if(hPrior_23_nh->IsZombie() || !hPrior_23_nh){
+      cerr << endl;
+      cerr << "Error: the histogram par23_hist_normal is not taken!" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    hPrior_23_ih = (TH2D*) fPrior->Get(name_prior_23_ih.Data()); 
+    if(hPrior_23_ih->IsZombie() || !hPrior_23_ih){
+      cerr << endl;
+      cerr << "Error: the histogram par23_hist_inverted is not taken!" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+
+    hToy_th13_dcp_nh = (TH2D*) hPrior_th13_dcp_nh->Clone("hToy_th13_dcp_nh");
+    hToy_th13_dcp_nh->Reset();
+    hToy_th13_dcp_ih = (TH2D*) hPrior_th13_dcp_ih->Clone("hToy_th13_dcp_ih");
+    hToy_th13_dcp_ih->Reset();
+    
+    hToy_23_nh = (TH2D*) hPrior_23_nh->Clone("hToy_23_nh");
+    hToy_23_nh->Reset();
+    hToy_23_ih = (TH2D*) hPrior_23_ih->Clone("hToy_23_ih");
+    hToy_23_ih->Reset();
+    
+    // TCanvas *c0 = new TCanvas("c0","c0");
+    // hPrior_th13_dcp_nh->Draw("colz");
+    // TCanvas *c1 = new TCanvas("c1","c1");
+    // hPrior_th13_dcp_ih->Draw("colz");
+    // TCanvas *c2 = new TCanvas("c2","c2");
+    // hPrior_23_nh->Draw("colz");
+    // TCanvas *c3 = new TCanvas("c3","c3");
+    // hPrior_23_ih->Draw("colz");
+    // return;
+
+  } // if(file_priors)
+
 
   bool RHCFlag = false;
   TString str_sk_sample(sk_sample);
@@ -165,7 +259,16 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   // }
   string sample_name = util::AsStringCompact(s);
   const char * sname = sample_name.c_str();
+
+ //
+
+  TH1D* h_up = new TH1D("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_down = new TH1D("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_nominal;
+  TH2D* h_2d = new TH2D("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,10);
   
+  //
+
   //Check if the mode is valid
   string modetitle = "";
   switch(mode) {
@@ -267,6 +370,16 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   T2KOpt::Instance()->ReadXmlPath(config);
     
+
+  // Check whether some osc. params need to be randomized
+  
+  bool randomize_mixing12   = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
+  bool randomize_mixing13   = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
+  bool randomize_mixing23   = (TMath::Abs(input_mixing23 + 999) < kASmallNum);
+  bool randomize_deltacp    = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
+  bool randomize_dm12sq     = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
+  bool randomize_dm23sq     = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
+
   // Set physics hypothesis
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
@@ -424,7 +537,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   else {
     hErecoNominal->Write(Form("%s_nominalprefit",sname));
   }
-  
+
   double nominal_total_nsk = hErecoNominal->Integral();
   
   TH1D * hErecoNominal_per50MeV = spectrum_to_per_50mev(hErecoNominal);
@@ -508,12 +621,150 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
       }
 
       //non-23 oscillation parameters
-      if(mode == 11) {
-        ph.SetCurrValue(conv::kPhypMixing12,  util::RandomizeMixing12());
-        ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13());
-        ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV());
-        ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq());
-      }
+      if(mode == 11 || mode == 0) {
+	
+	double input_mixing12_used = conv::kBadResult;  
+	double input_mixing13_used = conv::kBadResult;    
+	double input_mixing23_used = conv::kBadResult;   
+	double input_deltacp_used  = conv::kBadResult; 
+	double input_dm12sq_used   = conv::kBadResult;   
+	double input_dm23sq_used   = conv::kBadResult;   
+	double input_beta_bar_used = conv::kBadResult;
+	
+	// Extract Mass Hierarchy
+	
+	conv::NuMassHierarchy_t hier;
+	conv::NuMassHierarchy_t hierBar;
+	
+	//int iMH= util::RandomizeMH(PriorProbNH); // 0 --> NH, 1 --> IH
+	
+	int iMH = conv::kBadResult;  // Index of Mass Hierarchy: 0 --> NH, 1 --> IH
+	
+	// Don't marginalize Mass Hierarchy. Only the assumed one
+	if(doMargMH == false){
+	  hier    = Opt::Instance()->gMassHierarchyAssumed;
+	  hierBar = Opt::Instance()->gMassHierarchyAssumed;
+	  //  - iMH=0 --> kNmhNormal
+	  //  - iMH=1 --> kNmhInverted	
+	  if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+	  else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+	  
+	  // Mass Hierarchy has to be defined
+	  else {
+	    cerr << endl;
+	    cerr << "Mass Hierarchy is not defined" << endl;
+	    cerr << endl;
+	    exit(1);
+	  }
+	}
+	
+	// Extract randomly the Mass Hierarchy 
+	else	  
+	  iMH = util::RandomizeMH(PriorProbNH);   // iMH = 0 --> NH, iMH = 1 --> IH
+
+	hToy_MH->Fill(iMH+conv::kASmallNum);
+
+	if( iMH==0 ){ // Normal Hierarchy
+	  
+	  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
+	  hier    = kNmhNormal;
+	  hierBar = kNmhNormal;
+	  skexp.GetSuperkMC()->SetMassHierarchy(hier);
+	  skexp.GetSuperkMC()->SetMassHierarchyBar(hierBar);
+	  
+	  // Randomize specified osc params for current toy MC expt
+	  if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
+	  if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }     
+	  
+	  if ( (randomize_dm23sq || randomize_mixing23) && UsePrior_23){
+	    double dm=0;
+	    double mix23=0;
+	    hPrior_23_nh->GetRandom2(mix23,dm);      
+	    if(randomize_mixing23) input_mixing23 = mix23;
+	    if(randomize_dm23sq)   input_dm23sq = dm;
+	  }
+	  
+	  if ( (randomize_mixing13 || randomize_deltacp) && UsePrior_th13_dcp){
+	    double mix13=0;
+	    double dcp=0;
+	    hPrior_th13_dcp_nh->GetRandom2(mix13,dcp);
+	    if(randomize_mixing13) input_mixing13 = mix13;
+	    if(randomize_deltacp)  input_deltacp = dcp;
+	  }
+	}
+	
+	else if(iMH==1){ // Inverted Hierarchy
+	  
+	  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
+	  hier    = kNmhInverted;
+	  hierBar = kNmhInverted;
+	  skexp.GetSuperkMC()->SetMassHierarchy(hier);
+	  skexp.GetSuperkMC()->SetMassHierarchyBar(hierBar);
+
+	  // Randomize specified osc params for current toy MC expt 
+	  if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
+	  if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();   }     
+	  
+	  if ( (randomize_dm23sq || randomize_mixing23) && UsePrior_23){
+	    double dm=0;
+	    double mix23=0;
+	    hPrior_23_ih->GetRandom2(mix23,dm);      
+	    if(randomize_mixing23) input_mixing23 = mix23;
+	    if(randomize_dm23sq)   input_dm23sq = dm;
+	  }
+	  
+	  if ( (randomize_mixing13 || randomize_deltacp) && UsePrior_th13_dcp){
+	    double mix13=0;
+	    double dcp=0;
+	    hPrior_th13_dcp_ih->GetRandom2(mix13,dcp);
+	    if(randomize_mixing13) input_mixing13 = mix13;
+	    if(randomize_deltacp)  input_deltacp = dcp;
+	  }
+	}
+	else{
+	  cerr << endl;
+	  cerr << "Mass Hierarchy is not defined" << endl;
+	  cerr << "iMH = " << iMH << endl;
+	  cerr << endl;
+	  exit(1);
+	}	
+	  	
+	if(ph.Hypothesis() == kHypOsc3F) {  
+	  ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+	  ph.SetCurrValue(conv::kPhypCPV,       input_deltacp);
+	  ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+	  ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+	}
+	else if(ph.Hypothesis() == kHypOsc3FBar) {
+	  ph.SetCurrValue(conv::kPhypMixing13,     input_mixing13);
+	  ph.SetCurrValue(conv::kPhypCPV,          input_deltacp);
+	  ph.SetCurrValue(conv::kPhypMixing23,     input_mixing23);
+	  ph.SetCurrValue(conv::kPhypDm23sq,       input_dm23sq);
+	  ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+	  ph.SetCurrValue(conv::kPhypCPVBar,       input_deltacp);
+	  ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+	  ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+	}
+       
+	//cout << "- Physics hypothesis set: " << ph << endl;
+
+	double mix12 = ph.CurrValue(kPhypMixing12);
+	double mix13 = ph.CurrValue(kPhypMixing13);
+	double mix23 = ph.CurrValue(kPhypMixing23);
+	double dm12 = ph.CurrValue(kPhypDm12sq);
+	double dm23 = ph.CurrValue(kPhypDm23sq);
+	double dcp = ph.CurrValue(kPhypCPV);
+	
+	if(iMH==0){
+	  hToy_th13_dcp_nh->Fill(mix13,dcp);
+	  hToy_23_nh->Fill(mix23,dm23);
+	}
+	else if(iMH==1){
+	  hToy_th13_dcp_ih->Fill(mix13,dcp);
+	  hToy_23_ih->Fill(mix23,dm23);
+	}
+  
+      } // mode 11 (osc param)
 
     }//mode<100
 
@@ -695,7 +946,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
         spectrum = skexp.CurrPredictedErecoVArray(s);
       }
     }
-
+    
     //store Nsk
     double nskint = spectrum->Integral();
     hNsk->Fill(nskint);
@@ -706,9 +957,12 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
       double nom   = hErecoNominal->GetBinContent(ibin+1);
       double N = spectrum->GetArray()[ibin];
       sumsq_per_bin[ibin] += (N-nom)*(N-nom);
+
+      h_2d->Fill(h_2d->GetXaxis()->GetBinCenter(ibin+1),N);
+
     }
-    
-    
+     
+  
     if (save_toy_expts) { delete spectrum; }
     
     //store thrown parameter values
@@ -753,6 +1007,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   }
   hNsk->Write();
 
+
+  cout << "Nominal = " << hErecoNominal->Integral() << endl;
 
   // Find min/max and calculate fractional deviation from nominal
   TH1D * hErecoMax = new TH1D(*hErecoNominal);
@@ -826,6 +1082,42 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   hErecoMin->Draw("same");
   c2->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
+
+
+  // Assume symmetric errors wrt the average (not nominal)
+
+  for(int i=1;i<=util::NumErecoBins(s);i++){
+    TH1D* h_proj = (TH1D*) h_2d->ProjectionY("",i,i);
+    double average = average(h_proj);
+    double rms = rms(h_proj,average);
+    h_up->SetBinContent(i,average+ rms);
+    h_down->SetBinContent(i,average-rms);  
+  }
+  h_up   ->Write(Form("%s_%s_up_average" ,sname,modetitle.c_str()));
+  h_down ->Write(Form("%s_%s_down_average",sname,modetitle.c_str()));
+  
+  TCanvas * c = new TCanvas("c","Wrt average");
+  //h_2d->Draw("colz");
+  h_up->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  h_up->GetYaxis()->SetTitle("Events per bin");
+  h_down->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  h_down->GetYaxis()->SetTitle("Events per bin");
+  h_up->SetLineStyle(3);
+  h_down->SetLineStyle(3);
+  h_up->SetLineColor(kRed);
+  h_down->SetLineColor(kRed);
+  h_up->SetFillColor(kRed);
+  h_down->SetFillColor(10); //white, to unfill the lower area
+  h_up->SetFillStyle(3244); // hatched
+  h_down->SetFillStyle(1001); // solid (white, to unfill the lower area)
+  h_up->Draw("");
+  h_down->Draw("same");
+  hErecoNominal->SetLineColor(kBlack);
+  hErecoNominal->Draw("same");
+
+  //
+
+
   if (save_throws) {
     TCanvas * csys = new TCanvas();
     csys->Divide(ceil(sqrt(np)),ceil(sqrt(np)));
@@ -860,6 +1152,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
     
   double dn_over_n = hNsk->GetRMS() / hNsk->GetMean();
   
+  cout << "RMS / Mean = " << dn_over_n << endl;
+
   if (use_new_definition_of_dn_over_n) {
     double sum_nsk = 0;
     for (int iexp = 0 ; iexp < nexp; iexp++) {
@@ -869,7 +1163,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
     
     double sumsq = 0;
     for (int iexp = 0 ; iexp < nexp; iexp++) {
-      cerr<<nsk_per_toy_arr[iexp]<<"\t"<<mean_nsk<<endl;
+      //cerr<<nsk_per_toy_arr[iexp]<<"\t"<<mean_nsk<<endl;
       sumsq += pow(nsk_per_toy_arr[iexp]-mean_nsk,2);
     }
     
@@ -879,6 +1173,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
     
     dn_over_n = expected_deviation/nominal_total_nsk;
     
+    cout << "Use the following:" << endl;
+    cout << "RMS / Nominal = " << dn_over_n << endl;
   }
       
   
@@ -902,6 +1198,28 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
 
   cout << "Tweaks performed in " 
        << w.CpuTime() << " sec." << endl;
+
+
+
+
+
+  // Draw histograms
+  
+  TCanvas *cToy_th13_dcp_nh = new TCanvas("cToy_th13_dcp_nh","cToy_th13_dcp_nh");
+  hToy_th13_dcp_nh->Draw("colz");
+  
+  TCanvas *cToy_th13_dcp_ih = new TCanvas("cToy_th13_dcp_ih","cToy_th13_dcp_ih");
+  hToy_th13_dcp_ih->Draw("colz");
+  
+  TCanvas *cToy_23_nh = new TCanvas("cToy_23_nh","cToy_23_nh");
+  hToy_23_nh->Draw("colz");
+  
+  TCanvas *cToy_23_ih = new TCanvas("cToy_23_ih","cToy_23_ih");
+  hToy_23_ih->Draw("colz");
+  
+  TCanvas *cToy_MH = new TCanvas("cToy_MH","cToy_MH");
+  hToy_MH->Draw();
+  
 }
 
 
@@ -917,4 +1235,35 @@ int main()
 }
 #endif
 
+
+double average(TH1D* h1){
+  double avg(0);
+  
+  for(int i=1; i<=h1->GetNbinsX();i++){
+    avg += h1->GetBinCenter(i)*h1->GetBinContent(i);
+  }
+  avg = avg/h1->GetEntries();
+  
+  return avg;
+}
+
+double rms(TH1D* h1,double avg){
+  double rms(0);
+  
+  for(int i=1; i<=h1->GetNbinsX();i++){
+    rms += ((h1->GetBinCenter(i) - avg) **2) * (h1->GetBinContent(i));
+  }
+  rms = rms/h1->GetEntries();
+  rms = rms**0.5;
+  return rms;
+}
+
+TH1D * spectrum_to_per_50mev(TH1D * h) {
+  TH1D * hout = new TH1D(*h);
+  for(int ix = 1; ix <= hout->GetNbinsX(); ix++) {
+    hout->SetBinContent(ix, 0.05 * h->GetBinContent(ix) / h->GetBinWidth(ix));
+  }
+  hout->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  return hout;
+}
 

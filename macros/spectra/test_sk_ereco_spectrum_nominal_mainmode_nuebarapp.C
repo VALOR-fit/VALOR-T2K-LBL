@@ -27,22 +27,22 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
  // double       input_dm23sq         = 0.,                          
  // double       input_betabar        = 0.,
 
- // double       input_mixing12       = -99,                         
- // double       input_mixing13       = -99,                         
- // double       input_mixing23       = -99,                         
- // double       input_deltacp        = -99,                         
- // double       input_dm12sq         = -99,                         
- // double       input_dm23sq         = -99,                       
- // double       input_betabar        = -99,
+ double       input_mixing12       = -99,                         
+ double       input_mixing13       = -99,                         
+ double       input_mixing23       = -99,                         
+ double       input_deltacp        = -99,                         
+ double       input_dm12sq         = -99,                         
+ double       input_dm23sq         = -99,                       
+ double       input_betabar        = -99,
 
- // Normal Hierarchy
- double       input_mixing12       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13       = conv::kT2KReacBestFitSinsqTheta13_NH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23       = conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp        = conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
- double       input_dm12sq         = -99,    /* Dm^2_{12},  */
- double       input_dm23sq         = conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
- double       input_betabar       = -99,
+ // // Normal Hierarchy (VALOR)
+ // double       input_mixing12       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = conv::kT2KReacBestFitSinsqTheta13_NH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
+ // double       input_dm12sq         = -99,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
+ // double       input_betabar       = -99,
 
  // // Inverted Hierarchy
  // double       input_mixing12       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -54,16 +54,17 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
  // double       input_betabar       = -99,
   
  bool         disable_banff_tuning = false,                          /* */
-
+ 
  const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",      
+ //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app.xml",      
    
  bool         print_spectrum       = false,                          /* */
- const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy           = "normal"   ,
  const char * mixparamchoice      = "sinsqtheta",
+ const char * hierarchy           = "normal"   ,
+ const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
   bool plot_per_50MeV = true
@@ -236,7 +237,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   hErecoTot_coarse->GetYaxis()->SetTitle("Number of events");
   
   
-  
+  cout << "# Tot events = " << hErecoTot->Integral() << endl;
+
   //can save this to file &/or print it
   stringstream streamer;
 
@@ -570,6 +572,10 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   c->Update();
   c->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
   hErecoTot_draw->GetXaxis()->UnZoom();
+
+  return;
+
+
 
   //draw coarse binned histograms
   TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);

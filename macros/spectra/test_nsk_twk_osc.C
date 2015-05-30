@@ -16,7 +16,7 @@ void test_nsk_twk_osc
   const char * hypothesis  = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
   const char * mixparamchoice       = "sinsqtheta",
   const char * hierarchy            = "normal",
-  const char * config_file = "analysis_configuration_run1to6_test.xml",
+  const char * config_file = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
 
   double       input_mixing12       = -99,                            /* */
   double       input_mixing13       = -99,                            /* */
@@ -28,6 +28,7 @@ void test_nsk_twk_osc
 {
   using namespace std;
   using namespace valor;
+  using namespace valor::conv;
 
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
 
