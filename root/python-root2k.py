@@ -36,8 +36,15 @@ R = ROOT
 valor = ROOT.valor
 conv = valor.conv
 util = valor.util
-Opt  = valor.Opt.Instance()
-Rnd  = valor.Rnd.Instance()
+opt    = valor.Opt.Instance()
+t2kopt = valor.T2KOpt.Instance()
+rnd    = valor.Rnd.Instance()
 arr_idx = util.ArrIdx.Instance()
+physlim = util.T2KPhysicalParameterLimits.Instance()
 
 
+# Make float formatting strings
+for n in xrange(1,9):
+  globals()["to"+`n`+"dp"] = "{0:."+`n`+"f}"
+  globals()["to"+`n`+"sf"] = "{0:."+`n-1`+"e}"
+  
