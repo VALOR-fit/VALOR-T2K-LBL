@@ -15,12 +15,12 @@ using namespace valor::conv;
 
 void generate_toymc_ensemble_joint_bar
 (
- //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT",   
- //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_1_rethrowunphysical_4p5E20POT_NoStatFluct",   
- const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_rethrowunphysical_4p5E20POT_Mach3_NoStatFluct",   
+ //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_7p8E21POT_DEV",   
+ //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_4p5E20POT_DEV",   
+ const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_4E20POT_DEV",   
  
  int          run                     = 0,                   
- double       nexperiments            = 10000,               /* number of toy-MC expts to generate */
+ double       nexperiments            = 10, //10100,               /* number of toy-MC expts to generate */
  const char * hypothesis              = "3f_osc_normbar", /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
 
  // double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -49,19 +49,18 @@ void generate_toymc_ensemble_joint_bar
  double       input_deltacp_ih        = -999,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
  double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
  double       input_dm23sq_ih         = -999,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
- double       input_beta_bar          = 0,
+ double       input_beta_bar          = 1.,
 
- const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
- //const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
+ const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",
 
  bool rethrow_if_parameters_unphysical = true,                          // rethrow unphysical toys
- bool         stat_fluctuations       = false,                           /* include statistical fluctuation in toy MC expts? */
+ bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
  
  const bool   doMargMH                = true,      // marginalize Mass Hierarchy
- //const double PriorProbNH             = 0.648861, // Valor  // Prior for MH --> give the prob. of NH as input
  const double PriorProbNH             = 0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
  
  bool         save_in_xml_format      = true,     /* also save in txt format */
@@ -81,7 +80,6 @@ void generate_toymc_ensemble_joint_bar
  const char * mixparamchoice          = "sinsqtheta",    /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant          = "two",           /* one==kNuOctantOne two==kNuOctantTwo */
 
- //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Valor.root" // Set to "" if no user priors are used (VALOR) 
  TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR) 
  )
 {
@@ -169,88 +167,6 @@ void generate_toymc_ensemble_joint_bar
   if(input_deltacp_ih < -90 && input_deltacp_ih > -900) input_deltacp_ih = conv::kGlobFitDeltaCP;
   
   if(input_beta_bar < -90 && input_beta_bar > -900) input_beta_bar = conv::kGlobFitBetaBar;
-
-
-
-
-
-
-
-
-  // // Take prior distributions
- 
-  // TString name_prior_dcp_nh = "hPrior_Ldcp_nh";
-  // TString name_prior_dcp_ih = "hPrior_Ldcp_ih";
-  // TString name_prior_23_nh = "hPrior_L23_nh";
-  // TString name_prior_23_ih = "hPrior_L23_ih";
- 
-  // TH1D *hPrior_dcp_nh = 0;
-  // TH2D *hPrior_23_nh = 0;
-  // TH1D *hPrior_dcp_ih = 0;
-  // TH2D *hPrior_23_ih = 0;
- 
-  // bool UsePrior_dcp = false;
-  // bool UsePrior_23 = false;
-
-  // if(file_priors!=""){
-
-  //   UsePrior_dcp = true;
-  //   UsePrior_23 = true;
-    
-  //   cout << endl;
-  //   cout << "Take priors from: " << file_priors << endl;
-  //   TFile *fPrior = new TFile(file_priors.Data(),"READ");
-  //   if(!fPrior->IsOpen() || !fPrior){
-  //     cerr << endl;
-  //     cerr << "Error: the file " << file_priors << " is not open!" << endl;
-  //     cerr << endl;
-  //     exit(1);
-  //   }
-
-  //   hPrior_dcp_nh = (TH1D*) fPrior->Get(name_prior_dcp_nh.Data());        
-  //   if(hPrior_dcp_nh->IsZombie() || !hPrior_dcp_nh){
-  //     cerr << endl;
-  //     cerr << "Error: the histogram deltaCP normal hierarchy is not taken!" << endl;
-  //     cerr << endl;
-  //     exit(1);
-  //   }
-  //   hPrior_dcp_ih = (TH1D*) fPrior->Get(name_prior_dcp_ih.Data());       
-  //   if(hPrior_dcp_ih->IsZombie() || !hPrior_dcp_ih){
-  //     cerr << endl;
-  //     cerr << "Error: the histogram deltaCP inverted hierarchy is not taken!" << endl;
-  //     cerr << endl;
-  //     exit(1);
-  //   }
-
-  //   hPrior_23_nh = (TH2D*) fPrior->Get(name_prior_23_nh.Data()); 
-  //   if(hPrior_23_nh->IsZombie() || !hPrior_23_nh){
-  //     cerr << endl;
-  //     cerr << "Error: the histogram par23_hist_normal is not taken!" << endl;
-  //     cerr << endl;
-  //     exit(1);
-  //   }
-  //   hPrior_23_ih = (TH2D*) fPrior->Get(name_prior_23_ih.Data()); 
-  //   if(hPrior_23_ih->IsZombie() || !hPrior_23_ih){
-  //     cerr << endl;
-  //     cerr << "Error: the histogram par23_hist_inverted is not taken!" << endl;
-  //     cerr << endl;
-  //     exit(1);
-  //   }
-
-  //   hToy_dcp_nh = (TH1D*) hPrior_dcp_nh->Clone("hToy_dcp_nh");
-  //   hToy_dcp_nh->Reset();
-  //   hToy_dcp_ih = (TH1D*) hPrior_dcp_ih->Clone("hToy_dcp_ih");
-  //   hToy_dcp_ih->Reset();
-
-  //   hToy_23_nh = (TH2D*) hPrior_23_nh->Clone("hToy_23_nh");
-  //   hToy_23_nh->Reset();
-  //   hToy_23_ih = (TH2D*) hPrior_23_ih->Clone("hToy_23_ih");
-  //   hToy_23_ih->Reset();
-        
-  // } // if(file_priors)
-
-
-
 
 
 
@@ -504,8 +420,33 @@ void generate_toymc_ensemble_joint_bar
      conv::NuMassHierarchy_t hier;
      conv::NuMassHierarchy_t hierBar;
      
-     int iMH = util::RandomizeMH(PriorProbNH); // 0 --> NH, 1 --> IH
+     //int iMH = util::RandomizeMH(PriorProbNH); // 0 --> NH, 1 --> IH
      
+     int iMH = conv::kBadResult;  // Index of Mass Hierarchy: 0 --> NH, 1 --> IH
+	
+     // Don't marginalize Mass Hierarchy. Only the assumed one
+     if(doMargMH == false){
+       hier    = Opt::Instance()->gMassHierarchyAssumed;
+       hierBar = Opt::Instance()->gMassHierarchyAssumed;
+       //  - iMH=0 --> kNmhNormal
+       //  - iMH=1 --> kNmhInverted	
+       if     ( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal   ) iMH = 0;
+       else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted ) iMH = 1; 
+       
+       // Mass Hierarchy has to be defined
+       else {
+	 cerr << endl;
+	 cerr << "Mass Hierarchy is not defined" << endl;
+	 cerr << endl;
+	 exit(1);
+       }
+     }
+     
+     // Extract randomly the Mass Hierarchy 
+     else	  
+       iMH = util::RandomizeMH(PriorProbNH);   // iMH = 0 --> NH, iMH = 1 --> IH
+     
+
      hToy_MH->Fill(iMH+conv::kASmallNum);
      
      if( iMH==0 ){ // Normal Hierarchy
@@ -666,9 +607,7 @@ void generate_toymc_ensemble_joint_bar
        
        ph.SetCurrValue(kPhypBetaBar,    input_beta_bar_used);
      }
-     
-     cout << "- Physics hypothesis set: " << ph << endl;
-     
+          
      double mix12 = ph.CurrValue(kPhypMixing12);
      double mix13 = ph.CurrValue(kPhypMixing13);
      double mix23 = ph.CurrValue(kPhypMixing23);
@@ -686,6 +625,9 @@ void generate_toymc_ensemble_joint_bar
      }
   
      //
+
+     cout << "- Physics hypothesis set: " << ph << endl;
+
 
      bool applied_negevents_condition = true;
      bool unphysical_tweak = true;
@@ -850,7 +792,6 @@ void generate_toymc_ensemble_joint_bar
      }
 #endif
      
-
      
      // If an XML file was specified, add an entry
      
