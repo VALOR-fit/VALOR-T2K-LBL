@@ -1,22 +1,22 @@
 
 void DrawPvaluesVsBetaBar_nuebar
 (
- const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_NUOSC_MH_4p5E20POT/",
- //const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_NUOSC_MH_4E20POT/",
+ //const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_4p5E20POT/",
+ const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_4E20POT/",
 
- const double Asimov = 4.15309 //3.69162
+ const double Asimov = 3.71812 //4.18289 //3.69162
 )
 {
   char name[200];
 
   const int Nfiles = 6; //7;
   TString file[Nfiles] = {
-    "pvalue_beta0.root",
-    "pvalue_beta0p5.root",
-    "pvalue_beta1.root",
-    "pvalue_beta1p5.root",
-    "pvalue_beta2.root",
-    "pvalue_beta2p5.root"
+    "pvalue_beta0_Mach3_NH.root",
+    "pvalue_beta0p5_Mach3_NH.root",
+    "pvalue_beta1_Mach3_NH.root",
+    "pvalue_beta1p5_Mach3_NH.root",
+    "pvalue_beta2_Mach3_NH.root",
+    "pvalue_beta2p5_Mach3_NH.root"
     //"pvalue_beta3.root"
   };
   

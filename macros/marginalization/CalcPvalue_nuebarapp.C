@@ -17,18 +17,12 @@ using namespace valor::conv;
 void CalcPvalue_nuebarapp
 (
  // Mach3 - 4.5 x 10^20 POT
- TString tag = "pvalue_beta1_Mach3_NH",
- double data = 4.18289, // # of data events
- double deltachisq_beta01_data = 1.93242, // data deltachisq 01
+ TString tag = "pvalue_beta2p5_Mach3_NH",
+ double data = 3.71812, //4.18289, // # of data events
+ double deltachisq_beta01_data = 1.72185, // data deltachisq 01
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4p5E20POT_DEV-3f+normbar_10kToys.root",
-
- // // Mach3 - 4 x 10^20 POT
- // TString tag = "pvalue_beta1_Mach3_NH",
- // double data = 3.71812, // # of data events
- // double deltachisq_beta01_data = 1.72185, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4E20POT_DEV-3f+normbar_10kToys.root",
+ //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4p5E20POT_DEV-3f+normbar_10kToys.root",
+ char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4E20POT_DEV-3f+normbar_10kToys.root",
 
  )
 {
