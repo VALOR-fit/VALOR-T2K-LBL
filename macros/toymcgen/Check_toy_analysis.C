@@ -9,13 +9,10 @@ void Check_toy_analysis
   
  int first_experiment  = 0, //4404, //4739,                       /* */
  int last_experiment   = 9999, //4404, //4739,                       /* */
+  
+ const char * xmlfile = "toymc/CHECKS/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_rethrowunphysical_4p5E20POT_Mach3_NoStatFluct-0.xml",
+ const char * rootfile = "../../inputs/toymc/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_4p5E20POT_DEV-0.root",
  
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_2-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT-0.xml",
-
- const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_1_rethrowunphysical_4p5E20POT_NoStatFluct-0.xml",  
- const char * rootfile = "../../inputs/toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_1_rethrowunphysical_4p5E20POT_NoStatFluct-0.root",
  const char * histoname = "mock_data_1Re_RHC_%d",
  
  bool using_xml_file = false,
@@ -32,7 +29,8 @@ void Check_toy_analysis
  const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
  //const char * config_file              = "analysis_configuration_run1to6_test_app_4E20POT.xml",
 
- const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
+ //const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
+ const char * fit_param_list        = "nuosc3f_normbar_fix12+nuisance",
 
  const char * dmsqscheme               = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
@@ -304,30 +302,30 @@ void Check_toy_analysis
 
 
 
-  // Find min/max and calculate fractional deviation from nominal
-  TH1D * hErecoMax = new TH1D(*hErecoNominal);
-  TH1D * hErecoMin = new TH1D(*hErecoNominal);
-  hErecoMax->SetDirectory(0);
-  hErecoMin->SetDirectory(0);
-  hErecoMax->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
-  hErecoMin->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
-  TH1D * hErecoMaxEnv = new TH1D(*hErecoNominal);
-  TH1D * hErecoMinEnv = new TH1D(*hErecoNominal);
-  hErecoMaxEnv->SetDirectory(0);
-  hErecoMinEnv->SetDirectory(0);
-  for(int ibin=1; ibin <= util::NumErecoBins(s); ibin++) {
-    double nom   = hErecoNominal->GetBinContent(ibin);
-    double sumsq = 0;
-    double sig = TMath::Sqrt(sumsq_per_bin[ibin-1]/nexp);
-    double min = nom-sig;
-    double max = nom+sig;
-    if(nom>0){
-      hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
-      hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
-      hErecoMaxEnv -> SetBinContent (ibin,  max);
-      hErecoMinEnv -> SetBinContent (ibin,  min);
-    }
-  }//ibin
+  // // Find min/max and calculate fractional deviation from nominal
+  // TH1D * hErecoMax = new TH1D(*hErecoNominal);
+  // TH1D * hErecoMin = new TH1D(*hErecoNominal);
+  // hErecoMax->SetDirectory(0);
+  // hErecoMin->SetDirectory(0);
+  // hErecoMax->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
+  // hErecoMin->GetYaxis()->SetTitle("Ratio of events at 1 #sigma to nominal");
+  // TH1D * hErecoMaxEnv = new TH1D(*hErecoNominal);
+  // TH1D * hErecoMinEnv = new TH1D(*hErecoNominal);
+  // hErecoMaxEnv->SetDirectory(0);
+  // hErecoMinEnv->SetDirectory(0);
+  // for(int ibin=1; ibin <= util::NumErecoBins(s); ibin++) {
+  //   double nom   = hErecoNominal->GetBinContent(ibin);
+  //   double sumsq = 0;
+  //   double sig = TMath::Sqrt(sumsq_per_bin[ibin-1]/nexp);
+  //   double min = nom-sig;
+  //   double max = nom+sig;
+  //   if(nom>0){
+  //     hErecoMax -> SetBinContent (ibin,  (max-nom)/nom);
+  //     hErecoMin -> SetBinContent (ibin,  (min-nom)/nom);
+  //     hErecoMaxEnv -> SetBinContent (ibin,  max);
+  //     hErecoMinEnv -> SetBinContent (ibin,  min);
+  //   }
+  // }//ibin
 
 
 
