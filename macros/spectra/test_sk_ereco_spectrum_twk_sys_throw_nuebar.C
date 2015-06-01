@@ -105,10 +105,11 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_nuebar
 (
-  int          mode                     = 1,                                         /* options: see above */
+  int          mode                     = 0,                                         /* options: see above */
   bool         update_rootfile          = false,                                        /* "update" ROOT output file? If false, will "recreate" */
   const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
   const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
+
   double       input_mixing12           = -99,                       
   double       input_mixing13           = -999, //-999,               
   double       input_mixing23           = -999, //-999,               
@@ -116,11 +117,12 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   double       input_dm12sq             = -99,                       
   double       input_dm23sq             = -999, //-999,               
   double       input_betabar            = -99,
+
   bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
   bool         save_throws              = false,                                        /* save the thrown parameter values*/
-  const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
-  //const char * config_file              = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml",   /* */
-  const int    nexp                     = 10000,                                          /* number of experiments to make */
+  //const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
+  const char * config_file              = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml",   /* */
+  const int    nexp                     = 10,                                          /* number of experiments to make */
   const char * dmsqscheme               = "auto",
   const char * mixparamchoice           = "sinsqtheta",
   const char * hierarchy                = "normal",
@@ -265,8 +267,16 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   TH1D* h_up = new TH1D("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_down = new TH1D("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_nominal;
-  TH2D* h_2d = new TH2D("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,10);
+  TH2D* h_2d = new TH2D("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,3);
   
+  TH1D** h_bin = new TH1D*[util::NumErecoBins(s)];
+  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
+    char name[200];
+    sprintf(name,"h_bin_%d",ibin);
+    h_bin[ibin] = new TH1D(name,name,20000,0,3);
+  }
+
+  TH1D* hErecoAverage = new TH1D("hErecoAverage","hErecoAverage",util::NumErecoBins(s),util::ErecoBinEdges(s));
   //
 
   //Check if the mode is valid
@@ -960,6 +970,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
 
       h_2d->Fill(h_2d->GetXaxis()->GetBinCenter(ibin+1),N);
 
+      h_bin[ibin]->Fill(N);
     }
      
   
@@ -1087,12 +1098,23 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   // Assume symmetric errors wrt the average (not nominal)
 
   for(int i=1;i<=util::NumErecoBins(s);i++){
-    TH1D* h_proj = (TH1D*) h_2d->ProjectionY("",i,i);
+    //TH1D* h_proj = (TH1D*) h_2d->ProjectionY("",i,i);
+    TH1D *h_proj = (TH1D*) h_bin[i-1];
     double average = average(h_proj);
     double rms = rms(h_proj,average);
     h_up->SetBinContent(i,average+ rms);
     h_down->SetBinContent(i,average-rms);  
+
+    hErecoAverage->SetBinContent(i,average);
   }
+
+  if (modetitle.find("prefit")==string::npos) {
+    hErecoAverage->Write(Form("%s_%s_average",sname,modetitle.c_str()));
+  }
+  else {
+    hErecoAverage->Write(Form("%s_%s_average",sname,modetitle.c_str()));
+  }
+
   h_up   ->Write(Form("%s_%s_up_average" ,sname,modetitle.c_str()));
   h_down ->Write(Form("%s_%s_down_average",sname,modetitle.c_str()));
   
@@ -1114,9 +1136,11 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   h_down->Draw("same");
   hErecoNominal->SetLineColor(kBlack);
   hErecoNominal->Draw("same");
+  hErecoAverage->SetLineColor(kRed);
+  hErecoAverage->SetLineWidth(2);
+  hErecoAverage->Draw("same");
 
   //
-
 
   if (save_throws) {
     TCanvas * csys = new TCanvas();

@@ -60,6 +60,9 @@ optionParser.add_option("-d","--do-marg", action="store", dest="domarg", default
 #optionParser.add_option("-z","--rethrow-unphysical-toys", action="store", dest="rethrow_toys", default=False, help="Flag to rethrow unphysical toys")
 optionParser.add_option("-u","--dnovern-new-def", action="store", dest="dnovern", default=False, help="Use new definition for dn/n")
 
+#optionParser.add_option("-z","--do-totsyst-squaresum", action="store", dest="dototsyssum", default=True, help="")
+#optionParser.add_option("-p","--do-plot-osc", action="store", dest="plotosc", default=True, help="")
+
 (opt, args) = optionParser.parse_args()
 
 make_summary = not opt.notable
@@ -139,7 +142,7 @@ elif opt.do_imp: #combinations + splines + oscparams
 
 #modes = [0,1,5,6,7,8,9]
 #modes = [0,1,5,6,7,8,9,11]
-modes = [0,1,5,6,9,11]
+modes = [0,1,5,6,7,8,9]
 
 if do_uncorrelated_xsec:
   modes.append(2)
@@ -168,13 +171,13 @@ if not do_not_run_jobs:
 
       for mode in modes:
 
-          #changing osc params doesn't affect anything if there are no oscillations
-          #if mode == 11 and osc == [0,   0,   0,   0,   0,   0]:
-          if mode == 11 and osc == [0,   0,   0,   0,   0,   0,  -99]:
-              continue
-          #if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99]:
-          if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99,  -99]:
-              continue
+          # #changing osc params doesn't affect anything if there are no oscillations
+          # #if mode == 11 and osc == [0,   0,   0,   0,   0,   0]:
+          # if mode == 11 and osc == [0,   0,   0,   0,   0,   0,  -99]:
+          #     continue
+          # #if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99]:
+          # if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99,  -99]:
+          #     continue
               
           command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_nuebar.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'")\''
 
@@ -201,6 +204,8 @@ if make_summary:
   # Eg table 6 in TN-155
   # Uses outputs from previous macro runs, but calculates 'all' values using quadrature.
   files = glob.glob("sk_ereco_spectrum_*-twk_sys_throw_*txt")
+
+  
   l = [x for x in files if "12_0.000,13_0.000,23_0.000" in x]
   if not len(l)==1:
     raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
@@ -212,7 +217,7 @@ if make_summary:
 
   col_titles = ["(no oscillations)","(oscillations with typical parameter values)"]
   col_files = [no_osc_info,osc_info]
-
+  
   out_cols = []
   
   for title,infile in zip(col_titles,col_files):
@@ -224,7 +229,7 @@ if make_summary:
         row_id = row_id.strip()
         val = val.strip().partition(" ")[0]
         input_rows[row_id] = val
-        
+
       except ValueError:
         pass
     f.close()
@@ -247,17 +252,20 @@ if make_summary:
     all_with_banff_prefit = ["SKDet_FSI","BANFFprefit"]
     
     if do_oscillation_parameters:
-      if "no oscillations" not in title:
-        all_postfit.append("Osc_param")
-        all_with_banff_prefit.append("Osc_param")
-      
+        if "no oscillations" not in title:
+          all_postfit.append("Osc_param")
+          all_with_banff_prefit.append("Osc_param")
+       
     all_prefit = [x+"prefit" for x in all_postfit]
     
     # All from quadrature
     #~ d["total_prefit"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_prefit ])) # all using the 'prefit' figures
-    d["total_prefit"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_with_banff_prefit ])) # Only BANFF prefit figures used
-    d["total_postfit"] = math.sqrt(sum([float(input_rows[x])**2 for x in all_postfit]))
-    
+    d["total_prefit_sum"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_with_banff_prefit ])) # Only BANFF prefit figures used
+    d["total_postfit_sum"] = math.sqrt(sum([float(input_rows[x])**2 for x in all_postfit]))
+    # All from from "all" distribution
+    d["total_prefit"] = float(input_rows["allprefit"])
+    d["total_postfit"] = float(input_rows["all"])
+
     try:
       d["osc"] = float(input_rows["Osc_param"])
     except KeyError:
@@ -312,6 +320,14 @@ if make_summary:
   f.write("\\\\\n")
 
   f.write(make_row(["Total (BANFF postfit)"]+[percent_2dp(d["total_postfit"]) for d in out_cols]))
+  f.write("\\\\\n\\hline\n")
+
+  f.write("\\hline\n")
+  
+  f.write(make_row(["Total (BANFF prefit sum)"]+[percent_2dp(d["total_prefit_sum"]) for d in out_cols]))
+  f.write("\\\\\n")
+
+  f.write(make_row(["Total (BANFF postfit sum)"]+[percent_2dp(d["total_postfit_sum"]) for d in out_cols]))
   f.write("\\\\\n\\hline\n")
   
   f.write("""\\end{tabular}
