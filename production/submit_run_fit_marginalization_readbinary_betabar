@@ -42,6 +42,7 @@ foreach (@ARGV) {
     elsif($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
     elsif($_ eq '--nexpts'                 ) { $nexpts                = $ARGV[$iarg+1]; }
     elsif($_ eq '--xml-file'               ) { $xml_file              = $ARGV[$iarg+1]; }
+    elsif($_ eq '--root-file'              ) { $root_file              = $ARGV[$iarg+1]; }
     elsif($_ eq '--dotoys'                 ) { $dotoys                = $ARGV[$iarg+1]; }
     
     elsif($_ eq '--dm23sq'                 ) { $dm23sq                = $ARGV[$iarg+1]; }
@@ -92,9 +93,14 @@ foreach (@ARGV) {
 $resource        = "interactive"               unless defined $resource;
 $tag             = "fitmarg_sin2th13"          unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
-$nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
+$nexpts          = 7                           unless defined $nexpts;  # number of toy experiments per job
 
-$xml_file        = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.xml" unless defined $xml_file;
+#$xml_file        = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.xml" unless defined $xml_file;
+#$root_file       = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.root" unless defined $root_file;
+$xml_file        = "../outputs/test/prova-0.xml" unless defined $xml_file;
+$root_file       = "../outputs/test/prova-0.root" unless defined $root_file;
+
+$using_xml_file  = 0                           unless defined $using_xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
 
@@ -152,8 +158,8 @@ $job_dir           = "."               unless defined $job_dir;
 $softw_dir         = $ENV{'T2KOSCANA'} unless defined $softw_dir;
 $fmwk_dir          = $ENV{'VALOR_FMWK'} unless defined $fmwk_dir;
 
-$using_xml_file = (defined $xml_file ? "true" : "false" );
-$xml_file = "" unless defined $xml_file;
+#$using_xml_file = (defined $xml_file ? "true" : "false" );
+#$xml_file = "" unless defined $xml_file;
 
 if( !defined $cput ) {
     if($resource eq "RAL"   ) { $cput = "6:00:00";  }
@@ -184,7 +190,7 @@ while($irun < $nruns) {
     
     $program = "root2k ";
     
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_betabar.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12Bar,$mix13Bar,$mix23Bar,$deltacpBar,$dm12sqBar,$dm23sqBar,$betaBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_betabar.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix12Bar,$mix13Bar,$mix23Bar,$deltacpBar,$dm12sqBar,$dm23sqBar,$betaBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
     
     $command = "$program $arguments";
     print "$command \n";

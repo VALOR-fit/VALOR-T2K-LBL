@@ -32,12 +32,17 @@ void run_fit_marginalization_readbinary_betabar
  const char * tag                      = "fitmarg_betabar_DEV",    /* tag for output file */
 
  int          first_experiment         = 0, //4404, //4739,                       /* */
- int          last_experiment          = 0, //4404, //4739,                       /* */
+ int          last_experiment          = 5, //4404, //4739,                       /* */
 
- const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p5E20POT_DEV-0.xml",
- //const char * xmlfile = "toymc/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4E20POT_DEV-0.xml",
+ //const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
+ //const char * xmlfile = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.xml",
+ const char *xmlfile = "../outputs/test/prova-0.xml",
  
- bool         dotoys                   = true,
+ const char * rootfile = "../outputs/test/prova-0.root",
+
+ bool using_xml_file = true,
+
+ bool         dotoys                   = 0,
 
  // Default
  double       input_mixing12           = -99,           
@@ -52,12 +57,13 @@ void run_fit_marginalization_readbinary_betabar
  double       input_deltacp_bar        = -99,
  double       input_dm12sq_bar         = -99,
  double       input_dm23sq_bar         = -99,
- double       input_beta_bar           = 1., //0.2,
-
- //const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
- const char * config_file              = "analysis_configuration_run1to6_test_app_4E20POT.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app_fullstat.xml",
+ double       input_beta_bar           = 1.0, //0.2,
+ 
+ const char * config_file              = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_4.5E20POT_fluxJune.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_6.5E20POT_fluxJune.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_8E20POT_fluxJune.xml",
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_9E20POT_fluxJune.xml",
  
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
@@ -76,7 +82,7 @@ void run_fit_marginalization_readbinary_betabar
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- const char * infilename = "../../inputs/marginalization/toys/nuebarapp_T2Kreact_10kToys_DEV/BetaBar_Toy_23_th13dcp_Corr_Mach3_DEV",
+ const char * infilename = "../../inputs/marginalization/toys/EPS_RELEASE/BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_10k_DEV",
 
  const int    nfiles               = 1, //401, 1        // # of files to read
 
@@ -112,6 +118,7 @@ void run_fit_marginalization_readbinary_betabar
   // Analysis configuration
   TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file));
   TString xmlfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile));
+  TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile));
 
   FileStat_t dummy;
 
@@ -490,9 +497,14 @@ void run_fit_marginalization_readbinary_betabar
     // get toy MC with/without systematics
     
     SuperkObservation * skobs_fakedata = new SuperkObservation;
-    bool using_xml_file = true;
-    if(!dotoys && using_xml_file){
-      skobs_fakedata->Read(xmlfile2.Data(),iexperiment,using_xml_file);
+    //bool using_xml_file = true;
+    if(!dotoys){
+      if(using_xml_file){
+	skobs_fakedata->Read(xmlfile2.Data(),iexperiment,using_xml_file);
+      }
+      else{
+	skobs_fakedata->Read(rootfile2.Data(),iexperiment,using_xml_file);
+      }
     }
     else{
       bool applied_negevents_condition = true;
