@@ -66,6 +66,7 @@ void test_sk_ereco_spectrum_nominal
   
   double title_size = 0.08;
   double title_offset = 0.7;
+  double label_size = 0.07;
 
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -498,7 +499,7 @@ void test_sk_ereco_spectrum_nominal
   hErecoMode_NumuBar_CCnQE->SetFillColor(kOrange+1);
   //hErecoMode_NumuBar_CCnQE->SetFillStyle(3004);
 
-  hErecoMode_Numu_CC->SetLineWidth(1);
+  hErecoMode_Numu_CC->SetLineWidth(2);
   hErecoMode_Numu_CC->SetLineStyle(1);
   //~ hErecoMode_Numu_CC->SetFillStyle(3007);
   hErecoMode_Numu_CC->SetFillStyle(1001);
@@ -540,6 +541,8 @@ void test_sk_ereco_spectrum_nominal
   
   sErecoTotFlavMode->GetXaxis()->SetTitleSize(title_size);
   sErecoTotFlavMode->GetYaxis()->SetTitleSize(title_size);
+  sErecoTotFlavMode->GetXaxis()->SetLabelSize(label_size);
+  sErecoTotFlavMode->GetYaxis()->SetLabelSize(label_size);
   
   double ymax = (force_ymax > 0 ? force_ymax : 1.1*sErecoTotFlavMode->GetMaximum());
   TH1F * drawn_frame = cErecoTotFlavMode->DrawFrame(0,0,TMath::Min(max_energy_for_plots,hErecoMode_NC->GetXaxis()->GetXmax()),ymax);

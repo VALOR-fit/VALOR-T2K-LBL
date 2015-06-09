@@ -283,9 +283,10 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     ratio_graph_prefit .Draw("a2")
     ratio_graph_postfit.Draw("2")
     
-    legend2 = ROOT.TLegend(0.75,0.73,0.93,0.94);
+    legend2 = ROOT.TLegend(0.5,0.85,0.93,0.94);
     legend2.SetFillStyle(0);
     legend2.SetBorderSize(0);
+    legend2.SetNColumns(2)
     legend2.AddEntry(ratio_graph_prefit  ,"Prefit" ,"F")
     legend2.AddEntry(ratio_graph_postfit ,"Postfit","F")
     
