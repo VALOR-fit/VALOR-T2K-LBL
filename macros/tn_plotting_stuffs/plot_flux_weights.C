@@ -24,7 +24,7 @@ void FormatHistLong(TH1D *hist, int colour, int style)
 
 void plot_flux_weights()
 {
-  TFile *weightfile = TFile::Open("../../inputs/official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root");
+  TFile *weightfile = TFile::Open("/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root");
   weightfile->cd();
   
   TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
@@ -36,7 +36,7 @@ void plot_flux_weights()
   FormatHistLong(enu_sk_tuned13a_numu_ratio, 2, 1);
   enu_sk_tuned13a_numu_ratio->Draw("hist");
 
-  c1->SaveAs("flux_ratio_13av1.1_to_13anom_numu.eps");
+  c1->SaveAs("flux_ratio_13av1p1_to_13anom_numu.eps");
 
   TCanvas *c2 = new TCanvas("c2", "c2", 800, 600);
   FormatCanvas(c2);
@@ -47,7 +47,7 @@ void plot_flux_weights()
   FormatHistLong(enu_sk_tuned13a_numub_ratio, 2, 1);
   enu_sk_tuned13a_numub_ratio->Draw("hist");
 
-  c2->SaveAs("flux_ratio_13av1.1_to_13anom_numubar.eps");
+  c2->SaveAs("flux_ratio_13av1p1_to_13anom_numubar.eps");
 
   TCanvas *c3 = new TCanvas("c3", "c3", 800, 600);
   FormatCanvas(c3);
@@ -58,7 +58,7 @@ void plot_flux_weights()
   FormatHistLong(enu_sk_tuned13a_nue_ratio, 2, 1);
   enu_sk_tuned13a_nue_ratio->Draw("hist");
 
-  c3->SaveAs("flux_ratio_13av1.1_to_13anom_nue.eps");
+  c3->SaveAs("flux_ratio_13av1p1_to_13anom_nue.eps");
 
   TCanvas *c4 = new TCanvas("c4", "c4", 800, 600);
   FormatCanvas(c4);
@@ -69,6 +69,6 @@ void plot_flux_weights()
   FormatHistLong(enu_sk_tuned13a_nueb_ratio, 2, 1);
   enu_sk_tuned13a_nueb_ratio->Draw("hist");
 
-  c4->SaveAs("flux_ratio_13av1.1_to_13anom_nuebar.eps");
+  c4->SaveAs("flux_ratio_13av1p1_to_13anom_nuebar.eps");
 
 }
