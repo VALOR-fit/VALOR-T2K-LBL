@@ -1125,9 +1125,9 @@ void generate_toymc_ensemble_joint_bar
        PhysParamList true_nuisance_params_multiring = skexp->Tweaks();
        iparm->Append(true_nuisance_params_multiring);
 #endif  
-     iparm->Write(Form("iparm_%d",iexperiment));
-     
-     delete iparm;
+       //iparm->Write(Form("iparm_%d",iexperiment));
+       
+       delete iparm;
      }
      
   }//iexperiment
@@ -1151,12 +1151,12 @@ void generate_toymc_ensemble_joint_bar
   
   // Write histograms to output file
 
-  h_0->Write();
-  h_1->Write();
-  h_2->Write();
-  h_3->Write();
-  h_4->Write();
-  h_4_Escale->Write();
+  //h_0->Write();
+  //h_1->Write();
+  //h_2->Write();
+  //h_3->Write();
+  //h_4->Write();
+  //h_4_Escale->Write();
   
   hPrior_th13_dcp_nh->Write();  
   hPrior_th13_dcp_ih->Write();  
