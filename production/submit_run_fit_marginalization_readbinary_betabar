@@ -94,9 +94,7 @@ $tag             = "fitmarg_sin2th13"          unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
 
-#$xml_file        = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT-0.xml" unless defined $xml_file;
-#$xml_file        = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4p5E20POT_2-0.xml" unless defined $xml_file;
-$xml_file        = "toymc/toymc_nuebarapp_NuOscOnly_Toy23dcp_MH_betabar_0_rethrowunphysical_4E20POT-0.xml" unless defined $xml_file;
+$xml_file        = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.xml" unless defined $xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
 
@@ -114,10 +112,7 @@ $mix12Bar        = -99                         unless defined $mix12Bar;
 $deltacpBar      = -99                         unless defined $deltacpBar;
 $betaBar         = 0                           unless defined $betaBar;
 
-#$config_file    = "analysis_configuration_run1to6_test_app_4p5E20POT.xml"  unless defined $config_file;
-$config_file    = "analysis_configuration_run1to6_test_app_4E20POT.xml"  unless defined $config_file;
-#$config_file    = "analysis_configuration_run1to6_test_app.xml"  unless defined $config_file;
-#$config_file    = "analysis_configuration_run1to6_test_app_fullstat.xml"  unless defined $config_file;
+$config_file    = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml"  unless defined $config_file;
 
 $tweak_systematics      = 1                    unless defined $tweak_systematics;
 $stat_fluct             = 1                    unless defined $stat_fluct;
@@ -132,7 +127,7 @@ $mixparamoctant         = "two"                  unless defined $mixparamoctant;
 
 #### marginalization
 
-$marg_file         = "../../inputs/marginalization/toys/nuebarapp_1D_NuOsc_T2Kreact_betabar_Toydcp23Joint_MH_10kToys/BetaBar_4p0E20POT_Toy23dcp_Valor" unless defined $marg_file;
+$marg_file         = "../../inputs/marginalization/toys/EPS_RELEASE/BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_10k_DEV" unless defined $marg_file;
 
 $nfiles_marg       = 1             unless defined $nfiles_marg;     # of marginalization files
 $nexpts_marg       = 10000         unless defined $nexpts_marg;    # of marginalization toys
