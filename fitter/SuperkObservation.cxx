@@ -165,26 +165,45 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
   }//is_xml
 
   else { // DEPRECATE?
-    assert(!"This code branch is deprecated");
-//~ #ifndef __NUEONLY__ 
-    //~ TFile f(config_file.c_str());
-    //~ TH1D * hist = 0;
-    //~ f.GetObject(Form("mock_data_%d",data_set_id),hist);
-    //~ if(!hist) {
-      //~ cerr << "Obs >> Histogram for 1Rmu does not exist!" << endl;
-    //~ }
-    //~ else {
-      //~ assert(hist->GetNbinsX() == util::NumErecoBins(kSKsFCFV1RingMuLike));
-      //~ double integral = 0;
-      //~ for(int ix = 1; ix <= hist->GetNbinsX(); ix++) {
-        //~ double nev   = hist->GetBinContent(ix);
-        //~ integral+=nev;
-        //~ fErDistrArray1Rmu->GetArray()[ix-1] = nev;
-      //~ }
-      //~ cout << "Obs >> Read: " << integral
-           //~ << " " << util::AsString(kSKsFCFV1RingMuLike) << " events." << endl;
-    //~ }
-//~ #endif
+   
+    //assert(!"This code branch is deprecated");
+
+#ifdef __NUEONLY__ 
+#ifdef __RHC_RUNNING__
+    TFile f(config_file.c_str());
+    TH1D * hist = 0;
+    f.GetObject(Form("mock_data_1Re_RHC_%d",data_set_id),hist);
+    if(!hist) {
+      cerr << "Obs >> Histogram for RHC1Re does not exist!" << endl;
+    }
+ 
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s!=kSKsRHCFCFV1RingELike) continue;
+      
+      for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
+	double nobs = hist->GetBinContent(ibin);
+	fErDistrArray[is]->GetArray()[ibin-1] = nobs;
+      }
+      cout << "Obs >> Read: " << hist->Integral()
+     	   << " " << util::AsString(s) << " events." << endl;
+    }
+#endif
+#endif
+    
+    // else {
+    //   assert(hist->GetNbinsX() == util::NumErecoBins(kSKsRHCFCFV1RingELike));
+    //   double integral = 0;
+    //   for(int ix = 1; ix <= hist->GetNbinsX(); ix++) {
+    // 	double nev   = hist->GetBinContent(ix);
+    // 	integral+=nev;
+    // 	fErDistrArray[is]->GetArray()[ix-1] = nev;
+    //   }
+    //   cout << "Obs >> Read: " << integral
+    // 	   << " " << util::AsString(kSKsRHCFCFV1RingELike) << " events." << endl;
+    // }
+    //#endif
+    
   }//!is_xml
 
   return true;
