@@ -15,13 +15,18 @@ using namespace valor::conv;
 
 void generate_toymc_ensemble_joint_bar
 (
- //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_7p8E21POT_DEV",   
+ //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_9E20POT_DEV",   
  //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_4p5E20POT_DEV",   
  const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_4E20POT_DEV",   
  
- int          run                     = 0,                   
- double       nexperiments            = 10, //10100,               /* number of toy-MC expts to generate */
+ int          run                     = 0,   
+ double       first_experiment        = 0,                
+ double       last_experiment         = 10000,                
+ //double       nexperiments            = 10000,               /* number of toy-MC expts to generate */
+ 
  const char * hypothesis              = "3f_osc_normbar", /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
+
+ bool printsystvariation              = false,
 
  // double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
  // double       input_mixing13_nh       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -51,8 +56,10 @@ void generate_toymc_ensemble_joint_bar
  double       input_dm23sq_ih         = -999,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
  double       input_beta_bar          = 1.,
 
+ const char * config_file      = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_8E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
- const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",
 
@@ -64,7 +71,8 @@ void generate_toymc_ensemble_joint_bar
  const double PriorProbNH             = 0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
  
  bool         save_in_xml_format      = true,     /* also save in txt format */
- bool         save_in_root_format     = true,                           /* */  
+ bool         save_in_root_format     = false,                           /* */ 
+ 
  const char * points_to_add_1Rmu      = 0,        /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
  const char * points_to_add_1Re       = 0,        /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
  const char * points_to_add_1Rmu_RHC  = 0,        /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
@@ -73,7 +81,7 @@ void generate_toymc_ensemble_joint_bar
  const char * points_to_add_MultiRe   = 0,        /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
  //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
  const char * xml_file_to_add         = 0,        /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
- bool         save_fluct_in_xml       = true,     /* save the values of the variations in the xml file? */
+ bool         save_fluct_in_xml       = false,     /* save the values of the variations in the xml file? */
  
  const char * dmsqscheme              = "auto",          /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy               = "normal",        /* normal or inverted */
@@ -325,6 +333,9 @@ void generate_toymc_ensemble_joint_bar
     if (points_to_add_MultiRe ) full_points_to_add_MultiRe  = new string(points_to_add_MultiRe );
   }
 
+  // Defined # of experiments
+  double nexperiments = last_experiment - first_experiment + 1; 
+  
   // Print out job summary
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
@@ -398,8 +409,9 @@ void generate_toymc_ensemble_joint_bar
   skexp->Read(config);
 
   int weird = 0;
-  for(int iexperiment=0; iexperiment < nexperiments; iexperiment++) {
-
+  for(int iexperiment=first_experiment; iexperiment <= last_experiment; iexperiment++) {
+    //for(int iexperiment=0; iexperiment < nexperiments; iexperiment++) {
+    
     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
     
     // Generate mock data
@@ -640,7 +652,7 @@ void generate_toymc_ensemble_joint_bar
          cout << "- Randomizing all systematic params in pdf..." << endl;
          skexp->TweakAllSystematics();
          //         skexp->TweakSystematic("sk_energy_scale",0.0,true);
-         skexp->PrintSystematicVariations();
+         if(printsystvariation) skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 2) {
          // special tweak, increasing numu flux parameters <700MeV by 5%
@@ -651,17 +663,17 @@ void generate_toymc_ensemble_joint_bar
          twkv[2] += 0.05;
          twkv[3] += 0.05;
          skexp->GetBANFF()->Tweak(true,&twkv);
-         skexp->PrintSystematicVariations();
+         if(printsystvariation) skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 3) {
          cout << "- Randomizing all but SK systematic params in pdf..." << endl;
          skexp->TweakAllBANFFSystematics();
          skexp->TweakAllUncorrelatedXSecSystematics();
-         skexp->PrintSystematicVariations();
+         if(printsystvariation) skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 4) {
          skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
-         skexp->PrintSystematicVariations();
+         if(printsystvariation) skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 5) {
          cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
@@ -674,22 +686,22 @@ void generate_toymc_ensemble_joint_bar
          twkv[14] += 0.15;
          twkv[15] += 0.15;
          skexp->GetBANFF()->Tweak(true,&twkv);
-         skexp->PrintSystematicVariations();
+         if(printsystvariation) skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 6) {
          cout << "- Randomizing all BANFF systematic params in pdf..." << endl;
          skexp->TweakAllBANFFSystematics();
-         skexp->PrintSystematicVariations();
+         if(printsystvariation) skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 7) {
          cout << "- Randomizing all uncorrelated cross section systematic params in pdf..." << endl;
          skexp->TweakAllUncorrelatedXSecSystematics();
-         skexp->PrintSystematicVariations();
+         if(printsystvariation) skexp->PrintSystematicVariations();
        }
        else if(tweak_systematics == 8) {
          cout << "- Randomizing all SK+FSI systematic params in pdf..." << endl;
          skexp->TweakAllSKDetectorFSISystematics();
-         skexp->PrintSystematicVariations();
+         if(printsystvariation) skexp->PrintSystematicVariations();
        }
 
        // Rethrow unphysical parameters
