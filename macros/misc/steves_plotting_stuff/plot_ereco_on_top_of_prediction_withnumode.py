@@ -34,11 +34,11 @@ text_entry_height = 0.08
 
 coarse_binning = [0.0,0.4,0.7,1.0,1.5,2.0,3.0,4.0,5.0,30]
 
-def main(file_patterns,tag="data",rebin=False,nopave=False):
+def main(file_patterns,config,tag="data",rebin=False,nopave=False):
   
   nopave = True
   
-  max_energy = 5
+  max_energy = 6
   title_size = 0.08
   label_size = 0.07
   
@@ -47,7 +47,7 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   objects_to_keep = []
   
   skexp = valor.SuperkExpectation()
-  skexp.Read(os.environ['T2KOSCANA']+"/config/analysis_configuration_2.315E20.xml")
+  skexp.Read(os.environ['T2KOSCANA']+"/config/"+config)
   
   fparm_unosc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
   fparm_unosc.SetInitValue(conv.kPhypMixing12,  0.0)
@@ -63,8 +63,9 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   n_unosc_low_energy  = unosc_spectrum.Integral()
   unosc_spectrum.GetXaxis().SetRangeUser(0.5,1.0)
   n_unosc_mid_energy  = unosc_spectrum.Integral()
-  unosc_spectrum.GetXaxis().SetRangeUser(1.0,30)
+  unosc_spectrum.GetXaxis().SetRangeUser(1.0,30.)
   n_unosc_high_energy = unosc_spectrum.Integral()
+  unosc_spectrum.GetXaxis().SetRangeUser(0.,30.)
   
   
   skobs = valor.SuperkObservation()
@@ -126,7 +127,6 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   
   skexp.Generate(fparm)
   histogram = skexp.CurrPredictedErecoSpectrum(sample)
-  histogram.SetMaximum(1.1*max(data_max,histogram.GetMaximum()))
   histogram.SetLineColor(ROOT.kRed)
   histogram.SetLineWidth(2)
   n_pred = histogram.Integral()
@@ -135,7 +135,6 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   fparm2 = valor.FitParamList(ch.best_fit_params)
   skexp.Generate(fparm2)
   histogram2 = skexp.CurrPredictedErecoSpectrum(sample)
-  histogram2.SetMaximum(1.1*max(data_max,histogram2.GetMaximum()))
   histogram2.SetLineColor(ROOT.kBlue)
   histogram2.SetLineWidth(2)
   n_pred = histogram2.Integral()
@@ -146,9 +145,17 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
     histogram2 = rebin_histogram_coarser(histogram2,coarse_binning)
     histogram2.GetXaxis().SetRangeUser(0,max_energy)
     
+  max_values = [data_max,histogram.GetMaximum(),histogram2.GetMaximum()]
+  ymax = 1.1*max(max_values)
+  data_spectrum.SetMaximum(ymax)
+  
   canvas.Clear()
   
-  legend = ROOT.TLegend(0.65,0.6,0.95,0.93)
+  if nopave:
+    legend = ROOT.TLegend(0.5,0.54,0.95,0.93)
+  else:
+    legend = ROOT.TLegend(0.65,0.6,0.95,0.93)
+    
   legend.AddEntry(data_spectrum,"Data")
   legend.AddEntry(histogram ,"Best-fit"        ,"l")
   legend.AddEntry(histogram2,"Nu-mode Best-fit","l")
@@ -181,9 +188,13 @@ def main(file_patterns,tag="data",rebin=False,nopave=False):
   data_spectrum.GetYaxis().SetTitle("Events per bin")
   
   data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
-  data_spectrum.Draw("e")
-  histogram .Draw("same")
+  framehist = make_frame(canvas,data_spectrum,0,max_energy,0,ymax)
+  framehist.Draw("AXIS")
+  data_spectrum.Draw("e same")
+  
   histogram2.Draw("same")
+  histogram .Draw("same")
+  
   legend.Draw()
   if not nopave:
     pave.Draw()
@@ -246,6 +257,23 @@ def SetRMargins(canv,needZ = False):
     canv.SetRightMargin(0.05)
   return
   
+def make_frame(canvas,h,xmin,xmax,ymin=None,ymax=None):
+  if ymin is None: ymin = h.GetMinimum()
+  if ymax is None: ymax = h.GetMaximum()
+  frame = canvas.DrawFrame(xmin,ymin,
+                           xmax,ymax)
+                           
+  for oldaxis,newaxis in [(h.GetXaxis(),frame.GetXaxis()),
+                          (h.GetYaxis(),frame.GetYaxis())]:
+    newaxis.SetTitle       (oldaxis.GetTitle())
+    newaxis.SetTitleSize   (oldaxis.GetTitleSize())
+    newaxis.SetTitleOffset (oldaxis.GetTitleOffset())
+    
+    newaxis.SetLabelSize   (oldaxis.GetLabelSize())
+    newaxis.SetLabelOffset (oldaxis.GetLabelOffset())
+    
+  return frame
+  
 
 if __name__=="__main__":
   import optparse
@@ -253,7 +281,9 @@ if __name__=="__main__":
   parser.add_option('-t', dest='tag'    ,default="data"  ,help='The filename')
   parser.add_option('-r', dest='rebin'  ,default=False,action="store_true"  ,help="Use the coarse binning")
   parser.add_option('-n', dest='nopave' ,default=False,action="store_true"  ,help="Don't draw the paves")
+  parser.add_option('-c', '--config'        , dest='config' , default="analysis_configuration.xml", help="Configuration file")
   
   options,patterns = parser.parse_args()
   
-  main(patterns, options.tag, options.rebin, options.nopave)
+  main(patterns, options.config, options.tag, options.rebin, options.nopave)
+  
