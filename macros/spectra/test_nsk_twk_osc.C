@@ -23,7 +23,7 @@ void test_nsk_twk_osc
   double       input_mixing23       = -99,                            /* */
   double       input_deltacp        = -99,                            /* */
   double       input_dm12sq         = -99,                            /* */
-  double       input_dm23sq         = -99,                            /* */
+  double       input_dm23sq         = -99                             /* */
 )
 {
   using namespace std;
