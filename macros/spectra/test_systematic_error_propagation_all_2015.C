@@ -1094,7 +1094,7 @@ fouterr->Close();
   string endrow     = " \\\\ ";
   
   int ncol1   = 80;
-  int ncolnev = 15;
+  int ncolnev = 10;
   int ncolfrc =  8;
 
   if(tablesyst_idx==-999){  // full table merged modes, all systematics
@@ -1118,10 +1118,10 @@ fouterr->Close();
     streamer << "\\begin{table}"   << endl;
     streamer << "\\tiny" << endl;
     streamer << "\\center" << endl;
-    streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
+    streamer << "\\begin{tabular}{| l | r | r  r | r  r |}" << endl;
     streamer << "\\hline \\hline" << endl;
     streamer << "{\\bf Parameter} &  "
-             << "{\\bf Nominal}   &  "
+             //~ << "{\\bf Nominal}   &  "
              << "{\\bf BANFF tuned} &  "
              << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
              << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
@@ -1139,17 +1139,17 @@ fouterr->Close();
     streamer   << setw(ncol1)  << setfill(' ')
                << "All syst"
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+               << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot
+               //~ << setw(ncolnev)  << setfill(' ') << setprecision(3) << tot
+               //~ << endcolumn
+               << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << tot_all_p
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot_all_p
+               << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_all_p << pctsymbol
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_p << pctsymbol
+               << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << tot_all_m
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_all_m
-               << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_m << pctsymbol
+               << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_all_m << pctsymbol
                << endrow
                << endl; 
     streamer << "\\hline" << endl;    
@@ -1174,17 +1174,17 @@ fouterr->Close();
       streamer   << setw(ncol1)  << setfill(' ')
                  << util::AsStringPaperTex(util::PhysParamIdFromString(sysstr))
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
                  << endcolumn
-                 << tot
+                 << setw(ncolnev)  << setfill(' ') << fixed << tot
                  << endcolumn
-                 << tot_p1 
+                 //~ << tot_p1 
+                 //~ << endcolumn
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_p1 << pctsymbol
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p1 << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << tot_m1
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m1
-                 << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m1 << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_m1 << pctsymbol
                  << endrow
                  << endl; 
       
@@ -1263,10 +1263,10 @@ fouterr->Close();
       streamer << "\\begin{table}"   << endl;
       streamer << "\\tiny" << endl;
       streamer << "\\center" << endl;
-      streamer << "\\begin{tabular}{| l | r | r | r  r | r  r |}" << endl;
+      streamer << "\\begin{tabular}{| l | r | r  r | r  r |}" << endl;
       streamer << "\\hline \\hline" << endl;
       streamer << "{\\bf Component} &  "
-               << "{\\bf Nominal}   &  "
+               //~ << "{\\bf Nominal}   &  "
                << "{\\bf BANFF tuned} &  "
                << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
                << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } \\\\"
@@ -1289,20 +1289,20 @@ fouterr->Close();
         streamer << setw(ncol1)  << setfill(' ')
                  << util::AsStringTex(m)
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
                  << endcolumn
                  << tot
                  << endcolumn
-                 << tot_p1 
+                 //~ << tot_p1 
+                 //~ << endcolumn
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_p1 << pctsymbol
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p1 << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << tot_m1
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m1
-                 << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m1 << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_m1 << pctsymbol
                  << endrow
                  << endl; 
-
+                 
         if(modestr=="numuncoth" ||
            modestr=="numubarncoth" ||
            modestr=="nuencoth" ||
