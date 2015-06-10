@@ -22,12 +22,6 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_throw_runAll.py [--all] (you
 [if the --all option is set, will run systematics individually also, on top of the normal 5 groups]
 It will then create the .root in the current working directory
 """
-    
-postfit_config  = "analysis_configuration_2.315E20.xml"
-#~ postfit_config  = "analysis_configuration.xml"
-
-prefit_config  = "analysis_configuration_2.315E20_prefit.xml"
-#~ prefit_config  = "analysis_configuration_prefit.xml"
 
 table_fn = "nsk_systematic_table_summary.tex"
 
@@ -53,8 +47,13 @@ optionParser.add_option("--skip-postfit", action="store_true", dest="skip_postfi
 optionParser.add_option("--skip-osc"  , action="store_true", dest="skip_osc"  , default=False, help="If don't want to run oscillated jobs")
 optionParser.add_option("--skip-unosc", action="store_true", dest="skip_unosc", default=False, help="If don't want to run unoscillated jobs")
 optionParser.add_option("--clear", action="store_true", dest="clear", default=False, help="Get rid of output of other jobs first.")
+optionParser.add_option('-c', '--config'        , dest='config'  , default="analysis_configuration_4.011E20.xml", help="Postfit configuration file")
+optionParser.add_option('-p', '--prefit-config' , dest='pconfig' , default="analysis_configuration_4.011E20_prefit.xml", help="Prefit configuration file")
 
 (opt, args) = optionParser.parse_args()
+
+postfit_config = args.config
+prefit_config  = args.pconfig
 
 make_summary = not opt.notable
 nexp = opt.nexp
