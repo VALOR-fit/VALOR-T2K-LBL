@@ -1045,7 +1045,7 @@ void make_toygrid_toys_joint
 	  double bestfit_chisq = -999.;
 	  fitter->SetTol(tolerance);
     
-	  if (fparm->GetNumberFreeParameters()) {
+	  if (fparm1->GetNumberFreeParameters()) {
 	    fitter->DoTheFit();
 	    fitstatus1 = fitter->FitStatusCode("migrad_min");
 	    fitstatus_err1 = fitter->FitStatusCode("hesse_err");     
@@ -1058,6 +1058,8 @@ void make_toygrid_toys_joint
 	    fparm->SetBestFitStatistic(bestfit_chisq);
 	    fparm1->CopyCurrToBestFitValues();
 	    fparm1->SetBestFitStatistic(bestfit_chisq);
+	    fitstatus = fitstatus1 = 0;
+	    fparm1->SetStatusCode("migrad_min",fitstatus);
 	  }
 	  chisq1 = bestfit_chisq;
 	  double bestfit_chisq2 = 9999.;
@@ -1104,11 +1106,13 @@ void make_toygrid_toys_joint
 	      bestfit_chisq2 = fparm2->GetBestFitStatistic();
 	    }
 	    else {
-        fit_inputs2->UpdateParamList(fparm2);
+	      fit_inputs2->UpdateParamList(fparm2);
 	      skexp->Generate(*fparm2);
-        fparm2->CopyCurrToBestFitValues();
+	      fparm2->CopyCurrToBestFitValues();
 	      bestfit_chisq2 = skobs->Statistic(skexp);
-        fparm2->SetBestFitStatistic(bestfit_chisq2);
+	      fparm2->SetBestFitStatistic(bestfit_chisq2);
+	      fitstatus2 = 0;
+	      fparm2->SetStatusCode("migrad_min",fitstatus2);
 	    }
 	    
 	    chisq2 = bestfit_chisq2;
