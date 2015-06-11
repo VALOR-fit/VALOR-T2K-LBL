@@ -45,7 +45,8 @@ void draw_sensitivity_plots_toys(
   
   string img_format(".eps");
 
-  const char * filename_nh = Form("%s.root",name_nh);
+  string filename_nh_s(Form("%s.root",name_nh));
+  const char * const filename_nh = filename_nh_s.c_str();
   FitParamList * fparm_nh = 0;
   PhysParamList * iparm_nh = new PhysParamList;
   int nbins_param1_nh, nbins_param2_nh;
@@ -55,7 +56,8 @@ void draw_sensitivity_plots_toys(
   string *parname1_nh=new string();
   string *parname2_nh=new string();
 
-  const char * filename_ih = Form("%s.root",name_ih);
+  string filename_ih_s(Form("%s.root",name_ih));
+  const char * const filename_ih = filename_ih_s.c_str();
   FitParamList * fparm_ih = 0;
   PhysParamList * iparm_ih = new PhysParamList;
   int nbins_param1_ih, nbins_param2_ih;
@@ -84,8 +86,7 @@ void draw_sensitivity_plots_toys(
   cout << endl;
   cout << "Read file: " << filename_nh << endl;
   cout << endl;
-
-  const char * filename_nh = Form("%s.root",name_nh);
+  
   TChain ch_nh("fitnt");
 
   if(ChangeOrder_nh){
@@ -611,8 +612,7 @@ void draw_sensitivity_plots_toys(
   cout << endl;
   cout << "Read file: " << filename_ih << endl;
   cout << endl;
-
-  const char * filename_ih = Form("%s.root",name_ih);
+  
   TChain ch_ih("fitnt");
 
   if(ChangeOrder_ih){
