@@ -17,9 +17,8 @@ using namespace valor::conv;
 
 void Check_toys_marginalization_readbinary
 (
- //const char * config_file              = "analysis_configuration_run1to6_test_app.xml",
- const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
-
+ const char * config_file              = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
+ 
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
  //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
@@ -48,12 +47,13 @@ void Check_toys_marginalization_readbinary
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename = "../../inputs/marginalization/toys/nuebarapp_T2Kreact_10kToys_DEV/BetaBar_Toy_23_th13dcp_Corr_Mach3_DEV",
-
+ //const char * infilename = "../../inputs/marginalization/toys/EPS_RELEASE/BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_50k_DEV",
+ const char * infilename = "../../inputs/marginalization/toys/EPS_RELEASE/BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_10k_DEV",
+ 
  //const int    nfiles               = 201,         // # of files to read
  const int    nfiles               = 1,         // # of files to read
 
- const int    NtoysMarg            = 10000,   // # toys marginalization 
+ const int    NtoysMarg            = 50000,   // # toys marginalization 
  
  const char * freeparname0        = "betaBar",  // free parameter
  const double freeparmin0         = 0.,         // minimum value of free parameter

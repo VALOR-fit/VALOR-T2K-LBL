@@ -32,13 +32,14 @@ void run_fit_marginalization_readbinary_betabar
  const char * tag                      = "fitmarg_betabar_DEV",    /* tag for output file */
 
  int          first_experiment         = 0, //4404, //4739,                       /* */
- int          last_experiment          = 5, //4404, //4739,                       /* */
+ int          last_experiment          = 0, //4404, //4739,                       /* */
 
- //const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
- //const char * xmlfile = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.xml",
- const char *xmlfile = "../outputs/test/prova-0.xml",
+ const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
+ //const char * xmlfile = "toymc/EPS_RELEASE_DEV_3/toymc_nuebar_beta0_toy_0_10000-0.xml",
  
- const char * rootfile = "../outputs/test/prova-0.root",
+ //const char * rootfile = "toymc/EPS_RELEASE_DEV_3/toymc_nuebar_beta0_8E20POT_50k.root",
+ const char * rootfile = "toymc/EPS_RELEASE_DEV_3/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV_50kToys-0.root",
+ //const char * rootfile = "toymc/EPS_RELEASE_DEV_unique/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_8E20POT_DEV_Toy_50k-0.root",
 
  bool using_xml_file = true,
 
@@ -57,7 +58,7 @@ void run_fit_marginalization_readbinary_betabar
  double       input_deltacp_bar        = -99,
  double       input_dm12sq_bar         = -99,
  double       input_dm23sq_bar         = -99,
- double       input_beta_bar           = 1.0, //0.2,
+ double       input_beta_bar           = 1., //0.2,
  
  const char * config_file              = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
  //const char * config_file              = "analysis_configuration_run1to6_test_app_4.5E20POT_fluxJune.xml",

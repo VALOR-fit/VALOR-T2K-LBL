@@ -24,15 +24,16 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "BetaBar_Toy_23_th13dcp_Corr_Mach3_DEV",
+ const char * tag                  = "BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_10k_DEV",
  //const char * tag                  = "BetaBar_FixOsc_sigmanuenumu0p03",
  //const char * tag                  = "BetaBar_NoSyst",
  //const char * tag                  = "PROVA",
  
- const char * config_file          = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
+ 
+ const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
+ //const char * config_file          = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4E20POT.xml",
- //const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
-
+ 
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
@@ -89,7 +90,7 @@ void build_marg_toys
  const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
  const int    NptScan1              = 1,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 10000,   // # toys marginalization 
+ const int    NtoysMarg            = 50000,   // # toys marginalization 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,      // marginalize Mass Hierarchy
@@ -102,7 +103,7 @@ void build_marg_toys
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
- TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR)
+ TString file_priors = "../../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR)
  //TString file_priors = "" // Set to "" if no user priors are used (VALOR)
  )
 {  

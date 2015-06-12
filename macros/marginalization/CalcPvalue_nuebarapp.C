@@ -16,14 +16,65 @@ using namespace valor::conv;
 
 void CalcPvalue_nuebarapp
 (
- // Mach3 - 4.5 x 10^20 POT
- TString tag = "pvalue_beta2p5_Mach3_NH",
- double data = 3.71812, //4.18289, // # of data events
- double deltachisq_beta01_data = 1.72185, // data deltachisq 01
- double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4p5E20POT_DEV-3f+normbar_10kToys.root",
- char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4E20POT_DEV-3f+normbar_10kToys.root",
+ // // Mach3 - 8 x 10^20 POT (beta=1) 
+ // TString tag = "pvalue_beta1_Mach3_NH",
+ // double data = 7.43693, // # of data events
+ // double deltachisq_beta01_data = 3.37795, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_8E20POT_EPS-3f+normbar_50kToys.root",
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_0_8E20POT_EPS-3f+normbar_50kToys_unique.root",
 
+ // // Mach3 - 4.0108 x 10^20 POT (beta=1) --> DATA
+ // TString tag = "pvalue_beta1_Mach3_NH",
+ // double data = 3., // # of data events
+ // double deltachisq_beta01_data = 0.164213, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_1_4.0108E20POT_EPS-3f+normbar_50kToys.root",
+
+ // Mach3 - 4.0108 x 10^20 POT (beta=1)
+ TString tag = "pvalue_beta1_Mach3_NH",
+ double data = 3.7285, // # of data events
+ double deltachisq_beta01_data = 1.72794, // data deltachisq 01
+ double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+ char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
+ 
+ // // Mach3 - 4.0108 x 10^20 POT (beta=0)
+ // TString tag = "pvalue_beta0_Mach3_NH",
+ // double data = 1.76704, // # of data events
+ // double deltachisq_beta01_data = -2.07772, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+
+ // // Mach3 - 4.0108 x 10^20 POT (beta=0.5)
+ // TString tag = "pvalue_beta0p5_Mach3_NH",
+ // double data = 2.74777, // # of data events
+ // double deltachisq_beta01_data = -0.186098, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+
+ // // Mach3 - 4.0108 x 10^20 POT (beta=1.5)
+ // TString tag = "pvalue_beta1p5_Mach3_NH",
+ // double data = 4.70924, // # of data events
+ // double deltachisq_beta01_data = 3.66517, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+
+ // // Mach3 - 4.0108 x 10^20 POT (beta=2.0)
+ // TString tag = "pvalue_beta2_Mach3_NH",
+ // double data = 5.68997, // # of data events
+ // double deltachisq_beta01_data = 5.62626, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+
+ // // Mach3 - 4.0108 x 10^20 POT (beta=2.5)
+ // TString tag = "pvalue_beta2p5_Mach3_NH",
+ // double data = 6.6707, // # of data events
+ // double deltachisq_beta01_data = 7.61176, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+ 
  )
 {
 
@@ -175,8 +226,9 @@ void CalcPvalue_nuebarapp
   // loop over the tree  
   
   int Nentries = treein->GetEntries();
+  //Nentries = 10000;
   for(int ientry=0;ientry<Nentries;ientry++){
-
+  
     treein->GetEntry(ientry);
 
     double nevents = (double)hErecoToy->Integral();    
@@ -251,9 +303,13 @@ void CalcPvalue_nuebarapp
 
   double Ntoys = (double)Nentries;
   
-  double pvalue_evt = GetPvalue(vec_evt_toys,Ntoys,data);
-  double pvalue_01 = GetPvalue(vec_chisq_01,Ntoys,deltachisq_beta01_data);
-  double pvalue_0BF = GetPvalue(vec_chisq_0BF,Ntoys,deltachisq_beta0BF_data);
+  double pvalue_evt_right = GetPvalue_rightside(vec_evt_toys,Ntoys,data);
+  double pvalue_01_right = GetPvalue_rightside(vec_chisq_01,Ntoys,deltachisq_beta01_data);
+  double pvalue_0BF_right = GetPvalue_rightside(vec_chisq_0BF,Ntoys,deltachisq_beta0BF_data);
+
+  double pvalue_evt_left = GetPvalue_leftside(vec_evt_toys,Ntoys,data);
+  double pvalue_01_left = GetPvalue_leftside(vec_chisq_01,Ntoys,deltachisq_beta01_data);
+  double pvalue_0BF_left = GetPvalue_leftside(vec_chisq_0BF,Ntoys,deltachisq_beta0BF_data);
 
  
   // Draw histograms
@@ -355,7 +411,7 @@ void CalcPvalue_nuebarapp
   sprintf(name,"#Delta #chi^{2}_{data} = %1.3f",deltachisq_beta01_data); 
   lPvalue_01->AddEntry(ldeltachisqDiff01,name,"l");
   lPvalue_01->Draw();
-
+  
   TCanvas *cPvalue_evt = new TCanvas("cPvalue_evt","cPvalue_evt");
   cPvalue_evt->SetLogy();
   hnevents->SetLineWidth(2);
@@ -388,12 +444,18 @@ void CalcPvalue_nuebarapp
   hdeltachisq_beta01->SetBinContent(1,deltachisq_beta01_data);
   TH1D *hdeltachisq_beta0BF = new TH1D("hdeltachisq_beta0BF","hdeltachisq_beta0BF",1,0,1);
   hdeltachisq_beta0BF->SetBinContent(1,deltachisq_beta0BF_data);
-  TH1D *hpvalue_rateonly = new TH1D("hpvalue_rateonly","hpvalue_rateonly",1,0,1);
-  hpvalue_rateonly->SetBinContent(1,pvalue_evt);
-  TH1D *hpvalue_rateshape01 = new TH1D("hpvalue_rateshape01","hpvalue_rateshape01",1,0,1);
-  hpvalue_rateshape01->SetBinContent(1,pvalue_01);
-  TH1D *hpvalue_rateshape0BF = new TH1D("hpvalue_rateshape0BF","hpvalue_rateshape0BF",1,0,1);
-  hpvalue_rateshape0BF->SetBinContent(1,pvalue_0BF);
+  TH1D *hpvalue_rateonly_right = new TH1D("hpvalue_rateonly_right","hpvalue_rateonly_right",1,0,1);
+  hpvalue_rateonly_right->SetBinContent(1,pvalue_evt_right);
+  TH1D *hpvalue_rateshape01_right = new TH1D("hpvalue_rateshape01_right","hpvalue_rateshape01_right",1,0,1);
+  hpvalue_rateshape01_right->SetBinContent(1,pvalue_01_right);
+  TH1D *hpvalue_rateshape0BF_right = new TH1D("hpvalue_rateshape0BF_right","hpvalue_rateshape0BF_right",1,0,1);
+  hpvalue_rateshape0BF_right->SetBinContent(1,pvalue_0BF_right);
+  TH1D *hpvalue_rateonly_left = new TH1D("hpvalue_rateonly_left","hpvalue_rateonly_left",1,0,1);
+  hpvalue_rateonly_left->SetBinContent(1,pvalue_evt_left);
+  TH1D *hpvalue_rateshape01_left = new TH1D("hpvalue_rateshape01_left","hpvalue_rateshape01_left",1,0,1);
+  hpvalue_rateshape01_left->SetBinContent(1,pvalue_01_left);
+  TH1D *hpvalue_rateshape0BF_left = new TH1D("hpvalue_rateshape0BF_left","hpvalue_rateshape0BF_left",1,0,1);
+  hpvalue_rateshape0BF_left->SetBinContent(1,pvalue_0BF_left);
 
   char outname[200];
   sprintf(outname,"%s.root",tag.Data());
@@ -401,9 +463,12 @@ void CalcPvalue_nuebarapp
   hNdata->Write();
   hdeltachisq_beta01->Write();
   hdeltachisq_beta0BF->Write();
-  hpvalue_rateonly->Write();
-  hpvalue_rateshape01->Write();
-  hpvalue_rateshape0BF->Write();
+  hpvalue_rateonly_right->Write();
+  hpvalue_rateshape01_right->Write();
+  hpvalue_rateshape0BF_right->Write();
+  hpvalue_rateonly_left->Write();
+  hpvalue_rateshape01_left->Write();
+  hpvalue_rateshape0BF_left->Write();
   outfile->Close();
 
   // Print results
@@ -413,18 +478,27 @@ void CalcPvalue_nuebarapp
   cout << "truepar0 = " << truepar0 << endl;
   if(IsFit2D) cout << "truepar1 = " << truepar1 << endl;
   cout << endl;
-  cout << "Calculate p-values:" << endl;
-  cout << "p-value rate-only (# evt) = " << pvalue_evt << endl;
-  cout << "p-value 01 (rate+shape) = " << pvalue_01 << endl;
-  cout << "p-value 0BF (rate+shape) = " << pvalue_0BF << endl;
+  cout << "Calculate right sided p-values:" << endl;
+  cout << "p-value rate-only (# evt) = " << pvalue_evt_right << endl;
+  cout << "p-value 01 (rate+shape) = " << pvalue_01_right << endl;
+  cout << "p-value 0BF (rate+shape) = " << pvalue_0BF_right << endl;
   cout << endl;
+  cout << "Calculate left sided p-values:" << endl;
+  cout << "p-value rate-only (# evt) = " << pvalue_evt_left << endl;
+  cout << "p-value 01 (rate+shape) = " << pvalue_01_left << endl;
+  cout << "p-value 0BF (rate+shape) = " << pvalue_0BF_left << endl;
+  cout << endl;
+  cout << "Mean deltachisq01 = " << hdeltachisqDiff01->GetMean() << endl;
+  cout << "RMS deltachisq01 = " << hdeltachisqDiff01->GetRMS() << endl;
+  cout << "Mean hnevents = " << hnevents->GetMean() << endl;
+  cout << "RMS hnevents = " << hnevents->GetRMS() << endl;
 
   return;
 }
 
 
 
-double GetPvalue(vector<double> vec_toys,int ntoys,double data){
+double GetPvalue_rightside(vector<double> vec_toys,int ntoys,double data){
   double ntot_toys = ntoys;
   if(ntot_toys != vec_toys.size()){    
     cout << endl;
@@ -441,9 +515,49 @@ double GetPvalue(vector<double> vec_toys,int ntoys,double data){
     cerr << endl;
     exit(1);
   }
+
+  cout << "Total number of toys stored in vector = " << vec_toys.size() << endl; 
+  cout << "Input total number of toys = " << ntot_toys << endl; 
+  ntot_toys = vec_toys.size();
+  cout << "Set total number of toys to vector size: " << ntot_toys << endl;
+  cout << endl;
+
   double nfrac=0;
   for (std::vector<double>::iterator it=vec_toys.begin(); it!=vec_toys.end(); ++it){
     if(*it >= data) nfrac += 1.; // If toy=data include the entry in the pvalue integral range 
+  }
+  double pvalue =  nfrac / (double)ntot_toys;
+
+  return pvalue;
+}
+
+double GetPvalue_leftside(vector<double> vec_toys,int ntoys,double data){
+  double ntot_toys = ntoys;
+  if(ntot_toys != vec_toys.size()){    
+    cout << endl;
+    cout << "Warning:" << endl;
+    cout << "Total number of toys stored in vector = " << vec_toys.size() << endl; 
+    cout << "Input total number of toys = " << ntot_toys << endl; 
+    ntot_toys = vec_toys.size();
+    cout << "Set total number of toys to vector size: " << ntot_toys << endl;
+    cout << endl;
+  }
+  if(ntot_toys<=0.){
+    cerr << endl;
+    cerr << "ntot_toys = " << ntot_toys << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  cout << "Total number of toys stored in vector = " << vec_toys.size() << endl; 
+  cout << "Input total number of toys = " << ntot_toys << endl; 
+  ntot_toys = vec_toys.size();
+  cout << "Set total number of toys to vector size: " << ntot_toys << endl;
+  cout << endl;
+
+  double nfrac=0;
+  for (std::vector<double>::iterator it=vec_toys.begin(); it!=vec_toys.end(); ++it){
+    if(*it <= data) nfrac += 1.; // If toy=data include the entry in the pvalue integral range 
   }
   double pvalue =  nfrac / (double)ntot_toys;
 

@@ -1,10 +1,9 @@
 
 void DrawPvaluesVsBetaBar_nuebar
 (
- //const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_4p5E20POT/",
- const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_4E20POT/",
+ const char *path = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/outputs/test/PVALUES_NUEBAR_EPS_RELEASE/",
 
- const double Asimov = 3.71812 //4.18289 //3.69162
+ const double Asimov = 3.7285
 )
 {
   char name[200];
