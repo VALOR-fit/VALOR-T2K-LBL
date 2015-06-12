@@ -55,12 +55,17 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   
  bool         disable_banff_tuning = false,                          /* */
  
- const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",      
+ const char * config_file      = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",      
+ //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app_4.0108E20POT_fluxJune.xml",      
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",      
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml",      
+ //const char * config_file     = "analysis_configuration_run1to6_test_prefit_app_4E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app.xml",      
    
+ bool         store_spectrum     = true,
  bool         print_spectrum       = false,                          /* */
  const char * mixparamchoice      = "sinsqtheta",
  const char * hierarchy           = "normal"   ,
@@ -389,7 +394,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   hErecoMode_NumuToNue->GetYaxis()->SetTitle("Events per 0.050 GeV");
   hErecoMode_NumuBarToNueBar->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoMode_NumuBarToNueBar->GetYaxis()->SetTitle("Events per 0.050 GeV");
-
+  
   THStack *sErecoTotFlavMode = new THStack("sErecoTotFlavMode","sErecoTotFlavMode");
   sErecoTotFlavMode->Add(hErecoMode_NC);
   sErecoTotFlavMode->Add(hErecoMode_BkgOther);
@@ -401,8 +406,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   sErecoTotFlavMode->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   sErecoTotFlavMode->GetYaxis()->SetTitle("Events per 0.050 GeV");
   cErecoTotFlavMode->Modified();
-
   gStyle->SetOptStat(0);
+
   TLegend *leg = new TLegend(0.6, 0.4, 0.9, 0.9);
   leg->SetFillColor(0);
   leg->SetBorderSize(0);
@@ -413,7 +418,57 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   leg->AddEntry(hErecoMode_BkgOther,"Bkg other","F");
   leg->Draw();
 
+  cout << "Tot = " << hErecoTot->Integral() << endl;
+  cout << "Tot 2 = " 
+       << hErecoMode_NumuBarToNueBar->Integral() + 
+    hErecoMode_NC->Integral() + 
+    hErecoMode_BkgOther->Integral() + 
+    hErecoMode_NumuToNue->Integral()
+       << endl; 
+  cout << "hErecoMode_NumuBarToNueBar = " << hErecoMode_NumuBarToNueBar->Integral() << endl; 
+  cout << "hErecoMode_NC = " << hErecoMode_NC->Integral() << endl; 
+  cout << "hErecoMode_BkgOther = " << hErecoMode_BkgOther->Integral() << endl; 
+  cout << "hErecoMode_NumuToNue = " << hErecoMode_NumuToNue->Integral() << endl;
+  //return;
 
+
+
+  TCanvas *cErecoTotFlavMode_norm = new TCanvas("cErecoTotFlavMode_norm","cErecoTotFlavMode_norm");
+  hErecoMode_NC_norm = (TH1D*) hErecoMode_NC->Clone("hErecoMode_NC_norm");
+  hErecoMode_NC_norm->Scale(1./hErecoMode_NC->Integral());
+  hErecoMode_NC_norm->SetFillColor(0);
+  hErecoMode_NC_norm->SetLineColor(kRed);
+
+  hErecoMode_BkgOther_norm = (TH1D*) hErecoMode_BkgOther->Clone("hErecoMode_BkgOther_norm");
+  hErecoMode_BkgOther_norm->Scale(1./hErecoMode_BkgOther->Integral());
+  hErecoMode_BkgOther_norm->SetFillColor(0);
+  hErecoMode_BkgOther_norm->SetLineColor(kBlue);
+
+  hErecoMode_NumuToNue_norm = (TH1D*) hErecoMode_NumuToNue->Clone("hErecoMode_NumuToNue_norm");
+  hErecoMode_NumuToNue_norm->Scale(1./hErecoMode_NumuToNue_norm->Integral());
+  hErecoMode_NumuToNue_norm->SetFillColor(0);
+  hErecoMode_NumuToNue_norm->SetLineColor(kGray+3);
+
+  hErecoMode_NumuBarToNueBar_norm = (TH1D*) hErecoMode_NumuBarToNueBar->Clone("hErecoMode_NumuBarToNueBar_norm");
+  hErecoMode_NumuBarToNueBar_norm->Scale(1./hErecoMode_NumuBarToNueBar->Integral());
+  hErecoMode_NumuBarToNueBar_norm->SetFillColor(0);
+  hErecoMode_NumuBarToNueBar_norm->SetLineColor(kGreen);
+  
+  hErecoMode_NumuBarToNueBar_norm->DrawCopy("");
+  hErecoMode_BkgOther_norm->DrawCopy("same");
+  hErecoMode_NC_norm->DrawCopy("same");
+  hErecoMode_NumuToNue_norm->DrawCopy("same");
+  
+  TLegend *leg_norm = new TLegend(0.6, 0.4, 0.9, 0.9);
+  leg_norm->SetFillColor(0);
+  leg_norm->SetBorderSize(0);
+  leg_norm->AddEntry(hErecoMode_NumuBarToNueBar_norm,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","L");
+  leg_norm->AddEntry(hErecoMode_NumuToNue_norm,"#nu_{#mu} #rightarrow #nu_{e}","L");
+  leg_norm->AddEntry(hErecoMode_NC_norm,"NC","L");
+  leg_norm->AddEntry(hErecoMode_BkgOther_norm,"Bkg other","L");
+  leg_norm->Draw();
+  
+  
   // Draw Histo by flavor
 
   hErecoFlav_Nue->SetFillStyle(1001);
@@ -442,7 +497,6 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   TCanvas *cErecoTotFlav = new TCanvas("cErecoTotFlav","cErecoTotFlav");
   sErecoTotFlav->Draw("histo");
 
- 
 
   //combine modes
   double nccqe = 0, nccnqe = 0, nnuecc = 0, nnc = 0, nmec = 0;
@@ -573,10 +627,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   c->SaveAs(Form("sk_ereco_spectrum_%s_%f_%f%s.%s",sk_sample,input_mixing23, input_dm23sq, (disable_banff_tuning ? "_nobanff" : ""),plot_format));
   hErecoTot_draw->GetXaxis()->UnZoom();
 
-  return;
-
-
-
+ 
   //draw coarse binned histograms
   TCanvas * c_coarse = new TCanvas("c_coarse","",20,20,500,500);
   TLegend * legend_coarse = new TLegend(0.6, 0.4, 0.9, 0.9);
@@ -627,23 +678,18 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
   legend->Write();
   stack_coarse->Write();
   legend_coarse->Write();
+
+  hErecoMode_NC->Write();
+  hErecoMode_BkgOther->Write();
+  hErecoMode_NumuToNue->Write();
+  hErecoMode_NumuBarToNueBar->Write();
+
+  hErecoMode_NC_norm->Write();
+  hErecoMode_BkgOther_norm->Write();
+  hErecoMode_NumuToNue_norm->Write();
+  hErecoMode_NumuBarToNueBar_norm->Write();
+
   f.Close();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
