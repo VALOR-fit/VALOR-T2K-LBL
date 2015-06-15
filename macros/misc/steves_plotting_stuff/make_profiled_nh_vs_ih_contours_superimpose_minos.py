@@ -173,7 +173,7 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   
   
   # Dump graphs for Kirsty
-  outfile = ROOT.TFile("valor_fit_contours.root","RECREATE")
+  outfile = ROOT.TFile(tag+"valor_fit_contours.root","RECREATE")
   outfile.cd()
   
   h_delta_nh.Write("valor_nh_dchisq")
