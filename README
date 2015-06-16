@@ -1,15 +1,18 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-VaLOR T2K oscillation analysis
+VALOR T2K oscillation analysis
 
-(c) 2010-13 All Rights Reserved
+Copyright (c) 2010-15, The VALOR group, All Rights Reserved
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
 Current authors:
 
 - Andreopoulos, Costas <costas.andreopoulos \at stfc.ac.uk> 
-- Dealtry, Thomas <Thomas.Dealtry \at physics.ox.ac.uk>
+- Dealtry, Thomas <thomas.dealtry \at stfc.ac.uk>
+- Dennis, Steve <stephen.dennis \at warwick.ac.uk>
 - Escudero, Lorena <loressa \at ific.uv.es>
-- Grant, Nick <n.grant \at lancaster.ac.uk>
+- Grant, Nick <nick.grant \at stfc.ac.uk>
+- Sgalaberna, Davide <davide.sgalaberna \at cern.ch>
+- Shah, Raj <Raj.Shah \at physics.ox.ac.uk>
 
 Legacy authors:
 
@@ -19,50 +22,18 @@ Legacy authors:
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-* WHAT IS INCLUDED IN THIS PACKAGE? 
- 
-Schematic based on the SVN trunk (latest) version
+This version:
+Development code for joint 4 sample (nue/nuebar appearance and numu/numubar disappearance) analysis.
 
-<top_level>
-    |
-    |-- config                    : Analysis configuration XML files
-    |
-    |-- fitter                    : SuperK spectrum prediction code (with systematics) + fitting code
-    |
-    |-- inputs                    : Analysis inputs / data-files
-    |      |-- official           
-    |      |     |-- 2012         : Inputs for 2012 analysis
-    |      |     |    |-- banff   :  - BANFF inputs (best-fit parameters and error matrix)
-    |      |     |    |-- flux    :  - flux inputs (nominal and NA61-tuned fluxes)
-    |      |     |    |-- fsi     :  - FSI systematic error inputs
-    |      |     |    |-- xsec    :  - SuperK MC re-weighting splines to account for the effect of tweaked cross-section params
-    |      |     |    |-- superk  :  - SuperK MC mini-DSTs with MC events passing various SuperK selections
-    |      |            
-    |      |-- contour            : External contours that may eb super-imposed with our results
-    |      |-- test               : Data used for test purposes
-    |
-    |
-    |-- macros                    : Our analysis procedures
-    |     |------ spectra         :  - macros used for testing nominal and tweaked SuperK spectra
-    |     |------ fit             :  - macros used for fitting data or toy MC expts
-    |     |------ contour         :  - macros used for building confidence regions (eg implementing the Feldman-Cousins method)
-    |     |------ misc            :  - etc macros 
-    |
-    |-- production                : Batch production scripts for RAL/IN2P3/Oxford farms
-    |
-    |-- root                      : The `root2k' (ROOT + T2KANA libraries) environment for our analysis macros
-    |
-    |-- setup                     : Environment setup scripts for various locations
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-
-* SETTING-UP YOUR ENVIRONMENT
+Building the code:
 
 Use the appropriate script from the setup directory.
 The setup script expects a single argument (top-level source code directory).
 
 Example:
 % source setup/setup_at_XYZ.sh /path/to/t2kana/nuosc/top/level/dir
-
 
 * BUILDING THE OSCILLATION ANALYSIS CODE
 
@@ -79,77 +50,4 @@ make sure there are NO spaces within ''.
 
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-* RELEASES 
-
-
-Version: 2010_v1.0.0
-............................................................................................................................
-This is the code which was used for the 2010a 0.323E+20 POT muon-disappearance analysis.
-Details may be found in T2K-TN-36 (v4).
-
-Version: 2010_v2.0.0 
-............................................................................................................................
-This is the code which was used for the 2010b 1.431E+20 POT muon-disappearance analysis.
-Details may be found in T2K-TN-64 (v3).
-
-2010_v2.1.0
-............................................................................................................................
-Similar to 2010_v2.0.0 but with the following change requested during the analysis review:
-> The nd280 efficiency error was increased from +/-5% to +5.6% -5.2% to match the one used in the nue analysis.
-> The statistical error of the ND280 CC inclusive measurement (~2.7%) was also propagated to SK.
-
-
-2010_v3.0.0
-............................................................................................................................
-This code was used for the 2010b 1.431E+20 POT 3-flavour muon-neutrino disappearance analysis (details in T2K-TN-88)
-and for the 2010b 1.431E+20 POT joint 3-flavour analysis (details in T2K-TN-131)
-
-2012_v1.0.0
-............................................................................................................................
-This is the code used for the official 2012 3+E_20 POT 3-flavour muon-neutrino disappearance analysis.
-A *major* re-write of the analysis wrt to the 2010 releases since the analysis inputs and
-the analysis procedure (fitting for systematics) were very different.
-Details, too numerous to mention here, may be found in T2K-TN-141 (v4).
-This is the first freeze of the fully validated 2012 code: This branch also contains experimental and 
-deprecated features (experimental FSI and BANFF binnings, systematics not used in the final analysis,
-deprecated macros etc) that will be removed from a near-future "streamlined" revision.
-
-2012_v1.1.0
-............................................................................................................................
-Revision with small bugs fixed while writing the 2012 analysis PRL and resolving final differences with KIT
-
-
-2012_v1.2.0
-............................................................................................................................
-Revision with all changes needed during the PRL review process. Single most important change was moving from
-sin^2(2*theta23) fit to sin^2(theta23) fit.
-
-
-2012_v2.0.0
-............................................................................................................................
-Implemented the 2012 3-flavour electron-neutrino appearance analysis and the 2012 joint 3-flavour oscillation analysis.
-The source tree was cleaned-up (Experimental FSI and BANFF systematic binnings, systematics not used in the analysis 
-were removed.  Deprecated data files, macros and scripts were removed.  Code experimenting with the use of principal 
-components analysis in the study of the effect of systematics in the oscillation fit was deleted.)
-The main Minuit and the experimental Minuit2 fit implementations were "unified" so that one can switch between the two 
-transparently. A GSL fitter was implementing, adding the following fit methods in our analysis:
-Simulated annealing, Levemberg-Marquardt, Fletcher-Reeves conjugate gradient, Polak-Ribiere conjugate gradient,
-Vector Broyden-Fletcher-Goldfarb-Shanno (BFGS), Steepest Descent.
-Significant fit CPU-efficiency improvement as the jont analysis considers ~90 systematics.
-
-
-2013_v1.0.0
-............................................................................................................................
-This is the code used for the official 2013 Run 1-4a 3-flavour muon-neutrino disappearance analysis,
-documented in T2K-TN-155v1.
-
-2013_v2.0.0
-............................................................................................................................
-This is the code used for the official 2013 Run 1-4 3-flavour muon-neutrino disappearance analysis,
-documented in T2K-TN-183v1.
-
-
-Current trunk
-............................................................................................................................
-2013 Run 1-4 joint analysis development code.
 
