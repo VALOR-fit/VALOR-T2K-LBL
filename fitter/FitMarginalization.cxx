@@ -13,7 +13,7 @@
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
-#//define __print_array_toy_fillchisq__
+//define __print_array_toy_fillchisq__
 //#define __print_array_toy_merge__
 //#define __print_systematic_variations__
 #define __print_chisqmarg__
@@ -24,8 +24,8 @@
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
 
-//#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
-//#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
+#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
+#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
 
 //#define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
 #define __FILL_OSCPARAM_TOY_HISTO__
@@ -957,9 +957,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     UInt_t seedosc = Rnd::Instance()->RndToyMCosc().GetSeed();    
     UInt_t seedfit = Rnd::Instance()->RndFitter().GetSeed();
     UInt_t seedoth = Rnd::Instance()->RndOther().GetSeed();
+    //cout << seedstat << " " << seedsyst << " " << seedosc << " " << seedfit << " " << seedoth << endl;
     Rnd::Instance()->SetSeeds(seedstat+1,seedsyst+1,seedosc+1,seedfit+1,seedoth+1); // stat, syst, osc, fitter, other
     
+
     //
+    
 
     SuperkObservation * skobs = new SuperkObservation;
     
@@ -1044,6 +1047,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       seedosc = Rnd::Instance()->RndToyMCosc().GetSeed();    
       seedfit = Rnd::Instance()->RndFitter().GetSeed();
       seedoth = Rnd::Instance()->RndOther().GetSeed();
+      //cout << seedstat << " " << seedsyst << " " << seedosc << " " << seedfit << " " << seedoth << endl;
       Rnd::Instance()->SetSeeds(seedstat+1,seedsyst+1,seedosc+1,seedfit+1,seedoth+1); // stat, syst, osc, fitter, other
     
    
