@@ -5,13 +5,34 @@ import os
 
 env_var = "T2KOSCANA"
 
-mach3_filename = '/home/steve/analysis/systematic_variations/sigmavar2014SK.root'
-pthet_filename = '/home/steve/analysis/systematic_variations/systvariation.root'
-valor_filename = '/home/steve/analysis/systematic_variations/systematic_variations_RHC1Rmu.root'
+mach3_filename = '/home/steve/analysis/systematic_variations/mach3_prefit_sigmavar2014SK.root'
+pthet_filename = '/home/steve/analysis/systematic_variations/ptheta_postfit_systvariation_20150423.root'
+#valor_filename = '/home/steve/analysis/systematic_variations/valor_postfit_systematic_variations_RHC1Rmu.root'
+valor_filename = '/home/steve/analysis/systematic_variations/valor_postfit_systematic_variations_limited_RHC1Rmu.root'
+#valor_filename = '/home/steve/analysis/systematic_variations/valor_prefit_systematic_variations_RHC1Rmu.root'
+
+#~ mach3_filename = '/home/steve/analysis/systematic_variations/mach3_prefit_sigmavar2014SK_unosc.root'
+#~ pthet_filename = '/home/steve/analysis/systematic_variations/ptheta_postfit_systvariation_20150423.root'
+#~ #valor_filename = '/home/steve/analysis/systematic_variations/valor_postfit_unosc_systematic_variations_RHC1Rmu.root'
+#~ valor_filename = '/home/steve/analysis/systematic_variations/valor_prefit_unosc_systematic_variations_RHC1Rmu.root'
 
 mach3_nom_pattern = "[CURRENT]h[SELECTION]_nom"
 mach3_pattern     = "[CURRENT][SELECTION]_[PARAM]_sig_[VAR]"
 valor_pattern     = "Ratio_RHC1Rmu_[PARAM]_[VAR]"
+
+dump_all_plots_as_eps = True
+dump_canvases_to_file = True
+
+try:
+  ROOT.valor
+except:
+  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
+  
+valor = ROOT.valor
+util =  valor.util
+conv =  valor.conv
+opt  =  valor.Opt.Instance()
+env  =  valor.Env.Instance()
 
 # paired things have valor, then mach3
 variations = [ ("p1","p1"),
@@ -145,10 +166,16 @@ line_colors["p1"] = ROOT.kCyan
 line_colors["m3"] = ROOT.kRed
 line_colors["p3"] = ROOT.kBlue
 
+title_size = 0.08
+label_size = 0.07
+
+max_energy = 7
+
 def main():
   
   ROOT.gROOT.SetBatch(1)
   ROOT.gStyle.SetOptStat(0)
+  ROOT.gStyle.SetOptTitle(0)
   
   pthet_file = ROOT.TFile(pthet_filename)
   mach3_file = ROOT.TFile(mach3_filename)
@@ -197,6 +224,18 @@ def main():
     pthet_ratio_hists       [valor_param] = dict()
     pthet_hists_binno       [valor_param] = dict()
     pthet_ratio_hists_binno [valor_param] = dict()
+    
+    title = ROOT.TPaveText(0.,0.93,1.,1.,"ndc")
+    title.SetShadowColor(0)
+    title.SetFillColor(0)
+    title.SetFillStyle(0)
+    title.SetLineColor(0)
+    #~ title.SetTextFont(41) # sans serif
+    param_title = util.ParamAsStringPaperTable(util.PhysParamIdFromString(valor_param))
+    param_title = param_title.replace(";","-")
+    param_title = param_title.replace("$","")
+    param_title = param_title.replace("\\","#")
+    title.AddText(param_title)
     
     for valor_var,mach3_var in variations:
       
@@ -266,26 +305,84 @@ def main():
     pdf_printing[ 0] = "("
     pdf_printing[-1] = ")"
     
-    # Plot mach3 vs valor
-    hist_limits = []
+    # Plot valor
+    hists_to_plot = []
     for valor_var,mach3_var in variations:
-      for bin_content in (hist_to_list(valor_hists      [valor_param][valor_var])+
-                          hist_to_list(mach3_ratio_hists[valor_param][valor_var])):
-        hist_limits.append(abs(bin_content-1))
+      hists_to_plot.append(valor_hists[valor_param][valor_var])
+    hist_min,hist_max = get_hist_limits(hists_to_plot,max_x = max_energy)
     
-    hist_var = 1.1*max(hist_limits)
-    hist_max = hist_var + 1
-    hist_min = 1-hist_var
+    canv_key = valor_param+"_valor"
+    canv_key_binno = canv_key+"_binno"
+    
+    canvases[canv_key] = ROOT.TCanvas(canv_key,canv_key,1280,720)
+    SetMargins(canvases[canv_key])
+    option=""
+    for valor_var,mach3_var in variations:
+      valor_par_title = util.ParamAsString(util.PhysParamIdFromString(valor_param)).replace(";","")
+      valor_hists[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_par_title)
+      valor_hists[valor_param][valor_var].GetXaxis().SetTitle("E_{reco}")
+      valor_hists[valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
+      valor_hists[valor_param][valor_var].GetXaxis().SetTitleSize(title_size)
+      valor_hists[valor_param][valor_var].GetYaxis().SetTitleSize(title_size)
+      valor_hists[valor_param][valor_var].GetXaxis().SetTitleOffset(0.8)
+      valor_hists[valor_param][valor_var].GetYaxis().SetTitleOffset(1.15)
+      valor_hists[valor_param][valor_var].GetXaxis().SetLabelSize(label_size)
+      valor_hists[valor_param][valor_var].GetYaxis().SetLabelSize(label_size)
+      valor_hists[valor_param][valor_var].SetMaximum(hist_max)
+      valor_hists[valor_param][valor_var].SetMinimum(hist_min)
+      valor_hists[valor_param][valor_var].GetXaxis().SetRangeUser(0,max_energy)
+      valor_hists[valor_param][valor_var].Draw(option)
+      option = "same"
+    
+    canvases[canv_key].Update()
+    if dump_all_plots_as_eps: canvases[canv_key].Print("syst_var_ereco_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key].Update()
+    canvases[canv_key].Print("syst_var_valor_ereco"+".pdf"+pdf_printing[iparam])
+    
+    canvases[canv_key_binno] = ROOT.TCanvas(canv_key_binno,canv_key_binno,1280,720)
+    SetMargins(canvases[canv_key_binno])
+    option=""
+    for valor_var,mach3_var in variations:
+      valor_par_title = util.ParamAsString(util.PhysParamIdFromString(valor_param)).replace(";","")
+      valor_hists_binno[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_par_title)
+      valor_hists_binno[valor_param][valor_var].GetXaxis().SetTitle("Bin number")
+      valor_hists_binno[valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
+      valor_hists_binno[valor_param][valor_var].GetXaxis().SetTitleSize(title_size)
+      valor_hists_binno[valor_param][valor_var].GetYaxis().SetTitleSize(title_size)
+      valor_hists_binno[valor_param][valor_var].GetXaxis().SetTitleOffset(0.8)
+      valor_hists_binno[valor_param][valor_var].GetYaxis().SetTitleOffset(1.15)
+      valor_hists_binno[valor_param][valor_var].GetXaxis().SetLabelSize(label_size)
+      valor_hists_binno[valor_param][valor_var].GetYaxis().SetLabelSize(label_size)
+      valor_hists_binno[valor_param][valor_var].SetMaximum(hist_max)
+      valor_hists_binno[valor_param][valor_var].SetMinimum(hist_min)
+      valor_hists_binno[valor_param][valor_var].SetMaximum(hist_max)
+      valor_hists_binno[valor_param][valor_var].SetMinimum(hist_min)
+      valor_hists_binno[valor_param][valor_var].Draw(option)
+      option = "same"
+    
+    canvases[canv_key_binno].Update()
+    if dump_all_plots_as_eps: canvases[canv_key_binno].Print("syst_var_binno_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key_binno].Update()
+    canvases[canv_key_binno].Print("syst_var_valor_binno"+".pdf"+pdf_printing[iparam])
+    
+    # Plot mach3 vs valor
+    hists_to_plot = []
+    for valor_var,mach3_var in variations:
+      hists_to_plot.append(valor_hists[valor_param][valor_var])
+      hists_to_plot.append(mach3_ratio_hists[valor_param][valor_var])
+    hist_min,hist_max = get_hist_limits(hists_to_plot,max_x = max_energy)
     
     canv_key = valor_param+"_valor_vs_mach3"
     canv_key_binno = canv_key+"_binno"
     
     canvases[canv_key] = ROOT.TCanvas(canv_key,canv_key,1280,720)
+    SetMargins(canvases[canv_key])
     option=""
     for valor_var,mach3_var in variations:
-      valor_hists[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
-      valor_hists[valor_param][valor_var].GetXaxis().SetTitle("E_{reco}")
-      valor_hists[valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
+      valor_par_title = util.ParamAsString(util.PhysParamIdFromString(valor_param)).replace(";","")
+      valor_hists[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_par_title)
       valor_hists[valor_param][valor_var].SetMaximum(hist_max)
       valor_hists[valor_param][valor_var].SetMinimum(hist_min)
       valor_hists[valor_param][valor_var].Draw(option)
@@ -293,14 +390,17 @@ def main():
       mach3_ratio_hists[valor_param][valor_var].Draw(option)
     
     canvases[canv_key].Update()
+    if dump_all_plots_as_eps: canvases[canv_key].Print("syst_var_ereco_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key].Update()
     canvases[canv_key].Print("syst_var_valor_vs_mach3_ereco"+".pdf"+pdf_printing[iparam])
     
     canvases[canv_key_binno] = ROOT.TCanvas(canv_key_binno,canv_key_binno,1280,720)
+    SetMargins(canvases[canv_key_binno])
     option=""
     for valor_var,mach3_var in variations:
-      valor_hists_binno[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
-      valor_hists_binno[valor_param][valor_var].GetXaxis().SetTitle("Bin number")
-      valor_hists_binno[valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
+      valor_par_title = util.ParamAsString(util.PhysParamIdFromString(valor_param)).replace(";","")
+      valor_hists_binno[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_par_title)
       valor_hists_binno[valor_param][valor_var].SetMaximum(hist_max)
       valor_hists_binno[valor_param][valor_var].SetMinimum(hist_min)
       valor_hists_binno[valor_param][valor_var].Draw(option)
@@ -308,27 +408,26 @@ def main():
       mach3_ratio_hists_binno[valor_param][valor_var].Draw(option)
     
     canvases[canv_key_binno].Update()
+    if dump_all_plots_as_eps: canvases[canv_key_binno].Print("syst_var_binno_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key_binno].Update()
     canvases[canv_key_binno].Print("syst_var_valor_vs_mach3_binno"+".pdf"+pdf_printing[iparam])
     
     # Plot ptheta vs valor
-    hist_limits = []
+    hists_to_plot = []
     for valor_var,mach3_var in variations:
-      for bin_content in (hist_to_list(valor_hists[valor_param][valor_var])+hist_to_list(pthet_ratio_hists[valor_param][valor_var])):
-        hist_limits.append(abs(bin_content-1))
-    
-    hist_var = 1.1*max(hist_limits)
-    hist_max = hist_var + 1
-    hist_min = 1-hist_var
+      hists_to_plot.append(valor_hists[valor_param][valor_var])
+      hists_to_plot.append(pthet_ratio_hists[valor_param][valor_var])
+    hist_min,hist_max = get_hist_limits(hists_to_plot,max_x = max_energy)
     
     canv_key = valor_param+"_valor_vs_pthet"
     canv_key_binno = canv_key+"_binno"
     
     canvases[canv_key] = ROOT.TCanvas(canv_key,canv_key,1280,720)
+    SetMargins(canvases[canv_key])
     option=""
     for valor_var,mach3_var in variations:
       valor_hists[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
-      valor_hists[valor_param][valor_var].GetXaxis().SetTitle("E_{reco}")
-      valor_hists[valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
       valor_hists[valor_param][valor_var].SetMaximum(hist_max)
       valor_hists[valor_param][valor_var].SetMinimum(hist_min)
       valor_hists[valor_param][valor_var].Draw(option)
@@ -336,14 +435,16 @@ def main():
       pthet_ratio_hists[valor_param][valor_var].Draw(option)
     
     canvases[canv_key].Update()
+    if dump_all_plots_as_eps: canvases[canv_key].Print("syst_var_ereco_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key].Update()
     canvases[canv_key].Print("syst_var_valor_vs_ptheta_ereco"+".pdf"+pdf_printing[iparam])
     
     canvases[canv_key_binno] = ROOT.TCanvas(canv_key_binno,canv_key_binno,1280,720)
+    SetMargins(canvases[canv_key_binno])
     option=""
     for valor_var,mach3_var in variations:
       valor_hists_binno[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
-      valor_hists_binno[valor_param][valor_var].GetXaxis().SetTitle("Bin number")
-      valor_hists_binno[valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
       valor_hists_binno[valor_param][valor_var].SetMaximum(hist_max)
       valor_hists_binno[valor_param][valor_var].SetMinimum(hist_min)
       valor_hists_binno[valor_param][valor_var].Draw(option)
@@ -351,38 +452,49 @@ def main():
       pthet_ratio_hists_binno[valor_param][valor_var].Draw(option)
     
     canvases[canv_key_binno].Update()
+    if dump_all_plots_as_eps: canvases[canv_key_binno].Print("syst_var_binno_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key_binno].Update()
     canvases[canv_key_binno].Print("syst_var_valor_vs_ptheta_binno"+".pdf"+pdf_printing[iparam])
     
     # Plot pthet vs mach3
-    hist_limits = []
+    hists_to_plot = []
     for valor_var,mach3_var in variations:
-      for bin_content in (hist_to_list(mach3_ratio_hists[valor_param][valor_var])+
-                          hist_to_list(pthet_ratio_hists[valor_param][valor_var])):
-        hist_limits.append(abs(bin_content-1))
-    
-    hist_var = 1.1*max(hist_limits)
-    hist_max = hist_var + 1
-    hist_min = 1-hist_var
+      hists_to_plot.append(mach3_ratio_hists[valor_param][valor_var])
+      hists_to_plot.append(pthet_ratio_hists[valor_param][valor_var])
+    hist_min,hist_max = get_hist_limits(hists_to_plot,max_x = max_energy)
     
     canv_key = valor_param+"_mach3_vs_pthet"
     canv_key_binno = canv_key+"_binno"
     
     canvases[canv_key] = ROOT.TCanvas(canv_key,canv_key,1280,720)
+    SetMargins(canvases[canv_key])
     option=""
     for valor_var,mach3_var in variations:
-      mach3_ratio_hists[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+mach3_param+" vs "+mach3_param)
+      mach3_ratio_hists[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
       mach3_ratio_hists[valor_param][valor_var].GetXaxis().SetTitle("E_{reco}")
       mach3_ratio_hists[valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
       mach3_ratio_hists[valor_param][valor_var].SetMaximum(hist_max)
       mach3_ratio_hists[valor_param][valor_var].SetMinimum(hist_min)
+      mach3_ratio_hists[valor_param][valor_var].GetXaxis().SetTitleSize(title_size)
+      mach3_ratio_hists[valor_param][valor_var].GetYaxis().SetTitleSize(title_size)
+      mach3_ratio_hists[valor_param][valor_var].GetXaxis().SetTitleOffset(0.8)
+      mach3_ratio_hists[valor_param][valor_var].GetYaxis().SetTitleOffset(1.15)
+      mach3_ratio_hists[valor_param][valor_var].GetXaxis().SetLabelSize(label_size)
+      mach3_ratio_hists[valor_param][valor_var].GetYaxis().SetLabelSize(label_size)
+      
       mach3_ratio_hists[valor_param][valor_var].Draw(option)
       option = "same"
       pthet_ratio_hists[valor_param][valor_var].Draw(option)
     
     canvases[canv_key].Update()
+    if dump_all_plots_as_eps: canvases[canv_key].Print("syst_var_ereco_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key].Update()
     canvases[canv_key].Print("syst_var_mach3_vs_ptheta_ereco"+".pdf"+pdf_printing[iparam])
     
     canvases[canv_key_binno] = ROOT.TCanvas(canv_key_binno,canv_key_binno,1280,720)
+    SetMargins(canvases[canv_key_binno])
     option=""
     for valor_var,mach3_var in variations:
       mach3_ratio_hists_binno[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+mach3_param+" vs "+mach3_param)
@@ -390,29 +502,36 @@ def main():
       mach3_ratio_hists_binno[valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
       mach3_ratio_hists_binno[valor_param][valor_var].SetMaximum(hist_max)
       mach3_ratio_hists_binno[valor_param][valor_var].SetMinimum(hist_min)
+      mach3_ratio_hists_binno[valor_param][valor_var].GetXaxis().SetTitleSize(title_size)
+      mach3_ratio_hists_binno[valor_param][valor_var].GetYaxis().SetTitleSize(title_size)
+      mach3_ratio_hists_binno[valor_param][valor_var].GetXaxis().SetTitleOffset(0.8)
+      mach3_ratio_hists_binno[valor_param][valor_var].GetYaxis().SetTitleOffset(1.15)
+      mach3_ratio_hists_binno[valor_param][valor_var].GetXaxis().SetLabelSize(label_size)
+      mach3_ratio_hists_binno[valor_param][valor_var].GetYaxis().SetLabelSize(label_size)
+      
       mach3_ratio_hists_binno[valor_param][valor_var].Draw(option)
       option = "same"
       pthet_ratio_hists_binno[valor_param][valor_var].Draw(option)
     
     canvases[canv_key_binno].Update()
+    if dump_all_plots_as_eps: canvases[canv_key_binno].Print("syst_var_binno_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key_binno].Update()
     canvases[canv_key_binno].Print("syst_var_mach3_vs_ptheta_binno"+".pdf"+pdf_printing[iparam])
     
     # Plot all
-    hist_limits = []
+    hists_to_plot = []
     for valor_var,mach3_var in variations:
-      for bin_content in (hist_to_list(valor_hists      [valor_param][valor_var]) +
-                          hist_to_list(mach3_ratio_hists[valor_param][valor_var]) +
-                          hist_to_list(pthet_ratio_hists[valor_param][valor_var])):
-          hist_limits.append(abs(bin_content-1))
-    
-    hist_var = 1.1*max(hist_limits)
-    hist_max = hist_var + 1
-    hist_min = 1-hist_var
+      hists_to_plot.append(valor_hists[valor_param][valor_var])
+      hists_to_plot.append(mach3_ratio_hists[valor_param][valor_var])
+      hists_to_plot.append(pthet_ratio_hists[valor_param][valor_var])
+    hist_min,hist_max = get_hist_limits(hists_to_plot,max_x = max_energy)
     
     canv_key = valor_param+"_valor_vs_mach3_vs_pthet"
     canv_key_binno = canv_key+"_binno"
     
     canvases[canv_key] = ROOT.TCanvas(canv_key,canv_key,1280,720)
+    SetMargins(canvases[canv_key])
     option=""
     for valor_var,mach3_var in variations:
       valor_hists[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
@@ -426,9 +545,13 @@ def main():
       pthet_ratio_hists[valor_param][valor_var].Draw(option)
     
     canvases[canv_key].Update()
+    if dump_all_plots_as_eps: canvases[canv_key].Print("syst_var_binno_"+canv_key+".eps")
+    title.Draw()
+    canvases[canv_key].Update()
     canvases[canv_key].Print("syst_var_valor_vs_mach3_vs_ptheta_ereco"+".pdf"+pdf_printing[iparam])
     
     canvases[canv_key_binno] = ROOT.TCanvas(canv_key_binno,canv_key_binno,1280,720)
+    SetMargins(canvases[canv_key_binno])
     option=""
     for valor_var,mach3_var in variations:
       valor_hists_binno[valor_param][valor_var].SetTitle("Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
@@ -441,6 +564,9 @@ def main():
       mach3_ratio_hists_binno[valor_param][valor_var].Draw(option)
       pthet_ratio_hists_binno[valor_param][valor_var].Draw(option)
     
+    canvases[canv_key_binno].Update()
+    if dump_all_plots_as_eps: canvases[canv_key_binno].Print("syst_var_binno_"+canv_key+".eps")
+    title.Draw()
     canvases[canv_key_binno].Update()
     canvases[canv_key_binno].Print("syst_var_valor_vs_mach3_vs_ptheta_binno"+".pdf"+pdf_printing[iparam])
     
@@ -477,6 +603,26 @@ def ratio_hist(hvar,hnom):
 def hist_to_list(h):
   nbins = h.GetXaxis().GetNbins()
   return [h.GetBinContent(ibin) for ibin in xrange(1,nbins+1)]
+  
+  
+def get_hist_limits(hlist, min_x=-1E100, max_x = 1E100):
+  hist_limits = []
+  for h in hlist:
+    for i,bin_content in enumerate(hist_to_list(h)):
+      if min_x < h.GetBinCenter(i+1) < max_x:
+        hist_limits.append(abs(bin_content-1))
+    
+  hist_var = 1.1*max(hist_limits)
+  hist_max = hist_var + 1
+  hist_min = 1-hist_var
+  
+  return hist_min,hist_max
+  
+def SetMargins(canv):
+  canv.SetTopMargin(0.08)
+  canv.SetRightMargin(0.05)
+  canv.SetBottomMargin(0.16)
+  canv.SetLeftMargin  (0.17)
   
 if __name__=="__main__":
   main()
