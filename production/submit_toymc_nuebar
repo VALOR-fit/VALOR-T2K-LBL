@@ -98,10 +98,10 @@ foreach (@ARGV) {
 
 $resource        = "interactive"               unless defined $resource;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
-$tag             = "prova"          unless defined $tag;
+$tag             = "prova_0"          unless defined $tag;
 $run             = 0                           unless defined $run;  # run
-$firstexp        = 1                           unless defined $firstexp;  
-$lastexp         = 1                           unless defined $lastexp;  
+$firstexp        = 0                           unless defined $firstexp;  
+$lastexp         = 3                           unless defined $lastexp;  
 
 $hypothesis      = "3f_osc_normbar"            unless defined $hypothesis;
 $printsystvariation = 0                        unless defined $printsystvariation;
@@ -129,7 +129,7 @@ $stat_fluct          = 1                    unless defined $stat_fluct;
 $marg_hierarchy      = 1                    unless defined $marg_hierarchy;
 $prior_nh            = 0.684                unless defined $prior_nh;
 
-$save_xml            = 0                    unless defined $save_xml;
+$save_xml            = 1                    unless defined $save_xml;
 $save_root           = 1                    unless defined $save_root;
 
 $add_pt_1Rmu         = 0                    unless defined $add_pt_1Rmu;

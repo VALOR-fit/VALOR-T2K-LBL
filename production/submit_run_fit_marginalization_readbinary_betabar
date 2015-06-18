@@ -95,12 +95,13 @@ $tag             = "fitmarg_sin2th13"          unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 7                           unless defined $nexpts;  # number of toy experiments per job
 
-#$xml_file        = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.xml" unless defined $xml_file;
+$xml_file        = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.xml" unless defined $xml_file;
+#$xml_file        = "../outputs/test/prova-0.xml" unless defined $xml_file;
+
 #$root_file       = "toymc/EPS_RELEASE/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0_40k_A.root" unless defined $root_file;
-$xml_file        = "../outputs/test/prova-0.xml" unless defined $xml_file;
 $root_file       = "../outputs/test/prova-0.root" unless defined $root_file;
 
-$using_xml_file  = 0                           unless defined $using_xml_file;
+$using_xml_file  = 1                           unless defined $using_xml_file;
 
 $dotoys          = 0                           unless defined $dotoys;
 
