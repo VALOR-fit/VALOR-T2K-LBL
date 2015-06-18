@@ -21,7 +21,7 @@ void generate_toymc_ensemble_joint_bar
  
  int          run                     = 0,   
  double       first_experiment        = 0,                
- double       last_experiment         = 10000,                
+ double       last_experiment         = 10100,                
  //double       nexperiments            = 10000,               /* number of toy-MC expts to generate */
  
  const char * hypothesis              = "3f_osc_normbar", /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
@@ -54,7 +54,7 @@ void generate_toymc_ensemble_joint_bar
  double       input_deltacp_ih        = -999,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
  double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
  double       input_dm23sq_ih         = -999,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
- double       input_beta_bar          = 1.,
+ double       input_beta_bar          = 0.,
 
  const char * config_file      = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app_8E20POT.xml",
@@ -81,7 +81,7 @@ void generate_toymc_ensemble_joint_bar
  const char * points_to_add_MultiRe   = 0,        /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
  //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
  const char * xml_file_to_add         = 0,        /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
- bool         save_fluct_in_xml       = false,     /* save the values of the variations in the xml file? */
+ bool         save_fluct_in_xml       = true,     /* save the values of the variations in the xml file? */
  
  const char * dmsqscheme              = "auto",          /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy               = "normal",        /* normal or inverted */
