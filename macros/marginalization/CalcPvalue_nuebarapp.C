@@ -24,21 +24,24 @@ void CalcPvalue_nuebarapp
  // //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_8E20POT_EPS-3f+normbar_50kToys.root",
  // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_0_8E20POT_EPS-3f+normbar_50kToys_unique.root",
 
- // // Mach3 - 4.0108 x 10^20 POT (beta=1) --> DATA
- // TString tag = "pvalue_beta1_Mach3_NH",
- // double data = 3., // # of data events
- // double deltachisq_beta01_data = 0.164213, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_1_4.0108E20POT_EPS-3f+normbar_50kToys.root",
-
- // Mach3 - 4.0108 x 10^20 POT (beta=1)
+ // Mach3 - 4.0108 x 10^20 POT (beta=1) --> DATA
  TString tag = "pvalue_beta1_Mach3_NH",
- double data = 3.7285, // # of data events
- double deltachisq_beta01_data = 1.72794, // data deltachisq 01
+ double data = 3., // # of data events
+ double deltachisq_beta01_data = 0.164213, // data deltachisq 01
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
  //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
- char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
+ //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
+ //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_1_4.0108E20POT_EPS-3f+normbar_50kToys.root",
+ //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_xml/fitmarg_betabar_0_4p0108E20POT_EPS_10kToys-3f+normbar.root",
+ char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_0_4p0108E20POT_EPS_10kToys_xml_unique-3f+normbar.root",
+
+ // // Mach3 - 4.0108 x 10^20 POT (beta=1)
+ // TString tag = "pvalue_beta1_Mach3_NH",
+ // double data = 3.7285, // # of data events
+ // double deltachisq_beta01_data = 1.72794, // data deltachisq 01
+ // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
+ // //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+ // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
  
  // // Mach3 - 4.0108 x 10^20 POT (beta=0)
  // TString tag = "pvalue_beta0_Mach3_NH",
@@ -298,6 +301,12 @@ void CalcPvalue_nuebarapp
     vec_chisq_0BF.push_back(deltachisq_0BF);
     vec_chisq_01.push_back(deltachisq_01);
   }
+
+  if(deltachisq_01<-5 || deltachisq_01>20){
+    cout << "deltachisq_01 = " << deltachisq_01 << endl;
+    exit(1);
+  }
+
 
   // Compute p-values
 
