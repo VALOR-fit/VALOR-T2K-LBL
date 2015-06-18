@@ -38,7 +38,8 @@ coln_width = 3
 def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", skipflux=False, skipskdet=False):
   
   skexp = valor.SuperkExpectation()
-  skexp.Read(os.environ[env_var]+"/config/analysis_configuration.xml")
+  #skexp.Read(os.environ[env_var]+"/config/analysis_configuration_2.315E20.xml.xml")
+  skexp.Read(os.environ[env_var]+"/config/analysis_configuration_run1to6_test_app.xml")
   skdetfsi = skexp.GetSuperkDetectorFSI()
   xsec = skexp.GetNuXSec()
   
@@ -178,7 +179,7 @@ if __name__=="__main__":
   
   parser.add_option('-f', '--file', dest='output_file', default="syst_applied_table.tex", help="Name for output TeX file.")
   
-  parser.add_option('-s', '--sample' , dest='sample'      , default="1Rmu"                    , help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
+  parser.add_option('-s', '--sample' , dest='sample'      , default="RHC1Re"                    , help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
   parser.add_option('--skip-skdetfsi', dest='skipskdetfsi', action="store_true", default=False, help="Skip the SKdetFSI parameters")
   parser.add_option('--skip-flux'    , dest='skipflux'    , action="store_true", default=False, help="Skip the flux parameters")
   

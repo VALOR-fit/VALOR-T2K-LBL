@@ -52,8 +52,8 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   all_dicts_osc   = [osc_nominal_modes, osc_NA61_flux_modes, osc_prefit_tuned_modes, osc_postfit_tuned_modes]
   
   min_energy_spectrum = 0.0
-  min_energy_ratio    = 0.3
-  max_energy          = 7.0
+  min_energy_ratio    = 0.
+  max_energy = 1.25
 
   
   #  Make no flux SKExp
@@ -262,9 +262,11 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   flux_tuned_hist.SetLineWidth(line_width)
   flux_tuned_hist.SetTitle("")
   flux_tuned_hist.Draw("same")
-  fluxnom_leg = ROOT.TLegend(0.4,0.6,0.9,0.9)
+  #fluxnom_leg = ROOT.TLegend(0.4,0.6,0.9,0.9)
+  fluxnom_leg = ROOT.TLegend(0.7,0.7,1.0,1.0)
   fluxnom_leg.AddEntry(nominal_hist,"Nominal")
-  fluxnom_leg.AddEntry(flux_tuned_hist,"Flux tuning applied")
+  #fluxnom_leg.AddEntry(flux_tuned_hist,"Flux tuning applied")
+  fluxnom_leg.AddEntry(flux_tuned_hist,"Flux tuning NA61")
   fluxnom_leg.Draw()
   
   canv.cd(2)
@@ -333,9 +335,12 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   flux_tuned_hist.SetLineWidth(line_width)
   flux_tuned_hist.SetTitle("")
   flux_tuned_hist.Draw("same")
-  postfit_leg = ROOT.TLegend(0.4,0.6,0.9,0.9)
-  postfit_leg.AddEntry(flux_tuned_hist,"Flux tuning applied")
-  postfit_leg.AddEntry(postfit_hist,"BANFF tune applied")
+  #postfit_leg = ROOT.TLegend(0.4,0.6,0.9,0.9)
+  postfit_leg = ROOT.TLegend(0.7,0.7,1.0,1.0)
+  #postfit_leg.AddEntry(flux_tuned_hist,"Flux tuning applied")
+  postfit_leg.AddEntry(flux_tuned_hist,"Flux tuning NA61")
+  #postfit_leg.AddEntry(postfit_hist,"BANFF tune applied")
+  postfit_leg.AddEntry(postfit_hist,"BANFF tune")
   postfit_leg.Draw()
   
   canv.cd(2)
@@ -362,6 +367,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   pf_ratio_dev = max([abs(1.-x) for x in hist_to_list(pf_ratio)[5:]])
   pf_ratio.SetMinimum(1-1.1*pf_ratio_dev)
   pf_ratio.SetMaximum(1+1.1*pf_ratio_dev)
+  pf_ratio.GetYaxis().SetRangeUser(0.8,1.2)
   pf_ratio.Draw()
   line_at_one.Draw("same")
   
@@ -373,8 +379,9 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   if osc_pf_ratio.GetXaxis().GetXmax() > max_energy:
     osc_pf_ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
   osc_pf_ratio_dev = max([abs(1.-x) for x in hist_to_list(osc_pf_ratio)[5:]])
-  osc_pf_ratio.SetMinimum(1-1.1*osc_pf_ratio_dev)
-  osc_pf_ratio.SetMaximum(1+1.1*osc_pf_ratio_dev)
+  osc_pf_ratio.SetMinimum(1-1.2*osc_pf_ratio_dev)
+  osc_pf_ratio.SetMaximum(1+1.2*osc_pf_ratio_dev)
+  osc_pf_ratio.GetYaxis().SetRangeUser(0.8,1.2)
   osc_pf_ratio.Draw()
   line_at_one.Draw("same")
   
@@ -393,21 +400,21 @@ def hist_to_50MeV(h):
   
 def  make_fit_param_lists():
     
-  mixing12 = opt.GetGlobalBestFit(conv.kPhypMixing12)
-  mixing13 = conv.kT2KBestFitTheta13_NH
-  mixing23 = opt.GetGlobalBestFit(conv.kPhypMixing23)
-  dm12sq   = opt.GetGlobalBestFit(conv.kPhypDm12sq)
-  dm23sq   = opt.GetGlobalBestFit(conv.kPhypDm23sq)
-  deltacp  = conv.kT2KBestFitDeltaCP_NH
+  #mixing12 = opt.GetGlobalBestFit(conv.kPhypMixing12)
+  #mixing13 = conv.kT2KBestFitTheta13_NH
+  #mixing23 = opt.GetGlobalBestFit(conv.kPhypMixing23)
+  #dm12sq   = opt.GetGlobalBestFit(conv.kPhypDm12sq)
+  #dm23sq   = opt.GetGlobalBestFit(conv.kPhypDm23sq)
+  #deltacp  = conv.kT2KBestFitDeltaCP_NH
   
   fparm_osc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
   
-  fparm_osc.SetInitValue(conv.kPhypMixing12,  0.304);
-  fparm_osc.SetInitValue(conv.kPhypMixing13,  0.0248);
-  fparm_osc.SetInitValue(conv.kPhypMixing23,  0.527);
-  fparm_osc.SetInitValue(conv.kPhypCPV     ,  -1.55);
-  fparm_osc.SetInitValue(conv.kPhypDm12sq  ,  7.53E-5);
-  fparm_osc.SetInitValue(conv.kPhypDm23sq  ,  2.51E-3);
+  fparm_osc.SetInitValue(conv.kPhypMixing12,  0.306);
+  fparm_osc.SetInitValue(conv.kPhypMixing13,  0.025);
+  fparm_osc.SetInitValue(conv.kPhypMixing23,  0.528);
+  fparm_osc.SetInitValue(conv.kPhypCPV     ,  -1.601);
+  fparm_osc.SetInitValue(conv.kPhypDm12sq  ,  7.5E-5);
+  fparm_osc.SetInitValue(conv.kPhypDm23sq  ,  2.509E-3);
   
   fparm_unosc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
   fparm_unosc.SetInitValue(conv.kPhypMixing12,  0.0)
