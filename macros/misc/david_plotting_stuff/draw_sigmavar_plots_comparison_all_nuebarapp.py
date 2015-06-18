@@ -14,10 +14,10 @@ pthet_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/so
 
 
 #valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_prebanff_notosc.root'
-#valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_prebanff.root'
+valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_prebanff.root'
 #valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_postbanff_notosc.root'
 #valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_postbanff.root'
-valor_filename = 'systematic_variations_RHC1Re.root'
+#valor_filename = 'systematic_variations_RHC1Re.root'
 
 
 mach3_nom_pattern = "[CURRENT]h[SELECTION]_nom"
