@@ -30,7 +30,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
  double       input_mixing12       = -99,                         
  double       input_mixing13       = -99,                         
  double       input_mixing23       = -99,                         
- double       input_deltacp        = -99,                         
+ double       input_deltacp        = 0., //+TMath::Pi()/2., //-99,                         
  double       input_dm12sq         = -99,                         
  double       input_dm23sq         = -99,                       
  double       input_betabar        = -99,
