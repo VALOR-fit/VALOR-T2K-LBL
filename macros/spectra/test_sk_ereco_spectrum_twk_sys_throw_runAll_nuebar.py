@@ -23,9 +23,8 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_throw_runAll.py [--all] (you
 It will then create the .root in the current working directory
 """
     
-postfit_config  = "analysis_configuration_run1to6_test_app_4p5E20POT.xml"
-
-prefit_config  = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml"
+postfit_config  = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml"
+prefit_config  = "analysis_configuration_run1to6_test_prefit_app_4.0108E20POT_fluxJune.xml"
 
 prior_file = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root"
 
@@ -142,7 +141,8 @@ elif opt.do_imp: #combinations + splines + oscparams
 
 #modes = [0,1,5,6,7,8,9]
 #modes = [0,1,5,6,7,8,9,11]
-modes = [0,1,5,6,7,8,9]
+modes = [0,1,5,6,7,8,9]  # OK
+#modes = [0]
 
 if do_uncorrelated_xsec:
   modes.append(2)
@@ -155,7 +155,9 @@ if opt.mode is not None:
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23, betabar hypothesis
 
-if not opt.skip_unosc: oscparams.append([  0,   0,   0,   0,   -99,   -99,  -99]) #no oscillations!
+if not opt.skip_unosc  : oscparams.append([-99, -999, -999, -999, -99, -999, 0]) #use global best fits!
+#if not opt.skip_unosc: oscparams.append([  0,   0,   0,   0,   -99,   -99,  -99]) #no oscillations!
+
 #if not opt.skip_osc  : oscparams.append([-99, -99, -99, -99, -99, -99,  -99]) #use global best fits!
 if not opt.skip_osc  : oscparams.append([-99, -999, -999, -999, -99, -999, -99]) #use global best fits!
 
@@ -179,7 +181,7 @@ if not do_not_run_jobs:
           # if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99,  -99]:
           #     continue
               
-          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_nuebar.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'")\''
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_nuebar.C('+str(mode)+','+update+',"'+sksample+'","3f_osc_normbar",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'")\''
 
 
           print command
@@ -192,7 +194,7 @@ if not do_not_run_jobs:
           
           #repeat for the banff prefit (its a different spectrum, so erros have different effects)
           if not opt.skip_prefit:
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_nuebar.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'")\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_nuebar.C('+str(mode)+','+update+',"'+sksample+'","3f_osc_normbar",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'")\''
 
             print command
             if os.system(command) == 1:
@@ -205,15 +207,25 @@ if make_summary:
   # Uses outputs from previous macro runs, but calculates 'all' values using quadrature.
   files = glob.glob("sk_ereco_spectrum_*-twk_sys_throw_*txt")
 
-  
-  l = [x for x in files if "12_0.000,13_0.000,23_0.000" in x]
+
+  # l = [x for x in files if "12_0.000,13_0.000,23_0.000" in x]
+  # if not len(l)==1:
+  #   raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
+  # no_osc_info = l[0]
+  # l = [x for x in files if "12_0.000,13_0.000,23_0.000" not in x]
+  # if not len(l)==1:
+  #   raise T2KAnaError("Found "+`len(l)`+ "txt files for oscillation, expected 1")
+  # osc_info = l[0]
+
+  l = [x for x in files if "betabar_0.000" in x]
   if not len(l)==1:
     raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
   no_osc_info = l[0]
-  l = [x for x in files if "12_0.000,13_0.000,23_0.000" not in x]
+  l = [x for x in files if "betabar_1.000" in x]
   if not len(l)==1:
     raise T2KAnaError("Found "+`len(l)`+ "txt files for oscillation, expected 1")
   osc_info = l[0]
+
 
   col_titles = ["(no oscillations)","(oscillations with typical parameter values)"]
   col_files = [no_osc_info,osc_info]
