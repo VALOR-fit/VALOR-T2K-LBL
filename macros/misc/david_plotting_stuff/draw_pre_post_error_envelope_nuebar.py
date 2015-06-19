@@ -122,7 +122,8 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     par_hists = [nominal_hist]
 
 
-    hname = sample+"_"+par_set+"prefit"+"_average"
+    #hname = sample+"_"+par_set+"prefit"+"_average"
+    hname = sample+"_"+par_set+"prefit"+"_median"
     h = rootfile.Get(hname)
     if not h:
       print "Failed to get histogram: ",hname ; exit()
@@ -132,7 +133,8 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     prefit_average_hist.SetLineWidth(linewidth)
 
 
-    hname = sample+"_"+par_set+"_average"
+    #hname = sample+"_"+par_set+"_average"
+    hname = sample+"_"+par_set+"_median"
     h = rootfile.Get(hname)
     if not h:
       print "Failed to get histogram: ",hname ; exit()
@@ -147,7 +149,8 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     if useaverage==False :
       hname = sample+"_"+par_set+"prefit"+"_envpluserr"
     elif useaverage==True :
-      hname = sample+"_"+par_set+"prefit"+"_up_average"
+      #hname = sample+"_"+par_set+"prefit"+"_up_average"
+      hname = sample+"_"+par_set+"prefit"+"_up_median"
     h = rootfile.Get(hname)
     if not h:
       print "Failed to get histogram: ",hname ; exit()
@@ -156,7 +159,8 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     if useaverage==False :
       hname = sample+"_"+par_set+"prefit"+"_envminuserr"
     elif useaverage==True :
-      hname = sample+"_"+par_set+"prefit"+"_down_average"
+      #hname = sample+"_"+par_set+"prefit"+"_down_average"
+      hname = sample+"_"+par_set+"prefit"+"_down_median"
     h = rootfile.Get(hname)
     if not h:
       print "Failed to get histogram: ",hname ; exit()
@@ -165,7 +169,8 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     if useaverage==False :
       hname = sample+"_"+par_set+"_envpluserr"
     elif useaverage==True :
-      hname = sample+"_"+par_set+"_up_average"
+      #hname = sample+"_"+par_set+"_up_average"
+      hname = sample+"_"+par_set+"_up_median"
     h = rootfile.Get(hname)
     if not h:
       print "Failed to get histogram: ",hname ; exit()
@@ -174,7 +179,8 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     if useaverage==False :
       hname = sample+"_"+par_set+"_envminuserr"
     elif useaverage==True :
-      hname = sample+"_"+par_set+"_down_average"
+      #hname = sample+"_"+par_set+"_down_average"
+      hname = sample+"_"+par_set+"_down_median"
     h = rootfile.Get(hname)
     if not h:
       print "Failed to get histogram: ",hname ; exit()
@@ -239,16 +245,16 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     hminus_prefit.SetFillStyle(1001)
     hminus_prefit.SetLineColor(ROOT.kBlue)
 
-    hplus_prefit.Draw()
-    hplus_postfit.Draw("same")
-    hminus_postfit.Draw("same")
-    hminus_prefit.Draw("same")
-    hplus_prefit.Draw("same")
-    nominal_hist.Draw("same")
-    #postfit_average_hist.Draw("same")
-    prefit_nominal.Draw("same")
-    ##prefit_average_hist.Draw("same") 
-    hplus_prefit.Draw("same")
+    hplus_prefit.DrawCopy()
+    hplus_postfit.DrawCopy("same")
+    hminus_postfit.DrawCopy("same")
+    hminus_prefit.DrawCopy("same")
+    hplus_prefit.DrawCopy("same")
+    nominal_hist.DrawCopy("same")
+    #postfit_average_hist.DrawCopy("same")
+    prefit_nominal.DrawCopy("same")
+    ##prefit_average_hist.DrawCopy("same") 
+    hplus_prefit.DrawCopy("same")
     
     ROOT.gPad.RedrawAxis();
 
@@ -273,7 +279,122 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
 
     canv.Print(name+"_"+par_set+"_envelope.eps")
     
+
+
+
+
+
+
+
     # Now do it with ratios
+
+    # ratio_plus_prefit   = R.TH1D(hplus_prefit)
+    # ratio_minus_prefit  = R.TH1D(hminus_prefit)
+    # ratio_plus_postfit  = R.TH1D(hplus_postfit)
+    # ratio_minus_postfit = R.TH1D(hminus_postfit)
+ 
+    # if useaverage==True:
+    #   ratio_plus_prefit  .Divide(prefit_average_hist)
+    #   ratio_minus_prefit .Divide(prefit_average_hist)
+    #   ratio_plus_postfit .Divide(postfit_average_hist)
+    #   ratio_minus_postfit.Divide(postfit_average_hist)
+    # else :
+    #   ratio_plus_prefit  .Divide(prefit_nominal)
+    #   ratio_minus_prefit .Divide(prefit_nominal)
+    #   ratio_plus_postfit .Divide(nominal_hist)
+    #   ratio_minus_postfit.Divide(nominal_hist)
+
+    # for i in xrange(nominal_hist.GetXaxis().GetNbins()):
+    #   if abs(nominal_hist.GetBinContent(i+1))<0.001:
+    #     ratio_plus_postfit .SetBinContent(i+1,1)
+    #     ratio_minus_postfit.SetBinContent(i+1,1)
+    #   if abs(prefit_nominal.GetBinContent(i+1))<0.001:
+    #     ratio_plus_prefit .SetBinContent(i+1,1)
+    #     ratio_minus_prefit.SetBinContent(i+1,1)
+    
+    # ratio_hists = [(ratio_plus_prefit  , ratio_minus_prefit ) ,
+    #                (ratio_plus_postfit , ratio_minus_postfit)]
+    
+    # ratio_graph_prefit  = ROOT.TGraphAsymmErrors(ratio_plus_prefit  .GetXaxis().GetNbins())
+    # ratio_graph_postfit = ROOT.TGraphAsymmErrors(ratio_plus_postfit .GetXaxis().GetNbins())
+    
+    # ratio_graphs = [ratio_graph_prefit  ,
+    #                 ratio_graph_postfit , ]
+    
+    # for (hp,hm),g in zip(ratio_hists,ratio_graphs):
+    #   for i in xrange(h.GetXaxis().GetNbins()):
+    #     low_edge  = ratio_plus_prefit.GetBinLowEdge(i+1)
+    #     high_edge = low_edge + ratio_plus_prefit.GetBinWidth(i+1)
+    #     g.SetPoint      (i,ratio_plus_prefit.GetBinCenter(i+1),1)
+    #     g.SetPointEYlow (i,abs(hm.GetBinContent(i+1)-1))
+    #     g.SetPointEYhigh(i,abs(hp.GetBinContent(i+1)-1))
+    #     g.SetPointEXlow (i,ratio_plus_prefit.GetBinWidth(i+1)*0.5 - 0.005)
+    #     g.SetPointEXhigh(i,ratio_plus_prefit.GetBinWidth(i+1)*0.5 - 0.005)
+        
+    #   g.SetFillStyle(1001)
+    #   g.SetLineStyle(0)
+    #   g.SetLineWidth(0)
+    #   g.GetXaxis().SetRangeUser(0,max_energy)
+    #   CopyHistAxisFormatting(hplus_prefit,g)
+    #   g.GetYaxis().SetTitle("Ratio of # Total Events")
+      
+    # ratio_graph_prefit .SetFillColor(R.kBlue)
+    # ratio_graph_postfit.SetFillColor(R.kYellow)
+    # ratio_graph_prefit .SetLineColor(R.kBlue)
+    # ratio_graph_postfit.SetLineColor(R.kYellow)    
+    # #ratio_graph_prefit .SetLineWidth(3)
+    # #ratio_graph_postfit.SetLineWidth(3)
+    
+    # #ratio_graph_prefit.SetFillStyle(1001)
+    # ratio_graph_prefit.SetFillStyle(3001)
+    # ratio_graph_prefit.SetLineColor(R.kBlue)
+    # ratio_graph_prefit.SetLineWidth(2)
+        
+    # #ratio_graph_postfit.SetFillStyle(1001)
+    # ratio_graph_postfit.SetFillStyle(3001)
+    # ratio_graph_postfit.SetLineWidth(2)
+
+    # canv2 = ROOT.TCanvas()
+    # canv2.SetLeftMargin  (left_margin)
+    # canv2.SetBottomMargin(bottom_margin)
+    # canv2.SetRightMargin (right_margin )
+    # if use_log_plots: canv2.SetLogx()
+    # canv2.cd()
+    
+    # ratio_max = 1.3*ratio_plus_prefit .GetMaximum()
+    # ratio_graph_postfit.SetMaximum(ratio_max)
+    # ratio_graph_postfit.SetMinimum(2-ratio_max)
+    # ratio_graph_prefit .Draw("a2")
+    # ratio_graph_postfit.Draw("2")
+
+    # # ratio_max = 2.;
+    # # ratio_min = 0.;
+    # # ratio_plus_postfit.SetMaximum(ratio_max)
+    # # ratio_minus_postfit.SetMinimum(ratio_min)
+    # # ratio_plus_postfit.DrawCopy("")
+    # # ratio_minus_postfit.DrawCopy("same")
+    
+    # legend2 = ROOT.TLegend(0.6,0.75,0.93,0.92);
+    # legend2.SetFillStyle(0);
+    # legend2.SetBorderSize(0);
+    # legend2.AddEntry(ratio_graph_prefit  ,"Prefit" ,"F")
+    # legend2.AddEntry(ratio_graph_postfit ,"Postfit","F")
+    # legend2.Draw("same")
+    
+    # line_at_1 = ROOT.TLine(0,1,max_energy,1)
+    # line_at_1.SetLineWidth(2)
+    # line_at_1.Draw("same")
+    
+    # canv2.Update()
+    # canv2.Print(name+"_"+par_set+"_envelope_ratio.eps")
+
+
+
+
+
+
+    
+
 
     ratio_plus_prefit   = R.TH1D(hplus_prefit)
     ratio_minus_prefit  = R.TH1D(hminus_prefit)
@@ -302,39 +423,45 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     ratio_hists = [(ratio_plus_prefit  , ratio_minus_prefit ) ,
                    (ratio_plus_postfit , ratio_minus_postfit)]
     
-    ratio_graph_prefit  = ROOT.TGraphAsymmErrors(ratio_plus_prefit  .GetXaxis().GetNbins())
-    ratio_graph_postfit = ROOT.TGraphAsymmErrors(ratio_plus_postfit .GetXaxis().GetNbins())
+    # ratio_graph_prefit  = ROOT.TGraphAsymmErrors(ratio_plus_prefit  .GetXaxis().GetNbins())
+    # ratio_graph_postfit = ROOT.TGraphAsymmErrors(ratio_plus_postfit .GetXaxis().GetNbins())
     
-    ratio_graphs = [ratio_graph_prefit  ,
-                    ratio_graph_postfit , ]
+    # ratio_graphs = [ratio_graph_prefit  ,
+    #                 ratio_graph_postfit , ]
     
-    for (hp,hm),g in zip(ratio_hists,ratio_graphs):
-      for i in xrange(h.GetXaxis().GetNbins()):
-        low_edge  = ratio_plus_prefit.GetBinLowEdge(i+1)
-        high_edge = low_edge + ratio_plus_prefit.GetBinWidth(i+1)
-        g.SetPoint      (i,ratio_plus_prefit.GetBinCenter(i+1),1)
-        g.SetPointEYlow (i,abs(hm.GetBinContent(i+1)-1))
-        g.SetPointEYhigh(i,abs(hp.GetBinContent(i+1)-1))
-        g.SetPointEXlow (i,ratio_plus_prefit.GetBinWidth(i+1)*0.5 - 0.005)
-        g.SetPointEXhigh(i,ratio_plus_prefit.GetBinWidth(i+1)*0.5 - 0.005)
+    # for (hp,hm),g in zip(ratio_hists,ratio_graphs):
+    #   for i in xrange(h.GetXaxis().GetNbins()):
+    #     low_edge  = ratio_plus_prefit.GetBinLowEdge(i+1)
+    #     high_edge = low_edge + ratio_plus_prefit.GetBinWidth(i+1)
+    #     g.SetPoint      (i,ratio_plus_prefit.GetBinCenter(i+1),1)
+    #     g.SetPointEYlow (i,abs(hm.GetBinContent(i+1)-1))
+    #     g.SetPointEYhigh(i,abs(hp.GetBinContent(i+1)-1))
+    #     g.SetPointEXlow (i,ratio_plus_prefit.GetBinWidth(i+1)*0.5 - 0.005)
+    #     g.SetPointEXhigh(i,ratio_plus_prefit.GetBinWidth(i+1)*0.5 - 0.005)
         
-      g.SetFillStyle(1001)
-      g.SetLineStyle(0)
-      g.SetLineWidth(0)
-      g.GetXaxis().SetRangeUser(0,max_energy)
-      CopyHistAxisFormatting(hplus_prefit,g)
-      g.GetYaxis().SetTitle("Ratio of # Total Events")
+    #   g.SetFillStyle(1001)
+    #   g.SetLineStyle(0)
+    #   g.SetLineWidth(0)
+    #   g.GetXaxis().SetRangeUser(0,max_energy)
+    #   CopyHistAxisFormatting(hplus_prefit,g)
+    #   g.GetYaxis().SetTitle("Ratio of # Total Events")
       
-    ratio_graph_prefit .SetFillColor(R.kBlue)
-    ratio_graph_postfit.SetFillColor(R.kRed)
-    ratio_graph_prefit .SetLineColor(R.kBlue)
-    ratio_graph_postfit.SetLineColor(R.kRed)
+    # ratio_graph_prefit .SetFillColor(R.kBlue)
+    # ratio_graph_postfit.SetFillColor(R.kYellow)
+    # ratio_graph_prefit .SetLineColor(R.kBlue)
+    # ratio_graph_postfit.SetLineColor(R.kYellow)    
+    # #ratio_graph_prefit .SetLineWidth(3)
+    # #ratio_graph_postfit.SetLineWidth(3)
     
-    ratio_graph_prefit .SetLineWidth(3)
-    ratio_graph_postfit.SetLineWidth(3)
-    ratio_graph_prefit .SetFillStyle(1001)
-    ratio_graph_postfit.SetFillStyle(1001)
-    
+    # #ratio_graph_prefit.SetFillStyle(1001)
+    # ratio_graph_prefit.SetFillStyle(3001)
+    # ratio_graph_prefit.SetLineColor(R.kBlue)
+    # ratio_graph_prefit.SetLineWidth(2)
+        
+    # #ratio_graph_postfit.SetFillStyle(1001)
+    # ratio_graph_postfit.SetFillStyle(3001)
+    # ratio_graph_postfit.SetLineWidth(2)
+
     canv2 = ROOT.TCanvas()
     canv2.SetLeftMargin  (left_margin)
     canv2.SetBottomMargin(bottom_margin)
@@ -342,19 +469,54 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     if use_log_plots: canv2.SetLogx()
     canv2.cd()
     
-    ratio_max = 1.3*ratio_plus_prefit .GetMaximum()
+    # ratio_max = 1.3*ratio_plus_prefit .GetMaximum()
+    # ratio_graph_postfit.SetMaximum(ratio_max)
+    # ratio_graph_postfit.SetMinimum(2-ratio_max)
+    # ratio_graph_prefit .Draw("a2")
+    # ratio_graph_postfit.Draw("2")
+
+    ratio_plus_postfit.SetFillStyle(0)
+    ratio_minus_postfit.SetFillStyle(0)
+ 
+    ratio_max = 1.5
+    ratio_min = 0.5
     
-    ratio_graph_postfit.SetMaximum(ratio_max)
-    ratio_graph_postfit.SetMinimum(2-ratio_max)
+    ratio_plus_postfit.SetLineWidth(2)
+    ratio_minus_postfit.SetLineWidth(2)
+    ratio_plus_prefit.SetLineWidth(2)
+    ratio_minus_prefit.SetLineWidth(2)
+
+    ratio_plus_postfit.SetLineStyle(1)
+    ratio_minus_postfit.SetLineStyle(1)
+    ratio_plus_prefit.SetLineStyle(1)
+    ratio_minus_prefit.SetLineStyle(1)
+
+    ratio_plus_postfit.SetLineColor(R.kRed)
+    ratio_minus_postfit.SetLineColor(R.kRed)
+    ratio_plus_prefit.SetLineColor(R.kBlue)
+    ratio_minus_prefit.SetLineColor(R.kBlue)
     
-    ratio_graph_prefit .Draw("a2")
-    ratio_graph_postfit.Draw("2")
+    ratio_plus_postfit.SetMaximum(ratio_max)
+    ratio_plus_postfit.SetMinimum(ratio_min)
+    ratio_minus_postfit.SetMaximum(ratio_max)
+    ratio_minus_postfit.SetMinimum(ratio_min)
+    ratio_plus_prefit.SetMaximum(ratio_max)
+    ratio_plus_prefit.SetMinimum(ratio_min)
+    ratio_minus_prefit.SetMaximum(ratio_max)
+    ratio_minus_prefit.SetMinimum(ratio_min)
+ 
+    ratio_plus_prefit.DrawCopy("")
+    ratio_minus_prefit.DrawCopy("same")
+    ratio_plus_postfit.DrawCopy("same")
+    ratio_minus_postfit.DrawCopy("same")
     
-    legend2 = ROOT.TLegend(0.6,0.75,0.93,0.92);
+    ROOT.gPad.RedrawAxis();
+
+    legend2 = ROOT.TLegend(0.6,0.70,0.93,0.87);
     legend2.SetFillStyle(0);
     legend2.SetBorderSize(0);
-    legend2.AddEntry(ratio_graph_prefit  ,"Prefit" ,"F")
-    legend2.AddEntry(ratio_graph_postfit ,"Postfit","F")
+    legend2.AddEntry(ratio_plus_prefit  ,"Prefit" ,"L")
+    legend2.AddEntry(ratio_plus_postfit ,"Postfit","L")
     legend2.Draw("same")
     
     line_at_1 = ROOT.TLine(0,1,max_energy,1)
@@ -362,7 +524,6 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage):
     line_at_1.Draw("same")
     
     canv2.Update()
-    
     canv2.Print(name+"_"+par_set+"_envelope_ratio.eps")
 
     # Print out some event rates
