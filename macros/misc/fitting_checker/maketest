@@ -1,3 +1,0 @@
-echo "g++ testfit.cxx -I`root-config --incdir` `root-config --libs` -lMinuit -o test.exe"
-g++ testfit.cxx -I`root-config --incdir` `root-config --libs` -lMinuit -o test.exe
-
