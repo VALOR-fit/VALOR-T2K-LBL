@@ -34,14 +34,17 @@ void run_fit_marginalization_readbinary_betabar
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
+ //const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
  //const char * xmlfile = "toymc/EPS_RELEASE_DEV_3/toymc_nuebar_beta0_toy_0_10000-0.xml",
- 
+ //const char * xmlfile = "toymc/EPS_RELEASE_DEV_xml/toymc_nuebar_beta0_toy_0_10000-0.xml",
+ const char * xmlfile = "toymc/EPS_RELEASE_DEV_unique/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV-0.xml",
+
  //const char * rootfile = "toymc/EPS_RELEASE_DEV_3/toymc_nuebar_beta0_8E20POT_50k.root",
- const char * rootfile = "toymc/EPS_RELEASE_DEV_3/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV_50kToys-0.root",
+ const char * rootfile = "toymc/EPS_RELEASE_DEV_3/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV_50kToys-0.root", // used for data fit
+ //const char * rootfile = "",
  //const char * rootfile = "toymc/EPS_RELEASE_DEV_unique/toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_8E20POT_DEV_Toy_50k-0.root",
 
- bool using_xml_file = true,
+ bool using_xml_file = false,
 
  bool         dotoys                   = 0,
 
@@ -58,7 +61,7 @@ void run_fit_marginalization_readbinary_betabar
  double       input_deltacp_bar        = -99,
  double       input_dm12sq_bar         = -99,
  double       input_dm23sq_bar         = -99,
- double       input_beta_bar           = 1., //0.2,
+ double       input_beta_bar           = 0., //0.2,
  
  const char * config_file              = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
  //const char * config_file              = "analysis_configuration_run1to6_test_app_4.5E20POT_fluxJune.xml",
@@ -83,8 +86,9 @@ void run_fit_marginalization_readbinary_betabar
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
+ //const char * infilename = "../../inputs/marginalization/toys/EPS_RELEASE/BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_50k_DEV",
  const char * infilename = "../../inputs/marginalization/toys/EPS_RELEASE/BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_10k_DEV",
-
+ 
  const int    nfiles               = 1, //401, 1        // # of files to read
 
  const int    NtoysMarg            = 10000,  // # toys marginalization 
