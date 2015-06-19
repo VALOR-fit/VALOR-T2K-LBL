@@ -105,24 +105,25 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_nuebar
 (
-  int          mode                     = 0,                                         /* options: see above */
-  bool         update_rootfile          = false,                                        /* "update" ROOT output file? If false, will "recreate" */
+ int          mode                     = 9,                                         /* options: see above */
+ bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
   const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
-  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
+  const char * hypothesis               = "3f_osc_normbar",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
 
   double       input_mixing12           = -99,                       
-  double       input_mixing13           = -999, //-999,               
+  double       input_mixing13           = -999, //-999, //-999,               
   double       input_mixing23           = -999, //-999,               
-  double       input_deltacp            = -999, //-999,               
+  double       input_deltacp            = -999, //-999, //-999,               
   double       input_dm12sq             = -99,                       
-  double       input_dm23sq             = -999, //-999,               
-  double       input_betabar            = -99,
+  double       input_dm23sq             = -999, //-999, //-999,               
+  double       input_betabar            = 0.,
 
   bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
   bool         save_throws              = false,                                        /* save the thrown parameter values*/
-  //const char * config_file              = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
-  const char * config_file              = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml",   /* */
-  const int    nexp                     = 10,                                          /* number of experiments to make */
+ const char * config_file              = "analysis_configuration_run1to6_test_prefit_app_4.0108E20POT_fluxJune_skdet.xml",   /* */
+ //const char * config_file              = "analysis_configuration_run1to6_test_prefit_app_4.0108E20POT_fluxJune_fsisipn.xml",   /* */
+ //const char * config_file              = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",   /* */
+  const int    nexp                     = 10000,                                          /* number of experiments to make */
   const char * dmsqscheme               = "auto",
   const char * mixparamchoice           = "sinsqtheta",
   const char * hierarchy                = "normal",
@@ -138,6 +139,10 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+
+  //
+
+  TH1D *hMEC = new TH1D("hMEC","hMEC",200,-5,5);
 
   // Take prior distributions
  
@@ -159,7 +164,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
  
   bool UsePrior_th13_dcp = false;
   bool UsePrior_23 = false;
-
+  
   if(file_priors!=""){
 
     UsePrior_th13_dcp = true;
@@ -264,19 +269,28 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
 
  //
 
-  TH1D* h_up = new TH1D("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
-  TH1D* h_down = new TH1D("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_nominal;
   TH2D* h_2d = new TH2D("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,3);
   
   TH1D** h_bin = new TH1D*[util::NumErecoBins(s)];
+  TH1D** h_bin_coarse = new TH1D*[util::NumErecoBins(s)];
   for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
     char name[200];
     sprintf(name,"h_bin_%d",ibin);
-    h_bin[ibin] = new TH1D(name,name,20000,0,3);
+    h_bin[ibin] = new TH1D(name,name,20000,0,1);
+    //h_bin[ibin] = new TH1D(name,name,2000,0,1);
+    sprintf(name,"h_bin_coarse_%d",ibin);
+    h_bin_coarse[ibin] = new TH1D(name,name,200,0,1);
   }
 
   TH1D* hErecoAverage = new TH1D("hErecoAverage","hErecoAverage",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_up = new TH1D("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_down = new TH1D("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
+
+  TH1D* hErecoMedian = new TH1D("hErecoMedian","hErecoMedian",util::NumErecoBins(s),util::ErecoBinEdges(s)); 
+  TH1D* h_up_Median = new TH1D("h_up_Median","h_up_Median",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_down_Median = new TH1D("h_down_Median","h_down_Median",util::NumErecoBins(s),util::ErecoBinEdges(s));
+
   //
 
   //Check if the mode is valid
@@ -467,15 +481,17 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   SuperkObservation skobs;
   
       
+  // string oscparams = util::AsString(ph.Hypothesis(),
+  //                      input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   string oscparams = util::AsString(ph.Hypothesis(),
-                       input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
+			  input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar);
   
   
   // Output histograms
   TH1D * hErecoNominal = 0;
   VALORArray * obsEreco[nexp];
   for (int i = 0 ; i < nexp; i++) {obsEreco[i]=0;}
-  TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),10000,0,1000);
+  TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
   
   
   int nbanff;
@@ -755,6 +771,17 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
 	  ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
 	  ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
 	}
+	else if(ph.Hypothesis() == kHypOsc3FNormBar) {
+	  ph.SetCurrValue(conv::kPhypMixing13,     input_mixing13);
+	  ph.SetCurrValue(conv::kPhypCPV,          input_deltacp);
+	  ph.SetCurrValue(conv::kPhypMixing23,     input_mixing23);
+	  ph.SetCurrValue(conv::kPhypDm23sq,       input_dm23sq);
+	  ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+	  ph.SetCurrValue(conv::kPhypCPVBar,       input_deltacp);
+	  ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+	  ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+	  ph.SetCurrValue(conv::kPhypBetaBar,      input_betabar);
+	}
        
 	//cout << "- Physics hypothesis set: " << ph << endl;
 
@@ -920,6 +947,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
     else {done_print = false;}
     
     
+    if(mode==425) hMEC->Fill(v[25]);
+
     // generate predictions
     bool applied_negevents_condition = skexp.Generate(ph);
     if(applied_negevents_condition) {
@@ -959,6 +988,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
     
     //store Nsk
     double nskint = spectrum->Integral();
+ 
     hNsk->Fill(nskint);
     nsk_per_toy_arr[iexp] = nskint;
     
@@ -971,6 +1001,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
       h_2d->Fill(h_2d->GetXaxis()->GetBinCenter(ibin+1),N);
 
       h_bin[ibin]->Fill(N);
+      h_bin_coarse[ibin]->Fill(N);
     }
      
   
@@ -1017,10 +1048,12 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
     }
   }
   hNsk->Write();
-
-
+  
+  cout << endl;
   cout << "Nominal = " << hErecoNominal->Integral() << endl;
-
+  cout << "Average = " << hNsk->GetMean() << endl;
+  cout << endl;
+  
   // Find min/max and calculate fractional deviation from nominal
   TH1D * hErecoMax = new TH1D(*hErecoNominal);
   TH1D * hErecoMin = new TH1D(*hErecoNominal);
@@ -1093,33 +1126,38 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   hErecoMin->Draw("same");
   c2->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
-
-
   // Assume symmetric errors wrt the average (not nominal)
 
-  for(int i=1;i<=util::NumErecoBins(s);i++){
-    //TH1D* h_proj = (TH1D*) h_2d->ProjectionY("",i,i);
-    TH1D *h_proj = (TH1D*) h_bin[i-1];
-    double average = average(h_proj);
-    double rms = rms(h_proj,average);
-    h_up->SetBinContent(i,average+ rms);
-    h_down->SetBinContent(i,average-rms);  
+  for(int i=0;i<util::NumErecoBins(s);i++){
+    
+    // wrt average
+    double average = h_bin[i]->GetMean();
+    double rms = h_bin[i]->GetRMS();
+    hErecoAverage->SetBinContent(i+1,average);
+    h_up->SetBinContent(i+1,average+rms);
+    h_down->SetBinContent(i+1,average-rms);  
 
-    hErecoAverage->SetBinContent(i,average);
+    // wrt median
+    int medianbin = GetMedianStatBin(h_bin[i],0.5); // median
+    double medianstat = h_bin[i]->GetBinLowEdge(medianbin);
+    int median_p1sigma_bin = GetMedianStatBin(h_bin[i],0.5+0.34); // median +1sigma
+    double medianstat_p1sigma = h_bin[i]->GetBinLowEdge(median_p1sigma_bin); 
+    int medianstat_m1sigma_int = GetMedianStatBin(h_bin[i],0.5-0.34); // median -1sigma
+    double medianstat_m1sigma = h_bin[i]->GetBinCenter(medianstat_m1sigma_int); 
+    hErecoMedian->SetBinContent(i+1,medianstat);
+    h_up_Median->SetBinContent(i+1,medianstat_p1sigma);
+    h_down_Median->SetBinContent(i+1,medianstat_m1sigma);
   }
-
-  if (modetitle.find("prefit")==string::npos) {
-    hErecoAverage->Write(Form("%s_%s_average",sname,modetitle.c_str()));
-  }
-  else {
-    hErecoAverage->Write(Form("%s_%s_average",sname,modetitle.c_str()));
-  }
-
+  
+  hErecoAverage->Write(Form("%s_%s_average",sname,modetitle.c_str()));
   h_up   ->Write(Form("%s_%s_up_average" ,sname,modetitle.c_str()));
   h_down ->Write(Form("%s_%s_down_average",sname,modetitle.c_str()));
+
+  hErecoMedian->Write(Form("%s_%s_median",sname,modetitle.c_str()));
+  h_up_Median   ->Write(Form("%s_%s_up_median" ,sname,modetitle.c_str()));
+  h_down_Median ->Write(Form("%s_%s_down_median",sname,modetitle.c_str()));
   
-  TCanvas * c = new TCanvas("c","Wrt average");
-  //h_2d->Draw("colz");
+  TCanvas * cAverage = new TCanvas("cAverage","Wrt average");
   h_up->GetXaxis()->SetTitle("E_{reco} (GeV)");
   h_up->GetYaxis()->SetTitle("Events per bin");
   h_down->GetXaxis()->SetTitle("E_{reco} (GeV)");
@@ -1132,13 +1170,130 @@ void test_sk_ereco_spectrum_twk_sys_throw_nuebar
   h_down->SetFillColor(10); //white, to unfill the lower area
   h_up->SetFillStyle(3244); // hatched
   h_down->SetFillStyle(1001); // solid (white, to unfill the lower area)
-  h_up->Draw("");
-  h_down->Draw("same");
+  h_up->DrawCopy("");
+  h_down->DrawCopy("same");
   hErecoNominal->SetLineColor(kBlack);
-  hErecoNominal->Draw("same");
+  hErecoNominal->DrawCopy("same");
   hErecoAverage->SetLineColor(kRed);
   hErecoAverage->SetLineWidth(2);
-  hErecoAverage->Draw("same");
+  hErecoAverage->DrawCopy("same");
+  hErecoMedian->SetLineColor(kBlue);
+  hErecoMedian->SetLineWidth(2);
+  hErecoMedian->DrawCopy("same");
+  TLegend *lAverage = new TLegend(0.7,0.6,1.0,0.9);
+  lAverage->SetFillColor(0);
+  lAverage->SetLineColor(0);
+  lAverage->SetTextFont(132);
+  lAverage->SetTextSize(0.06);
+  lAverage->AddEntry(hErecoNominal,"Nominal","l");
+  lAverage->AddEntry(hErecoAverage,"Average","l");
+  lAverage->AddEntry(hErecoMedian,"Median","l");
+  lAverage->AddEntry(h_up,"Error wrt average","f");
+  lAverage->Draw();
+  
+  TCanvas * cMedian = new TCanvas("cMedian","Wrt median");
+  h_up_Median->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  h_up_Median->GetYaxis()->SetTitle("Events per bin");
+  h_down_Median->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  h_down_Median->GetYaxis()->SetTitle("Events per bin");
+  h_up_Median->SetLineStyle(3);
+  h_down_Median->SetLineStyle(3);
+  h_up_Median->SetLineColor(kRed);
+  h_down_Median->SetLineColor(kRed);
+  h_up_Median->SetFillColor(kRed);
+  h_down_Median->SetFillColor(10); //white, to unfill the lower area
+  h_up_Median->SetFillStyle(3244); // hatched
+  h_down_Median->SetFillStyle(1001); // solid (white, to unfill the lower area)
+  h_up_Median->DrawCopy("");
+  h_down_Median->DrawCopy("same");
+  hErecoNominal->SetLineColor(kBlack);
+  hErecoNominal->DrawCopy("same");
+  hErecoAverage->SetLineColor(kRed);
+  hErecoAverage->SetLineWidth(2);
+  hErecoAverage->DrawCopy("same");
+  hErecoMedian->SetLineColor(kBlue);
+  hErecoMedian->SetLineWidth(2);
+  hErecoMedian->DrawCopy("same");
+  TLegend *lMedian = new TLegend(0.7,0.6,1.0,0.9);
+  lMedian->SetFillColor(0);
+  lMedian->SetLineColor(0);
+  lMedian->SetTextFont(132);
+  lMedian->SetTextSize(0.06);
+  lMedian->AddEntry(hErecoNominal,"Nominal","l");
+  lMedian->AddEntry(hErecoAverage,"Average","l");
+  lMedian->AddEntry(hErecoMedian,"Median","l");
+  lMedian->AddEntry(h_up_Median,"Error wrt median","f");
+  lMedian->Draw();
+  
+  TCanvas * c3 = new TCanvas();
+  hNsk->Draw();
+  hNsk->GetXaxis()->SetTitle("# of SK events");
+  TLine *lNom = new TLine(hErecoNominal->Integral(),0,hErecoNominal->Integral(),hNsk->GetMaximum());
+  lNom->SetLineColor(kRed);
+  lNom->Draw();  
+
+  TCanvas **c4 = new TCanvas*[util::NumErecoBins(s)];
+  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+
+    //if(ibin+1!=10) continue;
+    
+    char name[200];
+    sprintf(name,"ErecoBin_%d",ibin);
+    c4[ibin] = new TCanvas(name,name);
+    h_bin_coarse[ibin]->Draw();
+    TLine *lNom_bin = new TLine(hErecoNominal->GetBinContent(ibin+1),0,hErecoNominal->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
+    lNom_bin->SetLineColor(kRed);
+    lNom_bin->Draw();
+
+    TLine *lNom_bin_up = new TLine(h_up->GetBinContent(ibin+1),0,h_up->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
+    lNom_bin_up->SetLineColor(kBlue);
+    lNom_bin_up->Draw();
+
+    TLine *lNom_bin_down = new TLine(h_down->GetBinContent(ibin+1),0,h_down->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
+    lNom_bin_down->SetLineColor(kBlue);
+    lNom_bin_down->Draw();
+
+    TLine *lMedian_bin = new TLine(hErecoMedian->GetBinContent(ibin+1),0,hErecoMedian->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
+    lMedian_bin->SetLineColor(kViolet);
+    lMedian_bin->Draw();
+
+    TLine *lNom_bin_up_Median = new TLine(h_up_Median->GetBinContent(ibin+1),0,h_up_Median->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
+    lNom_bin_up_Median->SetLineColor(kGreen);
+    lNom_bin_up_Median->Draw();
+
+    TLine *lNom_bin_down_Median = new TLine(h_down_Median->GetBinContent(ibin+1),0,h_down_Median->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
+    lNom_bin_down_Median->SetLineColor(kGreen);
+    lNom_bin_down_Median->Draw();
+    
+    //   cout << "bin " << ibin << " : " 
+    // 	 << endl 
+    // 	 << " - nominal = " << hErecoNominal->GetBinContent(ibin+1)
+    // 	 << endl
+    // 	 // << " - mean = " 
+    // 	 // << hErecoAverage->GetBinContent(ibin+1)
+    // 	 // << " +" << h_up->GetBinContent(ibin+1) - hErecoAverage->GetBinContent(ibin+1)
+    // 	 // << " -" << hErecoAverage->GetBinContent(ibin+1) - h_down->GetBinContent(ibin+1)
+    // 	 // << endl
+    //     	 // << " - median = " 
+    // 	 // << hErecoMedian->GetBinContent(ibin+1) 
+    // 	 // << " +" << h_up_Median->GetBinContent(ibin+1) - hErecoMedian->GetBinContent(ibin+1) 
+    // 	 // << " -" << hErecoMedian->GetBinContent(ibin+1) - h_down_Median->GetBinContent(ibin+1)
+    // 	 // << endl;
+    // 	 << " - mean = " 
+    // 	 << hErecoAverage->GetBinContent(ibin+1) << " - "
+    // 	 << h_up->GetBinContent(ibin+1) << " - "
+    // 	 << h_down->GetBinContent(ibin+1) 
+    // 	 << endl
+    //     	 << " - median = " 
+    // 	 << hErecoMedian->GetBinContent(ibin+1) << " - "
+    // 	 << h_up_Median->GetBinContent(ibin+1) << " - "
+    // 	 << h_down_Median->GetBinContent(ibin+1)
+    // 	 << endl;
+  }
+  cout << endl;
+ 
+  TCanvas *c5 = new TCanvas("c5","c5");
+  hMEC->Draw();
 
   //
 
@@ -1260,27 +1415,24 @@ int main()
 #endif
 
 
-double average(TH1D* h1){
-  double avg(0);
-  
-  for(int i=1; i<=h1->GetNbinsX();i++){
-    avg += h1->GetBinCenter(i)*h1->GetBinContent(i);
-  }
-  avg = avg/h1->GetEntries();
-  
-  return avg;
-}
+// double average(TH1D* h1){
+//   double avg(0);
+//   for(int i=1; i<=h1->GetNbinsX();i++){
+//     avg += h1->GetBinCenter(i)*h1->GetBinContent(i);
+//   }
+//   avg = avg/h1->GetEntries();  
+//   return avg;
+// }
 
-double rms(TH1D* h1,double avg){
-  double rms(0);
-  
-  for(int i=1; i<=h1->GetNbinsX();i++){
-    rms += ((h1->GetBinCenter(i) - avg) **2) * (h1->GetBinContent(i));
-  }
-  rms = rms/h1->GetEntries();
-  rms = rms**0.5;
-  return rms;
-}
+// double rms(TH1D* h1,double avg){
+//   double rms(0);  
+//   for(int i=1; i<=h1->GetNbinsX();i++){
+//     rms += ((h1->GetBinCenter(i) - avg) **2) * (h1->GetBinContent(i));
+//   }
+//   rms = rms/h1->GetEntries();
+//   rms = rms**0.5;
+//   return rms;
+// }
 
 TH1D * spectrum_to_per_50mev(TH1D * h) {
   TH1D * hout = new TH1D(*h);
@@ -1291,3 +1443,24 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
   return hout;
 }
 
+double GetMedianStatBin(TH1D *h,double frac){
+  
+  int binmedian = -999;
+  double totevents=h->Integral();
+
+  double currevt=0;
+  
+  for(int ibin=0;ibin<h->GetNbinsX();ibin++){
+    
+    currevt += h->GetBinContent(ibin+1);
+    
+    if( (currevt/totevents) >= frac ){
+      binmedian = ibin+1;
+      break;
+    }
+  }
+
+  //double median = h->GetBinCenter(binmedian);
+  
+  return binmedian;
+}

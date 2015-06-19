@@ -34,9 +34,10 @@ void test_systematic_error_propagation_all_2015_nuebarapp
 
  bool         save_toy_expts     = false,            /* save the ereco spectra? */
  
+ const char * config_file        = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",   /* */
  //const char * config_file        = "analysis_configuration_run1to6_test_prefit_app.xml",  
  //const char * config_file        = "analysis_configuration_run1to6_test_app.xml",  
- const char * config_file        = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
+ //const char * config_file        = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
 
  //const char * fit_param_list     = "nuosc3fbar_fixnonbar_fix5+nuisance",
  //const char * fit_param_list       = "nuosc3fbar_normbar_fixall+nuisance",
