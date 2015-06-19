@@ -177,7 +177,7 @@ def main(data_file_mixing, data_file_dmsq,
     param_title_nh = h_delta_nh.GetXaxis().GetTitle()
     param_title_ih = h_delta_ih.GetXaxis().GetTitle()
     if (param_title_nh != param_title_ih):
-      param_title = param_title_nh+" / "+param_title_ih
+      param_title = param_title_nh+" or "+param_title_ih
       h_delta_nh.GetXaxis().SetTitle(param_title)
       h_delta_ih.GetXaxis().SetTitle(param_title)
     else:
@@ -211,14 +211,14 @@ def main(data_file_mixing, data_file_dmsq,
     
     # Make legend
     
-    legend = ROOT.TLegend(0.7,0.7,0.9,0.9)
+    legend = ROOT.TLegend(0.8,0.7,0.9,0.9)
     legend.AddEntry(h_delta_nh,"NH","l")
     legend.AddEntry(h_delta_ih,"IH","l")
     legend.Draw()
     
     prec = precision[param]
     
-    pave = ROOT.TPaveText(0.43,0.7,0.65,0.89,"ndc")
+    pave = ROOT.TPaveText(0.365,0.7,0.68,0.89,"ndc")
     pave.SetTextFont(22)
     pave.SetShadowColor(0)
     pave.SetFillColor(0)

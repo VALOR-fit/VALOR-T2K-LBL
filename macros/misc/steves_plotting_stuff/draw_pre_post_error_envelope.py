@@ -210,7 +210,7 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     legend.AddEntry(legend_prefit   ,"Prefit" ,"FL")
     legend.AddEntry(legend_postfit  ,"Postfit","FL")
     
-    #~ if is_constrained[par_set]: legend.Draw()
+    if is_constrained[par_set]: legend.Draw()
     
     canv.Print(name+"_"+par_set+"_envelope.eps")
     
