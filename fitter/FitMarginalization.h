@@ -49,6 +49,11 @@
 #define deltacpBar_min -3.14159265358979312
 #define deltacpBar_max +3.14159265358979312
 
+// NEW BETABAR
+#define betaBar_min 0.
+#define betaBar_max 20.
+//
+
 // Nu mode
 
 #define mixing13_min 0.          
@@ -100,12 +105,22 @@ class FitMarginalization
   int GetFirstBinInFullRange(int par=0) const {return fmin_bin_param[par];}
   int GetLastBinInFullRange (int par=0) const {return fmax_bin_param[par];}
   
-  double GetBinParameterValue(int par, int ibin) const {return fmin_param[par] + ibin*fstep_param[par];}
+  double GetBinParameterValue(int par, int ibin) const {return fmin_param[par] + ibin*fstep_param[par];} // TO CHECK
    
   void SetFitParamList(const char * fit_param_list);
+
   FitParamList * GetFitParamList(void) {return fparm;};
-  const FitParamList * GetFitParamList(void) const {return fparm;};
+  // NEW MARG MH
+  FitParamList * GetFitParamList_NH(void) {return fparm_nh;};
+  FitParamList * GetFitParamList_IH(void) {return fparm_ih;};
+  //
   
+  const FitParamList * GetFitParamList(void) const {return fparm;};
+  // NEW MARG MH
+  const FitParamList * GetFitParamList_NH(void) const {return fparm_nh;};
+  const FitParamList * GetFitParamList_IH(void) const {return fparm_ih;};
+  //
+
   void PrintPhysHypothesis(void);
 
   bool IsFit2D(){ return fIsFit2D;}
@@ -161,17 +176,49 @@ class FitMarginalization
   VALORArrayF * GetToyMargErecoVArray()             {return fToyMargErecoVArray;};
   const VALORArrayF * GetToyMargErecoVArray() const {return fToyMargErecoVArray;};
   
-  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
+  //TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
+  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); // NEW MARG MH 2
   
   void SetMargOscParam();
+  // NEW MARG MH
+  void SetMargOscParam(FitParamList * infparm);
+  //
 
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
-  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1F *hprior);
+  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
+  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
+  // NEW MARG MH
+  void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
+  void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
+  void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
+  void SetPrior_IH(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
+  void SetPrior_IH(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
+  void SetPrior_IH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
+  //
+  
   std::string GetPrior(conv::PhysParamId_t physpar) const;
+  // NEW MARG MH
+  std::string GetPrior_NH(conv::PhysParamId_t physpar) const;
+  std::string GetPrior_IH(conv::PhysParamId_t physpar) const;
+  //
   
   void BuildDefaultPriors(void);
 
   double Randomize(conv::PhysParamId_t physpar) const;
+  // NEW MARG MH
+  double Randomize(conv::PhysParamId_t physpar, FitParamList * infparm) const;
+  //
+  
+  // NEW MARG MH 2
+  int RandomizeMH(const double probNH) const; // input is the prob for NH. P(IH) is 1-P(NH) 
+  void SetProbNormalHierarchy(double probnh);
+  double GetProbNormalHierarchy(void) const { return fProbNormalHierarchy;};
+
+  TH1D *GetHistoPriorMH(void) const {return fhPriorMH;};
+  TH1D *GetHistoToyMH(void) const {return fhToyMH;};
+  //
+
+
   bool RethrowOscUnphysical(conv::PhysParamId_t p,double oscval) const; // NEW 
   
   void SetMargMassHierarchy(bool domargMH);  
@@ -190,29 +237,16 @@ class FitMarginalization
   TObjArray * GetToyParamThrowHistograms(int nbins = -1) const; // Array needs deleting after call, histograms don't.
 
   // Histogram minimization
-  //void MinimizeChisqInterval(SuperkObservation *skobs_data);
   void MinimizeChisqIntervalRead(SuperkObservation *skobs_data,bool readbinary = false);
-
-
-  
-  //void MinimizeChisqStep(SuperkObservation *skobs_data);
-  void MinimizeChisqStepRead(SuperkObservation *skobs_data,bool readbinary = false);  // MAP
-  
-  //void SetMinimInterval(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast);
-  void SetMinimIntervalRead(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast,bool readbinary = false); // MAP
-  
-
-
-
+  void MinimizeChisqStepRead(SuperkObservation *skobs_data,bool readbinary = false);  // MAP  
+  void SetMinimIntervalRead(double XvalFirst,double XvalLast,double YvalFirst,double YvalLast,bool readbinary = false); // MAP  
   void SetMaxIterationSingleFit(int maxiter); // by default is the tot # of histo bins
   void SetMaxFitNumber(int nfit);
 
   // Step (descent gradient)
-  //void GridStartBin(SuperkObservation *skobs_data);
   void GridStartBinRead(SuperkObservation *skobs_data,bool readbinary = false); // MAP
   void SetGridStartRange(double minX,double maxX,double minY,double maxY);
   //
-
 
   void SetStartBin(double start_X,double start_Y); // if <0 --> throw random
   void SetNumStartBin(int Nthrows_X,int Nthrows_Y);
@@ -238,22 +272,16 @@ class FitMarginalization
 
   double GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin);
 
-
-
   // MAP
   TH1I *GetMapChisqRangeFileID_1D(void){ return fhmap_chisqrange_fileid_1D;};  
   TH2I *GetMapChisqRangeFileID_2D(void){ return fhmap_chisqrange_fileid_2D;};  
-
   void SetTagFileName(const char *tag);
   void SetFileID(int nfiles);
   int GetFileIDRead(int binpar0,int binpar1); // need histogram bin number as input
- 
   int GetCurrentFileID(void){ return fCurrentFileIDminim;};
   
-  
+  void SetTestStatistic(string teststatistic); // "rateonly" or "rate+shape". Always use the log-likelihood ratio
 
-
-  
  private:
   
   TH1F *fhchisq_marg_1D; 
@@ -349,13 +377,21 @@ class FitMarginalization
   VALORArrayF *fToyMargErecoVArray_Nue;     
 
   FitParamList * fparm;
+  // NEW MARG MH
+  FitParamList * fparm_nh;
+  FitParamList * fparm_ih;
+  //
+
+  // NEW MARG MH 2
+  double fProbNormalHierarchy; // Probability for Normal Hierarchy (for not flat prior)
+  //
+  
   conv::PhysHypothesis_t fhypothesis;
   
   bool             fShouldSaveToyParamLists;
   PhysParamList ** fSavedToyParamLists; //[fntoys_marg]
 
   SuperkExpectation *fskexp;
-
 
   // Histogram minimization
   
@@ -396,10 +432,13 @@ class FitMarginalization
 
   double fPOT[conv::kns]; // POT of each sk sample to print in the output text file with marg toys
   double fNormPOT[conv::kns]; // POT of each sk sample to print in the output text file with marg toys. Normalized to 1E+20
-  
+ 
+  string fteststatistic; // "rateonly" or "rate+shape"
+
+  // NEW MARG MH 2
+  TH1D *fhPriorMH;
+  TH1D *fhToyMH;
   //
-
-
 };
  
 } // valor
