@@ -24,7 +24,7 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
-const char * tag                   = "marg_toys",
+ const char * tag                   = "marg_toys",
 
  const char * config_file          = "analysis_configuration.xml",
 
@@ -66,20 +66,30 @@ const char * tag                   = "marg_toys",
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
- TString file_priors = "$T2KOSCANA/inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR)
+ const char * priors_file = "priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR)
  )
 {  
 
   FileStat_t dummy;
-  TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  TString config      = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  bool using_priors = priors_file[0];
+  TString file_priors = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), priors_file);
 
-  // Check for config file, and XML data file.
+  // Check for config file, and priors
   // If not found in inputs or config, see if it works as a normal path
   if (gSystem->GetPathInfo(config.Data(), dummy)) 
   {
     config = config_file;
     if (gSystem->GetPathInfo(config.Data(), dummy)) {
       cerr<<"Config file not found: "<<config_file<<endl;
+      exit(-1);
+    }
+  }
+  if (using_priors && gSystem->GetPathInfo(file_priors.Data(), dummy)) 
+  {
+    file_priors = priors_file;
+    if (gSystem->GetPathInfo(file_priors.Data(), dummy)) {
+      cerr<<"Priors file not found: "<<priors_file<<endl;
       exit(-1);
     }
   }
@@ -318,7 +328,7 @@ const char * tag                   = "marg_toys",
   bool UsePrior_dcp = false;
   bool UsePrior_23 = false;
 
-  if(file_priors!=""){
+  if(using_priors) {
 
     UsePrior_dcp = true;
     UsePrior_23 = true;
@@ -390,7 +400,7 @@ const char * tag                   = "marg_toys",
   //   fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
   //   fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
   // }
-  // else if(hyp == kHypOsc3FBarNormBar){
+  // else if(/*hyp == kHypOsc3FBarNormBar*/){
   //   fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
   //   fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,0.3);
   //   fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
@@ -412,7 +422,7 @@ const char * tag                   = "marg_toys",
     fitmarg->SetPrior_NH(kPhypMixing13,"user",hPrior_th13_dcp_nh); 
     fitmarg->SetPrior_IH(kPhypMixing13,"user",hPrior_th13_dcp_ih);
 
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
+    if(/*hyp == kHypOsc3FBarNormBar || */hyp == kHypOsc3FBar){ 
       fitmarg->SetPrior_NH(kPhypCPVBar,"user",hPrior_th13_dcp_nh);
       fitmarg->SetPrior_IH(kPhypCPVBar,"user",hPrior_th13_dcp_ih);
 
@@ -425,7 +435,7 @@ const char * tag                   = "marg_toys",
     cout << "Use flat prior for deltaCP" << endl;
     fitmarg->SetPrior_NH(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
     fitmarg->SetPrior_IH(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
+    if(/*hyp == kHypOsc3FBarNormBar || */hyp == kHypOsc3FBar){ 
       fitmarg->SetPrior_NH(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
       fitmarg->SetPrior_IH(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
     }
@@ -437,7 +447,7 @@ const char * tag                   = "marg_toys",
     fitmarg->SetPrior_IH(kPhypMixing23,"user",hPrior_23_ih);
     fitmarg->SetPrior_NH(kPhypDm23sq,"user",hPrior_23_nh);
     fitmarg->SetPrior_IH(kPhypDm23sq,"user",hPrior_23_ih);
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
+    if(/*hyp == kHypOsc3FBarNormBar || */hyp == kHypOsc3FBar){
       fitmarg->SetPrior_NH(kPhypMixing23Bar,"user",hPrior_23_nh);
       fitmarg->SetPrior_IH(kPhypMixing23Bar,"user",hPrior_23_ih);
       fitmarg->SetPrior_NH(kPhypDm23sqBar,"user",hPrior_23_nh);
@@ -451,7 +461,7 @@ const char * tag                   = "marg_toys",
     fitmarg->SetPrior_IH(kPhypMixing23,"flat",0,1);
     fitmarg->SetPrior_NH(kPhypDm23sq,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
     fitmarg->SetPrior_IH(kPhypDm23sq,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
+    if(/*hyp == kHypOsc3FBarNormBar ||*/ hyp == kHypOsc3FBar){
       fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",0,1);
       fitmarg->SetPrior_IH(kPhypMixing23Bar,"flat",0,1);
       fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",conv::kMinFitDm23sqBar,conv::kMaxFitDm23sqBar);
