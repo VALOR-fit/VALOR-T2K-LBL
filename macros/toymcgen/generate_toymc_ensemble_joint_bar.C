@@ -17,46 +17,48 @@ void generate_toymc_ensemble_joint_bar
 (
  //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_9E20POT_DEV",   
  //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_4p5E20POT_DEV",   
- const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_4E20POT_DEV",   
+ //const char * tag                     = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_4E20POT_DEV",   
+ const char * tag                     = "prova_joint",   
  
  int          run                     = 0,   
  double       first_experiment        = 0,                
- double       last_experiment         = 10100,                
+ double       last_experiment         = 0, //10100,                
  //double       nexperiments            = 10000,               /* number of toy-MC expts to generate */
  
- const char * hypothesis              = "3f_osc_normbar", /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
+ const char * hypothesis              = "3f_osc", /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
 
- bool printsystvariation              = false,
-
- // double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- // double       input_mixing13_nh       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- // double       input_mixing23_nh       = -99,   //conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- // double       input_deltacp_nh        = -99,   //conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
- // double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
- // double       input_dm23sq_nh         = -99,   //conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
- // double       input_mixing12_ih       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- // double       input_mixing13_ih       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- // double       input_mixing23_ih       = -99,   //conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- // double       input_deltacp_ih        = -99,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
- // double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
- // double       input_dm23sq_ih         = -99,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
- // double       input_beta_bar          = -99,
+ bool printsystvariation              = true,
 
  double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13_nh       = -999,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing23_nh       = -999,   //conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_deltacp_nh        = -999,   //conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
+ double       input_mixing13_nh       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing23_nh       = -99,   //conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_deltacp_nh        = -99,   //conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
  double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
- double       input_dm23sq_nh         = -999,   //conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
+ double       input_dm23sq_nh         = -99,   //conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
  double       input_mixing12_ih       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13_ih       = -999,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing23_ih       = -999,   //conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_deltacp_ih        = -999,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
+ double       input_mixing13_ih       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing23_ih       = -99,   //conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_deltacp_ih        = -99,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
  double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
- double       input_dm23sq_ih         = -999,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
- double       input_beta_bar          = 0.,
+ double       input_dm23sq_ih         = -99,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
+ double       input_beta_bar          = -99,
 
- const char * config_file      = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
+ // double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ // double       input_mixing13_nh       = -999,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ // double       input_mixing23_nh       = -999,   //conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ // double       input_deltacp_nh        = -999,   //conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
+ // double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
+ // double       input_dm23sq_nh         = -999,   //conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
+ // double       input_mixing12_ih       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ // double       input_mixing13_ih       = -999,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ // double       input_mixing23_ih       = -999,   //conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ // double       input_deltacp_ih        = -999,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
+ // double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
+ // double       input_dm23sq_ih         = -999,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
+ // double       input_beta_bar          = 0.,
+
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app_8E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",
@@ -71,7 +73,7 @@ void generate_toymc_ensemble_joint_bar
  const double PriorProbNH             = 0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
  
  bool         save_in_xml_format      = true,     /* also save in txt format */
- bool         save_in_root_format     = false,                           /* */ 
+ bool         save_in_root_format     = true,                           /* */ 
  
  const char * points_to_add_1Rmu      = 0,        /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
  const char * points_to_add_1Re       = 0,        /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
@@ -650,9 +652,31 @@ void generate_toymc_ensemble_joint_bar
        if(tweak_systematics == 1) {
          // tweak all sources of systematic err (gaussian err)
          cout << "- Randomizing all systematic params in pdf..." << endl;
-         skexp->TweakAllSystematics();
+       
+
+	 
+	 // prova joint fit
+	 //cout << "prova joint fit" << endl;
+	 //skexp->ResetSystematics();
+         //if(printsystvariation) skexp->PrintSystematicVariations();
+	 //return;
+	 //
+	   
+	 skexp->TweakAllSystematics();
          //         skexp->TweakSystematic("sk_energy_scale",0.0,true);
          if(printsystvariation) skexp->PrintSystematicVariations();
+       
+	 
+	 
+
+	 // SONO ARRIVATO QUI
+
+
+
+
+
+
+
        }
        else if(tweak_systematics == 2) {
          // special tweak, increasing numu flux parameters <700MeV by 5%
@@ -725,9 +749,7 @@ void generate_toymc_ensemble_joint_bar
 #ifdef __FHC_RUNNING__
      // Get 1-ring mu-like Ereco spectrum FHC     
      TH1D* mock_data_1Rmu = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));
- 
-     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike)>0){
-       
+     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingMuLike)>=0){
        for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingMuLike); ib++) {
 	 mock_data_1Rmu->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingMuLike)[ib-1]);
 	 double events = skobs->ErecoSpectrumArray(kSKsFCFV1RingMuLike)[ib-1];
@@ -740,12 +762,9 @@ void generate_toymc_ensemble_joint_bar
        }
        mock_data_1Rmu->SetDirectory(0);     
      }
-     
-
+ 
      TH1D* mock_data_1Re = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingELike), util::ErecoBinEdges(kSKsFCFV1RingELike));
-     
-     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike)>0){
-       
+     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFV1RingELike)>=0){
        for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingELike); ib++) {
 	 mock_data_1Re->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingELike)[ib-1]);
        }
@@ -756,10 +775,8 @@ void generate_toymc_ensemble_joint_bar
 #ifdef __RHC_RUNNING__
 
      // Get 1-ring mu-like Ereco spectrum RHC
-     TH1D* mock_data_1Rmu_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingMuLike), util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
-     
-     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike)>0){
-       
+     TH1D* mock_data_1Rmu_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingMuLike), util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));     
+     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsRHCFCFV1RingMuLike)>=0){
        for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++) {
 	 mock_data_1Rmu_RHC->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib-1]);
        }
@@ -768,9 +785,7 @@ void generate_toymc_ensemble_joint_bar
      
      // Get 1-ring e-like Ereco spectrum RHC
      TH1D* mock_data_1Re_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingELike), util::ErecoBinEdges(kSKsRHCFCFV1RingELike));
-
-     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsRHCFCFV1RingELike)>0){
-
+     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsRHCFCFV1RingELike)>=0){
        for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingELike); ib++) {
 	 mock_data_1Re_RHC->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingELike)[ib-1]);
        }
@@ -783,9 +798,7 @@ void generate_toymc_ensemble_joint_bar
 #ifdef __MULTIRING_FHC_RUNNING__
      // Get Multi-ring mu-like Ereco spectrum
      TH1D* mock_data_MultiRmu = new TH1D("","", util::NumErecoBins(kSKsFCFVMultiRingMuLike), util::ErecoBinEdges(kSKsFCFVMultiRingMuLike));
-
      if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFVMultiRingMuLike)>0){
-
        for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFVMultiRingMuLike); ib++) {
 	 mock_data_MultiRmu->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFVMultiRingMuLike)[ib-1]);
        }
@@ -794,16 +807,13 @@ void generate_toymc_ensemble_joint_bar
      
      // Get Multi-ring e-like Ereco spectrum 
      TH1D* mock_data_MultiRe = new TH1D("","", util::NumErecoBins(kSKsFCFVMultiRingELike), util::ErecoBinEdges(kSKsFCFVMultiRingELike));
-
-     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFVMultiRingELike)>0){
-       
+     if(util::ArrIdx::Instance()->SuperkSampleIdx(kSKsFCFVMultiRingELike)>0){       
        for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFVMultiRingELike); ib++) {
 	 mock_data_MultiRe->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFVMultiRingELike)[ib-1]);
        }
        mock_data_MultiRe->SetDirectory(0);
      }
 #endif
-     
      
      // If an XML file was specified, add an entry
      
