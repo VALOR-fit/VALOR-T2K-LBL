@@ -205,6 +205,7 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False,altlabels=True
   if not altlabels:
     pthet_hist.Draw("hist same")
   histogram .Draw("hist same")
+  data_spectrum.Draw("e same")
   legend.Draw()
   if not nopave:
     pave.Draw()
@@ -256,6 +257,7 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False,altlabels=True
   if not altlabels:
     pthet_hist.Draw("hist same")
   histogram .Draw("hist same")
+  data_spectrum.Draw("e same")
   legend.Draw()
   if not nopave:
     pave.Draw()

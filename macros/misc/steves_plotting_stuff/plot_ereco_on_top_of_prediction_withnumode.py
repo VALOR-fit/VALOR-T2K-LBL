@@ -190,10 +190,11 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False):
   data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
   framehist = make_frame(canvas,data_spectrum,0,max_energy,0,ymax)
   framehist.Draw("AXIS")
-  data_spectrum.Draw("e same")
   
   histogram2.Draw("same")
   histogram .Draw("same")
+  data_spectrum.Draw("e same")
+  
   
   legend.Draw()
   if not nopave:
