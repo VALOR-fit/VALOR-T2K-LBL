@@ -8,8 +8,8 @@ R.gROOT.SetBatch(1)
 old_POT = "2.315 #times 10^{20} POT"
 new_POT = "4.011 #times 10^{20} POT"
 
-f_old = ROOT.TFile("valor_fit_contours_old.root")
-f_new = ROOT.TFile("valor_fit_contours.root")
+f_old = ROOT.TFile("asimov_fit_contours_2.315E20.root")
+f_new = ROOT.TFile("asimov_with_reactor_values_valor_fit_contours.root")
 
 confidences = [("90",R.kSolid),
                ("68",R.kDashed)]
@@ -21,14 +21,14 @@ label_size = 0.07
 
 def main():
   for hierarchy in hierarchies:
-    bf_old = f_old.Get("valor_"+hierarchy+"_bestfit")
-    bf_new = f_new.Get("valor_"+hierarchy+"_bestfit")
+    bf_old = f_old.Get("valor_"+hierarchy+"_bestfit") ; assert(bf_old)
+    bf_new = f_new.Get("valor_"+hierarchy+"_bestfit") ; assert(bf_new)
     
     contours_old = []
     contours_new = []
     for conf,style in confidences:
-      cont_old = f_old.Get("valor_"+hierarchy+"_"+conf+"_contour")
-      cont_new = f_new.Get("valor_"+hierarchy+"_"+conf+"_contour")
+      cont_old = f_old.Get("valor_"+hierarchy+"_"+conf+"_contour") ; assert(cont_old)
+      cont_new = f_new.Get("valor_"+hierarchy+"_"+conf+"_contour") ; assert(cont_new)
       
       cont_old.SetLineStyle(style)
       cont_new.SetLineStyle(style)
@@ -81,7 +81,7 @@ def main():
     CopyMarkerToHist(bf_old,contours_old[0])
     CopyMarkerToHist(bf_new,contours_new[0])
       
-    legend = ROOT.TLegend(0.6,0.7,0.96,0.96)
+    legend = ROOT.TLegend(0.6,0.73,0.96,0.96)
     legend.AddEntry(contours_old[0],old_POT)
     legend.AddEntry(contours_new[0],new_POT)
     
