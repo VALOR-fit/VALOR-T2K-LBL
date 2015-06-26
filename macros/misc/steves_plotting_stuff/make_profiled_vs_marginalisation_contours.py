@@ -34,11 +34,12 @@ conf68 = 2.30
 
 to3dp = "{0:.3f}"
 to6dp = "{0:.6f}"
+to4sf = "{0:.3e}"
 
 p1 = conv.kPhypMixing23Bar
 p2 = conv.kPhypDm23sqBar
 
-# First file is prof-only, second is prof+marg
+# First file is profiled, second is marginalised
 def main(prof_file, marg_file, prof_bf_normal = None, marg_bf_normal =None, prof_bf_inverted = None, marg_bf_inverted =None,
          tag=None,draw_68 = True):
   
@@ -168,10 +169,10 @@ def main(prof_file, marg_file, prof_bf_normal = None, marg_bf_normal =None, prof
     marker_prof = ROOT.TMarker(bf_x_prof,bf_y_prof,ROOT.kFullStar)
     
     if (bf_chisq_marg > bf_chisq_prof):
-      bf_is_normal = True
+      bf_is_profiled = True
       marker_prof.SetMarkerStyle(ROOT.kOpenStar)
     else:
-      bf_is_normal = False
+      bf_is_profiled = False
       marker_marg.SetMarkerStyle(ROOT.kOpenStar)
       
     marker_marg.SetMarkerColor(ROOT.kViolet);
@@ -182,12 +183,39 @@ def main(prof_file, marg_file, prof_bf_normal = None, marg_bf_normal =None, prof
     CopyMarkerToHist(marker_marg,h_contour_marg)
     CopyMarkerToHist(marker_prof,h_contour_prof)
     
-    print "Bestfit point (prof)  : "   ,bf_x_prof,bf_y_prof,"\twith chisq: ",bf_chisq_prof
-    print "Bestfit point (prof+marg): ",bf_x_marg,bf_y_marg,"\twith chisq: ",bf_chisq_marg
+    print "Bestfit point (profiled)  :   ",util.ParamAsStringSimple(p1)+" = ",to6dp.format(bf_x_prof),", ",
+    print util.ParamAsStringSimple(p2)+" = "+to6dp.format(bf_y_prof),"\twith chisq: ",to4sf.format(bf_chisq_prof)
+    print "Bestfit point (marginalised): ",util.ParamAsStringSimple(p1)+" = ",to6dp.format(bf_x_marg),", ",
+    print util.ParamAsStringSimple(p2)+" = "+to6dp.format(bf_y_marg),"\twith chisq: ",to4sf.format(bf_chisq_marg)
       
     print "\n\n"
     
+    
+    # Dump graphs for Kirsty
+    outfile = ROOT.TFile(tag+"_valor_marg_contours.root","RECREATE")
+    outfile.cd()
+    
+    h_delta_prof.Write("valor_prof_dchisq")
+    h_delta_marg.Write("valor_marg_dchisq")
+  
+    contours_prof[0][0].Write("valor_prof_68_contour")
+    contours_prof[1][0].Write("valor_prof_90_contour")
+    contours_marg[0][0].Write("valor_marg_68_contour")
+    contours_marg[1][0].Write("valor_marg_90_contour")
+    
+    bf_prof_graph = ROOT.TGraph(1)
+    bf_marg_graph = ROOT.TGraph(1)
+    bf_prof_graph.SetTitle("Bestfit: Normal")
+    bf_marg_graph.SetTitle("Bestfit: Inverted")
+    bf_prof_graph.SetPoint(0,bf_x_prof,bf_y_prof)
+    bf_marg_graph.SetPoint(0,bf_x_marg,bf_y_marg)
+    bf_prof_graph.Write("valor_prof_bestfit")
+    bf_marg_graph.Write("valor_marg_bestfit")
+    outfile.Close()
+  
+    
     # Start drawing
+    
     
     #~ for zoom in [False,True]:
     for zoom in [True]:

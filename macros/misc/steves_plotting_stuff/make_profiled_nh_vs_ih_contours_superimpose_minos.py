@@ -33,7 +33,10 @@ conf90 = 4.61
 conf68 = 2.30
 
 to3dp = "{0:.3f}"
+to4dp = "{0:.4f}"
 to6dp = "{0:.6f}"
+to3sf = "{0:.2e}"
+to4sf = "{0:.3e}"
 
 p1 = conv.kPhypMixing23Bar
 p2 = conv.kPhypDm23sqBar
@@ -207,8 +210,10 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
   bf_ih_graph.Write("valor_ih_bestfit")
   outfile.Close()
   
-  print "Bestfit point (normal)  : ",bf_x_nh,bf_y_nh,"\twith chisq: ",bf_chisq_nh
-  print "Bestfit point (inverted): ",bf_x_ih,bf_y_ih,"\twith chisq: ",bf_chisq_ih
+  print "Bestfit point (normal)  : ",util.ParamAsStringSimple(p1)+" = ",to6dp.format(bf_x_nh),", ",
+  print util.ParamAsStringSimple(p2)+" = "+to6dp.format(bf_y_nh),"\twith chisq: ",to4sf.format(bf_chisq_nh)
+  print "Bestfit point (inverted): ",util.ParamAsStringSimple(p1)+" = ",to6dp.format(bf_x_ih),", ",
+  print util.ParamAsStringSimple(p2)+" = "+to6dp.format(bf_y_ih),"\twith chisq: ",to4sf.format(bf_chisq_ih)
   
   if bf_is_normal:
     print "\n",to3dp.format(bf_x_nh), " & ",to6dp.format(bf_y_nh)," & Normal"
@@ -313,7 +318,13 @@ def main(contour_file, bf_normal =None, bf_inverted =None, tag=None,draw_minos=T
     minos_graph.Draw("l same")
     minos_points.Draw("p same")
   canv_ih.Print(plot_name+"_ih."+image_format)
-
+  
+  print "Difference between unbinned BF and chisq minimum: ",
+  if bf_is_normal:
+    print h_nh.GetMinimum()-bf_chisq_nh,"\t(",h_nh.GetMinimum()," - ",bf_chisq_nh,")"
+  else:
+    print h_ih.GetMinimum()-bf_chisq_ih,"\t(",h_ih.GetMinimum()," - ",bf_chisq_ih,")"
+    
 def GetContours(h):
   dummy_canv = ROOT.TCanvas()
   dummy_canv.cd()
