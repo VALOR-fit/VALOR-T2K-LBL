@@ -2282,50 +2282,50 @@ void FitMarginalization::BuildDeltaChisqMarg(){
 }
 
 
-// //________________________________________________________________________________________
-// void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,double par1,double par2){
+//________________________________________________________________________________________
+void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,double par1,double par2){
 
-//   fparm->SetPriorMode(physpar,priorname);
-//   // NEW MARG MH
-//   fparm_nh->SetPriorMode(physpar,priorname);
-//   fparm_ih->SetPriorMode(physpar,priorname);
-//   //
+  fparm->SetPriorMode(physpar,priorname);
+  // NEW MARG MH
+  fparm_nh->SetPriorMode(physpar,priorname);
+  fparm_ih->SetPriorMode(physpar,priorname);
+  //
 
-//   if(priorname=="flat"){
-//     fparm->SetMinValueFlat(physpar,par1);
-//     fparm->SetMaxValueFlat(physpar,par2);
-//     // NEW MARG MH
-//     fparm_nh->SetMinValueFlat(physpar,par1);
-//     fparm_nh->SetMaxValueFlat(physpar,par2);
-//     fparm_ih->SetMinValueFlat(physpar,par1);
-//     fparm_ih->SetMaxValueFlat(physpar,par2);
-//     //
-//   }
-//   else if(priorname=="gaus"){
-//     fparm->SetMeanGaus(physpar,par1);
-//     fparm->SetSigmaGaus(physpar,par2);
-//     // NEW MARG MH
-//     fparm_nh->SetMeanGaus(physpar,par1);
-//     fparm_nh->SetSigmaGaus(physpar,par2);
-//     fparm_ih->SetMeanGaus(physpar,par1);
-//     fparm_ih->SetSigmaGaus(physpar,par2);
-//     //
-//   }
-//   else if(priorname=="user"){
-//     cerr << endl;
-//     cerr << "FitMarginalization::SetPrior" << endl;
-//     cerr << "You chose a user prior but you didn't give any histogram as input" << endl;
-//     exit(1);
-//   }
-//   else{
-//     cerr << endl;
-//     cerr << "FitMarginalization::SetPrior" << endl;
-//     cerr << "You chose the wrong prior option" << endl;
-//     exit(1);
-//   }
-  
-//   return;
-// }
+  if(priorname=="flat"){
+    fparm->SetMinValueFlat(physpar,par1);
+    fparm->SetMaxValueFlat(physpar,par2);
+    // NEW MARG MH
+    fparm_nh->SetMinValueFlat(physpar,par1);
+    fparm_nh->SetMaxValueFlat(physpar,par2);
+    fparm_ih->SetMinValueFlat(physpar,par1);
+    fparm_ih->SetMaxValueFlat(physpar,par2);
+    //
+  }
+  else if(priorname=="gaus"){
+    fparm->SetMeanGaus(physpar,par1);
+    fparm->SetSigmaGaus(physpar,par2);
+    // NEW MARG MH
+    fparm_nh->SetMeanGaus(physpar,par1);
+    fparm_nh->SetSigmaGaus(physpar,par2);
+    fparm_ih->SetMeanGaus(physpar,par1);
+    fparm_ih->SetSigmaGaus(physpar,par2);
+    //
+  }
+  else if(priorname=="user"){
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose a user prior but you didn't give any histogram as input" << endl;
+    exit(1);
+  }
+  else{
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose the wrong prior option" << endl;
+    exit(1);
+  }
+
+  return;
+}
 //________________________________________________________________________________________
 void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,double par1,double par2){
 
@@ -2404,38 +2404,38 @@ void FitMarginalization::SetPrior_IH(PhysParamId_t physpar,string priorname,doub
 
 
 
-// //________________________________________________________________________________________
-// void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1D *hprior){
-//   fparm->SetPriorMode(physpar,priorname);
-//   // NEW MARG MH
-//   fparm_nh->SetPriorMode(physpar,priorname);
-//   fparm_ih->SetPriorMode(physpar,priorname);
-//   //
+//________________________________________________________________________________________
+void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH1D *hprior){
+  fparm->SetPriorMode(physpar,priorname);
+  // NEW MARG MH
+  fparm_nh->SetPriorMode(physpar,priorname);
+  fparm_ih->SetPriorMode(physpar,priorname);
+  //
 
-//   if(priorname=="user"){
-//     fparm->SetPriorHisto(physpar,hprior);
-//     fparm->SetToyHisto(physpar,hprior);
-//     // NEW MARG MH
-//     fparm_nh->SetPriorHisto(physpar,hprior);
-//     fparm_nh->SetToyHisto(physpar,hprior);
-//     fparm_ih->SetPriorHisto(physpar,hprior);
-//     fparm_ih->SetToyHisto(physpar,hprior);
-//     //
-//   }  
-//   else if(priorname=="flat" || priorname=="gaus"){
-//     cerr << endl;
-//     cerr << "FitMarginalization::SetPrior" << endl;
-//     cerr << "You chose a " << priorname << " prior, but you gave as input an histogram" << endl;
-//     exit(1);
-//   }
-//   else{
-//     cerr << endl;
-//     cerr << "FitMarginalization::SetPrior" << endl;
-//     cerr << "You chose the wrong prior option" << endl;
-//     exit(1);
-//   }
-//   return;
-// }
+  if(priorname=="user"){
+    fparm->SetPriorHisto(physpar,hprior);
+    fparm->SetToyHisto(physpar,hprior);
+    // NEW MARG MH
+    fparm_nh->SetPriorHisto(physpar,hprior);
+    fparm_nh->SetToyHisto(physpar,hprior);
+    fparm_ih->SetPriorHisto(physpar,hprior);
+    fparm_ih->SetToyHisto(physpar,hprior);
+    //
+  }  
+  else if(priorname=="flat" || priorname=="gaus"){
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose a " << priorname << " prior, but you gave as input an histogram" << endl;
+    exit(1);
+  }
+  else{
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose the wrong prior option" << endl;
+    exit(1);
+  }
+  return;
+}
 //________________________________________________________________________________________
 void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,TH1D *hprior){
   fparm->SetPriorMode(physpar,priorname);
@@ -2497,38 +2497,38 @@ void FitMarginalization::SetPrior_IH(PhysParamId_t physpar,string priorname,TH1D
 
 
 
-// //________________________________________________________________________________________
-// void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH2D *hprior){
-//   fparm->SetPriorMode(physpar,priorname);
-//   // NEW MARG MH
-//   fparm_nh->SetPriorMode(physpar,priorname);
-//   fparm_ih->SetPriorMode(physpar,priorname);
-//   //
+//________________________________________________________________________________________
+void FitMarginalization::SetPrior(PhysParamId_t physpar,string priorname,TH2D *hprior){
+  fparm->SetPriorMode(physpar,priorname);
+  // NEW MARG MH
+  fparm_nh->SetPriorMode(physpar,priorname);
+  fparm_ih->SetPriorMode(physpar,priorname);
+  //
 
-//   if(priorname=="user"){
-//     fparm->SetPriorHisto2D(physpar,hprior);
-//     fparm->SetToyHisto2D(physpar,hprior);
-//     // NEW MARG MH
-//     fparm_nh->SetPriorHisto2D(physpar,hprior);
-//     fparm_nh->SetToyHisto2D(physpar,hprior);
-//     fparm_ih->SetPriorHisto2D(physpar,hprior);
-//     fparm_ih->SetToyHisto2D(physpar,hprior);
-//     //
-//   }
-//   else if(priorname=="flat" || priorname=="gaus"){
-//     cerr << endl;
-//     cerr << "FitMarginalization::SetPrior" << endl;
-//     cerr << "You chose a " << priorname << " prior, but you gave as input an histogram" << endl;
-//     exit(1);
-//   }
-//   else{
-//     cerr << endl;
-//     cerr << "FitMarginalization::SetPrior" << endl;
-//     cerr << "You chose the wrong prior option" << endl;
-//     exit(1);
-//   }
-//   return;
-// }
+  if(priorname=="user"){
+    fparm->SetPriorHisto2D(physpar,hprior);
+    fparm->SetToyHisto2D(physpar,hprior);
+    // NEW MARG MH
+    fparm_nh->SetPriorHisto2D(physpar,hprior);
+    fparm_nh->SetToyHisto2D(physpar,hprior);
+    fparm_ih->SetPriorHisto2D(physpar,hprior);
+    fparm_ih->SetToyHisto2D(physpar,hprior);
+    //
+  }
+  else if(priorname=="flat" || priorname=="gaus"){
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose a " << priorname << " prior, but you gave as input an histogram" << endl;
+    exit(1);
+  }
+  else{
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior" << endl;
+    cerr << "You chose the wrong prior option" << endl;
+    exit(1);
+  }
+  return;
+}
 //________________________________________________________________________________________
 void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,TH2D *hprior){
   fparm->SetPriorMode(physpar,priorname);
