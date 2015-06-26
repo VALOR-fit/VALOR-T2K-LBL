@@ -34,13 +34,17 @@ text_entry_height = 0.08
 
 coarse_binning = [0.0,0.4,0.7,1.0,1.5,2.0,3.0,4.0,5.0,30]
 
-def main(file_patterns,config,tag="data",rebin=False,nopave=False):
+def main(file_patterns,config,tag="data",rebin=False,nopave=False,altlabels=True):
   
-  max_energy = 6
+  max_energy = 5
   title_size = 0.08
   label_size = 0.07
   
   sample = conv.kSKsRHCFCFV1RingMuLike
+  
+  plot_type = "groups"
+  if altlabels:
+    plot_type = "bayes_vs_freq"
   
   objects_to_keep = []
   
@@ -85,7 +89,9 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False):
   
   data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
   
-  if (rebin): data_spectrum = rebin_histogram_coarser(data_spectrum,coarse_binning)
+  if (rebin):
+    data_spectrum = rebin_histogram_coarser(data_spectrum,coarse_binning)
+    
   data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
   
   assert(abs(data_spectrum.Integral()-n_data)<conv.kASmallNum)
@@ -136,24 +142,33 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False):
   # That's the VALOR contour done, let's get MaCh3
   m3_file = ROOT.TFile(file_patterns[1])
   assert(m3_file)
-  #~ mach3_hist = m3_file.Get("hist_1d")
-  mach3_hist = m3_file.Get("bestfit")
+  mach3_hist = m3_file.Get("hist_1d")
+  #~ mach3_hist = m3_file.Get("bestfit")
   assert(mach3_hist)
   mach3_hist.SetLineColor(ROOT.kBlue)
+  mach3_hist.SetLineWidth(2)
   
   # And P-theta
   pt_file = ROOT.TFile(file_patterns[2])
   assert(pt_file)
-  #~ pthet_hist = pt_file.Get("hNumuPDF")
-  pthet_hist = pt_file.Get("coarse_binning_spectrum")
+  pthet_hist = pt_file.Get("hNumuPDF")
+  #~ pthet_hist = pt_file.Get("coarse_binning_spectrum")
   assert(pthet_hist)
   pthet_hist.SetLineColor(ROOT.kGreen+2)
+  pthet_hist.SetLineWidth(2)
+  
+  if rebin and pthet_hist.GetXaxis().GetNbins() > len(coarse_binning):
+    pthet_hist = rebin_histogram_coarser(pthet_hist,coarse_binning)
   
   legend = ROOT.TLegend(0.68,0.55,0.93,0.93)
   legend.AddEntry(data_spectrum,"Data"    )
-  legend.AddEntry(histogram    ,"VALOR"   ,"l")
-  legend.AddEntry(mach3_hist   ,"MaCh3"   ,"l")
-  legend.AddEntry(pthet_hist   ,"P-theta" ,"l")
+  if altlabels:
+    legend.AddEntry(histogram    ,"Frequentist","l")
+    legend.AddEntry(mach3_hist   ,"Bayesian"   ,"l")
+  else:
+    legend.AddEntry(histogram    ,"VALOR"   ,"l")
+    legend.AddEntry(mach3_hist   ,"MaCh3"   ,"l")
+    legend.AddEntry(pthet_hist   ,"P-theta" ,"l")
   
   legend.SetBorderSize(0)
   legend.SetFillStyle (0)
@@ -187,13 +202,15 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False):
   data_spectrum.Draw("e")
   histogram .Draw("hist same")
   mach3_hist.Draw("hist same")
-  pthet_hist.Draw("hist same")
+  if not altlabels:
+    pthet_hist.Draw("hist same")
+  histogram .Draw("hist same")
   legend.Draw()
   if not nopave:
     pave.Draw()
     pave2.Draw()
     pave3.Draw()
-  canvas.Print(tag+"_spectrum_groups"+".eps")
+  canvas.Print(tag+"_spectrum_"+plot_type+".eps")
   
   
   histogram.GetXaxis().SetRangeUser(0,0.5)
@@ -212,6 +229,16 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False):
   print "Mid  E ratio: ",to2dp.format(100.*n_data_mid_energy /n_unosc_mid_energy ),"%"
   print "High E ratio: ",to2dp.format(100.*n_data_high_energy/n_unosc_high_energy),"%"
   
+  data_spectrum.GetXaxis().SetRangeUser(0,30)
+  histogram.GetXaxis().SetRangeUser(0,30)
+  mach3_hist.GetXaxis().SetRangeUser(0,30)
+  pthet_hist.GetXaxis().SetRangeUser(0,30)
+  print
+  print "Event count (data):    ",data_spectrum.Integral()
+  print "Event count (VALOR):   ",histogram.Integral()
+  print "Event count (MaCH3):   ",mach3_hist.Integral()
+  print "Event count (p-theta): ",pthet_hist.Integral()
+  
   # Plot per 100 MeV
   histogram.GetXaxis().SetRangeUser(0.,30)
   modify_histogram_to_events_per_width(data_spectrum,   0.5)
@@ -219,19 +246,23 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False):
   modify_histogram_to_events_per_width(mach3_hist   ,   0.5)
   modify_histogram_to_events_per_width(pthet_hist   ,   0.5)
   data_spectrum.GetYaxis().SetTitle("Events per 0.5 GeV")
+  data_spectrum.GetXaxis().SetRangeUser(0,max_energy)
   
   canvas2 = ROOT.TCanvas("c2","c2",1280,720)
   canvas2.cd()
   data_spectrum.Draw("e")
   histogram .Draw("hist same")
   mach3_hist.Draw("hist same")
-  pthet_hist.Draw("hist same")
+  if not altlabels:
+    pthet_hist.Draw("hist same")
+  histogram .Draw("hist same")
   legend.Draw()
   if not nopave:
     pave.Draw()
     pave2.Draw()
     pave3.Draw()
-  canvas.Print(tag+"_spectrum_groups_per_energy"+".eps")
+  canvas.Print(tag+"_spectrum_"+plot_type+"_per_energy"+".eps")
+  
 
 def modify_histogram_to_events_per_width(h,width=0.1):
   for ibin in xrange(1,h.GetXaxis().GetNbins()+1):
@@ -299,13 +330,14 @@ def make_frame(canvas,h,xmin,xmax,ymin=None,ymax=None):
 if __name__=="__main__":
   import optparse
   parser = optparse.OptionParser(usage="%prog [options] valor mach3 ptheta",description="Make plots.")
-  parser.add_option('-t', dest='tag'    ,default="data"  ,help='The filename')
-  parser.add_option('-r', dest='rebin'  ,default=False,action="store_true"  ,help="Use the coarse binning")
-  parser.add_option('-n', dest='nopave' ,default=False,action="store_true"  ,help="Don't draw the paves")
+  parser.add_option('-t', dest='tag'       ,default="data"  ,help='The filename')
+  parser.add_option('-r', dest='rebin'     ,default=False,action="store_true"  ,help="Use the coarse binning")
+  parser.add_option('-n', dest='nopave'    ,default=False,action="store_true"  ,help="Don't draw the paves")
+  parser.add_option('-l', dest='altlabels' ,default=False,action="store_true"  ,help="Do Frequentist-vs-Bayesian rather than Group-by-Group")
   parser.add_option('-c', '--config'        , dest='config' , default="analysis_configuration.xml", help="Configuration file")
   
   options,patterns = parser.parse_args()
   
   assert(len(patterns)==3)
   
-  main(patterns, options.config, options.tag, options.rebin, options.nopave)
+  main(patterns, options.config, options.tag, options.rebin, options.nopave,options.altlabels)
