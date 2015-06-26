@@ -195,13 +195,13 @@ def main(prof_file, marg_file, prof_bf_normal = None, marg_bf_normal =None, prof
     outfile = ROOT.TFile(tag+"_valor_marg_contours.root","RECREATE")
     outfile.cd()
     
-    h_delta_prof.Write("valor_prof_dchisq")
-    h_delta_marg.Write("valor_marg_dchisq")
+    h_delta_prof.Write("valor_prof_"+hierarchy+"_dchisq")
+    h_delta_marg.Write("valor_marg_"+hierarchy+"_dchisq")
   
-    contours_prof[0][0].Write("valor_prof_68_contour")
-    contours_prof[1][0].Write("valor_prof_90_contour")
-    contours_marg[0][0].Write("valor_marg_68_contour")
-    contours_marg[1][0].Write("valor_marg_90_contour")
+    contours_prof[0][0].Write("valor_prof_"+hierarchy+"_68_contour")
+    contours_prof[1][0].Write("valor_prof_"+hierarchy+"_90_contour")
+    contours_marg[0][0].Write("valor_marg_"+hierarchy+"_68_contour")
+    contours_marg[1][0].Write("valor_marg_"+hierarchy+"_90_contour")
     
     bf_prof_graph = ROOT.TGraph(1)
     bf_marg_graph = ROOT.TGraph(1)
@@ -209,8 +209,8 @@ def main(prof_file, marg_file, prof_bf_normal = None, marg_bf_normal =None, prof
     bf_marg_graph.SetTitle("Bestfit: Inverted")
     bf_prof_graph.SetPoint(0,bf_x_prof,bf_y_prof)
     bf_marg_graph.SetPoint(0,bf_x_marg,bf_y_marg)
-    bf_prof_graph.Write("valor_prof_bestfit")
-    bf_marg_graph.Write("valor_marg_bestfit")
+    bf_prof_graph.Write("valor_prof_"+hierarchy+"_bestfit")
+    bf_marg_graph.Write("valor_marg_"+hierarchy+"_bestfit")
     outfile.Close()
   
     

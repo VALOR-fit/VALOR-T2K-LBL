@@ -60,6 +60,9 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
   print "Reading stat from ",stat_file
   print "Reading stat+SYST from ",syst_file
   
+  # Output file for TGraph output
+  outfile = ROOT.TFile(tag+"_valor_stat_contours.root","RECREATE")
+  
   for hierarchy in ["nh","ih"]:
     f_stat = ROOT.TFile(stat_file)
     h_stat = f_stat.Get("h_chisq_dmsq_mixing23_Ave_"+hierarchy)
@@ -190,6 +193,25 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
       
     print "\n\n"
     
+    # Dump graphs for Kirsty
+    outfile.cd()
+    h_delta_stat.Write("valor_stat_"+hierarchy+"_dchisq")
+    h_delta_syst.Write("valor_syst_"+hierarchy+"_dchisq")
+  
+    contours_stat[0][0].Write("valor_stat_"+hierarchy+"_68_contour")
+    contours_stat[1][0].Write("valor_stat_"+hierarchy+"_90_contour")
+    contours_syst[0][0].Write("valor_syst_"+hierarchy+"_68_contour")
+    contours_syst[1][0].Write("valor_syst_"+hierarchy+"_90_contour")
+    
+    bf_stat_graph = ROOT.TGraph(1)
+    bf_syst_graph = ROOT.TGraph(1)
+    bf_stat_graph.SetTitle("Bestfit: Normal")
+    bf_syst_graph.SetTitle("Bestfit: Inverted")
+    bf_stat_graph.SetPoint(0,bf_x_stat,bf_y_stat)
+    bf_syst_graph.SetPoint(0,bf_x_syst,bf_y_syst)
+    bf_stat_graph.Write("valor_stat_"+hierarchy+"_bestfit")
+    bf_syst_graph.Write("valor_syst_"+hierarchy+"_bestfit")
+    
     # Start drawing
     
     #~ for zoom in [False,True]:
@@ -264,7 +286,9 @@ def main(stat_file, syst_file, stat_bf_normal = None, syst_bf_normal =None, stat
         g.SetLineColor(R.kBlue)
         g.Draw("same")
       canv_ih.Print(plot_name+"_"+hierarchy+"_stat+syst."+image_format)
-
+      
+  outfile.Close()
+  
 def GetContours(h):
   dummy_canv = ROOT.TCanvas()
   dummy_canv.cd()
