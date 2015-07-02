@@ -60,6 +60,7 @@ void BANFF::Init(void)
   fCovMtrx              = 0;
   fCovMtrxInv           = 0;
   fCovMtrxChoL          = 0; 
+
   fRHCBestFitValues     = 0;
   fRHCCurrentValues     = 0;
   fRHCCovMtrx           = 0;
@@ -78,51 +79,57 @@ void BANFF::Init(void)
   fIsFluxWghtUpdated    = true;
   fIsTweakedRHC         = false;
   fIsFluxWghtUpdatedRHC = true;
-
   // NEW FLUX FHC+RHC
-  fIsTweakedFHCpRHC         = false;
-  fIsFluxWghtUpdatedFHCpRHC = true;
+  //fIsTweakedFHCpRHC         = false;
+  //fIsFluxWghtUpdatedFHCpRHC = true;
   //
   
-  for (int ip = 0 ; ip < conv::knppmax ; ip++) {
-    PhysParamId_t p = (PhysParamId_t) ip;
-    fParam2Idx[ip]=-1;
-    for (int ibp = 0 ; ibp < kNumOfParamsInBANFFfit ; ibp++) {
-      if (kListOfBANFFParams[ibp] == p) {
-        fParam2Idx[ip] = ibp;
-      }
-    }
-    for (int ibp = 0 ; ibp < kNumOfRHCParamsInBANFFfit ; ibp++) {
-      if (kListOfRHCBANFFParams[ibp] == p) {
-        fParam2Idx[ip] = ibp;
-      }
-    }
-  }
-  
-  // NEW FLUX FHC+RHC
+  // NEW FHC+RHC JOINT  
+  // for (int ip = 0 ; ip < conv::knppmax ; ip++) {
+  //   PhysParamId_t p = (PhysParamId_t) ip;
+  //   fParam2Idx[ip]=-1;
+  //   for (int ibp = 0 ; ibp < kNumOfParamsInBANFFfit ; ibp++) {
+  //     if (kListOfBANFFParams[ibp] == p) {
+  //       fParam2Idx[ip] = ibp;
+  //     }
+  //   }
+  //   for (int ibp = 0 ; ibp < kNumOfRHCParamsInBANFFfit ; ibp++) {
+  //     if (kListOfRHCBANFFParams[ibp] == p) {
+  //       fParam2Idx[ip] = ibp;
+  //     }
+  //   }
+  // }
 
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
-  #if defined(__FULLY_CORRELATED__)
+  
   for (int ip = 0 ; ip < conv::knppmax ; ip++) {
     PhysParamId_t p = (PhysParamId_t) ip;
-    fParam2Idx[ip]=-1;
+    // FHC-only
+    fParam2Idx_FHC[ip]=-1;
     for (int ibp = 0 ; ibp < kNumOfParamsInBANFFfit ; ibp++) {
       if (kListOfBANFFParams[ibp] == p) {
-        fParam2Idx[ip] = ibp;
+        fParam2Idx_FHC[ip] = ibp;
       }
     }
+    // RHC-only
+    fParam2Idx_RHC[ip]=-1;
     for (int ibp = 0 ; ibp < kNumOfRHCParamsInBANFFfit ; ibp++) {
       if (kListOfRHCBANFFParams[ibp] == p) {
-        fParam2Idx[ip] = ibp;
+        fParam2Idx_RHC[ip] = ibp;
+      }
+    }
+    // FHC+RHC 
+    fParam2Idx_FHCpRHC[ip]=-1;
+    for (int ibp = 0 ; ibp < kNumOfFHCpRHCParamsInBANFFfit ; ibp++) {
+      if (kListOfFHCpRHCBANFFParams[ibp] == p) {
+        fParam2Idx_FHCpRHC[ip] = ibp;
       }
     }
   }
-  #endif
-#endif
   //
   
   fUntunedCentralValues = 0;
   fRHCUntunedCentralValues = 0;
+  fFHCpRHCUntunedCentralValues = 0;   // NEW FHC+RHC JOINT
   
 }
 //________________________________________________________________________________________
@@ -132,6 +139,7 @@ void BANFF::CleanUp(void)
   if ( fCurrentValues             ) delete fCurrentValues;
   if ( fCovMtrx                   ) delete fCovMtrx;
   if ( fCovMtrxChoL               ) delete fCovMtrxChoL;
+  
   if ( fRHCBestFitValues          ) delete fRHCBestFitValues;
   if ( fRHCCurrentValues          ) delete fRHCCurrentValues;
   if ( fRHCCovMtrx                ) delete fRHCCovMtrx;
@@ -144,8 +152,9 @@ void BANFF::CleanUp(void)
   if ( fFHCpRHCCovMtrxChoL            ) delete fFHCpRHCCovMtrxChoL;
   //
   
-  if (fUntunedCentralValues)    delete fUntunedCentralValues;
-  if (fRHCUntunedCentralValues) delete fRHCUntunedCentralValues;
+  if (fUntunedCentralValues)        delete fUntunedCentralValues;
+  if (fRHCUntunedCentralValues)     delete fRHCUntunedCentralValues;
+  if (fFHCpRHCUntunedCentralValues) delete fFHCpRHCUntunedCentralValues; // NEW FHC+RHC JOINT
 }
 //________________________________________________________________________________________
 bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -194,16 +203,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // Get BANFF fit central values
 
 #ifndef __BANFF_BESTFIT_IS_ONE__
-
-  // #if BANFF_BINS == 1
-  //   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
-  // #elif BANFF_BINS == 2
-  //   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
-  // #elif BANFF_BINS == 3
-  //   fBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-  // #endif
   fBestFitValues = util::XML2TVectorD(xml,root_node,banff_param_path);
-
   if(!fBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
     exit(1);
@@ -233,15 +233,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fCurrentValues = new TVectorD(bestfit);
 
   // Get BANFF fit covariance matrix
-
-  // #if BANFF_BINS == 1
-  //   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
-  // #elif BANFF_BINS == 2
-  //   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
-  // #elif BANFF_BINS == 3
-  //   fCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-  // #endif  
-    fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
+  fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
  
   if(!fCovMtrx) {
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
@@ -294,13 +286,6 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 #ifndef __BANFF_BESTFIT_IS_ONE__
 
-  // #if BANFF_BINS == 1
-  //   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/best_fit_values");
-  // #elif BANFF_BINS == 2
-  //   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/disap/best_fit_values");
-  // #elif BANFF_BINS == 3
-  //   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,"banff/app/best_fit_values");
-  // #endif
   fRHCBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathRHCBanffParam.c_str());
     
   if(!fRHCBestFitValues) {
@@ -332,18 +317,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fRHCCurrentValues = new TVectorD(bestfit);
 
   // Get BANFF fit covariance matrix
-
-  //#if BANFF_BINS == 1
-  // #ifdef NEW_RHC_BANFF
-  //     fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff_rhc/covariance_matrix");
-  // #else
-  //     fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/covariance_matrix");
-  // #endif
-  // #elif BANFF_BINS == 2
-  //   fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/disap/covariance_matrix");
-  // #elif BANFF_BINS == 3
-  //   fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,"banff/app/covariance_matrix");
-  // #endif
+  
   fRHCCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathRHCBanffCovMatr.c_str());
 
   if(!fRHCCovMtrx) {
@@ -377,13 +351,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fRHCCurrentArray = fRHCCurrentValues->GetMatrixArray();
   return true;
 }
-
-
-
-
-
-
-
+//________________________________________________________________________________________
 
 
 
@@ -391,13 +359,23 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
-  
+  if (fBestFitValues)  { delete fBestFitValues; fBestFitValues = 0;}
+  if (fCurrentValues)  { delete fCurrentValues; fCurrentValues = 0;}
+  if (fCovMtrx)        { delete fCovMtrx;       fCovMtrx       = 0;}
+  if (fCovMtrxInv)     { delete fCovMtrxInv;    fCovMtrxInv    = 0;}
+
+  if (fRHCBestFitValues)  { delete fRHCBestFitValues; fRHCBestFitValues = 0;}
+  if (fRHCCurrentValues)  { delete fRHCCurrentValues; fRHCCurrentValues = 0;}
+  if (fRHCCovMtrx)        { delete fRHCCovMtrx;       fRHCCovMtrx       = 0;}
+  if (fRHCCovMtrxInv)     { delete fRHCCovMtrxInv;    fRHCCovMtrxInv    = 0;}
+
   if (fFHCpRHCBestFitValues)  { delete fFHCpRHCBestFitValues; fFHCpRHCBestFitValues = 0;}
   if (fFHCpRHCCurrentValues)  { delete fFHCpRHCCurrentValues; fFHCpRHCCurrentValues = 0;}
   if (fFHCpRHCCovMtrx)        { delete fFHCpRHCCovMtrx;       fFHCpRHCCovMtrx       = 0;}
   if (fFHCpRHCCovMtrxInv)     { delete fFHCpRHCCovMtrxInv;    fFHCpRHCCovMtrxInv    = 0;}
-// Read BANFF inputs to oscillation analysis
-//
+
+  // Read BANFF inputs to oscillation analysis
+  //
 #ifdef __show_init_mesg_info__
   cout << "Exp/BANFF >> Reading BANFF inputs from XML configuration file." << endl;
 #endif
@@ -406,9 +384,11 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   // Get BANFF fit central values
 
 #ifndef __BANFF_BESTFIT_IS_ONE__
+
+  // Use same path as FHC. Also FHC and RHC paths are the same. Use different configuration files   
   fFHCpRHCBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
   
-  cout << T2KOpt::Instance()->fPathBanffParam.c_str() << endl;
+  cout << T2KOpt::Instance()->fPathBanffParam.c_str() << endl; 
   
   if(!fFHCpRHCBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
@@ -433,12 +413,14 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_debug__
   cout << "Exp/BANFF >> Input FHC+RHC BANFF best-fit parameters: " << endl; 
   util::PrintCompact(bestfit,12,6,"FHC+RHC BANFF fit params");
-#endif
-
+#endif  
+  
   // init current values to best-fit values
   fFHCpRHCCurrentValues = new TVectorD(bestfit);
 
   // Get BANFF fit covariance matrix
+
+  // Use same path as FHC. Also FHC and RHC paths are the same. Use different configuration files 
   fFHCpRHCCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
  
   if(!fFHCpRHCCovMtrx) {
@@ -449,6 +431,20 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   double det;
   fFHCpRHCCovMtrxInv = new TMatrixD(*fFHCpRHCCovMtrx);
   (*fFHCpRHCCovMtrxInv).Invert(&det);
+
+
+  // TODO: get the FHC-only and RHC-only covariance matrices!!!
+  // write a method to select the sub-matrices from the full FHC+RHC one
+  fCovMtrx = new TMatrixD(conv::kNumOfParamsInBANFFfit,conv::kNumOfParamsInBANFFfit);
+  fCovMtrxInv = new TMatrixD(conv::kNumOfParamsInBANFFfit,conv::kNumOfParamsInBANFFfit);
+  fRHCCovMtrx = new TMatrixD(conv::kNumOfRHCParamsInBANFFfit,conv::kNumOfRHCParamsInBANFFfit);
+  fRHCCovMtrxInv = new TMatrixD(conv::kNumOfRHCParamsInBANFFfit,conv::kNumOfRHCParamsInBANFFfit);
+  fCovMtrx->UnitMatrix();
+  fCovMtrxInv->UnitMatrix();
+  fRHCCovMtrx->UnitMatrix();
+  fRHCCovMtrxInv->UnitMatrix();
+  //
+
 
   const TMatrixD & cov = *fFHCpRHCCovMtrx;
   if(cov.GetNrows() != np || cov.GetNcols() != np) 
@@ -471,28 +467,55 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fFHCpRHCBestFitArray = fFHCpRHCBestFitValues->GetMatrixArray();
   fFHCpRHCCurrentArray = fFHCpRHCCurrentValues->GetMatrixArray();
   
-  // Fill FHC and RHC parameter arrays
-  // for(int ipar=0;ipar<kNumOfFluxParamsInBANFFfit;ipar++)
-  //   fBestFitValues(ipar) = fFHCpRHCBestFitValues(ipar);
-  // for(int ipar=0;ipar<kNumOfRHCFluxParamsInBANFFfit;ipar++)
-  //   fRHCBestFitValues(ipar) = fFHCpRHCBestFitValues(kNumOfFluxParamsInBANFFfit+ipar);
-  // for(int ipar=0;ipar<kNumOfFHCpRHCXSecParamsInBANFFfit;ipar++){
-  //   fBestFitValues(kNumOfFluxParamsInBANFFfit+ipar)    = fFHCpRHCBestFitValues(kNumOfFluxParamsInBANFFfit+kNumOfFluxParamsInBANFFfit+ipar);
-  //   fRHCBestFitValues(kNumOfFluxParamsInBANFFfit+ipar) = fFHCpRHCBestFitValues(kNumOfFluxParamsInBANFFfit+kNumOfFluxParamsInBANFFfit+ipar);
-  // }
+
+  // NEW FHC+RHC JOINT
+
+  // Initialize FHC-only and RHC-only vectors
+
+  const int np_fhc = conv::kNumOfParamsInBANFFfit;
+  double init_fhc[np_fhc];
+  for(int ip = 0; ip < np_fhc; ip++) init_fhc[ip] = conv::kBadResult;
+  fBestFitValues = new TVectorD(np_fhc, init_fhc);
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+
+  const int np_rhc = conv::kNumOfRHCParamsInBANFFfit;
+  double init_rhc[np_rhc];
+  for(int ip = 0; ip < np_rhc; ip++) init_rhc[ip] = conv::kBadResult;
+  fRHCBestFitValues = new TVectorD(np_rhc, init_rhc);
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
   
+  this->SplitFHCpRHCvectors(bestfit,bestfit_values_fhc,bestfit_values_rhc);
+  
+  // Copy bestfit to current values
+  fCurrentValues = new TVectorD(bestfit_values_fhc);
+  fRHCCurrentValues = new TVectorD(bestfit_values_rhc);
+
+  fBestFitArray = fBestFitValues->GetMatrixArray();
+  fCurrentArray = fCurrentValues->GetMatrixArray();
+  fRHCBestFitArray = fRHCBestFitValues->GetMatrixArray();
+  fRHCCurrentArray = fRHCCurrentValues->GetMatrixArray();
+
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/BANFF >> Input FHC BANFF best-fit parameters from FHC+RHC: " << endl; 
+  util::PrintCompact(bestfit_values_fhc,12,6,"FHC BANFF fit params");
+  cout << "Exp/BANFF >> Input RHC BANFF best-fit parameters from FHC+RHC: " << endl; 
+  util::PrintCompact(bestfit_values_rhc,12,6,"RHC BANFF fit params");
+#endif
+
+#ifdef __show_init_mesg_info__
+  cout << "Exp/BANFF >> Done reading BANFF inputs!" << endl;
+#endif
+  //
+ 
   return true;
 }
 
 //
 
-
-
-
 //________________________________________________________________________________________
 double BANFF::BestFitValue(PhysParamId_t p) const
 {
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_FHC(p);
   return fBestFitArray[idx];
 }
 //________________________________________________________________________________________
@@ -503,7 +526,7 @@ double BANFF::BestFitValue(int idx) const
 //________________________________________________________________________________________
 double BANFF::RHCBestFitValue(PhysParamId_t p) const
 {
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_RHC(p);
   return fRHCBestFitArray[idx];
 }
 //________________________________________________________________________________________
@@ -513,10 +536,13 @@ double BANFF::RHCBestFitValue(int idx) const
 }
 //________________________________________________________________________________________
 
+
 // NEW FLUX FHC+RHC
+
+// Not really useful. For Debugging
 double BANFF::FHCpRHCBestFitValue(PhysParamId_t p) const
 {
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_FHCpRHC(p);
   return fFHCpRHCBestFitArray[idx];
 }
 //________________________________________________________________________________________
@@ -535,7 +561,8 @@ double BANFF::CurrentValue(int idx) const
 //________________________________________________________________________________________
 double BANFF::CurrentValue(PhysParamId_t p) const
 {
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_FHC(p); // NEW FHC+RHC JOINT
+  //int idx = this->Param2Idx(p); 
   return fCurrentArray[idx];
 }
 //________________________________________________________________________________________
@@ -546,13 +573,16 @@ double BANFF::RHCCurrentValue(int idx) const
 //________________________________________________________________________________________
 double BANFF::RHCCurrentValue(PhysParamId_t p) const
 {
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_RHC(p); // NEW FHC+RHC JOINT
+  //int idx = this->Param2Idx(p); 
   return fRHCCurrentArray[idx];
 }
 //________________________________________________________________________________________
 
 
 // NEW FLUX FHC+RHC
+
+// Not really useful. For Debugging
 double BANFF::FHCpRHCCurrentValue(int idx) const
 {
   return fFHCpRHCCurrentArray[idx];
@@ -560,7 +590,7 @@ double BANFF::FHCpRHCCurrentValue(int idx) const
 //________________________________________________________________________________________
 double BANFF::FHCpRHCCurrentValue(PhysParamId_t p) const
 {
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_FHCpRHC(p);
   return fFHCpRHCCurrentArray[idx];
 }
 //________________________________________________________________________________________
@@ -570,7 +600,8 @@ double BANFF::FHCpRHCCurrentValue(PhysParamId_t p) const
 double BANFF::OneSigmaError(PhysParamId_t p) const
 {
   const TMatrixD & cov = *fCovMtrx;
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_FHC(p); // NEW FHC+RHC JOINT
+  //int idx = this->Param2Idx(p);
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
@@ -583,7 +614,8 @@ double BANFF::OneSigmaError(int idx) const
 double BANFF::RHCOneSigmaError(PhysParamId_t p) const
 {
   const TMatrixD & cov = *fRHCCovMtrx;
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_RHC(p); // NEW FHC+RHC JOINT
+  //int idx = this->Param2Idx(p); 
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
@@ -599,7 +631,7 @@ double BANFF::RHCOneSigmaError(int idx) const
 double BANFF::FHCpRHCOneSigmaError(PhysParamId_t p) const
 {
   const TMatrixD & cov = *fFHCpRHCCovMtrx;
-  int idx = this->Param2Idx(p);
+  int idx = this->Param2Idx_FHCpRHC(p);
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
@@ -610,11 +642,20 @@ double BANFF::FHCpRHCOneSigmaError(int idx) const
 }
 //________________________________________________________________________________________
 
+
+// NEW FHC+RHC JOINT
+
 //________________________________________________________________________________________
 double BANFF::SampleOneSigmaError(PhysParamId_t p) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return this->OneSigmaError(p);
+  #else
   return this->FHCpRHCOneSigmaError(p);
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return this->OneSigmaError(p);
 #elif defined(__RHC_RUNNING__)
@@ -627,8 +668,14 @@ double BANFF::SampleOneSigmaError(PhysParamId_t p) const
 //________________________________________________________________________________________
 double BANFF::SampleOneSigmaError(int idx) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return this->OneSigmaError(idx);
+  #else
   return this->FHCpRHCOneSigmaError(idx);
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return this->OneSigmaError(idx);
 #elif defined(__RHC_RUNNING__)
@@ -641,8 +688,14 @@ double BANFF::SampleOneSigmaError(int idx) const
 //________________________________________________________________________________________
 double BANFF::SampleCurrentValue(PhysParamId_t p) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return this->CurrentValue(p);
+  #else
   return this->FHCpRHCCurrentValue(p);
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return this->CurrentValue(p);
 #elif defined(__RHC_RUNNING__)
@@ -655,8 +708,14 @@ double BANFF::SampleCurrentValue(PhysParamId_t p) const
 //________________________________________________________________________________________
 double BANFF::SampleCurrentValue(int idx) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return this->CurrentValue(idx);
+  #else
   return this->FHCpRHCCurrentValue(idx);
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return this->CurrentValue(idx);
 #elif defined(__RHC_RUNNING__)
@@ -669,8 +728,14 @@ double BANFF::SampleCurrentValue(int idx) const
 //________________________________________________________________________________________
 double BANFF::SampleBestFitValue(PhysParamId_t p) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return this->BestFitValue(p);
+  #else
   return this->FHCpRHCBestFitValue(p);
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return this->BestFitValue(p);
 #elif defined(__RHC_RUNNING__)
@@ -683,8 +748,14 @@ double BANFF::SampleBestFitValue(PhysParamId_t p) const
 //________________________________________________________________________________________
 double BANFF::SampleBestFitValue(int idx) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return this->BestFitValue(idx);
+  #else
   return this->FHCpRHCBestFitValue(idx);
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return this->BestFitValue(idx);
 #elif defined(__RHC_RUNNING__)
@@ -696,6 +767,8 @@ double BANFF::SampleBestFitValue(int idx) const
 }
 //________________________________________________________________________________________
 
+//
+
 //________________________________________________________________________________________
 void BANFF::SyncRHCToFHCSystematics()
 {
@@ -704,14 +777,20 @@ void BANFF::SyncRHCToFHCSystematics()
 //________________________________________________________________________________________
 
 
-
 void BANFF::TweakSample(
   bool       force_inputs, /* force the input params or generate random ones internally  */
   TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
 )
 {
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)
+  // NEW FHC+RHC JOINT
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  #if defined(__FULLY_CORRELATED__)
+  this->Tweak(force_inputs, input_vec);
+  this->SyncRHCToFHCSystematics();
+  #else
   this->TweakFHCpRHC(force_inputs, input_vec);
+  #endif
+  //
 #else
 #ifdef __FHC_RUNNING__
   this->Tweak(force_inputs, input_vec);
@@ -749,7 +828,6 @@ void BANFF::Tweak(
   // Get best-fit and current BANFF params
   //
 
-  
   TVectorD & bestfit_values = *fBestFitValues;
   TVectorD & current_values = *fCurrentValues;
 
@@ -884,8 +962,15 @@ void BANFF::TweakFHCpRHC(
 #endif
 
   // Switch flags
-  fIsTweakedFHCpRHC         = true;
-  fIsFluxWghtUpdatedFHCpRHC = false;
+  
+  // NEW FHC+RHC JOINT
+  fIsTweaked            = true;
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdated    = false;
+  fIsFluxWghtUpdatedRHC = false;
+  //fIsTweakedFHCpRHC         = true;
+  //fIsFluxWghtUpdatedFHCpRHC = false;
+  //
 
   //
   // If this is the first time this function is called, then run the Cholesky 
@@ -901,6 +986,12 @@ void BANFF::TweakFHCpRHC(
 
   TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
   TVectorD & current_values = *fFHCpRHCCurrentValues;
+  // NEW FHC+RHC JOINT
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  //
 
   //
   // Force input BANFF parameters
@@ -913,9 +1004,27 @@ void BANFF::TweakFHCpRHC(
 #ifdef __show_tweak_mesg_debug__
         cout << "Exp/BANFF/Tweak >> Reset FHC+RHC BANFF params to best-fit values." << endl;
 #endif
-        fIsTweakedFHCpRHC = false;
+
+	// NEW FHC+RHC JOINT
+        fIsTweaked    = false;
+        fIsTweakedRHC = false;
+	//fIsTweakedFHCpRHC = false;
+	
         current_values = bestfit_values;
-        return;
+	// NEW FHC+RHC JOINT
+        current_values_fhc = bestfit_values_fhc;
+        current_values_rhc = bestfit_values_rhc;
+        //
+
+	// bestfit_values.Print();
+	// bestfit_values_fhc.Print();
+	// bestfit_values_rhc.Print();
+
+	// current_values.Print();
+	// current_values_fhc.Print();
+	// current_values_rhc.Print();
+	
+	return;
       }
       else     
 	{
@@ -925,6 +1034,11 @@ void BANFF::TweakFHCpRHC(
 	  TVectorD & vec = *input_vec;
 	  assert(vec.GetNoElements() == conv::kNumOfFHCpRHCParamsInBANFFfit);
 	  current_values = vec;
+
+	  // NEW FHC+RHC JOINT
+	  this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+	  //
+	  
 	  return;
 	}
     }//force_inputs?
@@ -936,14 +1050,22 @@ void BANFF::TweakFHCpRHC(
   else
     {
 #ifdef __show_tweak_mesg_debug__
-      cout << "Exp/BANFF/Tweak >> Generating RHC random twk dials (correlated)! " << endl;
+      cout << "Exp/BANFF/Tweak >> Generating FHC+RHC random twk dials (correlated)! " << endl;
 #endif
+
       TMatrixD & L = *fFHCpRHCCovMtrxChoL;
       TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
       current_values = vec;
+
+      // NEW FHC+RHC JOINT
+      this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+      //
+
       return;
     }
 }
+
+//________________________________________________________________________________________
 
 void BANFF::TweakSampleConstrainedOnly(
   bool       force_inputs, /* force the input params or generate random ones internally  */
@@ -951,8 +1073,15 @@ void BANFF::TweakSampleConstrainedOnly(
   bool   unconstrained     /* This function will either do all constrained parameters, or all unconstrained*/
 )
 {
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)
+  // NEW FHC+RHC JOINT
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  #if defined(__FULLY_CORRELATED__)
+  this->TweakConstrainedOnly(force_inputs, input_vec,unconstrained);
+  this->SyncRHCToFHCSystematics();
+  #else
   this->TweakFHCpRHCConstrainedOnly(force_inputs, input_vec,unconstrained);
+  #endif
+  //
 #else
 #ifdef __FHC_RUNNING__
   this->TweakConstrainedOnly(force_inputs, input_vec,unconstrained);
@@ -1145,8 +1274,15 @@ void BANFF::TweakFHCpRHCConstrainedOnly(
 #endif
 
   // Switch flags
-  fIsTweakedFHCpRHC         = true;
-  fIsFluxWghtUpdatedFHCpRHC = false;
+
+  // NEW FHC+RHC JOINT
+  fIsTweaked            = true;
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdated    = false;
+  fIsFluxWghtUpdatedRHC = false;
+  //fIsTweakedFHCpRHC         = true;
+  //fIsFluxWghtUpdatedFHCpRHC = false;
+  //
 
   //
   // If this is the first time this function is called, then run the Cholesky 
@@ -1162,6 +1298,12 @@ void BANFF::TweakFHCpRHCConstrainedOnly(
 
   TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
   TVectorD & current_values = *fFHCpRHCCurrentValues;
+  // NEW FHC+RHC JOINT
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  //
 
   //
   // Force input BANFF parameters
@@ -1174,8 +1316,17 @@ void BANFF::TweakFHCpRHCConstrainedOnly(
 #ifdef __show_tweak_mesg_debug__
         cout << "Exp/BANFF/Tweak >> Reset FHC+RHC BANFF params to best-fit values." << endl;
 #endif
-        fIsTweakedFHCpRHC = false;
+        // NEW FHC+RHC JOINT
+	fIsTweaked    = false;
+        fIsTweakedRHC = false;
+        //fIsTweakedFHCpRHC = false;
+	//
+	
         current_values = bestfit_values;
+	// NEW FHC+RHC JOINT
+        current_values_fhc = bestfit_values_fhc;
+        current_values_rhc = bestfit_values_rhc;
+        //
         return;
       }
       else     
@@ -1183,14 +1334,45 @@ void BANFF::TweakFHCpRHCConstrainedOnly(
 #ifdef __show_tweak_mesg_debug__
 	  cout << "Exp/BANFF/Tweak >> Forcing FHC+RHC input BANFF parameters. " << endl;
 #endif
-        TVectorD & vec = *input_vec;
-        assert(vec.GetNoElements() == conv::kNumOfFHCpRHCParamsInBANFFfit);
-        for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
-          PhysParamId_t p = conv::kListOfFHCpRHCBANFFParams[ip];
-          if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
-        }
-        current_values = vec;
-        return;
+
+	  
+	  // 
+	  // OLD
+	  //
+	  // TVectorD & vec = *input_vec;
+	  // assert(vec.GetNoElements() == conv::kNumOfFHCpRHCParamsInBANFFfit);
+	  // for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
+	  //   PhysParamId_t p = conv::kListOfFHCpRHCBANFFParams[ip];
+	  //   if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+	  // }
+	  // current_values = vec;
+	  // // NEW FHC+RHC JOINT
+	  // this->SplitFHCpRHCvectors(fFHCpRHCBestFitValues,fBestFitValues,fRHCBestFitValues);
+	  // //
+
+
+	  TVectorD & vec = *input_vec;
+	  assert(vec.GetNoElements() == conv::kNumOfFHCpRHCParamsInBANFFfit);
+	  // Split into fhc-only and rhc-only
+	  const int np_fhc = conv::kNumOfParamsInBANFFfit;
+	  const int np_rhc = conv::kNumOfRHCParamsInBANFFfit;     
+	  TVectorD vec_fhc(np_fhc);
+	  TVectorD vec_rhc(np_rhc);
+	  this->SplitFHCpRHCvectors(vec,vec_fhc,vec_rhc);      
+	  // Copy to fhc-only vectors      
+	  for (int ip = 0; ip < vec_fhc.GetNoElements() ; ip++) {
+	    PhysParamId_t p = conv::kListOfBANFFParams[ip];
+	    if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec_fhc[ip]=current_values_fhc[ip];};
+	  }
+	  current_values_fhc = vec_fhc;
+	  // Copy to rhc-only vectors      
+	  for (int ip = 0; ip < vec_rhc.GetNoElements() ; ip++) {
+	    PhysParamId_t p = conv::kListOfRHCBANFFParams[ip];
+	    if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec_rhc[ip]=current_values_rhc[ip];};
+	  }
+	  current_values_rhc = vec_rhc;
+
+	  return;
 	}
     }//force_inputs?
 
@@ -1203,13 +1385,48 @@ void BANFF::TweakFHCpRHCConstrainedOnly(
 #ifdef __show_tweak_mesg_debug__
       cout << "Exp/BANFF/Tweak >> Generating RHC random twk dials (correlated)! " << endl;
 #endif
+
+      //
+      // OLD
+      //
+      //TMatrixD & L = *fFHCpRHCCovMtrxChoL;
+      //TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);    
+      // Copy to fhc-only and rhc-only vectors
+      // for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
+      // 	PhysParamId_t p = conv::kListOfFHCpRHCBANFFParams[ip];
+      //   if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+      // }
+      // current_values = vec;
+      // // NEW FHC+RHC JOINT
+      // this->SplitFHCpRHCvectors(fFHCpRHCCurrentValues,fCurrentValues,fRHCCurrentValues);
+      // //
+
       TMatrixD & L = *fFHCpRHCCovMtrxChoL;
-      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
-      for (int ip = 0; ip < vec.GetNoElements() ; ip++) {
-        PhysParamId_t p = conv::kListOfFHCpRHCBANFFParams[ip];
-        if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec[ip]=current_values[ip];};
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);    
+      // Split into fhc-only and rhc-only
+      const int np_fhc = conv::kNumOfParamsInBANFFfit;
+      const int np_rhc = conv::kNumOfRHCParamsInBANFFfit;     
+      TVectorD vec_fhc(np_fhc);
+      TVectorD vec_rhc(np_rhc);
+      this->SplitFHCpRHCvectors(vec,vec_fhc,vec_rhc);      
+      // Copy to fhc-only vectors      
+      for (int ip = 0; ip < vec_fhc.GetNoElements() ; ip++) {
+	PhysParamId_t p = conv::kListOfBANFFParams[ip];
+	if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec_fhc[ip]=current_values_fhc[ip];};
       }
-      current_values = vec;
+      current_values_fhc = vec_fhc;
+      // Copy to rhc-only vectors      
+      for (int ip = 0; ip < vec_rhc.GetNoElements() ; ip++) {
+	PhysParamId_t p = conv::kListOfRHCBANFFParams[ip];
+	if (unconstrained!=util::IsBANFFUnconstrained(p)) {vec_rhc[ip]=current_values_rhc[ip];};
+      }
+      current_values_rhc = vec_rhc;
+
+      // vec.Print();
+      // fCurrentValues->Print();
+      // fRHCCurrentValues->Print();
+      // exit(1);
+
       return;
     }
 }
@@ -1221,8 +1438,15 @@ void BANFF::TweakSampleXSecOnly(
   TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
 )
 {
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)
+  // NEW FHC+RHC JOINT
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  #if defined(__FULLY_CORRELATED__)
+  this->TweakXSecOnly(force_inputs,input_vec);
+  this->SyncRHCToFHCSystematics();
+  #else
   this->TweakFHCpRHCXSecOnly(force_inputs,input_vec);
+  #endif
+  //
 #else
 #ifdef __FHC_RUNNING__
   this->TweakXSecOnly(force_inputs,input_vec);
@@ -1402,8 +1626,15 @@ void BANFF::TweakFHCpRHCXSecOnly(
 #endif
 
   // Switch flags
-  fIsTweakedFHCpRHC         = true;
-  fIsFluxWghtUpdatedFHCpRHC = false;
+
+  // NEW FHC+RHC JOINT
+  fIsTweaked            = true;
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdated    = false;
+  fIsFluxWghtUpdatedRHC = false;
+  //fIsTweakedFHCpRHC         = true;
+  //fIsFluxWghtUpdatedFHCpRHC = false;
+  //
 
   //
   // If this is the first time this function is called, then run the Cholesky 
@@ -1419,6 +1650,12 @@ void BANFF::TweakFHCpRHCXSecOnly(
 
   TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
   TVectorD & current_values = *fFHCpRHCCurrentValues;
+  // NEW FHC+RHC JOINT
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  //
 
   //
   // Force input BANFF parameters
@@ -1431,23 +1668,36 @@ void BANFF::TweakFHCpRHCXSecOnly(
 #ifdef __show_tweak_mesg_debug__
         cout << "Exp/BANFF/TweakXSecOnly >> Reset FHCpRHC BANFF xsec params to best-fit values." << endl;
 #endif
-        fIsTweakedFHCpRHC = false;
-        current_values = bestfit_values;
+	// NEW FHC+RHC JOINT
+        fIsTweaked    = false;
+        fIsTweakedRHC = false;
+        //fIsTweakedFHCpRHC = false;
+	//
+        
+	current_values = bestfit_values;
+	// NEW FHC+RHC JOINT
+        current_values_fhc = bestfit_values_fhc;
+        current_values_rhc = bestfit_values_rhc;
+        //
         return;
      }
      else     
      {
 #ifdef __show_tweak_mesg_debug__
-        cout << "Exp/BANFF/TweakXSecOnly >> Forcing input FHCpRHC BANFF xsec parameters. " << endl;
+       cout << "Exp/BANFF/TweakXSecOnly >> Forcing input FHCpRHC BANFF xsec parameters. " << endl;
 #endif
-        TVectorD & vec = *input_vec;
+       TVectorD & vec = *input_vec;
+       int knumofxsecparamsinbanfffit = conv::kNumOfFHCpRHCParamsInBANFFfit - conv::kNumOfFHCpRHCFluxParamsInBANFFfit; 
+       assert(vec.GetNoElements() == knumofxsecparamsinbanfffit);
+       for (int i=0; i< knumofxsecparamsinbanfffit; i++){
+	 current_values[i] = vec[i];
+       }
 
-	int knumofxsecparamsinbanfffit = conv::kNumOfFHCpRHCParamsInBANFFfit - conv::kNumOfFHCpRHCFluxParamsInBANFFfit; 
-        assert(vec.GetNoElements() == knumofxsecparamsinbanfffit);
-	for (int i=0; i< knumofxsecparamsinbanfffit; i++){
-	  current_values[i] = vec[i];
-	}
-        return;
+       // NEW FHC+RHC JOINT
+       this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+      //
+
+       return;
      }
   }//force_inputs?
 
@@ -1467,15 +1717,14 @@ void BANFF::TweakFHCpRHCXSecOnly(
        if(i>=conv::kNumOfFHCpRHCFluxParamsInBANFFfit) current_values[i] = vec[i]; // xsec params are after flux params
        else current_values[i] = bestfit_values[i];
      }
+
+     // NEW FHC+RHC JOINT
+     this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+     //
+     
      return;
   }
 }
-
-
-
-
-
-
 
 
 
@@ -1486,8 +1735,15 @@ void BANFF::TweakSampleFluxOnly(
   TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
 )
 {
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) 
+  // NEW FHC+RHC JOINT
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  #if defined(__FULLY_CORRELATED__) 
+  this->TweakFluxOnly(force_inputs,input_vec);
+  this->SyncRHCToFHCSystematics();
+  #else
   this->TweakFHCpRHCFluxOnly(force_inputs,input_vec);
+  #endif
+  //
 #else
 #ifdef __FHC_RUNNING__
   this->TweakFluxOnly(force_inputs,input_vec);
@@ -1668,8 +1924,15 @@ void BANFF::TweakFHCpRHCFluxOnly(
 #endif
 
   // Switch flags
-  fIsTweakedFHCpRHC         = true;
-  fIsFluxWghtUpdatedFHCpRHC = false;
+
+  // NEW FHC+RHC JOINT
+  fIsTweaked            = true;
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdated    = false;
+  fIsFluxWghtUpdatedRHC = false;
+  //fIsTweakedFHCpRHC         = true;
+  //fIsFluxWghtUpdatedFHCpRHC = false;
+  //
 
   //
   // If this is the first time this function is called, then run the Cholesky 
@@ -1685,6 +1948,12 @@ void BANFF::TweakFHCpRHCFluxOnly(
 
   TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
   TVectorD & current_values = *fFHCpRHCCurrentValues;
+  // NEW FHC+RHC JOINT
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  //
 
   //
   // Force input BANFF parameters
@@ -1697,8 +1966,16 @@ void BANFF::TweakFHCpRHCFluxOnly(
 #ifdef __show_tweak_mesg_debug__
         cout << "Exp/BANFF/TweakFluxOnly >> Reset FHC+RHC BANFF flux params to best-fit values." << endl;
 #endif
-        fIsTweakedFHCpRHC = false;
-        current_values = bestfit_values;
+        // NEW FHC+RHC JOINT
+	fIsTweaked          = false;
+        fIsTweakedRHC       = false;
+        //fIsTweakedFHCpRHC = false;
+        
+	current_values = bestfit_values;
+	// NEW FHC+RHC JOINT
+        current_values_fhc = bestfit_values_fhc;
+        current_values_rhc = bestfit_values_rhc;
+        //
         return;
       }
       else     
@@ -1711,6 +1988,11 @@ void BANFF::TweakFHCpRHCFluxOnly(
 	  for (int i=0; i< conv::kNumOfFHCpRHCFluxParamsInBANFFfit; i++){
 	    current_values[i] = vec[i];
 	  }
+
+	  // NEW FHC+RHC JOINT
+	  this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+	  //
+
 	  return;
 	}
     }//force_inputs?
@@ -1730,6 +2012,11 @@ void BANFF::TweakFHCpRHCFluxOnly(
 	if(i<conv::kNumOfFHCpRHCFluxParamsInBANFFfit) current_values[i] = vec[i];
 	else current_values[i] = bestfit_values[i];
       }
+
+      // NEW FHC+RHC JOINT
+      this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+      //
+      
       return;
     }
 }
@@ -1830,10 +2117,6 @@ void BANFF::RestoreNominalMC(void)
   for (int i = 0 ; i < nxsp ; i++) {
     current_values[nfp+i] = (*fUntunedCentralValues)[i];
   }
-  
-  //~ for (int i = 0 ; i < conv::kNumOfParamsInBANFFfit ; i++) {
-    //~ bestfit_values[i] = current_values[i];
-  //~ }
 }
 //________________________________________________________________________________________
 void BANFF::RestoreRHCNominalMC(void)
@@ -1860,14 +2143,10 @@ void BANFF::RestoreRHCNominalMC(void)
   for (int i = 0 ; i < nxsp ; i++) {
     current_values[nfp+i] = (*fRHCUntunedCentralValues)[i];
   }
-  
-  //~ for (int i = 0 ; i < conv::kNumOfRHCParamsInBANFFfit ; i++) {
-  //~   bestfit_values[i] = current_values[i];
-  //~ }
 }
 //________________________________________________________________________________________
 
-// NEW FLUX FHC+RHC
+// NEW FHC+RHC JOINT
 void BANFF::RestoreFHCpRHCNominalMC(void)
 {
   // A special tweak method
@@ -1875,36 +2154,27 @@ void BANFF::RestoreFHCpRHCNominalMC(void)
   cout << "Exp/BANFF >> ** Applying special tweak cancelling the effect of FHC+RHC BANFF tuning "
        << "and restoring FHC+RHC nominal MC..." << endl; 
 
-  fIsTweakedFHCpRHC         = true;
-  fIsFluxWghtUpdatedFHCpRHC = false;
-
-  //this is doing nothing at end, because NuFlux and NuXSec
-  //are still reading bestfit values from fBestFitValues
-  //we need to modify BestFitValue(p) 
-  TVectorD & current_values = *fFHCpRHCCurrentValues;
-  //~ TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
-
-  const int nfp = conv::kNumOfFHCpRHCFluxParamsInBANFFfit;
-  for(int i=0; i<nfp; i++) {
-    current_values[i] = 1.;
-  }
-  const int nxsp = conv::kNumOfFHCpRHCParamsInBANFFfit - kNumOfFHCpRHCFluxParamsInBANFFfit;
-  for (int i = 0 ; i < nxsp ; i++) {
-    current_values[nfp+i] = (*fUntunedCentralValues)[i];
-  }
+  // NEW FHC+RHC JOINT
+  fIsTweaked            = true;
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdated    = false;
+  fIsFluxWghtUpdatedRHC = false;
+  //fIsTweakedFHCpRHC         = true;
+  //fIsFluxWghtUpdatedFHCpRHC = false;
+  //
   
-  //~ for (int i = 0 ; i < conv::kNumOfFHCpRHCParamsInBANFFfit ; i++) {
-    //~ bestfit_values[i] = current_values[i];
-  //~ }
+  this->RestoreNominalMC();
+  this->RestoreRHCNominalMC();
+  
+  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  TVectorD & current_values = *fFHCpRHCCurrentValues;
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);    
 }
-
-
-
-
-
-
-
-
+//
 
 //________________________________________________________________________________________
 void BANFF::RestoreTunedMC(void)
@@ -1938,36 +2208,37 @@ void BANFF::RestoreRHCTunedMC(void)
   current_values = bestfit_values;
 }
 //________________________________________________________________________________________
+
+// NEW FHC+RHC JOINT
+
 void BANFF::RestoreFHCpRHCTunedMC(void)
 {
-// A special tweak method
+  // A special tweak method
+  
+  cout << "Exp/BANFF >> ** Applying special tweak cancelling the effect of FHC+RHC BANFF tuning "
+       << "and restoring FHC+RHC nominal MC..." << endl; 
+  
+  // NEW FHC+RHC JOINT
+  fIsTweaked            = true;
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdated    = false;
+  fIsFluxWghtUpdatedRHC = false;
+  //fIsTweakedFHCpRHC         = true;
+  //fIsFluxWghtUpdatedFHCpRHC = false;
+  //
 
-  cout << "Exp/BANFF >> ** Applying special tweak applying the effect of BANFF tuning "
-       << "and restoring tuned MC..." << endl; 
-
-  fIsTweaked            = false;
-  fIsFluxWghtUpdated    = true;
-  fIsTweakedRHC         = false;
-  fIsFluxWghtUpdatedRHC = true;
-
-  TVectorD & bestfit_values = *fBestFitValues;
-  TVectorD & current_values = *fCurrentValues;
-  current_values = bestfit_values;
-
+  this->RestoreTunedMC();
+  this->RestoreRHCTunedMC();
+  
+  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  TVectorD & current_values = *fFHCpRHCCurrentValues;
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
   TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
   TVectorD & current_values_rhc = *fRHCCurrentValues;
-  current_values_rhc = bestfit_values_rhc;
- }
-
-
-
-
-
-
-
-
-
-
+  this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);    
+}
+//
 
 
 //________________________________________________________________________________________
@@ -1988,121 +2259,16 @@ double BANFF::ChisqPenalty(bool /*all_syst*/) const
   //covariance matrix
   const TMatrixD cov    (this->CovMatrix());
   const TMatrixD covInv (this->CovMatrixInv());
-  /*
-  if(!all_syst) {
-    if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaCombined){
-      //Vector with deviations of current values from  best fit values
-      const int np = 3;
-      TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
-      TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
-      int imaqe    = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
-      int iccqeE0  = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
-      int iBANFF1  = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFF01);
-      dev [0][0] = current_values[imaqe]   - bestfit_values[imaqe];
-      devT[0][0] = current_values[imaqe]   - bestfit_values[imaqe];
-      dev [0][1] = current_values[iccqeE0] - bestfit_values[iccqeE0];
-      devT[1][0] = current_values[iccqeE0] - bestfit_values[iccqeE0];
-      dev [0][2] = current_values[iBANFF1] - bestfit_values[iBANFF1];
-      devT[2][0] = current_values[iBANFF1] - bestfit_values[iBANFF1];
-      
-#ifdef __show_chisqpenalty_mesg_debug2__
-      cout << "Exp/ChisqPenalty >> deviations in BANFF parameters: " << endl;
-      util::PrintCompact(TMatrixDRow(dev,0), 12,6,"BANFF selected fit params");
-#endif
-      
-      //fill sub cov matrix
-      TMatrixD covSub(np, np);
-      covSub[0][0] = cov[imaqe]   [imaqe];
-      covSub[1][1] = cov[iccqeE0] [iccqeE0];
-      covSub[2][2] = cov[iBANFF1] [iBANFF1];
-      covSub[0][1] = cov[imaqe]   [iccqeE0];
-      covSub[0][2] = cov[imaqe]   [iBANFF1];
-      covSub[1][0] = cov[iccqeE0] [imaqe];
-      covSub[1][2] = cov[iccqeE0] [iBANFF1];
-      covSub[2][0] = cov[iBANFF1] [imaqe];
-      covSub[2][1] = cov[iBANFF1] [iccqeE0];
-      //invert the sub matrix
-      double det;
-      TMatrixD covInvSub(covSub);
-      covInvSub.Invert(&det);
-      
-#ifdef __show_chisqpenalty_mesg_debug__
-      cout << "Exp/BANFF/ChisqPenalty >> BANFF covariance sub matrix : " << endl;
-      util::PrintCompact(covSub,7,5);
-      cout << "Exp/BANFF/ChisqPenalty >> Inverse BANFF covariance sub matrix : " << endl;
-      util::PrintCompact(covInvSub,7,5);
-#endif
 
-#ifdef __show_chisqpenalty_mesg_debug2__
-      //check the inverse
-      TMatrixD prod = covSub * covInvSub;
-      cout << "Exp/BANFF/ChisqPenalty >> check of product covsub*(covsub)^-1 : "<< endl;
-      util::PrintCompact(prod,7,4);
-#endif
-      
-      TMatrixD chisqpenalty =  dev * covInvSub * devT;
-      double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
-      return chisq_penalty;
-    }
-    else{
   //Vector with deviations of current values from  best fit values
-      const int np = 2;
-      TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
-      TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
-      int imaqe    = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFMAQE);
-      int iccqeE0  = util::ArrIdx::Instance()->BANFFSystIdx(kNuisBANFFCCQEE0);
-      dev [0][0] = current_values[imaqe]   - bestfit_values[imaqe];
-      devT[0][0] = current_values[imaqe]   - bestfit_values[imaqe];
-      dev [0][1] = current_values[iccqeE0] - bestfit_values[iccqeE0];
-      devT[1][0] = current_values[iccqeE0] - bestfit_values[iccqeE0];
-      
-#ifdef __show_chisqpenalty_mesg_debug2__
-      cout << "Exp/ChisqPenalty >> deviations in BANFF parameters: " << endl;
-      util::PrintCompact(TMatrixDRow(dev,0), 12,6,"BANFF selected fit params");
-#endif
-      
-      //fill sub cov matrix
-      TMatrixD covSub(np, np);
-      covSub[0][0] = cov[imaqe]   [imaqe];
-      covSub[1][1] = cov[iccqeE0] [iccqeE0];
-      covSub[0][1] = cov[imaqe]   [iccqeE0];
-      covSub[1][0] = cov[iccqeE0] [imaqe];
-      //invert the sub matrix
-      double det;
-      TMatrixD covInvSub(covSub);
-      covInvSub.Invert(&det);
-      
-#ifdef __show_chisqpenalty_mesg_debug__
-      cout << "Exp/BANFF/ChisqPenalty >> BANFF covariance sub matrix : " << endl;
-      util::PrintCompact(covSub,7,5);
-      cout << "Exp/BANFF/ChisqPenalty >> Inverse BANFF covariance sub matrix : " << endl;
-      util::PrintCompact(covInvSub,7,5);
-#endif
-
-#ifdef __show_chisqpenalty_mesg_debug2__
-      //check the inverse
-      TMatrixD prod = covSub * covInvSub;
-      cout << "Exp/BANFF/ChisqPenalty >> check of product covsub*(covsub)^-1 : "<< endl;
-      util::PrintCompact(prod,7,4);
-#endif
-      
-      TMatrixD chisqpenalty =  dev * covInvSub * devT;
-      double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
-      return chisq_penalty;
-    
-    }
-  }//!all_syst
-  else {
-  */
-    //Vector with deviations of current values from  best fit values
-    const int np = conv::kNumOfParamsInBANFFfit;
-    TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
-    TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
-    for(int i = 0; i < np; i++){
-      dev[0][i]  = current_values[i]-bestfit_values[i];
-      devT[i][0] = current_values[i]-bestfit_values[i];
-    }
-
+  const int np = conv::kNumOfParamsInBANFFfit;
+  TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+  TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+  for(int i = 0; i < np; i++){
+    dev[0][i]  = current_values[i]-bestfit_values[i];
+    devT[i][0] = current_values[i]-bestfit_values[i];
+  }
+  
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/ChisqPenalty >> deviations in BANFF parameters: " << endl;
   util::PrintCompact(TMatrixDRow(dev,0), 12,6,"BANFF fit params");
@@ -2199,14 +2365,28 @@ double BANFF::RHCChisqPenalty(bool /*all_syst*/) const
 
 
 // NEW FLUX FHC+RHC
-double BANFF::FHCpRHCChisqPenalty(bool /*all_syst*/) const
+//double BANFF::FHCpRHCChisqPenalty(bool /*all_syst*/) const
+double BANFF::FHCpRHCChisqPenalty(bool /*all_syst*/)
 {
 #if !(defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__))
   return 0;
 #endif
+
   //Vector of current values & best fit values
-  const TVectorD & bestfit_values   = *fFHCpRHCBestFitValues;
-  const TVectorD & current_values   = *fFHCpRHCCurrentValues;
+  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  TVectorD & current_values = *fFHCpRHCCurrentValues;
+  
+  // NEW FHC+RHC JOINT  
+  const TVectorD & bestfit_values_fhc = *fBestFitValues;
+  const TVectorD & current_values_fhc = *fCurrentValues;
+  const TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  const TVectorD & current_values_rhc = *fRHCCurrentValues;
+  // Merge FHC and RHC vectors into a single FHCpRHC vector 
+  // Take into account FHC/RHC correlations
+  this->MergeFHCpRHCvectors(bestfit_values,bestfit_values_fhc,bestfit_values_rhc);
+  this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+  //
+
 #ifdef __show_chisqpenalty_mesg_debug2__
   cout << "Exp/BANFF/ChisqPenalty >> FHC+RHC BANFF parameters: " << endl;
   util::PrintCompact(current_values, bestfit_values, 12,6,"FHC+RHC BANFF fit params");
@@ -2257,34 +2437,21 @@ double BANFF::FHCpRHCChisqPenalty(bool /*all_syst*/) const
   return 0;
 }
 
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 void BANFF::PrintSystematicVariations(std::ostream & stream) const
 {
   //assert(fCurrentValues->GetNoElements() == conv::kNumOfParamsInBANFFfit);
-
   const TVectorD & current_values = *fCurrentValues;
   const TVectorD & bestfit_values = *fBestFitValues;
-
   stream << "Exp/BANFF >> BANFF parameters: " << endl; 
-  util::PrintCompact(current_values, bestfit_values, 12,6,"BANFF fit params", stream);
+  util::PrintCompact(current_values, bestfit_values, 12,6,"FHC BANFF fit params", stream);
 }
 //________________________________________________________________________________________
 void BANFF::PrintRHCSystematicVariations(std::ostream & stream) const
 {
   //assert(fCurrentValues->GetNoElements() == conv::kNumOfRHCParamsInBANFFfit);
-
   const TVectorD & current_values = *fRHCCurrentValues;
   const TVectorD & bestfit_values = *fRHCBestFitValues;
-
   stream << "Exp/BANFF >> RHC BANFF parameters: " << endl;
   util::PrintCompact(current_values, bestfit_values, 12,6,"RHC BANFF fit params", stream);
 }
@@ -2296,10 +2463,8 @@ void BANFF::PrintRHCSystematicVariations(std::ostream & stream) const
 void BANFF::PrintFHCpRHCSystematicVariations(std::ostream & stream) const
 {
   //assert(fCurrentValues->GetNoElements() == conv::kNumOfRHCParamsInBANFFfit);
-
   const TVectorD & current_values = *fFHCpRHCCurrentValues;
   const TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
-
   stream << "Exp/BANFF >> FHC+RHC BANFF parameters: " << endl;
   util::PrintCompact(current_values, bestfit_values, 12,6,"FHC+RHC BANFF fit params", stream);
 }
@@ -2307,18 +2472,40 @@ void BANFF::PrintFHCpRHCSystematicVariations(std::ostream & stream) const
 
 
 
+
+
+// NEW FHC+RHC JOINT
+
 //________________________________________________________________________________________
-int BANFF::Param2Idx(PhysParamId_t p) const
+int BANFF::Param2Idx_FHCpRHC(PhysParamId_t p) const
 {
   assert(p!=kPhypUndefined);
-  return fParam2Idx[p];  
+  return fParam2Idx_FHCpRHC[p];  
 }
 //________________________________________________________________________________________
+int BANFF::Param2Idx_FHC(PhysParamId_t p) const
+{
+  assert(p!=kPhypUndefined);
+  return fParam2Idx_FHC[p];  
+}
+int BANFF::Param2Idx_RHC(PhysParamId_t p) const
+{
+  assert(p!=kPhypUndefined);
+  return fParam2Idx_RHC[p];  
+}
+//
 
+//________________________________________________________________________________________
 const TVectorD & BANFF::SampleBestFitValues (void) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return *fBestFitValues;
+  #else
   return *fFHCpRHCBestFitValues;
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return *fBestFitValues;
 #elif defined(__RHC_RUNNING__)
@@ -2331,8 +2518,14 @@ const TVectorD & BANFF::SampleBestFitValues (void) const
 //________________________________________________________________________________________
 const TMatrixD & BANFF::SampleCovMatrix  (void) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return *fCovMtrx;
+  #else
   return *fFHCpRHCCovMtrx;
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return *fCovMtrx;
 #elif defined(__RHC_RUNNING__)
@@ -2345,8 +2538,14 @@ const TMatrixD & BANFF::SampleCovMatrix  (void) const
 //________________________________________________________________________________________
 const TMatrixD & BANFF::SampleCovMatrixInv (void) const
 {
+  // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  #if defined(__FULLY_CORRELATED__) 
+  return *fCovMtrxInv;
+  #else
   return *fFHCpRHCCovMtrxInv;
+  #endif
+  //
 #elif defined(__FHC_RUNNING__)
   return *fCovMtrxInv;
 #elif defined(__RHC_RUNNING__)
@@ -2357,3 +2556,155 @@ const TMatrixD & BANFF::SampleCovMatrixInv (void) const
 #endif
 }
 //________________________________________________________________________________________
+
+
+
+
+// NEW FHC+RHC JOINT
+
+void BANFF::SplitFHCpRHCvectors(TVectorD bestfit_values_fhcprhc,TVectorD &bestfit_values_fhc,TVectorD &bestfit_values_rhc){
+  
+  // Fill FHC and RHC parameter arrays
+
+  const int np = conv::kNumOfFHCpRHCParamsInBANFFfit;
+
+  // Loop over all fhc+rhc parameters and fill fhc- and rhc-only vectors
+  // The order of the parameters in the input vectors is: flux fhc, flux rhc, xsec fhc/rhc common
+  int range_flux_fhc[2] = {0, conv::kNumOfFluxParamsInBANFFfit}; // flux fhc
+  int range_flux_rhc[2] = {conv::kNumOfFluxParamsInBANFFfit,    conv::kNumOfFHCpRHCFluxParamsInBANFFfit}; // flux rhc 
+  int range_xsec_fhc[2] = {conv::kNumOfFHCpRHCFluxParamsInBANFFfit, conv::kNumOfFHCpRHCParamsInBANFFfit}; // xsec fhc
+  int range_xsec_rhc[2] = {conv::kNumOfFHCpRHCFluxParamsInBANFFfit, conv::kNumOfFHCpRHCParamsInBANFFfit}; // xsec rhc
+  
+#ifdef __show_init_mesg_debug__
+  cout << "range flux fhc = " <<  range_flux_fhc[0] << " - " <<  range_flux_fhc[1] << endl;
+  cout << "range flux rhc = " <<  range_flux_rhc[0] << " - " <<  range_flux_rhc[1] << endl;
+  cout << "range xsec fhc = " <<  range_xsec_fhc[0] << " - " <<  range_xsec_fhc[1] << endl;
+  cout << "range xsec rhc = " <<  range_xsec_rhc[0] << " - " <<  range_xsec_rhc[1] << endl;
+#endif __show_init_mesg_debug__
+
+  int count_fhc=0;
+  int count_rhc=0;
+  for(int ipar=0;ipar<np;ipar++){
+    
+    // use only if statements because vectors can share same parameters (e.g. xsec)
+
+    // fhc
+    if( ipar >= range_flux_fhc[0] && ipar < range_flux_fhc[1] ){     
+      bestfit_values_fhc[ count_fhc ] = bestfit_values_fhcprhc[ipar];
+      count_fhc++;
+    }
+    if( ipar >= range_xsec_fhc[0] && ipar < range_xsec_fhc[1] ){
+      bestfit_values_fhc[ count_fhc ] = bestfit_values_fhcprhc[ipar];
+      count_fhc++;
+    }
+    // rhc
+    if( ipar >= range_flux_rhc[0] && ipar < range_flux_rhc[1] ){
+      bestfit_values_rhc[ count_rhc ] = bestfit_values_fhcprhc[ipar];
+      count_rhc++;
+    }    
+    if( ipar >= range_xsec_rhc[0] && ipar < range_xsec_rhc[1] ){
+      bestfit_values_rhc[ count_rhc ] = bestfit_values_fhcprhc[ipar];
+      count_rhc++;
+    }    
+  } 
+ 
+  //bestfit_values_fhc.Print();
+  //bestfit_values_rhc.Print();
+  //bestfit_values_fhcprhc.Print();
+
+  return;
+}
+//
+
+
+void BANFF::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfit_values_fhc,TVectorD bestfit_values_rhc)
+{
+  
+  // Fill FHC and RHC parameter arrays
+  
+  const int np = conv::kNumOfFHCpRHCParamsInBANFFfit;
+  const int np_fhc = conv::kNumOfParamsInBANFFfit;
+  const int np_rhc = conv::kNumOfRHCParamsInBANFFfit;
+  
+  // Loop over all fhc+rhc parameters and fill fhc- and rhc-only vectors
+  // The order of the parameters in the input vectors is: flux fhc, flux rhc, xsec fhc/rhc common
+  int range_flux_fhc[2] = {0, conv::kNumOfFluxParamsInBANFFfit}; // flux fhc
+  int range_flux_rhc[2] = {0, conv::kNumOfRHCFluxParamsInBANFFfit}; // flux rhc 
+  int range_xsec_fhc[2] = {conv::kNumOfFluxParamsInBANFFfit,    conv::kNumOfParamsInBANFFfit}; // xsec fhc
+  int range_xsec_rhc[2] = {conv::kNumOfRHCFluxParamsInBANFFfit, conv::kNumOfRHCParamsInBANFFfit}; // xsec rhc
+  
+#ifdef __show_init_mesg_debug__
+  cout << "range flux fhc = " <<  range_flux_fhc[0] << " - " <<  range_flux_fhc[1] << endl;
+  cout << "range flux rhc = " <<  range_flux_rhc[0] << " - " <<  range_flux_rhc[1] << endl;
+  cout << "range xsec fhc = " <<  range_xsec_fhc[0] << " - " <<  range_xsec_fhc[1] << endl;
+  cout << "range xsec rhc = " <<  range_xsec_rhc[0] << " - " <<  range_xsec_rhc[1] << endl;
+#endif __show_init_mesg_debug__
+
+  int count=0;
+  
+  // fhc flux
+  for(int ipar=0;ipar<np_fhc;ipar++){
+    if( ipar >= range_flux_fhc[0] && ipar < range_flux_fhc[1] ){     
+      bestfit_values_fhcprhc[count] = bestfit_values_fhc[ ipar ]; 
+      count++;
+    }
+  }
+
+  // rhc flux
+  for(int ipar=0;ipar<np_rhc;ipar++){
+    if( ipar >= range_flux_rhc[0] && ipar < range_flux_rhc[1] ){     
+      bestfit_values_fhcprhc[count] = bestfit_values_rhc[ ipar ]; 
+      count++;
+    }
+  }
+  
+  // fhc xsec (same as rhc xsec)
+  for(int ipar=0;ipar<np_fhc;ipar++){
+    if( ipar >= range_xsec_fhc[0] && ipar < range_xsec_fhc[1] ){     
+      bestfit_values_fhcprhc[count] = bestfit_values_fhc[ ipar ]; 
+      count++;
+    }
+  }
+
+  // bestfit_values_fhc.Print();
+  // bestfit_values_rhc.Print();
+  // bestfit_values_fhcprhc.Print();
+
+
+  return;
+}
+
+void BANFF::UpdateFHCpRHCCurrentValues(){
+  // Update best-fit and current values
+  TVectorD & current_values = *fFHCpRHCCurrentValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);    
+}
+
+void BANFF::UpdateFHCpRHCBestFitValues(){
+  // Update best-fit and current values
+  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  this->MergeFHCpRHCvectors(bestfit_values,bestfit_values_fhc,bestfit_values_rhc);    
+}
+
+void BANFF::UpdateFHCandRHConlyCurrentValues(){
+  // Update best-fit and current values
+  TVectorD & current_values = *fFHCpRHCCurrentValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);   
+}
+
+void BANFF::UpdateFHCandRHConlyBestFitValues(){
+  // Update best-fit and current values
+  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  this->SplitFHCpRHCvectors(bestfit_values,bestfit_values_fhc,bestfit_values_rhc);    
+}
+
+
+//

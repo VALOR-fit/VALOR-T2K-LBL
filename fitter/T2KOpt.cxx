@@ -95,25 +95,35 @@ void T2KOpt::SetDefaults(void)
 
   // Get path to banff covariance matrix RHC
 #if BANFF_BINS == 1
-#ifdef NEW_RHC_BANFF
-  fPathRHCBanffCovMatr = "banff_rhc/covariance_matrix";
-#else
-  fPathRHCBanffCovMatr = "banff/covariance_matrix";
-#endif
-#elif BANFF_BINS == 2
-  fPathRHCBanffCovMatr = "banff/disap/covariance_matrix";
-#elif BANFF_BINS == 3
-  fPathRHCBanffCovMatr = "banff/app/covariance_matrix";
-#endif
 
-  // Get path to banff covariance matrix RHC
-#if BANFF_BINS == 1
+  // NEW FHC+RHC JOINT
+  // 
+  //#ifdef NEW_RHC_BANFF
+  //fPathRHCBanffCovMatr = "banff_rhc/covariance_matrix";
+  //#else
+  //
   fPathRHCBanffCovMatr = "banff/covariance_matrix";
+  //#endif
 #elif BANFF_BINS == 2
   fPathRHCBanffCovMatr = "banff/disap/covariance_matrix";
 #elif BANFF_BINS == 3
   fPathRHCBanffCovMatr = "banff/app/covariance_matrix";
 #endif
+  
+  // NEW FHC+RHC JOINT 
+  
+  // not needed at all!!!
+
+  //   // Get path to banff covariance matrix RHC
+  // #if BANFF_BINS == 1
+  //   fPathRHCBanffCovMatr = "banff/covariance_matrix";
+  // #elif BANFF_BINS == 2
+  //   fPathRHCBanffCovMatr = "banff/disap/covariance_matrix";
+  // #elif BANFF_BINS == 3
+  //   fPathRHCBanffCovMatr = "banff/app/covariance_matrix";
+  // #endif
+
+  //
 
   // SK Escale errors
   fPathEscale1RmuErr = "detector_systematics/superk/energy_scale_relative_error/one_mu_ring";

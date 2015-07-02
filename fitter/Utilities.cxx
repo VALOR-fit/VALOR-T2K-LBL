@@ -234,9 +234,19 @@ void valor::util::PrintCompact(
          stream << " [ ";
 
          //PhysParamId_t p = kListOfBANFFParams[ip];
-	 // NEW FLUX
-       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-         PhysParamId_t p = kListOfBANFFParams[ip];
+	 
+	 // NEW FHC+RHC JOINT
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)  
+	 PhysParamId_t p;
+	 if      (opt.Contains("FHC+RHC")) p = kListOfFHCpRHCBANFFParams[ip];
+	 else if (opt.Contains("FHC"))     p = kListOfBANFFParams[ip];   
+	 else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
+	 else {
+           cerr << "BANFF options string doesn't contain any options" << endl;
+           exit(1);
+         }
+	 //
+
        #elif defined(__FHC_RUNNING__)
          PhysParamId_t p = kListOfBANFFParams[ip];
        #elif defined(__RHC_RUNNING__)
@@ -254,7 +264,7 @@ void valor::util::PrintCompact(
        // #if FSI_BINS != 3
        //   //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
        // 	 // NEW FLUX
-       // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+       // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
        // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
        // #elif defined(__FHC_RUNNING__) // fhc only
        //   PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
@@ -265,14 +275,14 @@ void valor::util::PrintCompact(
        // #else
        // 	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
        // 	 // NEW FLUX
-       // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+       // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
        // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
        // #elif defined(__FHC_RUNNING__) // fhc only
        // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
        // #elif defined(__RHC_RUNNING__) // rhc only
        // 	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
        // #endif
-       // 	 //
+       // 	 
        // #endif
  
        	 // NEW FLUX
@@ -280,7 +290,7 @@ void valor::util::PrintCompact(
 	 // NEW SKDETFSI (use kNuisSKDetFSI_first)
 
          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
-       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__FHC_RUNNING__) // fhc only
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
@@ -351,8 +361,19 @@ void valor::util::PrintCompact(
          //PhysParamId_t p = kListOfBANFFParams[ip];
          
 	 // NEW FLUX
-       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-         PhysParamId_t p = kListOfBANFFParams[ip];
+
+	 // NEW FHC+RHC JOINT
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+	 PhysParamId_t p;
+	 if      (opt.Contains("FHC+RHC")) p = kListOfFHCpRHCBANFFParams[ip];
+	 else if (opt.Contains("FHC"))     p = kListOfBANFFParams[ip];   
+	 else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
+	 else {
+           cerr << "BANFF options string doesn't contain any options" << endl;
+           exit(1);
+         }
+	 //
+
        #elif defined(__FHC_RUNNING__)
          PhysParamId_t p = kListOfBANFFParams[ip];
        #elif defined(__RHC_RUNNING__)
@@ -370,7 +391,7 @@ void valor::util::PrintCompact(
 	 // #if FSI_BINS != 3
 	 //          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 	 // 	 // NEW FLUX
-	 //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+	 //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
 	 //          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 	 //        #elif defined(__FHC_RUNNING__)
 	 //          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
@@ -381,7 +402,7 @@ void valor::util::PrintCompact(
 	 // #else
 	 // 	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );	 
 	 // 	 // NEW FLUX
-	 //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+	 //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
 	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
 	 //        #elif defined(__FHC_RUNNING__)	 
 	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
@@ -398,7 +419,7 @@ void valor::util::PrintCompact(
          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 
 	 // NEW SKDETFSI (use kNuisSKDetFSI_first)
-       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+       #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__FHC_RUNNING__)
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
@@ -959,6 +980,8 @@ void valor::util::ArrIdx::Init(void)
 #endif
   }
 
+
+
   //SKDET + FSI
   // fhc
   for(int i = 0; i < knppmax; i++) {
@@ -1009,6 +1032,45 @@ void valor::util::ArrIdx::Init(void)
          << " is at slot: " << fRHCSKDetFSISystIdx [p] << endl;
 #endif
   }
+
+
+
+
+  // NEW FHC+RHC 
+  
+  // fhc+rhc
+  for(int i = 0; i < knppmax; i++) {
+    fFHCpRHCSKDetFSISystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+    if(p == kPhypUndefined) continue;
+    fFHCpRHCSKDetFSISystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+    cout << "Util/ArrIdx >> FHC+RHC SKDet+FSI: "
+	 << p << "\t"  
+	 << util::AsString(p)
+          << " is at slot: " << fFHCpRHCSKDetFSISystIdx [p] << endl;
+#endif
+  }
+  
+  for(int ip = 0; ip < kNumOfRHCSKDetFSIParams; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + ip);
+    if(p == kPhypUndefined) continue;
+    fFHCpRHCSKDetFSISystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+    cout << "Util/ArrIdx >> FHC+RHC SKDet+FSI: "
+         << p << "\t" 
+         << util::AsString(p)
+         << " is at slot: " << fFHCpRHCSKDetFSISystIdx [p] << endl;
+#endif
+  }
+  //
+
+
+
+
+  
 
   /// NEW MULTIRING 2
 

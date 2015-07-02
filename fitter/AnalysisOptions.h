@@ -33,7 +33,7 @@ Split valor::conv namespace into several smaller files
 #define SYST_STEP     0.1 // step size (in units of sigma)
 
 #ifndef __FULLY_CORRELATED__  // rhc-fhc samples
-#define __FULLY_CORRELATED__
+//#define __FULLY_CORRELATED__
 #endif
 
 // NEW XSEC (either niwg2013 or niwg2015)

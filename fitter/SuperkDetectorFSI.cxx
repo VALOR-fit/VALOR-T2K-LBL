@@ -112,28 +112,12 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SuperkDetectorFSI >> Reading SuperkDetector+FSI inputs from input XML file." << endl;
 #endif
 
-  // Get relative error on energy scale 
-  // fEnergyScale1RmuRelErr =
-  //   util::XML2Dbl(xml,root_node,
-  // 		  "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
-  // fEnergyScale1ReRelErr =
-  //   util::XML2Dbl(xml,root_node,
-  // 		  "detector_systematics/superk/energy_scale_relative_error/one_e_ring");
   fEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1RmuErr.c_str());
   fEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1ReErr.c_str());
 
   const int np = conv::kNumOfSKDetFSIParams;
 
-  // Get SuperkDetectorFSI covariance matrix
-  // #if FSI_BINS == 1
-  //   fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
-  // #elif FSI_BINS == 2
-  //   fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
-  // #elif FSI_BINS == 3
-  //   fCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
-  // #endif
-  fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
-    
+  fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());    
     
   if(!fCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No SuperkDetector+FSI covariance matrix was found." << endl;
@@ -191,26 +175,11 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/SuperkDetectorFSI >> Reading RHC SuperkDetector+FSI inputs from input XML file." << endl;
 #endif
 
-  // Get relative error on energy scale 
-  // fRHCEnergyScale1RmuRelErr =
-  //   util::XML2Dbl(xml,root_node,
-  //                 "detector_systematics/superk/energy_scale_relative_error/one_mu_ring");
-  // fRHCEnergyScale1ReRelErr =
-  //   util::XML2Dbl(xml,root_node,
-  //                 "detector_systematics/superk/energy_scale_relative_error/one_e_ring");
   fRHCEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1RmuErr.c_str());
   fRHCEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1ReErr.c_str());
 
   const int np = conv::kNumOfRHCSKDetFSIParams;
 
-  // Get SuperkDetectorFSI covariance matrix
-// #if FSI_BINS == 1
-//   fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/covariance_matrix");
-// #elif FSI_BINS == 2
-//   fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
-// #elif FSI_BINS == 3
-//   fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
-// #endif
   fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathRHCSKDetFSICovMatr.c_str());
 
   if(!fRHCCovMtrx) {
@@ -266,7 +235,92 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 //________________________________________________________________________________________
 
 
+// NEW FHC+RHC JOINT
 
+bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
+{
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SuperkDetectorFSI >> Reading FHC+RHC SuperkDetector+FSI inputs from input XML file." << endl;
+#endif
+
+  fEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1RmuErr.c_str());
+  fEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1ReErr.c_str());
+  fRHCEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1RmuErr.c_str());
+  fRHCEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1ReErr.c_str());
+
+  const int np     = conv::kNumOfFHCpRHCSKDetFSIParams;
+  const int np_fhc = conv::kNumOfSKDetFSIParams;
+  const int np_rhc = conv::kNumOfRHCSKDetFSIParams;
+
+  fFHCpRHCCovMtrx= util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
+
+  if(!fFHCpRHCCovMtrx) {
+    cerr << "Exp/SuperkDetectorFSI >> No FHC+RHC SuperkDetector+FSI covariance matrix was found." << endl;
+    exit(1);
+  }
+
+  const TMatrixD & cov = *fFHCpRHCCovMtrx;
+  if(cov.GetNrows() != np || cov.GetNcols() != np)
+    {
+      cerr << "Exp/SuperkDetectorFSI >> FHC+RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
+      cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+      cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+      exit(1);
+    }
+
+  double det;
+  fFHCpRHCCovMtrxInv = new TMatrixD(*fFHCpRHCCovMtrx);
+  (*fFHCpRHCCovMtrxInv).SetTol(1E-23);
+  (*fFHCpRHCCovMtrxInv).Invert(&det);
+  //  cout << "Determinant = " << det << endl;
+  const TMatrixD &   covInv  = *fFHCpRHCCovMtrxInv;
+  TMatrixD prod = cov*covInv;
+
+
+#ifdef __show_init_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI >> " << "Error {FHC EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI >> " << "Error {FHC EnergyScale;1Re}    : " << fEnergyScale1ReRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI >> " << "Error {RHC EnergyScale;1Rmu}    : " << fRHCEnergyScale1RmuRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI >> " << "Error {RHC EnergyScale;1Re}    : " << fRHCEnergyScale1ReRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI >> Input FHC+RHC SuperkDetector+FSI covariance matrix: " << endl; 
+  //cov.Print();
+  util::PrintCompact(cov,7,4);
+  cout << "Exp/SuperkDetectorFSI >> Inverse FHC+RHC SuperkDetector+FSI covariance matrix: " << endl;
+  util::PrintCompact(*fFHCpRHCCovMtrxInv,7,4);
+  cout << "Exp/SuperkDetectorFSI >> check of FHC+RHC product cov*(cov)^-1 : "<< endl;
+  util::PrintCompact(prod,7,4);
+#endif
+
+  // Create/init current SuperkDetector+FSI params
+  fCurrentValues = new TVectorD(np_fhc);
+  fNominalValues = new TVectorD(np_fhc);
+  fRHCCurrentValues = new TVectorD(np_rhc);
+  fRHCNominalValues = new TVectorD(np_rhc);
+  fFHCpRHCCurrentValues = new TVectorD(np);
+  fFHCpRHCNominalValues = new TVectorD(np);
+  for(int ip = 0; ip < np_fhc; ip++) {
+    (*fCurrentValues)[ip] = 1.;
+    (*fNominalValues)[ip] = 1.;
+  }
+  for(int ip = 0; ip < np_rhc; ip++) {
+    (*fRHCCurrentValues)[ip] = 1.;
+    (*fRHCNominalValues)[ip] = 1.;
+  }
+  for(int ip = 0; ip < np; ip++) {
+    (*fFHCpRHCCurrentValues)[ip] = 1.;
+    (*fFHCpRHCNominalValues)[ip] = 1.;
+  }
+  
+#ifdef __show_init_mesg_info__
+  cout << "Exp/SuperkDetectorFSI >> Done reading FHC+RHC SuperkDetector+FSI inputs!" << endl;
+#endif
+
+  return true;  
+}
+//
+
+
+//________________________________________________________________________________________
 
 /// NEW MULTIRING 2
 
@@ -372,6 +426,11 @@ bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_nod
 //________________________________________________________________________________________                                                                                    
 void SuperkDetectorFSI::TweakSampleEnergyScale(double twkdial)
 {
+  // NEW FHC+RHC JOINT
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+  this->TweakFHCpRHCEnergyScale(twkdial);
+#else
+  //
 #ifdef __FHC_RUNNING__  
   this->TweakEnergyScale(twkdial);
 #endif
@@ -380,6 +439,7 @@ void SuperkDetectorFSI::TweakSampleEnergyScale(double twkdial)
 #endif
 #ifdef __MULTIRING_RUNNING__
   this->TweakMultiRingEnergyScale(twkdial);
+#endif
 #endif
 }
 //________________________________________________________________________________________                                                                                        
@@ -392,6 +452,18 @@ void SuperkDetectorFSI::TweakRHCEnergyScale(double twkdial)
 {
   fRHCEnergyScaleTwkDial = twkdial;
 }
+//________________________________________________________________________________________
+
+
+// NEW FHC+RHC JOINT
+void SuperkDetectorFSI::TweakFHCpRHCEnergyScale(double twkdial)
+{
+  fEnergyScaleTwkDial = twkdial;
+  fRHCEnergyScaleTwkDial = twkdial;
+}
+//
+
+
 //________________________________________________________________________________________
 /// NEW MULTIRING 3
 void SuperkDetectorFSI::TweakMultiRingEnergyScale(double twkdial)
@@ -562,6 +634,15 @@ double SuperkDetectorFSI::SystWght(
 }
 
 
+
+
+
+
+
+
+
+
+
 // //________________________________________________________________________________________
 // double SuperkDetectorFSI::CurrentValue(conv::PhysParamId_t p) const
 // {
@@ -608,6 +689,29 @@ double SuperkDetectorFSI::RHCCurrentValue(conv::PhysParamId_t p) const
 }
 //________________________________________________________________________________________
 
+
+
+
+
+// NEW FHC+RHC JOINT
+double SuperkDetectorFSI::FHCpRHCCurrentValue(conv::PhysParamId_t p) const
+{
+  if(p == kRHCNuisSuperkEnergyScale) 
+    return fRHCEnergyScaleTwkDial;
+  else if(p == kNuisSuperkEnergyScale) 
+    return fEnergyScaleTwkDial;
+
+  const TVectorD & current_values = *fFHCpRHCCurrentValues;
+  int idx = arr_index->FHCpRHCSKDetFSISystIdx(p);
+  return current_values[idx];
+}
+//
+
+
+
+
+//________________________________________________________________________________________
+
 /// NEW MULTIRING 2
 double SuperkDetectorFSI::MultiRingCurrentValue(conv::PhysParamId_t p) const
 {
@@ -634,10 +738,14 @@ double SuperkDetectorFSI::SampleCurrentValue(PhysParamId_t p) const
     return this->CurrentValue(p);
   }
 }
-
 //________________________________________________________________________________________
 double SuperkDetectorFSI::SampleOneSigmaError(PhysParamId_t p) const
 {
+  // NEW FHC+RHC JOINT
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  return this->FHCpRHCOneSigmaError(p);
+  //
+#else
   if (util::IsRHCSystematic(p)) {
     return this->RHCOneSigmaError(p);
   }
@@ -647,6 +755,7 @@ double SuperkDetectorFSI::SampleOneSigmaError(PhysParamId_t p) const
   else {
     return this->OneSigmaError(p);
   }
+#endif
 }
 //________________________________________________________________________________________
 double SuperkDetectorFSI::OneSigmaError(PhysParamId_t p) const
@@ -675,6 +784,34 @@ double SuperkDetectorFSI::RHCOneSigmaError(PhysParamId_t p) const
   return TMath::Sqrt(cov[idx][idx]);
 }
 //________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+// NEW FHC+RHC JOINT
+double SuperkDetectorFSI::FHCpRHCOneSigmaError(PhysParamId_t p) const
+{
+  if(p == kRHCNuisSuperkEnergyScale || p == kNuisSuperkEnergyScale)
+    return 1;
+  const TMatrixD & cov = *fFHCpRHCCovMtrx;
+  int idx = arr_index->FHCpRHCSKDetFSISystIdx(p);
+  if (idx == -1) {
+    std::cerr<<"SuperkDetectorFSI/FHCpRHCOneSigmaError >> Failed for "<<util::AsString(p)<<std::endl;
+    return 1;
+  }
+  return TMath::Sqrt(cov[idx][idx]);
+}
+
+//________________________________________________________________________________________
+
+
+
+
 
 
 
@@ -723,6 +860,11 @@ void SuperkDetectorFSI::TweakSample(
   TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
 )
 {
+  // NEW FHC+RHC JOINT
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  this->TweakFHCpRHC(force_inputs,input_skdetfsi_params);
+  //
+#else
 #ifdef __FHC_RUNNING__  
   this->Tweak(force_inputs,input_skdetfsi_params);
 #endif
@@ -731,6 +873,7 @@ void SuperkDetectorFSI::TweakSample(
 #endif
 #ifdef __MULTIRING_RUNNING__
   this->TweakMultiRing(force_inputs,input_skdetfsi_params);
+#endif
 #endif
 }
 
@@ -924,6 +1067,116 @@ void SuperkDetectorFSI::TweakRHC(
 
 
 
+// NEW FHC+RHC JOINT
+
+//________________________________________________________________________________________ 
+void SuperkDetectorFSI::TweakFHCpRHC(
+  bool       force_inputs,    /* force the input params or generate random ones internally  */
+  TVectorD * input_skdetfsi_params /* input vector of FSI params - Set to NULL to reset to nominal ones */
+)
+{
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/Tweak >> Tweaking FHC+RHC SuperkDetector+FSI parameters" << endl;
+#endif
+
+  //
+  // For now don't tweak 1Rmu- or 1Re- only
+  //
+  // if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaRHCNuMuDisappOnly) {
+  //   this->TweakOnlyRHC1Rmu(force_inputs,input_skdetfsi_params);
+  //   return;
+  // }
+  // if (T2KOpt::Instance()->gOscAnaTypeChoice == conv::kAnaRHCNuEAppOnly) {
+  //   this->TweakOnlyRHC1Re(force_inputs,input_skdetfsi_params);
+  //   return;
+  // }
+  
+  TVectorD & current_values     = *fFHCpRHCCurrentValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+
+  //
+  // Force input FSI parameters
+  //
+  if(force_inputs)
+    {
+      // Input vector is NULL.
+      // This resets the FSI params to their best-fit values.
+      if(input_skdetfsi_params==0) {
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+        cout << "Exp/SuperkDetectorFSI/Tweak >> Reset FHC+RHC SuperkDetector+FSI params to nominal values." << endl;
+#endif
+        const int np = conv::kNumOfFHCpRHCSKDetFSIParams;
+        for(int ip = 0; ip < np; ip++) {
+	  current_values[ip] = 1.;
+        }
+        const int np_fhc = conv::kNumOfSKDetFSIParams;
+        for(int ip = 0; ip < np_fhc; ip++) {
+	  current_values_fhc[ip] = 1.;
+        }
+        const int np_rhc = conv::kNumOfRHCSKDetFSIParams;
+        for(int ip = 0; ip < np_rhc; ip++) {
+	  current_values_rhc[ip] = 1.;
+        }
+        return;
+      }
+      else
+	{
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+	  cout << "Exp/SuperkDetectorFSI/Tweak >> Forcing FHC+RHC input SuperkDetector+FSI parameters. " << endl;
+#endif
+	  TVectorD & vec = *input_skdetfsi_params;
+	  current_values = vec;
+	  return;
+	}
+    }//force_inputs?
+
+  //
+  // If this is the first time this function is called, then run the Cholesky
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fFHCpRHCCovMtrxChoL == 0)
+    {
+#ifdef __show_skdetfsi_cholesky_mesg_info__
+      cout << "Exp/SuperkDetectorFSI/Tweak >> "
+	   << "Running Cholesky's decomposition method on the FHC+RHC SuperkDetector+FSI covariance matrix." << endl;
+#endif
+    
+      TMatrixD cov(this->FHCpRHCCovMatrix());
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/Tweak >> FHC+RHC SuperkDetector+FSI covariance matrix: " << endl;
+      util::PrintCompact(cov,7,4);
+#endif
+
+      TMatrixD L = util::CholeskyDecomposition(cov);
+      fFHCpRHCCovMtrxChoL = new TMatrixD(L);
+#ifdef __show_skdetfsi_cholesky_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/Tweak >> Cholesky decomposition of FHC+RHC SuperkDetector+FSI covariance matrix: " << endl;
+      util::PrintCompact(*fFHCpRHCCovMtrxChoL,7,4);
+#endif
+    }
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  if(!force_inputs)
+    {   
+#ifdef __show_skdetfsi_tweak_mesg_debug__
+      cout << "Exp/SuperkDetectorFSI/Tweak >> Generating random FHC+RHC SuperkDetector+FSI params (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fFHCpRHCCovMtrxChoL; 
+      TVectorD & nominal_values = *fFHCpRHCNominalValues;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,nominal_values);
+      current_values = vec;
+      
+      this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+
+      return;
+    }
+}
+//________________________________________________________________________________________ 
 
 
 /// NEW MULTIRING 2
@@ -1579,17 +1832,6 @@ void SuperkDetectorFSI::TweakOnlyMultiRe(
 }
 ///
 
-
-
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 double SuperkDetectorFSI::ChisqPenalty(void) const
 //just a straight copy of BANFF::ChisqPenalty
@@ -1722,6 +1964,88 @@ double SuperkDetectorFSI::RHCChisqPenalty(void) const
 
 
 
+
+// NEW FHC+RHC JOINT  
+
+//________________________________________________________________________________________
+ double SuperkDetectorFSI::FHCpRHCChisqPenalty(void) //const
+//just a straight copy of BANFF::FHCpRHCChisqPenalty
+{
+#if !(defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__))
+  return 0;
+#endif
+  //Vector with deviations of current values from  best fit values
+  TVectorD & bestfit_values     = *fFHCpRHCNominalValues;
+  TVectorD & current_values     = *fFHCpRHCCurrentValues;
+  const TVectorD & bestfit_values_fhc = *fNominalValues;
+  const TVectorD & current_values_fhc = *fCurrentValues;
+  const TVectorD & bestfit_values_rhc = *fRHCNominalValues;
+  const TVectorD & current_values_rhc = *fRHCCurrentValues;
+  // Merge FHC and RHC vectors into a single FHCpRHC vector 
+  // Take into account FHC/RHC correlations
+  this->MergeFHCpRHCvectors(bestfit_values,bestfit_values_fhc,bestfit_values_rhc);
+  this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+  //
+  //
+
+  const int np = conv::kNumOfFHCpRHCSKDetFSIParams;
+  TMatrixD dev  (1,np); //vector of one column in matrix form for multiplication
+  TMatrixD devT (np,1); //vector of one row in matrix form for multiplication
+  for(int i = 0; i < np; i++){
+    dev[0][i]  = current_values[i]-bestfit_values[i];
+    devT[i][0] = current_values[i]-bestfit_values[i];
+  }
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> FHC+RHC SuperkDetector+FSI parameters: " << endl;
+  util::PrintCompact(current_values, bestfit_values, 12,6,"FHC+RHC SKDetFSI fit params");
+#endif
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/ChisqPenalty >> deviations in FHC+RHC SuperkDetector+FSI parameters: " << endl;
+  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"FHC+RHC SKDetFSI fit params");
+#endif
+
+  //covariance matrix
+  const TMatrixD cov    (this->FHCpRHCCovMatrix());
+  const TMatrixD covInv (this->FHCpRHCCovMatrixInv());
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> FHC+RHC SuperkDetector+FSI covariance matrix: " << endl;
+  util::PrintCompact(cov,7,4);
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> FHC+RHC inverse SuperkDetector+FSI covariance matrix: " << endl;
+  util::PrintCompact(covInv,7,4);
+#endif
+
+  //Check the inverse:
+  TMatrixD prod = cov*covInv;
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> check of FHC+RHC product cov*(cov)^-1 : "<< endl;
+  util::PrintCompact(prod,7,4);
+#endif
+
+  TMatrixD chisqpenalty =  dev * covInv * devT;
+  double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
+
+  //now add the contribution from energy scale
+  if ( fRHCEnergyScaleTwkDial ) chisq_penalty += fRHCEnergyScaleTwkDial*fRHCEnergyScaleTwkDial;
+  if ( fEnergyScaleTwkDial )    chisq_penalty += fEnergyScaleTwkDial*fEnergyScaleTwkDial;
+
+#ifdef __show_chisqpenalty_mesg_debug__
+  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> FHC+RHC chisqPenalty = " << chisq_penalty << endl;
+#endif
+
+  if(chisq_penalty < 0) 
+    cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> FHC+RHC chisqPenalty = " << chisq_penalty << endl;
+
+  if(chisq_penalty) return chisq_penalty;
+  
+  return 0;
+}
+//
+
+//________________________________________________________________________________________
+
 /// NEW MULTIRING 2
 double SuperkDetectorFSI::MultiRingChisqPenalty(void) const
 //just a straight copy of BANFF::ChisqPenalty
@@ -1801,7 +2125,6 @@ void SuperkDetectorFSI::PrintSystematicVariations(std::ostream & stream) const
   stream << "Exp/SuperkDetectorFSI >> Energy scale twk        = "  << fEnergyScaleTwkDial      << endl;
   stream << "Exp/SuperkDetectorFSI >> SuperkDetector+FSI parameters: " << endl;
   util::PrintCompact(curr_skdetfsi_params,15,6,"SKDetFSI params",stream);
-
 }
 //________________________________________________________________________________________
 void SuperkDetectorFSI::PrintRHCSystematicVariations(std::ostream & stream) const
@@ -1810,8 +2133,20 @@ void SuperkDetectorFSI::PrintRHCSystematicVariations(std::ostream & stream) cons
   stream << "Exp/SuperkDetectorFSI >> RHC energy scale twk        = "  << fRHCEnergyScaleTwkDial      << endl;
   stream << "Exp/SuperkDetectorFSI >> RHC SuperkDetector+FSI parameters: " << endl;
   util::PrintCompact(curr_skdetfsi_params,15,6,"RHC SKDetFSI params",stream);
-
 }
+//________________________________________________________________________________________
+
+// NEW FHC+RHC JOINT
+void SuperkDetectorFSI::PrintFHCpRHCSystematicVariations(std::ostream & stream) const
+{
+  const TVectorD & curr_skdetfsi_params = *fFHCpRHCCurrentValues;
+  stream << "Exp/SuperkDetectorFSI >> FHC energy scale twk        = "  << fEnergyScaleTwkDial      << endl;
+  stream << "Exp/SuperkDetectorFSI >> RHC energy scale twk        = "  << fRHCEnergyScaleTwkDial      << endl;
+  stream << "Exp/SuperkDetectorFSI >> FHC+RHC SuperkDetector+FSI parameters: " << endl;
+  util::PrintCompact(curr_skdetfsi_params,15,6,"FHC+RHC SKDetFSI params",stream);
+}
+//
+
 //________________________________________________________________________________________
 
 
@@ -2054,3 +2389,121 @@ double SuperkDetectorFSI::EnergyScale(SuperkSample_t s) const
   return scale;
 }
 //________________________________________________________________________________________                                                                                          
+
+
+
+
+
+
+
+
+
+
+
+
+// NEW FHC+RHC JOINT
+
+void SuperkDetectorFSI::SplitFHCpRHCvectors(TVectorD bestfit_values_fhcprhc,TVectorD &bestfit_values_fhc,TVectorD &bestfit_values_rhc){
+  
+  // Fill FHC and RHC parameter arrays
+
+  const int np = conv::kNumOfFHCpRHCParamsInBANFFfit;
+
+  // Loop over all fhc+rhc parameters and fill fhc- and rhc-only vectors
+  // The order of the parameters in the input vectors is: flux fhc, flux rhc, xsec fhc/rhc common
+  int range_fhc[2] = {0,                          conv::kNumOfSKDetFSIParams       }; // fhc
+  int range_rhc[2] = {conv::kNumOfSKDetFSIParams, conv::kNumOfFHCpRHCSKDetFSIParams}; // rhc 
+  
+#ifdef __show_init_mesg_debug__
+  cout << "range fhc = " <<  range_fhc[0] << " - " <<  range_fhc[1] << endl;
+  cout << "range rhc = " <<  range_rhc[0] << " - " <<  range_rhc[1] << endl;
+#endif __show_init_mesg_debug__
+
+  int count_fhc=0;
+  int count_rhc=0;
+  for(int ipar=0;ipar<np;ipar++){
+    
+    // use only if statements because vectors can share same parameters (e.g. xsec)
+
+    // fhc
+    if( ipar >= range_fhc[0] && ipar < range_fhc[1] ){     
+      bestfit_values_fhc[ count_fhc ] = bestfit_values_fhcprhc[ipar];
+      count_fhc++;
+    }
+    // rhc
+    if( ipar >= range_rhc[0] && ipar < range_rhc[1] ){
+      bestfit_values_rhc[ count_rhc ] = bestfit_values_fhcprhc[ipar];
+      count_rhc++;
+    }    
+  } 
+ 
+  // bestfit_values_fhc.Print();
+  // bestfit_values_rhc.Print();
+  // bestfit_values_fhcprhc.Print();
+
+  return;
+}
+//
+
+
+void SuperkDetectorFSI::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfit_values_fhc,TVectorD bestfit_values_rhc)
+{
+  
+  // Fill FHC and RHC parameter arrays
+  
+  const int np = conv::kNumOfFHCpRHCSKDetFSIParams;
+  const int np_fhc = conv::kNumOfSKDetFSIParams;
+  const int np_rhc = conv::kNumOfRHCSKDetFSIParams;
+  
+  // Loop over all fhc+rhc parameters and fill fhc- and rhc-only vectors
+  // The order of the parameters in the input vectors is: flux fhc, flux rhc, xsec fhc/rhc common
+  int range_fhc[2] = {0, conv::kNumOfSKDetFSIParams};    // flux fhc
+  int range_rhc[2] = {0, conv::kNumOfRHCSKDetFSIParams}; // flux rhc 
+  
+#ifdef __show_init_mesg_debug__
+  cout << "range fhc = " <<  range_fhc[0] << " - " <<  range_fhc[1] << endl;
+  cout << "range rhc = " <<  range_rhc[0] << " - " <<  range_rhc[1] << endl;
+#endif __show_init_mesg_debug__
+
+  int count=0;
+  
+  // fhc flux
+  for(int ipar=0;ipar<np_fhc;ipar++){
+    if( ipar >= range_fhc[0] && ipar < range_fhc[1] ){     
+      bestfit_values_fhcprhc[count] = bestfit_values_fhc[ ipar ]; 
+      count++;
+    }
+  }
+
+  // rhc flux
+  for(int ipar=0;ipar<np_rhc;ipar++){
+    if( ipar >= range_rhc[0] && ipar < range_rhc[1] ){     
+      bestfit_values_fhcprhc[count] = bestfit_values_rhc[ ipar ]; 
+      count++;
+    }
+  }
+ 
+  // bestfit_values_fhc.Print();
+  // bestfit_values_rhc.Print();
+  // bestfit_values_fhcprhc.Print();
+
+  return;
+}
+
+void SuperkDetectorFSI::UpdateFHCpRHCCurrentValues(){
+  // Update best-fit and current values
+  TVectorD & current_values = *fFHCpRHCCurrentValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc); 
+}
+
+void SuperkDetectorFSI::UpdateFHCpRHCBestFitValues(){
+  // Update best-fit and current values
+  TVectorD & bestfit_values = *fFHCpRHCNominalValues;
+  TVectorD & bestfit_values_fhc = *fNominalValues;
+  TVectorD & bestfit_values_rhc = *fRHCNominalValues;
+  this->MergeFHCpRHCvectors(bestfit_values,bestfit_values_fhc,bestfit_values_rhc);    
+}
+
+//

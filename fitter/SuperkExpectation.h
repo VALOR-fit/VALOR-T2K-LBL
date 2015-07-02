@@ -96,12 +96,18 @@ public:
 
    void TweakAllBANFFSystematics                  (void);        ///< random variation of all BANFF systematics
    void TweakAllRHCBANFFSystematics               (void);        ///< random variation of all BANFF systematics
+   // NEW FHC+RHC JOINT
+   void TweakAllFHCpRHCBANFFSystematics               (void);        ///< random variation of all BANFF systematics
+   //
    void TweakAllSampleBANFFSystematics            (void);        ///< random variation of all BANFF systematics
 
    void TweakAllUncorrelatedXSecSystematics       (void);        ///< random variation of all Uncorrelated XSec systematics
 
    void TweakAllSKDetectorFSISystematics          (void);        ///< random variation of all SK Detector systematics
    void TweakAllRHCSKDetectorFSISystematics       (void);        ///< random variation of all SK Detector systematics   // NEW FLUX
+   // NEW FHC+RHC JOINT
+   void TweakAllFHCpRHCSKDetectorFSISystematics   (void);        ///< random variation of all SK Detector systematics   // NEW FLUX
+   //
    void TweakAllMultiRingSKDetectorFSISystematics (void);        ///< random variation of all SK Detector systematics   /// NEW MULTIRING 2
    void TweakAllSampleSKDetectorFSISystematics    (void);        ///< random variation of all SK Detector systematics   /// NEW MULTIRING 2
    

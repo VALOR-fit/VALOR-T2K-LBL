@@ -34,12 +34,21 @@ Added samples for multiring forward horn current
 namespace valor {
 namespace conv   {
 
-//
-// ** SKDET+FSI systematics
-//
-
-// Number of SKDET+FSI systematic params
-
+  //
+  // ** SKDET+FSI systematics
+  //
+  
+  // Number of SKDET+FSI systematic params
+  
+  //
+  // NB: 
+  //
+  // We don't need kNumOfFHCpRHCSKDetFSIParams* because each skdetfsi parameter
+  // is definitely independent from the others. Indeed they belong to different data samples. 
+  // It's different from the BANFF case, where the xsec parameters are common to 
+  // both the FHC and RHC modes
+  //
+  
   // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
   #if FSI_BINS == 1
@@ -79,6 +88,7 @@ namespace conv   {
   static const int kNumOfSKDetFSIParamsMultiRe  = 12;
   ///
   #endif
+
 #elif defined(__USE_SKDETFSI2015__)
   #if FSI_BINS == 1
   static const int kNumOfSKDetFSIParams     = 24;
@@ -118,6 +128,12 @@ namespace conv   {
   ///
   #endif
 #endif
+
+  // NEW FHC+RHC JOINT
+  static const int kNumOfFHCpRHCSKDetFSIParams     = kNumOfSKDetFSIParams + kNumOfRHCSKDetFSIParams; // 36
+  static const int kNumOfFHCpRHCSKDetFSIParams1Rmu = kNumOfSKDetFSIParams1Rmu + kNumOfRHCSKDetFSIParams1Rmu; //12
+  static const int kNumOfFHCpRHCSKDetFSIParams1Re  = kNumOfSKDetFSIParams1Re + kNumOfRHCSKDetFSIParams1Re; //24
+  //
 
 
 // The following is the list of the above kNumOfFSIParams
@@ -237,6 +253,127 @@ static const PhysParamId_t kListOfRHCSKDetFSIParams[kNumOfRHCSKDetFSIParams] =
     #endif
 #endif
 };
+
+
+// NEW FHC+RHC JOINT
+ static const PhysParamId_t kListOfFHCpRHCSKDetFSIParams[kNumOfFHCpRHCSKDetFSIParams] =
+	 {
+#if defined(__USE_SKDETFSI2013__)
+    #if FSI_BINS != 3
+    kNuisSKDetFSI000,
+    kNuisSKDetFSI001,
+    kNuisSKDetFSI002,
+    kNuisSKDetFSI003,
+    kNuisSKDetFSI004,
+    kNuisSKDetFSI005,
+    #endif
+    #if FSI_BINS != 2
+    kNuisSKDetFSI006,
+    kNuisSKDetFSI007,
+    kNuisSKDetFSI008,
+    kNuisSKDetFSI009,
+    kNuisSKDetFSI010,
+    kNuisSKDetFSI011,
+    kNuisSKDetFSI012,
+    kNuisSKDetFSI013,
+    kNuisSKDetFSI014,
+    kNuisSKDetFSI015,
+    kNuisSKDetFSI016,
+    kNuisSKDetFSI017,
+    #endif
+#elif defined(__USE_SKDETFSI2015__)
+    #if FSI_BINS != 3
+    kNuisSKDetFSI000,
+    kNuisSKDetFSI001,
+    kNuisSKDetFSI002,
+    kNuisSKDetFSI003,
+    kNuisSKDetFSI004,
+    kNuisSKDetFSI005,
+    kNuisSKDetFSI006,
+    kNuisSKDetFSI007,
+    kNuisSKDetFSI008,
+    kNuisSKDetFSI009,
+    kNuisSKDetFSI010,
+    kNuisSKDetFSI011,
+    #endif
+    #if FSI_BINS != 2
+    kNuisSKDetFSI012,
+    kNuisSKDetFSI013,
+    kNuisSKDetFSI014,
+    kNuisSKDetFSI015,
+    kNuisSKDetFSI016,
+    kNuisSKDetFSI017,
+    kNuisSKDetFSI018,
+    kNuisSKDetFSI019,
+    kNuisSKDetFSI020,
+    kNuisSKDetFSI021,
+    kNuisSKDetFSI022,
+    kNuisSKDetFSI023,
+    #endif
+#endif
+
+#if defined(__USE_SKDETFSI2013__)
+    #if FSI_BINS != 3
+    kRHCNuisSKDetFSI000,
+    kRHCNuisSKDetFSI001,
+    kRHCNuisSKDetFSI002,
+    kRHCNuisSKDetFSI003,
+    kRHCNuisSKDetFSI004,
+    kRHCNuisSKDetFSI005,
+    #endif
+    #if FSI_BINS != 2
+    kRHCNuisSKDetFSI006,
+    kRHCNuisSKDetFSI007,
+    kRHCNuisSKDetFSI008,
+    kRHCNuisSKDetFSI009,
+    kRHCNuisSKDetFSI010,
+    kRHCNuisSKDetFSI011,
+    kRHCNuisSKDetFSI012,
+    kRHCNuisSKDetFSI013,
+    kRHCNuisSKDetFSI014,
+    kRHCNuisSKDetFSI015,
+    kRHCNuisSKDetFSI016,
+    kRHCNuisSKDetFSI017
+    #endif
+
+#elif defined(__USE_SKDETFSI2015__)
+    #if FSI_BINS != 3
+    kRHCNuisSKDetFSI000,
+    kRHCNuisSKDetFSI001,
+    kRHCNuisSKDetFSI002,
+    kRHCNuisSKDetFSI003,
+    kRHCNuisSKDetFSI004,
+    kRHCNuisSKDetFSI005,
+    kRHCNuisSKDetFSI006,
+    kRHCNuisSKDetFSI007,
+    kRHCNuisSKDetFSI008,
+    kRHCNuisSKDetFSI009,
+    kRHCNuisSKDetFSI010,
+    kRHCNuisSKDetFSI011,
+    #endif
+    #if FSI_BINS != 2
+    kRHCNuisSKDetFSI012,
+    kRHCNuisSKDetFSI013,
+    kRHCNuisSKDetFSI014,
+    kRHCNuisSKDetFSI015,
+    kRHCNuisSKDetFSI016,
+    kRHCNuisSKDetFSI017,
+    kRHCNuisSKDetFSI018,
+    kRHCNuisSKDetFSI019,
+    kRHCNuisSKDetFSI020,
+    kRHCNuisSKDetFSI021,
+    kRHCNuisSKDetFSI022,
+    kRHCNuisSKDetFSI023
+    #endif
+#endif
+    };
+    //
+
+
+
+
+
+
 
 /// NEW MULTIRING 2
 static const PhysParamId_t kListOfMultiRingSKDetFSIParams[kNumOfSKDetFSIParamsMultiRing] = 
@@ -3165,10 +3302,15 @@ static const bool kMultiRingSKDetFSIParamToSKMode[2][knm][kNumOfSKDetFSIParamsMu
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing + 1/*multiring escale*/;  // Tot # par FHC+MultiRing
     
     // NEW FLUX
-    #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) // fhc+rhc
-    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ; // Todo FHC+RHC with correlations
+    #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)// fhc+rhc (fully correlated)
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ; 
     //
 
+    // NEW FHC+RHC JOINT
+    #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && !defined(__FULLY_CORRELATED__) // fhc+rhc (w/ correlations)
+    static const int kNumOfNuisanceParams = kNumOfFHCpRHCParamsInBANFFfit + kNumOfFHCpRHCSKDetFSIParams + 2/*energy scale*/  + kNumOfUncXSecSyst ; 
+    //
+    
     #elif defined(__FHC_RUNNING__)  // fhc only
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
     
