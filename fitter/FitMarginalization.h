@@ -137,16 +137,12 @@ class FitMarginalization
   void BuildDeltaChisqMarg(void);
 
   void FillChisqMarg(SuperkObservation *skobs_data,bool readbinary = false); // Loop over the free params and call CalcChisqMargPt()
-  
-
-  
+    
   //float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
-  float CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary = false,bool allow_cached = true); // MAP
+  float CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary = false,bool allow_cached = true); // Use the map of the binary files
 
-
-  
   //float GetChisqMargTrue(double valpar0,double valpar1,SuperkObservation *skobs);
-  float GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs,bool readbinary = false); // MAP
+  float GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs,bool readbinary = false); // Use the map of the binary files
   
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
@@ -231,6 +227,14 @@ class FitMarginalization
   void SetNSKsamples();
   int GetNSKsamples ()  const {return fNSKsamples;};
   conv::SuperkSample_t GetSKSamples (int isksample) const ; 
+
+
+  // NEW FHC+RHC JOINT
+  bool UseSKSample(int isksample) const;
+  bool UseSKSample(conv::SuperkSample_t s) const;
+  //
+
+
 
   void SetSaveParamLists(bool save_lists = true);
   PhysParamList * const * GetParamListArray() const;
@@ -370,7 +374,7 @@ class FitMarginalization
   bool fMergeInputFiles_Called;
   int fNmergedFiles;
 
-  TH1F *fhToyMargCurr_RHCNumu;
+  //TH1F *fhToyMargCurr_RHCNumu; // NEW FHC+RHC JOINT
 
   VALORArrayF *fToyMargErecoVArray_RHCNumu; 
   VALORArrayF *fToyMargErecoVArray_RHCNue;  

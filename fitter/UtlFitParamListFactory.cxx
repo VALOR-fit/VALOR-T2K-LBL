@@ -1635,10 +1635,10 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 #elif defined(__FHC_RUNNING__)
   const int nparams = kNumOfParamsInBANFFfit;
 #elif defined(__RHC_RUNNING__)
-  const int nparams = kNumOfRHCParamsInBANFFfit
+  const int nparams = kNumOfRHCParamsInBANFFfit;
 #endif
 
-   // get parameter
+  // get parameter
   for(int i = 0; i < nparams; i++) {  
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
     #if defined(__FULLY_CORRELATED__)  
@@ -1845,7 +1845,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
 #elif defined(__FHC_RUNNING__)
   const int nparams = kNumOfParamsInBANFFfit;
 #elif defined(__RHC_RUNNING__)
-  const int nparams = kNumOfRHCParamsInBANFFfit
+  const int nparams = kNumOfRHCParamsInBANFFfit;
 #endif
 
    // get parameter
