@@ -121,6 +121,11 @@ class FitMarginalization
   const FitParamList * GetFitParamList_IH(void) const {return fparm_ih;};
   //
 
+  // NEW FHC+RHC JOINT 
+  const double GetMinOscParam(conv::PhysParamId_t physpar) const;
+  const double GetMaxOscParam(conv::PhysParamId_t physpar) const;
+  //
+
   void PrintPhysHypothesis(void);
 
   bool IsFit2D(){ return fIsFit2D;}

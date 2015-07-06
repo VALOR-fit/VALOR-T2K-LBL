@@ -25,10 +25,11 @@
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
 
-#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
-#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
+//#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
+//#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
 
-//#define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
+#define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
+
 #define __FILL_OSCPARAM_TOY_HISTO__
 
 
@@ -777,11 +778,10 @@ void FitMarginalization::SetFreeParam(int ParId,conv::PhysParamId_t *parfree,dou
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetFitParamList(const char * fit_param_list){
+  
   fparm  = util::NamedParameterList(fit_param_list);
-  // NEW MARG MH
   fparm_nh = new FitParamList(*fparm);
   fparm_ih = new FitParamList(*fparm);
-  //
   
   fhypothesis = fparm->PhysicsHypothesis();
 
@@ -933,10 +933,10 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     if (iexperiment%100 == 0) { cout << "iexperiment " << iexperiment << endl; }
 #endif
     
-    fparm->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue
+    fparm->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue is used
     // NEW MARG MH
-    fparm_nh->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue
-    fparm_ih->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue
+    fparm_nh->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue is used
+    fparm_ih->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue is used
     //
 
     // Extract oscillation parameters to be marginalized
@@ -961,14 +961,22 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     for(int ip = 0; ip < np; ip++) {
       conv::PhysParamId_t p = fparm_nh->WhichParam(ip);
       if(util::IsSystematic(p)) continue; // not oscillation parameters 
-      cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_nh->InitValue(p) << endl;
+
+      // NEW FHC+RHC JOINT
+      //cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_nh->InitValue(p) << endl;
+      cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_nh->CurrValue(p) << endl;
+      //
     }
     cout << "Inverted hierarchy parameters:" << endl;
     np = fparm_ih->GetNumberParameters();
     for(int ip = 0; ip < np; ip++) {
       conv::PhysParamId_t p = fparm_ih->WhichParam(ip);
       if(util::IsSystematic(p)) continue; // not oscillation parameters 
-      cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_ih->InitValue(p) << endl;
+									
+      // NEW FHC+RHC JOINT
+      //cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_ih->InitValue(p) << endl;
+      cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_ih->CurrValue(p) << endl;
+      //
     }
     cout << endl;    
 #endif
@@ -1122,6 +1130,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	fparm->Copy(*fparm_ih); // NEW MARG MH
       }
 
+
 #ifdef __FILL_OSCPARAM_TOY_HISTO__
 
       // Fill toy osc parameter histograms
@@ -1132,22 +1141,23 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	conv::PhysParamId_t p = fparm->WhichParam(ip);
 	//cout << p << " " << util::AsString(p) << endl;
 
-	if(p!=fPhysParamFree[0]) 
-	  fparm->SetDoMarg(fPhysParamFree[0],true); 
-	else{
-	  fparm->SetDoMarg(fPhysParamFree[0],false);  // Do not marginalize if free parameter 
-	  continue; 
-	}
-	
-	if(fIsFit2D){
-	  if(p!=fPhysParamFree[1]) 
-	    fparm->SetDoMarg(fPhysParamFree[1],true); 
-	  else{
-	    fparm->SetDoMarg(fPhysParamFree[1],false);  // Do not marginalize if free parameter
-	    continue; 
-	  }
-	}
-	
+	// NEW FHC+RHC JOINT
+	// if(p!=fPhysParamFree[0]) 
+	//   fparm->SetDoMarg(fPhysParamFree[0],true); 
+	// else{
+	//   fparm->SetDoMarg(fPhysParamFree[0],false);  // Do not marginalize if free parameter 
+	//   continue; 
+	// }
+	// if(fIsFit2D){
+	//   if(p!=fPhysParamFree[1]) 
+	//     fparm->SetDoMarg(fPhysParamFree[1],true); 
+	//   else{
+	//     fparm->SetDoMarg(fPhysParamFree[1],false);  // Do not marginalize if free parameter
+	//     continue; 
+	//   }
+	// }
+	//
+
 	if(util::IsSystematic(p)) continue; // not oscillation parameters 
 	if(fparm->IsFixed(p))    continue; // do not marginalize if fixed
 	
@@ -1180,15 +1190,28 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  exit(1);
 	}
 	
-	double usedvalue = fparm->InitValue(p);
+	
+	// NEW FHC+RHC JOINT
+	//double usedvalue = fparm->InitValue(p);
+	double usedvalue = fparm->CurrValue(p);
+	//
+	
 	fparm->GetToyHisto(p)->Fill(usedvalue); 
 	
+
 	if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
-	  usedvalue = fparm_nh->InitValue(p);
+	  
+	  // NEW FHC+RHC JOINT
+	  //usedvalue = fparm_nh->InitValue(p);
+	  usedvalue = fparm_nh->CurrValue(p);
+	  //
 	  fparm_nh->GetToyHisto(p)->Fill(usedvalue); 
 	}
 	else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
-	  usedvalue = fparm_ih->InitValue(p);
+	  // NEW FHC+RHC JOINT
+	  //usedvalue = fparm_ih->InitValue(p);
+	  usedvalue = fparm_ih->CurrValue(p);
+	  //
 	  fparm_ih->GetToyHisto(p)->Fill(usedvalue); 
 	}
       } // loop over p
@@ -1197,8 +1220,13 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       double usedvalue_y = conv::kBadResult;
 
 #ifdef __MARGINALIZE_23PARAMS_CORR__
-      usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
-      usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
+
+      // NEW FHC+RHC JOINT
+      //usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
+      usedvalue_x = fparm->CurrValue(conv::kPhypMixing23);
+      //usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
+      usedvalue_y = fparm->CurrValue(conv::kPhypDm23sq);
+      //
 
       fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
       fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
@@ -1214,8 +1242,13 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 #endif
 
 #ifdef __MARGINALIZE_TH13_DELTACP_CORR__
-      usedvalue_x = fparm->InitValue(conv::kPhypMixing13);
-      usedvalue_y = fparm->InitValue(conv::kPhypCPV);
+
+      // NEW FHC+RHC JOINT
+      //usedvalue_x = fparm->InitValue(conv::kPhypMixing13);
+      //usedvalue_y = fparm->InitValue(conv::kPhypCPV);
+      usedvalue_x = fparm->CurrValue(conv::kPhypMixing13);
+      usedvalue_y = fparm->CurrValue(conv::kPhypCPV);
+      //
 
       fparm->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
       fparm->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
@@ -1237,6 +1270,17 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       
 #endif // __FILL_OSCPARAM_TOY_HISTO__
 
+
+      
+
+
+
+      // SONO ARRIVATO QUI
+
+      
+
+
+
       //
 
       
@@ -1252,7 +1296,11 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       for(int ip = 0; ip < np; ip++) {
 	conv::PhysParamId_t p = fparm->WhichParam(ip);
 	if(util::IsSystematic(p)) continue; // not oscillation parameters 
-	cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm->InitValue(p) << endl;
+	
+	// NEW FHC+RHC JOINT
+	//cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm->InitValue(p) << endl;
+	cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm->CurrValue(p) << endl;
+	//
       }
       cout << endl;
 #endif
@@ -1271,10 +1319,14 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  
 	  
 	  // Update the expectation and produce the mock data
-	  //fparm->Update(fPhysParamFree[0],currval0); 
-	  //if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
-	  fparm->SetInitValue(fPhysParamFree[0],currval0); 
-	  if(fIsFit2D) fparm->SetInitValue(fPhysParamFree[1],currval1); 
+	  
+	  // NEW FHC+RHC JOINT
+	  fparm->Update(fPhysParamFree[0],currval0); 
+	  if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1); 
+	  //fparm->SetInitValue(fPhysParamFree[0],currval0); 
+	  //if(fIsFit2D) fparm->SetInitValue(fPhysParamFree[1],currval1); 
+	  //
+
 	  //cout << *fparm << endl;
 	  
 	  applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
@@ -1521,6 +1573,7 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 #ifdef __print_array_toy_fillchisq__
 	cout << util::AsString(s) << " --> # Ereco bins = " << util::NumErecoBins(s) << endl;
 	double nexp_sample = 0.;
+	double nobs_sample = 0.;
 	double chisq_sample = 0.;
 #endif
 
@@ -1533,12 +1586,13 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	  
 #ifdef __print_array_toy_fillchisq__
 	  nexp_sample += nexp;
+	  nobs_sample += nobs;	  
 	  chisq_sample += valor::util::ChisqPoisson(nobs,nexp);
 #endif
 	} // loop over ereco bins
 
 #ifdef __print_array_toy_fillchisq__
-	cout << "# exp sample = " << nexp_sample << " --> chisq sample = " << chisq_sample << " --> chisq tot = " << chisq << endl;
+	cout << "# exp sample = " << nexp_sample << " - # obs sample = " << nobs_sample << " --> chisq sample = " << chisq_sample << " --> chisq tot = " << chisq << endl;
 #endif
       }
       
@@ -2300,6 +2354,23 @@ void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,doub
   fparm_nh->SetPriorMode(physpar,priorname);
   //
 
+
+  // NEW FHC+RHC JOINT
+  
+  double nbins = 100;
+  double min = this->GetMinOscParam(physpar);
+  double max = this->GetMaxOscParam(physpar);
+  
+  char name[200];
+  sprintf(name,"h_%s",util::AsString(physpar).c_str());
+  TH1D *h = new TH1D(name,name,nbins,min,max);
+  fparm->SetToyHisto(physpar,h); // empty histogram
+  fparm_nh->SetToyHisto(physpar,h); // empty histogram
+  //cout << util::AsString(physpar) << " - " << name << " - min = " << min << " - max = " << max << endl;
+ 
+  //
+
+
   if(priorname=="flat"){
     fparm->SetMinValueFlat(physpar,par1);
     fparm->SetMaxValueFlat(physpar,par2);
@@ -2337,6 +2408,22 @@ void FitMarginalization::SetPrior_IH(PhysParamId_t physpar,string priorname,doub
   // NEW MARG MH
   fparm_ih->SetPriorMode(physpar,priorname);
   //
+
+
+  // NEW FHC+RHC JOINT
+  
+  double nbins = 100;
+  double min = this->GetMinOscParam(physpar);
+  double max = this->GetMaxOscParam(physpar);
+  char name[200];  
+  sprintf(name,"h_%s_ih",util::AsString(physpar).c_str());
+  TH1D *h = new TH1D(name,name,nbins,min,max);
+  fparm_ih->SetToyHisto(physpar,h); // empty histogram
+
+  //cout << util::AsString(physpar) << " - " << name << " - min = " << min << " - max = " << max << endl;
+
+  //
+
 
   if(priorname=="flat"){
     // NEW MARG MH
@@ -2621,8 +2708,10 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
 #endif
 
     // Update current values of parameters 
-    //infparm->Update(p,currval);
-    infparm->SetInitValue(p,currval);    
+    // NEW FHC+RHC JOINT
+    infparm->Update(p,currval);
+    //infparm->SetInitValue(p,currval);
+    //
   }
   
 
@@ -2761,9 +2850,12 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     //cout << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
 #endif
  
-    infparm->SetInitValue(conv::kPhypDm23sq,dmsq);
-    infparm->SetInitValue(conv::kPhypMixing23,mix23);
-    //infparm->Update(p,currval);
+    // NEW FHC+RHC JOINT
+    //infparm->SetInitValue(conv::kPhypDm23sq,dmsq);
+    //infparm->SetInitValue(conv::kPhypMixing23,mix23);
+    infparm->Update(conv::kPhypDm23sq,dmsq);
+    infparm->Update(conv::kPhypMixing23,mix23);
+    //
   }
 
 #endif // __MARGINALIZE_23PARAMS_CORR__
@@ -2796,9 +2888,12 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     //cout << "Nparam_with_2Dprior = " << Nparam_with_2Dprior << endl;
 #endif
  
-    infparm->SetInitValue(conv::kPhypMixing13,mix13);
-    infparm->SetInitValue(conv::kPhypCPV,dcp);
-    //infparm->Update(p,currval);
+    // NEW FHC+RHC JOINT
+    //infparm->SetInitValue(conv::kPhypMixing13,mix13);
+    //infparm->SetInitValue(conv::kPhypCPV,dcp);
+    infparm->Update(conv::kPhypMixing13,mix13);
+    infparm->Update(conv::kPhypCPV,dcp);
+    //
   }
 
 #endif // __MARGINALIZE_TH13_DELTACP_CORR__
@@ -2911,6 +3006,51 @@ bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscva
   
   return false;
 }
+
+
+
+
+
+  // NEW FHC+RHC JOINT 
+const double FitMarginalization::GetMinOscParam(PhysParamId_t physpar) const
+{
+  if     (physpar == conv::kPhypMixing13Bar) return mixing13Bar_min;
+  else if(physpar == conv::kPhypMixing23Bar) return mixing23Bar_min;
+  else if(physpar == conv::kPhypDm23sqBar)   return dmsq32Bar_min;
+  else if(physpar == conv::kPhypDm12sqBar)   return dmsq12Bar_min;
+  else if(physpar == conv::kPhypCPVBar)      return deltacpBar_min;
+  else if(physpar == conv::kPhypBetaBar)     return betaBar_min;
+
+  else if(physpar == conv::kPhypMixing13)    return mixing13_min;
+  else if(physpar == conv::kPhypMixing23)    return mixing23_min;
+  else if(physpar == conv::kPhypDm23sq)      return dmsq32_min;
+  else if(physpar == conv::kPhypDm12sq)      return dmsq12_min;
+  else if(physpar == conv::kPhypCPV)         return deltacp_min;
+
+  else return conv::kBadResult;
+}
+
+const double FitMarginalization::GetMaxOscParam(PhysParamId_t physpar) const
+{
+  if     (physpar == conv::kPhypMixing13Bar) return mixing13Bar_max;
+  else if(physpar == conv::kPhypMixing23Bar) return mixing23Bar_max;
+  else if(physpar == conv::kPhypDm23sqBar)   return dmsq32Bar_max;
+  else if(physpar == conv::kPhypDm12sqBar)   return dmsq12Bar_max;
+  else if(physpar == conv::kPhypCPVBar)      return deltacpBar_max;
+  else if(physpar == conv::kPhypBetaBar)     return betaBar_max;
+
+  else if(physpar == conv::kPhypMixing13)    return mixing13_max;
+  else if(physpar == conv::kPhypMixing23)    return mixing23_max;
+  else if(physpar == conv::kPhypDm23sq)      return dmsq32_max;
+  else if(physpar == conv::kPhypDm12sq)      return dmsq12_max;
+  else if(physpar == conv::kPhypCPV)         return deltacp_max;
+
+  else return conv::kBadResult;
+}
+//
+
+
+
 
 
 // NEW MARG MH
