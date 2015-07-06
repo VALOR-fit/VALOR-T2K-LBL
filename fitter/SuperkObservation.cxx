@@ -168,13 +168,52 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
    
     //assert(!"This code branch is deprecated");
 
-#ifdef __NUEONLY__ 
-#ifdef __RHC_RUNNING__
+
+    // NEW FHC+RHC JOINT
+
+#if defined(__RHC_RUNNING__) && defined(__RHC_RUNNING__) // joint fit
+    
+    TFile f(config_file.c_str());
+    TH1D * hist = 0;
+ 
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      
+      if (s == conv::kSKsUndefined) continue;
+      else if(s == conv::kSKsRHCFCFV1RingMuLike) f.GetObject(Form("mock_data_1Rmu_RHC_%d",data_set_id),hist);
+      else if(s == conv::kSKsRHCFCFV1RingELike) f.GetObject(Form("mock_data_1Re_RHC_%d",data_set_id),hist);
+      else if(s == conv::kSKsFCFV1RingELike) f.GetObject(Form("mock_data_1Re_%d",data_set_id),hist);
+      else if(s == conv::kSKsFCFV1RingMuLike) f.GetObject(Form("mock_data_1Rmu_%d",data_set_id),hist);
+      else {
+	cerr << endl;
+	cerr << "Used SK sample " << util::AsString(s) << " not available" << endl;
+	cerr << endl;
+	exit(1);
+      }
+      
+      if(!hist) {
+	cerr << "Obs >> Histogram for " << util::AsString(s) << " does not exist!" << endl;
+	exit(1);
+      }
+
+      for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
+	double nobs = hist->GetBinContent(ibin);
+	fErDistrArray[is]->GetArray()[ibin-1] = nobs;
+      }
+      cout << "Obs >> Read: " << hist->Integral()
+     	   << " " << util::AsString(s) << " events." << endl;
+    }
+
+#elif defined(__RHC_RUNNING__) // rhc only analyses (no joint fit)
+    
+    // nuebar app only
+#if defined(__NUEONLY__) 
     TFile f(config_file.c_str());
     TH1D * hist = 0;
     f.GetObject(Form("mock_data_1Re_RHC_%d",data_set_id),hist);
     if(!hist) {
       cerr << "Obs >> Histogram for RHC1Re does not exist!" << endl;
+      exit(1);
     }
  
     for (int is = 0 ; is < conv::kns ; is++) {
@@ -188,8 +227,46 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       cout << "Obs >> Read: " << hist->Integral()
      	   << " " << util::AsString(s) << " events." << endl;
     }
-#endif
-#endif
+
+    // numubar disap only
+#elif defined(__NUMUONLY__) 
+
+    TFile f(config_file.c_str());
+    TH1D * hist = 0;
+    f.GetObject(Form("mock_data_1Rmu_RHC_%d",data_set_id),hist);
+    if(!hist) {
+      cerr << "Obs >> Histogram for RHC1Rmu does not exist!" << endl;
+      exit(1);
+    }
+ 
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s!=kSKsRHCFCFV1RingMuLike) continue;
+      
+      for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
+	double nobs = hist->GetBinContent(ibin);
+	fErDistrArray[is]->GetArray()[ibin-1] = nobs;
+      }
+      cout << "Obs >> Read: " << hist->Integral()
+     	   << " " << util::AsString(s) << " events." << endl;
+    }
+
+#endif // __NUEONLY__ - __NUMUONLY__
+
+#else
+    cerr << endl;
+    cerr << "SuperkObservation::Read()" << endl;
+    cerr << "Analysis mode not defined" << endl;
+    cerr << endl;
+    exit(1);
+#endif // __RHC_RUNNING__ - __FHC_RUNNING__
+
+    //
+
+
+
+
+
     
     // else {
     //   assert(hist->GetNbinsX() == util::NumErecoBins(kSKsRHCFCFV1RingELike));
