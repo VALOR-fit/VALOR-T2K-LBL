@@ -2417,7 +2417,7 @@ void SuperkDetectorFSI::SplitFHCpRHCvectors(TVectorD bestfit_values_fhcprhc,TVec
 #ifdef __show_init_mesg_debug__
   cout << "range fhc = " <<  range_fhc[0] << " - " <<  range_fhc[1] << endl;
   cout << "range rhc = " <<  range_rhc[0] << " - " <<  range_rhc[1] << endl;
-#endif __show_init_mesg_debug__
+#endif
 
   int count_fhc=0;
   int count_rhc=0;
@@ -2463,7 +2463,7 @@ void SuperkDetectorFSI::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVe
 #ifdef __show_init_mesg_debug__
   cout << "range fhc = " <<  range_fhc[0] << " - " <<  range_fhc[1] << endl;
   cout << "range rhc = " <<  range_rhc[0] << " - " <<  range_rhc[1] << endl;
-#endif __show_init_mesg_debug__
+#endif 
 
   int count=0;
   

@@ -2580,7 +2580,7 @@ void BANFF::SplitFHCpRHCvectors(TVectorD bestfit_values_fhcprhc,TVectorD &bestfi
   cout << "range flux rhc = " <<  range_flux_rhc[0] << " - " <<  range_flux_rhc[1] << endl;
   cout << "range xsec fhc = " <<  range_xsec_fhc[0] << " - " <<  range_xsec_fhc[1] << endl;
   cout << "range xsec rhc = " <<  range_xsec_rhc[0] << " - " <<  range_xsec_rhc[1] << endl;
-#endif __show_init_mesg_debug__
+#endif
 
   int count_fhc=0;
   int count_rhc=0;
@@ -2638,7 +2638,7 @@ void BANFF::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfi
   cout << "range flux rhc = " <<  range_flux_rhc[0] << " - " <<  range_flux_rhc[1] << endl;
   cout << "range xsec fhc = " <<  range_xsec_fhc[0] << " - " <<  range_xsec_fhc[1] << endl;
   cout << "range xsec rhc = " <<  range_xsec_rhc[0] << " - " <<  range_xsec_rhc[1] << endl;
-#endif __show_init_mesg_debug__
+#endif 
 
   int count=0;
   
