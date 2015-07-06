@@ -1206,7 +1206,6 @@ double NuXSec::SystWght_1p(
   // - BANFF param, NuEToNuMu  normalization
   //  
   else if( p == kNuisBANFFMEC          || 
-           p == kNuisBANFFBgRES        ||
            p == kNuisBANFFNormCCcoh    ||
            p == kNuisBANFFNormNCcoh    ||
            p == kNuisBANFFNormNCoth    ||
