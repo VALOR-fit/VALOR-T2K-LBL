@@ -132,6 +132,33 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
    }
 
+
+    // NEW FHC+RHC JOINT
+  if(name == "nuosc3f_fixall_fitdcp") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit();
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> FixParameter (kPhypDm23sq);    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+  if(name == "nuosc3f_fixall_fitdcp+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 6);
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> FixParameter (kPhypDm23sq);    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+  //
+
   if(name == "nuosc3f_numudisapp_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> FixParameter (kPhypMixing13);
