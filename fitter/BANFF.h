@@ -194,7 +194,6 @@ public:
   void UpdateFHCpRHCCurrentValues(); // Merge current FHC and RHC values into FHCpRHC
   void UpdateFHCandRHConlyBestFitValues(); // Merge best-fit FHC and RHC values into FHCpRHC
   void UpdateFHCandRHConlyCurrentValues(); // Merge current FHC and RHC values into FHCpRHC
-
   //
   
 private:
