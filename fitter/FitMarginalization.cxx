@@ -1069,7 +1069,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	//~ cout << "- Generating toy-MC without systematic variation" << endl;
       }
     
-      // Set seeds after systematic paramter extraction
+      // Set seeds after systematic parameter extraction
 
       seedstat = Rnd::Instance()->RndToyMCstat().GetSeed();
       seedsyst = Rnd::Instance()->RndToyMCsyst().GetSeed();
@@ -1269,16 +1269,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	fhToyMH->Fill(1.+conv::kASmallNum);
       
 #endif // __FILL_OSCPARAM_TOY_HISTO__
-
-
-      
-
-
-
-      // SONO ARRIVATO QUI
-
-      
-
 
 
       //
