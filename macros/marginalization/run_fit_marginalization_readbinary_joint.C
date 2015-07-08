@@ -41,7 +41,7 @@ void run_fit_marginalization_readbinary_joint
 
  bool using_xml_file = false,
 
- bool         dotoys                   = 1,
+ bool         dotoys               = 1,
 
  // Default
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -786,8 +786,8 @@ void run_fit_marginalization_readbinary_joint
     cout << "# of calls of CalcChisqMargPt(): " 
 	 << nchisqcalls << endl;
     cout << endl;
-    cout << "Chisq True (beta=0) = " << chisqtrue0 << endl;
-    cout << "Delta Chisq = Chisq(beta=0) - Chisq(betaBF) = " << deltachisq0BF << endl;
+    cout << "Chisq True = " << chisqtrue0 << endl;
+    cout << "Delta Chisq = Chisq_true - Chisq_bf = " << deltachisq0BF << endl;
     cout << endl;
     cout << "Minimum of full Chisq histogram:" << endl;
     cout << "  - chisqmin = " << chisqminFullChisq << endl; 
