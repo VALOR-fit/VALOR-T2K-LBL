@@ -5,11 +5,15 @@ import os
 
 env_var = "T2KOSCANA"
 
+arg1 = sys.argv[1]
+arg2 = sys.argv[2]
+arg3 = sys.argv[3]
 
-mach3_filename = '/Users/rajs/work/studies/systematic_error_prop/sigmavar2014SK_unosc1.root'
+
+mach3_filename = arg1
 #mach3_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/mach3/sigmavar2014SK_osc2.root'
 
-valor_filename = '/Users/rajs/work/studies/systematic_error_prop/systematic_variationsno_osc_1Rmu.root'
+valor_filename = arg2
 #valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_prebanff.root'
 
 
@@ -24,7 +28,7 @@ variations = [ ("p1","p1"),
                ("m3","n3") ]
 
 mach3_current = "" #"anu_"
-mach3_selection = "sknumu"
+mach3_selection = arg3 #"sknumu"
 
 parameters = [ ( 'f_banffmaqe'          ,  'xsec_par_0'  ) ,
 
