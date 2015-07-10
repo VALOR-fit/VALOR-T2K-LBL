@@ -134,9 +134,11 @@ namespace util {
     int FSISystIdx          (conv::PhysParamId_t p)                        { return fFSISystIdx         [p]; }
     int SKDetFSISystIdx     (conv::PhysParamId_t p)                        { return fSKDetFSISystIdx    [p]; }
     int RHCSKDetFSISystIdx  (conv::PhysParamId_t p)                        { return fRHCSKDetFSISystIdx [p]; }
-    
+
     // NEW FHC+RHC JOINT
-    int FHCpRHCSKDetFSISystIdx  (conv::PhysParamId_t p)                    { return fFHCpRHCSKDetFSISystIdx [p]; }
+    int FHCpRHCSKDetFSISystIdx  (conv::PhysParamId_t p)                    { return fFHCpRHCSKDetFSISystIdx [p];    }
+    int BANFFFHCpRHCSystIdx     (conv::PhysParamId_t p)                    { return fBANFFFHCpRHCSystIdx[p];        }
+
     //
 
     /// NEW MULTIRING 2
@@ -163,7 +165,8 @@ namespace util {
 
     // NEW FHC+RHC JOINT
     int fFHCpRHCSKDetFSISystIdx  [conv::knppmax];            ///< maps physics param to FSI covariance matrix
-    //
+    int fBANFFFHCpRHCSystIdx     [conv::knppmax];            ///< maps physics param to BANFF covariance matrix
+      //
 
     /// NEW MULTIRING 2
     int fMultiRingSKDetFSISystIdx [conv::knppmax];       ///< maps physics param to FSI covariance matrix

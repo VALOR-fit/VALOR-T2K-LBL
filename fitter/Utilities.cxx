@@ -980,6 +980,25 @@ void valor::util::ArrIdx::Init(void)
 #endif
   }
 
+//FHC + RHC BANFF
+    
+    //BANFF
+    for(int i = 0; i < knppmax; i++) {
+        fBANFFFHCpRHCSystIdx[i] = -1;
+    }
+    for(int ip = 0; ip < kNumOfFHCpRHCParamsInBANFFfit; ip++) {
+        PhysParamId_t p = kListOfFHCpRHCBANFFParams[ip];
+        if(p == kPhypUndefined) continue;
+        fBANFFFHCpRHCSystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+        cout << "Util/ArrIdx >> BANFF: "
+        << p << "\t"
+        << util::AsString(p)
+        << " is at slot: " << fBANFFFHCpRHCSystIdx [p] << endl;
+#endif
+    }
+
+    
 
 
   //SKDET + FSI
