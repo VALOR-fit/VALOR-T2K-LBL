@@ -17,7 +17,7 @@ valor_filename = arg2
 #valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_prebanff.root'
 
 
-mach3_nom_pattern = "[CURRENT][SELECTION]_[MODE]_nom"
+mach3_nom_pattern = "[CURRENT][SELECTION][MODE]_nom"
 mach3_pattern     = "[CURRENT][SELECTION]_[PARAM][MODE]_sig_[VAR]"
 valor_pattern     = "Ratio_1Rmu[MODE]_[PARAM]_[VAR]"
 
@@ -284,19 +284,19 @@ def main():
     mach3_hists_binno       [valor_mode] = dict()
     mach3_ratio_hists_binno [valor_mode] = dict()
     
-#    mach3_nom_histname = mach3_nom_pattern
-#    for old,new in [("[CURRENT]"  , mach3_current  ),
-#                    ("[MODE]"     , mach3_mode     ),
-#                    ("[SELECTION]", mach3_selection) ]:
-#      mach3_nom_histname = mach3_nom_histname.replace(old,new)
-#                                                    
-#    mach3_nom_hists[valor_mode] = mach3_file.Get(mach3_nom_histname)
-#    if not mach3_nom_hists[valor_mode]:
-#      print "Failed to get MaCh3 nominal histogram ",mach3_nom_histname
-#    
-#    print mach3_nom_hists[valor_mode]
-#    
-#    mach3_nom_hists_binno[valor_mode] = hist_to_bin_number(mach3_nom_hists[valor_mode])
+    mach3_nom_histname = mach3_nom_pattern
+    for old,new in [("[CURRENT]"  , mach3_current  ),
+                    ("[MODE]"     , mach3_mode     ),
+                    ("[SELECTION]", mach3_selection) ]:
+      mach3_nom_histname = mach3_nom_histname.replace(old,new)
+                                                    
+    mach3_nom_hists[valor_mode] = mach3_file.Get(mach3_nom_histname)
+    if not mach3_nom_hists[valor_mode]:
+      print "Failed to get MaCh3 nominal histogram ",mach3_nom_histname
+    
+    print mach3_nom_hists[valor_mode]
+    
+    mach3_nom_hists_binno[valor_mode] = hist_to_bin_number(mach3_nom_hists[valor_mode])
 
       
     for iparam,(valor_param,mach3_param) in enumerate(parameters):
