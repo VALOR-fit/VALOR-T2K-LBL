@@ -290,6 +290,8 @@ def main():
     else :
         mach3_selection = mach3_selection_1
 
+    mach3_nom_histname = mach3_nom_pattern
+
     for old,new in [("[CURRENT]"  , mach3_current  ),
                     ("[MODE]"     , mach3_mode     ),
                     ("[SELECTION]", mach3_selection) ]:
