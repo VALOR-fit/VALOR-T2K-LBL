@@ -285,9 +285,9 @@ def main():
     mach3_hists_binno       [valor_mode] = dict()
     mach3_ratio_hists_binno [valor_mode] = dict()
     
-    if mach3_mode == "":
+    if mach3_mode == "" :
         mach3_selection = "h" + mach3_selection_1
-    else
+    else :
         mach3_selection = mach3_selection_1
 
     for old,new in [("[CURRENT]"  , mach3_current  ),
