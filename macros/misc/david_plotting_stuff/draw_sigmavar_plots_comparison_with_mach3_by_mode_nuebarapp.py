@@ -284,10 +284,13 @@ def main():
         mach3_hists_binno       [valor_mode] = dict()
         mach3_ratio_hists_binno [valor_mode] = dict()
 
-        if mach3_mode == "":
-            mach3_nom_histname = "h"+mach3_nom_pattern
-        else:
+
             mach3_nom_histname = mach3_nom_pattern
+            
+            if mach3_mode == "":
+            mach3_selection = "h"+arg3
+            else
+            mach3_selection = arg3
 
             for old,new in [("[CURRENT]"  , mach3_current  ),
                             ("[MODE]"     , mach3_mode     ),
