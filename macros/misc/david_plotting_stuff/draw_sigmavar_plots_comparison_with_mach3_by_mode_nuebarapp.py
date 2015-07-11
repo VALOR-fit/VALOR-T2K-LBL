@@ -328,7 +328,7 @@ def main():
         for old,new in [("[PARAM]"    , mach3_param    ),
                         ("[CURRENT]"  , mach3_current  ),
                         ("[MODE]"     , mach3_mode     ),
-                        ("[SELECTION]", mach3_selection),
+                        ("[SELECTION]", mach3_selection_1),
                         ("[VAR]"      , mach3_var      ) ]:
           mach3_histname = mach3_histname.replace(old,new)
                                                
