@@ -17,8 +17,8 @@ valor_filename = arg2
 #valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_prebanff.root'
 
 
-mach3_nom_pattern = "[CURRENT][SELECTION]_sm_[MODE]_nom"
-mach3_pattern     = "[CURRENT][SELECTION]_[PARAM]_sm_[MODE]_sig_[VAR]"
+mach3_nom_pattern = "[CURRENT][SELECTION]_[MODE]_nom"
+mach3_pattern     = "[CURRENT][SELECTION]_[PARAM]_[MODE]_sig_[VAR]"
 valor_pattern     = "Ratio_1Rmu_[MODE]_[PARAM]_[VAR]"
 
 # paired things have valor, then mach3
@@ -30,7 +30,11 @@ variations = [ ("p1","p1"),
 mach3_current = "" #"anu_"
 mach3_selection = arg3 #"sknumu"
 
-parameters = [ ( 'f_banffmaqe'          ,  'xsec_par_0'  ) ,
+parameters = [
+              
+              
+              
+              ( 'f_banffmaqe'          ,  'xsec_par_0'  ) ,
 
             #(                             ,  'xsec_par_1'  ) ,       # pF carbon
             #(                             ,  'xsec_par_2'  ) ,       # MEC carbon
@@ -189,52 +193,54 @@ parameters = [ ( 'f_banffmaqe'          ,  'xsec_par_0'  ) ,
               ( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
               ]
 
-modes = [ ( 'numuccqe'        , "numu_ccqe"      ) ,
-          ( 'numucc1pi'       , "numu_cc1pi"     ) ,
-          ( 'numucccoh'       , "numu_cccoh"     ) ,
-          ( 'numuccmec'       , "numu_mec"       ) ,
-          ( 'numuccoth'       , "numu_ccoth"     ) ,
-          ( 'numunc1piC'      , "numu_ncpipm"    ) ,
-          ( 'numunc1pi0'      , "numu_ncpi0"     ) ,
-          ( 'numunccoh'       , "numu_nccoh"     ) ,
-          ( 'numuncoth'       , "numu_ncoth"     ) ,
-          ( 'numubarccqe'     , "numub_ccqe"     ) ,
-          ( 'numubarcc1pi'    , "numub_cc1pi"    ) ,
-          ( 'numubarcccoh'    , "numub_cccoh"    ) ,
-          ( 'numubarccmec'    , "numub_mec"      ) ,
-          ( 'numubarccoth'    , "numub_ccoth"    ) ,
-          ( 'numubarnc1piC'   , "numub_ncpipm"   ) ,
-          ( 'numubarnc1pi0'   , "numub_ncpi0"    ) ,
-          ( 'numubarnccoh'    , "numub_nccoh"    ) ,
-          ( 'numubarncoth'    , "numub_ncoth"    ) ,
-          ( 'nueccqe'         , "nue_ccqe"       ) ,
-          ( 'nuecc1pi'        , "nue_cc1pi"      ) ,
-          ( 'nuecccoh'        , "nue_cccoh"      ) ,
-          ( 'nueccmec'        , "nue_mec"        ) ,
-          ( 'nueccoth'        , "nue_ccoth"      ) ,
-          ( 'nuenc1piC'       , "nue_ncpipm"     ) ,
-          ( 'nuenc1pi0'       , "nue_ncpi0"      ) ,
-          ( 'nuenccoh'        , "nue_nccoh"      ) ,
-          ( 'nuencoth'        , "nue_ncoth"      ) ,
-          ( 'oscnueccqe'      , "signue_ccqe"    ) ,
-          ( 'oscnuecc1pi'     , "signue_cc1pi"   ) ,
-          ( 'oscnuecccoh'     , "signue_cccoh"   ) ,
-          ( 'oscnueccmec'     , "signue_mec"     ) ,
-          ( 'oscnueccoth'     , "signue_ccoth"   ) ,
-          ( 'nuebarccqe'      , "nueb_ccqe"      ) ,
-          ( 'nuebarcc1pi'     , "nueb_cc1pi"     ) ,
-          ( 'nuebarcccoh'     , "nueb_cccoh"     ) ,
-          ( 'nuebarccmec'     , "nueb_mec"       ) ,
-          ( 'nuebarccoth'     , "nueb_ccoth"     ) ,
-          ( 'nuebarnc1piC'    , "nueb_ncpipm"    ) ,
-          ( 'nuebarnc1pi0'    , "nueb_ncpi0"     ) ,
-          ( 'nuebarnccoh'     , "nueb_nccoh"     ) ,
-          ( 'nuebarncoth'     , "nueb_ncoth"     ) ,
-          ( 'oscnuebarccqe'   , "signueb_ccqe"   ) ,
-          ( 'oscnuebarcc1pi'  , "signueb_cc1pi"  ) ,
-          ( 'oscnuebarcccoh'  , "signueb_cccoh"  ) ,
-          ( 'oscnuebarccmec'  , "signueb_mec"    ) ,
-          ( 'oscnuebarccoth'  , "signueb_ccoth"  ) ]
+modes = [
+          ( ''                , ''                  ) ,
+          ( 'numuccqe'        , "sm_numu_ccqe"      ) ,
+          ( 'numucc1pi'       , "sm_numu_cc1pi"     ) ,
+          ( 'numucccoh'       , "sm_numu_cccoh"     ) ,
+          ( 'numuccmec'       , "sm_numu_mec"       ) ,
+          ( 'numuccoth'       , "sm_numu_ccoth"     ) ,
+          ( 'numunc1piC'      , "sm_numu_ncpipm"    ) ,
+          ( 'numunc1pi0'      , "sm_numu_ncpi0"     ) ,
+          ( 'numunccoh'       , "sm_numu_nccoh"     ) ,
+          ( 'numuncoth'       , "sm_numu_ncoth"     ) ,
+          ( 'numubarccqe'     , "sm_numub_ccqe"     ) ,
+          ( 'numubarcc1pi'    , "sm_numub_cc1pi"    ) ,
+          ( 'numubarcccoh'    , "sm_numub_cccoh"    ) ,
+          ( 'numubarccmec'    , "sm_numub_mec"      ) ,
+          ( 'numubarccoth'    , "sm_numub_ccoth"    ) ,
+          ( 'numubarnc1piC'   , "sm_numub_ncpipm"   ) ,
+          ( 'numubarnc1pi0'   , "sm_numub_ncpi0"    ) ,
+          ( 'numubarnccoh'    , "sm_numub_nccoh"    ) ,
+          ( 'numubarncoth'    , "sm_numub_ncoth"    ) ,
+          ( 'nueccqe'         , "sm_nue_ccqe"       ) ,
+          ( 'nuecc1pi'        , "sm_nue_cc1pi"      ) ,
+          ( 'nuecccoh'        , "sm_nue_cccoh"      ) ,
+          ( 'nueccmec'        , "sm_nue_mec"        ) ,
+          ( 'nueccoth'        , "sm_nue_ccoth"      ) ,
+          ( 'nuenc1piC'       , "sm_nue_ncpipm"     ) ,
+          ( 'nuenc1pi0'       , "sm_nue_ncpi0"      ) ,
+          ( 'nuenccoh'        , "sm_nue_nccoh"      ) ,
+          ( 'nuencoth'        , "sm_nue_ncoth"      ) ,
+          ( 'oscnueccqe'      , "sm_signue_ccqe"    ) ,
+          ( 'oscnuecc1pi'     , "sm_signue_cc1pi"   ) ,
+          ( 'oscnuecccoh'     , "sm_signue_cccoh"   ) ,
+          ( 'oscnueccmec'     , "sm_signue_mec"     ) ,
+          ( 'oscnueccoth'     , "sm_signue_ccoth"   ) ,
+          ( 'nuebarccqe'      , "sm_nueb_ccqe"      ) ,
+          ( 'nuebarcc1pi'     , "sm_nueb_cc1pi"     ) ,
+          ( 'nuebarcccoh'     , "sm_nueb_cccoh"     ) ,
+          ( 'nuebarccmec'     , "sm_nueb_mec"       ) ,
+          ( 'nuebarccoth'     , "sm_nueb_ccoth"     ) ,
+          ( 'nuebarnc1piC'    , "sm_nueb_ncpipm"    ) ,
+          ( 'nuebarnc1pi0'    , "sm_nueb_ncpi0"     ) ,
+          ( 'nuebarnccoh'     , "sm_nueb_nccoh"     ) ,
+          ( 'nuebarncoth'     , "sm_nueb_ncoth"     ) ,
+          ( 'oscnuebarccqe'   , "sm_signueb_ccqe"   ) ,
+          ( 'oscnuebarcc1pi'  , "sm_signueb_cc1pi"  ) ,
+          ( 'oscnuebarcccoh'  , "sm_signueb_cccoh"  ) ,
+          ( 'oscnuebarccmec'  , "sm_signueb_mec"    ) ,
+          ( 'oscnuebarccoth'  , "sm_signueb_ccoth"  ) ]
 
 
 line_colors = dict()
