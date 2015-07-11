@@ -285,124 +285,124 @@ def main():
         mach3_ratio_hists_binno [valor_mode] = dict()
 
 
-            mach3_nom_histname = mach3_nom_pattern
-            
-            if mach3_mode == "":
+        mach3_nom_histname = mach3_nom_pattern
+
+        if mach3_mode == "":
             mach3_selection = "h"+arg3
-            else
-            mach3_selection = arg3
+        else
+        mach3_selection = arg3
 
-            for old,new in [("[CURRENT]"  , mach3_current  ),
-                            ("[MODE]"     , mach3_mode     ),
-                            ("[SELECTION]", mach3_selection) ]:
-                mach3_nom_histname = mach3_nom_histname.replace(old,new)
+        for old,new in [("[CURRENT]"  , mach3_current  ),
+                        ("[MODE]"     , mach3_mode     ),
+                        ("[SELECTION]", mach3_selection) ]:
+            mach3_nom_histname = mach3_nom_histname.replace(old,new)
 
-                mach3_nom_hists[valor_mode] = mach3_file.Get(mach3_nom_histname)
-                if not mach3_nom_hists[valor_mode]:
-                    print "Failed to get MaCh3 nominal histogram ",mach3_nom_histname
+            mach3_nom_hists[valor_mode] = mach3_file.Get(mach3_nom_histname)
+            if not mach3_nom_hists[valor_mode]:
+                print "Failed to get MaCh3 nominal histogram ",mach3_nom_histname
 
-                    print mach3_nom_hists[valor_mode]
+                print mach3_nom_hists[valor_mode]
 
-                    mach3_nom_hists_binno[valor_mode] = hist_to_bin_number(mach3_nom_hists[valor_mode])
+                mach3_nom_hists_binno[valor_mode] = hist_to_bin_number(mach3_nom_hists[valor_mode])
 
 
-                    for iparam,(valor_param,mach3_param) in enumerate(parameters):
+                for iparam,(valor_param,mach3_param) in enumerate(parameters):
 
-                        valor_hists             [valor_mode][valor_param] = dict()
-                        mach3_hists             [valor_mode][valor_param] = dict()
-                        mach3_ratio_hists       [valor_mode][valor_param] = dict()
-                        valor_hists_binno       [valor_mode][valor_param] = dict()
-                        mach3_hists_binno       [valor_mode][valor_param] = dict()
-                        mach3_ratio_hists_binno [valor_mode][valor_param] = dict()
+                    valor_hists             [valor_mode][valor_param] = dict()
+                    mach3_hists             [valor_mode][valor_param] = dict()
+                    mach3_ratio_hists       [valor_mode][valor_param] = dict()
+                    valor_hists_binno       [valor_mode][valor_param] = dict()
+                    mach3_hists_binno       [valor_mode][valor_param] = dict()
+                    mach3_ratio_hists_binno [valor_mode][valor_param] = dict()
 
-                        for valor_var,mach3_var in variations:
+                    for valor_var,mach3_var in variations:
 
-                            valor_histname = valor_pattern
-                            for old,new in [("[PARAM]", valor_param),
-                                            ("[MODE]" , valor_mode ),
-                                            ("[VAR]"  , valor_var  )] :
-                                valor_histname = valor_histname.replace(old,new)
+                        valor_histname = valor_pattern
+                        for old,new in [("[PARAM]", valor_param),
+                                        ("[MODE]" , valor_mode ),
+                                        ("[VAR]"  , valor_var  )] :
+                            valor_histname = valor_histname.replace(old,new)
 
-                                mach3_histname = mach3_pattern
-                                for old,new in [("[PARAM]"    , mach3_param    ),
-                                                ("[CURRENT]"  , mach3_current  ),
-                                                ("[MODE]"     , mach3_mode     ),
-                                                ("[SELECTION]", mach3_selection),
-                                                ("[VAR]"      , mach3_var      ) ]:
-                                    mach3_histname = mach3_histname.replace(old,new)
+                            mach3_histname = mach3_pattern
+                            for old,new in [("[PARAM]"    , mach3_param    ),
+                                            ("[CURRENT]"  , mach3_current  ),
+                                            ("[MODE]"     , mach3_mode     ),
+                                            ("[SELECTION]", mach3_selection),
+                                            ("[VAR]"      , mach3_var      ) ]:
+                                mach3_histname = mach3_histname.replace(old,new)
 
-                                    valor_hists[valor_mode][valor_param][valor_var] = valor_file.Get(valor_histname)
+                                valor_hists[valor_mode][valor_param][valor_var] = valor_file.Get(valor_histname)
 
-                                    if not valor_hists[valor_mode][valor_param][valor_var]:
-                                        print "Failed to get VALOR histogram ",valor_histname
+                                if not valor_hists[valor_mode][valor_param][valor_var]:
+                                    print "Failed to get VALOR histogram ",valor_histname
 
-                                        mach3_hists[valor_mode][valor_param][valor_var] = mach3_file.Get(mach3_histname)
-                                        if not mach3_hists[valor_mode][valor_param][valor_var]:
-                                            print "Failed to get MaCh3 histogram ",mach3_histname
+                                    mach3_hists[valor_mode][valor_param][valor_var] = mach3_file.Get(mach3_histname)
+                                    if not mach3_hists[valor_mode][valor_param][valor_var]:
+                                        print "Failed to get MaCh3 histogram ",mach3_histname
 
-                                            valor_hists[valor_mode][valor_param][valor_var].SetLineWidth(1)
-                                            valor_hists[valor_mode][valor_param][valor_var].SetLineColor(line_colors[valor_var])
+                                        valor_hists[valor_mode][valor_param][valor_var].SetLineWidth(1)
+                                        valor_hists[valor_mode][valor_param][valor_var].SetLineColor(line_colors[valor_var])
 
-                                            mach3_hists[valor_mode][valor_param][valor_var].SetName(valor_hists[valor_mode][valor_param][valor_var].GetName()+"_mach3")
-                                            mach3_hists[valor_mode][valor_param][valor_var].SetLineStyle(2)
-                                            mach3_hists[valor_mode][valor_param][valor_var].SetLineWidth(2)
-                                            mach3_hists[valor_mode][valor_param][valor_var].SetLineColor(valor_hists[valor_mode][valor_param][valor_var].GetLineColor()+2)
+                                        mach3_hists[valor_mode][valor_param][valor_var].SetName(valor_hists[valor_mode][valor_param][valor_var].GetName()+"_mach3")
+                                        mach3_hists[valor_mode][valor_param][valor_var].SetLineStyle(2)
+                                        mach3_hists[valor_mode][valor_param][valor_var].SetLineWidth(2)
+                                        mach3_hists[valor_mode][valor_param][valor_var].SetLineColor(valor_hists[valor_mode][valor_param][valor_var].GetLineColor()+2)
 
-                                            valor_hists_binno[valor_mode][valor_param][valor_var] = hist_to_bin_number(valor_hists[valor_mode][valor_param][valor_var])
-                                            mach3_hists_binno[valor_mode][valor_param][valor_var] = hist_to_bin_number(mach3_hists[valor_mode][valor_param][valor_var])
+                                        valor_hists_binno[valor_mode][valor_param][valor_var] = hist_to_bin_number(valor_hists[valor_mode][valor_param][valor_var])
+                                        mach3_hists_binno[valor_mode][valor_param][valor_var] = hist_to_bin_number(mach3_hists[valor_mode][valor_param][valor_var])
 
-                                            mach3_ratio_hists      [valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists      [valor_mode][valor_param][valor_var],mach3_nom_hists[valor_mode])
-                                            mach3_ratio_hists_binno[valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists_binno[valor_mode][valor_param][valor_var],mach3_nom_hists_binno[valor_mode])
+                                        mach3_ratio_hists      [valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists      [valor_mode][valor_param][valor_var],mach3_nom_hists[valor_mode])
+                                        mach3_ratio_hists_binno[valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists_binno[valor_mode][valor_param][valor_var],mach3_nom_hists_binno[valor_mode])
 
-                                            set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
-                                            set_zero_to_one(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var])
+                                        set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
+                                        set_zero_to_one(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var])
 
-                                            hist_limits = []
-                                            for valor_var,mach3_var in variations:
-                                                for bin_content in (hist_to_list(valor_hists[valor_mode][valor_param][valor_var])+hist_to_list(mach3_ratio_hists[valor_mode][valor_param][valor_var])):
-                                                    if abs(bin_content) > 1E-5:
-                                                        hist_limits.append(abs(bin_content-1))
+                                        hist_limits = []
+                                        for valor_var,mach3_var in variations:
+                                            for bin_content in (hist_to_list(valor_hists[valor_mode][valor_param][valor_var])+hist_to_list(mach3_ratio_hists[valor_mode][valor_param][valor_var])):
+                                                if abs(bin_content) > 1E-5:
+                                                    hist_limits.append(abs(bin_content-1))
 
-                                                        hist_var = 1.1*max(hist_limits)
-                                                        hist_max = hist_var + 1
-                                                        hist_min = 1-hist_var
+                                                    hist_var = 1.1*max(hist_limits)
+                                                    hist_max = hist_var + 1
+                                                    hist_min = 1-hist_var
 
-                                                        canv_name = valor_mode+"_"+valor_param
+                                                    canv_name = valor_mode+"_"+valor_param
 
-                                                        canvases[canv_name] = ROOT.TCanvas(canv_name,canv_name,1280,720)
+                                                    canvases[canv_name] = ROOT.TCanvas(canv_name,canv_name,1280,720)
+                                                    option=""
+                                                    for valor_var,mach3_var in variations:
+                                                        valor_hists[valor_mode][valor_param][valor_var].SetTitle(mach3_mode+" Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
+                                                        valor_hists[valor_mode][valor_param][valor_var].GetXaxis().SetTitle("E_{reco}")
+                                                        valor_hists[valor_mode][valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
+                                                        valor_hists[valor_mode][valor_param][valor_var].SetMaximum(hist_max)
+                                                        valor_hists[valor_mode][valor_param][valor_var].SetMinimum(hist_min)
+                                                        valor_hists[valor_mode][valor_param][valor_var].Draw(option)
+                                                        option = "same"
+                                                        mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
+
+                                                        canvases[canv_name].Update()
+                                                        canvases[canv_name].Print("syst_var_mode_ereco"+".pdf"+next(pdf_printing_iter_ereco))
+
+                                                        canv_name_binno = canv_name+"_binno"
+
+                                                        canvases[canv_name_binno] = ROOT.TCanvas(canv_name_binno,canv_name_binno,1280,720)
                                                         option=""
                                                         for valor_var,mach3_var in variations:
-                                                            valor_hists[valor_mode][valor_param][valor_var].SetTitle(mach3_mode+" Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
-                                                            valor_hists[valor_mode][valor_param][valor_var].GetXaxis().SetTitle("E_{reco}")
-                                                            valor_hists[valor_mode][valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
-                                                            valor_hists[valor_mode][valor_param][valor_var].SetMaximum(hist_max)
-                                                            valor_hists[valor_mode][valor_param][valor_var].SetMinimum(hist_min)
-                                                            valor_hists[valor_mode][valor_param][valor_var].Draw(option)
+                                                            valor_hists_binno[valor_mode][valor_param][valor_var].SetTitle(mach3_mode+" Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
+                                                            valor_hists_binno[valor_mode][valor_param][valor_var].GetXaxis().SetTitle("Bin number")
+                                                            valor_hists_binno[valor_mode][valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
+                                                            valor_hists_binno[valor_mode][valor_param][valor_var].SetMaximum(hist_max)
+                                                            valor_hists_binno[valor_mode][valor_param][valor_var].SetMinimum(hist_min)
+                                                            valor_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
                                                             option = "same"
-                                                            mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
+                                                            mach3_ratio_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
 
-                                                            canvases[canv_name].Update()
-                                                            canvases[canv_name].Print("syst_var_mode_ereco"+".pdf"+next(pdf_printing_iter_ereco))
+                                                            canvases[canv_name_binno].Update()
+                                                            canvases[canv_name_binno].Print("syst_var_mode_binno"+".pdf"+next(pdf_printing_iter_binno))
 
-                                                            canv_name_binno = canv_name+"_binno"
-
-                                                            canvases[canv_name_binno] = ROOT.TCanvas(canv_name_binno,canv_name_binno,1280,720)
-                                                            option=""
-                                                            for valor_var,mach3_var in variations:
-                                                                valor_hists_binno[valor_mode][valor_param][valor_var].SetTitle(mach3_mode+" Systematic tweak ratio: "+valor_param+" vs "+mach3_param)
-                                                                valor_hists_binno[valor_mode][valor_param][valor_var].GetXaxis().SetTitle("Bin number")
-                                                                valor_hists_binno[valor_mode][valor_param][valor_var].GetYaxis().SetTitle("Ratio to nominal")
-                                                                valor_hists_binno[valor_mode][valor_param][valor_var].SetMaximum(hist_max)
-                                                                valor_hists_binno[valor_mode][valor_param][valor_var].SetMinimum(hist_min)
-                                                                valor_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
-                                                                option = "same"
-                                                                mach3_ratio_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
-
-                                                                canvases[canv_name_binno].Update()
-                                                                canvases[canv_name_binno].Print("syst_var_mode_binno"+".pdf"+next(pdf_printing_iter_binno))
-
-                                                                print "Done!"
-                                                                exit(0)
+                                                            print "Done!"
+                                                            exit(0)
 
 def hist_to_bin_number(h):
     nbins = h.GetXaxis().GetNbins()
