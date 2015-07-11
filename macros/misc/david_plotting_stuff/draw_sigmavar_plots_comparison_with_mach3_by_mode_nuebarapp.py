@@ -9,6 +9,7 @@ arg1 = sys.argv[1]
 arg2 = sys.argv[2]
 arg3 = sys.argv[3]
 arg4 = sys.argv[4]
+arg5 = sys.argv[5]
 
 
 mach3_filename = arg1
@@ -20,7 +21,7 @@ valor_filename = arg2
 
 mach3_nom_pattern = "[CURRENT][SELECTION][MODE]_nom"
 mach3_pattern     = "[CURRENT][SELECTION]_[PARAM][MODE]_sig_[VAR]"
-valor_pattern     = "Ratio_"+arg4+"[MODE]_[PARAM]_[VAR]"
+valor_pattern     = "Ratio_"+arg5+"[MODE]_[PARAM]_[VAR]"
 
 # paired things have valor, then mach3
 variations = [ ("p1","p1"),
@@ -382,7 +383,7 @@ def main():
         mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
       
       canvases[canv_name].Update()
-      canvases[canv_name].Print("syst_var_mode_ereco"+".pdf"+next(pdf_printing_iter_ereco))
+      canvases[canv_name].Print("syst_var_mode_ereco"+arg4+arg5+".pdf"+next(pdf_printing_iter_ereco))
       
       canv_name_binno = canv_name+"_binno"
       
@@ -399,7 +400,7 @@ def main():
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
       
       canvases[canv_name_binno].Update()
-      canvases[canv_name_binno].Print("syst_var_mode_binno"+".pdf"+next(pdf_printing_iter_binno))
+      canvases[canv_name_binno].Print("syst_var_mode_binno"+arg4+arg5+".pdf"+next(pdf_printing_iter_binno))
   
   print "Done!"
   exit(0)
