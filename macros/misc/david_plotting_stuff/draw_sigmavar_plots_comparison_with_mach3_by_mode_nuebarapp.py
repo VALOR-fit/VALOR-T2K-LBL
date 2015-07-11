@@ -289,7 +289,7 @@ def main():
 
         if mach3_mode == "":
             mach3_selection = "h"+arg3
-        else
+        else :
         mach3_selection = arg3
 
         for old,new in [("[CURRENT]"  , mach3_current  ),
