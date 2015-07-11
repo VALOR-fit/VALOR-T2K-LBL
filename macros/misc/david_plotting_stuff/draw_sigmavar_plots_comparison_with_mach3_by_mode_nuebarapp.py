@@ -284,7 +284,7 @@ def main():
     mach3_hists_binno       [valor_mode] = dict()
     mach3_ratio_hists_binno [valor_mode] = dict()
     
-    mach3_nom_histname = mach3_nom_pattern
+    mach3_nom_histname = "h"+mach3_nom_pattern
     for old,new in [("[CURRENT]"  , mach3_current  ),
                     ("[MODE]"     , mach3_mode     ),
                     ("[SELECTION]", mach3_selection) ]:
