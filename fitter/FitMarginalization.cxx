@@ -13,7 +13,7 @@
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
-//#define __print_array_toy_fillchisq__
+#define __print_array_toy_fillchisq__
 //#define __print_array_toy_fillchisq_verbose__
 //#define __print_array_toy_merge__
 //#define __print_systematic_variations__
@@ -24,6 +24,7 @@
 //#define __print_hesseerror_verbose__
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // check bins both on the right and left 
+#define SCALE_PRECISION_FLOAT 88.
 
 //#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
 //#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
@@ -1530,12 +1531,25 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
   //cout << "currval0 = " << currval0 << endl;
   //cout << "currval1 = " << currval1 << endl;
   
+
+  
+  // NEW FHC+RHC JOINT
+  vector<float> vec_chisq_toy;
+  //
+
+
   for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
     //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;
     
+#ifdef __print_array_toy_fillchisq__
+    cout << endl;
+    cout << "Toy " << iexperiment << endl;
+    cout << endl;
+#endif
+
     // compute the likelihood for a single marginalization toy
     chisq = 0.;
-    
+        
     // Loop over the used SK samples
     int iscount=0;
     //for(int is = 0; is < kns; is++) {
@@ -1544,8 +1558,6 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
     for(int is=0;is<fNSKsamples;is++){
       SuperkSample_t s = this->GetSKSamples(is);
       
-
-
 
       // NEW FHC+RHC JOINT
       // Skip the sk samples which shouldn't be used in the chisq computation
@@ -1571,9 +1583,8 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
 	  float nexp = fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
 	  nexp *= (float)fNormPOT[is];
 	  float nobs = skobs_data->ErecoSpectrumArray(s)[ibin];
-       
-	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
-	  
+       	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+
 #ifdef __print_array_toy_fillchisq__
 	  nexp_sample += nexp;
 	  nobs_sample += nobs;	  
@@ -1652,20 +1663,54 @@ float FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int 
     
 #endif
     
-    float like = exp(-chisq/2.) / fntoys_marg;
+    // NEW FHC+RHC JOINT
+    
+    float like = exp(-chisq/2.+SCALE_PRECISION_FLOAT) / fntoys_marg;
+    //float like = exp(-chisq/2.) / fntoys_marg;
+    // //float like = exp(-chisq/2.);
     
 #ifdef __print_array_toy_fillchisq__
     cout << "chisq = " << chisq << " - like = " << like << endl; 
     cout << endl;
 #endif
-    
     flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
-    
+    	  
+    vec_chisq_toy.push_back(chisq);
+    //
+
   } // iexperiment
     
   // Now the marginalized likelihood is computed using toys from all the binary files
   // Compute the chisq for each free osc parameter value and fill the array and histo
-  float bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) );
+  
+
+  // NEW FHC+RHC JOINT
+
+  float bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) ) + SCALE_PRECISION_FLOAT*2.;
+  //float bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) );
+  // // float bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) ) + 2*log(fntoys_marg);
+  //cout << "Classical chisq = " << bincont << endl;
+  
+  // //
+  // // Use the following approximation: log(sum) = log(a0) + log( 1 + sum(a0/ai) ), a0 > a1 > ... > aN
+  // // See https://en.wikipedia.org/wiki/List_of_logarithmic_identities
+  // //
+  // std::sort(vec_chisq_toy.rbegin(),vec_chisq_toy.rend());
+  // float sum_chisq = 0.;
+  // for (std::vector<float>::iterator it=vec_chisq_toy.begin()+1; it!=vec_chisq_toy.end(); ++it){    
+  //   float arg = -0.5 * (*it - vec_chisq_toy[0]);
+  //   sum_chisq += exp( arg ) / fntoys_marg;
+  //   cout << "*it = " << *it << " - *it - vec_chisq_toy[0] = " << *it - vec_chisq_toy[0] << " - sum_chisq = " << sum_chisq << endl; 
+  // }
+  // bincont = vec_chisq_toy[0] - 2*log( 1./fntoys_marg + sum_chisq ); // + 2*log(fntoys_marg);
+  
+  // cout << "sum_chisq = " << sum_chisq << endl;
+  // cout << "2*log( 1 + sum_chisq ) = " << 2*log( 1 + sum_chisq ) << endl;
+  // cout << "vec_chisq_toy[0] = " << vec_chisq_toy[0] << endl;
+  // cout << " 2*log(fntoys_marg) = " <<  2*log(fntoys_marg) << endl;
+  // cout << "bincont = " << bincont << endl;
+
+  //
 
   fChisqMargVArray->SetEntry(bincont,iterpar0,iterpar1);
   if(!fIsFit2D) fhchisq_marg_1D->SetBinContent(iterpar0+1,bincont);
