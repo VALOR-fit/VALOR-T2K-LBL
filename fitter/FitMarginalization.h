@@ -23,11 +23,14 @@
 
 #include <TH1F.h>
 #include <TH2F.h>
+#include <TH1D.h> // NEW PRECISION
+#include <TH2D.h> // NEW PRECISION
 
 #include "Enumerations.h"
 
 #include "Utilities/VALORArrayI.h"
 #include "Utilities/VALORArrayF.h"
+#include "Utilities/VALORArrayD.h" // NEW PRECISION
 
 // NuBar mode
 
@@ -143,11 +146,16 @@ class FitMarginalization
 
   void FillChisqMarg(SuperkObservation *skobs_data,bool readbinary = false); // Loop over the free params and call CalcChisqMargPt()
     
-  //float CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
-  float CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary = false,bool allow_cached = true); // Use the map of the binary files
 
-  //float GetChisqMargTrue(double valpar0,double valpar1,SuperkObservation *skobs);
-  float GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs,bool readbinary = false); // Use the map of the binary files
+  // NEW PRECISION
+  //double CalcChisqMargPt(SuperkObservation *skobs_data,int iterpar0,int iterpar1, bool allow_cached = true);
+  double CalcChisqMargPtRead(SuperkObservation *skobs_data,int iterpar0,int iterpar1,bool readbinary = false,bool allow_cached = true); // Use the map of the binary files
+  //
+
+  // NEW PRECISION
+  //double GetChisqMargTrue(double valpar0,double valpar1,SuperkObservation *skobs);
+  double GetChisqMargTrueRead(double valpar0,double valpar1,SuperkObservation *skobs,bool readbinary = false); // Use the map of the binary files
+  //
   
   int GetNCallsCalcChisqMargPt(void) const { return fNCallsCalcChisqMargPt;};
 
@@ -155,8 +163,8 @@ class FitMarginalization
   void CalcBestFitErrorsMINOS(SuperkObservation *skobs,bool readbinary = false); // calculate the best-fit errors
   void CalcBestFitErrorsHESSE(SuperkObservation *skobs,bool readbinary = false,int Nh = 1); // calculate the best-fit errors
 
-  void MinimizeHisto(TH1F *hInChisqMarg);
-  void MinimizeHisto(TH2F *hInChisqMarg);
+  void MinimizeHisto(TH1D *hInChisqMarg); // NEW PRECISION
+  void MinimizeHisto(TH2D *hInChisqMarg); // NEW PRECISION
   void MinimizeHisto(void);
   
   double GetChisqBestFit(void) const      { return fchisq_bf;};
@@ -266,14 +274,14 @@ class FitMarginalization
   void SetBorderDoFit(bool dofit);
   void SetBorderMaxFitNumber(int nfit);
 
-  TH1F *GetChisqMarg1D (void){ return fhchisq_marg_1D;};
-  TH2F *GetChisqMarg2D (void){ return fhchisq_marg_2D;};
+  TH1D *GetChisqMarg1D (void){ return fhchisq_marg_1D;}; // NEW PRECISION
+  TH2D *GetChisqMarg2D (void){ return fhchisq_marg_2D;}; // NEW PRECISION
   
-  TH1F *GetDeltaChisqMarg1D (void){ return fhdeltachisq_marg_1D;};
-  TH2F *GetDeltaChisqMarg2D (void){ return fhdeltachisq_marg_2D;};
+  TH1D *GetDeltaChisqMarg1D (void){ return fhdeltachisq_marg_1D;}; // NEW PRECISION 
+  TH2D *GetDeltaChisqMarg2D (void){ return fhdeltachisq_marg_2D;}; // NEW PRECISION
 
-  TH1F *GetChisqStep_1D(void){ return fhchisq_marg_1D_Step;};  
-  TH2F *GetChisqStep_2D(void){ return fhchisq_marg_2D_Step;};  
+  TH1D *GetChisqStep_1D(void){ return fhchisq_marg_1D_Step;}; // NEW PRECISION 
+  TH2D *GetChisqStep_2D(void){ return fhchisq_marg_2D_Step;}; // NEW PRECISION
 
   int GetNumFit(void){ return fNFits;};
   int GetNumIterations(void){ return fNiterations;};
@@ -293,12 +301,13 @@ class FitMarginalization
   void SetTestStatistic(string teststatistic); // "rateonly" or "rate+shape". Always use the log-likelihood ratio
 
  private:
-  
-  TH1F *fhchisq_marg_1D; 
-  TH2F *fhchisq_marg_2D;  
-  TH1F *fhdeltachisq_marg_1D; 
-  TH2F *fhdeltachisq_marg_2D;  
-  
+
+  // NEW PRECISION
+  TH1D *fhchisq_marg_1D; 
+  TH2D *fhchisq_marg_2D;  
+  TH1D *fhdeltachisq_marg_1D; 
+  TH2D *fhdeltachisq_marg_2D;  
+  //  
 
   // MAP
   TH1I *fhmap_chisqrange_fileid_1D;
@@ -360,8 +369,10 @@ class FitMarginalization
 
   int fNCallsCalcChisqMargPt; // # of calls of CalcChisqMargPt
   
-  VALORArrayF *flikeVArray;
-  VALORArrayF *fChisqMargVArray;
+  // NEW PRECISION
+  VALORArrayD *flikeVArray;
+  VALORArrayD *fChisqMargVArray;
+  //
   
   int fNSKsamples;
   VALORArrayI *fnerecobins;
@@ -405,8 +416,10 @@ class FitMarginalization
 
   // Histogram minimization
   
-  TH1F *fhchisq_marg_1D_Step; // Get track of the minimization steps
-  TH2F *fhchisq_marg_2D_Step; // Get track of the minimization steps
+  // NEW PRECISION
+  TH1D *fhchisq_marg_1D_Step; // Get track of the minimization steps
+  TH2D *fhchisq_marg_2D_Step; // Get track of the minimization steps
+  //
   
   int fMaxIterationSingleFit; // Partial # of iterations before restarting the fit
   int fMaxFitNumber;        // Maximum # of fits
