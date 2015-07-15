@@ -1139,10 +1139,10 @@ fouterr->Close();
     streamer   << setw(ncol1)  << setfill(' ')
                << "All syst"
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
-               << endcolumn
-               //~ << setw(ncolnev)  << setfill(' ') << setprecision(3) << tot
+               //~ << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
                //~ << endcolumn
+               << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << tot
+               << endcolumn
                << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << tot_all_p
                << endcolumn
                << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_all_p << pctsymbol
@@ -1174,12 +1174,12 @@ fouterr->Close();
       streamer   << setw(ncol1)  << setfill(' ')
                  << util::AsStringPaperTex(util::PhysParamIdFromString(sysstr))
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
-                 << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << fixed << tot
-                 << endcolumn
-                 //~ << tot_p1 
+                 //~ << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
                  //~ << endcolumn
+                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3)<< tot
+                 << endcolumn
+                 << tot_p1 
+                 << endcolumn
                  << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_p1 << pctsymbol
                  << endcolumn
                  << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << tot_m1
@@ -1289,12 +1289,12 @@ fouterr->Close();
         streamer << setw(ncol1)  << setfill(' ')
                  << util::AsStringTex(m)
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
-                 << endcolumn
+                 //~ << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << totnom
+                 //~ << endcolumn
                  << tot
                  << endcolumn
-                 //~ << tot_p1 
-                 //~ << endcolumn
+                 << tot_p1 
+                 << endcolumn
                  << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << frac_p1 << pctsymbol
                  << endcolumn
                  << setw(ncolnev)  << setfill(' ') << fixed << setprecision(3) << tot_m1
