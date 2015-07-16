@@ -70,20 +70,22 @@ void run_fit_marginalization_readbinary_joint
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- const char * infilename = "../../inputs/marginalization/toys/JOINT/prova/PROVA_SystAll",
+ const char * infilename = "submit_prova",
+ //const char * infilename = "PROVA_SystAll",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/prova/PROVA_SystAll",
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/prova/PROVA_SystOsc",
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/prova/PROVA_NoSyst",
 
- const int    nfiles               = 1, //201, 1        // # of files to read
+ const int    nfiles               = 21, //201, 1        // # of files to read
 
- const int    NtoysMarg            = 500,  // # toys marginalization 
+ const int    NtoysMarg            = 500, //500, //3, //1,  // # toys marginalization 
  
  const char * freeparname0        = "deltacp",  // free parameter
  const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 21, // 801, 2          // # pts of free parameter to scan
+ const int    NptScan0            = 21, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
- const bool  doMargMH             = true,    // marginalize Mass Hierarchy
+ const bool  doMargMH             = true, //true    // marginalize Mass Hierarchy
  
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = true,
@@ -567,15 +569,27 @@ void run_fit_marginalization_readbinary_joint
     // Fit 1
 
     cout << endl;
-    cout << "/////////////// Fit 1 (mixing13=0) ////////////////" << endl;
+    cout << "################# Fit 1 (dcp=-3.14) #################" << endl;
+    
+    //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),+TMath::Pi(),true);
+    fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
+    //fitmarg->SetStartBin(0.1,-TMath::Pi()); 
+    fitmarg->SetStartBin(-TMath::Pi(),0.); 
+    //fitmarg->SetNumStartBin(10,1);
+    fitmarg->SetNumStartBin(1,1);
+    //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+    fitmarg->SetGridStartRange(-TMath::Pi(),-TMath::Pi()+conv::kASmallNum,0.,0.);
+    //fitmarg->SetExtractStartPt("GridFix");
+    fitmarg->SetExtractStartPt("Single");
+    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
-    double chisqmin_1 = (double)fitmarg->GetChisqMargTrueRead(0.,0.,skobs_fakedata,true);
-    double bestfit0_1 = 0.;
+    double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
+    double bestfit0_1 = fitmarg->GetParamBestFit(0);
     double bestfit1_1 = -999.;
-    if(fitmarg->IsFit2D()) bestfit1_1 = 0.;     
-    int nfits_1 = 1; // it's not a fit but single point
-    int fitstatus_1 = 1; // it's not a fit but single point
-    int niterations_1 = 1; // it's not a fit but single point
+    if(fitmarg->IsFit2D()) bestfit1_1 = fitmarg->GetParamBestFit(1); 
+    int nfits_1 = fitmarg->GetNumFit();
+    int fitstatus_1 = fitmarg->GetFitStatus();
+    int niterations_1 = fitmarg->GetNumIterations();
     if(chisqmin_1<chisqmin){
       chisqmin = chisqmin_1;
       bestfit0 = bestfit0_1; 
@@ -584,17 +598,20 @@ void run_fit_marginalization_readbinary_joint
       fitstatus = fitstatus_1;
       niterations = niterations_1;
     }
+    TH1D *ChisqStep_1 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_1");
+
 
     // Fit 2
 
     cout << endl;
-    cout << "/////////////// Fit 2 (mixing13>0, dcp=-3.14) ////////////////" << endl;
-
-    fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),+TMath::Pi(),true);
-    fitmarg->SetStartBin(0.1,-TMath::Pi()); 
-    fitmarg->SetNumStartBin(10,1);
-    fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-    fitmarg->SetExtractStartPt("GridFix");
+    cout << "################# Fit 2 (dcp=0.) #################" << endl;
+    
+    fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
+    fitmarg->SetStartBin(0.,0.); 
+    fitmarg->SetNumStartBin(1,1);
+    fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
+    //fitmarg->SetExtractStartPt("GridFix");
+    fitmarg->SetExtractStartPt("Single");
     fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
     double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
@@ -612,23 +629,23 @@ void run_fit_marginalization_readbinary_joint
       fitstatus = fitstatus_2;
       niterations = niterations_2;
     }
+    TH1D *ChisqStep_2 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_2");
+
 
 
     // Fit 3
 
     cout << endl;
-    cout << "/////////////// Fit 3 (mixing13>0, start dcp = 0.) ////////////////" << endl;
-
-    int bindcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->FindBin(0.);
-    double valdcp0_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(bindcp0_Y);
-    double binwidth = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinWidth(1);
-    fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),+TMath::Pi(),true);
-    fitmarg->SetStartBin(0.1,-TMath::Pi()); 
-    fitmarg->SetNumStartBin(10,1);
-    fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.3,valdcp0_Y-binwidth,valdcp0_Y+binwidth);
-    fitmarg->SetExtractStartPt("GridFix");
-    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+    cout << "################# Fit 3 (dcp=+3.14) #################" << endl;
     
+    fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
+    fitmarg->SetStartBin(+TMath::Pi(),0.); 
+    fitmarg->SetNumStartBin(1,1);
+    fitmarg->SetGridStartRange(+TMath::Pi()-conv::kASmallNum,+TMath::Pi(),0.,0.);
+    //fitmarg->SetExtractStartPt("GridFix");
+    fitmarg->SetExtractStartPt("Single");
+    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+
     double chisqmin_3 = (double)fitmarg->GetChisqBestFit();
     double bestfit0_3 = fitmarg->GetParamBestFit(0);
     double bestfit1_3 = -999.;
@@ -644,49 +661,22 @@ void run_fit_marginalization_readbinary_joint
       fitstatus = fitstatus_3;
       niterations = niterations_3;
     }
+    TH1D *ChisqStep_3 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_3");
 
-
-    // Fit 4
-
-    cout << endl;
-    cout << "/////////////// Fit 4 (mixing13>0, start dcp=+3.14) ////////////////" << endl;
-
-    fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),+TMath::Pi(),true);
-    fitmarg->SetStartBin(0.1,-TMath::Pi()); 
-    fitmarg->SetNumStartBin(10,1);
-    fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.3,vallastbin_Y-conv::kASmallNum,+TMath::Pi());
-    fitmarg->SetExtractStartPt("GridFix");
-    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
-
-    double chisqmin_4 = (double)fitmarg->GetChisqBestFit();
-    double bestfit0_4 = fitmarg->GetParamBestFit(0);
-    double bestfit1_4 = -999.;
-    if(fitmarg->IsFit2D()) bestfit1_4 = fitmarg->GetParamBestFit(1); 
-    int nfits_4 = fitmarg->GetNumFit();
-    int fitstatus_4 = fitmarg->GetFitStatus();
-    int niterations_4 = fitmarg->GetNumIterations();
-    if(chisqmin_4<chisqmin){
-      chisqmin = chisqmin_4;
-      bestfit0 = bestfit0_4; 
-      bestfit1 = bestfit1_4; 
-      nfits = nfits_4;    
-      fitstatus = fitstatus_4;
-      niterations = niterations_4;
-    }
-    
-
-
-
+    //
 
     nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
-    fitmarg->BuildDeltaChisqMarg();
 
     // Set best-fit parameters in FitMarginalization object
     // Otherwise error computation is done with respect to a wrong minimum
     fitmarg->SetChisqBestFit(chisqmin);
     fitmarg->SetParamBestFit(0,bestfit0);
     if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
-
+    
+    // Build the DeltaChisqMarg after the best-fit Chisq has been set
+    // Otherwise DeltaChisqMarg becomes negative if shifted wrt a local minimum
+    fitmarg->BuildDeltaChisqMarg();
+	
     //
     // Get fit errors
     //
@@ -821,8 +811,13 @@ void run_fit_marginalization_readbinary_joint
     fitmarg->GetChisqMarg1D()->DrawCopy();    
     
     TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
-    fitmarg->GetChisqStep_1D()->DrawCopy();
-    
+    ChisqStep_1->SetLineColor(kBlack);
+    ChisqStep_2->SetLineColor(kRed);
+    ChisqStep_3->SetLineColor(kBlue);
+    ChisqStep_1->Draw();
+    ChisqStep_2->Draw("same");
+    ChisqStep_3->Draw("same");
+
     TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
     fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
