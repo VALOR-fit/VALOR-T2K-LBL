@@ -51,7 +51,7 @@ void build_marg_toys_joint
  const char * freeparname0          = "deltacp",  // free parameter
  const double freeparmin0           = -3.14159265358979312e+00,     // minimum value of free parameter
  const double freeparmax0           = +3.14159265358979312e+00,     // maxinum value of free parameter
- const int    NptScan0              = 21,  // # pts of free parameter to scan
+ const int    NptScan0              = 21, //3, //21,  // # pts of free parameter to scan
 
  const char * freeparname1          = "",  // free parameter
  //const char * freeparname1          = "dmsq23Bar",  // free parameter
@@ -62,10 +62,10 @@ void build_marg_toys_joint
  const double freeparmax1           = 0.,     // maxinum value of free parameter
  const int    NptScan1              = 1,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 500,   // # toys marginalization 
+ const int    NtoysMarg            = 500, //3, //500  // # toys marginalization 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
- const bool   doMargMH             = true,      // marginalize Mass Hierarchy
+ const bool   doMargMH             = true, //true,      // marginalize Mass Hierarchy
  const double PriorProbNH          = 0.5, // Prior for MH --> give the prob. of NH as input
 
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
@@ -533,7 +533,7 @@ void build_marg_toys_joint
       fitmarg->SetPrior_IH(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
      }
     
-    cout << "Use flat prior for Mixing13" << endl;
+    cout << "Use gaussian prior for Mixing13" << endl;
     fitmarg->SetPrior_NH(kPhypMixing13,"gaus",0.02146,0.02146*0.05); // Daya Bay error is 0.05
     fitmarg->SetPrior_IH(kPhypMixing13,"gaus",0.02146,0.02146*0.05);   
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
