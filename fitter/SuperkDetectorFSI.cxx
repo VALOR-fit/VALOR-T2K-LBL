@@ -73,6 +73,12 @@ void SuperkDetectorFSI::Init(void)
   fRHCEnergyScale1RmuRelErr      = 0.;
   fRHCEnergyScale1ReRelErr       = 0.;
   fRHCEnergyScaleTwkDial         = 0.;
+ 
+  fFHCpRHCCovMtrxChoL            = 0;
+  fFHCpRHCCovMtrx                = 0;
+  fFHCpRHCCurrentValues          = 0;
+  fFHCpRHCNominalValues          = 0;
+
 
   /// NEW MULTIRING 2
   fMultiRingCurrentValues = 0;
@@ -98,6 +104,12 @@ void SuperkDetectorFSI::CleanUp(void)
   if ( fRHCNominalValues ) delete fRHCNominalValues;
   if ( fRHCCovMtrx       ) delete fRHCCovMtrx;
   if ( fRHCCovMtrxChoL   ) delete fRHCCovMtrxChoL;
+  
+  if ( fFHCpRHCCurrentValues) delete fFHCpRHCCurrentValues;
+  if ( fFHCpRHCNominalValues) delete fFHCpRHCNominalValues;
+  if ( fFHCpRHCCovMtrxChoL  ) delete fFHCpRHCCovMtrxChoL;
+  if ( fFHCpRHCCovMtrx      ) delete fFHCpRHCCovMtrx;
+    
   /// NEW MULTIRING 2
   if ( fMultiRingCurrentValues ) delete fMultiRingCurrentValues;
   if ( fMultiRingNominalValues ) delete fMultiRingNominalValues;
