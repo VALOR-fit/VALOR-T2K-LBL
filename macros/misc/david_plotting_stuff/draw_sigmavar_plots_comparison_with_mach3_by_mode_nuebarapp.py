@@ -308,7 +308,7 @@ def main():
 
 
     for iparam,(valor_param,mach3_param) in enumerate(parameters):
-      if(valor_param==1): break
+
       valor_hists             [valor_mode][valor_param] = dict()
       mach3_hists             [valor_mode][valor_param] = dict()
       mach3_ratio_hists       [valor_mode][valor_param] = dict()
