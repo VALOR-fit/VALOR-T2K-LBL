@@ -75,6 +75,9 @@ public:
   void TweakOnlyRHC1Re (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakOnlyMultiRe (bool force_inputs = false, TVectorD * input_params = 0); /// NEW MULTIRING 2
  
+  // NEW FHC+RHC JOINT ESCALE
+  void SyncEscaleRHCToFHCSystematics(); // synchronize only Escale
+  //
   void SyncRHCToFHCSystematics();
   void SyncMultiRingToFHCSystematics(); /// NEW MULTIRING 2
 

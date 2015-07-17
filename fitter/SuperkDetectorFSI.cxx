@@ -25,6 +25,11 @@
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_skdetfsi_applysyst_mesg_debug__
 
+// NEW FHC+RHC JOINT
+#define __SYNCHRONIZE_RHC_TO_FHC_ESCALE__ // Escale is the same for RHC and FHC samples
+                                          // Keep two different parameters but synchronized, same tweaks
+//
+
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -186,7 +191,7 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/SuperkDetectorFSI >> Reading RHC SuperkDetector+FSI inputs from input XML file." << endl;
 #endif
-
+  
   fRHCEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1RmuErr.c_str());
   fRHCEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1ReErr.c_str());
 
@@ -259,6 +264,15 @@ bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1ReErr.c_str());
   fRHCEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1RmuErr.c_str());
   fRHCEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1ReErr.c_str());
+
+  // NEW FHC+RHC JOINT ESCALE
+#if defined(__SYNCHRONIZE_RHC_TO_FHC_ESCALE__) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  cout << "Exp/SuperkDetectorFSI >> Synchronize RHC Escale to FHC Escale" << endl;
+  this->SyncEscaleRHCToFHCSystematics();
+  fRHCEnergyScale1RmuRelErr = fEnergyScale1RmuRelErr;
+  fRHCEnergyScale1ReRelErr = fEnergyScale1ReRelErr;
+#endif
+  //
 
   const int np     = conv::kNumOfFHCpRHCSKDetFSIParams;
   const int np_fhc = conv::kNumOfSKDetFSIParams;
@@ -458,11 +472,13 @@ void SuperkDetectorFSI::TweakSampleEnergyScale(double twkdial)
 void SuperkDetectorFSI::TweakEnergyScale(double twkdial)
 {
   fEnergyScaleTwkDial = twkdial;
+  this->SyncEscaleRHCToFHCSystematics(); // NEW FHC+RHC JOINT ESCALE
 }
 //________________________________________________________________________________________
 void SuperkDetectorFSI::TweakRHCEnergyScale(double twkdial)
 {
   fRHCEnergyScaleTwkDial = twkdial;
+  this->SyncEscaleRHCToFHCSystematics(); // NEW FHC+RHC JOINT ESCALE
 }
 //________________________________________________________________________________________
 
@@ -820,14 +836,6 @@ double SuperkDetectorFSI::FHCpRHCOneSigmaError(PhysParamId_t p) const
 }
 
 //________________________________________________________________________________________
-
-
-
-
-
-
-
-
 /// NEW MULTIRING 2
 double SuperkDetectorFSI::MultiRingOneSigmaError(PhysParamId_t p) const
 {
@@ -839,9 +847,15 @@ double SuperkDetectorFSI::MultiRingOneSigmaError(PhysParamId_t p) const
   int idx = arr_index->MultiRingSKDetFSISystIdx(p);
   return TMath::Sqrt(cov[idx][idx]);
 }
-///
+//________________________________________________________________________________________
 
-
+// NEW FHC+RHC JOINT ESCALE
+void SuperkDetectorFSI::SyncEscaleRHCToFHCSystematics(){
+#if defined(__SYNCHRONIZE_RHC_TO_FHC_ESCALE__) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  fRHCEnergyScaleTwkDial = fEnergyScaleTwkDial;
+#endif
+}
+//
 
 //________________________________________________________________________________________
 void SuperkDetectorFSI::SyncRHCToFHCSystematics()
@@ -1958,7 +1972,7 @@ double SuperkDetectorFSI::RHCChisqPenalty(void) const
 
   //now add the contribution from energy scale
   if (fRHCEnergyScaleTwkDial   ) chisq_penalty += fRHCEnergyScaleTwkDial*fRHCEnergyScaleTwkDial;
-
+  
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> RHC chisqPenalty = " << chisq_penalty << endl;
 #endif
@@ -2040,8 +2054,14 @@ double SuperkDetectorFSI::RHCChisqPenalty(void) const
   double chisq_penalty = chisqpenalty[0][0]; //The final matrix is 1x1, just a number
 
   //now add the contribution from energy scale
-  if ( fRHCEnergyScaleTwkDial ) chisq_penalty += fRHCEnergyScaleTwkDial*fRHCEnergyScaleTwkDial;
   if ( fEnergyScaleTwkDial )    chisq_penalty += fEnergyScaleTwkDial*fEnergyScaleTwkDial;
+  
+  // NEW FHC+RHC JOINT ESCALE
+#if !defined(__SYNCHRONIZE_RHC_TO_FHC_ESCALE__)
+  if (fRHCEnergyScaleTwkDial   ) chisq_penalty += fRHCEnergyScaleTwkDial*fRHCEnergyScaleTwkDial;
+#endif
+  //if ( fRHCEnergyScaleTwkDial ) chisq_penalty += fRHCEnergyScaleTwkDial*fRHCEnergyScaleTwkDial;
+  //
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> FHC+RHC chisqPenalty = " << chisq_penalty << endl;
