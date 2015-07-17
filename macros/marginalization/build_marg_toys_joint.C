@@ -15,6 +15,7 @@ using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
+
 void build_marg_toys_joint
 (
  const int    fileid               = 0,   // file id
@@ -31,8 +32,9 @@ void build_marg_toys_joint
  const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
  
- const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
- //const char * fit_param_list        = "nuosc3f_fixall_fitdcp+nuisance", // dcp
+ const char * fit_param_list        = "nuosc3f+nuisance", // all osc params are free
+ //const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
+ //const char * fit_param_list        = "nuosc3f_fixall_fitdcp+nuisance", // fix all osc params
  
  double       input_mixing12_nh       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13_nh       = 0.02146,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -51,7 +53,7 @@ void build_marg_toys_joint
  const char * freeparname0          = "deltacp",  // free parameter
  const double freeparmin0           = -3.14159265358979312e+00,     // minimum value of free parameter
  const double freeparmax0           = +3.14159265358979312e+00,     // maxinum value of free parameter
- const int    NptScan0              = 21, //3, //21,  // # pts of free parameter to scan
+ const int    NptScan0              = 2, //3, //21,  // # pts of free parameter to scan
 
  const char * freeparname1          = "",  // free parameter
  //const char * freeparname1          = "dmsq23Bar",  // free parameter
@@ -75,8 +77,10 @@ void build_marg_toys_joint
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
- //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR)
- TString file_priors = "" // Set to "" if no user priors are used (VALOR)
+ //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", // Set to "" if no user priors are used (VALOR)
+ TString file_priors = "", // Set to "" if no user priors are used (VALOR)
+ 
+ bool reactors       = true // reactor constraint
  )
 {  
 
@@ -480,35 +484,9 @@ void build_marg_toys_joint
   } // if(file_priors)
   
 
-
-  // Set priors for not fixed and not free oscillation parameters    
-  // fitmarg->SetPrior(kPhypMixing23,"flat",0,1);
-  // fitmarg->SetPrior(kPhypMixing13,"flat",0,0.3);
-  // fitmarg->SetPrior(kPhypMixing12,"flat",0,1);
-  // fitmarg->SetPrior(kPhypDm23sq,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
-  // fitmarg->SetPrior(kPhypDm12sq,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);  
-  // if(hyp == kHypOsc3FBar){
-  //   fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
-  //   fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,0.3);
-  //   fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
-  //   fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
-  //   fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
-  // }
-  // else if(hyp == kHypOsc3FBarNormBar){
-  //   fitmarg->SetPrior(kPhypMixing23Bar,"flat",0,1);
-  //   fitmarg->SetPrior(kPhypMixing13Bar,"flat",0,0.3);
-  //   fitmarg->SetPrior(kPhypMixing12Bar,"flat",0,1);
-  //   fitmarg->SetPrior(kPhypDm23sqBar,"flat",conv::kMinFitDm23sq,conv::kMaxFitDm23sq);
-  //   fitmarg->SetPrior(kPhypDm12sqBar,"flat",conv::kMinFitDm12sq,conv::kMaxFitDm12sq);
-  //   fitmarg->SetPrior(kPhypBetaBar,"flat",conv::kMinFitBetaBar,conv::kMaxFitBetaBar);
-  // }
-  // else if(hyp == kHypOsc3FNormBar){
-  //   fitmarg->SetPrior(kPhypBetaBar,"flat",conv::kMinFitBetaBar,conv::kMaxFitBetaBar);
-  // }
-
- 
-
+  
   // Set theta13 and deltaCP prior
+  
   if(UsePrior_dcp){
     fitmarg->SetPrior_NH(kPhypCPV,"user",hPrior_th13_dcp_nh);  // mix13 and dcp must have the same prior
     fitmarg->SetPrior_IH(kPhypCPV,"user",hPrior_th13_dcp_ih);
@@ -525,23 +503,36 @@ void build_marg_toys_joint
     }
   }
   else{
+    // deltaCP
     cout << "Use flat prior for deltaCP" << endl;
     fitmarg->SetPrior_NH(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
     fitmarg->SetPrior_IH(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
       fitmarg->SetPrior_NH(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
       fitmarg->SetPrior_IH(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
-     }
-    
-    cout << "Use gaussian prior for Mixing13" << endl;
-    fitmarg->SetPrior_NH(kPhypMixing13,"gaus",0.02146,0.02146*0.05); // Daya Bay error is 0.05
-    fitmarg->SetPrior_IH(kPhypMixing13,"gaus",0.02146,0.02146*0.05);   
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
-      fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",0.02146,0.02146*0.05);
-      fitmarg->SetPrior_IH(kPhypMixing13Bar,"gaus",0.02146,0.02146*0.05);
     }
     
-  }
+    // mixing13
+    if(reactors){
+      cout << "Use gaussian prior for Mixing13 on sinsq2th w/ reactor constraint" << endl;
+      fitmarg->SetPrior_NH(kPhypMixing13,"gaus",0.093,0.008); // prior on sinsq2th
+      fitmarg->SetPrior_IH(kPhypMixing13,"gaus",0.093,0.008);   
+      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
+	fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",0.093,0.008);
+	fitmarg->SetPrior_IH(kPhypMixing13Bar,"gaus",0.093,0.008);
+      }
+    }
+    else{
+      cout << "Use flat prior for Mixing13 on sinsq2th w/o reactor constraint" << endl;
+      fitmarg->SetPrior_NH(kPhypMixing13,"flat",0.,0.4); // prior on sinsq2th
+      fitmarg->SetPrior_IH(kPhypMixing13,"flat",0.,0.4);   
+      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
+	fitmarg->SetPrior_NH(kPhypMixing13Bar,"flat",0.,0.4);
+	fitmarg->SetPrior_IH(kPhypMixing13Bar,"flat",0.,0.4);
+      }
+    }
+    
+  } // if(UsePrior_dcp)
 
   // Set 23 prior
   if(UsePrior_23){
@@ -557,15 +548,17 @@ void build_marg_toys_joint
     }
   }
   else{
-    cout << "Use flat prior for Mixing23 parameter" << endl;
-    fitmarg->SetPrior_NH(kPhypMixing23,"flat",0.3,0.7);
+    // mixing23 
+    cout << "Use flat prior for Mixing23 parameter on sinsqth" << endl;
+    fitmarg->SetPrior_NH(kPhypMixing23,"flat",0.3,0.7); // prior on sinsqth
     fitmarg->SetPrior_IH(kPhypMixing23,"flat",0.3,0.7);
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
       fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",0.3,0.7);
       fitmarg->SetPrior_IH(kPhypMixing23Bar,"flat",0.3,0.7);
     }
     
-    cout << "Use flat prior for Dmsq23 parameter" << endl;
+    // dmsq23
+    cout << "Use flat prior for Dm23sq parameter" << endl;
     fitmarg->SetPrior_NH(kPhypDm23sq,"flat",2E-3,3E-3);
     fitmarg->SetPrior_IH(kPhypDm23sq,"flat",2E-3,3E-3);
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
@@ -574,13 +567,16 @@ void build_marg_toys_joint
     }
   }
   
-    //12 priors!
-    {
-        fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",0.0000753,0.0000018);
-        fitmarg->SetPrior_IH(kPhypDm12sq,"gaus",0.0000753,0.0000018);
-        fitmarg->SetPrior_NH(kPhypMixing12,"gaus",0.304,0.0134);
-        fitmarg->SetPrior_IH(kPhypMixing12,"gaus",0.304,0.0134);
-    }
+  // dmsq12
+  cout << "Use gaussian prior for Dm12sq parameter (PDG2014)" << endl;
+  fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",7.53E-5,0.18E-5);
+  fitmarg->SetPrior_IH(kPhypDm12sq,"gaus",7.53E-5,0.18E-5);
+
+  // mixing12
+  cout << "Use gaussian prior for Mixing12 parameter on sinsq2th (PDG2014)" << endl;
+  fitmarg->SetPrior_NH(kPhypMixing12,"gaus",0.846,0.021); // prior on sinsq2th
+  fitmarg->SetPrior_IH(kPhypMixing12,"gaus",0.846,0.021);
+  
 
   // Make toys and store in binary files
     
@@ -608,6 +604,12 @@ void build_marg_toys_joint
 
 
     
+  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12)){    
+    hToyHisto_Mix12_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12));
+    TCanvas *cToyHisto_Mix12_nh = new TCanvas("cToyHisto_Mix12_nh","cToyHisto_Mix12_nh");
+    hToyHisto_Mix12_nh->Draw("");
+  }
+
   if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing13)){    
     hToyHisto_Mix13_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing13));
     TCanvas *cToyHisto_Mix13_nh = new TCanvas("cToyHisto_Mix13_nh","cToyHisto_Mix13_nh");
@@ -630,6 +632,12 @@ void build_marg_toys_joint
     hToyHisto_Dm23_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sq));
     TCanvas *cToyHisto_Dm23_nh = new TCanvas("cToyHisto_Dm23_nh","cToyHisto_Dm23_nh");
     hToyHisto_Dm23_nh->Draw("");
+  }
+
+  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12)){
+    hToyHisto_Mix12_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12));
+    TCanvas *cToyHisto_Mix12_ih = new TCanvas("cToyHisto_Mix12_ih","cToyHisto_Mix12_ih");
+    hToyHisto_Mix12_ih->Draw("");
   }
 
   if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing13)){
