@@ -26,11 +26,12 @@
 #define NUMOFBINSAROUNDMINTOCHECK 3  // Check bins both on the right and left 
 
 #define SCALE_PRECISION 80. // Rescale the likelihood by exp(scale) when sum over the toys, then scale back at the end (CalcChisqMargPtRead())
-                                  // Avoid precision problems w/ floats when chisq~200 and like=exp(-0.5*chisq) becomes too small
-                                  // floats support numbers until exp(+88). The likelihood becomes like=exp(-0.5*chisq+88) >= exp(+88)
-                                  // When chisq gets larger, the scaling factor can be increased, paying attention that -200 < -0.5*chisq+scale < 89  
+                            // Avoid precision problems w/ floats or double when chisq~200 and like=exp(-0.5*chisq) becomes too small
+                            // floats support numbers until exp(+88). The likelihood becomes like=exp(-0.5*chisq+88) >= exp(+88)
+                            // When chisq gets larger, the scaling factor can be increased, paying attention that -200 < -0.5*chisq+scale < 89  
+                            // Now double are used for chisq and likelihood, but the scale factor could be needed anyway
 
-//#define __MARGINALIZE_23PARAMS_CORR__ // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
+//#define __MARGINALIZE_23PARAMS_CORR__     // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
 //#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
 
 #define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
@@ -38,13 +39,17 @@
 #define __FILL_OSCPARAM_TOY_HISTO__
 
 
-
+// NEW OSC PRIOR
+#define __USE_PRIOR_SINSQ2TH13__    // PDG gives sinsq2th 
+#define __USE_PRIOR_SINSQ2TH12__    // PDG gives sinsq2th
+//#define __USE_PRIOR_SINSQ2TH23__  // We don't use PDG
+//
 
 // NEW FHC+RHC JOINT
-#define __use_1Rmu_in_chisq__
-#define __use_1Re_in_chisq__
-#define __use_RHC1Rmu_in_chisq__
-#define __use_RHC1Re_in_chisq__
+#define __USE_1RMU_IN_CHISQ__
+#define __USE_1RE_IN_CHISQ__
+#define __USE_RHC1RMU_IN_CHISQ__
+#define __USE_RHC1RE_IN_CHISQ__
 //
 
 #include <cassert>
@@ -1544,7 +1549,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
   
 
   
-  // NEW FHC+RHC JOINT
+  // NEW PRECISION
   vector<double> vec_chisq_toy;
   //
 
@@ -1591,10 +1596,13 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 #endif
 
 	for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+
+	  // NEW PRECISION
 	  double nexp = (double)fToyMargErecoVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
 	  nexp *= (double)fNormPOT[is];
 	  double nobs = (double)skobs_data->ErecoSpectrumArray(s)[ibin];
        	  chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+	  //
 
 #ifdef __print_array_toy_fillchisq__
 	  nexp_sample += nexp;
@@ -1674,48 +1682,40 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
     
 #endif
     
-    // NEW FHC+RHC JOINT
-    
+    // NEW PRECISION
     double like = exp(-chisq/2.+SCALE_PRECISION) / fntoys_marg;
     //double like = exp(-chisq/2.) / fntoys_marg;
+    flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
+    //
     
 #ifdef __print_array_toy_fillchisq__
     cout << "chisq = " << chisq << " - like = " << like << endl; 
     cout << endl;
 #endif
-    flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
-    	  
-    vec_chisq_toy.push_back(chisq);
-    //
+
+    vec_chisq_toy.push_back(chisq); // NEW PRECISION
 
   } // iexperiment
     
+
   // Now the marginalized likelihood is computed using toys from all the binary files
   // Compute the chisq for each free osc parameter value and fill the array and histo
-  
-
-  // NEW FHC+RHC JOINT
-
-  double bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) ) + SCALE_PRECISION*2.;
-  //double bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) );
-  //cout << "Classical chisq = " << bincont << endl;
-  
-
-
-
-
+ 
  
   // NEW PRECISION 
   
+  double bincont = 0.;
+  // double bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) ) + SCALE_PRECISION*2.;
+  // //double bincont = -2*log( flikeVArray->GetEntry(iterpar0,iterpar1) );
+  // //cout << "Classical chisq = " << bincont << endl;
+
   std::sort(vec_chisq_toy.rbegin(),vec_chisq_toy.rend());
-  //cout << "vec_chisq_toy[0] = " << vec_chisq_toy[0] << endl;
   
   // Take the average value, in order not to exceed both the max and min allowed values
   
   double diff_chisq = (vec_chisq_toy[0] - vec_chisq_toy[vec_chisq_toy.size()-1]) / 2.;
   diff_chisq /= 2.; 
   double scale = diff_chisq;  
-  //double scale = (vec_chisq_toy[0]) / 2.; 
 
   if(diff_chisq > SCALE_PRECISION) scale = (double)SCALE_PRECISION;
   scale = TMath::Min((double)SCALE_PRECISION,scale);
@@ -1729,8 +1729,6 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
   //cout << "New chisq = " << bincont << endl;
 
   //
-
-
 
 
   // //
@@ -3096,13 +3094,15 @@ bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscva
   // NEW FHC+RHC JOINT 
 const double FitMarginalization::GetMinOscParam(PhysParamId_t physpar) const
 {
-  if     (physpar == conv::kPhypMixing13Bar) return mixing13Bar_min;
+  if     (physpar == conv::kPhypMixing12Bar) return mixing12Bar_min; // NEW OSC PRIOR
+  else if(physpar == conv::kPhypMixing13Bar) return mixing13Bar_min;
   else if(physpar == conv::kPhypMixing23Bar) return mixing23Bar_min;
   else if(physpar == conv::kPhypDm23sqBar)   return dmsq32Bar_min;
   else if(physpar == conv::kPhypDm12sqBar)   return dmsq12Bar_min;
   else if(physpar == conv::kPhypCPVBar)      return deltacpBar_min;
   else if(physpar == conv::kPhypBetaBar)     return betaBar_min;
 
+  else if(physpar == conv::kPhypMixing12)    return mixing12_min; // NEW OSC PRIOR
   else if(physpar == conv::kPhypMixing13)    return mixing13_min;
   else if(physpar == conv::kPhypMixing23)    return mixing23_min;
   else if(physpar == conv::kPhypDm23sq)      return dmsq32_min;
@@ -3114,13 +3114,15 @@ const double FitMarginalization::GetMinOscParam(PhysParamId_t physpar) const
 
 const double FitMarginalization::GetMaxOscParam(PhysParamId_t physpar) const
 {
-  if     (physpar == conv::kPhypMixing13Bar) return mixing13Bar_max;
+  if     (physpar == conv::kPhypMixing12Bar) return mixing12Bar_max; // NEW OSC PRIOR
+  else if(physpar == conv::kPhypMixing13Bar) return mixing13Bar_max;
   else if(physpar == conv::kPhypMixing23Bar) return mixing23Bar_max;
   else if(physpar == conv::kPhypDm23sqBar)   return dmsq32Bar_max;
   else if(physpar == conv::kPhypDm12sqBar)   return dmsq12Bar_max;
   else if(physpar == conv::kPhypCPVBar)      return deltacpBar_max;
   else if(physpar == conv::kPhypBetaBar)     return betaBar_max;
 
+  else if(physpar == conv::kPhypMixing12)    return mixing12_max; // NEW OSC PRIOR
   else if(physpar == conv::kPhypMixing13)    return mixing13_max;
   else if(physpar == conv::kPhypMixing23)    return mixing23_max;
   else if(physpar == conv::kPhypDm23sq)      return dmsq32_max;
@@ -3140,19 +3142,22 @@ const double FitMarginalization::GetMaxOscParam(PhysParamId_t physpar) const
 //________________________________________________________________________________________
 double FitMarginalization::Randomize(PhysParamId_t physpar, FitParamList * infparm) const
 {
+  double valrndm = conv::kBadResult;
 
   if(infparm->GetPriorModeName(physpar)=="flat"){
     double min = infparm->GetMinValueFlat(physpar);
     double max = infparm->GetMaxValueFlat(physpar);
-    return Rnd::Instance()->RndToyMCosc().Uniform(min,max);
+    valrndm = Rnd::Instance()->RndToyMCosc().Uniform(min,max);
   }
+
   else if(infparm->GetPriorModeName(physpar)=="gaus"){
     double mean = infparm->GetMeanGaus(physpar);
     double sigma = infparm->GetSigmaGaus(physpar);
-    return Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
+    valrndm = Rnd::Instance()->RndToyMCosc().Gaus(mean,sigma);
   }
+  
   else if(infparm->GetPriorModeName(physpar)=="user"){
-    return infparm->GetPriorHisto(physpar)->GetRandom();
+    valrndm =  infparm->GetPriorHisto(physpar)->GetRandom();
   }
   else{
     cerr << endl;
@@ -3162,6 +3167,66 @@ double FitMarginalization::Randomize(PhysParamId_t physpar, FitParamList * infpa
     exit(1);
   }
   
+
+
+  // NEW OSC PRIOR
+    
+  // Convert from sinsq2th to sinsqth or viceversa is mixing angle
+  
+  if(util::IsMixingAngle(physpar)){
+    //cout << util::AsString(physpar) << endl;
+    
+    // mixparamchoice = sinsqtheta
+    
+    if( Opt::Instance()->gOscMixingParamChoice == kNuMixSinsqTheta){       
+#ifdef __USE_PRIOR_SINSQ2TH23__
+      if(physpar == conv::kPhypMixing23 || physpar == conv::kPhypMixing23Bar) 
+	valrndm = util::FromSinsq2thToSinsqth(valrndm);
+#endif
+#ifdef __USE_PRIOR_SINSQ2TH12__
+      if(physpar == conv::kPhypMixing12 || physpar == conv::kPhypMixing12Bar) 
+	valrndm = util::FromSinsq2thToSinsqth(valrndm);
+#endif            
+#ifdef __USE_PRIOR_SINSQ2TH13__
+      if(physpar == conv::kPhypMixing13 || physpar == conv::kPhypMixing13Bar) 
+	valrndm = util::FromSinsq2thToSinsqth(valrndm);
+#endif
+      return valrndm;
+    }
+    
+    // mixparamchoice = sinsq2theta
+    
+    else if( Opt::Instance()->gOscMixingParamChoice == kNuMixSinsq2Theta){      
+#ifndef __USE_PRIOR_SINSQ2TH23__
+      if(physpar == conv::kPhypMixing23 || physpar == conv::kPhypMixing23Bar) 
+	valrndm = util::FromSinsqthToSinsq2th(valrndm);
+#endif
+#ifndef __USE_PRIOR_SINSQ2TH12__
+      if(physpar == conv::kPhypMixing12 || physpar == conv::kPhypMixing12Bar) 
+	valrndm = util::FromSinsqthToSinsq2th(valrndm);
+#endif            
+#ifndef __USE_PRIOR_SINSQ2TH13__
+      if(physpar == conv::kPhypMixing13 || physpar == conv::kPhypMixing13Bar)
+	valrndm = util::FromSinsqthToSinsq2th(valrndm);
+#endif
+      return valrndm;
+    }     
+
+    // mixparamchoice not defined      
+
+    else {
+      cerr << endl;
+      cerr << "FitMarginalization::Randomize" << endl;
+      cerr << "Mixing param choice is not defined" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+  } // IsMixingAngle
+  
+  //
+  
+  return valrndm;
 }
 //________________________________________________________________________________________
 
@@ -3405,19 +3470,19 @@ bool FitMarginalization::UseSKSample(int isksample) const
 {
   SuperkSample_t s = this->GetSKSamples(isksample);
 
-#ifdef __use_1Rmu_in_chisq__
+#ifdef __USE_1RMU_IN_CHISQ__
   if(s==conv::kSKsFCFV1RingMuLike) return true;
 #endif
 
-#ifdef __use_1Re_in_chisq__
+#ifdef __USE_1RE_IN_CHISQ__
   if(s==conv::kSKsFCFV1RingELike) return true;
 #endif
 
-#ifdef __use_RHC1Rmu_in_chisq__
+#ifdef __USE_RHC1RMU_IN_CHISQ__
   if(s==conv::kSKsRHCFCFV1RingMuLike) return true;
 #endif
 
-#ifdef __use_RHC1Re_in_chisq__
+#ifdef __USE_RHC1RE_IN_CHISQ__
   if(s==conv::kSKsRHCFCFV1RingELike) return true;
 #endif
 
@@ -3426,19 +3491,19 @@ bool FitMarginalization::UseSKSample(int isksample) const
 
 bool FitMarginalization::UseSKSample(SuperkSample_t s ) const
 {
-#ifdef __use_1Rmu_in_chisq__
+#ifdef __USE_1RMU_IN_CHISQ__
   if(s==conv::kSKsFCFV1RingMuLike) return true;
 #endif
 
-#ifdef __use_1Re_in_chisq__
+#ifdef __USE_1RE_IN_CHISQ__
   if(s==conv::kSKsFCFV1RingELike) return true;
 #endif
 
-#ifdef __use_RHC1Rmu_in_chisq__
+#ifdef __USE_RHC1RMU_IN_CHISQ__
   if(s==conv::kSKsRHCFCFV1RingMuLike) return true;
 #endif
 
-#ifdef __use_RHC1Rmu_in_chisq__
+#ifdef __USE_RHC1RE_IN_CHISQ__
   if(s==conv::kSKsRHCFCFV1RingELike) return true;
 #endif
 
