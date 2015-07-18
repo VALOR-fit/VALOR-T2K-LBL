@@ -6,8 +6,8 @@
 */
 //________________________________________________________________________________________
 
-//#define __print_oscparam_all__
-//#define __print_oscparam_all_verbose__
+//#define __print_oscparam_all__ // print extracted osc param for both NH and IH
+//#define __print_oscparam_all_verbose__ // print extracted osc param used in osc prob
 //#define __print_masshierarchy__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
@@ -34,7 +34,7 @@
 //#define __MARGINALIZE_23PARAMS_CORR__     // Extract mixing23 and dmsq23 from as correlated the same 2D prior 
 //#define __MARGINALIZE_TH13_DELTACP_CORR__ // Extract mixing13 and deltaCP from as correlated the same 2D prior 
 
-#define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
+//#define __TOYS_SYNCHRONIZE_IH_TO_NH__ // Make toys using the same extracted oscillated parameters for NH and IH 
 
 #define __FILL_OSCPARAM_TOY_HISTO__
 
@@ -954,12 +954,15 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     // Extract oscillation parameters to be marginalized
     
     this->SetMargOscParam(fparm_nh);
-    
-#ifndef __TOYS_SYNCHRONIZE_IH_TO_NH__
-    this->SetMargOscParam(fparm_ih);
-#else
-    fparm_ih->Copy(*fparm_nh);
-#endif 
+
+    // NEW OSC PRIOR
+    this->SetMargOscParam(fparm_ih);    
+    //#ifndef __TOYS_SYNCHRONIZE_IH_TO_NH__
+    //this->SetMargOscParam(fparm_ih);
+    //#else
+    //fparm_ih->Copy(*fparm_nh);
+    //#endif 
+    //
 
     ///
 
@@ -1208,8 +1211,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	double usedvalue = fparm->CurrValue(p);
 	//
 	
-	fparm->GetToyHisto(p)->Fill(usedvalue); 
-	
+	fparm->GetToyHisto(p)->Fill(usedvalue); 	
 
 	if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
 	  
@@ -1220,60 +1222,62 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  fparm_nh->GetToyHisto(p)->Fill(usedvalue); 
 	}
 	else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+
 	  // NEW FHC+RHC JOINT
 	  //usedvalue = fparm_ih->InitValue(p);
 	  usedvalue = fparm_ih->CurrValue(p);
 	  //
 	  fparm_ih->GetToyHisto(p)->Fill(usedvalue); 
 	}
+
       } // loop over p
 
       double usedvalue_x = conv::kBadResult;
       double usedvalue_y = conv::kBadResult;
 
-#ifdef __MARGINALIZE_23PARAMS_CORR__
+// #ifdef __MARGINALIZE_23PARAMS_CORR__
 
-      // NEW FHC+RHC JOINT
-      //usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
-      usedvalue_x = fparm->CurrValue(conv::kPhypMixing23);
-      //usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
-      usedvalue_y = fparm->CurrValue(conv::kPhypDm23sq);
-      //
+//       // NEW FHC+RHC JOINT
+//       //usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
+//       usedvalue_x = fparm->CurrValue(conv::kPhypMixing23);
+//       //usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
+//       usedvalue_y = fparm->CurrValue(conv::kPhypDm23sq);
+//       //
 
-      fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
-      fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+//       fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+//       fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
 
-      if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
-	fparm_nh->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
-	fparm_nh->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
-      }
-      else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
-	fparm_ih->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
-	fparm_ih->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
-      }
-#endif
+//       if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
+// 	fparm_nh->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+// 	fparm_nh->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+//       }
+//       else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+// 	fparm_ih->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+// 	fparm_ih->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+//       }
+// #endif
 
-#ifdef __MARGINALIZE_TH13_DELTACP_CORR__
+// #ifdef __MARGINALIZE_TH13_DELTACP_CORR__
 
-      // NEW FHC+RHC JOINT
-      //usedvalue_x = fparm->InitValue(conv::kPhypMixing13);
-      //usedvalue_y = fparm->InitValue(conv::kPhypCPV);
-      usedvalue_x = fparm->CurrValue(conv::kPhypMixing13);
-      usedvalue_y = fparm->CurrValue(conv::kPhypCPV);
-      //
+//       // NEW FHC+RHC JOINT
+//       //usedvalue_x = fparm->InitValue(conv::kPhypMixing13);
+//       //usedvalue_y = fparm->InitValue(conv::kPhypCPV);
+//       usedvalue_x = fparm->CurrValue(conv::kPhypMixing13);
+//       usedvalue_y = fparm->CurrValue(conv::kPhypCPV);
+//       //
 
-      fparm->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
-      fparm->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
+//       fparm->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+//       fparm->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
 
-      if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
-	fparm_nh->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
-	fparm_nh->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
-      }
-      else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
-	fparm_ih->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
-	fparm_ih->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
-      }
-#endif
+//       if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
+// 	fparm_nh->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+// 	fparm_nh->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
+//       }
+//       else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+// 	fparm_ih->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+// 	fparm_ih->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
+//       }
+// #endif
 
       if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
 	fhToyMH->Fill(0.+conv::kASmallNum);
@@ -1289,8 +1293,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 #ifdef __print_masshierarchy__
       cout << endl;
       cout << "iMH = " << iMH << " - MH: " << util::HierarchyAsString(hier) 
-	   << " - MHbar: " << util::HierarchyAsString(hierBar)
-	   << endl;
+	   << " - MHbar: " << util::HierarchyAsString(hierBar) << endl;
+      cout << endl;
 #endif
       
 #ifdef  __print_oscparam_all_verbose__
@@ -2429,6 +2433,41 @@ void FitMarginalization::BuildDeltaChisqMarg(){
 //________________________________________________________________________________________
 void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,double par1,double par2){
 
+  // NEW OSC PRIOR
+  cout << "Set NH prior of " << util::AsString(physpar) << " --> " << priorname << endl;
+#ifdef __USE_PRIOR_SINSQ2TH13__
+  if(physpar == conv::kPhypMixing13 || physpar == conv::kPhypMixing13Bar){
+    cout << "The prior is defined on sinsq2th13 --> convert to sinsqth13" << endl;
+  }
+#endif
+#ifdef __USE_PRIOR_SINSQ2TH23__
+  if(physpar == conv::kPhypMixing23 || physpar == conv::kPhypMixing23Bar){
+    cout << "The prior is defined on sinsq2th23 --> convert to sinsqth23" << endl;
+  }
+#endif
+#ifdef __USE_PRIOR_SINSQ2TH12__
+  if(physpar == conv::kPhypMixing12 || physpar == conv::kPhypMixing12Bar){
+    cout << "The prior is defined on sinsq2th12 --> convert to sinsqth12" << endl;
+  }
+#endif
+  if(priorname == "flat"){
+    cout << " - low = " << par1 << endl;
+    cout << " - up = " << par2 << endl;
+  }
+  else if(priorname == "gaus"){
+    cout << " - mean = " << par1 << endl;
+    cout << " - sigma = " << par2 << endl;
+  }
+  else{
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior_NH" << endl;
+    cerr << "Used prior is: " << priorname << endl;
+    cerr << "Prior not well defined for " << util::AsString(physpar) << endl;
+    exit(1);
+  }
+  cout << endl;
+  //
+
   fparm->SetPriorMode(physpar,priorname);
   // NEW MARG MH
   fparm_nh->SetPriorMode(physpar,priorname);
@@ -2440,7 +2479,15 @@ void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,doub
   double nbins = 100;
   double min = this->GetMinOscParam(physpar);
   double max = this->GetMaxOscParam(physpar);
-  
+
+  // NEW OSC PRIOR
+  if(physpar == conv::kPhypMixing13 || physpar == conv::kPhypMixing13Bar){ // Define a smaller range for mixing13 histogram
+    min = 0.;
+    max = 0.4;
+    nbins = 500;
+  }
+  //
+
   char name[200];
   sprintf(name,"h_%s",util::AsString(physpar).c_str());
   TH1D *h = new TH1D(name,name,nbins,min,max);
@@ -2485,6 +2532,41 @@ void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,doub
 //________________________________________________________________________________________
 void FitMarginalization::SetPrior_IH(PhysParamId_t physpar,string priorname,double par1,double par2){
 
+  // NEW OSC PRIOR
+  cout << "Set IH prior of " << util::AsString(physpar) << " --> " << priorname << endl;
+#ifdef __USE_PRIOR_SINSQ2TH13__
+  if(physpar == conv::kPhypMixing13 || physpar == conv::kPhypMixing13Bar){
+    cout << "The prior is defined on sinsq2th13 --> convert to sinsqth13" << endl;
+  }
+#endif
+#ifdef __USE_PRIOR_SINSQ2TH23__
+  if(physpar == conv::kPhypMixing23 || physpar == conv::kPhypMixing23Bar){
+    cout << "The prior is defined on sinsq2th23 --> convert to sinsqth23" << endl;
+  }
+#endif
+#ifdef __USE_PRIOR_SINSQ2TH12__
+  if(physpar == conv::kPhypMixing12 || physpar == conv::kPhypMixing12Bar){
+    cout << "The prior is defined on sinsq2th12 --> convert to sinsqth12" << endl;
+  }
+#endif
+  if(priorname == "flat"){
+    cout << " - low = " << par1 << endl;
+    cout << " - up = " << par2 << endl;
+  }
+  else if(priorname == "gaus"){
+    cout << " - mean = " << par1 << endl;
+    cout << " - sigma = " << par2 << endl;
+  }
+  else{
+    cerr << endl;
+    cerr << "FitMarginalization::SetPrior_NH" << endl;
+    cerr << "Used prior is: " << priorname << endl;
+    cerr << "Prior not well defined for " << util::AsString(physpar) << endl;
+    exit(1);
+  }
+  cout << endl;
+  //
+
   // NEW MARG MH
   fparm_ih->SetPriorMode(physpar,priorname);
   //
@@ -2495,6 +2577,15 @@ void FitMarginalization::SetPrior_IH(PhysParamId_t physpar,string priorname,doub
   double nbins = 100;
   double min = this->GetMinOscParam(physpar);
   double max = this->GetMaxOscParam(physpar);
+
+  // NEW OSC PRIOR
+  if(physpar == conv::kPhypMixing13 || physpar == conv::kPhypMixing13Bar){ // Define a smaller range for mixing13 histogram
+    min = 0.;
+    max = 0.4;
+    nbins = 500;
+  }
+  //
+
   char name[200];  
   sprintf(name,"h_%s_ih",util::AsString(physpar).c_str());
   TH1D *h = new TH1D(name,name,nbins,min,max);
@@ -2792,7 +2883,8 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm){
     infparm->Update(p,currval);
     //infparm->SetInitValue(p,currval);
     //
-  }
+    
+  } // loop over parameters
   
 
 
