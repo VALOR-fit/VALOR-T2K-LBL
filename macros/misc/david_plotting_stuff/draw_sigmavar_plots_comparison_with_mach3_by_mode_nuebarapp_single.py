@@ -10,7 +10,7 @@ valorfilename = sys.argv[2]
 m3selection = sys.argv[3] #mach3 sample
 tag = sys.argv[4] #oscillated or unoscillated
 sample = sys.argv[5] #valor sample
-single = sys.argv[6] #only do 1st mode if 1, all if 0
+# single = sys.argv[6] #only do 1st mode if 1, all if 0
 
 mach3_filename = mach3filename
 #mach3_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/mach3/sigmavar2014SK_osc2.root'
