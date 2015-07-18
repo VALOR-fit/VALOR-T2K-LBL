@@ -9,7 +9,7 @@ void SetRatioNullTo1(TH1D *hratiomy){
     }
 }
 
-void test_systematic_error_propagation_all_2015
+void test_systematic_error_propagation_all_2015_joint
 (
  int          mode               = 0,                                         /* options: see above */
  bool         update_rootfile    = false,                                        /* "update" ROOT output file? If false, will "recreate" */
