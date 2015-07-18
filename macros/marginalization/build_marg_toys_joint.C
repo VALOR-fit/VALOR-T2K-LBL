@@ -53,7 +53,7 @@ void build_marg_toys_joint
  const char * freeparname0          = "deltacp",  // free parameter
  const double freeparmin0           = -3.14159265358979312e+00,     // minimum value of free parameter
  const double freeparmax0           = +3.14159265358979312e+00,     // maxinum value of free parameter
- const int    NptScan0              = 2, //3, //21,  // # pts of free parameter to scan
+ const int    NptScan0              = 21, //3, //21,  // # pts of free parameter to scan
 
  const char * freeparname1          = "",  // free parameter
  //const char * freeparname1          = "dmsq23Bar",  // free parameter
@@ -504,7 +504,6 @@ void build_marg_toys_joint
   }
   else{
     // deltaCP
-    cout << "Use flat prior for deltaCP" << endl;
     fitmarg->SetPrior_NH(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
     fitmarg->SetPrior_IH(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
@@ -514,7 +513,6 @@ void build_marg_toys_joint
     
     // mixing13
     if(reactors){
-      cout << "Use gaussian prior for Mixing13 on sinsq2th w/ reactor constraint" << endl;
       fitmarg->SetPrior_NH(kPhypMixing13,"gaus",0.093,0.008); // prior on sinsq2th
       fitmarg->SetPrior_IH(kPhypMixing13,"gaus",0.093,0.008);   
       if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
@@ -523,7 +521,6 @@ void build_marg_toys_joint
       }
     }
     else{
-      cout << "Use flat prior for Mixing13 on sinsq2th w/o reactor constraint" << endl;
       fitmarg->SetPrior_NH(kPhypMixing13,"flat",0.,0.4); // prior on sinsq2th
       fitmarg->SetPrior_IH(kPhypMixing13,"flat",0.,0.4);   
       if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
@@ -549,7 +546,6 @@ void build_marg_toys_joint
   }
   else{
     // mixing23 
-    cout << "Use flat prior for Mixing23 parameter on sinsqth" << endl;
     fitmarg->SetPrior_NH(kPhypMixing23,"flat",0.3,0.7); // prior on sinsqth
     fitmarg->SetPrior_IH(kPhypMixing23,"flat",0.3,0.7);
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
@@ -558,7 +554,6 @@ void build_marg_toys_joint
     }
     
     // dmsq23
-    cout << "Use flat prior for Dm23sq parameter" << endl;
     fitmarg->SetPrior_NH(kPhypDm23sq,"flat",2E-3,3E-3);
     fitmarg->SetPrior_IH(kPhypDm23sq,"flat",2E-3,3E-3);
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
@@ -568,12 +563,10 @@ void build_marg_toys_joint
   }
   
   // dmsq12
-  cout << "Use gaussian prior for Dm12sq parameter (PDG2014)" << endl;
   fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",7.53E-5,0.18E-5);
   fitmarg->SetPrior_IH(kPhypDm12sq,"gaus",7.53E-5,0.18E-5);
 
   // mixing12
-  cout << "Use gaussian prior for Mixing12 parameter on sinsq2th (PDG2014)" << endl;
   fitmarg->SetPrior_NH(kPhypMixing12,"gaus",0.846,0.021); // prior on sinsq2th
   fitmarg->SetPrior_IH(kPhypMixing12,"gaus",0.846,0.021);
   
