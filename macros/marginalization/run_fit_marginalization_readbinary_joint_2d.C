@@ -599,7 +599,7 @@ void run_fit_marginalization_readbinary_joint_2d
       fitmarg->SetMinimIntervalRead(freeparmin0,freeparmax0,freeparmin1,freeparmax1,true);
       fitmarg->SetStartBin(0.3,0.002);
       fitmarg->SetNumStartBin(5,2);
-      fitmarg->SetGridStartRange(freeparmin0,0.5,freeparmin1,0.0035); // sin2th23<0.4 sure in the 1st octant
+      fitmarg->SetGridStartRange(freeparmin0,0.5,freeparmin1,0.0032); // sin2th23<0.4 sure in the 1st octant
       fitmarg->SetExtractStartPt("GridFix");
       fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
       
@@ -627,7 +627,7 @@ void run_fit_marginalization_readbinary_joint_2d
       fitmarg->SetMinimIntervalRead(freeparmin0,freeparmax0,freeparmin1,freeparmax1,true);
       fitmarg->SetStartBin(0.3,0.002);
       fitmarg->SetNumStartBin(5,2);
-      fitmarg->SetGridStartRange(0.5,freeparmax0,freeparmin1,0.0035); // start value sin2th23<0.4 sure in the 1st octant
+      fitmarg->SetGridStartRange(0.5,freeparmax0,freeparmin1,0.0032); // start value sin2th23<0.4 sure in the 1st octant
       fitmarg->SetExtractStartPt("GridFix");
       fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
       
