@@ -80,6 +80,7 @@ foreach (@ARGV) {
     elsif($_ eq '--npt-freepar1'           ) { $npt_freepar1          = $ARGV[$iarg+1]; }
     
     elsif($_ eq '--marginalize-hierarchy'  ) { $marg_hierarchy        = $ARGV[$iarg+1]; }
+    elsif($_ eq '--hierarchy-marg'         ) { $masshierarchy_marg    = $ARGV[$iarg+1]; }
     elsif($_ eq '--type-error'             ) { $type_error            = $ARGV[$iarg+1]; }
     elsif($_ eq '--draw-full-chisq'        ) { $draw_full_chisq       = $ARGV[$iarg+1]; }
 
@@ -134,6 +135,8 @@ $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # M
 $npt_freepar0      = 21            unless defined $npt_freepar0; # of free parameter points to scan
 
 $marg_hierarchy    = 1             unless defined $marg_hierarchy;
+$masshierarchy_marg = "normal"     unless defined $masshierarchy_marg;
+
 $type_error        = ""            unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
 $draw_full_chisq   = 1             unless defined $draw_full_chisq;
 
@@ -172,12 +175,9 @@ while($irun < $nruns) {
     #$irun = $irun + 1;
     #next;
     
-    
     $program = "root2k ";
-    
-    #$arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_betabar.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
-    
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_joint.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
+        
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_joint.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$type_error\",$draw_full_chisq,\"$test_stat\",\"$masshierarchy_marg\")\'";
 
 
     $command = "$program $arguments";

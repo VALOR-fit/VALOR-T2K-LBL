@@ -43,25 +43,46 @@ void run_fit_marginalization_readbinary_joint
 
  bool         dotoys               = 1,
 
- // Default
+ // // Mach3, T2K Run1-4 + reactors best fit (A)
+ // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+
+ // Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13       = 0.02146,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_deltacp        = 0., //-99,    /* deltacp, */
  double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- double       input_dm23sq         = 2.5E-3, //-99,    /* |Dm^2_{23}| */
+ double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
- const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app_4.5E20POT_fluxJune.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app_6.5E20POT_fluxJune.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app_8E20POT_fluxJune.xml",
- //const char * config_file              = "analysis_configuration_run1to6_test_app_9E20POT_fluxJune.xml",
+ // // Mach3, T2K only Run1-4 best fit (C)
+ // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0422,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = 1.91, //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+
+ // // Mach3, T2K Run1-4 + reactors best fit - th23 non maximal (D)
+ // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.4, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+
+ //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
- const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
+ const char * fit_param_list        = "nuosc3f+nuisance", // dcp
+ //const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
  
  const char * dmsqscheme               = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamchoice           = "sinsqtheta", /* sinsq2theta or sinsqtheta */
@@ -70,22 +91,24 @@ void run_fit_marginalization_readbinary_joint
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- const char * infilename = "submit_prova",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_IH_StatOnly_Mach3T2KonlyRun14/joint_dcp_IH_Mach3T2Konly_StatOnly", // Stat-only (Mach3 T2K only)
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_NH_StatOnly_Mach3T2KReactRun14/joint_dcp_NH_StatOnly",             // Stat-only (Mach3 T2K+react)
+ const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_MH_10kToys/joint_dcp_react_constrall_MH_10kToys",            // Stat+Syst (T2K+react)
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_t2konly_MH_10kToys/joint_dcp_t2konly_constrall_MH_10kToys",        // Stat+Syst (T2K only)
+ //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/prova/PROVA_SystAll",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/prova/PROVA_SystOsc",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/prova/PROVA_NoSyst",
 
- const int    nfiles               = 21, //201, 1        // # of files to read
+ const int    nfiles               = 201, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 500, //500, //3, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 10000, //500, //10000, //1,  // # toys marginalization 
  
  const char * freeparname0        = "deltacp",  // free parameter
  const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 21, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ const int    NptScan0            = 201, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
  const bool  doMargMH             = true, //true    // marginalize Mass Hierarchy
+ const char * hierarchy_marg      = "normal",     /* normal or inverted */
  
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = true,
@@ -97,6 +120,7 @@ void run_fit_marginalization_readbinary_joint
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
+
 
   // Set the second parameter (1D fit)
   const char * freeparname1        = "";  // free parameter
@@ -545,8 +569,9 @@ void run_fit_marginalization_readbinary_joint
     
     
     // Set Mass Hierarchy marginalization
-    fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
-    
+    Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy_marg); // needed to build the right binary file name 
+    fitmarg->SetMargMassHierarchy(doMargMH); // false by default     
+
     // Set fit parameter list
     fitmarg->SetFitParamList(fit_param_list);
     fitmarg->PrintPhysHypothesis();
