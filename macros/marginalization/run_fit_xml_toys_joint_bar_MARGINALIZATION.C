@@ -78,12 +78,12 @@
 
 void run_fit_xml_toys_joint_bar_MARGINALIZATION
 (
- const int    ntoys_marg             = 1000,
+ const int    ntoys_marg             = 500,
  const int    nbins_tot_param1       = 200,
 
  const char * outfilename            = "ToyMarginalization_10k_x_200.bin",
  const char * infilename             = "ToyMarginalization_1k_x_200.bin",
- const bool readtoys                 = true,  // true->read binary, false-> make toys        
+ const bool readtoys                 = false,  // true->read binary, false-> make toys
 
  const char * xmlfile = "fakedata/201411.fakedata/fakedata_201411_0p170e21_A.xml",       /* input XML file Run5-6 fakedata */ 
  bool using_xml_file = true,
