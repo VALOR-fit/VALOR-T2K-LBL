@@ -103,35 +103,35 @@ $fitparamlist   = "nuosc3f_nueapp_fix4+nuisance"      unless defined $fitparamli
 #$fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist; 
 
 
-# # Mach3, T2K Run1-4 + reactors best fit
-# $dm23sq_nh       = 2.509E-3                    unless defined $dm23sq_nh; 
-# $dm12sq_nh       = 7.53E-5                   unless defined $dm12sq_nh; 
-# $mix23_nh        = 0.528                       unless defined $mix23_nh;
-# $mix13_nh        = 0.0243                   unless defined $mix13_nh;
-# $mix12_nh        = 0.304                     unless defined $mix12_nh;
-# $deltacp_nh      = -1.601                         unless defined $deltacp_nh;
-# $dm23sq_ih       = 2.509E-3                    unless defined $dm23sq_ih; 
-# $dm12sq_ih       = 7.53E-5                   unless defined $dm12sq_ih; 
-# $mix23_ih        = 0.528                       unless defined $mix23_ih;
-# $mix13_ih        = 0.0243                   unless defined $mix13_ih;
-# $mix12_ih        = 0.304                     unless defined $mix12_ih;
-# $deltacp_ih      = -1.601                        unless defined $deltacp_ih;
-# $betaBar         = -99                       unless defined $betaBar;
-
-# Mach3, T2K only Run1-4  best fit
+# Mach3, T2K Run1-4 + reactors best fit
 $dm23sq_nh       = 2.509E-3                    unless defined $dm23sq_nh; 
 $dm12sq_nh       = 7.53E-5                   unless defined $dm12sq_nh; 
 $mix23_nh        = 0.528                       unless defined $mix23_nh;
-$mix13_nh        = 0.0422                   unless defined $mix13_nh;
+$mix13_nh        = 0.0243                   unless defined $mix13_nh;
 $mix12_nh        = 0.304                     unless defined $mix12_nh;
-$deltacp_nh      = 1.91                         unless defined $deltacp_nh;
+$deltacp_nh      = -1.601                         unless defined $deltacp_nh;
 $dm23sq_ih       = 2.509E-3                    unless defined $dm23sq_ih; 
 $dm12sq_ih       = 7.53E-5                   unless defined $dm12sq_ih; 
 $mix23_ih        = 0.528                       unless defined $mix23_ih;
-$mix13_ih        = 0.0422                   unless defined $mix13_ih;
+$mix13_ih        = 0.0243                   unless defined $mix13_ih;
 $mix12_ih        = 0.304                     unless defined $mix12_ih;
-$deltacp_ih      = 1.91                        unless defined $deltacp_ih;
+$deltacp_ih      = -1.601                        unless defined $deltacp_ih;
 $betaBar         = -99                       unless defined $betaBar;
+
+# # Mach3, T2K only Run1-4  best fit
+# $dm23sq_nh       = 2.509E-3                    unless defined $dm23sq_nh; 
+# $dm12sq_nh       = 7.53E-5                   unless defined $dm12sq_nh; 
+# $mix23_nh        = 0.528                       unless defined $mix23_nh;
+# $mix13_nh        = 0.0422                   unless defined $mix13_nh;
+# $mix12_nh        = 0.304                     unless defined $mix12_nh;
+# $deltacp_nh      = 1.91                         unless defined $deltacp_nh;
+# $dm23sq_ih       = 2.509E-3                    unless defined $dm23sq_ih; 
+# $dm12sq_ih       = 7.53E-5                   unless defined $dm12sq_ih; 
+# $mix23_ih        = 0.528                       unless defined $mix23_ih;
+# $mix13_ih        = 0.0422                   unless defined $mix13_ih;
+# $mix12_ih        = 0.304                     unless defined $mix12_ih;
+# $deltacp_ih      = 1.91                        unless defined $deltacp_ih;
+# $betaBar         = -99                       unless defined $betaBar;
 
 # 1D fit - dcp
 # $freepar0               = "deltacp"                 unless defined $freepar0;
@@ -143,10 +143,20 @@ $betaBar         = -99                       unless defined $betaBar;
 # $maxfreepar1            = 0.                        unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 # $npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-# 2D fit - sinsqth13 Vs dcp (no reactors)
+# # 2D fit - sinsqth13 Vs dcp (no reactors)
+# $freepar0               = "mixing13"                 unless defined $freepar0;
+# $minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
+# $maxfreepar0            = 0.4                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+# $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
+# $freepar1               = "deltacp"                  unless defined $freepar1;
+# $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+# $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+# $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
+
+# 2D fit - sinsqth13 Vs dcp (with reactors)
 $freepar0               = "mixing13"                 unless defined $freepar0;
-$minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = 0.4                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+$minfreepar0            = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
 $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
 $freepar1               = "deltacp"                  unless defined $freepar1;
 $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
