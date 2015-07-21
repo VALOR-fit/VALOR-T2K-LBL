@@ -274,10 +274,10 @@ void run_fit_marginalization_readbinary_joint
   double deltachisqtrue=conv::kALargeNum;
   double deltachisq01=conv::kALargeNum;
   double deltachisq0BF=conv::kALargeNum;
-  TH2F *hchisq2D_out;
-  TH1F *hchisq1D_out;
-  TH2F *hstep2D_out;
-  TH1F *hstep1D_out;
+  TH2D *hchisq2D_out;
+  TH1D *hchisq1D_out;
+  TH2D *hstep2D_out;
+  TH1D *hstep1D_out;
   double bestfit0=-999;
   double bestfit1=-999;
   double bestfiterrNeg0=-999;

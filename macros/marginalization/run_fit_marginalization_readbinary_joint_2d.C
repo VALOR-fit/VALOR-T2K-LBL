@@ -272,10 +272,10 @@ void run_fit_marginalization_readbinary_joint_2d
   double deltachisqtrue=conv::kALargeNum;
   double deltachisq01=conv::kALargeNum;
   double deltachisq0BF=conv::kALargeNum;
-  TH2F *hchisq2D_out;
-  TH1F *hchisq1D_out;
-  TH2F *hstep2D_out;
-  TH1F *hstep1D_out;
+  TH2D *hchisq2D_out;
+  TH1D *hchisq1D_out;
+  TH2D *hstep2D_out;
+  TH1D *hstep1D_out;
   double bestfit0=-999;
   double bestfit1=-999;
   double bestfiterrNeg0=-999;
@@ -781,11 +781,11 @@ void run_fit_marginalization_readbinary_joint_2d
     // Fill the output tree
    
     if(fitmarg->IsFit2D()){
-      hchisq2D_out = (TH2F*)fitmarg->GetChisqMarg2D()->Clone("hchisq2D");
+      hchisq2D_out = (TH2D*)fitmarg->GetChisqMarg2D()->Clone("hchisq2D");
       //if(minimizeHisto) hstep2D_out = (TH2F*)fitmarg->GetChisqStep_2D()->Clone("hstep2D");
     }
     else{
-      hchisq1D_out = (TH1F*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
+      hchisq1D_out = (TH1D*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
       //if(minimizeHisto) hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
     }
             
