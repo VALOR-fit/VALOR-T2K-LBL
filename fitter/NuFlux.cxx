@@ -537,8 +537,6 @@ void NuFlux::BookAndInitAuxSpectra(void)
   fSKNuEFluxTunedFinal     -> SetDirectory(0);
   fSKNuEBarFluxTunedFinal  -> SetDirectory(0);
 
-  cout << "Now this->ApplyBANFFWeights(false)" << endl;
-
   this->ApplyBANFFWeights(false); // reweight ext/tuned to fin/tuned flux (corresponds to BANFF best-fit)
 
   //
