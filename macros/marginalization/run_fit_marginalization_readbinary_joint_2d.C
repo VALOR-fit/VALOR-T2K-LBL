@@ -853,9 +853,9 @@ void run_fit_marginalization_readbinary_joint_2d
     TCanvas *cErecoToy_RHC1Re = new TCanvas("cErecoToy_RHC1Re","cErecoToy_RHC1Re");
     hErecoToy_RHC1Re->DrawCopy();
 
-    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-    fitmarg->GetChisqMarg1D()->DrawCopy();    
-    
+//    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
+//    fitmarg->GetChisqMarg1D()->DrawCopy();    
+//    
 //    TCanvas *cChisqStep = new TCanvas("cChisqStep","cChisqStep");
 //    ChisqStep_1->SetLineColor(kBlack);
 //    ChisqStep_2->SetLineColor(kRed);
@@ -863,9 +863,9 @@ void run_fit_marginalization_readbinary_joint_2d
 //    ChisqStep_1->Draw();
 //    ChisqStep_2->Draw("same");
 //    ChisqStep_3->Draw("same");
-
-    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-    fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
+//
+//    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
+//    fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
 
     // Clean-up
