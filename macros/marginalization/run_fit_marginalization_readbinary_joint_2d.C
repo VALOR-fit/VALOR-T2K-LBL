@@ -619,33 +619,33 @@ void run_fit_marginalization_readbinary_joint_2d
           niterations = niterations_1;
       }
 
-      // Fit 2
-      
-      cout << endl;
-      cout << "/////////////// Fit 2 (start dmsq = 0.002, second octant) ////////////////" << endl;
-      
-      fitmarg->SetMinimIntervalRead(freeparmin0,freeparmax0,freeparmin1,freeparmax1,true);
-      fitmarg->SetStartBin(0.3,0.002);
-      fitmarg->SetNumStartBin(5,2);
-      fitmarg->SetGridStartRange(0.5,freeparmax0,freeparmin1,0.0032); // start value sin2th23<0.4 sure in the 1st octant
-      fitmarg->SetExtractStartPt("GridFix");
-      fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
-      
-      double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
-      double bestfit0_2 = fitmarg->GetParamBestFit(0);
-      double bestfit1_2 = -999.;
-      if(fitmarg->IsFit2D()) bestfit1_2 = fitmarg->GetParamBestFit(1);
-      int nfits_2 = fitmarg->GetNumFit();
-      int fitstatus_2 = fitmarg->GetFitStatus();
-      int niterations_2 = fitmarg->GetNumIterations();
-      if(chisqmin_2<chisqmin){
-          chisqmin = chisqmin_2;
-          bestfit0 = bestfit0_2;
-          bestfit1 = bestfit1_2;
-          nfits = nfits_2;
-          fitstatus = fitstatus_2;
-          niterations = niterations_2;
-      }
+//      // Fit 2
+//      
+//      cout << endl;
+//      cout << "/////////////// Fit 2 (start dmsq = 0.002, second octant) ////////////////" << endl;
+//      
+//      fitmarg->SetMinimIntervalRead(freeparmin0,freeparmax0,freeparmin1,freeparmax1,true);
+//      fitmarg->SetStartBin(0.3,0.002);
+//      fitmarg->SetNumStartBin(5,2);
+//      fitmarg->SetGridStartRange(0.5,freeparmax0,freeparmin1,0.0032); // start value sin2th23<0.4 sure in the 1st octant
+//      fitmarg->SetExtractStartPt("GridFix");
+//      fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
+//      
+//      double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
+//      double bestfit0_2 = fitmarg->GetParamBestFit(0);
+//      double bestfit1_2 = -999.;
+//      if(fitmarg->IsFit2D()) bestfit1_2 = fitmarg->GetParamBestFit(1);
+//      int nfits_2 = fitmarg->GetNumFit();
+//      int fitstatus_2 = fitmarg->GetFitStatus();
+//      int niterations_2 = fitmarg->GetNumIterations();
+//      if(chisqmin_2<chisqmin){
+//          chisqmin = chisqmin_2;
+//          bestfit0 = bestfit0_2;
+//          bestfit1 = bestfit1_2;
+//          nfits = nfits_2;
+//          fitstatus = fitstatus_2;
+//          niterations = niterations_2;
+//      }
 
 //    // Fit 2
 //
@@ -746,7 +746,7 @@ void run_fit_marginalization_readbinary_joint_2d
 
     truepar0 = fparm->InitValue(freepar0);
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
-    chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(input_deltacp,truepar1,skobs_fakedata,true);
+    chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
     
     // Draw Full Chisq
     if(DrawFullChisq){

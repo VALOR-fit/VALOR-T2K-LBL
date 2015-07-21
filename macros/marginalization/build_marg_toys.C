@@ -589,13 +589,6 @@ void build_marg_toys
     }
   }
   
-    //12 priors!
-    {
-        fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",0.0000753,0.0000018);
-        fitmarg->SetPrior_IH(kPhypDm12sq,"gaus",0.0000753,0.0000018);
-        fitmarg->SetPrior_NH(kPhypMixing12,"gaus",0.304,0.0134);
-        fitmarg->SetPrior_IH(kPhypMixing12,"gaus",0.304,0.0134);
-    }
 
   // Make toys and store in binary files
     
