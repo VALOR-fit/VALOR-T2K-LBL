@@ -103,8 +103,8 @@ void run_fit_marginalization_readbinary_joint_2d
  const int    NtoysMarg            = 1, //500, //10000, //1,  // # toys marginalization 
  
  const char * freeparname0        = "mixing13",  // free parameter
- const double freeparmin0         = 0.015, // minimum value of free parameter
- const double freeparmax0         = 0.036, // maxinum value of free parameter
+ const double freeparmin0         = 0., // minimum value of free parameter
+ const double freeparmax0         = 0.113, // maxinum value of free parameter
  const int    NptScan0            = 81, //201, //21,      // # pts of free parameter to scan
 
  const char * freeparname1        = "deltacp",  // free parameter
@@ -118,7 +118,9 @@ void run_fit_marginalization_readbinary_joint_2d
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = true,
 
- const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
+ const string teststat            = "rate+shape",   // "rate-only" or "rate+shape",
+
+ const bool constrain_reactor     = false
 )
 {
 
@@ -273,6 +275,10 @@ void run_fit_marginalization_readbinary_joint_2d
   double deltachisq0BF=conv::kALargeNum;
   TH2D *hchisq2D_out;
   TH1D *hchisq1D_out;
+  TH2D *hpenaltyterm2D_out;
+  TH1D *hpenaltyterm1D_out;
+  TH2D *hdeltachisq2D_out;
+  TH1D *hdeltachisq1D_out;
   TH2D *hstep2D_out;
   TH1D *hstep1D_out;
   double bestfit0=-999;
@@ -302,6 +308,10 @@ void run_fit_marginalization_readbinary_joint_2d
   fitnt->Branch("bestfit1", &bestfit1 );
   fitnt->Branch("hchisq2D", &hchisq2D_out );
   fitnt->Branch("hchisq1D", &hchisq1D_out );
+  fitnt->Branch("hpenaltyterm2D", &hpenaltyterm2D_out );
+  fitnt->Branch("hpenaltyterm1D", &hpenaltyterm1D_out );
+  fitnt->Branch("hdeltachisq2D", &hdeltachisq2D_out );
+  fitnt->Branch("hdeltachisq1D", &hdeltachisq1D_out );
   fitnt->Branch("hstep2D", &hstep2D_out );
   fitnt->Branch("hstep1D", &hstep1D_out );
   fitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
@@ -583,8 +593,16 @@ void run_fit_marginalization_readbinary_joint_2d
     fitmarg->SetFileID(nfiles);
     
 
-
-
+    // Penalty term
+    
+    if(constrain_reactor){
+      
+      double sinsq2th13_mean = 0.093; // PDG 2014 (sinsq2th13)
+      double sinsq2th13_sigma = 0.008; // PDG 2014 (sinsq2th13)
+      
+      fitmarg->UsePenaltyTerm(true,false);
+      fitmarg->SetPenaltyTerm(sinsq2th13_mean, sinsq2th13_sigma); // to be used after UsePenaltyTerm()
+    }
 
     //
     //////////////// Implement the minimization ///////////////
@@ -593,7 +611,6 @@ void run_fit_marginalization_readbinary_joint_2d
     //
     ///////////////////////////////////////////////////////////
     //
-
 
     
     // Draw Full Chisq
@@ -666,10 +683,14 @@ void run_fit_marginalization_readbinary_joint_2d
    
     if(fitmarg->IsFit2D()){
       hchisq2D_out = (TH2D*)fitmarg->GetChisqMarg2D()->Clone("hchisq2D");
+      hdeltachisq2D_out = (TH2D*)fitmarg->GetDeltaChisqMarg2D()->Clone("hdeltachisq2D");
+      hpenaltyterm2D_out = (TH2D*)fitmarg->GetPenaltyTerm2D()->Clone("hpenaltyterm2D");
       //if(minimizeHisto) hstep2D_out = (TH2D*)fitmarg->GetChisqStep_2D()->Clone("hstep2D");
     }
     else{
       hchisq1D_out = (TH1D*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
+      hdeltachisq1D_out = (TH1D*)fitmarg->GetDeltaChisqMarg1D()->Clone("hcdeltahisq1D");
+      hpenaltyterm1D_out = (TH1D*)fitmarg->GetPenaltyTerm1D()->Clone("hpenaltyterm1D");
       //if(minimizeHisto) hstep1D_out = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
     }
             
@@ -755,9 +776,6 @@ void run_fit_marginalization_readbinary_joint_2d
     delete hErecoToy_RHC1Re;
 
   } // for iexperiment
-
-   
-
 
 
   // Store ntuple with best-fit results
