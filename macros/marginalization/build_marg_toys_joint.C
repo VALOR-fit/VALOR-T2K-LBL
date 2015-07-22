@@ -34,37 +34,58 @@ void build_marg_toys_joint
  
  const char * fit_param_list        = "nuosc3f+nuisance", // all osc params are free
  //const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
- //const char * fit_param_list        = "nuosc3f_fixall_fitdcp+nuisance", // fix all osc params
+ //const char * fit_param_list        = "nuosc3f_fixall_fitdcp+nuisance", // fix all osc params (stat-only)
+ //const char * fit_param_list        = "nuosc3f_nueapp_fix4+nuisance", // fix all osc params except sinsqth13 and dcp (stat-only)
  
+ // Mach3, T2K Run1-4 + reactors best fit (A)
  double       input_mixing12_nh       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13_nh       = 0.02146,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23_nh       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_nh        = 0., //-99,    /* deltacp, */
+ double       input_mixing13_nh       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23_nh       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp_nh        = -1.601, //-99,    /* deltacp, */
  double       input_dm12sq_nh         = 7.53E-5,    /* Dm^2_{12},  */
- double       input_dm23sq_nh         = 2.5E-3, //-99,    /* |Dm^2_{23}| */
+ double       input_dm23sq_nh         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  double       input_mixing12_ih       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13_ih       = 0.02146,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23_ih       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_ih        = 0., //-99,    /* deltacp, */
+ double       input_mixing13_ih       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23_ih       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp_ih        = -1.601, //-99,    /* deltacp, */
  double       input_dm12sq_ih         = 7.53E-5,    /* Dm^2_{12},  */
- double       input_dm23sq_ih         = 2.5E-3, //-99,    /* |Dm^2_{23}| */ 
+ double       input_dm23sq_ih         = 2.509E-3, //-99,    /* |Dm^2_{23}| */ 
  double       input_beta_bar          = -99,
+
+ // // Mach3, T2K only Run1-4 best fit (C)
+ // double       input_mixing12_nh       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13_nh       = 0.0422,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23_nh       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp_nh        = 1.91, //-99,    /* deltacp, */
+ // double       input_dm12sq_nh         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq_nh         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ // double       input_mixing12_ih       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13_ih       = 0.0422,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23_ih       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp_ih        = 1.91, //-99,    /* deltacp, */
+ // double       input_dm12sq_ih         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq_ih         = 2.509E-3, //-99,    /* |Dm^2_{23}| */ 
+ // double       input_beta_bar          = -99,
 
  const char * freeparname0          = "deltacp",  // free parameter
  const double freeparmin0           = -3.14159265358979312e+00,     // minimum value of free parameter
  const double freeparmax0           = +3.14159265358979312e+00,     // maxinum value of free parameter
- const int    NptScan0              = 21, //3, //21,  // # pts of free parameter to scan
-
+ const int    NptScan0              = 3, //3, //21,  // # pts of free parameter to scan
  const char * freeparname1          = "",  // free parameter
- //const char * freeparname1          = "dmsq23Bar",  // free parameter
- //const double freeparmin1           = 0.0002,     // minimum value of free parameter
- //const double freeparmax1           = 0.02,     // maxinum value of free parameter
- //const char * freeparname1          = "deltacpBar",  // free parameter
  const double freeparmin1           = 0.,     // minimum value of free parameter
  const double freeparmax1           = 0.,     // maxinum value of free parameter
  const int    NptScan1              = 1,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 500, //3, //500  // # toys marginalization 
+ // const char * freeparname0          = "mixing13",  // free parameter
+ // const double freeparmin0           = 0.,     // minimum value of free parameter
+ // const double freeparmax0           = 0.4,     // maxinum value of free parameter
+ // const int    NptScan0              = 81,  // # pts of free parameter to scan
+ // const char * freeparname1          = "deltacp",  // free parameter
+ // const double freeparmin1           = -3.14159265358979312e+00,     // minimum value of free parameter
+ // const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
+ // const int    NptScan1              = 51, //3, //21,  // # pts of free parameter to scan
+
+ const int    NtoysMarg            = 10000, //3, //500  // # toys marginalization 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true, //true,      // marginalize Mass Hierarchy
@@ -73,14 +94,14 @@ void build_marg_toys_joint
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
 
  const char * dmsqscheme           = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy            = "normal",    /* normal or inverted */
+ const char * hierarchy            = "inverted",    /* normal or inverted */
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
  //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", // Set to "" if no user priors are used (VALOR)
  TString file_priors = "", // Set to "" if no user priors are used (VALOR)
  
- bool reactors       = true // reactor constraint
+ bool reactors       = false // reactor constraint
  )
 {  
 
@@ -516,8 +537,8 @@ void build_marg_toys_joint
       fitmarg->SetPrior_NH(kPhypMixing13,"gaus",0.093,0.008); // prior on sinsq2th
       fitmarg->SetPrior_IH(kPhypMixing13,"gaus",0.093,0.008);   
       if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
-	fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",0.093,0.008);
-	fitmarg->SetPrior_IH(kPhypMixing13Bar,"gaus",0.093,0.008);
+      	fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",0.093,0.008);
+      	fitmarg->SetPrior_IH(kPhypMixing13Bar,"gaus",0.093,0.008);
       }
     }
     else{
