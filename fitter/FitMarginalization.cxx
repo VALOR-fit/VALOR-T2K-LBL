@@ -246,6 +246,18 @@ FitMarginalization::FitMarginalization()
   fteststatistic = "";
   fhPriorMH = 0;
   fhToyMH = 0;
+  
+  // NEW PENALTY TERM
+  fpenalty_mean0 = 0.;
+  fpenalty_mean1 = 0.;
+  fpenalty_sigma0 = 0.;
+  fpenalty_sigma1 = 0.;
+  fhpenaltyterm_1D = 0;
+  fhpenaltyterm_2D = 0;
+  fusepenalty0 = false;
+  fusepenalty1 = false;
+  //
+  
   //
 }
 //________________________________________________________________________________________
@@ -360,7 +372,7 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   cout << "Initialize histogram fchisq_marg_1D:" << endl;
   cout << "BinCenter(1) = " << fhchisq_marg_1D->GetXaxis()->GetBinCenter(1) << endl;
   cout << "BinCenter(Nbins) = " << fhchisq_marg_1D->GetXaxis()->GetBinCenter(fnbins_param[0]) << endl;
-  
+
   // NEW PRECISION
   fhchisq_marg_2D = new TH2D("hchisq_marg_2D","hchisq_marg_2D",
 			     fnbins_param[0],fmin_param[0]-fstep_param[0]/2.,fmax_param[0]+fstep_param[0]/2.,
@@ -378,6 +390,13 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   
   fhdeltachisq_marg_1D = 0;
   fhdeltachisq_marg_2D = 0; 
+
+
+  // NEW PENALTY TERM
+  fhpenaltyterm_1D = (TH1D*) fhchisq_marg_1D->Clone("hpenaltyterm_1D");
+  fhpenaltyterm_2D = (TH2D*) fhchisq_marg_2D->Clone("hpenaltyterm_2D");
+  //
+
 
   cout << endl;
   cout << "Initialize VALORArray fToyMargErecoVArray with:"<< endl;
@@ -517,6 +536,12 @@ void FitMarginalization::CleanUp(void){
   //if (fToyMargErecoVArray_Numu          ) { delete fToyMargErecoVArray_Numu          ; fToyMargErecoVArray_Numu           = 0;}
   //if (fToyMargErecoVArray_Nue           ) { delete fToyMargErecoVArray_Nue           ; fToyMargErecoVArray_Nue            = 0;}
   //
+
+  // NEW PENALTY TERM
+  if (fhpenaltyterm_1D                  ) { delete fhpenaltyterm_1D                  ; fhpenaltyterm_1D                   = 0;}
+  if (fhpenaltyterm_2D                  ) { delete fhpenaltyterm_2D                  ; fhpenaltyterm_2D                   = 0;}
+  //
+  
   if (fhchisq_marg_1D                   ) { delete fhchisq_marg_1D                   ; fhchisq_marg_1D                    = 0;}
   if (fhchisq_marg_2D                   ) { delete fhchisq_marg_2D                   ; fhchisq_marg_2D                    = 0;}
   if (fhchisq_marg_1D_Step              ) { delete fhchisq_marg_1D_Step              ; fhchisq_marg_1D_Step               = 0;}
@@ -1759,14 +1784,264 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 
 
 
+
+  
+  // NEW PENALTY TERM
+
+  // Calculate the penalty term of the free parameters
+
+  //cout << endl;
+  //cout << "bincont = " << bincont << endl;
+
+  double penaltyterm = 0.;
+
+  if(fusepenalty0 || fusepenalty1){
+    if(!fIsFit2D){ 
+      double freeparval0 = fhchisq_marg_1D->GetXaxis()->GetBinCenter(iterpar0+1);
+      penaltyterm = CalcPenaltyTerm(freeparval0);
+    }
+    else{      
+      double freeparval0 = fhchisq_marg_2D->GetXaxis()->GetBinCenter(iterpar0+1);
+      double freeparval1 = fhchisq_marg_2D->GetYaxis()->GetBinCenter(iterpar1+1);
+      penaltyterm = CalcPenaltyTerm(freeparval0,freeparval1);
+    }
+  
+    bincont += penaltyterm;
+  }
+  
+  if(!fIsFit2D) fhpenaltyterm_1D->SetBinContent(iterpar0+1,penaltyterm);
+  else          fhpenaltyterm_2D->SetBinContent(iterpar0+1,iterpar1+1,penaltyterm);
+
+  //cout << "bincont = " << bincont << endl;
+
   //
 
   fChisqMargVArray->SetEntry(bincont,iterpar0,iterpar1);
   if(!fIsFit2D) fhchisq_marg_1D->SetBinContent(iterpar0+1,bincont);
   else          fhchisq_marg_2D->SetBinContent(iterpar0+1,iterpar1+1,bincont);
-  
+
   return bincont;
 }
+//________________________________________________________________________________________
+
+
+
+
+
+// NEW PENALTY TERM
+
+void FitMarginalization::UsePenaltyTerm (const bool usepenalty0, const bool usepenalty1){
+  fusepenalty0 = usepenalty0;
+  fusepenalty1 = usepenalty1;
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetPenaltyTerm(const double mean0, const double sigma0, const double mean1, const double sigma1){
+
+  fpenalty_mean0 = mean0;
+  fpenalty_mean1 = mean1;
+  fpenalty_sigma0 = sigma0;
+  fpenalty_sigma1 = sigma1;
+  
+  // Check if the parameters of the penalty term are set
+  if(fusepenalty0){
+    if(fpenalty_sigma0<=0.){
+      cerr << endl;
+      cerr << "FitMarginalization::SetPenaltyTerm" << endl;
+      cerr << "Using penalty term for free parameter 0" << endl;
+      cerr << "sigma = " << fpenalty_sigma0 << endl;
+      cerr << "The error must be >0" << endl;
+      cerr << endl;
+      exit(1);
+    }
+  }
+  if(fusepenalty1){
+    if(fpenalty_sigma1<=0.){
+      cerr << endl;
+      cerr << "FitMarginalization::SetPenaltyTerm" << endl;
+      cerr << "Using penalty term for free parameter 1" << endl;
+      cerr << "sigma = " << fpenalty_sigma1 << endl;
+      cerr << "The error must be >0" << endl;
+      cerr << endl;
+      exit(1);
+    }
+  }
+
+  // Check if the parameters of the penalty term are in the physical region
+  conv::PhysParamId_t parfree0 = fPhysParamFree[0];
+  conv::PhysParamId_t parfree1 = fPhysParamFree[1];
+  bool IsPhysical0 = this->RethrowOscUnphysical(parfree0, fpenalty_mean0);
+  bool IsPhysical1 = this->RethrowOscUnphysical(parfree1, fpenalty_mean1);  
+  if(IsPhysical0){
+    cerr << endl;
+    cerr << "FitMarginalization::SetPenaltyTerm" << endl;
+    cerr << "Penalty term of parameter 0: " << util::AsString(parfree0) << endl;
+    cerr << "The central value is in the unphysical region: " << fpenalty_mean0 << endl;
+    cerr << "Not allowed --> Set a new value" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if(IsPhysical1){
+    cerr << endl;
+    cerr << "FitMarginalization::SetPenaltyTerm" << endl;
+    cerr << "Penalty term of parameter 1: " << util::AsString(parfree1) << endl;
+    cerr << "The central value is in the unphysical region: " << fpenalty_mean1 << endl;
+    cerr << "Not allowed --> Set a new value" << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  // Print parameters of penalty term
+  cout << endl;
+  if(fusepenalty0){
+    cout << "Use Penalty term on parameter 0:" << endl;
+    cout << "  - Mean = " << fpenalty_mean0 << endl;
+    cout << "  - Sigma = " << fpenalty_sigma0 << endl;
+  }
+  if(fusepenalty1){
+    cout << "Use Penalty term on parameter 1:" << endl;
+    cout << "  - Mean = " << fpenalty_mean1 << endl;
+    cout << "  - Sigma = " << fpenalty_sigma1 << endl;
+  }
+  cout << endl;
+  
+  return;
+}
+//________________________________________________________________________________________
+double FitMarginalization::CalcPenaltyTerm(const double par0, const double par1){ 
+  
+  double penaltyterm = 0.; 
+  
+  conv::PhysParamId_t parfree0 = fPhysParamFree[0];
+  conv::PhysParamId_t parfree1 = fPhysParamFree[1];
+
+  double parval0 = par0;
+  double parval1 = par1;
+
+  //
+  // mixparamchoice = sinsqtheta
+  // 
+  
+  if( Opt::Instance()->gOscMixingParamChoice == kNuMixSinsqTheta){       
+  
+    //
+    // sinsqtheta running mode is used 
+    // If sinsq2theta penalty term convert free parameter from sinsqtheta to sinsq2theta
+    // Otherwise don't convert anything
+    //
+
+#ifdef __USE_PRIOR_SINSQ2TH13__  
+    if(fusepenalty0){
+      if(parfree0 == conv::kPhypMixing13 || parfree0 == conv::kPhypMixing13Bar){
+	parval0 = util::FromSinsqthToSinsq2th(parval0); 
+      }
+    }
+    if(fusepenalty1){
+      if(parfree1 == conv::kPhypMixing13 || parfree1 == conv::kPhypMixing13Bar){
+	parval1 = util::FromSinsqthToSinsq2th(parval1); 
+      } 
+    }
+#endif
+#ifdef __USE_PRIOR_SINSQ2TH12__    
+    if(fusepenalty0){
+      if(parfree0 == conv::kPhypMixing12 || parfree0 == conv::kPhypMixing12Bar){
+	parval0 = util::FromSinsqthToSinsq2th(parval0); 
+      }
+    }
+    if(fusepenalty1){
+      if(parfree1 == conv::kPhypMixing12 || parfree1 == conv::kPhypMixing12Bar){
+	parval1 = util::FromSinsqthToSinsq2th(parval1); 
+      } 
+    }
+#endif
+#ifdef __USE_PRIOR_SINSQ2TH23__  
+    if(fusepenalty0){
+      if(parfree0 == conv::kPhypMixing23 || parfree0 == conv::kPhypMixing23Bar){
+	parval0 = util::FromSinsqthToSinsq2th(parval0); 
+      }
+    }
+    if(fusepenalty1){
+      if(parfree1 == conv::kPhypMixing23 || parfree1 == conv::kPhypMixing23Bar){
+	parval1 = util::FromSinsqthToSinsq2th(parval1); 
+      } 
+    }
+#endif
+  }
+
+  else if( Opt::Instance()->gOscMixingParamChoice == kNuMixSinsq2Theta){       
+  
+    //
+    // sinsq2theta running mode is used 
+    // If sinsqtheta penalty term convert free parameter from sinsq2theta to sinsqtheta
+    // Otherwise don't convert anything
+    //
+
+#ifndef __USE_PRIOR_SINSQ2TH13__  
+    if(fusepenalty0){
+      if(parfree0 == conv::kPhypMixing13 || parfree0 == conv::kPhypMixing13Bar){
+	parval0 = util::FromSinsq2thToSinsqth(parval0); 
+      }
+    }
+    if(fusepenalty1){
+      if(parfree1 == conv::kPhypMixing13 || parfree1 == conv::kPhypMixing13Bar){
+	parval1 = util::FromSinsq2thToSinsqth(parval1); 
+      } 
+    }
+#endif
+#ifndef __USE_PRIOR_SINSQ2TH12__    
+    if(fusepenalty0){
+      if(parfree0 == conv::kPhypMixing12 || parfree0 == conv::kPhypMixing12Bar){
+	parval0 = util::FromSinsq2thToSinsqth(parval0); 
+      }
+    }
+    if(fusepenalty1){
+      if(parfree1 == conv::kPhypMixing12 || parfree1 == conv::kPhypMixing12Bar){
+	parval1 = util::FromSinsq2thToSinsqth(parval1); 
+      } 
+    }
+#endif
+#ifndef __USE_PRIOR_SINSQ2TH23__  
+    if(fusepenalty0){
+      if(parfree0 == conv::kPhypMixing23 || parfree0 == conv::kPhypMixing23Bar){
+	parval0 = util::FromSinsq2thToSinsqth(parval0); 
+      }
+    }
+    if(fusepenalty1){
+      if(parfree1 == conv::kPhypMixing23 || parfree1 == conv::kPhypMixing23Bar){
+	parval1 = util::FromSinsq2thToSinsqth(parval1); 
+      } 
+    }
+#endif
+  }
+
+  double penalty0 = 0.;
+  double penalty1 = 0.;
+
+  if(fusepenalty0) penalty0 = (parval0 - fpenalty_mean0)*(parval0 - fpenalty_mean0) /  ( fpenalty_sigma0 * fpenalty_sigma0);
+  if(fusepenalty1) penalty1 = (parval1 - fpenalty_mean1)*(parval1 - fpenalty_mean1) /  ( fpenalty_sigma1 * fpenalty_sigma1);
+  
+  penaltyterm = penalty0 + penalty1;
+  
+  // cout << endl;
+  // cout << "Parameter 0: " << util::AsString(parfree0) << endl;
+  // cout << "parval0 = " << par0 << endl;
+  // cout << "parval0 (converted) = " << parval0 << endl;
+  // cout << "Parameter 1: " << util::AsString(parfree1) << endl;
+  // cout << "parval1 = " << par1 << endl;
+  // cout << "parval1 (converted) = " << parval1 << endl;
+  // cout << endl;
+  // cout << "penalty0 = " << penalty0 << endl;
+  // cout << "penalty1 = " << penalty1 << endl;
+  // cout << "penaltyterm = " << penaltyterm << endl;
+  // cout << endl;
+    
+  return penaltyterm;    
+}
+
+//
+
+
+
+
 
 
 //________________________________________________________________________________________
@@ -2316,6 +2591,13 @@ void FitMarginalization::ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_
       fhchisq_marg_2D_Step->SetBinContent(ipar0+1,ipar1+1,bincont);
       fhdeltachisq_marg_1D->SetBinContent(ipar0+1,bincont);
       fhdeltachisq_marg_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
+
+      
+      // NEW PENALTY TERM
+      fhpenaltyterm_1D->SetBinContent(ipar0+1,bincont);
+      fhpenaltyterm_2D->SetBinContent(ipar0+1,ipar1+1,bincont);
+      //
+      
     }
   }
   return;
@@ -2435,6 +2717,7 @@ void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,doub
 
   // NEW OSC PRIOR
   cout << "Set NH prior of " << util::AsString(physpar) << " --> " << priorname << endl;
+
 #ifdef __USE_PRIOR_SINSQ2TH13__
   if(physpar == conv::kPhypMixing13 || physpar == conv::kPhypMixing13Bar){
     cout << "The prior is defined on sinsq2th13 --> convert to sinsqth13" << endl;
@@ -2534,6 +2817,9 @@ void FitMarginalization::SetPrior_IH(PhysParamId_t physpar,string priorname,doub
 
   // NEW OSC PRIOR
   cout << "Set IH prior of " << util::AsString(physpar) << " --> " << priorname << endl;
+
+  // TODO: Running in sinsqtheta mode. The sinsq2theta running mode is not available yet.
+
 #ifdef __USE_PRIOR_SINSQ2TH13__
   if(physpar == conv::kPhypMixing13 || physpar == conv::kPhypMixing13Bar){
     cout << "The prior is defined on sinsq2th13 --> convert to sinsqth13" << endl;

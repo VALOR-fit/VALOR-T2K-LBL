@@ -277,6 +277,14 @@ class FitMarginalization
   TH1D *GetChisqMarg1D (void){ return fhchisq_marg_1D;}; // NEW PRECISION
   TH2D *GetChisqMarg2D (void){ return fhchisq_marg_2D;}; // NEW PRECISION
   
+  // NEW PENALTY TERM
+  double CalcPenaltyTerm (const double par0, const double par1=0.);
+  void SetPenaltyTerm (const double mean0, const double sigma0, const double mean1=0., const double sigma1=0.);
+  void UsePenaltyTerm (const bool usepenalty0, const bool usepenalty1);
+  const TH1D *GetPenaltyTerm1D (void){ return fhpenaltyterm_1D;}; 
+  const TH2D *GetPenaltyTerm2D (void){ return fhpenaltyterm_2D;}; 
+  //
+
   TH1D *GetDeltaChisqMarg1D (void){ return fhdeltachisq_marg_1D;}; // NEW PRECISION 
   TH2D *GetDeltaChisqMarg2D (void){ return fhdeltachisq_marg_2D;}; // NEW PRECISION
 
@@ -308,6 +316,17 @@ class FitMarginalization
   TH1D *fhdeltachisq_marg_1D; 
   TH2D *fhdeltachisq_marg_2D;  
   //  
+
+  // NEW PENALTY TERM
+  TH1D *fhpenaltyterm_1D; 
+  TH2D *fhpenaltyterm_2D; 
+  double fpenalty_mean0;
+  double fpenalty_mean1;
+  double fpenalty_sigma0;
+  double fpenalty_sigma1;
+  bool fusepenalty0;
+  bool fusepenalty1;
+  //
 
   // MAP
   TH1I *fhmap_chisqrange_fileid_1D;
