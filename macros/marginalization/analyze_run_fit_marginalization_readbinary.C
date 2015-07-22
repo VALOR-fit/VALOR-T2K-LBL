@@ -13,47 +13,8 @@ using namespace valor;
 using namespace valor::conv;
 
 void analyze_run_fit_marginalization_readbinary
-(
-
- // Chisq Minimization algorithm validation
- //char infilename[200] = "fitmarg_sin2th23_2p5E20POT-3f+3fbar_10margtoys_3500toys.root",         // 1D (sin2th23)
- //char infilename[200] = "fitmarg_sin2th23Vsdmsq_2p5E20POT-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
- //char infilename[200] = "fitmarg_sin2th23Vsdmsq_2p5E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root", // 2D (sin2th23 Vs dmsq)
-
- //char infilename[200] = "fitmarg_sin2th13_4p0E20POT_MINOSHESSE-3f+3fbar_10margtoys_3500toys.root", // 1D (sin2th13)
-
- //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp) 
- //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_dcpcoarser.root" // 2D (sin2th13 Vs dcp) 
- //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_sin2th13finer.root" // 2D (sin2th13 Vs dcp) 
- //char infilename[200] = "fitmarg_sin2th13Vsdcp_7p8E21POT_MINOSHESS-3f+3fbar_10margtoys_3500toys.root" // 2D (sin2th13 Vs dcp)
- 
- //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_sinfiner_MoreBins3.root"
- //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_MoreBins3.root"
- //char infilename[200] = "fitmarg_sin2th13Vsdcp_4p0E20POT_MINOSHESS-3f+3fbar_10margtoys_3500toys_dcpcoarser_MoreBins3.root"
-
- // Pull validation
-
- //char infilename[200] = "fitmarg_sinsqth23_T2Konly_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsqth23)
- //char infilename[200] = "fitmarg_sinsqth23_0p3_T2Konly_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsqth23)
- //char infilename[200] = "fitmarg_sinsqth23_0p7_T2Konly_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsqth23)
- //char infilename[200] = "fitmarg_sinsqth23_0p3_T2Konly_fixosc_10ktoys_FullStat-3f+3fbar.root" // 1D (sinsqth23, full stat)
- //char infilename[200] = "fitmarg_sinsqth23_0p7_T2Konly_fixosc_10ktoys_FullStat-3f+3fbar.root" // 1D (sinsqth23, full stat)
-
- //char infilename[200] = "fitmarg_sin2th13_dcpflat_fixosc_T2Konly_10ktoys_NormPOT-3f+3fbar.root" // 1D (sin2th13) 
- //char infilename[200] = "fitmarg_sin2th13_dcpflat_fixosc_T2Konly_10ktoys-3f+3fbar.root" // 1D (sinsq2th13)
- //char infilename[200] = "fitmarg_sinsqth13_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsq2th13)
-
- //char infilename[200] = "fitmarg_sinsq2th13_oct2_fixosc_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsq2th13)
- //char infilename[200] = "fitmarg_sinsq2th13_oct2_dcpflat_10ktoys_NormPOT-3f+3fbar.root" // 1D (sinsq2th13) 
- //char infilename[200] = "fitmarg_sinsq2th13_oct2_fixosc_10ktoys_NormPOT_fullstat-3f+3fbar.root" // 1D (sinsq2th13)
- //char infilename[200] = "fitmarg_sinsq2th13_oct2_dcpflat_10ktoys_NormPOT_fullstat-3f+3fbar.root" // 1D (sinsq2th13)
- 
- //char infilename[200] = "fitmarg_sinsq2th13_oct2_fixosc_10ktoys_NormPOT_fullstat-3f+3fbar.root" // 1D (sinsq2th13, full stat)
-
-
- // Raj
+( 
  char infilename[200] = "analyze_output_raj.root"
-
 )
 {
   char name[200];
@@ -77,10 +38,10 @@ void analyze_run_fit_marginalization_readbinary
   int fitstatus=-999;
   double chisqmin=conv::kALargeNum;
   double chisqtrue=conv::kALargeNum;
-  TH2F *hchisq2D_out;
-  TH1F *hchisq1D_out;
-  TH2F *hstep2D_out;
-  TH1F *hstep1D_out;
+  TH2D *hchisq2D_out;
+  TH1D *hchisq1D_out;
+  TH2D *hstep2D_out;
+  TH1D *hstep1D_out;
   double bestfit0=-999;
   double bestfit1=-999;
   double bestfiterrNeg0=-999;
@@ -132,44 +93,44 @@ void analyze_run_fit_marginalization_readbinary
 
   // Declare histograms
 
-  TH1F *hbestfitFullChisq_1D = new TH1F("hbestfitFullChisq_1D","hbestfitFullChisq_1D",201,0,1);
-  TH1F *hbestfit_1D = new TH1F("hbestfit_1D","hbestfit_1D",201,0,1);
+  TH1D *hbestfitFullChisq_1D = new TH1D("hbestfitFullChisq_1D","hbestfitFullChisq_1D",201,0,1);
+  TH1D *hbestfit_1D = new TH1D("hbestfit_1D","hbestfit_1D",201,0,1);
 
-  //TH2F *hbestfitFullChisq_2D = new TH2F("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,1,201,0.0002,0.02);
+  //TH2D *hbestfitFullChisq_2D = new TH2D("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,1,201,0.0002,0.02);
   TH2F *hbestfitFullChisq_2D = new TH2F("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,0.3,201,-3.15,3.15);
 
   //TH2F *hbestfit_2D = new TH2F("hbestfit_2D","hbestfit_2D",201,0,1,201,0.0002,0.02);
   TH2F *hbestfit_2D = new TH2F("hbestfit_2D","hbestfit_2D",201,0,0.3,201,-3.15,3.15);
 
-  TH1F *hdeltachisqDiff = new TH1F("hdeltachisqDiff","hdeltachisqDiff",100,0,20);
-  TH1F *hchisqminDiff = new TH1F("hchisqminDiff","hchisqminDiff",100,0.,0.3);
-  TH1F *hchisqmin = new TH1F("hchisqmin","hchisqmin",100,0,100);
-  TH1F *hchisqminFullChisq = new TH1F("hchisqminFullChisq","hchisqminFullChisq",100,0,100);
+  TH1D *hdeltachisqDiff = new TH1D("hdeltachisqDiff","hdeltachisqDiff",100,0,20);
+  TH1D *hchisqminDiff = new TH1D("hchisqminDiff","hchisqminDiff",100,0.,0.3);
+  TH1D *hchisqmin = new TH1D("hchisqmin","hchisqmin",100,0,100);
+  TH1D *hchisqminFullChisq = new TH1D("hchisqminFullChisq","hchisqminFullChisq",100,0,100);
 
-  // TH1F *hErrMINOSneg0 = new TH1F("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
-  // TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",1000,0,0.002);
-  // TH1F *hErrMINOSpos0 = new TH1F("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
-  // TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",1000,0,0.002);
-  // TH1F *hErrHESSEsym0 = new TH1F("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
-  // TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",1000,0,0.002);
-  TH1F *hErrMINOSneg0 = new TH1F("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
-  TH1F *hErrMINOSneg1 = new TH1F("hErrMINOSneg1","hErrMINOSneg1",1000,0.,6.28);
-  TH1F *hErrMINOSpos0 = new TH1F("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
-  TH1F *hErrMINOSpos1 = new TH1F("hErrMINOSpos1","hErrMINOSpos1",1000,0.,6.28);
-  TH1F *hErrHESSEsym0 = new TH1F("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
-  TH1F *hErrHESSEsym1 = new TH1F("hErrHESSEsym1","hErrHESSEsym1",1000,0.,20);
+  // TH1D *hErrMINOSneg0 = new TH1D("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
+  // TH1D *hErrMINOSneg1 = new TH1D("hErrMINOSneg1","hErrMINOSneg1",1000,0,0.002);
+  // TH1D *hErrMINOSpos0 = new TH1D("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
+  // TH1D *hErrMINOSpos1 = new TH1D("hErrMINOSpos1","hErrMINOSpos1",1000,0,0.002);
+  // TH1D *hErrHESSEsym0 = new TH1D("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
+  // TH1D *hErrHESSEsym1 = new TH1D("hErrHESSEsym1","hErrHESSEsym1",1000,0,0.002);
+  TH1D *hErrMINOSneg0 = new TH1D("hErrMINOSneg0","hErrMINOSneg0",1000,0,0.3);
+  TH1D *hErrMINOSneg1 = new TH1D("hErrMINOSneg1","hErrMINOSneg1",1000,0.,6.28);
+  TH1D *hErrMINOSpos0 = new TH1D("hErrMINOSpos0","hErrMINOSpos0",1000,0,0.3);
+  TH1D *hErrMINOSpos1 = new TH1D("hErrMINOSpos1","hErrMINOSpos1",1000,0.,6.28);
+  TH1D *hErrHESSEsym0 = new TH1D("hErrHESSEsym0","hErrHESSEsym0",1000,0,0.3);
+  TH1D *hErrHESSEsym1 = new TH1D("hErrHESSEsym1","hErrHESSEsym1",1000,0.,20);
 
-  TH1F *hnchisqcalls = new TH1F("hnchisqcalls","hnchisqcalls",100,0,700);
-  TH1F *hfitstatus = new TH1F("hfitstatus","hfitstatus",5,0,5);
+  TH1D *hnchisqcalls = new TH1D("hnchisqcalls","hnchisqcalls",100,0,700);
+  TH1D *hfitstatus = new TH1D("hfitstatus","hfitstatus",5,0,5);
   int NdiffChisq = 0;
 
-  TH1F *hpullsHESSE0 = new TH1F("hpullsHESSE0","hpullsHESSE0",100,-5,5);
-  TH1F *hpullsHESSE1 = new TH1F("hpullsHESSE1","hpullsHESSE1",100,-5,5);
-  TH1F *hpullsMINOS0 = new TH1F("hpullsMINOS0","hpullsMINOS0",100,-5,5);
-  TH1F *hpullsMINOS1 = new TH1F("hpullsMINOS1","hpullsMINOS1",100,-5,5);
+  TH1D *hpullsHESSE0 = new TH1D("hpullsHESSE0","hpullsHESSE0",100,-5,5);
+  TH1D *hpullsHESSE1 = new TH1D("hpullsHESSE1","hpullsHESSE1",100,-5,5);
+  TH1D *hpullsMINOS0 = new TH1D("hpullsMINOS0","hpullsMINOS0",100,-5,5);
+  TH1D *hpullsMINOS1 = new TH1D("hpullsMINOS1","hpullsMINOS1",100,-5,5);
 
-  TH1F *hresidual0 = new TH1F("hresidual0","hresidual0",100,-5,5);
-  TH1F *hresidual1 = new TH1F("hresidual1","hresidual1",100,-5,5);
+  TH1D *hresidual0 = new TH1D("hresidual0","hresidual0",100,-5,5);
+  TH1D *hresidual1 = new TH1D("hresidual1","hresidual1",100,-5,5);
 
   // Check if 1D or 2D fit
   bool IsFit2D;
