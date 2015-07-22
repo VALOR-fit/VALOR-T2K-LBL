@@ -98,9 +98,9 @@ $tag             = "submit_prova"            unless defined $tag;
 $config_file     = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml"  unless defined $config_file;
 
 #$fitparamlist   = "nuosc3f_fixall_fitdcp+nuisance"    unless defined $fitparamlist; # for stat-only
-$fitparamlist   = "nuosc3f_nueapp_fix4+nuisance"      unless defined $fitparamlist; # for sinsqth13 Vs dcp stat-only 
+#$fitparamlist   = "nuosc3f_nueapp_fix4+nuisance"      unless defined $fitparamlist; # for sinsqth13 Vs dcp stat-only 
 #$fitparamlist   = "nuosc3f_12fix+nuisance"    unless defined $fitparamlist;
-#$fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist; 
+$fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist; 
 
 
 # Mach3, T2K Run1-4 + reactors best fit
@@ -155,25 +155,25 @@ $betaBar         = -99                       unless defined $betaBar;
 
 # 2D fit - sinsqth13 Vs dcp (with reactors)
 $freepar0               = "mixing13"                 unless defined $freepar0;
-$minfreepar0            = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+$minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
 $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
 $freepar1               = "deltacp"                  unless defined $freepar1;
 $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
 $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-$nexpts_marg            = 1                    unless defined $nexpts_marg;     # of toys
+$nexpts_marg            = 10000                    unless defined $nexpts_marg;     # of toys
 
 # # 1D fits - dcp
 #$step_freepar0          = 201                  unless defined $step_freepar0;   # of points for each job param0
 #$step_freepar1          = 1                    unless defined $step_freepar1;   # of points for each job param1
 
 # 2D fits - sinsqth13 Vs dcp 
-$step_freepar0          = 81                  unless defined $step_freepar0;   # of points for each job param0
-$step_freepar1          = 51                  unless defined $step_freepar1;   # of points for each job param1
+$step_freepar0          = 4                  unless defined $step_freepar0;   # of points for each job param0
+$step_freepar1          = 2                   unless defined $step_freepar1;   # of points for each job param1
 
-$tweak_systematics      = 0                    unless defined $tweak_systematics;
+$tweak_systematics      = 1                    unless defined $tweak_systematics;
 $marg_hierarchy         = 0                    unless defined $marg_hierarchy;
 $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 
@@ -274,9 +274,9 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	    print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
 	    print PBS "$command \n";
 	    close(PBS);
-	    `sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+	    #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 	    #`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-	    #`sbatch -t 05:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+	    `sbatch -t 05:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 	    #`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 	}
 	
