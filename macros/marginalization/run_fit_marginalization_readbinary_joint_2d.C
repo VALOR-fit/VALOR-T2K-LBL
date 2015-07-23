@@ -653,15 +653,16 @@ void run_fit_marginalization_readbinary_joint_2d
     bestfiterrSym0 = fitmarg->GetParamBestFitErrSym(0);
     bestfiterrSym1 = fitmarg->GetParamBestFitErrSym(1);
 
-    // // Get true chisq 
-    // truepar0 = fparm->InitValue(freepar0);
-    // if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
-    // chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
+    // Get true chisq 
+    truepar0 = fparm->InitValue(freepar0);
+    if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
+    chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
 
 
-   // Get delta chisq
-    deltachisq0BF = chisqtrue0 - chisqmin;
- 
+    // Get delta chisq
+    if(chisqmin==conv::kBadResult) deltachisq0BF = chisqtrue0 - chisqmin;
+    else deltachisq0BF = chisqtrue0 - chisqminFullChisq;
+
     // Get the fakedata histogram
 
     for(int is = 0; is < kns; is++) {
@@ -700,7 +701,7 @@ void run_fit_marginalization_readbinary_joint_2d
     // Print output
     
     cout << endl;
-    cout << "Minimum Marginalized Chisq = " << chisqmin << endl;        
+    cout << "Minimum Marginalized Chisq = " << chisqmin << endl;
     cout << "bestfit 0 = " << bestfit0;
     cout << " +" << bestfiterrPos0 
 	 << " -" << bestfiterrNeg0 
