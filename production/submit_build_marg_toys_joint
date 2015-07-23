@@ -162,7 +162,7 @@ $freepar1               = "deltacp"                  unless defined $freepar1;
 $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
 $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
-
+ 
 $nexpts_marg            = 10000                    unless defined $nexpts_marg;     # of toys
 
 # # 1D fits - dcp
