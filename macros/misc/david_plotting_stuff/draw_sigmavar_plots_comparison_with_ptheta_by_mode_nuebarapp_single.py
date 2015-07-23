@@ -22,7 +22,7 @@ valor_filename = valorfilename
 
 #mach3_nom_pattern = "[CURRENT][SELECTION]_[MODE]_nom"
 mach3_nom_pattern = "[CURRENT]_h[SELECTION][MODE]"
-mach3_pattern     = "[CURRENT][SELECTION]_[PARAM][MODE]_sig_[VAR]"
+mach3_pattern     = "[CURRENT]_[SELECTION]_[PARAM][MODE]_sig_[VAR]"
 valor_pattern     = "Ratio_"+sample+"[MODE]_[PARAM]_[VAR]"
 
 # paired things have valor, then mach3
@@ -249,7 +249,7 @@ parameters = [
               ( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
               ]
 
-modes = [ ( ''                , '_nom'                  ) ,
+modes = [ ( ''                , ''                  ) ,
 #          ( '_numuccqe'        , "_numu_ccqe"      ) ,
 #          ( '_numucc1pi'       , "_numu_cc1pi"     ) ,
 #          ( '_numucccoh'       , "_numu_cccoh"     ) ,
