@@ -431,7 +431,7 @@ def main():
         mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
       
       canvases[canv_name].Update()
-      canvases[canv_name].Print("syst_var_mode_ereco"+".pdf"+next(pdf_printing_iter_ereco))
+      canvases[canv_name].Print("syst_var_mode_ereco_"+tag+".pdf"+next(pdf_printing_iter_ereco))
       
       canv_name_binno = canv_name+"_binno"
       
@@ -448,7 +448,7 @@ def main():
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
       
       canvases[canv_name_binno].Update()
-      canvases[canv_name_binno].Print("syst_var_mode_binno"+".pdf"+next(pdf_printing_iter_binno))
+      canvases[canv_name_binno].Print("syst_var_mode_binno_"+tag+".pdf"+next(pdf_printing_iter_binno))
   
   print "Done!"
   exit(0)
