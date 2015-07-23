@@ -21,7 +21,7 @@ valor_filename = valorfilename
 
 
 #mach3_nom_pattern = "[CURRENT][SELECTION]_[MODE]_nom"
-mach3_nom_pattern = "[CURRENT]_h[SELECTION][MODE]"
+mach3_nom_pattern = "[CURRENT]_h[SELECTION]_nom"
 mach3_pattern     = "[CURRENT]_[SELECTION]_[PARAM][MODE]_sig_[VAR]"
 valor_pattern     = "Ratio_"+sample+"[MODE]_[PARAM]_[VAR]"
 
@@ -249,7 +249,7 @@ parameters = [
               ( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
               ]
 
-modes = [ ( ''                , '_nom'                  ) ,
+modes = [ ( ''                , ''                  ) ,
 #          ( '_numuccqe'        , "_numu_ccqe"      ) ,
 #          ( '_numucc1pi'       , "_numu_cc1pi"     ) ,
 #          ( '_numucccoh'       , "_numu_cccoh"     ) ,
@@ -342,7 +342,7 @@ def main():
     
     mach3_nom_histname = mach3_nom_pattern
     for old,new in [("[CURRENT]"  , mach3_current  ),
-                    ("[MODE]"     , mach3_mode     ),
+                    #   ("[MODE]"     , mach3_mode     ),
                     ("[SELECTION]", mach3_selection) ]:
       mach3_nom_histname = mach3_nom_histname.replace(old,new)
                                                     
