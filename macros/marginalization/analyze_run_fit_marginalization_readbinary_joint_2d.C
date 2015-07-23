@@ -14,7 +14,14 @@ using namespace valor::conv;
 
 void analyze_run_fit_marginalization_readbinary_joint_2d
 ( 
- char infilename[200] = "fitmarg_prova-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root",
+ double trueval0 = 0.0243,
+ double trueval1 = -1.609,
+ 
+ //char infilename[200] = "../marginalization/joint/fitmarg_sinsqth13Vsdcp_ReactConstr_DataSetA-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root",
+ //char infilename[200] = "../marginalization/joint/fitmarg_sinsqth13Vsdcp_ReactConstr_DataSetB-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root",
+ //char infilename[200] = "../marginalization/joint/fitmarg_sinsqth13Vsdcp_T2Konly_DataSetA-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root",
+ char infilename[200] = "../marginalization/joint/fitmarg_sinsqth13Vsdcp_T2Konly_DataSetB-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root",
+
  const bool IsFit2D = true
   )
 {
@@ -411,7 +418,7 @@ void analyze_run_fit_marginalization_readbinary_joint_2d
 
   // Draw chisq distributions
 
-  treein->GetEntry(0);
+  treein->GetEntry(0); // Get informations from the tree
 
   TCanvas *cchisq_out_GetEntry = new TCanvas("cchisq_out_GetEntry","cchisq_out_GetEntry");
   if(IsFit2D) hchisq2D_out->DrawCopy("colz");
@@ -425,7 +432,22 @@ void analyze_run_fit_marginalization_readbinary_joint_2d
   if(IsFit2D) hpenaltyterm2D_out->DrawCopy("colz");
   else        hpenaltyterm1D_out->DrawCopy();
 
+  
   // Draw contours
+
+  TMarker * mPtBestFit = new TMarker(bestfitFullChisq0,bestfitFullChisq1,20);
+  mPtBestFit->SetMarkerSize(1.5);
+  mPtBestFit->SetMarkerColor(kBlue);
+
+  if(truepar0!=conv::kBadResult && truepar1!=conv::kBadResult){
+    trueval0 = truepar0;
+    trueval1 = truepar1;
+  }
+
+  TMarker * mPtTrue = new TMarker(trueval0,trueval1,29);
+  mPtTrue->SetMarkerSize(1.5);
+  mPtTrue->SetMarkerColor(kBlack);
+
   TCanvas *ccontours = new TCanvas("ccontours","ccontours");
   TH2D *hcontour2D_68CL = (TH2D*)hdeltachisq2D_out->Clone("hcontour2D");
   hcontour2D_68CL->SetLineColor(kBlue);
@@ -440,6 +462,20 @@ void analyze_run_fit_marginalization_readbinary_joint_2d
   hcontour2D_90CL->SetContourLevel(0,4.61);
   hcontour2D_90CL->Draw("cont3 same");
   
+  mPtBestFit->Draw("same");
+  mPtTrue->Draw("same");
+
+  TLegend *lcontours = new TLegend(0.5,0.6,0.8,0.8);
+  lcontours->SetFillColor(0);
+  lcontours->SetLineColor(0);
+  lcontours->SetTextFont(132);
+  lcontours->SetTextSize(0.05);
+  lcontours->AddEntry(hcontour2D_68CL,"68% CL","l");
+  lcontours->AddEntry(hcontour2D_90CL,"90% CL","l");
+  lcontours->AddEntry(mPtBestFit,"VALOR best-fit","p");
+  lcontours->AddEntry(mPtTrue,"True value","p");
+  lcontours->Draw();
+
 
   // Print results
   
