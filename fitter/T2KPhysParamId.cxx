@@ -3495,9 +3495,9 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   
   ///
   default :
-    return "--";
+    return util::RawParamAsStringTex(p);
   }
-  return "--";
+  return util::RawParamAsStringTex(p);
 }
 //________________________________________________________________________________________
 string valor::util::AsStringPaperTable(PhysParamId_t p)
