@@ -25,6 +25,7 @@
 #include "FitCore/PhysHypothesis.h"
 #include "Utilities/NuOsc3Flavour.h"
 #include "Utilities/NuOscSterile.h"
+#include "Utilities/NSI3Flavour.h"
 #include "Utilities.h"
 #include "Utilities/VALORArray.h"
 
@@ -109,6 +110,7 @@ public:
   // NEW
   void SetMassHierarchyBar    (conv::NuMassHierarchy_t hier) { fNuOsc3FlavourBar.SetMassHierarchy(hier); }
   void SetMassHierarchySterile(conv::NuMassHierarchy_t hier) { fNuOscSterile.SetMassHierarchy(hier); }
+  void SetMassHierarchyNSI    (conv::NuMassHierarchy_t hier) { fNSI3Flavour.SetMassHierarchy(hier); }
   //
 
 
@@ -142,6 +144,7 @@ private:
   void ApplyPhysHypothesisToTemplates_3fOsc(void); 
   void ApplyPhysHypothesisToTemplates_3fOscBar(void); 
   void ApplyPhysHypothesisToTemplates_Sterile(void); 
+  void ApplyPhysHypothesisToTemplates_3fNSI(void); 
 
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
   bool SkipTemplate(conv::SuperkMode_t m);
@@ -271,6 +274,7 @@ private:
   PhysHypothesis fPhysHypothesis;          ///< Physics hypothesis 
   NuOsc3Flavour  fNuOsc3Flavour;           ///< 3-flavour neutrino osc. probability calculations
   NuOsc3Flavour  fNuOsc3FlavourBar;        ///< 3-flavour anti-neutrino osc. probability calculations
+  NSI3Flavour    fNSI3Flavour;             ///< 3-flavour osc. probability calculations with nSI
   
   // NEW 
   NuOscSterile  fNuOscSterile;            ///< sterile osc. probability calculations  
