@@ -44,18 +44,18 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
     labels.append("")
     
   draw_legend = any(labels)
-  ymax = 0.9
+  ymax = 0.95
   ymin = ymax
   for l in labels:
     if l: ymin -= text_entry_height
-  legend = ROOT.TLegend(0.7,ymin,0.9,0.9)
+  legend = ROOT.TLegend(0.7,ymin,0.9,0.95)
   
   stat_boxes = []
   ymin = ymax
   for ipattern,pattern in enumerate(file_patterns):
     this_ymax = ymin
     ymin -= text_entry_height
-    box = ROOT.TPaveText(0.1,ymin,0.4,this_ymax,"ndc")
+    box = ROOT.TPaveText(0.13,ymin,0.4,this_ymax,"ndc")
     box.SetTextColor(colors[ipattern])
     box.SetShadowColor(0)
     stat_boxes.append(box)
@@ -134,7 +134,7 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
     if (do_systematics or not util.IsSystematic(p)):
       canv.Print("pull_"+util.ParamAsStringSimple(p)+".eps")
     
-    title = ROOT.TPaveText(0.,0.93,1.,1.,"ndc")
+    title = ROOT.TPaveText(0.,0.88,1.,0.94,"ndc")
     title.SetShadowColor(0)
     title.SetFillColor(0)
     title.SetFillStyle(0)
