@@ -99,6 +99,7 @@ $config_file     = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.01
 
 #$fitparamlist   = "nuosc3f_fixall_fitdcp+nuisance"    unless defined $fitparamlist; # for stat-only
 #$fitparamlist   = "nuosc3f_nueapp_fix4+nuisance"      unless defined $fitparamlist; # for sinsqth13 Vs dcp stat-only 
+#$fitparamlist   = "nuosc3f_numudisapp_fix4+nuisance"      unless defined $fitparamlist; # for sinsqth13 Vs dcp stat-only 
 #$fitparamlist   = "nuosc3f_12fix+nuisance"    unless defined $fitparamlist;
 $fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist; 
 
@@ -153,25 +154,39 @@ $betaBar         = -99                       unless defined $betaBar;
 # $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 # $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-# 2D fit - sinsqth13 Vs dcp (with reactors)
-$freepar0               = "mixing13"                 unless defined $freepar0;
-$minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = 0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+# # 2D fit - sinsqth13 Vs dcp (with reactors)
+# $freepar0               = "mixing13"                 unless defined $freepar0;
+# $minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
+# $maxfreepar0            = 0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+# $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
+# $freepar1               = "deltacp"                  unless defined $freepar1;
+# $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+# $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+# $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
+
+# 2D fit - sinsqth23 Vs dmsq32 (with reactors)
+$freepar0               = "mixing23"                 unless defined $freepar0;
+$minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
 $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
-$freepar1               = "deltacp"                  unless defined $freepar1;
-$minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
-$maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-$npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
- 
+$freepar1               = "dmsq23"                   unless defined $freepar1;
+$minfreepar1            = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
+$maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+$npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
+
 $nexpts_marg            = 10000                    unless defined $nexpts_marg;     # of toys
 
 # # 1D fits - dcp
 #$step_freepar0          = 201                  unless defined $step_freepar0;   # of points for each job param0
 #$step_freepar1          = 1                    unless defined $step_freepar1;   # of points for each job param1
 
-# 2D fits - sinsqth13 Vs dcp 
-$step_freepar0          = 4                  unless defined $step_freepar0;   # of points for each job param0
-$step_freepar1          = 2                   unless defined $step_freepar1;   # of points for each job param1
+# # 2D fits - sinsqth13 Vs dcp 
+# $step_freepar0          = 4                  unless defined $step_freepar0;   # of points for each job param0
+# $step_freepar1          = 2                   unless defined $step_freepar1;   # of points for each job param1
+
+# 2D fits - sinsqth23 Vs dmsq 
+$step_freepar0          = 4                   unless defined $step_freepar0;   # of points for each job param0
+$step_freepar1          = 1                   unless defined $step_freepar1;   # of points for each job param1
 
 $tweak_systematics      = 1                    unless defined $tweak_systematics;
 $marg_hierarchy         = 0                    unless defined $marg_hierarchy;
