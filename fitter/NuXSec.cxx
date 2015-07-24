@@ -1,0 +1,2245 @@
+//________________________________________________________________________________________
+/*
+
+ \copyright (c) 2010-2013, VaLOR group.
+
+30-12-2013  Nick
+Added samples, modes and systematics for reverse horn current running
+
+*/
+//________________________________________________________________________________________
+
+#define __show_init_mesg_info__
+//#define __show_init_mesg_debug__
+//#define __show_init_mesg_debug2__
+//#define __show_banff_tuning_wght_mesg_info__
+//#define __show_banff_tuning_wght_mesg_debug__
+//#define __show_syst_var_wght_mesg_debug__
+//#define __show_build_xsbinning_template_mesg_info__
+//#define __show_build_xsbinning_template_mesg_debug__
+//#define __show_wght_spline_idx_mesg_debug__
+//#define __show_isanevent_mesg_debug__
+//#define __show_find_wght_spline_mesg_debug__
+//#define __save_ori_templates_init_debug__
+#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
+//#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong.
+//#define check_spline_limits       //slow, but should be used when testing
+
+
+#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+//#define WARN_ON_FLAT_SPLINE
+
+#define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
+//#define __ALLOW_SPLINES_OUTSIDE_LIMIT__  // allow splines to go outside the min and max limit where defined. To use only for syst effect cross checks
+
+#include <cassert>
+#include <cstdlib>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+
+#include <TMath.h>
+
+#include "NuXSec.h"
+#include "BANFF.h"
+#include "Utilities.h"
+#include "Build.h"
+
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::ostringstream;
+using std::setprecision;
+
+using namespace valor;
+using namespace valor::conv;
+using namespace valor::util;
+
+ClassImp(NuXSec)
+
+//________________________________________________________________________________________
+NuXSec::NuXSec()
+{
+  this->Init();
+}
+//________________________________________________________________________________________
+NuXSec::~NuXSec()
+{
+  this->CleanUp();
+}
+//________________________________________________________________________________________
+void NuXSec::Init(void)
+{
+  fBANFF = 0;
+
+  for(int ispl = 0; ispl < knwspl1Rmu; ispl++) {
+     fXSecWghtSpl1Rmu[ispl] = 0;
+  }
+  for(int ispl = 0; ispl < knwspl1Re; ispl++) {
+     fXSecWghtSpl1Re[ispl] = 0;
+  }
+  for(int ispl = 0; ispl < kRHCnwspl1Rmu; ispl++) {
+    fRHCXSecWghtSpl1Rmu[ispl] = 0;
+  }
+  for(int ispl = 0; ispl < kRHCnwspl1Re; ispl++) {
+    fRHCXSecWghtSpl1Re[ispl] = 0;
+  }
+
+
+  /// NEW MULTIRING
+  for(int ispl = 0; ispl < knwsplMultiRmu; ispl++) {
+    fXSecWghtSplMultiRmu[ispl] = 0;
+  }
+  for(int ispl = 0; ispl < knwsplMultiRe; ispl++) {
+    fXSecWghtSplMultiRe[ispl] = 0;
+  }
+  ////
+
+  
+  for(int is=0; is<kns; is++) {
+    for(int im=0; im<knm; im++) {
+      fXsBinningTempl [is][im] = 0;
+    }
+  }
+  ////
+
+  fRPATwkDial            = 1.; // relRPA is the default parameter
+  fFermiMomTwkDial       = 0;
+  fSpecFuncTwkDial       = 0;
+  fWshapeTwkDial         = 0;
+  fShapeCCothTwkDial     = 0;
+  fPiLessDeltaTwkDial    = 0;
+  fBindETwkDial          = 0;
+  fNormCCcohTwkDial      = 0;
+  fNormNC1piCTwkDial     = 0;
+  fNormNCcohTwkDial      = 0;
+  fNormNCothTwkDial      = 0;
+  fNormNuEToNuMuTwkDial  = 0;
+  fNormAntiNuToNuTwkDial = 0;
+  
+  fRHCRPATwkDial            = 1; // NEW XSEC //relRPA is the default parameter
+  fRHCFermiMomTwkDial       = 0;
+  fRHCSpecFuncTwkDial       = 0;
+  fRHCWshapeTwkDial         = 0;
+  fRHCShapeCCothTwkDial     = 0;
+  fRHCPiLessDeltaTwkDial    = 0;
+  fRHCBindETwkDial          = 0;
+  fRHCNormCCcohTwkDial      = 0;
+  fRHCNormNC1piCTwkDial     = 0;
+  fRHCNormNCcohTwkDial      = 0;
+  fRHCNormNCothTwkDial      = 0;
+  fRHCNormNuEToNuMuTwkDial  = 0;
+  fRHCNormAntiNuToNuTwkDial = 0;
+  fNormRHCToFHCTwkDial = 0;
+  
+  fUntunedCentralValues = 0;
+  fRHCUntunedCentralValues = 0;
+  
+  arr_index = util::ArrIdx::Instance();
+
+}
+//________________________________________________________________________________________
+void NuXSec::CleanUp(void)
+{
+  for(int ispl = 0; ispl < knwspl1Rmu; ispl++) {
+     if (fXSecWghtSpl1Rmu[ispl]) delete fXSecWghtSpl1Rmu[ispl];
+  }
+  for(int ispl = 0; ispl < knwspl1Re; ispl++) {
+     if (fXSecWghtSpl1Re[ispl]) delete fXSecWghtSpl1Re[ispl];
+  }
+  for(int ispl = 0; ispl < kRHCnwspl1Rmu; ispl++) {
+    if (fRHCXSecWghtSpl1Rmu[ispl]) delete fRHCXSecWghtSpl1Rmu[ispl];
+  }
+  for(int ispl = 0; ispl < kRHCnwspl1Re; ispl++) {
+    if (fRHCXSecWghtSpl1Re[ispl]) delete fRHCXSecWghtSpl1Re[ispl];
+  }
+
+  /// NEW MULTIRING
+  for(int ispl = 0; ispl < knwsplMultiRmu; ispl++) {
+    if (fXSecWghtSplMultiRmu[ispl]) delete fXSecWghtSplMultiRmu[ispl];
+  }
+  for(int ispl = 0; ispl < knwsplMultiRe; ispl++) {
+    if (fXSecWghtSplMultiRe[ispl]) delete fXSecWghtSplMultiRe[ispl];
+  }
+  ////
+
+  for(int is=0; is<kns; is++) {
+    for(int im=0; im<knm; im++) {
+      if (fXsBinningTempl [is][im]) delete fXsBinningTempl [is][im]; 
+    }
+  }
+  
+  if (fUntunedCentralValues)    delete fUntunedCentralValues;
+  if (fRHCUntunedCentralValues) delete fRHCUntunedCentralValues;
+}
+//________________________________________________________________________________________
+bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
+{
+#ifdef __show_init_mesg_info__
+  cout << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file." << endl;
+#endif
+  
+  //
+  // Load cross-section weight splines
+  //
+
+#if SPLINE_TYPE == -1
+  cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
+  return true;
+#endif
+
+  std::vector<TFile*> spline_files(conv::kns);
+
+  spline_files[kSKsFCFV1RingMuLike    ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
+  spline_files[kSKsFCFV1RingELike     ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring" );
+
+#if defined(__USE_NIWG2015__)
+  spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring_rhc");
+  spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring_rhc" );
+#elif defined(__USE_NIWG2013__)
+  spline_files[kSKsRHCFCFV1RingMuLike ] = spline_files[kSKsFCFV1RingMuLike];
+  spline_files[kSKsRHCFCFV1RingELike  ] = spline_files[kSKsFCFV1RingELike ]; 
+#endif
+  
+  /// NEW MULTIRING (multiring-only splines)
+  spline_files[kSKsFCFVMultiRingMuLike]= util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
+  spline_files[kSKsFCFVMultiRingELike ]= util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
+  //~ spline_files[kSKsFCFVMultiRingMuLike] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
+  //~ spline_files[kSKsFCFVMultiRingELike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
+  
+  assert(spline_files[kSKsFCFV1RingMuLike    ]);
+  assert(spline_files[kSKsFCFV1RingELike     ]);
+  assert(spline_files[kSKsRHCFCFV1RingMuLike ]);
+  assert(spline_files[kSKsRHCFCFV1RingELike  ]);
+  assert(spline_files[kSKsFCFVMultiRingMuLike]);
+  assert(spline_files[kSKsFCFVMultiRingELike ]);
+  
+  // Make a flat spline
+#ifdef __use_flat_splines_for_missing_splines__
+  double x[5] = {-5,-2,0,+2,+5};
+  double y[5] = {1,1,1,1,1};
+  int n = 5;
+  TSpline3 *flatspline = new TSpline3("Missing spline",x,y,n);
+#endif //__use_flat_splines_for_missing_splines__
+
+  PhysParamId_t p;
+  bool need_splines;
+  int nXSecSyst;
+
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    
+    #ifdef __show_init_mesg_info__
+    cout << "Exp/NuXSec >> Reading splines for " << util::AsString(s)<< endl;
+    #endif
+
+    bool is_rhc = util::IsRHCSample(s);
+
+    if(is_rhc)
+      nXSecSyst = kNumOfRHCXSecSyst;
+    else
+      nXSecSyst = kNumOfXSecSyst;
+
+    // loop over modes for current sample
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined)    continue;
+      if(util::IsOscNuMu(m))    continue; //using NuMu splines
+      if(util::IsOscNuMuBar(m)) continue; //using NuMuBar splines
+
+      // NEW XSEC
+      #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
+      if(util::IsOscNuEBar(m))  continue; //using NuEBar splines
+      #endif
+      
+      // loop over cross-section systematic parameters
+      for(int ip = 0; ip < nXSecSyst; ip++) {
+        if(is_rhc) {
+          p = kListOfRHCXSecSyst[ip];
+          if(p == kPhypUndefined) continue;
+          //do we need weight splines for the current systematic parameter? 
+          need_splines = kRHCXSecSystHasWghtSplines[ip];
+          if(!need_splines) continue;
+        }
+        else {
+          p = kListOfXSecSyst[ip];          
+          if(p == kPhypUndefined) continue;
+          // do we need weight splines for the current systematic parameter?
+          need_splines = kXSecSystHasWghtSplines[ip];
+          if(!need_splines) continue;
+        }
+#if defined(DISABLE_SCC) && BANFF_BINS != 2
+        if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+            p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
+          continue;
+#endif
+        // is the current systematic parameter going to be applied to current sample/mode?
+        //~ bool is_applied = this->ApplySystToSKMode(p,s,m);
+        bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
+        if(!is_applied) continue;
+        // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
+        for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
+          double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
+          double Ereco_min = util::XsecErecoBinEdges(s,ir);
+          double Ereco_max = util::XsecErecoBinEdges(s,ir+1);
+          
+          for(int it = 0; it < kXsNEtrueBins; it++) {
+            double Etrue     = kXsEtrueBinEdges[is][im][it] + kOneMeV;
+            double Etrue_min = kXsEtrueBinEdges[is][im][it];
+            double Etrue_max = kXsEtrueBinEdges[is][im][it+1];
+
+            bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
+            if(bin_is_beyond_end_of_range) continue;
+            
+            bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue);
+            
+#ifdef __skip_unexpected_spline_test_in_readsplines__
+            if(!bin_is_not_empty)                 
+              continue;
+#endif
+
+            std::string splname = this->BuildSplineName(s,m,p,ir,it);
+
+#ifdef __show_init_mesg_debug__
+            cout << "Exp/NuXSec >> Loading cross-section weight spline: " 
+                 << splname << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+#endif
+
+            // Copy spline from input file
+            TSpline3 * spl = NULL;
+            //Todo: add separate splines for RHC running if necessary
+            spl = (TSpline3 *) spline_files[s]->Get(splname.c_str());
+            
+            if(!spl) {
+              if(!bin_is_not_empty) {
+#ifdef __show_init_mesg_debug__
+                cout << "Exp/NuXSec >> No events or spline for: "
+                     << splname
+                     << endl;
+#endif
+                continue;
+              }
+              else {
+#ifndef __use_flat_splines_for_missing_splines__
+                cerr << "Exp/NuXSec >> Null cross-section weight spline: " 
+                     << splname 
+#if SPLINE_TYPE == 0
+                     << ", " << AsString(m)
+#endif
+                     << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+                cerr << AsString(s) << endl;
+                exit(1);
+#else
+                spl = flatspline;
+#ifdef WARN_ON_FLAT_SPLINE
+                cout<<"Exp/NuXSec >> Using flat spline: "<<splname
+                     << ", " << AsString(m)
+                     << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+#endif // WARN_ON_FLAT_SPLINE
+#endif //__use_flat_splines_for_missing_splines__
+              } //bin_is_not_empty
+            } // !spl
+            else {
+              if(!bin_is_not_empty) {
+                cerr << "Exp/NuXSec >> Spline exists for empty bin: "
+                     << splname 
+                     << " Ereco: "  << Ereco_min << "-" << Ereco_max 
+                     << ", Etrue: " << Etrue_min << "-" << Etrue_max 
+                     //<< ". Spline thinks there are " << spl->GetTitle()
+                     << endl;
+                // exit(1);
+              }
+            }
+            
+#ifndef __skip_unexpected_spline_test_in_readsplines__
+#ifndef __USE_NIWG2015__
+            string spln(spl->GetTitle());
+            spln.erase(spln.end()-7,spln.end());
+            int nevents_spl = atoi(spln.c_str());
+            int nevents_hist = this->HowManyEvents(s, m, Ereco, Etrue);
+            if(nevents_spl != nevents_hist) {
+              cerr << "Exp/NuXSec >> Spline and histogram disagree on number of events! "
+                   << "Spline thinks there are: " << nevents_spl
+                   << ", Histogram thinks there are: " << nevents_hist
+                   << "; " << splname
+                   << "; Ereco: " << Ereco - kOneMeV << " to " << util::XsecErecoBinEdges(s,ir+1)
+                   << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
+                   << endl;
+              //exit(1);
+            }
+#endif
+#endif
+            // Get index for current weight spline
+            int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);     
+            if(idx < 0) {
+              cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: " 
+                   << splname
+                     << endl;
+              exit(1);
+            }
+            
+#ifdef __show_init_mesg_debug__
+            cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: " 
+                 << idx << "  for spline: " << splname << endl;
+            cout << "Exp/NuXSec >> Spline thinks there are " 
+                 << spl->GetTitle() << endl;
+#endif
+
+#ifdef __check_splines_not_flat_on_read__
+            if (spl!=flatspline && bin_is_not_empty) {
+              int n_points_to_check = 11;
+              double zero_point = spl->Eval(0);
+              bool flat=true;
+              for (int ipoint = 0 ; ipoint < n_points_to_check ; ipoint++) {
+                double val = spl->GetXmin()+(spl->GetXmax()-spl->GetXmin()*ipoint/n_points_to_check);
+                if (TMath::Abs(spl->Eval(val)-zero_point) > 1E-3){
+                  flat=false;
+                  break;
+                }
+              }
+              if (flat) {
+                cerr<<"Exp/NuXSec >> Warning, input spline from file is flat: "<<std::setw(40)<<std::left<<splname
+                     <<std::fixed
+                     << "( Ereco: " << setprecision(2) << Ereco_min << "-" << setprecision(2) << Ereco_max 
+                     << ", Etrue: " << setprecision(2) << Etrue_min << "-" << setprecision(2) << Etrue_max <<")"<<endl;
+              }
+            }
+#endif
+
+            if     (s == kSKsFCFV1RingMuLike)    fXSecWghtSpl1Rmu   [idx] = new TSpline3(*spl);
+            else if(s == kSKsFCFV1RingELike)     fXSecWghtSpl1Re    [idx] = new TSpline3(*spl);
+            else if(s == kSKsRHCFCFV1RingMuLike) fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
+            else if(s == kSKsRHCFCFV1RingELike)  fRHCXSecWghtSpl1Re [idx] = new TSpline3(*spl);
+            
+            
+            /// NEW MULTIRING (update with splines for MultiRing sample)
+            else if(s == kSKsFCFVMultiRingMuLike) fXSecWghtSplMultiRmu[idx] = new TSpline3(*spl);
+            else if(s == kSKsFCFVMultiRingELike)  fXSecWghtSplMultiRe [idx] = new TSpline3(*spl);
+            ///
+            
+#ifdef __show_init_mesg_debug2__
+            //check that the spline is not flat
+            cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: " ;
+            cout << spl->Eval(-1) << "\t"
+                 << spl->Eval(0) << "\t"
+                 << spl->Eval(+1) << endl;
+              
+#endif
+            }//Etrue
+          }//Ereco
+       }//p
+    }//m
+  }//s
+
+#ifdef __show_init_mesg_info__
+  cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (splines only)!" << endl;
+#endif
+
+  return true;  
+}
+
+//________________________________________________________________________________________
+bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
+{
+#ifdef __show_init_mesg_info__
+  cout << "Exp/NuXSec >> Reading neutrino generator inputs (minus splines) from input XML file." << endl;
+#endif
+
+  //
+  //
+  //
+
+  //book the bool templ histograms
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     const int      n_ereco_bins = kNXsErecoBins[is];
+     const double * ereco_bin_edges = util::XsecErecoBinEdges(s);
+     for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue;
+       const int      n_etrue_bins    = util::NumVariableXsEtrueBins (s,m);
+       const double * etrue_bin_edges = util::VariableXsEtrueBinEdges(s,m);
+       fXsBinningTempl[is][im] = new TH2D(
+          Form("bool_templ_%d_%d",is,im), util::AsString(m).c_str(),
+               n_ereco_bins, ereco_bin_edges, n_etrue_bins, etrue_bin_edges);
+       fXsBinningTempl[is][im]->SetDirectory(0);
+       fXsBinningTempl[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+       fXsBinningTempl[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+     }
+  }
+  
+#ifdef __USE_NIWG2015__
+  if (fUntunedCentralValues    ) delete fUntunedCentralValues   ;
+  if (fRHCUntunedCentralValues ) delete fRHCUntunedCentralValues;
+  
+  fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
+  fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
+  
+  if (not (fUntunedCentralValues && fRHCUntunedCentralValues) ) {
+    cerr<<"Failed to read <untuned_parameter_central_values>"<<endl;
+    exit(-1);
+  }
+  if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
+    cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
+         << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
+         << endl;
+    exit(-1);
+  }
+  if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
+    cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
+         << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
+         << endl;
+    exit(-1);
+  }
+#endif
+
+  //DEBUG
+  //~ for (int ip = kNumOfFluxParamsInBANFFfit ; ip < kNumOfParamsInBANFFfit; ip++) {
+    //~ conv::PhysParamId_t p = conv::kListOfBANFFParams[ip];
+    //~ int i = arr_index->BANFFXSecSystIdx(p);
+    //~ std::cerr<<AsString(p)<<"\t"<<(*fUntunedCentralValues)[i]<<std::endl;
+  //~ }
+
+  // NEW XSEC --> comment old xsec systematics --> not commented any longer because used
+  fNormCCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  fNormNC1piCRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
+  fNormNCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
+  fNormNCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
+  fNormNuEToNuMuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  fNormAntiNuToNuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
+  fRHCNormCCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/cccoh");
+  fRHCNormNC1piCRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nc1piC");
+  fRHCNormNCcohRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nccoh");
+  fRHCNormNCothRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/ncoth");
+  fRHCNormNuEToNuMuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/numu_to_nue");
+  fRHCNormAntiNuToNuRelErr =
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/nu_to_antinu");
+  fNormRHCToFHCRelErr = 
+    util::XML2Dbl(xml,root_node,"xsec/normalisations/rhc_to_fhc");
+#ifdef __show_init_mesg_info__
+  cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
+#endif
+
+  return true;  
+}
+//Todo: change these methods so that they return the correct BANFF fit
+//________________________________________________________________________________________
+void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)
+{
+  fBANFF = banff;
+}
+//________________________________________________________________________________________
+void NuXSec::TellMeAboutTheRHCBANFFfit(BANFF * banff)
+{
+  fBANFF = banff;
+}
+//________________________________________________________________________________________
+double NuXSec::FinTuningWght(
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  double tot_wght = 1.;
+
+  int nXSecSyst;
+  PhysParamId_t p;
+  bool is_banff_xsec_param;
+  bool is_rhc = util::IsRHCSample(s);
+
+  if(is_rhc)
+    nXSecSyst = kNumOfRHCXSecSyst;
+  else
+    nXSecSyst = kNumOfXSecSyst;
+
+  for(int isyst = 0; isyst < nXSecSyst; isyst++) {
+    if(is_rhc) {
+      p = kListOfRHCXSecSyst[isyst];
+      // "Tuning" involves reweighting to BANFF best-fit values.
+      // Consider only the cross-section systematics that were included in the BANFF fit.
+      is_banff_xsec_param = kRHCXSecSystIncludedInBANFF[isyst];
+    }
+    else {
+      p = kListOfXSecSyst[isyst];
+      is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
+    }
+    if(!is_banff_xsec_param) continue;
+    // Is the current systematic parameter applied to current sample/mode end energy bin?
+    bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
+    if(!apply) continue;
+    // Calculate weight
+    double wght = this->FinTuningWght_1p(p,s,m,Ereco,Etrue);
+    tot_wght *= wght;
+  }
+
+  return tot_wght;
+}
+//________________________________________________________________________________________
+double NuXSec::FinTuningWght_1p(
+  PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+#if defined(DISABLE_SCC) && BANFF_BINS != 2
+  if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+      p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
+    return 1;
+#endif
+  
+  // NEW XSEC
+
+//
+// This method provides weights to reweight MC to the BANFF best-fit parameters.
+// It handles the 4 BANFF cross-section parameters which are correlated with the BANFF 
+// flux parameters. In the current incarnation of the BANFF fit, these parameters are:
+//
+// - NIWG2013 BANFF param, M_{A}  QE
+// - NIWG2013 BANFF param, M_{A}  RES
+// - NIWG2013 BANFF param, CCQE   normalization, 0 - 1.5 GeV (Etrue)
+// - NIWG2013 BANFF param, CCQE   normalization, 1.5 - 3.5 GeV (Etrue)
+// - NIWG2013 BANFF param, CCQE   normalization, 3.5 - 30.0 GeV (Etrue)
+// - NIWG2013 BANFF param, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
+// - NIWG2013 BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV (Etrue)
+// 
+//
+// - NIWG2015 BANFF param, MEC        normalization
+// - NIWG2015 BANFF param, CA5    
+// - NIWG2015 BANFF param, BgRES      normalization
+// - NIWG2015 BANFF param, M_{A} QE
+// - NIWG2015 BANFF param, M_{A} RES
+// - NIWG2015 BANFF param, SCCA (not for numu disappearance)      
+// - NIWG2015 BANFF param, SCCV (not for numu disappearance)     
+// - NIWG2015 BANFF param, Pf    
+// - NIWG2015 BANFF param, CCothShape
+// - NIWG2015 BANFF param, Eb 
+// - NIWG2015 BANFF param, CCcoh      normalization
+// - NIWG2015 BANFF param, NCcoh      normalization
+// - NIWG2015 BANFF param, NCoth      normalization
+// - NIWG2015 BANFF param, NuEToNuMu  normalization
+//
+  
+  // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
+  TSpline3 * wght_spl = 0;
+  
+  double wght = 1.;
+  double tb;
+  
+  //~ cout << "\nEtrue: " << Etrue
+       //~ << "\tEreco: " << Ereco
+       //~ << "\np :" << AsString(p)
+       //~ << "mode: " << AsString(m)
+       //~ << "\nEvents: "<<this->HowManyEvents(s,m,Ereco,Etrue)
+       //~ << endl;
+
+
+  // RESPONSE FUNCTION PARAMETERS
+    
+  // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+  //
+  // BANFF param, M_{A} QE
+  // BANFF param, M_{A} RES
+  //
+  if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES || p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    //if(!wght_spl)
+    //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
+    assert(wght_spl);
+    if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
+      tb = fBANFF->RHCBestFitValue(p);
+    else
+      tb = fBANFF->BestFitValue(p);
+    wght = wght_spl->Eval(tb);
+  }
+
+#elif defined(__USE_NIWG2015__)
+  
+  // NEW XSEC
+  //
+  // BANFF param, M_{A} QE
+  // BANFF param, M_{A} RES
+  // BANFF param, CA5    
+  // BANFF param, SCCA (not for numu disappearance)   
+  // BANFF param, SCCV (not for numu disappearance)   
+  // BANFF param, Pf   
+  // BANFF param, CCothShape
+  // BANFF param, Eb 
+  //
+  
+  if( p == kNuisBANFFMAQE          || p == kRHCNuisBANFFMAQE       ||
+      p == kNuisBANFFMARES         || p == kRHCNuisBANFFMARES       )
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    //~ if(!wght_spl)
+      //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
+    assert(wght_spl);
+    double untuned_value = 0;
+    if(p == kRHCNuisBANFFMAQE       || 
+       p == kRHCNuisBANFFMARES       )
+    {
+      tb = fBANFF->RHCBestFitValue(p);
+      untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+    }
+    else
+    {
+      tb = fBANFF->BestFitValue(p);
+      untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
+    }
+      
+      double spline_point = (tb-untuned_value);
+#ifdef check_spline_limits
+      if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
+        std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+      }
+#endif
+
+
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+      if (spline_point > wght_spl->GetXmax()) spline_point = wght_spl->GetXmax();
+      if (spline_point < wght_spl->GetXmin()) spline_point = wght_spl->GetXmin();
+#endif
+
+      wght = wght_spl->Eval(spline_point);   
+  }
+  
+  if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
+      p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+      p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       ||
+#endif
+      p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
+      p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
+      p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
+      p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE       )
+  {
+    //
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    //~ if(!wght_spl)
+      //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
+    assert(wght_spl);
+    double untuned_value = 0;
+    // NEW XSEC
+    if(p == kRHCNuisBANFFMAQE       || 
+       p == kRHCNuisBANFFMARES      || 
+       p == kRHCNuisBANFFFermiMom   || 
+       p == kRHCNuisBANFFShapeCCoth || 
+       p == kRHCNuisBANFFBindE      || 
+       // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
+       p == kRHCNuisBANFFSCCA       || 
+       p == kRHCNuisBANFFSCCV       ||
+#endif
+       p == kRHCNuisBANFFCA5        ||
+       p == kRHCNuisBANFFBgRES       ) 
+      {
+        tb = fBANFF->RHCBestFitValue(p);
+        untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+      }
+      else
+      {
+        tb = fBANFF->BestFitValue(p);
+        untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
+      }
+      
+      double spline_point = tb-untuned_value;
+      
+#ifdef check_spline_limits
+      if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
+        std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+      }
+#endif
+
+      
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+      if (spline_point > wght_spl->GetXmax()) spline_point = wght_spl->GetXmax();
+      if (spline_point < wght_spl->GetXmin()) spline_point = wght_spl->GetXmin();
+#endif
+      
+      wght = wght_spl->Eval(spline_point);
+  }
+#endif
+
+
+  // NORMALIZATION PARAMETERS
+
+  // NEW XSEC NIWG
+#if defined(__USE_NIWG2013__)
+  //
+  // BANFF param, CCQE   normalization, 0 - 1.5 GeV
+  // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
+  // BANFF param, CCQE   normalization, 3.5 - 30.0 GeV
+  // BANFF param, CC1pi  normalization, 0 - 2.5 GeV
+  // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
+  // BANFF param, NC1pi0 normalization
+  //  
+  else if(p == kNuisBANFFCCQEE0
+          #if BANFF_BINS != 3
+          || p == kNuisBANFFCCQEE1
+          || p == kNuisBANFFCCQEE2
+          #endif
+          || p == kNuisBANFFCC1piE0
+          #if BANFF_BINS != 3
+          || p == kNuisBANFFCC1piE1
+          #endif
+          #if (BANFF_BINS != 2)
+          || p == kNuisBANFFNC1pi0
+          #endif
+          )
+    {
+      wght = fBANFF->BestFitValue(p);
+    }
+  else if(p == kRHCNuisBANFFCCQEE0
+          #if BANFF_BINS != 3
+          || p == kRHCNuisBANFFCCQEE1
+          || p == kRHCNuisBANFFCCQEE2
+          #endif
+          || p == kRHCNuisBANFFCC1piE0
+          #if BANFF_BINS != 3
+          || p == kRHCNuisBANFFCC1piE1
+          #endif
+          #if (BANFF_BINS != 2)
+          || p == kRHCNuisBANFFNC1pi0
+          #endif
+          )
+    {
+      wght = fBANFF->RHCBestFitValue(p);
+    }
+
+#elif defined(__USE_NIWG2015__)
+  //
+  // NEW XSEC
+  //
+  // - BANFF param, MEC        normalization
+  // - BANFF param, BgRES      normalization
+  // - BANFF param, CCcoh      normalization
+  // - BANFF param, NCcoh      normalization
+  // - BANFF param, NCoth      normalization
+  // - BANFF param, NuEToNuMu  normalization
+  //  
+  else if(
+          p == kNuisBANFFMEC         || 
+          p == kNuisBANFFBgRES       ||
+          p == kNuisBANFFNormCCcoh    ||
+          p == kNuisBANFFNormNCcoh    ||
+          p == kNuisBANFFNormNCoth    ||
+          p == kNuisBANFFNormNuEToNuMu
+          )
+    {
+      wght = fBANFF->BestFitValue(p);
+    }
+  else if(
+          p == kRHCNuisBANFFMEC         || 
+          p == kRHCNuisBANFFBgRES       ||
+          p == kRHCNuisBANFFNormCCcoh    ||
+          p == kRHCNuisBANFFNormNCcoh    ||
+          p == kRHCNuisBANFFNormNCoth    ||
+          p == kRHCNuisBANFFNormNuEToNuMu
+          )
+    {
+      wght = fBANFF->RHCBestFitValue(p);
+    }
+#endif
+
+#ifdef __show_banff_tuning_wght_mesg_debug__
+    cout << "Exp/NuXSec/FinTuningWght >> "
+         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+         << ", Ereco = " << Ereco << " GeV" 
+         << ", Etrue = " << Etrue << " GeV => Weight [" 
+         << util::AsString(p) << "] = " << wght 
+         << endl;   
+#endif
+
+  if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
+    //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
+    int ireco = -1; 
+    for (int i = 0; i < kNXsErecoBins[s]; i++) {
+      if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
+         util::XsecErecoBinEdges(s,i+1) >  Ereco) 
+        {
+          ireco = i;
+          break;
+        }
+    }
+    int itrue = -1; 
+    int is = arr_index->SuperkSampleIdx(s);
+    int im = arr_index->SuperkModeIdx(s, m);
+    for (int i = 0; i < kXsNEtrueBins; i++) {
+      if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
+         kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
+        {
+          itrue = i;
+          break;
+        }
+    }
+    cout << "Exp/NuXSec/FinTuningWght >> Got an absurd weight! "
+         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+         << ", Ereco = " << Ereco << " GeV" 
+         << ", Etrue = " << Etrue << " GeV =>"
+         << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
+         << " Weight [" << util::AsString(p) << "] = " << wght
+         << " Current value = " << this->CurrentValue(p)
+         << endl;
+    if (wght_spl) {
+      cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
+           << endl;
+    }
+    else {
+      cout <<"Not using spline"<<std::endl;
+    }
+    exit(1);
+  }
+  return wght;
+}
+//________________________________________________________________________________________
+double NuXSec::SystWght(
+  SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  double tot_wght = 1.;
+
+  int nXSecSyst;
+  PhysParamId_t p;
+  double dt;
+  bool is_rhc = util::IsRHCSample(s);
+
+  if(is_rhc)
+    nXSecSyst = kNumOfRHCXSecSyst;
+  else
+    nXSecSyst = kNumOfXSecSyst;
+
+  for(int isyst = 0; isyst < nXSecSyst; isyst++) {
+    if(is_rhc) {
+      p = kListOfRHCXSecSyst[isyst];
+      // Was tweaked?
+      if(kRHCXSecSystIncludedInBANFF[isyst])
+        dt = fabs(fBANFF->RHCCurrentValue(p) - fBANFF->RHCBestFitValue(p)); // banff parameters
+      else
+        dt = fabs(this->CurrentValue(p)); // non-banff normalisations
+    }//RHC
+    else {
+      p = kListOfXSecSyst[isyst];
+      // Was tweaked?
+      if(kXSecSystIncludedInBANFF[isyst])
+        dt = fabs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
+      else
+        dt = fabs(this->CurrentValue(p)); // non-banff normalisations
+    }//FHC
+    // Was tweaked?
+    if(dt < kASmallNum) continue;
+    // Is the current systematic parameter applied to current sample/mode end energy bin?
+    bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
+    if(!apply) continue;
+    // Calculate weight
+    double wght = this->SystWght_1p(p,s,m,Ereco,Etrue);
+    tot_wght *= wght;
+  }//isyst
+  return tot_wght;
+}
+//________________________________________________________________________________________
+double NuXSec::SystWght_1p(
+  PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+#if defined(DISABLE_SCC) && BANFF_BINS != 2
+  if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+      p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
+    return 1;
+#endif
+//
+// This method provides weights to account for systematic variations to the XSec params.
+// The weights are relative to MC reweighted to the BANFF best-fit point.
+// It handles both the BANFF and uncorelated XSec params.
+//
+
+  // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
+  
+  TSpline3 * wght_spl = 0;
+
+  double wght = 1.;
+  double tb, tc;
+
+  //
+  // BANFF param w/ response functions:
+  //
+
+  // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+  // BANFF param # 31, M_{A} QE
+  // BANFF param # 32, M_{A} RES
+  //
+  if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES || p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+    if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
+      tb = fBANFF->RHCBestFitValue(p);
+      tc = fBANFF->RHCCurrentValue(p);
+    }
+    else {
+      tb = fBANFF->BestFitValue(p);
+      tc = fBANFF->CurrentValue(p);
+    }
+    wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
+  }
+  
+  //
+  // BANFF param, CCQE   normalization, 0 - 1.5 GeV
+  // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
+  // BANFF param, CCQE   normalization, 3.5 - 30.0 GeV
+  // BANFF param, CC1pi  normalization, 0 - 2.5 GeV
+  // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
+  // BANFF param, NC1pi0 normalization
+  // 
+  else if(p == kNuisBANFFCCQEE0
+#if BANFF_BINS != 3
+       || p == kNuisBANFFCCQEE1
+       || p == kNuisBANFFCCQEE2
+#endif
+       || p == kNuisBANFFCC1piE0
+#if BANFF_BINS != 3
+       || p == kNuisBANFFCC1piE1
+#endif
+#if (BANFF_BINS != 2)
+       || p == kNuisBANFFNC1pi0
+#endif
+  )
+  {
+    wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
+  }
+  else if(p == kRHCNuisBANFFCCQEE0
+#if BANFF_BINS != 3
+       || p == kRHCNuisBANFFCCQEE1
+       || p == kRHCNuisBANFFCCQEE2
+#endif
+       || p == kRHCNuisBANFFCC1piE0
+#if BANFF_BINS != 3
+       || p == kRHCNuisBANFFCC1piE1
+#endif
+#if (BANFF_BINS != 2)
+       || p == kRHCNuisBANFFNC1pi0
+#endif
+  )
+  {
+   wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
+  }
+  
+  // end NIWG2013
+#elif defined(__USE_NIWG2015__)
+  //
+  // NEW XSEC
+  //
+  // BANFF param, M_{A} QE
+  // BANFF param, M_{A} RES
+  // BANFF param, CA5 
+  // BANFF param, SCCA (not for numu disappearance)
+  // BANFF param, SCCV (not for numu disappearance)
+  // BANFF param, Pf   
+  // BANFF param, CCothShape
+  // BANFF param, Eb 
+  
+  // Axial masses
+  if (p == kNuisBANFFMAQE          || p == kRHCNuisBANFFMAQE       ||
+      p == kNuisBANFFMARES         || p == kRHCNuisBANFFMARES      )
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    double untuned_value = 1;
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+
+    // NEW XSEC NIWG
+    // NEW XSEC
+    if(p == kRHCNuisBANFFMAQE          || 
+       p == kRHCNuisBANFFMARES          )
+    {
+      tb = fBANFF->RHCBestFitValue(p);
+      tc = fBANFF->RHCCurrentValue(p);
+      untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+    }
+    else {
+      tb = fBANFF->BestFitValue(p);
+      tc = fBANFF->CurrentValue(p);
+      untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
+    }
+    double spl_tb = (tb-untuned_value);
+    double spl_tc = (tc-untuned_value);
+#ifdef check_spline_limits
+    if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
+      std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+    }
+#endif
+    
+    
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+    if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
+    if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
+#endif
+
+    wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+  } // end of MAQE
+  
+  // Other systematics where we check spline limits
+  else if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
+           p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
+           p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCA       ||
+#endif
+           p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
+           p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES       )
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    double untuned_value = 0;
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+
+    // NEW XSEC NIWG
+    // NEW XSEC
+    if(p == kRHCNuisBANFFShapeCCoth || 
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
+       p == kRHCNuisBANFFSCCA       || 
+       p == kRHCNuisBANFFSCCV       ||
+#endif
+       p == kRHCNuisBANFFCA5        ||
+       p == kRHCNuisBANFFBgRES       ) 
+    {
+      tb = fBANFF->RHCBestFitValue(p);
+      tc = fBANFF->RHCCurrentValue(p);
+      untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+    }
+    else {
+      tb = fBANFF->BestFitValue(p);
+      tc = fBANFF->CurrentValue(p);
+      untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
+    }
+    double spl_tb = tb-untuned_value;
+    double spl_tc = tc-untuned_value;
+#ifdef check_spline_limits
+    if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
+      std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+    }
+#endif
+
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+    if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
+    if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
+#endif
+    
+    wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+  }
+    
+  // Response functions where we expect to exceed the splines range.
+  else if (p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
+           p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE      )
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    double untuned_value = 0;
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+
+    // NEW XSEC NIWG
+    // NEW XSEC
+    if(p == kRHCNuisBANFFFermiMom   ||
+       p == kRHCNuisBANFFBindE       ) 
+    {
+      tb = fBANFF->RHCBestFitValue(p);
+      tc = fBANFF->RHCCurrentValue(p);
+      untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+    }
+    else {
+      tb = fBANFF->BestFitValue(p);
+      tc = fBANFF->CurrentValue(p);
+      untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
+    }
+    double spl_tb = tb-untuned_value;
+    double spl_tc = tc-untuned_value;
+    
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+    if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
+    if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
+#endif
+    
+    wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+  } // end of response functions
+
+  //
+  // BANFF param normalization:
+  //
+  
+  // NEW XSEC
+  //  
+  // BANFF param normalization:
+  //
+  // - BANFF param, MEC        normalization
+  // - BANFF param, BgRES      normalization
+  // - BANFF param, CCcoh      normalization
+  // - BANFF param, NCcoh      normalization
+  // - BANFF param, NCoth      normalization
+  // - BANFF param, NuEToNuMu  normalization
+  //  
+  else if( p == kNuisBANFFMEC          || 
+           p == kNuisBANFFNormCCcoh    ||
+           p == kNuisBANFFNormNCcoh    ||
+           p == kNuisBANFFNormNCoth    ||
+           p == kNuisBANFFNormNuEToNuMu )
+  {
+    wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
+  }
+  else if( p == kRHCNuisBANFFMEC          || 
+           p == kRHCNuisBANFFNormCCcoh    ||
+           p == kRHCNuisBANFFNormNCcoh    ||
+           p == kRHCNuisBANFFNormNCoth    ||
+           p == kRHCNuisBANFFNormNuEToNuMu )
+  {
+    wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
+  }
+#endif // NIWG2015
+  
+    // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+  //
+  // Fermi momentum
+  // spectral function on/off
+  // W-shape
+  // CC other shape
+  // Binding energy
+  //
+  else if(  (p >= kNuisXSecFermiMom && p <= kNuisXSecShapeCCoth)       ||
+             p == kNuisXSecBindE                                       ||
+            (p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecShapeCCoth) ||
+             p == kRHCNuisXSecBindE                                     )
+  {
+#if SPLINE_TYPE == -1
+    return wght;
+#endif
+    wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    assert(wght_spl);
+    tc = this->CurrentValue(p);
+    wght = wght_spl->Eval(tc);
+  }    
+  // CCQE norm 1.5 - 3.5 GeV
+  // CCQE norm > 3.5 GeV
+  // CC1pi norm > 2.5 GeV   
+  // CC coherent norm
+  // NC 1piC norm
+  // NC coherent norm
+  // NC other norm
+  // nue / numu cross section
+  //    
+  else if((p >= kNuisXSecNormCCcoh && p <= kNuisXSecNormAntiNuToNu)       || 
+          (p >= kRHCNuisXSecNormCCcoh && p <= kRHCNuisXSecNormAntiNuToNu) ||
+           p == kNuisRHCToFHC)
+  {
+    wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
+  }
+  //
+  // pion-less delta-decay
+  //
+  else if(p == kNuisXSecPiLessDelta || p == kRHCNuisXSecPiLessDelta)
+    {
+      #if SPLINE_TYPE == -1
+      return wght;
+      #endif
+      wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+      assert(wght_spl);
+      tc = TMath::Max(this->CurrentValue(p), -1.);
+      wght = wght_spl->Eval(tc);
+    }
+
+  // NEW XSEC 
+
+#elif defined(__USE_NIWG2015__)
+  //
+  // RPA tuning
+  //
+  else if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
+  {
+    return 1; // This is implented in SKMC for now
+    //~ #if SPLINE_TYPE == -1
+    //~ return wght;
+    //~ #endif
+    //~ wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
+    //~ assert(wght_spl);
+    //~ tc = this->CurrentValue(p);
+    //~ wght = wght_spl->Eval(tc);
+  }    
+#endif
+
+#ifdef __show_syst_var_wght_mesg_debug__
+  if (wght != 1.)
+  {
+     cout << "Exp/NuXSec/SystWght >> "
+          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+          << ", Ereco = " << Ereco << " GeV" 
+          << ", Etrue = " << Etrue << " GeV => Weight [" 
+          << util::AsString(p) << "] = " << wght 
+          << endl;   
+  }
+#endif
+
+  if(fabs(wght) > conv::kMaxAllowedWght) {
+    //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
+    int ireco = -1; 
+    for (int i = 0; i < kNXsErecoBins[s]; i++) {
+      if(util::XsecErecoBinEdges(s,i)   <= Ereco && 
+         util::XsecErecoBinEdges(s,i+1) >  Ereco) 
+        {
+          ireco = i;
+          break;
+        }
+    }
+    int itrue = -1; 
+    int is = arr_index->SuperkSampleIdx(s);
+    int im = arr_index->SuperkModeIdx(s, m);
+    for (int i = 0; i < kXsNEtrueBins; i++) {
+      if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
+         kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
+        {
+          itrue = i;
+          break;
+        }
+    }
+    cout << "Exp/NuXSec/SystWght >> Got an absurd weight! "
+         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+         << ", Ereco = " << Ereco << " GeV" 
+         << ", Etrue = " << Etrue << " GeV =>"
+         << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
+         << " Weight [" << util::AsString(p) << "] = " << wght
+         << " Current value = " << this->CurrentValue(p)
+         << endl;
+    if (wght_spl) {
+      cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
+           << endl;
+    }
+    else {
+      cout <<"Not using spline"<<std::endl;
+    }
+    exit(1);
+  }
+  
+  return wght;
+}
+//________________________________________________________________________________________
+double NuXSec::CurrentValue(PhysParamId_t p) const
+{
+  // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+  switch(p) {
+  case kNuisXSecFermiMom:
+    return fFermiMomTwkDial;
+    break;
+  case kNuisXSecSpecFunc:
+    return fSpecFuncTwkDial;
+    break;
+  case kNuisXSecWshape:
+    return fWshapeTwkDial;
+    break;
+  case kNuisXSecShapeCCoth:
+    return fShapeCCothTwkDial;
+    break;
+  case kNuisXSecPiLessDelta:
+    return fPiLessDeltaTwkDial;
+    break;
+  case kNuisXSecBindE:
+    return fBindETwkDial;
+    break;
+  case kNuisXSecNormCCcoh:
+    return fNormCCcohTwkDial;
+    break;
+  case kNuisXSecNormNC1piC:
+    return fNormNC1piCTwkDial;
+    break;
+  case kNuisXSecNormNCoth:
+    return fNormNCothTwkDial;
+    break;
+  case kNuisXSecNormNCcoh:
+    return fNormNCcohTwkDial;
+    break;
+  case kNuisXSecNormNuEToNuMu:
+    return fNormNuEToNuMuTwkDial;
+    break;
+  case kNuisXSecNormAntiNuToNu:
+    return fNormAntiNuToNuTwkDial;
+    break;
+  case kRHCNuisXSecFermiMom:
+    return fRHCFermiMomTwkDial;
+    break;
+  case kRHCNuisXSecSpecFunc:
+    return fRHCSpecFuncTwkDial;
+    break;
+  case kRHCNuisXSecWshape:
+    return fRHCWshapeTwkDial;
+    break;
+  case kRHCNuisXSecShapeCCoth:
+    return fRHCShapeCCothTwkDial;
+    break;
+  case kRHCNuisXSecPiLessDelta:
+    return fRHCPiLessDeltaTwkDial;
+    break;
+  case kRHCNuisXSecBindE:
+    return fRHCBindETwkDial;
+    break;
+  case kRHCNuisXSecNormCCcoh:
+    return fRHCNormCCcohTwkDial;
+    break;
+  case kRHCNuisXSecNormNC1piC:
+    return fRHCNormNC1piCTwkDial;
+    break;
+  case kRHCNuisXSecNormNCoth:
+    return fRHCNormNCothTwkDial;
+    break;
+  case kRHCNuisXSecNormNCcoh:
+    return fRHCNormNCcohTwkDial;
+    break;
+  case kRHCNuisXSecNormNuEToNuMu:
+    return fRHCNormNuEToNuMuTwkDial;
+    break;
+  case kRHCNuisXSecNormAntiNuToNu:
+    return fRHCNormAntiNuToNuTwkDial;
+    break;
+  case kNuisRHCToFHC:
+    return fNormRHCToFHCTwkDial;
+    break;
+  case kNuisBANFFMAQE:
+  case kNuisBANFFMARES:
+  case kNuisBANFFCCQEE0:
+  #if BANFF_BINS != 3
+  case kNuisBANFFCCQEE1:
+  case kNuisBANFFCCQEE2:
+  #endif
+  case kNuisBANFFCC1piE0:
+  #if BANFF_BINS != 3
+  case kNuisBANFFCC1piE1:
+  #endif
+  #if (BANFF_BINS != 2)
+  case kNuisBANFFNC1pi0:
+  #endif
+  #if BANFF_BINS == 4
+  case kNuisBANFFMECNorm:
+  case kNuisBANFFPDDDoubleCount:
+  #endif
+    return fBANFF->CurrentValue(p);
+    break;
+  case kRHCNuisBANFFMAQE:
+  case kRHCNuisBANFFMARES:
+  case kRHCNuisBANFFCCQEE0:
+  #if BANFF_BINS != 3
+  case kRHCNuisBANFFCCQEE1:
+  case kRHCNuisBANFFCCQEE2:
+  #endif
+  case kRHCNuisBANFFCC1piE0:
+  #if BANFF_BINS != 3
+  case kRHCNuisBANFFCC1piE1:
+  #endif
+  #if (BANFF_BINS != 2)
+  case kRHCNuisBANFFNC1pi0:
+  #endif
+    return fBANFF->RHCCurrentValue(p);
+    break;
+  default:
+    return 0;
+  }
+
+#elif defined(__USE_NIWG2015__)
+
+  // NEW XSEC
+
+  switch(p) {
+
+  case kNuisXSecRPA:
+    return fRPATwkDial;
+    break;
+
+  case kNuisBANFFFermiMom:
+  case kNuisBANFFShapeCCoth:
+  case kNuisBANFFBindE:
+  case kNuisBANFFNormCCcoh:
+  case kNuisBANFFNormNCoth:
+  case kNuisBANFFNormNCcoh:
+  case kNuisBANFFNormNuEToNuMu:  
+  case kNuisBANFFMAQE:
+  case kNuisBANFFMARES:
+  case kNuisBANFFMEC: 
+  case kNuisBANFFCA5:
+  case kNuisBANFFBgRES:
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)    
+  case kNuisBANFFSCCA:
+  case kNuisBANFFSCCV:
+#endif
+    return fBANFF->CurrentValue(p);
+    break;
+    
+  case kRHCNuisXSecRPA:
+    return fRHCRPATwkDial;
+    break;
+
+  case kRHCNuisBANFFFermiMom:
+  case kRHCNuisBANFFShapeCCoth:
+  case kRHCNuisBANFFBindE:
+  case kRHCNuisBANFFNormCCcoh:
+  case kRHCNuisBANFFNormNCoth:
+  case kRHCNuisBANFFNormNCcoh:
+  case kRHCNuisBANFFNormNuEToNuMu:  
+  case kRHCNuisBANFFMAQE:
+  case kRHCNuisBANFFMARES:
+  case kRHCNuisBANFFMEC: 
+  case kRHCNuisBANFFCA5:
+  case kRHCNuisBANFFBgRES:
+      // NEW SPLIT ANA
+#if (BANFF_BINS != 2)
+  case kRHCNuisBANFFSCCA:
+  case kRHCNuisBANFFSCCV:    
+#endif
+    return fBANFF->RHCCurrentValue(p);
+    break;
+    
+  default:
+    return 0;
+  }
+#endif
+
+  return 0;
+}
+
+
+//________________________________________________________________________________________
+double NuXSec::RelativeError(PhysParamId_t p) const
+{
+  // NEW XSEC --> xsec syst now in BANFF output are commented 
+  //
+  // not commented any longer, but uncorrelated systematics are not used
+  //
+  
+  // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+  switch(p) {
+  case kNuisXSecNormCCcoh:
+    return fNormCCcohRelErr;
+    break;
+  case kNuisXSecNormNC1piC:
+    return fNormNC1piCRelErr;
+    break;
+  case kNuisXSecNormNCcoh:
+    return fNormNCcohRelErr;
+    break;
+  case kNuisXSecNormNCoth:
+    return fNormNCothRelErr;
+    break;
+  case kNuisXSecNormNuEToNuMu:
+    return fNormNuEToNuMuRelErr;
+    break;
+  case kNuisXSecNormAntiNuToNu:
+    return fNormAntiNuToNuRelErr;
+    break;
+  case kRHCNuisXSecNormCCcoh:
+    return fRHCNormCCcohRelErr;
+    break;
+  case kRHCNuisXSecNormNC1piC:
+    return fRHCNormNC1piCRelErr;
+    break;
+  case kRHCNuisXSecNormNCcoh:
+    return fRHCNormNCcohRelErr;
+    break;
+  case kRHCNuisXSecNormNCoth:
+    return fRHCNormNCothRelErr;
+    break;
+  case kRHCNuisXSecNormNuEToNuMu:
+    return fRHCNormNuEToNuMuRelErr;
+    break;
+  case kRHCNuisXSecNormAntiNuToNu:
+    return fRHCNormAntiNuToNuRelErr;
+    break;
+  case kNuisRHCToFHC:
+    return fNormRHCToFHCRelErr;
+    break;
+  default:
+    cout << "Relative error is not defined for xsec parameter: " << AsString(p) << endl;
+    return 0;
+  }
+#elif defined(__USE_NIWG2015__)
+  // NEW XSEC
+  // No uncorrelated "NORMALIZATION" NIWG2015 xsec systematics
+#endif
+  return 0;
+}
+ 
+ 
+//________________________________________________________________________________________
+void NuXSec::PrintSystematicVariations(std::ostream & stream) const
+{
+  // NEW XSEC --> xsec syst now in BANFF output are commented 
+  //
+  // not commented any longer, but uncorrelated systematics are not used
+  //
+
+  stream << "Exp/XSec >> XSec parameters:"                              << endl; 
+
+#if defined(__USE_NIWG2013__)
+  stream << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
+  stream << "         >> Spectral function   " << fSpecFuncTwkDial      << endl;
+  stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
+  stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
+  stream << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
+  stream << "         >> Binding energy      " << fBindETwkDial         << endl;
+  stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
+  stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
+  #ifndef __NUMUONLY__ 
+  stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
+  #endif
+  stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
+  stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
+  stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
+#elif defined(__USE_NIWG2015__)
+  stream << "         >> RPA tuning          " << fRPATwkDial      << endl;
+#endif
+}
+//________________________________________________________________________________________
+void NuXSec::PrintRHCSystematicVariations(std::ostream & stream) const
+{
+  // NEW XSEC --> xsec syst now in BANFF output are commented 
+  //
+  // not commented any longer, but uncorrelated systematics are not used
+  //
+#if defined(__USE_NIWG2013__)
+  stream << "Exp/XSec >> RHC XSec parameters:"                              << endl;
+  stream << "         >> RHC Fermi momentum      " << fRHCFermiMomTwkDial      << endl;
+  stream << "         >> RHC spectral function   " << fRHCSpecFuncTwkDial      << endl;
+  stream << "         >> RHC W-shape             " << fRHCWshapeTwkDial        << endl;
+  stream << "         >> RHC CC-oth shape        " << fRHCShapeCCothTwkDial    << endl;
+  stream << "         >> RHC pi-less delta decay " << fRHCPiLessDeltaTwkDial   << endl;
+  stream << "         >> RHC binding energy      " << fRHCBindETwkDial         << endl;
+  stream << "         >> RHC CC-coh norm         " << fRHCNormCCcohTwkDial     << endl;
+  stream << "         >> RHC NC-1piC norm        " << fRHCNormNC1piCTwkDial    << endl;
+  #ifndef __NUMUONLY__
+  stream << "         >> RHC NC-coh norm         " << fRHCNormNCcohTwkDial     << endl;
+  #endif
+  stream << "         >> RHC NC-oth norm         " << fRHCNormNCothTwkDial     << endl;
+  stream << "         >> RHC NuE to NuMu norm    " << fRHCNormNuEToNuMuTwkDial << endl;
+  stream << "         >> RHC antiNu to Nu norm   " << fRHCNormAntiNuToNuTwkDial<< endl;
+  stream << "         >> RHC to FHC norm         " << fNormRHCToFHCTwkDial     << endl;
+#elif defined(__USE_NIWG2015__)
+  stream << "         >> RHC RPA tuning          " << fRHCRPATwkDial      << endl;
+#endif
+}
+
+//________________________________________________________________________________________
+//
+// Cross-section weight splines
+//
+
+//________________________________________________________________________________________
+TSpline3 * NuXSec::FindWghtSpline(
+   PhysParamId_t p, SuperkSample_t s, SuperkMode_t mp, double Ereco, double Etrue) const
+{
+  SuperkMode_t m = mp; // default
+  // HACK: for `osc numu' templates, use `numu' response functions
+  if      ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     } //both use the same binning
+  else if ( mp == kSKmOscNuMuCC1pi    ) { m = kSKmNuMuCC1pi;    }
+  else if ( mp == kSKmOscNuMuCCcoh    ) { m = kSKmNuMuCCcoh;    }
+  else if ( mp == kSKmOscNuMuCCoth    ) { m = kSKmNuMuCCoth;    }
+
+  else if ( mp == kSKmOscNuMuBarCCQE     ) { m = kSKmNuMuBarCCQE;     }//both use the same binning
+  else if ( mp == kSKmOscNuMuBarCC1pi    ) { m = kSKmNuMuBarCC1pi;    }
+  else if ( mp == kSKmOscNuMuBarCCcoh    ) { m = kSKmNuMuBarCCcoh;    }
+  else if ( mp == kSKmOscNuMuBarCCoth    ) { m = kSKmNuMuBarCCoth;  }
+#ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
+  else if ( mp == kSKmOscNuEBarCCQE     ) { m = kSKmNuEBarCCQE;     }//problem if they dont use the same binning?
+  else if ( mp == kSKmOscNuEBarCC1pi    ) { m = kSKmNuEBarCC1pi;    }//fewer bins then numubar
+  else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
+  else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
+#endif
+
+
+  int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
+
+  if(idx == -1 || idx == -2) 
+  {
+    cerr << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
+         << "sample = "      << util::AsString(s) 
+         << ", mode = "      << util::AsString(m)
+         << ", parameter = " << util::AsString(p)
+         << ", Ereco = "     << Ereco << " GeV"
+         << ", Etrue = "     << Etrue << " GeV!"
+         << " idx = " << idx 
+         << endl;
+    exit(1);
+  }
+
+#ifdef __show_find_wght_spline_mesg_debug__
+  cout << "Exp/NuXSec/FindWghtSpline >> Looking for spline: "
+         << "sample = "      << util::AsString(s) 
+         << ", mode = "      << util::AsString(m)
+         << ", parameter = " << util::AsString(p)
+         << ", Ereco = "     << Ereco << " GeV"
+         << ", Etrue = "     << Etrue << " GeV!"
+         << " idx = " << idx 
+         << endl;
+#endif
+
+  //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike, 
+  //kSKsFCFV1RingELike, kSKsRHCFCFV1RingMuLike or kSKsRHCFCFV1RingELike
+
+  // if(s == kSKsRHCFCFV1RingMuLike)
+  //   return fRHCXSecWghtSpl1Rmu[idx];
+  // else if(s == kSKsRHCFCFV1RingELike)
+  //   return fRHCXSecWghtSpl1Re[idx];
+  // else if(s == kSKsFCFV1RingELike)
+  //   return fXSecWghtSpl1Re[idx];
+  // else
+  //   return fXSecWghtSpl1Rmu[idx];
+
+  /// NEW MULTIRING (use 1 ring splines for multiring sample)
+  if(s == kSKsRHCFCFV1RingMuLike)
+    return fRHCXSecWghtSpl1Rmu[idx];
+  else if(s == kSKsRHCFCFV1RingELike)
+    return fRHCXSecWghtSpl1Re[idx];
+  
+  else if(s == kSKsFCFV1RingELike)
+    return fXSecWghtSpl1Re[idx];
+  else if(s == kSKsFCFV1RingMuLike)
+    return fXSecWghtSpl1Rmu[idx];
+
+  else if(s == kSKsFCFVMultiRingELike){ // multiring
+    //cout << "kSKsFCFVMultiRingELike" << endl;
+    assert(fXSecWghtSplMultiRe[idx]);
+    return fXSecWghtSplMultiRe[idx];    
+  }
+  else {
+    //cout << "kSKsFCFVMultiRingLike" << endl;
+    assert(fXSecWghtSplMultiRmu[idx]);
+    return fXSecWghtSplMultiRmu[idx];
+  }
+  ///
+
+}
+//________________________________________________________________________________________
+int NuXSec::WghtSplineIdx(
+   PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+// 1-D array of weight splines is basically a linearized version of a 5-D array 
+// with the following indices:
+//
+//  0:  0 --> kNSuperkSamples
+//  1:  0 --> kNSuperkModes
+//  2:  0 --> kNumOfXSecSyst
+//  3:  0 --> kXsNErecoBins
+//  4:  0 --> kXsNEtrueBins
+//
+
+  int is = arr_index->SuperkSampleIdx(s);
+  if(is == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for sample "
+         << util::AsString(s)
+         << ". util::ArrIdx returned "
+         << arr_index->SuperkSampleIdx(s)
+         << endl;
+#endif //__show_wght_spline_idx_mesg_debug__
+    return -1;
+  }
+  int im = arr_index->SuperkModeIdx(s,m);
+  if(im == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for mode "
+         << util::AsString(m)
+         << " in sample "
+         << util::AsString(s)
+         << ". util::ArrIdx returned "
+         << arr_index->SuperkModeIdx(s,m)
+         << endl;
+#endif //__show_wght_spline_idx_mesg_debug__
+    return -1;
+  }
+  int ip;
+  if(util::IsRHCSample(s))
+    ip = arr_index->RHCXSecSystIdx(p);
+  else
+    ip = arr_index->XSecSystIdx(p);
+  if(ip == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec syst "
+         << util::AsString(p)
+         << ". util::ArrIdx returned "
+         << arr_index->XSecSystIdx(p)
+         << endl;
+#endif//__show_wght_spline_idx_mesg_debug__
+    return -1;
+  }
+  int ireco = -1; 
+  int nErecoBins = kNXsErecoBins[is];
+  const double * ErecoBinEdges = util::XsecErecoBinEdges(s);
+  for (int i = 0; i < nErecoBins ; i++) {
+    if(ErecoBinEdges[i]   <= Ereco && 
+       ErecoBinEdges[i+1] >  Ereco) 
+      {
+        ireco = i;
+        break;
+      }
+  }
+  if(ireco == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ERecoBin for ereco value "
+         << Ereco << endl;
+#endif//__show_wght_spline_idx_mesg_debug__
+    return -1;
+  }
+
+  int itrue = -1; 
+
+  for (int i = 0; i < kXsNEtrueBins; i++) {
+    if(kXsEtrueBinEdges[is][im][i]   <= Etrue && 
+       kXsEtrueBinEdges[is][im][i+1] >  Etrue) 
+      {
+        itrue = i;
+        break;
+      }
+  } 
+  if(itrue == -1) {
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ETrueBin for etrue value "
+         << Etrue 
+         << " in mode " << m << " "
+         << util::AsString(m)
+         << " in sample " << s << " "
+         << util::AsString(s)
+         << endl;
+#endif //__show_wght_spline_idx_mesg_debug__
+    return -2;
+  }
+  
+  int idx = itrue 
+    + ireco * kXsNEtrueBins 
+    + ip    * kXsNEtrueBins * nErecoBins
+    + im    * kXsNEtrueBins * nErecoBins * kNumOfXSecSyst;
+    //    + is    * kXsNEtrueBins * util::NumXsecErecoBins(s) * kNumOfXSecSyst * kNSuperkModes;
+    
+    
+#ifdef __show_wght_spline_idx_mesg_debug__
+    cout << "Exp/NuXSec/WghtSplineIdx >> Spline information:"
+         << "\tEtrue: "<<Etrue<<" ("<<itrue<<") , Ereco: "<<Ereco<<" ("<<ireco<<") \n"
+         << " in mode " << m << " "
+         << util::AsString(m)
+         << " in sample " << s << " "
+         << util::AsString(s)
+         << " has index "<<idx<<"\n"
+         << endl;
+#endif //__show_wght_spline_idx_mesg_debug__
+  
+  return idx;
+}
+//________________________________________________________________________________________
+bool NuXSec::ApplySyst(
+  PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  bool apply2mode = this->ApplySystToSKMode(p,s,m);
+  if (not apply2mode) return false;
+  bool apply2bin  = this->ApplySystToEnergyBin(p,Ereco,Etrue);
+  return apply2bin;
+}
+//________________________________________________________________________________________
+bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m) const
+{
+  int im = arr_index->SuperkModeIdx(s,m);
+  if (im == -1) return false;
+  
+  int isyst;
+  if(util::IsRHCSample(s)) {
+    isyst = arr_index->RHCXSecSystIdx(p);
+    if (isyst == -1) return false;
+  }
+  else {
+    isyst = arr_index->XSecSystIdx(p);
+    if (isyst == -1) return false;
+  }
+  
+  int is = arr_index->SuperkSampleIdx(s);
+
+  bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
+
+  return apply;
+}
+//________________________________________________________________________________________
+bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) const
+{
+  int isyst;
+  bool apply;
+
+  if(IsRHCSystematic(p)) {
+    isyst = arr_index->RHCXSecSystIdx(p);
+    if (isyst == -1) return false;
+    apply = (Ereco >= kRHCXSecSystErecoCut[isyst][0] && Ereco < kRHCXSecSystErecoCut[isyst][1]) &&
+      (Etrue >= kRHCXSecSystEtrueCut[isyst][0] && Etrue < kRHCXSecSystEtrueCut[isyst][1]);
+  }
+  else {
+    isyst = arr_index->XSecSystIdx(p);
+    if (isyst == -1) return false;
+    apply = (Ereco >= kXSecSystErecoCut[isyst][0] && Ereco < kXSecSystErecoCut[isyst][1]) &&
+      (Etrue >= kXSecSystEtrueCut[isyst][0] && Etrue < kXSecSystEtrueCut[isyst][1]);
+  }
+
+  return apply;
+}
+//________________________________________________________________________________________
+void NuXSec::BuildXsBinningMCTemplates(
+  TH2D * input_mctempl_array[kns][knm])
+{
+#ifdef __show_init_mesg_info__
+  cout << "Exp/NuXSec >> BuildXsBinningMCTemplates "<< endl;
+#endif
+  for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     for(int im = 0; im < knm; im++) {
+       SuperkMode_t m = kSKReactionModes[is][im];
+       if(m == kSKmUndefined) continue; 
+#ifdef __show_build_xsbinning_template_mesg_info__
+       cout << "Exp/NuXSec >> Building Xsec binning MC template for "
+            << "sample = " << util::AsString(s) 
+            << ", mode = " << util::AsString(m)
+            << endl;
+#endif
+       const TH2D * mctempl = input_mctempl_array[is][im];
+       assert (mctempl);
+       TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
+
+       for(int ir = 0; ir <= mctempl->GetNbinsX(); ir++) {
+         for(int it = 0; it <= mctempl->GetNbinsY(); it++) {
+           if(mctempl->GetBinContent(ir,it) > kASmallNum) {
+             mctempl_xsbinning->Fill(mctempl->GetXaxis()->GetBinCenter(ir), mctempl->GetYaxis()->GetBinCenter(it), mctempl->GetBinContent(ir,it));
+#ifdef __show_build_xsbinning_template_mesg_debug__
+             int bx = 0, by = 0, bz = 0;
+             int bg = mctempl_xsbinning->FindBin(mctempl->GetXaxis()->GetBinCenter(ir), mctempl->GetYaxis()->GetBinCenter(it));
+             mctempl_xsbinning->GetBinXYZ(bg, bx, by, bz);
+             cout << std::fixed
+                  << "Exp/NuXSec >> Filled Xsec binning MC template for "
+                  << "ereco = " << mctempl->GetXaxis()->GetBinCenter(ir)
+                  << " etrue = " << mctempl->GetYaxis()->GetBinCenter(it)
+                  << endl
+                  << "\t Put into bins: ereco " 
+                  << mctempl_xsbinning->GetXaxis()->GetBinLowEdge(bx) << " - " 
+                  << mctempl_xsbinning->GetXaxis()->GetBinUpEdge(bx) << "\t etrue " 
+                  << mctempl_xsbinning->GetYaxis()->GetBinLowEdge(by) << " - " 
+                  << mctempl_xsbinning->GetYaxis()->GetBinUpEdge(by)
+                  << endl;
+#endif
+           }
+         }//it
+       }//ir
+       
+     }//im
+  }//is
+
+#ifdef __save_ori_templates_init_debug__
+  TFile out("XsBinningTemplates.root","RECREATE");
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    for(int im = 0; im < knm; im++) {
+      SuperkMode_t m = kSKReactionModes[is][im];
+      if(m == kSKmUndefined) continue;
+      fXsBinningTempl[is][im]->Write();
+    }
+  }
+  out.Close();
+#endif
+}
+//________________________________________________________________________________________
+bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  int is = arr_index->SuperkSampleIdx(s);
+  int im = arr_index->SuperkModeIdx(s,m);
+  assert(is != -1 && im != -1);
+
+  TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
+  assert(mctempl_xsbinning);
+
+  int ir = mctempl_xsbinning->GetXaxis()->FindBin(Ereco);
+  int it = mctempl_xsbinning->GetYaxis()->FindBin(Etrue);
+
+  bool ev = mctempl_xsbinning->GetBinContent(ir,it) > kASmallNum;
+
+#ifdef __show_isanevent_mesg_debug__
+  if(ev)
+    cout << "Exp/NuXSec >> There are " << mctempl_xsbinning->GetBinContent(ir,it)
+         << " events for sample = " << util::AsString(s) 
+         << ", mode = " << util::AsString(m)
+         << ", Etrue = " << Etrue
+         << ", Ereco = " << Ereco
+         << endl;
+#endif
+  return ev;
+} 
+//________________________________________________________________________________________
+int NuXSec::HowManyEvents(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
+{
+  int is = arr_index->SuperkSampleIdx(s);
+  int im = arr_index->SuperkModeIdx(s,m);
+  assert(is != -1 && im != -1);
+
+  TH2D * mctempl_xsbinning = fXsBinningTempl[is][im];
+  assert(mctempl_xsbinning);
+
+  int ir = mctempl_xsbinning->GetXaxis()->FindBin(Ereco);
+  int it = mctempl_xsbinning->GetYaxis()->FindBin(Etrue);
+
+  int ev = (int)mctempl_xsbinning->GetBinContent(ir,it);
+
+#ifdef __show_isanevent_mesg_debug__
+  if(ev)
+    cout << "Exp/NuXSec >> There are " << ev
+         << " events for sample = " << util::AsString(s) 
+         << ", mode = " << util::AsString(m)
+         << ", Etrue = " << Etrue
+         << ", Ereco = " << Ereco
+         << endl;
+#endif
+
+  return ev;
+} 
+//________________________________________________________________________________________
+TH2D * NuXSec::Template(SuperkSample_t s, SuperkMode_t m) const
+{
+  int sidx = arr_index->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = arr_index->SuperkModeIdx(s,m);
+  if(midx == -1) {
+    return 0;
+  }
+
+  TH2D * h = 0;
+  h = fXsBinningTempl[sidx][midx];
+  assert(h);
+
+  return h;
+}
+//________________________________________________________________________________________
+double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
+{
+  //only contains the contributions from the non-BANFF xsec parameters
+
+  double chisq_penalty = 0;
+
+  // NEW XSEC --> comment all because many xsec syst are now in the BANFF and the others are not used any longer
+  // --> not commented any longer
+
+  // NEW XSEC NIWG
+
+#if defined(__USE_NIWG2013__)
+
+  // hack for hk
+  if(hk_syst) {
+    //#ifdef __FHC_RUNNING__
+    if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
+    if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
+    if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
+    if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
+    //#endif
+    /*
+#ifdef __RHC_RUNNING__
+    if (fRHCNormCCcohTwkDial)      chisq_penalty += fRHCNormCCcohTwkDial*fRHCNormCCcohTwkDial;
+    if (fRHCNormNC1piCTwkDial)     chisq_penalty += fRHCNormNC1piCTwkDial*fRHCNormNC1piCTwkDial;
+    if (fRHCNormNCcohTwkDial)      chisq_penalty += fRHCNormNCcohTwkDial*fRHCNormNCcohTwkDial;
+    if (fRHCNormNCothTwkDial)      chisq_penalty += fRHCNormNCothTwkDial*fRHCNormNCothTwkDial;
+#endif
+    */
+    return chisq_penalty;
+  }
+  //#ifdef __FHC_RUNNING__
+
+  if (fFermiMomTwkDial)       chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
+  if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
+  if (fWshapeTwkDial)         chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
+  if (fShapeCCothTwkDial)     chisq_penalty += fShapeCCothTwkDial*fShapeCCothTwkDial;
+  if (fPiLessDeltaTwkDial)    chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
+#ifndef __NUEONLY__
+  if (fBindETwkDial)          chisq_penalty += fBindETwkDial*fBindETwkDial;
+#endif
+  if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
+#ifndef __NUEONLY__
+  if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
+#endif
+#ifndef __NUMUONLY__
+  if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
+#endif
+  if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
+  if (fNormNuEToNuMuTwkDial)  chisq_penalty += fNormNuEToNuMuTwkDial*fNormNuEToNuMuTwkDial;
+#ifndef __NUEONLY__
+  if (fNormAntiNuToNuTwkDial) chisq_penalty += fNormAntiNuToNuTwkDial*fNormAntiNuToNuTwkDial;
+#endif
+  if (fNormRHCToFHCTwkDial)   chisq_penalty += fNormRHCToFHCTwkDial*fNormRHCToFHCTwkDial;
+
+  //#endif
+  /*
+#ifdef __RHC_RUNNING__
+    if (fRHCFermiMomTwkDial)       chisq_penalty += fRHCFermiMomTwkDial*fRHCFermiMomTwkDial;
+    if (fRHCSpecFuncTwkDial)       chisq_penalty += fRHCSpecFuncTwkDial*fRHCSpecFuncTwkDial;
+    if (fRHCWshapeTwkDial)         chisq_penalty += fRHCWshapeTwkDial*fRHCWshapeTwkDial;
+    if (fRHCShapeCCothTwkDial)     chisq_penalty += fRHCShapeCCothTwkDial*fRHCShapeCCothTwkDial;
+    if (fRHCPiLessDeltaTwkDial)    chisq_penalty += fRHCPiLessDeltaTwkDial*fRHCPiLessDeltaTwkDial;
+#ifndef __NUEONLY__
+    if (fRHCBindETwkDial)          chisq_penalty += fRHCBindETwkDial*fRHCBindETwkDial;
+#endif
+    if (fRHCNormCCcohTwkDial)      chisq_penalty += fRHCNormCCcohTwkDial*fRHCNormCCcohTwkDial;
+#ifndef __NUEONLY__
+    if (fRHCNormNC1piCTwkDial)     chisq_penalty += fRHCNormNC1piCTwkDial*fRHCNormNC1piCTwkDial;
+#endif
+#ifndef __NUMUONLY__
+    if (fRHCNormNCcohTwkDial)      chisq_penalty += fRHCNormNCcohTwkDial*fRHCNormNCcohTwkDial;
+#endif
+    if (fRHCNormNCothTwkDial)      chisq_penalty += fRHCNormNCothTwkDial*fRHCNormNCothTwkDial;
+    if (fRHCNormNuEToNuMuTwkDial)  chisq_penalty += fRHCNormNuEToNuMuTwkDial*fRHCNormNuEToNuMuTwkDial;
+#ifndef __NUEONLY__
+    if (fRHCNormAntiNuToNuTwkDial) chisq_penalty += fRHCNormAntiNuToNuTwkDial*fRHCNormAntiNuToNuTwkDial;
+#endif
+#endif
+  */
+
+#elif defined(__USE_NIWG2015__)
+  //if (fRPATwkDial)       chisq_penalty += fRPATwkDial    * fRPATwkDial;
+  // //if (fRHCRPATwkDial)    chisq_penalty += fRHCRPATwkDial * fRHCRPATwkDial;
+#endif
+
+  return chisq_penalty;
+}
+//________________________________________________________________________________________
+void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
+{
+  // NEW XSEC --> comment all because many xsec syst are now in the BANFF and the others are not used any longer
+  // -->  not commented any longer
+  
+#if defined(__USE_NIWG2013__)
+  if      (p==kNuisXSecFermiMom      ) fFermiMomTwkDial      = twkdial;
+  else if (p==kNuisXSecSpecFunc      ) fSpecFuncTwkDial      = twkdial;
+  else if (p==kNuisXSecWshape        ) fWshapeTwkDial        = twkdial;
+  else if (p==kNuisXSecShapeCCoth    ) fShapeCCothTwkDial    = twkdial;
+  else if (p==kNuisXSecPiLessDelta   ) fPiLessDeltaTwkDial   = twkdial;
+  else if (p==kNuisXSecBindE         ) fBindETwkDial         = twkdial;
+  else if (p==kNuisXSecNormCCcoh     ) fNormCCcohTwkDial     = twkdial;
+  else if (p==kNuisXSecNormNC1piC    ) fNormNC1piCTwkDial    = twkdial;
+  else if (p==kNuisXSecNormNCcoh     ) fNormNCcohTwkDial     = twkdial;
+  else if (p==kNuisXSecNormNCoth     ) fNormNCothTwkDial     = twkdial;
+  else if (p==kNuisXSecNormNuEToNuMu ) fNormNuEToNuMuTwkDial = twkdial;
+  else if (p==kNuisXSecNormAntiNuToNu) fNormAntiNuToNuTwkDial= twkdial;
+  else if (p==kRHCNuisXSecFermiMom      ) fRHCFermiMomTwkDial      = twkdial;
+  else if (p==kRHCNuisXSecSpecFunc      ) fRHCSpecFuncTwkDial      = twkdial;
+  else if (p==kRHCNuisXSecWshape        ) fRHCWshapeTwkDial        = twkdial;
+  else if (p==kRHCNuisXSecShapeCCoth    ) fRHCShapeCCothTwkDial    = twkdial;
+  else if (p==kRHCNuisXSecPiLessDelta   ) fRHCPiLessDeltaTwkDial   = twkdial;
+  else if (p==kRHCNuisXSecBindE         ) fRHCBindETwkDial         = twkdial;
+  else if (p==kRHCNuisXSecNormCCcoh     ) fRHCNormCCcohTwkDial     = twkdial;
+  else if (p==kRHCNuisXSecNormNC1piC    ) fRHCNormNC1piCTwkDial    = twkdial;
+  else if (p==kRHCNuisXSecNormNCcoh     ) fRHCNormNCcohTwkDial     = twkdial;
+  else if (p==kRHCNuisXSecNormNCoth     ) fRHCNormNCothTwkDial     = twkdial;
+  else if (p==kRHCNuisXSecNormNuEToNuMu ) fRHCNormNuEToNuMuTwkDial = twkdial;
+  else if (p==kRHCNuisXSecNormAntiNuToNu) fRHCNormAntiNuToNuTwkDial= twkdial;
+  else if (p==kNuisRHCToFHC             ) fNormRHCToFHCTwkDial     = twkdial;
+
+  // NEW XSEC
+#elif defined(__USE_NIWG2015__)
+  // RPA is a discrete value (0 or 1)
+  if      (p==kNuisXSecRPA      ){
+    if( fabs(twkdial)>conv::kASmallNum && fabs(twkdial-1)>conv::kASmallNum ){
+      if(twkdial < 0.5) twkdial = 0.;
+      else              twkdial = 1.;
+      std::cout << std::endl; 
+      std::cout << "Tweak Dial RPA must be 0 or 1 " << std::endl; 
+      std::cout << "Tweak Dial RPA restored to " << twkdial << std::endl; 
+      std::cout << std::endl; 
+    }
+    fRPATwkDial      = twkdial; 
+  }
+  else if (p==kRHCNuisXSecRPA   ){
+    if( fabs(twkdial)>conv::kASmallNum && fabs(twkdial-1)>conv::kASmallNum ){
+      if(twkdial < 0.5) twkdial = 0.;
+      else              twkdial = 1.;
+      std::cout << std::endl; 
+      std::cout << "Tweak Dial RHC RPA must be 0 or 1 " << std::endl; 
+      std::cout << "Tweak Dial RHC RPA restored to " << twkdial << std::endl; 
+      std::cout << std::endl;
+    }
+    fRHCRPATwkDial   = twkdial;
+  }
+#endif
+  else {
+    cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;
+    exit(1);
+  }
+}
+//________________________________________________________________________________________
+void NuXSec::SyncRHCToFHCSystematics()
+{
+  fRHCRPATwkDial            = fRPATwkDial           ; // NEW XSEC
+  fRHCFermiMomTwkDial       = fFermiMomTwkDial      ;
+  fRHCSpecFuncTwkDial       = fSpecFuncTwkDial      ;
+  fRHCWshapeTwkDial         = fWshapeTwkDial        ;
+  fRHCShapeCCothTwkDial     = fShapeCCothTwkDial    ;
+  fRHCPiLessDeltaTwkDial    = fPiLessDeltaTwkDial   ;
+  fRHCBindETwkDial          = fBindETwkDial         ;
+  fRHCNormCCcohTwkDial      = fNormCCcohTwkDial     ;
+  fRHCNormNC1piCTwkDial     = fNormNC1piCTwkDial    ;
+  fRHCNormNCcohTwkDial      = fNormNCcohTwkDial     ;
+  fRHCNormNCothTwkDial      = fNormNCothTwkDial     ;
+  fRHCNormNuEToNuMuTwkDial  = fNormNuEToNuMuTwkDial ;
+  fRHCNormAntiNuToNuTwkDial = fNormAntiNuToNuTwkDial;
+}
+//________________________________________________________________________________________
+std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const
+{
+  ostringstream splname;
+  splname << "spl_";
+#if defined(__USE_NIWG2013__)
+  if(IsMultiRMuSample(s))
+    splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
+  else if(IsMultiRESample(s))
+    splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
+  else
+    splname << util::AsStringCompact_splinehack(s) << "_";
+  
+  splname   << util::AsStringCompact_splinehack(m) << "_"
+            << util::AsStringCompact_splinehack(p) << "_"
+            << reco_bin << "_" 
+            << true_bin;
+#elif defined(__USE_NIWG2015__)
+  splname << util::AsStringCompact(s) <<"_"
+          << util::AsStringSpline(p)  <<"_"
+          << util::AsStringCompact(m) <<"_"
+          << true_bin << "_" 
+          << reco_bin;
+#endif
+  return splname.str();
+}
+//________________________________________________________________________________________
