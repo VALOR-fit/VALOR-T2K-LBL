@@ -476,7 +476,7 @@ def ratio_hist(hvar,hnom):
   hratio = ROOT.TH1D(hvar)
   print "what what"
   print hratio.Integral()
-  print hvar.Integral()
+  print hnom.Integral()
   hratio.SetName (hvar.GetName ()+"_ratio")
   hratio.SetTitle(hvar.GetTitle()+" Ratio")
   hratio.GetYaxis().SetTitle("Ratio")
