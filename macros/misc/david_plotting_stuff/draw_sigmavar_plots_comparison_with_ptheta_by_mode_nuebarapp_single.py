@@ -381,7 +381,7 @@ def main():
           mach3_histname = mach3_histname.replace(old,new)
                                                
         valor_hists[valor_mode][valor_param][valor_var] = valor_file.Get(valor_histname)
-        
+        print valor_histname
         if not valor_hists[valor_mode][valor_param][valor_var]:
           print "Failed to get VALOR histogram ",valor_histname
           
