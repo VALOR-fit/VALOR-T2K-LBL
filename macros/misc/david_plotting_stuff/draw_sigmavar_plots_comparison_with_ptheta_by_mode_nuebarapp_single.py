@@ -409,7 +409,9 @@ def main():
         print mach3_ratio_hists [valor_mode][valor_param][valor_var].Integral()
         set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
         set_zero_to_one(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var])
-        
+        print "after set to zero"
+        print mach3_ratio_hists [valor_mode][valor_param][valor_var].Integral()
+
       hist_limits = []
       for valor_var,mach3_var in variations:
         for bin_content in (hist_to_list(valor_hists[valor_mode][valor_param][valor_var])+hist_to_list(mach3_ratio_hists[valor_mode][valor_param][valor_var])):
