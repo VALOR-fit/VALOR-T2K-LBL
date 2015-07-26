@@ -435,6 +435,7 @@ def main():
         valor_hists[valor_mode][valor_param][valor_var].Draw(option)
         option = "same"
         mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
+        print "after draw"
         print mach3_ratio_hists [valor_mode][valor_param][valor_var].Integral()
 
 
