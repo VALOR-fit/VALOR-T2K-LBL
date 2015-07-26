@@ -436,8 +436,7 @@ def main():
         option = "same"
         mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
         print "after draw"
-        print mach3_ratio_hists [valor_mode][valor_param][valor_var].Integral()
-        input("Press Enter to continue...")
+        print mach3_ratio_hists [valor_mode][valor_param][valor_var].GetBinContent(4)
 
       canvases[canv_name].Update()
       canvases[canv_name].Print("syst_var_mode_ereco_"+sample+"_"+tag+".pdf"+next(pdf_printing_iter_ereco))
