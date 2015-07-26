@@ -400,10 +400,12 @@ def main():
         valor_hists_binno[valor_mode][valor_param][valor_var] = hist_to_bin_number(valor_hists[valor_mode][valor_param][valor_var])
         mach3_hists_binno[valor_mode][valor_param][valor_var] = hist_to_bin_number(mach3_hists[valor_mode][valor_param][valor_var])
         
+        print mach3_hists[valor_mode][valor_param][valor_var].Integral()
+        
         mach3_ratio_hists      [valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists      [valor_mode][valor_param][valor_var],mach3_nom_hists[valor_mode])
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists_binno[valor_mode][valor_param][valor_var],mach3_nom_hists_binno[valor_mode])
         
-        #  set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
+        set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
         set_zero_to_one(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var])
         
       hist_limits = []
