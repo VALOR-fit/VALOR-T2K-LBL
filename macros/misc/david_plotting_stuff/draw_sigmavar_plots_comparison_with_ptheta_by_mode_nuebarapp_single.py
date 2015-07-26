@@ -405,7 +405,8 @@ def main():
         
         mach3_ratio_hists      [valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists      [valor_mode][valor_param][valor_var],mach3_nom_hists[valor_mode])
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists_binno[valor_mode][valor_param][valor_var],mach3_nom_hists_binno[valor_mode])
-        
+        print "getting ratio"
+        print mach3_ratio_hists [valor_mode][valor_param][valor_var].Integral()
         set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
         set_zero_to_one(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var])
         
