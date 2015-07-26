@@ -481,6 +481,7 @@ def ratio_hist(hvar,hnom):
   hratio.SetTitle(hvar.GetTitle()+" Ratio")
   hratio.GetYaxis().SetTitle("Ratio")
   hratio.Divide(hnom)
+  print hratio.Integral()
   return hratio
   
 def set_zero_to_one(h):
