@@ -403,7 +403,7 @@ def main():
         mach3_ratio_hists      [valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists      [valor_mode][valor_param][valor_var],mach3_nom_hists[valor_mode])
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists_binno[valor_mode][valor_param][valor_var],mach3_nom_hists_binno[valor_mode])
        
-       #   set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
+        set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
         set_zero_to_one(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var])
 
       hist_limits = []
@@ -429,8 +429,6 @@ def main():
         valor_hists[valor_mode][valor_param][valor_var].Draw(option)
         option = "same"
         mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
-        print "after draw"
-        print mach3_ratio_hists [valor_mode][valor_param][valor_var].GetBinContent(4)
 
       canvases[canv_name].Update()
       canvases[canv_name].Print("syst_var_mode_ereco_"+sample+"_"+tag+".pdf"+next(pdf_printing_iter_ereco))
