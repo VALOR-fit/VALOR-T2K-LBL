@@ -435,7 +435,9 @@ def main():
         valor_hists[valor_mode][valor_param][valor_var].Draw(option)
         option = "same"
         mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
-      
+        print mach3_ratio_hists [valor_mode][valor_param][valor_var].Integral()
+
+
       canvases[canv_name].Update()
       canvases[canv_name].Print("syst_var_mode_ereco_"+sample+"_"+tag+".pdf"+next(pdf_printing_iter_ereco))
       
