@@ -52,7 +52,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   all_dicts_osc   = [osc_nominal_modes, osc_NA61_flux_modes, osc_prefit_tuned_modes, osc_postfit_tuned_modes]
   
   min_energy_spectrum = 0.0
-  min_energy_ratio    = 0.3
+  min_energy_ratio    = 0.0
   max_energy          = 7.0
 
   
@@ -180,7 +180,6 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   
   cols = ["","$N_{SK}$","$N_{SK}$","$N_{SK}$","$N_{SK}$"]
   widths = [col1_width]+([col_width]*(len(cols)-1))
-  print widths
     
   entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \n")
@@ -288,7 +287,12 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   ratio.SetLineColor(ROOT.kBlack)
   if ratio.GetXaxis().GetXmax() > max_energy:
     ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
-  ratio_dev = max([abs(1.-x) for x in hist_to_list(ratio)[5:]])
+    
+  for ibin in xrange(1,ratio.GetXaxis().GetNbins()+1):
+    if ratio.GetBinContent(ibin) < 0.01:
+      ratio.SetBinContent(ibin,1)
+      
+  ratio_dev = max([abs(1.-x) for x in hist_to_list(ratio)])
   ratio.SetMinimum(1-1.1*ratio_dev)
   ratio.SetMaximum(1+1.1*ratio_dev)
   ratio.Draw()
@@ -301,7 +305,11 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   osc_ratio.SetLineColor(ROOT.kBlack)
   if osc_ratio.GetXaxis().GetXmax() > max_energy:
     osc_ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
-  osc_ratio_dev = max([abs(1.-x) for x in hist_to_list(osc_ratio)[5:]])
+    
+  for ibin in xrange(1,osc_ratio.GetXaxis().GetNbins()+1):
+    if osc_ratio.GetBinContent(ibin) < 0.01:
+      osc_ratio.SetBinContent(ibin,1)
+  osc_ratio_dev = max([abs(1.-x) for x in hist_to_list(osc_ratio)])
   osc_ratio.SetMinimum(1-1.1*osc_ratio_dev)
   osc_ratio.SetMaximum(1+1.1*osc_ratio_dev)
   osc_ratio.Draw()
@@ -359,7 +367,12 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   pf_ratio.SetTitle("")
   if pf_ratio.GetXaxis().GetXmax() > max_energy:
     pf_ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
-  pf_ratio_dev = max([abs(1.-x) for x in hist_to_list(pf_ratio)[5:]])
+    
+  for ibin in xrange(1,pf_ratio.GetXaxis().GetNbins()+1):
+    if pf_ratio.GetBinContent(ibin) < 0.01:
+      pf_ratio.SetBinContent(ibin,1)
+      
+  pf_ratio_dev = max([abs(1.-x) for x in hist_to_list(pf_ratio)])
   pf_ratio.SetMinimum(1-1.1*pf_ratio_dev)
   pf_ratio.SetMaximum(1+1.1*pf_ratio_dev)
   pf_ratio.Draw()
@@ -372,7 +385,12 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   osc_pf_ratio.SetTitle("")
   if osc_pf_ratio.GetXaxis().GetXmax() > max_energy:
     osc_pf_ratio.GetXaxis().SetRangeUser(min_energy_ratio,max_energy)
-  osc_pf_ratio_dev = max([abs(1.-x) for x in hist_to_list(osc_pf_ratio)[5:]])
+  
+  for ibin in xrange(1,osc_pf_ratio.GetXaxis().GetNbins()+1):
+    if osc_pf_ratio.GetBinContent(ibin) < 0.01:
+      osc_pf_ratio.SetBinContent(ibin,1)
+  
+  osc_pf_ratio_dev = max([abs(1.-x) for x in hist_to_list(osc_pf_ratio)])
   osc_pf_ratio.SetMinimum(1-1.1*osc_pf_ratio_dev)
   osc_pf_ratio.SetMaximum(1+1.1*osc_pf_ratio_dev)
   osc_pf_ratio.Draw()
