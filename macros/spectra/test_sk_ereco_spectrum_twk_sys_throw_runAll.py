@@ -52,8 +52,8 @@ optionParser.add_option('-p', '--prefit-config' , dest='pconfig' , default="anal
 
 (opt, args) = optionParser.parse_args()
 
-postfit_config = args.config
-prefit_config  = args.pconfig
+postfit_config = opt.config
+prefit_config  = opt.pconfig
 
 make_summary = not opt.notable
 nexp = opt.nexp
