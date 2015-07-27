@@ -249,7 +249,7 @@ parameters = [
               ( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
               ]
 
-modes = [ ( ''                , ''                  ) ,
+modes = [ #( ''                , ''                  ) ,
           ( '_numuccqe'        , "_numu_ccqe"      ) ,
           ( '_numucc1pi'       , "_numu_cc1pi"     ) ,
           ( '_numucccoh'       , "_numu_cccoh"     ) ,
