@@ -21,7 +21,7 @@ valor_filename = valorfilename
 
 
 #mach3_nom_pattern = "[CURRENT][SELECTION]_[MODE]_nom"
-mach3_nom_pattern = "[CURRENT]_h[SELECTION]_nom"
+mach3_nom_pattern = "[CURRENT]_h[SELECTION]_[MODE]"
 mach3_pattern     = "[CURRENT]_[SELECTION]_[PARAM][MODE]_sig_[VAR]"
 valor_pattern     = "Ratio_"+sample+"[MODE]_[PARAM]_[VAR]"
 
