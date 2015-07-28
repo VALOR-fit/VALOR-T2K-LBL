@@ -31,10 +31,10 @@ rnd  =  valor.Rnd.Instance()
 opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
 opt.SetDefaultParameterValues()
 
-#~ fit_param_list = "nuosc3f_numudisapp_nuis3fixdcp+nuisance"
-#~ fit_param_list = "nuosc3fbar_numudisapp_constrainall+nuisance"
-#~ fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"
-fit_param_list = "nsi3f_fix4+nuisance"
+#~ default_fit_param_list = "nuosc3f_numudisapp_nuis3fixdcp+nuisance"
+#~ default_fit_param_list = "nuosc3fbar_numudisapp_constrainall+nuisance"
+#~ default_fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"
+default_fit_param_list = "nsi3f_fix4+nuisance"
 
 stat_fluctuations = True
 syst_tweaks       = False
@@ -63,7 +63,7 @@ color = ROOT.kBlack
 
 img_format = "png"
 
-def main(params,config_file,sample):
+def main(params,config_file,fit_param_list,sample):
   
   # Set up superKexpectation and read config file
   config =  os.environ[env_var]+"/config/"+config_file
@@ -75,6 +75,8 @@ def main(params,config_file,sample):
   skexp.Read(config)
   
   if syst_tweaks: skexp.RandomizeSystematics();
+  
+  if fit_param_list is None: fit_param_list = default_fit_param_list
   
   fparm = valor.util.NamedParameterList(fit_param_list)
   
@@ -167,7 +169,7 @@ if __name__=="__main__":
   import optparse
   parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of applied systematics")
   
-  #~ parser.add_option('-f', '--file', dest='output_file', default="effects_of_tuning.tex", help="Name for output TeX file.")
+  parser.add_option('-f', '--fit-param-list', dest='fpl', default=None, help="Name of FPL.")
   
   parser.add_option('-s', '--sample' , dest='sample'      , default="1Rmu"                    , help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
   
@@ -175,4 +177,4 @@ if __name__=="__main__":
   
   opt,params = parser.parse_args()
   
-  main(params,opt.config,opt.sample)
+  main(params,opt.config,opt.fpl,opt.sample)
