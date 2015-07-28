@@ -486,16 +486,8 @@ void run_fit_xml_toys_joint_nsi
         }
       }//applied_negevents_condition
     }
-
     
-
-    //if theta23 is not fixed then initialize to 0.4 for the first fit (first octant) and 0.6 for the second one
-
     if(hyp == kHypOsc3F || hyp == kHypNSI3F ) {
-      if(!(fparm1->IsFixed(conv::kPhypMixing23))) {     
-      fparm1->SetInitValue(conv::kPhypMixing23,0.4);
-      fparm2->SetInitValue(conv::kPhypMixing23,0.6);
-      }
       //if reactor constraint enabled, set nuisance
       if(reactor) {
         fparm1->SetNuisance(conv::kPhypMixing13,true);
@@ -524,7 +516,14 @@ void run_fit_xml_toys_joint_nsi
     fparm1->ShowOnlyCurrValuesInNextPrint();
     cout << "- True oscillation params (below) yield chisq = " << true_chisq
          << *fparm1;
-  
+    
+    // if theta23 is not fixed then initialize to 0.4 for the first fit (first octant) and 0.6 for the second one
+    if(hyp == kHypOsc3F || hyp == kHypNSI3F ) {   
+      if(!(fparm1->IsFixed(conv::kPhypMixing23))) {     
+        fparm1->SetInitValue(conv::kPhypMixing23,0.4);
+        fparm2->SetInitValue(conv::kPhypMixing23,0.6);
+      }
+    }
 
     // Do the fit
 
