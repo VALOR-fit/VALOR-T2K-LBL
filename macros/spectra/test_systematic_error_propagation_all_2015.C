@@ -340,26 +340,26 @@ void test_systematic_error_propagation_all_2015
         
           ip_skdetfsi_rhc++;
         }
-	else if(sysstr=="f_sk_e_scale_rhc" && idx<0){
-	  double bestfit = 0.;
-	  //tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-	  //tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-	  tweak_p1 = bestfit + 1;
-	  tweak_m1 = bestfit - 1;
-	  //tweak_p1 = TMath::Max(tweak_p1,0.);
-	  //tweak_m1 = TMath::Max(tweak_m1,0.);
-	  vp1sigma_skescale = tweak_p1;
-	  vm1sigma_skescale = tweak_m1;
-	  
-	  //tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-	  //tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-	  tweak_p3 = bestfit + 3;
-	  tweak_m3 = bestfit - 3;
-	  //tweak_p3 = TMath::Max(tweak_p3,0.);
-	  //tweak_m3 = TMath::Max(tweak_m3,0.);
-	  vp3sigma_skescale = tweak_p3;
-	  vm3sigma_skescale = tweak_m3;
-	}
+        else if(sysstr=="f_sk_e_scale_rhc" && (idx<0)){
+          double bestfit = 0.;
+          //tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+          //tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+          tweak_p1 = bestfit + 1;
+          tweak_m1 = bestfit - 1;
+          //tweak_p1 = TMath::Max(tweak_p1,0.);
+          //tweak_m1 = TMath::Max(tweak_m1,0.);
+          vp1sigma_skescale = tweak_p1;
+          vm1sigma_skescale = tweak_m1;
+          
+          //tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+          //tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+          tweak_p3 = bestfit + 3;
+          tweak_m3 = bestfit - 3;
+          //tweak_p3 = TMath::Max(tweak_p3,0.);
+          //tweak_m3 = TMath::Max(tweak_m3,0.);
+          vp3sigma_skescale = tweak_p3;
+          vm3sigma_skescale = tweak_m3;
+        }
       }
       else if(util::IsBANFF(p)){
         idx = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);
@@ -398,12 +398,12 @@ void test_systematic_error_propagation_all_2015
     }
     else if(util::IsFHCSystematic(p)){
       if(util::IsSKDetFSI(p)){
-	idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);     
-	if(idx>=0){
+        idx = util::ArrIdx::Instance()->SKDetFSISystIdx(p);     
+        if(idx>=0){
           bestfit = 1;
-	  
-	  tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
-	  tweak_m1 = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
+          
+          tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
+          tweak_m1 = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
           //tweak_p1 = TMath::Max(tweak_p1,0.);
           //tweak_m1 = TMath::Max(tweak_m1,0.);
           vp1sigma_skdetfsi[ip_skdetfsi] = tweak_p1;
@@ -418,25 +418,25 @@ void test_systematic_error_propagation_all_2015
           
           ip_skdetfsi++;
         }
-	else if(sysstr=="f_sk_e_scale") && idx<0){
-	  //tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-	  //tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-	  tweak_p1 = bestfit + 1;
-	  tweak_m1 = bestfit - 1;
-	  //tweak_p1 = TMath::Max(tweak_p1,0.);
-	  //tweak_m1 = TMath::Max(tweak_m1,0.);
-	  vp1sigma_skescale = tweak_p1;
-	  vm1sigma_skescale = tweak_m1;
-	  
-	  //tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-	  //tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-	  tweak_p3 = bestfit + 3;
-	  tweak_m3 = bestfit - 3;
-	  //tweak_p3 = TMath::Max(tweak_p3,0.);
-	  //tweak_m3 = TMath::Max(tweak_m3,0.);
-	  vp3sigma_skescale = tweak_p3;
-	  vm3sigma_skescale = tweak_m3;
-	}
+        else if(sysstr=="f_sk_e_scale" && (idx<0)){
+          //tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+          //tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+          tweak_p1 = bestfit + 1;
+          tweak_m1 = bestfit - 1;
+          //tweak_p1 = TMath::Max(tweak_p1,0.);
+          //tweak_m1 = TMath::Max(tweak_m1,0.);
+          vp1sigma_skescale = tweak_p1;
+          vm1sigma_skescale = tweak_m1;
+          
+          //tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+          //tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
+          tweak_p3 = bestfit + 3;
+          tweak_m3 = bestfit - 3;
+          //tweak_p3 = TMath::Max(tweak_p3,0.);
+          //tweak_m3 = TMath::Max(tweak_m3,0.);
+          vp3sigma_skescale = tweak_p3;
+          vm3sigma_skescale = tweak_m3;
+        }
 
 
       }
@@ -892,7 +892,7 @@ void test_systematic_error_propagation_all_2015
           if(!fparm->IsNuisance(p)) continue; 
           string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
           if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-	  
+          
           // Spectra 
           sprintf(name,"cspectra_%s_%s",mname,sysstr.c_str());
           TCanvas *cspectra = new TCanvas(name,name);
@@ -951,7 +951,7 @@ void test_systematic_error_propagation_all_2015
           hRatioTunMode_m3sigma[ip][im]->SetLineColor(kRed);
           hRatioTunMode_p3sigma[ip][im]->SetLineColor(kBlue);
           cratio->SaveAs(Form("Ratio_%s_%s_%s_nsk_%s.eps",sname,mname,sysstr.c_str(),oscparams.c_str()));
-	  
+          
         } // ip
       } //im
     } // per_mode
