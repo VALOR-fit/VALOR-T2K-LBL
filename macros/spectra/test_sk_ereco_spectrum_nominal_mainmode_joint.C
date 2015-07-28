@@ -16,7 +16,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint
 (
  const char * tag                   = "prova",
  
- const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
  
  // Mach3, T2K Run1-4 + reactors best fit (A)
@@ -64,7 +64,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint
  bool         store_spectrum     = true,
  bool         print_spectrum       = false,                          /* */
  const char * mixparamchoice      = "sinsqtheta",
- const char * hierarchy           = "inverted"   ,
+ const char * hierarchy           = "normal"   ,
  const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
