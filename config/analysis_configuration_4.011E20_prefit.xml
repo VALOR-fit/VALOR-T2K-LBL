@@ -505,7 +505,7 @@
       -->
       
       <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv4_FSIv1.root </filename>
-      <objname>    covmat_skdetfsi_rhc_nue </objname>
+      <objname>    covmat_skdetfsi_nue </objname>
       
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
@@ -517,7 +517,7 @@
         <objname>    covmat_sk_fsi         </objname> 
         -->
          <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv4_FSIv1.root </filename>
-         <objname>    covmat_skdetfsi_rhc_numu </objname>
+         <objname>    covmat_skdetfsi_numu </objname>
         
         <objtype>    TMatrixD              </objtype>
       </covariance_matrix>
@@ -526,7 +526,7 @@
     <app>
       <covariance_matrix>
          <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv4_FSIv1.root </filename>
-         <objname>    covmat_skdetfsi_rhc_nue </objname>
+         <objname>    covmat_skdetfsi_nue </objname>
          
          <objtype>    TMatrixD              </objtype>
       </covariance_matrix>
