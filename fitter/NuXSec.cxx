@@ -30,6 +30,7 @@ Added samples, modes and systematics for reverse horn current running
 //#define WARN_ON_FLAT_SPLINE
 
 #define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
+//#define __ALLOW_SPLINES_OUTSIDE_LIMIT__  // allow splines to go outside the min and max limit where defined. To use only for syst effect cross checks
 
 #include <cassert>
 #include <cstdlib>
@@ -708,7 +709,14 @@ double NuXSec::FinTuningWght_1p(
         std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
       }
 #endif
-      wght = wght_spl->Eval(spline_point);
+
+
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+      if (spline_point > wght_spl->GetXmax()) spline_point = wght_spl->GetXmax();
+      if (spline_point < wght_spl->GetXmin()) spline_point = wght_spl->GetXmin();
+#endif
+
+      wght = wght_spl->Eval(spline_point);   
   }
   
   if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
@@ -761,6 +769,13 @@ double NuXSec::FinTuningWght_1p(
         std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
       }
 #endif
+
+      
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+      if (spline_point > wght_spl->GetXmax()) spline_point = wght_spl->GetXmax();
+      if (spline_point < wght_spl->GetXmin()) spline_point = wght_spl->GetXmin();
+#endif
+      
       wght = wght_spl->Eval(spline_point);
   }
 #endif
@@ -1076,6 +1091,13 @@ double NuXSec::SystWght_1p(
       std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
     }
 #endif
+    
+    
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+    if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
+    if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
+#endif
+
     wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
   } // end of MAQE
   
@@ -1123,6 +1145,12 @@ double NuXSec::SystWght_1p(
       std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
     }
 #endif
+
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+    if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
+    if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
+#endif
+    
     wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
   }
     
@@ -1154,8 +1182,10 @@ double NuXSec::SystWght_1p(
     double spl_tb = tb-untuned_value;
     double spl_tc = tc-untuned_value;
     
-    if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax()-conv::kASmallNum;
-    if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin()+conv::kASmallNum;
+#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
+    if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
+    if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
+#endif
     
     wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
   } // end of response functions
