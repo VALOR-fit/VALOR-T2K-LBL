@@ -902,7 +902,7 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
     util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
     util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing+1);
     
-    #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING) 
+    #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
 
       #if defined(__FULLY_CORRELATED__) 
       // rhc+fhc fully correlated 
@@ -914,8 +914,8 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
       #else
       // rhc+fhc w/ correlations 
       util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
-      util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfRHCpFHCParamsInBANFFfit);
-      util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfRHCpFHCParamsInBANFFfit+1+kNumOfFHCpRHCSKDetFSIParams);
+      util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfFHCpRHCParamsInBANFFfit);
+      util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfFHCpRHCParamsInBANFFfit+1+kNumOfFHCpRHCSKDetFSIParams);
       #endif
       //
     
