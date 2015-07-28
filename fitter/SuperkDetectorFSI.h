@@ -161,6 +161,8 @@ private:
 
   void Init      (void);
   void CleanUp   (void);
+  
+  void MakeFHCAndRHCMatricesFromFHCpRHCMatrix();
   //
   // Private data members
   //

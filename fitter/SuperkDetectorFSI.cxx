@@ -125,8 +125,10 @@ void SuperkDetectorFSI::CleanUp(void)
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
+  
+  assert(!"Deprecated!");
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SuperkDetectorFSI >> Reading SuperkDetector+FSI inputs from input XML file." << endl;
+  cout << "Exp/SuperkDetectorFSI/Read >> Reading SuperkDetector+FSI inputs from input XML file." << endl;
 #endif
 
   fEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1RmuErr.c_str());
@@ -137,16 +139,16 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());    
     
   if(!fCovMtrx) {
-    cerr << "Exp/SuperkDetectorFSI >> No SuperkDetector+FSI covariance matrix was found." << endl;
+    cerr << "Exp/SuperkDetectorFSI/Read >> No SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);
   }
 
   const TMatrixD & cov = *fCovMtrx;
   if(cov.GetNrows() != np || cov.GetNcols() != np)
   {
-    cerr << "Exp/SuperkDetectorFSI >> SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
-    cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
-    cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+    cerr << "Exp/SuperkDetectorFSI/Read >> SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
+    cerr << "Exp/SuperkDetectorFSI/Read >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+    cerr << "Exp/SuperkDetectorFSI/Read >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
     exit(1);
   }
 
@@ -159,14 +161,14 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   TMatrixD prod = cov*covInv;
 
 #ifdef __show_init_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {EnergyScale;1Re}    : " << fEnergyScale1ReRelErr  << endl;
-  cout << "Exp/SuperkDetectorFSI >> Input SuperkDetector+FSI covariance matrix: " << endl; 
+  cout << "Exp/SuperkDetectorFSI/Read >> " << "Error {EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI/Read >> " << "Error {EnergyScale;1Re}    : " << fEnergyScale1ReRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI/Read >> Input SuperkDetector+FSI covariance matrix: " << endl; 
   //cov.Print();
   util::PrintCompact(cov,7,4);
-  cout << "Exp/SuperkDetectorFSI >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
+  cout << "Exp/SuperkDetectorFSI/Read >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
   util::PrintCompact(*fCovMtrxInv,7,4);
-  cout << "Exp/SuperkDetectorFSI >> check of product cov*(cov)^-1 : "<< endl;
+  cout << "Exp/SuperkDetectorFSI/Read >> check of product cov*(cov)^-1 : "<< endl;
   util::PrintCompact(prod,7,4);
 #endif
 
@@ -180,7 +182,7 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SuperkDetectorFSI >> Done reading SuperkDetector+FSI inputs!" << endl;
+  cout << "Exp/SuperkDetectorFSI/Read >> Done reading SuperkDetector+FSI inputs!" << endl;
 #endif
 
   return true;  
@@ -188,8 +190,9 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
+  assert(!"Deprecated!");
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SuperkDetectorFSI >> Reading RHC SuperkDetector+FSI inputs from input XML file." << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadRHC >> Reading RHC SuperkDetector+FSI inputs from input XML file." << endl;
 #endif
   
   fRHCEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1RmuErr.c_str());
@@ -200,16 +203,16 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fRHCCovMtrx= util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathRHCSKDetFSICovMatr.c_str());
 
   if(!fRHCCovMtrx) {
-    cerr << "Exp/SuperkDetectorFSI >> No RHC SuperkDetector+FSI covariance matrix was found." << endl;
+    cerr << "Exp/SuperkDetectorFSI/ReadRHC >> No RHC SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);
   }
 
   const TMatrixD & cov = *fRHCCovMtrx;
   if(cov.GetNrows() != np || cov.GetNcols() != np)
     {
-      cerr << "Exp/SuperkDetectorFSI >> RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
-      cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
-      cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+      cerr << "Exp/SuperkDetectorFSI/ReadRHC >> RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
+      cerr << "Exp/SuperkDetectorFSI/ReadRHC >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+      cerr << "Exp/SuperkDetectorFSI/ReadRHC >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
       exit(1);
     }
 
@@ -223,14 +226,14 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 
 #ifdef __show_init_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {RHC EnergyScale;1Rmu}    : " << fRHCEnergyScale1RmuRelErr  << endl;
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {RHC EnergyScale;1Re}    : " << fRHCEnergyScale1ReRelErr  << endl;
-  cout << "Exp/SuperkDetectorFSI >> Input RHC SuperkDetector+FSI covariance matrix: " << endl; 
+  cout << "Exp/SuperkDetectorFSI/ReadRHC >> " << "Error {RHC EnergyScale;1Rmu}    : " << fRHCEnergyScale1RmuRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadRHC >> " << "Error {RHC EnergyScale;1Re}    : " << fRHCEnergyScale1ReRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadRHC >> Input RHC SuperkDetector+FSI covariance matrix: " << endl; 
   //cov.Print();
   util::PrintCompact(cov,7,4);
-  cout << "Exp/SuperkDetectorFSI >> Inverse RHC SuperkDetector+FSI covariance matrix: " << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadRHC >> Inverse RHC SuperkDetector+FSI covariance matrix: " << endl;
   util::PrintCompact(*fRHCCovMtrxInv,7,4);
-  cout << "Exp/SuperkDetectorFSI >> check of RHC product cov*(cov)^-1 : "<< endl;
+  cout << "Exp/SuperkDetectorFSI/ReadRHC >> check of RHC product cov*(cov)^-1 : "<< endl;
   util::PrintCompact(prod,7,4);
 #endif
 
@@ -244,7 +247,7 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     }
 
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SuperkDetectorFSI >> Done reading RHC SuperkDetector+FSI inputs!" << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadRHC >> Done reading RHC SuperkDetector+FSI inputs!" << endl;
 #endif
 
   return true;  
@@ -257,20 +260,20 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SuperkDetectorFSI >> Reading FHC+RHC SuperkDetector+FSI inputs from input XML file." << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> Reading FHC+RHC SuperkDetector+FSI inputs from input XML file." << endl;
 #endif
 
-  fEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1RmuErr.c_str());
-  fEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1ReErr.c_str());
-  fRHCEnergyScale1RmuRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1RmuErr.c_str());
-  fRHCEnergyScale1ReRelErr = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1ReErr.c_str());
+  fEnergyScale1RmuRelErr     = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1RmuErr   .c_str());
+  fEnergyScale1ReRelErr      = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1ReErr    .c_str());
+  fRHCEnergyScale1RmuRelErr  = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1RmuErr.c_str());
+  fRHCEnergyScale1ReRelErr   = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathRHCEscale1ReErr .c_str());
 
   // NEW FHC+RHC JOINT ESCALE
 #if defined(__SYNCHRONIZE_RHC_TO_FHC_ESCALE__) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-  cout << "Exp/SuperkDetectorFSI >> Synchronize RHC Escale to FHC Escale" << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> Synchronize RHC Escale to FHC Escale" << endl;
   this->SyncEscaleRHCToFHCSystematics();
   fRHCEnergyScale1RmuRelErr = fEnergyScale1RmuRelErr;
-  fRHCEnergyScale1ReRelErr = fEnergyScale1ReRelErr;
+  fRHCEnergyScale1ReRelErr  = fEnergyScale1ReRelErr;
 #endif
   //
 
@@ -278,19 +281,19 @@ bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   const int np_fhc = conv::kNumOfSKDetFSIParams;
   const int np_rhc = conv::kNumOfRHCSKDetFSIParams;
 
-  fFHCpRHCCovMtrx= util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
+  fFHCpRHCCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
 
   if(!fFHCpRHCCovMtrx) {
-    cerr << "Exp/SuperkDetectorFSI >> No FHC+RHC SuperkDetector+FSI covariance matrix was found." << endl;
+    cerr << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> No FHC+RHC SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);
   }
 
   const TMatrixD & cov = *fFHCpRHCCovMtrx;
   if(cov.GetNrows() != np || cov.GetNcols() != np)
     {
-      cerr << "Exp/SuperkDetectorFSI >> FHC+RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
-      cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
-      cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+      cerr << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> FHC+RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
+      cerr << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+      cerr << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
       exit(1);
     }
 
@@ -304,16 +307,16 @@ bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 
 #ifdef __show_init_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {FHC EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {FHC EnergyScale;1Re}    : " << fEnergyScale1ReRelErr  << endl;
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {RHC EnergyScale;1Rmu}    : " << fRHCEnergyScale1RmuRelErr  << endl;
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {RHC EnergyScale;1Re}    : " << fRHCEnergyScale1ReRelErr  << endl;
-  cout << "Exp/SuperkDetectorFSI >> Input FHC+RHC SuperkDetector+FSI covariance matrix: " << endl; 
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> " << "Error {FHC EnergyScale;1Rmu}    : " << fEnergyScale1RmuRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> " << "Error {FHC EnergyScale;1Re}    : " << fEnergyScale1ReRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> " << "Error {RHC EnergyScale;1Rmu}    : " << fRHCEnergyScale1RmuRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> " << "Error {RHC EnergyScale;1Re}    : " << fRHCEnergyScale1ReRelErr  << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> Input FHC+RHC SuperkDetector+FSI covariance matrix: " << endl; 
   //cov.Print();
   util::PrintCompact(cov,7,4);
-  cout << "Exp/SuperkDetectorFSI >> Inverse FHC+RHC SuperkDetector+FSI covariance matrix: " << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> Inverse FHC+RHC SuperkDetector+FSI covariance matrix: " << endl;
   util::PrintCompact(*fFHCpRHCCovMtrxInv,7,4);
-  cout << "Exp/SuperkDetectorFSI >> check of FHC+RHC product cov*(cov)^-1 : "<< endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> check of FHC+RHC product cov*(cov)^-1 : "<< endl;
   util::PrintCompact(prod,7,4);
 #endif
 
@@ -337,8 +340,10 @@ bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     (*fFHCpRHCNominalValues)[ip] = 1.;
   }
   
+  this->MakeFHCAndRHCMatricesFromFHCpRHCMatrix();
+  
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SuperkDetectorFSI >> Done reading FHC+RHC SuperkDetector+FSI inputs!" << endl;
+  cout << "Exp/SuperkDetectorFSI/ReadFHCpRHC >> Done reading FHC+RHC SuperkDetector+FSI inputs!" << endl;
 #endif
 
   return true;  
@@ -2521,6 +2526,46 @@ void SuperkDetectorFSI::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVe
 
   return;
 }
+
+//______________________________________________________________________
+void SuperkDetectorFSI::MakeFHCAndRHCMatricesFromFHCpRHCMatrix()
+{
+  const int np     = conv::kNumOfFHCpRHCSKDetFSIParams;
+  const int np_fhc = conv::kNumOfSKDetFSIParams;
+  const int np_rhc = conv::kNumOfRHCSKDetFSIParams;
+  
+  const TMatrixD & cov = *fFHCpRHCCovMtrx;
+  if(cov.GetNrows() != np || cov.GetNcols() != np)
+  {
+    cerr << "Exp/SuperkDetectorFSI/MakeFHCAndRHCMatricesFromFHCpRHCMatrix >> FHC+RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
+    cerr << "Exp/SuperkDetectorFSI/MakeFHCAndRHCMatricesFromFHCpRHCMatrix >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+    cerr << "Exp/SuperkDetectorFSI/MakeFHCAndRHCMatricesFromFHCpRHCMatrix >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+    exit(1);
+  }
+  
+  int fhc_min = 0;
+  int fhc_max = np_fhc-1;
+  int rhc_min = fhc_max+1;
+  int rhc_max = np-1;
+  
+  fCovMtrx    = new TMatrixD(cov.GetSub(fhc_min,fhc_max,fhc_min,fhc_max));
+  fRHCCovMtrx = new TMatrixD(cov.GetSub(rhc_min,rhc_max,rhc_min,rhc_max));
+  
+  double fhc_det, rhc_det;
+  fCovMtrxInv = new TMatrixD(*fCovMtrx);
+  fCovMtrxInv->SetTol(1E-23);
+  fCovMtrxInv->Invert(&fhc_det);
+  
+  fRHCCovMtrxInv = new TMatrixD(*fRHCCovMtrx);
+  fRHCCovMtrxInv->SetTol(1E-23);
+  fRHCCovMtrxInv->Invert(&rhc_det);
+  
+  assert(fCovMtrx   ->GetNrows()==np_fhc);
+  assert(fRHCCovMtrx->GetNrows()==np_rhc);
+  
+  return;
+}
+  
 
 void SuperkDetectorFSI::UpdateFHCpRHCCurrentValues(){
   // Update best-fit and current values
