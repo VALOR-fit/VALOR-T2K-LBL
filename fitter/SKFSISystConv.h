@@ -3308,7 +3308,7 @@ static const bool kMultiRingSKDetFSIParamToSKMode[2][knm][kNumOfSKDetFSIParamsMu
 
     // NEW FHC+RHC JOINT
     #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && !defined(__FULLY_CORRELATED__) // fhc+rhc (w/ correlations)
-    static const int kNumOfNuisanceParams = kNumOfFHCpRHCParamsInBANFFfit + kNumOfFHCpRHCSKDetFSIParams + 2/*energy scale*/  + kNumOfUncXSecSyst ; 
+    static const int kNumOfNuisanceParams = kNumOfFHCpRHCParamsInBANFFfit + kNumOfFHCpRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ; 
     //
     
     #elif defined(__FHC_RUNNING__)  // fhc only
