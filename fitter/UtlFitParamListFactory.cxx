@@ -607,6 +607,47 @@ FitParamList * util::NamedParameterList(string name)
     return fp;
   }
   
+  if(name == "nsi3f") {
+    FitParamList * fp = FitParamList::NSI3FlavourFit();
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+  if(name == "nsi3f+nuisance") {
+    FitParamList * fp = FitParamList::NSI3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 7);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    
+    return fp;
+  }
+  if(name == "nsi3f_fix4") {
+    FitParamList * fp = FitParamList::NSI3FlavourFit();
+    
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypDm12sq);
+    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+  if(name == "nsi3f_fix4+nuisance") {
+    FitParamList * fp = FitParamList::NSI3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 7);
+    
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypDm12sq);
+    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    
+    return fp;
+  }
+  
 
 
 

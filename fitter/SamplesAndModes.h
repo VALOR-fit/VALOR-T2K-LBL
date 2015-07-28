@@ -171,8 +171,10 @@ static const SuperkMode_t kSKReactionModes[kns][knm] = {
     kSKmNuEBarCCoth,
     kSKmNuEBarNC1piC,
     kSKmNuEBarNC1pi0,
-    kSKmNuEBarNCoth,
+    // NEW FHC+RHC JOINT
     kSKmNuEBarNCcoh,
+    kSKmNuEBarNCoth,
+    //
     kSKmOscNuEBarCCQE,
     kSKmOscNuEBarCC1pi,
     kSKmOscNuEBarCCcoh,

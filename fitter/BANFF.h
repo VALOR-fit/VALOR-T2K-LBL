@@ -95,7 +95,7 @@ public:
   const TMatrixD & RHCCovMatrixInv            (void) const { return *fRHCCovMtrxInv;    }
 
   // NEW FLUX FHC+RHC
-  const TVectorD & FHCpRHCBestFitValues       (void) const { return *fFHCpRHCBestFitValues; }
+  //const TVectorD & FHCpRHCBestFitValues       (void) const { return *fFHCpRHCBestFitValues; }
   const TMatrixD & FHCpRHCCovMatrix           (void) const { return *fFHCpRHCCovMtrx;       }
   const TMatrixD & FHCpRHCCovMatrixInv        (void) const { return *fFHCpRHCCovMtrxInv;    }
   
@@ -145,7 +145,8 @@ public:
   double RHCChisqPenalty          (bool all_syst = true) const;
   
   // NEW FLUX FHC+RHC
-  double FHCpRHCChisqPenalty          (bool all_syst = true) const;
+  //double FHCpRHCChisqPenalty          (bool all_syst = true) const;
+  double FHCpRHCChisqPenalty          (bool all_syst = true);
   //
 
   // Get & tweak flags	
@@ -153,7 +154,7 @@ public:
   bool IsTweakedRHC           (void) const { return fIsTweakedRHC;         } ///< BANFF params tweaked?
 
   // NEW FLUX FHC+RHC
-  bool IsTweakedFHCpRHC           (void) const { return fIsTweakedFHCpRHC;         } ///< BANFF params tweaked?
+  //bool IsTweakedFHCpRHC           (void) const { return fIsTweakedFHCpRHC;         } ///< BANFF params tweaked?
   //
 
   bool IsFluxWghtUpdated      (void) const { return fIsFluxWghtUpdated;    } ///< NuFlux object updated flux in response?
@@ -186,11 +187,26 @@ public:
   bool ReadFHCpRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
   //
 
+  // NEW FHC+RHC JOINT
+  void SplitFHCpRHCvectors(TVectorD FHCpRHCvec,TVectorD &FHCvec,TVectorD &RHCvec); 
+  void MergeFHCpRHCvectors(TVectorD &FHCpRHCvec,TVectorD FHCvec,TVectorD RHCvec);
+  void UpdateFHCpRHCBestFitValues(); // Merge best-fit FHC and RHC values into FHCpRHC
+  void UpdateFHCpRHCCurrentValues(); // Merge current FHC and RHC values into FHCpRHC
+  void UpdateFHCandRHConlyBestFitValues(); // Merge best-fit FHC and RHC values into FHCpRHC
+  void UpdateFHCandRHConlyCurrentValues(); // Merge current FHC and RHC values into FHCpRHC
+  //
+  
 private:
 
   void Init      (void);
   void CleanUp   (void);
-  int  Param2Idx   (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+
+  // NEW FHC+RHC JOINT
+  int  Param2Idx_FHCpRHC (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+  int  Param2Idx_FHC (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+  int  Param2Idx_RHC (conv::PhysParamId_t p) const; ///< convert BANFF PhysParamId_t to a covariance matrix or vector index
+  //
+
   void CholeskyDecomposeMatrix (void);    ///< Cholesky decompose the covariance matrix
   void CholeskyDecomposeRHCMatrix (void);    ///< Cholesky decompose the covariance matrix
   
@@ -235,11 +251,18 @@ private:
   double * fFHCpRHCCurrentArray; //! ///< Pointer to the actual memory location of the current values
   //
 
-  int fParam2Idx[conv::knppmax];
-  
+  // NEW FHC+RHC JOINT
+  int fParam2Idx_FHCpRHC[conv::knppmax];
+  int fParam2Idx_FHC[conv::knppmax];
+  int fParam2Idx_RHC[conv::knppmax];
+  //  
+
   TVectorD * fUntunedCentralValues;    // Store the untuned values of the params (for RestoreNominalMC methods)
   TVectorD * fRHCUntunedCentralValues; // Store the untuned values of the params (for RestoreNominalMC methods)
-
+  // NEW FHC+RHC JOINT
+  TVectorD * fFHCpRHCUntunedCentralValues; // Store the untuned values of the params (for RestoreNominalMC methods)
+  //
+  
 ClassDef(BANFF, 1)
 };
 

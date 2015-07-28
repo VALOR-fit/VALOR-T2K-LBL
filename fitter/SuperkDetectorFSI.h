@@ -53,11 +53,17 @@ public:
   // Tweak FSI params (either force the input params or generate correlated params using the Cholesky method)
   void TweakEnergyScale                    (double twkdial);
   void TweakRHCEnergyScale                 (double twkdial);
+  // NEW FHC+RHC JOINT
+  void TweakFHCpRHCEnergyScale             (double twkdial);
+  //
   void TweakMultiRingEnergyScale           (double twkdial); /// NEW MULTIRING 3
   void TweakSampleEnergyScale              (double twkdial); 
 
   void Tweak (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakRHC (bool force_inputs = false, TVectorD * input_params = 0);
+  // NEW FHC+RHC JOINT
+  void TweakFHCpRHC (bool force_inputs = false, TVectorD * input_params = 0); 
+  //
   void TweakMultiRing (bool force_inputs = false, TVectorD * input_params = 0);  /// NEW MULTIRING 2
   void TweakSample (bool force_inputs = false, TVectorD * input_params = 0); 
   
@@ -69,17 +75,26 @@ public:
   void TweakOnlyRHC1Re (bool force_inputs = false, TVectorD * input_params = 0);
   void TweakOnlyMultiRe (bool force_inputs = false, TVectorD * input_params = 0); /// NEW MULTIRING 2
  
+  // NEW FHC+RHC JOINT ESCALE
+  void SyncEscaleRHCToFHCSystematics(); // synchronize only Escale
+  //
   void SyncRHCToFHCSystematics();
   void SyncMultiRingToFHCSystematics(); /// NEW MULTIRING 2
 
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
   double RHCCurrentValue (conv::PhysParamId_t p) const;
+  // NEW FHC+RHC JOINT
+  double FHCpRHCCurrentValue (conv::PhysParamId_t p) const;
+  //
   double MultiRingCurrentValue (conv::PhysParamId_t p) const; /// NEW MULTIRING 2
   double SampleCurrentValue(conv::PhysParamId_t p) const; // Picks the right one of the above methods
   
   double OneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
   double RHCOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
+  // NEW FHC+RHC JOINT
+  double FHCpRHCOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
+  //
   double MultiRingOneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix   /// NEW MULTIRING 2
   double SampleOneSigmaError(conv::PhysParamId_t p) const; // Picks the right one of the above methods
 
@@ -90,6 +105,11 @@ public:
   const TMatrixD & RHCCovMatrix         (void) const { return *fRHCCovMtrx; }
   const TMatrixD & RHCCovMatrixCholesky (void) const { return *fRHCCovMtrxChoL; }
   const TMatrixD & RHCCovMatrixInv      (void) const { return *fRHCCovMtrxInv; }
+  // NEW FHC+RHC JOINT
+  const TMatrixD & FHCpRHCCovMatrix         (void) const { return *fFHCpRHCCovMtrx; }
+  const TMatrixD & FHCpRHCCovMatrixCholesky (void) const { return *fFHCpRHCCovMtrxChoL; }
+  const TMatrixD & FHCpRHCCovMatrixInv      (void) const { return *fFHCpRHCCovMtrxInv; }
+  //
   /// NEW MULTIRING 2
   const TMatrixD & MultiRingCovMatrix         (void) const { return *fMultiRingCovMtrx; }
   const TMatrixD & MultiRingCovMatrixCholesky (void) const { return *fMultiRingCovMtrxChoL; }
@@ -99,6 +119,9 @@ public:
   // Penalty term included in the chisq if FSI nuisance terms are included in the fit       
   double ChisqPenalty(void) const;
   double RHCChisqPenalty(void) const;
+  // NEW FHC+RHC JOINT
+  double FHCpRHCChisqPenalty(void); //const;
+  //
   /// NEW MULTIRING 2
   double MultiRingChisqPenalty(void) const;
   ///
@@ -106,6 +129,9 @@ public:
   // Print
   void PrintSystematicVariations (std::ostream & stream = std::cout) const;
   void PrintRHCSystematicVariations (std::ostream & stream = std::cout) const;
+  // NEW FHC+RHC JOINT
+  void PrintFHCpRHCSystematicVariations (std::ostream & stream = std::cout) const;
+  //
   /// NEW MULTIRING 2
   void PrintMultiRingSystematicVariations (std::ostream & stream = std::cout) const;
   ///
@@ -113,6 +139,7 @@ public:
   // Read inputs from XML file
   bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
   bool ReadRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
+  bool ReadFHCpRHC (TXMLEngine* xml, XMLNodePointer_t root_node);  // NEW FHC+RHC JOINT
   /// NEW MULTIRING 2
   bool ReadMultiRing (TXMLEngine* xml, XMLNodePointer_t root_node);
   ///
@@ -122,6 +149,13 @@ public:
   bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco) const;
+
+  // NEW FHC+RHC JOINT
+  void SplitFHCpRHCvectors(TVectorD bestfit_values_fhcprhc,TVectorD &bestfit_values_fhc,TVectorD &bestfit_values_rhc);
+  void MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfit_values_fhc,TVectorD bestfit_values_rhc);
+  void UpdateFHCpRHCCurrentValues();
+  void UpdateFHCpRHCBestFitValues();
+  //
 
 private:
 
@@ -142,6 +176,15 @@ private:
   TMatrixD * fRHCCovMtrx;          ///< FSI covariance matrix
   TMatrixD * fRHCCovMtrxInv;       ///< Inverse FSI covariance matrix
   TMatrixD * fRHCCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
+  
+
+  // NEW FHC+RHC JOINT
+  TVectorD * fFHCpRHCCurrentValues;    ///< Current values of FSI params
+  TVectorD * fFHCpRHCNominalValues;    ///< Nominal values of FSI params
+  TMatrixD * fFHCpRHCCovMtrx;          ///< FSI covariance matrix
+  TMatrixD * fFHCpRHCCovMtrxInv;       ///< Inverse FSI covariance matrix
+  TMatrixD * fFHCpRHCCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
+  //
 
   /// NEW MULTIRING 2
   TVectorD * fMultiRingCurrentValues;    ///< Current values of FSI params

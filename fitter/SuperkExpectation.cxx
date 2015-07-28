@@ -140,7 +140,6 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
   if (xmldoc==0) {
     cerr << "SKExp/Read >> " << "Can not parse input: " << config_file << endl;
-    delete xml;
     return false;  
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);

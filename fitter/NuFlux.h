@@ -66,7 +66,7 @@ public:
   bool ReadRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
 
   // NEW FLUX FHC+RHC
-  bool ReadFHCpRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
+  //bool ReadFHCpRHC (TXMLEngine* xml, XMLNodePointer_t root_node);
   //
 
   // BANFF fit info
@@ -74,7 +74,7 @@ public:
   void TellMeAboutTheRHCBANFFfit(BANFF * banff);
 
   // NEW FLUX FHC+RHC
-  void TellMeAboutTheFHCpRHCBANFFfit(BANFF * banff);
+  //void TellMeAboutTheFHCpRHCBANFFfit(BANFF * banff);
   //
 
   // Drawing options:
@@ -109,7 +109,7 @@ private:
   void BookAndInitRHCAuxSpectra(void);
 
   // NEW FLUX FHC+RHC
-  void BookAndInitFHCpRHCAuxSpectra(void);
+  //void BookAndInitFHCpRHCAuxSpectra(void);
   //
 
   // Apply BANFF weights
@@ -118,7 +118,7 @@ private:
 
 
   // NEW FLUX FHC+RHC
-  void ApplyFHCpRHCBANFFWeights (bool get_current) const;
+  //void ApplyFHCpRHCBANFFWeights (bool get_current) const;
   //
 
 
