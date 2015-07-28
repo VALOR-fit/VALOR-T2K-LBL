@@ -38,7 +38,6 @@ namespace valor {
     void  AppendAllUncorrelatedXSecSystematics       (FitParamList * fp, int start);
     void  AppendAllSuperkDetectorFSISystematics      (FitParamList * fp, int start);
     void  AppendAllCorrelatedBANFFSystematics        (FitParamList * fp, int start);
-    void  AppendAllCorrelatedBANFFSystematicsRHC     (FitParamList * fp, int start);
 
 #ifdef __NUMUONLY__
     void  AppendUncorrelatedXSecSystematicsDisap     (FitParamList * fp, int start);
