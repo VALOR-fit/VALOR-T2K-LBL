@@ -33,14 +33,35 @@ opt.SetDefaultParameterValues()
 
 #~ fit_param_list = "nuosc3f_numudisapp_nuis3fixdcp+nuisance"
 #~ fit_param_list = "nuosc3fbar_numudisapp_constrainall+nuisance"
-fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"
+#~ fit_param_list = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance"
+fit_param_list = "nsi3f_fix4+nuisance"
+
 stat_fluctuations = True
 syst_tweaks       = False
-nbins = 1000
+nbins = 201
 
 write_bin_spectra = False
 
+to3sf = "{0:.3g}"
 python_undefined = 2L*sys.maxint+1
+
+input_mixing12     = 0.304
+input_mixing13     = 0.0248
+input_mixing23     = 0.527
+input_deltacp      = -1.55
+input_dm12sq       = 7.53E-5
+input_dm23sq       = 2.51E-3
+input_mixing12Bar  = 0.304
+input_mixing13Bar  = 0.0248
+input_mixing23Bar  = 0.527
+input_deltacpBar   = -1.55
+input_dm12sqBar    = 7.53E-5
+input_dm23sqBar    = 2.51E-3
+input_epsmutau     = 0
+
+color = ROOT.kBlack
+
+img_format = "png"
 
 def main(params,config_file,sample):
   
@@ -56,6 +77,21 @@ def main(params,config_file,sample):
   if syst_tweaks: skexp.RandomizeSystematics();
   
   fparm = valor.util.NamedParameterList(fit_param_list)
+  
+  if fparm.Exists(conv.kPhypMixing12    ) : fparm.SetInitValue(conv.kPhypMixing12   , input_mixing12);
+  if fparm.Exists(conv.kPhypMixing13    ) : fparm.SetInitValue(conv.kPhypMixing13   , input_mixing13);
+  if fparm.Exists(conv.kPhypMixing23    ) : fparm.SetInitValue(conv.kPhypMixing23   , input_mixing23);
+  if fparm.Exists(conv.kPhypCPV         ) : fparm.SetInitValue(conv.kPhypCPV        , input_deltacp);
+  if fparm.Exists(conv.kPhypDm12sq      ) : fparm.SetInitValue(conv.kPhypDm12sq     , input_dm12sq);
+  if fparm.Exists(conv.kPhypDm23sq      ) : fparm.SetInitValue(conv.kPhypDm23sq     , input_dm23sq);
+  if fparm.Exists(conv.kPhypMixing12Bar ) : fparm.SetInitValue(conv.kPhypMixing12Bar, input_mixing12Bar);
+  if fparm.Exists(conv.kPhypMixing13Bar ) : fparm.SetInitValue(conv.kPhypMixing13Bar, input_mixing13Bar);
+  if fparm.Exists(conv.kPhypMixing23Bar ) : fparm.SetInitValue(conv.kPhypMixing23Bar, input_mixing23Bar);
+  if fparm.Exists(conv.kPhypCPVBar      ) : fparm.SetInitValue(conv.kPhypCPVBar     , input_deltacpBar);
+  if fparm.Exists(conv.kPhypDm12sqBar   ) : fparm.SetInitValue(conv.kPhypDm12sqBar  , input_dm12sqBar);
+  if fparm.Exists(conv.kPhypDm23sqBar   ) : fparm.SetInitValue(conv.kPhypDm23sqBar  , input_dm23sqBar);
+  if fparm.Exists(conv.kPhypNSIepsMuTau ) : fparm.SetInitValue(conv.kPhypNSIepsMuTau, input_epsmutau);
+
       
   skobs = valor.SuperkObservation()
   applied_negevents_condition = skobs.Generate(skexp, fparm, stat_fluctuations)
@@ -68,6 +104,11 @@ def main(params,config_file,sample):
   
   canv = ROOT.TCanvas("canv","canv",1280,1024)
   canv.cd()
+  
+  if len(params)==0:
+    params = [util.ParamAsStringSimple(p) for p in xrange(conv.knppmax) if fparm.Exists(p)]
+    
+  print "Making chisq distribution for "+`len(params)`+" parameters."
   
   for param_name in params:
     param = util.PhysParamIdFromString(param_name)
@@ -84,12 +125,18 @@ def main(params,config_file,sample):
       print "Param ",param,"=",util.ParamAsString(param)," not found in FitParamList ",fit_param_list
       continue
       
+    print "Doing param: ",util.ParamAsString(param)
+      
     fparm.ResetCurrToInitValues()
     
     lower_limit = fparm.MinValue(param)
     upper_limit = fparm.MaxValue(param)
     
-    h = ROOT.TH1D(util.ParamAsStringSimple(param)+"_chisq","Chisq of "+util.ParamAsStringSimple(param),nbins,lower_limit,upper_limit)
+    hname = util.ParamAsStringSimple(param)+"_chisq"
+    htitle = "Chisq of "+util.ParamAsStringSimple(param)
+    
+    h = ROOT.TH1D(hname,htitle,nbins,lower_limit,upper_limit)
+    h.SetLineColor(color)
     
     for ibin in xrange(nbins):
       par_value = h.GetBinCenter(ibin+1)
@@ -104,14 +151,14 @@ def main(params,config_file,sample):
         del tmp_hist;
       
     hists.append(h)
-    h.Write()
+    h.Write(hname)
   
   canv = ROOT.TCanvas()
   canv.cd()
   for h in hists:
     h.Draw()
     canv.Update()
-    canv.Print(h.GetName()+".eps")
+    canv.Print(h.GetName()+"."+img_format)
     
 class T2KAnaError(Exception):
   pass
