@@ -841,7 +841,6 @@ void test_sk_ereco_spectrum_twk_sys_throw
     
     double sumsq = 0;
     for (int iexp = 0 ; iexp < nexp; iexp++) {
-      cerr<<nsk_per_toy_arr[iexp]<<"\t"<<mean_nsk<<endl;
       sumsq += pow(nsk_per_toy_arr[iexp]-mean_nsk,2);
     }
     
