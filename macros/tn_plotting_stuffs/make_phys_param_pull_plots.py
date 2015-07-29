@@ -97,11 +97,12 @@ def main(file_patterns,labels=[None],tag=None,do_systematics=False,print_stats=F
       h.SetTitle(util.ParamAsStringPaperRooTex(p).replace(";"," - "))
       pull_hists[ipattern][p] = h
       
+      tex_param_name = util.ParamAsStringPaperRooTex(p).replace(";"," - ")
       hname = "bfvals_f"+`ipattern`+"_"+util.ParamAsStringSimple(p)
       h = ROOT.TH1D(hname,hname,nbins,fparm.MinValue(p),fparm.MaxValue(p))
-      h.GetXaxis().SetTitle("Best-fit")
+      h.GetXaxis().SetTitle(tex_param_name+" best-fit")
       h.GetYaxis().SetTitle("Fraction of fits")
-      h.SetTitle(util.ParamAsStringPaperRooTex(p).replace(";"," - "))
+      h.SetTitle(tex_param_name)
       bf_hists[ipattern][p] = h
       
     for entry in ch:
