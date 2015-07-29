@@ -31,7 +31,10 @@ npads_y = 5
 
 nbins = 50
 
-def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
+def main(file_patterns,labels=[None],tag=None,do_systematics=False,print_stats=False,plot_ymax=None):
+  
+  fn_base = ""
+  if tag: fn_base = tag+"_"
   
   objects_to_keep = []
   
@@ -138,6 +141,9 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
     canv.SetRightMargin(0.05)
     plot_opt = orig_plot_opt
     histmax  = 1.1*max([h[p].GetMaximum() for h in pull_hists.itervalues()])
+    
+    if plot_ymax is not None: histmax = plot_ymax
+    
     for ipattern,pattern in enumerate(file_patterns):
       h = pull_hists[ipattern][p]
       h.SetMaximum(histmax)
@@ -156,7 +162,7 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
         objects_to_keep.append(clone_box)
     
     if (do_systematics or not util.IsSystematic(p)):
-      canv.Print("pull_"+util.ParamAsStringSimple(p)+".eps")
+      canv.Print(fn_base+"pull_"+util.ParamAsStringSimple(p)+".eps")
     
     title = ROOT.TPaveText(0.7,0.5,0.86,0.6,"ndc")
     title.SetShadowColor(0)
@@ -187,6 +193,8 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
     
     plot_opt = orig_plot_opt
     histmax  = 1.1*max([h[p].GetMaximum() for h in bf_hists.itervalues()])
+    if plot_ymax is not None: histmax = plot_ymax
+    
     for ipattern,pattern in enumerate(file_patterns):
       h = bf_hists[ipattern][p]
       h.SetMaximum(histmax)
@@ -205,7 +213,7 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
         objects_to_keep.append(clone_box)
     
     if (do_systematics or not util.IsSystematic(p)):
-      canv.Print("bf_"+util.ParamAsStringSimple(p)+".eps")
+      canv.Print(fn_base+"bf_"+util.ParamAsStringSimple(p)+".eps")
     
     title = ROOT.TPaveText(0.7,0.5,0.86,0.6,"ndc")
     title.SetShadowColor(0)
@@ -227,18 +235,20 @@ def main(file_patterns,labels=[None],do_systematics=False,print_stats=False):
       ipad_b = 1
     
   for icanv,canv in enumerate(big_pull_canvs):
-    canv.Print("many_pulls_"+`icanv`+".eps")
+    canv.Print(fn_base+"many_pulls_"+`icanv`+".eps")
   for icanv,canv in enumerate(big_bf_canvs):
-    canv.Print("many_bf_"+`icanv`+".eps")
+    canv.Print(fn_base+"many_bf_"+`icanv`+".eps")
 
 if __name__=="__main__":
   import optparse
   parser = optparse.OptionParser(usage="%prog [options] pattern1 [pattern2] ...",description="Make plots of physics parameter pulls")
   parser.add_option('-s','--do-systematics', dest='do_systematics'    , action="store_true", default=False, help="Draw the systematic parameters individually as well")
+  parser.add_option('-t','--tag', dest='tag', default=None, help="Tag for output files")
   parser.add_option('-l','--labels', dest='labels', default="", help="Legend entries, comma seperated")
   parser.add_option('-p','--print_stats', dest='do_stats', action="store_true", default=False, help="Draw the Gaussian fit parameters as well")
+  parser.add_option('-m','--plot-max', dest='ymax',default=None,type=float,help="Maximum for the y-axis of the plots")
   
   options,patterns = parser.parse_args()
   labels = options.labels.split(",")
   
-  main(patterns,labels,options.do_systematics,options.do_stats)
+  main(patterns,labels,options.tag,options.do_systematics,options.do_stats,options.ymax)
