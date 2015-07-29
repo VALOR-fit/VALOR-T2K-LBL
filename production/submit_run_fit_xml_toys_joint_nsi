@@ -101,7 +101,7 @@ $nruns                  = 200                                 unless defined $nr
 $firstexpt              = 0                                   unless defined $firstexpt;
 $lastexpt               = 20                                  unless defined $lastexpt; 
 
-$xmlfile                = "toymc/Asimov/toymc_Asimov_T2Konly_NH-0.xml"                  unless defined $xmlfile;
+$xmlfile                = "NOSUCHFILE"                         unless defined $xmlfile;
 $using_xml_file         = 0                                    unless defined $using_xml_file;
 $dotoys                 = 1                                    unless defined $dotoys;
 
