@@ -2973,7 +2973,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kPhypDm51sq                ) : return "$|\\Delta m^{2}_{51}|$";             break;
   
   // Nonstandard matter interaction
-  case ( kPhypNSIepsMuTau           ) : return "$nsi_\\epsilon_{\\mu\\tau}$";      break;
+  case ( kPhypNSIepsMuTau           ) : return "$\\epsilon_{\\mu\\tau}$";      break;
     
   
     /*
