@@ -349,9 +349,7 @@ def main():
     mach3_nom_hists[valor_mode] = mach3_file.Get(mach3_nom_histname)
     if not mach3_nom_hists[valor_mode]:
       print "Failed to get MaCh3 nominal histogram ",mach3_nom_histname
-    
-    print mach3_nom_hists[valor_mode]
-    
+        
     mach3_nom_hists_binno[valor_mode] = hist_to_bin_number(mach3_nom_hists[valor_mode])
   
       
