@@ -3881,7 +3881,6 @@ bool valor::util::IsSystematic(PhysParamId_t p)
   return true;
 }
 //________________________________________________________________________________________
-
 bool valor::util::IsFHCSystematic(PhysParamId_t p)
 {
   //return !IsRHCSystematic(p);
@@ -3892,6 +3891,20 @@ bool valor::util::IsFHCSystematic(PhysParamId_t p)
     else
       return false;
   ///
+}
+//________________________________________________________________________________________
+bool valor::util::IsFHCOnlySystematic(PhysParamId_t p)
+{
+  if (p >= kNuisBANFF00 && p < kNuisBANFFMAQE) {return true;}
+  if (p >= kNuisSKDetFSI_first && p < kNuisSKDetFSI_first+kNumOfSKDetFSIParams) {return true;}
+  return false;
+}
+//________________________________________________________________________________________
+bool valor::util::IsRHCOnlySystematic(PhysParamId_t p)
+{
+  if (p >= kRHCNuisBANFF00 && p < kRHCNuisBANFFMAQE) {return true;}
+  if (p >= kRHCNuisSKDetFSI_first && p < kRHCNuisSKDetFSI_first+kNumOfRHCSKDetFSIParams) {return true;}
+  return false;
 }
 //________________________________________________________________________________________
 bool valor::util::IsBANFFUnconstrained(PhysParamId_t p)

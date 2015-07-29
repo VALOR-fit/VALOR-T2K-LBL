@@ -579,6 +579,8 @@ namespace util {
   bool IsSystematic       (conv::PhysParamId_t p);
   bool IsFHCSystematic    (conv::PhysParamId_t p);
   bool IsRHCSystematic    (conv::PhysParamId_t p);
+  bool IsFHCOnlySystematic(conv::PhysParamId_t p); // Systematic that applies to only FHC modes in 2015 analysis
+  bool IsRHCOnlySystematic(conv::PhysParamId_t p); // Systematic that applies to only RHC modes in 2015 analysis
   /// NEW MULTIRING 2
   bool IsMultiRingSystematic    (conv::PhysParamId_t p);
   /// 
