@@ -4402,8 +4402,9 @@ valor::conv::PhysParamId_t
 {
   string lsh = util::ToLowerCase(sh);
   
-  if (lsh == "dmsq"   ) return conv::kPhypDm23sq;
-  if (lsh == "dmsqbar") return conv::kPhypDm23sqBar;
+  if (lsh == "dmsq"    ) return conv::kPhypDm23sq;
+  if (lsh == "dmsqbar" ) return conv::kPhypDm23sqBar;
+  if (lsh == "epsmutau") return conv::kPhypNSIepsMuTau;
   
   for (int i = 0 ; i < knppmax ; i++) {
     PhysParamId_t k = (PhysParamId_t) i ;
