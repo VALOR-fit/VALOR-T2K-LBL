@@ -80,6 +80,8 @@ void draw_sensitivity_plots_toys(
     param1 = util::GetBarredVersionOfPhysParam(param1);
     param2 = util::GetBarredVersionOfPhysParam(param2);
   }
+  
+  bool NSIMode = (param1 == conv::kPhypNSIepsMuTau || param2 == conv::kPhypNSIepsMuTau);
 
   // 1D: dChi2 vs param1  (Normal Hierarchy)
 
@@ -180,6 +182,9 @@ void draw_sensitivity_plots_toys(
   double deltacp_min = 0;
   double deltacp_max = 0;
   double deltacp_step = 0;
+  double epsmutau_min = 0;
+  double epsmutau_max = 0;
+  double epsmutau_step = 0;
 
   if(!theta2theta){
     if(reactor){
@@ -233,6 +238,10 @@ void draw_sensitivity_plots_toys(
   //deltacp_step = 2*conv::kpi/50;
   deltacp_step = (deltacp_max-deltacp_min)/(nbins1_nh-1);
   
+  epsmutau_min = -1;
+  epsmutau_max = -2;
+  epsmutau_step = (epsmutau_max-epsmutau_min)/(nbins1_nh-1);
+  
   // Take steps and min-max values from the tree if they exist
 
   if(*parname1_nh==""){
@@ -258,6 +267,11 @@ void draw_sensitivity_plots_toys(
       min_val_param1 = dmsq_min;
       max_val_param1 = dmsq_max;
       step1 = dmsq_step;
+    }
+    else if(parname1_def=="epsmutau"){
+      min_val_param1 = epsmutau_min;
+      max_val_param1 = epsmutau_max;
+      step1 = epsmutau_step;
     }
     else if(parname1_def=="none"){
       min_val_param1 = 0.;
@@ -289,6 +303,11 @@ void draw_sensitivity_plots_toys(
       min_val_param2 = dmsq_min;
       max_val_param2 = dmsq_max;
       step2 = dmsq_step;
+    }
+    else if(parname2_def=="epsmutau"){
+      min_val_param2 = epsmutau_min;
+      max_val_param2 = epsmutau_max;
+      step2 = epsmutau_step;
     }
     else if(parname2_def=="none"){
     }
@@ -370,6 +389,9 @@ void draw_sensitivity_plots_toys(
       deltacp_nh = fparm_nh->BestFitValue(conv::kPhypCPVBar);
       chisq_nh = fparm_nh->GetBestFitStatistic();
     }
+    if (NSIMode) {
+      double epsmutau_nh = fparm_nh->BestFitValue(conv::kPhypNSIepsMuTau);
+    }
     
  
     double bf1_nh=0;
@@ -377,11 +399,13 @@ void draw_sensitivity_plots_toys(
     else if(*parname1_nh=="mixing13") bf1_nh = mix13_nh;
     else if(*parname1_nh=="mixing23") bf1_nh = mix23_nh;
     else if(*parname1_nh=="dmsq") bf1_nh = dmsq_nh;
+    else if(*parname1_nh=="epsmutau") bf1_nh = epsmutau_nh;
     double bf2_nh=0;
     if(*parname2_nh=="deltacp") bf2_nh = deltacp_nh;
     else if(*parname2_nh=="mixing13") bf2_nh = mix13_nh;
     else if(*parname2_nh=="mixing23") bf2_nh = mix23_nh;
     else if(*parname2_nh=="dmsq") bf2_nh = dmsq_nh;
+    else if(*parname2_nh=="epsmutau") bf2_nh = epsmutau_nh;
 
     int bin_idx=0;
     double bincont=0.;
@@ -708,6 +732,9 @@ void draw_sensitivity_plots_toys(
   double deltacp_min = 0;
   double deltacp_max = 0;
   double deltacp_step = 0;
+  double epsmutau_min = 0;
+  double epsmutau_max = 0;
+  double epsmutau_step = 0;
 
   if(!theta2theta){
     if(reactor){
@@ -752,6 +779,10 @@ void draw_sensitivity_plots_toys(
   //deltacp_step = 2*conv::kpi/50;
   deltacp_step = (deltacp_max-deltacp_min)/(nbins1_ih-1);
   
+  epsmutau_min = -1;
+  epsmutau_max = +1;
+  epsmutau_step = (epsmutau_max-epsmutau_min)/(nbins1_ih-1);
+  
 
   // Take steps and min-max values from the tree if they exist
 
@@ -778,6 +809,11 @@ void draw_sensitivity_plots_toys(
       min_val_param1 = dmsq_min;
       max_val_param1 = dmsq_max;
       step1 = dmsq_step;
+    }
+    else if(parname1_def=="epsmutau"){
+      min_val_param1 = epsmutau_min;
+      max_val_param1 = epsmutau_max;
+      step1 = epsmutau_step;
     }
     else if(parname1_def=="none"){
       min_val_param1 = 0.;
@@ -809,6 +845,11 @@ void draw_sensitivity_plots_toys(
       min_val_param2 = dmsq_min;
       max_val_param2 = dmsq_max;
       step2 = dmsq_step;
+    }
+    else if(parname2_def=="epsmutau"){
+      min_val_param2 = epsmutau_min;
+      max_val_param2 = epsmutau_max;
+      step2 = epsmutau_step;
     }
     else if(parname2_def=="none"){
     }
@@ -890,17 +931,22 @@ void draw_sensitivity_plots_toys(
       deltacp_ih = fparm_ih->BestFitValue(conv::kPhypCPVBar);
       chisq_ih = fparm_ih->GetBestFitStatistic();
     }
+    if (NSIMode) {
+      double epsmutau_ih = fparm_ih->BestFitValue(conv::kPhypNSIepsMuTau);
+    }
 
     double bf1_ih=0;
     if(*parname1_ih=="deltacp") bf1_ih = deltacp_ih;
     else if(*parname1_ih=="mixing13") bf1_ih = mix13_ih;
     else if(*parname1_ih=="mixing23") bf1_ih = mix23_ih;
     else if(*parname1_ih=="dmsq") bf1_ih = dmsq_ih;
+    else if(*parname1_ih=="epsmutau") bf1_ih = epsmutau_ih;
     double bf2_ih=0;
     if(*parname2_ih=="deltacp") bf2_ih = deltacp_ih;
     else if(*parname2_ih=="mixing13") bf2_ih = mix13_ih;
     else if(*parname2_ih=="mixing23") bf2_ih = mix23_ih;
     else if(*parname2_ih=="dmsq") bf2_ih = dmsq_ih;
+    else if(*parname2_ih=="epsmutau") bf2_ih = epsmutau_ih;
 
     int bin_idx=0;
     double bincont=0.;
