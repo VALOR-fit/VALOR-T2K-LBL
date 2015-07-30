@@ -127,6 +127,7 @@ void make_toygrid_toys_nsi
     exit(1);
   }
   Opt::Instance()->SetDefaultParameterValues();
+  Opt::Instance()->SetMiscBool("UseDoubleAngle23Constraint",true); // If mixing23 is nuisance, use the MINOS result
   
   // Check whether some osc. params need to be randomized
   bool randomize_mixing12 = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
