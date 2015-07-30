@@ -686,12 +686,70 @@ FitParamList * util::NamedParameterList(string name)
     
     return fp;
   }
+  if(name == "nsi3f_fix4_constrain2") {
+    FitParamList * fp = FitParamList::NSI3FlavourFit();
+    
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypDm12sq);
+    
+    fp -> SetNuisance  (kPhypMixing23, true);
+    fp -> SetNuisance  (kPhypDm23sq  , true);
+    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
   
-
-
-
-
-
+  if(name == "nsi3f_fix4_constrain2+nuisance") {
+    FitParamList * fp = FitParamList::NSI3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 7);
+    
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypDm12sq);
+    
+    fp -> SetNuisance  (kPhypMixing23, true);
+    fp -> SetNuisance  (kPhypDm23sq  , true);
+    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    
+    return fp;
+  }
+  
+  if(name == "nsi3f_fix4_constrain2+nuisance_fixnue") {
+    FitParamList * fp = FitParamList::NSI3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 7);
+    
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypDm12sq);
+    
+    fp -> SetNuisance  (kPhypMixing23, true);
+    fp -> SetNuisance  (kPhypDm23sq  , true);
+    
+    for (int ip = 0 ; ip < conv::knppmax ; ip++)  {
+      PhysParamId_t p = (PhysParamId_t) ip;
+      if (!fp->Exists(p)) {continue;}
+      if ((p>=kRHCNuisBANFF16 && p <= kRHCNuisBANFF24) ||
+          (p>=kNuisBANFF16    && p <= kNuisBANFF24   )) {
+        fp->FixParameter(p);
+      }
+    }
+    if (fp->Exists(kNuisBANFFNormNuEToNuMu   )) {fp->FixParameter(kNuisBANFFNormNuEToNuMu   );}
+    if (fp->Exists(kRHCNuisBANFFNormNuEToNuMu)) {fp->FixParameter(kRHCNuisBANFFNormNuEToNuMu);}
+        
+    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    
+    return fp;
+  }
+  
   cerr<<"FitParamListFactory/NamedParamList >> Unable to make: "<<name<<endl;
   exit(-1); 
   }
