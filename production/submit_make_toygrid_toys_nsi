@@ -126,7 +126,7 @@ $xmlfile                 = "NOSUCHFILE"                          unless defined 
 $using_xmlfile           = 0                                     unless defined $using_xmlfile;
  
 $optfixparams            = "dmsq12,mixing13,mixing12,deltacp"      unless defined $optfixparams;  # list of the params to be fixed in the fit   
-$optnuisparams           = "mixing23,dmsq23"                       unless defined $optnuisparams;  # list of the params to be fixed in the fit   
+$optnuisparams           = ""                                      unless defined $optnuisparams;  # list of the params to be fixed in the fit   
         
 $param1                 = "epsmutau"                             unless defined $param1;
 $param2                 = "none"                                 unless defined $param2;
