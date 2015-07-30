@@ -195,6 +195,8 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     prefit_nominal.Draw("same")
     hplus_prefit.Draw("same")
     
+    canv.RedrawAxis()
+    
     legend_prefit = ROOT.TH1D(hminus_prefit)
     legend_prefit.SetLineStyle(prefit_nominal.GetLineStyle())
     legend_prefit.SetLineColor(prefit_nominal.GetLineColor())
@@ -282,6 +284,7 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     
     ratio_graph_prefit .Draw("a2")
     ratio_graph_postfit.Draw("2")
+    canv2.RedrawAxis()
     
     legend2 = ROOT.TLegend(0.5,0.85,0.93,0.94);
     legend2.SetFillStyle(0);
