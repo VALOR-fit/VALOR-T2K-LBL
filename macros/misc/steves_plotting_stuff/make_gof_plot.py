@@ -94,7 +94,7 @@ def main(toy_pattern_nh,toy_pattern_ih,data_fit_nh,data_fit_ih,tag):
     line.SetLineWidth(linewidth)
     
     h.SetLineWidth(linewidth)
-    h.GetXaxis().SetTitle("#Chi^{2}_{GOF}")
+    h.GetXaxis().SetTitle("#chi^{2}_{GOF}")
     h.GetYaxis().SetTitle("Fraction of fits")
     
     pave = R.TPaveText(0.7,0.7,0.9,0.9,"ndc")
@@ -102,7 +102,7 @@ def main(toy_pattern_nh,toy_pattern_ih,data_fit_nh,data_fit_ih,tag):
     pave.SetFillColor(0)
     pave.SetFillStyle(0)
     pave.SetLineColor(0)
-    pave.AddText("#Chi^{2}_{data} = "+to2dp.format(bf_chisq))
+    pave.AddText("#chi^{2}_{data} = "+to2dp.format(bf_chisq))
     pave.AddText("p-value = "+to2dp.format(pvalue))
     
     canv = ROOT.TCanvas(hier,hier,1280,1024)
