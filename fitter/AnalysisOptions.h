@@ -32,8 +32,14 @@ Split valor::conv namespace into several smaller files
 #define SYST_NSIGMA   3   // number of sigma away from nominal nuisance parameters are allowed to be
 #define SYST_STEP     0.1 // step size (in units of sigma)
 
-#ifndef __FULLY_CORRELATED__  // rhc-fhc samples
-//#define __FULLY_CORRELATED__
+// NEW 2D TEMPLATES
+#ifndef __USE_2D_TEMPLATES__ 
+#define __USE_2D_TEMPLATES__ // Use 2D templates
+#endif
+//
+
+#ifndef __FULLY_CORRELATED__ 
+//#define __FULLY_CORRELATED__ // fully correlated rhc-fhc samples
 #endif
 
 // NEW XSEC (either niwg2013 or niwg2015)

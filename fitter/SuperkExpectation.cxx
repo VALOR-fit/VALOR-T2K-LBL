@@ -74,6 +74,10 @@ void SuperkExpectation::Init(void)
     if (s==kSKsUndefined) {
       fPredictErecoSpectrumArrayTot [is] = 0;
       fPredictErecoSpectrumArray    [is] = 0;
+      // NEW 2D TEMPLATES
+      fPredictErecoVsQ2SpectrumArrayTot [is] = 0;
+      fPredictErecoVsQ2SpectrumArray    [is] = 0;
+      //
       continue;
     }
     fPredictErecoSpectrumArrayTot [is]= new VALORArray(util::NumErecoBins(s));
@@ -87,6 +91,23 @@ void SuperkExpectation::Init(void)
     fPredictErecoSpectrumArray   [is]->SetTitle(Form("Predicted Ereco Spectrum Array %s by mode",util::AsStringCompact(s).c_str()));
     fPredictErecoSpectrumArrayTot[is]->SetName(Form("ereco_%s_total"  , util::AsStringCompact(s).c_str()));
     fPredictErecoSpectrumArray   [is]->SetName(Form("ereco_%s_mode"   , util::AsStringCompact(s).c_str()));
+
+    // NEW 2D TEMPLATES
+    fPredictErecoVsQ2SpectrumArrayTot [is]= new VALORArray(util::NumErecoBins(s),util::NumQ2Bins(s));
+    fPredictErecoVsQ2SpectrumArray    [is]= new VALORArray(conv::knm, util::NumErecoBins(s), util::NumQ2Bins(s));
+    
+    fPredictErecoVsQ2SpectrumArrayTot[is] ->SetDimensionName(0, "Ereco");
+    fPredictErecoVsQ2SpectrumArrayTot[is] ->SetDimensionName(1, "Q2");
+
+    fPredictErecoVsQ2SpectrumArray   [is] ->SetDimensionName(0, "SK Mode");
+    fPredictErecoVsQ2SpectrumArray   [is] ->SetDimensionName(1, "Ereco");
+    fPredictErecoVsQ2SpectrumArray   [is] ->SetDimensionName(2, "Q2");
+    
+    fPredictErecoVsQ2SpectrumArrayTot[is]->SetTitle(Form("Predicted Ereco Vs Q2 Spectrum Array %s total"  ,util::AsStringCompact(s).c_str()));
+    fPredictErecoVsQ2SpectrumArray   [is]->SetTitle(Form("Predicted Ereco Vs Q2 Spectrum Array %s by mode",util::AsStringCompact(s).c_str()));
+    fPredictErecoVsQ2SpectrumArrayTot[is]->SetName(Form("ereco_Vs_q2_%s_total"  , util::AsStringCompact(s).c_str()));
+    fPredictErecoVsQ2SpectrumArray   [is]->SetName(Form("ereco_Vs_q2_%s_mode"   , util::AsStringCompact(s).c_str()));
+    //
   }
   
 }
@@ -209,7 +230,9 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
   fSuperkMC->Hypothesis().Copy(ph);
 
   // update SK MC templates
-  fSuperkMC->UpdateTemplates();
+  fSuperkMC->UpdateTemplates(); // it already supports both 1D and 2D templates
+
+#ifndef __USE_2D_TEMPLATES__ // 1D templates
 
   // update Ereco spectrum prediction
   bool applied_negevents_condition = fSuperkMC->UpdateErecoSpectra();
@@ -230,6 +253,69 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
       }//m
     }//ibin
   }//s
+
+#else // 2D templates
+
+  // NEW 2D TEMPLATES
+  
+  // update Ereco spectrum prediction
+  bool applied_negevents_condition = fSuperkMC->UpdateErecoVsQ2Spectra();
+
+  // copy histograms
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+
+    const int nbins_q2    = kNQ2Bins[is];
+    const int nbins_ereco = kNErecoBins[is];
+
+    typedef double (erq2type)  [nbins_ereco][nbins_q2];
+    const erq2type & arr_skmc     = *reinterpret_cast< const erq2type * > ( fSuperkMC->CurrErecoVsQ2SpectrumArray(s) );
+    if (!arr_skmc) return 0;
+
+    erq2type & arr_skexp    = *reinterpret_cast< erq2type * > ( this->CurrPredictedErecoVsQ2SpectrumArray(s) );
+    if (!arr_skexp) return 0;
+    
+    for(int ibin_ereco = 1; ibin_ereco <= nbins_ereco; ibin_ereco++) {
+      for(int ibin_q2 = 1; ibin_q2 <= nbins_q2; ibin_q2++) {
+	
+	//double ns = fSuperkMC->CurrErecoVsQ2SpectrumArray(s)[ibin_ereco-1][ibin_q2-1];
+	//this->CurrPredictedErecoVsQ2SpectrumArray(s)[ibin_ereco-1][ibin_q2-1] = ns;
+
+	double ns = arr_skmc[ibin_ereco-1][ibin_q2-1];
+	arr_skexp[ibin_ereco-1][ibin_q2-1] = ns;
+
+	// now per mode
+ 
+	for(int im = 0; im < knm; im++) {
+	  SuperkMode_t m = kSKReactionModes[is][im];
+	  if(m == kSKmUndefined) continue;
+
+	  const erq2type & arr_skmc_mode = *reinterpret_cast< const erq2type * > (fSuperkMC->CurrErecoVsQ2SpectrumArray(s,m));  
+	  if (!arr_skmc_mode) return 0;
+	  
+	  erq2type & arr_skexp_mode = *reinterpret_cast< erq2type * > (this->CurrPredictedErecoVsQ2SpectrumArrayMode(s,m));  
+	  if (!arr_skexp_mode) return 0;
+	  
+	  //double nsm = fSuperkMC->CurrErecoVsQ2SpectrumArray(s,m)[ibin_ereco-1][ibin_q2-1]; 
+	  //this->CurrPredictedErecoVsQ2SpectrumArrayMode(s,m)[ibin_ereco-1][ibin_q2-1] = nsm; 
+	
+	  double nsm = arr_skmc_mode[ibin_ereco-1][ibin_q2-1]; 
+	  arr_skexp_mode[ibin_ereco-1][ibin_q2-1] = nsm; 
+
+	}//m
+      }//ibin q2
+    }//ibin ereco
+  }//s
+  
+  //
+  
+  
+  // SONO ARRIVATO QUI
+  
+  
+#endif
+
   return applied_negevents_condition;
 }
 //________________________________________________________________________________________
@@ -391,6 +477,187 @@ double SuperkExpectation::CurrPredictedErecoSpectrumArray(valor::conv::SuperkSam
   return arr[i];
 }
 //________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+// SONO ARRIVATO QUI
+
+// NEW 2D TEMPLATES
+
+TH2D* SuperkExpectation::CurrPredictedErecoVsQ2Spectrum(valor::conv::SuperkSample_t s) const 
+{
+  cout << "SuperkExpectation::CurrPredictedErecoVsQ2Spectrum" << endl;
+
+  const int nbins_q2    = util::NumQ2Bins(s);
+  const int nbins_ereco = util::NumErecoBins(s);
+  typedef double (erq2type)  [nbins_ereco][nbins_q2];  
+
+  const erq2type & arr = *reinterpret_cast< const erq2type * > (CurrPredictedErecoVsQ2SpectrumArray(s));  
+  //const double * arr = CurrPredictedErecoSpectrumArray(s);
+  if (!arr) return 0;
+  
+  string name (Form("curr_ereco_Vs_q2_%s"                       ,util::AsStringCompact(s).c_str() ) );
+  string title(Form("Current Predicted Ereco Vs Q2 Spectrum: %s",util::AsString(s).c_str() ) );
+  
+  TH2D * h = new TH2D(name.c_str(), title.c_str(), nbins_q2, util::Q2BinEdges(s), nbins_ereco, util::ErecoBinEdges(s) );
+  util::FormatErecoVsQ2Hist(h);
+  for (int ir = 0 ; ir < nbins_ereco ; ir++ ) {
+    for (int iq = 0 ; iq < nbins_q2 ; iq++ ) {
+      h->SetBinContent(iq+1,ir+1,arr[ir][iq]);
+    } 
+  }
+  return h;
+}
+//________________________________________________________________________________________
+TH2D* SuperkExpectation::CurrPredictedErecoVsQ2Spectrum(
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const 
+{ 
+  const int nbins_q2    = util::NumQ2Bins(s);
+  const int nbins_ereco = util::NumErecoBins(s);
+  typedef double (erq2type)  [nbins_ereco][nbins_q2];  
+  const erq2type & arr = *reinterpret_cast< const erq2type * > (CurrPredictedErecoVsQ2SpectrumArrayMode(s,m));  
+  //const double * arr = CurrPredictedErecoSpectrumArrayMode(s,m);
+  if (!arr) return 0;
+  
+  string name  (Form("curr_ereco_Vs_q2_%s_%s"                       ,util::AsStringCompact(s).c_str(), util::AsStringCompact(m).c_str()) );
+  string title (Form("Current Predicted Ereco Vs Q2 Spectrum: %s %s",util::AsString(s).c_str()       , util::AsString(m).c_str()       ) );
+  TH2D * h = new TH2D(name.c_str(), title.c_str(), nbins_q2, util::Q2BinEdges(s), nbins_ereco, util::ErecoBinEdges(s) );
+  util::FormatErecoVsQ2Hist(h);
+  util::SetDefaultSKSpectrumStyle(s,m,h);
+  for (int ir = 0 ; ir < nbins_ereco ; ir++ ) {
+    for (int iq = 0 ; iq < nbins_q2 ; iq++ ) {
+      h->SetBinContent(iq+1,ir+1,arr[ir][iq]);
+    }
+  }
+  return h;
+}
+//________________________________________________________________________________________
+VALORArray * SuperkExpectation::CurrPredictedErecoVsQ2VArray(valor::conv::SuperkSample_t s) 
+{
+  VALORArray * arr = fPredictErecoVsQ2SpectrumArrayTot[s];
+  if (!arr) {
+    std::cerr<<"SKExp/CurrPredictedErecoVsQ2VArray could not find array for sample "<<util::AsString(s)<<std::endl;
+    exit(-1);
+  }
+  
+  return arr;
+}
+//________________________________________________________________________________________
+VALORArray * SuperkExpectation::CurrPredictedErecoVsQ2VArrayMode(valor::conv::SuperkSample_t s) 
+{
+  VALORArray * arr = fPredictErecoVsQ2SpectrumArray[s];
+  if (!arr) {
+    std::cerr<<"SKExp/CurrPredictedErecoVsQ2VArrayMode could not find array for sample "<<util::AsString(s)<<std::endl;
+    exit(-1);
+  }
+  
+  return arr;
+}
+//________________________________________________________________________________________
+const VALORArray * SuperkExpectation::CurrPredictedErecoVsQ2VArray(valor::conv::SuperkSample_t s) const
+{
+  const VALORArray * arr = fPredictErecoVsQ2SpectrumArrayTot[s];
+  if (!arr) {
+    std::cerr<<"SKExp/CurrPredictedErecoVsQ2VArray could not find array for sample "<<util::AsString(s)<<std::endl;
+    exit(-1);
+  }
+  
+  return arr;
+}
+//________________________________________________________________________________________
+const VALORArray * SuperkExpectation::CurrPredictedErecoVsQ2VArrayMode(valor::conv::SuperkSample_t s) const
+{
+  const VALORArray * arr = fPredictErecoVsQ2SpectrumArray[s];
+  if (!arr) {
+    std::cerr<<"SKExp/CurrPredictedErecoVsQ2VArrayMode could not find array for sample "<<util::AsString(s)<<std::endl;
+    exit(-1);
+  }
+  
+  return arr;
+}
+//________________________________________________________________________________________
+double* SuperkExpectation::CurrPredictedErecoVsQ2SpectrumArray(valor::conv::SuperkSample_t s) 
+{
+  VALORArray * arr = this->CurrPredictedErecoVsQ2VArray(s);
+  return arr->GetArray();
+}
+//________________________________________________________________________________________
+const double* SuperkExpectation::CurrPredictedErecoVsQ2SpectrumArray(valor::conv::SuperkSample_t s)  const
+{
+  const VALORArray * arr = this->CurrPredictedErecoVsQ2VArray(s);
+  return arr->GetArray();
+}
+//________________________________________________________________________________________
+double* SuperkExpectation::CurrPredictedErecoVsQ2SpectrumArrayMode(
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m)
+{ 
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(midx == -1) {
+    return 0;
+  }
+  
+  VALORArray * arr = this->CurrPredictedErecoVsQ2VArrayMode(s);
+
+  return &(arr->GetEntryRef(midx,0,0));
+}
+//________________________________________________________________________________________
+const double* SuperkExpectation::CurrPredictedErecoVsQ2SpectrumArrayMode(
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const
+{ 
+  int sidx = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+  if(sidx == -1) {
+    return 0;
+  }
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(midx == -1) {
+    return 0;
+  }
+  
+  const VALORArray * arr = this->CurrPredictedErecoVsQ2VArrayMode(s);
+
+  return &(arr->GetEntryRef(midx,0,0));
+}
+//________________________________________________________________________________________
+double SuperkExpectation::CurrPredictedErecoVsQ2SpectrumArray(valor::conv::SuperkSample_t s, int ir, int iq) const
+{
+  const int nbins_q2    = util::NumQ2Bins(s);
+  const int nbins_ereco = util::NumErecoBins(s);
+  typedef double (erq2type)  [nbins_ereco][nbins_q2];  
+  const erq2type & arr = *reinterpret_cast< const erq2type * > (CurrPredictedErecoVsQ2SpectrumArray(s));  
+  //const double * arr = CurrPredictedErecoVsQ2SpectrumArray(s);
+  if (!arr) return 0;
+
+  assert(arr);
+  return arr[ir][iq];
+} 
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(std::ostream & stream) const
 {
   cout << "Exp >> SuperK PDF tweaks: " << endl;
@@ -436,6 +703,9 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t 
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
     
+
+#ifndef __USE_2D_TEMPLATES__ // 1D templates
+
     if (hist_mode) {
       util::SetDefaultStyle();
       TH1D * spectrum = 0;
@@ -456,7 +726,7 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t 
       spectrum->SetName(util::AsStringCompact(s,kSKmUndefined,append_begin).c_str());
       array->Add(spectrum);
       for(int im = 0; im < knm; im++) {
-         SuperkMode_t m = kSKReactionModes[is][im];
+        SuperkMode_t m = kSKReactionModes[is][im];
          if(m == kSKmUndefined) continue;
          spectrum_mode[im]->SetName(util::AsStringCompact(s,m,append_begin).c_str());
          array->Add(spectrum_mode[im]);
@@ -471,6 +741,50 @@ bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t 
       array->Add(bymode);
     }
   }//is
+
+#else // 2D templates
+  
+  // NEW 2D TEMPLATES
+  
+  if (hist_mode) {
+      util::SetDefaultStyle();
+      TH2D * spectrum = 0;
+      TH2D * spectrum_mode[knm] = { };
+      
+      // copy & format Ereco spectra
+      spectrum = this->CurrPredictedErecoVsQ2Spectrum(s);
+      spectrum->SetDirectory (0);
+      
+      for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         if(m == kSKmUndefined) continue;
+         spectrum_mode[im] = this->CurrPredictedErecoVsQ2Spectrum(s,m);
+         spectrum_mode[im]->SetDirectory (0);
+      }//imode
+      
+      // add spectra to the results array
+      spectrum->SetName(util::AsStringCompact(s,kSKmUndefined,append_begin).c_str());
+      array->Add(spectrum);
+      for(int im = 0; im < knm; im++) {
+         SuperkMode_t m = kSKReactionModes[is][im];
+         if(m == kSKmUndefined) continue;
+         spectrum_mode[im]->SetName(util::AsStringCompact(s,m,append_begin).c_str());
+         array->Add(spectrum_mode[im]);
+      }//im
+    } // hist mode
+    else {
+      VALORArray * total = new VALORArray(*(this->CurrPredictedErecoVsQ2VArray(s)));
+      total->SetName(Form("%s%s",append_begin.c_str(),total->GetName()));
+      array->Add(total);
+      VALORArray * bymode = new VALORArray(*(this->CurrPredictedErecoVsQ2VArrayMode(s)));
+      bymode->SetName(Form("%s%s",append_begin.c_str(),bymode->GetName()));
+      array->Add(bymode);
+    }
+  }//is
+
+ //
+
+#endif
 
   return true;
 }

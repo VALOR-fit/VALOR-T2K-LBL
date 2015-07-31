@@ -28,10 +28,16 @@
 #include "Utilities.h"
 #include "Utilities/VALORArray.h"
 
+
+#include <TH3D.h> // NEW 2D TEMPLATES
+//class TH3D; // NEW 2D TEMPLATES
+
+
 class TVirtualPad;
 class TTree;
 class TH1D;
 class TH2D;
+
 
 namespace valor {
 
@@ -61,10 +67,27 @@ public:
   const double* CurrErecoSpectrumArray   (conv::SuperkSample_t s) const;
   double*       CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m);
   const double* CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
-  
   VALORArray * CurrSpectrumVArray        (conv::SuperkSample_t s);
   const VALORArray * CurrSpectrumVArray  (conv::SuperkSample_t s) const;
-      
+
+
+
+
+  // NEW 2D TEMPLATES
+  // Integrate current MC templates and get Ereco Vs Q2 spectra (needed for fitting the data)
+  bool  UpdateErecoVsQ2Spectra  (void);
+  TH2D* CurrErecoVsQ2Spectrum   (conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  TH2D* CurrErecoVsQ2Spectrum   (conv::SuperkSample_t s, conv::SuperkMode_t m) const; // Returns new object, mut be deleted
+  double*       CurrErecoVsQ2SpectrumArray   (conv::SuperkSample_t s);
+  const double* CurrErecoVsQ2SpectrumArray   (conv::SuperkSample_t s) const;
+  double*       CurrErecoVsQ2SpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m);
+  const double* CurrErecoVsQ2SpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  VALORArray * CurrSpectrumVArray2D        (conv::SuperkSample_t s);
+  const VALORArray * CurrSpectrumVArray2D  (conv::SuperkSample_t s) const;
+  //
+
+
+
   // MC event samples used to fill-in MC templates and POT exposure for each
   TTree * MCTree (conv::SuperkSample_t s, conv::SuperkMode_t m);
   double  MCPOT  (conv::SuperkSample_t s, conv::SuperkMode_t m);
@@ -75,6 +98,17 @@ public:
   
   TH2D Get2DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) const;
   TH2D Get2DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SKMCTemplateType_t type) const;
+
+
+
+  // NEW 2D TEMPLATES
+  TH3D * Template2D (conv::SuperkSample_t s, conv::SuperkMode_t m, conv::SKMCTemplateType_t type) const;
+  TH3D * VarTemplate2D (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+  TH3D Get3DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) const;
+  TH3D Get3DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SKMCTemplateType_t type) const;
+  //
+
+
 
   // POT of analysed data sample (MC is scaled to that POT value)
   double AnalyzedSamplePOT(conv::SuperkSample_t s) const;
@@ -113,6 +147,7 @@ public:
 
 
   void NevDebug(conv::SKMCTemplateType_t t, string name);
+  void NevDebug2D(conv::SKMCTemplateType_t t, string name); // NEW 2D TEMPLATES
   
   void FillTemplateArrays(bool with_tuning_weights = false);
   bool DoTemplateArraysHaveNIWGTune(void) const;
@@ -128,8 +163,23 @@ private:
   void FillTemplateHistogram(conv::SuperkSample_t s, conv::SuperkMode_t m);
   void FillSpecialTemplates (void);
   
+
+
+  // NEW 2D TEMPLATES
+  double CalcQ2(double Enu,double *Pnu,double Elep, double *Plep); 
+  void DrawProjectionXY(TH3D *h);  // for debugging
+  void ProjectTemplate3Dto2D(TH3D *h3d[conv::kns][conv::knm], TH2D *h2d[conv::kns][conv::knm]);
+  double GetTemplateIntegral(TH3D *h3d[conv::kns][conv::knm]);
+  double GetTemplateIntegral(TH2D *h2d[conv::kns][conv::knm]);
+  double GetTemplateIntegral(TH3D *h3d);
+  double GetTemplateIntegral(TH2D *h2d);
+  //
+
+
+
   // Apply BANFF flux + cross section tuning (based on ND280 data) on top of NA61-based flux tuned MC
   void ApplyBANFFTuningToTemplates (void); 
+  void ApplyBANFFTuningToTemplates2D (void); // NEW 2D TEMPLATES 
 
   // Apply systematic variations to MC templates
   void ApplySystematicsToTemplates                   (void); 
@@ -137,14 +187,34 @@ private:
   void ApplySystematicsToTemplates_NonMultiplicative (void); 
   bool ApplyEnergyScaleSystematicToTotalSpectrum     (void);
 
+  // NEW 2D TEMPLATES
+  void ApplySystematicsToTemplates2D                 (void);  
+  void ApplySystematicsToTemplates_Multiplicative_2D (void);  
+  void ApplySystematicsToTemplates_NonMultiplicative2D (void);  
+  bool ApplyEnergyScaleSystematicToTotalSpectrum2D   (void); 
+  //
+
   // Apply physics hypothesis (oscillations,...) to MC templates
   void ApplyPhysHypothesisToTemplates (void); // Master function, picks one of the following functions to call based on fPhysHypothesis
   
-  void ApplyPhysHypothesisToTemplates_3fOsc(void); 
-  void ApplyPhysHypothesisToTemplates_3fOscBar(void); 
-  void ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void);  // NEW BETABAR
-  void ApplyPhysHypothesisToTemplates_3fOscNormBar(void);     // NEW BETABAR 2
-  void ApplyPhysHypothesisToTemplates_Sterile(void); 
+  // NEW 2D TEMPLATES
+  void ApplyPhysHypothesisToTemplates2D (void); // Master function, picks one of the following functions to call based on fPhysHypothesis
+  //
+
+
+  // NEW 2D TEMPLATES
+  /* void ApplyPhysHypothesisToTemplates_3fOsc(void);  */
+  /* void ApplyPhysHypothesisToTemplates_3fOscBar(void);  */
+  /* void ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void);   */
+  /* void ApplyPhysHypothesisToTemplates_3fOscNormBar(void);      */
+  /* void ApplyPhysHypothesisToTemplates_Sterile(void);  */
+  void ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates=false); 
+  void ApplyPhysHypothesisToTemplates_3fOscBar(const bool Use2Dtemplates=false); 
+  void ApplyPhysHypothesisToTemplates_3fOscBarNormBar(const bool Use2Dtemplates=false);  
+  void ApplyPhysHypothesisToTemplates_3fOscNormBar(const bool Use2Dtemplates=false);     
+  void ApplyPhysHypothesisToTemplates_Sterile(const bool Use2Dtemplates=false); 
+  //
+
 
   // Ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
   bool SkipTemplate(conv::SuperkMode_t m);
@@ -158,6 +228,7 @@ private:
 
   // Integrate current MC templates and get Etrue spectra (needed for applying physics hypothesis)
   void FillEtrueSpectra(void);
+  void FillEtrueSpectra2D(void); // NEW 2D TEMPLATES
   
   //
   // Private data members
@@ -193,6 +264,42 @@ private:
   TH1D *     fMCErecoSpectrumTot[conv::kns];     ///< Ereco MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
   TH1D *     fMCEtrueSpectrumTot[conv::kns];     ///< Etrue MC spectrum (sample)          : nominal
   
+
+
+
+
+  // NEW 2D TEMPLATES
+  TH3D *     fMCTemplOri2D[conv::kns][conv::knm];        ///< Ereco-Q2-Etrue MC template(sample,mode): nominal (doesn't even have pot weighting applied)
+  TH3D *     fMCTemplNom2D[conv::kns][conv::knm];        ///< Ereco-Q2-Etrue MC template(sample,mode): nominal + ext/tuning
+  TH3D *     fMCTemplRPA2D[conv::kns][conv::knm];        ///< Ereco-Q2-Etrue MC template(sample,mode): nominal + ext/tuning + with rel RPA
+  TH3D *     fMCTemplPOT2D[conv::kns][conv::knm];        ///< Ereco-Q2-Etrue MC template(sample,mode): nominal + ext/tuning + with rel RPA
+
+  TH3D *     fMCVariableTempl2D[conv::kns][conv::knm];
+  
+  std::vector<VALORArray * > fMCVariableTemplArray2D; // sample -> (mode, MCetrue,Xsereco,XsQ2)
+  std::vector<VALORArray * > fMCTemplArrayOri2D;      // sample -> (mode, etrue, ereco, Q2)   
+  
+  std::vector<VALORArray * > fMCTemplArrayNom2D; //sample -> (mode, etrue, observable1, observable2)
+  std::vector<VALORArray * > fMCTemplArrayTun2D; //sample -> (mode, etrue, observable1, observable2)
+  std::vector<VALORArray * > fMCTemplArrayFin2D; //sample -> (mode, etrue, observable1, observable2)
+  
+  std::vector<VALORArray * > fMCTemplArrayRPAWght2D; //sample -> (mode, etrue, observable1, observable2) - contains weight RPA_rel / weight RPA_nonrel
+  
+  std::vector<VALORArray * > fMCStatFracErr2D;               // sample -> (mode, etrue, observable1, observable2)
+  //std::vector<VALORArray * > fMCEtrueSpectrumTotArray2D;   // sample -> etrue
+  std::vector<VALORArray * > fMCErecoSpectrumTotArray2D;     // sample -> observable1
+  std::vector<VALORArray * > fMCQ2SpectrumTotArray2D;        // sample -> observable2
+  std::vector<VALORArray * > fMCErecoVsQ2SpectrumTotArray2D; // sample -> observable1, observable2
+  std::vector<VALORArray * > fMCErecoVsQ2SpectrumArray;      // sample -> (mode, observable1, observable2)
+
+  TH2D *     fMCErecoVsQ2Spectrum[conv::kns][conv::knm];   ///< Ereco Vs Q2 MC spectrum (sample,mode)     : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
+  TH2D *     fMCErecoVsQ2SpectrumTot[conv::kns];     ///< Ereco Vs Q2 MC spectrum (sample)          : nominal + ext/tuning + nd280/tuning + systematics + physics hypothesis
+  //
+
+
+
+
+
   // input event trees and normalisation factors
   vector<TTree*> fMCTreeNuMu;              ///< input MC event tree /  sample: numu                            / cuts: by sample 
   vector<TTree*> fMCTreeNuMuBar;           ///< input MC event tree /  sample: numubar                         / cuts: by sample 
@@ -264,6 +371,15 @@ private:
   
   int fNonEmptyVariableBins [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
   int * fNonEmptyFixedBins  [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
+
+
+  // NEW 2D TEMPLATES
+  int fNNonEmptyVariableBins2D[conv::kns][conv::knm];               //!
+  int fNNonEmptyFixedBins2D   [conv::kns][conv::knm][kMaxVarBins];  //!  
+  int fNonEmptyVariableBins2D [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the q2, reco and true bin numbers, masked with conv::kBigIndex;
+  int * fNonEmptyFixedBins2D  [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the q2, reco and true bin numbers, masked with conv::kBigIndex;
+  //
+
 
   // utility objects for computing cross-section and flux weights
   NuFlux *         fNuFlux;                ///< Neutrino flux inputs

@@ -115,6 +115,145 @@ double valor::util::XsecErecoBinEdges(valor::conv::SuperkSample_t s, int i)
   }
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+int valor::util::NumQ2Bins(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kNQ2Bins1Rmu; break;
+     case ( kSKsFCFV1RingELike      ) : return kNQ2Bins1Re;  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCNQ2Bins1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCNQ2Bins1Re;  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kNQ2BinsMultiRmu; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kNQ2BinsMultiRe;  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+const double * valor::util::Q2BinEdges(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kQ2BinEdges1Rmu; break;
+     case ( kSKsFCFV1RingELike      ) : return kQ2BinEdges1Re;  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCQ2BinEdges1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCQ2BinEdges1Re;  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kQ2BinEdgesMultiRmu; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kQ2BinEdgesMultiRe;  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+double valor::util::Q2BinEdges(valor::conv::SuperkSample_t s, int i)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kQ2BinEdges1Rmu[i]; break;
+     case ( kSKsFCFV1RingELike      ) : return kQ2BinEdges1Re[i];  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCQ2BinEdges1Rmu[i]; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCQ2BinEdges1Re[i];  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kQ2BinEdgesMultiRmu[i]; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kQ2BinEdgesMultiRe[i];  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+int valor::util::Q2BinContains(valor::conv::SuperkSample_t s, double Q2)
+{
+  int nedges = util::NumQ2Bins(s)+1;
+  const double * edges = util::Q2BinEdges(s);
+  if (Q2 > edges[nedges] || Q2 < edges[0]) return -1;
+  int bin =  TMath::BinarySearch(nedges,edges,Q2);
+  if (bin == util::NumQ2Bins(s)+1) return -1;
+  return bin;
+}
+//___________________________________________________________________________
+int valor::util::NumXsecQ2Bins(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kXsNQ2Bins1Rmu; break;
+     case ( kSKsFCFV1RingELike      ) : return kXsNQ2Bins1Re;  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCXsNQ2Bins1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCXsNQ2Bins1Re;  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kXsNQ2BinsMultiRmu; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kXsNQ2BinsMultiRe;  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+const double * valor::util::XsecQ2BinEdges(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kXsQ2BinEdges1Rmu; break;
+     case ( kSKsFCFV1RingELike      ) : return kXsQ2BinEdges1Re;  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCXsQ2BinEdges1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCXsQ2BinEdges1Re;  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kXsQ2BinEdgesMultiRmu; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kXsQ2BinEdgesMultiRe;  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+double valor::util::XsecQ2BinEdges(valor::conv::SuperkSample_t s, int i)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kXsQ2BinEdges1Rmu[i]; break;
+     case ( kSKsFCFV1RingELike      ) : return kXsQ2BinEdges1Re[i];  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCXsQ2BinEdges1Rmu[i]; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCXsQ2BinEdges1Re[i];  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kXsQ2BinEdgesMultiRmu[i]; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kXsQ2BinEdgesMultiRe[i];  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //___________________________________________________________________________
 int valor::util::NumEtrueBins(valor::conv::SuperkSample_t s)
 {

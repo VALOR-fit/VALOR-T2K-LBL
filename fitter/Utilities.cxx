@@ -665,6 +665,126 @@ void valor::util::ApplyEnergyScaleSystematic(conv::SuperkSample_t s, double * ev
 }
 //___________________________________________________________________________
 
+
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+void valor::util::ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double * events_per_bin_array, double escale_tweak)
+{
+  const int n_q2_bins = util::NumQ2Bins(s);
+  const int n_ereco_bins = util::NumErecoBins(s);
+
+  typedef double (erq2type)  [n_ereco_bins][n_q2_bins];
+  erq2type & events_per_bin = *reinterpret_cast< erq2type * > ( events_per_bin_array );
+  if (!events_per_bin){
+    cerr << endl;
+    cerr << "valor::util::ApplyEnergyScaleSystematic2D" << endl;
+    cerr << "events_per_bin array doesn't exist!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  // NB: events_par_bin is fine!
+
+  // for (int ibin_q2 = 0 ; ibin_q2 < n_q2_bins; ibin_q2++) { // loop over q2
+  //   for (int ibin = 0 ; ibin <= n_ereco_bins; ibin++) {
+  //     cout << events_per_bin[ibin][ibin_q2] << ", ";
+  //   }
+  //   cout << endl;
+  // }
+  // exit(1);
+
+  const double * bin_edges = util::ErecoBinEdges(s);
+  
+  double new_events_per_bin [n_ereco_bins+1][n_q2_bins];// With overflow bin
+  double scaled_bin_edges   [n_ereco_bins+1][n_q2_bins];
+  double unscaled_bin_edges [n_ereco_bins+2][n_q2_bins];// With overflow bin
+  
+  // Calculate bin information
+
+  for (int ibin_q2 = 0 ; ibin_q2 < n_q2_bins; ibin_q2++) { // loop over q2
+
+    double total_events = 0;
+    
+    for (int ibin = 0 ; ibin <= n_ereco_bins; ibin++) {
+      if (ibin  != n_ereco_bins) {
+	total_events += events_per_bin[ibin][ibin_q2];
+      }
+      unscaled_bin_edges[ibin][ibin_q2] = bin_edges[ibin];
+      scaled_bin_edges  [ibin][ibin_q2] = bin_edges[ibin] * escale_tweak;
+      new_events_per_bin[ibin][ibin_q2] = 0;
+    } // ibin (ereco)
+    
+    unscaled_bin_edges[n_ereco_bins+1][ibin_q2] = 1E4; //Overflow bin (no underflow unless we start binning from something other than zero).
+    
+    if (total_events < kASmallNum) return;
+    
+    double overlap = 0;
+      
+    for (int ibin_s = 0 ; ibin_s < n_ereco_bins ; ibin_s++) { // Loop over scaled bins
+      double bin_min_s = scaled_bin_edges[ibin_s][ibin_q2];
+      double bin_max_s = scaled_bin_edges[ibin_s+1][ibin_q2];
+      for (int ibin_u = 0 ; ibin_u < n_ereco_bins+1 ; ibin_u++) {
+	double bin_min_u = unscaled_bin_edges[ibin_u][ibin_q2];
+	double bin_max_u = unscaled_bin_edges[ibin_u+1][ibin_q2];
+      
+	if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
+	else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
+	else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
+	else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
+	else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
+	else overlap = -999; // No crossover
+	
+	if (overlap <= 0) continue;
+	
+	double new_events = events_per_bin[ibin_s][ibin_q2] * overlap / (scaled_bin_edges[ibin_s+1][ibin_q2] - scaled_bin_edges[ibin_s][ibin_q2]);
+	new_events_per_bin[ibin_u][ibin_q2] += new_events;
+      }
+    }
+    // Move events back into main array.
+    for (int i = 0 ; i < n_ereco_bins ; i++) {
+      events_per_bin[i][ibin_q2] = new_events_per_bin[i][ibin_q2];
+    }
+    events_per_bin[n_ereco_bins-1][ibin_q2] += new_events_per_bin[n_ereco_bins][ibin_q2]; //Put events from overflow bin back into top bin
+    
+#ifndef NDEBUG
+  double new_total_events = 0;
+  for (int i = 0 ; i < n_ereco_bins ; i++) {
+    new_total_events+=events_per_bin[i][ibin_q2];
+  }
+  if ( fabs((new_total_events/total_events)-1) > conv::kASmallNum ) {
+    cerr<<"Util/ApplyEnergyScaleSystematic2D - failed normalisation check for sample "<<util::AsString(s)<<endl;
+    cerr<<"Q2 bin = " << ibin_q2 << endl;
+    cerr<<"Events: "<<total_events<<" ==> "<<new_total_events<<"\t"<<new_total_events/total_events
+        <<"\t"<<fabs((new_total_events/total_events)-1)<<"\t at scale "<<escale_tweak<<endl;
+    assert(!"Broken");
+  }
+#endif //NDEBUG
+
+  } // loop over q2 
+  
+  return;
+}
+//
+
+
+
+
+
+
+
+
+
+
+//___________________________________________________________________________
+
 // A few helper functions for use in UseEventToFillInTemplate
 // that make swapping mode definitions a little easier
 

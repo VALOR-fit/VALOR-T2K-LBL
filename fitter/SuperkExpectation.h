@@ -121,19 +121,41 @@ public:
    const VALORArray * CurrPredictedErecoVArrayMode (valor::conv::SuperkSample_t s) const;
    VALORArray       * CurrPredictedErecoVArray     (valor::conv::SuperkSample_t s);
    VALORArray       * CurrPredictedErecoVArrayMode (valor::conv::SuperkSample_t s);
-   
    // As histograms
    TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
    TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
-   
    // Double array getters
    double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s);
    double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m);
-   
    const double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s) const;
    const double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const;
    double  CurrPredictedErecoSpectrumArray           (valor::conv::SuperkSample_t s, int i) const;
-   
+
+
+   // NEW 2D TEMPLATES
+
+   // Access calculated SK reconstructed energy Vs Q2 spectrum for each sample/mode
+   const VALORArray * CurrPredictedErecoVsQ2VArray     (valor::conv::SuperkSample_t s) const;
+   const VALORArray * CurrPredictedErecoVsQ2VArrayMode (valor::conv::SuperkSample_t s) const;
+   VALORArray       * CurrPredictedErecoVsQ2VArray     (valor::conv::SuperkSample_t s);
+   VALORArray       * CurrPredictedErecoVsQ2VArrayMode (valor::conv::SuperkSample_t s);
+   // As histograms
+   TH2D*   CurrPredictedErecoVsQ2Spectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+   TH2D*   CurrPredictedErecoVsQ2Spectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
+   // Double array getters
+   double* CurrPredictedErecoVsQ2SpectrumArray     (valor::conv::SuperkSample_t s);
+   double* CurrPredictedErecoVsQ2SpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m);
+   const double* CurrPredictedErecoVsQ2SpectrumArray     (valor::conv::SuperkSample_t s) const;
+   const double* CurrPredictedErecoVsQ2SpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const;
+   double  CurrPredictedErecoVsQ2SpectrumArray           (valor::conv::SuperkSample_t s, int ir, int iq) const;
+   //   
+
+
+
+
+
+
+
    // Access inputs used for building-up the expected spectrum at SK
    SuperkDetectorFSI * GetSuperkDetectorFSI (void) { return fSuperkDetectorFSI; }
    SuperkMC          * GetSuperkMC          (void) { return fSuperkMC;          }
@@ -163,6 +185,11 @@ private:
    
    VALORArray * fPredictErecoSpectrumArrayTot [conv::kns];
    VALORArray * fPredictErecoSpectrumArray    [conv::kns];
+
+   // NEW 2D TEMPLATES
+   VALORArray * fPredictErecoVsQ2SpectrumArrayTot [conv::kns];
+   VALORArray * fPredictErecoVsQ2SpectrumArray    [conv::kns];
+   //
    
 ClassDef(SuperkExpectation, 6)
 };

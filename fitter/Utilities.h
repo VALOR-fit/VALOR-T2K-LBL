@@ -51,6 +51,7 @@ class TAxis;
 #include "Utilities/UtlStr.h"
 #include "Utilities/UtlStyle.h"
 #include "Utilities/UtlXML.h"
+#include "Utilities/VALORArrayD.h"
 
 
 using std::string;
@@ -82,6 +83,9 @@ namespace util {
   
   // Apply the energy scale systematic (used in both SKMC and SKToyArray)
   void ApplyEnergyScaleSystematic(conv::SuperkSample_t s, double * events_per_bin, double escale_tweak);
+  
+  void ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double *events_per_bin, double escale_tweak); // NEW 2D TEMPLATES
+  
   
   //
   // Reaction mode utilities etc
