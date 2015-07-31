@@ -47,6 +47,7 @@ minos_style = R.kSolid
 def main(data_file_epsmutau_flat, data_file_epsmutau_minos, 
          data_bf_normal_epsmutau_flat  = None, data_bf_inverted_epsmutau_flat  = None,
          data_bf_normal_epsmutau_minos = None, data_bf_inverted_epsmutau_minos = None,
+         label_flat = "Flat prior", label_minos = "MINOS prior",
          tag=None,draw_hierarchies_individually = False):
   
   ROOT.gStyle.SetPalette(56);
@@ -327,8 +328,8 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   # Make legend
   
   legend = ROOT.TLegend(0.45,0.25,0.6,0.4)
-  legend.AddEntry(h_delta_nh_flat ,"Flat prior","l")
-  legend.AddEntry(h_delta_nh_minos,"MINOS prior","l")
+  legend.AddEntry(h_delta_nh_flat ,label_flat,"l")
+  legend.AddEntry(h_delta_nh_minos,label_minos,"l")
   legend.Draw()
   
   prec = precision[param]
@@ -368,8 +369,8 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   # Make legend
   
   legend = ROOT.TLegend(0.45,0.25,0.6,0.4)
-  legend.AddEntry(h_delta_ih_flat ,"Flat prior","l")
-  legend.AddEntry(h_delta_ih_minos,"MINOS prior","l")
+  legend.AddEntry(h_delta_ih_flat ,label_flat ,"l")
+  legend.AddEntry(h_delta_ih_minos,label_minos,"l")
   legend.Draw()
   
   prec = precision[param]
@@ -429,11 +430,14 @@ if __name__=="__main__":
   parser.add_option('--data-bf-ih-minos' , dest='data_bf_inverted_minos', default=None, help="File containing MINOS prior best-fit (data, IH)")
   parser.add_option('-t','--tag' , dest='tag', default=None, help="Tag for output")
   parser.add_option('-i','--individual-priors' , dest='individual_priors', default=False,action="store_true", help="Should we draw the independent prior plots")
+  parser.add_option('--label-flat'  , dest='label_flat'   , default="Flat prior" , help="Label on the legend for flat prior")
+  parser.add_option('--label-minos' , dest='label_minos'  , default="MINOS prior", help="Label on the legend for MINOS prior")
   
   o,args = parser.parse_args()
   
   main(args[0],args[1],
     o.data_bf_normal_flat , o.data_bf_inverted_flat ,
     o.data_bf_normal_minos, o.data_bf_inverted_minos,
+    o.label_flat, o.label_minos,
     o.tag,o.individual_priors)
 
