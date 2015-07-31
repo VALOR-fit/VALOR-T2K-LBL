@@ -15,6 +15,7 @@ Added samples for multiring forward horn current
 //#define __show_syst_reset_mesg__
 //#define __show_syst_tweak_mesg__
 //#define __show_syst_tweak_debug__
+//#define __show_contributions_to_penalty_term__
 
 #include <cassert>
 #include <cstdlib>
@@ -1780,12 +1781,9 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
     if(fp.Exists(kNuisSuperkEnergyScale)) {
       double twk = fp.CurrValue(kNuisSuperkEnergyScale);
       this->GetSuperkDetectorFSI()->TweakEnergyScale(twk);
-    }
-    if(fp.Exists(kRHCNuisSuperkEnergyScale)) {
-      double twk = fp.CurrValue(kRHCNuisSuperkEnergyScale);
-      this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
-    }
-    //
+        this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(twk);
+
+    }    //
     
   #endif
 #else 
