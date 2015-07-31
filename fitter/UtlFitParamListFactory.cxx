@@ -338,7 +338,7 @@ FitParamList * util::NamedParameterList(string name)
     FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
     //        fp -> SetNuisance  (kPhypDm23sq,   true);
-    //        fp -> SetNuisance  (kPhypMixing13, true);
+            fp -> SetNuisance  (kPhypMixing13, true);
     fp -> FixParameter (kPhypMixing12      );
     fp -> FixParameter (kPhypDm12sq        );
     //fp -> FixParameter (kPhypCPV);
@@ -1249,7 +1249,6 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
     }
     
-    fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,  0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale) );   // RHC SK escale
     for(int i = 0; i < kNumOfRHCSKDetFSIParams; i++) {
       // kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
       PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
@@ -1396,7 +1395,6 @@ void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int sta
 	double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
 	fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
       }      
-      fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale));  // RHC SK escale
       for(int i = 0; i < kNumOfRHCSKDetFSIParams1Rmu; i++) {
 	// kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
 	PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
@@ -1536,7 +1534,6 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
 	double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
 	fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
       }
-      fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale));  // FHC SK escale
       for(int i = 0; i < kNumOfRHCSKDetFSIParams1Re; i++) {
 	// kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
 	PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
