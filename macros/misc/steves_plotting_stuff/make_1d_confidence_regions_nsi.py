@@ -47,6 +47,8 @@ minos_style = R.kSolid
 limit_at_chisq = 10
 new_eps_limit  = 0.6
 
+linewidth=2
+
 def main(data_file_epsmutau_flat, data_file_epsmutau_minos, 
          data_bf_normal_epsmutau_flat  = None, data_bf_inverted_epsmutau_flat  = None,
          data_bf_normal_epsmutau_minos = None, data_bf_inverted_epsmutau_minos = None,
@@ -256,6 +258,11 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   h_delta_nh_minos.GetYaxis().SetTitleOffset(0.6)
   h_delta_ih_minos.GetYaxis().SetTitleOffset(0.6)
   
+  h_delta_nh_flat .SetLineWidth(linewidth)
+  h_delta_ih_flat .SetLineWidth(linewidth)
+  h_delta_nh_minos.SetLineWidth(linewidth)
+  h_delta_ih_minos.SetLineWidth(linewidth)
+  
   # End big block of minos prior stuff
   
   h_delta_nh_flat .SetMinimum(0)
@@ -305,6 +312,8 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   vertical_lines_ih = [neg_line_ih_flat ,pos_line_ih_flat ,neg_line_ih_minos,pos_line_ih_minos]
   
   vertical_lines = vertical_lines_nh + vertical_lines_ih
+  for l in vertical_lines:
+    l.SetLineWidth(linewidth)
   
   neg_line_nh_flat .SetLineStyle(flat_style)
   pos_line_nh_flat .SetLineStyle(flat_style)
@@ -316,27 +325,30 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   neg_line_ih_minos.SetLineStyle(minos_style)
   pos_line_ih_minos.SetLineStyle(minos_style)
   
-  line_h90 = ROOT.TLine(h_delta_nh_flat .GetXaxis().GetXmin(),conf90,h_delta_nh_flat .GetXaxis().GetXmax(),conf90)
-  line_h90.SetLineColor(R.kRed)
-  
-  
   # Make NH plot
   canv_nh = ROOT.TCanvas("canv_nh ","canv_nh ",1280,720)
   canv_nh.cd()
   SetBLMargins(canv_nh)
   SetRMargins (canv_nh ,False)
   
-  h_delta_nh_flat .Draw()
-  h_delta_nh_minos.Draw("same")
-  line_h90.Draw("same")
+  h_delta_nh_flat .Draw("c")
+  h_delta_nh_minos.Draw("csame")
   
   for l in vertical_lines_nh:
     l.SetLineColor(R.kBlue)
     l.Draw("same")
+    
+  # Make 90% confidence region line
+  canv_nh.Update()
+  line_h90_nh = ROOT.TLine(canv_nh.GetFrame().GetX1(),conf90,canv_nh.GetFrame().GetX2(),conf90)
+  line_h90_nh.SetLineColor(R.kRed)
+  line_h90_nh.SetLineWidth(linewidth)
+  
+  line_h90_nh.Draw("same")
   
   # Make legend
   
-  legend = ROOT.TLegend(0.45,0.5,0.65,0.6)
+  legend = ROOT.TLegend(0.45,0.5,0.65,0.68)
   legend.AddEntry(h_delta_nh_flat ,label_flat,"l")
   legend.AddEntry(h_delta_nh_minos,label_minos,"l")
   legend.Draw()
@@ -367,17 +379,24 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   SetBLMargins(canv_ih)
   SetRMargins (canv_ih ,False)
   
-  h_delta_ih_flat .Draw()
-  h_delta_ih_minos.Draw("same")
-  line_h90.Draw("same")
+  h_delta_ih_flat .Draw("c")
+  h_delta_ih_minos.Draw("csame")
   
   for l in vertical_lines_ih:
     l.SetLineColor(R.kBlue)
     l.Draw("same")
+    
+  # Make 90% confidence region line
+  canv_ih.Update()
+  line_h90_ih = ROOT.TLine(canv_ih.GetFrame().GetX1(),conf90,canv_ih.GetFrame().GetX2(),conf90)
+  line_h90_ih.SetLineColor(R.kRed)
+  line_h90_ih.SetLineWidth(linewidth)
+  
+  line_h90_ih.Draw("same")
   
   # Make legend
   
-  legend = ROOT.TLegend(0.45,0.5,0.65,0.6)
+  legend = ROOT.TLegend(0.45,0.5,0.65,0.68)
   legend.AddEntry(h_delta_ih_flat ,label_flat ,"l")
   legend.AddEntry(h_delta_ih_minos,label_minos,"l")
   legend.Draw()
