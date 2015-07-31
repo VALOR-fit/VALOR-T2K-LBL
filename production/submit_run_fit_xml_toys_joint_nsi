@@ -73,6 +73,7 @@ foreach (@ARGV) {
   elsif($_ eq '--tolerance'              ) { $tolerance             = $ARGV[$iarg+1]; }
   elsif($_ eq '--optfixparams'           ) { $optfixparams          = $ARGV[$iarg+1]; }
   elsif($_ eq '--rethrow-unphysical'     ) { $rethrow_unphysical    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--gof'                    ) { $gof_binning           = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
   elsif($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
@@ -137,7 +138,7 @@ $dcp_value              = 0                                      unless defined 
 $reactor                = 0                                      unless defined $reactor;
 $tolerance              = 0.01                                   unless defined $tolerance;
 $rethrow_unphysical     = true                                   unless defined $rethrow_unphysical;
-$gof_binning            = false                                   unless defined $gof_binning;
+$gof_binning            = false                                  unless defined $gof_binning;
 $optfixparams            = "dmsq12,mixing12,deltacp,mixing13"    unless defined $optfixparams;  # list of the params to be fixed in the fit   
 
 $softw_dir              = $ENV{'T2KOSCANA'}                    unless defined $softw_dir;
