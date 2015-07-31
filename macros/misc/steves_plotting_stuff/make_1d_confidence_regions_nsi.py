@@ -44,6 +44,9 @@ precision["epsmutau"] = to3dp
 flat_style  = R.kDotted
 minos_style = R.kSolid
 
+limit_at_chisq = 10
+new_eps_limit  = 0.6
+
 def main(data_file_epsmutau_flat, data_file_epsmutau_minos, 
          data_bf_normal_epsmutau_flat  = None, data_bf_inverted_epsmutau_flat  = None,
          data_bf_normal_epsmutau_minos = None, data_bf_inverted_epsmutau_minos = None,
@@ -186,6 +189,7 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   print "\n\n"
   
   h_delta_nh_flat.GetYaxis().SetTitleOffset(0.6)
+  h_delta_ih_flat.GetYaxis().SetTitleOffset(0.6)
   # End big block of flat prior stuff
   
   
@@ -250,6 +254,7 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   print "\n\n"
   
   h_delta_nh_minos.GetYaxis().SetTitleOffset(0.6)
+  h_delta_ih_minos.GetYaxis().SetTitleOffset(0.6)
   
   # End big block of minos prior stuff
   
@@ -282,6 +287,10 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   
   h_delta_nh_flat .SetMaximum(ymax_nh)
   h_delta_ih_flat .SetMaximum(ymax_ih)
+  
+  # Adjust limits if we have to
+  ymax_nh = CheckEpsMuTauLimits(h_delta_nh_flat)
+  ymax_ih = CheckEpsMuTauLimits(h_delta_ih_flat)
   
   neg_line_nh_flat  = ROOT.TLine(neg_90_nh_flat_x ,ymin,neg_90_nh_flat_x ,ymax_nh)
   pos_line_nh_flat  = ROOT.TLine(pos_90_nh_flat_x ,ymin,pos_90_nh_flat_x ,ymax_nh)
@@ -327,7 +336,7 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   
   # Make legend
   
-  legend = ROOT.TLegend(0.45,0.25,0.6,0.4)
+  legend = ROOT.TLegend(0.45,0.5,0.65,0.6)
   legend.AddEntry(h_delta_nh_flat ,label_flat,"l")
   legend.AddEntry(h_delta_nh_minos,label_minos,"l")
   legend.Draw()
@@ -368,7 +377,7 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   
   # Make legend
   
-  legend = ROOT.TLegend(0.45,0.25,0.6,0.4)
+  legend = ROOT.TLegend(0.45,0.5,0.65,0.6)
   legend.AddEntry(h_delta_ih_flat ,label_flat ,"l")
   legend.AddEntry(h_delta_ih_minos,label_minos,"l")
   legend.Draw()
@@ -419,6 +428,15 @@ def SetRMargins(canv,needZ = False):
   else: 
     canv.SetRightMargin(0.05)
   return
+  
+def CheckEpsMuTauLimits(h):
+  upper_content = h.GetBinContent(h.FindBin(-new_eps_limit))
+  lower_content = h.GetBinContent(h.FindBin(+new_eps_limit))
+  if ( upper_content> limit_at_chisq and
+      lower_content > limit_at_chisq ):
+    h.GetXaxis().SetRangeUser(-new_eps_limit,+new_eps_limit)
+    h.SetMaximum(1.1 * max([upper_content,lower_content]))
+  return h.GetMaximum()
   
 if __name__=="__main__":
   import optparse
