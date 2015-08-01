@@ -41,23 +41,33 @@ params["epsmutau"] = conv.kPhypNSIepsMuTau
 precision = dict()
 precision["epsmutau"] = to3dp
 
-flat_style  = R.kDotted
-minos_style = R.kSolid
-
 limit_at_chisq = 10
 new_eps_limit  = 0.6
 
 linewidth=2
 
+lowest_possible_ymax = 6.5
+
 def main(data_file_epsmutau_flat, data_file_epsmutau_minos, 
          data_bf_normal_epsmutau_flat  = None, data_bf_inverted_epsmutau_flat  = None,
          data_bf_normal_epsmutau_minos = None, data_bf_inverted_epsmutau_minos = None,
          label_flat = "Flat prior", label_minos = "MINOS prior",
+         skip_minos = False,
          tag=None,draw_hierarchies_individually = False):
   
   ROOT.gStyle.SetPalette(56);
   ROOT.gStyle.SetOptStat(0)
   ROOT.gStyle.SetOptTitle(0)
+  
+  
+  flat_style  = R.kDotted
+  minos_style = R.kSolid
+
+  if skip_minos: flat_style = R.kSolid
+  
+  
+  label_flat_start  = label_flat +": "
+  label_minos_start = label_minos+": "
   
   # m = nh
   # p = ih
@@ -299,6 +309,12 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   ymax_nh = CheckEpsMuTauLimits(h_delta_nh_flat)
   ymax_ih = CheckEpsMuTauLimits(h_delta_ih_flat)
   
+  if ymax_nh < lowest_possible_ymax: ymax_nh = lowest_possible_ymax
+  if ymax_ih < lowest_possible_ymax: ymax_ih = lowest_possible_ymax
+  
+  h_delta_nh_flat .SetMaximum(ymax_nh)
+  h_delta_ih_flat .SetMaximum(ymax_ih)
+  
   neg_line_nh_flat  = ROOT.TLine(neg_90_nh_flat_x ,ymin,neg_90_nh_flat_x ,ymax_nh)
   pos_line_nh_flat  = ROOT.TLine(pos_90_nh_flat_x ,ymin,pos_90_nh_flat_x ,ymax_nh)
   neg_line_ih_flat  = ROOT.TLine(neg_90_ih_flat_x ,ymin,neg_90_ih_flat_x ,ymax_ih)
@@ -308,8 +324,12 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   neg_line_ih_minos = ROOT.TLine(neg_90_ih_minos_x,ymin,neg_90_ih_minos_x,ymax_ih)
   pos_line_ih_minos = ROOT.TLine(pos_90_ih_minos_x,ymin,pos_90_ih_minos_x,ymax_ih)
   
-  vertical_lines_nh = [neg_line_nh_flat ,pos_line_nh_flat ,neg_line_nh_minos,pos_line_nh_minos]
-  vertical_lines_ih = [neg_line_ih_flat ,pos_line_ih_flat ,neg_line_ih_minos,pos_line_ih_minos]
+  vertical_lines_nh = [neg_line_nh_flat ,pos_line_nh_flat] 
+  vertical_lines_ih = [neg_line_ih_flat ,pos_line_ih_flat] 
+  
+  if not skip_minos:
+    vertical_lines_nh.extend([neg_line_nh_minos,pos_line_nh_minos])
+    vertical_lines_ih.extend([neg_line_ih_minos,pos_line_ih_minos])
   
   vertical_lines = vertical_lines_nh + vertical_lines_ih
   for l in vertical_lines:
@@ -332,7 +352,7 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   SetRMargins (canv_nh ,False)
   
   h_delta_nh_flat .Draw("c")
-  h_delta_nh_minos.Draw("csame")
+  if not skip_minos: h_delta_nh_minos.Draw("csame")
   
   for l in vertical_lines_nh:
     l.SetLineColor(R.kBlue)
@@ -348,21 +368,21 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   
   # Make legend
   
-  legend = ROOT.TLegend(0.45,0.5,0.65,0.68)
+  legend = ROOT.TLegend(0.45,0.55,0.65,0.72)
   legend.AddEntry(h_delta_nh_flat ,label_flat,"l")
   legend.AddEntry(h_delta_nh_minos,label_minos,"l")
-  legend.Draw()
+  if not skip_minos: legend.Draw()
   
   prec = precision[param]
   
-  pave_nh = ROOT.TPaveText(0.365,0.7,0.68,0.89,"ndc")
+  pave_nh = ROOT.TPaveText(0.365,0.73,0.68,0.92,"ndc")
   pave_nh.SetTextFont(22)
   pave_nh.SetShadowColor(0)
   pave_nh.SetFillColor(0)
   pave_nh.SetFillStyle(0)
   pave_nh.SetLineColor(0)
-  pave_nh.AddText("Flat prior:  "+prec.format(neg_90_nh_flat_x )+" < "+param_title_nh_flat +" < "+prec.format(pos_90_nh_flat_x )+" (at 90%)")
-  pave_nh.AddText("MINOS prior: "+prec.format(neg_90_nh_minos_x)+" < "+param_title_nh_minos+" < "+prec.format(pos_90_nh_minos_x)+" (at 90%)")
+  pave_nh.AddText(label_flat_start+prec.format(neg_90_nh_flat_x )+" < "+param_title_nh_flat +" < "+prec.format(pos_90_nh_flat_x )+" (at 90%)")
+  if not skip_minos: pave_nh.AddText(label_minos_start+prec.format(neg_90_nh_minos_x)+" < "+param_title_nh_minos+" < "+prec.format(pos_90_nh_minos_x)+" (at 90%)")
   pave_nh.Draw("same")
   
   if tag is None:
@@ -380,7 +400,7 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   SetRMargins (canv_ih ,False)
   
   h_delta_ih_flat .Draw("c")
-  h_delta_ih_minos.Draw("csame")
+  if not skip_minos: h_delta_ih_minos.Draw("csame")
   
   for l in vertical_lines_ih:
     l.SetLineColor(R.kBlue)
@@ -396,21 +416,21 @@ def main(data_file_epsmutau_flat, data_file_epsmutau_minos,
   
   # Make legend
   
-  legend = ROOT.TLegend(0.45,0.5,0.65,0.68)
+  legend = ROOT.TLegend(0.45,0.55,0.65,0.72)
   legend.AddEntry(h_delta_ih_flat ,label_flat ,"l")
   legend.AddEntry(h_delta_ih_minos,label_minos,"l")
-  legend.Draw()
+  if not skip_minos: legend.Draw()
   
   prec = precision[param]
   
-  pave_ih = ROOT.TPaveText(0.365,0.7,0.68,0.89,"ndc")
+  pave_ih = ROOT.TPaveText(0.365,0.73,0.68,0.92,"ndc")
   pave_ih.SetTextFont(22)
   pave_ih.SetShadowColor(0)
   pave_ih.SetFillColor(0)
   pave_ih.SetFillStyle(0)
   pave_ih.SetLineColor(0)
-  pave_ih.AddText("Flat prior:  "+prec.format(neg_90_ih_flat_x )+" < "+param_title_ih_flat +" < "+prec.format(pos_90_ih_flat_x )+" (at 90%)")
-  pave_ih.AddText("MINOS prior: "+prec.format(neg_90_ih_minos_x)+" < "+param_title_ih_minos+" < "+prec.format(pos_90_ih_minos_x)+" (at 90%)")
+  pave_ih.AddText(label_flat_start+prec.format(neg_90_ih_flat_x )+" < "+param_title_ih_flat +" < "+prec.format(pos_90_ih_flat_x )+" (at 90%)")
+  if not skip_minos: pave_ih.AddText(label_minos_start+prec.format(neg_90_ih_minos_x)+" < "+param_title_ih_minos+" < "+prec.format(pos_90_ih_minos_x)+" (at 90%)")
   pave_ih.Draw("same")
   
   if tag is None:
@@ -469,6 +489,7 @@ if __name__=="__main__":
   parser.add_option('-i','--individual-priors' , dest='individual_priors', default=False,action="store_true", help="Should we draw the independent prior plots")
   parser.add_option('--label-flat'  , dest='label_flat'   , default="Flat prior" , help="Label on the legend for flat prior")
   parser.add_option('--label-minos' , dest='label_minos'  , default="MINOS prior", help="Label on the legend for MINOS prior")
+  parser.add_option('--skip-minos' , dest='skip_minos'  , default=False, action="store_true", help="Don't draw the MINOS lines")
   
   o,args = parser.parse_args()
   
@@ -476,5 +497,6 @@ if __name__=="__main__":
     o.data_bf_normal_flat , o.data_bf_inverted_flat ,
     o.data_bf_normal_minos, o.data_bf_inverted_minos,
     o.label_flat, o.label_minos,
+    o.skip_minos,
     o.tag,o.individual_priors)
 
