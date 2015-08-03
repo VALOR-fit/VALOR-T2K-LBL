@@ -152,6 +152,20 @@ public:
   void FillTemplateArrays(bool with_tuning_weights = false);
   bool DoTemplateArraysHaveNIWGTune(void) const;
 
+
+
+  // NEW 2D TEMPLATES (TO REMOVE)
+  TH1D *hThetaLep_Numu;
+  TH2D *hPThetaLep_Numu;
+  TH1D *hThetaLep_Nue;
+  TH2D *hPThetaLep_Nue;
+  TH1D *hThetaLep_NumuBar;
+  TH2D *hPThetaLep_NumuBar;
+  TH1D *hThetaLep_NueBar;
+  TH2D *hPThetaLep_NueBar;
+  //
+
+
 private:
 
   // Init and clean-up
@@ -166,7 +180,7 @@ private:
 
 
   // NEW 2D TEMPLATES
-  double CalcQ2(double Enu,double *Pnu,double Elep, double *Plep); 
+  double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
   void DrawProjectionXY(TH3D *h);  // for debugging
   void ProjectTemplate3Dto2D(TH3D *h3d[conv::kns][conv::knm], TH2D *h2d[conv::kns][conv::knm]);
   double GetTemplateIntegral(TH3D *h3d[conv::kns][conv::knm]);
@@ -362,22 +376,32 @@ private:
   double     fBrWghtRPArel;                ///< branch var for reading input MC mini-DST
   double     fBrWghtRPAnonrel;             ///< branch var for reading input MC mini-DST
   int        fBrEvFlag;                    ///< branch var for reading input MC mini-DST
-  
-  static const int kMaxVarBins = 1000;
-  
+  // NEW 2D TEMPLATES
+  //int        fBrNumnu;                     ///< branch var for reading input MC mini-DST
+  //int        fBrNring;                     ///< branch var for reading input MC mini-DST
+  float      fBrAmomm[10];                  ///< branch var for reading input MC mini-DST (1 mu-like ring)
+  float      fBrAmome[10];                  ///< branch var for reading input MC mini-DST (1 e-like ring)
+  float      fBrDir[1][3];                    ///< branch var for reading input MC mini-DST 
+  //float      fBrDirnu[1][3];                  ///< branch var for reading input MC mini-DST 
+  //
+
+  static const int kMaxVarBins   = 1000;
+  // NEW 2D TEMPLATES
+  static const int kMaxVarBins2D = 10000;
+  //
+ 
   // Arrays for remembering which big bins have events, and which little bins for those big bigs have events.
   int fNNonEmptyVariableBins[conv::kns][conv::knm];               //!
   int fNNonEmptyFixedBins   [conv::kns][conv::knm][kMaxVarBins];  //!
-  
   int fNonEmptyVariableBins [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
   int * fNonEmptyFixedBins  [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the reco and true bin numbers, masked with conv::kBigIndex;
 
 
   // NEW 2D TEMPLATES
   int fNNonEmptyVariableBins2D[conv::kns][conv::knm];               //!
-  int fNNonEmptyFixedBins2D   [conv::kns][conv::knm][kMaxVarBins];  //!  
-  int fNonEmptyVariableBins2D [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the q2, reco and true bin numbers, masked with conv::kBigIndex;
-  int * fNonEmptyFixedBins2D  [conv::kns][conv::knm][kMaxVarBins];  //! These contain both the q2, reco and true bin numbers, masked with conv::kBigIndex;
+  int fNNonEmptyFixedBins2D   [conv::kns][conv::knm][kMaxVarBins2D];  //!  
+  int fNonEmptyVariableBins2D [conv::kns][conv::knm][kMaxVarBins2D];  //! These contain both the q2, reco and true bin numbers, masked with conv::kBigIndex;
+  int * fNonEmptyFixedBins2D  [conv::kns][conv::knm][kMaxVarBins2D];  //! These contain both the q2, reco and true bin numbers, masked with conv::kBigIndex;
   //
 
 

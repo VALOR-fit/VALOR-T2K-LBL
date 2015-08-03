@@ -144,7 +144,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   fBANFF             = new BANFF;
   fNuFlux            = new NuFlux; 
   fNuXSec            = new NuXSec; 
-  fSuperkDetectorFSI = new SuperkDetectorFSI; 
+  fSuperkDetectorFSI = new SuperkDetectorFSI;
   fSuperkMC          = new SuperkMC;
 
   // Configure inter-dependencies.
@@ -155,6 +155,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   fSuperkMC -> TellMeAboutCrossSections (fNuXSec);
   fSuperkMC -> TellMeAboutTheFlux       (fNuFlux);
   fSuperkMC -> TellMeAboutTheDetectorFSI(fSuperkDetectorFSI);
+
 
   // Parse the input XML configuration file
   TXMLEngine* xml = new TXMLEngine;   
@@ -202,6 +203,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   if ( ! this->GetSuperkDetectorFSI() -> ReadMultiRing (xml, root_node) ) return false; /// Take same cov. matrix of FHC sample
 #endif
   ///
+
   if ( ! this->GetSuperkMC         () -> Read (xml, root_node) ) return false;
 
   fIsConfigured = true;
@@ -211,7 +213,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   delete xml;
 
   cout << "Exp >> Done configuring Superk spectrum predictor... \n\n" << endl;
-
+  
   return true;
 }
 //________________________________________________________________________________________
@@ -311,7 +313,6 @@ bool SuperkExpectation::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
   //
   
   
-  // SONO ARRIVATO QUI
   
   
 #endif
@@ -488,7 +489,6 @@ double SuperkExpectation::CurrPredictedErecoSpectrumArray(valor::conv::SuperkSam
 
 
 
-// SONO ARRIVATO QUI
 
 // NEW 2D TEMPLATES
 

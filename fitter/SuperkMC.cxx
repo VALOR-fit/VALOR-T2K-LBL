@@ -55,6 +55,11 @@
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
 #define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
 
+// NEW 2D TEMPLATES
+#define INCLUDEEVENTSNEGATIVEQ2      // include Q2 underflow events in the first bin?
+#define INCLUDEEVENTSOVERFLOWQ2      // include Q2 overflow events in the last bin?
+//
+
 #define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
 #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
@@ -70,6 +75,7 @@
 #include <iostream>
 #include <sstream>
 #include <climits>
+#include <iomanip>
 
 #include <TTree.h>
 #include <TH2D.h>
@@ -78,6 +84,7 @@
 #include <TLegend.h>
 #include <TMath.h>
 #include <TCanvas.h>
+#include <TLorentzVector.h> // NEW 2D TEMPLATES
 
 #include "SuperkMC.h"
 #include "SuperkDetectorFSI.h"
@@ -105,9 +112,9 @@ SuperkMC::SuperkMC()
 }
 //________________________________________________________________________________________
 SuperkMC::~SuperkMC()
-{
+{ 
   this->CleanUp();
-  
+
   for (int is = 0 ; is < conv::kns ; is++) {
     if (fMCVariableTemplArray   [is]) { delete fMCVariableTemplArray   [is]; fMCVariableTemplArray   [is] = 0;}
     if (fMCTemplArrayOri        [is]) { delete fMCTemplArrayOri        [is]; fMCTemplArrayOri        [is] = 0;}
@@ -172,14 +179,16 @@ void SuperkMC::Init(void)
         fNNonEmptyFixedBins    [is][im][ivb] = 0;
         fNonEmptyFixedBins     [is][im][ivb] = NULL;
         fNonEmptyVariableBins  [is][im][ivb] = 0;
-
-        // NEW 2D TEMPLATES
+      }
+      
+      // NEW 2D TEMPLATES
+      for (int ivb = 0; ivb < kMaxVarBins2D; ivb++) {
 	fNNonEmptyFixedBins2D    [is][im][ivb] = 0;
         fNonEmptyFixedBins2D     [is][im][ivb] = NULL;
         fNonEmptyVariableBins2D  [is][im][ivb] = 0;
-	//
-
       }
+      //
+
     }//im
     fMCTreeNuMu     .push_back(0);
     fMCTreeNuMuBar  .push_back(0);
@@ -212,6 +221,7 @@ void SuperkMC::Init(void)
       fMCStatFracErr2D              .push_back( 0 );
       //fMCEtrueSpectrumTotArray2D    .push_back( 0 );
       fMCErecoSpectrumTotArray2D    .push_back( 0 );
+      fMCQ2SpectrumTotArray2D       .push_back( 0 );
       fMCErecoVsQ2SpectrumTotArray2D.push_back( 0 );
       fMCErecoVsQ2SpectrumArray     .push_back( 0 );
       //
@@ -317,22 +327,10 @@ void SuperkMC::Init(void)
       fMCTemplArrayRPAWght2D        [is]->SetAll(1);
       //
 
-
-      // cout << util::AsString(s) << endl;
-      // cout << "ndim: " << fMCTemplArrayOri[is]->GetNDim() << " - " << fMCTemplArrayOri2D[is]->GetNDim() << endl;
-      // cout << fMCTemplArrayOri[is]->GetSize(0) << " - " << fMCTemplArrayOri2D[is]->GetSize(0) << endl;
-      // cout << fMCTemplArrayOri[is]->GetSize(1) << " - " << fMCTemplArrayOri2D[is]->GetSize(1) << endl;
-      // cout << fMCTemplArrayOri[is]->GetSize(2) << " - " << fMCTemplArrayOri2D[is]->GetSize(2) << endl;
-      // cout << fMCTemplArrayOri[is]->GetSize(3) << " - " << fMCTemplArrayOri2D[is]->GetSize(3) << endl;
-      // cout << endl;
-      //exit(1);
-
-
     } // not kUndfined
     
   }//is
   
-
   ////  
 
   // FHC
@@ -367,8 +365,7 @@ void SuperkMC::Init(void)
   fBrWghtSFRFG         = 1;
   fBrWghtRPArel        = 1;
   fBrWghtRPAnonrel     = 1;
-  
-  
+    
   fNuFlux              = 0;
   fNuXSec              = 0;  
   fSKDetFSI            = 0;
@@ -419,7 +416,7 @@ void SuperkMC::CleanUp(void)
 //________________________________________________________________________________________
 bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
-  this->CleanUp();
+  this->CleanUp(); 
 
   // instantiate all necessary histograms
   this->Book();
@@ -427,7 +424,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/SKMC >> Reading SuperK MC inputs from input XML file." << endl;
 #endif
-
+  
   //
   // Get data POT
   // 
@@ -576,6 +573,24 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fPhysHypothesis.Init(kHypOsc3F);
 
   
+
+
+
+
+  // NEW 2D TEMPLATES (TO REMOVE)
+  hThetaLep_Numu = new TH1D("hThetaLep_Numu","hThetaLep_Numu",50,0,200);
+  hPThetaLep_Numu = new TH2D("hPThetaLep_Numu","hPThetaLep_Numu",500,0,5000,50,0,200);
+
+  hThetaLep_Nue = new TH1D("hThetaLep_Nue","hThetaLep_Nue",50,0,200);
+  hPThetaLep_Nue = new TH2D("hPThetaLep_Nue","hPThetaLep_Nue",500,0,1500,50,0,200);
+
+  hThetaLep_NumuBar = new TH1D("hThetaLep_NumuBar","hThetaLep_NumuBar",50,0,200);
+  hPThetaLep_NumuBar = new TH2D("hPThetaLep_NumuBar","hPThetaLep_NumuBar",500,0,5000,50,0,200);
+
+  hThetaLep_NueBar = new TH1D("hThetaLep_NueBar","hThetaLep_NueBar",50,0,200);
+  hPThetaLep_NueBar = new TH2D("hPThetaLep_NueBar","hPThetaLep_NueBar",500,0,1500,50,0,200);
+  //
+
   // fill-in MC templates from the input event tree
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
@@ -584,50 +599,22 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
        SuperkMode_t m = kSKReactionModes[is][im];
        if(m == kSKmUndefined) continue;
        this->FillTemplateHistogram(s,m);
-             
-       //        //if(s == kSKsFCFV1RingELike || s == kSKsRHCFCFV1RingELike) continue; // TO REMOVE
-       // #ifndef __USE_2D_TEMPLATES__
-       //        //cout << this->Template(s,m,kSKMCtOri)->GetXaxis()->GetNbins() << " ";
-       //        //cout << this->Template(s,m,kSKMCtOri)->GetYaxis()->GetNbins() << " - ";
-       //        cout << this->Template(s,m,kSKMCtOri)->Integral(1,util::NumErecoBins(s),1,util::NumEtrueBins(s)) << ", ";
-       //        //cout << this->Template(s,m,kSKMCtOri)->Integral(0,util::NumErecoBins(s)+1,0,util::NumEtrueBins(s)+1) << ", ";
-       //        //cout << this->GetTemplateIntegral( this->Template(s,m,kSKMCtOri) ) << " ";       
-       //        //cout << this->Template(s,m,kSKMCtOri)->GetEntries() << " ";       
-       //        // for(int i=0;i<=this->Template(s,m,kSKMCtOri)->GetXaxis()->GetNbins(); i++){
-       //        // 	 cout << this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinLowEdge(i+1) << " ";
-       //        // }
-       //        // cout << endl;
-       //        // for(int i=0;i<=this->Template(s,m,kSKMCtOri)->GetYaxis()->GetNbins(); i++){
-       //        // 	 cout << this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinLowEdge(i+1) << " ";
-       //        // }
-       //        //cout << endl;
-       //        // exit(1);
-       // #else  
-       //        //cout << this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetNbins() << " ";
-       //        //cout << this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetNbins() << " ";
-       //        //cout << this->Template2D(s,m,kSKMCtOri)->GetZaxis()->GetNbins() << " - ";
-       //        cout << this->Template2D(s,m,kSKMCtOri)->Integral(1,util::NumQ2Bins(s),1,util::NumErecoBins(s),1,util::NumEtrueBins(s)) << ", ";
-       //        //cout << this->Template2D(s,m,kSKMCtOri)->Integral(0,util::NumQ2Bins(s)+1,0,util::NumErecoBins(s)+1,0,util::NumEtrueBins(s)+1) << ", ";
-       //        //cout << this->GetTemplateIntegral( this->Template2D(s,m,kSKMCtOri) ) << " ";
-       //        //cout << this->Template2D(s,m,kSKMCtOri)->GetEntries() << " ";       
-       //        // for(int i=0;i<=this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetNbins(); i++){
-       //        // 	 cout << this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinLowEdge(i+1) << " ";
-       //        // }
-       //        // cout << endl;
-       //        // for(int i=0;i<=this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetNbins(); i++){
-       //        // 	 cout << this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinLowEdge(i+1) << " ";
-       //        // }
-       //        // cout << endl;
-       //        // for(int i=0;i<=this->Template2D(s,m,kSKMCtOri)->GetZaxis()->GetNbins(); i++){
-       //        // 	 cout << this->Template2D(s,m,kSKMCtOri)->GetZaxis()->GetBinLowEdge(i+1) << " ";
-       //        // }
-       //        //cout << endl;
-       //        // exit(1);
-       // #endif
      }     
-     //cout << endl;
   }
    
+  
+  // TCanvas *c = new TCanvas("c","c");
+  // hThetaLep_Numu->Draw();
+  // c->Print("hThetaLep_Numu.pdf");
+  // hThetaLep_Nue->Draw();
+  // c->Print("hThetaLep_Nue.pdf");
+  // hThetaLep_NumuBar->Draw();
+  // c->Print("hThetaLep_NumuBar.pdf");
+  // hThetaLep_NueBar->Draw();
+  // c->Print("hThetaLep_NueBar.pdf");
+  // exit(1);
+  
+
   this->FillTemplateArrays(true); // Fill the arrays - with niwg weights by default
 
   // fill-in "special" MC templates (osc. numu CC)
@@ -687,11 +674,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri); 
     
-  // TCanvas *c = new TCanvas("c","c");
-  // fMCTemplOri[0][0]->Draw("colz");
-  // c->Print("fMCTemplOri.pdf");
-  //exit(1);
-
 #endif
   
   
@@ -726,65 +708,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__      
   cout << "Exp/SKMC >> Done reading SuperK MC inputs!" << endl;
 #endif
-
-
-
-
-
-
-
-
-
-  //   // loop over samples
-  //   for(int is = 0; is < kns; is++) {
-  //     SuperkSample_t s = kSKSamples[is];
-  //     if(s == kSKsUndefined) continue;
-  // #ifndef __USE_2D_TEMPLATES__
-  //     cout << "VALORArray: " << endl;
-  //     cout << "fMCTemplArrayOri: " << util::AsString(s) << " integral = " << fMCTemplArrayOri[is]->Integral() << endl;
-  //     cout << "fMCTemplArrayNom: " << util::AsString(s) << " integral = " << fMCTemplArrayNom[is]->Integral() << endl;
-  //     cout << "fMCTemplArrayFin: " << util::AsString(s) << " integral = " << fMCTemplArrayFin[is]->Integral() << endl;
-  //     cout << "fMCTemplArrayTun: " << util::AsString(s) << " integral = " << fMCTemplArrayTun[is]->Integral() << endl;    
-  //     cout << "fMCVariableTemplArray: " << util::AsString(s) << " integral = " << fMCVariableTemplArray[is]->Integral() << endl;
-  //     cout << "Histograms per mode: " << endl;
-  //     for(int im=0; im < knm; im++){
-  //       SuperkMode_t m = kSKReactionModes[is][im];
-  //       if(m == kSKmUndefined) continue;
-  //       //cout << this -> Template(s,m,kSKMCtOri) -> GetEntries() << " ";
-  //       //cout << this -> Template(s,m,kSKMCtOri) -> Integral() << " ";
-  //       //cout << this -> Template(s,m,kSKMCtNom) -> Integral() << " ";
-  //       //cout << this -> Template(s,m,kSKMCtFin) -> Integral() << " ";
-  //       //cout << this -> Template(s,m,kSKMCtTun) -> Integral() << " ";
-  //     }
-  //     cout << endl;
-  // #else
-  //     cout << "VALORArray: " << endl;
-  //     cout << "fMCTemplArrayOri: " << util::AsString(s) << " integral = " << fMCTemplArrayOri2D[is]->Integral() << endl;
-  //     cout << "fMCTemplArrayNom: " << util::AsString(s) << " integral = " << fMCTemplArrayNom2D[is]->Integral() << endl;
-  //     cout << "fMCTemplArrayFin: " << util::AsString(s) << " integral = " << fMCTemplArrayFin2D[is]->Integral() << endl;
-  //     cout << "fMCTemplArrayTun: " << util::AsString(s) << " integral = " << fMCTemplArrayTun2D[is]->Integral() << endl;
-  //     cout << "fMCVariableTemplArray: " << util::AsString(s) << " integral = " << fMCVariableTemplArray2D[is]->Integral() << endl;
-  //         cout << "Histograms per mode: " << endl;
-  //     for(int im=0; im < knm; im++){
-  //       SuperkMode_t m = kSKReactionModes[is][im];
-  //       if(m == kSKmUndefined) continue;
-  //       //cout << this -> Template2D(s,m,kSKMCtOri) -> GetEntries() << " ";
-  //       //cout << this -> Template2D(s,m,kSKMCtOri) -> Integral() << " ";
-  //       //cout << this -> Template2D(s,m,kSKMCtNom) -> Integral() << " ";
-  //       //cout << this -> Template2D(s,m,kSKMCtFin) -> Integral() << " ";
-  //       //cout << this -> Template2D(s,m,kSKMCtTun) -> Integral() << " ";
-  //     }
-  //     cout << endl;
-  // #endif    
-  //     cout << "fMCEtrueSpectrumTotArray = " << fMCEtrueSpectrumTotArray[is]->Integral() << endl;
-  //   }
-  //   exit(1);
-  //   // SONO ARRIVATO QUI
-
-
-
-
-
 
   return true;
 }
@@ -924,21 +847,6 @@ void SuperkMC::Book(void)
        fMCVariableTempl[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
        fMCVariableTempl[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
      }
-
-     // cout << util::AsString(s) << endl;
-     // cout << "# of ereco bins = " << n_ereco_bins << " : " << endl;
-     // for(int i=0;i<=n_ereco_bins;i++){
-     //   cout << ereco_bin_edges[i] << ", ";
-     // }
-     // cout << endl;
-     // cout << endl;
-     // cout << "# of etrue bins = " << n_etrue_bins << " : " << endl;
-     // for(int i=0;i<=n_etrue_bins;i++){
-     //   cout << util::EtrueBinEdges(s)[i] << ", ";
-     // }
-     // cout << endl;
-     // cout << endl;
-
   }
 
 #else  // __USE_2D_TEMPLATES__
@@ -1006,27 +914,6 @@ void SuperkMC::Book(void)
        fMCVariableTempl2D[is][im]->GetYaxis()->SetTitle("E_{reco} (GeV)");
        fMCVariableTempl2D[is][im]->GetZaxis()->SetTitle("E_{true} (GeV)");
      }
-  
-     // cout << util::AsString(s) << endl;
-     // cout << "# of q2 bins = " << n_q2_bins << " : " << endl;
-     // for(int i=0;i<=n_q2_bins;i++){
-     //   cout << q2_bin_edges[i] << ", ";
-     // }
-     // cout << endl;
-     // cout << endl;
-     // cout << "# of ereco bins = " << n_ereco_bins << " : " << endl;
-     // for(int i=0;i<=n_ereco_bins;i++){
-     //   cout << ereco_bin_edges[i] << ", ";
-     // }
-     // cout << endl;
-     // cout << endl;
-     // cout << "# of etrue bins = " << n_etrue_bins << " : " << endl;
-     // for(int i=0;i<=n_etrue_bins;i++){
-     //   cout << etrue_bin_edges[i] << ", ";
-     // }
-     // cout << endl;
-     // cout << endl;
-
   }
   //
 #endif // __USE_2D_TEMPLATES__
@@ -1077,31 +964,63 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
      exit(1);
   }
   
-  const char * erec_branch          = "erec";
-  const char * etrue_branch         = "pnu";
+  const char * erec_branch          = "erec"; // MeV/c
+  const char * etrue_branch         = "pnu";  // GeV/c
   const char * mode_branch          = "mode";
   const char * flux_wght_branch     = "wgtflx";
   const char * rpa_nrel_wght_branch = "wgtRPA_nr";
   const char * rpa_rel_wght_branch  = "wgtRPA_r";
   const char * sf_rfg_wght_branch   = "wgtsfrfg";
   //~ const char * flux_wght_branch = "wgt";
-  
+  // // NEW 2D TEMPLATES  
+  // const char * numnu_branch = "numnu";
+  // const char * nring_branch = "nring";
+  const char * amomm_branch = "amomm"; // MeV/c
+  const char * amome_branch = "amome"; // MeV/c
+  const char * dir_branch   = "dir";
+  // const char * dirnu_branch = "dirnu";
+  // //
+
   TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
   TBranch * branchEtrue   = mctree->GetBranch(etrue_branch     );
   TBranch * branchGenCode = mctree->GetBranch(mode_branch      );
   TBranch * branchWghtFlx = mctree->GetBranch(flux_wght_branch );
-  
+  // // NEW 2D TEMPLATES
+  // TBranch * branchNumnu   = mctree->GetBranch(numnu_branch      );  
+  // TBranch * branchNring   = mctree->GetBranch(nring_branch      );  
+  TBranch * branchAmomm   = mctree->GetBranch(amomm_branch      );  
+  TBranch * branchAmome   = mctree->GetBranch(amome_branch      );  
+  TBranch * branchDir     = mctree->GetBranch(dir_branch        );  
+  // TBranch * branchDirnu   = mctree->GetBranch(dirnu_branch      );  
+  // //
+
   branchEreco    -> SetAddress(&fBrEreco);
   branchEtrue    -> SetAddress(&fBrPtrue);
   branchGenCode  -> SetAddress(&fBrGenCode);
   branchWghtFlx  -> SetAddress(&fBrWghtFlx);  
+  // // NEW 2D TEMPLATES
+  // branchNumnu    -> SetAddress(&fBrNumnu);
+  // branchNring    -> SetAddress(&fBrNring);
+  branchAmomm    -> SetAddress(&fBrAmomm);
+  branchAmome    -> SetAddress(&fBrAmome);
+  branchDir      -> SetAddress(&fBrDir);
+  // branchDirnu    -> SetAddress(&fBrDirnu);
+  // //
 
   mctree->SetBranchStatus("*",0);
   mctree->SetBranchStatus(erec_branch      , 1 );
   mctree->SetBranchStatus(etrue_branch     , 1 );
   mctree->SetBranchStatus(mode_branch      , 1 );
   mctree->SetBranchStatus(flux_wght_branch , 1 );
-  
+  // // NEW 2D TEMPLATES
+  // mctree->SetBranchStatus(numnu_branch     , 1 );
+  // mctree->SetBranchStatus(nring_branch     , 1 );
+  mctree->SetBranchStatus(amomm_branch     , 1 );
+  mctree->SetBranchStatus(amome_branch     , 1 );
+  mctree->SetBranchStatus(dir_branch       , 1 );
+  // mctree->SetBranchStatus(dirnu_branch     , 1 );
+  // //
+
 #ifdef USE_SFRFG_WEIGHT
   TBranch * branchSfRfg   = mctree->GetBranch(sf_rfg_wght_branch);
   mctree->SetBranchStatus(sf_rfg_wght_branch , 1 );
@@ -1130,7 +1049,139 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
     if(!use_it) continue;
 
-    double ereco_fill = fBrEreco/1000.;
+    // Get reconstructed energy
+    double ereco_fill = fBrEreco/1000.; // GeV 
+   
+
+
+
+
+    // NEW 2D TEMPLATES
+    
+    //////////////////// CALCULATE Q2 //////////////////
+
+    double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+    double electronMass = 0.510999 / 1000.; // GeV
+    double muonMass     = 105.66   / 1000.; // GeV
+ 
+    // Get momentum and energy of most energetic lepton (only 1Ring samples)
+    //*Br    8 :amome     : amome[nring]/F                                      
+    //*Br    9 :amomm     : amomm[nring]/F                                      
+    
+    double pmax_lep = 0.; // momentum of most energetic lepton  
+    double emax_lep = 0.; // energy of most energetic lepton
+    double mass_lep = 0.;
+    if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+      pmax_lep = fBrAmomm[0] / 1000.; // GeV
+      emax_lep = sqrt( pmax_lep*pmax_lep + electronMass*electronMass );
+      mass_lep = electronMass;
+    }
+    else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+      pmax_lep = fBrAmome[0] / 1000.; // GeV
+      emax_lep = sqrt( pmax_lep*pmax_lep + muonMass*muonMass );
+      mass_lep = muonMass;
+    }
+    else{
+      cerr << endl;
+      cerr << "SuperkMC::FillTemplateHistogram" << endl;
+      cerr << "Using sample " << util::AsString(s) << endl;
+      cerr << "Samples other than: " << endl;
+      cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+      cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+      cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+      cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+      cerr << "are not implemented" << endl;
+      exit(1);
+    }
+    
+    // Get lepton direction
+    // Costheta is the scalar product between the neutrino beam and lepton directions. Used in T2KReWeight as well.    
+    //*Br    6 :dir       : dir[nring][3]/F                                       
+
+    double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+    if( costheta<-1.00001 || costheta>+1.00001 ){
+      cerr << endl;
+      cerr << std::setprecision(10);
+      cerr << "SuperkMC::FillTemplateHistogram" << endl;
+      cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+    double sintheta = 1. - costheta*costheta;
+    if( sintheta<-1.00001 || sintheta>+1.00001 ){
+      cerr << endl;
+      cerr << std::setprecision(10);
+      cerr << "SuperkMC::FillTemplateHistogram" << endl;
+      cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
+      cerr << "costheta = " << costheta << endl;
+      cerr << endl;
+      exit(1);
+    }
+
+    double LepTheta        = TMath::ACos(costheta); // radiant    
+    double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees   
+    if(LepTheta<0.){
+      cerr << endl;
+      cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+    // Get neutrino energy
+    double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum) 
+    
+    // Calculate Q2 from the outgoing lepton  
+    // q = Pf-Pf (P = 4-momentum)
+    // Q2 = -q*q
+    // In the laboratory frame system we can write Q2 as:
+    // Q2 = -t = -q2 = 2*Enu*(Elep-Plep*costheta) - Mlep^2
+    // costheta is the scattering angle between neutrino and lepton
+   
+    double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep);
+    
+    double q2_fill = Q2;
+
+    //q2_fill = ereco_fill; // NEW 2D TEMPLATES (TODO) // be careful to overflows!!!
+
+#ifdef INCLUDEEVENTSNEGATIVEQ2
+    if(q2_fill < 0. && q2_fill> -0.01){ 
+      q2_fill = 0.01;
+    }
+#endif    
+#ifdef INCLUDEEVENTSOVERFLOWQ2
+    
+    int nbins = util::NumQ2Bins(s);
+    double MaxQ2_up   = util::Q2BinEdges(s,nbins);
+    double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
+    double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
+    //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << endl;
+    
+    q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
+#endif
+
+    // if(q2_fill < 0.){ 
+    //   cout << "costheta = " << costheta << endl;
+    //   cout << "sintheta = " << sintheta << endl;
+    //   cout << "emax_lep = " << emax_lep << endl;
+    //   cout << "ereco_nu = " << ereco_nu << endl;
+    //   cout << "Q2 = " << Q2 << " GeV" << endl;
+    //   exit(1);
+    // }
+
+    // if(q2_fill > 30.){ 
+    //   cout << "costheta = " << costheta << endl;
+    //   cout << "sintheta = " << sintheta << endl;
+    //   cout << "emax_lep = " << emax_lep << endl;
+    //   cout << "ereco_nu = " << ereco_nu << endl;
+    //   cout << "Q2 = " << Q2 << " GeV" << endl;
+    //   //exit(1);
+    // }
+    
+    ////////////////////////////////////////////////////
+
+    //
+
     
     double Etrue = fBrPtrue[0];
     
@@ -1146,9 +1197,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
     ereco_fill = TMath::Min(29.9, ereco_fill);
 #endif
-
-
-    double q2_fill = ereco_fill; // NEW 2D TEMPLATES (TODO) // be careful to overflows!!!
 
 #ifndef __USE_2D_TEMPLATES__
     this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, Etrue);
@@ -1196,6 +1244,31 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     //    
 #endif
     
+
+
+
+
+
+
+
+    // // NEW 2D TEMPLATES (TO REMOVE)
+    // if(s == kSKsFCFV1RingMuLike){        
+    //   hThetaLep_Numu->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
+    // }
+    // else if(s == kSKsRHCFCFV1RingMuLike){ 
+    //   hThetaLep_NumuBar->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
+    // }
+    // else if(s == kSKsFCFV1RingELike){
+    //   hThetaLep_Nue->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
+    // }
+    // else if(s == kSKsRHCFCFV1RingELike){
+    //   hThetaLep_NueBar->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
+    // }
+    // //
+
+
+
+
 
 
 #ifndef __USE_2D_TEMPLATES__
@@ -1267,36 +1340,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif
 
 #endif
-
-
-
-
-
-
-  
-  // #ifndef __USE_2D_TEMPLATES__
-  //   //if( (ntotevents - this -> Template(s,m,kSKMCtOri) -> GetEntries()) > 0.00001 ){
-  //   if( (ntotevents - this -> Template(s,m,kSKMCtOri) -> Integral()) > 0.00001 ){
-  //     cout << util::AsString(s) << " - " << util::AsString(m) << endl;
-  //     cout << "ntotevents = " << ntotevents << " : ";
-  //     //cout << " - Integral 1D = " << this -> Template(s,m,kSKMCtOri) -> Integral() << " ";
-  //     //cout << " - GetEntries 1D = " << this -> Template(s,m,kSKMCtOri) -> GetEntries() << endl;
-  //     cout << " - Integral 1D = " << fMCTemplOri[sidx][midx] -> Integral() << " ";
-  //     cout << " - GetEntries 1D = " << fMCTemplOri[sidx][midx] -> GetEntries() << endl;
-  //   }
-  // #else
-  //   //if( (ntotevents - this -> Template2D(s,m,kSKMCtOri) -> GetEntries()) > 0.00001 ){
-  //   if( (ntotevents - this -> Template2D(s,m,kSKMCtOri) -> Integral()) > 0.00001 ){
-  //     cout << util::AsString(s) << " - " << util::AsString(m) << endl;
-  //     cout << "ntotevents = " << ntotevents << " : ";
-  //     //cout << " - Integral 2D = " << this -> Template2D(s,m,kSKMCtOri) -> Integral() << " ";
-  //     //cout << " - GetEntries 2D = " << this -> Template2D(s,m,kSKMCtOri) -> GetEntries() << endl;
-  //     cout << " - Integral 2D = " << fMCTemplOri2D[sidx][midx] -> Integral() << " ";
-  //     cout << " - GetEntries 2D = " << fMCTemplOri2D[sidx][midx] -> GetEntries() << endl;
-  //   }  
-  // #endif  
-  // SONO ARRIVATO QUI
-  //exit(1);
 
 }
 //________________________________________________________________________________________
@@ -1589,7 +1632,7 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
 	}//irv
       }//itv
       fNNonEmptyVariableBins2D[is][im] = i_ne_var_2d;
-      assert(i_ne_var_2d<kMaxVarBins);
+      assert(i_ne_var_2d<kMaxVarBins2D);
  
       //
 
@@ -1891,7 +1934,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	}//irv
       }//itv
       fNNonEmptyVariableBins2D[sidx][tgt_midx] = i_ne_var;
-      assert(i_ne_var<kMaxVarBins);
+      assert(i_ne_var<kMaxVarBins2D);
       
     }//i
 
@@ -2165,7 +2208,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	}//irv
       }//itv
       fNNonEmptyVariableBins2D[sidx][tgt_midx] = i_ne_var;
-      assert(i_ne_var<kMaxVarBins);
+      assert(i_ne_var<kMaxVarBins2D);
     }//i
     
 
@@ -2445,7 +2488,7 @@ void SuperkMC::FillSpecialTemplates(void)
 	}//irv
       }//itv
       fNNonEmptyVariableBins2D[sidx][tgt_midx] = i_ne_var;
-      assert(i_ne_var<kMaxVarBins);
+      assert(i_ne_var<kMaxVarBins2D);
       
     }//i
     
@@ -6312,12 +6355,32 @@ bool SuperkMC::DoTemplateArraysHaveNIWGTune(void) const
 
 
 
+
+
+
+
+
+
 // NEW 2D TEMPLATES
-double SuperkMC::CalcQ2(double Enu,double *Pnu,double Elep, double *Plep)
+double SuperkMC::CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep)
 {
-  return 0.;
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton 
+
+  // Q2 in the laboratory reference system (Giunti section 5.3.1)
+  double Q2 = 2*Enu*(Elep-Plep*costheta) - Mlep*Mlep;
+
+  return Q2;
 }
 //____________________________________________________________________________________
+
+
+
+
+
+
 
 
 // NEW 2D TEMPLATES
@@ -6345,8 +6408,6 @@ void SuperkMC::DrawProjectionXY(TH3D *h){ // for debugging
 //____________________________________________________________________________________
 
 void SuperkMC::ProjectTemplate3Dto2D(TH3D *h3d[conv::kns][conv::knm], TH2D *h2d[conv::kns][conv::knm]){
-  
-  // SONO ARRIVATO QUI
   
   // Project from (Q2,Ereco,Etrue) to (Ereco,Etrue)
   

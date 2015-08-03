@@ -61,14 +61,16 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  
    
- bool         store_spectrum     = true,
- bool         print_spectrum       = false,                          /* */
+ bool         store_spectrum      = true,
+ bool         print_spectrum      = true,                          /* */
  const char * mixparamchoice      = "sinsqtheta",
  const char * hierarchy           = "normal"   ,
  const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
-  bool plot_per_50MeV = false
+ bool plot_per_50MeV = false,
+ double ErecoRangeLow = 0.,
+ double ErecoRangeUp = 1.5
 )
 {
   using namespace std;
@@ -181,10 +183,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   // Histogram booking
   const int nbins_Q2 = util::NumQ2Bins(s);
   const double * Q2_bin_edges = util::Q2BinEdges(s);
-  const int nbins = util::NumErecoBins(s);
+  const int nbins_ereco = util::NumErecoBins(s);
   const double * ereco_bin_edges = util::ErecoBinEdges(s);
-  TH1D * hErecoTot = new TH1D("hErecoTot","hErecoTot",nbins,ereco_bin_edges); 
-  TH2D * hErecoVsQ2Tot = new TH2D("hErecoVsQ2Tot","hErecoVsQ2Tot",nbins,ereco_bin_edges,nbins_Q2,Q2_bin_edges);
+  TH2D * hErecoVsQ2Tot = new TH2D("hErecoVsQ2Tot","hErecoVsQ2Tot",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
 
   TH1D * hErecoMode[conv::knm]; //< contribution from each mode  
   TH1D * hErecoMode_draw[conv::knm]; //< contribution from each mode  
@@ -210,7 +211,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   
 
 
-  // Get energy spectra
+  //Get energy spectra
   for(int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[is][im];
     if(m == conv::kSKmUndefined) continue;
@@ -226,20 +227,192 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     }      
   }
   
-  hErecoVsQ2Tot = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));
-  
+  hErecoVsQ2Tot = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));  
   hErecoVsQ2Tot->GetXaxis()->SetTitle("Q^{2} (GeV)");
   hErecoVsQ2Tot->GetYaxis()->SetTitle("E_{reco} (GeV)");
   hErecoVsQ2Tot->GetZaxis()->SetTitle("Number of events");
   
+  TCanvas *cErecoTot_Proj = new TCanvas("cErecoTot_Proj","cErecoTot_Proj");
+  hErecoVsQ2Tot->ProjectionY()->Draw();
+
+  TCanvas *cQ2Tot_Proj = new TCanvas("cQ2Tot_Proj","cQ2Tot_Proj");
+  hErecoVsQ2Tot->ProjectionX()->Draw();
+
+  TCanvas *cErecoVsQ2Tot = new TCanvas("cErecoVsQ2Tot","cErecoVsQ2Tot");
+  hErecoVsQ2Tot->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
   hErecoVsQ2Tot->Draw("colz");
 
-  cout << "# Tot events = " << hErecoVsQ2Tot->Integral() << endl;
+
+  // Build mode/flavor
+
+  TH2D * hErecoVsQ2Mode_NC = new TH2D("hErecoVsQ2Mode_NC","hErecoVsQ2Mode_NC",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Mode_NueBeam = new TH2D("hErecoVsQ2Mode_NueBeam","hErecoVsQ2Mode_NueBeam",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Mode_NumuBeam = new TH2D("hErecoVsQ2Mode_NumuBeam","hErecoVsQ2Mode_NumuBeam",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Mode_NumuBarBeam = new TH2D("hErecoVsQ2Mode_NumuBarBeam","hErecoVsQ2Mode_NumuBarBeam",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Mode_NumuBarToNueBar = new TH2D("hErecoVsQ2Mode_NumuBarToNueBar","hErecoVsQ2Mode_NumuBarToNueBar",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Mode_NumuToNue = new TH2D("hErecoVsQ2Mode_NumuToNue","hErecoVsQ2Mode_NumuToNue",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+
+  // flavor only
+  TH2D * hErecoVsQ2Flav_Numu = new TH2D("hErecoVsQ2Flav_Numu","hErecoVsQ2Flav_Numu",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Flav_NumuBar = new TH2D("hErecoVsQ2VFlav_NumuBar","hErecoVsQ2Flav_NumuBar",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Flav_Nue = new TH2D("hErecoVsQ2Flav_Nue","hErecoVsQ2Flav_Nue",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Flav_NueBar = new TH2D("hErecoVsQ2Flav_NueBar","hErecoVsQ2Flav_NueBar",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+
+  hErecoVsQ2Flav_Numu->SetFillStyle(0);
+  hErecoVsQ2Flav_NumuBar->SetFillStyle(0);
+  hErecoVsQ2Flav_Nue->SetFillStyle(0);
+  hErecoVsQ2Flav_NueBar->SetFillStyle(0);
+  
+  hErecoVsQ2Mode_NC->SetFillStyle(0);
+  hErecoVsQ2Mode_NueBeam->SetFillStyle(0);
+  hErecoVsQ2Mode_NumuBeam->SetFillStyle(0);
+  hErecoVsQ2Mode_NumuBarBeam->SetFillStyle(0);
+  hErecoVsQ2Mode_NumuBarToNueBar->SetFillStyle(0);
+  hErecoVsQ2Mode_NumuToNue->SetFillStyle(0);
+
+  for (int im = 0; im < conv::knm; im++) {
+    conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
+    if(m == conv::kSKmUndefined) continue;
+    if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
+    string modestr = util::AsStringCompact(m);
+    
+    // Fill by flavor
+    if(util::IsNuE(m) || util::IsOscNuE(m))
+      hErecoVsQ2Flav_Nue->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m));
+    else if(util::IsNuEBar(m) || util::IsOscNuEBar(m))
+      hErecoVsQ2Flav_NueBar->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m));
+    else if(util::IsNuMuBar(m) || util::IsOscNuMuBar(m))
+      hErecoVsQ2Flav_NumuBar->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m));
+    else if(util::IsNuMu(m) || util::IsOscNuMu(m))
+      hErecoVsQ2Flav_Numu->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m));
+    else{
+      cout << modestr << endl;
+      cout << "No flavors are selected!!!" << endl;
+      exit(1);
+    }
+    
+    //cout << m << " " << modestr << " --> ";
+    if(util::IsCCQE(m)) cout << "IsCCQE" << endl;
+    else if(util::IsMEC(m)) cout << "IsMEC" << endl;
+    else if(util::IsCCnQE(m)) cout << "IsCCnQE" << endl;
+    else if(util::IsNC(m)) cout << "IsNC" << endl;
+    else{
+      cout << "No modes!!!" << endl;
+      exit(1);
+    }
+    cout << endl;
+
+    // Fill by flavor/mode
+    
+    if(util::IsNC(m))    
+      hErecoVsQ2Mode_NC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NC
+    else if(util::IsOscNuEBar(m))
+      hErecoVsQ2Mode_NumuBarToNueBar->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar->NueBar
+    else if(util::IsOscNuE(m))
+      hErecoVsQ2Mode_NumuToNue->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu->Nue
+    else if( util::IsNuMuBar(m))
+      hErecoVsQ2Mode_NumuBarBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar Beam
+    else if( util::IsNuMu(m))
+      hErecoVsQ2Mode_NumuBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu Beam
+    else if( util::IsNuE(m) || util::IsNuEBar(m) )
+      hErecoVsQ2Mode_NueBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Nue & NueBar Beam
+    else{
+      cout << modestr << endl;
+      cout << "No mode / flavors are selected!!!" << endl;
+      exit(1);
+    }
+
+  } // loop over modes
 
 
-  cout << "CIAO" << endl;
+  TCanvas *cErecoVsQ2_NC = new TCanvas("cErecoVsQ2_NC","cErecoVsQ2_NC"); 
+  hErecoVsQ2Mode_NC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
+  hErecoVsQ2Mode_NC->Draw("colz");
+
+  TCanvas *cErecoVsQ2_NumuBarBeam = new TCanvas("cErecoVsQ2_NumuBarBeam","cErecoVsQ2_NumuBarBeam"); 
+  hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  hErecoVsQ2Mode_NumuBarBeam->Draw("colz"); 
+
+  TCanvas *cErecoVsQ2_NumuBeam = new TCanvas("cErecoVsQ2_NumuBeam","cErecoVsQ2_NumuBeam"); 
+  hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
+  hErecoVsQ2Mode_NumuBeam->Draw("colz");
+
+  TCanvas *cErecoVsQ2_NueBeam = new TCanvas("cErecoVsQ2_NueBeam","cErecoVsQ2_NueBeam"); 
+  hErecoVsQ2Mode_NueBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
+  hErecoVsQ2Mode_NueBeam->Draw("colz");
+
+  TCanvas *cErecoVsQ2_NumuBarToNueBar = new TCanvas("cErecoVsQ2_NumuBarToNueBar","cErecoVsQ2_NumuBarToNueBar"); 
+  hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
+  hErecoVsQ2Mode_NumuBarToNueBar->Draw("colz");
+
+  TCanvas *cErecoVsQ2_NumuToNue = new TCanvas("cErecoVsQ2_NumuToNue","cErecoVsQ2_NumuToNue"); 
+  hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
+  hErecoVsQ2Mode_NumuToNue->Draw("colz");
+
+
+
+  // Get total # of events
+
+  double TotEvts = hErecoVsQ2Tot->Integral();
+
+  double TotEvtsCheck = 
+    hErecoVsQ2Mode_NC->Integral() + 
+    hErecoVsQ2Mode_NumuBarBeam->Integral() + 
+    hErecoVsQ2Mode_NumuBeam->Integral() + 
+    hErecoVsQ2Mode_NueBeam->Integral() + 
+    hErecoVsQ2Mode_NumuBarToNueBar->Integral() + 
+    hErecoVsQ2Mode_NumuToNue->Integral();
+  
+  cout << "# Tot events = " << TotEvts << endl;
+
+  if( fabs(TotEvts-TotEvtsCheck)>0.0000001 ){
+    cout << endl;
+    cout << "TotEvts = " << TotEvts << endl;
+    cout << "TotEvtsCheck = " << TotEvtsCheck << endl;
+    cout << "There is an error!" << endl;
+    cout << endl;
+    exit(1);
+  }
+
+
+  // Print canvases
+
+  if(print_spectrum){
+    
+    char name[200];
+
+    sprintf(name,"%s_%s.pdf","cErecoVsQ2Tot",sk_sample);    
+    cErecoVsQ2Tot ->Print(name);
+
+    sprintf(name,"%s_%s.pdf","cErecoTot_Proj",sk_sample);    
+    cErecoTot_Proj->Print(name);
+    
+    sprintf(name,"%s_%s.pdf","cQ2Tot_Proj",sk_sample);    
+    cQ2Tot_Proj   ->Print(name);
+
+    sprintf(name,"%s_%s.pdf","cErecoVsQ2_NC",sk_sample);    
+    cErecoVsQ2_NC ->Print(name);
+       
+    sprintf(name,"%s_%s.pdf","cErecoVsQ2_NumuBarBeam",sk_sample);    
+    cErecoVsQ2_NumuBarBeam ->Print(name);
+
+    sprintf(name,"%s_%s.pdf","cErecoVsQ2_NumuBeam",sk_sample);    
+    cErecoVsQ2_NumuBeam ->Print(name);
+
+    sprintf(name,"%s_%s.pdf","cErecoVsQ2_NueBeam",sk_sample);    
+    cErecoVsQ2_NueBeam ->Print(name);
+
+    sprintf(name,"%s_%s.pdf","cErecoVsQ2_NumuBarToNueBar",sk_sample);    
+    cErecoVsQ2_NumuBarToNueBar ->Print(name);
+
+    sprintf(name,"%s_%s.pdf","cErecoVsQ2_NumuToNue",sk_sample);    
+    cErecoVsQ2_NumuToNue ->Print(name);
+  }
+
 
   return;
+
+
 
 
 

@@ -159,5 +159,12 @@ Split valor::conv namespace into several smaller files
 //#define ERECO_BINS_1RE 4 //Same as Linda's binning scheme
 #endif
 
+
+
+#ifndef Q2_BINS
+#define Q2_BINS 1 // (DEFAULT) 50 MeV bins 0-1.25 GeV (25 bins)
+#define Q2_BINS 2 // 50 MeV bins 0-1.25 GeV (25 bins) in e-like and 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins) in mu-like
+#endif
+
 #endif
 
