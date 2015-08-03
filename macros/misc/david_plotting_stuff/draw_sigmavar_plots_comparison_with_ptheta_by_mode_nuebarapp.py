@@ -21,7 +21,7 @@ valor_filename = valorfilename
 
 
 #mach3_nom_pattern = "[CURRENT][SELECTION]_[MODE]_nom"
-mach3_nom_pattern = "[CURRENT]_h[SELECTION][MODE]"
+mach3_nom_pattern = "[CURRENT]_h[SELECTION][MODE]_nom"
 mach3_pattern     = "[CURRENT]_[SELECTION]_[PARAM][MODE]_sig_[VAR]"
 valor_pattern     = "Ratio_"+sample+"[MODE]_[PARAM]_[VAR]"
 
@@ -257,7 +257,7 @@ modes = [ #( ''                , ''                  ) ,
           ( '_numuccoth'       , "_numu_ccother"     ) ,
           #~ ( '_numunc1piC'      , "_numu_ncpipm"    ) ,
           #~ ( '_numunc1pi0'      , "_numu_ncpi0"     ) ,
-          ( '_numunccoh'       , "_numu_nc_coh"     ) ,
+         # ( '_numunccoh'       , "_numu_nc_coh"     ) ,
           #( '_numuncoth'       , "_numu_ncoth"     ) ,
           ( '_numubarccqe'     , "_numub_ccqe"     ) ,
           ( '_numubarcc1pi'    , "_numub_cc1pi"    ) ,
@@ -266,7 +266,7 @@ modes = [ #( ''                , ''                  ) ,
           ( '_numubarccoth'    , "_numub_ccother"    ) ,
           #~ ( '_numubarnc1piC'   , "_numub_ncpipm"   ) ,
           #~ ( '_numubarnc1pi0'   , "_numub_ncpi0"    ) ,
-          ( '_numubarnccoh'    , "_numub_nc_coh"    ) ,
+        #  ( '_numubarnccoh'    , "_numub_nc_coh"    ) ,
           #( '_numubarncoth'    , "_numub_ncoth"    ) ,
           ( '_nueccqe'         , "_nue_ccqe"       ) ,
           ( '_nuecc1pi'        , "_nue_cc1pi"      ) ,
@@ -275,7 +275,7 @@ modes = [ #( ''                , ''                  ) ,
           ( '_nueccoth'        , "_nue_ccother"      ) ,
           #~ ( '_nuenc1piC'       , "_nue_ncpipm"     ) ,
           #~ ( '_nuenc1pi0'       , "_nue_ncpi0"      ) ,
-          ( '_nuenccoh'        , "_nue_nc_coh"      ) ,
+         # ( '_nuenccoh'        , "_nue_nc_coh"      ) ,
           #( '_nuencoth'        , "_nue_ncoth"      ) ,
           ( '_oscnueccqe'      , "_signue_ccqe"    ) ,
           ( '_oscnuecc1pi'     , "_signue_cc1pi"   ) ,
@@ -289,7 +289,7 @@ modes = [ #( ''                , ''                  ) ,
           ( '_nuebarccoth'     , "_nueb_ccother"     ) ,
           #~ ( '_nuebarnc1piC'    , "_nueb_ncpipm"    ) ,
           #~ ( '_nuebarnc1pi0'    , "_nueb_ncpi0"     ) ,
-          ( '_nuebarnccoh'     , "_nueb_nc_coh"     ) ,
+         # ( '_nuebarnccoh'     , "_nueb_nc_coh"     ) ,
           #( '_nuebarncoth'     , "_nueb_ncoth"     ) ,
           ( '_oscnuebarccqe'   , "_signueb_ccqe"   ) ,
           ( '_oscnuebarcc1pi'  , "_signueb_cc1pi"  ) ,
