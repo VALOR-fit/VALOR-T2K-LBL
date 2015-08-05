@@ -141,6 +141,8 @@ public:
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
   
+  bool IsShapeParameter(conv::PhysParamId_t p) const; // Are we using a spline?
+
 private:
 
   void Init    (void);

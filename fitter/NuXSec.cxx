@@ -2243,3 +2243,21 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
   return splname.str();
 }
 //________________________________________________________________________________________
+bool NuXSec::IsShapeParameter(conv::PhysParamId_t p) const
+{
+  if(p == kPhypUndefined) return false;
+  for(int ip = 0; ip < kNumOfXSecSyst; ip++) {
+    PhysParamId_t p2 = kListOfXSecSyst[ip];
+    if (p==p2 && kXSecSystHasWghtSplines[ip]) {
+      return true;
+    }
+  }
+  for(int ip = 0; ip < kNumOfRHCXSecSyst; ip++) {
+    PhysParamId_t p2 = kListOfRHCXSecSyst[ip];
+    if (p==p2 && kRHCXSecSystHasWghtSplines[ip]) {
+      return true;
+    }
+  }
+  return false;
+}
+//________________________________________________________________________________________
