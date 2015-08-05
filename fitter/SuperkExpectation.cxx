@@ -494,8 +494,6 @@ double SuperkExpectation::CurrPredictedErecoSpectrumArray(valor::conv::SuperkSam
 
 TH2D* SuperkExpectation::CurrPredictedErecoVsQ2Spectrum(valor::conv::SuperkSample_t s) const 
 {
-  cout << "SuperkExpectation::CurrPredictedErecoVsQ2Spectrum" << endl;
-
   const int nbins_q2    = util::NumQ2Bins(s);
   const int nbins_ereco = util::NumErecoBins(s);
   typedef double (erq2type)  [nbins_ereco][nbins_q2];  
@@ -530,6 +528,7 @@ TH2D* SuperkExpectation::CurrPredictedErecoVsQ2Spectrum(
   string name  (Form("curr_ereco_Vs_q2_%s_%s"                       ,util::AsStringCompact(s).c_str(), util::AsStringCompact(m).c_str()) );
   string title (Form("Current Predicted Ereco Vs Q2 Spectrum: %s %s",util::AsString(s).c_str()       , util::AsString(m).c_str()       ) );
   TH2D * h = new TH2D(name.c_str(), title.c_str(), nbins_q2, util::Q2BinEdges(s), nbins_ereco, util::ErecoBinEdges(s) );
+
   util::FormatErecoVsQ2Hist(h);
   util::SetDefaultSKSpectrumStyle(s,m,h);
   for (int ir = 0 ; ir < nbins_ereco ; ir++ ) {
@@ -537,6 +536,7 @@ TH2D* SuperkExpectation::CurrPredictedErecoVsQ2Spectrum(
       h->SetBinContent(iq+1,ir+1,arr[ir][iq]);
     }
   }
+
   return h;
 }
 //________________________________________________________________________________________

@@ -100,39 +100,6 @@ static const double kXsErecoBinEdgesMultiRmu[kXsNErecoBinsMultiRmu+1] =
    2.500,  2.600,  2.700,  2.800,  2.900,  3.000,  3.500,  4.000,  5.000,  7.000,
    10.000, 30.000
 };
-
-
-// NEW 2D TEMPLATES
-static const int kXsNQ2Bins1Rmu = 41;
-static const double kXsQ2BinEdges1Rmu[kXsNQ2Bins1Rmu+1] =
-{
-   0.000,  0.300,  0.350,  0.400,  0.450,  0.500,  0.550,  0.600,  0.650,  0.700,
-   0.750,  0.800,  0.850,  0.900,  0.950,  1.000,  1.100,  1.200,  1.300,  1.400,
-   1.500,  1.600,  1.700,  1.800,  1.900,  2.000,  2.100,  2.200,  2.300,  2.400,
-   2.500,  2.600,  2.700,  2.800,  2.900,  3.000,  3.500,  4.000,  5.000,  7.000,
-   10.000, 30.000
-};
-static const int kRHCXsNQ2Bins1Rmu = 41;
-static const double kRHCXsQ2BinEdges1Rmu[kRHCXsNQ2Bins1Rmu+1] =
-  {
-    0.000,  0.300,  0.350,  0.400,  0.450,  0.500,  0.550,  0.600,  0.650,  0.700,
-    0.750,  0.800,  0.850,  0.900,  0.950,  1.000,  1.100,  1.200,  1.300,  1.400,
-    1.500,  1.600,  1.700,  1.800,  1.900,  2.000,  2.100,  2.200,  2.300,  2.400,
-    2.500,  2.600,  2.700,  2.800,  2.900,  3.000,  3.500,  4.000,  5.000,  7.000,
-    10.000, 30.000
-  };
-static const int kXsNQ2BinsMultiRmu = 41;
-static const double kXsQ2BinEdgesMultiRmu[kXsNQ2BinsMultiRmu+1] =
-{
-   0.000,  0.300,  0.350,  0.400,  0.450,  0.500,  0.550,  0.600,  0.650,  0.700,
-   0.750,  0.800,  0.850,  0.900,  0.950,  1.000,  1.100,  1.200,  1.300,  1.400,
-   1.500,  1.600,  1.700,  1.800,  1.900,  2.000,  2.100,  2.200,  2.300,  2.400,
-   2.500,  2.600,  2.700,  2.800,  2.900,  3.000,  3.500,  4.000,  5.000,  7.000,
-   10.000, 30.000
-};
-//
-
-
 #elif ERECO_XSEC_BINS_1RMU == 2
 // 600 50-MeV bins from 0 to 30 GeV
 static const int kXsNErecoBins1Rmu = 600;
@@ -385,43 +352,6 @@ static const double kXsErecoBinEdgesMultiRe[kXsNErecoBinsMultiRe+1] =
     0.900,  0.950,  1.000,  1.050,  1.100,  1.150,
     1.200,  1.250
   };
-
-
-// NEW 2D TEMPLATES
-static const int kXsNQ2Bins1Re = 25;
-static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] = 
-  {
-    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
-    0.300,  0.350,  0.400,  0.450,  0.500,  0.550,
-    0.600,  0.650,  0.700,  0.750,  0.800,  0.850,
-    0.900,  0.950,  1.000,  1.050,  1.100,  1.150,
-    1.200,  1.250
-  };
-static const int kRHCXsNQ2Bins1Re = 25;
-static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
-  {
-    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
-    0.300,  0.350,  0.400,  0.450,  0.500,  0.550,
-    0.600,  0.650,  0.700,  0.750,  0.800,  0.850,
-    0.900,  0.950,  1.000,  1.050,  1.100,  1.150,
-    1.200,  1.250
-  };
-static const int kXsNQ2BinsMultiRe = 25;
-static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] = 
-  {
-    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,
-    0.300,  0.350,  0.400,  0.450,  0.500,  0.550,
-    0.600,  0.650,  0.700,  0.750,  0.800,  0.850,
-    0.900,  0.950,  1.000,  1.050,  1.100,  1.150,
-    1.200,  1.250
-  };
-//
-
-
-
-
-
-
 #endif
 //
 // The weight splines are pre-computed in the following Etrue bins (for each Ereco bin)
@@ -3083,17 +3013,17 @@ static const double kErecoBinEdgesMultiRe[kNErecoBinsMultiRe+1] =
 static const int kNErecoBins1Re = 25;
 static const double kErecoBinEdges1Re[kNErecoBins1Re+1] = 
 {
-   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
+  1.000,  1.050,  1.100,  1.150,  1.200,  1.250
 };
 static const int kRHCNErecoBins1Re = 25;
 static const double kRHCErecoBinEdges1Re[kRHCNErecoBins1Re+1] =
-  {
-    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
-    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
-    1.000,  1.050,  1.100,  1.150,  1.200,  1.250
-  };
+{
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
+  1.000,  1.050,  1.100,  1.150,  1.200,  1.250
+};
 static const int kNErecoBinsMultiRe = 25;
 static const double kErecoBinEdgesMultiRe[kNErecoBinsMultiRe+1] = 
 {
@@ -3111,117 +3041,278 @@ static const double kErecoBinEdgesMultiRe[kNErecoBinsMultiRe+1] =
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // NEW 2D TEMPLATES
 
-#if Q2_BINS == 1
-static const int kNQ2Bins1Rmu = 25;
+
+
+#if defined(__ERECO_VS_Q2_TEMPLATES__)
+
+// Q2 mu-like binning of xsec splines
+#if Q2_XSEC_BINS_1RMU == 1
+static const int kXsNQ2Bins1Rmu = 19;
+static const double kXsQ2BinEdges1Rmu[kXsNQ2Bins1Rmu+1] =
+{
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
+};
+static const int kRHCXsNQ2Bins1Rmu = 19;
+static const double kRHCXsQ2BinEdges1Rmu[kRHCXsNQ2Bins1Rmu+1] =
+{
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
+};
+static const int kXsNQ2BinsMultiRmu = 19;
+static const double kXsQ2BinEdgesMultiRmu[kXsNQ2BinsMultiRmu+1] =
+{
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
+};
+#elif Q2_XSEC_BINS_1RMU == 2
+static const int kXsNQ2Bins1Rmu = 1;
+static const double kXsQ2BinEdges1Rmu[kXsNQ2Bins1Rmu+1] =
+{
+  0.000, 30.000
+};
+static const int kRHCXsNQ2Bins1Rmu = 1;
+static const double kRHCXsQ2BinEdges1Rmu[kRHCXsNQ2Bins1Rmu+1] =
+{
+  0.000, 30.000
+};
+static const int kXsNQ2BinsMultiRmu = 1;
+static const double kXsQ2BinEdgesMultiRmu[kXsNQ2BinsMultiRmu+1] =
+{
+  0.000, 30.000
+};
+#endif
+
+#if Q2_XSEC_BINS_1RE == 1
+static const int kXsNQ2Bins1Re = 19;
+static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] = 
+{
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
+};
+static const int kRHCXsNQ2Bins1Re = 19;
+static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
+{
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
+};
+static const int kXsNQ2BinsMultiRe = 19;
+static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] = 
+{
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
+};
+#elif Q2_XSEC_BINS_1RE == 2
+static const int kXsNQ2Bins1Re = 1;
+static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] = 
+{
+  0.000, 30.000
+};
+static const int kRHCXsNQ2Bins1Re = 1;
+static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
+{
+  0.000, 30.000
+};
+static const int kXsNQ2BinsMultiRe = 1;
+static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] = 
+{
+  0.000, 30.000
+};
+#endif
+
+// Q2 mu-like binning of templates
+#if Q2_BINS_1RMU == 1
+static const int kNQ2Bins1Rmu = 19;
 static const double kQ2BinEdges1Rmu[kNQ2Bins1Rmu+1] = 
 {
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250
+   0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
 };
-static const int kRHCNQ2Bins1Rmu = 25;
+static const int kRHCNQ2Bins1Rmu = 19;
 static const double kRHCQ2BinEdges1Rmu[kRHCNQ2Bins1Rmu+1] =
-  {
+{
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250
-  };
-static const int kNQ2BinsMultiRmu = 25;
+   0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
+};
+static const int kNQ2BinsMultiRmu = 19;
 static const double kQ2BinEdgesMultiRmu[kNQ2BinsMultiRmu+1] = 
 {
-   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
 };
-
-static const int kNQ2Bins1Re = 25;
-static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] = 
-{
-   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250
-};
-static const int kRHCNQ2Bins1Re = 25;
-static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] =
-  {
-    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
-    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
-    1.000,  1.050,  1.100,  1.150,  1.200,  1.250
-  };
-static const int kNQ2BinsMultiRe = 25;
-static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] = 
-{
-   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250
-};
-
-#elif Q2_BINS == 2
-static const int kNQ2Bins1Rmu = 73;
+#elif Q2_BINS_1RMU == 2
+static const int kNQ2Bins1Rmu = 1;
 static const double kQ2BinEdges1Rmu[kNQ2Bins1Rmu+1] =
-   {
-   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450,
-   1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950,
-   2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450,
-   2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950,
-   3.000,  3.250,  3.500,  3.750,
-   4.000,  4.500,  5.000,  5.500,
-   6.000,  7.000,  8.000,  9.000, 10.000, 30.000
+{
+  0.000, 30.000
 };
-static const int kRHCNQ2Bins1Rmu = 73;
+static const int kRHCNQ2Bins1Rmu = 1;
 static const double kRHCQ2BinEdges1Rmu[kRHCNQ2Bins1Rmu+1] =
-  {
-    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
-    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
-    1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450,
-    1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950,
-    2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450,
-    2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950,
-    3.000,  3.250,  3.500,  3.750,
-    4.000,  4.500,  5.000,  5.500,
-    6.000,  7.000,  8.000,  9.000, 10.000, 30.000
-  };
-static const int kNQ2BinsMultiRmu = 73;
+{
+  0.000, 30.000
+};
+static const int kNQ2BinsMultiRmu = 1;
 static const double kQ2BinEdgesMultiRmu[kNQ2BinsMultiRmu+1] =
 {
-   0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450,
-   1.500,  1.550,  1.600,  1.650,  1.700,  1.750,  1.800,  1.850,  1.900,  1.950,
-   2.000,  2.050,  2.100,  2.150,  2.200,  2.250,  2.300,  2.350,  2.400,  2.450,
-   2.500,  2.550,  2.600,  2.650,  2.700,  2.750,  2.800,  2.850,  2.900,  2.950,
-   3.000,  3.250,  3.500,  3.750,
-   4.000,  4.500,  5.000,  5.500,
-   6.000,  7.000,  8.000,  9.000, 10.000, 30.000
+  0.000, 30.000
 };
+#endif
 
-static const int kNQ2Bins1Re = 25;
+// Q2 e-like binning
+#if Q2_BINS_1RE == 1
+static const int kNQ2Bins1Re = 19;
 static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] = 
 {
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250
+   0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
 };
-static const int kRHCNQ2Bins1Re = 25;
+static const int kRHCNQ2Bins1Re = 19;
 static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] =
-  {
-    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450,
-    0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950,
-    1.000,  1.050,  1.100,  1.150,  1.200,  1.250
-  };
-static const int kNQ2BinsMultiRe = 25;
-static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] = 
 {
    0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
-   0.500,  0.550,  0.600,  0.650,  0.700,  0.750,  0.800,  0.850,  0.900,  0.950, 
-   1.000,  1.050,  1.100,  1.150,  1.200,  1.250
+   0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
 };
-
+static const int kNQ2BinsMultiRe = 19;
+static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] = 
+{
+  0.000,  0.050,  0.100,  0.150,  0.200,  0.250,  0.300,  0.350,  0.400,  0.450, 
+  0.500,  0.550,  0.600,  0.650,  0.700,  0.800,  0.900,  1.000,  1.200,  1.500
+};
+#elif Q2_BINS_1RE == 2
+static const int kNQ2Bins1Re = 1;
+static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] = 
+{
+  0.000, 30.000
+};
+static const int kRHCNQ2Bins1Re = 1;
+static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] =
+{
+  0.000, 30.000
+};
+static const int kNQ2BinsMultiRe = 1;
+static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] = 
+{
+  0.000, 30.00
+};
 #endif
+
+
+
+ 
+ 
+#elif defined(__ERECO_VS_THETA_TEMPLATES__)
+
+// Theta mu-like binning of xsec splines
+#if THETA_XSEC_BINS_1RMU == 1
+static const int kXsNQ2Bins1Rmu = 15;
+static const double kXsQ2BinEdges1Rmu[kXsNQ2Bins1Rmu+1] =
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+static const int kRHCXsNQ2Bins1Rmu = 15;
+static const double kRHCXsQ2BinEdges1Rmu[kRHCXsNQ2Bins1Rmu+1] =
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+static const int kXsNQ2BinsMultiRmu = 15;
+static const double kXsQ2BinEdgesMultiRmu[kXsNQ2BinsMultiRmu+1] =
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+#endif
+
+// Theta e-like binning of xsec splines
+#if THETA_XSEC_BINS_1RE == 1
+static const int kXsNQ2Bins1Re = 15;
+static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] = 
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+static const int kRHCXsNQ2Bins1Re = 15;
+static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+static const int kXsNQ2BinsMultiRe = 15;
+static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] = 
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+#endif
+
+// Theta mu-like binning of templates
+#if THETA_BINS_1RMU == 1
+static const int kNQ2Bins1Rmu = 15;
+static const double kQ2BinEdges1Rmu[kNQ2Bins1Rmu+1] = 
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+static const int kRHCNQ2Bins1Rmu = 15;
+static const double kRHCQ2BinEdges1Rmu[kRHCNQ2Bins1Rmu+1] =
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+static const int kNQ2BinsMultiRmu = 15;
+static const double kQ2BinEdgesMultiRmu[kNQ2BinsMultiRmu+1] = 
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+#endif
+
+// Theta e-like binning
+#if THETA_BINS_1RE == 1
+static const int kNQ2Bins1Re = 15;
+static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] = 
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+static const int kRHCNQ2Bins1Re = 15;
+static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] =
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+static const int kNQ2BinsMultiRe = 15;
+static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] = 
+{
+  0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
+    110., 120., 130., 140., 180.
+};
+#endif
+
+#endif // __ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
+
 //
 
 
@@ -3236,15 +3327,10 @@ static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] =
  static const int kNEtrueBins  [kns] = { kNEtrueBins1Rmu,   kNEtrueBins1Re,   kRHCNEtrueBins1Rmu,   kRHCNEtrueBins1Re   , kNEtrueBinsMultiRmu,   kNEtrueBinsMultiRe     }; 
  static const int kNXsErecoBins[kns] = { kXsNErecoBins1Rmu, kXsNErecoBins1Re, kRHCXsNErecoBins1Rmu, kRHCXsNErecoBins1Re , kXsNErecoBinsMultiRmu, kXsNErecoBinsMultiRe   }; 
 
-
-
  // NEW 2D TEMPLATES
  static const int kNQ2Bins  [kns] = { kNQ2Bins1Rmu,   kNQ2Bins1Re,   kRHCNQ2Bins1Rmu,   kRHCNQ2Bins1Re   , kNQ2BinsMultiRmu,   kNQ2BinsMultiRe     }; 
  static const int kNXsQ2Bins[kns] = { kXsNQ2Bins1Rmu, kXsNQ2Bins1Re, kRHCXsNQ2Bins1Rmu, kRHCXsNQ2Bins1Re , kXsNQ2BinsMultiRmu, kXsNQ2BinsMultiRe   }; 
  //
-
-
-
 
 
 // NEW 2D TEMPLATES (make it smaller otherwise > INT_MAX)

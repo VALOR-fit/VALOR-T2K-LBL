@@ -1058,7 +1058,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 
     // NEW 2D TEMPLATES
     
-    //////////////////// CALCULATE Q2 //////////////////
+
+#if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
 
     double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
     double electronMass = 0.510999 / 1000.; // GeV
@@ -1144,43 +1145,112 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 
     //q2_fill = ereco_fill; // NEW 2D TEMPLATES (TODO) // be careful to overflows!!!
 
+
 #ifdef INCLUDEEVENTSNEGATIVEQ2
     if(q2_fill < 0. && q2_fill> -0.01){ 
       q2_fill = 0.01;
     }
 #endif    
 #ifdef INCLUDEEVENTSOVERFLOWQ2
-    
     int nbins = util::NumQ2Bins(s);
     double MaxQ2_up   = util::Q2BinEdges(s,nbins);
     double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
     double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
-    //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << endl;
-    
+    //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
     q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
+    
+    if(q2_fill > MaxQ2_up){ 
+      cout << q2_fill << endl;
+      exit(1);
+    }
 #endif
 
-    // if(q2_fill < 0.){ 
-    //   cout << "costheta = " << costheta << endl;
-    //   cout << "sintheta = " << sintheta << endl;
-    //   cout << "emax_lep = " << emax_lep << endl;
-    //   cout << "ereco_nu = " << ereco_nu << endl;
-    //   cout << "Q2 = " << Q2 << " GeV" << endl;
-    //   exit(1);
-    // }
+    if( q2_fill < util::Q2BinEdges(s,0) ){ 
+      cout << "costheta = " << costheta << endl;
+      cout << "sintheta = " << sintheta << endl;
+      cout << "emax_lep = " << emax_lep << endl;
+      cout << "ereco_nu = " << ereco_nu << endl;
+      cout << "Q2 = " << Q2 << " GeV" << endl;
+      exit(1);
+    }
+    if( q2_fill > util::Q2BinEdges(s,nbins) ){ 
+      cout << "costheta = " << costheta << endl;
+      cout << "sintheta = " << sintheta << endl;
+      cout << "emax_lep = " << emax_lep << endl;
+      cout << "ereco_nu = " << ereco_nu << endl;
+      cout << "Q2 = " << Q2 << " GeV" << endl;
+      exit(1);
+    }
 
-    // if(q2_fill > 30.){ 
-    //   cout << "costheta = " << costheta << endl;
-    //   cout << "sintheta = " << sintheta << endl;
-    //   cout << "emax_lep = " << emax_lep << endl;
-    //   cout << "ereco_nu = " << ereco_nu << endl;
-    //   cout << "Q2 = " << Q2 << " GeV" << endl;
-    //   //exit(1);
-    // }
+
+#elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
+
+    double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+   
+    double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+    if( costheta<-1.00001 || costheta>+1.00001 ){
+      cerr << endl;
+      cerr << std::setprecision(10);
+      cerr << "SuperkMC::FillTemplateHistogram" << endl;
+      cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+      cerr << endl;
+      exit(1);
+    }
     
-    ////////////////////////////////////////////////////
+    double LepTheta        = TMath::ACos(costheta); // radiant    
+    double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees   
+    if(LepTheta<0.){
+      cerr << endl;
+      cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+    double q2_fill = LepThetaDegrees;
+
+#ifdef INCLUDEEVENTSNEGATIVEQ2
+    if(q2_fill < 0.){ 
+      q2_fill = util::Q2BinEdges(s,0)+conv::kASmallNum;
+    }
+#endif    
+#ifdef INCLUDEEVENTSOVERFLOWQ2
+    int nbins = util::NumQ2Bins(s);
+    double MaxQ2_up   = util::Q2BinEdges(s,nbins);
+    double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
+    double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
+    //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
+    q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
+    
+    if(q2_fill > MaxQ2_up){ 
+      cout << q2_fill << endl;
+      exit(1);
+    }
+#endif
+
+    if( q2_fill < util::Q2BinEdges(s,0) ){ 
+      cout << "costheta = " << costheta << endl;
+      cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+      exit(1);
+    }
+
+    if( q2_fill > util::Q2BinEdges(s,nbins) ){ 
+      cout << "costheta = " << costheta << endl;
+      cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+      exit(1);
+    }
+
+#else
+    cerr << endl;
+    cerr << "SuperkMC::FillTemplateHistogram()" << endl;
+    cerr << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization" << endl;
+    cerr << endl;
+    exit(1);
+#endif //__ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
 
     //
+  
+
+
 
     
     double Etrue = fBrPtrue[0];
@@ -1230,9 +1300,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG);
     this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG);
     #endif
-
 #else
-
     // NEW 2D TEMPLATES
     #ifdef USE_RPA_WEIGHTS
     this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);

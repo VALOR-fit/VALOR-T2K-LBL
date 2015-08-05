@@ -36,6 +36,12 @@ Split valor::conv namespace into several smaller files
 #ifndef __USE_2D_TEMPLATES__ 
 #define __USE_2D_TEMPLATES__ // Use 2D templates
 #endif
+
+//#define __ERECO_VS_Q2_TEMPLATES__ // Ereco Vs Q2 parametrization
+#ifndef __ERECO_VS_Q2_TEMPLATES__ 
+#define __ERECO_VS_THETA_TEMPLATES__ // Ereco Vs THETA parametrization
+#endif
+
 //
 
 #ifndef __FULLY_CORRELATED__ 
@@ -161,10 +167,49 @@ Split valor::conv namespace into several smaller files
 
 
 
-#ifndef Q2_BINS
-#define Q2_BINS 1 // (DEFAULT) 50 MeV bins 0-1.25 GeV (25 bins)
-#define Q2_BINS 2 // 50 MeV bins 0-1.25 GeV (25 bins) in e-like and 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins) in mu-like
+
+// NEW 2D TEMPLATES
+
+#ifndef Q2_XSEC_BINS_1RMU
+#define Q2_XSEC_BINS_1RMU 1 // DEFAULT (19 bins) 
+//#define Q2_XSEC_BINS_1RMU 2 // 1 single bin (1D template) 
 #endif
+
+#ifndef Q2_XSEC_BINS_1RE
+#define Q2_XSEC_BINS_1RE 1 // DEFAULT (19 bins) 
+//#define Q2_XSEC_BINS_1RE 2 // 1 single bin (1D template)
+#endif
+
+#ifndef Q2_BINS_1RMU
+#define Q2_BINS_1RMU 1 // DEFAULT (19 bins)
+//#define Q2_BINS_1RMU 2 // 1 single bin (1D template)
+#endif
+
+#ifndef Q2_BINS_1RE
+#define Q2_BINS_1RE 1 // DEFAULT (19 bins)
+//#define Q2_BINS_1RE 2 // 1 single bin (1D template)
+#endif
+
+
+#ifndef THETA_XSEC_BINS_1RMU
+#define THETA_XSEC_BINS_1RMU 1 // DEFAULT (15 bins) 
+#endif
+
+#ifndef THETA_XSEC_BINS_1RE
+#define THETA_XSEC_BINS_1RE 1 // DEFAULT (15 bins) 
+#endif
+
+#ifndef THETA_BINS_1RMU
+#define THETA_BINS_1RMU 1 // DEFAULT (15 bins)
+#endif
+
+#ifndef THETA_BINS_1RE
+#define THETA_BINS_1RE 1 // DEFAULT (15 bins)
+#endif
+
+
+//
+
 
 #endif
 
