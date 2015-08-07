@@ -1061,26 +1061,23 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 
 #if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
 
-    double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-    double electronMass = 0.510999 / 1000.; // GeV
-    double muonMass     = 105.66   / 1000.; // GeV
- 
+    double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+    double electronMass = 0.511   / 1000.; // GeV
+    double muonMass     = 105.658 / 1000.; // GeV
+    double neutronMass  = 939.565 / 1000.; // GeV
+    double protonMass   = 938.272 / 1000.; // GeV
+
     // Get momentum and energy of most energetic lepton (only 1Ring samples)
-    //*Br    8 :amome     : amome[nring]/F                                      
-    //*Br    9 :amomm     : amomm[nring]/F                                      
     
     double pmax_lep = 0.; // momentum of most energetic lepton  
-    double emax_lep = 0.; // energy of most energetic lepton
     double mass_lep = 0.;
     if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-      pmax_lep = fBrAmomm[0] / 1000.; // GeV
-      emax_lep = sqrt( pmax_lep*pmax_lep + electronMass*electronMass );
       mass_lep = electronMass;
+      pmax_lep = fBrAmome[0] / 1000.; // GeV
     }
     else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-      pmax_lep = fBrAmome[0] / 1000.; // GeV
-      emax_lep = sqrt( pmax_lep*pmax_lep + muonMass*muonMass );
       mass_lep = muonMass;
+      pmax_lep = fBrAmomm[0] / 1000.; // GeV
     }
     else{
       cerr << endl;
@@ -1095,9 +1092,32 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
       exit(1);
     }
     
+    double mass_nucl = 0.;
+    if( (s == kSKsRHCFCFV1RingELike) || (s == kSKsRHCFCFV1RingMuLike) ){ // RHC
+      mass_nucl = protonMass; // nubar interacts with proton
+    }
+    else if( (s == kSKsFCFV1RingELike) || (s == kSKsFCFV1RingMuLike) ){ // FHC
+      mass_nucl = neutronMass; // nubar interacts with neutron
+    }
+    else{
+      cerr << endl;
+      cerr << "SuperkMC::FillTemplateHistogram" << endl;
+      cerr << "Using sample " << util::AsString(s) << endl;
+      cerr << "Samples other than: " << endl;
+      cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+      cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+      cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+      cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+      cerr << "are not implemented" << endl;
+      exit(1);
+    }
+
+    // Get lepton energy
+
+    double emax_lep = sqrt( pmax_lep*pmax_lep + mass_lep*mass_lep );
+
     // Get lepton direction
-    // Costheta is the scalar product between the neutrino beam and lepton directions. Used in T2KReWeight as well.    
-    //*Br    6 :dir       : dir[nring][3]/F                                       
+    // Costheta is the scalar product between the neutrino beam and lepton directions. 
 
     double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
     if( costheta<-1.00001 || costheta>+1.00001 ){
@@ -1129,22 +1149,45 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
       exit(1);
     }
     
-    // Get neutrino energy
+
     double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum) 
     
-    // Calculate Q2 from the outgoing lepton  
-    // q = Pf-Pf (P = 4-momentum)
-    // Q2 = -q*q
-    // In the laboratory frame system we can write Q2 as:
-    // Q2 = -t = -q2 = 2*Enu*(Elep-Plep*costheta) - Mlep^2
-    // costheta is the scattering angle between neutrino and lepton
-   
-    double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep);
+    //double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Q^2
+    //double Q2 = this->CalcQd2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Qd^2
+    //double Q2 = this->CalcEhad(ereco_nu,emax_lep);
+    //double Q2 = this->CalcInelasticity(ereco_nu,emax_lep);
+    //double Q2 = this->CalcBjorkenScale(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
+    //double Q2 = this->CalcWhadr(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
+    double Q2 = this->CalcXSecTerm(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
     
+    //if(Q2<0. || Q2 > 1.){
+    //cout << "costheta = " << costheta << " ";
+    //cout << "emax_lep = " << emax_lep << " ";
+    //cout << "ereco_nu = " << ereco_nu << " ";
+    //cout << "Q2 = " << Q2 << " GeV" << endl;
+    // //Q2 = 0.001;
+    //}
+
+    //cout << Q2 << " ";
+    //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
+    //cout << Q2 << " ";    
+    // // PROVA
+    // double px = ereco_nu*dir_nu[0];
+    // double py = ereco_nu*dir_nu[1];
+    // double pz = ereco_nu*dir_nu[2];
+    // double e = ereco_nu;
+    // TLorentzVector lv_pnu(px,py,pz,e); 
+    // px = pmax_lep*fBrDir[0][1];
+    // py = pmax_lep*fBrDir[0][2];
+    // pz = pmax_lep*fBrDir[0][3];
+    // e = emax_lep;
+    // TLorentzVector lv_plep(px,py,pz,e);
+    // Q2 = (lv_pnu - lv_plep).Mag2();
+    // cout << Q2 << endl;    
+    // //
+
+
     double q2_fill = Q2;
-
-    //q2_fill = ereco_fill; // NEW 2D TEMPLATES (TODO) // be careful to overflows!!!
-
 
 #ifdef INCLUDEEVENTSNEGATIVEQ2
     if(q2_fill < 0. && q2_fill> -0.01){ 
@@ -1166,18 +1209,23 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif
 
     if( q2_fill < util::Q2BinEdges(s,0) ){ 
-      cout << "costheta = " << costheta << endl;
-      cout << "sintheta = " << sintheta << endl;
-      cout << "emax_lep = " << emax_lep << endl;
-      cout << "ereco_nu = " << ereco_nu << endl;
+      cout << "Q2 < Q2BinEdge(s,0)" << endl;
+      cout << "nu direction: " << dir_nu[0] << " " << dir_nu[1] << " " << dir_nu[2] << " ";
+      cout << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
+      cout << "theta = " << LepThetaDegrees << " ";
+      cout << "costheta = " << costheta << " ";
+      //cout << "sintheta = " << sintheta << " ";
+      cout << "emax_lep = " << emax_lep << " ";
+      cout << "ereco_nu = " << ereco_nu << " ";
       cout << "Q2 = " << Q2 << " GeV" << endl;
       exit(1);
     }
     if( q2_fill > util::Q2BinEdges(s,nbins) ){ 
-      cout << "costheta = " << costheta << endl;
-      cout << "sintheta = " << sintheta << endl;
-      cout << "emax_lep = " << emax_lep << endl;
-      cout << "ereco_nu = " << ereco_nu << endl;
+      cout << "Q2 > Q2BinEdge(s,0)" << endl;
+      cout << "costheta = " << costheta << " ";
+      cout << "sintheta = " << sintheta << " ";
+      cout << "emax_lep = " << emax_lep << " ";
+      cout << "ereco_nu = " << ereco_nu << " ";
       cout << "Q2 = " << Q2 << " GeV" << endl;
       exit(1);
     }
@@ -1267,6 +1315,11 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
     ereco_fill = TMath::Min(29.9, ereco_fill);
 #endif
+
+
+    //q2_fill = ereco_fill; // NEW 2D TEMPLATES (TODO) // be careful to overflows!!!
+
+
 
 #ifndef __USE_2D_TEMPLATES__
     this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, Etrue);
@@ -6407,25 +6460,12 @@ TH3D SuperkMC::Get3DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SK
 
 
 
-
-
-
-
-
-
-
 //____________________________________________________________________________________
 bool SuperkMC::DoTemplateArraysHaveNIWGTune(void) const
 {
   return fTemplateArraysHaveNIWGTune;
 }
 //____________________________________________________________________________________
-
-
-
-
-
-
 
 
 
@@ -6443,7 +6483,106 @@ double SuperkMC::CalcQ2(double Enu,double Elep,double Plep,double costheta,doubl
   return Q2;
 }
 //____________________________________________________________________________________
+double SuperkMC::CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep)
+{
+   // Qd^2 (variation of Q^2)
+  
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton 
 
+  double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+  
+  double Qd2 = TMath::Power(1+Q2/0.7, -1);
+
+  return Qd2;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcEhad(double Enu,double Elep)
+{
+  // Energy of the hadronic recoil system
+  
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+
+  double nu = Enu - Elep;
+  
+  return nu;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcInelasticity(double Enu,double Elep)
+{
+  // Inelasticity = (Enu - Elep) / Enu
+  
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+
+  double Inel = (Enu - Elep) / Enu;
+  
+  return Inel;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
+{
+  // x = Q2 / (2*Mn*Enu*Inelasticity)
+  
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton 
+  // Mn       --> nucleon mass
+
+  double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+  double Inel = this->CalcInelasticity(Enu,Elep);
+  double x = Q2 / (2*Mn*Enu*Inel);
+  
+  return x;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
+{
+  // x = Q2 / (2*Mn*Enu*Inelasticity)
+  
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton 
+  // Mn       --> nucleon mass
+
+  double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+  double nu = this->CalcEhad(Enu,Elep);
+
+  double W = Mn*Mn + 2*Mn*nu - Q2;
+
+  return W;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn){
+
+  // Term of CCQE dsigma/dQ^2 which sign is different for nu/nubar (arXiv:1305.7513v1, eq. 57-61)
+
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton 
+  // Mn       --> nucleon mass
+
+  double MA = 1.2257; // Axial Mass (BANFF post-fit) 
+  double gA = 1.2694; // FA(Q2=0) 
+  
+  double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+
+  double F1 = 0.5;
+  double F2 = 0.5;
+  double FA = gA / TMath::Power( 1 + Q2/(MA*MA), 2. );
+  double B = Q2/(Mn*Mn)*FA*(F1+F2);
+
+  double XSecTerm = (4*Mn*Enu - Q2 - Mlep*Mlep) / (Mn*Mn) * B;
+ 
+  return XSecTerm;
+}
+//____________________________________________________________________________________
 
 
 

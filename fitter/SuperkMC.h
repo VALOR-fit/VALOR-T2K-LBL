@@ -180,7 +180,14 @@ private:
 
 
   // NEW 2D TEMPLATES
-  double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
+  double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep); 
+  double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep); 
+  double CalcEhad(double Enu,double Elep);     
+  double CalcInelasticity(double Enu,double Elep);     
+  double CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+  double CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+  double CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+  
   void DrawProjectionXY(TH3D *h);  // for debugging
   void ProjectTemplate3Dto2D(TH3D *h3d[conv::kns][conv::knm], TH2D *h2d[conv::kns][conv::knm]);
   double GetTemplateIntegral(TH3D *h3d[conv::kns][conv::knm]);
