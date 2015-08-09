@@ -124,6 +124,19 @@ void valor::util::FormatErecoHist(TH1 * hist)
   hist->GetYaxis()->SetTitle("Events per bin");
 }
 //________________________________________________________________________________________
+void valor::util::FormatQ2Hist(TH1 * hist)
+{
+  hist->SetDirectory(0);
+  hist->SetLineWidth(2);
+  hist->SetLineColor(kBlack);
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+  hist->GetXaxis()->SetTitle("Q^{2} (GeV)");
+#elif defined __ERECO_VS_THETA_TEMPLATES__
+  hist->GetXaxis()->SetTitle("#theta");
+#endif
+  hist->GetYaxis()->SetTitle("Events per bin");
+}
+//________________________________________________________________________________________
 
 // NEW 2D TEMPLATES
 void valor::util::FormatErecoVsQ2Hist(TH2 * hist)
@@ -131,7 +144,11 @@ void valor::util::FormatErecoVsQ2Hist(TH2 * hist)
   hist->SetDirectory(0);
   hist->SetLineWidth(2);
   hist->SetLineColor(kBlack);
+#ifdef __ERECO_VS_Q2_TEMPLATES__
   hist->GetXaxis()->SetTitle("Q^{2} (GeV)");
+#elif defined __ERECO_VS_THETA_TEMPLATES__
+  hist->GetXaxis()->SetTitle("#theta");
+#endif
   hist->GetYaxis()->SetTitle("E_{reco} (GeV)");
   hist->GetZaxis()->SetTitle("Events per bin");
 }

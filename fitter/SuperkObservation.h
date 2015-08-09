@@ -73,24 +73,51 @@ public:
 
   // Get data
   double NumOfEvents (valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;             
+#ifndef __USE_2D_TEMPLATES__
   double NumOfEvents (double Er, valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;  
+#else
+  double NumOfEvents (double value, bool second_dim, valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;  
+#endif
 
+  //TEMPORARILY leave these active (until the rest of the code catches up to 2D arrays)
+  double           *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s);
+  const double     *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s) const;
+#ifndef __USE_2D_TEMPLATES__
   TH1D*  ErecoSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
   VALORArray       *  ErecoSpectrumVArray (valor::conv::SuperkSample_t s);
   const VALORArray *  ErecoSpectrumVArray (valor::conv::SuperkSample_t s) const;
-  double           *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s);
-  const double     *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s) const;
   
 private:
   
   VALORArray * fErDistrArray   [conv::kns];
+
+#else //__USE_2D_TEMPLATES__
+  TH2D*  TwoDSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  TH1D*  XSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  TH1D*  YSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  VALORArray       *  TwoDSpectrumVArray (valor::conv::SuperkSample_t s);
+  const VALORArray *  TwoDSpectrumVArray (valor::conv::SuperkSample_t s) const;
+  double           *  TwoDSpectrumArray  (valor::conv::SuperkSample_t s);
+  const double     *  TwoDSpectrumArray  (valor::conv::SuperkSample_t s) const;
+  
+private:
+  
+  VALORArray * f2DDistrArray   [conv::kns];
+
+#endif //__USE_2D_TEMPLATES__
+
+ private:
 
   void Init    (void);
   void CleanUp (void);
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
+#ifndef __USE_2D_TEMPLATES__
 ClassDef(SuperkObservation, 4)
+#else
+ClassDef(SuperkObservation, 5)
+#endif
 };
 
 } // valor

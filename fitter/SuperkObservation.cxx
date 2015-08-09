@@ -21,9 +21,10 @@
 */
 //________________________________________________________________________________________
 
-//#define __show_num_of_events_mesg_debug__
-//#define __show_bin_contributions_to_chisq__
-//#define __announce_generate__
+#define __show_read_events_mesg_debug__
+#define __show_num_of_events_mesg_debug__
+#define __show_bin_contributions_to_chisq__
+#define __announce_generate__
 
 #include <cassert>
 #include <cstdlib>
@@ -71,18 +72,35 @@ SuperkObservation::~SuperkObservation(void)
 //________________________________________________________________________________________
 void SuperkObservation::Init(void)
 {
-// Initialize private data members
-//
+  // Initialize private data members
+  //
   for (int is = 0 ; is < conv::kns ;  is ++ ) {
     SuperkSample_t s = kSKSamples[is];
     if (s==kSKsUndefined) {
+#ifndef __USE_2D_TEMPLATES__ //1D templates
       fErDistrArray[is]=0;
+#else
+      f2DDistrArray[is]=0;
+#endif
     }
     else {
+#ifndef __USE_2D_TEMPLATES__ //1D templates
       fErDistrArray[is] = new VALORArray(util::NumErecoBins(s));
       fErDistrArray[is]->SetTitle(Form("Ereco distribution: %s",util::AsString(s).c_str()));
       fErDistrArray[is]->SetName(Form("%s",util::AsStringCompact(s).c_str()));
       fErDistrArray[is]->SetDimensionName(0,"Reconstructed energy /GeV");
+#else //2D templates
+      f2DDistrArray[is]= new VALORArray(util::NumErecoBins(s),util::NumQ2Bins(s));
+    
+      f2DDistrArray[is]->SetDimensionName(0, "Ereco");
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+      f2DDistrArray[is]->SetDimensionName(1, "Q2");
+#else
+      f2DDistrArray[is]->SetDimensionName(1, "Theta");
+#endif
+      f2DDistrArray[is]->SetTitle(Form("2D Observed Spectrum Array %s", util::AsStringCompact(s).c_str()));
+      f2DDistrArray[is]->SetName (Form("obs_2D_arr_%s", util::AsStringCompact(s).c_str()));
+#endif //__USE_2D_TEMPLATES__
     }
   }
   
@@ -92,7 +110,11 @@ void SuperkObservation::Init(void)
 void SuperkObservation::CleanUp(void)
 {
   for (int is = 0 ; is < conv::kns ; is++) {
+#ifndef __USE_2D_TEMPLATES__ //1D templates
     if (fErDistrArray[is]) delete fErDistrArray[is];
+#else
+    if (f2DDistrArray[is]) delete f2DDistrArray[is];
+#endif
   }
 }
 //________________________________________________________________________________________
@@ -132,10 +154,15 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     for (int is = 0 ; is < conv::kns ; is++) {
       SuperkSample_t s = conv::kSKSamples[is];
       if (s==kSKsUndefined) continue;
+#ifdef __show_read_events_mesg_debug__
+      cout << "Obs >> Read: Reading events for sample: " << util::AsString(s) << endl;
+#endif
       ostringstream datanode;
       datanode << "superk/observation";
       datanode << "/data_set_" << data_set_id;
       datanode << "/"<<util::GetXMLDatasetName(s);
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
       datanode << "/ereco_values"; 
 
       if(util::NodeExists(xml,root_node,datanode.str())) {
@@ -157,6 +184,58 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       else {
         cerr << "Obs >> Node " << datanode.str() << " does not exist!" << endl;
       }
+#else //2D templates
+      //first get the number of events
+      int nevents = 0;
+      {
+	ostringstream datanodetmp;
+	datanodetmp << datanode.str();
+	datanodetmp << "/nevents";
+	if(util::NodeExists(xml,root_node,datanodetmp.str())) {
+	  nevents = util::XML2Int(xml,root_node,datanodetmp.str());
+	}
+	else {
+	  cerr << "Obs >> Node " << datanodetmp.str() << " does not exist!" << endl;
+	}
+      }
+      //now get each event
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+      datanode << "/ereco_q2_values";
+#else
+      datanode << "/ereco_theta_values";
+#endif
+      TH2D h("", "", util::NumErecoBins(s), util::ErecoBinEdges(s), util::NumQ2Bins(s), util::Q2BinEdges(s));
+      h.SetDirectory(0);
+      for(int iev = 0; iev < nevents; iev++) {
+	ostringstream datanodetmp;
+	datanodetmp << datanode.str();
+	datanodetmp << "/ev" << iev;
+	if(util::NodeExists(xml,root_node,datanodetmp.str())) {
+	  vector<double> values = util::XML2DblArray(xml,root_node,datanodetmp.str());
+	  double Ereco = values.at(0);
+	  double Q2    = values.at(1);
+#ifdef __show_read_events_mesg_debug__
+	  cout << "Obs >> Read: event " << iev
+	       << " " << f2DDistrArray[is]->GetDimensionName(0) << " = " << Ereco
+	       << " " << f2DDistrArray[is]->GetDimensionName(1) << " = " << Q2
+	       << endl;
+#endif
+	  h.Fill(Ereco, Q2);
+        }
+        else {
+          cerr << "Obs >> Node " << datanodetmp.str() << " does not exist!" << endl;
+        }
+      }//iev
+      cout << "Obs >> Read: " << h.Integral()
+	   << " " << util::AsString(s) << " events." << endl;
+      for(int ibinx = 1; ibinx <= util::NumErecoBins(s); ibinx++) {
+	for(int ibiny = 1; ibiny <= util::NumQ2Bins(s); ibiny++) {
+	  double nobs = h.GetBinContent(ibinx, ibiny);
+	  f2DDistrArray[is]->SetEntry(nobs, ibinx-1, ibiny-1);
+	}//ibinx
+      }//ibiny
+#endif //__USE_2D_TEMPLATES__
+
     } // is
     
     // Release memory
@@ -166,8 +245,8 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 
   else { // DEPRECATE?
    
+#ifndef __USE_2D_TEMPLATES__ //1D templates
     //assert(!"This code branch is deprecated");
-
 
     // NEW FHC+RHC JOINT
 
@@ -280,6 +359,10 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     // 	   << " " << util::AsString(kSKsRHCFCFV1RingELike) << " events." << endl;
     // }
     //#endif
+
+#else
+    assert(!"SuperKObservation::Read(is_xml = false) is not implemented in 2D template mode");
+#endif //__USE_2D_TEMPLATES__
     
   }//!is_xml
 
@@ -294,12 +377,22 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
     return nev;
   }
 
-  int is = arr_index->SuperkSampleIdx(s);
+  //int is = arr_index->SuperkSampleIdx(s);
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+  nev = ErecoSpectrumVArray(s)->Integral();
+#else
+  nev = TwoDSpectrumVArray(s)->Integral();
+#endif
+
+  /*
   const double * spectrum = this->ErecoSpectrumArray(s);
-  
+
   for(int ir = 0; ir < kNErecoBins[is]; ir++){
-    nev += spectrum[ir];
+  nev += spectrum[ir];
   }
+  */
+
 
 #ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
@@ -309,7 +402,11 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
   return nev;
 }
 //________________________________________________________________________________________
+#ifndef __USE_2D_TEMPLATES__ //1D templates 
 double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
+#else
+double SuperkObservation::NumOfEvents(double value, bool second_dim, SuperkSample_t s) const
+#endif
 {
   double nev = 0;
 
@@ -319,15 +416,43 @@ double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
   
   cerr<<"WARNING: SuperkObservation::NumOfEvents(Ereco) needs testing"<<std::endl;
   // NEEDS TESTING
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates 
   const double * spectrum = this->ErecoSpectrumArray(s);
   
   int bin = util::ErecoBinContains(s,Er);
   assert(bin!=-1);
   nev = spectrum[util::ErecoBinContains(s,Er)];
+#else //2D templates
+  const VALORArray * spectrum = this->TwoDSpectrumVArray(s);
+  int bin = -1, nbins = 0;
+  if(!second_dim) {
+    bin = util::ErecoBinContains(s,value);
+    nbins = util::NumQ2Bins(s);
+  }
+  else {
+    bin = util::Q2BinContains(s,value);
+    nbins = util::NumErecoBins(s);
+  }
+  assert(bin!=-1);
+  for(int ib = 0; ib < nbins; ib++) {
+    if(!second_dim)
+      nev += spectrum->GetEntry(bin, ib);
+    else
+      nev += spectrum->GetEntry(ib, bin);
+  }
+#endif //__USE_2D_TEMPLATES__
   
 #ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
-       << util::AsString(s) << ", Ereco = " << Er << " GeV) = " << nev << endl;
+       << util::AsString(s) << ", ";
+#ifndef __USE_2D_TEMPLATES__
+  cout << "Ereco = " << Er << " GeV";
+#else
+  if(!second_dim)
+    cout << spectrum->GetDimensionName(0) << " = " << value;
+#endif
+  cout << ") = " << nev << endl;
 #endif
 
   return nev;
@@ -339,11 +464,19 @@ int SuperkObservation::NumOfBins()
   for (int is = 0 ; is < kns ; is++) {
     SuperkSample_t s = kSKSamples[is];
     if (s==kSKsUndefined) continue;
+#ifndef __USE_2D_TEMPLATES__ //1D templates
     nbins+=util::NumErecoBins(s);
+#else
+    nbins += util::NumErecoBins(s) * util::NumQ2Bins(s);
+#endif
   }
   return nbins;
 }
 //________________________________________________________________________________________
+
+
+//________________________________________________________________________________________
+#ifndef __USE_2D_TEMPLATES__ //1D templates
 TH1D* SuperkObservation::ErecoSpectrum (valor::conv::SuperkSample_t s) const
 {
   if(s == kSKsUndefined) {
@@ -390,6 +523,119 @@ const double* SuperkObservation::ErecoSpectrumArray (valor::conv::SuperkSample_t
   if (not va) return 0;
   return ErecoSpectrumVArray(s)->GetArray();
 }
+#else //__USE_2D_TEMPLATES__
+//________________________________________________________________________________________
+TH2D* SuperkObservation::TwoDSpectrum (valor::conv::SuperkSample_t s) const
+{
+  if(s == kSKsUndefined) {
+    return 0;
+  }
+
+  const int nbins_q2    = util::NumQ2Bins(s);
+  const int nbins_ereco = util::NumErecoBins(s);
+  typedef double (erq2type)  [nbins_ereco][nbins_q2];  
+
+  const erq2type & arr = *reinterpret_cast< const erq2type * > (TwoDSpectrumArray(s));
+  if (!arr) return 0;
+
+  string name (Form("obs_2D_%s"               ,util::AsStringCompact(s).c_str() ) );
+  string title(Form("2D Observed Spectrum: %s",util::AsString(s).c_str() ) );
+
+  TH2D * data = new TH2D(name.c_str(), title.c_str(), nbins_q2, util::Q2BinEdges(s), nbins_ereco, util::ErecoBinEdges(s) );
+  util::FormatErecoVsQ2Hist(data);
+  data -> SetDirectory(0);
+  data -> SetMarkerStyle(20);
+  data -> SetMarkerSize(1);
+  
+  for (int ir = 0 ; ir < nbins_ereco ; ir++ ) {
+    for (int iq = 0 ; iq < nbins_q2 ; iq++ ) {
+      data->SetBinContent(iq+1,ir+1,arr[ir][iq]);
+    }//iq
+  }//ir
+  
+  return data;
+}
+//________________________________________________________________________________________
+TH1D* SuperkObservation::XSpectrum (valor::conv::SuperkSample_t s) const
+{
+  if(s == kSKsUndefined) {
+    return 0;
+  }
+
+  const int nbins = util::NumErecoBins(s);
+  
+  const VALORArray * varray = TwoDSpectrumVArray(s);
+  if (!varray) return 0;
+
+  string name (Form("obs_%s_%s", varray->GetDimensionName(0).c_str(), util::AsStringCompact(s).c_str() ) );
+  string title(Form("1D Observed Spectrum: %s", util::AsString(s).c_str() ) );
+
+  TH1D * data = new TH1D(name.c_str(), title.c_str(), nbins, util::ErecoBinEdges(s) );
+  util::FormatErecoHist(data);
+  data -> SetDirectory(0);
+  data -> SetMarkerStyle(20);
+  data -> SetMarkerSize(1);
+  
+  for (int ib = 0 ; ib < nbins ; ib++ ) {
+    data->SetBinContent(ib+1, varray->Integral(ib,ib, -1,-1));
+  }//ib
+  
+  return data;
+}
+//________________________________________________________________________________________
+TH1D* SuperkObservation::YSpectrum (valor::conv::SuperkSample_t s) const
+{
+  if(s == kSKsUndefined) {
+    return 0;
+  }
+
+  const int nbins = util::NumQ2Bins(s);
+
+  const VALORArray * varray = TwoDSpectrumVArray(s);
+  if (!varray) return 0;
+
+  string name (Form("obs_%s_%s", varray->GetDimensionName(1).c_str(), util::AsStringCompact(s).c_str() ) );
+  string title(Form("1D Observed Spectrum: %s", util::AsString(s).c_str() ) );
+
+  TH1D * data = new TH1D(name.c_str(), title.c_str(), nbins, util::Q2BinEdges(s) );
+  util::FormatQ2Hist(data);
+  data -> SetDirectory(0);
+  data -> SetMarkerStyle(20);
+  data -> SetMarkerSize(1);
+  
+  for (int ib = 0 ; ib < nbins ; ib++ ) {
+    data->SetBinContent(ib+1, varray->Integral(-1,-1, ib,ib));
+  }//ib
+  
+  return data;
+}
+//________________________________________________________________________________________
+VALORArray * SuperkObservation::TwoDSpectrumVArray (valor::conv::SuperkSample_t s)
+{
+  return f2DDistrArray[s];
+}
+//________________________________________________________________________________________
+const VALORArray * SuperkObservation::TwoDSpectrumVArray (valor::conv::SuperkSample_t s) const
+{
+  return f2DDistrArray[s];
+}
+//________________________________________________________________________________________
+double* SuperkObservation::TwoDSpectrumArray (valor::conv::SuperkSample_t s)
+{
+  VALORArray * va = TwoDSpectrumVArray(s);
+  if (not va) return 0;
+  return TwoDSpectrumVArray(s)->GetArray();
+}
+//________________________________________________________________________________________
+const double* SuperkObservation::TwoDSpectrumArray (valor::conv::SuperkSample_t s) const
+{
+  const VALORArray * va = TwoDSpectrumVArray(s);
+  if (not va) return 0;
+  return TwoDSpectrumVArray(s)->GetArray();
+}
+#endif //__USE_2D_TEMPLATES__
+//________________________________________________________________________________________
+
 //________________________________________________________________________________________
 bool SuperkObservation::Generate(
      FitModelABC * model, bool fluctuate)
@@ -401,12 +647,22 @@ bool SuperkObservation::Generate(
   for (int is = 0 ; is < conv::kns ; is++ ) {
     SuperkSample_t s = kSKSamples[is];
     if (s==kSKsUndefined) continue;
+#ifndef __USE_2D_TEMPLATES__ //1D templates
     for(int ibin = 0; ibin < util::NumErecoBins(s); ibin++) {
        double nexp  = skexp->CurrPredictedErecoSpectrumArray(s)[ibin];
        double nobs  = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
        this->ErecoSpectrumArray(s)[ibin] = nobs;
-    }
-  }
+    }//ibin
+#else //2D templates
+    for(int ibinx = 0; ibinx < util::NumErecoBins(s); ibinx++) {
+      for(int ibiny = 0; ibiny < util::NumQ2Bins(s); ibiny++) {
+	double nexp = skexp->CurrPredictedErecoVsQ2VArray(s)->GetEntry(ibinx, ibiny);
+	double nobs = (fluctuate) ? Rnd::Instance()->RndToyMCstat().Poisson(nexp) : nexp;
+	this->TwoDSpectrumVArray(s)->SetEntry(nobs, ibinx, ibiny);
+      }//ibiny
+    }//ibinx
+#endif //__USE_2D_TEMPLATES__
+  }//is
 
   return false;
 }
@@ -469,18 +725,31 @@ bool SuperkObservation::Write(TObjArray * data_collection, const char * data_tag
     
     if (hist_mode) {
       util::SetDefaultStyle();
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates 
       // This is a new object, leaks memory if data_collection has not been set as owner
-      TH1D * data = this->ErecoSpectrum(s);
-      
-      data -> SetName( 
-       Form( "%s_%s", 
-              data_tag,
-              util::AsStringCompact(s).c_str() ) 
-      );
+      TH1D * data = this->ErecoSpectrum(s);      
+#else //2D templates
+      // This is a new object, leaks memory if data_collection has not been set as owner
+      TH2D * data = this->TwoDSpectrum(s);
+
+      TH1D * datax = this->XSpectrum(s);
+      datax->SetName(Form("x_%s_%s", data_tag, util::AsStringCompact(s).c_str()));
+      data_collection->Add(datax);
+      TH1D * datay = this->YSpectrum(s);
+      datay->SetName(Form("y_%s_%s", data_tag, util::AsStringCompact(s).c_str()));
+      data_collection->Add(datay);
+#endif //__USE_2D_TEMPLATES__
+
+      data->SetName(Form("%s_%s", data_tag, util::AsStringCompact(s).c_str()));
       data_collection -> Add(data);
     }
     else {
+#ifndef __USE_2D_TEMPLATES__ //1D templates  
       VALORArray * data = this->ErecoSpectrumVArray(s);
+#else //2D templates
+      VALORArray * data = this->TwoDSpectrumVArray(s);
+#endif //__USE_2D_TEMPLATES__
       data -> SetName( Form( "%s_%s", data_tag, util::AsStringCompact(s).c_str() ) );
       data_collection -> Add(data);
     }
@@ -551,8 +820,9 @@ double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
       SuperkSample_t s = kSKSamples[is];
       // current sample is undefined: skip
       if (s == conv::kSKsUndefined) continue;
-      int n_ereco_bins = kNErecoBins[is];
-      
+      int n_ereco_bins = util::NumErecoBins(s);
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
       const VALORArray * obs_v = this->ErecoSpectrumVArray(s);
       const VALORArray * exp_v = skexp->CurrPredictedErecoVArray(s);
       const double * obs_arr = obs_v->GetArray();
@@ -569,14 +839,16 @@ double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
           
           total_chisq += delta_chisq;
         
-  #ifdef __show_bin_contributions_to_chisq__
+#ifdef __show_bin_contributions_to_chisq__
           double xlo = util::ErecoBinEdges(s,ibin);
           double xup = util::ErecoBinEdges(s,ibin+1);
             cout << "SuperkObservation::Statistic >> delta_chisq (s = "<<util::AsString(s)<<", bin = " << ibin 
                  << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
             cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
-  #endif
+#endif
         }//ibin
+
+
       }// not goodness of fit
       else {
 #ifndef __RHC_RUNNING__
@@ -607,12 +879,90 @@ double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
   #ifdef __show_bin_contributions_to_chisq__
           double xlo = util::ErecoBinEdges(s,ibin);
           double xup = util::ErecoBinEdges(s,ibin+1);
-          cout << "FitInputs::Chisquare()> delta_chisq (s = "<<util::AsString(s)<<", bin = " << ibin 
+          cout << "SuperkObservation::Statistic()> delta_chisq (s = "<<util::AsString(s)<<", bin = " << ibin 
              << "; [" << xlo << ", " << xup << "] GeV) = " << delta_chisq << endl;
           cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
   #endif
         }//ibin
       } //goodness of fit
+
+#else //2D templates
+
+      const VALORArray * obs_v = this->TwoDSpectrumVArray(s);
+      const VALORArray * exp_v = skexp->CurrPredictedErecoVsQ2VArray(s);
+      int n_q2_bins = util::NumQ2Bins(s);
+      
+      if (not gof) {
+          
+        for (int ibinx = 0 ; ibinx < n_ereco_bins ; ibinx++) {
+	  for (int ibiny = 0 ; ibiny < n_q2_bins ; ibiny++) {
+	    nobs = obs_v->GetEntry(ibinx, ibiny);
+	    nexp = exp_v->GetEntry(ibinx, ibiny);
+          
+	    if    (gauss) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	    else          { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+          
+	    total_chisq += delta_chisq;
+        
+#ifdef __show_bin_contributions_to_chisq__
+	    double xlo = util::ErecoBinEdges(s,ibinx);
+	    double xup = util::ErecoBinEdges(s,ibinx+1);
+	    double ylo = util::ErecoBinEdges(s,ibiny);
+	    double yup = util::ErecoBinEdges(s,ibiny+1);
+            cout << "SuperkObservation::Statistic >> delta_chisq (s = "<<util::AsString(s)
+		 << ", bin = " << ibinx << "," << ibiny 
+                 << "; " << obs_v->GetDimensionName(0) <<  " = [" << xlo << ", " << xup << "]"
+                 << "; " << obs_v->GetDimensionName(1) <<  " = [" << ylo << ", " << yup << "]"
+		 << ") = " << delta_chisq << endl;
+            cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
+#endif
+	  }//ibiny
+	}//ibinx
+
+      }// not goodness of fit
+      else {
+        const int nbinsx = 2;
+        double binedgesx[nbinsx+1] = {0.0,2.5,30.0};
+	const int nbinsy = 2;
+	double binedgesy[nbinsy+1] = {0.0,1.0,30.0};
+
+	cerr << "Warning** SuperKObservation goodness of fit arrays for 2D templates have arbitrary values set. Please update!" << endl;
+	cerr << "SuperKObservation goodness of fit arrays should be moved to Binning.h" << endl;
+      
+        //loop over Ereco bins
+        for(int ibinx = 0; ibinx < nbinsx; ibinx++) {
+          int ErecoMinBin = TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedgesx[ibinx]);
+          int ErecoMaxBin = TMath::BinarySearch(n_ereco_bins,util::ErecoBinEdges(s),binedgesx[ibinx+1]);
+	  for(int ibiny = 0; ibiny < nbinsy; ibiny++) {
+	    int Q2MinBin = TMath::BinarySearch(n_q2_bins,util::Q2BinEdges(s),binedgesy[ibiny]);
+	    int Q2MaxBin = TMath::BinarySearch(n_q2_bins,util::Q2BinEdges(s),binedgesy[ibiny+1]);
+
+	    nobs = obs_v->Integral(ErecoMinBin, ErecoMaxBin, Q2MinBin, Q2MaxBin);
+	    nexp = exp_v->Integral(ErecoMinBin, ErecoMaxBin, Q2MinBin, Q2MaxBin);
+          
+	    if    (gauss) { delta_chisq = util::ChisqGauss  (nobs,nexp); }
+	    else          { delta_chisq = util::ChisqPoisson(nobs,nexp); }
+          
+	    total_chisq += delta_chisq;
+            
+#ifdef __show_bin_contributions_to_chisq__
+	    double xlo = util::ErecoBinEdges(s,ibinx);
+	    double xup = util::ErecoBinEdges(s,ibinx+1);
+	    double ylo = util::ErecoBinEdges(s,ibiny);
+	    double yup = util::ErecoBinEdges(s,ibiny+1);
+            cout << "SuperkObservation::Statistic >> delta_chisq (s = "<<util::AsString(s)
+		 << ", bin = " << ibinx << "," << ibiny 
+                 << "; " << obs_v->GetDimensionName(0) <<  " = [" << xlo << ", " << xup << "]"
+                 << "; " << obs_v->GetDimensionName(1) <<  " = [" << ylo << ", " << yup << "]"
+		 << ") = " << delta_chisq << endl;
+            cout << "\tNobs: " << nobs << "\tNexp:" << nexp << endl;
+  #endif
+	  }//ibiny
+	}//ibinx
+      } //goodness of fit
+
+#endif //__USE_2D_TEMPLATES__
+
     }//is
     
     double syst_chisq_pen = model->GetFitStatisticPenalty();
