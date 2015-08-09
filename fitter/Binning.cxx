@@ -63,12 +63,12 @@ double valor::util::ErecoBinEdges(valor::conv::SuperkSample_t s, int i)
 //___________________________________________________________________________
 int valor::util::ErecoBinContains(valor::conv::SuperkSample_t s, double Ereco)
 {
-  int nedges = util::NumErecoBins(s)+1;
+  int nedges = util::NumErecoBins(s);
   const double * edges = util::ErecoBinEdges(s);
   if (Ereco > edges[nedges] || Ereco < edges[0]) return -1;
   int bin =  TMath::BinarySearch(nedges,edges,Ereco);
-  if (bin == util::NumErecoBins(s)+1) return -1;
-  return bin;
+  if (bin >= util::NumErecoBins(s)) return -1;
+  return bin; //return in range 0->nbins-1
 }
 //___________________________________________________________________________
 int valor::util::NumXsecErecoBins(valor::conv::SuperkSample_t s)
@@ -178,12 +178,12 @@ double valor::util::Q2BinEdges(valor::conv::SuperkSample_t s, int i)
 //___________________________________________________________________________
 int valor::util::Q2BinContains(valor::conv::SuperkSample_t s, double Q2)
 {
-  int nedges = util::NumQ2Bins(s)+1;
+  int nedges = util::NumQ2Bins(s);
   const double * edges = util::Q2BinEdges(s);
   if (Q2 > edges[nedges] || Q2 < edges[0]) return -1;
   int bin =  TMath::BinarySearch(nedges,edges,Q2);
-  if (bin == util::NumQ2Bins(s)+1) return -1;
-  return bin;
+  if (bin >= util::NumQ2Bins(s)) return -1;
+  return bin; //return in range 0->nbins-1
 }
 //___________________________________________________________________________
 int valor::util::NumXsecQ2Bins(valor::conv::SuperkSample_t s)

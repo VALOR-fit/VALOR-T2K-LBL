@@ -21,8 +21,9 @@
 */
 //________________________________________________________________________________________
 
-#define __show_read_events_mesg_debug__
-#define __show_num_of_events_mesg_debug__
+//#define __show_read_events_mesg_debug__
+//#define __show_num_of_events_mesg_debug__
+//#define __show_num_of_bins_mesg_debug__
 #define __show_bin_contributions_to_chisq__
 #define __announce_generate__
 
@@ -377,22 +378,11 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
     return nev;
   }
 
-  //int is = arr_index->SuperkSampleIdx(s);
-
 #ifndef __USE_2D_TEMPLATES__ //1D templates
   nev = ErecoSpectrumVArray(s)->Integral();
 #else
   nev = TwoDSpectrumVArray(s)->Integral();
 #endif
-
-  /*
-  const double * spectrum = this->ErecoSpectrumArray(s);
-
-  for(int ir = 0; ir < kNErecoBins[is]; ir++){
-  nev += spectrum[ir];
-  }
-  */
-
 
 #ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
@@ -405,7 +395,7 @@ double SuperkObservation::NumOfEvents(SuperkSample_t s) const
 #ifndef __USE_2D_TEMPLATES__ //1D templates 
 double SuperkObservation::NumOfEvents(double Er, SuperkSample_t s) const
 #else
-double SuperkObservation::NumOfEvents(double value, bool second_dim, SuperkSample_t s) const
+double SuperkObservation::NumOfEvents(double xvalue, double yvalue, SuperkSample_t s) const
 #endif
 {
   double nev = 0;
@@ -414,10 +404,10 @@ double SuperkObservation::NumOfEvents(double value, bool second_dim, SuperkSampl
     return 0;
   }
   
+#ifndef __USE_2D_TEMPLATES__ //1D templates 
   cerr<<"WARNING: SuperkObservation::NumOfEvents(Ereco) needs testing"<<std::endl;
   // NEEDS TESTING
 
-#ifndef __USE_2D_TEMPLATES__ //1D templates 
   const double * spectrum = this->ErecoSpectrumArray(s);
   
   int bin = util::ErecoBinContains(s,Er);
@@ -425,32 +415,29 @@ double SuperkObservation::NumOfEvents(double value, bool second_dim, SuperkSampl
   nev = spectrum[util::ErecoBinContains(s,Er)];
 #else //2D templates
   const VALORArray * spectrum = this->TwoDSpectrumVArray(s);
-  int bin = -1, nbins = 0;
-  if(!second_dim) {
-    bin = util::ErecoBinContains(s,value);
-    nbins = util::NumQ2Bins(s);
-  }
-  else {
-    bin = util::Q2BinContains(s,value);
-    nbins = util::NumErecoBins(s);
-  }
-  assert(bin!=-1);
-  for(int ib = 0; ib < nbins; ib++) {
-    if(!second_dim)
-      nev += spectrum->GetEntry(bin, ib);
-    else
-      nev += spectrum->GetEntry(ib, bin);
-  }
+
+  int binx = -1, biny = -1;
+  if(xvalue >= 0)
+    binx = util::ErecoBinContains(s, xvalue);
+  if(yvalue >= 0)
+    biny = util::Q2BinContains(s, yvalue);
+
+  nev = spectrum->Integral(binx,binx, biny,biny);
 #endif //__USE_2D_TEMPLATES__
-  
+
 #ifdef __show_num_of_events_mesg_debug__
   cout << "Obs >> NEvents(" 
        << util::AsString(s) << ", ";
 #ifndef __USE_2D_TEMPLATES__
   cout << "Ereco = " << Er << " GeV";
 #else
-  if(!second_dim)
-    cout << spectrum->GetDimensionName(0) << " = " << value;
+  cout << spectrum->GetDimensionName(0) << " = ";
+  if(xvalue < 0) cout << "integrated";
+  else cout << xvalue;
+  cout << ", "
+       << spectrum->GetDimensionName(1) << " = ";
+  if(yvalue < 0) cout << "integrated";
+  else cout << yvalue;
 #endif
   cout << ") = " << nev << endl;
 #endif
@@ -461,6 +448,9 @@ double SuperkObservation::NumOfEvents(double value, bool second_dim, SuperkSampl
 int SuperkObservation::NumOfBins()
 {
   int nbins = 0;
+#ifdef __show_num_of_bins_mesg_debug__
+  cout << "SuperkObservation::NumOfBins() ";
+#endif
   for (int is = 0 ; is < kns ; is++) {
     SuperkSample_t s = kSKSamples[is];
     if (s==kSKsUndefined) continue;
@@ -468,8 +458,15 @@ int SuperkObservation::NumOfBins()
     nbins+=util::NumErecoBins(s);
 #else
     nbins += util::NumErecoBins(s) * util::NumQ2Bins(s);
+#ifdef __show_num_of_bins_mesg_debug__
+    cout << util::AsStringCompact(s) << ": " 
+	 << util::NumErecoBins(s) * util::NumQ2Bins(s) << " + ";
 #endif
+#endif //__USE_2D_TEMPLATES__
   }
+#ifdef __show_num_of_bins_mesg_debug__
+  cout << " = " << nbins << std::endl;
+#endif
   return nbins;
 }
 //________________________________________________________________________________________

@@ -76,7 +76,8 @@ public:
 #ifndef __USE_2D_TEMPLATES__
   double NumOfEvents (double Er, valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;  
 #else
-  double NumOfEvents (double value, bool second_dim, valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;  
+  //use values of <0 to integrate along that axis
+  double NumOfEvents (double xvalue, double yvalue,  valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;  
 #endif
 
   //TEMPORARILY leave these active (until the rest of the code catches up to 2D arrays)
