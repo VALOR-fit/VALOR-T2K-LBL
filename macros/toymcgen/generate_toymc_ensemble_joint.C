@@ -7,7 +7,38 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+#include "SuperkObservation.h"
+#include "SuperkExpectation.h"
+#include "BANFF.h"
+#include "SuperkDetectorFSI.h"
+#include "T2KPhysicalParameterLimits.h"
+
+#include "Utilities.h"
+#include "Binning.h"
+#include "Utilities/UtlXML.h"
+
 #include "Build.h"
+
+#include "AnalysisOptions.h"
+
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TRandom3.h"
+#include "TSystem.h"
+
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+void AddExtraEventsToHist(TH1D * h, string * full_points_to_add);
+void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH1D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
+#else //2D templates
+void AddExtraEventsToHist(TH2D * h, string * full_points_to_add);
+void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
+#endif
+string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra);
 
 void generate_toymc_ensemble_joint
 (
@@ -57,8 +88,6 @@ void generate_toymc_ensemble_joint
   using namespace valor;
   using namespace valor::conv;
   
-  int n_points_per_line_xml = 5;
-
   TRandom3 rand(0);
 
   TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
@@ -139,6 +168,9 @@ void generate_toymc_ensemble_joint
   
   // Are we adding events from an XML file?
   if (xml_file_to_add) {
+    cerr << "xml_file_to_add needs testing (and not yet implemented for 2D templates)" << endl;
+    exit(-1);
+
     TXMLEngine xml;
     const char * xml_path = Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xml_file_to_add);
     XMLDocPointer_t xmldoc = xml.ParseFile(xml_path);
@@ -147,24 +179,13 @@ void generate_toymc_ensemble_joint
       exit(1);
     }
     XMLNodePointer_t root_node = xml.DocGetRootElement(xmldoc);
-    
-    string s_1Rmu = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring/ereco_values");
-    full_points_to_add_1Rmu = new string( points_to_add_1Rmu ? Form("%s,%s",points_to_add_1Rmu,s_1Rmu) : s_1Rmu);
 
-    string s_1Re = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_e_ring/ereco_values");
-    full_points_to_add_1Re = new string( points_to_add_1Re ? Form("%s,%s",points_to_add_1Re,s_1Re) : s_1Re);
-    
-    string s_1Rmu_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring_rhc/ereco_values");
-    full_points_to_add_1Rmu_RHC = new string( points_to_add_1Rmu_RHC ? Form("%s,%s",points_to_add_1Rmu_RHC,s_1Rmu_RHC) : s_1Rmu_RHC);
-    
-    string s_1Re_RHC = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_e_ring_rhc/ereco_values");
-    full_points_to_add_1Re_RHC = new string( points_to_add_1Re_RHC ? Form("%s,%s",points_to_add_1Re_RHC,s_1Re_RHC) : s_1Re_RHC);
-
-    string s_MultiRmu = util::XML2String(&xml, root_node, "superk/observation/data_set_0/multi_mu_ring/ereco_values");
-    full_points_to_add_MultiRmu = new string( points_to_add_MultiRmu ? Form("%s,%s",points_to_add_MultiRmu,s_MultiRmu) : s_MultiRmu);
-    
-    string s_MultiRe = util::XML2String(&xml, root_node, "superk/observation/data_set_0/multi_e_ring/ereco_values");
-    full_points_to_add_MultiRe = new string( points_to_add_MultiRe ? Form("%s,%s",points_to_add_MultiRe,s_MultiRe) : s_MultiRe);
+    full_points_to_add_1Rmu     = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingMuLike,     points_to_add_1Rmu);
+    full_points_to_add_1Re      = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingELike,      points_to_add_1Re);
+    full_points_to_add_1Rmu_RHC = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingMuLike,  points_to_add_1Rmu_RHC);
+    full_points_to_add_1Re_RHC  = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingELike,   points_to_add_1Re_RHC);
+    full_points_to_add_MultiRmu = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingMuLike, points_to_add_MultiRmu);
+    full_points_to_add_MultiRe  = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingELike,  points_to_add_MultiRe);
   }
   else {
     if (points_to_add_1Rmu    ) full_points_to_add_1Rmu     = new string(points_to_add_1Rmu    );
@@ -186,12 +207,12 @@ void generate_toymc_ensemble_joint
   cout << "   - Rethrow unphysical : " << ((rethrow_if_parameters_unphysical) ? "YES " : "NO") << endl;
   cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ? "YES " : "NO") << endl;
   cout << "   - True oscillation parameters: " << endl;
-  cout << "       > " << util::AsString(kPhypMixing12) << " = " << ((randomize_mixing12) ? "* randomized *" : input_mixing12) << endl;
-  cout << "       > " << util::AsString(kPhypMixing13) << " = " << ((randomize_mixing13) ? "* randomized *" : input_mixing13) << endl;
-  cout << "       > " << util::AsString(kPhypMixing23) << " = " << ((randomize_mixing23) ? "* randomized *" : input_mixing23) << endl;
-  cout << "       > " << util::AsString(kPhypCPV    )  << " = " << ((randomize_deltacp) ? "* randomized *" : input_deltacp) << endl;
-  cout << "       > " << util::AsString(kPhypDm12sq)   << " = " << ((randomize_dm12sq)  ? "* randomized *" : input_dm12sq ) << " eV^2/c^4" << endl;
-  cout << "       > " << util::AsString(kPhypDm23sq)   << " = " << ((randomize_dm23sq)  ? "* randomized *" : input_dm23sq ) << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypMixing12) << " = "; ((randomize_mixing12) ? cout << "* randomized *" : cout << input_mixing12) << endl;
+  cout << "       > " << util::AsString(kPhypMixing13) << " = "; ((randomize_mixing13) ? cout << "* randomized *" : cout << input_mixing13) << endl;
+  cout << "       > " << util::AsString(kPhypMixing23) << " = "; ((randomize_mixing23) ? cout << "* randomized *" : cout << input_mixing23) << endl;
+  cout << "       > " << util::AsString(kPhypCPV    )  << " = "; ((randomize_deltacp)  ? cout << "* randomized *" : cout << input_deltacp)  << endl;
+  cout << "       > " << util::AsString(kPhypDm12sq)   << " = "; ((randomize_dm12sq)   ? cout << "* randomized *" : cout << input_dm12sq )  << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((randomize_dm23sq)   ? cout << "* randomized *" : cout << input_dm23sq )  << " eV^2/c^4" << endl;
   cout << "   - Adding the following data-points in each toy-MC expt: " << endl;
   cout << "    For 1R mu-like: "     << ((full_points_to_add_1Rmu)     ? *full_points_to_add_1Rmu     : "*None*") << endl;
   cout << "    For 1R e-like: "      << ((full_points_to_add_1Re)      ? *full_points_to_add_1Re      : "*None*") << endl;
@@ -244,7 +265,8 @@ void generate_toymc_ensemble_joint
      PhysHypothesis ph(hypothesis);
 
      bool applied_negevents_condition = true;
-     while(applied_negevents_condition) {
+     bool unphysical_tweak = true;
+     while(applied_negevents_condition || unphysical_tweak) {
 
        // Randomize specified osc params for current toy MC expt
        if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
@@ -344,73 +366,45 @@ void generate_toymc_ensemble_joint
      double escale=0.;
 #ifdef __FHC_RUNNING__
      escale = skexp->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale);
-#endif     
+#endif
+
+     //Get the spectra
 #ifdef __FHC_RUNNING__
-     // Get 1-ring mu-like Ereco spectrum FHC     
-     TH1D* mock_data_1Rmu = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingMuLike), util::ErecoBinEdges(kSKsFCFV1RingMuLike));     
-     for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingMuLike); ib++) {
-       mock_data_1Rmu->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingMuLike)[ib-1]);
-       double events = skobs->ErecoSpectrumArray(kSKsFCFV1RingMuLike)[ib-1];
-       if(ib == 1) h_0->Fill(events);
-       if(ib == 2) h_1->Fill(events);
-       if(ib == 3) h_2->Fill(events);
-       if(ib == 4) h_3->Fill(events);
-       if(ib == 5) h_4->Fill(events);
-       if(ib == 5) h_4_Escale->Fill( escale, events);
-     }
-     mock_data_1Rmu->SetDirectory(0);     
-
-
-     mock_data_1Rmu->Draw();
-
-     return;
-     
-
-
-
-
-
-
-
-
-
-     TH1D* mock_data_1Re = new TH1D("","", util::NumErecoBins(kSKsFCFV1RingELike), util::ErecoBinEdges(kSKsFCFV1RingELike));
-     for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFV1RingELike); ib++) {
-       mock_data_1Re->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFV1RingELike)[ib-1]);
-     }
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+     TH1D * mock_data_1Rmu = skobs->ErecoSpectrum(kSKsFCFV1RingMuLike);
+     TH1D * mock_data_1Re  = skobs->ErecoSpectrum(kSKsFCFV1RingELike);
+#else
+     TH2D * mock_data_1Rmu = skobs->TwoDSpectrum(kSKsFCFV1RingMuLike);
+     TH2D * mock_data_1Re  = skobs->TwoDSpectrum(kSKsFCFV1RingELike);
+#endif     
+     mock_data_1Rmu->SetDirectory(0);
      mock_data_1Re->SetDirectory(0);
-#endif
+     
+#endif //__FHC_RUNNING__
 #ifdef __RHC_RUNNING__
-     // Get 1-ring mu-like Ereco spectrum RHC
-     TH1D* mock_data_1Rmu_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingMuLike), util::ErecoBinEdges(kSKsRHCFCFV1RingMuLike));
-     for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingMuLike); ib++) {
-       mock_data_1Rmu_RHC->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingMuLike)[ib-1]);
-     }
-     mock_data_1Rmu_RHC->SetDirectory(0);     
-     // Get 1-ring e-like Ereco spectrum RHC
-     TH1D* mock_data_1Re_RHC = new TH1D("","", util::NumErecoBins(kSKsRHCFCFV1RingELike), util::ErecoBinEdges(kSKsRHCFCFV1RingELike));
-     for(int ib = 1; ib <= util::NumErecoBins(kSKsRHCFCFV1RingELike); ib++) {
-       mock_data_1Re_RHC->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsRHCFCFV1RingELike)[ib-1]);
-     }
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+     TH1D * mock_data_1Rmu_RHC = skobs->ErecoSpectrum(kSKsRHCFCFV1RingMuLike);
+     TH1D * mock_data_1Re_RHC  = skobs->ErecoSpectrum(kSKsRHCFCFV1RingELike);
+#else
+     TH2D * mock_data_1Rmu_RHC = skobs->TwoDSpectrum(kSKsRHCFCFV1RingMuLike);
+     TH2D * mock_data_1Re_RHC  = skobs->TwoDSpectrum(kSKsRHCFCFV1RingELike);     
+#endif
+     mock_data_1Rmu_RHC->SetDirectory(0);
      mock_data_1Re_RHC->SetDirectory(0);
-#endif
+#endif //__RHC_RUNNING__
 #ifdef __MULTIRING_FHC_RUNNING__
-     // Get Multi-ring mu-like Ereco spectrum
-     TH1D* mock_data_MultiRmu = new TH1D("","", util::NumErecoBins(kSKsFCFVMultiRingMuLike), util::ErecoBinEdges(kSKsFCFVMultiRingMuLike));
-     for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFVMultiRingMuLike); ib++) {
-       mock_data_MultiRmu->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFVMultiRingMuLike)[ib-1]);
-     }
-     mock_data_MultiRmu->SetDirectory(0);     
-     // Get Multi-ring e-like Ereco spectrum 
-     TH1D* mock_data_MultiRe = new TH1D("","", util::NumErecoBins(kSKsFCFVMultiRingELike), util::ErecoBinEdges(kSKsFCFVMultiRingELike));
-     for(int ib = 1; ib <= util::NumErecoBins(kSKsFCFVMultiRingELike); ib++) {
-       mock_data_MultiRe->SetBinContent(ib, skobs->ErecoSpectrumArray(kSKsFCFVMultiRingELike)[ib-1]);
-     }
-     mock_data_MultiRe->SetDirectory(0);
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+     TH1D* mock_data_MultiRmu = skobs->ErecoSpectrum(kSKsFCFVMultiRingMuLike);
+     TH1D* mock_data_MultiRe  = skobs->ErecoSpectrum(kSKsFCFVMultiRingELike);
+#else
+     TH2D* mock_data_MultiRmu = skobs->TwoDSpectrum(kSKsFCFVMultiRingMuLike);
+     TH2D* mock_data_MultiRe  = skobs->TwoDSpectrum(kSKsFCFVMultiRingELike);     
 #endif
+     mock_data_MultiRmu->SetDirectory(0);     
+     mock_data_MultiRe->SetDirectory(0);
+#endif //__MULTIRING_FHC_RUNNING__
      
      // If an XML file was specified, add an entry
-     
      if(save_in_xml_format) {
 
        // Dataset info
@@ -423,223 +417,25 @@ void generate_toymc_ensemble_joint
          fxml << " -->" << endl;
        }
      
-       // FHC
 #ifdef __FHC_RUNNING__
        // Now the 1Rmu part
-       fxml << "        <one_mu_ring>    " << endl;
-       fxml << "          <ereco_values> " << endl;
-       ftxt << "1Rmu:";
-       ftxt << endl;
-       // Adding Ereco values as a comma separated list.
-       // Assuming uniform distribution within each bin, randomize values within each bin.
-       int ievtot = 0;
-       for(int ibin = 1; ibin <= mock_data_1Rmu->GetNbinsX(); ibin++) {
-         double Nb   = mock_data_1Rmu->GetBinContent (ibin); // number of events in this Ereco bin
-         double Emin = mock_data_1Rmu->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
-         double Emax = mock_data_1Rmu->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-	 double Ecent = mock_data_1Rmu->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
-         for(int iev = 0; iev < Nb; iev++) {
-	   double E= Emin + rand.Uniform() * (Emax-Emin);
-	   if(ievtot > 0) {
-	     fxml << ", "; 
-	     ftxt << ","; 
-	     if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
-	   }
-	   fxml << E; 
-	   ftxt << E; 
-	   ievtot++;
-         }//iev
-       }//ibin
-       // add extra data-points, if any
-       if(full_points_to_add_1Rmu) {
-         fxml << ",\n"<<endl; // should really have an XML comment here but TXMLEngine won't let us.
-         fxml << *full_points_to_add_1Rmu;
-         ftxt << "," << *full_points_to_add_1Rmu;
-       }
-       fxml << endl;
-       ftxt << endl;
-       fxml << "          </ereco_values> " << endl;
-       fxml << "        </one_mu_ring>    " << endl;       
-       
+       AddEventsToXML(fxml, ftxt, mock_data_1Rmu, kSKsFCFV1RingMuLike, full_points_to_add_1Rmu, rand);
        //Now the 1Re part
-       ftxt << endl;
-       ftxt << "1Re:";
-       ftxt << endl;
-       fxml << "        <one_e_ring>    " << endl;
-       fxml << "          <ereco_values> " << endl;       
-       ievtot = 0;
-       for(int ibin = 1; ibin <= mock_data_1Re->GetNbinsX(); ibin++) {
-         double Nb   = mock_data_1Re->GetBinContent (ibin); // number of events in this Ereco bin
-         double Emin = mock_data_1Re->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
-         double Emax = mock_data_1Re->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
- 	 double Ecent = mock_data_1Re->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
-        for(int iev = 0; iev < Nb; iev++) {
-	   double E= Emin + rand.Uniform() * (Emax-Emin);
-	   if(ievtot > 0) {
-	     fxml << ", "; 
-	     ftxt << ","; 
-	     if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
-	   }
-	   fxml << E; 
-	   ftxt << E; 
-	   ievtot++;
-	}//iev
-       }//ibin
-       // add extra data-points, if any
-       if(full_points_to_add_1Re) {
-         fxml << ",\n"<<endl;
-         fxml << *full_points_to_add_1Re;
-         ftxt << "," << *full_points_to_add_1Re;
-       }
-       fxml << endl;
-       ftxt << endl;
-       fxml << "          </ereco_values> " << endl;
-       fxml << "        </one_e_ring>    " << endl;       
+       AddEventsToXML(fxml, ftxt, mock_data_1Re,  kSKsFCFV1RingELike,  full_points_to_add_1Re, rand);
 #endif
 #ifdef __RHC_RUNNING__
        // Now the 1Rmu RHC part
-       fxml << "        <one_mu_ring_rhc>    " << endl;
-       fxml << "          <ereco_values> " << endl;       
-       ftxt << "1Rmu RHC:";
-       ftxt << endl;       
-       // Adding Ereco values as a comma separated list.
-       // Assuming uniform distribution within each bin, randomize values within each bin.
-       int ievtot = 0;
-       for(int ibin = 1; ibin <= mock_data_1Rmu_RHC->GetNbinsX(); ibin++) {
-         double Nb   = mock_data_1Rmu_RHC->GetBinContent (ibin); // number of events in this Ereco bin
-         double Emin = mock_data_1Rmu_RHC->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
-         double Emax = mock_data_1Rmu_RHC->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-	 double Ecent = mock_data_1Rmu_RHC->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
-         for(int iev = 0; iev < Nb; iev++) {
-	   double E= Emin + rand.Uniform() * (Emax-Emin);
-            if(ievtot > 0) {
-              fxml << ", "; 
-              ftxt << ","; 
-              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
-            }
-            fxml << E; 
-            ftxt << E; 
-            ievtot++;
-         }//iev
-       }//ibin
-       // add extra data-points, if any
-       if(full_points_to_add_1Rmu_RHC) {
-         fxml << ",\n"<<endl;
-         fxml << *full_points_to_add_1Rmu_RHC;
-         ftxt << "," << *full_points_to_add_1Rmu_RHC;
-       }
-       fxml << endl;
-       ftxt << endl;
-       fxml << "          </ereco_values> " << endl;
-       fxml << "        </one_mu_ring_rhc>" << endl;
-       
+       AddEventsToXML(fxml, ftxt, mock_data_1Rmu_RHC, kSKsRHCFCFV1RingMuLike, full_points_to_add_1Rmu_RHC, rand);
        //Now the 1Re RHC part
-       ftxt << endl;
-       ftxt << "1Re RHC:";
-       ftxt << endl;
-       fxml << "        <one_e_ring_rhc>"  << endl;
-       fxml << "          <ereco_values> " << endl;       
-       ievtot = 0;
-       for(int ibin = 1; ibin <= mock_data_1Re_RHC->GetNbinsX(); ibin++) {
-         double Nb   = mock_data_1Re_RHC->GetBinContent (ibin); // number of events in this Ereco bin
-         double Emin = mock_data_1Re_RHC->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
-         double Emax = mock_data_1Re_RHC->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
- 	 double Ecent = mock_data_1Re_RHC->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
-	 for(int iev = 0; iev < Nb; iev++) {
-	   double E= Emin + rand.Uniform() * (Emax-Emin);
-	   if(ievtot > 0) {
-	     fxml << ", "; 
-	     ftxt << ","; 
-              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
-            }
-            fxml << E; 
-            ftxt << E; 
-            ievtot++;
-         }//iev
-       }//ibin
-       // add extra data-points, if any
-       if(full_points_to_add_1Re_RHC) {
-         fxml << ",\n"<<endl;
-         fxml << *full_points_to_add_1Re_RHC;
-         ftxt << "," << *full_points_to_add_1Re_RHC;
-       }
-       fxml << endl;
-       ftxt << endl;
-       fxml << "          </ereco_values> " << endl;
-       fxml << "        </one_e_ring_rhc>    " << endl;
+       AddEventsToXML(fxml, ftxt, mock_data_1Re_RHC,  kSKsRHCFCFV1RingELike,  full_points_to_add_1Re_RHC, rand);
 #endif
 #ifdef __MULTIRING_FHC_RUNNING__       
        // Now the MultiRmu part
-       fxml << "        <multi_mu_ring>    " << endl;
-       fxml << "          <ereco_values> " << endl;       
-       ftxt << "MultiRmu :";
-       ftxt << endl;       
-       // Adding Ereco values as a comma separated list.
-       // Assuming uniform distribution within each bin, randomize values within each bin.
-       int ievtot = 0;
-       for(int ibin = 1; ibin <= mock_data_MultiRmu->GetNbinsX(); ibin++) {
-         double Nb   = mock_data_MultiRmu->GetBinContent (ibin); // number of events in this Ereco bin
-         double Emin = mock_data_MultiRmu->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
-         double Emax = mock_data_MultiRmu->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
- 	 double Ecent = mock_data_MultiRmu->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
-	 for(int iev = 0; iev < Nb; iev++) {
- 	   double E= Emin + rand.Uniform() * (Emax-Emin);
-           if(ievtot > 0) {
-              fxml << ", "; 
-              ftxt << ","; 
-              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
-            }
-            fxml << E; 
-            ftxt << E; 
-            ievtot++;
-         }//iev
-       }//ibin
-       // add extra data-points, if any
-       if(full_points_to_add_MultiRmu) {
-         fxml << ",\n"<<endl;
-         fxml << *full_points_to_add_MultiRmu;
-         ftxt << "," << *full_points_to_add_MultiRmu;
-       }
-       fxml << endl;
-       ftxt << endl;
-       fxml << "          </ereco_values> " << endl;
-       fxml << "        </multi_mu_ring>" << endl;
-       
-       //Now the MultiRe part
-       ftxt << endl;
-       ftxt << "MultiRe:";
-       ftxt << endl;
-       fxml << "        <multi_e_ring>"  << endl;
-       fxml << "          <ereco_values> " << endl;       
-       ievtot = 0;
-       for(int ibin = 1; ibin <= mock_data_MultiRe->GetNbinsX(); ibin++) {
-         double Nb   = mock_data_MultiRe->GetBinContent (ibin); // number of events in this Ereco bin
-         double Emin = mock_data_MultiRe->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
-         double Emax = mock_data_MultiRe->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-	 double Ecent = mock_data_MultiRe->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
-         for(int iev = 0; iev < Nb; iev++) {
-	   double E= Emin + rand.Uniform() * (Emax-Emin);
-            if(ievtot > 0) {
-              fxml << ", "; 
-              ftxt << ","; 
-              if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
-            }
-            fxml << E; 
-            ftxt << E; 
-            ievtot++;
-         }//iev
-       }//ibin
-       // add extra data-points, if any
-       if(full_points_to_add_MultiRe) {
-         fxml << ",\n"<<endl;
-         fxml << *full_points_to_add_MultiRe;
-         ftxt << "," << *full_points_to_add_MultiRe;
-       }
-       fxml << endl;
-       ftxt << endl;
-       fxml << "          </ereco_values> " << endl;
-       fxml << "        </multi_e_ring>    " << endl;
+       AddEventsToXML(fxml, ftxt, mock_data_MultiRmu, kSKsFCFVMultiRingMuLike, full_points_to_add_MultiRmu, rand);
+       //Now the 1Re RHC part
+       AddEventsToXML(fxml, ftxt, mock_data_MultiRe,  kSKsFCFVMultiRingELike,  full_points_to_add_MultiRe, rand);
 #endif
+       
        fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;       
      }//xml
 
@@ -647,67 +443,37 @@ void generate_toymc_ensemble_joint
      if(f) {
        if(save_in_root_format) {
 #ifdef __FHC_RUNNING__
-           if(full_points_to_add_1Rmu) {
-            vector<string> vecp = util::Tokens(*full_points_to_add_1Rmu,",");
-            assert(vecp.size()>0);
-            for(int ip=0; ip < vecp.size(); ip++) {
-              mock_data_1Rmu->Fill(atof(vecp[ip].c_str()));
-            }
-          }
-          if(full_points_to_add_1Re) {
-            vector<string> vecp = util::Tokens(*full_points_to_add_1Re,",");
-            assert(vecp.size()>0);
-            for(int ip=0; ip < vecp.size(); ip++) {
-              mock_data_1Re->Fill(atof(vecp[ip].c_str()));
-            }
-          }
+	 AddExtraEventsToHist(mock_data_1Rmu, full_points_to_add_1Rmu);
+	 AddExtraEventsToHist(mock_data_1Re,  full_points_to_add_1Re);
 #endif
 #ifdef __RHC_RUNNING__	 
-          if(full_points_to_add_1Rmu_RHC) {
-            vector<string> vecp = util::Tokens(*full_points_to_add_1Rmu_RHC,",");
-            assert(vecp.size()>0);
-            for(int ip=0; ip < vecp.size(); ip++) {
-              mock_data_1Rmu_RHC->Fill(atof(vecp[ip].c_str()));
-            }
-          }
-          if(full_points_to_add_1Re_RHC) {
-            vector<string> vecp = util::Tokens(*full_points_to_add_1Re_RHC,",");
-            assert(vecp.size()>0);
-            for(int ip=0; ip < vecp.size(); ip++) {
-              mock_data_1Re_RHC->Fill(atof(vecp[ip].c_str()));
-            }
-          }
+	 AddExtraEventsToHist(mock_data_1Rmu_RHC, full_points_to_add_1Rmu_RHC);
+	 AddExtraEventsToHist(mock_data_1Re_RHC,  full_points_to_add_1Re_RHC);
 #endif
 #ifdef __MULTIRING_FHC_RUNNING__
-          if(full_points_to_add_MultiRmu) {
-            vector<string> vecp = util::Tokens(*full_points_to_add_MultiRmu,",");
-            assert(vecp.size()>0);
-            for(int ip=0; ip < vecp.size(); ip++) {
-              mock_data_MultiRmu->Fill(atof(vecp[ip].c_str()));
-            }
-          }
-          if(full_points_to_add_MultiRe) {
-            vector<string> vecp = util::Tokens(*full_points_to_add_MultiRe,",");
-            assert(vecp.size()>0);
-            for(int ip=0; ip < vecp.size(); ip++) {
-              mock_data_MultiRe->Fill(atof(vecp[ip].c_str()));
-            }
-          }
+	 AddExtraEventsToHist(mock_data_MultiRmu, full_points_to_add_MultiRmu);
+	 AddExtraEventsToHist(mock_data_MultiRe,  full_points_to_add_MultiRe);
 #endif
-       }
+       }//save_in_root_format
        f->cd();
        
 #ifdef __FHC_RUNNING__
        mock_data_1Rmu->Write(Form("mock_data_1Rmu_%d",iexperiment));
        mock_data_1Re->Write(Form("mock_data_1Re_%d",iexperiment));
+       delete mock_data_1Rmu;
+       delete mock_data_1Re;
 #endif
 #ifdef __RHC_RUNNING__
        mock_data_1Rmu_RHC->Write(Form("mock_data_1Rmu_RHC_%d",iexperiment));
        mock_data_1Re_RHC->Write(Form("mock_data_1Re_RHC_%d",iexperiment));
+       delete mock_data_1Rmu_RHC;
+       delete mock_data_1Re_RHC;
 #endif
 #ifdef __MULTIRING_FHC_RUNNING__
        mock_data_MultiRmu->Write(Form("mock_data_MultiRmu_%d",iexperiment));
        mock_data_MultiRe->Write(Form("mock_data_MultiRe_%d",iexperiment));
+       delete mock_data_MultiRmu;
+       delete mock_data_MultiRe;
 #endif
 
        // Object for storing input oscillation and nuisance params in each toy-MC
@@ -729,13 +495,14 @@ void generate_toymc_ensemble_joint
        PhysParamList true_nuisance_params_multiring = skexp->Tweaks();
        iparm->Append(true_nuisance_params_multiring);
 #endif  
-     iparm->Write(Form("iparm_%d",iexperiment));
+       iparm->Write(Form("iparm_%d",iexperiment));
        
        delete iparm;
      }
 
   }//iexperiment
 
+  cerr << "Warning h_0, h_1, ... have not been filled" << endl;
   h_0->Write();
   h_1->Write();
   h_2->Write();
@@ -760,3 +527,146 @@ void generate_toymc_ensemble_joint
 
 }
 
+
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH1D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand)
+#else
+void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand)
+#endif
+{
+  using namespace std;
+  using namespace valor;
+  using namespace valor::conv;
+
+  ftxt << util::AsStringCompact(s) << ":" << endl;
+  fxml << "        <" << util::GetXMLDatasetName(s) << ">" << endl;
+  fxml << "          <" << util::GetXMLDatasetParamsName() << ">" << endl;
+
+  int ievtot = 0;
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+  // Adding Ereco values as a comma separated list.
+  // Assuming uniform distribution within each bin, randomize values within each bin.
+  for(int ibin = 1; ibin <= h->GetNbinsX(); ibin++) {
+    double Nb   = h->GetBinContent (ibin); // number of events in this Ereco bin
+    double Emin = h->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+    double Emax = h->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+    double Ecent = h->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
+    for(int iev = 0; iev < Nb; iev++) {
+      double E= Emin + rand.Uniform() * (Emax-Emin);
+      if(ievtot > 0) {
+	fxml << ", "; 
+	ftxt << ","; 
+	if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
+      }
+      fxml << E; 
+      ftxt << E; 
+      ievtot++;
+    }//iev
+  }//ibin
+  // add extra data-points, if any
+  if(full_points_to_add) {
+    fxml << ",\n"<<endl; // should really have an XML comment here but TXMLEngine won't let us.
+    fxml << *full_points_to_add;
+    ftxt << "," << *full_points_to_add;
+  }
+  fxml << endl;
+
+#else //2D templates
+       
+  // Adding 2D template values with each event as its own node containing 2 values
+  // Assuming uniform distribution within each bin, randomize values within each bin.
+  for(int ibinx = 1; ibinx <= h->GetNbinsX(); ibinx++) {
+    double Xmin  = h->GetXaxis()->GetBinLowEdge(ibinx); // X bin min
+    double Xmax  = h->GetXaxis()->GetBinUpEdge (ibinx); // X bin max
+    double Xcent = h->GetXaxis()->GetBinCenter (ibinx); // X bin center
+    for(int ibiny = 1; ibiny <= h->GetNbinsY(); ibiny++) {
+      double Nb    = h->GetBinContent (ibinx, ibiny); // number of events in this bin
+      double Ymin  = h->GetYaxis()->GetBinLowEdge(ibiny); // Y bin min
+      double Ymax  = h->GetYaxis()->GetBinUpEdge (ibiny); // Y bin max
+      double Ycent = h->GetYaxis()->GetBinCenter (ibiny); // Y bin center
+      for(int iev = 0; iev < Nb; iev++) {
+	double X = Xmin + rand.Uniform() * (Xmax - Xmin);
+	double Y = Ymin + rand.Uniform() * (Ymax - Ymin);
+	if(ievtot > 0) {
+	  ftxt << ": "; 
+	}
+	fxml << "            <ev" << ievtot << ">"
+	     << X << "," << Y
+	     << "</ev" << ievtot << ">"
+	     << endl;
+	ftxt << X << "," << Y; 
+	ievtot++;
+      }//iev
+    }//ibiny
+  }//ibinx
+  // add extra data-points, if any
+  if(full_points_to_add) {
+    fxml << ",\n" << endl; // should really have an XML comment here but TXMLEngine won't let us.
+    vector<string> vecpairs = util::Tokens(*full_points_to_add,",");
+    assert(vecpairs.size()>0);
+    for(unsigned int ipair = 0; ipair < vecpairs.size(); ipair++) {
+      vector<string> values = util::Tokens(vecpairs[ipair], ":");
+      assert(values.size() == 2);
+      fxml << "            <ev" << ievtot << ">"
+	   << atof(values[0].c_str()) << "," << atof(values[1].c_str())
+	   << "</ev" << ievtot << ">"
+	   << endl;
+      ievtot++;
+    }//ipair
+    ftxt << ":" << *full_points_to_add;
+  }
+  // add the nevents to the XML
+  fxml << "            <nevents> " << ievtot << "</nevents>" << endl;
+#endif //__USE_2D_TEMPLATES__
+	 
+  ftxt << endl;
+  fxml << "          </" << util::GetXMLDatasetParamsName() << "> " << endl;
+  fxml << "        </" << util::GetXMLDatasetName(s) << ">    " << endl;       
+}
+
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+void AddExtraEventsToHist(TH1D * h, string * full_points_to_add)
+#else
+void AddExtraEventsToHist(TH2D * h, string * full_points_to_add)
+#endif
+{
+  using namespace std;
+  using namespace valor;
+  using namespace valor::conv;
+
+  if(full_points_to_add) {
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+    vector<string> vecp = util::Tokens(*full_points_to_add, ",");
+    assert(vecp.size() > 0);
+    for(int ip=0; ip < vecp.size(); ip++) {
+      h->Fill(atof(vecp[ip].c_str()));
+    }//ip
+#else //2D templates
+    vector<string> vecpairs = util::Tokens(*full_points_to_add,",");
+    assert(vecpairs.size()>0);
+    for(unsigned int ipair = 0; ipair < vecpairs.size(); ipair++) {
+      vector<string> values = util::Tokens(vecpairs[ipair], ":");
+      assert(values.size() == 2);
+      h->Fill(atof(values[0].c_str()), atof(values[1].c_str()));
+    }//ipair
+#endif
+  }//full_points_to_add
+}
+
+string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra)
+{
+  using namespace std;
+  using namespace valor;
+  using namespace valor::conv;
+
+  string sxml = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring/ereco_values");
+  string * sout = new string(sxml);
+  if(!sextra.empty()) {
+    sout->append(",");
+    sout->append(sextra);
+  }
+  return sout;
+}
