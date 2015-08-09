@@ -233,8 +233,52 @@ double valor::util::XsecQ2BinEdges(valor::conv::SuperkSample_t s, int i)
 //
 
 
-
-
+//___________________________________________________________________________
+string valor::util::GetXMLDatasetParamsName()
+{
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+  return "ereco_values";
+#else //2D templates
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+  return "ereco_q2_values";
+#else
+  return "ereco_theta_values";
+#endif //__ERECO_VS_Q2_TEMPLATES__
+#endif //__USE_2D_TEMPLATES__
+}
+//___________________________________________________________________________
+string valor::util::GetAxisNameCompact(int iaxis)
+{
+  if(iaxis == 0)
+    return "Ereco";
+#ifdef __USE_2D_TEMPLATES__ //2D templates
+  if(iaxis == 1)
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+    return "Q2";
+#else
+  return "Theta";
+#endif //__ERECO_VS_Q2_TEMPLATES__
+#endif //__USE_2D_TEMPLATES__
+  else
+    return "???";  
+}
+//___________________________________________________________________________
+string valor::util::GetAxisName(int iaxis)
+{
+  if(iaxis == 0)
+    return "Reconstructed energy (GeV)";
+#ifdef __USE_2D_TEMPLATES__ //2D templates
+  if(iaxis == 1)
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+    return "Q2 (GeV)";
+#else
+  return "Theta";
+#endif //__ERECO_VS_Q2_TEMPLATES__
+#endif //__USE_2D_TEMPLATES__
+  else
+    return "???";  
+}
+//___________________________________________________________________________
 
 
 

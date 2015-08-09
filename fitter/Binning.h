@@ -54,6 +54,9 @@ namespace util   {
   double         XsecQ2BinEdges (conv::SuperkSample_t s, int i);
   //
 
+  string GetXMLDatasetParamsName(); //returns e.g. ereco_values
+  string GetAxisNameCompact(int iaxis);
+  string GetAxisName(int iaxis);
 
   
   int            NumEtrueBins  (conv::SuperkSample_t s);

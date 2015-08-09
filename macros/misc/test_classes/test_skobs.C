@@ -67,6 +67,8 @@ void test_skobs
   cout << "   - Using experiments in range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
 
   TString outfilename = Form("%s-run_%d_%d_%d.root", tag, run, first_experiment, last_experiment);
+  TFile fout(outfilename.Data(), "RECREATE");
+  fout.Close();
 
   // Loop over toy-MC experiments
   for(int iexperiment = first_experiment; iexperiment <= last_experiment; iexperiment++) {
@@ -99,12 +101,13 @@ void test_skobs
     }//test_generate
 
     if(test_num_of_bins)
-      skobs->NumOfBins();
+      cout << "NBins = " << skobs->NumOfBins() << endl;
 
     if(test_num_of_events) {
       for (int is = 0 ; is < conv::kns ;  is ++ ) {
 	SuperkSample_t s = kSKSamples[is];
-	skobs->NumOfEvents(s);
+	if(s == kSKsUndefined) continue;
+	cout << "NEv = " << skobs->NumOfEvents(s) << "\t" << util::AsStringCompact(s) << endl;
 	skobs->NumOfEvents(-1,-1,s);
 	for(int ir = 0; ir < util::NumErecoBins(s); ir++)
 	  skobs->NumOfEvents(util::ErecoBinEdges(s,ir) + conv::kASmallNum, -1, s);

@@ -89,16 +89,11 @@ void SuperkObservation::Init(void)
       fErDistrArray[is] = new VALORArray(util::NumErecoBins(s));
       fErDistrArray[is]->SetTitle(Form("Ereco distribution: %s",util::AsString(s).c_str()));
       fErDistrArray[is]->SetName(Form("%s",util::AsStringCompact(s).c_str()));
-      fErDistrArray[is]->SetDimensionName(0,"Reconstructed energy /GeV");
+      fErDistrArray[is]->SetDimensionName(0, util::GetAxisNameCompact(0));
 #else //2D templates
-      f2DDistrArray[is]= new VALORArray(util::NumErecoBins(s),util::NumQ2Bins(s));
-    
-      f2DDistrArray[is]->SetDimensionName(0, "Ereco");
-#ifdef __ERECO_VS_Q2_TEMPLATES__
-      f2DDistrArray[is]->SetDimensionName(1, "Q2");
-#else
-      f2DDistrArray[is]->SetDimensionName(1, "Theta");
-#endif
+      f2DDistrArray[is]= new VALORArray(util::NumErecoBins(s),util::NumQ2Bins(s));   
+      f2DDistrArray[is]->SetDimensionName(0, util::GetAxisNameCompact(0));
+      f2DDistrArray[is]->SetDimensionName(1, util::GetAxisNameCompact(1));
       f2DDistrArray[is]->SetTitle(Form("2D Observed Spectrum Array %s", util::AsStringCompact(s).c_str()));
       f2DDistrArray[is]->SetName (Form("obs_2D_arr_%s", util::AsStringCompact(s).c_str()));
 #endif //__USE_2D_TEMPLATES__
@@ -164,7 +159,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       datanode << "/"<<util::GetXMLDatasetName(s);
 
 #ifndef __USE_2D_TEMPLATES__ //1D templates
-      datanode << "/ereco_values"; 
+      datanode << "/"<<util::GetXMLDatasetParamsName();
 
       if(util::NodeExists(xml,root_node,datanode.str())) {
         TH1D h("", "", util::NumErecoBins(s), util::ErecoBinEdges(s));
@@ -200,11 +195,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 	}
       }
       //now get each event
-#ifdef __ERECO_VS_Q2_TEMPLATES__
-      datanode << "/ereco_q2_values";
-#else
-      datanode << "/ereco_theta_values";
-#endif
+      datanode << "/"<<util::GetXMLDatasetParamsName();
       TH2D h("", "", util::NumErecoBins(s), util::ErecoBinEdges(s), util::NumQ2Bins(s), util::Q2BinEdges(s));
       h.SetDirectory(0);
       for(int iev = 0; iev < nevents; iev++) {
