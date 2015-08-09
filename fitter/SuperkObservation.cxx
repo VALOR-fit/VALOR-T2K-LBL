@@ -487,6 +487,7 @@ TH1D* SuperkObservation::ErecoSpectrum (valor::conv::SuperkSample_t s) const
   
   return data;
 }
+#endif //__USE_2D_TEMPLATES__
 //________________________________________________________________________________________
 VALORArray * SuperkObservation::ErecoSpectrumVArray (valor::conv::SuperkSample_t s)
 {
@@ -511,7 +512,7 @@ const double* SuperkObservation::ErecoSpectrumArray (valor::conv::SuperkSample_t
   if (not va) return 0;
   return ErecoSpectrumVArray(s)->GetArray();
 }
-#else //__USE_2D_TEMPLATES__
+#ifdef __USE_2D_TEMPLATES__ //2D templates
 //________________________________________________________________________________________
 TH2D* SuperkObservation::TwoDSpectrum (valor::conv::SuperkSample_t s) const
 {

@@ -80,19 +80,20 @@ public:
   double NumOfEvents (double xvalue, double yvalue,  valor::conv::SuperkSample_t s = valor::conv::kSKsUndefined) const;  
 #endif
 
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+  TH1D*  ErecoSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+#endif
+
   //TEMPORARILY leave these active (until the rest of the code catches up to 2D arrays)
   double           *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s);
   const double     *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s) const;
-#ifndef __USE_2D_TEMPLATES__
-  TH1D*  ErecoSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
   VALORArray       *  ErecoSpectrumVArray (valor::conv::SuperkSample_t s);
-  const VALORArray *  ErecoSpectrumVArray (valor::conv::SuperkSample_t s) const;
-  
+  const VALORArray *  ErecoSpectrumVArray (valor::conv::SuperkSample_t s) const;  
 private:
-  
   VALORArray * fErDistrArray   [conv::kns];
 
-#else //__USE_2D_TEMPLATES__
+#ifdef __USE_2D_TEMPLATES__ //2D templates
+public:
   TH2D*  TwoDSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
   TH1D*  XSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
   TH1D*  YSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
