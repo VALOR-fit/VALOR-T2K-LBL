@@ -82,7 +82,6 @@ public:
 
 #ifndef __USE_2D_TEMPLATES__ //1D templates
   TH1D*  ErecoSpectrum (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
-#endif
 
   //TEMPORARILY leave these active (until the rest of the code catches up to 2D arrays)
   double           *  ErecoSpectrumArray  (valor::conv::SuperkSample_t s);
@@ -91,6 +90,7 @@ public:
   const VALORArray *  ErecoSpectrumVArray (valor::conv::SuperkSample_t s) const;  
 private:
   VALORArray * fErDistrArray   [conv::kns];
+#endif
 
 #ifdef __USE_2D_TEMPLATES__ //2D templates
 public:

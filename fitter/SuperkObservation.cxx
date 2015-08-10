@@ -235,20 +235,35 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     delete xml;
   }//is_xml
 
-  else { // DEPRECATE?
+  else {
    
-#ifndef __USE_2D_TEMPLATES__ //1D templates
-    //assert(!"This code branch is deprecated");
-
-    // NEW FHC+RHC JOINT
-
-#if defined(__RHC_RUNNING__) && defined(__RHC_RUNNING__) // joint fit
-    
     TFile f(config_file.c_str());
+#ifndef __USE_2D_TEMPLATES__ //1D templates
     TH1D * hist = 0;
- 
+#else
+    TH2D * hist = 0;
+#endif
+
     for (int is = 0 ; is < conv::kns ; is++) {
       SuperkSample_t s = conv::kSKSamples[is];
+
+      //select which histograms to read in
+#if !defined(__FHC_RUNNING__)
+      //skip the FHC samples
+      if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike) continue;
+#endif
+#if !defined(__RHC_RUNNING__)
+      //skip the RHC samples
+      if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike) continue;
+#endif
+#if defined(__NUEONLY__)
+      //skip the mu-like samples
+      if(s == kSKsFCFV1RingMuLike || s == kSKsRHCFCFV1RingMuLike) continue;
+#endif
+#if defined(__NUMUONLY__)
+      //skip the e-like samples
+      if(s == kSKsFCFV1RingELike || s == kSKsRHCFCFV1RingELike) continue;
+#endif
       
       if (s == conv::kSKsUndefined) continue;
       else if(s == conv::kSKsRHCFCFV1RingMuLike) f.GetObject(Form("mock_data_1Rmu_RHC_%d",data_set_id),hist);
@@ -267,97 +282,26 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 	exit(1);
       }
 
+#ifndef __USE_2D_TEMPLATES__ //1D templates
       for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
 	double nobs = hist->GetBinContent(ibin);
 	fErDistrArray[is]->GetArray()[ibin-1] = nobs;
       }
-      cout << "Obs >> Read: " << hist->Integral()
-     	   << " " << util::AsString(s) << " events." << endl;
-    }
-
-#elif defined(__RHC_RUNNING__) // rhc only analyses (no joint fit)
-    
-    // nuebar app only
-#if defined(__NUEONLY__) 
-    TFile f(config_file.c_str());
-    TH1D * hist = 0;
-    f.GetObject(Form("mock_data_1Re_RHC_%d",data_set_id),hist);
-    if(!hist) {
-      cerr << "Obs >> Histogram for RHC1Re does not exist!" << endl;
-      exit(1);
-    }
- 
-    for (int is = 0 ; is < conv::kns ; is++) {
-      SuperkSample_t s = conv::kSKSamples[is];
-      if (s!=kSKsRHCFCFV1RingELike) continue;
-      
-      for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
-	double nobs = hist->GetBinContent(ibin);
-	fErDistrArray[is]->GetArray()[ibin-1] = nobs;
-      }
-      cout << "Obs >> Read: " << hist->Integral()
-     	   << " " << util::AsString(s) << " events." << endl;
-    }
-
-    // numubar disap only
-#elif defined(__NUMUONLY__) 
-
-    TFile f(config_file.c_str());
-    TH1D * hist = 0;
-    f.GetObject(Form("mock_data_1Rmu_RHC_%d",data_set_id),hist);
-    if(!hist) {
-      cerr << "Obs >> Histogram for RHC1Rmu does not exist!" << endl;
-      exit(1);
-    }
- 
-    for (int is = 0 ; is < conv::kns ; is++) {
-      SuperkSample_t s = conv::kSKSamples[is];
-      if (s!=kSKsRHCFCFV1RingMuLike) continue;
-      
-      for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
-	double nobs = hist->GetBinContent(ibin);
-	fErDistrArray[is]->GetArray()[ibin-1] = nobs;
-      }
-      cout << "Obs >> Read: " << hist->Integral()
-     	   << " " << util::AsString(s) << " events." << endl;
-    }
-
-#endif // __NUEONLY__ - __NUMUONLY__
-
-#else
-    cerr << endl;
-    cerr << "SuperkObservation::Read()" << endl;
-    cerr << "Analysis mode not defined" << endl;
-    cerr << endl;
-    exit(1);
-#endif // __RHC_RUNNING__ - __FHC_RUNNING__
-
-    //
-
-
-
-
-
-    
-    // else {
-    //   assert(hist->GetNbinsX() == util::NumErecoBins(kSKsRHCFCFV1RingELike));
-    //   double integral = 0;
-    //   for(int ix = 1; ix <= hist->GetNbinsX(); ix++) {
-    // 	double nev   = hist->GetBinContent(ix);
-    // 	integral+=nev;
-    // 	fErDistrArray[is]->GetArray()[ix-1] = nev;
-    //   }
-    //   cout << "Obs >> Read: " << integral
-    // 	   << " " << util::AsString(kSKsRHCFCFV1RingELike) << " events." << endl;
-    // }
-    //#endif
-
-#else
-    assert(!"SuperKObservation::Read(is_xml = false) is not implemented in 2D template mode");
+#else //2D templates
+      for(int ibinx = 1; ibinx <= util::NumErecoBins(s); ibinx++) {
+	for(int ibiny = 1; ibiny <= util::NumQ2Bins(s); ibiny++) {
+	  double nobs = hist->GetBinContent(ibinx, ibiny);
+	  f2DDistrArray[is]->SetEntry(nobs, ibinx-1, ibiny-1);
+	}//ibiny
+      }//ibinx
 #endif //__USE_2D_TEMPLATES__
+      
+	cout << "Obs >> Read: " << hist->Integral()
+	     << " " << util::AsString(s) << " events." << endl;
+    }//is
     
   }//!is_xml
-
+  
   return true;
 }
 //________________________________________________________________________________________
@@ -487,7 +431,7 @@ TH1D* SuperkObservation::ErecoSpectrum (valor::conv::SuperkSample_t s) const
   
   return data;
 }
-#endif //__USE_2D_TEMPLATES__
+//#endif //__USE_2D_TEMPLATES__
 //________________________________________________________________________________________
 VALORArray * SuperkObservation::ErecoSpectrumVArray (valor::conv::SuperkSample_t s)
 {
@@ -512,7 +456,8 @@ const double* SuperkObservation::ErecoSpectrumArray (valor::conv::SuperkSample_t
   if (not va) return 0;
   return ErecoSpectrumVArray(s)->GetArray();
 }
-#ifdef __USE_2D_TEMPLATES__ //2D templates
+#else
+//#ifdef __USE_2D_TEMPLATES__ //2D templates
 //________________________________________________________________________________________
 TH2D* SuperkObservation::TwoDSpectrum (valor::conv::SuperkSample_t s) const
 {
