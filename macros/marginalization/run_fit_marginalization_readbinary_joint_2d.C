@@ -20,6 +20,9 @@
 // - set correct oscillation parameters for reactor constraint
 // 
 
+#include "Build.h"
+#include "AnalysisOptions.h"
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
@@ -75,8 +78,8 @@ void run_fit_marginalization_readbinary_joint_2d
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
- //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
@@ -95,24 +98,25 @@ void run_fit_marginalization_readbinary_joint_2d
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_NH_StatOnly_Mach3T2KReactRun14/joint_dcp_NH_StatOnly",             // Stat-only (Mach3 T2K+react)
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_MH_10kToys/joint_dcp_react_constrall_MH_10kToys",            // Stat+Syst (T2K+react)
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_t2konly_MH_10kToys/joint_dcp_t2konly_constrall_MH_10kToys",        // Stat+Syst (T2K only)
- const char * infilename = "submit_prova",
- //const char * infilename = "PROVA_SystAll",
+ //const char * infilename = "submit_prova",
+ //const char * infilename = "submit_prova_Merged",
+ const char * infilename = "PROVA_SystAll",
 
- const int    nfiles               = 6, //201, 21, 1        // # of files to read
+ const int    nfiles               = 1, //12, //12, //6, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 1, //500, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 2, //500, //10000, //1,  // # toys marginalization 
  
  const char * freeparname0        = "mixing13",  // free parameter
  const double freeparmin0         = 0., // minimum value of free parameter
  const double freeparmax0         = 0.113, // maxinum value of free parameter
- const int    NptScan0            = 81, //201, //21,      // # pts of free parameter to scan
+ const int    NptScan0            = 4, //81, //201, //21,      // # pts of free parameter to scan
 
  const char * freeparname1        = "deltacp",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan1            = 51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
+ const int    NptScan1            = 3, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
 
- const bool  doMargMH             = false,    // marginalize Mass Hierarchy
+ const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
  
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
@@ -297,6 +301,12 @@ void run_fit_marginalization_readbinary_joint_2d
   TH1D *hErecoToy_1Re;
   TH1D *hErecoToy_RHC1Rmu;
   TH1D *hErecoToy_RHC1Re;
+  // NEW 2D TEMPLATES
+  TH2D *hErecoToy2D_1Rmu;
+  TH2D *hErecoToy2D_1Re;
+  TH2D *hErecoToy2D_RHC1Rmu;
+  TH2D *hErecoToy2D_RHC1Re;
+  //
   
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
@@ -336,6 +346,10 @@ void run_fit_marginalization_readbinary_joint_2d
   fitnt->Branch("hErecoToy_1Re",&hErecoToy_1Re);
   fitnt->Branch("hErecoToy_RHC1Rmu",&hErecoToy_RHC1Rmu);
   fitnt->Branch("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
+  fitnt->Branch("hErecoToy2D_1Rmu",&hErecoToy2D_1Rmu);
+  fitnt->Branch("hErecoToy2D_1Re",&hErecoToy2D_1Re);
+  fitnt->Branch("hErecoToy2D_RHC1Rmu",&hErecoToy2D_RHC1Rmu);
+  fitnt->Branch("hErecoToy2D_RHC1Re",&hErecoToy2D_RHC1Re);
   
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
@@ -668,6 +682,8 @@ void run_fit_marginalization_readbinary_joint_2d
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
       if(s == kSKsUndefined) continue;
+
+#ifndef __USE_2D_TEMPLATES__
       else if(s == kSKsRHCFCFV1RingMuLike)
 	hErecoToy_RHC1Rmu = skobs_fakedata->ErecoSpectrum(s);
       else if(s == kSKsRHCFCFV1RingELike)
@@ -677,6 +693,17 @@ void run_fit_marginalization_readbinary_joint_2d
       else if(s == kSKsFCFV1RingELike)
 	hErecoToy_1Re = skobs_fakedata->ErecoSpectrum(s);
       //cout << "    " << util::AsStringCompact(s) << endl;
+#else
+      else if(s == kSKsRHCFCFV1RingMuLike)
+	hErecoToy2D_RHC1Rmu = skobs_fakedata->TwoDSpectrum(s);
+      else if(s == kSKsRHCFCFV1RingELike)
+	hErecoToy2D_RHC1Re = skobs_fakedata->TwoDSpectrum(s);
+      else if(s == kSKsFCFV1RingMuLike)
+	hErecoToy2D_1Rmu = skobs_fakedata->TwoDSpectrum(s);
+      else if(s == kSKsFCFV1RingELike)
+	hErecoToy2D_1Re = skobs_fakedata->TwoDSpectrum(s);
+      //cout << "    " << util::AsStringCompact(s) << endl;      
+#endif
     }
 
 
@@ -741,12 +768,18 @@ void run_fit_marginalization_readbinary_joint_2d
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
       if(s == kSKsUndefined) continue;
-      cout <<  "# of events in " << util::AsStringCompact(s) << " sample: " 
-	   << skobs_fakedata->ErecoSpectrum(s)->Integral() << endl;
+      cout <<  "# of events in " << util::AsStringCompact(s) << " sample: "; 
+	
+#ifndef __USE_2D_TEMPLATES__
+      cout << skobs_fakedata->ErecoSpectrum(s)->Integral() << endl;
+#else
+      cout << skobs_fakedata->TwoDSpectrum(s)->Integral() << endl;
+#endif    
     }
     cout << endl;
     
 
+#ifndef __USE_2D_TEMPLATES__
     TCanvas *cErecoToy_1Rmu = new TCanvas("cErecoToy_1Rmu","cErecoToy_1Rmu");
     hErecoToy_1Rmu->DrawCopy();
 
@@ -758,6 +791,21 @@ void run_fit_marginalization_readbinary_joint_2d
 
     TCanvas *cErecoToy_RHC1Re = new TCanvas("cErecoToy_RHC1Re","cErecoToy_RHC1Re");
     hErecoToy_RHC1Re->DrawCopy();
+#else
+
+    TCanvas *cErecoToy2D_1Rmu = new TCanvas("cErecoToy2D_1Rmu","cErecoToy2D_1Rmu");
+    hErecoToy2D_1Rmu->DrawCopy("colz");
+
+    TCanvas *cErecoToy2D_1Re = new TCanvas("cErecoToy2D_1Re","cErecoToy2D_1Re");
+    hErecoToy2D_1Re->DrawCopy("colz");
+
+    TCanvas *cErecoToy2D_RHC1Rmu = new TCanvas("cErecoToy2D_RHC1Rmu","cErecoToy2D_RHC1Rmu");
+    hErecoToy2D_RHC1Rmu->DrawCopy("colz");
+
+    TCanvas *cErecoToy2D_RHC1Re = new TCanvas("cErecoToy2D_RHC1Re","cErecoToy2D_RHC1Re");
+    hErecoToy2D_RHC1Re->DrawCopy("colz");
+
+#endif
 
    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
    fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
@@ -775,6 +823,10 @@ void run_fit_marginalization_readbinary_joint_2d
     delete hErecoToy_1Re;
     delete hErecoToy_RHC1Rmu;
     delete hErecoToy_RHC1Re;
+    delete hErecoToy2D_1Rmu;
+    delete hErecoToy2D_1Re;
+    delete hErecoToy2D_RHC1Rmu;
+    delete hErecoToy2D_RHC1Re;
 
   } // for iexperiment
 

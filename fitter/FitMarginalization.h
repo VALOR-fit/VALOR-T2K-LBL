@@ -182,21 +182,22 @@ class FitMarginalization
   void SetParamBestFitErrSym(int ParId,double val) { fparam_bf_errsym[ParId] = val;};
   
 
-  VALORArrayF * GetToyMargErecoVArray()             {return fToyMargErecoVArray;};
-  const VALORArrayF * GetToyMargErecoVArray() const {return fToyMargErecoVArray;};
+  VALORArrayF * GetToyMargVArray()             {return fToyMargVArray;};
+  const VALORArrayF * GetToyMargVArray() const {return fToyMargVArray;};
   
-  //TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
-  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); // NEW MARG MH 2
+  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); 
+  
+  // NEW 2D TEMPLATES
+  TH2F * GetToyMargHisto2D(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); 
+  //
   
   void SetMargOscParam();
-  // NEW MARG MH
   void SetMargOscParam(FitParamList * infparm);
-  //
-
+ 
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
   void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
-  // NEW MARG MH
+  
   void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
   void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
   void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
@@ -396,25 +397,19 @@ class FitMarginalization
   int fNSKsamples;
   VALORArrayI *fnerecobins;
   VALORArrayI *fsksamples; // pointer of SuperkSample_t doesn't work. Then use kSKSamples[]
-  VALORArrayF *fToyMargErecoVArray;
-  VALORArrayF *fToyMargErecoVArray_Clone;
+  VALORArrayF *fToyMargVArray;
+  VALORArrayF *fToyMargVArray_Clone;
   TH1F *fhToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
   int fMaxSampleErecoBins;
 
-  int fnerecobins_RHCNumu;
-  VALORArrayF *fToyMargErecoVArray_RHCNumu_Clone; 
-  VALORArrayF *fToyMargErecoVArray_RHCNue_Clone; 
-  VALORArrayF *fToyMargErecoVArray_Numu_Clone; 
-  VALORArrayF *fToyMargErecoVArray_Nue_Clone; 
+  // NEW 2D TEMPLATES
+  VALORArrayI *fnq2bins; 
+  TH2F *fhToyMargCurr2D[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
+  int fMaxSampleQ2Bins;
+  //
+  
   bool fMergeInputFiles_Called;
   int fNmergedFiles;
-
-  //TH1F *fhToyMargCurr_RHCNumu; // NEW FHC+RHC JOINT
-
-  VALORArrayF *fToyMargErecoVArray_RHCNumu; 
-  VALORArrayF *fToyMargErecoVArray_RHCNue;  
-  VALORArrayF *fToyMargErecoVArray_Numu;    
-  VALORArrayF *fToyMargErecoVArray_Nue;     
 
   FitParamList * fparm;
   // NEW MARG MH

@@ -9,7 +9,8 @@
 //
 // ------------------------------------------------------------------------------------------------
 
-
+#include "Build.h"
+#include "AnalysisOptions.h"
 
 using namespace std;
 using namespace valor;
@@ -27,11 +28,11 @@ void Check_toys_marginalization_readbinary
  const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
 
  double       input_mixing12       = 0.304,                         
- double       input_mixing13       = 0.02146,                         
- double       input_mixing23       = 0.5,                         
- double       input_deltacp        = 0.,                         
- double       input_dm12sq         = 7.5E-5,                         
- double       input_dm23sq         = 2.5E-3,                       
+ double       input_mixing13       = 0.0243,                         
+ double       input_mixing23       = 0.528,                         
+ double       input_deltacp        = -1.601,                         
+ double       input_dm12sq         = 7.53E-5,                         
+ double       input_dm23sq         = 2.509E-3,                       
  double       input_betabar        = 1.,
 
  const char * dmsqscheme          = "auto",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -39,7 +40,7 @@ void Check_toys_marginalization_readbinary
  const char * mixparamchoice      = "sinsqtheta",
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
- const int InputBin0  = 10,
+ const int InputBin0  = 0,
  const int InputBin1  = 0,
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
@@ -50,17 +51,26 @@ void Check_toys_marginalization_readbinary
 
  const int    nfiles               = 1,         // # of files to read
 
- const int    NtoysMarg            = 500,   // # toys marginalization 
+ const int    NtoysMarg            = 2, //500,   // # toys marginalization 
+
+ const char * freeparname0        = "mixing13",  // free parameter
+ const double freeparmin0         = 0., // minimum value of free parameter
+ const double freeparmax0         = 0.113, // maxinum value of free parameter
+ const int    NptScan0            = 4, //81, //201, //21,      // # pts of free parameter to scan
+
+ const char * freeparname1        = "deltacp",  // free parameter
+ const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
+ const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ const int    NptScan1            = 3, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
  
- const char * freeparname0        = "deltacp",  // free parameter
- const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
- const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 21, // 801, 2          // # pts of free parameter to scan
- 
- const char * freeparname1        = "",  // free parameter
- const double freeparmin1         = 0., // minimum value of free parameter
- const double freeparmax1         = 0., // maxinum value of free parameter
- const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
+ // const char * freeparname0        = "deltacp",  // free parameter
+ // const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+ // const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ // const int    NptScan0            = 21, // 801, 2          // # pts of free parameter to scan
+ // const char * freeparname1        = "",  // free parameter
+ // const double freeparmin1         = 0., // minimum value of free parameter
+ // const double freeparmax1         = 0., // maxinum value of free parameter
+ // const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
@@ -402,18 +412,26 @@ void Check_toys_marginalization_readbinary
   }
  
   skexp->Generate(ph);
+
+#ifndef __USE_2D_TEMPLATES__
   h_nominal = new TH1D(*skexp->CurrPredictedErecoSpectrum(s));
+#else
+  h_nominal = new TH1D(*skexp->CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
+#endif
 
   double nominal_total_nsk = h_nominal->Integral();
-
 
   // Loop over marginalization toys
 
   for(int itoy=0;itoy<NtoysMarg;itoy++){
   
-    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
+#ifndef __USE_2D_TEMPLATES__
+    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto2D(s,itoy,ipar0,ipar1);
+#else
+    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto2D(s,itoy,ipar0,ipar1)->ProjectionY();
+#endif
 
-    //cout << "# of events = " << h_marg_toy->Integral() << endl;
+    cout << "# of events = " << h_marg_toy->Integral() << endl;
     
     for(int i=1;i<=util::NumErecoBins(s);i++){
       h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
