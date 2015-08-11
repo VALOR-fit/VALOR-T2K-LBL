@@ -1086,7 +1086,6 @@ void valor::util::ArrIdx::Init(void)
   }
   //
 
-}
 
 
 
