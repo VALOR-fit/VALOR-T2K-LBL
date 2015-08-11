@@ -984,17 +984,17 @@ void valor::util::ArrIdx::Init(void)
     
     //BANFF
     for(int i = 0; i < knppmax; i++) {
-        fBANFFFHCpRHCSystIdx[i] = -1;
+        fFHCpRHCBANFFSystIdx[i] = -1;
     }
     for(int ip = 0; ip < kNumOfFHCpRHCParamsInBANFFfit; ip++) {
         PhysParamId_t p = kListOfFHCpRHCBANFFParams[ip];
         if(p == kPhypUndefined) continue;
-        fBANFFFHCpRHCSystIdx[p] = ip;
+        fFHCpRHCBANFFSystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
         cout << "Util/ArrIdx >> BANFF: "
         << p << "\t"
         << util::AsString(p)
-        << " is at slot: " << fBANFFFHCpRHCSystIdx [p] << endl;
+        << " is at slot: " << fFHCpRHCBANFFSystIdx [p] << endl;
 #endif
     }
 
@@ -1076,7 +1076,7 @@ void valor::util::ArrIdx::Init(void)
   for(int ip = 0; ip < kNumOfRHCSKDetFSIParams; ip++) {
     PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + ip);
     if(p == kPhypUndefined) continue;
-    fFHCpRHCSKDetFSISystIdx[p] = ip;
+    fFHCpRHCSKDetFSISystIdx[p] = ip+kNumOfSKDetFSIParams; // shifted because after the FHC params // NEW FHC+RHC JOINT (NEW)
 #ifdef __show_arr_idx_mesg_debug__
     cout << "Util/ArrIdx >> FHC+RHC SKDet+FSI: "
          << p << "\t" 
@@ -1086,6 +1086,7 @@ void valor::util::ArrIdx::Init(void)
   }
   //
 
+}
 
 
 

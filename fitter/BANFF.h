@@ -95,7 +95,7 @@ public:
   const TMatrixD & RHCCovMatrixInv            (void) const { return *fRHCCovMtrxInv;    }
 
   // NEW FLUX FHC+RHC
-  //const TVectorD & FHCpRHCBestFitValues       (void) const { return *fFHCpRHCBestFitValues; }
+  const TVectorD & FHCpRHCBestFitValues       (void) const { return *fFHCpRHCBestFitValues; } // NEW FHC+RHC JOINT (NEW)
   const TMatrixD & FHCpRHCCovMatrix           (void) const { return *fFHCpRHCCovMtrx;       }
   const TMatrixD & FHCpRHCCovMatrixInv        (void) const { return *fFHCpRHCCovMtrxInv;    }
   
