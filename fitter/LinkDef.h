@@ -28,6 +28,6 @@
 #pragma link C++ class valor::BANFF;
 #pragma link C++ class valor::NuXSec;
 #pragma link C++ class valor::NuFlux;
-#pragma link C++ class valor::FitMarginalization;
+#pragma link C++ class valor::FitMarginalization+;
 
 #endif
