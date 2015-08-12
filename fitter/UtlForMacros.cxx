@@ -149,7 +149,7 @@ void valor::util::SetGlobalOptions(const char * dmsqscheme, const char * hierarc
     cerr << *Opt::Instance() << endl;
     exit(1);
   }
-  cout << *Opt::Instance() << endl;
+  cout << *Opt::Instance();
 }
 //____________________________________________________________________________
 void valor::util::SetOscParamOptions(double& input_mixing12_nh, double& input_mixing13_nh, double& input_mixing23_nh,

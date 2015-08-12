@@ -142,13 +142,8 @@ void generate_toymc_ensemble
 			   randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih,
 			   randomize_deltacp_ih,  randomize_dm12sq_ih,   randomize_dm23sq_ih		     
 			   );
-  
-  string * full_points_to_add_1Rmu     = 0;
-  string * full_points_to_add_1Re      = 0;
-  string * full_points_to_add_1Rmu_RHC = 0;
-  string * full_points_to_add_1Re_RHC  = 0;
-  string * full_points_to_add_MultiRmu = 0;
-  string * full_points_to_add_MultiRe  = 0;
+
+  string * full_points_to_add[kns] = { 0,0,0,0,0,0 };
   
   // Are we adding events from an XML file?
   if (xml_file_to_add) {
@@ -159,34 +154,33 @@ void generate_toymc_ensemble
     
     const char * xml_path = util::FormFilePath(xml_file_to_add, gSystem->Getenv("T2KOSCANA"));
     XMLDocPointer_t xmldoc = xml.ParseFile(xml_path);
-    if (xmldoc==0) {
+    if (xmldoc == 0) {
       cerr << "Can not parse XML file to add: " << xml_path << endl;
       exit(1);
     }
     XMLNodePointer_t root_node = xml.DocGetRootElement(xmldoc);
 
-    full_points_to_add_1Rmu     = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingMuLike,     points_to_add_1Rmu);
-    full_points_to_add_1Re      = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingELike,      points_to_add_1Re);
-    full_points_to_add_1Rmu_RHC = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingMuLike,  points_to_add_1Rmu_RHC);
-    full_points_to_add_1Re_RHC  = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingELike,   points_to_add_1Re_RHC);
-    full_points_to_add_MultiRmu = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingMuLike, points_to_add_MultiRmu);
-    full_points_to_add_MultiRe  = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingELike,  points_to_add_MultiRe);
+    full_points_to_add[0] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingMuLike,     points_to_add_1Rmu);
+    full_points_to_add[1] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingELike,      points_to_add_1Re);
+    full_points_to_add[2] = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingMuLike,  points_to_add_1Rmu_RHC);
+    full_points_to_add[3] = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingELike,   points_to_add_1Re_RHC);
+    full_points_to_add[4] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingMuLike, points_to_add_MultiRmu);
+    full_points_to_add[5] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingELike,  points_to_add_MultiRe);
   }//xml_file_to_add
   else {
-    if (points_to_add_1Rmu    ) full_points_to_add_1Rmu     = new string(points_to_add_1Rmu    );
-    if (points_to_add_1Re     ) full_points_to_add_1Re      = new string(points_to_add_1Re     );
-    if (points_to_add_1Rmu_RHC) full_points_to_add_1Rmu_RHC = new string(points_to_add_1Rmu_RHC);
-    if (points_to_add_1Re_RHC ) full_points_to_add_1Re_RHC  = new string(points_to_add_1Re_RHC );
-    if (points_to_add_MultiRmu) full_points_to_add_MultiRmu = new string(points_to_add_MultiRmu);
-    if (points_to_add_MultiRe ) full_points_to_add_MultiRe  = new string(points_to_add_MultiRe );
+    if (points_to_add_1Rmu    ) full_points_to_add[0] = new string(points_to_add_1Rmu    );
+    if (points_to_add_1Re     ) full_points_to_add[1] = new string(points_to_add_1Re     );
+    if (points_to_add_1Rmu_RHC) full_points_to_add[2] = new string(points_to_add_1Rmu_RHC);
+    if (points_to_add_1Re_RHC ) full_points_to_add[3] = new string(points_to_add_1Re_RHC );
+    if (points_to_add_MultiRmu) full_points_to_add[4] = new string(points_to_add_MultiRmu);
+    if (points_to_add_MultiRe ) full_points_to_add[5] = new string(points_to_add_MultiRe );
   }//!xml_file_to_add
   cout << "   - Adding the following data-points in each toy-MC expt: " << endl;
-  cout << "    For 1R mu-like: "     << ((full_points_to_add_1Rmu)     ? *full_points_to_add_1Rmu     : "*None*") << endl;
-  cout << "    For 1R e-like: "      << ((full_points_to_add_1Re)      ? *full_points_to_add_1Re      : "*None*") << endl;
-  cout << "    For 1R mu-like RHC: " << ((full_points_to_add_1Rmu_RHC) ? *full_points_to_add_1Rmu_RHC : "*None*") << endl;
-  cout << "    For 1R e-like RHC: "  << ((full_points_to_add_1Re_RHC)  ? *full_points_to_add_1Re_RHC  : "*None*") << endl;
-  cout << "    For MultiR mu-like: " << ((full_points_to_add_MultiRmu) ? *full_points_to_add_MultiRmu : "*None*") << endl;
-  cout << "    For MultiR e-like: "  << ((full_points_to_add_MultiRe)  ? *full_points_to_add_MultiRe  : "*None*") << endl;
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = conv::kSKSamples[is];
+    if (s == conv::kSKsUndefined) continue;
+    cout << "    For " << util::AsStringCompact(s) << "\t" << ((full_points_to_add[is]) ? *full_points_to_add[is] : "*None*") << endl;
+  }//is
   cout << endl;
 
   // Open files
@@ -272,80 +266,24 @@ void generate_toymc_ensemble
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
      }//applied_negevents_condition
-  
+
      //Get the spectra
-#ifdef __FHC_RUNNING__
 #ifndef __USE_2D_TEMPLATES__ //1D templates
-#ifndef __NUEONLY__
-     TH1D * mock_data_1Rmu = skobs->ErecoSpectrum(kSKsFCFV1RingMuLike);
+     TH1D * mock_data[kns];
+#else
+     TH2D * mock_data[kns];
 #endif
-#ifndef __NUMUONLY__
-     TH1D * mock_data_1Re  = skobs->ErecoSpectrum(kSKsFCFV1RingELike);
-#endif
-#else //2D templates
-#ifndef __NUEONLY__
-     TH2D * mock_data_1Rmu = skobs->TwoDSpectrum(kSKsFCFV1RingMuLike);
-#endif
-#ifndef __NUMUONLY__
-     TH2D * mock_data_1Re  = skobs->TwoDSpectrum(kSKsFCFV1RingELike);
-#endif
-#endif //__USE_2D_TEMPLATES__
-#ifndef __NUEONLY__
-     mock_data_1Rmu->SetDirectory(0);
-#endif
-#ifndef __NUMUONLY__
-     mock_data_1Re->SetDirectory(0);
-#endif
-#endif //__FHC_RUNNING__
-     
-#ifdef __RHC_RUNNING__
+     for (int is = 0 ; is < conv::kns ; is++) {
+       SuperkSample_t s = conv::kSKSamples[is];
+       if (s == conv::kSKsUndefined) continue;
 #ifndef __USE_2D_TEMPLATES__ //1D templates
-#ifndef __NUEONLY__
-     TH1D * mock_data_1Rmu_RHC = skobs->ErecoSpectrum(kSKsRHCFCFV1RingMuLike);
+       mock_data[is] = skobs->ErecoSpectrum(s);
+#else
+       mock_data[is] = skobs->TwoDSpectrum(s);
 #endif
-#ifndef __NUMUONLY__
-     TH1D * mock_data_1Re_RHC  = skobs->ErecoSpectrum(kSKsRHCFCFV1RingELike);
-#endif
-#else //2D templates
-#ifndef __NUEONLY__
-     TH2D * mock_data_1Rmu_RHC = skobs->TwoDSpectrum(kSKsRHCFCFV1RingMuLike);
-#endif
-#ifndef __NUMUONLY__
-     TH2D * mock_data_1Re_RHC  = skobs->TwoDSpectrum(kSKsRHCFCFV1RingELike);
-#endif
-#endif //__USE_2D_TEMPLATES__
-#ifndef __NUEONLY__
-     mock_data_1Rmu_RHC->SetDirectory(0);
-#endif
-#ifndef __NUMUONLY__
-     mock_data_1Re_RHC->SetDirectory(0);
-#endif
-#endif //__RHC_RUNNING__
-     
-#ifdef __MULTIRING_FHC_RUNNING__
-#ifndef __USE_2D_TEMPLATES__ //1D templates
-#ifndef __NUEONLY__
-     TH1D* mock_data_MultiRmu = skobs->ErecoSpectrum(kSKsFCFVMultiRingMuLike);
-#endif
-#ifndef __NUMUONLY__
-     TH1D* mock_data_MultiRe  = skobs->ErecoSpectrum(kSKsFCFVMultiRingELike);
-#endif
-#else //2D templates
-#ifndef __NUEONLY__
-     TH2D* mock_data_MultiRmu = skobs->TwoDSpectrum(kSKsFCFVMultiRingMuLike);
-#endif
-#ifndef __NUMUONLY__
-     TH2D* mock_data_MultiRe  = skobs->TwoDSpectrum(kSKsFCFVMultiRingELike);     
-#endif
-#endif //__USE_2D_TEMPLATES__
-#ifndef __NUEONLY__
-     mock_data_MultiRmu->SetDirectory(0);     
-#endif
-#ifndef __NUMUONLY__
-     mock_data_MultiRe->SetDirectory(0);
-#endif
-#endif //__MULTIRING_FHC_RUNNING__
-     
+       mock_data[is]->SetDirectory(0);
+     }//is
+      
      // If an XML file was specified, add an entry
      if(save_in_xml_format) {
 
@@ -358,107 +296,33 @@ void generate_toymc_ensemble
            skexp->PrintSystematicVariations(fxml);
          fxml << " -->" << endl;
        }
-     
-#ifdef __FHC_RUNNING__
-#ifndef __NUEONLY__
-       // Now the 1Rmu part
-       AddEventsToXML(fxml, ftxt, mock_data_1Rmu, kSKsFCFV1RingMuLike, full_points_to_add_1Rmu, rand);
-#endif
-#ifndef __NUMUONLY__
-       //Now the 1Re part
-       AddEventsToXML(fxml, ftxt, mock_data_1Re,  kSKsFCFV1RingELike,  full_points_to_add_1Re, rand);
-#endif
-#endif //__FHC_RUNNING__
-       
-#ifdef __RHC_RUNNING__
-#ifndef __NUEONLY__
-       // Now the 1Rmu RHC part
-       AddEventsToXML(fxml, ftxt, mock_data_1Rmu_RHC, kSKsRHCFCFV1RingMuLike, full_points_to_add_1Rmu_RHC, rand);
-#endif
-#ifndef __NUMUONLY__
-       //Now the 1Re RHC part
-       AddEventsToXML(fxml, ftxt, mock_data_1Re_RHC,  kSKsRHCFCFV1RingELike,  full_points_to_add_1Re_RHC, rand);
-#endif
-#endif //__RHC_RUNNING__
-       
-#ifdef __MULTIRING_FHC_RUNNING__
-#ifndef __NUEONLY__
-       // Now the MultiRmu part
-       AddEventsToXML(fxml, ftxt, mock_data_MultiRmu, kSKsFCFVMultiRingMuLike, full_points_to_add_MultiRmu, rand);
-#endif
-#ifndef __NUMUONLY__
-       //Now the 1Re RHC part
-       AddEventsToXML(fxml, ftxt, mock_data_MultiRe,  kSKsFCFVMultiRingELike,  full_points_to_add_MultiRe, rand);
-#endif
-#endif //__MULTIRING_FHC_RUNNING__
+
+       for (int is = 0 ; is < conv::kns ; is++) {
+	 SuperkSample_t s = conv::kSKSamples[is];
+	 if (s == conv::kSKsUndefined) continue;
+	 AddEventsToXML(fxml, ftxt, mock_data[is], s, full_points_to_add[is], rand);
+       }//is
        
        fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;       
      }//save to xml file
 
      // If a ROOT filename was specified, save the ROOT histogram too
      if(f) {
-#ifdef __FHC_RUNNING__
-#ifndef __NUEONLY__
-       AddExtraEventsToHist(mock_data_1Rmu, full_points_to_add_1Rmu);
-#endif
-#ifndef __NUMUONLY__
-       AddExtraEventsToHist(mock_data_1Re,  full_points_to_add_1Re);
-#endif
-#endif //__FHC_RUNNING__
-       
-#ifdef __RHC_RUNNING__	 
-#ifndef __NUEONLY__
-       AddExtraEventsToHist(mock_data_1Rmu_RHC, full_points_to_add_1Rmu_RHC);
-#endif
-#ifndef __NUMUONLY__
-       AddExtraEventsToHist(mock_data_1Re_RHC,  full_points_to_add_1Re_RHC);
-#endif
-#endif //__RHC_RUNNING__
-       
-#ifdef __MULTIRING_FHC_RUNNING__
-#ifndef __NUEONLY__
-       AddExtraEventsToHist(mock_data_MultiRmu, full_points_to_add_MultiRmu);
-#endif
-#ifndef __NUMUONLY__
-       AddExtraEventsToHist(mock_data_MultiRe,  full_points_to_add_MultiRe);
-#endif
-#endif //__MULTIRING_FHC_RUNNING__
-       
+       for (int is = 0 ; is < conv::kns ; is++) {
+	 SuperkSample_t s = conv::kSKSamples[is];
+	 if (s == conv::kSKsUndefined) continue;
+	 AddExtraEventsToHist(mock_data[is], full_points_to_add[is]);
+       }//is
+      
        f->cd();
-       
-#ifdef __FHC_RUNNING__
-#ifndef __NUEONLY__
-       mock_data_1Rmu->Write(Form("mock_data_1Rmu_%d",iexperiment));
-       delete mock_data_1Rmu;
-#endif
-#ifndef __NUMUONLY__
-       mock_data_1Re->Write(Form("mock_data_1Re_%d",iexperiment));
-       delete mock_data_1Re;
-#endif
-#endif //__FHC_RUNNING__
-       
-#ifdef __RHC_RUNNING__
-#ifndef __NUEONLY__
-       mock_data_1Rmu_RHC->Write(Form("mock_data_1Rmu_RHC_%d",iexperiment));
-       delete mock_data_1Rmu_RHC;
-#endif
-#ifndef __NUMUONLY__
-       mock_data_1Re_RHC->Write(Form("mock_data_1Re_RHC_%d",iexperiment));
-       delete mock_data_1Re_RHC;
-#endif
-#endif //__RHC_RUNNING__
-       
-#ifdef __MULTIRING_FHC_RUNNING__
-#ifndef __NUEONLY__
-       mock_data_MultiRmu->Write(Form("mock_data_MultiRmu_%d",iexperiment));
-       delete mock_data_MultiRmu;
-#endif
-#ifndef __NUMUONLY__
-       mock_data_MultiRe->Write(Form("mock_data_MultiRe_%d",iexperiment));
-       delete mock_data_MultiRe;
-#endif
-#endif //__MULTIRING_FHC_RUNNING__
 
+       for (int is = 0 ; is < conv::kns ; is++) {
+	 SuperkSample_t s = conv::kSKSamples[is];
+	 if (s == conv::kSKsUndefined) continue;
+	 mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+	 delete mock_data[is];
+       }//is
+            
        // Object for storing input oscillation and nuisance params in each toy-MC
        PhysParamList * iparm = new PhysParamList;
        iparm->Clear();
