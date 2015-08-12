@@ -8,6 +8,8 @@
 #pragma link C++ namespace valor::conv;
 #pragma link C++ namespace valor::util;
 
+#pragma link C++ struct valor::util::OscParams;
+
 #pragma link C++ enum  valor::conv::PhysParamId_t;
 #pragma link C++ enum  valor::conv::ConfLevel_t;
 #pragma link C++ enum  valor::conv::SuperkSample_t;
@@ -26,6 +28,6 @@
 #pragma link C++ class valor::BANFF;
 #pragma link C++ class valor::NuXSec;
 #pragma link C++ class valor::NuFlux;
-#pragma link C++ class valor::FitMarginalization+;
+#pragma link C++ class valor::FitMarginalization;
 
 #endif

@@ -13,7 +13,6 @@
 
 #include "Utilities.h"
 #include "Binning.h"
-#include "Utilities/UtlXML.h"
 #include "Conventions/PhysHypothesisId.h"
 
 #include "Build.h"
@@ -21,13 +20,9 @@
 
 #include "AnalysisOptions.h"
 
-#include "TH1D.h"
-#include "TH2D.h"
 #include "TRandom3.h"
 #include "TSystem.h"
 
-#include <string>
-#include <iostream>
 #include <sstream>
 #include <fstream>
 
@@ -52,38 +47,43 @@ void generate_toymc_ensemble
  double       last_experiment         = 0,
  const char * hypothesis              = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
- double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13_nh       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing23_nh       = -99,   //conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_deltacp_nh        = -99,   //conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
- double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
- double       input_dm23sq_nh         = -99,   //conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
- double       input_mixing12_ih       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing13_ih       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_mixing23_ih       = -99,   //conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
- double       input_deltacp_ih        = -99,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
- double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
- double       input_dm23sq_ih         = -99,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
+ //-999 randomize
+ //-99 use global best fits
+ double       input_mixing12_nh       = -99,   /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13_nh       = -99,   /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23_nh       = -99,   /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp_nh        = -99,   /* deltacp or sindeltacp depending on user choice */
+ double       input_dm12sq_nh         = -99,   /* Dm^2_{12},  */
+ double       input_dm23sq_nh         = -99,   /* |Dm^2_{23}| */
+ double       input_mixing12_ih       = -99,   /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13_ih       = -99,   /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23_ih       = -99,   /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp_ih        = -99,   /* deltacp or sindeltacp depending on user choice */
+ double       input_dm12sq_ih         = -99,   /* Dm^2_{12},  */
+ double       input_dm23sq_ih         = -99,   /* |Dm^2_{23}| */
  double       input_beta_bar          = -99,
  
- const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ double       input_prior_prob_nh     = -99,   /* prior probability of normal mass hierarchy. -99 global best fit */
+ const bool   doMargMH                = true,  // marginalize Mass Hierarchy?
+ 
+ string       file_priors             = "",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
+
+ 
+ const char * config_file             = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
 
  bool rethrow_if_parameters_unphysical = true, // rethrow unphysical toys
 
  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
- bool         printsystvariation      = true,                           /* cout the skexp tweaks */
 
- bool         save_in_xml_format      = true,                           /* also save in txt format */
- bool         save_in_root_format     = true,                           /* */  
  string       points_to_add_1Rmu      = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
  string       points_to_add_1Re       = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
  string       points_to_add_1Rmu_RHC  = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
- string       points_to_add_1Re_RHC   = "10:10,20:20",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+ string       points_to_add_1Re_RHC   = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
  string       points_to_add_MultiRmu  = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
  string       points_to_add_MultiRe   = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
- const char * xml_file_to_add         = "toymc_numudisap-0.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml */
- const int    xml_to_add_dataset_id   = 0,           /* the dataset ID of the xml file to add values from */
+ const char * xml_file_to_add         = "",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml */
+ const int    xml_to_add_dataset_id   = 0,            /* the dataset ID of the xml file to add values from */
  bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
  const char * dmsqscheme              = "auto",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy               = "normal",                       /* normal or inverted */
@@ -94,12 +94,39 @@ void generate_toymc_ensemble
 {
   TRandom3 rand(0);
 
+  //some options set here because of CINT 40-argument limit
+  bool printsystvariation = true;  /* cout the skexp tweaks */
+  bool save_in_xml_format = true;  /* also save in txt format */
+  bool save_in_root_format = true;
+
+
   TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
   TH1D * h_1 = new TH1D ("h_1", "h_1", 100, 0, 10);
   TH1D * h_2 = new TH1D ("h_2","h_2", 100, 0, 10);
   TH1D * h_3 = new TH1D ("h_3","h_3", 100, 0, 10);
   TH1D * h_4 = new TH1D ("h_4","h_4", 100, 0, 10);
   TH2D * h_4_Escale = new TH2D ("h_4_Escale","h_4_Escale", 100, -5, 5, 100, 0, 10);
+
+  //book histograms to save the input choices
+  TH1D * hToy_MH = new TH1D("hToy_MH","0-->NH, 1-->IH",2,0,2);
+  hToy_MH->GetXaxis()->SetBinLabel(0, "NH");
+  hToy_MH->GetXaxis()->SetBinLabel(1, "IH");
+  //using [0] = NH, [1] = IH
+  TH2D * hToy_th13_dcp[2] = {0, 0};
+  TH2D * hToy_23[2] = {0, 0};
+  //and histograms for the priors
+  TH2D * hPrior_th13_dcp[2] = {0, 0};
+  TH2D * hPrior_23[2]    = {0, 0};
+
+  //get the prior histograms from the file
+  bool UsePrior_th13_dcp = false;
+  bool UsePrior_23 = false;
+  if(!file_priors.empty()) {
+    UsePrior_th13_dcp = true;
+    UsePrior_23 = true;
+    const char * file_priors_full_path = util::FormFilePath(file_priors.c_str(), "inputs");
+    //util::GetPriorHists(file_priors_full_path, hPrior_th13_dcp, hPrior_23, hToy_th13_dcp, hToy_23);
+  }
 
   // Analysis configuration file
   const char * config = util::FormFilePath(config_file, "config");
@@ -127,25 +154,14 @@ void generate_toymc_ensemble
   util::SetGlobalOptions(dmsqscheme, hierarchy, mixparamchoice, mixparamoctant, cpvphase);
 
   // Set input osc params to defaults, or set them to be randomised
-  bool randomize_mixing12_nh, randomize_mixing13_nh, randomize_mixing23_nh;
-  bool randomize_deltacp_nh, randomize_dm12sq_nh, randomize_dm23sq_nh;
-  bool randomize_beta_bar;
-  bool randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih;
-  bool randomize_deltacp_ih, randomize_dm12sq_ih, randomize_dm23sq_ih;
+  util::OscParams input_osc = util::SetOscParamOptions(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
+						       input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
+						       input_beta_bar, 
+						       input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
+						       input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih);
 
-  util::SetOscParamOptions(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
-			   input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
-			   randomize_mixing12_nh, randomize_mixing13_nh, randomize_mixing23_nh,
-			   randomize_deltacp_nh,  randomize_dm12sq_nh,   randomize_dm23sq_nh,
-			   input_beta_bar, randomize_beta_bar,
-			   input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
-			   input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
-			   randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih,
-			   randomize_deltacp_ih,  randomize_dm12sq_ih,   randomize_dm23sq_ih		     
-			   );
-  
+  // Extra points to add to the toy dataset(s)
   string * full_points_to_add[kns] = { 0,0,0,0,0,0 };
-
   // Are we adding events from an XML file?
   if (xml_file_to_add) {
     TXMLEngine xml;
@@ -218,29 +234,39 @@ void generate_toymc_ensemble
      SuperkObservation * skobs = new SuperkObservation;
      PhysHypothesis ph(hypothesis);
 
+     // Set the mass hierarchy
+     const int iMH = util::SetMassHierarchy(skexp, doMargMH, input_prior_prob_nh, hToy_MH);
+
      // Randomize specified osc params for current toy MC expt
-     util::RandomizeOscParams(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
-			      input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
-			      randomize_mixing12_nh, randomize_mixing13_nh, randomize_mixing23_nh,
-			      randomize_deltacp_nh,  randomize_dm12sq_nh,   randomize_dm23sq_nh,
-			      input_beta_bar, randomize_beta_bar,
-			      input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
-			      input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
-			      randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih,
-			      randomize_deltacp_ih,  randomize_dm12sq_ih,   randomize_dm23sq_ih		     
-			      );
+     util::RandomizeOscParams(input_osc);
+
+     // Marginalize
+     //theta13 vs dcp NH
+     if(input_osc.randomize_mixing13_nh && input_osc.randomize_dcp_nh && UsePrior_th13_dcp)
+       hPrior_th13_dcp[0]->GetRandom2(input_mixing13_nh, input_deltacp_nh);
+     //theta13 vs dcp IH
+     if(input_osc.randomize_mixing13_ih && input_osc.randomize_dcp_ih && UsePrior_th13_dcp)
+       hPrior_th13_dcp[1]->GetRandom2(input_mixing13_ih, input_deltacp_ih);
+     //theta23 vs dm32sq NH
+     if(input_osc.randomize_mixing23_nh && input_osc.randomize_dm23sq_nh && UsePrior_23)
+       hPrior_23[0]->GetRandom2(input_mixing23_nh, input_dm23sq_nh);
+     //theta23 vs dm32sq IH
+     if(input_osc.randomize_mixing23_ih && input_osc.randomize_dm23sq_ih && UsePrior_23)
+       hPrior_23[1]->GetRandom2(input_mixing23_ih, input_dm23sq_ih);
 
      // Set physics hypothesis
-     //TODO use priors to decide which hierarchy to set to
-     util::SetOscParams(ph,
-			input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
-			input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
-			input_beta_bar
-			);
+     util::SetOscParams(ph, input_osc, iMH);
 
-
-
-
+     // Save the chosen oscillation parameters
+     // (mass hierarchy is saved above in util::SetMassHierarchy())
+     //double mix12 = ph.CurrValue(kPhypMixing12);
+     double mix13 = ph.CurrValue(kPhypMixing13);
+     double mix23 = ph.CurrValue(kPhypMixing23);
+     //double dm12 = ph.CurrValue(kPhypDm12sq);
+     double dm23 = ph.CurrValue(kPhypDm23sq);
+     double dcp = ph.CurrValue(kPhypCPV);
+     hToy_th13_dcp[iMH]->Fill(mix13,dcp);
+     hToy_23[iMH]->Fill(mix23,dm23);
 
      bool applied_negevents_condition = true;
      bool unphysical_tweak = true;
@@ -345,6 +371,14 @@ void generate_toymc_ensemble
   h_4->Write();
   h_4_Escale->Write();
 
+  for(int im = 0; im < 2; im++) {
+    hPrior_th13_dcp[im]->Write();  
+    hToy_th13_dcp[im]->Write();
+    hPrior_23[im]->Write();
+    hToy_23[im]->Write();
+  }
+  hToy_MH->Write();
+
   //
   // Close files
   //
@@ -383,7 +417,7 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::Sup
     double Emax = h->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
     double Ecent = h->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
     for(int iev = 0; iev < Nb; iev++) {
-      double E= Emin + rand.Uniform() * (Emax-Emin);
+      double E = Emin + rand.Uniform() * (Emax - Emin);
       if(ievtot > 0) {
 	fxml << ", "; 
 	ftxt << ","; 
