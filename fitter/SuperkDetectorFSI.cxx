@@ -1153,6 +1153,9 @@ void SuperkDetectorFSI::TweakFHCpRHC(
 #endif
 	  TVectorD & vec = *input_skdetfsi_params;
 	  current_values = vec;
+
+	  this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc); // NEW FHC+RHC JOINT (NEW)
+
 	  return;
 	}
     }//force_inputs?

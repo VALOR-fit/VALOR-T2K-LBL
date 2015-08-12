@@ -37,7 +37,7 @@ Split valor::conv namespace into several smaller files
 #define __USE_2D_TEMPLATES__ // Use 2D templates
 #endif
 
-//#define __ERECO_VS_Q2_TEMPLATES__ // Ereco Vs Q2 parametrization
+#define __ERECO_VS_Q2_TEMPLATES__ // Ereco Vs Q2 parametrization
 #ifndef __ERECO_VS_Q2_TEMPLATES__ 
 #define __ERECO_VS_THETA_TEMPLATES__ // Ereco Vs THETA parametrization
 #endif
@@ -150,9 +150,7 @@ Split valor::conv namespace into several smaller files
 
 #ifndef ERECO_BINS_1RMU
 //#define ERECO_BINS_1RMU 1 // 50 MeV binning 0-30 GeV
-
 #define ERECO_BINS_1RMU 2 // DEFAULT 50 MeV bins in 0-3 GeV, 250 MeV bins in 3-4 GeV, 500 MeV bins in 4-6 GeV, 1000 MeV bins 6-10 GeV, 1 bin 10-30 GeV (73 bins)
-
 //#define ERECO_BINS_1RMU 3 // 41 bins, same as ERECO_XSEC_BINS_1RMU 1
 //#define ERECO_BINS_1RMU 4 //Same as Linda's binning scheme
 //#define ERECO_BINS_1RMU 5 //39 bins, added for T2K Run 5-6 RHC analysis
@@ -172,34 +170,34 @@ Split valor::conv namespace into several smaller files
 
 #ifndef Q2_XSEC_BINS_1RMU
 //#define Q2_XSEC_BINS_1RMU 1 // DEFAULT Q^2 (19 bins) 
-//#define Q2_XSEC_BINS_1RMU 2 // 1 single bin (1D template) 
+#define Q2_XSEC_BINS_1RMU 2 // 1 single bin (1D template) 
 //#define Q2_XSEC_BINS_1RMU 3 // Qd^2 parametrization, finer close to 1 (19 bins) 
 //#define Q2_XSEC_BINS_1RMU 4 // Inelasticity parametrization, finer close to 1 (19 bins) 
-#define Q2_XSEC_BINS_1RMU 5 // XSec term parametrization, finer close to 1 (19 bins) 
+//#define Q2_XSEC_BINS_1RMU 5 // XSec term parametrization, finer close to 1 (19 bins) 
 #endif
 
 #ifndef Q2_XSEC_BINS_1RE
 //#define Q2_XSEC_BINS_1RE 1 // DEFAULT (19 bins) 
-//#define Q2_XSEC_BINS_1RE 2 // 1 single bin (1D template)
+#define Q2_XSEC_BINS_1RE 2 // 1 single bin (1D template)
 //#define Q2_XSEC_BINS_1RE 3 // Qd^2 parametrization, finer close to 1 (19 bins) 
 //#define Q2_XSEC_BINS_1RE 4 // Inelasticity parametrization, finer close to 1 (19 bins) 
-#define Q2_XSEC_BINS_1RE 5 // XSec term parametrization, finer close to 1 (19 bins) 
+//#define Q2_XSEC_BINS_1RE 5 // XSec term parametrization, finer close to 1 (19 bins) 
 #endif
 
 #ifndef Q2_BINS_1RMU
 //#define Q2_BINS_1RMU 1 // DEFAULT (19 bins)
-//#define Q2_BINS_1RMU 2 // 1 single bin (1D template)
+#define Q2_BINS_1RMU 2 // 1 single bin (1D template)
 //#define Q2_BINS_1RMU 3 // Qd^2 parametrization, finer close to 1 (19 bins) 
 //#define Q2_BINS_1RMU 4 // Inelasticity parametrization, finer close to 1 (19 bins) 
-#define Q2_BINS_1RMU 5 // XSec term parametrization, finer close to 1 (19 bins) 
+//#define Q2_BINS_1RMU 5 // XSec term parametrization, finer close to 1 (19 bins) 
 #endif
 
 #ifndef Q2_BINS_1RE
 //#define Q2_BINS_1RE 1 // DEFAULT (19 bins)
-//#define Q2_BINS_1RE 2 // 1 single bin (1D template)
+#define Q2_BINS_1RE 2 // 1 single bin (1D template)
 //#define Q2_BINS_1RE 3 // Qd^2 parametrization, finer close to 1 (19 bins) 
 //#define Q2_BINS_1RE 4 // Inelasticity parametrization, finer close to 1 (19 bins) 
-#define Q2_BINS_1RE 5 // XSec term parametrization, finer close to 1 (19 bins) 
+//#define Q2_BINS_1RE 5 // XSec term parametrization, finer close to 1 (19 bins) 
 #endif
 
 

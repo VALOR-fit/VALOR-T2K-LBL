@@ -25,7 +25,7 @@
 //#define __show_num_of_events_mesg_debug__
 //#define __show_num_of_bins_mesg_debug__
 //#define __show_bin_contributions_to_chisq__
-#define __announce_generate__
+//#define __announce_generate__
 
 #include <cassert>
 #include <cstdlib>

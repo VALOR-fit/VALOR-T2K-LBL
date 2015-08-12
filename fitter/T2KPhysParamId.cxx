@@ -2382,34 +2382,70 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFF24               ) : return "f_banff24";      break;
 #endif
 
-#ifndef ONEOVERMAQE
-    case ( kNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
+      
+      // NEW FHC+RHC JOINT (NEW)
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+
+    #ifndef ONEOVERMAQE
+    case ( kNuisBANFFMAQE             ) : return "f_banffmaqe_fhc_rhc";    break;
+    #else
+    case ( kNuisBANFFMAQE             ) : return "f_banff1overmaqe2_fhc_rhc";  break;
+    #endif
+    case ( kNuisBANFFMARES            ) : return "f_banffmares_fhc_rhc";   break;
+    case ( kNuisBANFFCCQEE0           ) : return "f_banffccqee0_fhc_rhc";  break;
+    #if BANFF_BINS != 3
+    case ( kNuisBANFFCCQEE1           ) : return "f_banffccqee1_fhc_rhc";  break;
+    case ( kNuisBANFFCCQEE2           ) : return "f_banffccqee2_fhc_rhc";  break;
+    #endif
+    case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0_fhc_rhc"; break;
+    #if BANFF_BINS != 3
+    case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1_fhc_rhc"; break;
+    #endif
+    #if (BANFF_BINS != 2)
+    case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0_fhc_rhc";  break;
+    #endif
+      
+    case ( kNuisBANFFMEC               ) : return "f_banffmec_fhc_rhc";            break;
+    case ( kNuisBANFFCA5               ) : return "f_banffca5_fhc_rhc";            break;
+    case ( kNuisBANFFBgRES             ) : return "f_banffbgres_fhc_rhc";          break;
+    #if (BANFF_BINS != 2)
+    case ( kNuisBANFFSCCA              ) : return "f_banffscca_fhc_rhc";           break;
+    case ( kNuisBANFFSCCV              ) : return "f_banffsccv_fhc_rhc";           break;
+    #endif
+    case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi_fhc_rhc";         break; // uncorrelated in the past
+    case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_fhc_rhc";     break; // uncorrelated in the past
+    case ( kNuisBANFFBindE             ) : return "f_banffbindE_fhc_rhc";          break; // uncorrelated in the past
+    case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh_fhc_rhc";     break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh_fhc_rhc";     break; // uncorrelated in the past
+    case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth_fhc_rhc";     break; // uncorrelated in the past
+    case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu_fhc_rhc"; break; // uncorrelated in the past
+      
 #else
+    #ifndef ONEOVERMAQE
+    case ( kNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
+    #else
     case ( kNuisBANFFMAQE             ) : return "f_banff1overmaqe2";  break;
-#endif
+    #endif
     case ( kNuisBANFFMARES            ) : return "f_banffmares";   break;
     case ( kNuisBANFFCCQEE0           ) : return "f_banffccqee0";  break;
-#if BANFF_BINS != 3
+    #if BANFF_BINS != 3
     case ( kNuisBANFFCCQEE1           ) : return "f_banffccqee1";  break;
     case ( kNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
-#endif
+    #endif
     case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
-#if BANFF_BINS != 3
+    #if BANFF_BINS != 3
     case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
-#endif
-#if (BANFF_BINS != 2)
+    #endif
+    #if (BANFF_BINS != 2)
     case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
-#endif
-
-      // NEW XSEC
-    case ( kNuisBANFFMEC               ) : return "f_banffmec";            break;
+    #endif
+  case ( kNuisBANFFMEC               ) : return "f_banffmec";            break;
     case ( kNuisBANFFCA5               ) : return "f_banffca5";            break;
     case ( kNuisBANFFBgRES             ) : return "f_banffbgres";          break;
-      // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
+    #if (BANFF_BINS != 2)
     case ( kNuisBANFFSCCA              ) : return "f_banffscca";           break;
     case ( kNuisBANFFSCCV              ) : return "f_banffsccv";           break;
-#endif
+    #endif
     case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi";         break; // uncorrelated in the past
     case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth";     break; // uncorrelated in the past
     case ( kNuisBANFFBindE             ) : return "f_banffbindE";          break; // uncorrelated in the past
@@ -2419,6 +2455,8 @@ string valor::util::AsStringCompact(PhysParamId_t p)
     case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu"; break; // uncorrelated in the past
       //
 
+#endif //if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+     
       // NEW XSEC
     case ( kNuisXSecRPA               ) : return "f_rpa";          break;
 

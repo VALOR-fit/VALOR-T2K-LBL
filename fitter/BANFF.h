@@ -95,14 +95,13 @@ public:
   const TMatrixD & RHCCovMatrixInv            (void) const { return *fRHCCovMtrxInv;    }
 
   // NEW FLUX FHC+RHC
-  //const TVectorD & FHCpRHCBestFitValues       (void) const { return *fFHCpRHCBestFitValues; }
+  const TVectorD & FHCpRHCBestFitValues       (void) const { return *fFHCpRHCBestFitValues; } // NEW FHC+RHC JOINT (NEW)
   const TMatrixD & FHCpRHCCovMatrix           (void) const { return *fFHCpRHCCovMtrx;       }
   const TMatrixD & FHCpRHCCovMatrixInv        (void) const { return *fFHCpRHCCovMtrxInv;    }
   
   const TVectorD & SampleBestFitValues          (void) const;
   const TMatrixD & SampleCovMatrix              (void) const;
-  const TMatrixD & SampleCovMatrixInv           (void) const;
-  
+  const TMatrixD & SampleCovMatrixInv           (void) const;  
   //
 
   // Systematic variations (wrt the best-fit BANFF params)

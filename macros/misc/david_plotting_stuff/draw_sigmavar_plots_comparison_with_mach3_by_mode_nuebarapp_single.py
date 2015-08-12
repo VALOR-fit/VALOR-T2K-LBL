@@ -29,33 +29,33 @@ variations = [ ("p1","p1"),
                ("m1","n1"),
                ("m3","n3") ]
 
-mach3_current = "" #"anu_"
+mach3_current = "anu_" #"anu_"
 mach3_selection_1 = m3selection #"sknumu"
 
 parameters = [
 
 
 
-  ( 'f_banffmaqe'          ,  'xsec_par_0'  ) ,
+  ( 'f_banffmaqe_fhc_rhc'          ,  'xsec_par_0'  ) ,
 
   #(                             ,  'xsec_par_1'  ) ,       # pF carbon
   #(                             ,  'xsec_par_2'  ) ,       # MEC carbon
   #(                             ,  'xsec_par_3'  ) ,       # Eb carbon
 
-  ( 'f_banffpfermi'        ,  'xsec_par_4'  ) ,
-  ( 'f_banffmec'           ,  'xsec_par_5'  ) ,
-  ( 'f_banffbindE'         ,  'xsec_par_6'  ) ,
-  ( 'f_banffca5'           ,  'xsec_par_7'  ) ,
-  ( 'f_banffmares'         ,  'xsec_par_8'  ) ,
-  ( 'f_banffbgres'         ,  'xsec_par_9'  ) ,
-  ( 'f_banffnorm_nuetonumu',  'xsec_par_10' ) ,
-  ( 'f_banffshapeCCoth'    ,  'xsec_par_11' ) ,
+  ( 'f_banffpfermi_fhc_rhc'        ,  'xsec_par_4'  ) ,
+  ( 'f_banffmec_fhc_rhc'           ,  'xsec_par_5'  ) ,
+  ( 'f_banffbindE_fhc_rhc'         ,  'xsec_par_6'  ) ,
+  ( 'f_banffca5_fhc_rhc'           ,  'xsec_par_7'  ) ,
+  ( 'f_banffmares_fhc_rhc'         ,  'xsec_par_8'  ) ,
+  ( 'f_banffbgres_fhc_rhc'         ,  'xsec_par_9'  ) ,
+  ( 'f_banffnorm_nuetonumu_fhc_rhc',  'xsec_par_10' ) ,
+  ( 'f_banffshapeCCoth_fhc_rhc'    ,  'xsec_par_11' ) ,
 
   #(                            ,  'xsec_par_12' ) ,       # CCcoh carbon
 
-  ( 'f_banffnorm_cccoh'    ,  'xsec_par_13' ) ,
-  ( 'f_banffnorm_nccoh'    ,  'xsec_par_14' ) ,
-  ( 'f_banffnorm_ncoth'    ,  'xsec_par_15' ) ,
+  ( 'f_banffnorm_cccoh_fhc_rhc'    ,  'xsec_par_13' ) ,
+  ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_14' ) ,
+  ( 'f_banffnorm_ncoth_fhc_rhc'    ,  'xsec_par_15' ) ,
 
   #(                            ,  'xsec_par_16' ) ,
   #(                            ,  'xsec_par_17' ) ,
@@ -192,7 +192,7 @@ parameters = [
   ( 'f_skdetfsi004_rhc',  'skdet_par_34') ,
   ( 'f_skdetfsi005_rhc',  'skdet_par_35') ,
 
-  ( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
+  #( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
   ]
 
 modes = [

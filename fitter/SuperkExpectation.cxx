@@ -1156,24 +1156,25 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
   else
   if(systematic.find("banff") != string::npos) {
 
-    // NEW FHC+RHC JOINT
+    // NEW FHC+RHC JOINT 
     if(systematic.find("rhc")!=string::npos && systematic.find("fhc")!=string::npos){
       cerr << endl;
       cerr << "SuperkExpectation::TweakSystematicLegacy" << endl;
       cerr << "Tweak FHC and RHC BANFF systematic separately, if w/o correlations" << endl;
       exit(1);
     }
-    //
     
-    bool is_rhc = systematic.find("rhc") != string::npos;
-    if(is_rhc) {
-      const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
-      TVectorD twkv(this->GetBANFF()->RHCBestFitValues());
+    // NEW FHC+RHC JOINT (NEW)
+    
+    else if(systematic.find("fhc_rhc")!=string::npos){
+      
+      const int nbanff = conv::kNumOfFHCpRHCParamsInBANFFfit;
+      TVectorD twkv(this->GetBANFF()->FHCpRHCBestFitValues());
       if(!best_banff) {
         for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
       }
       PhysParamId_t p = util::PhysParamIdFromString(systematic);
-      int ip = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);
+      int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(p);
       if(ip < 0) {
         cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
         exit(1);
@@ -1185,32 +1186,64 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
            << endl;
       util::PrintCompact(twkv);
 #endif
-      this->GetBANFF()->TweakRHC(true,&twkv);
-    }//is_rhc
+      this->GetBANFF()->TweakFHCpRHC(true,&twkv);
+
+      //
+
+    }
+    
     else {
-      const int nbanff = conv::kNumOfParamsInBANFFfit;
-      TVectorD twkv(this->GetBANFF()->BestFitValues());
-      if(!best_banff) {
-        for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
-      }
 
-      PhysParamId_t p = util::PhysParamIdFromString(systematic);
-      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
-      if(ip < 0) {
-        cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
-        exit(1);
-      }
-      twkv[ip] = twkdial;
-
+      bool is_rhc = systematic.find("rhc") != string::npos;
+      if(is_rhc) {
+	const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
+	TVectorD twkv(this->GetBANFF()->RHCBestFitValues());
+	if(!best_banff) {
+	  for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+	}
+	PhysParamId_t p = util::PhysParamIdFromString(systematic);
+	int ip = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);
+	if(ip < 0) {
+	  cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+	  exit(1);
+	}
+	twkv[ip] = twkdial;
 #ifdef __show_syst_tweak_debug__
-      cout << "Exp >> Tweaking systematic string: " << systematic
-           << ", NuisParam: " << util::AsString(p)
-           << endl;
-      util::PrintCompact(twkv);
+	cout << "Exp >> Tweaking systematic string: " << systematic
+	     << ", NuisParam: " << util::AsString(p)
+	     << endl;
+	util::PrintCompact(twkv);
 #endif
-      this->GetBANFF()->Tweak(true,&twkv);
-    }//!is_rhc
+	this->GetBANFF()->TweakRHC(true,&twkv);
+      }//is_rhc
+      else {
+	const int nbanff = conv::kNumOfParamsInBANFFfit;
+	TVectorD twkv(this->GetBANFF()->BestFitValues());
+	if(!best_banff) {
+	  for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+	}
+	
+	PhysParamId_t p = util::PhysParamIdFromString(systematic);
+	int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
+	if(ip < 0) {
+	  cerr << "Exp >> Unknown systematic parameter (" << systematic << ")" << endl;
+	  exit(1);
+	}
+	twkv[ip] = twkdial;
+	
+#ifdef __show_syst_tweak_debug__
+	cout << "Exp >> Tweaking systematic string: " << systematic
+	     << ", NuisParam: " << util::AsString(p)
+	     << endl;
+	util::PrintCompact(twkv);
+#endif
+	this->GetBANFF()->Tweak(true,&twkv);
+      }//!is_rhc
+
+    }
   }//banff
+  
+  
 
   //
   // XSec
@@ -1333,14 +1366,33 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
 
   // tweak an individual FSI parameter (ignores correlations, debug)
   else if(util::IsSKDetFSI(p)) {
-   
+
     bool is_rhc = util::IsRHCSystematic(p);
-    /// NEW MULTIRING 2
     bool is_fhc = util::IsFHCSystematic(p);
     bool is_multiring = util::IsMultiRingSystematic(p);
-    ///
+   
+
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+
+    // NEW 2D TEMPLATES (NEW)
+
+    const int nskdetfsi = conv::kNumOfFHCpRHCSKDetFSIParams;
+    TVectorD twkv(nskdetfsi);
+    for (int ib = 0; ib < nskdetfsi; ib++) { twkv[ib] = 1; }
   
-    /// NEW MULTIRING 2
+    int ip = util::ArrIdx::Instance()->FHCpRHCSKDetFSISystIdx(p);
+    if(ip < 0) {
+      cerr << "Exp >> Unknown systematic parameter (" << util::AsString(p) << ")" << endl;
+      exit(1);
+    }
+    twkv[ip] = twkdial;
+
+    cout << "ip = " << ip << " - twkdial = " << twkdial << " - twkv[ip] = " << twkv[ip] << endl;
+    this->GetSuperkDetectorFSI()->TweakFHCpRHC(true,&twkv);  
+
+    //
+#else
+
     int nskdetfsi = 0;
     if(is_rhc)
       nskdetfsi = conv::kNumOfRHCSKDetFSIParams;
@@ -1356,20 +1408,19 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
     }
     int ip = 0;
     
-    /// NEW MULTIRING 2
     if (is_rhc)      ip = p-kListOfRHCSKDetFSIParams[0];
     else if (is_fhc) ip = p-kListOfSKDetFSIParams[0];
     else             ip = p-kListOfMultiRingSKDetFSIParams[0];
-    ///
-  
+    
     assert(ip >=0 && ip<twkv.GetNoElements());
     twkv[ip]=twkdial;
 
-     /// NEW MULTIRING 2
     if (is_rhc)      this->GetSuperkDetectorFSI()->TweakRHC(true,&twkv);
     else if (is_fhc) this->GetSuperkDetectorFSI()->Tweak(true,&twkv);
     else             this->GetSuperkDetectorFSI()->TweakMultiRing(true,&twkv);
-    ///
+    
+#endif
+
 
   }//skdetfsi
     
@@ -1379,6 +1430,28 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
   
   // tweak an individual BANFF parameter (ignores correlations, debug)
   else if(util::IsBANFF(p)) {
+
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+    
+    // NEW FHC+RHC JOINT (NEW)
+
+    bool best_banff = opt && string(opt).find("best_banff")!=string::npos;
+    const int nbanff = conv::kNumOfFHCpRHCParamsInBANFFfit;
+    TVectorD twkv(this->GetBANFF()->FHCpRHCBestFitValues());
+    if(!best_banff) {
+      for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
+    }
+    int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(p);
+    if(ip < 0) {
+      cerr << "Exp >> Unknown systematic parameter (" << util::AsString(p) << ")" << endl;
+      exit(1);
+    }
+    twkv[ip] = twkdial;
+    this->GetBANFF()->TweakFHCpRHC(true,&twkv);  
+    //
+    
+#else
+  
     bool best_banff = opt && string(opt).find("best_banff")!=string::npos;
     bool is_rhc = util::IsRHCSystematic(p);
     if(is_rhc) {
@@ -1409,7 +1482,11 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
       twkv[ip] = twkdial;
       this->GetBANFF()->Tweak(true,&twkv);
     }//!is_rhc
+
+#endif // if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+
   }//banff
+
 
   //
   // XSec

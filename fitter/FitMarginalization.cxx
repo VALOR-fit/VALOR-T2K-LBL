@@ -186,6 +186,18 @@ FitMarginalization::FitMarginalization()
   fnerecobins = 0;
   fToyMargVArray = 0;
   fToyMargVArray_Clone = 0;
+
+  // NEW 2D TEMPLATES
+  fToyMargVArray_1Rmu = 0;
+  fToyMargVArray_1Re = 0;
+  fToyMargVArray_RHC1Rmu = 0;
+  fToyMargVArray_RHC1Re = 0;
+  fToyMargVArray_Clone_1Rmu = 0;
+  fToyMargVArray_Clone_1Re = 0;
+  fToyMargVArray_Clone_RHC1Rmu = 0;
+  fToyMargVArray_Clone_RHC1Re = 0;
+  //
+
   for(int i=0;i<conv::kns;i++) fhToyMargCurr[i] = 0;
   fMaxSampleErecoBins = 0;
 
@@ -3838,15 +3850,6 @@ void FitMarginalization::SetRethrowSystUnphysical(bool dorethrow){
   return;
 }
 //________________________________________________________________________________________
-
-
-
-
-
-// SONO ARRIVATO QUI
-
-
-
 void FitMarginalization::MergeInputFiles(){
 
   // Initialize the clone VALORArray only the first time MergeInputFiles() is called
@@ -4019,6 +4022,14 @@ void FitMarginalization::MergeInputFiles(){
   
   return;
 }
+
+
+
+// SONO ARRIVATO QUI
+
+
+
+
 
 //________________________________________________________________________________________
 void FitMarginalization::SetNSKsamples(){

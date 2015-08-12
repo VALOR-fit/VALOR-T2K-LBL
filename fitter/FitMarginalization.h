@@ -397,8 +397,21 @@ class FitMarginalization
   int fNSKsamples;
   VALORArrayI *fnerecobins;
   VALORArrayI *fsksamples; // pointer of SuperkSample_t doesn't work. Then use kSKSamples[]
+  
   VALORArrayF *fToyMargVArray;
   VALORArrayF *fToyMargVArray_Clone;
+  
+  // NEW 2D TEMPLATES
+  VALORArrayF *fToyMargVArray_1Rmu;
+  VALORArrayF *fToyMargVArray_1Re;
+  VALORArrayF *fToyMargVArray_RHC1Rmu;
+  VALORArrayF *fToyMargVArray_RHC1Re;
+  VALORArrayF *fToyMargVArray_Clone_1Rmu;
+  VALORArrayF *fToyMargVArray_Clone_1Re;
+  VALORArrayF *fToyMargVArray_Clone_RHC1Rmu;
+  VALORArrayF *fToyMargVArray_Clone_RHC1Re;
+  //
+  
   TH1F *fhToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
   int fMaxSampleErecoBins;
 
@@ -458,7 +471,7 @@ class FitMarginalization
   int fStep;
   int fStartBin_X;
   int fStartBin_Y;
-  int fNumStartBin_X;
+  int fNumStartBin_X; 
   int fNumStartBin_Y;
 
   string fExtractStartPt;
