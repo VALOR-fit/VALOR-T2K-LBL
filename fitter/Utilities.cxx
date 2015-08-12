@@ -988,6 +988,12 @@ void valor::util::ArrIdx::Init(void)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
+     if(s != (SuperkSample_t)is) {
+       cerr << "SuperkSample " << (int)s << " " << util::AsString(s)
+	    << " is at the wrong position " << is << " in kSKSamples"
+	    << endl;
+       exit(-1);
+     }
      fSuperkSampleIdx [s] = is;
 #ifdef __show_arr_idx_mesg_debug__
      cout << "Util/ArrIdx >> Sample: " 

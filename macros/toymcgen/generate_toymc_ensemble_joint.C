@@ -16,6 +16,8 @@
 #include "Utilities.h"
 #include "Binning.h"
 #include "Utilities/UtlXML.h"
+#include "Conventions/PhysHypothesisId.h"
+#include "Conventions/Opt.h"
 
 #include "Build.h"
 
@@ -31,112 +33,15 @@
 #include <sstream>
 #include <fstream>
 
-#ifndef __USE_2D_TEMPLATES__ //1D templates
-void AddExtraEventsToHist(TH1D * h, string * full_points_to_add);
-void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH1D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
-#else //2D templates
-void AddExtraEventsToHist(TH2D * h, string * full_points_to_add);
-void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
-#endif
-string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra);
+using namespace std;
+using namespace valor;
+using namespace valor::conv;
 
-void generate_toymc_ensemble_joint
-(
- const char * tag                     = "toymc_numudisap",                        /* */
- //const char * tag                     = "toymc_FHCpRHCpMultiRing",                        /* */
- //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_ResultsRun1to4_IH",                        /* */
- //const char * tag                     = "toymc_FHCpRHC_DataRun1to4_MCRun5and6_Run1to4_IH",                        /* */
- //const char * tag                     = "toymc_FHCpRHC_MCRun1to6_th13DB_NH",                        /* */
-
- int          run                     = 0,                              /* */
- double       nexperiments            = 1,                             /* number of toy-MC expts to generate */
- const char * hypothesis              = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
-
- double       input_mixing12          = -99, //0.306, //-999,                            /* 12-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
- double       input_mixing13          = -99, //0.0252, //-99, //0.02146 , // 0.0251,    /* 13-mixing, sinq2theta or sinsqtheta depending on config choice, if -999 then randomize  */
- double       input_mixing23          = -99, //0.533, //-99, //0.50,   // 0.513                         /* 23-mixing, sinq2theta or sinsqtheta depending on config choice */
- double       input_deltacp           = -99, //0.0,//-1.5707963,                            /* deltacp, if -999 then randomize */
- double       input_dm12sq            = -99, //7.58E-5,   //-999,                            /* Dm^2_{12}, if -999 then randomize */
- double       input_dm23sq            = -99, //2.481E-3, //-99, //2.32E-3,                            /* |Dm^2_{23}| */
- 
- //const char * config_file      = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
- const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
-
- bool rethrow_if_parameters_unphysical = true, // rethrow unphysical toys
-
-  bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
-  int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
-
-  bool         save_in_xml_format      = true,                           /* also save in txt format */
-  bool         save_in_root_format     = true,                           /* */  
-  const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_1Re_RHC   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_MultiRmu  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  const char * points_to_add_MultiRe   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
-  //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
-  const char * xml_file_to_add         = 0,           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
-  bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
-  const char * dmsqscheme              = "auto",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
-  const char * hierarchy               = "normal",                       /* normal or inverted */
-  const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
-  const char * mixparamoctant          = "one"                           /* one==kNuOctantOne two==kNuOctantTwo */
-)
+string SysThrowIdToString(int tweak_systematics)
 {
-  using namespace std;
-  using namespace valor;
-  using namespace valor::conv;
-  
-  TRandom3 rand(0);
-
-  TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
-  TH1D * h_1 = new TH1D ("h_1", "h_1", 100, 0, 10);
-  TH1D * h_2 = new TH1D ("h_2","h_2", 100, 0, 10);
-  TH1D * h_3 = new TH1D ("h_3","h_3", 100, 0, 10);
-  TH1D * h_4 = new TH1D ("h_4","h_4", 100, 0, 10);
-  TH2D * h_4_Escale = new TH2D ("h_4_Escale","h_4_Escale", 100, -5, 5, 100, 0, 10);
-
-  // Analysis configuration
-  const char * config = (new string(Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file)))->c_str();
-
-  // Global options
-  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
-  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
-  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
-  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
-  if(Opt::Instance()->Undefined()) {
-    cerr << "Global options not defined correctly. Exiting..." << endl;
-    cerr << *Opt::Instance() << endl;
-    exit(1);
-  }
-
-  // Check whether some osc. params need to be randomized
-  bool randomize_mixing12      = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
-  bool randomize_mixing13      = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
-  bool randomize_mixing23      = (TMath::Abs(input_mixing23 + 999) < kASmallNum);
-  bool randomize_deltacp       = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
-  bool randomize_dm12sq        = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
-  bool randomize_dm23sq        = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
-
-
-  //Set to defaults
-  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
-    if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsq2Theta13;
-    if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsq2Theta23;
-    if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsq2Theta12;
-  }
-  else {
-    if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsqTheta13;
-    if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsqTheta23;
-    if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsqTheta12;
-  }
-  if(input_dm23sq < -1 && input_dm23sq > -900)  input_dm23sq = conv::kGlobFitDm23sq;
-  if(input_dm12sq < -1 && input_dm12sq > -900)  input_dm12sq = conv::kGlobFitDm12sq;
-  if(input_deltacp < -90 && input_deltacp > -900) input_deltacp = conv::kGlobFitDeltaCP;
-
-  string tweak_sys_str = "None";
-  switch(tweak_systematics) {
+  string tweak_sys_str;
+  switch(tweak_systematics)
+    {
     case(0):
       tweak_sys_str = "None"; break;
     case(1):
@@ -156,8 +61,382 @@ void generate_toymc_ensemble_joint
     case(8):
       tweak_sys_str = "SK+FSI"; break;
     default:
-      tweak_sys_str = "None";
+      cerr << "SysThrowIdToString() tweak_systematics = " << tweak_systematics
+	   << " not implemented" << endl;
+      exit(-1);
+    }
+  return tweak_sys_str;
+}
+
+void PerformSysThrow(int tweak_systematics, SuperkExpectation * skexp, bool print = true)
+{
+  if(tweak_systematics == 0) {
+    return;
   }
+  else if(tweak_systematics == 1) {
+    // tweak all sources of systematic err (gaussian err)
+    cout << "- Randomizing all systematic params in pdf..." << endl;
+    skexp->TweakAllSystematics();
+    // skexp->TweakSystematic("sk_energy_scale",0.0,true);
+  }
+  else if(tweak_systematics == 2) {
+    // special tweak, increasing numu flux parameters <700MeV by 5%
+    cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
+    TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+    twkv[0] += 0.05;
+    twkv[1] += 0.05;
+    twkv[2] += 0.05;
+    twkv[3] += 0.05;
+    skexp->GetBANFF()->Tweak(true,&twkv);
+  }
+  else if(tweak_systematics == 3) {
+    cout << "- Randomizing all but SK systematic params in pdf..." << endl;
+    skexp->TweakAllBANFFSystematics();
+    skexp->TweakAllUncorrelatedXSecSystematics();
+  }
+  else if(tweak_systematics == 4) {
+    cout << "- Setting xsec_norm_nc1piC to -0.5" << endl;
+    skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
+  }
+  else if(tweak_systematics == 5) {
+    cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
+    TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+    twkv[6]  += 0.15;
+    twkv[7]  += 0.15;
+    twkv[8]  += 0.15;
+    twkv[9]  += 0.15;
+    twkv[10] += 0.15;
+    twkv[14] += 0.15;
+    twkv[15] += 0.15;
+    skexp->GetBANFF()->Tweak(true,&twkv);
+  }
+  else if(tweak_systematics == 6) {
+    cout << "- Randomizing all BANFF systematic params in pdf..." << endl;
+    skexp->TweakAllBANFFSystematics();
+  }
+  else if(tweak_systematics == 7) {
+    cout << "- Randomizing all uncorrelated cross section systematic params in pdf..." << endl;
+    skexp->TweakAllUncorrelatedXSecSystematics();
+  }
+  else if(tweak_systematics == 8) {
+    cout << "- Randomizing all SK+FSI systematic params in pdf..." << endl;
+    skexp->TweakAllSKDetectorFSISystematics();
+  }
+  else {
+    cerr << "PerformSysThrow() tweak_systematics = " << tweak_systematics
+	 << " not implemented" << endl;
+    exit(-1);
+  }
+  if(print)
+    skexp->PrintSystematicVariations();
+}
+
+const char * FormFilePath(const char * file, const char * dir)
+{
+  return  (new string(Form("%s/%s/%s", gSystem->Getenv("T2KOSCANA"), dir, file)))->c_str();
+}
+
+void SetGlobalOptions(const char * dmsqscheme, const char * hierarchy, const char * mixparamchoice, const char * mixparamoctant, const char * cpvchoice)
+{
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(mixparamoctant);
+  Opt::Instance()->gOscDeltaCP           = util::CPVChoiceFromString(cpvchoice);
+  if(Opt::Instance()->Undefined()) {
+    cerr << "Global options not defined correctly. Exiting..." << endl;
+    cerr << *Opt::Instance() << endl;
+    exit(1);
+  }
+  cout << *Opt::Instance() << endl;
+}
+
+void RandomizeOscParams(double& input_mixing12_nh, double& input_mixing13_nh, double& input_mixing23_nh,
+			double& input_deltacp_nh,  double& input_dm12sq_nh,   double& input_dm23sq_nh,
+			bool randomize_mixing12_nh, bool randomize_mixing13_nh, bool randomize_mixing23_nh,
+			bool randomize_deltacp_nh,  bool randomize_dm12sq_nh,   bool randomize_dm23sq_nh,
+			double& input_beta_bar, bool randomize_beta_bar,
+			double& input_mixing12_ih, double& input_mixing13_ih, double& input_mixing23_ih,
+			double& input_deltacp_ih,  double& input_dm12sq_ih,   double& input_dm23sq_ih,
+			bool randomize_mixing12_ih, bool randomize_mixing13_ih, bool randomize_mixing23_ih,
+			bool randomize_deltacp_ih,  bool randomize_dm12sq_ih,   bool randomize_dm23sq_ih
+			)
+{
+  if (randomize_mixing12_nh) { input_mixing12_nh = util::RandomizeMixing12(); }
+  if (randomize_mixing13_nh) { input_mixing13_nh = util::RandomizeMixing13(); }
+  if (randomize_mixing23_nh) { input_mixing23_nh = util::RandomizeMixing23(); }
+  if (randomize_deltacp_nh ) { input_deltacp_nh  = util::RandomizeCPV();      }
+  if (randomize_dm12sq_nh  ) { input_dm12sq_nh   = util::RandomizeDm12sq();   }
+  if (randomize_dm23sq_nh  ) { input_dm23sq_nh   = util::RandomizeDm23sq();   }
+
+  if (randomize_beta_bar   ) { input_beta_bar    = util::RandomizeBetaBar();  }
+
+  if (randomize_mixing12_ih) { input_mixing12_ih = util::RandomizeMixing12(); }
+  if (randomize_mixing13_ih) { input_mixing13_ih = util::RandomizeMixing13(); }
+  if (randomize_mixing23_ih) { input_mixing23_ih = util::RandomizeMixing23(); }
+  if (randomize_deltacp_ih ) { input_deltacp_ih  = util::RandomizeCPV();      }
+  if (randomize_dm12sq_ih  ) { input_dm12sq_ih   = util::RandomizeDm12sq();   }
+  if (randomize_dm23sq_ih  ) { input_dm23sq_ih   = util::RandomizeDm23sq();   }
+}
+
+void SetOscParams(PhysHypothesis& ph,
+		  double input_mixing12_used, double input_mixing13_used, double input_mixing23_used,
+		  double input_deltacp_used,  double input_dm12sq_used,   double input_dm23sq_used,
+		  double input_beta_bar_used,
+		  bool print = true
+		  )
+{
+  if(ph.Hypothesis() == kHypNuMuDisapp2F) {
+       ph.SetCurrValue(kPhypMixing23,  input_mixing23_used);
+       ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
+  }
+  else if(ph.Hypothesis() == kHypOsc3F) {  
+    ph.SetCurrValue(kPhypMixing12,  input_mixing12_used);
+    ph.SetCurrValue(kPhypMixing13,  input_mixing13_used);
+    ph.SetCurrValue(kPhypMixing23,  input_mixing23_used);
+    ph.SetCurrValue(kPhypCPV    ,   input_deltacp_used);
+    ph.SetCurrValue(kPhypDm12sq,    input_dm12sq_used);
+    ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
+  }
+  else if(ph.Hypothesis() == kHypOsc3FBar) {
+    ph.SetCurrValue(kPhypMixing12,  input_mixing12_used);
+    ph.SetCurrValue(kPhypMixing13,  input_mixing13_used);
+    ph.SetCurrValue(kPhypMixing23,  input_mixing23_used);
+    ph.SetCurrValue(kPhypCPV    ,   input_deltacp_used);
+    ph.SetCurrValue(kPhypDm12sq,    input_dm12sq_used);
+    ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
+       
+    ph.SetCurrValue(kPhypMixing12Bar,  input_mixing12_used);
+    ph.SetCurrValue(kPhypMixing13Bar,  input_mixing13_used);
+    ph.SetCurrValue(kPhypMixing23Bar,  input_mixing23_used);
+    ph.SetCurrValue(kPhypCPVBar    ,   input_deltacp_used);
+    ph.SetCurrValue(kPhypDm12sqBar,    input_dm12sq_used);
+    ph.SetCurrValue(kPhypDm23sqBar,    input_dm23sq_used);
+  }
+  else if(ph.Hypothesis() == kHypOsc3FNormBar) {
+    ph.SetCurrValue(kPhypMixing12,  input_mixing12_used);
+    ph.SetCurrValue(kPhypMixing13,  input_mixing13_used);
+    ph.SetCurrValue(kPhypMixing23,  input_mixing23_used);
+    ph.SetCurrValue(kPhypCPV    ,   input_deltacp_used);
+    ph.SetCurrValue(kPhypDm12sq,    input_dm12sq_used);
+    ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
+       
+    ph.SetCurrValue(kPhypBetaBar,    input_beta_bar_used);
+  }
+  else if(ph.Hypothesis() == kHypOsc3FBarNormBar) {
+    ph.SetCurrValue(kPhypMixing12,  input_mixing12_used);
+    ph.SetCurrValue(kPhypMixing13,  input_mixing13_used);
+    ph.SetCurrValue(kPhypMixing23,  input_mixing23_used);
+    ph.SetCurrValue(kPhypCPV    ,   input_deltacp_used);
+    ph.SetCurrValue(kPhypDm12sq,    input_dm12sq_used);
+    ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
+       
+    ph.SetCurrValue(kPhypMixing12Bar,  input_mixing12_used);
+    ph.SetCurrValue(kPhypMixing13Bar,  input_mixing13_used);
+    ph.SetCurrValue(kPhypMixing23Bar,  input_mixing23_used);
+    ph.SetCurrValue(kPhypCPVBar    ,   input_deltacp_used);
+    ph.SetCurrValue(kPhypDm12sqBar,    input_dm12sq_used);
+    ph.SetCurrValue(kPhypDm23sqBar,    input_dm23sq_used);
+       
+    ph.SetCurrValue(kPhypBetaBar,    input_beta_bar_used);
+  }
+  else {
+    cout << "SetOscParams() " << util::AsString(ph.Hypothesis()) << " not implemented" << endl;
+    exit(1);
+  }
+  if(print)
+    cout << "- Physics hypothesis set: " << ph << endl;
+}
+
+void SetOscParamOptions(PhysHypothesis_t hyp,
+			double& input_mixing12_nh, double& input_mixing13_nh, double& input_mixing23_nh,
+			double& input_deltacp_nh,  double& input_dm12sq_nh,   double& input_dm23sq_nh,
+			bool& randomize_mixing12_nh, bool& randomize_mixing13_nh, bool& randomize_mixing23_nh,
+			bool& randomize_deltacp_nh,  bool& randomize_dm12sq_nh,   bool& randomize_dm23sq_nh,
+			double& input_beta_bar, bool& randomize_beta_bar,
+			double& input_mixing12_ih, double& input_mixing13_ih, double& input_mixing23_ih,
+			double& input_deltacp_ih,  double& input_dm12sq_ih,   double& input_dm23sq_ih,
+			bool& randomize_mixing12_ih, bool& randomize_mixing13_ih, bool& randomize_mixing23_ih,
+			bool& randomize_deltacp_ih,  bool& randomize_dm12sq_ih,   bool& randomize_dm23sq_ih
+			)
+{
+  // Check whether some osc. params need to be randomized
+  //NH
+  randomize_mixing12_nh = (TMath::Abs(input_mixing12_nh + 999) < kASmallNum);
+  randomize_mixing13_nh = (TMath::Abs(input_mixing13_nh + 999) < kASmallNum);
+  randomize_mixing23_nh = (TMath::Abs(input_mixing23_nh + 999) < kASmallNum);
+  randomize_deltacp_nh  = (TMath::Abs(input_deltacp_nh  + 999) < kASmallNum);
+  randomize_dm12sq_nh   = (TMath::Abs(input_dm12sq_nh   + 999) < kASmallNum);
+  randomize_dm23sq_nh   = (TMath::Abs(input_dm23sq_nh   + 999) < kASmallNum);
+  //IH
+  randomize_mixing12_ih = (TMath::Abs(input_mixing12_ih + 999) < kASmallNum);
+  randomize_mixing13_ih = (TMath::Abs(input_mixing13_ih + 999) < kASmallNum);
+  randomize_mixing23_ih = (TMath::Abs(input_mixing23_ih + 999) < kASmallNum);
+  randomize_deltacp_ih  = (TMath::Abs(input_deltacp_ih  + 999) < kASmallNum);
+  randomize_dm12sq_ih   = (TMath::Abs(input_dm12sq_ih   + 999) < kASmallNum);
+  randomize_dm23sq_ih   = (TMath::Abs(input_dm23sq_ih   + 999) < kASmallNum);
+  //Beta bar
+  randomize_beta_bar    = (TMath::Abs(input_beta_bar    + 999) < kASmallNum);
+
+  //Set to defaults
+  //NH
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13_nh < -1 && input_mixing13_nh > -900) input_mixing13_nh = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23_nh < -1 && input_mixing23_nh > -900) input_mixing23_nh = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12_nh < -1 && input_mixing12_nh > -900) input_mixing12_nh = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13_nh < -1 && input_mixing13_nh > -900) input_mixing13_nh = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23_nh < -1 && input_mixing23_nh > -900) input_mixing23_nh = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12_nh < -1 && input_mixing12_nh > -900) input_mixing12_nh = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq_nh < -1 && input_dm23sq_nh > -900)  input_dm23sq_nh = conv::kGlobFitDm23sq;
+  if(input_dm12sq_nh < -1 && input_dm12sq_nh > -900)  input_dm12sq_nh = conv::kGlobFitDm12sq;
+  if(input_deltacp_nh < -90 && input_deltacp_nh > -900) input_deltacp_nh = conv::kGlobFitDeltaCP;
+  //IH
+  if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
+    if(input_mixing13_ih < -1 && input_mixing13_ih > -900) input_mixing13_ih = conv::kGlobFitSinsq2Theta13;
+    if(input_mixing23_ih < -1 && input_mixing23_ih > -900) input_mixing23_ih = conv::kGlobFitSinsq2Theta23;
+    if(input_mixing12_ih < -1 && input_mixing12_ih > -900) input_mixing12_ih = conv::kGlobFitSinsq2Theta12;
+  }
+  else {
+    if(input_mixing13_ih < -1 && input_mixing13_ih > -900) input_mixing13_ih = conv::kGlobFitSinsqTheta13;
+    if(input_mixing23_ih < -1 && input_mixing23_ih > -900) input_mixing23_ih = conv::kGlobFitSinsqTheta23;
+    if(input_mixing12_ih < -1 && input_mixing12_ih > -900) input_mixing12_ih = conv::kGlobFitSinsqTheta12;
+  }
+  if(input_dm23sq_ih < -1 && input_dm23sq_ih > -900)  input_dm23sq_ih = conv::kGlobFitDm23sq;
+  if(input_dm12sq_ih < -1 && input_dm12sq_ih > -900)  input_dm12sq_ih = conv::kGlobFitDm12sq;
+  if(input_deltacp_ih < -90 && input_deltacp_ih > -900) input_deltacp_ih = conv::kGlobFitDeltaCP;
+  //Beta bar
+  if(input_beta_bar < -90 && input_beta_bar > -900) input_beta_bar = conv::kGlobFitBetaBar;
+
+  cout << "   - True oscillation parameters: " << endl;
+  cout << "       > " << util::AsString(kPhypMixing12) << " = "; ((randomize_mixing12_nh) ? cout << "* randomized *" : cout << input_mixing12_nh) << endl;
+  cout << "       > " << util::AsString(kPhypMixing13) << " = "; ((randomize_mixing13_nh) ? cout << "* randomized *" : cout << input_mixing13_nh) << endl;
+  cout << "       > " << util::AsString(kPhypMixing23) << " = "; ((randomize_mixing23_nh) ? cout << "* randomized *" : cout << input_mixing23_nh) << endl;
+  cout << "       > " << util::AsString(kPhypCPV    )  << " = "; ((randomize_deltacp_nh)  ? cout << "* randomized *" : cout << input_deltacp_nh)  << endl;
+  cout << "       > " << util::AsString(kPhypDm12sq)   << " = "; ((randomize_dm12sq_nh)   ? cout << "* randomized *" : cout << input_dm12sq_nh )  << " eV^2/c^4" << endl;
+  cout << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((randomize_dm23sq_nh)   ? cout << "* randomized *" : cout << input_dm23sq_nh )  << " eV^2/c^4" << endl;
+  if(hyp == kHypOsc3FBar || hyp == kHypOsc3FBarNormBar) {
+    cout << "       > " << util::AsString(kPhypMixing12) << " = "; ((randomize_mixing12_ih) ? cout << "* randomized *" : cout << input_mixing12_ih) << endl;
+    cout << "       > " << util::AsString(kPhypMixing13) << " = "; ((randomize_mixing13_ih) ? cout << "* randomized *" : cout << input_mixing13_ih) << endl;
+    cout << "       > " << util::AsString(kPhypMixing23) << " = "; ((randomize_mixing23_ih) ? cout << "* randomized *" : cout << input_mixing23_ih) << endl;
+    cout << "       > " << util::AsString(kPhypCPV    )  << " = "; ((randomize_deltacp_ih)  ? cout << "* randomized *" : cout << input_deltacp_ih)  << endl;
+    cout << "       > " << util::AsString(kPhypDm12sq)   << " = "; ((randomize_dm12sq_ih)   ? cout << "* randomized *" : cout << input_dm12sq_ih )  << " eV^2/c^4" << endl;
+    cout << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((randomize_dm23sq_ih)   ? cout << "* randomized *" : cout << input_dm23sq_ih )  << " eV^2/c^4" << endl;
+  }
+  if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FNormBar)
+    cout << "       > " << util::AsString(kPhypBetaBar)  << " = "; ((randomize_beta_bar)    ? cout << "* randomized *" : cout << input_beta_bar) << endl;
+}
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+void AddExtraEventsToHist(TH1D * h, string * full_points_to_add);
+void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH1D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
+#else //2D templates
+void AddExtraEventsToHist(TH2D * h, string * full_points_to_add);
+void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
+#endif
+string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra);
+
+void generate_toymc_ensemble_joint
+(
+ const char * tag                     = "toymc_numudisap",                        /* */
+ int          run                     = 0,                              /* */
+ double       first_experiment        = 0,                
+ double       last_experiment         = 0,
+ const char * hypothesis              = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
+
+ double       input_mixing12_nh       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing13_nh       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing23_nh       = -99,   //conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_deltacp_nh        = -99,   //conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
+ double       input_dm12sq_nh         = -99,    /* Dm^2_{12},  */
+ double       input_dm23sq_nh         = -99,   //conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
+ double       input_mixing12_ih       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing13_ih       = -99,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_mixing23_ih       = -99,   //conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
+ double       input_deltacp_ih        = -99,   //conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, if -999 then randomize */
+ double       input_dm12sq_ih         = -99,    /* Dm^2_{12},  */
+ double       input_dm23sq_ih         = -99,   //conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}|, if -999 then randomize */
+ double       input_beta_bar          = -99,
+ 
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+
+ bool rethrow_if_parameters_unphysical = true, // rethrow unphysical toys
+
+ bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
+ int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
+ bool         printsystvariation      = true,                           /* cout the skexp tweaks */
+
+ bool         save_in_xml_format      = true,                           /* also save in txt format */
+ bool         save_in_root_format     = true,                           /* */  
+ const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_1Re_RHC   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_MultiRmu  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ const char * points_to_add_MultiRe   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
+ //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
+ const char * xml_file_to_add         = 0,           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
+ bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
+ const char * dmsqscheme              = "auto",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * hierarchy               = "normal",                       /* normal or inverted */
+ const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
+ const char * mixparamoctant          = "one",                          /* one==kNuOctantOne two==kNuOctantTwo */
+ const char * cpvphase                = "delta"                         /* delta==kNuDeltaCPPhase sindelta==kNuDeltaCPSin */
+ )
+{
+  TRandom3 rand(0);
+
+  TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
+  TH1D * h_1 = new TH1D ("h_1", "h_1", 100, 0, 10);
+  TH1D * h_2 = new TH1D ("h_2","h_2", 100, 0, 10);
+  TH1D * h_3 = new TH1D ("h_3","h_3", 100, 0, 10);
+  TH1D * h_4 = new TH1D ("h_4","h_4", 100, 0, 10);
+  TH2D * h_4_Escale = new TH2D ("h_4_Escale","h_4_Escale", 100, -5, 5, 100, 0, 10);
+
+  // Analysis configuration file
+  const char * config = FormFilePath(config_file, "config");
+
+  // Systematic tweak mode (as string)
+  string tweak_sys_str = SysThrowIdToString(tweak_systematics);
+
+  // Defined # of experiments
+  double nexperiments = last_experiment - first_experiment + 1; 
+
+  // Print out job summary
+  cout << "\n[Job inputs]" << endl;
+  cout << "- Job: " << tag << "/" << run << endl;
+  cout << "- Input physics hypothesis: " << hypothesis << endl;
+  cout << "- Toy-MC generation" << endl;
+  cout << "   - Number of toy experiments: " << nexperiments << endl;
+  cout << "   - Randomize systematics : "      << tweak_sys_str << endl;
+  cout << "   - Rethrow unphysical : " << ((rethrow_if_parameters_unphysical) ? "YES " : "NO") << endl;
+  cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ? "YES " : "NO") << endl;
+  cout << "- Outputs" << endl;
+  cout << "     - Storing toy-MC expts in XML format: "   << ((save_in_xml_format) ?   "YES " : "NO") << endl;
+  cout << "     - Storing toy-MC expts in ROOT format:  " << ((save_in_root_format) ?  "YES " : "NO") << endl;
+
+  // Global options
+  SetGlobalOptions(dmsqscheme, hierarchy, mixparamchoice, mixparamoctant, cpvphase);
+
+  // Set input osc params to defaults, or set them to be randomised
+  bool randomize_mixing12_nh, randomize_mixing13_nh, randomize_mixing23_nh;
+  bool randomize_deltacp_nh, randomize_dm12sq_nh, randomize_dm23sq_nh;
+  bool randomize_beta_bar;
+  bool randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih;
+  bool randomize_deltacp_ih, randomize_dm12sq_ih, randomize_dm23sq_ih;
+  SetOscParamOptions(util::PhysHypFromString(hypothesis),
+		     input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
+		     input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
+		     randomize_mixing12_nh, randomize_mixing13_nh, randomize_mixing23_nh,
+		     randomize_deltacp_nh,  randomize_dm12sq_nh,   randomize_dm23sq_nh,
+		     input_beta_bar, randomize_beta_bar,
+		     input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
+		     input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
+		     randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih,
+		     randomize_deltacp_ih,  randomize_dm12sq_ih,   randomize_dm23sq_ih		     
+		     );
   
   string * full_points_to_add_1Rmu     = 0;
   string * full_points_to_add_1Re      = 0;
@@ -186,7 +465,7 @@ void generate_toymc_ensemble_joint
     full_points_to_add_1Re_RHC  = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingELike,   points_to_add_1Re_RHC);
     full_points_to_add_MultiRmu = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingMuLike, points_to_add_MultiRmu);
     full_points_to_add_MultiRe  = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingELike,  points_to_add_MultiRe);
-  }
+  }//xml_file_to_add
   else {
     if (points_to_add_1Rmu    ) full_points_to_add_1Rmu     = new string(points_to_add_1Rmu    );
     if (points_to_add_1Re     ) full_points_to_add_1Re      = new string(points_to_add_1Re     );
@@ -194,25 +473,7 @@ void generate_toymc_ensemble_joint
     if (points_to_add_1Re_RHC ) full_points_to_add_1Re_RHC  = new string(points_to_add_1Re_RHC );
     if (points_to_add_MultiRmu) full_points_to_add_MultiRmu = new string(points_to_add_MultiRmu);
     if (points_to_add_MultiRe ) full_points_to_add_MultiRe  = new string(points_to_add_MultiRe );
-  }
-
-  // Print out job summary
-  cout << "\n[Job inputs]" << endl;
-  cout << "- Job: " << tag << "/" << run << endl;
-  cout << "- Reading analysis configuration from: " << config << endl;
-  cout << "- Input physics hypothesis: " << hypothesis << endl;
-  cout << "- Toy-MC generation" << endl;
-  cout << "   - Number of toy experiments: " << nexperiments << endl;
-  cout << "   - Randomize systematics : "      << tweak_sys_str << endl;
-  cout << "   - Rethrow unphysical : " << ((rethrow_if_parameters_unphysical) ? "YES " : "NO") << endl;
-  cout << "   - Statistical fluctuations: "    << ((stat_fluctuations) ? "YES " : "NO") << endl;
-  cout << "   - True oscillation parameters: " << endl;
-  cout << "       > " << util::AsString(kPhypMixing12) << " = "; ((randomize_mixing12) ? cout << "* randomized *" : cout << input_mixing12) << endl;
-  cout << "       > " << util::AsString(kPhypMixing13) << " = "; ((randomize_mixing13) ? cout << "* randomized *" : cout << input_mixing13) << endl;
-  cout << "       > " << util::AsString(kPhypMixing23) << " = "; ((randomize_mixing23) ? cout << "* randomized *" : cout << input_mixing23) << endl;
-  cout << "       > " << util::AsString(kPhypCPV    )  << " = "; ((randomize_deltacp)  ? cout << "* randomized *" : cout << input_deltacp)  << endl;
-  cout << "       > " << util::AsString(kPhypDm12sq)   << " = "; ((randomize_dm12sq)   ? cout << "* randomized *" : cout << input_dm12sq )  << " eV^2/c^4" << endl;
-  cout << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((randomize_dm23sq)   ? cout << "* randomized *" : cout << input_dm23sq )  << " eV^2/c^4" << endl;
+  }//!xml_file_to_add
   cout << "   - Adding the following data-points in each toy-MC expt: " << endl;
   cout << "    For 1R mu-like: "     << ((full_points_to_add_1Rmu)     ? *full_points_to_add_1Rmu     : "*None*") << endl;
   cout << "    For 1R e-like: "      << ((full_points_to_add_1Re)      ? *full_points_to_add_1Re      : "*None*") << endl;
@@ -220,11 +481,7 @@ void generate_toymc_ensemble_joint
   cout << "    For 1R e-like RHC: "  << ((full_points_to_add_1Re_RHC)  ? *full_points_to_add_1Re_RHC  : "*None*") << endl;
   cout << "    For MultiR mu-like: " << ((full_points_to_add_MultiRmu) ? *full_points_to_add_MultiRmu : "*None*") << endl;
   cout << "    For MultiR e-like: "  << ((full_points_to_add_MultiRe)  ? *full_points_to_add_MultiRe  : "*None*") << endl;
-  cout << "- Outputs" << endl;
-  cout << "     - Storing toy-MC expts in XML format: "   << ((save_in_xml_format) ?   "YES " : "NO") << endl;
-  cout << "     - Storing toy-MC expts in ROOT format:  " << ((save_in_root_format) ?  "YES " : "NO") << endl;
   cout << endl;
-  cout << *Opt::Instance() << endl;
 
   // Open files
   TFile * f = 0;
@@ -255,8 +512,7 @@ void generate_toymc_ensemble_joint
   skexp->Read(config);
 
   int weird = 0;
-  for(int iexperiment=0; iexperiment < nexperiments; iexperiment++) {
-
+  for(int iexperiment=first_experiment; iexperiment <= last_experiment; iexperiment++) {
      cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
      // Generate mock data
@@ -264,90 +520,35 @@ void generate_toymc_ensemble_joint
      SuperkObservation * skobs = new SuperkObservation;
      PhysHypothesis ph(hypothesis);
 
+     // Randomize specified osc params for current toy MC expt
+     RandomizeOscParams(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
+			input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
+			randomize_mixing12_nh, randomize_mixing13_nh, randomize_mixing23_nh,
+			randomize_deltacp_nh,  randomize_dm12sq_nh,   randomize_dm23sq_nh,
+			input_beta_bar, randomize_beta_bar,
+			input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
+			input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
+			randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih,
+			randomize_deltacp_ih,  randomize_dm12sq_ih,   randomize_dm23sq_ih		     
+			);
+
+     // Set physics hypothesis
+     //TODO use priors to decide which hierarchy to set to
+     SetOscParams(ph,
+		  input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
+		  input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
+		  input_beta_bar
+		  );
+
+
+
+
+
      bool applied_negevents_condition = true;
      bool unphysical_tweak = true;
      while(applied_negevents_condition || unphysical_tweak) {
 
-       // Randomize specified osc params for current toy MC expt
-       if (randomize_mixing12) { input_mixing12 = util::RandomizeMixing12(); }
-       if (randomize_mixing13) { input_mixing13 = util::RandomizeMixing13(); }
-       if (randomize_mixing23) { input_mixing23 = util::RandomizeMixing23(); }
-       if (randomize_deltacp ) { input_deltacp  = util::RandomizeCPV();       }
-       if (randomize_dm12sq  ) { input_dm12sq   = util::RandomizeDm12sq();        }
-       if (randomize_dm23sq  ) { input_dm23sq   = util::RandomizeDm23sq();        }
-
-       // Set physics hypothesis
-       if(ph.Hypothesis() == kHypNuMuDisapp2F) {
-         ph.SetCurrValue(kPhypMixing23,  input_mixing23);
-         ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
-       }
-       else if(ph.Hypothesis() == kHypOsc3F) {  
-         ph.SetCurrValue(kPhypMixing12,  input_mixing12);
-         ph.SetCurrValue(kPhypMixing13,  input_mixing13);
-         ph.SetCurrValue(kPhypMixing23,  input_mixing23);
-         ph.SetCurrValue(kPhypCPV    ,   input_deltacp);
-         ph.SetCurrValue(kPhypDm12sq,    input_dm12sq);
-         ph.SetCurrValue(kPhypDm23sq,    input_dm23sq);
-       }
-
-       cout << "- Physics hypothesis set: " << ph << endl;
-
-       if(tweak_systematics == 1) {
-         // tweak all sources of systematic err (gaussian err)
-         cout << "- Randomizing all systematic params in pdf..." << endl;
-         skexp->TweakAllSystematics();
-         //         skexp->TweakSystematic("sk_energy_scale",0.0,true);
-         skexp->PrintSystematicVariations();
-       }
-       else if(tweak_systematics == 2) {
-         // special tweak, increasing numu flux parameters <700MeV by 5%
-         cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
-         TVectorD twkv(skexp->GetBANFF()->BestFitValues());
-         twkv[0] += 0.05;
-         twkv[1] += 0.05;
-         twkv[2] += 0.05;
-         twkv[3] += 0.05;
-         skexp->GetBANFF()->Tweak(true,&twkv);
-         skexp->PrintSystematicVariations();
-       }
-       else if(tweak_systematics == 3) {
-         cout << "- Randomizing all but SK systematic params in pdf..." << endl;
-         skexp->TweakAllBANFFSystematics();
-         skexp->TweakAllUncorrelatedXSecSystematics();
-         skexp->PrintSystematicVariations();
-       }
-       else if(tweak_systematics == 4) {
-         skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
-         skexp->PrintSystematicVariations();
-       }
-       else if(tweak_systematics == 5) {
-         cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
-         TVectorD twkv(skexp->GetBANFF()->BestFitValues());
-         twkv[6]  += 0.15;
-         twkv[7]  += 0.15;
-         twkv[8]  += 0.15;
-         twkv[9]  += 0.15;
-         twkv[10] += 0.15;
-         twkv[14] += 0.15;
-         twkv[15] += 0.15;
-         skexp->GetBANFF()->Tweak(true,&twkv);
-         skexp->PrintSystematicVariations();
-       }
-       else if(tweak_systematics == 6) {
-         cout << "- Randomizing all BANFF systematic params in pdf..." << endl;
-         skexp->TweakAllBANFFSystematics();
-         skexp->PrintSystematicVariations();
-       }
-       else if(tweak_systematics == 7) {
-         cout << "- Randomizing all uncorrelated cross section systematic params in pdf..." << endl;
-         skexp->TweakAllUncorrelatedXSecSystematics();
-         skexp->PrintSystematicVariations();
-       }
-       else if(tweak_systematics == 8) {
-         cout << "- Randomizing all SK+FSI systematic params in pdf..." << endl;
-         skexp->TweakAllSKDetectorFSISystematics();
-         skexp->PrintSystematicVariations();
-       }
+       PerformSysThrow(tweak_systematics, skexp, printsystvariation);
 
        // Rethrow unphysical parameters
        PhysParamList true_nuisance_params = skexp->Tweaks();
@@ -535,10 +736,6 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH1D * h, valor::conv::Sup
 void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand)
 #endif
 {
-  using namespace std;
-  using namespace valor;
-  using namespace valor::conv;
-
   ftxt << util::AsStringCompact(s) << ":" << endl;
   fxml << "        <" << util::GetXMLDatasetName(s) << ">" << endl;
   fxml << "          <" << util::GetXMLDatasetParamsName() << ">" << endl;
@@ -633,10 +830,6 @@ void AddExtraEventsToHist(TH1D * h, string * full_points_to_add)
 void AddExtraEventsToHist(TH2D * h, string * full_points_to_add)
 #endif
 {
-  using namespace std;
-  using namespace valor;
-  using namespace valor::conv;
-
   if(full_points_to_add) {
 #ifndef __USE_2D_TEMPLATES__ //1D templates
     vector<string> vecp = util::Tokens(*full_points_to_add, ",");
@@ -658,10 +851,7 @@ void AddExtraEventsToHist(TH2D * h, string * full_points_to_add)
 
 string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra)
 {
-  using namespace std;
-  using namespace valor;
-  using namespace valor::conv;
-
+#ifndef __USE_2D_TEMPLATES__ //1D templates
   string sxml = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring/ereco_values");
   string * sout = new string(sxml);
   if(!sextra.empty()) {
@@ -669,4 +859,8 @@ string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_n
     sout->append(sextra);
   }
   return sout;
+#else
+  cerr << "TODO - implement ConstructPointsToAddFromXML() in 2D" << endl;
+  exit(-1);
+#endif
 }
