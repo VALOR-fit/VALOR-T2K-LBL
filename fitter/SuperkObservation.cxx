@@ -203,9 +203,9 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 	datanodetmp << datanode.str();
 	datanodetmp << "/ev" << iev;
 	if(util::NodeExists(xml,root_node,datanodetmp.str())) {
-	  vector<double> values = util::XML2DblArray(xml,root_node,datanodetmp.str());
-	  double Ereco = values.at(0);
-	  double Q2    = values.at(1);
+	  pair<double,double> values = util::XML2DblDblPair(xml,root_node,datanodetmp.str());
+	  double Ereco = values.first;
+	  double Q2    = values.second;
 #ifdef __show_read_events_mesg_debug__
 	  cout << "Obs >> Read: event " << iev
 	       << " " << f2DDistrArray[is]->GetDimensionName(0) << " = " << Ereco

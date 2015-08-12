@@ -42,7 +42,7 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH1D * h, valor::conv::Sup
 void AddExtraEventsToHist(TH2D * h, string * full_points_to_add);
 void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
 #endif
-string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra);
+string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string & sextra, int datasetid);
 
 void generate_toymc_ensemble
 (
@@ -76,14 +76,14 @@ void generate_toymc_ensemble
 
  bool         save_in_xml_format      = true,                           /* also save in txt format */
  bool         save_in_root_format     = true,                           /* */  
- const char * points_to_add_1Rmu      = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
- const char * points_to_add_1Re       = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
- const char * points_to_add_1Rmu_RHC  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
- const char * points_to_add_1Re_RHC   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
- const char * points_to_add_MultiRmu  = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
- const char * points_to_add_MultiRe   = 0,                              /* comma separated-list of data-points to add, eg when creating hybrid data/toy-MC experiments */
- //const char * xml_file_to_add         = "data_newstruct.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
- const char * xml_file_to_add         = 0,           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml. Always uses set 0 */
+ string       points_to_add_1Rmu      = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+ string       points_to_add_1Re       = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+ string       points_to_add_1Rmu_RHC  = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+ string       points_to_add_1Re_RHC   = "10:10,20:20",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+ string       points_to_add_MultiRmu  = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+ string       points_to_add_MultiRe   = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+ const char * xml_file_to_add         = "toymc_numudisap-0.xml",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml */
+ const int    xml_to_add_dataset_id   = 0,           /* the dataset ID of the xml file to add values from */
  bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
  const char * dmsqscheme              = "auto",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy               = "normal",                       /* normal or inverted */
@@ -132,6 +132,7 @@ void generate_toymc_ensemble
   bool randomize_beta_bar;
   bool randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih;
   bool randomize_deltacp_ih, randomize_dm12sq_ih, randomize_dm23sq_ih;
+
   util::SetOscParamOptions(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
 			   input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
 			   randomize_mixing12_nh, randomize_mixing13_nh, randomize_mixing23_nh,
@@ -142,17 +143,14 @@ void generate_toymc_ensemble
 			   randomize_mixing12_ih, randomize_mixing13_ih, randomize_mixing23_ih,
 			   randomize_deltacp_ih,  randomize_dm12sq_ih,   randomize_dm23sq_ih		     
 			   );
-
-  string * full_points_to_add[kns] = { 0,0,0,0,0,0 };
   
+  string * full_points_to_add[kns] = { 0,0,0,0,0,0 };
+
   // Are we adding events from an XML file?
   if (xml_file_to_add) {
-    cerr << "xml_file_to_add needs testing (and not yet implemented for 2D templates)" << endl;
-    exit(-1);
-
     TXMLEngine xml;
     
-    const char * xml_path = util::FormFilePath(xml_file_to_add, gSystem->Getenv("T2KOSCANA"));
+    const char * xml_path = util::FormFilePath(xml_file_to_add, "inputs");
     XMLDocPointer_t xmldoc = xml.ParseFile(xml_path);
     if (xmldoc == 0) {
       cerr << "Can not parse XML file to add: " << xml_path << endl;
@@ -160,20 +158,20 @@ void generate_toymc_ensemble
     }
     XMLNodePointer_t root_node = xml.DocGetRootElement(xmldoc);
 
-    full_points_to_add[0] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingMuLike,     points_to_add_1Rmu);
-    full_points_to_add[1] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingELike,      points_to_add_1Re);
-    full_points_to_add[2] = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingMuLike,  points_to_add_1Rmu_RHC);
-    full_points_to_add[3] = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingELike,   points_to_add_1Re_RHC);
-    full_points_to_add[4] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingMuLike, points_to_add_MultiRmu);
-    full_points_to_add[5] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingELike,  points_to_add_MultiRe);
+    full_points_to_add[0] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingMuLike,     points_to_add_1Rmu,     xml_to_add_dataset_id);
+    full_points_to_add[1] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFV1RingELike,      points_to_add_1Re,      xml_to_add_dataset_id);
+    full_points_to_add[2] = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingMuLike,  points_to_add_1Rmu_RHC, xml_to_add_dataset_id);
+    full_points_to_add[3] = ConstructPointsToAddFromXML(xml, root_node, kSKsRHCFCFV1RingELike,   points_to_add_1Re_RHC,  xml_to_add_dataset_id);
+    full_points_to_add[4] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingMuLike, points_to_add_MultiRmu, xml_to_add_dataset_id);
+    full_points_to_add[5] = ConstructPointsToAddFromXML(xml, root_node, kSKsFCFVMultiRingELike,  points_to_add_MultiRe,  xml_to_add_dataset_id);
   }//xml_file_to_add
   else {
-    if (points_to_add_1Rmu    ) full_points_to_add[0] = new string(points_to_add_1Rmu    );
-    if (points_to_add_1Re     ) full_points_to_add[1] = new string(points_to_add_1Re     );
-    if (points_to_add_1Rmu_RHC) full_points_to_add[2] = new string(points_to_add_1Rmu_RHC);
-    if (points_to_add_1Re_RHC ) full_points_to_add[3] = new string(points_to_add_1Re_RHC );
-    if (points_to_add_MultiRmu) full_points_to_add[4] = new string(points_to_add_MultiRmu);
-    if (points_to_add_MultiRe ) full_points_to_add[5] = new string(points_to_add_MultiRe );
+    if ( ! points_to_add_1Rmu.empty()     ) full_points_to_add[0] = new string(points_to_add_1Rmu    );
+    if ( ! points_to_add_1Re.empty()      ) full_points_to_add[1] = new string(points_to_add_1Re     );
+    if ( ! points_to_add_1Rmu_RHC.empty() ) full_points_to_add[2] = new string(points_to_add_1Rmu_RHC);
+    if ( ! points_to_add_1Re_RHC.empty()  ) full_points_to_add[3] = new string(points_to_add_1Re_RHC );
+    if ( ! points_to_add_MultiRmu.empty() ) full_points_to_add[4] = new string(points_to_add_MultiRmu);
+    if ( ! points_to_add_MultiRe.empty()  ) full_points_to_add[5] = new string(points_to_add_MultiRe );
   }//!xml_file_to_add
   cout << "   - Adding the following data-points in each toy-MC expt: " << endl;
   for(int is = 0; is < kns; is++) {
@@ -182,7 +180,7 @@ void generate_toymc_ensemble
     cout << "    For " << util::AsStringCompact(s) << "\t" << ((full_points_to_add[is]) ? *full_points_to_add[is] : "*None*") << endl;
   }//is
   cout << endl;
-
+  
   // Open files
   TFile * f = 0;
   if(save_in_root_format) {
@@ -339,7 +337,7 @@ void generate_toymc_ensemble
 
   }//iexperiment
 
-  cerr << "Warning h_0, h_1, ... have not been filled (what are they?!)" << endl;
+  cerr << "Warning h_0, h_1, ... have not been filled (what are they for?!)" << endl;
   h_0->Write();
   h_1->Write();
   h_2->Write();
@@ -398,7 +396,7 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::Sup
   }//ibin
   // add extra data-points, if any
   if(full_points_to_add) {
-    fxml << ",\n"<<endl; // should really have an XML comment here but TXMLEngine won't let us.
+    fxml << ",\n" << endl; // should really have an XML comment here but TXMLEngine won't let us.
     fxml << *full_points_to_add;
     ftxt << "," << *full_points_to_add;
   }
@@ -434,7 +432,7 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::Sup
   }//ibinx
   // add extra data-points, if any
   if(full_points_to_add) {
-    fxml << ",\n" << endl; // should really have an XML comment here but TXMLEngine won't let us.
+    fxml << endl; // should really have an XML comment here but TXMLEngine won't let us.
     vector<string> vecpairs = util::Tokens(*full_points_to_add,",");
     assert(vecpairs.size()>0);
     for(unsigned int ipair = 0; ipair < vecpairs.size(); ipair++) {
@@ -483,18 +481,33 @@ void AddExtraEventsToHist(TH2D * h, string * full_points_to_add)
   }//full_points_to_add
 }
 
-string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra)
+string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string & sextra, int datasetid)
 {
+  if(util::ArrIdx::Instance()->SuperkSampleIdx(s) == -1)
+    return 0;
 #ifndef __USE_2D_TEMPLATES__ //1D templates
-  string sxml = util::XML2String(&xml, root_node, "superk/observation/data_set_0/one_mu_ring/ereco_values");
+  string sxml = util::XML2String(&xml, root_node, Form("superk/observation/data_set_%d/%s/ereco_values", datasetid, util::GetXMLMCTreeName(s).c_str()));
   string * sout = new string(sxml);
   if(!sextra.empty()) {
     sout->append(",");
     sout->append(sextra);
   }
-  return sout;
 #else
-  cerr << "TODO - implement ConstructPointsToAddFromXML() in 2D" << endl;
-  exit(-1);
+  int nevents = util::XML2Int(&xml, root_node, Form("superk/observation/data_set_%d/%s/%s/nevents",
+						    datasetid, util::GetXMLMCTreeName(s).c_str(), util::GetXMLDatasetParamsName().c_str()));
+  string * sout = new string();
+  for(int iev = 0; iev < nevents; iev++) {
+    if(iev != 0)
+      sout->append(", ");
+    string sxml = util::XML2String(&xml, root_node, Form("superk/observation/data_set_%d/%s/%s/ev%d",
+							 datasetid, util::GetXMLMCTreeName(s).c_str(), util::GetXMLDatasetParamsName().c_str(), iev));
+    std::replace(sxml.begin(), sxml.end(), ',', ':');
+    sout->append(sxml);
+  }//iev
+  if(!sextra.empty()) {
+    sout->append(", ");
+    sout->append(sextra);
+  }
 #endif
+  return sout;
 }
