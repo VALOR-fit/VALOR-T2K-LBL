@@ -6,7 +6,7 @@
   \brief     Utilities for macros
 
   \author    Tom Dealtry <t.dealtry \at lancaster.ac.uk>
-  University of Lancaster
+             Lancaster University
           
   \created   Aug 12, 2015
 

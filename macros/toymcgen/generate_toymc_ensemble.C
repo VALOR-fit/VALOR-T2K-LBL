@@ -17,6 +17,7 @@
 
 #include "Build.h"
 #include "UtlForMacros.h"
+#include "Parser.h"
 
 #include "AnalysisOptions.h"
 
@@ -38,6 +39,19 @@ void AddExtraEventsToHist(TH2D * h, string * full_points_to_add);
 void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
 #endif
 string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string & sextra, int datasetid);
+
+class MyParser : public Parser
+{
+public:
+  MyParser() : Parser() { cout << "MyParser constructor" << endl; }
+  ~MyParser() { cout << "MyParser destructor" << endl; }
+};
+
+int main()
+{
+  MyParser * myparser = new MyParser();
+  delete myparser;
+}
 
 void generate_toymc_ensemble
 (
@@ -278,6 +292,7 @@ void generate_toymc_ensemble
 	 unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
 	 if (unphysical_tweak) {
 	   cout << "Parameters are unphysical - rethrowing" << std::endl;
+	   weird++;
 	   continue;
 	 }
        }
@@ -287,6 +302,8 @@ void generate_toymc_ensemble
 
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+       if(applied_negevents_condition)
+	 weird++;
      }//applied_negevents_condition
 
      //Get the spectra
@@ -393,6 +410,13 @@ void generate_toymc_ensemble
     f->Close();
     delete f;
   }//f
+
+  cout << endl 
+       << " - Summary - " << endl
+       << "    * Created " << nexperiments << " toys" << endl
+       << "    * " << weird << " weird things happened"
+       << " (applied_negevents_condition or unphysical_tweaks)" << endl 
+       << endl;
 }
 
 
@@ -416,7 +440,7 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::Sup
     double Nb   = h->GetBinContent (ibin); // number of events in this Ereco bin
     double Emin = h->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
     double Emax = h->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
-    double Ecent = h->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
+    //double Ecent = h->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
     for(int iev = 0; iev < Nb; iev++) {
       double E = Emin + rand.Uniform() * (Emax - Emin);
       if(ievtot > 0) {
@@ -444,12 +468,12 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::Sup
   for(int ibinx = 1; ibinx <= h->GetNbinsX(); ibinx++) {
     double Xmin  = h->GetXaxis()->GetBinLowEdge(ibinx); // X bin min
     double Xmax  = h->GetXaxis()->GetBinUpEdge (ibinx); // X bin max
-    double Xcent = h->GetXaxis()->GetBinCenter (ibinx); // X bin center
+    //double Xcent = h->GetXaxis()->GetBinCenter (ibinx); // X bin center
     for(int ibiny = 1; ibiny <= h->GetNbinsY(); ibiny++) {
       double Nb    = h->GetBinContent (ibinx, ibiny); // number of events in this bin
       double Ymin  = h->GetYaxis()->GetBinLowEdge(ibiny); // Y bin min
       double Ymax  = h->GetYaxis()->GetBinUpEdge (ibiny); // Y bin max
-      double Ycent = h->GetYaxis()->GetBinCenter (ibiny); // Y bin center
+      //double Ycent = h->GetYaxis()->GetBinCenter (ibiny); // Y bin center
       for(int iev = 0; iev < Nb; iev++) {
 	double X = Xmin + rand.Uniform() * (Xmax - Xmin);
 	double Y = Ymin + rand.Uniform() * (Ymax - Ymin);
