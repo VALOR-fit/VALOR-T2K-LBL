@@ -23,7 +23,7 @@ void Check_toys_marginalization_readbinary
 
  const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
 
- const char * sk_sample = "1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
  const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
 
@@ -45,11 +45,13 @@ void Check_toys_marginalization_readbinary
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename = "PROVA_SystAll",
+ const char * infilename = "submit_prova_TemplVArray",
+ //const char * infilename = "PROVA_SystAll_TemplVArray",
+ //const char * infilename = "PROVA_SystAll",
  //const char * infilename = "PROVA_SystOsc",
  //const char * infilename = "PROVA_NoSyst",
 
- const int    nfiles               = 1,         // # of files to read
+ const int    nfiles               = 12, // 1         // # of files to read
 
  const int    NtoysMarg            = 2, //500,   // # toys marginalization 
 
@@ -433,9 +435,16 @@ void Check_toys_marginalization_readbinary
 
     cout << "# of events = " << h_marg_toy->Integral() << endl;
     
+    double NNormPOT = fitmarg->GetNormPOT(s);
+    double NPOT = fitmarg->GetPOT(s);
+    //cout << "NNormPOT = " << NNormPOT << endl;
+    //cout << "NPOT = " << NPOT << endl;
+
     for(int i=1;i<=util::NumErecoBins(s);i++){
       h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
+      //cout << h_marg_toy->GetBinContent(i) / NNormPOT << " "; // normalized to # 1x10^20 POT
     }
+    //cout << endl;
 	
     //store Nsk
     double nskint = h_marg_toy->Integral();

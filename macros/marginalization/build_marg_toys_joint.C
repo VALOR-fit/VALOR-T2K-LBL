@@ -25,7 +25,8 @@ void build_marg_toys_joint
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "PROVA_SystAll",
+ const char * tag                  = "PROVA_SystAll_TemplVArray",
+ //const char * tag                  = "PROVA_SystAll",
  //const char * tag                  = "PROVA_SystOsc",
  //const char * tag                  = "PROVA_NoSyst",
  

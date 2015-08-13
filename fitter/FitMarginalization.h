@@ -129,6 +129,12 @@ class FitMarginalization
   const double GetMaxOscParam(conv::PhysParamId_t physpar) const;
   //
 
+
+  // NEW 2D TEMPLATES (VARRAY)
+  const double GetNormPOT(conv::SuperkSample_t s);
+  const double GetPOT(conv::SuperkSample_t s);
+  //
+
   void PrintPhysHypothesis(void);
 
   bool IsFit2D(){ return fIsFit2D;}
@@ -184,7 +190,13 @@ class FitMarginalization
 
   VALORArrayF * GetToyMargVArray()             {return fToyMargVArray;};
   const VALORArrayF * GetToyMargVArray() const {return fToyMargVArray;};
-  
+
+
+  // NEW 2D TEMPLATES (VARRAY)
+  VALORArrayF * GetToyMargVArraySample(conv::SuperkSample_t s);
+  VALORArrayF * GetToyMargVArraySample_Clone(conv::SuperkSample_t s);
+  //
+
   TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); 
   
   // NEW 2D TEMPLATES
@@ -398,10 +410,9 @@ class FitMarginalization
   VALORArrayI *fnerecobins;
   VALORArrayI *fsksamples; // pointer of SuperkSample_t doesn't work. Then use kSKSamples[]
   
-  VALORArrayF *fToyMargVArray;
-  VALORArrayF *fToyMargVArray_Clone;
-  
-  // NEW 2D TEMPLATES
+  // NEW 2D TEMPLATES (VARRAY)
+  VALORArrayF *fToyMargVArray; // TO REMOVE
+  VALORArrayF *fToyMargVArray_Clone; // TO REMOVE
   VALORArrayF *fToyMargVArray_1Rmu;
   VALORArrayF *fToyMargVArray_1Re;
   VALORArrayF *fToyMargVArray_RHC1Rmu;

@@ -84,7 +84,7 @@ void run_fit_marginalization_readbinary_joint_2d
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
- const char * fit_param_list        = "nuosc3f+nuisance", // dcp
+ const char * fit_param_list        = "nuosc3f+nuisance", // dcp 
  //const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
  
  const char * dmsqscheme               = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -98,11 +98,14 @@ void run_fit_marginalization_readbinary_joint_2d
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_NH_StatOnly_Mach3T2KReactRun14/joint_dcp_NH_StatOnly",             // Stat-only (Mach3 T2K+react)
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_MH_10kToys/joint_dcp_react_constrall_MH_10kToys",            // Stat+Syst (T2K+react)
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_t2konly_MH_10kToys/joint_dcp_t2konly_constrall_MH_10kToys",        // Stat+Syst (T2K only)
+ //const char * infilename = "submit_prova_TemplVArray",
+ const char * infilename = "submit_prova_TemplVArray_Merged",
  //const char * infilename = "submit_prova",
  //const char * infilename = "submit_prova_Merged",
- const char * infilename = "PROVA_SystAll",
-
- const int    nfiles               = 1, //12, //12, //6, //201, 21, 1        // # of files to read
+ //const char * infilename = "PROVA_SystAll",
+ //const char * infilename = "PROVA_SystAll_TemplVArray",
+ 
+ const int    nfiles               = 1, //1, //12, //6, //201, 21, 1        // # of files to read
 
  const int    NtoysMarg            = 2, //500, //10000, //1,  // # toys marginalization 
  

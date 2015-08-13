@@ -23,7 +23,8 @@ void MergeInputFiles(
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "submit_prova",
+ //const char * tag                  = "submit_prova",
+ const char * tag                  = "submit_prova_TemplVArray",
  
  const int    nfiles               = 12, //201,         // # of files to read
 
