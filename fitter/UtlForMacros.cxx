@@ -213,7 +213,8 @@ util::OscParams valor::util::SetOscParamOptions(double input_mixing12_nh, double
   if(input_beta_bar < -90 && input_beta_bar > -900) input_beta_bar = conv::kGlobFitBetaBar;
   //MH
   if(input_mh_nh_prior < -1 && input_mh_nh_prior > -900) input_mh_nh_prior = 0.684; //Mach3
-
+  cerr << "Default value for input_mh_nh_prior is hard coded. This should be moved into the relevant Conventions file" << endl;
+  
   //Set the input values in the OscParams
   //NH
   inputs.mixing12_nh = input_mixing12_nh;
