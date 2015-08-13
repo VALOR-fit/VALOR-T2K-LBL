@@ -4010,20 +4010,24 @@ void FitMarginalization::BuildDefaultPriors(void)
       
       if ( ( fabs(mean -conv::kBadResult) < conv::kAVerySmallNum ) || 
            ( fabs(fracerr-conv::kBadResult) < conv::kAVerySmallNum ) ) {
-        this->SetPrior(p,"flat",badmin,badmax);
+        this->SetPrior_NH(p,"flat",badmin,badmax);
+        this->SetPrior_IH(p,"flat",badmin,badmax);
       }
       else {
         double sigma = fracerr*mean;
         //~ std::cout<<"Setting default prior: "<<util::AsString(p)<<"\tGaus("<<mean<<","<<sigma<<")"<<std::endl;
-        this->SetPrior(p,"gaus",mean,sigma);
+        this->SetPrior_NH(p,"gaus",mean,sigma);
+        this->SetPrior_IH(p,"gaus",mean,sigma);
       }
     }
     else if (util::IsPhase(p)) {
-      this->SetPrior(p,"flat",dcp_min,dcp_max);
+      this->SetPrior_NH(p,"flat",dcp_min,dcp_max);
+      this->SetPrior_IH(p,"flat",dcp_min,dcp_max);
     }
         
     else {
-      this->SetPrior(p,"flat",badmin,badmax);
+      this->SetPrior_NH(p,"flat",badmin,badmax);
+      this->SetPrior_IH(p,"flat",badmin,badmax);
     }
   }
   return;

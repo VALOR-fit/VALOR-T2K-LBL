@@ -203,12 +203,12 @@ class FitMarginalization
   TH2F * GetToyMargHisto2D(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); 
   //
   
-  void SetMargOscParam();
+  // THIS ISN"T IMPLEMENTED ANYMORE! void SetMargOscParam();
   void SetMargOscParam(FitParamList * infparm);
  
-  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
-  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
-  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
+  // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
+  // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
+  // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
   
   void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
   void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
@@ -218,7 +218,7 @@ class FitMarginalization
   void SetPrior_IH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
   //
   
-  std::string GetPrior(conv::PhysParamId_t physpar) const;
+  // THIS ISN"T IMPLEMENTED ANYMORE! std::string GetPrior(conv::PhysParamId_t physpar) const;
   // NEW MARG MH
   std::string GetPrior_NH(conv::PhysParamId_t physpar) const;
   std::string GetPrior_IH(conv::PhysParamId_t physpar) const;
@@ -226,7 +226,7 @@ class FitMarginalization
   
   void BuildDefaultPriors(void);
 
-  double Randomize(conv::PhysParamId_t physpar) const;
+  // THIS ISN"T IMPLEMENTED ANYMORE! double Randomize(conv::PhysParamId_t physpar) const;
   // NEW MARG MH
   double Randomize(conv::PhysParamId_t physpar, FitParamList * infparm) const;
   //
