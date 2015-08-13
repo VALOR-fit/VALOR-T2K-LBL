@@ -66,7 +66,7 @@ void generate_toymc_ensemble
  double       input_prior_prob_nh     = -99,   /* prior probability of normal mass hierarchy. -99 global best fit */
  const bool   doMargMH                = true,  // marginalize Mass Hierarchy?
  
- string       file_priors             = "",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
+ string       file_priors             = "priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
 
  
  const char * config_file             = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
@@ -82,7 +82,7 @@ void generate_toymc_ensemble
  string       points_to_add_1Re_RHC   = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
  string       points_to_add_MultiRmu  = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
  string       points_to_add_MultiRe   = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
- const char * xml_file_to_add         = "",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml */
+ string       xml_file_to_add         = "",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml */
  const int    xml_to_add_dataset_id   = 0,            /* the dataset ID of the xml file to add values from */
  bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
  const char * dmsqscheme              = "auto",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -109,9 +109,8 @@ void generate_toymc_ensemble
 
   //book histograms to save the input choices
   TH1D * hToy_MH = new TH1D("hToy_MH","0-->NH, 1-->IH",2,0,2);
-  hToy_MH->GetXaxis()->SetBinLabel(0, "NH");
-  hToy_MH->GetXaxis()->SetBinLabel(1, "IH");
-  //using [0] = NH, [1] = IH
+  hToy_MH->GetXaxis()->SetBinLabel(1, "NH");
+  hToy_MH->GetXaxis()->SetBinLabel(2, "IH");
   TH2D * hToy_th13_dcp[2] = {0, 0};
   TH2D * hToy_23[2] = {0, 0};
   //and histograms for the priors
@@ -125,7 +124,7 @@ void generate_toymc_ensemble
     UsePrior_th13_dcp = true;
     UsePrior_23 = true;
     const char * file_priors_full_path = util::FormFilePath(file_priors.c_str(), "inputs");
-    //util::GetPriorHists(file_priors_full_path, hPrior_th13_dcp, hPrior_23, hToy_th13_dcp, hToy_23);
+    util::GetPriorHists(file_priors_full_path, hPrior_th13_dcp, hPrior_23, hToy_th13_dcp, hToy_23);
   }
 
   // Analysis configuration file
@@ -158,15 +157,16 @@ void generate_toymc_ensemble
 						       input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
 						       input_beta_bar, 
 						       input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
-						       input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih);
+						       input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
+						       input_prior_prob_nh, doMargMH);
 
   // Extra points to add to the toy dataset(s)
   string * full_points_to_add[kns] = { 0,0,0,0,0,0 };
   // Are we adding events from an XML file?
-  if (xml_file_to_add) {
+  if (!xml_file_to_add.empty()) {
     TXMLEngine xml;
     
-    const char * xml_path = util::FormFilePath(xml_file_to_add, "inputs");
+    const char * xml_path = util::FormFilePath(xml_file_to_add.c_str(), "inputs");
     XMLDocPointer_t xmldoc = xml.ParseFile(xml_path);
     if (xmldoc == 0) {
       cerr << "Can not parse XML file to add: " << xml_path << endl;
@@ -235,7 +235,7 @@ void generate_toymc_ensemble
      PhysHypothesis ph(hypothesis);
 
      // Set the mass hierarchy
-     const int iMH = util::SetMassHierarchy(skexp, doMargMH, input_prior_prob_nh, hToy_MH);
+     util::SetMassHierarchy(skexp, input_osc);
 
      // Randomize specified osc params for current toy MC expt
      util::RandomizeOscParams(input_osc);
@@ -255,18 +255,16 @@ void generate_toymc_ensemble
        hPrior_23[1]->GetRandom2(input_mixing23_ih, input_dm23sq_ih);
 
      // Set physics hypothesis
-     util::SetOscParams(ph, input_osc, iMH);
+     util::SetOscParams(ph, input_osc);
 
      // Save the chosen oscillation parameters
-     // (mass hierarchy is saved above in util::SetMassHierarchy())
-     //double mix12 = ph.CurrValue(kPhypMixing12);
-     double mix13 = ph.CurrValue(kPhypMixing13);
-     double mix23 = ph.CurrValue(kPhypMixing23);
-     //double dm12 = ph.CurrValue(kPhypDm12sq);
-     double dm23 = ph.CurrValue(kPhypDm23sq);
-     double dcp = ph.CurrValue(kPhypCPV);
-     hToy_th13_dcp[iMH]->Fill(mix13,dcp);
-     hToy_23[iMH]->Fill(mix23,dm23);
+     if(hToy_th13_dcp[input_osc.iMH])
+       hToy_th13_dcp[input_osc.iMH]->Fill(ph.CurrValue(kPhypMixing13),
+					  ph.CurrValue(kPhypCPV));
+     if(hToy_23[input_osc.iMH])
+       hToy_23[input_osc.iMH]->Fill(ph.CurrValue(kPhypMixing23),
+				    ph.CurrValue(kPhypDm23sq));
+     hToy_MH->Fill(input_osc.iMH + conv::kASmallNum);
 
      bool applied_negevents_condition = true;
      bool unphysical_tweak = true;
@@ -363,22 +361,6 @@ void generate_toymc_ensemble
 
   }//iexperiment
 
-  cerr << "Warning h_0, h_1, ... have not been filled (what are they for?!)" << endl;
-  h_0->Write();
-  h_1->Write();
-  h_2->Write();
-  h_3->Write();
-  h_4->Write();
-  h_4_Escale->Write();
-
-  for(int im = 0; im < 2; im++) {
-    hPrior_th13_dcp[im]->Write();  
-    hToy_th13_dcp[im]->Write();
-    hPrior_23[im]->Write();
-    hToy_23[im]->Write();
-  }
-  hToy_MH->Write();
-
   //
   // Close files
   //
@@ -389,9 +371,28 @@ void generate_toymc_ensemble
     fxml.close();
   }
   if(f) {
+    cerr << endl << "Warning h_0, h_1, ... have not been filled (what are they for?!)" << endl;
+    h_0->Write();
+    h_1->Write();
+    h_2->Write();
+    h_3->Write();
+    h_4->Write();
+    h_4_Escale->Write();
+
+    for(int im = 0; im < 2; im++) {
+      if(hPrior_th13_dcp[im])
+	hPrior_th13_dcp[im]->Write();  
+      if(hToy_th13_dcp[im])
+	hToy_th13_dcp[im]->Write();
+      if(hPrior_23[im])
+	hPrior_23[im]->Write();
+      if(hToy_23[im])
+	hToy_23[im]->Write();
+    }
+    hToy_MH->Write();
     f->Close();
     delete f;
-  }
+  }//f
 }
 
 

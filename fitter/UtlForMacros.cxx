@@ -157,7 +157,8 @@ util::OscParams valor::util::SetOscParamOptions(double input_mixing12_nh, double
 						double input_dcp_nh,      double input_dm12sq_nh,   double input_dm23sq_nh,
 						double input_beta_bar,
 						double input_mixing12_ih, double input_mixing13_ih, double input_mixing23_ih,
-						double input_dcp_ih,      double input_dm12sq_ih,   double input_dm23sq_ih)
+						double input_dcp_ih,      double input_dm12sq_ih,   double input_dm23sq_ih,
+						double input_mh_nh_prior, bool marginalize_MH)
 {
   util::OscParams inputs;
   
@@ -210,6 +211,8 @@ util::OscParams valor::util::SetOscParamOptions(double input_mixing12_nh, double
   if(input_dcp_ih    < -90 && input_dcp_ih    > -900) input_dcp_ih = conv::kGlobFitDeltaCP;
   //Beta bar
   if(input_beta_bar < -90 && input_beta_bar > -900) input_beta_bar = conv::kGlobFitBetaBar;
+  //MH
+  if(input_mh_nh_prior < -1 && input_mh_nh_prior > -900) input_mh_nh_prior = 0.684; //Mach3
 
   //Set the input values in the OscParams
   //NH
@@ -227,8 +230,12 @@ util::OscParams valor::util::SetOscParamOptions(double input_mixing12_nh, double
   inputs.dm12sq_ih   = input_dm12sq_ih;
   inputs.dm23sq_ih   = input_dm23sq_ih;
   //Other
-  inputs.beta_bar    = input_beta_bar;
-  
+  inputs.beta_bar       = input_beta_bar;
+  inputs.marginalize_mh = marginalize_MH;
+  inputs.mh_nh_prior    = input_mh_nh_prior;
+  inputs.MH             = Opt::Instance()->gMassHierarchyAssumed;
+  inputs.iMH            = (inputs.MH == kNmhNormal) ? 0 : 1;
+
   cout << "   - True oscillation parameters: " << endl;
   cout << "     - Normal ordering: " << endl;
   cout << "       > " << util::AsString(kPhypMixing12) << " = "; ((inputs.randomize_mixing12_nh) ? cout << "* randomized *" : cout << input_mixing12_nh) << endl;
@@ -246,6 +253,7 @@ util::OscParams valor::util::SetOscParamOptions(double input_mixing12_nh, double
   cout << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((inputs.randomize_dm23sq_ih)   ? cout << "* randomized *" : cout << input_dm23sq_ih )  << " eV^2/c^4" << endl;
   cout << "     - Other: " << endl;
   cout << "       > " << util::AsString(kPhypBetaBar)  << " = "; ((inputs.randomize_beta_bar)    ? cout << "* randomized *" : cout << input_beta_bar) << endl;
+  cout << "       > Mass hierarchy = "; ((inputs.marginalize_mh) ? cout << "Margninalized (NH prior = " << inputs.mh_nh_prior << ")" : cout << util::AsString(inputs.MH)) << endl;
 
   return inputs;
 }
@@ -269,14 +277,14 @@ void valor::util::RandomizeOscParams(OscParams & inputs)
   if (inputs.randomize_dm23sq_ih  ) { inputs.dm23sq_ih   = util::RandomizeDm23sq();   }
 }
 //____________________________________________________________________________
-void valor::util::SetOscParams(PhysHypothesis& ph, OscParams inputs, int iMH, bool print)
+void valor::util::SetOscParams(PhysHypothesis& ph, OscParams inputs, bool print)
 {
   double input_mixing12_used, input_mixing13_used, input_mixing23_used;
   double input_dcp_used,      input_dm12sq_used,   input_dm23sq_used;
   double input_beta_bar_used;
 
   //Get the values to use (based on MH)
-  if(iMH == 0) {
+  if(inputs.iMH == 0) {
     //NH
     input_mixing12_used = inputs.mixing12_nh;
     input_mixing13_used = inputs.mixing13_nh;
@@ -285,7 +293,7 @@ void valor::util::SetOscParams(PhysHypothesis& ph, OscParams inputs, int iMH, bo
     input_dm12sq_used   = inputs.dm12sq_nh;
     input_dm23sq_used   = inputs.dm23sq_nh;
   }
-  else if(iMH == 1) {
+  else if(inputs.iMH == 1) {
     //IH
     input_mixing12_used = inputs.mixing12_ih;
     input_mixing13_used = inputs.mixing13_ih;
@@ -295,7 +303,7 @@ void valor::util::SetOscParams(PhysHypothesis& ph, OscParams inputs, int iMH, bo
     input_dm23sq_used   = inputs.dm23sq_ih;
   }
   else {
-    cerr << "SetOscParams has unknown value of iMH: " << iMH << endl;
+    cerr << "SetOscParams has unknown value of iMH: " << inputs.iMH << endl;
     exit(1);
   }
   //Other
@@ -364,59 +372,52 @@ void valor::util::SetOscParams(PhysHypothesis& ph, OscParams inputs, int iMH, bo
     cout << "- Physics hypothesis set: " << ph << endl;
 }
 //____________________________________________________________________________
-int valor::util::SetMassHierarchy(SuperkExpectation * skexp, bool doMargMH, double PriorProbNH, TH1D * hToy_MH)
+void valor::util::SetMassHierarchy(SuperkExpectation * skexp, OscParams & inputs)
 {
-  conv::NuMassHierarchy_t hier;
-     
   //  - iMH=0 --> kNmhNormal
   //  - iMH=1 --> kNmhInverted	
-  int iMH = conv::kBadResult;
 	
   // Don't marginalize Mass Hierarchy. Use the one already set
-  if(!doMargMH) {
-    hier = Opt::Instance()->gMassHierarchyAssumed;
-    if(hier == kNmhNormal)
-      iMH = 0;
-    else if(hier == kNmhInverted)
-      iMH = 1; 
+  if(! inputs.marginalize_mh) {
+    inputs.MH = Opt::Instance()->gMassHierarchyAssumed;
+
+    //convert to int
+    if(inputs.MH == kNmhNormal)
+      inputs.iMH = 0;
+    else if(inputs.MH == kNmhInverted)
+      inputs.iMH = 1; 
     else {
       cerr << "Mass Hierarchy is not undefined" << endl;
       exit(1);
     }
-  }//!doMargMH     
+  }//!marginalize_mh
   // Extract randomly the Mass Hierarchy 
   else {
-    iMH = util::RandomizeMH(PriorProbNH);
-  }
+    inputs.iMH = util::RandomizeMH(inputs.mh_nh_prior);
 
-  //save the choice in a histogram
-  if(hToy_MH)
-    hToy_MH->Fill(iMH+conv::kASmallNum);
-
-  //convert to NuMassHierarchy_t
-  if(iMH == 0)
-    hier = kNmhNormal;
-  else if(iMH == 1)
-    hier = kNmhInverted;
-  else {
-    cerr << "util::SetMassHierarchy() Unknown value of iMH " << iMH << endl;
-    exit(1);
-  }
+    //convert to NuMassHierarchy_t
+    if(inputs.iMH == 0)
+      inputs.MH = kNmhNormal;
+    else if(inputs.iMH == 1)
+      inputs.MH = kNmhInverted;
+    else {
+      cerr << "util::SetMassHierarchy() Unknown value of iMH " << inputs.iMH << endl;
+      exit(1);
+    }
+  }//marginalize_mh
 
   //set the hierarchy
-  Opt::Instance()->gMassHierarchyAssumed = hier;
-  skexp->GetSuperkMC()->SetMassHierarchy(hier);
-  skexp->GetSuperkMC()->SetMassHierarchyBar(hier);
-
-  return iMH;
+  Opt::Instance()->gMassHierarchyAssumed = inputs.MH;
+  skexp->GetSuperkMC()->SetMassHierarchy(inputs.MH);
+  skexp->GetSuperkMC()->SetMassHierarchyBar(inputs.MH);
 }
 //____________________________________________________________________________
-void GetPriorHists(const char * file_priors,
-		   TH2D ** hPrior_th13_dcp, TH2D ** hPrior_23,
-		   TH2D ** hToy_th13_dcp, TH2D ** hToy_23)
+void valor::util::GetPriorHists(const char * file_priors,
+				TH2D ** hPrior_th13_dcp, TH2D ** hPrior_23,
+				TH2D ** hToy_th13_dcp, TH2D ** hToy_23)
 {
   TString name_prior_th13_dcp = "hPrior_th13_dcp_";
-  TString name_prior_23 = "hPrior_L23";
+  TString name_prior_23 = "hPrior_L23_";
   TString name_mh[2];
   name_mh[0] = "nh";
   name_mh[1] = "ih";
@@ -432,14 +433,14 @@ void GetPriorHists(const char * file_priors,
     //theta13 vs deltacp
     string name = Form("%s%s", name_prior_th13_dcp.Data(), name_mh[im].Data());
     fPrior->GetObject(name.c_str(), hPrior_th13_dcp[im]);
-    if(hPrior_th13_dcp[im]->IsZombie() || !hPrior_th13_dcp[im]){
+    if(!hPrior_th13_dcp[im] || hPrior_th13_dcp[im]->IsZombie()){
       cerr << "Error: the histogram " << name << " hasn't been found" << endl;
       exit(1);
     }
     //theta23 vs dm32sq
     name = Form("%s%s", name_prior_23.Data(), name_mh[im].Data());
     fPrior->GetObject(name.c_str(), hPrior_23[im]);
-    if(hPrior_23[im]->IsZombie() || !hPrior_23[im]){
+    if(!hPrior_23[im] || hPrior_23[im]->IsZombie()){
       cerr << "Error: the histogram " << name << " hasn't been found" << endl;
       exit(1);
     }

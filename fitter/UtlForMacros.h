@@ -18,7 +18,8 @@
 #ifndef _valor_macros_utils_h_
 #define _valor_macros_utils_h_
 
-class TH1D;
+#include "Conventions/NuMassHierarchy.h"
+
 class TH2D;
 
 #include <string>
@@ -46,6 +47,9 @@ namespace util {
     double dm23sq_ih;
     //Other
     double beta_bar;
+    double mh_nh_prior;
+    int    iMH;
+    conv::NuMassHierarchy_t MH;
     //Randomize?
     //NH
     bool randomize_mixing12_nh;
@@ -62,7 +66,8 @@ namespace util {
     bool randomize_dm12sq_ih;
     bool randomize_dm23sq_ih;
     //Other
-    bool randomize_beta_bar;    
+    bool randomize_beta_bar;
+    bool marginalize_mh;
   };
   
   // Get the string related to the systematics which are being tweaked
@@ -86,8 +91,8 @@ namespace util {
 			       double input_deltacp_nh,  double input_dm12sq_nh,   double input_dm23sq_nh,
 			       double input_beta_bar,
 			       double input_mixing12_ih, double input_mixing13_ih, double input_mixing23_ih,
-			       double input_deltacp_ih,  double input_dm12sq_ih,   double input_dm23sq_ih
-			       );
+			       double input_deltacp_ih,  double input_dm12sq_ih,   double input_dm23sq_ih,
+			       double mh_nh_prior,       bool marginalize_MH);
 
   // Randomize ALL oscillation parameters (if requested) in a single function
   //  Input values passed by reference, so can be updated
@@ -95,20 +100,19 @@ namespace util {
   
   // Update all the values in the PhysHypothesis, for any 2/3 flavour hypothesis type, in a single function
   //  PhysHypothesis passed by reference, so can be updated
-  void SetOscParams(PhysHypothesis& ph, OscParams inputs, int iMH, bool print = true);
-    
+  void SetOscParams(PhysHypothesis& ph, OscParams inputs, bool print = true);
+
   // Set the mass hierarchy in Opt and SKMC (for both bar & non-bar) using either
   // - the current value in Opt
   // - a prior
-  //  optionally save the chosen value in a histogram
-  int SetMassHierarchy(SuperkExpectation * skexp, bool doMargMH, double PriorProbNH, TH1D * hToy_MH = 0);
+  void SetMassHierarchy(SuperkExpectation * skexp, OscParams & inputs);
 
-    
+  // Get the prior histograms from the file
+  //  and create the 'values used in toys' histograms
   void GetPriorHists(const char * file_priors,
 		     TH2D ** hPrior_th13_dcp, TH2D ** hPrior_23,
 		     TH2D ** hToy_th13_dcp, TH2D ** hToy_23);
-
-    
+ 
 } // util
 } // valor
   
