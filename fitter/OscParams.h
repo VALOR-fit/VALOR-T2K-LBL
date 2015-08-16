@@ -1,0 +1,147 @@
+//____________________________________________________________________________
+/*!
+
+  \class     valor::utils::OscParams
+
+  \brief     Singleton class to hold the oscillation parameter options
+
+  \author    Tom Dealtry <t.dealtry \at lancaster.ac.uk>
+             Lancaster University
+          
+  \created   Aug 15, 2015
+
+  \copyright (c) 2010-2014, The VALOR group.
+
+*/
+//____________________________________________________________________________
+
+#ifndef _valor_osc_params_h_
+#define _valor_osc_params_h_
+
+#include "Conventions/NuMassHierarchy.h"
+#include "FitCore/PhysHypothesis.h"
+
+#include "TH2D.h"
+#include "TH1D.h"
+#include "TFile.h"
+
+#include <string>
+
+namespace valor {
+namespace util {
+
+class OscParams {
+public:
+
+  static OscParams * Instance(void);
+
+  // Check ALL oscillation parameters for -99 (set to global best fits) and -999 (randomize)
+  void SetValues(double input_mixing12_nh, double input_mixing13_nh, double input_mixing23_nh,
+		 double input_deltacp_nh,  double input_dm12sq_nh,   double input_dm23sq_nh,
+		 double input_beta_bar,
+		 double input_mixing12_ih, double input_mixing13_ih, double input_mixing23_ih,
+		 double input_deltacp_ih,  double input_dm12sq_ih,   double input_dm23sq_ih,
+		 double mh_nh_prior,       bool marginalize_MH,
+		 std::string file_priors
+		 );
+
+  // Randomize ALL oscillation parameters (if requested)
+  void Randomize();
+
+  // Update all the values in the PhysHypothesis, for any 2/3 flavour hypothesis type, in a single function
+  void UpdatePhysHypothesis(PhysHypothesis & ph, bool print = true);
+
+  // Write the histograms in the OscParams
+  void Write(TFile * f);
+
+  // Print values of oscillation parameters (or whether they're set to be randomized)
+  void Print (ostream & stream) const;
+  friend ostream & operator << (ostream & stream, const OscParams & oscparams);
+
+    
+  //NH
+  double mixing12_nh;
+  double mixing13_nh;
+  double mixing23_nh;
+  double dcp_nh;
+  double dm12sq_nh;
+  double dm23sq_nh;
+  //IH
+  double mixing12_ih;
+  double mixing13_ih;
+  double mixing23_ih;
+  double dcp_ih;
+  double dm12sq_ih;
+  double dm23sq_ih;
+  //Other
+  double beta_bar;
+    
+  //Randomize?
+  //NH
+  bool randomize_mixing12_nh;
+  bool randomize_mixing13_nh;
+  bool randomize_mixing23_nh;
+  bool randomize_dcp_nh;
+  bool randomize_dm12sq_nh;
+  bool randomize_dm23sq_nh;
+  //IH
+  bool randomize_mixing12_ih;
+  bool randomize_mixing13_ih;
+  bool randomize_mixing23_ih;
+  bool randomize_dcp_ih;
+  bool randomize_dm12sq_ih;
+  bool randomize_dm23sq_ih;
+  //Other
+  bool randomize_beta_bar;
+
+  //Mass hierarchy margninalisation
+  double mh_nh_prior;
+  int    iMH;
+  conv::NuMassHierarchy_t MH;
+  bool marginalize_mh;
+
+  //Priors
+  std::string priors_file;
+  TH2D * hPrior_th13_dcp_nh;
+  TH2D * hPrior_th13_dcp_ih;
+  TH2D * hPrior_23_nh;
+  TH2D * hPrior_23_ih;
+
+  //Save the parameters actually used in histograms
+  TH2D * hToy_th13_dcp_nh;
+  TH2D * hToy_th13_dcp_ih;
+  TH2D * hToy_23_nh;
+  TH2D * hToy_23_ih;
+  TH1D * hToy_MH;
+
+private:
+  // Self
+  static OscParams * fInstance;
+
+  void Init();
+  void Cleanup();
+
+  // Singleton class: constructors are private
+  OscParams();
+  OscParams(const OscParams & opt);
+  virtual ~OscParams();
+
+  // Clean-up
+  struct Cleaner {
+    void DummyMethodAndSilentCompiler() { }
+    ~Cleaner() {
+      if (OscParams::fInstance != 0) {
+	delete OscParams::fInstance;
+	OscParams::fInstance = 0;
+      }
+    }
+  };
+  friend struct Cleaner;
+};
+
+ostream & operator << (ostream & stream, const OscParams & oscparams);
+
+} // util
+} // valor
+
+#endif

@@ -8,16 +8,16 @@
 #pragma link C++ namespace valor::conv;
 #pragma link C++ namespace valor::util;
 
-#pragma link C++ struct valor::util::OscParams;
-
 #pragma link C++ enum  valor::conv::PhysParamId_t;
 #pragma link C++ enum  valor::conv::ConfLevel_t;
 #pragma link C++ enum  valor::conv::SuperkSample_t;
 #pragma link C++ enum  valor::conv::SuperkMode_t;
 
 
+#pragma link C++ class valor::util::OscParams;
 #pragma link C++ class valor::util::ArrIdx;
 
+#pragma link C++ class valor::RunOpt;
 #pragma link C++ class valor::T2KPhysicalParameterLimits;
 #pragma link C++ class valor::T2KOpt;
 
