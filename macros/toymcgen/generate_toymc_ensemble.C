@@ -17,12 +17,13 @@
 
 #include "Build.h"
 #include "UtlForMacros.h"
-#include "Parser.h"
+#include "OscParams.h"
 
 #include "AnalysisOptions.h"
 
 #include "TRandom3.h"
 #include "TSystem.h"
+#include "TStopwatch.h"
 
 #include <sstream>
 #include <fstream>
@@ -40,26 +41,13 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::Sup
 #endif
 string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string & sextra, int datasetid);
 
-class MyParser : public Parser
-{
-public:
-  MyParser() : Parser() { cout << "MyParser constructor" << endl; }
-  ~MyParser() { cout << "MyParser destructor" << endl; }
-};
-
-int main()
-{
-  MyParser * myparser = new MyParser();
-  delete myparser;
-}
-
 void generate_toymc_ensemble
 (
  const char * tag                     = "toymc_numudisap",                        /* */
  int          run                     = 0,                              /* */
  double       first_experiment        = 0,                
- double       last_experiment         = 0,
- const char * hypothesis              = "3f_oscbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
+ double       last_experiment         = 9999,
+ const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  //-999 randomize
  //-99 use global best fits
@@ -106,7 +94,10 @@ void generate_toymc_ensemble
  const char * cpvphase                = "delta"                         /* delta==kNuDeltaCPPhase sindelta==kNuDeltaCPSin */
  )
 {
-  TRandom3 rand(0);
+  cout << "start" << endl;
+  TStopwatch sw;
+  const int randomseed = 100;
+  TRandom3 rand(randomseed); //random number to see where inside a bin a toy is generated
 
   //some options set here because of CINT 40-argument limit
   bool printsystvariation = true;  /* cout the skexp tweaks */
@@ -120,26 +111,6 @@ void generate_toymc_ensemble
   TH1D * h_3 = new TH1D ("h_3","h_3", 100, 0, 10);
   TH1D * h_4 = new TH1D ("h_4","h_4", 100, 0, 10);
   TH2D * h_4_Escale = new TH2D ("h_4_Escale","h_4_Escale", 100, -5, 5, 100, 0, 10);
-
-  //book histograms to save the input choices
-  TH1D * hToy_MH = new TH1D("hToy_MH","0-->NH, 1-->IH",2,0,2);
-  hToy_MH->GetXaxis()->SetBinLabel(1, "NH");
-  hToy_MH->GetXaxis()->SetBinLabel(2, "IH");
-  TH2D * hToy_th13_dcp[2] = {0, 0};
-  TH2D * hToy_23[2] = {0, 0};
-  //and histograms for the priors
-  TH2D * hPrior_th13_dcp[2] = {0, 0};
-  TH2D * hPrior_23[2]    = {0, 0};
-
-  //get the prior histograms from the file
-  bool UsePrior_th13_dcp = false;
-  bool UsePrior_23 = false;
-  if(!file_priors.empty()) {
-    UsePrior_th13_dcp = true;
-    UsePrior_23 = true;
-    const char * file_priors_full_path = util::FormFilePath(file_priors.c_str(), "inputs");
-    util::GetPriorHists(file_priors_full_path, hPrior_th13_dcp, hPrior_23, hToy_th13_dcp, hToy_23);
-  }
 
   // Analysis configuration file
   const char * config = util::FormFilePath(config_file, "config");
@@ -164,15 +135,26 @@ void generate_toymc_ensemble
   cout << "     - Storing toy-MC expts in ROOT format:  " << ((save_in_root_format) ?  "YES " : "NO") << endl;
 
   // Global options
-  util::SetGlobalOptions(dmsqscheme, hierarchy, mixparamchoice, mixparamoctant, cpvphase);
+  Opt::Instance()->SetValues(dmsqscheme, hierarchy, mixparamchoice, mixparamoctant, cpvphase);
+
+  //get the prior histograms from the file
+  bool UsePrior_th13_dcp = false;
+  bool UsePrior_23 = false;
+  string file_priors_full_path = "";
+  if(!file_priors.empty()) {
+    UsePrior_th13_dcp = true;
+    UsePrior_23 = true;
+    file_priors_full_path = util::FormFilePath(file_priors.c_str(), "inputs");
+  }
 
   // Set input osc params to defaults, or set them to be randomised
-  util::OscParams input_osc = util::SetOscParamOptions(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
-						       input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
-						       input_beta_bar, 
-						       input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
-						       input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
-						       input_prior_prob_nh, doMargMH);
+  util::OscParams::Instance()->SetValues(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
+					 input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
+					 input_beta_bar, 
+					 input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
+					 input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
+					 input_prior_prob_nh, doMargMH,
+					 file_priors_full_path);
 
   // Extra points to add to the toy dataset(s)
   string * full_points_to_add[kns] = { 0,0,0,0,0,0 };
@@ -239,7 +221,8 @@ void generate_toymc_ensemble
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config);
 
-  int weird = 0;
+  int weird_applied_neg      = 0;
+  int weird_unphysical_tweak = 0;
   for(int iexperiment=first_experiment; iexperiment <= last_experiment; iexperiment++) {
      cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
@@ -249,36 +232,13 @@ void generate_toymc_ensemble
      PhysHypothesis ph(hypothesis);
 
      // Set the mass hierarchy
-     util::SetMassHierarchy(skexp, input_osc);
+     util::SetMassHierarchy(skexp);
 
      // Randomize specified osc params for current toy MC expt
-     util::RandomizeOscParams(input_osc);
-
-     // Marginalize
-     //theta13 vs dcp NH
-     if(input_osc.randomize_mixing13_nh && input_osc.randomize_dcp_nh && UsePrior_th13_dcp)
-       hPrior_th13_dcp[0]->GetRandom2(input_mixing13_nh, input_deltacp_nh);
-     //theta13 vs dcp IH
-     if(input_osc.randomize_mixing13_ih && input_osc.randomize_dcp_ih && UsePrior_th13_dcp)
-       hPrior_th13_dcp[1]->GetRandom2(input_mixing13_ih, input_deltacp_ih);
-     //theta23 vs dm32sq NH
-     if(input_osc.randomize_mixing23_nh && input_osc.randomize_dm23sq_nh && UsePrior_23)
-       hPrior_23[0]->GetRandom2(input_mixing23_nh, input_dm23sq_nh);
-     //theta23 vs dm32sq IH
-     if(input_osc.randomize_mixing23_ih && input_osc.randomize_dm23sq_ih && UsePrior_23)
-       hPrior_23[1]->GetRandom2(input_mixing23_ih, input_dm23sq_ih);
+     util::OscParams::Instance()->Randomize();
 
      // Set physics hypothesis
-     util::SetOscParams(ph, input_osc);
-
-     // Save the chosen oscillation parameters
-     if(hToy_th13_dcp[input_osc.iMH])
-       hToy_th13_dcp[input_osc.iMH]->Fill(ph.CurrValue(kPhypMixing13),
-					  ph.CurrValue(kPhypCPV));
-     if(hToy_23[input_osc.iMH])
-       hToy_23[input_osc.iMH]->Fill(ph.CurrValue(kPhypMixing23),
-				    ph.CurrValue(kPhypDm23sq));
-     hToy_MH->Fill(input_osc.iMH + conv::kASmallNum);
+     util::OscParams::Instance()->UpdatePhysHypothesis(ph);
 
      bool applied_negevents_condition = true;
      bool unphysical_tweak = true;
@@ -292,7 +252,7 @@ void generate_toymc_ensemble
 	 unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
 	 if (unphysical_tweak) {
 	   cout << "Parameters are unphysical - rethrowing" << std::endl;
-	   weird++;
+	   weird_unphysical_tweak++;
 	   continue;
 	 }
        }
@@ -303,7 +263,7 @@ void generate_toymc_ensemble
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
        if(applied_negevents_condition)
-	 weird++;
+	 weird_applied_neg++;
      }//applied_negevents_condition
 
      //Get the spectra
@@ -388,6 +348,7 @@ void generate_toymc_ensemble
     fxml.close();
   }
   if(f) {
+    util::OscParams::Instance()->Write(f);
     cerr << endl << "Warning h_0, h_1, ... have not been filled (what are they for?!)" << endl;
     h_0->Write();
     h_1->Write();
@@ -396,17 +357,6 @@ void generate_toymc_ensemble
     h_4->Write();
     h_4_Escale->Write();
 
-    for(int im = 0; im < 2; im++) {
-      if(hPrior_th13_dcp[im])
-	hPrior_th13_dcp[im]->Write();  
-      if(hToy_th13_dcp[im])
-	hToy_th13_dcp[im]->Write();
-      if(hPrior_23[im])
-	hPrior_23[im]->Write();
-      if(hToy_23[im])
-	hToy_23[im]->Write();
-    }
-    hToy_MH->Write();
     f->Close();
     delete f;
   }//f
@@ -414,9 +364,12 @@ void generate_toymc_ensemble
   cout << endl 
        << " - Summary - " << endl
        << "    * Created " << nexperiments << " toys" << endl
-       << "    * " << weird << " weird things happened"
-       << " (applied_negevents_condition or unphysical_tweaks)" << endl 
+       << "    * " << weird_unphysical_tweak << " unphysical_tweaks rethrown" << endl
+       << "    * " << weird_applied_neg << " applied_negevents_condition rethrown" << endl
        << endl;
+
+  sw.Stop();
+  sw.Print();
 }
 
 
