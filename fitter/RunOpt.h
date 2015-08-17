@@ -52,7 +52,7 @@ class RunOpt
 public:
   RunOpt();
   RunOpt(int argc, char ** argv, int parseopt);
-  ~RunOpt();
+  virtual ~RunOpt();
   
   /*uncomment this if we want to make the class a singleton again (also remove the public constructor/destructor)
   static RunOpt * Instance(void);
