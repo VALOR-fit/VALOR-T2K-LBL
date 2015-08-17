@@ -34,30 +34,31 @@ void run_fit_marginalization_readbinary_joint
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- //const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
- const char * xmlfile = "../outputs/test/toymc_prova_joint-0.xml",
+ const char * xmlfile = "data_run1to4/data_newstruct.xml",
+ //const char * xmlfile = "data_run1to6/data.xml",
+ //const char * xmlfile = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/2015_v2.0.0_evolution/inputs/data_run1to6/skdata_run1to6.xml",
 
  const char * rootfile = "../outputs/test/toymc_prova_joint-0.root",
 
- bool using_xml_file = false,
+ bool using_xml_file = true, 
 
- bool         dotoys               = 1,
+ bool         dotoys               = 0,
 
- // // Mach3, T2K Run1-4 + reactors best fit (A)
- // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = -1.601, //-99,    /* deltacp, */
- // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
-
- // Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
+ // Mach3, T2K Run1-4 + reactors best fit (A)
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp        = 0., //-99,    /* deltacp, */
+ double       input_deltacp        = -1.601, //-99,    /* deltacp, */
  double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+
+ // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
+ // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = 0., //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
  // // Mach3, T2K only Run1-4 best fit (C)
  // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -91,23 +92,21 @@ void run_fit_marginalization_readbinary_joint
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_IH_StatOnly_Mach3T2KonlyRun14/joint_dcp_IH_Mach3T2Konly_StatOnly", // Stat-only (Mach3 T2K only)
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_NH_StatOnly_Mach3T2KReactRun14/joint_dcp_NH_StatOnly",             // Stat-only (Mach3 T2K+react)
- const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_MH_10kToys/joint_dcp_react_constrall_MH_10kToys",            // Stat+Syst (T2K+react)
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_t2konly_MH_10kToys/joint_dcp_t2konly_constrall_MH_10kToys",        // Stat+Syst (T2K only)
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_dcp_t2kreact_constrall_NH_10kToys",
+ const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_dcp_t2kreact_constrall_IH_10kToys",
  //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
-
+ 
  const int    nfiles               = 201, //201, 21, 1        // # of files to read
 
  const int    NtoysMarg            = 10000, //500, //10000, //1,  // # toys marginalization 
- 
+  
  const char * freeparname0        = "deltacp",  // free parameter
  const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
  const int    NptScan0            = 201, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
- const bool  doMargMH             = true, //true    // marginalize Mass Hierarchy
+ const bool  doMargMH             = false,     // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
  
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
@@ -115,7 +114,7 @@ void run_fit_marginalization_readbinary_joint
 
  const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
 )
-{
+{ 
 
   using namespace std;
   using namespace valor;
@@ -276,6 +275,8 @@ void run_fit_marginalization_readbinary_joint
   double deltachisq0BF=conv::kALargeNum;
   TH2D *hchisq2D_out;
   TH1D *hchisq1D_out;
+  TH2D *hdeltachisq2D_out;
+  TH1D *hdeltachisq1D_out;
   TH2D *hstep2D_out;
   TH1D *hstep1D_out;
   double bestfit0=-999;
@@ -305,6 +306,8 @@ void run_fit_marginalization_readbinary_joint
   fitnt->Branch("bestfit1", &bestfit1 );
   fitnt->Branch("hchisq2D", &hchisq2D_out );
   fitnt->Branch("hchisq1D", &hchisq1D_out );
+  fitnt->Branch("hdeltachisq2D", &hdeltachisq2D_out );
+  fitnt->Branch("hdeltachisq1D", &hdeltachisq1D_out );
   fitnt->Branch("hstep2D", &hstep2D_out );
   fitnt->Branch("hstep1D", &hstep1D_out );
   fitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
@@ -761,10 +764,12 @@ void run_fit_marginalization_readbinary_joint
    
     if(fitmarg->IsFit2D()){
       hchisq2D_out = (TH2D*)fitmarg->GetChisqMarg2D()->Clone("hchisq2D");
+      hdeltachisq2D_out = (TH2D*)fitmarg->GetDeltaChisqMarg2D()->Clone("hdeltachisq2D");
       //if(minimizeHisto) hstep2D_out = (TH2F*)fitmarg->GetChisqStep_2D()->Clone("hstep2D");
     }
     else{
       hchisq1D_out = (TH1D*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
+      hdeltachisq1D_out = (TH1D*)fitmarg->GetDeltaChisqMarg1D()->Clone("hdeltachisq1D");
       //if(minimizeHisto) hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
     }
             
