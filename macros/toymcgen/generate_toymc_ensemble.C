@@ -7,6 +7,10 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+#include "Build.h"
+#include "AnalysisOptions.h"
+
+#if !defined(__CINT__) || defined(__MAKECINT__)
 #include "SuperkObservation.h"
 #include "SuperkExpectation.h"
 #include "T2KPhysicalParameterLimits.h"
@@ -15,11 +19,8 @@
 #include "Binning.h"
 #include "Conventions/PhysHypothesisId.h"
 
-#include "Build.h"
 #include "UtlForMacros.h"
 #include "OscParams.h"
-
-#include "AnalysisOptions.h"
 
 #include "TRandom3.h"
 #include "TSystem.h"
@@ -27,6 +28,7 @@
 
 #include <sstream>
 #include <fstream>
+#endif
 
 using namespace std;
 using namespace valor;
@@ -43,7 +45,7 @@ string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_n
 
 void generate_toymc_ensemble
 (
- const char * tag                     = "toymc_numudisap",                        /* */
+ const char * tag                     = "toymc",                        /* */
  int          run                     = 0,                              /* */
  double       first_experiment        = 0,                
  double       last_experiment         = 9999,
