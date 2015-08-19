@@ -390,6 +390,8 @@ void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::Sup
   int ievtot = 0;
 
 #ifndef __USE_2D_TEMPLATES__ //1D templates
+  const int n_points_per_line_xml = 10; // this should be an option. But 1D templates are going so there's no point...
+
   // Adding Ereco values as a comma separated list.
   // Assuming uniform distribution within each bin, randomize values within each bin.
   for(int ibin = 1; ibin <= h->GetNbinsX(); ibin++) {
@@ -481,7 +483,7 @@ void AddExtraEventsToHist(TH2D * h, string * full_points_to_add)
 #ifndef __USE_2D_TEMPLATES__ //1D templates
     vector<string> vecp = util::Tokens(*full_points_to_add, ",");
     assert(vecp.size() > 0);
-    for(int ip=0; ip < vecp.size(); ip++) {
+    for(unsigned int ip=0; ip < vecp.size(); ip++) {
       h->Fill(atof(vecp[ip].c_str()));
     }//ip
 #else //2D templates
