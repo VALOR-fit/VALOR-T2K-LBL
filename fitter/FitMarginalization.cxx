@@ -11,8 +11,8 @@
 //#define __print_masshierarchy__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
-#define __print_array_toy_maketoys__
-#define __print_array_toy_maketoys_verbose__
+//#define __print_array_toy_maketoys__
+//#define __print_array_toy_maketoys_verbose__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_fillchisq_verbose__
 //#define __print_array_toy_merge__
@@ -1529,18 +1529,34 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 
 	      // NEW 2D TEMPLATES (VARRAY)
 	      //fToyMargVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib); 
-	      this->GetToyMargVArraySample(s)->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iereco,ib); 
+	      this->GetToyMargVArraySample(s)->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ib); 
 	      //
 	      
 	    }
 #else
 
 	    // NEW 2D TEMPLATES
-	    double * obsErec = skobs->TwoDSpectrumArray(s); 
+	    
+	    // const int nbins_q2    = util::NumQ2Bins(s);
+	    // const int nbins_ereco = util::NumErecoBins(s);
+	    // typedef double (erq2type)  [nbins_ereco][nbins_q2];  
+	    // const erq2type & arr = *reinterpret_cast< const erq2type * > (skobs->TwoDSpectrumArray(s));  
+	    // //const double * arr = CurrPredictedErecoSpectrumArrayMode(s,m);
+	    // if (!arr){
+	    //   cerr << endl;
+	    //   cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+	    //   cerr << "const erq2type & arr = *reinterpret_cast< const erq2type * > (skobs->TwoDSpectrumArray(s)) doesn't work" << endl;
+	    //   cerr << endl;
+	    //   exit(1);
+	    // }
+	    // //double * obsErec = skobs->TwoDSpectrumArray(s); 
+	    
 	    // Build toy 2D distributions (Ereco Vs Q2)
 	    for(int iereco = 0; iereco < util::NumErecoBins(s); iereco++){
 	      for(int iq2 = 0; iq2 < util::NumQ2Bins(s); iq2++){
+		
 		float bincont = (float) skobs->TwoDSpectrumVArray(s)->GetEntry(iereco,iq2); // Maybe it takes longer than using the array --> TO CHECK
+		//float bincont = (float) (arr[iereco][iq2]);
 		bincont /= (float)fNormPOT[is]; 
 		
 		// NEW 2D TEMPLATES (VARRAY)
@@ -1596,7 +1612,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	      // NEW 2D TEMPLATES (VARRAY)
 	      //double bincont = (double)fToyMargVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib); 
 	      double bincont = conv::kBadResult;
-	      bincont = this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ib); 
+	      bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ib); 
 	      //
 
 	      cout << bincont << " ";
@@ -1607,7 +1623,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 		// NEW 2D TEMPLATES (VARRAY)
 		//double bincont = (double)fToyMargVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib,iq2); 
 		double bincont = conv::kBadResult;
-		bincont = this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ib,iq2); 
+		bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ib,iq2); 
 		//
 		
 		cout << bincont << " ";
