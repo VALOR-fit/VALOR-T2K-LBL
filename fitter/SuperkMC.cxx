@@ -648,7 +648,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 #ifndef __USE_2D_TEMPLATES__ // 1D templates
   
-  fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri); 
+  fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri);
 
 #else // 2D templates
   
@@ -670,15 +670,16 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
       fMCTemplOri[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
     }
   }  
-  this->ProjectTemplate3Dto2D(fMCTemplOri2D,fMCTemplOri);
+  //this->ProjectTemplate3Dto2D(fMCTemplOri2D,fMCTemplOri);
 
-  fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri); 
+  fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri2D);
     
 #endif
   
   
-  if( !fNuXSec -> ReadSplines(xml,root_node) ) return false;
-  
+ // if( !fNuXSec -> ReadSplines(xml,root_node) ) return false; // old 1d
+  if( !fNuXSec -> ReadSplines2D(xml,root_node) ) return false; // new 2d
+
   // apply flux tuning (based on external data) to templates
   //this->ApplyFluxExtTuningToTemplates();
 
@@ -3284,9 +3285,9 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
 	if(fMCVariableTemplArray2D[is]->GetEntryRef(im, itv-1, irv-1, iqv-1) <= 0) continue;
 	
 	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
-	
+    double Q2VarMin    = util::XsecQ2BinEdges(s,iqv-1) +kOneMeV;
 	// Plug-in BANFF & other xsec systematics 
-	double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin); // Don't change. Apply systematics only in Ereco and not Q2 
+	double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin); // Don't change. Apply systematics only in Ereco and not Q2
       
 	// Combined weight
 	double wght = flux_wght * xsec_wght;
@@ -3587,8 +3588,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 
 
 
-
-
 // NEW 2D TEMPLATES
 
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void) 
@@ -3667,9 +3666,10 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
         //assert(fMCVariableTemplArray[is]->GetEntryRef(im, itv-1, irv-1) > 0);
         
         double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+        double Q2VarMin = util::Q2BinEdges(s,iqv-1) + kOneMeV;
 
         // Plug-in BANFF & other xsec systematics 
-        double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin); 
+        double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin);
 
 #ifdef XSECWEIGHTSAREONE
         xsec_wght = 1;
