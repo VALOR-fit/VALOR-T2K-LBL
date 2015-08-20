@@ -21,6 +21,7 @@
 #include <TObject.h>
 #include <TXMLEngine.h>
 #include <TH2.h>
+#include <TH3.h>
 #include <TSpline.h>
 #include <TFile.h>
 
@@ -45,10 +46,12 @@ public:
 
   // Reweight to best-fit values of the BANFF cross-section related params
   double FinTuningWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+    double FinTuningWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
 
   // Calculate weight in response to systematic parameter variations of cross-section parameters
   // For the BANFF parameters, the weight is relative to the best-fit (tuned MC) parameter, not the nominal MC one
   double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+    double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
 
   // Tweak systematic parameters held in this object.
   // Note: BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 
@@ -98,6 +101,7 @@ public:
 
   // Get weight spline for each sample / mode / parameters / Ereco bin / Etrue bin
   TSpline3 * FindWghtSpline(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+    TSpline3 * FindWghtSpline(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
 
   // Print
   void PrintSystematicVariations (std::ostream & stream = std::cout) const;
@@ -106,6 +110,7 @@ public:
   // Read inputs from XML file
   bool Read        (TXMLEngine* xml, XMLNodePointer_t root_node);
   bool ReadSplines (TXMLEngine* xml, XMLNodePointer_t root_node);
+    bool ReadSplines2D (TXMLEngine* xml, XMLNodePointer_t root_node);
 
   // Set BANFF fit info
   void TellMeAboutTheBANFFfit(BANFF * banff);
@@ -113,9 +118,11 @@ public:
 
   //
   void BuildXsBinningMCTemplates(TH2D* input_mctempl_array[valor::conv::kns][valor::conv::knm]);
+  void BuildXsBinningMCTemplates(TH3D* input_mctempl_array[valor::conv::kns][valor::conv::knm]);
 
   //
   TH2D * Template(conv::SuperkSample_t s, conv::SuperkMode_t m) const;
+    TH3D * Template2D(conv::SuperkSample_t s, conv::SuperkMode_t m) const;
 
   // Penalty term included in the chisq if NuXSec nuisance terms are included in the fit
   double ChisqPenalty(bool all_syst = true, bool hk_syst = false) const;
@@ -151,19 +158,27 @@ private:
   // In FinTuningWght(), the weights for all systematic params are transformed --so that they can be applied 
   // to MC template bins-- and they are combined together.
   double FinTuningWght_1p(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+    double FinTuningWght_1p(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
 
   // Calculate weight in response to systematic parameter variations. Weight is calculated for a single (input) parameter.
   // Comments similar to the ones above apply
   double SystWght_1p(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+    double SystWght_1p(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
 
   // Calculate weight spline index
   int  WghtSplineIdx        (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
+    int  WghtSplineIdx        (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
 
   //
   bool IsThereAnEvent       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   int  HowManyEvents        (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   
   std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const;
+
+    bool IsThereAnEvent       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
+    int  HowManyEvents        (conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
+    
+    std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin, int q2bin) const;
   
   //
   // Private data members
@@ -182,6 +197,7 @@ private:
   ////
 
   TH2D *      fXsBinningTempl[conv::kns][conv::knm]; ///< Ereco-Etrue templates in XSec binning scheme
+  TH3D *      fXsBinningTempl2D[conv::kns][conv::knm]; ///< Ereco-Etrue templates in XSec binning scheme
 
   // tweaking dials
   double fRPATwkDial; // NEW XSEC
