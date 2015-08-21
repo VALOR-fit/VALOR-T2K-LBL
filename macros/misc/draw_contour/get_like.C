@@ -53,7 +53,7 @@ void get_like(const char* filename = "")
         input_x = ip->Value(valor::conv::kPhypMixing23);
         input_y = ip->Value(valor::conv::kPhypDm23sq);
     }
-    else if (    if(file2.find("cp13")!= string::npos))
+    else if (file2.find("cp13")!= string::npos)
     {
         input_x = ip->Value(valor::conv::kPhypMixing13);
         input_y = ip->Value(valor::conv::kPhypCPV);

@@ -9,7 +9,7 @@
 
 void draw_contour(const char* filename = "")
 {
-  //   char* filename = "toyA_joint";
+    //   char* filename = "toyA_joint";
     
     TCanvas* c = new TCanvas("c","c",0,0,900,600);
     TFile f(Form("%s.root",filename));
@@ -35,10 +35,10 @@ void draw_contour(const char* filename = "")
         input_x = ip->Value(valor::conv::kPhypMixing23);
         input_y = ip->Value(valor::conv::kPhypDm23sq);
     }
-    else if (    if(file2.find("cp13")!= string::npos))
-            {
-            input_x = ip->Value(valor::conv::kPhypMixing13);
-            input_y = ip->Value(valor::conv::kPhypCPV);
+    else if ( file2.find("cp13")!= string::npos)
+    {
+        input_x = ip->Value(valor::conv::kPhypMixing13);
+        input_y = ip->Value(valor::conv::kPhypCPV);
     }
     else{
         cout << "\n\n\tERROR: Could not find which parameters are being used\n\n" <<endl;
@@ -48,7 +48,7 @@ void draw_contour(const char* filename = "")
     
     cout << "x: " << input_x << endl;
     cout << "y: " << input_y << endl;
-
+    
     
     h3 = (TH2D*)h1->Clone();
     h2 = (TH2D*)h1->Clone();
@@ -56,7 +56,7 @@ void draw_contour(const char* filename = "")
     double chisq_min = h1->GetMinimum();
     h1->SetContour(1);
     h3->SetContour(1);
-
+    
     h1->SetContourLevel(0,chisq_min+2.3);
     h3->SetContourLevel(0,chisq_min+4.6);
     h1->SetLineWidth(2);
@@ -76,11 +76,11 @@ void draw_contour(const char* filename = "")
     TMarker * bf = new TMarker(xmin,ymin,kFullStar);
     bf->SetMarkerColor(kRed);
     bf->SetMarkerSize(1.5);
-
+    
     TMarker * bf2 = new TMarker(input_x,input_y,kFullStar);
     bf2->SetMarkerColor(kViolet);
     bf2->SetMarkerSize(1.5);
-
+    
     TLegend* leg = new TLegend(0.7,0.8,0.9,0.98);
     leg->AddEntry(bf,"Best fit point","p");
     leg->AddEntry(bf2,"True asimov point","p");
@@ -97,13 +97,13 @@ void draw_contour(const char* filename = "")
     c->SaveAs(Form("%s.pdf",filename));
     
     TFile* f2 = new TFile(Form("%s_contour.root",filename),"recreate");
-
+    
     save_contour(f2,h1,h3);
     h2->Write("chisq_map_2D");
     
     bf->Write("best_fit_point_marker");
     f2->Close();
-
+    
 }
 
 void save_contour(TFile* f2, TH2D* h1=0, TH2D* h3=0)
