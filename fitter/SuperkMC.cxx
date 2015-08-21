@@ -676,9 +676,11 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     
 #endif
   
-  
- // if( !fNuXSec -> ReadSplines(xml,root_node) ) return false; // old 1d
-  if( !fNuXSec -> ReadSplines2D(xml,root_node) ) return false; // new 2d
+#ifndef __USE_2D_TEMPLATES__
+    if( !fNuXSec -> ReadSplines(xml,root_node) ) return false; // old 1d
+#else
+    if( !fNuXSec -> ReadSplines2D(xml,root_node) ) return false; // new 2d
+#endif
 
   // apply flux tuning (based on external data) to templates
   //this->ApplyFluxExtTuningToTemplates();
@@ -3287,7 +3289,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
 	double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
     double Q2VarMin    = util::XsecQ2BinEdges(s,iqv-1) +kOneMeV;
 	// Plug-in BANFF & other xsec systematics 
-	double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin); // Don't change. Apply systematics only in Ereco and not Q2
+	double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin); // Apply systematics in Ereco and Q2
       
 	// Combined weight
 	double wght = flux_wght * xsec_wght;
