@@ -7,7 +7,7 @@
 //
 // If the input contains either "ss23" or "cp13" in the name, the bf point will be  added
 
-void draw_contour(const char* filename = "")
+void draw_contour(const char* filename = "", const char* opt = "")
 {
     //   char* filename = "toyA_joint";
     
@@ -28,14 +28,14 @@ void draw_contour(const char* filename = "")
     
     t->GetEntry(0);
     string file2 = filename;
-    
+    string option = opt;
     double input_x,input_y;
-    if(file2.find("ss23")!= string::npos)
+    if(file2.find("ss23")!= string::npos || option.find("ss23")!= string::npos )
     {
         input_x = ip->Value(valor::conv::kPhypMixing23);
         input_y = ip->Value(valor::conv::kPhypDm23sq);
     }
-    else if ( file2.find("cp13")!= string::npos)
+    else if ( file2.find("cp13")!= string::npos || option.find("cp13")!= string::npos)
     {
         input_x = ip->Value(valor::conv::kPhypMixing13);
         input_y = ip->Value(valor::conv::kPhypCPV);
