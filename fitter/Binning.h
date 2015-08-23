@@ -3646,16 +3646,16 @@ static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] =
 
 
 //Number of cross-section weight splines
-static const int kNumOfXSecSystWghtSpl1Rmu = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBins1Rmu * kXsNEtrueBins;
+static const int kNumOfXSecSystWghtSpl1Rmu = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBins1Rmu * kXsNEtrueBins * kXsNQ2Bins1Rmu;
 static const int knwspl1Rmu = kNumOfXSecSystWghtSpl1Rmu; // as above - shorter name                                                                                  
 
-static const int kNumOfXSecSystWghtSpl1Re = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBins1Re * kXsNEtrueBins;
+static const int kNumOfXSecSystWghtSpl1Re = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBins1Re * kXsNEtrueBins * kXsNQ2Bins1Re;
 static const int knwspl1Re = kNumOfXSecSystWghtSpl1Re; // as above - shorter name
 
-static const int kNumOfRHCXSecSystWghtSpl1Rmu = kNSuperkModes * kNumOfRHCXSecSyst * kRHCXsNErecoBins1Rmu * kXsNEtrueBins;
+static const int kNumOfRHCXSecSystWghtSpl1Rmu = kNSuperkModes * kNumOfRHCXSecSyst * kRHCXsNErecoBins1Rmu * kXsNEtrueBins * kRHCXsNQ2Bins1Rmu;
 static const int kRHCnwspl1Rmu = kNumOfRHCXSecSystWghtSpl1Rmu; // as above - shorter name                                                
 
-static const int kNumOfRHCXSecSystWghtSpl1Re = kNSuperkModes * kNumOfRHCXSecSyst * kRHCXsNErecoBins1Re * kXsNEtrueBins;
+static const int kNumOfRHCXSecSystWghtSpl1Re = kNSuperkModes * kNumOfRHCXSecSyst * kRHCXsNErecoBins1Re * kXsNEtrueBins * kRHCXsNQ2Bins1Re;
 static const int kRHCnwspl1Re = kNumOfRHCXSecSystWghtSpl1Re; // as above - shorter name 
 
 
