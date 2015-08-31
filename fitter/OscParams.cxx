@@ -90,12 +90,12 @@ void valor::util::OscParams::Cleanup()
 }
 //____________________________________________________________________________
 void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mixing13_nh, double input_mixing23_nh,
-			  double input_dcp_nh,      double input_dm12sq_nh,   double input_dm23sq_nh,
-			  double input_beta_bar,
-			  double input_mixing12_ih, double input_mixing13_ih, double input_mixing23_ih,
-			  double input_dcp_ih,      double input_dm12sq_ih,   double input_dm23sq_ih,
-			  double input_mh_nh_prior, bool marginalize_MH,
-			  string file_priors)
+				       double input_dcp_nh,      double input_dm12sq_nh,   double input_dm23sq_nh,
+				       double input_beta_bar,
+				       double input_mixing12_ih, double input_mixing13_ih, double input_mixing23_ih,
+				       double input_dcp_ih,      double input_dm12sq_ih,   double input_dm23sq_ih,
+				       double input_mh_nh_prior, bool marginalize_MH,
+				       string file_priors)
 {  
   // Check whether some osc. params need to be randomized (i.e. if == -999)
   //NH
@@ -292,9 +292,9 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
   
   //Update the PhysHypothesis
   if(ph.Hypothesis() == kHypNuMuDisapp2F) {
-       ph.SetCurrValue(kPhypMixing23,  input_mixing23_used);
-       ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
-  }
+    ph.SetCurrValue(kPhypMixing23,  input_mixing23_used);
+    ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
+  }//kHypNuMuDisapp2F
   else if(ph.Hypothesis() == kHypOsc3F) {  
     ph.SetCurrValue(kPhypMixing12,  input_mixing12_used);
     ph.SetCurrValue(kPhypMixing13,  input_mixing13_used);
@@ -302,7 +302,7 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
     ph.SetCurrValue(kPhypCPV    ,   input_dcp_used);
     ph.SetCurrValue(kPhypDm12sq,    input_dm12sq_used);
     ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
-  }
+  }//kHypOsc3F
   else if(ph.Hypothesis() == kHypOsc3FBar) {
     ph.SetCurrValue(kPhypMixing12,  input_mixing12_used);
     ph.SetCurrValue(kPhypMixing13,  input_mixing13_used);
@@ -317,7 +317,7 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
     ph.SetCurrValue(kPhypCPVBar    ,   input_dcp_used);
     ph.SetCurrValue(kPhypDm12sqBar,    input_dm12sq_used);
     ph.SetCurrValue(kPhypDm23sqBar,    input_dm23sq_used);
-  }
+  }//kHypOsc3FBar
   else if(ph.Hypothesis() == kHypOsc3FNormBar) {
     ph.SetCurrValue(kPhypMixing12,  input_mixing12_used);
     ph.SetCurrValue(kPhypMixing13,  input_mixing13_used);
@@ -327,7 +327,7 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
     ph.SetCurrValue(kPhypDm23sq,    input_dm23sq_used);
        
     ph.SetCurrValue(kPhypBetaBar,    input_beta_bar_used);
-  }
+  }//kHypOsc3FNormBar
   else if(ph.Hypothesis() == kHypOsc3FBarNormBar) {
     ph.SetCurrValue(kPhypMixing12,  input_mixing12_used);
     ph.SetCurrValue(kPhypMixing13,  input_mixing13_used);
@@ -344,7 +344,7 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
     ph.SetCurrValue(kPhypDm23sqBar,    input_dm23sq_used);
        
     ph.SetCurrValue(kPhypBetaBar,    input_beta_bar_used);
-  }
+  }//kHypOsc3FBarNormBar
   else {
     cout << "SetOscParams() " << util::AsString(ph.Hypothesis()) << " not implemented" << endl;
     exit(1);
@@ -368,28 +368,202 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
   }//IH
 
 }
+//____________________________________________________________________________
+void valor::util::OscParams::UpdateFitParamList(FitParamList& fparm, bool set_init, bool print)
+{
+  double input_mixing12_used, input_mixing13_used, input_mixing23_used;
+  double input_dcp_used,      input_dm12sq_used,   input_dm23sq_used;
+  double input_beta_bar_used;
 
+  //Get the values to use (based on MH)
+  if(iMH == 0) {
+    //NH
+    input_mixing12_used = mixing12_nh;
+    input_mixing13_used = mixing13_nh;
+    input_mixing23_used = mixing23_nh;
+    input_dcp_used      = dcp_nh;
+    input_dm12sq_used   = dm12sq_nh;
+    input_dm23sq_used   = dm23sq_nh;
+  }
+  else if(iMH == 1) {
+    //IH
+    input_mixing12_used = mixing12_ih;
+    input_mixing13_used = mixing13_ih;
+    input_mixing23_used = mixing23_ih;
+    input_dcp_used      = dcp_ih;
+    input_dm12sq_used   = dm12sq_ih;
+    input_dm23sq_used   = dm23sq_ih;
+  }
+  else {
+    cerr << "SetOscParams has unknown value of iMH: " << iMH << endl;
+    exit(1);
+  }
+  //Other
+  input_beta_bar_used = beta_bar;
+  
+  //Update the FitParamList
+  if(fparm.PhysicsHypothesis() == kHypNuMuDisapp2F) {
+    if(set_init) {
+      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+    }
+    else {
+      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+    }
+  }//kHypNuMuDisapp2F
+  else if(fparm.PhysicsHypothesis() == kHypOsc3F) {  
+    if(set_init) {
+      fparm.SetInitValue(kPhypMixing12,  input_mixing12_used);
+      fparm.SetInitValue(kPhypMixing13,  input_mixing13_used);
+      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetInitValue(kPhypCPV    ,   input_dcp_used);
+      fparm.SetInitValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+    }
+    else {
+      fparm.SetCurrentValue(kPhypMixing12,  input_mixing12_used);
+      fparm.SetCurrentValue(kPhypMixing13,  input_mixing13_used);
+      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetCurrentValue(kPhypCPV    ,   input_dcp_used);
+      fparm.SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+    }
+  }//kHypOsc3F
+  else if(fparm.PhysicsHypothesis() == kHypOsc3FBar) {
+    if(set_init) {
+      fparm.SetInitValue(kPhypMixing12,  input_mixing12_used);
+      fparm.SetInitValue(kPhypMixing13,  input_mixing13_used);
+      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetInitValue(kPhypCPV    ,   input_dcp_used);
+      fparm.SetInitValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+       
+      fparm.SetInitValue(kPhypMixing12Bar,  input_mixing12_used);
+      fparm.SetInitValue(kPhypMixing13Bar,  input_mixing13_used);
+      fparm.SetInitValue(kPhypMixing23Bar,  input_mixing23_used);
+      fparm.SetInitValue(kPhypCPVBar    ,   input_dcp_used);
+      fparm.SetInitValue(kPhypDm12sqBar,    input_dm12sq_used);
+      fparm.SetInitValue(kPhypDm23sqBar,    input_dm23sq_used);
+    }
+    else {
+      fparm.SetCurrentValue(kPhypMixing12,  input_mixing12_used);
+      fparm.SetCurrentValue(kPhypMixing13,  input_mixing13_used);
+      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetCurrentValue(kPhypCPV    ,   input_dcp_used);
+      fparm.SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+       
+      fparm.SetCurrentValue(kPhypMixing12Bar,  input_mixing12_used);
+      fparm.SetCurrentValue(kPhypMixing13Bar,  input_mixing13_used);
+      fparm.SetCurrentValue(kPhypMixing23Bar,  input_mixing23_used);
+      fparm.SetCurrentValue(kPhypCPVBar    ,   input_dcp_used);
+      fparm.SetCurrentValue(kPhypDm12sqBar,    input_dm12sq_used);
+      fparm.SetCurrentValue(kPhypDm23sqBar,    input_dm23sq_used);
+    }
+  }//kHypOsc3FBar
+  else if(fparm.PhysicsHypothesis() == kHypOsc3FNormBar) {
+    if(set_init) {
+      fparm.SetInitValue(kPhypMixing12,  input_mixing12_used);
+      fparm.SetInitValue(kPhypMixing13,  input_mixing13_used);
+      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetInitValue(kPhypCPV    ,   input_dcp_used);
+      fparm.SetInitValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+       
+      fparm.SetInitValue(kPhypBetaBar,    input_beta_bar_used);
+    }
+    else {
+      fparm.SetCurrentValue(kPhypMixing12,  input_mixing12_used);
+      fparm.SetCurrentValue(kPhypMixing13,  input_mixing13_used);
+      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetCurrentValue(kPhypCPV    ,   input_dcp_used);
+      fparm.SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+       
+      fparm.SetCurrentValue(kPhypBetaBar,    input_beta_bar_used);
+    }
+  }//kHypOsc3FNormBar
+  else if(fparm.PhysicsHypothesis() == kHypOsc3FBarNormBar) {
+    if(set_init) {
+      fparm.SetInitValue(kPhypMixing12,  input_mixing12_used);
+      fparm.SetInitValue(kPhypMixing13,  input_mixing13_used);
+      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetInitValue(kPhypCPV    ,   input_dcp_used);
+      fparm.SetInitValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+       
+      fparm.SetInitValue(kPhypMixing12Bar,  input_mixing12_used);
+      fparm.SetInitValue(kPhypMixing13Bar,  input_mixing13_used);
+      fparm.SetInitValue(kPhypMixing23Bar,  input_mixing23_used);
+      fparm.SetInitValue(kPhypCPVBar    ,   input_dcp_used);
+      fparm.SetInitValue(kPhypDm12sqBar,    input_dm12sq_used);
+      fparm.SetInitValue(kPhypDm23sqBar,    input_dm23sq_used);
+       
+      fparm.SetInitValue(kPhypBetaBar,    input_beta_bar_used);
+    }
+    else {
+      fparm.SetCurrentValue(kPhypMixing12,  input_mixing12_used);
+      fparm.SetCurrentValue(kPhypMixing13,  input_mixing13_used);
+      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm.SetCurrentValue(kPhypCPV    ,   input_dcp_used);
+      fparm.SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+       
+      fparm.SetCurrentValue(kPhypMixing12Bar,  input_mixing12_used);
+      fparm.SetCurrentValue(kPhypMixing13Bar,  input_mixing13_used);
+      fparm.SetCurrentValue(kPhypMixing23Bar,  input_mixing23_used);
+      fparm.SetCurrentValue(kPhypCPVBar    ,   input_dcp_used);
+      fparm.SetCurrentValue(kPhypDm12sqBar,    input_dm12sq_used);
+      fparm.SetCurrentValue(kPhypDm23sqBar,    input_dm23sq_used);
+       
+      fparm.SetCurrentValue(kPhypBetaBar,    input_beta_bar_used);
+    }
+  }//kHypOsc3FBarNormBar
+  else {
+    cout << "SetOscParams() " << util::AsString(fparm.PhysicsHypothesis()) << " not implemented" << endl;
+    exit(1);
+  }
+  
+  if(print)
+    cout << "- Oscillation parameters in physics param list updated: " << fparm << endl;
+
+  //save the values used
+  if(iMH == 0) {
+    if(hToy_th13_dcp_nh)
+      hToy_th13_dcp_nh->Fill(input_mixing13_used, input_dcp_used);
+    if(hToy_23_nh)
+      hToy_23_nh->Fill(input_mixing23_used, input_dm23sq_used);
+  }//NH
+  else if(iMH == 1) {
+    if(hToy_th13_dcp_ih)
+      hToy_th13_dcp_ih->Fill(input_mixing13_used, input_dcp_used);
+    if(hToy_23_ih)
+      hToy_23_ih->Fill(input_mixing23_used, input_dm23sq_used);
+  }//IH
+
+}
 //____________________________________________________________________________
 void valor::util::OscParams::Print(ostream & stream) const
 {
   stream << "   - True oscillation parameters: " << endl
-   << "     - Normal ordering: " << endl
-   << "       > " << util::AsString(kPhypMixing12) << " = "; ((randomize_mixing12_nh) ? cout << "* randomized *" : cout << mixing12_nh) << endl
-   << "       > " << util::AsString(kPhypMixing13) << " = "; ((randomize_mixing13_nh) ? cout << "* randomized *" : cout << mixing13_nh) << endl
-   << "       > " << util::AsString(kPhypMixing23) << " = "; ((randomize_mixing23_nh) ? cout << "* randomized *" : cout << mixing23_nh) << endl
-   << "       > " << util::AsString(kPhypCPV    )  << " = "; ((randomize_dcp_nh)      ? cout << "* randomized *" : cout << dcp_nh) << endl
-   << "       > " << util::AsString(kPhypDm12sq)   << " = "; ((randomize_dm12sq_nh)   ? cout << "* randomized *" : cout << dm12sq_nh )  << " eV^2/c^4" << endl
-   << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((randomize_dm23sq_nh)   ? cout << "* randomized *" : cout << dm23sq_nh )  << " eV^2/c^4" << endl
-   << "     - Inverted ordering: " << endl
-   << "       > " << util::AsString(kPhypMixing12) << " = "; ((randomize_mixing12_ih) ? cout << "* randomized *" : cout << mixing12_ih) << endl
-   << "       > " << util::AsString(kPhypMixing13) << " = "; ((randomize_mixing13_ih) ? cout << "* randomized *" : cout << mixing13_ih) << endl
-   << "       > " << util::AsString(kPhypMixing23) << " = "; ((randomize_mixing23_ih) ? cout << "* randomized *" : cout << mixing23_ih) << endl
-   << "       > " << util::AsString(kPhypCPV    )  << " = "; ((randomize_dcp_ih)      ? cout << "* randomized *" : cout << dcp_ih) << endl
-   << "       > " << util::AsString(kPhypDm12sq)   << " = "; ((randomize_dm12sq_ih)   ? cout << "* randomized *" : cout << dm12sq_ih )  << " eV^2/c^4" << endl
-   << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((randomize_dm23sq_ih)   ? cout << "* randomized *" : cout << dm23sq_ih )  << " eV^2/c^4" << endl
-   << "     - Other: " << endl
-   << "       > " << util::AsString(kPhypBetaBar)  << " = "; ((randomize_beta_bar)    ? cout << "* randomized *" : cout << beta_bar) << endl
-   << "       > Mass hierarchy = "; ((marginalize_mh) ? cout << "Margninalized (NH prior = " << mh_nh_prior << ")" : cout << util::AsString(MH)) << endl;
+	 << "     - Normal ordering: " << endl
+	 << "       > " << util::AsString(kPhypMixing12) << " = "; ((randomize_mixing12_nh) ? cout << "* randomized *" : cout << mixing12_nh) << endl
+	 << "       > " << util::AsString(kPhypMixing13) << " = "; ((randomize_mixing13_nh) ? cout << "* randomized *" : cout << mixing13_nh) << endl
+	 << "       > " << util::AsString(kPhypMixing23) << " = "; ((randomize_mixing23_nh) ? cout << "* randomized *" : cout << mixing23_nh) << endl
+	 << "       > " << util::AsString(kPhypCPV    )  << " = "; ((randomize_dcp_nh)      ? cout << "* randomized *" : cout << dcp_nh) << endl
+	 << "       > " << util::AsString(kPhypDm12sq)   << " = "; ((randomize_dm12sq_nh)   ? cout << "* randomized *" : cout << dm12sq_nh )  << " eV^2/c^4" << endl
+	 << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((randomize_dm23sq_nh)   ? cout << "* randomized *" : cout << dm23sq_nh )  << " eV^2/c^4" << endl
+	 << "     - Inverted ordering: " << endl
+	 << "       > " << util::AsString(kPhypMixing12) << " = "; ((randomize_mixing12_ih) ? cout << "* randomized *" : cout << mixing12_ih) << endl
+	 << "       > " << util::AsString(kPhypMixing13) << " = "; ((randomize_mixing13_ih) ? cout << "* randomized *" : cout << mixing13_ih) << endl
+	 << "       > " << util::AsString(kPhypMixing23) << " = "; ((randomize_mixing23_ih) ? cout << "* randomized *" : cout << mixing23_ih) << endl
+	 << "       > " << util::AsString(kPhypCPV    )  << " = "; ((randomize_dcp_ih)      ? cout << "* randomized *" : cout << dcp_ih) << endl
+	 << "       > " << util::AsString(kPhypDm12sq)   << " = "; ((randomize_dm12sq_ih)   ? cout << "* randomized *" : cout << dm12sq_ih )  << " eV^2/c^4" << endl
+	 << "       > " << util::AsString(kPhypDm23sq)   << " = "; ((randomize_dm23sq_ih)   ? cout << "* randomized *" : cout << dm23sq_ih )  << " eV^2/c^4" << endl
+	 << "     - Other: " << endl
+	 << "       > " << util::AsString(kPhypBetaBar)  << " = "; ((randomize_beta_bar)    ? cout << "* randomized *" : cout << beta_bar) << endl
+	 << "       > Mass hierarchy = "; ((marginalize_mh) ? cout << "Margninalized (NH prior = " << mh_nh_prior << ")" : cout << util::AsString(MH)) << endl;
   if(!priors_file.empty()) {
     if((randomize_mixing13_nh && randomize_dcp_nh)
        || (randomize_mixing13_ih && randomize_dcp_ih)

@@ -40,7 +40,13 @@ using namespace valor::conv;
 //____________________________________________________________________________
 const char * valor::util::FormFilePath(const char * file, const char * dir)
 {
-  return  Form("%s/%s/%s", gSystem->Getenv("T2KOSCANA"), dir, file);
+  FileStat_t dummy;
+  const char * filename = Form("%s/%s/%s", gSystem->Getenv("T2KOSCANA"), dir, file);
+  if(gSystem->GetPathInfo(filename, dummy)) {
+    cerr << "File not found: " << filename << endl;
+    exit(-1);
+  }
+  return filename; 
 }
 //____________________________________________________________________________
 string valor::util::SysThrowIdToString(unsigned int tweak_systematics)
@@ -77,6 +83,8 @@ string valor::util::SysThrowIdToString(unsigned int tweak_systematics)
 void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectation * skexp, bool print)
 {
   if(tweak_systematics == 0) {
+    //make sure systematics are reset
+    skexp->ResetSystematicVariations();
     return;
   }
   else if(tweak_systematics == 1) {

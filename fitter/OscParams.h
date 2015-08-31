@@ -20,6 +20,7 @@
 
 #include "Conventions/NuMassHierarchy.h"
 #include "FitCore/PhysHypothesis.h"
+#include "FitCore/FitParamList.h"
 
 #include "TH2D.h"
 #include "TH1D.h"
@@ -48,8 +49,9 @@ public:
   // Randomize ALL oscillation parameters (if requested)
   void Randomize();
 
-  // Update all the values in the PhysHypothesis, for any 2/3 flavour hypothesis type, in a single function
-  void UpdatePhysHypothesis(PhysHypothesis & ph, bool print = true);
+  // Update all the values in the PhysHypothesis / FitParamList
+  void UpdatePhysHypothesis(PhysHypothesis & ph,  bool print = true);
+  void UpdateFitParamList  (FitParamList & fparm, bool set_init, bool print = false);
 
   // Write the histograms in the OscParams
   void Write(TFile * f);
