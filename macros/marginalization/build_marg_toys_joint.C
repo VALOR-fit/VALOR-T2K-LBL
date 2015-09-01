@@ -80,22 +80,22 @@ void build_marg_toys_joint
  const char * freeparname0          = "mixing13",  // free parameter
  const double freeparmin0           = 0.,     // minimum value of free parameter
  const double freeparmax0           = 0.4,     // maxinum value of free parameter
- const int    NptScan0              = 4, //81,  // # pts of free parameter to scan
+ const int    NptScan0              = 2, //81,  // # pts of free parameter to scan
  const char * freeparname1          = "deltacp",  // free parameter
  const double freeparmin1           = -3.14159265358979312e+00,     // minimum value of free parameter
  const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
- const int    NptScan1              = 3, //51, //3, //21,  // # pts of free parameter to scan
+ const int    NptScan1              = 2, //51, //3, //21,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 2, //3, //500  // # toys marginalization 
+ const int    NtoysMarg            = 100, //3, //500  // # toys marginalization 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
- const bool   doMargMH             = true, //true,      // marginalize Mass Hierarchy
+ const bool   doMargMH             = 0, //true,      // marginalize Mass Hierarchy
  const double PriorProbNH          = 0.5, // Prior for MH --> give the prob. of NH as input
 
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
-
+ 
  const char * dmsqscheme           = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * hierarchy            = "inverted",    /* normal or inverted */
+ const char * hierarchy            = "normal",    /* normal or inverted */
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  

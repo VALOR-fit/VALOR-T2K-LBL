@@ -99,27 +99,27 @@ void run_fit_marginalization_readbinary_joint_2d
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_MH_10kToys/joint_dcp_react_constrall_MH_10kToys",            // Stat+Syst (T2K+react)
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_t2konly_MH_10kToys/joint_dcp_t2konly_constrall_MH_10kToys",        // Stat+Syst (T2K only)
  //const char * infilename = "submit_prova_TemplVArray",
- const char * infilename = "submit_prova_TemplVArray_Merged",
+ //const char * infilename = "submit_prova_TemplVArray_Merged",
  //const char * infilename = "submit_prova",
  //const char * infilename = "submit_prova_Merged",
  //const char * infilename = "PROVA_SystAll",
- //const char * infilename = "PROVA_SystAll_TemplVArray",
+ const char * infilename = "PROVA_SystAll_TemplVArray",
  
  const int    nfiles               = 1, //1, //12, //6, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 2, //500, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 100, //500, //10000, //1,  // # toys marginalization 
  
  const char * freeparname0        = "mixing13",  // free parameter
  const double freeparmin0         = 0., // minimum value of free parameter
  const double freeparmax0         = 0.113, // maxinum value of free parameter
- const int    NptScan0            = 4, //81, //201, //21,      // # pts of free parameter to scan
+ const int    NptScan0            = 2, //81, //201, //21,      // # pts of free parameter to scan
 
  const char * freeparname1        = "deltacp",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan1            = 3, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
+ const int    NptScan1            = 2, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
 
- const bool  doMargMH             = true,    // marginalize Mass Hierarchy
+ const bool  doMargMH             = false,    // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
  
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  

@@ -29,7 +29,7 @@ using namespace valor::conv;
 
 void run_fit_marginalization_readbinary_joint
 (
-
+ 
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
  const char * tag                      = "fitmarg_joint_PROVA",    /* tag for output file */
@@ -37,12 +37,13 @@ void run_fit_marginalization_readbinary_joint
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- //const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
- const char * xmlfile = "../outputs/test/toymc_prova_joint-0.xml",
+ const char * xmlfile = "data_run1to4/data_newstruct.xml",
+ //const char * xmlfile = "data_run1to6/data.xml",
+ //const char * xmlfile = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/2015_v2.0.0_evolution/inputs/data_run1to6/skdata_run1to6.xml",
 
  const char * rootfile = "../outputs/test/toymc_prova_joint-0.root",
 
- bool using_xml_file = false,
+ bool using_xml_file = true,
 
  bool         dotoys               = 1,
 
@@ -94,8 +95,12 @@ void run_fit_marginalization_readbinary_joint
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",
+
+ const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsQ2/joint_sinsqth13Vsdcp_t2kreact_constrall_NH_10kToys_ErecoVsQ2",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_2Dtempl_ErecoVsQ2/joint_sinsqth13Vsdcp_t2kreact_constrall_IH_10kToys_ErecoVsQ2",
+
  //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
  //const char * infilename = "PROVA_SystAll_TemplVArray",
