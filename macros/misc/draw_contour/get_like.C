@@ -8,8 +8,8 @@
 
 void get_like
 (
- const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_IH",
- const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0", 
+ const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_NH",
+ const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_NH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0", 
  const char* opt = "cp13",
  const bool SavePDF = false
  )
