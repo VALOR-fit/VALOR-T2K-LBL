@@ -24,13 +24,14 @@ void build_marg_toys
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_10k_DEV",
+ //const char * tag                  = "BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_10k_DEV",
  //const char * tag                  = "BetaBar_FixOsc_sigmanuenumu0p03",
  //const char * tag                  = "BetaBar_NoSyst",
- //const char * tag                  = "PROVA",
+ const char * tag                  = "PROVA",
  
- 
- const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
+  
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4E20POT.xml",
  
@@ -90,7 +91,7 @@ void build_marg_toys
  const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
  const int    NptScan1              = 1,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 50000,   // # toys marginalization 
+ const int    NtoysMarg            = 3,   // # toys marginalization 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = true,      // marginalize Mass Hierarchy
@@ -103,7 +104,7 @@ void build_marg_toys
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
- TString file_priors = "../../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR)
+ TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR)
  //TString file_priors = "" // Set to "" if no user priors are used (VALOR)
  )
 {  
@@ -137,7 +138,7 @@ void build_marg_toys
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(config.Data());
- 
+
   //
 
   PhysParamId_t freepar0;
@@ -420,8 +421,17 @@ void build_marg_toys
     cout << "       > " << util::AsString(kPhypBetaBar)      << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypBetaBar    ) << endl;
   }  
 
-  cout << *fitmarg->GetFitParamList_NH() << endl;
-  cout << *fitmarg->GetFitParamList_IH() << endl;
+
+ 
+  // FitParamList &myfparm  = *fitmarg->GetFitParamList_NH();
+  // skexp->Generate(myfparm,false,false); // test SetNuisanceParams
+  // cout << skexp->GetFitStatisticPenalty() << endl;
+  // return;
+  // cout << *fitmarg->GetFitParamList_NH() << endl;
+  // cout << *fitmarg->GetFitParamList_IH() << endl;  
+  // return;
+
+
   
   // Set Prior for Mass Hierarchy (set it for NH and it's automatically done for IH as well)
   fitmarg->SetProbNormalHierarchy(PriorProbNH);

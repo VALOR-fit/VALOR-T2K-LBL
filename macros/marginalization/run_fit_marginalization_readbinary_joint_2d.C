@@ -34,14 +34,15 @@ void run_fit_marginalization_readbinary_joint_2d
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- //const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
- const char * xmlfile = "../outputs/test/toymc_prova_joint-0.xml",
+ const char * xmlfile = "data_run1to4/data_newstruct.xml",
+ //const char * xmlfile = "data_run1to6/data.xml",
+ //const char * xmlfile = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/2015_v2.0.0_evolution/inputs/data_run1to6/skdata_run1to6.xml",
 
  const char * rootfile = "../outputs/test/toymc_prova_joint-0.root",
 
- bool using_xml_file = false,
+ bool using_xml_file = true,
 
- bool         dotoys               = 1,
+ bool         dotoys               = 0,
 
  // Mach3, T2K Run1-4 + reactors best fit (A)
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -75,8 +76,8 @@ void run_fit_marginalization_readbinary_joint_2d
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
- //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
@@ -95,22 +96,22 @@ void run_fit_marginalization_readbinary_joint_2d
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_NH_StatOnly_Mach3T2KReactRun14/joint_dcp_NH_StatOnly",             // Stat-only (Mach3 T2K+react)
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_MH_10kToys/joint_dcp_react_constrall_MH_10kToys",            // Stat+Syst (T2K+react)
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_t2konly_MH_10kToys/joint_dcp_t2konly_constrall_MH_10kToys",        // Stat+Syst (T2K only)
- const char * infilename = "submit_prova",
- //const char * infilename = "PROVA_SystAll",
+ //const char * infilename = "submit_prova",
+ const char * infilename = "PROVA_SystAll",
 
- const int    nfiles               = 6, //201, 21, 1        // # of files to read
+ const int    nfiles               = 1, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 1, //500, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 100, //500, //10000, //1,  // # toys marginalization 
  
  const char * freeparname0        = "mixing13",  // free parameter
  const double freeparmin0         = 0., // minimum value of free parameter
  const double freeparmax0         = 0.113, // maxinum value of free parameter
- const int    NptScan0            = 81, //201, //21,      // # pts of free parameter to scan
+ const int    NptScan0            = 2, //81, //201, //21,      // # pts of free parameter to scan
 
  const char * freeparname1        = "deltacp",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan1            = 51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
+ const int    NptScan1            = 2, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
 
  const bool  doMargMH             = false,    // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */

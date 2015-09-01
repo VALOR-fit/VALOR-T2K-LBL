@@ -42,9 +42,9 @@ void run_fit_marginalization_readbinary_joint
 
  bool using_xml_file = true, 
 
- bool         dotoys               = 0,
+ bool         dotoys               = 1,
 
- // Mach3, T2K Run1-4 + reactors best fit (A)
+ // Mach3, T2K Run1-4 + reactors best fit (A) 
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -93,7 +93,9 @@ void run_fit_marginalization_readbinary_joint
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_dcp_t2kreact_constrall_NH_10kToys",
- const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_dcp_t2kreact_constrall_IH_10kToys",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_dcp_t2kreact_constrall_IH_10kToys",
+ const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_NH_10kToys_OldJoint",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_IH_10kToys_OldJoint",
  //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
  

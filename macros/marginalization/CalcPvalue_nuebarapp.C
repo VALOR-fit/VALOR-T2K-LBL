@@ -30,10 +30,10 @@ void CalcPvalue_nuebarapp
  double deltachisq_beta01_data = 0.164213, // data deltachisq 01
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
  //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
- //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
+ char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
  //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_1_4.0108E20POT_EPS-3f+normbar_50kToys.root",
  //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_xml/fitmarg_betabar_0_4p0108E20POT_EPS_10kToys-3f+normbar.root",
- char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_0_4p0108E20POT_EPS_10kToys_xml_unique-3f+normbar.root",
+ //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_0_4p0108E20POT_EPS_10kToys_xml_unique-3f+normbar.root",
 
  // // Mach3 - 4.0108 x 10^20 POT (beta=1)
  // TString tag = "pvalue_beta1_Mach3_NH",

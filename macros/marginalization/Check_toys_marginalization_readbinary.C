@@ -17,57 +17,55 @@ using namespace valor::conv;
 
 void Check_toys_marginalization_readbinary
 (
- const char * config_file              = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
- 
- //const char * fit_param_list       = "nuosc3fbar_normbar_fixosc+nuisance",
- //const char * fit_param_list       = "nuosc3fbar_normbar_fitdcpbar+nuisance",
- //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
- //const char * fit_param_list       = "nuosc3f_normbar_fitdcp+nuisance",
- const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
+ //const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
+ const char * config_file          = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
 
- const char * sk_sample = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
 
- const char * hypothesis           = "3f_osc_normbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
+ const char * sk_sample = "1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
- double       input_mixing12       = -99,                         
- double       input_mixing13       = -99,                         
- double       input_mixing23       = -99,                         
- double       input_deltacp        = -99,                         
- double       input_dm12sq         = -99,                         
- double       input_dm23sq         = -99,                       
- double       input_betabar        = -99,
+ const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
+
+ double       input_mixing12       = 0.304,                         
+ double       input_mixing13       = 0.02146,                         
+ double       input_mixing23       = 0.5,                         
+ double       input_deltacp        = 0.,                         
+ double       input_dm12sq         = 7.5E-5,                         
+ double       input_dm23sq         = 2.5E-3,                       
+ double       input_betabar        = 1.,
 
  const char * dmsqscheme          = "auto",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy           = "normal"   ,
  const char * mixparamchoice      = "sinsqtheta",
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
- const int InputBin0  = 1,
+ const int InputBin0  = 10,
  const int InputBin1  = 0,
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- //const char * infilename = "../../inputs/marginalization/toys/EPS_RELEASE/BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_50k_DEV",
- const char * infilename = "../../inputs/marginalization/toys/EPS_RELEASE/BetaBar_Toy_23_th13dcp_Corr_Mach3_fluxJune_10k_DEV",
- 
- //const int    nfiles               = 201,         // # of files to read
+ const char * infilename = "PROVA_SystAll",
+ //const char * infilename = "PROVA_SystOsc",
+ //const char * infilename = "PROVA_NoSyst",
+
  const int    nfiles               = 1,         // # of files to read
 
- const int    NtoysMarg            = 50000,   // # toys marginalization 
+ const int    NtoysMarg            = 500,   // # toys marginalization 
  
- const char * freeparname0        = "betaBar",  // free parameter
- const double freeparmin0         = 0.,         // minimum value of free parameter
- const double freeparmax0         = 1.,         // maxinum value of free parameter
- const int    NptScan0            = 2,          // # pts of free parameter to scan
+ const char * freeparname0        = "deltacp",  // free parameter
+ const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+ const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ const int    NptScan0            = 21, // 801, 2          // # pts of free parameter to scan
  
  const char * freeparname1        = "",  // free parameter
- const double freeparmin1         = -3.14159265358979312e+00, // minimum value of free parameter
- const double freeparmax1         = +3.14159265358979312e+00, // maxinum value of free parameter
+ const double freeparmin1         = 0., // minimum value of free parameter
+ const double freeparmax1         = 0., // maxinum value of free parameter
  const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  
- const char *FileToyOscParam       = "../../inputs/marginalization/toys//nuebarapp_1D_NuOsc_T2Kreact_betabar_Toy_23_mix13dcp_Joint_MH_10kToys/BetaBar_4p0E20POT_Toy_23_th13dcp_Corr_Mach3.root"
+ //const char *FileToyOscParam       = "../../inputs/marginalization/toys//nuebarapp_1D_NuOsc_T2Kreact_betabar_Toy_23_mix13dcp_Joint_MH_10kToys/BetaBar_4p0E20POT_Toy_23_th13dcp_Corr_Mach3.root"
+ const char *FileToyOscParam       = ""
  )
 {
   
@@ -290,8 +288,7 @@ void Check_toys_marginalization_readbinary
   
   fitmarg->SetTagFileName(infilename);
   fitmarg->SetFileID(nfiles);
-  
- 
+    
   // Get Ereco toys
   
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
@@ -308,11 +305,14 @@ void Check_toys_marginalization_readbinary
   
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
   
+
   int ipar0 = InputBin0;
   int ipar1 = InputBin1;
   
-  cout << "par0 = " << ipar0 << endl;
-  cout << "par1 = " << ipar1 << endl;
+  double parvalue = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(InputBin0+1);
+
+  cout << "par0 = " << ipar0 << " --> " << freeparname0 << " = " << parvalue << endl;
+  
 
   TH1F* h_marg_toy;
   TH1F* h_up = new TH1F("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
@@ -410,9 +410,11 @@ void Check_toys_marginalization_readbinary
   // Loop over marginalization toys
 
   for(int itoy=0;itoy<NtoysMarg;itoy++){
-
+  
     h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
 
+    //cout << "# of events = " << h_marg_toy->Integral() << endl;
+    
     for(int i=1;i<=util::NumErecoBins(s);i++){
       h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
     }

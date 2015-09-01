@@ -31,8 +31,8 @@ void run_fit_marginalization_readbinary_betabar
 
  const char * tag                      = "fitmarg_betabar_DEV",    /* tag for output file */
 
- int          first_experiment         = 60000, //4404, //4739,                       /* */
- int          last_experiment          = 60000, //4404, //4739,                       /* */
+ int          first_experiment         = 0, //4404, //4739,                       /* */
+ int          last_experiment          = 0, //4404, //4739,                       /* */
 
  //const char * xmlfile = "data_run1to6/skdata_run1to6.xml",
  //const char * xmlfile = "toymc/EPS_RELEASE_DEV_3/toymc_nuebar_beta0_toy_0_10000-0.xml",
