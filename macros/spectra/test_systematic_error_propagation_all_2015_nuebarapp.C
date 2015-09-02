@@ -13,28 +13,29 @@ void test_systematic_error_propagation_all_2015_nuebarapp
 (
  int          mode               = 0,                /* options: see above */
  bool         update_rootfile    = false,            /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "RHC1Re",         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
- const char * hypothesis         = "3f_oscbar_normbar", /* options: "2f_numu_disap", "3f_osc", "3f_oscbar, 3f_oscbar_normbar" */
+ const char * sk_sample          = "1Re",         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * hypothesis         = "3f_osc", /* options: "2f_numu_disap", "3f_osc", "3f_oscbar, 3f_oscbar_normbar" */
 
- double       input_mixing12     = -99,              /* */
- double       input_mixing13     = -99,              /* */
- double       input_mixing23     = -99,              /* */
- double       input_deltacp      = -99,              /* */
- double       input_dm12sq       = -99,              /* */
- double       input_dm23sq       = -99,              /* */
- double       input_betabar      = -99,              /* */
-
- // double       input_mixing12     = 0.,              /* */
- // double       input_mixing13     = 0.,              /* */
- // double       input_mixing23     = 0.,              /* */
- // double       input_deltacp      = 0.,              /* */
+ // double       input_mixing12     = -99,              /* */
+ // double       input_mixing13     = -99,              /* */
+ // double       input_mixing23     = -99,              /* */
+ // double       input_deltacp      = -99,              /* */
  // double       input_dm12sq       = -99,              /* */
  // double       input_dm23sq       = -99,              /* */
- // double       input_betabar      = 0.,              /* */
+ // double       input_betabar      = -99,              /* */
+
+ double       input_mixing12     = 0.,              /* */
+ double       input_mixing13     = 0.,              /* */
+ double       input_mixing23     = 0.,              /* */
+ double       input_deltacp      = 0.,              /* */
+ double       input_dm12sq       = -99,              /* */
+ double       input_dm23sq       = -99,              /* */
+ double       input_betabar      = 0.,              /* */
 
  bool         save_toy_expts     = false,            /* save the ereco spectra? */
  
- const char * config_file        = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",   /* */
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file        = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",   /* */
  //const char * config_file        = "analysis_configuration_run1to6_test_prefit_app.xml",  
  //const char * config_file        = "analysis_configuration_run1to6_test_app.xml",  
  //const char * config_file        = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",   /* */
@@ -54,7 +55,7 @@ void test_systematic_error_propagation_all_2015_nuebarapp
  int    tablesyst_idx            = -999,   /* -999 --> full table merged modes, 0-Nsyst --> mode table, -99 --> Document with all the mode table */
  string tablesyst_name           = "f_banff17_rhc", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
- const bool   per_mode           = true
+ const bool   per_mode           = false
  ){
   using namespace std;
   using namespace valor;

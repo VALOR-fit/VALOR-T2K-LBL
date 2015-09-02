@@ -412,13 +412,13 @@ if __name__=="__main__":
 
   # T2K+reactors (sinsqtheta) - Normal Hierarchy
   parser.add_option('--mixing12', dest='mixing12',default=0.304   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  parser.add_option('--mixing13', dest='mixing13',default=0.025  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  parser.add_option('--mixing13', dest='mixing13',default=0.0243  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
   parser.add_option('--mixing23', dest='mixing23',default=0.528   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
   parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5 ,type=float, help='Value of small mass splitting')
   parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.509E-3 ,type=float, help='Value of large mass splitting')
   parser.add_option('--deltacp' , dest='deltacp' ,default=-1.601    ,type=float, help='Value of delta CP')
   parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.304   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.025  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.0243  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
   parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.528   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
   parser.add_option('--dm12sqbar'  , dest='dm12sqBar'  ,default=7.53E-5 ,type=float, help='Barred value of small mass splitting')
   parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=2.509E-3 ,type=float, help='Barred value of large mass splitting')

@@ -16,8 +16,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
 (
  const char * tag                   = "prova",
  
- const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
- const char * hypothesis           = "3f_osc_normbar",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
+ const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
  
  // double       input_mixing12       = 0.,                          
  // double       input_mixing13       = 0.,                          
@@ -27,35 +27,18 @@ void test_sk_ereco_spectrum_nominal_mainmode_nuebarapp
  // double       input_dm23sq         = 0.,                          
  // double       input_betabar        = 0.,
 
- double       input_mixing12       = -99,                         
- double       input_mixing13       = -99,                         
- double       input_mixing23       = -99,                         
- double       input_deltacp        = 0., //+TMath::Pi()/2., //-99,                         
- double       input_dm12sq         = -99,                         
- double       input_dm23sq         = -99,                       
- double       input_betabar        = -99,
-
- // // Normal Hierarchy (VALOR)
- // double       input_mixing12       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = conv::kT2KReacBestFitSinsqTheta13_NH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = conv::kT2KReacBestFitSinsqTheta23_NH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = conv::kT2KReacBestFitDeltaCP_NH, //-99,    /* deltacp, */
- // double       input_dm12sq         = -99,    /* Dm^2_{12},  */
- // double       input_dm23sq         = conv::kT2KReacBestFitDmsq23_NH, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar       = -99,
-
- // // Inverted Hierarchy
- // double       input_mixing12       = -99,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = conv::kT2KReacBestFitSinsqTheta13_IH,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = conv::kT2KReacBestFitSinsqTheta23_IH, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = conv::kT2KReacBestFitDeltaCP_IH, //-99,    /* deltacp, */
- // double       input_dm12sq         = -99,    /* Dm^2_{12},  */
- // double       input_dm23sq         = conv::kT2KReacBestFitDmsq23_IH, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar       = -99,
-  
+ double       input_mixing12       = 0.304,                         
+ double       input_mixing13       = 0.02146,                         
+ double       input_mixing23       = 0.5,                         
+ double       input_deltacp        = 0,                         
+ double       input_dm12sq         = 7.53E-5,                         
+ double       input_dm23sq         = 2.5E-3,                       
+ double       input_betabar        = 0, //-99,
+ 
  bool         disable_banff_tuning = false,                          /* */
  
- const char * config_file      = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",      
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app_4.0108E20POT_fluxJune.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",      
  //const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",      

@@ -19,34 +19,47 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint
  const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
  
- // double       input_mixing12       = 0.,                          
- // double       input_mixing13       = 0.,                          
- // double       input_mixing23       = 0.,                          
- // double       input_deltacp        = 0.,                          
- // double       input_dm12sq         = 0.,                          
- // double       input_dm23sq         = 0.,                          
- // double       input_betabar        = 0.,
-
- double       input_mixing12       = 0.304,                         
- double       input_mixing13       = 0.02146,                         
- double       input_mixing23       = 0.5,                         
- double       input_deltacp        = 0,                         
- double       input_dm12sq         = 7.53E-5,                         
- double       input_dm23sq         = 2.5E-3,                       
- double       input_betabar        = 0, //-99,
+ // Mach3, T2K Run1-4 + reactors best fit (A)
+ double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ double       input_betabar        = -99,
  
+ // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
+ // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = 0., //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ // double       input_betabar        = -99,
+
+ // // Mach3, T2K only Run1-4 best fit (C)
+ // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0422,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = 1.91, //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ // double       input_betabar        = -99,
+
+ // // Mach3, T2K Run1-4 + reactors best fit - th23 non maximal (D)
+ // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.4, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ // double       input_betabar        = -99,
+
  bool         disable_banff_tuning = false,                          /* */
  
  const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- //const char * config_file      = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",      
- //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app_4.0108E20POT_fluxJune.xml",      
- //const char * config_file      = "analysis_configuration_run1to6_test_app_4p5E20POT.xml",      
- //const char * config_file      = "analysis_configuration_run1to6_test_app_4E20POT.xml",      
- //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app_4p5E20POT.xml",      
- //const char * config_file     = "analysis_configuration_run1to6_test_prefit_app_4E20POT.xml",
- //const char * config_file      = "analysis_configuration_run1to6_test_app.xml",      
- //const char * config_file      = "analysis_configuration_run1to6_test_app_fullstat.xml",      
- //const char * config_file      = "analysis_configuration_run1to6_test_prefit_app.xml",      
+ //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
+ 
    
  bool         store_spectrum     = true,
  bool         print_spectrum       = false,                          /* */
@@ -618,6 +631,15 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint
 	   << setw(15) << setfill(' ') << setprecision(6) << n1pi << " events ("
 	   << setw(10) << setfill(' ') << setprecision(6) << 100*n1pi/ntot << " %)" << endl;
      
+  cout << endl;
+  cout << "Numu --> Nue = " << hErecoMode_NumuToNue->Integral() << endl;
+  cout << "NumuBar --> NueBar = " << hErecoMode_NumuBarToNueBar->Integral() << endl; 
+  cout << "NC = " << hErecoMode_NC->Integral() << endl; 
+  cout << "Numu beam = " << hErecoMode_NumuBeam->Integral() << endl; 
+  cout << "NumuBar beam = " << hErecoMode_NumuBarBeam->Integral() << endl; 
+  cout << "Nue beam = " << hErecoMode_NueBeam->Integral() << endl; 
+  cout << "Total = " << hErecoTot->Integral() << endl;
+  cout << endl;
   
   //
   // Draw
