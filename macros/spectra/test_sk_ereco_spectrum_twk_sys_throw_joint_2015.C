@@ -105,35 +105,36 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015
 (
- int          mode                     = 9,                                         /* options: see above */
+ int          mode                     = 1,                                         /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
-  const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
-  const char * hypothesis               = "3f_osc_normbar",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
+ const char * sk_sample                = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
+ 
+ double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ double       input_betabar        = -99,
+ 
+ bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
+ bool         save_throws              = false,                                        /* save the thrown parameter values*/
 
-  double       input_mixing12           = -99,                       
-  double       input_mixing13           = -999, //-999, //-999,               
-  double       input_mixing23           = -999, //-999,               
-  double       input_deltacp            = -999, //-999, //-999,               
-  double       input_dm12sq             = -99,                       
-  double       input_dm23sq             = -999, //-999, //-999,               
-  double       input_betabar            = 0.,
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
 
-  bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
-  bool         save_throws              = false,                                        /* save the thrown parameter values*/
- const char * config_file              = "analysis_configuration_run1to6_test_prefit_app_4.0108E20POT_fluxJune_skdet.xml",   /* */
- //const char * config_file              = "analysis_configuration_run1to6_test_prefit_app_4.0108E20POT_fluxJune_fsisipn.xml",   /* */
- //const char * config_file              = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",   /* */
-  const int    nexp                     = 10000,                                          /* number of experiments to make */
-  const char * dmsqscheme               = "auto",
-  const char * mixparamchoice           = "sinsqtheta",
-  const char * hierarchy                = "normal",
-  const char * mixparamoctant           = "two",       
-  bool         reject_unphysical_throws = true    ,
-  bool         use_new_definition_of_dn_over_n = true,
-  
-  const bool   doMargMH             = true,      // marginalize Mass Hierarchy
-  const double PriorProbNH          = 0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
-  TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root" // Set to "" if no user priors are used (VALOR) 
+ const int    nexp                     = 10000,                                          /* number of experiments to make */
+ const char * dmsqscheme               = "auto",
+ const char * mixparamchoice           = "sinsqtheta",
+ const char * hierarchy                = "normal",
+ const char * mixparamoctant           = "two",       
+ bool         reject_unphysical_throws = true    ,
+ bool         use_new_definition_of_dn_over_n = false,
+ 
+ const bool   doMargMH             = false,      // marginalize Mass Hierarchy
+ const double PriorProbNH          = 0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
+ TString file_priors = "" // Set to "" if no user priors are used (VALOR) 
  )
 {
   using namespace std;
@@ -276,11 +277,43 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015
   TH1D** h_bin_coarse = new TH1D*[util::NumErecoBins(s)];
   for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
     char name[200];
-    sprintf(name,"h_bin_%d",ibin);
-    h_bin[ibin] = new TH1D(name,name,20000,0,1);
-    //h_bin[ibin] = new TH1D(name,name,2000,0,1);
-    sprintf(name,"h_bin_coarse_%d",ibin);
-    h_bin_coarse[ibin] = new TH1D(name,name,200,0,1);
+
+    if(s == kSKsRHCFCFV1RingELike ){
+      sprintf(name,"h_bin_%d",ibin);
+      h_bin[ibin] = new TH1D(name,name,100000,0,5);
+      //h_bin[ibin] = new TH1D(name,name,10000,0,5);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,1000,0,5);
+    }
+    else if(s == kSKsRHCFCFV1RingMuLike ){
+      sprintf(name,"h_bin_%d",ibin);
+      h_bin[ibin] = new TH1D(name,name,100000,0,20);
+      //h_bin[ibin] = new TH1D(name,name,10000,0,20);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,1000,0,20);
+    }
+    else if(s == kSKsFCFV1RingELike ){
+      sprintf(name,"h_bin_%d",ibin);
+      h_bin[ibin] = new TH1D(name,name,100000,0,5);
+      //h_bin[ibin] = new TH1D(name,name,10000,0,5);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,1000,0,5);
+    }
+    else if(s == kSKsFCFV1RingMuLike ){
+      sprintf(name,"h_bin_%d",ibin);
+      h_bin[ibin] = new TH1D(name,name,100000,0,20);
+      //h_bin[ibin] = new TH1D(name,name,10000,0,5);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,1000,0,20);
+    }
+    else{
+      cerr << "Undefined sample" << endl;
+      exit(1);
+    }
+    
+
+
+
   }
 
   TH1D* hErecoAverage = new TH1D("hErecoAverage","hErecoAverage",util::NumErecoBins(s),util::ErecoBinEdges(s));
@@ -491,8 +524,15 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015
   TH1D * hErecoNominal = 0;
   VALORArray * obsEreco[nexp];
   for (int i = 0 ; i < nexp; i++) {obsEreco[i]=0;}
-  TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
-  
+  TH1D * hNsk;
+  if(s == kSKsRHCFCFV1RingELike )       hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+  else if(s == kSKsRHCFCFV1RingMuLike ) hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,50);
+  else if(s == kSKsFCFV1RingELike )     hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,50);
+  else if(s == kSKsFCFV1RingMuLike )    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),500,10,200);
+  else{
+    cerr << "Undefined sample" << endl;
+    exit(1);
+  }
   
   int nbanff;
   if(RHCFlag) nbanff = conv::kNumOfRHCParamsInBANFFfit;
@@ -1103,8 +1143,11 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015
   hErecoMaxEnv->Draw();
   hErecoMinEnv->Draw("same");
   hErecoNominal->Draw("same");
+  c->Update();
   c->SaveAs(Form("%s_%s_envelope_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
+
+
   TH1D * hErecoMaxEnv_per50MeV = spectrum_to_per_50mev(hErecoMaxEnv);
   TH1D * hErecoMinEnv_per50MeV = spectrum_to_per_50mev(hErecoMinEnv);
   
@@ -1180,6 +1223,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015
   hErecoMedian->SetLineColor(kBlue);
   hErecoMedian->SetLineWidth(2);
   hErecoMedian->DrawCopy("same");
+  gPad->RedrawAxis();
+  cAverage->Update();
   TLegend *lAverage = new TLegend(0.7,0.6,1.0,0.9);
   lAverage->SetFillColor(0);
   lAverage->SetLineColor(0);
@@ -1190,7 +1235,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015
   lAverage->AddEntry(hErecoMedian,"Median","l");
   lAverage->AddEntry(h_up,"Error wrt average","f");
   lAverage->Draw();
-  
+ 
   TCanvas * cMedian = new TCanvas("cMedian","Wrt median");
   h_up_Median->GetXaxis()->SetTitle("E_{reco} (GeV)");
   h_up_Median->GetYaxis()->SetTitle("Events per bin");
@@ -1214,6 +1259,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015
   hErecoMedian->SetLineColor(kBlue);
   hErecoMedian->SetLineWidth(2);
   hErecoMedian->DrawCopy("same");
+  gPad->RedrawAxis();
+  cMedian->Update();
   TLegend *lMedian = new TLegend(0.7,0.6,1.0,0.9);
   lMedian->SetFillColor(0);
   lMedian->SetLineColor(0);
@@ -1224,7 +1271,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015
   lMedian->AddEntry(hErecoMedian,"Median","l");
   lMedian->AddEntry(h_up_Median,"Error wrt median","f");
   lMedian->Draw();
-  
+
   TCanvas * c3 = new TCanvas();
   hNsk->Draw();
   hNsk->GetXaxis()->SetTitle("# of SK events");
