@@ -614,6 +614,8 @@ namespace util {
   string ParamAsStringSpline             (conv::PhysParamId_t p);
   string ParamAsStringNIWG               (conv::PhysParamId_t p);
   
+  conv::PhysParamId_t GetBarredVersionOfPhysParam(conv::PhysParamId_t p);
+  
 } // util
 
 } // valor
