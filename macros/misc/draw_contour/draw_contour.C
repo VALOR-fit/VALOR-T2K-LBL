@@ -9,17 +9,17 @@
 
 void draw_contour
 (
- //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_NH",
- //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_NH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_NH",
+ const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_NH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
  
- //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Asimov_C_NH",
- //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Asimov_C_NH-sinsqtheta[12_0.304,13_0.042,23_0.528],dcp_1.910,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Asimov_C_NH",
+ //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Asimov_C_NH-sinsqtheta[12_0.304,13_0.042,23_0.528],dcp_1.910,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
 
  // const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Kreact_DataRun14_NH",
  // const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_NH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
 
- const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Kreact_DataRun14_IH",
- const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Kreact_DataRun14_IH",
+ //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
 
  const char* opt = "cp13",
  const bool SavePDF = false
@@ -73,6 +73,9 @@ void draw_contour
   h2 = (TH2D*)h1->Clone();
   h4 = (TH2D*)h1->Clone();
   double chisq_min = h1->GetMinimum();
+
+  cout << "chisq_min = " << chisq_min << endl;
+
   h1->SetContour(1);
   h3->SetContour(1);
   
@@ -92,6 +95,9 @@ void draw_contour
   double xmin = h1->GetXaxis()->GetBinCenter(binx);
   double ymin = h1->GetYaxis()->GetBinCenter(biny);
   
+  cout << "best-fit x = " << xmin << endl;
+  cout << "best-fit y = " << ymin << endl;
+
   TMarker * bf = new TMarker(xmin,ymin,kFullStar);
   bf->SetMarkerColor(kRed);
   bf->SetMarkerSize(1.5);
