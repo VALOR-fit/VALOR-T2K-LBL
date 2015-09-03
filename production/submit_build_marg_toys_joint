@@ -93,7 +93,8 @@ foreach (@ARGV) {
 }
 
 $resource        = "interactive"               unless defined $resource;
-$tag             = "submit_prova"            unless defined $tag;
+#$tag             = "submit_prova"              unless defined $tag;
+$tag             = "submit_prova_TemplVArray"  unless defined $tag;
 
 $config_file     = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml"  unless defined $config_file;
 
@@ -144,6 +145,16 @@ $betaBar         = -99                       unless defined $betaBar;
 # $maxfreepar1            = 0.                        unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 # $npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan
 
+# 2D fit - sinsqth13 Vs dcp (debug)
+$freepar0               = "mixing13"                 unless defined $freepar0;
+$minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.4                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+$npt_freepar0           = 4                          unless defined $npt_freepar0;    # of free parameter points to scan
+$freepar1               = "deltacp"                  unless defined $freepar1;
+$minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+$maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+$npt_freepar1           = 3                          unless defined $npt_freepar1;    # of free parameter points to scan
+
 # # 2D fit - sinsqth13 Vs dcp (no reactors)
 # $freepar0               = "mixing13"                 unless defined $freepar0;
 # $minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -164,32 +175,37 @@ $betaBar         = -99                       unless defined $betaBar;
 # $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 # $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-# 2D fit - sinsqth23 Vs dmsq32 (with reactors)
-$freepar0               = "mixing23"                 unless defined $freepar0;
-$minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-$npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
-$freepar1               = "dmsq23"                   unless defined $freepar1;
-$minfreepar1            = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
-$maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-$npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
+# # 2D fit - sinsqth23 Vs dmsq32 (with reactors)
+# $freepar0               = "mixing23"                 unless defined $freepar0;
+# $minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+# $maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+# $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
+# $freepar1               = "dmsq23"                   unless defined $freepar1;
+# $minfreepar1            = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
+# $maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+# $npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-$nexpts_marg            = 10000                    unless defined $nexpts_marg;     # of toys
+#$nexpts_marg            = 10000                    unless defined $nexpts_marg;     # of toys
+$nexpts_marg            = 2                    unless defined $nexpts_marg;     # of toys
 
 # # 1D fits - dcp
 #$step_freepar0          = 201                  unless defined $step_freepar0;   # of points for each job param0
 #$step_freepar1          = 1                    unless defined $step_freepar1;   # of points for each job param1
 
+# 2D fits - sinsqth13 Vs dcp (debug) 
+$step_freepar0          = 1                  unless defined $step_freepar0;   # of points for each job param0
+$step_freepar1          = 1                   unless defined $step_freepar1;   # of points for each job param1
+
 # # 2D fits - sinsqth13 Vs dcp 
 # $step_freepar0          = 4                  unless defined $step_freepar0;   # of points for each job param0
 # $step_freepar1          = 2                   unless defined $step_freepar1;   # of points for each job param1
 
-# 2D fits - sinsqth23 Vs dmsq 
-$step_freepar0          = 4                   unless defined $step_freepar0;   # of points for each job param0
-$step_freepar1          = 1                   unless defined $step_freepar1;   # of points for each job param1
+# # 2D fits - sinsqth23 Vs dmsq 
+# $step_freepar0          = 4                   unless defined $step_freepar0;   # of points for each job param0
+# $step_freepar1          = 1                   unless defined $step_freepar1;   # of points for each job param1
 
 $tweak_systematics      = 1                    unless defined $tweak_systematics;
-$marg_hierarchy         = 0                    unless defined $marg_hierarchy;
+$marg_hierarchy         = 1                    unless defined $marg_hierarchy;
 $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;

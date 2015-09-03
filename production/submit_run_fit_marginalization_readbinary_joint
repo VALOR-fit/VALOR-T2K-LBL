@@ -92,7 +92,7 @@ foreach (@ARGV) {
     $iarg++;
 }
 $resource        = "interactive"               unless defined $resource;
-$tag             = "fitmarg_prova"             unless defined $tag;
+$tag             = "fitmarg_joint_dcp_IH"             unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
 
@@ -126,7 +126,8 @@ $mixparamoctant         = "two"                  unless defined $mixparamoctant;
 
 #### marginalization
 
-$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl" unless defined $marg_file;
+$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl" unless defined $marg_file;
+#$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl" unless defined $marg_file;
 
 $nfiles_marg       = 201             unless defined $nfiles_marg;     # of marginalization files
 $nexpts_marg       = 10000         unless defined $nexpts_marg;    # of marginalization toys
@@ -137,7 +138,7 @@ $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # M
 $npt_freepar0      = 201            unless defined $npt_freepar0; # of free parameter points to scan
 
 $marg_hierarchy    = 0             unless defined $marg_hierarchy;
-$masshierarchy_marg = "normal"     unless defined $masshierarchy_marg;
+$masshierarchy_marg = "inverted"     unless defined $masshierarchy_marg;
 
 $type_error        = ""            unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
 $draw_full_chisq   = 1             unless defined $draw_full_chisq;
