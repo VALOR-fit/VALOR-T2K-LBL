@@ -48,30 +48,31 @@ void generate_toymc_ensemble
  const char * tag                     = "toymc",                        /* */
  int          run                     = 0,                              /* */
  double       first_experiment        = 0,                
- double       last_experiment         = 9999,
+ double       last_experiment         = 20,
  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  //-999 randomize
  //-99 use global best fits
- double       input_mixing12_nh       = -99,   /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13_nh       = -99,   /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23_nh       = -99,   /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_nh        = -99,   /* deltacp or sindeltacp depending on user choice */
- double       input_dm12sq_nh         = -99,   /* Dm^2_{12},  */
- double       input_dm23sq_nh         = -99,   /* |Dm^2_{23}| */
- double       input_mixing12_ih       = -99,   /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13_ih       = -99,   /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23_ih       = -99,   /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_ih        = -99,   /* deltacp or sindeltacp depending on user choice */
- double       input_dm12sq_ih         = -99,   /* Dm^2_{12},  */
- double       input_dm23sq_ih         = -99,   /* |Dm^2_{23}| */
- double       input_beta_bar          = -99,
+ double       input_mixing12_nh       = -999,   /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13_nh       = -999,   /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23_nh       = -999,   /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp_nh        = -999,   /* deltacp or sindeltacp depending on user choice */
+ double       input_dm12sq_nh         = -999,   /* Dm^2_{12},  */
+ double       input_dm23sq_nh         = -999,   /* |Dm^2_{23}| */
+ double       input_mixing12_ih       = -999,   /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13_ih       = -999,   /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23_ih       = -999,   /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp_ih        = -999,   /* deltacp or sindeltacp depending on user choice */
+ double       input_dm12sq_ih         = -999,   /* Dm^2_{12},  */
+ double       input_dm23sq_ih         = -999,   /* |Dm^2_{23}| */
+ double       input_beta_bar          = 1.,
  
- double       input_prior_prob_nh     = -99,   /* prior probability of normal mass hierarchy. -99 global best fit */
- const bool   doMargMH                = true,  // marginalize Mass Hierarchy?
+ double       input_prior_prob_nh     = 0.5,   /* prior probability of normal mass hierarchy */
+ const bool   doMargMH                = false,  // marginalize Mass Hierarchy?
  
- string       file_priors             = "priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
-
+ //string       file_priors             = "priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
+ string       file_priors             = "",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
+ 
  
  const char * config_file             = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
 
@@ -88,7 +89,9 @@ void generate_toymc_ensemble
  string       points_to_add_MultiRe   = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
  string       xml_file_to_add         = "",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml */
  const int    xml_to_add_dataset_id   = 0,            /* the dataset ID of the xml file to add values from */
+
  bool         save_fluct_in_xml       = true,                          /* save the values of the variations in the xml file? */
+
  const char * dmsqscheme              = "auto",                        /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy               = "normal",                       /* normal or inverted */
  const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
@@ -105,6 +108,27 @@ void generate_toymc_ensemble
   bool printsystvariation = true;  /* cout the skexp tweaks */
   bool save_in_xml_format = true;  /* also save in txt format */
   bool save_in_root_format = true;
+
+
+
+
+  TH1D *hToyHisto_dcp_nh = new TH1D("hToyHisto_dcp_nh","hToyHisto_dcp_nh",100,-3.5,+3.5);
+  TH1D *hToyHisto_Mix13_nh = new TH1D("hToyHisto_Mix13_nh","hToyHisto_Mix13_nh",100,0.,0.20);
+  TH1D *hToyHisto_Mix23_nh = new TH1D("hToyHisto_Mix23_nh","hToyHisto_Mix23_nh",100,0.2,0.8);
+  TH1D *hToyHisto_Dm23_nh = new TH1D("hToyHisto_Dm23_nh","hToyHisto_Dm23_nh",100,1.5E-3,3.5E-3);
+  TH1D *hToyHisto_Mix12_nh = new TH1D("hToyHisto_Mix12_nh","hToyHisto_Mix12_nh",100,0.2,0.4);
+  TH1D *hToyHisto_Dm12_nh = new TH1D("hToyHisto_Dm12_nh","hToyHisto_Dm12_nh",100,6.E-5,9.E-5);
+
+  TH1D *hToyHisto_dcp_ih = new TH1D("hToyHisto_dcp_ih","hToyHisto_dcp_ih",100,-3.5,+3.5);
+  TH1D *hToyHisto_Mix13_ih = new TH1D("hToyHisto_Mix13_ih","hToyHisto_Mix13_ih",100,0.,0.20);
+  TH1D *hToyHisto_Mix23_ih = new TH1D("hToyHisto_Mix23_ih","hToyHisto_Mix23_ih",100,0.2,0.8);
+  TH1D *hToyHisto_Dm23_ih = new TH1D("hToyHisto_Dm23_ih","hToyHisto_Dm23_ih",100,1.5E-3,3.5E-3);
+  TH1D *hToyHisto_Mix12_ih = new TH1D("hToyHisto_Mix12_ih","hToyHisto_Mix12_ih",100,0.2,0.4);
+  TH1D *hToyHisto_Dm12_ih = new TH1D("hToyHisto_Dm12_ih","hToyHisto_Dm12_ih",100,6.E-5,9.E-5);
+
+  TH1D *hToyHisto_MH = new TH1D("hToyHisto_MH","hToyHisto_MH",2,0,2);
+
+
 
 
   TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
@@ -155,8 +179,16 @@ void generate_toymc_ensemble
 					 input_beta_bar, 
 					 input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
 					 input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
-					 input_prior_prob_nh, doMargMH,
-					 file_priors_full_path);
+					 input_prior_prob_nh, doMargMH);
+  
+  // Set priors of osc params to defaults, or set them to be randomised
+  util::OscParams::Instance()->SetPrior(conv::kPhypMixing23, "flat", 0.3,          0.7,         "sinsqth" );      
+  util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,   "flat", 2E-3,         3E-3,        ""        );  
+  util::OscParams::Instance()->SetPrior(conv::kPhypMixing13, "gaus", 0.093,        0.008,       "sinsq2th"); // Convert to sinsqth
+  util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      "flat", -TMath::Pi(), +TMath::Pi(),""        ); 
+  util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, "gaus", 0.846,        0.021,       "sinsq2th"); // Convert to sinsqth
+  util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   "gaus", 7.53E-5,      0.18E-5,     ""        ); 
+
 
   // Extra points to add to the toy dataset(s)
   string * full_points_to_add[kns] = { 0,0,0,0,0,0 };
@@ -233,15 +265,49 @@ void generate_toymc_ensemble
      SuperkObservation * skobs = new SuperkObservation;
      PhysHypothesis ph(hypothesis);
 
-     // Set the mass hierarchy
-     util::SetMassHierarchy(skexp);
-
      // Randomize specified osc params for current toy MC expt
      util::OscParams::Instance()->Randomize();
+
+     // Set the mass hierarchy 
+     // Do it after randomizing MH, otherwise we can have two different MH values and it crashes
+     util::SetMassHierarchy(skexp); 
 
      // Set physics hypothesis
      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
 
+
+     // Fill toy osc params histograms
+     
+     double mix12 = ph.CurrValue(kPhypMixing12);
+     double mix13 = ph.CurrValue(kPhypMixing13);
+     double mix23 = ph.CurrValue(kPhypMixing23);
+     double dm12 = ph.CurrValue(kPhypDm12sq);
+     double dm23 = ph.CurrValue(kPhypDm23sq);
+     double dcp = ph.CurrValue(kPhypCPV);
+     int mh = Opt::Instance()->gMassHierarchyAssumed;
+
+     if(mh==conv::kNmhNormal){
+       hToyHisto_Mix12_nh->Fill(mix12);
+       hToyHisto_Mix13_nh->Fill(mix13);
+       hToyHisto_Mix23_nh->Fill(mix23);
+       hToyHisto_Dm12_nh->Fill(dm12);
+       hToyHisto_Dm23_nh->Fill(dm23);
+       hToyHisto_dcp_nh->Fill(dcp);
+     }
+     else if(mh==conv::kNmhInverted){
+       hToyHisto_Mix12_ih->Fill(mix12);
+       hToyHisto_Mix13_ih->Fill(mix13);
+       hToyHisto_Mix23_ih->Fill(mix23);
+       hToyHisto_Dm12_ih->Fill(dm12);
+       hToyHisto_Dm23_ih->Fill(dm23);
+       hToyHisto_dcp_ih->Fill(dcp);
+     }
+     hToyHisto_MH->Fill(mh);
+
+     cout << "mh = " << mh << endl;
+     
+     //
+     
      bool applied_negevents_condition = true;
      bool unphysical_tweak = true;
      while(applied_negevents_condition || unphysical_tweak) {
@@ -339,6 +405,93 @@ void generate_toymc_ensemble
      }//save to ROOT file
 
   }//iexperiment
+
+
+
+
+
+  // Plot toy histograms
+  
+  TCanvas *cToyHisto_dcp_nh = new TCanvas("cToyHisto_dcp_nh","cToyHisto_dcp_nh");
+  hToyHisto_dcp_nh->Draw();
+  TCanvas *cToyHisto_dcp_ih = new TCanvas("cToyHisto_dcp_ih","cToyHisto_dcp_ih");
+  hToyHisto_dcp_ih->Draw();
+  
+  TCanvas *cToyHisto_Mix13_nh = new TCanvas("cToyHisto_Mix13_nh","cToyHisto_Mix13_nh");
+  hToyHisto_Mix13_nh->Draw();
+  TCanvas *cToyHisto_Mix13_ih = new TCanvas("cToyHisto_Mix13_ih","cToyHisto_Mix13_ih");
+  hToyHisto_Mix13_ih->Draw();
+  
+  TCanvas *cToyHisto_Mix23_nh = new TCanvas("cToyHisto_Mix23_nh","cToyHisto_Mix23_nh");
+  hToyHisto_Mix23_nh->Draw();
+  TCanvas *cToyHisto_Mix23_ih = new TCanvas("cToyHisto_Mix23_ih","cToyHisto_Mix23_ih");
+  hToyHisto_Mix23_ih->Draw();
+  
+  TCanvas *cToyHisto_Dm23_nh = new TCanvas("cToyHisto_Dm23_nh","cToyHisto_Dm23_nh");
+  hToyHisto_Dm23_nh->Draw();
+  TCanvas *cToyHisto_Dm23_ih = new TCanvas("cToyHisto_Dm23_ih","cToyHisto_Dm23_ih");
+  hToyHisto_Dm23_ih->Draw();
+  
+  TCanvas *cToyHisto_Mix12_nh = new TCanvas("cToyHisto_Mix12_nh","cToyHisto_Mix12_nh");
+  hToyHisto_Mix12_nh->Draw();
+  TCanvas *cToyHisto_Mix12_ih = new TCanvas("cToyHisto_Mix12_ih","cToyHisto_Mix12_ih");
+  hToyHisto_Mix12_ih->Draw();
+  
+  TCanvas *cToyHisto_Dm12_nh = new TCanvas("cToyHisto_Dm12_nh","cToyHisto_Dm12_nh");
+  hToyHisto_Dm12_nh->Draw();
+  TCanvas *cToyHisto_Dm12_ih = new TCanvas("cToyHisto_Dm12_ih","cToyHisto_Dm12_ih");
+  hToyHisto_Dm12_ih->Draw();
+  
+  TCanvas *cToyHisto_MH = new TCanvas("cToyHisto_MH","cToyHisto_MH");
+  hToyHisto_MH->Draw();
+  
+  // Print out mean and rms of toy osc param distributions
+  
+  cout << endl;
+  
+  cout << "deltaCP (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_dcp_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_dcp_nh->GetRMS()  << endl;
+  cout << "deltaCP (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_dcp_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_dcp_ih->GetRMS()  << endl;
+
+  cout << "Mixing13 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix13_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix13_nh->GetRMS()  << endl;
+  cout << "Mixing13 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix13_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix13_ih->GetRMS()  << endl;
+  
+  cout << "Mixing23 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix23_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix23_nh->GetRMS()  << endl;
+  cout << "Mixing23 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix23_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix23_ih->GetRMS()  << endl;
+
+  cout << "Dm23 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Dm23_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Dm23_nh->GetRMS()  << endl;
+  cout << "Dm23 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Dm23_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Dm23_ih->GetRMS()  << endl;
+
+  cout << "Mixing12 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix12_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix12_nh->GetRMS()  << endl;
+  cout << "Mixing12 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix12_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix12_ih->GetRMS()  << endl;
+
+  cout << "Dm12 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Dm12_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Dm12_nh->GetRMS()  << endl;
+  cout << "Dm12 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Dm12_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Dm12_ih->GetRMS()  << endl;
+
+
 
   //
   // Close files
