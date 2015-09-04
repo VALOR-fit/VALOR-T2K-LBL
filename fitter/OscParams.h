@@ -42,10 +42,9 @@ public:
 		 double input_beta_bar,
 		 double input_mixing12_ih, double input_mixing13_ih, double input_mixing23_ih,
 		 double input_deltacp_ih,  double input_dm12sq_ih,   double input_dm23sq_ih,
-		 double mh_nh_prior,       bool marginalize_MH,
-		 std::string file_priors
+		 double mh_nh_prior,       bool marginalize_MH
 		 );
-
+  
   // Randomize ALL oscillation parameters (if requested)
   void Randomize();
 
@@ -61,6 +60,31 @@ public:
   friend ostream & operator << (ostream & stream, const OscParams & oscparams);
 
     
+
+  
+  void SetPrior(conv::PhysParamId_t physpar,string mode,double par1,double par2, string mixmode="");
+  
+  double ExtractParam(conv::PhysParamId_t physpar,string mode,double par1,double par2,string mixmode="");
+  
+  string mixmode_mixing12; // "sinsqth" or "sinsq2th"
+  string mixmode_mixing13; // "sinsqth" or "sinsq2th"
+  string mixmode_mixing23; // "sinsqth" or "sinsq2th"
+
+  string priormode_mixing12; // "user","gaus" or "flat"
+  string priormode_mixing13; // "user","gaus" or "flat"
+  string priormode_mixing23; // "user","gaus" or "flat"
+  string priormode_dcp;      // "user","gaus" or "flat"
+  string priormode_dm12sq;   // "user","gaus" or "flat"
+  string priormode_dm23sq;   // "user","gaus" or "flat"
+
+  double params_mixing12[2]; // (mean,sigma) or (low,up)
+  double params_mixing13[2]; // (mean,sigma) or (low,up)
+  double params_mixing23[2]; // (mean,sigma) or (low,up)
+  double params_dcp[2];      // (mean,sigma) or (low,up)
+  double params_dm12sq[2];   // (mean,sigma) or (low,up) 
+  double params_dm23sq[2];   // (mean,sigma) or (low,up)
+
+
   //NH
   double mixing12_nh;
   double mixing13_nh;

@@ -17,6 +17,8 @@
 #include "Conventions/PhysHypothesisId.h"
 #include "Conventions/Constants.h"
 #include "Utilities/UtlNumStat.h"
+#include "Utilities/Rnd.h"
+#include <TMath.h>
 
 using std::cout;
 using std::cerr;
@@ -65,6 +67,26 @@ valor::util::OscParams * valor::util::OscParams::Instance()
 //____________________________________________________________________________
 void valor::util::OscParams::Init()
 {
+  mixmode_mixing12 = "";
+  mixmode_mixing13 = "";
+  mixmode_mixing23 = "";
+
+  priormode_mixing12 = "";
+  priormode_mixing13 = "";
+  priormode_mixing23 = "";
+  priormode_dcp      = "";
+  priormode_dm12sq   = "";
+  priormode_dm23sq   = "";
+
+  for(int i=0;i<2;i++){
+    params_mixing12[i] = conv::kBadResult;
+    params_mixing13[i] = conv::kBadResult;
+    params_mixing23[i] = conv::kBadResult;
+    params_dcp[i]      = conv::kBadResult;
+    params_dm12sq[i]   = conv::kBadResult;
+    params_dm23sq[i]   = conv::kBadResult;
+  }
+
   hPrior_th13_dcp_nh = 0;
   hPrior_th13_dcp_ih = 0;
   hPrior_23_nh = 0;
@@ -78,6 +100,26 @@ void valor::util::OscParams::Init()
 //____________________________________________________________________________
 void valor::util::OscParams::Cleanup()
 {
+  mixmode_mixing12 = "";
+  mixmode_mixing13 = "";
+  mixmode_mixing23 = "";
+
+  priormode_mixing12 = "";
+  priormode_mixing13 = "";
+  priormode_mixing23 = "";
+  priormode_dcp      = "";
+  priormode_dm12sq   = "";
+  priormode_dm23sq   = "";
+
+  for(int i=0;i<2;i++){
+    params_mixing12[i] = conv::kBadResult;
+    params_mixing13[i] = conv::kBadResult;
+    params_mixing23[i] = conv::kBadResult;
+    params_dcp[i]      = conv::kBadResult;
+    params_dm12sq[i]   = conv::kBadResult;
+    params_dm23sq[i]   = conv::kBadResult;
+  }
+  
   if(hPrior_th13_dcp_nh) delete hPrior_th13_dcp_nh;
   if(hPrior_th13_dcp_ih) delete hPrior_th13_dcp_ih;
   if(hPrior_23_nh) delete hPrior_23_nh;
@@ -89,13 +131,95 @@ void valor::util::OscParams::Cleanup()
   if(hToy_MH) delete hToy_MH;
 }
 //____________________________________________________________________________
+
+void valor::util::OscParams::SetPrior(conv::PhysParamId_t physpar,string mode,double par1,double par2,string mixmode)
+{
+  if(physpar==conv::kPhypMixing13){
+    priormode_mixing13 = mode;
+    mixmode_mixing13   = mixmode;
+    params_mixing13[0] = par1;
+    params_mixing13[1] = par2;
+  }
+  else if(physpar==conv::kPhypMixing23){
+    priormode_mixing23 = mode;
+    mixmode_mixing23   = mixmode;
+    params_mixing23[0] = par1;
+    params_mixing23[1] = par2;
+  }
+  else if(physpar==conv::kPhypMixing12){
+    priormode_mixing12 = mode;
+    mixmode_mixing12   = mixmode;
+    params_mixing12[0] = par1;
+    params_mixing12[1] = par2;  
+  }
+  else if(physpar==conv::kPhypCPV){
+    priormode_dcp = mode;
+    params_dcp[0] = par1;
+    params_dcp[1] = par2;
+  }
+  else if(physpar==conv::kPhypDm23sq){
+    priormode_dm23sq = mode;
+    params_dm23sq[0] = par1;
+    params_dm23sq[1] = par2;
+  }
+  else if(physpar==conv::kPhypDm12sq){
+    priormode_dm12sq = mode;
+    params_dm12sq[0] = par1;
+    params_dm12sq[1] = par2;
+  }
+  else{ //kPhypUndefined
+    cerr << endl;
+    cerr << "The physics " << util::AsString(physpar) << " parameter is not defined" << endl;
+    cerr << endl;
+    exit(1);    
+  }
+
+  cout << endl;
+  cout << "Prior for " << util::AsString(physpar) << " : " << endl;
+  if(mode == "gaus"){
+    cout << " - gaus : mean = " << par1 << " - sigma = " << par2 << endl;
+  }
+  else if(mode == "flat"){
+    cout << " - flat : low = " << par1 << " - up = " << par2 << endl;
+  }
+  else if(mode == "user"){
+    cout << " - user " << endl;
+  }
+  else{
+    cerr << endl;
+    cerr << "Prior mode " << mode << "is not defined for " << util::AsString(physpar) << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  if(IsMixingAngle(physpar)){
+    if( Opt::Instance()->gOscMixingParamChoice == kNuMixSinsqTheta){       
+      if(mixmode == "sinsq2th"){
+	cout << " - Convert extracted value from sinsq2th to sinsqth" << endl;
+      }
+    }
+    else if( Opt::Instance()->gOscMixingParamChoice == kNuMixSinsq2Theta){       
+      if(mixmode == "sinsqth"){
+	cout << " - Convert extracted value from sinsqth to sinsq2th" << endl;
+      }
+    }
+    if(mixmode != "sinsq2th" && mixmode != "sinsqth"){
+      cerr << endl;
+      cerr << "The mixing mode " << mixmode << " is not used" << endl;
+      cerr << endl;
+      exit(1);
+    }
+  }
+
+}
+//____________________________________________________________________________
 void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mixing13_nh, double input_mixing23_nh,
 				       double input_dcp_nh,      double input_dm12sq_nh,   double input_dm23sq_nh,
 				       double input_beta_bar,
 				       double input_mixing12_ih, double input_mixing13_ih, double input_mixing23_ih,
 				       double input_dcp_ih,      double input_dm12sq_ih,   double input_dm23sq_ih,
-				       double input_mh_nh_prior, bool marginalize_MH,
-				       string file_priors)
+				       double input_mh_nh_prior, bool marginalize_MH
+				       )
 {  
   // Check whether some osc. params need to be randomized (i.e. if == -999)
   //NH
@@ -146,8 +270,9 @@ void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mi
   if(input_dcp_ih    < -90 && input_dcp_ih    > -900) input_dcp_ih = conv::kGlobFitDeltaCP;
   //Beta bar
   if(input_beta_bar < -90 && input_beta_bar > -900) input_beta_bar = conv::kGlobFitBetaBar;
+
   //MH
-  if(input_mh_nh_prior < -1 && input_mh_nh_prior > -900) input_mh_nh_prior = 0.684; //Mach3
+  if(input_mh_nh_prior < -1 && input_mh_nh_prior > -900) input_mh_nh_prior = 0.5;
   cerr << "Default value for input_mh_nh_prior is hard coded. This should be moved into the relevant Conventions file" << endl;
   
   //Set the input values in the OscParams
@@ -170,92 +295,191 @@ void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mi
   marginalize_mh = marginalize_MH;
   mh_nh_prior    = input_mh_nh_prior;
   MH             = Opt::Instance()->gMassHierarchyAssumed;
-  iMH            = (MH == kNmhNormal) ? 0 : 1;
-
-  //Get the prior histograms
-  TFile * fPrior = new TFile(file_priors.c_str(), "READ");
-  if(!fPrior || !fPrior->IsOpen()){
-    cerr << "Error: the file " << file_priors << " is not open!" << endl;
-    exit(1);
-  }
-  hPrior_th13_dcp_nh = new TH2D(*GetTH2DFromTFile(fPrior, "hPrior_th13_dcp_nh"));
-  hPrior_th13_dcp_ih = new TH2D(*GetTH2DFromTFile(fPrior, "hPrior_th13_dcp_ih"));
-  hPrior_23_nh       = new TH2D(*GetTH2DFromTFile(fPrior, "hPrior_L23_nh"));
-  hPrior_23_ih       = new TH2D(*GetTH2DFromTFile(fPrior, "hPrior_L23_ih"));
-
-  //Setup the 'values used' histograms
-  //MH
-  hToy_MH = new TH1D("hToy_MH", "0-->NH, 1-->IH", 2, 0, 2);
-  hToy_MH->GetXaxis()->SetBinLabel(1, "NH");
-  hToy_MH->GetXaxis()->SetBinLabel(2, "IH");
-  //nh
-  if(hPrior_th13_dcp_nh) {
-    hToy_th13_dcp_nh = new TH2D(*(hPrior_th13_dcp_nh));
-    hToy_th13_dcp_nh->Reset();
-    hToy_th13_dcp_nh->SetName("hToy_th13_dcp_nh");
-  }
-  if(hPrior_23_nh) {
-    hToy_23_nh = new TH2D(*hPrior_23_nh);
-    hToy_23_nh->Reset();
-    hToy_23_nh->SetName("hToy_23_nh");
-  }
-  //ih
-  if(hPrior_th13_dcp_ih) {
-    hToy_th13_dcp_ih = new TH2D(*hPrior_th13_dcp_ih);
-    hToy_th13_dcp_ih->Reset();
-    hToy_th13_dcp_ih->SetName("hToy_th13_dcp_ih");
-  }
-  if(hPrior_23_ih) {
-    hToy_23_ih = new TH2D(*hPrior_23_ih);
-    hToy_23_ih->Reset();
-    hToy_23_ih->SetName("hToy_23_ih");
-  }
+  iMH            = (MH == kNmhNormal) ? 0 : 1; 
 }
 //____________________________________________________________________________
 void valor::util::OscParams::Randomize()
 {
-  //NH
-  if (randomize_mixing12_nh) { mixing12_nh = util::RandomizeMixing12(); }
-  if (randomize_dm12sq_nh  ) { dm12sq_nh   = util::RandomizeDm12sq();   }
-  //theta13 vs dcp
-  if(hPrior_th13_dcp_nh && randomize_dcp_nh && randomize_mixing13_nh) {
-    hPrior_th13_dcp_nh->GetRandom2(mixing13_nh, dcp_nh);
-  }
-  else {
-    if (randomize_mixing13_nh) { mixing13_nh = util::RandomizeMixing13(); }
-    if (randomize_dcp_nh     ) { dcp_nh      = util::RandomizeCPV();      }
-  }
-  //theta23 vs dm32sq
-  if(hPrior_23_nh && randomize_dm23sq_nh && randomize_mixing23_nh) {
-    hPrior_23_nh->GetRandom2(mixing23_nh, dm23sq_nh);
-  }
-  else {
-    if (randomize_mixing23_nh) { mixing23_nh = util::RandomizeMixing23(); }
-    if (randomize_dm23sq_nh  ) { dm23sq_nh   = util::RandomizeDm23sq();   }
-  }
+    
+  // Mass Hierarchy
+  
+  if(marginalize_mh){
+    
+    const double min = 0.;
+    const double max = 1.;
+    double Pnh = mh_nh_prior;
+    double Pih = 1 - Pnh;
+    
+    if(Pnh < 0. || Pnh > 1.){
+      cerr << endl;
+      cerr << "Randomize" << endl;
+      cerr << "The input probability for NH is not possible" << endl;
+      cerr << "P(NH) = " << Pnh << endl;
+      cerr << endl;
+      exit(1);
+    }
+    if(Pih < 0. || Pih > 1.){
+      cerr << endl;
+      cerr << "Randomize" << endl;
+      cerr << "The input probability for IH is not possible" << endl;
+      cerr << "P(IH) = " << Pih << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+    double rndm = Rnd::Instance()->RndToyMCosc().Uniform(min,max);
+    
+    iMH = conv::kBadResult;
+    if(rndm <= Pnh) iMH = 0; // Normal Hierarchy
+    else            iMH = 1; // Inverted Hierarchy
+    
+    if( iMH==0 ){
+      Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
+      // hier    = kNmhNormal;
+      // hierBar = kNmhNormal;
+      // skexp->GetSuperkMC()->SetMassHierarchy(hier);
+      // skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+      // fparm->Copy(*fparm_nh); // NEW MARG MH
+    }
+    else if( iMH==1 ){
+      Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
+      // hier    = kNmhInverted;
+      // hierBar = kNmhInverted;
+      // skexp->GetSuperkMC()->SetMassHierarchy(hier);
+      // skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
+      // fparm->Copy(*fparm_ih); // NEW MARG MH
+    }
+    
+  } // Mass Hierarchy
+  
+  double par1 = conv::kBadResult;
+  double par2 = conv::kBadResult;
+  double valrndm = conv::kBadResult;
+  string mixmode = "";
+  string priormode = "";
+  // Normal Hierarchy
+  
+  if(iMH==0){
+    
+    // mixing23
+    par1 = params_mixing23[0]; 
+    par2 = params_mixing23[1];
+    priormode = priormode_mixing23;
+    mixmode = mixmode_mixing23;
+    mixing23_nh = this->ExtractParam(conv::kPhypMixing23,priormode,par1,par2,mixmode);
+        
+    // mixing13 
+    par1 = params_mixing13[0]; 
+    par2 = params_mixing13[1];
+    priormode = priormode_mixing13;
+    mixmode = mixmode_mixing13;
+    mixing13_nh = this->ExtractParam(conv::kPhypMixing13,priormode,par1,par2,mixmode);
+    
+    // deltaCP
+    par1 = -TMath::Pi(); 
+    par2 = +TMath::Pi();
+    priormode = priormode_dcp;
+    mixmode = "";
+    dcp_nh = this->ExtractParam(conv::kPhypCPV,priormode,par1,par2,mixmode);
+    
+    // dmsq23
+    par1 = 2E-3; 
+    par2 = 3E-3;
+    priormode = priormode_dm23sq;
+    mixmode = "";
+    dm23sq_nh = this->ExtractParam(conv::kPhypDm23sq,priormode,par1,par2,mixmode);
 
-  //IH
-  if (randomize_mixing12_ih) { mixing12_ih = util::RandomizeMixing12(); }
-  if (randomize_dm12sq_ih  ) { dm12sq_ih   = util::RandomizeDm12sq();   }
-  //theta13 vs dcp
-  if(hPrior_th13_dcp_ih && randomize_dcp_ih && randomize_mixing13_ih) {
-    hPrior_th13_dcp_ih->GetRandom2(mixing13_ih, dcp_ih);
-  }
-  else {
-    if (randomize_mixing13_ih) { mixing13_ih = util::RandomizeMixing13(); }
-    if (randomize_dcp_ih     ) { dcp_ih      = util::RandomizeCPV();      }
-  }
-  //theta23 vs dm32sq
-  if(hPrior_23_ih && randomize_dm23sq_ih && randomize_mixing23_ih) {
-    hPrior_23_ih->GetRandom2(mixing23_ih, dm23sq_ih);
-  }
-  else {
-    if (randomize_mixing23_ih) { mixing23_ih = util::RandomizeMixing23(); }
-    if (randomize_dm23sq_ih  ) { dm23sq_ih   = util::RandomizeDm23sq();   }
-  }
+    // dmsq12
+    par1 = 7.53E-5; 
+    par2 = 0.18E-5;
+    priormode = priormode_dm12sq;
+    mixmode = "";
+    dm12sq_nh = this->ExtractParam(conv::kPhypDm12sq,priormode,par1,par2,mixmode);
 
-  //other
-  if (randomize_beta_bar   ) { beta_bar    = util::RandomizeBetaBar();  }
+    // mixing12
+    par1 = params_mixing12[0]; 
+    par2 = params_mixing12[1];
+    priormode = priormode_mixing13;
+    mixmode = mixmode_mixing12;
+    mixing12_nh = this->ExtractParam(conv::kPhypMixing12,priormode,par1,par2,mixmode);
+  }
+  
+  // Inverted Hierarchy
+  
+  else if(iMH==1){
+
+    // mixing23
+    par1 = params_mixing23[0]; 
+    par2 = params_mixing23[1];
+    priormode = priormode_mixing23;
+    mixmode = mixmode_mixing23;
+    mixing23_ih = this->ExtractParam(conv::kPhypMixing23,priormode,par1,par2,mixmode);
+        
+    // mixing13 
+    par1 = params_mixing13[0]; 
+    par2 = params_mixing13[1];
+    priormode = priormode_mixing13;
+    mixmode = mixmode_mixing13;
+    mixing13_ih = this->ExtractParam(conv::kPhypMixing13,priormode,par1,par2,mixmode);
+    
+    // deltaCP
+    par1 = -TMath::Pi(); 
+    par2 = +TMath::Pi();
+    priormode = priormode_dcp;
+    mixmode = "";
+    dcp_ih = this->ExtractParam(conv::kPhypCPV,priormode,par1,par2,mixmode);
+    
+    // dmsq23
+    par1 = 2E-3; 
+    par2 = 3E-3;
+    priormode = priormode_dm23sq;
+    mixmode = "";
+    dm23sq_ih = this->ExtractParam(conv::kPhypDm23sq,priormode,par1,par2,mixmode);
+
+    // dmsq12
+    par1 = 7.53E-5; 
+    par2 = 0.18E-5;
+    priormode = priormode_dm12sq;
+    mixmode = "";
+    dm12sq_ih = this->ExtractParam(conv::kPhypDm12sq,priormode,par1,par2,mixmode);
+
+    // mixing12
+    par1 = params_mixing12[0]; 
+    par2 = params_mixing12[1];
+    priormode = priormode_mixing13;
+    mixmode = mixmode_mixing12;
+    mixing12_ih = this->ExtractParam(conv::kPhypMixing12,priormode,par1,par2,mixmode);
+  }
+  
+  else{
+    cerr << endl;
+    cerr << "Mass Hierarchy is not defined" << endl;
+    cerr << endl;
+    exit(1);
+  }
+      
+}
+//____________________________________________________________________________
+double valor::util::OscParams::ExtractParam(conv::PhysParamId_t physpar,string mode,double par1,double par2,string mixmode){
+  
+  double valrndm = conv::kBadResult;
+
+  if(mode=="gaus")
+    valrndm = Rnd::Instance()->RndToyMCosc().Gaus(par1,par2);
+  else if(mode=="flat")
+    valrndm = Rnd::Instance()->RndToyMCosc().Uniform(par1,par2);
+  
+  if(IsMixingAngle(physpar)){    
+    if(Opt::Instance()->gOscMixingParamChoice == kNuMixSinsqTheta){
+      if(mixmode == "sinsqth")       return valrndm;
+      else if(mixmode == "sinsq2th") return util::FromSinsq2thToSinsqth(valrndm);
+    }
+    else if(Opt::Instance()->gOscMixingParamChoice == kNuMixSinsq2Theta){
+      if(mixmode == "sinsqth")       return util::FromSinsqthToSinsq2th(valrndm);
+      else if(mixmode == "sinsq2th") return valrndm;
+    }
+  }
+  return valrndm;
 }
 //____________________________________________________________________________
 void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print)
@@ -287,8 +511,8 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
     cerr << "SetOscParams has unknown value of iMH: " << iMH << endl;
     exit(1);
   }
-  //Other
-  input_beta_bar_used = beta_bar;
+  //Other 
+  input_beta_bar_used = beta_bar;  // It's never randomized
   
   //Update the PhysHypothesis
   if(ph.Hypothesis() == kHypNuMuDisapp2F) {
@@ -352,20 +576,6 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
   
   if(print)
     cout << "- Physics hypothesis set: " << ph << endl;
-
-  //save the values used
-  if(iMH == 0) {
-    if(hToy_th13_dcp_nh)
-      hToy_th13_dcp_nh->Fill(input_mixing13_used, input_dcp_used);
-    if(hToy_23_nh)
-      hToy_23_nh->Fill(input_mixing23_used, input_dm23sq_used);
-  }//NH
-  else if(iMH == 1) {
-    if(hToy_th13_dcp_ih)
-      hToy_th13_dcp_ih->Fill(input_mixing13_used, input_dcp_used);
-    if(hToy_23_ih)
-      hToy_23_ih->Fill(input_mixing23_used, input_dm23sq_used);
-  }//IH
 
 }
 //____________________________________________________________________________
