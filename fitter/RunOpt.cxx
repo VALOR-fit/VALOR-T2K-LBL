@@ -269,7 +269,7 @@ void valor::RunOpt::Read3FOscParamsOptions()
       fDm12sq[i] = fParser->ArgAsDouble(Form("dm12sq-%s", fHierStr[i].c_str()));
     
     if(fParser->OptionExists(Form("dm23sq-%s", fHierStr[i].c_str())))
-      fDm23sq[i] = fParser->ArgAsDouble(Form("fdm23sq-%s", fHierStr[i].c_str()));
+      fDm23sq[i] = fParser->ArgAsDouble(Form("dm23sq-%s", fHierStr[i].c_str()));
   }//i
 
   if(fParser->OptionExists("beta-bar"))
