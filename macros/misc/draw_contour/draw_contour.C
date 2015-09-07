@@ -19,10 +19,11 @@ void draw_contour
  // const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_NH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
 
  //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Kreact_DataRun14_IH",
- //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",1
 
+ const bool doRasterScan = true,
  const char* opt = "cp13",
- const bool SavePDF = false
+ const bool SavePDF = true
  )
 {
   //   char* filename = "toyA_joint";
@@ -35,6 +36,9 @@ void draw_contour
   TH2D* h2;
   TH2D* h3;
   TH2D* h4;
+  TH2D *h1_rasterscan;
+  TH2D *h2_rasterscan;
+
   valor::FitParamList* fp = 0;
   valor::PhysParamList* ip = 0;
   
@@ -72,6 +76,7 @@ void draw_contour
   h3 = (TH2D*)h1->Clone();
   h2 = (TH2D*)h1->Clone();
   h4 = (TH2D*)h1->Clone();
+  h1_rasterscan = (TH2D*)h1->Clone("h1_rasterscan");
   double chisq_min = h1->GetMinimum();
 
   cout << "chisq_min = " << chisq_min << endl;
@@ -118,9 +123,75 @@ void draw_contour
   bf2->Draw();
   
   leg->Draw();
+
+
+
+  TCanvas *cCont = new TCanvas("cCont","cCont");
+  h1->Draw("cont3");
+  h3->Draw("cont3 same");
+  bf->Draw();
+  //bf2->Draw();
   
+  
+  // Produce raster scan  
+
+  TCanvas *cRasterScan = new TCanvas("cRasterScan","cRasterScan");
+  if(doRasterScan){
+
+    TGraph *bf_raster = new TGraph();
+    for(int iy=0;iy<h1->GetYaxis()->GetNbins();iy++){
+      
+      // Fine the minimum for each value of y
+      double raster_min = 99999.;
+      for(int ix=0;ix<h1->GetXaxis()->GetNbins();ix++){
+	double cont = h1_rasterscan->GetBinContent(ix+1,iy+1);
+	if(cont < raster_min) raster_min = cont;
+      }
+
+      cout << raster_min << " ";
+      // Shift wrt the minimum for each value of y
+      for(int ix=0;ix<h1->GetXaxis()->GetNbins();ix++){
+	double cont = h1_rasterscan->GetBinContent(ix+1,iy+1);
+
+	//cout << "cont = " << cont << " - raster_min = " << raster_min << endl;
+	if(cont == raster_min){
+	  double cont_x = h1_rasterscan->GetXaxis()->GetBinCenter(ix+1);
+	  double cont_y = h1_rasterscan->GetYaxis()->GetBinCenter(iy+1);
+	  bf_raster->SetPoint(iy,cont_x,cont_y);
+	}
+
+	cont = cont - raster_min;
+	h1_rasterscan->SetBinContent(ix+1,iy+1,cont);
+      }
+      
+    }
+    //h1_rasterscan->DrawCopy("colz");
+    h2_rasterscan = (TH2D*)h1_rasterscan->Clone("h2_rasterscan");
+    h1_rasterscan->SetContour(1);
+    h2_rasterscan->SetContour(1);
+    h1_rasterscan->SetContourLevel(0,2.3);
+    h2_rasterscan->SetContourLevel(0,4.61);
+    h1_rasterscan->SetLineStyle(2);
+    h1_rasterscan->SetLineWidth(2);
+    h1_rasterscan->SetLineColor(kRed);
+    h2_rasterscan->SetLineWidth(2);
+    h2_rasterscan->SetLineColor(kRed);
+    h1_rasterscan->Draw("cont3");
+    h2_rasterscan->Draw("cont3 same");
+     bf_raster->Draw("p");
+    bf_raster->SetLineColor(kRed);
+    bf_raster->SetMarkerColor(kRed);
+    bf_raster->SetMarkerStyle(kFullStar);
+  }
+
+  // Save pdf files
+
   if(SavePDF) c->SaveAs(Form("%s.pdf",tag));
+  if(SavePDF) cCont->SaveAs(Form("contour_%s.pdf",tag));
+  if(SavePDF) cRasterScan->SaveAs(Form("rasterscan_%s.pdf",tag));
   
+  // Save contours in root file
+
   TFile* f2 = new TFile(Form("%s_contour.root",tag),"recreate");
   
   save_contour(f2,h1,h3);
