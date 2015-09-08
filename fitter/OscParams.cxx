@@ -34,6 +34,7 @@ namespace valor {
     ostream & operator << (ostream & stream, const OscParams & oscparams)
     {
       oscparams.Print(stream);
+      oscparams.Print_Toys(stream);
       return stream;
     }
   }
@@ -878,6 +879,89 @@ void valor::util::OscParams::Print(ostream & stream) const
   }
   stream << endl;
   
+}
+//____________________________________________________________________________
+void valor::util::OscParams::Print_Toys(ostream & stream) const
+{
+  // Print out mean and rms of toy osc param distributions
+  
+  stream << endl; 
+  stream << "deltaCP (NH):" << endl;
+  stream << "  - Mean = " << hToyHisto_dcp_nh->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_dcp_nh->GetRMS()  << endl;
+  stream << "deltaCP (IH):" << endl;
+  stream << "  - Mean = " << hToyHisto_dcp_ih->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_dcp_ih->GetRMS()  << endl;
+  stream << "Mixing13 (NH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Mix13_nh->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Mix13_nh->GetRMS()  << endl;
+  stream << "Mixing13 (IH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Mix13_ih->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Mix13_ih->GetRMS()  << endl;  
+  stream << "Mixing23 (NH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Mix23_nh->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Mix23_nh->GetRMS()  << endl;
+  stream << "Mixing23 (IH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Mix23_ih->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Mix23_ih->GetRMS()  << endl;
+  stream << "Dm23 (NH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Dm23_nh->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Dm23_nh->GetRMS()  << endl;
+  stream << "Dm23 (IH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Dm23_ih->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Dm23_ih->GetRMS()  << endl;
+  stream << "Mixing12 (NH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Mix12_nh->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Mix12_nh->GetRMS()  << endl;
+  stream << "Mixing12 (IH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Mix12_ih->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Mix12_ih->GetRMS()  << endl;
+  stream << "Dm12 (NH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Dm12_nh->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Dm12_nh->GetRMS()  << endl;
+  stream << "Dm12 (IH):" << endl;
+  stream << "  - Mean = " << hToyHisto_Dm12_ih->GetMean() << endl;
+  stream << "  - RMS  = " << hToyHisto_Dm12_ih->GetRMS()  << endl;  
+  stream << endl;
+
+  cout << endl; 
+  cout << "deltaCP (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_dcp_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_dcp_nh->GetRMS()  << endl;
+  cout << "deltaCP (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_dcp_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_dcp_ih->GetRMS()  << endl;
+  cout << "Mixing13 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix13_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix13_nh->GetRMS()  << endl;
+  cout << "Mixing13 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix13_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix13_ih->GetRMS()  << endl;  
+  cout << "Mixing23 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix23_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix23_nh->GetRMS()  << endl;
+  cout << "Mixing23 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix23_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix23_ih->GetRMS()  << endl;
+  cout << "Dm23 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Dm23_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Dm23_nh->GetRMS()  << endl;
+  cout << "Dm23 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Dm23_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Dm23_ih->GetRMS()  << endl;
+  cout << "Mixing12 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix12_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix12_nh->GetRMS()  << endl;
+  cout << "Mixing12 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Mix12_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Mix12_ih->GetRMS()  << endl;
+  cout << "Dm12 (NH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Dm12_nh->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Dm12_nh->GetRMS()  << endl;
+  cout << "Dm12 (IH):" << endl;
+  cout << "  - Mean = " << hToyHisto_Dm12_ih->GetMean() << endl;
+  cout << "  - RMS  = " << hToyHisto_Dm12_ih->GetRMS()  << endl;  
+  cout << endl;
 }
 //____________________________________________________________________________
 void valor::util::OscParams::Write(TFile * f)

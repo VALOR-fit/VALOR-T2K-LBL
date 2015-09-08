@@ -69,6 +69,7 @@ public:
 
   // Print values of oscillation parameters (or whether they're set to be randomized)
   void Print (ostream & stream) const;
+  void Print_Toys (ostream & stream) const;
   friend ostream & operator << (ostream & stream, const OscParams & oscparams);
 
   void SetPrior(conv::PhysParamId_t physpar,string mode,double par1,double par2, string mixmode="");
