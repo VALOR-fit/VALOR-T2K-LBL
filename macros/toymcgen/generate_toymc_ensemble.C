@@ -48,7 +48,7 @@ void generate_toymc_ensemble
  const char * tag                     = "toymc",                        /* */
  int          run                     = 0,                              /* */
  double       first_experiment        = 0,                
- double       last_experiment         = 100,
+ double       last_experiment         = 1,
  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  //-999 randomize
@@ -350,107 +350,12 @@ void generate_toymc_ensemble
   }//iexperiment
 
 
-
-
-
-  // Plot toy histograms
-  
-  TH1D *hToyHisto_dcp_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("deltaCP","normal");
-  TH1D *hToyHisto_Mix13_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing13","normal");
-  TH1D *hToyHisto_Mix23_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing23","normal");
-  TH1D *hToyHisto_Dm23_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("dmsq23","normal");
-  TH1D *hToyHisto_Mix12_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing12","normal");
-  TH1D *hToyHisto_Dm12_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("dmsq12","normal");
-
-  TH1D *hToyHisto_dcp_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("deltaCP","inverted");
-  TH1D *hToyHisto_Mix13_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing13","inverted");
-  TH1D *hToyHisto_Mix23_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing23","inverted");
-  TH1D *hToyHisto_Dm23_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("dmsq23","inverted");
-  TH1D *hToyHisto_Mix12_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing12","inverted");
-  TH1D *hToyHisto_Dm12_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("dmsq12","inverted");
-
-  TH1D *hToyHisto_MH = (TH1D*)util::OscParams::Instance()->GetToyHisto("hierarchy");
-
-  TCanvas *cToyHisto_dcp_nh = new TCanvas("cToyHisto_dcp_nh","cToyHisto_dcp_nh");
-  hToyHisto_dcp_nh->Draw();
-  TCanvas *cToyHisto_dcp_ih = new TCanvas("cToyHisto_dcp_ih","cToyHisto_dcp_ih");
-  hToyHisto_dcp_ih->Draw();
-  
-  TCanvas *cToyHisto_Mix13_nh = new TCanvas("cToyHisto_Mix13_nh","cToyHisto_Mix13_nh");
-  hToyHisto_Mix13_nh->Draw();
-  TCanvas *cToyHisto_Mix13_ih = new TCanvas("cToyHisto_Mix13_ih","cToyHisto_Mix13_ih");
-  hToyHisto_Mix13_ih->Draw();
-  
-  TCanvas *cToyHisto_Mix23_nh = new TCanvas("cToyHisto_Mix23_nh","cToyHisto_Mix23_nh");
-  hToyHisto_Mix23_nh->Draw();
-  TCanvas *cToyHisto_Mix23_ih = new TCanvas("cToyHisto_Mix23_ih","cToyHisto_Mix23_ih");
-  hToyHisto_Mix23_ih->Draw();
-  
-  TCanvas *cToyHisto_Dm23_nh = new TCanvas("cToyHisto_Dm23_nh","cToyHisto_Dm23_nh");
-  hToyHisto_Dm23_nh->Draw();
-  TCanvas *cToyHisto_Dm23_ih = new TCanvas("cToyHisto_Dm23_ih","cToyHisto_Dm23_ih");
-  hToyHisto_Dm23_ih->Draw();
-  
-  TCanvas *cToyHisto_Mix12_nh = new TCanvas("cToyHisto_Mix12_nh","cToyHisto_Mix12_nh");
-  hToyHisto_Mix12_nh->Draw();
-  TCanvas *cToyHisto_Mix12_ih = new TCanvas("cToyHisto_Mix12_ih","cToyHisto_Mix12_ih");
-  hToyHisto_Mix12_ih->Draw();
-  
-  TCanvas *cToyHisto_Dm12_nh = new TCanvas("cToyHisto_Dm12_nh","cToyHisto_Dm12_nh");
-  hToyHisto_Dm12_nh->Draw();
-  TCanvas *cToyHisto_Dm12_ih = new TCanvas("cToyHisto_Dm12_ih","cToyHisto_Dm12_ih");
-  hToyHisto_Dm12_ih->Draw();
-  
-  TCanvas *cToyHisto_MH = new TCanvas("cToyHisto_MH","cToyHisto_MH");
-  hToyHisto_MH->Draw();
-  
-  // Print out mean and rms of toy osc param distributions
-  
-  cout << endl;
-  
-  cout << "deltaCP (NH):" << endl;
-  cout << "  - Mean = " << hToyHisto_dcp_nh->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_dcp_nh->GetRMS()  << endl;
-  cout << "deltaCP (IH):" << endl;
-  cout << "  - Mean = " << hToyHisto_dcp_ih->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_dcp_ih->GetRMS()  << endl;
-
-  cout << "Mixing13 (NH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Mix13_nh->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Mix13_nh->GetRMS()  << endl;
-  cout << "Mixing13 (IH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Mix13_ih->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Mix13_ih->GetRMS()  << endl;
-  
-  cout << "Mixing23 (NH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Mix23_nh->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Mix23_nh->GetRMS()  << endl;
-  cout << "Mixing23 (IH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Mix23_ih->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Mix23_ih->GetRMS()  << endl;
-
-  cout << "Dm23 (NH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Dm23_nh->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Dm23_nh->GetRMS()  << endl;
-  cout << "Dm23 (IH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Dm23_ih->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Dm23_ih->GetRMS()  << endl;
-
-  cout << "Mixing12 (NH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Mix12_nh->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Mix12_nh->GetRMS()  << endl;
-  cout << "Mixing12 (IH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Mix12_ih->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Mix12_ih->GetRMS()  << endl;
-
-  cout << "Dm12 (NH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Dm12_nh->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Dm12_nh->GetRMS()  << endl;
-  cout << "Dm12 (IH):" << endl;
-  cout << "  - Mean = " << hToyHisto_Dm12_ih->GetMean() << endl;
-  cout << "  - RMS  = " << hToyHisto_Dm12_ih->GetRMS()  << endl;
-
-
+  // Store toy histograms    
+  char name[200];
+  sprintf(name,"%s_oscparam_toys.root",tag);
+  TFile *ftoys = new TFile(name,"recreate");
+  util::OscParams::Instance()->Write(ftoys);
+  ftoys->Close();
 
   //
   // Close files
@@ -459,6 +364,13 @@ void generate_toymc_ensemble
     fxml << "    </observation>       " << endl;
     fxml << "  </superk>              " << endl;
     fxml << "</analysis_inputs>       ";// << endl;
+    
+    fxml << endl;
+    fxml << "<!--" << endl;
+    util::OscParams::Instance()->Print_Toys(fxml);
+    fxml << "-->" << endl;
+    fxml << endl;
+
     fxml.close();
   }
   if(f) {
@@ -476,6 +388,14 @@ void generate_toymc_ensemble
   sw.Stop();
   sw.Print();
 }
+
+
+
+
+
+
+
+
 
 
 
