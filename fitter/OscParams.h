@@ -52,6 +52,18 @@ public:
   void UpdatePhysHypothesis(PhysHypothesis & ph,  bool print = true);
   void UpdateFitParamList  (FitParamList & fparm, bool set_init, bool print = false);
 
+
+  // Toy histograms
+  void FillOscToyHisto(PhysHypothesis &ph);
+  TH1D *GetToyHisto(string oscparam,string MH="normal");
+  TH1D *GetToyHisto_Mix13(string MH="normal");
+  TH1D *GetToyHisto_Mix23(string MH="normal");
+  TH1D *GetToyHisto_Dm23(string MH="normal");
+  TH1D *GetToyHisto_Mix12(string MH="normal");
+  TH1D *GetToyHisto_Dm12(string MH="normal");
+  TH1D *GetToyHisto_dcp(string MH="normal");
+  TH1D *GetToyHisto_MH();
+
   // Write the histograms in the OscParams
   void Write(TFile * f);
 
@@ -59,9 +71,6 @@ public:
   void Print (ostream & stream) const;
   friend ostream & operator << (ostream & stream, const OscParams & oscparams);
 
-    
-
-  
   void SetPrior(conv::PhysParamId_t physpar,string mode,double par1,double par2, string mixmode="");
   
   double ExtractParam(conv::PhysParamId_t physpar,string mode,double par1,double par2,string mixmode="");
@@ -134,13 +143,21 @@ public:
   TH2D * hPrior_23_ih;
 
   //Save the parameters actually used in histograms
-  TH2D * hToy_th13_dcp_nh;
-  TH2D * hToy_th13_dcp_ih;
-  TH2D * hToy_23_nh;
-  TH2D * hToy_23_ih;
-  TH1D * hToy_MH;
+  TH1D *hToyHisto_dcp_nh;
+  TH1D *hToyHisto_Mix13_nh;
+  TH1D *hToyHisto_Mix23_nh;
+  TH1D *hToyHisto_Dm23_nh;
+  TH1D *hToyHisto_Mix12_nh;
+  TH1D *hToyHisto_Dm12_nh;
+  TH1D *hToyHisto_dcp_ih;
+  TH1D *hToyHisto_Mix13_ih;
+  TH1D *hToyHisto_Mix23_ih;
+  TH1D *hToyHisto_Dm23_ih;
+  TH1D *hToyHisto_Mix12_ih;
+  TH1D *hToyHisto_Dm12_ih;
+  TH1D *hToyHisto_MH;
 
-private:
+ private:
   // Self
   static OscParams * fInstance;
 

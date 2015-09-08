@@ -91,11 +91,23 @@ void valor::util::OscParams::Init()
   hPrior_th13_dcp_ih = 0;
   hPrior_23_nh = 0;
   hPrior_23_ih = 0;
-  hToy_th13_dcp_nh = 0;
-  hToy_th13_dcp_ih = 0;
-  hToy_23_nh = 0;
-  hToy_23_ih = 0;
-  hToy_MH = 0;
+
+  hToyHisto_dcp_nh = new TH1D("hToyHisto_dcp_nh","hToyHisto_dcp_nh",100,-3.5,+3.5);
+  hToyHisto_Mix13_nh = new TH1D("hToyHisto_Mix13_nh","hToyHisto_Mix13_nh",100,0.,0.20);
+  hToyHisto_Mix23_nh = new TH1D("hToyHisto_Mix23_nh","hToyHisto_Mix23_nh",100,0.2,0.8);
+  hToyHisto_Dm23_nh = new TH1D("hToyHisto_Dm23_nh","hToyHisto_Dm23_nh",100,1.5E-3,3.5E-3);
+  hToyHisto_Mix12_nh = new TH1D("hToyHisto_Mix12_nh","hToyHisto_Mix12_nh",100,0.2,0.4);
+  hToyHisto_Dm12_nh = new TH1D("hToyHisto_Dm12_nh","hToyHisto_Dm12_nh",100,6.E-5,9.E-5);
+
+  hToyHisto_dcp_ih = new TH1D("hToyHisto_dcp_ih","hToyHisto_dcp_ih",100,-3.5,+3.5);
+  hToyHisto_Mix13_ih = new TH1D("hToyHisto_Mix13_ih","hToyHisto_Mix13_ih",100,0.,0.20);
+  hToyHisto_Mix23_ih = new TH1D("hToyHisto_Mix23_ih","hToyHisto_Mix23_ih",100,0.2,0.8);
+  hToyHisto_Dm23_ih = new TH1D("hToyHisto_Dm23_ih","hToyHisto_Dm23_ih",100,1.5E-3,3.5E-3);
+  hToyHisto_Mix12_ih = new TH1D("hToyHisto_Mix12_ih","hToyHisto_Mix12_ih",100,0.2,0.4);
+  hToyHisto_Dm12_ih = new TH1D("hToyHisto_Dm12_ih","hToyHisto_Dm12_ih",100,6.E-5,9.E-5);
+
+  hToyHisto_MH = new TH1D("hToyHisto_MH","hToyHisto_MH",2,0,2);
+
 }
 //____________________________________________________________________________
 void valor::util::OscParams::Cleanup()
@@ -124,11 +136,22 @@ void valor::util::OscParams::Cleanup()
   if(hPrior_th13_dcp_ih) delete hPrior_th13_dcp_ih;
   if(hPrior_23_nh) delete hPrior_23_nh;
   if(hPrior_23_ih) delete hPrior_23_ih;
-  if(hToy_th13_dcp_nh) delete hToy_th13_dcp_nh;
-  if(hToy_th13_dcp_ih) delete hToy_th13_dcp_ih;
-  if(hToy_23_nh) delete hToy_23_nh;
-  if(hToy_23_ih) delete hToy_23_ih;
-  if(hToy_MH) delete hToy_MH;
+
+  if(hToyHisto_dcp_nh) delete hToyHisto_dcp_nh;
+  if(hToyHisto_Mix13_nh) delete hToyHisto_Mix13_nh;
+  if(hToyHisto_Mix23_nh) delete hToyHisto_Mix23_nh;
+  if(hToyHisto_Dm23_nh) delete hToyHisto_Dm23_nh;
+  if(hToyHisto_Mix12_nh) delete hToyHisto_Mix12_nh;
+  if(hToyHisto_Dm12_nh) delete hToyHisto_Dm12_nh;
+  if(hToyHisto_dcp_ih) delete hToyHisto_dcp_ih;
+  if(hToyHisto_Mix13_ih) delete hToyHisto_Mix13_ih;
+  if(hToyHisto_Mix23_ih) delete hToyHisto_Mix23_ih;
+  if(hToyHisto_Dm23_ih) delete hToyHisto_Dm23_ih;
+  if(hToyHisto_Mix12_ih) delete hToyHisto_Mix12_ih;
+  if(hToyHisto_Dm12_ih) delete hToyHisto_Dm12_ih;
+  if(hToyHisto_MH) delete hToyHisto_MH;
+
+  
 }
 //____________________________________________________________________________
 
@@ -354,7 +377,6 @@ void valor::util::OscParams::Randomize()
   
   double par1 = conv::kBadResult;
   double par2 = conv::kBadResult;
-  double valrndm = conv::kBadResult;
   string mixmode = "";
   string priormode = "";
   // Normal Hierarchy
@@ -457,7 +479,85 @@ void valor::util::OscParams::Randomize()
     cerr << endl;
     exit(1);
   }
-      
+}
+//____________________________________________________________________________
+void valor::util::OscParams::FillOscToyHisto(PhysHypothesis &ph){
+
+  // Fill toy osc params histograms
+  
+  double mix12 = ph.CurrValue(kPhypMixing12);
+  double mix13 = ph.CurrValue(kPhypMixing13);
+  double mix23 = ph.CurrValue(kPhypMixing23);
+  double dm12 = ph.CurrValue(kPhypDm12sq);
+  double dm23 = ph.CurrValue(kPhypDm23sq);
+  double dcp = ph.CurrValue(kPhypCPV);
+  int mh = Opt::Instance()->gMassHierarchyAssumed;
+  
+  if(mh==conv::kNmhNormal){
+    hToyHisto_Mix12_nh->Fill(mix12);
+    hToyHisto_Mix13_nh->Fill(mix13);
+    hToyHisto_Mix23_nh->Fill(mix23);
+    hToyHisto_Dm12_nh->Fill(dm12);
+    hToyHisto_Dm23_nh->Fill(dm23);
+    hToyHisto_dcp_nh->Fill(dcp);
+  }
+  else if(mh==conv::kNmhInverted){
+    hToyHisto_Mix12_ih->Fill(mix12);
+    hToyHisto_Mix13_ih->Fill(mix13);
+    hToyHisto_Mix23_ih->Fill(mix23);
+    hToyHisto_Dm12_ih->Fill(dm12);
+    hToyHisto_Dm23_ih->Fill(dm23);
+    hToyHisto_dcp_ih->Fill(dcp);
+  }
+  hToyHisto_MH->Fill(mh);
+  //cout << "mh = " << mh << endl;
+}
+//____________________________________________________________________________
+TH1D *valor::util::OscParams::GetToyHisto(string oscparam,string MH){
+
+  if(oscparam=="hierarchy"){
+    return hToyHisto_MH;
+  }
+
+  if(MH=="normal"){
+    if     (oscparam=="deltaCP")  return hToyHisto_dcp_nh;
+    else if(oscparam=="mixing23") return hToyHisto_Mix23_nh;
+    else if(oscparam=="mixing13") return hToyHisto_Mix13_nh;
+    else if(oscparam=="dmsq23")   return hToyHisto_Dm23_nh;
+    else if(oscparam=="mixing12") return hToyHisto_Mix12_nh;
+    else if(oscparam=="dmsq12")   return hToyHisto_Dm12_nh;
+    else {
+      cerr << endl;
+      cerr << "The oscillation parameters is not defined: " << oscparam << endl;
+      cerr << "Following oscillation parameters are shown:" << endl;
+      cerr << " - deltaCP, mixing23, mixing13, dmsq23, mixing12, dmsq12" << endl; 
+      cerr << endl;
+      exit(1);
+    }
+  }
+  else if(MH=="inverted"){
+    if     (oscparam=="deltaCP")  return hToyHisto_dcp_ih;
+    else if(oscparam=="mixing23") return hToyHisto_Mix23_ih;
+    else if(oscparam=="mixing13") return hToyHisto_Mix13_ih;
+    else if(oscparam=="dmsq23")   return hToyHisto_Dm23_ih;
+    else if(oscparam=="mixing12") return hToyHisto_Mix12_ih;
+    else if(oscparam=="dmsq12")   return hToyHisto_Dm12_ih;
+    else {
+      cerr << endl;
+      cerr << "The oscillation parameters is not defined: " << oscparam << endl;
+      cerr << "Following oscillation parameters are shown:" << endl;
+      cerr << " - deltaCP, mixing23, mixing13, dmsq23, mixing12, dmsq12" << endl; 
+      cerr << endl;
+      exit(1);
+    }
+  }
+  else {
+    cerr << endl;
+    cerr << "Mass Hierarchy set to " << MH << " is not defined" << endl;
+    cerr << "Following options are available: normal or inverted" << endl;
+    cerr << endl;
+    exit(1);
+  }
 }
 //____________________________________________________________________________
 double valor::util::OscParams::ExtractParam(conv::PhysParamId_t physpar,string mode,double par1,double par2,string mixmode){
@@ -737,21 +837,6 @@ void valor::util::OscParams::UpdateFitParamList(FitParamList& fparm, bool set_in
   
   if(print)
     cout << "- Oscillation parameters in physics param list updated: " << fparm << endl;
-
-  //save the values used
-  if(iMH == 0) {
-    if(hToy_th13_dcp_nh)
-      hToy_th13_dcp_nh->Fill(input_mixing13_used, input_dcp_used);
-    if(hToy_23_nh)
-      hToy_23_nh->Fill(input_mixing23_used, input_dm23sq_used);
-  }//NH
-  else if(iMH == 1) {
-    if(hToy_th13_dcp_ih)
-      hToy_th13_dcp_ih->Fill(input_mixing13_used, input_dcp_used);
-    if(hToy_23_ih)
-      hToy_23_ih->Fill(input_mixing23_used, input_dm23sq_used);
-  }//IH
-
 }
 //____________________________________________________________________________
 void valor::util::OscParams::Print(ostream & stream) const
@@ -817,26 +902,59 @@ void valor::util::OscParams::Write(TFile * f)
     hPrior_23_ih->Write();
   }
   //toys used
-  if(hToy_th13_dcp_nh) {
-    hToy_th13_dcp_nh->SetDirectory(0);
-    hToy_th13_dcp_nh->Write();
+  if(hToyHisto_dcp_nh) {
+    hToyHisto_dcp_nh->SetDirectory(0);
+    hToyHisto_dcp_nh->Write();
   }
-  if(hToy_th13_dcp_ih) {
-    hToy_th13_dcp_ih->SetDirectory(0);
-    hToy_th13_dcp_ih->Write();
+  if(hToyHisto_Mix13_nh) {
+    hToyHisto_Mix13_nh->SetDirectory(0);
+    hToyHisto_Mix13_nh->Write();
   }
-  if(hToy_23_nh) {
-    hToy_23_nh->SetDirectory(0);
-    hToy_23_nh->Write();
+  if(hToyHisto_Mix23_nh) {
+    hToyHisto_Mix23_nh->SetDirectory(0);
+    hToyHisto_Mix23_nh->Write();
   }
-  if(hToy_23_ih) {
-    hToy_23_ih->SetDirectory(0);
-    hToy_23_ih->Write();
+  if(hToyHisto_Dm23_nh) {
+    hToyHisto_Dm23_nh->SetDirectory(0);
+    hToyHisto_Dm23_nh->Write();
   }
-  if(hToy_MH) {
-    hToy_MH->SetDirectory(0);
-    hToy_MH->Write();
+  if(hToyHisto_Mix12_nh) {
+    hToyHisto_Mix12_nh->SetDirectory(0);
+    hToyHisto_Mix12_nh->Write();
   }
+  if(hToyHisto_Dm12_nh) {
+    hToyHisto_Dm12_nh->SetDirectory(0);
+    hToyHisto_Dm12_nh->Write();
+  }
+  if(hToyHisto_dcp_ih) {
+    hToyHisto_dcp_ih->SetDirectory(0);
+    hToyHisto_dcp_ih->Write();
+  }
+  if(hToyHisto_Mix13_ih) {
+    hToyHisto_Mix13_ih->SetDirectory(0);
+    hToyHisto_Mix13_ih->Write();
+  }
+  if(hToyHisto_Mix23_ih) {
+    hToyHisto_Mix23_ih->SetDirectory(0);
+    hToyHisto_Mix23_ih->Write();
+  }
+  if(hToyHisto_Dm23_ih) {
+    hToyHisto_Dm23_ih->SetDirectory(0);
+    hToyHisto_Dm23_ih->Write();
+  }
+  if(hToyHisto_Mix12_ih) {
+    hToyHisto_Mix12_ih->SetDirectory(0);
+    hToyHisto_Mix12_ih->Write();
+  }
+  if(hToyHisto_Dm12_ih) {
+    hToyHisto_Dm12_ih->SetDirectory(0);
+    hToyHisto_Dm12_ih->Write();
+  }
+  if(hToyHisto_MH) {
+    hToyHisto_MH->SetDirectory(0);
+    hToyHisto_MH->Write();
+  }
+
 }
 //____________________________________________________________________________
 //____________________________________________________________________________

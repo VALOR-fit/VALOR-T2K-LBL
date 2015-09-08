@@ -184,9 +184,9 @@ void valor::util::SetMassHierarchy(SuperkExpectation * skexp)
   skexp->GetSuperkMC()->SetMassHierarchy(OscParams::Instance()->MH);
   skexp->GetSuperkMC()->SetMassHierarchyBar(OscParams::Instance()->MH);
 
-  //save it
-  if(OscParams::Instance()->hToy_MH)
-    OscParams::Instance()->hToy_MH->Fill(OscParams::Instance()->iMH + conv::kASmallNum);
+  ////save it
+  //if(OscParams::Instance()->hToy_MH)
+  //OscParams::Instance()->hToy_MH->Fill(OscParams::Instance()->iMH + conv::kASmallNum);
 }
 //____________________________________________________________________________
 TH2D * valor::util::GetTH2DFromTFile(TFile * f, const char * name)

@@ -48,7 +48,7 @@ void generate_toymc_ensemble
  const char * tag                     = "toymc",                        /* */
  int          run                     = 0,                              /* */
  double       first_experiment        = 0,                
- double       last_experiment         = 20,
+ double       last_experiment         = 100,
  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  //-999 randomize
@@ -68,7 +68,7 @@ void generate_toymc_ensemble
  double       input_beta_bar          = 1.,
  
  double       input_prior_prob_nh     = 0.5,   /* prior probability of normal mass hierarchy */
- const bool   doMargMH                = false,  // marginalize Mass Hierarchy?
+ const bool   doMargMH                = true,  // marginalize Mass Hierarchy?
  
  //string       file_priors             = "priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
  string       file_priors             = "",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
@@ -108,35 +108,6 @@ void generate_toymc_ensemble
   bool printsystvariation = true;  /* cout the skexp tweaks */
   bool save_in_xml_format = true;  /* also save in txt format */
   bool save_in_root_format = true;
-
-
-
-
-  TH1D *hToyHisto_dcp_nh = new TH1D("hToyHisto_dcp_nh","hToyHisto_dcp_nh",100,-3.5,+3.5);
-  TH1D *hToyHisto_Mix13_nh = new TH1D("hToyHisto_Mix13_nh","hToyHisto_Mix13_nh",100,0.,0.20);
-  TH1D *hToyHisto_Mix23_nh = new TH1D("hToyHisto_Mix23_nh","hToyHisto_Mix23_nh",100,0.2,0.8);
-  TH1D *hToyHisto_Dm23_nh = new TH1D("hToyHisto_Dm23_nh","hToyHisto_Dm23_nh",100,1.5E-3,3.5E-3);
-  TH1D *hToyHisto_Mix12_nh = new TH1D("hToyHisto_Mix12_nh","hToyHisto_Mix12_nh",100,0.2,0.4);
-  TH1D *hToyHisto_Dm12_nh = new TH1D("hToyHisto_Dm12_nh","hToyHisto_Dm12_nh",100,6.E-5,9.E-5);
-
-  TH1D *hToyHisto_dcp_ih = new TH1D("hToyHisto_dcp_ih","hToyHisto_dcp_ih",100,-3.5,+3.5);
-  TH1D *hToyHisto_Mix13_ih = new TH1D("hToyHisto_Mix13_ih","hToyHisto_Mix13_ih",100,0.,0.20);
-  TH1D *hToyHisto_Mix23_ih = new TH1D("hToyHisto_Mix23_ih","hToyHisto_Mix23_ih",100,0.2,0.8);
-  TH1D *hToyHisto_Dm23_ih = new TH1D("hToyHisto_Dm23_ih","hToyHisto_Dm23_ih",100,1.5E-3,3.5E-3);
-  TH1D *hToyHisto_Mix12_ih = new TH1D("hToyHisto_Mix12_ih","hToyHisto_Mix12_ih",100,0.2,0.4);
-  TH1D *hToyHisto_Dm12_ih = new TH1D("hToyHisto_Dm12_ih","hToyHisto_Dm12_ih",100,6.E-5,9.E-5);
-
-  TH1D *hToyHisto_MH = new TH1D("hToyHisto_MH","hToyHisto_MH",2,0,2);
-
-
-
-
-  TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
-  TH1D * h_1 = new TH1D ("h_1", "h_1", 100, 0, 10);
-  TH1D * h_2 = new TH1D ("h_2","h_2", 100, 0, 10);
-  TH1D * h_3 = new TH1D ("h_3","h_3", 100, 0, 10);
-  TH1D * h_4 = new TH1D ("h_4","h_4", 100, 0, 10);
-  TH2D * h_4_Escale = new TH2D ("h_4_Escale","h_4_Escale", 100, -5, 5, 100, 0, 10);
 
   // Analysis configuration file
   const char * config = util::FormFilePath(config_file, "config");
@@ -275,37 +246,9 @@ void generate_toymc_ensemble
      // Set physics hypothesis
      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
 
-
-     // Fill toy osc params histograms
-     
-     double mix12 = ph.CurrValue(kPhypMixing12);
-     double mix13 = ph.CurrValue(kPhypMixing13);
-     double mix23 = ph.CurrValue(kPhypMixing23);
-     double dm12 = ph.CurrValue(kPhypDm12sq);
-     double dm23 = ph.CurrValue(kPhypDm23sq);
-     double dcp = ph.CurrValue(kPhypCPV);
-     int mh = Opt::Instance()->gMassHierarchyAssumed;
-
-     if(mh==conv::kNmhNormal){
-       hToyHisto_Mix12_nh->Fill(mix12);
-       hToyHisto_Mix13_nh->Fill(mix13);
-       hToyHisto_Mix23_nh->Fill(mix23);
-       hToyHisto_Dm12_nh->Fill(dm12);
-       hToyHisto_Dm23_nh->Fill(dm23);
-       hToyHisto_dcp_nh->Fill(dcp);
-     }
-     else if(mh==conv::kNmhInverted){
-       hToyHisto_Mix12_ih->Fill(mix12);
-       hToyHisto_Mix13_ih->Fill(mix13);
-       hToyHisto_Mix23_ih->Fill(mix23);
-       hToyHisto_Dm12_ih->Fill(dm12);
-       hToyHisto_Dm23_ih->Fill(dm23);
-       hToyHisto_dcp_ih->Fill(dcp);
-     }
-     hToyHisto_MH->Fill(mh);
-
-     cout << "mh = " << mh << endl;
-     
+     // Fill toy histograms of osc params
+     util::OscParams::Instance()->FillOscToyHisto(ph);
+    
      //
      
      bool applied_negevents_condition = true;
@@ -412,6 +355,22 @@ void generate_toymc_ensemble
 
   // Plot toy histograms
   
+  TH1D *hToyHisto_dcp_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("deltaCP","normal");
+  TH1D *hToyHisto_Mix13_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing13","normal");
+  TH1D *hToyHisto_Mix23_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing23","normal");
+  TH1D *hToyHisto_Dm23_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("dmsq23","normal");
+  TH1D *hToyHisto_Mix12_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing12","normal");
+  TH1D *hToyHisto_Dm12_nh = (TH1D*)util::OscParams::Instance()->GetToyHisto("dmsq12","normal");
+
+  TH1D *hToyHisto_dcp_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("deltaCP","inverted");
+  TH1D *hToyHisto_Mix13_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing13","inverted");
+  TH1D *hToyHisto_Mix23_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing23","inverted");
+  TH1D *hToyHisto_Dm23_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("dmsq23","inverted");
+  TH1D *hToyHisto_Mix12_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("mixing12","inverted");
+  TH1D *hToyHisto_Dm12_ih = (TH1D*)util::OscParams::Instance()->GetToyHisto("dmsq12","inverted");
+
+  TH1D *hToyHisto_MH = (TH1D*)util::OscParams::Instance()->GetToyHisto("hierarchy");
+
   TCanvas *cToyHisto_dcp_nh = new TCanvas("cToyHisto_dcp_nh","cToyHisto_dcp_nh");
   hToyHisto_dcp_nh->Draw();
   TCanvas *cToyHisto_dcp_ih = new TCanvas("cToyHisto_dcp_ih","cToyHisto_dcp_ih");
@@ -503,19 +462,10 @@ void generate_toymc_ensemble
     fxml.close();
   }
   if(f) {
-    util::OscParams::Instance()->Write(f);
-    cerr << endl << "Warning h_0, h_1, ... have not been filled (what are they for?!)" << endl;
-    h_0->Write();
-    h_1->Write();
-    h_2->Write();
-    h_3->Write();
-    h_4->Write();
-    h_4_Escale->Write();
-
     f->Close();
     delete f;
   }//f
-
+  
   cout << endl 
        << " - Summary - " << endl
        << "    * Created " << nexperiments << " toys" << endl
