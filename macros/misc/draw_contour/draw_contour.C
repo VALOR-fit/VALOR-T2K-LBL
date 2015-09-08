@@ -9,8 +9,8 @@
 
 void draw_contour
 (
- const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_NH",
- const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_NH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_IH",
+ const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
  
  //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Asimov_C_NH",
  //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Asimov_C_NH-sinsqtheta[12_0.304,13_0.042,23_0.528],dcp_1.910,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
@@ -169,8 +169,8 @@ void draw_contour
     h2_rasterscan = (TH2D*)h1_rasterscan->Clone("h2_rasterscan");
     h1_rasterscan->SetContour(1);
     h2_rasterscan->SetContour(1);
-    h1_rasterscan->SetContourLevel(0,2.3);
-    h2_rasterscan->SetContourLevel(0,4.61);
+    h1_rasterscan->SetContourLevel(0,1.0);
+    h2_rasterscan->SetContourLevel(0,2.7);
     h1_rasterscan->SetLineStyle(2);
     h1_rasterscan->SetLineWidth(2);
     h1_rasterscan->SetLineColor(kRed);
@@ -182,7 +182,7 @@ void draw_contour
     bf_raster->SetLineColor(kRed);
     bf_raster->SetMarkerColor(kRed);
     bf_raster->SetMarkerStyle(kFullStar);
-  }
+  } // doRasterScan
 
   // Save pdf files
 
