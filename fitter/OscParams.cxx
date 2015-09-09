@@ -20,6 +20,8 @@
 #include "Utilities/Rnd.h"
 #include <TMath.h>
 
+#define __print_toys__ 
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -109,6 +111,20 @@ void valor::util::OscParams::Init()
 
   hToyHisto_MH = new TH1D("hToyHisto_MH","hToyHisto_MH",2,0,2);
 
+  mixing12_nh = conv::kBadResult;
+  mixing13_nh = conv::kBadResult;
+  mixing23_nh = conv::kBadResult;
+  dcp_nh = conv::kBadResult;
+  dm12sq_nh = conv::kBadResult;
+  dm23sq_nh = conv::kBadResult;
+  mixing12_ih = conv::kBadResult;
+  mixing13_ih = conv::kBadResult;
+  mixing23_ih = conv::kBadResult;
+  dcp_ih = conv::kBadResult;
+  dm12sq_ih = conv::kBadResult;
+  dm23sq_ih = conv::kBadResult;
+  beta_bar = conv::kBadResult;
+ 
 }
 //____________________________________________________________________________
 void valor::util::OscParams::Cleanup()
@@ -152,7 +168,20 @@ void valor::util::OscParams::Cleanup()
   if(hToyHisto_Dm12_ih) delete hToyHisto_Dm12_ih;
   if(hToyHisto_MH) delete hToyHisto_MH;
 
-  
+  mixing12_nh = conv::kBadResult;
+  mixing13_nh = conv::kBadResult;
+  mixing23_nh = conv::kBadResult;
+  dcp_nh = conv::kBadResult;
+  dm12sq_nh = conv::kBadResult;
+  dm23sq_nh = conv::kBadResult;
+  mixing12_ih = conv::kBadResult;
+  mixing13_ih = conv::kBadResult;
+  mixing23_ih = conv::kBadResult;
+  dcp_ih = conv::kBadResult;
+  dm12sq_ih = conv::kBadResult;
+  dm23sq_ih = conv::kBadResult;
+  beta_bar = conv::kBadResult;
+ 
 }
 //____________________________________________________________________________
 
@@ -245,6 +274,7 @@ void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mi
 				       double input_mh_nh_prior, bool marginalize_MH
 				       )
 {  
+  
   // Check whether some osc. params need to be randomized (i.e. if == -999)
   //NH
   randomize_mixing12_nh = (TMath::Abs(input_mixing12_nh + 999) < kASmallNum);
@@ -324,8 +354,16 @@ void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mi
 //____________________________________________________________________________
 void valor::util::OscParams::Randomize()
 {
-    
+
   // Mass Hierarchy
+
+#ifdef __print_toys__ 
+  cout << endl;
+  cout << "Before toys: " << endl
+       << "Mass Hierarchy (local) = " << iMH << endl
+       << " (global) = " << Opt::Instance()->gMassHierarchyAssumed
+       << endl;
+#endif
   
   if(marginalize_mh){
     
@@ -373,7 +411,13 @@ void valor::util::OscParams::Randomize()
       // skexp->GetSuperkMC()->SetMassHierarchyBar(hierBar);
       // fparm->Copy(*fparm_ih); // NEW MARG MH
     }
-    
+    else{
+      cerr << endl;
+      cerr << "Mass Hierarchy " << iMH << " is not defined" << endl;
+      cerr << endl;
+      exit(1);
+    }
+
   } // Mass Hierarchy
   
   double par1 = conv::kBadResult;
@@ -389,42 +433,48 @@ void valor::util::OscParams::Randomize()
     par2 = params_mixing23[1];
     priormode = priormode_mixing23;
     mixmode = mixmode_mixing23;
-    mixing23_nh = this->ExtractParam(conv::kPhypMixing23,priormode,par1,par2,mixmode);
+    if(randomize_mixing23_nh)
+      mixing23_nh = this->ExtractParam(conv::kPhypMixing23,priormode,par1,par2,mixmode);
         
     // mixing13 
     par1 = params_mixing13[0]; 
     par2 = params_mixing13[1];
     priormode = priormode_mixing13;
     mixmode = mixmode_mixing13;
-    mixing13_nh = this->ExtractParam(conv::kPhypMixing13,priormode,par1,par2,mixmode);
+    if(randomize_mixing13_nh)
+      mixing13_nh = this->ExtractParam(conv::kPhypMixing13,priormode,par1,par2,mixmode);
     
     // deltaCP
     par1 = -TMath::Pi(); 
     par2 = +TMath::Pi();
     priormode = priormode_dcp;
     mixmode = "";
-    dcp_nh = this->ExtractParam(conv::kPhypCPV,priormode,par1,par2,mixmode);
+    if(randomize_dcp_nh)
+      dcp_nh = this->ExtractParam(conv::kPhypCPV,priormode,par1,par2,mixmode);
     
     // dmsq23
     par1 = 2E-3; 
     par2 = 3E-3;
     priormode = priormode_dm23sq;
     mixmode = "";
-    dm23sq_nh = this->ExtractParam(conv::kPhypDm23sq,priormode,par1,par2,mixmode);
+    if(randomize_dm23sq_nh)
+      dm23sq_nh = this->ExtractParam(conv::kPhypDm23sq,priormode,par1,par2,mixmode);
 
     // dmsq12
     par1 = 7.53E-5; 
     par2 = 0.18E-5;
     priormode = priormode_dm12sq;
     mixmode = "";
-    dm12sq_nh = this->ExtractParam(conv::kPhypDm12sq,priormode,par1,par2,mixmode);
+    if(randomize_dm12sq_nh)
+      dm12sq_nh = this->ExtractParam(conv::kPhypDm12sq,priormode,par1,par2,mixmode);
 
     // mixing12
     par1 = params_mixing12[0]; 
     par2 = params_mixing12[1];
     priormode = priormode_mixing13;
     mixmode = mixmode_mixing12;
-    mixing12_nh = this->ExtractParam(conv::kPhypMixing12,priormode,par1,par2,mixmode);
+    if(randomize_mixing12_nh)
+      mixing12_nh = this->ExtractParam(conv::kPhypMixing12,priormode,par1,par2,mixmode);
   }
   
   // Inverted Hierarchy
@@ -436,50 +486,79 @@ void valor::util::OscParams::Randomize()
     par2 = params_mixing23[1];
     priormode = priormode_mixing23;
     mixmode = mixmode_mixing23;
-    mixing23_ih = this->ExtractParam(conv::kPhypMixing23,priormode,par1,par2,mixmode);
+    if(randomize_mixing23_ih)
+      mixing23_ih = this->ExtractParam(conv::kPhypMixing23,priormode,par1,par2,mixmode);
         
     // mixing13 
     par1 = params_mixing13[0]; 
     par2 = params_mixing13[1];
     priormode = priormode_mixing13;
     mixmode = mixmode_mixing13;
-    mixing13_ih = this->ExtractParam(conv::kPhypMixing13,priormode,par1,par2,mixmode);
+    if(randomize_mixing13_ih)
+      mixing13_ih = this->ExtractParam(conv::kPhypMixing13,priormode,par1,par2,mixmode);
     
     // deltaCP
     par1 = -TMath::Pi(); 
     par2 = +TMath::Pi();
     priormode = priormode_dcp;
     mixmode = "";
-    dcp_ih = this->ExtractParam(conv::kPhypCPV,priormode,par1,par2,mixmode);
+    if(randomize_dcp_ih)
+      dcp_ih = this->ExtractParam(conv::kPhypCPV,priormode,par1,par2,mixmode);
     
     // dmsq23
     par1 = 2E-3; 
     par2 = 3E-3;
     priormode = priormode_dm23sq;
     mixmode = "";
-    dm23sq_ih = this->ExtractParam(conv::kPhypDm23sq,priormode,par1,par2,mixmode);
+    if(randomize_dm23sq_ih)
+      dm23sq_ih = this->ExtractParam(conv::kPhypDm23sq,priormode,par1,par2,mixmode);
 
     // dmsq12
     par1 = 7.53E-5; 
     par2 = 0.18E-5;
     priormode = priormode_dm12sq;
     mixmode = "";
-    dm12sq_ih = this->ExtractParam(conv::kPhypDm12sq,priormode,par1,par2,mixmode);
+    if(randomize_dm12sq_ih)
+      dm12sq_ih = this->ExtractParam(conv::kPhypDm12sq,priormode,par1,par2,mixmode);
 
     // mixing12
     par1 = params_mixing12[0]; 
     par2 = params_mixing12[1];
     priormode = priormode_mixing13;
     mixmode = mixmode_mixing12;
-    mixing12_ih = this->ExtractParam(conv::kPhypMixing12,priormode,par1,par2,mixmode);
+    if(randomize_mixing12_ih)
+      mixing12_ih = this->ExtractParam(conv::kPhypMixing12,priormode,par1,par2,mixmode);
   }
   
   else{
-    cerr << endl;
+cerr << endl;
     cerr << "Mass Hierarchy is not defined" << endl;
     cerr << endl;
     exit(1);
   }
+  
+#ifdef __print_toys__ 
+  cout << endl;
+  cout << "After toys: " << endl;
+  cout << "Mass hierarchy = " << iMH << endl;
+  cout << "Mass hierarchy global = " << Opt::Instance()->gMassHierarchyAssumed << endl;
+  cout << endl;
+  cout << "mixing12_nh = " << mixing12_nh << endl;
+  cout << "mixing13_nh = " << mixing13_nh << endl;
+  cout << "mixing23_nh = " << mixing23_nh << endl;
+  cout << "dcp_nh = " << dcp_nh << endl;
+  cout << "dm12sq_nh = " << dm12sq_nh << endl;
+  cout << "dm23sq_nh = " << dm23sq_nh << endl;
+  cout << endl;
+  cout << "mixing12_ih = " << mixing12_ih << endl;
+  cout << "mixing13_ih = " << mixing13_ih << endl;
+  cout << "mixing23_ih = " << mixing23_ih << endl;
+  cout << "dcp_ih = " << dcp_ih << endl;
+  cout << "dm12sq_ih = " << dm12sq_ih << endl;
+  cout << "dm23sq_ih = " << dm23sq_ih << endl;
+  cout << endl;
+#endif
+
 }
 //____________________________________________________________________________
 void valor::util::OscParams::FillOscToyHisto(PhysHypothesis &ph){
@@ -493,7 +572,7 @@ void valor::util::OscParams::FillOscToyHisto(PhysHypothesis &ph){
   double dm23 = ph.CurrValue(kPhypDm23sq);
   double dcp = ph.CurrValue(kPhypCPV);
   int mh = Opt::Instance()->gMassHierarchyAssumed;
-  
+
   if(mh==conv::kNmhNormal){
     hToyHisto_Mix12_nh->Fill(mix12);
     hToyHisto_Mix13_nh->Fill(mix13);
@@ -615,6 +694,19 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
   //Other 
   input_beta_bar_used = beta_bar;  // It's never randomized
   
+ #ifdef __print_toys__
+  cout << endl;
+  cout << "Used values:" << endl;
+  cout << endl;
+  cout << "input_mixing12_used = " << input_mixing12_used << endl;
+  cout << "input_mixing13_used = " << input_mixing13_used << endl;
+  cout << "input_mixing23_used = " << input_mixing23_used << endl;
+  cout << "input_dcp_used = " << input_dcp_used << endl;
+  cout << "input_dm12sq_used = " << input_dm12sq_used << endl;
+  cout << "input_dm23sq_used = " << input_dm23sq_used << endl;
+  cout << endl;
+#endif
+
   //Update the PhysHypothesis
   if(ph.Hypothesis() == kHypNuMuDisapp2F) {
     ph.SetCurrValue(kPhypMixing23,  input_mixing23_used);

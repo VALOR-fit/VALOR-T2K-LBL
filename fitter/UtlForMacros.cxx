@@ -150,35 +150,16 @@ void valor::util::SetMassHierarchy(SuperkExpectation * skexp)
   //  - iMH=0 --> kNmhNormal
   //  - iMH=1 --> kNmhInverted	
 	
-  // Don't marginalize Mass Hierarchy. Use the one already set
-  if(! OscParams::Instance()->marginalize_mh) {
-    OscParams::Instance()->MH = Opt::Instance()->gMassHierarchyAssumed;
-
-    //convert to int
-    if(OscParams::Instance()->MH == kNmhNormal)
-      OscParams::Instance()->iMH = 0;
-    else if(OscParams::Instance()->MH == kNmhInverted)
-      OscParams::Instance()->iMH = 1; 
-    else {
-      cerr << "Mass Hierarchy is not undefined" << endl;
-      exit(1);
-    }
-  }//!marginalize_mh
-  // Extract randomly the Mass Hierarchy 
+  //convert to NuMassHierarchy_t
+  if(OscParams::Instance()->iMH == 0)
+    OscParams::Instance()->MH = kNmhNormal;
+  else if(OscParams::Instance()->iMH == 1)
+    OscParams::Instance()->MH = kNmhInverted;
   else {
-    OscParams::Instance()->iMH = util::RandomizeMH(OscParams::Instance()->mh_nh_prior);
-
-    //convert to NuMassHierarchy_t
-    if(OscParams::Instance()->iMH == 0)
-      OscParams::Instance()->MH = kNmhNormal;
-    else if(OscParams::Instance()->iMH == 1)
-      OscParams::Instance()->MH = kNmhInverted;
-    else {
-      cerr << "util::SetMassHierarchy() Unknown value of iMH " << OscParams::Instance()->iMH << endl;
-      exit(1);
-    }
-  }//marginalize_mh
-
+    cerr << "util::SetMassHierarchy() Unknown value of iMH " << OscParams::Instance()->iMH << endl;
+    exit(1);
+  }
+  
   //set the hierarchy
   Opt::Instance()->gMassHierarchyAssumed = OscParams::Instance()->MH;
   skexp->GetSuperkMC()->SetMassHierarchy(OscParams::Instance()->MH);

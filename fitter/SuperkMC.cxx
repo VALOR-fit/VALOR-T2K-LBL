@@ -3362,15 +3362,6 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
 
 
 
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 void SuperkMC::UpdateTemplates(void)
 {
@@ -3975,7 +3966,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates2D(void)
 //void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
 void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) // NEW 2D TEMPLATES
 {
-#ifndef __ALLOW_DIFFERING_HIERARCHIES__
+#ifndef __ALLOW_DIFFERING_HIERARCHIES__  
   assert(Opt::Instance()->gMassHierarchyAssumed==fNuOsc3Flavour.GetMassHierarchy());
 #endif
   // set oscillation parameters to the oscillation probability calculation code

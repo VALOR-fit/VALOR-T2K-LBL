@@ -292,11 +292,13 @@ void valor::RunOpt::Read3FOscParamsOptions()
     else
       fPriorsFile = util::FormFilePath(fParser->ArgAsString("priors-file").c_str(), "inputs");
   }
+
   util::OscParams::Instance()->SetValues(fMix12[0], fMix13[0], fMix23[0], fCPV[0], fDm12sq[0], fDm23sq[0],
 					 fBetaBar,
 					 fMix12[1], fMix13[1], fMix23[1], fCPV[1], fDm12sq[1], fDm23sq[1],
 					 fPriorProbNH, fMargMH
 					 );
+
 }
 //____________________________________________________________________________
 void valor::RunOpt::Usage(const int w)

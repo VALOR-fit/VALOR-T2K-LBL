@@ -34,7 +34,7 @@ Split valor::conv namespace into several smaller files
 
 // NEW 2D TEMPLATES
 #ifndef __USE_2D_TEMPLATES__ 
-#define __USE_2D_TEMPLATES__ // Use 2D templates
+//#define __USE_2D_TEMPLATES__ // Use 2D templates
 #endif
 
 //#define __ERECO_VS_Q2_TEMPLATES__ // Ereco Vs Q2 parametrization
@@ -177,8 +177,8 @@ Split valor::conv namespace into several smaller files
 #endif
 
 #ifndef Q2_XSEC_BINS_1RE
-//#define Q2_XSEC_BINS_1RE 1 // DEFAULT (19 bins) 
-#define Q2_XSEC_BINS_1RE 2 // 1 single bin (1D template)
+#define Q2_XSEC_BINS_1RE 1 // DEFAULT (19 bins) 
+//#define Q2_XSEC_BINS_1RE 2 // 1 single bin (1D template)
 //#define Q2_XSEC_BINS_1RE 3 // Qd^2 parametrization, finer close to 1 (19 bins) 
 //#define Q2_XSEC_BINS_1RE 4 // Inelasticity parametrization, finer close to 1 (19 bins) 
 //#define Q2_XSEC_BINS_1RE 5 // XSec term parametrization, finer close to 1 (19 bins) 
@@ -193,8 +193,8 @@ Split valor::conv namespace into several smaller files
 #endif
 
 #ifndef Q2_BINS_1RE
-//#define Q2_BINS_1RE 1 // DEFAULT (19 bins)
-#define Q2_BINS_1RE 2 // 1 single bin (1D template)
+#define Q2_BINS_1RE 1 // DEFAULT (19 bins)
+//#define Q2_BINS_1RE 2 // 1 single bin (1D template)
 //#define Q2_BINS_1RE 3 // Qd^2 parametrization, finer close to 1 (19 bins) 
 //#define Q2_BINS_1RE 4 // Inelasticity parametrization, finer close to 1 (19 bins) 
 //#define Q2_BINS_1RE 5 // XSec term parametrization, finer close to 1 (19 bins) 
@@ -202,8 +202,8 @@ Split valor::conv namespace into several smaller files
 
 
 #ifndef THETA_XSEC_BINS_1RMU
-//#define THETA_XSEC_BINS_1RMU 1 // DEFAULT (15 bins) 
-#define THETA_XSEC_BINS_1RMU 2 // 1 single bin 
+#define THETA_XSEC_BINS_1RMU 1 // DEFAULT (15 bins) 
+//#define THETA_XSEC_BINS_1RMU 2 // 1 single bin 
 #endif
 
 #ifndef THETA_XSEC_BINS_1RE
@@ -212,8 +212,8 @@ Split valor::conv namespace into several smaller files
 #endif
 
 #ifndef THETA_BINS_1RMU
-//#define THETA_BINS_1RMU 1 // DEFAULT (15 bins)
-#define THETA_BINS_1RMU 2 // 1 single bin
+#define THETA_BINS_1RMU 1 // DEFAULT (15 bins)
+//#define THETA_BINS_1RMU 2 // 1 single bin
 #endif
 
 #ifndef THETA_BINS_1RE
