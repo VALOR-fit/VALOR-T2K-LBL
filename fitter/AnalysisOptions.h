@@ -202,8 +202,8 @@ Split valor::conv namespace into several smaller files
 
 
 #ifndef THETA_XSEC_BINS_1RMU
-#define THETA_XSEC_BINS_1RMU 1 // DEFAULT (15 bins) 
-//#define THETA_XSEC_BINS_1RMU 2 // 1 single bin 
+//#define THETA_XSEC_BINS_1RMU 1 // DEFAULT (15 bins) 
+#define THETA_XSEC_BINS_1RMU 2 // 1 single bin 
 #endif
 
 #ifndef THETA_XSEC_BINS_1RE
@@ -212,8 +212,8 @@ Split valor::conv namespace into several smaller files
 #endif
 
 #ifndef THETA_BINS_1RMU
-#define THETA_BINS_1RMU 1 // DEFAULT (15 bins)
-//#define THETA_BINS_1RMU 2 // 1 single bin
+//#define THETA_BINS_1RMU 1 // DEFAULT (15 bins)
+#define THETA_BINS_1RMU 2 // 1 single bin
 #endif
 
 #ifndef THETA_BINS_1RE

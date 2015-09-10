@@ -20,6 +20,8 @@
 #include "Conventions/PhysParamId.h"
 #include "Utilities/Env.h"
 
+#include "UtlFitParamListFactory.h"
+
 #include "TMath.h"
 #include "TString.h"
 
@@ -100,7 +102,7 @@ void valor::RunOpt::Init(void)
   fStatFluctuations    = true;
   fSystTweakMode       = 1;
   fRethrowIfUnphysical = true;
-  fVerboseSystThrows   = true; // Print out the output systematic tweaks
+  fVerboseSystThrows   = false; // Print out the output systematic tweaks
   //global options
   fGlobalDmsqScheme     = "auto";
   fGlobalMassHierarchy  = "normal";
@@ -147,6 +149,34 @@ void valor::RunOpt::Init(void)
     fPriorParDm23sq[i]   = conv::kBadResult;
     fPriorParDeltaCP[i]  = conv::kBadResult;
   }
+  fSynchronizeIHtoNH = true;
+  
+  // fit marg options
+  fFirstExperimentMarg = 0;
+  fLastExperimentMarg = 1;
+  fNExperimentsMarg = 1;
+  fTag = "fitmarg_joint";
+  fXmlfile = "";
+  fRootfile = "";
+  fUsing_xml_file = false;
+  fDoToys = true;
+  fFit_param_list = "nuosc3f+nuisance";
+  fInfilename     = "submit_prova_TemplVArray";
+  fNfiles         = 9;
+  fNtoysMarg      = 100;
+  fFreeparname0   = "deltacp";
+  fFreeparmin0    = -3.14159265358979312e+00;
+  fFreeparmax0    = +3.14159265358979312e+00;
+  fNptScan0       = 9;
+  fFreeparname1   = "";
+  fFreeparmin1    = 0.;
+  fFreeparmax1    = 0.;
+  fNptScan1       = 1;
+  fDoMargMH       = false;
+  fHierarchy_marg = "normal";
+  fTypeError      = "";
+  fDrawFullChisq  = true;
+  fTeststat       = "rate+shape";
 }
 //____________________________________________________________________________
 void valor::RunOpt::InitOscParams(double value)
@@ -192,6 +222,11 @@ void valor::RunOpt::ReadFromCommandLine(int argc, char ** argv, int parseopt)
     ReadGlobalOptions();
   if(parseopt & kParse3FOscParams)
     Read3FOscParamsOptions();
+
+  // NEW FIT MARG
+  if(parseopt & kParseFitMarg)
+    ReadFitMargOptions();
+  //
 }
 //____________________________________________________________________________
 void valor::RunOpt::ReadCommonOptions()
@@ -318,6 +353,11 @@ void valor::RunOpt::Read3FOscParamsOptions()
     if(fParser->OptionExists(Form("dm23sq-%s", fHierStr[i].c_str())))
       fDm23sq[i] = fParser->ArgAsDouble(Form("dm23sq-%s", fHierStr[i].c_str()));
   }//i
+
+  if(fParser->OptionExists("synch-ih-to-nh"))
+    fSynchronizeIHtoNH = true;
+  else 
+    fSynchronizeIHtoNH = false;
 
   if(fParser->OptionExists("beta-bar"))
     fBetaBar = fParser->ArgAsDouble("beta-bar");
@@ -459,6 +499,18 @@ void valor::RunOpt::Read3FOscParamsOptions()
     fPriorParDeltaCP[1] = (double)atof(input[2].c_str());
   }
 
+
+
+  // Synchronize IH to NH osc params
+  if(fSynchronizeIHtoNH){
+    fMix12[1]  = fMix12[0];
+    fMix13[1]  = fMix13[0];
+    fMix23[1]  = fMix23[0];
+    fCPV[1]    = fCPV[0];
+    fDm12sq[1] = fDm12sq[0];
+    fDm23sq[1] = fDm23sq[0];
+  }
+
   // Set Osc param values
   util::OscParams::Instance()->SetValues(fMix12[0], fMix13[0], fMix23[0], fCPV[0], fDm12sq[0], fDm23sq[0],
 					 fBetaBar,
@@ -484,6 +536,25 @@ void valor::RunOpt::Read3FOscParamsOptions()
   //fPriorsFile = util::FormFilePath(fParser->ArgAsString("priors-file").c_str(), "inputs");
   //}
 }
+
+
+//____________________________________________________________________________
+void valor::RunOpt::ReadFitMargOptions()
+{
+  if(fParser->OptionExists("hypothesis"))
+    fHypothesis = fParser->ArgAsString("hypothesis");
+
+
+  //if(fParser->OptionExists("default-all-oscparams"))
+  //InitOscParams(-99);
+  
+  //if(fParser->OptionExists(Form("mixing12-%s", fHierStr[i].c_str())))
+  //fMix12 = fParser->ArgAsDouble(Form("mixing12-%s", fHierStr[i].c_str()));
+ 
+}
+
+
+
 //____________________________________________________________________________
 void valor::RunOpt::Usage(const int w)
 {

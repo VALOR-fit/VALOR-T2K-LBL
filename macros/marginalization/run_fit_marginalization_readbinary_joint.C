@@ -23,6 +23,13 @@
 #include <Build.h>
 #include <AnalysisOptions.h>
 
+#if !defined(__CINT__) || defined(__MAKECINT__)
+
+#include "TSystem.h"
+#include "TStopwatch.h"
+
+#endif
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
@@ -81,7 +88,9 @@ void run_fit_marginalization_readbinary_joint
 
  const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
- 
+ //const char * config_file      = "analysis_configuration_test_theta.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike.xml",     
+
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
@@ -95,24 +104,19 @@ void run_fit_marginalization_readbinary_joint
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",
-
- const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsQ2/joint_sinsqth13Vsdcp_t2kreact_constrall_NH_10kToys_ErecoVsQ2",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_2Dtempl_ErecoVsQ2/joint_sinsqth13Vsdcp_t2kreact_constrall_IH_10kToys_ErecoVsQ2",
-
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsTheta/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
  //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
- //const char * infilename = "PROVA_SystAll_TemplVArray",
+ const char * infilename = "submit_prova_TemplVArray",
 
- const int    nfiles               = 201, //201, 21, 1        // # of files to read
+ const int    nfiles               = 9, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 10000, //500, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 100, //500, //10000, //1,  // # toys marginalization 
  
  const char * freeparname0        = "deltacp",  // free parameter
  const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 201, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ const int    NptScan0            = 9, //201, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
  const bool  doMargMH             = false,     // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
@@ -123,6 +127,8 @@ void run_fit_marginalization_readbinary_joint
  const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
 )
 {
+
+  TStopwatch sw;
 
   using namespace std;
   using namespace valor;
@@ -924,15 +930,15 @@ void run_fit_marginalization_readbinary_joint
 
   } // for iexperiment
 
-   
-
-
+  
 
   // Store ntuple with best-fit results
   f.cd();
   fitnt->Write();
   f.Close();
 
+  sw.Stop();
+  sw.Print();
 
   return;
 }
