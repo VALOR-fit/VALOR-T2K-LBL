@@ -12,6 +12,8 @@
 #include <sstream>
 #include <cstdlib>
 
+#include <string>
+
 #include "RunOpt.h"
 #include "Conventions/Opt.h"
 #include "Conventions/Constants.h"
@@ -98,7 +100,7 @@ void valor::RunOpt::Init(void)
   fStatFluctuations    = true;
   fSystTweakMode       = 1;
   fRethrowIfUnphysical = true;
-  fVerboseSystThrows   = false;
+  fVerboseSystThrows   = true; // Print out the output systematic tweaks
   //global options
   fGlobalDmsqScheme     = "auto";
   fGlobalMassHierarchy  = "normal";
@@ -108,9 +110,43 @@ void valor::RunOpt::Init(void)
   //3f osc options
   InitOscParams(-99);
   fHypothesis = "3f_osc";
-  fMargMH     = true;
-  fPriorsFile = util::FormFilePath("priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", "inputs"); //use this for default ON
-  //fPriorsFile = ""; //use this for default OFF
+
+  
+  // Priors
+
+  fPriorsFile = ""; //use this for default OFF
+  //fPriorsFile = util::FormFilePath("priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", "inputs"); //use this for default ON
+
+  fMargMH       = false;
+  fPriorProbNH  = 0.5;
+
+  // NEW
+  fMargMixing12 = false;
+  fMargMixing13 = false;
+  fMargMixing23 = false;
+  fMargDm12sq   = false;
+  fMargDm23sq   = false;
+  fMargDeltaCP  = false;
+
+  fPriorMixing12 = "";
+  fPriorMixing13 = "";
+  fPriorMixing23 = "";
+  fPriorDm12sq   = "";
+  fPriorDm23sq   = "";
+  fPriorDeltaCP  = "";
+  
+  fMixModeMixing12 = "";
+  fMixModeMixing23 = "";
+  fMixModeMixing13 = "";
+
+  for(int i=0;i<2;i++){
+    fPriorParMixing12[i] = conv::kBadResult;
+    fPriorParMixing13[i] = conv::kBadResult;
+    fPriorParMixing23[i] = conv::kBadResult;
+    fPriorParDm12sq[i]   = conv::kBadResult;
+    fPriorParDm23sq[i]   = conv::kBadResult;
+    fPriorParDeltaCP[i]  = conv::kBadResult;
+  }
 }
 //____________________________________________________________________________
 void valor::RunOpt::InitOscParams(double value)
@@ -124,9 +160,10 @@ void valor::RunOpt::InitOscParams(double value)
     fDm23sq[i] = value;
   }//i
   fBetaBar     = value;
+  
   //randomizing the prior makes no sense, so only set it if it's not -999
-  if(! (TMath::Abs(value + 999) < kASmallNum))
-    fPriorProbNH = value;
+  //if(! (TMath::Abs(value + 999) < kASmallNum))
+  //fPriorProbNH = value;
 }
 //____________________________________________________________________________
 void valor::RunOpt::ReadFromCommandLine(int argc, char ** argv, int parseopt)
@@ -236,6 +273,8 @@ void valor::RunOpt::ReadGlobalOptions()
   if(fParser->OptionExists("mix-param-octant"))
     fGlobalMixParamOctant = fParser->ArgAsString("mix-param-octant");
 
+  cout << "ReadGlobalOptions" << endl;
+
   Opt::Instance()->SetValues(fGlobalDmsqScheme.c_str(),     fGlobalMassHierarchy.c_str(),
 			   fGlobalMixParamScheme.c_str(), fGlobalMixParamOctant.c_str(),
 			   fGlobalCPVPhaseScheme.c_str());
@@ -243,15 +282,23 @@ void valor::RunOpt::ReadGlobalOptions()
 //____________________________________________________________________________
 void valor::RunOpt::Read3FOscParamsOptions()
 {
+
   if(fParser->OptionExists("hypothesis"))
     fHypothesis = fParser->ArgAsString("hypothesis");
+
+  //
+  // Keep the following order:
+  // - randomize-all-oscparams
+  // - default-all-oscparams
+  // - set each single osc params
+  //
 
   if(fParser->OptionExists("randomize-all-oscparams"))
     InitOscParams(-999);
 
   if(fParser->OptionExists("default-all-oscparams"))
     InitOscParams(-99);
-
+   
   for(int i = 0; i < 2; i++) {
     if(fParser->OptionExists(Form("mixing12-%s", fHierStr[i].c_str())))
       fMix12[i] = fParser->ArgAsDouble(Form("mixing12-%s", fHierStr[i].c_str()));
@@ -262,7 +309,7 @@ void valor::RunOpt::Read3FOscParamsOptions()
     if(fParser->OptionExists(Form("mixing23-%s", fHierStr[i].c_str())))
       fMix23[i] = fParser->ArgAsDouble(Form("mixing23-%s", fHierStr[i].c_str()));
     
-    if(fParser->OptionExists(Form("cpv-%s", fHierStr[i].c_str())))
+    if(fParser->OptionExists(Form("cpv-%s", fHierStr[i].c_str())))            
       fCPV[i] = fParser->ArgAsDouble(Form("cpv-%s", fHierStr[i].c_str()));
     
     if(fParser->OptionExists(Form("dm12sq-%s", fHierStr[i].c_str())))
@@ -283,22 +330,159 @@ void valor::RunOpt::Read3FOscParamsOptions()
   else if(fParser->OptionExists("disable-marg-mass-hierarchy"))
     fMargMH = false;
 
-  if(fParser->OptionExists("disable-priors")) {
-    fPriorsFile = "";
+
+  // Set the priors
+
+  // NEW 
+  if(fParser->OptionExists("prior-reactors")){ 
+
+    fMargMixing12        = true;
+    fPriorMixing12       = "gaus";   
+    fPriorParMixing12[0] = 0.846;
+    fPriorParMixing12[1] = 0.021;
+    fMixModeMixing12     = "sinsq2th";
+
+    fMargMixing13        = true;
+    fPriorMixing13       = "gaus";   
+    fPriorParMixing13[0] = 0.093;
+    fPriorParMixing13[1] = 0.008;
+    fMixModeMixing13     = "sinsq2th";
+
+    fMargMixing23        = true;
+    fPriorMixing23       = "flat";   
+    fPriorParMixing23[0] = 0.3;
+    fPriorParMixing23[1] = 0.7;
+    fMixModeMixing23     = "sinsqth";
+
+    fMargDm23sq          = true;
+    fPriorDm23sq         = "flat";   
+    fPriorParDm23sq[0]   = 2E-3;
+    fPriorParDm23sq[1]   = 3E-3;
+
+    fMargDm12sq          = true;
+    fPriorDm12sq         = "gaus";   
+    fPriorParDm12sq[0]   = 7.53E-5;
+    fPriorParDm12sq[1]   = 0.18E-5;
+
+    fMargDeltaCP         = true;
+    fPriorDeltaCP        = "flat";   
+    fPriorParDeltaCP[0]  = -TMath::Pi();
+    fPriorParDeltaCP[1]  = +TMath::Pi();
   }
-  else if(fParser->OptionExists("priors-file")) {
-    if(fParser->ArgAsString("priors-file").compare("off"))
-      fPriorsFile = "";
-    else
-      fPriorsFile = util::FormFilePath(fParser->ArgAsString("priors-file").c_str(), "inputs");
+  else if(fParser->OptionExists("prior-t2konly")){
+
+    fMargMixing12        = true;
+    fPriorMixing12       = "gaus";   
+    fPriorParMixing12[0] = 0.846;
+    fPriorParMixing12[1] = 0.021;
+    fMixModeMixing12     = "sinsq2th";
+
+    fMargMixing13        = true;
+    fPriorMixing13       = "gaus";   
+    fPriorParMixing13[0] = 0.095;
+    fPriorParMixing13[1] = 0.010;
+    fMixModeMixing13     = "sinsq2th";
+
+    fMargMixing23        = true;
+    fPriorMixing23       = "flat";   
+    fPriorParMixing23[0] = 0.3;
+    fPriorParMixing23[1] = 0.7;
+    fMixModeMixing23     = "sinsqth";
+
+    fMargDm23sq          = true;
+    fPriorDm23sq         = "flat";   
+    fPriorParDm23sq[0]   = 2E-3;
+    fPriorParDm23sq[1]   = 3E-3;
+
+    fMargDm12sq          = true;
+    fPriorDm12sq         = "gaus";   
+    fPriorParDm12sq[0]   = 7.53E-5;
+    fPriorParDm12sq[1]   = 0.18E-5;
+
+    fMargDeltaCP         = true;
+    fPriorDeltaCP        = "flat";   
+    fPriorParDeltaCP[0]  = -TMath::Pi();
+    fPriorParDeltaCP[1]  = +TMath::Pi();
+  }
+  else{
+    if(!fParser->OptionExists("default-all-oscparams")){
+      cerr << endl;
+      cerr << "Priors are not defined" << endl;
+      cerr << endl;
+      exit(1);
+    }
   }
 
+  if(fParser->OptionExists("prior-mixing12")){
+    fMargMixing12 = true;
+    vector<string> input = fParser->ArgAsStringTokens("prior-mixing12",",");
+    fPriorMixing12       = input[0];   
+    fPriorParMixing12[0] = (double)atof(input[1].c_str());
+    fPriorParMixing12[1] = (double)atof(input[2].c_str());
+    fMixModeMixing12     = input[3];
+  }
+  if(fParser->OptionExists("prior-mixing13")){
+    fMargMixing13 = true;
+    vector<string> input = fParser->ArgAsStringTokens("prior-mixing13",",");
+    fPriorMixing13       = input[0];   
+    fPriorParMixing13[0] = (double)atof(input[1].c_str());
+    fPriorParMixing13[1] = (double)atof(input[2].c_str());
+    fMixModeMixing13     = input[3];
+  }
+  if(fParser->OptionExists("prior-mixing23")){
+    fMargMixing23 = true;
+    vector<string> input = fParser->ArgAsStringTokens("prior-mixing23",",");
+    fPriorMixing23       = input[0];   
+    fPriorParMixing23[0] = (double)atof(input[1].c_str());
+    fPriorParMixing23[1] = (double)atof(input[2].c_str());
+    fMixModeMixing23     = input[3];
+  }
+  if(fParser->OptionExists("prior-dmsq23")){
+    fMargDm23sq = true;
+    vector<string> input = fParser->ArgAsStringTokens("prior-dmsq23",",");
+    fPriorDm23sq       = input[0];   
+    fPriorParDm23sq[0] = (double)atof(input[1].c_str());
+    fPriorParDm23sq[1] = (double)atof(input[2].c_str());
+  }
+  if(fParser->OptionExists("prior-dmsq12")){
+    fMargDm12sq = true;
+    vector<string> input = fParser->ArgAsStringTokens("prior-dmsq12",",");
+    fPriorDm12sq       = input[0];   
+    fPriorParDm12sq[0] = (double)atof(input[1].c_str());
+    fPriorParDm12sq[1] = (double)atof(input[2].c_str());
+  }
+  if(fParser->OptionExists("prior-deltacp")){
+    fMargDeltaCP = true;
+    vector<string> input = fParser->ArgAsStringTokens("prior-deltacp",",");
+    fPriorDeltaCP       = input[0];   
+    fPriorParDeltaCP[0] = (double)atof(input[1].c_str());
+    fPriorParDeltaCP[1] = (double)atof(input[2].c_str());
+  }
+
+  // Set Osc param values
   util::OscParams::Instance()->SetValues(fMix12[0], fMix13[0], fMix23[0], fCPV[0], fDm12sq[0], fDm23sq[0],
 					 fBetaBar,
 					 fMix12[1], fMix13[1], fMix23[1], fCPV[1], fDm12sq[1], fDm23sq[1],
 					 fPriorProbNH, fMargMH
 					 );
 
+  // Set priors of osc params to defaults, or set them to be randomised
+  if(fMargMixing23) util::OscParams::Instance()->SetPrior(conv::kPhypMixing23, fPriorMixing23,  fPriorParMixing23[0], fPriorParMixing23[1], fMixModeMixing23);      
+  if(fMargDm23sq)   util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,   fPriorDm23sq,    fPriorParDm23sq[0],   fPriorParDm23sq[1],   ""              );  
+  if(fMargMixing13) util::OscParams::Instance()->SetPrior(conv::kPhypMixing13, fPriorMixing13,  fPriorParMixing13[0], fPriorParMixing13[1], fMixModeMixing13); // Convert to sinsqth
+  if(fMargDeltaCP)  util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      fPriorDeltaCP,  fPriorParDeltaCP[0],  fPriorParDeltaCP[1],  ""              ); 
+  if(fMargMixing12) util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, fPriorMixing12, fPriorParMixing12[0], fPriorParMixing12[1], fMixModeMixing12); // Convert to sinsqth
+  if(fMargDm12sq)   util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   fPriorDm12sq,   fPriorParDm23sq[0],   fPriorParDm23sq[1],   ""              ); 
+
+  //if(fParser->OptionExists("disable-priors")) {
+  //fPriorsFile = "";
+  //}
+  //else if(fParser->OptionExists("priors-file")) {
+  //if(fParser->ArgAsString("priors-file").compare("off"))
+  //fPriorsFile = "";
+  //else
+  //fPriorsFile = util::FormFilePath(fParser->ArgAsString("priors-file").c_str(), "inputs");
+  //}
 }
 //____________________________________________________________________________
 void valor::RunOpt::Usage(const int w)

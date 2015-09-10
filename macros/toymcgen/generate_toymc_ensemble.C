@@ -48,7 +48,7 @@ void generate_toymc_ensemble
  const char * tag                     = "toymc",                        /* */
  int          run                     = 0,                              /* */
  double       first_experiment        = 0,                
- double       last_experiment         = 1,
+ double       last_experiment         = 999,
  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  //-999 randomize
@@ -56,19 +56,33 @@ void generate_toymc_ensemble
  double       input_mixing12_nh       = -999,   /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13_nh       = -999,   /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23_nh       = -999,   /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_nh        = -999,   /* deltacp or sindeltacp depending on user choice */
+ double       input_deltacp_nh        = -3.14,   /* deltacp or sindeltacp depending on user choice */
  double       input_dm12sq_nh         = -999,   /* Dm^2_{12},  */
  double       input_dm23sq_nh         = -999,   /* |Dm^2_{23}| */
  double       input_mixing12_ih       = -999,   /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13_ih       = -999,   /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23_ih       = -999,   /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp_ih        = -999,   /* deltacp or sindeltacp depending on user choice */
+ double       input_deltacp_ih        = -3.14,   /* deltacp or sindeltacp depending on user choice */
  double       input_dm12sq_ih         = -999,   /* Dm^2_{12},  */
  double       input_dm23sq_ih         = -999,   /* |Dm^2_{23}| */
  double       input_beta_bar          = 1.,
  
+ // double       input_mixing12_nh       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13_nh       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23_nh       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */   
+ // double       input_deltacp_nh        = -1.601, //-99,    /* deltacp, */            
+ // double       input_dm12sq_nh         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq_nh         = 2.509E-3, //-99,    /* |Dm^2_{23}| */ 
+ // double       input_mixing12_ih       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13_ih       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23_ih       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */   
+ // double       input_deltacp_ih        = -1.601, //-99,    /* deltacp, */            
+ // double       input_dm12sq_ih         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq_ih         = 2.509E-3, //-99,    /* |Dm^2_{23}| */ 
+ // double       input_beta_bar          = 1.,
+
  double       input_prior_prob_nh     = 0.5,   /* prior probability of normal mass hierarchy */
- const bool   doMargMH                = true,  // marginalize Mass Hierarchy?
+ const bool   doMargMH                = false,  // marginalize Mass Hierarchy?
  
  //string       file_priors             = "priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
  string       file_priors             = "",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
@@ -144,6 +158,9 @@ void generate_toymc_ensemble
     file_priors_full_path = util::FormFilePath(file_priors.c_str(), "inputs");
   }
 
+  
+
+
   // Set input osc params to defaults, or set them to be randomised
   util::OscParams::Instance()->SetValues(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
 					 input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
@@ -151,7 +168,7 @@ void generate_toymc_ensemble
 					 input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
 					 input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
 					 input_prior_prob_nh, doMargMH);
-  
+
   // Set priors of osc params to defaults, or set them to be randomised
   util::OscParams::Instance()->SetPrior(conv::kPhypMixing23, "flat", 0.3,          0.7,         "sinsqth" );      
   util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,   "flat", 2E-3,         3E-3,        ""        );  
@@ -159,6 +176,9 @@ void generate_toymc_ensemble
   util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      "flat", -TMath::Pi(), +TMath::Pi(),""        ); 
   util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, "gaus", 0.846,        0.021,       "sinsq2th"); // Convert to sinsqth
   util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   "gaus", 7.53E-5,      0.18E-5,     ""        ); 
+  
+
+  //util::OscParams::Instance()->Print(cout);
 
 
   // Extra points to add to the toy dataset(s)
@@ -236,6 +256,7 @@ void generate_toymc_ensemble
      SuperkObservation * skobs = new SuperkObservation;
      PhysHypothesis ph(hypothesis);
 
+
      // Randomize specified osc params for current toy MC expt
      util::OscParams::Instance()->Randomize();
 
@@ -248,7 +269,7 @@ void generate_toymc_ensemble
 
      // Fill toy histograms of osc params
      util::OscParams::Instance()->FillOscToyHisto(ph);
-    
+     
      //
      
      bool applied_negevents_condition = true;

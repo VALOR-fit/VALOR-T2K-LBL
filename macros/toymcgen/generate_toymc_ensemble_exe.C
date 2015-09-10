@@ -7,6 +7,12 @@
 // ------------------------------------------------------------------------------------------------
 //
 
+
+// Run in the following way:
+
+// source /Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/trunk_20150630_2d_templates/macros/toymcgen/compile_toymcgen.sh
+//./generate_toymc_ensemble.exe --enable-stat-fluct --syst-tweak-mode --enable-rethrow-unphysical-toys --randomize-all-oscparams --prior-reactors --cpv-nh -3.14 --cpv-ih 3.14 --enable-marg-mass-hierarchy --normal-mass-hierarchy-prior 0.5 --n-experiments 100
+
 #include "SuperkObservation.h"
 #include "SuperkExpectation.h"
 #include "T2KPhysicalParameterLimits.h"
@@ -157,13 +163,6 @@ int main(int argc, char ** argv)
 
   TRandom3 rand(runopt.ToySeed()); //random number to see where inside a bin a toy is generated
 
-  TH1D * h_0 = new TH1D ("h_0", "h_0", 100, 0, 10);
-  TH1D * h_1 = new TH1D ("h_1", "h_1", 100, 0, 10);
-  TH1D * h_2 = new TH1D ("h_2","h_2", 100, 0, 10);
-  TH1D * h_3 = new TH1D ("h_3","h_3", 100, 0, 10);
-  TH1D * h_4 = new TH1D ("h_4","h_4", 100, 0, 10);
-  TH2D * h_4_Escale = new TH2D ("h_4_Escale","h_4_Escale", 100, -5, 5, 100, 0, 10);
-
   // Extra points to add to the toy dataset(s)
   string * full_points_to_add[kns] = { 0,0,0,0,0,0 };
   // Are we adding events from an XML file?
@@ -234,14 +233,20 @@ int main(int argc, char ** argv)
      SuperkObservation * skobs = new SuperkObservation;
      PhysHypothesis ph(runopt.Hypothesis());
 
-     // Set the mass hierarchy
-     util::SetMassHierarchy(skexp);
+
+     //util::OscParams::Instance()->Print(cout);
 
      // Randomize specified osc params for current toy MC expt
      util::OscParams::Instance()->Randomize();
 
+     // Set the mass hierarchy
+     util::SetMassHierarchy(skexp);
+
      // Update physics hypothesis with chosen value of oscillation parameters
      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
+
+     // Fill toy histograms of osc params
+     util::OscParams::Instance()->FillOscToyHisto(ph);
 
      bool applied_negevents_condition = true;
      bool unphysical_tweak = true;
@@ -353,13 +358,6 @@ int main(int argc, char ** argv)
   }
   if(f) {
     util::OscParams::Instance()->Write(f);
-    cerr << endl << "Warning h_0, h_1, ... have not been filled (what are they for?!)" << endl;
-    h_0->Write();
-    h_1->Write();
-    h_2->Write();
-    h_3->Write();
-    h_4->Write();
-    h_4_Escale->Write();
     f->Close();
     delete f;
   }//f

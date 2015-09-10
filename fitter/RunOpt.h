@@ -136,9 +136,43 @@ public:
   double fDm12sq[2];
   double fDm23sq[2];
   double fBetaBar;
+
+
   double fPriorProbNH;
   bool   fMargMH;
   string fPriorsFile;
+
+
+  // NEW
+  
+  bool fMargMixing12;
+  bool fMargMixing13;
+  bool fMargMixing23;
+  bool fMargDm12sq;
+  bool fMargDm23sq;
+  bool fMargDeltaCP;
+
+  string fMixModeMixing12;
+  string fMixModeMixing23;
+  string fMixModeMixing13;
+ 
+  string fPriorMixing12;
+  string fPriorMixing13;
+  string fPriorMixing23;
+  string fPriorDm12sq;
+  string fPriorDm23sq;
+  string fPriorDeltaCP;
+  
+  double fPriorParMixing12[2];
+  double fPriorParMixing13[2];
+  double fPriorParMixing23[2];
+  double fPriorParDm12sq[2];
+  double fPriorParDm23sq[2];
+  double fPriorParDeltaCP[2];
+  //
+  
+
+  //
 
   /* uncomment this if we want to make the class a singleton again (also remove the public constructor/destructor)
   // Self

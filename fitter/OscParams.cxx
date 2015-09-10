@@ -20,7 +20,7 @@
 #include "Utilities/Rnd.h"
 #include <TMath.h>
 
-#define __print_toys__ 
+//#define __print_toys__ 
 
 using std::cout;
 using std::cerr;
@@ -274,7 +274,6 @@ void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mi
 				       double input_mh_nh_prior, bool marginalize_MH
 				       )
 {  
-  
   // Check whether some osc. params need to be randomized (i.e. if == -999)
   //NH
   randomize_mixing12_nh = (TMath::Abs(input_mixing12_nh + 999) < kASmallNum);
@@ -292,7 +291,7 @@ void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mi
   randomize_dm23sq_ih   = (TMath::Abs(input_dm23sq_ih   + 999) < kASmallNum);
   //Beta bar
   randomize_beta_bar    = (TMath::Abs(input_beta_bar    + 999) < kASmallNum);
-
+  
   //Set to defaults (only if enough negative (standard value is -99)
   //NH
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
@@ -354,6 +353,9 @@ void valor::util::OscParams::SetValues(double input_mixing12_nh, double input_mi
 //____________________________________________________________________________
 void valor::util::OscParams::Randomize()
 {
+  cout << endl;
+  cout << "valor::util::OscParams::Randomize()" << endl;
+  cout << endl;
 
   // Mass Hierarchy
 
@@ -424,9 +426,9 @@ void valor::util::OscParams::Randomize()
   double par2 = conv::kBadResult;
   string mixmode = "";
   string priormode = "";
+ 
   // Normal Hierarchy
-  
-  if(iMH==0){
+   if(iMH==0){
     
     // mixing23
     par1 = params_mixing23[0]; 
@@ -435,7 +437,7 @@ void valor::util::OscParams::Randomize()
     mixmode = mixmode_mixing23;
     if(randomize_mixing23_nh)
       mixing23_nh = this->ExtractParam(conv::kPhypMixing23,priormode,par1,par2,mixmode);
-        
+    
     // mixing13 
     par1 = params_mixing13[0]; 
     par2 = params_mixing13[1];
@@ -531,7 +533,7 @@ void valor::util::OscParams::Randomize()
   }
   
   else{
-cerr << endl;
+    cerr << endl;
     cerr << "Mass Hierarchy is not defined" << endl;
     cerr << endl;
     exit(1);
@@ -646,17 +648,43 @@ double valor::util::OscParams::ExtractParam(conv::PhysParamId_t physpar,string m
 
   if(mode=="gaus")
     valrndm = Rnd::Instance()->RndToyMCosc().Gaus(par1,par2);
-  else if(mode=="flat")
+  else if(mode=="flat"){
+    if(par1>=par2){
+      cerr << endl;
+      cerr << "Parameters for " << mode << " prior are not set correctly" << endl;
+      cerr << "par1 = " << par1 << " - par2 = " << par2 << endl;
+      cerr << endl;
+      exit(1);
+    }
     valrndm = Rnd::Instance()->RndToyMCosc().Uniform(par1,par2);
-  
+  }  
+  else{
+    cerr << endl;
+    cerr << "Prior is not defined: " << mode << endl;
+    cerr << endl;
+    exit(1);
+  }
+
   if(IsMixingAngle(physpar)){    
     if(Opt::Instance()->gOscMixingParamChoice == kNuMixSinsqTheta){
       if(mixmode == "sinsqth")       return valrndm;
       else if(mixmode == "sinsq2th") return util::FromSinsq2thToSinsqth(valrndm);
+      else {
+	cerr << endl;
+	cerr << "mixmode is not defined: " << mixmode << endl;
+	cerr << endl;
+	exit(1);
+      }
     }
     else if(Opt::Instance()->gOscMixingParamChoice == kNuMixSinsq2Theta){
       if(mixmode == "sinsqth")       return util::FromSinsqthToSinsq2th(valrndm);
       else if(mixmode == "sinsq2th") return valrndm;
+      else {
+	cerr << endl;
+	cerr << "mixmode is not defined: " << mixmode << endl;
+	cerr << endl;
+	exit(1);
+      }
     }
   }
   return valrndm;
