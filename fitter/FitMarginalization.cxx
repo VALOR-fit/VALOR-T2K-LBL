@@ -11,7 +11,7 @@
 //#define __print_masshierarchy__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
-#define __print_array_toy_maketoys__
+//#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_fillchisq_verbose__
@@ -1058,6 +1058,28 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  skexp->TweakAllSKDetectorFSISystematics();
 	}
 
+	// tweak all sources of systematic error but fix MEC to its nominal value (only FHC+RHC joint fit)
+	if(tweak_systematics == 5) {
+#if defined(__RHC_RUNNING__) && defined(__FHC_RUNNING__) && !defined(__FULLY_CORRELATED__)
+	  //~ cout << "- Randomizing all systematic params except MEC in pdf..." << endl;
+	  skexp->TweakAllSystematics();
+	  //skexp->PrintSystematicVariations();
+	  TVectorD twkv(skexp->GetBANFF()->FHCpRHCCurrentValues());
+	  double MECval = skexp->GetBANFF()->FHCpRHCBestFitValue(conv::kNuisBANFFMEC);
+	  int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(conv::kNuisBANFFMEC);
+	  twkv[ip] = MECval;
+	  //cout << "ip = " << ip << " --> " << MECval << endl;
+	  skexp->GetBANFF()->TweakFHCpRHC(true,&twkv);	
+	  //skexp->PrintSystematicVariations();
+#else
+	  cerr << endl;
+	  cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+	  cerr << "Tweaking all systematics but fixing MEC is available only for FHC+RHC not fully correlated" << endl;
+	  cerr << endl;
+	  exit(1);
+#endif
+	}
+
 #ifdef __print_systematic_variations__
 	skexp->PrintSystematicVariations();
 #endif
@@ -1260,49 +1282,49 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       double usedvalue_x = conv::kBadResult;
       double usedvalue_y = conv::kBadResult;
 
-// #ifdef __MARGINALIZE_23PARAMS_CORR__
-
-//       // NEW FHC+RHC JOINT
-//       //usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
-//       usedvalue_x = fparm->CurrValue(conv::kPhypMixing23);
-//       //usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
-//       usedvalue_y = fparm->CurrValue(conv::kPhypDm23sq);
-//       //
-
-//       fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
-//       fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
-
-//       if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
-// 	fparm_nh->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
-// 	fparm_nh->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
-//       }
-//       else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
-// 	fparm_ih->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
-// 	fparm_ih->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
-//       }
-// #endif
-
-// #ifdef __MARGINALIZE_TH13_DELTACP_CORR__
-
-//       // NEW FHC+RHC JOINT
-//       //usedvalue_x = fparm->InitValue(conv::kPhypMixing13);
-//       //usedvalue_y = fparm->InitValue(conv::kPhypCPV);
-//       usedvalue_x = fparm->CurrValue(conv::kPhypMixing13);
-//       usedvalue_y = fparm->CurrValue(conv::kPhypCPV);
-//       //
-
-//       fparm->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
-//       fparm->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
-
-//       if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
-// 	fparm_nh->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
-// 	fparm_nh->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
-//       }
-//       else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
-// 	fparm_ih->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
-// 	fparm_ih->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
-//       }
-// #endif
+      // #ifdef __MARGINALIZE_23PARAMS_CORR__
+      
+      //       // NEW FHC+RHC JOINT
+      //       //usedvalue_x = fparm->InitValue(conv::kPhypMixing23);
+      //       usedvalue_x = fparm->CurrValue(conv::kPhypMixing23);
+      //       //usedvalue_y = fparm->InitValue(conv::kPhypDm23sq);
+      //       usedvalue_y = fparm->CurrValue(conv::kPhypDm23sq);
+      //       //
+      
+      //       fparm->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+      //       fparm->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+      
+      //       if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
+      // 	fparm_nh->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+      // 	fparm_nh->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+      //       }
+      //       else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+      // 	fparm_ih->GetToyHisto2D(conv::kPhypMixing23)->Fill(usedvalue_x,usedvalue_y); 
+      // 	fparm_ih->GetToyHisto2D(conv::kPhypDm23sq)->Fill(usedvalue_x,usedvalue_y); 
+      //       }
+      // #endif
+      
+      // #ifdef __MARGINALIZE_TH13_DELTACP_CORR__
+      
+      //       // NEW FHC+RHC JOINT
+      //       //usedvalue_x = fparm->InitValue(conv::kPhypMixing13);
+      //       //usedvalue_y = fparm->InitValue(conv::kPhypCPV);
+      //       usedvalue_x = fparm->CurrValue(conv::kPhypMixing13);
+      //       usedvalue_y = fparm->CurrValue(conv::kPhypCPV);
+      //       //
+      
+      //       fparm->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+      //       fparm->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
+      
+      //       if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
+      // 	fparm_nh->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+      // 	fparm_nh->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
+      //       }
+      //       else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+      // 	fparm_ih->GetToyHisto2D(conv::kPhypMixing13)->Fill(usedvalue_x,usedvalue_y); 
+      // 	fparm_ih->GetToyHisto2D(conv::kPhypCPV)->Fill(usedvalue_x,usedvalue_y); 
+      //       }
+      // #endif
 
       if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal)
 	fhToyMH->Fill(0.+conv::kASmallNum);
