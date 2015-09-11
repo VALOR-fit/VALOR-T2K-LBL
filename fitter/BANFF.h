@@ -87,15 +87,18 @@ public:
 
   // Get BANFF best fit values, covariance matrix and cholesky decomposition of covariance matrix
   const TVectorD & BestFitValues              (void) const { return *fBestFitValues;    }
+  const TVectorD & CurrentValues              (void) const { return *fCurrentValues;    }
   const TMatrixD & CovMatrix                  (void) const { return *fCovMtrx;          }
   const TMatrixD & CovMatrixInv               (void) const { return *fCovMtrxInv;       }
   const TMatrixD & CovMatrixCholesky          (void) const { return *fCovMtrxChoL;      }
   const TVectorD & RHCBestFitValues           (void) const { return *fRHCBestFitValues; }
+  const TVectorD & RHCCurrentValues           (void) const { return *fRHCCurrentValues; }
   const TMatrixD & RHCCovMatrix               (void) const { return *fRHCCovMtrx;       }
   const TMatrixD & RHCCovMatrixInv            (void) const { return *fRHCCovMtrxInv;    }
 
   // NEW FLUX FHC+RHC
   const TVectorD & FHCpRHCBestFitValues       (void) const { return *fFHCpRHCBestFitValues; } // NEW FHC+RHC JOINT (NEW)
+  const TVectorD & FHCpRHCCurrentValues       (void) const { return *fFHCpRHCCurrentValues; } // NEW FHC+RHC JOINT (NEW)
   const TMatrixD & FHCpRHCCovMatrix           (void) const { return *fFHCpRHCCovMtrx;       }
   const TMatrixD & FHCpRHCCovMatrixInv        (void) const { return *fFHCpRHCCovMtrxInv;    }
   

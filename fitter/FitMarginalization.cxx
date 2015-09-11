@@ -1209,6 +1209,28 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  skexp->TweakAllSKDetectorFSISystematics();
 	}
 
+	// tweak all sources of systematic error but fix MEC to its nominal value (only FHC+RHC joint fit)
+	if(tweak_systematics == 5) {
+#if defined(__RHC_RUNNING__) && defined(__FHC_RUNNING__) && !defined(__FULLY_CORRELATED__)
+	  //~ cout << "- Randomizing all systematic params except MEC in pdf..." << endl;
+	  skexp->TweakAllSystematics();
+	  //skexp->PrintSystematicVariations();
+	  TVectorD twkv(skexp->GetBANFF()->FHCpRHCCurrentValues());
+	  double MECval = skexp->GetBANFF()->FHCpRHCBestFitValue(conv::kNuisBANFFMEC);
+	  int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(conv::kNuisBANFFMEC);
+	  twkv[ip] = MECval;
+	  //cout << "ip = " << ip << " --> " << MECval << endl;
+	  skexp->GetBANFF()->TweakFHCpRHC(true,&twkv);	
+	  //skexp->PrintSystematicVariations();
+#else
+	  cerr << endl;
+	  cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+	  cerr << "Tweaking all systematics but fixing MEC is available only for FHC+RHC not fully correlated" << endl;
+	  cerr << endl;
+	  exit(1);
+#endif
+	}
+
 #ifdef __print_systematic_variations__
 	skexp->PrintSystematicVariations();
 #endif
