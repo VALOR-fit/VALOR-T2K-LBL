@@ -143,9 +143,13 @@ class FitMarginalization
 
   void WriteToys2Binary(int idfile, const char *tag);
   void WriteToys2BinaryMerge(const char *tag);
-
   void ReadToysFromBinary(int idfile, const char *tag);
-  
+
+  // NEW SPECTRA MARG
+  void WriteLikeToys2Binary(const char *tag); 
+  void ReadLikeToysFromBinary(const char *tag);
+  //
+
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
 
   void BuildDeltaChisqMarg(void);
@@ -191,6 +195,9 @@ class FitMarginalization
   VALORArrayF * GetToyMargVArray()             {return fToyMargVArray;};
   const VALORArrayF * GetToyMargVArray() const {return fToyMargVArray;};
 
+  // NEW SPECTRA MARG
+  double GetLikeToyRead(double valpar0,double valpar1,int iexperiment,bool readbinary = false); // Use the map of the binary files
+  //
 
   // NEW 2D TEMPLATES (VARRAY)
   VALORArrayF * GetToyMargVArraySample(conv::SuperkSample_t s);
@@ -373,6 +380,10 @@ class FitMarginalization
 
   char fnamefilebinary[200];
 
+  // NEW SPECTRA MARG
+  char fnamelikefilebinary[200]; // to store toy likelihood from the fit
+  //
+
   double fchisq_bf;
   double fparam_bf[2]; 
   double fparam_bf_errpos[2]; 
@@ -405,6 +416,9 @@ class FitMarginalization
   VALORArrayD *flikeVArray;
   VALORArrayD *fChisqMargVArray;
   //
+
+  VALORArrayD *flikeToyVArray; // Fit likelihood of each toy  // NEW SPECTRA MARG
+
   
   int fNSKsamples;
   VALORArrayI *fnerecobins;

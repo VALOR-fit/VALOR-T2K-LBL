@@ -33,7 +33,9 @@ void DrawSpectraBestFit
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const double InputPar0 = 0., // Input value of parameter 0
+ const char * likeinfilename = "liketoy_fitmarg_joint_PROVA_toy100_x_oscpar9_oscpar1_MHNH.bin",
+
+ const double InputPar0 = -1.5708, // Input value of parameter 0
  const double InputPar1 = 0., // Input value of parameter 1
 
  const char * fit_param_list        = "nuosc3f+nuisance", // dcp
@@ -41,9 +43,9 @@ void DrawSpectraBestFit
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsTheta/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",
  const char * infilename = "submit_prova_TemplVArray",
 
- const int    nfiles               = 1, //201, // 1         // # of files to read
+ const int    nfiles               = 9, //201, // 1         // # of files to read
 
- const int    NtoysMarg            = 1000, //10000,   // # toys marginalization 
+ const int    NtoysMarg            = 100, //10000,   // # toys marginalization 
 
  // const char * freeparname0        = "mixing13",  // free parameter
  // const double freeparmin0         = 0., // minimum value of free parameter
@@ -57,7 +59,7 @@ void DrawSpectraBestFit
  const char * freeparname0        = "deltacp",  // free parameter
  const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 3, //201, // 801, 2          // # pts of free parameter to scan
+ const int    NptScan0            = 9, //201, // 801, 2          // # pts of free parameter to scan
  const char * freeparname1        = "",  // free parameter
  const double freeparmin1         = 0., // minimum value of free parameter
  const double freeparmax1         = 0., // maxinum value of free parameter
@@ -229,7 +231,9 @@ void DrawSpectraBestFit
   
   fitmarg->SetTagFileName(infilename);
   fitmarg->SetFileID(nfiles);
-    
+
+  // Read fit toy likelihoods from binary file
+  fitmarg->ReadLikeToysFromBinary(likeinfilename);
 
   // Get Ereco toys
   
@@ -277,14 +281,24 @@ void DrawSpectraBestFit
   cout << "   grid bin center = " << iparbincenter1 << endl;
   cout << endl;
   
-  //
+  // Set variables to read the fit toy likelihoods
   
+  double truepar0 = -999;
+  double truepar1 = -999;
+  truepar0 = fparm->InitValue(freepar0);
+  if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
+  
+  //
+
   const int NErecBins = util::NumErecoBins(s);
   double **NentriesErecoToy = new double*[NErecBins];
   for(int i=0;i<NErecBins;i++) NentriesErecoToy[i] = new double[NtoysMarg];
   
+  double *LikeToy = new double[NtoysMarg];
+  double SumLike = 0.;
+
   // Loop over marginalization toys
-  
+   
   for(int itoy=0;itoy<NtoysMarg;itoy++){
     
 #ifndef __USE_2D_TEMPLATES__
@@ -295,9 +309,17 @@ void DrawSpectraBestFit
     
     for(int i=1;i<=util::NumErecoBins(s);i++) NentriesErecoToy[i-1][itoy] = h_marg_toy->GetBinContent(i);
     
+    if(fitmarg->IsFit2D())
+      LikeToy[itoy] = fitmarg->GetLikeToyRead(InputPar0,truepar1,itoy,true); 
+    else
+      LikeToy[itoy] = fitmarg->GetLikeToyRead(InputPar0,InputPar1,itoy,true); 
+    //cout << "toy " << itoy << " - like = " << like << endl;
+
+    SumLike += LikeToy[itoy];
+
   } // loop itoy
   
-  
+
   // Set and declare bin histograms 
   
   double *lowedge = new double[n_ereco_bins];
@@ -321,10 +343,13 @@ void DrawSpectraBestFit
     // histograms must contain the first and last entries 
     if(lowedge[ibin]==0.) lowedge[ibin] -= 1.E-3;
     upedge[ibin] += 1.E-3;
-    cout << "bin # " << ibin << " --> " << lowedge[ibin] << " " << upedge[ibin] << endl;
+    cout << "bin # " << ibin << " --> lowedge = " << lowedge[ibin] << " - upedge = " << upedge[ibin] << endl;
     
   } // loop over Ereco bins
   
+
+  
+  // Fill bin histograms
   
   TH1D **h_bin = new TH1D*[util::NumErecoBins(s)];
   char name[200];
@@ -335,48 +360,43 @@ void DrawSpectraBestFit
   
   for(int i=0;i<util::NumErecoBins(s);i++){
     for(int itoy=0;itoy<NtoysMarg;itoy++){
-      h_bin[i]->Fill(NentriesErecoToy[i][itoy]);
+      double weight = LikeToy[itoy]/SumLike;
+      h_bin[i]->Fill(NentriesErecoToy[i][itoy],weight);
     }
   }
     
-  // Find the mode of each Ereco bin
+  // Find the mode/mean of each Ereco bin
   
   double *bin_mode = new double[n_ereco_bins];
   
   for(int iereco=0;iereco<util::NumErecoBins(s);iereco++){
     
-    //double y = h_bin[iereco]->GetBinCenter(h_bin[iereco]->GetMaximumBin());
     double y = h_bin[iereco]->GetMean();
     double ey = h_bin[iereco]->GetRMS();
     
-    if(SystMode==0){
-      
+    if(SystMode==0){ // Get the mode
       cout << "bin # " << iereco << " --> Integral = " << h_bin[iereco]->Integral()
 	   << " - Mean = " << y << " - RMS = " << ey << endl;
-      
       TF1 *f1 = new TF1("f1","gaus", y-ey,y+ey);  
       //TF1 *f1 = new TF1("f1","pol2", y-ey,y+ey);  
       //TF1 *f1 = new TF1("f1","landau",y-ey,y+ey);  
       //TF1 *f1 = new TF1("f1","gaus+landau",h_bin[iereco]->GetXaxis()->GetBinLowEdge(1),h_bin[iereco]->GetXaxis()->GetBinUpEdge(h_bin[iereco]->GetNbinsX()));  
-      //TF1 *f1 = new TF1("f1","gaus",h_bin[iereco]->GetXaxis()->GetBinLowEdge(1),h_bin[iereco]->GetXaxis()->GetBinUpEdge(h_bin[iereco]->GetNbinsX()));  
-      
-      TFitResultPtr r = h_bin[iereco]->Fit("f1","S","goff",y-ey,y+ey);
-      
-      //if(y[i-1]>0.1 && r->Parameter(1)>0)
-      //if(r->Parameter(1)>0)
-      
+      //TF1 *f1 = new TF1("f1","gaus",h_bin[iereco]->GetXaxis()->GetBinLowEdge(1),h_bin[iereco]->GetXaxis()->GetBinUpEdge(h_bin[iereco]->GetNbinsX()));        
+      TFitResultPtr r = h_bin[iereco]->Fit("f1","S","goff",y-ey,y+ey);       
       bin_mode[iereco] = r->Parameter(1);
       cout << bin_mode[iereco] << " - ";
       bin_mode[iereco] = f1->GetMaximumX();
       cout << bin_mode[iereco] << endl;
-    }
-    else if(SystMode==1){
+    } 
+    else if(SystMode==1){ // Get the mean
       bin_mode[iereco] = y;
     }
     
     if(bin_mode[iereco]<0.) bin_mode[iereco] = 0.;
     
     h_nominal_marg->SetBinContent(iereco+1,bin_mode[iereco]);
+  
+    cout << "# of events in Ereco " << iereco << " = " << bin_mode[iereco] << endl;
   }
   
   // Draw bin histograms
