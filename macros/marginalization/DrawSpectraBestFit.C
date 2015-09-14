@@ -18,7 +18,7 @@ using namespace valor::conv;
 
 void DrawSpectraBestFit
 (
- const char *tag = "sinsqth13Vsdcp_T2Konly_Run14_Data_NH",
+ const char *tag = "sinsqth13Vsdcp_T2Konly_Run14_DataNH",
 
  const char * xmlfile      = "data_run1to4/data_newstruct.xml",
  //const char * xmlfile      = "data_run1to6/data.xml",
@@ -33,25 +33,22 @@ void DrawSpectraBestFit
  const char * sk_sample    = "1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
  bool SystMode = 1,  // 0 --> GetMode, 1 --> GetMean
- bool WeightMode = 0, // 0 --> All weights are 1, 1 --> Likelihoods are weights
+ bool WeightsAreOne = false, // (for nominal or bestfit spectra) true --> All weights are 1, false --> Likelihoods are weights
  
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * likeinfilename = "/mnt/lnec/davides/VALOR/results/fit/liketoy_fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Data_NH_toy10000_x_oscpar81_oscpar51_MHNH.bin",
+ //const char * likeinfilename = "/mnt/lnec/davides/VALOR/results/fit/liketoy_fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Data_IH_FixMEC_toy10000_x_oscpar81_oscpar51_MHIH.bin", 
+ //const char * likeinfilename = "/mnt/lnec/davides/VALOR/results/fit/liketoy_fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Data_NH_StatOnly_toy1000_x_oscpar81_oscpar51_MHNH.bin",
+ const char * likeinfilename = "/mnt/lnec/davides/VALOR/results/fit/liketoy_fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Data_NH_toy10000_x_oscpar81_oscpar51_MHNH.bin", 
 
- const double InputPar0 = 0.0409625,  // Input value of parameter 0 
+ const double InputPar0 = 0.048025,  // Input value of parameter 0 
  const double InputPar1 = 1.25664, // Input value of parameter 1
 
  const char * fit_param_list        = "nuosc3f+nuisance", // dcp
 
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_NH_10kToys_FixMEC/joint_sinsqth13_Vs_dcp_t2konly_constrall_NH_10kToys_FixMEC",
  //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_IH_10kToys_FixMEC/joint_sinsqth13_Vs_dcp_t2konly_constrall_IH_10kToys_FixMEC",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_NH_10kToys_StatOnly/joint_sinsqth13_Vs_dcp_t2konly_constrall_NH_1kToys_StatOnly",
  //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_IH_10kToys_StatOnly/joint_sinsqth13_Vs_dcp_t2konly_constrall_IH_1kToys_StatOnly",
  const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konlyrange_NH_10kToys_NEWTOYS/joint_dcp_t2konly_constrall_NH_10kToys",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konlyrange_IH_10kToys_NEWTOYS/joint_dcp_t2konly_constrall_IH_10kToys",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_reactrange_NH_10kToys_NEWTOYS/joint_sinsqth13Vsdcp_t2kreact_constrall_NH_10kToys",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_reactrange_IH_10kToys_NEWTOYS/joint_sinsqth13Vsdcp_t2kreact_constrall_IH_10kToys",
 
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_1kToys_StatOnly/joint_dcp_t2kreact_constrall_NH_1kToys_StatOnly",
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_1kToys_StatOnly/joint_dcp_t2kreact_constrall_IH_1kToys_StatOnly",
@@ -385,7 +382,7 @@ void DrawSpectraBestFit
   for(int i=0;i<util::NumErecoBins(s);i++){
     for(int itoy=0;itoy<NtoysMarg;itoy++){
       double weight = LikeToy[itoy]/SumLike;
-      if(WeightMode) weight = 1.;
+      if(WeightsAreOne) weight = 1.;
       h_bin[i]->Fill(NentriesErecoToy[i][itoy],weight);
     }
   }
