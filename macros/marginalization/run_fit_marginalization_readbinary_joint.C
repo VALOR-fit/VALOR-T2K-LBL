@@ -618,6 +618,7 @@ void run_fit_marginalization_readbinary_joint
     double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
 
     
+
     // Fit 1
 
     cout << endl;
@@ -664,7 +665,7 @@ void run_fit_marginalization_readbinary_joint
     fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
     //fitmarg->SetExtractStartPt("GridFix");
     fitmarg->SetExtractStartPt("Single");
-    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+    //fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
     double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
     double bestfit0_2 = fitmarg->GetParamBestFit(0);
@@ -696,7 +697,7 @@ void run_fit_marginalization_readbinary_joint
     fitmarg->SetGridStartRange(+TMath::Pi()-conv::kASmallNum,+TMath::Pi(),0.,0.);
     //fitmarg->SetExtractStartPt("GridFix");
     fitmarg->SetExtractStartPt("Single");
-    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+    //fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
     double chisqmin_3 = (double)fitmarg->GetChisqBestFit();
     double bestfit0_3 = fitmarg->GetParamBestFit(0);
@@ -763,6 +764,9 @@ void run_fit_marginalization_readbinary_joint
       chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
       fitmarg->BuildDeltaChisqMarg();
     }
+
+    // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+    fitmarg->WriteLikeToys2Binary(tag);
 
     // Get delta chisq
     deltachisq0BF = chisqtrue0 - chisqmin;
