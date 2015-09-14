@@ -29,20 +29,21 @@ void run_fit_marginalization_readbinary_joint
 
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
- const char * tag                      = "fitmarg_joint_PROVA",    /* tag for output file */
-
+ const char * tag                      = "fitmarg_joint_Run14_Asimov_A_FHConly_IH_StatOnly_OldJoint",    /* tag for output file */
+ //const char * tag                    = "fitmarg_joint_Run16_Asimov_A_FHCpRHC_IH",    /* tag for output file */
+ 
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- const char * xmlfile = "data_run1to4/data_newstruct.xml",
- //const char * xmlfile = "data_run1to6/data.xml",
+ //const char * xmlfile = "data_run1to4/data_newstruct.xml",
+ const char * xmlfile = "data_run1to6/data.xml",
  //const char * xmlfile = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/2015_v2.0.0_evolution/inputs/data_run1to6/skdata_run1to6.xml",
 
  const char * rootfile = "../outputs/test/toymc_prova_joint-0.root",
 
  bool using_xml_file = true, 
 
- bool         dotoys               = 1,
+ bool         dotoys               = 0,
 
  // Mach3, T2K Run1-4 + reactors best fit (A) 
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -76,8 +77,8 @@ void run_fit_marginalization_readbinary_joint
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
- //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
@@ -92,16 +93,21 @@ void run_fit_marginalization_readbinary_joint
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_dcp_t2kreact_constrall_NH_10kToys",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_1kToys_StatOnly/joint_dcp_t2kreact_constrall_NH_1kToys_StatOnly",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_1kToys_StatOnly/joint_dcp_t2kreact_constrall_IH_1kToys_StatOnly",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_1kToys_OldJoint_StatOnly/joint_dcp_t2kreact_constrall_NH_1kToys_StatOnly",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_1kToys_OldJoint_StatOnly/joint_dcp_t2kreact_constrall_IH_1kToys_StatOnly",
+
+ const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_dcp_t2kreact_constrall_NH_10kToys",
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_dcp_t2kreact_constrall_IH_10kToys",
- const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_NH_10kToys_OldJoint",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_NH_10kToys_OldJoint",
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_IH_10kToys_OldJoint",
  //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
  
  const int    nfiles               = 201, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 10000, //500, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 10000, //500, //10000, //1000,  // # toys marginalization 
   
  const char * freeparname0        = "deltacp",  // free parameter
  const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
@@ -741,6 +747,9 @@ void run_fit_marginalization_readbinary_joint
       chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
       fitmarg->BuildDeltaChisqMarg();
     }
+
+    // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+    fitmarg->WriteLikeToys2Binary(tag);
 
     // Get delta chisq
     deltachisq0BF = chisqtrue0 - chisqmin;

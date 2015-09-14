@@ -102,6 +102,10 @@ ClassImp(FitMarginalization)
 //________________________________________________________________________________________
 FitMarginalization::FitMarginalization()
 {
+  // NEW SPECTRA MARG
+  flikeToyVArray                     = 0; 
+  //
+
   flikeVArray                        = 0;
   fChisqMargVArray                   = 0;
   fnerecobins                        = 0;
@@ -306,6 +310,10 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
 
   sprintf(fnamefilebinary,"%s","%s_file%d_toy%d_x_oscpar%d_oscpar%d_MH%s%s%s");  
   
+  // NEW SPECTRA MARG
+  sprintf(fnamelikefilebinary,"%s","liketoy_%s_toy%d_x_oscpar%d_oscpar%d_MH%s%s");  
+  //
+
   fMergeInputFiles_Called = true; // false the first time MergeInputFiles() is called
   fNmergedFiles = 0; // fNmergedFiles++ everytime MergeInputFiles() is called (after reading each file)
 
@@ -352,6 +360,11 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   flikeVArray                 = new VALORArrayD(fnbins_param[0], fnbins_param[1]); // NEW PRECISION
   flikeVArray->SetAll(0.);
   
+  // NEW SPECTRA MARG
+  flikeToyVArray              = new VALORArrayD(fnbins_param[0], fnbins_param[1], fntoys_marg); 
+  flikeToyVArray->SetAll(0.);
+  //
+
   char Xtitle[200];
   char Ytitle[200];
   sprintf(Xtitle,"%s",util::AsStringPaperRooTex(fPhysParamFree[0]).c_str()); 
@@ -518,6 +531,10 @@ void FitMarginalization::CleanUp(void){
     fSavedToyParamLists = 0;
   }
   
+  // NEW SPECTRA MARG
+  if (flikeToyVArray                    ) { delete flikeToyVArray                    ; flikeToyVArray                = 0;}
+  //
+
   if (flikeVArray                       ) { delete flikeVArray                       ; flikeVArray                        = 0;}
   if (fChisqMargVArray                  ) { delete fChisqMargVArray                  ; fChisqMargVArray                   = 0;}
   if (fnerecobins                       ) { delete fnerecobins                       ; fnerecobins                        = 0;}
@@ -1571,10 +1588,12 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
   // If chisq already colculated return the stored value and break
   double chisq = fChisqMargVArray->GetEntry(iterpar0,iterpar1); 
   if(allow_cached && chisq > 0.) {return chisq;}
-    
+      
+  // NEW SPECTRA MARG
   // Set to 0 in case it has been already calculated before, for example when fabs(chisq)<1.E-8.
-  flikeVArray->SetEntry(0.,iterpar0,iterpar1); 
-  
+  //flikeVArray->SetEntry(0.,iterpar0,iterpar1); // not used
+  //
+
   fNCallsCalcChisqMargPt++;
   
   // Read binary file
@@ -1732,11 +1751,23 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
     } // loop SK samples
     
 #endif
-    
-    // NEW PRECISION
-    double like = exp(-chisq/2.+SCALE_PRECISION) / fntoys_marg;
-    //double like = exp(-chisq/2.) / fntoys_marg;
-    flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
+     
+    // NEW SPECTRA MARG
+
+    // // NEW PRECISION
+    // double like = exp(-chisq/2.+SCALE_PRECISION) / fntoys_marg;
+    // //double like = exp(-chisq/2.) / fntoys_marg;
+    // flikeVArray->AddToEntry(like,iterpar0,iterpar1); // this is correct if binary files differ only for free param sub-ranges
+    // //
+    //
+
+    // Get total likelihood of each toy experiment
+    double liketoy = exp(-chisq/2.);
+    flikeToyVArray->AddToEntry(liketoy,iterpar0,iterpar1,iexperiment); // this is correct if binary files differ only for free param sub-ranges
+   
+#ifdef __print_like_toy_fillchisq__
+    cout << "toy " << iexperiment << " - like = " << liketoy << endl;
+#endif
     //
     
 #ifdef __print_array_toy_fillchisq__
@@ -2493,6 +2524,60 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
 
   return;
 }
+//________________________________________________________________________________________
+
+
+
+
+
+
+
+
+// NEW SPECTRA MARG
+
+void FitMarginalization::WriteLikeToys2Binary(const char *tag){
+
+  cout << endl;
+  cout << "Write toy likelihoods in a binary file:" << endl;
+
+  char namemh[200];
+  if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
+  else{ 
+    if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
+      sprintf(namemh,"%s","NH");
+    else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
+      sprintf(namemh,"%s","IH");
+    else{
+      cerr << "FitMarginalization::WriteToys2Binary" << endl;
+      cerr << "Mass Hierarchy not defined" << endl;
+      exit(1);
+    }
+  }	    
+  char outname[200];
+  sprintf(outname,fnamelikefilebinary,tag,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,".bin");
+  std::string soutname(outname);
+  flikeToyVArray->WriteFile(soutname);
+}
+//________________________________________________________________________________________
+void FitMarginalization::ReadLikeToysFromBinary(const char *tag){
+
+  cout << endl;
+  cout << "Read fit toy likelihoods from binary file:" << endl;
+
+  std::string sinname(tag);
+  cout << sinname << endl;
+
+  flikeToyVArray->ReadFile(sinname);
+}
+
+//
+
+
+
+
+
+
+
 //________________________________________________________________________________________
 void FitMarginalization::MinimizeHisto(){
   
@@ -5965,6 +6050,95 @@ double FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Su
 
   return chisqtrue;
 }
+//________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+// NEW SPECTRA MARG
+double FitMarginalization::GetLikeToyRead(double valpar0,double valpar1,int iexperiment,bool readbinary){ // Use the map of the binary files
+
+  int bin0 = conv::kBadResult;
+  int bin1 = conv::kBadResult;
+
+  int nbinsX = fnbins_param[0];
+  int nbinsY = fnbins_param[1];
+
+  double min_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(1);
+  double max_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(nbinsX);
+  double min_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(1);
+  double max_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(nbinsY);
+  
+  if(valpar0<min_X || valpar0>max_X){
+    cerr << endl;
+    cerr << "FitMarginalization::GetLikeToyRead" << endl;
+    cerr << "Parameter0 " << fnamefreeparam[0] << " is outside the total allowed range" << endl;
+    cerr << "Allowed range: " << min_X << " - " << max_X << endl;
+    cerr << "Param0 value: " << valpar0 << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  if( fIsFit2D && (valpar1<min_Y || valpar1>max_Y) ){
+    cerr << endl;
+    cerr << "FitMarginalization::GetLikeToyRead" << endl;
+    cerr << "Parameter1 " << fnamefreeparam[1] << " is outside the total allowed range" << endl;
+    cerr << "Allowed range: " << min_Y << " - " << max_Y << endl;
+    cerr << "Param1 value: " << valpar1 << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  if(!fIsFit2D){
+    //bin0 = fhchisq_marg_1D->GetXaxis()->FindBin(valpar0+conv::kAVerySmallNum);
+    bin0 = fhchisq_marg_1D->GetXaxis()->FindBin(valpar0);
+  }
+  else{ 
+    // bin0 = fhchisq_marg_2D->GetXaxis()->FindBin(valpar0+conv::kAVerySmallNum);
+    // bin1 = fhchisq_marg_2D->GetYaxis()->FindBin(valpar1+conv::kAVerySmallNum);
+    bin0 = fhchisq_marg_2D->GetXaxis()->FindBin(valpar0);
+    bin1 = fhchisq_marg_2D->GetYaxis()->FindBin(valpar1);
+  }
+  
+  // Check if the true point is included by the sub-range
+  // fmin_bin_sub_param is an index while bin* is the histogram bin number
+  
+  // Do this check only if binary files were not read at each grid point step before.
+  // Otherwise the range is not the entire one but the one corresponding to the last 
+  // read binary file.
+  if(!readbinary){
+    if(
+       (bin0 < (fmin_bin_sub_param[0]+1) || bin0 > (fmax_bin_sub_param[0]+1)) || 
+       ( fIsFit2D && ( bin1<(fmin_bin_sub_param[1]+1) || bin1>(fmax_bin_sub_param[1]+1) ) ) 
+       ){
+      
+      cout << endl;
+      cout << "True point is not included in the sub-range" << endl;
+      cout << "Set the value to " << conv::kALargeNum << endl;
+      return conv::kALargeNum;
+    }
+  }
+
+  double liketoy = conv::kBadResult;
+  if(fIsFit2D) liketoy = flikeToyVArray->GetEntry(bin0-1,bin1-1,iexperiment);
+  else         liketoy = flikeToyVArray->GetEntry(bin0-1,fmin_bin_sub_param[1],iexperiment);
+
+  return liketoy;
+}
+//
+
+
+
+
+
+
+
+
 //________________________________________________________________________________________
 void FitMarginalization::SetTagFileName(const char *tag){
   ftagfile = string(tag); // Get the file tag name 
