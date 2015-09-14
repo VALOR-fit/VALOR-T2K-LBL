@@ -659,6 +659,8 @@ void run_fit_marginalization_readbinary_joint_2d
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
     chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
 
+    // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+    fitmarg->WriteLikeToys2Binary(tag);
 
     // Get delta chisq
     if(chisqmin==conv::kBadResult) deltachisq0BF = chisqtrue0 - chisqmin;
