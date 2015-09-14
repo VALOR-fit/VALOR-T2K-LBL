@@ -18,54 +18,77 @@ using namespace valor::conv;
 
 void DrawSpectraBestFit
 (
- //const char * xmlfile      = "data_run1to4/data_newstruct.xml",
- const char * xmlfile      = "data_run1to6/data.xml",
+ const char *tag = "sinsqth13Vsdcp_T2Konly_Run14_Data_NH",
+
+ const char * xmlfile      = "data_run1to4/data_newstruct.xml",
+ //const char * xmlfile      = "data_run1to6/data.xml",
  const char * rootfile     = "../outputs/test/toymc_prova_joint-0.root",
  const bool using_xml_file = true,
  int   iexperiment         = 0, // data (or fake data) event to show                    
  
- const char * config_file  = "analysis_configuration_test_theta.xml",
+ //const char * config_file  = "analysis_configuration_test_theta.xml",
  //const char * config_file  = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ const char * config_file  = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
 
  const char * sk_sample    = "1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
  bool SystMode = 1,  // 0 --> GetMode, 1 --> GetMean
-
+ bool WeightMode = 0, // 0 --> All weights are 1, 1 --> Likelihoods are weights
+ 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * likeinfilename = "liketoy_fitmarg_joint_PROVA_toy100_x_oscpar9_oscpar1_MHNH.bin",
+ const char * likeinfilename = "/mnt/lnec/davides/VALOR/results/fit/liketoy_fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Data_NH_toy10000_x_oscpar81_oscpar51_MHNH.bin",
 
- const double InputPar0 = -1.5708, // Input value of parameter 0
- const double InputPar1 = 0., // Input value of parameter 1
+ const double InputPar0 = 0.0409625,  // Input value of parameter 0 
+ const double InputPar1 = 1.25664, // Input value of parameter 1
 
  const char * fit_param_list        = "nuosc3f+nuisance", // dcp
 
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsTheta/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",
- const char * infilename = "submit_prova_TemplVArray",
+ //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_NH_10kToys_FixMEC/joint_sinsqth13_Vs_dcp_t2konly_constrall_NH_10kToys_FixMEC",
+ //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_IH_10kToys_FixMEC/joint_sinsqth13_Vs_dcp_t2konly_constrall_IH_10kToys_FixMEC",
+ //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_NH_10kToys_StatOnly/joint_sinsqth13_Vs_dcp_t2konly_constrall_NH_1kToys_StatOnly",
+ //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_IH_10kToys_StatOnly/joint_sinsqth13_Vs_dcp_t2konly_constrall_IH_1kToys_StatOnly",
+ const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konlyrange_NH_10kToys_NEWTOYS/joint_dcp_t2konly_constrall_NH_10kToys",
+ //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konlyrange_IH_10kToys_NEWTOYS/joint_dcp_t2konly_constrall_IH_10kToys",
+ //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_reactrange_NH_10kToys_NEWTOYS/joint_sinsqth13Vsdcp_t2kreact_constrall_NH_10kToys",
+ //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_reactrange_IH_10kToys_NEWTOYS/joint_sinsqth13Vsdcp_t2kreact_constrall_IH_10kToys",
 
- const int    nfiles               = 9, //201, // 1         // # of files to read
-
- const int    NtoysMarg            = 100, //10000,   // # toys marginalization 
-
- // const char * freeparname0        = "mixing13",  // free parameter
- // const double freeparmin0         = 0., // minimum value of free parameter
- // const double freeparmax0         = 0.113, // maxinum value of free parameter
- // const int    NptScan0            = 4, //81, //201, //21,      // # pts of free parameter to scan
- // const char * freeparname1        = "deltacp",  // free parameter
- // const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
- // const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- // const int    NptScan1            = 3, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_1kToys_StatOnly/joint_dcp_t2kreact_constrall_NH_1kToys_StatOnly",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_1kToys_StatOnly/joint_dcp_t2kreact_constrall_IH_1kToys_StatOnly",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_1kToys_OldJoint_StatOnly/joint_dcp_t2kreact_constrall_NH_1kToys_StatOnly",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_1kToys_OldJoint_StatOnly/joint_dcp_t2kreact_constrall_IH_1kToys_StatOnly",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_dcp_t2kreact_constrall_NH_10kToys",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_dcp_t2kreact_constrall_IH_10kToys",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_NH_10kToys_OldJoint",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_IH_10kToys_OldJoint",
+ //const char * infilename = "submit_prova",
+ //const char * infilename = "PROVA_SystAll",
  
- const char * freeparname0        = "deltacp",  // free parameter
- const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
- const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 9, //201, // 801, 2          // # pts of free parameter to scan
- const char * freeparname1        = "",  // free parameter
- const double freeparmin1         = 0., // minimum value of free parameter
- const double freeparmax1         = 0., // maxinum value of free parameter
- const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
+ //const int    nfiles               = 201, //201, // 1         // # of files to read
+ const int    nfiles               = 546, //201, // 1         // # of files to read
+
+ const int    NtoysMarg            = 10000,   // # toys marginalization 
+ 
+ const char * freeparname0        = "mixing13",  // free parameter
+ const double freeparmin0         = 0., // minimum value of free parameter
+ const double freeparmax0         = 0.113, // maxinum value of free parameter
+ const int    NptScan0            = 81, //81, //201, //21,      // # pts of free parameter to scan
+ const char * freeparname1        = "deltacp",  // free parameter
+ const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
+ const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ const int    NptScan1            = 51, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
+ 
+ // const char * freeparname0        = "deltacp",  // free parameter
+ // const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+ // const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ // const int    NptScan0            = 201, //201, // 801, 2          // # pts of free parameter to scan
+ // const char * freeparname1        = "",  // free parameter
+ // const double freeparmin1         = 0., // minimum value of free parameter
+ // const double freeparmax1         = 0., // maxinum value of free parameter
+ // const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = false,    // marginalize Mass Hierarchy
+ const char * hierarchy_marg      = "normal",     /* normal or inverted */
  )
 {
   FileStat_t dummy;
@@ -217,6 +240,7 @@ void DrawSpectraBestFit
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
   
   // Set Mass Hierarchy marginalization
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy_marg); // needed to build the right binary file name 
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
     
   // Set fit parameter list
@@ -246,7 +270,7 @@ void DrawSpectraBestFit
   // Declare the histograms
   const int n_ereco_bins = util::NumErecoBins(s);  
   TH1F* h_marg_toy;
-  TH1D *h_nominal_marg = new TH1D("h_nominal_marg","h_nominal_marg",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D *h_bestfit_marg = new TH1D("h_bestfit_marg","h_bestfit_marg",util::NumErecoBins(s),util::ErecoBinEdges(s));
   
   //
   
@@ -263,8 +287,8 @@ void DrawSpectraBestFit
   iparbincenter0 = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(ipar0+1);
   
   if(fitmarg->IsFit2D()){
-    ipar1 = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->FindBin(InputPar1)-1; // bin of the parameter (histo bin = param bin + 1)
-    iparbincenter1 = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(ipar1+1);
+    ipar1 = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->FindBin(InputPar1)-1; // bin of the parameter (histo bin = param bin + 1)
+    iparbincenter1 = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(ipar1+1);
   }
   else{
     ipar1 = 0;
@@ -300,7 +324,7 @@ void DrawSpectraBestFit
   // Loop over marginalization toys
    
   for(int itoy=0;itoy<NtoysMarg;itoy++){
-    
+
 #ifndef __USE_2D_TEMPLATES__
     h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
 #else
@@ -361,6 +385,7 @@ void DrawSpectraBestFit
   for(int i=0;i<util::NumErecoBins(s);i++){
     for(int itoy=0;itoy<NtoysMarg;itoy++){
       double weight = LikeToy[itoy]/SumLike;
+      if(WeightMode) weight = 1.;
       h_bin[i]->Fill(NentriesErecoToy[i][itoy],weight);
     }
   }
@@ -394,7 +419,7 @@ void DrawSpectraBestFit
     
     if(bin_mode[iereco]<0.) bin_mode[iereco] = 0.;
     
-    h_nominal_marg->SetBinContent(iereco+1,bin_mode[iereco]);
+    h_bestfit_marg->SetBinContent(iereco+1,bin_mode[iereco]);
   
     cout << "# of events in Ereco " << iereco << " = " << bin_mode[iereco] << endl;
   }
@@ -410,15 +435,23 @@ void DrawSpectraBestFit
   
   TH1D *hErecoToy;
 #ifndef __USE_2D_TEMPLATES__
-  hErecoToy = skobs_fakedata->ErecoSpectrum(s);
+  hErecoToy = (TH1D*)skobs_fakedata->ErecoSpectrum(s)->Clone("hErecoToy");
 #else
-  hErecoToy = skobs_fakedata->TwoDSpectrum(s)->ProjectionX();
+  hErecoToy = (TH1D*)skobs_fakedata->TwoDSpectrum(s)->ProjectionX()->Clone("hErecoToy");
 #endif  
   
   // Draw best-fit histogram marginalizing the systematics
-  TCanvas *c_nominal_marg = new TCanvas("c_nominal_marg","c_nominal_marg");
+  TCanvas *c_bestfit_marg = new TCanvas("c_bestfit_marg","c_bestfit_marg");
   hErecoToy->Draw("pe");
-  h_nominal_marg->Draw("same");
+  h_bestfit_marg->Draw("same");
+
+  // Store best-fit spectrum in a file
+  char name[200];
+  sprintf(name,"spectrum_bestfit_%s.root",tag);
+  TFile *fout = new TFile(name,"RECREATE");
+  hErecoToy->Write();
+  h_bestfit_marg->Write();
+  fout->Close();
 
   return;
 }
