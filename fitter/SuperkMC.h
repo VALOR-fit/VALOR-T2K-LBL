@@ -254,6 +254,7 @@ private:
   double     fBrWghtSFRFG;                 ///< branch var for reading input MC mini-DST
   double     fBrWghtRPArel;                ///< branch var for reading input MC mini-DST
   double     fBrWghtRPAnonrel;             ///< branch var for reading input MC mini-DST
+  double     fBrWghtCCcoh;                   ///< branch var for reading input MC mini-DST
   int        fBrEvFlag;                    ///< branch var for reading input MC mini-DST
   
   static const int kMaxVarBins = 1000;

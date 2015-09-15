@@ -26,7 +26,7 @@ Added samples, modes and systematics for reverse horn current running
 //#define check_spline_limits       //slow, but should be used when testing
 
 
-#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+//#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
 #define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
@@ -533,8 +533,11 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
 #endif
-
-  return true;  
+#ifdef RESCALE_MEC_TO_MARTINI
+    Martinit_to_Nieves_MEC_ratio =
+    util::XML2TGraph(xml,root_node,"mc/normalisations/martini_to_nieves");
+#endif
+  return true;
 }
 //Todo: change these methods so that they return the correct BANFF fit
 //________________________________________________________________________________________

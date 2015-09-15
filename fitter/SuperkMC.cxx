@@ -59,6 +59,7 @@
 
 #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
 #define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
+#define	USE_CCcoh_WEIGHTS   // use the pion CCcoh weight branch in the trees
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
@@ -249,6 +250,7 @@ void SuperkMC::Init(void)
   fBrWghtFlx           = 1;
   fBrWghtSFRFG         = 1;
   fBrWghtRPArel        = 1;
+  fBrWghtCCcoh         = 1;
   fBrWghtRPAnonrel     = 1;
   
   
@@ -649,6 +651,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
   const char * rpa_nrel_wght_branch = "wgtRPA_nr";
   const char * rpa_rel_wght_branch  = "wgtRPA_r";
   const char * sf_rfg_wght_branch   = "wgtsfrfg";
+  const char * cc_coh_wght_branch   = "wght_CCcoh";
   //~ const char * flux_wght_branch = "wgt";
 
   TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
@@ -681,8 +684,12 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
   mctree->SetBranchStatus(rpa_rel_wght_branch , 1 );
   branchRPAr->SetAddress(&fBrWghtRPArel);  
 #endif
-
-  for(int iev = 0; iev < mctree->GetEntries(); iev++) 
+#ifdef USE_CCcoh_WEIGHTS
+    TBranch * branchCCcoh   = mctree->GetBranch(cc_coh_wght_branch);
+    mctree->SetBranchStatus(cc_coh_wght_branch , 1 );
+    branchCCcoh->SetAddress(&fBrWghtCCcoh);
+#endif
+  for(int iev = 0; iev < mctree->GetEntries(); iev++)
   {
     mctree->GetEntry(iev);
     
@@ -712,18 +719,29 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, Etrue);
     
     double pot_flx_weight = pot_wght * fBrWghtFlx;
+      
+#ifdef RESCALE_MEC_TO_MARTINI
+      if(util::IsMEC(m))
+      {
+          double martini_nieves_weight = fNuXSec->GetMartiniToNievesRatio()->Eval(Etrue);
+          if(Etrue > 1.5) martini_nieves_weight = 1;
+          pot_flx_weight = pot_flx_weight * martini_nieves_weight;
+      }
+#endif
     
     this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight);
     
     // Actually fill the template
+      
 #ifdef USE_RPA_WEIGHTS
-    this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-    this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG);
+    this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh);
+    this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh);
 #else
-    this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG);
-    this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG);
+    this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh);
+    this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh);
 #endif
     
+      
     
 #ifdef __show_init_mesg_debug__
      if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
