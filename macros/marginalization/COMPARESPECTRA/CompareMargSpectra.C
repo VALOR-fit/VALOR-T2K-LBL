@@ -2,21 +2,29 @@
 void CompareMargSpectra()
 {
   // VALOR histograms
-  const int Nfiles = 1; //3;
+  const int Nfiles = 2; //3;
   const char *infilename[Nfiles] = {
+    "../marginalization/joint_newtoys/Run14_Study/spectrum_bestfit_sinsqth13Vsdcp_T2Konly_Run14_DataNH.root",
     //"../marginalization/joint_newtoys/Run14_Study/spectrum_bestfit_sinsqth13Vsdcp_T2Konly_Run14_DataNH_FixMEC.root",
-    "../marginalization/joint_newtoys/Run14_Study/spectrum_bestfit_sinsqth13Vsdcp_T2Konly_Run14_DataNH.root"
     //"../marginalization/joint_newtoys/Run14_Study/spectrum_bestfit_sinsqth13Vsdcp_T2Konly_Run14_DataNH_StatOnly.root"
+
+    "../marginalization/joint_newtoys/Run14_Study/spectrum_bestfit_sinsqth13Vsdcp_T2Konly_Run14_DataIH.root"
+    //"../marginalization/joint_newtoys/Run14_Study/spectrum_bestfit_sinsqth13Vsdcp_T2Konly_Run14_DataIH_FixMEC.root",
+    //"../marginalization/joint_newtoys/Run14_Study/spectrum_bestfit_sinsqth13Vsdcp_T2Konly_Run14_DataIH_StatOnly.root"
   };  
   const char *HistoName[Nfiles] = {
-    //"h_bestfit_marg",
+    "h_bestfit_marg",
     "h_bestfit_marg"
     //"h_bestfit_marg"
   };
   const char *AnalysisMode[Nfiles] = {
+    "Stat+Syst - T2K only - NH",
     //"Fix MEC - T2K only - NH",
-    "Stat+Syst - T2K only - NH"
     //"Stat-only - T2K only - NH"
+
+    "Stat+Syst - T2K only - IH"
+    //"Fix MEC - T2K only - IH",
+    //"Stat-only - T2K only - IH"
   };
 
   // Mach3 histograms
