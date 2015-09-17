@@ -85,7 +85,7 @@ void DrawSpectraBestFit
  // const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = false,    // marginalize Mass Hierarchy
- const char * hierarchy_marg      = "normal",     /* normal or inverted */
+ const char * hierarchy_marg      = "normal"     /* normal or inverted */
  )
 {
   FileStat_t dummy;
