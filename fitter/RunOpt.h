@@ -23,6 +23,13 @@
 #ifndef _RUN_OPT_H_
 #define _RUN_OPT_H_
 
+#include "FitCore/FitModelABC.h"
+#include "FitCore/FitParamList.h"
+#include "FitCore/PhysParamList.h"
+#include "Utilities/VALORArray.h"
+#include "FitCore/PhysHypothesis.h"
+#include "T2KPhysicalParameterLimits.h"
+
 #include "Parser/CmdLnArgParser.h"
 #include "UtlForMacros.h"
 
@@ -113,8 +120,7 @@ public:
   TString TypeError () const { if(fParseType & kParseFitMarg) return fTypeError; cerr << "kParseFitMarg not set" << endl; exit(-1); }
   bool   DrawFullChisq () const { if(fParseType & kParseFitMarg) return fDrawFullChisq; cerr << "kParseFitMarg not set" << endl; exit(-1); }
   string Teststat () const { if(fParseType & kParseFitMarg) return fTeststat; cerr << "kParseFitMarg not set" << endl; exit(-1); }
-
-
+  
   // Print 
   virtual void   Print (ostream & stream, const int w = 30) const;
   friend ostream & operator << (ostream & stream, const RunOpt & opt);
@@ -223,6 +229,8 @@ public:
   TString fTypeError;
   bool fDrawFullChisq;
   string fTeststat;
+  conv::PhysParamId_t fFreepar0;
+  conv::PhysParamId_t fFreepar1;
   //
 
   /* uncomment this if we want to make the class a singleton again (also remove the public constructor/destructor)

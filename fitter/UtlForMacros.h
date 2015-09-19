@@ -28,16 +28,19 @@
 
 namespace valor {
   class SuperkExpectation;
+  class SuperkObservation;
   class PhysHypothesis;
+  class FitMarginalization;
 
 namespace util {
   
   // Get the string related to the systematics which are being tweaked
   std::string SysThrowIdToString(unsigned int tweak_systematics);
   // Tweak the relevant systematics
-  void PerformSysThrow(unsigned int tweak_systematics, SuperkExpectation * skexp,
-		       bool print = true);
+  void PerformSysThrow(unsigned int tweak_systematics, SuperkExpectation * skexp, bool print = true);
   //TODO should we change the uint to an enum SysTweakId_t?
+
+  void PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool print = true); // take inputs from command line
 
   // Construct an absolute file path, relative to $T2KOSCANA
   const char * FormFilePath(const char * file, const char * dir);
@@ -49,8 +52,10 @@ namespace util {
 
   // Helper function. Get a TH2D from a file & check its valid
   TH2D * GetTH2DFromTFile(TFile * f, const char * name);
+  
+  conv::PhysParamId_t GetFreePar(string freeparname);
 
 } // util
 } // valor
-  
+
 #endif

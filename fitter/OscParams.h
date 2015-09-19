@@ -50,7 +50,7 @@ public:
 
   // Update all the values in the PhysHypothesis / FitParamList
   void UpdatePhysHypothesis(PhysHypothesis & ph,  bool print = true);
-  void UpdateFitParamList  (FitParamList & fparm, bool set_init, bool print = false);
+  void UpdateFitParamList  (FitParamList * fparm, bool set_init, bool print = false);
 
 
   // Toy histograms
@@ -112,6 +112,10 @@ public:
   //Other
   double beta_bar;
     
+
+  //double GetInitOscParValue(conv::PhysParamId_t oscparid) { return fparm.InitValue(oscparid);}
+  //double GetCurrOscParValue(conv::PhysParamId_t oscparid) { return fparm.BestFitValue(oscparid);}
+
   //Randomize?
   //NH
   bool randomize_mixing12_nh;

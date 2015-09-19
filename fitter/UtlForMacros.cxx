@@ -12,9 +12,16 @@ ChangeLog:
 #include "UtlForMacros.h"
 
 #include "SuperkExpectation.h"
+#include "SuperkObservation.h"
 #include "SuperkMC.h"
 #include "BANFF.h"
 #include "SuperkDetectorFSI.h"
+#include "FitMarginalization.h"
+#include "Build.h"
+#include "UtlForMacros.h"
+#include "OscParams.h"
+#include "RunOpt.h"
+#include "Utilities/Env.h"
 
 #include "Conventions/Opt.h"
 #include "Conventions/PhysParamId.h"
@@ -25,6 +32,7 @@ ChangeLog:
 
 #include "TSystem.h"
 #include "TCanvas.h"
+#include "TMath.h"
 
 #include <iostream>
 #include <string>
@@ -144,6 +152,299 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
   if(print)
     skexp->PrintSystematicVariations();
 }
+//____________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool print){
+    
+  Env::Instance()->AutoSet("t2xk");
+  cout << *Env::Instance() << endl;
+  //gROOT->SetBatch(true);
+  
+
+  RunOpt runopt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
+
+  //RunOpt::ReadFromCommandLine(argc, argv, parseopt);
+
+
+  // Set the second parameter (1D fit)
+  const char * freeparname1        = "";  // free parameter
+  const double freeparmin1         = 0.; // minimum value of free parameter
+  const double freeparmax1         = 0.; // maxinum value of free parameter
+  const int    NptScan1            = 1; //201, //21,      // # pts of free parameter to scan
+  //
+
+  // // Reset all the variables
+  int nfits=-999;
+  int nchisqcalls=-999;
+  int niterations=-999;
+  int fitstatus=-999;
+  double chisqmin=conv::kALargeNum;
+  double bestfit0=-999;
+  double bestfit1=-999;
+  
+  // Set free param, ntoys, # pt to scan, min par, max par (if min and max not passed, use default ones for that par)
+
+  // free parameter 
+
+  PhysParamId_t freepar0 = conv::kPhypUndefined;
+  string sfreeparname0(runopt.Freeparname0()); 
+  PhysParamId_t freepar1 = conv::kPhypUndefined;
+  string sfreeparname1(runopt.Freeparname1());  
+     
+  PhysParamId_t parfree[2];
+  parfree[0] = GetFreePar(sfreeparname0);
+  parfree[1] = freepar1;
+
+  // # of toys for marginalization
+  int ntoys = runopt.NtoysMarg();
+  
+  // # of free parameter pts to scan 
+  int nbinspar[2];
+  nbinspar[0] = runopt.NptScan0();
+  nbinspar[1] = runopt.NptScan1();
+  
+  // free parameter range
+  double minpar[2];
+  double maxpar[2];
+  minpar[0] = runopt.Freeparmin0();
+  maxpar[0] = runopt.Freeparmax0();
+  minpar[1] = runopt.Freeparmin1();
+  maxpar[1] = runopt.Freeparmax1();
+  
+  // free parameter sub-range
+  
+  const int    first_bin_freepar0   = -999; // first freepar of the sub-range
+  const int    last_bin_freepar0    = -999; // last freepar of the sub-range
+  const int    first_bin_freepar1   = -999; // first freepar of the sub-range
+  const int    last_bin_freepar1    = -999; // last freepar of the sub-range
+  
+  int subminbin[2];
+  int submaxbin[2];
+  subminbin[0] = first_bin_freepar0; submaxbin[0] = last_bin_freepar0;
+  subminbin[1] = first_bin_freepar1; submaxbin[1] = last_bin_freepar1;
+  
+  // Implement the constructor giving the following input parameters:
+  //FitMarginalization *fitmarg = new FitMarginalization();   
+  fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
+  fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
+  fitmarg->SetTestStatistic(runopt.Teststat()); // Set Test Statistic ("rate-only" or "rate+shape")
+  fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
+  
+  // Set Mass Hierarchy marginalization
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(runopt.Hierarchy_marg()); // needed to build the right binary file name 
+  
+  //
+  // MH MUST BE THE SAME AS FOR TOYS!!! TO CHECK  
+  //
+  fitmarg->SetMargMassHierarchy(runopt.DoMargMH()); 
+  //
+  
+  // Set fit parameter list
+  fitmarg->SetFitParamList(runopt.Fit_param_list().c_str());
+  fitmarg->PrintPhysHypothesis();
+  
+  
+  // Build the map fileID - sub-range
+  
+  fitmarg->SetMaxIterationSingleFit(2);  // Max # of iterations per fit
+  fitmarg->SetMaxFitNumber(3); // Max # of fits max # of iterations
+  
+  fitmarg->SetTagFileName(runopt.Infilename().c_str());
+  fitmarg->SetFileID(runopt.Nfiles());
+  
+  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
+  double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
+  int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
+  double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
+
+  // Fit 1
+
+  cout << endl;
+  cout << "################# Fit 1 (dcp=-3.14) #################" << endl;
+    
+  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),+TMath::Pi(),true);
+  fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
+  //fitmarg->SetStartBin(0.1,-TMath::Pi()); 
+  fitmarg->SetStartBin(-TMath::Pi(),0.); 
+  //fitmarg->SetNumStartBin(10,1);
+  fitmarg->SetNumStartBin(1,1);
+  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.3,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  fitmarg->SetGridStartRange(-TMath::Pi(),-TMath::Pi()+conv::kASmallNum,0.,0.);
+  //fitmarg->SetExtractStartPt("GridFix");
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+
+  double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_1 = fitmarg->GetParamBestFit(0);
+  double bestfit1_1 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_1 = fitmarg->GetParamBestFit(1); 
+  int nfits_1 = fitmarg->GetNumFit();
+  int fitstatus_1 = fitmarg->GetFitStatus();
+  int niterations_1 = fitmarg->GetNumIterations();
+  if(chisqmin_1<chisqmin){
+    chisqmin = chisqmin_1;
+    bestfit0 = bestfit0_1; 
+    bestfit1 = bestfit1_1; 
+    nfits = nfits_1;    
+    fitstatus = fitstatus_1;
+    niterations = niterations_1;
+  }
+  TH1D *ChisqStep_1 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_1");
+
+
+  // Fit 2
+
+  cout << endl;
+  cout << "################# Fit 2 (dcp=0.) #################" << endl;
+    
+  fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
+  fitmarg->SetStartBin(0.,0.); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
+  //fitmarg->SetExtractStartPt("GridFix");
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+
+  double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_2 = fitmarg->GetParamBestFit(0);
+  double bestfit1_2 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_2 = fitmarg->GetParamBestFit(1); 
+  int nfits_2 = fitmarg->GetNumFit();
+  int fitstatus_2 = fitmarg->GetFitStatus();
+  int niterations_2 = fitmarg->GetNumIterations();
+  if(chisqmin_2<chisqmin){
+    chisqmin = chisqmin_2;
+    bestfit0 = bestfit0_2; 
+    bestfit1 = bestfit1_2; 
+    nfits = nfits_2;    
+    fitstatus = fitstatus_2;
+    niterations = niterations_2;
+  }
+  TH1D *ChisqStep_2 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_2");
+
+
+
+  // Fit 3
+
+  cout << endl;
+  cout << "################# Fit 3 (dcp=+3.14) #################" << endl;
+    
+  fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
+  fitmarg->SetStartBin(+TMath::Pi(),0.); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(+TMath::Pi()-conv::kASmallNum,+TMath::Pi(),0.,0.);
+  //fitmarg->SetExtractStartPt("GridFix");
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+
+  double chisqmin_3 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_3 = fitmarg->GetParamBestFit(0);
+  double bestfit1_3 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_3 = fitmarg->GetParamBestFit(1); 
+  int nfits_3 = fitmarg->GetNumFit();
+  int fitstatus_3 = fitmarg->GetFitStatus();
+  int niterations_3 = fitmarg->GetNumIterations();
+  if(chisqmin_3<chisqmin){
+    chisqmin = chisqmin_3;
+    bestfit0 = bestfit0_3; 
+    bestfit1 = bestfit1_3; 
+    nfits = nfits_3;    
+    fitstatus = fitstatus_3;
+    niterations = niterations_3;
+  }
+  TH1D *ChisqStep_3 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_3");
+  
+  // Set best-fit parameters in FitMarginalization object
+  // Otherwise error computation is done with respect to a wrong minimum
+  fitmarg->SetChisqBestFit(chisqmin);
+  fitmarg->SetParamBestFit(0,bestfit0);
+  if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
+  
+  // Build the DeltaChisqMarg after the best-fit Chisq has been set
+  // Otherwise DeltaChisqMarg becomes negative if shifted wrt a local minimum
+  fitmarg->BuildDeltaChisqMarg();
+  
+  //
+  // Get fit errors
+  //
+  // Since the chisq was minimized reading binary files at each step you 
+  // must adopt the same approach for error computations as well.
+  //
+  
+  if(runopt.TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+  if(runopt.TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
+
+  // Draw Full Chisq
+  if(runopt.DrawFullChisq()){
+    fitmarg->FillChisqMarg(skobs_fakedata,true);
+    fitmarg->MinimizeHisto();
+    //bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
+    //if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
+    //chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
+    fitmarg->BuildDeltaChisqMarg();
+  }
+
+  // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+  fitmarg->WriteLikeToys2Binary(runopt.Tag().c_str());
+  
+}
+//____________________________________________________________________________
+conv::PhysParamId_t valor::util::GetFreePar(string freeparname){
+
+  PhysParamId_t freepar;
+  string sfreeparname(freeparname);  
+  // NuBar mode
+  if(sfreeparname=="mixing23Bar")      freepar = conv::kPhypMixing23Bar;
+  else if(sfreeparname=="mixing13Bar") freepar = conv::kPhypMixing13Bar;
+  else if(sfreeparname=="dmsq23Bar")   freepar = conv::kPhypDm23sqBar;
+  else if(sfreeparname=="dmsq12Bar")   freepar = conv::kPhypDm12sqBar;
+  else if(sfreeparname=="mixing12Bar") freepar = conv::kPhypMixing12Bar;
+  else if(sfreeparname=="deltacpBar")  freepar = conv::kPhypCPVBar;
+  else if(sfreeparname=="betaBar")     freepar = conv::kPhypBetaBar;
+  // Nu mode
+  else if(sfreeparname=="mixing23")    freepar = conv::kPhypMixing23;
+  else if(sfreeparname=="mixing13")    freepar = conv::kPhypMixing13;
+  else if(sfreeparname=="dmsq23")      freepar = conv::kPhypDm23sq;
+  else if(sfreeparname=="dmsq12")      freepar = conv::kPhypDm12sq;
+  else if(sfreeparname=="mixing12")    freepar = conv::kPhypMixing12;
+  else if(sfreeparname=="deltacp")     freepar = conv::kPhypCPV;
+  
+  else{
+    freepar = conv::kPhypUndefined;
+    cout << "Param is not defined" << endl;
+    exit(1);
+  }
+
+  return freepar;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 //____________________________________________________________________________
 void valor::util::SetMassHierarchy(SuperkExpectation * skexp)
 {

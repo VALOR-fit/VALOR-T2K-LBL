@@ -800,7 +800,7 @@ void valor::util::OscParams::UpdatePhysHypothesis(PhysHypothesis& ph, bool print
 
 }
 //____________________________________________________________________________
-void valor::util::OscParams::UpdateFitParamList(FitParamList& fparm, bool set_init, bool print)
+void valor::util::OscParams::UpdateFitParamList(FitParamList* fparm, bool set_init, bool print)
 {
   double input_mixing12_used, input_mixing13_used, input_mixing23_used;
   double input_dcp_used,      input_dm12sq_used,   input_dm23sq_used;
@@ -833,126 +833,126 @@ void valor::util::OscParams::UpdateFitParamList(FitParamList& fparm, bool set_in
   input_beta_bar_used = beta_bar;
   
   //Update the FitParamList
-  if(fparm.PhysicsHypothesis() == kHypNuMuDisapp2F) {
+  if(fparm->PhysicsHypothesis() == kHypNuMuDisapp2F) {
     if(set_init) {
-      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetInitValue(kPhypDm23sq,    input_dm23sq_used);
     }
     else {
-      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
     }
   }//kHypNuMuDisapp2F
-  else if(fparm.PhysicsHypothesis() == kHypOsc3F) {  
+  else if(fparm->PhysicsHypothesis() == kHypOsc3F) {  
     if(set_init) {
-      fparm.SetInitValue(kPhypMixing12,  input_mixing12_used);
-      fparm.SetInitValue(kPhypMixing13,  input_mixing13_used);
-      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetInitValue(kPhypCPV    ,   input_dcp_used);
-      fparm.SetInitValue(kPhypDm12sq,    input_dm12sq_used);
-      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetInitValue(kPhypMixing12,  input_mixing12_used);
+      fparm->SetInitValue(kPhypMixing13,  input_mixing13_used);
+      fparm->SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetInitValue(kPhypCPV    ,   input_dcp_used);
+      fparm->SetInitValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm->SetInitValue(kPhypDm23sq,    input_dm23sq_used);
     }
     else {
-      fparm.SetCurrentValue(kPhypMixing12,  input_mixing12_used);
-      fparm.SetCurrentValue(kPhypMixing13,  input_mixing13_used);
-      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetCurrentValue(kPhypCPV    ,   input_dcp_used);
-      fparm.SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
-      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetCurrentValue(kPhypMixing12,  input_mixing12_used);
+      fparm->SetCurrentValue(kPhypMixing13,  input_mixing13_used);
+      fparm->SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetCurrentValue(kPhypCPV    ,   input_dcp_used);
+      fparm->SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm->SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
     }
   }//kHypOsc3F
-  else if(fparm.PhysicsHypothesis() == kHypOsc3FBar) {
+  else if(fparm->PhysicsHypothesis() == kHypOsc3FBar) {
     if(set_init) {
-      fparm.SetInitValue(kPhypMixing12,  input_mixing12_used);
-      fparm.SetInitValue(kPhypMixing13,  input_mixing13_used);
-      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetInitValue(kPhypCPV    ,   input_dcp_used);
-      fparm.SetInitValue(kPhypDm12sq,    input_dm12sq_used);
-      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetInitValue(kPhypMixing12,  input_mixing12_used);
+      fparm->SetInitValue(kPhypMixing13,  input_mixing13_used);
+      fparm->SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetInitValue(kPhypCPV    ,   input_dcp_used);
+      fparm->SetInitValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm->SetInitValue(kPhypDm23sq,    input_dm23sq_used);
        
-      fparm.SetInitValue(kPhypMixing12Bar,  input_mixing12_used);
-      fparm.SetInitValue(kPhypMixing13Bar,  input_mixing13_used);
-      fparm.SetInitValue(kPhypMixing23Bar,  input_mixing23_used);
-      fparm.SetInitValue(kPhypCPVBar    ,   input_dcp_used);
-      fparm.SetInitValue(kPhypDm12sqBar,    input_dm12sq_used);
-      fparm.SetInitValue(kPhypDm23sqBar,    input_dm23sq_used);
+      fparm->SetInitValue(kPhypMixing12Bar,  input_mixing12_used);
+      fparm->SetInitValue(kPhypMixing13Bar,  input_mixing13_used);
+      fparm->SetInitValue(kPhypMixing23Bar,  input_mixing23_used);
+      fparm->SetInitValue(kPhypCPVBar    ,   input_dcp_used);
+      fparm->SetInitValue(kPhypDm12sqBar,    input_dm12sq_used);
+      fparm->SetInitValue(kPhypDm23sqBar,    input_dm23sq_used);
     }
     else {
-      fparm.SetCurrentValue(kPhypMixing12,  input_mixing12_used);
-      fparm.SetCurrentValue(kPhypMixing13,  input_mixing13_used);
-      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetCurrentValue(kPhypCPV    ,   input_dcp_used);
-      fparm.SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
-      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetCurrentValue(kPhypMixing12,  input_mixing12_used);
+      fparm->SetCurrentValue(kPhypMixing13,  input_mixing13_used);
+      fparm->SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetCurrentValue(kPhypCPV    ,   input_dcp_used);
+      fparm->SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm->SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
        
-      fparm.SetCurrentValue(kPhypMixing12Bar,  input_mixing12_used);
-      fparm.SetCurrentValue(kPhypMixing13Bar,  input_mixing13_used);
-      fparm.SetCurrentValue(kPhypMixing23Bar,  input_mixing23_used);
-      fparm.SetCurrentValue(kPhypCPVBar    ,   input_dcp_used);
-      fparm.SetCurrentValue(kPhypDm12sqBar,    input_dm12sq_used);
-      fparm.SetCurrentValue(kPhypDm23sqBar,    input_dm23sq_used);
+      fparm->SetCurrentValue(kPhypMixing12Bar,  input_mixing12_used);
+      fparm->SetCurrentValue(kPhypMixing13Bar,  input_mixing13_used);
+      fparm->SetCurrentValue(kPhypMixing23Bar,  input_mixing23_used);
+      fparm->SetCurrentValue(kPhypCPVBar    ,   input_dcp_used);
+      fparm->SetCurrentValue(kPhypDm12sqBar,    input_dm12sq_used);
+      fparm->SetCurrentValue(kPhypDm23sqBar,    input_dm23sq_used);
     }
   }//kHypOsc3FBar
-  else if(fparm.PhysicsHypothesis() == kHypOsc3FNormBar) {
+  else if(fparm->PhysicsHypothesis() == kHypOsc3FNormBar) {
     if(set_init) {
-      fparm.SetInitValue(kPhypMixing12,  input_mixing12_used);
-      fparm.SetInitValue(kPhypMixing13,  input_mixing13_used);
-      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetInitValue(kPhypCPV    ,   input_dcp_used);
-      fparm.SetInitValue(kPhypDm12sq,    input_dm12sq_used);
-      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetInitValue(kPhypMixing12,  input_mixing12_used);
+      fparm->SetInitValue(kPhypMixing13,  input_mixing13_used);
+      fparm->SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetInitValue(kPhypCPV    ,   input_dcp_used);
+      fparm->SetInitValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm->SetInitValue(kPhypDm23sq,    input_dm23sq_used);
        
-      fparm.SetInitValue(kPhypBetaBar,    input_beta_bar_used);
+      fparm->SetInitValue(kPhypBetaBar,    input_beta_bar_used);
     }
     else {
-      fparm.SetCurrentValue(kPhypMixing12,  input_mixing12_used);
-      fparm.SetCurrentValue(kPhypMixing13,  input_mixing13_used);
-      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetCurrentValue(kPhypCPV    ,   input_dcp_used);
-      fparm.SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
-      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetCurrentValue(kPhypMixing12,  input_mixing12_used);
+      fparm->SetCurrentValue(kPhypMixing13,  input_mixing13_used);
+      fparm->SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetCurrentValue(kPhypCPV    ,   input_dcp_used);
+      fparm->SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm->SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
        
-      fparm.SetCurrentValue(kPhypBetaBar,    input_beta_bar_used);
+      fparm->SetCurrentValue(kPhypBetaBar,    input_beta_bar_used);
     }
   }//kHypOsc3FNormBar
-  else if(fparm.PhysicsHypothesis() == kHypOsc3FBarNormBar) {
+  else if(fparm->PhysicsHypothesis() == kHypOsc3FBarNormBar) {
     if(set_init) {
-      fparm.SetInitValue(kPhypMixing12,  input_mixing12_used);
-      fparm.SetInitValue(kPhypMixing13,  input_mixing13_used);
-      fparm.SetInitValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetInitValue(kPhypCPV    ,   input_dcp_used);
-      fparm.SetInitValue(kPhypDm12sq,    input_dm12sq_used);
-      fparm.SetInitValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetInitValue(kPhypMixing12,  input_mixing12_used);
+      fparm->SetInitValue(kPhypMixing13,  input_mixing13_used);
+      fparm->SetInitValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetInitValue(kPhypCPV    ,   input_dcp_used);
+      fparm->SetInitValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm->SetInitValue(kPhypDm23sq,    input_dm23sq_used);
        
-      fparm.SetInitValue(kPhypMixing12Bar,  input_mixing12_used);
-      fparm.SetInitValue(kPhypMixing13Bar,  input_mixing13_used);
-      fparm.SetInitValue(kPhypMixing23Bar,  input_mixing23_used);
-      fparm.SetInitValue(kPhypCPVBar    ,   input_dcp_used);
-      fparm.SetInitValue(kPhypDm12sqBar,    input_dm12sq_used);
-      fparm.SetInitValue(kPhypDm23sqBar,    input_dm23sq_used);
+      fparm->SetInitValue(kPhypMixing12Bar,  input_mixing12_used);
+      fparm->SetInitValue(kPhypMixing13Bar,  input_mixing13_used);
+      fparm->SetInitValue(kPhypMixing23Bar,  input_mixing23_used);
+      fparm->SetInitValue(kPhypCPVBar    ,   input_dcp_used);
+      fparm->SetInitValue(kPhypDm12sqBar,    input_dm12sq_used);
+      fparm->SetInitValue(kPhypDm23sqBar,    input_dm23sq_used);
        
-      fparm.SetInitValue(kPhypBetaBar,    input_beta_bar_used);
+      fparm->SetInitValue(kPhypBetaBar,    input_beta_bar_used);
     }
     else {
-      fparm.SetCurrentValue(kPhypMixing12,  input_mixing12_used);
-      fparm.SetCurrentValue(kPhypMixing13,  input_mixing13_used);
-      fparm.SetCurrentValue(kPhypMixing23,  input_mixing23_used);
-      fparm.SetCurrentValue(kPhypCPV    ,   input_dcp_used);
-      fparm.SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
-      fparm.SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
+      fparm->SetCurrentValue(kPhypMixing12,  input_mixing12_used);
+      fparm->SetCurrentValue(kPhypMixing13,  input_mixing13_used);
+      fparm->SetCurrentValue(kPhypMixing23,  input_mixing23_used);
+      fparm->SetCurrentValue(kPhypCPV    ,   input_dcp_used);
+      fparm->SetCurrentValue(kPhypDm12sq,    input_dm12sq_used);
+      fparm->SetCurrentValue(kPhypDm23sq,    input_dm23sq_used);
        
-      fparm.SetCurrentValue(kPhypMixing12Bar,  input_mixing12_used);
-      fparm.SetCurrentValue(kPhypMixing13Bar,  input_mixing13_used);
-      fparm.SetCurrentValue(kPhypMixing23Bar,  input_mixing23_used);
-      fparm.SetCurrentValue(kPhypCPVBar    ,   input_dcp_used);
-      fparm.SetCurrentValue(kPhypDm12sqBar,    input_dm12sq_used);
-      fparm.SetCurrentValue(kPhypDm23sqBar,    input_dm23sq_used);
+      fparm->SetCurrentValue(kPhypMixing12Bar,  input_mixing12_used);
+      fparm->SetCurrentValue(kPhypMixing13Bar,  input_mixing13_used);
+      fparm->SetCurrentValue(kPhypMixing23Bar,  input_mixing23_used);
+      fparm->SetCurrentValue(kPhypCPVBar    ,   input_dcp_used);
+      fparm->SetCurrentValue(kPhypDm12sqBar,    input_dm12sq_used);
+      fparm->SetCurrentValue(kPhypDm23sqBar,    input_dm23sq_used);
        
-      fparm.SetCurrentValue(kPhypBetaBar,    input_beta_bar_used);
+      fparm->SetCurrentValue(kPhypBetaBar,    input_beta_bar_used);
     }
   }//kHypOsc3FBarNormBar
   else {
-    cout << "SetOscParams() " << util::AsString(fparm.PhysicsHypothesis()) << " not implemented" << endl;
+    cout << "SetOscParams() " << util::AsString(fparm->PhysicsHypothesis()) << " not implemented" << endl;
     exit(1);
   }
   

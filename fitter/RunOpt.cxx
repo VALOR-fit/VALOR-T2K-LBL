@@ -177,6 +177,8 @@ void valor::RunOpt::Init(void)
   fTypeError      = "";
   fDrawFullChisq  = true;
   fTeststat       = "rate+shape";
+  fFreepar0 = conv::kPhypUndefined;
+  fFreepar1 = conv::kPhypUndefined;
 }
 //____________________________________________________________________________
 void valor::RunOpt::InitOscParams(double value)
