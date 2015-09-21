@@ -41,6 +41,7 @@ namespace util {
   //TODO should we change the uint to an enum SysTweakId_t?
 
   void PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool print = true); // take inputs from command line
+  void MargFit_1D_deltaCP(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
 
   // Construct an absolute file path, relative to $T2KOSCANA
   const char * FormFilePath(const char * file, const char * dir);

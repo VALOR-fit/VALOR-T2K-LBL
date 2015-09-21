@@ -153,23 +153,6 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
     skexp->PrintSystematicVariations();
 }
 //____________________________________________________________________________
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool print){
     
   Env::Instance()->AutoSet("t2xk");
@@ -180,7 +163,6 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
   RunOpt runopt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
 
   //RunOpt::ReadFromCommandLine(argc, argv, parseopt);
-
 
   // Set the second parameter (1D fit)
   const char * freeparname1        = "";  // free parameter
@@ -267,6 +249,88 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
   
   fitmarg->SetTagFileName(runopt.Infilename().c_str());
   fitmarg->SetFileID(runopt.Nfiles());
+
+
+  // 1D deltaCP fit
+  if(runopt.Freeparname0()=="deltacp" && runopt.Freeparname1()==""){
+    util::MargFit_1D_deltaCP(fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+  }
+  
+  // 1D sinsqth13 fit
+  //
+  // 1D sinsqth23 fit
+  //
+  // 1D dmsq32 fit
+  // 2D sinsqth13 Vs dcp fit
+  //
+  // 2D sinsqth23 Vs dmsq32 fit
+  //
+  
+  // Set best-fit parameters in FitMarginalization object
+  // Otherwise error computation is done with respect to a wrong minimum
+  fitmarg->SetChisqBestFit(chisqmin);
+  fitmarg->SetParamBestFit(0,bestfit0);
+  if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
+  
+  // Build the DeltaChisqMarg after the best-fit Chisq has been set
+  // Otherwise DeltaChisqMarg becomes negative if shifted wrt a local minimum
+  fitmarg->BuildDeltaChisqMarg();
+  
+  //
+  // Get fit errors
+  //
+  // Since the chisq was minimized reading binary files at each step you 
+  // must adopt the same approach for error computations as well.
+  //
+  
+  if(runopt.TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+  if(runopt.TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
+
+  // Draw Full Chisq
+  if(runopt.DrawFullChisq()){
+    fitmarg->FillChisqMarg(skobs_fakedata,true);
+    fitmarg->MinimizeHisto();
+    //bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
+    //if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
+    //chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
+    fitmarg->BuildDeltaChisqMarg();
+  }
+
+  // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+  fitmarg->WriteLikeToys2Binary(runopt.FileTag().c_str());
+  
+}
+//____________________________________________________________________________
+conv::PhysParamId_t valor::util::GetFreePar(string freeparname){
+
+  PhysParamId_t freepar;
+  string sfreeparname(freeparname);  
+  // NuBar mode
+  if(sfreeparname=="mixing23Bar")      freepar = conv::kPhypMixing23Bar;
+  else if(sfreeparname=="mixing13Bar") freepar = conv::kPhypMixing13Bar;
+  else if(sfreeparname=="dmsq23Bar")   freepar = conv::kPhypDm23sqBar;
+  else if(sfreeparname=="dmsq12Bar")   freepar = conv::kPhypDm12sqBar;
+  else if(sfreeparname=="mixing12Bar") freepar = conv::kPhypMixing12Bar;
+  else if(sfreeparname=="deltacpBar")  freepar = conv::kPhypCPVBar;
+  else if(sfreeparname=="betaBar")     freepar = conv::kPhypBetaBar;
+  // Nu mode
+  else if(sfreeparname=="mixing23")    freepar = conv::kPhypMixing23;
+  else if(sfreeparname=="mixing13")    freepar = conv::kPhypMixing13;
+  else if(sfreeparname=="dmsq23")      freepar = conv::kPhypDm23sq;
+  else if(sfreeparname=="dmsq12")      freepar = conv::kPhypDm12sq;
+  else if(sfreeparname=="mixing12")    freepar = conv::kPhypMixing12;
+  else if(sfreeparname=="deltacp")     freepar = conv::kPhypCPV;
+  
+  else{
+    freepar = conv::kPhypUndefined;
+    cout << "Param is not defined" << endl;
+    exit(1);
+  }
+
+  return freepar;
+}
+//____________________________________________________________________________
+void valor::util::MargFit_1D_deltaCP(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
   
   double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
   double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
@@ -305,8 +369,6 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
     fitstatus = fitstatus_1;
     niterations = niterations_1;
   }
-  TH1D *ChisqStep_1 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_1");
-
 
   // Fit 2
 
@@ -336,9 +398,6 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
     fitstatus = fitstatus_2;
     niterations = niterations_2;
   }
-  TH1D *ChisqStep_2 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_2");
-
-
 
   // Fit 3
 
@@ -368,83 +427,7 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
     fitstatus = fitstatus_3;
     niterations = niterations_3;
   }
-  TH1D *ChisqStep_3 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_3");
-  
-  // Set best-fit parameters in FitMarginalization object
-  // Otherwise error computation is done with respect to a wrong minimum
-  fitmarg->SetChisqBestFit(chisqmin);
-  fitmarg->SetParamBestFit(0,bestfit0);
-  if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
-  
-  // Build the DeltaChisqMarg after the best-fit Chisq has been set
-  // Otherwise DeltaChisqMarg becomes negative if shifted wrt a local minimum
-  fitmarg->BuildDeltaChisqMarg();
-  
-  //
-  // Get fit errors
-  //
-  // Since the chisq was minimized reading binary files at each step you 
-  // must adopt the same approach for error computations as well.
-  //
-  
-  if(runopt.TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
-  if(runopt.TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
-
-  // Draw Full Chisq
-  if(runopt.DrawFullChisq()){
-    fitmarg->FillChisqMarg(skobs_fakedata,true);
-    fitmarg->MinimizeHisto();
-    //bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
-    //if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
-    //chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
-    fitmarg->BuildDeltaChisqMarg();
-  }
-
-  // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-  fitmarg->WriteLikeToys2Binary(runopt.Tag().c_str());
-  
 }
-//____________________________________________________________________________
-conv::PhysParamId_t valor::util::GetFreePar(string freeparname){
-
-  PhysParamId_t freepar;
-  string sfreeparname(freeparname);  
-  // NuBar mode
-  if(sfreeparname=="mixing23Bar")      freepar = conv::kPhypMixing23Bar;
-  else if(sfreeparname=="mixing13Bar") freepar = conv::kPhypMixing13Bar;
-  else if(sfreeparname=="dmsq23Bar")   freepar = conv::kPhypDm23sqBar;
-  else if(sfreeparname=="dmsq12Bar")   freepar = conv::kPhypDm12sqBar;
-  else if(sfreeparname=="mixing12Bar") freepar = conv::kPhypMixing12Bar;
-  else if(sfreeparname=="deltacpBar")  freepar = conv::kPhypCPVBar;
-  else if(sfreeparname=="betaBar")     freepar = conv::kPhypBetaBar;
-  // Nu mode
-  else if(sfreeparname=="mixing23")    freepar = conv::kPhypMixing23;
-  else if(sfreeparname=="mixing13")    freepar = conv::kPhypMixing13;
-  else if(sfreeparname=="dmsq23")      freepar = conv::kPhypDm23sq;
-  else if(sfreeparname=="dmsq12")      freepar = conv::kPhypDm12sq;
-  else if(sfreeparname=="mixing12")    freepar = conv::kPhypMixing12;
-  else if(sfreeparname=="deltacp")     freepar = conv::kPhypCPV;
-  
-  else{
-    freepar = conv::kPhypUndefined;
-    cout << "Param is not defined" << endl;
-    exit(1);
-  }
-
-  return freepar;
-}
-
-
-
-
-
-
-
-
-
-
-
-
 //____________________________________________________________________________
 void valor::util::SetMassHierarchy(SuperkExpectation * skexp)
 {

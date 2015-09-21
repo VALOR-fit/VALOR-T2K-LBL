@@ -152,10 +152,6 @@ void valor::RunOpt::Init(void)
   fSynchronizeIHtoNH = true;
   
   // fit marg options
-  fFirstExperimentMarg = 0;
-  fLastExperimentMarg = 1;
-  fNExperimentsMarg = 1;
-  fTag = "fitmarg_joint";
   fXmlfile = "";
   fRootfile = "";
   fUsing_xml_file = false;
@@ -177,8 +173,6 @@ void valor::RunOpt::Init(void)
   fTypeError      = "";
   fDrawFullChisq  = true;
   fTeststat       = "rate+shape";
-  fFreepar0 = conv::kPhypUndefined;
-  fFreepar1 = conv::kPhypUndefined;
 }
 //____________________________________________________________________________
 void valor::RunOpt::InitOscParams(double value)
@@ -546,17 +540,96 @@ void valor::RunOpt::ReadFitMargOptions()
   if(fParser->OptionExists("hypothesis"))
     fHypothesis = fParser->ArgAsString("hypothesis");
 
+  if(fParser->OptionExists("do-toys")){
+    fDoToys = true;
+  }
+  else{
+    fDoToys = false;
 
-  //if(fParser->OptionExists("default-all-oscparams"))
-  //InitOscParams(-99);
+    if(fParser->OptionExists("use-xml-file")){
+      fXmlfile = fParser->ArgAsString("use-xml-file");
+      fUsing_xml_file = true;
+    }
+    else if(fParser->OptionExists("use-root-file")){
+      fRootfile = fParser->ArgAsString("use-root-file");
+      fUsing_xml_file = false;
+    }
+    else{
+      cerr << endl;
+      cerr << "Neither root or xml file is given" << endl;
+      cerr << endl;
+      exit(1);
+    }
+  }
   
-  //if(fParser->OptionExists(Form("mixing12-%s", fHierStr[i].c_str())))
-  //fMix12 = fParser->ArgAsDouble(Form("mixing12-%s", fHierStr[i].c_str()));
+  if(fParser->OptionExists("fit-param-list"))
+    fFit_param_list = fParser->ArgAsString("fit-param-list");
+
+  if(fParser->OptionExists("marg-file"))
+    fInfilename = fParser->ArgAsString("marg-file");
+  
+  if(fParser->OptionExists("nfiles-marg"))
+    fNfiles = fParser->ArgAsInt("nfiles-marg");
+
+  if(fParser->OptionExists("ntoys-marg"))
+    fNtoysMarg = fParser->ArgAsInt("ntoys-marg");
+  
+  if(fParser->OptionExists("freepar0-name"))
+    fFreeparname0 = fParser->ArgAsString("freepar0-name");
+  
+  if(fParser->OptionExists("freepar1-name"))
+    fFreeparname1 = fParser->ArgAsString("freepar1-name");
+  
+  if(fParser->OptionExists("freepar0-min"))
+    fFreeparmin0 = fParser->ArgAsDouble("freepar0-min");
+
+  if(fParser->OptionExists("freepar1-min"))
+    fFreeparmin1 = fParser->ArgAsDouble("freepar1-min");
+
+  if(fParser->OptionExists("freepar0-max"))
+    fFreeparmax0 = fParser->ArgAsDouble("freepar0-max");
+
+  if(fParser->OptionExists("freepar1-max"))
+    fFreeparmax1 = fParser->ArgAsDouble("freepar1-max");
+
+
+  // to check
+
+  if(fParser->OptionExists("freepar0-npt"))
+    fNptScan0 = fParser->ArgAsInt("freepar0-npt");
  
+  if(fParser->OptionExists("freepar1-npt"))
+    fNptScan1 = fParser->ArgAsInt("freepar1-npt");
+ 
+  if(fParser->OptionExists("marginalize-mh"))
+    fDoMargMH = true;
+  else
+    fDoMargMH = false;
+  
+  if(fParser->OptionExists("marg-mh-normal"))
+    fHierarchy_marg = "normal";
+  else
+    fHierarchy_marg = "inverted";
+
+  if(fParser->OptionExists("type-error"))
+    fTypeError = fParser->ArgAsString("type-error");
+  
+  if(fParser->OptionExists("full-chisq"))
+    fDrawFullChisq = true;
+  else
+    fDrawFullChisq = false;
+
+  if(fParser->OptionExists("rate-shape"))
+    fTeststat = "rate+shape";
+  else if(fParser->OptionExists("rate-only"))
+    fTeststat = "rate-only";
+  else{
+    cerr << endl;
+    cerr << "The test statistic for marginalization is not defined" << endl;
+    cerr << endl;
+    exit(1);
+  }
 }
-
-
-
 //____________________________________________________________________________
 void valor::RunOpt::Usage(const int w)
 {

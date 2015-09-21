@@ -98,7 +98,7 @@ public:
   bool   VerboseSystThrows   () const { if(fParseType & (kParseToys | kParseFitMarg)) return fVerboseSystThrows;   cerr << "kParseToys or kParseFitMarg not set" << endl; exit(-1); }
 
   // fit marginalization options
-  string Tag () const { if(fParseType & kParseFitMarg) return fTag; cerr << "kParseFitMarg not set" << endl; exit(-1); }
+  //string Tag () const { if(fParseType & kParseFitMarg) return fTag; cerr << "kParseFitMarg not set" << endl; exit(-1); }
   string Xmlfile () const { if(fParseType & kParseFitMarg) return fXmlfile; cerr << "kParseFitMarg not set" << endl; exit(-1); }
   string Rootfile () const { if(fParseType & kParseFitMarg) return fRootfile; cerr << "kParseFitMarg not set" << endl; exit(-1); }
   bool   Using_xml_file () const { if(fParseType & kParseFitMarg) return fUsing_xml_file; cerr << "kParseFitMarg not set" << endl; exit(-1); }
@@ -204,11 +204,11 @@ public:
   //
 
   // fit marg options
-  int  fFirstExperimentMarg;
-  int  fLastExperimentMarg;
-  int  fNExperimentsMarg;
-  string fTag;
-  string fXmlfile;
+  //int  fFirstExperimentMarg;
+  //int  fLastExperimentMarg;
+  //int  fNExperimentsMarg;
+  //string fTag;
+  string fXmlfile; 
   string fRootfile;
   bool fUsing_xml_file;
   bool fDoToys;
@@ -229,8 +229,8 @@ public:
   TString fTypeError;
   bool fDrawFullChisq;
   string fTeststat;
-  conv::PhysParamId_t fFreepar0;
-  conv::PhysParamId_t fFreepar1;
+  //conv::PhysParamId_t fFreepar0;
+  //conv::PhysParamId_t fFreepar1;
   //
 
   /* uncomment this if we want to make the class a singleton again (also remove the public constructor/destructor)
