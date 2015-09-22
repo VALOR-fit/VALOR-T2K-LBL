@@ -429,6 +429,18 @@ void valor::util::MargFit_1D_deltaCP(FitMarginalization *fitmarg,SuperkObservati
   }
 }
 //____________________________________________________________________________
+void valor::util::MargFit_1D_sinsqth13(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+}
+//____________________________________________________________________________
+void valor::util::MargFit_2D_sinsqth13_deltaCP(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+}
+//____________________________________________________________________________
+void valor::util::MargFit_1D_sinsqth23(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+}
+//____________________________________________________________________________
+void valor::util::MargFit_2D_sinsqth23_dmsq32(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+}
+//____________________________________________________________________________
 void valor::util::SetMassHierarchy(SuperkExpectation * skexp)
 {
   //  - iMH=0 --> kNmhNormal

@@ -191,12 +191,12 @@ int main(int argc, char ** argv)
   double deltachisqtrue=conv::kALargeNum;
   //double deltachisq01=conv::kALargeNum;
   double deltachisq0BF=conv::kALargeNum;
-  // TH2D *hchisq2D_out;
-  // TH1D *hchisq1D_out;
-  // TH2D *hdeltachisq2D_out;
-  // TH1D *hdeltachisq1D_out;
-  // TH2D *hstep2D_out;
-  // TH1D *hstep1D_out;
+  TH2F *hchisq2D_out = new TH2F("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
+  TH1F *hchisq1D_out = new TH1F("hchisq1D_out","hchisq1D_out",1,0,1);
+  TH2F *hdeltachisq2D_out = new TH2F("hdeltachisq2D_out","hdeltachisq2D_out",1,0,1,1,0,1);
+  TH1F *hdeltachisq1D_out = new TH1F("hdeltachisq1D_out","hdeltachisq1D_out",1,0,1);
+  TH2F *hstep2D_out = new TH2F("hstep2D_out","hstep2D_out",1,0,1,1,0,1);
+  TH1F *hstep1D_out = new TH1F("hstep1D_out","hstep1D_out",1,0,1);
   double bestfit0=-999;
   double bestfit1=-999;
   double bestfiterrNeg0=-999;
@@ -209,40 +209,34 @@ int main(int argc, char ** argv)
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
   int ToyID=-999;
-  // TH1D *hErecoToy_1Rmu;
-  // TH1D *hErecoToy_1Re;
-  // TH1D *hErecoToy_RHC1Rmu;
-  // TH1D *hErecoToy_RHC1Re;
-  // // NEW 2D TEMPLATES
-  // TH2D *hErecoToy2D_1Rmu;
-  // TH2D *hErecoToy2D_1Re;
-  // TH2D *hErecoToy2D_RHC1Rmu;
-  // TH2D *hErecoToy2D_RHC1Re;
-  // //
+  TH1F *hErecoToy_1Rmu = new TH1F("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1);
+  TH1F *hErecoToy_1Re = new TH1F("hErecoToy_1Re","hErecoToy_1Re",1,0,1);
+  TH1F *hErecoToy_RHC1Rmu = new TH1F("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1);
+  TH1F *hErecoToy_RHC1Re = new TH1F("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1);
+  TH2F *hErecoToy2D_1Rmu = new TH2F("hErecoToy2D_1Rmu","hErecoToy2D_1Rmu",1,0,1,1,0,1);
+  TH2F *hErecoToy2D_1Re = new TH2F("hErecoToy2D_1Re","hErecoToy2D_1Re",1,0,1,1,0,1);
+  TH2F *hErecoToy2D_RHC1Rmu = new TH2F("hErecoToy2D_RHC1Rmu","hErecoToy2D_RHC1Rmu",1,0,1,1,0,1);
+  TH2F *hErecoToy2D_RHC1Re = new TH2F("hErecoToy2D_RHC1Re","hErecoToy2D_RHC1Re",1,0,1,1,0,1);
+  
  
   // // Object for storing input oscillation and nuisance params in each toy-MC
-  // PhysParamList * iparm = new PhysParamList;
+  PhysParamList * iparm = new PhysParamList;
 
   
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
   fitnt->Branch("best_fit_params",      "valor::FitParamList",  &fparm,      1280000,0);
-  // //fitnt->Branch("input_params",         "valor::PhysParamList", &iparm,      1280000,0);
+  fitnt->Branch("input_params",         "valor::PhysParamList", &iparm,      1280000,0);
   fitnt->Branch("truepar0", &truepar0 );
   fitnt->Branch("truepar1", &truepar1 );
   fitnt->Branch("bestfit0", &bestfit0 );
   fitnt->Branch("bestfit1", &bestfit1 );
-  
-  //fitnt->Branch("hchisq2D","TH2D", &hchisq2D_out,32000,0 );
-  // fitnt->Branch("hchisq1D", &hchisq1D_out );
-  // fitnt->Branch("hdeltachisq2D", &hdeltachisq2D_out );
-  // fitnt->Branch("hdeltachisq1D", &hdeltachisq1D_out );
-  // fitnt->Branch("hstep2D", &hstep2D_out );
-  // fitnt->Branch("hstep1D", &hstep1D_out );
-
-  //T->Branch("hpx","TH1F",&hpx,32000,0);
-  //T->Branch("hpxpy","TH2F",&hpxpy,32000,0);
-  
+  fitnt->Branch("hchisq2D",     "TH2F", &hchisq2D_out,     32000,0 );
+  fitnt->Branch("hchisq1D",     "TH1F", &hchisq1D_out,     32000,0 );
+  fitnt->Branch("hdeltachisq2D","TH2F", &hdeltachisq2D_out,32000,0 );
+  fitnt->Branch("hdeltachisq1D","TH1F", &hdeltachisq1D_out,32000,0 );
+  fitnt->Branch("hstep2D",      "TH2F", &hstep2D_out,      32000,0 );
+  fitnt->Branch("hstep1D",      "TH1F", &hstep1D_out,      32000,0 );
   fitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
   fitnt->Branch("chisqmin",&chisqmin,"chisqmin/D");
   fitnt->Branch("chisqtrue0",&chisqtrue0,"chisqtrue0/D");
@@ -261,15 +255,14 @@ int main(int argc, char ** argv)
   fitnt->Branch("bestfitFullChisq1", &bestfitFullChisq1 );
   fitnt->Branch("chisqminFullChisq",&chisqminFullChisq);
   fitnt->Branch("ToyID",&ToyID);
-  
-  //fitnt->Branch("hErecoToy_1Rmu","TH1F",&hErecoToy_1Rmu,32000,0);
-  // fitnt->Branch("hErecoToy_1Re",&hErecoToy_1Re);
-  // fitnt->Branch("hErecoToy_RHC1Rmu",&hErecoToy_RHC1Rmu);
-  // fitnt->Branch("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
-  // fitnt->Branch("hErecoToy2D_1Rmu",&hErecoToy2D_1Rmu);
-  // fitnt->Branch("hErecoToy2D_1Re",&hErecoToy2D_1Re);
-  // fitnt->Branch("hErecoToy2D_RHC1Rmu",&hErecoToy2D_RHC1Rmu);
-  // fitnt->Branch("hErecoToy2D_RHC1Re",&hErecoToy2D_RHC1Re);
+  fitnt->Branch("hErecoToy_1Rmu",     "TH1F",&hErecoToy_1Rmu,     32000,0);
+  fitnt->Branch("hErecoToy_1Re",      "TH1F",&hErecoToy_1Re,      32000,0);
+  fitnt->Branch("hErecoToy_RHC1Rmu",  "TH1F",&hErecoToy_RHC1Rmu,  32000,0);
+  fitnt->Branch("hErecoToy_RHC1Re",   "TH1F",&hErecoToy_RHC1Re,   32000,0);
+  fitnt->Branch("hErecoToy2D_1Rmu",   "TH2F",&hErecoToy2D_1Rmu,   32000,0);
+  fitnt->Branch("hErecoToy2D_1Re",    "TH2F",&hErecoToy2D_1Re,    32000,0);
+  fitnt->Branch("hErecoToy2D_RHC1Rmu","TH2F",&hErecoToy2D_RHC1Rmu,32000,0);
+  fitnt->Branch("hErecoToy2D_RHC1Re", "TH2F",&hErecoToy2D_RHC1Re, 32000,0);
  
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
@@ -297,10 +290,10 @@ int main(int argc, char ** argv)
        // Fill toy histograms of osc params
        util::OscParams::Instance()->FillOscToyHisto(ph);
        
-       // // Reset input true params and add true oscillation params
-       // iparm->Clear();
-       // PhysParamList true_oscillation_params = fparm->AsPhysParamList("current");
-       // iparm->Append(true_oscillation_params);
+       // Reset input true params and add true oscillation params
+       iparm->Clear();
+       PhysParamList true_oscillation_params = fparm->AsPhysParamList("current");
+       iparm->Append(true_oscillation_params);
        
        // Loop over toys
        bool applied_negevents_condition = true;
@@ -350,30 +343,30 @@ int main(int argc, char ** argv)
      
      FitMarginalization *fitmarg = new FitMarginalization();   
      
-     // // Reset all the variables
-    truepar0=-999;
-    truepar1=-999;    
-    // nfits=-999;
-    // nchisqcalls=-999;
-    // niterations=-999;
-    // fitstatus=-999;
-    // chisqmin=conv::kALargeNum;
-    chisqtrue0=conv::kALargeNum;
-    // chisqtrue1=conv::kALargeNum;
-    // deltachisqtrue=conv::kALargeNum;
-    // bestfit0=-999;
-    // bestfit1=-999;
-    // bestfiterrNeg0=-999;
-    // bestfiterrNeg1=-999;
-    // bestfiterrPos0=-999;
-    // bestfiterrPos1=-999;
-    // bestfiterrSym0=-999;
-    // bestfiterrSym1=-999;  
-    // bestfitFullChisq0=-999;
-    // bestfitFullChisq1=-999;
-    // chisqminFullChisq=conv::kALargeNum;
-
+     // Reset all the variables
+     truepar0=-999;
+     truepar1=-999;    
+     nfits=-999;
+     nchisqcalls=-999;
+     niterations=-999;
+     fitstatus=-999;
+     chisqmin=conv::kALargeNum;
+     chisqtrue0=conv::kALargeNum;
+     chisqtrue1=conv::kALargeNum;
+     deltachisqtrue=conv::kALargeNum;
+     bestfit0=-999;
+     bestfit1=-999;
+     bestfiterrNeg0=-999;
+     bestfiterrNeg1=-999;
+     bestfiterrPos0=-999;
+     bestfiterrPos1=-999;
+     bestfiterrSym0=-999;
+     bestfiterrSym1=-999;  
+     bestfitFullChisq0=-999;
+     bestfitFullChisq1=-999;
+     chisqminFullChisq=conv::kALargeNum;
    
+     // Perform the fit w/ marginalization
      util::PerformMargFit(argc,argv,fitmarg,skexp,skobs_fakedata); 
      
      nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
@@ -385,7 +378,6 @@ int main(int argc, char ** argv)
      
      bestfiterrSym0 = fitmarg->GetParamBestFitErrSym(0);
      bestfiterrSym1 = fitmarg->GetParamBestFitErrSym(1);
-
      
      // Get true chisq 
      
@@ -398,7 +390,6 @@ int main(int argc, char ** argv)
      truepar0 = fparm->InitValue(freepar0);
      if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
      
-     //chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(input_deltacp,truepar1,skobs_fakedata,true);  // TODO
      chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  // TODO
      
      cout << endl;
@@ -406,15 +397,6 @@ int main(int argc, char ** argv)
      cout << "truepar0 = " << truepar0 << endl;
      cout << "truepar1 = " << truepar1 << endl;
      cout << endl;
-
-     cout << "runopt.Freeparname0() = " << runopt.Freeparname0() << endl;
-     cout << "runopt.Freeparname1() = " << runopt.Freeparname1() << endl;
-     cout << util::AsString(freepar0) << " " << util::AsString(freepar1) << endl;
-     cout << endl;
-     
-
-
-
 
      // Get Best Fit point
      bestfit0 = fitmarg->GetParamBestFit(0); 
@@ -436,51 +418,47 @@ int main(int argc, char ** argv)
      
      
 
-
-
-
-     //      // Get the fakedata histogram
+     // Get the fakedata histogram
+     for(int is = 0; is < kns; is++) {
+       SuperkSample_t s = kSKSamples[is];
+       if(s == kSKsUndefined) continue;
+    
+#ifndef __USE_2D_TEMPLATES__
+       else if(s == kSKsRHCFCFV1RingMuLike)
+      	 hErecoToy_RHC1Rmu = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
+       else if(s == kSKsRHCFCFV1RingELike)
+      	 hErecoToy_RHC1Re = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
+       else if(s == kSKsFCFV1RingMuLike)
+      	 hErecoToy_1Rmu = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
+       else if(s == kSKsFCFV1RingELike)
+      	 hErecoToy_1Re = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
+       //cout << "    " << util::AsStringCompact(s) << endl;
      
-     //      for(int is = 0; is < kns; is++) {
-     //        SuperkSample_t s = kSKSamples[is];
-     //        if(s == kSKsUndefined) continue;
+#else
+       else if(s == kSKsRHCFCFV1RingMuLike)
+	 hErecoToy2D_RHC1Rmu = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+       else if(s == kSKsRHCFCFV1RingELike)
+      	 hErecoToy2D_RHC1Re = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+       else if(s == kSKsFCFV1RingMuLike)
+      	 hErecoToy2D_1Rmu = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+       else if(s == kSKsFCFV1RingELike)
+      	 hErecoToy2D_1Re = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+       //cout << "    " << util::AsStringCompact(s) << endl;      
+#endif
+     }
      
-     // #ifndef __USE_2D_TEMPLATES__
-     //        else if(s == kSKsRHCFCFV1RingMuLike)
-     // 	 hErecoToy_RHC1Rmu = skobs_fakedata->ErecoSpectrum(s);
-     //        else if(s == kSKsRHCFCFV1RingELike)
-     // 	 hErecoToy_RHC1Re = skobs_fakedata->ErecoSpectrum(s);
-     //        else if(s == kSKsFCFV1RingMuLike)
-     // 	 hErecoToy_1Rmu = skobs_fakedata->ErecoSpectrum(s);
-     //        else if(s == kSKsFCFV1RingELike)
-     // 	 hErecoToy_1Re = skobs_fakedata->ErecoSpectrum(s);
-     //        //cout << "    " << util::AsStringCompact(s) << endl;
+     // Fill the output tree
      
-     // #else
-     //        else if(s == kSKsRHCFCFV1RingMuLike)
-     // 	 hErecoToy2D_RHC1Rmu = skobs_fakedata->TwoDSpectrum(s);
-     //        else if(s == kSKsRHCFCFV1RingELike)
-     // 	 hErecoToy2D_RHC1Re = skobs_fakedata->TwoDSpectrum(s);
-     //        else if(s == kSKsFCFV1RingMuLike)
-     // 	 hErecoToy2D_1Rmu = skobs_fakedata->TwoDSpectrum(s);
-     //        else if(s == kSKsFCFV1RingELike)
-     // 	 hErecoToy2D_1Re = skobs_fakedata->TwoDSpectrum(s);
-     //        //cout << "    " << util::AsStringCompact(s) << endl;      
-     // #endif
-     //      }
-     
-     // // Fill the output tree
-     
-     // if(fitmarg->IsFit2D()){
-     //   hchisq2D_out = (TH2D*)fitmarg->GetChisqMarg2D()->Clone("hchisq2D");
-     //   hdeltachisq2D_out = (TH2D*)fitmarg->GetDeltaChisqMarg2D()->Clone("hdeltachisq2D");
-     //   //if(minimizeHisto) hstep2D_out = (TH2F*)fitmarg->GetChisqStep_2D()->Clone("hstep2D");
-     // }
-     // else{
-     //   hchisq1D_out = (TH1D*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
-     //   hdeltachisq1D_out = (TH1D*)fitmarg->GetDeltaChisqMarg1D()->Clone("hdeltachisq1D");
-     //   //if(minimizeHisto) hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
-     // }
+     if(fitmarg->IsFit2D()){
+       hchisq2D_out = (TH2F*)fitmarg->GetChisqMarg2D()->Clone("hchisq2D");
+       hdeltachisq2D_out = (TH2F*)fitmarg->GetDeltaChisqMarg2D()->Clone("hdeltachisq2D");
+       hstep2D_out = (TH2F*)fitmarg->GetChisqStep_2D()->Clone("hstep2D");
+     }
+     else{
+       hchisq1D_out = (TH1F*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
+       hdeltachisq1D_out = (TH1F*)fitmarg->GetDeltaChisqMarg1D()->Clone("hdeltachisq1D");
+       hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
+     }
      
      fitnt->Fill();
      
@@ -543,14 +521,14 @@ int main(int argc, char ** argv)
      delete skobs_fakedata;  
      fitmarg->CleanUp();
      delete fitmarg;
-     //delete hErecoToy_1Rmu;
-     //delete hErecoToy_1Re;
-     //delete hErecoToy_RHC1Rmu;
-     //delete hErecoToy_RHC1Re;
-     //delete hErecoToy2D_1Rmu;
-     //delete hErecoToy2D_1Re;
-     //delete hErecoToy2D_RHC1Rmu;
-     //delete hErecoToy2D_RHC1Re;
+     delete hErecoToy_1Rmu;
+     delete hErecoToy_1Re;
+     delete hErecoToy_RHC1Rmu;
+     delete hErecoToy_RHC1Re;
+     delete hErecoToy2D_1Rmu;
+     delete hErecoToy2D_1Re;
+     delete hErecoToy2D_RHC1Rmu;
+     delete hErecoToy2D_RHC1Re;
      
   } // loop over toys
   
