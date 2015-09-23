@@ -358,7 +358,7 @@
     
     <best_fit_values>     
       <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_3pc_nue_to_numu.root </filename>
-      <objname>    postfit_params   </objname>
+      <objname>    prefit_params   </objname>
       <!-- <objname>    prefit_params   </objname> --> 
       <objtype>    TVectorD        </objtype>
     </best_fit_values>
@@ -368,7 +368,7 @@
     -->
     <covariance_matrix>
       <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_3pc_nue_to_numu.root </filename>
-      <objname>    postfit_cov       </objname>
+      <objname>    prefit_cov       </objname>
       <!-- <objname>    prefit_cov       </objname> -->
       <objtype>    TMatrixD         </objtype>
     </covariance_matrix>
@@ -377,7 +377,7 @@
     <disap>
       <best_fit_values>
 	<filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_normnue0p03.root </filename>
-        <objname>    postfit_params   </objname>
+        <objname>    prefit_params   </objname>
         <objtype>    TVectorD        </objtype>
       </best_fit_values>
       <!--
@@ -385,7 +385,7 @@
       -->
       <covariance_matrix>
 	<filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_normnue0p03.root </filename>
-        <objname>    postfit_cov       </objname>    
+        <objname>    prefit_cov       </objname>    
         <objtype>    TMatrixD         </objtype>
       </covariance_matrix>
     </disap>
@@ -393,7 +393,7 @@
     <app>
       <best_fit_values>
 	<filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_normnue0p03.root </filename>
-        <objname>    postfit_params   </objname>
+        <objname>    prefit_params   </objname>
         <objtype>    TVectorD         </objtype>
       </best_fit_values>
       <!--           
@@ -401,7 +401,7 @@
       -->
       <covariance_matrix>
 	<filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_normnue0p03.root </filename>
-        <objname>    postfit_cov       </objname>    
+        <objname>    prefit_cov       </objname>    
         <objtype>    TMatrixD         </objtype>
       </covariance_matrix>
     </app>

@@ -359,7 +359,7 @@
     <best_fit_values>     
       <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_3pc_nue_to_numu.root </filename>
       <objname>    postfit_params   </objname>
-      <!-- <objname>    prefit_params   </objname> --> 
+      <!-- <objname>    postfit_params   </objname> --> 
       <objtype>    TVectorD        </objtype>
     </best_fit_values>
     
@@ -369,7 +369,7 @@
     <covariance_matrix>
       <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_3pc_nue_to_numu.root </filename>
       <objname>    postfit_cov       </objname>
-      <!-- <objname>    prefit_cov       </objname> -->
+      <!-- <objname>    postfit_cov       </objname> -->
       <objtype>    TMatrixD         </objtype>
     </covariance_matrix>
    
@@ -449,8 +449,7 @@
     <weight_splines_2d>
         <one_mu_ring>
             <filename>
-                official/2015/xsec/splines_v8_1Rmu.root
-                <!-- official/2015/xsec/2d_splines/theta/splines_v5_1Rmu.root -->
+                official/2015/xsec/2d_splines/theta/1bin/splines_v5_1Rmu.root
             </filename>
         </one_mu_ring>
         <one_e_ring>
@@ -461,8 +460,7 @@
         
         <one_mu_ring_rhc>
             <filename>
-                official/2015/xsec/splines_v8_RHC1Rmu.root
-                <!-- official/2015/xsec/2d_splines/theta/splines_v5_RHC1Rmu.root -->
+                official/2015/xsec/2d_splines/theta/1bin/splines_v5_RHC1Rmu.root
             </filename>
         </one_mu_ring_rhc>
         <one_e_ring_rhc>
