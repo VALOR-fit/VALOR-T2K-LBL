@@ -27,6 +27,8 @@ copy-scripts-to-bin: FORCE
 	@echo " "
 	@echo "** Copying scripts to bin..."
 	cp ${T2KOSCANA}/make/valor_t2xk-config ${T2KOSCANA}/bin
+	cp ${T2KOSCANA}/root/root2k ${T2KOSCANA}/bin
+	cp ${T2KOSCANA}/root/pyroot2k ${T2KOSCANA}/bin
 
 build-fitter: FORCE
 	@echo " "

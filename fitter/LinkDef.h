@@ -14,10 +14,8 @@
 #pragma link C++ enum  valor::conv::SuperkMode_t;
 
 
-#pragma link C++ class valor::util::OscParams;
 #pragma link C++ class valor::util::ArrIdx;
 
-#pragma link C++ class valor::RunOpt;
 #pragma link C++ class valor::T2KPhysicalParameterLimits;
 #pragma link C++ class valor::T2KOpt;
 

@@ -9,7 +9,7 @@ ChangeLog:
 //____________________________________________________________________________
 
 
-#include "UtlForMacros.h"
+#include "UtlForMacrosT2XK.h"
 
 #include "SuperkExpectation.h"
 #include "SuperkObservation.h"
@@ -18,11 +18,10 @@ ChangeLog:
 #include "SuperkDetectorFSI.h"
 #include "FitMarginalization.h"
 #include "Build.h"
-#include "UtlForMacros.h"
-#include "OscParams.h"
-#include "RunOpt.h"
-#include "Utilities/Env.h"
 
+#include "Utilities/RunOpt.h"
+#include "Utilities/Env.h"
+#include "Utilities/OscParams.h"
 #include "Conventions/Opt.h"
 #include "Conventions/PhysParamId.h"
 #include "Conventions/PhysHypothesisId.h"
@@ -45,48 +44,6 @@ using std::string;
 using namespace valor;
 using namespace valor::conv;
 
-//____________________________________________________________________________
-const char * valor::util::FormFilePath(const char * file, const char * dir)
-{
-  FileStat_t dummy;
-  const char * filename = Form("%s/%s/%s", gSystem->Getenv("T2KOSCANA"), dir, file);
-  if(gSystem->GetPathInfo(filename, dummy)) {
-    cerr << "File not found: " << filename << endl;
-    exit(-1);
-  }
-  return filename; 
-}
-//____________________________________________________________________________
-string valor::util::SysThrowIdToString(unsigned int tweak_systematics)
-{
-  string tweak_sys_str;
-  switch(tweak_systematics)
-    {
-    case(0):
-      tweak_sys_str = "None"; break;
-    case(1):
-      tweak_sys_str = "All"; break;
-    case(2):
-      tweak_sys_str = "Special low energy numu flux increase"; break;
-    case(3):
-      tweak_sys_str = "Tweak all but SK and FSI"; break;
-    case(4):
-      tweak_sys_str = "NC1pi norm = 0.5"; break;
-    case(5):
-      tweak_sys_str = "High energy >1.5 GeV flux increase"; break;
-    case(6):
-      tweak_sys_str = "BANFF"; break;
-    case(7):
-      tweak_sys_str = "XSec"; break;
-    case(8):
-      tweak_sys_str = "SK+FSI"; break;
-    default:
-      cerr << "SysThrowIdToString() tweak_systematics = " << tweak_systematics
-	   << " not implemented" << endl;
-      exit(-1);
-    }
-  return tweak_sys_str;
-}
 //____________________________________________________________________________
 void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectation * skexp, bool print)
 {
@@ -464,17 +421,6 @@ void valor::util::SetMassHierarchy(SuperkExpectation * skexp)
   ////save it
   //if(OscParams::Instance()->hToy_MH)
   //OscParams::Instance()->hToy_MH->Fill(OscParams::Instance()->iMH + conv::kASmallNum);
-}
-//____________________________________________________________________________
-TH2D * valor::util::GetTH2DFromTFile(TFile * f, const char * name)
-{
-  TH2D * h = 0;
-  f->GetObject(name, h);
-  if(!h || h->IsZombie()) {
-    cerr << "Error: the histogram " << name << " hasn't been found" << endl;
-    exit(1);
-  }
-  return h;
 }
 //____________________________________________________________________________
 //____________________________________________________________________________
