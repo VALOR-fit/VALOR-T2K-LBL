@@ -44,8 +44,8 @@ void run_fit_marginalization_readbinary_joint
  int          first_experiment         = 0, //4404, //4739,                       /* */
  int          last_experiment          = 0, //4404, //4739,                       /* */
 
- const char * xmlfile = "data_run1to4/data_newstruct.xml",
- //const char * xmlfile = "data_run1to6/data.xml",
+ //const char * xmlfile = "data_run1to4/data_newstruct.xml",
+ const char * xmlfile = "data_run1to6/data.xml",
  //const char * xmlfile = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/2015_v2.0.0_evolution/inputs/data_run1to6/skdata_run1to6.xml",
 
  const char * rootfile = "../outputs/test/toymc_prova_joint-0.root",
@@ -612,6 +612,7 @@ void run_fit_marginalization_readbinary_joint
     fitmarg->SetTagFileName(infilename);
     fitmarg->SetFileID(nfiles);
     
+
     double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
     double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
     int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
@@ -665,7 +666,7 @@ void run_fit_marginalization_readbinary_joint
     fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
     //fitmarg->SetExtractStartPt("GridFix");
     fitmarg->SetExtractStartPt("Single");
-    //fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
     double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
     double bestfit0_2 = fitmarg->GetParamBestFit(0);
@@ -697,7 +698,7 @@ void run_fit_marginalization_readbinary_joint
     fitmarg->SetGridStartRange(+TMath::Pi()-conv::kASmallNum,+TMath::Pi(),0.,0.);
     //fitmarg->SetExtractStartPt("GridFix");
     fitmarg->SetExtractStartPt("Single");
-    //fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
     double chisqmin_3 = (double)fitmarg->GetChisqBestFit();
     double bestfit0_3 = fitmarg->GetParamBestFit(0);
@@ -772,7 +773,7 @@ void run_fit_marginalization_readbinary_joint
     deltachisq0BF = chisqtrue0 - chisqmin;
  
 
-
+ 
     // Get the fakedata histogram
 
     for(int is = 0; is < kns; is++) {
