@@ -6,9 +6,9 @@
 
 #
 #
-PACKAGE_LIB                   = $(LIBNAME)-$(T2KANA_VERSION).$(DllSuf)
-PACKAGE_LIBNOVRS              = $(LIBNAME).$(DllSuf)
-PACKAGE_LIBMACLINK            = $(LIBNAME).$(DllLinkSuf)
+PACKAGE_LIB                   = $(T2KOSCANA)/lib/$(LIBNAME)-$(VALOR_APP_VERSION).$(DllSuf)
+PACKAGE_LIBNOVRS              = $(T2KOSCANA)/lib/$(LIBNAME).$(DllSuf)
+PACKAGE_LIBMACLINK            = $(T2KOSCANA)/lib/$(LIBNAME).$(DllLinkSuf)
 
 PACKAGE_ALL_SOURCES          := $(wildcard *.cxx)
 DICTGEN_HEADERS              := $(addsuffix .h, $(basename $(PACKAGE_ALL_SOURCES)))

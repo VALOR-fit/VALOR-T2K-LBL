@@ -8,7 +8,7 @@ MAKEFILE = Makefile
 
 # Include machine specific flags and locations (inc. files & libs)
 #
-include Make.include
+include ${T2KOSCANA}/make/Make.include
 
 PACKAGE           = T2KNuOsc
 DICTIONARY        = _RootDict$(PACKAGE)
@@ -18,7 +18,7 @@ all : rootcint lib lib-link
 
 # Include standard package makefile targets
 #
-include Make.template
+include ${T2KOSCANA}/make/Make.template
 
 FORCE:
 

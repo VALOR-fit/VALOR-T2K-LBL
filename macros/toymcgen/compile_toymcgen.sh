@@ -8,6 +8,6 @@ echo $command
 $command
 
 # Order of lirbaries is important here. VALOR libs must come before ROOT/logcpp
-command="g++ -W -Wall -fsigned-char  -O2   -Wno-strict-aliasing  generate_toymc_ensemble_exe.o -L$T2KOSCANA/fitter/ -L${VALOR_FMWK}/lib/  -lValorConv -lValorFitCore -lValorMesg -lValorParse -lValorUtil -lT2KNuOsc -o generate_toymc_ensemble.exe  -llog4cpp `root-config --evelibs --ldflags` -lMinuit -lMinuit2 -lHistPainter -lXMLParser -lXMLIO "
+command="g++ -W -Wall -fsigned-char  -O2   -Wno-strict-aliasing  generate_toymc_ensemble_exe.o -L$T2KOSCANA/fitter/ -L${VALOR_FMWK}/lib/  -lValorConv -lValorFitCore -lValorMesg -lValorParse -lValorUtil -lT2KNuOsc -o generate_toymc_ensemble.exe -L/opt/local/lib -llog4cpp `root-config --evelibs --ldflags` -lMinuit -lMinuit2 -lHistPainter -lXMLParser -lXMLIO "
 echo $command
 $command
