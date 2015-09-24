@@ -92,7 +92,7 @@ void valor::RunOpt::Init(void)
   fHierStr[0] = "nh";
   fHierStr[1] = "ih";
   //common options
-  fConfigFile      = util::FormFilePath("analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml", "config");
+  fConfigFile      = util::FormFilePath("", "config");
   fFileTag         = "tag";
   fRun             = 0;
   //toy options
@@ -268,18 +268,48 @@ void valor::RunOpt::ReadToyOptions()
   else
       fNExperiments = fLastExperiment - fFirstExperiment + 1;
 
-  if(fParser->OptionExists("enable-stat-fluct"))
+  if( fParser->OptionExists("enable-stat-fluct") &&
+      fParser->OptionExists("disable-stat-fluct")
+      ){
+    cerr << endl;
+    cerr << "Statistical fluctuations are both enabled and disabled" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  else if(fParser->OptionExists("enable-stat-fluct"))
     fStatFluctuations = true;
   else if(fParser->OptionExists("disable-stat-fluct"))
     fStatFluctuations = false;
+  else{
+    cerr << endl;
+    cerr << "You must enable or disable the statistical fluctuations" << endl;
+    cerr << "Use --enable-stat-fluct or --disable-stat-fluct" << endl;
+    cerr << endl;
+    exit(1);
+  }
 
   if(fParser->OptionExists("syst-tweak-mode"))
     fSystTweakMode = fParser->ArgAsInt("syst-tweak-mode");
-
-  if(fParser->OptionExists("enable-rethrow-unphysical-toys"))
+  
+  if( fParser->OptionExists("enable-rethrow-unphysical-toys") &&
+      fParser->OptionExists("disable-rethrow-unphysical-toys")
+      ){
+    cerr << endl;
+    cerr << "Rethrowing of physical and unphysical toys is both enabled and disabled" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  else if(fParser->OptionExists("enable-rethrow-unphysical-toys"))
     fRethrowIfUnphysical = true;
   else if(fParser->OptionExists("disable-rethrow-unphysical-toys"))
     fRethrowIfUnphysical = false;
+  else{
+    cerr << endl;
+    cerr << "You must enable or disable the rethrowing of unphysical toys" << endl;
+    cerr << "Use --enable-rethrow-unphysical-toys or --disable-rethrow-unphysical-toys" << endl;
+    cerr << endl;
+    exit(1);
+  }
 
   if(fParser->OptionExists("enable-verbose-syst-throws"))
     fVerboseSystThrows = true;
@@ -350,10 +380,26 @@ void valor::RunOpt::Read3FOscParamsOptions()
       fDm23sq[i] = fParser->ArgAsDouble(Form("dm23sq-%s", fHierStr[i].c_str()));
   }//i
 
-  if(fParser->OptionExists("synch-ih-to-nh"))
+
+  if( fParser->OptionExists("enable-synch-osc-ih-to-nh") && 
+      fParser->OptionExists("disable-synch-osc-ih-to-nh") 
+      ){
+    cerr << endl;
+    cerr << "You both enabled and disabled the synchronization of IH to NH osc params" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  if(fParser->OptionExists("enable-synch-osc-ih-to-nh"))
     fSynchronizeIHtoNH = true;
-  else 
+  else if( fParser->OptionExists("disable-synch-osc-ih-to-nh") )
     fSynchronizeIHtoNH = false;
+  else{
+    cerr << endl;
+    cerr << "You didn't enabled or disabled the synchronization of IH to NH osc params" << endl;
+    cerr << "Use --enable-synch-osc-ih-to-nh or --disable-synch-osc-ih-to-nh" << endl;
+    cerr << endl;
+    exit(1);
+  }
 
   if(fParser->OptionExists("beta-bar"))
     fBetaBar = fParser->ArgAsDouble("beta-bar");
@@ -361,16 +407,40 @@ void valor::RunOpt::Read3FOscParamsOptions()
   if(fParser->OptionExists("normal-mass-hierarchy-prior"))
     fPriorProbNH = fParser->ArgAsDouble("normal-mass-hierarchy-prior");
   
-  if(fParser->OptionExists("enable-marg-mass-hierarchy"))
+  if( fParser->OptionExists("enable-marg-mass-hierarchy") &&
+      fParser->OptionExists("disable-marg-mass-hierarchy")
+      ){
+    cerr << endl;
+    cerr << "You both disabled and enabled the marginalization of the mass hierarchy" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  else if(fParser->OptionExists("enable-marg-mass-hierarchy"))
     fMargMH = true;
   else if(fParser->OptionExists("disable-marg-mass-hierarchy"))
     fMargMH = false;
-
+  else{
+    cerr << endl;
+    cerr << "You must enable or disable the marginalization of mass hierarchy" << endl;
+    cerr << "Use --enable-marg-mass-hierarchy or --disable-marg-mass-hierarchy" << endl;
+    cerr << endl;
+    exit(1);
+  }
 
   // Set the priors
 
   // NEW 
-  if(fParser->OptionExists("prior-reactors")){ 
+  
+  if( fParser->OptionExists("prior-t2konly") && 
+      fParser->OptionExists("prior-reactors")
+      ){
+    cerr << endl;
+    cerr << "Both T2K-only and T2K+reactors priors are called" << endl;
+    cerr << "You can call only one of them" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  else if(fParser->OptionExists("prior-reactors")){ 
 
     fMargMixing12        = true;
     fPriorMixing12       = "gaus";   
@@ -448,6 +518,7 @@ void valor::RunOpt::Read3FOscParamsOptions()
       exit(1);
     }
   }
+  
 
   if(fParser->OptionExists("prior-mixing12")){
     fMargMixing12 = true;
@@ -495,8 +566,6 @@ void valor::RunOpt::Read3FOscParamsOptions()
     fPriorParDeltaCP[1] = (double)atof(input[2].c_str());
   }
 
-
-
   // Synchronize IH to NH osc params
   if(fSynchronizeIHtoNH){
     fMix12[1]  = fMix12[0];
@@ -537,9 +606,6 @@ void valor::RunOpt::Read3FOscParamsOptions()
 //____________________________________________________________________________
 void valor::RunOpt::ReadFitMargOptions()
 {
-  if(fParser->OptionExists("hypothesis"))
-    fHypothesis = fParser->ArgAsString("hypothesis");
-
   if(fParser->OptionExists("do-toys")){
     fDoToys = true;
   }
@@ -556,7 +622,7 @@ void valor::RunOpt::ReadFitMargOptions()
     }
     else{
       cerr << endl;
-      cerr << "Neither root or xml file is given" << endl;
+      cerr << "You not doing toys on the fly but you didn't pass neither root nor xml file" << endl;
       cerr << endl;
       exit(1);
     }
@@ -606,11 +672,9 @@ void valor::RunOpt::ReadFitMargOptions()
   else
     fDoMargMH = false;
   
-  if(fParser->OptionExists("marg-mh-normal"))
-    fHierarchy_marg = "normal";
-  else
-    fHierarchy_marg = "inverted";
-
+  if(fParser->OptionExists("mass-hierarchy-marg"))
+    fHierarchy_marg = fParser->ArgAsString("mass-hierarchy-marg");
+  
   if(fParser->OptionExists("type-error"))
     fTypeError = fParser->ArgAsString("type-error");
   
