@@ -144,9 +144,11 @@ foreach (@ARGV) {
 
 ###########################Variables to set in the script ##############################
 
-#@array_freepar_user = (-3.14); # run only on these points. If empty run on all the grid points
-#@array_freepar_user = (-3.14, 0.); # run only on these points. If empty run on all the grid points
-@array_freepar_user = (); # run only on these points. If empty run on all the grid points
+#@array_freepar0_user = (-3.14); # run only on these points. If empty run on all the grid points
+#@array_freepar0_user = (-3.14, 0.); # run only on these points. If empty run on all the grid points
+@array_freepar0_user = (); # run only on these points. If empty run on all the grid points
+
+@array_freepar1_user = (); # run only on these points. If empty run on all the grid points
 
 ########################################################################################
 
@@ -232,8 +234,8 @@ $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # M
 $npt_freepar0      = 9            unless defined $npt_freepar0; # of free parameter points to scan
 
 $freepar1          = ""     unless defined $freepar1;
-$minfreepar1       = 0.  unless defined $minfreepar1;  # Min free param allowed value
-$maxfreepar1       = 0.  unless defined $maxfreepar1;  # Max free param allowed value
+$minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
+$maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
 $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
 
 $masshierarchy_marg = "normal"     unless defined $masshierarchy_marg;
@@ -245,27 +247,37 @@ $test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" 
 ########################################################################################
 
 
+print "\nThe free parameters of the fit are:\n";
+print "$freepar0\n";
+print "$freepar1\n\n";
+
+
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
 
 # Set the grid of the free parameter
 
-if($freepar0=="deltacp"){
-    $freepar_first = -3.14159265358979312;
-    $freepar_last  = +3.14159265358979312;
-    $i_freepar     = 0;
-    $n_freepar     = 5;
-    $step_freepar  = ($freepar_last - $freepar_first) / ($n_freepar-1);
+if($freepar0 eq "deltacp"){
+    $freepar0_first = -3.14159265358979312;
+    $freepar0_last  = +3.14159265358979312;
+    $i_freepar0     = 0;
+    $n_freepar0     = 5;
+    $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
+    $init_freepar0  = $deltacp;
 }
-elsif($freepar0=="mixing13"){
+elsif($freepar0 eq "mixing13"){
+    $freepar0_first = 0.;
+    $freepar0_last  = 0.1;
+    $i_freepar0     = 0;
+    $n_freepar0     = 3;
+    $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
+    $init_freepar0  = $mix13;
+}
+elsif($freepar0 eq "mixing23"){
     print "\n The grid of $freepar0 for Feldman-Cousins is not defined yet\n";
     exit;
 }
-elsif($freepar0=="mixing23"){
-    print "\n The grid of $freepar0 for Feldman-Cousins is not defined yet\n";
-    exit;
-}
-elsif($freepar0=="dmsq23"){
+elsif($freepar0 eq "dmsq23"){
     print "\n The grid of $freepar0 for Feldman-Cousins is not defined yet\n";
     exit;
 }
@@ -274,45 +286,109 @@ else{
     exit;
 }
 
+if($freepar1 eq ""){
+    $freepar1_first = 0;
+    $freepar1_last  = 0;
+    $i_freepar1     = 0;
+    $n_freepar1     = 1;
+    $step_freepar1  = 0;
+    $init_freepar1  = -999;
+}
+elsif($freepar1 eq "deltacp"){
+    $freepar1_first = -3.14159265358979312;
+    $freepar1_last  = +3.14159265358979312;
+    $i_freepar1     = 0;
+    $n_freepar1     = 5;
+    $step_freepar1  = ($freepar1_last - $freepar1_first) / ($n_freepar1-1);
+    $init_freepar1  = $deltacp;
+}
+elsif($freepar1 eq "mixing13"){
+    $freepar1_first = 0.;
+    $freepar1_last  = 0.1;
+    $i_freepar1     = 0;
+    $n_freepar1     = 3;
+    $step_freepar1  = ($freepar1_last - $freepar1_first) / ($n_freepar1-1);
+    $init_freepar1  = $mix13;
+}
+elsif($freepar1 eq "mixing23"){
+    print "\n The grid of $freepar1 for Feldman-Cousins is not defined yet\n";
+    exit;
+}
+elsif($freepar1 eq "dmsq23"){
+    print "\n The grid of $freepar1 for Feldman-Cousins is not defined yet\n";
+    exit;
+}
+else{
+    print "\n The grid of $freepar1 for Feldman-Cousins is not defined\n";
+    exit;
+}
 
-# Fill the array of grid points
-
-my $array_freepar;
-$i_freepar     = 0;
-while($i_freepar < $n_freepar) {
-    $freepar = $freepar_first + $i_freepar * $step_freepar;
-    #$ifile_first = 0;
-    #$ifile_last  = $nexpts; # The "last" experiment is included
-    push @array_freepar, $freepar;
-    $i_freepar++;
+# Check if freepar1 = freepar0
+if($freepar1 eq $freepar0){
+    print "\nThe free parameter 0 is the same as the free parameter 1: $freepar0 - $freepar1\n";
+    exit;
 }
 
 
-# Loop over the grid points
 
-$i_freepar     = 0;
-while($i_freepar < $n_freepar) { 
+# Fill the array of grid points
+
+my $array_freepar0;
+$i_freepar0     = 0;
+while($i_freepar0 < $n_freepar0) {
+    $pt_freepar0 = $freepar0_first + $i_freepar0 * $step_freepar0;
+    #$ifile_first = 0;
+    #$ifile_last  = $nexpts; # The "last" experiment is included
+    push @array_freepar0, $pt_freepar0;
+    $i_freepar0++;
+}
+
+my $array_freepar1;
+$i_freepar1     = 0;
+while($i_freepar1 < $n_freepar1) {
+    $pt_freepar1 = $freepar1_first + $i_freepar1 * $step_freepar1;
+    #$ifile_first = 0;
+    #$ifile_last  = $nexpts; # The "last" experiment is included
+    push @array_freepar1, $pt_freepar1;
+    $i_freepar1++;
+}
+
+
+
+################### Loop over the grid points ################
+
+# parameter 1
+
+$i_freepar1     = 0;
+while($i_freepar1 < $n_freepar1) { 
     
-    $freepar = $array_freepar[$i_freepar];
-
+    $pt_freepar1 = $array_freepar1[$i_freepar1];
+    
     # if running single point
     if($run_fullgrid==0){
-	$n_freepar = 1;
-	$freepar = $deltacp;
+	$n_freepar1 = 1;
+	$pt_freepar1 = $init_freepar1;
     }
-    
-    print "\n";
-    print "Point of freepar $i_freepar: $freepar \n";
-        
+
+    if   ($freepar1 eq "deltacp") { $deltacp  = $pt_freepar1; }
+    elsif($freepar1 eq "mixing13"){ $mix13 = $pt_freepar1; }
+    elsif($freepar1 eq "mixing23"){ $mix23 = $pt_freepar1; }
+    elsif($freepar1 eq "dmsq23")  { $dmsq23   = $pt_freepar1; }    
+    elsif($freepar1 eq ""){}
+    else{
+	print "\n $freepar1 is not defined\n";
+	exit;
+    }
+
     # Select grid points to run. If array_freepar_user is empty, then run all the points
-    my $n_freepar_user = @array_freepar_user;	
-    if($n_freepar_user>0){
+    my $n_freepar1_user = @array_freepar0_user;	
+    if($n_freepar1_user>0){
 	$skip_point = 0;
-	for (my $i=0; $i < $n_freepar_user; $i++) {
-	    #print "$array_freepar_user[$i] - $array_freepar[$i_freepar] \n";
-	    if( abs($array_freepar_user[$i] - $array_freepar[$i_freepar]) < 0.01 ){
-		print "Run the point $array_freepar[$i_freepar] \n"; 
-		print "user = $array_freepar_user[$i_freepar] / grid = $array_freepar[$i_freepar] \n"; 
+	for (my $i=0; $i < $n_freepar1_user; $i++) {
+	    #print "$array_freepar1_user[$i] - $array_freepar1[$i_freepar1] \n";
+	    if( abs($array_freepar1_user[$i] - $array_freepar1[$i_freepar1]) < 0.01 ){
+		print "Run the point $array_freepar1[$i_freepar1] \n"; 
+		print "user = $array_freepar1_user[$i_freepar1] / grid = $array_freepar1[$i_freepar1] \n"; 
 		$skip_point = 0;
 		last;
 	    }
@@ -322,186 +398,238 @@ while($i_freepar < $n_freepar) {
 	}
 	if($skip_point==1){
 	    print "Skip this point! \n";
-	    $i_freepar++;
+	    $i_freepar1++;
 	    next;
 	}
     }
-    
-    #
-    # Loop over the jobs (for each freepar point)
-    # Not used if toys are run. See code line $irun = $nruns;
-    #
-    
-    $irun = 0;
-    while($irun < $nruns) { # loop over the jobs
+
+
+    # parameter 0 
+ 
+    $i_freepar0     = 0;
+    while($i_freepar0 < $n_freepar0) { 
+        
+	$pt_freepar0 = $array_freepar0[$i_freepar0];
 	
-	$ifile_first = $irun * $nexpts;
-	$ifile_last  = $ifile_first + $nexpts - 1; # The "last" experiment is included
-	
+	# if running single point
+	if($run_fullgrid==0){
+	    $n_freepar0 = 1;
+	    $pt_freepar0 = $init_freepar0;
+	}
+    
+	if   ($freepar0 eq "deltacp") { $deltacp  = $pt_freepar0; }
+	elsif($freepar0 eq "mixing13"){ $mix13 = $pt_freepar0; }
+	elsif($freepar0 eq "mixing23"){ $mix23 = $pt_freepar0; }
+	elsif($freepar0 eq "dmsq23")  { $dmsq23   = $pt_freepar0; }    
+	elsif($freepar0 eq ""){}
+	else{
+	    print "\n $freepar0 is not defined\n";
+	    exit;
+	}
+
 	print "\n";
-	print "Submitting run: $irun \n";
-	print "first: $ifile_first \n";
-	print "last: $ifile_last \n";
+	print "Point of freepar0 $i_freepar0: $pt_freepar0 \n";
+	print "Point of freepar1 $i_freepar1: $pt_freepar1 \n";
+        
+	# Select grid points to run. If array_freepar_user is empty, then run all the points
+	my $n_freepar0_user = @array_freepar0_user;	
+	if($n_freepar0_user>0){
+	    $skip_point = 0;
+	    for (my $i=0; $i < $n_freepar0_user; $i++) {
+		#print "$array_freepar0_user[$i] - $array_freepar0[$i_freepar0] \n";
+		if( abs($array_freepar0_user[$i] - $array_freepar0[$i_freepar0]) < 0.01 ){
+		    print "Run the point $array_freepar0[$i_freepar0] \n"; 
+		    print "user = $array_freepar0_user[$i_freepar0] / grid = $array_freepar0[$i_freepar0] \n"; 
+		    $skip_point = 0;
+		    last;
+		}
+		else{		
+		    $skip_point = 1;
+		}
+	    }
+	    if($skip_point==1){
+		print "Skip this point! \n";
+		$i_freepar0++;
+		next;
+	    }
+	}
+    
 	
-	# Variable to set, not by the user
-	$dotoys = 0;                # Don't do toys on fly but read either xml or root files
-	$run = 0;                   # Do the same as for toys. Useless for both toys and fits
-	$stat_fluct_fit = 0;        # Useless for fits, since toys are read and not performed
-	$tweak_systematics_fit = 0; # Useless for fits, since toys are read and not performed
-	$tag_freepar = sprintf("fit_%s_%f-%1.0f",$tag,$freepar,$run);
-	$xml_file_freepar = sprintf("toy_%s_%f-%1.0f.xml",$tag,$freepar,$run);
-	$root_file_freepar = sprintf("toy_%s_%f-%1.0f.root",$tag,$freepar,$run);
+	#
+	# Loop over the jobs (for each freepar point)
+	# Not used if toys are run. See code line $irun = $nruns;
+	#
+	
+	$irun = 0;
+	while($irun < $nruns) { # loop over the jobs
+	    
+	    $ifile_first = $irun * $nexpts;
+	    $ifile_last  = $ifile_first + $nexpts - 1; # The "last" experiment is included
+	    
+	    print "\n";
+	    print "Submitting run: $irun \n";
+	    print "first: $ifile_first \n";
+	    print "last: $ifile_last \n";
+	    
+	    # Variable to set, not by the user
+	    $dotoys = 0;                # Don't do toys on fly but read either xml or root files
+	    $stat_fluct_fit = 0;        # Useless for fits, since toys are read and not performed
+	    $tweak_systematics_fit = 0; # Useless for fits, since toys are read and not performed
+	    $tag_freepar = sprintf("fit_%s_nexp_%d_%1.3f_%1.3f-job%1.0f",$tag,$nexpts,$pt_freepar0,$pt_freepar1,$irun);
+	    
+	    $program = "";
+	    $arguments = "./run_fit_marginalization_exe.exe --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dm12sq --dm23sq-nh $dm23sq --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --syst-tweak-mode $tweak_systematics_fit --fit-param-list \"$fitparamlist\" --marg-file \"$marg_file\" --nfiles-marg $nfiles_marg --ntoys-marg $nexpts_marg --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marg-mh \"$marg_hierarchy\" --type-error \"$type_error\"";
+	    
+	    $command = "$program $arguments $arguments_bool";
+	    
+	    #if(using_xml_file) { $command = " $command --use-xml-file $xml_file_freepar"; }
+	    #if(using_root_file){ $command = " $command --use-root-file $root_file_freepar"; }
+	    
+	    print "$command \n";
+	    
+	    ################################### Submit the job ##################################
+	    
+	    #
+	    # ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
+	    #
+	    if($resource eq "ETH-Monch") {
+		open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
+		print PBS "#!/bin/bash -l  \n";
+		#print PBS "#SBATCH --partition=dphys_compute_wk  \n";
+		print PBS "#SBATCH --partition=dphys_compute  \n";
+		#print PBS "#SBATCH --partition=dphys_largemem  \n";
+		print PBS "#SBATCH --nodes=1  \n";
+		print PBS "#SBATCH --ntasks-per-node=1  \n";
+		print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
+		print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
+		print PBS "$command \n";
+		close(PBS);
+		#`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+		#`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+		`sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+		#`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+	    }
+	    
+	    #
+	    # ETH (Brutus cluster)
+	    #
+	    if($resource eq "ETH-Brutus") {
+		open(PBS, ">$job_dir/$tag-$ijob.sh") or die("Can not create the PBS batch script");
+		print PBS "#!/bin/bash \n";
+		#print PBS "#PBS -N $tag-$irun \n";
+		#print PBS "#PBS -l cput=$cput \n";
+		#print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+		#print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+		#print PBS "#PBS -q prod \n";
+		#print PBS "#PBS -l walltime=$cput \n";
+		#print PBS "cd $job_dir \n";
+		#print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
+		print PBS "$command \n";
+		close(PBS);
+		`bsub -W 3:59 < $job_dir/$tag-$ijob.sh`;
+		#`bsub -W 1:59 < $job_dir/$tag-$ijob.sh`;
+		#`bsub -W 0:29 < $job_dir/$tag-$ijob.sh`;
+	    }
+	    
+	    #
+	    # RAL
+	    #
+	    if($resource eq "RAL") {
+		$source = `which bash`;
+		$fullprogram = `which root2k`;
+		$fullprogram = `readlink -m $fullprogram`;
+		$arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+		$arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
 		
-	$program = "";
-	$arguments = "./run_fit_marginalization_exe.exe --file-tag \"$tag_freepar\" --run \"$run\" --config-file \"$config_file\" --n-experiments $nexpts --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dm12sq --dm23sq-nh $dm23sq --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --syst-tweak-mode $tweak_systematics_fit --fit-param-list \"$fitparamlist\" --marg-file \"$marg_file\" --nfiles-marg $nfiles_marg --ntoys-marg $nexpts_marg --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marg-mh \"$marg_hierarchy\" --type-error \"$type_error\"";
-	
-	$command = "$program $arguments $arguments_bool";
-	
-	#if(using_xml_file) { $command = " $command --use-xml-file $xml_file_freepar"; }
-	#if(using_root_file){ $command = " $command --use-root-file $root_file_freepar"; }
-	
-	print "$command \n";
-	
-	################################### Submit the job ##################################
-	
-	#
-	# ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
-	#
-	if($resource eq "ETH-Monch") {
-	    open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
-	    print PBS "#!/bin/bash -l  \n";
-	    #print PBS "#SBATCH --partition=dphys_compute_wk  \n";
-	    print PBS "#SBATCH --partition=dphys_compute  \n";
-	    #print PBS "#SBATCH --partition=dphys_largemem  \n";
-	    print PBS "#SBATCH --nodes=1  \n";
-	    print PBS "#SBATCH --ntasks-per-node=1  \n";
-	    print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
-	    print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
-	    print PBS "$command \n";
-	    close(PBS);
-	    #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-	    #`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-	    `sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-	    #`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-	}
-	
-	#
-	# ETH (Brutus cluster)
-	#
-	if($resource eq "ETH-Brutus") {
-	    open(PBS, ">$job_dir/$tag-$ijob.sh") or die("Can not create the PBS batch script");
-	    print PBS "#!/bin/bash \n";
-	    #print PBS "#PBS -N $tag-$irun \n";
-	    #print PBS "#PBS -l cput=$cput \n";
-	    #print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-	    #print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-	    #print PBS "#PBS -q prod \n";
-	    #print PBS "#PBS -l walltime=$cput \n";
-	    #print PBS "cd $job_dir \n";
-	    #print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
-	    print PBS "$command \n";
-	    close(PBS);
-	    `bsub -W 3:59 < $job_dir/$tag-$ijob.sh`;
-	    #`bsub -W 1:59 < $job_dir/$tag-$ijob.sh`;
-	    #`bsub -W 0:29 < $job_dir/$tag-$ijob.sh`;
-	}
-	
-	#
-	# RAL
-	#
-	if($resource eq "RAL") {
-	    $source = `which bash`;
-	    $fullprogram = `which root2k`;
-	    $fullprogram = `readlink -m $fullprogram`;
-	    $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
-	    $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+		$consh   = "$job_dir/$tag_in-run_fit_marg-$ijob.consh";
+		$cndname = "$job_dir/$tag_in-run_fit_marg-$ijob.condor";
+		
+		open(CONSH,">$consh") or die("Cannot make shell script for Condor");
+		print CONSH "cd $job_dir \n";
+		print CONSH "$command \n";
+		close(CONSH);
+		
+		open(CND, ">$cndname") or die("Cannot create the Condor file");
+		print CND "Executable               = $source \n";
+		print CND "Arguments                = $consh \n";
+		print CND "Error                    = $job_dir/fit_marg_$tag_in-${ijob}_\$\(Process\).err \n";
+		print CND "Output                   = $job_dir/fit_marg_$tag_in-${ijob}_\$\(Process\).out \n";
+		print CND "Universe                 = vanilla \n";
+		print CND "Getenv                   = True \n";
+		print CND "should_transfer_files    = YES \n";
+		print CND "when_to_transfer_output  = ON_EXIT \n";
+		
+		print CND "InitialDir               = $job_dir \n";
+		
+		print CND "\nqueue\n";
+		
+		close(CND);
+		`condor_submit $cndname`;
+	    }
 	    
-	    $consh   = "$job_dir/$tag_in-run_fit_marg-$ijob.consh";
-	    $cndname = "$job_dir/$tag_in-run_fit_marg-$ijob.condor";
 	    
-	    open(CONSH,">$consh") or die("Cannot make shell script for Condor");
-	    print CONSH "cd $job_dir \n";
-	    print CONSH "$command \n";
-	    close(CONSH);
+	    #
+	    # RAL (SL5)
+	    #
+	    if($resource eq "OLDRAL") {
+		open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+		print PBS "#!/bin/bash \n";
+		print PBS "#PBS -N $tag-$irun \n";
+		print PBS "#PBS -l cput=$cput \n";
+		print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+		print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+		print PBS "#PBS -q prod \n";
+		print PBS "#PBS -l walltime=$cput \n";
+		print PBS "cd $job_dir \n";
+		print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
+		print PBS "$command \n";
+		close(PBS);
+		#`qsub -q prod $job_dir/$tag-$irun.pbs`;
+	    }
 	    
-	    open(CND, ">$cndname") or die("Cannot create the Condor file");
-	    print CND "Executable               = $source \n";
-	    print CND "Arguments                = $consh \n";
-	    print CND "Error                    = $job_dir/fit_marg_$tag_in-${ijob}_\$\(Process\).err \n";
-	    print CND "Output                   = $job_dir/fit_marg_$tag_in-${ijob}_\$\(Process\).out \n";
-	    print CND "Universe                 = vanilla \n";
-	    print CND "Getenv                   = True \n";
-	    print CND "should_transfer_files    = YES \n";
-	    print CND "when_to_transfer_output  = ON_EXIT \n";
+	    #
+	    # Oxford
+	    #
+	    if($resource eq "Oxford") {
+		open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+		print PBS "#!/bin/bash \n";
+		print PBS "#PBS -N $tag-$irun \n";
+		print PBS "#PBS -l cput=$cput \n";
+		print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+		print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+		print PBS "cd $job_dir \n";
+		print PBS "source $fmwk_dir/setup/setup_at_oxford.sh $fmwk_dir\n";
+		print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
+		print PBS "$command \n";
+		print PBS "mailoutput(){\n echo \"Check Oxford servers\" \n grep 'root2k' $job_dir/$tag-$irun.pbs \n }\n";
+		print PBS "mailoutput | mail -s \"run_fit_dcp job done!\" rajbatchjobresult\@gmail.com\n";
+		close(PBS);
+		`qsub $job_dir/$tag-$irun.pbs`;
+	    }    #
+	    # Grid
+	    #
+	    if($resource eq "Grid") {
+		print "Not supported just yet!\n";
+	    }
+	    #
+	    # interactive
+	    #
+	    if($resource eq "interactive") {
+		system($command);
+	    }
 	    
-	    print CND "InitialDir               = $job_dir \n";
 	    
-	    print CND "\nqueue\n";
+	    $irun++;
 	    
-	    close(CND);
-	    `condor_submit $cndname`;
-	}
+	} # loop over irun 
 	
+	$i_freepar0++;
 	
-	#
-	# RAL (SL5)
-	#
-	if($resource eq "OLDRAL") {
-	    open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
-	    print PBS "#!/bin/bash \n";
-	    print PBS "#PBS -N $tag-$irun \n";
-	    print PBS "#PBS -l cput=$cput \n";
-	    print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-	    print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-	    print PBS "#PBS -q prod \n";
-	    print PBS "#PBS -l walltime=$cput \n";
-	    print PBS "cd $job_dir \n";
-	    print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
-	    print PBS "$command \n";
-	    close(PBS);
-	    #`qsub -q prod $job_dir/$tag-$irun.pbs`;
-	}
-	
-	#
-	# Oxford
-	#
-	if($resource eq "Oxford") {
-	    open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
-	    print PBS "#!/bin/bash \n";
-	    print PBS "#PBS -N $tag-$irun \n";
-	    print PBS "#PBS -l cput=$cput \n";
-	    print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-	    print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-	    print PBS "cd $job_dir \n";
-	    print PBS "source $fmwk_dir/setup/setup_at_oxford.sh $fmwk_dir\n";
-	    print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
-	    print PBS "$command \n";
-	    print PBS "mailoutput(){\n echo \"Check Oxford servers\" \n grep 'root2k' $job_dir/$tag-$irun.pbs \n }\n";
-	    print PBS "mailoutput | mail -s \"run_fit_dcp job done!\" rajbatchjobresult\@gmail.com\n";
-	    close(PBS);
-	    `qsub $job_dir/$tag-$irun.pbs`;
-	}    #
-	# Grid
-	#
-	if($resource eq "Grid") {
-	    print "Not supported just yet!\n";
-	}
-	#
-	# interactive
-	#
-	if($resource eq "interactive") {
-	    system($command);
-	}
-	
+    } # loop over i_freepar0
 
-	$irun++;
-
-    } # loop over irun 
-	
-    $i_freepar++;
-
-} # loop over i_freepar
-
+    $i_freepar1++;
+    
+} # loop over i_freepar1
        
 
 
