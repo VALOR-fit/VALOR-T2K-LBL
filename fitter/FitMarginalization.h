@@ -125,14 +125,14 @@ class FitMarginalization
   //
 
   // NEW FHC+RHC JOINT 
-  const double GetMinOscParam(conv::PhysParamId_t physpar) const;
-  const double GetMaxOscParam(conv::PhysParamId_t physpar) const;
+  double GetMinOscParam(conv::PhysParamId_t physpar) const;
+  double GetMaxOscParam(conv::PhysParamId_t physpar) const;
   //
 
 
   // NEW 2D TEMPLATES (VARRAY)
-  const double GetNormPOT(conv::SuperkSample_t s);
-  const double GetPOT(conv::SuperkSample_t s);
+  double GetNormPOT(conv::SuperkSample_t s) const;
+  double GetPOT(conv::SuperkSample_t s) const;
   //
 
   void PrintPhysHypothesis(void);
@@ -413,7 +413,7 @@ class FitMarginalization
   int fNCallsCalcChisqMargPt; // # of calls of CalcChisqMargPt
   
   // NEW PRECISION
-  VALORArrayD *flikeVArray;
+  //VALORArrayD *flikeVArray; //UNUSED
   VALORArrayD *fChisqMargVArray;
   //
 
@@ -426,7 +426,7 @@ class FitMarginalization
   
   // NEW 2D TEMPLATES (VARRAY)
   VALORArrayF *fToyMargVArray; // TO REMOVE
-  VALORArrayF *fToyMargVArray_Clone; // TO REMOVE
+  //VALORArrayF *fToyMargVArray_Clone; // TO REMOVE
   VALORArrayF *fToyMargVArray_1Rmu;
   VALORArrayF *fToyMargVArray_1Re;
   VALORArrayF *fToyMargVArray_RHC1Rmu;

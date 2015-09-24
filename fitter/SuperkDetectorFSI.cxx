@@ -350,7 +350,12 @@ bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 /// NEW MULTIRING 2
 
-bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_node)
+bool SuperkDetectorFSI::ReadMultiRing(
+#ifdef __MULTIRING_FHC_RUNNING__
+  TXMLEngine* xml, XMLNodePointer_t root_node)
+#else
+  TXMLEngine* /*xml*/, XMLNodePointer_t /*root_node*/)
+#endif
 {
 #ifdef __MULTIRING_FHC_RUNNING__
 
@@ -2486,7 +2491,7 @@ void SuperkDetectorFSI::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVe
   
   // Fill FHC and RHC parameter arrays
   
-  const int np = conv::kNumOfFHCpRHCSKDetFSIParams;
+  //const int np = conv::kNumOfFHCpRHCSKDetFSIParams;
   const int np_fhc = conv::kNumOfSKDetFSIParams;
   const int np_rhc = conv::kNumOfRHCSKDetFSIParams;
   

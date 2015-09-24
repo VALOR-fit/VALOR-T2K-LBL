@@ -871,7 +871,7 @@ void SuperkMC::Book(void)
      const int      var_n_ereco_bins    = kNXsErecoBins[is];
      const double * var_ereco_bin_edges = util::XsecErecoBinEdges(s);
 
-     const double * etrue_bin_edges = util::EtrueBinEdges(s);
+     //const double * etrue_bin_edges = util::EtrueBinEdges(s);
     
 
      for(int im = 0; im < knm; im++) {
@@ -1477,16 +1477,17 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
 
-    const int      n_q2_bins       = kNQ2Bins[is]; // NEW 2D TEMPLATES
     const int      n_ereco_bins    = kNErecoBins[is];
     const int      n_etrue_bins    = kNEtrueBins[is];
-    const double * q2_bin_edges    = util::Q2BinEdges(s); // NEW 2D TEMPLATES
     const double * ereco_bin_edges = util::ErecoBinEdges(s);
     const double * etrue_bin_edges = util::EtrueBinEdges(s);
-    
-    const double * var_q2_bin_edges = util::XsecQ2BinEdges(s); // NEW 2D TEMPLATES
     const double * var_ereco_bin_edges = util::XsecErecoBinEdges(s);
-
+#ifdef __USE_2D_TEMPLATES__ //2D templates
+    const int      n_q2_bins       = kNQ2Bins[is]; // NEW 2D TEMPLATES
+    const double * q2_bin_edges    = util::Q2BinEdges(s); // NEW 2D TEMPLATES
+    const double * var_q2_bin_edges = util::XsecQ2BinEdges(s); // NEW 2D TEMPLATES
+#endif
+    
     for(int im = 0; im < knm; im++) {
       SuperkMode_t m = kSKReactionModes[is][im];
       if(m == kSKmUndefined) continue;
@@ -1780,17 +1781,21 @@ void SuperkMC::FillSpecialTemplates(void)
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
+
+#if defined(__USE_OSC_NUMU_MC_TEMPLATES__) || defined(__USE_OSC_NUMUBAR_MC_TEMPLATES__) || defined(__USE_OLD_OSC_NUEBAR_MC_TEMPLATES__)
     int sidx = arr_index->SuperkSampleIdx(s);
     
     EFluxType fNom = (IsRHCSample(s)) ? kRHCFlxNominal : kFlxNominal ;
     EFluxType fExt = (IsRHCSample(s)) ? kRHCFlxExtTuning : kFlxExtTuning ;
     
+    const int n = 4;
+#endif
+
     //
     // Fill in `osc numu' templates from `numu' templates
     // and take into account the nue/numu flux weight
     // 
     
-    const int n = 4;
 
     
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
@@ -2823,7 +2828,7 @@ TH2D* SuperkMC::CurrErecoVsQ2Spectrum(SuperkSample_t s) const
   int is = arr_index->SuperkSampleIdx(s);
   int n_q2_bins    = kNQ2Bins[is];
   int n_ereco_bins = kNErecoBins[is];
-  int n_etrue_bins = kNEtrueBins[is];
+  //int n_etrue_bins = kNEtrueBins[is];
   typedef double (erq2type)  [n_ereco_bins][n_q2_bins];
   const erq2type & arr     = *reinterpret_cast< const erq2type         * > ( CurrErecoVsQ2SpectrumArray(s) );
   if (!arr) return 0;
@@ -2850,7 +2855,7 @@ TH2D* SuperkMC::CurrErecoVsQ2Spectrum(SuperkSample_t s, SuperkMode_t m) const
   int is = arr_index->SuperkSampleIdx(s);
   int n_q2_bins    = kNQ2Bins[is];
   int n_ereco_bins = kNErecoBins[is];
-  int n_etrue_bins = kNEtrueBins[is];
+  //int n_etrue_bins = kNEtrueBins[is];
   typedef double (erq2type)  [n_ereco_bins][n_q2_bins];
   const erq2type & arr     = *reinterpret_cast< const erq2type         * > ( CurrErecoVsQ2SpectrumArray(s) );
   if (!arr) return 0;
@@ -6679,7 +6684,7 @@ double SuperkMC::GetTemplateIntegral(TH2D *h2d[conv::kns][conv::knm]){
     SuperkSample_t s = kSKSamples[is];
     if(s == kSKsUndefined) continue;
  
-     const int      n_q2_bins       = kNQ2Bins[is];
+    //const int      n_q2_bins       = kNQ2Bins[is];
      const int      n_ereco_bins    = kNErecoBins[is];
      const int      n_etrue_bins    = kNEtrueBins[is];
      

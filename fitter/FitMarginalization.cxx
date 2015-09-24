@@ -1367,7 +1367,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       // Fill toy osc parameter histograms
 
       int np = fparm->GetNumberParameters();
-      int npfree = 0;
+      //int npfree = 0;
       for(int ip = 0; ip < np; ip++) {
 	conv::PhysParamId_t p = fparm->WhichParam(ip);
 	//cout << p << " " << util::AsString(p) << endl;
@@ -1448,9 +1448,11 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 
       } // loop over p
 
+#if defined(__MARGINALIZE_23PARAMS_CORR__) || defined(__MARGINALIZE_TH13_DELTACP_CORR__)
       double usedvalue_x = conv::kBadResult;
       double usedvalue_y = conv::kBadResult;
-
+#endif
+      
 #ifdef __MARGINALIZE_23PARAMS_CORR__
       
       // NEW FHC+RHC JOINT
@@ -2808,8 +2810,8 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   int max_bin_sub_param0=0;
   int min_bin_sub_param1=0;
   int max_bin_sub_param1=0;
-  int nbins_param0=0;
-  int nbins_param1=0;
+  //int nbins_param0=0;
+  //int nbins_param1=0;
 
   char inname_range[200];
   sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
@@ -3263,7 +3265,8 @@ TH2F * FitMarginalization::GetToyMargHisto2D(SuperkSample_t sksample,int itoy,in
 
 
 // NEW 2D TEMPLATES (VARRAY)
-const double FitMarginalization::GetNormPOT(conv::SuperkSample_t s){
+double FitMarginalization::GetNormPOT(conv::SuperkSample_t s) const
+{
 
   double nnormpot = conv::kBadResult;
   
@@ -3284,7 +3287,8 @@ const double FitMarginalization::GetNormPOT(conv::SuperkSample_t s){
   return nnormpot;
 }
 //________________________________________________________________________________________
-const double FitMarginalization::GetPOT(conv::SuperkSample_t s){
+double FitMarginalization::GetPOT(conv::SuperkSample_t s) const
+{
 
   double npot = conv::kBadResult;
   
@@ -3308,7 +3312,8 @@ const double FitMarginalization::GetPOT(conv::SuperkSample_t s){
 
 
 //________________________________________________________________________________________
-void FitMarginalization::ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param){
+void FitMarginalization::ResetChisqMarg(int * /*min_bin_sub_param*/ ,int * /*max_bin_sub_param*/)
+{
   for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
     for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
       double bincont = 0;
@@ -3331,8 +3336,8 @@ void FitMarginalization::ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_
   return;
 }
 //________________________________________________________________________________________
-void FitMarginalization::BuildDeltaChisqMarg(){
-
+void FitMarginalization::BuildDeltaChisqMarg()
+{
   if(fchisq_bf==conv::kALargeNum){
     cerr << endl;
     cerr << "FitMarginalization::BuildDeltaChisqMarg" << endl;
@@ -3838,13 +3843,13 @@ string FitMarginalization::GetPrior_IH(PhysParamId_t physpar) const
 // NEW MARG MH
 
 //________________________________________________________________________________________
-void FitMarginalization::SetMargOscParam(FitParamList * infparm){
-  
+void FitMarginalization::SetMargOscParam(FitParamList * infparm)
+{  
   int Nparam_with_2Dprior = 0;
 
   // Loop over the fit parameter list
   int np = infparm->GetNumberParameters();
-  int npfree = 0;
+  //int npfree = 0;
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = infparm->WhichParam(ip);
     //cout << p << " " << util::AsString(p) << endl;
@@ -4202,7 +4207,7 @@ bool FitMarginalization::RethrowOscUnphysical(conv::PhysParamId_t p,double oscva
 
 
   // NEW FHC+RHC JOINT 
-const double FitMarginalization::GetMinOscParam(PhysParamId_t physpar) const
+double FitMarginalization::GetMinOscParam(PhysParamId_t physpar) const
 {
   if     (physpar == conv::kPhypMixing12Bar) return mixing12Bar_min; // NEW OSC PRIOR
   else if(physpar == conv::kPhypMixing13Bar) return mixing13Bar_min;
@@ -4222,7 +4227,7 @@ const double FitMarginalization::GetMinOscParam(PhysParamId_t physpar) const
   else return conv::kBadResult;
 }
 
-const double FitMarginalization::GetMaxOscParam(PhysParamId_t physpar) const
+double FitMarginalization::GetMaxOscParam(PhysParamId_t physpar) const
 {
   if     (physpar == conv::kPhypMixing12Bar) return mixing12Bar_max; // NEW OSC PRIOR
   else if(physpar == conv::kPhypMixing13Bar) return mixing13Bar_max;
@@ -5763,12 +5768,12 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 
   //
   
-  TRandom3 *r = new TRandom3(0); // needed to randomly scan the distribution
+  //TRandom3 *r = new TRandom3(0); // needed to randomly scan the distribution
 
-  double UniFirstBin_X = fFirstMinimBin_X; 
-  double UniLastBin_X  = fLastMinimBin_X; 
-  double UniFirstBin_Y = fFirstMinimBin_Y; 
-  double UniLastBin_Y  = fLastMinimBin_Y; 
+  //double UniFirstBin_X = fFirstMinimBin_X; 
+  //double UniLastBin_X  = fLastMinimBin_X; 
+  //double UniFirstBin_Y = fFirstMinimBin_Y; 
+  //double UniLastBin_Y  = fLastMinimBin_Y; 
 
   int binN_X = fStartBin_X;
   int binN_Y = fStartBin_Y;
@@ -6340,22 +6345,24 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 
       // Compute the gradient between the lowest bin and the opposite one and the new step size
            
-      double grad_X=0.;
-      double grad_Y=0.;
-      double step_X=0.;
-      double step_Y=0.;
-      double num=0.;
+      //double grad_X=0.;
+      //double grad_Y=0.;
+      //double step_X=0.;
+      //double step_Y=0.;
+      //double num=0.;
+#if defined __print_minimization_steps__
       double den=0.;
-
+#endif
       
       if(!fIsFit2D){
 
 	int NextBin_X = binN_X + (NewDir_X-1); // NewDir=0,1,2. NewDir=1 if binN
+
+#if defined __print_minimization_steps__
 	double NextVal_X = fhchisq_marg_1D->GetXaxis()->GetBinCenter(NextBin_X);
 	double BinVal_X = binlowedge_X; 
 	double NewVal_X = fhchisq_marg_1D->GetXaxis()->GetBinCenter(NextBin_X);
 
-#if defined __print_minimization_steps__
 	cout << "binN_X = " << binN_X << " -  NextBin_X = " << NextBin_X << endl;
 	cout << "BinVal_X = " << BinVal_X << endl;
 	cout << "NextVal_X = " << NextVal_X << endl;  
@@ -6374,6 +6381,7 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 	int NextBin_X = binN_X + (NewDir_X-1); // NewDir=0,1,2. NewDir=1 if binN
 	int NextBin_Y = binN_Y + (NewDir_Y-1);
 	
+#if defined __print_minimization_steps__
 	double NextVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(NextBin_X);
 	double NextVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(NextBin_Y);
 	
@@ -6383,7 +6391,6 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 	double NewVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(NextBin_X);
 	double NewVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(NextBin_Y);
 		
-#if defined __print_minimization_steps__
 	cout << "binN_X = " << binN_X << " -  NextBin_X = " << NextBin_X << endl;
 	cout << "binN_Y = " << binN_Y << " -  NextBin_Y = " << NextBin_Y << endl;
 	cout << "BinVal_X = " << BinVal_X << " - NextVal_X = " << NextVal_X << endl;
@@ -6559,8 +6566,8 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
 
   TRandom3 *r = new TRandom3(0); 
 
-  double like_iter = conv::kBadResult;
-  double like_prev = conv::kBadResult;
+  //double like_iter = conv::kBadResult;
+  //double like_prev = conv::kBadResult;
   
 
   // Single starting point
@@ -7092,7 +7099,7 @@ int FitMarginalization::GetFileIDRead(int ipar0,int ipar1){
 //________________________________________________________________________________________
 void FitMarginalization::CalcBestFitErrors(SuperkObservation *skobs,string method,bool readbinary){
   
-  double error = conv::kBadResult;
+  //double error = conv::kBadResult;
 
   if(method=="MINOS"){
     this->CalcBestFitErrorsMINOS(skobs,readbinary);
@@ -7132,7 +7139,7 @@ double FitMarginalization::GetInterpolationX(double X1,double Y1,double X2, doub
 //________________________________________________________________________________________
 void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bool readbinary){
   
-  double error = conv::kBadResult;
+  //double error = conv::kBadResult;
   const double CritChisq_1D = 1.;
   const double CritChisq_2D = 2.3;
 
@@ -7634,14 +7641,14 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
   return;
 }
 //________________________________________________________________________________________
-void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation *skobs_data,bool readbinary,int Nh){
-
+void FitMarginalization::CalcBestFitErrorsHESSE(SuperkObservation * /*skobs_data*/,bool /*readbinary*/,int Nh)
+{
   cout << "Compute HESSE errors" << endl;
 #ifdef __print_hesseerror__
   cout << "Bins far " << Nh << " from the best-fit bin are used" << endl;
 #endif
 
-  double error = conv::kBadResult;
+  //double error = conv::kBadResult;
   const double CritChisq_1D = 1.;
   const double CritChisq_2D = 2.3;
  

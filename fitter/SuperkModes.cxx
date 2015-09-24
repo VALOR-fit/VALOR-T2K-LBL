@@ -57,7 +57,12 @@ bool valor::util::IsNuMu(valor::conv::SuperkMode_t  m)
   return false;
 }
 //____________________________________________________________________________
-bool valor::util::IsOscNuMu(valor::conv::SuperkMode_t  m)
+bool valor::util::IsOscNuMu(
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+  valor::conv::SuperkMode_t  m)
+#else
+  valor::conv::SuperkMode_t  /*m*/)
+#endif
 {
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
   if(m >= kSKmOscNuMuCCQE && m <= kSKmOscNuMuCCoth)
@@ -66,7 +71,12 @@ bool valor::util::IsOscNuMu(valor::conv::SuperkMode_t  m)
   return false;
 }
 //____________________________________________________________________________
-bool valor::util::IsOscNuMuBar(valor::conv::SuperkMode_t  m)
+bool valor::util::IsOscNuMuBar(
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+  valor::conv::SuperkMode_t  m)
+#else
+  valor::conv::SuperkMode_t  /*m*/)
+#endif
 {
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
   if(m >= kSKmOscNuMuBarCCQE && m <= kSKmOscNuMuBarCCoth)

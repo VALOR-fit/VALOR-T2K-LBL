@@ -153,8 +153,8 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
     skexp->PrintSystematicVariations();
 }
 //____________________________________________________________________________
-void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool print){
-    
+void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool /*print*/)
+{    
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   //gROOT->SetBatch(true);
@@ -165,15 +165,15 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
   //RunOpt::ReadFromCommandLine(argc, argv, parseopt);
 
   // Set the second parameter (1D fit)
-  const char * freeparname1        = "";  // free parameter
-  const double freeparmin1         = 0.; // minimum value of free parameter
-  const double freeparmax1         = 0.; // maxinum value of free parameter
-  const int    NptScan1            = 1; //201, //21,      // # pts of free parameter to scan
+  //const char * freeparname1        = "";  // free parameter
+  //const double freeparmin1         = 0.; // minimum value of free parameter
+  //const double freeparmax1         = 0.; // maxinum value of free parameter
+  //const int    NptScan1            = 1; //201, //21,      // # pts of free parameter to scan
   //
 
   // // Reset all the variables
   int nfits=-999;
-  int nchisqcalls=-999;
+  //int nchisqcalls=-999;
   int niterations=-999;
   int fitstatus=-999;
   double chisqmin=conv::kALargeNum;
@@ -184,7 +184,7 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
 
   // free parameter 
 
-  PhysParamId_t freepar0 = conv::kPhypUndefined;
+  //PhysParamId_t freepar0 = conv::kPhypUndefined;
   string sfreeparname0(runopt.Freeparname0()); 
   PhysParamId_t freepar1 = conv::kPhypUndefined;
   string sfreeparname1(runopt.Freeparname1());  
@@ -332,10 +332,10 @@ conv::PhysParamId_t valor::util::GetFreePar(string freeparname){
 //____________________________________________________________________________
 void valor::util::MargFit_1D_deltaCP(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
   
-  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
-  double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
-  int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
-  double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
+  //double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
+  //double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
+  //int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
+  //double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
 
   // Fit 1
 
@@ -429,16 +429,16 @@ void valor::util::MargFit_1D_deltaCP(FitMarginalization *fitmarg,SuperkObservati
   }
 }
 //____________________________________________________________________________
-void valor::util::MargFit_1D_sinsqth13(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_1D_sinsqth13(FitMarginalization * /*fitmarg*/,SuperkObservation * /*skobs_fakedata*/,double & /*chisqmin*/,double & /*bestfit0*/, double & /*bestfit1*/,int /*nfits*/,int /*fitstatus*/,int /*niterations*/){
 }
 //____________________________________________________________________________
-void valor::util::MargFit_2D_sinsqth13_deltaCP(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_2D_sinsqth13_deltaCP(FitMarginalization * /*fitmarg*/,SuperkObservation * /*skobs_fakedata*/,double & /*chisqmin*/,double & /*bestfit0*/, double & /*bestfit1*/,int /*nfits*/,int /*fitstatus*/,int /*niterations*/){
 }
 //____________________________________________________________________________
-void valor::util::MargFit_1D_sinsqth23(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_1D_sinsqth23(FitMarginalization * /*fitmarg*/,SuperkObservation * /*skobs_fakedata*/,double & /*chisqmin*/,double & /*bestfit0*/, double & /*bestfit1*/,int /*nfits*/,int /*fitstatus*/,int /*niterations*/){
 }
 //____________________________________________________________________________
-void valor::util::MargFit_2D_sinsqth23_dmsq32(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_2D_sinsqth23_dmsq32(FitMarginalization * /*fitmarg*/,SuperkObservation * /*skobs_fakedata*/,double & /*chisqmin*/,double & /*bestfit0*/, double & /*bestfit1*/,int /*nfits*/,int /*fitstatus*/,int /*niterations*/){
 }
 //____________________________________________________________________________
 void valor::util::SetMassHierarchy(SuperkExpectation * skexp)

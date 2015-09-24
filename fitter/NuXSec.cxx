@@ -2660,7 +2660,12 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
 
 
 //________________________________________________________________________________________
-double NuXSec::RelativeError(PhysParamId_t p) const
+double NuXSec::RelativeError(
+#if defined(__USE_NIWG2013__)
+  PhysParamId_t p) const
+#else
+  PhysParamId_t /*p*/) const
+#endif
 {
     // NEW XSEC --> xsec syst now in BANFF output are commented
     //
@@ -3542,7 +3547,12 @@ TH3D * NuXSec::Template2D(SuperkSample_t s, SuperkMode_t m) const
     return h;
 }
 //________________________________________________________________________________________
-double NuXSec::ChisqPenalty(bool /*all_syst*/, bool hk_syst) const
+double NuXSec::ChisqPenalty(bool /*all_syst*/,
+#if defined(__USE_NIWG2013__)
+  bool hk_syst) const
+#else
+  bool /*hk_syst*/) const
+#endif
 {
     //only contains the contributions from the non-BANFF xsec parameters
     

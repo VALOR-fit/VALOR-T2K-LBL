@@ -1054,18 +1054,23 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 //________________________________________________________________________________________
 
 //________________________________________________________________________________________
-void util::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, int start)
+void util::AppendAllUncorrelatedXSecSystematics(
+#if defined(__USE_NIWG2013__)
+  FitParamList * fparm, int start)
+#else
+  FitParamList * /*fparm*/, int /*start*/)
+#endif
 {
 // Add nuisance params
 //
 
-  int ip = start; // first unallocated element in the param list
 
   // NEW XSEC --> comment all old non-banff xsec systematics --> Not needed any longer
 
   // NEW XSEC NIWG
 
 #if defined(__USE_NIWG2013__)
+  int ip = start; // first unallocated element in the param list
   
   // XSec
   fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecFermiMom));
@@ -1098,17 +1103,22 @@ void util::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, int start)
 }
 #ifdef __NUMUONLY__
 //________________________________________________________________________________________
-void util::AppendUncorrelatedXSecSystematicsDisap(FitParamList * fparm, int start)
+void util::AppendUncorrelatedXSecSystematicsDisap(
+#if defined(__USE_NIWG2013__)
+  FitParamList * fparm, int start)
+#else
+  FitParamList * /*fparm*/, int /*start*/)
+#endif
 {
 // Add nuisance params
 //
-  int ip = start; // first unallocated element in the param list
 
   // NEW XSEC --> comment all old non-banff xsec systematics
   
   // NEW XSEC NIWG
 
 #if defined(__USE_NIWG2013__)
+  int ip = start; // first unallocated element in the param list
 
   // XSec
   fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecFermiMom) );
@@ -1132,17 +1142,22 @@ void util::AppendUncorrelatedXSecSystematicsDisap(FitParamList * fparm, int star
 #endif
 #ifdef __NUEONLY__
 //________________________________________________________________________________________
-void util::AppendUncorrelatedXSecSystematicsApp(FitParamList * fparm, int start)
+void util::AppendUncorrelatedXSecSystematicsApp(
+#if defined(__USE_NIWG2013__)
+  FitParamList * fparm, int start)
+#else
+  FitParamList * /*fparm*/, int /*start*/)
+#endif
 {
 // Add nuisance params
 //
-  int ip = start; // first unallocated element in the param list
 
   // NEW XSEC --> comment all old non-banff xsec systematics
 
   // NEW XSEC NIWG
 
 #if defined(__USE_NIWG2013__)
+  int ip = start; // first unallocated element in the param list
 
   // XSec
   fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecFermiMom) );
@@ -1767,7 +1782,7 @@ void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start
 #elif defined(__FHC_RUNNING__)
   const int nparams = kNumOfParamsInBANFFfit;
 #elif defined(__RHC_RUNNING__)
-  const int nparams = kNumOfRHCParamsInBANFFfit
+  const int nparams = kNumOfRHCParamsInBANFFfit;
 #endif
 
    // get parameter

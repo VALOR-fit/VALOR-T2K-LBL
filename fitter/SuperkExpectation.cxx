@@ -1367,11 +1367,6 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
   // tweak an individual FSI parameter (ignores correlations, debug)
   else if(util::IsSKDetFSI(p)) {
 
-    bool is_rhc = util::IsRHCSystematic(p);
-    bool is_fhc = util::IsFHCSystematic(p);
-    bool is_multiring = util::IsMultiRingSystematic(p);
-   
-
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
 
     // NEW 2D TEMPLATES (NEW)
@@ -1392,7 +1387,10 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
 
     //
 #else
-
+    bool is_rhc = util::IsRHCSystematic(p);
+    bool is_fhc = util::IsFHCSystematic(p);
+    //bool is_multiring = util::IsMultiRingSystematic(p);
+   
     int nskdetfsi = 0;
     if(is_rhc)
       nskdetfsi = conv::kNumOfRHCSKDetFSIParams;

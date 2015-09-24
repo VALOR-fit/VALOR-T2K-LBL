@@ -2236,11 +2236,11 @@ void BANFF::RestoreFHCpRHCNominalMC(void)
   this->RestoreNominalMC();
   this->RestoreRHCNominalMC();
   
-  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  //TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
   TVectorD & current_values = *fFHCpRHCCurrentValues;
-  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  //TVectorD & bestfit_values_fhc = *fBestFitValues;
   TVectorD & current_values_fhc = *fCurrentValues;
-  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  //TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
   TVectorD & current_values_rhc = *fRHCCurrentValues;
   this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);    
 }
@@ -2300,11 +2300,11 @@ void BANFF::RestoreFHCpRHCTunedMC(void)
   this->RestoreTunedMC();
   this->RestoreRHCTunedMC();
   
-  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  //TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
   TVectorD & current_values = *fFHCpRHCCurrentValues;
-  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  //TVectorD & bestfit_values_fhc = *fBestFitValues;
   TVectorD & current_values_fhc = *fCurrentValues;
-  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  //TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
   TVectorD & current_values_rhc = *fRHCCurrentValues;
   this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);    
 }
@@ -2691,7 +2691,7 @@ void BANFF::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfi
   
   // Fill FHC and RHC parameter arrays
   
-  const int np = conv::kNumOfFHCpRHCParamsInBANFFfit;
+  //const int np = conv::kNumOfFHCpRHCParamsInBANFFfit;
   const int np_fhc = conv::kNumOfParamsInBANFFfit;
   const int np_rhc = conv::kNumOfRHCParamsInBANFFfit;
   
@@ -2700,9 +2700,10 @@ void BANFF::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfi
   int range_flux_fhc[2] = {0, conv::kNumOfFluxParamsInBANFFfit}; // flux fhc
   int range_flux_rhc[2] = {0, conv::kNumOfRHCFluxParamsInBANFFfit}; // flux rhc 
   int range_xsec_fhc[2] = {conv::kNumOfFluxParamsInBANFFfit,    conv::kNumOfParamsInBANFFfit}; // xsec fhc
+
+#ifdef __show_init_mesg_debug__
   int range_xsec_rhc[2] = {conv::kNumOfRHCFluxParamsInBANFFfit, conv::kNumOfRHCParamsInBANFFfit}; // xsec rhc
   
-#ifdef __show_init_mesg_debug__
   cout << "range flux fhc = " <<  range_flux_fhc[0] << " - " <<  range_flux_fhc[1] << endl;
   cout << "range flux rhc = " <<  range_flux_rhc[0] << " - " <<  range_flux_rhc[1] << endl;
   cout << "range xsec fhc = " <<  range_xsec_fhc[0] << " - " <<  range_xsec_fhc[1] << endl;
