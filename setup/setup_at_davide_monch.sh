@@ -11,5 +11,5 @@ export T2KOSCANA=$1
 export ROOTSYS=/Users/davidesgalaberna/root/
 
 export LD_LIBRARY_PATH=${T2KOSCANA}/fitter:${LD_LIBRARY_PATH}
-export DYLD_LIBRARY_PATH=${T2KOSCANA}/fitter:${ROOTSYS}/lib:${DYLD_LIBRARY_PATH}
-export PATH=${T2KOSCANA}/root:${T2KOSCANA}/production:${ROOTSYS}/bin:${T2KOSCANA}/fitter:${PATH}
+export DYLD_LIBRARY_PATH=${T2KOSCANA}/fitter:${ROOTSYS}/lib:$T2KOSCANA/lib:${DYLD_LIBRARY_PATH}
+export PATH=${T2KOSCANA}/root:${T2KOSCANA}/production:${ROOTSYS}/bin:$T2KOSCANA/bin:${PATH}
