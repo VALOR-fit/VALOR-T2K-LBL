@@ -33,6 +33,10 @@ ChangeLog:
 #include "TCanvas.h"
 #include "TMath.h"
 
+#include <sstream>
+#include <fstream>
+#include <iomanip>
+
 #include <iostream>
 #include <string>
 
@@ -108,6 +112,157 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
   }
   if(print)
     skexp->PrintSystematicVariations();
+}
+//____________________________________________________________________________
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+void valor::util::AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH1D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand)
+#else
+void valor::util::AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand)
+#endif
+{
+  ftxt << util::AsStringCompact(s) << ":" << endl;
+  fxml << "        <" << util::GetXMLDatasetName(s) << ">" << endl;
+  fxml << "          <" << util::GetXMLDatasetParamsName() << ">" << endl;
+
+  int ievtot = 0;
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+  const int n_points_per_line_xml = 10; // this should be an option. But 1D templates are going so there's no point...
+
+  // Adding Ereco values as a comma separated list.
+  // Assuming uniform distribution within each bin, randomize values within each bin.
+  for(int ibin = 1; ibin <= h->GetNbinsX(); ibin++) {
+    double Nb   = h->GetBinContent (ibin); // number of events in this Ereco bin
+    double Emin = h->GetXaxis()->GetBinLowEdge (ibin); // Ereco bin min
+    double Emax = h->GetXaxis()->GetBinUpEdge  (ibin); // Ereco bin max
+    //double Ecent = h->GetXaxis()->GetBinCenter (ibin); // Ereco bin center
+    for(int iev = 0; iev < Nb; iev++) {
+      double E = Emin + rand.Uniform() * (Emax - Emin);
+      if(ievtot > 0) {
+	fxml << ", "; 
+	ftxt << ","; 
+	if ( ! (ievtot % n_points_per_line_xml) ) fxml << endl; 
+      }
+      fxml << E; 
+      ftxt << E; 
+      ievtot++;
+    }//iev
+  }//ibin
+  // add extra data-points, if any
+  if(full_points_to_add) {
+    fxml << ",\n" << endl; // should really have an XML comment here but TXMLEngine won't let us.
+    fxml << *full_points_to_add;
+    ftxt << "," << *full_points_to_add;
+  }
+  fxml << endl;
+
+#else //2D templates
+       
+  // Adding 2D template values with each event as its own node containing 2 values
+  // Assuming uniform distribution within each bin, randomize values within each bin.
+  for(int ibinx = 1; ibinx <= h->GetNbinsX(); ibinx++) {
+    double Xmin  = h->GetXaxis()->GetBinLowEdge(ibinx); // X bin min
+    double Xmax  = h->GetXaxis()->GetBinUpEdge (ibinx); // X bin max
+    //double Xcent = h->GetXaxis()->GetBinCenter (ibinx); // X bin center
+    for(int ibiny = 1; ibiny <= h->GetNbinsY(); ibiny++) {
+      double Nb    = h->GetBinContent (ibinx, ibiny); // number of events in this bin
+      double Ymin  = h->GetYaxis()->GetBinLowEdge(ibiny); // Y bin min
+      double Ymax  = h->GetYaxis()->GetBinUpEdge (ibiny); // Y bin max
+      //double Ycent = h->GetYaxis()->GetBinCenter (ibiny); // Y bin center
+      for(int iev = 0; iev < Nb; iev++) {
+	double X = Xmin + rand.Uniform() * (Xmax - Xmin);
+	double Y = Ymin + rand.Uniform() * (Ymax - Ymin);
+	if(ievtot > 0) {
+	  ftxt << ": "; 
+	}
+	fxml << "            <ev" << ievtot << ">"
+	     << X << "," << Y
+	     << "</ev" << ievtot << ">"
+	     << endl;
+	ftxt << X << "," << Y; 
+	ievtot++;
+      }//iev
+    }//ibiny
+  }//ibinx
+  // add extra data-points, if any
+  if(full_points_to_add) {
+    fxml << endl; // should really have an XML comment here but TXMLEngine won't let us.
+    vector<string> vecpairs = util::Tokens(*full_points_to_add,",");
+    assert(vecpairs.size()>0);
+    for(unsigned int ipair = 0; ipair < vecpairs.size(); ipair++) {
+      vector<string> values = util::Tokens(vecpairs[ipair], ":");
+      assert(values.size() == 2);
+      fxml << "            <ev" << ievtot << ">"
+	   << atof(values[0].c_str()) << "," << atof(values[1].c_str())
+	   << "</ev" << ievtot << ">"
+	   << endl;
+      ievtot++;
+    }//ipair
+    ftxt << ":" << *full_points_to_add;
+  }
+  // add the nevents to the XML
+  fxml << "            <nevents> " << ievtot << "</nevents>" << endl;
+#endif //__USE_2D_TEMPLATES__
+	 
+  ftxt << endl;
+  fxml << "          </" << util::GetXMLDatasetParamsName() << "> " << endl;
+  fxml << "        </" << util::GetXMLDatasetName(s) << ">    " << endl;       
+}
+//____________________________________________________________________________
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+void valor::util::AddExtraEventsToHist(TH1D * h, string * full_points_to_add)
+#else
+void valor::util::AddExtraEventsToHist(TH2D * h, string * full_points_to_add)
+#endif
+{
+  if(full_points_to_add) {
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+    vector<string> vecp = util::Tokens(*full_points_to_add, ",");
+    assert(vecp.size() > 0);
+    for(unsigned int ip=0; ip < vecp.size(); ip++) {
+      h->Fill(atof(vecp[ip].c_str()));
+    }//ip
+#else //2D templates
+    vector<string> vecpairs = util::Tokens(*full_points_to_add,",");
+    assert(vecpairs.size()>0);
+    for(unsigned int ipair = 0; ipair < vecpairs.size(); ipair++) {
+      vector<string> values = util::Tokens(vecpairs[ipair], ":");
+      assert(values.size() == 2);
+      h->Fill(atof(values[0].c_str()), atof(values[1].c_str()));
+    }//ipair
+#endif
+  }//full_points_to_add
+}
+//____________________________________________________________________________
+string * valor::util::ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra, int datasetid)
+{
+  if(util::ArrIdx::Instance()->SuperkSampleIdx(s) == -1)
+    return 0;
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+  string sxml = util::XML2String(&xml, root_node, Form("superk/observation/data_set_%d/%s/ereco_values", datasetid, util::GetXMLMCTreeName(s).c_str()));
+  string * sout = new string(sxml);
+  if(!sextra.empty()) {
+    sout->append(",");
+    sout->append(sextra);
+  }
+#else
+  int nevents = util::XML2Int(&xml, root_node, Form("superk/observation/data_set_%d/%s/%s/nevents",
+						    datasetid, util::GetXMLMCTreeName(s).c_str(), util::GetXMLDatasetParamsName().c_str()));
+  string * sout = new string();
+  for(int iev = 0; iev < nevents; iev++) {
+    if(iev != 0)
+      sout->append(", ");
+    string sxml = util::XML2String(&xml, root_node, Form("superk/observation/data_set_%d/%s/%s/ev%d",
+							 datasetid, util::GetXMLMCTreeName(s).c_str(), util::GetXMLDatasetParamsName().c_str(), iev));
+    std::replace(sxml.begin(), sxml.end(), ',', ':');
+    sout->append(sxml);
+  }//iev
+  if(!sextra.empty()) {
+    sout->append(", ");
+    sout->append(sextra);
+  }
+#endif
+  return sout;
 }
 //____________________________________________________________________________
 void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool /*print*/)
