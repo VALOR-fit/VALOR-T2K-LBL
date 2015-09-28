@@ -528,8 +528,6 @@ void run_fit_marginalization_readbinary
     double maxpar[2];
     minpar[0] = freeparmin0;
     maxpar[0] = freeparmax0;
-    minpar[1] = freeparmin1;
-    maxpar[1] = freeparmax1;
     
     // free parameter sub-range
     
@@ -581,7 +579,7 @@ void run_fit_marginalization_readbinary
     }
 
       fitmarg->SetExtractStartPt("GridFix");
-      fitmarg->SetGridStartRange(freeparmin0,freeparmax0,freeparmin1,freeparmax1);
+      fitmarg->SetGridStartRange(freeparmin0,freeparmax0);
       fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
       
       double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
