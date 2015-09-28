@@ -522,7 +522,6 @@ void run_fit_marginalization_readbinary
     // # of free parameter pts to scan 
     int nbinspar[2];
     nbinspar[0] = NptScan0;
-    nbinspar[1] = NptScan1;
     
     // free parameter range
     double minpar[2];
