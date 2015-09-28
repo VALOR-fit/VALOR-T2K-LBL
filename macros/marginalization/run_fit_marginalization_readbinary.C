@@ -735,10 +735,10 @@ void run_fit_marginalization_readbinary
     hErecoToy_RHC1Re->DrawCopy();
 
    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
-   fitmarg->GetChisqMarg()->DrawCopy("colz");
+   fitmarg->GetChisqMarg1D()->DrawCopy("colz");
    
    TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
-   fitmarg->GetDeltaChisqMarg()->DrawCopy("colz");
+   fitmarg->GetDeltaChisqMarg1D()->DrawCopy("colz");
 
 
     // Clean-up
