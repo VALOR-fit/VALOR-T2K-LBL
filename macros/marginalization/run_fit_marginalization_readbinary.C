@@ -528,7 +528,9 @@ void run_fit_marginalization_readbinary
     double maxpar[2];
     minpar[0] = freeparmin0;
     maxpar[0] = freeparmax0;
-    
+      minpar[1] = 0.;
+      maxpar[1] = 0.;
+      
     // free parameter sub-range
     
     const int    first_bin_freepar0   = -999; // first freepar of the sub-range
@@ -539,7 +541,6 @@ void run_fit_marginalization_readbinary
     int subminbin[2];
     int submaxbin[2];
     subminbin[0] = first_bin_freepar0; submaxbin[0] = last_bin_freepar0;
-    subminbin[1] = first_bin_freepar1; submaxbin[1] = last_bin_freepar1;
     
     // Implement the constructor giving the following input parameters:
     FitMarginalization *fitmarg = new FitMarginalization();   
