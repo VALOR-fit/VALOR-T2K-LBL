@@ -62,6 +62,22 @@ FitParamList * util::NamedParameterList(string name)
     //
     return fp;
   }
+  if(name == "nuosc3f_fix23+nuisance") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 6);
+    fp -> FixParameter (kPhypMixing23);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    // NEW XSEC
+    #if defined(__USE_NIWG2015__)
+    //~ fp -> FixParameter (kNuisXSecRPA ); 
+    #endif
+    //
+    return fp;
+  }
+
+
+
   if(name == "nuosc3f_12constrain+escale") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
@@ -86,7 +102,7 @@ FitParamList * util::NamedParameterList(string name)
   // treated as nuisance paramers.
   //
 
-  if(name == "nuosc3f_12constrain") {
+  if(name == "nuosc3f_12constrain+") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> SetNuisance (kPhypMixing12, true);
     fp -> SetNuisance (kPhypDm12sq,   true);
