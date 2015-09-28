@@ -579,7 +579,7 @@ void run_fit_marginalization_readbinary
     }
 
       fitmarg->SetExtractStartPt("GridFix");
-      fitmarg->SetGridStartRange(freeparmin0,freeparmax0);
+      fitmarg->SetGridStartRange(freeparmin0,freeparmax0,0.,0.);
       fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
       
       double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
