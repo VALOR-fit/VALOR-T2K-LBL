@@ -20,9 +20,14 @@
 
 #include "Utilities/OscParams.h"
 
+#include "Enumerations.h"
+
 #include "TH2D.h"
 #include "TH1D.h"
 #include "TFile.h"
+#include "TRandom3.h"
+
+#include "TXMLEngine.h"
 
 #include <string>
 
@@ -37,6 +42,15 @@ namespace util {
   // Tweak the relevant systematics
   void PerformSysThrow(unsigned int tweak_systematics, SuperkExpectation * skexp, bool print = true);
   //TODO should we change the uint to an enum SysTweakId_t?
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+  void AddExtraEventsToHist(TH1D * h, string * full_points_to_add);
+  void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH1D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
+#else //2D templates
+  void AddExtraEventsToHist(TH2D * h, string * full_points_to_add);
+  void AddEventsToXML(ofstream & fxml, ofstream & ftxt, TH2D * h, valor::conv::SuperkSample_t s, string * full_points_to_add, TRandom3 & rand);
+#endif
+  string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra, int datasetid);
 
   void PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool print = true); // take inputs from command line
   void MargFit_1D_deltaCP(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
