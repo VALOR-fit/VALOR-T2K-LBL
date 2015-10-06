@@ -260,7 +260,7 @@ string valor::util::GetAxisNameCompact(int iaxis)
 #endif //__ERECO_VS_Q2_TEMPLATES__
 #endif //__USE_2D_TEMPLATES__
   else
-    return "???";  
+    return "???"; 
 }
 //___________________________________________________________________________
 string valor::util::GetAxisName(int iaxis)

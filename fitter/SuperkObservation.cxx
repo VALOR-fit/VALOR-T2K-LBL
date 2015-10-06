@@ -238,11 +238,19 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
   else {
    
     TFile f(config_file.c_str());
+      
 #ifndef __USE_2D_TEMPLATES__ //1D templates
     TH1D * hist = 0;
 #else
     TH2D * hist = 0;
 #endif
+
+    if(!f.IsOpen()){
+      cerr << endl;
+      cerr << "File " << config_file.c_str() << " is not defined" << endl;
+      cerr << endl;
+      exit(1);
+    }
 
     for (int is = 0 ; is < conv::kns ; is++) {
       SuperkSample_t s = conv::kSKSamples[is];
@@ -266,10 +274,18 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 #endif
       
       if (s == conv::kSKsUndefined) continue;
-      else if(s == conv::kSKsRHCFCFV1RingMuLike) f.GetObject(Form("mock_data_1Rmu_RHC_%d",data_set_id),hist);
-      else if(s == conv::kSKsRHCFCFV1RingELike) f.GetObject(Form("mock_data_1Re_RHC_%d",data_set_id),hist);
-      else if(s == conv::kSKsFCFV1RingELike) f.GetObject(Form("mock_data_1Re_%d",data_set_id),hist);
-      else if(s == conv::kSKsFCFV1RingMuLike) f.GetObject(Form("mock_data_1Rmu_%d",data_set_id),hist);
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+      else if(s == conv::kSKsRHCFCFV1RingMuLike) hist = (TH1D*) f.Get(Form("mock_data_RHC1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsRHCFCFV1RingELike)	 hist = (TH1D*) f.Get(Form("mock_data_RHC1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingELike)   	 hist = (TH1D*) f.Get(Form("mock_data_1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingMuLike)	 hist = (TH1D*) f.Get(Form("mock_data_1Rmu_%d",data_set_id));
+#else //2D templates
+      else if(s == conv::kSKsRHCFCFV1RingMuLike) hist = (TH2D*) f.Get(Form("mock_data_RHC1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsRHCFCFV1RingELike)	 hist = (TH2D*) f.Get(Form("mock_data_RHC1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingELike)	 hist = (TH2D*) f.Get(Form("mock_data_1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingMuLike) 	 hist = (TH2D*) f.Get(Form("mock_data_1Rmu_%d",data_set_id));
+#endif
       else {
 	cerr << endl;
 	cerr << "Used SK sample " << util::AsString(s) << " not available" << endl;
@@ -279,8 +295,21 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       
       if(!hist) {
 	cerr << "Obs >> Histogram for " << util::AsString(s) << " does not exist!" << endl;
+	if(s == conv::kSKsFCFV1RingMuLike)
+	  cerr << "Obs >> Need histogram name " << Form("mock_data_1Rmu_%d",data_set_id) << endl;
+	else if(s == conv::kSKsRHCFCFV1RingMuLike)
+	  cerr << "Obs >> Need histogram name " << Form("mock_data_RHC1Rmu_%d",data_set_id) << endl;
+	else if(s == conv::kSKsFCFV1RingELike)
+	  cerr << "Obs >> Need histogram name " << Form("mock_data_1Re_%d",data_set_id) << endl;
+	else if(s == conv::kSKsRHCFCFV1RingELike)
+	  cerr << "Obs >> Need histogram name " << Form("mock_data_RHC1Re_%d",data_set_id) << endl;
+	else{
+	  cerr << "Obs >> Histogram sample not defined" << endl;
+	  exit(1);
+	}
 	exit(1);
       }
+
 
 #ifndef __USE_2D_TEMPLATES__ //1D templates
       for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
@@ -288,18 +317,18 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 	fErDistrArray[is]->GetArray()[ibin-1] = nobs;
       }
 #else //2D templates
+      
       for(int ibinx = 1; ibinx <= util::NumErecoBins(s); ibinx++) {
 	for(int ibiny = 1; ibiny <= util::NumQ2Bins(s); ibiny++) {
-	  double nobs = hist->GetBinContent(ibinx, ibiny);
+	  // histogram convention (Q2,Ereco) is opposite of VALORArray's one (Ereco,Q2)
+	  double nobs = hist->GetBinContent(ibiny, ibinx);
 	  f2DDistrArray[is]->SetEntry(nobs, ibinx-1, ibiny-1);
 	}//ibiny
       }//ibinx
+      
 #endif //__USE_2D_TEMPLATES__
       
-	cout << "Obs >> Read: " << hist->Integral()
-	     << " " << util::AsString(s) << " events." << endl;
     }//is
-    
   }//!is_xml
   
   return true;
