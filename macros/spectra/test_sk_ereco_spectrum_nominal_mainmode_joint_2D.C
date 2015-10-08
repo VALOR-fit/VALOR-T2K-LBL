@@ -79,8 +79,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
 
  int          iexperiment         = 0, //4404, //4739,                       /* */
- //const char * rootfile = "../outputs/test/SKdata_Run14.root",
- const char * rootfile = "../outputs/test/SKdata_Run16.root", 
+ //const char * rootfile = "data_run1to4/SKdata_Run14.root",
+ const char * rootfile = "data_run1to6/SKdata_Run16.root", 
  const bool draw_data_spectra = false
 
 
@@ -1060,7 +1060,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   else {
     cout << endl;
     cout << "Don't draw data spectra" << endl;
-    if(draw_data_spectra){
+    if(!draw_data_spectra){
       cout << "Chosen not to draw data spectra" << endl;
     }
     else{
