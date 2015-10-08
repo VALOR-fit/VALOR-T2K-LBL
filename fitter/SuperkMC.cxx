@@ -3645,8 +3645,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
       int last_itv = -1;
       double flux_wght = -1;
       for (int ivb = 0 ; ivb < fNNonEmptyVariableBins2D[is][im] ; ivb++ ) {
-
-
 	
 	// The array is built as following: fNonEmptyVariableBins2D[is][im][i_ne_var_2d] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
 	int itv = ( fNonEmptyVariableBins2D[is][im][ivb] % (conv::kBigIndex * conv::kBigIndex) ) % conv::kBigIndex;

@@ -34,7 +34,7 @@ Split valor::conv namespace into several smaller files
 
 // NEW 2D TEMPLATES
 #ifndef __USE_2D_TEMPLATES__ 
-//#define __USE_2D_TEMPLATES__ // Use 2D templates
+#define __USE_2D_TEMPLATES__ // Use 2D templates
 #endif
 
 //#define __ERECO_VS_Q2_TEMPLATES__ // Ereco Vs Q2 parametrization
