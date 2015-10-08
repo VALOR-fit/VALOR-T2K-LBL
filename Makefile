@@ -60,6 +60,8 @@ clean-files: FORCE
 	@echo " "
 	@echo "** Cleaning-up..."
 	rm -f ${T2KOSCANA}/bin/valor_t2xk-config; \
+	rm -f ${T2KOSCANA}/bin/pyroot2k; \
+	rm -f ${T2KOSCANA}/bin/root2k; \
 	cd ${T2KOSCANA}/fitter;\
 	make clean;\
 	cd ${T2KOSCANA}/apps/fit/;\
