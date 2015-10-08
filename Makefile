@@ -2,7 +2,7 @@ SHELL = /bin/sh
 NAME = all
 MAKEFILE = Makefile
 
-include $(VALOR_FMWK)/make/Make.include
+include $(T2KOSCANA)/make/Make.include
 
 # define composite targets
 #
