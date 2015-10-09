@@ -243,7 +243,7 @@ CXXFLAGS      = -Wall -fPIC \
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
   CXXFLAGS += -Wno-strict-aliasing 
 endif
-LDFLAGS       = -g
+LDFLAGS       = -g -Wl,--no-as-needed
 SOFLAGS       = -shared
 DllSuf       := so
 DllLinkSuf   := 
@@ -270,7 +270,7 @@ CXXFLAGS      = -Wall -fPIC \
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
   CXXFLAGS += -Wno-strict-aliasing 
 endif
-LDFLAGS       = -g
+LDFLAGS       = -g -Wl,--no-as-needed
 SOFLAGS       = -shared
 DllSuf       := so
 DllLinkSuf   := 
