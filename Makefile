@@ -23,14 +23,14 @@ print-make-info: FORCE
 	@echo "***** The source tree corresponds to VALOR version $(VALOR_VERSION)"
 	@echo " "
 
-copy-scripts-to-bin: FORCE
+copy-scripts-to-bin: make-bin-lib-dir FORCE
 	@echo " "
 	@echo "** Copying scripts to bin..."
 	cp ${T2KOSCANA}/make/valor_t2xk-config ${T2KOSCANA}/bin
 	cp ${T2KOSCANA}/root/root2k ${T2KOSCANA}/bin
 	cp ${T2KOSCANA}/root/pyroot2k ${T2KOSCANA}/bin
 
-build-fitter: FORCE
+build-fitter: make-bin-lib-dir FORCE
 	@echo " "
 	@echo "** Building T2K oscillation fitter library..."
 	+cd ${T2KOSCANA}/fitter;\
@@ -44,7 +44,7 @@ make-bin-lib-dir: FORCE
 	[ -d bin ] || mkdir bin; chmod 755 bin;\
 	[ -d lib ] || mkdir lib; chmod 755 lib;
 
-build-fit-apps: FORCE
+build-fit-apps: make-bin-lib-dir FORCE
 	@echo " "
 	@echo "** Building T2XK fit apps..."
 	cd ${T2KOSCANA}/apps/fit/;\
