@@ -6111,7 +6111,7 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 	  bin_Min_1D[i] = binloop_1D; // store the X bins 
 
 	  // Bin is on the border, it should happens only when binN = binF
-	  double bincont = conv::kALargeNum;
+	  bincont = conv::kALargeNum;
 	  if( (binloop_1D < fFirstMinimBin_X) ||
 	      (binloop_1D > fLastMinimBin_X) 
 	      )
