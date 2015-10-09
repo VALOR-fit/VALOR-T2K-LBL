@@ -434,7 +434,7 @@ private:
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
-ClassDef(SuperkMC, 7);
+ClassDef(SuperkMC, 8);
 };
 
 } //valor

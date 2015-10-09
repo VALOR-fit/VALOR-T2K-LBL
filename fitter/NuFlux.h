@@ -177,7 +177,7 @@ private:
   TH1D *           fSKRHCNuEFluxExtTuningWght;      ///< SuperK nue     flux tuning weights
   TH1D *           fSKRHCNuEBarFluxExtTuningWght;   ///< SuperK nue     flux tuning weights
       
-ClassDef(NuFlux, 5)
+ClassDef(NuFlux, 6)
 };
 
 } //valor

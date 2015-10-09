@@ -255,7 +255,7 @@ private:
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
-ClassDef(NuXSec, 5);
+ClassDef(NuXSec, 6);
 };
 
 } // valor
