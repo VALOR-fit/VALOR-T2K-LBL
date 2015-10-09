@@ -10,6 +10,6 @@ export T2KOSCANA="$(readlink -m $1)"
 export VALOR_FMWK="$(readlink -m $2)"
 
 source "${VALOR_FMWK}/setup/setup_at_cvmfs.sh" "${VALOR_FMWK}"
-export LD_LIBRARY_PATH="${T2KOSCANA}/fitter:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="${T2KOSCANA}/lib:${LD_LIBRARY_PATH}"
 export PATH="${T2KOSCANA}/root:${T2KOSCANA}/production:${PATH}"
 
