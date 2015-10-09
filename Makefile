@@ -67,6 +67,15 @@ clean-files: FORCE
 	cd ${T2KOSCANA}/apps/fit/;\
 	make clean;\
 	cd ${T2KOSCANA};
+	@echo " "
+	@echo " "
+	@echo " "
+	@echo "Deleting libaries in $T2KOSCANA/fitter. They have moved, so this will be disabled in the near future"
+	rm -f ${T2KOSCANA}/fitter/libT2KNuOsc*
+	@echo " "
+	@echo " "
+	@echo " "
+
 
 clean-dir: FORCE
 	@echo "Deleting VALOR/T2XK lib and bin directories...";\
