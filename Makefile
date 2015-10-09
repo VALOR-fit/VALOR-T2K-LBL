@@ -33,7 +33,7 @@ copy-scripts-to-bin: FORCE
 build-fitter: FORCE
 	@echo " "
 	@echo "** Building T2K oscillation fitter library..."
-	cd ${T2KOSCANA}/fitter;\
+	+cd ${T2KOSCANA}/fitter;\
 	make;\
 	cd ${T2KOSCANA};
 
