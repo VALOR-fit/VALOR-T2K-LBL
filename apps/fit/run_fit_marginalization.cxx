@@ -266,7 +266,8 @@ int main(int argc, char ** argv)
  
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
-  for(int iexperiment = runopt.FirstExperiment(), last_experiment = runopt.LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
+  last_experiment = runopt.LastExperiment();
+  for(int iexperiment = runopt.FirstExperiment(); iexperiment <= last_experiment; iexperiment++) {
      cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
      // Generate mock data
