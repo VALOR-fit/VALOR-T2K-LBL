@@ -20,8 +20,6 @@ if(($match = grep(/--help/i, @ARGV)) > 0) {
   print "    debug             Adds -g in the compiler options to request debug info       default: disabled \n";
   print "\n options for 3rd party software, prefix with --with- (eg --with-log4cpp-lib=/some/path/)\n\n";
   print "    optimiz-level     Compiler optimization (any of O,O2,O3,OO,Os)                default: O2 \n";
-  print "    log4cpp-inc       Path to log4cpp includes                                    default: - (auto-detection enabled) \n";
-  print "    log4cpp-lib       Path to log4cpp library                                     default: - (auto-detection enabled) \n";
   print "\n VALOR/t2xk running options\n\n";
   print "     --fhc-running              Run with FHC 1-ring samples (neutrino enhanced)      default: off \n";
   print "     --rhc-running              Run with RHC 1-ring samples (anti-neutrino enhanced) default: off \n";
@@ -115,49 +113,6 @@ if($opt_enable_debug eq "YES") { $opt_with_cxx_debug_flag = "-g"; }
 my $opt_with_cxx_optimiz_flag="O2"; # default
 if( $options=~m/--with-optimiz-level=(\S*)/i ) {
   $opt_with_cxx_optimiz_flag = $1;
-}
-
-#
-# Get libxml2 and log4cpp include and library paths
-#
-
-my $opt_with_log4cpp_inc = "";
-my $opt_with_log4cpp_lib = "";
-
-# --with-log4cpp-inc=
-if($options=~m/--with-log4cpp-inc=(\S*)/i) {
-  $opt_with_log4cpp_inc = $1;
-}
-if(! -d $opt_with_log4cpp_inc && $auto_detect)  {
-  print "\n*** Warning *** You didn't specify the log4cpp include path \n";
-  print "Auto-detecting...\n";
-  $matched = auto_detect("OstreamAppender.hh");
-  if( $matched=~m/(\S*)\/log4cpp\/OstreamAppender.hh/i ) {
-     $opt_with_log4cpp_inc = $1;
-  }
-  print "Setting --with-log4cpp-inc=$opt_with_log4cpp_inc\n";
-}
-if(! -d $opt_with_log4cpp_inc) {
-  print "*** Error *** You need to specify the log4cpp include path using --with-log4cpp-inc=/some/path/\n\n";
-  exit 1;
-}
-
-# --with-log4cpp-lib=
-if($options=~m/--with-log4cpp-lib=(\S*)/i) {
-  $opt_with_log4cpp_lib = $1;
-}
-if(! -d $opt_with_log4cpp_lib && $auto_detect)  {
-  print "\n*** Warning *** You didn't specify the log4cpp library path \n";
-  print "Auto-detecting...\n";
-  $matched = auto_detect("liblog4cpp.*");
-  if( $matched=~m/(\S*)\/liblog4cpp\S*/i ) {
-     $opt_with_log4cpp_lib = $1;
-  }
-  print "Setting --with-log4cpp-lib=$opt_with_log4cpp_lib\n";
-}
-if(! -d $opt_with_log4cpp_lib) {
-  print "*** Error *** You need to specify the log4cpp library path using --with-log4cpp-lib=/some/path/\n\n";
-  exit 1;
 }
 
 print "\n";
@@ -288,8 +243,6 @@ print MKCONF "# \n";
 print MKCONF "OPT_PREFIX=$opt_prefix\n";
 print MKCONF "OPT_WITH_CXX_DEBUG_FLAG=$opt_with_cxx_debug_flag\n";
 print MKCONF "OPT_WITH_CXX_OPTIMIZ_FLAG=-$opt_with_cxx_optimiz_flag\n";
-print MKCONF "OPT_WITH_LOG4CPP_INC=$opt_with_log4cpp_inc\n";
-print MKCONF "OPT_WITH_LOG4CPP_LIB=$opt_with_log4cpp_lib\n";
 close(MKCONF);
 if(-e $MKCONF_FILENAME) {
   print "\nThe following config options were set in Make.config: \n";
