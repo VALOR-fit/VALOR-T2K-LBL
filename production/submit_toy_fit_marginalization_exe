@@ -32,44 +32,30 @@ use File::Path;
 $iarg=0;
 foreach (@ARGV) {
 
-    #print "$iarg --> $_ - $ARGV[$iarg] - $ARGV[$iarg+1] \n";
+    if($iarg % 2 == 1) {$iarg++; next;}
 
-    if( index($ARGV[$iarg],'--') == -1 ){ $iarg++; next;} # skip inputs w/o "--"   
-
-    if( index($ARGV[$iarg+1],'--') != -1 || ($iarg+1) == ($#ARGV+1) ){ # last parsed input
-	
-	if(   $_ eq '--prior-t2konly'                  ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	elsif($_ eq '--prior-reactors'                 ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-
-	elsif($_ eq '--enable-verbose-syst-throws'     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	elsif($_ eq '--disable-verbose-syst-throws'    ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	
-	elsif($_ eq '--disable-marg-mass-hierarchy'    ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	elsif($_ eq '--enable-marg-mass-hierarchy'     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	
-	elsif($_ eq '--disable-stat-fluct'             ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	elsif($_ eq '--enable-stat-fluct'              ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	
-	elsif($_ eq '--enable-rethrow-unphysical-toys' ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	elsif($_ eq '--disable-rethrow-unphysical-toys') { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	
-	elsif($_ eq '--default-all-oscparams'          ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	elsif($_ eq '--randomize-all-oscparams'        ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	
-	elsif($_ eq '--full-chisq'                     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	
-	elsif($_ eq '--rate-shape'                     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	elsif($_ eq '--rate-only'                      ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	
-	elsif($_ eq '--do-toys'                        ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	
-	elsif($_ eq '--enable-synch-osc-ih-to-nh'      ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-	elsif($_ eq '--disable-synch-osc-ih-to-nh'     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
-		
-	elsif($_ eq '--run-full-grid'                  ) { $run_fullgrid          = 1; }
-
-	$iarg++; next;
-    }
+    # #print "$iarg --> $_ - $ARGV[$iarg] - $ARGV[$iarg+1] \n";
+    # if( index($ARGV[$iarg],'--') == -1 ){ $iarg++; next;} # skip inputs w/o "--"   
+    # if( index($ARGV[$iarg+1],'--') != -1 || ($iarg+1) == ($#ARGV+1) ){ # last parsed input
+    # 	if(   $_ eq '--prior-t2konly'                  ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--prior-reactors'                 ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--enable-verbose-syst-throws'     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--disable-verbose-syst-throws'    ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--disable-marg-mass-hierarchy'    ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--enable-marg-mass-hierarchy'     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }		
+    # 	elsif($_ eq '--enable-rethrow-unphysical-toys' ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--disable-rethrow-unphysical-toys') { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--default-all-oscparams'          ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--randomize-all-oscparams'        ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }	
+    # 	elsif($_ eq '--full-chisq'                     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--rate-shape'                     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--rate-only'                      ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--do-toys'                        ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--enable-synch-osc-ih-to-nh'      ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--disable-synch-osc-ih-to-nh'     ) { $arguments_bool = "$arguments_bool $_"; $iarg++; next; }
+    # 	elsif($_ eq '--run-full-grid'                  ) { $run_fullgrid          = 1; }
+    # 	$iarg++; next;
+    # }
 
     ##################################### Common ########################################
     if   ($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
@@ -82,7 +68,10 @@ foreach (@ARGV) {
     
     elsif($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
 
-    elsif($_ eq '--nexpts'                 ) { $nexpts                = $ARGV[$iarg+1]; }
+    elsif($_ eq '--n-experiments'          ) { $nexpts                = $ARGV[$iarg+1]; }
+    elsif($_ eq '--first-experiment'       ) { $first_expt            = $ARGV[$iarg+1]; }
+    
+    elsif($_ eq '--marginalize-mh'         ) { $marg_hierarchy        = $ARGV[$iarg+1]; }
 
     elsif($_ eq '--dm23sq'                 ) { $dm23sq                = $ARGV[$iarg+1]; }
     elsif($_ eq '--dm12sq'                 ) { $dm12sq                = $ARGV[$iarg+1]; }
@@ -102,6 +91,8 @@ foreach (@ARGV) {
     ####################### Only for run_fit_marginalization*.C #########################
     elsif($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
     elsif($_ eq '--use-xml-file'           ) { $using_xml_file        = $ARGV[$iarg+1]; }
+    elsif($_ eq '--fakedata-root-file'     ) { $fakedata_root_file    = $ARGV[$iarg+1]; }
+    elsif($_ eq '--fakedata-xml-file'      ) { $fakedata_xml_file     = $ARGV[$iarg+1]; }
     elsif($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
     elsif($_ eq '--marg-file'              ) { $marg_file             = $ARGV[$iarg+1]; }
     elsif($_ eq '--nfiles-marg'            ) { $nfiles_marg           = $ARGV[$iarg+1]; }
@@ -120,15 +111,18 @@ foreach (@ARGV) {
     elsif($_ eq '--test-stat'              ) { $test_stat             = $ARGV[$iarg+1]; }
     #####################################################################################
 
-
     ############################ Only for generate_toymc*.C #############################
     elsif($_ eq '--hypothesis'             ) { $hypothesis            = $ARGV[$iarg+1]; }
     elsif($_ eq '--print-syst-variation'   ) { $print_syst_variation  = $ARGV[$iarg+1]; }
     elsif($_ eq '--rethrow-unphysical'     ) { $rethrow_unphysical    = $ARGV[$iarg+1]; }
-    elsif($_ eq '--stat-fluctuations'      ) { $stat_fluct            = $ARGV[$iarg+1]; }
+    elsif($_ eq '--enable-verbose-syst-throws' ) { $verbose_systthrows = $ARGV[$iarg+1]; }
+    elsif($_ eq '--enable-rethrow-unphysical-toys' ) { $rethrow_unphysical  = $ARGV[$iarg+1]; }
+    elsif($_ eq '--enable-synch-osc-ih-to-nh' ) { $sync_ih_to_nh      = $ARGV[$iarg+1]; }
+    elsif($_ eq '--enable-stat-fluct'      ) { $stat_fluct            = $ARGV[$iarg+1]; }
     elsif($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
-    elsif($_ eq '--marginalize-hierarchy'  ) { $marg_hierarchy        = $ARGV[$iarg+1]; }
     elsif($_ eq '--prior-prob-nh'          ) { $prior_prob_nh         = $ARGV[$iarg+1]; }
+    elsif($_ eq '--prior-mode'             ) { $prior_mode            = $ARGV[$iarg+1]; }
+    elsif($_ eq '--do-toys'                ) { $do_toys               = $ARGV[$iarg+1]; }
     elsif($_ eq '--save-xml'               ) { $save_xml              = $ARGV[$iarg+1]; }
     elsif($_ eq '--save-fluct-xml'         ) { $save_fluct_xml        = $ARGV[$iarg+1]; }
     elsif($_ eq '--save-root'              ) { $save_root             = $ARGV[$iarg+1]; }
@@ -138,7 +132,7 @@ foreach (@ARGV) {
     else {
 	print "Unrecognised argument ".$_."\n"; exit;
     }
-    $iarg = $iarg+1;
+    $iarg++;
 }
 
 
@@ -160,11 +154,12 @@ $tag             = "fitmarg_joint_dcp"         unless defined $tag;
 
 $run_fullgrid    = 0                           unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
 
-#$config_file    = "analysis_configuration_test_theta.xml"  unless defined $config_file;
-$config_file    = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml"  unless defined $config_file;
+$config_file    = "analysis_configuration_test_theta_elike_RFGRPA.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml"  unless defined $config_file;
 #$config_file     = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml"  unless defined $config_file;
 
-$nexpts            = 1                    unless defined $nexpts;  # number of toy experiments and fits per freepar point
+$nexpts            = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point
+$first_expt        = 0   unless defined $first_exp; # first toy experiment id 
 
 # $dm23sq          = 2.509E-3                    unless defined $dm23sq;
 # $dm12sq          = 7.53E-5                     unless defined $dm12sq;
@@ -181,6 +176,8 @@ $mix13           = 0.0243                        unless defined $mix13;
 $mix12           = 0.304                        unless defined $mix12;
 $deltacp         = -1.601                        unless defined $deltacp;
 $betaBar         = 1.                          unless defined $betaBar;
+
+$marg_hierarchy  = 0                           unless defined $marg_hierarchy; # commont to fakedata toys and marginalization toys
 
 $dmsqscheme      = "auto"                      unless defined $dmsqscheme;
 $masshierarchy   = "normal"                    unless defined $masshierarchy;
@@ -203,10 +200,13 @@ if( !defined $cput ) {
 $hypothesis             = "3f_osc"             unless defined $hypothesis;
 $print_syst_variation   = 1                    unless defined $print_syst_variation;
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
-$stat_fluc              = 1                    unless defined $stat_fluct;
+$verbose_systthrows     = 0                    unless defined $verbose_systthrows;
+$sync_ih_to_nh          = 1                    unless defined $sync_ih_to_nh;
+$stat_fluct             = 1                    unless defined $stat_fluct;
 $tweak_systematics      = 1                    unless defined $tweak_systematics;
-$marg_hierarchy         = 0                    unless defined $marg_hierarchy;
 $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
+$prior_mode             = 1                    unless defined $prior_mode; # 0-->fix,1-->react,2-->t2k-only
+$do_toys                = 1                    unless defined $do_toys;
 $save_xml               = 1                    unless defined $save_xml;
 $save_fluct_xml         = 1                    unless defined $save_fluc_xml;
 $save_root              = 1                    unless defined $save_root;
@@ -216,16 +216,19 @@ $file_priors = "" unless defined $file_priors;
 ########################################################################################
 
 ########################## Fit w/ marginalization #########################
-$using_xml_file  = 1                           unless defined $using_xml_file;
+$using_xml_file  = 0                           unless defined $using_xml_file;
+$fakedata_root_file = "../outputs/test/SKdata_Run14.root" unless defined $fakedata_root_file;
+$fakedata_xml_file = "../outputs/test/SKdata_Run14.xml" unless defined $fakedata_xml_file;
+
 $nruns           = 1                           unless defined $nruns;         # number of jobs per freepar point
 
 $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3f_12fix+nuisance"    unless defined $fitparamlist;
 
 #$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_dcp_t2kreact_constrall_IH_10kToys" unless defined $marg_file;
-$marg_file         = "submit_prova_TemplVArray" unless defined $marg_file;
+$marg_file         = "submit_prova_TemplVArray_2d" unless defined $marg_file;
 
-$nfiles_marg       = 9             unless defined $nfiles_marg;     # of marginalization files
+$nfiles_marg       = 1             unless defined $nfiles_marg;     # of marginalization files
 $nexpts_marg       = 100           unless defined $nexpts_marg;    # of marginalization toys
 
 $freepar0          = "deltacp"     unless defined $freepar0;
@@ -472,16 +475,17 @@ while($i_freepar1 < $n_freepar1) {
 	    print "last: $ifile_last \n";
 	    
 	    # Variable to set, not by the user
-	    $dotoys = 0;                # Don't do toys on fly but read either xml or root files
-	    $stat_fluct_fit = 0;        # Useless for fits, since toys are read and not performed
-	    $tweak_systematics_fit = 0; # Useless for fits, since toys are read and not performed
+	    #$dotoys = 0;                # Don't do toys on fly but read either xml or root files
+	    #$stat_fluct_fit = 0;        # Useless for fits, since toys are read and not performed
+	    #$tweak_systematics_fit = 0; # Useless for fits, since toys are read and not performed
 	    $tag_freepar = sprintf("fit_%s_nexp_%d_%1.3f_%1.3f-job%1.0f",$tag,$nexpts,$pt_freepar0,$pt_freepar1,$irun);
 	    
 	    $program = "";
-	    $arguments = "./run_fit_marginalization_exe.exe --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dm12sq --dm23sq-nh $dm23sq --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --syst-tweak-mode $tweak_systematics_fit --fit-param-list \"$fitparamlist\" --marg-file \"$marg_file\" --nfiles-marg $nfiles_marg --ntoys-marg $nexpts_marg --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marg-mh \"$marg_hierarchy\" --type-error \"$type_error\"";
+	    $arguments = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/trunk_20150630_2d_templates/bin/run_fit_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $first_expt --enable-rethrow-unphysical-toys $rethrow_unphysical --enable-verbose-syst-throws $verbose_systthrows --enable-synch-osc-ih-to-nh $sync_ih_to_nh --enable-marg-mass-hierarchy $marg_hierarchy --prior $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --marginalize-mh-margtoys $marg_hierarchy --mass-hierarchy-marg $masshierarchy_marg --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dm12sq --dm23sq-nh $dm23sq --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --enable-stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --marg-file \"$marg_file\" --nfiles-marg $nfiles_marg --ntoys-marg $nexpts_marg --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marg-mh \"$marg_hierarchy\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\"";
 	    
-	    $command = "$program $arguments $arguments_bool";
-	    
+	    #$command = "$program $arguments $arguments_bool";
+	    $command = "$program $arguments";
+
 	    #if(using_xml_file) { $command = " $command --use-xml-file $xml_file_freepar"; }
 	    #if(using_root_file){ $command = " $command --use-root-file $root_file_freepar"; }
 	    
