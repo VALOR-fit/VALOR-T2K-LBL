@@ -115,8 +115,10 @@ def main(file_patterns,config,tag="data",rebin=False,nopave=False,draw_unosc=Fal
     
     # Set up hierarchy
     if ("31" in fparm.Name(conv.kPhypDm23sq)):
+      opt.gMassHierarchyAssumed = conv.kNmhInverted
       opt.gOscDmsqScheme = conv.kNuDmsq12andAbs31
     elif ("32" in fparm.Name(conv.kPhypDm23sq)):
+      opt.gMassHierarchyAssumed = conv.kNmhNormal
       opt.gOscDmsqScheme = conv.kNuDmsq12andAbs23
     else:
       print "Something went wrong, probably unsupported Fogli-Lisi"

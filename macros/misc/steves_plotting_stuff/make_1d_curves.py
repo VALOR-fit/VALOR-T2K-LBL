@@ -30,7 +30,7 @@ opt.SetDefaultParameterValues()
 
 image_format = "eps"
 conf90 = 2.71
-conf68 = 1
+conf68 = 1.
 
 to3dp = "{0:.3f}"
 to3sf = "{0:.3g}"
@@ -135,34 +135,64 @@ def main(data_file_mixing, data_file_dmsq,
     print "Bestfit point (ih)  : ",bf_x_ih,"\twith chisq: ",bf_chisq_ih
     
     neg_90_nh_x = None
+    neg_68_nh_x = None
     ibin_nh = bf_bin_nh
+    while ibin_nh > 0 and neg_68_nh_x is None:
+      if h_delta_nh.GetBinContent(ibin_nh) > conf68:
+        neg_68_nh_x = h_delta_nh.GetXaxis().GetBinUpEdge(ibin_nh)
+      ibin_nh -= 1
     while ibin_nh > 0 and neg_90_nh_x is None:
       if h_delta_nh.GetBinContent(ibin_nh) > conf90:
         neg_90_nh_x = h_delta_nh.GetXaxis().GetBinUpEdge(ibin_nh)
       ibin_nh -= 1
       
     pos_90_nh_x = None
+    pos_68_nh_x = None
     ibin_nh = bf_bin_nh
+    while ibin_nh < h_delta_nh.GetXaxis().GetNbins()+1 and pos_68_nh_x is None:
+      if h_delta_nh.GetBinContent(ibin_nh) > conf68:
+        pos_68_nh_x = h_delta_nh.GetXaxis().GetBinLowEdge(ibin_nh)
+      ibin_nh += 1
     while ibin_nh < h_delta_nh.GetXaxis().GetNbins()+1 and pos_90_nh_x is None:
       if h_delta_nh.GetBinContent(ibin_nh) > conf90:
         pos_90_nh_x = h_delta_nh.GetXaxis().GetBinLowEdge(ibin_nh)
       ibin_nh += 1
       
     neg_90_ih_x = None
+    neg_68_ih_x = None
     ibin_ih = bf_bin_ih
+    while ibin_ih > 0 and neg_68_ih_x is None:
+      if h_delta_ih.GetBinContent(ibin_ih) > conf68:
+        neg_68_ih_x = h_delta_ih.GetXaxis().GetBinUpEdge(ibin_ih)
+      ibin_ih -= 1
     while ibin_ih > 0 and neg_90_ih_x is None:
       if h_delta_ih.GetBinContent(ibin_ih) > conf90:
         neg_90_ih_x = h_delta_ih.GetXaxis().GetBinUpEdge(ibin_ih)
       ibin_ih -= 1
       
     pos_90_ih_x = None
+    pos_68_ih_x = None
     ibin_ih = bf_bin_ih
+    while ibin_ih < h_delta_ih.GetXaxis().GetNbins()+1 and pos_68_ih_x is None:
+      if h_delta_ih.GetBinContent(ibin_ih) > conf68:
+        pos_68_ih_x = h_delta_ih.GetXaxis().GetBinLowEdge(ibin_ih)
+      ibin_ih += 1
     while ibin_ih < h_delta_ih.GetXaxis().GetNbins()+1 and pos_90_ih_x is None:
       if h_delta_ih.GetBinContent(ibin_ih) > conf90:
         pos_90_ih_x = h_delta_ih.GetXaxis().GetBinLowEdge(ibin_ih)
       ibin_ih += 1
      
     print "\n\n"
+    
+    prec = precision[param]
+    err_plu_x_nh = pos_68_nh_x - bf_x_nh
+    err_min_x_nh = bf_x_nh - neg_68_nh_x
+    err_plu_x_ih = pos_68_ih_x - bf_x_ih
+    err_min_x_ih = bf_x_ih - neg_68_ih_x
+    
+    print "1 Sigma:"
+    print "NH: ",prec.format(bf_x_nh)+" +"+prec.format(err_plu_x_nh)+" -"+prec.format(err_min_x_nh)
+    print "IH: ",prec.format(bf_x_ih)+" +"+prec.format(err_plu_x_ih)+" -"+prec.format(err_min_x_ih)
     
     h_delta_nh.GetYaxis().SetTitleOffset(0.6)
   
