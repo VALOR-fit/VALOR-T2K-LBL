@@ -1904,7 +1904,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
 {
 #ifndef __ALLOW_DIFFERING_HIERARCHIES__
-  assert(Opt::Instance()->gMassHierarchyAssumed==fNuOsc3Flavour.GetMassHierarchy());
+  std::cerr << "SKExp/ApplyPhysHypothesisToTemplates_3fOsc >> "
+            << "NOTE: UPDATING SKMC HIERARCHY FROM GLOBAL TO "<<util::AsString(Opt::Instance()->gMassHierarchyAssumed)<<endl;
+  fNuOsc3Flavour.SetMassHierarchy(Opt::Instance()->gMassHierarchyAssumed);
 #endif
   // set oscillation parameters to the oscillation probability calculation code
   double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
@@ -2063,7 +2065,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
 void SuperkMC::ApplyPhysHypothesisToTemplates_3fNSI(void)
 {
 #ifndef __ALLOW_DIFFERING_HIERARCHIES__
-  assert(Opt::Instance()->gMassHierarchyAssumed==fNSI3Flavour.GetMassHierarchy());
+  std::cerr << "SKExp/ApplyPhysHypothesisToTemplates_3fOscNSI >> "
+            << "NOTE: UPDATING SKMC HIERARCHY FROM GLOBAL TO "<<util::AsString(Opt::Instance()->gMassHierarchyAssumed)<<endl;
+  fNSI3Flavour.SetMassHierarchy(Opt::Instance()->gMassHierarchyAssumed);
 #endif
   // set oscillation parameters to the oscillation probability calculation code
   double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
@@ -2218,6 +2222,12 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fNSI(void)
 //________________________________________________________________________________________
 void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
 {
+#ifndef __ALLOW_DIFFERING_HIERARCHIES__
+  std::cerr << "SKExp/ApplyPhysHypothesisToTemplates_3fOscBar >> "
+            << "NOTE: UPDATING SKMC HIERARCHY FROM GLOBAL TO "<<util::AsString(Opt::Instance()->gMassHierarchyAssumed)<<endl;
+  fNuOsc3FlavourBar.SetMassHierarchy(Opt::Instance()->gMassHierarchyAssumed);
+#endif
+
   //
   // 3-flavour oscillations, separate nu and nubar
   //
@@ -2393,7 +2403,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
 void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
 {
 #ifndef __ALLOW_DIFFERING_HIERARCHIES__
-  assert(Opt::Instance()->gMassHierarchyAssumed==fNuOscSterile.GetMassHierarchy());
+  std::cerr << "SKExp/ApplyPhysHypothesisToTemplates_Sterile >> "
+            << "NOTE: UPDATING SKMC HIERARCHY FROM GLOBAL TO "<<util::AsString(Opt::Instance()->gMassHierarchyAssumed)<<endl;
+  fNuOscSterile.SetMassHierarchy(Opt::Instance()->gMassHierarchyAssumed);
 #endif
   //
   // 3+n flavour sterile oscillations
