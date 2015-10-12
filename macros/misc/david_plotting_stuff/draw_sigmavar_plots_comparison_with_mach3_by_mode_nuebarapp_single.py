@@ -289,9 +289,12 @@ def main():
     mach3_ratio_hists_binno [valor_mode] = dict()
 
     if mach3_mode == "" :
-      mach3_selection = mach3_selection_1
+      mach3_selection = "h" + mach3_selection_1
     else :
       mach3_selection = mach3_selection_1
+
+    if "RHC" in valor_mode :
+      mach3_selection = "anu_" + mach3_selection
 
     mach3_nom_histname = mach3_nom_pattern
 
