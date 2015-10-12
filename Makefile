@@ -33,9 +33,7 @@ copy-scripts-to-bin: make-bin-lib-dir FORCE
 build-fitter: make-bin-lib-dir FORCE
 	@echo " "
 	@echo "** Building T2K oscillation fitter library..."
-	+cd ${T2KOSCANA}/fitter;\
-	make;\
-	cd ${T2KOSCANA};
+	$(MAKE) -C ${T2KOSCANA}/fitter
 
 make-bin-lib-dir: FORCE
 	@echo " "
@@ -47,9 +45,7 @@ make-bin-lib-dir: FORCE
 build-fit-apps: make-bin-lib-dir FORCE
 	@echo " "
 	@echo "** Building T2XK fit apps..."
-	cd ${T2KOSCANA}/apps/fit/;\
-	make;\
-	cd ${T2KOSCANA};
+	$(MAKE) -C ${T2KOSCANA}/apps/fit/
 
 
 clean: clean-files clean-dir
