@@ -31,7 +31,6 @@ variations = [ ("p1","p1"),
 
 mach3_current = "" #"anu_"
 mach3_selection_1 = m3selection #"sknumu"
-
 parameters = [
 
 
@@ -291,21 +290,18 @@ def main():
     if mach3_mode == "" :
         if "RHC" in sample :
             mach3_selection = "anu_h" + mach3_selection_1
-            print("RHC")
-            print(mach3_selection)
         else:
             mach3_selection = "h" + mach3_selection_1
-            print("FHC")
-            print(mach3_selection)
     else :
       if "RHC" in sample :
         mach3_selection = "anu_" + mach3_selection_1
-        print("RHC")
-        print(mach3_selection)
       else :
         mach3_selection = mach3_selection_1
-        print("FHC")
-        print(mach3_selection)
+
+    if "RHC" in sample :
+        mach3_selection_2 = "anu_" + mach3_selection_1
+    else:
+        mach3_selection_2 = mach3_selection_1
 
     mach3_nom_histname = mach3_nom_pattern
 
@@ -344,7 +340,7 @@ def main():
         for old,new in [("[PARAM]"    , mach3_param    ),
                         ("[CURRENT]"  , mach3_current  ),
                         ("[MODE]"     , mach3_mode     ),
-                        ("[SELECTION]", mach3_selection_1),
+                        ("[SELECTION]", mach3_selection_2),
                         ("[VAR]"      , mach3_var      ) ]:
           mach3_histname = mach3_histname.replace(old,new)
 
