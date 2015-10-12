@@ -409,8 +409,10 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
   }
 
   // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-  fitmarg->WriteLikeToys2Binary(runopt.FileTag().c_str());
-  
+  if(runopt.StoreLikeWeights()){
+    fitmarg->WriteLikeToys2Binary(runopt.FileTag().c_str());
+  }
+
 }
 //____________________________________________________________________________
 conv::PhysParamId_t valor::util::GetFreePar(string freeparname){

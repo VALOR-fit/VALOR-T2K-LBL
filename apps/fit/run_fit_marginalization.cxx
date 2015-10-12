@@ -14,13 +14,7 @@
 
 
 // How to run the macro:
-//
-//$T2KOSCANA/bin/run_fit_marginalization --cpv-nh -1.601 --mixing13-nh 0.0243 --mixing23-nh 0.528 --mixing12-nh 0.304 --dm12sq-nh 7.53E-5 --dm23sq-nh 2.509E-3 --synch-ih-to-nh --prior-reactors --disable-stat-fluct --syst-tweak-mode 0 --default-all-oscparams --fit-param-list "nuosc3f+nuisance" --marg-file "submit_prova_TemplVArray" --nfiles-marg 9 --ntoys-marg 100 --freepar0-name "deltacp" --freepar1-name "" --freepar0-min -3.14159265358979312e+00 --freepar0-max +3.14159265358979312e+00 --freepar0-npt 9 --marg-mh-normal "normal" --type-error "" --full-chisq 1 --rate-shape --use-xml-file "data_run1to6/data.xml"
-//
-// or
-//
-//$T2KOSCANA/bin/run_fit_marginalization --cpv-nh -1.601 --mixing13-nh 0.0243 --mixing23-nh 0.528 --mixing12-nh 0.304 --dm12sq-nh 7.53E-5 --dm23sq-nh 2.509E-3 --synch-ih-to-nh --prior-reactors --disable-stat-fluct --syst-tweak-mode 0 --default-all-oscparams --fit-param-list "nuosc3f+nuisance" --marg-file "submit_prova_TemplVArray" --nfiles-marg 9 --ntoys-marg 100 --freepar0-name "deltacp" --freepar1-name "" --freepar0-min -3.14159265358979312e+00 --freepar0-max +3.14159265358979312e+00 --freepar0-npt 9 --marg-mh-normal "normal" --type-error "" --full-chisq 1 --rate-shape --do-toys
-//
+
 
 //
 // TODO:
@@ -169,15 +163,19 @@ int main(int argc, char ** argv)
   cout << "- The following physics hypothesis is used in the fit: " << util::AsString(hyp) << endl;
 
 
-
-
   // Create file to store results
+
   string oscstr;// = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);  
-  TFile f(Form("%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
 
-
+  TFile *f = new TFile(Form("%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");  
+  TFile *ftoys = new TFile(Form("%s_Toys-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
 
   // Set Tree toy/fit
+
+  int run=-999;
+  string tag="";
+  int nexpts=-999;
+  int ToyID=-999;
 
   double truepar0=-999;
   double truepar1=-999;    
@@ -208,21 +206,22 @@ int main(int argc, char ** argv)
   double bestfitFullChisq0=-999;
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
-  int ToyID=-999;
+#ifndef __USE_2D_TEMPLATES__
   TH1F *hErecoToy_1Rmu = new TH1F("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1);
   TH1F *hErecoToy_1Re = new TH1F("hErecoToy_1Re","hErecoToy_1Re",1,0,1);
   TH1F *hErecoToy_RHC1Rmu = new TH1F("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1);
   TH1F *hErecoToy_RHC1Re = new TH1F("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1);
-  TH2F *hErecoToy2D_1Rmu = new TH2F("hErecoToy2D_1Rmu","hErecoToy2D_1Rmu",1,0,1,1,0,1);
-  TH2F *hErecoToy2D_1Re = new TH2F("hErecoToy2D_1Re","hErecoToy2D_1Re",1,0,1,1,0,1);
-  TH2F *hErecoToy2D_RHC1Rmu = new TH2F("hErecoToy2D_RHC1Rmu","hErecoToy2D_RHC1Rmu",1,0,1,1,0,1);
-  TH2F *hErecoToy2D_RHC1Re = new TH2F("hErecoToy2D_RHC1Re","hErecoToy2D_RHC1Re",1,0,1,1,0,1);
-  
+#else
+  TH2F *hErecoToy_1Rmu = new TH2F("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1,1,0,1);
+  TH2F *hErecoToy_1Re = new TH2F("hErecoToy_1Re","hErecoToy_1Re",1,0,1,1,0,1);
+  TH2F *hErecoToy_RHC1Rmu = new TH2F("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1,1,0,1);
+  TH2F *hErecoToy_RHC1Re = new TH2F("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1,1,0,1);
+#endif
  
   // // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
 
-  
+
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
   fitnt->Branch("best_fit_params",      "valor::FitParamList",  &fparm,      1280000,0);
@@ -254,16 +253,31 @@ int main(int argc, char ** argv)
   fitnt->Branch("bestfitFullChisq0", &bestfitFullChisq0 );
   fitnt->Branch("bestfitFullChisq1", &bestfitFullChisq1 );
   fitnt->Branch("chisqminFullChisq",&chisqminFullChisq);
+
   fitnt->Branch("ToyID",&ToyID);
+  fitnt->Branch("Job",&run);
+  fitnt->Branch("Tag",&tag);
+  fitnt->Branch("nexpts",&nexpts);
+
+#ifndef __USE_2D_TEMPLATES__
   fitnt->Branch("hErecoToy_1Rmu",     "TH1F",&hErecoToy_1Rmu,     32000,0);
   fitnt->Branch("hErecoToy_1Re",      "TH1F",&hErecoToy_1Re,      32000,0);
   fitnt->Branch("hErecoToy_RHC1Rmu",  "TH1F",&hErecoToy_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoToy_RHC1Re",   "TH1F",&hErecoToy_RHC1Re,   32000,0);
-  fitnt->Branch("hErecoToy2D_1Rmu",   "TH2F",&hErecoToy2D_1Rmu,   32000,0);
-  fitnt->Branch("hErecoToy2D_1Re",    "TH2F",&hErecoToy2D_1Re,    32000,0);
-  fitnt->Branch("hErecoToy2D_RHC1Rmu","TH2F",&hErecoToy2D_RHC1Rmu,32000,0);
-  fitnt->Branch("hErecoToy2D_RHC1Re", "TH2F",&hErecoToy2D_RHC1Re, 32000,0);
+#else  
+  fitnt->Branch("hErecoToy_1Rmu",     "TH2F",&hErecoToy_1Rmu,     32000,0);
+  fitnt->Branch("hErecoToy_1Re",      "TH2F",&hErecoToy_1Re,      32000,0);
+  fitnt->Branch("hErecoToy_RHC1Rmu",  "TH2F",&hErecoToy_RHC1Rmu,  32000,0);
+  fitnt->Branch("hErecoToy_RHC1Re",   "TH2F",&hErecoToy_RHC1Re,   32000,0);
+#endif
  
+  // Update physics fitparamlist with chosen value of oscillation parameters
+  bool set_init = false;
+  set_init = true;
+  util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
+  set_init = false;
+  util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
+
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
   last_experiment = runopt.LastExperiment();
@@ -275,10 +289,10 @@ int main(int argc, char ** argv)
      SuperkObservation * skobs_fakedata = new SuperkObservation;
      PhysHypothesis ph(runopt.Hypothesis());
 
+     //util::OscParams::Instance()->Print(cout);
+     
      // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
-     util::OscParams::Instance()->UpdateFitParamList(fparm,true);
-     util::OscParams::Instance()->UpdateFitParamList(fparm,false);
      
      if(runopt.DoToys()){
        
@@ -288,6 +302,11 @@ int main(int argc, char ** argv)
        // Set the mass hierarchy
        util::SetMassHierarchy(skexp);
        
+       // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
+       util::OscParams::Instance()->UpdatePhysHypothesis(ph);
+       set_init = false;
+       util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
+     
        // Fill toy histograms of osc params
        util::OscParams::Instance()->FillOscToyHisto(ph);
        
@@ -339,9 +358,8 @@ int main(int argc, char ** argv)
        }
      }
      
-     
      /////////////////// SET MARGINALIZATION FIT ////////////////
-     
+  
      FitMarginalization *fitmarg = new FitMarginalization();   
      
      // Reset all the variables
@@ -413,12 +431,11 @@ int main(int argc, char ** argv)
        chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
        //   fitmarg->BuildDeltaChisqMarg();
      }
-     
+
+          
      // Get delta chisq
      deltachisq0BF = chisqtrue0 - chisqmin;
      
-     
-
      // Get the fakedata histogram
      for(int is = 0; is < kns; is++) {
        SuperkSample_t s = kSKSamples[is];
@@ -433,17 +450,16 @@ int main(int argc, char ** argv)
       	 hErecoToy_1Rmu = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
        else if(s == kSKsFCFV1RingELike)
       	 hErecoToy_1Re = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
-       //cout << "    " << util::AsStringCompact(s) << endl;
-     
+       //cout << "    " << util::AsStringCompact(s) << endl;     
 #else
        else if(s == kSKsRHCFCFV1RingMuLike)
-	 hErecoToy2D_RHC1Rmu = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+	 hErecoToy_RHC1Rmu = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
        else if(s == kSKsRHCFCFV1RingELike)
-      	 hErecoToy2D_RHC1Re = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+      	 hErecoToy_RHC1Re = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
        else if(s == kSKsFCFV1RingMuLike)
-      	 hErecoToy2D_1Rmu = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+      	 hErecoToy_1Rmu = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
        else if(s == kSKsFCFV1RingELike)
-      	 hErecoToy2D_1Re = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+      	 hErecoToy_1Re = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
        //cout << "    " << util::AsStringCompact(s) << endl;      
 #endif
      }
@@ -461,8 +477,14 @@ int main(int argc, char ** argv)
        hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
      }
      
+     // Fill toy informations (toy id, run, # of experiments, tag)
+     ToyID = iexperiment;
+     tag = runopt.FileTag();
+     nexpts = runopt.NExperiments();
+     run = runopt.Run();
+
+    
      fitnt->Fill();
-     
      
      // Print output
      
@@ -518,25 +540,50 @@ int main(int argc, char ** argv)
      }
      cout << endl;
      
+     
+     // Store mock data in separated root file 
+     // as when generate_toymc_ensemble.cxx is run
+     
+     ftoys->cd();
+
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+     TH1D * mock_data[kns];
+#else
+     TH2D * mock_data[kns];
+#endif
+     for (int is = 0 ; is < conv::kns ; is++) {
+       SuperkSample_t s = conv::kSKSamples[is];
+       if (s == conv::kSKsUndefined) continue;
+#ifndef __USE_2D_TEMPLATES__ 
+       mock_data[is] = skobs_fakedata->ErecoSpectrum(s);
+#else
+       mock_data[is] = skobs_fakedata->TwoDSpectrum(s);
+#endif
+       mock_data[is]->SetDirectory(0);
+  
+       mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+       delete mock_data[is];
+       
+     }//is
+     
      // Clean-up
-     delete skobs_fakedata;  
+     delete skobs_fakedata;
      fitmarg->CleanUp();
      delete fitmarg;
-     delete hErecoToy_1Rmu;
-     delete hErecoToy_1Re;
-     delete hErecoToy_RHC1Rmu;
-     delete hErecoToy_RHC1Re;
-     delete hErecoToy2D_1Rmu;
-     delete hErecoToy2D_1Re;
-     delete hErecoToy2D_RHC1Rmu;
-     delete hErecoToy2D_RHC1Re;
      
   } // loop over toys
   
+  delete hErecoToy_1Rmu;
+  delete hErecoToy_1Re;
+  delete hErecoToy_RHC1Rmu;
+  delete hErecoToy_RHC1Re;
+  
   // Store ntuple with best-fit results
-  f.cd();
-  fitnt->Write();
-  f.Close();
+  f->cd();
+  fitnt->Write(); // store the tree
+  util::OscParams::Instance()->Write(f); // store the toy osc param histograms
+  f->Close();
+  delete f;
   
   sw.Stop();
   sw.Print();
