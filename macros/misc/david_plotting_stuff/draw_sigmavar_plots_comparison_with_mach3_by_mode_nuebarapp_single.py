@@ -292,16 +292,20 @@ def main():
         if "RHC" in sample :
             mach3_selection = "anu_h" + mach3_selection_1
             print("RHC")
+            print(mach3_selection)
         else:
             mach3_selection = "h" + mach3_selection_1
             print("FHC")
+            print(mach3_selection)
     else :
       if "RHC" in sample :
         mach3_selection = "anu_" + mach3_selection_1
         print("RHC")
+        print(mach3_selection)
       else :
         mach3_selection = mach3_selection_1
         print("FHC")
+        print(mach3_selection)
 
     mach3_nom_histname = mach3_nom_pattern
 
