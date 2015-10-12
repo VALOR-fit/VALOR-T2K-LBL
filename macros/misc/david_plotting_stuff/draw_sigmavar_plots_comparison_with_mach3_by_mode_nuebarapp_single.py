@@ -291,13 +291,17 @@ def main():
     if mach3_mode == "" :
         if "RHC" in sample :
             mach3_selection = "anu_h" + mach3_selection_1
+            print("RHC")
         else:
             mach3_selection = "h" + mach3_selection_1
+            print("FHC")
     else :
       if "RHC" in sample :
         mach3_selection = "anu_" + mach3_selection_1
+        print("RHC")
       else :
         mach3_selection = mach3_selection_1
+        print("FHC")
 
     mach3_nom_histname = mach3_nom_pattern
 
