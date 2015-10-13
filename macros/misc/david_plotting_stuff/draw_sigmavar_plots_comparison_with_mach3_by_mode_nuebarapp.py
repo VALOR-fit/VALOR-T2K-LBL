@@ -10,7 +10,7 @@ valorfilename = sys.argv[2]
 m3selection = sys.argv[3] #mach3 sample
 tag = sys.argv[4] #oscillated or unoscillated
 sample = sys.argv[5] #valor sample
-#single = sys.argv[6] #only do 1st mode if 1, all if 0
+# single = sys.argv[6] #only do 1st mode if 1, all if 0
 
 mach3_filename = mach3filename
 #mach3_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/mach3/sigmavar2014SK_osc2.root'
@@ -31,31 +31,31 @@ variations = [ ("p1","p1"),
 
 mach3_current = "" #"anu_"
 mach3_selection_1 = m3selection #"sknumu"
-
 parameters = [
 
 
 
-  ( 'f_banffmaqe'          ,  'xsec_par_0'  ) ,
+  ( 'f_banffmaqe_fhc_rhc'          ,  'xsec_par_0'  ) ,
 
   #(                             ,  'xsec_par_1'  ) ,       # pF carbon
   #(                             ,  'xsec_par_2'  ) ,       # MEC carbon
   #(                             ,  'xsec_par_3'  ) ,       # Eb carbon
 
-  ( 'f_banffpfermi'        ,  'xsec_par_4'  ) ,
-  ( 'f_banffmec'           ,  'xsec_par_5'  ) ,
-  ( 'f_banffbindE'         ,  'xsec_par_6'  ) ,
-  ( 'f_banffca5'           ,  'xsec_par_7'  ) ,
-  ( 'f_banffmares'         ,  'xsec_par_8'  ) ,
-  ( 'f_banffbgres'         ,  'xsec_par_9'  ) ,
-  ( 'f_banffnorm_nuetonumu',  'xsec_par_10' ) ,
-  ( 'f_banffshapeCCoth'    ,  'xsec_par_11' ) ,
+  ( 'f_banffpfermi_fhc_rhc'        ,  'xsec_par_4'  ) ,
+  ( 'f_banffmec_fhc_rhc'           ,  'xsec_par_5'  ) ,
+  ( 'f_banffbindE_fhc_rhc'         ,  'xsec_par_6'  ) ,
+  ( 'f_banffca5_fhc_rhc'           ,  'xsec_par_7'  ) ,
+  ( 'f_banffmares_fhc_rhc'         ,  'xsec_par_8'  ) ,
+  ( 'f_banffbgres_fhc_rhc'         ,  'xsec_par_9'  ) ,
+  ( 'f_banffnorm_nuetonumu_fhc_rhc',  'xsec_par_10' ) ,
+  ( 'f_banffshapeCCoth_fhc_rhc'    ,  'xsec_par_11' ) ,
 
   #(                            ,  'xsec_par_12' ) ,       # CCcoh carbon
 
-  ( 'f_banffnorm_cccoh'    ,  'xsec_par_13' ) ,
-  ( 'f_banffnorm_nccoh'    ,  'xsec_par_14' ) ,
-  ( 'f_banffnorm_ncoth'    ,  'xsec_par_15' ) ,
+  ( 'f_banffnorm_cccoh_fhc_rhc'    ,  'xsec_par_13' ) ,
+  ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_14' ) ,
+  ( 'f_banffnorm_ncoth_fhc_rhc'    ,  'xsec_par_17' ) ,
+  ( 'f_banffnorm_nc1gamma_fhc_rhc' ,  'xsec_par_15' ) ,
 
   #(                            ,  'xsec_par_16' ) ,
   #(                            ,  'xsec_par_17' ) ,
@@ -192,57 +192,62 @@ parameters = [
   ( 'f_skdetfsi004_rhc',  'skdet_par_34') ,
   ( 'f_skdetfsi005_rhc',  'skdet_par_35') ,
 
-  ( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
+  #( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
   ]
 
 modes = [
-  ( ''                , ''                  ) ,
-  ( '_numuccqe'        , "_sm_numu_ccqe"      ) ,
-  ( '_numucc1pi'       , "_sm_numu_cc1pi"     ) ,
-  ( '_numucccoh'       , "_sm_numu_cccoh"     ) ,
-  ( '_numuccmec'       , "_sm_numu_mec"       ) ,
-  ( '_numuccoth'       , "_sm_numu_ccoth"     ) ,
-  ( '_numunc1piC'      , "_sm_numu_ncpipm"    ) ,
-  ( '_numunc1pi0'      , "_sm_numu_ncpi0"     ) ,
-  ( '_numunccoh'       , "_sm_numu_nccoh"     ) ,
-  ( '_numuncoth'       , "_sm_numu_ncoth"     ) ,
-  ( '_numubarccqe'     , "_sm_numub_ccqe"     ) ,
-  ( '_numubarcc1pi'    , "_sm_numub_cc1pi"    ) ,
-  ( '_numubarcccoh'    , "_sm_numub_cccoh"    ) ,
-  ( '_numubarccmec'    , "_sm_numub_mec"      ) ,
-  ( '_numubarccoth'    , "_sm_numub_ccoth"    ) ,
-  ( '_numubarnc1piC'   , "_sm_numub_ncpipm"   ) ,
-  ( '_numubarnc1pi0'   , "_sm_numub_ncpi0"    ) ,
-  ( '_numubarnccoh'    , "_sm_numub_nccoh"    ) ,
-  ( '_numubarncoth'    , "_sm_numub_ncoth"    ) ,
-  ( '_nueccqe'         , "_sm_nue_ccqe"       ) ,
-  ( '_nuecc1pi'        , "_sm_nue_cc1pi"      ) ,
-  ( '_nuecccoh'        , "_sm_nue_cccoh"      ) ,
-  ( '_nueccmec'        , "_sm_nue_mec"        ) ,
-  ( '_nueccoth'        , "_sm_nue_ccoth"      ) ,
-  ( '_nuenc1piC'       , "_sm_nue_ncpipm"     ) ,
-  ( '_nuenc1pi0'       , "_sm_nue_ncpi0"      ) ,
-  ( '_nuenccoh'        , "_sm_nue_nccoh"      ) ,
-  ( '_nuencoth'        , "_sm_nue_ncoth"      ) ,
-  ( '_oscnueccqe'      , "_sm_signue_ccqe"    ) ,
-  ( '_oscnuecc1pi'     , "_sm_signue_cc1pi"   ) ,
-  ( '_oscnuecccoh'     , "_sm_signue_cccoh"   ) ,
-  ( '_oscnueccmec'     , "_sm_signue_mec"     ) ,
-  ( '_oscnueccoth'     , "_sm_signue_ccoth"   ) ,
-  ( '_nuebarccqe'      , "_sm_nueb_ccqe"      ) ,
-  ( '_nuebarcc1pi'     , "_sm_nueb_cc1pi"     ) ,
-  ( '_nuebarcccoh'     , "_sm_nueb_cccoh"     ) ,
-  ( '_nuebarccmec'     , "_sm_nueb_mec"       ) ,
-  ( '_nuebarccoth'     , "_sm_nueb_ccoth"     ) ,
-  ( '_nuebarnc1piC'    , "_sm_nueb_ncpipm"    ) ,
-  ( '_nuebarnc1pi0'    , "_sm_nueb_ncpi0"     ) ,
-  ( '_nuebarnccoh'     , "_sm_nueb_nccoh"     ) ,
-  ( '_nuebarncoth'     , "_sm_nueb_ncoth"     ) ,
-  ( '_oscnuebarccqe'   , "_sm_signueb_ccqe"   ) ,
-  ( '_oscnuebarcc1pi'  , "_sm_signueb_cc1pi"  ) ,
-  ( '_oscnuebarcccoh'  , "_sm_signueb_cccoh"  ) ,
-  ( '_oscnuebarccmec'  , "_sm_signueb_mec"    ) ,
-  ( '_oscnuebarccoth'  , "_sm_signueb_ccoth"  ) ]
+#  ( ''                , ''                  ) ,
+#  ( '_numuccqe'        , "_sm_numu_ccqe"      ) ,
+#  ( '_numucc1pi'       , "_sm_numu_cc1pi"     ) ,
+#  ( '_numucccoh'       , "_sm_numu_cccoh"     ) ,
+#  ( '_numuccmec'       , "_sm_numu_mec"       ) ,
+#  ( '_numuccoth'       , "_sm_numu_ccoth"     ) ,
+#  ( '_numunc1piC'      , "_sm_numu_ncpipm"    ) ,
+#  ( '_numunc1pi0'      , "_sm_numu_ncpi0"     ) ,
+#  ( '_numunccoh'       , "_sm_numu_nccoh"     ) ,
+#  ( '_numuncoth'       , "_sm_numu_ncoth"     ) ,
+  ( '_numunc1gamma'    , "_sm_numu_nc1gamma"  ) ,
+#  ( '_numubarccqe'     , "_sm_numub_ccqe"     ) ,
+#  ( '_numubarcc1pi'    , "_sm_numub_cc1pi"    ) ,
+#  ( '_numubarcccoh'    , "_sm_numub_cccoh"    ) ,
+#  ( '_numubarccmec'    , "_sm_numub_mec"      ) ,
+#  ( '_numubarccoth'    , "_sm_numub_ccoth"    ) ,
+#  ( '_numubarnc1piC'   , "_sm_numub_ncpipm"   ) ,
+#  ( '_numubarnc1pi0'   , "_sm_numub_ncpi0"    ) ,
+#  ( '_numubarnccoh'    , "_sm_numub_nccoh"    ) ,
+#  ( '_numubarncoth'    , "_sm_numub_ncoth"    ) ,
+  ( '_numubarnc1gamma' , "_sm_numub_nc1gamma"  ) ,
+#  ( '_nueccqe'         , "_sm_nue_ccqe"       ) ,
+#  ( '_nuecc1pi'        , "_sm_nue_cc1pi"      ) ,
+#  ( '_nuecccoh'        , "_sm_nue_cccoh"      ) ,
+#  ( '_nueccmec'        , "_sm_nue_mec"        ) ,
+#  ( '_nueccoth'        , "_sm_nue_ccoth"      ) ,
+#  ( '_nuenc1piC'       , "_sm_nue_ncpipm"     ) ,
+#  ( '_nuenc1pi0'       , "_sm_nue_ncpi0"      ) ,
+#  ( '_nuenccoh'        , "_sm_nue_nccoh"      ) ,
+#  ( '_nuencoth'        , "_sm_nue_ncoth"      ) ,
+  ( '_nuenc1gamma'     , "_sm_nue_nc1gamma"   ) ,
+#  ( '_oscnueccqe'      , "_sm_signue_ccqe"    ) ,
+#  ( '_oscnuecc1pi'     , "_sm_signue_cc1pi"   ) ,
+#  ( '_oscnuecccoh'     , "_sm_signue_cccoh"   ) ,
+#  ( '_oscnueccmec'     , "_sm_signue_mec"     ) ,
+#  ( '_oscnueccoth'     , "_sm_signue_ccoth"   ) ,
+#  ( '_nuebarccqe'      , "_sm_nueb_ccqe"      ) ,
+#  ( '_nuebarcc1pi'     , "_sm_nueb_cc1pi"     ) ,
+#  ( '_nuebarcccoh'     , "_sm_nueb_cccoh"     ) ,
+#  ( '_nuebarccmec'     , "_sm_nueb_mec"       ) ,
+#  ( '_nuebarccoth'     , "_sm_nueb_ccoth"     ) ,
+#  ( '_nuebarnc1piC'    , "_sm_nueb_ncpipm"    ) ,
+#  ( '_nuebarnc1pi0'    , "_sm_nueb_ncpi0"     ) ,
+#  ( '_nuebarnccoh'     , "_sm_nueb_nccoh"     ) ,
+#  ( '_nuebarncoth'     , "_sm_nueb_ncoth"     ) ,
+  ( '_nuebarnc1gamma'  , "_sm_nueb_nc1gamma"  ) ,
+#  ( '_oscnuebarccqe'   , "_sm_signueb_ccqe"   ) ,
+#  ( '_oscnuebarcc1pi'  , "_sm_signueb_cc1pi"  ) ,
+#  ( '_oscnuebarcccoh'  , "_sm_signueb_cccoh"  ) ,
+#  ( '_oscnuebarccmec'  , "_sm_signueb_mec"    ) ,
+#  ( '_oscnuebarccoth'  , "_sm_signueb_ccoth"  )
+         ]
 
 
 line_colors = dict()
@@ -279,7 +284,6 @@ def main():
   pdf_printing_iter_binno = iter(pdf_printing)
 
   for imode,(valor_mode,mach3_mode) in enumerate(modes):
-    if imode is 1 : imode=54
     valor_hists             [valor_mode] = dict()
     mach3_hists             [valor_mode] = dict()
     mach3_ratio_hists       [valor_mode] = dict()
@@ -288,9 +292,20 @@ def main():
     mach3_ratio_hists_binno [valor_mode] = dict()
 
     if mach3_mode == "" :
-      mach3_selection = "h" + mach3_selection_1
+        if "RHC" in sample :
+            mach3_selection = "anu_h" + mach3_selection_1
+        else:
+            mach3_selection = "h" + mach3_selection_1
     else :
-      mach3_selection = mach3_selection_1
+      if "RHC" in sample :
+        mach3_selection = "anu_" + mach3_selection_1
+      else :
+        mach3_selection = mach3_selection_1
+
+    if "RHC" in sample :
+        mach3_selection_2 = "anu_" + mach3_selection_1
+    else:
+        mach3_selection_2 = mach3_selection_1
 
     mach3_nom_histname = mach3_nom_pattern
 
@@ -329,7 +344,7 @@ def main():
         for old,new in [("[PARAM]"    , mach3_param    ),
                         ("[CURRENT]"  , mach3_current  ),
                         ("[MODE]"     , mach3_mode     ),
-                        ("[SELECTION]", mach3_selection_1),
+                        ("[SELECTION]", mach3_selection_2),
                         ("[VAR]"      , mach3_var      ) ]:
           mach3_histname = mach3_histname.replace(old,new)
 
