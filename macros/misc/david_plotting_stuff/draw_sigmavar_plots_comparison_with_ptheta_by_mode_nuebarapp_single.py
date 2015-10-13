@@ -247,7 +247,7 @@ parameters = [
              # ( 'f_skdetfsi004_rhc',  'skdet_par_34') , 
              # ( 'f_skdetfsi005_rhc',  'skdet_par_35') ,
               
-              ( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
+              ( 'f_sk_e_scale' ,  'skdet_par_36'),
               ]
 
 modes = [ ( ''                , ''                  ) ,
