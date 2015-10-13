@@ -52,9 +52,10 @@ parameters = [
               
               #(                            ,  'xsec_par_12' ) ,       # CCcoh carbon
               
-              ( 'f_banffnorm_cccoh'    ,  'xsec_par_13' ) ,
-              ( 'f_banffnorm_nccoh'    ,  'xsec_par_14' ) ,
-              ( 'f_banffnorm_ncoth'    ,  'xsec_par_15' ) ,
+              ( 'f_banffnorm_cccoh_fhc_rhc'    ,  'xsec_par_13' ) ,
+              ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_14' ) ,
+              ( 'f_banffnorm_ncoth_fhc_rhc'    ,  'xsec_par_17' ) ,
+              ( 'f_banffnorm_nc1gamma_fhc_rhc' ,  'xsec_par_15' ) ,
               
               ( 'f_banff00' ,  'flux_par_50' ) ,
               ( 'f_banff01',  'flux_par_51' ) ,

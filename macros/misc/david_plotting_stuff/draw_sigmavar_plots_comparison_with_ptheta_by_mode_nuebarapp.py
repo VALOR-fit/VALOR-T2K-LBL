@@ -52,9 +52,10 @@ parameters = [
               
               #(                            ,  'xsec_par_12' ) ,       # CCcoh carbon
               
-              ( 'f_banffnorm_cccoh'    ,  'xsec_par_13' ) ,
-              ( 'f_banffnorm_nccoh'    ,  'xsec_par_14' ) ,
-              ( 'f_banffnorm_ncoth'    ,  'xsec_par_15' ) ,
+              ( 'f_banffnorm_cccoh_fhc_rhc'    ,  'xsec_par_13' ) ,
+              ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_14' ) ,
+              ( 'f_banffnorm_ncoth_fhc_rhc'    ,  'xsec_par_17' ) ,
+              ( 'f_banffnorm_nc1gamma_fhc_rhc' ,  'xsec_par_15' ) ,
               
               ( 'f_banff00' ,  'flux_par_50' ) ,
               ( 'f_banff01',  'flux_par_51' ) ,
@@ -255,6 +256,7 @@ modes = [ #( ''                , ''                  ) ,
           ( '_numucccoh'       , "_numu_cccoh"     ) ,
           ( '_numuccmec'       , "_numu_mec"       ) ,
           ( '_numuccoth'       , "_numu_ccother"     ) ,
+          ( '_numunc1gamma'        , "_numu_ncgam"         )
           #~ ( '_numunc1piC'      , "_numu_ncpipm"    ) ,
           #~ ( '_numunc1pi0'      , "_numu_ncpi0"     ) ,
          # ( '_numunccoh'       , "_numu_nc_coh"     ) ,
@@ -264,6 +266,8 @@ modes = [ #( ''                , ''                  ) ,
           ( '_numubarcccoh'    , "_numub_cccoh"    ) ,
           ( '_numubarccmec'    , "_numub_mec"      ) ,
           ( '_numubarccoth'    , "_numub_ccother"    ) ,
+         ( '_numubarnc1gamma'  , "_numub_ncgam"         )
+
           #~ ( '_numubarnc1piC'   , "_numub_ncpipm"   ) ,
           #~ ( '_numubarnc1pi0'   , "_numub_ncpi0"    ) ,
         #  ( '_numubarnccoh'    , "_numub_nc_coh"    ) ,
@@ -273,6 +277,8 @@ modes = [ #( ''                , ''                  ) ,
           ( '_nuecccoh'        , "_nue_cccoh"      ) ,
           ( '_nueccmec'        , "_nue_mec"        ) ,
           ( '_nueccoth'        , "_nue_ccother"      ) ,
+         ( '_nuenc1gamma'  , "_nue_ncgam"         )
+
           #~ ( '_nuenc1piC'       , "_nue_ncpipm"     ) ,
           #~ ( '_nuenc1pi0'       , "_nue_ncpi0"      ) ,
          # ( '_nuenccoh'        , "_nue_nc_coh"      ) ,
@@ -287,6 +293,8 @@ modes = [ #( ''                , ''                  ) ,
           ( '_nuebarcccoh'     , "_nueb_cccoh"     ) ,
           ( '_nuebarccmec'     , "_nueb_mec"       ) ,
           ( '_nuebarccoth'     , "_nueb_ccother"     ) ,
+         ( '_nuebarnc1gamma'  , "_nueb_ncgam"         )
+
           #~ ( '_nuebarnc1piC'    , "_nueb_ncpipm"    ) ,
           #~ ( '_nuebarnc1pi0'    , "_nueb_ncpi0"     ) ,
          # ( '_nuebarnccoh'     , "_nueb_nc_coh"     ) ,
