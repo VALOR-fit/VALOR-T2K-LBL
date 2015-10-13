@@ -98,7 +98,7 @@ LOG_LIBRARIES := -L$(LOG_LIB_DIR) -llog4cpp
 #-------------------------------------------------------------------
 #                       Some global variables
 #-------------------------------------------------------------------
-MAKE   := gmake
+MAKE   := make
 RM      = rm -f
 MKDIR   = mkdir -p
 CAT     = cat
