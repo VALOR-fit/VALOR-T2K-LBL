@@ -48,6 +48,12 @@ readable["BANFF_xsec"        ] = "Cross-section"
 readable["BANFF_flux"        ] = "Flux"
 readable["all"               ] = "All systematics"
 
+short_labels = dict()
+short_labels["SKDet_FSI"         ] = "SuperK"
+short_labels["BANFF_xsec"        ] = "XSec"
+short_labels["BANFF_flux"        ] = "Flux"
+short_labels["all"               ] = "All"
+
 is_constrained  = dict()
 is_constrained ["SKDet_FSI"         ] = True
 is_constrained ["BANFF_xsec"        ] = True
@@ -67,21 +73,21 @@ conv =  valor.conv
 opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
 
-def main(sample,unoscillated_input_filename, oscillated_input_filename):
+def main(sample,unoscillated_input_filename, oscillated_input_filename, draw_labels):
   f_unosc = ROOT.TFile(unoscillated_input_filename)
   if not f_unosc:
     raise T2KAnaError("Could not open unoscillated input file")
     
-  pre_and_postfit_envelope(sample,f_unosc,"unoscillated")
+  pre_and_postfit_envelope(sample,f_unosc,"unoscillated", draw_labels)
   
   f_osc   = ROOT.TFile(oscillated_input_filename)
   if not f_unosc:
     raise T2KAnaError("Could not open oscillated input file")
     
-  pre_and_postfit_envelope(sample,f_osc  ,"oscillated" )
+  pre_and_postfit_envelope(sample,f_osc  ,"oscillated"  , draw_labels)
   
 
-def pre_and_postfit_envelope(sample,rootfile,name):
+def pre_and_postfit_envelope(sample,rootfile,name,draw_labels):
   
   assert(rootfile)
   
@@ -214,6 +220,17 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     
     if is_constrained[par_set]: legend.Draw()
     
+    #~ label = ROOT.TPaveText(0.45,0.80,0.69,0.92,"ndc")
+    #~ label.SetShadowColor(0)
+    #~ label.SetFillColor(0)
+    #~ label.SetFillStyle(0)
+    #~ label.SetLineColor(0)
+    #~ label.AddText(short_labels[par_set])
+    label_top = ROOT.TText(0.45,0.84,short_labels[par_set])
+    label_top.SetNDC()
+    label_top.SetTextFont(62)
+    if draw_labels: label_top.Draw()
+    
     canv.Print(name+"_"+par_set+"_envelope.eps")
     
     # Now do it with ratios
@@ -299,6 +316,12 @@ def pre_and_postfit_envelope(sample,rootfile,name):
     line_at_1.SetLineWidth(2)
     line_at_1.Draw("same")
     
+    
+    label_bottom = ROOT.TText(0.70,0.24,short_labels[par_set])
+    label_bottom.SetNDC()
+    label_bottom.SetTextFont(62)
+    if draw_labels: label_bottom.Draw()
+    
     canv2.Update()
     
     canv2.Print(name+"_"+par_set+"_envelope_ratio.eps")
@@ -345,6 +368,7 @@ if __name__=="__main__":
   parser.add_option('-s', dest='sample',default="RHC1Rmu"  ,help='The sample')
   parser.add_option('-o', dest='osc'  ,default=default_oscillated_input_file  ,help='The unoscillated input ROOT file')
   parser.add_option('-u', dest='unosc',default=default_unoscillated_input_file,help='The oscillated input ROOT file')
+  parser.add_option('-l', dest='label',default=False, action="store_true",help='Draw labels on plots')
   
   options,other = parser.parse_args()
   
@@ -352,4 +376,4 @@ if __name__=="__main__":
     print "Bad arguments: ",other
     exit(-1)
   
-  main(options.sample,options.unosc,options.osc)
+  main(options.sample,options.unosc,options.osc,options.label)
