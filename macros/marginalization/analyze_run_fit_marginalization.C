@@ -57,12 +57,12 @@ void analyze_run_fit_marginalization
   double deltachisqtrue=conv::kALargeNum;
   double deltachisq0BF=conv::kALargeNum;
 
-  TH2D *hchisq2D_out = new TH2D("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
-  TH1D *hchisq1D_out = new TH1D("hchisq1D_out","hchisq1D_out",1,0,1);
-  TH2D *hdeltachisq2D_out = new TH2D("hdeltachisq2D_out","hdeltachisq2D_out",1,0,1,1,0,1);
-  TH1D *hdeltachisq1D_out = new TH1D("hdeltachisq1D_out","hdeltachisq1D_out",1,0,1);
-  TH2D *hstep2D_out = new TH2D("hstep2D_out","hstep2D_out",1,0,1,1,0,1);
-  TH1D *hstep1D_out = new TH1D("hstep1D_out","hstep1D_out",1,0,1);
+  TH2F *hchisq2D_out = new TH2F("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
+  TH1F *hchisq1D_out = new TH1F("hchisq1D_out","hchisq1D_out",1,0,1);
+  TH2F *hdeltachisq2D_out = new TH2F("hdeltachisq2D_out","hdeltachisq2D_out",1,0,1,1,0,1);
+  TH1F *hdeltachisq1D_out = new TH1F("hdeltachisq1D_out","hdeltachisq1D_out",1,0,1);
+  TH2F *hstep2D_out = new TH2F("hstep2D_out","hstep2D_out",1,0,1,1,0,1);
+  TH1F *hstep1D_out = new TH1F("hstep1D_out","hstep1D_out",1,0,1);
 
   double bestfit0=-999;
   double bestfit1=-999;
@@ -75,17 +75,17 @@ void analyze_run_fit_marginalization
   double bestfitFullChisq0=-999;
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
-  #ifndef __USE_2D_TEMPLATES__
-    TH1D *hErecoToy_1Rmu = new TH1D("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1);
-    TH1D *hErecoToy_1Re = new TH1D("hErecoToy_1Re","hErecoToy_1Re",1,0,1);
-    TH1D *hErecoToy_RHC1Rmu = new TH1D("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1);
-    TH1D *hErecoToy_RHC1Re = new TH1D("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1);
-  #else
-    TH2D *hErecoToy_1Rmu = new TH2D("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1,1,0,1);
-    TH2D *hErecoToy_1Re = new TH2D("hErecoToy_1Re","hErecoToy_1Re",1,0,1,1,0,1);
-    TH2D *hErecoToy_RHC1Rmu = new TH2D("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1,1,0,1);
-    TH2D *hErecoToy_RHC1Re = new TH2D("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1,1,0,1);
-  #endif
+  // #ifndef __USE_2D_TEMPLATES__
+  //   TH1F *hErecoToy_1Rmu = new TH1F("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1);
+  //   TH1F *hErecoToy_1Re = new TH1F("hErecoToy_1Re","hErecoToy_1Re",1,0,1);
+  //   TH1F *hErecoToy_RHC1Rmu = new TH1F("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1);
+  //   TH1F *hErecoToy_RHC1Re = new TH1F("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1);
+  // #else
+  //   TH2F *hErecoToy_1Rmu = new TH2F("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1,1,0,1);
+  //   TH2F *hErecoToy_1Re = new TH2F("hErecoToy_1Re","hErecoToy_1Re",1,0,1,1,0,1);
+  //   TH2F *hErecoToy_RHC1Rmu = new TH2F("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1,1,0,1);
+  //   TH2F *hErecoToy_RHC1Re = new TH2F("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1,1,0,1);
+  // #endif
  
   // Create tree to store outputs
   treein->SetBranchAddress("best_fit_params",&fparm);
@@ -121,17 +121,17 @@ void analyze_run_fit_marginalization
   treein->SetBranchAddress("Job",&run);
   treein->SetBranchAddress("Tag",&tag);
   treein->SetBranchAddress("nexpts",&nexpts);
-  #ifndef __USE_2D_TEMPLATES__
-    treein->SetBranchAddress("hErecoToy_1Rmu",&hErecoToy_1Rmu);
-    treein->SetBranchAddress("hErecoToy_1Re",&hErecoToy_1Re);
-    treein->SetBranchAddress("hErecoToy_RHC1Rmu",&hErecoToy_RHC1Rmu);
-    treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
-  #else  
-    treein->SetBranchAddress("hErecoToy_1Rmu",&hErecoToy_1Rmu);
-    treein->SetBranchAddress("hErecoToy_1Re",&hErecoToy_1Re);
-    treein->SetBranchAddress("hErecoToy_RHC1Rmu",&hErecoToy_RHC1Rmu);
-    treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
-  #endif
+  // #ifndef __USE_2D_TEMPLATES__
+  //   treein->SetBranchAddress("hErecoToy_1Rmu",&hErecoToy_1Rmu);
+  //   treein->SetBranchAddress("hErecoToy_1Re",&hErecoToy_1Re);
+  //   treein->SetBranchAddress("hErecoToy_RHC1Rmu",&hErecoToy_RHC1Rmu);
+  //   treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
+  // #else  
+  //   treein->SetBranchAddress("hErecoToy_1Rmu",&hErecoToy_1Rmu);
+  //   treein->SetBranchAddress("hErecoToy_1Re",&hErecoToy_1Re);
+  //   treein->SetBranchAddress("hErecoToy_RHC1Rmu",&hErecoToy_RHC1Rmu);
+  //   treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
+  // #endif
 
 
 
