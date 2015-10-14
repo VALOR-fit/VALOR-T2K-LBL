@@ -22,6 +22,14 @@
 // 
 
 
+//
+// TODO:
+// - Add string of freeparname0 and freeparname1
+//
+
+
+
+
 #include "SuperkObservation.h"
 #include "SuperkExpectation.h"
 #include "T2KPhysicalParameterLimits.h"
@@ -167,16 +175,14 @@ int main(int argc, char ** argv)
 
   string oscstr;// = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);  
 
+  //TFile *ftoys = new TFile(Form("Toys_%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
   TFile *f = new TFile(Form("%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");  
-  TFile *ftoys = new TFile(Form("%s_Toys-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
 
   // Set Tree toy/fit
-
   int run=-999;
   string tag="";
   int nexpts=-999;
   int ToyID=-999;
-
   double truepar0=-999;
   double truepar1=-999;    
   int nfits=-999;
@@ -187,7 +193,6 @@ int main(int argc, char ** argv)
   double chisqtrue0=conv::kALargeNum;
   double chisqtrue1=conv::kALargeNum;
   double deltachisqtrue=conv::kALargeNum;
-  //double deltachisq01=conv::kALargeNum;
   double deltachisq0BF=conv::kALargeNum;
   TH2F *hchisq2D_out = new TH2F("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
   TH1F *hchisq1D_out = new TH1F("hchisq1D_out","hchisq1D_out",1,0,1);
@@ -218,9 +223,8 @@ int main(int argc, char ** argv)
   TH2F *hErecoToy_RHC1Re = new TH2F("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1,1,0,1);
 #endif
  
-  // // Object for storing input oscillation and nuisance params in each toy-MC
+  // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
-
 
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
@@ -230,12 +234,14 @@ int main(int argc, char ** argv)
   fitnt->Branch("truepar1", &truepar1 );
   fitnt->Branch("bestfit0", &bestfit0 );
   fitnt->Branch("bestfit1", &bestfit1 );
-  fitnt->Branch("hchisq2D",     "TH2F", &hchisq2D_out,     32000,0 );
+
   fitnt->Branch("hchisq1D",     "TH1F", &hchisq1D_out,     32000,0 );
-  fitnt->Branch("hdeltachisq2D","TH2F", &hdeltachisq2D_out,32000,0 );
-  fitnt->Branch("hdeltachisq1D","TH1F", &hdeltachisq1D_out,32000,0 );
-  fitnt->Branch("hstep2D",      "TH2F", &hstep2D_out,      32000,0 );
   fitnt->Branch("hstep1D",      "TH1F", &hstep1D_out,      32000,0 );
+  fitnt->Branch("hdeltachisq1D","TH1F", &hdeltachisq1D_out,32000,0 );
+  fitnt->Branch("hchisq2D",     "TH2F", &hchisq2D_out,     32000,0 );
+  fitnt->Branch("hdeltachisq2D","TH2F", &hdeltachisq2D_out,32000,0 );
+  fitnt->Branch("hstep2D",      "TH2F", &hstep2D_out,      32000,0 );
+  
   fitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
   fitnt->Branch("chisqmin",&chisqmin,"chisqmin/D");
   fitnt->Branch("chisqtrue0",&chisqtrue0,"chisqtrue0/D");
@@ -253,23 +259,21 @@ int main(int argc, char ** argv)
   fitnt->Branch("bestfitFullChisq0", &bestfitFullChisq0 );
   fitnt->Branch("bestfitFullChisq1", &bestfitFullChisq1 );
   fitnt->Branch("chisqminFullChisq",&chisqminFullChisq);
-
   fitnt->Branch("ToyID",&ToyID);
   fitnt->Branch("Job",&run);
   fitnt->Branch("Tag",&tag);
   fitnt->Branch("nexpts",&nexpts);
-
-#ifndef __USE_2D_TEMPLATES__
+  #ifndef __USE_2D_TEMPLATES__
   fitnt->Branch("hErecoToy_1Rmu",     "TH1F",&hErecoToy_1Rmu,     32000,0);
   fitnt->Branch("hErecoToy_1Re",      "TH1F",&hErecoToy_1Re,      32000,0);
   fitnt->Branch("hErecoToy_RHC1Rmu",  "TH1F",&hErecoToy_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoToy_RHC1Re",   "TH1F",&hErecoToy_RHC1Re,   32000,0);
-#else  
+  #else  
   fitnt->Branch("hErecoToy_1Rmu",     "TH2F",&hErecoToy_1Rmu,     32000,0);
   fitnt->Branch("hErecoToy_1Re",      "TH2F",&hErecoToy_1Re,      32000,0);
   fitnt->Branch("hErecoToy_RHC1Rmu",  "TH2F",&hErecoToy_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoToy_RHC1Re",   "TH2F",&hErecoToy_RHC1Re,   32000,0);
-#endif
+  #endif
  
   // Update physics fitparamlist with chosen value of oscillation parameters
   bool set_init = false;
@@ -424,12 +428,17 @@ int main(int argc, char ** argv)
 
      // Draw Full Chisq
      if(runopt.DrawFullChisq()){
-       //   fitmarg->FillChisqMarg(skobs_fakedata,true);
-       //   fitmarg->MinimizeHisto();
+       
+       cout << endl;
+       cout << "Draw the full Chisq" << endl;
+       cout << endl;
+
+       fitmarg->FillChisqMarg(skobs_fakedata,true);
+       fitmarg->MinimizeHisto();
        bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
        if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
        chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
-       //   fitmarg->BuildDeltaChisqMarg();
+       fitmarg->BuildDeltaChisqMarg();
      }
 
           
@@ -470,11 +479,34 @@ int main(int argc, char ** argv)
        hchisq2D_out = (TH2F*)fitmarg->GetChisqMarg2D()->Clone("hchisq2D");
        hdeltachisq2D_out = (TH2F*)fitmarg->GetDeltaChisqMarg2D()->Clone("hdeltachisq2D");
        hstep2D_out = (TH2F*)fitmarg->GetChisqStep_2D()->Clone("hstep2D");
+     
+       int npt_chisq_x = hchisq2D_out->GetNbinsX();
+       int npt_chisq_y = hchisq2D_out->GetNbinsY();
+       for(int iy=0;iy<npt_chisq_y;iy++){
+	 for(int ix=0;ix<npt_chisq_x;ix++){
+	   cout << hchisq2D_out->GetBinContent(ix+1,iy+1) << " ";
+	 }
+	 cout << endl;
+       }
+       
      }
      else{
        hchisq1D_out = (TH1F*)fitmarg->GetChisqMarg1D()->Clone("hchisq1D");
        hdeltachisq1D_out = (TH1F*)fitmarg->GetDeltaChisqMarg1D()->Clone("hdeltachisq1D");
        hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D()->Clone("hstep1D");
+       //hchisq1D_out = (TH1F*)fitmarg->GetChisqMarg1D();
+       //hdeltachisq1D_out = (TH1F*)fitmarg->GetDeltaChisqMarg1D();
+       //hstep1D_out = (TH1F*)fitmarg->GetChisqStep_1D();
+
+       int npt_chisq_x = hchisq1D_out->GetNbinsX();
+       for(int ix=0;ix<npt_chisq_x;ix++){
+	 cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+       }
+       cout << endl;
+       for(int ix=0;ix<npt_chisq_x;ix++){
+	 cout << hdeltachisq1D_out->GetBinContent(ix+1) << " ";
+       }
+       
      }
      
      // Fill toy informations (toy id, run, # of experiments, tag)
@@ -483,8 +515,11 @@ int main(int argc, char ** argv)
      nexpts = runopt.NExperiments();
      run = runopt.Run();
 
-    
-     fitnt->Fill();
+     // Fill the tree 
+     int iflag_tree = fitnt->Fill();
+     cout << endl;
+     cout << "iflag_tree = " << iflag_tree << endl;
+     cout << endl;
      
      // Print output
      
@@ -541,35 +576,55 @@ int main(int argc, char ** argv)
      cout << endl;
      
      
-     // Store mock data in separated root file 
-     // as when generate_toymc_ensemble.cxx is run
-     
-     ftoys->cd();
+     //      // Store mock data in separated root file 
+     //      // as when generate_toymc_ensemble.cxx is run
+     //      ftoys->cd();
+     // #ifndef __USE_2D_TEMPLATES__ //1D templates
+     //      TH1D * mock_data[kns];
+     // #else
+     //      TH2D * mock_data[kns];
+     // #endif
+     //      for (int is = 0 ; is < conv::kns ; is++) {
+     //        SuperkSample_t s = conv::kSKSamples[is];
+     //        if (s == conv::kSKsUndefined) continue;
+     // #ifndef __USE_2D_TEMPLATES__ 
+     //        mock_data[is] = skobs_fakedata->ErecoSpectrum(s);
+     // #else
+     //        mock_data[is] = skobs_fakedata->TwoDSpectrum(s);
+     // #endif
+     //        mock_data[is]->SetDirectory(0);     
+     //        mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+     //        delete mock_data[is];
+     //}//is
 
-#ifndef __USE_2D_TEMPLATES__ //1D templates
-     TH1D * mock_data[kns];
-#else
-     TH2D * mock_data[kns];
-#endif
-     for (int is = 0 ; is < conv::kns ; is++) {
-       SuperkSample_t s = conv::kSKSamples[is];
-       if (s == conv::kSKsUndefined) continue;
-#ifndef __USE_2D_TEMPLATES__ 
-       mock_data[is] = skobs_fakedata->ErecoSpectrum(s);
-#else
-       mock_data[is] = skobs_fakedata->TwoDSpectrum(s);
-#endif
-       mock_data[is]->SetDirectory(0);
-  
-       mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
-       delete mock_data[is];
-       
-     }//is
      
+
+     int npt_chisq_x = hchisq1D_out->GetNbinsX();
+     for(int ix=0;ix<npt_chisq_x;ix++){
+       cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+     }
+     cout << endl;
+
+
+
+     // // Write chisq
+     // f->cd();
+     // hchisq1D_out->Write();
+
+
+
      // Clean-up
      delete skobs_fakedata;
      fitmarg->CleanUp();
      delete fitmarg;
+
+
+     hchisq1D_out->GetNbinsX();
+     for(int ix=0;ix<npt_chisq_x;ix++){
+       cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+     }
+     cout << endl;
+
      
   } // loop over toys
   
@@ -577,7 +632,14 @@ int main(int argc, char ** argv)
   delete hErecoToy_1Re;
   delete hErecoToy_RHC1Rmu;
   delete hErecoToy_RHC1Re;
-  
+
+  delete hchisq2D_out;
+  delete hdeltachisq2D_out;
+  delete hstep2D_out;
+  delete hchisq1D_out;
+  delete hdeltachisq1D_out;
+  delete hstep1D_out;
+
   // Store ntuple with best-fit results
   f->cd();
   fitnt->Write(); // store the tree
