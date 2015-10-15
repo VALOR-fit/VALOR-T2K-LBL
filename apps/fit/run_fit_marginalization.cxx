@@ -175,10 +175,11 @@ int main(int argc, char ** argv)
 
   string oscstr;// = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);  
 
-  //TFile *ftoys = new TFile(Form("Toys_%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
+  TFile *ftoys = new TFile(Form("Toys_%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
   TFile *f = new TFile(Form("%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");  
 
   // Set Tree toy/fit
+  bool IsFit2D=false;
   int run=-999;
   string tag="";
   int nexpts=-999;
@@ -191,8 +192,6 @@ int main(int argc, char ** argv)
   int fitstatus=-999;
   double chisqmin=conv::kALargeNum;
   double chisqtrue0=conv::kALargeNum;
-  double chisqtrue1=conv::kALargeNum;
-  double deltachisqtrue=conv::kALargeNum;
   double deltachisq0BF=conv::kALargeNum;
   TH2F *hchisq2D_out = new TH2F("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
   TH1F *hchisq1D_out = new TH1F("hchisq1D_out","hchisq1D_out",1,0,1);
@@ -249,10 +248,13 @@ int main(int argc, char ** argv)
   fitnt->Branch("hstep2D",      "TH2F", &hstep2D_out,      32000,0 );
   
   fitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
+  
+  fitnt->Branch("IsFit2D",&IsFit2D);
+
   fitnt->Branch("chisqmin",&chisqmin,"chisqmin/D");
   fitnt->Branch("chisqtrue0",&chisqtrue0,"chisqtrue0/D");
-  fitnt->Branch("chisqtrue1",&chisqtrue1,"chisqtrue1/D");
-  fitnt->Branch("deltachisqtrue",&deltachisqtrue,"deltachisqtrue/D");
+  fitnt->Branch("deltachisq0BF",&deltachisq0BF,"deltachisq0BF/D");
+
   fitnt->Branch("nfits",&nfits,"nfits/I");
   fitnt->Branch("nchisqcalls",&nchisqcalls,"nchisqcalls/I");
   fitnt->Branch("niterations",&niterations,"niterations/I");
@@ -381,8 +383,6 @@ int main(int argc, char ** argv)
      fitstatus=-999;
      chisqmin=conv::kALargeNum;
      chisqtrue0=conv::kALargeNum;
-     chisqtrue1=conv::kALargeNum;
-     deltachisqtrue=conv::kALargeNum;
      bestfit0=-999;
      bestfit1=-999;
      bestfiterrNeg0=-999;
@@ -397,6 +397,8 @@ int main(int argc, char ** argv)
    
      // Perform the fit w/ marginalization
      util::PerformMargFit(argc,argv,fitmarg,skexp,skobs_fakedata); 
+     
+     IsFit2D = fitmarg->IsFit2D();
      
      nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
 
@@ -439,12 +441,12 @@ int main(int argc, char ** argv)
        cout << "Draw the full Chisq" << endl;
        cout << endl;
 
-       fitmarg->FillChisqMarg(skobs_fakedata,true);
-       fitmarg->MinimizeHisto();
+       //fitmarg->FillChisqMarg(skobs_fakedata,true);
+       //fitmarg->MinimizeHisto();
        bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
        if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
        chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
-       fitmarg->BuildDeltaChisqMarg();
+       //fitmarg->BuildDeltaChisqMarg();
      }
 
           
@@ -565,42 +567,34 @@ int main(int argc, char ** argv)
      cout << endl;
      
      
-     //      // Store mock data in separated root file 
-     //      // as when generate_toymc_ensemble.cxx is run
-     //      ftoys->cd();
-     // #ifndef __USE_2D_TEMPLATES__ //1D templates
-     //      TH1D * mock_data[kns];
-     // #else
-     //      TH2D * mock_data[kns];
-     // #endif
-     //      for (int is = 0 ; is < conv::kns ; is++) {
-     //        SuperkSample_t s = conv::kSKSamples[is];
-     //        if (s == conv::kSKsUndefined) continue;
-     // #ifndef __USE_2D_TEMPLATES__ 
-     //        mock_data[is] = skobs_fakedata->ErecoSpectrum(s);
-     // #else
-     //        mock_data[is] = skobs_fakedata->TwoDSpectrum(s);
-     // #endif
-     //        mock_data[is]->SetDirectory(0);     
-     //        mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
-     //        delete mock_data[is];
-     //}//is
-
+     // Store mock data in separated root file 
+     // as when generate_toymc_ensemble.cxx is run
+     ftoys->cd();
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+     TH1D * mock_data[kns];
+#else
+     TH2D * mock_data[kns];
+#endif
+     for (int is = 0 ; is < conv::kns ; is++) {
+       SuperkSample_t s = conv::kSKSamples[is];
+       if (s == conv::kSKsUndefined) continue;
+#ifndef __USE_2D_TEMPLATES__ 
+       mock_data[is] = skobs_fakedata->ErecoSpectrum(s);
+#else
+       mock_data[is] = skobs_fakedata->TwoDSpectrum(s);
+#endif
+       mock_data[is]->SetDirectory(0);     
+       mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+       delete mock_data[is];
+     }//is
      
+     //
 
      int npt_chisq_x = hchisq1D_out->GetNbinsX();
      for(int ix=0;ix<npt_chisq_x;ix++){
        cout << hchisq1D_out->GetBinContent(ix+1) << " ";
      }
      cout << endl;
-
-
-
-     // // Write chisq
-     // f->cd();
-     // hchisq1D_out->Write();
-
-
 
      // Clean-up
      delete skobs_fakedata;
