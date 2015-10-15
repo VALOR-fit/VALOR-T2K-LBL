@@ -165,6 +165,15 @@ public:
   TH2D *hPThetaLep_NueBar;
   //
 
+  // NEW 2D TEMPLATES
+  double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep); 
+  double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep); 
+  double CalcEhad(double Enu,double Elep);     
+  double CalcInelasticity(double Enu,double Elep);     
+  double CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+  double CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+  double CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+  //
 
 private:
 
@@ -177,17 +186,8 @@ private:
   void FillTemplateHistogram(conv::SuperkSample_t s, conv::SuperkMode_t m);
   void FillSpecialTemplates (void);
   
-
-
-  // NEW 2D TEMPLATES
-  double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep); 
-  double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep); 
-  double CalcEhad(double Enu,double Elep);     
-  double CalcInelasticity(double Enu,double Elep);     
-  double CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
-  double CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
-  double CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
   
+  // NEW 2D TEMPLATES
   void DrawProjectionXY(TH3D *h);  // for debugging
   void ProjectTemplate3Dto2D(TH3D *h3d[conv::kns][conv::knm], TH2D *h2d[conv::kns][conv::knm]);
   double GetTemplateIntegral(TH3D *h3d[conv::kns][conv::knm]);
@@ -195,8 +195,6 @@ private:
   double GetTemplateIntegral(TH3D *h3d);
   double GetTemplateIntegral(TH2D *h2d);
   //
-
-
 
   // Apply BANFF flux + cross section tuning (based on ND280 data) on top of NA61-based flux tuned MC
   void ApplyBANFFTuningToTemplates (void); 
