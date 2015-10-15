@@ -1061,25 +1061,24 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 
     // NEW 2D TEMPLATES
     
-
-#if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
-
     double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
     double electronMass = 0.511   / 1000.; // GeV
     double muonMass     = 105.658 / 1000.; // GeV
     double neutronMass  = 939.565 / 1000.; // GeV
     double protonMass   = 938.272 / 1000.; // GeV
 
+#if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
+
     // Get momentum and energy of most energetic lepton (only 1Ring samples)
     
     double pmax_lep = 0.; // momentum of most energetic lepton  
     double mass_lep = 0.;
     if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-      mass_lep = electronMass;
+      mass_lep = electronMass; // GeV
       pmax_lep = fBrAmome[0] / 1000.; // GeV
     }
     else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-      mass_lep = muonMass;
+      mass_lep = muonMass; // GeV
       pmax_lep = fBrAmomm[0] / 1000.; // GeV
     }
     else{
@@ -1236,8 +1235,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 
 #elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
 
-    double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-   
     double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
     if( costheta<-1.00001 || costheta>+1.00001 ){
       cerr << endl;
@@ -1302,8 +1299,48 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
   
 
 
-
+    // //// PROVA Ereco
     
+    // //if(s!=kSKsRHCFCFV1RingMuLike) continue;
+    // //if(s!=kSKsRHCFCFV1RingELike) continue;
+    // //if(s!=kSKsFCFV1RingELike) continue;
+    
+    // // Get momentum and energy of most energetic lepton (only 1Ring samples)
+    // double pmax_lep = 0.; // momentum of most energetic lepton  
+    // double mass_lep = 0.;
+    // if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+    //   mass_lep = electronMass * 1000.; // GeV --> MeV
+    //   pmax_lep = fBrAmome[0]; // MeV
+    // }
+    // else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+    //   mass_lep = muonMass * 1000.; // GeV --> MeV
+    //   pmax_lep = fBrAmomm[0]; // MeV
+    // }
+    // else{
+    //   cerr << endl;
+    //   cerr << "SuperkMC::FillTemplateHistogram" << endl;
+    //   cerr << "Using sample " << util::AsString(s) << endl;
+    //   cerr << "Samples other than: " << endl;
+    //   cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+    //   cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+    //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+    //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+    //   cerr << "are not implemented" << endl;
+    //   exit(1);
+    // }
+    
+    // //double myereco_nu = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep); // inputs are MeV
+    // //double myereco_nubar = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep); // inputs are MeV
+    
+    // //cout << ereco_fill << " " << myereco_nu / 1000. << " " << myereco_nubar / 1000. << endl;
+    // //cout << ;
+
+    // ///////////
+
+
+
+
+
     double Etrue = fBrPtrue[0];
     
     //if(util::IsRHCSample(s))
@@ -1689,7 +1726,7 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
 
 	  // loop over variable Q2
 	  for(int iqv = 1; iqv <= fMCVariableTempl2D[is][im]->GetXaxis()->GetNbins(); iqv++) {
-	   
+	    
 	    double Q2VarMin = var_q2_bin_edges[iqv-1] + kOneMeV;
 	    double Q2VarMax = var_q2_bin_edges[iqv]   - kOneMeV;
 	    int Q2MinBin = 1 + TMath::BinarySearch(n_q2_bins,q2_bin_edges,Q2VarMin);
@@ -6730,6 +6767,41 @@ double SuperkMC::GetTemplateIntegral(TH2D *h2d){
   return integral;
 }
 //____________________________________________________________________________________
+
+
+
+
+double SuperkMC::ErecoFunc_Nu(double Mom,double costh,double mass_lep){
+  
+  const double Eb = 27.;     // oxygen
+  const double mp = 938.272; // proton mass (MeV)
+  const double mn = 939.565; // neutron mass (MeV)
+  
+  double Ereco=0.;
+  double E_lep=0.;
+
+  E_lep = sqrt( Mom*Mom + mass_lep*mass_lep );    // Reco energy muon or electron
+  Ereco = mp*mp - (mn - Eb)*(mn - Eb) - mass_lep*mass_lep + 2*(mn - Eb)*E_lep;   // right formula
+  Ereco /= 2*(mn - Eb - E_lep + Mom*costh);
+
+  return Ereco;  // GeV
+}
+
+double SuperkMC::ErecoFunc_NuBar(double Mom,double costh,double mass_lep){
+  
+  const double Eb = 27.;     // oxygen
+  const double mp = 938.272; // proton mass (MeV)
+  const double mn = 939.565; // neutron mass (MeV)
+  
+  double Ereco=0.;
+  double E_lep=0.;
+
+  E_lep = sqrt( Mom*Mom + mass_lep*mass_lep );    // Reco energy lepton
+  Ereco = mn*mn - (mp - Eb)*(mp - Eb) - mass_lep*mass_lep + 2*(mp - Eb)*E_lep;   
+  Ereco /= 2*(mp - Eb - E_lep + Mom*costh);
+
+  return Ereco;  // MeV
+}
 
 //
 

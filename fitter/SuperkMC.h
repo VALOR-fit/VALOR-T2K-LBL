@@ -173,6 +173,8 @@ public:
   double CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
   double CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
   double CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+  double ErecoFunc_Nu(double Mom,double costh,double mass_lep);
+  double ErecoFunc_NuBar(double Mom,double costh,double mass_lep);
   //
 
 private:
