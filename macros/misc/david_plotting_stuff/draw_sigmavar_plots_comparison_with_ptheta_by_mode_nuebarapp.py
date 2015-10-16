@@ -56,7 +56,8 @@ parameters = [
               ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_14' ) ,
               ( 'f_banffnorm_ncoth_fhc_rhc'    ,  'xsec_par_15' ) ,
               ( 'f_banffnorm_nc1gamma_fhc_rhc' ,  'xsec_par_15' ) ,
-              
+              ( 'f_banffnorm_nc1gamma' ,  'xsec_par_16' ) ,
+
               ( 'f_banff00' ,  'flux_par_50' ) ,
               ( 'f_banff01',  'flux_par_51' ) ,
               ( 'f_banff02',  'flux_par_52' ) ,
