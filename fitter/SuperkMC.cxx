@@ -1154,13 +1154,13 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 
     double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum) 
     
-    double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Q^2
+    //double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Q^2
     //double Q2 = this->CalcQd2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Qd^2
     //double Q2 = this->CalcEhad(ereco_nu,emax_lep);
     //double Q2 = this->CalcInelasticity(ereco_nu,emax_lep);
     //double Q2 = this->CalcBjorkenScale(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
     //double Q2 = this->CalcWhadr(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
-    //double Q2 = this->CalcXSecTerm(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
+    double Q2 = this->CalcXSecTerm(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
     
     //if(Q2<0. || Q2 > 1.){
     //cout << "costheta = " << costheta << " ";
@@ -6601,7 +6601,7 @@ double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta
   // costheta --> angle between neutrino and lepton 
   // Mn       --> nucleon mass
 
-  double MA = 1.2257; // Axial Mass (BANFF post-fit) 
+  double MA = 1.2257; // Axial Mass, BANFF post-fit (GeV) 
   double gA = 1.2694; // FA(Q2=0) 
   
   double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);

@@ -57,8 +57,10 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
  bool         disable_banff_tuning = false,                          /* */
 
+ const char * config_file      = "analysis_configuration_test_theta_xsecterm_RFGRPA_21bins.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_xsecterm_RFGRPA.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_officialsplines.xml",
@@ -982,6 +984,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   hLikeSigBkg->GetZaxis()->SetTitle("#Delta #chi^{2}");
 
   hLikeSigBkg_ProjEreco = (TH1D*) hLikeSigBkg->ProjectionY()->Clone("hLikeSigBkg_ProjEreco");
+
+
   TCanvas *cLikeSigBkg_ProjEreco = new TCanvas("cLikeSigBkg_ProjEreco","cLikeSigBkg_ProjEreco");
   hLikeSigBkg_ProjEreco->Draw();
   if(draw_data){
@@ -1068,6 +1072,79 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
       cout << endl;
     }
   }
+
+   
+
+  // // PROVA
+  // cout << "Nq2 = " << Nq2 
+  //      << " - hsig X = " << hSig->GetXaxis()->GetNbins() 
+  //      << " - hLikeSigBkg X = " << hLikeSigBkg->GetXaxis()->GetNbins() 
+  //      << endl;
+  // cout << "Nereco = " << Nereco 
+  //      << " - hsig Y = " << hSig->GetYaxis()->GetNbins() 
+  //      << " - hLikeSigBkg Y = " << hLikeSigBkg->GetYaxis()->GetNbins() 
+  //      << endl;
+  // TArrayD *axis_bin = (TArrayD*) hLikeSigBkg_ProjEreco->GetXaxis()->GetXbins();
+  // double *array = axis_bin->GetArray();
+  // cout << "CIAO" << endl;
+  // for(int ibin=0;ibin<Nereco;ibin++){
+  //   cout << array[ibin] << endl;
+  // }
+  // return;  
+  // //
+
+
+
+
+
+
+  // Store spectra
+
+  TFile *fout;
+  if(store_spectrum){
+    
+    char name[200];
+    sprintf(name,"%s_%s.root",tag,util::AsStringCompact(s).c_str());
+    fout = new TFile(name,"RECREATE");
+    
+    hErecoVsQ2Tot->Write();
+    hQ2Tot->Write();
+    hErecoTot->Write();
+
+    hErecoVsQ2Mode_NueBeam->Write();
+    hErecoVsQ2Mode_NumuBeam->Write();
+    hErecoVsQ2Mode_NumuBarBeam->Write();
+    hErecoVsQ2Mode_NumuBarToNueBar->Write();
+    hErecoVsQ2Mode_NumuToNue->Write();
+    hErecoVsQ2Mode_NC->Write();
+    hErecoVsQ2Mode_MEC->Write();
+    hErecoVsQ2Mode_CCQE->Write();
+    hErecoVsQ2Mode_CCnQE->Write();
+    
+    hErecoMode_NueBeam->Write();
+    hErecoMode_NumuBeam->Write();
+    hErecoMode_NumuBarBeam->Write();
+    hErecoMode_NumuBarToNueBar->Write();
+    hErecoMode_NumuToNue->Write();
+    hErecoMode_NC->Write();
+    hErecoMode_MEC->Write();
+    hErecoMode_CCQE->Write();
+    hErecoMode_CCnQE->Write();
+    
+    hQ2Mode_NueBeam->Write();
+    hQ2Mode_NumuBeam->Write();
+    hQ2Mode_NumuBarBeam->Write();
+    hQ2Mode_NumuBarToNueBar->Write();
+    hQ2Mode_NumuToNue->Write();
+    hQ2Mode_NC->Write();
+    hQ2Mode_MEC->Write();
+    hQ2Mode_CCQE->Write();
+    hQ2Mode_CCnQE->Write();
+
+    fout->Close();
+  }
+
+
 
   // Print canvases
 

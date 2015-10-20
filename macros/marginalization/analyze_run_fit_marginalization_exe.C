@@ -10,6 +10,7 @@
 
 #include "Build.h"
 #include "AnalysisOptions.h"
+#include <vector>
 
 using namespace std;
 using namespace valor;
@@ -20,15 +21,24 @@ const double err_minos_par1[2] = {0,6.28};
 const double err_hesse_par0[2] = {0,20.};
 const double err_hesse_par1[2] = {0,20.};
 
-void analyze_run_fit_marginalization
+const double CLfrac_1sigma = 0.6827;  // 1sigma% CL
+const double CLfrac_90CL   = 0.9;  // 90% CL
+const double CLfrac_95CL   = 0.95;  // 95% CL
+
+
+void analyze_run_fit_marginalization_exe
 ( 
- char infilename[200] = "fit_submit_fitmarg_joint_dcp_nexp_10_-1.601_-999.000-job0-_0_9.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/coverage_result/fit_submit_fitmarg_joint_dcp_nexp_10_-1.601_-999.000-job_ALL.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/0/fit_submit_fitmarg_joint_dcp_nexp_500_0.000_-999.000-All.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/m1/fit_submit_fitmarg_joint_dcp_nexp_500_-1.000_-999.000-All.root"
+ char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/p2/fit_submit_fitmarg_joint_dcp_nexp_500_2.000_-999.000-All.root" 
 )
 {
   char name[200];
   FitParamList * fparm  = util::NamedParameterList("nuosc3f"); 
   PhysParamList * iparm = new PhysParamList;
-
+  vector<double> myvector;
+  
   TFile *filein = new TFile(infilename,"READ");
   if(!filein->IsOpen()){
     cerr << endl;
@@ -138,14 +148,14 @@ void analyze_run_fit_marginalization
 
   ///////////// Declare histograms //////////////
 
-  TH1D *hbestfitFullChisq_1D = new TH1D("hbestfitFullChisq_1D","hbestfitFullChisq_1D",201,0,1);
-  TH1D *hbestfit_1D = new TH1D("hbestfit_1D","hbestfit_1D",201,0,1);
+  TH1D *hbestfitFullChisq_1D = new TH1D("hbestfitFullChisq_1D","hbestfitFullChisq_1D",201,-3.15,3.15);
+  TH1D *hbestfit_1D = new TH1D("hbestfit_1D","hbestfit_1D",201,-3.15,3.15);
   TH2F *hbestfitFullChisq_2D = new TH2F("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,0.3,201,-3.15,3.15);
   TH2F *hbestfit_2D = new TH2F("hbestfit_2D","hbestfit_2D",201,0,0.3,201,-3.15,3.15);
-  TH1D *hdeltachisqDiff = new TH1D("hdeltachisqDiff","hdeltachisqDiff",100,0,20);
-  TH1D *hchisqminDiff = new TH1D("hchisqminDiff","hchisqminDiff",100,0.,0.3);
-  TH1D *hchisqmin = new TH1D("hchisqmin","hchisqmin",100,0,100);
-  TH1D *hchisqminFullChisq = new TH1D("hchisqminFullChisq","hchisqminFullChisq",100,0,100);
+  TH1D *hdeltachisqDiff = new TH1D("hdeltachisqDiff","hdeltachisqDiff",100,-5,20);
+  TH1D *hchisqminDiff = new TH1D("hchisqminDiff","hchisqminDiff",100,-0.3,0.3);
+  TH1D *hchisqmin = new TH1D("hchisqmin","hchisqmin",100,-10,100);
+  TH1D *hchisqminFullChisq = new TH1D("hchisqminFullChisq","hchisqminFullChisq",100,-10,100);
   TH1D *hErrMINOSneg0 = new TH1D("hErrMINOSneg0","hErrMINOSneg0",1000,err_minos_par0[0],err_minos_par0[1]);
   TH1D *hErrMINOSneg1 = new TH1D("hErrMINOSneg1","hErrMINOSneg1",1000,err_minos_par1[0],err_minos_par1[1]);
   TH1D *hErrMINOSpos0 = new TH1D("hErrMINOSpos0","hErrMINOSpos0",1000,err_minos_par0[0],err_minos_par0[1]);
@@ -216,6 +226,8 @@ void analyze_run_fit_marginalization
     // Fill deltaChisq histogram
     hdeltachisqDiff->Fill(deltachisq0BF);
 
+    myvector.push_back(deltachisq0BF);
+
     // Minimized chisq distribution
     hchisqmin->Fill(chisqmin);
     hbestfit_2D->Fill(bestfit0,bestfit1);
@@ -235,7 +247,7 @@ void analyze_run_fit_marginalization
     if(deltachisq0BF <= GetConstChisq(IsFit2D,"90CL")   ) Nin_90CL++;
     if(deltachisq0BF <= GetConstChisq(IsFit2D,"95CL")   ) Nin_95CL++;
     if(deltachisq0BF <= GetConstChisq(IsFit2D,"2sigma") ) Nin_2sigma++;
-    
+        
     // Fill histograms for pull validation and errors
        
     hErrMINOSneg0->Fill(bestfiterrNeg0);
@@ -304,8 +316,13 @@ void analyze_run_fit_marginalization
   double FracIn_95CL   = (double) Nin_95CL   / (double) Nentries;
   double FracIn_2sigma = (double) Nin_2sigma / (double) Nentries;  
   
+  // Calculate critical value
+
+  double FCCritVal_1sigma = CalcDLcrit(myvector,CLfrac_1sigma*100.,0.); 
+  double FCCritVal_90CL   = CalcDLcrit(myvector,CLfrac_90CL*100.,0.); 
+  double FCCritVal_95CL   = CalcDLcrit(myvector,CLfrac_95CL*100.,0.); 
+
   
- 
   // Get pulls
 
   double FitMeanPar0_HESSE = -999;
@@ -352,85 +369,106 @@ void analyze_run_fit_marginalization
   TCanvas *cbestfit = new TCanvas("hbestfit","hbestfit");
   if(IsFit2D){
     hbestfit_2D->GetYaxis()->SetTitle("#delta_{CP}");
-    hbestfit_2D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{13}");
-     hbestfit_2D->DrawCopy("colz");
+    hbestfit_2D->GetXaxis()->SetTitle("sin^{2} #theta_{13}");
+    hbestfit_2D->DrawCopy("colz");
   }
   else{
     hbestfit_1D->GetYaxis()->SetTitle("# entries");
-    hbestfit_1D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{13}");
+    hbestfit_1D->GetXaxis()->SetTitle("#delta_{CP}");
     hbestfit_1D->DrawCopy();
   }
 
   TCanvas *cbestfitFullChisq = new TCanvas("hbestfitFullChisq","hbestfitFullChisq");
   if(IsFit2D){
     hbestfitFullChisq_2D->GetYaxis()->SetTitle("#delta_{CP}");
-    hbestfitFullChisq_2D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{13}");
+    hbestfitFullChisq_2D->GetXaxis()->SetTitle("sin^{2} #theta_{13}");
     hbestfitFullChisq_2D->DrawCopy("colz");
   }
   else{
     hbestfitFullChisq_1D->GetYaxis()->SetTitle("# entries");
-    hbestfitFullChisq_1D->GetXaxis()->SetTitle("sin^{2} #bar{#theta}_{13}");
+    hbestfitFullChisq_1D->GetXaxis()->SetTitle("#delta_{CP}");
     hbestfitFullChisq_1D->DrawCopy();
   }
 
   TCanvas *cErrMINOSneg0 = new TCanvas("cErrMINOSneg0","cErrMINOSneg0");
   hErrMINOSneg0->GetYaxis()->SetTitle("# entries");
-  hErrMINOSneg0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{13} (MINOS negative)");
+  if(IsFit2D) hErrMINOSneg0->GetXaxis()->SetTitle("#Delta sin^{2} #theta_{13} (MINOS negative)");
+  else        hErrMINOSneg0->GetXaxis()->SetTitle("#delta_{CP} (MINOS negative)");
   hErrMINOSneg0->DrawCopy();
+  
   TCanvas *cErrMINOSpos0 = new TCanvas("cErrMINOSpos0","cErrMINOSpos0");
   hErrMINOSpos0->GetYaxis()->SetTitle("# entries");
-  hErrMINOSpos0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{13} (MINOS positive)");
+  if(IsFit2D) hErrMINOSpos0->GetXaxis()->SetTitle("#Delta sin^{2} #theta}_{13} (MINOS positive)");
+  else        hErrMINOSpos0->GetXaxis()->SetTitle("#delta_{CP} (MINOS positive)");
   hErrMINOSpos0->DrawCopy();
-
-  TCanvas *cErrMINOSneg1 = new TCanvas("cErrMINOSneg1","cErrMINOSneg1");
-  hErrMINOSneg1->GetYaxis()->SetTitle("# entries");
-  hErrMINOSneg1->GetXaxis()->SetTitle("#delta_{CP} (MINOS positive)");
-  hErrMINOSneg1->DrawCopy();
-  TCanvas *cErrMINOSpos1 = new TCanvas("cErrMINOSpos1","cErrMINOSpos1");
-  hErrMINOSpos1->GetYaxis()->SetTitle("# entries");
-  hErrMINOSpos1->GetXaxis()->SetTitle("#delta_{CP} (MINOS negative)");
-  hErrMINOSpos1->DrawCopy();
+  
+  TCanvas *cErrMINOSneg1;
+  TCanvas *cErrMINOSpos1;
+  if(IsFit2D){
+    cErrMINOSneg1 = new TCanvas("cErrMINOSneg1","cErrMINOSneg1");
+    hErrMINOSneg1->GetYaxis()->SetTitle("# entries");
+    hErrMINOSneg1->GetXaxis()->SetTitle("#delta_{CP} (MINOS positive)");
+    hErrMINOSneg1->DrawCopy();  
+    cErrMINOSpos1 = new TCanvas("cErrMINOSpos1","cErrMINOSpos1");
+    hErrMINOSpos1->GetYaxis()->SetTitle("# entries");
+    hErrMINOSpos1->GetXaxis()->SetTitle("#delta_{CP} (MINOS negative)");
+    hErrMINOSpos1->DrawCopy();
+  }
 
   TCanvas *cErrHESSEsym0 = new TCanvas("cErrHESSEsym0","cErrHESSEsym0");
   hErrHESSEsym0->GetYaxis()->SetTitle("# entries");
-  hErrHESSEsym0->GetXaxis()->SetTitle("#Delta sin^{2} #bar{#theta}_{13} (HESSE)");
+  if(IsFit2D) hErrHESSEsym0->GetXaxis()->SetTitle("#Delta sin^{2} #theta_{13} (HESSE)");
+  else        hErrHESSEsym0->GetXaxis()->SetTitle("#delta_{CP} (HESSE)");
   hErrHESSEsym0->DrawCopy();
-  TCanvas *cErrHESSEsym1 = new TCanvas("cErrHESSEsym1","cErrHESSEsym1");
-  hErrHESSEsym1->GetYaxis()->SetTitle("# entries");
-  hErrHESSEsym1->GetXaxis()->SetTitle("#delta_{CP} (HESSE)");
-  hErrHESSEsym1->DrawCopy();
 
+  TCanvas *cErrHESSEsym1;
+  if(IsFit2D){  
+    cErrHESSEsym1 = new TCanvas("cErrHESSEsym1","cErrHESSEsym1");
+    hErrHESSEsym1->GetYaxis()->SetTitle("# entries");
+    hErrHESSEsym1->GetXaxis()->SetTitle("#delta_{CP} (HESSE)");
+    hErrHESSEsym1->DrawCopy();
+  }
+ 
   TCanvas *cchisqminDiff = new TCanvas("hchisqminDiff","hchisqminDiff");
   hchisqminDiff->GetYaxis()->SetTitle("# entries");
   hchisqminDiff->GetXaxis()->SetTitle("#chi^{2}_{Descent} - #chi^{2}_{Global}");
   hchisqminDiff->DrawCopy();
+
   TCanvas *cdeltachisqDiff = new TCanvas("cdeltachisqDiff","cdeltachisqDiff");
   hdeltachisqDiff->GetYaxis()->SetTitle("# entries");
   hdeltachisqDiff->GetXaxis()->SetTitle("#Delta #chi^{2}_{Descent} (no global)");
   hdeltachisqDiff->DrawCopy();
-  
+  TLine *lcritval_90CL = new TLine(FCCritVal_90CL,0,FCCritVal_90CL,hdeltachisqDiff->GetMaximum());
+  lcritval_90CL->SetLineColor(kRed);
+  lcritval_90CL->Draw();
+
   TCanvas *cpullsHESSE0 = new TCanvas("cpullsHESSE0","cpullsHESSE0");
-  hpullsHESSE0->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (HESSE error)");
+  TLatex *lpullsHESSE0;
+  if(IsFit2D) hpullsHESSE0->GetXaxis()->SetTitle("Pull sin^{2} #theta_{13} (HESSE error)");
+  else        hpullsHESSE0->GetXaxis()->SetTitle("Pull #delta_{CP} (HESSE error)");
   hpullsHESSE0->GetYaxis()->SetTitle("# entries");
   hpullsHESSE0->DrawCopy();
   sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsHESSE0->GetMean(),hpullsHESSE0->GetRMS(),FitMeanPar0_HESSE,FitRMSPar0_HESSE); 
-  TLatex *lpullsHESSE0 = new TLatex(0.90,hpullsHESSE0->GetMaximum()*0.8,name);
+  lpullsHESSE0 = new TLatex(0.90,hpullsHESSE0->GetMaximum()*0.8,name);
   lpullsHESSE0->SetTextSize(0.07);
   lpullsHESSE0->Draw("same");
-  
+
+  TCanvas *cpullsHESSE1;
+  TLatex *lpullsHESSE1;
   if(IsFit2D){
-    TCanvas *cpullsHESSE1 = new TCanvas("cpullsHESSE1","cpullsHESSE1");
+    cpullsHESSE1 = new TCanvas("cpullsHESSE1","cpullsHESSE1");
     hpullsHESSE1->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (HESSE error)");
     hpullsHESSE1->GetYaxis()->SetTitle("# entries");
     hpullsHESSE1->DrawCopy();
     sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsHESSE1->GetMean(),hpullsHESSE1->GetRMS(),FitMeanPar1_HESSE,FitRMSPar1_HESSE); 
-    TLatex *lpullsHESSE1 = new TLatex(0.90,hpullsHESSE1->GetMaximum()*0.8,name);
+    lpullsHESSE1 = new TLatex(0.90,hpullsHESSE1->GetMaximum()*0.8,name);
     lpullsHESSE1->SetTextSize(0.07);
     lpullsHESSE1->Draw();
   }
 
   TCanvas *cpullsMINOS0 = new TCanvas("cpullsMINOS0","cpullsMINOS0");
-  hpullsMINOS0->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (MINOS error)");
+  if(IsFit2D) hpullsMINOS0->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (MINOS error)");
+  else        hpullsMINOS0->GetXaxis()->SetTitle("Pull #delta_{CP} (MINOS error)");
   hpullsMINOS0->GetYaxis()->SetTitle("# entries");
   hpullsMINOS0->DrawCopy();
   sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsMINOS0->GetMean(),hpullsMINOS0->GetRMS(),FitMeanPar0_MINOS,FitRMSPar0_MINOS); 
@@ -438,19 +476,22 @@ void analyze_run_fit_marginalization
   lpullsMINOS0->SetTextSize(0.07);
   lpullsMINOS0->Draw();
 
+  TCanvas *cpullsMINOS1;
+  TLatex *lpullsMINOS1;
   if(IsFit2D){
-    TCanvas *cpullsMINOS1 = new TCanvas("cpullsMINOS1","cpullsMINOS1");
-    hpullsMINOS1->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (MINOS error)");
+    cpullsMINOS1 = new TCanvas("cpullsMINOS1","cpullsMINOS1");
+    hpullsMINOS1->GetXaxis()->SetTitle("Pull #delta_{CP} (MINOS error)");
     hpullsMINOS1->GetYaxis()->SetTitle("# entries");
     hpullsMINOS1->DrawCopy();
     sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsMINOS1->GetMean(),hpullsMINOS1->GetRMS(),FitMeanPar1_MINOS,FitRMSPar1_MINOS); 
-    TLatex *lpullsMINOS1 = new TLatex(0.90,hpullsMINOS1->GetMaximum()*0.8,name);
+    lpullsMINOS1 = new TLatex(0.90,hpullsMINOS1->GetMaximum()*0.8,name);
     lpullsMINOS1->SetTextSize(0.07);
     lpullsMINOS1->Draw();
   }
 
   TCanvas *cresidual0 = new TCanvas("cresidual0","cresidual0");
-  hresidual0->GetXaxis()->SetTitle("Residual sin^{2} #bar{#theta}_{13}");
+  if(IsFit2D) hresidual0->GetXaxis()->SetTitle("Residual sin^{2} #bar{#theta}_{13}");
+  else        hresidual0->GetXaxis()->SetTitle("Residual #delta_{CP}"); 
   hresidual0->GetYaxis()->SetTitle("# entries");
   hresidual0->DrawCopy();
   sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hresidual0->GetMean(),hresidual0->GetRMS()); 
@@ -458,8 +499,10 @@ void analyze_run_fit_marginalization
   lresidual0->SetTextSize(0.07);
   lresidual0->Draw();
 
+  TCanvas *cresidual1;
+  TLatex *lresidual1;
   if(IsFit2D){
-    TCanvas *cresidual1 = new TCanvas("cresidual1","cresidual1");
+    cresidual1 = new TCanvas("cresidual1","cresidual1");
     hresidual1->GetXaxis()->SetTitle("Residual sin^{2} #bar{#theta}_{13}");
     hresidual1->GetYaxis()->SetTitle("# entries");
     hresidual1->DrawCopy();
@@ -555,13 +598,18 @@ void analyze_run_fit_marginalization
     cout << " - Fit RMS Par1 = " << FitRMSPar1_MINOS << endl;
   }
   cout << endl;
-  cout << "Coverage" << endl;
+  cout << "Coverage:" << endl;
   cout << "Fraction of toys inside 1sigma = " << FracIn_1sigma << endl;
   cout << "Fraction of toys inside 90CL   = " << FracIn_90CL   << endl;
   cout << "Fraction of toys inside 95CL   = " << FracIn_95CL   << endl;
   cout << "Fraction of toys inside 2sigma = " << FracIn_2sigma << endl;
   cout << endl;
-  
+  cout << "Feldman-Cousins critical values:" << endl;
+  cout << "Crit Value 1sigma = " << FCCritVal_1sigma << endl; 
+  cout << "Crit Value 90CL = " << FCCritVal_90CL << endl; 
+  cout << "Crit Value 95CL = " << FCCritVal_95CL << endl; 
+  cout << endl;
+
   return;
 }
 
@@ -618,4 +666,12 @@ double GetConstChisq(bool Fit2D,string CL){
     }
   }
   return -999;
+}
+
+double CalcDLcrit(vector<double> dchisq, double conflev, double sigmacl){
+  sort(dchisq.begin(), dchisq.end()); // sort the dchisq vector   
+  vector<double>::iterator dchisqIter;
+  dchisqIter = dchisq.begin() + (int)(0.01*conflev*dchisq.size() + sigmacl);
+  double critval = (*dchisqIter);
+  return critval;
 }
