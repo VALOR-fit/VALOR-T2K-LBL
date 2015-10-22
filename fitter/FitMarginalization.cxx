@@ -7139,6 +7139,8 @@ double FitMarginalization::GetInterpolationX(double X1,double Y1,double X2, doub
 //________________________________________________________________________________________
 void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bool readbinary){
   
+  cout << "Compute MINOS errors" << endl;
+  
   //double error = conv::kBadResult;
   const double CritChisq_1D = 1.;
   const double CritChisq_2D = 2.3;

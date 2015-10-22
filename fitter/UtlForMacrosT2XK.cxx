@@ -378,16 +378,23 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
   // 2D sinsqth23 Vs dmsq32 fit
   //
   
+  cout << "Minimization is complete" << endl;
+
+  cout << "Set best-fit parameter values" << endl;
+
   // Set best-fit parameters in FitMarginalization object
   // Otherwise error computation is done with respect to a wrong minimum
   fitmarg->SetChisqBestFit(chisqmin);
   fitmarg->SetParamBestFit(0,bestfit0);
   if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
   
+  cout << "Build deltaChisqMarg distribution" << endl;
+
   // Build the DeltaChisqMarg after the best-fit Chisq has been set
   // Otherwise DeltaChisqMarg becomes negative if shifted wrt a local minimum
   fitmarg->BuildDeltaChisqMarg();
   
+
   //
   // Get fit errors
   //
@@ -395,18 +402,54 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
   // must adopt the same approach for error computations as well.
   //
   
+  cout << "Compute MINOS errors" << endl;
+
   if(runopt.TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+
+  cout << "Compute HESSE errors" << endl;
+
   if(runopt.TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
 
+  
   // Draw Full Chisq
+
+  double bestfitFullChisq0 = conv::kBadResult;
+  double bestfitFullChisq1 = conv::kBadResult;
+  double chisqminFullChisq = conv::kBadResult;
+
   if(runopt.DrawFullChisq()){
+
+    bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
+    if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
+    chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
+    cout << endl;
+    cout << "bestfitFullChisq0 = " << bestfitFullChisq0 << endl;
+    cout << "bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
+    cout << "chisqminFullChisq = " << chisqminFullChisq << endl;
+    cout << endl;
+
+    cout << "Fill Full Chisq Marg" << endl;
+
     fitmarg->FillChisqMarg(skobs_fakedata,true);
+
+    cout << "Minimize Histo" << endl;
+
     fitmarg->MinimizeHisto();
-    //bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
-    //if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
-    //chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
+    bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
+    if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
+    chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
+
+    cout << endl;
+    cout << "bestfitFullChisq0 = " << bestfitFullChisq0 << endl;
+    cout << "bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
+    cout << "chisqminFullChisq = " << chisqminFullChisq << endl;
+    cout << endl;
+
+    cout << "Build deltaChisqMarg distribution" << endl;
+    
     fitmarg->BuildDeltaChisqMarg();
   }
+
 
   // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
   if(runopt.StoreLikeWeights()){
