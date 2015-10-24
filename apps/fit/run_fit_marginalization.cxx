@@ -590,11 +590,11 @@ int main(int argc, char ** argv)
      
      //
 
-     int npt_chisq_x = hchisq1D_out->GetNbinsX();
-     for(int ix=0;ix<npt_chisq_x;ix++){
-       cout << hchisq1D_out->GetBinContent(ix+1) << " ";
-     }
-     cout << endl;
+     // int npt_chisq_x = hchisq1D_out->GetNbinsX();
+     // for(int ix=0;ix<npt_chisq_x;ix++){
+     //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+     // }
+     // cout << endl;
 
      // Clean-up
      delete skobs_fakedata;
@@ -602,11 +602,11 @@ int main(int argc, char ** argv)
      delete fitmarg;
 
 
-     hchisq1D_out->GetNbinsX();
-     for(int ix=0;ix<npt_chisq_x;ix++){
-       cout << hchisq1D_out->GetBinContent(ix+1) << " ";
-     }
-     cout << endl;
+     // hchisq1D_out->GetNbinsX();
+     // for(int ix=0;ix<npt_chisq_x;ix++){
+     //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+     // }
+     // cout << endl;
 
      
   } // loop over toys

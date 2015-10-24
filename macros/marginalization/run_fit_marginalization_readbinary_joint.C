@@ -41,18 +41,23 @@ void run_fit_marginalization_readbinary_joint
 
  const char * tag                      = "fitmarg_joint_PROVA",    /* tag for output file */
 
- int          first_experiment         = 0, //4404, //4739,                       /* */
- int          last_experiment          = 0, //4404, //4739,                       /* */
+ int          first_experiment         = 31, //4404, //4739,                       /* */
+ int          last_experiment          = 31, //4404, //4739,                       /* */
 
  //const char * xmlfile = "data_run1to4/data_newstruct.xml",
- const char * xmlfile = "data_run1to6/data.xml",
- //const char * xmlfile = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/2015_v2.0.0_evolution/inputs/data_run1to6/skdata_run1to6.xml",
+ //const char * xmlfile = "data_run1to6/data.xml",
+ //const char * xmlfile = "../outputs/test/skdata.xml",
+ //const char * xmlfile = "../outputs/test/ciao-0.xml",
+ const char * xmlfile = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/2015_v2.0.0_evolution/inputs/data_run1to6/skdata_run1to6.xml",
+ 
+ //const char * rootfile = "../outputs/test/ciao-0.root",
+ //const char * rootfile = "../../inputs/data_run1to4/SKdata_Run14.root ",
+ //const char * rootfile = "data_run1to6/SKdata_Run16.root ",
+ const char * rootfile = "../outputs/test/Toys_fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-job96-_0_99.root",
+ 
+ bool using_xml_file = false,
 
- const char * rootfile = "../outputs/test/toymc_prova_joint-0.root",
-
- bool using_xml_file = true,
-
- bool         dotoys               = 1,
+ bool         dotoys               = 0,
 
  // Mach3, T2K Run1-4 + reactors best fit (A)
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -86,10 +91,11 @@ void run_fit_marginalization_readbinary_joint
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
- const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike.xml",     
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
+ const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
 
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
@@ -107,21 +113,22 @@ void run_fit_marginalization_readbinary_joint
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsTheta/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
  //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
- const char * infilename = "submit_prova_TemplVArray",
+ //const char * infilename = "submit_prova_TemplVArray_2d",
+ const char * infilename = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16",
 
- const int    nfiles               = 9, //201, 21, 1        // # of files to read
+ const int    nfiles               = 101, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 100, //500, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 10000, //100, //10000, //1,  // # toys marginalization 
  
  const char * freeparname0        = "deltacp",  // free parameter
  const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 9, //201, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
  const bool  doMargMH             = false,     // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
  
- const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
+ const TString TypeError          = "HESSE-MINOS",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = true,
 
  const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
@@ -477,6 +484,17 @@ void run_fit_marginalization_readbinary_joint
     
     cout << *fparm << endl;
 
+
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = kSKSamples[is];
+      if(s == kSKsUndefined) continue;
+      cout << util::AsString(s) << " --> " << skobs_fakedata->NumOfEvents(s) <<  endl;
+    }
+    //exit(1);
+
+
+
+
     /////////////////// SET MARGINALIZATION FIT ////////////////
     
     // Reset all the variables
@@ -657,11 +675,45 @@ void run_fit_marginalization_readbinary_joint
 
     // Fit 2
 
+    // cout << endl;
+    // cout << "################# Fit 2 (dcp=0.) #################" << endl;
+    
+    // fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
+    // fitmarg->SetStartBin(0.,0.); 
+    // fitmarg->SetNumStartBin(1,1);
+    // fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
+    // //fitmarg->SetExtractStartPt("GridFix");
+    // fitmarg->SetExtractStartPt("Single");
+    // fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+
+    // double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
+    // double bestfit0_2 = fitmarg->GetParamBestFit(0);
+    // double bestfit1_2 = -999.;
+    // if(fitmarg->IsFit2D()) bestfit1_2 = fitmarg->GetParamBestFit(1); 
+    // int nfits_2 = fitmarg->GetNumFit();
+    // int fitstatus_2 = fitmarg->GetFitStatus();
+    // int niterations_2 = fitmarg->GetNumIterations();
+    // if(chisqmin_2<chisqmin){
+    //   chisqmin = chisqmin_2;
+    //   bestfit0 = bestfit0_2; 
+    //   bestfit1 = bestfit1_2; 
+    //   nfits = nfits_2;    
+    //   fitstatus = fitstatus_2;
+    //   niterations = niterations_2;
+    // }
+    // TH1D *ChisqStep_2 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_2");
+
+
+
+
+
+    // Fit 2
+
     cout << endl;
-    cout << "################# Fit 2 (dcp=0.) #################" << endl;
+    cout << "################# Fit 2 (dcp=-pi/2) #################" << endl;
     
     fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
-    fitmarg->SetStartBin(0.,0.); 
+    fitmarg->SetStartBin(-TMath::Pi()/2.,0.); 
     fitmarg->SetNumStartBin(1,1);
     fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
     //fitmarg->SetExtractStartPt("GridFix");
@@ -685,17 +737,15 @@ void run_fit_marginalization_readbinary_joint
     }
     TH1D *ChisqStep_2 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_2");
 
-
-
-    // Fit 3
+    // Fit 2
 
     cout << endl;
-    cout << "################# Fit 3 (dcp=+3.14) #################" << endl;
+    cout << "################# Fit 3 (dcp=+pi/2) #################" << endl;
     
     fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
-    fitmarg->SetStartBin(+TMath::Pi(),0.); 
+    fitmarg->SetStartBin(+TMath::Pi()/2.,0.); 
     fitmarg->SetNumStartBin(1,1);
-    fitmarg->SetGridStartRange(+TMath::Pi()-conv::kASmallNum,+TMath::Pi(),0.,0.);
+    fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
     //fitmarg->SetExtractStartPt("GridFix");
     fitmarg->SetExtractStartPt("Single");
     fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
@@ -715,7 +765,37 @@ void run_fit_marginalization_readbinary_joint
       fitstatus = fitstatus_3;
       niterations = niterations_3;
     }
-    TH1D *ChisqStep_3 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_3");
+    TH1D *ChisqStep_3 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_2");
+
+    // Fit 4
+
+    cout << endl;
+    cout << "################# Fit 4 (dcp=+3.14) #################" << endl;
+    
+    fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
+    fitmarg->SetStartBin(+TMath::Pi(),0.); 
+    fitmarg->SetNumStartBin(1,1);
+    fitmarg->SetGridStartRange(+TMath::Pi()-conv::kASmallNum,+TMath::Pi(),0.,0.);
+    //fitmarg->SetExtractStartPt("GridFix");
+    fitmarg->SetExtractStartPt("Single");
+    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+
+    double chisqmin_4 = (double)fitmarg->GetChisqBestFit();
+    double bestfit0_4 = fitmarg->GetParamBestFit(0);
+    double bestfit1_4 = -999.;
+    if(fitmarg->IsFit2D()) bestfit1_4 = fitmarg->GetParamBestFit(1); 
+    int nfits_4 = fitmarg->GetNumFit();
+    int fitstatus_4 = fitmarg->GetFitStatus();
+    int niterations_4 = fitmarg->GetNumIterations();
+    if(chisqmin_4<chisqmin){
+      chisqmin = chisqmin_4;
+      bestfit0 = bestfit0_4; 
+      bestfit1 = bestfit1_4; 
+      nfits = nfits_4;    
+      fitstatus = fitstatus_4;
+      niterations = niterations_4;
+    }
+    TH1D *ChisqStep_4 = (TH1D*)fitmarg->GetChisqStep_1D()->Clone("ChisqStep_4");
 
     //
 
@@ -918,6 +998,14 @@ void run_fit_marginalization_readbinary_joint
     TCanvas *cDeltaChisqMarg =  new TCanvas("cDeltaChisqMarg","cDeltaChisqMarg");
     fitmarg->GetDeltaChisqMarg1D()->DrawCopy();
 
+    TCanvas *cErecoToy2D_1Rmu = new TCanvas("hErecoToy2D_1Rmu","hErecoToy2D_1Rmu");
+    hErecoToy2D_1Rmu->Draw("colz");
+    TCanvas *cErecoToy2D_RHC1Rmu = new TCanvas("hErecoToy2D_RHC1Rmu","hErecoToy2D_RHC1Rmu");
+    hErecoToy2D_RHC1Rmu->Draw("colz");
+    TCanvas *cErecoToy2D_1Re = new TCanvas("hErecoToy2D_1Re","hErecoToy2D_1Re");
+    hErecoToy2D_1Re->Draw("colz");
+    TCanvas *cErecoToy2D_RHC1Re = new TCanvas("hErecoToy2D_RHC1Re","hErecoToy2D_RHC1Re");
+    hErecoToy2D_RHC1Re->Draw("colz");
 
     // Clean-up
     delete skobs_fakedata;  

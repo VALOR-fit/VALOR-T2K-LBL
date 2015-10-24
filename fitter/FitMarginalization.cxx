@@ -18,7 +18,7 @@
 //#define __print_array_toy_fillchisq_verbose__
 //#define __print_array_toy_merge__
 //#define __print_systematic_variations__
-#define __print_chisqmarg__
+//#define __print_chisqmarg__
 //#define __readtoys_debug__
 //#define __print_minimization_steps__ //
 //#define __print_hesseerror__
@@ -7149,6 +7149,9 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
 
   if(!fIsFit2D){   // 1D
         
+    this->FillChisqMarg(skobs_data,readbinary);
+    this->MinimizeHisto();
+
     // Get Delta Chisq distribution
     this->BuildDeltaChisqMarg();
     //fhdeltachisq_marg_1D = (TH1D*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D"); // NEW PRECISION
