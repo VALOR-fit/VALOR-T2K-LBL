@@ -614,8 +614,10 @@ void run_fit_marginalization_readbinary_joint_2d
     
     if(constrain_reactor){
       
-      double sinsq2th13_mean = 0.093; // PDG 2014 (sinsq2th13)
-      double sinsq2th13_sigma = 0.008; // PDG 2014 (sinsq2th13)
+      //double sinsq2th13_mean = 0.093; // PDG 2014 (sinsq2th13)
+      //double sinsq2th13_sigma = 0.008; // PDG 2014 (sinsq2th13)
+      double sinsq2th13_mean = conv::kPrior_Sinsq2th13_Used_Mean; // Used (sinsq2th13)
+      double sinsq2th13_sigma = conv::kPrior_Sinsq2th13_Used_RMS; // Used (sinsq2th13)
       
       fitmarg->UsePenaltyTerm(true,false);
       fitmarg->SetPenaltyTerm(sinsq2th13_mean, sinsq2th13_sigma); // to be used after UsePenaltyTerm()

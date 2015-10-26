@@ -526,28 +526,64 @@ void build_marg_toys_joint
   }
   else{
     // deltaCP
-    fitmarg->SetPrior_NH(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
-    fitmarg->SetPrior_IH(kPhypCPV,"flat",-TMath::Pi(),+TMath::Pi());
+    fitmarg->SetPrior_NH(kPhypCPV,"flat",
+			 conv::kPrior_deltaCP_Flat_Low,
+			 conv::kPrior_deltaCP_Flat_Up
+			 );
+    fitmarg->SetPrior_IH(kPhypCPV,"flat",
+			 conv::kPrior_deltaCP_Flat_Low,
+			 conv::kPrior_deltaCP_Flat_Up
+			 );
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
-      fitmarg->SetPrior_NH(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
-      fitmarg->SetPrior_IH(kPhypCPVBar,"flat",-TMath::Pi(),+TMath::Pi());
+      fitmarg->SetPrior_NH(kPhypCPVBar,"flat",
+			   conv::kPrior_deltaCP_Flat_Low,
+			   conv::kPrior_deltaCP_Flat_Up
+			   );
+      fitmarg->SetPrior_IH(kPhypCPVBar,"flat",
+			   conv::kPrior_deltaCP_Flat_Low,
+			   conv::kPrior_deltaCP_Flat_Up
+			   );
     }
     
     // mixing13
     if(reactors){
-      fitmarg->SetPrior_NH(kPhypMixing13,"gaus",0.093,0.008); // prior on sinsq2th
-      fitmarg->SetPrior_IH(kPhypMixing13,"gaus",0.093,0.008);   
+      fitmarg->SetPrior_NH(kPhypMixing13,"gaus",
+      			   conv::kPrior_Sinsq2th13_Used_Mean,
+      			   conv::kPrior_Sinsq2th13_Used_RMS
+      			   ); // prior on sinsq2th
+      fitmarg->SetPrior_IH(kPhypMixing13,"gaus",
+      			   conv::kPrior_Sinsq2th13_Used_Mean,
+      			   conv::kPrior_Sinsq2th13_Used_RMS
+      			   );   
       if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
-      	fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",0.093,0.008);
-      	fitmarg->SetPrior_IH(kPhypMixing13Bar,"gaus",0.093,0.008);
-      }
+      	fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",
+      			     conv::kPrior_Sinsq2th13_Used_Mean,
+      			     conv::kPrior_Sinsq2th13_Used_RMS
+      			     );
+      	fitmarg->SetPrior_IH(kPhypMixing13Bar,"gaus",
+      			     conv::kPrior_Sinsq2th13_Used_Mean,
+      			     conv::kPrior_Sinsq2th13_Used_RMS
+      			     );
+      }      
     }
     else{
-      fitmarg->SetPrior_NH(kPhypMixing13,"flat",0.,0.4); // prior on sinsq2th
-      fitmarg->SetPrior_IH(kPhypMixing13,"flat",0.,0.4);   
+      fitmarg->SetPrior_NH(kPhypMixing13,"flat",
+			   conv::kPrior_Sinsq2th13_Flat_Low,
+			   conv::kPrior_Sinsq2th13_Flat_Up
+			   ); // prior on sinsq2th
+      fitmarg->SetPrior_IH(kPhypMixing13,"flat",
+			   conv::kPrior_Sinsq2th13_Flat_Low,
+			   conv::kPrior_Sinsq2th13_Flat_Up
+			   );   
       if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
-	fitmarg->SetPrior_NH(kPhypMixing13Bar,"flat",0.,0.4);
-	fitmarg->SetPrior_IH(kPhypMixing13Bar,"flat",0.,0.4);
+	fitmarg->SetPrior_NH(kPhypMixing13Bar,"flat",
+			     conv::kPrior_Sinsq2th13_Flat_Low,
+			     conv::kPrior_Sinsq2th13_Flat_Up
+			     );
+	fitmarg->SetPrior_IH(kPhypMixing13Bar,"flat",
+			     conv::kPrior_Sinsq2th13_Flat_Low,
+			     conv::kPrior_Sinsq2th13_Flat_Up
+			     );
       }
     }
     
@@ -568,29 +604,66 @@ void build_marg_toys_joint
   }
   else{
     // mixing23 
-    fitmarg->SetPrior_NH(kPhypMixing23,"flat",0.3,0.7); // prior on sinsqth
-    fitmarg->SetPrior_IH(kPhypMixing23,"flat",0.3,0.7);
+    fitmarg->SetPrior_NH(kPhypMixing23,"flat",
+			 conv::kPrior_Sinsq2th23_Flat_Low,
+			 conv::kPrior_Sinsq2th23_Flat_Up
+			 ); // prior on sinsqth
+    fitmarg->SetPrior_IH(kPhypMixing23,"flat",
+			 conv::kPrior_Sinsq2th23_Flat_Low,
+			 conv::kPrior_Sinsq2th23_Flat_Up
+			 );
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
-      fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",0.3,0.7);
-      fitmarg->SetPrior_IH(kPhypMixing23Bar,"flat",0.3,0.7);
+      fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",
+			   conv::kPrior_Sinsq2th23_Flat_Low,
+			   conv::kPrior_Sinsq2th23_Flat_Up
+			   );
+      fitmarg->SetPrior_IH(kPhypMixing23Bar,"flat",
+			   conv::kPrior_Sinsq2th23_Flat_Low,
+			   conv::kPrior_Sinsq2th23_Flat_Up
+			   );
     }
     
     // dmsq23
-    fitmarg->SetPrior_NH(kPhypDm23sq,"flat",2E-3,3E-3);
-    fitmarg->SetPrior_IH(kPhypDm23sq,"flat",2E-3,3E-3);
+    fitmarg->SetPrior_NH(kPhypDm23sq,"flat",
+			 conv::kPrior_Dm23sq_Flat_Low,
+			 conv::kPrior_Dm23sq_Flat_Up
+			 );
+    fitmarg->SetPrior_IH(kPhypDm23sq,"flat",
+			 conv::kPrior_Dm23sq_Flat_Low,
+			 conv::kPrior_Dm23sq_Flat_Up
+			 );
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
-      fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",2E-3,3E-3);
-      fitmarg->SetPrior_IH(kPhypDm23sqBar,"flat",2E-3,3E-3);
+      fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",
+			   conv::kPrior_Dm23sq_Flat_Low,
+			   conv::kPrior_Dm23sq_Flat_Up
+			   )
+	;
+      fitmarg->SetPrior_IH(kPhypDm23sqBar,"flat",
+			   conv::kPrior_Dm23sq_Flat_Low,
+			   conv::kPrior_Dm23sq_Flat_Up
+			   );
     }
   }
   
   // dmsq12
-  fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",7.53E-5,0.18E-5);
-  fitmarg->SetPrior_IH(kPhypDm12sq,"gaus",7.53E-5,0.18E-5);
+  fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",
+		       conv::kPrior_Dm12sq_Used_Mean,
+		       conv::kPrior_Dm12sq_Used_RMS
+		       );
+  fitmarg->SetPrior_IH(kPhypDm12sq,"gaus",
+		       conv::kPrior_Dm12sq_Used_Mean,
+		       conv::kPrior_Dm12sq_Used_RMS
+		       );
 
   // mixing12
-  fitmarg->SetPrior_NH(kPhypMixing12,"gaus",0.846,0.021); // prior on sinsq2th
-  fitmarg->SetPrior_IH(kPhypMixing12,"gaus",0.846,0.021);
+  fitmarg->SetPrior_NH(kPhypMixing12,"gaus",
+		       conv::kPrior_Sinsq2th12_Used_Mean,
+		       conv::kPrior_Sinsq2th12_Used_RMS
+		       ); // prior on sinsq2th
+  fitmarg->SetPrior_IH(kPhypMixing12,"gaus",
+		       conv::kPrior_Sinsq2th12_Used_Mean,
+		       conv::kPrior_Sinsq2th12_Used_RMS
+		       );
   
 
   // Make toys and store in binary files
