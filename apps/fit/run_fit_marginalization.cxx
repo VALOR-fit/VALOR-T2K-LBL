@@ -402,14 +402,11 @@ int main(int argc, char ** argv)
      
      nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
 
-     bestfiterrNeg0 = fitmarg->GetParamBestFitErrNeg(0);
-     bestfiterrNeg1 = fitmarg->GetParamBestFitErrNeg(1);
-     bestfiterrPos0 = fitmarg->GetParamBestFitErrPos(0);
-     bestfiterrPos1 = fitmarg->GetParamBestFitErrPos(1);
-     
-     bestfiterrSym0 = fitmarg->GetParamBestFitErrSym(0);
-     bestfiterrSym1 = fitmarg->GetParamBestFitErrSym(1);
-     
+     // Get Best Fit point
+     bestfit0 = fitmarg->GetParamBestFit(0); 
+     bestfit1 = fitmarg->GetParamBestFit(1);
+     chisqmin = fitmarg->GetChisqBestFit();
+    
      // Get true chisq 
      
      PhysParamId_t freepar0 = conv::kPhypUndefined;
@@ -429,27 +426,71 @@ int main(int argc, char ** argv)
      cout << "truepar1 = " << truepar1 << endl;
      cout << endl;
 
-     // Get Best Fit point
-     bestfit0 = fitmarg->GetParamBestFit(0); 
-     bestfit1 = fitmarg->GetParamBestFit(1);
-     chisqmin = fitmarg->GetChisqBestFit();
+  
+     // // Draw Full Chisq
+     // if(runopt.DrawFullChisq()){
+     //   cout << endl;
+     //   cout << "Draw the full Chisq" << endl;
+     //   cout << endl;
+     //   //fitmarg->FillChisqMarg(skobs_fakedata,true);
+     //   //fitmarg->MinimizeHisto();
+     //   bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
+     //   if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
+     //   chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
+     //   //fitmarg->BuildDeltaChisqMarg();
+     // }
+     
 
      // Draw Full Chisq
+     
      if(runopt.DrawFullChisq()){
        
-       cout << endl;
-       cout << "Draw the full Chisq" << endl;
-       cout << endl;
-
-       //fitmarg->FillChisqMarg(skobs_fakedata,true);
-       //fitmarg->MinimizeHisto();
+       cout << "Fill Full Chisq Marg" << endl;
+       fitmarg->FillChisqMarg(skobs_fakedata,true);
+       
+       cout << "Minimize Histo" << endl;
+       fitmarg->MinimizeHisto();
+       
        bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
        if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
        chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
-       //fitmarg->BuildDeltaChisqMarg();
+       cout << endl;
+       cout << "bestfitFullChisq0 = " << bestfitFullChisq0 << endl;
+       cout << "bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
+       cout << "chisqminFullChisq = " << chisqminFullChisq << endl;
+       cout << endl;
+       
+       cout << "Build deltaChisqMarg distribution" << endl;
+       fitmarg->BuildDeltaChisqMarg();
+     }
+     
+     //
+     // Get fit errors
+     //
+     // Since the chisq was minimized reading binary files at each step you 
+     // must adopt the same approach for error computations as well.
+     //
+     
+     if(runopt.TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+     if(runopt.TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
+     
+     bestfiterrNeg0 = fitmarg->GetParamBestFitErrNeg(0);
+     bestfiterrNeg1 = fitmarg->GetParamBestFitErrNeg(1);
+     bestfiterrPos0 = fitmarg->GetParamBestFitErrPos(0);
+     bestfiterrPos1 = fitmarg->GetParamBestFitErrPos(1);
+     
+     bestfiterrSym0 = fitmarg->GetParamBestFitErrSym(0);
+     bestfiterrSym1 = fitmarg->GetParamBestFitErrSym(1);
+     
+
+
+     // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+     if(runopt.StoreLikeWeights()){
+       fitmarg->WriteLikeToys2Binary(runopt.FileTag().c_str());
      }
 
-          
+
+
      // Get delta chisq
      deltachisq0BF = chisqtrue0 - chisqmin;
      
@@ -489,10 +530,13 @@ int main(int argc, char ** argv)
        fitmarg->GetDeltaChisqMarg1D()->Copy(*hdeltachisq1D_out);
        fitmarg->GetChisqStep_1D    ()->Copy(*hstep1D_out);
 
+       cout << "Chisq:" << endl;
        int npt_chisq_x = hchisq1D_out->GetNbinsX();
        for(int ix=0;ix<npt_chisq_x;ix++){
          cout << hchisq1D_out->GetBinContent(ix+1) << " ";
        }
+       cout << endl;
+       cout << "DeltaChisq:" << endl;
        cout << endl;
        for(int ix=0;ix<npt_chisq_x;ix++){
          cout << hdeltachisq1D_out->GetBinContent(ix+1) << " ";
@@ -506,14 +550,16 @@ int main(int argc, char ** argv)
      nexpts = runopt.NExperiments();
      run = runopt.Run();
 
-     // Fill the tree 
-     int iflag_tree = fitnt->Fill();
-     cout << endl;
-     cout << "iflag_tree = " << iflag_tree << endl;
-     cout << endl;
+     // // Fill the tree 
+     // int iflag_tree = fitnt->Fill();
+     // cout << endl;
+     // cout << "iflag_tree = " << iflag_tree << endl;
+     // cout << endl;
+     
      
      // Print output
      
+     cout << endl;
      cout << endl;
      cout << "Minimum Marginalized Chisq = " << chisqmin << endl;        
      cout << "bestfit 0 = " << bestfit0;

@@ -402,52 +402,40 @@ void valor::util::PerformMargFit(int argc, char ** argv, FitMarginalization *fit
   fitmarg->BuildDeltaChisqMarg(); 
   
 
-  //
-  // Get fit errors
-  //
-  // Since the chisq was minimized reading binary files at each step you 
-  // must adopt the same approach for error computations as well.
-  //
-  
-  if(runopt.TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
-  if(runopt.TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
+  // //
+  // // Get fit errors
+  // //
+  // // Since the chisq was minimized reading binary files at each step you 
+  // // must adopt the same approach for error computations as well.
+  // //
+  // if(runopt.TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+  // if(runopt.TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
 
+  // // Draw Full Chisq
+  // double bestfitFullChisq0 = conv::kBadResult; // not stored anywhere
+  // double bestfitFullChisq1 = conv::kBadResult; // not stored anywhere
+  // double chisqminFullChisq = conv::kBadResult; // not stored anywhere
+  // if(runopt.DrawFullChisq()){
+  //   cout << "Fill Full Chisq Marg" << endl;
+  //   fitmarg->FillChisqMarg(skobs_fakedata,true);
+  //   cout << "Minimize Histo" << endl;
+  //   fitmarg->MinimizeHisto();
+  //   bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
+  //   if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
+  //   chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
+  //   cout << endl;
+  //   cout << "bestfitFullChisq0 = " << bestfitFullChisq0 << endl;
+  //   cout << "bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
+  //   cout << "chisqminFullChisq = " << chisqminFullChisq << endl;
+  //   cout << endl;
+  //   cout << "Build deltaChisqMarg distribution" << endl;
+  //   fitmarg->BuildDeltaChisqMarg();
+  // }
 
-  
-  // Draw Full Chisq
-
-  double bestfitFullChisq0 = conv::kBadResult; // not stored anywhere
-  double bestfitFullChisq1 = conv::kBadResult; // not stored anywhere
-  double chisqminFullChisq = conv::kBadResult; // not stored anywhere
-
-  if(runopt.DrawFullChisq()){
-
-    cout << "Fill Full Chisq Marg" << endl;
-
-    fitmarg->FillChisqMarg(skobs_fakedata,true);
-
-    cout << "Minimize Histo" << endl;
-
-    fitmarg->MinimizeHisto();
-    bestfitFullChisq0 = fitmarg->GetParamBestFit(0);
-    if(fitmarg->IsFit2D()) bestfitFullChisq1 = fitmarg->GetParamBestFit(1); 
-    chisqminFullChisq = (double)fitmarg->GetChisqBestFit();
-
-    cout << endl;
-    cout << "bestfitFullChisq0 = " << bestfitFullChisq0 << endl;
-    cout << "bestfitFullChisq1 = " << bestfitFullChisq1 << endl;
-    cout << "chisqminFullChisq = " << chisqminFullChisq << endl;
-    cout << endl;
-
-    cout << "Build deltaChisqMarg distribution" << endl;
-    
-    fitmarg->BuildDeltaChisqMarg();
-  }
-
-  // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-  if(runopt.StoreLikeWeights()){
-    fitmarg->WriteLikeToys2Binary(runopt.FileTag().c_str());
-  }
+  // // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+  // if(runopt.StoreLikeWeights()){
+  //   fitmarg->WriteLikeToys2Binary(runopt.FileTag().c_str());
+  // }
 
 }
 //____________________________________________________________________________
