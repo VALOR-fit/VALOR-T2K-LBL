@@ -3218,14 +3218,14 @@ static const double kXsQ2BinEdges1Rmu[kXsNQ2Bins1Rmu+1] =
   0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
   0.600,  1.500
 };
-static const int kRHCXsNQ2Bins1Rmu = 19;
+static const int kRHCXsNQ2Bins1Rmu = 21;
 static const double kRHCXsQ2BinEdges1Rmu[kRHCXsNQ2Bins1Rmu+1] =
 {
   0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
   0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
   0.600,  1.500
 };
-static const int kXsNQ2BinsMultiRmu = 19;
+static const int kXsNQ2BinsMultiRmu = 21;
 static const double kXsQ2BinEdgesMultiRmu[kXsNQ2BinsMultiRmu+1] =
 {
   0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
