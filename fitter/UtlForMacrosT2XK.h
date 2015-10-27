@@ -29,6 +29,8 @@
 
 #include "TXMLEngine.h"
 
+#include "Utilities/RunOpt.h"
+
 #include <string>
 
 namespace valor {
@@ -36,6 +38,7 @@ namespace valor {
   class SuperkObservation;
   class PhysHypothesis;
   class FitMarginalization;
+//class RunOpt;
 
 namespace util {
   
@@ -52,12 +55,13 @@ namespace util {
 #endif
   string * ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePointer_t & root_node, valor::conv::SuperkSample_t s, string sextra, int datasetid);
 
-  void PerformMargFit(int argc, char ** argv, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool print = true); // take inputs from command line
-  void MargFit_1D_deltaCP(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
-  void MargFit_1D_sinsqth13(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
-  void MargFit_2D_sinsqth13_deltaCP(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
-  void MargFit_1D_sinsqth23(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
-  void MargFit_2D_sinsqth23_dmsq32(FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
+  void PerformMargFit(int argc, char ** argv, RunOpt *runopt, FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool print = true); // take inputs from command line
+
+  void MargFit_1D_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
+  void MargFit_1D_sinsqth13(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
+  void MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
+  void MargFit_1D_sinsqth23(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
+  void MargFit_2D_sinsqth23_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations);
 
   // Set the mass hierarchy in Opt and SKMC (for both bar & non-bar) using either
   // - the current value in Opt

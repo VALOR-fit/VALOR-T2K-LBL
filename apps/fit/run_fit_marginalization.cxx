@@ -104,22 +104,23 @@ int main(int argc, char ** argv)
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   gROOT->SetBatch(true);
-  MyRunOpt runopt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
+  //MyRunOpt runopt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
+  MyRunOpt *runopt = new MyRunOpt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
   
-  TString opt(runopt.Fit_param_list()); 
+  TString opt(runopt->Fit_param_list()); 
 
   // Analysis configuration
-  TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), runopt.ConfigFile().c_str() ));
-  TString xmlfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), runopt.Xmlfile().c_str() ));
-  TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), runopt.Rootfile().c_str() ));
+  TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), runopt->ConfigFile().c_str() ));
+  TString xmlfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), runopt->Xmlfile().c_str() ));
+  TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), runopt->Rootfile().c_str() ));
 
   FileStat_t dummy;
   
   // Global options
-  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(runopt.GlobalMassHierarchy());
-  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(runopt.GlobalDmsqScheme());
-  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(runopt.GlobalMixParamScheme());
-  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(runopt.GlobalMixParamOctant());
+  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(runopt->GlobalMassHierarchy());
+  Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(runopt->GlobalDmsqScheme());
+  Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(runopt->GlobalMixParamScheme());
+  Opt::Instance()->gOscOctantChoice      = util::OctantFromString(runopt->GlobalMixParamOctant());
   if(Opt::Instance()->Undefined()) {
     cerr << "Global options not defined correctly. Exiting..." << endl;
     cerr << *Opt::Instance() << endl;
@@ -129,40 +130,40 @@ int main(int argc, char ** argv)
 
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(runopt.ConfigFile().c_str());
+  skexp->Read(runopt->ConfigFile().c_str());
 
   // Fit param list for fakedata sets
-  FitParamList * fparm  = util::NamedParameterList(runopt.Fit_param_list().c_str()); 
+  FitParamList * fparm  = util::NamedParameterList(runopt->Fit_param_list().c_str()); 
   
   PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
   cout << "- The following physics hypothesis is used for fakedata sets: " << util::AsString(hyp) << endl;
 
-  int first_experiment = runopt.FirstExperiment();
-  int last_experiment = runopt.LastExperiment();
+  int first_experiment = runopt->FirstExperiment();
+  int last_experiment = runopt->LastExperiment();
   int nexperiments = last_experiment - first_experiment + 1; 
 
 
   // Print settings
   cout << "\n[Job inputs]" << endl;
-  cout << "- Job: " << runopt.FileTag() << endl;
+  cout << "- Job: " << runopt->FileTag() << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
 
-  if(runopt.DoToys()){
+  if(runopt->DoToys()){
     cout << "- Toy-MC generation" << endl;
     cout << "   - Number of toy experiments: " << nexperiments << endl; 
-    cout << "   - Randomize systematics : "      << ((runopt.SystTweakMode()) ?      "YES " : "NO") << endl;
-    cout << "   - Statistical fluctuations: "    << ((runopt.StatFluctuations()) ?      "YES " : "NO") << endl;
+    cout << "   - Randomize systematics : "      << ((runopt->SystTweakMode()) ?      "YES " : "NO") << endl;
+    cout << "   - Statistical fluctuations: "    << ((runopt->StatFluctuations()) ?      "YES " : "NO") << endl;
   }
   else{
     cout << "- Reading analysis configuration from: " << config << endl;
     cout << "- Toy-MC" << endl;
-    if(runopt.Using_xml_file()) cout << "   - Reading experiments from: " << xmlfile2 << endl; 
+    if(runopt->Using_xml_file()) cout << "   - Reading experiments from: " << xmlfile2 << endl; 
     else cout << "   - Reading experiments from: " << rootfile2 << endl; 
     cout << "   - Using experiments in range: [" << first_experiment << ", " << last_experiment << "]" << endl; 
   }
   
   cout << "- Fit" << endl;
-  cout << "   - Fit Parameter List: " << runopt.Fit_param_list() << endl;
+  cout << "   - Fit Parameter List: " << runopt->Fit_param_list() << endl;
   cout << "- Outputs" << endl;
   cout << endl;
   cout << *Opt::Instance() << endl;
@@ -175,8 +176,8 @@ int main(int argc, char ** argv)
 
   string oscstr;// = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);  
 
-  TFile *ftoys = new TFile(Form("Toys_%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
-  TFile *f = new TFile(Form("%s-%s_%d_%d.root", runopt.FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");  
+  TFile *ftoys = new TFile(Form("Toys_%s-%s_%d_%d.root", runopt->FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
+  TFile *f = new TFile(Form("%s-%s_%d_%d.root", runopt->FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");  
 
   // Set Tree toy/fit
   bool IsFit2D=false;
@@ -292,21 +293,21 @@ int main(int argc, char ** argv)
 
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
-  last_experiment = runopt.LastExperiment();
-  for(int iexperiment = runopt.FirstExperiment(); iexperiment <= last_experiment; iexperiment++) {
+  last_experiment = runopt->LastExperiment();
+  for(int iexperiment = runopt->FirstExperiment(); iexperiment <= last_experiment; iexperiment++) {
      cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
      // Generate mock data
      cout << "- Generating toy-MC..." << endl;
      SuperkObservation * skobs_fakedata = new SuperkObservation;
-     PhysHypothesis ph(runopt.Hypothesis());
+     PhysHypothesis ph(runopt->Hypothesis());
 
      //util::OscParams::Instance()->Print(cout);
      
      // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
      
-     if(runopt.DoToys()){
+     if(runopt->DoToys()){
        
        // Randomize specified osc params for current toy MC expt
        util::OscParams::Instance()->Randomize();
@@ -332,11 +333,11 @@ int main(int argc, char ** argv)
        bool unphysical_tweak = true;
        while(applied_negevents_condition || unphysical_tweak) {
          
-         util::PerformSysThrow(runopt.SystTweakMode(), skexp, runopt.VerboseSystThrows());
+         util::PerformSysThrow(runopt->SystTweakMode(), skexp, runopt->VerboseSystThrows());
          
          // Rethrow unphysical parameters
          PhysParamList true_nuisance_params = skexp->Tweaks();
-         if (runopt.RethrowIfUnphysical()) {
+         if (runopt->RethrowIfUnphysical()) {
            unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
            if (unphysical_tweak) {
              cout << "Parameters are unphysical - rethrowing" << std::endl;
@@ -348,7 +349,7 @@ int main(int argc, char ** argv)
            unphysical_tweak = false;
          }
          
-         applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, ph, runopt.StatFluctuations());
+         applied_negevents_condition = skobs_fakedata->CreateMockData(*skexp, ph, runopt->StatFluctuations());
          cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
          if(applied_negevents_condition)
            weird_applied_neg++;
@@ -360,13 +361,13 @@ int main(int argc, char ** argv)
      
      else { // Read xml file
        
-       if(runopt.Using_xml_file()){
+       if(runopt->Using_xml_file()){
          cout << "Use xml file" << endl;
-         skobs_fakedata->Read(xmlfile2.Data(),iexperiment,runopt.Using_xml_file());
+         skobs_fakedata->Read(xmlfile2.Data(),iexperiment,runopt->Using_xml_file());
        }
        else{
          cout << "Use root file" << endl;
-         skobs_fakedata->Read(rootfile2.Data(),iexperiment,runopt.Using_xml_file());
+         skobs_fakedata->Read(rootfile2.Data(),iexperiment,runopt->Using_xml_file());
        }
      }
      
@@ -396,24 +397,25 @@ int main(int argc, char ** argv)
      chisqminFullChisq=conv::kALargeNum;
    
      // Perform the fit w/ marginalization
-     util::PerformMargFit(argc,argv,fitmarg,skexp,skobs_fakedata); 
+     util::PerformMargFit(argc,argv,runopt,fitmarg,skexp,skobs_fakedata); 
      
      IsFit2D = fitmarg->IsFit2D();
      
      nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
 
      // Get Best Fit point
+     cout << "Get Best Fit point" << endl;
      bestfit0 = fitmarg->GetParamBestFit(0); 
      bestfit1 = fitmarg->GetParamBestFit(1);
      chisqmin = fitmarg->GetChisqBestFit();
-    
+
      // Get true chisq 
-     
+     cout << "Calculate Chisq for true point:" << endl;
      PhysParamId_t freepar0 = conv::kPhypUndefined;
      PhysParamId_t freepar1 = conv::kPhypUndefined;
     
-     freepar0 = util::GetFreePar(runopt.Freeparname0());
-     if(fitmarg->IsFit2D()) freepar1 = util::GetFreePar(runopt.Freeparname1());
+     freepar0 = util::GetFreePar(runopt->Freeparname0());
+     if(fitmarg->IsFit2D()) freepar1 = util::GetFreePar(runopt->Freeparname1());
      
      truepar0 = fparm->InitValue(freepar0);
      if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);
@@ -421,14 +423,13 @@ int main(int argc, char ** argv)
      chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  // TODO
      
      cout << endl;
-     cout << "Calculate Chisq for true point:" << endl;
      cout << "truepar0 = " << truepar0 << endl;
      cout << "truepar1 = " << truepar1 << endl;
      cout << endl;
 
   
      // // Draw Full Chisq
-     // if(runopt.DrawFullChisq()){
+     // if(runopt->DrawFullChisq()){
      //   cout << endl;
      //   cout << "Draw the full Chisq" << endl;
      //   cout << endl;
@@ -443,7 +444,7 @@ int main(int argc, char ** argv)
 
      // Draw Full Chisq
      
-     if(runopt.DrawFullChisq()){
+     if(runopt->DrawFullChisq()){
        
        cout << "Fill Full Chisq Marg" << endl;
        fitmarg->FillChisqMarg(skobs_fakedata,true);
@@ -471,8 +472,8 @@ int main(int argc, char ** argv)
      // must adopt the same approach for error computations as well.
      //
      
-     if(runopt.TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
-     if(runopt.TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
+     if(runopt->TypeError().Contains("MINOS")) fitmarg->CalcBestFitErrors(skobs_fakedata,"MINOS",true);
+     if(runopt->TypeError().Contains("HESSE")) fitmarg->CalcBestFitErrors(skobs_fakedata,"HESSE",true);
      
      bestfiterrNeg0 = fitmarg->GetParamBestFitErrNeg(0);
      bestfiterrNeg1 = fitmarg->GetParamBestFitErrNeg(1);
@@ -485,8 +486,8 @@ int main(int argc, char ** argv)
 
 
      // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-     if(runopt.StoreLikeWeights()){
-       fitmarg->WriteLikeToys2Binary(runopt.FileTag().c_str());
+     if(runopt->StoreLikeWeights()){
+       fitmarg->WriteLikeToys2Binary(runopt->FileTag().c_str());
      }
 
 
@@ -546,9 +547,9 @@ int main(int argc, char ** argv)
      
      // Fill toy informations (toy id, run, # of experiments, tag)
      ToyID = iexperiment;
-     tag = runopt.FileTag();
-     nexpts = runopt.NExperiments();
-     run = runopt.Run();
+     tag = runopt->FileTag();
+     nexpts = runopt->NExperiments();
+     run = runopt->Run();
 
      // // Fill the tree 
      // int iflag_tree = fitnt->Fill();
@@ -647,7 +648,6 @@ int main(int argc, char ** argv)
      fitmarg->CleanUp();
      delete fitmarg;
 
-
      // hchisq1D_out->GetNbinsX();
      // for(int ix=0;ix<npt_chisq_x;ix++){
      //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
@@ -676,6 +676,8 @@ int main(int argc, char ** argv)
   f->Close();
   delete f;
   
+  delete runopt;
+
   sw.Stop();
   sw.Print();
 }

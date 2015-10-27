@@ -51,8 +51,8 @@ foreach (@ARGV) {
     elsif($_ eq '--marginalize-mh'   ) { $marg_hierarchy  = $ARGV[$iarg+1]; }
     elsif($_ eq '--hierarchy'        ) { $masshierarchy   = $ARGV[$iarg+1]; }
 
-    elsif($_ eq '--dm23sq'           ) { $dm23sq          = $ARGV[$iarg+1]; }
-    elsif($_ eq '--dm12sq'           ) { $dm12sq          = $ARGV[$iarg+1]; }
+    elsif($_ eq '--dmsq23'           ) { $dmsq23          = $ARGV[$iarg+1]; }
+    elsif($_ eq '--dmsq12'           ) { $dmsq12          = $ARGV[$iarg+1]; }
     elsif($_ eq '--mix23'            ) { $mix23           = $ARGV[$iarg+1]; }
     elsif($_ eq '--mix13'            ) { $mix13           = $ARGV[$iarg+1]; }
     elsif($_ eq '--mix12'            ) { $mix12           = $ARGV[$iarg+1]; }
@@ -114,11 +114,11 @@ foreach (@ARGV) {
 
 ########################### Variables to set in the script ##############################
 
-@array_freepar0_user = (0,0.1); # run only on these points. If empty run on all the grid points
+@array_freepar0_user = (0.03, 0.045); # run only on these points. If empty run on all the grid points
 #@array_freepar0_user = (); # run only on these points. If empty run on all the grid points
-@array_freepar1_user = (+3.14159); # run only on these points. If empty run on all the grid points
+@array_freepar1_user = (-1,0); # run only on these points. If empty run on all the grid points
 
-$run_fullgrid  = 1   unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
+$run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
 
 ########################################################################################
 
@@ -138,16 +138,16 @@ $config_file    = "analysis_configuration_test_theta_elike_RFGRPA.xml"  unless d
 $nexpts          = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point
 $first_expt      = 31   unless defined $first_exp; # first toy experiment id 
 
-# $dm23sq          = -999                    unless defined $dm23sq;
-# $dm12sq          = -999                     unless defined $dm12sq;
+# $dmsq23          = -999                    unless defined $dmsq23;
+# $dmsq12          = -999                     unless defined $dmsq12;
 # $mix23           = -999                       unless defined $mix23;
 # $mix13           = -999                      unless defined $mix13;
 # $mix12           = -999                       unless defined $mix12;      
 # $deltacp         = -1.601                      unless defined $deltacp;
 # $betaBar         = 1.                          unless defined $betaBar;
 
-$dm23sq          = 2.509E-3                        unless defined $dm23sq;
-$dm12sq          = 7.53E-5                        unless defined $dm12sq;
+$dmsq23          = 2.509E-3                        unless defined $dmsq23;
+$dmsq12          = 7.53E-5                        unless defined $dmsq12;
 $mix23           = 0.528                        unless defined $mix23;
 $mix13           = 0.0243                        unless defined $mix13;
 $mix12           = 0.304                        unless defined $mix12;
@@ -198,7 +198,8 @@ $file_priors            = ""                   unless defined $file_priors;
 $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3f_12fix+nuisance"    unless defined $fitparamlist;
 
-$file_margtoys     = "submit_prova_sinsqth13Vsdcp" unless defined $file_margtoys;
+#$file_margtoys     = "submit_prova_sinsqth13Vsdcp" unless defined $file_margtoys;
+$file_margtoys     = "submit_prova_sinsqth23Vsdmsq23" unless defined $file_margtoys;
 #$file_margtoys     = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16" unless defined $file_margtoys;
 
 #$nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
@@ -216,15 +217,25 @@ $ntoys_margtoys    = 1         unless defined $ntoys_margtoys;     # of marginal
 # $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
 # $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
 
+# # 2D fit - sinsqth13 Vs dcp (debug)
+# $freepar0               = "mixing13"                 unless defined $freepar0;
+# $minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
+# $maxfreepar0            = 0.4                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+# $npt_freepar0           = 21                          unless defined $npt_freepar0;    # of free parameter points to scan
+# $freepar1               = "deltacp"                  unless defined $freepar1;
+# $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+# $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+# $npt_freepar1           = 21                          unless defined $npt_freepar1;    # of free parameter points to scan
+
 # 2D fit - sinsqth13 Vs dcp (debug)
-$freepar0               = "mixing13"                 unless defined $freepar0;
-$minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = 0.4                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-$npt_freepar0           = 21                          unless defined $npt_freepar0;    # of free parameter points to scan
-$freepar1               = "deltacp"                  unless defined $freepar1;
-$minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
-$maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-$npt_freepar1           = 21                          unless defined $npt_freepar1;    # of free parameter points to scan
+$freepar0               = "mixing23"                 unless defined $freepar0;
+$minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+$npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
+$freepar1               = "dmsq23"                   unless defined $freepar1;
+$minfreepar1            = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
+$maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+$npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
 
 $type_error        = "HESSE-MINOS" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
 $draw_full_chisq   = 1             unless defined $draw_full_chisq;
@@ -257,17 +268,25 @@ elsif($freepar0 eq "mixing13"){
     $freepar0_first = 0.;
     $freepar0_last  = 0.1;
     $i_freepar0     = 0;
-    $n_freepar0     = 81;  # same as chisq grid
+    $n_freepar0     = 3; #81;  # same as chisq grid
     $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
     $init_freepar0  = $mix13;
 }
 elsif($freepar0 eq "mixing23"){
-    print "\n The grid of $freepar0 for Feldman-Cousins is not defined yet\n";
-    exit;
+    $freepar0_first = 0.3;
+    $freepar0_last  = 0.7;
+    $i_freepar0     = 0;
+    $n_freepar0     = 81;  # same as chisq grid
+    $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
+    $init_freepar0  = $mix23;
 }
 elsif($freepar0 eq "dmsq23"){
-    print "\n The grid of $freepar0 for Feldman-Cousins is not defined yet\n";
-    exit;
+    $freepar0_first = 2.E-3;
+    $freepar0_last  = 3.E-3;
+    $i_freepar0     = 0;
+    $n_freepar0     = 21;  # same as chisq grid
+    $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
+    $init_freepar0  = $dmsq23;
 }
 else{
     print "\n The grid of $freepar0 for Feldman-Cousins is not defined\n";
@@ -286,7 +305,7 @@ elsif($freepar1 eq "deltacp"){
     $freepar1_first = -3.14159265358979312;
     $freepar1_last  = +3.14159265358979312;
     $i_freepar1     = 0;
-    $n_freepar1     = 201; # same as chisq grid
+    $n_freepar1     = 3; #201; # same as chisq grid
     $step_freepar1  = ($freepar1_last - $freepar1_first) / ($n_freepar1-1);
     $init_freepar1  = $deltacp;
 }
@@ -299,12 +318,20 @@ elsif($freepar1 eq "mixing13"){
     $init_freepar1  = $mix13;
 }
 elsif($freepar1 eq "mixing23"){
-    print "\n The grid of $freepar1 for Feldman-Cousins is not defined yet\n";
-    exit;
+    $freepar1_first = 0.3;
+    $freepar1_last  = 0.7;
+    $i_freepar1     = 0;
+    $n_freepar1     = 81;  # same as chisq grid
+    $step_freepar1  = ($freepar1_last - $freepar1_first) / ($n_freepar1-1);
+    $init_freepar1  = $mix23;
 }
 elsif($freepar1 eq "dmsq23"){
-    print "\n The grid of $freepar1 for Feldman-Cousins is not defined yet\n";
-    exit;
+    $freepar1_first = 2.E-3;
+    $freepar1_last  = 3.E-3;
+    $i_freepar1     = 0;
+    $n_freepar1     = 21;  # same as chisq grid
+    $step_freepar1  = ($freepar1_last - $freepar1_first) / ($n_freepar1-1);
+    $init_freepar1  = $dmsq23;
 }
 else{
     print "\n The grid of $freepar1 for Feldman-Cousins is not defined\n";
@@ -355,48 +382,51 @@ while($i_freepar1 < $n_freepar1) {
     
     $pt_freepar1 = $array_freepar1[$i_freepar1];
     
-    # if running single point
+    # if running single init point  
     if($run_fullgrid==0){
 	$n_freepar1 = 1;
 	$pt_freepar1 = $init_freepar1;
     }
-
-    if   ($freepar1 eq "deltacp") { $deltacp  = $pt_freepar1; }
-    elsif($freepar1 eq "mixing13"){ $mix13 = $pt_freepar1; }
-    elsif($freepar1 eq "mixing23"){ $mix23 = $pt_freepar1; }
-    elsif($freepar1 eq "dmsq23")  { $dmsq23   = $pt_freepar1; }    
-    elsif($freepar1 eq ""){}
+    
+    # set the running point to the pt of the grid
     else{
-	print "\n $freepar1 is not defined\n";
-	exit;
-    }
-
-    # Select grid points to run. If array_freepar_user is empty, then run all the points
-    my $n_freepar1_user = @array_freepar1_user;	
-    if($n_freepar1_user>0){
-	$skip_point = 0;
-	for (my $i=0; $i < $n_freepar1_user; $i++) {
-	    #print "$array_freepar1_user[$i] - $array_freepar1[$i_freepar1] \n";
-	    if( abs($array_freepar1_user[$i] - $array_freepar1[$i_freepar1]) < 0.01 ){
-		print "Run the point $array_freepar1[$i_freepar1] \n"; 
-		print "user = $array_freepar1_user[$i_freepar1] / grid = $array_freepar1[$i_freepar1] \n"; 
-		$skip_point = 0;
-		last;
+	if   ($freepar1 eq "deltacp") { $deltacp  = $pt_freepar1; }
+	elsif($freepar1 eq "mixing13"){ $mix13    = $pt_freepar1; }
+	elsif($freepar1 eq "mixing23"){ $mix23    = $pt_freepar1; }
+	elsif($freepar1 eq "dmsq23")  { $dmsq23   = $pt_freepar1; }    
+	elsif($freepar1 eq ""){}
+	else{
+	    print "\n $freepar1 is not defined\n";
+	    exit;
+	}
+	
+	# Select grid points to run. If array_freepar_user is empty, then run all the points
+	my $n_freepar1_user = @array_freepar1_user;	
+	if($n_freepar1_user>0){
+	    $skip_point = 0;
+	    for (my $i=0; $i < $n_freepar1_user; $i++) {
+		#print "$array_freepar1_user[$i] - $array_freepar1[$i_freepar1] \n";
+		if( abs($array_freepar1_user[$i] - $array_freepar1[$i_freepar1]) < 0.01 ){
+		    print "Run the point $array_freepar1[$i_freepar1] \n"; 
+		    print "user = $array_freepar1_user[$i_freepar1] / grid = $array_freepar1[$i_freepar1] \n"; 
+		    $skip_point = 0;
+		    last;
+		}
+		else{	
+		    $skip_point = 1;
+		}
 	    }
-	    else{	
-		$skip_point = 1;
+	    if($skip_point==1){
+		print "Skip this point of parameter 1 : ";
+		print " $array_freepar1[$i_freepar1] \n";
+		print "\n////////////////////////////// \n\n";
+		
+		$i_freepar1++;
+		next;
 	    }
 	}
-	if($skip_point==1){
-	    print "Skip this point of parameter 1 : ";
-	    print " $array_freepar1[$i_freepar1]) \n";
-	    print "\n////////////////////////////// \n\n";
-
-	    $i_freepar1++;
-	    next;
-	}
-    }
-
+	
+    } # loop over grid
 
     # parameter 0 
  
@@ -410,46 +440,49 @@ while($i_freepar1 < $n_freepar1) {
 	    $n_freepar0 = 1;
 	    $pt_freepar0 = $init_freepar0;
 	}
-    
-	if   ($freepar0 eq "deltacp") { $deltacp  = $pt_freepar0; }
-	elsif($freepar0 eq "mixing13"){ $mix13 = $pt_freepar0; }
-	elsif($freepar0 eq "mixing23"){ $mix23 = $pt_freepar0; }
-	elsif($freepar0 eq "dmsq23")  { $dmsq23   = $pt_freepar0; }    
-	elsif($freepar0 eq ""){}
+	
+	# set the running point to the pt of the grid
 	else{
-	    print "\n $freepar0 is not defined\n";
-	    exit;
-	}
-
-	print "\n";
-	print "Point of freepar0 $i_freepar0: $pt_freepar0 \n";
-	print "Point of freepar1 $i_freepar1: $pt_freepar1 \n";
-        
-	# Select grid points to run. If array_freepar_user is empty, then run all the points
-	my $n_freepar0_user = @array_freepar0_user;	
-	if($n_freepar0_user>0){
-	    $skip_point = 0;
-	    for (my $i=0; $i < $n_freepar0_user; $i++) {
-		#print "$array_freepar0_user[$i] - $array_freepar0[$i_freepar0] \n";
-		if( abs($array_freepar0_user[$i] - $array_freepar0[$i_freepar0]) < 0.01 ){
-		    print "Run the point $array_freepar0[$i_freepar0] \n"; 
-		    print "user = $array_freepar0_user[$i_freepar0] / grid = $array_freepar0[$i_freepar0] \n"; 
-		    $skip_point = 0;
-		    last;
+	    if   ($freepar0 eq "deltacp") { $deltacp  = $pt_freepar0; }
+	    elsif($freepar0 eq "mixing13"){ $mix13    = $pt_freepar0; }
+	    elsif($freepar0 eq "mixing23"){ $mix23    = $pt_freepar0; }
+	    elsif($freepar0 eq "dmsq23")  { $dmsq23   = $pt_freepar0; }    
+	    elsif($freepar0 eq ""){}
+	    else{
+		print "\n $freepar0 is not defined\n";
+		exit;
+	    }
+	    
+	    print "\n";
+	    print "Point of freepar0 $i_freepar0: $pt_freepar0 \n";
+	    print "Point of freepar1 $i_freepar1: $pt_freepar1 \n";
+	    
+	    # Select grid points to run. If array_freepar_user is empty, then run all the points
+	    my $n_freepar0_user = @array_freepar0_user;	
+	    if($n_freepar0_user>0){
+		$skip_point = 0;
+		for (my $i=0; $i < $n_freepar0_user; $i++) {
+		    #print "$array_freepar0_user[$i] - $array_freepar0[$i_freepar0] \n";
+		    if( abs($array_freepar0_user[$i] - $array_freepar0[$i_freepar0]) < 0.01 ){
+			print "Run the point $array_freepar0[$i_freepar0] \n"; 
+			print "user = $array_freepar0_user[$i_freepar0] / grid = $array_freepar0[$i_freepar0] \n"; 
+			$skip_point = 0;
+			last;
+		    }
+		    else{		
+			$skip_point = 1;
+		    }
 		}
-		else{		
-		    $skip_point = 1;
+		if($skip_point==1){
+		    print "Skip this point parameter 0 : ";
+		    print " $array_freepar0[$i_freepar0] \n";
+		    print "\n////////////////////////////// \n\n";
+		    $i_freepar0++;
+		    next;
 		}
 	    }
-	    if($skip_point==1){
-		print "Skip this point parameter 0 : ";
-		print " $array_freepar0[$i_freepar0] \n";
-		print "\n////////////////////////////// \n\n";
-		$i_freepar0++;
-		next;
-	    }
-	}
-    
+	
+	} # loop over grid
 	
 	#
 	# Loop over the jobs (for each freepar point)
@@ -466,6 +499,11 @@ while($i_freepar1 < $n_freepar1) {
 	    print "Submitting run: $irun \n";
 	    print "first: $ifile_first \n";
 	    print "last: $ifile_last \n";
+	    print "param 0: $pt_freepar0 \n";
+	    print "param 1: $pt_freepar1 \n\n";
+	    print "Oscillation parameters: \n";
+	    print "dcp=$deltacp, mix13=$mix13, mix23=$mix23, dmsq23=$dmsq23 \n\n";
+
 	    
 	    # Variable to set, not by the user
 	    #$dotoys = 0;                # Don't do toys on fly but read either xml or root files
@@ -474,7 +512,7 @@ while($i_freepar1 < $n_freepar1) {
 	    $tag_freepar = sprintf("fit_%s_nexp_%d_%1.3f_%1.3f-job%1.0f",$tag,$nexpts,$pt_freepar0,$pt_freepar1,$irun);
 	    
 	    $program = "";
-	    $arguments = "$softw_dir//bin/run_fit_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $first_expt --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dm12sq --dm23sq-nh $dm23sq --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy --mass-hierarchy-margtoys \"$masshierarchy\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights";
+	    $arguments = "$softw_dir//bin/run_fit_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $first_expt --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy --mass-hierarchy-margtoys \"$masshierarchy\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights";
 	    
 	    #$command = "$program $arguments $arguments_bool";
 	    $command = "$program $arguments";
