@@ -114,11 +114,11 @@ foreach (@ARGV) {
 
 ########################### Variables to set in the script ##############################
 
-@array_freepar0_user = (-3.14, 0.); # run only on these points. If empty run on all the grid points
+@array_freepar0_user = (0,0.1); # run only on these points. If empty run on all the grid points
 #@array_freepar0_user = (); # run only on these points. If empty run on all the grid points
-@array_freepar1_user = (); # run only on these points. If empty run on all the grid points
+@array_freepar1_user = (+3.14159); # run only on these points. If empty run on all the grid points
 
-$run_fullgrid    = 0                           unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
+$run_fullgrid  = 1   unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
 
 ########################################################################################
 
@@ -129,19 +129,20 @@ $resource        = "interactive"               unless defined $resource;
 $tag             = "submit_fitmarg_joint_dcp"  unless defined $tag;
 $nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point
 
-$config_file    = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml"  unless defined $config_file;
-#$config_file    = "analysis_configuration_test_theta_elike_RFGRPA.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml" unless defined $config_file;
+$config_file    = "analysis_configuration_test_theta_elike_RFGRPA.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml"  unless defined $config_file;
 #$config_file    = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml"  unless defined $config_file;
-#$config_file     = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml"  unless defined $config_file;
 
-$nexpts            = 10   unless defined $nexpts;  # number of toy experiments and fits per freepar point
-$first_expt        = 0   unless defined $first_exp; # first toy experiment id 
+$nexpts          = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point
+$first_expt      = 31   unless defined $first_exp; # first toy experiment id 
 
 # $dm23sq          = -999                    unless defined $dm23sq;
 # $dm12sq          = -999                     unless defined $dm12sq;
 # $mix23           = -999                       unless defined $mix23;
 # $mix13           = -999                      unless defined $mix13;
-# $mix12           = -999                       unless defined $mix12;
+# $mix12           = -999                       unless defined $mix12;      
 # $deltacp         = -1.601                      unless defined $deltacp;
 # $betaBar         = 1.                          unless defined $betaBar;
 
@@ -176,14 +177,15 @@ if( !defined $cput ) {
 $hypothesis             = "3f_osc"             unless defined $hypothesis;
 $do_toys                = 1                    unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
-$fakedata_root_file = "../outputs/test/SKdata_Run14.root" unless defined $fakedata_root_file;
+#$fakedata_root_file = "../outputs/test/SKdata_Run14.root" unless defined $fakedata_root_file;
+$fakedata_root_file = "../outputs/test/Toys_fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-job96-_0_99.root" unless defined $fakedata_root_file;
 $fakedata_xml_file  = "../outputs/test/SKdata_Run14.xml"  unless defined $fakedata_xml_file;
 $print_syst_variation   = 0                    unless defined $print_syst_variation;
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
 $sync_ih_to_nh          = 1                    unless defined $sync_ih_to_nh;
-$stat_fluct             = 1                    unless defined $stat_fluct;
-$tweak_systematics      = 1                    unless defined $tweak_systematics;
+$stat_fluct             = 0                    unless defined $stat_fluct;
+$tweak_systematics      = 0                    unless defined $tweak_systematics;
 $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 $prior_mode             = 1                    unless defined $prior_mode; # 0-->fix,1-->react,2-->t2k-only
 $save_xml               = 1                    unless defined $save_xml;
@@ -196,24 +198,35 @@ $file_priors            = ""                   unless defined $file_priors;
 $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3f_12fix+nuisance"    unless defined $fitparamlist;
 
-#$file_margtoys     = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_dcp_t2kreact_constrall_IH_10kToys" unless defined $file_margtoys;
-#$file_margtoys     = "submit_prova_TemplVArray_2d" unless defined $file_margtoys;
-$file_margtoys     = "submit_prova_TemplVArray_t2konly_2d" unless defined $file_margtoys;
+$file_margtoys     = "submit_prova_sinsqth13Vsdcp" unless defined $file_margtoys;
+#$file_margtoys     = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16" unless defined $file_margtoys;
 
-$nfiles_margtoys   = 1             unless defined $nfiles_margtoys; # of marginalization files
-$ntoys_margtoys    = 100           unless defined $ntoys_margtoys;     # of marginalization toys
+#$nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
+#$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
+$nfiles_margtoys   = 1           unless defined $nfiles_margtoys; # of marginalization files
+$ntoys_margtoys    = 1         unless defined $ntoys_margtoys;     # of marginalization toys
 
-$freepar0          = "deltacp"     unless defined $freepar0;
-$minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
-$maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
-$npt_freepar0      = 9            unless defined $npt_freepar0; # of free parameter points to scan
+# # 1D fit - dcp
+# $freepar0          = "deltacp"     unless defined $freepar0;
+# $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
+# $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
+# $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+# $freepar1          = ""     unless defined $freepar1;
+# $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
+# $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
+# $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
 
-$freepar1          = ""     unless defined $freepar1;
-$minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
-$maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
-$npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
+# 2D fit - sinsqth13 Vs dcp (debug)
+$freepar0               = "mixing13"                 unless defined $freepar0;
+$minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.4                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+$npt_freepar0           = 21                          unless defined $npt_freepar0;    # of free parameter points to scan
+$freepar1               = "deltacp"                  unless defined $freepar1;
+$minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+$maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+$npt_freepar1           = 21                          unless defined $npt_freepar1;    # of free parameter points to scan
 
-$type_error        = "MINOS-HESSE" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
+$type_error        = "HESSE-MINOS" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
 $draw_full_chisq   = 1             unless defined $draw_full_chisq;
 
 $test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
@@ -279,7 +292,7 @@ elsif($freepar1 eq "deltacp"){
 }
 elsif($freepar1 eq "mixing13"){
     $freepar1_first = 0.;
-    $freepar1_last  = 0.1;
+    $freepar1_last  = 0.113;
     $i_freepar1     = 0;
     $n_freepar1     = 81;  # same as chisq grid
     $step_freepar1  = ($freepar1_last - $freepar1_first) / ($n_freepar1-1);
@@ -332,6 +345,9 @@ while($i_freepar1 < $n_freepar1) {
 
 ################### Loop over the grid points ################
 
+print "\nLoop over the grid points\n";
+print "\n////////////////////////////// \n\n";
+
 # parameter 1
 
 $i_freepar1     = 0;
@@ -356,7 +372,7 @@ while($i_freepar1 < $n_freepar1) {
     }
 
     # Select grid points to run. If array_freepar_user is empty, then run all the points
-    my $n_freepar1_user = @array_freepar0_user;	
+    my $n_freepar1_user = @array_freepar1_user;	
     if($n_freepar1_user>0){
 	$skip_point = 0;
 	for (my $i=0; $i < $n_freepar1_user; $i++) {
@@ -367,12 +383,15 @@ while($i_freepar1 < $n_freepar1) {
 		$skip_point = 0;
 		last;
 	    }
-	    else{		
+	    else{	
 		$skip_point = 1;
 	    }
 	}
 	if($skip_point==1){
-	    print "Skip this point! \n";
+	    print "Skip this point of parameter 1 : ";
+	    print " $array_freepar1[$i_freepar1]) \n";
+	    print "\n////////////////////////////// \n\n";
+
 	    $i_freepar1++;
 	    next;
 	}
@@ -423,7 +442,9 @@ while($i_freepar1 < $n_freepar1) {
 		}
 	    }
 	    if($skip_point==1){
-		print "Skip this point! \n";
+		print "Skip this point parameter 0 : ";
+		print " $array_freepar0[$i_freepar0] \n";
+		print "\n////////////////////////////// \n\n";
 		$i_freepar0++;
 		next;
 	    }
@@ -463,6 +484,8 @@ while($i_freepar1 < $n_freepar1) {
 	    
 	    print "$command \n";
 	    
+	    print "\n////////////////////////////// \n\n";
+
 	    ################################### Submit the job ##################################
 	    
 	    #
