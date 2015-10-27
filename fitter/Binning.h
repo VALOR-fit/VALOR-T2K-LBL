@@ -3209,7 +3209,31 @@ static const double kXsQ2BinEdgesMultiRmu[kXsNQ2BinsMultiRmu+1] =
 {
   0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 5
 };
+// Q2 mu-like binning of xsec splines (Optimized)
+#elif Q2_XSEC_BINS_1RMU == 8 // Q^2 parametrization
+static const int kXsNQ2Bins1Rmu = 21;
+static const double kXsQ2BinEdges1Rmu[kXsNQ2Bins1Rmu+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
+static const int kRHCXsNQ2Bins1Rmu = 19;
+static const double kRHCXsQ2BinEdges1Rmu[kRHCXsNQ2Bins1Rmu+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
+static const int kXsNQ2BinsMultiRmu = 19;
+static const double kXsQ2BinEdgesMultiRmu[kXsNQ2BinsMultiRmu+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
 #endif
+
 
 #if Q2_XSEC_BINS_1RE == 1 // Q^2 parametrization
 static const int kXsNQ2Bins1Re = 19;
@@ -3346,6 +3370,28 @@ static const int kXsNQ2BinsMultiRe = 21;
 static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] =
 {
   0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 5
+};
+#elif Q2_XSEC_BINS_1RE == 8 // XSec term parametrization
+static const int kXsNQ2Bins1Re = 21;
+static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] =
+{  
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
+static const int kRHCXsNQ2Bins1Re = 21;
+static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
+static const int kXsNQ2BinsMultiRe = 21;
+static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
 };
 #endif
 
@@ -3487,6 +3533,28 @@ static const double kQ2BinEdgesMultiRmu[kNQ2BinsMultiRmu+1] =
 {
   0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 5
 };
+#elif Q2_BINS_1RMU == 8 // XSec term parametrization
+static const int kNQ2Bins1Rmu = 21;
+static const double kQ2BinEdges1Rmu[kNQ2Bins1Rmu+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
+static const int kRHCNQ2Bins1Rmu = 21;
+static const double kRHCQ2BinEdges1Rmu[kRHCNQ2Bins1Rmu+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
+static const int kNQ2BinsMultiRmu = 21;
+static const double kQ2BinEdgesMultiRmu[kNQ2BinsMultiRmu+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
 #endif
 
 // Q2 e-like binning
@@ -3625,6 +3693,28 @@ static const int kNQ2BinsMultiRe = 21;
 static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] =
 {
   0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 5
+};
+#elif Q2_BINS_1RE == 8 // XSec term parametrization
+static const int kNQ2Bins1Re = 21;
+static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
+static const int kRHCNQ2Bins1Re = 21;
+static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
+};
+static const int kNQ2BinsMultiRe = 21;
+static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] =
+{
+  0.000,  0.030,  0.060,  0.090,  0.120,  0.150,  0.180,  0.210,  0.240,  0.270, 
+  0.300,  0.330,  0.360,  0.390,  0.420,  0.450,  0.480,  0.510,  0.540,  0.570,
+  0.600,  1.500
 };
 #endif
 
