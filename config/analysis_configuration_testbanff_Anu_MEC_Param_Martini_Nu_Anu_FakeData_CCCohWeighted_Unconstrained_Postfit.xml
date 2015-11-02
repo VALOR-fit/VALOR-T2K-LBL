@@ -364,7 +364,7 @@
     -->
     
     <best_fit_values>     
-      <filename>   test/banff_comparison/Anu_MEC_Param_Martini_Nu_Anu_FakeData_CCCohWeighted_Unconstrained_Postfit.root </filename>
+      <filename>   test/banff_comparison/banff_valororder_Anu_MEC_Param_Martini_Nu_Anu_FakeData_CCCohWeighted_Unconstrained_Postfit.root </filename>
       <objname>    postfit_params   </objname>
       <objtype>    TVectorD        </objtype>
     </best_fit_values>
@@ -373,7 +373,7 @@
       Covariance of fit parameters                 
     -->
     <covariance_matrix>
-      <filename>   test/banff_comparison/Anu_MEC_Param_Martini_Nu_Anu_FakeData_CCCohWeighted_Unconstrained_Postfit.root </filename>
+      <filename>   test/banff_comparison/banff_valororder_Anu_MEC_Param_Martini_Nu_Anu_FakeData_CCCohWeighted_Unconstrained_Postfit.root </filename>
       <objname>    postfit_cov       </objname>
       <objtype>    TMatrixD         </objtype>
     </covariance_matrix>
@@ -462,7 +462,7 @@
     </normalisations>
     
     <untuned_parameter_central_values>
-       <filename>   test/banff_comparison/Anu_MEC_Param_Martini_Nu_Anu_FakeData_CCCohWeighted_Unconstrained_Postfit.root  </filename>
+       <filename>   test/banff_comparison/banff_valororder_Anu_MEC_Param_Martini_Nu_Anu_FakeData_CCCohWeighted_Unconstrained_Postfit.root  </filename>
        <objname>    untuned_central_values                      </objname>
        <objtype>    TVectorD           </objtype>
     </untuned_parameter_central_values>
