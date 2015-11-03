@@ -327,7 +327,6 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   maxpar[1] = runopt->Freeparmax1();
   
   // free parameter sub-range
-  
   const int    first_bin_freepar0   = -999; // first freepar of the sub-range
   const int    last_bin_freepar0    = -999; // last freepar of the sub-range
   const int    first_bin_freepar1   = -999; // first freepar of the sub-range
@@ -358,7 +357,6 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->SetFitParamList(runopt->Fit_param_list().c_str());
   fitmarg->PrintPhysHypothesis();
   
-  
   // Build the map fileID - sub-range
   
   fitmarg->SetMaxIterationSingleFit(2);  // Max # of iterations per fit
@@ -367,14 +365,46 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->SetTagFileName(runopt->Infilename().c_str());
   fitmarg->SetFileID(runopt->Nfiles());
 
+
   // 1D deltaCP fit
   if(runopt->Freeparname0()=="deltacp" && runopt->Freeparname1()==""){
     util::MargFit_1D_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }
   // 2D sinsqth13 Vs dcp fit
   else if(runopt->Freeparname0()=="mixing13" && runopt->Freeparname1()=="deltacp"){
+        
+    bool penalty_par0       = runopt->PenaltyTerm0();
+    bool penalty_par1       = runopt->PenaltyTerm1();
+    bool constrain          = penalty_par0 && penalty_par1;
+    double sinsq2th13_mean  = conv::kPrior_Sinsq2th13_Used_Mean; // Used (sinsq2th13)
+    double sinsq2th13_sigma = conv::kPrior_Sinsq2th13_Used_RMS; // Used (sinsq2th13)
+    
+    if(penalty_par0 && !penalty_par1){
+      cout << endl;
+      cout << "Use penalty term only for free parameter 0:" << endl;
+      cout << " sinsq2th13_mean = "  << sinsq2th13_mean  << endl;
+      cout << " sinsq2th13_sigma = " << sinsq2th13_sigma << endl;
+      cout << endl;
+    }
+    else if(!penalty_par0 && !penalty_par1){
+      cout << endl;
+      cout << "No penalty term is used" << endl;
+      cout << endl;
+    }
+    else{
+      cerr << endl;
+      cerr << "valor::util::PerformMargFit()" << endl;
+      cerr << "Penalty term for parameter 1 is not implemented yet" << endl;
+      cerr << endl;
+      exit(1);
+    }
+       
+    fitmarg->UsePenaltyTerm(penalty_par0,penalty_par1);
+    fitmarg->SetPenaltyTerm(sinsq2th13_mean, sinsq2th13_sigma); // to be used after UsePenaltyTerm()
+    
     util::MargFit_2D_sinsqth13_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }
+  
   // 2D sinsqth23 Vs dmsq32 fit
   else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="dmsq23"){
     util::MargFit_2D_sinsqth23_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
@@ -587,6 +617,7 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
   double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
 
   int nbinsX = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsX();
+  double valfirstbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(1);
   double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
   
   int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
@@ -598,7 +629,8 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 1 (mixing13=0) ////////////////" << endl;
   
-  double chisqmin_1 = (double)fitmarg->GetChisqMargTrueRead(0.,0.,skobs_fakedata,true);
+  //double chisqmin_1 = (double)fitmarg->GetChisqMargTrueRead(0.,0.,skobs_fakedata,true);
+  double chisqmin_1 = (double)fitmarg->GetChisqMargTrueRead(valfirstbin_X,valfirstbin_Y,skobs_fakedata,true);
   double bestfit0_1 = 0.;
   double bestfit1_1 = -999.;
   if(fitmarg->IsFit2D()) bestfit1_1 = 0.;     

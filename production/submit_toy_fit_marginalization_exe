@@ -103,6 +103,8 @@ foreach (@ARGV) {
     elsif($_ eq '--draw-full-chisq'    ) { $draw_full_chisq     = $ARGV[$iarg+1]; }
     elsif($_ eq '--test-stat'          ) { $test_stat           = $ARGV[$iarg+1]; }
     elsif($_ eq '--store-like-weights' ) { $store_like_weights  = $ARGV[$iarg+1]; }
+    elsif($_ eq '--penalty-par0'       ) { $penalty_freepar0    = $ARGV[$iarg+1]; }
+    elsif($_ eq '--penatly-par1'       ) { $penalty_freepar1    = $ARGV[$iarg+1]; }
     #####################################################################################
     
     else {
@@ -138,22 +140,22 @@ $config_file    = "analysis_configuration_test_theta_elike_RFGRPA.xml"  unless d
 $nexpts          = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point
 $first_expt      = 0   unless defined $first_exp; # first toy experiment id 
 
-$dmsq23          = -999                    unless defined $dmsq23;
-$dmsq12          = -999                     unless defined $dmsq12;
-$mix23           = -999                       unless defined $mix23;
-#$mix13           = -999                      unless defined $mix13;
-$mix13           = 0.024                      unless defined $mix13;
-$mix12           = -999                       unless defined $mix12;      
-$deltacp         = -1.601                      unless defined $deltacp;
-$betaBar         = 1.                          unless defined $betaBar;
-
-# $dmsq23          = 2.509E-3                        unless defined $dmsq23;
-# $dmsq12          = 7.53E-5                        unless defined $dmsq12;
-# $mix23           = 0.528                        unless defined $mix23;
-# $mix13           = 0.0243                        unless defined $mix13;
-# $mix12           = 0.304                        unless defined $mix12;
-# $deltacp         = -1.601                        unless defined $deltacp;
+# $dmsq23          = -999                    unless defined $dmsq23;
+# $dmsq12          = -999                     unless defined $dmsq12;
+# $mix23           = -999                       unless defined $mix23;
+# #$mix13           = -999                      unless defined $mix13;
+# $mix13           = 0.024                      unless defined $mix13;
+# $mix12           = -999                       unless defined $mix12;      
+# $deltacp         = -1.601                      unless defined $deltacp;
 # $betaBar         = 1.                          unless defined $betaBar;
+
+$dmsq23          = 2.509E-3                        unless defined $dmsq23;
+$dmsq12          = 7.53E-5                        unless defined $dmsq12;
+$mix23           = 0.528                        unless defined $mix23;
+$mix13           = 0.0243                        unless defined $mix13;
+$mix12           = 0.304                        unless defined $mix12;
+$deltacp         = -1.601                        unless defined $deltacp;
+$betaBar         = 1.                          unless defined $betaBar;
 
 $marg_hierarchy  = 0                           unless defined $marg_hierarchy; # common to fakedata toys and marginalization toys, to avoid easy mistakes
 $masshierarchy   = "normal"                    unless defined $masshierarchy;  # common to fakedata toys and marginalization toys, to avoid easy mistakes
@@ -185,8 +187,8 @@ $print_syst_variation   = 0                    unless defined $print_syst_variat
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
 $sync_ih_to_nh          = 1                    unless defined $sync_ih_to_nh;
-$stat_fluct             = 1                    unless defined $stat_fluct;
-$tweak_systematics      = 1                    unless defined $tweak_systematics;
+$stat_fluct             = 0                    unless defined $stat_fluct;
+$tweak_systematics      = 0                    unless defined $tweak_systematics;
 $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 $prior_mode             = 1                    unless defined $prior_mode; # 0-->fix,1-->react,2-->t2k-only
 $save_xml               = 1                    unless defined $save_xml;
@@ -200,7 +202,8 @@ $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3f_12fix+nuisance"    unless defined $fitparamlist;
 
 #$file_margtoys     = "submit_prova_sinsqth13Vsdcp" unless defined $file_margtoys;
-$file_margtoys     = "submit_prova_sinsqth13Vsdcp_manyfiles" unless defined $file_margtoys;
+#$file_margtoys     = "submit_prova_sinsqth13Vsdcp_manyfiles" unless defined $file_margtoys;
+$file_margtoys     = "submit_prova_sinsqth13Vsdcp_react_manyfiles" unless defined $file_margtoys;
 #$file_margtoys     = "submit_prova_sinsqth23Vsdmsq23" unless defined $file_margtoys;
 #$file_margtoys     = "submit_prova_sinsqth23Vsdmsq23_manyfiles" unless defined $file_margtoys;
 #$file_margtoys     = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16" unless defined $file_margtoys;
@@ -209,9 +212,8 @@ $file_margtoys     = "submit_prova_sinsqth13Vsdcp_manyfiles" unless defined $fil
 #$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
 $nfiles_margtoys   = 4           unless defined $nfiles_margtoys; # of marginalization files
 $ntoys_margtoys    = 1         unless defined $ntoys_margtoys;     # of marginalization toys
-
-$nfiles_margtoys   = 546           unless defined $nfiles_margtoys; # of marginalization files        
-$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys  
+#$nfiles_margtoys   = 546            unless defined $nfiles_margtoys; # of marginalization files        
+#$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys  
 
 # # 1D fit - dcp
 # $freepar0          = "deltacp"     unless defined $freepar0;
@@ -223,15 +225,25 @@ $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marg
 # $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
 # $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
 
-# 2D fit - sinsqth13 Vs dcp (debug)
+# # 2D fit - sinsqth13 Vs dcp (t2k only)
+# $freepar0               = "mixing13"                 unless defined $freepar0;
+# $minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
+# $maxfreepar0            = 0.113                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+# $npt_freepar0           = 81                          unless defined $npt_freepar0;    # of free parameter points to scan
+# $freepar1               = "deltacp"                  unless defined $freepar1;
+# $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+# $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+# $npt_freepar1           = 51                          unless defined $npt_freepar1;    # of free parameter points to scan
+
+# 2D fit - sinsqth13 Vs dcp (t2k reactors)
 $freepar0               = "mixing13"                 unless defined $freepar0;
-$minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = 0.113                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-$npt_freepar0           = 81                          unless defined $npt_freepar0;    # of free parameter points to scan
+$minfreepar0            = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+$npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
 $freepar1               = "deltacp"                  unless defined $freepar1;
 $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
 $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-$npt_freepar1           = 51                          unless defined $npt_freepar1;    # of free parameter points to scan
+$npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
 
 # # 2D fit - sinsqth23 Vs dmsq (debug)
 # $freepar0               = "mixing23"                 unless defined $freepar0;
@@ -248,7 +260,10 @@ $draw_full_chisq   = 1             unless defined $draw_full_chisq;
 
 $test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
 
-$store_like_weights = 0            unless defined $store_like_weights;  # set to 1 only if 1 fit is run
+$store_like_weights = 0   unless defined $store_like_weights;  # set to 1 only if 1 fit is run
+
+$penalty_freepar0 = 0         unless defined $penalty_freepar0; 
+$penalty_freepar1 = 0         unless defined $penalty_freepar1; 
 ########################################################################################
 
 
@@ -520,7 +535,7 @@ while($i_freepar1 < $n_freepar1) {
 	    $tag_in = $tag_freepar; # needed for the output files
 
 	    $program = "";
-	    $arguments = "$softw_dir//bin/run_fit_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $ifile_first --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy --mass-hierarchy-margtoys \"$masshierarchy\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights";
+	    $arguments = "$softw_dir//bin/run_fit_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $ifile_first --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy --mass-hierarchy-margtoys \"$masshierarchy\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights --penalty-freepar0 $penalty_freepar0 --penalty-freepar1 $penalty_freepar1";
 	    
 	    #$command = "$program $arguments $arguments_bool";
 	    $command = "$program $arguments";
