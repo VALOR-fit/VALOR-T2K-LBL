@@ -138,21 +138,22 @@ $config_file    = "analysis_configuration_test_theta_elike_RFGRPA.xml"  unless d
 $nexpts          = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point
 $first_expt      = 0   unless defined $first_exp; # first toy experiment id 
 
-# $dmsq23          = -999                    unless defined $dmsq23;
-# $dmsq12          = -999                     unless defined $dmsq12;
-# $mix23           = -999                       unless defined $mix23;
-# $mix13           = -999                      unless defined $mix13;
-# $mix12           = -999                       unless defined $mix12;      
-# $deltacp         = -1.601                      unless defined $deltacp;
-# $betaBar         = 1.                          unless defined $betaBar;
-
-$dmsq23          = 2.509E-3                        unless defined $dmsq23;
-$dmsq12          = 7.53E-5                        unless defined $dmsq12;
-$mix23           = 0.528                        unless defined $mix23;
-$mix13           = 0.0243                        unless defined $mix13;
-$mix12           = 0.304                        unless defined $mix12;
-$deltacp         = -1.601                        unless defined $deltacp;
+$dmsq23          = -999                    unless defined $dmsq23;
+$dmsq12          = -999                     unless defined $dmsq12;
+$mix23           = -999                       unless defined $mix23;
+#$mix13           = -999                      unless defined $mix13;
+$mix13           = 0.024                      unless defined $mix13;
+$mix12           = -999                       unless defined $mix12;      
+$deltacp         = -1.601                      unless defined $deltacp;
 $betaBar         = 1.                          unless defined $betaBar;
+
+# $dmsq23          = 2.509E-3                        unless defined $dmsq23;
+# $dmsq12          = 7.53E-5                        unless defined $dmsq12;
+# $mix23           = 0.528                        unless defined $mix23;
+# $mix13           = 0.0243                        unless defined $mix13;
+# $mix12           = 0.304                        unless defined $mix12;
+# $deltacp         = -1.601                        unless defined $deltacp;
+# $betaBar         = 1.                          unless defined $betaBar;
 
 $marg_hierarchy  = 0                           unless defined $marg_hierarchy; # common to fakedata toys and marginalization toys, to avoid easy mistakes
 $masshierarchy   = "normal"                    unless defined $masshierarchy;  # common to fakedata toys and marginalization toys, to avoid easy mistakes
@@ -184,8 +185,8 @@ $print_syst_variation   = 0                    unless defined $print_syst_variat
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
 $sync_ih_to_nh          = 1                    unless defined $sync_ih_to_nh;
-$stat_fluct             = 0                    unless defined $stat_fluct;
-$tweak_systematics      = 0                    unless defined $tweak_systematics;
+$stat_fluct             = 1                    unless defined $stat_fluct;
+$tweak_systematics      = 1                    unless defined $tweak_systematics;
 $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 $prior_mode             = 1                    unless defined $prior_mode; # 0-->fix,1-->react,2-->t2k-only
 $save_xml               = 1                    unless defined $save_xml;
@@ -204,10 +205,13 @@ $file_margtoys     = "submit_prova_sinsqth13Vsdcp_manyfiles" unless defined $fil
 #$file_margtoys     = "submit_prova_sinsqth23Vsdmsq23_manyfiles" unless defined $file_margtoys;
 #$file_margtoys     = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16" unless defined $file_margtoys;
 
-#$nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
+#$nfiles_margtoys   = 201           unless defined $nfiles_margtoys; # of marginalization files
 #$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
 $nfiles_margtoys   = 4           unless defined $nfiles_margtoys; # of marginalization files
 $ntoys_margtoys    = 1         unless defined $ntoys_margtoys;     # of marginalization toys
+
+$nfiles_margtoys   = 546           unless defined $nfiles_margtoys; # of marginalization files        
+$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys  
 
 # # 1D fit - dcp
 # $freepar0          = "deltacp"     unless defined $freepar0;
@@ -513,6 +517,8 @@ while($i_freepar1 < $n_freepar1) {
 	    #$tweak_systematics_fit = 0; # Useless for fits, since toys are read and not performed
 	    $tag_freepar = sprintf("fit_%s_nexp_%d_%1.3f_%1.3f-job%1.0f",$tag,$nexpts,$pt_freepar0,$pt_freepar1,$irun);
 	    
+	    $tag_in = $tag_freepar; # needed for the output files
+
 	    $program = "";
 	    $arguments = "$softw_dir//bin/run_fit_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $ifile_first --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy --mass-hierarchy-margtoys \"$masshierarchy\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights";
 	    
@@ -535,18 +541,19 @@ while($i_freepar1 < $n_freepar1) {
 		open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
 		print PBS "#!/bin/bash -l  \n";
 		#print PBS "#SBATCH --partition=dphys_compute_wk  \n";
-		print PBS "#SBATCH --partition=dphys_compute  \n";
+		#print PBS "#SBATCH --partition=dphys_compute  \n";
+		print PBS "#SBATCH --partition=dphys_compute --mem-per-cpu=1500  \n"; # in MB. Same as dphys_largemem default RAM    
 		#print PBS "#SBATCH --partition=dphys_largemem  \n";
 		print PBS "#SBATCH --nodes=1  \n";
 		print PBS "#SBATCH --ntasks-per-node=1  \n";
-		print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
-		print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
+		print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out-$tag_in.%j.o  \n";
+		print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out-$tag_in.%j.e  \n";
 		print PBS "$command \n";
 		close(PBS);
 		#`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 		#`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-		`sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-		#`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+		`sbatch -t 02:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+		#`sbatch -t 00:15:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
 	    }
 	    
 	    #
