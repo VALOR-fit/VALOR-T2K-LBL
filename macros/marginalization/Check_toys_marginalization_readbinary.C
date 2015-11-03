@@ -18,10 +18,13 @@ using namespace valor::conv;
 
 void Check_toys_marginalization_readbinary
 (
- //const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
- const char * config_file          = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
+ const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
 
- const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
+ const char * fit_param_list        = "nuosc3f+nuisance", // dcp
 
  const char * sk_sample = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
@@ -45,37 +48,28 @@ void Check_toys_marginalization_readbinary
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * infilename = "submit_prova_TemplVArray",
- //const char * infilename = "PROVA_SystAll_TemplVArray",
+ //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsTheta/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
+ //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
- //const char * infilename = "PROVA_SystOsc",
- //const char * infilename = "PROVA_NoSyst",
+ //const char * infilename = "submit_prova_TemplVArray_2d",
+ const char * infilename = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16",
 
- const int    nfiles               = 12, // 1         // # of files to read
+ const int    nfiles               = 101, //101, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 2, //500,   // # toys marginalization 
-
- const char * freeparname0        = "mixing13",  // free parameter
- const double freeparmin0         = 0., // minimum value of free parameter
- const double freeparmax0         = 0.113, // maxinum value of free parameter
- const int    NptScan0            = 4, //81, //201, //21,      // # pts of free parameter to scan
-
- const char * freeparname1        = "deltacp",  // free parameter
- const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
- const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan1            = 3, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
+ const int    NtoysMarg            = 10000, //100, //10000, //1,  // # toys marginalization 
  
- // const char * freeparname0        = "deltacp",  // free parameter
- // const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
- // const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- // const int    NptScan0            = 21, // 801, 2          // # pts of free parameter to scan
- // const char * freeparname1        = "",  // free parameter
- // const double freeparmin1         = 0., // minimum value of free parameter
- // const double freeparmax1         = 0., // maxinum value of free parameter
- // const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
-
- const bool  doMargMH             = true,    // marginalize Mass Hierarchy
+ const char * freeparname0        = "deltacp",  // free parameter
+ const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+ const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
+ const char * freeparname1        = "",  // free parameter
+ const double freeparmin1         = 0., // minimum value of free parameter
+ const double freeparmax1         = 0., // maxinum value of free parameter
+ const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
+
+ const bool  doMargMH             = false,     // marginalize Mass Hierarchy
+
  //const char *FileToyOscParam       = "../../inputs/marginalization/toys//nuebarapp_1D_NuOsc_T2Kreact_betabar_Toy_23_mix13dcp_Joint_MH_10kToys/BetaBar_4p0E20POT_Toy_23_th13dcp_Corr_Mach3.root"
  const char *FileToyOscParam       = ""
  )
