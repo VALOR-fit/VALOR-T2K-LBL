@@ -551,11 +551,11 @@ int main(int argc, char ** argv)
      nexpts = runopt->NExperiments();
      run = runopt->Run();
 
-     // // Fill the tree 
-     // int iflag_tree = fitnt->Fill();
-     // cout << endl;
-     // cout << "iflag_tree = " << iflag_tree << endl;
-     // cout << endl;
+     // Fill the tree 
+     int iflag_tree = fitnt->Fill();
+     cout << endl;
+     cout << "Output fill tree flag = " << iflag_tree << endl;
+     cout << endl;
      
      
      // Print output
