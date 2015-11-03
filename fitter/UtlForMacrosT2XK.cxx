@@ -585,8 +585,12 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
   
   double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
   double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
+
+  int nbinsX = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsX();
+  double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
   
   int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
+  double valfirstbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(1);
   double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
   
   // Fit 1
@@ -610,15 +614,24 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
     niterations = niterations_1;
   }
   
+  cout << endl;
+  cout << "True parameters: " << endl;
+  cout << " - par0 = " << bestfit0_1 << endl;
+  cout << " - par1 = " << bestfit1_1 << endl;
+  cout << "True chisq = " << chisqmin_1;
+  cout << endl;
+
   // Fit 2
   
   cout << endl;
   cout << "/////////////// Fit 2 (mixing13=0.02, dcp=-3.14) ////////////////" << endl;
   
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
+  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(0.02,-TMath::Pi()); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -637,17 +650,18 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
     fitstatus = fitstatus_2;
     niterations = niterations_2;
   }
-  
-  
+    
   // Fit 3
   
   cout << endl;
   cout << "/////////////// Fit 3 (mixing13=0.02, dcp=-pi/2.) ////////////////" << endl;
   
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
+  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(0.02,-TMath::Pi()/2.); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -673,10 +687,12 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 4 (mixing13=0.02, dcp=+pi/2.) ////////////////" << endl;
   
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
+  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(0.02,+TMath::Pi()/2.); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -702,10 +718,12 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 5 (mixing13=0.02, dcp=+3.14) ////////////////" << endl;
   
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
+  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(0.02,+TMath::Pi()); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
