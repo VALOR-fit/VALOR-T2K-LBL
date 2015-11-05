@@ -101,6 +101,10 @@ int main(int argc, char ** argv)
 {
   TStopwatch sw;
 
+  sw.Stop();
+  sw.Print();
+  sw.Start(0);
+
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   gROOT->SetBatch(true);
@@ -290,6 +294,10 @@ int main(int argc, char ** argv)
   util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
   set_init = false;
   util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
+
+  sw.Stop();
+  sw.Print();
+  sw.Start(0);
 
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
@@ -654,7 +662,10 @@ int main(int argc, char ** argv)
      // }
      // cout << endl;
 
-     
+     sw.Stop();
+     sw.Print();
+     sw.Start(0);
+
   } // loop over toys
   
   delete hErecoToy_1Rmu;
