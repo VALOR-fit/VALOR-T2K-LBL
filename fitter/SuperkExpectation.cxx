@@ -13,8 +13,8 @@ Added samples for multiring forward horn current
 //________________________________________________________________________________________
 
 //#define __show_syst_reset_mesg__
-//#define __show_syst_tweak_mesg__
-//#define __show_syst_tweak_debug__
+#define __show_syst_tweak_mesg__
+#define __show_syst_tweak_debug__
 //#define __show_contributions_to_penalty_term__
 
 #include <cassert>
@@ -1030,7 +1030,7 @@ void SuperkExpectation::TweakSystematicLegacy(string systematic, double twkdial,
 void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, Option_t * opt)
 {
 
-  cout << "SuperkExpectation::TweakSystematic(p) 1" << endl;
+  cout << "SuperkExpectation::TweakSystematic(p)" << endl;
 
       
 #ifdef __show_syst_tweak_mesg__

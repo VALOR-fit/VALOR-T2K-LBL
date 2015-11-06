@@ -138,7 +138,7 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     
   if(!fCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No SuperkDetector+FSI covariance matrix was found." << endl;
-    exit(1);
+    std::exit(1);
   }
 
   const TMatrixD & cov = *fCovMtrx;
@@ -147,7 +147,7 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/SuperkDetectorFSI >> SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
     cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
     cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
-    exit(1);
+    std::exit(1);
   }
 
   double det;
@@ -201,7 +201,7 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   if(!fRHCCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No RHC SuperkDetector+FSI covariance matrix was found." << endl;
-    exit(1);
+    std::exit(1);
   }
 
   const TMatrixD & cov = *fRHCCovMtrx;
@@ -210,7 +210,7 @@ bool SuperkDetectorFSI::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
       cerr << "Exp/SuperkDetectorFSI >> RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
       cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
       cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
-      exit(1);
+      std::exit(1);
     }
 
   double det;
@@ -282,7 +282,7 @@ bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   if(!fFHCpRHCCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No FHC+RHC SuperkDetector+FSI covariance matrix was found." << endl;
-    exit(1);
+    std::exit(1);
   }
 
   const TMatrixD & cov = *fFHCpRHCCovMtrx;
@@ -291,7 +291,7 @@ bool SuperkDetectorFSI::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
       cerr << "Exp/SuperkDetectorFSI >> FHC+RHC SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
       cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
       cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
-      exit(1);
+      std::exit(1);
     }
 
   double det;
@@ -394,7 +394,7 @@ bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_nod
 
   if(!fMultiRingCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No MultiRing SuperkDetector+FSI covariance matrix was found." << endl;
-    exit(1);
+    std::exit(1);
   }
 
   const TMatrixD & cov = *fMultiRingCovMtrx;
@@ -403,7 +403,7 @@ bool SuperkDetectorFSI::ReadMultiRing(TXMLEngine* xml, XMLNodePointer_t root_nod
       cerr << "Exp/SuperkDetectorFSI >> MultiRing SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
       cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
       cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
-      exit(1);
+      std::exit(1);
     }
 
   double det;
@@ -594,7 +594,7 @@ double SuperkDetectorFSI::SystWght(
 	   << util::AsString((conv::PhysParamId_t)(iparam+conv::kNuisSKDetFSI_first)) << "\t" <<  util::AsString(p) << endl;
 #endif
       }
-      exit(1);
+      std::exit(1);
     } //iparam != -1
     
     if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike){
@@ -616,7 +616,7 @@ double SuperkDetectorFSI::SystWght(
     if(iparam < 0 || iparam >= np) {
       cerr << "Exp/SuperkDetectorFSI/SystWght >> Found no SuperkDetector+FSI bins for sample, mode, Ereco combination!" << endl
            << util::AsString(s) << "\t" << util::AsString(m) << "\t" << Ereco << endl;
-      //exit(1);
+      //std::exit(1);
       return 1;
     }
   }
@@ -2347,7 +2347,7 @@ double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s, SuperkMode_t /* m 
     return fEnergyScaleMultiRmuRelErr; 
   else {
     cerr << "EnergyScaleRelErr --> No sample is identified!" << endl;
-    exit(1);
+    std::exit(1);
   }
   ///
 
@@ -2385,7 +2385,7 @@ double SuperkDetectorFSI::EnergyScaleRelErr(SuperkSample_t s) const
     return fEnergyScaleMultiRmuRelErr; 
   else {
     cerr << "EnergyScaleRelErr --> No sample is identified!" << endl;
-    exit(1);
+    std::exit(1);
   }
   return 0;
 }

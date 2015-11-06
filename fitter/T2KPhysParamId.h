@@ -131,7 +131,7 @@ static const PhysParamId_t kNuisBANFFNormNCoth      = kNuis063;   // NC other no
 static const PhysParamId_t kNuisBANFFNormNuEToNuMu  = kNuis064;   // nue / numu cross section
 //
 
-static const PhysParamId_t kLastBANFFParam  = kNuis065; // Utility, should always come after last FHC BANFF
+static const PhysParamId_t kNuisBANFFMECBar  = kNuis065; // Utility, should always come after last FHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -346,7 +346,7 @@ static const PhysParamId_t kRHCNuisBANFFNormNCoth      = kNuis173;   // NC other
 static const PhysParamId_t kRHCNuisBANFFNormNuEToNuMu  = kNuis174;   // nue / numu cross section
 //
 
-static const PhysParamId_t kRHCLastBANFFParam  = kNuis175; // Utility, should always come after last RHC BANFF
+static const PhysParamId_t kRHCNuisBANFFMECBar         = kNuis175; // Utility, should always come after last RHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)

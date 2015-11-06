@@ -30,6 +30,7 @@ Added samples for multiring forward horn current
 #include "AnalysisOptions.h"
 #include "Enumerations.h"
 #include "SamplesAndModes.h"
+#include <iostream>
 
 namespace valor {
 namespace conv   {
@@ -3325,8 +3326,8 @@ static const bool kMultiRingSKDetFSIParamToSKMode[2][knm][kNumOfSKDetFSIParamsMu
     #ifdef __MULTIRING_FHC_RUNNING__ // multiring fhc only 
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParamsMultiRing + 1/*energy scale*/  + kNumOfUncXSecSyst;
 #else
-    cerr << "No samples have been chosen for the analysis!!!" << endl;
-    exit(1);    
+    std::cerr << "No samples have been chosen for the analysis!!!" << std::endl;
+    std::exit(1);    
     #endif
 #endif // sample analysis option
 

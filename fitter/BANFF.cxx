@@ -10,7 +10,7 @@
 //#define __show_init_mesg_debug__   
 //#define __show_cholesky_mesg_info__
 //#define __show_cholesky_mesg_debug__
-//#define __show_tweak_mesg_debug__
+#define __show_tweak_mesg_debug__
 //#define __show_update_correlated_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug2__
@@ -185,7 +185,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
          << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
          << endl;
-    exit(-1);
+    std::exit(-1);
   }
   //
 
@@ -193,19 +193,19 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values"); 
   // if (not (fUntunedCentralValues && fRHCUntunedCentralValues) ) {
   // cerr<<"Failed to read <untuned_parameter_central_values>"<<endl;
-  // exit(-1);
+  // std::exit(-1);
   // }
   // if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
   // cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
   // << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
   // << endl;
-  // exit(-1);
+  // std::exit(-1);
   // }
   // if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
   // cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
   // << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
   // << endl;
-  // exit(-1);
+  // std::exit(-1);
   // }
   
 #endif
@@ -218,7 +218,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fBestFitValues = util::XML2TVectorD(xml,root_node,banff_param_path);
   if(!fBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
-    exit(1);
+    std::exit(1);
   }
 #else
   double init[np];
@@ -233,7 +233,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> BANFF best-fit parameter vector has unexpected number of elements!" << endl;
     cerr << "Exp/BANFF >> Expecting: " <<  np << " elements" << endl;
     cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
-    exit(1);
+    std::exit(1);
   }
 
 #ifdef __show_init_mesg_debug__
@@ -249,7 +249,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
  
   if(!fCovMtrx) {
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
-    exit(1);
+    std::exit(1);
   }
   // Invert BANFF fit covariance matrix
   double det;
@@ -305,7 +305,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
 	 << endl;
-    exit(-1);
+    std::exit(-1);
   }
 #endif
   //
@@ -319,7 +319,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     
   if(!fRHCBestFitValues) {
     cerr << "Exp/BANFF >> No RHC BANFF best-fit parameter vector was found." << endl;
-    exit(1);
+    std::exit(1);
   }
 #else
   double init[np];
@@ -334,7 +334,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
       cerr << "Exp/BANFF >> RHC BANFF best-fit parameter vector has unexpected number of elements!" << endl;
       cerr << "Exp/BANFF >> Expecting: " <<  np << " elements" << endl;
       cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
-      exit(1);
+      std::exit(1);
     }
 
 #ifdef __show_init_mesg_debug__
@@ -351,7 +351,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   if(!fRHCCovMtrx) {
     cerr << "Exp/BANFF >> No RHC BANFF covariance matrix was found." << endl;
-    exit(1);
+    std::exit(1);
   }
   // Invert BANFF fit covariance matrix
   double det;
@@ -429,21 +429,21 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "NuXSec/Read >> Expected "<<kNumOfFHCpRHCParamsInBANFFfit-kNumOfFHCpRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fFHCpRHCUntunedCentralValues->GetNoElements()
 	 << endl;
-    exit(-1);
+    std::exit(-1);
   }
   fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
     cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
 	 << endl;
-    exit(-1);
+    std::exit(-1);
   }
   fRHCUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
     cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
 	 << endl;
-    exit(-1);
+    std::exit(-1);
   }
 #endif
   //
@@ -461,7 +461,7 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   
   if(!fFHCpRHCBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
-    exit(1);
+    std::exit(1);
   }
 #else
   double init[np];
@@ -476,7 +476,7 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> FHC+RHC BANFF best-fit parameter vector has unexpected number of elements!" << endl;
     cerr << "Exp/BANFF >> Expecting: " <<  np << " elements" << endl;
     cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
-    exit(1);
+    std::exit(1);
   }
 
 #ifdef __show_init_mesg_debug__
@@ -494,7 +494,7 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
  
   if(!fFHCpRHCCovMtrx) {
     cerr << "Exp/BANFF >> No FHC+RHC BANFF covariance matrix was found." << endl;
-    exit(1);
+    std::exit(1);
   }
   // Invert BANFF fit covariance matrix
   double det;
@@ -731,7 +731,7 @@ double BANFF::SampleOneSigmaError(PhysParamId_t p) const
   return this->RHCOneSigmaError(p);
 #else
   std::cerr<<"BANFF/SampleOneSigmaError >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -751,7 +751,7 @@ double BANFF::SampleOneSigmaError(int idx) const
   return this->RHCOneSigmaError(idx);
 #else
   std::cerr<<"BANFF/SampleOneSigmaError >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -771,7 +771,7 @@ double BANFF::SampleCurrentValue(PhysParamId_t p) const
   return this->RHCCurrentValue(p);
 #else
   std::cerr<<"BANFF/SampleCurrentValue >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -791,7 +791,7 @@ double BANFF::SampleCurrentValue(int idx) const
   return this->RHCCurrentValue(idx);
 #else
   std::cerr<<"BANFF/SampleCurrentValue >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -811,7 +811,7 @@ double BANFF::SampleBestFitValue(PhysParamId_t p) const
   return this->RHCBestFitValue(p);
 #else
   std::cerr<<"BANFF/SampleBestFitValue >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -831,7 +831,7 @@ double BANFF::SampleBestFitValue(int idx) const
   return this->RHCBestFitValue(idx);
 #else
   std::cerr<<"BANFF/SampleBestFitValue >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -1494,7 +1494,7 @@ void BANFF::TweakFHCpRHCConstrainedOnly(
       // vec.Print();
       // fCurrentValues->Print();
       // fRHCCurrentValues->Print();
-      // exit(1);
+      // std::exit(1);
 
       return;
     }
@@ -2582,7 +2582,7 @@ const TVectorD & BANFF::SampleBestFitValues (void) const
   return *fRHCBestFitValues;
 #else
   std::cerr<<"BANFF/SampleBestFitValues >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -2602,7 +2602,7 @@ const TMatrixD & BANFF::SampleCovMatrix  (void) const
   return *fRHCCovMtrx;
 #else
   std::cerr<<"BANFF/SampleCovMtrx >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -2622,7 +2622,7 @@ const TMatrixD & BANFF::SampleCovMatrixInv (void) const
   return *fRHCCovMtrxInv;
 #else
   std::cerr<<"BANFF/SampleCovMtrxInv >> Cannot find right matrix."<<endl;
-  exit(-1);
+  std::exit(-1);
 #endif
 }
 //________________________________________________________________________________________

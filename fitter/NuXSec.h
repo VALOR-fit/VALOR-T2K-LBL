@@ -143,8 +143,10 @@ public:
   
   bool IsShapeParameter(conv::PhysParamId_t p) const; // Are we using a spline?
 
-    TGraph* GetMartiniToNievesRatio(void){ return Martinit_to_Nieves_MEC_ratio; }
-    
+    TGraph* GetMartiniToNievesRatioNu(void){ return Martinit_to_Nieves_MEC_ratio_Nu; }
+    TGraph* GetMartiniToNievesRatioNuBar(void){ return Martinit_to_Nieves_MEC_ratio_NuBar; }
+    TGraph* GetNievesMomentumOffset(void){ return NievesMomentumOffset; }
+
 private:
 
   void Init    (void);
@@ -241,7 +243,9 @@ private:
   TVectorD * fUntunedCentralValues;
   TVectorD * fRHCUntunedCentralValues;
     
-    TGraph* Martinit_to_Nieves_MEC_ratio;
+    TGraph* Martinit_to_Nieves_MEC_ratio_Nu;
+    TGraph* Martinit_to_Nieves_MEC_ratio_NuBar;
+    TGraph* NievesMomentumOffset;
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 

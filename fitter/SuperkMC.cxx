@@ -759,8 +759,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         }
 #endif
         
-        
-        
         //if(util::IsRHCSample(s))
 #ifdef USE_FLUX_EXT_WEIGHT
         fBrWghtFlx = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);

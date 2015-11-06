@@ -7,7 +7,7 @@
 Added samples, modes and systematics for reverse horn current running
 
 */
-//________________________________________________________________________________________
+//______________________________________________________ __________________________________
 
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
@@ -24,8 +24,7 @@ Added samples, modes and systematics for reverse horn current running
 #define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
 //#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong.
 //#define check_spline_limits       //slow, but should be used when testing
-
-
+#define __Negative_Spline_Value_HACK__ // Some splines have negative value close to -3sigma, needed for SF studies
 //#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
@@ -330,7 +329,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
                      << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
                 cerr << AsString(s) << endl;
-                exit(1);
+                std::exit(1);
 #else
                 spl = flatspline;
 #ifdef WARN_ON_FLAT_SPLINE
@@ -349,7 +348,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                      << ", Etrue: " << Etrue_min << "-" << Etrue_max 
                      //<< ". Spline thinks there are " << spl->GetTitle()
                      << endl;
-                // exit(1);
+                // std::exit(1);
               }
             }
             
@@ -367,7 +366,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                    << "; Ereco: " << Ereco - kOneMeV << " to " << util::XsecErecoBinEdges(s,ir+1)
                    << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
                    << endl;
-              //exit(1);
+              //std::exit(1);
             }
 #endif
 #endif
@@ -377,7 +376,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
               cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: " 
                    << splname
                      << endl;
-              exit(1);
+              std::exit(1);
             }
             
 #ifdef __show_init_mesg_debug__
@@ -480,19 +479,19 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   
   if (not (fUntunedCentralValues && fRHCUntunedCentralValues) ) {
     cerr<<"Failed to read <untuned_parameter_central_values>"<<endl;
-    exit(-1);
+    std::exit(-1);
   }
   if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
     cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
          << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
          << endl;
-    exit(-1);
+    std::exit(-1);
   }
   if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
     cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
          << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
          << endl;
-    exit(-1);
+    std::exit(-1);
   }
 #endif
 
@@ -534,8 +533,14 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
 #endif
 #ifdef RESCALE_MEC_TO_MARTINI
-    Martinit_to_Nieves_MEC_ratio =
-    util::XML2TGraph(xml,root_node,"mc/normalisations/martini_to_nieves");
+    Martinit_to_Nieves_MEC_ratio_Nu =
+    util::XML2TGraph(xml,root_node,"mc/normalisations/martini_to_nieves_nu");
+    Martinit_to_Nieves_MEC_ratio_NuBar =
+    util::XML2TGraph(xml,root_node,"mc/normalisations/martini_to_nieves_nubar");
+#endif
+#ifdef OFFSET_NIEVES_MOMENTUM
+    NievesMomentumOffset =
+    util::XML2TGraph(xml,root_node,"mc/normalisations/nieves_momentum_offset");
 #endif
   return true;
 }
@@ -841,23 +846,25 @@ double NuXSec::FinTuningWght_1p(
   // - BANFF param, NuEToNuMu  normalization
   //  
   else if(
-          p == kNuisBANFFMEC         || 
-          p == kNuisBANFFBgRES       ||
-          p == kNuisBANFFNormCCcoh    ||
-          p == kNuisBANFFNormNCcoh    ||
-          p == kNuisBANFFNormNCoth    ||
-          p == kNuisBANFFNormNuEToNuMu
+          p == kNuisBANFFMEC            ||
+          p == kNuisBANFFBgRES          ||
+          p == kNuisBANFFNormCCcoh      ||
+          p == kNuisBANFFNormNCcoh      ||
+          p == kNuisBANFFNormNCoth      ||
+          p == kNuisBANFFNormNuEToNuMu  ||
+          p == kNuisBANFFMECBar
           )
     {
       wght = fBANFF->BestFitValue(p);
     }
   else if(
-          p == kRHCNuisBANFFMEC         || 
-          p == kRHCNuisBANFFBgRES       ||
-          p == kRHCNuisBANFFNormCCcoh    ||
-          p == kRHCNuisBANFFNormNCcoh    ||
-          p == kRHCNuisBANFFNormNCoth    ||
-          p == kRHCNuisBANFFNormNuEToNuMu
+          p == kRHCNuisBANFFMEC             ||
+          p == kRHCNuisBANFFBgRES           ||
+          p == kRHCNuisBANFFNormCCcoh       ||
+          p == kRHCNuisBANFFNormNCcoh       ||
+          p == kRHCNuisBANFFNormNCoth       ||
+          p == kRHCNuisBANFFNormNuEToNuMu   ||
+          p == kRHCNuisBANFFMECBar
           )
     {
       wght = fBANFF->RHCBestFitValue(p);
@@ -867,12 +874,14 @@ double NuXSec::FinTuningWght_1p(
 #ifdef __show_banff_tuning_wght_mesg_debug__
     cout << "Exp/NuXSec/FinTuningWght >> "
          << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
-         << ", Ereco = " << Ereco << " GeV" 
+         << ", Ereco = " << Ereco << " GeV"
          << ", Etrue = " << Etrue << " GeV => Weight [" 
          << util::AsString(p) << "] = " << wght 
          << endl;   
 #endif
-
+#ifdef __Negative_Spline_Value_HACK__
+    if(wght< 0) wght = conv::kASmallNum;
+#endif
   if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
@@ -910,7 +919,7 @@ double NuXSec::FinTuningWght_1p(
     else {
       cout <<"Not using spline"<<std::endl;
     }
-    exit(1);
+    std::exit(1);
   }
   return wght;
 }
@@ -929,6 +938,9 @@ double NuXSec::SystWght(
     nXSecSyst = kNumOfRHCXSecSyst;
   else
     nXSecSyst = kNumOfXSecSyst;
+    
+    
+ //   fBANFF->PrintFHCpRHCSystematicVariations();
 
   for(int isyst = 0; isyst < nXSecSyst; isyst++) {
     if(is_rhc) {
@@ -1189,8 +1201,21 @@ double NuXSec::SystWght_1p(
     if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
     if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
 #endif
-    
-    wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+#ifdef __Negative_Spline_Value_HACK__
+      //Hack for SF studies 10/10/15
+      double sp_nw = wght_spl->Eval(spl_tc);
+      double sp_bf = wght_spl->Eval(spl_tb);
+      
+      if(sp_nw < 0 ) sp_nw = conv::kASmallNum;
+      if(sp_bf < 0 ) sp_bf = conv::kASmallNum;
+      
+      wght = sp_nw / sp_bf;
+#else
+      wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+#endif
+      
+
+      
   } // end of response functions
 
   //
@@ -1212,7 +1237,8 @@ double NuXSec::SystWght_1p(
            p == kNuisBANFFNormCCcoh    ||
            p == kNuisBANFFNormNCcoh    ||
            p == kNuisBANFFNormNCoth    ||
-           p == kNuisBANFFNormNuEToNuMu )
+           p == kNuisBANFFNormNuEToNuMu||
+           p == kNuisBANFFMECBar          )
   {
     wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
@@ -1220,7 +1246,8 @@ double NuXSec::SystWght_1p(
            p == kRHCNuisBANFFNormCCcoh    ||
            p == kRHCNuisBANFFNormNCcoh    ||
            p == kRHCNuisBANFFNormNCoth    ||
-           p == kRHCNuisBANFFNormNuEToNuMu )
+           p == kRHCNuisBANFFNormNuEToNuMu||
+          p == kRHCNuisBANFFMECBar)
   {
     wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
   }
@@ -1308,8 +1335,12 @@ double NuXSec::SystWght_1p(
           << endl;   
   }
 #endif
-
-  if(fabs(wght) > conv::kMaxAllowedWght) {
+//No Negative weights
+#ifdef __Negative_Spline_Value_HACK__
+    if(wght< 0) wght = conv::kASmallNum;
+#endif
+    
+  if(fabs(wght) > conv::kMaxAllowedWght ||  wght < 0) {
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < kNXsErecoBins[s]; i++) {
@@ -1346,7 +1377,7 @@ double NuXSec::SystWght_1p(
     else {
       cout <<"Not using spline"<<std::endl;
     }
-    exit(1);
+    std::exit(1);
   }
   
   return wght;
@@ -1492,7 +1523,8 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   case kNuisBANFFNormNuEToNuMu:  
   case kNuisBANFFMAQE:
   case kNuisBANFFMARES:
-  case kNuisBANFFMEC: 
+  case kNuisBANFFMEC:
+  case kNuisBANFFMECBar:
   case kNuisBANFFCA5:
   case kNuisBANFFBgRES:
       // NEW SPLIT ANA
@@ -1516,7 +1548,8 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
   case kRHCNuisBANFFNormNuEToNuMu:  
   case kRHCNuisBANFFMAQE:
   case kRHCNuisBANFFMARES:
-  case kRHCNuisBANFFMEC: 
+  case kRHCNuisBANFFMEC:
+  case kRHCNuisBANFFMECBar:
   case kRHCNuisBANFFCA5:
   case kRHCNuisBANFFBgRES:
       // NEW SPLIT ANA
@@ -1697,7 +1730,7 @@ TSpline3 * NuXSec::FindWghtSpline(
          << ", Etrue = "     << Etrue << " GeV!"
          << " idx = " << idx 
          << endl;
-    exit(1);
+    std::exit(1);
   }
 
 #ifdef __show_find_wght_spline_mesg_debug__
@@ -2199,7 +2232,7 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
 #endif
   else {
     cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;
-    exit(1);
+    std::exit(1);
   }
 }
 //________________________________________________________________________________________

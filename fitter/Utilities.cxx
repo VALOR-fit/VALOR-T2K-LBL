@@ -243,7 +243,7 @@ void valor::util::PrintCompact(
 	 else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
 	 else {
            cerr << "BANFF options string doesn't contain any options" << endl;
-           exit(1);
+           std::exit(1);
          }
 	 //
 
@@ -370,7 +370,7 @@ void valor::util::PrintCompact(
 	 else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
 	 else {
            cerr << "BANFF options string doesn't contain any options" << endl;
-           exit(1);
+           std::exit(1);
          }
 	 //
 

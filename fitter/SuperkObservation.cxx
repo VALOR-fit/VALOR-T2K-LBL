@@ -125,7 +125,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     if (xmldoc==0) {
       cerr << "SKObs/Read >> " << "Can not parse input: " << config_file << endl;
       delete xml;
-      exit(1);
+      std::exit(1);
     }
     XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
     
@@ -188,12 +188,12 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
 	cerr << endl;
 	cerr << "Used SK sample " << util::AsString(s) << " not available" << endl;
 	cerr << endl;
-	exit(1);
+	std::exit(1);
       }
       
       if(!hist) {
 	cerr << "Obs >> Histogram for " << util::AsString(s) << " does not exist!" << endl;
-	exit(1);
+	std::exit(1);
       }
 
       for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
@@ -213,7 +213,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     f.GetObject(Form("mock_data_1Re_RHC_%d",data_set_id),hist);
     if(!hist) {
       cerr << "Obs >> Histogram for RHC1Re does not exist!" << endl;
-      exit(1);
+      std::exit(1);
     }
  
     for (int is = 0 ; is < conv::kns ; is++) {
@@ -236,7 +236,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     f.GetObject(Form("mock_data_1Rmu_RHC_%d",data_set_id),hist);
     if(!hist) {
       cerr << "Obs >> Histogram for RHC1Rmu does not exist!" << endl;
-      exit(1);
+      std::exit(1);
     }
  
     for (int is = 0 ; is < conv::kns ; is++) {
@@ -258,7 +258,7 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
     cerr << "SuperkObservation::Read()" << endl;
     cerr << "Analysis mode not defined" << endl;
     cerr << endl;
-    exit(1);
+    std::exit(1);
 #endif // __RHC_RUNNING__ - __FHC_RUNNING__
 
     //
@@ -619,6 +619,6 @@ double SuperkObservation::Statistic (FitModelABC * model, Option_t * stat_opt)
   
   // If we get here, the cast has failed.
   std::cerr<<"SuperkOberservation/Generate >> Failed to interpret model: "<<model->Name()<<std::endl;
-  exit(-1);
+  std::exit(-1);
 }
 //________________________________________________________________________________________

@@ -157,25 +157,25 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fSKNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numu");
   if(!fSKNuMuFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK numu ext/tuned flux histogram!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK numubar flux
   fSKNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numubar");
   if(!fSKNuMuBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK numubar ext/tuned flux histogram!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK nue flux
   fSKNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nue");
   if(!fSKNuEFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK nue ext/tuned flux histogram!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK nuebar flux
   fSKNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nuebar");
   if(!fSKNuEBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK nuebar ext/tuned flux histogram!" << endl;
-    exit(1);
+    std::exit(1);
   }
 
 #ifdef __show_init_mesg_info__
@@ -191,28 +191,28 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numu");
   if(!fSKNuMuFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK numu flux ext/tuning weights!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK numubar flux tuning weights
   fSKNuMuBarFluxExtTuningWght = 
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numubar");
   if(!fSKNuMuBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK numubar flux ext/tuning weights!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK nue flux tuning weights
   fSKNuEFluxExtTuningWght = 
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nue");
   if(!fSKNuEFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK nue flux ext/tuning weights!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK nuebar flux tuning weights
   fSKNuEBarFluxExtTuningWght = 
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nuebar");
   if(!fSKNuEBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK nuebar flux ext/tuning weights!" << endl;
-    exit(1);
+    std::exit(1);
   }
 
 #ifdef __show_init_mesg_info__
@@ -247,25 +247,25 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fSKRHCNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numu");
   if(!fSKRHCNuMuFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC numu ext/tuned flux histogram!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK numubar flux (reverse horn current)
   fSKRHCNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numubar");
   if(!fSKRHCNuMuBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC numubar ext/tuned flux histogram!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK nue flux (reverse horn current)
   fSKRHCNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nue");
   if(!fSKRHCNuEFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC nue ext/tuned flux histogram!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK nuebar flux (reverse horn current)
   fSKRHCNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nuebar");
   if(!fSKRHCNuEBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC nuebar ext/tuned flux histogram!" << endl;
-    exit(1);
+    std::exit(1);
   }
 
 #ifdef __show_init_mesg_info__
@@ -281,28 +281,28 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numu");
   if(!fSKRHCNuMuFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC numu flux ext/tuning weights!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK numubar flux tuning weights (reverse horn current) 
   fSKRHCNuMuBarFluxExtTuningWght = 
     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numubar");
   if(!fSKRHCNuMuBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC numubar flux ext/tuning weights!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK nue flux tuning weights (reverse horn current) 
   fSKRHCNuEFluxExtTuningWght = 
     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nue");
   if(!fSKRHCNuEFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC nue flux ext/tuning weights!" << endl;
-    exit(1);
+    std::exit(1);
   }
   // SuperK nuebar flux tuning weights (reverse horn current) 
   fSKRHCNuEBarFluxExtTuningWght = 
     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nuebar");
   if(!fSKRHCNuEBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC nuebar flux ext/tuning weights!" << endl;
-    exit(1);
+    std::exit(1);
   }
 
 #ifdef __show_init_mesg_info__
@@ -350,50 +350,50 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 //   fSKNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numu");
 //   if(!fSKNuMuFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK numu ext/tuned flux histogram!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK numubar flux
 //   fSKNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numubar");
 //   if(!fSKNuMuBarFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK numubar ext/tuned flux histogram!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK nue flux
 //   fSKNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nue");
 //   if(!fSKNuEFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK nue ext/tuned flux histogram!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK nuebar flux
 //   fSKNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nuebar");
 //   if(!fSKNuEBarFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK nuebar ext/tuned flux histogram!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 
 //   // SuperK numu flux (reverse horn current)
 //   fSKRHCNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numu");
 //   if(!fSKRHCNuMuFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK RHC numu ext/tuned flux histogram!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK numubar flux (reverse horn current)
 //   fSKRHCNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numubar");
 //   if(!fSKRHCNuMuBarFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK RHC numubar ext/tuned flux histogram!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK nue flux (reverse horn current)
 //   fSKRHCNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nue");
 //   if(!fSKRHCNuEFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK RHC nue ext/tuned flux histogram!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK nuebar flux (reverse horn current)
 //   fSKRHCNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nuebar");
 //   if(!fSKRHCNuEBarFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK RHC nuebar ext/tuned flux histogram!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 
 // #ifdef __show_init_mesg_info__
@@ -409,28 +409,28 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 //      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numu");
 //   if(!fSKNuMuFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK numu flux ext/tuning weights!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK numubar flux tuning weights
 //   fSKNuMuBarFluxExtTuningWght = 
 //      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numubar");
 //   if(!fSKNuMuBarFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK numubar flux ext/tuning weights!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK nue flux tuning weights
 //   fSKNuEFluxExtTuningWght = 
 //      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nue");
 //   if(!fSKNuEFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK nue flux ext/tuning weights!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK nuebar flux tuning weights
 //   fSKNuEBarFluxExtTuningWght = 
 //      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nuebar");
 //   if(!fSKNuEBarFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK nuebar flux ext/tuning weights!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 
 //   // SuperK numu flux tuning weights (reverse horn current) 
@@ -438,28 +438,28 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 //     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numu");
 //   if(!fSKRHCNuMuFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK RHC numu flux ext/tuning weights!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK numubar flux tuning weights (reverse horn current) 
 //   fSKRHCNuMuBarFluxExtTuningWght = 
 //     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numubar");
 //   if(!fSKRHCNuMuBarFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK RHC numubar flux ext/tuning weights!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK nue flux tuning weights (reverse horn current) 
 //   fSKRHCNuEFluxExtTuningWght = 
 //     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nue");
 //   if(!fSKRHCNuEFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK RHC nue flux ext/tuning weights!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 //   // SuperK nuebar flux tuning weights (reverse horn current) 
 //   fSKRHCNuEBarFluxExtTuningWght = 
 //     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nuebar");
 //   if(!fSKRHCNuEBarFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK RHC nuebar flux ext/tuning weights!" << endl;
-//     exit(1);
+//     std::exit(1);
 //   }
 
 // #ifdef __show_init_mesg_info__
@@ -860,7 +860,7 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
                      << " in bin = " << bin << " is = " << flux_twk << " !!! " << endl;
                 cerr << "Exp/Flux >> Negative value was the result of tweaking BANFF param: " 
                      << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
-                exit(1);
+                std::exit(1);
            }
            flux_spectrum_wght->SetBinContent(bin,flux_twk);
         } // bin
@@ -965,7 +965,7 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
 		 << " in bin = " << bin << " is = " << flux_twk << " !!! " << endl;
 	    cerr << "Exp/Flux >> Negative value was the result of tweaking RHC BANFF param: " 
 		 << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
-	    exit(1);
+	    std::exit(1);
 	  }
 	  flux_spectrum_wght->SetBinContent(bin,flux_twk);
         } // bin
@@ -1100,7 +1100,7 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
 // 		 << " in bin = " << bin << " is = " << flux_twk << " !!! " << endl;
 // 	    cerr << "Exp/Flux >> Negative value was the result of tweaking RHC BANFF param: " 
 // 		 << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
-// 	    exit(1);
+// 	    std::exit(1);
 // 	  }
 // 	  flux_spectrum_wght->SetBinContent(bin,flux_twk);
 //         } // bin
@@ -1375,7 +1375,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
            cerr << "Exp/Flux >> No nominal flux spectrum for particle with PDG = " 
              << nu_pdg << endl;
-           exit(1);
+           std::exit(1);
         }
         break;
      }
@@ -1391,7 +1391,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
            cerr << "Exp/Flux >> No ext/tuned flux spectrum for particle with PDG = " 
              << nu_pdg << endl;
-           exit(1);
+           std::exit(1);
         }
         break;
      }
@@ -1407,7 +1407,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
            cerr << "Exp/Flux >> No fin/tuned flux spectrum for particle with PDG = " 
              << nu_pdg << endl;
-           exit(1);
+           std::exit(1);
         }
         break;
      }
@@ -1423,7 +1423,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
            cerr << "Exp/Flux >> No current flux spectrum for particle with PDG = " 
              << nu_pdg << endl;
-           exit(1);
+           std::exit(1);
         }
         break;
      }
@@ -1439,7 +1439,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
 	  cerr << "Exp/Flux >> No RHC nominal flux spectrum for particle with PDG = " 
 	       << nu_pdg << endl;
-	  exit(1);
+	  std::exit(1);
         }
       break;
     }
@@ -1455,7 +1455,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
 	  cerr << "Exp/Flux >> No RHC ext/tuned flux spectrum for particle with PDG = " 
 	       << nu_pdg << endl;
-	  exit(1);
+	  std::exit(1);
         }
       break;
     }
@@ -1471,7 +1471,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
 	  cerr << "Exp/Flux >> No RHC fin/tuned flux spectrum for particle with PDG = " 
 	       << nu_pdg << endl;
-	  exit(1);
+	  std::exit(1);
         }
       break;
     }
@@ -1487,7 +1487,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
 	  cerr << "Exp/Flux >> No RHC current flux spectrum for particle with PDG = "
 	       << nu_pdg << endl;
-	  exit(1);
+	  std::exit(1);
         }
       break;
     }
@@ -1509,7 +1509,7 @@ TH1D * NuFlux::SuperkFluxExtTuningWghts(int nu_pdg) const
   else
     {
       cerr << "Exp/Flux >> Unknown neutrino PDG value: " << nu_pdg << endl;
-      exit(1);
+      std::exit(1);
     }
   return 0;
 }
@@ -1523,7 +1523,7 @@ TH1D * NuFlux::SuperkRHCFluxExtTuningWghts(int nu_pdg) const
   else
     {
       cerr << "Exp/Flux >> Unknown neutrino PDG value: " << nu_pdg << endl;
-      exit(1);
+      std::exit(1);
     }
   return 0;
 }

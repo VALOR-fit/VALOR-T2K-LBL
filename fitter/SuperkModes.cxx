@@ -47,6 +47,7 @@ int valor::util::SuperkMode2SKMCPdg(valor::conv::SuperkMode_t m)
 
   return 0;
 }
+
 //____________________________________________________________________________
 bool valor::util::IsNuMu(valor::conv::SuperkMode_t  m)
 {
