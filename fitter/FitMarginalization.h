@@ -25,6 +25,7 @@
 #include <TH2F.h>
 #include <TH1D.h> // NEW PRECISION
 #include <TH2D.h> // NEW PRECISION
+#include <TTree.h>
 
 #include "Enumerations.h"
 
@@ -148,6 +149,10 @@ class FitMarginalization
   // NEW SPECTRA MARG
   void WriteLikeToys2Binary(const char *tag); 
   void ReadLikeToysFromBinary(const char *tag);
+  void SetStoreLikeWeights(bool doStoreLikeWeights){fStoreLikeWeights = doStoreLikeWeights;};
+  //
+  // NEW OSC TREE
+  void WriteOscToys2Tree(const char *tag); 
   //
 
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
@@ -514,6 +519,16 @@ class FitMarginalization
   TH1D *fhPriorMH;
   TH1D *fhToyMH;
   //
+
+  
+
+  // NEW OSC TREE
+  bool fStoreLikeWeights;
+  char fnameoscfiletree[200]; // to store toy likelihood from the fit
+  TTree *treetoys;
+  void InitTreeOscToys();
+  //
+
 };
  
 } // valor

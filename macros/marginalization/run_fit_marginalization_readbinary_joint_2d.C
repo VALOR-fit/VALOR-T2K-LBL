@@ -78,7 +78,9 @@ void run_fit_marginalization_readbinary_joint_2d
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
- const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
+ //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
@@ -94,30 +96,52 @@ void run_fit_marginalization_readbinary_joint_2d
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_IH_StatOnly_Mach3T2KonlyRun14/joint_dcp_IH_Mach3T2Konly_StatOnly", // Stat-only (Mach3 T2K only)
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_NH_StatOnly_Mach3T2KReactRun14/joint_dcp_NH_StatOnly",             // Stat-only (Mach3 T2K+react)
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_MH_10kToys/joint_dcp_react_constrall_MH_10kToys",            // Stat+Syst (T2K+react)
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_t2konly_MH_10kToys/joint_dcp_t2konly_constrall_MH_10kToys",        // Stat+Syst (T2K only)
- //const char * infilename = "submit_prova_TemplVArray",
- //const char * infilename = "submit_prova_TemplVArray_Merged",
  //const char * infilename = "submit_prova",
- //const char * infilename = "submit_prova_Merged",
- //const char * infilename = "PROVA_SystAll",
- const char * infilename = "PROVA_SystAll_TemplVArray",
+ //const char * infilename = "submit_prova_sinsqth13Vsdcp",
+ //const char * infilename = "submit_prova_sinsqth13Vsdcp_react_manyfiles",
+ const char * infilename = "submit_prova_sinsqth13Vsdcp_manyfiles",
+ //const char * infilename = "submit_prova_sinsqth23Vsdmsq23",
+ //const char * infilename = "submit_prova_sinsqth23Vsdmsq23_manyfiles",
  
- const int    nfiles               = 1, //1, //12, //6, //201, 21, 1        // # of files to read
+ const int    nfiles               = 4, //4, //1, //201        // # of files to read
 
- const int    NtoysMarg            = 100, //500, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 1, //500, //10000, //1,  // # toys marginalization 
  
+ // const char * freeparname0        = "mixing13",  // free parameter
+ // const double freeparmin0         = 0.015, // minimum value of free parameter
+ // const double freeparmax0         = 0.036, // maxinum value of free parameter
+ // const int    NptScan0            = 81, //201, //21,      // # pts of free parameter to scan
+ // const char * freeparname1        = "deltacp",  // free parameter
+ // const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
+ // const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ // const int    NptScan1            = 51, //201, //21, // 801,          // # pts of free parameter to scan
+ 
+ // const char * freeparname0        = "mixing13",  // free parameter
+ // const double freeparmin0         = 0., // minimum value of free parameter
+ // const double freeparmax0         = 0.113, // maxinum value of free parameter
+ // const int    NptScan0            = 3,       // # pts of free parameter to scan
+ // const char * freeparname1        = "deltacp",  // free parameter
+ // const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
+ // const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ // const int    NptScan1            = 3, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+
  const char * freeparname0        = "mixing13",  // free parameter
  const double freeparmin0         = 0., // minimum value of free parameter
  const double freeparmax0         = 0.113, // maxinum value of free parameter
- const int    NptScan0            = 2, //81, //201, //21,      // # pts of free parameter to scan
-
+ const int    NptScan0            = 81,       // # pts of free parameter to scan
  const char * freeparname1        = "deltacp",  // free parameter
  const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan1            = 2, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
+ const int    NptScan1            = 51, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+
+ // const char * freeparname0        = "mixing23",  // free parameter
+ // const double freeparmin0         = 0.3, // minimum value of free parameter
+ // const double freeparmax0         = 0.7, // maxinum value of free parameter
+ // const int    NptScan0            = 81, //81, //201, //21,      // # pts of free parameter to scan
+ // const char * freeparname1        = "dmsq23",  // free parameter
+ // const double freeparmin1         = 2.E-3,         // minimum value of free parameter
+ // const double freeparmax1         = 3.E-3, // 10., 1         // maxinum value of free parameter
+ // const int    NptScan1            = 21, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
 
  const bool  doMargMH             = false,    // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
@@ -125,9 +149,11 @@ void run_fit_marginalization_readbinary_joint_2d
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = true,
 
+ const bool StoreLikeWeights      = false,
+
  const string teststat            = "rate+shape",   // "rate-only" or "rate+shape",
 
- const bool constrain_reactor     = false
+ const bool constrain_reactor     = true
 )
 {
 
@@ -591,6 +617,8 @@ void run_fit_marginalization_readbinary_joint_2d
     fitmarg->SetTestStatistic(teststat);     // Set Test Statistic ("rate-only" or "rate+shape")
     fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
     
+    // Set if to store full likelihood for each toy (after fitmarg->Init())
+    fitmarg->SetStoreLikeWeights(StoreLikeWeights);
     
     // Set Mass Hierarchy marginalization
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy_marg); // needed to build the right binary file name 
@@ -678,7 +706,9 @@ void run_fit_marginalization_readbinary_joint_2d
     chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);
 
     // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-    fitmarg->WriteLikeToys2Binary(tag);
+    if(StoreLikeWeights){
+      fitmarg->WriteLikeToys2Binary(tag);
+    }
 
     // Get delta chisq
     if(chisqmin==conv::kBadResult) deltachisq0BF = chisqtrue0 - chisqmin;

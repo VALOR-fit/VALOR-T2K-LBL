@@ -664,7 +664,7 @@ void build_marg_toys_joint
 		       conv::kPrior_Sinsq2th12_Used_Mean,
 		       conv::kPrior_Sinsq2th12_Used_RMS
 		       );
-  
+ 
 
   // Make toys and store in binary files
     
@@ -673,6 +673,9 @@ void build_marg_toys_joint
 
   fitmarg->MakeToysMarginalization(tweak_systematics,skexp); 
   fitmarg->WriteToys2Binary(fileid,tag);  
+
+  // Write tree with stored oscillation parameter values 
+  fitmarg->WriteOscToys2Tree(tag);
   
   // Draw prior and toy histograms for marginalized oscillation parameters
  
@@ -767,7 +770,7 @@ void build_marg_toys_joint
 
 
   // Write histograms in output file
-  
+ 
   char name[200];
   sprintf(name,"%s.root",tag);
   TFile *fout = new TFile(name,"RECREATE");

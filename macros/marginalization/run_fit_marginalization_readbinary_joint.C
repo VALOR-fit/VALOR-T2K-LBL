@@ -39,10 +39,10 @@ void run_fit_marginalization_readbinary_joint
  
  ////////////////////////// GENERAL PARAMETERS /////////////////////
 
- const char * tag                      = "fitmarg_joint_PROVA",    /* tag for output file */
+ const char * tag                      = "fit_submit_prova",    /* tag for output file */
 
- int          first_experiment         = 31, //4404, //4739,                       /* */
- int          last_experiment          = 31, //4404, //4739,                       /* */
+ int          first_experiment         = 0, //31, //4404, //4739,                       /* */
+ int          last_experiment          = 0, //31,                        /* */
 
  //const char * xmlfile = "data_run1to4/data_newstruct.xml",
  //const char * xmlfile = "data_run1to6/data.xml",
@@ -51,13 +51,13 @@ void run_fit_marginalization_readbinary_joint
  const char * xmlfile = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/branches/2015_v2.0.0_evolution/inputs/data_run1to6/skdata_run1to6.xml",
  
  //const char * rootfile = "../outputs/test/ciao-0.root",
- //const char * rootfile = "../../inputs/data_run1to4/SKdata_Run14.root ",
+ const char * rootfile = "data_run1to4/SKdata_Run14.root ",
  //const char * rootfile = "data_run1to6/SKdata_Run16.root ",
- const char * rootfile = "../outputs/test/Toys_fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-job96-_0_99.root",
+ //const char * rootfile = "../outputs/test/Toys_fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-job96-_0_99.root",
  
  bool using_xml_file = false,
 
- bool         dotoys               = 0,
+ bool         dotoys               = 1,
 
  // Mach3, T2K Run1-4 + reactors best fit (A)
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -94,8 +94,8 @@ void run_fit_marginalization_readbinary_joint
  //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
+ const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
 
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
@@ -111,25 +111,27 @@ void run_fit_marginalization_readbinary_joint
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
  
  //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsTheta/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
- //const char * infilename = "submit_prova",
+ const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
  //const char * infilename = "submit_prova_TemplVArray_2d",
- const char * infilename = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16",
+ //const char * infilename = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16",
 
- const int    nfiles               = 101, //201, 21, 1        // # of files to read
+ const int    nfiles               = 1, //101, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 10000, //100, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 2, //100, //10000, //1,  // # toys marginalization 
  
  const char * freeparname0        = "deltacp",  // free parameter
  const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
  const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ const int    NptScan0            = 5, //201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
  const bool  doMargMH             = false,     // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
  
  const TString TypeError          = "HESSE-MINOS",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = true,
+
+ const bool StoreLikeWeights      = true,
 
  const string teststat            = "rate+shape"   // "rate-only" or "rate+shape"
 )
@@ -611,7 +613,9 @@ void run_fit_marginalization_readbinary_joint
     fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
     fitmarg->SetTestStatistic(teststat);     // Set Test Statistic ("rate-only" or "rate+shape")
     fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
-    
+
+    // Set if to store full likelihood for each toy (after fitmarg->Init())
+    fitmarg->SetStoreLikeWeights(StoreLikeWeights); 
     
     // Set Mass Hierarchy marginalization
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy_marg); // needed to build the right binary file name 
@@ -835,6 +839,7 @@ void run_fit_marginalization_readbinary_joint
     truepar0 = fparm->InitValue(freepar0);
     if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);	
     chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(input_deltacp,truepar1,skobs_fakedata,true);
+
     
     // Draw Full Chisq
     if(DrawFullChisq){
@@ -847,8 +852,10 @@ void run_fit_marginalization_readbinary_joint
     }
 
     // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-    fitmarg->WriteLikeToys2Binary(tag);
-
+    if(StoreLikeWeights){
+      fitmarg->WriteLikeToys2Binary(tag);
+    }
+    
     // Get delta chisq
     deltachisq0BF = chisqtrue0 - chisqmin;
  
@@ -903,6 +910,21 @@ void run_fit_marginalization_readbinary_joint
          
     // Print output
     
+    cout << std::setprecision(10);
+    cout << endl;
+    cout << "Chisq:" << endl;
+    int npt_chisq_x = hchisq1D_out->GetNbinsX();
+    for(int ix=0;ix<npt_chisq_x;ix++){
+      cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+    }
+    cout << endl;
+    cout << "DeltaChisq:" << endl;
+    cout << endl;
+    for(int ix=0;ix<npt_chisq_x;ix++){
+      cout << hdeltachisq1D_out->GetBinContent(ix+1) << " ";
+    }
+       
+
     cout << endl;
     cout << "Minimum Marginalized Chisq = " << chisqmin << endl;        
     cout << "bestfit 0 = " << bestfit0;

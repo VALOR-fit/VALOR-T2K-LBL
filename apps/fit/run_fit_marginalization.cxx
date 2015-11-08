@@ -101,6 +101,10 @@ int main(int argc, char ** argv)
 {
   TStopwatch sw;
 
+  cout << endl;
+  cout << "CPU time" << endl;
+  cout << endl;
+
   sw.Stop();
   sw.Print();
   sw.Start(0);
@@ -295,6 +299,10 @@ int main(int argc, char ** argv)
   set_init = false;
   util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
 
+  cout << endl;
+  cout << "CPU time" << endl;
+  cout << endl;
+
   sw.Stop();
   sw.Print();
   sw.Start(0);
@@ -435,7 +443,15 @@ int main(int argc, char ** argv)
      cout << "truepar1 = " << truepar1 << endl;
      cout << endl;
 
-  
+     cout << endl;
+     cout << "CPU time" << endl;
+     cout << endl;
+
+     sw.Stop();
+     sw.Print();
+     sw.Start(0);
+
+     
      // // Draw Full Chisq
      // if(runopt->DrawFullChisq()){
      //   cout << endl;
@@ -491,15 +507,6 @@ int main(int argc, char ** argv)
      bestfiterrSym0 = fitmarg->GetParamBestFitErrSym(0);
      bestfiterrSym1 = fitmarg->GetParamBestFitErrSym(1);
      
-
-
-     // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-     if(runopt->StoreLikeWeights()){
-       fitmarg->WriteLikeToys2Binary(runopt->FileTag().c_str());
-     }
-
-
-
      // Get delta chisq
      deltachisq0BF = chisqtrue0 - chisqmin;
      
@@ -661,6 +668,10 @@ int main(int argc, char ** argv)
      //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
      // }
      // cout << endl;
+
+     cout << endl;
+     cout << "CPU time" << endl;
+     cout << endl;
 
      sw.Stop();
      sw.Print();

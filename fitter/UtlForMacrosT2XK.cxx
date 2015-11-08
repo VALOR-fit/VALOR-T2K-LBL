@@ -344,6 +344,9 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->SetTestStatistic(runopt->Teststat()); // Set Test Statistic ("rate-only" or "rate+shape")
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
   
+  // Set if to store full likelihood for each toy (after fitmarg->Init())
+  fitmarg->SetStoreLikeWeights(runopt->StoreLikeWeights()); 
+
   // Set Mass Hierarchy marginalization
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(runopt->Hierarchy_marg()); // needed to build the right binary file name 
   
@@ -449,6 +452,12 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
 
   cout << "Build deltaChisqMarg distribution" << endl;
   fitmarg->BuildDeltaChisqMarg(); 
+
+
+  // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+  if(runopt->StoreLikeWeights()){
+    fitmarg->WriteLikeToys2Binary(runopt->FileTag().c_str());
+  }
 }
 //____________________________________________________________________________
 conv::PhysParamId_t valor::util::GetFreePar(string freeparname){

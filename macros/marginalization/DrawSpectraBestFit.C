@@ -21,76 +21,159 @@ void DrawSpectraBestFit
  const char *tag = "sinsqth13Vsdcp_T2Konly_Run14_Data_NH",
 
  const char * xmlfile      = "data_run1to4/data_newstruct.xml",
- //const char * xmlfile      = "data_run1to6/data.xml",
- const char * rootfile     = "../outputs/test/toymc_prova_joint-0.root",
- const bool using_xml_file = true,
+ const char * rootfile     = "data_run1to6/SKdata_Run16.root",
+ const bool using_xml_file = false,
  int   iexperiment         = 0, // data (or fake data) event to show                    
  
- //const char * config_file  = "analysis_configuration_test_theta.xml",
- //const char * config_file  = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- const char * config_file  = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
+ const char * config_file  = "analysis_configuration_test_theta_elike.xml",
 
  const char * sk_sample    = "1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
  bool SystMode = 1,  // 0 --> GetMode, 1 --> GetMean
- bool WeightMode = 0, // 0 --> All weights are 1, 1 --> Likelihoods are weights
+ bool WeightMode = 1, // 0 --> All weights are 1, 1 --> Likelihoods are weights
  
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * likeinfilename = "/mnt/lnec/davides/VALOR/results/fit/liketoy_fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Data_NH_toy10000_x_oscpar81_oscpar51_MHNH.bin",
+ //const char * likeinfilename = "liketoy_fit_submit_prova_toy3_x_oscpar201_oscpar1_MHNH.bin",
+ const char * likeinfilename = "liketoy_fit_submit_prova_toy2_x_oscpar5_oscpar1_MHNH.bin",
 
- const double InputPar0 = 0.0409625,  // Input value of parameter 0 
- const double InputPar1 = 1.25664, // Input value of parameter 1
+ const double InputPar0 = -1.570796327, //-1.759291886,  // Input value of parameter 0 
+ const double InputPar1 = 0., // Input value of parameter 1
 
  const char * fit_param_list        = "nuosc3f+nuisance", // dcp
 
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_NH_10kToys_FixMEC/joint_sinsqth13_Vs_dcp_t2konly_constrall_NH_10kToys_FixMEC",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_IH_10kToys_FixMEC/joint_sinsqth13_Vs_dcp_t2konly_constrall_IH_10kToys_FixMEC",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_NH_10kToys_StatOnly/joint_sinsqth13_Vs_dcp_t2konly_constrall_NH_1kToys_StatOnly",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konly_IH_10kToys_StatOnly/joint_sinsqth13_Vs_dcp_t2konly_constrall_IH_1kToys_StatOnly",
- const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konlyrange_NH_10kToys_NEWTOYS/joint_dcp_t2konly_constrall_NH_10kToys",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_t2konlyrange_IH_10kToys_NEWTOYS/joint_dcp_t2konly_constrall_IH_10kToys",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_reactrange_NH_10kToys_NEWTOYS/joint_sinsqth13Vsdcp_t2kreact_constrall_NH_10kToys",
- //const char * infilename = "/mnt/lnec/davides/VALOR/results/joint_sinsqth13_Vs_dcp_reactrange_IH_10kToys_NEWTOYS/joint_sinsqth13Vsdcp_t2kreact_constrall_IH_10kToys",
+ const char * infilename = "submit_prova",
+ 
+ const int    nfiles               = 1, //201, // 1         // # of files to read
+ //const int    nfiles               = 546, //201, // 1         // # of files to read
 
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_1kToys_StatOnly/joint_dcp_t2kreact_constrall_NH_1kToys_StatOnly",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_1kToys_StatOnly/joint_dcp_t2kreact_constrall_IH_1kToys_StatOnly",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_1kToys_OldJoint_StatOnly/joint_dcp_t2kreact_constrall_NH_1kToys_StatOnly",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_1kToys_OldJoint_StatOnly/joint_dcp_t2kreact_constrall_IH_1kToys_StatOnly",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_dcp_t2kreact_constrall_NH_10kToys",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_dcp_t2kreact_constrall_IH_10kToys",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_NH_10kToys_OldJoint",
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_OldJoint/joint_dcp_t2kreact_constrall_IH_10kToys_OldJoint",
- //const char * infilename = "submit_prova",
- //const char * infilename = "PROVA_SystAll",
+ const int    NtoysMarg            = 2, //10000,   // # toys marginalization 
  
- //const int    nfiles               = 201, //201, // 1         // # of files to read
- const int    nfiles               = 546, //201, // 1         // # of files to read
-
- const int    NtoysMarg            = 10000,   // # toys marginalization 
+ // const char * freeparname0        = "mixing13",  // free parameter
+ // const double freeparmin0         = 0., // minimum value of free parameter
+ // const double freeparmax0         = 0.113, // maxinum value of free parameter
+ // const int    NptScan0            = 81, //81, //201, //21,      // # pts of free parameter to scan
+ // const char * freeparname1        = "deltacp",  // free parameter
+ // const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
+ // const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ // const int    NptScan1            = 51, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
  
- const char * freeparname0        = "mixing13",  // free parameter
- const double freeparmin0         = 0., // minimum value of free parameter
- const double freeparmax0         = 0.113, // maxinum value of free parameter
- const int    NptScan0            = 81, //81, //201, //21,      // # pts of free parameter to scan
- const char * freeparname1        = "deltacp",  // free parameter
- const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
- const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan1            = 51, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
- 
- // const char * freeparname0        = "deltacp",  // free parameter
- // const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
- // const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- // const int    NptScan0            = 201, //201, // 801, 2          // # pts of free parameter to scan
- // const char * freeparname1        = "",  // free parameter
- // const double freeparmin1         = 0., // minimum value of free parameter
- // const double freeparmax1         = 0., // maxinum value of free parameter
- // const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
+ const char * freeparname0        = "deltacp",  // free parameter
+ const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+ const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ const int    NptScan0            = 5, //201, //201, // 801, 2          // # pts of free parameter to scan
+ const char * freeparname1        = "",  // free parameter
+ const double freeparmin1         = 0., // minimum value of free parameter
+ const double freeparmax1         = 0., // maxinum value of free parameter
+ const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
  const bool  doMargMH             = false,    // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
+
+ //const char * fileosctoys         = "submit_prova_osctoys_toy3_x_oscpar201_oscpar1_MHNH.root"
+ const char * fileosctoys         = "submit_prova_osctoys_toy2_x_oscpar5_oscpar1_MHNH.root"
  )
 {
+
+  FitParamList * fparm_osc  = util::NamedParameterList("nuosc3f"); 
+
+  TFile *filetreein = new TFile(fileosctoys,"READ");
+  if(!filetreein->IsOpen()){
+    cerr << endl;
+    cerr << "File " << infilename << " is not open" << endl;
+    cerr << endl;
+  }
+  TTree *treein = (TTree*)filetreein->Get("treemargtoys");
+  if(!treein){
+    cerr << endl;
+    cerr << "Tree object is not empty" << endl;
+    cerr << endl;
+  }
+
+  treein->SetBranchAddress("best_fit_params",&fparm_osc);
+
+  int Nentries = treein->GetEntries();
+  cout << "Nentries = " << Nentries << endl;
+
+  if(Nentries!=NtoysMarg){
+    cerr << endl;
+    cerr << "Nentries osc parameter tree = " << Nentries << endl;
+    cerr << "NtoysMarg of marg binary files = " << NtoysMarg << endl;
+    cerr << "They must be identical!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  double BFProf_Mix13=0.;
+  double BFProf_Mix23=0.;
+  double BFProf_Mix12=0.;
+  double BFProf_Dm23=0.;
+  double BFProf_Dm12=0.;
+  double BFProf_DeltaCP=0.;
+
+  double LikeMax=0.;
+ 
+  double BFMarg_Mix13=0.;
+  double BFMarg_Mix23=0.;
+  double BFMarg_Mix12=0.;
+  double BFMarg_Dm23=0.;
+  double BFMarg_Dm12=0.;
+  double BFMarg_DeltaCP=0.;
+
+  double *ToyMix13   = new double[NtoysMarg];
+  double *ToyMix23   = new double[NtoysMarg];
+  double *ToyMix12   = new double[NtoysMarg];
+  double *ToyDm23    = new double[NtoysMarg];
+  double *ToyDm12    = new double[NtoysMarg];
+  double *ToyDeltaCP = new double[NtoysMarg];
+
+  for(int ientry=0;ientry<Nentries;ientry++){
+    treein->GetEntry(ientry);
+    
+    cout << endl;
+    cout << "Toy " << ientry << endl;
+
+    //cout << *fparm_osc << endl;
+    
+    int np = fparm_osc->GetNumberParameters();
+    for(int ip = 0; ip < np; ip++) {
+      conv::PhysParamId_t p = fparm_osc->WhichParam(ip);
+      
+      //cout << "Param: " << util::AsStringCompact(p) << " ";
+      //if(util::IsSystematic(p)) cout << " --> Systematic "; // not oscillation parameters 
+      //if(fparm_osc->IsFixed(p)) cout << " --> Fixed "; 
+      //if(fparm_osc->IsNuisance(p)) cout << " --> Nuisance ";
+      //cout << " --> " << fparm_osc->CurrValue(p);
+      //cout << endl;
+
+      if(util::IsSystematic(p)) continue; // not oscillation parameters 
+      if(fparm_osc->IsFixed(p)) continue; 
+      if(fparm_osc->IsNuisance(p)) continue;
+
+      cout << "Param: " << util::AsStringCompact(p) << " = "
+	   << fparm_osc->CurrValue(p)
+	   << endl;
+
+      if     (p==kPhypMixing13)  ToyMix13[ientry] = fparm_osc->CurrValue(p); 
+      else if(p==kPhypMixing23)  ToyMix23[ientry] = fparm_osc->CurrValue(p); 
+      else if(p==kPhypMixing12)  ToyMix12[ientry] = fparm_osc->CurrValue(p); 
+      else if(p==kPhypDm23sq)    ToyDm23[ientry]  = fparm_osc->CurrValue(p); 
+      else if(p==kPhypDm12sq)    ToyDm12[ientry]  = fparm_osc->CurrValue(p); 
+      else if(p==kPhypCPV)       ToyDm12[ientry]  = fparm_osc->CurrValue(p); 
+
+      else if(p==kPhypMixing13Bar)  ToyMix13[ientry] = fparm_osc->CurrValue(p); 
+      else if(p==kPhypMixing23Bar)  ToyMix23[ientry] = fparm_osc->CurrValue(p); 
+      else if(p==kPhypMixing12Bar)  ToyMix12[ientry] = fparm_osc->CurrValue(p); 
+      else if(p==kPhypDm23sqBar)    ToyDm23[ientry]  = fparm_osc->CurrValue(p); 
+      else if(p==kPhypDm12sqBar)    ToyDm12[ientry]  = fparm_osc->CurrValue(p); 
+      else if(p==kPhypCPVBar)       ToyDm12[ientry]  = fparm_osc->CurrValue(p); 
+
+      //if(util::IsSystematic(p)) continue; // not oscillation parameters 
+    }
+    
+  }
+  
+  
   FileStat_t dummy;
   
   TString opt(fit_param_list); 
@@ -238,7 +321,10 @@ void DrawSpectraBestFit
   fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
-  
+
+  // Set if to store full likelihood for each toy (after fitmarg->Init())
+  fitmarg->SetStoreLikeWeights(true); 
+   
   // Set Mass Hierarchy marginalization
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy_marg); // needed to build the right binary file name 
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
@@ -269,6 +355,7 @@ void DrawSpectraBestFit
   
   // Declare the histograms
   const int n_ereco_bins = util::NumErecoBins(s);  
+  const int n_q2_bins = util::NumQ2Bins(s);  
   TH1F* h_marg_toy;
   TH1D *h_bestfit_marg = new TH1D("h_bestfit_marg","h_bestfit_marg",util::NumErecoBins(s),util::ErecoBinEdges(s));
   
@@ -320,24 +407,37 @@ void DrawSpectraBestFit
   
   double *LikeToy = new double[NtoysMarg];
   double SumLike = 0.;
-
+  
   // Loop over marginalization toys
    
   for(int itoy=0;itoy<NtoysMarg;itoy++){
-
+    
 #ifndef __USE_2D_TEMPLATES__
     h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
 #else
-    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto2D(s,itoy,ipar0,ipar1)->ProjectionY();
+    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto2D(s,itoy,ipar0,ipar1)->ProjectionY()->Clone("h_marg_toy");
 #endif
+
     
-    for(int i=1;i<=util::NumErecoBins(s);i++) NentriesErecoToy[i-1][itoy] = h_marg_toy->GetBinContent(i);
-    
+    for(int i=1;i<=util::NumErecoBins(s);i++){ 
+      NentriesErecoToy[i-1][itoy] = h_marg_toy->GetBinContent(i);
+      //cout << h_marg_toy->GetBinCenter(i) << endl;
+    }
+
     if(fitmarg->IsFit2D())
       LikeToy[itoy] = fitmarg->GetLikeToyRead(InputPar0,truepar1,itoy,true); 
     else
       LikeToy[itoy] = fitmarg->GetLikeToyRead(InputPar0,InputPar1,itoy,true); 
-    //cout << "toy " << itoy << " - like = " << like << endl;
+    
+    //cout << "toy " << itoy << " - like = " <<  LikeToy[itoy] << endl;
+
+    if(LikeToy[itoy] < 0){
+      cerr << endl;
+      cerr << "Marginalization toy likelihood is negative!" << endl;
+      cerr << "Toy " << itoy << " --> Likelihood = " << LikeToy[itoy] << endl;
+      cerr << endl;
+      exit(1);
+    }
 
     SumLike += LikeToy[itoy];
 
@@ -367,7 +467,7 @@ void DrawSpectraBestFit
     // histograms must contain the first and last entries 
     if(lowedge[ibin]==0.) lowedge[ibin] -= 1.E-3;
     upedge[ibin] += 1.E-3;
-    cout << "bin # " << ibin << " --> lowedge = " << lowedge[ibin] << " - upedge = " << upedge[ibin] << endl;
+    //cout << "bin # " << ibin << " --> lowedge = " << lowedge[ibin] << " - upedge = " << upedge[ibin] << endl;
     
   } // loop over Ereco bins
   
@@ -385,11 +485,58 @@ void DrawSpectraBestFit
   for(int i=0;i<util::NumErecoBins(s);i++){
     for(int itoy=0;itoy<NtoysMarg;itoy++){
       double weight = LikeToy[itoy]/SumLike;
-      if(WeightMode) weight = 1.;
+      if(!WeightMode) weight = 1.;
       h_bin[i]->Fill(NentriesErecoToy[i][itoy],weight);
     }
   }
     
+  // Get best-fit oscillation parameters
+  for(int itoy=0;itoy<NtoysMarg;itoy++){
+    double weight = LikeToy[itoy]/SumLike;
+    if(!WeightMode) weight = 1.;
+
+    // Take best-fit of marginalized osc params with marginalization
+    BFMarg_Mix13   += ToyMix13[itoy]   * weight;
+    BFMarg_Mix23   += ToyMix23[itoy]   * weight;
+    BFMarg_Mix12   += ToyMix12[itoy]   * weight;
+    BFMarg_Dm23    += ToyDm23[itoy]    * weight;
+    BFMarg_Dm12    += ToyDm12[itoy]    * weight;
+    BFMarg_DeltaCP += ToyDeltaCP[itoy] * weight;
+
+    // Take best-fit of marginalized osc params with profiling (approximation)
+    if(LikeMax<LikeToy[itoy]){ 
+      BFProf_Mix13   = ToyMix13[itoy]; 
+      BFProf_Mix23   = ToyMix23[itoy]; 
+      BFProf_Mix12   = ToyMix12[itoy]; 
+      BFProf_Dm23    = ToyDm23[itoy]; 
+      BFProf_Dm12    = ToyDm12[itoy]; 
+      BFProf_DeltaCP = ToyDeltaCP[itoy]; 
+      LikeMax        = LikeToy[itoy];
+    }
+    
+    // for(int i=0;i<util::NumErecoBins(s);i++){
+    //   double NTotEvt = 0;
+    //   #ifndef __USE_2D_TEMPLATES__
+    //   NTotEvt = (double)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1)->Integral();
+    //   #else
+    //   NTotEvt = (double)fitmarg->GetToyMargHisto2D(s,itoy,ipar0,ipar1)->Integral();
+    //   #endif
+
+    //   cout << util::AsStringCompact(s) 
+    // 	   << " --> # of events = " << NTotEvt  
+    // 	   << endl;
+    // }
+    // cout << " - Like = " << LikeToy[itoy] << endl;
+    // cout << " - Mix13   = " << ToyMix13[itoy]   << endl;
+    // cout << " - Mix23   = " << ToyMix23[itoy]   << endl;
+    // cout << " - Mix12   = " << ToyMix12[itoy]   << endl;
+    // cout << " - Dm23    = " << ToyDm23[itoy]    << endl;
+    // cout << " - Dm12    = " << ToyDm12[itoy]    << endl;
+    // cout << " - DeltaCP = " << ToyDeltaCP[itoy] << endl;
+    // cout << endl;
+
+  }
+
   // Find the mode/mean of each Ereco bin
   
   double *bin_mode = new double[n_ereco_bins];
@@ -403,10 +550,6 @@ void DrawSpectraBestFit
       cout << "bin # " << iereco << " --> Integral = " << h_bin[iereco]->Integral()
 	   << " - Mean = " << y << " - RMS = " << ey << endl;
       TF1 *f1 = new TF1("f1","gaus", y-ey,y+ey);  
-      //TF1 *f1 = new TF1("f1","pol2", y-ey,y+ey);  
-      //TF1 *f1 = new TF1("f1","landau",y-ey,y+ey);  
-      //TF1 *f1 = new TF1("f1","gaus+landau",h_bin[iereco]->GetXaxis()->GetBinLowEdge(1),h_bin[iereco]->GetXaxis()->GetBinUpEdge(h_bin[iereco]->GetNbinsX()));  
-      //TF1 *f1 = new TF1("f1","gaus",h_bin[iereco]->GetXaxis()->GetBinLowEdge(1),h_bin[iereco]->GetXaxis()->GetBinUpEdge(h_bin[iereco]->GetNbinsX()));        
       TFitResultPtr r = h_bin[iereco]->Fit("f1","S","goff",y-ey,y+ey);       
       bin_mode[iereco] = r->Parameter(1);
       cout << bin_mode[iereco] << " - ";
@@ -421,7 +564,7 @@ void DrawSpectraBestFit
     
     h_bestfit_marg->SetBinContent(iereco+1,bin_mode[iereco]);
   
-    cout << "# of events in Ereco " << iereco << " = " << bin_mode[iereco] << endl;
+    //cout << "# of events in Ereco " << iereco << " = " << bin_mode[iereco] << endl;
   }
   
   // Draw bin histograms
@@ -437,7 +580,7 @@ void DrawSpectraBestFit
 #ifndef __USE_2D_TEMPLATES__
   hErecoToy = (TH1D*)skobs_fakedata->ErecoSpectrum(s)->Clone("hErecoToy");
 #else
-  hErecoToy = (TH1D*)skobs_fakedata->TwoDSpectrum(s)->ProjectionX()->Clone("hErecoToy");
+  hErecoToy = (TH1D*)skobs_fakedata->TwoDSpectrum(s)->ProjectionY()->Clone("hErecoToy");
 #endif  
   
   // Draw best-fit histogram marginalizing the systematics
@@ -445,6 +588,114 @@ void DrawSpectraBestFit
   hErecoToy->Draw("pe");
   h_bestfit_marg->Draw("same");
 
+
+
+
+
+  // Draw best-fit oscillation parameters
+  
+  TCanvas *c_bestfit_mix13 = new TCanvas("c_bestfit_mix13","c_bestfit_mix13");
+  fparm_osc->GetToyHisto(conv::kPhypMixing13)->DrawClone();
+  TLine *lMargMix13 = new TLine(BFMarg_Mix13,0,BFMarg_Mix13,fparm_osc->GetToyHisto(conv::kPhypMixing13)->GetMaximum());
+  lMargMix13->SetLineColor(kRed);
+  lMargMix13->SetLineWidth(2);
+  lMargMix13->Draw();
+  TLine *lProfMix13 = new TLine(BFProf_Mix13,0,BFProf_Mix13,fparm_osc->GetToyHisto(conv::kPhypMixing13)->GetMaximum());
+  lProfMix13->SetLineColor(kBlue);
+  lProfMix13->SetLineWidth(2);
+  lProfMix13->Draw();
+  
+  TLegend *legoscpar = new TLegend(0.6, 0.4, 0.9, 0.9);  
+  legoscpar->SetFillColor(0);
+  legoscpar->SetBorderSize(0);
+  legoscpar->AddEntry(lMargMix13,"Marginalized","l");
+  legoscpar->AddEntry(lProfMix13,"Profiled","l");
+  legoscpar->Draw();
+
+  TCanvas *c_bestfit_mix23 = new TCanvas("c_bestfit_mix23","c_bestfit_mix23");
+  fparm_osc->GetToyHisto(conv::kPhypMixing23)->DrawClone();
+  TLine *lMargMix23 = new TLine(BFMarg_Mix23,0,BFMarg_Mix23,fparm_osc->GetToyHisto(conv::kPhypMixing23)->GetMaximum());
+  lMargMix23->SetLineColor(kRed);
+  lMargMix23->SetLineWidth(2);
+  lMargMix23->Draw();
+  TLine *lProfMix23 = new TLine(BFProf_Mix23,0,BFProf_Mix23,fparm_osc->GetToyHisto(conv::kPhypMixing23)->GetMaximum());
+  lProfMix23->SetLineColor(kBlue);
+  lProfMix23->SetLineWidth(2);
+  lProfMix23->Draw();
+  legoscpar->Draw();
+
+  TCanvas *c_bestfit_mix12 = new TCanvas("c_bestfit_mix12","c_bestfit_mix12");
+  fparm_osc->GetToyHisto(conv::kPhypMixing12)->DrawClone();
+  TLine *lMargMix12 = new TLine(BFMarg_Mix12,0,BFMarg_Mix12,fparm_osc->GetToyHisto(conv::kPhypMixing12)->GetMaximum());
+  lMargMix12->SetLineColor(kRed);
+  lMargMix12->SetLineWidth(2);
+  lMargMix12->Draw();
+  TLine *lProfMix12 = new TLine(BFProf_Mix12,0,BFProf_Mix12,fparm_osc->GetToyHisto(conv::kPhypMixing12)->GetMaximum());
+  lProfMix12->SetLineColor(kBlue);
+  lProfMix12->SetLineWidth(2);
+  lProfMix12->Draw();
+  legoscpar->Draw();
+
+  TCanvas *c_bestfit_dm23 = new TCanvas("c_bestfit_dm23","c_bestfit_dm23");
+  fparm_osc->GetToyHisto(conv::kPhypDm23sq)->DrawClone();
+  TLine *lMargDm23 = new TLine(BFMarg_Dm23,0,BFMarg_Dm23,fparm_osc->GetToyHisto(conv::kPhypDm23sq)->GetMaximum());
+  lMargDm23->SetLineColor(kRed);
+  lMargDm23->SetLineWidth(2);
+  lMargDm23->Draw();
+  TLine *lProfDm23 = new TLine(BFProf_Dm23,0,BFProf_Dm23,fparm_osc->GetToyHisto(conv::kPhypDm23sq)->GetMaximum());
+  lProfDm23->SetLineColor(kBlue);
+  lProfDm23->SetLineWidth(2);
+  lProfDm23->Draw();
+  legoscpar->Draw();
+
+  TCanvas *c_bestfit_dm12 = new TCanvas("c_bestfit_dm12","c_bestfit_dm12");
+  fparm_osc->GetToyHisto(conv::kPhypDm12sq)->DrawClone();
+  TLine *lMargDm12 = new TLine(BFMarg_Dm12,0,BFMarg_Dm12,fparm_osc->GetToyHisto(conv::kPhypDm12sq)->GetMaximum());
+  lMargDm12->SetLineColor(kRed);
+  lMargDm12->SetLineWidth(2);
+  lMargDm12->Draw();
+  TLine *lProfDm12 = new TLine(BFProf_Dm12,0,BFProf_Dm12,fparm_osc->GetToyHisto(conv::kPhypDm12sq)->GetMaximum());
+  lProfDm12->SetLineColor(kBlue);
+  lProfDm12->SetLineWidth(2);
+  lProfDm12->Draw();
+  legoscpar->Draw();
+
+  TCanvas *c_bestfit_dcp = new TCanvas("c_bestfit_dcp","c_bestfit_dcp");
+  fparm_osc->GetToyHisto(conv::kPhypCPV)->DrawClone();
+  TLine *lMargDcp = new TLine(BFMarg_DeltaCP,0,BFMarg_DeltaCP,fparm_osc->GetToyHisto(conv::kPhypCPV)->GetMaximum());
+  lMargDcp->SetLineColor(kRed);
+  lMargDcp->SetLineWidth(2);
+  lMargDcp->Draw();
+  TLine *lProfDcp = new TLine(BFProf_DeltaCP,0,BFProf_DeltaCP,fparm_osc->GetToyHisto(conv::kPhypCPV)->GetMaximum());
+  lProfDcp->SetLineColor(kBlue);
+  lProfDcp->SetLineWidth(2);
+  lProfDcp->Draw();
+  legoscpar->Draw();
+
+
+  // Print resutls
+  
+  cout << endl;
+  cout << "Best-fit of marginalized oscillation parameters w/ marginalization" << endl;
+  cout << "(weighted average of osc params with likelihoods from all marginalization toys):" << endl;
+  cout << " - Mix13   = " << BFMarg_Mix13 << endl;
+  cout << " - Mix23   = " << BFMarg_Mix23 << endl;
+  cout << " - Mix12   = " << BFMarg_Mix12 << endl;
+  cout << " - Dm23    = " << BFMarg_Dm23 << endl;
+  cout << " - Dm12    = " << BFMarg_Dm12 << endl;
+  cout << " - DeltaCP = " << BFMarg_DeltaCP << endl;
+  cout << endl;
+  cout << "Best-fit of marginalized oscillation parameters w/ profiling" << endl;
+  cout << "(w/ highest likelihood from all marginalization toys):" << endl;
+  cout << " - Mix13   = " << BFProf_Mix13 << endl;
+  cout << " - Mix23   = " << BFProf_Mix23 << endl;
+  cout << " - Mix12   = " << BFProf_Mix12 << endl;
+  cout << " - Dm23    = " << BFProf_Dm23 << endl;
+  cout << " - Dm12    = " << BFProf_Dm12 << endl;
+  cout << " - DeltaCP = " << BFProf_DeltaCP << endl;
+  cout << endl;
+
+ 
   // Store best-fit spectrum in a file
   char name[200];
   sprintf(name,"spectrum_bestfit_%s.root",tag);
