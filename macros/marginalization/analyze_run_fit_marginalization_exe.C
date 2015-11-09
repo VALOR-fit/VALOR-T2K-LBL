@@ -28,11 +28,43 @@ const double CLfrac_95CL   = 0.95;  // 95% CL
 
 void analyze_run_fit_marginalization_exe
 ( 
+ string namepar0 = "sin^{2} #theta_{13}",
+ string namepar1 = "#delta_{CP}",
+
+ bool UseFullChisqFit = true,
+ bool CheckSingleToy = false,
+ const int ToySel = 263, //488,
+
+ // Current POT
  //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/coverage_result/fit_submit_fitmarg_joint_dcp_nexp_10_-1.601_-999.000-job_ALL.root"
  //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/0/fit_submit_fitmarg_joint_dcp_nexp_500_0.000_-999.000-All.root"
  //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/m1/fit_submit_fitmarg_joint_dcp_nexp_500_-1.000_-999.000-All.root"
- char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/p2/fit_submit_fitmarg_joint_dcp_nexp_500_2.000_-999.000-All.root" 
-)
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/p2/fit_submit_fitmarg_joint_dcp_nexp_500_2.000_-999.000-All.root" 
+
+ // High POT
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/m1/fit_submit_fitmarg_joint_dcp_nexp_100_-1.000_-999.000-All.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/0/fit_submit_fitmarg_joint_dcp_nexp_100_0.000_-999.000-All.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/p2/fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-All.root"
+ 
+ // CHECKS
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/p2_NEW/noerror/fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-All.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/p2_NEW/minos/fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-All.root"
+ 
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/fit_fitmarg_joint_dcp_nexp_25_-1.000_-999.000-All.root "
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/fit_fitmarg_joint_dcp_nexp_25_2.000_-999.000-All.root "
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/fit_fitmarg_joint_dcp_nexp_25_0.000_-999.000-All.root "
+
+ // My
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_joint_dcp_nexp_10_-1.000_-999.000-All.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_joint_dcp_nexp_10_0.000_-999.000-All.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_joint_dcp_nexp_10_2.000_-999.000-All.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_sinsqth13Vsdcp_t2konly_nexp_1_0.020_-1.000-All.root"
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_sinsqth13Vsdcp_t2konly_nexp_1_0.022_1.500-All.root"
+ char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_sinsqth13Vsdcp_t2konly_nexp_1_0.028_0.000-All.root"
+
+ // Raj
+ //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/raj/m1/fit_submit_fitmarg_joint_dcp_nexp_500_-1.000_-999.000-All_OLD.root"
+  )
 {
   char name[200];
   FitParamList * fparm  = util::NamedParameterList("nuosc3f"); 
@@ -153,7 +185,7 @@ void analyze_run_fit_marginalization_exe
   TH2F *hbestfitFullChisq_2D = new TH2F("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,0.3,201,-3.15,3.15);
   TH2F *hbestfit_2D = new TH2F("hbestfit_2D","hbestfit_2D",201,0,0.3,201,-3.15,3.15);
   TH1D *hdeltachisqDiff = new TH1D("hdeltachisqDiff","hdeltachisqDiff",100,-5,20);
-  TH1D *hchisqminDiff = new TH1D("hchisqminDiff","hchisqminDiff",100,-0.3,0.3);
+  TH1D *hchisqminDiff = new TH1D("hchisqminDiff","hchisqminDiff",100,-0.3,3.3);
   TH1D *hchisqmin = new TH1D("hchisqmin","hchisqmin",100,-10,100);
   TH1D *hchisqminFullChisq = new TH1D("hchisqminFullChisq","hchisqminFullChisq",100,-10,100);
   TH1D *hErrMINOSneg0 = new TH1D("hErrMINOSneg0","hErrMINOSneg0",1000,err_minos_par0[0],err_minos_par0[1]);
@@ -198,35 +230,54 @@ void analyze_run_fit_marginalization_exe
   int NdiffChisq = 0;
   
   int Nentries = treein->GetEntries();
+  
+  cout << "Nentries = " << Nentries << endl;
+
+  //int NinPROVA = 0;
+
+
+  
   for(int ientry=0;ientry<Nentries;ientry++){
+
+    if(CheckSingleToy){ 
+      Nentries = 1;
+      ientry = ToySel;
+    }
 
     treein->GetEntry(ientry);
  
     // Find bestfit chisq and true chisq
     
+    //cout << *fparm << endl;
+    
     int bin_bestfit0 = hdeltachisq1D_out->FindBin(bestfit0);
     double deltachisq_bestfit0 = hdeltachisq1D_out->GetBinContent(bin_bestfit0);
 
     int bin_truepar0 = hdeltachisq1D_out->FindBin(truepar0);
-    double deltachisq_truepar0 = hdeltachisq1D_out->GetBinContent(bin_truepar0);
-        
+    double deltachisq_truepar0 = hdeltachisq1D_out->GetBinContent(bin_truepar0);        
 
+    double deltachisq0BF_used = conv::kBadResult;
+    if(!UseFullChisqFit) deltachisq0BF_used = chisqtrue0-chisqmin;
+    else                 deltachisq0BF_used = chisqtrue0-chisqminFullChisq;
+    
     // // Print chisq
     // int npt_chisq_x = hchisq1D_out->GetNbinsX();
     // for(int ix=0;ix<npt_chisq_x;ix++){
     //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
     // }
     // cout << endl;
-    // cout << "truepar0 = " << truepar0 << endl;
-    // cout << "bestfit0 = " << bestfit0 << endl;
-    // cout << "deltachisq = " << deltachisq_truepar0 - deltachisq_bestfit0 << endl;
-    // cout << "deltachisq0BF (tree) = " << deltachisq0BF << endl;
-    // cout << endl;
+    //cout << "truepar0 = " << truepar0 << endl;
+    //cout << "bestfit0 = " << bestfit0 << endl;
+    //cout << "deltachisq (fit) = " << chisqtrue0-chisqmin << endl;
+    //cout << "deltachisq (global) = " << chisqtrue0-chisqminFullChisq << endl;
+    //cout << "deltachisq0BF (tree) = " << deltachisq0BF << endl;
+    //cout << endl;
 
     // Fill deltaChisq histogram
-    hdeltachisqDiff->Fill(deltachisq0BF);
+    
+    hdeltachisqDiff->Fill(deltachisq0BF_used);
 
-    myvector.push_back(deltachisq0BF);
+    myvector.push_back(deltachisq0BF_used);
 
     // Minimized chisq distribution
     hchisqmin->Fill(chisqmin);
@@ -243,13 +294,37 @@ void analyze_run_fit_marginalization_exe
     hbestfitFullChisq_1D->Fill(bestfitFullChisq0);
 
     // Fill variables for coverage study
-    if(deltachisq0BF <= GetConstChisq(IsFit2D,"1sigma") ) Nin_1sigma++;
-    if(deltachisq0BF <= GetConstChisq(IsFit2D,"90CL")   ) Nin_90CL++;
-    if(deltachisq0BF <= GetConstChisq(IsFit2D,"95CL")   ) Nin_95CL++;
-    if(deltachisq0BF <= GetConstChisq(IsFit2D,"2sigma") ) Nin_2sigma++;
-        
+    if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"1sigma") ) Nin_1sigma++;
+    if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"90CL")   ) Nin_90CL++;
+    if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"95CL")   ) Nin_95CL++;
+    if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"2sigma") ) Nin_2sigma++;
+
+    //if(deltachisq0BF_used <= 1.6212065) NinPROVA++;
+
     // Fill histograms for pull validation and errors
        
+    // // cout << endl;
+    // // cout << "deltaCP:" << endl;
+    // // cout << "bestfit0 = " << bestfit0 << endl;
+    // // cout << "truepar0 = " << truepar0 << endl;
+    // // cout << "bestfiterrNeg0 = " << bestfiterrNeg0 << endl;
+    // // cout << "bestfiterrPos0 = " << bestfiterrPos0 << endl;
+ 
+    // bestfiterrNeg0 = TMath::Abs( TMath::Sin(bestfit0-bestfiterrNeg0) - TMath::Sin(bestfit0) );
+    // //if( (TMath::Sin(bestfit0)-bestfiterrNeg0) < -1. ) bestfiterrNeg0 = TMath::Sin(bestfit0)+1.;
+    
+    // bestfiterrPos0 = TMath::Abs( TMath::Sin(bestfit0+bestfiterrPos0) - TMath::Sin(bestfit0) );
+    // if( (TMath::Sin(bestfit0)+bestfiterrPos0) > +1. ) bestfiterrPos0 = 1.-TMath::Sin(bestfit0);
+    
+    // bestfit0 = TMath::Sin(bestfit0);
+    // truepar0 = TMath::Sin(truepar0);
+   
+    // // cout << "sin(deltaCP):" << endl;
+    // // cout << "bestfit0 = " << bestfit0 << endl;
+    // // cout << "truepar0 = " << truepar0 << endl;
+    // // cout << "bestfiterrNeg0 = " << bestfiterrNeg0 << endl;
+    // // cout << "bestfiterrPos0 = " << bestfiterrPos0 << endl;
+    
     hErrMINOSneg0->Fill(bestfiterrNeg0);
     hErrMINOSpos0->Fill(bestfiterrPos0);
     hErrMINOSneg1->Fill(bestfiterrNeg1);
@@ -308,20 +383,16 @@ void analyze_run_fit_marginalization_exe
     
   } // end loop over tree entries
 
-  
   // Calculate coverage
-
   double FracIn_1sigma = (double) Nin_1sigma / (double) Nentries;
   double FracIn_90CL   = (double) Nin_90CL   / (double) Nentries;
   double FracIn_95CL   = (double) Nin_95CL   / (double) Nentries;
   double FracIn_2sigma = (double) Nin_2sigma / (double) Nentries;  
   
   // Calculate critical value
-
   double FCCritVal_1sigma = CalcDLcrit(myvector,CLfrac_1sigma*100.,0.); 
   double FCCritVal_90CL   = CalcDLcrit(myvector,CLfrac_90CL*100.,0.); 
   double FCCritVal_95CL   = CalcDLcrit(myvector,CLfrac_95CL*100.,0.); 
-
   
   // Get pulls
 
@@ -368,38 +439,55 @@ void analyze_run_fit_marginalization_exe
 
   TCanvas *cbestfit = new TCanvas("hbestfit","hbestfit");
   if(IsFit2D){
-    hbestfit_2D->GetYaxis()->SetTitle("#delta_{CP}");
-    hbestfit_2D->GetXaxis()->SetTitle("sin^{2} #theta_{13}");
+    hbestfit_2D->GetXaxis()->SetTitle(namepar0.c_str());
+    hbestfit_2D->GetYaxis()->SetTitle(namepar1.c_str());
     hbestfit_2D->DrawCopy("colz");
   }
   else{
     hbestfit_1D->GetYaxis()->SetTitle("# entries");
-    hbestfit_1D->GetXaxis()->SetTitle("#delta_{CP}");
+    hbestfit_1D->GetXaxis()->SetTitle(namepar0.c_str());
     hbestfit_1D->DrawCopy();
   }
 
   TCanvas *cbestfitFullChisq = new TCanvas("hbestfitFullChisq","hbestfitFullChisq");
   if(IsFit2D){
-    hbestfitFullChisq_2D->GetYaxis()->SetTitle("#delta_{CP}");
-    hbestfitFullChisq_2D->GetXaxis()->SetTitle("sin^{2} #theta_{13}");
+    hbestfitFullChisq_2D->GetXaxis()->SetTitle(namepar0.c_str());
+    hbestfitFullChisq_2D->GetYaxis()->SetTitle(namepar1.c_str());
     hbestfitFullChisq_2D->DrawCopy("colz");
   }
   else{
     hbestfitFullChisq_1D->GetYaxis()->SetTitle("# entries");
-    hbestfitFullChisq_1D->GetXaxis()->SetTitle("#delta_{CP}");
+    hbestfitFullChisq_1D->GetXaxis()->SetTitle(namepar0.c_str());
     hbestfitFullChisq_1D->DrawCopy();
   }
 
   TCanvas *cErrMINOSneg0 = new TCanvas("cErrMINOSneg0","cErrMINOSneg0");
   hErrMINOSneg0->GetYaxis()->SetTitle("# entries");
-  if(IsFit2D) hErrMINOSneg0->GetXaxis()->SetTitle("#Delta sin^{2} #theta_{13} (MINOS negative)");
-  else        hErrMINOSneg0->GetXaxis()->SetTitle("#delta_{CP} (MINOS negative)");
+  
+  if(IsFit2D){
+    char name[200];
+    sprintf(name,"#Delta %s (MINOS negative)",namepar0.c_str());
+    hErrMINOSneg0->GetXaxis()->SetTitle(name);
+  }
+  else{
+    char name[200];
+    sprintf(name,"#Delta %s (MINOS negative)",namepar0.c_str());
+    hErrMINOSneg0->GetXaxis()->SetTitle(name);
+  }
   hErrMINOSneg0->DrawCopy();
   
   TCanvas *cErrMINOSpos0 = new TCanvas("cErrMINOSpos0","cErrMINOSpos0");
   hErrMINOSpos0->GetYaxis()->SetTitle("# entries");
-  if(IsFit2D) hErrMINOSpos0->GetXaxis()->SetTitle("#Delta sin^{2} #theta}_{13} (MINOS positive)");
-  else        hErrMINOSpos0->GetXaxis()->SetTitle("#delta_{CP} (MINOS positive)");
+  if(IsFit2D){
+    char name[200];
+    sprintf(name,"#Delta %s (MINOS positive)",namepar0.c_str());
+    hErrMINOSpos0->GetXaxis()->SetTitle(name);
+  }
+  else{
+    char name[200];
+    sprintf(name,"#Delta %s (MINOS positive)",namepar0.c_str());
+    hErrMINOSpos0->GetXaxis()->SetTitle(name);
+  }
   hErrMINOSpos0->DrawCopy();
   
   TCanvas *cErrMINOSneg1;
@@ -407,25 +495,39 @@ void analyze_run_fit_marginalization_exe
   if(IsFit2D){
     cErrMINOSneg1 = new TCanvas("cErrMINOSneg1","cErrMINOSneg1");
     hErrMINOSneg1->GetYaxis()->SetTitle("# entries");
-    hErrMINOSneg1->GetXaxis()->SetTitle("#delta_{CP} (MINOS positive)");
+    char name[200];
+    sprintf(name,"#Delta %s (MINOS negative)",namepar1.c_str());
+    hErrMINOSneg1->GetXaxis()->SetTitle(name);
     hErrMINOSneg1->DrawCopy();  
     cErrMINOSpos1 = new TCanvas("cErrMINOSpos1","cErrMINOSpos1");
     hErrMINOSpos1->GetYaxis()->SetTitle("# entries");
-    hErrMINOSpos1->GetXaxis()->SetTitle("#delta_{CP} (MINOS negative)");
+    char name[200];
+    sprintf(name,"#Delta %s (MINOS positive)",namepar1.c_str());
+    hErrMINOSpos1->GetXaxis()->SetTitle(name);
     hErrMINOSpos1->DrawCopy();
   }
 
   TCanvas *cErrHESSEsym0 = new TCanvas("cErrHESSEsym0","cErrHESSEsym0");
   hErrHESSEsym0->GetYaxis()->SetTitle("# entries");
-  if(IsFit2D) hErrHESSEsym0->GetXaxis()->SetTitle("#Delta sin^{2} #theta_{13} (HESSE)");
-  else        hErrHESSEsym0->GetXaxis()->SetTitle("#delta_{CP} (HESSE)");
+  if(IsFit2D){
+    char name[200];
+    sprintf(name,"#Delta %s (HESSE)",namepar0.c_str());
+    hErrHESSEsym0->GetXaxis()->SetTitle(name);
+  }
+  else{
+    char name[200];
+    sprintf(name,"#Delta %s (HESSE)",namepar0.c_str());
+    hErrHESSEsym0->GetXaxis()->SetTitle(name);
+  }
   hErrHESSEsym0->DrawCopy();
 
   TCanvas *cErrHESSEsym1;
   if(IsFit2D){  
     cErrHESSEsym1 = new TCanvas("cErrHESSEsym1","cErrHESSEsym1");
     hErrHESSEsym1->GetYaxis()->SetTitle("# entries");
-    hErrHESSEsym1->GetXaxis()->SetTitle("#delta_{CP} (HESSE)");
+    char name[200];
+    sprintf(name,"#Delta %s (HESSE)",namepar1.c_str());
+    hErrHESSEsym1->GetXaxis()->SetTitle(name);
     hErrHESSEsym1->DrawCopy();
   }
  
@@ -444,8 +546,16 @@ void analyze_run_fit_marginalization_exe
 
   TCanvas *cpullsHESSE0 = new TCanvas("cpullsHESSE0","cpullsHESSE0");
   TLatex *lpullsHESSE0;
-  if(IsFit2D) hpullsHESSE0->GetXaxis()->SetTitle("Pull sin^{2} #theta_{13} (HESSE error)");
-  else        hpullsHESSE0->GetXaxis()->SetTitle("Pull #delta_{CP} (HESSE error)");
+  if(IsFit2D){
+    char name[200];
+    sprintf(name,"Pull %s (HESSE error)",namepar0.c_str());
+    hpullsHESSE0->GetXaxis()->SetTitle(name);
+  }
+  else{
+    char name[200];
+    sprintf(name,"Pull %s (HESSE error)",namepar0.c_str());
+    hpullsHESSE0->GetXaxis()->SetTitle(name);
+   }
   hpullsHESSE0->GetYaxis()->SetTitle("# entries");
   hpullsHESSE0->DrawCopy();
   sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsHESSE0->GetMean(),hpullsHESSE0->GetRMS(),FitMeanPar0_HESSE,FitRMSPar0_HESSE); 
@@ -457,7 +567,9 @@ void analyze_run_fit_marginalization_exe
   TLatex *lpullsHESSE1;
   if(IsFit2D){
     cpullsHESSE1 = new TCanvas("cpullsHESSE1","cpullsHESSE1");
-    hpullsHESSE1->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (HESSE error)");
+    char name[200];
+    sprintf(name,"Pull %s (HESSE error)",namepar1.c_str());
+    hpullsHESSE1->GetXaxis()->SetTitle(name);
     hpullsHESSE1->GetYaxis()->SetTitle("# entries");
     hpullsHESSE1->DrawCopy();
     sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsHESSE1->GetMean(),hpullsHESSE1->GetRMS(),FitMeanPar1_HESSE,FitRMSPar1_HESSE); 
@@ -467,8 +579,16 @@ void analyze_run_fit_marginalization_exe
   }
 
   TCanvas *cpullsMINOS0 = new TCanvas("cpullsMINOS0","cpullsMINOS0");
-  if(IsFit2D) hpullsMINOS0->GetXaxis()->SetTitle("Pull sin^{2} #bar{#theta}_{13} (MINOS error)");
-  else        hpullsMINOS0->GetXaxis()->SetTitle("Pull #delta_{CP} (MINOS error)");
+  if(IsFit2D){
+    char name[200];
+    sprintf(name,"Pull %s (MINOS error)",namepar0.c_str());
+    hpullsMINOS0->GetXaxis()->SetTitle(name);
+  }
+  else{
+    char name[200];
+    sprintf(name,"Pull %s (MINOS error)",namepar0.c_str());
+    hpullsMINOS0->GetXaxis()->SetTitle(name);
+  }
   hpullsMINOS0->GetYaxis()->SetTitle("# entries");
   hpullsMINOS0->DrawCopy();
   sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsMINOS0->GetMean(),hpullsMINOS0->GetRMS(),FitMeanPar0_MINOS,FitRMSPar0_MINOS); 
@@ -480,7 +600,9 @@ void analyze_run_fit_marginalization_exe
   TLatex *lpullsMINOS1;
   if(IsFit2D){
     cpullsMINOS1 = new TCanvas("cpullsMINOS1","cpullsMINOS1");
-    hpullsMINOS1->GetXaxis()->SetTitle("Pull #delta_{CP} (MINOS error)");
+    char name[200];
+    sprintf(name,"Pull %s (MINOS error)",namepar1.c_str());
+    hpullsMINOS1->GetXaxis()->SetTitle(name);
     hpullsMINOS1->GetYaxis()->SetTitle("# entries");
     hpullsMINOS1->DrawCopy();
     sprintf(name,"#splitline{#splitline{Mean=%1.2f}{RMS=%1.2f}}{#splitline{Fit Mean=%1.2f}{Fit RMS=%1.2f}}",hpullsMINOS1->GetMean(),hpullsMINOS1->GetRMS(),FitMeanPar1_MINOS,FitRMSPar1_MINOS); 
@@ -490,8 +612,17 @@ void analyze_run_fit_marginalization_exe
   }
 
   TCanvas *cresidual0 = new TCanvas("cresidual0","cresidual0");
-  if(IsFit2D) hresidual0->GetXaxis()->SetTitle("Residual sin^{2} #bar{#theta}_{13}");
-  else        hresidual0->GetXaxis()->SetTitle("Residual #delta_{CP}"); 
+
+  if(IsFit2D){
+    char name[200];
+    sprintf(name,"Residual %s",namepar0.c_str());
+    hresidual0->GetXaxis()->SetTitle(name);
+  }
+  else{
+    char name[200];
+    sprintf(name,"Residual %s",namepar0.c_str());
+    hresidual0->GetXaxis()->SetTitle(name); 
+  }
   hresidual0->GetYaxis()->SetTitle("# entries");
   hresidual0->DrawCopy();
   sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hresidual0->GetMean(),hresidual0->GetRMS()); 
@@ -503,7 +634,9 @@ void analyze_run_fit_marginalization_exe
   TLatex *lresidual1;
   if(IsFit2D){
     cresidual1 = new TCanvas("cresidual1","cresidual1");
-    hresidual1->GetXaxis()->SetTitle("Residual sin^{2} #bar{#theta}_{13}");
+    char name[200];
+    sprintf(name,"Residual %s",namepar1.c_str());
+    hresidual1->GetXaxis()->SetTitle(name);
     hresidual1->GetYaxis()->SetTitle("# entries");
     hresidual1->DrawCopy();
     sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hresidual1->GetMean(),hresidual1->GetRMS()); 
@@ -513,27 +646,68 @@ void analyze_run_fit_marginalization_exe
   }
 
 
+  // Check a single toy
+  if(CheckSingleToy){
+    
+    treein->GetEntry(ToySel);
 
-  // // Check a single toy
-  // treein->GetEntry(0);
-  // TCanvas *cchisq_out_GetEntry = new TCanvas("cchisq_out_GetEntry","cchisq_out_GetEntry");
-  // if(IsFit2D) hchisq2D_out->Draw("colz");
-  // else        hchisq1D_out->Draw("histo");
-  // TCanvas *cdeltachisq_out_GetEntry = new TCanvas("cdeltachisq_out_GetEntry","cdeltachisq_out_GetEntry");
-  // if(IsFit2D) hdeltachisq2D_out->Draw("colz");
-  // else        hdeltachisq1D_out->Draw("histo");
-  // cout << endl;
-  // int npt_chisq_x = hchisq1D_out->GetNbinsX();
-  // for(int ix=0;ix<npt_chisq_x;ix++){
-  //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
-  // }
-  // cout << endl;
-  // TCanvas *cErecoToy_1Rmu = new TCanvas("cErecoToy_1Rmu","cErecoToy_1Rmu");
-  // hErecoToy_1Rmu->Draw("colz");
-  // TCanvas *cErecoToy_1Re = new TCanvas("cErecoToy_1Re","cErecoToy_1Re");
-  // hErecoToy_1Re->Draw("colz");
+    int npt_chisq_x = conv::kBadResult;
+    int npt_chisq_y = conv::kBadResult;
 
-  
+    TCanvas *cchisq_out_GetEntry = new TCanvas("cchisq_out_GetEntry","cchisq_out_GetEntry");
+    if(IsFit2D){
+      hchisq2D_out->GetXaxis()->SetTitle(namepar0.c_str());
+      hchisq2D_out->GetYaxis()->SetTitle(namepar1.c_str());
+      hchisq2D_out->Draw("colz");
+      npt_chisq_x = hchisq2D_out->GetNbinsX();
+      npt_chisq_y = hchisq2D_out->GetNbinsY();
+    }
+    else{
+      hchisq1D_out->GetXaxis()->SetTitle(namepar0.c_str());
+      hchisq1D_out->Draw("histo");
+      npt_chisq_x = hchisq1D_out->GetNbinsX();
+      npt_chisq_y = hchisq1D_out->GetNbinsY();
+    }
+    TCanvas *cdeltachisq_out_GetEntry = new TCanvas("cdeltachisq_out_GetEntry","cdeltachisq_out_GetEntry");
+    if(IsFit2D){
+      hdeltachisq2D_out->GetXaxis()->SetTitle(namepar0.c_str());
+      hdeltachisq2D_out->GetYaxis()->SetTitle(namepar1.c_str());
+      hdeltachisq2D_out->Draw("colz");
+    }    
+    else{
+      hdeltachisq1D_out->GetXaxis()->SetTitle(namepar0.c_str());
+      hdeltachisq1D_out->Draw("histo");
+    }
+    cout << endl;
+    
+    cout << "npt_chisq_x = " << npt_chisq_x << endl;
+    cout << "npt_chisq_y = " << npt_chisq_y << endl;
+    
+    for(int iy=0;iy<npt_chisq_y;iy++){
+      for(int ix=0;ix<npt_chisq_x;ix++){
+       	if(IsFit2D) cout << hchisq2D_out->GetBinContent(ix+1,iy+1) << " ";
+        else        cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+    TCanvas *cErecoToy_1Rmu = new TCanvas("cErecoToy_1Rmu","cErecoToy_1Rmu");
+    hErecoToy_1Rmu->Draw("colz");
+    TCanvas *cErecoToy_1Re = new TCanvas("cErecoToy_1Re","cErecoToy_1Re");
+    hErecoToy_1Re->Draw("colz");
+    TCanvas *cErecoToy_RHC1Rmu = new TCanvas("cErecoToy_RHC1Rmu","cErecoToy_RHC1Rmu");
+    hErecoToy_RHC1Rmu->Draw("colz");
+    TCanvas *cErecoToy_RHC1Re = new TCanvas("cErecoToy_RHC1Re","cErecoToy_RHC1Re");
+    hErecoToy_RHC1Re->Draw("colz");
+   
+    cout << endl;
+    cout << "Events in fake data spectra:"<< endl;
+    cout << " - # of 1Rmu events = "    << hErecoToy_1Rmu->Integral() << endl;
+    cout << " - # of RHC1Rmu events = " << hErecoToy_RHC1Rmu->Integral() << endl;
+    cout << " - # of 1Re events = "     << hErecoToy_1Re->Integral() << endl;
+    cout << " - # of RHC1Re events = "  << hErecoToy_RHC1Re->Integral() << endl;
+    cout << endl;
+  }
 
 
   // Print results 
@@ -610,6 +784,7 @@ void analyze_run_fit_marginalization_exe
   cout << "Crit Value 95CL = " << FCCritVal_95CL << endl; 
   cout << endl;
 
+  //cout << "NinPROVA = " << NinPROVA << endl;
   return;
 }
 
