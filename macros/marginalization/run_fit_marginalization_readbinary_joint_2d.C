@@ -326,16 +326,22 @@ void run_fit_marginalization_readbinary_joint_2d
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
   int ToyID=-999;
-  TH1D *hErecoToy_1Rmu;
-  TH1D *hErecoToy_1Re;
-  TH1D *hErecoToy_RHC1Rmu;
-  TH1D *hErecoToy_RHC1Re;
-  // NEW 2D TEMPLATES
-  TH2D *hErecoToy2D_1Rmu;
-  TH2D *hErecoToy2D_1Re;
-  TH2D *hErecoToy2D_RHC1Rmu;
-  TH2D *hErecoToy2D_RHC1Re;
-  //
+  TH1F *hErecoToy_1Rmu;
+  TH1F *hErecoToy_1Re;
+  TH1F *hErecoToy_RHC1Rmu;
+  TH1F *hErecoToy_RHC1Re;
+  TH2F *hErecoToy2D_1Rmu;
+  TH2F *hErecoToy2D_1Re;
+  TH2F *hErecoToy2D_RHC1Rmu;
+  TH2F *hErecoToy2D_RHC1Re;
+  TH1F *hErecoExp_1Rmu;
+  TH1F *hErecoExp_1Re;
+  TH1F *hErecoExp_RHC1Rmu;
+  TH1F *hErecoExp_RHC1Re;
+  TH2F *hErecoExp2D_1Rmu;
+  TH2F *hErecoExp2D_1Re;
+  TH2F *hErecoExp2D_RHC1Rmu;
+  TH2F *hErecoExp2D_RHC1Re;
   
   // Create tree to store outputs
   TTree * fitnt = new TTree("fitnt","Results of VaLOR data and/or toy-MC experiment fits");
@@ -379,7 +385,15 @@ void run_fit_marginalization_readbinary_joint_2d
   fitnt->Branch("hErecoToy2D_1Re",&hErecoToy2D_1Re);
   fitnt->Branch("hErecoToy2D_RHC1Rmu",&hErecoToy2D_RHC1Rmu);
   fitnt->Branch("hErecoToy2D_RHC1Re",&hErecoToy2D_RHC1Re);
-  
+  fitnt->Branch("hErecoExp_1Rmu",&hErecoExp_1Rmu);
+  fitnt->Branch("hErecoExp_1Re",&hErecoExp_1Re);
+  fitnt->Branch("hErecoExp_RHC1Rmu",&hErecoExp_RHC1Rmu);
+  fitnt->Branch("hErecoExp_RHC1Re",&hErecoExp_RHC1Re);
+  fitnt->Branch("hErecoExp2D_1Rmu",&hErecoExp2D_1Rmu);
+  fitnt->Branch("hErecoExp2D_1Re",&hErecoExp2D_1Re);
+  fitnt->Branch("hErecoExp2D_RHC1Rmu",&hErecoExp2D_RHC1Rmu);
+  fitnt->Branch("hErecoExp2D_RHC1Re",&hErecoExp2D_RHC1Re);  
+
   TBranch * br_fparm     = fitnt->GetBranch("best_fit_params");
   TBranch * br_bf_array  = fitnt->GetBranch("best_fit_pdf");
 
@@ -721,24 +735,40 @@ void run_fit_marginalization_readbinary_joint_2d
       if(s == kSKsUndefined) continue;
 
 #ifndef __USE_2D_TEMPLATES__
-      else if(s == kSKsRHCFCFV1RingMuLike)
-	hErecoToy_RHC1Rmu = skobs_fakedata->ErecoSpectrum(s);
-      else if(s == kSKsRHCFCFV1RingELike)
-	hErecoToy_RHC1Re = skobs_fakedata->ErecoSpectrum(s);
-      else if(s == kSKsFCFV1RingMuLike)
-	hErecoToy_1Rmu = skobs_fakedata->ErecoSpectrum(s);
-      else if(s == kSKsFCFV1RingELike)
-	hErecoToy_1Re = skobs_fakedata->ErecoSpectrum(s);
+      else if(s == kSKsRHCFCFV1RingMuLike){
+	hErecoToy_RHC1Rmu = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
+      	hErecoExp_RHC1Rmu = (TH1F*)skexp->CurrPredictedErecoSpectrum(s);
+      }
+      else if(s == kSKsRHCFCFV1RingELike){
+	hErecoToy_RHC1Re = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
+	hErecoExp_RHC1Re = (TH1F*)skexp->CurrPredictedErecoSpectrum(s);  
+      }
+      else if(s == kSKsFCFV1RingMuLike){
+	hErecoToy_1Rmu = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
+	hErecoExp_1Rmu = (TH1F*)skexp->CurrPredictedErecoSpectrum(s);  
+      }
+      else if(s == kSKsFCFV1RingELike){
+	hErecoToy_1Re = (TH1F*)skobs_fakedata->ErecoSpectrum(s);
+      	hErecoExp_1Re = (TH1F*)skexp->CurrPredictedErecoSpectrum(s);  
+      }
       //cout << "    " << util::AsStringCompact(s) << endl;
 #else
-      else if(s == kSKsRHCFCFV1RingMuLike)
-	hErecoToy2D_RHC1Rmu = skobs_fakedata->TwoDSpectrum(s);
-      else if(s == kSKsRHCFCFV1RingELike)
-	hErecoToy2D_RHC1Re = skobs_fakedata->TwoDSpectrum(s);
-      else if(s == kSKsFCFV1RingMuLike)
-	hErecoToy2D_1Rmu = skobs_fakedata->TwoDSpectrum(s);
-      else if(s == kSKsFCFV1RingELike)
-	hErecoToy2D_1Re = skobs_fakedata->TwoDSpectrum(s);
+      else if(s == kSKsRHCFCFV1RingMuLike){
+	hErecoToy2D_RHC1Rmu = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+	hErecoExp2D_RHC1Rmu = (TH2F*)skexp->CurrPredictedErecoVsQ2Spectrum(s);  
+      }
+      else if(s == kSKsRHCFCFV1RingELike){
+	hErecoToy2D_RHC1Re = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+	hErecoExp2D_RHC1Re = (TH2F*)skexp->CurrPredictedErecoVsQ2Spectrum(s);  
+      }
+      else if(s == kSKsFCFV1RingMuLike){
+	hErecoToy2D_1Rmu = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+    	hErecoExp2D_1Rmu = (TH2F*)skexp->CurrPredictedErecoVsQ2Spectrum(s);  
+      }
+      else if(s == kSKsFCFV1RingELike){
+	hErecoToy2D_1Re = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+    	hErecoTExp2D_1Re = (TH2F*)skexp->CurrPredictedErecoVsQ2Spectrum(s);  
+      }
       //cout << "    " << util::AsStringCompact(s) << endl;      
 #endif
     }
@@ -805,16 +835,25 @@ void run_fit_marginalization_readbinary_joint_2d
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
       if(s == kSKsUndefined) continue;
-      cout <<  "# of events in " << util::AsStringCompact(s) << " sample: "; 
 	
+      cout << "Sample " << util::AsStringCompact(s) << endl;
+      cout << " - # of observed events = ";       
 #ifndef __USE_2D_TEMPLATES__
       cout << skobs_fakedata->ErecoSpectrum(s)->Integral() << endl;
 #else
       cout << skobs_fakedata->TwoDSpectrum(s)->Integral() << endl;
-#endif    
+#endif
+      cout << " - # of expected events = ";       
+#ifndef __USE_2D_TEMPLATES__
+      cout << skexp->CurrPredictedErecoSpectrum(s)->Integral() << endl;
+#else
+      cout << skexp->CurrPredictedErecoVsQ2Spectrum(s)->Integral() << endl;
+#endif
+      cout << endl;
     }
     cout << endl;
-    
+ 
+    // Draw observed spectra
 
 #ifndef __USE_2D_TEMPLATES__
     TCanvas *cErecoToy_1Rmu = new TCanvas("cErecoToy_1Rmu","cErecoToy_1Rmu");
@@ -844,6 +883,38 @@ void run_fit_marginalization_readbinary_joint_2d
 
 #endif
 
+    // Draw expected spectra
+    
+#ifndef __USE_2D_TEMPLATES__
+    TCanvas *cErecoExp_1Rmu = new TCanvas("cErecoExp_1Rmu","cErecoExp_1Rmu");
+    hErecoExp_1Rmu->DrawCopy();
+
+    TCanvas *cErecoExp_1Re = new TCanvas("cErecoExp_1Re","cErecoExp_1Re");
+    hErecoExp_1Re->DrawCopy();
+
+    TCanvas *cErecoExp_RHC1Rmu = new TCanvas("cErecoExp_RHC1Rmu","cErecoExp_RHC1Rmu");
+    hErecoExp_RHC1Rmu->DrawCopy();
+
+    TCanvas *cErecoExp_RHC1Re = new TCanvas("cErecoExp_RHC1Re","cErecoExp_RHC1Re");
+    hErecoExp_RHC1Re->DrawCopy();
+#else
+
+    TCanvas *cErecoExp2D_1Rmu = new TCanvas("cErecoExp2D_1Rmu","cErecoExp2D_1Rmu");
+    hErecoExp2D_1Rmu->DrawCopy("colz");
+
+    TCanvas *cErecoExp2D_1Re = new TCanvas("cErecoExp2D_1Re","cErecoExp2D_1Re");
+    hErecoExp2D_1Re->DrawCopy("colz");
+
+    TCanvas *cErecoExp2D_RHC1Rmu = new TCanvas("cErecoExp2D_RHC1Rmu","cErecoExp2D_RHC1Rmu");
+    hErecoExp2D_RHC1Rmu->DrawCopy("colz");
+
+    TCanvas *cErecoExp2D_RHC1Re = new TCanvas("cErecoExp2D_RHC1Re","cErecoExp2D_RHC1Re");
+    hErecoExp2D_RHC1Re->DrawCopy("colz");
+
+#endif
+
+
+
    TCanvas *cChisqMarg = new TCanvas("cChisqMarg","cChisqMarg");
    fitmarg->GetChisqMarg2D()->DrawCopy("colz");    
    
@@ -864,6 +935,14 @@ void run_fit_marginalization_readbinary_joint_2d
     delete hErecoToy2D_1Re;
     delete hErecoToy2D_RHC1Rmu;
     delete hErecoToy2D_RHC1Re;
+    delete hErecoExp_1Rmu;
+    delete hErecoExp_1Re;
+    delete hErecoExp_RHC1Rmu;
+    delete hErecoExp_RHC1Re;
+    delete hErecoExp2D_1Rmu;
+    delete hErecoExp2D_1Re;
+    delete hErecoExp2D_RHC1Rmu;
+    delete hErecoExp2D_RHC1Re;
 
   } // for iexperiment
 
