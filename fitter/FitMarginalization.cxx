@@ -21,6 +21,7 @@
 //#define __print_chisqmarg__
 #define __print_chisqmarg_ptval__
 #define __print_chisqmarg_tstopwatch__
+#define __print_chisqmarg_changebinary__
 //#define __readtoys_debug__
 //#define __print_minimization_steps__ //
 //#define __print_hesseerror__
@@ -1882,6 +1883,12 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
     
     if( (fCurrentFileIDminim==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
       //if( (fileid==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
+      
+#ifdef __print_chisqmarg_changebinary__
+      cout << endl;
+      cout << "Change binary file from " << fCurrentFileIDminim << " to " << fileid << endl;
+#endif
+
       fCurrentFileIDminim = fileid;
       this->ReadToysFromBinary(fileid,tag);
     }
