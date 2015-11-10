@@ -39,7 +39,11 @@ nbins = 30
 
 linewidth = 2
 
-def main(toy_pattern_nh,toy_pattern_ih,data_fit_nh,data_fit_ih,tag):
+chisq_pdf = R.TF1("chisq","1/(TMath::Power(2,[0]/2) * TMath::Gamma([0]/2)) * TMath::Power(x,[0]/2 - 1) * TMath::Exp(-x/2)")
+chisq_pdf.SetParName(0,"NDoF")
+chisq_pdf.SetParLimits(0,0.,1E4)
+
+def main(toy_pattern_nh,toy_pattern_ih,data_fit_nh,data_fit_ih,tag,fit_degrees):
   
   ROOT.gStyle.SetPalette(56);
   ROOT.gStyle.SetOptStat(0)
@@ -85,6 +89,15 @@ def main(toy_pattern_nh,toy_pattern_ih,data_fit_nh,data_fit_ih,tag):
     
     h.Scale(1./n_fits)
     
+    if fit_degrees:
+      chisq_pdf.SetParameter(0,10)
+      hfit = h.Clone()
+      hfit.Fit(chisq_pdf)
+      fitted_ndof = chisq_pdf.GetParameter(0)
+      chisq_pdf.SetRange(hfit.GetXaxis().GetXmin(),hfit.GetXaxis().GetXmax())
+      fitted_hist = R.TH1D(chisq_pdf.GetHistogram())
+      fitted_hist.SetLineColor(R.kBlue)
+    
     ymin = 0
     ymax = h.GetMaximum()*1.1
     h.SetMaximum(ymax)
@@ -105,14 +118,24 @@ def main(toy_pattern_nh,toy_pattern_ih,data_fit_nh,data_fit_ih,tag):
     pave.AddText("#chi^{2}_{data} = "+to2dp.format(bf_chisq))
     pave.AddText("p-value = "+to2dp.format(pvalue))
     
+    if fit_degrees:
+      pave2 = R.TPaveText(0.7,0.6,0.9,0.7,"ndc")
+      pave2.SetShadowColor(0)
+      pave2.SetFillColor(0)
+      pave2.SetFillStyle(0)
+      pave2.SetLineColor(0)
+      pave2.AddText("# DoF = "+to2dp.format(fitted_ndof))
+    
     canv = ROOT.TCanvas(hier,hier,1280,1024)
     canv.cd()
     SetBLMargins(canv)
     SetRMargins(canv)
     
     h.Draw()
+    if fit_degrees:fitted_hist.Draw("C same")
     line.Draw()
     pave.Draw()
+    if fit_degrees: pave2.Draw()
     canv.Print(tag+"_"+hier+"."+image_format)
     
     hists[hier] = h
@@ -141,11 +164,13 @@ if __name__=="__main__":
   
   parser.add_option('--data-bf-nh'  , dest='data_bf_nh' , default=None, help="File containing data best-fit (NH)")
   parser.add_option('--data-bf-ih'  , dest='data_bf_ih' , default=None, help="File containing data best-fit (IH)")
-  parser.add_option('-t','--tag' , dest='tag', default="gof", help="Tag for output")
+  parser.add_option('-t','--tag'    , dest='tag', default="gof", help="Tag for output")
+  parser.add_option('-d','--degrees', dest='degrees',default=False, action="store_true",help='Draw fitted NDOF on plots')
+
   
   o,args = parser.parse_args()
   
   main(args[0],args[1],
     o.data_bf_nh , o.data_bf_ih ,
-    o.tag)
+    o.tag,o.degrees)
 
