@@ -26,6 +26,7 @@
 #include <TH1D.h> // NEW PRECISION
 #include <TH2D.h> // NEW PRECISION
 #include <TTree.h>
+#include <TStopwatch.h>
 
 #include "Enumerations.h"
 

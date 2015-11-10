@@ -98,17 +98,7 @@ private:
 
 
 int main(int argc, char ** argv)
-{
-  TStopwatch sw;
-
-  cout << endl;
-  cout << "CPU time" << endl;
-  cout << endl;
-
-  sw.Stop();
-  sw.Print();
-  sw.Start(0);
-
+{     
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   gROOT->SetBatch(true);
@@ -188,6 +178,17 @@ int main(int argc, char ** argv)
   TFile *f = new TFile(Form("%s-%s_%d_%d.root", runopt->FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");  
 
   // Set Tree toy/fit
+  
+  double CPUtime_Minim=conv::kBadResult;
+  double CPUtime_FullChisq=conv::kBadResult;
+  double REALtime_Minim=conv::kBadResult;
+  double REALtime_FullChisq=conv::kBadResult;
+
+  double CPUtime_init=conv::kBadResult;
+  double CPUtime_end=conv::kBadResult;
+  double REALtime_init=conv::kBadResult;
+  double REALtime_end=conv::kBadResult;
+
   bool IsFit2D=false;
   int run=-999;
   string tag="";
@@ -272,6 +273,16 @@ int main(int argc, char ** argv)
   
   fitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
   
+  fitnt->Branch("CPUtime_Minim",&CPUtime_Minim);
+  fitnt->Branch("CPUtime_FullChisq",&CPUtime_FullChisq);
+  fitnt->Branch("REALtime_Minim",&REALtime_Minim);
+  fitnt->Branch("REALtime_FullChisq",&REALtime_FullChisq);
+
+  fitnt->Branch("CPUtime_init",&CPUtime_init);
+  fitnt->Branch("CPUtime_end",&CPUtime_end);
+  fitnt->Branch("REALtime_init",&REALtime_init);
+  fitnt->Branch("REALtime_end",&REALtime_end);
+
   fitnt->Branch("IsFit2D",&IsFit2D);
 
   fitnt->Branch("chisqmin",&chisqmin,"chisqmin/D");
@@ -321,21 +332,23 @@ int main(int argc, char ** argv)
   set_init = false;
   util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
 
-  cout << endl;
-  cout << "CPU time" << endl;
-  cout << endl;
-
-  sw.Stop();
-  sw.Print();
-  sw.Start(0);
-
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
   last_experiment = runopt->LastExperiment();
   for(int iexperiment = runopt->FirstExperiment(); iexperiment <= last_experiment; iexperiment++) {
-     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
+    
+    TStopwatch sw_fit;
 
-     // Generate mock data
+    cout << endl;
+    cout << "CPU time" << endl;
+    cout << endl;
+    sw_fit.Stop();
+    sw_fit.Print();
+    sw_fit.Start(0);
+    
+    cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
+    
+    // Generate mock data
      cout << "- Generating toy-MC..." << endl;
      SuperkObservation * skobs_fakedata = new SuperkObservation;
      PhysHypothesis ph(runopt->Hypothesis());
@@ -437,6 +450,17 @@ int main(int argc, char ** argv)
      // Perform the fit w/ marginalization
      util::PerformMargFit(argc,argv,runopt,fitmarg,skexp,skobs_fakedata); 
      
+
+     cout << endl;
+     cout << "CPU time" << endl;
+     cout << endl;
+     sw_fit.Stop();
+     sw_fit.Print();
+     CPUtime_Minim = sw_fit.CpuTime();
+     REALtime_Minim = sw_fit.RealTime();
+     sw_fit.Start(0);
+
+
      IsFit2D = fitmarg->IsFit2D();
      
      nchisqcalls = fitmarg->GetNCallsCalcChisqMargPt();
@@ -464,15 +488,6 @@ int main(int argc, char ** argv)
      cout << "truepar0 = " << truepar0 << endl;
      cout << "truepar1 = " << truepar1 << endl;
      cout << endl;
-
-     cout << endl;
-     cout << "CPU time" << endl;
-     cout << endl;
-
-     sw.Stop();
-     sw.Print();
-     sw.Start(0);
-
      
      // // Draw Full Chisq
      // if(runopt->DrawFullChisq()){
@@ -509,6 +524,16 @@ int main(int argc, char ** argv)
        
        cout << "Build deltaChisqMarg distribution" << endl;
        fitmarg->BuildDeltaChisqMarg();
+     
+       cout << endl;
+       cout << "CPU time" << endl;
+       cout << endl;
+       sw_fit.Stop();
+       sw_fit.Print();
+       CPUtime_FullChisq = sw_fit.CpuTime();
+       REALtime_FullChisq = sw_fit.RealTime();
+       sw_fit.Start(0);
+       
      }
      
      //
@@ -701,14 +726,6 @@ int main(int argc, char ** argv)
      // }
      // cout << endl;
 
-     cout << endl;
-     cout << "CPU time" << endl;
-     cout << endl;
-
-     sw.Stop();
-     sw.Print();
-     sw.Start(0);
-
   } // loop over toys
   
   delete hErecoToy_1Rmu;
@@ -732,10 +749,6 @@ int main(int argc, char ** argv)
   fitnt->Write(); // store the tree
   util::OscParams::Instance()->Write(f); // store the toy osc param histograms
   f->Close();
-  delete f;
-  
+  delete f;  
   delete runopt;
-
-  sw.Stop();
-  sw.Print();
 }

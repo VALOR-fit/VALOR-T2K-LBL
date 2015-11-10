@@ -19,6 +19,8 @@
 //#define __print_array_toy_merge__
 //#define __print_systematic_variations__
 //#define __print_chisqmarg__
+#define __print_chisqmarg_ptval__
+#define __print_chisqmarg_tstopwatch__
 //#define __readtoys_debug__
 //#define __print_minimization_steps__ //
 //#define __print_hesseerror__
@@ -1858,6 +1860,11 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
   double chisq = fChisqMargVArray->GetEntry(iterpar0,iterpar1); 
   if(allow_cached && chisq > 0.) {return chisq;}
    
+
+#ifdef __print_chisqmarg_tstopwatch__ 
+  TStopwatch sw;
+#endif
+
   // NEW SPECTRA MARG
   // Set to 0 in case it has been already calculated before, for example when fabs(chisq)<1.E-8.
   //flikeVArray->SetEntry(0.,iterpar0,iterpar1); // not used
@@ -2244,15 +2251,17 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
   //cout << "bincont = " << bincont << endl;
 
   double penaltyterm = 0.;
+  double freeparval0 = conv::kBadResult;
+  double freeparval1 = conv::kBadResult;
 
   if(fusepenalty0 || fusepenalty1){
     if(!fIsFit2D){ 
-      double freeparval0 = fhchisq_marg_1D->GetXaxis()->GetBinCenter(iterpar0+1);
+      freeparval0 = fhchisq_marg_1D->GetXaxis()->GetBinCenter(iterpar0+1);
       penaltyterm = CalcPenaltyTerm(freeparval0);
     }
     else{      
-      double freeparval0 = fhchisq_marg_2D->GetXaxis()->GetBinCenter(iterpar0+1);
-      double freeparval1 = fhchisq_marg_2D->GetYaxis()->GetBinCenter(iterpar1+1);
+      freeparval0 = fhchisq_marg_2D->GetXaxis()->GetBinCenter(iterpar0+1);
+      freeparval1 = fhchisq_marg_2D->GetYaxis()->GetBinCenter(iterpar1+1);
       penaltyterm = CalcPenaltyTerm(freeparval0,freeparval1);
     }
   
@@ -2269,6 +2278,21 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
   fChisqMargVArray->SetEntry(bincont,iterpar0,iterpar1);
   if(!fIsFit2D) fhchisq_marg_1D->SetBinContent(iterpar0+1,bincont);
   else          fhchisq_marg_2D->SetBinContent(iterpar0+1,iterpar1+1,bincont);
+
+
+  
+#ifdef __print_chisqmarg_ptval__
+  freeparval0 = fhchisq_marg_2D->GetXaxis()->GetBinCenter(iterpar0+1);
+  freeparval1 = fhchisq_marg_2D->GetYaxis()->GetBinCenter(iterpar1+1);
+  cout << "ParVal0 = " << freeparval0 
+       << " - ParVal1 = " << freeparval1 
+       << " --> chisq = " << bincont 
+#ifdef __print_chisqmarg_tstopwatch__
+       << " --> cpu time = " << sw.CpuTime() << " sec"
+       << " --> real time = " << sw.RealTime() << " sec"
+#endif
+       << endl;
+#endif
 
   return bincont;
 }
