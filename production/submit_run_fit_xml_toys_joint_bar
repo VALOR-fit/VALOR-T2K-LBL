@@ -288,6 +288,12 @@ while($irun < $nruns) {
      `condor_submit $job_dir/$tag-$ijob.condor`;
   }
   
+  if(lc($resource) eq "warwick") {
+     $submit="bsub -q long -e \"$job_dir/$tag-$ijob.err\" -o \"$job_dir/$tag-$ijob.out\" -J \"$tag-$ijob\" $program $arguments";
+     #~ print $submit."\n";
+     `$submit`;
+  }
+  
   #
   # RAL (SL5 system)
   #
