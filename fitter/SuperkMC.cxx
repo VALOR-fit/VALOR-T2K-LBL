@@ -3803,32 +3803,6 @@ double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m)
 
 
 // NEW 2D TEMPLATES
-
-<<<<<<< .mine
-TH2D* SuperkMC::CurrErecoVsQ2Spectrum(SuperkSample_t s) const
-{
-    int is = arr_index->SuperkSampleIdx(s);
-    int n_q2_bins    = kNQ2Bins[is];
-    int n_ereco_bins = kNErecoBins[is];
-    //int n_etrue_bins = kNEtrueBins[is];
-    typedef double (erq2type)  [n_ereco_bins][n_q2_bins];
-    const erq2type & arr     = *reinterpret_cast< const erq2type         * > ( CurrErecoVsQ2SpectrumArray(s) );
-    if (!arr) return 0;
-    //const double * arr = CurrErecoSpectrumArray(s,m);
-    //if (!arr) return 0;
-    
-    string name  = Form("curr_erecoVsq2_%s"               , AsStringCompact(s).c_str() );
-    string title = Form("Current Ereco Vs Q2 Spectrum: %s", AsString(s).c_str() );
-    
-    int nbins_q2    = util::NumQ2Bins(s);
-    int nbins_ereco = util::NumErecoBins(s);
-    TH2D * h = new TH2D(name.c_str(), title.c_str(), nbins_q2, util::Q2BinEdges(s), nbins_ereco, util::Q2BinEdges(s) );
-    util::FormatErecoVsQ2Hist(h);
-    for (int iq = 0 ; iq < nbins_q2 ; iq++ ) {
-        for (int ir = 0 ; ir < nbins_ereco ; ir++ ) {
-            h->SetBinContent(iq+1,ir+1,arr[ir][iq]);
-        }
-=======
 TH2D* SuperkMC::CurrErecoVsQ2Spectrum(SuperkSample_t s) const                               
 { 
   int is = arr_index->SuperkSampleIdx(s);
@@ -3851,9 +3825,9 @@ TH2D* SuperkMC::CurrErecoVsQ2Spectrum(SuperkSample_t s) const
   for (int iq = 0 ; iq < nbins_q2 ; iq++ ) {
     for (int ir = 0 ; ir < nbins_ereco ; ir++ ) {
       h->SetBinContent(iq+1,ir+1,arr[ir][iq]);
->>>>>>> .r6390
     }
-    return h;
+  }
+  return h;
 }
 //________________________________________________________________________________________
 TH2D* SuperkMC::CurrErecoVsQ2Spectrum(SuperkSample_t s, SuperkMode_t m) const
@@ -7566,31 +7540,6 @@ double SuperkMC::CalcWhadr(double Enu,double Elep,double Plep,double costheta,do
 }
 //____________________________________________________________________________________
 double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn){
-<<<<<<< .mine
-    
-    // Term of CCQE dsigma/dQ^2 which sign is different for nu/nubar (arXiv:1305.7513v1, eq. 57-61)
-    
-    // Enu      --> neutrino reco energy
-    // Elep     --> lepton reco energy
-    // Plep     --> lepton reco momentum
-    // costheta --> angle between neutrino and lepton
-    // Mn       --> nucleon mass
-    
-    double MA = 1.2257; // Axial Mass (BANFF post-fit)
-    double gA = 1.2694; // FA(Q2=0)
-    
-    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
-    
-    double F1 = 0.5;
-    double F2 = 0.5;
-    double FA = gA / TMath::Power( 1 + Q2/(MA*MA), 2. );
-    double B = Q2/(Mn*Mn)*FA*(F1+F2);
-    
-    double XSecTerm = (4*Mn*Enu - Q2 - Mlep*Mlep) / (Mn*Mn) * B;
-    
-    return XSecTerm;
-=======
-
   // Term of CCQE dsigma/dQ^2 which sign is different for nu/nubar (arXiv:1305.7513v1, eq. 57-61)
 
   // Enu      --> neutrino reco energy 
@@ -7612,7 +7561,6 @@ double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta
   double XSecTerm = (4*Mn*Enu - Q2 - Mlep*Mlep) / (Mn*Mn) * B;
  
   return XSecTerm;
->>>>>>> .r6390
 }
 //____________________________________________________________________________________
 
