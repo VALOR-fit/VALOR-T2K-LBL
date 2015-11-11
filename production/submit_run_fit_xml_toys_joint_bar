@@ -78,6 +78,7 @@ foreach (@ARGV) {
   elsif($_ eq '--tolerance'              ) { $tolerance             = $ARGV[$iarg+1]; }
   elsif($_ eq '--optfixparams'           ) { $optfixparams          = $ARGV[$iarg+1]; }
   elsif($_ eq '--rethrow-unphysical'     ) { $rethrow_unphysical    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--gof'                    ) { $gof_binning           = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
   elsif($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
