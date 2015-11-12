@@ -209,7 +209,7 @@ Split valor::conv namespace into several smaller files
 //#define Q2_BINS_1RE 5 // XSec term parametrization, (19 bins) 
 //#define Q2_BINS_1RE 6 // XSec term parametrization, (89 bins)
 //#define Q2_BINS_1RE 7 // XSec term parametrization, Optimized (21 bins)
-//#define Q2_BINS_1RE 8 // Q^2 parametrization, Optimized (19 bins)
+//#define Q2_BINS_1RE 8 // Q^2 parametrization, Optimized (21 bins)
 #endif
 
 
