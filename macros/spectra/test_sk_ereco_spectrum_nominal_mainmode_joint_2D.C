@@ -56,8 +56,12 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  // double       input_betabar        = -99,
 
  bool         disable_banff_tuning = false,                          /* */
-
- const char * config_file      = "analysis_configuration_test_theta_xsecterm_RFGRPA_21bins.xml",
+ 
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
+ const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_q2_elike_21bins.xml",
+ //const char * config_file      = "analysis_configuration_test_q2_elike.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_xsecterm_RFGRPA_21bins.xml",
  //const char * config_file      = "analysis_configuration_test_theta_xsecterm_RFGRPA.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
