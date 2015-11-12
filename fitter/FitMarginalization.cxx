@@ -19,9 +19,9 @@
 //#define __print_array_toy_merge__
 //#define __print_systematic_variations__
 //#define __print_chisqmarg__
-#define __print_chisqmarg_ptval__
-#define __print_chisqmarg_tstopwatch__
-#define __print_chisqmarg_changebinary__
+//#define __print_chisqmarg_ptval__
+//#define __print_chisqmarg_tstopwatch__
+//#define __print_chisqmarg_changebinary__
 //#define __readtoys_debug__
 //#define __print_minimization_steps__ //
 //#define __print_hesseerror__
@@ -3138,7 +3138,7 @@ void FitMarginalization::WriteLikeToys2Binary(const char *tag){
       else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
 	sprintf(namemh,"%s","IH");
       else{
-	cerr << "FitMarginalization::WriteToys2Binary" << endl;
+	cerr << "FitMarginalization::WriteLikeToys2Binary" << endl;
 	cerr << "Mass Hierarchy not defined" << endl;
 	exit(1);
       }
@@ -3204,7 +3204,7 @@ void FitMarginalization::WriteOscToys2Tree(const char *tag){
     else if( Opt::Instance()->gMassHierarchyAssumed == kNmhInverted )
       sprintf(namemh,"%s","IH");
     else{
-      cerr << "FitMarginalization::WriteToys2Binary" << endl;
+      cerr << "FitMarginalization::WriteOscToys2Tree" << endl;
       cerr << "Mass Hierarchy not defined" << endl;
       exit(1);
     }

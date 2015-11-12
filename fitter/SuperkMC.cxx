@@ -65,7 +65,7 @@
 #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
 #define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
 
-#define	USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
+//#define	USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
 #define	USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
