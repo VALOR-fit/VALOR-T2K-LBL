@@ -64,7 +64,9 @@
 
 #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
 #define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
-//#define	USE_CCcoh_WEIGHTS   // use the pion CCcoh weight branch in the trees
+
+#define	USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
+#define	USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
@@ -384,6 +386,12 @@ void SuperkMC::Init(void)
     
     arr_index = util::ArrIdx::Instance();
     
+#ifdef USE_CCcoh_WEIGHTS
+    cout << "Exp/SKMC CCcoherent reweight is applied" << endl;
+#endif   
+#ifdef USE_NC1gamma_WEIGHTS 
+    cout << "Exp/SKMC NC1gamma reweight is applied" << endl;
+#endif
     cout << "Exp/SKMC >> Init complete" << endl;
     
 }
@@ -1709,10 +1717,13 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif
         
         double pot_flx_weight = pot_wght * fBrWghtFlx;
-        double NC1GammaWght = 1.;
+        double NC1GammaWght = 1.;       
+#ifdef USE_NC1gamma_WEIGHTS
         if(util::IsNC1Gamma(TMath::Abs(fBrGenCode))){
             NC1GammaWght = 2.;
         }
+#endif
+
 #ifndef __USE_2D_TEMPLATES__
         this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight);
 #else
@@ -2316,9 +2327,12 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         double pot_flx_weight = pot_wght * fBrWghtFlx;
         double NC1GammaWght = 1.;
+#ifdef USE_NC1gamma_WEIGHTS
         if(util::IsNC1Gamma(TMath::Abs(fBrGenCode))){
             NC1GammaWght = 2.;
         }
+#endif
+
 #ifndef __USE_2D_TEMPLATES__
         this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight);
 #else
