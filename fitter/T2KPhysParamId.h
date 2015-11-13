@@ -122,16 +122,16 @@ static const PhysParamId_t kNuisBANFFBgRES    = kNuis055;  // Isospin 1/2 normal
 static const PhysParamId_t kNuisBANFFSCCA     = kNuis056;  // Second current axial
 static const PhysParamId_t kNuisBANFFSCCV     = kNuis057;  // Second current vector
 #endif
-static const PhysParamId_t kNuisBANFFFermiMom       = kNuis058;   // Fermi momentum
-static const PhysParamId_t kNuisBANFFShapeCCoth     = kNuis059;   // CC other shape
-static const PhysParamId_t kNuisBANFFBindE          = kNuis060;   // Binding energy
-static const PhysParamId_t kNuisBANFFNormCCcoh      = kNuis061;   // CC coherent norm
-static const PhysParamId_t kNuisBANFFNormNCcoh      = kNuis062;   // NC coh norm
-static const PhysParamId_t kNuisBANFFNormNCoth      = kNuis063;   // NC other norm
-static const PhysParamId_t kNuisBANFFNormNuEToNuMu  = kNuis064;   // nue / numu cross section
-static const PhysParamId_t kNuisBANFFNormNC1Gamma       = kNuis065;   // NC 1 gamma
-static const PhysParamId_t kNuisBANFFNormNuEBarToNuMuBar       = kNuis066;   // NC 1 gamma
-    static const PhysParamId_t kNuisBANFFMECBar      = kNuis067;  // MEC normalization
+static const PhysParamId_t kNuisBANFFFermiMom            = kNuis058;   // Fermi momentum
+static const PhysParamId_t kNuisBANFFShapeCCoth          = kNuis059;   // CC other shape
+static const PhysParamId_t kNuisBANFFBindE               = kNuis060;   // Binding energy
+static const PhysParamId_t kNuisBANFFNormCCcoh           = kNuis061;   // CC coherent norm
+static const PhysParamId_t kNuisBANFFNormNCcoh           = kNuis062;   // NC coh norm
+static const PhysParamId_t kNuisBANFFNormNCoth           = kNuis063;   // NC other norm
+static const PhysParamId_t kNuisBANFFNormNuEToNuMu       = kNuis064;   // nue / numu cross section
+static const PhysParamId_t kNuisBANFFNormNC1Gamma        = kNuis065;   // NC 1 gamma
+static const PhysParamId_t kNuisBANFFNormNuEBarToNuMuBar = kNuis066;   // NC 1 gamma
+static const PhysParamId_t kNuisBANFFMECBar              = kNuis067;  // MEC normalization
 
 //
 
@@ -299,7 +299,7 @@ static const PhysParamId_t kRHCNuisBANFF06 = kNuis176; // # 06; SK anti-numu
 static const PhysParamId_t kRHCNuisBANFF07 = kNuis177; // # 07; SK anti-numu
 static const PhysParamId_t kRHCNuisBANFF08 = kNuis178; // # 08; SK anti-numu 
 static const PhysParamId_t kRHCNuisBANFF09 = kNuis179; // # 09; SK anti-numu 
-static const PhysParamId_t kRHCNuisBANFF10 = kNuis140; // # 10; SK anti-numu 
+static const PhysParamId_t kRHCNuisBANFF10 = kNuis180; // # 10; SK anti-numu 
 static const PhysParamId_t kRHCNuisBANFF11 = kNuis181; // # 11; SK anti-numu (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF12 = kNuis182; // # 12; SK anti-numu (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF13 = kNuis183; // # 13; SK anti-numu (different meanings depending on samples defined)
@@ -341,16 +341,16 @@ static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis205;  // Isospin 1/2 norm
 static const PhysParamId_t kRHCNuisBANFFSCCA    = kNuis206;  // Second current axial
 static const PhysParamId_t kRHCNuisBANFFSCCV    = kNuis207;  // Second current vector
 #endif
-static const PhysParamId_t kRHCNuisBANFFFermiMom       = kNuis208;   // Fermi momentum
-static const PhysParamId_t kRHCNuisBANFFShapeCCoth     = kNuis209;   // CC other shape
-static const PhysParamId_t kRHCNuisBANFFBindE          = kNuis210;   // Binding energy
-static const PhysParamId_t kRHCNuisBANFFNormCCcoh      = kNuis211;   // CC coherent norm
-static const PhysParamId_t kRHCNuisBANFFNormNCcoh      = kNuis212;   // NC coh norm
-static const PhysParamId_t kRHCNuisBANFFNormNCoth      = kNuis213;   // NC other norm
-static const PhysParamId_t kRHCNuisBANFFNormNuEToNuMu  = kNuis214;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisBANFFNormNC1Gamma       = kNuis215;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisBANFFNormNuEBarToNuMuBar  = kNuis216;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisBANFFMECBar          = kNuis217;  // MEC normalization
+static const PhysParamId_t kRHCNuisBANFFFermiMom            = kNuis208;   // Fermi momentum
+static const PhysParamId_t kRHCNuisBANFFShapeCCoth          = kNuis209;   // CC other shape
+static const PhysParamId_t kRHCNuisBANFFBindE               = kNuis210;   // Binding energy
+static const PhysParamId_t kRHCNuisBANFFNormCCcoh           = kNuis211;   // CC coherent norm
+static const PhysParamId_t kRHCNuisBANFFNormNCcoh           = kNuis212;   // NC coh norm
+static const PhysParamId_t kRHCNuisBANFFNormNCoth           = kNuis213;   // NC other norm
+static const PhysParamId_t kRHCNuisBANFFNormNuEToNuMu       = kNuis214;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisBANFFNormNC1Gamma        = kNuis215;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisBANFFNormNuEBarToNuMuBar = kNuis216;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisBANFFMECBar              = kNuis217;  // MEC normalization
 
 //
 
