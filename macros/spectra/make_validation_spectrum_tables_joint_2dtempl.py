@@ -3,7 +3,6 @@
 import ROOT
 import math
 import array
-import numpy as np
 import sys
 import os
 
