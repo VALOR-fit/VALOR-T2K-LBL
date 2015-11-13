@@ -38,6 +38,7 @@ Added samples for multiring forward horn current
 #include "Utilities.h"
 #include "Conventions/Opt.h"
 #include "Utilities/Rnd.h"
+#include "Utilities/UtlHist.h"
 
 using std::cout;
 using std::cerr;
@@ -348,36 +349,62 @@ bool SuperkExpectation::Generate(const FitParamList & fp, bool all_banff_fit, bo
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(valor::conv::SuperkSample_t s) const 
 {
-  const double * arr = CurrPredictedErecoSpectrumArray(s);
-  if (!arr) return 0;
+  const int dimension = 0 ; // 0 = Ereco, 1 = Q2, theta, etc
+  const VALORArray * va = 0;
+#ifdef __USE_2D_TEMPLATES__
+  va = this->CurrPredictedErecoVsQ2VArray(s);
+#else
+  va = this->CurrPredictedErecoVArray(s);
+#endif
+  if (!va) {
+    std::cerr<<"SuperkExpectation/CurrPredictedErecoSpectrum(s) >> Failed to get VALORArray for "<<util::AsString(s)<<endl;
+    return 0;
+  }
   
   string name (Form("curr_ereco_%s"                       ,util::AsStringCompact(s).c_str() ) );
   string title(Form("Current Predicted Ereco Spectrum: %s",util::AsString(s).c_str() ) );
   
-  int nbins = util::NumErecoBins(s);
-  TH1D * h = new TH1D(name.c_str(), title.c_str(), nbins, util::ErecoBinEdges(s) );
+  const double * bin_edges = util::ErecoBinEdges(s);
+  
+  TH1D * h = new TH1D(util::Make1DHistogramFromArray(*va,bin_edges,dimension));
   util::FormatErecoHist(h);
-  for (int i = 0 ; i < nbins ; i++ ) {
-    h->SetBinContent(i+1,arr[i]);
-  }
+  h->SetName(name.c_str());
+  h->SetTitle(title.c_str());
+  
   return h;
 }
 //________________________________________________________________________________________
 TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
   valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const 
-{ 
-  const double * arr = CurrPredictedErecoSpectrumArrayMode(s,m);
-  if (!arr) return 0;
+{
+  const int dimension = 0 ; // 0 = Ereco, 1 = Q2, theta, etc
+  const VALORArray * va = 0;
+#ifdef __USE_2D_TEMPLATES__
+  va = this->CurrPredictedErecoVsQ2VArrayMode(s);
+#else
+  va = this->CurrPredictedErecoVArrayMode(s);
+#endif
+  if (!va) {
+    std::cerr<<"SuperkExpectation/CurrPredictedErecoSpectrum(s,m) >> Failed to get VALORArray for "<<util::AsString(s)<<" - "<<util::AsString(m)<<endl;
+    return 0;
+  }
   
-  int nbins = util::NumErecoBins(s);
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(midx == -1) {
+    std::cerr<<"SuperkExpectation/CurrPredictedErecoSpectrum(s,m) >> Failed to get mode for "<<util::AsString(s)<<" - "<<util::AsString(m)<<endl;
+    return 0;
+  }
+  
   string name  (Form("curr_ereco_%s_%s"                       ,util::AsStringCompact(s).c_str(), util::AsStringCompact(m).c_str()) );
   string title (Form("Current Predicted Ereco Spectrum: %s %s",util::AsString(s).c_str()       , util::AsString(m).c_str()       ) );
-  TH1D * h = new TH1D(name.c_str(), title.c_str(), nbins, util::ErecoBinEdges(s) );
+  const double * bin_edges = util::ErecoBinEdges(s);
+    
+  TH1D * h = new TH1D(util::Make1DHistogramFromArray(va->GetSlice(0,midx,midx),bin_edges,dimension));
   util::FormatErecoHist(h);
   util::SetDefaultSKSpectrumStyle(s,m,h);
-  for (int i = 0 ; i < nbins ; i++ ) {
-    h->SetBinContent(i+1,arr[i]);
-  }
+  h->SetName(name.c_str());
+  h->SetTitle(title.c_str());
+    
   return h;
 }
 //________________________________________________________________________________________
