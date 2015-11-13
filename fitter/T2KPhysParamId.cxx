@@ -4104,6 +4104,20 @@ bool valor::util::IsXSec(PhysParamId_t p)
     
     return false;
 }
+//________________________________________________________________________________________
+bool valor::util::IsSCC(PhysParamId_t p)
+{
+#if defined(__USE_NIWG2015__) && (BANFF_BINS != 2)
+  if (p == kNuisBANFFSCCA        ||
+      p == kNuisBANFFSCCV        ||
+      p == kRHCNuisBANFFSCCA     || 
+      p == kRHCNuisBANFFSCCV     ) {
+    return true;
+  }
+#endif
+  
+  return false;
+}
 //____________________________________________________________________________
 bool valor::util::IsUsingSplines(PhysParamId_t p)
 {

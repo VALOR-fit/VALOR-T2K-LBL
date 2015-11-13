@@ -604,6 +604,7 @@ namespace util {
   bool IsEnergyScale       (conv::PhysParamId_t p);
   bool IsBANFFUnconstrained(conv::PhysParamId_t p);
   bool IsRPA               (conv::PhysParamId_t p);
+  bool IsSCC               (conv::PhysParamId_t p);
   
   conv::PhysParamId_t      PhysParamIdFromString     (string h);
   conv::PhysParamId_t      PhysParamIdFromLongString (string h);
