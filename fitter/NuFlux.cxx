@@ -48,7 +48,16 @@ NuFlux::NuFlux()
 {
   this->Init();
 
-  //check that BANFFSystConv.h is setup correctly (more checks in BANFF::BANFF())
+  //check that BANFFSystConv.h is setup correctly
+  CheckListOfBANFFParams(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
+			 "kListOfBANFFParams", false);
+  CheckListOfBANFFParams(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
+			 "kListOfRHCBANFFParams", false);
+  CheckListOfBANFFParams(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
+			 "kListOfFHCpRHCBANFFParams", true);
+
+  exit(-1);
+  
   CheckIsFluxParam(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
 		   kParamInBANFFfitIsSuperkFluxParam, "kParamInBANFFfitIsSuperkFluxParam");
   CheckIsFluxParam(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
@@ -75,6 +84,38 @@ NuFlux::NuFlux()
 NuFlux::~NuFlux()
 {
   this->CleanUp();
+}
+//________________________________________________________________________________________
+void NuFlux::CheckListOfBANFFParams(int nparams, int nfluxparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gap)
+{
+  int ib = 0;
+  PhysParamId_t curr, prev;
+
+  //check that BANFF flux parameters are monotonically increasing (a single gap is allowed in FHCpRHC)
+  for(ib = 1; ib < nparams; ib++) {
+    prev = params[ib-1];
+    curr = params[ib];
+#ifdef __show_banffsystconv_check_nuflux_mesg_debug__
+    if(ib == 1)
+      cout << "NuFlux/Init >> " << vname << "[" << ib-1 << "] = " << prev << " " << util::AsString(prev) << endl;
+    cout << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << curr << " " << util::AsString(curr) << endl;
+#endif
+    if(ib < nfluxparams) {
+      if((int)curr != ((int)prev + 1)) {
+	cout << allow_gap << endl << "\t";
+	//this is to allow jumps between FHC + RHC flux parameters
+	if(allow_gap) {
+	  cout << "Setting allow_gap to false" << endl << "\t";
+	  allow_gap = false;
+	  continue;
+	}
+	cerr << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << curr << " " << util::AsString(curr) << endl
+	     << " comes before " << vname << "[" << ib-1 << "] = " << prev << " " << util::AsString(prev)
+	     << endl;
+	exit(-1);
+      }
+    }
+  }//ib
 }
 //________________________________________________________________________________________
 void NuFlux::CheckIsFluxParam(int nparams, int nfluxparams, const PhysParamId_t * params, const bool * flux, const char * vname)
