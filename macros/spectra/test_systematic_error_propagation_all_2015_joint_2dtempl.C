@@ -9,6 +9,21 @@ void SetRatioNullTo1(TH1D *hratiomy){
   }
 }
 
+void SetRatio(TH1D* hnom,TH1D* htweak,TH1D* hratio){
+  for(int ibin=0;ibin<hnom->GetNbinsX();ibin++){
+    double cont_nom   = hnom->GetBinContent(ibin+1);
+    double cont_tweak = htweak->GetBinContent(ibin+1);
+    double cont_ratio = -999.;
+    if(cont_nom>0.){
+      cont_ratio = cont_tweak / cont_nom; 
+    }
+    else{
+      cont_ratio = 1.;
+    }
+    hratio->SetBinContent(ibin+1,cont_ratio);
+  }
+}
+
 void test_systematic_error_propagation_all_2015_joint_2dtempl
 (
  int          mode               = 0,                                         /* options: see above */
@@ -16,28 +31,27 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  const char * sk_sample          = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
 
- double       input_mixing12     = -99,                                         /* */
- double       input_mixing13     = -99,                                         /* */
- double       input_mixing23     = -99,                                         /* */
- double       input_deltacp      = -99,                                         /* */
- double       input_dm12sq       = -99,                                         /* */
- double       input_dm23sq       = -99,                                         /* */
+ // double       input_mixing12     = -99,                                         /* */
+ // double       input_mixing13     = -99,                                         /* */
+ // double       input_mixing23     = -99,                                         /* */
+ // double       input_deltacp      = -99,                                         /* */
+ // double       input_dm12sq       = -99,                                         /* */
+ // double       input_dm23sq       = -99,                                         /* */
 
- // double       input_mixing12     = 0.,              /* */
- // double       input_mixing13     = 0.,              /* */
- // double       input_mixing23     = 0.,              /* */
- // double       input_deltacp      = 0.,              /* */
- // double       input_dm12sq       = -99,              /* */
- // double       input_dm23sq       = -99,              /* */
+ double       input_mixing12     = 0.,              /* */
+ double       input_mixing13     = 0.,              /* */
+ double       input_mixing23     = 0.,              /* */
+ double       input_deltacp      = 0.,              /* */
+ double       input_dm12sq       = -99,              /* */
+ double       input_dm23sq       = -99,              /* */
 
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
- 
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
+ const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
+
  const char * fit_param_list     = "nuosc3f+nuisance",
  
  const char * mixparamchoice     = "sinsqtheta",
@@ -84,8 +98,10 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  T2KOpt::Instance()->ReadXmlPath(config);
-    
+  //T2KOpt::Instance()->ReadXmlPath(config);
+  string sconfig(config);
+  T2KOpt::Instance()->ReadXmlPath(sconfig);
+
   // Set physics hypothesis
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
@@ -130,7 +146,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
   // Print options
   cout << "\n[Job inputs]" << endl;
-  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Reading analysis configuration from: " << sconfig << endl;
   cout << "- Physics hypothesis: \n" << ph << endl;
   cout << *Opt::Instance() << endl;
     
@@ -144,16 +160,16 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read(config);
+  skexp.Read(sconfig);
+
   SuperkObservation skobs;
     
   // Define the parameter list
+
   FitParamList * fparm = util::NamedParameterList(fit_param_list);
   const int np = fparm->GetNumberParameters();
-  //fparm->Print();
-    
-    
-    
+  fparm->Print();
+  
     
   // Define the tweak histograms
     
@@ -234,8 +250,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   // skexp.TweakSystematic("sk_e_scale",0.);
   skexp.ResetSystematics();
   skexp.Generate(ph);
-  //hErecoTun = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  hErecoTun = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()); // NEW 2D TEMPLATES
+  hErecoTun = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  //hErecoTun = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()); // NEW 2D TEMPLATES
   hErecoTun->SetName("hErecoTun");
     
   for (int im = 0; im < conv::knm; im++) {
@@ -243,8 +259,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     if(m == conv::kSKmUndefined) continue;
     if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     string modestr = util::AsStringCompact(m);
-    //hErecoTunMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
-    hErecoTunMode[im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY(); // NEW 2D TEMPLATES
+    hErecoTunMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
+    //hErecoTunMode[im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY(); // NEW 2D TEMPLATES
     hErecoTunMode[im]->SetFillStyle(0);
     char name[200];
     sprintf(name,"hErecoTun_%s",modestr.c_str());
@@ -255,9 +271,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   char name[200];
   sprintf(name,"hRatioTun");
   hRatioTun = (TH1D*)hErecoTun->Clone(name);
-  hRatioTun->Divide(hErecoTun);
-  SetRatioNullTo1(hRatioTun);
-    
+  SetRatio(hErecoTun,hErecoTun,hRatioTun);
+
   // Get nominal MC - No BANFF tuning
   skexp.ResetSystematics();
   skexp.GetBANFF()->RestoreFHCpRHCNominalMC();
@@ -266,8 +281,9 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   // skexp.TweakSystematic("sk_e_scale",0.);
   // skexp.TweakSystematic("sk_e_scale",0.);
   skexp.Generate(ph);
-  //hErecoNom = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  hErecoNom = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()); // NEW 2D TEMPLATES
+  
+  hErecoNom = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  //hErecoNom = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()); // NEW 2D TEMPLATES
   hErecoNom->SetName("hErecoNom");
     
   for (int im = 0; im < conv::knm; im++) {
@@ -277,8 +293,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     string modestr = util::AsStringCompact(m);
     const char * mname = modestr.c_str();
         
-    //hErecoNomMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
-    hErecoNomMode[im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY(); // NEW 2D TEMPLATES
+    hErecoNomMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
+    //hErecoNomMode[im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY(); // NEW 2D TEMPLATES
     hErecoNomMode[im]->SetFillStyle(0);
     char name[200];
     sprintf(name,"hErecoNomMode_%s",modestr.c_str());
@@ -288,8 +304,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     char name[200];
     sprintf(name,"hRatioTunMode_%s",mname);
     hRatioTunMode[im] = (TH1D*)hErecoTunMode[im]->Clone(name);
-    hRatioTunMode[im]->Divide(hErecoTunMode[im]);
-    SetRatioNullTo1(hRatioTunMode[im]);
+    SetRatio(hErecoTunMode[im],hErecoTunMode[im],hRatioTunMode[im]);
   }
     
   for (int im = 0; im < conv::knm; im++) {
@@ -298,7 +313,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     string modestr = util::AsStringCompact(m);
   }
-    
+
   // Loop over systematics
     
   int ip_banff = 0;
@@ -310,6 +325,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
         
+    cout << endl;
+    cout << "///////////////////////////////////////////////" << endl;
     cout << endl;
     cout << "Tweak systematic parameter: " << sysstr << endl;
         
@@ -438,35 +455,40 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // skexp.TweakSystematic("sk_e_scale",0.);
     // skexp.TweakSystematic("sk_e_scale",0.);
     skexp.ResetSystematics();
-    cout << "Twk p1\t" << sysstr << "\t" << tweak_p1 << endl;
+    cout << "Twk p1\t" << sysstr << "\t" << tweak_p1 << endl; 
+    if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsBANFF(p)) cout << "Nominal = " << skexp.GetBANFF()            ->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsXSec(p))  cout << "Nominal = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
+    else{
+      cout << "Parameter " << util::AsString(p) << " doesn't belong to any group" << endl;
+      exit(1);
+    }
     skexp.TweakSystematic(sysstr,tweak_p1);
+    if(util::IsSKDetFSI(p))   cout << "+1sigma = " << skexp.GetSuperkDetectorFSI()->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsBANFF(p)) cout << "+1sigma = " << skexp.GetBANFF()            ->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsXSec(p))  cout << "+1sigma = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
+    else{
+      cout << "Parameter " << util::AsString(p) << " doesn't belong to any group" << endl;
+      exit(1);
+    }
     skexp.Generate(ph);
     
-    //hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-    hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
+    hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    //hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
     char name[200];
     sprintf(name,"hErecoTun_p1sigma_%s",sysstr.c_str());
     char title[200];
     sprintf(title,"E reco, %s, +1 sigma = %.3lf",sysstr.c_str(),tweak_p1);
     hErecoTun_p1sigma[ip]->SetName (name);
     hErecoTun_p1sigma[ip]->SetTitle(title);
-    
-    cout << endl;
-    cout << "/////////" << endl;
-    cout << endl;
-    cout << sysstr << " --> " << (hErecoTun_p1sigma[ip]->Integral() - hErecoTun->Integral()) / hErecoTun->Integral() << endl;
-    cout << endl;
-    cout << "/////////" << endl;
-    cout << endl;
-    
+
     char name[200];
     sprintf(name,"hRatioTun_p1sigma_%s",sysstr.c_str());
     char title[200];
     sprintf(title,"Ratio, %s, +1 sigma = %.3lf",sysstr.c_str(),tweak_p1);
     hRatioTun_p1sigma[ip] = (TH1D*)hErecoTun_p1sigma[ip]->Clone(name);
-    hRatioTun_p1sigma[ip]->Divide(hErecoTun);
-    SetRatioNullTo1(hRatioTun_p1sigma[ip]);
-    
+    SetRatio(hErecoTun,hErecoTun_p1sigma[ip],hRatioTun_p1sigma[ip]);
+
     for (int im = 0; im < conv::knm; im++) {
       conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
       if(m == conv::kSKmUndefined) continue;
@@ -474,8 +496,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       string modestr = util::AsStringCompact(m);
       const char * mname = modestr.c_str();
         
-      //hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
-      hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
+      hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      //hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
       hErecoTunMode_p1sigma[ip][im]->SetFillStyle(0);
         
       char name[200];
@@ -490,8 +512,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       char title[200];
       sprintf(title,"Ratio, %s, %s, +1 sigma = %.3lf",sysstr.c_str(),mname,tweak_p1);
       hRatioTunMode_p1sigma[ip][im] = (TH1D*)hErecoTunMode_p1sigma[ip][im]->Clone(name);
-      hRatioTunMode_p1sigma[ip][im]->Divide(hErecoTunMode[im]);
-      SetRatioNullTo1(hRatioTunMode_p1sigma[ip][im]);
+      SetRatio(hErecoTunMode[im],hErecoTunMode_p1sigma[ip][im],hRatioTunMode_p1sigma[ip][im]);
     }
     
     // -1 sigma tweak systematic
@@ -502,12 +523,25 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // skexp.TweakSystematic("sk_e_scale",0.);
     skexp.ResetSystematics();
     cout << "Twk m1\t" << sysstr << "\t" << tweak_m1 << endl;
-    
+    if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsBANFF(p)) cout << "Nominal = " << skexp.GetBANFF()            ->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsXSec(p))  cout << "Nominal = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
+    else{
+      cout << "Parameter " << util::AsString(p) << " doesn't belong to any group" << endl;
+      exit(1);
+    }
     skexp.TweakSystematic(sysstr,tweak_m1);
+    if(util::IsSKDetFSI(p))   cout << "-1sigma = " << skexp.GetSuperkDetectorFSI()->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsBANFF(p)) cout << "-1sigma = " << skexp.GetBANFF()            ->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsXSec(p))  cout << "-1sigma = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
+    else{
+      cout << "Parameter " << util::AsString(p) << " doesn't belong to any group" << endl;
+      exit(1);
+    }
     skexp.Generate(ph);
     
-    //hErecoTun_m1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-    hErecoTun_m1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
+    hErecoTun_m1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    //hErecoTun_m1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
     char name[200];
     sprintf(name,"hErecoTun_m1sigma_%s",sysstr.c_str());
     char title[200];
@@ -520,8 +554,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     char title[200];
     sprintf(title,"Ratio, %s, -1 sigma = %.3lf",sysstr.c_str(),tweak_m1);
     hRatioTun_m1sigma[ip] = (TH1D*)hErecoTun_m1sigma[ip]->Clone(name);
-    hRatioTun_m1sigma[ip]->Divide(hErecoTun);
-    SetRatioNullTo1(hRatioTun_m1sigma[ip]);
+    SetRatio(hErecoTun,hErecoTun_m1sigma[ip],hRatioTun_m1sigma[ip]);
     
     for (int im = 0; im < conv::knm; im++) {
       conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
@@ -530,8 +563,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       string modestr = util::AsStringCompact(m);
       const char * mname = modestr.c_str();
         
-      //hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
-      hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
+      hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      //hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
       hErecoTunMode_m1sigma[ip][im]->SetFillStyle(0);
         
       char name[200];
@@ -546,8 +579,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       char title[200];
       sprintf(title,"Ratio, %s, %s, -1 sigma = %.3lf",sysstr.c_str(),mname,tweak_m1);
       hRatioTunMode_m1sigma[ip][im] = (TH1D*)hErecoTunMode_m1sigma[ip][im]->Clone(name);
-      hRatioTunMode_m1sigma[ip][im]->Divide(hErecoTunMode[im]);
-      SetRatioNullTo1(hRatioTunMode_m1sigma[ip][im]);
+      SetRatio(hErecoTunMode[im],hErecoTunMode_m1sigma[ip][im],hRatioTunMode_m1sigma[ip][im]);
     }
     
     // +3 sigma tweak systematic
@@ -558,12 +590,25 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // skexp.TweakSystematic("sk_e_scale",0.);
     skexp.ResetSystematics();
     cout << "Twk p3\t" << sysstr << "\t" << tweak_p3 << endl;
-    
+    if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsBANFF(p)) cout << "Nominal = " << skexp.GetBANFF()            ->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsXSec(p))  cout << "Nominal = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
+    else{
+      cout << "Parameter " << util::AsString(p) << " doesn't belong to any group" << endl;
+      exit(1);
+    }
     skexp.TweakSystematic(sysstr,tweak_p3);
+    if(util::IsSKDetFSI(p))   cout << "+3sigma = " << skexp.GetSuperkDetectorFSI()->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsBANFF(p)) cout << "+3sigma = " << skexp.GetBANFF()            ->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsXSec(p))  cout << "+3sigma = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
+    else{
+      cout << "Parameter " << util::AsString(p) << " doesn't belong to any group" << endl;
+      exit(1);
+    }
     skexp.Generate(ph);
     
-    //hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-    hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
+    hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    //hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
     char name[200];
     sprintf(name,"hErecoTun_p3sigma_%s",sysstr.c_str());
     char title[200];
@@ -576,9 +621,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     char title[200];
     sprintf(title,"Ratio, %s, +3 sigma = %.3lf",sysstr.c_str(),tweak_p3);
     hRatioTun_p3sigma[ip] = (TH1D*)hErecoTun_p3sigma[ip]->Clone(name);
-    hRatioTun_p3sigma[ip]->Divide(hErecoTun);
-    SetRatioNullTo1(hRatioTun_p3sigma[ip]);
-    
+    SetRatio(hErecoTun,hErecoTun_p3sigma[ip],hRatioTun_p3sigma[ip]);
+
     for (int im = 0; im < conv::knm; im++) {
       conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
       if(m == conv::kSKmUndefined) continue;
@@ -586,8 +630,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       string modestr = util::AsStringCompact(m);
       const char * mname = modestr.c_str();
         
-      //hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
-      hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
+      hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      //hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
       hErecoTunMode_p3sigma[ip][im]->SetFillStyle(0);
         
       char name[200];
@@ -602,9 +646,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       char title[200];
       sprintf(title,"Ratio, %s, %s, +3 sigma = %.3lf",sysstr.c_str(),mname,tweak_p3);
       hRatioTunMode_p3sigma[ip][im] = (TH1D*)hErecoTunMode_p3sigma[ip][im]->Clone(name);
-      hRatioTunMode_p3sigma[ip][im]->Divide(hErecoTunMode[im]);
-      SetRatioNullTo1(hRatioTunMode_p3sigma[ip][im]);
-    }
+      SetRatio(hErecoTunMode[im],hErecoTunMode_p3sigma[ip][im],hRatioTunMode_p3sigma[ip][im]);
+   }
     
     // -3 sigma tweak systematic
     skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
@@ -614,12 +657,25 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // skexp.TweakSystematic("sk_e_scale",0.);
     skexp.ResetSystematics();
     cout << "Twk m3\t" << sysstr << "\t" << tweak_m3 << endl;
-    
+    if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsBANFF(p)) cout << "Nominal = " << skexp.GetBANFF()            ->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsXSec(p))  cout << "Nominal = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
+    else{
+      cout << "Parameter " << util::AsString(p) << " doesn't belong to any group" << endl;
+      exit(1);
+    }
     skexp.TweakSystematic(sysstr,tweak_m3);
+    if(util::IsSKDetFSI(p))   cout << "-3sigma = " << skexp.GetSuperkDetectorFSI()->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsBANFF(p)) cout << "-3sigma = " << skexp.GetBANFF()            ->FHCpRHCCurrentValue(p)<< endl;
+    else if(util::IsXSec(p))  cout << "-3sigma = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
+    else{
+      cout << "Parameter " << util::AsString(p) << " doesn't belong to any group" << endl;
+      exit(1);
+    }
     skexp.Generate(ph);
     
-    //hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-    hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
+    hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    //hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
     char name[200];
     sprintf(name,"hErecoTun_m3sigma_%s",sysstr.c_str());
     char title[200];
@@ -632,9 +688,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     char title[200];
     sprintf(title,"Ratio, %s, -3 sigma = %.3lf",sysstr.c_str(),tweak_m3);
     hRatioTun_m3sigma[ip] = (TH1D*)hErecoTun_m3sigma[ip]->Clone(name);
-    hRatioTun_m3sigma[ip]->Divide(hErecoTun);
-    SetRatioNullTo1(hRatioTun_m3sigma[ip]);
-    
+    SetRatio(hErecoTun,hErecoTun_m3sigma[ip],hRatioTun_m3sigma[ip]);
+
     for (int im = 0; im < conv::knm; im++) {
       conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
       if(m == conv::kSKmUndefined) continue;
@@ -642,8 +697,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       string modestr = util::AsStringCompact(m);
       const char * mname = modestr.c_str();
         
-      //hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
-      hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
+      hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      //hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
       hErecoTunMode_m3sigma[ip][im]->SetFillStyle(0);
         
       char name[200];
@@ -658,9 +713,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       char title[200];
       sprintf(title,"Ratio, %s, %s, -3 sigma = %.3lf",sysstr.c_str(),mname,tweak_m3);
       hRatioTunMode_m3sigma[ip][im] = (TH1D*)hErecoTunMode_m3sigma[ip][im]->Clone(name);
-      hRatioTunMode_m3sigma[ip][im]->Divide(hErecoTunMode[im]);
-      SetRatioNullTo1(hRatioTunMode_m3sigma[ip][im]);
-        
+      SetRatio(hErecoTunMode[im],hErecoTunMode_m3sigma[ip][im],hRatioTunMode_m3sigma[ip][im]);
     }
     
     NtotParam++;
@@ -692,8 +745,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   skexp.Generate(ph);
     
     
-  //hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
+  hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  //hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
   char name[200];
   sprintf(name,"hErecoTun_p1sigma_all");
   hErecoTun_p1sigma_all->SetName(name);
@@ -724,8 +777,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   skexp.Generate(ph);
     
     
-  //hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
+  hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  //hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
   char name[200];
   sprintf(name,"hErecoTun_m1sigma_all");
   hErecoTun_m1sigma_all->SetName(name);

@@ -20,13 +20,22 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
  
  // Mach3, T2K Run1-4 + reactors best fit (A)
- double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ double       input_mixing12       = 0.,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13       = 0.,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23       = 0., //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp        = 0., //-99,    /* deltacp, */
  double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  double       input_betabar        = -99,
+
+ // // Mach3, T2K Run1-4 + reactors best fit (A)
+ // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ // double       input_betabar        = -99,
  
  // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
  // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -58,7 +67,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  bool         disable_banff_tuning = false,                          /* */
  
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
+ const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_q2_elike_21bins.xml",
  //const char * config_file      = "analysis_configuration_test_q2_elike.xml",
  //const char * config_file      = "analysis_configuration_test_theta_xsecterm_RFGRPA_21bins.xml",
@@ -231,10 +242,11 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  string sconfig(config);
 
   // Print options
   cout << "\n[Job inputs]" << endl;
-  cout << "- Reading analysis configuration from: " << config << endl;
+  cout << "- Reading analysis configuration from: " << sconfig << endl;
   cout << "- Plotting spectra for sample: " << util::AsString(s) << endl;
   cout << "- Disabling BANFF tuning: " << ((disable_banff_tuning) ? "YES" : "NO") << endl;
   cout << "- Physics hypothesis: " << ph << endl;
@@ -274,7 +286,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   
   // Create & config superk spectrum predictor
   SuperkExpectation skexp;
-  skexp.Read(config);
+  skexp.Read(sconfig);
 
   // Disable BANFF tuning if requested
   if(disable_banff_tuning) {
