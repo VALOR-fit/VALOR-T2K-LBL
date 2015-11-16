@@ -1405,12 +1405,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         // NEW 2D TEMPLATES
         
-        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-        double electronMass = 0.511   / 1000.; // GeV
-        double muonMass     = 105.658 / 1000.; // GeV
-        double neutronMass  = 939.565 / 1000.; // GeV
-        double protonMass   = 938.272 / 1000.; // GeV
-        
 #if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
         
         // Get momentum and energy of most energetic lepton (only 1Ring samples)
@@ -1418,11 +1412,11 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         double pmax_lep = 0.; // momentum of most energetic lepton
         double mass_lep = 0.;
         if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-            mass_lep = electronMass; // GeV
+            mass_lep = kElectronMassGeV; // GeV
             pmax_lep = fBrAmome[0] / 1000.; // GeV
         }
         else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-            mass_lep = muonMass; // GeV
+            mass_lep = kMuonMassGeV; // GeV
             pmax_lep = fBrAmomm[0] / 1000.; // GeV
         }
         else{
@@ -1440,10 +1434,10 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         double mass_nucl = 0.;
         if( (s == kSKsRHCFCFV1RingELike) || (s == kSKsRHCFCFV1RingMuLike) ){ // RHC
-            mass_nucl = protonMass; // nubar interacts with proton
+            mass_nucl = kProtonMassGeV; // nubar interacts with proton
         }
         else if( (s == kSKsFCFV1RingELike) || (s == kSKsFCFV1RingMuLike) ){ // FHC
-            mass_nucl = neutronMass; // nubar interacts with neutron
+            mass_nucl = kNeutronMassGeV; // nubar interacts with neutron
         }
         else{
             cerr << endl;
@@ -1465,7 +1459,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         // Get lepton direction
         // Costheta is the scalar product between the neutrino beam and lepton directions.
         
-        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
         if( costheta<-1.00001 || costheta>+1.00001 ){
             cerr << endl;
             cerr << std::setprecision(10);
@@ -1518,9 +1512,9 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
         //cout << Q2 << " ";
         // // PROVA
-        // double px = ereco_nu*dir_nu[0];
-        // double py = ereco_nu*dir_nu[1];
-        // double pz = ereco_nu*dir_nu[2];
+        // double px = ereco_nu*kBeamDir[0];
+        // double py = ereco_nu*kBeamDir[1];
+        // double pz = ereco_nu*kBeamDir[2];
         // double e = ereco_nu;
         // TLorentzVector lv_pnu(px,py,pz,e);
         // px = pmax_lep*fBrDir[0][1];
@@ -1556,7 +1550,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
             cout << "Q2 < Q2BinEdge(s,0)" << endl;
-            cout << "nu direction: " << dir_nu[0] << " " << dir_nu[1] << " " << dir_nu[2] << " ";
+            cout << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
             cout << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
             cout << "theta = " << LepThetaDegrees << " ";
             cout << "costheta = " << costheta << " ";
@@ -1579,7 +1573,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
 #elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
         
-        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
         if( costheta<-1.00001 || costheta>+1.00001 ){
             cerr << endl;
             cerr << std::setprecision(10);
@@ -1653,11 +1647,11 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         // double pmax_lep = 0.; // momentum of most energetic lepton
         // double mass_lep = 0.;
         // if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-        //   mass_lep = electronMass * 1000.; // GeV --> MeV
+        //   mass_lep = kElectronMassGeV * 1000.; // GeV --> MeV
         //   pmax_lep = fBrAmome[0]; // MeV
         // }
         // else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-        //   mass_lep = muonMass * 1000.; // GeV --> MeV
+        //   mass_lep = kMuonMassGeV * 1000.; // GeV --> MeV
         //   pmax_lep = fBrAmomm[0]; // MeV
         // }
         // else{
@@ -1997,12 +1991,6 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         // NEW 2D TEMPLATES
         
-        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-        double electronMass = 0.511   / 1000.; // GeV
-        double muonMass     = 105.658 / 1000.; // GeV
-        double neutronMass  = 939.565 / 1000.; // GeV
-        double protonMass   = 938.272 / 1000.; // GeV
-        
 #if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
         
         // Get momentum and energy of most energetic lepton (only 1Ring samples)
@@ -2010,12 +1998,12 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         double pmax_lep = 0.; // momentum of most energetic lepton
         double mass_lep = 0.;
         if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-            mass_lep = electronMass; // GeV
+            mass_lep = kElectronMassGeV; // GeV
             pmax_lep = fBrAmome[0] / 1000.; // GeV
             pmax_lep = this->SmearMomentum(pmax_lep,"electron");
         }
         else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-            mass_lep = muonMass; // GeV
+            mass_lep = kMuonMassGeV; // GeV
             pmax_lep = fBrAmomm[0] / 1000.; // GeV
             pmax_lep = this->SmearMomentum(pmax_lep,"muon");
         }
@@ -2034,10 +2022,10 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         double mass_nucl = 0.;
         if( (s == kSKsRHCFCFV1RingELike) || (s == kSKsRHCFCFV1RingMuLike) ){ // RHC
-            mass_nucl = protonMass; // nubar interacts with proton
+            mass_nucl = kProtonMassGeV; // nubar interacts with proton
         }
         else if( (s == kSKsFCFV1RingELike) || (s == kSKsFCFV1RingMuLike) ){ // FHC
-            mass_nucl = neutronMass; // nubar interacts with neutron
+            mass_nucl = kNeutronMassGeV; // nubar interacts with neutron
         }
         else{
             cerr << endl;
@@ -2060,7 +2048,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         // Get lepton direction
         // Costheta is the scalar product between the neutrino beam and lepton directions.
         
-        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
         if( costheta<-1.00001 || costheta>+1.00001 ){
             cerr << endl;
             cerr << std::setprecision(10);
@@ -2127,9 +2115,9 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
         //cout << Q2 << " ";
         // // PROVA
-        // double px = ereco_nu*dir_nu[0];
-        // double py = ereco_nu*dir_nu[1];
-        // double pz = ereco_nu*dir_nu[2];
+        // double px = ereco_nu*kBeamDir[0];
+        // double py = ereco_nu*kBeamDir[1];
+        // double pz = ereco_nu*kBeamDir[2];
         // double e = ereco_nu;
         // TLorentzVector lv_pnu(px,py,pz,e);
         // px = pmax_lep*fBrDir[0][1];
@@ -2165,7 +2153,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
             cout << "Q2 < Q2BinEdge(s,0)" << endl;
-            cout << "nu direction: " << dir_nu[0] << " " << dir_nu[1] << " " << dir_nu[2] << " ";
+            cout << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
             cout << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
             cout << "theta = " << LepThetaDegrees << " ";
             cout << "costheta = " << costheta << " ";
@@ -2188,7 +2176,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
 #elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
         
-        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
         if( costheta<-1.00001 || costheta>+1.00001 ){
             cerr << endl;
             cerr << std::setprecision(10);
@@ -2262,11 +2250,11 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         // double pmax_lep = 0.; // momentum of most energetic lepton
         // double mass_lep = 0.;
         // if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-        //   mass_lep = electronMass * 1000.; // GeV --> MeV
+        //   mass_lep = kElectronMassGeV * 1000.; // GeV --> MeV
         //   pmax_lep = fBrAmome[0]; // MeV
         // }
         // else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-        //   mass_lep = muonMass * 1000.; // GeV --> MeV
+        //   mass_lep = kMuonMassGeV * 1000.; // GeV --> MeV
         //   pmax_lep = fBrAmomm[0]; // MeV
         // }
         // else{
