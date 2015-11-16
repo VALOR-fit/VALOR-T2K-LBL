@@ -1520,6 +1520,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
             p == kNuisBANFFNormCCcoh    ||
             p == kNuisBANFFNormNCcoh    ||
             p == kNuisBANFFNormNCoth    ||
+	    p == kNuisBANFFNormNC1Gamma ||
             p == kNuisBANFFNormNuEToNuMu ||
             p == kNuisBANFFNormNuEBarToNuMuBar
 
@@ -1534,6 +1535,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
             p == kRHCNuisBANFFNormCCcoh    ||
             p == kRHCNuisBANFFNormNCcoh    ||
             p == kRHCNuisBANFFNormNCoth    ||
+	    p == kRHCNuisBANFFNormNC1Gamma ||
             p == kRHCNuisBANFFNormNuEToNuMu ||
             p == kRHCNuisBANFFNormNuEBarToNuMuBar
 
@@ -2341,27 +2343,29 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     // - BANFF param, NuEToNuMu  normalization
     //
     else if( p == kNuisBANFFMEC          ||
-            p == kNuisBANFFMECBar       ||
-            p == kNuisBANFFNormCCcoh    ||
-            p == kNuisBANFFNormNCcoh    ||
-            p == kNuisBANFFNormNCoth    ||
-            p == kNuisBANFFNormNuEToNuMu ||
-            p == kNuisBANFFNormNuEBarToNuMuBar
-            )
+	     p == kNuisBANFFMECBar       ||
+	     p == kNuisBANFFNormCCcoh    ||
+	     p == kNuisBANFFNormNCcoh    ||
+	     p == kNuisBANFFNormNCoth    ||
+	     p == kNuisBANFFNormNC1Gamma ||
+	     p == kNuisBANFFNormNuEToNuMu ||
+	     p == kNuisBANFFNormNuEBarToNuMuBar
+	     )
     {
         wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
     }
     else if( p == kRHCNuisBANFFMEC          ||
              p == kRHCNuisBANFFMECBar       ||
-            p == kRHCNuisBANFFNormCCcoh    ||
-            p == kRHCNuisBANFFNormNCcoh    ||
-            p == kRHCNuisBANFFNormNCoth    ||
-            p == kRHCNuisBANFFNormNuEToNuMu ||
-            p == kRHCNuisBANFFNormNuEBarToNuMuBar
-)
-    {
+	     p == kRHCNuisBANFFNormCCcoh    ||
+	     p == kRHCNuisBANFFNormNCcoh    ||
+	     p == kRHCNuisBANFFNormNCoth    ||
+	     p == kRHCNuisBANFFNormNC1Gamma ||
+	     p == kRHCNuisBANFFNormNuEToNuMu ||
+	     p == kRHCNuisBANFFNormNuEBarToNuMuBar
+	     )
+      {
         wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
-    }
+      }
 #endif // NIWG2015
     
     // NEW XSEC NIWG
