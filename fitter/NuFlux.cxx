@@ -18,6 +18,7 @@
 //#define __show_flux_twk_mesg_info__   
 //#define __show_flux_twk_mesg_debug__   
 //#define __show_flux_twk_mesg_debug_level2__  //even more verbose
+//#define __show_banffsystconv_check_nuflux_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -38,6 +39,7 @@ using std::endl;
 
 using namespace valor;
 using namespace valor::util;
+using namespace valor::conv;
 
 ClassImp(NuFlux)
 
@@ -45,11 +47,145 @@ ClassImp(NuFlux)
 NuFlux::NuFlux()
 {
   this->Init();
+
+  //check that BANFFSystConv.h is setup correctly (more checks in BANFF::BANFF())
+  CheckIsFluxParam(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
+		   kParamInBANFFfitIsSuperkFluxParam, "kParamInBANFFfitIsSuperkFluxParam");
+  CheckIsFluxParam(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
+		   kRHCParamInBANFFfitIsSuperkFluxParam, "kRHCParamInBANFFfitIsSuperkFluxParam");
+  CheckIsFluxParam(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
+		   kFHCpRHCParamInBANFFfitIsSuperkFluxParam, "kFHCpRHCParamInBANFFfitIsSuperkFluxParam");
+
+  CheckFluxPdg(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
+	       kNuPdgCodeOfFluxParamInBANFFfit, "kNuPdgCodeOfFluxParamInBANFFfit");
+  CheckFluxPdg(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
+	       kNuPdgCodeOfRHCFluxParamInBANFFfit, "kNuPdgCodeOfRHCFluxParamInBANFFfit");
+  CheckFluxPdg(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
+	       kNuPdgCodeOfFHCpRHCFluxParamInBANFFfit, "kNuPdgCodeOfFHCpRHCFluxParamInBANFFfit");
+
+  CheckFluxERange(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
+		  (const double *)kEtrueRangeOfFluxParamInBANFFfit, "kEtrueRangeOfFluxParamInBANFFfit");
+  CheckFluxERange(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
+		  (const double *)kEtrueRangeOfRHCFluxParamInBANFFfit, "kEtrueRangeOfRHCFluxParamInBANFFfit");
+  CheckFluxERange(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
+		  (const double *)kEtrueRangeOfFHCpRHCFluxParamInBANFFfit, "kEtrueRangeOfFHCpRHCFluxParamInBANFFfit");
+
 }
 //________________________________________________________________________________________
 NuFlux::~NuFlux()
 {
   this->CleanUp();
+}
+//________________________________________________________________________________________
+void NuFlux::CheckIsFluxParam(int nparams, int nfluxparams, const PhysParamId_t * params, const bool * flux, const char * vname)
+{
+  PhysParamId_t curr;
+  //check that BANFF parameters mark themselves as flux/not correctly
+  for(int ib = 0; ib < nparams; ib++) {
+    curr = params[ib];
+    bool is_flux_expect = (ib < nfluxparams ? true : false);
+    bool is_flux  = flux[ib];
+#ifdef __show_banffsystconv_check_nuflux_mesg_debug__
+    cout << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << is_flux << " " << util::AsString(curr) << endl;
+#endif
+    if(is_flux != is_flux_expect) {
+      cerr << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << is_flux << " " << util::AsString(curr) << endl
+	   << "INCORRECT!" << endl;
+      exit(-1);
+    }
+  }//ib
+}
+//________________________________________________________________________________________
+void NuFlux::CheckFluxPdg(int nparams, int nfluxparams, const PhysParamId_t * params, const int * pdg, const char * vname)
+{
+  PhysParamId_t curr, prev;
+  //check that BANFF parameters effect the correct PDG
+  for(int ib = 1; ib < nparams; ib++) {
+    prev = params[ib-1];
+    curr = params[ib];
+    int this_flux_pdg = pdg[ib];
+    int prev_flux_pdg = pdg[ib-1];
+#ifdef __show_banffsystconv_check_nuflux_mesg_debug__
+    if(ib == 1)
+      cout << "NuFlux/Init >> " << vname << "[" << ib-1 << "] = " << prev_flux_pdg << " " << util::AsString(prev) << endl;
+    cout << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl;
+#endif
+    if(ib < nfluxparams) {
+      int this_flux_position = std::distance(kOrderOfBANFFFluxPDG, std::find(std::begin(kOrderOfBANFFFluxPDG), std::end(kOrderOfBANFFFluxPDG), this_flux_pdg));
+      int prev_flux_position = std::distance(kOrderOfBANFFFluxPDG, std::find(std::begin(kOrderOfBANFFFluxPDG), std::end(kOrderOfBANFFFluxPDG), prev_flux_pdg));
+      int next_flux_position = (prev_flux_position + 1) % 4;
+      int noptions = sizeof(kOrderOfBANFFFluxPDG) / sizeof(int);
+      if(this_flux_position > noptions) {
+	cerr << "NuFlux/Init >> Unknown flux PDG code" << endl
+	     << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl;
+	exit(-1);
+      }
+      if(prev_flux_position > noptions) {
+	cerr << "NuFlux/Init >> Unknown flux PDG code" << endl
+	     << vname << "[" << ib-1 << "] = " << prev_flux_pdg << " " << util::AsString(prev) << endl;
+	exit(-1);
+      }
+      if(this_flux_position != prev_flux_position && this_flux_position != next_flux_position){
+	cerr << "NuFlux/Init >> Wrong flux PDG code" << endl
+	     << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl
+	     << "Should be " << pdg[prev_flux_position]
+	     << " or "       << pdg[next_flux_position] << endl;
+	exit(-1);
+      }
+    }//flux param
+    else {
+      if(this_flux_pdg) {
+	cerr << "NuFlux/Init >> Wrong flux PDG code" << endl
+	     << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl
+	     << "Should be 0" << endl;
+	exit(-1);
+      }
+    }//not flux param
+  }//ib
+}
+//________________________________________________________________________________________
+void NuFlux::CheckFluxERange(int nparams, int nfluxparams, const PhysParamId_t * params, const double * erange, const char * vname)
+{
+  PhysParamId_t curr, prev;
+  //check that BANFF parameters effect the correct PDG
+  for(int ib = 1; ib < nparams; ib++) {
+    prev = params[ib-1];
+    curr = params[ib];
+    double this_lo = erange[ib*2];
+    double this_hi = erange[ib*2 + 1];
+    double prev_lo = erange[(ib-1)*2];
+    double prev_hi = erange[(ib-1)*2 + 1];
+#ifdef __show_banffsystconv_check_nuflux_mesg_debug__
+    if(ib == 1)
+      cout << "NuFlux/Init >> " << vname << "[" << ib-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl;
+    cout << "NuFlux/Init >> " << vname << "[" << ib << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl;
+#endif
+    if(ib < nfluxparams) {
+      if(TMath::Abs(this_lo - prev_hi) > 1E-6) {
+	if(TMath::Abs(prev_hi - 30) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok!
+	else {
+	  cerr << "NuFlux/Init >> Wrong energy range" << endl
+	       << vname << "[" << ib-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
+	       << vname << "[" << ib << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	       << "Should be previous high and this low should be identical (or 30 and 0)" << endl;
+	  exit(-1);
+	}
+      }
+      if(TMath::Abs(this_lo + 1) < 1E-6 || TMath::Abs(this_hi + 1) < 1E-6) {
+	cerr << "NuFlux/Init >> Wrong energy range" << endl
+	     << vname << "[" << ib << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	     << "Flux parameters shouldn't have -1 here" << endl;	
+      }
+    }
+    else {
+      if(TMath::Abs(this_lo + 1) > 1E-6 || TMath::Abs(this_hi + 1) > 1E-6) {
+	cerr << "NuFlux/Init >> Wrong energy range" << endl
+	     << vname << "[" << ib << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	     << "Should be -1,-1" << endl;
+	exit(-1);
+      }
+    }
+  }//ib
 }
 //________________________________________________________________________________________
 void NuFlux::Init(void)

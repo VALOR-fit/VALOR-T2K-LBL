@@ -200,6 +200,8 @@ public:
   
 private:
 
+  void CheckListOfBANFFParams(int nparams, const conv::PhysParamId_t * params, const char * vname);
+    
   void Init      (void);
   void CleanUp   (void);
 

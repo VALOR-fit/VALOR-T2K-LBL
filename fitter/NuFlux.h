@@ -100,6 +100,11 @@ public:
 
 private:
 
+  // Check that BANFFSystConv.h is setup correctly
+  void CheckIsFluxParam(int nparams, int nfluxparams, const conv::PhysParamId_t * params, const bool   * flux,   const char * vname);
+  void CheckFluxPdg    (int nparams, int nfluxparams, const conv::PhysParamId_t * params, const int    * pdg,    const char * vname);
+  void CheckFluxERange (int nparams, int nfluxparams, const conv::PhysParamId_t * params, const double * erange, const char * vname);
+
   // Initialize and clean-up
   void Init    (void);
   void CleanUp (void);

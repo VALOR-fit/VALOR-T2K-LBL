@@ -15,6 +15,7 @@
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug2__
 //#define __BANFF_BESTFIT_IS_ONE__ //debug mode to turn the best fit vector into a vector of 1's (i.e. BANFF tuned == flux tuned)
+//#define __show_banffsystconv_check_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -46,11 +47,41 @@ BANFF::BANFF() :
 TObject()
 {
   this->Init();
+
+  //check that BANFFSystConv.h is setup correctly (more checks in NuFlux::NuFlux())
+  /*
+  CheckListOfBANFFParams(kNumOfParamsInBANFFfit, kListOfBANFFParams, "kListOfBANFFParams");
+  CheckListOfBANFFParams(kNumOfRHCParamsInBANFFfit, kListOfRHCBANFFParams, "kListOfRHCBANFFParams");
+  CheckListOfBANFFParams(kNumOfFHCpRHCParamsInBANFFfit, kListOfFHCpRHCBANFFParams, "kListOfFHCpRHCBANFFParams");
+  */
 }
 //________________________________________________________________________________________
 BANFF::~BANFF()
 {
   this->CleanUp();
+}
+//________________________________________________________________________________________
+void BANFF::CheckListOfBANFFParams(int nparams, const conv::PhysParamId_t * params, const char * vname)
+{
+  int ib = 0;
+  PhysParamId_t curr, prev;
+
+  //check that BANFF parameters are monotonically increasing (gaps are allowed)
+  for(ib = 1; ib < nparams; ib++) {
+    prev = params[ib-1];
+    curr = params[ib];
+#ifdef __show_banffsystconv_check_mesg_debug__
+    if(ib == 1)
+      cout << "BANFF/Init >> " << vname << "[" << ib-1 << "] = " << prev << " " << util::AsString(prev) << endl;
+    cout << "BANFF/Init >> " << vname << "[" << ib   << "] = " << curr << " " << util::AsString(curr) << endl;
+#endif
+    if((int)curr <= (int)prev) {
+      cerr << "BANFF/Init >> " << vname << "[" << ib   << "] = " << curr << " " << util::AsString(curr) << endl
+	   << " comes before " << vname << "[" << ib-1 << "] = " << prev << " " << util::AsString(prev)
+	   << endl;
+      exit(-1);
+    }
+  }
 }
 //________________________________________________________________________________________
 void BANFF::Init(void)
@@ -130,7 +161,7 @@ void BANFF::Init(void)
   fUntunedCentralValues = 0;
   fRHCUntunedCentralValues = 0;
   fFHCpRHCUntunedCentralValues = 0;   // NEW FHC+RHC JOINT
-  
+
 }
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
