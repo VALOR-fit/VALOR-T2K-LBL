@@ -55,8 +55,6 @@ NuFlux::NuFlux()
 			 "kListOfRHCBANFFParams", false);
   CheckListOfBANFFParams(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
 			 "kListOfFHCpRHCBANFFParams", true);
-
-  exit(-1);
   
   CheckIsFluxParam(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
 		   kParamInBANFFfitIsSuperkFluxParam, "kParamInBANFFfitIsSuperkFluxParam");
@@ -102,10 +100,8 @@ void NuFlux::CheckListOfBANFFParams(int nparams, int nfluxparams, const conv::Ph
 #endif
     if(ib < nfluxparams) {
       if((int)curr != ((int)prev + 1)) {
-	cout << allow_gap << endl << "\t";
 	//this is to allow jumps between FHC + RHC flux parameters
 	if(allow_gap) {
-	  cout << "Setting allow_gap to false" << endl << "\t";
 	  allow_gap = false;
 	  continue;
 	}
@@ -152,16 +148,15 @@ void NuFlux::CheckFluxPdg(int nparams, int nfluxparams, const PhysParamId_t * pa
     cout << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl;
 #endif
     if(ib < nfluxparams) {
-      int this_flux_position = std::distance(kOrderOfBANFFFluxPDG, std::find(std::begin(kOrderOfBANFFFluxPDG), std::end(kOrderOfBANFFFluxPDG), this_flux_pdg));
-      int prev_flux_position = std::distance(kOrderOfBANFFFluxPDG, std::find(std::begin(kOrderOfBANFFFluxPDG), std::end(kOrderOfBANFFFluxPDG), prev_flux_pdg));
+      int this_flux_position = std::distance(kOrderOfBANFFFluxPDG, std::find(kOrderOfBANFFFluxPDG, kOrderOfBANFFFluxPDG + kNBANFFluxPDGs, this_flux_pdg));
+      int prev_flux_position = std::distance(kOrderOfBANFFFluxPDG, std::find(kOrderOfBANFFFluxPDG, kOrderOfBANFFFluxPDG + kNBANFFluxPDGs, prev_flux_pdg));
       int next_flux_position = (prev_flux_position + 1) % 4;
-      int noptions = sizeof(kOrderOfBANFFFluxPDG) / sizeof(int);
-      if(this_flux_position > noptions) {
+      if(this_flux_position > kNBANFFluxPDGs) {
 	cerr << "NuFlux/Init >> Unknown flux PDG code" << endl
 	     << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl;
 	exit(-1);
       }
-      if(prev_flux_position > noptions) {
+      if(prev_flux_position > kNBANFFluxPDGs) {
 	cerr << "NuFlux/Init >> Unknown flux PDG code" << endl
 	     << vname << "[" << ib-1 << "] = " << prev_flux_pdg << " " << util::AsString(prev) << endl;
 	exit(-1);

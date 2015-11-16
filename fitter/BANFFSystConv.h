@@ -30,7 +30,8 @@
 namespace valor {
     namespace conv   {
 
-      static const int kOrderOfBANFFFluxPDG[4] = { kPdgNuMu, kPdgNuMuBar, kPdgNuE, kPdgNuEBar };
+      static const int kNBANFFluxPDGs = 4;
+      static const int kOrderOfBANFFFluxPDG[kNBANFFluxPDGs] = { kPdgNuMu, kPdgNuMuBar, kPdgNuE, kPdgNuEBar };
       
         //
         // Number of BANFF fit parameters
