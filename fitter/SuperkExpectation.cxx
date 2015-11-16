@@ -130,10 +130,13 @@ void SuperkExpectation::CleanUp(void)
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
 {  
-  T2KOpt::Instance()->ReadXmlPath(config_file); 
+  if (T2KOpt::Instance()->ReadXmlPath(config_file)) {
+    cerr << "SKExp/Read >> Unable to access config file: " << config_file << endl;
+    return false;
+  }
   
   cout << "SKExp/Read >> Reading config file: " << config_file << endl;
-
+  
   if(fIsConfigured) {
     this->CleanUp();
   } 
