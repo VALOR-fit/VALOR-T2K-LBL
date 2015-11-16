@@ -423,10 +423,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     if(m == conv::kSKmUndefined) continue;
     if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     string modestr = util::AsStringCompact(m);
-
-    TH2D * htemp = skexp.CurrPredictedErecoVsQ2Spectrum(s,m);
-    cout << m << " " << modestr << " = " << htemp->Integral() << endl;
-    /*
+        
+    //cout << m << " " << modestr << " --> ";
     if(util::IsCCQE(m)) cout << "IsCCQE" << endl;
     else if(util::IsMEC(m)) cout << "IsMEC" << endl;
     else if(util::IsCCnQE(m)) cout << "IsCCnQE" << endl;
@@ -436,21 +434,20 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
       exit(1);
     }
     cout << endl;
-    */
 
     // Fill by flavor/mode    
     if(util::IsNC(m))    
-      hErecoVsQ2Mode_NC->Add(htemp); // NC
+      hErecoVsQ2Mode_NC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NC
     else if(util::IsOscNuEBar(m))
-      hErecoVsQ2Mode_NumuBarToNueBar->Add(htemp); // NumuBar->NueBar
+      hErecoVsQ2Mode_NumuBarToNueBar->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar->NueBar
     else if(util::IsOscNuE(m))
-      hErecoVsQ2Mode_NumuToNue->Add(htemp); // Numu->Nue
+      hErecoVsQ2Mode_NumuToNue->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu->Nue
     else if( util::IsNuMuBar(m))
-      hErecoVsQ2Mode_NumuBarBeam->Add(htemp); // NumuBar Beam
+      hErecoVsQ2Mode_NumuBarBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar Beam
     else if( util::IsNuMu(m))
-      hErecoVsQ2Mode_NumuBeam->Add(htemp); // Numu Beam
+      hErecoVsQ2Mode_NumuBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu Beam
     else if( util::IsNuE(m) || util::IsNuEBar(m) )
-      hErecoVsQ2Mode_NueBeam->Add(htemp); // Nue & NueBar Beam
+      hErecoVsQ2Mode_NueBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Nue & NueBar Beam
     else{
       cout << modestr << endl;
       cout << "No mode / flavors are selected!!!" << endl;
@@ -458,11 +455,11 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     }
 
     if(util::IsCCQE(m))    
-      hErecoVsQ2Mode_CCQE->Add(htemp); // CCQE
+      hErecoVsQ2Mode_CCQE->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // CCQE
     else if(util::IsMEC(m))    
-      hErecoVsQ2Mode_MEC->Add(htemp); // MEC
+      hErecoVsQ2Mode_MEC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // MEC
     else if(util::IsCCnQE(m))    
-      hErecoVsQ2Mode_CCnQE->Add(htemp); // CCnQE
+      hErecoVsQ2Mode_CCnQE->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // CCnQE
     else if(util::IsNC(m)){} // already filled
     else{
       cout << modestr << endl;
@@ -470,10 +467,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
       exit(1);
     }
 
-    delete htemp;
   } // loop over modes
-
-  cout << endl << endl;
 
   // Get 1D projections X: Q2
   hQ2Mode_NumuBarBeam     = (TH1D*) hErecoVsQ2Mode_NumuBarBeam    ->ProjectionX()->Clone("hQ2Mode_NumuBarBeam");
@@ -1196,11 +1190,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
 
 TH1D * spectrum_to_per_50mev(TH1D * h) {
-  cout << "spectrum_to_per_50mev" << endl;
   TH1D * hout = new TH1D(*h);
-  cout << "spectrum_to_per_50mev copy done" << endl;
-  hout->SetName(TString::Format("%s_per50", h->GetName()));
-  cout << "spectrum_to_per_50mev new name set" << endl;
   for(int ix = 1; ix <= hout->GetNbinsX(); ix++) {
     hout->SetBinContent(ix, 0.05 * h->GetBinContent(ix) / h->GetBinWidth(ix));
   }
