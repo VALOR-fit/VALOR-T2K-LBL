@@ -173,6 +173,8 @@ private:
    void Book    (void);
    void CleanUp (void);
 
+   void CheckPhysParamId(void);
+
    // Use the nuisance param values in the input FitParamList to tweak the pdfs.
    void SetNuisanceParams (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
 
