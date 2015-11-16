@@ -625,6 +625,9 @@ namespace util {
   
   conv::PhysParamId_t GetBarredVersionOfPhysParam(conv::PhysParamId_t p);
   
+  // Tell the framework classes what our parameter names are
+  void PopulateNameRegistry(void);
+  
 } // util
 
 } // valor

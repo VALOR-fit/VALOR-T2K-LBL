@@ -12,6 +12,7 @@
 //________________________________________________________________________________________
 
 #include <string>
+#include <map>
 #include <algorithm>
 #include <iostream>
 
@@ -19,6 +20,7 @@
 
 #include "T2KPhysParamId.h"
 #include "Utilities.h"
+#include "Utilities/NameRegistry.h"
 //~ #include "NuOscMixParam.h"
 #include "Enumerations.h"
 
@@ -4587,4 +4589,15 @@ string valor::util::ParamAsStringCompact_KDI        (conv::PhysParamId_t p) { re
 string valor::util::ParamAsStringSpline             (conv::PhysParamId_t p) { return util::AsStringSpline            (p);}
 string valor::util::ParamAsStringNIWG               (conv::PhysParamId_t p) { return util::AsStringNIWG              (p);}
 //____________________________________________________________________________
-
+void valor::util::PopulateNameRegistry(void)
+{
+  NameRegistry * nr = util::NameRegistry::MutableInstance();
+  
+  for (int ip = -1 ; ip < conv::kLastNuisParam; ip++) {
+    conv::PhysParamId_t p = (conv::PhysParamId_t)ip;
+    nr->fParamNames      [p] = util::AsString(p);
+    nr->fParamNamesSimple[p] = util::AsStringSimple(p);
+  }
+  return;
+}
+//____________________________________________________________________________
