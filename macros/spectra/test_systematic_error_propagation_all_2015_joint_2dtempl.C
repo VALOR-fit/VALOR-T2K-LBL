@@ -254,6 +254,10 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   //hErecoTun = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()); // NEW 2D TEMPLATES
   hErecoTun->SetName("hErecoTun");
     
+  cout << endl;
+  cout << "Tot # of events tuned = " << hErecoTun->Integral() << endl;
+  cout << endl;
+
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
@@ -482,6 +486,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hErecoTun_p1sigma[ip]->SetName (name);
     hErecoTun_p1sigma[ip]->SetTitle(title);
 
+    cout << "Tot # of events +1 sigma = " << hErecoTun_p1sigma[ip]->Integral() << endl;
+
     char name[200];
     sprintf(name,"hRatioTun_p1sigma_%s",sysstr.c_str());
     char title[200];
@@ -549,6 +555,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hErecoTun_m1sigma[ip]->SetName (name);
     hErecoTun_m1sigma[ip]->SetTitle(title);
     
+    cout << "Tot # of events -1 sigma = " << hErecoTun_m1sigma[ip]->Integral() << endl;
+
     char name[200];
     sprintf(name,"hRatioTun_m1sigma_%s",sysstr.c_str());
     char title[200];
@@ -616,6 +624,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hErecoTun_p3sigma[ip]->SetName (name);
     hErecoTun_p3sigma[ip]->SetTitle(title);
     
+    cout << "Tot # of events +3 sigma = " << hErecoTun_p3sigma[ip]->Integral() << endl;
+
     char name[200];
     sprintf(name,"hRatioTun_p3sigma_%s",sysstr.c_str());
     char title[200];
@@ -683,6 +693,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hErecoTun_m3sigma[ip]->SetName (name);
     hErecoTun_m3sigma[ip]->SetTitle(title);
     
+    cout << "Tot # of events -3 sigma = " << hErecoTun_m3sigma[ip]->Integral() << endl;
+
     char name[200];
     sprintf(name,"hRatioTun_m3sigma_%s",sysstr.c_str());
     char title[200];
@@ -733,8 +745,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   skexp.ResetSystematics();
     
   TVectorD *twkv_banff_p1sigma;
-  TVectorD *twkv_skdetfsi_p1sigma;
-    
+  TVectorD *twkv_skdetfsi_p1sigma;    
     
   twkv_banff_p1sigma = new TVectorD(nbanff,vp1sigma_banff);
   twkv_skdetfsi_p1sigma= new TVectorD(nskdetfsi,vp1sigma_skdetfsi);
@@ -742,8 +753,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   skexp.GetSuperkDetectorFSI()->TweakFHCpRHC(true,twkv_skdetfsi_p1sigma);
   skexp.TweakSystematic("sk_e_scale",vp1sigma_skescale);
   skexp.TweakSystematic("sk_e_scale_rhc",vp1sigma_skescale);
-  skexp.Generate(ph);
-    
+  skexp.Generate(ph);    
     
   hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   //hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
