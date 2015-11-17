@@ -1154,17 +1154,13 @@ void SuperkMC::Book(void)
             if(m == kSKmUndefined) continue;
             const int      var_n_etrue_bins    = util::NumVariableMCEtrueBins (s,m);
             const double * var_etrue_bin_edges = util::VariableMCEtrueBinEdges(s,m);
-            fMCTemplOri[is][im] = new TH2D(
-                                           Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplOri[is][im] = new TH2D(Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
                                            n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplNom[is][im] = new TH2D(
-                                           Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplNom[is][im] = new TH2D(Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
                                            n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplRPA[is][im] = new TH2D(
-                                           Form("nsk_rpa_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplRPA[is][im] = new TH2D(Form("nsk_rpa_%d_%d",is,im), util::AsString(m).c_str(),
                                            n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplPOT[is][im] = new TH2D(
-                                           Form("nsk_pot_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplPOT[is][im] = new TH2D(Form("nsk_pot_%d_%d",is,im), util::AsString(m).c_str(),
                                            n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
             
             fMCTemplOri[is][im]->SetDirectory(0);
@@ -1180,8 +1176,7 @@ void SuperkMC::Book(void)
             fMCTemplPOT[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
             fMCTemplPOT[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
             
-            fMCVariableTempl[is][im] = new TH2D(
-                                                Form("nsk_ori_var_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCVariableTempl[is][im] = new TH2D(Form("nsk_ori_var_%d_%d",is,im), util::AsString(m).c_str(),
                                                 var_n_ereco_bins, var_ereco_bin_edges, var_n_etrue_bins,  var_etrue_bin_edges);
             fMCVariableTempl[is][im]->SetDirectory(0);
             fMCVariableTempl[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
@@ -1216,17 +1211,13 @@ void SuperkMC::Book(void)
             if(m == kSKmUndefined) continue;
             const int      var_n_etrue_bins    = util::NumVariableMCEtrueBins (s,m);
             const double * var_etrue_bin_edges = util::VariableMCEtrueBinEdges(s,m);
-            fMCTemplOri2D[is][im] = new TH3D(
-                                             Form("nsk_ori_%d_%d_2d",is,im), util::AsString(m).c_str(),
+            fMCTemplOri2D[is][im] = new TH3D(Form("nsk_ori_%d_%d_2d",is,im), util::AsString(m).c_str(),
                                              n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplNom2D[is][im] = new TH3D(
-                                             Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplNom2D[is][im] = new TH3D(Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
                                              n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplRPA2D[is][im] = new TH3D(
-                                             Form("nsk_rpa_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplRPA2D[is][im] = new TH3D(Form("nsk_rpa_%d_%d",is,im), util::AsString(m).c_str(),
                                              n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplPOT2D[is][im] = new TH3D(
-                                             Form("nsk_pot_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplPOT2D[is][im] = new TH3D(Form("nsk_pot_%d_%d",is,im), util::AsString(m).c_str(),
                                              n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
             
             fMCTemplOri2D[is][im]->SetDirectory(0);
@@ -1246,8 +1237,7 @@ void SuperkMC::Book(void)
             fMCTemplPOT2D[is][im]->GetYaxis()->SetTitle("E_{reco} (GeV)");
             fMCTemplPOT2D[is][im]->GetZaxis()->SetTitle("E_{true} (GeV)");
             
-            fMCVariableTempl2D[is][im] = new TH3D(
-                                                  Form("nsk_ori_var_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCVariableTempl2D[is][im] = new TH3D(Form("nsk_ori_var_%d_%d",is,im), util::AsString(m).c_str(),
                                                   var_n_q2_bins, var_q2_bin_edges, var_n_ereco_bins, var_ereco_bin_edges, var_n_etrue_bins,  var_etrue_bin_edges);
             fMCVariableTempl2D[is][im]->SetDirectory(0);
             fMCVariableTempl2D[is][im]->GetXaxis()->SetTitle("Q^2 (GeV)");
