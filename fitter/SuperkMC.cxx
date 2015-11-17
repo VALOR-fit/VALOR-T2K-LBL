@@ -98,6 +98,7 @@
 #include "Conventions/Opt.h"
 #include "Utilities/Rnd.h"
 #include "Utilities/NuOscSterile.h"
+#include "Utilities/UtlSystem.h"
 
 using std::cout;
 using std::cerr;
@@ -643,7 +644,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     // c->Print("hThetaLep_NumuBar.pdf");
     // hThetaLep_NueBar->Draw();
     // c->Print("hThetaLep_NueBar.pdf");
-    // exit(1);
+    // util::Die(1); return;
     
     
     this->FillTemplateArrays(true); // Fill the arrays - with niwg weights by default
@@ -944,7 +945,7 @@ bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
     // c->Print("hThetaLep_NumuBar.pdf");
     // hThetaLep_NueBar->Draw();
     // c->Print("hThetaLep_NueBar.pdf");
-    // exit(1);
+    // util::Die(1); return;
     
     
     this->FillTemplateArrays(true); // Fill the arrays - with niwg weights by default
@@ -1274,7 +1275,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     if(!mctree) {
         cerr << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: "
         << util::AsString(s) << "/" << util::AsString(m) << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     double pot_wght = this->AnalyzedSamplePOT(s) / mcpot;
@@ -1291,7 +1292,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         cerr << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for "
         << util::AsString(s) << "/" << util::AsString(m)
         << " is " << pot_wght << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     const char * erec_branch          = "erec"; // MeV/c
@@ -1419,7 +1420,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
             cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
             cerr << "are not implemented" << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double mass_nucl = 0.;
@@ -1439,7 +1440,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
             cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
             cerr << "are not implemented" << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         // Get lepton energy
@@ -1456,7 +1457,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << "SuperkMC::FillTemplateHistogram" << endl;
             cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double sintheta = 1. - costheta*costheta;
@@ -1467,7 +1468,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
             cerr << "costheta = " << costheta << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double LepTheta        = TMath::ACos(costheta); // radiant
@@ -1476,7 +1477,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << endl;
             cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         
@@ -1534,7 +1535,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         if(q2_fill > MaxQ2_up){
             cout << q2_fill << endl;
-            exit(1);
+            util::Die(1); return;
         }
 #endif
         
@@ -1548,7 +1549,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cout << "emax_lep = " << emax_lep << " ";
             cout << "ereco_nu = " << ereco_nu << " ";
             cout << "Q2 = " << Q2 << " GeV" << endl;
-            exit(1);
+            util::Die(1); return;
         }
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
             cout << "Q2 > Q2BinEdge(s,0)" << endl;
@@ -1557,7 +1558,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cout << "emax_lep = " << emax_lep << " ";
             cout << "ereco_nu = " << ereco_nu << " ";
             cout << "Q2 = " << Q2 << " GeV" << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         
@@ -1570,7 +1571,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << "SuperkMC::FillTemplateHistogram" << endl;
             cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double LepTheta        = TMath::ACos(costheta); // radiant
@@ -1579,7 +1580,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << endl;
             cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double q2_fill = LepThetaDegrees;
@@ -1599,20 +1600,20 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         if(q2_fill > MaxQ2_up){
             cout << q2_fill << endl;
-            exit(1);
+            util::Die(1); return;
         }
 #endif
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
             cout << "costheta = " << costheta << endl;
             cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
             cout << "costheta = " << costheta << endl;
             cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
 #else
@@ -1620,7 +1621,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         cerr << "SuperkMC::FillTemplateHistogram()" << endl;
         cerr << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization" << endl;
         cerr << endl;
-        exit(1);
+        util::Die(1); return;
 #endif //__ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
         
         //
@@ -1654,7 +1655,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
         //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
         //   cerr << "are not implemented" << endl;
-        //   exit(1);
+        //   util::Die(1); return;
         // }
         
         // //double myereco_nu = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep); // inputs are MeV
@@ -1863,7 +1864,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     if(!mctree) {
         cerr << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: "
         << util::AsString(s) << "/" << util::AsString(m) << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     double pot_wght = this->AnalyzedSamplePOT(s) / mcpot;
@@ -1880,7 +1881,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         cerr << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for "
         << util::AsString(s) << "/" << util::AsString(m)
         << " is " << pot_wght << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     const char * erec_branch          = "erec"; // MeV/c
@@ -2007,7 +2008,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
             cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
             cerr << "are not implemented" << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double mass_nucl = 0.;
@@ -2027,7 +2028,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
             cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
             cerr << "are not implemented" << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
 
@@ -2045,7 +2046,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cerr << "SuperkMC::FillTemplateHistogram" << endl;
             cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double sintheta = 1. - costheta*costheta;
@@ -2056,7 +2057,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
             cerr << "costheta = " << costheta << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double LepTheta        = TMath::ACos(costheta); // radiant
@@ -2065,7 +2066,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cerr << endl;
             cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         /*
@@ -2137,7 +2138,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         if(q2_fill > MaxQ2_up){
             cout << q2_fill << endl;
-            exit(1);
+            util::Die(1); return;
         }
 #endif
         
@@ -2151,7 +2152,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cout << "emax_lep = " << emax_lep << " ";
             cout << "ereco_nu = " << ereco_nu << " ";
             cout << "Q2 = " << Q2 << " GeV" << endl;
-            exit(1);
+            util::Die(1); return;
         }
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
             cout << "Q2 > Q2BinEdge(s,0)" << endl;
@@ -2160,7 +2161,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cout << "emax_lep = " << emax_lep << " ";
             cout << "ereco_nu = " << ereco_nu << " ";
             cout << "Q2 = " << Q2 << " GeV" << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         
@@ -2173,7 +2174,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cerr << "SuperkMC::FillTemplateHistogram" << endl;
             cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double LepTheta        = TMath::ACos(costheta); // radiant
@@ -2182,7 +2183,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cerr << endl;
             cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
             cerr << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         double q2_fill = LepThetaDegrees;
@@ -2202,20 +2203,20 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         if(q2_fill > MaxQ2_up){
             cout << q2_fill << endl;
-            exit(1);
+            util::Die(1); return;
         }
 #endif
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
             cout << "costheta = " << costheta << endl;
             cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
             cout << "costheta = " << costheta << endl;
             cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
-            exit(1);
+            util::Die(1); return;
         }
         
 #else
@@ -2223,7 +2224,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         cerr << "SuperkMC::FillTemplateHistogram()" << endl;
         cerr << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization" << endl;
         cerr << endl;
-        exit(1);
+        util::Die(1); return;
 #endif //__ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
         
         //
@@ -2257,7 +2258,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
         //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
         //   cerr << "are not implemented" << endl;
-        //   exit(1);
+        //   util::Die(1); return;
         // }
         
         // //double myereco_nu = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep); // inputs are MeV
@@ -2607,10 +2608,10 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                         double nev = this->Template2D(s,m,template_to_use)->GetBinContent(iq,ir,it);
                         
                         // cout << "2D: " << util::AsString(s) << " , " << util::AsString(m)
-                        // 	 << " --> Q2 = " << this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinCenter(iq)
-                        // 	 << " --> Ereco = " << this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinCenter(ir)
-                        // 	 << " --> nev = " << nev << endl;
-                        // if(nev==0) exit(1);
+                        //      << " --> Q2 = " << this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinCenter(iq)
+                        //      << " --> Ereco = " << this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinCenter(ir)
+                        //      << " --> nev = " << nev << endl;
+                        // if(nev==0) {util::Die(1); return;}
                         
                         
                         fMCTemplArrayNom2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
@@ -4649,7 +4650,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
                 double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
                 
                 // if(s==kSKsFCFVMultiRingMuLike || s==kSKsFCFVMultiRingELike){
-                //   exit(1);
+                //   util::Die(1); return;;
                 // }
                 
                 
@@ -4870,7 +4871,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     else
     {
         std::cerr<<"SKMC/ApplyPhysHypothesisToTemplates >> Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
-        exit(-1);
+        util::Die(-1); return;
     }
     
 #ifdef __save_templates_debug__
@@ -4930,7 +4931,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates2D(void)
     else
     {
         std::cerr<<"SKMC/ApplyPhysHypothesisToTemplates2D >> Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
-        exit(-1);
+        util::Die(-1); return;
     }
     
 #ifdef __save_templates_debug__
@@ -5010,7 +5011,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) /
         << "\n oscillation mixing params: " << util::AsString(omp)
         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
         << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     // loop over samples
@@ -5253,7 +5254,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(const bool Use2Dtemplates
         << "\n oscillation mixing params: " << util::AsString(omp)
         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
         << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     // loop over samples
@@ -5495,7 +5496,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(const bool Use2Dte
         << "\n oscillation mixing params: " << util::AsString(omp)
         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
         << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     // loop over samples
@@ -5730,7 +5731,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(const bool Use2Dtempl
         << "\n oscillation mixing params: " << util::AsString(omp)
         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
         << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     // loop over samples
@@ -5950,14 +5951,14 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(const bool Use2Dtemplates)
             cerr << "**  Exp/SKMC >> Can't handle choice of "
             << "\n octant: " << util::AsString(Opt::Instance()->gOscOctantChoice)
             << endl;
-            exit(1);
+            util::Die(1); return;
         }
     }
     else {
         cerr << "**  Exp/SKMC >> Can't handle choice of "
         << "\n oscillation mixing params: " << util::AsString(omp)
         << endl;
-        exit(1);
+        util::Die(1); return;
     }
     
     // May need to put some decision on mass splitting convention here.
@@ -6583,7 +6584,7 @@ double SuperkMC::AnalyzedSamplePOT(SuperkSample_t s) const
     }
     else {
         cerr << "Sample not selected" << endl;
-        exit(1);
+        util::Die(1); return 0;
     }
 }
 //________________________________________________________________________________________
@@ -7017,7 +7018,7 @@ void SuperkMC::NevDebug2D(SKMCTemplateType_t t, string name)
             
             
             //this->DrawProjectionXY( mctempl ); // OK!!!
-            //exit(1);
+            //util::Die(1); return;);
             
             
             //first write the 3d template, and cout the mode integral
@@ -7569,7 +7570,7 @@ void SuperkMC::DrawProjectionXY(TH3D *h){ // for debugging
     //Template2D(kSKsFCFV1RingELike,kSKmOscNuECCQE,kSKMCtNom);
     
     //this->DrawProjectionXY( mctempl ); // OK!!!
-    //exit(1);
+    //util::Die(1); return;;
     
     cout << "Draw Canvas" << endl;
     
