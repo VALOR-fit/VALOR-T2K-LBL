@@ -55,6 +55,15 @@ using namespace valor;
 using namespace valor::conv;
 using namespace valor::util;
 
+#ifdef USE_SPLINE_MAP
+#include <unordered_map>
+struct valor::NuXSec::SplineMapContainer {
+  std::unordered_map<conv::XSecSplineKey,TSpline*> map;
+};
+#else
+struct valor::NuXSec::SplineMapContainer {};
+#endif
+
 ClassImp(NuXSec)
 
 //________________________________________________________________________________________
@@ -136,6 +145,12 @@ void NuXSec::Init(void)
   fRHCUntunedCentralValues = 0;
   
   arr_index = util::ArrIdx::Instance();
+  
+  fSplMapC = 0;
+
+#ifdef USE_SPLINE_MAP
+  fSplMapC = new SplineMapContainer;
+#endif
 
 }
 //________________________________________________________________________________________
@@ -2243,4 +2258,34 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
 #endif
   return splname.str();
 }
+//________________________________________________________________________________________
+#ifdef USE_SPLINE_MAP
+std::size_t std::hash<conv::XSecSplineKey>::operator() (const conv::XSecSplineKey & k) const
+{
+  static std::size_t myhash = 0xcbf29ce484222325; //FNV offset
+#ifndef STL_HASH
+  // FNV-1 hash https://en.wikipedia.org/wiki/Fowler-Noll-Vo_hash_function
+  static std::size_t prime = 0x100000001b3;
+  static size_t nbytes = sizeof(conv::XSecSplineKey);
+  const char * block = (const char *)&k;
+  for (unsigned int i = 0 ; i < nbytes ; i++) {
+    myhash *= prime;
+    myhash ^= block[i];
+  }
+#else
+  // Slower but maybe more reliable? STL hashes combined using boost-inspired method
+  // http://www.boost.org/doc/libs/1_35_0/doc/html/boost/hash_combine_id241013.html
+  static std::hash<int>    hash_int;
+  static std::hash<double> hash_double;
+  myhash ^= hash_int(k.m)        + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_int(k.m)        + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_int(k.p)        + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_double(k.Etrue) + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_double(k.dim1)  + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_double(k.dim2)  + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  // If this turns out to be speed critical, could probably reduce the number of instructions here safely.
+#endif
+  return myhash;
+}
+#endif //USE_SPLINE_MAP
 //________________________________________________________________________________________

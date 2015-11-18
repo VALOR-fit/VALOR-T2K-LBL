@@ -18,12 +18,15 @@
 #ifndef _valor_nu_xsec_h_
 #define _valor_nu_xsec_h_
 
+#include <functional>
+
 #include <TObject.h>
 #include <TXMLEngine.h>
 #include <TH2.h>
 #include <TSpline.h>
 #include <TFile.h>
 
+#include "Build.h"
 #include "Binning.h"
 #include "Conventions.h"
 #include "Enumerations.h"
@@ -238,10 +241,40 @@ private:
   TVectorD * fRHCUntunedCentralValues;
   
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
+  
+  struct SplineMapContainer;     // CINT can't handle C++11 types. Hide our unordered_map in a container.
+  SplineMapContainer * fSplMapC; //! which Cint will ignore (Pimpl idiom).
 
 ClassDef(NuXSec, 5);
 };
 
 } // valor
+
+#ifdef USE_SPLINE_MAP
+// Keys for an ordered map of TSplines
+namespace valor {
+namespace conv  {
+  struct XSecSplineKey
+  {
+    PhysParamId_t p;
+    SuperkSample_t s;
+    SuperkMode_t m;
+    double Etrue;
+    double dim1;
+    double dim2;
+  };
+}
+}
+
+namespace std {
+  template <> struct hash <valor::conv::XSecSplineKey>
+  {
+    public:
+      std::size_t operator() (const valor::conv::XSecSplineKey & k) const;
+  };
+}
+#endif //USE_SPLINE_MAP
+
+
 
 #endif
