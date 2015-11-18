@@ -144,6 +144,10 @@ public:
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
   
+  // Fill the map, if we use it.
+  void FillSplineMap(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue, double obs1, double obs2 = 0);
+  void SetSplineMapFilled(bool is_filled = true);
+  
 private:
 
   void Init    (void);
@@ -240,10 +244,11 @@ private:
   TVectorD * fUntunedCentralValues;
   TVectorD * fRHCUntunedCentralValues;
   
-  util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
-  
   struct SplineMapContainer;     // CINT can't handle C++11 types. Hide our unordered_map in a container.
   SplineMapContainer * fSplMapC; //! which Cint will ignore (Pimpl idiom).
+  bool fSplineMapIsFilled;
+  
+  util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
 ClassDef(NuXSec, 5);
 };
@@ -260,8 +265,9 @@ namespace conv  {
     SuperkSample_t s;
     SuperkMode_t m;
     double Etrue;
-    double dim1;
-    double dim2;
+    double obs1;
+    double obs2;
+    bool operator==(const XSecSplineKey & k2) const;
   };
 }
 }

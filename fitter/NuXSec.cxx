@@ -58,7 +58,7 @@ using namespace valor::util;
 #ifdef USE_SPLINE_MAP
 #include <unordered_map>
 struct valor::NuXSec::SplineMapContainer {
-  std::unordered_map<conv::XSecSplineKey,TSpline*> map;
+  std::unordered_map<conv::XSecSplineKey, const TSpline*> Map;
 };
 #else
 struct valor::NuXSec::SplineMapContainer {};
@@ -147,6 +147,7 @@ void NuXSec::Init(void)
   arr_index = util::ArrIdx::Instance();
   
   fSplMapC = 0;
+  fSplineMapIsFilled = false;
 
 #ifdef USE_SPLINE_MAP
   fSplMapC = new SplineMapContainer;
@@ -2233,6 +2234,11 @@ void NuXSec::SyncRHCToFHCSystematics()
   fRHCNormAntiNuToNuTwkDial = fNormAntiNuToNuTwkDial;
 }
 //________________________________________________________________________________________
+void NuXSec::SetSplineMapFilled(bool is_filled)
+{
+  fSplineMapIsFilled = is_filled;
+}
+//________________________________________________________________________________________
 std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const
 {
   ostringstream splname;
@@ -2259,30 +2265,81 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
   return splname.str();
 }
 //________________________________________________________________________________________
+void NuXSec::FillSplineMap(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Etrue, double obs1, double obs2)
+{
 #ifdef USE_SPLINE_MAP
+  int idx = this->WghtSplineIdx(p,s,m,obs1,Etrue);
+  if (idx < 0) {idx = -1;}
+  
+  const conv::XSecSplineKey k{p,s,m,Etrue,obs1,obs2};
+  
+  static const std::hash<conv::XSecSplineKey> hasher;
+  
+  cerr<<"hash: "<<hasher(k)<<endl;
+  cerr<<"Count: "<<fSplMapC->Map.count(k)<<endl;
+  
+  if (fSplMapC->Map.count(k)) {
+    cerr << "Exp/NuXSec/FillWeightSplineMap >> Found duplicate weight spline for "
+        << "sample = "      << util::AsString(s) 
+        << ", mode = "      << util::AsString(m)
+        << ", parameter = " << util::AsString(p)
+        << ", Etrue = "     << Etrue << " GeV"
+        << ", Ereco = "     << obs1  << " GeV!"
+        << " idx = " << idx 
+        << endl;
+  }
+  
+  TSpline * spl = fXSecWghtSpl1Rmu[idx];
+  
+  std::unordered_map<conv::XSecSplineKey,TSpline *>::value_type entry(k,spl);
+  fSplMapC->Map.insert(entry);  
+#endif
+  return;
+}
+//________________________________________________________________________________________
+#ifdef USE_SPLINE_MAP
+bool valor::conv::XSecSplineKey::operator== (const XSecSplineKey & k2) const
+{
+  return ( (this->p     == k2.p     ) &&
+           (this->s     == k2.s     ) &&
+           (this->m     == k2.m     ) &&
+           (this->Etrue == k2.Etrue ) &&
+           (this->obs1  == k2.obs1  ) &&
+           (this->obs2  == k2.obs2  ) );
+}
+//________________________________________________________________________________________
 std::size_t std::hash<conv::XSecSplineKey>::operator() (const conv::XSecSplineKey & k) const
 {
-  static std::size_t myhash = 0xcbf29ce484222325; //FNV offset
+  static const std::size_t seed = 0xcbf29ce484222325; //FNV offset
+  std::size_t myhash = seed;
 #ifndef STL_HASH
   // FNV-1 hash https://en.wikipedia.org/wiki/Fowler-Noll-Vo_hash_function
-  static std::size_t prime = 0x100000001b3;
-  static size_t nbytes = sizeof(conv::XSecSplineKey);
-  const char * block = (const char *)&k;
-  for (unsigned int i = 0 ; i < nbytes ; i++) {
-    myhash *= prime;
-    myhash ^= block[i];
-  }
+  static const std::size_t prime = 0x100000001b3;
+  // First do Enums, 4 bytes at a time, converting properly to 8-byte uints
+  myhash *= prime;
+  myhash ^= (std::size_t)k.p;
+  myhash *= prime;
+  myhash ^= (std::size_t)k.s;
+  myhash *= prime;
+  myhash ^= (std::size_t)k.m;
+  // Then do doubles, 8 bytes at time, stuffing into 8-byte uints without conversion
+  myhash *= prime;
+  myhash ^= *(std::size_t*)&(k.Etrue);
+  myhash *= prime;
+  myhash ^= *(std::size_t*)&(k.obs1);
+  myhash *= prime;
+  myhash ^= *(std::size_t*)&(k.obs2);
 #else
   // Slower but maybe more reliable? STL hashes combined using boost-inspired method
   // http://www.boost.org/doc/libs/1_35_0/doc/html/boost/hash_combine_id241013.html
-  static std::hash<int>    hash_int;
-  static std::hash<double> hash_double;
-  myhash ^= hash_int(k.m)        + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
-  myhash ^= hash_int(k.m)        + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  static const std::hash<int>    hash_int;
+  static const std::hash<double> hash_double;
   myhash ^= hash_int(k.p)        + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_int(k.s)        + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_int(k.m)        + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
   myhash ^= hash_double(k.Etrue) + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
-  myhash ^= hash_double(k.dim1)  + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
-  myhash ^= hash_double(k.dim2)  + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_double(k.obs1)  + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
+  myhash ^= hash_double(k.obs2)  + 0x9e3779b9 + (myhash << 6) + (myhash >> 2);
   // If this turns out to be speed critical, could probably reduce the number of instructions here safely.
 #endif
   return myhash;
