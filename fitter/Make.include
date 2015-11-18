@@ -2,8 +2,8 @@
 # Costas Andreopoulos (Rutherford Lab.) <costas.andreopoulos \at stfc.ac.uk>
 #
 
-GOPT_WITH_CXX_DEBUG_FLAG    = -g
-#GOPT_WITH_CXX_OPTIMIZ_FLAG = -O3
+#GOPT_WITH_CXX_DEBUG_FLAG    = -g
+GOPT_WITH_CXX_OPTIMIZ_FLAG = -O3
 GOPT_WITH_CXX_OPTIMIZ_FLAG  =
 GOPT_WITH_CXX_USERDEF_FLAGS = 
 
@@ -253,7 +253,7 @@ CFLAGS    = -g
 #	$(CXX) -c -o $@ $(CXXFLAGS) $(CPPFLAGS) $<
 
 .cc.o:
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -O0 $<
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -O0 ${T2KCOMPILE} $<
 
 .cxx.o:
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) ${T2KCOMPILE} $<
