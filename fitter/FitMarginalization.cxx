@@ -27,6 +27,8 @@
 //#define __print_hesseerror__
 //#define __print_hesseerror_verbose__
 
+//#define FILL_TREE_OSCPARAM_TOYS
+
 #define NUMOFBINSAROUNDMINTOCHECK 3  // Check bins both on the right and left 
 
 #define SCALE_PRECISION 80. // Rescale the likelihood by exp(scale) when sum over the toys, then scale back at the end (CalcChisqMargPtRead())
@@ -1702,9 +1704,9 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       } // loop ipar0 (free parameter)
     } // applied_negevents_condition
     
-
+#ifdef FILL_TREE_OSCPARAM_TOYS
     treetoys->Fill(); // NEW OSC TREE
-
+#endif
 
     delete skobs;
   } // iexperiment
