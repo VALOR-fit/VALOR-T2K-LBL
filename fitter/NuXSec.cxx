@@ -1341,7 +1341,7 @@ double NuXSec::SystWght_1p(
 #endif
    
 #ifdef __Negative_Spline_Value_HACK__
-    if(fabs(wght) > 5* 1 /conv::kASmallNum ||  wght < 0) {
+    if(fabs(wght) > 100000* 1 /conv::kASmallNum ||  wght < 0) {
 #else
   if(fabs(wght) > conv::kMaxAllowedWght ||  wght < 0) {
 #endif
