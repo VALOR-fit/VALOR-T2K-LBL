@@ -358,6 +358,16 @@
             <objname>    cos_offsets    </objname>
             <objtype>    TGraph         </objtype>
         </nieves_momentum_offset>
+        <martini_to_nieves_nu>
+            <filename>   test/banff_comparison/ccqe_mec_pdd_ratio_skTh528.root </filename>
+            <objname>    PDD_ratio_hist_altbin      </objname>
+            <objtype>    TH2D         </objtype>
+        </martini_to_nieves_nu>
+        <martini_to_nieves_nubar>
+            <filename>   test/banff_comparison/ccqe_mec_pdd_ratio_skTh528.root </filename>
+            <objname>    PDD_ratio_hist_numubar_altbin          </objname>
+            <objtype>    TH2D       </objtype>
+        </martini_to_nieves_nubar>
     </normalisations>  </mc>
 
   <!--
