@@ -83,7 +83,7 @@ foreach (@ARGV) {
     elsif($_ eq '--hierarchy-marg'         ) { $masshierarchy_marg    = $ARGV[$iarg+1]; }
     elsif($_ eq '--type-error'             ) { $type_error            = $ARGV[$iarg+1]; }
     elsif($_ eq '--draw-full-chisq'        ) { $draw_full_chisq       = $ARGV[$iarg+1]; }
-
+    elsif($_ eq '--store-like'             ) { $store_like            = $ARGV[$iarg+1]; }
     elsif($_ eq '--test-stat'              ) { $test_stat             = $ARGV[$iarg+1]; }
     
     else {
@@ -92,7 +92,7 @@ foreach (@ARGV) {
     $iarg++;
 }
 $resource        = "interactive"               unless defined $resource;
-$tag             = "fitmarg_joint_dcp_IH"             unless defined $tag;
+$tag             = "fitmarg_prova"             unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
 
@@ -107,17 +107,16 @@ $dm23sq          = 2.509E-3                    unless defined $dm23sq;
 $dm12sq          = 7.53E-5                     unless defined $dm12sq;
 $mix23           = 0.528                       unless defined $mix23;
 $mix13           = 0.0243                      unless defined $mix13;
+#$mix13           = 0.0217                      unless defined $mix13;
 $mix12           = 0.304                       unless defined $mix12;
 $deltacp         = -1.601                      unless defined $deltacp;
 
-$config_file    = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml"  unless defined $config_file;
-#$config_file    = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml"  unless defined $config_file;
+$config_file    = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml"  unless defined $config_file;
 
 $tweak_systematics      = 0                    unless defined $tweak_systematics;
 $stat_fluct             = 0                    unless defined $stat_fluct;
 
 $fitparamlist   = "nuosc3f+nuisance"      unless defined $fitparamlist;
-#$fitparamlist   = "nuosc3f_12fix+nuisance"      unless defined $fitparamlist;
 
 $dmsqscheme             = "auto"                unless defined $dmsqscheme;
 $masshierarchy          = "normal"               unless defined $masshierarchy;
@@ -126,8 +125,8 @@ $mixparamoctant         = "two"                  unless defined $mixparamoctant;
 
 #### marginalization
 
-$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl" unless defined $marg_file;
-#$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl" unless defined $marg_file;
+$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $marg_file;
+#$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $marg_file;
 
 $nfiles_marg       = 201             unless defined $nfiles_marg;     # of marginalization files
 $nexpts_marg       = 10000         unless defined $nexpts_marg;    # of marginalization toys
@@ -138,11 +137,11 @@ $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # M
 $npt_freepar0      = 201            unless defined $npt_freepar0; # of free parameter points to scan
 
 $marg_hierarchy    = 0             unless defined $marg_hierarchy;
-$masshierarchy_marg = "inverted"     unless defined $masshierarchy_marg;
+$masshierarchy_marg = "normal"     unless defined $masshierarchy_marg;
 
 $type_error        = ""            unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
 $draw_full_chisq   = 1             unless defined $draw_full_chisq;
-
+$store_like        = 0             unless defined $store_like;   # store likelihood weights for best-fit spectra w/ marginalization. To do only when 1 fit is performed 
 $test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
 
 $job_dir           = "."               unless defined $job_dir;
@@ -180,7 +179,7 @@ while($irun < $nruns) {
     
     $program = "root2k ";
         
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_joint.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$masshierarchy_marg\",\"$type_error\",$draw_full_chisq,\"$test_stat\")\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_joint.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,$marg_hierarchy,\"$masshierarchy_marg\",\"$type_error\",$draw_full_chisq,$store_like,\"$test_stat\")\'";
 
 
     $command = "$program $arguments";
