@@ -1339,8 +1339,12 @@ double NuXSec::SystWght_1p(
 #ifdef __Negative_Spline_Value_HACK__
     if(wght< 0) wght = conv::kASmallNum;
 #endif
-    
+   
+#ifdef __Negative_Spline_Value_HACK__
+    if(fabs(wght) > 5* 1 /conv::kASmallNum ||  wght < 0) {
+#else
   if(fabs(wght) > conv::kMaxAllowedWght ||  wght < 0) {
+#endif
     //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
     int ireco = -1; 
     for (int i = 0; i < kNXsErecoBins[s]; i++) {

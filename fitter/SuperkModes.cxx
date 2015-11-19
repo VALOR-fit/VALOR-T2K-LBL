@@ -60,19 +60,19 @@ bool valor::util::IsNuMu(valor::conv::SuperkMode_t  m)
 //____________________________________________________________________________
 bool valor::util::IsOscNuMu(valor::conv::SuperkMode_t  m)
 {
-#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+//#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
   if(m >= kSKmOscNuMuCCQE && m <= kSKmOscNuMuCCoth)
     return true;
-#endif
+//#endif
   return false;
 }
 //____________________________________________________________________________
 bool valor::util::IsOscNuMuBar(valor::conv::SuperkMode_t  m)
 {
-#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+//#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
   if(m >= kSKmOscNuMuBarCCQE && m <= kSKmOscNuMuBarCCoth)
     return true;
-#endif
+//#endif
   return false;
 }
 //____________________________________________________________________________

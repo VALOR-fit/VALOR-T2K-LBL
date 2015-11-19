@@ -266,6 +266,9 @@ void SuperkMC::Init(void)
     
 #ifdef OFFSET_NIEVES_MOMENTUM
     std::cout << "Exp/SKMC >> 1p 1h momentum offset applied" << std::endl;
+#ifdef OFFSET_CCQE_ONLY
+    std::cout << "Exp/SKMC >> 1p 1h momentum offset applied only to CCQE " << std::endl;
+#endif
 #endif
 
     std::cout << "Exp/SKMC >> Init complete" << std::endl;
@@ -734,8 +737,12 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         double Etrue = fBrPtrue[0];
         
-        
 #ifdef OFFSET_NIEVES_MOMENTUM
+#ifdef OFFSET_CCQE_ONLY
+        if(!util::IsCCQE(m)){
+        double ereco_fill = fBrEreco/1000.;
+        }
+        else{
         double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
         double electronMass = 0.511   / 1000.; // GeV
         double muonMass     = 105.658 / 1000.; // GeV
@@ -757,6 +764,30 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
             else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
         }
+        }
+#else
+        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+        double electronMass = 0.511   / 1000.; // GeV
+        double muonMass     = 105.658 / 1000.; // GeV
+        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+        double pmax_lep = 0.; // momentum of most energetic lepton
+        double mass_lep = 0.;
+        
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            mass_lep = electronMass; // GeV
+            pmax_lep = fBrAmome[0] / 1000.; // GeV
+            pmax_lep += fNuXSec->GetNievesMomentumOffset()->Eval(costheta)/1000.;
+            if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
+            else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            mass_lep = muonMass; // GeV
+            pmax_lep = fBrAmomm[0] / 1000.; // GeV
+            pmax_lep += fNuXSec->GetNievesMomentumOffset()->Eval(costheta)/1000.;
+            if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
+            else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
+        }
+#endif
 #endif
         
         //if(util::IsRHCSample(s))

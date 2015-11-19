@@ -32,6 +32,10 @@ Split valor::conv namespace into several smaller files
 //#define RESCALE_MEC_TO_MARTINI //resclae the mec MC to martini predition, Need to include a TGraph which is stored in NuXSec
 
 //#define OFFSET_NIEVES_MOMENTUM //offset the measured momentum using TGraph in NuXsec
+//
+//#ifdef OFFSET_NIEVES_MOMENTUM
+//#define OFFSET_CCQE_ONLY
+//#endif
 
 #define MECBAR_ERROR
 
