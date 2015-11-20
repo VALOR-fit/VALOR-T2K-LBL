@@ -27,7 +27,7 @@
 //#define __print_hesseerror__
 //#define __print_hesseerror_verbose__
 
-//#define FILL_TREE_OSCPARAM_TOYS
+#define FILL_TREE_OSCPARAM_TOYS
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // Check bins both on the right and left 
 
@@ -317,7 +317,7 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   
   // NEW SPECTRA MARG
   sprintf(fnamelikefilebinary,"%s","liketoy_%s_toy%d_x_oscpar%d_oscpar%d_MH%s%s");  
-  sprintf(fnameoscfiletree,"%s","%s_osctoys_toy%d_x_oscpar%d_oscpar%d_MH%s%s");  
+  sprintf(fnameoscfiletree,"%s","%s_osctoys_file%d_toy%d_x_oscpar%d_oscpar%d_MH%s%s");  
   //
 
   fMergeInputFiles_Called = true; // false the first time MergeInputFiles() is called
@@ -631,10 +631,6 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   
   fhToyMH = new TH1D("hToyMH","Toy MH: bin 1 --> NH, bin 2 --> IH",2,0,2);
 
-  // NEW OSC TREE
-  this->InitTreeOscToys(); // Initialize tree to store marg toys fitparamlist
-  //
-
   fStoreLikeWeights = false; // don't store the full likelihood befault
 }
 //________________________________________________________________________________________
@@ -707,8 +703,10 @@ void FitMarginalization::CleanUp(void){
   //
 #endif
 
+#ifdef FILL_TREE_OSCPARAM_TOYS
   if (treetoys                         ) { delete treetoys                         ; treetoys                = 0;}  // NEW OSC TREE
-
+  if (filetreetoys                     ) { delete filetreetoys                     ; filetreetoys            = 0;}  // NEW OSC TREE
+#endif
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetFullRange(){
@@ -1411,30 +1409,28 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	
 	if(fparm->IsPrior2D(p)){ // Fill it later as correlated (only mix23 and dm23 and/or mix13 and dcp)
 
-#ifdef __MARGINALIZE_23PARAMS_CORR__	  
+          #ifdef __MARGINALIZE_23PARAMS_CORR__	  
 	  if(p==conv::kPhypDm23sq || p==conv::kPhypMixing23) continue;
-#endif
-#ifdef __MARGINALIZE_TH13_DELTACP_CORR__	  
+          #endif
+          #ifdef __MARGINALIZE_TH13_DELTACP_CORR__	  
 	  if(p==conv::kPhypCPV || p==conv::kPhypMixing13) continue;
-#endif
-
+          #endif
 	  cerr << endl;
 	  cerr << "FitMarginalization::MakeToysMarginalization" << endl;
 	  cerr << "There are other parameters which are not 2D correlated" << endl;
 	  cerr << "Now the only 2D correlated parameters are " << endl;  
-
-#ifdef __MARGINALIZE_23PARAMS_CORR__	  
+          #ifdef __MARGINALIZE_23PARAMS_CORR__	  
 	  cerr << util::AsString(conv::kPhypDm23sq)
 	       << " and "
 	       << util::AsString(conv::kPhypMixing23)
 	       << endl;
-#endif
-#ifdef __MARGINALIZE_TH13_DELTACP_CORR__	  
+          #endif
+          #ifdef __MARGINALIZE_TH13_DELTACP_CORR__	  
 	  cerr << util::AsString(conv::kPhypCPV)
 	       << " and "
 	       << util::AsString(conv::kPhypMixing13)
 	       << endl;
-#endif
+          #endif
 	  exit(1);
 	}
 	
@@ -3193,11 +3189,10 @@ void FitMarginalization::ReadLikeToysFromBinary(const char *tag){
 // NEW OSC TREE
 
 //________________________________________________________________________________________
-void FitMarginalization::WriteOscToys2Tree(const char *tag){
+void FitMarginalization::WriteOscToys2Tree(int idfile, const char *tag){
 
-  cout << endl;
-  cout << "Write toy oscillation parameters to tree in file:" << endl;
-  
+#ifdef FILL_TREE_OSCPARAM_TOYS
+
   char namemh[200];
   if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
@@ -3212,17 +3207,27 @@ void FitMarginalization::WriteOscToys2Tree(const char *tag){
     }
   }	    
   char outname[200];
-  sprintf(outname,fnameoscfiletree,tag,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,".root");
-  std::string soutname(outname);
-    
-  TFile *outfiletree = new TFile(outname,"RECREATE");
+  sprintf(outname,fnameoscfiletree,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,".root");
+  
+  filetreetoys = new TFile(outname,"RECREATE");
+  
+  cout << endl;
+  cout << "Write toy oscillation parameters to tree in file" << endl;
+  filetreetoys->cd();
   treetoys->Write();
-  outfiletree->Close();  
+  filetreetoys->Close();  
+  delete filetreetoys; 
+  filetreetoys = 0;
+
+#else
+  cout << "FitMarginalization/WriteOscToys2Tree > The tree with toy oscillation parameters is not stored" << endl;
+#endif
 }
 //________________________________________________________________________________________
 void FitMarginalization::InitTreeOscToys(){
   treetoys = new TTree("treemargtoys","FitParamList and osc param values of marg toys");
   treetoys->Branch("best_fit_params",      "valor::FitParamList",  &fparm,      1280000,0);
+  treetoys->SetDirectory(0);
 }
 
 

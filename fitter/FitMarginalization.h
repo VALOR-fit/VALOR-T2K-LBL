@@ -26,6 +26,7 @@
 #include <TH1D.h> // NEW PRECISION
 #include <TH2D.h> // NEW PRECISION
 #include <TTree.h>
+#include <TFile.h>
 #include <TStopwatch.h>
 
 #include "Enumerations.h"
@@ -153,7 +154,8 @@ class FitMarginalization
   void SetStoreLikeWeights(bool doStoreLikeWeights){fStoreLikeWeights = doStoreLikeWeights;};
   //
   // NEW OSC TREE
-  void WriteOscToys2Tree(const char *tag); 
+  void WriteOscToys2Tree(int idfile, const char *tag); 
+  void InitTreeOscToys();
   //
 
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
@@ -527,7 +529,7 @@ class FitMarginalization
   bool fStoreLikeWeights;
   char fnameoscfiletree[200]; // to store toy likelihood from the fit
   TTree *treetoys;
-  void InitTreeOscToys();
+  TFile *filetreetoys;
   //
 
 };
