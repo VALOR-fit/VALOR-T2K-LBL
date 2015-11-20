@@ -672,7 +672,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     const char * amomm_branch = "amomm"; // MeV/c
     const char * amome_branch = "amome"; // MeV/c
     const char * dir_branch   = "dir";
-    
+    const char * dir_nu_branch = "dirnu";
+
     
     TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
     TBranch * branchEtrue   = mctree->GetBranch(etrue_branch     );
@@ -682,6 +683,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     TBranch * branchAmomm   = mctree->GetBranch(amomm_branch      );
     TBranch * branchAmome   = mctree->GetBranch(amome_branch      );
     TBranch * branchDir     = mctree->GetBranch(dir_branch        );
+    TBranch * branchDirNu   = mctree->GetBranch(dir_nu_branch     );
     
     
     branchEreco    -> SetAddress(&fBrEreco);
@@ -692,6 +694,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     branchAmomm    -> SetAddress(&fBrAmomm);
     branchAmome    -> SetAddress(&fBrAmome);
     branchDir      -> SetAddress(&fBrDir);
+    branchDirNu    -> SetAddress(&fBrDirNu);
     
     
     mctree->SetBranchStatus("*",0);
@@ -702,6 +705,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     mctree->SetBranchStatus(amomm_branch     , 1 );
     mctree->SetBranchStatus(amome_branch     , 1 );
     mctree->SetBranchStatus(dir_branch       , 1 );
+    mctree->SetBranchStatus(dir_nu_branch    , 1 );
 
     
 #ifdef USE_SFRFG_WEIGHT
@@ -821,6 +825,37 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             }
             
             pot_flx_weight = pot_flx_weight * martini_nieves_weight;
+        }
+#endif
+        
+#ifdef RESCALE_CCQE_MEC_PDD
+        int lepton_int =0;
+        if(util::IsMEC(m)){
+            lepton_int = 3;
+        }
+        else{
+            lepton_int = 2;
+        }
+
+        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+        double costheta = dir_nu[0] * fBrDirNu[lepton_int][0] + dir_nu[1] * fBrDirNu[lepton_int][1] + dir_nu[2] * fBrDirNu[lepton_int][2];
+
+        if(util::IsMEC(m) || util::IsCCQE(m))
+        {
+            double pdd_weight =1;
+            if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino PDD rescale
+                int biny = fNuXSec->GetPDDNu()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
+                int binx = fNuXSec->GetPDDNu()->GetXaxis()->FindBin(costheta);
+
+                pdd_weight = fNuXSec->GetPDDNu()->GetBinContent(binx,biny);
+            }
+            else{         //AntiNeutrino PDD rescale
+                int biny = fNuXSec->GetPDDNuBar()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
+                int binx = fNuXSec->GetPDDNuBar()->GetXaxis()->FindBin(costheta);
+
+                pdd_weight = fNuXSec->GetPDDNuBar()->GetBinContent(binx,biny);
+            }
+            pot_flx_weight = pot_flx_weight * pdd_weight;
         }
 #endif
         
@@ -1966,8 +2001,11 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
         double escale = fSKDetFSI->EnergyScale(s);
         
         double * events_per_bin = this->CurrErecoSpectrumArray(s);
-        
+#ifdef USE_CONSTANT_ENERGY_SHIFT_ERROR
+        util::ApplyConstantEnergySystematic(s,events_per_bin,escale);
+#else
         util::ApplyEnergyScaleSystematic(s,events_per_bin,escale);
+#endif
     }//is
     return applied_negevents_condition;
 }

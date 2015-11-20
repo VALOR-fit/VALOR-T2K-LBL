@@ -249,6 +249,8 @@ namespace valor {
         
         ////
         float      fBrPtrue[10];                 ///< branch var for reading input MC Minituple
+        float      fBrDirNu[10][3];                 ///< branch var for reading input MC Minituple
+
         double     fBrEreco;                     ///< branch var for reading input MC mini-DST
         //~ double     fBrEtrue;                     ///< branch var for reading input MC mini-DST
         int        fBrGenCode;                   ///< branch var for reading input MC mini-DST

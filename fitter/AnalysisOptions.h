@@ -37,7 +37,11 @@ Split valor::conv namespace into several smaller files
 //#define OFFSET_CCQE_ONLY
 //#endif
 
-#define MECBAR_ERROR
+//#define RESCALE_CCQE_MEC_PDD //Rescale for PDD stuff
+
+//#define MECBAR_ERROR
+
+//#define USE_CONSTANT_ENERGY_SHIFT_ERROR
 
 #define SYST_NSIGMA   3   // number of sigma away from nominal nuisance parameters are allowed to be
 #define SYST_STEP     0.1 // step size (in units of sigma)

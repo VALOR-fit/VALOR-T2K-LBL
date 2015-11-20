@@ -147,6 +147,9 @@ public:
     TGraph* GetMartiniToNievesRatioNuBar(void){ return Martinit_to_Nieves_MEC_ratio_NuBar; }
     TGraph* GetNievesMomentumOffset(void){ return NievesMomentumOffset; }
 
+    TH2D* GetPDDNu      (void)      { return PDD_ratio_nu; }
+    TH2D* GetPDDNuBar   (void)      { return PDD_ratio_nubar; }
+    
 private:
 
   void Init    (void);
@@ -246,7 +249,9 @@ private:
     TGraph* Martinit_to_Nieves_MEC_ratio_Nu;
     TGraph* Martinit_to_Nieves_MEC_ratio_NuBar;
     TGraph* NievesMomentumOffset;
-  
+    TH2D* PDD_ratio_nu;
+    TH2D* PDD_ratio_nubar;
+    
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
 
 ClassDef(NuXSec, 5);
