@@ -2708,7 +2708,30 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
   ostext << endl;
   ostext << "FitParamList:" << endl;
   ostext << *fparm << endl;
+  ostext << endl;
+  ostext << "Priors of oscillation parameters are:" << endl;
   
+  for (int ip = 0 ; ip < conv::kNuis000 ; ip++) {
+    PhysParamId_t p = (PhysParamId_t)ip;
+    if (not fparm->Exists(p)) {continue;}    
+    if (util::IsMixingAngle(p) || util::IsMassSplitting(p)) {
+      ostext << " - " << util::AsString(p) << " (NH) : " << endl;
+      ostext << "     Prior = " << this->GetPrior_NH(p) << endl;
+      ostext << "     Min Value = " << fparm_nh->GetMinValueFlat(p) << endl;
+      ostext << "     Max Value = " << fparm_nh->GetMinValueFlat(p) << endl;
+      ostext << "     Mean Value = " << fparm_nh->GetMeanGaus(p) << endl;
+      ostext << "     Sigma Value = " << fparm_nh->GetSigmaGaus(p) << endl;
+      ostext << " - " << util::AsString(p) << " (IH) : " << endl;
+      ostext << "     Prior = " << this->GetPrior_NH(p) << endl;
+      ostext << "     Min Value = " << fparm_nh->GetMinValueFlat(p) << endl;
+      ostext << "     Max Value = " << fparm_nh->GetMinValueFlat(p) << endl;
+      ostext << "     Mean Value = " << fparm_nh->GetMeanGaus(p) << endl;
+      ostext << "     Sigma Value = " << fparm_nh->GetSigmaGaus(p) << endl;
+    }    
+  }
+  ostext << endl;
+
+
   ostext.close();
 }
 //________________________________________________________________________________________

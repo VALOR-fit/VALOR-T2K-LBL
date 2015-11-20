@@ -693,31 +693,23 @@ void build_marg_toys_joint
 
   TH1D *hToyHisto_MH;
 
-  cout << "Before taking histo" << endl;
-
   if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12)){    
     hToyHisto_Mix12_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12));
     TCanvas *cToyHisto_Mix12_nh = new TCanvas("cToyHisto_Mix12_nh","cToyHisto_Mix12_nh");
     hToyHisto_Mix12_nh->Draw("");
   }
 
-   cout << "After taking histo Toy Mix12 NH" << endl;
-
   if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing13)){    
     hToyHisto_Mix13_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing13));
     TCanvas *cToyHisto_Mix13_nh = new TCanvas("cToyHisto_Mix13_nh","cToyHisto_Mix13_nh");
     hToyHisto_Mix13_nh->Draw("");
   }
-   
-   cout << "After taking histo Toy Mix13 NH" << endl;
-
-   if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypCPV)){
-     hToyHisto_dcp_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypCPV));
-     TCanvas *cToyHisto_dcp_nh = new TCanvas("cToyHisto_dcp_nh","cToyHisto_dcp_nh");
+  
+  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypCPV)){
+    hToyHisto_dcp_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypCPV));
+    TCanvas *cToyHisto_dcp_nh = new TCanvas("cToyHisto_dcp_nh","cToyHisto_dcp_nh");
      hToyHisto_dcp_nh->Draw("");
-   }
-
-   cout << "After taking histo Toy dcp NH" << endl;
+  }
 
   if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23)){
     hToyHisto_Mix23_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23));
@@ -725,15 +717,11 @@ void build_marg_toys_joint
     hToyHisto_Mix23_nh->Draw("");
   }
   
-   cout << "After taking histo Toy Mix23 NH" << endl;
-
   if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sq)){
     hToyHisto_Dm23_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sq));
     TCanvas *cToyHisto_Dm23_nh = new TCanvas("cToyHisto_Dm23_nh","cToyHisto_Dm23_nh");
     hToyHisto_Dm23_nh->Draw("");
   }
-
-   cout << "After taking histo Toy Dm23 NH" << endl;
 
   if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12)){
     hToyHisto_Mix12_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12));
@@ -741,15 +729,11 @@ void build_marg_toys_joint
     hToyHisto_Mix12_ih->Draw("");
   }
 
-   cout << "After taking histo Toy Mix12 IH" << endl;
-
   if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing13)){
     hToyHisto_Mix13_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing13));
     TCanvas *cToyHisto_Mix13_ih = new TCanvas("cToyHisto_Mix13_ih","cToyHisto_Mix13_ih");
     hToyHisto_Mix13_ih->Draw("");
   }
-
-   cout << "After taking histo Toy Mix13 IH" << endl;
 
   if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypCPV)){
     hToyHisto_dcp_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypCPV));
@@ -757,15 +741,11 @@ void build_marg_toys_joint
     hToyHisto_dcp_ih->Draw("");
   }
 
-   cout << "After taking histo Toy dcp IH" << endl;
-
   if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23)){
     hToyHisto_Mix23_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23));
     TCanvas *cToyHisto_Mix23_ih = new TCanvas("cToyHisto_Mix23_ih","cToyHisto_Mix23_ih");
     hToyHisto_Mix23_ih->Draw("");
   }
-
-   cout << "After taking histo Toy Mix23 IH" << endl;
 
   if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sq)){
     hToyHisto_Dm23_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sq));
@@ -773,23 +753,17 @@ void build_marg_toys_joint
     hToyHisto_Dm23_ih->Draw("");
   }
 
-   cout << "After taking histo Toy Dm23 IH" << endl;
-
   if(fitmarg->GetHistoPriorMH()){
     hPriorHisto_MH = new TH1D(*fitmarg->GetHistoPriorMH());
     TCanvas *cPriorHisto_MH = new TCanvas("cPriorHisto_MH","cPriorHisto_MH");
     hPriorHisto_MH->Draw();
   }
 
-   cout << "After taking histo Prior MH" << endl;
-
   if(fitmarg->GetHistoToyMH()){
     hToyHisto_MH = new TH1D(*fitmarg->GetHistoToyMH());
     TCanvas *cToyHisto_MH = new TCanvas("cToyHisto_MH","cToyHisto_MH");
     hToyHisto_MH->Draw();
   }
-
-  cout << "After taking histo Toy MH" << endl;
 
   
   // Write histograms in output file
