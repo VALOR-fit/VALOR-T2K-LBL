@@ -28,7 +28,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 (
  int          mode               = 0,                                         /* options: see above */
  bool         update_rootfile    = false,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample          = "1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
 
  // double       input_mixing12     = -99,                                         /* */
@@ -49,8 +49,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
+ const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
 
  const char * fit_param_list     = "nuosc3f+nuisance",
  
@@ -96,6 +96,10 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   string sample_name = util::AsStringCompact(s);
   const char * sname = sample_name.c_str();
     
+  cout << endl;
+  cout << "Running sample: " << util::AsString(s) << endl;
+  cout << endl;
+
   // Analysis configuration
   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
   //T2KOpt::Instance()->ReadXmlPath(config);
@@ -255,7 +259,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   hErecoTun->SetName("hErecoTun");
     
   cout << endl;
-  cout << "Tot # of events tuned = " << hErecoTun->Integral() << endl;
+  cout << "Tot # of events tuned (integral)   = " << hErecoTun->Integral() << endl;
+  cout << "Tot # of events tuned (getentries) = " << hErecoTun->GetEntries() << endl;
   cout << endl;
 
   for (int im = 0; im < conv::knm; im++) {
@@ -486,7 +491,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hErecoTun_p1sigma[ip]->SetName (name);
     hErecoTun_p1sigma[ip]->SetTitle(title);
 
-    cout << "Tot # of events +1 sigma = " << hErecoTun_p1sigma[ip]->Integral() << endl;
+    cout << "Tot # of events +1 sigma (integral)   = " << hErecoTun_p1sigma[ip]->Integral() << endl;
+    cout << "Tot # of events +1 sigma (getentries) = " << hErecoTun_p1sigma[ip]->GetEntries() << endl;
 
     char name[200];
     sprintf(name,"hRatioTun_p1sigma_%s",sysstr.c_str());
@@ -555,7 +561,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hErecoTun_m1sigma[ip]->SetName (name);
     hErecoTun_m1sigma[ip]->SetTitle(title);
     
-    cout << "Tot # of events -1 sigma = " << hErecoTun_m1sigma[ip]->Integral() << endl;
+    cout << "Tot # of events -1 sigma (integral)   = " << hErecoTun_m1sigma[ip]->Integral() << endl;
+    cout << "Tot # of events -1 sigma (getentries) = " << hErecoTun_m1sigma[ip]->GetEntries() << endl;
 
     char name[200];
     sprintf(name,"hRatioTun_m1sigma_%s",sysstr.c_str());
@@ -624,7 +631,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hErecoTun_p3sigma[ip]->SetName (name);
     hErecoTun_p3sigma[ip]->SetTitle(title);
     
-    cout << "Tot # of events +3 sigma = " << hErecoTun_p3sigma[ip]->Integral() << endl;
+    cout << "Tot # of events +3 sigma (integral)   = " << hErecoTun_p3sigma[ip]->Integral() << endl;
+    cout << "Tot # of events +3 sigma (getentries) = " << hErecoTun_p3sigma[ip]->GetEntries() << endl;
 
     char name[200];
     sprintf(name,"hRatioTun_p3sigma_%s",sysstr.c_str());
@@ -693,7 +701,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hErecoTun_m3sigma[ip]->SetName (name);
     hErecoTun_m3sigma[ip]->SetTitle(title);
     
-    cout << "Tot # of events -3 sigma = " << hErecoTun_m3sigma[ip]->Integral() << endl;
+    cout << "Tot # of events -3 sigma (integral)   = " << hErecoTun_m3sigma[ip]->Integral() << endl;
+    cout << "Tot # of events -3 sigma (getentries) = " << hErecoTun_m3sigma[ip]->GetEntries() << endl;
 
     char name[200];
     sprintf(name,"hRatioTun_m3sigma_%s",sysstr.c_str());
@@ -1035,16 +1044,20 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
     
-    double totnom = hErecoNom->Integral();
-    double tot    = hErecoTun->Integral();
-    
-    double tot_p1  = fabs( hErecoTun_p1sigma[ip]->Integral() );
-    double tot_m1  = fabs( hErecoTun_m1sigma[ip]->Integral() );
+    // double totnom = hErecoNom->Integral();
+    // double tot    = hErecoTun->Integral();    
+    // double tot_p1  = fabs( hErecoTun_p1sigma[ip]->Integral() );
+    // double tot_m1  = fabs( hErecoTun_m1sigma[ip]->Integral() );
+    // double tot_p3  = fabs( hErecoTun_p3sigma[ip]->Integral() );
+    // double tot_m3  = fabs( hErecoTun_m3sigma[ip]->Integral() );
+    double totnom = hErecoNom->GetEntries();
+    double tot    = hErecoTun->GetEntries();    
+    double tot_p1  = fabs( hErecoTun_p1sigma[ip]->GetEntries() );
+    double tot_m1  = fabs( hErecoTun_m1sigma[ip]->GetEntries() );
+    double tot_p3  = fabs( hErecoTun_p3sigma[ip]->GetEntries() );
+    double tot_m3  = fabs( hErecoTun_m3sigma[ip]->GetEntries() );
     double frac_p1 = fabs( (tot_p1 - tot)/tot );
     double frac_m1 = fabs( (tot_m1 - tot)/tot );
-    
-    double tot_p3  = fabs( hErecoTun_p3sigma[ip]->Integral() );
-    double tot_m3  = fabs( hErecoTun_m3sigma[ip]->Integral() );
     double frac_p3 = fabs( (tot_p3 - tot)/tot );
     double frac_m3 = fabs( (tot_m3 - tot)/tot );
     
@@ -1122,11 +1135,15 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 	     << endl;
     streamer << "\\hline" << endl;
     
-    double totnom = hErecoNom->Integral();
-    double tot    = hErecoTun->Integral();
-    
-    double tot_all_p = hErecoTun_p1sigma_all->Integral();
-    double tot_all_m = hErecoTun_m1sigma_all->Integral();
+    // double totnom = hErecoNom->Integral();
+    // double tot    = hErecoTun->Integral();    
+    // double tot_all_p = hErecoTun_p1sigma_all->Integral();
+    // double tot_all_m = hErecoTun_m1sigma_all->Integral();
+    double totnom = hErecoNom->GetEntries();
+    double tot    = hErecoTun->GetEntries();    
+    double tot_all_p = hErecoTun_p1sigma_all->GetEntries();
+    double tot_all_m = hErecoTun_m1sigma_all->GetEntries();
+
     double frac_all_p = (tot_all_p - tot)/tot * 100;
     double frac_all_m = (tot_all_m - tot)/tot * 100;
     
@@ -1155,13 +1172,16 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
         
-      double tot_p1  = hErecoTun_p1sigma[ip]->Integral();
-      double tot_m1  = hErecoTun_m1sigma[ip]->Integral();
+      // double tot_p1  = hErecoTun_p1sigma[ip]->Integral();
+      // double tot_m1  = hErecoTun_m1sigma[ip]->Integral();
+      // double tot_p3  = hErecoTun_p3sigma[ip]->Integral();
+      // double tot_m3  = hErecoTun_m3sigma[ip]->Integral();
+      double tot_p1  = hErecoTun_p1sigma[ip]->GetEntries();
+      double tot_m1  = hErecoTun_m1sigma[ip]->GetEntries();
+      double tot_p3  = hErecoTun_p3sigma[ip]->GetEntries();
+      double tot_m3  = hErecoTun_m3sigma[ip]->GetEntries();
       double frac_p1 = (tot_p1 - tot)/tot * 100;
-      double frac_m1 = (tot_m1 - tot)/tot * 100;
-        
-      double tot_p3  = hErecoTun_p3sigma[ip]->Integral();
-      double tot_m3  = hErecoTun_m3sigma[ip]->Integral();
+      double frac_m1 = (tot_m1 - tot)/tot * 100;        
       double frac_p3 = (tot_p3 - tot)/tot * 100;
       double frac_m3 = (tot_m3 - tot)/tot * 100;
         
@@ -1273,10 +1293,14 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 	if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
 	string modestr = util::AsStringCompact(m);
             
-	double totnom = hErecoNomMode[im]->Integral();
-	double tot = hErecoTunMode[im]->Integral();
-	double tot_p1 = hErecoTunMode_p1sigma[ip][im]->Integral();
-	double tot_m1 = hErecoTunMode_m1sigma[ip][im]->Integral();
+	// double totnom = hErecoNomMode[im]->Integral();
+	// double tot = hErecoTunMode[im]->Integral();
+	// double tot_p1 = hErecoTunMode_p1sigma[ip][im]->Integral();
+	// double tot_m1 = hErecoTunMode_m1sigma[ip][im]->Integral();
+	double totnom = hErecoNomMode[im]->GetEntries();
+	double tot = hErecoTunMode[im]->GetEntries();
+	double tot_p1 = hErecoTunMode_p1sigma[ip][im]->GetEntries();
+	double tot_m1 = hErecoTunMode_m1sigma[ip][im]->GetEntries();
 	double frac_p1 = (tot_p1 - tot)/tot * 100;
 	double frac_m1 = (tot_m1 - tot)/tot * 100;
             
