@@ -29,13 +29,26 @@
 // 210 tweak xsec_bindE
 // 211 tweak xsec_rpa (0 or 1)
 //
+// banff fhc only
 // 400 tweak banff00
 // 401 tweak banff01
+// 425 tweak banff25 (MEC)
+// 441 tweak banff41 (MECbar)
 // 400+kNumOfParamsInBANFFfit tweak last banff parameter
 //
+// banff rhc only
 // 500 tweak banff00_rhc
 // 501 tweak banff01_rhc
+// 425 tweak banff25 (MEC)
+// 441 tweak banff41 (MECbar)
 // 500+kNumOfRHCParamsInBANFFfit tweak last banff parameter
+//
+// banff fhc+rhc w/ correlations
+// 600 tweak banff00_fhcprhc
+// 601 tweak banff01_fhcprhc
+// 650 tweak banff50_fhcprhc (MEC)
+// 666 tweak banff66_fhcprhc (MECbar)
+// 600+kNumOfFHCpRHCParamsInBANFFfit tweak last banff parameter
 //
 // 800 tweak skdetfsi00
 // 801 tweak skdetfsi01
@@ -112,7 +125,7 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 11,                                         /* options: see above */
+ int          mode                     = 650, //650, //11,                                         /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
  const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
@@ -137,10 +150,11 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
  bool         save_throws              = false,                                        /* save the thrown parameter values*/
 
  //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
+ const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- const char *config_file       = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml",
+ //const char *config_file       = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml",
 
- const int    nexp                     = 100,                                          /* number of experiments to make */
+ const int    nexp                     = 10000,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
@@ -306,6 +320,10 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       // banff rhc
       if(mode >= 500 && mode < 500+conv::kNumOfRHCParamsInBANFFfit) {
         modetitle = Form("banff%02d_rhc",mode-500); break;
+      }
+      // banff fhc+rhc
+      if(mode >= 600 && mode < 600+conv::kNumOfFHCpRHCParamsInBANFFfit) {
+        modetitle = Form("banff%02d_fhcprhc",mode-600); break;
       }
       // skdetfsi fhc
       else if(mode >= 800 && mode < 800+conv::kNumOfSKDetFSIParams) {
@@ -617,8 +635,9 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 	util::SetMassHierarchy(skexp);
 
 	// Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
-	util::OscParams::Instance()->UpdatePhysHypothesis(ph);
-	set_init = false;
+	bool print = false;
+	util::OscParams::Instance()->UpdatePhysHypothesis(ph,print);
+	bool set_init = false;
 	util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
 	
 	// Fill toy histograms of osc params
@@ -710,14 +729,14 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 
         default:
           
-          // banff fhc
+          // banff fhc only
           if(mode >= 400 && mode < 400+conv::kNumOfParamsInBANFFfit) {
             TVectorD v(conv::kNumOfParamsInBANFFfit);
             v = skexp->GetBANFF()->BestFitValues();
             int ib = mode - 400;
             v[ib] = skexp->GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
             skexp->GetBANFF()->TweakSample(true,&v);
-            break;
+	    break;
           }
           // banff rhc
           else if(mode >= 500 && mode < 500+conv::kNumOfRHCParamsInBANFFfit) {
@@ -728,7 +747,18 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
             skexp->GetBANFF()->TweakSample(true,&v);
             break;
           }
-          // skdetfsi fhc
+          // banff fhc+rhc
+          else if(mode >= 600 && mode < 600+conv::kNumOfFHCpRHCParamsInBANFFfit) {
+            TVectorD v(conv::kNumOfFHCpRHCParamsInBANFFfit);
+            v = skexp->GetBANFF()->FHCpRHCBestFitValues();
+            int ib = mode - 600;
+            v[ib] = skexp->GetBANFF()->FHCpRHCBestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib]));
+	    //cout << "Single Param Variance = " << skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib] << endl;
+	    skexp->GetBANFF()->TweakSample(true,&v);
+            break;
+          }
+
+	  // skdetfsi fhc
           else if(mode >= 800 && mode < 800+conv::kNumOfSKDetFSIParams) {
             TVectorD v(conv::kNumOfSKDetFSIParams);
             for (int ipf = 0; ipf < conv::kNumOfSKDetFSIParams; ipf++) {

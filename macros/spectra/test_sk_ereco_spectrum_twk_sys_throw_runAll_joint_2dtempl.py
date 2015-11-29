@@ -25,9 +25,10 @@ It will then create the .root in the current working directory
 
 # 15 bins theta    
 #postfit_config  = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml"
-#prefit_config  = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml"
+#prefit_config  = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml" 
 
 # 1 bin theta
+#postfit_config  = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml"
 postfit_config  = "analysis_configuration_test_theta_1bin_NIWG2015c.xml"
 prefit_config  = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml"
 
@@ -99,8 +100,8 @@ do_not_run_jobs = opt.do_not_run
 store_throws = "true" if opt.storethrows else "false"
 
 
-do_oscillation_parameters = False
-do_uncorrelated_xsec      = False
+#do_oscillation_parameters = False
+#do_uncorrelated_xsec      = False
 
 if args:
   print "Unrecognised arguments: ",args
@@ -108,56 +109,92 @@ if args:
 
 save_toy_expts = "false"
 
-modes1 = [0,1,2,9,11] #combinations
-
-#modes2 = range(400,422) #banff fhc (niwg2013 - numudisap)
-#modes2 = range(500,422) #banff rhc (niwg2013 - numudisap)
-#modes2 = range(500,527) #banff fhc (niwg2015 - numudisap)
-modes2 = range(500,536) #banff rhc (niwg2015 - numudisap)
-
-#modes3 = range(200,210) #unconstranied xsec (niwg2013)
-modes3 = range(211,211) #unconstranied xsec (niwg2015)
-
-#modes4 = range(800,805) #sk detector (skdetfsi 2013 - numudisap - fhc)
-#modes4 = range(806,817) #sk detector (skdetfsi 2013 - nue - fhc)
-#modes4 = range(800,817) #sk detector (skdetfsi 2013 - joint - fhc)
-#modes4 = range(900,905) #sk detector (skdetfsi 2013 - numudisap - rhc)
-modes4 = range(906,917) #sk detector (skdetfsi 2013 - nue - rhc)
-#modes4 = range(900,917) #sk detector (skdetfsi 2013 - joint - rhc)
-
-modes6 = range(700,703) #osc param
-
-modes7 = [7,8] #banff flux / banff xsec individually
-
-modes = modes1
-if opt.do_all: #combinations + everything
-    modes = modes + modes2 + modes3 + modes4 + modes5 + modes6 + modes7
-elif opt.do_imp: #combinations + splines + oscparams
-    modes = modes + modes6 + [200,201,202,203,204,215]
+# modes1 = [0,1,2,9,11] #combinations
+# #modes2 = range(400,422) #banff fhc (niwg2013 - numudisap)
+# #modes2 = range(500,422) #banff rhc (niwg2013 - numudisap)
+# #modes2 = range(500,527) #banff fhc (niwg2015 - numudisap)
+# modes2 = range(500,536) #banff rhc (niwg2015 - numudisap)
+# #modes3 = range(200,210) #unconstranied xsec (niwg2013)
+# modes3 = range(211,211) #unconstranied xsec (niwg2015)
+# #modes4 = range(800,805) #sk detector (skdetfsi 2013 - numudisap - fhc)
+# #modes4 = range(806,817) #sk detector (skdetfsi 2013 - nue - fhc)
+# #modes4 = range(800,817) #sk detector (skdetfsi 2013 - joint - fhc)
+# #modes4 = range(900,905) #sk detector (skdetfsi 2013 - numudisap - rhc)
+# modes4 = range(906,917) #sk detector (skdetfsi 2013 - nue - rhc)
+# #modes4 = range(900,917) #sk detector (skdetfsi 2013 - joint - rhc)
+# modes6 = range(700,703) #osc param
+# modes7 = [7,8] #banff flux / banff xsec individually
+# modes = modes1
+# if opt.do_all: #combinations + everything
+#     modes = modes + modes2 + modes3 + modes4 + modes5 + modes6 + modes7
+# elif opt.do_imp: #combinations + splines + oscparams
+#     modes = modes + modes6 + [200,201,202,203,204,215]
 
 
-#  0 tweak all parameters
-#  1 tweak all BANFF
-#  2 tweak all unconstrained xsec
-#  5 tweak all BANFF oxygen
-#  6 tweak all BANFF non-oxygen
-#  7 tweak BANFF flux only
-#  8 tweak BANFF xsec only
-#  9 tweak SKdet + FSI
-# 10 tweak BANFF + unconstrained xsec
-# 11 oscillation parameters
+#   0 tweak all parameters (name_modes="all")
+#   1 tweak all BANFF (name_modes="BANFF")
+#   5 tweak all BANFF oxygen (name_modes="") --> not any longer 
+#   6 tweak all BANFF non-oxygen (name_modes="") --> not any longer
+#   7 tweak BANFF flux only (name_modes="BANFF_flux")
+#   8 tweak BANFF xsec only (name_modes="BANFF_xsec")
+#   9 tweak SKdet + FSI (name_modes="SKDet_FSI")
+#  11 oscillation parameters (name_modes="Osc_param")
+# 650 tweak mec fhc+rhc (name_modes="banff50_fhcprhc")
+# 666 tweak mecbar fhc+rhc (name_modes="banff66_fhcprhc")
 
-#modes = [0,1,5,6,7,8,9]
-#modes = [0,1,5,6,7,8,9,11]
-modes = [0,1,5,6,7,8,9]  # OK
-#modes = [0]
 
-if do_uncorrelated_xsec:
-  modes.append(2)
-  
-if do_oscillation_parameters:
-  modes.append(11)
-  
+#
+# Set the systematic running mode 
+# Keep the order you want to have in the table
+# Keep same order between modes and name_modes
+#
+
+name_modes = []
+latex_name_modes = []
+
+# modes = [11,0]  
+# # modes = 11
+# name_modes.append("Osc_param") 
+# latex_name_modes.append("Oscillations")
+# # modes = 0
+# name_modes.append("all") 
+# latex_name_modes.append("All")
+# # modes = 0 (prefit)
+# name_modes.append("allprefit") 
+# latex_name_modes.append("All (prefit)")
+
+modes = [9,7,8,650,666,1,11,0]
+# modes = 9
+name_modes.append("SKDet_FSI") 
+latex_name_modes.append("SKDet_FSI")
+# modes = 7
+name_modes.append("BANFF_flux") 
+latex_name_modes.append("BANFF_flux")
+# modes = 8
+name_modes.append("BANFF_xsec") 
+latex_name_modes.append("BANFF_xsec")
+# modes = 650
+name_modes.append("banff50_fhcprhc")
+latex_name_modes.append("MEC")
+# modes = 666
+name_modes.append("banff66_fhcprhc")
+latex_name_modes.append("MECbar")
+# modes = 1
+name_modes.append("BANFF") 
+latex_name_modes.append("BANFF Tot")
+# modes = 1 (prefit)
+name_modes.append("BANFFprefit") 
+latex_name_modes.append("BANFF Tot (prefit)")
+# modes = 11
+name_modes.append("Osc_param") 
+latex_name_modes.append("Oscillations")
+# modes = 0
+name_modes.append("all") 
+latex_name_modes.append("All")
+# modes = 0 (prefit)
+name_modes.append("allprefit") 
+latex_name_modes.append("All (prefit)")
+
 if opt.mode is not None:
   modes = [int(opt.mode)]
 
@@ -169,9 +206,6 @@ if not opt.skip_unosc: oscparams.append([  0,   0,   0,   0,   -99,   -99,  -99]
 #if not opt.skip_osc  : oscparams.append([-99, -99, -99, -99, -99, -99,  -99]) #use global best fits!
 if not opt.skip_osc  : oscparams.append([-999, -999, -999, -99, -999, -999, -99]) #use global best fits!
 
-#oscparams.append([0.86, 0.1,  1,  0,  7.58E-5,  2.32E-3])
-#oscparams.append([0.86, 0,    1,  0,  7.58E-5,  2.32E-3])
-
 update = "true"
 
 if not do_not_run_jobs:
@@ -181,14 +215,6 @@ if not do_not_run_jobs:
 
       for mode in modes:
 
-          # #changing osc params doesn't affect anything if there are no oscillations
-          # #if mode == 11 and osc == [0,   0,   0,   0,   0,   0]:
-          # if mode == 11 and osc == [0,   0,   0,   0,   0,   0,  -99]:
-          #     continue
-          # #if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99]:
-          # if mode == 11 and osc == [0,   0,   0,   0,   -99,  -99,  -99]:
-          #     continue
-              
           command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'")\''
 
 
@@ -215,33 +241,32 @@ if make_summary:
   # Uses outputs from previous macro runs, but calculates 'all' values using quadrature.
   files = glob.glob("sk_ereco_spectrum_*-twk_sys_throw_*txt")
 
+  if not opt.skip_unosc:
+    l = [x for x in files if unosc_tag_file in x]
+    print "\n File is:  ",x,"\n"
+    if not len(l)==1:
+        raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
+    no_osc_info = l[0]
 
-  # l = [x for x in files if "12_0.000,13_0.000,23_0.000" in x]
-  # if not len(l)==1:
-  #   raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
-  # no_osc_info = l[0]
-  # l = [x for x in files if "12_0.000,13_0.000,23_0.000" not in x]
-  # if not len(l)==1:
-  #   raise T2KAnaError("Found "+`len(l)`+ "txt files for oscillation, expected 1")
-  # osc_info = l[0]
-
-
-  l = [x for x in files if unosc_tag_file in x]
-
-  print "\n File is:  ",x,"\n"
-
-  if not len(l)==1:
-    raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
-  no_osc_info = l[0]
-  l = [x for x in files if osc_tag_file in x]
-  if not len(l)==1:
-    raise T2KAnaError("Found "+`len(l)`+ "txt files for oscillation, expected 1")
-  osc_info = l[0]
+  if not opt.skip_osc:
+    l = [x for x in files if osc_tag_file in x]
+    if not len(l)==1:
+        raise T2KAnaError("Found "+`len(l)`+ "txt files for oscillation, expected 1")
+    osc_info = l[0]
 
 
-  col_titles = ["(no oscillations)","(oscillations with typical parameter values)"]
-  col_files = [no_osc_info,osc_info]
+  #col_titles = ["(no oscillations)","(oscillations with typical parameter values)"]
+  #col_files = [no_osc_info,osc_info]
   
+  col_titles = []
+  col_files = []
+  if not opt.skip_unosc: 
+      col_titles.append("(no oscillations)")
+      col_files.append(no_osc_info)
+  if not opt.skip_osc: 
+      col_titles.append("(oscillations with typical parameter values)")
+      col_files.append(osc_info)    
+
   out_cols = []
   
   for title,infile in zip(col_titles,col_files):
@@ -260,40 +285,51 @@ if make_summary:
     d = dict()
     out_cols.append(d)
 
-    d["skdet"]      = float(input_rows["SKDet_FSI"])
-    d["banff_pre"]  = float(input_rows["BANFFprefit"])
-    d["banff_post"] = float(input_rows["BANFF"])
-    d["banff_cons"]   = float(input_rows["BANFF_constrained"])
-    d["banff_uncons"] = float(input_rows["BANFF_unconstrained"])
+    for name in name_modes:
+        d[name] = float(input_rows[name])
+        
+    # print "\n add1 = ",float(input_rows["all"]),"\n"
+    # print "\n add2 = ",float(input_rows["Osc_param"]),"\n"
+    # print "\n sum = ",float(input_rows["all"])+float(input_rows["Osc_param"]),"\n"
+    # print "\n sum quadrature = ",math.sqrt( float( float(input_rows["all"])**2 + float(input_rows["Osc_param"])**2 ) ),"\n"
+    #d["all_plus_osc"] = math.sqrt( float( float(input_rows["all"])**2 + float(input_rows["Osc_param"])**2 ) )
+    #latex_name_modes.append("All + Oscillations")                            
+    #name_modes.append("all_plus_osc")                            
     
-    if do_uncorrelated_xsec:
-      d["xsec"]       = float(input_rows["unconstrained_xsec"])
-    
-    #~ all_postfit = ["SKDet_FSI","BANFF","unconstrained_xsec"]
-    #~ all_with_banff_prefit = ["SKDet_FSI","BANFFprefit","unconstrained_xsec"]
-    
-    all_postfit = ["SKDet_FSI","BANFF"]
-    all_with_banff_prefit = ["SKDet_FSI","BANFFprefit"]
-    
-    if do_oscillation_parameters:
-        if "no oscillations" not in title:
-          all_postfit.append("Osc_param")
-          all_with_banff_prefit.append("Osc_param")
-       
-    all_prefit = [x+"prefit" for x in all_postfit]
-    
-    # All from quadrature
-    #~ d["total_prefit"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_prefit ])) # all using the 'prefit' figures
-    d["total_prefit_sum"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_with_banff_prefit ])) # Only BANFF prefit figures used
-    d["total_postfit_sum"] = math.sqrt(sum([float(input_rows[x])**2 for x in all_postfit]))
-    # All from from "all" distribution
-    d["total_prefit"] = float(input_rows["allprefit"])
-    d["total_postfit"] = float(input_rows["all"])
 
-    try:
-      d["osc"] = float(input_rows["Osc_param"])
-    except KeyError:
-      d["osc"] = 0.
+    # d["skdet"]      = float(input_rows["SKDet_FSI"])
+    # if not opt.skip_prefit: 
+    #     d["banff_pre"]  = float(input_rows["BANFFprefit"])
+    # if not opt.skip_postfit: 
+    #     d["banff_post"] = float(input_rows["BANFF"])
+    #d["banff_cons"]   = float(input_rows["BANFF_constrained"])
+    #d["banff_uncons"] = float(input_rows["BANFF_unconstrained"])
+    
+    # if do_uncorrelated_xsec:
+    #     d["xsec"]       = float(input_rows["unconstrained_xsec"])
+    
+    # all_postfit = ["SKDet_FSI","BANFF"]
+    # all_with_banff_prefit = ["SKDet_FSI","BANFFprefit"]    
+    # if do_oscillation_parameters:
+    #     if "no oscillations" not in title:
+    #       all_postfit.append("Osc_param")
+    #       all_with_banff_prefit.append("Osc_param")
+    # all_prefit = [x+"prefit" for x in all_postfit]
+    # # All from quadrature
+    # if not opt.skip_prefit: 
+    #     d["total_prefit_sum"]  = math.sqrt(sum([float(input_rows[x])**2 for x in all_with_banff_prefit ])) # Only BANFF prefit figures used
+    # if not opt.skip_postfit: 
+    #     d["total_postfit_sum"] = math.sqrt(sum([float(input_rows[x])**2 for x in all_postfit]))
+    # All from from "all" distribution
+   
+    # if not opt.skip_prefit: 
+    #     d["total_prefit"] = float(input_rows["allprefit"])
+    # if not opt.skip_postfit: 
+    #     d["total_postfit"] = float(input_rows["all"])
+    # try:
+    #   d["osc"] = float(input_rows["Osc_param"])
+    # except KeyError:
+    #   d["osc"] = 0.
       
   f = open(table_fn,"w")
   f.write("""\\begin{table}[htb]
@@ -315,44 +351,56 @@ if make_summary:
   f.write(make_row([""]+["\multicolumn{1}{c|}{"+t+"}" for t in col_titles]))
   f.write("\\\\\n\\hline\n")
 
-  f.write(make_row(["SuperK detector + FSI + SI"]+[percent_2dp(d["skdet"]) for d in out_cols]))
-  f.write("\\\\\n")
+  for latex_name,name in zip(latex_name_modes,name_modes):
+      print "\n",latex_name," - ",name,"\n"
+      f.write(make_row([latex_name]+[percent_2dp(d[name]) for d in out_cols]))
+      f.write("\\\\\n")
 
-  f.write(make_row(["BANFF (prefit)"]+[percent_2dp(d["banff_pre"]) for d in out_cols]))
-  f.write("\\\\\n")
 
-  f.write(make_row(["BANFF (postfit)"]+[percent_2dp(d["banff_post"]) for d in out_cols]))
-  f.write("\\\\\n")
+  # f.write(make_row(["SuperK detector + FSI + SI"]+[percent_2dp(d["skdet"]) for d in out_cols]))
+  # f.write("\\\\\n")
+
+  # if not opt.skip_prefit:
+  #     f.write(make_row(["BANFF (prefit)"]+[percent_2dp(d["banff_pre"]) for d in out_cols]))
+  #     f.write("\\\\\n")
+
+  # if not opt.skip_postfit:
+  #     f.write(make_row(["BANFF (postfit)"]+[percent_2dp(d["banff_post"]) for d in out_cols]))
+  #     f.write("\\\\\n")
   
-  f.write(make_row(["BANFF (constrained)"]+[percent_2dp(d["banff_cons"]) for d in out_cols]))
-  f.write("\\\\\n")
+  # # f.write(make_row(["BANFF (constrained)"]+[percent_2dp(d["banff_cons"]) for d in out_cols]))
+  # # f.write("\\\\\n")
 
-  f.write(make_row(["BANFF (unconstrained)"]+[percent_2dp(d["banff_uncons"]) for d in out_cols]))
-  f.write("\\\\\n")
+  # # f.write(make_row(["BANFF (unconstrained)"]+[percent_2dp(d["banff_uncons"]) for d in out_cols]))
+  # # f.write("\\\\\n")
   
-  if do_uncorrelated_xsec: 
-    f.write(make_row(["Uncorrelated XSec"]+[percent_2dp(d["xsec"]) for d in out_cols]))
-    f.write("\\\\\n")
+  # # if do_uncorrelated_xsec: 
+  # #   f.write(make_row(["Uncorrelated XSec"]+[percent_2dp(d["xsec"]) for d in out_cols]))
+  # #   f.write("\\\\\n")
     
-  if do_oscillation_parameters:
-    f.write(make_row(["Oscillation parameters"]+[percent_2dp(d["osc"]) for d in out_cols]))
-    f.write("\\\\\n")
+  # if do_oscillation_parameters:
+  #   f.write(make_row(["Oscillation parameters"]+[percent_2dp(d["osc"]) for d in out_cols]))
+  #   f.write("\\\\\n")
     
-  f.write("\\hline\n")
+  # f.write("\\hline\n")
   
-  f.write(make_row(["Total (BANFF prefit)"]+[percent_2dp(d["total_prefit"]) for d in out_cols]))
-  f.write("\\\\\n")
+  # if not opt.skip_prefit:
+  #     f.write(make_row(["Total (BANFF prefit)"]+[percent_2dp(d["total_prefit"]) for d in out_cols]))
+  #     f.write("\\\\\n")
 
-  f.write(make_row(["Total (BANFF postfit)"]+[percent_2dp(d["total_postfit"]) for d in out_cols]))
+  # if not opt.skip_postfit:
+  #     f.write(make_row(["Total (BANFF postfit)"]+[percent_2dp(d["total_postfit"]) for d in out_cols]))
+
   f.write("\\\\\n\\hline\n")
 
   f.write("\\hline\n")
   
-  f.write(make_row(["Total (BANFF prefit sum)"]+[percent_2dp(d["total_prefit_sum"]) for d in out_cols]))
-  f.write("\\\\\n")
-
-  f.write(make_row(["Total (BANFF postfit sum)"]+[percent_2dp(d["total_postfit_sum"]) for d in out_cols]))
-  f.write("\\\\\n\\hline\n")
+  # if not opt.skip_prefit:
+  #     f.write(make_row(["Total (BANFF prefit sum)"]+[percent_2dp(d["total_prefit_sum"]) for d in out_cols]))
+  #     f.write("\\\\\n")
+  # if not opt.skip_postfit:
+  #     f.write(make_row(["Total (BANFF postfit sum)"]+[percent_2dp(d["total_postfit_sum"]) for d in out_cols]))
+  #     f.write("\\\\\n\\hline\n")
   
   f.write("""\\end{tabular}
 %caption goes here
