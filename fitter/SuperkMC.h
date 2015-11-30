@@ -153,19 +153,6 @@ namespace valor {
         void FillTemplateArrays(bool with_tuning_weights = false);
         bool DoTemplateArraysHaveNIWGTune(void) const;
         
-        
-        
-        // NEW 2D TEMPLATES (TO REMOVE)
-        TH1D *hThetaLep_Numu;
-        TH2D *hPThetaLep_Numu;
-        TH1D *hThetaLep_Nue;
-        TH2D *hPThetaLep_Nue;
-        TH1D *hThetaLep_NumuBar;
-        TH2D *hPThetaLep_NumuBar;
-        TH1D *hThetaLep_NueBar;
-        TH2D *hPThetaLep_NueBar;
-        //
-        
         // NEW 2D TEMPLATES
         double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
         double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep);

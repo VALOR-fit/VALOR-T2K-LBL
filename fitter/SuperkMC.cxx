@@ -377,15 +377,6 @@ void SuperkMC::Init(void)
     fNuXSec              = 0;
     fSKDetFSI            = 0;
     
-    hThetaLep_Numu      = 0;
-    hPThetaLep_Numu     = 0;
-    hThetaLep_Nue       = 0;
-    hPThetaLep_Nue      = 0;
-    hThetaLep_NumuBar   = 0;
-    hPThetaLep_NumuBar  = 0;
-    hThetaLep_NueBar    = 0;
-    hPThetaLep_NueBar   = 0;
-    
     arr_index = util::ArrIdx::Instance();
     
 #ifdef USE_CCcoh_WEIGHTS
@@ -413,16 +404,16 @@ void SuperkMC::CleanUp(void)
             
             // NEW 2D TEMPLATES
             if( fMCErecoVsQ2Spectrum[is][im] ) delete fMCErecoVsQ2Spectrum[is][im];
-            if( fMCVariableTempl2D[is][im] ) delete fMCVariableTempl2D[is][im];
+            if( fMCVariableTempl2D  [is][im] ) delete fMCVariableTempl2D[is][im];
             //
             
             for (int ivb = 0; ivb < fNNonEmptyVariableBins[is][im] ; ivb++) {
-                if (fNonEmptyFixedBins[is][im][ivb]) delete fNonEmptyFixedBins[is][im][ivb];
+                if (fNonEmptyFixedBins[is][im][ivb]) delete[] fNonEmptyFixedBins[is][im][ivb];
             }
             
             // NEW 2D TEMPLATES
             for (int ivb = 0; ivb < fNNonEmptyVariableBins2D[is][im] ; ivb++) {
-                if (fNonEmptyFixedBins2D[is][im][ivb]) delete fNonEmptyFixedBins2D[is][im][ivb];
+                if (fNonEmptyFixedBins2D[is][im][ivb]) delete[] fNonEmptyFixedBins2D[is][im][ivb];
             }
             //
             
@@ -434,15 +425,6 @@ void SuperkMC::CleanUp(void)
         if( fMCErecoVsQ2SpectrumTot [is] ) { delete fMCErecoVsQ2SpectrumTot [is]; fMCErecoVsQ2SpectrumTot [is] = 0; }
         //
     }
-    
-    if (hThetaLep_Numu      ) delete hThetaLep_Numu;
-    if (hPThetaLep_Numu     ) delete hPThetaLep_Numu;
-    if (hThetaLep_Nue       ) delete hThetaLep_Nue;
-    if (hPThetaLep_Nue      ) delete hPThetaLep_Nue;
-    if (hThetaLep_NumuBar   ) delete hThetaLep_NumuBar;
-    if (hPThetaLep_NumuBar  ) delete hPThetaLep_NumuBar;
-    if (hThetaLep_NueBar    ) delete hThetaLep_NueBar;
-    if (hPThetaLep_NueBar   ) delete hPThetaLep_NueBar;
     
 }
 //________________________________________________________________________________________
@@ -605,24 +587,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     fPhysHypothesis.Init(kHypOsc3F);
     
     
-    
-    
-    
-    
-    // NEW 2D TEMPLATES (TO REMOVE)
-    hThetaLep_Numu = new TH1D("hThetaLep_Numu","hThetaLep_Numu",50,0,200);
-    hPThetaLep_Numu = new TH2D("hPThetaLep_Numu","hPThetaLep_Numu",500,0,5000,50,0,200);
-    
-    hThetaLep_Nue = new TH1D("hThetaLep_Nue","hThetaLep_Nue",50,0,200);
-    hPThetaLep_Nue = new TH2D("hPThetaLep_Nue","hPThetaLep_Nue",500,0,1500,50,0,200);
-    
-    hThetaLep_NumuBar = new TH1D("hThetaLep_NumuBar","hThetaLep_NumuBar",50,0,200);
-    hPThetaLep_NumuBar = new TH2D("hPThetaLep_NumuBar","hPThetaLep_NumuBar",500,0,5000,50,0,200);
-    
-    hThetaLep_NueBar = new TH1D("hThetaLep_NueBar","hThetaLep_NueBar",50,0,200);
-    hPThetaLep_NueBar = new TH2D("hPThetaLep_NueBar","hPThetaLep_NueBar",500,0,1500,50,0,200);
-    //
-    
     // fill-in MC templates from the input event tree
     for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
@@ -633,18 +597,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
             this->FillTemplateHistogram(s,m);
         }
     }
-    
-    
-    // TCanvas *c = new TCanvas("c","c");
-    // hThetaLep_Numu->Draw();
-    // c->Print("hThetaLep_Numu.pdf");
-    // hThetaLep_Nue->Draw();
-    // c->Print("hThetaLep_Nue.pdf");
-    // hThetaLep_NumuBar->Draw();
-    // c->Print("hThetaLep_NumuBar.pdf");
-    // hThetaLep_NueBar->Draw();
-    // c->Print("hThetaLep_NueBar.pdf");
-    // util::Die(1); return;
     
     
     this->FillTemplateArrays(true); // Fill the arrays - with niwg weights by default
@@ -905,25 +857,6 @@ bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
     // need to initialise as 3 flavour oscillation, otherwise ExtTuning (NA61) and FinTuning (BANFF) is not applied to nuesig modes
     fPhysHypothesis.Init(kHypOsc3F);
     
-    
-    
-    
-    
-    
-    // NEW 2D TEMPLATES (TO REMOVE)
-    hThetaLep_Numu = new TH1D("hThetaLep_Numu","hThetaLep_Numu",50,0,200);
-    hPThetaLep_Numu = new TH2D("hPThetaLep_Numu","hPThetaLep_Numu",500,0,5000,50,0,200);
-    
-    hThetaLep_Nue = new TH1D("hThetaLep_Nue","hThetaLep_Nue",50,0,200);
-    hPThetaLep_Nue = new TH2D("hPThetaLep_Nue","hPThetaLep_Nue",500,0,1500,50,0,200);
-    
-    hThetaLep_NumuBar = new TH1D("hThetaLep_NumuBar","hThetaLep_NumuBar",50,0,200);
-    hPThetaLep_NumuBar = new TH2D("hPThetaLep_NumuBar","hPThetaLep_NumuBar",500,0,5000,50,0,200);
-    
-    hThetaLep_NueBar = new TH1D("hThetaLep_NueBar","hThetaLep_NueBar",50,0,200);
-    hPThetaLep_NueBar = new TH2D("hPThetaLep_NueBar","hPThetaLep_NueBar",500,0,1500,50,0,200);
-    //
-    
     // fill-in MC templates from the input event tree
     for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
@@ -934,19 +867,6 @@ bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
             this->FillTemplateHistogramSmeared(s,m);
         }
     }
-    
-    
-    // TCanvas *c = new TCanvas("c","c");
-    // hThetaLep_Numu->Draw();
-    // c->Print("hThetaLep_Numu.pdf");
-    // hThetaLep_Nue->Draw();
-    // c->Print("hThetaLep_Nue.pdf");
-    // hThetaLep_NumuBar->Draw();
-    // c->Print("hThetaLep_NumuBar.pdf");
-    // hThetaLep_NueBar->Draw();
-    // c->Print("hThetaLep_NueBar.pdf");
-    // util::Die(1); return;
-    
     
     this->FillTemplateArrays(true); // Fill the arrays - with niwg weights by default
     
@@ -1742,31 +1662,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         
         
-        
-        
-        
-        
-        
-        // // NEW 2D TEMPLATES (TO REMOVE)
-        // if(s == kSKsFCFV1RingMuLike){
-        //   hThetaLep_Numu->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-        // }
-        // else if(s == kSKsRHCFCFV1RingMuLike){
-        //   hThetaLep_NumuBar->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-        // }
-        // else if(s == kSKsFCFV1RingELike){
-        //   hThetaLep_Nue->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-        // }
-        // else if(s == kSKsRHCFCFV1RingELike){
-        //   hThetaLep_NueBar->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-        // }
-        // //
-        
-        
-        
-        
-        
-        
 #ifndef __USE_2D_TEMPLATES__
         
 #ifdef __show_init_mesg_debug__
@@ -2342,34 +2237,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 #endif
         //
 #endif
-        
-        
-        
-        
-        
-        
-        
-        
-        // // NEW 2D TEMPLATES (TO REMOVE)
-        // if(s == kSKsFCFV1RingMuLike){
-        //   hThetaLep_Numu->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-        // }
-        // else if(s == kSKsRHCFCFV1RingMuLike){
-        //   hThetaLep_NumuBar->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-        // }
-        // else if(s == kSKsFCFV1RingELike){
-        //   hThetaLep_Nue->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-        // }
-        // else if(s == kSKsRHCFCFV1RingELike){
-        //   hThetaLep_NueBar->Fill(LepThetaDegrees, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG);
-        // }
-        // //
-        
-        
-        
-        
-        
-        
+
 #ifndef __USE_2D_TEMPLATES__
         
 #ifdef __show_init_mesg_debug__
