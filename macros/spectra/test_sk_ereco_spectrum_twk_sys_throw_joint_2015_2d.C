@@ -125,9 +125,9 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 650, //650, //11,                                         /* options: see above */
+ int          mode                     = 0, //650, //11,                                         /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample                = "1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
  // double       input_mixing12       = 0.304,    
@@ -154,7 +154,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char *config_file       = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml",
 
- const int    nexp                     = 10000,                                          /* number of experiments to make */
+ const int    nexp                     = 1000,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
@@ -206,41 +206,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   }
   Opt::Instance()->SetDefaultParameterValues();
 
-  // Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
-  // Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(mixparamchoice);
-  // if(Opt::Instance()->Undefined()) {
-  //   cerr << "Global options not defined correctly. Exiting..." << endl;
-  //   cerr << *Opt::Instance() << endl;
-  //   exit(1);
-  // }
   string sample_name = util::AsStringCompact(s);
   const char * sname = sample_name.c_str();
-
-  //
-
-  TH1D* h_nominal;
-  TH2D* h_2d = new TH2D("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,3);
-  
-  TH1D** h_bin = new TH1D*[util::NumErecoBins(s)];
-  TH1D** h_bin_coarse = new TH1D*[util::NumErecoBins(s)];
-  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
-    char name[200];
-    sprintf(name,"h_bin_%d",ibin);
-    h_bin[ibin] = new TH1D(name,name,20000,0,1);
-    //h_bin[ibin] = new TH1D(name,name,2000,0,1);
-    sprintf(name,"h_bin_coarse_%d",ibin);
-    h_bin_coarse[ibin] = new TH1D(name,name,200,0,1);
-  }
-
-  TH1D* hErecoAverage = new TH1D("hErecoAverage","hErecoAverage",util::NumErecoBins(s),util::ErecoBinEdges(s));
-  TH1D* h_up = new TH1D("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
-  TH1D* h_down = new TH1D("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
-
-  TH1D* hErecoMedian = new TH1D("hErecoMedian","hErecoMedian",util::NumErecoBins(s),util::ErecoBinEdges(s)); 
-  TH1D* h_up_Median = new TH1D("h_up_Median","h_up_Median",util::NumErecoBins(s),util::ErecoBinEdges(s));
-  TH1D* h_down_Median = new TH1D("h_down_Median","h_down_Median",util::NumErecoBins(s),util::ErecoBinEdges(s));
-
-  //
 
   //Check if the mode is valid
   string modetitle = "";
@@ -336,6 +303,74 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       cout << "Unknown mode " << mode << endl; exit(1); break;
   }//switch mode
   
+
+ //
+
+  TH1D * hErecoNominal = 0;
+  TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+
+  TH1D* h_nominal;
+  //TH2D* h_2d = new TH2D("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,3);
+  TH1D** h_bin = new TH1D*[util::NumErecoBins(s)];
+  TH1D** h_bin_coarse = new TH1D*[util::NumErecoBins(s)];
+
+    // RHC1Re
+    if(s==conv::kSKsRHCFCFV1RingELike){
+      hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+    }
+    // 1Re
+    else if(s==conv::kSKsFCFV1RingELike){
+      hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
+    }
+    // RHC1Rmu
+    else if(s==conv::kSKsRHCFCFV1RingMuLike){
+      hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
+    }
+    // 1Rmu
+    else if(s==conv::kSKsFCFV1RingMuLike){
+      hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);      
+    } 
+
+  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
+    char name[200];
+    sprintf(name,"h_bin_%d",ibin);
+
+    // RHC1Re
+    if(s==conv::kSKsRHCFCFV1RingELike){
+      h_bin[ibin] = new TH1D(name,name,20000,0,3);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,200,0,3);
+    }
+    // 1Re
+    else if(s==conv::kSKsFCFV1RingELike){
+      h_bin[ibin] = new TH1D(name,name,20000,0,10);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,200,0,10);
+    }
+    // RHC1Rmu
+    else if(s==conv::kSKsRHCFCFV1RingMuLike){
+      h_bin[ibin] = new TH1D(name,name,20000,0,20);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,200,0,20);
+    }
+    // 1Rmu
+    else if(s==conv::kSKsFCFV1RingMuLike){
+      h_bin[ibin] = new TH1D(name,name,20000,0,50);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,200,0,50);
+    } 
+  }
+
+  TH1D* hErecoAverage = new TH1D("hErecoAverage","hErecoAverage",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_up = new TH1D("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_down = new TH1D("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
+
+  TH1D* hErecoMedian = new TH1D("hErecoMedian","hErecoMedian",util::NumErecoBins(s),util::ErecoBinEdges(s)); 
+  TH1D* h_up_Median = new TH1D("h_up_Median","h_up_Median",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_down_Median = new TH1D("h_down_Median","h_down_Median",util::NumErecoBins(s),util::ErecoBinEdges(s));
+
+  //
+
   int syst_nsigma = util::GetSystNSigma();
 
   TString config_str(config_file);
@@ -463,10 +498,10 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 
 
   // Output histograms
-  TH1D * hErecoNominal = 0;
+  //TH1D * hErecoNominal = 0;
   VALORArray * obsEreco[nexp];
   for (int i = 0 ; i < nexp; i++) {obsEreco[i]=0;}
-  TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+  //TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
   
   int nbanff;
   if(RHCFlag) nbanff = conv::kNumOfRHCParamsInBANFFfit;
@@ -868,7 +903,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 
       sumsq_per_bin[ibin] += (N-nom)*(N-nom);
 
-      h_2d->Fill(h_2d->GetXaxis()->GetBinCenter(ibin+1),N);
+      //h_2d->Fill(h_2d->GetXaxis()->GetBinCenter(ibin+1),N);
 
       h_bin[ibin]->Fill(N);
       h_bin_coarse[ibin]->Fill(N);

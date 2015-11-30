@@ -109,28 +109,6 @@ if args:
 
 save_toy_expts = "false"
 
-# modes1 = [0,1,2,9,11] #combinations
-# #modes2 = range(400,422) #banff fhc (niwg2013 - numudisap)
-# #modes2 = range(500,422) #banff rhc (niwg2013 - numudisap)
-# #modes2 = range(500,527) #banff fhc (niwg2015 - numudisap)
-# modes2 = range(500,536) #banff rhc (niwg2015 - numudisap)
-# #modes3 = range(200,210) #unconstranied xsec (niwg2013)
-# modes3 = range(211,211) #unconstranied xsec (niwg2015)
-# #modes4 = range(800,805) #sk detector (skdetfsi 2013 - numudisap - fhc)
-# #modes4 = range(806,817) #sk detector (skdetfsi 2013 - nue - fhc)
-# #modes4 = range(800,817) #sk detector (skdetfsi 2013 - joint - fhc)
-# #modes4 = range(900,905) #sk detector (skdetfsi 2013 - numudisap - rhc)
-# modes4 = range(906,917) #sk detector (skdetfsi 2013 - nue - rhc)
-# #modes4 = range(900,917) #sk detector (skdetfsi 2013 - joint - rhc)
-# modes6 = range(700,703) #osc param
-# modes7 = [7,8] #banff flux / banff xsec individually
-# modes = modes1
-# if opt.do_all: #combinations + everything
-#     modes = modes + modes2 + modes3 + modes4 + modes5 + modes6 + modes7
-# elif opt.do_imp: #combinations + splines + oscparams
-#     modes = modes + modes6 + [200,201,202,203,204,215]
-
-
 #   0 tweak all parameters (name_modes="all")
 #   1 tweak all BANFF (name_modes="BANFF")
 #   5 tweak all BANFF oxygen (name_modes="") --> not any longer 
@@ -141,7 +119,6 @@ save_toy_expts = "false"
 #  11 oscillation parameters (name_modes="Osc_param")
 # 650 tweak mec fhc+rhc (name_modes="banff50_fhcprhc")
 # 666 tweak mecbar fhc+rhc (name_modes="banff66_fhcprhc")
-
 
 #
 # Set the systematic running mode 
@@ -166,13 +143,13 @@ latex_name_modes = []
 modes = [9,7,8,650,666,1,11,0]
 # modes = 9
 name_modes.append("SKDet_FSI") 
-latex_name_modes.append("SKDet_FSI")
+latex_name_modes.append("SKDet+FSI+SI")
 # modes = 7
 name_modes.append("BANFF_flux") 
-latex_name_modes.append("BANFF_flux")
+latex_name_modes.append("Flux")
 # modes = 8
 name_modes.append("BANFF_xsec") 
-latex_name_modes.append("BANFF_xsec")
+latex_name_modes.append("XSec")
 # modes = 650
 name_modes.append("banff50_fhcprhc")
 latex_name_modes.append("MEC")
