@@ -53,9 +53,9 @@ param_sets = ["SKDet_FSI"   ,
 
 readable = dict()
 readable["SKDet_FSI"         ] = "SK Detector + FSI"
-readable["BANFF"             ] = "BANFF all"
 readable["BANFF_xsec"        ] = "Cross-section"
 readable["BANFF_flux"        ] = "Flux"
+readable["BANFF"             ] = "BANFF all"
 readable["Osc_param"         ] = "Oscillations"
 readable["all"               ] = "All systematics"
 
@@ -120,14 +120,68 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
     prefit_nominal.SetLineWidth(linewidth)
     prefit_nominal.SetLineColor(ROOT.kBlue)
   
+
+  canv_nsk_prefit = ROOT.TCanvas()
+  canv_nsk_postfit = ROOT.TCanvas()
+  legend_nsk_prefit = ROOT.TLegend(0.7,0.6,0.9,0.9);
+  legend_nsk_prefit.SetFillStyle(0);
+  legend_nsk_prefit.SetBorderSize(0);
+  legend_nsk_prefit.SetTextSize(0.04);
+  legend_nsk_postfit = ROOT.TLegend(0.7,0.6,0.9,0.9);
+  legend_nsk_postfit.SetFillStyle(0);
+  legend_nsk_postfit.SetBorderSize(0);
+  legend_nsk_postfit.SetTextSize(0.04);
+
   if doprefit==True :
     all_hists = [nominal_hist,prefit_nominal]
   else :
     all_hists = [nominal_hist]
 
+  all_hists_nsk_prefit = [] # declare it as global only for legend
+  all_hists_nsk_postfit = [] # declare it as global only for legend
+
   for ii,par_set in enumerate(param_sets):
-    
+      
     par_hists = [nominal_hist]
+
+    ##### Draw histo of total # of SK events for each group of systematics
+
+    if doprefit==True :
+      hname = sample+"_"+par_set+"prefit"+"_nsk"
+      h = rootfile.Get(hname)
+      if not h:
+        print "Failed to get histogram: ",hname ; exit()
+      prefit_nsk_hist = ROOT.TH1D( h )
+      prefit_nsk_hist.SetLineColor(ii+1)
+      prefit_nsk_hist.SetLineStyle(1)
+      prefit_nsk_hist.SetLineWidth(linewidth)
+      canv_nsk_prefit.cd()
+      if ii==0 :
+        prefit_nsk_hist.DrawCopy()
+      else :
+        prefit_nsk_hist.DrawCopy("same")
+      all_hists_nsk_prefit.append(prefit_nsk_hist)
+      legend_nsk_prefit.AddEntry(all_hists_nsk_prefit[ii],readable[par_set],"L")
+      legend_nsk_prefit.Draw()
+
+    hname = sample+"_"+par_set+"_nsk"
+    h = rootfile.Get(hname)
+    if not h:
+      print "Failed to get histogram: ",hname ; exit()
+    postfit_nsk_hist = ROOT.TH1D( h )
+    postfit_nsk_hist.SetLineColor(ii+1)
+    postfit_nsk_hist.SetLineStyle(1)
+    postfit_nsk_hist.SetLineWidth(linewidth)
+    canv_nsk_postfit.cd()
+    if ii==0 :
+      postfit_nsk_hist.DrawCopy()
+    else :
+      postfit_nsk_hist.DrawCopy("same")
+    all_hists_nsk_postfit.append(postfit_nsk_hist)
+    legend_nsk_postfit.AddEntry(all_hists_nsk_postfit[ii],readable[par_set],"L")
+    legend_nsk_postfit.Draw()
+
+    #######
 
     if doprefit==True :
       #hname = sample+"_"+par_set+"prefit"+"_average"
@@ -587,6 +641,12 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
     items.append(to3dp.format(m1_events_post) +" ("+to3dp.format(m1_percent_post)+"%)")
     print "\t".join(items)
     
+
+  canv_nsk_prefit.Update()
+  canv_nsk_prefit.Print(sample+"_prefit_nsk.eps")
+  canv_nsk_postfit.Update()
+  canv_nsk_postfit.Print(sample+"_nsk.eps")
+
   return
 
 class T2KAnaError(Exception):

@@ -125,9 +125,9 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 0, //650, //11,                                         /* options: see above */
+ int          mode                     = 1, //650, //11,                                         /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample                = "1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
  // double       input_mixing12       = 0.304,    
@@ -149,12 +149,13 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
  bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
  bool         save_throws              = false,                                        /* save the thrown parameter values*/
 
- //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
  const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char *config_file       = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml",
 
- const int    nexp                     = 1000,                                          /* number of experiments to make */
+ const int    nexp                     = 10000,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
@@ -304,32 +305,37 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   }//switch mode
   
 
- //
+  //
+  
+  TString config_str(config_file);
+  bool isprefit = config_str.Contains("prefit");
+  if(isprefit)
+    modetitle += "prefit";
+
+  //
 
   TH1D * hErecoNominal = 0;
-  TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
-
+  TH1D * hNsk; 
   TH1D* h_nominal;
-  //TH2D* h_2d = new TH2D("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,3);
   TH1D** h_bin = new TH1D*[util::NumErecoBins(s)];
   TH1D** h_bin_coarse = new TH1D*[util::NumErecoBins(s)];
 
-    // RHC1Re
-    if(s==conv::kSKsRHCFCFV1RingELike){
-      hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
-    }
-    // 1Re
-    else if(s==conv::kSKsFCFV1RingELike){
-      hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
-    }
-    // RHC1Rmu
-    else if(s==conv::kSKsRHCFCFV1RingMuLike){
-      hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
-    }
-    // 1Rmu
-    else if(s==conv::kSKsFCFV1RingMuLike){
-      hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);      
-    } 
+  // RHC1Re
+  if(s==conv::kSKsRHCFCFV1RingELike){
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+  }
+  // 1Re
+  else if(s==conv::kSKsFCFV1RingELike){
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
+  }
+  // RHC1Rmu
+  else if(s==conv::kSKsRHCFCFV1RingMuLike){
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
+  }
+  // 1Rmu
+  else if(s==conv::kSKsFCFV1RingMuLike){
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);      
+  } 
 
   for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
     char name[200];
@@ -372,11 +378,6 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   //
 
   int syst_nsigma = util::GetSystNSigma();
-
-  TString config_str(config_file);
-  bool isprefit = config_str.Contains("prefit");
-  if(isprefit)
-    modetitle += "prefit";
 
   cout << endl;
   cout << "Systematic mode (" << mode << ") --> " << modetitle << endl;
@@ -482,19 +483,15 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   //SuperkExpectation *skexp;
   SuperkExpectation *skexp = new SuperkExpectation;
   skexp->Read(sconfig);
-  
+
   //
   SuperkObservation skobs;
-  
   
   string oscparams = util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar);
  
   cout << "input_deltacp = " << input_deltacp << endl;
   cout << oscparams << endl;
-
   
-
-
 
 
   // Output histograms
