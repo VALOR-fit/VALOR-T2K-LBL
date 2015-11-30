@@ -19,7 +19,7 @@ R = ROOT # Steve
 # bottom_margin = 0.15
 # use_log_plots = False
 
-max_energy = 1.25
+#max_energy = 1.25
 linewidth = 3
 title_offset = 0.8
 left_margin   = 0.16
@@ -100,7 +100,12 @@ def main(sample,unoscillated_input_filename, oscillated_input_filename,useaverag
 def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
   
   assert(rootfile)
-  
+
+  if sample=="RHC1Re" or sample=="1Re" :
+    max_energy = 1.25
+  elif sample=="RHC1Rmu" or sample=="1Rmu" :
+    max_energy = 2.9
+    
   nh = rootfile.Get(sample+"_nominal")
   nominal_hist = ROOT.TH1D(nh)
   nominal_hist.SetTitle("")
