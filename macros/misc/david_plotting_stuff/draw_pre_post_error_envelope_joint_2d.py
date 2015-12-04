@@ -44,18 +44,22 @@ ROOT.gStyle.SetOptTitle(0)
 
 colors = [ROOT.kBlack, ROOT.kRed, ROOT.kBlue, ROOT.kMagenta+1,  ROOT.kGreen+2, ROOT.kOrange+7, ROOT.kCyan+2,]
 
-param_sets = ["SKDet_FSI"   ,
-              "BANFF_xsec"  ,
-              "BANFF_flux"  ,
-              "BANFF"       ,
-              "Osc_param"   ,
-              "all"         ,]
+param_sets = [
+  "SKDet_FSI"     ,
+  "BANFF_xsec"    ,
+  "BANFF_flux"    ,
+  "BANFF"         ,
+  #"skdetfsi_banff",
+  "Osc_param"     ,
+  "all"           ,
+]
 
 readable = dict()
-readable["SKDet_FSI"         ] = "SK Detector + FSI"
+readable["SKDet_FSI"         ] = "SK Detector + FSI + SI"
 readable["BANFF_xsec"        ] = "Cross-section"
 readable["BANFF_flux"        ] = "Flux"
 readable["BANFF"             ] = "BANFF all"
+#readable["skdetfsi_banff"    ] = "Flux + XSec + SKDetector + FSI + SI"
 readable["Osc_param"         ] = "Oscillations"
 readable["all"               ] = "All systematics"
 
@@ -64,6 +68,7 @@ is_constrained ["SKDet_FSI"         ] = True
 is_constrained ["BANFF_xsec"        ] = True
 is_constrained ["BANFF_flux"        ] = True
 is_constrained ["BANFF"             ] = True
+#is_constrained ["skdetfsi_banff"    ] = True
 is_constrained ["Osc_param"         ] = True
 is_constrained ["all"               ] = True
 
@@ -305,6 +310,13 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
       #hplus_prefit.SetLineStyle(1)
       hplus_prefit.SetLineWidth(linewidth)
 
+    hplus_postfit.GetYaxis().SetTitleOffset(0.8)
+    hplus_postfit.SetTitle("")
+    hplus_postfit.GetXaxis().SetRangeUser(0.,max_energy)
+    hplus_postfit.GetXaxis().SetTitle("E_{reco} (GeV)")
+    hplus_postfit.GetYaxis().SetTitle("Events per bin")
+    hplus_postfit.GetYaxis().SetTitleOffset(title_offset)
+
     hplus_postfit.SetFillColor(ROOT.kRed)
     hplus_postfit.SetFillStyle(1001)
     
@@ -360,7 +372,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
     
     canv.Update()
 
-    canv.Print(name+"_"+par_set+"_envelope.eps")
+    canv.Print(sample+name+"_"+par_set+"_envelope.eps")
     
 
 
@@ -622,7 +634,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
     line_at_1.Draw("same")
     
     canv2.Update()
-    canv2.Print(name+"_"+par_set+"_envelope_ratio.eps")
+    canv2.Print(sample+name+"_"+par_set+"_envelope_ratio.eps")
 
     # Print out some event rates
     nom_events     = nominal_hist  .Integral()

@@ -15,6 +15,8 @@
 //   9 tweak SKdet + FSI
 //  10 tweak BANFF + unconstrained xsec
 //  11 oscillation parameters
+//  12 sigma nue/numu (nu and nubar) parameters
+//  13 tweak all parameters except oscillations
 //
 // 200 tweak pfermi
 // 201 tweak specfunc
@@ -47,6 +49,8 @@
 // 600 tweak banff00_fhcprhc
 // 601 tweak banff01_fhcprhc
 // 650 tweak banff50_fhcprhc (MEC)
+// 662 tweak banff62_fhcprhc (NCother)
+// 664 tweak banff64_fhcprhc (NC1gamma)
 // 666 tweak banff66_fhcprhc (MECbar)
 // 600+kNumOfFHCpRHCParamsInBANFFfit tweak last banff parameter
 //
@@ -125,9 +129,9 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 1, //650, //11,                                         /* options: see above */
+ int          mode                     = 13, //650, //11,                                         /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample                = "RHC1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
  // double       input_mixing12       = 0.304,    
@@ -155,7 +159,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char *config_file       = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml",
 
- const int    nexp                     = 10000,                                          /* number of experiments to make */
+ const int    nexp                     = 1000,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
@@ -239,6 +243,10 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       modetitle = "BANFF_unconstrained_xsec"; break;
     case 11:
       modetitle = "Osc_param"; break;
+    case 12:
+      modetitle = "NueNumu"; break;
+    case 13:
+      modetitle = "skdetfsi_banff"; break;
 
     case 200:
       modetitle = "pfermi"; break;
@@ -654,7 +662,17 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
         skexp->TweakAllBANFFSystematics();
       }
 
-      //non-23 oscillation parameters
+     //sigma nue/numu (nu and nubar) xsec (they are correlated)
+      if(mode == 12) {
+	skexp->GetBANFF()->TweakSampleXSecNumuNueOnly(false,0); // cholesky w/ full cov matrix
+      }
+      
+      // All expect oscillations
+      if(mode == 13) {
+	skexp->TweakAllSystematics();
+      }
+      
+      //oscillations parameters
       if(mode == 11 || mode == 0) {
 		
 	// Randomize specified osc params for current toy MC expt
