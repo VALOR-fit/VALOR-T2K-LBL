@@ -7611,6 +7611,7 @@ double SuperkMC::ErecoFunc_NuBar(double Mom,double costh,double mass_lep){
 
 double SuperkMC::SmearMomentum(double fit_momentum,Option_t * option ) const
 {
+  //Taken from T2K paper: http://arxiv.org/pdf/1502.01550v2.pdf (bottom of p53)
     TRandom3 & rndgen = Rnd::Instance()->RndOther();
     
     double error = 1;
