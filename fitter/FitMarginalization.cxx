@@ -27,7 +27,7 @@
 //#define __print_hesseerror__
 //#define __print_hesseerror_verbose__
 
-#define FILL_TREE_OSCPARAM_TOYS
+//#define FILL_TREE_OSCPARAM_TOYS
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // Check bins both on the right and left 
 
@@ -427,7 +427,7 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
 #ifndef __USE_2D_TEMPLATES__  
   for(int is=0;is<conv::kns;is++){
     if(is<fNSKsamples){
-      char name[200];
+      char name[256];
       SuperkSample_t s = this->GetSKSamples(is);    
       sprintf(name,"hToyMargCurr_%s",util::AsStringCompact(s).c_str());
       fhToyMargCurr[is] = new TH1F(name,name,util::NumErecoBins(s),util::ErecoBinEdges(s));   
@@ -441,7 +441,7 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   // NEW 2D TEMPLATES
   for(int is=0;is<conv::kns;is++){
     if(is<fNSKsamples){
-      char name[200];
+      char name[256];
       SuperkSample_t s = this->GetSKSamples(is);    
       sprintf(name,"hToyMargCurr2D_%s",util::AsStringCompact(s).c_str());
       fhToyMargCurr2D[is] = new TH2F(name,name,util::NumQ2Bins(s),util::Q2BinEdges(s),util::NumErecoBins(s),util::ErecoBinEdges(s));   
@@ -468,8 +468,8 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   }
   //
 
-  char Xtitle[200];
-  char Ytitle[200];
+  char Xtitle[256];
+  char Ytitle[256];
   sprintf(Xtitle,"%s",util::AsStringPaperRooTex(fPhysParamFree[0]).c_str()); 
   sprintf(Ytitle,"%s",util::AsStringPaperRooTex(fPhysParamFree[1]).c_str()); 
 
@@ -2537,7 +2537,7 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
 
-  char namemh[200];
+  char namemh[256];
   if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
     if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
@@ -2551,7 +2551,7 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
     }
   }	    
 
-  char outname[200];
+  char outname[256];
   sprintf(outname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
   std::string soutname(outname);
 
@@ -2607,7 +2607,7 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
   //int min_bin_sub_param1 = fmin_bin_sub_param[1];
   //int max_bin_sub_param1 = fmax_bin_sub_param[1];
 
-  char outname_range[200];
+  char outname_range[256];
   sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
   
   std::string soutname_range(outname_range);
@@ -2718,13 +2718,13 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
       ostext << " - " << util::AsString(p) << " (NH) : " << endl;
       ostext << "     Prior = " << this->GetPrior_NH(p) << endl;
       ostext << "     Min Value = " << fparm_nh->GetMinValueFlat(p) << endl;
-      ostext << "     Max Value = " << fparm_nh->GetMinValueFlat(p) << endl;
+      ostext << "     Max Value = " << fparm_nh->GetMaxValueFlat(p) << endl;
       ostext << "     Mean Value = " << fparm_nh->GetMeanGaus(p) << endl;
       ostext << "     Sigma Value = " << fparm_nh->GetSigmaGaus(p) << endl;
       ostext << " - " << util::AsString(p) << " (IH) : " << endl;
       ostext << "     Prior = " << this->GetPrior_NH(p) << endl;
       ostext << "     Min Value = " << fparm_nh->GetMinValueFlat(p) << endl;
-      ostext << "     Max Value = " << fparm_nh->GetMinValueFlat(p) << endl;
+      ostext << "     Max Value = " << fparm_nh->GetMaxValueFlat(p) << endl;
       ostext << "     Mean Value = " << fparm_nh->GetMeanGaus(p) << endl;
       ostext << "     Sigma Value = " << fparm_nh->GetSigmaGaus(p) << endl;
     }    
@@ -2741,7 +2741,7 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
   cout << endl;
   cout << "Write marginalization toys in a binary file:" << endl;
   
-  char namemh[200];
+  char namemh[256];
   if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
     if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
@@ -2755,10 +2755,10 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
     }
   }	    
   
-  char outtag[200] = "%s_%s";
+  char outtag[256] = "%s_%s";
   sprintf(outtag,"%s_%s",tag,"Merged");
 
-  char outname[200];
+  char outname[256];
   sprintf(outname,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string soutname(outname);
@@ -2814,7 +2814,7 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
   //int min_bin_sub_param1 = fmin_bin_sub_param[1];
   //int max_bin_sub_param1 = fmax_bin_sub_param[1];
 
-  char outname_range[200];
+  char outname_range[256];
   sprintf(outname_range,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
   
   std::string soutname_range(outname_range);
@@ -2837,7 +2837,7 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
 
   //
 
-  char outname_text[200];
+  char outname_text[256];
   std::string soutname_text(outname_text);
   sprintf(outname_text,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".txt");
 
@@ -2898,7 +2898,7 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
 //________________________________________________________________________________________
 void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){ 
 
-  char namemh[200];
+  char namemh[256];
   if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
     if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
@@ -2921,7 +2921,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   //int nbins_param0=0;
   //int nbins_param1=0;
 
-  char inname_range[200];
+  char inname_range[256];
   sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
   
   std::string sinname_range(inname_range);
@@ -2993,7 +2993,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   //   exit(1);
   // }
 
-  char inname[200];
+  char inname[256];
   sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
   std::string sinname(inname);
@@ -3151,7 +3151,7 @@ void FitMarginalization::WriteLikeToys2Binary(const char *tag){
     cout << endl;
     cout << "Write toy likelihoods in a binary file:" << endl;
     
-    char namemh[200];
+    char namemh[256];
     if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
     else{ 
       if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
@@ -3164,7 +3164,7 @@ void FitMarginalization::WriteLikeToys2Binary(const char *tag){
 	exit(1);
       }
     }	    
-    char outname[200];
+    char outname[256];
     sprintf(outname,fnamelikefilebinary,tag,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,".bin");
     std::string soutname(outname);
     flikeToyVArray->WriteFile(soutname);
@@ -3216,7 +3216,7 @@ void FitMarginalization::WriteOscToys2Tree(int idfile, const char *tag){
 
 #ifdef FILL_TREE_OSCPARAM_TOYS
 
-  char namemh[200];
+  char namemh[256];
   if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
     if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
@@ -3229,7 +3229,7 @@ void FitMarginalization::WriteOscToys2Tree(int idfile, const char *tag){
       exit(1);
     }
   }	    
-  char outname[200];
+  char outname[256];
   sprintf(outname,fnameoscfiletree,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,".root");
   
   filetreetoys = new TFile(outname,"RECREATE");
@@ -3689,7 +3689,7 @@ void FitMarginalization::SetPrior_NH(PhysParamId_t physpar,string priorname,doub
   }
   //
 
-  char name[200];
+  char name[256];
   sprintf(name,"h_%s",util::AsString(physpar).c_str());
   TH1D *h = new TH1D(name,name,nbins,min,max);
   fparm->SetToyHisto(physpar,h); // empty histogram
@@ -3790,7 +3790,7 @@ void FitMarginalization::SetPrior_IH(PhysParamId_t physpar,string priorname,doub
   }
   //
 
-  char name[200];  
+  char name[256];  
   sprintf(name,"h_%s_ih",util::AsString(physpar).c_str());
   TH1D *h = new TH1D(name,name,nbins,min,max);
   fparm_ih->SetToyHisto(physpar,h); // empty histogram
@@ -7128,7 +7128,7 @@ void FitMarginalization::SetFileID(int nfiles){
   cout << "Build the map between the binary file ID and the free parameters sub-range" << endl;
   cout << endl;
   
-  char namemh[200];
+  char namemh[256];
   if(fdoMargMassHierarchy) sprintf(namemh,"%s","marg");
   else{ 
     if( Opt::Instance()->gMassHierarchyAssumed == kNmhNormal )
@@ -7158,7 +7158,7 @@ void FitMarginalization::SetFileID(int nfiles){
 
   for(int idfile=0;idfile<nfiles;idfile++){
     
-    char inname[200];
+    char inname[256];
     sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
 
     std::string sinname(inname);
@@ -7174,8 +7174,8 @@ void FitMarginalization::SetFileID(int nfiles){
     // // Check # of binary files
     // //cout << fnamefilebinary << endl;
     // //cout << tag << endl;
-    // char numfiletag[200];
-    // char ext[200] = ".bin";
+    // char numfiletag[256];
+    // char ext[256] = ".bin";
     // sprintf(numfiletag,"%s","./");
     // //sprintf(numfiletag,"../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys/submit_sinsqth13Vsdcp_NormPOT_postfit*");
     // //TString snumfiletag(numfiletag);
@@ -7202,7 +7202,7 @@ void FitMarginalization::SetFileID(int nfiles){
 
 
 
-    char inname_range[200];
+    char inname_range[256];
     sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");    
     std::string sinname_range(inname_range);    
     
