@@ -706,111 +706,7 @@ bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
     // instantiate all necessary histograms
     this->Book();
     
-    //#ifdef __show_init_mesg_info__
-    //    cout << "Exp/SKMC >> Reading SuperK MC inputs from input XML file." << endl;
-    //#endif
-    //
-    //    //
-    //    // Get data POT
-    //    //
-    //    fPOT = util::XML2Dbl(xml,root_node,"data_pot/superk/fhc");
-    //#ifdef __show_init_mesg_info__
-    //    cout << "Exp/SKMC >> " << "POT_{data} (FHC) = " << fPOT << endl;
-    //#endif
-    //    //
-    //    // Get data POT RHC
-    //    //
-    //    fPOTRHC = util::XML2Dbl(xml,root_node,"data_pot/superk/rhc");
-    //#ifdef __show_init_mesg_info__
-    //    cout << "Exp/SKMC >> " << "POT_{data} (RHC) = " << fPOTRHC << endl;
-    //#endif
-    //
-    //    // NEW MULTIRING
-    //
-    //    //
-    //    // Get data POT FHC MultiRing
-    //    //
-    //
-    //#ifdef __MULTIRING_FHC_RUNNING__
-    //    fPOTMultiRing = util::XML2Dbl(xml,root_node,"data_pot/superk/multiring_fhc");
-    //#ifdef __show_init_mesg_info__
-    //    cout << "Exp/SKMC >> " << "POT_{data} (MultiRing) = " << fPOTMultiRing << endl;
-    //#endif
-    //#endif
-    //    ///
-    
-    //    //
-    //    // Get MC trees and MC POT
-    //    //
-    //
-    //    // FHC
-    //    fMCPOTHistNuMu      = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot_fhc"         );
-    //    fMCPOTHistNuMuBar   = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot_fhc"      );
-    //    fMCPOTHistNuE       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot_fhc"          );
-    //    fMCPOTHistNuEBar    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot_fhc"       );
-    //    fMCPOTHistOscNuE    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot_fhc"   );
-    //    fMCPOTHistOscNuEBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot_fhc");
-    //
-    //    fMCPOTNuMu       = fMCPOTHistNuMu     ->GetBinContent(2) / fMCPOTHistNuMu     ->GetBinContent(1);
-    //    fMCPOTNuMuBar    = fMCPOTHistNuMuBar  ->GetBinContent(2) / fMCPOTHistNuMuBar  ->GetBinContent(1);
-    //    fMCPOTNuE        = fMCPOTHistNuE      ->GetBinContent(2) / fMCPOTHistNuE      ->GetBinContent(1);
-    //    fMCPOTNuEBar     = fMCPOTHistNuEBar   ->GetBinContent(2) / fMCPOTHistNuEBar   ->GetBinContent(1);
-    //    fMCPOTOscNuE     = fMCPOTHistOscNuE   ->GetBinContent(2) / fMCPOTHistOscNuE   ->GetBinContent(1);
-    //    fMCPOTOscNuEBar  = fMCPOTHistOscNuEBar->GetBinContent(2) / fMCPOTHistOscNuEBar->GetBinContent(1);
-    //
-    //    // RHC
-    //    fMCPOTHistRHCNuMu      = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot_rhc"         );
-    //    fMCPOTHistRHCNuMuBar   = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot_rhc"      );
-    //    fMCPOTHistRHCNuE       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot_rhc"          );
-    //    fMCPOTHistRHCNuEBar    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot_rhc"       );
-    //    fMCPOTHistRHCOscNuE    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot_rhc"   );
-    //    fMCPOTHistRHCOscNuEBar = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot_rhc");
-    //
-    //    fMCPOTRHCNuMu      = fMCPOTHistRHCNuMu     ->GetBinContent(2) / fMCPOTHistRHCNuMu     ->GetBinContent(1);
-    //    fMCPOTRHCNuMuBar   = fMCPOTHistRHCNuMuBar  ->GetBinContent(2) / fMCPOTHistRHCNuMuBar  ->GetBinContent(1);
-    //    fMCPOTRHCNuE       = fMCPOTHistRHCNuE      ->GetBinContent(2) / fMCPOTHistRHCNuE      ->GetBinContent(1);
-    //    fMCPOTRHCNuEBar    = fMCPOTHistRHCNuEBar   ->GetBinContent(2) / fMCPOTHistRHCNuEBar   ->GetBinContent(1);
-    //    fMCPOTRHCOscNuE    = fMCPOTHistRHCOscNuE   ->GetBinContent(2) / fMCPOTHistRHCOscNuE   ->GetBinContent(1);
-    //    fMCPOTRHCOscNuEBar = fMCPOTHistRHCOscNuEBar->GetBinContent(2) / fMCPOTHistRHCOscNuEBar->GetBinContent(1);
-    //
-    //    // NEW MULTIRING
-    //#ifdef __MULTIRING_FHC_RUNNING__
-    //    fMCPOTHistMultiRingNuMu       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
-    //    fMCPOTHistMultiRingNuMuBar    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
-    //    fMCPOTHistMultiRingNuE        = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
-    //    fMCPOTHistMultiRingNuEBar     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-    //    fMCPOTHistMultiRingOscNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
-    //    fMCPOTHistMultiRingOscNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot");
-    //
-    //    fMCPOTMultiRingNuMu       = fMCPOTHistMultiRingNuMu     ->GetBinContent(2) / fMCPOTHistMultiRingNuMu     ->GetBinContent(1);
-    //    fMCPOTMultiRingNuMuBar    = fMCPOTHistMultiRingNuMuBar  ->GetBinContent(2) / fMCPOTHistMultiRingNuMuBar  ->GetBinContent(1);
-    //    fMCPOTMultiRingNuE        = fMCPOTHistMultiRingNuE      ->GetBinContent(2) / fMCPOTHistMultiRingNuE      ->GetBinContent(1);
-    //    fMCPOTMultiRingNuEBar     = fMCPOTHistMultiRingNuEBar   ->GetBinContent(2) / fMCPOTHistMultiRingNuEBar   ->GetBinContent(1);
-    //    fMCPOTMultiRingOscNuE     = fMCPOTHistMultiRingOscNuE   ->GetBinContent(2) / fMCPOTHistMultiRingOscNuE   ->GetBinContent(1);
-    //    fMCPOTMultiRingOscNuEBar  = fMCPOTHistMultiRingOscNuEBar->GetBinContent(2) / fMCPOTHistMultiRingOscNuEBar->GetBinContent(1);
-    //#endif
-    //    ////
-    //
-    //    for(int is = 0; is < kns; is++) {
-    //        SuperkSample_t s = kSKSamples[is];
-    //        if (s==kSKsUndefined) continue;
-    //        fMCTreeNuMu     [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/numu/%s"         ,util::GetXMLMCTreeName(s).c_str()));
-    //        fMCTreeNuMuBar  [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/numubar/%s"      ,util::GetXMLMCTreeName(s).c_str()));
-    //        fMCTreeNuE      [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/nue/%s"          ,util::GetXMLMCTreeName(s).c_str()));
-    //        fMCTreeNuEBar   [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/nuebar/%s"       ,util::GetXMLMCTreeName(s).c_str()));
-    //        fMCTreeOscNuE   [is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/signal_nue/%s"   ,util::GetXMLMCTreeName(s).c_str()));
-    //        fMCTreeOscNuEBar[is] = util::XML2TTree (xml,root_node,Form("mc/superk/nominal/signal_nuebar/%s",util::GetXMLMCTreeName(s).c_str()));
-    //        assert (fMCTreeNuMu      [is]);
-    //        assert (fMCTreeNuMuBar   [is]);
-    //        assert (fMCTreeNuE       [is]);
-    //        assert (fMCTreeNuEBar    [is]);
-    //        assert (fMCTreeOscNuE    [is]);
-    //        assert (fMCTreeOscNuEBar [is]);
-    //    }
-    //
-    //
-    
-    
+
 #ifdef __show_init_mesg_info__
     // FHC
     cout << "Exp/SKMC >> " << "FHC POT {MC; numu}    = "    << fMCPOTNuMu       << endl;
@@ -894,7 +790,6 @@ bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
     this->MCStatErrDebug();
 #endif
 #endif
-    
     
     
     // need to read in the xsec splines, before applying any BANFF tweaks
@@ -1858,6 +1753,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     branchCCcoh->SetAddress(&fBrWghtCCcoh);
 #endif
     
+
     
     double ntotevents = 0.;
     
@@ -1871,27 +1767,145 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
         if(!use_it) continue;
         
+        //Get True energy
+        double Etrue = fBrPtrue[0];
+
         // Get reconstructed energy
         double ereco_fill = fBrEreco/1000.; // GeV
         
-        
         // NEW 2D TEMPLATES
         
+        // Get lepton direction
+        // Costheta is the scalar product between the neutrino beam and lepton directions.
+        
+        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+       
+        if( costheta<-1.00001 || costheta>+1.00001 ){
+            cerr << endl;
+            cerr << std::setprecision(10);
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        double sintheta = 1. - costheta*costheta;
+        if( sintheta<-1.00001 || sintheta>+1.00001 ){
+            cerr << endl;
+            cerr << std::setprecision(10);
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
+            cerr << "costheta = " << costheta << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        double LepTheta        = TMath::ACos(costheta); // radiant
+        double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
+        if(LepTheta<0.){
+            cerr << endl;
+            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        
+        //
+        //Smear theta based on gaussian around the true value and error from http://arxiv.org/pdf/1502.01550v2.pdf
+        //Different muon and electron theta resolution, I took that to mean muon sample and electron sample.
+        //
+        double theta_error_degrees = 0.;
+        
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            theta_error_degrees = 1.8;
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            theta_error_degrees = 3.;
+        }
+        
+        double LepThetaDegreesSmeared = Rnd::Instance()->RndOther().Gaus(LepThetaDegrees,theta_error_degrees);
+        
+        //Set all values based on smeared quantitiy
+        
+        double LepThetaSmeared = LepThetaDegreesSmeared * TMath::Pi() / 180.;
+        double costhetaSmeared = TMath::Cos(LepTheta);
+        
+        // Get the true lepton momentum from the tree, position in array depends on int mode.
+
+        int lepton_int =0;
+        if(util::IsMEC(m)){
+            lepton_int = 3;
+        }
+        else{
+            lepton_int = 2;
+        }
+        
+        double ptrue_lep = fBrPtrue[lepton_int];
+        double pmax_lepSmeared = ptrue_lep;
+        
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            pmax_lepSmeared = this->SmearMomentum(ptrue_lep,"electron");
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            pmax_lepSmeared = this->SmearMomentum(ptrue_lep,"muon");
+        }
+
+
+        // Set the correct lepton mass
+        
+        double mass_lep = 0.;
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            mass_lep    = kElectronMassGeV; // GeV
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            mass_lep = kMuonMassGeV; // GeV
+        }
+        else{
+            cerr << endl;
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "Using sample " << util::AsString(s) << endl;
+            cerr << "Samples other than: " << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << "are not implemented" << endl;
+            util::Die(1); return;
+        }
+        
+        // Calculate lepton energy
+        
+        double emax_lepSmeared = sqrt( pmax_lepSmeared*pmax_lepSmeared + mass_lep*mass_lep );
+        
+        /*
+         
+         Recalculate ERec using new plep from distribution!
+         
+         */
+        
+        double ereco_nuSmeared = 0;
+        
+        if(util::IsRHCSample(s)){
+            ereco_nuSmeared = this->ErecoFunc_NuBar(pmax_lepSmeared,costhetaSmeared,mass_lep);
+        }
+        else{
+            ereco_nuSmeared = this->ErecoFunc_Nu(pmax_lepSmeared,costhetaSmeared,mass_lep);
+        }
+        
+        if(ereco_fill < 0) ereco_fill = 0;
+        if(ereco_nuSmeared < 0) ereco_nuSmeared = 0;
+
 #if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
         
         // Get momentum and energy of most energetic lepton (only 1Ring samples)
         
         double pmax_lep = 0.; // momentum of most energetic lepton
-        double mass_lep = 0.;
         if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-            mass_lep = kElectronMassGeV; // GeV
-            pmax_lep = fBrAmome[0] / 1000.; // GeV
-            pmax_lep = this->SmearMomentum(pmax_lep,"electron");
+            pmax_lep    = fBrAmome[0] /1000.; // GeV
         }
         else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-            mass_lep = kMuonMassGeV; // GeV
             pmax_lep = fBrAmomm[0] / 1000.; // GeV
-            pmax_lep = this->SmearMomentum(pmax_lep,"muon");
         }
         else{
             cerr << endl;
@@ -1926,68 +1940,15 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             util::Die(1); return;
         }
         
-
-        // Get lepton energy
-        
-        double emax_lep = sqrt( pmax_lep*pmax_lep + mass_lep*mass_lep );
-        
-        // Get lepton direction
-        // Costheta is the scalar product between the neutrino beam and lepton directions.
-        
-        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
-        if( costheta<-1.00001 || costheta>+1.00001 ){
-            cerr << endl;
-            cerr << std::setprecision(10);
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
-            cerr << endl;
-            util::Die(1); return;
-        }
-        
-        double sintheta = 1. - costheta*costheta;
-        if( sintheta<-1.00001 || sintheta>+1.00001 ){
-            cerr << endl;
-            cerr << std::setprecision(10);
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
-            cerr << "costheta = " << costheta << endl;
-            cerr << endl;
-            util::Die(1); return;
-        }
-        
-        double LepTheta        = TMath::ACos(costheta); // radiant
-        double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
-        if(LepTheta<0.){
-            cerr << endl;
-            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
-            cerr << endl;
-            util::Die(1); return;
-        }
-        
-        /*
-         
-         Recalculate ERec using new plep from distribution!
-         
-         */
-        
-        if(util::IsRHCSample(s)){
-            ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
-        }
-        else{
-            ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
-        }
-        
-        if(ereco_fill < 0) ereco_fill = 0;
-        
         double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum)
         
-        // double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Q^2
-        //double Q2 = this->CalcQd2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Qd^2
-        //double Q2 = this->CalcEhad(ereco_nu,emax_lep);
-        //double Q2 = this->CalcInelasticity(ereco_nu,emax_lep);
-        //double Q2 = this->CalcBjorkenScale(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
-        //double Q2 = this->CalcWhadr(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
-        double Q2 = this->CalcXSecTerm(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
+        // double Q2 = this->CalcQ2(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep); // Q^2
+        //double Q2 = this->CalcQd2(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep); // Qd^2
+        //double Q2 = this->CalcEhad(ereco_nuSmeared,emax_lepSmeared);
+        //double Q2 = this->CalcInelasticity(ereco_nuSmeared,emax_lepSmeared);
+        //double Q2 = this->CalcBjorkenScale(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep,mass_nucl);
+        //double Q2 = this->CalcWhadr(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep,mass_nucl);
+        double Q2 = this->CalcXSecTerm(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep,mass_nucl);
         
         //if(Q2<0. || Q2 > 1.){
         //cout << "costheta = " << costheta << " ";
@@ -2041,47 +2002,28 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             cout << "Q2 < Q2BinEdge(s,0)" << endl;
             cout << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
             cout << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
-            cout << "theta = " << LepThetaDegrees << " ";
-            cout << "costheta = " << costheta << " ";
+            cout << "theta = " << LepThetaDegreesSmeared << " ";
+            cout << "costheta = " << costhetaSmeared << " ";
             //cout << "sintheta = " << sintheta << " ";
-            cout << "emax_lep = " << emax_lep << " ";
-            cout << "ereco_nu = " << ereco_nu << " ";
+            cout << "emax_lep = " << emax_lepSmeared << " ";
+            cout << "ereco_nu = " << ereco_nuSmeared << " ";
             cout << "Q2 = " << Q2 << " GeV" << endl;
             util::Die(1); return;
         }
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
             cout << "Q2 > Q2BinEdge(s,0)" << endl;
-            cout << "costheta = " << costheta << " ";
-            cout << "sintheta = " << sintheta << " ";
-            cout << "emax_lep = " << emax_lep << " ";
-            cout << "ereco_nu = " << ereco_nu << " ";
+            cout << "costheta = " << costhetaSmeared << " ";
+            cout << "sintheta = " << TMath::Sin(LepThetaSmeared) << " ";
+            cout << "emax_lep = " << emax_lepSmeared << " ";
+            cout << "ereco_nu = " << ereco_nuSmeared << " ";
             cout << "Q2 = " << Q2 << " GeV" << endl;
             util::Die(1); return;
         }
         
         
 #elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
-        
-        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
-        if( costheta<-1.00001 || costheta>+1.00001 ){
-            cerr << endl;
-            cerr << std::setprecision(10);
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
-            cerr << endl;
-            util::Die(1); return;
-        }
-        
-        double LepTheta        = TMath::ACos(costheta); // radiant
-        double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
-        if(LepTheta<0.){
-            cerr << endl;
-            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
-            cerr << endl;
-            util::Die(1); return;
-        }
-        
-        double q2_fill = LepThetaDegrees;
+
+        double q2_fill = LepThetaDegreesSmeared;
         
 #ifdef INCLUDEEVENTSNEGATIVEQ2
         if(q2_fill < 0.){
@@ -2103,14 +2045,14 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 #endif
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
-            cout << "costheta = " << costheta << endl;
-            cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+            cout << "costheta = " << costhetaSmeared << endl;
+            cout << "LepThetaDegrees = " << LepThetaDegreesSmeared << endl;
             util::Die(1); return;
         }
         
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
-            cout << "costheta = " << costheta << endl;
-            cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+            cout << "costheta = " << costhetaSmeared << endl;
+            cout << "LepThetaDegrees = " << LepThetaDegreesSmeared << endl;
             util::Die(1); return;
         }
         
@@ -2168,7 +2110,6 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         
         
-        double Etrue = fBrPtrue[0];
         
         //if(util::IsRHCSample(s))
 #ifdef USE_FLUX_EXT_WEIGHT
@@ -2189,13 +2130,13 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         
 #ifndef __USE_2D_TEMPLATES__
-        this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, Etrue);
-        fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, Etrue);
+        this -> Template(s,m,kSKMCtOri) -> Fill (ereco_nuSmeared, Etrue);
+        fMCVariableTempl[sidx][midx]    -> Fill (ereco_nuSmeared, Etrue);
         ntotevents += 1.;
 #else
         // NEW 2D TEMPLATES
-        this -> Template2D(s,m,kSKMCtOri) -> Fill (q2_fill, ereco_fill, Etrue);
-        fMCVariableTempl2D[sidx][midx]    -> Fill (q2_fill, ereco_fill, Etrue);
+        this -> Template2D(s,m,kSKMCtOri) -> Fill (q2_fill, ereco_nuSmeared, Etrue);
+        fMCVariableTempl2D[sidx][midx]    -> Fill (q2_fill, ereco_nuSmeared, Etrue);
         ntotevents += 1.;
         //
 #endif
@@ -2209,10 +2150,10 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 #endif
 
 #ifndef __USE_2D_TEMPLATES__
-        this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight);
+        this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight);
 #else
         //NEW 2D TEMPLATES
-        this -> Template2D(s,m,kSKMCtPOT) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight);
+        this -> Template2D(s,m,kSKMCtPOT) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight);
         //
 #endif
         
@@ -2220,20 +2161,20 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
 #ifndef __USE_2D_TEMPLATES__
 #ifdef USE_RPA_WEIGHTS
-        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #else
-        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #endif
 #else
         // NEW 2D TEMPLATES
 #ifdef USE_RPA_WEIGHTS
-        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
-        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #else
-        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
-        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #endif
         //
 #endif
@@ -2242,16 +2183,16 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
 #ifdef __show_init_mesg_debug__
         if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
-            cout << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
-            << " (Ereco = " << fBrEreco/1000 << ")" << endl;
+            cout << "Exp/SKMC/FillTemplateSmeared >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            << " (Ereco = " << ereco_nuSmeared << ")" << endl;
 #endif
 #ifdef __show_init_mesg_debug2__
         if(fBrEreco/1000 <= 0)
-            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
             << " (Etrue = " << Etrue << ")" << endl;
         //#endif __show_init_mesg_debug2__
         if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
-            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
             << " (Etrue = " << Etrue << ")" << endl;
 #endif
         
@@ -2261,29 +2202,29 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
 #ifdef __show_init_mesg_debug__
         if(Etrue <= 0 || Etrue >= this->Template2D(s,m,kSKMCtOri)->GetZaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsZ())){
-            cout << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
-            << " (Ereco = " << fBrEreco/1000 << ")"
+            cout << "Exp/SKMC/FillTemplateSmeared >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            << " (Ereco = " << ereco_nuSmeared << ")"
             << " (Q2 = " << q2_fill << ")" << endl;
         }
 #endif
 #ifdef __show_init_mesg_debug2__
         if(fBrEreco/1000 <= 0)
-            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
             << " (Etrue = " << Etrue << ")" << endl;
         //#endif __show_init_mesg_debug2__
         if(fBrEreco/1000 >= this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsY()))
-            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
             << " (Etrue = " << Etrue << ")"
             << " (Q2 = " << q2_fill << ")" << endl;
         
         if(q2_fill <= 0)
-            cout << "Exp/SKMC/FillTemplate >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
-            << " (Ereco = " << fBrEreco/1000 << ")"
+            cout << "Exp/SKMC/FillTemplateSmeared >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            << " (Ereco = " << ereco_nuSmeared << ")"
             << " (Etrue = " << Etrue << ")" << endl;
         //#endif __show_init_mesg_debug2__
         if(q2_fill >= this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsX()))
-            cout << "Exp/SKMC/FillTemplate >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
-            << " (Ereco = " << fBrEreco/1000 << ")"
+            cout << "Exp/SKMC/FillTemplateSmeared >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            << " (Ereco = " << ereco_nuSmeared << ")"
             << " (Etrue = " << Etrue << ")" << endl;
         //
 #endif// __show_init_mesg_debug__
@@ -2295,12 +2236,12 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 #ifdef __show_init_mesg_debug__
     
 #ifndef __USE_2D_TEMPLATES__
-    cout << "Exp/SKMC/FillTemplate >>      "
+    cout << "Exp/SKMC/FillTemplateSmeared >>      "
     << "Number of template entries = "
     << this -> Template(s,m,kSKMCtNom) -> GetEntries() << endl;
 #else
     // NEW 2D TEMPLATES
-    cout << "Exp/SKMC/FillTemplate2D >>      "
+    cout << "Exp/SKMC/FillTemplate2DSmeared >>      "
     << "Number of template entries = "
     << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << endl;
     //
@@ -4345,7 +4286,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
                 double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
                 
                 // if(s==kSKsFCFVMultiRingMuLike || s==kSKsFCFVMultiRingELike){
-                //   exit(1);
+                //   util::Die(1); return;
                 // }
                 
                 
@@ -7624,7 +7565,7 @@ double SuperkMC::SmearMomentum(double fit_momentum,Option_t * option ) const
         error = fit_momentum * (0.017 + 0.007 / TMath::Sqrt(fit_momentum));
     }
     
-    return rndgen.BreitWigner(fit_momentum,error);
+    return rndgen.Gaus(fit_momentum,error);
     
 }
 //
