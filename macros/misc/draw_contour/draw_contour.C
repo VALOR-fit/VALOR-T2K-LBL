@@ -9,27 +9,38 @@
 
 void draw_contour
 (
- const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_IH",
- const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ const char tag[200] = "fitmarg_joint_sinsqth13Vsdcp_react_ih_Summer2016",
  
- //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Asimov_C_NH",
- //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Asimov_C_NH-sinsqtheta[12_0.304,13_0.042,23_0.528],dcp_1.910,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ // Summer 2016 Stat
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Summer2016_nexp_1_0.022_-1.601-job0-_0_0.root",
+ const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Summer2016_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_nh_Summer2016_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_ih_Summer2016_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Summer2016_nexp_1_0.528_0.003-job0-_0_0.root  ",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Summer2016_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_nh_Summer2016_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_Summer2016_nexp_1_0.528_0.003-job0-_0_0.root",
 
- // const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Kreact_DataRun14_NH",
- // const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_NH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ // Current Stat 
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_nh_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_ih_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_nh_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_nexp_1_0.528_0.003-job0-_0_0.root",
+ 
 
- //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Kreact_DataRun14_IH",
- //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",1
-
- const bool doRasterScan = true,
- const char* opt = "cp13",
+ const bool doRasterScan = false,
+ const char* opt = "cp13", //"cp13","ss23"
  const bool SavePDF = true
  )
 {
   //   char* filename = "toyA_joint";
   
   TCanvas* c = new TCanvas("c","c",0,0,900,600);
-  TFile f(Form("%s.root",filename));
+  TFile f(Form("%s",filename));
   TTree* t = f.Get("fitnt");
   
   TH2D* h1;
@@ -216,7 +227,7 @@ void save_contour(TFile* f2, TH2D* h1=0, TH2D* h3=0)
     TIter next(list90);
     while ((g = (TGraph*)next()))
     {
-        char name[10];
+        char name[200];
         sprintf(name, "g90_valor_%d",it);
         g->SetLineWidth(2);
         g->SetLineStyle(1);
@@ -234,7 +245,7 @@ void save_contour(TFile* f2, TH2D* h1=0, TH2D* h3=0)
     it=0;
     while ((g = (TGraph*)next68()))
     {
-        char name[10];
+        char name[200];
         sprintf(name, "g68_valor_%d",it);
         g->SetLineWidth(2);
         g->SetLineStyle(2);
