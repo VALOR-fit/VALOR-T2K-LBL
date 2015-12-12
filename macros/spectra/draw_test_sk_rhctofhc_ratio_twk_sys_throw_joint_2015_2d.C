@@ -5,14 +5,26 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  )
 {
 
+  string name_skdetonly[2] = {
+    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_SKDetonly.root",
+    "SKDet"
+  };
+
+  string name_fsionly[2] = {
+    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_FSIonly.root",
+    "FSI+SI"
+  };
+
   string name_skdetfsi[2] = {
     "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_SKDet_FSI.root",
     "SKDet+FSI+SI"
   };
+
   string name_flux[2] = {
     "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_flux.root",
     "Flux"
   };
+
   string name_xsec[2] = {
     "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_xsec.root",
     "XSec Tot"
@@ -38,17 +50,17 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   }
 
   string name_xsec_ncother[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_xsec.root",
+    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_banff62_fhcprhc.root",
     "XSec NC other (uncorr)"
   };
 
   string name_xsec_nc1gamma[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_xsec.root",
+    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_banff64_fhcprhc.root",
     "XSec NC $1\\gamma$ (uncorr)"
   };
 
   string name_xsec_nuenumu[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_xsec.root",
+    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_NueNumu.root",
     "XSec $\\nu_e$ / $\\nu_{\\mu}$ (uncorr)"
   };
 
@@ -62,6 +74,10 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 
   TH1D *hskdetfsi_elike; 
   TH1D *hskdetfsi_mulike; 
+  TH1D *hskdetonly_elike; 
+  TH1D *hskdetonly_mulike; 
+  TH1D *hfsionly_elike; 
+  TH1D *hfsionly_mulike; 
   TH1D *hflux_elike;
   TH1D *hflux_mulike;
   TH1D *hxsec_ncother_elike;
@@ -88,6 +104,16 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   if(!file_skdetfsi->IsOpen()){ cerr << "File " << name_skdetfsi[0] << " is not open" << endl; exit(1);}
   hskdetfsi_elike = (TH1D*) file_skdetfsi->Get(title_histo_elike);
   hskdetfsi_mulike = (TH1D*) file_skdetfsi->Get(title_histo_mulike);
+
+  TFile *file_skdetonly = new TFile(name_skdetonly[0].c_str(),"READ");
+  if(!file_skdetonly->IsOpen()){ cerr << "File " << name_skdetonly[0] << " is not open" << endl; exit(1);}
+  hskdetonly_elike = (TH1D*) file_skdetonly->Get(title_histo_elike);
+  hskdetonly_mulike = (TH1D*) file_skdetonly->Get(title_histo_mulike);
+
+  TFile *file_fsionly = new TFile(name_fsionly[0].c_str(),"READ");
+  if(!file_fsionly->IsOpen()){ cerr << "File " << name_fsionly[0] << " is not open" << endl; exit(1);}
+  hfsionly_elike = (TH1D*) file_fsionly->Get(title_histo_elike);
+  hfsionly_mulike = (TH1D*) file_fsionly->Get(title_histo_mulike);
 
   TFile *file_flux = new TFile(name_flux[0].c_str(),"READ");
   if(!file_flux->IsOpen()){ cerr << "File " << name_flux[0] << " is not open" << endl; exit(1);}
@@ -138,10 +164,12 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   TCanvas *c_ratio_elike = new TCanvas("c_ratio_elike","c_ratio_elike");
   hall_elike->Draw("");
   hskdetfsi_elike->Draw("same");
+  hskdetonly_elike->Draw("same");
+  hfsionly_elike->Draw("same");
   hflux_elike->Draw("same");
-  //hxsec_ncother_elike->Draw("same");
-  //hxsec_nc1gamma_elike->Draw("same");
-  //hxsec_nuenumu_elike->Draw("same");
+  hxsec_ncother_elike->Draw("same");
+  hxsec_nc1gamma_elike->Draw("same");
+  hxsec_nuenumu_elike->Draw("same");
   hxsec_elike->Draw("same");
   hbanfftot_elike->Draw("same");
   hskdetfsi_banfftot_elike->Draw("same");
@@ -152,17 +180,21 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 
   hall_elike->SetLineColor(kBlack);
   hskdetfsi_elike->SetLineColor(kRed);
+  hskdetonly_elike->SetLineColor(kRed+1);
+  hfsionly_elike->SetLineColor(kRed+2);
   hflux_elike->SetLineColor(kBlue);
-  hxsec_ncother_elike->SetLineColor(kGreen);
-  hxsec_nc1gamma_elike->SetLineColor(kGreen);
-  hxsec_nuenumu_elike->SetLineColor(kGreen);
+  hxsec_ncother_elike->SetLineColor(kGreen+1);
+  hxsec_nc1gamma_elike->SetLineColor(kGreen+2);
+  hxsec_nuenumu_elike->SetLineColor(kGreen+3);
   hxsec_elike->SetLineColor(kGreen);
   hbanfftot_elike->SetLineColor(kCyan);
   hskdetfsi_banfftot_elike->SetLineColor(kViolet);
-  hosc_elike->SetLineColor(kGreen+2);
+  hosc_elike->SetLineColor(kGray);
 
   hall_elike->SetLineWidth(2);
   hskdetfsi_elike->SetLineWidth(2);
+  hskdetonly_elike->SetLineWidth(2);
+  hfsionly_elike->SetLineWidth(2);
   hflux_elike->SetLineWidth(2);
   hxsec_ncother_elike->SetLineWidth(2);
   hxsec_nc1gamma_elike->SetLineWidth(2);
@@ -179,6 +211,8 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   l_ratio_elike->SetTextSize(0.06);
   l_ratio_elike->AddEntry(hall_elike,"All","l");
   l_ratio_elike->AddEntry(hskdetfsi_elike,"SKDet+FSI+SI","l");
+  l_ratio_elike->AddEntry(hskdetonly_elike,"SKDet","l");
+  l_ratio_elike->AddEntry(hfsionly_elike,"FSI+SI","l");
   l_ratio_elike->AddEntry(hflux_elike,"Flux","l");
   l_ratio_elike->AddEntry(hxsec_ncother_elike,"XSec NC other","l");
   l_ratio_elike->AddEntry(hxsec_nc1gamma_elike,"XSec NC 1#gamma","l");
@@ -193,6 +227,8 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   TCanvas *c_ratio_mulike = new TCanvas("c_ratio_mulike","c_ratio_mulike");
   hall_mulike->Draw("");
   hskdetfsi_mulike->Draw("same");
+  hskdetonly_mulike->Draw("same");
+  hfsionly_mulike->Draw("same");
   hflux_mulike->Draw("same");
   hxsec_ncother_mulike->Draw("same");
   hxsec_nc1gamma_mulike->Draw("same");
@@ -207,19 +243,24 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 
   //hall_mulike->SetMaximum(2100);
 
+
   hall_mulike->SetLineColor(kBlack);
   hskdetfsi_mulike->SetLineColor(kRed);
+  hskdetonly_mulike->SetLineColor(kRed+1);
+  hfsionly_mulike->SetLineColor(kRed+2);
   hflux_mulike->SetLineColor(kBlue);
-  hxsec_ncother_mulike->SetLineColor(kGreen);
-  hxsec_nc1gamma_mulike->SetLineColor(kGreen);
-  hxsec_nuenumu_mulike->SetLineColor(kGreen);
+  hxsec_ncother_mulike->SetLineColor(kGreen+1);
+  hxsec_nc1gamma_mulike->SetLineColor(kGreen+2);
+  hxsec_nuenumu_mulike->SetLineColor(kGreen+3);
   hxsec_mulike->SetLineColor(kGreen);
   hbanfftot_mulike->SetLineColor(kCyan);
   hskdetfsi_banfftot_mulike->SetLineColor(kViolet);
-  hosc_mulike->SetLineColor(kGreen+2);
+  hosc_mulike->SetLineColor(kGray);
 
   hall_mulike->SetLineWidth(2);
   hskdetfsi_mulike->SetLineWidth(2);
+  hskdetonly_mulike->SetLineWidth(2);
+  hfsionly_mulike->SetLineWidth(2);
   hflux_mulike->SetLineWidth(2);
   hxsec_ncother_mulike->SetLineWidth(2);
   hxsec_nc1gamma_mulike->SetLineWidth(2);
@@ -236,6 +277,8 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   l_ratio_mulike->SetTextSize(0.06);
   l_ratio_mulike->AddEntry(hall_mulike,"All","l");
   l_ratio_mulike->AddEntry(hskdetfsi_mulike,"SKDet+FSI+SI","l");
+  l_ratio_mulike->AddEntry(hskdetonly_mulike,"SKDet","l");
+  l_ratio_mulike->AddEntry(hfsionly_mulike,"FSI+SI","l");
   l_ratio_mulike->AddEntry(hflux_mulike,"Flux","l");
   l_ratio_mulike->AddEntry(hxsec_ncother_mulike,"XSec NC other","l");
   l_ratio_mulike->AddEntry(hxsec_nc1gamma_mulike,"XSec NC 1#gamma","l");
@@ -255,6 +298,20 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   double Ratio_RMS_skdetfsi_elike = hskdetfsi_elike->GetRMS();
   double Ratio_Err_skdetfsi_mulike = Ratio_RMS_skdetfsi_mulike / Ratio_Mean_skdetfsi_mulike;
   double Ratio_Err_skdetfsi_elike = Ratio_RMS_skdetfsi_elike / Ratio_Mean_skdetfsi_elike;
+
+  double Ratio_Mean_skdetonly_mulike = hskdetonly_mulike->GetMean();
+  double Ratio_Mean_skdetonly_elike = hskdetonly_elike->GetMean();
+  double Ratio_RMS_skdetonly_mulike = hskdetonly_mulike->GetRMS();
+  double Ratio_RMS_skdetonly_elike = hskdetonly_elike->GetRMS();
+  double Ratio_Err_skdetonly_mulike = Ratio_RMS_skdetonly_mulike / Ratio_Mean_skdetonly_mulike;
+  double Ratio_Err_skdetonly_elike = Ratio_RMS_skdetonly_elike / Ratio_Mean_skdetonly_elike;
+
+  double Ratio_Mean_fsionly_mulike = hfsionly_mulike->GetMean();
+  double Ratio_Mean_fsionly_elike = hfsionly_elike->GetMean();
+  double Ratio_RMS_fsionly_mulike = hfsionly_mulike->GetRMS();
+  double Ratio_RMS_fsionly_elike = hfsionly_elike->GetRMS();
+  double Ratio_Err_fsionly_mulike = Ratio_RMS_fsionly_mulike / Ratio_Mean_fsionly_mulike;
+  double Ratio_Err_fsionly_elike = Ratio_RMS_fsionly_elike / Ratio_Mean_fsionly_elike;
 
   double Ratio_Mean_flux_mulike = hflux_mulike->GetMean();
   double Ratio_Mean_flux_elike = hflux_elike->GetMean();
@@ -347,6 +404,22 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 
   streamer << "\\hline" << endl;
    
+  streamer << name_skdetonly[1] 
+	   << " & " << Ratio_Mean_skdetonly_mulike
+	   << " & " << Ratio_Err_skdetonly_mulike
+	   << " & " << Ratio_Mean_skdetonly_elike
+	   << " & " << Ratio_Err_skdetonly_elike
+	   << " \\\\ \\hline"
+	   << endl;
+
+  streamer << name_fsionly[1] 
+	   << " & " << Ratio_Mean_fsionly_mulike
+	   << " & " << Ratio_Err_fsionly_mulike
+	   << " & " << Ratio_Mean_fsionly_elike
+	   << " & " << Ratio_Err_fsionly_elike
+	   << " \\\\ \\hline"
+	   << endl;
+
   streamer << name_skdetfsi[1] 
 	   << " & " << Ratio_Mean_skdetfsi_mulike
 	   << " & " << Ratio_Err_skdetfsi_mulike
@@ -396,6 +469,8 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 	   << " & " << Ratio_Err_xsec_elike
 	   << " \\\\ \\hline"
 	   << endl;
+
+  streamer << " \\hline" << endl;
 
   streamer << name_banfftot[1] 
 	   << " & " << Ratio_Mean_banfftot_mulike

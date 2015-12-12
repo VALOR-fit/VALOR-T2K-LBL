@@ -133,6 +133,9 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
   
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
+
+
+
  
  // double       input_mixing12       = 0.304,    
  // double       input_mixing13       = 0.0217, //0.0243   
@@ -150,7 +153,10 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  double       input_dm23sq         = -99,     
  double       input_betabar        = -99,
 
- const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
+
+ const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
@@ -215,6 +221,10 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
     modetitle = "NueNumu"; break;
   case 13:
     modetitle = "skdetfsi_banff"; break;
+  case 14:
+    modetitle = "FSIonly"; break;
+  case 15:
+    modetitle = "SKDetonly"; break;
     
   case 200:
     modetitle = "pfermi"; break;
@@ -499,8 +509,8 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 	skexp->GetBANFF()->TweakSampleXSecOnly(false,0); // cholesky w/ full cov matrix
       }
       
-      //SK det + FSI
-      if(mode == 9) {
+      //SK det + FSI, FSI only or SKDet only
+      if(mode == 9 || mode == 14 || mode == 15) {
 	skexp->TweakAllSampleSKDetectorFSISystematics();
       }
       
