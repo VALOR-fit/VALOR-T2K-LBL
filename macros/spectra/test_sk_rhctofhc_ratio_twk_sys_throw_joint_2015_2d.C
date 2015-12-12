@@ -17,6 +17,9 @@
 //  11 oscillation parameters
 //  12 sigma nue/numu (nu and nubar) parameters
 //  13 tweak all parameters except oscillations
+//  14 tweak FSI (use different config file)
+//  15 tweak SKDet (use different config file)
+//  16 tweak Escale
 //
 // 200 tweak pfermi
 // 201 tweak specfunc
@@ -225,6 +228,8 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
     modetitle = "FSIonly"; break;
   case 15:
     modetitle = "SKDetonly"; break;
+  case 16:
+    modetitle = "Escale_SK"; break;
     
   case 200:
     modetitle = "pfermi"; break;
@@ -252,7 +257,7 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   
   case 211:
     modetitle = "rpa"; break;
-    
+
   case 700:
     modetitle = "mixing13"; break;
   case 701:
@@ -526,11 +531,23 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 	skexp->GetBANFF()->TweakSampleXSecNumuNueOnly(false,0); // cholesky w/ full cov matrix
       }
 
-      // All expect oscillations
+      // All except oscillations
       if(mode == 13) {
 	skexp->TweakAllSystematics();
       }
-      
+
+      // Energy Scale
+      if(mode == 16){
+	// Same as done in SuperkExpectation::TweakAllFHCpRHCSKDetectorFSISystematics()
+	skexp->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+	skexp->GetSuperkDetectorFSI()->TweakRHCEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+
+	// cout << "FHC Escale = " << skexp->GetSuperkDetectorFSI()->FHCpRHCCurrentValue(kNuisSuperkEnergyScale) << endl;
+	// cout << "FHC Escale = " << skexp->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale) << endl;
+	// cout << "RHC Escale = " << skexp->GetSuperkDetectorFSI()->FHCpRHCCurrentValue(kRHCNuisSuperkEnergyScale) << endl;
+	// cout << "RHC Escale = " << skexp->GetSuperkDetectorFSI()->RHCCurrentValue(kRHCNuisSuperkEnergyScale) << endl;
+      }
+
       //non-23 oscillation parameters
       if(mode == 11 || mode == 0) {
 	
@@ -623,9 +640,6 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 	skexp->TweakSystematic("rpa",tweak); // Automatically set at 0 or 1 in the Tweak
 	skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
 	break;
-	
-      case 300:
-	skexp->TweakSystematic("sk_e_scale",tweak); break;
 	
       case 700:
 	ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13()); break;
