@@ -354,9 +354,9 @@
             <objtype>    TGraph         </objtype>
         </martini_to_nieves_nubar>
         <nieves_momentum_offset>
-            <filename>   test/banff_comparison/nieves_minus_neut_MeV.root </filename>
-            <objname>    cos_offsets    </objname>
-            <objtype>    TGraph         </objtype>
+            <filename>   test/banff_comparison/1p1h/1p1h_offset_hist.root </filename>
+            <objname>    nieves_minus_neut_hist    </objname>
+            <objtype>    TH2D </objtype>
         </nieves_momentum_offset>
         <two_d>
         <pdd_nu>
@@ -375,13 +375,13 @@
         <three_d>
             <pdd_nu>
                 <filename>   test/banff_comparison/pdd/ccqe_mec_pdd_ratio_3D_skTh528.root </filename>
-                <objname>    PDD_ratio_3D_hist      </objname>
+                <objname>    nonPDD_ratio_3D_hist      </objname>
                 <!--            <objname>    PDD_ratio_hist      </objname>-->
                 <objtype>    TH3D         </objtype>
             </pdd_nu>
             <pdd_nubar>
                 <filename>   test/banff_comparison/pdd/ccqe_mec_pdd_ratio_3D_skTh528.root </filename>
-                <objname>    PDD_ratio_3D_hist_numubar          </objname>
+                <objname>    nonPDD_ratio_3D_hist_numubar          </objname>
                 <!--            <objname>    PDD_ratio_hist_numubar          </objname>-->
                 <objtype>    TH3D       </objtype>
             </pdd_nubar>
