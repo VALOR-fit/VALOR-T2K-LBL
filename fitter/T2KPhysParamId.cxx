@@ -4006,23 +4006,27 @@ bool valor::util::IsFHCSystematic(PhysParamId_t p)
 bool valor::util::IsBANFFUnconstrained(PhysParamId_t p)
 {
     switch (p) {
-        case (kNuisBANFFMEC        )   :
-        case (kNuisBANFFFermiMom   )   :
-        case (kNuisBANFFBindE      )   :
-        case (kNuisBANFFNormCCcoh  )   :
+      //case (kNuisBANFFMEC        )   :
+	  //case (kNuisBANFFFermiMom   )   :
+	  //case (kNuisBANFFBindE      )   :
+	  //case (kNuisBANFFNormCCcoh  )   :
         case (kNuisBANFFNormNuEToNuMu) :
-        case (kNuisBANFFNormNC1Gamma   )   :
         case (kNuisBANFFNormNuEBarToNuMuBar) :
-        case (kNuisBANFFMECBar     )   :
+        case (kNuisBANFFNormNC1Gamma   )   :
+        case (kNuisBANFFNormNCoth   )   :
+	  //case (kNuisBANFFNormNuEBarToNuMuBar) :
+	  //case (kNuisBANFFMECBar     )   :
             
-        case (kRHCNuisBANFFMEC        )   :
-        case (kRHCNuisBANFFFermiMom   )   :
-        case (kRHCNuisBANFFBindE      )   :
-        case (kRHCNuisBANFFNormCCcoh  )   :
+	  //case (kRHCNuisBANFFMEC        )   :
+	  //case (kRHCNuisBANFFFermiMom   )   :
+	  //case (kRHCNuisBANFFBindE      )   :
+	  //case (kRHCNuisBANFFNormCCcoh  )   :
         case (kRHCNuisBANFFNormNuEToNuMu) :
-        case (kRHCNuisBANFFNormNC1Gamma   )   :
         case (kRHCNuisBANFFNormNuEBarToNuMuBar) :
-        case (kRHCNuisBANFFMECBar     )   :
+        case (kRHCNuisBANFFNormNC1Gamma   )   :
+        case (kRHCNuisBANFFNormNCoth   )   :
+	  //case (kRHCNuisBANFFNormNuEBarToNuMuBar) :
+	  //case (kRHCNuisBANFFMECBar     )   :
             
             
             return true;
