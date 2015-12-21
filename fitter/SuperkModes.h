@@ -115,6 +115,18 @@ namespace valor {
         bool IsCCnQE            (conv::SuperkMode_t  m);
         bool IsNC               (conv::SuperkMode_t  m);
         bool IsMEC              (conv::SuperkMode_t  m);
+
+        int AppliesToCCQE(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToCCMEC(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToCCcoh(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToCC1pi(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToCCoth(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNC1pi0(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNC1piC(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNCcoh(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNC1Gamma(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNCoth(std::vector<valor::conv::SuperkMode_t> modes);
+        void PrintAppliesType(int mode, const char * type, bool verbose = false);
         
         // String stuff
         conv::SuperkMode_t  SuperkModeFromString      (string h);

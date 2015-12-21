@@ -206,6 +206,1118 @@ bool valor::util::IsNC(valor::conv::SuperkMode_t m)
     return false;
 }
 //____________________________________________________________________________
+int valor::util::AppliesToCCQE(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  == modes.end())
+    return 0;
+  //effects all CCQE
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToCCMEC(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+    return 0;
+  //effects all CCMEC
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToCCcoh(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  == modes.end())
+    return 0;
+  //effects all CCcoh
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToCC1pi(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  == modes.end())
+    return 0;
+  //effects all CC1pi
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToCCoth(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  == modes.end())
+    return 0;
+  //effects all CCoth
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       != modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    != modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) != modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToNC1pi0(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     == modes.end())
+    return 0;
+  //effects all NC1pi0
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1pi0)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1pi0)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1pi0)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1pi0)     != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToNC1piC(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     == modes.end())
+    return 0;
+  //effects all NC1piC
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1piC)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1piC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1piC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1piC)     != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToNCcoh(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     == modes.end())
+    return 0;
+  //effects all NCcoh
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCcoh)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCcoh)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCcoh)     != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToNC1Gamma(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     == modes.end())
+    return 0;
+  //effects all NC1Gamma
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+int valor::util::AppliesToNCoth(vector<valor::conv::SuperkMode_t> modes)
+{
+  if(!modes.size())
+    return 0;
+  //no effect
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     == modes.end())
+    return 0;
+  //effects all NCoth
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     != modes.end())
+    return 1;
+  //numu+numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     == modes.end())
+    return 2;
+  //nue+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     != modes.end())
+    return 3;
+  //numu+nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     == modes.end())
+    return 4;
+  //numubar+nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     != modes.end())
+    return 5;
+  //numu
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     == modes.end())
+    return 6;
+  //numubar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     == modes.end())
+    return 7;
+  //nue
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     == modes.end())
+    return 8;
+  //nuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuNCoth)       == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarNCoth)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuENCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarNCoth)     != modes.end())
+    return 9;
+  return 99;
+}
+//____________________________________________________________________________
+void valor::util::PrintAppliesType(int mode, const char * type, bool verbose)
+{
+  switch(mode)
+    {
+    case 0:
+      if(!verbose)
+	return;
+      std::cout << "Doesn't effect " << type << std::endl;
+      break;
+    case 1:
+      std::cout << "Effects all of " << type << std::endl;
+      break;
+    case 2:
+      std::cout << "Effects numu+numubar for " << type << std::endl;
+      break;
+    case 3:
+      std::cout << "Effects nue+nuebar for " << type << std::endl;
+      break;
+    case 4:
+      std::cout << "Effects numu+nue for " << type << std::endl;
+      break;
+    case 5:
+      std::cout << "Effects numubar+nuebar for " << type << std::endl;
+      break;
+    case 6:
+      std::cout << "Effects numu for " << type << std::endl;
+      break;
+    case 7:
+      std::cout << "Effects numubar for " << type << std::endl;
+      break;
+    case 8:
+      std::cout << "Effects nue for " << type << std::endl;
+      break;
+    case 9:
+      std::cout << "Effects nuebar for " << type << std::endl;
+      break;
+    default:
+      std::cout << "Odd effects for " << type << std::endl;
+      break;
+    }
+}
+//____________________________________________________________________________
 
 
 

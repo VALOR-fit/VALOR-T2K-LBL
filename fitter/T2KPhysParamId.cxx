@@ -119,7 +119,7 @@ string valor::util::AsString(PhysParamId_t p)
     // NEW XSEC
   case ( kNuisBANFFMEC            ) : return "BANFF; Norm; MEC";                    break;
   case ( kNuisBANFFCA5            ) : return "BANFF; CA5 RES";                      break;
-  case ( kNuisBANFFBgRES          ) : return "BANFF; Norm; BgRES Isospin 1/2";      break;
+  case ( kNuisBANFFBgRES          ) : return "BANFF; BgRES Isospin 1/2";      break;
     // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
   case ( kNuisBANFFSCCA           ) : return "BANFF; Second current class axial";   break;
@@ -143,7 +143,7 @@ string valor::util::AsString(PhysParamId_t p)
     //
 
     // NEW XSEC
-  case ( kNuisXSecRPA        ) : return "Tuning; RPA";                     break;
+  case ( kNuisXSecRPA        ) : return "Tuning; Norm; RPA";                     break;
 
   case ( kNuisXSecFermiMom   ) : return "Fermi Momentum";                  break;
   case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break;

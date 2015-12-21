@@ -12,6 +12,8 @@
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
 //#define __show_init_mesg_debug2__
+#define __show_xsecsystconv_check_mesg_info__
+//#define __show_xsecsystconv_check_mesg_debug__
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
@@ -61,11 +63,204 @@ ClassImp(NuXSec)
 NuXSec::NuXSec()
 {
     this->Init();
+
+    //check that XSecSystConv.h is setup correctly
+    CheckListOfXSecSyst(kNumOfXSecSyst, kListOfXSecSyst,
+			"kListOfXSecSyst", false);
+    CheckListOfXSecSyst(kNumOfRHCXSecSyst, kListOfRHCXSecSyst,
+			"kListOfRHCXSecSyst", false);
+    
+    CheckIsSplineParam(kNumOfXSecSyst, kListOfXSecSyst,
+		       kXSecSystHasWghtSplines, "kXSecSystHasWghtSplines");
+    CheckIsSplineParam(kNumOfXSecSyst, kListOfXSecSyst,
+		       kRHCXSecSystHasWghtSplines, "kRHCXSecSystHasWghtSplines");
+    
+    CheckIsBANFFParam(kNumOfXSecSyst, kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit,
+		      kListOfXSecSyst, kXSecSystIncludedInBANFF, "kXSecSystIncludedInBANFF");
+    CheckIsBANFFParam(kNumOfRHCXSecSyst, kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit,
+		      kListOfRHCXSecSyst, kRHCXSecSystIncludedInBANFF, "kRHCXSecSystIncludedInBANFF");
+
+    CheckERange(kNumOfXSecSyst, kListOfXSecSyst, (const double *)kXSecSystErecoCut, "kXSecSystErecoCut");
+    CheckERange(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const double *)kRHCXSecSystErecoCut, "kRHCXSecSystErecoCut");
+    
+    CheckERange(kNumOfXSecSyst, kListOfXSecSyst, (const double *)kXSecSystEtrueCut, "kXSecSystEtrueCut");
+    CheckERange(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const double *)kRHCXSecSystEtrueCut, "kRHCXSecSystEtrueCut");
+
+    // kXSecSystFracErr //NO OBVIOUS WAY TO TEST THIS. Is it even used?
+    // kRHCXSecSystFracErr //NO OBVIOUS WAY TO TEST THIS. Is it even used?
+
+    CheckSKMode(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const bool *)kXsApplyXSecSystToSKMode, "kXsApplyXSecSystToSKMode");
 }
 //________________________________________________________________________________________
 NuXSec::~NuXSec()
 {
     this->CleanUp();
+}
+//________________________________________________________________________________________
+void NuXSec::CheckListOfXSecSyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool is_fatal)
+{
+  int ix;
+  PhysParamId_t curr, prev;
+
+  //check that XSec systematics are monotonically increasing
+  for(ix = 1; ix < nparams; ix++) {
+    prev = params[ix-1];
+    curr = params[ix];
+#ifdef __show_xsecsystconv_check_mesg_debug__
+    if(ix == 1)
+      cout << "NuXSec/Init >> " << vname << "[" << ix-1 << "] = " << prev << " " << util::AsString(prev) << endl;
+    cout << "NuXSec/Init >> " << vname << "[" << ix   << "] = " << curr << " " << util::AsString(curr) << endl;
+#endif
+    if((int)curr != ((int)prev + 1)) {
+      cerr << "NuXSec/Init >> " << vname << "[" << ix   << "] = " << curr << " " << util::AsString(curr) << endl
+	   << " comes before " << vname << "[" << ix-1 << "] = " << prev << " " << util::AsString(prev)
+	   << endl;
+      if(is_fatal)
+	exit(-1);
+    }
+  }//ix
+}
+//________________________________________________________________________________________
+void NuXSec::CheckIsSplineParam(int nparams, const conv::PhysParamId_t * params, const bool * spline, const char * vname)
+{
+  int ix;
+  PhysParamId_t curr;
+  //Check the spline parameters all don't have "norm" in the AsString (and vice versa)
+  for(ix = 0; ix < nparams; ix++) {
+    curr     = params[ix];
+    bool isspline = spline[ix];
+    string name = util::AsString(curr);
+#ifdef __show_xsecsystconv_check_mesg_debug__
+    cout << "NuXSec/Init >> " << vname << "[" << ix << "] = " << isspline << " " << name << endl;
+#endif
+    bool expected_spline = (name.find("Norm") == string::npos && name.find("Tuning") == string::npos);
+    if(isspline != expected_spline) {
+      cerr << "NuXSec/Init >> " << vname << (isspline ? " is" : " isn't") << " a spline. It "
+	   << (expected_spline ? "should" : "shouldn't") << " be " << util::AsString(curr) << endl;
+      //exit(-1);
+    }
+  }//ix
+}
+//________________________________________________________________________________________
+void NuXSec::CheckIsBANFFParam(int nparams, int nbanffxsecparams, const conv::PhysParamId_t * params, const bool * banff, const char * vname)
+{
+  int ix, nbanff = 0;
+  bool isbanff;
+  PhysParamId_t curr;
+  //Check the total number of BANFF XSec parameters are what's expected
+  for(ix = 0; ix < nparams; ix++) {
+    curr    = params[ix];
+    isbanff = banff[ix];
+#ifdef __show_xsecsystconv_check_mesg_debug__
+    cout << "NuXSec/Init >> " << vname << "[" << ix << "] = " << isbanff << " " << util::AsString(curr) << endl;
+#endif
+    if(isbanff)
+      nbanff++;
+  }//ix
+  if(nbanff != nbanffxsecparams) {
+    cerr << "NuXSec/Init >> " << vname << " has " << nbanff
+	 << " parameters. Expected " << nbanffxsecparams << endl;
+    exit(-1);
+  }
+}
+//________________________________________________________________________________________
+void NuXSec::CheckERange(int nparams, const PhysParamId_t * params, const double * erange, const char * vname)
+{
+  PhysParamId_t curr, prev;
+  //check that XSec parameters effect the correct energy range
+  for(int ix = 1; ix < nparams; ix++) {
+    prev = params[ix-1];
+    curr = params[ix];
+    double this_lo = erange[ix*2];
+    double this_hi = erange[ix*2 + 1];
+    double prev_lo = erange[(ix-1)*2];
+    double prev_hi = erange[(ix-1)*2 + 1];
+#ifdef __show_xsecsystconv_check_mesg_debug__
+    if(ix == 1)
+      cout << "NuXSec/Init >> " << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl;
+    cout << "NuXSec/Init >> " << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl;
+#endif
+    if(TMath::Abs(this_lo - prev_hi) > 1E-6) {
+      if(TMath::Abs(prev_hi - 100) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok!
+      else {
+	cerr << "NuXSec/Init >> Wrong energy range" << endl
+	     << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
+	     << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	     << "Should be previous high and this low should be identical (or 100 and 0)" << endl;
+	exit(-1);
+      }
+    }
+    if(TMath::Abs(this_lo + 1) < 1E-6 || TMath::Abs(this_hi + 1) < 1E-6) {
+      cerr << "NuXSec/Init >> Wrong energy range" << endl
+	   << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	   << "XSec parameters shouldn't have -1 here" << endl;	
+    }
+  }//ix
+}
+//________________________________________________________________________________________
+void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const bool * modes, const char * vname)
+{
+  PhysParamId_t curr;
+  //check that XSec parameters effect the correct energy range
+  for(int ix = 0; ix < nparams; ix++) {
+    curr = params[ix];
+    cout << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr) << endl;
+    vector<SuperkMode_t> first_modes_set;
+    bool found_good_sample = false;
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = kSKSamples[is];
+      if(s == kSKsUndefined) continue;
+#ifdef __show_xsecsystconv_check_mesg_debug__
+      cout << "\t" << util::AsString(s) << endl;
+#endif
+      vector<SuperkMode_t> modes_set;
+      for(int im = 0; im < knm; im++) {
+	SuperkMode_t m = kSKReactionModes[is][im];
+	if(m == kSKmUndefined) continue;
+	bool applies_to_mode = modes[is*knm*nparams + im*nparams + ix];
+	if(applies_to_mode) {
+	  modes_set.push_back(m);
+#ifdef __show_xsecsystconv_check_mesg_debug__
+	  cout << util::AsString(m) << "\t\t";
+#endif
+	}
+      }//im
+#ifdef __show_xsecsystconv_check_mesg_debug__
+      cout << endl;
+#endif
+      if(!found_good_sample) {
+	found_good_sample = true;
+	first_modes_set = modes_set;
+      }
+      else {
+	//check that they're equal
+	if(first_modes_set != modes_set) {
+	  cerr << "NuXSec/Init >> " << vname << " Difference between samples!" << endl;
+	  exit(-1);
+	}
+      }
+    }//is
+    if(!first_modes_set.size()) {
+      cerr << "\tHas no effect on any mode!" << endl;
+      //exit(-1);
+    }
+    else {
+      //check that they apply to all e.g. CCQE
+      // this must be done by printing to screen & analyser
+#ifdef __show_xsecsystconv_check_mesg_info__
+      PrintAppliesType(util::AppliesToCCQE(first_modes_set), "CCQE");
+      PrintAppliesType(util::AppliesToCCMEC(first_modes_set), "CCMEC");
+      PrintAppliesType(util::AppliesToCCcoh(first_modes_set), "CCcoh");
+      PrintAppliesType(util::AppliesToCC1pi(first_modes_set), "CC1pi");
+      PrintAppliesType(util::AppliesToCCoth(first_modes_set), "CCoth");
+      PrintAppliesType(util::AppliesToNC1pi0(first_modes_set), "NC1pi0");
+      PrintAppliesType(util::AppliesToNC1piC(first_modes_set), "NC1piC");
+      PrintAppliesType(util::AppliesToNCcoh(first_modes_set), "NCcoh");
+      PrintAppliesType(util::AppliesToNC1Gamma(first_modes_set), "NC1Gamma");
+      PrintAppliesType(util::AppliesToNCoth(first_modes_set), "NCoth");
+#endif
+    }
+  }//ix
 }
 //________________________________________________________________________________________
 void NuXSec::Init(void)

@@ -150,6 +150,13 @@ public:
   
 private:
 
+  // Check that XSecSystConv.h is setup correctly
+  void CheckListOfXSecSyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool is_fatal);
+  void CheckIsSplineParam (int nparams, const conv::PhysParamId_t * params, const bool * spline, const char * vname);
+  void CheckIsBANFFParam  (int nparams, int nbanffxsecparams, const conv::PhysParamId_t * params, const bool * banff, const char * vname);
+  void CheckERange        (int nparams, const conv::PhysParamId_t * params, const double * erange, const char * vname);
+  void CheckSKMode        (int nparams, const conv::PhysParamId_t * params, const bool * modes, const char * vname);
+
   void Init    (void);
   void CleanUp (void);
 
