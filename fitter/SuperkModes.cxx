@@ -350,6 +350,34 @@ int valor::util::AppliesToCCQE(vector<valor::conv::SuperkMode_t> modes)
      find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     != modes.end() &&
      find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  != modes.end())
     return 9;
+  //signue+signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  != modes.end())
+    return 10;
+  //non-signue+non-signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCQE)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCQE)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCQE)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCQE) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCQE)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCQE)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCQE)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCQE)  == modes.end())
+    return 11;
   return 99;
 }
 //____________________________________________________________________________
@@ -497,6 +525,34 @@ int valor::util::AppliesToCCMEC(vector<valor::conv::SuperkMode_t> modes)
      find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
      find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
     return 9;
+  //signue+signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+    return 10;
+  //non-signue+non-signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+    return 11;
   return 99;
 }
 //____________________________________________________________________________
@@ -644,6 +700,34 @@ int valor::util::AppliesToCCcoh(vector<valor::conv::SuperkMode_t> modes)
      find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     != modes.end() &&
      find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  != modes.end())
     return 9;
+  //signue+signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  != modes.end())
+    return 10;
+  //non-signue+non-signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCcoh)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCcoh)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCcoh)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCcoh) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCcoh)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCcoh)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCcoh)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCcoh)  == modes.end())
+    return 11;
   return 99;
 }
 //____________________________________________________________________________
@@ -791,6 +875,34 @@ int valor::util::AppliesToCC1pi(vector<valor::conv::SuperkMode_t> modes)
      find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     != modes.end() &&
      find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  != modes.end())
     return 9;
+  //signue+signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  != modes.end())
+    return 10;
+  //non-signue+non-signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC1pi)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC1pi)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC1pi)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC1pi) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECC1pi)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC1pi)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC1pi)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC1pi)  == modes.end())
+    return 11;
   return 99;
 }
 //____________________________________________________________________________
@@ -938,6 +1050,34 @@ int valor::util::AppliesToCCoth(vector<valor::conv::SuperkMode_t> modes)
      find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     != modes.end() &&
      find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  != modes.end())
     return 9;
+  //signue+signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  != modes.end())
+    return 10;
+  //non-signue+non-signuebar
+  if(find(modes.begin(), modes.end(), kSKmNuMuCCoth)       == modes.end() &&
+#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuCCoth)    == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuMuBarCCoth)    == modes.end() &&
+#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCoth) == modes.end() &&
+#endif
+     find(modes.begin(), modes.end(), kSKmNuECCoth)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECCoth)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCCoth)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCCoth)  == modes.end())
+    return 11;
   return 99;
 }
 //____________________________________________________________________________
@@ -1311,6 +1451,12 @@ void valor::util::PrintAppliesType(int mode, const char * type, bool verbose)
       break;
     case 9:
       std::cout << "Effects nuebar for " << type << std::endl;
+      break;
+    case 10:
+      std::cout << "Effects signue+signuebar for " << type << std::endl;
+      break;
+    case 11:
+      std::cout << "Effects non-signue+non-signuebar for " << type << std::endl;
       break;
     default:
       std::cout << "Odd effects for " << type << std::endl;

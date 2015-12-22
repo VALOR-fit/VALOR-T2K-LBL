@@ -159,6 +159,11 @@ public:
 
 private:
 
+  // Check that SKFSISystConv.h is setup correctly
+  void CheckListOfSKDetFSISyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gap);
+  void CheckERange            (int nparams, const conv::PhysParamId_t * params, const double * erange, const char * vname);
+  void CheckSKMode            (int nparams, const conv::PhysParamId_t * params, const bool * modes, const char * vname, int start_sample_index, bool fatal_no_effect);
+
   void Init      (void);
   void CleanUp   (void);
   //

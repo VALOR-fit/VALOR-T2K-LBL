@@ -89,7 +89,7 @@ NuXSec::NuXSec()
     // kXSecSystFracErr //NO OBVIOUS WAY TO TEST THIS. Is it even used?
     // kRHCXSecSystFracErr //NO OBVIOUS WAY TO TEST THIS. Is it even used?
 
-    CheckSKMode(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const bool *)kXsApplyXSecSystToSKMode, "kXsApplyXSecSystToSKMode");
+    CheckSKMode(kNumOfXSecSyst, kListOfXSecSyst, (const bool *)kXsApplyXSecSystToSKMode, "kXsApplyXSecSystToSKMode");
 }
 //________________________________________________________________________________________
 NuXSec::~NuXSec()
@@ -204,7 +204,9 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
   //check that XSec parameters effect the correct energy range
   for(int ix = 0; ix < nparams; ix++) {
     curr = params[ix];
+#if defined(__show_xsecsystconv_check_mesg_debug__) || defined(__show_xsecsystconv_check_mesg_info__)
     cout << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr) << endl;
+#endif
     vector<SuperkMode_t> first_modes_set;
     bool found_good_sample = false;
     for(int is = 0; is < kns; is++) {
@@ -235,13 +237,15 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
       else {
 	//check that they're equal
 	if(first_modes_set != modes_set) {
-	  cerr << "NuXSec/Init >> " << vname << " Difference between samples!" << endl;
+	  cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
+	       << "\tDifference between samples!" << endl;
 	  exit(-1);
 	}
       }
     }//is
     if(!first_modes_set.size()) {
-      cerr << "\tHas no effect on any mode!" << endl;
+      cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
+	   << "\tHas no effect on any mode!" << endl;
       //exit(-1);
     }
     else {

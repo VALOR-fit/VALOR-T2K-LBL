@@ -19,6 +19,8 @@
 
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
+#define __show_skdetfsiconv_check_mesg_info__
+//#define __show_skdetfsiconv_check_mesg_debug__
 //#define __show_skdetfsi_cholesky_mesg_info__
 //#define __show_skdetfsi_cholesky_mesg_debug__
 //#define __show_skdetfsi_tweak_mesg_debug__
@@ -55,11 +57,177 @@ ClassImp(SuperkDetectorFSI)
 SuperkDetectorFSI::SuperkDetectorFSI()
 {
   this->Init();
+
+  // Check that SKFSISystConv.h is setup correctly
+  CheckListOfSKDetFSISyst(kNumOfSKDetFSIParams, kListOfSKDetFSIParams,
+			  "kListOfSKDetFSIParams", false);
+  CheckListOfSKDetFSISyst(kNumOfRHCSKDetFSIParams, kListOfRHCSKDetFSIParams,
+			  "kListOfRHCSKDetFSIParams", false);
+  CheckListOfSKDetFSISyst(kNumOfFHCpRHCSKDetFSIParams, kListOfFHCpRHCSKDetFSIParams,
+			  "kListOfFHCpRHCSKDetFSIParams", true);
+  CheckListOfSKDetFSISyst(kNumOfSKDetFSIParamsMultiRing, kListOfMultiRingSKDetFSIParams,
+			  "kListOfMultiRingSKDetFSIParams", false);
+
+  CheckERange(kNumOfSKDetFSIParams, kListOfSKDetFSIParams,
+	      (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
+  CheckERange(kNumOfRHCSKDetFSIParams, kListOfRHCSKDetFSIParams,
+	      (const double *)kRHCSKDetFSIParamsErecoCut, "kRHCSKDetFSIParamsErecoCut");
+  CheckERange(kNumOfSKDetFSIParamsMultiRing, kListOfMultiRingSKDetFSIParams,
+	      (const double *)kMultiRingSKDetFSIParamsErecoCut, "kMultiRingSKDetFSIParamsErecoCut");
+
+  CheckSKMode(kNumOfSKDetFSIParams, kListOfSKDetFSIParams,
+	      (const bool *)kSKDetFSIParamToSKMode, "kSKDetFSIParamToSKMode", 0, true);
+  CheckSKMode(kNumOfRHCSKDetFSIParams, kListOfRHCSKDetFSIParams,
+	      (const bool *)kRHCSKDetFSIParamToSKMode, "kRHCSKDetFSIParamToSKMode", 2, true);
+  CheckSKMode(kNumOfSKDetFSIParamsMultiRing, kListOfMultiRingSKDetFSIParams,
+	      (const bool *)kMultiRingSKDetFSIParamToSKMode, "kMultiRingSKDetFSIParamToSKMode", 4, false);
 }
 //________________________________________________________________________________________
 SuperkDetectorFSI::~SuperkDetectorFSI()
 {
   this->CleanUp();
+}
+//________________________________________________________________________________________
+void SuperkDetectorFSI::CheckListOfSKDetFSISyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gap)
+{
+  int id = 0;
+  PhysParamId_t curr, prev;
+
+  //check that SKDETFSI parameters are monotonically increasing (a single gap is allowed in FHCpRHC)
+  for(id = 1; id < nparams; id++) {
+    prev = params[id-1];
+    curr = params[id];
+#ifdef __show_skdetfsiconv_check_mesg_debug__
+    if(id == 1)
+      cout << "SuperkDetectorFSI/Init >> " << vname << "[" << id-1 << "] = " << prev << " " << util::AsString(prev) << endl;
+    cout << "SuperkDetectorFSI/Init >> " << vname << "[" << id   << "] = " << curr << " " << util::AsString(curr) << endl;
+#endif
+    if((int)curr != ((int)prev + 1)) {
+      //this is to allow jumps between FHC + RHC flux parameters
+      if(allow_gap) {
+	allow_gap = false;
+	continue;
+      }
+      cerr << "SuperkDetectorFSI/Init >> " << vname << "[" << id   << "] = " << curr << " " << util::AsString(curr) << endl
+	   << " comes before " << vname << "[" << id-1 << "] = " << prev << " " << util::AsString(prev)
+	   << endl;
+      exit(-1);
+    }
+  }//id
+}
+//________________________________________________________________________________________
+void SuperkDetectorFSI::CheckERange(int nparams, const PhysParamId_t * params, const double * erange, const char * vname)
+{
+  PhysParamId_t curr, prev;
+  //check that XSec parameters effect the correct energy range
+  for(int ix = 1; ix < nparams; ix++) {
+    prev = params[ix-1];
+    curr = params[ix];
+    double this_lo = erange[ix*2];
+    double this_hi = erange[ix*2 + 1];
+    double prev_lo = erange[(ix-1)*2];
+    double prev_hi = erange[(ix-1)*2 + 1];
+#ifdef __show_skdetfsiconv_check_mesg_debug__
+    if(ix == 1)
+      cout << "SuperkDetectorFSI/Init >> " << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl;
+    cout << "SuperkDetectorFSI/Init >> " << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl;
+#endif
+    if(TMath::Abs(this_lo - prev_hi) > 1E-6) {
+      if(TMath::Abs(prev_hi - 30) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok! (numu modes valid 0-30)
+      else if(TMath::Abs(prev_hi - 1.25) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok! (nue modes valid 0-1.25)
+      else {
+	cerr << "SuperkDetectorFSI/Init >> Wrong energy range" << endl
+	     << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
+	     << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	     << "Should be previous high and this low should be identical (or 30 and 0, or 1.25 and 0)" << endl;
+	exit(-1);
+      }
+    }
+    if(TMath::Abs(this_lo + 1) < 1E-6 || TMath::Abs(this_hi + 1) < 1E-6) {
+      cerr << "SuperkDetectorFSI/Init >> Wrong energy range" << endl
+	   << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	   << "XSec parameters shouldn't have -1 here" << endl;	
+    }
+  }//ix
+}
+//________________________________________________________________________________________
+void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const bool * modes, const char * vname, int start_sample_index, bool fatal_no_effect)
+{
+  PhysParamId_t curr;
+  //check that XSec parameters effect the correct energy range
+  for(int ix = 0; ix < nparams; ix++) {
+    curr = params[ix];
+#if defined(__show_skdetfsiconv_check_mesg_debug__) || defined(__show_skdetfsiconv_check_mesg_info__)
+    cout << "SuperkDetectorFSI/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr) << endl;
+#endif
+    vector<SuperkMode_t> modes_set[2];
+    bool found_good_sample = false;
+    for(int is = 0; is < 2; is++) {
+      SuperkSample_t s = kSKSamples[is + start_sample_index];
+      if(s == kSKsUndefined) continue;
+      found_good_sample = true;
+#ifdef __show_skdetfsiconv_check_mesg_debug__
+      cout << "\t" << util::AsString(s) << endl;
+#endif
+      for(int im = 0; im < knm; im++) {
+	SuperkMode_t m = kSKReactionModes[is + start_sample_index][im];
+	if(m == kSKmUndefined) continue;
+	bool applies_to_mode = modes[is*knm*nparams + im*nparams + ix];
+	if(applies_to_mode) {
+	  modes_set[is].push_back(m);
+#ifdef __show_skdetfsiconv_check_mesg_debug__
+	  cout << util::AsString(m) << "\t\t";
+#endif
+	}
+      }//im
+#ifdef __show_skdetfsiconv_check_mesg_debug__
+      cout << endl;
+#endif
+    }//is
+    if(!found_good_sample) {
+#ifdef __show_skdetfsiconv_check_mesg_info__
+      cout << "SuperkDetectorFSI/Init >> Relevant samples not active. Not performing " << vname << " check" << endl;
+#endif
+      return;
+    }
+    int is = -1;
+    //parameters should either effect Mu- or E-like samples (not both)
+    if(modes_set[0].size() && modes_set[1].size()) {
+      cerr << "SuperkDetectorFSI/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
+	   << "\tParmeters shouldn't effect both Mu- and E-like samples" << endl;
+      exit(-1);
+    }
+    //parmaeters should effect 
+    if(!modes_set[0].size() && !modes_set[1].size()) {
+      cerr << "SuperkDetectorFSI/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
+	   << "\tParmeters should have some effect" << endl;
+      if(fatal_no_effect)
+	exit(-1);
+      else
+	continue;
+    }
+    else if(modes_set[0].size()) {
+      is = 0;
+    }
+    else if(modes_set[1].size()) {
+      is = 1;
+    }
+    //check that they apply to all e.g. CCQE
+    // this must be done by printing to screen & analyser
+#ifdef __show_skdetfsiconv_check_mesg_info__
+    cout << "Effects " << util::AsString(kSKSamples[is + start_sample_index]) << endl;
+    PrintAppliesType(util::AppliesToCCQE(modes_set[is]), "CCQE");
+    PrintAppliesType(util::AppliesToCCMEC(modes_set[is]), "CCMEC");
+    PrintAppliesType(util::AppliesToCCcoh(modes_set[is]), "CCcoh");
+    PrintAppliesType(util::AppliesToCC1pi(modes_set[is]), "CC1pi");
+    PrintAppliesType(util::AppliesToCCoth(modes_set[is]), "CCoth");
+    PrintAppliesType(util::AppliesToNC1pi0(modes_set[is]), "NC1pi0");
+    PrintAppliesType(util::AppliesToNC1piC(modes_set[is]), "NC1piC");
+    PrintAppliesType(util::AppliesToNCcoh(modes_set[is]), "NCcoh");
+    PrintAppliesType(util::AppliesToNC1Gamma(modes_set[is]), "NC1Gamma");
+    PrintAppliesType(util::AppliesToNCoth(modes_set[is]), "NCoth");
+#endif
+  }//ix
 }
 //________________________________________________________________________________________
 void SuperkDetectorFSI::Init(void)
