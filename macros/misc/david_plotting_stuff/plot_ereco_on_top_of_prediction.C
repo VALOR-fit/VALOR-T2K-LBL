@@ -17,60 +17,44 @@ using namespace valor::conv;
 
 void plot_ereco_on_top_of_prediction
 (
- const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
- const char * tag    = "fitmarg_betabar_DEV",    /* tag for output file */
+ const char * sk_sample            = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
  
- const char * expfile = "sk_ereco_spectrum_RHC1Re_prova-sinsqtheta[12_0.306,13_0.025,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007500,23_0.002509]eV2,betabar_1.000-RHC1Re.root",
- const char * xmlfile = "../../inputs/data_run1to6/skdata_run1to6.xml",
+ //const char * expfile = "spectra/template_ErecoVsTheta_2D_RHC1Re_RHC1Re.root",
+ //const char * expfile = "spectra/template_ErecoVsTheta_2D_1Re_1Re.root",
+ const char * expfile = "spectra/template_ErecoVsTheta_2D_RHC1Rmu_RHC1Rmu.root",
+ //const char * expfile = "spectra/template_ErecoVsTheta_2D_1Rmu_1Rmu.root",
+
+ const char * rootfile = "data_run1to6/SKdata_Run16.root",
+ //const char * rootfile = "../outputs/test/SKdata_Run16.root",
+
+ const bool drawdata = true,
+
+ float myscale = 7.,
  )
-{
+{  
 
+  // // const Int_t NRGBs = 5;                                                                           
+  // // const Int_t NCont = 104;                                                        
+  // // Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };     
+  // // Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };                       
+  // // Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };                       
+  // // Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };                       
+  // // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);        
+  // // gStyle->SetNumberContours(NCont);                                               
 
-
-   // //example of macro illustrating how to superimpose two histograms
-   // //with different scales in the "same" pad.
-   // // To see the output of this macro, click begin_html <a href="gif/twoscales.gif" >here</a> end_html
-   // //Author: Rene Brun
-
-   // TCanvas *c1 = new TCanvas("c1","hists with different scales",600,400);
-
-   // //create/fill draw h1
-   // gStyle->SetOptStat(kFALSE);
-   // TH1F *h1 = new TH1F("h1","my histogram",100,-3,3);
-   // Int_t i;
-   // for (i=0;i<10000;i++) h1->Fill(gRandom->Gaus(0,1));
-   // h1->Draw();
-   // c1->Update();
-
-   // //create hint1 filled with the bins integral of h1
-   // TH1F *hint1 = new TH1F("hint1","h1 bins integral",100,-3,3);
-   // Float_t sum = 0;
-   // for (i=1;i<=100;i++) {
-   //    sum += h1->GetBinContent(i);
-   //    hint1->SetBinContent(i,sum);
-   // }
-
-   // //scale hint1 to the pad coordinates
-   // Float_t rightmax = 1.1*hint1->GetMaximum();
-   // Float_t scale = gPad->GetUymax()/rightmax;
-   // hint1->SetLineColor(kRed);
-   // hint1->Scale(scale);
-   // hint1->Draw("same");
-
-   // //draw an axis on the right side
-   // TGaxis *axis = new TGaxis(gPad->GetUxmax(),gPad->GetUymin(),
-   //       gPad->GetUxmax(), gPad->GetUymax(),0,rightmax,510,"+L");
-   // axis->SetLineColor(kRed);
-   // axis->SetLabelColor(kRed);
-   // axis->Draw();
-
-   // return;
-
-
-
-
-
-
+  // const Int_t NRGBs = 5;
+  // const Int_t NCont = 255;
+  // Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };                          
+  // Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };                          
+  // Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };                           
+  // Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };                           
+  // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);           
+  // // Double_t red[NRGBs] = { 1.00, 0.00, 0.00};
+  // // Double_t green[NRGBs] = { 0.00, 1.00, 0.00};
+  // // Double_t blue[NRGBs] = { 1.00, 0.00, 1.00};
+  // // Double_t stops[NRGBs] = { -1.00, 0.00, 1.00 };
+  // // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+  // gStyle->SetNumberContours(NCont);
 
 
 
@@ -78,123 +62,232 @@ void plot_ereco_on_top_of_prediction
   // Get Expectation
   
   TFile *fexp = new TFile(expfile,"READ");
-  TH1D *hErecoExp = (TH1D*) fexp->Get("sk_RHC1Retotal");
+  TH1D *hErecoExp = (TH1D*) fexp->Get("hErecoTot");
+  TH1D *hQ2Exp = (TH1D*) fexp->Get("hQ2Tot");
 
+  TH1D *hErecoMode_NueBeam = (TH1D*) fexp->Get("hErecoMode_NueBeam");
+  TH1D *hErecoMode_NumuBeam = (TH1D*) fexp->Get("hErecoMode_NumuBeam");
+  TH1D *hErecoMode_NumuBarBeam = (TH1D*) fexp->Get("hErecoMode_NumuBarBeam");
   TH1D *hErecoMode_NumuBarToNueBar = (TH1D*) fexp->Get("hErecoMode_NumuBarToNueBar");
-  TH1D *hErecoMode_NC = (TH1D*) fexp->Get("hErecoMode_NC");
-  TH1D *hErecoMode_BkgOther = (TH1D*) fexp->Get("hErecoMode_BkgOther");
   TH1D *hErecoMode_NumuToNue = (TH1D*) fexp->Get("hErecoMode_NumuToNue");
- 
+  TH1D *hErecoMode_NC = (TH1D*) fexp->Get("hErecoMode_NC"); 
   TH1D *hEreco_AllBkg = (TH1D*) hErecoMode_NC->Clone("hEreco_AllBkg");
-  hEreco_AllBkg->Add(hErecoMode_BkgOther);
-  hEreco_AllBkg->Add(hErecoMode_NumuToNue);
+  hEreco_AllBkg->Add(hErecoMode_NumuBarBeam);
+  hEreco_AllBkg->Add(hErecoMode_NumuBeam);
+  hEreco_AllBkg->Add(hErecoMode_NueBeam);
+
+  TH1D *hQ2Mode_NueBeam = (TH1D*) fexp->Get("hQ2Mode_NueBeam");
+  TH1D *hQ2Mode_NumuBeam = (TH1D*) fexp->Get("hQ2Mode_NumuBeam");
+  TH1D *hQ2Mode_NumuBarBeam = (TH1D*) fexp->Get("hQ2Mode_NumuBarBeam");
+  TH1D *hQ2Mode_NumuBarToNueBar = (TH1D*) fexp->Get("hQ2Mode_NumuBarToNueBar");
+  TH1D *hQ2Mode_NumuToNue = (TH1D*) fexp->Get("hQ2Mode_NumuToNue");
+  TH1D *hQ2Mode_NC = (TH1D*) fexp->Get("hQ2Mode_NC"); 
+  TH1D *hQ2_AllBkg = (TH1D*) hQ2Mode_NC->Clone("hQ2_AllBkg");
+  hQ2_AllBkg->Add(hQ2Mode_NumuBarBeam);
+  hQ2_AllBkg->Add(hQ2Mode_NumuBeam);
+  hQ2_AllBkg->Add(hQ2Mode_NueBeam);
  
-  TH1D *hErecoMode_NumuBarToNueBar_norm = (TH1D*) fexp->Get("hErecoMode_NumuBarToNueBar_norm");
-  TH1D *hErecoMode_NC_norm = (TH1D*) fexp->Get("hErecoMode_NC_norm");
-  TH1D *hErecoMode_BkgOther_norm = (TH1D*) fexp->Get("hErecoMode_BkgOther_norm");
-  TH1D *hErecoMode_NumuToNue_norm = (TH1D*) fexp->Get("hErecoMode_NumuToNue_norm");
-  
+  TH2D *hErecoVsQ2Mode_NueBeam = (TH2D*) fexp->Get("hErecoVsQ2Mode_NueBeam");
+  TH2D *hErecoVsQ2Mode_NumuBeam = (TH2D*) fexp->Get("hErecoVsQ2Mode_NumuBeam");
+  TH2D *hErecoVsQ2Mode_NumuBarBeam = (TH2D*) fexp->Get("hErecoVsQ2Mode_NumuBarBeam");
+  TH2D *hErecoVsQ2Mode_NumuBarToNueBar = (TH2D*) fexp->Get("hErecoVsQ2Mode_NumuBarToNueBar");
+  TH2D *hErecoVsQ2Mode_NumuToNue = (TH2D*) fexp->Get("hErecoVsQ2Mode_NumuToNue");
+  TH2D *hErecoVsQ2Mode_NC = (TH2D*) fexp->Get("hErecoVsQ2Mode_NC"); 
+  TH2D *hErecoVsQ2_AllBkg = (TH2D*) hErecoVsQ2Mode_NC->Clone("hErecoVsQ2_AllBkg");
+  hErecoVsQ2_AllBkg->Add(hErecoVsQ2Mode_NumuBarBeam);
+  hErecoVsQ2_AllBkg->Add(hErecoVsQ2Mode_NumuBeam);
+  hErecoVsQ2_AllBkg->Add(hErecoVsQ2Mode_NueBeam);
+  TH2D *hErecoVsQ2_All = (TH2D*) hErecoVsQ2Mode_NC->Clone("hErecoVsQ2_All");
+  hErecoVsQ2_All->Add(hErecoVsQ2Mode_NumuBarBeam);
+  hErecoVsQ2_All->Add(hErecoVsQ2Mode_NumuBeam);
+  hErecoVsQ2_All->Add(hErecoVsQ2Mode_NueBeam);
+  hErecoVsQ2_All->Add(hErecoVsQ2Mode_NumuToNue);
+  hErecoVsQ2_All->Add(hErecoVsQ2Mode_NumuBarToNueBar);
+
+  // Normalized histograms
+
   TH1D *hEreco_AllBkg_norm = (TH1D*) hEreco_AllBkg->Clone("hEreco_AllBkg_norm");
   hEreco_AllBkg_norm->Scale(1./hEreco_AllBkg_norm->Integral());
+  TH1D *hErecoMode_NumuToNue_norm = (TH1D*) hErecoMode_NumuToNue->Clone("hErecoMode_NumuToNue_norm");
+  hErecoMode_NumuToNue_norm->Scale(1./hErecoMode_NumuToNue->Integral());
+  TH1D *hErecoMode_NumuBarToNueBar_norm = (TH1D*) hErecoMode_NumuBarToNueBar->Clone("hErecoMode_NumuBarToNueBar_norm");
+  hErecoMode_NumuBarToNueBar_norm->Scale(1./hErecoMode_NumuBarToNueBar->Integral());
 
-  cout << "Tot = " << hErecoExp->Integral() << endl;
-  cout << "Tot 2 = " 
-       << hErecoMode_NumuBarToNueBar->Integral() + 
-    hErecoMode_NC->Integral() + 
-    hErecoMode_BkgOther->Integral() + 
-    hErecoMode_NumuToNue->Integral()
-       << endl; 
-  cout << "hErecoMode_NumuBarToNueBar = " << hErecoMode_NumuBarToNueBar->Integral() << endl; 
-  cout << "hErecoMode_NC = " << hErecoMode_NC->Integral() << endl; 
-  cout << "hErecoMode_BkgOther = " << hErecoMode_BkgOther->Integral() << endl; 
-  cout << "hErecoMode_NumuToNue = " << hErecoMode_NumuToNue->Integral() << endl;
-  // return;
+  TH1D *hQ2_AllBkg_norm = (TH1D*) hQ2_AllBkg->Clone("hQ2_AllBkg_norm");
+  hQ2_AllBkg_norm->Scale(1./hQ2_AllBkg_norm->Integral());
+  TH1D *hQ2Mode_NumuToNue_norm = (TH1D*) hQ2Mode_NumuToNue->Clone("hQ2Mode_NumuToNue_norm");
+  hQ2Mode_NumuToNue_norm->Scale(1./hQ2Mode_NumuToNue->Integral());
+  TH1D *hQ2Mode_NumuBarToNueBar_norm = (TH1D*) hQ2Mode_NumuBarToNueBar->Clone("hQ2Mode_NumuBarToNueBar_norm");
+  hQ2Mode_NumuBarToNueBar_norm->Scale(1./hQ2Mode_NumuBarToNueBar->Integral());
 
 
+  
   // Get Data
+    
+  TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile));
+  cout << endl;
+  cout << "Reading data from: " << rootfile2 << endl; 
+  cout << endl;
 
-  TString xmlfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile));
-  
-  FileStat_t dummy;
-  if (gSystem->GetPathInfo(xmlfile2.Data(), dummy)) 
-    {
-      xmlfile2 = xmlfile;
-      if (gSystem->GetPathInfo(xmlfile2.Data(), dummy)) {
-	cerr<<"Data input file not found: "<<xmlfile<<endl;
-	exit(-1);
-      }
-    }
- 
   SuperkObservation * skobs_fakedata = new SuperkObservation;
-  bool using_xml_file = true;
-  if(using_xml_file){
-    skobs_fakedata->Read(xmlfile2.Data(),0,using_xml_file);
-  }
-  else{
-    skobs_fakedata->Read(rootfile2.Data(),0,using_xml_file);
-  }
-  
+  skobs_fakedata->Read(rootfile2.Data(),0,false);
+
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {
     cerr << "** Undefined sample!" << endl;
     return;
   }
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
+  TH2F *hErecoVsQ2Data = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
 
-  TH1D *hErecoData;   
-  hErecoData = (TH1D*)skobs_fakedata->ErecoSpectrum(s)->Clone("hErecoData");
+  TH1F *hQ2Data = (TH1F*)hErecoVsQ2Data->ProjectionX()->Clone("hQ2Data");
+  TH1F *hErecoData = (TH1F*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
   
+  
+  // Print # of events
+  
+  cout << endl;
+  cout << "Tot # of events = " << hErecoVsQ2_All->Integral() << endl;
+  cout << "Tot # of events 2 = " 
+       << 
+    hErecoVsQ2Mode_NumuBarToNueBar->Integral() + 
+    hErecoVsQ2Mode_NumuToNue->Integral() + 
+    hErecoVsQ2_AllBkg->Integral()
+       << endl; 
+  cout << endl;
+  cout << "Check expected # of events of each component:" << endl;
+  cout << " - NumuBar -> NueBar = " << hErecoVsQ2Mode_NumuBarToNueBar->Integral() << endl; 
+  cout << " - Numu -> Nue = " << hErecoVsQ2Mode_NumuToNue->Integral() << endl; 
+  cout << " - NC = " << hErecoVsQ2Mode_NC->Integral() << endl;
+  cout << " - NumuBar beam = " << hErecoVsQ2Mode_NumuBarBeam->Integral() << endl;
+  cout << " - Numu beam = " << hErecoVsQ2Mode_NumuBeam->Integral() << endl;
+  cout << " - Nue beam = " << hErecoVsQ2Mode_NueBeam->Integral() << endl;
+  cout << endl;
+  cout << "# of observed events = " << hErecoVsQ2Data->Integral() << endl;
+  cout << endl;
+
+
+
   // Draw 
   
+  hErecoVsQ2Data->SetMarkerColor(kGray);
+  //hErecoVsQ2Data->SetMarkerStyle(1);
+  hErecoVsQ2Data->SetMarkerSize(3);
+
   TCanvas *Ereco_ExpVsData = new TCanvas("Ereco_ExpVsData","Ereco_ExpVsData");
-  hErecoData->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoData->GetXaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
   hErecoData->GetYaxis()->SetTitle("Number of events");  
   hErecoExp->SetLineColor(kBlue);
-  hErecoData->DrawCopy("pe");
-  hErecoExp->DrawCopy("histo same");  
-  TLegend *leg = new TLegend(0.6, 0.4, 0.9, 0.7);
-  leg->SetFillColor(0);
-  leg->SetBorderSize(0);
-  leg->AddEntry(hErecoExp,"Expected","L");
-  leg->AddEntry(hErecoData,"Data","P");
-  leg->Draw();
+  hErecoExp->SetLineWidth(2);
+  hErecoExp->DrawCopy("histo");  
+  if(drawdata) hErecoData->DrawCopy("pe same");
+  TLegend *leg_Ereco = new TLegend(0.6, 0.4, 0.9, 0.7);
+  leg_Ereco->SetFillColor(0);
+  leg_Ereco->SetBorderSize(0);
+  leg_Ereco->AddEntry(hErecoExp,"Expected","L");
+  leg_Ereco->AddEntry(hErecoData,"Data","P");
+  leg_Ereco->Draw();
+
+  TCanvas *Q2_ExpVsData = new TCanvas("Q2_ExpVsData","Q2_ExpVsData");
+  hQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hQ2Data->GetYaxis()->SetTitle("Number of events");  
+  hQ2Exp->SetLineColor(kBlue);
+  hQ2Exp->SetLineWidth(2);
+  hQ2Data->DrawCopy("pe");
+  hQ2Exp->DrawCopy("histo same");  
+  TLegend *leg_Q2 = new TLegend(0.6, 0.4, 0.9, 0.7);
+  leg_Q2->SetFillColor(0);
+  leg_Q2->SetBorderSize(0);
+  leg_Q2->AddEntry(hQ2Exp,"Expected","L");
+  leg_Q2->AddEntry(hQ2Data,"Data","P");
+  leg_Q2->Draw();
+
+  TCanvas *ErecoVsQ2_ExpVsData = new TCanvas("ErecoVsQ2_ExpVsData","ErecoVsQ2_ExpVsData");
+  hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
+  hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hErecoVsQ2Data->GetZaxis()->SetTitle("Number of events");  
+  hErecoVsQ2_All->SetLineColor(kBlue);
+  hErecoVsQ2_All->SetLineWidth(2);
+  hErecoVsQ2_All->DrawCopy("colz");  
+  hErecoVsQ2Data->DrawCopy("p same");
+
+  TCanvas *ErecoVsQ2_NueBeam_ExpVsData = new TCanvas("ErecoVsQ2_NueBeam_ExpVsData","ErecoVsQ2_NueBeam_ExpVsData");
+  hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
+  hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hErecoVsQ2Data->GetZaxis()->SetTitle("Number of events");  
+  hErecoVsQ2Mode_NueBeam->SetLineColor(kBlue);
+  hErecoVsQ2Mode_NueBeam->SetLineWidth(2);
+  hErecoVsQ2Mode_NueBeam->DrawCopy("colz");  
+  hErecoVsQ2Data->DrawCopy("p same");
+
+  TCanvas *ErecoVsQ2_NumuBeam_ExpVsData = new TCanvas("ErecoVsQ2_NumuBeam_ExpVsData","ErecoVsQ2_NumuBeam_ExpVsData");
+  hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
+  hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hErecoVsQ2Data->GetZaxis()->SetTitle("Number of events");  
+  hErecoVsQ2Mode_NumuBeam->SetLineColor(kBlue);
+  hErecoVsQ2Mode_NumuBeam->SetLineWidth(2);
+  hErecoVsQ2Mode_NumuBeam->DrawCopy("colz");  
+  hErecoVsQ2Data->DrawCopy("p same");
+
+  TCanvas *ErecoVsQ2_NumuBarBeam_ExpVsData = new TCanvas("ErecoVsQ2_NumuBarBeam_ExpVsData","ErecoVsQ2_NumuBarBeam_ExpVsData");
+  hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
+  hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hErecoVsQ2Data->GetZaxis()->SetTitle("Number of events");  
+  hErecoVsQ2Mode_NumuBarBeam->SetLineColor(kBlue);
+  hErecoVsQ2Mode_NumuBarBeam->SetLineWidth(2);
+  hErecoVsQ2Mode_NumuBarBeam->DrawCopy("colz");  
+  hErecoVsQ2Data->DrawCopy("p same");
+
+  TCanvas *ErecoVsQ2_NumuBarToNueBar_ExpVsData = new TCanvas("ErecoVsQ2_NumuBarToNueBar_ExpVsData","ErecoVsQ2_NumuBarToNueBar_ExpVsData");
+  hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
+  hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hErecoVsQ2Data->GetZaxis()->SetTitle("Number of events");  
+  hErecoVsQ2Mode_NumuBarToNueBar->SetLineColor(kBlue);
+  hErecoVsQ2Mode_NumuBarToNueBar->SetLineWidth(2);
+  hErecoVsQ2Mode_NumuBarToNueBar->DrawCopy("colz");  
+  hErecoVsQ2Data->DrawCopy("p same");
+
+  TCanvas *ErecoVsQ2_NumuToNue_ExpVsData = new TCanvas("ErecoVsQ2_NumuToNue_ExpVsData","ErecoVsQ2_NumuToNue_ExpVsData");
+  hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
+  hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hErecoVsQ2Data->GetZaxis()->SetTitle("Number of events");  
+  hErecoVsQ2Mode_NumuToNue->SetLineColor(kBlue);
+  hErecoVsQ2Mode_NumuToNue->SetLineWidth(2);
+  hErecoVsQ2Mode_NumuToNue->DrawCopy("colz");  
+  hErecoVsQ2Data->DrawCopy("p same");
+
+  TCanvas *ErecoVsQ2_NC_ExpVsData = new TCanvas("ErecoVsQ2_NC_ExpVsData","ErecoVsQ2_NC_ExpVsData");
+  hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
+  hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hErecoVsQ2Data->GetZaxis()->SetTitle("Number of events");  
+  hErecoVsQ2Mode_NC->SetLineColor(kBlue);
+  hErecoVsQ2Mode_NC->SetLineWidth(2);
+  hErecoVsQ2Mode_NC->DrawCopy("colz");  
+  hErecoVsQ2Data->DrawCopy("p same");
   
-  // TCanvas *cEreco_ExpVsData_Component = new TCanvas("cEreco_ExpVsData_Component","cEreco_ExpVsData_Component");
-  // hErecoMode_NC->SetFillColor(0);
-  // hErecoMode_NC->SetLineColor(kRed);
-  // hErecoMode_BkgOther->SetFillColor(0);
-  // hErecoMode_BkgOther->SetLineColor(kBlue);
-  // hErecoMode_NumuToNue->SetFillColor(0);
-  // hErecoMode_NumuToNue->SetLineColor(kGray+3);
-  // hErecoMode_NumuBarToNueBar->SetFillColor(0);
-  // hErecoMode_NumuBarToNueBar->SetLineColor(kGreen);
-  // hErecoData->DrawCopy("pe");
-  // //scale hint1 to the pad coordinates
-  // float myscale = 3.;
-  // Float_t rightmax = 1.1*hErecoData->GetMaximum();
-  // Float_t scale = gPad->GetUymax()/rightmax * myscale;
-  // hErecoMode_NumuBarToNueBar->Scale(scale);
-  // hErecoMode_NumuBarToNueBar->Draw("same");
-  // hErecoMode_BkgOther->Scale(scale);
-  // hErecoMode_BkgOther->DrawCopy("same");
-  // hErecoMode_NC->Scale(scale);
-  // hErecoMode_NC->DrawCopy("same");
-  // hErecoMode_NumuToNue->Scale(scale);
-  // hErecoMode_NumuToNue->DrawCopy("same");
-  // cout << "rightmax = " << rightmax << endl;
-  // cout << "gPad->GetUxmax() = " << gPad->GetUxmax() << endl;  
-  // cout << "scale = " << scale << endl;
-  // //draw an axis on the right side
-  // //TGaxis *axis = new TGaxis(gPad->GetUxmax(),gPad->GetUymin(),gPad->GetUxmax(), gPad->GetUymax(),0,rightmax,510,"+L");
-  // TGaxis *axis = new TGaxis(1.25,gPad->GetUymin(),1.25, gPad->GetUymax()*myscale,0,rightmax,510,"+L");
-  // //TGaxis *axis = new TGaxis(1.25,gPad->GetUymin(),1.25, gPad->GetUymax()*myscale,0,rightmax,510,"+L");
-  // axis->SetLineColor(kBlack);
-  // axis->SetLabelColor(kBlack);
-  // axis->SetTitle("# of observed events");
-  // axis->ImportAxisAttributes(hErecoData->GetYaxis());
-  // axis->Draw();  
-  // gPad->SetTicks(1,0); // remove ticks on the left
-  // return;
+  TCanvas *ErecoVsQ2_Components_ExpVsData = new TCanvas("ErecoVsQ2_Components_ExpVsData","ErecoVsQ2_Components_ExpVsData");
+  hErecoVsQ2Data->SetMarkerSize(1.5);
+  ErecoVsQ2_Components_ExpVsData->Divide(2,3);
+  ErecoVsQ2_Components_ExpVsData->cd(1);
+  hErecoVsQ2Mode_NumuBarToNueBar->Draw("colz");
+  hErecoVsQ2Data->DrawCopy("p same");
+  ErecoVsQ2_Components_ExpVsData->cd(2);
+  hErecoVsQ2Mode_NumuToNue->Draw("colz");
+  hErecoVsQ2Data->DrawCopy("p same");
+  ErecoVsQ2_Components_ExpVsData->cd(3);
+  hErecoVsQ2Mode_NC->Draw("colz");
+  hErecoVsQ2Data->DrawCopy("p same");
+  ErecoVsQ2_Components_ExpVsData->cd(4);
+  hErecoVsQ2Mode_NueBeam->Draw("colz");
+  hErecoVsQ2Data->DrawCopy("p same");
+  ErecoVsQ2_Components_ExpVsData->cd(5);
+  hErecoVsQ2Mode_NumuBeam->Draw("colz");
+  hErecoVsQ2Data->DrawCopy("p same");
+  ErecoVsQ2_Components_ExpVsData->cd(6);
+  hErecoVsQ2Mode_NumuBarBeam->Draw("colz");
+  hErecoVsQ2Data->DrawCopy("p same");
+
+  
 
 
 
@@ -202,91 +295,48 @@ void plot_ereco_on_top_of_prediction
 
 
 
+
+
+  
   TCanvas *cEreco_ExpVsData_Component = new TCanvas("cEreco_ExpVsData_Component","cEreco_ExpVsData_Component");
-  hErecoMode_NC->SetFillColor(0);
-  hErecoMode_NC->SetLineColor(kRed);
-  hErecoMode_BkgOther->SetFillColor(0);
-  hErecoMode_BkgOther->SetLineColor(kBlue);
+  //hErecoMode_NC->SetFillColor(0);
+  //hErecoMode_NC->SetLineColor(kRed);
+  hEreco_AllBkg->SetFillColor(0);
+  hEreco_AllBkg->SetLineColor(kBlue);
   hErecoMode_NumuToNue->SetFillColor(0);
   hErecoMode_NumuToNue->SetLineColor(kGray+3);
   hErecoMode_NumuBarToNueBar->SetFillColor(0);
   hErecoMode_NumuBarToNueBar->SetLineColor(kGreen);
-  hEreco_AllBkg->SetFillColor(0);
-  hEreco_AllBkg->SetLineColor(kBlack);
-  hEreco_AllBkg->SetLineStyle(2);
-  hEreco_AllBkg->SetLineWidth(3);
-  // rescale MC
-  hErecoMode_NumuBarToNueBar->Scale(7.);
-  hErecoMode_BkgOther->Scale(7.);
-  hErecoMode_NC->Scale(7.);
-  hErecoMode_NumuToNue->Scale(7.);
-  hEreco_AllBkg->Scale(7.);
-  //
-  hErecoData->DrawCopy("pe");
-  hErecoMode_NumuBarToNueBar->Draw("same");
-  hErecoMode_BkgOther->DrawCopy("same");
-  hErecoMode_NC->DrawCopy("same");
-  hErecoMode_NumuToNue->DrawCopy("same");
+  //scale hint1 to the pad coordinates
+  Float_t rightmax = 1.1*hErecoData->GetMaximum();
+  //Float_t scale = gPad->GetUymax()/rightmax * myscale;
+  Float_t scale = myscale;
+  hErecoMode_NumuBarToNueBar->Scale(scale);
+  hErecoMode_NumuBarToNueBar->Draw("");
+  hEreco_AllBkg->Scale(scale);
   hEreco_AllBkg->DrawCopy("same");
-  TLegend *leg_comp = new TLegend(0.6, 0.4, 0.9, 0.9);
-  leg_comp->SetFillColor(0);
-  leg_comp->SetBorderSize(0);
-  leg_comp->AddEntry(hErecoData,"Data","P");
-  leg_comp->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","L");
-  leg_comp->AddEntry(hErecoMode_NumuToNue,"#nu_{#mu} #rightarrow #nu_{e}","L");
-  leg_comp->AddEntry(hErecoMode_NC,"NC","L");
-  leg_comp->AddEntry(hErecoMode_BkgOther,"Bkg other","L");
-  leg_comp->AddEntry(hEreco_AllBkg,"All Bkg","L");
-  leg_comp->Draw();
-  TLatex *tex_comp = new TLatex(0.7,0.7,"MC #times 7");
+  //hErecoMode_NC->Scale(scale);
+  //hErecoMode_NC->DrawCopy("same");
+  hErecoMode_NumuToNue->Scale(scale);
+  hErecoMode_NumuToNue->DrawCopy("same");
+  if(drawdata) hErecoData->DrawCopy("pe same");
+ 
+  TLegend *leg_component = new TLegend(0.6, 0.4, 0.9, 0.7);
+  leg_component->SetFillColor(0);
+  leg_component->SetBorderSize(0);
+  leg_component->AddEntry(hErecoMode_NumuToNue,"#nu_{#mu} #rightarrow #nu_{e}","L");
+  leg_component->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","L");
+  leg_component->AddEntry(hEreco_AllBkg,"Bkg","L");
+  if(drawdata) leg_component->AddEntry(hErecoData,"Data","P");
+  leg_component->Draw();
+
+  char name[200];
+  sprintf(name,"MC #times %i",scale);
+  TLatex *tex_comp = new TLatex(0.7,0.7,name);
   tex_comp->SetTextSize(0.07);
   tex_comp->Draw();
-  
-   
 
-  TCanvas *Ereco_ExpVsData_Component_Norm = new TCanvas("Ereco_ExpVsData_Component_Norm","Ereco_ExpVsData_Component_Norm");
-  hErecoMode_NC_norm->SetFillColor(0);
-  hErecoMode_NC_norm->SetLineColor(kRed);
-  hErecoMode_BkgOther_norm->SetFillColor(0);
-  hErecoMode_BkgOther_norm->SetLineColor(kBlue);
-  hErecoMode_NumuToNue_norm->SetFillColor(0);
-  hErecoMode_NumuToNue_norm->SetLineColor(kGray+3);
-  hErecoMode_NumuBarToNueBar_norm->SetFillColor(0);
-  hErecoMode_NumuBarToNueBar_norm->SetLineColor(kGreen);
-  hEreco_AllBkg_norm->SetFillColor(0);
-  hEreco_AllBkg_norm->SetLineColor(kBlack);
-  hEreco_AllBkg_norm->SetLineStyle(2);
-  hEreco_AllBkg_norm->SetLineWidth(3);
-  // rescale MC
-  hErecoMode_NumuBarToNueBar_norm->Scale(7.);
-  hErecoMode_BkgOther_norm->Scale(7.);
-  hErecoMode_NC_norm->Scale(7.);
-  hErecoMode_NumuToNue_norm->Scale(7.);
-  hEreco_AllBkg_norm->Scale(7.);
-  //
-  hErecoData->DrawCopy("pe");
-  hErecoMode_NumuBarToNueBar_norm->DrawCopy("same");
-  hErecoMode_BkgOther_norm->DrawCopy("same");
-  hErecoMode_NC_norm->DrawCopy("same");
-  hErecoMode_NumuToNue_norm->DrawCopy("same");
-  hEreco_AllBkg_norm->DrawCopy("same");
-  TLegend *leg_comp_norm = new TLegend(0.6, 0.4, 0.9, 0.9);
-  leg_comp_norm->SetFillColor(0);
-  leg_comp_norm->SetBorderSize(0);
-  leg_comp_norm->AddEntry(hErecoData,"Data","P");
-  leg_comp_norm->AddEntry(hErecoMode_NumuBarToNueBar_norm,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","L");
-  leg_comp_norm->AddEntry(hErecoMode_NumuToNue_norm,"#nu_{#mu} #rightarrow #nu_{e}","L");
-  leg_comp_norm->AddEntry(hErecoMode_NC_norm,"NC","L");
-  leg_comp_norm->AddEntry(hErecoMode_BkgOther_norm,"Bkg other","L");
-  leg_comp_norm->AddEntry(hEreco_AllBkg_norm,"All Bkg","L");
-  leg_comp_norm->Draw();
- 
-
-
-
-
-
-
+  return;
 
 
 }
