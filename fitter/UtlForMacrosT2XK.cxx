@@ -640,7 +640,7 @@ void valor::util::MargFit_1D_sinsqth13(RunOpt *runopt,FitMarginalization *fitmar
   fitmarg->SetMinimIntervalRead(0.,0.113,0.,0.,true);
   fitmarg->SetStartBin(conv::kUsed_SinsqTheta13,0.); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(-TMath::Pi(),-TMath::Pi()+conv::kASmallNum,0.,0.);
+  fitmarg->SetGridStartRange(0,0.113,0.,0.);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
@@ -672,7 +672,7 @@ void valor::util::MargFit_1D_sinsqth23(RunOpt *runopt,FitMarginalization *fitmar
   fitmarg->SetMinimIntervalRead(0.3,0.7,0.,0.,true);
   fitmarg->SetStartBin(conv::kUsed_SinsqTheta23,0.); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(-TMath::Pi(),-TMath::Pi()+conv::kASmallNum,0.,0.);
+  fitmarg->SetGridStartRange(0.3,0.7,0.,0.);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
@@ -702,10 +702,10 @@ void valor::util::MargFit_1D_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,S
   cout << endl;
   cout << "################# Fit 1 (dmsq32 = conv::kUsed_SinsqTheta23) #################" << endl;
     
-  fitmarg->SetMinimIntervalRead(0.3,0.7,0.,0.,true);
-  fitmarg->SetStartBin(conv::kUsed_SinsqTheta23,0.); 
+  fitmarg->SetMinimIntervalRead(2.E-3,3.E-3,0.,0.,true);
+  fitmarg->SetStartBin(conv::kUsed_Dm23sq,0.); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(-TMath::Pi(),-TMath::Pi()+conv::kASmallNum,0.,0.);
+  fitmarg->SetGridStartRange(2.E-3,3.E-3,0.,0.);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
