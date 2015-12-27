@@ -14,57 +14,79 @@ using namespace valor::conv;
 
 void plot_contours_dcp_many
 ( 
- bool doGlobalMin  = true,
-
- //const char tag[200] = "fitmarg_dcp_T2Kreact_Comparison_Run16_Run17",
- //bool SaveRootFile = true
+ const bool doGlobalMin  = true,
+ const bool same_mh_color = false, // use same color for NH and IH
+ const bool same_mh_style = true, // use same style for NH and IH
+ const bool draw_preliminary = true
 )
 {
 
   // NIWG2015c Summer 2016 statistics
-  const int Nfiles = 5;
+  const int Nfiles = 1;
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
-    // Current
+
+    // Run16 Data
     {
-      "../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
-      "../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_ih_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    }
-    ,
-    // Summer 2016
-    {
-      "../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_react_nh_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-      "../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_react_ih_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    }
-    ,
-    // Summer 2016 100/0
-    {
-      "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-      "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",            
-    }
-    // Summer 2016 75/25
-    {
-      "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-      "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    }
-    // Summer 2016 50/50
-    {
-      "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-      "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    }
+      "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_react_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+      "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_react_ih_nexp_1_-1.601_-999.000-job0-_0_0.root" // IH
+    },
+    // // Run16 Data (FHC-only)
+    // {
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_data_react_nh_fhconly_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_data_react_ih_fhconly_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // },
+    
+    // // Current
+    // {
+    //   "../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   "../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_ih_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    //   //"../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_t2konly_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   //"../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_t2konly_ih_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    // }
+    // ,
+    // // Summer 2016
+    // {
+    //   "../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_react_nh_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+    //   "../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_react_ih_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+    //   //"../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_t2konly_nh_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+    //   //"../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+    // }
+    // ,
+    // // Summer 2016 100/0
+    // {
+    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",      
+    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",            
+    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_nh_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",      
+    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",            
+    // }
+    // // Summer 2016 75/25
+    // {
+    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root",      
+    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_nh_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root",      
+    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // }
+    // // Summer 2016 50/50
+    // {
+    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root",      
+    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_nh_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root",      
+    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // }
 
 
   };
-
-
-
   
   char *latexname[Nfiles][Nmh] = {
-    {"Current - NH", "Current - IH"}
-    {"Summer Exp - NH", "Summer Exp - IH"}
-    {"Summer 100/0 - NH", "Summer 100/0 - IH"}
-    {"Summer 75/25 - NH", "Summer 75/25 - IH"}
-    {"Summer 50/50 - NH", "Summer 50/50 - IH"}
+    {"NH","IH"},
+    // {"NH all","IH all"},
+    // {"NH FHC-only","IH FHC-only"}
+    // {"Current - NH", "Current - IH"}
+    // {"Summer Exp - NH", "Summer Exp - IH"}
+    // {"Summer 100/0 - NH", "Summer 100/0 - IH"}
+    // {"Summer 75/25 - NH", "Summer 75/25 - IH"}
+    // {"Summer 50/50 - NH", "Summer 50/50 - IH"}
   };
   
   char name[200];
@@ -143,6 +165,19 @@ void plot_contours_dcp_many
 
   } // end loop Nfiles
   
+
+  // Init histogram
+
+  int NbinsX = hdeltachisq1D_GlobMin[0][0]->GetNbinsX(); 
+  int NbinsY = hdeltachisq1D_GlobMin[0][0]->GetNbinsY();
+  double lowedgeX = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(1);
+  double upedgeX = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinUpEdge(NbinsX);
+  char *TitleX = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetTitle();
+  char *TitleY = hdeltachisq1D_GlobMin[0][0]->GetYaxis()->GetTitle();
+  TH1D *hInit = new TH1D("hInit","hInit",NbinsX,lowedgeX,upedgeX);
+  hInit->GetXaxis()->SetTitle(TitleX);
+  hInit->GetYaxis()->SetTitle(TitleY);
+
   // Draw histograms
   
   // Chisq
@@ -158,23 +193,28 @@ void plot_contours_dcp_many
   sprintf(name,"cChisq1D");
   cChisq = new TCanvas(name,name);
 
+  hInit->SetMaximum(Max_chisq*1.2);
+  hInit->DrawCopy();
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
       hchisq1D[ifile][imh]->SetMaximum(Max_chisq*1.2);
-      hchisq1D[ifile][imh]->SetLineStyle(imh+1);
+      if(same_mh_style) hchisq1D[ifile][imh]->SetLineStyle(1);
+      else hchisq1D[ifile][imh]->SetLineStyle(imh+1);
       hchisq1D[ifile][imh]->SetLineWidth(2);
-      hchisq1D[ifile][imh]->SetLineColor(ifile+1);
-      if((ifile+imh)==0) hchisq1D[ifile][imh]->Draw();
+      if(same_mh_color) hchisq1D[ifile][imh]->SetLineColor(ifile+1);
+      else hchisq1D[ifile][imh]->SetLineColor(ifile+imh+1);
+      if((ifile+imh)==0) hchisq1D[ifile][imh]->Draw("same");
       else hchisq1D[ifile][imh]->Draw("same");
     }
   }
 
-  TLegend *lchisq = new TLegend(0.6,0.25,0.8,0.65);
+  TLegend *lchisq = new TLegend(0.6,0.45,0.8,0.65);
   lchisq->SetFillColor(0);
   lchisq->SetLineColor(0);
   lchisq->SetTextFont(132);
-  lchisq->SetTextSize(0.05);
+  lchisq->SetTextSize(0.07);
   for(int ifile=0;ifile<Nfiles;ifile++){
+    //for(int imh=0;imh<1;imh++){
     for(int imh=0;imh<Nmh;imh++){
       lchisq->AddEntry(hchisq1D[ifile][imh],latexname[ifile][imh],"l");
     }
@@ -194,23 +234,29 @@ void plot_contours_dcp_many
   sprintf(name,"cDeltaChisq1D");
   cDeltaChisq = new TCanvas(name,name);
 
+  hInit->SetMaximum(Max_deltachisq*1.2);
+  hInit->DrawCopy();
+
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
       hdeltachisq1D_GlobMin[ifile][imh]->SetMaximum(Max_deltachisq*1.2);
-      hdeltachisq1D_GlobMin[ifile][imh]->SetLineStyle(imh+1);
+      if(same_mh_style) hdeltachisq1D_GlobMin[ifile][imh]->SetLineStyle(1);
+      else hdeltachisq1D_GlobMin[ifile][imh]->SetLineStyle(imh+1);
       hdeltachisq1D_GlobMin[ifile][imh]->SetLineWidth(2);
-      hdeltachisq1D_GlobMin[ifile][imh]->SetLineColor(ifile+1);
-      if((ifile+imh)==0) hdeltachisq1D_GlobMin[ifile][imh]->Draw();
+      if(same_mh_color) hdeltachisq1D_GlobMin[ifile][imh]->SetLineColor(ifile+1);
+      else hdeltachisq1D_GlobMin[ifile][imh]->SetLineColor(ifile+imh+1);
+      if((ifile+imh)==0) hdeltachisq1D_GlobMin[ifile][imh]->Draw("same");
       else hdeltachisq1D_GlobMin[ifile][imh]->Draw("same");
     }
   }
 
-  TLegend *ldeltachisq = new TLegend(0.6,0.25,0.8,0.65);
+  TLegend *ldeltachisq = new TLegend(0.6,0.45,0.8,0.65);
   ldeltachisq->SetFillColor(0);
   ldeltachisq->SetLineColor(0);
   ldeltachisq->SetTextFont(132);
-  ldeltachisq->SetTextSize(0.05);
+  ldeltachisq->SetTextSize(0.07);
   for(int ifile=0;ifile<Nfiles;ifile++){
+    //for(int imh=0;imh<1;imh++){
     for(int imh=0;imh<Nmh;imh++){
       ldeltachisq->AddEntry(hdeltachisq1D_GlobMin[ifile][imh],latexname[ifile][imh],"l");
     }
@@ -238,7 +284,7 @@ void plot_contours_dcp_many
   l1sigma->Draw();
   l90->Draw();
   l2sigma->Draw();
-  //l3sigma->Draw();
+  l3sigma->Draw();
   //l4sigma->Draw();
   //l5sigma->Draw();
   
@@ -263,11 +309,13 @@ void plot_contours_dcp_many
   latLine1Sigma->Draw("same");
   latLine90CL->Draw("same");
   latLine2Sigma->Draw("same");
-  //latLine3Sigma->Draw("same");
+  latLine3Sigma->Draw("same");
   //latLine4Sigma->Draw("same");
   //latLine5Sigma->Draw("same");
 
 
+  TLatex *latPreliminary = new TLatex(-1.7,1.1,"PRELIMINARY");
+  if(draw_preliminary) latPreliminary->Draw("same");
 
   // // Store in root file
   // if(SaveRootFile){
