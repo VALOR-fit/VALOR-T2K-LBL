@@ -462,10 +462,6 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   //flikeVArray                 = new VALORArrayD(fnbins_param[0], fnbins_param[1]); // NEW PRECISION
   //flikeVArray->SetAll(0.);
   
-  if(this->fStoreLikeWeights){
-    flikeToyVArray              = new VALORArrayD(fnbins_param[0], fnbins_param[1], fntoys_marg); 
-    flikeToyVArray->SetAll(0.);
-  }
   //
 
   char Xtitle[256];
@@ -632,6 +628,14 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   fhToyMH = new TH1D("hToyMH","Toy MH: bin 1 --> NH, bin 2 --> IH",2,0,2);
 
   fStoreLikeWeights = false; // don't store the full likelihood befault
+}
+//________________________________________________________________________________________
+void FitMarginalization::SetStoreLikeWeights(bool doStoreLikeWeights){
+  fStoreLikeWeights = doStoreLikeWeights;
+  if(this->fStoreLikeWeights){
+    flikeToyVArray              = new VALORArrayD(fnbins_param[0], fnbins_param[1], fntoys_marg); 
+    flikeToyVArray->SetAll(0.);
+  }
 }
 //________________________________________________________________________________________
 void FitMarginalization::CleanUp(void){
@@ -2137,9 +2141,6 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
     }
 
 
-
-
-
 #ifdef __print_like_toy_fillchisq__
     double val0 = conv::kBadResult;
     double val1 = conv::kBadResult;
@@ -3167,13 +3168,14 @@ void FitMarginalization::WriteLikeToys2Binary(const char *tag){
     char outname[256];
     sprintf(outname,fnamelikefilebinary,tag,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,".bin");
     std::string soutname(outname);
-    flikeToyVArray->WriteFile(soutname);
+    if(this->fStoreLikeWeights) flikeToyVArray->WriteFile(soutname);
   }
   else{
     cerr << endl;
     cerr << "FitMarginalization::WriteLikeToys2Binary" << endl;
     cerr << "Storing/Reading of toy likelihood weights is not enabled" << endl;
     cerr << endl;
+    exit(1);
   }
 
 }

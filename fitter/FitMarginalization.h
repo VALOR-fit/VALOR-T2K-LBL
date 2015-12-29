@@ -151,7 +151,7 @@ class FitMarginalization
   // NEW SPECTRA MARG
   void WriteLikeToys2Binary(const char *tag); 
   void ReadLikeToysFromBinary(const char *tag);
-  void SetStoreLikeWeights(bool doStoreLikeWeights){fStoreLikeWeights = doStoreLikeWeights;};
+  void SetStoreLikeWeights(bool doStoreLikeWeights);
   //
   // NEW OSC TREE
   void WriteOscToys2Tree(int idfile, const char *tag); 

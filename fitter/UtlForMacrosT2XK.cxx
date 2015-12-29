@@ -343,9 +343,9 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->SetTestStatistic(runopt->Teststat()); // Set Test Statistic ("rate-only" or "rate+shape")
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
+  fitmarg->SetStoreLikeWeights(runopt->StoreLikeWeights()); // Set if to store full likelihood for each toy (after fitmarg->Init())
   
-  // Set if to store full likelihood for each toy (after fitmarg->Init())
-  fitmarg->SetStoreLikeWeights(runopt->StoreLikeWeights()); 
+  
 
   // Set Mass Hierarchy marginalization
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(runopt->Hierarchy_marg()); // needed to build the right binary file name 
@@ -415,18 +415,18 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   
 
   // 1D sinsqth13 fit
-  if(runopt->Freeparname0()=="mixing13" && runopt->Freeparname1()==""){
+  else if(runopt->Freeparname0()=="mixing13" && runopt->Freeparname1()==""){
     util::MargFit_1D_sinsqth13(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }  
   //
   // 1D sinsqth23 fit
-  if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()==""){
+  else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()==""){
     util::MargFit_1D_sinsqth23(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }
   //
   // 1D dmsq32 fit
   //
-  if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()==""){
+  else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()==""){
     util::MargFit_1D_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }
 
@@ -465,7 +465,6 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
 
   cout << "Build deltaChisqMarg distribution" << endl;
   fitmarg->BuildDeltaChisqMarg(); 
-
 
   // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
   if(runopt->StoreLikeWeights()){
