@@ -17,7 +17,16 @@ void plot_contours_dcp_many
  const bool doGlobalMin  = true,
  const bool same_mh_color = false, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
- const bool draw_preliminary = true
+ const bool draw_preliminary = true,
+
+ const bool draw_1sigmaCL = false,
+ const bool draw_90CL     = false,
+ const bool draw_2sigmaCL = false,
+ const bool draw_3sigmaCL = true,
+ const bool draw_4sigmaCL = false,
+ const bool draw_5sigmaCL = true,
+
+ const bool draw_reactors = false
 )
 {
 
@@ -27,10 +36,27 @@ void plot_contours_dcp_many
   char *infilename[Nfiles][Nmh] = {
 
     // Run16 Data
-    {
-      "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_react_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-      "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_react_ih_nexp_1_-1.601_-999.000-job0-_0_0.root" // IH
-    },
+    // {
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_react_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_react_ih_nexp_1_-1.601_-999.000-job0-_0_0.root" // IH
+    // },
+    // {
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth13_data_t2konly_nh_nexp_1_0.022_-999.000-job0-_0_0.root", 
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth13_data_t2konly_ih_nexp_1_0.022_-999.000-job0-_0_0.root" 
+    // },
+    // {
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth23_data_react_nh_nexp_1_0.528_-999.000-job0-_0_0.root", 
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth23_data_react_ih_nexp_1_0.528_-999.000-job0-_0_0.root" 
+    // },
+    // {
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dmsq_data_react_nh_nexp_1_0.003_-999.000-job0-_0_0.root",
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dmsq_data_react_ih_nexp_1_0.003_-999.000-job0-_0_0.root"
+    // },
+    // {
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_t2konly_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_t2konly_ih_nexp_1_-1.601_-999.000-job0-_0_0.root" // IH
+    // },
+   
     // // Run16 Data (FHC-only)
     // {
     //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_data_react_nh_fhconly_nexp_1_-1.601_-999.000-job0-_0_0.root",
@@ -75,11 +101,16 @@ void plot_contours_dcp_many
     //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root"
     // }
 
-
+    // High Statistics (125x10^20 POT for both Nu and NuBar) 
+    {
+      "../marginalization/joint/NIWG2015c/HighStat/fit_fitmarg_joint_dcp_react_nh_125nu125nubarPOT_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+      "../marginalization/joint/NIWG2015c/HighStat/fit_fitmarg_joint_dcp_react_ih_125nu125nubarPOT_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    }
   };
   
   char *latexname[Nfiles][Nmh] = {
-    {"NH","IH"},
+    {"Normal Hierarchy","Inverted Hierarchy"},
+    // {"NH","IH"},
     // {"NH all","IH all"},
     // {"NH FHC-only","IH FHC-only"}
     // {"Current - NH", "Current - IH"}
@@ -149,11 +180,23 @@ void plot_contours_dcp_many
     double ChisqMin_1 = hchisq1D[ifile][1]->GetMinimum();
     double ChisqMin_Glob = ChisqMin_0;
     if( ChisqMin_1 < ChisqMin_Glob ) ChisqMin_Glob = ChisqMin_1;
+    
+    int XminBin_0 = hchisq1D[ifile][0]->GetMinimumBin();
+    double Xmin_0 = hchisq1D[ifile][0]->GetBinCenter(XminBin_0);
+    int XminBin_1 = hchisq1D[ifile][1]->GetMinimumBin();
+    double Xmin_1 = hchisq1D[ifile][1]->GetBinCenter(XminBin_1);
+
     cout << endl;
-    cout << "ChisqMin 0 = " << ChisqMin_0 << endl;
-    cout << "ChisqMin 1 = " << ChisqMin_1 << endl;
+    cout << "Minimum for " << latexname[ifile][0] << " :" << endl;
+    cout << " - X = " << Xmin_0 << endl;
+    cout << " - ChisqMin " << latexname[ifile][0] << " = " << ChisqMin_0 << endl;
+    cout << "Minimum for " << latexname[ifile][1] << " :" << endl;
+    cout << " - X = " << Xmin_1 << endl;
+    cout << " - ChisqMin " << latexname[ifile][1] << " = " << ChisqMin_1 << endl;
+    cout << endl;
     cout << "ChisqMin Glob = " << ChisqMin_Glob << endl;
     cout << endl;
+
     for(int imh=0;imh<Nmh;imh++){      
       double ChisqMin_Curr = hchisq1D[ifile][imh]->GetMinimum();
       for(int i=0;i<hdeltachisq1D_GlobMin[ifile][imh]->GetNbinsX();i++){
@@ -192,9 +235,10 @@ void plot_contours_dcp_many
   
   sprintf(name,"cChisq1D");
   cChisq = new TCanvas(name,name);
-
+  
   hInit->SetMaximum(Max_chisq*1.2);
   hInit->DrawCopy();
+
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
       hchisq1D[ifile][imh]->SetMaximum(Max_chisq*1.2);
@@ -236,6 +280,19 @@ void plot_contours_dcp_many
 
   hInit->SetMaximum(Max_deltachisq*1.2);
   hInit->DrawCopy();
+
+  // Draw reactors box
+  const double sinsqth13_nom = 0.0219;
+  const double sinsqth13_err = 0.0012;
+  double X1 = sinsqth13_nom - sinsqth13_err;
+  double X2 = sinsqth13_nom + sinsqth13_err;
+  double Y1 = hInit->GetMinimum();
+  //double Y2 = hInit->GetMaximum();
+  double Y2 = 45.;
+  TBox *breactors = new TBox(X1,Y1,X2,Y2);
+  breactors->SetFillColor(kYellow+1);
+  if(draw_reactors) breactors->Draw("");
+
 
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
@@ -281,19 +338,19 @@ void plot_contours_dcp_many
   l3sigma->SetLineColor(kBlue);
   l4sigma->SetLineColor(kBlue);
   l5sigma->SetLineColor(kBlue);
-  l1sigma->Draw();
-  l90->Draw();
-  l2sigma->Draw();
-  l3sigma->Draw();
-  //l4sigma->Draw();
-  //l5sigma->Draw();
+  if(draw_1sigmaCL) l1sigma->Draw();
+  if(draw_90CL)     l90->Draw();
+  if(draw_2sigmaCL) l2sigma->Draw();
+  if(draw_3sigmaCL) l3sigma->Draw();
+  if(draw_4sigmaCL) l4sigma->Draw();
+  if(draw_5sigmaCL) l5sigma->Draw();
   
-  TLatex *latLine1Sigma = new TLatex(-1.7,1.1,"1#sigma");
-  TLatex *latLine90CL = new TLatex(-1.7,2.81,"90% CL");
-  TLatex *latLine2Sigma = new TLatex(-1.7,4.1,"2#sigma");
-  TLatex *latLine3Sigma = new TLatex(-1.7,9.1,"3#sigma");
-  TLatex *latLine4Sigma = new TLatex(-1.7,16.1,"4#sigma");
-  TLatex *latLine5Sigma = new TLatex(-1.7,25.1,"5#sigma");
+  TLatex *latLine1Sigma = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"1#sigma");
+  TLatex *latLine90CL = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),2.81,"90% CL");
+  TLatex *latLine2Sigma = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),4.1,"2#sigma");
+  TLatex *latLine3Sigma = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),9.1,"3#sigma");
+  TLatex *latLine4Sigma = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),16.1,"4#sigma");
+  TLatex *latLine5Sigma = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),25.1,"5#sigma");
   latLine1Sigma->SetTextColor(kBlue);
   latLine90CL->SetTextColor(kBlue);
   latLine2Sigma->SetTextColor(kBlue);
@@ -306,16 +363,17 @@ void plot_contours_dcp_many
   latLine3Sigma->SetTextSize(0.07);
   latLine4Sigma->SetTextSize(0.07);
   latLine5Sigma->SetTextSize(0.07);
-  latLine1Sigma->Draw("same");
-  latLine90CL->Draw("same");
-  latLine2Sigma->Draw("same");
-  latLine3Sigma->Draw("same");
-  //latLine4Sigma->Draw("same");
-  //latLine5Sigma->Draw("same");
+  if(draw_1sigmaCL) latLine1Sigma->Draw("same");
+  if(draw_90CL)     latLine90CL->Draw("same");
+  if(draw_2sigmaCL) latLine2Sigma->Draw("same");
+  if(draw_3sigmaCL) latLine3Sigma->Draw("same");
+  if(draw_4sigmaCL) latLine4Sigma->Draw("same");
+  if(draw_5sigmaCL) latLine5Sigma->Draw("same");
 
 
-  TLatex *latPreliminary = new TLatex(-1.7,1.1,"PRELIMINARY");
+  TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"PRELIMINARY");
   if(draw_preliminary) latPreliminary->Draw("same");
+
 
   // // Store in root file
   // if(SaveRootFile){
