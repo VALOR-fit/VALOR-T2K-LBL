@@ -4501,10 +4501,13 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
         case (kNuisBANFFNormCCcoh        ): return "CCCOH_O_0";
         case (kNuisBANFFNormNCcoh        ): return "NCCOH_0";
         case (kNuisBANFFNormNCoth        ): return "NCOTHER_FAR_0";
-        case (kNuisBANFFNormNuEToNuMu    ): return "CCNue";
         case (kNuisBANFFNormNC1Gamma     ): return "NC1GAMMA_0";
-        case (kNuisBANFFNormNuEBarToNuMuBar): return "CCNueBar";
-            
+
+        case (kNuisBANFFNormNuEToNuMu      ): return "SigmaNue";
+        case (kNuisBANFFNormNuEBarToNuMuBar): return "SigmaNuebar";
+	  //case (kNuisBANFFNormNuEToNuMu    ): return "CCNue";
+	  //case (kNuisBANFFNormNuEBarToNuMuBar): return "CCNueBar";
+	  
         case (kRHCNuisBANFFMECBar        ): return "MEC_NUBAR";
         case (kRHCNuisBANFFMEC           ): return "MEC_O";
         case (kRHCNuisBANFFCA5           ): return "CA5";
