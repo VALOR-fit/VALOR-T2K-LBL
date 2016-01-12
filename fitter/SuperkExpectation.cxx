@@ -190,7 +190,11 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   xml->FreeDoc(xmldoc);
   delete xml;
 
-  cout << "Exp >> Done configuring Superk spectrum predictor... \n\n" << endl;
+
+#ifdef USE_CONSTANT_ENERGY_SHIFT_ERROR
+  std::cout << "Exp >> Using constant energy scale error" << std::endl;
+#endif
+  std::cout << "Exp >> Done configuring Superk spectrum predictor... \n\n" << std::endl;
 
   return true;
 }

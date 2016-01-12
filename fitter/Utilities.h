@@ -101,6 +101,7 @@ namespace util {
   bool IsNC1piC   (int neut_reaction_mode);
   bool IsNCcoh    (int neut_reaction_mode); 
   bool IsNCoth    (int neut_reaction_mode);
+  bool IsNC1Gamma (int neut_reaction_mode); // NC 1 GAMMA
 
   //
   // Etc

@@ -853,25 +853,29 @@ double NuXSec::FinTuningWght_1p(
   // - BANFF param, NuEToNuMu  normalization
   //  
   else if(
-          p == kNuisBANFFMEC            ||
-          p == kNuisBANFFBgRES          ||
-          p == kNuisBANFFNormCCcoh      ||
-          p == kNuisBANFFNormNCcoh      ||
-          p == kNuisBANFFNormNCoth      ||
-          p == kNuisBANFFNormNuEToNuMu  ||
-          p == kNuisBANFFMECBar
+          p == kNuisBANFFMEC         ||
+          p == kNuisBANFFMECBar      ||
+          p == kNuisBANFFBgRES       ||
+          p == kNuisBANFFNormCCcoh    ||
+          p == kNuisBANFFNormNCcoh    ||
+          p == kNuisBANFFNormNCoth    ||
+          p == kNuisBANFFNormNC1Gamma    ||
+          p == kNuisBANFFNormNuEToNuMu ||
+          p == kNuisBANFFNormNuEBarToNuMuBar
           )
     {
       wght = fBANFF->BestFitValue(p);
     }
   else if(
-          p == kRHCNuisBANFFMEC             ||
-          p == kRHCNuisBANFFBgRES           ||
-          p == kRHCNuisBANFFNormCCcoh       ||
-          p == kRHCNuisBANFFNormNCcoh       ||
-          p == kRHCNuisBANFFNormNCoth       ||
-          p == kRHCNuisBANFFNormNuEToNuMu   ||
-          p == kRHCNuisBANFFMECBar
+          p == kRHCNuisBANFFMEC         ||
+          p == kRHCNuisBANFFMECBar      ||
+          p == kRHCNuisBANFFBgRES       ||
+          p == kRHCNuisBANFFNormCCcoh    ||
+          p == kRHCNuisBANFFNormNCcoh    ||
+          p == kRHCNuisBANFFNormNCoth    ||
+          p == kRHCNuisBANFFNormNC1Gamma    ||
+          p == kRHCNuisBANFFNormNuEToNuMu ||
+          p == kRHCNuisBANFFNormNuEBarToNuMuBar
           )
     {
       wght = fBANFF->RHCBestFitValue(p);
@@ -1240,21 +1244,32 @@ double NuXSec::SystWght_1p(
   // - BANFF param, NCoth      normalization
   // - BANFF param, NuEToNuMu  normalization
   //  
-  else if( p == kNuisBANFFMEC          || 
-           p == kNuisBANFFNormCCcoh    ||
-           p == kNuisBANFFNormNCcoh    ||
-           p == kNuisBANFFNormNCoth    ||
-           p == kNuisBANFFNormNuEToNuMu||
-           p == kNuisBANFFMECBar          )
+  else if(
+          p == kNuisBANFFMEC         ||
+          p == kNuisBANFFMECBar      ||
+          p == kNuisBANFFBgRES       ||
+          p == kNuisBANFFNormCCcoh    ||
+          p == kNuisBANFFNormNCcoh    ||
+          p == kNuisBANFFNormNCoth    ||
+          p == kNuisBANFFNormNC1Gamma ||
+          p == kNuisBANFFNormNuEToNuMu ||
+          p == kNuisBANFFNormNuEBarToNuMuBar
+          
+          )
   {
     wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
   }
-  else if( p == kRHCNuisBANFFMEC          || 
-           p == kRHCNuisBANFFNormCCcoh    ||
-           p == kRHCNuisBANFFNormNCcoh    ||
-           p == kRHCNuisBANFFNormNCoth    ||
-           p == kRHCNuisBANFFNormNuEToNuMu||
-          p == kRHCNuisBANFFMECBar)
+  else if(
+          p == kRHCNuisBANFFMEC         ||
+          p == kRHCNuisBANFFMECBar      ||
+          p == kRHCNuisBANFFBgRES       ||
+          p == kRHCNuisBANFFNormCCcoh    ||
+          p == kRHCNuisBANFFNormNCcoh    ||
+          p == kRHCNuisBANFFNormNCoth    ||
+          p == kRHCNuisBANFFNormNC1Gamma ||
+          p == kRHCNuisBANFFNormNuEToNuMu ||
+          p == kRHCNuisBANFFNormNuEBarToNuMuBar
+          )
   {
     wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
   }
