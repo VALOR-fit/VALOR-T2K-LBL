@@ -753,18 +753,20 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
         double pmax_lep = 0.; // momentum of most energetic lepton
         double mass_lep = 0.;
-        
+            int bin_etrue = fNuXSec->GetNievesMomentumOffset()->GetXaxis()->FindBin(Etrue);
+            int bin_theta = fNuXSec->GetNievesMomentumOffset()->GetYaxis()->FindBin(TMath::ACos(costheta)*180/TMath::Pi());
+
         if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
             mass_lep = electronMass; // GeV
             pmax_lep = fBrAmome[0] / 1000.; // GeV
-            pmax_lep += fNuXSec->GetNievesMomentumOffset()->Eval(costheta)/1000.;
+            pmax_lep += fNuXSec->GetNievesMomentumOffset()->GetBinContent(bin_etrue,bin_theta)/1000.;
             if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
             else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
         }
         else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
             mass_lep = muonMass; // GeV
             pmax_lep = fBrAmomm[0] / 1000.; // GeV
-            pmax_lep += fNuXSec->GetNievesMomentumOffset()->Eval(costheta)/1000.;
+            pmax_lep += fNuXSec->GetNievesMomentumOffset()->GetBinContent(bin_etrue,bin_theta)/1000.;
             if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
             else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
         }
@@ -776,18 +778,20 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
         double pmax_lep = 0.; // momentum of most energetic lepton
         double mass_lep = 0.;
-        
+        int bin_etrue = fNuXSec->GetNievesMomentumOffset()->GetXaxis()->FindBin(Etrue);
+        int bin_theta = fNuXSec->GetNievesMomentumOffset()->GetYaxis()->FindBin(TMath::ACos(costheta)*180/TMath::Pi());
+
         if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
             mass_lep = electronMass; // GeV
             pmax_lep = fBrAmome[0] / 1000.; // GeV
-            pmax_lep += fNuXSec->GetNievesMomentumOffset()->Eval(costheta)/1000.;
+            pmax_lep += fNuXSec->GetNievesMomentumOffset()->GetBinContent(bin_etrue,bin_theta)/1000.;
             if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
             else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
         }
         else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
             mass_lep = muonMass; // GeV
             pmax_lep = fBrAmomm[0] / 1000.; // GeV
-            pmax_lep += fNuXSec->GetNievesMomentumOffset()->Eval(costheta)/1000.;
+            pmax_lep += fNuXSec->GetNievesMomentumOffset()->GetBinContent(bin_etrue,bin_theta)/1000.;
             if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
             else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
         }
@@ -844,16 +848,33 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         {
             double pdd_weight =1;
             if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino PDD rescale
-                int biny = fNuXSec->GetPDDNu()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
-                int binx = fNuXSec->GetPDDNu()->GetXaxis()->FindBin(costheta);
+#ifdef MEC_3D
+                int binz = fNuXSec->GetPDDNu_3D()->GetZaxis()->FindBin(fBrPtrue[lepton_int]);
+                int binx = fNuXSec->GetPDDNu_3D()->GetXaxis()->FindBin(costheta);
+                int biny = fNuXSec->GetPDDNu_3D()->GetYaxis()->FindBin(Etrue);
+                
+                pdd_weight = fNuXSec->GetPDDNu_3D()->GetBinContent(binx,biny,binz);
+#elif MEC_2D
+                int binx = fNuXSec->GetPDDNu_2D()->GetXaxis()->FindBin(costheta);
+                int biny = fNuXSec->GetPDDNu_2D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
+                
+                pdd_weight = fNuXSec->GetPDDNu_2D()->GetBinContent(binx,biny);
+#endif
 
-                pdd_weight = fNuXSec->GetPDDNu()->GetBinContent(binx,biny);
             }
             else{         //AntiNeutrino PDD rescale
-                int biny = fNuXSec->GetPDDNuBar()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
-                int binx = fNuXSec->GetPDDNuBar()->GetXaxis()->FindBin(costheta);
+#ifdef MEC_3D
+                int binz = fNuXSec->GetPDDNuBar_3D()->GetZaxis()->FindBin(fBrPtrue[lepton_int]);
+                int binx = fNuXSec->GetPDDNuBar_3D()->GetXaxis()->FindBin(costheta);
+                int biny = fNuXSec->GetPDDNuBar_3D()->GetYaxis()->FindBin(Etrue);
+                
+                pdd_weight = fNuXSec->GetPDDNuBar_3D()->GetBinContent(binx,biny,binz);
+#elif MEC_2D
+                int binx = fNuXSec->GetPDDNuBar_2D()->GetXaxis()->FindBin(costheta);
+                int biny = fNuXSec->GetPDDNuBar_2D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
 
-                pdd_weight = fNuXSec->GetPDDNuBar()->GetBinContent(binx,biny);
+                pdd_weight = fNuXSec->GetPDDNuBar_2D()->GetBinContent(binx,biny);
+#endif
             }
             pot_flx_weight = pot_flx_weight * pdd_weight;
         }

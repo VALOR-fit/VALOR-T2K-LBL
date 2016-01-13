@@ -539,15 +539,21 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2TGraph(xml,root_node,"mc/normalisations/martini_to_nieves_nubar");
 #endif
 #ifdef RESCALE_CCQE_MEC_PDD
-    PDD_ratio_nu =
-    util::XML2TH2D(xml,root_node,"mc/normalisations/pdd_nu");
-    PDD_ratio_nubar =
-    util::XML2TH2D(xml,root_node,"mc/normalisations/pdd_nubar");
+#ifdef MEC_3D
+    PDD_ratio_nu_3D =
+    util::XML2TH3D(xml,root_node,"mc/normalisations/three_d/pdd_nu");
+    PDD_ratio_nubar_3D =
+    util::XML2TH3D(xml,root_node,"mc/normalisations/three_d/pdd_nubar");
+#else
+    PDD_ratio_nu_2D =
+    util::XML2TH2D(xml,root_node,"mc/normalisations/two_d/pdd_nu");
+    PDD_ratio_nubar_2D =
+    util::XML2TH2D(xml,root_node,"mc/normalisations/two_d/pdd_nubar");
 #endif
-    
+#endif
 #ifdef OFFSET_NIEVES_MOMENTUM
     NievesMomentumOffset =
-    util::XML2TGraph(xml,root_node,"mc/normalisations/nieves_momentum_offset");
+    util::XML2TH2D(xml,root_node,"mc/normalisations/nieves_momentum_offset");
 #endif
   return true;
 }
