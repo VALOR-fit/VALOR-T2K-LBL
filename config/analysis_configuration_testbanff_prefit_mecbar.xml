@@ -354,9 +354,9 @@
             <objtype>    TGraph         </objtype>
         </martini_to_nieves_nubar>
         <nieves_momentum_offset>
-            <filename>   test/banff_comparison/1p1h/1p1h_offset_hist.root </filename>
+            <filename>   test/banff_comparison/1p1h/1p_1h_Oxygen.root </filename>
             <objname>    nieves_minus_neut_hist    </objname>
-            <objtype>    TH2D </objtype>
+            <objtype>    TH2D                      </objtype>
         </nieves_momentum_offset>
         <two_d>
         <pdd_nu>
@@ -402,7 +402,7 @@
     -->
     
     <best_fit_values>     
-      <filename>   test/banff_comparison/banff_valororder_Nieves_NEUT_1p1h_FakeData_CCCohWeighted_Postfit_cccoh_fd.root </filename>
+      <filename>   test/banff_comparison/banff_valororder_postfit_asimov_20151220.root </filename>
       <objname>    prefit_params   </objname>
       <objtype>    TVectorD        </objtype>
     </best_fit_values>
@@ -411,7 +411,7 @@
       Covariance of fit parameters                 
     -->
     <covariance_matrix>
-      <filename>   test/banff_comparison/banff_valororder_Nieves_NEUT_1p1h_FakeData_CCCohWeighted_Postfit_cccoh_fd.root </filename>
+      <filename>   test/banff_comparison/banff_valororder_postfit_asimov_20151220.root </filename>
       <objname>    prefit_cov       </objname>
       <objtype>    TMatrixD         </objtype>
     </covariance_matrix>
@@ -500,7 +500,7 @@
     </normalisations>
     
     <untuned_parameter_central_values>
-       <filename>   test/banff_comparison/banff_valororder_Nieves_NEUT_1p1h_FakeData_CCCohWeighted_Postfit_cccoh_fd.root  </filename>
+       <filename>   test/banff_comparison/banff_valororder_postfit_asimov_20151220.root  </filename>
        <objname>    untuned_central_values                      </objname>
        <objtype>    TVectorD           </objtype>
     </untuned_parameter_central_values>
