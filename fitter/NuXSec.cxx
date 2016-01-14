@@ -538,7 +538,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     Martinit_to_Nieves_MEC_ratio_NuBar =
     util::XML2TGraph(xml,root_node,"mc/normalisations/martini_to_nieves_nubar");
 #endif
-#ifdef RESCALE_CCQE_MEC_PDD
+#ifdef RESCALE_MEC_PDD
 #ifdef MEC_3D
     PDD_ratio_nu_3D =
     util::XML2TH3D(xml,root_node,"mc/normalisations/three_d/pdd_nu");

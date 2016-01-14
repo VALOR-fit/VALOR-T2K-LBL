@@ -60,6 +60,7 @@
 #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
 #define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
 #define USE_CCcoh_WEIGHTS   // use the pion CCcoh weight branch in the trees
+#define	USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
@@ -270,7 +271,9 @@ void SuperkMC::Init(void)
     std::cout << "Exp/SKMC >> 1p 1h momentum offset applied only to CCQE " << std::endl;
 #endif
 #endif
-
+#ifdef USE_NC1gamma_WEIGHTS
+    cout << "Exp/SKMC NC1gamma reweight is applied" << endl;
+#endif
     std::cout << "Exp/SKMC >> Init complete" << std::endl;
     
     
@@ -753,7 +756,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
         double pmax_lep = 0.; // momentum of most energetic lepton
         double mass_lep = 0.;
-            int bin_etrue = fNuXSec->GetNievesMomentumOffset()->GetXaxis()->FindBin(Etrue);
+            int bin_etrue = fNuXSec->GetNievesMomentumOffset()->GetXaxis()->FindBin(Etrue*1000);
             int bin_theta = fNuXSec->GetNievesMomentumOffset()->GetYaxis()->FindBin(TMath::ACos(costheta)*180/TMath::Pi());
 
         if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
@@ -778,7 +781,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
         double pmax_lep = 0.; // momentum of most energetic lepton
         double mass_lep = 0.;
-        int bin_etrue = fNuXSec->GetNievesMomentumOffset()->GetXaxis()->FindBin(Etrue);
+        int bin_etrue = fNuXSec->GetNievesMomentumOffset()->GetXaxis()->FindBin(Etrue*1000);
         int bin_theta = fNuXSec->GetNievesMomentumOffset()->GetYaxis()->FindBin(TMath::ACos(costheta)*180/TMath::Pi());
 
         if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
@@ -815,6 +818,13 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         double pot_flx_weight = pot_wght * fBrWghtFlx;
         
+        double NC1GammaWght = 1.;
+#ifdef USE_NC1gamma_WEIGHTS
+        if(util::IsNC1Gamma(TMath::Abs(fBrGenCode))){
+            NC1GammaWght = 2.;
+        }
+#endif
+        
 #ifdef RESCALE_MEC_TO_MARTINI
         if(util::IsMEC(m))
         {
@@ -832,26 +842,20 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         }
 #endif
         
-#ifdef RESCALE_CCQE_MEC_PDD
-        int lepton_int =0;
-        if(util::IsMEC(m)){
-            lepton_int = 3;
-        }
-        else{
-            lepton_int = 2;
-        }
+#ifdef RESCALE_MEC_PDD
+        int lepton_int = 3; //lepton is at 3 in array of particles
 
         double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
         double costheta = dir_nu[0] * fBrDirNu[lepton_int][0] + dir_nu[1] * fBrDirNu[lepton_int][1] + dir_nu[2] * fBrDirNu[lepton_int][2];
 
-        if(util::IsMEC(m) || util::IsCCQE(m))
+        if(util::IsMEC(m))
         {
             double pdd_weight =1;
             if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino PDD rescale
 #ifdef MEC_3D
-                int binz = fNuXSec->GetPDDNu_3D()->GetZaxis()->FindBin(fBrPtrue[lepton_int]);
+                int binz = fNuXSec->GetPDDNu_3D()->GetZaxis()->FindBin(Etrue);
                 int binx = fNuXSec->GetPDDNu_3D()->GetXaxis()->FindBin(costheta);
-                int biny = fNuXSec->GetPDDNu_3D()->GetYaxis()->FindBin(Etrue);
+                int biny = fNuXSec->GetPDDNu_3D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
                 
                 pdd_weight = fNuXSec->GetPDDNu_3D()->GetBinContent(binx,biny,binz);
 #elif MEC_2D
@@ -864,11 +868,12 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             }
             else{         //AntiNeutrino PDD rescale
 #ifdef MEC_3D
-                int binz = fNuXSec->GetPDDNuBar_3D()->GetZaxis()->FindBin(fBrPtrue[lepton_int]);
+                int binz = fNuXSec->GetPDDNuBar_3D()->GetZaxis()->FindBin(Etrue);
                 int binx = fNuXSec->GetPDDNuBar_3D()->GetXaxis()->FindBin(costheta);
-                int biny = fNuXSec->GetPDDNuBar_3D()->GetYaxis()->FindBin(Etrue);
+                int biny = fNuXSec->GetPDDNuBar_3D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
                 
                 pdd_weight = fNuXSec->GetPDDNuBar_3D()->GetBinContent(binx,biny,binz);
+                
 #elif MEC_2D
                 int binx = fNuXSec->GetPDDNuBar_2D()->GetXaxis()->FindBin(costheta);
                 int biny = fNuXSec->GetPDDNuBar_2D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
@@ -878,18 +883,18 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             }
             pot_flx_weight = pot_flx_weight * pdd_weight;
         }
-#endif
+#endif //RESCALE_MEC_PDD
         
         this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight);
         
         // Actually fill the template
         
 #ifdef USE_RPA_WEIGHTS
-        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh);
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh);
+        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #else
-        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh);
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh);
+        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #endif
         
         
