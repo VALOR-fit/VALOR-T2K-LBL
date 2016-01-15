@@ -8,7 +8,7 @@
 //   0 tweak all parameters
 //   1 tweak all BANFF
 //   2 tweak all unconstrained xsec
-//   5 tweak only BANFF unstrained parameters
+//   5 tweak only BANFF unconstrained parameters
 //   6 tweak all BANFF constrained parameters
 //   7 tweak BANFF flux only
 //   8 tweak BANFF xsec only
@@ -156,8 +156,12 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  double       input_dm23sq         = -99,     
  double       input_betabar        = -99,
 
+ const char * config_file      = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c_Asimov.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_Asimov.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly_Asimov.xml",
 
- const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
@@ -317,10 +321,15 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   string sample_name_1Rmu = util::AsStringCompact(kSKsRHCFCFV1RingMuLike);
   const char * sname_1Rmu = sample_name_1Rmu.c_str();
 
-  TH1D * hNsk_RHC1Re = new TH1D(Form("%s_%s_nsk",sname_RHC1Re,modetitle.c_str()),Form("%s_%s_nsk",sname_RHC1Re,modetitle.c_str()),100,0,10);
-  TH1D * hNsk_1Re = new TH1D(Form("%s_%s_nsk",sname_1Re,modetitle.c_str()),Form("%s_%s_nsk",sname_1Re,modetitle.c_str()),100,0,100);
-  TH1D * hNsk_RHC1Rmu = new TH1D(Form("%s_%s_nsk",sname_RHC1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_RHC1Rmu,modetitle.c_str()),100,0,100);
-  TH1D * hNsk_1Rmu = new TH1D(Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),100,0,300);      
+  TH1D * hNsk_RHC1Re = new TH1D(Form("%s_nsk",sname_RHC1Re),Form("%s_nsk",sname_RHC1Re),100,0,10);
+  TH1D * hNsk_1Re = new TH1D(Form("%s_nsk",sname_1Re),Form("%s_nsk",sname_1Re),100,0,100);
+  TH1D * hNsk_RHC1Rmu = new TH1D(Form("%s_nsk",sname_RHC1Rmu),Form("%s_nsk",sname_RHC1Rmu),100,0,100);
+  TH1D * hNsk_1Rmu = new TH1D(Form("%s_nsk",sname_1Rmu),Form("%s_nsk",sname_1Rmu),100,0,300);      
+
+  // TH1D * hNsk_RHC1Re = new TH1D(Form("%s_%s_nsk",sname_RHC1Re,modetitle.c_str()),Form("%s_%s_nsk",sname_RHC1Re,modetitle.c_str()),100,0,10);
+  // TH1D * hNsk_1Re = new TH1D(Form("%s_%s_nsk",sname_1Re,modetitle.c_str()),Form("%s_%s_nsk",sname_1Re,modetitle.c_str()),100,0,100);
+  // TH1D * hNsk_RHC1Rmu = new TH1D(Form("%s_%s_nsk",sname_RHC1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_RHC1Rmu,modetitle.c_str()),100,0,100);
+  // TH1D * hNsk_1Rmu = new TH1D(Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),100,0,300);      
   
   TH1D * hRatio_FHCtoRHC_elike  = new TH1D(Form("%s_ratio","Re"),Form("%s_nsk","Re"),200,5.,12.);      
   TH1D * hRatio_FHCtoRHC_mulike = new TH1D(Form("%s_ratio","Rmu"),Form("%s_nsk","Rmu"),200,3.,5.);      
