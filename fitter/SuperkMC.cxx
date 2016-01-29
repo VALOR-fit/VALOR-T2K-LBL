@@ -1294,8 +1294,10 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << endl;
             util::Die(1); return;
         }
-        
-        
+                
+	//cout << "theta1 = " << LepThetaDegrees << " - ";
+	//cout << "theta2 = " << CalcThetaDegrees(fBrDir) << endl;
+
         double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum)
         
         //double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Q^2
@@ -1379,27 +1381,31 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
 #elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
         
-        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
-        if( costheta<-1.00001 || costheta>+1.00001 ){
-            cerr << endl;
-            cerr << std::setprecision(10);
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
-            cerr << endl;
-            util::Die(1); return;
-        }
-        
-        double LepTheta        = TMath::ACos(costheta); // radiant
-        double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
-        if(LepTheta<0.){
-            cerr << endl;
-            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
-            cerr << endl;
-            util::Die(1); return;
-        }
-        
-        double q2_fill = LepThetaDegrees;
-        
+        //double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
+        // if( costheta<-1.00001 || costheta>+1.00001 ){
+        //     cerr << endl;
+        //     cerr << std::setprecision(10);
+        //     cerr << "SuperkMC::FillTemplateHistogram" << endl;
+        //     cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+        //     cerr << endl;
+        //     util::Die(1); return;
+        // }        
+        // double LepTheta        = TMath::ACos(costheta); // radiant
+        // double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
+        // if(LepTheta<0.){
+        //     cerr << endl;
+        //     cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+        //     cerr << endl;
+        //     util::Die(1); return;
+        // }        
+        // double q2_fill = LepThetaDegrees;
+	//cout << "theta1 = " << q2_fill << " - ";
+	
+	double q2_fill = CalcThetaDegrees(fBrDir);
+	
+	//cout << "theta2 = " << q2_fill << endl;
+	
+
 #ifdef INCLUDEEVENTSNEGATIVEQ2
         if(q2_fill < 0.){
             q2_fill = util::Q2BinEdges(s,0)+conv::kASmallNum;
@@ -1420,15 +1426,17 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
-            cout << "costheta = " << costheta << endl;
-            cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
-            util::Die(1); return;
+          cout << "q2_fill = " << q2_fill << endl;
+	  //cout << "costheta = " << costheta << endl;
+	  //cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+	  util::Die(1); return;
         }
         
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
-            cout << "costheta = " << costheta << endl;
-            cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
-            util::Die(1); return;
+          cout << "q2_fill = " << q2_fill << endl;
+	  //cout << "costheta = " << costheta << endl;
+	  //cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+	  util::Die(1); return;
         }
         
 #else
@@ -7368,7 +7376,33 @@ double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta
 //____________________________________________________________________________________
 
 
+double SuperkMC::CalcThetaDegrees(float dir[10][3]){
 
+  //double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+  //double costheta = dir_nu[0] * dir[0][0] + dir_nu[1] * dir[0][1] + dir_nu[2] * dir[0][2];
+  double costheta = kBeamDir[0] * dir[0][0] + kBeamDir[1] * dir[0][1] + kBeamDir[2] * dir[0][2];
+
+  if( costheta<-1.00001 || costheta>+1.00001 ){
+    cerr << endl;
+    cerr << std::setprecision(10);
+    cerr << "SuperkMC::FillTemplateHistogram" << endl;
+    cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+    cerr << endl;
+    util::Die(1); return 0;
+    exit(1);
+  }    
+  double LepTheta        = TMath::ACos(costheta); // radiant    
+  double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees   
+  if(LepTheta<0.){
+    cerr << endl;
+    cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  return LepThetaDegrees;
+}
+
+//____________________________________________________________________________________
 
 
 
