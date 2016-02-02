@@ -52,6 +52,7 @@ FitParamList * util::NamedParameterList(string name)
   }
   if(name == "nuosc3f+nuisance") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+
     util::AppendAllSystematicsTo(fp, 6);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
@@ -863,8 +864,6 @@ FitParamList * util::NamedParameterList(string name)
       return fp;
     }
 
-
-
  if(name == "nuosc3f_normbar_fixall+nuisance") {
    FitParamList * fp = FitParamList::NuOsc3FlavourNormBarFit(kNumOfNuisanceParams);
    util::AppendAllSystematicsTo(fp, 7);
@@ -879,9 +878,24 @@ FitParamList * util::NamedParameterList(string name)
    fp -> SetSystMode(0);
    return fp;
  }
+
+ if(name == "nuosc3f_normbar+nuisance") {
+   FitParamList * fp = FitParamList::NuOsc3FlavourNormBarFit(kNumOfNuisanceParams);
+ 
+   util::AppendAllSystematicsTo(fp, 7);
+   fp -> SetParListName(name);
+   fp -> SetSystMode(1);
+   // NEW XSEC
+#if defined(__USE_NIWG2015__)
+   //~ fp -> FixParameter (kNuisXSecRPA ); 
+#endif
+   //
+   return fp;
+ }
+ 
  
  //  
-  
+ 
  cerr<<"FitParamListFactory/NamedParamList >> Unable to make: "<<name<<endl;
  exit(-1); 
 }

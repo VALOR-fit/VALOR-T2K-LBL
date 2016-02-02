@@ -14,28 +14,28 @@ using namespace valor::conv;
 
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
- const char * tag                   = "prova",
- 
+ const char * tag                  = "template_ErecoVsTheta_2D_notosc",
  const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
- const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
+ const char * hypothesis           = "3f_osc_normbar",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
- // Mach3, T2K Run1-4 + reactors best fit (A)
- double       input_mixing12       = 0.,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13       = 0.,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23       = 0., //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_deltacp        = 0., //-99,    /* deltacp, */
- double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- double       input_betabar        = -99,
-
  // // Mach3, T2K Run1-4 + reactors best fit (A)
- // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ // double       input_mixing12       = 0.,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0., //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = 0., //-99,    /* deltacp, */
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  // double       input_betabar        = -99,
+
+ // Mach3, T2K Run1-4 + reactors best fit (A)
+ double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ double       input_betabar        = 1., //0., //-99,
  
  // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
  // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -66,22 +66,20 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
  bool         disable_banff_tuning = false,                          /* */
  
+ //const char * config_file      = "analysis_configuration_test_xsecterm_elike_RFGRPA_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_q2_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
+ const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_q2_elike_21bins.xml",
- //const char * config_file      = "analysis_configuration_test_q2_elike.xml",
- //const char * config_file      = "analysis_configuration_test_theta_xsecterm_RFGRPA_21bins.xml",
- //const char * config_file      = "analysis_configuration_test_theta_xsecterm_RFGRPA.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_officialsplines.xml",
- //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
-   
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
+
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Asimov.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_Asimov.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly_Asimov.xml",
+ 
  bool         store_spectrum      = true,
  bool         print_spectrum      = true,                          /* */
  const char * mixparamchoice      = "sinsqtheta",
@@ -317,7 +315,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   
   hErecoVsQ2Tot = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));  
   hErecoVsQ2Tot->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Tot->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Tot->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Tot->GetZaxis()->SetTitle("Number of events");
   
   TH1D *hErecoTot = (TH1D*) hErecoVsQ2Tot->ProjectionY()->Clone("hErecoTot");
@@ -510,7 +508,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp) 
     hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
   hErecoVsQ2Mode_NumuBarBeam->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NumuBarBeam->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_NumuBarBeam->Draw("colz"); 
   if(draw_data){
@@ -524,7 +522,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp) 
     hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
   hErecoVsQ2Mode_NumuBeam->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NumuBeam->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_NumuBeam->Draw("colz");
   if(draw_data){
@@ -538,7 +536,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp)   
     hErecoVsQ2Mode_NueBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
   hErecoVsQ2Mode_NueBeam->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_NueBeam->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_NueBeam->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NueBeam->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_NueBeam->Draw("colz");
   if(draw_data){
@@ -552,7 +550,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp)   
     hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
   hErecoVsQ2Mode_NumuBarToNueBar->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NumuBarToNueBar->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_NumuBarToNueBar->Draw("colz");
   if(draw_data){
@@ -566,7 +564,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp) 
     hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
   hErecoVsQ2Mode_NumuToNue->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NumuToNue->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_NumuToNue->Draw("colz");
   if(draw_data){
@@ -580,7 +578,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp) 
     hErecoVsQ2Mode_NC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
   hErecoVsQ2Mode_NC->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_NC->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_NC->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NC->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_NC->Draw("colz");
   if(draw_data){
@@ -594,7 +592,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp) 
     hErecoVsQ2Mode_MEC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
   hErecoVsQ2Mode_MEC->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_MEC->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_MEC->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_MEC->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_MEC->Draw("colz");
   if(draw_data){
@@ -608,7 +606,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp) 
     hErecoVsQ2Mode_CCQE->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
   hErecoVsQ2Mode_CCQE->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_CCQE->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_CCQE->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_CCQE->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_CCQE->Draw("colz");
   if(draw_data){
@@ -622,7 +620,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   if(ErecoRangeLow!=ErecoRangeUp) 
     hErecoVsQ2Mode_CCnQE->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
   hErecoVsQ2Mode_CCnQE->GetXaxis()->SetTitle(titleX);
-  hErecoVsQ2Mode_CCnQE->GetYaxis()->SetTitle("E_{reco} (GeV)");
+  hErecoVsQ2Mode_CCnQE->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_CCnQE->GetZaxis()->SetTitle("Number of events");
   hErecoVsQ2Mode_CCnQE->Draw("colz");
   if(draw_data){
@@ -726,15 +724,15 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     hErecoMode_CCnQE->GetYaxis()->SetTitle("Events per 0.050 GeV");
   }
   else{
-    hErecoMode_NumuBarBeam->GetYaxis()->SetTitle("Events");
-    hErecoMode_NumuBeam->GetYaxis()->SetTitle("Events");
-    hErecoMode_NueBeam->GetYaxis()->SetTitle("Events");
-    hErecoMode_NumuToNue->GetYaxis()->SetTitle("Events");
-    hErecoMode_NumuBarToNueBar->GetYaxis()->SetTitle("Events");
-    hErecoMode_NC->GetYaxis()->SetTitle("Events");
-    hErecoMode_MEC->GetYaxis()->SetTitle("Events");
-    hErecoMode_CCQE->GetYaxis()->SetTitle("Events");
-    hErecoMode_CCnQE->GetYaxis()->SetTitle("Events");
+    hErecoMode_NumuBarBeam->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_NumuBeam->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_NueBeam->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_NumuToNue->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_NumuBarToNueBar->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_NC->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_MEC->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_CCQE->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_CCnQE->GetYaxis()->SetTitle("Number of events");
   }
 
   THStack *sErecoTotFlavMode = new THStack("sErecoTotFlavMode","sErecoTotFlavMode");
@@ -754,14 +752,14 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   sErecoTotFlavMode->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco    
   sErecoTotFlavMode->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   if(plot_per_50MeV) sErecoTotFlavMode->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  else sErecoTotFlavMode->GetYaxis()->SetTitle("Events");
+  else sErecoTotFlavMode->GetYaxis()->SetTitle("Number of events");
   cErecoTotFlavMode->Modified();
   gStyle->SetOptStat(0);
 
   TLegend *legY = new TLegend(0.6, 0.4, 0.9, 0.9);
   legY->SetFillColor(0);
   legY->SetBorderSize(0);
-  legY->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu} mode, e-like Total","L");
+  legY->AddEntry(hErecoMode_NumuBarToNueBar,"Total","L");
   legY->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","F");
   legY->AddEntry(hErecoMode_NumuToNue,"#nu_{#mu} #rightarrow #nu_{e}","F");
   legY->AddEntry(hErecoMode_NC,"NC","F");
@@ -786,7 +784,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   sErecoTotReac->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco    
   sErecoTotReac->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   if(plot_per_50MeV) sErecoTotReac->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  else sErecoTotReac->GetYaxis()->SetTitle("Events");
+  else sErecoTotReac->GetYaxis()->SetTitle("Number of events");
   cErecoTotReac->Modified();
   gStyle->SetOptStat(0);
 
@@ -908,13 +906,13 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   }
   sQ2TotFlavMode->GetXaxis()->SetTitle(titleX);
   if(plot_per_50MeV) sQ2TotFlavMode->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  else sQ2TotFlavMode->GetYaxis()->SetTitle("Events");
+  else sQ2TotFlavMode->GetYaxis()->SetTitle("Number of events");
   cQ2TotFlavMode->Modified();
   gStyle->SetOptStat(0);
 
   legX->SetFillColor(0);
   legX->SetBorderSize(0);
-  legX->AddEntry(hQ2Mode_NumuBarToNueBar,"#bar{#nu} mode, e-like Total","L");
+  legX->AddEntry(hQ2Mode_NumuBarToNueBar,"Total","L");
   legX->AddEntry(hQ2Mode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","F");
   legX->AddEntry(hQ2Mode_NumuToNue,"#nu_{#mu} #rightarrow #nu_{e}","F");
   legX->AddEntry(hQ2Mode_NC,"NC","F");
@@ -940,7 +938,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   }
   sQ2TotReac->GetXaxis()->SetTitle(titleX);
   if(plot_per_50MeV) sQ2TotReac->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  else sQ2TotReac->GetYaxis()->SetTitle("Events");
+  else sQ2TotReac->GetYaxis()->SetTitle("Number of events");
   cQ2TotReac->Modified();
   gStyle->SetOptStat(0);
 
@@ -953,71 +951,64 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   legX_reac->Draw();
 
 
-
-
-  // Draw Sig/Bkg ratio plots (likelihood)
-  // nexp = Bkg only, nobs = Sig + Bkg
-
-  TH2D *hSig;
-  TH2D *hSigpBkg;
-  if(s==kSKsFCFV1RingELike){
-    hSig = (TH2D*) hErecoVsQ2Mode_NumuToNue->Clone("hSignal");
-  }
-  else if(s==kSKsFCFV1RingMuLike){
-    hSig = (TH2D*) hErecoVsQ2Mode_NumuBeam->Clone("hSignal");
-  }
-  else if(s==kSKsRHCFCFV1RingELike){
-    hSig = (TH2D*) hErecoVsQ2Mode_NumuBarToNueBar->Clone("hSignal");
-  }
-  else if(s==kSKsRHCFCFV1RingMuLike){
-    hSig = (TH2D*) hErecoVsQ2Mode_NumuBarBeam->Clone("hSignal");
-  }
-
-
-  
-  TH2D *hLikeSigBkg = (TH2D*) hSig->Clone("hLikeSigBkg");
-  hLikeSigBkg->Reset();
-  
-  int Nq2 = hErecoVsQ2Tot->GetXaxis()->GetNbins();
-  int Nereco = hErecoVsQ2Tot->GetYaxis()->GetNbins();  
-  for(int iq2=0;iq2<Nq2;iq2++){
-    for(int iereco=0;iereco<Nereco;iereco++){
-      double ntot = hErecoVsQ2Tot->GetBinContent(iq2+1,iereco+1);
-      double nsig = hSig->GetBinContent(iq2+1,iereco+1);
-      double nbkg = ntot - nsig;
-      double nexp = nbkg;
-      double nobs = ntot;
-      double like = valor::util::ChisqPoisson(nobs,nexp);
-      hLikeSigBkg->SetBinContent(iq2+1,iereco+1,like);
-    }
-  }
-
-  TCanvas *cLikeSigBkg = new TCanvas("cLikeSigBkg","cLikeSigBkg");
-  hLikeSigBkg->Draw("colz");
-  if(draw_data){
-    h_data->Draw("same");
-  }
-  hLikeSigBkg->GetZaxis()->SetTitle("#Delta #chi^{2}");
-
-  hLikeSigBkg_ProjEreco = (TH1D*) hLikeSigBkg->ProjectionY()->Clone("hLikeSigBkg_ProjEreco");
-
-
-  TCanvas *cLikeSigBkg_ProjEreco = new TCanvas("cLikeSigBkg_ProjEreco","cLikeSigBkg_ProjEreco");
-  hLikeSigBkg_ProjEreco->Draw();
-  if(draw_data){
-    h_data_ereco->Draw("pe same");
-  }
-  hLikeSigBkg_ProjEreco->GetYaxis()->SetTitle("#Delta #chi^{2}");
-
-  hLikeSigBkg_ProjQ2 = (TH1D*) hLikeSigBkg->ProjectionX()->Clone("hLikeSigBkg_ProjQ2");
-  TCanvas *cLikeSigBkg_ProjQ2 = new TCanvas("cLikeSigBkg_ProjQ2","cLikeSigBkg_ProjQ2");
-  hLikeSigBkg_ProjQ2->Draw();
-  if(draw_data){
-    h_data_q2->Draw("pe same");
-  }
-  hLikeSigBkg_ProjQ2->GetYaxis()->SetTitle("#Delta #chi^{2}");
+ 
+  // // Draw Sig/Bkg ratio plots (likelihood)
+  // // nexp = Bkg only, nobs = Sig + Bkg
+  // TH2D *hSig;
+  // TH2D *hSigpBkg;
+  // if(s==kSKsFCFV1RingELike){
+  //   hSig = (TH2D*) hErecoVsQ2Mode_NumuToNue->Clone("hSignal");
+  // }
+  // else if(s==kSKsFCFV1RingMuLike){
+  //   hSig = (TH2D*) hErecoVsQ2Mode_NumuBeam->Clone("hSignal");
+  // }
+  // else if(s==kSKsRHCFCFV1RingELike){
+  //   hSig = (TH2D*) hErecoVsQ2Mode_NumuBarToNueBar->Clone("hSignal");
+  // }
+  // else if(s==kSKsRHCFCFV1RingMuLike){
+  //   hSig = (TH2D*) hErecoVsQ2Mode_NumuBarBeam->Clone("hSignal");
+  // }  
+  // TH2D *hLikeSigBkg = (TH2D*) hSig->Clone("hLikeSigBkg");
+  // hLikeSigBkg->Reset();
+  // int Nq2 = hErecoVsQ2Tot->GetXaxis()->GetNbins();
+  // int Nereco = hErecoVsQ2Tot->GetYaxis()->GetNbins();  
+  // for(int iq2=0;iq2<Nq2;iq2++){
+  //   for(int iereco=0;iereco<Nereco;iereco++){
+  //     double ntot = hErecoVsQ2Tot->GetBinContent(iq2+1,iereco+1);
+  //     double nsig = hSig->GetBinContent(iq2+1,iereco+1);
+  //     double nbkg = ntot - nsig;
+  //     double nexp = nbkg;
+  //     double nobs = ntot;
+  //     double like = valor::util::ChisqPoisson(nobs,nexp);
+  //     hLikeSigBkg->SetBinContent(iq2+1,iereco+1,like);
+  //   }
+  // }
+  // TCanvas *cLikeSigBkg = new TCanvas("cLikeSigBkg","cLikeSigBkg");
+  // hLikeSigBkg->Draw("colz");
+  // if(draw_data){
+  //   h_data->Draw("same");
+  // }
+  // hLikeSigBkg->GetZaxis()->SetTitle("#Delta #chi^{2}");
+  // hLikeSigBkg_ProjEreco = (TH1D*) hLikeSigBkg->ProjectionY()->Clone("hLikeSigBkg_ProjEreco");
+  // TCanvas *cLikeSigBkg_ProjEreco = new TCanvas("cLikeSigBkg_ProjEreco","cLikeSigBkg_ProjEreco");
+  // hLikeSigBkg_ProjEreco->Draw();
+  // if(draw_data){
+  //   h_data_ereco->Draw("pe same");
+  // }
+  // hLikeSigBkg_ProjEreco->GetYaxis()->SetTitle("#Delta #chi^{2}");
+  // hLikeSigBkg_ProjQ2 = (TH1D*) hLikeSigBkg->ProjectionX()->Clone("hLikeSigBkg_ProjQ2");
+  // TCanvas *cLikeSigBkg_ProjQ2 = new TCanvas("cLikeSigBkg_ProjQ2","cLikeSigBkg_ProjQ2");
+  // hLikeSigBkg_ProjQ2->Draw();
+  // if(draw_data){
+  //   h_data_q2->Draw("pe same");
+  // }
+  // hLikeSigBkg_ProjQ2->GetYaxis()->SetTitle("#Delta #chi^{2}");
   
   
+
+  
+
+
   // Get total # of events
 
   double TotEvts = hErecoVsQ2Tot->Integral();
@@ -1090,29 +1081,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   }
 
    
-
-  // // PROVA
-  // cout << "Nq2 = " << Nq2 
-  //      << " - hsig X = " << hSig->GetXaxis()->GetNbins() 
-  //      << " - hLikeSigBkg X = " << hLikeSigBkg->GetXaxis()->GetNbins() 
-  //      << endl;
-  // cout << "Nereco = " << Nereco 
-  //      << " - hsig Y = " << hSig->GetYaxis()->GetNbins() 
-  //      << " - hLikeSigBkg Y = " << hLikeSigBkg->GetYaxis()->GetNbins() 
-  //      << endl;
-  // TArrayD *axis_bin = (TArrayD*) hLikeSigBkg_ProjEreco->GetXaxis()->GetXbins();
-  // double *array = axis_bin->GetArray();
-  // cout << "CIAO" << endl;
-  // for(int ibin=0;ibin<Nereco;ibin++){
-  //   cout << array[ibin] << endl;
-  // }
-  // return;  
-  // //
-
-
-
-
-
+  
 
   // Store spectra
 

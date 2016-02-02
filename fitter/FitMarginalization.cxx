@@ -29,7 +29,7 @@
 
 //#define FILL_TREE_OSCPARAM_TOYS
 
-#define NUMOFBINSAROUNDMINTOCHECK 3  // Check bins both on the right and left 
+#define NUMOFBINSAROUNDMINTOCHECK 3  // Check bins both on the right and left Emac
 
 #define SCALE_PRECISION 80. // Rescale the likelihood by exp(scale) when sum over the toys, then scale back at the end (CalcChisqMargPtRead())
                             // Avoid precision problems w/ floats or double when chisq~200 and like=exp(-0.5*chisq) becomes too small
@@ -1184,9 +1184,9 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     cout << "toy=" << iexperiment << endl; 
 
     cout << "Normal hierarchy parameters:" << endl;
-    int np=0;
-    np = fparm_nh->GetNumberParameters();
-    for(int ip = 0; ip < np; ip++) {
+    int np_print=0;
+    np_print = fparm_nh->GetNumberParameters();
+    for(int ip = 0; ip < np_print; ip++) {
       conv::PhysParamId_t p = fparm_nh->WhichParam(ip);
       if(util::IsSystematic(p)) continue; // not oscillation parameters 
 
@@ -1196,8 +1196,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       //
     }
     cout << "Inverted hierarchy parameters:" << endl;
-    np = fparm_ih->GetNumberParameters();
-    for(int ip = 0; ip < np; ip++) {
+    np_print = fparm_ih->GetNumberParameters();
+    for(int ip = 0; ip < np_print; ip++) {
       conv::PhysParamId_t p = fparm_ih->WhichParam(ip);
       if(util::IsSystematic(p)) continue; // not oscillation parameters 
 									
@@ -1391,6 +1391,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	conv::PhysParamId_t p = fparm->WhichParam(ip);
 	//cout << p << " " << util::AsString(p) << endl;
 
+
 	// NEW FHC+RHC JOINT
 	// if(p!=fPhysParamFree[0]) 
 	//   fparm->SetDoMarg(fPhysParamFree[0],true); 
@@ -1409,7 +1410,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	//
 
 	if(util::IsSystematic(p)) continue; // not oscillation parameters 
-	if(fparm->IsFixed(p))    continue; // do not marginalize if fixed
+	if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
+	if(p==conv::kPhypBetaBar) continue; // NEVER marginalize betaBar 
+
+
+	//cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm->CurrValue(p) << endl;
+
 	
 	if(fparm->IsPrior2D(p)){ // Fill it later as correlated (only mix23 and dm23 and/or mix13 and dcp)
 
@@ -1443,7 +1449,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	//double usedvalue = fparm->InitValue(p);
 	double usedvalue = fparm->CurrValue(p);
 	//
-	
+
 	fparm->GetToyHisto(p)->Fill(usedvalue); 	
 
 	if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
@@ -1545,6 +1551,11 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       }
       cout << endl;
 #endif
+      
+
+
+
+
       
       // Produce toys for each osc param value
       

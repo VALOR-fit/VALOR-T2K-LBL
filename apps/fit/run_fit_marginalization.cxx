@@ -202,7 +202,9 @@ int main(int argc, char ** argv)
   int fitstatus=-999;
   double chisqmin=conv::kALargeNum;
   double chisqtrue0=conv::kALargeNum;
+  double chisqtrue1=conv::kALargeNum;
   double deltachisq0BF=conv::kALargeNum;
+  double deltachisq01=conv::kALargeNum;
   TH2F *hchisq2D_out = new TH2F("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
   TH1F *hchisq1D_out = new TH1F("hchisq1D_out","hchisq1D_out",1,0,1);
   TH2F *hdeltachisq2D_out = new TH2F("hdeltachisq2D_out","hdeltachisq2D_out",1,0,1,1,0,1);
@@ -287,7 +289,9 @@ int main(int argc, char ** argv)
 
   fitnt->Branch("chisqmin",&chisqmin,"chisqmin/D");
   fitnt->Branch("chisqtrue0",&chisqtrue0,"chisqtrue0/D");
+  fitnt->Branch("chisqtrue1",&chisqtrue1,"chisqtrue1/D");
   fitnt->Branch("deltachisq0BF",&deltachisq0BF,"deltachisq0BF/D");
+  fitnt->Branch("deltachisq01",&deltachisq01,"deltachisq01/D");
 
   fitnt->Branch("nfits",&nfits,"nfits/I");
   fitnt->Branch("nchisqcalls",&nchisqcalls,"nchisqcalls/I");
@@ -305,7 +309,7 @@ int main(int argc, char ** argv)
   fitnt->Branch("Job",&run);
   fitnt->Branch("Tag",&tag);
   fitnt->Branch("nexpts",&nexpts);
-  #ifndef __USE_2D_TEMPLATES__
+#ifndef __USE_2D_TEMPLATES__
   fitnt->Branch("hErecoToy_1Rmu",     "TH1F",&hErecoToy_1Rmu,     32000,0);
   fitnt->Branch("hErecoToy_1Re",      "TH1F",&hErecoToy_1Re,      32000,0);
   fitnt->Branch("hErecoToy_RHC1Rmu",  "TH1F",&hErecoToy_RHC1Rmu,  32000,0);
@@ -314,7 +318,7 @@ int main(int argc, char ** argv)
   fitnt->Branch("hErecoExp_1Re",      "TH1F",&hErecoExp_1Re,      32000,0);
   fitnt->Branch("hErecoExp_RHC1Rmu",  "TH1F",&hErecoExp_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoExp_RHC1Re",   "TH1F",&hErecoExp_RHC1Re,   32000,0);
-  #else  
+#else  
   fitnt->Branch("hErecoToy_1Rmu",     "TH2F",&hErecoToy_1Rmu,     32000,0);
   fitnt->Branch("hErecoToy_1Re",      "TH2F",&hErecoToy_1Re,      32000,0);
   fitnt->Branch("hErecoToy_RHC1Rmu",  "TH2F",&hErecoToy_RHC1Rmu,  32000,0);
@@ -323,7 +327,7 @@ int main(int argc, char ** argv)
   fitnt->Branch("hErecoExp_1Re",      "TH2F",&hErecoExp_1Re,      32000,0);
   fitnt->Branch("hErecoExp_RHC1Rmu",  "TH2F",&hErecoExp_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoExp_RHC1Re",   "TH2F",&hErecoExp_RHC1Re,   32000,0);
-  #endif
+#endif
  
   // Update physics fitparamlist with chosen value of oscillation parameters
   bool set_init = false;
@@ -435,6 +439,7 @@ int main(int argc, char ** argv)
      fitstatus=-999;
      chisqmin=conv::kALargeNum;
      chisqtrue0=conv::kALargeNum;
+     chisqtrue1=conv::kALargeNum;
      bestfit0=-999;
      bestfit1=-999;
      bestfiterrNeg0=-999;
@@ -447,9 +452,9 @@ int main(int argc, char ** argv)
      bestfitFullChisq1=-999;
      chisqminFullChisq=conv::kALargeNum;
    
+     
      // Perform the fit w/ marginalization
      util::PerformMargFit(argc,argv,runopt,fitmarg,skexp,skobs_fakedata); 
-     
 
      cout << endl;
      cout << "CPU time" << endl;
@@ -459,7 +464,6 @@ int main(int argc, char ** argv)
      CPUtime_Minim = sw_fit.CpuTime();
      REALtime_Minim = sw_fit.RealTime();
      sw_fit.Start(0);
-
 
      IsFit2D = fitmarg->IsFit2D();
      
@@ -472,23 +476,38 @@ int main(int argc, char ** argv)
      chisqmin = fitmarg->GetChisqBestFit();
 
      // Get true chisq 
-     cout << "Calculate Chisq for true point:" << endl;
+
      PhysParamId_t freepar0 = conv::kPhypUndefined;
      PhysParamId_t freepar1 = conv::kPhypUndefined;
-    
+     
      freepar0 = util::GetFreePar(runopt->Freeparname0());
      if(fitmarg->IsFit2D()) freepar1 = util::GetFreePar(runopt->Freeparname1());
      
      truepar0 = fparm->InitValue(freepar0);
      if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);
      
-     chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  // TODO
+     // BetaBar (nuebar appearance)
+     if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()==""){
+       
+       cout << "Calculate Chisq for betaBar = 0 and 1:" << endl;
+       
+       chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(0.,truepar1,skobs_fakedata,true);  
+       chisqtrue1 = (double)fitmarg->GetChisqMargTrueRead(1.,truepar1,skobs_fakedata,true);  
+     }
+     
+     // All other analyses
+     else{
+
+       cout << "Calculate Chisq for true point:" << endl;
+       
+       chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  // TODO
+     }
      
      cout << endl;
      cout << "truepar0 = " << truepar0 << endl;
      cout << "truepar1 = " << truepar1 << endl;
-     cout << endl;
-     
+     cout << endl;    
+ 
      // // Draw Full Chisq
      // if(runopt->DrawFullChisq()){
      //   cout << endl;
@@ -502,7 +521,7 @@ int main(int argc, char ** argv)
      //   //fitmarg->BuildDeltaChisqMarg();
      // }
      
-
+     
      // Draw Full Chisq
      
      if(runopt->DrawFullChisq()){
@@ -524,7 +543,7 @@ int main(int argc, char ** argv)
        
        cout << "Build deltaChisqMarg distribution" << endl;
        fitmarg->BuildDeltaChisqMarg();
-     
+       
        cout << endl;
        cout << "CPU time" << endl;
        cout << endl;
@@ -554,8 +573,10 @@ int main(int argc, char ** argv)
      bestfiterrSym0 = fitmarg->GetParamBestFitErrSym(0);
      bestfiterrSym1 = fitmarg->GetParamBestFitErrSym(1);
      
+     
      // Get delta chisq
      deltachisq0BF = chisqtrue0 - chisqmin;
+     deltachisq01  = chisqtrue0 - chisqtrue1;  // for nuebar appearance (betaBar = 0,1)
      
      // Get the fakedata histogram
      for(int is = 0; is < kns; is++) {
@@ -604,11 +625,10 @@ int main(int argc, char ** argv)
        }
        cout << endl;
        cout << "DeltaChisq:" << endl;
-       cout << endl;
        for(int ix=0;ix<npt_chisq_x;ix++){
          cout << hdeltachisq1D_out->GetBinContent(ix+1) << " ";
        }
-       
+       cout << endl;
      }
      
      // Fill toy informations (toy id, run, # of experiments, tag)
@@ -655,8 +675,10 @@ int main(int argc, char ** argv)
      cout << "# of calls of CalcChisqMargPt(): " 
           << nchisqcalls << endl;
      cout << endl;
-     cout << "Chisq True (" << truepar0 << "," << truepar1 << ") = " << chisqtrue0 << endl;
-     cout << "Delta Chisq = Chisq_true - Chisq_bf = " << deltachisq0BF << endl;
+     cout << "Chisq True 0 (" << truepar0 << "," << truepar1 << ") = " << chisqtrue0 << endl;
+     cout << "Chisq True 1 (" << truepar0 << "," << truepar1 << ") = " << chisqtrue1 << endl;
+     cout << "Delta Chisq = Chisq_true0 - Chisq_bf = " << deltachisq0BF << endl;
+     cout << "Delta Chisq = Chisq_true0 - Chisq_true1 = " << deltachisq01 << endl;
      cout << endl;
      cout << "Minimum of full Chisq histogram:" << endl;
      cout << "  - chisqmin = " << chisqminFullChisq << endl; 
