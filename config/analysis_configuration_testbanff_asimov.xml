@@ -507,7 +507,9 @@
                     0.024
                 </one_e_ring>
             </energy_scale_relative_error>
-            
+            <energy_shift_relative_error>
+                0.015
+            </energy_shift_relative_error>
         </superk>
     </detector_systematics>
     

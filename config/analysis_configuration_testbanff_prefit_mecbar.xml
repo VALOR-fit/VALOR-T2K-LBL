@@ -374,14 +374,14 @@
         </two_d>
         <three_d>
             <pdd_nu>
-                <filename>   test/banff_comparison/pdd/ccqe_mec_pdd_ratio_3D_skTh600.root </filename>
-                <objname>    PDD_ratio_3D_hist      </objname>
+                <filename>   test/banff_comparison/pdd/ccqe_mec_pdd_ratio_3D_skTh528.root </filename>
+                <objname>    nonPDD_ratio_3D_hist      </objname>
                 <!--            <objname>    PDD_ratio_hist      </objname>-->
                 <objtype>    TH3D         </objtype>
             </pdd_nu>
             <pdd_nubar>
-                <filename>   test/banff_comparison/pdd/ccqe_mec_pdd_ratio_3D_skTh600.root </filename>
-                <objname>    PDD_ratio_3D_hist_numubar          </objname>
+                <filename>   test/banff_comparison/pdd/ccqe_mec_pdd_ratio_3D_skTh528.root </filename>
+                <objname>    nonPDD_ratio_3D_hist_numubar          </objname>
                 <!--            <objname>    PDD_ratio_hist_numubar          </objname>-->
                 <objtype>    TH3D       </objtype>
             </pdd_nubar>
