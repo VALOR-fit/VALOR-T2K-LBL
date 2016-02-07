@@ -42,6 +42,7 @@ namespace valor {
          * SuperK detector errors (energy scale and efficiencies)
          */
         static const PhysParamId_t kNuisSuperkEnergyScale     = kNuis000;     // SK energy scale
+
 #if FSI_BINS != 3
         static const PhysParamId_t kNuisSuperkEff1RmuCCQEoth  = kNuis001; // SK 1Rmu CCQE efficiency (other)
         static const PhysParamId_t kNuisSuperkEff1RmuCCQErc0u = kNuis002; // SK 1Rmu CCQE efficiency (ring counting; Ereco bin 1)
@@ -66,7 +67,8 @@ namespace valor {
         static const PhysParamId_t kNuisSuperkEff1ReNC1       = kNuis011;    // SK 1Re NC eff Ereco bin 1
         static const PhysParamId_t kNuisSuperkEff1ReNC2       = kNuis012;    // SK 1Re NC eff Ereco bin 2
 #endif
-        
+        static const PhysParamId_t kNuisSuperkEnergyShift     = kNuis013;     // SK energy shift
+  
         /*
          * (flux and cross-section) correlated parameters used in the BANFF fit
          */

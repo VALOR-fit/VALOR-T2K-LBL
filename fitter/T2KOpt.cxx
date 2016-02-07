@@ -137,6 +137,9 @@ void T2KOpt::SetDefaults(void)
   fPathEscaleMultiRmuErr = "detector_systematics/superk/energy_scale_relative_error/multi_mu_ring";
   fPathEscaleMultiReErr = "detector_systematics/superk/energy_scale_relative_error/multi_e_ring";
 
+  // SK EShift Errors
+    fPathEShiftErr = "detector_systematics/superk/energy_shift_relative_error";
+    
   // Get SuperkDetectorFSI covariance matrix
 #if FSI_BINS == 1
   fPathSKDetFSICovMatr = "skdetfsi/covariance_matrix";

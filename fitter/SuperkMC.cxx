@@ -2028,7 +2028,11 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
         
         double * events_per_bin = this->CurrErecoSpectrumArray(s);
 #ifdef USE_CONSTANT_ENERGY_SHIFT_ERROR
+        double eshift = fSKDetFSI->EnergyShift(s);
         util::ApplyConstantEnergySystematic(s,events_per_bin,escale);
+#elif defined(USE_SHIFT_AND_SCALE_ERROR)
+        double eshift = fSKDetFSI->EnergyShift(s);
+        util::ApplyEnergyScaleShiftSystematic(s,events_per_bin,escale,eshift);
 #else
         util::ApplyEnergyScaleSystematic(s,events_per_bin,escale);
 #endif

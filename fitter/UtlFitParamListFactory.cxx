@@ -62,6 +62,22 @@ FitParamList * util::NamedParameterList(string name)
     //
     return fp;
   }
+    
+    if(name == "nuosc3f+nuisance+shift") {
+        FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams + 1 );
+        util::AppendAllSystematicsTo(fp, 6);
+        fp -> SetParListName(name);
+        fp -> SetSystMode(1);
+        fp->AddParam( kNumOfNuisanceParams, kNuisSuperkEnergyShift,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyShift) );   // FHC SK escale
+
+        // NEW XSEC
+#if defined(__USE_NIWG2015__)
+        //~ fp -> FixParameter (kNuisXSecRPA );
+#endif
+        //
+        return fp;
+    }
+    
   if(name == "nuosc3f_fix23+nuisance") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);

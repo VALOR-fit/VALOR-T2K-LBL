@@ -50,6 +50,7 @@ public:
 
   string fPathEscale1RmuErr;
   string fPathEscale1ReErr;
+  string fPathEShiftErr;
   string fPathSKDetFSICovMatr;
   string fPathRHCEscale1RmuErr;
   string fPathRHCEscale1ReErr;

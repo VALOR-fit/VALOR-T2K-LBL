@@ -513,6 +513,8 @@ void SuperkExpectation::ResetSystematics(void)
   this->GetSuperkDetectorFSI()->TweakFHCpRHC(true,0);
   this->GetSuperkDetectorFSI()->TweakEnergyScale(0.);
   this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(0.);
+  this->GetSuperkDetectorFSI()->TweakFHCpRHCEnergyShift(0.);
+
 #endif
   //
 
@@ -529,6 +531,7 @@ void SuperkExpectation::ResetSystematics(void)
   // SK det + FSI
   this->GetSuperkDetectorFSI()->TweakEnergyScale(0.);
   this->GetSuperkDetectorFSI()->Tweak(true,0);
+  this->GetSuperkDetectorFSI()->TweakFHCpRHCEnergyShift(0.);
 #endif
 
   // X Section
@@ -1414,6 +1417,7 @@ void SuperkExpectation::TweakAllFHCpRHCSKDetectorFSISystematics(void)
 
   this->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetectorFSI()->TweakRHCEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+  this->GetSuperkDetectorFSI()->TweakFHCpRHCEnergyShift(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
   this->GetSuperkDetectorFSI()->TweakFHCpRHC(); // <-- Cholesky method
 }
 //

@@ -38,14 +38,15 @@ Split valor::conv namespace into several smaller files
 //#endif
 
 //#define RESCALE_MEC_PDD //Rescale for PDD stuff
-//#ifdef RESCALE_MEC_PDD
-//#define MEC_3D
+#ifdef RESCALE_MEC_PDD
+#define MEC_3D
 ////#define MEC_2D
-//#endif
+#endif
 
 #define MECBAR_ERROR
 
 //#define USE_CONSTANT_ENERGY_SHIFT_ERROR
+#define USE_SHIFT_AND_SCALE_ERROR
 
 #define SYST_NSIGMA   3   // number of sigma away from nominal nuisance parameters are allowed to be
 #define SYST_STEP     0.1 // step size (in units of sigma)

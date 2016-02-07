@@ -56,7 +56,8 @@ string valor::util::AsString(PhysParamId_t p)
             // SK detector
             //
         case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;
-            
+        case ( kNuisSuperkEnergyShift     ) : return "SK energy shift";                 break;
+
             //
             // BANFF flux and cross-section params
             //
@@ -1110,6 +1111,8 @@ string valor::util::AsStringTex(PhysParamId_t p)
             // SK detector
             //
         case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;
+        case ( kNuisSuperkEnergyShift     ) : return "SK energy shift";                 break;
+
             //
             // BANFF flux and cross-section params
             //
@@ -2371,6 +2374,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
             //**************************** FORWARD HORN CURRENT *******************************
             
         case ( kNuisSuperkEnergyScale     ) : return "f_sk_e_scale";    break;
+        case ( kNuisSuperkEnergyShift     ) : return "f_sk_e_shift";    break;
         case ( kNuisBANFF00               ) : return "f_banff00";      break;
         case ( kNuisBANFF01               ) : return "f_banff01";      break;
         case ( kNuisBANFF02               ) : return "f_banff02";      break;
@@ -3071,7 +3075,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
             // SK detector
             //
             
-        case ( kNuisSuperkEnergyScale     ) : return "$f_{E; r}^{SK}$";                 break;
+        case ( kNuisSuperkEnergyScale     ) : return "$f_{Escale; r}^{SK}$";                 break;
+        case ( kNuisSuperkEnergyShift     ) : return "$f_{Eshift; r}^{SK}$";                 break;
             
             //
             // BANFF flux and cross-section params
@@ -4177,6 +4182,7 @@ bool valor::util::IsEff(PhysParamId_t p)
     assert(!"IsEff Currently unimplemented");
     switch(p) {
         case ( kNuisSuperkEnergyScale     ) : return true;  break;
+        case ( kNuisSuperkEnergyShift     ) : return true;  break;
         default :
             return false;
     }
@@ -4226,7 +4232,7 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
     
 #endif
 #endif
-    if(p == kNuisSuperkEnergyScale)
+    if(p == kNuisSuperkEnergyScale || kNuisSuperkEnergyShift)
         return true;
     
     //rhc
