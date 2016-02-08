@@ -521,11 +521,13 @@
             0.024
          </one_mu_ring>
          <one_e_ring>
-            0.024
+           0.024
          </one_e_ring>
       </energy_scale_relative_error>
-      
-     </superk>
+      <energy_shift_relative_error>
+        0.015
+      </energy_shift_relative_error> 
+    </superk>
   </detector_systematics>
   
   <!--
