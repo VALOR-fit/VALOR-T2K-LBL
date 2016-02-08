@@ -128,8 +128,8 @@ void run_fit_marginalization_readbinary
 
   // Analysis configuration
   TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file));
-  TString xmlfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), xmlfile));
-  TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile));
+  TString xmlfile2(Form("%s",xmlfile));
+  TString rootfile2(Form("%s", rootfile));
 
   FileStat_t dummy;
 
@@ -144,7 +144,7 @@ void run_fit_marginalization_readbinary
     }
   }
   
-  if (!dotoys && gSystem->GetPathInfo(xmlfile2.Data(), dummy)) 
+  if (!dotoys && using_xml_file && gSystem->GetPathInfo(xmlfile2.Data(), dummy)) 
   {
     xmlfile2 = xmlfile;
     if (gSystem->GetPathInfo(xmlfile2.Data(), dummy)) {
