@@ -68,7 +68,7 @@ FitParamList * util::NamedParameterList(string name)
         util::AppendAllSystematicsTo(fp, 6);
         fp -> SetParListName(name);
         fp -> SetSystMode(1);
-        fp->AddParam( kNumOfNuisanceParams, kNuisSuperkEnergyShift,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyShift) );   // FHC SK escale
+        fp->AddParam( kNumOfNuisanceParams + 6, kNuisSuperkEnergyShift,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyShift) );   // FHC SK escale
 
         // NEW XSEC
 #if defined(__USE_NIWG2015__)
