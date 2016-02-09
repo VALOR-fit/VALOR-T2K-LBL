@@ -12,13 +12,13 @@
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
-//#define __print_array_toy_maketoys_verbose__
+#define __print_array_toy_maketoys_verbose__
 //#define __print_array_toy_fillchisq__
 //#define __print_array_toy_fillchisq_verbose__
-//#define __print_array_toy_merge__
+#define __print_array_toy_merge__
 //#define __print_systematic_variations__
 #define __print_chisqmarg__
-//#define __readtoys_debug__
+#define __readtoys_debug__
 //#define __print_minimization_steps__ //
 //#define __print_hesseerror__
 //#define __print_hesseerror_verbose__

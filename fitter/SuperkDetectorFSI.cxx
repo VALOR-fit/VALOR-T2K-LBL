@@ -2472,8 +2472,8 @@ double SuperkDetectorFSI::EnergyShift(SuperkSample_t s) const
         exit(1);
     }
     double err     = this->EnergyShiftRelErr(s);
-    double scale   = 1. + twkdial * err;
-    return scale;
+    double shift   = twkdial * err;
+    return shift;
 }
 
 

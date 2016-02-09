@@ -681,7 +681,7 @@ void valor::util::ApplyConstantEnergySystematic(conv::SuperkSample_t s, double *
             total_events += events_per_bin[ibin];
         }
         unscaled_bin_edges[ibin] = bin_edges[ibin];
-        scaled_bin_edges  [ibin] = bin_edges[ibin] + (escale_tweak - 1.);
+        scaled_bin_edges  [ibin] = bin_edges[ibin] + (escale_tweak);
         new_events_per_bin[ibin] = 0;
     }
     
