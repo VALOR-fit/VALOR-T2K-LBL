@@ -368,13 +368,12 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->SetTagFileName(runopt->Infilename().c_str());
   fitmarg->SetFileID(runopt->Nfiles());
 
-
   // 1D deltaCP fit
   if(runopt->Freeparname0()=="deltacp" && runopt->Freeparname1()==""){
     util::MargFit_1D_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }
   // 1D betaBar fit (nuebar appearance)
-  if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()==""){
+  else if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()==""){
     util::MargFit_1D_betaBar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }
   // 2D sinsqth13 Vs dcp fit
