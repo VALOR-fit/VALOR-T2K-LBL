@@ -264,6 +264,13 @@ void SuperkMC::Init(void)
 #ifdef RESCALE_MEC_TO_MARTINI
     std::cout << "Exp/SKMC >> MEC rescaled from Nieves to Martini" << std::endl;
 #endif
+#ifdef USE_CONSTANT_ENERGY_SHIFT_ERROR
+    std::cout << "Exp/SKMC >> Using constant energy shift error" << std::endl;
+#endif
+    
+#ifdef USE_SHIFT_AND_SCALE_ERROR
+    std::cout << "Exp/SKMC >> Using constant energy shift + scale error" << std::endl;
+#endif
     
 #ifdef OFFSET_NIEVES_MOMENTUM
     std::cout << "Exp/SKMC >> 1p 1h momentum offset applied" << std::endl;
