@@ -54,6 +54,9 @@ void run_fit_marginalization_readbinary_joint_2d
  double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
+ double       input_mixing23Bar    = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_dm23sqBar      = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+
  // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
  // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -78,7 +81,7 @@ void run_fit_marginalization_readbinary_joint_2d
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
 
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
+ const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_ExpSummer2016_75_25.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
  //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
@@ -86,7 +89,7 @@ void run_fit_marginalization_readbinary_joint_2d
  bool         stat_fluctuations        = false,    /* include statistical fluctuation in toy MC expts? (not for marginalization) */
  int          tweak_systematics        = 0,       /* generate toy (both fakedata sets and marginalization) MC with randomized systematics? */
  
- const char * fit_param_list        = "nuosc3f+nuisance", // dcp 
+ const char * fit_param_list        = "nuosc3fbar_numudissap_allsyst", // dcp
  //const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
  
  const char * dmsqscheme               = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
@@ -99,13 +102,13 @@ void run_fit_marginalization_readbinary_joint_2d
  //const char * infilename = "submit_prova",
  //const char * infilename = "submit_prova_sinsqth13Vsdcp",
  //const char * infilename = "submit_prova_sinsqth13Vsdcp_react_manyfiles",
- const char * infilename = "submit_prova_sinsqth13Vsdcp_manyfiles",
+ const char * infilename = "Run14",
  //const char * infilename = "submit_prova_sinsqth23Vsdmsq23",
  //const char * infilename = "submit_prova_sinsqth23Vsdmsq23_manyfiles",
  
- const int    nfiles               = 4, //4, //1, //201        // # of files to read
+ const int    nfiles               = 1, //4, //1, //201        // # of files to read
 
- const int    NtoysMarg            = 1, //500, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 10, //500, //10000, //1,  // # toys marginalization
  
  // const char * freeparname0        = "mixing13",  // free parameter
  // const double freeparmin0         = 0.015, // minimum value of free parameter
@@ -125,23 +128,23 @@ void run_fit_marginalization_readbinary_joint_2d
  // const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
  // const int    NptScan1            = 3, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
 
- const char * freeparname0        = "mixing13",  // free parameter
- const double freeparmin0         = 0., // minimum value of free parameter
- const double freeparmax0         = 0.113, // maxinum value of free parameter
- const int    NptScan0            = 81,       // # pts of free parameter to scan
- const char * freeparname1        = "deltacp",  // free parameter
- const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
- const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan1            = 51, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+// const char * freeparname0        = "mixing13",  // free parameter
+// const double freeparmin0         = 0., // minimum value of free parameter
+// const double freeparmax0         = 0.113, // maxinum value of free parameter
+// const int    NptScan0            = 81,       // # pts of free parameter to scan
+// const char * freeparname1        = "deltacp",  // free parameter
+// const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
+// const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+// const int    NptScan1            = 51, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
 
- // const char * freeparname0        = "mixing23",  // free parameter
- // const double freeparmin0         = 0.3, // minimum value of free parameter
- // const double freeparmax0         = 0.7, // maxinum value of free parameter
- // const int    NptScan0            = 81, //81, //201, //21,      // # pts of free parameter to scan
- // const char * freeparname1        = "dmsq23",  // free parameter
- // const double freeparmin1         = 2.E-3,         // minimum value of free parameter
- // const double freeparmax1         = 3.E-3, // 10., 1         // maxinum value of free parameter
- // const int    NptScan1            = 21, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+  const char * freeparname0        = "mixing23Bar",  // free parameter
+  const double freeparmin0         = 0.25, // minimum value of free parameter
+  const double freeparmax0         = 0.75, // maxinum value of free parameter
+  const int    NptScan0            = 81, //81, //201, //21,      // # pts of free parameter to scan
+  const char * freeparname1        = "dmsq23Bar",  // free parameter
+  const double freeparmin1         = 1.8E-3,         // minimum value of free parameter
+  const double freeparmax1         = 3.2E-3, // 10., 1         // maxinum value of free parameter
+  const int    NptScan1            = 21, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
 
  const bool  doMargMH             = false,    // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
@@ -153,7 +156,7 @@ void run_fit_marginalization_readbinary_joint_2d
 
  const string teststat            = "rate+shape",   // "rate-only" or "rate+shape",
 
- const bool constrain_reactor     = true
+ const bool constrain_reactor     = false
 )
 {
 
@@ -209,19 +212,26 @@ void run_fit_marginalization_readbinary_joint_2d
   bool randomize_deltacp  = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
   bool randomize_dm12sq   = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
   bool randomize_dm23sq   = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
-    
+  bool randomize_mixing23Bar = (TMath::Abs(input_mixing23Bar + 999) < kASmallNum);
+  bool randomize_dm23sqBar   = (TMath::Abs(input_dm23sqBar   + 999) < kASmallNum);
+
   //Set to defaults
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsq2Theta13;
     if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsq2Theta23;
     if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+    if(input_mixing23Bar < -1 && input_mixing23Bar > -900) input_mixing23Bar = conv::kGlobFitSinsq2Theta23;
+
   }
   else {
     if(input_mixing13 < -1 && input_mixing13 > -900) input_mixing13 = conv::kGlobFitSinsqTheta13;
     if(input_mixing23 < -1 && input_mixing23 > -900) input_mixing23 = conv::kGlobFitSinsqTheta23;
     if(input_mixing12 < -1 && input_mixing12 > -900) input_mixing12 = conv::kGlobFitSinsqTheta12;
+    if(input_mixing23Bar < -1 && input_mixing23Bar > -900) input_mixing23Bar = conv::kGlobFitSinsqTheta23;
+
   }
   if(input_dm23sq < -1 && input_dm23sq > -900)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm23sqBar < -1 && input_dm23sqBar > -900)  input_dm23sqBar = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1 && input_dm12sq > -900)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90 && input_deltacp > -900) input_deltacp = conv::kGlobFitDeltaCP;
 
@@ -243,7 +253,11 @@ void run_fit_marginalization_readbinary_joint_2d
     fparm->SetInitValue(kPhypDm12sq,   input_dm12sq);
     fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
   }
-   
+  if(hyp == kHypOsc3FBarDissap) {
+    fparm->SetInitValue(kPhypMixing23Bar, input_mixing23Bar);
+    fparm->SetInitValue(kPhypDm23sqBar,   input_dm23sqBar);
+  }
+  
   int nexperiments = last_experiment - first_experiment + 1; 
   
   // Print settings
@@ -291,7 +305,7 @@ void run_fit_marginalization_readbinary_joint_2d
   pdf_array->SetOwner(false);
   
   // Create file to store results
-  string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);  
+  string oscstr = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,0,input_mixing23Bar,input_dm23sqBar);
   TFile f(Form("%s-%s_%d_%d.root", tag, oscstr.c_str(), first_experiment, last_experiment), "recreate");
 
   double truepar0=-999;
@@ -414,6 +428,11 @@ void run_fit_marginalization_readbinary_joint_2d
       if (randomize_dm23sq  ) { input_dm23sq   = util::RandomizeDm23sq();   }
     }
 
+    if(hyp = kHypOsc3FBarDissap){
+      if (randomize_mixing23Bar) { input_mixing23Bar = util::RandomizeMixing23(); }
+      if (randomize_dm23sqBar  ) { input_dm23sqBar   = util::RandomizeDm23sq();   }
+    }
+      
     // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
     if(hyp == kHypOsc3F) {
       fparm->SetInitValue(kPhypMixing12, input_mixing12);
@@ -423,7 +442,11 @@ void run_fit_marginalization_readbinary_joint_2d
       fparm->SetInitValue(kPhypDm12sq,   input_dm12sq);
       fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
     }
-       
+    
+    if(hyp = kHypOsc3FBarDissap){
+      fparm->SetInitValue(kPhypMixing23Bar, input_mixing23Bar);
+      fparm->SetInitValue(kPhypDm23sqBar,   input_dm23sqBar);
+    }
     // Reset all output spectra
     dat_array->Clear();
     pdf_array->Clear();
