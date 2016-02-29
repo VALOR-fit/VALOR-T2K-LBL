@@ -34,7 +34,7 @@ Split valor::conv namespace into several smaller files
 
 // NEW 2D TEMPLATES
 #ifndef __USE_2D_TEMPLATES__ 
-#define __USE_2D_TEMPLATES__ // Use 2D templates
+//#define __USE_2D_TEMPLATES__ // Use 2D templates
 #endif
 
 //#define __ERECO_VS_Q2_TEMPLATES__ // Ereco Vs Q2 parametrization
@@ -89,7 +89,7 @@ Split valor::conv namespace into several smaller files
 
 #ifndef BANFF_BINS
 #ifdef __NUMUONLY__
-#define BANFF_BINS 2 //numu disapp without MEC
+#define BANFF_BINS 1 //numu disapp without MEC // keep fixed SCC parameters
 #else
 #ifdef __NUEONLY__
 #define BANFF_BINS 3 //nue app
@@ -101,7 +101,7 @@ Split valor::conv namespace into several smaller files
 
 #ifndef FSI_BINS
 #ifdef __NUMUONLY__
-#define FSI_BINS 2 //numu disapp analysis, 6 bins
+#define FSI_BINS 1 //numu disapp analysis, 6 bins //Keep same as joint
 #else
 #ifdef __NUEONLY__
 #define FSI_BINS 3 //nue app analysis, 12 bins

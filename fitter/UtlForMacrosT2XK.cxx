@@ -416,6 +416,22 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
     util::MargFit_2D_sinsqth23_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }
   
+  // 2D sinsqth23bar Vs dmsq32bar fit
+  else if(runopt->Freeparname0()=="mixing23Bar" && runopt->Freeparname1()=="dmsq23Bar"){
+    util::MargFit_2D_sinsqth23_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+  }
+  
+    // 2D sinsqth23 Vs sinsqth23bar fit
+  else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="mixing23Bar"){
+      util::MargFit_2D_sinsqth23_sinsqth23bar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+  }
+    
+    // 2D dmsq32 Vs dmsq32bar fit
+  else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()=="dmsq23Bar"){
+      util::MargFit_2D_dmsq_dmsqbar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+  }
+
+  
 
   // 1D sinsqth13 fit
   else if(runopt->Freeparname0()=="mixing13" && runopt->Freeparname1()==""){
@@ -477,7 +493,8 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   }
 }
 //____________________________________________________________________________
-conv::PhysParamId_t valor::util::GetFreePar(string freeparname){
+conv::PhysParamId_t valor::util::GetFreePar(string freeparname)
+{
 
   PhysParamId_t freepar;
   string sfreeparname(freeparname);  
@@ -506,7 +523,8 @@ conv::PhysParamId_t valor::util::GetFreePar(string freeparname){
   return freepar;
 }
 //____________________________________________________________________________
-void valor::util::MargFit_1D_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_1D_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
   
   //double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
   //double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
@@ -634,7 +652,8 @@ void valor::util::MargFit_1D_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,
   }
 }
 //____________________________________________________________________________
-void valor::util::MargFit_1D_sinsqth13(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_1D_sinsqth13(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
 
   // Fit 1
 
@@ -666,7 +685,8 @@ void valor::util::MargFit_1D_sinsqth13(RunOpt *runopt,FitMarginalization *fitmar
 
 }
 //____________________________________________________________________________
-void valor::util::MargFit_1D_sinsqth23(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_1D_sinsqth23(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
 
   // Fit 1
 
@@ -699,12 +719,13 @@ void valor::util::MargFit_1D_sinsqth23(RunOpt *runopt,FitMarginalization *fitmar
 }
 
 //____________________________________________________________________________
-void valor::util::MargFit_1D_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_1D_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
 
   // Fit 1
 
   cout << endl;
-  cout << "################# Fit 1 (dmsq32 = conv::kUsed_SinsqTheta23) #################" << endl;
+  cout << "################# Fit 1 (dmsq32 = conv::kUsed_Dm23sq) #################" << endl;
     
   fitmarg->SetMinimIntervalRead(2.E-3,3.E-3,0.,0.,true);
   fitmarg->SetStartBin(conv::kUsed_Dm23sq,0.); 
@@ -731,7 +752,8 @@ void valor::util::MargFit_1D_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,S
 
 }
 //____________________________________________________________________________
-void valor::util::MargFit_1D_betaBar(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_1D_betaBar(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
 
   // Fit. Just set the fitmarginalization
 
@@ -763,7 +785,8 @@ void valor::util::MargFit_1D_betaBar(RunOpt *runopt,FitMarginalization *fitmarg,
 
 }
 //____________________________________________________________________________
-void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
   
   double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
   double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
@@ -1149,7 +1172,8 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
   // }
 }
 //____________________________________________________________________________
-void valor::util::MargFit_2D_sinsqth23_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations){
+void valor::util::MargFit_2D_sinsqth23_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
     
   // Fit 1
 
@@ -1259,6 +1283,100 @@ void valor::util::MargFit_2D_sinsqth23_dmsq32(RunOpt *runopt,FitMarginalization 
   //   niterations = niterations_2;
   // }
 
+}
+//____________________________________________________________________________
+void valor::util::MargFit_2D_sinsqth23_sinsqth23bar(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
+    
+    // Fit 1
+    
+    cout << endl;
+    cout << "/////////////// Fit 1 (start dmsq = 0.0025, first octant) ////////////////" << endl;
+    
+    fitmarg->SetMinimIntervalRead(runopt->Freeparmin0(),runopt->Freeparmax0(),runopt->Freeparmin1(),runopt->Freeparmax1(),true);
+    fitmarg->SetStartBin(0.4,0.4);
+    fitmarg->SetNumStartBin(5,5);
+    fitmarg->SetGridStartRange(runopt->Freeparmin0(),runopt->Freeparmax0(),runopt->Freeparmin1(),runopt->Freeparmax1()); // sin2th23<0.4 sure in the 1st octant
+    fitmarg->SetExtractStartPt("Single");
+    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
+    
+    double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
+    double bestfit0_1 = fitmarg->GetParamBestFit(0);
+    double bestfit1_1 = -999.;
+    if(fitmarg->IsFit2D()) bestfit1_1 = fitmarg->GetParamBestFit(1);
+    int nfits_1 = fitmarg->GetNumFit();
+    int fitstatus_1 = fitmarg->GetFitStatus();
+    int niterations_1 = fitmarg->GetNumIterations();
+    if(chisqmin_1<chisqmin){
+        chisqmin = chisqmin_1;
+        bestfit0 = bestfit0_1;
+        bestfit1 = bestfit1_1;
+        nfits = nfits_1;
+        fitstatus = fitstatus_1;
+        niterations = niterations_1;
+    }
+    
+    // Fit 2
+    
+    cout << endl;
+    cout << "/////////////// Fit 2 (start ss23 = 0.6, ss23bar = 0.6, second octant) ////////////////" << endl;
+    
+    fitmarg->SetMinimIntervalRead(runopt->Freeparmin0(),runopt->Freeparmax0(),runopt->Freeparmin1(),runopt->Freeparmax1(),true);
+    fitmarg->SetStartBin(0.6,0.6);
+    fitmarg->SetNumStartBin(5,5);
+    fitmarg->SetGridStartRange(runopt->Freeparmin0(),runopt->Freeparmax0(),runopt->Freeparmin1(),runopt->Freeparmax1()); // start value sin2th23 = 0.6 sure in the 2nd octant
+    fitmarg->SetExtractStartPt("GridFix");
+    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
+    
+    double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
+    double bestfit0_2 = fitmarg->GetParamBestFit(0);
+    double bestfit1_2 = -999.;
+    if(fitmarg->IsFit2D()) bestfit1_2 = fitmarg->GetParamBestFit(1);
+    int nfits_2 = fitmarg->GetNumFit();
+    int fitstatus_2 = fitmarg->GetFitStatus();
+    int niterations_2 = fitmarg->GetNumIterations();
+    if(chisqmin_2<chisqmin){
+        chisqmin = chisqmin_2;
+        bestfit0 = bestfit0_2;
+        bestfit1 = bestfit1_2;
+        nfits = nfits_2;
+        fitstatus = fitstatus_2;
+        niterations = niterations_2;
+    }
+    
+}
+//____________________________________________________________________________
+void valor::util::MargFit_2D_dmsq_dmsqbar(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
+    
+    // Fit 1
+    
+    cout << endl;
+    cout << "/////////////// Fit 1 (start dmsq = 0.0025, first octant) ////////////////" << endl;
+    
+    fitmarg->SetMinimIntervalRead(runopt->Freeparmin0(),runopt->Freeparmax0(),runopt->Freeparmin1(),runopt->Freeparmax1(),true);
+    fitmarg->SetStartBin(0.0025,0.0025);
+    fitmarg->SetNumStartBin(2,2);
+    fitmarg->SetGridStartRange(runopt->Freeparmin0(),runopt->Freeparmax0(),runopt->Freeparmin1(),runopt->Freeparmax1());
+    fitmarg->SetExtractStartPt("Single");
+    fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
+    
+    double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
+    double bestfit0_1 = fitmarg->GetParamBestFit(0);
+    double bestfit1_1 = -999.;
+    if(fitmarg->IsFit2D()) bestfit1_1 = fitmarg->GetParamBestFit(1);
+    int nfits_1 = fitmarg->GetNumFit();
+    int fitstatus_1 = fitmarg->GetFitStatus();
+    int niterations_1 = fitmarg->GetNumIterations();
+    if(chisqmin_1<chisqmin){
+        chisqmin = chisqmin_1;
+        bestfit0 = bestfit0_1;
+        bestfit1 = bestfit1_1;
+        nfits = nfits_1;
+        fitstatus = fitstatus_1;
+        niterations = niterations_1;
+    }
+    
 }
 //____________________________________________________________________________
 void valor::util::SetMassHierarchy(SuperkExpectation * skexp)

@@ -133,7 +133,7 @@ class FitMarginalization
   //
 
 
-  // NEW 2D TEMPLATES (VARRAY)
+  // NEW 2D TEMPLATES (VARRAY)nuosc3fbar_numudissap_allsyst
   double GetNormPOT(conv::SuperkSample_t s) const;
   double GetPOT(conv::SuperkSample_t s) const;
   //

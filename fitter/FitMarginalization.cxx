@@ -1002,14 +1002,15 @@ void FitMarginalization::SetFitParamList(const char * fit_param_list){
     cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "The free parameter " << fnamefreeparam[0] 
 	 << " is fixed in FitParamList " << fit_param_list
-	 << endl << endl;
+	 << endl << *fparm << endl;
+    
     exit(1);
   }
   else if( fparm->IsNuisance(fPhysParamFree[0]) ){
     cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "The free parameter " << fnamefreeparam[0] 
 	 << " is nuisance in FitParamList " << fit_param_list
-	 << endl << endl;
+    << endl << *fparm << endl;
     exit(1);
   }
 
@@ -1023,14 +1024,14 @@ void FitMarginalization::SetFitParamList(const char * fit_param_list){
     cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "The free parameter " << fnamefreeparam[1] 
 	 << " is fixed in FitParamList " << fit_param_list
-	 << endl << endl;
+    << endl << *fparm << endl;
     exit(1);
   }
   else if( fparm->IsNuisance(fPhysParamFree[1]) ){
     cerr << "FitMarginalization::SetFitParamList" << endl;
     cerr << "The free parameter " << fnamefreeparam[1] 
 	 << " is nuisance in FitParamList " << fit_param_list
-	 << endl << endl;
+    << endl << *fparm << endl;
     exit(1);
   }
 
@@ -1388,9 +1389,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       int np = fparm->GetNumberParameters();
       //int npfree = 0;
       for(int ip = 0; ip < np; ip++) {
-	conv::PhysParamId_t p = fparm->WhichParam(ip);
-	//cout << p << " " << util::AsString(p) << endl;
-
+        conv::PhysParamId_t p = fparm->WhichParam(ip);
+        //cout << p << " " << util::AsString(p) << endl;
 
 	// NEW FHC+RHC JOINT
 	// if(p!=fPhysParamFree[0]) 
@@ -1409,65 +1409,65 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	// }
 	//
 
-	if(util::IsSystematic(p)) continue; // not oscillation parameters 
-	if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
-	if(p==conv::kPhypBetaBar) continue; // NEVER marginalize betaBar 
+        if(util::IsSystematic(p)) continue; // not oscillation parameters
+        if(fparm->IsFixed(p))     continue; // do not marginalize if fixed
+        if(p==conv::kPhypBetaBar) continue; // NEVER marginalize betaBar
 
 
 	//cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm->CurrValue(p) << endl;
 
 	
-	if(fparm->IsPrior2D(p)){ // Fill it later as correlated (only mix23 and dm23 and/or mix13 and dcp)
+        if(fparm->IsPrior2D(p)){ // Fill it later as correlated (only mix23 and dm23 and/or mix13 and dcp)
 
           #ifdef __MARGINALIZE_23PARAMS_CORR__	  
-	  if(p==conv::kPhypDm23sq || p==conv::kPhypMixing23) continue;
+          if(p==conv::kPhypDm23sq || p==conv::kPhypMixing23) continue;
           #endif
           #ifdef __MARGINALIZE_TH13_DELTACP_CORR__	  
-	  if(p==conv::kPhypCPV || p==conv::kPhypMixing13) continue;
+          if(p==conv::kPhypCPV || p==conv::kPhypMixing13) continue;
           #endif
-	  cerr << endl;
-	  cerr << "FitMarginalization::MakeToysMarginalization" << endl;
-	  cerr << "There are other parameters which are not 2D correlated" << endl;
-	  cerr << "Now the only 2D correlated parameters are " << endl;  
+          cerr << endl;
+          cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+          cerr << "There are other parameters which are not 2D correlated" << endl;
+          cerr << "Now the only 2D correlated parameters are " << endl;
           #ifdef __MARGINALIZE_23PARAMS_CORR__	  
-	  cerr << util::AsString(conv::kPhypDm23sq)
-	       << " and "
-	       << util::AsString(conv::kPhypMixing23)
-	       << endl;
+          cerr << util::AsString(conv::kPhypDm23sq)
+            << " and "
+            << util::AsString(conv::kPhypMixing23)
+          << endl;
           #endif
           #ifdef __MARGINALIZE_TH13_DELTACP_CORR__	  
-	  cerr << util::AsString(conv::kPhypCPV)
-	       << " and "
-	       << util::AsString(conv::kPhypMixing13)
-	       << endl;
+          cerr << util::AsString(conv::kPhypCPV)
+            << " and "
+            << util::AsString(conv::kPhypMixing13)
+          << endl;
           #endif
-	  exit(1);
-	}
+          exit(1);
+        }
 	
 	
-	// NEW FHC+RHC JOINT
-	//double usedvalue = fparm->InitValue(p);
-	double usedvalue = fparm->CurrValue(p);
-	//
+        // NEW FHC+RHC JOINT
+        //double usedvalue = fparm->InitValue(p);
+        double usedvalue = fparm->CurrValue(p);
+        //
 
-	fparm->GetToyHisto(p)->Fill(usedvalue); 	
+        fparm->GetToyHisto(p)->Fill(usedvalue);
 
-	if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
+        if(Opt::Instance()->gMassHierarchyAssumed == kNmhNormal){
 	  
-	  // NEW FHC+RHC JOINT
-	  //usedvalue = fparm_nh->InitValue(p);
-	  usedvalue = fparm_nh->CurrValue(p);
-	  //
-	  fparm_nh->GetToyHisto(p)->Fill(usedvalue); 
-	}
-	else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
+          // NEW FHC+RHC JOINT
+          //usedvalue = fparm_nh->InitValue(p);
+          usedvalue = fparm_nh->CurrValue(p);
+          //
+          fparm_nh->GetToyHisto(p)->Fill(usedvalue);
+        }
+        else if(Opt::Instance()->gMassHierarchyAssumed == kNmhInverted){
 
-	  // NEW FHC+RHC JOINT
-	  //usedvalue = fparm_ih->InitValue(p);
-	  usedvalue = fparm_ih->CurrValue(p);
-	  //
-	  fparm_ih->GetToyHisto(p)->Fill(usedvalue); 
-	}
+          // NEW FHC+RHC JOINT
+          //usedvalue = fparm_ih->InitValue(p);
+          usedvalue = fparm_ih->CurrValue(p);
+          //
+          fparm_ih->GetToyHisto(p)->Fill(usedvalue);
+        }
 
       } // loop over p
 

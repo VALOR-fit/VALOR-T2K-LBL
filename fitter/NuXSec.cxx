@@ -1719,7 +1719,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
             p == kNuisBANFFNormCCcoh    ||
             p == kNuisBANFFNormNCcoh    ||
             p == kNuisBANFFNormNCoth    ||
-	    p == kNuisBANFFNormNC1Gamma ||
+            p == kNuisBANFFNormNC1Gamma ||
             p == kNuisBANFFNormNuEToNuMu ||
             p == kNuisBANFFNormNuEBarToNuMuBar
 
@@ -1734,7 +1734,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
             p == kRHCNuisBANFFNormCCcoh    ||
             p == kRHCNuisBANFFNormNCcoh    ||
             p == kRHCNuisBANFFNormNCoth    ||
-	    p == kRHCNuisBANFFNormNC1Gamma ||
+            p == kRHCNuisBANFFNormNC1Gamma ||
             p == kRHCNuisBANFFNormNuEToNuMu ||
             p == kRHCNuisBANFFNormNuEBarToNuMuBar
 
