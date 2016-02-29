@@ -227,7 +227,6 @@ void build_marg_toys_joint
   fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
-
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);
   fitmarg->PrintPhysHypothesis();      
@@ -357,6 +356,25 @@ void build_marg_toys_joint
     fparm_ih->SetInitValue(kPhypDm23sqBar,   input_dm23sq_ih);
     fparm_ih->SetInitValue(kPhypBetaBar,     input_beta_bar);
   }
+  else if(hyp == kHypOsc3FBarDissap) {
+    fparm_nh->SetInitValue(kPhypMixing12, input_mixing12_nh);
+    fparm_nh->SetInitValue(kPhypMixing13, input_mixing13_nh);
+    fparm_nh->SetInitValue(kPhypMixing23, input_mixing23_nh);
+    fparm_nh->SetInitValue(kPhypCPV    ,  input_deltacp_nh);
+    fparm_nh->SetInitValue(kPhypDm12sq,   input_dm12sq_nh);
+    fparm_nh->SetInitValue(kPhypDm23sq,   input_dm23sq_nh);
+    fparm_nh->SetInitValue(kPhypMixing23Bar, input_mixing23_nh);
+    fparm_nh->SetInitValue(kPhypDm23sqBar,   input_dm23sq_nh);
+    
+    fparm_ih->SetInitValue(kPhypMixing12, input_mixing12_ih);
+    fparm_ih->SetInitValue(kPhypMixing13, input_mixing13_ih);
+    fparm_ih->SetInitValue(kPhypMixing23, input_mixing23_ih);
+    fparm_ih->SetInitValue(kPhypCPV    ,  input_deltacp_ih);
+    fparm_ih->SetInitValue(kPhypDm12sq,   input_dm12sq_ih);
+    fparm_ih->SetInitValue(kPhypDm23sq,   input_dm23sq_ih);
+    fparm_ih->SetInitValue(kPhypMixing23Bar, input_mixing23_ih);
+    fparm_ih->SetInitValue(kPhypDm23sqBar,   input_dm23sq_ih);
+  }
   else if(hyp == kHypNuMuDisapp2F) {
     fparm->SetInitValue(kPhypMixing23, input_mixing23);
     fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
@@ -389,6 +407,10 @@ void build_marg_toys_joint
     cout << "       > " << util::AsString(kPhypDm23sqBar)    << " = " << fitmarg->GetFitParamList_NH()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
     cout << "       > " << util::AsString(kPhypBetaBar)      << " = " << fitmarg->GetFitParamList_NH()->InitValue(kPhypBetaBar    ) << endl;
   }  
+  else if(hyp == kHypOsc3FBarDissap) {
+    cout << "       > " << util::AsString(kPhypMixing23Bar)  << " = " << fitmarg->GetFitParamList_NH()->InitValue(kPhypMixing23Bar) << endl;
+    cout << "       > " << util::AsString(kPhypDm23sqBar)    << " = " << fitmarg->GetFitParamList_NH()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
+  }
 
   cout << "   - True oscillation parameters (Inverted Hierarchy): " << endl;
   cout << "       > " << util::AsString(kPhypMixing12) << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypMixing12) << endl;
@@ -416,8 +438,12 @@ void build_marg_toys_joint
     cout << "       > " << util::AsString(kPhypDm12sqBar)    << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypDm12sqBar  ) << " eV^2/c^4" << endl;
     cout << "       > " << util::AsString(kPhypDm23sqBar)    << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
     cout << "       > " << util::AsString(kPhypBetaBar)      << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypBetaBar    ) << endl;
-  }  
-   
+  }
+  else if(hyp == kHypOsc3FBarDissap) {
+    cout << "       > " << util::AsString(kPhypMixing23Bar)  << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypMixing23Bar) << endl;
+    cout << "       > " << util::AsString(kPhypDm23sqBar)    << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
+  }
+  
   cout << *fitmarg->GetFitParamList_NH() << endl;
   //cout << *fitmarg->GetFitParamList_IH() << endl;
 
@@ -555,7 +581,7 @@ void build_marg_toys_joint
       			   conv::kPrior_Sinsq2th13_Used_Mean,
       			   conv::kPrior_Sinsq2th13_Used_RMS
       			   );   
-      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
+      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
       	fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",
       			     conv::kPrior_Sinsq2th13_Used_Mean,
       			     conv::kPrior_Sinsq2th13_Used_RMS
@@ -595,7 +621,9 @@ void build_marg_toys_joint
     fitmarg->SetPrior_IH(kPhypMixing23,"user",hPrior_23_ih);
     fitmarg->SetPrior_NH(kPhypDm23sq,"user",hPrior_23_nh);
     fitmarg->SetPrior_IH(kPhypDm23sq,"user",hPrior_23_ih);
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
+    cout << "setting 23bar priors " << endl;
+    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
+      cout << "in here" << endl;
       fitmarg->SetPrior_NH(kPhypMixing23Bar,"user",hPrior_23_nh);
       fitmarg->SetPrior_IH(kPhypMixing23Bar,"user",hPrior_23_ih);
       fitmarg->SetPrior_NH(kPhypDm23sqBar,"user",hPrior_23_nh);
@@ -612,7 +640,9 @@ void build_marg_toys_joint
 			 conv::kPrior_Sinsq2th23_Flat_Low,
 			 conv::kPrior_Sinsq2th23_Flat_Up
 			 );
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
+    cout << "setting 23bar priors " << endl;
+    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
+      cout << "in here" << endl;
       fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",
 			   conv::kPrior_Sinsq2th23_Flat_Low,
 			   conv::kPrior_Sinsq2th23_Flat_Up
@@ -632,7 +662,9 @@ void build_marg_toys_joint
 			 conv::kPrior_Dm23sq_Flat_Low,
 			 conv::kPrior_Dm23sq_Flat_Up
 			 );
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
+    cout << "setting 23bar priors " << endl;
+    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
+      cout << "in here" << endl;
       fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",
 			   conv::kPrior_Dm23sq_Flat_Low,
 			   conv::kPrior_Dm23sq_Flat_Up
@@ -684,13 +716,19 @@ void build_marg_toys_joint
 
   TH1D *hToyHisto_Mix23_nh;
   TH1D *hToyHisto_Dm23_nh;
-
+  
+  TH1D *hToyHisto_Mix23Bar_nh;
+  TH1D *hToyHisto_Dm23Bar_nh;
+  
   TH1D *hToyHisto_Mix13_ih;
   TH1D *hToyHisto_dcp_ih;
 
   TH1D *hToyHisto_Mix23_ih;
   TH1D *hToyHisto_Dm23_ih;
 
+  TH1D *hToyHisto_Mix23Bar_ih;
+  TH1D *hToyHisto_Dm23Bar_ih;
+  
   TH1D *hToyHisto_MH;
 
   if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12)){    
@@ -722,6 +760,18 @@ void build_marg_toys_joint
     TCanvas *cToyHisto_Dm23_nh = new TCanvas("cToyHisto_Dm23_nh","cToyHisto_Dm23_nh");
     hToyHisto_Dm23_nh->Draw("");
   }
+  
+  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23Bar)){
+    hToyHisto_Mix23Bar_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23Bar));
+    TCanvas *cToyHisto_Mix23Bar_nh = new TCanvas("cToyHisto_Mix23Bar_nh","cToyHisto_Mix23Bar_nh");
+    hToyHisto_Mix23Bar_nh->Draw("");
+  }
+  
+  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sqBar)){
+    hToyHisto_Dm23Bar_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sqBar));
+    TCanvas *cToyHisto_Dm23Bar_nh = new TCanvas("cToyHisto_Dm23Bar_nh","cToyHisto_Dm23Bar_nh");
+    hToyHisto_Dm23Bar_nh->Draw("");
+  }
 
   if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12)){
     hToyHisto_Mix12_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12));
@@ -751,6 +801,18 @@ void build_marg_toys_joint
     hToyHisto_Dm23_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sq));
     TCanvas *cToyHisto_Dm23_ih = new TCanvas("cToyHisto_Dm23_ih","cToyHisto_Dm23_ih");
     hToyHisto_Dm23_ih->Draw("");
+  }
+  
+  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23Bar)){
+    hToyHisto_Mix23Bar_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23Bar));
+    TCanvas *cToyHisto_Mix23Bar_ih = new TCanvas("cToyHisto_Mix23Bar_ih","cToyHisto_Mix23Bar_ih");
+    hToyHisto_Mix23Bar_ih->Draw("");
+  }
+  
+  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sqBar)){
+    hToyHisto_Dm23Bar_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sqBar));
+    TCanvas *cToyHisto_Dm23Bar_ih = new TCanvas("cToyHisto_Dm23Bar_ih","cToyHisto_Dm23Bar_ih");
+    hToyHisto_Dm23Bar_ih->Draw("");
   }
 
   if(fitmarg->GetHistoPriorMH()){
@@ -790,7 +852,14 @@ void build_marg_toys_joint
     hToyHisto_Dm23_nh->SetName("hToyHisto_Dm23_nh");
     hToyHisto_Dm23_nh->Write();
   }
-  
+  if(hToyHisto_Mix23Bar_nh){
+    hToyHisto_Mix23Bar_nh->SetName("hToyHisto_Mix23Bar_nh");
+    hToyHisto_Mix23Bar_nh->Write();
+  }
+  if(hToyHisto_Dm23Bar_nh){
+    hToyHisto_Dm23Bar_nh->SetName("hToyHisto_Dm23Bar_nh");
+    hToyHisto_Dm23Bar_nh->Write();
+  }
   if(hToyHisto_Mix13_ih){
     hToyHisto_Mix13_ih->SetName("hToyHisto_Mix13_ih");
     hToyHisto_Mix13_ih->Write();
@@ -807,6 +876,15 @@ void build_marg_toys_joint
     hToyHisto_Dm23_ih->SetName("hToyHisto_Dm23_ih");
     hToyHisto_Dm23_ih->Write();
   }
+  if(hToyHisto_Mix23Bar_ih){
+    hToyHisto_Mix23Bar_ih->SetName("hToyHisto_Mix23Bar_ih");
+    hToyHisto_Mix23Bar_ih->Write();
+  }
+  if(hToyHisto_Dm23Bar_ih){
+    hToyHisto_Dm23Bar_ih->SetName("hToyHisto_Dm23Bar_ih");
+    hToyHisto_Dm23Bar_ih->Write();
+  }
+
   
   if(hPriorHisto_MH){
     hPriorHisto_MH->SetName("hPriorHisto_MH");
