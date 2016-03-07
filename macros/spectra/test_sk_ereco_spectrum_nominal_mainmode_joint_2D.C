@@ -14,11 +14,11 @@ using namespace valor::conv;
 
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
- const char * tag                  = "template_ErecoVsTheta_2D_notosc",
+ const char * tag                  = "prova",
  const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
- const char * hypothesis           = "3f_osc_normbar",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
+ const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
- // // Mach3, T2K Run1-4 + reactors best fit (A)
+ // // No Oscillations
  // double       input_mixing12       = 0.,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  // double       input_mixing13       = 0.,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  // double       input_mixing23       = 0., //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -27,54 +27,46 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  // double       input_betabar        = -99,
 
- // Mach3, T2K Run1-4 + reactors best fit (A)
+ // Mach3, T2K Run1-4 + reactors best fit (1)
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_deltacp        = -1.601, //-99,    /* deltacp, */
  double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  double       input_betabar        = 1., //0., //-99,
- 
- // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
+
+ // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 + first octant (2)
  // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.45, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
  // double       input_deltacp        = 0., //-99,    /* deltacp, */
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar        = -99,
-
- // // Mach3, T2K only Run1-4 best fit (C)
- // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.0422,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = 1.91, //-99,    /* deltacp, */
- // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar        = -99,
-
- // // Mach3, T2K Run1-4 + reactors best fit - th23 non maximal (D)
- // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0.4, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = -1.601, //-99,    /* deltacp, */
- // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar        = -99,
-
+ // double       input_betabar        = 1., //0., //-99,
+ 
  bool         disable_banff_tuning = false,                          /* */
  
+ //
+ // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
+ //
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
+ const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
+ 
+ //
+ // OLD CONFIGURATION FILES
+ //
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_xsecterm_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_q2_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
-
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Asimov.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_Asimov.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
@@ -229,7 +221,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   
   
   string oscparams = util::AsString(ph.Hypothesis(),
-				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar);
+				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar,-999,-999);
 
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {
