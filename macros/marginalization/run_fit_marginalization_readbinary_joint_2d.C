@@ -435,7 +435,7 @@ void run_fit_marginalization_readbinary_joint_2d
     }
       
     // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
-    if(hyp == kHypOsc3F) {
+    if(hyp == kHypOsc3F || hyp = kHypOsc3FBarDissap) {
       fparm->SetInitValue(kPhypMixing12, input_mixing12);
       fparm->SetInitValue(kPhypMixing13, input_mixing13);
       fparm->SetInitValue(kPhypMixing23, input_mixing23);
