@@ -21,14 +21,14 @@ void Check_toys_marginalization_readbinary
  //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA.xml",
+ const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_ExpSummer2016_75_25.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
 
- const char * fit_param_list        = "nuosc3f+nuisance", // dcp
+ const char * fit_param_list        = "nuosc3fbar_numudissap_allsyst", // dcp
 
- const char * sk_sample = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample = "1Rmu",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
- const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
+ const char * hypothesis           = "3f_oscbar_dissap",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
 
  double       input_mixing12       = 0.304,                         
  double       input_mixing13       = 0.0243,                         
@@ -37,6 +37,8 @@ void Check_toys_marginalization_readbinary
  double       input_dm12sq         = 7.53E-5,                         
  double       input_dm23sq         = 2.509E-3,                       
  double       input_betabar        = 1.,
+ double       input_mixing23Bar    = 0.528,
+ double       input_dm23sqBar      = 2.509E-3,
 
  const char * dmsqscheme          = "auto",   /* abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy           = "normal"   ,
@@ -52,22 +54,33 @@ void Check_toys_marginalization_readbinary
  //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
  //const char * infilename = "submit_prova_TemplVArray_2d",
- const char * infilename = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/marg_toys/Run16",
+ const char * infilename = "/Users/rajs/work/studies/numudissap_sensi/toys/Run14",
 
- const int    nfiles               = 101, //101, //201, 21, 1        // # of files to read
+ const int    nfiles               = 1, //101, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 10000, //100, //10000, //1,  // # toys marginalization 
+ const int    NtoysMarg            = 10, //100, //10000, //1,  // # toys marginalization
  
- const char * freeparname0        = "deltacp",  // free parameter
- const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
- const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
- 
- const char * freeparname1        = "",  // free parameter
- const double freeparmin1         = 0., // minimum value of free parameter
- const double freeparmax1         = 0., // maxinum value of free parameter
- const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
+// const char * freeparname0        = "deltacp",  // free parameter
+// const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+// const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+// const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+// 
+// const char * freeparname1        = "",  // free parameter
+// const double freeparmin1         = 0., // minimum value of free parameter
+// const double freeparmax1         = 0., // maxinum value of free parameter
+// const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
+  const char * freeparname0        = "mixing23Bar",  // free parameter
+  const double freeparmin0         = 0.25,         // minimum value of free parameter
+  const double freeparmax0         = 0.75, // 10., 1         // maxinum value of free parameter
+  const int    NptScan0            = 81, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ 
+  const char * freeparname1        = "dmsq23Bar",  // free parameter
+  const double freeparmin1         = 1.8E-3, // minimum value of free parameter
+  const double freeparmax1         = 3.2E-3, // maxinum value of free parameter
+  const int    NptScan1            = 21, //201, //21,      // # pts of free parameter to scan
+
+ 
  const bool  doMargMH             = false,     // marginalize Mass Hierarchy
 
  //const char *FileToyOscParam       = "../../inputs/marginalization/toys//nuebarapp_1D_NuOsc_T2Kreact_betabar_Toy_23_mix13dcp_Joint_MH_10kToys/BetaBar_4p0E20POT_Toy_23_th13dcp_Corr_Mach3.root"
@@ -344,13 +357,18 @@ void Check_toys_marginalization_readbinary
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsq2Theta13;
     if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsq2Theta23;
     if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsq2Theta12;
+    if(input_mixing23Bar < -1) input_mixing23Bar = conv::kGlobFitSinsq2Theta23;
+
   }
   else {
     if(input_mixing13 < -1) input_mixing13 = conv::kGlobFitSinsqTheta13;
     if(input_mixing23 < -1) input_mixing23 = conv::kGlobFitSinsqTheta23;
     if(input_mixing12 < -1) input_mixing12 = conv::kGlobFitSinsqTheta12;
+    if(input_mixing23 < -1) input_mixing23Bar = conv::kGlobFitSinsqTheta23;
+
   }
   if(input_dm23sq < -1)  input_dm23sq = conv::kGlobFitDm23sq;
+  if(input_dm23sq < -1)  input_dm23sqBar = conv::kGlobFitDm23sq;
   if(input_dm12sq < -1)  input_dm12sq = conv::kGlobFitDm12sq;
   if(input_deltacp < -90) input_deltacp = conv::kGlobFitDeltaCP;
   if(input_betabar < -1) input_betabar = conv::kGlobFitBetaBar;
@@ -405,7 +423,17 @@ void Check_toys_marginalization_readbinary
     ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
     ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
-  }
+  } else
+    if(ph.Hypothesis() == conv::kHypOsc3FBarDissap){
+      ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+      ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+      ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+      ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+      ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+      ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+      ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23Bar);
+      ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sqBar);
+    }
  
   skexp->Generate(ph);
 
@@ -422,7 +450,7 @@ void Check_toys_marginalization_readbinary
   for(int itoy=0;itoy<NtoysMarg;itoy++){
   
 #ifndef __USE_2D_TEMPLATES__
-    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto2D(s,itoy,ipar0,ipar1);
+    h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto(s,itoy,ipar0,ipar1);
 #else
     h_marg_toy = (TH1F*)fitmarg->GetToyMargHisto2D(s,itoy,ipar0,ipar1)->ProjectionY();
 #endif

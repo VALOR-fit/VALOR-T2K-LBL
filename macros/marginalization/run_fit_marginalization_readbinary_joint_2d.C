@@ -152,18 +152,19 @@ void run_fit_marginalization_readbinary_joint_2d
  const TString TypeError          = "",  // "HESSE-MINOS" (contained by the string)  
  const bool DrawFullChisq         = true,
 
- const bool StoreLikeWeights      = false,
+ const bool StoreLikeWeights      = false
 
- const string teststat            = "rate+shape",   // "rate-only" or "rate+shape",
+ // const string teststat            = "rate+shape",   // "rate-only" or "rate+shape",
 
- const bool constrain_reactor     = false
+ // const bool constrain_reactor     = false
 )
 {
 
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
-
+  const string teststat = "rate+shape";
+  const bool constrain_reactor = false;
   TString opt(fit_param_list); 
 
   // Analysis configuration
@@ -245,7 +246,7 @@ void run_fit_marginalization_readbinary_joint_2d
   cout << "- The following physics hypothesis is used for fakedata sets: " << util::AsString(hyp) << endl;
 
   // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
-  if(hyp == kHypOsc3F) {
+  if(hyp == kHypOsc3F || hyp == kHypOsc3FBarDissap) {
     fparm->SetInitValue(kPhypMixing12, input_mixing12);
     fparm->SetInitValue(kPhypMixing13, input_mixing13);
     fparm->SetInitValue(kPhypMixing23, input_mixing23);
