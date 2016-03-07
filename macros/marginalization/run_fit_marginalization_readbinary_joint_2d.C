@@ -444,7 +444,7 @@ void run_fit_marginalization_readbinary_joint_2d
       fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
     }
     
-    if(hyp = kHypOsc3FBarDissap){
+    if(hyp == kHypOsc3FBarDissap){
       fparm->SetInitValue(kPhypMixing23Bar, input_mixing23Bar);
       fparm->SetInitValue(kPhypDm23sqBar,   input_dm23sqBar);
     }
