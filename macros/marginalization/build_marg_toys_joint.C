@@ -731,85 +731,100 @@ void build_marg_toys_joint
   
   TH1D *hToyHisto_MH;
 
-  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12)){    
+  PhysHypothesis ph(hyp);
+
+  if(ph.Contains(conv::kPhypMixing12) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12)){    
     hToyHisto_Mix12_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12));
     TCanvas *cToyHisto_Mix12_nh = new TCanvas("cToyHisto_Mix12_nh","cToyHisto_Mix12_nh");
     hToyHisto_Mix12_nh->Draw("");
   }
 
-  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing13)){    
+
+  if(ph.Contains(conv::kPhypDm12sq) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm12sq)){
+    hToyHisto_Dm12_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm12sq));
+    TCanvas *cToyHisto_Dm12_nh = new TCanvas("cToyHisto_Dm12_nh","cToyHisto_Dm12_nh");
+    hToyHisto_Dm12_nh->Draw("");
+  }
+  
+  if(ph.Contains(conv::kPhypMixing13) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing13)){    
     hToyHisto_Mix13_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing13));
     TCanvas *cToyHisto_Mix13_nh = new TCanvas("cToyHisto_Mix13_nh","cToyHisto_Mix13_nh");
     hToyHisto_Mix13_nh->Draw("");
   }
   
-  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypCPV)){
+  if(ph.Contains(conv::kPhypCPV) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypCPV)){
     hToyHisto_dcp_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypCPV));
     TCanvas *cToyHisto_dcp_nh = new TCanvas("cToyHisto_dcp_nh","cToyHisto_dcp_nh");
      hToyHisto_dcp_nh->Draw("");
   }
 
-  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23)){
+  if(ph.Contains(conv::kPhypMixing23) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23)){
     hToyHisto_Mix23_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23));
     TCanvas *cToyHisto_Mix23_nh = new TCanvas("cToyHisto_Mix23_nh","cToyHisto_Mix23_nh");
     hToyHisto_Mix23_nh->Draw("");
   }
   
-  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sq)){
+  if(ph.Contains(conv::kPhypDm23sq) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sq)){
     hToyHisto_Dm23_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sq));
     TCanvas *cToyHisto_Dm23_nh = new TCanvas("cToyHisto_Dm23_nh","cToyHisto_Dm23_nh");
     hToyHisto_Dm23_nh->Draw("");
   }
   
-  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23Bar)){
+  if(ph.Contains(conv::kPhypMixing23Bar) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23Bar)){
     hToyHisto_Mix23Bar_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing23Bar));
     TCanvas *cToyHisto_Mix23Bar_nh = new TCanvas("cToyHisto_Mix23Bar_nh","cToyHisto_Mix23Bar_nh");
     hToyHisto_Mix23Bar_nh->Draw("");
   }
   
-  if(fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sqBar)){
+  if(ph.Contains(conv::kPhypDm23sqBar) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sqBar)){
     hToyHisto_Dm23Bar_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypDm23sqBar));
     TCanvas *cToyHisto_Dm23Bar_nh = new TCanvas("cToyHisto_Dm23Bar_nh","cToyHisto_Dm23Bar_nh");
     hToyHisto_Dm23Bar_nh->Draw("");
   }
 
-  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12)){
+  if(ph.Contains(conv::kPhypMixing12) && fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12)){
     hToyHisto_Mix12_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing12));
     TCanvas *cToyHisto_Mix12_ih = new TCanvas("cToyHisto_Mix12_ih","cToyHisto_Mix12_ih");
     hToyHisto_Mix12_ih->Draw("");
   }
 
-  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing13)){
+  if(ph.Contains(conv::kPhypDm12sq) && fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm12sq)){
+    hToyHisto_Dm12_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm12sq));
+    TCanvas *cToyHisto_Dm12_ih = new TCanvas("cToyHisto_Dm12_ih","cToyHisto_Dm12_ih");
+    hToyHisto_Dm12_ih->Draw("");
+  }
+
+  if(ph.Contains(conv::kPhypMixing13) && fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing13)){
     hToyHisto_Mix13_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing13));
     TCanvas *cToyHisto_Mix13_ih = new TCanvas("cToyHisto_Mix13_ih","cToyHisto_Mix13_ih");
     hToyHisto_Mix13_ih->Draw("");
   }
 
-  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypCPV)){
+  if(ph.Contains(conv::kPhypCPV) && fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypCPV)){
     hToyHisto_dcp_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypCPV));
     TCanvas *cToyHisto_dcp_ih = new TCanvas("cToyHisto_dcp_ih","cToyHisto_dcp_ih");
     hToyHisto_dcp_ih->Draw("");
   }
 
-  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23)){
+  if(ph.Contains(conv::kPhypMixing23) && fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23)){
     hToyHisto_Mix23_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23));
     TCanvas *cToyHisto_Mix23_ih = new TCanvas("cToyHisto_Mix23_ih","cToyHisto_Mix23_ih");
     hToyHisto_Mix23_ih->Draw("");
   }
 
-  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sq)){
+  if(ph.Contains(conv::kPhypDm23sq) && fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sq)){
     hToyHisto_Dm23_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sq));
     TCanvas *cToyHisto_Dm23_ih = new TCanvas("cToyHisto_Dm23_ih","cToyHisto_Dm23_ih");
     hToyHisto_Dm23_ih->Draw("");
   }
   
-  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23Bar)){
+  if(ph.Contains(conv::kPhypMixing23Bar) && fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23Bar)){
     hToyHisto_Mix23Bar_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypMixing23Bar));
     TCanvas *cToyHisto_Mix23Bar_ih = new TCanvas("cToyHisto_Mix23Bar_ih","cToyHisto_Mix23Bar_ih");
     hToyHisto_Mix23Bar_ih->Draw("");
   }
   
-  if(fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sqBar)){
+  if(ph.Contains(conv::kPhypDm23sqBar) && fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sqBar)){
     hToyHisto_Dm23Bar_ih = new TH1D(*fitmarg->GetFitParamList_IH()->GetToyHisto(conv::kPhypDm23sqBar));
     TCanvas *cToyHisto_Dm23Bar_ih = new TCanvas("cToyHisto_Dm23Bar_ih","cToyHisto_Dm23Bar_ih");
     hToyHisto_Dm23Bar_ih->Draw("");
@@ -836,6 +851,14 @@ void build_marg_toys_joint
   sprintf(name,"%s_histotoys_file%d.root",tag,fileid);
   TFile *fout = new TFile(name,"RECREATE");
 
+  if(hToyHisto_Mix12_nh){
+    hToyHisto_Mix12_nh->SetName("hToyHisto_Mix12_nh");
+    hToyHisto_Mix12_nh->Write();
+  }
+  if(hToyHisto_Dm12_nh){
+    hToyHisto_Dm12_nh->SetName("hToyHisto_Dm12_nh");
+    hToyHisto_Dm12_nh->Write();
+  }
   if(hToyHisto_Mix13_nh){
     hToyHisto_Mix13_nh->SetName("hToyHisto_Mix13_nh");
     hToyHisto_Mix13_nh->Write();
@@ -859,6 +882,15 @@ void build_marg_toys_joint
   if(hToyHisto_Dm23Bar_nh){
     hToyHisto_Dm23Bar_nh->SetName("hToyHisto_Dm23Bar_nh");
     hToyHisto_Dm23Bar_nh->Write();
+  }
+
+  if(hToyHisto_Mix12_ih){
+    hToyHisto_Mix12_ih->SetName("hToyHisto_Mix12_ih");
+    hToyHisto_Mix12_ih->Write();
+  }
+  if(hToyHisto_Dm12_ih){
+    hToyHisto_Dm12_ih->SetName("hToyHisto_Dm12_ih");
+    hToyHisto_Dm12_ih->Write();
   }
   if(hToyHisto_Mix13_ih){
     hToyHisto_Mix13_ih->SetName("hToyHisto_Mix13_ih");
