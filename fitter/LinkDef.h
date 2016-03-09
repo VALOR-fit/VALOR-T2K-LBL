@@ -27,7 +27,6 @@
 #pragma link C++ class valor::NuXSec;
 #pragma link C++ class valor::NuFlux;
 #pragma link C++ class valor::FitMarginalization+;
-#pragma link C++ class valor::RootFinder;
 
 
 #endif
