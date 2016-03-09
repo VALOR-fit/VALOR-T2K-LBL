@@ -494,7 +494,7 @@ bool SuperkExpectation::Write(
   return true;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::ResetSystematics(void)
+void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
 {
 #ifdef __show_syst_reset_mesg__
   cout << "Exp >> Reseting all systematic variations." << endl;
@@ -1200,7 +1200,7 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
 
 
 //________________________________________________________________________________________
-void SuperkExpectation::RandomizeSystematics(void)
+void SuperkExpectation::RandomizeSystematics(Option_t * /*opt*/)
 {
 #ifdef __show_syst_tweak_mesg__
   cout << "Exp >> Generating random variations of all systematic params." << endl;
@@ -2368,7 +2368,7 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 }
 
 //________________________________________________________________________________________
-void SuperkExpectation::PrintSystematics (std::ostream & stream) const
+void SuperkExpectation::PrintSystematics (std::ostream & stream, Option_t * /*opt*/) const
 {
   stream<<"SuperkExpectation/PrintSystematics not yet implemented"<<endl;
 }
