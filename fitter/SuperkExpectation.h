@@ -66,12 +66,12 @@ public:
    // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
    // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
    bool Generate             (const PhysHypothesis & ph, Option_t * opt = 0);
-   void RandomizeSystematics (void); ///< random variation of all systematics
+   void RandomizeSystematics (Option_t * opt = 0); ///< random variation of all systematics
    void TweakSystematic      (string syst_name, double twkdial=0., Option_t * opt = 0);
    void TweakSystematic      (conv::PhysParamId_t syst, double twkdial=0., Option_t * opt = 0);
    // Additional related methods to reset the systematics and enquire their values.
-   void ResetSystematics (void);
-   void PrintSystematics (std::ostream & stream = std::cout) const;
+   void ResetSystematics (Option_t * opt = 0);
+   void PrintSystematics (std::ostream & stream = std::cout, Option_t * opt = 0) const;
    
    PhysParamList Tweaks(void);
    void CopyTweaksTo(PhysParamList & pl);
