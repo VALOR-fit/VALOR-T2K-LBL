@@ -519,7 +519,7 @@
         Covariance matrix of SKDet FSI parameters
     -->
     <covariance_matrix>
-      <filename>   official/2015/skdetfsi/Joint_FHC_RHC_SKDetFSI_VaLOR_Order_BANFF_4_3_16root </filename>
+      <filename>   official/2015/skdetfsi/Joint_FHC_RHC_SKDetFSI_VaLOR_Order_BANFF_4_3_16.root </filename>
       <objname>    covmat_skdet_only_full </objname>   
       <!-- <objname>    covmat_skdetfsi_rhc_joint </objname> -->       
       <objtype>    TMatrixD              </objtype>
