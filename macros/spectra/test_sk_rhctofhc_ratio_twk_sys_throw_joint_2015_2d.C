@@ -137,9 +137,6 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
 
-
-
- 
  // double       input_mixing12       = 0.304,    
  // double       input_mixing13       = 0.0217, //0.0243   
  // double       input_mixing23       = 0.528,    
@@ -148,19 +145,41 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  // double       input_dm23sq         = 2.509E-3,     
  // double       input_betabar        = -99,
 
+ // // Asimov A
+ // double       input_mixing12       = -999,    
+ // double       input_mixing13       = -999,   
+ // double       input_mixing23       = -99,    
+ // double       input_deltacp        = -1.601,  
+ // double       input_dm12sq         = -999,   
+ // double       input_dm23sq         = -99,     
+ // double       input_betabar        = -99,
+
+ // Asimov B
  double       input_mixing12       = -999,    
  double       input_mixing13       = -999,   
- double       input_mixing23       = -99,    
- double       input_deltacp        = -1.601,  
+ double       input_mixing23       = 0.45,    
+ double       input_deltacp        = 0.,  
  double       input_dm12sq         = -999,   
  double       input_dm23sq         = -99,     
  double       input_betabar        = -99,
 
- const char * config_file      = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c_Asimov.xml",
+ //
+ // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
+ //
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
+ const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
+ 
+ //
+ // OLD CONFIGURATION FILES
+ //
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c_Asimov_Bias.xml",
+ //const char * config_file      = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c_Asimov.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_Asimov.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly_Asimov.xml",
-
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
@@ -357,12 +376,21 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   
   // Set oscillation parameter values and priors
   
+  // util::OscParams::Instance()->SetValues(input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
+  // 					 input_betabar,
+  // 					 input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
+  // 					 PriorProbNH, doMargMH
+  // 					 );
+  
+  // Use same values for Nu and NuBar oscillation parameters 
   util::OscParams::Instance()->SetValues(input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
 					 input_betabar,
 					 input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-					 PriorProbNH, doMargMH
+					 PriorProbNH, doMargMH,
+					 input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
+					 input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq
 					 );
-  
+
   bool MargMixing12        = true;
   string PriorMixing12       = "gaus";   
   double PriorParMixing12[2];
@@ -413,7 +441,7 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   if(randomize_mixing12) 
     util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, PriorMixing12, PriorParMixing12[0], PriorParMixing12[1], MixModeMixing12); // Convert to sinsqth
   if(randomize_dm12sq)   
-    util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   PriorDm12sq,   PriorParDm23sq[0],   PriorParDm23sq[1],   ""              ); 
+    util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              ); 
   
   // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
   util::OscParams::Instance()->UpdatePhysHypothesis(ph);
@@ -440,7 +468,7 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   
   SuperkObservation skobs;
   
-  string oscparams = util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar);
+  string oscparams = util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar,-999,-999);
 
   FitParamList * fparm = util::NamedParameterList("nuosc3f+nuisance"); 
   const int np = fparm->GetNumberParameters();
