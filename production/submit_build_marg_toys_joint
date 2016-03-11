@@ -94,10 +94,11 @@ foreach (@ARGV) {
 
 $resource        = "interactive"               unless defined $resource;
 
-$tag             = "joint_betaBar_niwg2015c_react_NH_10kToys"         unless defined $tag;
+$tag             = "joint_betaBar_niwg2015c_react_MargMH_NoNueBar_10kToys"         unless defined $tag;
 #$tag             = "joint_deltaCP_niwg2015c_react_NH_10kToys"            unless defined $tag;
 
-$config_file     = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml"  unless defined $config_file;
+$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml"  unless defined $config_file;
+
 
 #$fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
 $fitparamlist   = "nuosc3f_normbar+nuisance"    unless defined $fitparamlist;  # nuebar appearance analysis
@@ -113,7 +114,8 @@ $deltacp_nh      = -1.601                         unless defined $deltacp_nh;
 $dm23sq_ih       = 2.509E-3                    unless defined $dm23sq_ih; 
 $dm12sq_ih       = 7.53E-5                   unless defined $dm12sq_ih; 
 $mix23_ih        = 0.528                       unless defined $mix23_ih;
-$mix13_ih        = 0.0243                   unless defined $mix13_ih;
+#$mix13_ih        = 0.0243                   unless defined $mix13_ih;
+$mix13_ih        = 0.0217                   unless defined $mix13_ih;
 $mix12_ih        = 0.304                     unless defined $mix12_ih;
 $deltacp_ih      = -1.601                        unless defined $deltacp_ih;
 #$betaBar         = -99                       unless defined $betaBar;
@@ -218,8 +220,8 @@ $npt_freepar1           = 1                         unless defined $npt_freepar1
 # $maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 # $npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-#$nexpts_marg            = 10000                    unless defined $nexpts_marg;     # of toys
-$nexpts_marg            = 100                    unless defined $nexpts_marg;     # of toys
+$nexpts_marg            = 10000                    unless defined $nexpts_marg;     # of toys
+#$nexpts_marg            = 100                    unless defined $nexpts_marg;     # of toys
 
 # 1D fits - betaBar (nuebar appearance)
 $step_freepar0          = 2                  unless defined $step_freepar0;   # of points for each job param0
