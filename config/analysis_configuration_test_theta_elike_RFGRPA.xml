@@ -356,22 +356,23 @@
       Central values from BANFF fit
     -->
     
-    <best_fit_values>     
-      <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_3pc_nue_to_numu.root </filename>
-      <objname>    postfit_params   </objname>
-      <!-- <objname>    postfit_params   </objname> --> 
-      <objtype>    TVectorD        </objtype>
+    <best_fit_values>
+        <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_3pc_nue_to_numu_NC1gamma_nuebar.root </filename>
+        <objname>    prefit_params   </objname>
+        <!-- <objname>    prefit_params   </objname> -->
+        <objtype>    TVectorD        </objtype>
     </best_fit_values>
     
     <!--
-      Covariance of fit parameters                 
-    -->
+     Covariance of fit parameters
+     -->
     <covariance_matrix>
-      <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_3pc_nue_to_numu.root </filename>
-      <objname>    postfit_cov       </objname>
-      <!-- <objname>    postfit_cov       </objname> -->
-      <objtype>    TMatrixD         </objtype>
+        <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc_3pc_nue_to_numu_NC1gamma_nuebar.root </filename>
+        <objname>    prefit_cov       </objname>
+        <!-- <objname>    prefit_cov       </objname> -->
+        <objtype>    TMatrixD         </objtype>
     </covariance_matrix>
+    
    
    
     <disap>
