@@ -717,6 +717,9 @@ void build_marg_toys_joint
   TH1D *hToyHisto_Mix23_nh;
   TH1D *hToyHisto_Dm23_nh;
   
+  TH1D *hToyHisto_Mix12_nh;
+  TH1D *hToyHisto_Dm12_nh;
+  
   TH1D *hToyHisto_Mix23Bar_nh;
   TH1D *hToyHisto_Dm23Bar_nh;
   
@@ -726,6 +729,9 @@ void build_marg_toys_joint
   TH1D *hToyHisto_Mix23_ih;
   TH1D *hToyHisto_Dm23_ih;
 
+  TH1D *hToyHisto_Mix12_ih;
+  TH1D *hToyHisto_Dm12_ih;
+  
   TH1D *hToyHisto_Mix23Bar_ih;
   TH1D *hToyHisto_Dm23Bar_ih;
   
