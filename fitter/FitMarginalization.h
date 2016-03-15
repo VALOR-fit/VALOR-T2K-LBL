@@ -335,7 +335,8 @@ class FitMarginalization
   //
   
   void SetTestStatistic(string teststatistic); // "rateonly" or "rate+shape". Always use the log-likelihood ratio
-
+  void SetSeed(UInt_t seed) {fSeed = seed;};
+  
  private:
 
   // NEW PRECISION
@@ -400,7 +401,7 @@ class FitMarginalization
   
   UInt_t fSeed;
 
-  int fnbins_param[2]; 
+  int fnbins_param[2];
   int fnbins_sub_param[2]; 
   
   int fntoys_marg;

@@ -52,10 +52,15 @@
 //
 
 // NEW FHC+RHC JOINT
+#ifdef __NUMUONLY__
 #define __USE_1RMU_IN_CHISQ__
-#define __USE_1RE_IN_CHISQ__
 #define __USE_RHC1RMU_IN_CHISQ__
+#else // Joint fit and NuEApp
+#define __USE_1RMU_IN_CHISQ__
+#define __USE_RHC1RMU_IN_CHISQ__
+#define __USE_1RE_IN_CHISQ__
 #define __USE_RHC1RE_IN_CHISQ__
+#endif // __NUMUONLY__
 //
 
 #include <cassert>
@@ -1147,8 +1152,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     
     // Initialize the seed to the experiment number. fSeed is 999
     
-    UInt_t myseed = 99;
-    Rnd::Instance()->SetSeeds(myseed+iexperiment+10,myseed+iexperiment+20,myseed+iexperiment+30,myseed+iexperiment+40,fSeed+iexperiment+50); // stat, syst, osc, fitter, other
+    Rnd::Instance()->SetSeeds(fSeed+iexperiment+10,fSeed+iexperiment+20,fSeed+iexperiment+30,fSeed+iexperiment+40,fSeed+iexperiment+50); // stat, syst, osc, fitter, other
     
 #ifdef __show_each_experiment__
     cout << endl;
