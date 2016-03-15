@@ -75,10 +75,17 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   CheckERange(kNumOfSKDetFSIParamsMultiRing, kListOfMultiRingSKDetFSIParams,
 	      (const double *)kMultiRingSKDetFSIParamsErecoCut, "kMultiRingSKDetFSIParamsErecoCut");
 
+#ifdef __NUMUONLY__
+  CheckSKMode(kNumOfSKDetFSIParams, kListOfSKDetFSIParams,
+              (const bool *)kSKDetFSIParamToSKMode, "kSKDetFSIParamToSKMode", 0, false);
+  CheckSKMode(kNumOfRHCSKDetFSIParams, kListOfRHCSKDetFSIParams,
+              (const bool *)kRHCSKDetFSIParamToSKMode, "kRHCSKDetFSIParamToSKMode", 2, false);
+#else
   CheckSKMode(kNumOfSKDetFSIParams, kListOfSKDetFSIParams,
 	      (const bool *)kSKDetFSIParamToSKMode, "kSKDetFSIParamToSKMode", 0, true);
   CheckSKMode(kNumOfRHCSKDetFSIParams, kListOfRHCSKDetFSIParams,
 	      (const bool *)kRHCSKDetFSIParamToSKMode, "kRHCSKDetFSIParamToSKMode", 2, true);
+#endif //__NUMUONLY__
   CheckSKMode(kNumOfSKDetFSIParamsMultiRing, kListOfMultiRingSKDetFSIParams,
 	      (const bool *)kMultiRingSKDetFSIParamToSKMode, "kMultiRingSKDetFSIParamToSKMode", 4, false);
 }
