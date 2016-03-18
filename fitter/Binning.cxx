@@ -63,12 +63,12 @@ double valor::util::ErecoBinEdges(valor::conv::SuperkSample_t s, int i)
 //___________________________________________________________________________
 int valor::util::ErecoBinContains(valor::conv::SuperkSample_t s, double Ereco)
 {
-  int nedges = util::NumErecoBins(s)+1;
+  int nedges = util::NumErecoBins(s);
   const double * edges = util::ErecoBinEdges(s);
   if (Ereco > edges[nedges] || Ereco < edges[0]) return -1;
   int bin =  TMath::BinarySearch(nedges,edges,Ereco);
-  if (bin == util::NumErecoBins(s)+1) return -1;
-  return bin;
+  if (bin >= util::NumErecoBins(s)) return -1;
+  return bin; //return in range 0->nbins-1
 }
 //___________________________________________________________________________
 int valor::util::NumXsecErecoBins(valor::conv::SuperkSample_t s)
@@ -115,6 +115,189 @@ double valor::util::XsecErecoBinEdges(valor::conv::SuperkSample_t s, int i)
   }
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+int valor::util::NumQ2Bins(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kNQ2Bins1Rmu; break;
+     case ( kSKsFCFV1RingELike      ) : return kNQ2Bins1Re;  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCNQ2Bins1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCNQ2Bins1Re;  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kNQ2BinsMultiRmu; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kNQ2BinsMultiRe;  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+const double * valor::util::Q2BinEdges(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kQ2BinEdges1Rmu; break;
+     case ( kSKsFCFV1RingELike      ) : return kQ2BinEdges1Re;  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCQ2BinEdges1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCQ2BinEdges1Re;  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kQ2BinEdgesMultiRmu; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kQ2BinEdgesMultiRe;  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+double valor::util::Q2BinEdges(valor::conv::SuperkSample_t s, int i)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kQ2BinEdges1Rmu[i]; break;
+     case ( kSKsFCFV1RingELike      ) : return kQ2BinEdges1Re[i];  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCQ2BinEdges1Rmu[i]; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCQ2BinEdges1Re[i];  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kQ2BinEdgesMultiRmu[i]; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kQ2BinEdgesMultiRe[i];  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+int valor::util::Q2BinContains(valor::conv::SuperkSample_t s, double Q2)
+{
+  int nedges = util::NumQ2Bins(s);
+  const double * edges = util::Q2BinEdges(s);
+  if (Q2 > edges[nedges] || Q2 < edges[0]) return -1;
+  int bin =  TMath::BinarySearch(nedges,edges,Q2);
+  if (bin >= util::NumQ2Bins(s)) return -1;
+  return bin; //return in range 0->nbins-1
+}
+//___________________________________________________________________________
+int valor::util::NumXsecQ2Bins(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kXsNQ2Bins1Rmu; break;
+     case ( kSKsFCFV1RingELike      ) : return kXsNQ2Bins1Re;  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCXsNQ2Bins1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCXsNQ2Bins1Re;  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kXsNQ2BinsMultiRmu; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kXsNQ2BinsMultiRe;  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+const double * valor::util::XsecQ2BinEdges(valor::conv::SuperkSample_t s)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kXsQ2BinEdges1Rmu; break;
+     case ( kSKsFCFV1RingELike      ) : return kXsQ2BinEdges1Re;  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCXsQ2BinEdges1Rmu; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCXsQ2BinEdges1Re;  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kXsQ2BinEdgesMultiRmu; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kXsQ2BinEdgesMultiRe;  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//___________________________________________________________________________
+double valor::util::XsecQ2BinEdges(valor::conv::SuperkSample_t s, int i)
+{
+  switch(s) {
+     case ( kSKsFCFV1RingMuLike     ) : return kXsQ2BinEdges1Rmu[i]; break;
+     case ( kSKsFCFV1RingELike      ) : return kXsQ2BinEdges1Re[i];  break;
+     case ( kSKsRHCFCFV1RingMuLike  ) : return kRHCXsQ2BinEdges1Rmu[i]; break;
+     case ( kSKsRHCFCFV1RingELike   ) : return kRHCXsQ2BinEdges1Re[i];  break;
+     case ( kSKsFCFVMultiRingMuLike ) : return kXsQ2BinEdgesMultiRmu[i]; break;
+     case ( kSKsFCFVMultiRingELike  ) : return kXsQ2BinEdgesMultiRe[i];  break;
+
+     default                          : return 0;
+  }
+  return 0;
+}
+//
+
+
+//___________________________________________________________________________
+string valor::util::GetXMLDatasetParamsName()
+{
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+  return "ereco_values";
+#else //2D templates
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+  return "ereco_q2_values";
+#else
+  return "ereco_theta_values";
+#endif //__ERECO_VS_Q2_TEMPLATES__
+#endif //__USE_2D_TEMPLATES__
+}
+//___________________________________________________________________________
+string valor::util::GetAxisNameCompact(int iaxis)
+{
+  if(iaxis == 0)
+    return "Ereco";
+#ifdef __USE_2D_TEMPLATES__ //2D templates
+  if(iaxis == 1)
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+    return "Q2";
+#else
+  return "Theta";
+#endif //__ERECO_VS_Q2_TEMPLATES__
+#endif //__USE_2D_TEMPLATES__
+  else
+    return "???"; 
+}
+//___________________________________________________________________________
+string valor::util::GetAxisName(int iaxis)
+{
+  if(iaxis == 0)
+    return "Reconstructed energy (GeV)";
+#ifdef __USE_2D_TEMPLATES__ //2D templates
+  if(iaxis == 1)
+#ifdef __ERECO_VS_Q2_TEMPLATES__
+    return "Q2 (GeV)";
+#else
+  return "Theta";
+#endif //__ERECO_VS_Q2_TEMPLATES__
+#endif //__USE_2D_TEMPLATES__
+  else
+    return "???";  
+}
+//___________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //___________________________________________________________________________
 int valor::util::NumEtrueBins(valor::conv::SuperkSample_t s)
 {

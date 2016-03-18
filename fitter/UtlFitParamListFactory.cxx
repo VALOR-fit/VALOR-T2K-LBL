@@ -52,6 +52,7 @@ FitParamList * util::NamedParameterList(string name)
   }
   if(name == "nuosc3f+nuisance") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+
     util::AppendAllSystematicsTo(fp, 6);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);
@@ -62,38 +63,6 @@ FitParamList * util::NamedParameterList(string name)
     //
     return fp;
   }
-    
-    if(name == "nuosc3f+nuisance+shift") {
-        FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams + 1 );
-        util::AppendAllSystematicsTo(fp, 6);
-        fp -> SetParListName(name);
-        fp -> SetSystMode(1);
-        fp->AddParam( kNumOfNuisanceParams + 6, kNuisSuperkEnergyShift,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyShift) );   // FHC SK escale
-
-        // NEW XSEC
-#if defined(__USE_NIWG2015__)
-        //~ fp -> FixParameter (kNuisXSecRPA );
-#endif
-        //
-        return fp;
-    }
-    
-  if(name == "nuosc3f_fix23+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
-    util::AppendAllSystematicsTo(fp, 6);
-    fp -> FixParameter (kPhypMixing23);
-    fp -> SetParListName(name);
-    fp -> SetSystMode(1);
-    // NEW XSEC
-    #if defined(__USE_NIWG2015__)
-    //~ fp -> FixParameter (kNuisXSecRPA ); 
-    #endif
-    //
-    return fp;
-  }
-
-
-
   if(name == "nuosc3f_12constrain+escale") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
@@ -118,7 +87,7 @@ FitParamList * util::NamedParameterList(string name)
   // treated as nuisance paramers.
   //
 
-  if(name == "nuosc3f_12constrain+") {
+  if(name == "nuosc3f_12constrain") {
     FitParamList * fp = FitParamList::NuOsc3FlavourFit();
     fp -> SetNuisance (kPhypMixing12, true);
     fp -> SetNuisance (kPhypDm12sq,   true);
@@ -370,12 +339,25 @@ FitParamList * util::NamedParameterList(string name)
     FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 6);
     //        fp -> SetNuisance  (kPhypDm23sq,   true);
-            fp -> SetNuisance  (kPhypMixing13, true);
+    //        fp -> SetNuisance  (kPhypMixing13, true);
     fp -> FixParameter (kPhypMixing12      );
     fp -> FixParameter (kPhypDm12sq        );
     //fp -> FixParameter (kPhypCPV);
     fp -> SetParListName(name);
     fp -> SetSystMode(1);//future oscillation
+    return fp;
+  }
+  
+  if(name == "nuosc3fbar_numudissap_allsyst") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourBarDissapFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 8);
+    fp -> FixParameter (kPhypCPV);
+    fp -> SetNuisance  (kPhypMixing13 , true);
+    fp -> SetNuisance  (kPhypMixing12 , true);
+    fp -> SetNuisance  (kPhypDm12sq   , true);
+    
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
     return fp;
   }
 
@@ -424,6 +406,23 @@ FitParamList * util::NamedParameterList(string name)
 
     return fp;
   }
+    
+    if(name == "nuosc3fbar_numudisapp+nuisance") {
+        FitParamList * fp = FitParamList::NuOsc3FlavourBarFit(kNumOfNuisanceParams);
+        util::AppendAllSystematicsTo(fp, 12);
+        
+        fp -> SetParListName(name);
+        fp -> SetSystMode(1);
+        
+        // NEW XSEC
+#if defined(__USE_NIWG2015__)
+        //~ fp -> FixParameter (kNuisXSecRPA );
+#endif
+        //
+        
+        return fp;
+    }
+    
   
   if(name == "nuosc3fbar_numudisapp_fixnonbar_fix4") {
     FitParamList * fp = FitParamList::NuOsc3FlavourBarFit();
@@ -679,7 +678,8 @@ FitParamList * util::NamedParameterList(string name)
     fp -> SetSystMode(0);
     return fp;
   }
-  
+    
+
   if(name == "nuosc3fbar_normbar_fixall+nuisance") {
     FitParamList * fp = FitParamList::NuOsc3FlavourBarNormBarFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 13);
@@ -708,59 +708,7 @@ FitParamList * util::NamedParameterList(string name)
     //
     return fp;
   }
-
-  if(name == "nuosc3f_fixall_fitdmsq+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
-    util::AppendAllSystematicsTo(fp, 6);
-    fp -> FixParameter (kPhypMixing13);
-    fp -> FixParameter (kPhypMixing23);
-    fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypCPV);
-    fp -> FixParameter (kPhypDm12sq);
-    //   fp -> FixParameter (kPhypDm23sq);
-    
-    fp -> SetParListName(name);
-    fp -> SetSystMode(1);
-    // NEW XSEC                                                                                                                     
-#if defined(__USE_NIWG2015__)
-    //~ fp -> FixParameter (kNuisXSecRPA );                                                                                         
-#endif
-    //                                                                                                                              
-    return fp;
-  }
   
-  if(name == "nuosc3f_fixall_fitss23+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
-    util::AppendAllSystematicsTo(fp, 6);
-    fp -> FixParameter (kPhypMixing13);
-    //    fp -> FixParameter (kPhypMixing23);
-    fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypCPV);
-    fp -> FixParameter (kPhypDm12sq);
-    fp -> FixParameter (kPhypDm23sq);                                                                                          
-    
-    fp -> SetParListName(name);
-    fp -> SetSystMode(1);
-       
-    return fp;
-  }
-  
-  if(name == "nuosc3f_fixall_fitss13+nuisance") {
-    FitParamList * fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
-    util::AppendAllSystematicsTo(fp, 6);
-    //fp -> FixParameter (kPhypMixing13);
-    fp -> FixParameter (kPhypMixing23);                                                                                       
-    fp -> FixParameter (kPhypMixing12);
-    fp -> FixParameter (kPhypCPV);
-    fp -> FixParameter (kPhypDm12sq);
-    fp -> FixParameter (kPhypDm23sq);
-
-    fp -> SetParListName(name);
-    fp -> SetSystMode(1);
-
-    return fp;
-  }
-
   if(name == "nuosc3fbar_normbar_fixosc") {
     FitParamList * fp = FitParamList::NuOsc3FlavourBarNormBarFit();
     fp -> FixParameter (kPhypMixing13);
@@ -947,8 +895,6 @@ FitParamList * util::NamedParameterList(string name)
       return fp;
     }
 
-
-
  if(name == "nuosc3f_normbar_fixall+nuisance") {
    FitParamList * fp = FitParamList::NuOsc3FlavourNormBarFit(kNumOfNuisanceParams);
    util::AppendAllSystematicsTo(fp, 7);
@@ -963,11 +909,26 @@ FitParamList * util::NamedParameterList(string name)
    fp -> SetSystMode(0);
    return fp;
  }
+
+ if(name == "nuosc3f_normbar+nuisance") {
+   FitParamList * fp = FitParamList::NuOsc3FlavourNormBarFit(kNumOfNuisanceParams);
+ 
+   util::AppendAllSystematicsTo(fp, 7);
+   fp -> SetParListName(name);
+   fp -> SetSystMode(1);
+   // NEW XSEC
+#if defined(__USE_NIWG2015__)
+   //~ fp -> FixParameter (kNuisXSecRPA ); 
+#endif
+   //
+   return fp;
+ }
+ 
  
  //  
-  
+ 
  cerr<<"FitParamListFactory/NamedParamList >> Unable to make: "<<name<<endl;
- std::exit(-1); 
+ exit(-1); 
 }
     
 //________________________________________________________________________________________
@@ -976,60 +937,7 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 // Add nuisance params
 //
 
-#if defined(__NUMUONLY__) // numu disappearance only
-
-  #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
-
-    #if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__)
-    // fhc all + skdetfsi multiring
-    util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
-    util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
-    util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing+1);
-    
-    #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-
-      #if defined(__FULLY_CORRELATED__) 
-      // rhc+fhc fully correlated 
-      util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
-      util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
-      util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
-    
-      // NEW FHC+RHC JOINT
-      #else
-      // rhc+fhc w/ correlations 
-      util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
-      util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfFHCpRHCParamsInBANFFfit);
-      util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfFHCpRHCParamsInBANFFfit+1+kNumOfFHCpRHCSKDetFSIParams);
-      #endif
-      //
-    
-    #elif defined(__FHC_RUNNING__)
-    // fhc only 
-    util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
-    util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
-    util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams);
-
-    #elif defined(__RHC_RUNNING__)
-    // rhc only 
-    util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
-    util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfRHCParamsInBANFFfit);
-    util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfRHCParamsInBANFFfit+1+kNumOfRHCSKDetFSIParams);
-    
-    #endif
-
-  #else
-    
-   #ifdef __MULTIRING_FHC_RUNNING__
-    // multiring fhc only 
-    util::AppendCorrelatedBANFFSystematicsDisap  (fparm, start);
-    util::AppendSuperkDetectorFSISystematicsDisap(fparm, start+kNumOfParamsInBANFFfit);
-    util::AppendUncorrelatedXSecSystematicsDisap (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParamsMultiRing);
-    // #endif
-    #endif // sample analysis option
-
-  #endif
-
-#elif defined(__NUEONLY__) // nue appearance
+#if defined(__NUEONLY__) // nue appearance
 
   #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
     
@@ -1138,18 +1046,23 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 //________________________________________________________________________________________
 
 //________________________________________________________________________________________
-void util::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, int start)
+void util::AppendAllUncorrelatedXSecSystematics(
+#if defined(__USE_NIWG2013__)
+  FitParamList * fparm, int start)
+#else
+  FitParamList * /*fparm*/, int /*start*/)
+#endif
 {
 // Add nuisance params
 //
 
-  int ip = start; // first unallocated element in the param list
 
   // NEW XSEC --> comment all old non-banff xsec systematics --> Not needed any longer
 
   // NEW XSEC NIWG
 
 #if defined(__USE_NIWG2013__)
+  int ip = start; // first unallocated element in the param list
   
   // XSec
   fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecFermiMom));
@@ -1180,53 +1093,24 @@ void util::AppendAllUncorrelatedXSecSystematics(FitParamList * fparm, int start)
 #endif
 
 }
-#ifdef __NUMUONLY__
-//________________________________________________________________________________________
-void util::AppendUncorrelatedXSecSystematicsDisap(FitParamList * fparm, int start)
-{
-// Add nuisance params
-//
-  int ip = start; // first unallocated element in the param list
-
-  // NEW XSEC --> comment all old non-banff xsec systematics
-  
-  // NEW XSEC NIWG
-
-#if defined(__USE_NIWG2013__)
-
-  // XSec
-  fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecFermiMom) );
-  fparm->AddParam( ip++, kNuisXSecSpecFunc,      0.5, 0.,               1.,              SYST_STEP,  false, true, AsString(kNuisXSecSpecFunc) );
-  fparm->AddParam( ip++, kNuisXSecWshape,        0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecWshape) );
-  fparm->AddParam( ip++, kNuisXSecShapeCCoth,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecShapeCCoth) );
-  fparm->AddParam( ip++, kNuisXSecPiLessDelta,   0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecPiLessDelta) );
-  fparm->AddParam( ip++, kNuisXSecBindE,         0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecBindE) );
-  fparm->AddParam( ip++, kNuisXSecNormCCcoh,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormCCcoh) );
-  fparm->AddParam( ip++, kNuisXSecNormNC1piC,    0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNC1piC) );
-  fparm->AddParam( ip++, kNuisXSecNormNCoth,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNCoth) );
-  fparm->AddParam( ip++, kNuisXSecNormAntiNuToNu,0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormAntiNuToNu) );
-  fparm->AddParam( ip++, kNuisXSecNormNuEToNuMu, 0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecNormNuEToNuMu) );
-
-#elif defined(__USE_NIWG2015__)
-  // NEW XSEC
-  //fparm->AddParam( ip++, kNuisXSecRPA,           0., 0.,               1.,             SYST_STEP,  false, true, AsString(kNuisXSecRPA) );
-#endif
-
-}
-#endif
 #ifdef __NUEONLY__
 //________________________________________________________________________________________
-void util::AppendUncorrelatedXSecSystematicsApp(FitParamList * fparm, int start)
+void util::AppendUncorrelatedXSecSystematicsApp(
+#if defined(__USE_NIWG2013__)
+  FitParamList * fparm, int start)
+#else
+  FitParamList * /*fparm*/, int /*start*/)
+#endif
 {
 // Add nuisance params
 //
-  int ip = start; // first unallocated element in the param list
 
   // NEW XSEC --> comment all old non-banff xsec systematics
 
   // NEW XSEC NIWG
 
 #if defined(__USE_NIWG2013__)
+  int ip = start; // first unallocated element in the param list
 
   // XSec
   fparm->AddParam( ip++, kNuisXSecFermiMom,      0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisXSecFermiMom) );
@@ -1268,14 +1152,14 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
   if (xmldoc==0) {
     cerr << "util/AppendAllSuperkDetectorFSISystematics >> " << "Can not parse input: " << config_file << endl;
     delete xml;
-    std::exit(1);  
+    exit(1);  
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
   
   if(!SKDetFSICovMtrx) {
     cerr << "util/AppendAllSuperkDetectorFSISystematics >> " << "No SKDET+FSI covariance matrix was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
   // Release memory
@@ -1333,6 +1217,7 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
       fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
     }
     
+    fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,  0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale) );   // RHC SK escale
     for(int i = 0; i < kNumOfRHCSKDetFSIParams; i++) {
       // kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
       PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
@@ -1390,147 +1275,6 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int start
 
 }
 
-#ifdef __NUMUONLY__
-
-//________________________________________________________________________________________
-void util::AppendSuperkDetectorFSISystematicsDisap(FitParamList * fparm, int start)
-{
-// Add nuisance params
-//
-  int ip = start; // first unallocated element in the param list
-
-  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
-  //    to have something sensible to initialise to
-  // Parse the input XML configuration file
-
-
-  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
-  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
-
-  TXMLEngine* xml = new TXMLEngine;   
-  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
-  if (xmldoc==0) {
-    cerr << "util/AppendSuperkDetectorFSISystematicsDisap >> " << "Can not parse input: " << config_file << endl;
-    delete xml;
-    std::exit(1);  
-  }
-  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
-  // Get FSI covariance matrix
-  //TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,"skdetfsi/disap/covariance_matrix");
-  TMatrixD * SKDetFSICovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());
-
-  if(!SKDetFSICovMtrx) {
-    cerr << "util/AppendSuperkDetectorFSISystematicsDisap >> " << "No SKDET+FSI covariance matrix was found." << endl;
-    std::exit(1);
-  }
-  const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
-  // Release memory
-  //~ xml->FreeNode(root_node);
-  xml->FreeDoc(xmldoc);
-  delete xml;
-
-  
-  // FSI
-#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
-
-  // fhc all + skdetfsi multiring 
-  #if defined (__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) 
-    fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
-    for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
-      // kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
-      double err = sqrt(SKDetFSICov[i][i]);
-      double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
-      fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-    }
-    fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
-    for(int i = 0; i < kNumOfSKDetFSIParamsMultiRmu; i++) {
-      // kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
-      PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + i);
-      double err = sqrt(SKDetFSICov[i][i]);
-      double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
-      fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-    }
-    
-    // fhc+rhc 
-    #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-
-      // fhc+rhc fully correlated
-      #if defined(__FULLY_CORRELATED__) 
-      fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
-      for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
-        // kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
-        PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
-        double err = sqrt(SKDetFSICov[i][i]);
-        double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
-        fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-      }
-      
-      
-      // NEW FHC+RHC JOINT
-      
-      // fhc+rhc fully w/ correlations
-      #else
-      fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
-      for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
-	// kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
-	PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
-	double err = sqrt(SKDetFSICov[i][i]);
-	double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
-	fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-      }      
-      for(int i = 0; i < kNumOfRHCSKDetFSIParams1Rmu; i++) {
-	// kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
-	PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
-	double err = sqrt(SKDetFSICov[i][i]);
-	double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
-	fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-      }      
-      #endif
-      //
-    
-    // fhc only 
-   #elif defined(__FHC_RUNNING__) 
-    fparm->AddParam( ip++, kNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kNuisSuperkEnergyScale));  // FHC SK escale
-    for(int i = 0; i < kNumOfSKDetFSIParams1Rmu; i++) {
-      // kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
-      PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + i);
-      double err = sqrt(SKDetFSICov[i][i]);
-      double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
-      fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-    }
-    
-    // rhc only 
-   #elif defined(__RHC_RUNNING__) 
-    fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale));  // RHC SK escale
-    for(int i = 0; i < kNumOfRHCSKDetFSIParams1Rmu; i++) {
-      // kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
-      PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
-      double err = sqrt(SKDetFSICov[i][i]);
-      double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
-      fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-    }
-    //
-
-   #endif
-
-#else
-  #ifdef __MULTIRING_FHC_RUNNING__
-  // multiring fhc only 
-  fparm->AddParam( ip++, kMultiRingNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kMultiRingNuisSuperkEnergyScale));  // MultiRing SK escale
-  for(int i = 0; i < kNumOfSKDetFSIParamsMultiRmu; i++) {
-    // kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + i);
-    double err = sqrt(SKDetFSICov[i][i]);
-    double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
-    fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-  }
-  #endif
-#endif // sample analysis option
-  ///
-  if (SKDetFSICovMtrx) delete SKDetFSICovMtrx;
-}
-#endif // #ifdef __NUMUONLY__
 
 #ifdef __NUEONLY__
 //________________________________________________________________________________________
@@ -1552,7 +1296,7 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   if (xmldoc==0) {
     cerr << "util/AppendSuperkDetectorFSISystematicsApp >> " << "Can not parse input: " << config_file << endl;
     delete xml;
-    std::exit(1);  
+    exit(1);  
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get FSI covariance matrix
@@ -1561,7 +1305,7 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
   
   if(!SKDetFSICovMtrx) {
     cerr << "util/AppendSuperkDetectorFSISystematicsApp >> " << "No SKDET+FSI covariance matrix was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   const TMatrixD & SKDetFSICov = *SKDetFSICovMtrx;
   // Release memory
@@ -1618,6 +1362,7 @@ void util::AppendSuperkDetectorFSISystematicsApp(FitParamList * fparm, int start
 	double lowerr = TMath::Max(0., 1.0-(err*SYST_NSIGMA));
 	fparm->AddParam(ip++, p,  1.0, lowerr, 1.0+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
       }
+      fparm->AddParam( ip++, kRHCNuisSuperkEnergyScale,     0.0, -1.0*SYST_NSIGMA, 1.0*SYST_NSIGMA, SYST_STEP,  false, true, AsString(kRHCNuisSuperkEnergyScale));  // FHC SK escale
       for(int i = 0; i < kNumOfRHCSKDetFSIParams1Re; i++) {
 	// kNuisSKDetFSI_first defined in T2KPhysParamId.h for each different analysis mode  
 	PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + i);
@@ -1693,7 +1438,7 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
   if (xmldoc==0) {
     cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << "Can not parse input: " << config_file << endl;
     delete xml;
-    std::exit(1);  
+    exit(1);  
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get BANFF fit central values
@@ -1701,7 +1446,7 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 
   if(!BANFFBestFitValues) {
     cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << " No BANFF best-fit parameter vector was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   const TVectorD & BANFFBestFit = *BANFFBestFitValues;
   // Get BANFF fit covariance matrix
@@ -1709,7 +1454,7 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 
   if(!BANFFCovMtrx) {
     cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << " No BANFF covariance matrix was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   const TMatrixD & BANFFCov = *BANFFCovMtrx;
   // Release memory
@@ -1777,112 +1522,6 @@ void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 }
 //________________________________________________________________________________________
 
-
-#ifdef __NUMUONLY__
-//________________________________________________________________________________________
-void util::AppendCorrelatedBANFFSystematicsDisap(FitParamList * fparm, int start)
-{
-// Add nuisance params
-//
-  int ip = start; // first unallocated element in the param list
-
-  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
-  //    to have something sensible to initialise to
-  // Parse the input XML configuration file
-  
-  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
-  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
-
-  TXMLEngine* xml = new TXMLEngine;   
-  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
-  if (xmldoc==0) {
-    cerr << "util/AppendCorrelatedBANFFSystematicsDisap >> " << "Can not parse input: " << config_file << endl;
-    delete xml;
-    std::exit(1);  
-  }
-  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
-  // Get BANFF fit central values
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
-
-
-  if(!BANFFBestFitValues) {
-    cerr << "util/AppendCorrelatedBANFFSystematicsDisap >> No BANFF best-fit parameter vector was found." << endl;
-    std::exit(1);
-  }
-  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
-  // Get BANFF fit covariance matrix
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
-
-  if(!BANFFCovMtrx) {
-    cerr << "util/AppendCorrelatedBANFFSystematicsDisap >> No BANFF covariance matrix was found." << endl;
-    std::exit(1);
-  }
-  const TMatrixD & BANFFCov = *BANFFCovMtrx;
-  // Release memory
-  //~ xml->FreeNode(root_node);
-  xml->FreeDoc(xmldoc);
-  delete xml;
-
-  // 
-  // OLD
-  //
-  //   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {    
-  // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) 
-  //     PhysParamId_t p = kListOfBANFFParams[i];
-  // #elif defined(__FHC_RUNNING__) 
-  //     PhysParamId_t p = kListOfBANFFParams[i];
-  // #elif defined(__RHC_RUNNING__)
-  //     PhysParamId_t p = kListOfRHCBANFFParams[i];
-  // #endif
-  //
-
-  // NEW FHC+RHC JOINT 
-  
-  // Take the number of banff parameters
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)  
-  #if defined(__FULLY_CORRELATED__)  
-  const int nparams = kNumOfParamsInBANFFfit;
-  #else
-  const int nparams = kNumOfFHCpRHCParamsInBANFFfit;
-  #endif
-#elif defined(__FHC_RUNNING__)
-  const int nparams = kNumOfParamsInBANFFfit;
-#elif defined(__RHC_RUNNING__)
-  const int nparams = kNumOfRHCParamsInBANFFfit;
-#endif
-
-   // get parameter
-  for(int i = 0; i < nparams; i++) {  
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-    #if defined(__FULLY_CORRELATED__)  
-    PhysParamId_t p = kListOfBANFFParams[i];
-    #else
-    PhysParamId_t p = kListOfFHCpRHCBANFFParams[i];
-    #endif
-#elif defined(__FHC_RUNNING__) 
-    PhysParamId_t p = kListOfBANFFParams[i];
-#elif defined(__RHC_RUNNING__)
-    PhysParamId_t p = kListOfRHCBANFFParams[i];
-#endif
-   
-    //
-
-    double bf = BANFFBestFit[i];
-    double err = sqrt(BANFFCov[i][i]);
-    //double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
-    double lowerr=0;
-    if(p==kNuisBANFFShapeCCoth || p==kRHCNuisBANFFShapeCCoth){
-      lowerr = bf-(err*SYST_NSIGMA);
-    }
-    else lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
-
-    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-  } // loop over nparams
-  
-  if(BANFFBestFitValues ) delete BANFFBestFitValues;
-  if(BANFFCovMtrx       ) delete BANFFCovMtrx;
-}
-#endif
 #ifdef __NUEONLY__
 //________________________________________________________________________________________
 void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
@@ -1904,7 +1543,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
   if (xmldoc==0) {
     cerr << "util/AppendCorrelatedBANFFSystematicsApp >> " << "Can not parse input: " << config_file << endl;
     delete xml;
-    std::exit(1);  
+    exit(1);  
   }
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
   // Get BANFF fit central values
@@ -1912,7 +1551,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
 
   if(!BANFFBestFitValues) {
     cerr << "util/AppendCorrelatedBANFFSystematicsApp >> No BANFF best-fit parameter vector was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   const TVectorD & BANFFBestFit = *BANFFBestFitValues;
   // Get BANFF fit covariance matrix
@@ -1920,7 +1559,7 @@ void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
 
   if(!BANFFCovMtrx) {
     cerr << "util/AppendCorrelatedBANFFSystematicsApp >> No BANFF covariance matrix was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   const TMatrixD & BANFFCov = *BANFFCovMtrx;
   // Release memory

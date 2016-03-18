@@ -45,7 +45,8 @@ parallel = True
 base = os.environ["PWD"]
 
 # input path
-file_loc = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/skfiles/13a/t2ksk_13a_ntuple"
+#file_loc = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/skfiles/13a/t2ksk_13a_ntuple"
+file_loc = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/skfiles/14a/"
 
 if os.environ["USER"] == "phrhbq": file_loc = "/storage/epp2/t2k/data/sk/14a/neut"
 if os.environ["USER"] == "steve" : file_loc = "/home/steve/stor/superkMC/"

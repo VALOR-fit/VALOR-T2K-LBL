@@ -35,9 +35,10 @@ void make_toygrid_toys_joint
 
  bool         stat_fluctuations       = false,                             /* include statistical fluctuation in toy MC expts? */
  int          tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
- bool         using_xml_file      = false,                                   /* if false, skobs reads xmlfile as a root file */
+ bool         using_xml_file      = true,                                   /* if false, skobs reads xmlfile as a root file */
 
- const char * config_file      = "analysis_configuration_run1to6_test.xml",        /* analysis configuration file */
+ const char * config_file      = "analysis_configuration_1.7E20_prefit.xml",   /* analysis configuration file */
+ //const char * config_file      = "analysis_configuration_run1to6_test.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6_oa2p25.xml",        /* analysis configuration file */
  //const char * config_file      = "analysis_configuration_run1to6_oa2p0.xml",        /* analysis configuration file */
@@ -435,7 +436,7 @@ void make_toygrid_toys_joint
 	 fparm1->FixParameter(kPhypMixing13);
 	 fparm2->FixParameter(kPhypMixing13);
        }
-       if(optfixparams.Contains("dmsq")){ 
+       if(optfixparams.Contains("dmsq32")){ 
 	 fparm->FixParameter(kPhypDm23sq);
 	 fparm1->FixParameter(kPhypDm23sq);
 	 fparm2->FixParameter(kPhypDm23sq);
@@ -467,7 +468,7 @@ void make_toygrid_toys_joint
 	 fparm1->FixParameter(kPhypMixing13Bar);
 	 fparm2->FixParameter(kPhypMixing13Bar);
        }
-       if(optfixparams.Contains("dmsq")){ 
+       if(optfixparams.Contains("dmsq32")){ 
 	 fparm->FixParameter(kPhypDm23sqBar);
 	 fparm1->FixParameter(kPhypDm23sqBar);
 	 fparm2->FixParameter(kPhypDm23sqBar);
@@ -566,11 +567,11 @@ void make_toygrid_toys_joint
 	   if(!applied_negevents_condition) {
 	     // keep track of all nuisance params set so as to add in output tree
 	     PhysParamList true_nuisance_params = skexp->Tweaks();
-	     iparm->Append(true_nuisance_params);
+	     iparm->Append(true_nuisance_params).q;
 	   }
 	   // reset all systematics so that the PDF used in the fitter is the nominal one
 	   cout << "- Reseting all systematic params in pdf..." << endl;
-	   skexp->ResetSystematicVariations();
+	   //skexp->ResetSystematicVariations();
 	   //skexp->PrintSystematicVariations();
 	 }
 	 else {
@@ -588,9 +589,10 @@ void make_toygrid_toys_joint
      else 
        skobs->Read(xmlfile2.Data(),iexperiment,using_xml_file);
 
-    // Set exclusion grid points
+
+     // Set exclusion grid points
     double mixing13_min = 0.0;
-    double mixing13_max = 0.4;
+    double mixing13_max = 0.3;
     double mixing13_step = 0.005;     
     if(reactor){
       mixing13_min = 0.015;
@@ -1110,11 +1112,11 @@ void make_toygrid_toys_joint
 	      bestfit_chisq2 = fparm2->GetBestFitStatistic();
 	    }
 	    else {
-        fit_inputs2->UpdateParamList(fparm2);
+	      fit_inputs2->UpdateParamList(fparm2);
 	      skexp->Generate(*fparm2);
-        fparm2->CopyCurrToBestFitValues();
+	      fparm2->CopyCurrToBestFitValues();
 	      bestfit_chisq2 = skobs->Statistic(skexp);
-        fparm2->SetBestFitStatistic(bestfit_chisq2);
+	      fparm2->SetBestFitStatistic(bestfit_chisq2);
 	    }
 	    
 	    chisq2 = bestfit_chisq2;

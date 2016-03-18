@@ -151,4 +151,6 @@ void root2k()
 
     print_banner();
     config_mesg();
+    
+    valor::util::PopulateNameRegistry();
 }

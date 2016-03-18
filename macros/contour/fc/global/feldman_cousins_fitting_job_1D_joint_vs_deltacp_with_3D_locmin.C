@@ -17,8 +17,8 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D_locmin
   int          nexperiments            = 1,                                  /* number of toy MC experiment fits */
  double       input_deltacp           = -1.,                                 /* generate toy MC with this range of 23 mixing (expressed in terms of either sinsq2theta, sinsqtheta, ...) */
   const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
-  bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
-  bool         tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
+  bool         stat_fluctuations       = false,                                /* include statistical fluctuation in toy MC expts? */
+  bool         tweak_systematics       = 0,                                /* generate toy MC with randomized systematics? */
  //const char * fit_param_list          = "nuosc3f_12fix+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
  const char * fit_param_list          = "nuosc3f_12fix",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
   const char * fit_option              = "minuit+hesse",                            /* fitter option */
@@ -31,7 +31,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D_locmin
   const char * mixparamoctant          = "one",                                /* one==kNuOctantOne two==kNuOctantTwo */
  //const char * dchisqsurf_file         = "data_theta2theta_fit_joint_nh_final_fix_reactor_abs23_chisq_vs_theta23_dmsq_theta13_extra_3D.root" 
  //const char * dchisqsurf_file         = "LikeGrid_mixing23_Nbins5_dmsq_Nbins5_mixing13_Nbins5.root"
- const char * dchisqsurf_file         = "../../inputs/fc/LikeGrid_Data_Run1to4_NH_mixing23_dmsq_mixing13_41x21x21.root"
+ const char * dchisqsurf_file          = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/fc/LikeGrid_Data_Run1to4_NH_mixing23_dmsq_mixing13_41x21x21.root",
 )
 {
   using namespace std;

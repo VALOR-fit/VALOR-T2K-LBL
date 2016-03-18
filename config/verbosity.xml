@@ -10,5 +10,7 @@
 
   <priority msgstream="Messenger">    DEBUG    </priority>
   <priority msgstream="XML">          NOTICE   </priority>
+  <priority msgstream="Parser">       NOTICE   </priority>
+  <priority msgstream="NuOsc3Flavour">NOTICE   </priority>
 
 </messenger_config>

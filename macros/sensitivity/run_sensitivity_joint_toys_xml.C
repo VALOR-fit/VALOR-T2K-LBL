@@ -9,7 +9,8 @@
 
 void run_sensitivity_joint_toys_xml
 (
-  const char * xmlfile                 = "../inputs/data_newstruct.xml",                                                /* input XML file with toy MC experiments */
+ //const char * xmlfile                 = "inputs/data_newstruct.xml",                   /* input XML file with toy MC experiments */
+  const char * xmlfile                 = "inputs/Asimov/toymc_Asimov_dcp0_NH-0.xml",
   //const char * xmlfile                 = "inputs/toymc_FHCpRHC_DataRun1to4_MCRun5and6_NH-0.xml",                /* input XML file with toy MC experiments */
   int          first_experiment        = 0,                                   /* */
   int          last_experiment         = 0,                                   /* */
@@ -21,7 +22,8 @@ void run_sensitivity_joint_toys_xml
   int          run                     = 0,                                   /* run number */
   //const char * config_file             = "analysis_configuration_run1to6.xml",        /* analysis configuration file */
   //const char * config_file             = "analysis_configuration_run5and6.xml",        /* analysis configuration file */
-  const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
+  //const char * config_file             = "analysis_configuration_test.xml",        /* analysis configuration file */
+  const char * config_file             = "analysis_configuration_test_multiring_mrmc.xml",        /* analysis configuration file */
   bool         stat_fluctuations       = true,                                /* include statistical fluctuation in toy MC expts? */
   int          tweak_systematics       = 1,                                /* generate toy MC with randomized systematics? */
   //const char * fit_param_list          = "nuosc3f_12constrain+nuisance",  /* fit parameter list for the given physics hypothesis (see FitParamList.h) */
@@ -487,14 +489,14 @@ void run_sensitivity_joint_toys_xml
 	 cout << "Grid point:" << endl;
 	 cout << endl;
 	 conv::PhysParamId_t p1 = fparm1->WhichParam(parvalue1);
-	 conv::PhysParamId_t p2 = fparm1->WhichParam(parvalue2);
+	 conv::PhysParamId_t p2 = fparm2->WhichParam(parvalue2);
 	 if(param1!="none"){
 	   TString namepar1 = fparm1->Name(p1);
 	   cout << namepar1.Data() << " = " << fparm1->CurrValue(p1) << " ";
 	 }
 	 if(param2!="none"){
 	   TString namepar2 = fparm2->Name(p2);
-	   cout << namepar2.Data() << " = " << fparm1->CurrValue(p2) << " ";
+	   cout << namepar2.Data() << " = " << fparm2->CurrValue(p2) << " ";
 	 }
 	 cout << endl;
 	 cout << endl;

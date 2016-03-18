@@ -52,11 +52,7 @@ foreach (@ARGV) {
     elsif($_ eq '--mix12'                  ) { $mix12                 = $ARGV[$iarg+1]; }
     elsif($_ eq '--deltacp'                ) { $deltacp               = $ARGV[$iarg+1]; }
     elsif($_ eq '--dm23sqBar'              ) { $dm23sqBar             = $ARGV[$iarg+1]; }
-    elsif($_ eq '--dm12sqBar'              ) { $dm12sqBar             = $ARGV[$iarg+1]; }
     elsif($_ eq '--mix23Bar'               ) { $mix23Bar              = $ARGV[$iarg+1]; }
-    elsif($_ eq '--mix13Bar'               ) { $mix13Bar              = $ARGV[$iarg+1]; }
-    elsif($_ eq '--mix12Bar'               ) { $mix12Bar              = $ARGV[$iarg+1]; }
-    elsif($_ eq '--deltacpBar'             ) { $deltacpBar            = $ARGV[$iarg+1]; }
     elsif($_ eq '--betaBar'                ) { $betaBar               = $ARGV[$iarg+1]; }
 
     elsif($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
@@ -113,6 +109,9 @@ $deltacp         = -1.601                      unless defined $deltacp;
 $dm12sq          = 7.53E-5                     unless defined $dm12sq;
 $dm23sq          = 2.509E-3                    unless defined $dm23sq;
 
+$mix23Bar           = 0.528                       unless defined $mix23;
+$dm23sqBar          = 2.509E-3                    unless defined $dm23sq;
+
 # # Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
 # $mix12           = 0.304                       unless defined $mix12;
 # $mix13           = 0.0243                      unless defined $mix13;
@@ -157,18 +156,28 @@ $mixparamoctant         = "two"                  unless defined $mixparamoctant;
 
 $marg_file         = "submit_prova" unless defined $marg_file;
 
-$nfiles_marg       = 6             unless defined $nfiles_marg;     # of marginalization files
+$nfiles_marg       = 1             unless defined $nfiles_marg;     # of marginalization files
 $nexpts_marg       = 1             unless defined $nexpts_marg;    # of marginalization toys
 
-$freepar0          = "mixing13"    unless defined $freepar0;
-$minfreepar0       = 0.            unless defined $minfreepar0;  # Min free param allowed value
-$maxfreepar0       = 0.113         unless defined $maxfreepar0;  # Max free param allowed value
-$npt_freepar0      = 81            unless defined $npt_freepar0; # of free parameter points to scan
+# # 2D fit - sinsqth13 Vs dcp (with reactors)
+#$freepar0          = "mixing13"    unless defined $freepar0;
+#$minfreepar0       = 0.            unless defined $minfreepar0;  # Min free param allowed value
+#$maxfreepar0       = 0.113         unless defined $maxfreepar0;  # Max free param allowed value
+#$npt_freepar0      = 81            unless defined $npt_freepar0; # of free parameter points to scan
+#$freepar1          = "deltacp"     unless defined $freepar1;
+#$minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;  # Min free param allowed value
+#$maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;  # Max free param allowed value
+#$npt_freepar1      = 51            unless defined $npt_freepar1; # of free parameter points to scan
 
-$freepar1          = "deltacp"     unless defined $freepar1;
-$minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;  # Min free param allowed value
-$maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;  # Max free param allowed value
-$npt_freepar1      = 51            unless defined $npt_freepar1; # of free parameter points to scan
+# 2D fit - sinsqth23 Vs dmsq32 (with reactors)
+$freepar0               = "mixing23"                 unless defined $freepar0;
+$minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+$npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
+$freepar1               = "dmsq23"                   unless defined $freepar1;
+$minfreepar1            = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
+$maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+$npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
 
 $marg_hierarchy    = 0             unless defined $marg_hierarchy;
 $masshierarchy_marg = "normal"     unless defined $masshierarchy_marg;
@@ -178,7 +187,9 @@ $draw_full_chisq   = 1             unless defined $draw_full_chisq;
 
 $test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
 
-$constrain_reactor = 1             unless defined $constrain_reactor;
+$store_like = 0; # always disabled in 2D fits
+
+$constrain_reactor = 0             unless defined $constrain_reactor;
 
 $job_dir           = "."               unless defined $job_dir;
 $softw_dir         = $ENV{'T2KOSCANA'} unless defined $softw_dir;
@@ -215,7 +226,7 @@ while($irun < $nruns) {
     
     $program = "root2k ";
         
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_joint_2d.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$masshierarchy_marg\",\"$type_error\",$draw_full_chisq,\"$test_stat\",$constrain_reactor)\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_joint_2d.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix23Bar,$dm23sqBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$masshierarchy_marg\",\"$type_error\",$draw_full_chisq,$store_like,\"$test_stat\",$constrain_reactor)\'";
 
     $command = "$program $arguments";
     print "$command \n";

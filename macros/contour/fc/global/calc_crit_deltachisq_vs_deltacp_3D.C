@@ -20,10 +20,11 @@ double confidenceLevel[nConfidenceLevel] = {
 
 void calc_crit_deltachisq_vs_deltacp_3D
 (
- char FCfilename[200]        = "../fc_dcp_allsyst_locmin_3D_ntoys_1000_idcp_%d.root",
- //char FCfilename[200]        = "../fc_dcp_allsyst_3D_ntoys_1000_idcp_%d.root",
- bool SingleBin              = true,
- int lastbin                 = 8,
+ char FCfilename[200]        = "../fc/fc_dcp_statonly_PDG2013_NH_3D_locmin_ntoys_1000_idcp_%d.root",
+ //char FCfilename[200]        = "../fc/fc_dcp_allsyst_locmin_3D_ntoys_1000_idcp_%d.root",
+ //char FCfilename[200]        = "../fc/fc_dcp_allsyst_3D_ntoys_1000_idcp_%d.root",
+ bool SingleBin              = false,
+ int lastbin                 = 10,
  bool CheckConvergence       = false,
  int StepConvergence         = 100,
  const char tag[200]         = "critval",
@@ -40,8 +41,8 @@ void calc_crit_deltachisq_vs_deltacp_3D
   double Ngod_Min = 0.;
   double Ngod_Max = 10.;
   const int Ngod_Bins = 75;
-  double SetPar_ndf = 0.4;
-
+  double SetPar_ndf = 1.;
+  double SetPar_norm = 1.;
   //
 
   int startbin = 0;
@@ -95,14 +96,6 @@ void calc_crit_deltachisq_vs_deltacp_3D
   TCanvas *cDLConv_68[nbins];
   TCanvas *cDLConv_90[nbins];
   TCanvas *cDLConv_95[nbins];
-  for(int ibin=0;ibin<nbins;ibin++){
-    TString name = Form("cDLConv_68_%d",ibin);
-    cDLConv_68[ibin] = new TCanvas(name,name);
-    TString name = Form("cDLConv_90_%d",ibin);
-    cDLConv_90[ibin] = new TCanvas(name,name);
-    TString name = Form("cDLConv_95_%d",ibin);
-    cDLConv_95[ibin] = new TCanvas(name,name);
-  }
   
   TCanvas *cCritVal[nConfidenceLevel];
   for(int icl=0;icl<nConfidenceLevel;icl++){
@@ -406,7 +399,8 @@ void calc_crit_deltachisq_vs_deltacp_3D
     hDeltaChisq[ibin]->GetXaxis()->SetTitle("#Delta#chi^{2}");
     hDeltaChisq[ibin]->GetYaxis()->SetTitle("Fraction of events");
     hDeltaChisq[ibin]->Draw("");
-    
+    hDeltaChisq[ibin]->GetYaxis()->SetRangeUser(0.,3.);
+
 
     // Fit w/ dchisq asymptotic formula (arXiv:1007.1727v2)
   
@@ -428,26 +422,35 @@ void calc_crit_deltachisq_vs_deltacp_3D
       cout << endl;
     }
     
-    TF1 *f_chi2_1dof = new TF1("f_chi2_1dof",chi2_1dof,Ngod_Min,Ngod_Max,1);
+    TF1 *f_chi2_1dof = new TF1("f_chi2_1dof",chi2_1dof,Ngod_Min,Ngod_Max,2);
     f_chi2_1dof->SetLineColor(kRed);
     f_chi2_1dof->SetParameter(0,SetPar_ndf);
-    f_chi2_1dof->SetParameter(0,0.5);
-    f_chi2_1dof->SetParNames("dof");
-    f_chi2_1dof->Draw("same");    
+    f_chi2_1dof->SetParameter(1,SetPar_norm
+);
+    f_chi2_1dof->SetParName(0,"dof");
+    f_chi2_1dof->SetParName(1,"norm");
+    //f_chi2_1dof->Draw("same");    
+    //hDeltaChisq[ibin]->Fit("f_chi2_1dof");
+    f_chi2_1dof->DrawCopy("same");
       
-    TF1 *f_chi2_1dof_noncentr = new TF1("f_chi2_1dof_noncentr",chi2_1dof_noncentr,Ngod_Min,Ngod_Max,1);
-    f_chi2_1dof_noncentr->SetLineColor(kBlue);
-    //f_chi2_1dof_noncentr->SetParameter(0,mu[ibin]); // true mu (true deltacp)
-    //f_chi2_1dof_noncentr->SetParameter(1,sigma[ibin]); // sigma   
-    f_chi2_1dof_noncentr->SetParNames("dof");
-    f_chi2_1dof_noncentr->Draw("same");
-    hDeltaChisq[ibin]->GetYaxis()->SetRangeUser(0.,1.);
-    
+    // TF1 *f_chi2_1dof_noncentr = new TF1("f_chi2_1dof_noncentr",chi2_1dof_noncentr,Ngod_Min,Ngod_Max,1);
+    // f_chi2_1dof_noncentr->SetLineColor(kBlue);
+    // //f_chi2_1dof_noncentr->SetParameter(0,mu[ibin]); // true mu (true deltacp)
+    // //f_chi2_1dof_noncentr->SetParameter(1,sigma[ibin]); // sigma   
+    // f_chi2_1dof_noncentr->SetParNames("dof");
+    // f_chi2_1dof_noncentr->Draw("same");
+
     if(CheckConvergence){
+      TString name = Form("cDLConv_68_%d",ibin);
+      cDLConv_68[ibin] = new TCanvas(name,name);
       cDLConv_68[ibin]->cd();
       gDLcritConv[kCL68][ibin]->Draw("APL");
+      TString name = Form("cDLConv_90_%d",ibin);
+      cDLConv_90[ibin] = new TCanvas(name,name);
       cDLConv_90[ibin]->cd();
       gDLcritConv[kCL90][ibin]->Draw("APL");
+      TString name = Form("cDLConv_95_%d",ibin);
+      cDLConv_95[ibin] = new TCanvas(name,name);
       cDLConv_95[ibin]->cd();
       gDLcritConv[kCL95][ibin]->Draw("APL");
     }
@@ -484,7 +487,7 @@ double CalcCritVal(vector<double> dchisq, double conflev, double sigmacl){
 
 
 Double_t chi2_1dof(Double_t *x,Double_t *par) {
-  Double_t fitval = (pow(x[0],par[0]/2.-1.)*(1./exp(x[0]/2.))) / ((pow(2.,par[0]/2.)*TMath::Gamma(par[0]/2.)));
+  Double_t fitval = (pow(x[0],par[0]/2.-1.)*(1./exp(x[0]/2.))) / ((pow(2.,par[0]/2.)*TMath::Gamma(par[0]/2.))) * par[1];
   return fitval;
 }
 

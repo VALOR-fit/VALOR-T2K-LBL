@@ -25,6 +25,9 @@
 #include <TH2F.h>
 #include <TH1D.h> // NEW PRECISION
 #include <TH2D.h> // NEW PRECISION
+#include <TTree.h>
+#include <TFile.h>
+#include <TStopwatch.h>
 
 #include "Enumerations.h"
 
@@ -125,8 +128,14 @@ class FitMarginalization
   //
 
   // NEW FHC+RHC JOINT 
-  const double GetMinOscParam(conv::PhysParamId_t physpar) const;
-  const double GetMaxOscParam(conv::PhysParamId_t physpar) const;
+  double GetMinOscParam(conv::PhysParamId_t physpar) const;
+  double GetMaxOscParam(conv::PhysParamId_t physpar) const;
+  //
+
+
+  // NEW 2D TEMPLATES (VARRAY)nuosc3fbar_numudissap_allsyst
+  double GetNormPOT(conv::SuperkSample_t s) const;
+  double GetPOT(conv::SuperkSample_t s) const;
   //
 
   void PrintPhysHypothesis(void);
@@ -137,12 +146,16 @@ class FitMarginalization
 
   void WriteToys2Binary(int idfile, const char *tag);
   void WriteToys2BinaryMerge(const char *tag);
-
   void ReadToysFromBinary(int idfile, const char *tag);
-  
+
   // NEW SPECTRA MARG
   void WriteLikeToys2Binary(const char *tag); 
   void ReadLikeToysFromBinary(const char *tag);
+  void SetStoreLikeWeights(bool doStoreLikeWeights);
+  //
+  // NEW OSC TREE
+  void WriteOscToys2Tree(int idfile, const char *tag); 
+  void InitTreeOscToys();
   //
 
   void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
@@ -186,25 +199,32 @@ class FitMarginalization
   void SetParamBestFitErrPos(int ParId,double val) { fparam_bf_errpos[ParId] = val;};
   void SetParamBestFitErrSym(int ParId,double val) { fparam_bf_errsym[ParId] = val;};
   
+
+  VALORArrayF * GetToyMargVArray()             {return fToyMargVArray;};
+  const VALORArrayF * GetToyMargVArray() const {return fToyMargVArray;};
+
   // NEW SPECTRA MARG
   double GetLikeToyRead(double valpar0,double valpar1,int iexperiment,bool readbinary = false); // Use the map of the binary files
   //
 
-  VALORArrayF * GetToyMargErecoVArray()             {return fToyMargErecoVArray;};
-  const VALORArrayF * GetToyMargErecoVArray() const {return fToyMargErecoVArray;};
-  
-  //TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1,int iMassHierarchy);
-  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); // NEW MARG MH 2
-  
-  void SetMargOscParam();
-  // NEW MARG MH
-  void SetMargOscParam(FitParamList * infparm);
+  // NEW 2D TEMPLATES (VARRAY)
+  VALORArrayF * GetToyMargVArraySample(conv::SuperkSample_t s);
+  VALORArrayF * GetToyMargVArraySample_Clone(conv::SuperkSample_t s);
   //
 
-  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
-  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
-  void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
-  // NEW MARG MH
+  TH1F * GetToyMargHisto(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); 
+  
+  // NEW 2D TEMPLATES
+  TH2F * GetToyMargHisto2D(conv::SuperkSample_t s,int itoy,int ifreepar0,int ifreepar1); 
+  //
+  
+  // THIS ISN"T IMPLEMENTED ANYMORE! void SetMargOscParam();
+  void SetMargOscParam(FitParamList * infparm);
+ 
+  // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
+  // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
+  // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
+  
   void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
   void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
   void SetPrior_NH(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
@@ -213,7 +233,7 @@ class FitMarginalization
   void SetPrior_IH(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
   //
   
-  std::string GetPrior(conv::PhysParamId_t physpar) const;
+  // THIS ISN"T IMPLEMENTED ANYMORE! std::string GetPrior(conv::PhysParamId_t physpar) const;
   // NEW MARG MH
   std::string GetPrior_NH(conv::PhysParamId_t physpar) const;
   std::string GetPrior_IH(conv::PhysParamId_t physpar) const;
@@ -221,7 +241,7 @@ class FitMarginalization
   
   void BuildDefaultPriors(void);
 
-  double Randomize(conv::PhysParamId_t physpar) const;
+  // THIS ISN"T IMPLEMENTED ANYMORE! double Randomize(conv::PhysParamId_t physpar) const;
   // NEW MARG MH
   double Randomize(conv::PhysParamId_t physpar, FitParamList * infparm) const;
   //
@@ -315,7 +335,8 @@ class FitMarginalization
   //
   
   void SetTestStatistic(string teststatistic); // "rateonly" or "rate+shape". Always use the log-likelihood ratio
-
+  void SetSeed(UInt_t seed) {fSeed = seed;};
+  
  private:
 
   // NEW PRECISION
@@ -380,7 +401,7 @@ class FitMarginalization
   
   UInt_t fSeed;
 
-  int fnbins_param[2]; 
+  int fnbins_param[2];
   int fnbins_sub_param[2]; 
   
   int fntoys_marg;
@@ -401,34 +422,41 @@ class FitMarginalization
   int fNCallsCalcChisqMargPt; // # of calls of CalcChisqMargPt
   
   // NEW PRECISION
-  VALORArrayD *flikeVArray;
+  //VALORArrayD *flikeVArray; //UNUSED
   VALORArrayD *fChisqMargVArray;
   //
-  
+
   VALORArrayD *flikeToyVArray; // Fit likelihood of each toy  // NEW SPECTRA MARG
 
+  
   int fNSKsamples;
   VALORArrayI *fnerecobins;
   VALORArrayI *fsksamples; // pointer of SuperkSample_t doesn't work. Then use kSKSamples[]
-  VALORArrayF *fToyMargErecoVArray;
-  VALORArrayF *fToyMargErecoVArray_Clone;
+  
+  // NEW 2D TEMPLATES (VARRAY)
+  VALORArrayF *fToyMargVArray; // TO REMOVE
+  //VALORArrayF *fToyMargVArray_Clone; // TO REMOVE
+  VALORArrayF *fToyMargVArray_1Rmu;
+  VALORArrayF *fToyMargVArray_1Re;
+  VALORArrayF *fToyMargVArray_RHC1Rmu;
+  VALORArrayF *fToyMargVArray_RHC1Re;
+  VALORArrayF *fToyMargVArray_Clone_1Rmu;
+  VALORArrayF *fToyMargVArray_Clone_1Re;
+  VALORArrayF *fToyMargVArray_Clone_RHC1Rmu;
+  VALORArrayF *fToyMargVArray_Clone_RHC1Re;
+  //
+  
   TH1F *fhToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
   int fMaxSampleErecoBins;
 
-  int fnerecobins_RHCNumu;
-  VALORArrayF *fToyMargErecoVArray_RHCNumu_Clone; 
-  VALORArrayF *fToyMargErecoVArray_RHCNue_Clone; 
-  VALORArrayF *fToyMargErecoVArray_Numu_Clone; 
-  VALORArrayF *fToyMargErecoVArray_Nue_Clone; 
+  // NEW 2D TEMPLATES
+  VALORArrayI *fnq2bins; 
+  TH2F *fhToyMargCurr2D[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
+  int fMaxSampleQ2Bins;
+  //
+  
   bool fMergeInputFiles_Called;
   int fNmergedFiles;
-
-  //TH1F *fhToyMargCurr_RHCNumu; // NEW FHC+RHC JOINT
-
-  VALORArrayF *fToyMargErecoVArray_RHCNumu; 
-  VALORArrayF *fToyMargErecoVArray_RHCNue;  
-  VALORArrayF *fToyMargErecoVArray_Numu;    
-  VALORArrayF *fToyMargErecoVArray_Nue;     
 
   FitParamList * fparm;
   // NEW MARG MH
@@ -477,7 +505,7 @@ class FitMarginalization
   int fStep;
   int fStartBin_X;
   int fStartBin_Y;
-  int fNumStartBin_X;
+  int fNumStartBin_X; 
   int fNumStartBin_Y;
 
   string fExtractStartPt;
@@ -495,6 +523,16 @@ class FitMarginalization
   TH1D *fhPriorMH;
   TH1D *fhToyMH;
   //
+
+  
+
+  // NEW OSC TREE
+  bool fStoreLikeWeights;
+  char fnameoscfiletree[200]; // to store toy likelihood from the fit
+  TTree *treetoys;
+  TFile *filetreetoys;
+  //
+
 };
  
 } // valor

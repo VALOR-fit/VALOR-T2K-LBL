@@ -1311,8 +1311,8 @@ void draw_sensitivity_plots_toys(
       TLegend *l_cont_par2_par1 = new TLegend(0.7,0.7,0.85,0.85);
       l_cont_par2_par1->SetFillColor(0);
       l_cont_par2_par1->SetLineColor(0);
-      l_cont_par2_par1->AddEntry(h_chisq_par2_par1_Ave_nh,LegendName_nh,"L");
-      l_cont_par2_par1->AddEntry(h_chisq_par2_par1_Ave_ih,LegendName_ih,"L");
+      l_cont_par2_par1->AddEntry(h_chisq_par2_par1_Ave_nh_Cont,LegendName_nh,"L");
+      l_cont_par2_par1->AddEntry(h_chisq_par2_par1_Ave_ih_Cont,LegendName_ih,"L");
       l_cont_par2_par1->Draw();
     }
   }
@@ -1325,6 +1325,7 @@ void draw_sensitivity_plots_toys(
     double max = g_chisq_par1_nh_Err->GetMaximum() * 1.25;
     g_chisq_par1_nh_Err->SetMinimum(max);
     g_chisq_par1_nh_Err->SetMinimum(0);
+    g_chisq_par1_nh_Err->GetXaxis()->SetRangeUser(0,1);
     g_chisq_par1_nh_Err->SetFillColor(kRed);
     g_chisq_par1_nh_Err->SetFillStyle(3001);
     g_chisq_par1_nh_Err->DrawClone("a2");
@@ -1337,6 +1338,7 @@ void draw_sensitivity_plots_toys(
     double max = g_chisq_par1_ih_Err->GetMaximum() * 1.25;
     g_chisq_par1_ih_Err->SetMinimum(max);
     g_chisq_par1_ih_Err->SetMinimum(0);
+    g_chisq_par1_ih_Err->GetXaxis()->SetRangeUser(0,1);
     g_chisq_par1_ih_Err->SetFillColor(kRed);
     g_chisq_par1_ih_Err->SetFillStyle(3001);
     g_chisq_par1_ih_Err->DrawClone("a2");
@@ -1351,6 +1353,7 @@ void draw_sensitivity_plots_toys(
       g_chisq_par1_nh_shift->SetMarkerColor(kBlack);
       g_chisq_par1_nh_shift->SetLineWidth(2);
       if(*parname1_nh=="deltacp") g_chisq_par1_nh_shift->GetXaxis()->SetTitle("#delta_{CP}");
+      if(*parname1_nh=="mixing13") g_chisq_par1_nh_shift->GetXaxis()->SetTitle("#sin^{2} #theta_{13}");
       g_chisq_par1_nh_shift->GetYaxis()->SetTitle("#Delta #chi^{2}");
 
       g_chisq_par1_nh_shift->DrawClone("ac");
@@ -1362,6 +1365,10 @@ void draw_sensitivity_plots_toys(
       g_chisq_par1_ih_shift->DrawClone("c same");
       //g_chisq_par1_ih_shift->DrawClone("p same");
       
+      TLine *lineConstCL = new TLine(0,CLval,0.4,CLval);
+      lineConstCL->SetLineWidth(2);
+      lineConstCL->Draw("same");
+
       if(DrawLeg){
         TLegend *l_cont_par1 = new TLegend(0.7,0.7,0.85,0.85);
         l_cont_par1->SetFillColor(0);
@@ -1382,7 +1389,13 @@ void draw_sensitivity_plots_toys(
     char name[200];
     
     if(nDim==1){
-    }
+      sprintf(name,"%s%s%s","Like1D_NH_",tag,".pdf");
+      c_chisq_par1_nh->Print(name);
+      sprintf(name,"%s%s%s","Like1D_IH_",tag,".pdf");
+      c_chisq_par1_ih->Print(name);
+      sprintf(name,"%s%s%s","Cont1D_",tag,".pdf");
+      c_chisq_par1_mhall->Print(name);
+     }
     else if(nDim==2){
       sprintf(name,"%s%s%s","Like2D_NH_" ,tag,img_format.c_str());
       c_chisq_par2_par1_nh->Print(name);

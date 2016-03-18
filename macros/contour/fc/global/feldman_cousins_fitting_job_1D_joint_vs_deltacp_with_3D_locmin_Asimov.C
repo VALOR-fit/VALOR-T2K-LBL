@@ -76,14 +76,12 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D_locmin_Asimov
   // Take input oscillation likelihood grid for toy extraction
   TFile *dchisqfile = TFile::Open(dchisqsurf_file);
   TH3D *dchisq3D = (TH3D*)dchisqfile->Get("hLike3D");
-  TH2D *dchisq2D = (TH2D*)dchisqfile->Get("hLike2D");
 
   // dm23sq, mixing23, mixing13 range and step
   double mixing23_min   = dchisq3D->GetXaxis()->GetBinCenter(1);
   double mixing23_max   = dchisq3D->GetXaxis()->GetBinCenter(dchisq3D->GetNbinsX());
   double mixing23_step  = dchisq3D->GetXaxis()->GetBinCenter(2) - dchisq3D->GetXaxis()->GetBinCenter(1);
   double dmsq_min     = dchisq3D->GetYaxis()->GetBinCenter(1);
-
   double dmsq_max     = dchisq3D->GetYaxis()->GetBinCenter(dchisq3D->GetNbinsY());
   double dmsq_step    = dchisq3D->GetYaxis()->GetBinCenter(2) - dchisq3D->GetYaxis()->GetBinCenter(1);
   double mixing13_min   = dchisq3D->GetZaxis()->GetBinCenter(1);
@@ -562,6 +560,7 @@ void feldman_cousins_fitting_job_1D_joint_vs_deltacp_with_3D_locmin_Asimov
       
     } // if(!GetAsimov)
     
+
     cout << "- Toy-MC > True 23-sector params: " 
 	 << util::AsString(conv::kPhypMixing23) << " = " << input_mixing23 << ", "
 	 << util::AsString(conv::kPhypMixing13) << " = " << input_mixing13 << ", "

@@ -28,7 +28,7 @@
 
 #include <iostream>
 
-#include <Enumerations.h>
+#include "Enumerations.h"
 
 class TH1D;
 class TH2D;
@@ -104,8 +104,7 @@ public:
   
   const TVectorD & SampleBestFitValues          (void) const;
   const TMatrixD & SampleCovMatrix              (void) const;
-  const TMatrixD & SampleCovMatrixInv           (void) const;
-  
+  const TMatrixD & SampleCovMatrixInv           (void) const;  
   //
 
   // Systematic variations (wrt the best-fit BANFF params)
@@ -124,12 +123,18 @@ public:
   void TweakRHCFluxOnly     (bool force_inputs = false, TVectorD * input_vec = 0); 
   void TweakFHCpRHCFluxOnly (bool force_inputs = false, TVectorD * input_vec = 0); // NEW FLUX FHC+RHC
   void TweakSampleFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
-
+  
   void TweakXSecOnly        (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakRHCXSecOnly     (bool force_inputs = false, TVectorD * input_vec = 0); 
   void TweakFHCpRHCXSecOnly (bool force_inputs = false, TVectorD * input_vec = 0); // NEW FLUX FHC+RHC
   void TweakSampleXSecOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
-    
+
+  /////
+  void TweakXSecNumuNueOnly           (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakRHCXSecNumuNueOnly        (bool force_inputs = false, TVectorD * input_vec = 0); 
+  void TweakFHCpRHCXSecNumuNueOnly (bool force_inputs = false, TVectorD * input_vec = 0); // NEW FLUX FHC+RHC
+  void TweakSampleXSecNumuNueOnly     (bool force_inputs = false, TVectorD * input_vec = 0);
+  /////    
 
   void SyncRHCToFHCSystematics();
 
@@ -200,7 +205,7 @@ public:
   //
   
 private:
-
+    
   void Init      (void);
   void CleanUp   (void);
 

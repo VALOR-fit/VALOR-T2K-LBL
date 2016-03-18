@@ -30,6 +30,7 @@
 
 class TGraph;
 class TH1;
+class TH2;
 
 using std::string;
 using std::vector;
@@ -41,8 +42,11 @@ namespace util {
   // T2K specific
  
    void SetDefaultSKSpectrumStyle (conv::SuperkSample_t s, conv::SuperkMode_t m, TH1D * histogram);
+   void SetDefaultSKSpectrumStyle (conv::SuperkSample_t s, conv::SuperkMode_t m, TH2D * histogram); // NEW 2D TEMPLATES
    // When making an ereco hist, set directory/axis titles/line colour
    void FormatErecoHist(TH1 * hist);
+   void FormatQ2Hist(TH1 * hist);
+   void FormatErecoVsQ2Hist(TH2 * hist); // NEW 2D TEMPLATES
 
 } // util
 } // valor

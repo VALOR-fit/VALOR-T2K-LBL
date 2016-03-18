@@ -12,17 +12,16 @@ tag = sys.argv[4] #oscillated or unoscillated
 sample = sys.argv[5] #valor sample
 m3_current = sys.argv[6]
 
-#mach3_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/mach3/sigmavar2014SK.root'
 mach3_filename = mach3filename
-
-#valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_prebanff_notosc.root'
-#valor_filename = '/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/test/systematic_variations/systematic_variations_RHC1Re_prebanff.root'
 valor_filename = valorfilename
 
-
 #mach3_nom_pattern = "[CURRENT][SELECTION]_[MODE]_nom"
-mach3_nom_pattern = "[CURRENT]_h[SELECTION]_nom"
+#mach3_nom_pattern = "[CURRENT]_h[SELECTION]_nom"
+mach3_nom_pattern = "[CURRENT]_h[SELECTION][MODE]_nom"
+
+#mach3_pattern     = "[CURRENT]_[SELECTION]_[PARAM]_[MODE]_sig_[VAR]"
 mach3_pattern     = "[CURRENT]_[SELECTION]_[PARAM][MODE]_sig_[VAR]"
+
 valor_pattern     = "Ratio_"+sample+"[MODE]_[PARAM]_[VAR]"
 
 # paired things have valor, then mach3
@@ -35,269 +34,175 @@ mach3_current = m3_current
 mach3_selection = m3selection
 
 parameters = [
-              ( 'f_banffmaqe'          ,  'xsec_par_0'  ) ,
-              
-              #(                             ,  'xsec_par_1'  ) ,       # pF carbon
-              #(                             ,  'xsec_par_2'  ) ,       # MEC carbon
-              #(                             ,  'xsec_par_3'  ) ,       # Eb carbon
-              
-              ( 'f_banffpfermi'        ,  'xsec_par_4'  ) ,
-              ( 'f_banffmec'           ,  'xsec_par_5'  ) ,
-              ( 'f_banffbindE'         ,  'xsec_par_6'  ) ,
-              ( 'f_banffca5'           ,  'xsec_par_7'  ) ,
-              ( 'f_banffmares'         ,  'xsec_par_8'  ) ,
-              ( 'f_banffbgres'         ,  'xsec_par_9'  ) ,
-              ( 'f_banffnorm_nuetonumu',  'xsec_par_10' ) ,
-              ( 'f_banffshapeCCoth'    ,  'xsec_par_11' ) ,
-              
-              #(                            ,  'xsec_par_12' ) ,       # CCcoh carbon
-              
-              ( 'f_banffnorm_cccoh_fhc_rhc'    ,  'xsec_par_13' ) ,
-              ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_14' ) ,
-              ( 'f_banffnorm_ncoth_fhc_rhc'    ,  'xsec_par_16' ) ,
-              ( 'f_banffnorm_nc1gamma_fhc_rhc' ,  'xsec_par_15' ) ,
-              
-              ( 'f_banff00' ,  'flux_par_50' ) ,
-              ( 'f_banff01',  'flux_par_51' ) ,
-              ( 'f_banff02',  'flux_par_52' ) ,
-              ( 'f_banff03',  'flux_par_53' ) ,
-              ( 'f_banff04',  'flux_par_54' ) ,
-              ( 'f_banff05',  'flux_par_55' ) ,
-              ( 'f_banff06' ,  'flux_par_56' ) ,
-              ( 'f_banff07' ,  'flux_par_57' ) ,
-              ( 'f_banff08' ,  'flux_par_58' ) ,
-              ( 'f_banff09' ,  'flux_par_59' ) ,
-              ( 'f_banff10' ,  'flux_par_60' ) ,
-              ( 'f_banff11',  'flux_par_61' ) ,
-              ( 'f_banff12' ,  'flux_par_62' ) ,
-              ( 'f_banff13',  'flux_par_63' ) ,
-              ( 'f_banff14',  'flux_par_64' ) ,
-              ( 'f_banff15',  'flux_par_65' ) ,
-              ( 'f_banff16',  'flux_par_66' ) ,
-              ( 'f_banff17',  'flux_par_67' ) ,
-              ( 'f_banff18',  'flux_par_68' ) ,
-              ( 'f_banff19',  'flux_par_69' ) ,
-              ( 'f_banff20' ,  'flux_par_70' ) ,
-              ( 'f_banff21',  'flux_par_71' ) ,
-              ( 'f_banff22',  'flux_par_72' ) ,
-              ( 'f_banff23',  'flux_par_73' ) ,
-              ( 'f_banff24',  'flux_par_74' ) ,
-              #(                            ,  'xsec_par_16' ) ,
-              #(                            ,  'xsec_par_17' ) ,
-              #(                            ,  'xsec_par_18' ) ,
-              #(                            ,  'xsec_par_19' ) ,
-              #(                            ,  'xsec_par_20' ) ,
-              #(                            ,  'xsec_par_21' ) ,
-              #(                            ,  'xsec_par_22' ) ,
-              #(                            ,  'xsec_par_23' ) ,
-              
-            #( 'f_banffmaqe_rhc'          ,  'xsec_par_0'  ) ,
-            
-            #(                             ,  'xsec_par_1'  ) ,       # pF carbon
-            #(                             ,  'xsec_par_2'  ) ,       # MEC carbon
-            #(                             ,  'xsec_par_3'  ) ,       # Eb carbon
 
-             #( 'f_banffpfermi_rhc'        ,  'xsec_par_4'  ) ,
-             #( 'f_banffmec_rhc'           ,  'xsec_par_5'  ) ,
-             #( 'f_banffbindE_rhc'         ,  'xsec_par_6'  ) ,
-             #( 'f_banffca5_rhc'           ,  'xsec_par_7'  ) ,
-             #( 'f_banffmares_rhc'         ,  'xsec_par_8'  ) ,
-             #( 'f_banffbgres_rhc'         ,  'xsec_par_9'  ) ,
-             #( 'f_banffnorm_nuetonumu_rhc',  'xsec_par_10' ) ,
-             #( 'f_banffshapeCCoth_rhc'    ,  'xsec_par_11' ) ,
+  # ( 'f_banffmaqe_fhc_rhc'                , 'xsec_par_0'  ) ,  
+  # ( 'f_banffpfermi_fhc_rhc'              , 'xsec_par_1'  ) ,
+  # ( 'f_banffmec_fhc_rhc'                 , 'xsec_par_2'  ) ,
+  # ( 'f_banffbindE_fhc_rhc'               , 'xsec_par_3'  ) ,
+  ( 'f_banffmecbar_fhc_rhc'              , 'xsec_par_4'  ) ,
+  # ( 'f_banffca5_fhc_rhc'                 , 'xsec_par_5'  ) ,
+  # ( 'f_banffmares_fhc_rhc'               , 'xsec_par_6'  ) ,
+  # ( 'f_banffbgres_fhc_rhc'               , 'xsec_par_7'  ) ,
+  ( 'f_banffnorm_nuetonumu_fhc_rhc'      , 'xsec_par_8' ) ,
+  ( 'f_banffnorm_nuebartonumubar_fhc_rhc', 'xsec_par_9' ) ,
+  # ( 'f_banffshapeCCoth_fhc_rhc'          , 'xsec_par_10' ) ,
+  # ( 'f_banffnorm_cccoh_fhc_rhc'          , 'xsec_par_11' ) ,
+  # ( 'f_banffnorm_nccoh_fhc_rhc'          , 'xsec_par_12' ) ,
+  # ( 'f_banffnorm_nc1gamma_fhc_rhc'       , 'xsec_par_13' ) ,
+  # ( 'f_banffnorm_ncoth_fhc_rhc'          , 'xsec_par_14' ) ,
 
-             #(                            ,  'xsec_par_12' ) ,       # CCcoh carbon
+  # ( 'f_banff00' ,  'flux_par_50' ) ,
+  # ( 'f_banff01',  'flux_par_51' ) ,
+  # ( 'f_banff02',  'flux_par_52' ) ,
+  # ( 'f_banff03',  'flux_par_53' ) ,
+  # ( 'f_banff04',  'flux_par_54' ) ,
+  # ( 'f_banff05',  'flux_par_55' ) ,
+  # ( 'f_banff06' ,  'flux_par_56' ) ,
+  # ( 'f_banff07' ,  'flux_par_57' ) ,
+  # ( 'f_banff08' ,  'flux_par_58' ) ,
+  # ( 'f_banff09' ,  'flux_par_59' ) ,
+  # ( 'f_banff10' ,  'flux_par_60' ) ,
+  # ( 'f_banff11',  'flux_par_61' ) ,
+  # ( 'f_banff12' ,  'flux_par_62' ) ,
+  # ( 'f_banff13',  'flux_par_63' ) ,
+  # ( 'f_banff14',  'flux_par_64' ) ,
+  # ( 'f_banff15',  'flux_par_65' ) ,
+  # ( 'f_banff16',  'flux_par_66' ) ,
+  # ( 'f_banff17',  'flux_par_67' ) ,
+  # ( 'f_banff18',  'flux_par_68' ) ,
+  # ( 'f_banff19',  'flux_par_69' ) ,
+  # ( 'f_banff20' ,  'flux_par_70' ) ,
+  # ( 'f_banff21',  'flux_par_71' ) ,
+  # ( 'f_banff22',  'flux_par_72' ) ,
+  # ( 'f_banff23',  'flux_par_73' ) ,
+  # ( 'f_banff24',  'flux_par_74' ) ,
+  
 
-             #( 'f_banffnorm_cccoh_rhc'    ,  'xsec_par_13' ) ,
-             #( 'f_banffnorm_nccoh_rhc'    ,  'xsec_par_14' ) ,
-             #( 'f_banffnorm_ncoth_rhc'    ,  'xsec_par_15' ) ,
+  # ( 'f_banff00_rhc',  'flux_par_75' ) , 
+  # ( 'f_banff01_rhc',  'flux_par_76' ) , 
+  # ( 'f_banff02_rhc',  'flux_par_77' ) , 
+  # ( 'f_banff03_rhc',  'flux_par_78' ) , 
+  # ( 'f_banff04_rhc',  'flux_par_79' ) , 
+  # ( 'f_banff05_rhc',  'flux_par_80' ) , 
+  # ( 'f_banff06_rhc',  'flux_par_81' ) , 
+  # ( 'f_banff07_rhc',  'flux_par_82' ) , 
+  # ( 'f_banff08_rhc',  'flux_par_83' ) , 
+  # ( 'f_banff09_rhc',  'flux_par_84' ) , 
+  # ( 'f_banff10_rhc',  'flux_par_85' ) , 
+  # ( 'f_banff11_rhc',  'flux_par_86' ) , 
+  # ( 'f_banff12_rhc',  'flux_par_87' ) , 
+  # ( 'f_banff13_rhc',  'flux_par_88' ) , 
+  # ( 'f_banff14_rhc',  'flux_par_89' ) , 
+  # ( 'f_banff15_rhc',  'flux_par_90' ) , 
+  # ( 'f_banff16_rhc',  'flux_par_91' ) , 
+  # ( 'f_banff17_rhc',  'flux_par_92' ) , 
+  # ( 'f_banff18_rhc',  'flux_par_93' ) , 
+  # ( 'f_banff19_rhc',  'flux_par_94' ) , 
+  # ( 'f_banff20_rhc',  'flux_par_95' ) , 
+  # ( 'f_banff21_rhc',  'flux_par_96' ) , 
+  # ( 'f_banff22_rhc',  'flux_par_97' ) , 
+  # ( 'f_banff23_rhc',  'flux_par_98' ) , 
+  # ( 'f_banff24_rhc',  'flux_par_99' ) , 
+  
+  # ( 'f_skdetfsi006',  'skdet_par_0') ,
+  # ( 'f_skdetfsi007',  'skdet_par_1') ,
+  # ( 'f_skdetfsi008',  'skdet_par_2') ,
+  # ( 'f_skdetfsi009',  'skdet_par_3') ,
+  # ( 'f_skdetfsi010',  'skdet_par_4') ,
+  # ( 'f_skdetfsi011',  'skdet_par_5') ,
+  # ( 'f_skdetfsi012',  'skdet_par_6') ,
+  # ( 'f_skdetfsi013',  'skdet_par_7') ,
+  # ( 'f_skdetfsi014',  'skdet_par_8') ,
+  # ( 'f_skdetfsi015',  'skdet_par_9') ,
+  # ( 'f_skdetfsi016',  'skdet_par_10') ,
+  # ( 'f_skdetfsi017',  'skdet_par_11') ,
+  
+  # ( 'f_skdetfsi000',  'skdet_par_12') ,
+  # ( 'f_skdetfsi001',  'skdet_par_13') ,
+  # ( 'f_skdetfsi002',  'skdet_par_14') ,
+  # ( 'f_skdetfsi003',  'skdet_par_15') ,
+  # ( 'f_skdetfsi004',  'skdet_par_16') ,
+  # ( 'f_skdetfsi005',  'skdet_par_17') ,
+  
+  # ( 'f_sk_e_scale' ,  'skdet_par_36'),
+  
+  # ( 'f_skdetfsi006_rhc',  'skdet_par_18') , 
+  # ( 'f_skdetfsi007_rhc',  'skdet_par_19') , 
+  # ( 'f_skdetfsi008_rhc',  'skdet_par_20') , 
+  # ( 'f_skdetfsi009_rhc',  'skdet_par_21') , 
+  # ( 'f_skdetfsi010_rhc',  'skdet_par_22') , 
+  # ( 'f_skdetfsi011_rhc',  'skdet_par_23') ,
+  # ( 'f_skdetfsi012_rhc',  'skdet_par_24') ,
+  # ( 'f_skdetfsi013_rhc',  'skdet_par_25') ,
+  # ( 'f_skdetfsi014_rhc',  'skdet_par_26') ,
+  # ( 'f_skdetfsi015_rhc',  'skdet_par_27') ,
+  # ( 'f_skdetfsi016_rhc',  'skdet_par_28') ,
+  # ( 'f_skdetfsi017_rhc',  'skdet_par_29') ,
+  
+  # ( 'f_skdetfsi000_rhc',  'skdet_par_30') , 
+  # ( 'f_skdetfsi001_rhc',  'skdet_par_31') , 
+  # ( 'f_skdetfsi002_rhc',  'skdet_par_32') , 
+  # ( 'f_skdetfsi003_rhc',  'skdet_par_33') , 
+  # ( 'f_skdetfsi004_rhc',  'skdet_par_34') , 
+  # ( 'f_skdetfsi005_rhc',  'skdet_par_35') ,
+  
+  # ( 'f_sk_e_scale_rhc' ,  'skdet_par_36'),
+]
 
-             #(                            ,  'xsec_par_16' ) ,
-             #(                            ,  'xsec_par_17' ) ,
-             #(                            ,  'xsec_par_18' ) ,
-             #(                            ,  'xsec_par_19' ) , 
-             #(                            ,  'xsec_par_20' ) , 
-             #(                            ,  'xsec_par_21' ) , 
-             #(                            ,  'xsec_par_22' ) , 
-             #(                            ,  'xsec_par_23' ) , 
-             #( ,  'flux_par_50' ) , 
-             # ( ,  'flux_par_51' ) , 
-             # ( ,  'flux_par_52' ) , 
-             # ( ,  'flux_par_53' ) , 
-             # ( ,  'flux_par_54' ) , 
-             # ( ,  'flux_par_55' ) , 
-             # ( ,  'flux_par_56' ) , 
-             # ( ,  'flux_par_57' ) , 
-             # ( ,  'flux_par_58' ) , 
-             # ( ,  'flux_par_59' ) , 
-             # ( ,  'flux_par_60' ) , 
-             # ( ,  'flux_par_61' ) , 
-             # ( ,  'flux_par_62' ) , 
-             # ( ,  'flux_par_63' ) , 
-             # ( ,  'flux_par_64' ) , 
-             # ( ,  'flux_par_65' ) , 
-             # ( ,  'flux_par_66' ) , 
-             # ( ,  'flux_par_67' ) , 
-             # ( ,  'flux_par_68' ) , 
-             # ( ,  'flux_par_69' ) , 
-             # ( ,  'flux_par_70' ) , 
-             # ( ,  'flux_par_71' ) , 
-             # ( ,  'flux_par_72' ) , 
-             # ( ,  'flux_par_73' ) , 
-             # ( ,  'flux_par_74' ) , 
-
-             # ( 'f_banff00_rhc',  'flux_par_75' ) , 
-             # ( 'f_banff01_rhc',  'flux_par_76' ) , 
-             # ( 'f_banff02_rhc',  'flux_par_77' ) , 
-             # ( 'f_banff03_rhc',  'flux_par_78' ) , 
-             # ( 'f_banff04_rhc',  'flux_par_79' ) , 
-             # ( 'f_banff05_rhc',  'flux_par_80' ) , 
-             # ( 'f_banff06_rhc',  'flux_par_81' ) , 
-             # ( 'f_banff07_rhc',  'flux_par_82' ) , 
-             # ( 'f_banff08_rhc',  'flux_par_83' ) , 
-             # ( 'f_banff09_rhc',  'flux_par_84' ) , 
-             # ( 'f_banff10_rhc',  'flux_par_85' ) , 
-             # ( 'f_banff11_rhc',  'flux_par_86' ) , 
-             # ( 'f_banff12_rhc',  'flux_par_87' ) , 
-             # ( 'f_banff13_rhc',  'flux_par_88' ) , 
-             # ( 'f_banff14_rhc',  'flux_par_89' ) , 
-             # ( 'f_banff15_rhc',  'flux_par_90' ) , 
-             # ( 'f_banff16_rhc',  'flux_par_91' ) , 
-             # ( 'f_banff17_rhc',  'flux_par_92' ) , 
-             # ( 'f_banff18_rhc',  'flux_par_93' ) , 
-             # ( 'f_banff19_rhc',  'flux_par_94' ) , 
-             # ( 'f_banff20_rhc',  'flux_par_95' ) , 
-             # ( 'f_banff21_rhc',  'flux_par_96' ) , 
-             # ( 'f_banff22_rhc',  'flux_par_97' ) , 
-             # ( 'f_banff23_rhc',  'flux_par_98' ) , 
-             # ( 'f_banff24_rhc',  'flux_par_99' ) , 
-
-             #( ,  'skdet_par_0' ) , 
-             #( ,  'skdet_par_1' ) , 
-             #( ,  'skdet_par_2' ) , 
-             #( ,  'skdet_par_3' ) , 
-             #( ,  'skdet_par_4' ) , 
-             #( ,  'skdet_par_5' ) , 
-             #( ,  'skdet_par_6' ) , 
-             #( ,  'skdet_par_7' ) , 
-             #( ,  'skdet_par_8' ) , 
-             #( ,  'skdet_par_9' ) , 
-             #( ,  'skdet_par_10') , 
-             #( ,  'skdet_par_11') , 
-             
-             # ( ,  'skdet_par_12') , 
-             # ( ,  'skdet_par_13') , 
-             # ( ,  'skdet_par_14') , 
-             # ( ,  'skdet_par_15') , 
-             # ( ,  'skdet_par_16') , 
-             # ( ,  'skdet_par_17') , 
-             
-             # ( ,  'skdet_par_18') , 
-             # ( ,  'skdet_par_19') , 
-             # ( ,  'skdet_par_20') , 
-             # ( ,  'skdet_par_21') , 
-             # ( ,  'skdet_par_22') , 
-             # ( ,  'skdet_par_23') , 
-             # ( ,  'skdet_par_24') , 
-             # ( ,  'skdet_par_25') , 
-             # ( ,  'skdet_par_26') , 
-             # ( ,  'skdet_par_27') , 
-             # ( ,  'skdet_par_28') , 
-             # ( ,  'skdet_par_29') , 
-              
-#              ( 'f_skdetfsi006',  'skdet_par_0') ,
-#              ( 'f_skdetfsi007',  'skdet_par_1') ,
-#              ( 'f_skdetfsi008',  'skdet_par_2') ,
-#              ( 'f_skdetfsi009',  'skdet_par_3') ,
-#              ( 'f_skdetfsi010',  'skdet_par_4') ,
-#              ( 'f_skdetfsi011',  'skdet_par_5') ,
-#              ( 'f_skdetfsi012',  'skdet_par_6') ,
-#              ( 'f_skdetfsi013',  'skdet_par_7') ,
-#              ( 'f_skdetfsi014',  'skdet_par_8') ,
-#              ( 'f_skdetfsi015',  'skdet_par_9') ,
-#              ( 'f_skdetfsi016',  'skdet_par_10') ,
-#              ( 'f_skdetfsi017',  'skdet_par_11') ,
-#              
-#              ( 'f_skdetfsi000',  'skdet_par_12') ,
-#              ( 'f_skdetfsi001',  'skdet_par_13') ,
-#              ( 'f_skdetfsi002',  'skdet_par_14') ,
-#              ( 'f_skdetfsi003',  'skdet_par_15') ,
-#              ( 'f_skdetfsi004',  'skdet_par_16') ,
-#              ( 'f_skdetfsi005',  'skdet_par_17') ,
-#              
-#              ( 'f_sk_e_scale' ,  'skdet_par_36'),
-# 
-#              ( 'f_skdetfsi006_rhc',  'skdet_par_18') , 
-#              ( 'f_skdetfsi007_rhc',  'skdet_par_19') , 
-#              ( 'f_skdetfsi008_rhc',  'skdet_par_20') , 
-#              ( 'f_skdetfsi009_rhc',  'skdet_par_21') , 
-#              ( 'f_skdetfsi010_rhc',  'skdet_par_22') , 
-#              ( 'f_skdetfsi011_rhc',  'skdet_par_23') ,
-#              ( 'f_skdetfsi012_rhc',  'skdet_par_24') ,
-#              ( 'f_skdetfsi013_rhc',  'skdet_par_25') ,
-#              ( 'f_skdetfsi014_rhc',  'skdet_par_26') ,
-#              ( 'f_skdetfsi015_rhc',  'skdet_par_27') ,
-#              ( 'f_skdetfsi016_rhc',  'skdet_par_28') ,
-#              ( 'f_skdetfsi017_rhc',  'skdet_par_29') ,
-#              
-#              ( 'f_skdetfsi000_rhc',  'skdet_par_30') , 
-#              ( 'f_skdetfsi001_rhc',  'skdet_par_31') , 
-#              ( 'f_skdetfsi002_rhc',  'skdet_par_32') , 
-#              ( 'f_skdetfsi003_rhc',  'skdet_par_33') , 
-#              ( 'f_skdetfsi004_rhc',  'skdet_par_34') , 
-#              ( 'f_skdetfsi005_rhc',  'skdet_par_35') ,
-#              
-#                   ( 'f_sk_e_scale' ,  'skdet_par_36'),
-              ]
-
-modes = [ ( ''                , ''                  ) ,
-#          ( '_numuccqe'        , "_numu_ccqe"      ) ,
-#          ( '_numucc1pi'       , "_numu_cc1pi"     ) ,
-#          ( '_numucccoh'       , "_numu_cccoh"     ) ,
-#          ( '_numuccmec'       , "_numu_mec"       ) ,
-#          ( '_numuccoth'       , "_numu_ccother"     ) ,
-#          #~ ( '_numunc1piC'      , "_numu_ncpipm"    ) ,
-#          #~ ( '_numunc1pi0'      , "_numu_ncpi0"     ) ,
-#          ( '_numunccoh'       , "_numu_nccoh"     ) ,
-#          #( '_numuncoth'       , "_numu_ncoth"     ) ,
-#          ( '_numubarccqe'     , "_numub_ccqe"     ) ,
-#          ( '_numubarcc1pi'    , "_numub_cc1pi"    ) ,
-#          ( '_numubarcccoh'    , "_numub_cccoh"    ) ,
-#          ( '_numubarccmec'    , "_numub_mec"      ) ,
-#          ( '_numubarccoth'    , "_numub_ccother"    ) ,
-#          #~ ( '_numubarnc1piC'   , "_numub_ncpipm"   ) ,
-#          #~ ( '_numubarnc1pi0'   , "_numub_ncpi0"    ) ,
-#          ( '_numubarnccoh'    , "_numub_nccoh"    ) ,
-#          #( '_numubarncoth'    , "_numub_ncoth"    ) ,
-#          ( '_nueccqe'         , "_nue_ccqe"       ) ,
-#          ( '_nuecc1pi'        , "_nue_cc1pi"      ) ,
-#          ( '_nuecccoh'        , "_nue_cccoh"      ) ,
-#          ( '_nueccmec'        , "_nue_mec"        ) ,
-#          ( '_nueccoth'        , "_nue_ccother"      ) ,
-#          #~ ( '_nuenc1piC'       , "_nue_ncpipm"     ) ,
-#          #~ ( '_nuenc1pi0'       , "_nue_ncpi0"      ) ,
-#          ( '_nuenccoh'        , "_nue_nccoh"      ) ,
-#          #( '_nuencoth'        , "_nue_ncoth"      ) ,
-#          ( '_oscnueccqe'      , "_signue_ccqe"    ) ,
-#          ( '_oscnuecc1pi'     , "_signue_cc1pi"   ) ,
-#          ( '_oscnuecccoh'     , "_signue_cccoh"   ) ,
-#          ( '_oscnueccmec'     , "_signue_mec"     ) ,
-#          ( '_oscnueccoth'     , "_signue_ccother"   ) ,
-#          ( '_nuebarccqe'      , "_nueb_ccqe"      ) ,
-#          ( '_nuebarcc1pi'     , "_nueb_cc1pi"     ) ,
-#          ( '_nuebarcccoh'     , "_nueb_cccoh"     ) ,
-#          ( '_nuebarccmec'     , "_nueb_mec"       ) ,
-#          ( '_nuebarccoth'     , "_nueb_ccother"     ) ,
-#          #~ ( '_nuebarnc1piC'    , "_nueb_ncpipm"    ) ,
-#          #~ ( '_nuebarnc1pi0'    , "_nueb_ncpi0"     ) ,
-#          ( '_nuebarnccoh'     , "_nueb_nccoh"     ) ,
-#          #( '_nuebarncoth'     , "_nueb_ncoth"     ) ,
-#          ( '_oscnuebarccqe'   , "_signueb_ccqe"   ) ,
-#          ( '_oscnuebarcc1pi'  , "_signueb_cc1pi"  ) ,
-#          ( '_oscnuebarcccoh'  , "_signueb_cccoh"  ) ,
-#          ( '_oscnuebarccmec'  , "_signueb_mec"    ) ,
-#          ( '_oscnuebarccoth'  , "_signueb_ccother"  )
-         ]
+modes = [ 
+  #( ''                , ''                  ) ,
+  
+  ( '_numuccqe'        , "_numu_ccqe"      ) ,
+  ( '_numucc1pi'       , "_numu_cc1pi"     ) ,
+  ( '_numucccoh'       , "_numu_cccoh"     ) ,
+  ( '_numuccmec'       , "_numu_mec"       ) ,
+  ( '_numuccoth'       , "_numu_ccother"     ) ,
+  #( '_numunc1piC'      , "_numu_ncpipm"    ) ,
+  #( '_numunc1pi0'      , "_numu_ncpi0"     ) ,
+  #( '_numunccoh'       , "_numu_nccoh"     ) ,
+  ( '_numuncoth'       , "_numu_ncoth"     ) ,
+  ( '_numunc1gamma'    , "_numu_ncgam"     ) ,
+  ( '_numubarccqe'     , "_numub_ccqe"     ) ,
+  ( '_numubarcc1pi'    , "_numub_cc1pi"    ) ,
+  ( '_numubarcccoh'    , "_numub_cccoh"    ) ,
+  ( '_numubarccmec'    , "_numub_mec"      ) ,
+  ( '_numubarccoth'    , "_numub_ccother"    ) ,
+  #( '_numubarnc1piC'   , "_numub_ncpipm"   ) ,
+  #( '_numubarnc1pi0'   , "_numub_ncpi0"    ) ,
+  #( '_numubarnccoh'    , "_numub_nccoh"    ) ,
+  ( '_numubarncoth'    , "_numub_ncoth"    ) ,
+  ( '_numubarnc1gamma' , "_numub_ncgam"    ) ,
+  ( '_nueccqe'         , "_nue_ccqe"       ) ,
+  ( '_nuecc1pi'        , "_nue_cc1pi"      ) ,
+  ( '_nuecccoh'        , "_nue_cccoh"      ) ,
+  ( '_nueccmec'        , "_nue_mec"        ) ,
+  ( '_nueccoth'        , "_nue_ccother"      ) ,
+  #( '_nuenc1piC'       , "_nue_ncpipm"     ) ,
+  #( '_nuenc1pi0'       , "_nue_ncpi0"      ) ,
+  #( '_nuenccoh'        , "_nue_nccoh"      ) ,
+  ( '_nuencoth'        , "_nue_ncoth"      ) ,
+  ( '_nuenc1gamma'     , "_nue_ncgam"      ) ,
+  ( '_oscnueccqe'      , "_signue_ccqe"    ) ,
+  ( '_oscnuecc1pi'     , "_signue_cc1pi"   ) ,
+  ( '_oscnuecccoh'     , "_signue_cccoh"   ) ,
+  ( '_oscnueccmec'     , "_signue_mec"     ) ,
+  ( '_oscnueccoth'     , "_signue_ccother"   ) ,
+  ( '_nuebarccqe'      , "_nueb_ccqe"      ) ,
+  ( '_nuebarcc1pi'     , "_nueb_cc1pi"     ) ,
+  ( '_nuebarcccoh'     , "_nueb_cccoh"     ) ,
+  ( '_nuebarccmec'     , "_nueb_mec"       ) ,
+  ( '_nuebarccoth'     , "_nueb_ccother"     ) ,
+  #( '_nuebarnc1piC'    , "_nueb_ncpipm"    ) ,
+  #( '_nuebarnc1pi0'    , "_nueb_ncpi0"     ) ,
+  #( '_nuebarnccoh'     , "_nueb_nccoh"     ) ,
+  ( '_nuebarncoth'     , "_nueb_ncoth"     ) ,
+  ( '_nuebarnc1gamma'  , "_nueb_ncgam"     ) ,
+  ( '_oscnuebarccqe'   , "_signueb_ccqe"   ) ,
+  ( '_oscnuebarcc1pi'  , "_signueb_cc1pi"  ) ,
+  ( '_oscnuebarcccoh'  , "_signueb_cccoh"  ) ,
+  ( '_oscnuebarccmec'  , "_signueb_mec"    ) ,
+  ( '_oscnuebarccoth'  , "_signueb_ccother"  )
+]
 
 
 line_colors = dict()
@@ -343,14 +248,22 @@ def main():
     
     mach3_nom_histname = mach3_nom_pattern
     for old,new in [("[CURRENT]"  , mach3_current  ),
-                    #   ("[MODE]"     , mach3_mode     ),
+                    ("[MODE]"     , mach3_mode     ),
                     ("[SELECTION]", mach3_selection) ]:
       mach3_nom_histname = mach3_nom_histname.replace(old,new)
                                                     
     mach3_nom_hists[valor_mode] = mach3_file.Get(mach3_nom_histname)
+    
+    #print "\n [CURRENT]  ",mach3_current
+    #print "\n [MODE]     ",mach3_mode
+    #print "\n [SELECTION]",mach3_selection
+    #print "\n mach3 histname = ",mach3_nom_histname,"\n"
+
     if not mach3_nom_hists[valor_mode]:
       print "Failed to get MaCh3 nominal histogram ",mach3_nom_histname
-        
+    
+    print mach3_nom_hists[valor_mode]
+    
     mach3_nom_hists_binno[valor_mode] = hist_to_bin_number(mach3_nom_hists[valor_mode])
   
       
@@ -378,11 +291,15 @@ def main():
                         ("[SELECTION]", mach3_selection),
                         ("[VAR]"      , mach3_var      ) ]:
           mach3_histname = mach3_histname.replace(old,new)
-                                               
+                        
+        #print "\n valor_histname = ",valor_histname,"\n"
+
         valor_hists[valor_mode][valor_param][valor_var] = valor_file.Get(valor_histname)
-        print valor_histname
+        
         if not valor_hists[valor_mode][valor_param][valor_var]:
           print "Failed to get VALOR histogram ",valor_histname
+          
+        #print "\n mach3_histname = ",mach3_histname,"\n"
           
         mach3_hists[valor_mode][valor_param][valor_var] = mach3_file.Get(mach3_histname)
         if not mach3_hists[valor_mode][valor_param][valor_var]:
@@ -401,10 +318,10 @@ def main():
         
         mach3_ratio_hists      [valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists      [valor_mode][valor_param][valor_var],mach3_nom_hists[valor_mode])
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var] = ratio_hist(mach3_hists_binno[valor_mode][valor_param][valor_var],mach3_nom_hists_binno[valor_mode])
-       
+        
         set_zero_to_one(mach3_ratio_hists      [valor_mode][valor_param][valor_var])
         set_zero_to_one(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var])
-
+        
       hist_limits = []
       for valor_var,mach3_var in variations:
         for bin_content in (hist_to_list(valor_hists[valor_mode][valor_param][valor_var])+hist_to_list(mach3_ratio_hists[valor_mode][valor_param][valor_var])):
@@ -428,7 +345,7 @@ def main():
         valor_hists[valor_mode][valor_param][valor_var].Draw(option)
         option = "same"
         mach3_ratio_hists[valor_mode][valor_param][valor_var].Draw(option)
-
+      
       canvases[canv_name].Update()
       canvases[canv_name].Print("syst_var_mode_ereco_"+sample+"_"+tag+".pdf"+next(pdf_printing_iter_ereco))
       
@@ -445,6 +362,14 @@ def main():
         valor_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
         option = "same"
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
+        #mach3_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
+        #print "integral = ",mach3_hists_binno[valor_mode][valor_param][valor_var].Integral(),"\n"
+      
+      #print "Nominal name = ",mach3_nom_hists_binno[valor_mode].GetName(),"\n"
+      #mach3_nom_hists_binno[valor_mode].Draw(option)
+      #print "\nintegral ereco = ",mach3_nom_hists[valor_mode].Integral(),"\n"
+      #print "\nintegral binno = ",mach3_nom_hists_binno[valor_mode].Integral(),"\n"
+
       
       canvases[canv_name_binno].Update()
       canvases[canv_name_binno].Print("syst_var_mode_binno_"+sample+"_"+tag+".pdf"+next(pdf_printing_iter_binno))

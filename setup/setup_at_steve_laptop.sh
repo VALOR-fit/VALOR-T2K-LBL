@@ -9,10 +9,13 @@
 
 if [ -z ${VALOR_FWMK} ] ; then
   if [ $USER == steve ] ; then 
-    source /home/steve/analysis/fmwk/setup/setup_at_steve_laptop.sh 
+    source "/home/steve/analysis/fmwk/setup/setup_at_steve_laptop.sh"
   fi
   if [ $USER == phrhbq ] ; then 
-    source /storage/epp2/phrhbq/analysis/fmwk/setup/setup_at_steve_laptop.sh
+    source "/storage/epp2/phrhbq/analysis/fmwk/setup/setup_at_steve_laptop.sh"
+  fi
+  if [ $USER == jat98257 ] ; then
+    source "/opt/ppd/t2k/users/steve/valor/fmwk/trunk//setup/setup_at_cvmfs.sh"
   fi
 fi
 
@@ -23,8 +26,6 @@ if [ -z $T2KOSCANA ]; then
   export T2KOSCANA="$( dirname "$( dirname "${source}" )" )/" # Directory above the one containing this file
 fi
 
-export LD_LIBRARY_PATH=${T2KOSCANA}/fitter:${LD_LIBRARY_PATH}
-export PATH=${T2KOSCANA}/root:${T2KOSCANA}/production:${PATH}
-
-
+export LD_LIBRARY_PATH="${T2KOSCANA}/lib:${LD_LIBRARY_PATH}"
+export PATH="${T2KOSCANA}/bin:${T2KOSCANA}/production:${PATH}"
 

@@ -1,19 +1,19 @@
 //____________________________________________________________________________
 /*!
-
-\class    valor skmodes
-
-\brief    Superk Modes for VALOR
-
-\author   Steve Dennis <stephen.dennis \at warwick.ac.uk>
-          University of Warwick ; STFC, Rutherford Appleton Laboratory
-          
-\created  April 08 2014
-
-Changes since 2014 v0.0.1:
-
-
-*/
+ 
+ \class    valor skmodes
+ 
+ \brief    Superk Modes for VALOR
+ 
+ \author   Steve Dennis <stephen.dennis \at warwick.ac.uk>
+ University of Warwick ; STFC, Rutherford Appleton Laboratory
+ 
+ \created  April 08 2014
+ 
+ Changes since 2014 v0.0.1:
+ 
+ 
+ */
 //____________________________________________________________________________
 
 #ifndef _skmodes_modes_h_
@@ -23,7 +23,7 @@ Changes since 2014 v0.0.1:
 #include "AnalysisOptions.h"
 
 namespace valor {
-  
+    
     namespace conv   {
         
         // Enumeration of (true) reaction modes that may be considered separately within each SuperK sample
@@ -96,42 +96,54 @@ namespace valor {
         }
         SuperkMode_t;
     } // conv
+    
+    namespace util {
+        // Modes
+        int SuperkMode2FluxNuPdg(conv::SuperkMode_t m);
+        int SuperkMode2SKMCPdg  (conv::SuperkMode_t m);
+        
+        bool IsNuMu             (conv::SuperkMode_t  m);
+        bool IsOscNuMu          (conv::SuperkMode_t  m);
+        bool IsNuMuBar          (conv::SuperkMode_t  m);
+        bool IsOscNuMuBar       (conv::SuperkMode_t  m);
+        bool IsNuE              (conv::SuperkMode_t  m);
+        bool IsNuEBar           (conv::SuperkMode_t  m);
+        bool IsOscNuEBar        (conv::SuperkMode_t  m);
+        bool IsOscNuE           (conv::SuperkMode_t  m);
+        bool IsCC               (conv::SuperkMode_t  m);
+        bool IsCCQE             (conv::SuperkMode_t  m);
+        bool IsCCnQE            (conv::SuperkMode_t  m);
+        bool IsNC               (conv::SuperkMode_t  m);
+        bool IsMEC              (conv::SuperkMode_t  m);
 
-namespace util {
-  // Modes
-  int SuperkMode2FluxNuPdg(conv::SuperkMode_t m);
-  int SuperkMode2SKMCPdg  (conv::SuperkMode_t m);
-
-  bool IsNuMu             (conv::SuperkMode_t  m);
-  bool IsOscNuMu          (conv::SuperkMode_t  m);
-  bool IsNuMuBar          (conv::SuperkMode_t  m);
-  bool IsOscNuMuBar       (conv::SuperkMode_t  m);
-  bool IsNuE              (conv::SuperkMode_t  m);
-  bool IsNuEBar           (conv::SuperkMode_t  m);
-  bool IsOscNuEBar        (conv::SuperkMode_t  m);
-  bool IsOscNuE           (conv::SuperkMode_t  m);
-  bool IsCC               (conv::SuperkMode_t  m);
-  bool IsCCQE             (conv::SuperkMode_t  m);
-  bool IsCCnQE            (conv::SuperkMode_t  m);
-  bool IsNC               (conv::SuperkMode_t  m);
-  bool IsMEC              (conv::SuperkMode_t  m);
-  
-  // String stuff
-  conv::SuperkMode_t  SuperkModeFromString      (string h);
-  string AsString           (conv::SuperkMode_t       m);
-  string AsStringCompact    (conv::SuperkMode_t       m);
-  string AsStringTex        (conv::SuperkMode_t       m);
-  string AsStringRooTex     (conv::SuperkMode_t       m);
-  // Aliases
-  string ModeAsString           (conv::SuperkMode_t       m);
-  string ModeAsStringCompact    (conv::SuperkMode_t       m);
-  string ModeAsStringTex        (conv::SuperkMode_t       m);
-  string ModeAsStringRooTex     (conv::SuperkMode_t       m);
-  
-  conv::SuperkMode_t GetMode(int is, int im);
-  
-} // util
+        int AppliesToCCQE(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToCCMEC(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToCCcoh(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToCC1pi(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToCCoth(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNC1pi0(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNC1piC(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNCcoh(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNC1Gamma(std::vector<valor::conv::SuperkMode_t> modes);
+        int AppliesToNCoth(std::vector<valor::conv::SuperkMode_t> modes);
+        void PrintAppliesType(int mode, const char * type, bool verbose = false);
+        
+        // String stuff
+        conv::SuperkMode_t  SuperkModeFromString      (string h);
+        string AsString           (conv::SuperkMode_t       m);
+        string AsStringCompact    (conv::SuperkMode_t       m);
+        string AsStringTex        (conv::SuperkMode_t       m);
+        string AsStringRooTex     (conv::SuperkMode_t       m);
+        // Aliases
+        string ModeAsString           (conv::SuperkMode_t       m);
+        string ModeAsStringCompact    (conv::SuperkMode_t       m);
+        string ModeAsStringTex        (conv::SuperkMode_t       m);
+        string ModeAsStringRooTex     (conv::SuperkMode_t       m);
+        
+        conv::SuperkMode_t GetMode(int is, int im);
+        
+    } // util
 } // valor
-  
+
 #endif 
 

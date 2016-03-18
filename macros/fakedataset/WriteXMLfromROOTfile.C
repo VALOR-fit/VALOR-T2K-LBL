@@ -3,21 +3,50 @@
 
 void WriteXMLfromROOTfile
 (
- const char * tag                     = "fakedata_201411_E",                        /* */
+ const char * tag                     = "fakedata_201411_0p250e21_F",                        /* */
+ 
+
+ // FHC
  
  //char *path_FHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setA_p250kA.0p681e21_pot.mask.root",	
  //char *path_FHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setB_p250kA.0p681e21_pot.mask.root",	
  //char *path_FHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setC_p250kA.0p681e21_pot.mask.root",	
  //char *path_FHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setD_p250kA.0p681e21_pot.mask.root",	
- char *path_FHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setE_p250kA.0p681e21_pot.mask.root",	
- //char *path_FHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setF_p250kA.0p681e21_pot.mask.root",
+ //char *path_FHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setE_p250kA.0p681e21_pot.mask.root",	
+ char *path_FHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setF_p250kA.0p681e21_pot.mask.root",
+
+ /////////////// 0.0506 x 10^21 POT (RHC) /////////////
  
  //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setA_m250kA.0p051e21_pot.mask.root",	
  //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setB_m250kA.0p051e21_pot.mask.root",	
  //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setC_m250kA.0p051e21_pot.mask.root",	
  //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setD_m250kA.0p051e21_pot.mask.root",	
- char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setE_m250kA.0p051e21_pot.mask.root",
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setE_m250kA.0p051e21_pot.mask.root",
  //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setF_m250kA.0p051e21_pot.mask.root",
+
+
+
+ /////////////// 1.7 POT x 10^21 POT (RHC) ////////////
+ 
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setA_m250kA.0p170e21_pot.mask.root",	
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setB_m250kA.0p170e21_pot.mask.root",	
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setC_m250kA.0p170e21_pot.mask.root",	
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setD_m250kA.0p170e21_pot.mask.root",	
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setE_m250kA.0p170e21_pot.mask.root",
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setF_m250kA.0p170e21_pot.mask.root",
+
+
+
+ /////////////// 2.5 POT x 10^21 POT (RHC) //////////// 
+ 
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setA_m250kA.0p250e21_pot.mask.root",	
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setB_m250kA.0p250e21_pot.mask.root",	
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setC_m250kA.0p250e21_pot.mask.root",	
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setD_m250kA.0p250e21_pot.mask.root",	
+ //char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setE_m250kA.0p250e21_pot.mask.root",
+ char *path_RHC = "$T2KOSCANA/inputs/fakedata/201411.fakedata/minituples/t2ksk.fakedt.minituple.setF_m250kA.0p250e21_pot.mask.root",
+
+
 
  char *path_MultiRing,
 
@@ -178,13 +207,14 @@ void WriteXMLfromROOTfile
 	if(iclass != 1) continue;  // iclass = 1 --> e-like
 	fxml << erec / 1000. << ", ";
       }
+      cout << endl;
     }
   }
+
   fxml << endl;
   fxml << "          </ereco_values> " << endl;
   fxml << "        </one_e_ring_rhc>    " << endl;
 
-  
 // 
   
   fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;

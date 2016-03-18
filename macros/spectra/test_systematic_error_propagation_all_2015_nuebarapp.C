@@ -13,24 +13,24 @@ void test_systematic_error_propagation_all_2015_nuebarapp
 (
  int          mode               = 0,                /* options: see above */
  bool         update_rootfile    = false,            /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "1Re",         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample          = "RHC1Re",         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis         = "3f_osc", /* options: "2f_numu_disap", "3f_osc", "3f_oscbar, 3f_oscbar_normbar" */
 
- // double       input_mixing12     = -99,              /* */
- // double       input_mixing13     = -99,              /* */
- // double       input_mixing23     = -99,              /* */
- // double       input_deltacp      = -99,              /* */
- // double       input_dm12sq       = -99,              /* */
- // double       input_dm23sq       = -99,              /* */
- // double       input_betabar      = -99,              /* */
-
- double       input_mixing12     = 0.,              /* */
- double       input_mixing13     = 0.,              /* */
- double       input_mixing23     = 0.,              /* */
- double       input_deltacp      = 0.,              /* */
+ double       input_mixing12     = -99,              /* */
+ double       input_mixing13     = -99,              /* */
+ double       input_mixing23     = -99,              /* */
+ double       input_deltacp      = -99,              /* */
  double       input_dm12sq       = -99,              /* */
  double       input_dm23sq       = -99,              /* */
- double       input_betabar      = 0.,              /* */
+ double       input_betabar      = -99,              /* */
+
+ // double       input_mixing12     = 0.,              /* */
+ // double       input_mixing13     = 0.,              /* */
+ // double       input_mixing23     = 0.,              /* */
+ // double       input_deltacp      = 0.,              /* */
+ // double       input_dm12sq       = -99,              /* */
+ // double       input_dm23sq       = -99,              /* */
+ // double       input_betabar      = 0.,              /* */
 
  bool         save_toy_expts     = false,            /* save the ereco spectra? */
  

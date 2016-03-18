@@ -9,42 +9,35 @@ import math
 import array
 import numpy as np
 import sys
-import os
 
-def main(files, treename=None,experiment="NONE"):
+try:
+  ROOT.valor
+except:
+  ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C");
   
-  try:
-    ROOT.valor
-  except:
-    if   experiment=="T2K" : ROOT.gROOT.ProcessLine(".x $T2KOSCANA/root/root2k.C")
-    elif experiment=="DUNE": ROOT.gROOT.ProcessLine(".x $VALOR_DUNE/root/valor_dune.C")
-    else:                    ROOT.gROOT.ProcessLine(".x $VALOR_FMWK/root/valor_interpreter.C");
-    
-  valor = ROOT.valor
-  util  = ROOT.valor.util
-  conv  = ROOT.valor.conv
-  opt   = ROOT.valor.Opt.Instance()
-  nr    = ROOT.valor.util.NameRegistry.Instance()
+valor = ROOT.valor
+util = ROOT.valor.util
+conv = ROOT.valor.conv
+opt  = ROOT.valor.Opt.Instance()
 
-  ext = ".root"
+ext = ".root"
 
-  # Method to call, variable for out_tree, write only if function true on first FPL
-  fitparamlist_methods_and_entries= [("BestFitValue","bestfit"  ,""),
-                                     ("HesseError"  ,"hesse"    ,"HesseErrorsSet"),
-                                     ("MigradError" ,"migraderr","MigradErrorsSet"),
-                                     ("InitValue"   ,"init"     ,""),
-                                     ("PlusError"   ,"pluserr"  ,"MinosErrorsSet"),
-                                     ("MinusError"  ,"minuserr" ,"MinosErrorsSet"),
-  ]
+fitparamlist_methods_and_entries= [("BestFitValue","bestfit"  ),
+                                   ("HesseError"  ,"hesse"    ),
+                                   ("MigradError" ,"migraderr"),
+                                   ("InitValue"   ,"init"     ),
+                                   ("PlusError"   ,"pluserr"  ),
+                                   ("MinusError"  ,"minuserr" ),
+]
 
-  physparamlist_methods_and_entries = [
-    ("Value" , "value")
-  ]
+physparamlist_methods_and_entries = [
+  ("Value" , "value")
+]
 
-  # Should be updated to read from Opt::Persistable
-  opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
+# Should be updated to read from Opt::Persistable
+opt.gOscMixingParamChoice = conv.kNuMixSinsqTheta
 
-# REAL MAIN FUNCTION STARTS HERE
+def main(files, treename=None):
   for filename in files:
     
     if not filename.endswith(ext):
@@ -106,15 +99,12 @@ def main(files, treename=None,experiment="NONE"):
           
           for ipar in xrange(fpl.Size()): # Loop over parameters
             par = fpl.WhichParam(ipar)
-            parname = nr.ParamAsStringSimple(par).replace("|","")
+            parname = util.ParamAsStringCompact(par).replace("|","")
             
             if par < conv.kNuis000:
               physics_params.append(par)
             
-            for method, entryname,condition in fitparamlist_methods_and_entries:
-              if (condition and not (getattr(fpl,condition)())):
-                continue
-                
+            for method, entryname in fitparamlist_methods_and_entries:
               full_branch_name = basename+"__"+parname+"__"+entryname
               new_branches.append(full_branch_name)
               
@@ -139,7 +129,7 @@ def main(files, treename=None,experiment="NONE"):
           # Loop over physics parameters
           for par in xrange(conv.knppmax):
             if not ppl.Contains(par): continue
-            parname = nr.ParamAsStringSimple(par).replace("|","")
+            parname = util.ParamAsStringCompact(par).replace("|","")
             
             for method, entryname in physparamlist_methods_and_entries:
               full_branch_name = basename+"__"+parname+"__"+entryname
@@ -165,10 +155,4 @@ def main(files, treename=None,experiment="NONE"):
       out_tree.Write()
   
 if __name__=="__main__":
-  # Need argument parser here for experiment - for now check if dune defined
-  if "VALOR_DUNE" in os.environ:
-    experiment = "DUNE"
-  else:
-    experiment = "T2K"
-    
-  main(sys.argv[1:],None,experiment)
+  main(sys.argv[1:])

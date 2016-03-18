@@ -41,8 +41,16 @@ def main(argv):
     outfile_numuCC   = argv[4]
     outfile_nueCC    = argv[5]
     outfile_2pi0ring = argv[6]
-    path = argv[7]+"/"
+    useereco    = argv[7]
+    path = argv[8]+"/"
     
+    if useereco=="erec_delta" : print "EREC_DELTA"
+    elif useereco=="erec" : print "EREC"
+    elif useereco=="erec_pi" : print "EREC_PI"
+    else : 
+        print "WRONG EREC"
+        sys.exit()
+
     # set path
     outfile_numuCCQE = path+outfile_numuCCQE
     outfile_nueCCQE  = path+outfile_nueCCQE
@@ -75,6 +83,8 @@ def main(argv):
     tevis = n.zeros(1, dtype=n.float32)
     global tnring
     tnring = n.zeros(1, dtype=n.int)
+    global tnmue
+    tnmue = n.zeros(1, dtype=n.int)
 
     global terec_delta
     terec_delta = n.zeros(1,dtype=n.float32)
@@ -95,7 +105,8 @@ def main(argv):
         tree.Branch('nring', tnring, 'nring/I')
         tree.Branch('erec_delta', terec_delta, 'erec_delta/F')
         tree.Branch('erec_pi', terec_pi, 'erec_pi/F')
-    
+        tree.Branch('nmue', tnmue, 'nmue/I')
+
     tree = TChain("h1")
     for f in files: tree.Add(f)
 
@@ -131,14 +142,14 @@ def main(argv):
         
         if select_numuccqe(tree):
             isnumu = True
-            FillVarTree(tree,isnumu)
+            FillVarTree(tree,isnumu,useereco)
             tree_numuccqe.Fill()
             h_numuCCQE.Fill(1)
             continue
             
         if select_nueccqe(tree):
             isnumu = False
-            FillVarTree(tree,isnumu)
+            FillVarTree(tree,isnumu,useereco)
             tree_nueccqe.Fill()
             h_nueCCQE.Fill(1)
             continue
@@ -146,45 +157,34 @@ def main(argv):
         if reject1ring(tree)==False : continue # reject 1ring events
 
         if select_pi0(tree,False)==True : # 2-ring pi0
+        #if select_pi0_fitqun(tree,False)==True : # 2-ring pi0
             isnumu = False
-            if ErecoCut(tree,isnumu)==False : continue 
-            FillVarTree(tree,isnumu)
+            if ErecoCut(tree,isnumu,useereco)==False : continue 
+            FillVarTree(tree,isnumu,useereco)
             tree_2rpi0.Fill()
             h_2rpi0.Fill(1)
             continue
         
         #if select_mr_numucc(tree)==True : # multi-ring numucc
         if select_mr_numucc_highmom(tree)==True : # multi-ring numucc (highest mom ring)
+        #if select_2r_numucc_highmom_fitqun(tree)==True : # multi-ring numucc (highest mom ring)
             isnumu = True
-            if ErecoCut(tree,isnumu)==False : continue 
-            FillVarTree(tree,isnumu)
+            if ErecoCut(tree,isnumu,useereco)==False : continue 
+            FillVarTree(tree,isnumu,useereco)
             tree_numucc.Fill()
             h_numuCC.Fill(1)
             continue
 
         #if select_mr_nuecc(tree)==True : # multi-ring nuecc
-        if select_mr_nuecc_highmom(tree)==True : # multi-ring nuecc (highest mom ring)
+        #if select_mr_nuecc_highmom(tree)==True : # multi-ring nuecc (highest mom ring)
+        if select_2r_nuecc_highmom_fitqun(tree)==True : # multi-ring nuecc (highest mom ring)
             isnumu = False
-            if ErecoCut(tree,isnumu)==False : continue 
-            FillVarTree(tree,isnumu)
+            if ErecoCut(tree,isnumu,useereco)==False : continue 
+            FillVarTree(tree,isnumu,useereco)
             tree_nuecc.Fill()
             h_nueCC.Fill(1)
             continue
         
-        ##########################################################
-        #
-        #                           TODO
-        #
-        # - cross check CosThetaNuLepton() --> DONE
-        # - cross check EnuReco() --> DONE
-        # - implement Q2() 
-        # - use PID of the highest momentum ring --> ring_type() --> DONE
-        #
-        ###########################################################
- 
-        #select_elike(tree)
-        #select_mulike(tree)
-
     # write trees in files
     
     fout_numuccqe = ROOT.TFile(outfile_numuCCQE, "update")
@@ -282,7 +282,7 @@ def select_mr_numucc(tree):
 def select_mr_nuecc(tree):
     for i in range(tree.nring):
         if tree.ip[i] == 2 and tree.amome[i] > 1000: return True
-    return False
+        return False
 
 def prmslg_ip(tree, rnum = -1):
     if rnum == -1: rnum = get_pmax_ring(tree)
@@ -389,6 +389,34 @@ def select_pi0(tree, nomass = False):
     mass, mom, costh =  get_pi0_mmd(tree)
     if not select_pi0_mass(mass): return False
     return True
+
+
+
+
+
+
+def select_pi0_fitqun(tree, nomass = False):
+    # 2 rings
+    if tree.nring != 2: return False
+    # fitqun
+    #
+    #record_cut("2ring")
+    # 1st and 2nd ring are e-like
+    if  tree.ip[0] != 2 or tree.ip[1] != 2: return False
+    #record_cut("erings")
+    # no decay electrons
+    if tree.nmue != 0: return False
+    #record_cut("dcye")
+    if nomass:
+        return True
+    mass, mom, costh =  get_pi0_mmd(tree)
+    if not select_pi0_mass(mass): return False
+    return True
+    
+
+
+
+
 
 # Calculate Pi0 Properties
 def ix(a, b, c):
@@ -738,8 +766,19 @@ def EnuRecoCC1Pi(tree,isnumu) :
     return enu
 
 
-def ErecoCut(tree,isnumu) :
-    ereco = EnuReco(tree,isnumu)
+def ErecoCut(tree,isnumu,useereco) :
+    
+    #ereco = EnuReco(tree,isnumu)
+
+    if useereco=="erec" :
+        ereco = EnuReco(tree,isnumu)
+    elif useereco=="erec_delta" :
+        ereco = EnuRecoDelta(tree,isnumu) 
+    elif useereco=="erec_pi" :
+        ereco = EnuRecoCC1Pi(tree,isnumu) 
+    else : 
+        sys.exit()
+    
     if ereco<0.0 : return False #EnuReco(tree)<1250.0
     return True
 
@@ -773,10 +812,23 @@ def Q2(tree,isnumu) :
     return -q2 * 1E-6
 
 
-def FillVarTree(tree,isnumu) :
+def FillVarTree(tree,isnumu,useereco) :
     ipmax = get_pmax_ring(tree)
     tmode[0] = tree.mode
-    terec[0] = EnuReco(tree,isnumu)  # in MeV/c in the tree, then converted in the t2k analysis code
+
+    if useereco=="erec" :
+        terec[0] = EnuReco(tree,isnumu)
+    elif useereco=="erec_delta" :
+        terec[0] = EnuRecoDelta(tree,isnumu) 
+    elif useereco=="erec_pi" :
+        terec[0] = EnuRecoCC1Pi(tree,isnumu) 
+    else : 
+        sys.exit()
+    
+    #terec[0] = EnuReco(tree,isnumu)  # in MeV/c in the tree, then converted in the t2k analysis code
+    #terec[0] = (EnuReco(tree,isnumu) - tree.pnu[0])/tree.pnu[0] # for plotting
+ 
+
     tenu[0] = tree.pnu[0] # momentum at neutrino interaction
     twgt[0] = 1 
     if isnumu :
@@ -789,18 +841,21 @@ def FillVarTree(tree,isnumu) :
     #print tQ2[0] 
     tevis[0] = tree.evis/1000.0 # given in MeV/c
     tnring[0] = tree.nring 
+    tnmue[0] = tree.nmue
     #print tnring[0], terec[0], tenu[0], tplep[0], tevis[0]
     
     terec_delta[0] = EnuRecoDelta(tree,isnumu)  # in MeV/c in the tree, then converted in the t2k analysis code
     terec_pi   [0] = EnuRecoCC1Pi(tree,isnumu)  # in MeV/c in the tree, then converted in the t2k analysis code
     
+    
 def select_mr_numucc_highmom(tree): # highest momentum ring
     rtype = ring_type(tree) 
     ipmax = get_pmax_ring(tree)
+
+    #if tree.nmue > tree.nring : return False # new cut --> # mu->e <= # rings  
+    #if tree.nmue > 1 : return False # new cut --> # mu->e <= # rings  
+
     if rtype == 3 and tree.amomm[ipmax] > 200 : return True
-    #for i in range(tree.nring):
-    #if rtype == 3 and tree.amomm[i] > 200: return True
-    
     for inmue in range(tree.nmue):
         evect = [ (tree.pos[xx] - tree.epos[3*inmue+xx])**2 for xx in range(3) ]
         edist = sqrt(sum(evect))
@@ -809,13 +864,93 @@ def select_mr_numucc_highmom(tree): # highest momentum ring
 
 
 
-def select_mr_nuecc_highmom(tree) : # highest momentum ring
+
+
+def select_2r_numucc_highmom_fitqun(tree): # highest momentum ring
     rtype = ring_type(tree) 
     ipmax = get_pmax_ring(tree)
-    if rtype == 2 and tree.amome[ipmax] > 1000: return True
-    #for i in range(tree.nring):
-    #    if rtype == 2 and tree.amome[i] > 1000: return True
+
+    #if tree.nmue > tree.nring : return False # new cut --> # mu->e <= # rings  
+    #if tree.nmue > 1 : return False # new cut --> # mu->e <= # rings  
+
+    # fiTQun cut for highest mom ring (first seeded ring is the more energetic)
+    #if tree.nring==2 : 
+    if tree.fq2rpcflg[0] < 0 : return False # whether fiTQun believes the particle is exiting hte ID --> #MINUIT convergence check
+    
+    indMom = 0
+    if tree.fq2rmom2[0]>tree.fq2rmom1[0] : indMom = 1
+    if not tree.fq2rmom1[indMom]>200. : return False
+
+    # selected_fitQun_16_9_14
+    #fitqun_electron_likelihood = tree.fq2rnll[0] # first seeded ring
+    #fitqun_pizero_likelihood = tree.fq2rnll[1] # first seeded ring
+    #fitqun_pizero_mass         = tree.fqpi0mass[0]
+
+    # selected_fitQun_16_9_14 II
+    fitqun_electron_likelihood = min(tree.fq2rnll[0],tree.fq2rnll[2]) # first seeded ring
+    fitqun_pizero_likelihood = min(tree.fq2rnll[1],tree.fq2rnll[3]) # first seeded ring
+    fitqun_pizero_mass         = tree.fqpi0mass[0]
+
+    if not (fitqun_pizero_likelihood-fitqun_electron_likelihood) < (175 - 0.875*fitqun_pizero_mass): return False
+
+    if rtype == 3 and tree.amomm[ipmax] > 200 : return True
+    for inmue in range(tree.nmue):
+        evect = [ (tree.pos[xx] - tree.epos[3*inmue+xx])**2 for xx in range(3) ]
+        edist = sqrt(sum(evect))
+        if edist > 100: return True
     return False
+
+
+
+
+
+
+
+
+
+
+
+def select_mr_nuecc_highmom(tree) : # highest momentum ring
+    #if tree.nmue>0 : return False # new cut
+    rtype = ring_type(tree) 
+    ipmax = get_pmax_ring(tree)
+    if rtype == 2 and tree.amome[ipmax] > 200: return True
+    return False
+
+def select_2r_nuecc_highmom_fitqun(tree) : # highest momentum ring w/ fiTQun
+    #if tree.nmue>0 : return False # new cut --> no mu->e events 
+    if tree.nring>2 : return False
+
+    # fiTQun cut for highest mom ring (first seeded ring is the more energetic)
+    #if tree.nring==2 : 
+    if tree.fq2rpcflg[0] < 0 : return False # whether fiTQun believes the particle is exiting hte ID --> #MINUIT convergence check
+    
+    indMom = 0
+    if tree.fq2rmom2[0]>tree.fq2rmom1[0] : indMom = 1
+    if not tree.fq2rmom1[indMom]>200. : return False
+
+    #print "indMom", indMom
+
+    # selected_fitQun_16_9_14
+    fitqun_electron_likelihood = tree.fq2rnll[indMom] # first seeded ring
+    fitqun_pizero_likelihood = tree.fq2rnll[indMom+1] # first seeded ring
+    fitqun_pizero_mass         = tree.fqpi0mass[0]
+
+    # selected_fitQun_16_9_14 II
+    #fitqun_electron_likelihood = min(tree.fq2rnll[0],tree.fq2rnll[2]) # first seeded ring
+    #fitqun_pizero_likelihood = min(tree.fq2rnll[1],tree.fq2rnll[3]) # first seeded ring
+    #fitqun_pizero_mass         = tree.fqpi0mass[0]
+
+    if not (fitqun_pizero_likelihood-fitqun_electron_likelihood) < (175 - 0.875*fitqun_pizero_mass): return False
+
+    rtype = ring_type(tree) 
+    ipmax = get_pmax_ring(tree)
+    if rtype == 2 and tree.amome[ipmax] > 200: return True
+    return False
+
+
+
+
 
 def reject1ring(tree) :
     nr = tree.nring 
@@ -859,12 +994,13 @@ class T2KAnaError(Exception):
   pass
 
 if __name__=="__main__":
-  #import optparse
-  #parser = optparse.OptionParser(usage="%prog [options]..",description="Make plots of size of systematic/statistical effects")
-  #parser.add_option('-o', dest='osc'  ,default=files  ,help='The unoscillated input ROOT file')
-  #options,other = parser.parse_args()
-  #main(options.osc) 
+    #import optparse
+    #parser = optparse.OptionParser(usage="%prog [options]..",description="Make plots of size of systematic/statistical effects")
+    #parser.add_option('-o', dest='osc'  ,default=files  ,help='The unoscillated input ROOT file')
+    #options,other = parser.parse_args()
+    #main(options.osc) 
 
-  main(sys.argv[1:]) 
+    main(sys.argv[1:]) 
+     
 
 

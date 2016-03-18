@@ -18,6 +18,7 @@
 //#define __show_flux_twk_mesg_info__   
 //#define __show_flux_twk_mesg_debug__   
 //#define __show_flux_twk_mesg_debug_level2__  //even more verbose
+//#define __show_banffsystconv_check_nuflux_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -38,6 +39,7 @@ using std::endl;
 
 using namespace valor;
 using namespace valor::util;
+using namespace valor::conv;
 
 ClassImp(NuFlux)
 
@@ -45,11 +47,181 @@ ClassImp(NuFlux)
 NuFlux::NuFlux()
 {
   this->Init();
+
+  //check that BANFFSystConv.h is setup correctly
+  CheckListOfBANFFParams(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
+			 "kListOfBANFFParams", false);
+  CheckListOfBANFFParams(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
+			 "kListOfRHCBANFFParams", false);
+  CheckListOfBANFFParams(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
+			 "kListOfFHCpRHCBANFFParams", true);
+  
+  CheckIsFluxParam(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
+		   kParamInBANFFfitIsSuperkFluxParam, "kParamInBANFFfitIsSuperkFluxParam");
+  CheckIsFluxParam(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
+		   kRHCParamInBANFFfitIsSuperkFluxParam, "kRHCParamInBANFFfitIsSuperkFluxParam");
+  CheckIsFluxParam(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
+		   kFHCpRHCParamInBANFFfitIsSuperkFluxParam, "kFHCpRHCParamInBANFFfitIsSuperkFluxParam");
+
+  CheckFluxPdg(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
+	       kNuPdgCodeOfFluxParamInBANFFfit, "kNuPdgCodeOfFluxParamInBANFFfit");
+  CheckFluxPdg(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
+	       kNuPdgCodeOfRHCFluxParamInBANFFfit, "kNuPdgCodeOfRHCFluxParamInBANFFfit");
+  CheckFluxPdg(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
+	       kNuPdgCodeOfFHCpRHCFluxParamInBANFFfit, "kNuPdgCodeOfFHCpRHCFluxParamInBANFFfit");
+
+  CheckFluxERange(kNumOfParamsInBANFFfit, kNumOfFluxParamsInBANFFfit, kListOfBANFFParams,
+		  (const double *)kEtrueRangeOfFluxParamInBANFFfit, "kEtrueRangeOfFluxParamInBANFFfit");
+  CheckFluxERange(kNumOfRHCParamsInBANFFfit, kNumOfRHCFluxParamsInBANFFfit, kListOfRHCBANFFParams,
+		  (const double *)kEtrueRangeOfRHCFluxParamInBANFFfit, "kEtrueRangeOfRHCFluxParamInBANFFfit");
+  CheckFluxERange(kNumOfFHCpRHCParamsInBANFFfit, kNumOfFHCpRHCFluxParamsInBANFFfit, kListOfFHCpRHCBANFFParams,
+		  (const double *)kEtrueRangeOfFHCpRHCFluxParamInBANFFfit, "kEtrueRangeOfFHCpRHCFluxParamInBANFFfit");
+
 }
 //________________________________________________________________________________________
 NuFlux::~NuFlux()
 {
   this->CleanUp();
+}
+//________________________________________________________________________________________
+void NuFlux::CheckListOfBANFFParams(int nparams, int nfluxparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gap)
+{
+  int ib = 0;
+  PhysParamId_t curr, prev;
+
+  //check that BANFF flux parameters are monotonically increasing (a single gap is allowed in FHCpRHC)
+  for(ib = 1; ib < nparams; ib++) {
+    prev = params[ib-1];
+    curr = params[ib];
+#ifdef __show_banffsystconv_check_nuflux_mesg_debug__
+    if(ib == 1)
+      cout << "NuFlux/Init >> " << vname << "[" << ib-1 << "] = " << prev << " " << util::AsString(prev) << endl;
+    cout << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << curr << " " << util::AsString(curr) << endl;
+#endif
+    if(ib < nfluxparams) {
+      if((int)curr != ((int)prev + 1)) {
+	//this is to allow jumps between FHC + RHC flux parameters
+	if(allow_gap) {
+	  allow_gap = false;
+	  continue;
+	}
+	cerr << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << curr << " " << util::AsString(curr) << endl
+	     << " comes before " << vname << "[" << ib-1 << "] = " << prev << " " << util::AsString(prev)
+	     << endl;
+	exit(-1);
+      }
+    }
+  }//ib
+}
+//________________________________________________________________________________________
+void NuFlux::CheckIsFluxParam(int nparams, int nfluxparams, const PhysParamId_t * params, const bool * flux, const char * vname)
+{
+  PhysParamId_t curr;
+  //check that BANFF parameters mark themselves as flux/not correctly
+  for(int ib = 0; ib < nparams; ib++) {
+    curr = params[ib];
+    bool is_flux_expect = (ib < nfluxparams ? true : false);
+    bool is_flux  = flux[ib];
+#ifdef __show_banffsystconv_check_nuflux_mesg_debug__
+    cout << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << is_flux << " " << util::AsString(curr) << endl;
+#endif
+    if(is_flux != is_flux_expect) {
+      cerr << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << is_flux << " " << util::AsString(curr) << endl
+	   << "INCORRECT!" << endl;
+      exit(-1);
+    }
+  }//ib
+}
+//________________________________________________________________________________________
+void NuFlux::CheckFluxPdg(int nparams, int nfluxparams, const PhysParamId_t * params, const int * pdg, const char * vname)
+{
+  PhysParamId_t curr, prev;
+  //check that BANFF parameters effect the correct PDG
+  for(int ib = 1; ib < nparams; ib++) {
+    prev = params[ib-1];
+    curr = params[ib];
+    int this_flux_pdg = pdg[ib];
+    int prev_flux_pdg = pdg[ib-1];
+#ifdef __show_banffsystconv_check_nuflux_mesg_debug__
+    if(ib == 1)
+      cout << "NuFlux/Init >> " << vname << "[" << ib-1 << "] = " << prev_flux_pdg << " " << util::AsString(prev) << endl;
+    cout << "NuFlux/Init >> " << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl;
+#endif
+    if(ib < nfluxparams) {
+      int this_flux_position = std::distance(kOrderOfBANFFFluxPDG, std::find(kOrderOfBANFFFluxPDG, kOrderOfBANFFFluxPDG + kNBANFFluxPDGs, this_flux_pdg));
+      int prev_flux_position = std::distance(kOrderOfBANFFFluxPDG, std::find(kOrderOfBANFFFluxPDG, kOrderOfBANFFFluxPDG + kNBANFFluxPDGs, prev_flux_pdg));
+      int next_flux_position = (prev_flux_position + 1) % 4;
+      if(this_flux_position > kNBANFFluxPDGs) {
+	cerr << "NuFlux/Init >> Unknown flux PDG code" << endl
+	     << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl;
+	exit(-1);
+      }
+      if(prev_flux_position > kNBANFFluxPDGs) {
+	cerr << "NuFlux/Init >> Unknown flux PDG code" << endl
+	     << vname << "[" << ib-1 << "] = " << prev_flux_pdg << " " << util::AsString(prev) << endl;
+	exit(-1);
+      }
+      if(this_flux_position != prev_flux_position && this_flux_position != next_flux_position){
+	cerr << "NuFlux/Init >> Wrong flux PDG code" << endl
+	     << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl
+	     << "Should be " << pdg[prev_flux_position]
+	     << " or "       << pdg[next_flux_position] << endl;
+	exit(-1);
+      }
+    }//flux param
+    else {
+      if(this_flux_pdg) {
+	cerr << "NuFlux/Init >> Wrong flux PDG code" << endl
+	     << vname << "[" << ib   << "] = " << this_flux_pdg << " " << util::AsString(curr) << endl
+	     << "Should be 0" << endl;
+	exit(-1);
+      }
+    }//not flux param
+  }//ib
+}
+//________________________________________________________________________________________
+void NuFlux::CheckFluxERange(int nparams, int nfluxparams, const PhysParamId_t * params, const double * erange, const char * vname)
+{
+  PhysParamId_t curr, prev;
+  //check that BANFF parameters effect the correct PDG
+  for(int ib = 1; ib < nparams; ib++) {
+    prev = params[ib-1];
+    curr = params[ib];
+    double this_lo = erange[ib*2];
+    double this_hi = erange[ib*2 + 1];
+    double prev_lo = erange[(ib-1)*2];
+    double prev_hi = erange[(ib-1)*2 + 1];
+#ifdef __show_banffsystconv_check_nuflux_mesg_debug__
+    if(ib == 1)
+      cout << "NuFlux/Init >> " << vname << "[" << ib-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl;
+    cout << "NuFlux/Init >> " << vname << "[" << ib << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl;
+#endif
+    if(ib < nfluxparams) {
+      if(TMath::Abs(this_lo - prev_hi) > 1E-6) {
+	if(TMath::Abs(prev_hi - 30) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok!
+	else {
+	  cerr << "NuFlux/Init >> Wrong energy range" << endl
+	       << vname << "[" << ib-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
+	       << vname << "[" << ib << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	       << "Should be previous high and this low should be identical (or 30 and 0)" << endl;
+	  exit(-1);
+	}
+      }
+      if(TMath::Abs(this_lo + 1) < 1E-6 || TMath::Abs(this_hi + 1) < 1E-6) {
+	cerr << "NuFlux/Init >> Wrong energy range" << endl
+	     << vname << "[" << ib << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	     << "Flux parameters shouldn't have -1 here" << endl;	
+      }
+    }
+    else {
+      if(TMath::Abs(this_lo + 1) > 1E-6 || TMath::Abs(this_hi + 1) > 1E-6) {
+	cerr << "NuFlux/Init >> Wrong energy range" << endl
+	     << vname << "[" << ib << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+	     << "Should be -1,-1" << endl;
+	exit(-1);
+      }
+    }
+  }//ib
 }
 //________________________________________________________________________________________
 void NuFlux::Init(void)
@@ -157,25 +329,25 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fSKNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numu");
   if(!fSKNuMuFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK numu ext/tuned flux histogram!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK numubar flux
   fSKNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numubar");
   if(!fSKNuMuBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK numubar ext/tuned flux histogram!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK nue flux
   fSKNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nue");
   if(!fSKNuEFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK nue ext/tuned flux histogram!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK nuebar flux
   fSKNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nuebar");
   if(!fSKNuEBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK nuebar ext/tuned flux histogram!" << endl;
-    std::exit(1);
+    exit(1);
   }
 
 #ifdef __show_init_mesg_info__
@@ -191,28 +363,28 @@ bool NuFlux::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numu");
   if(!fSKNuMuFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK numu flux ext/tuning weights!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK numubar flux tuning weights
   fSKNuMuBarFluxExtTuningWght = 
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numubar");
   if(!fSKNuMuBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK numubar flux ext/tuning weights!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK nue flux tuning weights
   fSKNuEFluxExtTuningWght = 
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nue");
   if(!fSKNuEFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK nue flux ext/tuning weights!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK nuebar flux tuning weights
   fSKNuEBarFluxExtTuningWght = 
      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nuebar");
   if(!fSKNuEBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK nuebar flux ext/tuning weights!" << endl;
-    std::exit(1);
+    exit(1);
   }
 
 #ifdef __show_init_mesg_info__
@@ -247,25 +419,25 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   fSKRHCNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numu");
   if(!fSKRHCNuMuFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC numu ext/tuned flux histogram!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK numubar flux (reverse horn current)
   fSKRHCNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numubar");
   if(!fSKRHCNuMuBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC numubar ext/tuned flux histogram!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK nue flux (reverse horn current)
   fSKRHCNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nue");
   if(!fSKRHCNuEFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC nue ext/tuned flux histogram!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK nuebar flux (reverse horn current)
   fSKRHCNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nuebar");
   if(!fSKRHCNuEBarFluxTunedExt) {
     cerr << "Exp/Flux >> No input SuperK RHC nuebar ext/tuned flux histogram!" << endl;
-    std::exit(1);
+    exit(1);
   }
 
 #ifdef __show_init_mesg_info__
@@ -281,28 +453,28 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numu");
   if(!fSKRHCNuMuFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC numu flux ext/tuning weights!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK numubar flux tuning weights (reverse horn current) 
   fSKRHCNuMuBarFluxExtTuningWght = 
     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numubar");
   if(!fSKRHCNuMuBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC numubar flux ext/tuning weights!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK nue flux tuning weights (reverse horn current) 
   fSKRHCNuEFluxExtTuningWght = 
     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nue");
   if(!fSKRHCNuEFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC nue flux ext/tuning weights!" << endl;
-    std::exit(1);
+    exit(1);
   }
   // SuperK nuebar flux tuning weights (reverse horn current) 
   fSKRHCNuEBarFluxExtTuningWght = 
     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nuebar");
   if(!fSKRHCNuEBarFluxExtTuningWght) {
     cerr << "Exp/Flux >> No input SuperK RHC nuebar flux ext/tuning weights!" << endl;
-    std::exit(1);
+    exit(1);
   }
 
 #ifdef __show_init_mesg_info__
@@ -350,50 +522,50 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 //   fSKNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numu");
 //   if(!fSKNuMuFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK numu ext/tuned flux histogram!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK numubar flux
 //   fSKNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/numubar");
 //   if(!fSKNuMuBarFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK numubar ext/tuned flux histogram!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK nue flux
 //   fSKNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nue");
 //   if(!fSKNuEFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK nue ext/tuned flux histogram!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK nuebar flux
 //   fSKNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned/nuebar");
 //   if(!fSKNuEBarFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK nuebar ext/tuned flux histogram!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 
 //   // SuperK numu flux (reverse horn current)
 //   fSKRHCNuMuFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numu");
 //   if(!fSKRHCNuMuFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK RHC numu ext/tuned flux histogram!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK numubar flux (reverse horn current)
 //   fSKRHCNuMuBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/numubar");
 //   if(!fSKRHCNuMuBarFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK RHC numubar ext/tuned flux histogram!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK nue flux (reverse horn current)
 //   fSKRHCNuEFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nue");
 //   if(!fSKRHCNuEFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK RHC nue ext/tuned flux histogram!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK nuebar flux (reverse horn current)
 //   fSKRHCNuEBarFluxTunedExt = util::XML2TH1D(xml,root_node,"flux/superk/tuned_rhc/nuebar");
 //   if(!fSKRHCNuEBarFluxTunedExt) {
 //     cerr << "Exp/Flux >> No input SuperK RHC nuebar ext/tuned flux histogram!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 
 // #ifdef __show_init_mesg_info__
@@ -409,28 +581,28 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 //      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numu");
 //   if(!fSKNuMuFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK numu flux ext/tuning weights!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK numubar flux tuning weights
 //   fSKNuMuBarFluxExtTuningWght = 
 //      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/numubar");
 //   if(!fSKNuMuBarFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK numubar flux ext/tuning weights!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK nue flux tuning weights
 //   fSKNuEFluxExtTuningWght = 
 //      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nue");
 //   if(!fSKNuEFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK nue flux ext/tuning weights!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK nuebar flux tuning weights
 //   fSKNuEBarFluxExtTuningWght = 
 //      util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights/nuebar");
 //   if(!fSKNuEBarFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK nuebar flux ext/tuning weights!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 
 //   // SuperK numu flux tuning weights (reverse horn current) 
@@ -438,28 +610,28 @@ bool NuFlux::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 //     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numu");
 //   if(!fSKRHCNuMuFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK RHC numu flux ext/tuning weights!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK numubar flux tuning weights (reverse horn current) 
 //   fSKRHCNuMuBarFluxExtTuningWght = 
 //     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/numubar");
 //   if(!fSKRHCNuMuBarFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK RHC numubar flux ext/tuning weights!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK nue flux tuning weights (reverse horn current) 
 //   fSKRHCNuEFluxExtTuningWght = 
 //     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nue");
 //   if(!fSKRHCNuEFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK RHC nue flux ext/tuning weights!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 //   // SuperK nuebar flux tuning weights (reverse horn current) 
 //   fSKRHCNuEBarFluxExtTuningWght = 
 //     util::XML2TH1D(xml,root_node,"flux/superk/tuning_weights_rhc/nuebar");
 //   if(!fSKRHCNuEBarFluxExtTuningWght) {
 //     cerr << "Exp/Flux >> No input SuperK RHC nuebar flux ext/tuning weights!" << endl;
-//     std::exit(1);
+//     exit(1);
 //   }
 
 // #ifdef __show_init_mesg_info__
@@ -860,7 +1032,7 @@ void NuFlux::ApplyBANFFWeights(bool get_current) const
                      << " in bin = " << bin << " is = " << flux_twk << " !!! " << endl;
                 cerr << "Exp/Flux >> Negative value was the result of tweaking BANFF param: " 
                      << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
-                std::exit(1);
+                exit(1);
            }
            flux_spectrum_wght->SetBinContent(bin,flux_twk);
         } // bin
@@ -965,7 +1137,7 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
 		 << " in bin = " << bin << " is = " << flux_twk << " !!! " << endl;
 	    cerr << "Exp/Flux >> Negative value was the result of tweaking RHC BANFF param: " 
 		 << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
-	    std::exit(1);
+	    exit(1);
 	  }
 	  flux_spectrum_wght->SetBinContent(bin,flux_twk);
         } // bin
@@ -1100,7 +1272,7 @@ void NuFlux::ApplyRHCBANFFWeights(bool get_current) const
 // 		 << " in bin = " << bin << " is = " << flux_twk << " !!! " << endl;
 // 	    cerr << "Exp/Flux >> Negative value was the result of tweaking RHC BANFF param: " 
 // 		 << util::AsString(p) << " (value = " << banff_param_value << ")" << endl;
-// 	    std::exit(1);
+// 	    exit(1);
 // 	  }
 // 	  flux_spectrum_wght->SetBinContent(bin,flux_twk);
 //         } // bin
@@ -1375,7 +1547,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
            cerr << "Exp/Flux >> No nominal flux spectrum for particle with PDG = " 
              << nu_pdg << endl;
-           std::exit(1);
+           exit(1);
         }
         break;
      }
@@ -1391,7 +1563,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
            cerr << "Exp/Flux >> No ext/tuned flux spectrum for particle with PDG = " 
              << nu_pdg << endl;
-           std::exit(1);
+           exit(1);
         }
         break;
      }
@@ -1407,7 +1579,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
            cerr << "Exp/Flux >> No fin/tuned flux spectrum for particle with PDG = " 
              << nu_pdg << endl;
-           std::exit(1);
+           exit(1);
         }
         break;
      }
@@ -1423,7 +1595,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
            cerr << "Exp/Flux >> No current flux spectrum for particle with PDG = " 
              << nu_pdg << endl;
-           std::exit(1);
+           exit(1);
         }
         break;
      }
@@ -1439,7 +1611,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
 	  cerr << "Exp/Flux >> No RHC nominal flux spectrum for particle with PDG = " 
 	       << nu_pdg << endl;
-	  std::exit(1);
+	  exit(1);
         }
       break;
     }
@@ -1455,7 +1627,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
 	  cerr << "Exp/Flux >> No RHC ext/tuned flux spectrum for particle with PDG = " 
 	       << nu_pdg << endl;
-	  std::exit(1);
+	  exit(1);
         }
       break;
     }
@@ -1471,7 +1643,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
 	  cerr << "Exp/Flux >> No RHC fin/tuned flux spectrum for particle with PDG = " 
 	       << nu_pdg << endl;
-	  std::exit(1);
+	  exit(1);
         }
       break;
     }
@@ -1487,7 +1659,7 @@ TH1D * NuFlux::SuperkFluxSpectrum(int nu_pdg, conv::FluxType_t flxtype) const
         {
 	  cerr << "Exp/Flux >> No RHC current flux spectrum for particle with PDG = "
 	       << nu_pdg << endl;
-	  std::exit(1);
+	  exit(1);
         }
       break;
     }
@@ -1509,7 +1681,7 @@ TH1D * NuFlux::SuperkFluxExtTuningWghts(int nu_pdg) const
   else
     {
       cerr << "Exp/Flux >> Unknown neutrino PDG value: " << nu_pdg << endl;
-      std::exit(1);
+      exit(1);
     }
   return 0;
 }
@@ -1523,7 +1695,7 @@ TH1D * NuFlux::SuperkRHCFluxExtTuningWghts(int nu_pdg) const
   else
     {
       cerr << "Exp/Flux >> Unknown neutrino PDG value: " << nu_pdg << endl;
-      std::exit(1);
+      exit(1);
     }
   return 0;
 }

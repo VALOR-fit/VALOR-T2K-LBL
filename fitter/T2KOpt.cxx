@@ -11,6 +11,8 @@ ChangeLog:
 #include <string>
 #include <cstdlib>
 
+#include "TSystem.h"
+
 #include "T2KOpt.h"
 #include "Utilities/Rnd.h"
 #include "Utilities.h"
@@ -58,9 +60,16 @@ T2KOpt * T2KOpt::Instance()
   return fInstance;
 }
 //____________________________________________________________________________
-void T2KOpt::ReadXmlPath(std::string config_file){ 
+int T2KOpt::ReadXmlPath(std::string config_file)
+{
+  FileStat_t fs;
+  int status = gSystem->GetPathInfo(config_file.c_str(),fs);
+  if (status) {
+    std::cerr<<"T2KOpt/ReadXmlPath > Warning, cannot access file: "<<config_file<<endl;
+    return -1;
+  }
   fConfigFileName = config_file;
-  return;
+  return 0;
 }
 //____________________________________________________________________________
 void T2KOpt::SetDefaults(void) 
@@ -137,9 +146,6 @@ void T2KOpt::SetDefaults(void)
   fPathEscaleMultiRmuErr = "detector_systematics/superk/energy_scale_relative_error/multi_mu_ring";
   fPathEscaleMultiReErr = "detector_systematics/superk/energy_scale_relative_error/multi_e_ring";
 
-  // SK EShift Errors
-    fPathEShiftErr = "detector_systematics/superk/energy_shift_relative_error";
-    
   // Get SuperkDetectorFSI covariance matrix
 #if FSI_BINS == 1
   fPathSKDetFSICovMatr = "skdetfsi/covariance_matrix";

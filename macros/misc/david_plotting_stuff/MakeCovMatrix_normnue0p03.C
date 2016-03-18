@@ -28,8 +28,11 @@ using namespace valor::conv;
 
 void MakeCovMatrix_normnue0p03
 (
- const char *filenamein = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc_plus_scc.root",
- const char *filenameout = "postfit_banff_2015_data_20150417_valor_order_rhc_plus_scc_normnue0p03.root"
+ const char *filenamein = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/valor/softw/t2xk/trunk/inputs/official/2015/banff/postfit_banff_2015_data_20150417_valor_order_all_plus_scc.root",
+ //const char *filenameout = "postfit_banff_2015_data_20150417_valor_order_rhc_plus_scc_normnue0p03.root",
+ //int element = 38, // fhc-only or rhc-only cov matrix
+ const char *filenameout = "postfit_banff_2015_data_20150417_valor_order_all_plus_scc_normnue0p03.root",
+ int element = 63, // joint fhc+rhc cov matrix
 )
 {
 
@@ -43,15 +46,15 @@ void MakeCovMatrix_normnue0p03
   TVectorT<double> *postfit_params = (TVectorT<double>*) filein->Get("postfit_params"); 
 
   TMatrixT<double> *prefit_cov = (TMatrixT<double>*) filein->Get("prefit_cov");
-  cout << prefit_cov(38,38) << endl;
-  prefit_cov(38,38) = 0.0009;
-  cout << prefit_cov(38,38) << endl;
+  cout << prefit_cov(element,element) << endl;
+  prefit_cov(element,element) = 0.0009;
+  cout << prefit_cov(element,element) << endl;
   //postfit_cov_old->Print();
 
   TMatrixT<double> *postfit_cov = (TMatrixT<double>*) filein->Get("postfit_cov");
-  cout << postfit_cov(38,38) << endl;
-  postfit_cov(38,38) = 0.0009;
-  cout << postfit_cov(38,38) << endl;
+  cout << postfit_cov(element,element) << endl;
+  postfit_cov(element,element) = 0.0009;
+  cout << postfit_cov(element,element) << endl;
   //postfit_cov_old->Print();
 
   TFile *fileout = new TFile(filenameout,"RECREATE");

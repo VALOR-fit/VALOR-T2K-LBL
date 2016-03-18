@@ -18,7 +18,7 @@ optionParser.add_option("-a","--all", action="store_true", dest="do_all", defaul
 (opt, args) = optionParser.parse_args()
 
 #tag = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_0_4p0108E20POT_DEV_10k_C"
-tag = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_8E20POT_DEV_Toy_50k"
+tag = "toymc_nuebarapp_NuOscOnly_Toy_23_th13dcp_Corr_MH_betabar_1_8E20POT"
 #tag = "Prova_rootfile_8E20POT_DEV_10_A"
 
 run = 0
@@ -42,7 +42,7 @@ input_mixing23_ih = -999
 input_deltacp_ih  = -999  
 input_dm12sq_ih   = -99   
 input_dm23sq_ih   = -999  
-input_beta_bar    = 1
+input_beta_bar    = 0
 
 #config_file = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml"
 #config_file = "analysis_configuration_run1to6_prefit_test_app_4.0108E20POT_fluxJune.xml"

@@ -9,27 +9,82 @@
 
 void draw_contour
 (
- const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_IH",
- const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ const char tag[200] = "fitmarg_joint_sinsqth13Vsdcp_data_t2konly_nh",
  
- //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Asimov_C_NH",
- //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Konly_Run14_Asimov_C_NH-sinsqtheta[12_0.304,13_0.042,23_0.528],dcp_1.910,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ // Data
+ const char* filename = "../../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth13Vsdcp_data_t2konly_nh_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth13Vsdcp_data_t2konly_ih_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_nexp_1_0.528_0.003-job0-_0_0.root",
+ 
+ // Summer 2016 Stat
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Summer2016_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Summer2016_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_nh_Summer2016_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_ih_Summer2016_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Summer2016_nexp_1_0.528_0.003-job0-_0_0.root  ",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Summer2016_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_nh_Summer2016_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_Summer2016_nexp_1_0.528_0.003-job0-_0_0.root",
 
- // const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Kreact_DataRun14_NH",
- // const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_NH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",
+ // Summer 2016 Stat (100/0)
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Summer2016_100_0_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Summer2016_100_0_nexp_1_0.022_-1.601-job0-_0_0.root",
 
- //const char tag[200] = "fitmarg_sinsqth13Vsdcp_T2Kreact_DataRun14_IH",
- //const char* filename = "../marginalization/joint_newtoys/fitmarg_sinsqth13Vsdcp_T2Kreact_Run1to4_Data_IH-sinsqtheta[12_0.304,13_0.024,23_0.528],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0",1
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_nh_Summer2016_100_0_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_ih_Summer2016_100_0_nexp_1_0.022_-1.601-job0-_0_0.root",
 
- const bool doRasterScan = true,
- const char* opt = "cp13",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Summer2016_100_0_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Summer2016_100_0_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_nh_Summer2016_100_0_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_Summer2016_100_0_nexp_1_0.528_0.003-job0-_0_0.root",
+
+ // Summer 2016 Stat (50/50)
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Summer2016_50_50_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Summer2016_50_50_nexp_1_0.022_-1.601-job0-_0_0.root",
+ 
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_nh_Summer2016_50_50_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_ih_Summer2016_50_50_nexp_1_0.022_-1.601-job0-_0_0.root",
+ 
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Summer2016_50_50_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Summer2016_50_50_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_nh_Summer2016_50_50_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_Summer2016_50_50_nexp_1_0.528_0.003-job0-_0_0.root",
+
+ // Summer 2016 Stat (75/25)
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Summer2016_75_25_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Summer2016_75_25_nexp_1_0.022_-1.601-job0-_0_0.root",
+ 
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_nh_Summer2016_75_25_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_ih_Summer2016_75_25_nexp_1_0.022_-1.601-job0-_0_0.root",
+ 
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Summer2016_75_25_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Summer2016_75_25_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_nh_Summer2016_75_25_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_Summer2016_75_25_nexp_1_0.528_0.003-job0-_0_0.root",
+
+ // Current Stat 
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_nh_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth13Vsdcp_t2konly_ih_nexp_1_0.022_-1.601-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_nh_nexp_1_0.528_0.003-job0-_0_0.root",
+ //const char* filename = "../../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_nexp_1_0.528_0.003-job0-_0_0.root",
+ 
+
+ //const bool doRasterScan = false,
+ const char* opt = "ss23", //"cp13","ss23"
  const bool SavePDF = true
  )
 {
   //   char* filename = "toyA_joint";
   
   TCanvas* c = new TCanvas("c","c",0,0,900,600);
-  TFile f(Form("%s.root",filename));
+  TFile f(Form("%s",filename));
   TTree* t = f.Get("fitnt");
   
   TH2D* h1;
@@ -76,7 +131,7 @@ void draw_contour
   h3 = (TH2D*)h1->Clone();
   h2 = (TH2D*)h1->Clone();
   h4 = (TH2D*)h1->Clone();
-  h1_rasterscan = (TH2D*)h1->Clone("h1_rasterscan");
+  //h1_rasterscan = (TH2D*)h1->Clone("h1_rasterscan");
   double chisq_min = h1->GetMinimum();
 
   cout << "chisq_min = " << chisq_min << endl;
@@ -134,62 +189,54 @@ void draw_contour
   
   
   // Produce raster scan  
-
-  TCanvas *cRasterScan = new TCanvas("cRasterScan","cRasterScan");
-  if(doRasterScan){
-
-    TGraph *bf_raster = new TGraph();
-    for(int iy=0;iy<h1->GetYaxis()->GetNbins();iy++){
-      
-      // Fine the minimum for each value of y
-      double raster_min = 99999.;
-      for(int ix=0;ix<h1->GetXaxis()->GetNbins();ix++){
-	double cont = h1_rasterscan->GetBinContent(ix+1,iy+1);
-	if(cont < raster_min) raster_min = cont;
-      }
-
-      cout << raster_min << " ";
-      // Shift wrt the minimum for each value of y
-      for(int ix=0;ix<h1->GetXaxis()->GetNbins();ix++){
-	double cont = h1_rasterscan->GetBinContent(ix+1,iy+1);
-
-	//cout << "cont = " << cont << " - raster_min = " << raster_min << endl;
-	if(cont == raster_min){
-	  double cont_x = h1_rasterscan->GetXaxis()->GetBinCenter(ix+1);
-	  double cont_y = h1_rasterscan->GetYaxis()->GetBinCenter(iy+1);
-	  bf_raster->SetPoint(iy,cont_x,cont_y);
-	}
-
-	cont = cont - raster_min;
-	h1_rasterscan->SetBinContent(ix+1,iy+1,cont);
-      }
-      
-    }
-    //h1_rasterscan->DrawCopy("colz");
-    h2_rasterscan = (TH2D*)h1_rasterscan->Clone("h2_rasterscan");
-    h1_rasterscan->SetContour(1);
-    h2_rasterscan->SetContour(1);
-    h1_rasterscan->SetContourLevel(0,1.0);
-    h2_rasterscan->SetContourLevel(0,2.7);
-    h1_rasterscan->SetLineStyle(2);
-    h1_rasterscan->SetLineWidth(2);
-    h1_rasterscan->SetLineColor(kRed);
-    h2_rasterscan->SetLineWidth(2);
-    h2_rasterscan->SetLineColor(kRed);
-    h1_rasterscan->Draw("cont3");
-    h2_rasterscan->Draw("cont3 same");
-     bf_raster->Draw("p");
-    bf_raster->SetLineColor(kRed);
-    bf_raster->SetMarkerColor(kRed);
-    bf_raster->SetMarkerStyle(kFullStar);
-  } // doRasterScan
-
-  // Save pdf files
-
-  if(SavePDF) c->SaveAs(Form("%s.pdf",tag));
-  if(SavePDF) cCont->SaveAs(Form("contour_%s.pdf",tag));
-  if(SavePDF) cRasterScan->SaveAs(Form("rasterscan_%s.pdf",tag));
+  // TCanvas *cRasterScan = new TCanvas("cRasterScan","cRasterScan");
+  // if(doRasterScan){
+  //   TGraph *bf_raster = new TGraph();
+  //   for(int iy=0;iy<h1->GetYaxis()->GetNbins();iy++){
+  //     // Fine the minimum for each value of y
+  //     double raster_min = 99999.;
+  //     for(int ix=0;ix<h1->GetXaxis()->GetNbins();ix++){
+  // 	double cont = h1_rasterscan->GetBinContent(ix+1,iy+1);
+  // 	if(cont < raster_min) raster_min = cont;
+  //     }
+  //     cout << raster_min << " ";
+  //     // Shift wrt the minimum for each value of y
+  //     for(int ix=0;ix<h1->GetXaxis()->GetNbins();ix++){
+  // 	double cont = h1_rasterscan->GetBinContent(ix+1,iy+1);
+  // 	//cout << "cont = " << cont << " - raster_min = " << raster_min << endl;
+  // 	if(cont == raster_min){
+  // 	  double cont_x = h1_rasterscan->GetXaxis()->GetBinCenter(ix+1);
+  // 	  double cont_y = h1_rasterscan->GetYaxis()->GetBinCenter(iy+1);
+  // 	  bf_raster->SetPoint(iy,cont_x,cont_y);
+  // 	}
+  // 	cont = cont - raster_min;
+  // 	h1_rasterscan->SetBinContent(ix+1,iy+1,cont);
+  //     }
+  //   }
+  //   //h1_rasterscan->DrawCopy("colz");
+  //   h2_rasterscan = (TH2D*)h1_rasterscan->Clone("h2_rasterscan");
+  //   h1_rasterscan->SetContour(1);
+  //   h2_rasterscan->SetContour(1);
+  //   h1_rasterscan->SetContourLevel(0,1.0);
+  //   h2_rasterscan->SetContourLevel(0,2.7);
+  //   h1_rasterscan->SetLineStyle(2);
+  //   h1_rasterscan->SetLineWidth(2);
+  //   h1_rasterscan->SetLineColor(kRed);
+  //   h2_rasterscan->SetLineWidth(2);
+  //   h2_rasterscan->SetLineColor(kRed);
+  //   h1_rasterscan->Draw("cont3");
+  //   h2_rasterscan->Draw("cont3 same");
+  //    bf_raster->Draw("p");
+  //   bf_raster->SetLineColor(kRed);
+  //   bf_raster->SetMarkerColor(kRed);
+  //   bf_raster->SetMarkerStyle(kFullStar);
+  // } // doRasterScan
+  // // Save pdf files
+  // if(SavePDF) c->SaveAs(Form("%s.pdf",tag));
+  // if(SavePDF) cCont->SaveAs(Form("contour_%s.pdf",tag));
+  // if(SavePDF) cRasterScan->SaveAs(Form("rasterscan_%s.pdf",tag));
   
+
   // Save contours in root file
 
   TFile* f2 = new TFile(Form("%s_contour.root",tag),"recreate");
@@ -216,7 +263,7 @@ void save_contour(TFile* f2, TH2D* h1=0, TH2D* h3=0)
     TIter next(list90);
     while ((g = (TGraph*)next()))
     {
-        char name[10];
+        char name[200];
         sprintf(name, "g90_valor_%d",it);
         g->SetLineWidth(2);
         g->SetLineStyle(1);
@@ -234,7 +281,7 @@ void save_contour(TFile* f2, TH2D* h1=0, TH2D* h3=0)
     it=0;
     while ((g = (TGraph*)next68()))
     {
-        char name[10];
+        char name[200];
         sprintf(name, "g68_valor_%d",it);
         g->SetLineWidth(2);
         g->SetLineStyle(2);
