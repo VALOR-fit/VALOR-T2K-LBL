@@ -34,7 +34,7 @@ Split valor::conv namespace into several smaller files
 
 // NEW 2D TEMPLATES
 #ifndef __USE_2D_TEMPLATES__ 
-//#define __USE_2D_TEMPLATES__ // Use 2D templates
+#define __USE_2D_TEMPLATES__ // Use 2D templates
 #endif
 
 //#define __ERECO_VS_Q2_TEMPLATES__ // Ereco Vs Q2 parametrization
@@ -219,8 +219,8 @@ Split valor::conv namespace into several smaller files
 #endif
 
 #ifndef THETA_XSEC_BINS_1RE
-#define THETA_XSEC_BINS_1RE 1 // DEFAULT (15 bins) 
-//#define THETA_XSEC_BINS_1RE 2 // 1 single bin 
+//#define THETA_XSEC_BINS_1RE 1 // DEFAULT (15 bins) 
+#define THETA_XSEC_BINS_1RE 2 // 1 single bin 
 #endif
 
 #ifndef THETA_BINS_1RMU
@@ -229,8 +229,8 @@ Split valor::conv namespace into several smaller files
 #endif
 
 #ifndef THETA_BINS_1RE
-#define THETA_BINS_1RE 1 // DEFAULT (15 bins)
-//#define THETA_BINS_1RE 2 // 1 single bin
+//#define THETA_BINS_1RE 1 // DEFAULT (15 bins)
+#define THETA_BINS_1RE 2 // 1 single bin
 #endif
 
 
