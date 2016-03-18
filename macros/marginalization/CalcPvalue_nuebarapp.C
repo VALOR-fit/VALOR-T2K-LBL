@@ -10,74 +10,36 @@
 //                                                                                           
 // ------------------------------------------------------------------------------------------------
 
+#include <vector>
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
 void CalcPvalue_nuebarapp
 (
- // // Mach3 - 8 x 10^20 POT (beta=1) 
- // TString tag = "pvalue_beta1_Mach3_NH",
- // double data = 7.43693, // # of data events
- // double deltachisq_beta01_data = 3.37795, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_8E20POT_EPS-3f+normbar_50kToys.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_0_8E20POT_EPS-3f+normbar_50kToys_unique.root",
-
- // Mach3 - 4.0108 x 10^20 POT (beta=1) --> DATA
+ // Run 1-6 (beta=0) --> Asimov
  TString tag = "pvalue_beta1_Mach3_NH",
- double data = 3., // # of data events
- double deltachisq_beta01_data = 0.164213, // data deltachisq 01
+ double data = 3.10468, // # of data events
+ double deltachisq_beta01_data = 1.36409, // data deltachisq 01
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
- char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
- //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_1_4.0108E20POT_EPS-3f+normbar_50kToys.root",
- //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_xml/fitmarg_betabar_0_4p0108E20POT_EPS_10kToys-3f+normbar.root",
- //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_0_4p0108E20POT_EPS_10kToys_xml_unique-3f+normbar.root",
+ char infilename[200] = "fit_fitmarg_joint_betaBar_react_NoRHCelike_TOYS_nexp_10000_0.000_-999.000-job0-_0_9999.root",
 
- // // Mach3 - 4.0108 x 10^20 POT (beta=1)
+ // // Run 1-6 (beta=0) --> Asimov
  // TString tag = "pvalue_beta1_Mach3_NH",
- // double data = 3.7285, // # of data events
- // double deltachisq_beta01_data = 1.72794, // data deltachisq 01
+ // double data = 3.10468, // # of data events
+ // double deltachisq_beta01_data = 1.36409, // data deltachisq 01
  // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
+ // char infilename[200] = "../NueBarAppJointFit/fit_fitmarg_joint_betaBar_react_nh_TOYS_nexp_10000_0.000_-999.000-job0-_0_9999.root",
  
- // // Mach3 - 4.0108 x 10^20 POT (beta=0)
- // TString tag = "pvalue_beta0_Mach3_NH",
- // double data = 1.76704, // # of data events
- // double deltachisq_beta01_data = -2.07772, // data deltachisq 01
+ // // Summer 2016 (beta=0) --> Asimov
+ // TString tag = "pvalue_beta1_Mach3_NH",
+ // double data = 7.3619, // # of data events
+ // double deltachisq_beta01_data = 3.15932, // data deltachisq 01
  // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
+ // char infilename[200] = "fit_fitmarg_joint_betaBar_react_ExpSummer2016_TOYS_nexp_10000_0.000_-999.000-job0-_0_9999.root",
 
- // // Mach3 - 4.0108 x 10^20 POT (beta=0.5)
- // TString tag = "pvalue_beta0p5_Mach3_NH",
- // double data = 2.74777, // # of data events
- // double deltachisq_beta01_data = -0.186098, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
 
- // // Mach3 - 4.0108 x 10^20 POT (beta=1.5)
- // TString tag = "pvalue_beta1p5_Mach3_NH",
- // double data = 4.70924, // # of data events
- // double deltachisq_beta01_data = 3.66517, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
-
- // // Mach3 - 4.0108 x 10^20 POT (beta=2.0)
- // TString tag = "pvalue_beta2_Mach3_NH",
- // double data = 5.68997, // # of data events
- // double deltachisq_beta01_data = 5.62626, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
-
- // // Mach3 - 4.0108 x 10^20 POT (beta=2.5)
- // TString tag = "pvalue_beta2p5_Mach3_NH",
- // double data = 6.6707, // # of data events
- // double deltachisq_beta01_data = 7.61176, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
- 
  )
 {
 
@@ -97,6 +59,7 @@ void CalcPvalue_nuebarapp
   vector<double> vec_chisq_01;
   vector<double> vec_chisq_0BF;
   vector<double> vec_evt_toys;
+  vector<double> vec_like_toys;
 
   PhysParamList *iparm;
   FitParamList *fparm; 
@@ -132,7 +95,7 @@ void CalcPvalue_nuebarapp
   double bestfitFullChisq1=-999;
   double chisqminFullChisq=conv::kALargeNum;
   int ToyID=-999;
-  TH1D *hErecoToy;
+  TH2F *hErecoToy_RHC1Re;
 
   TBranch        *b_chisqmin_subrange;   //!
 
@@ -170,13 +133,15 @@ void CalcPvalue_nuebarapp
   treein->SetBranchAddress("bestfitFullChisq1", &bestfitFullChisq1 );
   treein->SetBranchAddress("chisqminFullChisq",&chisqminFullChisq);
   treein->SetBranchAddress("ToyID",&ToyID);
-  treein->SetBranchAddress("hErecoToy",&hErecoToy);
+  treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
 
 
   // Declare histograms
   
   TH1F *hnevents = new TH1F("hnevents","hnevents",NBinHisto,0.,MaxHisto);
   TH1F *hnevents_data = new TH1F("hnevents_data","hnevents_data",NBinHisto,0,MaxHisto);
+  
+  TH1D *hnevents_WeightLike = new TH1D("hnevents_WeightLike","hnevents_WeightLike",NBinHisto,0.,MaxHisto); 
 
   TH1F *hdeltachisqDiff0BF = new TH1F("hdeltachisqDiff0BF","hdeltachisqDiff0BF",NBinHisto,0,MaxHisto);
   TH1F *hdeltachisqDiff0BF_toyevt0 = new TH1F("hdeltachisqDiff0BF_toyevt0","hdeltachisqDiff0BF_toyevt0",NBinHisto,0,MaxHisto);
@@ -220,6 +185,8 @@ void CalcPvalue_nuebarapp
   TH1F *hchisq2_toyevt2 = new TH1F("hchisq2_toyevt2","hchisq0_toyevt2",400,0,100);
   THStack *schisq2 = new THStack("schisq2","schisq2");
 
+  TH1D *hchisqWeightLike = new TH1D("hchisqWeightLike","hchisqWeightLike",400,0,100);
+
   // Check if 1D or 2D fit
   bool IsFit2D;
   treein->GetEntry(0);
@@ -229,12 +196,12 @@ void CalcPvalue_nuebarapp
   // loop over the tree  
   
   int Nentries = treein->GetEntries();
-  //Nentries = 10000;
+  //Nentries = 10;
   for(int ientry=0;ientry<Nentries;ientry++){
   
     treein->GetEntry(ientry);
 
-    double nevents = (double)hErecoToy->Integral();    
+    double nevents = (double)hErecoToy_RHC1Re->Integral();    
     if(nevents<0){
       cerr << endl;
       cerr << "ToyID: " << ToyID << endl;
@@ -245,6 +212,16 @@ void CalcPvalue_nuebarapp
 
     hnevents->Fill(nevents);    
     if(nevents<data) hnevents_data->Fill(nevents);
+    
+    //double LikeBeta1_toys = chisqtrue1;
+
+    double chisqtrue_min = chisqtrue1;
+    //double chisqtrue_min = TMath::Min(chisqtrue1,chisqtrue0);
+    double LikeBeta1_toys = TMath::Exp(-chisqtrue_min/2.);
+    //hnevents_WeightLike->Fill((double)nevents);    
+    hnevents_WeightLike->Fill((double)nevents,LikeBeta1_toys);    
+    //cout << "nevents = " << nevents << " - LikeBeta1_toys = " << LikeBeta1_toys << endl;
+    
     
     //if(deltachisqtrue>-4) continue;
     //if(deltachisqtrue>-2 || deltachisqtrue<-2.2) continue;
@@ -295,12 +272,16 @@ void CalcPvalue_nuebarapp
     if(nevents==0)      hchisq1_toyevt0->Fill(chisqtrue1);
     else if(nevents==1) hchisq1_toyevt1->Fill(chisqtrue1);
     else if(nevents==2) hchisq1_toyevt2->Fill(chisqtrue1);
-
+      
     // Fill vectors for pvalue calculations
+
     vec_evt_toys.push_back(nevents);
     vec_chisq_0BF.push_back(deltachisq_0BF);
     vec_chisq_01.push_back(deltachisq_01);
-  }
+    vec_like_toys.push_back(LikeBeta1_toys);
+       
+  } // end loop over toys
+
 
   if(deltachisq_01<-5 || deltachisq_01>20){
     cout << "deltachisq_01 = " << deltachisq_01 << endl;
@@ -308,6 +289,46 @@ void CalcPvalue_nuebarapp
   }
 
 
+
+
+  
+
+
+  // Rate-only: # of obs. events weighted with likelihood
+
+  // for (std::vector<double>::iterator it=vec_like_toys.begin(); it!=vec_like_toys.end(); ++it){
+  //   cout << *it << ", ";
+  // }
+  // cout << endl;
+  // //std::sort(vec_like_toys.rbegin(),vec_like_toys.rend());
+  // //std::sort(vec_like_toys.begin(),vec_like_toys.end());
+  // // int index[10];
+  // // //TMath::Sort(10,vec_like_toys.data(),index,0);  
+  // // double * tmp_ptr = vec_like_toys.data();
+  // // TMath::Sort(10,tmp_ptr,index,0);
+  // // exit(1);
+  // for (std::vector<double>::iterator it=vec_like_toys.begin(); it!=vec_like_toys.end(); ++it){
+  //   cout << *it << ", ";
+  //   //double Weight = LikeBeta1_toys / vec_like_toys[0];
+  //   //hnevents_WeightLike->Fill((double)nevents);    
+  // }
+  // cout << endl;
+
+  //double Min = vec_like_toys[0];
+  //cout << "Min = " << Min << endl;
+
+  // for(int i=0; i<hnevents_WeightLike->GetNbinsX();i++){
+  //   double bincont = hnevents_WeightLike->GetBinContent(i+1);
+  //   double bincont_new = bincont / Min;
+    
+  //   if(bincont>0.){
+  //     hnevents_WeightLike->SetBinContent(i+1,bincont_new);
+  //   }
+  // }
+ 
+
+
+  
   // Compute p-values
 
   double Ntoys = (double)Nentries;
@@ -320,7 +341,8 @@ void CalcPvalue_nuebarapp
   double pvalue_01_left = GetPvalue_leftside(vec_chisq_01,Ntoys,deltachisq_beta01_data);
   double pvalue_0BF_left = GetPvalue_leftside(vec_chisq_0BF,Ntoys,deltachisq_beta0BF_data);
 
- 
+  double pvalue_evt_histo = GetPvalue_Discrete(hnevents_WeightLike,data);
+
   // Draw histograms
   
   // treein->GetEntry(493);
@@ -330,7 +352,7 @@ void CalcPvalue_nuebarapp
   // else        hchisq1D_out->DrawCopy();
 
   // TCanvas *cErecoToy_GetEntry = new TCanvas("cErecoToy_GetEntry","cErecoToy_GetEntry");
-  // hErecoToy->DrawCopy();
+  // hErecoToy_RHC1Re->DrawCopy();
 
   TCanvas *cchisqmin = new TCanvas("cchisqmin","cchisqmin");
   hchisqmin->GetYaxis()->SetTitle("# entries");
@@ -445,6 +467,24 @@ void CalcPvalue_nuebarapp
   lPvalues_evt->Draw();
 
 
+ TCanvas *cPvalue_evt_LikeWeigth = new TCanvas("cPvalue_evt_LikeWeigth","cPvalue_evt_LikeWeigth");
+ //cPvalue_evt_LikeWeigth->SetLogy();
+  hnevents_WeightLike->SetLineWidth(2);
+  hnevents_WeightLike->GetXaxis()->SetTitle("# of observed events");
+  hnevents_WeightLike->GetYaxis()->SetTitle("# of entries weighted with likelihood");
+  hnevents_WeightLike->DrawCopy();
+  ldata->Draw();
+  // TLegend *lPvalues_evt = new TLegend(0.5,0.6,0.9,0.9);
+  // lPvalues_evt->SetFillColor(0);
+  // lPvalues_evt->SetLineColor(0);
+  // lPvalues_evt->SetTextFont(132);
+  // lPvalues_evt->SetTextSize(0.06);
+  // lPvalues_evt->AddEntry(hnevents,"# of toy events","l");
+  // sprintf(name,"# of data events = %1.3f",data); 
+  // lPvalues_evt->AddEntry(ldata,name,"l");
+  // lPvalues_evt->Draw();
+
+
   // Write output file
   
   TH1D *hNdata = new TH1D("hNdata","hNdata",1,0,1);
@@ -496,6 +536,9 @@ void CalcPvalue_nuebarapp
   cout << "p-value rate-only (# evt) = " << pvalue_evt_left << endl;
   cout << "p-value 01 (rate+shape) = " << pvalue_01_left << endl;
   cout << "p-value 0BF (rate+shape) = " << pvalue_0BF_left << endl;
+  cout << endl;
+  cout << "Calculate discrete right sided p-value with histogram:" << endl;
+  cout << "p-value rate-only (# evt) = " << pvalue_evt_histo << endl;
   cout << endl;
   cout << "Mean deltachisq01 = " << hdeltachisqDiff01->GetMean() << endl;
   cout << "RMS deltachisq01 = " << hdeltachisqDiff01->GetRMS() << endl;
@@ -570,5 +613,14 @@ double GetPvalue_leftside(vector<double> vec_toys,int ntoys,double data){
   }
   double pvalue =  nfrac / (double)ntot_toys;
 
+  return pvalue;
+}
+
+double GetPvalue_Discrete(TH1D *histo,double data){
+
+  int bin_data = histo->FindBin(data);
+  double pvalue = histo->Integral(bin_data,histo->GetNbinsX());
+  pvalue /= histo->Integral();
+  
   return pvalue;
 }

@@ -243,7 +243,7 @@ void valor::util::PrintCompact(
 	 else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
 	 else {
            cerr << "BANFF options string doesn't contain any options" << endl;
-           std::exit(1);
+           exit(1);
          }
 	 //
 
@@ -370,7 +370,7 @@ void valor::util::PrintCompact(
 	 else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
 	 else {
            cerr << "BANFF options string doesn't contain any options" << endl;
-           std::exit(1);
+           exit(1);
          }
 	 //
 
@@ -664,143 +664,125 @@ void valor::util::ApplyEnergyScaleSystematic(conv::SuperkSample_t s, double * ev
   return;
 }
 //___________________________________________________________________________
-void valor::util::ApplyConstantEnergySystematic(conv::SuperkSample_t s, double * events_per_bin, double escale_tweak)
+
+
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+void valor::util::ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double * events_per_bin_array, double escale_tweak)
 {
-    const int n_ereco_bins = util::NumErecoBins(s);
-    
-    const double * bin_edges = util::ErecoBinEdges(s);
-    
-    double new_events_per_bin [n_ereco_bins+1];// With overflow bin
-    double scaled_bin_edges   [n_ereco_bins+1];
-    double unscaled_bin_edges [n_ereco_bins+2];// With overflow bin
-    
-    // Calculate bin information
+  const int n_q2_bins = util::NumQ2Bins(s);
+  const int n_ereco_bins = util::NumErecoBins(s);
+
+  typedef double (erq2type)  [n_ereco_bins][n_q2_bins];
+  erq2type & events_per_bin = *reinterpret_cast< erq2type * > ( events_per_bin_array );
+  if (!events_per_bin){
+    cerr << endl;
+    cerr << "valor::util::ApplyEnergyScaleSystematic2D" << endl;
+    cerr << "events_per_bin array doesn't exist!" << endl;
+    cerr << endl;
+    exit(1);
+  }
+
+  // NB: events_par_bin is fine!
+
+  // for (int ibin_q2 = 0 ; ibin_q2 < n_q2_bins; ibin_q2++) { // loop over q2
+  //   for (int ibin = 0 ; ibin <= n_ereco_bins; ibin++) {
+  //     cout << events_per_bin[ibin][ibin_q2] << ", ";
+  //   }
+  //   cout << endl;
+  // }
+  // exit(1);
+
+  const double * bin_edges = util::ErecoBinEdges(s);
+  
+  double new_events_per_bin [n_ereco_bins+1][n_q2_bins];// With overflow bin
+  double scaled_bin_edges   [n_ereco_bins+1][n_q2_bins];
+  double unscaled_bin_edges [n_ereco_bins+2][n_q2_bins];// With overflow bin
+  
+  // Calculate bin information
+
+  for (int ibin_q2 = 0 ; ibin_q2 < n_q2_bins; ibin_q2++) { // loop over q2
+
     double total_events = 0;
-    for (int ibin = 0 ; ibin <= n_ereco_bins; ibin++) {
-        if (ibin  != n_ereco_bins) {
-            total_events += events_per_bin[ibin];
-        }
-        unscaled_bin_edges[ibin] = bin_edges[ibin];
-        scaled_bin_edges  [ibin] = bin_edges[ibin] + (escale_tweak);
-        new_events_per_bin[ibin] = 0;
-    }
     
-    unscaled_bin_edges[n_ereco_bins+1] = 1E4; //Overflow bin (no underflow unless we start binning from something other than zero).
+    for (int ibin = 0 ; ibin <= n_ereco_bins; ibin++) {
+      if (ibin  != n_ereco_bins) {
+	total_events += events_per_bin[ibin][ibin_q2];
+      }
+      unscaled_bin_edges[ibin][ibin_q2] = bin_edges[ibin];
+      scaled_bin_edges  [ibin][ibin_q2] = bin_edges[ibin] * escale_tweak;
+      new_events_per_bin[ibin][ibin_q2] = 0;
+    } // ibin (ereco)
+    
+    unscaled_bin_edges[n_ereco_bins+1][ibin_q2] = 1E4; //Overflow bin (no underflow unless we start binning from something other than zero).
     
     if (total_events < kASmallNum) return;
     
     double overlap = 0;
-    
+      
     for (int ibin_s = 0 ; ibin_s < n_ereco_bins ; ibin_s++) { // Loop over scaled bins
-        double bin_min_s = scaled_bin_edges[ibin_s];
-        double bin_max_s = scaled_bin_edges[ibin_s+1];
-        for (int ibin_u = 0 ; ibin_u < n_ereco_bins+1 ; ibin_u++) {
-            double bin_min_u = unscaled_bin_edges[ibin_u];
-            double bin_max_u = unscaled_bin_edges[ibin_u+1];
-            
-            if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
-            else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
-            else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
-            else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
-            else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
-            else overlap = -999; // No crossover
-            
-            if (overlap <= 0) continue;
-            
-            double new_events = events_per_bin[ibin_s] * overlap / (scaled_bin_edges[ibin_s+1]-scaled_bin_edges[ibin_s]);
-            new_events_per_bin[ibin_u] += new_events;
-        }
+      double bin_min_s = scaled_bin_edges[ibin_s][ibin_q2];
+      double bin_max_s = scaled_bin_edges[ibin_s+1][ibin_q2];
+      for (int ibin_u = 0 ; ibin_u < n_ereco_bins+1 ; ibin_u++) {
+	double bin_min_u = unscaled_bin_edges[ibin_u][ibin_q2];
+	double bin_max_u = unscaled_bin_edges[ibin_u+1][ibin_q2];
+      
+	if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
+	else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
+	else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
+	else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
+	else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
+	else overlap = -999; // No crossover
+	
+	if (overlap <= 0) continue;
+	
+	double new_events = events_per_bin[ibin_s][ibin_q2] * overlap / (scaled_bin_edges[ibin_s+1][ibin_q2] - scaled_bin_edges[ibin_s][ibin_q2]);
+	new_events_per_bin[ibin_u][ibin_q2] += new_events;
+      }
     }
     // Move events back into main array.
     for (int i = 0 ; i < n_ereco_bins ; i++) {
-        events_per_bin[i] = new_events_per_bin[i];
+      events_per_bin[i][ibin_q2] = new_events_per_bin[i][ibin_q2];
     }
-    events_per_bin[n_ereco_bins-1] += new_events_per_bin[n_ereco_bins]; //Put events from overflow bin back into top bin
+    events_per_bin[n_ereco_bins-1][ibin_q2] += new_events_per_bin[n_ereco_bins][ibin_q2]; //Put events from overflow bin back into top bin
     
 #ifndef NDEBUG
-    double new_total_events = 0;
-    for (int i = 0 ; i < n_ereco_bins ; i++) {
-        new_total_events+=events_per_bin[i];
-    }
-    if ( fabs((new_total_events/total_events)-1) > conv::kASmallNum ) {
-        cerr<<"Util/ApplyEnergyScaleSystematic - failed normalisation check for sample "<<util::AsString(s)<<endl;
-        cerr<<"Events: "<<total_events<<" ==> "<<new_total_events<<"\t"<<new_total_events/total_events
+  double new_total_events = 0;
+  for (int i = 0 ; i < n_ereco_bins ; i++) {
+    new_total_events+=events_per_bin[i][ibin_q2];
+  }
+  if ( fabs((new_total_events/total_events)-1) > conv::kASmallNum ) {
+    cerr<<"Util/ApplyEnergyScaleSystematic2D - failed normalisation check for sample "<<util::AsString(s)<<endl;
+    cerr<<"Q2 bin = " << ibin_q2 << endl;
+    cerr<<"Events: "<<total_events<<" ==> "<<new_total_events<<"\t"<<new_total_events/total_events
         <<"\t"<<fabs((new_total_events/total_events)-1)<<"\t at scale "<<escale_tweak<<endl;
-        assert(!"Broken");
-    }
+    assert(!"Broken");
+  }
 #endif //NDEBUG
-    
-    return;
+
+  } // loop over q2 
+  
+  return;
 }
-//___________________________________________________________________________
-void valor::util::ApplyEnergyScaleShiftSystematic(conv::SuperkSample_t s, double * events_per_bin, double escale_tweak, double eshift_tweak)
-{
-    const int n_ereco_bins = util::NumErecoBins(s);
-    
-    const double * bin_edges = util::ErecoBinEdges(s);
-    
-    double new_events_per_bin [n_ereco_bins+1];// With overflow bin
-    double scaled_bin_edges   [n_ereco_bins+1];
-    double unscaled_bin_edges [n_ereco_bins+2];// With overflow bin
-    
-    // Calculate bin information
-    double total_events = 0;
-    for (int ibin = 0 ; ibin <= n_ereco_bins; ibin++) {
-        if (ibin  != n_ereco_bins) {
-            total_events += events_per_bin[ibin];
-        }
-        unscaled_bin_edges[ibin] = bin_edges[ibin];
-        scaled_bin_edges  [ibin] = bin_edges[ibin] * escale_tweak + eshift_tweak;
-        new_events_per_bin[ibin] = 0;
-    }
-    
-    unscaled_bin_edges[n_ereco_bins+1] = 1E4; //Overflow bin (no underflow unless we start binning from something other than zero).
-    
-    if (total_events < kASmallNum) return;
-    
-    double overlap = 0;
-    
-    for (int ibin_s = 0 ; ibin_s < n_ereco_bins ; ibin_s++) { // Loop over scaled bins
-        double bin_min_s = scaled_bin_edges[ibin_s];
-        double bin_max_s = scaled_bin_edges[ibin_s+1];
-        for (int ibin_u = 0 ; ibin_u < n_ereco_bins+1 ; ibin_u++) {
-            double bin_min_u = unscaled_bin_edges[ibin_u];
-            double bin_max_u = unscaled_bin_edges[ibin_u+1];
-            
-            if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
-            else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
-            else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
-            else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
-            else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
-            else overlap = -999; // No crossover
-            
-            if (overlap <= 0) continue;
-            
-            double new_events = events_per_bin[ibin_s] * overlap / (scaled_bin_edges[ibin_s+1]-scaled_bin_edges[ibin_s]);
-            new_events_per_bin[ibin_u] += new_events;
-        }
-    }
-    // Move events back into main array.
-    for (int i = 0 ; i < n_ereco_bins ; i++) {
-        events_per_bin[i] = new_events_per_bin[i];
-    }
-    events_per_bin[n_ereco_bins-1] += new_events_per_bin[n_ereco_bins]; //Put events from overflow bin back into top bin
-    
-#ifndef NDEBUG
-    double new_total_events = 0;
-    for (int i = 0 ; i < n_ereco_bins ; i++) {
-        new_total_events+=events_per_bin[i];
-    }
-    if ( fabs((new_total_events/total_events)-1) > conv::kASmallNum ) {
-        cerr<<"Util/ApplyEnergyScaleSystematic - failed normalisation check for sample "<<util::AsString(s)<<endl;
-        cerr<<"Events: "<<total_events<<" ==> "<<new_total_events<<"\t"<<new_total_events/total_events
-        <<"\t"<<fabs((new_total_events/total_events)-1)<<"\t at scale "<<escale_tweak<< "\twith shift " << eshift_tweak << endl;
-        assert(!"Broken");
-    }
-#endif //NDEBUG
-    
-    return;
-}
+//
+
+
+
+
+
+
+
+
+
+
 //___________________________________________________________________________
 
 // A few helper functions for use in UseEventToFillInTemplate
@@ -877,114 +859,114 @@ bool valor::util::IsNCcoh(int neut_reaction_mode)
   return neut_reaction_mode == 36;
 }
 //___________________________________________________________________________
-bool valor::util::IsNCoth(int neut_reaction_mode)
+bool valor::util::IsNCoth(int neut_reaction_mode) 
 //this is a catch all for everything NC that is not 1pi0, 1piC or coh
 // needs to be updated if another subcategory is added
 {
     bool is_ncoth = ( //  neut_reaction_mode == 38 || now in NC 1 gamma!
                      //   neut_reaction_mode == 39 || now in NC 1 gamma!
-                     neut_reaction_mode == 41 ||
-                     neut_reaction_mode == 42 ||
-                     neut_reaction_mode == 43 ||
-                     neut_reaction_mode == 44 ||
-                     neut_reaction_mode == 45 ||
-                     neut_reaction_mode == 46 ||
-                     neut_reaction_mode == 51 ||
-                     neut_reaction_mode == 52);
-    return is_ncoth;
+		     neut_reaction_mode == 41 ||
+		     neut_reaction_mode == 42 ||
+		     neut_reaction_mode == 43 ||
+		     neut_reaction_mode == 44 ||
+		     neut_reaction_mode == 45 ||
+		     neut_reaction_mode == 46 ||
+		     neut_reaction_mode == 51 ||
+		     neut_reaction_mode == 52);
+  return is_ncoth;
 }
 //___________________________________________________________________________
 bool valor::util::UseEventToFillInTemplate(
-                                           SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode)
+  SuperkMode_t m, int nu_pdg_code, int neut_reaction_mode)
 {
-    bool is_numu    = (nu_pdg_code == kPdgNuMu);
-    bool is_nue     = (nu_pdg_code == kPdgNuE);
-    bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
-    bool is_nuebar  = (nu_pdg_code == kPdgNuEBar);
+  bool is_numu    = (nu_pdg_code == kPdgNuMu);
+  bool is_nue     = (nu_pdg_code == kPdgNuE);
+  bool is_numubar = (nu_pdg_code == kPdgNuMuBar);
+  bool is_nuebar  = (nu_pdg_code == kPdgNuEBar);
+  
+  int abs_mode = TMath::Abs(neut_reaction_mode);
+
+  switch (m) {
+    // Numu
+    case kSKmNuMuCCQE         :  return ( IsCCQE    (abs_mode) && is_numu    );
+    case kSKmNuMuCC1pi        :  return ( IsCC1pi   (abs_mode) && is_numu    );
+    case kSKmNuMuCCcoh        :  return ( IsCCcoh   (abs_mode) && is_numu    );
+    case kSKmNuMuCCMEC        :  return ( IsMEC     (abs_mode) && is_numu    );
+    case kSKmNuMuCCoth        :  return ( IsCCoth   (abs_mode) && is_numu    );
+    case kSKmNuMuNC1piC       :  return ( IsNC1piC  (abs_mode) && is_numu    );
+    case kSKmNuMuNC1pi0       :  return ( IsNC1pi0  (abs_mode) && is_numu    );
+    case kSKmNuMuNCcoh        :  return ( IsNCcoh   (abs_mode) && is_numu    );
+    case kSKmNuMuNCoth        :  return ( IsNCoth   (abs_mode) && is_numu    );
+      case kSKmNuMuNC1Gamma     :  return ( IsNC1Gamma(abs_mode) && is_numu    );
     
-    int abs_mode = TMath::Abs(neut_reaction_mode);
+    case kSKmNuMuBarCCQE      :  return ( IsCCQE    (abs_mode) && is_numubar );
+    case kSKmNuMuBarCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numubar );
+    case kSKmNuMuBarCCcoh     :  return ( IsCCcoh   (abs_mode) && is_numubar );
+    case kSKmNuMuBarCCMEC     :  return ( IsMEC     (abs_mode) && is_numubar );
+    case kSKmNuMuBarCCoth     :  return ( IsCCoth   (abs_mode) && is_numubar );
+    case kSKmNuMuBarNC1piC    :  return ( IsNC1piC  (abs_mode) && is_numubar );
+    case kSKmNuMuBarNC1pi0    :  return ( IsNC1pi0  (abs_mode) && is_numubar );
+    case kSKmNuMuBarNCcoh     :  return ( IsNCcoh   (abs_mode) && is_numubar );
+    case kSKmNuMuBarNCoth     :  return ( IsNCoth   (abs_mode) && is_numubar );
+      case kSKmNuMuBarNC1Gamma  :  return ( IsNC1Gamma(abs_mode) && is_numubar );
+
     
-    switch (m) {
-            // Numu
-        case kSKmNuMuCCQE         :  return ( IsCCQE    (abs_mode) && is_numu    );
-        case kSKmNuMuCC1pi        :  return ( IsCC1pi   (abs_mode) && is_numu    );
-        case kSKmNuMuCCcoh        :  return ( IsCCcoh   (abs_mode) && is_numu    );
-        case kSKmNuMuCCMEC        :  return ( IsMEC     (abs_mode) && is_numu    );
-        case kSKmNuMuCCoth        :  return ( IsCCoth   (abs_mode) && is_numu    );
-        case kSKmNuMuNC1piC       :  return ( IsNC1piC  (abs_mode) && is_numu    );
-        case kSKmNuMuNC1pi0       :  return ( IsNC1pi0  (abs_mode) && is_numu    );
-        case kSKmNuMuNCcoh        :  return ( IsNCcoh   (abs_mode) && is_numu    );
-        case kSKmNuMuNCoth        :  return ( IsNCoth   (abs_mode) && is_numu    );
-        case kSKmNuMuNC1Gamma     :  return ( IsNC1Gamma(abs_mode) && is_numu    );
-            
-        case kSKmNuMuBarCCQE      :  return ( IsCCQE    (abs_mode) && is_numubar );
-        case kSKmNuMuBarCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numubar );
-        case kSKmNuMuBarCCcoh     :  return ( IsCCcoh   (abs_mode) && is_numubar );
-        case kSKmNuMuBarCCMEC     :  return ( IsMEC     (abs_mode) && is_numubar );
-        case kSKmNuMuBarCCoth     :  return ( IsCCoth   (abs_mode) && is_numubar );
-        case kSKmNuMuBarNC1piC    :  return ( IsNC1piC  (abs_mode) && is_numubar );
-        case kSKmNuMuBarNC1pi0    :  return ( IsNC1pi0  (abs_mode) && is_numubar );
-        case kSKmNuMuBarNCcoh     :  return ( IsNCcoh   (abs_mode) && is_numubar );
-        case kSKmNuMuBarNCoth     :  return ( IsNCoth   (abs_mode) && is_numubar );
-        case kSKmNuMuBarNC1Gamma  :  return ( IsNC1Gamma(abs_mode) && is_numubar );
-            
-            
-            // Osc Numu
-        case kSKmOscNuMuCCQE      :  return ( IsCCQE    (abs_mode) && is_numu    );
-        case kSKmOscNuMuCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numu    );
-        case kSKmOscNuMuCCcoh     :  return ( IsCCcoh   (abs_mode) && is_numu    );
-        case kSKmOscNuMuCCMEC     :  return ( IsMEC     (abs_mode) && is_numu    );
-        case kSKmOscNuMuCCoth     :  return ( IsCCoth   (abs_mode) && is_numu    );
-            
-        case kSKmOscNuMuBarCCQE   :  return ( IsCCQE    (abs_mode) && is_numubar );
-        case kSKmOscNuMuBarCC1pi  :  return ( IsCC1pi   (abs_mode) && is_numubar );
-        case kSKmOscNuMuBarCCcoh  :  return ( IsCCcoh   (abs_mode) && is_numubar );
-        case kSKmOscNuMuBarCCMEC  :  return ( IsMEC     (abs_mode) && is_numubar );
-        case kSKmOscNuMuBarCCoth  :  return ( IsCCoth   (abs_mode) && is_numubar );
-            
-            //NuE
-        case kSKmNuECCQE          :  return ( IsCCQE    (abs_mode) && is_nue     );
-        case kSKmNuECC1pi         :  return ( IsCC1pi   (abs_mode) && is_nue     );
-        case kSKmNuECCcoh         :  return ( IsCCcoh   (abs_mode) && is_nue     );
-        case kSKmNuECCMEC         :  return ( IsMEC     (abs_mode) && is_nue     );
-        case kSKmNuECCoth         :  return ( IsCCoth   (abs_mode) && is_nue     );
-        case kSKmNuENC1piC        :  return ( IsNC1piC  (abs_mode) && is_nue     );
-        case kSKmNuENC1pi0        :  return ( IsNC1pi0  (abs_mode) && is_nue     );
-        case kSKmNuENCcoh         :  return ( IsNCcoh   (abs_mode) && is_nue     );
-        case kSKmNuENCoth         :  return ( IsNCoth   (abs_mode) && is_nue     );
-        case kSKmNuENC1Gamma      :  return ( IsNC1Gamma(abs_mode) && is_nue     );
-            
-        case kSKmNuEBarCCQE       :  return ( IsCCQE    (abs_mode) && is_nuebar  );
-        case kSKmNuEBarCC1pi      :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
-        case kSKmNuEBarCCcoh      :  return ( IsCCcoh   (abs_mode) && is_nuebar  );
-        case kSKmNuEBarCCMEC      :  return ( IsMEC     (abs_mode) && is_nuebar  );
-        case kSKmNuEBarCCoth      :  return ( IsCCoth   (abs_mode) && is_nuebar  );
-        case kSKmNuEBarNC1piC     :  return ( IsNC1piC  (abs_mode) && is_nuebar  );
-        case kSKmNuEBarNC1pi0     :  return ( IsNC1pi0  (abs_mode) && is_nuebar  );
-        case kSKmNuEBarNCcoh      :  return ( IsNCcoh   (abs_mode) && is_nuebar  );
-        case kSKmNuEBarNCoth      :  return ( IsNCoth   (abs_mode) && is_nuebar  );
-        case kSKmNuEBarNC1Gamma   :  return ( IsNC1Gamma(abs_mode) && is_nuebar  );
-            
-            
-            // Osc NuE
-        case kSKmOscNuECCQE       :  return ( IsCCQE    (abs_mode) && is_nue     );
-        case kSKmOscNuECC1pi      :  return ( IsCC1pi   (abs_mode) && is_nue     );
-        case kSKmOscNuECCcoh      :  return ( IsCCcoh   (abs_mode) && is_nue     );
-        case kSKmOscNuECCMEC      :  return ( IsMEC     (abs_mode) && is_nue     );
-        case kSKmOscNuECCoth      :  return ( IsCCoth   (abs_mode) && is_nue     );
-            
-        case kSKmOscNuEBarCCQE    :  return ( IsCCQE    (abs_mode) && is_nuebar  );
-        case kSKmOscNuEBarCC1pi   :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
-        case kSKmOscNuEBarCCcoh   :  return ( IsCCcoh   (abs_mode) && is_nuebar  );
-        case kSKmOscNuEBarCCMEC   :  return ( IsMEC     (abs_mode) && is_nuebar  );
-        case kSKmOscNuEBarCCoth   :  return ( IsCCoth   (abs_mode) && is_nuebar  );
-            
-            
-        case kSKmUndefined: break;
-    }
+    // Osc Numu
+    case kSKmOscNuMuCCQE      :  return ( IsCCQE    (abs_mode) && is_numu    );
+    case kSKmOscNuMuCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numu    );
+    case kSKmOscNuMuCCcoh     :  return ( IsCCcoh   (abs_mode) && is_numu    );
+    case kSKmOscNuMuCCMEC     :  return ( IsMEC     (abs_mode) && is_numu    );
+    case kSKmOscNuMuCCoth     :  return ( IsCCoth   (abs_mode) && is_numu    );
     
-    std::cerr<<"util/UseEventToFillInTemplate >> Unhandled mode: "<<AsString(m)<<" ("<<m<<")"<<std::endl;
-    return false;
+    case kSKmOscNuMuBarCCQE   :  return ( IsCCQE    (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCC1pi  :  return ( IsCC1pi   (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCCcoh  :  return ( IsCCcoh   (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCCMEC  :  return ( IsMEC     (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCCoth  :  return ( IsCCoth   (abs_mode) && is_numubar );
+    
+    //NuE
+    case kSKmNuECCQE          :  return ( IsCCQE    (abs_mode) && is_nue     );
+    case kSKmNuECC1pi         :  return ( IsCC1pi   (abs_mode) && is_nue     );
+    case kSKmNuECCcoh         :  return ( IsCCcoh   (abs_mode) && is_nue     );
+    case kSKmNuECCMEC         :  return ( IsMEC     (abs_mode) && is_nue     );
+    case kSKmNuECCoth         :  return ( IsCCoth   (abs_mode) && is_nue     );
+    case kSKmNuENC1piC        :  return ( IsNC1piC  (abs_mode) && is_nue     );
+    case kSKmNuENC1pi0        :  return ( IsNC1pi0  (abs_mode) && is_nue     );
+    case kSKmNuENCcoh         :  return ( IsNCcoh   (abs_mode) && is_nue     );
+    case kSKmNuENCoth         :  return ( IsNCoth   (abs_mode) && is_nue     );
+      case kSKmNuENC1Gamma      :  return ( IsNC1Gamma(abs_mode) && is_nue     );
+          
+    case kSKmNuEBarCCQE       :  return ( IsCCQE    (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCC1pi      :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCCcoh      :  return ( IsCCcoh   (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCCMEC      :  return ( IsMEC     (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCCoth      :  return ( IsCCoth   (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNC1piC     :  return ( IsNC1piC  (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNC1pi0     :  return ( IsNC1pi0  (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNCcoh      :  return ( IsNCcoh   (abs_mode) && is_nuebar  );
+    case kSKmNuEBarNCoth      :  return ( IsNCoth   (abs_mode) && is_nuebar  );
+      case kSKmNuEBarNC1Gamma   :  return ( IsNC1Gamma(abs_mode) && is_nuebar  );
+
+    
+    // Osc NuE
+    case kSKmOscNuECCQE       :  return ( IsCCQE    (abs_mode) && is_nue     );
+    case kSKmOscNuECC1pi      :  return ( IsCC1pi   (abs_mode) && is_nue     );
+    case kSKmOscNuECCcoh      :  return ( IsCCcoh   (abs_mode) && is_nue     );
+    case kSKmOscNuECCMEC      :  return ( IsMEC     (abs_mode) && is_nue     );
+    case kSKmOscNuECCoth      :  return ( IsCCoth   (abs_mode) && is_nue     );
+                                                                             
+    case kSKmOscNuEBarCCQE    :  return ( IsCCQE    (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCC1pi   :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCCcoh   :  return ( IsCCcoh   (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCCMEC   :  return ( IsMEC     (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCCoth   :  return ( IsCCoth   (abs_mode) && is_nuebar  );
+    
+    
+    case kSKmUndefined: break;
+  }
+  
+  std::cerr<<"util/UseEventToFillInTemplate >> Unhandled mode: "<<AsString(m)<<" ("<<m<<")"<<std::endl;
+  return false;
 }
 //___________________________________________________________________________
 valor::util::ArrIdx * valor::util::ArrIdx::fInstance = 0;
@@ -1019,6 +1001,12 @@ void valor::util::ArrIdx::Init(void)
   for(int is = 0; is < kns; is++) {
      SuperkSample_t s = kSKSamples[is];
      if(s == kSKsUndefined) continue;
+     if(s != (SuperkSample_t)is) {
+       cerr << "SuperkSample " << (int)s << " " << util::AsString(s)
+	    << " is at the wrong position " << is << " in kSKSamples"
+	    << endl;
+       exit(-1);
+     }
      fSuperkSampleIdx [s] = is;
 #ifdef __show_arr_idx_mesg_debug__
      cout << "Util/ArrIdx >> Sample: " 

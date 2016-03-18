@@ -39,9 +39,11 @@ util = valor.util
 opt    = valor.Opt.Instance()
 t2kopt = valor.T2KOpt.Instance()
 rnd    = valor.Rnd.Instance()
-arr_idx = util.ArrIdx.Instance()
+arridx = util.ArrIdx.Instance()
 physlim = util.T2KPhysicalParameterLimits.Instance()
+nr = util.NameRegistry.Instance()
 
+opt.gDoNotDie = True # We're interactive, so don't die unless you have to.
 
 # Make float formatting strings
 for n in xrange(1,9):

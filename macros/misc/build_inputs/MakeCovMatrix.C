@@ -12,34 +12,56 @@
 
 //
 
-#define SINGLEDIAGMATR // build a single diagonal covariance matrix
+//#define SINGLEDIAGMATR // build a single diagonal covariance matrix
 
 #ifndef SINGLEDIAGMATR
 #define ADDCOVMATR
-#define UNITMATRIX
+#define ADDPARONE
+//#define UNITMATRIX
 #endif
 
 void MakeCovMatrix( 
 		   
-		   const char *filename = "$T2KOSCANA/inputs/official/2014/flux/flux_covariance_13av1_prelim.root",
+		   //const char *filename = "$T2KOSCANA/inputs/official/2014/flux/flux_covariance_13av1_prelim.root",
+		   const char *filename = "$T2KOSCANA/inputs/official/2015/flux/flux_covariance_banff_13av1.0.root",
 		   const char *covname = "total_flux_cov",
 		   
 		   //const char *outfilename = "$T2KOSCANA/outputs/test/cov_flux_prelim_13av1_xsec_postbanff2013.root",
-		   //const char *outfilename = "$T2KOSCANA/outputs/test/cov_flux_prelim_13av1_xsec_prelim.root",		   
-		   const char *outfilename = "$T2KOSCANA/outputs/test/cov_flux_prelim_diag_2015_skdetfsi.root",		   
+		   const char *outfilename = "$T2KOSCANA/outputs/test/cov_flux_prelim_13av1_xsec_prelim_numudisap.root",		   
+		   //const char *outfilename = "$T2KOSCANA/outputs/test/cov_flux_prelim_diag_2015_skdetfsi.root",		   
 
 		   const bool CorrMode = true, // true -> correlated FHC-RHC, false -> not correlated
 
-		   // Select the sk sub-matrices:
+		   // // // Select the sk sub-matrices --> joint and nue app only
+		   // //fhc-only
+		   // const int first_sk_fhc = 50, 
+		   // const int last_sk_fhc = 74,
+		   // // rhc-only
+		   // const int first_sk_rhc = 75, 
+		   // const int last_sk_rhc = 99,
+		   // // fhc+rhc
+		   // const int first_sk_all = 50, 
+		   // const int last_sk_all = 99,
+		   // //
+		   // const int first_fhc_out = 25, // first to add xsec cov 
+		   // const int first_rhc_out = 25, // first to add xsec cov
+		   // const int first_all_out = 50, // first to add xsec cov
+
+		   // Select the sk sub-matrices --> numu disap only
 		   //fhc-only
 		   const int first_sk_fhc = 50, 
-		   const int last_sk_fhc = 74,
+		   const int last_sk_fhc = 65,
 		   // rhc-only
 		   const int first_sk_rhc = 75, 
-		   const int last_sk_rhc = 99,
+		   const int last_sk_rhc = 90,
 		   // fhc+rhc
-		   const int first_sk_all = 50, 
-		   const int last_sk_all = 99,
+		   const int first_sk_all = 50, // random 
+		   const int last_sk_all = 81,  // random
+		   //
+		   const int first_fhc_out = 16, // first to add xsec cov
+		   const int first_rhc_out = 16, // first to add xsec cov
+		   const int first_all_out = 32, // first to add xsec cov 
+
 
 		   // Add a piece of covariance matrix 1
 		   // const char *addfilename = "$T2KOSCANA/inputs/official/2013/banff/postfit_banff_2013_joint_v5.root",
@@ -47,15 +69,17 @@ void MakeCovMatrix(
 		   // const int first_add = 25, // rhc-only 
 		   // const int last_add = 32,
 
-		   const char *addfilename = "$T2KOSCANA/inputs/official/2014/xsec/xsec_covariance_2014_v1.root",
+		   //const char *addfilename = "$T2KOSCANA/inputs/official/2014/xsec/xsec_covariance_2014_v1.root",
+		   const char *addfilename = "$T2KOSCANA/inputs/official/2015/xsec/xsec_covariance_2014_skonly.root",
 		   const char *addcovname = "xsec_cov",
 		   const int first_add = 0, // rhc-only
-		   const int last_add = 13,
+		   //const int last_add = 13,  
+		   const int last_add = 8, // numu disap --> no scca and sccv 
 		   
 		   //
 		   
-		   const int NDiagMatr_1 = 12,  
-		   const int NDiagMatr_2 = 12,
+		   const int NDiagMatr_1 = 16,  
+		   const int NDiagMatr_2 = 25,
 		    ){
   
   using namespace std;
@@ -212,25 +236,11 @@ void MakeCovMatrix(
 
   // Take sk sub-matrices
 
-  int firstcol = 50;
-  int firstrow = 50;
-  int lastcol = cov->GetNcols()-1;
-  int lastrow = cov->GetNrows()-1;
-
   TMatrixD *cov_sk_all = (TMatrixD*) cov->GetSub(first_sk_all,last_sk_all,first_sk_all,last_sk_all); 
   TMatrixD *cov_sk_fhc = (TMatrixD*) cov->GetSub(first_sk_fhc,last_sk_fhc,first_sk_fhc,last_sk_fhc); 
   TMatrixD *cov_sk_rhc = (TMatrixD*) cov->GetSub(first_sk_rhc,last_sk_rhc,first_sk_rhc,last_sk_rhc);
 
 
-  
-  //if(!CorrMode){
-  //cout << "Remove correlations" << endl;
-  //for(int irow=0;irow<cov_sk_all){
-  //for(){
-  //}
-  //}
-  //}
-  
 
   // Add matrix 
 #ifdef ADDCOVMATR
@@ -247,7 +257,8 @@ void MakeCovMatrix(
   
   //Take parameters
   TVectorD *par_sk_add = (TVectorD*) addfilein->Get("xsec_param_prior");
-  TObjArray *parname_sk_add = (TObjArray*) addfilein->Get("paramNames");
+  //TObjArray *parname_sk_add = (TObjArray*) addfilein->Get("paramNames");
+  TObjArray *parname_sk_add = (TObjArray*) addfilein->Get("xsec_param_names");
   if(parname_sk_add!=0){  
     parname_sk_add->SetOwner(kTRUE);
     int npar = parname_sk_add->GetEntriesFast();
@@ -264,21 +275,22 @@ void MakeCovMatrix(
   addfilein->Close();
 
   TMatrixD *cov_sk_add_piece = (TMatrixD*) cov_sk_add->GetSub(first_add,last_add,first_add,last_add);
-  
 
-
+  //par_sk_add->Print();
+  //cov_sk_add_piece->Print();
+  //return;
   // // Check additional covariance matrix
   // for(int irow=0;irow<cov_sk_add_piece->GetNrows();irow++){
   //   for(int icol=0;icol<cov_sk_add_piece->GetNrows();icol++){
-  //     if(cov_sk_add_piece(irow,icol)==1.) cov_sk_add_piece(irow,icol) = 0.1;
+  //     cout << cov_sk_add_piece(irow,icol) << " ";
+  //     //if(cov_sk_add_piece(irow,icol)==1.) cov_sk_add_piece(irow,icol) = 0.1;
   //   }
+  //   cout << endl;
   // }
-  
-
+  // return;
 
 
   int nbins_sk_all_final = cov_sk_add_piece->GetNrows() + cov_sk_all->GetNrows();
-
   int nbins_sk_all = cov_sk_all->GetNrows();
   int nbins_sk_add_piece = cov_sk_add_piece->GetNrows();
   TMatrixD *cov_sk_all_final = new TMatrixD(nbins_sk_all_final,nbins_sk_all_final);
@@ -313,7 +325,7 @@ void MakeCovMatrix(
   for(int irow=0;irow<nbins_sk_add_piece;irow++)
     for(int icol=0;icol<nbins_sk_add_piece;icol++)
       cov_sk_rhc_final(irow+nbins_sk_rhc,icol+nbins_sk_rhc) = cov_sk_add_piece(irow,icol);
-  
+
 #endif 
 #ifndef ADDCOVMATR 
     
@@ -322,6 +334,7 @@ void MakeCovMatrix(
   TMatrixD *cov_sk_rhc_final = (TMatrixD*) cov_sk_rhc->Clone("");
   
 #endif
+
 
 
   // Write output parameter vector 
@@ -335,15 +348,21 @@ void MakeCovMatrix(
 
   // Add original parameter values
   const int NdimOrig = cov_sk_all->GetNrows(); 
-  for(int ipar=0;ipar<NdimOrig;ipar++) 
+  for(int ipar=0;ipar<NdimOrig;ipar++){
     par_sk_all_final(ipar) = 1.;  //set prior values always to 1 for simplicity
+  }
+
 #ifdef ADDCOVMATR
   // Add adding parameter values
   const int NdimAdd = cov_sk_add_piece->GetNrows();
-  for(int ipar=0;ipar<NdimAdd;ipar++) 
-    par_sk_all_final(ipar+NdimOrig) = 1.; //set prior values always to 1 for simplicity
+  for(int ipar=0;ipar<NdimAdd;ipar++){ 
+    //par_sk_all_final(ipar+NdimOrig) = 1.; //set prior values always to 1 for simplicity
+    par_sk_all_final(ipar+NdimOrig) = par_sk_add(ipar);
+  }
 #endif
   
+
+
   // Add original parameter values
   const int NdimOrig = cov_sk_fhc->GetNrows(); 
   for(int ipar=0;ipar<NdimOrig;ipar++) 
@@ -351,9 +370,13 @@ void MakeCovMatrix(
 #ifdef ADDCOVMATR
   // Add adding parameter values
   const int NdimAdd = cov_sk_add_piece->GetNrows();
-  for(int ipar=0;ipar<NdimAdd;ipar++) 
-    par_sk_fhc_final(ipar+NdimOrig) = 1.; //set prior values always to 1 for simplicity
+  for(int ipar=0;ipar<NdimAdd;ipar++){ 
+    //par_sk_fhc_final(ipar+NdimOrig) = 1.; //set prior values always to 1 for simplicity
+    par_sk_fhc_final(ipar+NdimOrig) = par_sk_add(ipar);
+  }
 #endif
+
+
 
   // Add original parameter values
   const int NdimOrig = cov_sk_rhc->GetNrows(); 
@@ -362,16 +385,19 @@ void MakeCovMatrix(
 #ifdef ADDCOVMATR
   // Add adding parameter values
   const int NdimAdd = cov_sk_add_piece->GetNrows();
-  for(int ipar=0;ipar<NdimAdd;ipar++) 
-    par_sk_rhc_final(ipar+NdimOrig) = 1.; //set prior values always to 1 for simplicity
+  for(int ipar=0;ipar<NdimAdd;ipar++){ 
+    //par_sk_rhc_final(ipar+NdimOrig) = 1.; //set prior values always to 1 for simplicity
+    par_sk_rhc_final(ipar+NdimOrig) = par_sk_add(ipar);
+  }
 #endif
+
 
   //
 
 #ifdef UNITMATRIX
   for(int irow=0;irow<cov_sk_all_final->GetNrows();irow++){
     for(int icol=0;icol<cov_sk_all_final->GetNrows();icol++){
-      if(irow>=50){
+      if(irow>=first_all_out){
 	if(irow==icol) cov_sk_all_final(irow,icol) = 0.1;
 	else cov_sk_all_final(irow,icol) = 0.;
       }
@@ -379,7 +405,7 @@ void MakeCovMatrix(
   }
   for(int irow=0;irow<cov_sk_fhc_final->GetNrows();irow++){
     for(int icol=0;icol<cov_sk_fhc_final->GetNrows();icol++){
-      if(irow>=25){
+      if(irow>=first_fhc_out){
       if(irow==icol) cov_sk_fhc_final(irow,icol) = 0.1;
       else cov_sk_fhc_final(irow,icol) = 0.;
       }
@@ -387,7 +413,7 @@ void MakeCovMatrix(
   }
   for(int irow=0;irow<cov_sk_rhc_final->GetNrows();irow++){
     for(int icol=0;icol<cov_sk_rhc_final->GetNrows();icol++){
-      if(irow>=25){
+      if(irow>=first_rhc_out){
 	if(irow==icol) cov_sk_rhc_final(irow,icol) = 0.1;
 	else cov_sk_rhc_final(irow,icol) = 0.;
       }

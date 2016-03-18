@@ -7,9 +7,9 @@
 #
 
 export T2KOSCANA=$1
-#export ROOTSYS=/hep/root/v5.32.01/
-export ROOTSYS=/Users/davidesgalaberna/root/
+# #export ROOTSYS=/hep/root/v5.32.01/
+#export ROOTSYS=/Users/davidesgalaberna/root/
 
-export LD_LIBRARY_PATH=${T2KOSCANA}/fitter:${LD_LIBRARY_PATH}
-export DYLD_LIBRARY_PATH=${T2KOSCANA}/fitter:${ROOTSYS}/lib:${DYLD_LIBRARY_PATH}
-export PATH=${T2KOSCANA}/root:${T2KOSCANA}/production:${ROOTSYS}/bin:${T2KOSCANA}/fitter:${PATH}
+export LD_LIBRARY_PATH=${T2KOSCANA}/fitter:${ROOTSYS}/fitter:${ROOTSYS}/lib:$T2KOSCANA/lib:${LD_LIBRARY_PATH}:/usr/lib64/
+export DYLD_LIBRARY_PATH=${T2KOSCANA}/fitter:${ROOTSYS}/lib:$T2KOSCANA/lib:${DYLD_LIBRARY_PATH}
+export PATH=${T2KOSCANA}/root:${T2KOSCANA}/production:${ROOTSYS}/bin:$T2KOSCANA/bin:${PATH}

@@ -29,7 +29,7 @@
 //#define __show_banfftun_syst_var_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
 //#define __show_spectra_update_mesg_debug__
-#define __show_skipped_templates__
+//#define __show_skipped_templates__
 //#define __show_isanevent_mesg_debug__
 //#define __show_negative_events_mesg_debug__
 //#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
@@ -53,13 +53,20 @@
 //#define SYSTWEIGHTSAREONE
 //#define PHYSHYPWEIGHTSAREONE
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
+
 #define INCLUDEEVENTSOVERTHIRTYGEV // include Ereco overflow events in the last bin?
+
+// NEW 2D TEMPLATES
+#define INCLUDEEVENTSNEGATIVEQ2      // include Q2 underflow events in the first bin?
+#define INCLUDEEVENTSOVERFLOWQ2      // include Q2 overflow events in the last bin?
+//
 
 #define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
 #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch.
 #define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
-#define USE_CCcoh_WEIGHTS   // use the pion CCcoh weight branch in the trees
+
+#define	USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
 #define	USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
@@ -72,13 +79,16 @@
 #include <iostream>
 #include <sstream>
 #include <climits>
+#include <iomanip>
 
 #include <TTree.h>
 #include <TH2D.h>
+
 #include <TVirtualPad.h>
 #include <TLegend.h>
 #include <TMath.h>
 #include <TCanvas.h>
+#include <TLorentzVector.h> // NEW 2D TEMPLATES
 
 #include "SuperkMC.h"
 #include "SuperkDetectorFSI.h"
@@ -88,6 +98,7 @@
 #include "Conventions/Opt.h"
 #include "Utilities/Rnd.h"
 #include "Utilities/NuOscSterile.h"
+#include "Utilities/UtlSystem.h"
 
 using std::cout;
 using std::cerr;
@@ -120,7 +131,23 @@ SuperkMC::~SuperkMC()
         if (fMCEtrueSpectrumTotArray[is]) { delete fMCEtrueSpectrumTotArray[is]; fMCEtrueSpectrumTotArray[is] = 0;}
         if (fMCErecoSpectrumTotArray[is]) { delete fMCErecoSpectrumTotArray[is]; fMCErecoSpectrumTotArray[is] = 0;}
         if (fMCErecoSpectrumArray   [is]) { delete fMCErecoSpectrumArray   [is]; fMCErecoSpectrumArray   [is] = 0;}
+        
+        // NEW 2D TEMPLATES
+        if (fMCVariableTemplArray2D   [is])     { delete fMCVariableTemplArray2D   [is];     fMCVariableTemplArray2D   [is] = 0;}
+        if (fMCTemplArrayOri2D        [is])     { delete fMCTemplArrayOri2D        [is];     fMCTemplArrayOri2D        [is] = 0;}
+        if (fMCTemplArrayNom2D        [is])     { delete fMCTemplArrayNom2D        [is];     fMCTemplArrayNom2D        [is] = 0;}
+        if (fMCTemplArrayTun2D        [is])     { delete fMCTemplArrayTun2D        [is];     fMCTemplArrayTun2D        [is] = 0;}
+        if (fMCTemplArrayFin2D        [is])     { delete fMCTemplArrayFin2D        [is];     fMCTemplArrayFin2D        [is] = 0;}
+        if (fMCTemplArrayRPAWght2D    [is])     { delete fMCTemplArrayRPAWght2D    [is];     fMCTemplArrayRPAWght2D    [is] = 0;}
+        if (fMCStatFracErr2D          [is])     { delete fMCStatFracErr2D          [is];     fMCStatFracErr2D          [is] = 0;}
+        //if (fMCEtrueSpectrumTotArray2D[is])     { delete fMCEtrueSpectrumTotArray2D[is];     fMCEtrueSpectrumTotArray2D[is] = 0;}
+        if (fMCErecoSpectrumTotArray2D[is])     { delete fMCErecoSpectrumTotArray2D[is];     fMCErecoSpectrumTotArray2D[is] = 0;}
+        if (fMCQ2SpectrumTotArray2D   [is])     { delete fMCQ2SpectrumTotArray2D   [is];     fMCQ2SpectrumTotArray2D   [is] = 0;}
+        if (fMCErecoVsQ2SpectrumTotArray2D[is]) { delete fMCErecoVsQ2SpectrumTotArray2D[is]; fMCErecoVsQ2SpectrumTotArray2D[is] = 0;}
+        if (fMCErecoVsQ2SpectrumArray [is])     { delete fMCErecoVsQ2SpectrumArray [is];     fMCErecoVsQ2SpectrumArray [is] = 0;}
+        //
     }
+    
     
 }
 //________________________________________________________________________________________
@@ -136,6 +163,9 @@ void SuperkMC::Init(void)
         
         fMCErecoSpectrumTot[is] = 0;
         fMCEtrueSpectrumTot[is] = 0;
+        
+        fMCErecoVsQ2SpectrumTot[is] = 0; // NEW 2D TEMPLATES
+        
         for(int im=0; im<knm; im++) {
             fMCTemplOri      [is][im] = 0;
             fMCTemplNom      [is][im] = 0;
@@ -143,12 +173,28 @@ void SuperkMC::Init(void)
             fMCErecoSpectrum [is][im] = 0;
             fMCVariableTempl [is][im] = 0;
             
+            // NEW 2D TEMPLATES
+            fMCTemplOri2D      [is][im] = 0;
+            fMCTemplNom2D      [is][im] = 0;
+            fMCErecoVsQ2Spectrum [is][im] = 0;
+            fMCVariableTempl2D [is][im] = 0;
+            //
+            
             fNNonEmptyVariableBins [is][im] = 0;
             for (int ivb = 0; ivb < kMaxVarBins; ivb++) {
                 fNNonEmptyFixedBins    [is][im][ivb] = 0;
                 fNonEmptyFixedBins     [is][im][ivb] = NULL;
                 fNonEmptyVariableBins  [is][im][ivb] = 0;
             }
+            
+            // NEW 2D TEMPLATES
+            for (int ivb = 0; ivb < kMaxVarBins2D; ivb++) {
+                fNNonEmptyFixedBins2D    [is][im][ivb] = 0;
+                fNonEmptyFixedBins2D     [is][im][ivb] = NULL;
+                fNonEmptyVariableBins2D  [is][im][ivb] = 0;
+            }
+            //
+            
         }//im
         fMCTreeNuMu     .push_back(0);
         fMCTreeNuMuBar  .push_back(0);
@@ -169,6 +215,22 @@ void SuperkMC::Init(void)
             fMCEtrueSpectrumTotArray.push_back( 0 );
             fMCErecoSpectrumTotArray.push_back( 0 );
             fMCErecoSpectrumArray   .push_back( 0 );
+            
+            
+            // NEW 2D TEMPLATES
+            fMCVariableTemplArray2D       .push_back( 0 );
+            fMCTemplArrayOri2D            .push_back( 0 );
+            fMCTemplArrayNom2D            .push_back( 0 );
+            fMCTemplArrayTun2D            .push_back( 0 );
+            fMCTemplArrayFin2D            .push_back( 0 );
+            fMCTemplArrayRPAWght2D        .push_back( 0 );
+            fMCStatFracErr2D              .push_back( 0 );
+            //fMCEtrueSpectrumTotArray2D    .push_back( 0 );
+            fMCErecoSpectrumTotArray2D    .push_back( 0 );
+            fMCQ2SpectrumTotArray2D       .push_back( 0 );
+            fMCErecoVsQ2SpectrumTotArray2D.push_back( 0 );
+            fMCErecoVsQ2SpectrumArray     .push_back( 0 );
+            //
         }
         else {
             int n_etrue_bins = kNEtrueBins[is];
@@ -176,9 +238,20 @@ void SuperkMC::Init(void)
             int n_mc_etrue_bins = kMCNEtrueBins;//not sample dependent
             int n_xs_ereco_bins = kNXsErecoBins[is];
             
+            // NEW 2D TEMPLATES
+            int n_q2_bins = kNQ2Bins[is];
+            int n_xs_q2_bins = kNXsQ2Bins[is];
+            //
+            
             assert(n_etrue_bins < conv::kBigIndex);
             assert(n_ereco_bins < conv::kBigIndex);
             assert( (long) n_ereco_bins * (long)conv::kBigIndex + (long)n_etrue_bins < INT_MAX);
+            
+            // NEW 2D TEMPLATES
+            assert(n_q2_bins < conv::kBigIndex);
+            assert( (long) n_q2_bins * (long)conv::kBigIndex * (long)conv::kBigIndex + (long) n_ereco_bins * (long)conv::kBigIndex + (long)n_etrue_bins < INT_MAX);
+            //
+            
             
             fMCVariableTemplArray   .push_back( new VALORArray(knm, n_mc_etrue_bins, n_xs_ereco_bins) );
             fMCTemplArrayOri        .push_back( new VALORArray(knm, n_etrue_bins   , n_ereco_bins   ) );
@@ -214,7 +287,53 @@ void SuperkMC::Init(void)
             fMCTemplArrayRPAWght    [is]->SetTitle( Form("Rel_RPA/Nonrel_RPA Weight %s" , util::AsString(s).c_str()));
             
             fMCTemplArrayRPAWght    [is]->SetAll(1);
-        }
+            
+            
+            
+            // NEW 2D TEMPLATES
+            fMCVariableTemplArray2D       .push_back( new VALORArray(knm, n_mc_etrue_bins, n_xs_ereco_bins, n_xs_q2_bins) );
+            fMCTemplArrayOri2D            .push_back( new VALORArray(knm, n_etrue_bins   , n_ereco_bins   , n_q2_bins   ) );
+            fMCTemplArrayNom2D            .push_back( new VALORArray(knm, n_etrue_bins   , n_ereco_bins   , n_q2_bins  ) );
+            fMCTemplArrayTun2D            .push_back( new VALORArray(knm, n_etrue_bins   , n_ereco_bins   , n_q2_bins  ) );
+            fMCTemplArrayFin2D            .push_back( new VALORArray(knm, n_etrue_bins   , n_ereco_bins   , n_q2_bins   ) );
+            fMCTemplArrayRPAWght2D        .push_back( new VALORArray(knm, n_etrue_bins   , n_ereco_bins   , n_q2_bins   ) );
+            fMCStatFracErr2D              .push_back( new VALORArray(knm, n_etrue_bins   , n_ereco_bins   , n_q2_bins   ) );
+            //fMCEtrueSpectrumTotArray2D    .push_back( new VALORArray(n_etrue_bins) );
+            fMCErecoSpectrumTotArray2D    .push_back( new VALORArray(n_ereco_bins) );
+            fMCQ2SpectrumTotArray2D       .push_back( new VALORArray(n_q2_bins) );
+            fMCErecoVsQ2SpectrumTotArray2D.push_back( new VALORArray(n_ereco_bins, n_q2_bins) );
+            fMCErecoVsQ2SpectrumArray     .push_back( new VALORArray(knm, n_ereco_bins, n_q2_bins) );
+            
+            fMCVariableTemplArray2D       [is]->SetName( Form("mc_templ_variable_2d_%s"        , util::AsStringCompact(s).c_str()));
+            fMCTemplArrayOri2D            [is]->SetName( Form("mc_templ_ori_2d_%s"             , util::AsStringCompact(s).c_str()));
+            fMCTemplArrayNom2D            [is]->SetName( Form("mc_templ_nom_2d_%s"             , util::AsStringCompact(s).c_str()));
+            fMCTemplArrayTun2D            [is]->SetName( Form("mc_templ_tun_2d_%s"             , util::AsStringCompact(s).c_str()));
+            fMCTemplArrayFin2D            [is]->SetName( Form("mc_templ_fin_2d_%s"             , util::AsStringCompact(s).c_str()));
+            fMCStatFracErr2D              [is]->SetName( Form("mc_staterr_2d_%s"               , util::AsStringCompact(s).c_str()));
+            //fMCEtrueSpectrumTotArray2D    [is]->SetName( Form("mc_spectrum_etrue_tot_2d_%s"    , util::AsStringCompact(s).c_str()));
+            fMCErecoSpectrumTotArray2D    [is]->SetName( Form("mc_spectrum_obs_tot_ereco_2d_%s", util::AsStringCompact(s).c_str()));
+            fMCErecoVsQ2SpectrumTotArray2D[is]->SetName( Form("mc_spectrum_obs_tot_erecoVsq2_2d_%s", util::AsStringCompact(s).c_str()));
+            fMCQ2SpectrumTotArray2D       [is]->SetName( Form("mc_spectrum_obs_tot_q2_2d_%s"   , util::AsStringCompact(s).c_str()));
+            fMCErecoVsQ2SpectrumArray     [is]->SetName( Form("mc_spectrum_obs_2d_%s"          , util::AsStringCompact(s).c_str()));
+            fMCTemplArrayRPAWght2D        [is]->SetName( Form("mc_rpa_weight_2d_%s"            , util::AsStringCompact(s).c_str()));
+            
+            fMCVariableTemplArray2D       [is]->SetTitle( Form("MC variable template 2D  %s"        , util::AsString(s).c_str()));
+            fMCTemplArrayOri2D            [is]->SetTitle( Form("MC template ori 2D %s"              , util::AsString(s).c_str()));
+            fMCTemplArrayNom2D            [is]->SetTitle( Form("MC template nom 2D %s"              , util::AsString(s).c_str()));
+            fMCTemplArrayTun2D            [is]->SetTitle( Form("MC template tun 2D %s"              , util::AsString(s).c_str()));
+            fMCTemplArrayFin2D            [is]->SetTitle( Form("MC template fin 2D %s"              , util::AsString(s).c_str()));
+            fMCStatFracErr2D              [is]->SetTitle( Form("MC Fractional StatErr 2D %s"        , util::AsString(s).c_str()));
+            //fMCEtrueSpectrumTotArray2D    [is]->SetTitle( Form("MC Spectrum Etrue_Total 2D %s"      , util::AsString(s).c_str()));
+            fMCErecoSpectrumTotArray2D    [is]->SetTitle( Form("MC Spectrum Ereco Total 2D %s"      , util::AsString(s).c_str()));
+            fMCErecoVsQ2SpectrumTotArray2D[is]->SetTitle( Form("MC Spectrum Ereco Vs Q2 Total 2D %s"      , util::AsString(s).c_str()));
+            fMCQ2SpectrumTotArray2D       [is]->SetTitle( Form("MC Spectrum Q2 Total 2D %s"         , util::AsString(s).c_str()));
+            fMCErecoVsQ2SpectrumArray     [is]->SetTitle( Form("MC Spectrum Ereco Vs Q2 per mode %s", util::AsString(s).c_str()));
+            fMCTemplArrayRPAWght2D        [is]->SetTitle( Form("Rel_RPA/Nonrel_RPA Weight %s"       , util::AsString(s).c_str()));
+            
+            fMCTemplArrayRPAWght2D        [is]->SetAll(1);
+            //
+            
+        } // not kUndfined
         
     }//is
     
@@ -251,9 +370,8 @@ void SuperkMC::Init(void)
     fBrWghtFlx           = 1;
     fBrWghtSFRFG         = 1;
     fBrWghtRPArel        = 1;
-    fBrWghtCCcoh         = 1;
     fBrWghtRPAnonrel     = 1;
-    
+    fBrWghtCCcoh         = 1;
     
     fNuFlux              = 0;
     fNuXSec              = 0;
@@ -261,28 +379,13 @@ void SuperkMC::Init(void)
     
     arr_index = util::ArrIdx::Instance();
     
-#ifdef RESCALE_MEC_TO_MARTINI
-    std::cout << "Exp/SKMC >> MEC rescaled from Nieves to Martini" << std::endl;
-#endif
-#ifdef USE_CONSTANT_ENERGY_SHIFT_ERROR
-    std::cout << "Exp/SKMC >> Using constant energy shift error" << std::endl;
-#endif
-    
-#ifdef USE_SHIFT_AND_SCALE_ERROR
-    std::cout << "Exp/SKMC >> Using constant energy shift + scale error" << std::endl;
-#endif
-    
-#ifdef OFFSET_NIEVES_MOMENTUM
-    std::cout << "Exp/SKMC >> 1p 1h momentum offset applied" << std::endl;
-#ifdef OFFSET_CCQE_ONLY
-    std::cout << "Exp/SKMC >> 1p 1h momentum offset applied only to CCQE " << std::endl;
-#endif
-#endif
-#ifdef USE_NC1gamma_WEIGHTS
+#ifdef USE_CCcoh_WEIGHTS
+    cout << "Exp/SKMC CCcoherent reweight is applied" << endl;
+#endif   
+#ifdef USE_NC1gamma_WEIGHTS 
     cout << "Exp/SKMC NC1gamma reweight is applied" << endl;
 #endif
-    std::cout << "Exp/SKMC >> Init complete" << std::endl;
-    
+    cout << "Exp/SKMC >> Init complete" << endl;
     
 }
 //________________________________________________________________________________________
@@ -299,13 +402,30 @@ void SuperkMC::CleanUp(void)
             if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
             if( fMCVariableTempl[is][im] ) delete fMCVariableTempl[is][im];
             
+            // NEW 2D TEMPLATES
+            if( fMCErecoVsQ2Spectrum[is][im] ) delete fMCErecoVsQ2Spectrum[is][im];
+            if( fMCVariableTempl2D  [is][im] ) delete fMCVariableTempl2D[is][im];
+            //
+            
             for (int ivb = 0; ivb < fNNonEmptyVariableBins[is][im] ; ivb++) {
-                if (fNonEmptyFixedBins[is][im][ivb]) delete fNonEmptyFixedBins[is][im][ivb];
+                if (fNonEmptyFixedBins[is][im][ivb]) delete[] fNonEmptyFixedBins[is][im][ivb];
             }
+            
+            // NEW 2D TEMPLATES
+            for (int ivb = 0; ivb < fNNonEmptyVariableBins2D[is][im] ; ivb++) {
+                if (fNonEmptyFixedBins2D[is][im][ivb]) delete[] fNonEmptyFixedBins2D[is][im][ivb];
+            }
+            //
+            
         } //im
         if( fMCErecoSpectrumTot [is] ) { delete fMCErecoSpectrumTot [is]; fMCErecoSpectrumTot [is] = 0; }
         if( fMCEtrueSpectrumTot [is] ) { delete fMCEtrueSpectrumTot [is]; fMCEtrueSpectrumTot [is] = 0; }
+        
+        // NEW 2D TEMPLATES
+        if( fMCErecoVsQ2SpectrumTot [is] ) { delete fMCErecoVsQ2SpectrumTot [is]; fMCErecoVsQ2SpectrumTot [is] = 0; }
+        //
     }
+    
 }
 //________________________________________________________________________________________
 bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -347,10 +467,6 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 #endif
     ///
-    
-#ifdef USE_CCcoh_WEIGHTS
-    cout << "Exp/SKMC >> " << "Using CCcoh weights" << endl;
-#endif
     
     //
     // Get MC trees and MC POT
@@ -470,6 +586,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     // need to initialise as 3 flavour oscillation, otherwise ExtTuning (NA61) and FinTuning (BANFF) is not applied to nuesig modes
     fPhysHypothesis.Init(kHypOsc3F);
     
+    
     // fill-in MC templates from the input event tree
     for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
@@ -481,50 +598,267 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         }
     }
     
+    
     this->FillTemplateArrays(true); // Fill the arrays - with niwg weights by default
     
     // fill-in "special" MC templates (osc. numu CC)
-    this->FillSpecialTemplates();
+    this->FillSpecialTemplates(); // NEW 2D TEMPLATES (not for 2D templates)
     
 #ifdef __save_templates_debug__
+#ifndef __USE_2D_TEMPLATES__
     this->NevDebug(kSKMCtOri, "nevents");
     this->NevDebug(kSKMCtNom, "mcnorm");
     this->NevDebug(kSKMCtRPA, "mcnorm_rpa");
+#else
+    // NEW 2D TEMPLATES
+    this->NevDebug2D(kSKMCtOri, "nevents");
+    this->NevDebug2D(kSKMCtNom, "mcnorm");
+    this->NevDebug2D(kSKMCtRPA, "mcnorm_rpa");
+    //
+#endif
 #endif
     
-    this->CalculateMCStatError();
+    
+#ifndef __USE_2D_TEMPLATES__
+    this->CalculateMCStatError(); // NEW 2D TEMPLATES (no update for 2D templates)
 #ifdef __save_templates_debug_mcstat__
     this->MCStatErrDebug();
 #endif
+#endif
+    
+    
     
     // need to read in the xsec splines, before applying any BANFF tweaks
+    
+#ifndef __USE_2D_TEMPLATES__ // 1D templates
+    
     fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri);
-    if( !fNuXSec -> ReadSplines(xml,root_node) ) return false;
+    
+#else // 2D templates
+    
+    // Initialize fMCTemplOri 1D template, otherwise it crashes
+    // Only needed to build the fXsBinningTempl in NuXSec.cxx, which are 1D
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        const int      n_ereco_bins    = kNErecoBins[is];
+        const int      n_etrue_bins    = kNEtrueBins[is];
+        const double * ereco_bin_edges = util::ErecoBinEdges(s);
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            fMCTemplOri[is][im] = new TH2D(Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
+                                           n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+            fMCTemplOri[is][im]->SetDirectory(0);
+            fMCTemplOri[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+            fMCTemplOri[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+        }
+    }
+    //this->ProjectTemplate3Dto2D(fMCTemplOri2D,fMCTemplOri);
+    
+    fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri2D);
+    
+#endif
+    
+#ifndef __USE_2D_TEMPLATES__
+    if( !fNuXSec -> ReadSplines(xml,root_node) ) return false; // old 1d
+#else
+    if( !fNuXSec -> ReadSplines2D(xml,root_node) ) return false; // new 2d
+#endif
     
     // apply flux tuning (based on external data) to templates
     //this->ApplyFluxExtTuningToTemplates();
     
     
-    
     // apply flux and cross-section tuning (based on nd280 data fit by BANFF) to templates
+#ifndef __USE_2D_TEMPLATES__
     this->ApplyBANFFTuningToTemplates();
+#else
+    this->ApplyBANFFTuningToTemplates2D(); // NEW 2D TEMPLATES
+#endif
     
     // fill the etrue spectra
+#ifndef __USE_2D_TEMPLATES__
     this->FillEtrueSpectra();
+#else
+    this->FillEtrueSpectra2D(); // NEW 2D TEMPLATES
+#endif
     
+#ifdef __save_templates_debug__
+#ifndef __USE_2D_TEMPLATES__
+    this->NevDebug(kSKMCtTun, "mcnorm_fluxtuned_banfftuned");
+#else
+    this->NevDebug2D(kSKMCtTun, "mcnorm_fluxtuned_banfftuned"); // NEW 2D TEMPLATES
+#endif
+#endif
     
-    //don't need Ori templates anymore
+#ifdef __show_init_mesg_info__
+    cout << "Exp/SKMC >> Done reading SuperK MC inputs!" << endl;
+#endif
+    
+    return true;
+}
+//________________________________________________________________________________________
+bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
+{
+    this->CleanUp();
+    
+    // instantiate all necessary histograms
+    this->Book();
+    
+
+#ifdef __show_init_mesg_info__
+    // FHC
+    cout << "Exp/SKMC >> " << "FHC POT {MC; numu}    = "    << fMCPOTNuMu       << endl;
+    cout << "Exp/SKMC >> " << "FHC POT {MC; numubar} = "    << fMCPOTNuMuBar    << endl;
+    cout << "Exp/SKMC >> " << "FHC POT {MC; nue}     = "    << fMCPOTNuE        << endl;
+    cout << "Exp/SKMC >> " << "FHC POT {MC; nuebar}  = "    << fMCPOTNuEBar     << endl;
+    cout << "Exp/SKMC >> " << "FHC POT {MC; osc_nue} = "    << fMCPOTOscNuE     << endl;
+    cout << "Exp/SKMC >> " << "FHC POT {MC; osc_nuebar} = " << fMCPOTOscNuEBar  << endl;
+    
+    // RHC
+    cout << "Exp/SKMC >> " << "RHC POT {MC; numu}    = "    << fMCPOTRHCNuMu       << endl;
+    cout << "Exp/SKMC >> " << "RHC POT {MC; numubar} = "    << fMCPOTRHCNuMuBar    << endl;
+    cout << "Exp/SKMC >> " << "RHC POT {MC; nue}     = "    << fMCPOTRHCNuE        << endl;
+    cout << "Exp/SKMC >> " << "RHC POT {MC; nuebar}  = "    << fMCPOTRHCNuEBar     << endl;
+    cout << "Exp/SKMC >> " << "RHC POT {MC; osc_nue} = "    << fMCPOTRHCOscNuE     << endl;
+    cout << "Exp/SKMC >> " << "RHC POT {MC; osc_nuebar} = " << fMCPOTRHCOscNuEBar  << endl;
+    
+    // NEW MULTIRING
+#ifdef __MULTIRING_FHC_RUNNING__
+    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; numu}       = " << fMCPOTMultiRingNuMu      << endl;
+    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; numubar}    = " << fMCPOTMultiRingNuMuBar   << endl;
+    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; nue}        = " << fMCPOTMultiRingNuE       << endl;
+    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; nuebar}     = " << fMCPOTMultiRingNuEBar    << endl;
+    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nue}    = " << fMCPOTMultiRingOscNuE    << endl;
+    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nuebar} = " << fMCPOTMultiRingOscNuEBar << endl;
+#endif
+    ////
+    
     for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if (s==kSKsUndefined) continue;
+        
+        cout << "Exp/SKMC >> " << "Nev {MC; numu;     "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMu     [is]-> GetEntries()  << endl;
+        cout << "Exp/SKMC >> " << "Nev {MC; numubar;  "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMuBar  [is]-> GetEntries()  << endl;
+        cout << "Exp/SKMC >> " << "Nev {MC; nue;      "   <<AsStringCompact(s)<<"} = " << fMCTreeNuE      [is]-> GetEntries()  << endl;
+        cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   "   <<AsStringCompact(s)<<"} = " << fMCTreeNuEBar   [is]-> GetEntries()  << endl;
+        cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; "   <<AsStringCompact(s)<<"} = " << fMCTreeOscNuE   [is]-> GetEntries()  << endl;
+        cout << "Exp/SKMC >> " << "Nev {MC; nuebar[osc]; "<<AsStringCompact(s)<<"} = " << fMCTreeOscNuEBar[is]-> GetEntries()  << endl;
+        
+    }
+#endif//__show_init_mesg_info__
+    
+    // initialise physics hypothesis
+    // need to initialise as 3 flavour oscillation, otherwise ExtTuning (NA61) and FinTuning (BANFF) is not applied to nuesig modes
+    fPhysHypothesis.Init(kHypOsc3F);
+    
+    // fill-in MC templates from the input event tree
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
         for(int im = 0; im < knm; im++) {
-            //~ if(fMCTemplOri[is][im]) {delete fMCTemplOri[is][im]; fMCTemplOri[is][im] = 0;}
-            //~ if(fMCTemplNom[is][im]) {delete fMCTemplNom[is][im]; fMCTemplNom[is][im] = 0;}
-            //~ if(fMCTemplRPA[is][im]) {delete fMCTemplRPA[is][im]; fMCTemplRPA[is][im] = 0;}
-            //~ if(fMCTemplPOT[is][im]) {delete fMCTemplPOT[is][im]; fMCTemplPOT[is][im] = 0;}
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            this->FillTemplateHistogramSmeared(s,m);
         }
     }
     
+    this->FillTemplateArrays(true); // Fill the arrays - with niwg weights by default
+    
+    // fill-in "special" MC templates (osc. numu CC)
+    this->FillSpecialTemplates(); // NEW 2D TEMPLATES (not for 2D templates)
+    
 #ifdef __save_templates_debug__
+#ifndef __USE_2D_TEMPLATES__
+    this->NevDebug(kSKMCtOri, "nevents");
+    this->NevDebug(kSKMCtNom, "mcnorm");
+    this->NevDebug(kSKMCtRPA, "mcnorm_rpa");
+#else
+    // NEW 2D TEMPLATES
+    this->NevDebug2D(kSKMCtOri, "nevents");
+    this->NevDebug2D(kSKMCtNom, "mcnorm");
+    this->NevDebug2D(kSKMCtRPA, "mcnorm_rpa");
+    //
+#endif
+#endif
+    
+    
+#ifndef __USE_2D_TEMPLATES__
+    this->CalculateMCStatError(); // NEW 2D TEMPLATES (no update for 2D templates)
+#ifdef __save_templates_debug_mcstat__
+    this->MCStatErrDebug();
+#endif
+#endif
+    
+    
+    // need to read in the xsec splines, before applying any BANFF tweaks
+    
+#ifndef __USE_2D_TEMPLATES__ // 1D templates
+    
+    fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri);
+    
+#else // 2D templates
+    
+    // Initialize fMCTemplOri 1D template, otherwise it crashes
+    // Only needed to build the fXsBinningTempl in NuXSec.cxx, which are 1D
+    
+    // Don't need this any more as we have 2D splines
+    
+    /*
+     for(int is = 0; is < kns; is++) {
+     SuperkSample_t s = kSKSamples[is];
+     if(s == kSKsUndefined) continue;
+     const int      n_ereco_bins    = kNErecoBins[is];
+     const int      n_etrue_bins    = kNEtrueBins[is];
+     const double * ereco_bin_edges = util::ErecoBinEdges(s);
+     for(int im = 0; im < knm; im++) {
+     SuperkMode_t m = kSKReactionModes[is][im];
+     if(m == kSKmUndefined) continue;
+     fMCTemplOri[is][im] = new TH2D(Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
+     n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+     fMCTemplOri[is][im]->SetDirectory(0);
+     fMCTemplOri[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
+     fMCTemplOri[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
+     }
+     }
+     */
+    //this->ProjectTemplate3Dto2D(fMCTemplOri2D,fMCTemplOri);
+    
+    fNuXSec -> BuildXsBinningMCTemplates(fMCTemplOri2D);
+    
+#endif
+    
+    //#ifndef __USE_2D_TEMPLATES__
+    //    if( !fNuXSec -> ReadSplines(xml,root_node) ) return false; // old 1d
+    //#else
+    //    if( !fNuXSec -> ReadSplines2D(xml,root_node) ) return false; // new 2d
+    //#endif
+    
+    // apply flux tuning (based on external data) to templates
+    //this->ApplyFluxExtTuningToTemplates();
+    
+    
+    // apply flux and cross-section tuning (based on nd280 data fit by BANFF) to templates
+    //#ifndef __USE_2D_TEMPLATES__
+    //    this->ApplyBANFFTuningToTemplates();
+    //#else
+    //    this->ApplyBANFFTuningToTemplates2D(); // NEW 2D TEMPLATES
+    //#endif
+    
+    // fill the etrue spectra
+#ifndef __USE_2D_TEMPLATES__
+    this->FillEtrueSpectra();
+#else
+    this->FillEtrueSpectra2D(); // NEW 2D TEMPLATES
+#endif
+    
+#ifdef __save_templates_debug__
+#ifndef __USE_2D_TEMPLATES__
     this->NevDebug(kSKMCtTun, "mcnorm_fluxtuned_banfftuned");
+#else
+    this->NevDebug2D(kSKMCtTun, "mcnorm_fluxtuned_banfftuned"); // NEW 2D TEMPLATES
+#endif
 #endif
     
 #ifdef __show_init_mesg_info__
@@ -541,6 +875,8 @@ void SuperkMC::Book(void)
     // Histograms corresponding to different samples can have different binning
     //
     
+#ifndef __USE_2D_TEMPLATES__
+    
     for(int is = 0; is < kns; is++)
     {
         SuperkSample_t s = kSKSamples[is];
@@ -555,10 +891,10 @@ void SuperkMC::Book(void)
         fMCErecoSpectrumTot[is]->SetLineColor(kBlack);
         
         fMCEtrueSpectrumTot[is] = new TH1D("","", kNEtrueBins[is], util::EtrueBinEdges(s));
-        
         fMCEtrueSpectrumTot[is] -> SetDirectory(0);
         fMCEtrueSpectrumTot[is]->SetLineWidth(2);
         fMCEtrueSpectrumTot[is]->SetLineColor(kBlack);
+        
         for(int im=0; im < knm; im++)
         {
             SuperkMode_t m = kSKReactionModes[is][im];
@@ -569,10 +905,55 @@ void SuperkMC::Book(void)
         }//m
     }//s
     
+    
+    
+#else  // __USE_2D_TEMPLATES__
+    
+    // NEW 2D TEMPLATES
+    
+    for(int is = 0; is < kns; is++)
+    {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        
+        const int      n_ereco_bins    = kNErecoBins[is];
+        const double * ereco_bin_edges = util::ErecoBinEdges(s);
+        const int      n_q2_bins    = kNQ2Bins[is];
+        const double * q2_bin_edges = util::Q2BinEdges(s);
+        
+        fMCErecoVsQ2SpectrumTot[is] = new TH2D("","", n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges);
+        fMCErecoVsQ2SpectrumTot[is] -> SetDirectory(0);
+        fMCErecoVsQ2SpectrumTot[is]->SetLineWidth(2);
+        fMCErecoVsQ2SpectrumTot[is]->SetLineColor(kBlack);
+        
+        // Use the same Etrue template as for 1D templates mode
+        fMCEtrueSpectrumTot[is] = new TH1D("","", kNEtrueBins[is], util::EtrueBinEdges(s));
+        fMCEtrueSpectrumTot[is] -> SetDirectory(0);
+        fMCEtrueSpectrumTot[is]->SetLineWidth(2);
+        fMCEtrueSpectrumTot[is]->SetLineColor(kBlack);
+        
+        for(int im=0; im < knm; im++)
+        {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            fMCErecoVsQ2Spectrum[is][im] = new TH2D("","", n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges);
+            fMCErecoVsQ2Spectrum[is][im] -> SetDirectory(0);
+            //util::SetDefaultSKSpectrumStyle(s,m,fMCErecoVsQ2Spectrum[is][im]);
+        }//m
+    }//s
+    
+    //
+    
+#endif // __USE_2D_TEMPLATES__
+    
+    
+    
     //
     // 2-D(Ereco,Etrue) MC templates
     // Histograms corresponding to different samples can have different binning
     //
+    
+#ifndef __USE_2D_TEMPLATES__
     
     for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
@@ -589,17 +970,13 @@ void SuperkMC::Book(void)
             if(m == kSKmUndefined) continue;
             const int      var_n_etrue_bins    = util::NumVariableMCEtrueBins (s,m);
             const double * var_etrue_bin_edges = util::VariableMCEtrueBinEdges(s,m);
-            fMCTemplOri[is][im] = new TH2D(
-                                           Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplOri[is][im] = new TH2D(Form("nsk_ori_%d_%d",is,im), util::AsString(m).c_str(),
                                            n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplNom[is][im] = new TH2D(
-                                           Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplNom[is][im] = new TH2D(Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
                                            n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplRPA[is][im] = new TH2D(
-                                           Form("nsk_rpa_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplRPA[is][im] = new TH2D(Form("nsk_rpa_%d_%d",is,im), util::AsString(m).c_str(),
                                            n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
-            fMCTemplPOT[is][im] = new TH2D(
-                                           Form("nsk_pot_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCTemplPOT[is][im] = new TH2D(Form("nsk_pot_%d_%d",is,im), util::AsString(m).c_str(),
                                            n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
             
             fMCTemplOri[is][im]->SetDirectory(0);
@@ -615,14 +992,77 @@ void SuperkMC::Book(void)
             fMCTemplPOT[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
             fMCTemplPOT[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
             
-            fMCVariableTempl[is][im] = new TH2D(
-                                                Form("nsk_ori_var_%d_%d",is,im), util::AsString(m).c_str(),
+            fMCVariableTempl[is][im] = new TH2D(Form("nsk_ori_var_%d_%d",is,im), util::AsString(m).c_str(),
                                                 var_n_ereco_bins, var_ereco_bin_edges, var_n_etrue_bins,  var_etrue_bin_edges);
             fMCVariableTempl[is][im]->SetDirectory(0);
             fMCVariableTempl[is][im]->GetXaxis()->SetTitle("E_{reco} (GeV)");
             fMCVariableTempl[is][im]->GetYaxis()->SetTitle("E_{true} (GeV)");
         }
     }
+    
+#else  // __USE_2D_TEMPLATES__
+    
+    
+    // NEW 2D TEMPLATES
+    
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        
+        const int      n_q2_bins       = kNQ2Bins[is];
+        const int      n_ereco_bins    = kNErecoBins[is];
+        const int      n_etrue_bins    = kNEtrueBins[is];
+        const double * q2_bin_edges    = util::Q2BinEdges(s);
+        const double * ereco_bin_edges = util::ErecoBinEdges(s);
+        const int      var_n_q2_bins       = kNXsQ2Bins[is];
+        const double * var_q2_bin_edges    = util::XsecQ2BinEdges(s);
+        const int      var_n_ereco_bins    = kNXsErecoBins[is];
+        const double * var_ereco_bin_edges = util::XsecErecoBinEdges(s);
+        
+        //const double * etrue_bin_edges = util::EtrueBinEdges(s);
+        
+        
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            const int      var_n_etrue_bins    = util::NumVariableMCEtrueBins (s,m);
+            const double * var_etrue_bin_edges = util::VariableMCEtrueBinEdges(s,m);
+            fMCTemplOri2D[is][im] = new TH3D(Form("nsk_ori_%d_%d_2d",is,im), util::AsString(m).c_str(),
+                                             n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+            fMCTemplNom2D[is][im] = new TH3D(Form("nsk_nom_%d_%d",is,im), util::AsString(m).c_str(),
+                                             n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+            fMCTemplRPA2D[is][im] = new TH3D(Form("nsk_rpa_%d_%d",is,im), util::AsString(m).c_str(),
+                                             n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+            fMCTemplPOT2D[is][im] = new TH3D(Form("nsk_pot_%d_%d",is,im), util::AsString(m).c_str(),
+                                             n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+            
+            fMCTemplOri2D[is][im]->SetDirectory(0);
+            fMCTemplOri2D[is][im]->GetXaxis()->SetTitle("Q^2 (GeV)");
+            fMCTemplOri2D[is][im]->GetYaxis()->SetTitle("E_{reco} (GeV)");
+            fMCTemplOri2D[is][im]->GetZaxis()->SetTitle("E_{true} (GeV)");
+            fMCTemplNom2D[is][im]->SetDirectory(0);
+            fMCTemplNom2D[is][im]->GetXaxis()->SetTitle("Q^2 (GeV)");
+            fMCTemplNom2D[is][im]->GetYaxis()->SetTitle("E_{reco} (GeV)");
+            fMCTemplNom2D[is][im]->GetZaxis()->SetTitle("E_{true} (GeV)");
+            fMCTemplRPA2D[is][im]->SetDirectory(0);
+            fMCTemplRPA2D[is][im]->GetXaxis()->SetTitle("Q^2 (GeV)");
+            fMCTemplRPA2D[is][im]->GetYaxis()->SetTitle("E_{reco} (GeV)");
+            fMCTemplRPA2D[is][im]->GetZaxis()->SetTitle("E_{true} (GeV)");
+            fMCTemplPOT2D[is][im]->SetDirectory(0);
+            fMCTemplPOT2D[is][im]->GetXaxis()->SetTitle("Q^2 (GeV)");
+            fMCTemplPOT2D[is][im]->GetYaxis()->SetTitle("E_{reco} (GeV)");
+            fMCTemplPOT2D[is][im]->GetZaxis()->SetTitle("E_{true} (GeV)");
+            
+            fMCVariableTempl2D[is][im] = new TH3D(Form("nsk_ori_var_%d_%d",is,im), util::AsString(m).c_str(),
+                                                  var_n_q2_bins, var_q2_bin_edges, var_n_ereco_bins, var_ereco_bin_edges, var_n_etrue_bins,  var_etrue_bin_edges);
+            fMCVariableTempl2D[is][im]->SetDirectory(0);
+            fMCVariableTempl2D[is][im]->GetXaxis()->SetTitle("Q^2 (GeV)");
+            fMCVariableTempl2D[is][im]->GetYaxis()->SetTitle("E_{reco} (GeV)");
+            fMCVariableTempl2D[is][im]->GetZaxis()->SetTitle("E_{true} (GeV)");
+        }
+    }
+    //
+#endif // __USE_2D_TEMPLATES__
     
 }
 //________________________________________________________________________________________
@@ -650,7 +1090,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     if(!mctree) {
         cerr << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: "
         << util::AsString(s) << "/" << util::AsString(m) << endl;
-        std::exit(1);
+        util::Die(1); return;
     }
     
     double pot_wght = this->AnalyzedSamplePOT(s) / mcpot;
@@ -667,56 +1107,67 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         cerr << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for "
         << util::AsString(s) << "/" << util::AsString(m)
         << " is " << pot_wght << endl;
-        std::exit(1);
+        util::Die(1); return;
     }
     
-    const char * erec_branch          = "erec";
-    const char * etrue_branch         = "pnu";
+    const char * erec_branch          = "erec"; // MeV/c
+    const char * etrue_branch         = "pnu";  // GeV/c
     const char * mode_branch          = "mode";
     const char * flux_wght_branch     = "wgtflx";
     const char * rpa_nrel_wght_branch = "wgtRPA_nr";
     const char * rpa_rel_wght_branch  = "wgtRPA_r";
     const char * sf_rfg_wght_branch   = "wgtsfrfg";
     const char * cc_coh_wght_branch   = "wght_CCcoh";
+    
     //~ const char * flux_wght_branch = "wgt";
+    // // NEW 2D TEMPLATES
+    // const char * numnu_branch = "numnu";
+    // const char * nring_branch = "nring";
     const char * amomm_branch = "amomm"; // MeV/c
     const char * amome_branch = "amome"; // MeV/c
     const char * dir_branch   = "dir";
-    const char * dir_nu_branch = "dirnu";
-
+    // const char * dirnu_branch = "dirnu";
+    // //
     
     TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
     TBranch * branchEtrue   = mctree->GetBranch(etrue_branch     );
     TBranch * branchGenCode = mctree->GetBranch(mode_branch      );
     TBranch * branchWghtFlx = mctree->GetBranch(flux_wght_branch );
-    
+    // // NEW 2D TEMPLATES
+    // TBranch * branchNumnu   = mctree->GetBranch(numnu_branch      );
+    // TBranch * branchNring   = mctree->GetBranch(nring_branch      );
     TBranch * branchAmomm   = mctree->GetBranch(amomm_branch      );
     TBranch * branchAmome   = mctree->GetBranch(amome_branch      );
     TBranch * branchDir     = mctree->GetBranch(dir_branch        );
-    TBranch * branchDirNu   = mctree->GetBranch(dir_nu_branch     );
-    
+    // TBranch * branchDirnu   = mctree->GetBranch(dirnu_branch      );
+    // //
     
     branchEreco    -> SetAddress(&fBrEreco);
     branchEtrue    -> SetAddress(&fBrPtrue);
     branchGenCode  -> SetAddress(&fBrGenCode);
     branchWghtFlx  -> SetAddress(&fBrWghtFlx);
-    
+    // // NEW 2D TEMPLATES
+    // branchNumnu    -> SetAddress(&fBrNumnu);
+    // branchNring    -> SetAddress(&fBrNring);
     branchAmomm    -> SetAddress(&fBrAmomm);
     branchAmome    -> SetAddress(&fBrAmome);
     branchDir      -> SetAddress(&fBrDir);
-    branchDirNu    -> SetAddress(&fBrDirNu);
-    
+    // branchDirnu    -> SetAddress(&fBrDirnu);
+    // //
     
     mctree->SetBranchStatus("*",0);
     mctree->SetBranchStatus(erec_branch      , 1 );
     mctree->SetBranchStatus(etrue_branch     , 1 );
     mctree->SetBranchStatus(mode_branch      , 1 );
     mctree->SetBranchStatus(flux_wght_branch , 1 );
+    // // NEW 2D TEMPLATES
+    // mctree->SetBranchStatus(numnu_branch     , 1 );
+    // mctree->SetBranchStatus(nring_branch     , 1 );
     mctree->SetBranchStatus(amomm_branch     , 1 );
     mctree->SetBranchStatus(amome_branch     , 1 );
     mctree->SetBranchStatus(dir_branch       , 1 );
-    mctree->SetBranchStatus(dir_nu_branch    , 1 );
-
+    // mctree->SetBranchStatus(dirnu_branch     , 1 );
+    // //
     
 #ifdef USE_SFRFG_WEIGHT
     TBranch * branchSfRfg   = mctree->GetBranch(sf_rfg_wght_branch);
@@ -737,6 +1188,10 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     mctree->SetBranchStatus(cc_coh_wght_branch , 1 );
     branchCCcoh->SetAddress(&fBrWghtCCcoh);
 #endif
+    
+    
+    double ntotevents = 0.;
+    
     for(int iev = 0; iev < mctree->GetEntries(); iev++)
     {
         mctree->GetEntry(iev);
@@ -747,66 +1202,298 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
         if(!use_it) continue;
         
-        double ereco_fill = fBrEreco/1000.;
+        // Get reconstructed energy
+        double ereco_fill = fBrEreco/1000.; // GeV
         
-        double Etrue = fBrPtrue[0];
         
-#ifdef OFFSET_NIEVES_MOMENTUM
-#ifdef OFFSET_CCQE_ONLY
-        if(!util::IsCCQE(m)){
-        double ereco_fill = fBrEreco/1000.;
+        
+        
+        
+        // NEW 2D TEMPLATES
+        
+#if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
+        
+        // Get momentum and energy of most energetic lepton (only 1Ring samples)
+        
+        double pmax_lep = 0.; // momentum of most energetic lepton
+        double mass_lep = 0.;
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            mass_lep = kElectronMassGeV; // GeV
+            pmax_lep = fBrAmome[0] / 1000.; // GeV
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            mass_lep = kMuonMassGeV; // GeV
+            pmax_lep = fBrAmomm[0] / 1000.; // GeV
         }
         else{
-        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-        double electronMass = 0.511   / 1000.; // GeV
-        double muonMass     = 105.658 / 1000.; // GeV
-        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
-        double pmax_lep = 0.; // momentum of most energetic lepton
-        double mass_lep = 0.;
-            int bin_etrue = fNuXSec->GetNievesMomentumOffset()->GetXaxis()->FindBin(Etrue*1000);
-            int bin_theta = fNuXSec->GetNievesMomentumOffset()->GetYaxis()->FindBin(TMath::ACos(costheta)*180/TMath::Pi());
+            cerr << endl;
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "Using sample " << util::AsString(s) << endl;
+            cerr << "Samples other than: " << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << "are not implemented" << endl;
+            util::Die(1); return;
+        }
+        
+        double mass_nucl = 0.;
+        if( (s == kSKsRHCFCFV1RingELike) || (s == kSKsRHCFCFV1RingMuLike) ){ // RHC
+            mass_nucl = kProtonMassGeV; // nubar interacts with proton
+        }
+        else if( (s == kSKsFCFV1RingELike) || (s == kSKsFCFV1RingMuLike) ){ // FHC
+            mass_nucl = kNeutronMassGeV; // nubar interacts with neutron
+        }
+        else{
+            cerr << endl;
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "Using sample " << util::AsString(s) << endl;
+            cerr << "Samples other than: " << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << "are not implemented" << endl;
+            util::Die(1); return;
+        }
+        
+        // Get lepton energy
+        
+        double emax_lep = sqrt( pmax_lep*pmax_lep + mass_lep*mass_lep );
+        
+        // Get lepton direction
+        // Costheta is the scalar product between the neutrino beam and lepton directions.
+        
+        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
+        if( costheta<-1.00001 || costheta>+1.00001 ){
+            cerr << endl;
+            cerr << std::setprecision(10);
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        double sintheta = 1. - costheta*costheta;
+        if( sintheta<-1.00001 || sintheta>+1.00001 ){
+            cerr << endl;
+            cerr << std::setprecision(10);
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
+            cerr << "costheta = " << costheta << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        double LepTheta        = TMath::ACos(costheta); // radiant
+        double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
+        if(LepTheta<0.){
+            cerr << endl;
+            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+                
+	//cout << "theta1 = " << LepThetaDegrees << " - ";
+	//cout << "theta2 = " << CalcThetaDegrees(fBrDir) << endl;
 
-        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-            mass_lep = electronMass; // GeV
-            pmax_lep = fBrAmome[0] / 1000.; // GeV
-            pmax_lep += fNuXSec->GetNievesMomentumOffset()->GetBinContent(bin_etrue,bin_theta)/1000.;
-            if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
-            else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
+        double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum)
+        
+        //double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Q^2
+        //double Q2 = this->CalcQd2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Qd^2
+        //double Q2 = this->CalcEhad(ereco_nu,emax_lep);
+        //double Q2 = this->CalcInelasticity(ereco_nu,emax_lep);
+        //double Q2 = this->CalcBjorkenScale(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
+        //double Q2 = this->CalcWhadr(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
+        double Q2 = this->CalcXSecTerm(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
+        
+        //if(Q2<0. || Q2 > 1.){
+        //cout << "costheta = " << costheta << " ";
+        //cout << "emax_lep = " << emax_lep << " ";
+        //cout << "ereco_nu = " << ereco_nu << " ";
+        //cout << "Q2 = " << Q2 << " GeV" << endl;
+        // //Q2 = 0.001;
+        //}
+        
+        //cout << Q2 << " ";
+        //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
+        //cout << Q2 << " ";
+        // // PROVA
+        // double px = ereco_nu*kBeamDir[0];
+        // double py = ereco_nu*kBeamDir[1];
+        // double pz = ereco_nu*kBeamDir[2];
+        // double e = ereco_nu;
+        // TLorentzVector lv_pnu(px,py,pz,e);
+        // px = pmax_lep*fBrDir[0][1];
+        // py = pmax_lep*fBrDir[0][2];
+        // pz = pmax_lep*fBrDir[0][3];
+        // e = emax_lep;
+        // TLorentzVector lv_plep(px,py,pz,e);
+        // Q2 = (lv_pnu - lv_plep).Mag2();
+        // cout << Q2 << endl;
+        // //
+        
+        
+        double q2_fill = Q2;
+        
+#ifdef INCLUDEEVENTSNEGATIVEQ2
+        if(q2_fill < 0. && q2_fill> -0.01){
+            q2_fill = 0.01;
         }
-        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-            mass_lep = muonMass; // GeV
-            pmax_lep = fBrAmomm[0] / 1000.; // GeV
-            pmax_lep += fNuXSec->GetNievesMomentumOffset()->GetBinContent(bin_etrue,bin_theta)/1000.;
-            if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
-            else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
+#endif
+#ifdef INCLUDEEVENTSOVERFLOWQ2
+        int nbins = util::NumQ2Bins(s);
+        double MaxQ2_up   = util::Q2BinEdges(s,nbins);
+        double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
+        double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
+        //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
+        q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
+        
+        if(q2_fill > MaxQ2_up){
+            cout << q2_fill << endl;
+            util::Die(1); return;
         }
+#endif
+        
+        if( q2_fill < util::Q2BinEdges(s,0) ){
+            cout << "Q2 < Q2BinEdge(s,0)" << endl;
+            cout << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
+            cout << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
+            cout << "theta = " << LepThetaDegrees << " ";
+            cout << "costheta = " << costheta << " ";
+            //cout << "sintheta = " << sintheta << " ";
+            cout << "emax_lep = " << emax_lep << " ";
+            cout << "ereco_nu = " << ereco_nu << " ";
+            cout << "Q2 = " << Q2 << " GeV" << endl;
+            util::Die(1); return;
         }
+        if( q2_fill > util::Q2BinEdges(s,nbins) ){
+            cout << "Q2 > Q2BinEdge(s,0)" << endl;
+            cout << "costheta = " << costheta << " ";
+            cout << "sintheta = " << sintheta << " ";
+            cout << "emax_lep = " << emax_lep << " ";
+            cout << "ereco_nu = " << ereco_nu << " ";
+            cout << "Q2 = " << Q2 << " GeV" << endl;
+            util::Die(1); return;
+        }
+        
+        
+#elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
+        
+        //double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
+        // if( costheta<-1.00001 || costheta>+1.00001 ){
+        //     cerr << endl;
+        //     cerr << std::setprecision(10);
+        //     cerr << "SuperkMC::FillTemplateHistogram" << endl;
+        //     cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+        //     cerr << endl;
+        //     util::Die(1); return;
+        // }        
+        // double LepTheta        = TMath::ACos(costheta); // radiant
+        // double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
+        // if(LepTheta<0.){
+        //     cerr << endl;
+        //     cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+        //     cerr << endl;
+        //     util::Die(1); return;
+        // }        
+        // double q2_fill = LepThetaDegrees;
+	//cout << "theta1 = " << q2_fill << " - ";
+	
+	double q2_fill = CalcThetaDegrees(fBrDir);
+	
+	//cout << "theta2 = " << q2_fill << endl;
+	
+
+#ifdef INCLUDEEVENTSNEGATIVEQ2
+        if(q2_fill < 0.){
+            q2_fill = util::Q2BinEdges(s,0)+conv::kASmallNum;
+        }
+#endif
+#ifdef INCLUDEEVENTSOVERFLOWQ2
+        int nbins = util::NumQ2Bins(s);
+        double MaxQ2_up   = util::Q2BinEdges(s,nbins);
+        double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
+        double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
+        //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
+        q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
+        
+        if(q2_fill > MaxQ2_up){
+            cout << q2_fill << endl;
+            util::Die(1); return;
+        }
+#endif
+        
+        if( q2_fill < util::Q2BinEdges(s,0) ){
+          cout << "q2_fill = " << q2_fill << endl;
+	  //cout << "costheta = " << costheta << endl;
+	  //cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+	  util::Die(1); return;
+        }
+        
+        if( q2_fill > util::Q2BinEdges(s,nbins) ){
+          cout << "q2_fill = " << q2_fill << endl;
+	  //cout << "costheta = " << costheta << endl;
+	  //cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+	  util::Die(1); return;
+        }
+        
 #else
-        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-        double electronMass = 0.511   / 1000.; // GeV
-        double muonMass     = 105.658 / 1000.; // GeV
-        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
-        double pmax_lep = 0.; // momentum of most energetic lepton
-        double mass_lep = 0.;
-        int bin_etrue = fNuXSec->GetNievesMomentumOffset()->GetXaxis()->FindBin(Etrue*1000);
-        int bin_theta = fNuXSec->GetNievesMomentumOffset()->GetYaxis()->FindBin(TMath::ACos(costheta)*180/TMath::Pi());
-
-        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-            mass_lep = electronMass; // GeV
-            pmax_lep = fBrAmome[0] / 1000.; // GeV
-            pmax_lep += fNuXSec->GetNievesMomentumOffset()->GetBinContent(bin_etrue,bin_theta)/1000.;
-            if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
-            else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
-        }
-        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-            mass_lep = muonMass; // GeV
-            pmax_lep = fBrAmomm[0] / 1000.; // GeV
-            pmax_lep += fNuXSec->GetNievesMomentumOffset()->GetBinContent(bin_etrue,bin_theta)/1000.;
-            if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
-            else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
-        }
-#endif
-#endif
+        cerr << endl;
+        cerr << "SuperkMC::FillTemplateHistogram()" << endl;
+        cerr << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization" << endl;
+        cerr << endl;
+        util::Die(1); return;
+#endif //__ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
+        
+        //
+        
+        
+        
+        // //// PROVA Ereco
+        
+        // //if(s!=kSKsRHCFCFV1RingMuLike) continue;
+        // //if(s!=kSKsRHCFCFV1RingELike) continue;
+        // //if(s!=kSKsFCFV1RingELike) continue;
+        
+        // // Get momentum and energy of most energetic lepton (only 1Ring samples)
+        // double pmax_lep = 0.; // momentum of most energetic lepton
+        // double mass_lep = 0.;
+        // if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+        //   mass_lep = kElectronMassGeV * 1000.; // GeV --> MeV
+        //   pmax_lep = fBrAmome[0]; // MeV
+        // }
+        // else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+        //   mass_lep = kMuonMassGeV * 1000.; // GeV --> MeV
+        //   pmax_lep = fBrAmomm[0]; // MeV
+        // }
+        // else{
+        //   cerr << endl;
+        //   cerr << "SuperkMC::FillTemplateHistogram" << endl;
+        //   cerr << "Using sample " << util::AsString(s) << endl;
+        //   cerr << "Samples other than: " << endl;
+        //   cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+        //   cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+        //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+        //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+        //   cerr << "are not implemented" << endl;
+        //   util::Die(1); return;
+        // }
+        
+        // //double myereco_nu = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep); // inputs are MeV
+        // //double myereco_nubar = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep); // inputs are MeV
+        
+        // //cout << ereco_fill << " " << myereco_nu / 1000. << " " << myereco_nubar / 1000. << endl;
+        // //cout << ;
+        
+        // ///////////
+        
+        
+        
+        
+        
+        double Etrue = fBrPtrue[0];
         
         //if(util::IsRHCSample(s))
 #ifdef USE_FLUX_EXT_WEIGHT
@@ -820,82 +1507,43 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #ifdef INCLUDEEVENTSOVERTHIRTYGEV
         ereco_fill = TMath::Min(29.9, ereco_fill);
 #endif
+        
+        
+        //q2_fill = ereco_fill; // NEW 2D TEMPLATES (TODO) // be careful to overflows!!!
+        
+        
+        
+#ifndef __USE_2D_TEMPLATES__
         this -> Template(s,m,kSKMCtOri) -> Fill (ereco_fill, Etrue);
         fMCVariableTempl[sidx][midx]    -> Fill (ereco_fill, Etrue);
+        ntotevents += 1.;
+#else
+        // NEW 2D TEMPLATES
+        this -> Template2D(s,m,kSKMCtOri) -> Fill (q2_fill, ereco_fill, Etrue);
+        fMCVariableTempl2D[sidx][midx]    -> Fill (q2_fill, ereco_fill, Etrue);
+        ntotevents += 1.;
+        //
+#endif
         
         double pot_flx_weight = pot_wght * fBrWghtFlx;
-        
-        double NC1GammaWght = 1.;
+        double NC1GammaWght = 1.;       
 #ifdef USE_NC1gamma_WEIGHTS
         if(util::IsNC1Gamma(TMath::Abs(fBrGenCode))){
             NC1GammaWght = 2.;
         }
 #endif
-        
-#ifdef RESCALE_MEC_TO_MARTINI
-        if(util::IsMEC(m))
-        {
-            double martini_nieves_weight =1;
-            if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino MEC rescale
-                martini_nieves_weight = fNuXSec->GetMartiniToNievesRatioNu()->Eval(Etrue);
-                if(Etrue > 1.5) martini_nieves_weight = 1;
-            }
-            else{         //AntiNeutrino MEC rescale
-                martini_nieves_weight = fNuXSec->GetMartiniToNievesRatioNuBar()->Eval(Etrue);
-                if(Etrue > 1.5) martini_nieves_weight = 1;
-            }
-            
-            pot_flx_weight = pot_flx_weight * martini_nieves_weight;
-        }
-#endif
-        
-#ifdef RESCALE_MEC_PDD
-        int lepton_int = 3; //lepton is at 3 in array of particles
 
-        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-        double costheta = dir_nu[0] * fBrDirNu[lepton_int][0] + dir_nu[1] * fBrDirNu[lepton_int][1] + dir_nu[2] * fBrDirNu[lepton_int][2];
-
-        if(util::IsMEC(m))
-        {
-            double pdd_weight =1;
-            if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino PDD rescale
-#ifdef MEC_3D
-                int binz = fNuXSec->GetPDDNu_3D()->GetZaxis()->FindBin(Etrue);
-                int binx = fNuXSec->GetPDDNu_3D()->GetXaxis()->FindBin(costheta);
-                int biny = fNuXSec->GetPDDNu_3D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
-                
-                pdd_weight = fNuXSec->GetPDDNu_3D()->GetBinContent(binx,biny,binz);
-#elif MEC_2D
-                int binx = fNuXSec->GetPDDNu_2D()->GetXaxis()->FindBin(costheta);
-                int biny = fNuXSec->GetPDDNu_2D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
-                
-                pdd_weight = fNuXSec->GetPDDNu_2D()->GetBinContent(binx,biny);
-#endif
-
-            }
-            else{         //AntiNeutrino PDD rescale
-#ifdef MEC_3D
-                int binz = fNuXSec->GetPDDNuBar_3D()->GetZaxis()->FindBin(Etrue);
-                int binx = fNuXSec->GetPDDNuBar_3D()->GetXaxis()->FindBin(costheta);
-                int biny = fNuXSec->GetPDDNuBar_3D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
-                
-                pdd_weight = fNuXSec->GetPDDNuBar_3D()->GetBinContent(binx,biny,binz);
-                
-#elif MEC_2D
-                int binx = fNuXSec->GetPDDNuBar_2D()->GetXaxis()->FindBin(costheta);
-                int biny = fNuXSec->GetPDDNuBar_2D()->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
-
-                pdd_weight = fNuXSec->GetPDDNuBar_2D()->GetBinContent(binx,biny);
-#endif
-            }
-            pot_flx_weight = pot_flx_weight * pdd_weight;
-        }
-#endif //RESCALE_MEC_PDD
-        
+#ifndef __USE_2D_TEMPLATES__
         this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight);
+#else
+        //NEW 2D TEMPLATES
+        this -> Template2D(s,m,kSKMCtPOT) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight);
+        //
+#endif
         
         // Actually fill the template
         
+#ifndef __USE_2D_TEMPLATES__
 #ifdef USE_RPA_WEIGHTS
         this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
         this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
@@ -903,8 +1551,21 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
         this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #endif
+#else
+        // NEW 2D TEMPLATES
+#ifdef USE_RPA_WEIGHTS
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+#else
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+#endif
+        //
+#endif
         
         
+        
+#ifndef __USE_2D_TEMPLATES__
         
 #ifdef __show_init_mesg_debug__
         if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
@@ -919,14 +1580,681 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
             cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
             << " (Etrue = " << Etrue << ")" << endl;
+#endif
+        
+#else
+        
+        // NEW 2D TEMPLATES
+        
+#ifdef __show_init_mesg_debug__
+        if(Etrue <= 0 || Etrue >= this->Template2D(s,m,kSKMCtOri)->GetZaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsZ())){
+            cout << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            << " (Ereco = " << fBrEreco/1000 << ")"
+            << " (Q2 = " << q2_fill << ")" << endl;
+        }
+#endif
+#ifdef __show_init_mesg_debug2__
+        if(fBrEreco/1000 <= 0)
+            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            << " (Etrue = " << Etrue << ")" << endl;
+        //#endif __show_init_mesg_debug2__
+        if(fBrEreco/1000 >= this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsY()))
+            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            << " (Etrue = " << Etrue << ")"
+            << " (Q2 = " << q2_fill << ")" << endl;
+        
+        if(q2_fill <= 0)
+            cout << "Exp/SKMC/FillTemplate >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            << " (Ereco = " << fBrEreco/1000 << ")"
+            << " (Etrue = " << Etrue << ")" << endl;
+        //#endif __show_init_mesg_debug2__
+        if(q2_fill >= this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsX()))
+            cout << "Exp/SKMC/FillTemplate >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            << " (Ereco = " << fBrEreco/1000 << ")"
+            << " (Etrue = " << Etrue << ")" << endl;
+        //
 #endif// __show_init_mesg_debug__
+        
+#endif
         
     }//iev
     
 #ifdef __show_init_mesg_debug__
+    
+#ifndef __USE_2D_TEMPLATES__
     cout << "Exp/SKMC/FillTemplate >>      "
     << "Number of template entries = "
     << this -> Template(s,m,kSKMCtNom) -> GetEntries() << endl;
+#else
+    // NEW 2D TEMPLATES
+    cout << "Exp/SKMC/FillTemplate2D >>      "
+    << "Number of template entries = "
+    << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << endl;
+    //
+#endif
+    
+#endif
+    
+}
+
+//________________________________________________________________________________________
+void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
+{
+#ifdef __show_init_mesg_debug__
+    cout << "Exp/SKMC/FillTemplate >> Creating MC template for: "
+    << util::AsString(s) << " / " << util::AsString(m) << endl;
+#endif
+    
+    //filled in FillSpecialTemplates()
+    if(util::IsOscNuMu(m) || util::IsOscNuMuBar(m))
+        return;
+    
+#ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
+    if (util::IsOscNuEBar(m)) return;// with that flag, these are filled in FillSpecial
+#endif
+    
+    int sidx = arr_index->SuperkSampleIdx(s);
+    int midx = arr_index->SuperkModeIdx(s,m);
+    
+    TTree * mctree = this->MCTree(s,m);
+    double  mcpot  = this->MCPOT (s,m);
+    
+    if(!mctree) {
+        cerr << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: "
+        << util::AsString(s) << "/" << util::AsString(m) << endl;
+        util::Die(1); return;
+    }
+    
+    double pot_wght = this->AnalyzedSamplePOT(s) / mcpot;
+    
+#ifdef POTWEIGHTSAREONE
+    pot_wght = 1;
+#endif
+    
+#ifdef __show_init_mesg_debug__
+    cout << "Exp/SKMC/FillTemplate >>      "
+    << "Weight (data POT / MC POT) = " << pot_wght << endl;
+#endif
+    if(pot_wght < 0) {
+        cerr << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for "
+        << util::AsString(s) << "/" << util::AsString(m)
+        << " is " << pot_wght << endl;
+        util::Die(1); return;
+    }
+    
+    const char * erec_branch          = "erec"; // MeV/c
+    const char * etrue_branch         = "pnu";  // GeV/c
+    const char * mode_branch          = "mode";
+    const char * flux_wght_branch     = "wgtflx";
+    const char * rpa_nrel_wght_branch = "wgtRPA_nr";
+    const char * rpa_rel_wght_branch  = "wgtRPA_r";
+    const char * sf_rfg_wght_branch   = "wgtsfrfg";
+    const char * cc_coh_wght_branch   = "wght_CCcoh";
+    
+    //~ const char * flux_wght_branch = "wgt";
+    // // NEW 2D TEMPLATES
+    // const char * numnu_branch = "numnu";
+    // const char * nring_branch = "nring";
+    const char * amomm_branch = "amomm"; // MeV/c
+    const char * amome_branch = "amome"; // MeV/c
+    const char * dir_branch   = "dir";
+    // const char * dirnu_branch = "dirnu";
+    // //
+    
+    TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
+    TBranch * branchEtrue   = mctree->GetBranch(etrue_branch     );
+    TBranch * branchGenCode = mctree->GetBranch(mode_branch      );
+    TBranch * branchWghtFlx = mctree->GetBranch(flux_wght_branch );
+    // // NEW 2D TEMPLATES
+    // TBranch * branchNumnu   = mctree->GetBranch(numnu_branch      );
+    // TBranch * branchNring   = mctree->GetBranch(nring_branch      );
+    TBranch * branchAmomm   = mctree->GetBranch(amomm_branch      );
+    TBranch * branchAmome   = mctree->GetBranch(amome_branch      );
+    TBranch * branchDir     = mctree->GetBranch(dir_branch        );
+    // TBranch * branchDirnu   = mctree->GetBranch(dirnu_branch      );
+    // //
+    
+    branchEreco    -> SetAddress(&fBrEreco);
+    branchEtrue    -> SetAddress(&fBrPtrue);
+    branchGenCode  -> SetAddress(&fBrGenCode);
+    branchWghtFlx  -> SetAddress(&fBrWghtFlx);
+    // // NEW 2D TEMPLATES
+    // branchNumnu    -> SetAddress(&fBrNumnu);
+    // branchNring    -> SetAddress(&fBrNring);
+    branchAmomm    -> SetAddress(&fBrAmomm);
+    branchAmome    -> SetAddress(&fBrAmome);
+    branchDir      -> SetAddress(&fBrDir);
+    // branchDirnu    -> SetAddress(&fBrDirnu);
+    // //
+    
+    mctree->SetBranchStatus("*",0);
+    mctree->SetBranchStatus(erec_branch      , 1 );
+    mctree->SetBranchStatus(etrue_branch     , 1 );
+    mctree->SetBranchStatus(mode_branch      , 1 );
+    mctree->SetBranchStatus(flux_wght_branch , 1 );
+    // // NEW 2D TEMPLATES
+    // mctree->SetBranchStatus(numnu_branch     , 1 );
+    // mctree->SetBranchStatus(nring_branch     , 1 );
+    mctree->SetBranchStatus(amomm_branch     , 1 );
+    mctree->SetBranchStatus(amome_branch     , 1 );
+    mctree->SetBranchStatus(dir_branch       , 1 );
+    // mctree->SetBranchStatus(dirnu_branch     , 1 );
+    // //
+    
+#ifdef USE_SFRFG_WEIGHT
+    TBranch * branchSfRfg   = mctree->GetBranch(sf_rfg_wght_branch);
+    mctree->SetBranchStatus(sf_rfg_wght_branch , 1 );
+    branchSfRfg->SetAddress(&fBrWghtSFRFG);
+#endif
+#ifdef USE_RPA_WEIGHTS
+    TBranch * branchRPAnr   = mctree->GetBranch(rpa_nrel_wght_branch);
+    mctree->SetBranchStatus(rpa_nrel_wght_branch , 1 );
+    branchRPAnr->SetAddress(&fBrWghtRPAnonrel);
+    
+    TBranch * branchRPAr   = mctree->GetBranch(rpa_rel_wght_branch);
+    mctree->SetBranchStatus(rpa_rel_wght_branch , 1 );
+    branchRPAr->SetAddress(&fBrWghtRPArel);
+#endif
+#ifdef USE_CCcoh_WEIGHTS
+    TBranch * branchCCcoh   = mctree->GetBranch(cc_coh_wght_branch);
+    mctree->SetBranchStatus(cc_coh_wght_branch , 1 );
+    branchCCcoh->SetAddress(&fBrWghtCCcoh);
+#endif
+    
+
+    
+    double ntotevents = 0.;
+    
+    for(int iev = 0; iev < mctree->GetEntries(); iev++)
+    {
+        mctree->GetEntry(iev);
+        
+        if(fBrEreco<0) continue;
+        
+        // use current entry for mode m template?
+        bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
+        if(!use_it) continue;
+        
+        //Get True energy
+        double Etrue = fBrPtrue[0];
+
+        // Get reconstructed energy
+        double ereco_fill = fBrEreco/1000.; // GeV
+        
+        // NEW 2D TEMPLATES
+        
+        // Get lepton direction
+        // Costheta is the scalar product between the neutrino beam and lepton directions.
+        
+        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
+       
+        if( costheta<-1.00001 || costheta>+1.00001 ){
+            cerr << endl;
+            cerr << std::setprecision(10);
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        double sintheta = 1. - costheta*costheta;
+        if( sintheta<-1.00001 || sintheta>+1.00001 ){
+            cerr << endl;
+            cerr << std::setprecision(10);
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
+            cerr << "costheta = " << costheta << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        double LepTheta        = TMath::ACos(costheta); // radiant
+        double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
+        if(LepTheta<0.){
+            cerr << endl;
+            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        
+        //
+        //Smear theta based on gaussian around the true value and error from http://arxiv.org/pdf/1502.01550v2.pdf
+        //Different muon and electron theta resolution, I took that to mean muon sample and electron sample.
+        //
+        double theta_error_degrees = 0.;
+        
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            theta_error_degrees = 1.8;
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            theta_error_degrees = 3.;
+        }
+        
+        double LepThetaDegreesSmeared = Rnd::Instance()->RndOther().Gaus(LepThetaDegrees,theta_error_degrees);
+        
+        //Set all values based on smeared quantitiy
+        
+        double LepThetaSmeared = LepThetaDegreesSmeared * TMath::Pi() / 180.;
+        double costhetaSmeared = TMath::Cos(LepTheta);
+        
+        // Get the true lepton momentum from the tree, position in array depends on int mode.
+
+        int lepton_int =0;
+        if(util::IsMEC(m)){
+            lepton_int = 3;
+        }
+        else{
+            lepton_int = 2;
+        }
+        
+        double ptrue_lep = fBrPtrue[lepton_int];
+        double pmax_lepSmeared = ptrue_lep;
+        
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            pmax_lepSmeared = this->SmearMomentum(ptrue_lep,"electron");
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            pmax_lepSmeared = this->SmearMomentum(ptrue_lep,"muon");
+        }
+
+
+        // Set the correct lepton mass
+        
+        double mass_lep = 0.;
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            mass_lep    = kElectronMassGeV; // GeV
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            mass_lep = kMuonMassGeV; // GeV
+        }
+        else{
+            cerr << endl;
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "Using sample " << util::AsString(s) << endl;
+            cerr << "Samples other than: " << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << "are not implemented" << endl;
+            util::Die(1); return;
+        }
+        
+        // Calculate lepton energy
+        
+        double emax_lepSmeared = sqrt( pmax_lepSmeared*pmax_lepSmeared + mass_lep*mass_lep );
+        
+        /*
+         
+         Recalculate ERec using new plep from distribution!
+         
+         */
+        
+        double ereco_nuSmeared = 0;
+        
+        if(util::IsRHCSample(s)){
+            ereco_nuSmeared = this->ErecoFunc_NuBar(pmax_lepSmeared,costhetaSmeared,mass_lep);
+        }
+        else{
+            ereco_nuSmeared = this->ErecoFunc_Nu(pmax_lepSmeared,costhetaSmeared,mass_lep);
+        }
+        
+        if(ereco_fill < 0) ereco_fill = 0;
+        if(ereco_nuSmeared < 0) ereco_nuSmeared = 0;
+
+#if defined(__ERECO_VS_Q2_TEMPLATES__) // Use Ereco Vs Q2 parametrization
+        
+        // Get momentum and energy of most energetic lepton (only 1Ring samples)
+        
+        double pmax_lep = 0.; // momentum of most energetic lepton
+        if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+            pmax_lep    = fBrAmome[0] /1000.; // GeV
+        }
+        else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+            pmax_lep = fBrAmomm[0] / 1000.; // GeV
+        }
+        else{
+            cerr << endl;
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "Using sample " << util::AsString(s) << endl;
+            cerr << "Samples other than: " << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << "are not implemented" << endl;
+            util::Die(1); return;
+        }
+        
+        double mass_nucl = 0.;
+        if( (s == kSKsRHCFCFV1RingELike) || (s == kSKsRHCFCFV1RingMuLike) ){ // RHC
+            mass_nucl = kProtonMassGeV; // nubar interacts with proton
+        }
+        else if( (s == kSKsFCFV1RingELike) || (s == kSKsFCFV1RingMuLike) ){ // FHC
+            mass_nucl = kNeutronMassGeV; // nubar interacts with neutron
+        }
+        else{
+            cerr << endl;
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "Using sample " << util::AsString(s) << endl;
+            cerr << "Samples other than: " << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+            cerr << "are not implemented" << endl;
+            util::Die(1); return;
+        }
+        
+        double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum)
+        
+        // double Q2 = this->CalcQ2(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep); // Q^2
+        //double Q2 = this->CalcQd2(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep); // Qd^2
+        //double Q2 = this->CalcEhad(ereco_nuSmeared,emax_lepSmeared);
+        //double Q2 = this->CalcInelasticity(ereco_nuSmeared,emax_lepSmeared);
+        //double Q2 = this->CalcBjorkenScale(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep,mass_nucl);
+        //double Q2 = this->CalcWhadr(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep,mass_nucl);
+        double Q2 = this->CalcXSecTerm(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep,mass_nucl);
+        
+        //if(Q2<0. || Q2 > 1.){
+        //cout << "costheta = " << costheta << " ";
+        //cout << "emax_lep = " << emax_lep << " ";
+        //cout << "ereco_nu = " << ereco_nu << " ";
+        //cout << "Q2 = " << Q2 << " GeV" << endl;
+        // //Q2 = 0.001;
+        //}
+        
+        //cout << Q2 << " ";
+        //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
+        //cout << Q2 << " ";
+        // // PROVA
+        // double px = ereco_nu*kBeamDir[0];
+        // double py = ereco_nu*kBeamDir[1];
+        // double pz = ereco_nu*kBeamDir[2];
+        // double e = ereco_nu;
+        // TLorentzVector lv_pnu(px,py,pz,e);
+        // px = pmax_lep*fBrDir[0][1];
+        // py = pmax_lep*fBrDir[0][2];
+        // pz = pmax_lep*fBrDir[0][3];
+        // e = emax_lep;
+        // TLorentzVector lv_plep(px,py,pz,e);
+        // Q2 = (lv_pnu - lv_plep).Mag2();
+        // cout << Q2 << endl;
+        // //
+        
+        
+        double q2_fill = Q2;
+        
+#ifdef INCLUDEEVENTSNEGATIVEQ2
+        if(q2_fill < 0. && q2_fill> -0.01){
+            q2_fill = 0.01;
+        }
+#endif
+#ifdef INCLUDEEVENTSOVERFLOWQ2
+        int nbins = util::NumQ2Bins(s);
+        double MaxQ2_up   = util::Q2BinEdges(s,nbins);
+        double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
+        double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
+        //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
+        q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
+        
+        if(q2_fill > MaxQ2_up){
+            cout << q2_fill << endl;
+            util::Die(1); return;
+        }
+#endif
+        
+        if( q2_fill < util::Q2BinEdges(s,0) ){
+            cout << "Q2 < Q2BinEdge(s,0)" << endl;
+            cout << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
+            cout << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
+            cout << "theta = " << LepThetaDegreesSmeared << " ";
+            cout << "costheta = " << costhetaSmeared << " ";
+            //cout << "sintheta = " << sintheta << " ";
+            cout << "emax_lep = " << emax_lepSmeared << " ";
+            cout << "ereco_nu = " << ereco_nuSmeared << " ";
+            cout << "Q2 = " << Q2 << " GeV" << endl;
+            util::Die(1); return;
+        }
+        if( q2_fill > util::Q2BinEdges(s,nbins) ){
+            cout << "Q2 > Q2BinEdge(s,0)" << endl;
+            cout << "costheta = " << costhetaSmeared << " ";
+            cout << "sintheta = " << TMath::Sin(LepThetaSmeared) << " ";
+            cout << "emax_lep = " << emax_lepSmeared << " ";
+            cout << "ereco_nu = " << ereco_nuSmeared << " ";
+            cout << "Q2 = " << Q2 << " GeV" << endl;
+            util::Die(1); return;
+        }
+        
+        
+#elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
+
+        double q2_fill = LepThetaDegreesSmeared;
+        
+#ifdef INCLUDEEVENTSNEGATIVEQ2
+        if(q2_fill < 0.){
+            q2_fill = util::Q2BinEdges(s,0)+conv::kASmallNum;
+        }
+#endif
+#ifdef INCLUDEEVENTSOVERFLOWQ2
+        int nbins = util::NumQ2Bins(s);
+        double MaxQ2_up   = util::Q2BinEdges(s,nbins);
+        double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
+        double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
+        //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
+        q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
+        
+        if(q2_fill > MaxQ2_up){
+            cout << q2_fill << endl;
+            util::Die(1); return;
+        }
+#endif
+        
+        if( q2_fill < util::Q2BinEdges(s,0) ){
+            cout << "costheta = " << costhetaSmeared << endl;
+            cout << "LepThetaDegrees = " << LepThetaDegreesSmeared << endl;
+            util::Die(1); return;
+        }
+        
+        if( q2_fill > util::Q2BinEdges(s,nbins) ){
+            cout << "costheta = " << costhetaSmeared << endl;
+            cout << "LepThetaDegrees = " << LepThetaDegreesSmeared << endl;
+            util::Die(1); return;
+        }
+        
+#else
+        cerr << endl;
+        cerr << "SuperkMC::FillTemplateHistogram()" << endl;
+        cerr << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization" << endl;
+        cerr << endl;
+        util::Die(1); return;
+#endif //__ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
+        
+        //
+        
+        
+        
+        // //// PROVA Ereco
+        
+        // //if(s!=kSKsRHCFCFV1RingMuLike) continue;
+        // //if(s!=kSKsRHCFCFV1RingELike) continue;
+        // //if(s!=kSKsFCFV1RingELike) continue;
+        
+        // // Get momentum and energy of most energetic lepton (only 1Ring samples)
+        // double pmax_lep = 0.; // momentum of most energetic lepton
+        // double mass_lep = 0.;
+        // if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
+        //   mass_lep = kElectronMassGeV * 1000.; // GeV --> MeV
+        //   pmax_lep = fBrAmome[0]; // MeV
+        // }
+        // else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
+        //   mass_lep = kMuonMassGeV * 1000.; // GeV --> MeV
+        //   pmax_lep = fBrAmomm[0]; // MeV
+        // }
+        // else{
+        //   cerr << endl;
+        //   cerr << "SuperkMC::FillTemplateHistogram" << endl;
+        //   cerr << "Using sample " << util::AsString(s) << endl;
+        //   cerr << "Samples other than: " << endl;
+        //   cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
+        //   cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
+        //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+        //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
+        //   cerr << "are not implemented" << endl;
+        //   util::Die(1); return;
+        // }
+        
+        // //double myereco_nu = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep); // inputs are MeV
+        // //double myereco_nubar = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep); // inputs are MeV
+        
+        // //cout << ereco_fill << " " << myereco_nu / 1000. << " " << myereco_nubar / 1000. << endl;
+        // //cout << ;
+        
+        // ///////////
+        
+        
+        
+        
+        
+        
+        //if(util::IsRHCSample(s))
+#ifdef USE_FLUX_EXT_WEIGHT
+        fBrWghtFlx = fNuFlux->SuperkFluxExtTuningWght(s,m,Etrue);
+#endif
+        
+#ifdef FLUXWEIGHTSAREONE
+        fBrWghtFlx = 1.;
+#endif
+        
+#ifdef INCLUDEEVENTSOVERTHIRTYGEV
+        ereco_fill = TMath::Min(29.9, ereco_fill);
+#endif
+        
+        
+        //q2_fill = ereco_fill; // NEW 2D TEMPLATES (TODO) // be careful to overflows!!!
+        
+        
+        
+#ifndef __USE_2D_TEMPLATES__
+        this -> Template(s,m,kSKMCtOri) -> Fill (ereco_nuSmeared, Etrue);
+        fMCVariableTempl[sidx][midx]    -> Fill (ereco_nuSmeared, Etrue);
+        ntotevents += 1.;
+#else
+        // NEW 2D TEMPLATES
+        this -> Template2D(s,m,kSKMCtOri) -> Fill (q2_fill, ereco_nuSmeared, Etrue);
+        fMCVariableTempl2D[sidx][midx]    -> Fill (q2_fill, ereco_nuSmeared, Etrue);
+        ntotevents += 1.;
+        //
+#endif
+        
+        double pot_flx_weight = pot_wght * fBrWghtFlx;
+        double NC1GammaWght = 1.;
+#ifdef USE_NC1gamma_WEIGHTS
+        if(util::IsNC1Gamma(TMath::Abs(fBrGenCode))){
+            NC1GammaWght = 2.;
+        }
+#endif
+
+#ifndef __USE_2D_TEMPLATES__
+        this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight);
+#else
+        //NEW 2D TEMPLATES
+        this -> Template2D(s,m,kSKMCtPOT) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight);
+        //
+#endif
+        
+        // Actually fill the template
+        
+#ifndef __USE_2D_TEMPLATES__
+#ifdef USE_RPA_WEIGHTS
+        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+#else
+        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+#endif
+#else
+        // NEW 2D TEMPLATES
+#ifdef USE_RPA_WEIGHTS
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+#else
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_nuSmeared, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+#endif
+        //
+#endif
+
+#ifndef __USE_2D_TEMPLATES__
+        
+#ifdef __show_init_mesg_debug__
+        if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
+            cout << "Exp/SKMC/FillTemplateSmeared >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            << " (Ereco = " << ereco_nuSmeared << ")" << endl;
+#endif
+#ifdef __show_init_mesg_debug2__
+        if(fBrEreco/1000 <= 0)
+            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
+            << " (Etrue = " << Etrue << ")" << endl;
+        //#endif __show_init_mesg_debug2__
+        if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
+            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
+            << " (Etrue = " << Etrue << ")" << endl;
+#endif
+        
+#else
+        
+        // NEW 2D TEMPLATES
+        
+#ifdef __show_init_mesg_debug__
+        if(Etrue <= 0 || Etrue >= this->Template2D(s,m,kSKMCtOri)->GetZaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsZ())){
+            cout << "Exp/SKMC/FillTemplateSmeared >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            << " (Ereco = " << ereco_nuSmeared << ")"
+            << " (Q2 = " << q2_fill << ")" << endl;
+        }
+#endif
+#ifdef __show_init_mesg_debug2__
+        if(fBrEreco/1000 <= 0)
+            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
+            << " (Etrue = " << Etrue << ")" << endl;
+        //#endif __show_init_mesg_debug2__
+        if(fBrEreco/1000 >= this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsY()))
+            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
+            << " (Etrue = " << Etrue << ")"
+            << " (Q2 = " << q2_fill << ")" << endl;
+        
+        if(q2_fill <= 0)
+            cout << "Exp/SKMC/FillTemplateSmeared >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            << " (Ereco = " << ereco_nuSmeared << ")"
+            << " (Etrue = " << Etrue << ")" << endl;
+        //#endif __show_init_mesg_debug2__
+        if(q2_fill >= this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsX()))
+            cout << "Exp/SKMC/FillTemplateSmeared >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            << " (Ereco = " << ereco_nuSmeared << ")"
+            << " (Etrue = " << Etrue << ")" << endl;
+        //
+#endif// __show_init_mesg_debug__
+        
+#endif
+        
+    }//iev
+    
+#ifdef __show_init_mesg_debug__
+    
+#ifndef __USE_2D_TEMPLATES__
+    cout << "Exp/SKMC/FillTemplateSmeared >>      "
+    << "Number of template entries = "
+    << this -> Template(s,m,kSKMCtNom) -> GetEntries() << endl;
+#else
+    // NEW 2D TEMPLATES
+    cout << "Exp/SKMC/FillTemplate2DSmeared >>      "
+    << "Number of template entries = "
+    << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << endl;
+    //
+#endif
+    
 #endif
     
 }
@@ -945,14 +2273,21 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
         const int      n_etrue_bins    = kNEtrueBins[is];
         const double * ereco_bin_edges = util::ErecoBinEdges(s);
         const double * etrue_bin_edges = util::EtrueBinEdges(s);
-        
         const double * var_ereco_bin_edges = util::XsecErecoBinEdges(s);
+#ifdef __USE_2D_TEMPLATES__ //2D templates
+        const int      n_q2_bins       = kNQ2Bins[is]; // NEW 2D TEMPLATES
+        const double * q2_bin_edges    = util::Q2BinEdges(s); // NEW 2D TEMPLATES
+        const double * var_q2_bin_edges = util::XsecQ2BinEdges(s); // NEW 2D TEMPLATES
+#endif
         
         for(int im = 0; im < knm; im++) {
             SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
             
             const double * var_etrue_bin_edges = util::VariableMCEtrueBinEdges(s,m);
+            
+            
+#ifndef __USE_2D_TEMPLATES__
             
             // loop over Etrue
             for(int it = 1; it <= this->Template(s,m,template_to_use)->GetYaxis()->GetNbins(); it++) {
@@ -963,6 +2298,11 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                     ////
                     
                     double nev = this->Template(s,m,template_to_use)->GetBinContent(ir,it);
+                    
+                    // cout << "1D: " << util::AsString(s) << " , " << util::AsString(m)
+                    //      << " --> Ereco = " << this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinCenter(ir)
+                    //      << " --> nev = " << nev << endl;
+                    // if(nev==0) exit(1);
                     
                     fMCTemplArrayNom[is]->GetEntryRef(im, it-1 , ir-1) = nev;
                     fMCTemplArrayTun[is]->GetEntryRef(im, it-1 , ir-1) = nev;
@@ -1066,6 +2406,156 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
             }//itv
             fNNonEmptyVariableBins[is][im] = i_ne_var;
             assert(i_ne_var<kMaxVarBins);
+            
+            
+            
+#else  //__USE_2D_TEMPLATES__
+            
+            // NEW 2D TEMPLATES
+            
+            // loop over Etrue
+            for(int it = 1; it <= this->Template2D(s,m,template_to_use)->GetZaxis()->GetNbins(); it++) {
+                // loop over Ereco
+                for(int ir = 1; ir <= this->Template2D(s,m,template_to_use)->GetYaxis()->GetNbins(); ir++) {
+                    // loop over Q2
+                    for(int iq = 1; iq <= this->Template2D(s,m,template_to_use)->GetXaxis()->GetNbins(); iq++) {
+                        
+                        fMCTemplArrayOri2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = this->Template2D(s,m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                        
+                        double nev = this->Template2D(s,m,template_to_use)->GetBinContent(iq,ir,it);
+                        
+                        // cout << "2D: " << util::AsString(s) << " , " << util::AsString(m)
+                        //      << " --> Q2 = " << this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinCenter(iq)
+                        //      << " --> Ereco = " << this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinCenter(ir)
+                        //      << " --> nev = " << nev << endl;
+                        // if(nev==0) {util::Die(1); return;}
+                        
+                        
+                        fMCTemplArrayNom2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
+                        fMCTemplArrayTun2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
+                        fMCTemplArrayFin2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
+                        
+#ifdef USE_RPA_WEIGHTS
+                        double nev_relrpa = this->Template2D(s,m,kSKMCtRPA)->GetBinContent(iq,ir,it);
+                        if ( (!with_niwg_weights) || (nev_relrpa < conv::kASmallNum && nev < conv::kASmallNum)) {
+                            fMCTemplArrayRPAWght2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = 1.;
+                        }
+                        else if  (nev < conv::kASmallNum) {
+                            std::cerr<<"Warning: divide by zero in RPA rel weighting, setting weight of 1"<<std::endl;
+                            fMCTemplArrayRPAWght2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = 1.;
+                        }
+                        else{
+                            fMCTemplArrayRPAWght2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev_relrpa/nev;
+                        }
+#endif
+                        ////
+                    }//iq
+                }//ir
+            }//it
+            
+            int i_ne_var_2d = 0;
+            //now loop over the variable binning scheme (used to calculate weights only as many times as we need to)
+            //This loop also keeps a record of which bins are non-empty
+            
+            //loop over variable Etrue
+            for(int itv = 1; itv <= fMCVariableTempl2D[is][im]->GetZaxis()->GetNbins(); itv++) {
+                
+                double EtrueVarMin = var_etrue_bin_edges[itv-1] + kOneMeV;
+                double EtrueVarMax = var_etrue_bin_edges[itv]   - kOneMeV;
+                int EtrueMinBin = 1 + TMath::BinarySearch(n_etrue_bins,etrue_bin_edges,EtrueVarMin);
+                int EtrueMaxBin = 1 + TMath::BinarySearch(n_etrue_bins,etrue_bin_edges,EtrueVarMax);
+                
+                //~ cout <<
+                //~ "\nEmin: " << util::VariableMCEtrueBinEdges(s,m)[itv-1] <<
+                //~ " Emax: " << util::VariableMCEtrueBinEdges(s,m)[itv] <<
+                //~ "\nEtruemin Bin number: " << 1 + TMath::BinarySearch(kNEtrueBins[is],util::EtrueBinEdges(s),EtrueVarMin) <<
+                //~ " Etruemax Bin number: " << 1 + TMath::BinarySearch(kNEtrueBins[is],util::EtrueBinEdges(s),EtrueVarMax) << endl;
+                
+                // loop over variable Ereco
+                for(int irv = 1; irv <= fMCVariableTempl2D[is][im]->GetYaxis()->GetNbins(); irv++) {
+                    
+                    double ErecoVarMin = var_ereco_bin_edges[irv-1] + kOneMeV;
+                    double ErecoVarMax = var_ereco_bin_edges[irv]   - kOneMeV;
+                    int ErecoMinBin = 1 + TMath::BinarySearch(n_ereco_bins,ereco_bin_edges,ErecoVarMin);
+                    int ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,ereco_bin_edges,ErecoVarMax);
+                    
+                    // loop over variable Q2
+                    for(int iqv = 1; iqv <= fMCVariableTempl2D[is][im]->GetXaxis()->GetNbins(); iqv++) {
+                        
+                        double Q2VarMin = var_q2_bin_edges[iqv-1] + kOneMeV;
+                        double Q2VarMax = var_q2_bin_edges[iqv]   - kOneMeV;
+                        int Q2MinBin = 1 + TMath::BinarySearch(n_q2_bins,q2_bin_edges,Q2VarMin);
+                        int Q2MaxBin = 1 + TMath::BinarySearch(n_q2_bins,q2_bin_edges,Q2VarMax);
+                        
+                        double nev = fMCVariableTempl2D[is][im]->GetBinContent(iqv,irv,itv);
+                        
+                        fMCVariableTemplArray2D[is]->GetEntryRef(im, itv-1, irv-1, iqv-1) = nev;
+                        
+                        // Fill nonempty bin numbers.
+                        if (nev < conv::kASmallNum) {
+                            //cout << irv << "exit" << endl;
+                            continue;
+                        }
+                        
+                        fNonEmptyVariableBins2D[is][im][i_ne_var_2d] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                        
+                        //~ cout <<
+                        //~ "\n" <<
+                        //~ irv <<
+                        //~ "\nErmin: " << util::XsecErecoBinEdges(s,irv-1) <<
+                        //~ " Ermax: " << util::XsecErecoBinEdges(s,irv) <<
+                        //~ "\nErecomin Bin number: " << 1 + TMath::BinarySearch(kNErecoBins[is],util::ErecoBinEdges(s),ErecoVarMin) <<
+                        //~ " Erecomax Bin number: "  << 1 + TMath::BinarySearch(kNErecoBins[is],util::ErecoBinEdges(s),ErecoVarMax) << endl;
+                        
+                        int i_ne_fixed = 0;
+                        // loop over fixed Etrue to count n nonempty
+                        for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+                            // loop over fixed Ereco to count
+                            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+                                // loop over fixed Q2 to count
+                                for(int iq = Q2MinBin; iq <= Q2MaxBin; iq++) {
+                                    
+                                    double nevf = this->Template2D(s,m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                                    if (nevf < conv::kASmallNum) {
+                                        continue;
+                                    }
+                                    i_ne_fixed++;
+                                }//iq
+                            }//ir
+                        }//it
+                        fNNonEmptyFixedBins2D[is][im][i_ne_var_2d] = i_ne_fixed;
+                        fNonEmptyFixedBins2D [is][im][i_ne_var_2d] = new int[i_ne_fixed];
+                        
+                        i_ne_fixed = 0;
+                        // loop over fixed Etrue to count n nonempty
+                        for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+                            // loop over fixed Ereco to count
+                            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+                                // loop over fixed Q2 to count
+                                for(int iq = Q2MinBin; iq <= Q2MaxBin; iq++) {
+                                    
+                                    double nevf = this->Template2D(s,m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                                    if (nevf < conv::kASmallNum) {
+                                        continue;
+                                    }
+                                    fNonEmptyFixedBins2D[is][im][i_ne_var_2d][i_ne_fixed] = conv::kBigIndex*conv::kBigIndex * iq + conv::kBigIndex * ir + it;
+                                    i_ne_fixed++;
+                                }//iq
+                            }//ir
+                        }//it
+                        
+                        i_ne_var_2d++;
+                    }//iqv
+                }//irv
+            }//itv
+            fNNonEmptyVariableBins2D[is][im] = i_ne_var_2d;
+            assert(i_ne_var_2d<kMaxVarBins2D);
+            
+            //
+            
+#endif // __USE_2D_TEMPLATES__
+            
+            
         } //modes
     } //samples
     
@@ -1083,19 +2573,26 @@ void SuperkMC::FillSpecialTemplates(void)
     for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
+        
+#if defined(__USE_OSC_NUMU_MC_TEMPLATES__) || defined(__USE_OSC_NUMUBAR_MC_TEMPLATES__) || defined(__USE_OLD_OSC_NUEBAR_MC_TEMPLATES__)
         int sidx = arr_index->SuperkSampleIdx(s);
         
         EFluxType fNom = (IsRHCSample(s)) ? kRHCFlxNominal : kFlxNominal ;
         EFluxType fExt = (IsRHCSample(s)) ? kRHCFlxExtTuning : kFlxExtTuning ;
+        
+        const int n = 4;
+#endif
         
         //
         // Fill in `osc numu' templates from `numu' templates
         // and take into account the nue/numu flux weight
         //
         
-        const int n = 4;
+        
         
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+        
+#ifndef __USE_2D_TEMPLATES__ // 1D templates
         
         cout << "SKMC/FillSpecialTemplates >> Filling osc numu templates for " << util::AsString(s) << " sample" << endl;
         SuperkMode_t src_modes[n] = {  kSKmNuMuCCQE,    kSKmNuMuCC1pi,     kSKmNuMuCCcoh,    kSKmNuMuCCoth    };
@@ -1213,8 +2710,158 @@ void SuperkMC::FillSpecialTemplates(void)
             
         }//i
         
-#endif// __USE_OSC_NUMU_MC_TEMPLATES__
         
+#else // 2D templates
+        
+        // NEW 2D TEMPLATES
+        
+        cout << "SKMC/FillSpecialTemplates2D >> Filling osc numu templates for " << util::AsString(s) << " sample" << endl;
+        SuperkMode_t src_modes[n] = {  kSKmNuMuCCQE,    kSKmNuMuCC1pi,     kSKmNuMuCCcoh,    kSKmNuMuCCoth    };
+        SuperkMode_t tgt_modes[n] = {  kSKmOscNuMuCCQE, kSKmOscNuMuCC1pi,  kSKmOscNuMuCCcoh, kSKmOscNuMuCCoth };
+        
+        for(int i=0; i<n; i++) {
+            
+            SuperkMode_t tgt_m = tgt_modes[i];
+            int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes[i]);
+            int src_midx = arr_index->SuperkModeIdx(s,src_modes[i]);
+            
+            TH3D * src_ori = this->Template2D(s,src_modes[i],kSKMCtOri);
+            TH3D * tgt_ori = this->Template2D(s,tgt_modes[i],kSKMCtOri);
+            TH3D * src_nom = this->Template2D(s,src_modes[i],kSKMCtNom);
+            TH3D * tgt_nom = this->Template2D(s,tgt_modes[i],kSKMCtNom);
+            
+            // loop over Etrue
+            for(int it = 1; it <= src_ori->GetZaxis()->GetNbins(); it++) {
+                double Etrue = src_ori->GetZaxis()->GetBinCenter(it);
+                
+                // calc weight for weighting numu flux to nue flux
+                // (note: we have used `nominal' with different meaning in the flux and in the template enumerations.
+                // perhaps we should rename kFlxNominal -> kFlxOriginal, for consistency).
+                double flux_nue_ori  = fNuFlux->SuperkFlux (s, kPdgNuE,  Etrue, fNom   );
+                double flux_nue_nom  = fNuFlux->SuperkFlux (s, kPdgNuE,  Etrue, fExt );
+                double flux_numu_ori = fNuFlux->SuperkFlux (s, kPdgNuMu, Etrue, fNom   );
+                double flux_numu_nom = fNuFlux->SuperkFlux (s, kPdgNuMu, Etrue, fExt );
+                double wght_numu2nue_ori = (flux_numu_ori != 0) ? flux_nue_ori / flux_numu_ori : 0;
+                double wght_numu2nue_nom = (flux_numu_nom != 0) ? flux_nue_nom / flux_numu_nom : 0;
+                
+                // loop over Ereco
+                for(int ir = 1; ir <= src_ori->GetYaxis()->GetNbins(); ir++) {
+                    double Ereco = src_ori->GetYaxis()->GetBinCenter(ir);
+                    
+                    // loop over Q2
+                    for(int iq = 1; iq <= src_ori->GetXaxis()->GetNbins(); iq++) {
+                        double Q2 = src_ori->GetXaxis()->GetBinCenter(iq);
+                        
+                        // get nevents
+                        double nev_ori = src_ori-> GetBinContent(iq,ir,it);
+                        double nev_nom = src_nom-> GetBinContent(iq,ir,it);
+                        // set number of events
+                        double weighted_nev_ori = nev_ori*wght_numu2nue_ori;
+                        double weighted_nev_nom = nev_nom*wght_numu2nue_nom;
+                        tgt_ori->Fill(Q2,Ereco,Etrue, weighted_nev_ori);
+                        tgt_nom->Fill(Q2,Ereco,Etrue, weighted_nev_nom);
+                        
+                        double nev_tgt_ori = tgt_ori->GetBinContent(iq,ir,it);
+                        double nev_tgt_nom = tgt_nom->GetBinContent(iq,ir,it);
+                        
+                        fMCTemplArrayOri2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_ori;
+                        fMCTemplArrayNom2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                        fMCTemplArrayTun2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                        fMCTemplArrayFin2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                        
+                    }//iq
+                }//ir
+            }//it
+            
+            //one more loop, for the variable binning scheme.
+            //just set the OscNuMu equal to the NuMu
+            //loop over variable Etrue
+            
+            int i_ne_var = 0;
+            
+            for(int itv = 1; itv <= fMCVariableTempl2D[sidx][tgt_midx]->GetZaxis()->GetNbins(); itv++) {
+                double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
+                double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
+                
+                int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
+                int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
+                
+                double nev = 0;
+                
+                // loop over variable Ereco
+                for(int irv = 1; irv <= fMCVariableTempl2D[sidx][tgt_midx]->GetYaxis()->GetNbins(); irv++) {
+                    
+                    // loop over variable Q2
+                    for(int iqv = 1; iqv <= fMCVariableTempl2D[sidx][tgt_midx]->GetXaxis()->GetNbins(); iqv++) {
+                        
+                        nev = fMCVariableTemplArray2D[is]->GetEntry(src_midx, itv-1, irv-1, iqv-1);
+                        fMCVariableTemplArray2D[is]->GetEntryRef(tgt_midx, itv-1 , irv-1, iqv-1) = nev;
+                        
+                        // Fill nonempty bin numbers.
+                        if (nev < conv::kASmallNum) {
+                            continue;
+                        }
+                        
+                        fNonEmptyVariableBins2D[sidx][tgt_midx][i_ne_var] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                        
+                        double Q2VarMin = util::XsecQ2BinEdges(s,iqv-1) + kOneMeV;
+                        double Q2VarMax = util::XsecQ2BinEdges(s,iqv)   - kOneMeV;
+                        int Q2MinBin = 1 + TMath::BinarySearch(kNQ2Bins[sidx],util::Q2BinEdges(s),Q2VarMin);
+                        int Q2MaxBin = 1 + TMath::BinarySearch(kNQ2Bins[sidx],util::Q2BinEdges(s),Q2VarMax);
+                        
+                        double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+                        double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+                        int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
+                        int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
+                        
+                        int i_ne_fixed = 0;
+                        // loop over fixed Etrue to count n nonempty
+                        for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+                            // loop over fixed Ereco to count
+                            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+                                // loop over fixed Q2 to count
+                                for(int iq = Q2MinBin; iq <= Q2MaxBin; iq++) {
+                                    
+                                    double nevf = this->Template2D(s,tgt_m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                                    if (nevf < conv::kASmallNum) {
+                                        continue;
+                                    }
+                                    i_ne_fixed++;
+                                }//iq
+                            }//ir
+                        }//it
+                        fNNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var] = i_ne_fixed;
+                        fNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var] = new int[i_ne_fixed];
+                        
+                        i_ne_fixed = 0;
+                        // loop over fixed Etrue to count n nonempty
+                        for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+                            // loop over fixed Ereco to count
+                            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+                                // loop over fixed Q2 to count
+                                for(int iq = Q2MinBin; iq <= Q2MaxBin; iq++) {
+                                    
+                                    double nevf = this->Template2D(s,tgt_m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                                    if (nevf < conv::kASmallNum) {
+                                        continue;
+                                    }
+                                    fNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var][i_ne_fixed] = conv::kBigIndex*conv::kBigIndex * iq + conv::kBigIndex * ir + it;
+                                    i_ne_fixed++;
+                                }//iq
+                            }//ir
+                        }//it
+                        i_ne_var++;
+                    }//iqv
+                }//irv
+            }//itv
+            fNNonEmptyVariableBins2D[sidx][tgt_midx] = i_ne_var;
+            assert(i_ne_var<kMaxVarBins2D);
+            
+        }//i
+        
+#endif // __USE_2D_TEMPLATES__
+        
+#endif// __USE_OSC_NUMU_MC_TEMPLATES__
         
         
         //
@@ -1223,6 +2870,8 @@ void SuperkMC::FillSpecialTemplates(void)
         //
         
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+        
+#ifndef __USE_2D_TEMPLATES__ // 1D templates
         
         cout << "SKMC/FillSpecialTemplates >> Filling osc numubar templates for " << util::AsString(s) << " sample" << endl;
         SuperkMode_t src_modes_numubar[n] = {  kSKmNuMuBarCCQE,    kSKmNuMuBarCC1pi,     kSKmNuMuBarCCcoh,    kSKmNuMuBarCCoth    };
@@ -1291,7 +2940,6 @@ void SuperkMC::FillSpecialTemplates(void)
                     fMCVariableTemplArray[is]->GetEntryRef(tgt_midx, itv-1, irv-1) = nev;
                     ////
                     
-                    
                     // Fill nonempty bin numbers.
                     if (nev < conv::kASmallNum) {
                         continue;
@@ -1339,9 +2987,164 @@ void SuperkMC::FillSpecialTemplates(void)
             fNNonEmptyVariableBins[sidx][tgt_midx] = i_ne_var;
             assert(i_ne_var<kMaxVarBins);
         }//i
-#endif
+        
+#else // 2D templates
+        
+        // NEW 2D TEMPLATES
+        
+        cout << "SKMC/FillSpecialTemplates2D >> Filling osc numubar templates for " << util::AsString(s) << " sample" << endl;
+        SuperkMode_t src_modes_numubar[n] = {  kSKmNuMuBarCCQE,    kSKmNuMuBarCC1pi,     kSKmNuMuBarCCcoh,    kSKmNuMuBarCCoth    };
+        SuperkMode_t tgt_modes_numubar[n] = {  kSKmOscNuMuBarCCQE, kSKmOscNuMuBarCC1pi,  kSKmOscNuMuBarCCcoh, kSKmOscNuMuBarCCoth };
+        
+        for(int i=0; i<n; i++) {
+            
+            SuperkMode_t tgt_m = tgt_modes_numubar[i];
+            int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes_numubar[i]);
+            int src_midx = arr_index->SuperkModeIdx(s,src_modes_numubar[i]);
+            
+            TH3D * src_ori = this->Template2D(s,src_modes_numubar[i],kSKMCtOri);
+            TH3D * tgt_ori = this->Template2D(s,tgt_modes_numubar[i],kSKMCtOri);
+            TH3D * src_nom = this->Template2D(s,src_modes_numubar[i],kSKMCtNom);
+            TH3D * tgt_nom = this->Template2D(s,tgt_modes_numubar[i],kSKMCtNom);
+            
+            // loop over Etrue
+            for(int it = 1; it <= src_ori->GetZaxis()->GetNbins(); it++) {
+                double Etrue = src_ori->GetZaxis()->GetBinCenter(it);
+                
+                // calc weight for weighting numu flux to nue flux
+                // (note: we have used `nominal' with different meaning in the flux and in the template enumerations.
+                // perhaps we should rename fNom -> kFlxOriginal, for consistency).
+                double flux_nue_ori  = fNuFlux->SuperkFlux (s, kPdgNuEBar,  Etrue, fNom   );
+                double flux_nue_nom  = fNuFlux->SuperkFlux (s, kPdgNuEBar,  Etrue, fExt );
+                double flux_numu_ori = fNuFlux->SuperkFlux (s, kPdgNuMuBar, Etrue, fNom   );
+                double flux_numu_nom = fNuFlux->SuperkFlux (s, kPdgNuMuBar, Etrue, fExt );
+                double wght_numu2nue_ori = (flux_numu_ori != 0) ? flux_nue_ori / flux_numu_ori : 0;
+                double wght_numu2nue_nom = (flux_numu_nom != 0) ? flux_nue_nom / flux_numu_nom : 0;
+                
+                // loop over Ereco
+                for(int ir = 1; ir <= src_ori->GetYaxis()->GetNbins(); ir++) {
+                    double Ereco = src_ori->GetYaxis()->GetBinCenter(ir);
+                    
+                    // loop over Q2
+                    for(int iq = 1; iq <= src_ori->GetXaxis()->GetNbins(); iq++) {
+                        double Q2 = src_ori->GetXaxis()->GetBinCenter(iq);
+                        
+                        // get nevents
+                        double nev_ori = src_ori-> GetBinContent(iq,ir,it);
+                        double nev_nom = src_nom-> GetBinContent(iq,ir,it);
+                        // set number of events
+                        double weighted_nev_ori = nev_ori*wght_numu2nue_ori;
+                        double weighted_nev_nom = nev_nom*wght_numu2nue_nom;
+                        tgt_ori->Fill(Ereco,Etrue, weighted_nev_ori);
+                        tgt_nom->Fill(Ereco,Etrue, weighted_nev_nom);
+                        
+                        double nev_tgt_ori = tgt_ori->GetBinContent(iq,ir,it);
+                        double nev_tgt_nom = tgt_nom->GetBinContent(iq,ir,it);
+                        
+                        fMCTemplArrayOri2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_ori;
+                        fMCTemplArrayNom2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                        fMCTemplArrayTun2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                        fMCTemplArrayFin2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                    }//iq
+                }//ir
+            }//it
+            //one more loop, for the variable binning scheme.
+            //just set the OscNuMu equal to the NuMu
+            //loop over variable Etrue
+            int i_ne_var = 0;
+            
+            for(int itv = 1; itv <= fMCVariableTempl2D[sidx][tgt_midx]->GetZaxis()->GetNbins(); itv++) {
+                double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
+                double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
+                
+                int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
+                int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
+                
+                // loop over variable Ereco
+                for(int irv = 1; irv <= fMCVariableTempl2D[sidx][tgt_midx]->GetYaxis()->GetNbins(); irv++) {
+                    
+                    // loop over variable Q2
+                    for(int iqv = 1; iqv <= fMCVariableTempl2D[sidx][tgt_midx]->GetXaxis()->GetNbins(); iqv++) {
+                        
+                        double nev = 0;
+                        nev = fMCVariableTemplArray2D[is]->GetEntry(src_midx, itv-1, irv-1, iqv-1);
+                        fMCVariableTemplArray2D[is]->GetEntryRef(tgt_midx, itv-1, irv-1, iqv-1) = nev;
+                        ////
+                        
+                        // Fill nonempty bin numbers.
+                        if (nev < conv::kASmallNum) {
+                            continue;
+                        }
+                        
+                        fNonEmptyVariableBins2D[sidx][tgt_midx][i_ne_var] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                        
+                        double Q2VarMin = util::XsecQ2BinEdges(s,iqv-1) + kOneMeV;
+                        double Q2VarMax = util::XsecQ2BinEdges(s,iqv)   - kOneMeV;
+                        int Q2MinBin = 1 + TMath::BinarySearch(kNQ2Bins[sidx],util::Q2BinEdges(s),Q2VarMin);
+                        int Q2MaxBin = 1 + TMath::BinarySearch(kNQ2Bins[sidx],util::Q2BinEdges(s),Q2VarMax);
+                        
+                        double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+                        double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+                        int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
+                        int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
+                        
+                        int i_ne_fixed = 0;
+                        // loop over fixed Etrue to count n nonempty
+                        for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+                            // loop over fixed Ereco to count
+                            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+                                // loop over fixed Q2 to count
+                                for(int iq = Q2MinBin; iq <= Q2MaxBin; iq++) {
+                                    
+                                    double nevf = this->Template2D(s,tgt_m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                                    if (nevf < conv::kASmallNum) {
+                                        continue;
+                                    }
+                                    i_ne_fixed++;
+                                }//iq
+                            }//ir
+                        }//it
+                        fNNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var] = i_ne_fixed;
+                        fNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var] = new int[i_ne_fixed];
+                        
+                        i_ne_fixed = 0;
+                        // loop over fixed Etrue to count n nonempty
+                        for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+                            // loop over fixed Ereco to count
+                            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+                                // loop over fixed Q2 to count
+                                for(int iq = Q2MinBin; iq <= Q2MaxBin; iq++) {
+                                    
+                                    double nevf = this->Template2D(s,tgt_m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                                    if (nevf < conv::kASmallNum) {
+                                        continue;
+                                    }
+                                    fNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var][i_ne_fixed] = conv::kBigIndex*conv::kBigIndex * iq + conv::kBigIndex * ir + it;
+                                    i_ne_fixed++;
+                                }//iq
+                            }//ir
+                        }//it
+                        i_ne_var++;
+                    }//iqv
+                }//irv
+            }//itv
+            fNNonEmptyVariableBins2D[sidx][tgt_midx] = i_ne_var;
+            assert(i_ne_var<kMaxVarBins2D);
+        }//i
+        
+        
+#endif // __USE_2D_TEMPLATES__
+        
+#endif // __USE_OSC_NUMUBAR_MC_TEMPLATES__
+        
+        
+        
+        
+        // Old Osc NueBar MC templates
         
 #ifdef __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
+        
+#ifndef __USE_2D_TEMPLATES__ // 1D templates
         
         cout << "SKMC/FillSpecialTemplates >> Filling osc nuebar templates for " << util::AsString(s) << " sample" << endl;
         
@@ -1413,7 +3216,6 @@ void SuperkMC::FillSpecialTemplates(void)
                     fMCVariableTemplArray[sidx]      ->GetEntryRef(tgt_midx, itv-1, irv-1) = nev;
                     ////
                     
-                    
                     // Fill nonempty bin numbers.
                     if (nev < conv::kASmallNum) {
                         continue;
@@ -1463,10 +3265,160 @@ void SuperkMC::FillSpecialTemplates(void)
             
         }//i
         
-#endif// __USE_OSC_NUMU_MC_TEMPLATES__
+        
+#else // 2D templates
+        
+        // NEW 2D TEMPLATES
+        
+        cout << "SKMC/FillSpecialTemplates2D >> Filling osc nuebar templates for " << util::AsString(s) << " sample" << endl;
+        
+        SuperkMode_t src_modes_nuebar[n] = {  kSKmNuEBarCCQE,    kSKmNuEBarCC1pi,     kSKmNuEBarCCcoh,    kSKmNuEBarCCoth    };
+        SuperkMode_t tgt_modes_nuebar[n] = {  kSKmOscNuEBarCCQE, kSKmOscNuEBarCC1pi,  kSKmOscNuEBarCCcoh, kSKmOscNuEBarCCoth };
+        
+        for(int i=0; i<n; i++) {
+            
+            SuperkMode_t tgt_m = tgt_modes_nuebar[i];
+            int tgt_midx = arr_index->SuperkModeIdx(s,tgt_modes_nuebar[i]);
+            int src_midx = arr_index->SuperkModeIdx(s,src_modes_nuebar[i]);
+            
+            TH3D * src_ori = this->Template2D(s,src_modes_nuebar[i],kSKMCtOri);
+            TH3D * tgt_ori = this->Template2D(s,tgt_modes_nuebar[i],kSKMCtOri);
+            TH3D * src_nom = this->Template2D(s,src_modes_nuebar[i],kSKMCtNom);
+            TH3D * tgt_nom = this->Template2D(s,tgt_modes_nuebar[i],kSKMCtNom);
+            
+            // loop over Etrue
+            for(int it = 1; it <= src_ori->GetZaxis()->GetNbins(); it++) {
+                double Etrue = src_ori->GetZaxis()->GetBinCenter(it);
+                
+                // calc weight for weighting numu flux to nue flux
+                // (note: we have used `nominal' with different meaning in the flux and in the template enumerations.
+                // perhaps we should rename kFlxNominal -> kFlxOriginal, for consistency).
+                double flux_nue_ori  = fNuFlux->SuperkFlux (s, kPdgNuEBar,  Etrue, fNom   );
+                double flux_nue_nom  = fNuFlux->SuperkFlux (s, kPdgNuEBar,  Etrue, fExt );
+                double flux_numu_ori = fNuFlux->SuperkFlux (s, kPdgNuMuBar, Etrue, fNom   );
+                double flux_numu_nom = fNuFlux->SuperkFlux (s, kPdgNuMuBar, Etrue, fExt );
+                double wght_nue2numu_ori = (flux_nue_ori != 0) ? flux_numu_ori / flux_nue_ori : 0;
+                double wght_nue2numu_nom = (flux_nue_nom != 0) ? flux_numu_nom / flux_nue_nom : 0;
+                
+                // loop over Ereco
+                for(int ir = 1; ir <= src_ori->GetYaxis()->GetNbins(); ir++) {
+                    double Ereco = src_ori->GetYaxis()->GetBinCenter(ir);
+                    
+                    // loop over Q2
+                    for(int iq = 1; iq <= src_ori->GetXaxis()->GetNbins(); iq++) {
+                        double Q2 = src_ori->GetXaxis()->GetBinCenter(iq);
+                        
+                        // get nevents
+                        double nev_ori = src_ori-> GetBinContent(iq,ir,it);
+                        double nev_nom = src_nom-> GetBinContent(iq,ir,it);
+                        // set number of events
+                        double weighted_nev_ori = nev_ori*wght_nue2numu_ori;
+                        double weighted_nev_nom = nev_nom*wght_nue2numu_nom;
+                        tgt_ori->Fill(Q2,Ereco,Etrue, weighted_nev_ori);
+                        tgt_nom->Fill(Q2,Ereco,Etrue, weighted_nev_nom);
+                        
+                        double nev_tgt_ori = tgt_ori->GetBinContent(iq,ir,it);
+                        double nev_tgt_nom = tgt_nom->GetBinContent(iq,ir,it);
+                        
+                        fMCTemplArrayOri2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_ori;
+                        fMCTemplArrayNom2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                        fMCTemplArrayTun2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                        fMCTemplArrayFin2D[is]->GetEntryRef(tgt_midx, it-1, ir-1, iq-1) = nev_tgt_nom;
+                        
+                    }//iq
+                }//ir
+            }//it
+            //one more loop, for the variable binning scheme.
+            //just set the OscNuMu equal to the NuMu
+            //loop over variable Etrue
+            int i_ne_var = 0;
+            
+            for(int itv = 1; itv <= fMCVariableTempl2D[sidx][tgt_midx]->GetZaxis()->GetNbins(); itv++) {
+                double EtrueVarMin = util::VariableMCEtrueBinEdges(s,tgt_m)[itv-1] + kOneMeV;
+                double EtrueVarMax = util::VariableMCEtrueBinEdges(s,tgt_m)[itv]   - kOneMeV;
+                
+                int EtrueMinBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMin);
+                int EtrueMaxBin = 1 + TMath::BinarySearch(kNEtrueBins[sidx],util::EtrueBinEdges(s),EtrueVarMax);
+                
+                // loop over variable Ereco
+                for(int irv = 1; irv <= fMCVariableTempl2D[sidx][tgt_midx]->GetYaxis()->GetNbins(); irv++) {
+                    
+                    // loop over variable Q2
+                    for(int iqv = 1; iqv <= fMCVariableTempl2D[sidx][tgt_midx]->GetXaxis()->GetNbins(); iqv++) {
+                        
+                        double nev = 0;
+                        nev = fMCVariableTemplArray2D[sidx]->GetEntry(src_midx, itv-1, irv-1, iqv-1);
+                        fMCVariableTemplArray2D[sidx]->GetEntryRef(tgt_midx, itv-1, irv-1, iqv-1) = nev;
+                        ////
+                        
+                        // Fill nonempty bin numbers.
+                        if (nev < conv::kASmallNum) {
+                            continue;
+                        }
+                        
+                        fNonEmptyVariableBins2D[sidx][tgt_midx][i_ne_var] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                        
+                        double Q2VarMin = util::XsecQ2BinEdges(s,iqv-1) + kOneMeV;
+                        double Q2VarMax = util::XsecQ2BinEdges(s,iqv)   - kOneMeV;
+                        int Q2MinBin = 1 + TMath::BinarySearch(kNQ2Bins[sidx],util::Q2BinEdges(s),Q2VarMin);
+                        int Q2MaxBin = 1 + TMath::BinarySearch(kNQ2Bins[sidx],util::Q2BinEdges(s),Q2VarMax);
+                        
+                        double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+                        double ErecoVarMax = util::XsecErecoBinEdges(s,irv)   - kOneMeV;
+                        int ErecoMinBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMin);
+                        int ErecoMaxBin = 1 + TMath::BinarySearch(kNErecoBins[sidx],util::ErecoBinEdges(s),ErecoVarMax);
+                        
+                        int i_ne_fixed = 0;
+                        // loop over fixed Etrue to count n nonempty
+                        for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+                            // loop over fixed Ereco to count
+                            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+                                // loop over fixed Q2 to count
+                                for(int iq = Q2MinBin; iq <= Q2MaxBin; iq++) {
+                                    
+                                    double nevf = this->Template2D(s,tgt_m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                                    if (nevf < conv::kASmallNum) {
+                                        continue;
+                                    }
+                                    i_ne_fixed++;
+                                }//iq
+                            }//ir
+                        }//it
+                        fNNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var] = i_ne_fixed;
+                        fNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var] = new int[i_ne_fixed];
+                        
+                        i_ne_fixed = 0;
+                        // loop over fixed Etrue to count n nonempty
+                        for(int it = EtrueMinBin; it <= EtrueMaxBin; it++) {
+                            // loop over fixed Ereco to count
+                            for(int ir = ErecoMinBin; ir <= ErecoMaxBin; ir++) {
+                                // loop over fixed Q2 to count
+                                for(int iq = Q2MinBin; iq <= Q2MaxBin; iq++) {
+                                    
+                                    double nevf = this->Template2D(s,tgt_m,kSKMCtOri)->GetBinContent(iq,ir,it);
+                                    if (nevf < conv::kASmallNum) {
+                                        continue;
+                                    }
+                                    fNonEmptyFixedBins2D[sidx][tgt_midx][i_ne_var][i_ne_fixed] = conv::kBigIndex*conv::kBigIndex * ir + conv::kBigIndex * ir + it;
+                                    i_ne_fixed++;
+                                }//iq
+                            }//ir
+                        }//it
+                        i_ne_var++;
+                    }//iqv
+                }//irv
+            }//itv
+            fNNonEmptyVariableBins2D[sidx][tgt_midx] = i_ne_var;
+            assert(i_ne_var<kMaxVarBins2D);
+            
+        }//i
+        
+#endif // __USE_2D_TEMPLATES__
+        
+#endif// __USE_OLD_OSC_NUEBAR_MC_TEMPLATES__
         
         
-    }
+    } // end loop kns
 }
 //________________________________________________________________________________________
 void SuperkMC::CalculateMCStatError(void)
@@ -1548,7 +3500,6 @@ void SuperkMC::ApplyMCStatFluctationToTemplates(bool shape_only)
     }//s
     
 }
-
 //________________________________________________________________________________________
 TH1D* SuperkMC::CurrErecoSpectrum(SuperkSample_t s) const
 {
@@ -1653,6 +3604,165 @@ double* SuperkMC::CurrErecoSpectrumArray(SuperkSample_t s, SuperkMode_t m)
     return &(fMCErecoSpectrumArray[sidx]->GetEntryRef(midx,0));
 }
 //________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+TH2D* SuperkMC::CurrErecoVsQ2Spectrum(SuperkSample_t s) const                               
+{ 
+  int is = arr_index->SuperkSampleIdx(s);
+  int n_q2_bins    = kNQ2Bins[is];
+  int n_ereco_bins = kNErecoBins[is];
+  //int n_etrue_bins = kNEtrueBins[is];
+  typedef double (erq2type)  [n_ereco_bins][n_q2_bins];
+  const erq2type & arr     = *reinterpret_cast< const erq2type         * > ( CurrErecoVsQ2SpectrumArray(s) );
+  if (!arr) return 0;
+  //const double * arr = CurrErecoSpectrumArray(s,m);
+  //if (!arr) return 0;
+
+  string name  = Form("curr_erecoVsq2_%s"               , AsStringCompact(s).c_str() );
+  string title = Form("Current Ereco Vs Q2 Spectrum: %s", AsString(s).c_str() );
+
+  int nbins_q2    = util::NumQ2Bins(s);
+  int nbins_ereco = util::NumErecoBins(s);
+  TH2D * h = new TH2D(name.c_str(), title.c_str(), nbins_q2, util::Q2BinEdges(s), nbins_ereco, util::ErecoBinEdges(s) );
+  util::FormatErecoVsQ2Hist(h);
+  for (int iq = 0 ; iq < nbins_q2 ; iq++ ) {
+    for (int ir = 0 ; ir < nbins_ereco ; ir++ ) {
+      h->SetBinContent(iq+1,ir+1,arr[ir][iq]);
+    }
+  }
+  return h;
+}
+//________________________________________________________________________________________
+TH2D* SuperkMC::CurrErecoVsQ2Spectrum(SuperkSample_t s, SuperkMode_t m) const
+{
+    int is = arr_index->SuperkSampleIdx(s);
+    int n_q2_bins    = kNQ2Bins[is];
+    int n_ereco_bins = kNErecoBins[is];
+    //int n_etrue_bins = kNEtrueBins[is];
+    typedef double (erq2type)  [n_ereco_bins][n_q2_bins];
+    const erq2type & arr     = *reinterpret_cast< const erq2type         * > ( CurrErecoVsQ2SpectrumArray(s) );
+    if (!arr) return 0;
+    //const double * arr = CurrErecoSpectrumArray(s,m);
+    //if (!arr) return 0;
+    
+    string name  = Form("curr_erecoVsq2_%s_%s"               ,AsStringCompact(s).c_str(), AsStringCompact(m).c_str());
+    string title = Form("Current Ereco Vs Q2 Spectrum: %s %s",AsString(s).c_str()       , AsString(m).c_str()       );
+    
+    int nbins_q2    = util::NumQ2Bins(s);
+    int nbins_ereco = util::NumErecoBins(s);
+    TH2D * h = new TH2D(name.c_str(), title.c_str(), nbins_q2, util::Q2BinEdges(s), nbins_ereco, util::ErecoBinEdges(s) );
+    util::FormatErecoVsQ2Hist(h);
+    util::SetDefaultSKSpectrumStyle(s,m,h);
+    for (int iq = 0 ; iq < nbins_q2 ; iq++ ) {
+        for (int ir = 0 ; ir < nbins_ereco ; ir++ ) {
+            h->SetBinContent(iq+1,ir+1,arr[ir][iq]);
+        }
+    }
+    return h;
+}
+//________________________________________________________________________________________
+const double* SuperkMC::CurrErecoVsQ2SpectrumArray(SuperkSample_t s) const
+{
+    int sidx = arr_index->SuperkSampleIdx(s);
+    if(sidx == -1) {
+        return 0;
+    }
+    
+    return fMCErecoVsQ2SpectrumTotArray2D[sidx]->GetArray();
+}
+//________________________________________________________________________________________
+double* SuperkMC::CurrErecoVsQ2SpectrumArray(SuperkSample_t s)
+{
+    int sidx = arr_index->SuperkSampleIdx(s);
+    if(sidx == -1) {
+        return 0;
+    }
+    
+    return fMCErecoVsQ2SpectrumTotArray2D[sidx]->GetArray();
+}
+//________________________________________________________________________________________
+const VALORArray * SuperkMC::CurrSpectrumVArray2D(SuperkSample_t s) const
+{
+    int sidx = arr_index->SuperkSampleIdx(s);
+    if(sidx == -1) {
+        return 0;
+    }
+    
+    return fMCTemplArrayFin2D[sidx];
+}
+//________________________________________________________________________________________
+VALORArray * SuperkMC::CurrSpectrumVArray2D(SuperkSample_t s)
+{
+    int sidx = arr_index->SuperkSampleIdx(s);
+    if(sidx == -1) {
+        return 0;
+    }
+    
+    return fMCTemplArrayFin2D[sidx];
+}
+//________________________________________________________________________________________
+const double* SuperkMC::CurrErecoVsQ2SpectrumArray(SuperkSample_t s, SuperkMode_t m) const
+{
+    int sidx = arr_index->SuperkSampleIdx(s);
+    if(sidx == -1) {
+        return 0;
+    }
+    int midx = arr_index->SuperkModeIdx(s,m);
+    if(midx == -1) {
+        return 0;
+    }
+    
+    return &(fMCErecoVsQ2SpectrumArray[sidx]->GetEntryRef(midx,0,0));
+}
+//________________________________________________________________________________________
+double* SuperkMC::CurrErecoVsQ2SpectrumArray(SuperkSample_t s, SuperkMode_t m)
+{
+    int sidx = arr_index->SuperkSampleIdx(s);
+    if(sidx == -1) {
+        return 0;
+    }
+    int midx = arr_index->SuperkModeIdx(s,m);
+    if(midx == -1) {
+        return 0;
+    }
+    
+    return &(fMCErecoVsQ2SpectrumArray[sidx]->GetEntryRef(midx,0,0));
+}
+
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
 TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
 {
     int sidx = arr_index->SuperkSampleIdx(s);
@@ -1688,6 +3798,60 @@ TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t t
     return h;
 }
 //________________________________________________________________________________________
+
+
+
+
+
+// NEW 2D TEMPLATES
+TH3D * SuperkMC::Template2D(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
+{
+    int sidx = arr_index->SuperkSampleIdx(s);
+    if(sidx == -1) {
+        return 0;
+    }
+    int midx = arr_index->SuperkModeIdx(s,m);
+    if(midx == -1) {
+        return 0;
+    }
+    
+    TH3D * h = 0;
+    
+    switch(type) {
+        case (kSKMCtOri) :
+            h = fMCTemplOri2D[sidx][midx];
+            break;
+        case (kSKMCtPOT) :
+            h = fMCTemplPOT2D[sidx][midx];
+            break;
+        case (kSKMCtNom) :
+            h = fMCTemplNom2D[sidx][midx];
+            break;
+        case (kSKMCtRPA) :
+            h = fMCTemplRPA2D[sidx][midx];
+            break;
+        default:
+            return 0;
+    }
+    //std::cerr<<util::AsString(s)<<"\t"<<util::AsString(m)<<"\t"<<util::AsString(type)<<std::endl;
+    assert(h);
+    
+    return h;
+}
+//
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
 TH2D * SuperkMC::VarTemplate(SuperkSample_t s, SuperkMode_t m) const
 {
     int sidx = arr_index->SuperkSampleIdx(s);
@@ -1705,6 +3869,36 @@ TH2D * SuperkMC::VarTemplate(SuperkSample_t s, SuperkMode_t m) const
     
     return h;
 }
+//________________________________________________________________________________________
+
+
+
+
+// NEW 2D TEMPLATES
+
+TH3D * SuperkMC::VarTemplate2D(SuperkSample_t s, SuperkMode_t m) const
+{
+    int sidx = arr_index->SuperkSampleIdx(s);
+    if(sidx == -1) {
+        return 0;
+    }
+    int midx = arr_index->SuperkModeIdx(s,m);
+    if(midx == -1) {
+        return 0;
+    }
+    
+    TH3D * h = 0;
+    h = fMCVariableTempl2D[sidx][midx];
+    assert(h);
+    
+    return h;
+}
+//
+
+
+
+
+
 //________________________________________________________________________________________
 void SuperkMC::ApplyBANFFTuningToTemplates(void)
 {
@@ -1823,20 +4017,171 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 #endif
 }
 //________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
+{
+    // Take BANFF tuning into account (reweight MC to BANFF best-fit parameters)
+    // The weights returned by NuFlux::SuperkFluxFinTuningWght() are relative to the flux
+    // tuned based on external (NA61,...) data, so make sure that you run
+    // SuperkMC::ApplyFluxExtTuningToTemplates() before running this method.
+    // Source template type: kSKMCtNom
+    // Target template type: kSKMCtTun
+    //
+    
+#ifdef __show_init_mesg_info__
+    cout << "Exp/SKMC >> Applying BANFF 2D flux and cross-section tuning." << endl;
+#endif
+    
+    // loop over samples
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        // loop over sample modes
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            // consider template?
+            bool skip = this->SkipTemplate(m);
+            if(skip) continue;
+            
+#ifdef __show_banfftun_syst_var_wght_mesg_debug__
+            cout << "Exp/SKMC >> Applying BANFF 2D tuning to sample, mode: " << AsString(s) << "\t" << AsString(m) << endl;
+#endif
+            
+            //
+            // There are 600 50MeV Etrue energy bins in the templates, but
+            // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
+            // we can call NuXSec::FinTuningWght() and NuFlux::SuperkFluxFinTuningWght()
+            // a factor of 10 less often by looping over the kXsEtrueBinEdges.
+            // Note that the Ereco binning is identical between XSec and SuperkMC templates
+            //
+            for (int ivb = 0 ; ivb < fNNonEmptyVariableBins2D[is][im] ; ivb++ ) {
+                
+                // The array is built as following: fNonEmptyVariableBins2D = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                int itv = ( fNonEmptyVariableBins2D[is][im][ivb] % (conv::kBigIndex * conv::kBigIndex) ) % conv::kBigIndex;
+                int irv = ( ( fNonEmptyVariableBins2D[is][im][ivb] % (conv::kBigIndex * conv::kBigIndex) ) - itv ) / conv::kBigIndex;
+                int iqv = ( fNonEmptyVariableBins2D[is][im][ivb] - (conv::kBigIndex * irv + itv) ) / (conv::kBigIndex * conv::kBigIndex);
+                
+                // Get the min/max energy of the current variable flux Etrue bin
+                double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
+                
+                // Plug-in BANFF flux systematics
+                double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
+                
+                //skip if the big bin is empty
+                if(fMCVariableTemplArray2D[is]->GetEntryRef(im, itv-1, irv-1, iqv-1) <= 0) continue;
+                
+                double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+                double Q2VarMin    = util::XsecQ2BinEdges(s,iqv-1) +kOneMeV;
+                // Plug-in BANFF & other xsec systematics
+                double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin); // Apply systematics in Ereco and Q2
+                
+                // Combined weight
+                double wght = flux_wght * xsec_wght;
+                
+#ifdef BANFFTUNEISONE
+                wght = 1;
+#endif
+                for (int ifb = 0 ; ifb < fNNonEmptyFixedBins2D[is][im][ivb] ; ifb++ ) {
+                    
+                    // The array is built as following: fNonEmptyVariableBins2D[is][im][i_ne_var_2d] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                    int it = ( fNonEmptyFixedBins2D[is][im][ivb][ifb] % (conv::kBigIndex * conv::kBigIndex) ) % conv::kBigIndex;
+                    int ir = ( ( fNonEmptyFixedBins2D[is][im][ivb][ifb] % (conv::kBigIndex * conv::kBigIndex) ) - it ) / conv::kBigIndex;
+                    int iq = ( fNonEmptyFixedBins2D[is][im][ivb][ifb] - (conv::kBigIndex * ir + it) ) / (conv::kBigIndex * conv::kBigIndex);
+                    
+                    //check for empty bins
+                    if(fMCTemplArrayOri2D[is]->GetEntryRef(im, it-1, ir-1, iq-1) <= 0) continue;
+                    ////
+                    //double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+                    
+                    // get number of events in current bin of source MC template
+                    double nev = fMCTemplArrayNom2D[is]->GetEntry(im, it-1, ir-1, iq-1);
+                    
+                    nev = TMath::Max(0.,nev);
+                    double nev_tuned = nev * wght;
+                    
+#ifdef NO_EVENTS_CAN_BE_NEGATIVE
+                    if(nev_tuned < 0) {
+#ifdef __show_negative_events_mesg_debug__
+                        cout << "Exp/SKMC/ApplyBANFFTuningToTemplates2D >> set negative number of events " << nev_tuned
+                        << " to " << 0 << "\t" << " Ereco: " << Ereco << " Etrue: " << util::EtrueBinEdges(s,it-1) + kOneMeV << endl;
+#endif
+                        nev_tuned = 0;
+                    }
+#endif //NO_EVENTS_CAN_BE_NEGATIVE
+                    
+                    fMCTemplArrayTun2D[is]->GetEntryRef(im, it-1, ir-1, iq-1) = nev_tuned;
+                    fMCTemplArrayFin2D[is]->GetEntryRef(im, it-1, ir-1, iq-1) = nev_tuned;
+                    
+#ifdef __show_banfftun_syst_var_wght_mesg_debug__
+                    // Get the energy of the current bin
+                    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+                    double Ereco = util::ErecoBinEdges(s,ir-1) + kOneMeV;
+                    double Q2    = util::Q2BinEdges(s,iq-1)    + kOneMeV;
+                    if( flux_wght  != 1. ||
+                       xsec_wght  != 1. )
+                    {
+                        cout << "Exp/SKMC/SystVarWght >> "
+                        << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+                        << ", Q2 = " << Q2 << " GeV"
+                        << ", Ereco = " << Ereco << " GeV"
+                        << ", Etrue = " << Etrue << " GeV => Weights: "
+                        << ", Flux = "  << flux_wght
+                        << ", XSec = "  << xsec_wght
+                        << " (total = " << wght << ")"
+                        << " Nom events = " << nev
+                        << " New events = " << nev_tuned
+                        << endl;
+                    }
+#endif //__show_banfftun_syst_var_wght_mesg_debug__
+                    
+                }//ifb
+            }//ivb
+        }//im
+    }//is
+    
+#ifdef __show_init_mesg_info__
+    cout << "Exp/SKMC/ApplyBANFFTuningToTemplates2D >> Complete" << endl;
+#endif
+}
+
+//
+
+
+
+//________________________________________________________________________________________
 void SuperkMC::UpdateTemplates(void)
 {
 #ifdef __show_update_mesg_info__
     cout << "Exp/SKMC >> Updating MC templates...." << endl;
 #endif
     
+#ifndef __USE_2D_TEMPLATES__
     this->ApplySystematicsToTemplates   ();
     this->ApplyPhysHypothesisToTemplates();
+#else
+    this->ApplySystematicsToTemplates2D   ();
+    this->ApplyPhysHypothesisToTemplates2D();
+#endif
     
 #ifdef __INCLUDE_MC_STAT_FLUCTUATIONS__
 #ifdef __show_update_mesg_info__
     cout << "Exp/SKMC >> ** Note ** Fluctuating templates to take into account the effect of finite MC statistics...." << endl;
 #endif
-    this->ApplyMCStatFluctationToTemplates(true);
+#ifndef __USE_2D_TEMPLATES__
+    this->ApplyMCStatFluctationToTemplates(true); // Implemented only for 1D templates
+#endif
 #endif
 }
 //________________________________________________________________________________________
@@ -1846,6 +4191,22 @@ void SuperkMC::ApplySystematicsToTemplates(void)
     //
     this->ApplySystematicsToTemplates_Multiplicative   ();
 }
+//________________________________________________________________________________________
+
+
+
+
+// NEW 2D TEMPLATES
+void SuperkMC::ApplySystematicsToTemplates2D(void)
+{
+    // Apply systematic variations to MC templates
+    //
+    this->ApplySystematicsToTemplates_Multiplicative_2D   ();
+}
+//
+
+
+
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 {
@@ -1933,7 +4294,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
                 double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
                 
                 // if(s==kSKsFCFVMultiRingMuLike || s==kSKsFCFVMultiRingELike){
-                //   std::exit(1);
+                //   util::Die(1); return;
                 // }
                 
                 
@@ -2013,6 +4374,203 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #endif
 }
 //________________________________________________________________________________________
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
+{
+    // All multiplicative systematics are handled in the following loop.
+    //
+#ifdef __show_update_mesg_info__
+    cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
+#endif
+    
+    // Loop over samples
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        
+        bool is_rhc = util::IsRHCSample(s);
+        
+        double rpa_tweakval = fNuXSec->CurrentValue( is_rhc ? conv::kRHCNuisXSecRPA : conv::kNuisXSecRPA);
+        
+        bool relativisticRPA = (bool) rpa_tweakval;
+        assert ( fabs ( (double)relativisticRPA - rpa_tweakval) < conv::kASmallNum); // Check RPA was exactly 1 or 0
+        
+        //~ std::cerr<<util::AsString(s)<<"\t"<<is_rhc<<"\t"<<rpa_tweakval<<"\t"<<relativisticRPA<<std::endl;
+        
+        // Loop over sample modes
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            // Consider template?
+            bool skip = this->SkipTemplate(m);
+            if(skip) continue;
+            
+            bool applyRPAtoThisMode = false;
+            if (util::IsRHCSample(s)) applyRPAtoThisMode = fNuXSec->ApplySystToSKMode(conv::kRHCNuisXSecRPA, s, m) ;
+            else                      applyRPAtoThisMode = fNuXSec->ApplySystToSKMode(conv::kNuisXSecRPA   , s, m) ;
+            
+            const double * variableMCEtrueBinEdges = util::VariableMCEtrueBinEdges(s,m);
+            
+            // Recast VALORArray blocks so they can be used addressed like normal arrays (fast).
+            // Hard to read, so should only be used in code for which speed is essential.
+            int n_q2_bins    = kNQ2Bins[is];
+            int n_ereco_bins = kNErecoBins[is];
+            int n_etrue_bins = kNEtrueBins[is];
+            typedef double (templtype)[n_etrue_bins][n_ereco_bins][n_q2_bins];
+            const templtype & templTun = *reinterpret_cast<const templtype * >(&(fMCTemplArrayTun2D    [is]->GetEntryRef(im,0,0,0)));
+            const templtype & templRPA = *reinterpret_cast<const templtype * >(&(fMCTemplArrayRPAWght2D[is]->GetEntryRef(im,0,0,0)));
+            templtype       & templFin = *reinterpret_cast<templtype       * >(&(fMCTemplArrayFin2D    [is]->GetEntryRef(im,0,0,0)));
+            
+            //
+            // There are 600 50MeV Etrue energy bins in the templates, but
+            // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
+            // we can call NuXSec::FinTuningWght() and NuFlux::SuperkFluxFinTuningWght()
+            // a factor of 10 less often by looping over the kXsEtrueBinEdges.
+            // Note that the Ereco binning is identical between XSec and SuperkMC templates
+            //
+            // Loop over variable flux Etrue bins
+            int last_itv = -1;
+            double flux_wght = -1;
+            for (int ivb = 0 ; ivb < fNNonEmptyVariableBins2D[is][im] ; ivb++ ) {
+                
+                // The array is built as following: fNonEmptyVariableBins2D[is][im][i_ne_var_2d] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                int itv = ( fNonEmptyVariableBins2D[is][im][ivb] % (conv::kBigIndex * conv::kBigIndex) ) % conv::kBigIndex;
+                int irv = ( ( fNonEmptyVariableBins2D[is][im][ivb] % (conv::kBigIndex * conv::kBigIndex) ) - itv ) / conv::kBigIndex;
+                int iqv = ( fNonEmptyVariableBins2D[is][im][ivb] - (conv::kBigIndex * irv + itv) ) / (conv::kBigIndex * conv::kBigIndex);
+                
+                double EtrueVarMin = variableMCEtrueBinEdges[itv-1] + kOneMeV;
+                
+                // Plug-in BANFF flux systematics
+                if (itv!=last_itv) {
+                    flux_wght = fNuFlux->SuperkFluxSystWght(s,m,EtrueVarMin);
+                    last_itv = itv;
+                }
+                
+                //assert(fMCVariableTemplArray[is]->GetEntryRef(im, itv-1, irv-1) > 0);
+                
+                double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+                double Q2VarMin = util::XsecQ2BinEdges(s,iqv-1) + kOneMeV;
+                
+                // Plug-in BANFF & other xsec systematics
+                double xsec_wght = fNuXSec->SystWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin);
+                
+#ifdef XSECWEIGHTSAREONE
+                xsec_wght = 1;
+#endif
+                // Plug-in SK efficiency + FSI uncertainties
+                double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
+                
+                // if(s==kSKsFCFVMultiRingMuLike || s==kSKsFCFVMultiRingELike){
+                //   util::Die(1); return;;
+                // }
+                
+                
+                // Combined weight
+                double wght = skfsi_wght * flux_wght * xsec_wght;
+                
+#ifdef SYSTWEIGHTSAREONE
+                wght = 1;
+#endif
+                /*
+                 if(util::IsMEC(m))
+                 cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
+                 */
+                // loop over 50MeV Ereco
+                for (int ifb = 0 ; ifb < fNNonEmptyFixedBins2D[is][im][ivb] ; ifb++ ) {
+                    
+                    // The array is built as following: fNonEmptyVariableBins2D[is][im][i_ne_var_2d] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                    int it = ( fNonEmptyFixedBins2D[is][im][ivb][ifb] % (conv::kBigIndex * conv::kBigIndex) ) % conv::kBigIndex;
+                    int ir = ( ( fNonEmptyFixedBins2D[is][im][ivb][ifb] % (conv::kBigIndex * conv::kBigIndex) ) - it ) / conv::kBigIndex;
+                    int iq = ( fNonEmptyFixedBins2D[is][im][ivb][ifb] - (conv::kBigIndex * ir + it) ) / (conv::kBigIndex * conv::kBigIndex);
+                    
+                    //check for empty bins
+                    
+                    //assert(fMCTemplOri[is]->GetEntryRef(im, itv-1, irv-1) > 0);
+                    
+                    ////
+                    //double Etrue = util::ErecoBinEdges(s)(s,it-1) + kOneMeV;
+                    
+                    // get number of events in current bin of source MC template
+                    double nev = templTun[it-1][ir-1][iq-1];
+                    
+                    nev = TMath::Max(0.,nev);
+                    double nev_systm = nev * wght;
+#ifndef SYSTWEIGHTSAREONE
+                    if (relativisticRPA && applyRPAtoThisMode) {
+                        nev_systm *= templRPA[it-1][ir-1][iq-1]; // apply nonrel to rel RPA tune
+                    }
+#endif
+                    
+#ifdef __show_syst_var_wght_mesg_debug__
+                    // Get the energy of the current bin
+                    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+                    double Ereco = util::ErecoBinEdges(s,ir-1) + kOneMeV;
+                    double Q2    = util::Q2BinEdges(s,iq-1)    + kOneMeV;
+                    if( skfsi_wght != 1. ||
+                       flux_wght  != 1. ||
+                       xsec_wght  != 1. )
+                    {
+                        cout << "Exp/SKMC/SystVarWght >> "
+                        << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+                        << ", Q2 = " << Q2 << " GeV"
+                        << ", Ereco = " << Ereco << " GeV"
+                        << ", Etrue = " << Etrue << " GeV => Weights: "
+                        << "SK+FSI = "  << skfsi_wght
+                        << ", Flux = "  << flux_wght
+                        << ", XSec = "  << xsec_wght
+                        << ", RPA  = "  << templRPA[it-1][ir-1][iq-1]
+                        << " (total = " << wght << ")"
+                        << " Nom events = " << nev
+                        << " New events = " << nev_systm
+                        << endl;
+                    }
+#endif//__show_syst_var_wght_mesg_debug__
+                    
+#ifdef NO_EVENTS_CAN_BE_NEGATIVE
+                    if(nev_systm < 0) {
+#ifdef __show_negative_events_mesg_debug__
+                        cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
+                        << " to " << 0 << "\t" << " Ereco: " << Ereco << ", Q2: " << Q2 << endl;
+#endif//__show_negative_events_mesg_debug__
+                        nev_systm = 0;
+                    }
+#endif// NO_EVENTS_CAN_BE_NEGATIVE
+                    // Update target MC template
+                    
+                    templFin[it-1][ir-1][iq-1] = nev_systm;
+                    
+                }//ifb
+            }//ivb
+        }//im
+        
+    }//is
+    
+#ifdef __save_templates_debug__
+    this->NevDebug2D(kSKMCtSys, "mcnorm_fluxtuned_banfftuned_syst_multi");
+#endif
+}
+
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
 bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
 {
     //
@@ -2034,18 +4592,60 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
         double escale = fSKDetFSI->EnergyScale(s);
         
         double * events_per_bin = this->CurrErecoSpectrumArray(s);
-#ifdef USE_CONSTANT_ENERGY_SHIFT_ERROR
-        double eshift = fSKDetFSI->EnergyShift(s);
-        util::ApplyConstantEnergySystematic(s,events_per_bin,escale);
-#elif defined(USE_SHIFT_AND_SCALE_ERROR)
-        double eshift = fSKDetFSI->EnergyShift(s);
-        util::ApplyEnergyScaleShiftSystematic(s,events_per_bin,escale,eshift);
-#else
+        
         util::ApplyEnergyScaleSystematic(s,events_per_bin,escale);
-#endif
     }//is
     return applied_negevents_condition;
 }
+//________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum2D(void)
+{
+    //
+    // Now that all other systematics and physics hypotheses (that depend on Etrue) have been
+    // applied, apply the reconstructed energy scale systematic (that depends on Ereco).
+    // This systematic is applied by scaling the Ereco bin edges and assuming uniform
+    // distribution of events within each bin.
+#ifdef __show_update_mesg_info__
+    cout << "Exp/SKMC >> Applying non-multiplicative systematics to total spectrum" << endl;
+#endif
+    
+    bool applied_negevents_condition = false;
+    
+    // loop over samples
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        
+        double escale = fSKDetFSI->EnergyScale(s);
+        
+        double * events_per_bin = this->CurrErecoVsQ2SpectrumArray(s);
+        
+        util::ApplyEnergyScaleSystematic2D(s,events_per_bin,escale);
+    }//is
+    return applied_negevents_condition;
+}
+//
+
+
+
+
+
+
+
+
+
 //________________________________________________________________________________________
 void SuperkMC::ApplyPhysHypothesisToTemplates(void)
 {
@@ -2064,33 +4664,27 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     //
     if(hyp == kHypOsc3F)
     {
-        this->ApplyPhysHypothesisToTemplates_3fOsc();
+        this->ApplyPhysHypothesisToTemplates_3fOsc(false); // NEW 2D TEMPLATES
     }
     else if(hyp == kHypOsc3FBar)
     {
-        this->ApplyPhysHypothesisToTemplates_3fOscBar();
+        this->ApplyPhysHypothesisToTemplates_3fOscBar(false); // NEW 2D TEMPLATES
     }
-    
-    
-    
-    // NEW BETABAR
+    else if(hyp == kHypOsc3FBarDissap)
+    {
+      this->ApplyPhysHypothesisToTemplates_3fOscBarDissap(false); // NEW 2D TEMPLATES
+    }
     else if(hyp == kHypOsc3FBarNormBar)
     {
-        this->ApplyPhysHypothesisToTemplates_3fOscBarNormBar();
+        this->ApplyPhysHypothesisToTemplates_3fOscBarNormBar(false); // NEW 2D TEMPLATES
     }
-    //
-    
-    // NEW BETABAR 2
     else if(hyp == kHypOsc3FNormBar)
     {
-        this->ApplyPhysHypothesisToTemplates_3fOscNormBar();
+        this->ApplyPhysHypothesisToTemplates_3fOscNormBar(false); // NEW 2D TEMPLATES
     }
-    //
-    
-    
     else if(hyp == kHypOscSterile4F || hyp == kHypOscSterile5F)
     {
-        this->ApplyPhysHypothesisToTemplates_Sterile();
+        this->ApplyPhysHypothesisToTemplates_Sterile(false); // NEW 2D TEMPLATES
     }
     else if (hyp == kHypVoid) {
         // Do not apply PhysHypothesis
@@ -2098,7 +4692,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     else
     {
         std::cerr<<"SKMC/ApplyPhysHypothesisToTemplates >> Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
-        std::exit(-1);
+        util::Die(-1); return;
     }
     
 #ifdef __save_templates_debug__
@@ -2108,7 +4702,76 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     return;
 }
 //________________________________________________________________________________________
-void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+void SuperkMC::ApplyPhysHypothesisToTemplates2D(void)
+{
+    // Apply physics hypothesis {oscillation (2-flavour / 3-flavour), decay or
+    // decoherence} to MC templates
+    //
+    
+#ifdef __show_update_mesg_info__
+    cout << "Exp/SKMC >> Applying physics hypothesis" << endl;
+#endif
+    
+    PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
+    
+    //
+    // 3-flavour oscillations
+    //
+    if(hyp == kHypOsc3F)
+    {
+        this->ApplyPhysHypothesisToTemplates_3fOsc(true);
+    }
+    else if(hyp == kHypOsc3FBar)
+    {
+        this->ApplyPhysHypothesisToTemplates_3fOscBar(true);
+    }
+    else if(hyp == kHypOsc3FBarDissap)
+    {
+      this->ApplyPhysHypothesisToTemplates_3fOscBarDissap(true);
+    }
+    else if(hyp == kHypOsc3FBarNormBar)
+    {
+        this->ApplyPhysHypothesisToTemplates_3fOscBarNormBar(true);
+    }
+    else if(hyp == kHypOsc3FNormBar)
+    {
+        this->ApplyPhysHypothesisToTemplates_3fOscNormBar(true);
+    }
+    else if(hyp == kHypOscSterile4F || hyp == kHypOscSterile5F)
+    {
+        this->ApplyPhysHypothesisToTemplates_Sterile(true);
+    }
+    else if (hyp == kHypVoid) {
+        // Do not apply PhysHypothesis
+    }
+    else
+    {
+        std::cerr<<"SKMC/ApplyPhysHypothesisToTemplates2D >> Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
+        util::Die(-1); return;
+    }
+    
+#ifdef __save_templates_debug__
+    this->NevDebug2D(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_phys");
+#endif
+    
+    return;
+}
+//
+
+
+
+//________________________________________________________________________________________
+//void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
+void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) // NEW 2D TEMPLATES
 {
 #ifndef __ALLOW_DIFFERING_HIERARCHIES__
     assert(Opt::Instance()->gMassHierarchyAssumed==fNuOsc3Flavour.GetMassHierarchy());
@@ -2173,7 +4836,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
         << "\n oscillation mixing params: " << util::AsString(omp)
         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
         << endl;
-        std::exit(1);
+        util::Die(1); return;
     }
     
     // loop over samples
@@ -2181,6 +4844,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
         
+        int n_q2_bins    = kNQ2Bins[is]; // NEW 2D TEMPLATES
         int n_ereco_bins = kNErecoBins[is];
         int n_etrue_bins = kNEtrueBins[is];
         
@@ -2231,45 +4895,101 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
             cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
 #endif
             
-            // loop over modes
-            for(int im=0; im < knm; im++) {
-                SuperkMode_t m = kSKReactionModes[is][im];
-                if(m == kSKmUndefined) continue;
-                double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
-                // osc. probability
-                double posc = 1.;
-                if(kIsCC[is][im])
-                {
-                    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-                    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-                    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
-                    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-                    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-                    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-                    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-                    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-                }
-                // loop over Ereco
-                for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-                    // number of events in (Ereco,Etrue) bin (systematics applied)
-                    double nev = 0;
-                    
-                    nev = array[ir-1];
-                    ////
-                    
+            
+            
+            
+            // NEW 2D TEMPLATES
+            
+            if(Use2Dtemplates){ // 2D templates
+                
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    //double * array = &(fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,0,0));
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // loop over Q2
+                        for(int iq = 1; iq <= n_q2_bins ; iq++) {
+                            
+                            // number of events in (Q2,Ereco,Etrue) bin (systematics applied)
+                            double nev = 0;
+                            //nev = array[ir-1][iq-1];
+                            nev = fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1);
+                            ////
+                            
 #ifdef PHYSHYPWEIGHTSAREONE
-                    posc = 1;
+                            posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-                    if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+                            if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
 #endif
 #endif
-                    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-                    double nev_osc = nev * posc;
-                    
-                    array[ir-1] = nev_osc;
-                    ////
-                }//ir
-            }//im
+                            // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+                            double nev_osc = nev * posc;
+                            //array[ir-1][iq-1] = nev_osc;
+                            fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1) = nev_osc;
+                            ////
+                        }//iq
+                    }//ir
+                }//im
+                
+            }
+            else{ // 1D templates
+                
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // number of events in (Ereco,Etrue) bin (systematics applied)
+                        double nev = 0;
+                        nev = array[ir-1];
+                        ////
+                        
+#ifdef PHYSHYPWEIGHTSAREONE
+                        posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+                        if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+#endif
+#endif
+                        // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+                        double nev_osc = nev * posc;
+                        array[ir-1] = nev_osc;
+                        ////
+                    }//ir
+                }//im
+                
+            } // end if Use2Dtemplates)
+            //
+            
         }//it
     }//is
     
@@ -2277,7 +4997,8 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(void)
 }
 
 //________________________________________________________________________________________
-void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
+//void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
+void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(const bool Use2Dtemplates) // NEW 2D TEMPLATES
 {
     //
     // 3-flavour oscillations, separate nu and nubar
@@ -2358,7 +5079,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
         << "\n oscillation mixing params: " << util::AsString(omp)
         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
         << endl;
-        std::exit(1);
+        util::Die(1); return;
     }
     
     // loop over samples
@@ -2366,6 +5087,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
         
+        int n_q2_bins    = kNQ2Bins[is]; // NEW 2D TEMPLATES
         int n_ereco_bins = kNErecoBins[is];
         int n_etrue_bins = kNEtrueBins[is];
         
@@ -2416,65 +5138,344 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(void)
             cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
 #endif
             
-            // loop over modes
-            for(int im=0; im < knm; im++) {
-                SuperkMode_t m = kSKReactionModes[is][im];
-                if(m == kSKmUndefined) continue;
-                double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
-                // osc. probability
-                double posc = 1.;
-                if(kIsCC[is][im])
-                {
-                    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-                    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-                    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
-                    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-                    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-                    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-                    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-                    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-                }
-                // loop over Ereco
-                for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-                    // number of events in (Ereco,Etrue) bin (systematics applied)
-                    double nev = 0;
-                    
-                    nev = array[ir-1];
-                    ////
-                    
+            
+            
+            // NEW 2D TEMPLATES
+            
+            if(Use2Dtemplates){ // 2D templates
+                
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    //double * array = &(fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,0,0));
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // loop over Q2
+                        for(int iq = 1; iq <= n_q2_bins ; iq++) {
+                            // number of events in (Q2,Ereco,Etrue) bin (systematics applied)
+                            double nev = 0;
+                            //nev = array[ir-1][iq-1];
+                            nev = fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1);
+                            ////
+                            
 #ifdef PHYSHYPWEIGHTSAREONE
-                    posc = 1;
+                            posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-                    if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+                            if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
 #endif
 #endif
-                    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-                    double nev_osc = nev * posc;
-                    
-                    array[ir-1] = nev_osc;
-                    ////
-                }//ir
-            }//im
+                            // number of events in (Q2,Ereco,Etrue) bin (oscillations + systematics applied)
+                            double nev_osc = nev * posc;
+                            //array[ir-1][iq-1] = nev_osc;
+                            fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1) = nev_osc;
+                            ////
+                        }//iq
+                    }//ir
+                }//im
+                
+            }
+            else{ // 1D templates
+                
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // number of events in (Ereco,Etrue) bin (systematics applied)
+                        double nev = 0;
+                        nev = array[ir-1];
+                        ////
+                        
+#ifdef PHYSHYPWEIGHTSAREONE
+                        posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+                        if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+#endif
+#endif
+                        // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+                        double nev_osc = nev * posc;
+                        array[ir-1] = nev_osc;
+                        ////
+                    }//ir
+                }//im
+                
+            } // end if Use2DTemplates
+            //
+            
         }//it
     }//is
     return;
 }
-
-
-
-
-
-
-
-// NEW BETABAR
-
 //________________________________________________________________________________________
-void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void)
+void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarDissap(const bool Use2Dtemplates) // NEW 2D TEMPLATES
+{
+  //
+  // 3-flavour oscillations, separate nu and nubar
+  //
+  
+  // set oscillation parameters to the oscillation probability calculation code
+  double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
+  double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
+  double mixing23 = fPhysHypothesis.CurrValue(kPhypMixing23);
+  //double dm12sq   = fPhysHypothesis.CurrValue(kPhypDm12sq);
+  //double dm23sq   = fPhysHypothesis.CurrValue(kPhypDm23sq);
+  double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
+  double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
+  double delta_cp = fPhysHypothesis.CurrValue(kPhypCPV    );
+  
+  double mixing23bar = fPhysHypothesis.CurrValue(kPhypMixing23Bar);
+  double Dmsqbar     = fPhysHypothesis.CurrValue(kPhypDm23sqBar);
+  
+#ifdef __show_hypothesis__
+  cout << "**  Exp/SKMC >> " << fPhysHypothesis;
+#endif
+  NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
+  NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
+  
+  double p_osc[3][3];
+  double p_osc_bar[3][3];
+  
+  // mixing params are: sin^2(2*theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|
+  if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour   .SetOscParameters(mixing12,   mixing13,   mixing23,   dmsq   ,Dmsq   ,delta_cp);
+    fNuOsc3FlavourBar.SetOscParameters(mixing12,mixing13,mixing23bar,dmsq,Dmsqbar,delta_cp);
+  }
+  // mixing params are: sin^2(theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{23}|
+  else if(dmsqscheme == kNuDmsq12andAbs23 && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour   .SetOscParametersSinSqTAll(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersSinSqTAll(mixing12,mixing13,mixing23bar,dmsq,Dmsqbar,delta_cp);
+  }
+  // mixing params are: sin^2(2*theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|
+  else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour   .SetOscParametersSSq2TDmAtmSol(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersSSq2TDmAtmSol(mixing12,mixing13,mixing23bar,dmsq,Dmsqbar,delta_cp);
+  }
+  // mixing params are: sin^2(theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |m^2_{3} - (m^2_{1} + m^2_{1})/2|
+  else if(dmsqscheme == kNuDmsqFogliLisi && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour   .SetOscParametersDmsqAtmSol(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersDmsqAtmSol(mixing12,mixing13,mixing23bar,dmsq,Dmsqbar,delta_cp);
+  }
+  // mixing paras are: sin^2(2*theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
+  else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsq2Theta)
+  {
+    fNuOsc3Flavour   .SetOscParametersSSq2TDmsq13(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersSSq2TDmsq13(mixing12,mixing13,mixing23bar,dmsq,Dmsqbar,delta_cp);
+  }
+  // mixing paras are: sin^2(theta)
+  // independent squared mass splittings are: dm^2 = Dm^2_{12}, Dm^2 = |Dm^2_{31}|
+  else if(dmsqscheme == kNuDmsq12andAbs31 && omp == kNuMixSinsqTheta)
+  {
+    fNuOsc3Flavour   .SetOscParametersDmsq13(mixing12,   mixing13,   mixing23,   dmsq,   Dmsq,   delta_cp);
+    fNuOsc3FlavourBar.SetOscParametersDmsq13(mixing12,mixing13,mixing23bar,dmsq,Dmsqbar,delta_cp);
+  }
+  //unknown
+  else {
+    cerr << "**  Exp/SKMC >> Can't handle choice of "
+    << "\n oscillation mixing params: " << util::AsString(omp)
+    << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
+    << endl;
+    util::Die(1); return;
+  }
+  
+  // loop over samples
+  for(int is = 0; is < kns; is++) {
+    SuperkSample_t s = kSKSamples[is];
+    if(s == kSKsUndefined) continue;
+    
+    int n_q2_bins    = kNQ2Bins[is]; // NEW 2D TEMPLATES
+    int n_ereco_bins = kNErecoBins[is];
+    int n_etrue_bins = kNEtrueBins[is];
+    
+    //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
+    //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis();
+    //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis();
+    
+    // loop over Etrue
+    for(int it = 1; it <= n_etrue_bins; it++) {
+      
+      // calculate oscillation probabilities (incl. matter effects) for the current Etrue value
+      double Etrue = (util::EtrueBinEdges(s,it-1) + util::EtrueBinEdges(s,it) ) / 2;
+      
+      // skip unnecessary calculations
+      //bool bin_is_not_empty = this->IsThereAnEvent(s, Etrue);
+      //if(!bin_is_not_empty) continue;
+      
+      fNuOsc3Flavour   .CalcMatterOscProbAll(false, Etrue, p_osc    );
+      fNuOsc3FlavourBar.CalcMatterOscProbAll(true , Etrue, p_osc_bar);
+      double p_numu_numu       = p_osc    [1][1];
+      double p_numubar_numubar = p_osc_bar[1][1];
+      double p_nue_nue         = p_osc    [0][0];
+      double p_nuebar_nuebar   = p_osc_bar[0][0];
+      double p_numu_nue        = p_osc    [1][0];
+      double p_numubar_nuebar  = p_osc_bar[1][0];
+      double p_nue_numu        = p_osc    [0][1];
+      double p_nuebar_numubar  = p_osc_bar[0][1];
+      
+      // double p_numu_numu       = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuMu,    conv::kPdgNuMu,    Etrue);
+      // double p_nue_nue         = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuE,     conv::kPdgNuE,     Etrue);
+      // double p_numu_nue        = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuMu,    conv::kPdgNuE,     Etrue);
+      // double p_nue_numu        = fNuOsc3Flavour.CalcMatterOscProb   (conv::kPdgNuE,    conv::kPdgNuMu,     Etrue);
+      // double p_numubar_numubar = fNuOsc3FlavourBar.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuMuBar, Etrue);
+      // double p_nuebar_nuebar   = fNuOsc3FlavourBar.CalcMatterOscProb(conv::kPdgNuEBar,  conv::kPdgNuEBar,  Etrue);
+      // double p_numubar_nuebar  = fNuOsc3FlavourBar.CalcMatterOscProb(conv::kPdgNuMuBar, conv::kPdgNuEBar,  Etrue);
+      // double p_nuebar_numubar  = fNuOsc3FlavourBar.CalcMatterOscProb(conv::kPdgNuEBar, conv::kPdgNuMuBar,  Etrue);
+      
+      
+#ifdef __show_hypothesis_probabilities__
+      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
+      cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
+      cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
+      cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
+      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
+      cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
+#endif
+      
+      
+      
+      // NEW 2D TEMPLATES
+      
+      if(Use2Dtemplates){ // 2D templates
+        
+        // loop over modes
+        for(int im=0; im < knm; im++) {
+          SuperkMode_t m = kSKReactionModes[is][im];
+          if(m == kSKmUndefined) continue;
+          //double * array = &(fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,0,0));
+          // osc. probability
+          double posc = 1.;
+          if(kIsCC[is][im])
+          {
+            if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+            else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+            else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+            else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+            else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+            else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+            else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+            else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+          }
+          // loop over Ereco
+          for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+            // loop over Q2
+            for(int iq = 1; iq <= n_q2_bins ; iq++) {
+              // number of events in (Q2,Ereco,Etrue) bin (systematics applied)
+              double nev = 0;
+              //nev = array[ir-1][iq-1];
+              nev = fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1);
+              ////
+              
+#ifdef PHYSHYPWEIGHTSAREONE
+              posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+              if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+#endif
+#endif
+              // number of events in (Q2,Ereco,Etrue) bin (oscillations + systematics applied)
+              double nev_osc = nev * posc;
+              //array[ir-1][iq-1] = nev_osc;
+              fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1) = nev_osc;
+              ////
+            }//iq
+          }//ir
+        }//im
+        
+      }
+      else{ // 1D templates
+        
+        // loop over modes
+        for(int im=0; im < knm; im++) {
+          SuperkMode_t m = kSKReactionModes[is][im];
+          if(m == kSKmUndefined) continue;
+          double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
+          // osc. probability
+          double posc = 1.;
+          if(kIsCC[is][im])
+          {
+            if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+            else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+            else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+            else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+            else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+            else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+            else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+            else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+          }
+          // loop over Ereco
+          for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+            // number of events in (Ereco,Etrue) bin (systematics applied)
+            double nev = 0;
+            nev = array[ir-1];
+            ////
+            
+#ifdef PHYSHYPWEIGHTSAREONE
+            posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+            if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+#endif
+#endif
+            // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+            double nev_osc = nev * posc;
+            array[ir-1] = nev_osc;
+            ////
+          }//ir
+        }//im
+        
+      } // end if Use2DTemplates
+        //
+      
+    }//it
+  }//is
+  return;
+}
+//________________________________________________________________________________________
+//void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void)
+void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(const bool Use2Dtemplates) // NEW 2D TEMPLATES
 {
     //
     // 3-flavour oscillations, separate nu and nubar
     //
-    
+  
     // set oscillation parameters to the oscillation probability calculation code
     double mixing12 = fPhysHypothesis.CurrValue(kPhypMixing12);
     double mixing13 = fPhysHypothesis.CurrValue(kPhypMixing13);
@@ -2484,7 +5485,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void)
     double dmsq     = fPhysHypothesis.CurrValue(kPhypDm12sq);
     double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
     double delta_cp = fPhysHypothesis.CurrValue(kPhypCPV    );
-    
+  
     double mixing12bar = fPhysHypothesis.CurrValue(kPhypMixing12Bar);
     double mixing13bar = fPhysHypothesis.CurrValue(kPhypMixing13Bar);
     double mixing23bar = fPhysHypothesis.CurrValue(kPhypMixing23Bar);
@@ -2553,7 +5554,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void)
         << "\n oscillation mixing params: " << util::AsString(omp)
         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
         << endl;
-        std::exit(1);
+        util::Die(1); return;
     }
     
     // loop over samples
@@ -2561,6 +5562,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void)
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
         
+        int n_q2_bins    = kNQ2Bins[is]; // NEW 2D TEMPLATES
         int n_ereco_bins = kNErecoBins[is];
         int n_etrue_bins = kNEtrueBins[is];
         
@@ -2611,66 +5613,114 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(void)
             cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
 #endif
             
-            // loop over modes
-            for(int im=0; im < knm; im++) {
-                SuperkMode_t m = kSKReactionModes[is][im];
-                if(m == kSKmUndefined) continue;
-                double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
-                // osc. probability
-                double posc = 1.;
-                if(kIsCC[is][im])
-                {
-                    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-                    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-                    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
-                    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-                    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-                    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-                    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-                    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-                }
-                
-                if(util::IsOscNuEBar(m)) posc *= betabar;   // Enable or disable nuebar appearance
-                
-                // loop over Ereco
-                for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-                    // number of events in (Ereco,Etrue) bin (systematics applied)
-                    double nev = 0;
+            
+            
+            
+            
+            // NEW 2D TEMPLATES
+            
+            if(Use2Dtemplates){ // 2D templates
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    //double * array = &(fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,0,0));
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
                     
-                    nev = array[ir-1];
-                    ////
+                    if(util::IsOscNuEBar(m)) posc *= betabar;   // Enable or disable nuebar appearance
                     
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // loop over Q2
+                        for(int iq = 1; iq <= n_q2_bins ; iq++) {
+                            // number of events in (Q2,Ereco,Etrue) bin (systematics applied)
+                            double nev = 0;
+                            //nev = array[ir-1][iq-1];
+                            nev = fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1);
+                            ////
+                            
 #ifdef PHYSHYPWEIGHTSAREONE
-                    posc = 1;
+                            posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-                    if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+                            if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
 #endif
 #endif
-                    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-                    double nev_osc = nev * posc;
+                            // number of events in (Q2,Ereco,Etrue) bin (oscillations + systematics applied)
+                            double nev_osc = nev * posc;
+                            //array[ir-1][iq-1] = nev_osc;
+                            fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1) = nev_osc;
+                            ////
+                        }//iq
+                    }//ir
+                }//im
+                
+            }
+            else{ // 1D templates
+                
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
                     
+                    if(util::IsOscNuEBar(m)) posc *= betabar;   // Enable or disable nuebar appearance
                     
-                    array[ir-1] = nev_osc;
-                    ////
-                }//ir
-            }//im
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // number of events in (Ereco,Etrue) bin (systematics applied)
+                        double nev = 0;
+                        nev = array[ir-1];
+                        ////
+                        
+#ifdef PHYSHYPWEIGHTSAREONE
+                        posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+                        if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+#endif
+#endif
+                        // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+                        double nev_osc = nev * posc;
+                        array[ir-1] = nev_osc;
+                        ////
+                    }//ir
+                }//im
+            } // end if Use2Dtemplates
+            
+            //
+            
+            
         }//it
     }//is
     return;
 }
-//
-
-
-
-
-
-
-
-
-// NEW BETABAR 2
-
 //________________________________________________________________________________________
-void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(void)
+//void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(void)
+void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(const bool Use2Dtemplates) // NEW 2D TEMPLATES
 {
     //
     // 3-flavour oscillations + norm nuebar
@@ -2739,7 +5789,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(void)
         << "\n oscillation mixing params: " << util::AsString(omp)
         << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
         << endl;
-        std::exit(1);
+        util::Die(1); return;
     }
     
     // loop over samples
@@ -2747,6 +5797,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(void)
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
         
+        int n_q2_bins    = kNQ2Bins[is]; // NEW 2D TEMPLATES
         int n_ereco_bins = kNErecoBins[is];
         int n_etrue_bins = kNEtrueBins[is];
         
@@ -2797,64 +5848,111 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(void)
             cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
 #endif
             
-            // loop over modes
-            for(int im=0; im < knm; im++) {
-                SuperkMode_t m = kSKReactionModes[is][im];
-                if(m == kSKmUndefined) continue;
-                double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
-                // osc. probability
-                double posc = 1.;
-                if(kIsCC[is][im])
-                {
-                    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-                    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-                    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
-                    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-                    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-                    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-                    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-                    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-                }
+            
+            
+            // NEW 2D TEMPLATES
+            if(Use2Dtemplates){ // 2D templates
                 
-                if(util::IsOscNuEBar(m)) posc *= betabar;   // Enable or disable nuebar appearance
-                
-                // loop over Ereco
-                for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-                    // number of events in (Ereco,Etrue) bin (systematics applied)
-                    double nev = 0;
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    //double * array = &(fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,0,0));
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
                     
-                    nev = array[ir-1];
-                    ////
+                    if(util::IsOscNuEBar(m)) posc *= betabar;   // Enable or disable nuebar appearance
                     
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // loop over Q2
+                        for(int iq = 1; iq <= n_q2_bins ; iq++) {
+                            // number of events in (Q2,Ereco,Etrue) bin (systematics applied)
+                            double nev = 0;
+                            //nev = array[ir-1][iq-1];
+                            nev = fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1);
+                            ////
+                            
 #ifdef PHYSHYPWEIGHTSAREONE
-                    posc = 1;
+                            posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-                    if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+                            if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
 #endif
 #endif
-                    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-                    double nev_osc = nev * posc;
+                            // number of events in (Q2,Ereco,Etrue) bin (oscillations + systematics applied)
+                            double nev_osc = nev * posc;
+                            //array[ir-1][iq-1] = nev_osc;
+                            fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1) = nev_osc;
+                            ////
+                        }//iq
+                    }//ir
+                }//im
+                
+            }
+            else{ // 1D templates
+                
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    double * array = &(fMCTemplArrayFin[is]->GetEntryRef(im,it-1,0));
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
                     
+                    if(util::IsOscNuEBar(m)) posc *= betabar;   // Enable or disable nuebar appearance
                     
-                    array[ir-1] = nev_osc;
-                    ////
-                }//ir
-            }//im
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // number of events in (Ereco,Etrue) bin (systematics applied)
+                        double nev = 0;
+                        nev = array[ir-1];
+                        ////
+                        
+#ifdef PHYSHYPWEIGHTSAREONE
+                        posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+                        if(util::IsOscNuE(m) || util::IsOscNuEBar(m) || util::IsOscNuMuBar(m) || util::IsOscNuMu(m) ) posc = 0;
+#endif
+#endif
+                        // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+                        double nev_osc = nev * posc;
+                        array[ir-1] = nev_osc;
+                        ////
+                    }//ir
+                }//im
+            } // end if Use2Dtemplates
+            
+            //
+            
         }//it
     }//is
     return;
 }
-//
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
-void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
+//void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
+void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(const bool Use2Dtemplates) // NEW 2D TEMPLATES
 {
 #ifndef __ALLOW_DIFFERING_HIERARCHIES__
     assert(Opt::Instance()->gMassHierarchyAssumed==fNuOscSterile.GetMassHierarchy());
@@ -2911,14 +6009,14 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
             cerr << "**  Exp/SKMC >> Can't handle choice of "
             << "\n octant: " << util::AsString(Opt::Instance()->gOscOctantChoice)
             << endl;
-            std::exit(1);
+            util::Die(1); return;
         }
     }
     else {
         cerr << "**  Exp/SKMC >> Can't handle choice of "
         << "\n oscillation mixing params: " << util::AsString(omp)
         << endl;
-        std::exit(1);
+        util::Die(1); return;
     }
     
     // May need to put some decision on mass splitting convention here.
@@ -2932,6 +6030,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
         
+        int n_q2_bins    = kNQ2Bins[is]; // NEW 2D TEMPLATES
         int n_ereco_bins = kNErecoBins[is];
         int n_etrue_bins = kNEtrueBins[is];
         
@@ -2986,59 +6085,127 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(void)
             
 #endif
             
-            // loop over modes
-            for(int im=0; im < knm; im++) {
-                SuperkMode_t m = kSKReactionModes[is][im];
-                if(m == kSKmUndefined) continue;
-                // osc. probability
-                double posc = 1.;
-                if(kIsCC[is][im])
-                {
-                    if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
-                    else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
-                    else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
-                    else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
-                    else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
-                    else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
-                    else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
-                    else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
-                }
-                else { // NC oscillations to sterile
-                    if (util::IsNuMu(m)) {
-                        posc = p_numu_nc;
-                    }
-                    else if (util::IsNuMuBar(m)) {
-                        posc = p_numubar_nc;
-                    }
-                    else if (util::IsNuE(m)) {
-                        posc = p_nue_nc;
-                    }
-                    else if (util::IsNuEBar(m)) {
-                        posc = p_nuebar_nc;
-                    }
-                }
+            
+            
+            // NEW 2D TEMPLATES
+            
+            if(Use2Dtemplates){ // 2D templates
                 
-                // loop over Ereco
-                for(int ir = 1; ir <= n_ereco_bins ; ir++) {
-                    // number of events in (Ereco,Etrue) bin (systematics applied)
-                    double nev = 0;
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
+                    else { // NC oscillations to sterile
+                        if (util::IsNuMu(m)) {
+                            posc = p_numu_nc;
+                        }
+                        else if (util::IsNuMuBar(m)) {
+                            posc = p_numubar_nc;
+                        }
+                        else if (util::IsNuE(m)) {
+                            posc = p_nue_nc;
+                        }
+                        else if (util::IsNuEBar(m)) {
+                            posc = p_nuebar_nc;
+                        }
+                    }
                     
-                    nev = fMCTemplArrayFin[is]->GetEntryRef(im, it-1, ir-1);
-                    ////
-                    
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // loop over Q2
+                        for(int iq = 1; iq <= n_q2_bins ; iq++) {
+                            // number of events in (Q2,Ereco,Etrue) bin (systematics applied)
+                            double nev = 0;
+                            nev = fMCTemplArrayFin2D[is]->GetEntryRef(im, it-1, ir-1, iq-1);
+                            ////
+                            
 #ifdef PHYSHYPWEIGHTSAREONE
-                    posc = 1;
+                            posc = 1;
 #ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
-                    if(util::IsOscNuE(m)) posc = 0;
+                            if(util::IsOscNuE(m)) posc = 0;
 #endif
 #endif
-                    // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
-                    double nev_osc = nev * posc;
+                            // number of events in (Q2,Ereco,Etrue) bin (oscillations + systematics applied)
+                            double nev_osc = nev * posc;
+                            fMCTemplArrayFin2D[is]->GetEntryRef(im, it-1, ir-1, iq-1) = nev_osc;
+                            ////
+                        }//iq
+                    }//ir
+                }//im
+                
+            }
+            else{ // 1D templates
+                
+                // loop over modes
+                for(int im=0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    // osc. probability
+                    double posc = 1.;
+                    if(kIsCC[is][im])
+                    {
+                        if     ( util::IsNuMu(m)      ) { posc = p_numu_numu;       }
+                        else if( util::IsNuMuBar(m)   ) { posc = p_numubar_numubar; }
+                        else if( util::IsNuE(m)       ) { posc = p_nue_nue;         }
+                        else if( util::IsNuEBar(m)    ) { posc = p_nuebar_nuebar;   }
+                        else if( util::IsOscNuMu(m)   ) { posc = p_nue_numu;        }
+                        else if( util::IsOscNuMuBar(m)) { posc = p_nuebar_numubar;  }
+                        else if( util::IsOscNuE(m)    ) { posc = p_numu_nue;        }
+                        else if( util::IsOscNuEBar(m) ) { posc = p_numubar_nuebar;  }
+                    }
+                    else { // NC oscillations to sterile
+                        if (util::IsNuMu(m)) {
+                            posc = p_numu_nc;
+                        }
+                        else if (util::IsNuMuBar(m)) {
+                            posc = p_numubar_nc;
+                        }
+                        else if (util::IsNuE(m)) {
+                            posc = p_nue_nc;
+                        }
+                        else if (util::IsNuEBar(m)) {
+                            posc = p_nuebar_nc;
+                        }
+                    }
                     
-                    fMCTemplArrayFin[is]->GetEntryRef(im, it-1, ir-1) = nev_osc;
-                    ////
-                }//ir
-            }//im
+                    // loop over Ereco
+                    for(int ir = 1; ir <= n_ereco_bins ; ir++) {
+                        // number of events in (Ereco,Etrue) bin (systematics applied)
+                        double nev = 0;
+                        
+                        nev = fMCTemplArrayFin[is]->GetEntryRef(im, it-1, ir-1);
+                        ////
+                        
+#ifdef PHYSHYPWEIGHTSAREONE
+                        posc = 1;
+#ifdef PHYSHYPWEIGHTAREONEANDNUEISZERO
+                        if(util::IsOscNuE(m)) posc = 0;
+#endif
+#endif
+                        // number of events in (Ereco,Etrue) bin (oscillations + systematics applied)
+                        double nev_osc = nev * posc;
+                        
+                        fMCTemplArrayFin[is]->GetEntryRef(im, it-1, ir-1) = nev_osc;
+                        ////
+                    }//ir
+                }//im
+            } // end if Use2Dtemplates
+            
+            //
+            
         }//it
     }//is
     return;
@@ -3251,6 +6418,94 @@ bool SuperkMC::UpdateErecoSpectra(void)
     
     return applied_negevents_condition;
 }
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+bool SuperkMC::UpdateErecoVsQ2Spectra(void)
+{
+    bool applied_negevents_condition = false;
+    // loop over samples
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        
+        int n_q2_bins    = kNQ2Bins[is];
+        int n_ereco_bins = kNErecoBins[is];
+        int n_etrue_bins = kNEtrueBins[is];
+        
+        // Recast VALORArray blocks so they can be used addressed like normal arrays (fast).
+        // Hard to read, so should only be used in code for which speed is essential.
+        typedef double (templmtype)[knm][n_etrue_bins][n_ereco_bins][n_q2_bins];
+        typedef double (erq2mtype) [knm][n_ereco_bins][n_q2_bins];
+        typedef double (erq2type)  [n_ereco_bins][n_q2_bins];
+        const templmtype & templFin = *reinterpret_cast< const templmtype * > (fMCTemplArrayFin2D[is]->GetArray());
+        erq2mtype & erecoVsq2Mode   = *reinterpret_cast< erq2mtype        * > (fMCErecoVsQ2SpectrumArray[is]->GetArray());
+        erq2type & erecoVsq2Tot     = *reinterpret_cast< erq2type         * > (fMCErecoVsQ2SpectrumTotArray2D[is]->GetArray());
+        
+        // loop over Q2
+        for(int iq = 1; iq <= n_q2_bins; iq++) {
+            // loop over Ereco
+            for(int ir = 1; ir <= n_ereco_bins; ir++) {
+                double nev_tot = 0;
+                // loop over modes
+                for(int im = 0; im < knm; im++) {
+                    SuperkMode_t m = kSKReactionModes[is][im];
+                    if(m == kSKmUndefined) continue;
+                    // consider template?
+                    bool skip = this->SkipTemplate(m);
+                    if(skip) continue;
+                    
+                    // loop over Etrue
+                    double nev = 0;
+                    for(int it = 1; it <= n_etrue_bins; it++) {
+                        nev += templFin[im][it-1][ir-1][iq-1];
+                    }//it
+                    nev_tot += nev;
+#ifdef __apply_minevents_to_individual_modes__
+                    if(nev < 0) {
+#ifdef __show_negative_events_mesg_debug__
+                        cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev
+                        << " to zero " << 0 << "\t" << " Ereco: " << reco_spectrum_tot->GetYaxis()->GetBinCenter(ir)
+                        << " to zero " << 0 << "\t" << " Q2: "    << q2_spectrum_tot->GetXaxis()->GetBinCenter(iq) << endl;
+#endif
+                        nev = 0;
+                    } // if nev < 0
+#endif //__apply_minevents_to_individual_modes__
+                    
+                    erecoVsq2Mode[im][ir-1][iq-1] = nev;
+                    
+                }//im
+                
+                erecoVsq2Tot[ir-1][iq-1] = nev_tot;
+                
+            }//iq
+        }//ir
+    }//is
+    
+    applied_negevents_condition = this->ApplyEnergyScaleSystematicToTotalSpectrum2D();
+    
+    return applied_negevents_condition;
+}
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //________________________________________________________________________________________
 void SuperkMC::FillEtrueSpectra(void)
 {
@@ -3285,6 +6540,62 @@ void SuperkMC::FillEtrueSpectra(void)
             }//im
             
             fMCEtrueSpectrumTotArray[is]->GetEntryRef(it-1) = nev_tot;
+            
+        }//it
+    }//is
+}
+//________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+void SuperkMC::FillEtrueSpectra2D(void)
+{
+    // loop over samples
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        TH1D * true_spectrum_tot = fMCEtrueSpectrumTot[is];
+        
+        int n_q2_bins = kNQ2Bins[is];
+        int n_ereco_bins = kNErecoBins[is];
+        
+        // loop over Etrue
+        for(int it = 1; it <= true_spectrum_tot->GetNbinsX(); it++) {
+            double nev_tot = 0;
+            
+            // loop over modes
+            for(int im = 0; im < knm; im++) {
+                SuperkMode_t m = kSKReactionModes[is][im];
+                if(m == kSKmUndefined) continue;
+                // consider template?
+                bool skip = this->SkipTemplate(m);
+                if(skip) continue;
+                
+                TH3D * mctempl = this -> Template2D(s,m,kSKMCtOri);
+                
+                double nev = 0;
+                // loop over Ereco
+                for(int ir = 1; ir <= n_ereco_bins; ir++) {
+                    // loop over Q2
+                    for(int iq = 1; iq <= n_q2_bins; iq++) {
+                        nev += mctempl->GetBinContent(iq,ir,it);
+                    }//ir
+                }//iq
+                
+                nev_tot += nev;
+            }//im
+            
+            fMCEtrueSpectrumTotArray[is]->GetEntryRef(it-1) = nev_tot; // Use the same for 1D and 2D
             
         }//it
     }//is
@@ -3331,7 +6642,7 @@ double SuperkMC::AnalyzedSamplePOT(SuperkSample_t s) const
     }
     else {
         cerr << "Sample not selected" << endl;
-        std::exit(1);
+        util::Die(1); return 0;
     }
 }
 //________________________________________________________________________________________
@@ -3614,17 +6925,17 @@ void SuperkMC::Draw(TVirtualPad * c, Option_t * option) const
     c->Update();
 }
 //________________________________________________________________________________________
-bool SuperkMC::SkipTemplate(SuperkMode_t m) 
+bool SuperkMC::SkipTemplate(SuperkMode_t m)
 {
     // ignore nue_signal templates for all but the 3-flavour oscillation hypothesis
     
     //~ bool mode_is_nuesig    = util::IsOscNuE(m);
     //~ bool mode_is_nuebarsig = util::IsOscNuEBar(m);
-    //~ 
-    //~ 
+    //~
+    //~
     //~ PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
     //~ bool hyp_is_not_3flavour_osc = (hyp != kHypOsc3F);
-    //~ 
+    //~
     //~ bool skip = ((mode_is_nuesig || mode_is_nuebarsig) && hyp_is_not_3flavour_osc );
     
     bool skip = false;
@@ -3731,6 +7042,170 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
     
 }
 //________________________________________________________________________________________
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+void SuperkMC::NevDebug2D(SKMCTemplateType_t t, string name)
+{
+    
+    for(int is = 0; is < kns; is++) {
+        
+        SuperkSample_t s = kSKSamples[is];
+        
+        if(s == kSKsUndefined) continue;
+        
+        TFile* oute = new TFile(Form("Template2D_%s%s.root", name.c_str(),util::AsStringCompact(s).c_str()),"RECREATE");
+        
+        const int q2bins = util::NumQ2Bins(s);
+        const double * q2binedges = util::Q2BinEdges(s);
+        
+        const int erecobins = util::NumErecoBins(s);
+        const double * erecobinedges = util::ErecoBinEdges(s);
+        
+        double nsk = 0;
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            TH3D h = this -> Get3DHist(s,m,t);
+            TH3D * mctempl = &h;
+            
+            
+            //this->DrawProjectionXY( mctempl ); // OK!!!
+            //util::Die(1); return;);
+            
+            
+            //first write the 3d template, and cout the mode integral
+            mctempl->Write();
+            //      cout << name << " " << util::AsString(s) << " " << util::AsString(m) << " " << mctempl->Integral() << endl;
+            nsk += mctempl->Integral();
+            
+            //fill a 1D q2 spectrum
+            TH1D * hq2 = new TH1D(Form("q2_int_2d_%s",AsStringCompact(m).c_str()), Form("q2_int_2d_%s",AsStringCompact(m).c_str()), q2bins, q2binedges);
+            // loop over Q2
+            for(int iq = 1; iq <= hq2->GetNbinsX(); iq++) {
+                //find low and high of q2 for current bin
+                double qmin = hq2->GetXaxis()->GetBinLowEdge(iq) + kOneMeV;
+                double qmax = hq2->GetXaxis()->GetBinUpEdge(iq)  - kOneMeV;
+                //integrate the template
+                int iq_min = mctempl->GetXaxis()->FindBin(qmin);
+                int iq_max = mctempl->GetXaxis()->FindBin(qmax);
+                int ir_bins = mctempl->GetNbinsY();
+                int it_bins = mctempl->GetNbinsZ();
+                double nev = mctempl->Integral(iq_min, iq_max, 1, ir_bins, 1, it_bins);
+                hq2->SetBinContent(iq,nev);
+            }
+            hq2->Write();
+            delete hq2;
+            
+            //fill a 1D ereco spectrum (fine binning)
+            TH1D * hq2f = new TH1D(Form("q2_int_2d_%s_fine",AsStringCompact(m).c_str()), Form("q2_int_2d_%s",AsStringCompact(m).c_str()), mctempl->GetNbinsX(), mctempl->GetXaxis()->GetXbins()->GetArray());
+            // loop over Q2
+            for(int iq = 1; iq <= hq2f->GetNbinsX(); iq++) {
+                //find low and high of q2 for current bin
+                double qmin = hq2f->GetXaxis()->GetBinLowEdge(iq) + kOneMeV;
+                double qmax = hq2f->GetXaxis()->GetBinUpEdge(iq)  - kOneMeV;
+                //integrate the template
+                int iq_min = mctempl->GetXaxis()->FindBin(qmin);
+                int iq_max = mctempl->GetXaxis()->FindBin(qmax);
+                int ir_bins = mctempl->GetNbinsY();
+                int it_bins = mctempl->GetNbinsZ();
+                double nev = mctempl->Integral(iq_min, iq_max, 1, ir_bins, 1, it_bins);
+                hq2f->SetBinContent(iq,nev);
+            }
+            hq2f->Write();
+            delete hq2f;
+            
+            //fill a 1D ereco spectrum
+            TH1D * hrec = new TH1D(Form("erec_int_2d_%s",AsStringCompact(m).c_str()), Form("erec_int_2d_%s",AsStringCompact(m).c_str()), erecobins, erecobinedges);
+            // loop over Ereco
+            for(int ir = 1; ir <= hrec->GetNbinsX(); ir++) {
+                //find low and high of ereco for current bin
+                double rmin = hrec->GetXaxis()->GetBinLowEdge(ir) + kOneMeV;
+                double rmax = hrec->GetXaxis()->GetBinUpEdge(ir)  - kOneMeV;
+                //integrate the template
+                int iq_bins = mctempl->GetNbinsX();
+                int ir_min = mctempl->GetYaxis()->FindBin(rmin);
+                int ir_max = mctempl->GetYaxis()->FindBin(rmax);
+                int it_bins = mctempl->GetNbinsZ();
+                double nev = mctempl->Integral(1, iq_bins, ir_min, ir_max, 1, it_bins);
+                hrec->SetBinContent(ir,nev);
+            }
+            hrec->Write();
+            delete hrec;
+            
+            //fill a 1D ereco spectrum (fine binning)
+            TH1D * hrecf = new TH1D(Form("erec_int_2d_%s_fine",AsStringCompact(m).c_str()), Form("erec_int_2d_%s",AsStringCompact(m).c_str()), mctempl->GetNbinsY(), mctempl->GetYaxis()->GetXbins()->GetArray());
+            // loop over Ereco
+            for(int ir = 1; ir <= hrecf->GetNbinsX(); ir++) {
+                //find low and high of ereco for current bin
+                double rmin = hrecf->GetXaxis()->GetBinLowEdge(ir) + kOneMeV;
+                double rmax = hrecf->GetXaxis()->GetBinUpEdge(ir)  - kOneMeV;
+                //integrate the template
+                int iq_bins = mctempl->GetNbinsX();
+                int ir_min = mctempl->GetYaxis()->FindBin(rmin);
+                int ir_max = mctempl->GetYaxis()->FindBin(rmax);
+                int it_bins = mctempl->GetNbinsZ();
+                double nev = mctempl->Integral(1, iq_bins, ir_min, ir_max, 1, it_bins);
+                hrecf->SetBinContent(ir,nev);
+            }
+            hrecf->Write();
+            delete hrecf;
+            
+            //fill a 1D etrue spectrum
+            TH1D * htru = new TH1D(Form("enu_int_2d_%s",AsStringCompact(m).c_str()), Form("enu_int_2d_%s",AsStringCompact(m).c_str()), util::NumVariableMCEtrueBins(s,m), util::VariableMCEtrueBinEdges(s,m));
+            // loop over Etrue
+            for(int it = 1; it <= htru->GetNbinsX(); it++) {
+                //find low and high of etrue for current bin
+                double tmin = htru->GetXaxis()->GetBinLowEdge(it) + kOneMeV;
+                double tmax = htru->GetXaxis()->GetBinUpEdge(it)  - kOneMeV;
+                //integrate the template
+                int it_min = mctempl->GetZaxis()->FindBin(tmin);
+                int it_max = mctempl->GetZaxis()->FindBin(tmax);
+                int iq_bins = mctempl->GetNbinsX();
+                int ir_bins = mctempl->GetNbinsY();
+                double nev = mctempl->Integral(1, iq_bins, 1, ir_bins, it_min, it_max);
+                htru->SetBinContent(it,nev);
+            }
+            htru->Write();
+            delete htru;
+            
+        }//mode
+        
+        
+        //this->UpdateErecoSpectra();
+        this->UpdateErecoVsQ2Spectra();
+        
+        //get the total spectrum
+        
+        //TH1D * hfull = this->CurrErecoSpectrum(s);
+        //hfull->Write("ereco_spectrum");
+        //delete hfull;
+        
+        TH2D * hfull2D = this->CurrErecoVsQ2Spectrum(s);
+        hfull2D->Write("erecoVsq2_spectrum");
+        delete hfull2D;
+        
+        //    cout << "Total: " << nsk << endl << endl;
+        oute->Close();
+        delete oute;
+    }//sample
+}
+
+//
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
 void SuperkMC::MCStatErrDebug()
 {
     
@@ -3754,7 +7229,7 @@ void SuperkMC::MCStatErrDebug()
         int n_ereco_bins = kNErecoBins[is];
         
         //fill the nominal spectrum
-        TH1D * spectrum           = new TH1D("spe",          "spe",          n_ereco_bins, util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+        TH1D * spectrum           = new TH1D("spe","spe",n_ereco_bins, util::ErecoBinEdges(kSKsFCFV1RingMuLike));
         for(int im = 0; im < knm; im++) {
             SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
@@ -3842,6 +7317,10 @@ void SuperkMC::MCStatErrDebug()
     }//is
     out.Close();
 }
+
+
+
+
 //____________________________________________________________________________________
 TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) const
 {
@@ -3917,16 +7396,408 @@ TH2D SuperkMC::Get2DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SK
     return h;
 }
 //____________________________________________________________________________________
+
+
+
+
+
+
+
+
+// NEW 2D TEMPLATES
+
+TH3D SuperkMC::Get3DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) const
+{
+    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+    
+    const int      n_q2_bins       = kNQ2Bins[is];
+    const int      n_ereco_bins    = kNErecoBins[is];
+    const int      n_etrue_bins    = kNEtrueBins[is];
+    const double * q2_bin_edges    = util::Q2BinEdges(s);
+    const double * ereco_bin_edges = util::ErecoBinEdges(s);
+    
+    TH3D h(Form("nsk_2d_%d",is), util::AsString(s).c_str(),
+           n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+    
+    h.SetDirectory(0);
+    h.GetXaxis()->SetTitle("Q^{2} (GeV)");
+    h.GetYaxis()->SetTitle("E_{reco} (GeV)");
+    h.GetZaxis()->SetTitle("E_{true} (GeV)");
+    
+    for (int im = 0 ; im < kNSuperkModes ; im++ ) {
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if (m==kSKmUndefined) continue;
+        for (int it = 0 ; it < n_etrue_bins ; it++) {
+            for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
+                for (int iq = 0 ; iq < n_q2_bins ; iq++) {
+                    int binno = h.GetBin(iq+1,ir+1,it+1);
+                    if (type == conv::kSKMCtOri) {
+                        h.SetBinContent(binno, fMCTemplArrayOri2D[is]->GetEntryRef(im,it,ir,iq));
+                    }
+                    if (type == conv::kSKMCtNom) {
+                        h.SetBinContent(binno, fMCTemplArrayNom2D[is]->GetEntryRef(im,it,ir,iq));
+                    }
+                    if (type == conv::kSKMCtTun) {
+                        h.SetBinContent(binno, fMCTemplArrayTun2D[is]->GetEntryRef(im,it,ir,iq));
+                    }
+                    if (type == conv::kSKMCtFin) {
+                        h.SetBinContent(binno, fMCTemplArrayFin2D[is]->GetEntryRef(im,it,ir,iq));
+                    }
+                }
+            }
+        }
+    }
+    return h;
+}
+//____________________________________________________________________________________
+TH3D SuperkMC::Get3DHist(conv::SuperkSample_t s, conv::SuperkMode_t m , conv::SKMCTemplateType_t type) const
+{
+    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
+    int im = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+    const int      n_q2_bins       = kNQ2Bins[is];
+    const int      n_ereco_bins    = kNErecoBins[is];
+    const int      n_etrue_bins    = kNEtrueBins[is];
+    const double * q2_bin_edges    = util::Q2BinEdges(s);
+    const double * ereco_bin_edges = util::ErecoBinEdges(s);
+    
+    TH3D h(Form("nsk_2d_%d_%d",is,im), util::AsString(m).c_str(),
+           n_q2_bins, q2_bin_edges, n_ereco_bins, ereco_bin_edges, n_etrue_bins, util::EtrueBinEdges(s));
+    
+    h.SetDirectory(0);
+    h.GetXaxis()->SetTitle("Q^{2} (GeV)");
+    h.GetYaxis()->SetTitle("E_{reco} (GeV)");
+    h.GetZaxis()->SetTitle("E_{true} (GeV)");
+    
+    for (int it = 0 ; it < n_etrue_bins ; it++) {
+        for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
+            for (int iq = 0 ; iq < n_q2_bins ; iq++) {
+                int binno = h.GetBin(iq+1,ir+1,it+1);
+                if (type == conv::kSKMCtOri) {
+                    h.SetBinContent(binno, fMCTemplArrayOri2D[is]->GetEntryRef(im,it,ir,iq));
+                }
+                if (type == conv::kSKMCtNom) {
+                    h.SetBinContent(binno, fMCTemplArrayNom2D[is]->GetEntryRef(im,it,ir,iq));
+                }
+                if (type == conv::kSKMCtTun) {
+                    h.SetBinContent(binno, fMCTemplArrayTun2D[is]->GetEntryRef(im,it,ir,iq));
+                }
+                if (type == conv::kSKMCtFin) {
+                    h.SetBinContent(binno, fMCTemplArrayFin2D[is]->GetEntryRef(im,it,ir,iq));
+                }
+            }
+        }
+    }
+    return h;
+}
+//
+
+
+
+//____________________________________________________________________________________
 bool SuperkMC::DoTemplateArraysHaveNIWGTune(void) const
 {
     return fTemplateArraysHaveNIWGTune;
 }
 //____________________________________________________________________________________
+
+
+
+// NEW 2D TEMPLATES
+double SuperkMC::CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep)
+{
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    // Plep     --> lepton reco momentum
+    // costheta --> angle between neutrino and lepton
+    
+    // Q2 in the laboratory reference system (Giunti section 5.3.1)
+    double Q2 = 2*Enu*(Elep-Plep*costheta) - Mlep*Mlep;
+    
+    return Q2;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep)
+{
+    // Qd^2 (variation of Q^2)
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    // Plep     --> lepton reco momentum
+    // costheta --> angle between neutrino and lepton
+    
+    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+    
+    double Qd2 = TMath::Power(1+Q2/0.7, -1);
+    
+    return Qd2;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcEhad(double Enu,double Elep)
+{
+    // Energy of the hadronic recoil system
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    
+    double nu = Enu - Elep;
+    
+    return nu;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcInelasticity(double Enu,double Elep)
+{
+    // Inelasticity = (Enu - Elep) / Enu
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    
+    double Inel = (Enu - Elep) / Enu;
+    
+    return Inel;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
+{
+    // x = Q2 / (2*Mn*Enu*Inelasticity)
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    // Plep     --> lepton reco momentum
+    // costheta --> angle between neutrino and lepton
+    // Mn       --> nucleon mass
+    
+    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+    double Inel = this->CalcInelasticity(Enu,Elep);
+    double x = Q2 / (2*Mn*Enu*Inel);
+    
+    return x;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
+{
+    // x = Q2 / (2*Mn*Enu*Inelasticity)
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    // Plep     --> lepton reco momentum
+    // costheta --> angle between neutrino and lepton
+    // Mn       --> nucleon mass
+    
+    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+    double nu = this->CalcEhad(Enu,Elep);
+    
+    double W = Mn*Mn + 2*Mn*nu - Q2;
+    
+    return W;
+}
+//____________________________________________________________________________________
+double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn){
+  // Term of CCQE dsigma/dQ^2 which sign is different for nu/nubar (arXiv:1305.7513v1, eq. 57-61)
+
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton 
+  // Mn       --> nucleon mass
+
+  double MA = 1.2257; // Axial Mass, BANFF post-fit (GeV) 
+  double gA = 1.2694; // FA(Q2=0) 
+  
+  double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+
+  double F1 = 0.5;
+  double F2 = 0.5;
+  double FA = gA / TMath::Power( 1 + Q2/(MA*MA), 2. );
+  double B = Q2/(Mn*Mn)*FA*(F1+F2);
+
+  double XSecTerm = (4*Mn*Enu - Q2 - Mlep*Mlep) / (Mn*Mn) * B;
+ 
+  return XSecTerm;
+}
+//____________________________________________________________________________________
+
+
+double SuperkMC::CalcThetaDegrees(float dir[10][3]){
+
+  //double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+  //double costheta = dir_nu[0] * dir[0][0] + dir_nu[1] * dir[0][1] + dir_nu[2] * dir[0][2];
+  double costheta = kBeamDir[0] * dir[0][0] + kBeamDir[1] * dir[0][1] + kBeamDir[2] * dir[0][2];
+
+  if( costheta<-1.00001 || costheta>+1.00001 ){
+    cerr << endl;
+    cerr << std::setprecision(10);
+    cerr << "SuperkMC::FillTemplateHistogram" << endl;
+    cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+    cerr << endl;
+    util::Die(1); return 0;
+    exit(1);
+  }    
+  double LepTheta        = TMath::ACos(costheta); // radiant    
+  double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees   
+  if(LepTheta<0.){
+    cerr << endl;
+    cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  return LepThetaDegrees;
+}
+
+//____________________________________________________________________________________
+
+
+
+
+// NEW 2D TEMPLATES
+void SuperkMC::DrawProjectionXY(TH3D *h){ // for debugging
+    
+    //Template2D(kSKsFCFV1RingELike,kSKmOscNuECCQE,kSKMCtNom);
+    
+    //this->DrawProjectionXY( mctempl ); // OK!!!
+    //util::Die(1); return;;
+    
+    cout << "Draw Canvas" << endl;
+    
+    TCanvas *c = new TCanvas("c","c");
+    h->DrawCopy("colz");
+    
+    TCanvas *c1 = new TCanvas("c1","c1");
+    h->Project3D("xy")->DrawCopy("colz");
+    
+    cout << "Print Canvas" << endl;
+    c->Print("ciao.pdf");
+    c1->Print("proj_xy.pdf");
+    
+    return;
+}
+//____________________________________________________________________________________
+
+void SuperkMC::ProjectTemplate3Dto2D(TH3D *h3d[conv::kns][conv::knm], TH2D *h2d[conv::kns][conv::knm]){
+    
+    // Project from (Q2,Ereco,Etrue) to (Ereco,Etrue)
+    
+    for(int is=0;is<conv::kns;is++){
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        
+        const int      n_q2_bins       = kNQ2Bins[is];
+        const int      n_ereco_bins    = kNErecoBins[is];
+        const int      n_etrue_bins    = kNEtrueBins[is];
+        
+        for(int im=0;im<conv::knm;im++){
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            
+            for (int it = 0 ; it < n_etrue_bins ; it++) {
+                for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
+                    
+                    double cont = 0.;
+                    for (int iq = 0 ; iq < n_q2_bins ; iq++) {
+                        cont += h3d[is][im]->GetBinContent(iq+1,ir+1,it+1);
+                    }
+                    
+                    h2d[is][im]->SetBinContent(ir+1,it+1,cont);
+                }
+            }
+            
+        }
+    }
+    
+    return;
+}
+//____________________________________________________________________________________
+double SuperkMC::GetTemplateIntegral(TH3D *h3d[conv::kns][conv::knm]){
+    
+    double integral = 0.;
+    
+    for(int is=0;is<conv::kns;is++){
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        
+        const int      n_q2_bins       = kNQ2Bins[is];
+        const int      n_ereco_bins    = kNErecoBins[is];
+        const int      n_etrue_bins    = kNEtrueBins[is];
+        
+        for(int im=0;im<conv::knm;im++){
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            
+            for (int it = 0 ; it < n_etrue_bins ; it++) {
+                for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
+                    for (int iq = 0 ; iq < n_q2_bins ; iq++) {
+                        integral += h3d[is][im]->GetBinContent(iq+1,ir+1,it+1);
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    return integral;
+}
+//____________________________________________________________________________________
+double SuperkMC::GetTemplateIntegral(TH2D *h2d[conv::kns][conv::knm]){
+    
+    double integral = 0.;
+    
+    for(int is=0;is<conv::kns;is++){
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        
+        //const int      n_q2_bins       = kNQ2Bins[is];
+        const int      n_ereco_bins    = kNErecoBins[is];
+        const int      n_etrue_bins    = kNEtrueBins[is];
+        
+        for(int im=0;im<conv::knm;im++){
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            
+            for (int it = 0 ; it < n_etrue_bins ; it++) {
+                for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
+                    integral += h2d[is][im]->GetBinContent(ir+1,it+1);
+                }
+            }
+            
+        }
+    }
+    
+    return integral;
+}
+//____________________________________________________________________________________
+double SuperkMC::GetTemplateIntegral(TH3D *h3d){
+    
+    double integral = 0.;
+    
+    for (int it = 0 ; it < h3d->GetZaxis()->GetNbins() ; it++) {
+        for (int ir = 0 ; ir < h3d->GetYaxis()->GetNbins() ; ir++) {
+            for (int iq = 0 ; iq < h3d->GetXaxis()->GetNbins() ; iq++) {
+                integral += h3d->GetBinContent(iq+1,ir+1,it+1);
+            }
+        }
+    }
+    
+    return integral;
+}
+//____________________________________________________________________________________
+double SuperkMC::GetTemplateIntegral(TH2D *h2d){
+    
+    double integral = 0.;
+    
+    for (int it = 0 ; it < h2d->GetZaxis()->GetNbins() ; it++) {
+        for (int ir = 0 ; ir < h2d->GetYaxis()->GetNbins() ; ir++) {
+            integral += h2d->GetBinContent(ir+1,it+1);
+        }
+    }
+    
+    return integral;
+}
+//____________________________________________________________________________________
+
 double SuperkMC::ErecoFunc_Nu(double Mom,double costh,double mass_lep){
     
-    const double Eb = 27. / 1000;     // oxygen
-    const double mp = 938.272 / 1000.; // proton mass (GeV)
-    const double mn = 939.565 / 1000.; // neutron mass (GeV)
+    const double Eb = 27. / 1000.;     // oxygen
+    const double mp = 938.272 / 1000.; // proton mass (MeV)
+    const double mn = 939.565 / 1000.; // neutron mass (MeV)
     
     double Ereco=0.;
     double E_lep=0.;
@@ -3940,10 +7811,10 @@ double SuperkMC::ErecoFunc_Nu(double Mom,double costh,double mass_lep){
 
 double SuperkMC::ErecoFunc_NuBar(double Mom,double costh,double mass_lep){
     
-    const double Eb = 27. / 1000;     // oxygen
-    const double mp = 938.272 / 1000.; // proton mass (GeV)
-    const double mn = 939.565 / 1000.; // neutron mass (GeV)
-
+    const double Eb = 27. / 1000.;     // oxygen
+    const double mp = 938.272 / 1000.; // proton mass (MeV)
+    const double mn = 939.565 / 1000.; // neutron mass (MeV)
+    
     double Ereco=0.;
     double E_lep=0.;
     
@@ -3951,5 +7822,29 @@ double SuperkMC::ErecoFunc_NuBar(double Mom,double costh,double mass_lep){
     Ereco = mn*mn - (mp - Eb)*(mp - Eb) - mass_lep*mass_lep + 2*(mp - Eb)*E_lep;
     Ereco /= 2*(mp - Eb - E_lep + Mom*costh);
     
-    return Ereco;  // MeV
+    return Ereco;  // GeV
 }
+
+double SuperkMC::SmearMomentum(double fit_momentum,Option_t * option ) const
+{
+  //Taken from T2K paper: http://arxiv.org/pdf/1502.01550v2.pdf (bottom of p53)
+    TRandom3 & rndgen = Rnd::Instance()->RndOther();
+    
+    double error = 1;
+    TString opt = option;
+    if(opt.Contains("electron")){
+        error = fit_momentum * (0.006 + 0.026 / TMath::Sqrt(fit_momentum) );
+    }
+    else if (opt.Contains("muon"))
+    {
+        error = fit_momentum * (0.017 + 0.007 / TMath::Sqrt(fit_momentum));
+    }
+    
+    return rndgen.Gaus(fit_momentum,error);
+    
+}
+//
+
+
+
+

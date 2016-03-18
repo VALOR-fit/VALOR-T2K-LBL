@@ -38,8 +38,7 @@ coln_width = 3
 def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", skipflux=False, skipskdet=False):
   
   skexp = valor.SuperkExpectation()
-  #skexp.Read(os.environ[env_var]+"/config/analysis_configuration_2.315E20.xml.xml")
-  skexp.Read(os.environ[env_var]+"/config/analysis_configuration_run1to6_test_app.xml")
+  skexp.Read(os.environ[env_var]+"/config/analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml")
   skdetfsi = skexp.GetSuperkDetectorFSI()
   xsec = skexp.GetNuXSec()
   

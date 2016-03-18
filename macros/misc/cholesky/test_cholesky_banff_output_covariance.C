@@ -8,7 +8,8 @@
 
 void test_cholesky_banff_output_covariance
 (
-  const char * config_file = "analysis_configuration.xml", /* analysis configuration file */
+ //const char * config_file = "analysis_configuration_run1to5.xml", /* analysis configuration file */
+  const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
 )
 {
   using namespace std;

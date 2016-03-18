@@ -20,7 +20,7 @@ void run_fit_joint_bar_Dm2LocalMin
 (
   const char * tag                     = "toyexptfits_Dm2Loc_10",                       /* tag for output file */
   int          run                     = 0,                                   /* run number */
-  int          nexperiments            = 1
+  int          nexperiments            = 2
 ,                               /* number of toy MC experiment fits */
   
   double       input_mixing12          = -99, //0.306,                                /* 12-mixing, sinq2theta or sinsqtheta depending on user choice, if -999 then randomize */
@@ -70,10 +70,10 @@ void run_fit_joint_bar_Dm2LocalMin
   using namespace valor::conv;
 
 
-  const int Nmin = 1;
+  const int Nmin = 3;
   double Dm2LocalMin[Nmin] = {
-    //0.0025, 0.020, 0.035
-    0.0025
+    0.0025, 0.020, 0.035
+    //0.0025
     //0.04
   };
 

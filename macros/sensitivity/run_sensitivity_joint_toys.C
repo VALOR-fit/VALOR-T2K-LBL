@@ -37,11 +37,11 @@ void run_sensitivity_joint_toys
   //
 
   bool         reactor                 = true,                               /* enable this if you want to apply the reactor constraint */
-  double       tolerance               = 0.01,                                 /* value for the fitter tolerance */
+  double       tolerance               = 0.1,                                 /* value for the fitter tolerance */
   const char * param1                  = "deltacp",
   const char * param2                  = "none",                  /* second parameter to be fitting vs (for 2D) - default: none for a single fit or 1D */ 
   int          min_bin_param1          = 1 ,                                /* minimum bin for param1 */
-  int          max_bin_param1          = 20 ,                                /* maximum bin for param1 */
+  int          max_bin_param1          = 3 ,                                /* maximum bin for param1 */
   int          min_bin_param2          = 1 ,                                /* minimum bin for param2 */
   int          max_bin_param2          = 1                                  /* maximum bin for param2 */
 )
@@ -298,7 +298,7 @@ void run_sensitivity_joint_toys
 	 applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm1), stat_fluctuations); 
        }
      }//applied_negevents_condition
-     
+  
      /////////////////////////////////////////////////////
      //                                                 //
      //               FIT IN EACH GRID POINT            //

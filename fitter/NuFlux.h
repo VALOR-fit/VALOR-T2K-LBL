@@ -100,6 +100,12 @@ public:
 
 private:
 
+  // Check that BANFFSystConv.h is setup correctly
+  void CheckListOfBANFFParams(int nparams, int nfluxparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gap);
+  void CheckIsFluxParam(int nparams, int nfluxparams, const conv::PhysParamId_t * params, const bool   * flux,   const char * vname);
+  void CheckFluxPdg    (int nparams, int nfluxparams, const conv::PhysParamId_t * params, const int    * pdg,    const char * vname);
+  void CheckFluxERange (int nparams, int nfluxparams, const conv::PhysParamId_t * params, const double * erange, const char * vname);
+
   // Initialize and clean-up
   void Init    (void);
   void CleanUp (void);
@@ -177,7 +183,7 @@ private:
   TH1D *           fSKRHCNuEFluxExtTuningWght;      ///< SuperK nue     flux tuning weights
   TH1D *           fSKRHCNuEBarFluxExtTuningWght;   ///< SuperK nue     flux tuning weights
       
-ClassDef(NuFlux, 5)
+ClassDef(NuFlux, 6)
 };
 
 } //valor

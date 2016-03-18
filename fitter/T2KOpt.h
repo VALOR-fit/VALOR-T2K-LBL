@@ -41,7 +41,7 @@ public:
   // Paths in xml
   
   string fConfigFileName;
-  void ReadXmlPath(string config_file);
+  int ReadXmlPath(string config_file); // returns 0 if file good, -1 if inaccessible
 
   string fPathBanffCovMatr;
   string fPathBanffParam;
@@ -50,7 +50,6 @@ public:
 
   string fPathEscale1RmuErr;
   string fPathEscale1ReErr;
-  string fPathEShiftErr;
   string fPathSKDetFSICovMatr;
   string fPathRHCEscale1RmuErr;
   string fPathRHCEscale1ReErr;

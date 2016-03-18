@@ -23,44 +23,26 @@ void MergeInputFiles(
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "buildmarg_betabar",
+ //const char * tag                  = "submit_prova",
+ const char * tag                  = "submit_prova_TemplVArray",
  
- const int    nfiles               = 2, //201,         // # of files to read
+ const int    nfiles               = 12, //201,         // # of files to read
 
- //const char * config_file          = "analysis_configuration_1.7E20_prefit.xml",   
- //const char * config_file          = "analysis_configuration_1.7E20.xml",   
- const char * config_file          = "analysis_configuration_run1to6_test_app.xml",
+ const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
 
- //const char * fit_param_list       = "nuosc3fbar_numudisapp_fixnonbar_fix4+nuisance",
- //const char * fit_param_list       = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
- //const char * fit_param_list       = "nuosc3fbar_fixnonbar_12fix+nuisance",
- const char * fit_param_list       = "nuosc3f_normbar_fit23_fitdcp+nuisance",
+ const char * fit_param_list        = "nuosc3f+nuisance", // dcp
 
- const int    NtoysMarg            = 10,   // # toys marginalization 
+ const int    NtoysMarg            = 2,   // # toys marginalization 
 
- const char * freeparname0        = "betaBar",  // free parameter
- const double freeparmin0         = 0.,         // minimum value of free parameter
- const double freeparmax0         = 1, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 2, // 801, 2          // # pts of free parameter to scan
- // const char * freeparname0        = "mixing13Bar",  // free parameter
- // const double freeparmin0         = 0,              // minimum value of free parameter
- // const double freeparmax0         = 0.3,              // maxinum value of free parameter
- // //const char * freeparname0        = "mixing23Bar",  // free parameter
- // //const double freeparmin0         = 0,              // minimum value of free parameter
- // //const double freeparmax0         = 1,              // maxinum value of free parameter
- // const int    NptScan0            = 201,            // # pts of free parameter to scan
+ const char * freeparname0        = "mixing13",  // free parameter
+ const double freeparmin0         = 0., // minimum value of free parameter
+ const double freeparmax0         = 0.113, // maxinum value of free parameter
+ const int    NptScan0            = 4, //81, //201, //21,      // # pts of free parameter to scan
 
- const char * freeparname1          = "",  // free parameter
- const double freeparmin1           = 0,  // minimum value of free parameter
- const double freeparmax1           = 0,  // maxinum value of free parameter
- //const char * freeparname1          = "deltacpBar",  // free parameter
- //const double freeparmin1           = -3.14159265358979312e+00,  // minimum value of free parameter
- //const double freeparmax1           = +3.14159265358979312e+00,  // maxinum value of free parameter
- //const char * freeparname1          = "dmsq23Bar",  // free parameter
- //const double freeparmin1           = 0.0002,     // minimum value of free parameter
- //const double freeparmax1           = 0.02,     // maxinum value of free parameter
- //const int    NptScan1              = 201,  // # pts of free parameter to scan
- const int    NptScan1              = 1,  // # pts of free parameter to scan
+ const char * freeparname1        = "deltacp",  // free parameter
+ const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
+ const double freeparmax1         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ const int    NptScan1            = 3, //51, //201, //3, //21, // 801, 2          // # pts of free parameter to scan 
 
  const bool   doMargMH             = true,    // marginalize Mass Hierarchy
  const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys

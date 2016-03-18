@@ -15,7 +15,8 @@ void osc_prob_tables_generate
   double       density                    = 2.6,
   double       baseline                   = 295.,
   double       input_mixing12             = 0.8704,                         /* default values as for official analysis*/
-  double       input_mixing13             = 0.10,                           /* */ 
+  //double       input_mixing13             = 0.10,                           /* */ 
+  double       input_mixing13             = 1.,                           /* */ 
   double       input_mixing23             = 1.0,                            /* */
   double       input_deltacp              = 0.00,                           /* */
   double       input_dm12sq               = 7.6E-5,                         /* */

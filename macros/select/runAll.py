@@ -37,21 +37,48 @@ base = os.environ["PWD"]
 
 # input path
 file_loc = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/skfiles/13a/t2ksk_13a_ntuple"
+#file_loc = "/Users/davidesgalaberna/Desktop/ETH_phd/T2K/ANA/VALOR/skfiles/14a/"
 
 if os.environ["USER"] == "phrhbq": file_loc = "/storage/epp2/t2k/data/sk/13a/neut/t2ksk_13a_ntuple"
 
 # output file names
-outfile_numuCCQE  = "sk13a_1RnumuCCQE.root"
-outfile_nueCCQE   = "sk13a_1RnueCCQE.root"
-outfile_numuCC    = "sk13a_nRnumuCC.root"
-outfile_nueCC     = "sk13a_nRnueCC.root"
-outfile_2pi0ring  = "sk13a_2pi0ring.root"
+
+outfile_numuCCQE  = "sk13a_1RnumuCCQE"
+outfile_nueCCQE   = "sk13a_1RnueCCQE"
+outfile_numuCC    = "sk13a_nRnumuCC"
+outfile_nueCC     = "sk13a_nRnueCC"
+outfile_2pi0ring  = "sk13a_2pi0ring"
+
+#outfile_numuCCQE  = "sk14a_fq_1RnumuCCQE.root"
+#outfile_nueCCQE   = "sk14a_fq_1RnueCCQE.root"
+#outfile_numuCC    = "sk14a_fq_nRnumuCC.root"
+#outfile_nueCC     = "sk14a_fq_nRnueCC.root"
+#outfile_2pi0ring  = "sk14a_fq_2pi0ring.root"
+
 
 #specify the production(s) you want to run over here
 process10a = False
 process11c = False
 process13a = True
 process14a = False
+
+#specify which ereco you want to use (True --> ereco Delta)
+#useereco = "erec_delta"
+useereco = "erec"
+
+if useereco!="erec" :
+   outfile_numuCCQE = outfile_numuCCQE+"_"+useereco
+   outfile_nueCCQE = outfile_nueCCQE+"_"+useereco
+   outfile_numuCC = outfile_numuCC+"_"+useereco
+   outfile_nueCC = outfile_nueCC+"_"+useereco
+   outfile_2pi0ring = outfile_2pi0ring+"_"+useereco
+
+outfile_numuCCQE = outfile_numuCCQE+".root"
+outfile_nueCCQE = outfile_nueCCQE+".root"
+outfile_numuCC = outfile_numuCC+".root"
+outfile_nueCC = outfile_nueCC+".root"
+outfile_2pi0ring = outfile_2pi0ring+".root"
+
 
 processings = []
 if process10a: processings.append("10a")
@@ -120,7 +147,7 @@ if os.path.isfile(path+outfile_2pi0ring) :
 #sys.exit()
 
 for i in xrange(len(cutsandfiles)):
-   args = [cutsandfiles[i][1], cutsandfiles[i][0],outfile_numuCCQE,outfile_nueCCQE,outfile_numuCC,outfile_nueCC,outfile_2pi0ring,path]
+   args = [cutsandfiles[i][1], cutsandfiles[i][0],outfile_numuCCQE,outfile_nueCCQE,outfile_numuCC,outfile_nueCC,outfile_2pi0ring,useereco,path]
    command = './mymultiringsel.py "'+('" "'.join(args))+'" '
    print " "
    print command

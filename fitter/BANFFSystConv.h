@@ -29,10 +29,10 @@
 
 namespace valor {
     namespace conv   {
-        
-        static const int kNBANFFluxPDGs = 4;
-        static const int kOrderOfBANFFFluxPDG[kNBANFFluxPDGs] = { kPdgNuMu, kPdgNuMuBar, kPdgNuE, kPdgNuEBar };
-        
+
+      static const int kNBANFFluxPDGs = 4;
+      static const int kOrderOfBANFFFluxPDG[kNBANFFluxPDGs] = { kPdgNuMu, kPdgNuMuBar, kPdgNuE, kPdgNuEBar };
+      
         //
         // Number of BANFF fit parameters
         //
@@ -1656,7 +1656,7 @@ namespace valor {
             // nue
             { 0.0,  2.5 },        // kRHCNuisBANFF16
             { 2.5, 30.0 },        // kRHCNuisBANFF17
-            // anti-nue
+            // anti-nue 
             { 0.0,  0.5 },        // kRHCNuisBANFF18
             { 0.5,  0.7 },        // kRHCNuisBANFF19
             { 0.7,  0.8 },        // kRHCNuisBANFF20
@@ -1667,7 +1667,7 @@ namespace valor {
             
             //
             {  -1,   -1 },        // kRHCNuisBANFFMEC not a flux param
-            {  -1,   -1 },        // kRHCNuisBANFFCA5 not a flux param
+            {  -1,   -1 },        // kRHCNuisBANFFCA5 not a flux param  
             {  -1,   -1 },        // kRHCNuisBANFFBgRES not a flux param
             {  -1,   -1 },        // kRHCNuisBANFFMAQE, not a flux param
             {  -1,   -1 },        // kRHCNuisBANFFMARES, not a flux param
@@ -1717,7 +1717,7 @@ namespace valor {
             { 2.5, 30.0 },        // kNuisBANFF15
             
             // NEW SPLIT ANA
-            //#endif
+            //#endif	
             /* #if BANFF_BINS == 3 */
             /* { 0.0,  0.4 },        // kNuisBANFF00 */
             /* { 0.4,  0.5 },        // kNuisBANFF01 */
@@ -1744,7 +1744,7 @@ namespace valor {
             /* #endif */
             //#if BANFF_BINS == 1
             
-#else
+#else 
             { 0.0,  0.4 },        // kNuisBANFF00
             { 0.4,  0.5 },        // kNuisBANFF01
             { 0.5,  0.6 },        // kNuisBANFF02
@@ -1825,7 +1825,7 @@ namespace valor {
             /* #endif */
             //#if BANFF_BINS == 1
             
-#else
+#else 
             // numu
             { 0.0,  0.7 },        // kRHCNuisBANFF00
             { 0.7,  1.0 },        // kRHCNuisBANFF01
@@ -1926,7 +1926,7 @@ namespace valor {
             // nue
             { 0.0,  2.5 },        // kRHCNuisBANFF16
             { 2.5, 30.0 },        // kRHCNuisBANFF17
-            // anti-nue
+            // anti-nue 
             { 0.0,  0.5 },        // kRHCNuisBANFF18
             { 0.5,  0.7 },        // kRHCNuisBANFF19
             { 0.7,  0.8 },        // kRHCNuisBANFF20
@@ -1937,7 +1937,7 @@ namespace valor {
             
             //
             {  -1,   -1 },        // kNuisBANFFMEC not a flux param
-            {  -1,   -1 },        // kNuisBANFFCA5 not a flux param
+            {  -1,   -1 },        // kNuisBANFFCA5 not a flux param  
             {  -1,   -1 },        // kNuisBANFFBgRES not a flux param
             {  -1,   -1 },        // kNuisBANFFMAQE, not a flux param
             {  -1,   -1 },        // kNuisBANFFMARES, not a flux param

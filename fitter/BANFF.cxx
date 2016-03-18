@@ -15,6 +15,7 @@
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_chisqpenalty_mesg_debug2__
 //#define __BANFF_BESTFIT_IS_ONE__ //debug mode to turn the best fit vector into a vector of 1's (i.e. BANFF tuned == flux tuned)
+//#define __show_banffsystconv_check_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -130,7 +131,7 @@ void BANFF::Init(void)
   fUntunedCentralValues = 0;
   fRHCUntunedCentralValues = 0;
   fFHCpRHCUntunedCentralValues = 0;   // NEW FHC+RHC JOINT
-  
+
 }
 //________________________________________________________________________________________
 void BANFF::CleanUp(void)
@@ -185,7 +186,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
          << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
          << endl;
-    std::exit(-1);
+    exit(-1);
   }
   //
 
@@ -193,19 +194,19 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values"); 
   // if (not (fUntunedCentralValues && fRHCUntunedCentralValues) ) {
   // cerr<<"Failed to read <untuned_parameter_central_values>"<<endl;
-  // std::exit(-1);
+  // exit(-1);
   // }
   // if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
   // cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
   // << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
   // << endl;
-  // std::exit(-1);
+  // exit(-1);
   // }
   // if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
   // cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
   // << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
   // << endl;
-  // std::exit(-1);
+  // exit(-1);
   // }
   
 #endif
@@ -218,7 +219,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fBestFitValues = util::XML2TVectorD(xml,root_node,banff_param_path);
   if(!fBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
-    std::exit(1);
+    exit(1);
   }
 #else
   double init[np];
@@ -233,7 +234,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> BANFF best-fit parameter vector has unexpected number of elements!" << endl;
     cerr << "Exp/BANFF >> Expecting: " <<  np << " elements" << endl;
     cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
-    std::exit(1);
+    exit(1);
   }
 
 #ifdef __show_init_mesg_debug__
@@ -249,7 +250,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
  
   if(!fCovMtrx) {
     cerr << "Exp/BANFF >> No BANFF covariance matrix was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   // Invert BANFF fit covariance matrix
   double det;
@@ -305,7 +306,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
 	 << endl;
-    std::exit(-1);
+    exit(-1);
   }
 #endif
   //
@@ -319,7 +320,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     
   if(!fRHCBestFitValues) {
     cerr << "Exp/BANFF >> No RHC BANFF best-fit parameter vector was found." << endl;
-    std::exit(1);
+    exit(1);
   }
 #else
   double init[np];
@@ -334,7 +335,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
       cerr << "Exp/BANFF >> RHC BANFF best-fit parameter vector has unexpected number of elements!" << endl;
       cerr << "Exp/BANFF >> Expecting: " <<  np << " elements" << endl;
       cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
-      std::exit(1);
+      exit(1);
     }
 
 #ifdef __show_init_mesg_debug__
@@ -351,7 +352,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 
   if(!fRHCCovMtrx) {
     cerr << "Exp/BANFF >> No RHC BANFF covariance matrix was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   // Invert BANFF fit covariance matrix
   double det;
@@ -429,21 +430,21 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "NuXSec/Read >> Expected "<<kNumOfFHCpRHCParamsInBANFFfit-kNumOfFHCpRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fFHCpRHCUntunedCentralValues->GetNoElements()
 	 << endl;
-    std::exit(-1);
+    exit(-1);
   }
   fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
     cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
 	 << endl;
-    std::exit(-1);
+    exit(-1);
   }
   fRHCUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
     cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
 	 << endl;
-    std::exit(-1);
+    exit(-1);
   }
 #endif
   //
@@ -461,7 +462,7 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
   
   if(!fFHCpRHCBestFitValues) {
     cerr << "Exp/BANFF >> No BANFF best-fit parameter vector was found." << endl;
-    std::exit(1);
+    exit(1);
   }
 #else
   double init[np];
@@ -476,7 +477,7 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
     cerr << "Exp/BANFF >> FHC+RHC BANFF best-fit parameter vector has unexpected number of elements!" << endl;
     cerr << "Exp/BANFF >> Expecting: " <<  np << " elements" << endl;
     cerr << "Exp/BANFF >> Found: " << bestfit.GetNoElements() << " elements" << endl;
-    std::exit(1);
+    exit(1);
   }
 
 #ifdef __show_init_mesg_debug__
@@ -494,7 +495,7 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
  
   if(!fFHCpRHCCovMtrx) {
     cerr << "Exp/BANFF >> No FHC+RHC BANFF covariance matrix was found." << endl;
-    std::exit(1);
+    exit(1);
   }
   // Invert BANFF fit covariance matrix
   double det;
@@ -731,7 +732,7 @@ double BANFF::SampleOneSigmaError(PhysParamId_t p) const
   return this->RHCOneSigmaError(p);
 #else
   std::cerr<<"BANFF/SampleOneSigmaError >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -751,7 +752,7 @@ double BANFF::SampleOneSigmaError(int idx) const
   return this->RHCOneSigmaError(idx);
 #else
   std::cerr<<"BANFF/SampleOneSigmaError >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -771,7 +772,7 @@ double BANFF::SampleCurrentValue(PhysParamId_t p) const
   return this->RHCCurrentValue(p);
 #else
   std::cerr<<"BANFF/SampleCurrentValue >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -791,7 +792,7 @@ double BANFF::SampleCurrentValue(int idx) const
   return this->RHCCurrentValue(idx);
 #else
   std::cerr<<"BANFF/SampleCurrentValue >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -811,7 +812,7 @@ double BANFF::SampleBestFitValue(PhysParamId_t p) const
   return this->RHCBestFitValue(p);
 #else
   std::cerr<<"BANFF/SampleBestFitValue >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -831,7 +832,7 @@ double BANFF::SampleBestFitValue(int idx) const
   return this->RHCBestFitValue(idx);
 #else
   std::cerr<<"BANFF/SampleBestFitValue >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -853,13 +854,14 @@ void BANFF::TweakSample(
 {
   // NEW FHC+RHC JOINT
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-  #if defined(__FULLY_CORRELATED__)
+  
+#if defined(__FULLY_CORRELATED__)
   this->Tweak(force_inputs, input_vec);
   this->SyncRHCToFHCSystematics();
-  #else
+#else
   this->TweakFHCpRHC(force_inputs, input_vec);
-  #endif
-  //
+#endif
+
 #else
 #ifdef __FHC_RUNNING__
   this->Tweak(force_inputs, input_vec);
@@ -1494,7 +1496,7 @@ void BANFF::TweakFHCpRHCConstrainedOnly(
       // vec.Print();
       // fCurrentValues->Print();
       // fRHCCurrentValues->Print();
-      // std::exit(1);
+      // exit(1);
 
       return;
     }
@@ -1794,6 +1796,346 @@ void BANFF::TweakFHCpRHCXSecOnly(
      return;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________________________
+void BANFF::TweakSampleXSecNumuNueOnly(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+  // NEW FHC+RHC JOINT
+#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
+  #if defined(__FULLY_CORRELATED__) 
+  this->TweakXSecNumuNueOnly(force_inputs,input_vec);
+  this->SyncRHCToFHCSystematics();
+  #else
+  this->TweakFHCpRHCXSecNumuNueOnly(force_inputs,input_vec);
+  #endif
+  //
+#else
+#ifdef __FHC_RUNNING__
+  this->TweakXSecNumuNueOnly(force_inputs,input_vec);
+#endif
+#ifdef __RHC_RUNNING__
+  this->TweakRHCXSecNumuNueOnly(force_inputs,input_vec);
+#endif
+#endif
+}
+//________________________________________________________________________________________
+void BANFF::TweakXSecNumuNueOnly(
+  bool       force_inputs, /* force the input params or generate random ones internally  */
+  TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/TweakFluxOnly >> Tweaking BANFF flux parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweaked         = true;
+  fIsFluxWghtUpdated = false;
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fCovMtrxChoL == 0) 
+    this->CholeskyDecomposeMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  TVectorD & bestfit_values = *fBestFitValues;
+  TVectorD & current_values = *fCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+  {
+     // Input vector is NULL.
+     // This resets the BANFF params to their best-fit values.
+     if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/TweakFluxOnly >> Reset BANFF flux params to best-fit values." << endl;
+#endif
+        fIsTweaked = false;
+        current_values = bestfit_values;
+        return;
+     }
+     else     
+     {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/TweakFluxOnly >> Forcing input BANFF flux parameters. " << endl;
+#endif
+        // TVectorD & vec = *input_vec;
+        // assert(vec.GetNoElements() == conv::kNumOfFluxParamsInBANFFfit);
+	// for (int i=0; i< conv::kNumOfFluxParamsInBANFFfit; i++){
+	//   current_values[i] = vec[i];
+	// }
+        // return;
+
+	cerr << endl;
+	cerr << "BANFF::TweakXSecNumuNueOnly" << endl;
+	cerr << "Forced tweak not available" << endl;
+	cerr << endl;
+	exit(1);
+     }
+  }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+  {
+#ifdef __show_tweak_mesg_debug__
+     cout << "Exp/BANFF/TweakFluxOnly >> Generating random twk dials (correlated)! " << endl;
+#endif
+     TMatrixD & L = *fCovMtrxChoL;
+     TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+     for (int i=0; i< conv::kNumOfParamsInBANFFfit; i++){
+       //if(i<conv::kNumOfFluxParamsInBANFFfit) current_values[i] = vec[i];
+       if(i==63 || i==65) current_values[i] = vec[i];
+       else current_values[i] = bestfit_values[i];
+     }
+     return;
+  }
+
+}
+//________________________________________________________________________________________
+void BANFF::TweakRHCXSecNumuNueOnly(
+ bool       force_inputs, /* force the input params or generate random ones internally  */
+ TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/TweakFluxOnly >> Tweaking RHC BANFF flux parameters" << endl;
+#endif
+
+  // Switch flags
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdatedRHC = false;
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fRHCCovMtrxChoL == 0) 
+    this->CholeskyDecomposeRHCMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  TVectorD & bestfit_values = *fRHCBestFitValues;
+  TVectorD & current_values = *fRHCCurrentValues;
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+    {
+      // Input vector is NULL.
+      // This resets the BANFF params to their best-fit values.
+      if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/TweakFluxOnly >> Reset RHC BANFF flux params to best-fit values." << endl;
+#endif
+        fIsTweakedRHC = false;
+        current_values = bestfit_values;
+        return;
+      }
+      else     
+	{
+#ifdef __show_tweak_mesg_debug__
+	  cout << "Exp/BANFF/TweakFluxOnly >> Forcing RHC input BANFF flux parameters. " << endl;
+#endif
+	  // TVectorD & vec = *input_vec;
+	  // assert(vec.GetNoElements() == conv::kNumOfRHCFluxParamsInBANFFfit);
+	  // for (int i=0; i< conv::kNumOfRHCFluxParamsInBANFFfit; i++){
+	  //   current_values[i] = vec[i];
+	  // }
+	  // return;
+	  
+	  cerr << endl;
+	  cerr << "BANFF::TweakFHCpRHCXSecNumuNueOnly" << endl;
+	  cerr << "Forced tweak not available" << endl;
+	  cerr << endl;
+	  exit(1);
+	}
+    }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+    {
+#ifdef __show_tweak_mesg_debug__
+      cout << "Exp/BANFF/TweakFluxOnly >> Generating RHC random twk dials (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fRHCCovMtrxChoL;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+      for (int i=0; i< conv::kNumOfRHCParamsInBANFFfit; i++){
+	//if(i<conv::kNumOfRHCFluxParamsInBANFFfit) current_values[i] = vec[i];
+	if(i==63 || i==65) current_values[i] = vec[i];
+	else current_values[i] = bestfit_values[i];
+      }
+      return;
+    }
+}
+//________________________________________________________________________________________
+void BANFF::TweakFHCpRHCXSecNumuNueOnly(
+ bool       force_inputs, /* force the input params or generate random ones internally  */
+ TVectorD * input_vec    /* input vector of BANFF params - Set to 0 to reset to best-fit ones */
+)
+{
+#ifdef __show_tweak_mesg_debug__
+  cout << "Exp/BANFF/TweakFluxOnly >> Tweaking FHC+RHC BANFF flux parameters" << endl;
+#endif
+
+  // Switch flags
+
+  // NEW FHC+RHC JOINT
+  fIsTweaked            = true;
+  fIsTweakedRHC         = true;
+  fIsFluxWghtUpdated    = false;
+  fIsFluxWghtUpdatedRHC = false;
+  //fIsTweakedFHCpRHC         = true;
+  //fIsFluxWghtUpdatedFHCpRHC = false;
+  //
+
+  //
+  // If this is the first time this function is called, then run the Cholesky 
+  // decomposition of the flux covariance matrix
+  //
+
+  if(fFHCpRHCCovMtrxChoL == 0) 
+    this->CholeskyDecomposeFHCpRHCMatrix();
+
+  //
+  // Get best-fit and current BANFF params
+  //
+
+  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  TVectorD & current_values = *fFHCpRHCCurrentValues;
+  // NEW FHC+RHC JOINT
+  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  TVectorD & current_values_fhc = *fCurrentValues;
+  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  TVectorD & current_values_rhc = *fRHCCurrentValues;
+  //
+
+  //
+  // Force input BANFF parameters
+  //
+  if(force_inputs) 
+    {
+      // Input vector is NULL.
+      // This resets the BANFF params to their best-fit values.
+      if(input_vec==0) {
+#ifdef __show_tweak_mesg_debug__
+        cout << "Exp/BANFF/TweakFluxOnly >> Reset FHC+RHC BANFF flux params to best-fit values." << endl;
+#endif
+        // NEW FHC+RHC JOINT
+	fIsTweaked          = false;
+        fIsTweakedRHC       = false;
+        //fIsTweakedFHCpRHC = false;
+        
+	current_values = bestfit_values;
+	// NEW FHC+RHC JOINT
+        current_values_fhc = bestfit_values_fhc;
+        current_values_rhc = bestfit_values_rhc;
+        //
+        return;
+      }
+      else     
+	{
+#ifdef __show_tweak_mesg_debug__
+	  cout << "Exp/BANFF/TweakFluxOnly >> Forcing FHC+RHC input BANFF flux parameters. " << endl;
+#endif
+
+	  cerr << endl;
+	  cerr << "BANFF::TweakFHCpRHCXSecNumuNueOnly" << endl;
+	  cerr << "Forced tweak not available" << endl;
+	  cerr << endl;
+	  exit(1);
+
+	  // TVectorD & vec = *input_vec;
+	  // assert(vec.GetNoElements() == conv::kNumOfFHCpRHCFluxParamsInBANFFfit);
+	  // for (int i=0; i< conv::kNumOfFHCpRHCFluxParamsInBANFFfit; i++){
+	  //   current_values[i] = vec[i];
+	  // }
+	  // // NEW FHC+RHC JOINT
+	  // this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+	  // //
+
+	  return;
+	}
+    }//force_inputs?
+
+  //
+  // If the tweaking dials were not forced, generate correlated tweaking dials
+  // using the Cholesky method
+  //
+  else
+    {
+#ifdef __show_tweak_mesg_debug__
+      cout << "Exp/BANFF/TweakFluxOnly >> Generating FHC+RHC random twk dials (correlated)! " << endl;
+#endif
+      TMatrixD & L = *fFHCpRHCCovMtrxChoL;
+      TVectorD vec = util::CholeskyGenerateCorrelatedParams(L,bestfit_values);
+      for (int i=0; i< conv::kNumOfFHCpRHCParamsInBANFFfit; i++){
+	  //if(i<conv::kNumOfFHCpRHCFluxParamsInBANFFfit) current_values[i] = vec[i];
+	  if(i==63 || i==65) current_values[i] = vec[i];
+	  else current_values[i] = bestfit_values[i];
+      }
+
+      // NEW FHC+RHC JOINT
+      this->SplitFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);
+      //
+      
+      return;
+    }
+}
+//
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2236,11 +2578,11 @@ void BANFF::RestoreFHCpRHCNominalMC(void)
   this->RestoreNominalMC();
   this->RestoreRHCNominalMC();
   
-  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  //TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
   TVectorD & current_values = *fFHCpRHCCurrentValues;
-  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  //TVectorD & bestfit_values_fhc = *fBestFitValues;
   TVectorD & current_values_fhc = *fCurrentValues;
-  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  //TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
   TVectorD & current_values_rhc = *fRHCCurrentValues;
   this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);    
 }
@@ -2300,11 +2642,11 @@ void BANFF::RestoreFHCpRHCTunedMC(void)
   this->RestoreTunedMC();
   this->RestoreRHCTunedMC();
   
-  TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
+  //TVectorD & bestfit_values = *fFHCpRHCBestFitValues;
   TVectorD & current_values = *fFHCpRHCCurrentValues;
-  TVectorD & bestfit_values_fhc = *fBestFitValues;
+  //TVectorD & bestfit_values_fhc = *fBestFitValues;
   TVectorD & current_values_fhc = *fCurrentValues;
-  TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
+  //TVectorD & bestfit_values_rhc = *fRHCBestFitValues;
   TVectorD & current_values_rhc = *fRHCCurrentValues;
   this->MergeFHCpRHCvectors(current_values,current_values_fhc,current_values_rhc);    
 }
@@ -2582,7 +2924,7 @@ const TVectorD & BANFF::SampleBestFitValues (void) const
   return *fRHCBestFitValues;
 #else
   std::cerr<<"BANFF/SampleBestFitValues >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -2602,7 +2944,7 @@ const TMatrixD & BANFF::SampleCovMatrix  (void) const
   return *fRHCCovMtrx;
 #else
   std::cerr<<"BANFF/SampleCovMtrx >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -2622,7 +2964,7 @@ const TMatrixD & BANFF::SampleCovMatrixInv (void) const
   return *fRHCCovMtrxInv;
 #else
   std::cerr<<"BANFF/SampleCovMtrxInv >> Cannot find right matrix."<<endl;
-  std::exit(-1);
+  exit(-1);
 #endif
 }
 //________________________________________________________________________________________
@@ -2691,7 +3033,7 @@ void BANFF::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfi
   
   // Fill FHC and RHC parameter arrays
   
-  const int np = conv::kNumOfFHCpRHCParamsInBANFFfit;
+  //const int np = conv::kNumOfFHCpRHCParamsInBANFFfit;
   const int np_fhc = conv::kNumOfParamsInBANFFfit;
   const int np_rhc = conv::kNumOfRHCParamsInBANFFfit;
   
@@ -2700,9 +3042,10 @@ void BANFF::MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfi
   int range_flux_fhc[2] = {0, conv::kNumOfFluxParamsInBANFFfit}; // flux fhc
   int range_flux_rhc[2] = {0, conv::kNumOfRHCFluxParamsInBANFFfit}; // flux rhc 
   int range_xsec_fhc[2] = {conv::kNumOfFluxParamsInBANFFfit,    conv::kNumOfParamsInBANFFfit}; // xsec fhc
+
+#ifdef __show_init_mesg_debug__
   int range_xsec_rhc[2] = {conv::kNumOfRHCFluxParamsInBANFFfit, conv::kNumOfRHCParamsInBANFFfit}; // xsec rhc
   
-#ifdef __show_init_mesg_debug__
   cout << "range flux fhc = " <<  range_flux_fhc[0] << " - " <<  range_flux_fhc[1] << endl;
   cout << "range flux rhc = " <<  range_flux_rhc[0] << " - " <<  range_flux_rhc[1] << endl;
   cout << "range xsec fhc = " <<  range_xsec_fhc[0] << " - " <<  range_xsec_fhc[1] << endl;

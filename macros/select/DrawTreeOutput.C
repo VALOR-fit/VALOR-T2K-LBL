@@ -33,10 +33,15 @@
 
 using namespace std;
 
-//const char infilename[200] = "selected/neut/13a/sk13a_nRnueCC.root";
-const char infilename[200] = "selected/neut/13a/sk13a_nRnumuCC.root";
+//const char infilename[200] = "$T2KOSCANA/inputs/test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC.root";
+//const char infilename[200] = "$T2KOSCANA/inputs/test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnueCC_erec_delta.root";
+
+const char infilename[200] = "$T2KOSCANA/inputs/test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC.root";
+//const char infilename[200] = "$T2KOSCANA/inputs/test/selected_OLD/selected_NofitQun_4_9_14/neut/13a/sk13a_nRnumuCC_erec_delta.root";
 
 TH1F *herec = new TH1F("herec","herec",100,0,10);
+TH2F *herecVsenu = new TH2F("herecVsenu","herecVsenu",100,0,10,100,0,10);
+
 TH1F *hmode = new TH1F("hmode","hmode",200,-100,100);
 TH1F *henu = new TH1F("henu","henu",100,0,10);
 TH1F *hwgt = new TH1F("hwgt","hwgt",100,0,3);
@@ -185,6 +190,7 @@ void DrawTreeOutput(){
     if( (i%1000)==0 ) cout << "Event " << i << endl;
     tnue->GetEntry(i);	 // Get the Event			
     herec->Fill(erec_nue/1000.);
+    herecVsenu->Fill(erec_nue/1000.,enu_nue);
     hmode->Fill(mode_nue);
     henu->Fill(enu_nue);
     hwgt->Fill(wgt_nue);
@@ -214,6 +220,9 @@ void DrawTreeOutput(){
     if( (i%1000)==0 ) cout << "Event " << i << endl;
     tnuebar->GetEntry(i);	 // Get the Event			
     herec->Fill(erec_nuebar/1000.);
+
+    herecVsenu->Fill(erec_nuebar/1000.,enu_nuebar);
+
     hmode->Fill(mode_nuebar);
     henu->Fill(enu_nuebar);
     hwgt->Fill(wgt_nuebar);
@@ -222,7 +231,15 @@ void DrawTreeOutput(){
     hQ2->Fill(Q2_nuebar);
     hevis->Fill(evis_nuebar);
     hnring->Fill(nring_nuebar);
+
+    //OutValues();
+  
+
   }
+
+  //return;
+
+
 
   // tnuesig 
   cout << endl;
@@ -243,6 +260,7 @@ void DrawTreeOutput(){
     if( (i%1000)==0 ) cout << "Event " << i << endl;
     tnuesig->GetEntry(i);	 // Get the Event			
     herec->Fill(erec_nuesig/1000.);
+    herecVsenu->Fill(erec_nuesig/1000.,enu_nuesig);
     hmode->Fill(mode_nuesig);
     henu->Fill(enu_nuesig);
     hwgt->Fill(wgt_nuesig);
@@ -272,6 +290,7 @@ void DrawTreeOutput(){
     if( (i%1000)==0 ) cout << "Event " << i << endl;
     tnumu->GetEntry(i);	 // Get the Event			
     herec->Fill(erec_numu/1000.);
+    herecVsenu->Fill(erec_numu/1000.,enu_numu);
     hmode->Fill(mode_numu);
     henu->Fill(enu_numu);
     hwgt->Fill(wgt_numu);
@@ -301,6 +320,7 @@ void DrawTreeOutput(){
     if( (i%1000)==0 ) cout << "Event " << i << endl;
     tnumubar->GetEntry(i);	 // Get the Event			
     herec->Fill(erec_numubar/1000.);
+    herecVsenu->Fill(erec_numubar/1000.,enu_numubar);
     hmode->Fill(mode_numubar);
     henu->Fill(enu_numubar);
     hwgt->Fill(wgt_numubar);
@@ -314,6 +334,13 @@ void DrawTreeOutput(){
 
   TCanvas *cerec = new TCanvas("cerec","cerec");
   herec->Draw();
+
+  TCanvas *cereVsenu = new TCanvas("cerecVsenu","cerecVsenu");
+  herecVsenu->GetXaxis()->SetRangeUser(0,5);
+  herecVsenu->GetYaxis()->SetRangeUser(0,5);
+  herecVsenu->GetXaxis()->SetTitle("E_{reco} (GeV)");
+  herecVsenu->GetYaxis()->SetTitle("E_{true} (GeV)");
+  herecVsenu->Draw("colz");
 
   TCanvas *cmode = new TCanvas("cmode","cmode");
   hmode->Draw();
@@ -340,4 +367,16 @@ void DrawTreeOutput(){
   hnring->Draw();
 
   return;
+}
+
+
+
+void OutValues(){
+
+  if(enu_nue<4.364 && enu_nue>4.358){
+    cout << "Ereco " << erec_nuebar/1000.
+	 << "Etrue " << enu_nuebar
+	 << endl;
+  }
+  return;  
 }
