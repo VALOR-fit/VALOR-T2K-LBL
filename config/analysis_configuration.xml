@@ -1,25 +1,23 @@
 <?xml version="1.0"?>
 
-<analysis_inputs analysis="T2K/VaLOR/joint" data="run1to6_prelim_statonly" flux="tun13av1.1" mc="neut/14a" ndfit="banff/prelim" oth="sk+fsi">
+<analysis_inputs analysis="T2K/VaLOR/joint" data="run1to6b_prelim" flux="tun13av1.1" mc="neut/14a" ndfit="banff/prelim" oth="sk+fsi">
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Data POT for analysis
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  6.811e+20
-  0.506e+20
-
-  7.3e+20
-  1.7e+20 
   -->
- 
+  
+  <!-- 6.914e+20 -->
+  <!-- 4.0108e+20 -->
+
   <data_pot>
     <superk> 
      <fhc>
-       7.3e+20
+       6.914e+20
      </fhc>
      <rhc>
-       1.700e+20 
+       4.011e+20
      </rhc>       
     </superk> 
   </data_pot>
@@ -34,46 +32,46 @@
     <!--
      Tuned SuperK flux 
     -->
-      <tuned>
+      <tuned> 
         <numu>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run1-5b_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run1-6a_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu  </objname>
            <objtype>    TH1D                  </objtype>
         </numu>
         <numubar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run1-5b_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run1-6a_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub </objname>
            <objtype>    TH1D                  </objtype>
         </numubar>
         <nue>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run1-5b_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run1-6a_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue   </objname>
            <objtype>    TH1D                  </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run1-5b_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run1-6a_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb  </objname>
            <objtype>    TH1D                  </objtype>
         </nuebar>
       </tuned>
       <tuned_rhc>
         <numu>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu  </objname>
            <objtype>    TH1D                  </objtype>
         </numu>
         <numubar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub </objname>
            <objtype>    TH1D                  </objtype>
         </numubar>
         <nue>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue   </objname>
            <objtype>    TH1D                  </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb  </objname>
            <objtype>    TH1D                  </objtype>
         </nuebar>
@@ -84,22 +82,22 @@
       
       <tuning_weights>
         <numu>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run1-5b_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run1-6a_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </numu>
         <numubar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run1-5b_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run1-6a_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub_ratio  </objname>
            <objtype>    TH1D                         </objtype>
         </numubar>
         <nue>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run1-5b_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run1-6a_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue_ratio    </objname>
            <objtype>    TH1D                         </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run1-5b_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run1-6a_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </nuebar>
@@ -107,22 +105,22 @@
     
       <tuning_weights_rhc>
         <numu>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </numu>
         <numubar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub_ratio  </objname>
            <objtype>    TH1D                         </objtype>
         </numubar>
         <nue>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue_ratio    </objname>
            <objtype>    TH1D                         </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2015/flux/sk_tuned13av1.1_13anom_run5c-6c_antinumode_fine.root </filename>
+           <filename>   official/2015/flux/June2015/sk_tuned13av1.1_13anom_run5c-6e_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </nuebar>
@@ -359,8 +357,9 @@
     -->
     
     <best_fit_values>     
-      <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc.root </filename>
+      <filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
       <objname>    postfit_params   </objname>
+      <!-- <objname>    postfit_params   </objname> --> 
       <objtype>    TVectorD        </objtype>
     </best_fit_values>
     
@@ -368,15 +367,16 @@
       Covariance of fit parameters                 
     -->
     <covariance_matrix>
-      <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc.root </filename>
+      <filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
       <objname>    postfit_cov       </objname>
+      <!-- <objname>    postfit_cov       </objname> -->
       <objtype>    TMatrixD         </objtype>
     </covariance_matrix>
    
    
     <disap>
       <best_fit_values>
-        <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc.root </filename>
+	<filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
         <objname>    postfit_params   </objname>
         <objtype>    TVectorD        </objtype>
       </best_fit_values>
@@ -384,7 +384,7 @@
         Covariance of fit parameters
       -->
       <covariance_matrix>
-        <filename>   official/2015/banff/postfit_banff_2015_data_20150417_valor_order_rhc.root </filename>
+	<filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
         <objname>    postfit_cov       </objname>    
         <objtype>    TMatrixD         </objtype>
       </covariance_matrix>
@@ -392,20 +392,16 @@
    
     <app>
       <best_fit_values>
-        <!-- <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
-        <objname>    postfit_params   </objname> -->
-        <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
-        <objname>    prelim_par_fhc   </objname>
+	<filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
+        <objname>    postfit_params   </objname>
         <objtype>    TVectorD         </objtype>
       </best_fit_values>
       <!--           
         Covariance of fit parameters                          
       -->
       <covariance_matrix>
-        <!-- <filename>   official/2013/banff/postfit_banff_2013_appearance_v5.root  </filename>
-        <objname>    postfit_cov      </objname> -->
-        <filename>   test/PrelimCovMatrix/cov_flux_prelim_13av1_xsec_prelim.root </filename>
-        <objname>    prelim_cov_fhc   </objname>
+	<filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
+        <objname>    postfit_cov       </objname>    
         <objtype>    TMatrixD         </objtype>
       </covariance_matrix>
     </app>
@@ -427,28 +423,52 @@
   <xsec>
     
     <weight_splines>
-      <one_mu_ring>
-        <filename>
-          official/2015/xsec/splines_v8_1Rmu.root
-        </filename>
-      </one_mu_ring>
-      <one_e_ring>
-        <filename>
-          official/2015/xsec/splines_v8_1Re.root
-        </filename>
-      </one_e_ring>
-      
-      <one_mu_ring_rhc>
-        <filename>
-          official/2015/xsec/splines_v8_RHC1Rmu.root
-        </filename>
-      </one_mu_ring_rhc>
-      <one_e_ring_rhc>
-        <filename>
-          official/2015/xsec/splines_v8_RHC1Re.root
-        </filename>
-      </one_e_ring_rhc>
+        <one_mu_ring>
+            <filename>
+                official/2015/xsec/splines_v8_1Rmu.root
+            </filename>
+        </one_mu_ring>
+        <one_e_ring>
+            <filename>
+                official/2015/xsec/splines_v8_1Re.root
+            </filename>
+        </one_e_ring>
+        
+        <one_mu_ring_rhc>
+            <filename>
+                official/2015/xsec/splines_v8_RHC1Rmu.root
+            </filename>
+        </one_mu_ring_rhc>
+        <one_e_ring_rhc>
+            <filename>
+                official/2015/xsec/splines_v8_RHC1Re.root
+            </filename>
+        </one_e_ring_rhc>
     </weight_splines>
+
+    <weight_splines_2d>
+        <one_mu_ring>
+            <filename>
+                official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_1Rmu.root
+            </filename>
+        </one_mu_ring>
+        <one_e_ring>
+            <filename>
+                official/2015/xsec/2d_splines/theta/SFRPA/splines_v5_1Re.root
+            </filename>
+        </one_e_ring>
+        
+        <one_mu_ring_rhc>
+            <filename>
+                official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_RHC1Rmu.root
+            </filename>
+        </one_mu_ring_rhc>
+        <one_e_ring_rhc>
+            <filename>
+                official/2015/xsec/2d_splines/theta/SFRPA/splines_v5_RHC1Re.root
+            </filename>
+        </one_e_ring_rhc>
+    </weight_splines_2d>
     
     <normalisations>
       <cccoh>          1.0      </cccoh>
@@ -461,11 +481,11 @@
     </normalisations>
     
     <untuned_parameter_central_values>
-       <filename>   official/2015/banff/banff_systematic_central_values.root  </filename>
-       <objname>    banff_central_values_2015_disap                           </objname>
-       <objtype>    TVectorD           </objtype>
+      <filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root  </filename>
+      <objname>    banff_xsec_untuned_central_values                      </objname>
+      <objtype>    TVectorD           </objtype>
     </untuned_parameter_central_values>
-      
+    
   </xsec>
 
 
@@ -485,7 +505,6 @@
             0.024
          </one_e_ring>
       </energy_scale_relative_error>
-      
      </superk>
   </detector_systematics>
   
@@ -499,38 +518,10 @@
         Covariance matrix of SKDet FSI parameters
     -->
     <covariance_matrix>
-      <!--
-      <filename>   official/2013/skdetfsi/skfsipn_2013_joint_Run4.root  </filename>
-      <objname>    skfsipn_cov             </objname>
-      -->
-      
-      <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv3_FSIv1.root </filename>
-      <objname>    covmat_skdetfsi_rhc_nue </objname>
-      
+      <filename>   official/2015/skdetfsi/Joint_FHC_RHC_SKDetFSI_VaLOR_Order_BANFF_14_3_16.root </filename>
+      <objname>    covmat_skdetfsi_full </objname>          
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
-    
-    <disap>
-      <covariance_matrix>
-        <!--
-        <filename>   official/2013/skdetfsi/skdet_mat_numuoa_2013a_direct_v5_run1to4_final_valor.root  </filename>
-        <objname>    covmat_sk_fsi         </objname> 
-        -->
-         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv3_FSIv1.root </filename>
-         <objname>    covmat_skdetfsi_rhc_numu </objname>
-        
-        <objtype>    TMatrixD              </objtype>
-      </covariance_matrix>
-    </disap>
-    
-    <app>
-      <covariance_matrix>
-         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv3_FSIv1.root </filename>
-         <objname>    covmat_skdetfsi_rhc_nue </objname>
-         
-         <objtype>    TMatrixD              </objtype>
-      </covariance_matrix>
-    </app>
     
   </skdetfsi>
   

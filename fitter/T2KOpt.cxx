@@ -147,32 +147,7 @@ void T2KOpt::SetDefaults(void)
   fPathEscaleMultiReErr = "detector_systematics/superk/energy_scale_relative_error/multi_e_ring";
 
   // Get SuperkDetectorFSI covariance matrix
-#if FSI_BINS == 1
   fPathSKDetFSICovMatr = "skdetfsi/covariance_matrix";
-#elif FSI_BINS == 2
-  fPathSKDetFSICovMatr = "skdetfsi/disap/covariance_matrix";
-#elif FSI_BINS == 3
-  fPathSKDetFSICovMatr = "skdetfsi/app/covariance_matrix";
-#endif
-  
-  // Get SuperkDetectorFSI covariance matrix RHC
-#if FSI_BINS == 1
-  fPathRHCSKDetFSICovMatr = "skdetfsi/covariance_matrix";
-#elif FSI_BINS == 2
-  fPathRHCSKDetFSICovMatr = "skdetfsi/disap/covariance_matrix";
-#elif FSI_BINS == 3
-  fPathRHCSKDetFSICovMatr = "skdetfsi/app/covariance_matrix";
-#endif
-
-  // Get SuperkDetectorFSI covariance matrix FHC-MultiRing
-#if FSI_BINS == 1
-  fPathMultiRingSKDetFSICovMatr = "skdetfsi/covariance_matrix";
-#elif FSI_BINS == 2
-  fPathMultiRingSKDetFSICovMatr = "skdetfsi/disap/covariance_matrix";
-#elif FSI_BINS == 3
-  fPathMultiRingSKDetFSICovMatr = "skdetfsi/app/covariance_matrix";
-#endif
-
   //
 
   fFit_1Rmu     = false;
@@ -184,10 +159,10 @@ void T2KOpt::SetDefaults(void)
 
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
-    if(s == kSKsFCFV1RingMuLike) fFit_1Rmu = true;
-    if(s == kSKsFCFV1RingELike ) fFit_1Re  = true;
-    if(s == kSKsRHCFCFV1RingMuLike) fFit_RHC_1Rmu = true;
-    if(s == kSKsRHCFCFV1RingELike ) fFit_RHC_1Re  = true;
+    if(s == kSKsFCFV1RingMuLike    ) fFit_1Rmu = true;
+    if(s == kSKsFCFV1RingELike     ) fFit_1Re  = true;
+    if(s == kSKsRHCFCFV1RingMuLike ) fFit_RHC_1Rmu = true;
+    if(s == kSKsRHCFCFV1RingELike  ) fFit_RHC_1Re  = true;
     if(s == kSKsFCFVMultiRingMuLike) fFit_MultiRmu = true;
     if(s == kSKsFCFVMultiRingELike ) fFit_MultiRe  = true;
   }
