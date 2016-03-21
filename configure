@@ -24,6 +24,8 @@ if(($match = grep(/--help/i, @ARGV)) > 0) {
   print "     --fhc-running              Run with FHC 1-ring samples (neutrino enhanced)      default: off \n";
   print "     --rhc-running              Run with RHC 1-ring samples (anti-neutrino enhanced) default: off \n";
   print "     --multiring-fhc-running    Run with FHC multiring samples                       default: off \n";
+  print "     --multiring-fhc-nue        Run with FHC multiring nue samples                   default: off \n";
+  print "     --multiring-fhc-numu       Run with FHC multiring numu samples                  default: off \n";
   print "     --numudisap-only           Run with 1Rmu samples only                           default: off \n";
   print "     --nueapp-only              Run with 1Re samples only                            default: off \n";
   print "     --use_osc_numu             Run with nue->numu samples (rescale flux, not specific SKMC)           default: off \n";
@@ -177,9 +179,17 @@ foreach (@ARGV) {
       print BLD_HEADER_FILE "#define __RHC_RUNNING__ \n\n";
   }
   elsif($_ eq '--multiring-fhc-running') {
-      print BLD_HEADER_FILE "// For reverse multi-ring forward current running. \n";
+      print BLD_HEADER_FILE "// For multi-ring forward horn current running. \n";
       print BLD_HEADER_FILE "#define __MULTIRING_FHC_RUNNING__ \n\n";
   }
+  elsif($_ eq '--multiring-fhc-nue') {
+      print BLD_HEADER_FILE "// For multi-ring forward horn current running nue sample. \n";
+      print BLD_HEADER_FILE "#define __MULTIRING_FHC_NUE__ \n\n";
+  }
+  elsif($_ eq '--multiring-fhc-numu') {
+      print BLD_HEADER_FILE "// For multi-ring forward horn current running numu sample. \n";
+      print BLD_HEADER_FILE "#define __MULTIRING_FHC_NUMU__ \n\n";
+  }  
   elsif($_ eq '--numudisap-only') { 
      print BLD_HEADER_FILE "// Sets BANFF_BINS, FSI_BINS, and kSKSamples appropriately. \n";
      print BLD_HEADER_FILE "#define __NUMUONLY__ \n\n";
