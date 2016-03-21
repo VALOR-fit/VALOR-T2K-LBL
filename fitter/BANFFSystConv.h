@@ -59,7 +59,7 @@ namespace valor {
         //
 #elif BANFF_BINS == 3 //app
         static const int kNumOfParamsInBANFFfit = 40;
-        static const int kNumOfParamsInBANFFfit - 15;
+        static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 15;
         static const int kNumOfRHCParamsInBANFFfit = 40;
         static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 15;
         // NEW FLUX FHC+RHC

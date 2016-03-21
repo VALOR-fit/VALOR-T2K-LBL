@@ -47,9 +47,9 @@
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
 
 //#define POTWEIGHTSAREONE
-//#define FLUXWEIGHTSAREONE
-//#define BANFFTUNEISONE
-//#define XSECWEIGHTSAREONE
+// #define FLUXWEIGHTSAREONE
+// #define BANFFTUNEISONE
+// #define XSECWEIGHTSAREONE
 //#define SYSTWEIGHTSAREONE
 //#define PHYSHYPWEIGHTSAREONE
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
@@ -1187,8 +1187,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     TBranch * branchCCcoh   = mctree->GetBranch(cc_coh_wght_branch);
     mctree->SetBranchStatus(cc_coh_wght_branch , 1 );
     branchCCcoh->SetAddress(&fBrWghtCCcoh);
-#endif
-    
+#endif    
     
     double ntotevents = 0.;
     
@@ -1204,8 +1203,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         // Get reconstructed energy
         double ereco_fill = fBrEreco/1000.; // GeV
-        
-        
         
         
         
@@ -1286,7 +1283,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             util::Die(1); return;
         }
         
-        double LepTheta        = TMath::ACos(costheta); // radiant
+        double LepTheta        = TMath::ACos(costheta); // radians
         double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
         if(LepTheta<0.){
             cerr << endl;
@@ -1294,10 +1291,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             cerr << endl;
             util::Die(1); return;
         }
-                
-	//cout << "theta1 = " << LepThetaDegrees << " - ";
-	//cout << "theta2 = " << CalcThetaDegrees(fBrDir) << endl;
-
+        
+        
         double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum)
         
         //double Q2 = this->CalcQ2(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep); // Q^2
@@ -1381,31 +1376,27 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
 #elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
         
-        //double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
-        // if( costheta<-1.00001 || costheta>+1.00001 ){
-        //     cerr << endl;
-        //     cerr << std::setprecision(10);
-        //     cerr << "SuperkMC::FillTemplateHistogram" << endl;
-        //     cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
-        //     cerr << endl;
-        //     util::Die(1); return;
-        // }        
-        // double LepTheta        = TMath::ACos(costheta); // radiant
-        // double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
-        // if(LepTheta<0.){
-        //     cerr << endl;
-        //     cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
-        //     cerr << endl;
-        //     util::Die(1); return;
-        // }        
-        // double q2_fill = LepThetaDegrees;
-	//cout << "theta1 = " << q2_fill << " - ";
-	
-	double q2_fill = CalcThetaDegrees(fBrDir);
-	
-	//cout << "theta2 = " << q2_fill << endl;
-	
-
+        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
+        if( costheta<-1.00001 || costheta>+1.00001 ){
+            cerr << endl;
+            cerr << std::setprecision(10);
+            cerr << "SuperkMC::FillTemplateHistogram" << endl;
+            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        double LepTheta        = TMath::ACos(costheta); // radiant
+        double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
+        if(LepTheta<0.){
+            cerr << endl;
+            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
+            cerr << endl;
+            util::Die(1); return;
+        }
+        
+        double q2_fill = LepThetaDegrees;
+        
 #ifdef INCLUDEEVENTSNEGATIVEQ2
         if(q2_fill < 0.){
             q2_fill = util::Q2BinEdges(s,0)+conv::kASmallNum;
@@ -1426,17 +1417,15 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
-          cout << "q2_fill = " << q2_fill << endl;
-	  //cout << "costheta = " << costheta << endl;
-	  //cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
-	  util::Die(1); return;
+            cout << "costheta = " << costheta << endl;
+            cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+            util::Die(1); return;
         }
         
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
-          cout << "q2_fill = " << q2_fill << endl;
-	  //cout << "costheta = " << costheta << endl;
-	  //cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
-	  util::Die(1); return;
+            cout << "costheta = " << costheta << endl;
+            cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+            util::Die(1); return;
         }
         
 #else
@@ -1448,7 +1437,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif //__ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
         
         //
-        
         
         
         // //// PROVA Ereco
@@ -1488,8 +1476,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         // //cout << ;
         
         // ///////////
-        
-        
         
         
         
@@ -1617,7 +1603,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
 #endif
         
-    }//iev
+    }//iev loop over events
     
 #ifdef __show_init_mesg_debug__
     
@@ -1950,7 +1936,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         double ereco_nu = ereco_fill; // neutrino reconstructed energy (same for momentum)
         
-        // double Q2 = this->CalcQ2(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep); // Q^2
+        //double Q2 = this->CalcQ2(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep); // Q^2
         //double Q2 = this->CalcQd2(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep); // Qd^2
         //double Q2 = this->CalcEhad(ereco_nuSmeared,emax_lepSmeared);
         //double Q2 = this->CalcInelasticity(ereco_nuSmeared,emax_lepSmeared);
@@ -7525,7 +7511,7 @@ double SuperkMC::CalcQd2(double Enu,double Elep,double Plep,double costheta,doub
     // Plep     --> lepton reco momentum
     // costheta --> angle between neutrino and lepton
     
-    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+    double Q2 = SuperkMC::CalcQ2(Enu,Elep,Plep,costheta,Mlep);
     
     double Qd2 = TMath::Power(1+Q2/0.7, -1);
     
@@ -7566,8 +7552,8 @@ double SuperkMC::CalcBjorkenScale(double Enu,double Elep,double Plep,double cost
     // costheta --> angle between neutrino and lepton
     // Mn       --> nucleon mass
     
-    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
-    double Inel = this->CalcInelasticity(Enu,Elep);
+    double Q2 = SuperkMC::CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+    double Inel = SuperkMC::CalcInelasticity(Enu,Elep);
     double x = Q2 / (2*Mn*Enu*Inel);
     
     return x;
@@ -7575,20 +7561,20 @@ double SuperkMC::CalcBjorkenScale(double Enu,double Elep,double Plep,double cost
 //____________________________________________________________________________________
 double SuperkMC::CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
 {
-    // x = Q2 / (2*Mn*Enu*Inelasticity)
+  // x = Q2 / (2*Mn*Enu*Inelasticity)
     
-    // Enu      --> neutrino reco energy
-    // Elep     --> lepton reco energy
-    // Plep     --> lepton reco momentum
-    // costheta --> angle between neutrino and lepton
-    // Mn       --> nucleon mass
+  // Enu      --> neutrino reco energy
+  // Elep     --> lepton reco energy
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton
+  // Mn       --> nucleon mass
     
-    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
-    double nu = this->CalcEhad(Enu,Elep);
-    
-    double W = Mn*Mn + 2*Mn*nu - Q2;
-    
-    return W;
+  double Q2 = SuperkMC::CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+  double nu = SuperkMC::CalcEhad(Enu,Elep);
+  
+  double W = Mn*Mn + 2*Mn*nu - Q2;
+  
+  return W;
 }
 //____________________________________________________________________________________
 double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn){
@@ -7603,7 +7589,7 @@ double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta
   double MA = 1.2257; // Axial Mass, BANFF post-fit (GeV) 
   double gA = 1.2694; // FA(Q2=0) 
   
-  double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+  double Q2 = SuperkMC::CalcQ2(Enu,Elep,Plep,costheta,Mlep);
 
   double F1 = 0.5;
   double F2 = 0.5;
@@ -7617,33 +7603,7 @@ double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta
 //____________________________________________________________________________________
 
 
-double SuperkMC::CalcThetaDegrees(float dir[10][3]){
 
-  //double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-  //double costheta = dir_nu[0] * dir[0][0] + dir_nu[1] * dir[0][1] + dir_nu[2] * dir[0][2];
-  double costheta = kBeamDir[0] * dir[0][0] + kBeamDir[1] * dir[0][1] + kBeamDir[2] * dir[0][2];
-
-  if( costheta<-1.00001 || costheta>+1.00001 ){
-    cerr << endl;
-    cerr << std::setprecision(10);
-    cerr << "SuperkMC::FillTemplateHistogram" << endl;
-    cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
-    cerr << endl;
-    util::Die(1); return 0;
-    exit(1);
-  }    
-  double LepTheta        = TMath::ACos(costheta); // radiant    
-  double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees   
-  if(LepTheta<0.){
-    cerr << endl;
-    cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
-    cerr << endl;
-    exit(1);
-  }
-  return LepThetaDegrees;
-}
-
-//____________________________________________________________________________________
 
 
 

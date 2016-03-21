@@ -90,21 +90,20 @@ namespace valor {
 #endif
 
 #ifdef __MULTIRING_FHC_RUNNING__
-#ifdef __NUMUONLY__
+#  if defined (__NUMUONLY__) || defined(__MULTIRING_FHC_NUMU__)
       kSKsFCFVMultiRingMuLike,
       kSKsUndefined,
-#else
-#ifdef __NUEONLY__
+#  elif defined (__NUEONLY__) || defined(__MULTIRING_FHC_NUE__)
       kSKsUndefined,
       kSKsFCFVMultiRingELike,
-#else
+#  else
       kSKsFCFVMultiRingMuLike,
       kSKsFCFVMultiRingELike,
-#endif
-#endif
+#  endif
+      
 #else
       kSKsUndefined,
-      kSKsUndefined,
+      ≈kSKsUndefined,
 #endif
 
     };
@@ -516,7 +515,8 @@ namespace valor {
 
 
 #ifdef __MULTIRING_FHC_RUNNING__
-      // > 1 muon-like ring (numu disappearance)
+#ifdef __MULTIRING_FHC_NUMU__
+      // > MultiRmu (1 muon-like ring (numu disappearance))
       {
         kSKmNuMuCCQE,
         kSKmNuMuCC1pi,
@@ -602,7 +602,20 @@ namespace valor {
 #endif
       }
       ,
-      // > 1 electron-like ring (nue appearance)
+#endif // MultiRmu
+#if !defined(__MULTIRING_FHC_NUMU__)
+      {
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined
+      }
+      ,      
+#endif      
+#ifdef __MULTIRING_FHC_NUE__      
+      // > MultiRe (1 electron-like ring (nue appearance))
       {
         kSKmNuMuCCQE,
         kSKmNuMuCC1pi,
@@ -679,11 +692,6 @@ namespace valor {
         kSKmUndefined,
         kSKmUndefined,
 #endif
-        kSKmUndefined,
-        kSKmUndefined,
-        kSKmUndefined,
-        kSKmUndefined,
-        kSKmUndefined,
 #ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
         kSKmUndefined,
         kSKmUndefined,
@@ -692,7 +700,18 @@ namespace valor {
         kSKmUndefined,
 #endif
       }
-
+#endif // MultiRe FHC
+#if !defined(__MULTIRING_FHC_NUE__)
+            {
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined,
+        kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined, kSKmUndefined
+      }
+#endif
+      
 #else //not using MR FHC
       // > 1 muon-like ring (numu disappearance)
       {

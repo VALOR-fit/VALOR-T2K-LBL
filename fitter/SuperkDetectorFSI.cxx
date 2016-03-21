@@ -558,7 +558,11 @@ bool SuperkDetectorFSI::ReadMultiRing(
 
   ///  
 
-  const int np = conv::kNumOfSKDetFSIParamsMultiRing;
+  //  const int np = conv::kNumOfSKDetFSIParamsMultiRing;
+  // ~#{?
+  const int np = conv::kNumOfFHCpRHCSKDetFSIParamsMultiRing;
+  const int np_multi_fhc = conv::kNumOfSKDetFSIParams; 
+  
 
   // Get SuperkDetectorFSI covariance matrix
 // #if FSI_BINS == 1
@@ -569,8 +573,6 @@ bool SuperkDetectorFSI::ReadMultiRing(
 //   fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,"skdetfsi/app/covariance_matrix");
 // #endif
   fMultiRingCovMtrx= util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathMultiRingSKDetFSICovMatr.c_str());
-
-
 
   if(!fMultiRingCovMtrx) {
     cerr << "Exp/SuperkDetectorFSI >> No MultiRing SuperkDetector+FSI covariance matrix was found." << endl;
@@ -610,12 +612,20 @@ bool SuperkDetectorFSI::ReadMultiRing(
   // Create/init current SuperkDetector+FSI params
   fMultiRingCurrentValues = new TVectorD(np);
   fMultiRingNominalValues = new TVectorD(np);
+  /* ~#{?
   for(int ip = 0; ip < np; ip++) 
     {
       (*fMultiRingCurrentValues)[ip] = 1.;
       (*fMultiRingNominalValues)[ip] = 1.;
     }
+  */
+  for(int ip = 0; ip < np_multi_fhc; ip++) 
+    {
+      (*fMultiRingCurrentValues)[ip] = 1.;
+      (*fMultiRingNominalValues)[ip] = 1.;
+    }
 
+  
 #ifdef __show_init_mesg_info__
   cout << "Exp/SuperkDetectorFSI >> Done reading MultiRing SuperkDetector+FSI inputs!" << endl;
 #endif
@@ -624,9 +634,6 @@ bool SuperkDetectorFSI::ReadMultiRing(
   return true;  
 }
 ////
-
-
-
 
 
 //________________________________________________________________________________________                                                                                    
@@ -693,6 +700,11 @@ double SuperkDetectorFSI::SystWght(
   if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike)
     nSKDetFSIParams = conv::kNumOfRHCSKDetFSIParams;
   /// NEW MULTIRING 2
+  // ~#{ Hack for testing set multiring splines to single ring splines
+  // remove when splines are generated for samples
+  if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  // }#~
   else if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
     nSKDetFSIParams = conv::kNumOfSKDetFSIParamsMultiRing; 
   ///

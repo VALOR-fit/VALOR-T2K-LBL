@@ -135,6 +135,11 @@ namespace valor {
     static const int kNumOfFHCpRHCSKDetFSIParams1Re  = kNumOfSKDetFSIParams1Re + kNumOfRHCSKDetFSIParams1Re; //24
     //
 
+    // ~#{? MultiRing + JOINT
+    static const int kNumOfFHCpRHCSKDetFSIParamsMultiRing = kNumOfSKDetFSIParams + kNumOfRHCSKDetFSIParams; // 36
+    static const int kNumOfFHCpRHCSKDetFSIParamsMultiRmu  = kNumOfSKDetFSIParams + kNumOfRHCSKDetFSIParams; // 36
+    static const int kNumOfFHCpRHCSKDetFSIParamsMultiRe   = kNumOfSKDetFSIParams + kNumOfRHCSKDetFSIParams; // 36
+  
 
     // The following is the list of the above kNumOfFSIParams
     static const PhysParamId_t kListOfSKDetFSIParams[kNumOfSKDetFSIParams] =
@@ -3359,8 +3364,13 @@ namespace valor {
 #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
 
 #if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) // fhc all + skdetfsi multiring (no escale)
-    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing + 1/*multiring escale*/;  // Tot # par FHC+MultiRing
-
+#  if defined(__MULTIRING_FHC_NUMU__)
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRmu;  // Tot # par FHC+MultiRmu
+#  elif defined (__MULTIRING_FHC_NUE__)
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRe;  // Tot # par FHC+MultiRmu
+#  else
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing;  // Tot # par FHC+MultiRing
+#  endif
     // NEW FLUX
 #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)// fhc+rhc (fully correlated)
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
@@ -3383,7 +3393,14 @@ namespace valor {
 
 #else
 #ifdef __MULTIRING_FHC_RUNNING__ // multiring fhc only
-    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParamsMultiRing + 1/*energy scale*/  + kNumOfUncXSecSyst;
+#  if defined(__MULTIRING_FHC_NUMU__)
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRmu;  // Tot # par FHC+MultiRmu
+#  elif defined (__MULTIRING_FHC_NUE__)
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRe;  // Tot # par FHC+MultiRmu
+#  else
+    static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing;  // Tot # par FHC+MultiRing
+#  endif
+
 #else
     cerr << "No samples have been chosen for the analysis!!!" << endl;
     exit(1);

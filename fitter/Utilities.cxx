@@ -248,6 +248,8 @@ void valor::util::PrintCompact(
 	 //
 
        #elif defined(__FHC_RUNNING__)
+	 PhysParamId_t p = kListOfBANFFParams[ip];
+       #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing
          PhysParamId_t p = kListOfBANFFParams[ip];
        #elif defined(__RHC_RUNNING__)
 	 PhysParamId_t p = kListOfRHCBANFFParams[ip];
@@ -293,6 +295,8 @@ void valor::util::PrintCompact(
        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__FHC_RUNNING__) // fhc only
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
+       #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__RHC_RUNNING__) // rhc only
          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI_first + ip );
@@ -375,6 +379,8 @@ void valor::util::PrintCompact(
 	 //
 
        #elif defined(__FHC_RUNNING__)
+	 PhysParamId_t p = kListOfBANFFParams[ip];
+       #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing
          PhysParamId_t p = kListOfBANFFParams[ip];
        #elif defined(__RHC_RUNNING__)
          PhysParamId_t p = kListOfRHCBANFFParams[ip];
@@ -422,6 +428,8 @@ void valor::util::PrintCompact(
        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__FHC_RUNNING__)
+	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
+       #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing	 
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__RHC_RUNNING__)
          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI_first + ip );

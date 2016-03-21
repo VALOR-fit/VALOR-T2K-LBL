@@ -502,9 +502,15 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         if(!bin_is_not_empty)
                             continue;
 #endif
-                        
+			// ~#{ Hack for testing set multiring splines to single ring splines
+			// remove when splines are generated for samples
+			if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+			if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+			// }#~
+			
                         std::string splname = this->BuildSplineName(s,m,p,ir,it);
-                        
+			
+			
 #ifdef __show_init_mesg_debug__
                         cout << "Exp/NuXSec >> Loading cross-section weight spline: "
                         << splname << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
@@ -776,7 +782,11 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                             if(!bin_is_not_empty)
                                 continue;
 #endif
-                            
+                            // ~#{ Hack for testing set multiring splines to single ring splines
+			    // remove when splines are generated for samples
+			    if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+			    if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+			    // }#~	
                             std::string splname = this->BuildSplineName(s,m,p,ir,it,iv);
                             
 #ifdef __show_init_mesg_debug__
@@ -991,13 +1001,13 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         exit(-1);
     }
     if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
-        cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
+        cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
         << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
         << endl;
         exit(-1);
     }
     if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
-        cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
+        cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
         << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
         << endl;
         exit(-1);
@@ -3130,6 +3140,11 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
     else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
 #endif
     
+    // ~#{ Hack for testing set multiring splines to single ring splines
+    // remove when splines are generated for samples
+    if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+    if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+    // }#~
     
     int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue,Q2);
     
@@ -3962,12 +3977,26 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
     ostringstream splname;
     splname << "spl_";
 #if defined(__USE_NIWG2013__)
-    if(IsMultiRMuSample(s))
-        splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
-    else if(IsMultiRESample(s))
-        splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
-    else
+    if(IsMultiRMuSample(s)){
+      // ~#{? 
+      //  splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
+      // Want to set the spline name such that the 1Rmu samples are read
+      // FOR TESTING ONLY 
+        s = kSKsFCFV1RingMuLike;
         splname << util::AsStringCompact_splinehack(s) << "_";
+	cout << "set name to mu like" << endl;
+    }
+    else if(IsMultiRESample(s)){
+      // ~#{? 
+      // splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
+      // FOR TESTING ONLY
+        s = kSKsFCFV1RingELike;
+        splname << util::AsStringCompact_splinehack(s) << "_";
+	cout << "set name to e like" << endl;
+    }
+    else {
+        splname << util::AsStringCompact_splinehack(s) << "_";
+    }
     
     splname   << util::AsStringCompact_splinehack(m) << "_"
     << util::AsStringCompact_splinehack(p) << "_"
@@ -3989,9 +4018,19 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
     splname << "spl_";
 #if defined(__USE_NIWG2013__)
     if(IsMultiRMuSample(s))
-        splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
+      // ~#{? 
+      //  splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
+      // Want to set the spline name such that the 1Rme samples are read
+      // FOR TESTING ONLY 
+        s == kSKsFCFV1RingMuLike;
+        splname << util::AsStringCompact_splinehack(s) << "_";
+	
     else if(IsMultiRESample(s))
-        splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
+      // ~#{? 
+      // splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
+      // FOR TESTING ONLY
+        s == kSKsFCFV1RingELike;
+        splname << util::AsStringCompact_splinehack(s) << "_";
     else
         splname << util::AsStringCompact_splinehack(s) << "_";
     

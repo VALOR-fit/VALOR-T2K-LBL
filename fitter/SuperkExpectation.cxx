@@ -355,7 +355,11 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
 
   /// NEW MULTIRING 2
 #ifdef __MULTIRING_FHC_RUNNING__
+  // ~#{?
   if ( ! this->GetSuperkDetectorFSI() -> ReadMultiRing (xml, root_node) ) return false; /// Take same cov. matrix of FHC sample
+  
+  // if ( ! this->GetSuperkDetectorFSI() -> ReadMultiRingpFHCpRHC (xml, root_node) ) return false; /// Take same cov. matrix of FHC sample
+  
 #endif
   ///
 

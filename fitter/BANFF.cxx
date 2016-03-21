@@ -173,7 +173,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
   cout << "Exp/BANFF >> Reading BANFF inputs from XML configuration file." << endl;
   cout << "Exp/BANFF >> "<<util::XML2RootFileName(xml,root_node,banff_param_path)
-       << " - " << util::XML2RootObjName (xml,root_node,banff_param_path);
+       << " - " << util::XML2RootObjName (xml,root_node,banff_param_path) << endl;
 #endif
 
   const int np = conv::kNumOfParamsInBANFFfit;
@@ -183,7 +183,7 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // NEW FHC+RHC JOINT
   fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
-    cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
+    cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
          << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
          << endl;
     exit(-1);
@@ -197,13 +197,13 @@ bool BANFF::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   // exit(-1);
   // }
   // if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
-  // cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
+  // cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
   // << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
   // << endl;
   // exit(-1);
   // }
   // if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
-  // cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
+  // cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
   // << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
   // << endl;
   // exit(-1);
@@ -303,7 +303,7 @@ bool BANFF::ReadRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __USE_NIWG2015__
   fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
-    cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
+    cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
 	 << endl;
     exit(-1);
@@ -427,21 +427,21 @@ bool BANFF::ReadFHCpRHC(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __USE_NIWG2015__
   fFHCpRHCUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fFHCpRHCUntunedCentralValues->GetNoElements()!=kNumOfFHCpRHCParamsInBANFFfit-kNumOfFHCpRHCFluxParamsInBANFFfit) {
-    cerr << "NuXSec/Read >> Expected "<<kNumOfFHCpRHCParamsInBANFFfit-kNumOfFHCpRHCFluxParamsInBANFFfit
+    cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfFHCpRHCParamsInBANFFfit-kNumOfFHCpRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fFHCpRHCUntunedCentralValues->GetNoElements()
 	 << endl;
     exit(-1);
   }
   fUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
-    cerr << "NuXSec/Read >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
+    cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
 	 << endl;
     exit(-1);
   }
   fRHCUntunedCentralValues    = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
   if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
-    cerr << "NuXSec/Read >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
+    cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
 	 << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
 	 << endl;
     exit(-1);
