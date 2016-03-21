@@ -103,7 +103,7 @@ namespace valor {
       
 #else
       kSKsUndefined,
-      ≈kSKsUndefined,
+      kSKsUndefined,
 #endif
 
     };
