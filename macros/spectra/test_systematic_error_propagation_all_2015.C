@@ -23,19 +23,8 @@ void test_systematic_error_propagation_all_2015
  double       input_dm23sq       = -99,                                         /* */
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- const char * config_file        = "analysis_configuration_run1to6_test_app.xml",   /* */
- //const char * config_file        = "analysis_configuration_run1to6_test.xml",   /* */
- //const char * config_file        = "analysis_configuration_2.5E20_prefit.xml",
- //const char * config_file        = "analysis_configuration_2.5E20.xml",
- //const char * config_file        = "analysis_configuration_1.7E20_prefit.xml",
- //const char * config_file        = "analysis_configuration_1.7E20.xml",
- 
- 
- //const char * fit_param_list     = "nuosc3fbar_fixnonbar_12fix+nuisance",
- //const char * fit_param_list     = "nuosc3f_12fix+nuisance",
- //const char * fit_param_list     = "nuosc3fbar_nueapp_fixnonbar_fix4+nuisance",
- const char * fit_param_list     = "nuosc3fbar_fixnonbar_fix5+nuisance",
- //const char * fit_param_list     = "nuosc3fbar_fixnonbar_12fix+nuisance",
+ const char * config_file        = "analysis_configuration.xml",   /* */
+ const char * fit_param_list     = "nuosc3f_12fix+nuisance",
  
  
  const char * mixparamchoice     = "sinsqtheta",
@@ -102,28 +91,28 @@ void test_systematic_error_propagation_all_2015
         ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
         ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
     } else
-        if(ph.Hypothesis() == conv::kHypOsc3F) {
-            ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-            ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
-            ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-            ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
-            ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
-            ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-        } else
-            if(ph.Hypothesis() == conv::kHypOsc3FBar){
-                ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
-                ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
-                ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
-                ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
-                ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
-                ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
-                ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
-                ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
-                ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
-                ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
-                ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
-                ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
-            }
+    if(ph.Hypothesis() == conv::kHypOsc3F) {
+        ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+        ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+        ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+        ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+        ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+        ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+    } else
+    if(ph.Hypothesis() == conv::kHypOsc3FBar){
+        ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
+        ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
+        ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+        ph.SetCurrValue(conv::kPhypCPV    ,   input_deltacp);
+        ph.SetCurrValue(conv::kPhypDm12sq,    input_dm12sq);
+        ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
+        ph.SetCurrValue(conv::kPhypMixing12Bar,  input_mixing12);
+        ph.SetCurrValue(conv::kPhypMixing13Bar,  input_mixing13);
+        ph.SetCurrValue(conv::kPhypMixing23Bar,  input_mixing23);
+        ph.SetCurrValue(conv::kPhypCPVBar    ,   input_deltacp);
+        ph.SetCurrValue(conv::kPhypDm12sqBar,    input_dm12sq);
+        ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
+    }
     
     // Print options
     cout << "\n[Job inputs]" << endl;
