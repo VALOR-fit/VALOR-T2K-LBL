@@ -111,6 +111,10 @@ Split valor::conv namespace into several smaller files
 #endif
 #endif
 
+#ifndef MR_FSI_BINS
+#define MR_FSI_BINS 3
+#endif
+
 #ifndef ONEOVERMAQE
 //#define ONEOVERMAQE
 // Turn on if using a BANFF matrix with 1overMAQE, rather than MAQE. 

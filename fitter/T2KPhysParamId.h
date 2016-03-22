@@ -511,12 +511,12 @@ static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis306;   // SK e
  #endif
 
  // NEW SKDETFSI
- #if FSI_BINS != 3
+ #if MR_FSI_BINS != 3
  static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI000; 
  #else
  static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI006; 
  #endif
-
+  
 #elif defined(__USE_SKDETFSI2015__)
  // SKDET+FSI matrix 24x24
  #if FSI_BINS != 3
@@ -549,7 +549,7 @@ static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis306;   // SK e
  #endif
 
  // NEW SKDETFSI
- #if FSI_BINS != 3
+ #if MR_FSI_BINS != 3
  static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI000; 
  #else
  static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI012; 
