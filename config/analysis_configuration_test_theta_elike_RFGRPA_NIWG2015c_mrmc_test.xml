@@ -629,28 +629,9 @@
     -->
     <covariance_matrix>
       <filename>   official/2015/skdetfsi/Joint_FHC_RHC_SKDetFSI_VaLOR_Order.root </filename>
-      <objname>    covmat_skdetfsi_full </objname>   
-      <!-- <objname>    covmat_skdetfsi_rhc_joint </objname> -->       
+      <objname>    covmat_skdetfsi_full </objname>        
       <objtype>    TMatrixD              </objtype>
     </covariance_matrix>
-    
-    <disap>
-      <covariance_matrix>
-         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv4_FSIv1.root </filename>
-         <objname>    covmat_skdetfsi_full </objname>
-         <!-- <objname>   covmat_skdetfsi_rhc_numu  </objname> -->
-        <objtype>    TMatrixD              </objtype>
-      </covariance_matrix>
-    </disap>
-    
-    <app>
-      <covariance_matrix>
-         <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv4_FSIv1.root </filename>
-         <objname>    covmat_skdetfsi_full </objname>
-         <!-- <objname>   covmat_skdetfsi_rhc_nue  </objname> -->
-         <objtype>    TMatrixD              </objtype>
-      </covariance_matrix>
-    </app>
     
   </skdetfsi>
   
