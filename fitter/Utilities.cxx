@@ -214,6 +214,25 @@ valor::conv::SKMCTemplateType_t
 }
 //____________________________________________________________________________
 void valor::util::PrintCompact(
+        const TVectorD & v, const PhysParamId_t * params, int w, int prec, Option_t * /*option*/, std::ostream & stream)
+{
+  //~ TString opt = option;
+  
+  int np = v.GetNoElements();
+  stream << fixed;
+
+  for(int ip = 0; ip < np; ip++) {
+    PhysParamId_t p = params[ip];
+     stream << "> param = " << setw(3) << ip;
+
+     stream << setw(42) << util::AsString(p);
+     stream << " ]";
+     stream << " - value = " << setw(w) << setprecision(prec) << v[ip] << endl;
+  }
+  stream << scientific;
+}
+//____________________________________________________________________________
+void valor::util::PrintCompact(
         const TVectorD & v, int w, int prec, Option_t * option, std::ostream & stream)
 {
   TString opt = option;

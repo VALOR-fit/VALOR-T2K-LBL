@@ -314,7 +314,7 @@ void SuperkDetectorFSI::CleanUp(void)
 bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SuperkDetectorFSI >> Reading SuperkDetector+FSI inputs from input XML file." << endl;
+  cout << "SuperkDetectorFSI >> Reading SuperkDetector+FSI inputs from input XML file." << endl;
 #endif
 
   fEnergyScaleRelErrMu = util::XML2Dbl(xml,root_node,T2KOpt::Instance()->fPathEscale1RmuErr.c_str());
@@ -325,16 +325,16 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   fCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathSKDetFSICovMatr.c_str());    
     
   if(!fCovMtrx) {
-    cerr << "Exp/SuperkDetectorFSI >> No SuperkDetector+FSI covariance matrix was found." << endl;
+    cerr << "SuperkDetectorFSI >> No SuperkDetector+FSI covariance matrix was found." << endl;
     exit(1);
   }
 
   const TMatrixD & cov = *fCovMtrx;
   if(cov.GetNrows() != np || cov.GetNcols() != np)
   {
-    cerr << "Exp/SuperkDetectorFSI >> SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
-    cerr << "Exp/SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
-    cerr << "Exp/SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
+    cerr << "SuperkDetectorFSI >> SuperkDetector+FSI covariance matrix has unexpected size!" << endl;
+    cerr << "SuperkDetectorFSI >> Expecting: " <<  np << " x " << np << " matrix" << endl;
+    cerr << "SuperkDetectorFSI >> Found: " << cov.GetNrows() << " x " <<  cov.GetNcols() << " matrix" << endl;
     exit(1);
   }
 
@@ -347,14 +347,14 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   TMatrixD prod = cov*covInv;
 
 #ifdef __show_init_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {EnergyScale;mu}    : " << fEnergyScaleRelErrMu  << endl;
-  cout << "Exp/SuperkDetectorFSI >> " << "Error {EnergyScale;e}    : "  << fEnergyScaleRelErrE  << endl;
-  cout << "Exp/SuperkDetectorFSI >> Input SuperkDetector+FSI covariance matrix: " << endl; 
+  cout << "SuperkDetectorFSI >> " << "Error {EnergyScale;mu}    : " << fEnergyScaleRelErrMu  << endl;
+  cout << "SuperkDetectorFSI >> " << "Error {EnergyScale;e}    : "  << fEnergyScaleRelErrE  << endl;
+  cout << "SuperkDetectorFSI >> Input SuperkDetector+FSI covariance matrix: " << endl; 
   //cov.Print();
   util::PrintCompact(cov,7,4);
-  cout << "Exp/SuperkDetectorFSI >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
+  cout << "SuperkDetectorFSI >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
   util::PrintCompact(*fCovMtrxInv,7,4);
-  cout << "Exp/SuperkDetectorFSI >> check of product cov*(cov)^-1 : "<< endl;
+  cout << "SuperkDetectorFSI >> check of product cov*(cov)^-1 : "<< endl;
   util::PrintCompact(prod,7,4);
 #endif
 
@@ -368,7 +368,7 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
 
 #ifdef __show_init_mesg_info__
-  cout << "Exp/SuperkDetectorFSI >> Done reading SuperkDetector+FSI inputs!" << endl;
+  cout << "SuperkDetectorFSI >> Done reading SuperkDetector+FSI inputs!" << endl;
 #endif
 
   return true;  
@@ -441,7 +441,7 @@ void SuperkDetectorFSI::Tweak(
 )
 {
 #ifdef __show_skdetfsi_cholesky_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI/Tweak >> Tweaking SuperkDetector+FSI parameters" << endl;
+  cout << "SuperkDetectorFSI/Tweak >> Tweaking SuperkDetector+FSI parameters" << endl;
 #endif
   
   TVectorD & current_values = *fCurrentValues;
@@ -455,7 +455,7 @@ void SuperkDetectorFSI::Tweak(
      // This resets the FSI params to their best-fit values.
      if(input_skdetfsi_params==0) {
 #ifdef __show_skdetfsi_tweak_mesg_debug__
-        cout << "Exp/SuperkDetectorFSI/Tweak >> Reset SuperkDetector+FSI params to nominal values." << endl;
+        cout << "SuperkDetectorFSI/Tweak >> Reset SuperkDetector+FSI params to nominal values." << endl;
 #endif
         const int np = fNumOfActiveSKDetFSIParams;
         for(int ip = 0; ip < np; ip++) {
@@ -466,7 +466,7 @@ void SuperkDetectorFSI::Tweak(
      else
      {
 #ifdef __show_skdetfsi_tweak_mesg_debug__
-        cout << "Exp/SuperkDetectorFSI/Tweak >> Forcing input SuperkDetector+FSI parameters. " << endl;
+        cout << "SuperkDetectorFSI/Tweak >> Forcing input SuperkDetector+FSI parameters. " << endl;
 #endif
         TVectorD & vec = *input_skdetfsi_params;
         current_values = vec;
@@ -482,20 +482,20 @@ void SuperkDetectorFSI::Tweak(
   if(fCovMtrxChoL == 0)
   {
 #ifdef __show_skdetfsi_cholesky_mesg_info__
-    cout << "Exp/SuperkDetectorFSI/Tweak >> "
+    cout << "SuperkDetectorFSI/Tweak >> "
          << "Running Cholesky's decomposition method on the SuperkDetector+FSI covariance matrix." << endl;
 #endif
     
     TMatrixD cov(this->CovMatrix());
 #ifdef __show_skdetfsi_cholesky_mesg_debug__
-    cout << "Exp/SuperkDetectorFSI/Tweak >> SuperkDetector+FSI covariance matrix: " << endl;
+    cout << "SuperkDetectorFSI/Tweak >> SuperkDetector+FSI covariance matrix: " << endl;
     util::PrintCompact(cov,7,4);
 #endif
 
     TMatrixD L = util::CholeskyDecomposition(cov);
     fCovMtrxChoL = new TMatrixD(L);
 #ifdef __show_skdetfsi_cholesky_mesg_debug__
-    cout << "Exp/SuperkDetectorFSI/Tweak >> Cholesky decomposition of SuperkDetector+FSI covariance matrix: " << endl;
+    cout << "SuperkDetectorFSI/Tweak >> Cholesky decomposition of SuperkDetector+FSI covariance matrix: " << endl;
     util::PrintCompact(*fCovMtrxChoL,7,4);
 #endif
   }
@@ -507,7 +507,7 @@ void SuperkDetectorFSI::Tweak(
   if(!force_inputs)
   {   
 #ifdef __show_skdetfsi_tweak_mesg_debug__
-     cout << "Exp/SuperkDetectorFSI/Tweak >> Generating random SuperkDetector+FSI params (correlated)! " << endl;
+     cout << "SuperkDetectorFSI/Tweak >> Generating random SuperkDetector+FSI params (correlated)! " << endl;
 #endif
      TMatrixD & L = *fCovMtrxChoL; 
      TVectorD & nominal_values = *fNominalValues;
@@ -531,7 +531,7 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
   }
 
 #ifdef __show_chisqpenalty_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> SuperkDetector+FSI parameters: " << endl;
+  cout << "SuperkDetectorFSI/ChisqPenalty >> SuperkDetector+FSI parameters: " << endl;
   util::PrintCompact(current_values, bestfit_values, 12,6,"SKDetFSI fit params");
 #endif
 
@@ -545,16 +545,16 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
   const TMatrixD covInv (this->CovMatrixInv());
 
 #ifdef __show_chisqpenalty_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> SuperkDetector+FSI covariance matrix: " << endl;
+  cout << "SuperkDetectorFSI/ChisqPenalty >> SuperkDetector+FSI covariance matrix: " << endl;
   util::PrintCompact(cov,7,4);
-  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
+  cout << "SuperkDetectorFSI/ChisqPenalty >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
   util::PrintCompact(covInv,7,4);
 #endif
 
   //Check the inverse:
   TMatrixD prod = cov*covInv;
 #ifdef __show_chisqpenalty_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> check of product cov*(cov)^-1 : "<< endl;
+  cout << "SuperkDetectorFSI/ChisqPenalty >> check of product cov*(cov)^-1 : "<< endl;
   util::PrintCompact(prod,7,4);
 #endif
 
@@ -565,11 +565,11 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
   if (fEnergyScaleTwkDial   ) chisq_penalty += fEnergyScaleTwkDial*fEnergyScaleTwkDial;
 
 #ifdef __show_chisqpenalty_mesg_debug__
-  cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
+  cout << "SuperkDetectorFSI/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
 #endif
 
   if(chisq_penalty < 0) 
-    cout << "Exp/SuperkDetectorFSI/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
+    cout << "SuperkDetectorFSI/ChisqPenalty >> ChisqPenalty = " << chisq_penalty << endl;
 
   if(chisq_penalty) return chisq_penalty;
   
@@ -579,9 +579,9 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
 void SuperkDetectorFSI::PrintSystematicVariations(std::ostream & stream, Option_t * /*opt*/) const
 {
   const TVectorD & curr_skdetfsi_params = *fCurrentValues;
-  stream << "Exp/SuperkDetectorFSI >> Energy scale twk        = "  << fEnergyScaleTwkDial      << endl;
-  stream << "Exp/SuperkDetectorFSI >> SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(curr_skdetfsi_params,15,6,"SKDetFSI params",stream);
+  stream << "SuperkDetectorFSI >> Energy scale twk        = "  << fEnergyScaleTwkDial      << endl;
+  stream << "SuperkDetectorFSI >> SuperkDetector+FSI parameters: " << endl;
+  util::PrintCompact(curr_skdetfsi_params,fActiveSKDetFSIParams,15,6,"SKDetFSI params",stream);
 }
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySyst(

@@ -110,6 +110,9 @@ namespace valor {
         // Etc
         //
         
+        void PrintCompact (const TVectorD & v, const conv::PhysParamId_t * params, int w=15, int prec=9, Option_t * opt="", std::ostream & stream = std::cout);
+        
+        // These internally decide what params to use. They should be replaced with versions like the one above, that accept that as a generic list.
         void PrintCompact (const TVectorD & v, int w=15, int prec=9, Option_t * opt="", std::ostream & stream = std::cout);
         void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, std::ostream & stream = std::cout);
         void PrintCompact (const TMatrixD & m, int w=15, int prec=9, std::ostream & stream = std::cout);
