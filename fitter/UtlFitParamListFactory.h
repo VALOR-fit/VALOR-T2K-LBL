@@ -24,6 +24,8 @@
 
 #include "Build.h"
 
+#include "TMatrixD.h"
+
 #include "FitCore/FitParamList.h"
 
 using std::string;
