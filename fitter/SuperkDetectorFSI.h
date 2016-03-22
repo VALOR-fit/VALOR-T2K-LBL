@@ -62,6 +62,12 @@ public:
   void CopyTweaksTo(valor::PhysParamList & ppl) const;
   void CopyTweaksTo(valor::FitParamList & fpl) const;
   
+  // Get tweaks from a VALOR fit object
+  void UpdateFrom(const valor::FitParamList  & fpl);
+  
+  // Or just set one
+  void SetCurrentValue(conv::PhysParamId_t p, double tweak);
+  
   // Get current value of systematic params handled by this class
   double CurrentValue (conv::PhysParamId_t p) const;
   double OneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
@@ -87,12 +93,6 @@ public:
   bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco) const;
-  
-  void SplitFHCpRHCvectors(TVectorD bestfit_values_fhcprhc,TVectorD &bestfit_values_fhc,TVectorD &bestfit_values_rhc);
-  void MergeFHCpRHCvectors(TVectorD &bestfit_values_fhcprhc,TVectorD bestfit_values_fhc,TVectorD bestfit_values_rhc);
-  void UpdateFHCpRHCCurrentValues();
-  void UpdateFHCpRHCBestFitValues();
-  //
 
 private:
 
@@ -132,44 +132,6 @@ private:
   //____________________________________________________________________
   // DEPRECATED INTERACE, DO NOT USE
  public:
-  void TweakRHCEnergyScale                 (double ) {return;}
-  // NEW FHC+RHC JOINT
-  void TweakFHCpRHCEnergyScale             (double ) {return;}
-  //
-  void TweakMultiRingEnergyScale           (double ) {return;}
-  void TweakSampleEnergyScale              (double ) {return;}
-  
-  void TweakOnly1Rmu (bool  = false, TVectorD *  = 0) {return;}
-  void TweakOnlyRHC1Rmu (bool  = false, TVectorD *  = 0) {return;}
-  void TweakOnlyMultiRmu (bool  = false, TVectorD *  = 0) {return;}
-  
-  void TweakOnly1Re (bool  = false, TVectorD *  = 0) {return;}
-  void TweakOnlyRHC1Re (bool  = false, TVectorD *  = 0) {return;}
-  void TweakOnlyMultiRe (bool  = false, TVectorD *  = 0) {return;}
-  
-  void TweakRHC       (bool  = false, TVectorD *  = 0) {return;}
-  void TweakFHCpRHC   (bool  = false, TVectorD *  = 0) {return;}
-  void TweakMultiRing (bool  = false, TVectorD *  = 0) {return;}
- 
-  // NEW FHC+RHC JOINT ESCALE
-  void SyncEscaleRHCToFHCSystematics() {return;}
-  //
-  void SyncRHCToFHCSystematics();
-  void SyncMultiRingToFHCSystematics() {return;}
-  
-  double RHCCurrentValue (conv::PhysParamId_t /*p*/) const {return 0;}
-  // NEW FHC+RHC JOINT
-  double FHCpRHCCurrentValue (conv::PhysParamId_t /*p*/) const {return 0;}
-  //
-  double MultiRingCurrentValue (conv::PhysParamId_t /*p*/) const {return 0;}
-  double SampleCurrentValue(conv::PhysParamId_t /*p*/) const {return 0;}
-  
-    double RHCOneSigmaError(conv::PhysParamId_t /*p*/) const {return 0;}
-  // NEW FHC+RHC JOINT
-  double FHCpRHCOneSigmaError(conv::PhysParamId_t /*p*/) const {return 0;}
-  //
-  double MultiRingOneSigmaError(conv::PhysParamId_t /*p*/) const {return 0;}
-  double SampleOneSigmaError(conv::PhysParamId_t /*p*/) const {return 0;}
 
   const TMatrixD & RHCCovMatrix         (void) const { return *fCovMtrx;       }
   const TMatrixD & RHCCovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
@@ -183,10 +145,6 @@ private:
   const TMatrixD & MultiRingCovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
   const TMatrixD & MultiRingCovMatrixInv      (void) const { return *fCovMtrxInv;    }
   ///
-  
-  double RHCChisqPenalty(void) const {return 9E9;}
-  // NEW FHC+RHC JOINT
-  double FHCpRHCChisqPenalty(void)  {return 9E9;}
   
   void PrintRHCSystematicVariations (std::ostream & stream = std::cout) const{stream<<"CALLING DEPRECATED FUNCTION SuperkDetectorFSI/PrintRHCSystematicVariations"<<std::endl;}
   // NEW FHC+RHC JOINT

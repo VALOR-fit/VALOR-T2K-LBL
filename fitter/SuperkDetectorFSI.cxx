@@ -720,6 +720,15 @@ double SuperkDetectorFSI::EnergyScale(SuperkSample_t s, SuperkMode_t m) const
   double scale   = 1. + twkdial * err;
   return scale;
 }
+//________________________________________________________________________________________                                                                                       
+double SuperkDetectorFSI::EnergyScale(SuperkSample_t s) const
+{
+  double twkdial = fEnergyScaleTwkDial;
+  // energy scale
+  double err     = this->EnergyScaleRelErr(s);
+  double scale   = 1. + twkdial * err;
+  return scale;
+}
 //________________________________________________________________________________________                                                                                        
 void SuperkDetectorFSI::CopyTweaksTo(valor::PhysParamList & ppl) const
 {
@@ -757,6 +766,39 @@ void SuperkDetectorFSI::CopyTweaksTo(valor::FitParamList & fpl) const
       << "FPL does not contain parameter " << util::AsString(p);
   }
     
+  return;
+}
+//________________________________________________________________________________________
+void SuperkDetectorFSI::UpdateFrom(const valor::FitParamList  & fpl)
+{
+  for (int i = 0 ; i < fNumOfActiveSKDetFSIParams ; i++) {
+    PhysParamId_t p = fActiveSKDetFSIParams[i];
+    if (fpl.Exists(p)) {
+      (*fCurrentValues)[i] = fpl.CurrValue(p);
+    }
+    else {
+      LOG("SuperkDetectorFSI",pWARN) 
+        << "Unable to update flux parameter " << util::AsString(p) << " from FPL.";
+    }
+  }
+  
+  PhysParamId_t p = kNuisSuperkEnergyScale;
+  fEnergyScaleTwkDial = fpl.CurrValue(p);
+  //~ fIsTweaked = true;
+  return;
+}
+//________________________________________________________________________________________
+void SuperkDetectorFSI::SetCurrentValue(PhysParamId_t p, double tweak)
+{
+  if (p==kNuisSuperkEnergyScale) {
+    fEnergyScaleTwkDial = tweak; return;
+  }
+  for (int i = 0 ; i < fNumOfActiveSKDetFSIParams ; i++) {
+    if (p==fActiveSKDetFSIParams[i]) {
+      (*fCurrentValues)[i] = tweak; return;
+    }
+  }
+  LOG("SuperkDetectorFSI",pWARN)<<"Failed to update SKDetFSI matrix for unused parameter "<<util::AsString(p);
   return;
 }
 //________________________________________________________________________________________

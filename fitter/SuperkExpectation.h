@@ -53,30 +53,30 @@ class BANFF;             ///< BANFF near-detector flux and cross-section fit inf
 class SuperkExpectation: public FitModelABC
 {
 public:
-   // ctors & dtor
-   SuperkExpectation();
+  // ctors & dtor
+  SuperkExpectation();
   ~SuperkExpectation();
 
-   // *** FitModelABC Interface ***
-   string Name(void);
-   
-   // Read inputs from input XML file
-   bool Read(string config_file, Option_t * opt = 0);
+  // *** FitModelABC Interface ***
+  string Name(void);
+  
+  // Read inputs from input XML file
+  bool Read(string config_file, Option_t * opt = 0);
 
-   // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
-   // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
-   bool Generate             (const PhysHypothesis & ph, Option_t * opt = 0);
-   void RandomizeSystematics (Option_t * opt = 0); ///< random variation of all systematics
-   void TweakSystematic      (string syst_name, double twkdial=0., Option_t * opt = 0);
-   void TweakSystematic      (conv::PhysParamId_t syst, double twkdial=0., Option_t * opt = 0);
-   // Additional related methods to reset the systematics and enquire their values.
-   void ResetSystematics (Option_t * opt = 0);
-   void PrintSystematics (std::ostream & stream = std::cout, Option_t * opt = 0) const;
-   
-   PhysParamList Tweaks(void);
-   void CopyTweaksTo(PhysParamList & pl);
-   
-   bool Generate (const FitParamList & fp, Option_t * opt = 0);
+  // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
+  // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
+  bool Generate             (const PhysHypothesis & ph, Option_t * opt = 0);
+  void RandomizeSystematics (Option_t * opt = 0); ///< random variation of all systematics
+  void TweakSystematic      (string syst_name, double twkdial=0., Option_t * opt = 0);
+  void TweakSystematic      (conv::PhysParamId_t syst, double twkdial=0., Option_t * opt = 0);
+  // Additional related methods to reset the systematics and enquire their values.
+  void ResetSystematics (Option_t * opt = 0);
+  void PrintSystematics (std::ostream & stream = std::cout, Option_t * opt = 0) const;
+  
+  PhysParamList Tweaks(void);
+  void CopyTweaksTo(PhysParamList & pl);
+  
+  bool Generate (const FitParamList & fp, Option_t * opt = 0);
    
    // Write all predictions to the input container or to the input file
   bool Write (TObjArray* collection, const char * tag = "model", Option_t * write_opt = 0);
@@ -85,70 +85,60 @@ public:
   // Get penalty term for current systematics
   double GetFitStatisticPenalty(Option_t * opt = 0) const;
    
-   // ***T2K Legacy interface ***
-   
-   void ResetSystematicVariations (void) {ResetSystematics();}    ///< reset all systematics
-   
-   void TweakSystematicLegacy    (string systematic, double twkdial=0., bool best_banff=true); ///< set systematic variation (from top level)
-   //                     best_banff refers to whether to use bestfit or param=1 when fitting a single banff parameter
+  // ***T2K Legacy interface ***
+  
+  void ResetSystematicVariations (void) {ResetSystematics();}    ///< reset all systematics
+  
+  void TweakAllSystematics                       (void) {RandomizeSystematics();}
 
-   void TweakAllSystematics                       (void) {RandomizeSystematics();}
+  void TweakAllBANFFSystematics                  (void);        ///< random variation of all BANFF systematics
+  void TweakAllRHCBANFFSystematics               (void);        ///< random variation of all BANFF systematics
+  // NEW FHC+RHC JOINT
+  void TweakAllFHCpRHCBANFFSystematics               (void);        ///< random variation of all BANFF systematics
+  //
+  void TweakAllSampleBANFFSystematics            (void);        ///< random variation of all BANFF systematics
 
-   void TweakAllBANFFSystematics                  (void);        ///< random variation of all BANFF systematics
-   void TweakAllRHCBANFFSystematics               (void);        ///< random variation of all BANFF systematics
-   // NEW FHC+RHC JOINT
-   void TweakAllFHCpRHCBANFFSystematics               (void);        ///< random variation of all BANFF systematics
-   //
-   void TweakAllSampleBANFFSystematics            (void);        ///< random variation of all BANFF systematics
+  void TweakAllUncorrelatedXSecSystematics       (void);        ///< random variation of all Uncorrelated XSec systematics
+  
+  void TweakAllSKDetectorFSISystematics          (void);        ///< random variation of all SK Detector systematics
+  
+  // Interface method for fitters. The fit parameter list can contain info for both the 
+  // physics hypothesis and the systematic variations.
+  bool Generate (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
 
-   void TweakAllUncorrelatedXSecSystematics       (void);        ///< random variation of all Uncorrelated XSec systematics
-
-   void TweakAllSKDetectorFSISystematics          (void);        ///< random variation of all SK Detector systematics
-   void TweakAllRHCSKDetectorFSISystematics       (void);        ///< random variation of all SK Detector systematics   // NEW FLUX
-   // NEW FHC+RHC JOINT
-   void TweakAllFHCpRHCSKDetectorFSISystematics   (void);        ///< random variation of all SK Detector systematics   // NEW FLUX
-   //
-   void TweakAllMultiRingSKDetectorFSISystematics (void);        ///< random variation of all SK Detector systematics   /// NEW MULTIRING 2
-   void TweakAllSampleSKDetectorFSISystematics    (void);        ///< random variation of all SK Detector systematics   /// NEW MULTIRING 2
-   
-
-   // Interface method for fitters. The fit parameter list can contain info for both the 
-   // physics hypothesis and the systematic variations.
-   bool Generate (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
-
-   // Access calculated SK reconstructed energy spectrum for each sample/mode
-   const VALORArray * CurrPredictedErecoVArray     (valor::conv::SuperkSample_t s) const;
-   const VALORArray * CurrPredictedErecoVArrayMode (valor::conv::SuperkSample_t s) const;
-   VALORArray       * CurrPredictedErecoVArray     (valor::conv::SuperkSample_t s);
-   VALORArray       * CurrPredictedErecoVArrayMode (valor::conv::SuperkSample_t s);
-   // As histograms
-   TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
-   TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
-   // Double array getters
-   double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s);
-   double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m);
-   const double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s) const;
-   const double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const;
-   double  CurrPredictedErecoSpectrumArray           (valor::conv::SuperkSample_t s, int i) const;
+  // Access calculated SK reconstructed energy spectrum for each sample/mode
+  const VALORArray * CurrPredictedErecoVArray     (valor::conv::SuperkSample_t s) const;
+  const VALORArray * CurrPredictedErecoVArrayMode (valor::conv::SuperkSample_t s) const;
+  VALORArray       * CurrPredictedErecoVArray     (valor::conv::SuperkSample_t s);
+  VALORArray       * CurrPredictedErecoVArrayMode (valor::conv::SuperkSample_t s);
+  // As histograms
+  TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
+  // Double array getters
+  double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s);
+  double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m);
+  const double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s) const;
+  const double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const;
+  double  CurrPredictedErecoSpectrumArray           (valor::conv::SuperkSample_t s, int i) const;
 
 
-   // NEW 2D TEMPLATES
+  // NEW 2D TEMPLATES
 
-   // Access calculated SK reconstructed energy Vs Q2 spectrum for each sample/mode
-   const VALORArray * CurrPredictedErecoVsQ2VArray     (valor::conv::SuperkSample_t s) const;
-   const VALORArray * CurrPredictedErecoVsQ2VArrayMode (valor::conv::SuperkSample_t s) const;
-   VALORArray       * CurrPredictedErecoVsQ2VArray     (valor::conv::SuperkSample_t s);
-   VALORArray       * CurrPredictedErecoVsQ2VArrayMode (valor::conv::SuperkSample_t s);
-   // As histograms
-   TH2D*   CurrPredictedErecoVsQ2Spectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
-   TH2D*   CurrPredictedErecoVsQ2Spectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
-   // Double array getters
-   double* CurrPredictedErecoVsQ2SpectrumArray     (valor::conv::SuperkSample_t s);
-   double* CurrPredictedErecoVsQ2SpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m);
-   const double* CurrPredictedErecoVsQ2SpectrumArray     (valor::conv::SuperkSample_t s) const;
-   const double* CurrPredictedErecoVsQ2SpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const;
-   double  CurrPredictedErecoVsQ2SpectrumArray           (valor::conv::SuperkSample_t s, int ir, int iq) const;
-   //   
+  // Access calculated SK reconstructed energy Vs Q2 spectrum for each sample/mode
+  const VALORArray * CurrPredictedErecoVsQ2VArray     (valor::conv::SuperkSample_t s) const;
+  const VALORArray * CurrPredictedErecoVsQ2VArrayMode (valor::conv::SuperkSample_t s) const;
+  VALORArray       * CurrPredictedErecoVsQ2VArray     (valor::conv::SuperkSample_t s);
+  VALORArray       * CurrPredictedErecoVsQ2VArrayMode (valor::conv::SuperkSample_t s);
+  // As histograms
+  TH2D*   CurrPredictedErecoVsQ2Spectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  TH2D*   CurrPredictedErecoVsQ2Spectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
+  // Double array getters
+  double* CurrPredictedErecoVsQ2SpectrumArray     (valor::conv::SuperkSample_t s);
+  double* CurrPredictedErecoVsQ2SpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m);
+  const double* CurrPredictedErecoVsQ2SpectrumArray     (valor::conv::SuperkSample_t s) const;
+  const double* CurrPredictedErecoVsQ2SpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const;
+  double  CurrPredictedErecoVsQ2SpectrumArray           (valor::conv::SuperkSample_t s, int ir, int iq) const;
+  //   
 
 
 
@@ -156,43 +146,51 @@ public:
 
 
 
-   // Access inputs used for building-up the expected spectrum at SK
-   SuperkDetectorFSI * GetSuperkDetectorFSI (void) { return fSuperkDetectorFSI; }
-   SuperkMC          * GetSuperkMC          (void) { return fSuperkMC;          }
-   NuFlux            * GetNuFlux            (void) { return fNuFlux;            }
-   NuXSec            * GetNuXSec            (void) { return fNuXSec;            }
-   BANFF             * GetBANFF             (void) { return fBANFF;             }
+  // Access inputs used for building-up the expected spectrum at SK
+  SuperkDetectorFSI * GetSuperkDetectorFSI (void) { return fSuperkDetectorFSI; }
+  SuperkMC          * GetSuperkMC          (void) { return fSuperkMC;          }
+  NuFlux            * GetNuFlux            (void) { return fNuFlux;            }
+  NuXSec            * GetNuXSec            (void) { return fNuXSec;            }
+  BANFF             * GetBANFF             (void) { return fBANFF;             }
 
-   // Print
-   void PrintSystematicVariations(std::ostream & stream = std::cout) const;
-   
+  // Print
+  void PrintSystematicVariations(std::ostream & stream = std::cout) const;
+  
 private:
+  
+  // Initialise and clean-up
+  void Init    (void);
+  void Book    (void);
+  void CleanUp (void);
 
-   // Initialise and clean-up
-   void Init    (void);
-   void Book    (void);
-   void CleanUp (void);
+  void CheckPhysParamId(void);
 
-   void CheckPhysParamId(void);
+  // Use the nuisance param values in the input FitParamList to tweak the pdfs.
+  void SetNuisanceParams (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
 
-   // Use the nuisance param values in the input FitParamList to tweak the pdfs.
-   void SetNuisanceParams (const FitParamList & fp, bool all_banff_fit, bool all_1Re_eff);
+  bool             fIsConfigured;                ///< Is this object properly configured?
+  SuperkDetectorFSI * fSuperkDetectorFSI;        ///< SuperK detector info + FSI
+  SuperkMC          * fSuperkMC;                 ///< SuperK MC templates
+  NuFlux            * fNuFlux;                   ///< Neutrino flux simulation inputs
+  NuXSec            * fNuXSec;                   ///< Neutrino generator / cross section inputs
+  BANFF             * fBANFF;                    ///< BANFF fit info
+  
+  VALORArray * fPredictErecoSpectrumArrayTot [conv::kns];
+  VALORArray * fPredictErecoSpectrumArray    [conv::kns];
 
-   bool             fIsConfigured;                ///< Is this object properly configured?
-   SuperkDetectorFSI * fSuperkDetectorFSI;        ///< SuperK detector info + FSI
-   SuperkMC          * fSuperkMC;                 ///< SuperK MC templates
-   NuFlux            * fNuFlux;                   ///< Neutrino flux simulation inputs
-   NuXSec            * fNuXSec;                   ///< Neutrino generator / cross section inputs
-   BANFF             * fBANFF;                    ///< BANFF fit info
-   
-   VALORArray * fPredictErecoSpectrumArrayTot [conv::kns];
-   VALORArray * fPredictErecoSpectrumArray    [conv::kns];
-
-   // NEW 2D TEMPLATES
-   VALORArray * fPredictErecoVsQ2SpectrumArrayTot [conv::kns];
-   VALORArray * fPredictErecoVsQ2SpectrumArray    [conv::kns];
-   //
-   
+  // NEW 2D TEMPLATES
+  VALORArray * fPredictErecoVsQ2SpectrumArrayTot [conv::kns];
+  VALORArray * fPredictErecoVsQ2SpectrumArray    [conv::kns];
+  //
+  
+  
+  // DEPRECATED INTERFACE, DO NOT USE
+  
+  void TweakAllRHCSKDetectorFSISystematics       (void);
+  void TweakAllFHCpRHCSKDetectorFSISystematics   (void);
+  void TweakAllMultiRingSKDetectorFSISystematics (void);
+  void TweakAllSampleSKDetectorFSISystematics    (void);
+  
 ClassDef(SuperkExpectation, 6)
 };
 

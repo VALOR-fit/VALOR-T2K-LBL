@@ -155,8 +155,6 @@ namespace valor {
     
     // NEW 2D TEMPLATES
     
-    double CalcThetaDegrees(float dir[10][3]);
-    
     double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
     double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep);
     double CalcEhad(double Enu,double Elep);
