@@ -27,11 +27,6 @@
 //#define __show_chisqpenalty_mesg_debug__
 //#define __show_skdetfsi_applysyst_mesg_debug__
 
-// NEW FHC+RHC JOINT
-#define __SYNCHRONIZE_RHC_TO_FHC_ESCALE__ // Escale is the same for RHC and FHC samples
-                                          // Keep two different parameters but synchronized, same tweaks
-//
-
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -66,11 +61,11 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   this->Init();
 
   // Check that SKFSISystConv.h is set up corretly, and we have interpreted it right.
-  //~ CheckListOfSKDetFSISyst(fNumOfActiveSKDetFSIParams, fActiveSKDetFSIParams,
-        //~ "kListOfSKDetFSIParams", true);
-//~ 
-  //~ CheckERange(fNumOfActiveSKDetFSIParams, fActiveSKDetFSIParams,
-              //~ (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
+  CheckListOfSKDetFSISyst(fNumOfActiveSKDetFSIParams, fActiveSKDetFSIParams,
+        "kListOfSKDetFSIParams", true);
+
+  CheckERange(fNumOfActiveSKDetFSIParams, fActiveSKDetFSIParams,
+              (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
               
   //~ CheckSKMode(fNumOfActiveSKDetFSIParams, fActiveSKDetFSIParams,
               //~ (const bool *)kSKDetFSIParamToSKMode, "fActiveSKDetFSIParams", false);
@@ -81,31 +76,40 @@ SuperkDetectorFSI::~SuperkDetectorFSI()
   this->CleanUp();
 }
 //________________________________________________________________________________________
-void SuperkDetectorFSI::CheckListOfSKDetFSISyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gap)
+void SuperkDetectorFSI::CheckListOfSKDetFSISyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gaps)
 {
   int id = 0;
   PhysParamId_t curr, prev;
 
-  //check that SKDETFSI parameters are monotonically increasing (a single gap is allowed in FHCpRHC)
-  // May need reconfiguring for more gaps with multiring
+  // check that SKDETFSI parameters are monotonically increasing
+  // Nsamples-1 gaps are now allowed due to FHC/RHC/MR each having individual numu/nue options.
+  int nsamples=0;
+  for (int is = 0 ; is < conv::kns; is++) {
+    SuperkSample_t s = conv::kSKSamples[is];
+    if (s!=conv::kSKsUndefined) {
+      nsamples++;
+    }
+  }
+  int allowed_gaps = nsamples-1;
   for(id = 1; id < nparams; id++) {
     prev = params[id-1];
     curr = params[id];
 #ifdef __show_skdetfsiconv_check_mesg_debug__
-    if(id == 1)
+    if(id == 1) {
       cout << "SuperkDetectorFSI/CheckListOfSKDetFSISyst >> " << vname << "[" << id-1 << "] = " << prev << " " << util::AsString(prev) << endl;
+    }
     cout << "SuperkDetectorFSI/CheckListOfSKDetFSISyst >> " << vname << "[" << id   << "] = " << curr << " " << util::AsString(curr) << endl;
 #endif
     if((int)curr != ((int)prev + 1)) {
-      //this is to allow jumps between FHC + RHC flux parameters
-      if(allow_gap) {
-        allow_gap = false;
+      //~ //this is to allow jumps between sample parameters
+      if(allow_gaps && allowed_gaps>0) {
+        allowed_gaps--;
         continue;
       }
       cerr << "SuperkDetectorFSI/CheckLIstOfSKDetFSISyst >> " << vname << "[" << id   << "] = " << curr << " " << util::AsString(curr) << endl
            << " comes before " << vname << "[" << id-1 << "] = " << prev << " " << util::AsString(prev)
            << endl;
-      exit(-1);
+      util::Die(-1); return;
     }
   }//id
 }
@@ -207,18 +211,18 @@ void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * par
     
     //check that they apply to all e.g. CCQE
     // this must be done by printing to screen & analyser
-#ifdef __show_skdetfsiconv_check_mesg_info__
-    //~ cout << "Effects " << util::AsString(kSKSamples[is + start_sample_index]) << endl;
-    //~ PrintAppliesType(util::AppliesToCCQE    (modes_set[is]), "CCQE");
-    //~ PrintAppliesType(util::AppliesToCCMEC   (modes_set[is]), "CCMEC");
-    //~ PrintAppliesType(util::AppliesToCCcoh   (modes_set[is]), "CCcoh");
-    //~ PrintAppliesType(util::AppliesToCC1pi   (modes_set[is]), "CC1pi");
-    //~ PrintAppliesType(util::AppliesToCCoth   (modes_set[is]), "CCoth");
-    //~ PrintAppliesType(util::AppliesToNC1pi0  (modes_set[is]), "NC1pi0");
-    //~ PrintAppliesType(util::AppliesToNC1piC  (modes_set[is]), "NC1piC");
-    //~ PrintAppliesType(util::AppliesToNCcoh   (modes_set[is]), "NCcoh");
-    //~ PrintAppliesType(util::AppliesToNC1Gamma(modes_set[is]), "NC1Gamma");
-    //~ PrintAppliesType(util::AppliesToNCoth   (modes_set[is]), "NCoth");
+#ifdef __show_skdetfsiconv_check_mesg_debug__
+    cout << "Effects " << util::AsString(kSKSamples[is + start_sample_index]) << endl;
+    PrintAppliesType(util::AppliesToCCQE    (modes_set[is]), "CCQE");
+    PrintAppliesType(util::AppliesToCCMEC   (modes_set[is]), "CCMEC");
+    PrintAppliesType(util::AppliesToCCcoh   (modes_set[is]), "CCcoh");
+    PrintAppliesType(util::AppliesToCC1pi   (modes_set[is]), "CC1pi");
+    PrintAppliesType(util::AppliesToCCoth   (modes_set[is]), "CCoth");
+    PrintAppliesType(util::AppliesToNC1pi0  (modes_set[is]), "NC1pi0");
+    PrintAppliesType(util::AppliesToNC1piC  (modes_set[is]), "NC1piC");
+    PrintAppliesType(util::AppliesToNCcoh   (modes_set[is]), "NCcoh");
+    PrintAppliesType(util::AppliesToNC1Gamma(modes_set[is]), "NC1Gamma");
+    PrintAppliesType(util::AppliesToNCoth   (modes_set[is]), "NCoth");
 #endif
   }//ix
   

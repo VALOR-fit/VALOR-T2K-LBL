@@ -43,6 +43,11 @@ public:
  
   using TObject::Read; // Suppress clang warnings
   using TObject::Draw; // Suppress clang warnings
+  
+  int GetNumberOfActiveParameters() const {return fNumOfActiveSKDetFSIParams;}
+  const conv::PhysParamId_t * GetActiveParameters() const {return fActiveSKDetFSIParams;}
+  
+  conv::PhysParamId_t WhichParam(int id) const {return fActiveSKDetFSIParams[id];}
 
   // Calculate weight in response to systematic parameter variations of FSI parameters
   double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
@@ -97,7 +102,7 @@ public:
 private:
 
   // Check that SKFSISystConv.h is setup correctly
-  void CheckListOfSKDetFSISyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gap);
+  void CheckListOfSKDetFSISyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gaps);
   void CheckERange            (int nparams, const conv::PhysParamId_t * params, const double * erange, const char * vname);
   void CheckSKMode            (int nparams, const conv::PhysParamId_t * params, const bool * modes, const char * vname, bool fatal_no_effect);
 
