@@ -43,30 +43,31 @@ def main(sample,output_file,config_file,prefit_config):
   skexp.Read(os.environ[env_var]+"/config/"+prefit_config)
   banff = skexp.GetBANFF()
   
-  prefit_err = ROOT.TMatrixD(banff.RHCCovMatrix())
+  prefit_err = ROOT.TMatrixD(banff.FHCpRHCCovMatrix())
   del skexp
   
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file)
   banff = skexp.GetBANFF()
   
-  bf_vec = ROOT.TVectorD(banff.RHCBestFitValues())
-  postfit_err = ROOT.TMatrixD(banff.RHCCovMatrix())
-  det_matr = ROOT.TMatrixD(skexp.GetSuperkDetectorFSI().RHCCovMatrix())
+  bf_vec = ROOT.TVectorD(banff.FHCpRHCBestFitValues())
+  postfit_err = ROOT.TMatrixD(banff.FHCpRHCCovMatrix())
+  det_matr = ROOT.TMatrixD(skexp.GetSuperkDetectorFSI().FHCpRHCCovMatrix())
   
   banff_bestfit       = dict()
   banff_prefit_error  = dict()
   banff_postfit_error = dict()
   detfsi_error        = dict()
   
-  for ip in xrange(conv.kNumOfRHCParamsInBANFFfit):
+  for ip in xrange(conv.kNumOfFHCpRHCParamsInBANFFfit):
     banff_bestfit      [ip] = bf_vec[ip]
     banff_prefit_error [ip] = math.sqrt(prefit_err [ip][ip])
     banff_postfit_error[ip] = math.sqrt(postfit_err[ip][ip])
   
-  for ip in xrange(conv.kNumOfRHCSKDetFSIParams):
+  for ip in xrange(conv.kNumOfFHCpRHCSKDetFSIParams):
     detfsi_error[ip] = math.sqrt(det_matr[ip][ip])
-  
+    #print detfsi_error[ip]," "
+
   # Start writing the TeX
   tex_output = open(output_file,"w")
   
@@ -95,8 +96,8 @@ def main(sample,output_file,config_file,prefit_config):
   tex_output.write("& ".join(entries) + " \\\\ \n")
   tex_output.write("\n\\hline\n")
   
-  for ip in xrange(conv.kNumOfRHCParamsInBANFFfit):
-    p = getRHCBANFFparam(ip)
+  for ip in xrange(conv.kNumOfFHCpRHCParamsInBANFFfit):
+    p = getFHCpRHCBANFFparam(ip)
     cols = [str(ip),util.ParamAsStringPaperTable(p),to3dp.format(banff_bestfit[ip])]
     cols.append(to3dp.format(banff_prefit_error [ip])+" / "+to3dp.format(banff_postfit_error [ip]))
     entries = [x.ljust(w) for x,w in zip(cols,banff_col_widths)]
@@ -116,8 +117,8 @@ def main(sample,output_file,config_file,prefit_config):
   tex_output.write("& ".join(entries) + " \\\\ \n")
   tex_output.write("\n\\hline\n")
   
-  for ip in xrange(conv.kNumOfRHCSKDetFSIParams):
-    p = getRHCDetFSIparam(ip)
+  for ip in xrange(conv.kNumOfFHCpRHCSKDetFSIParams):
+    p = getFHCpRHCDetFSIparam(ip)
     cols = [str(ip),util.ParamAsStringPaperTable(p),to3dp.format(detfsi_error[ip])]
     entries = [x.ljust(w) for x,w in zip(cols,detfsi_col_widths)]
     tex_output.write("& ".join(entries) + " \\\\ \n")
@@ -131,20 +132,20 @@ def main(sample,output_file,config_file,prefit_config):
   
   print "Table output written to ",output_file
 
-def getRHCBANFFparam(ip):
+def getFHCpRHCBANFFparam(ip):
   for p in xrange(conv.knppmax):
-    test_ip = arridx.RHCBANFFSystIdx(p)
+    test_ip = arridx.FHCpRHCBANFFSystIdx(p)
     if test_ip == ip:
       return p
-  print "Failed to get RHC BANFF param ",ip
+  print "Failed to get FHC+RHC BANFF param ",ip
   exit(-1)
   
-def getRHCDetFSIparam(ip):
+def getFHCpRHCDetFSIparam(ip):
   for p in xrange(conv.knppmax):
-    test_ip = arridx.RHCSKDetFSISystIdx(p)
+    test_ip = arridx.FHCpRHCSKDetFSISystIdx(p)
     if test_ip == ip:
       return p
-  print "Failed to get RHC SKDetFSI param ",ip
+  print "Failed to get FHC+RHC SKDetFSI param ",ip
   exit(-1)
   
 if __name__=="__main__":
