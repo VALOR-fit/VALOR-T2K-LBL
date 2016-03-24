@@ -54,10 +54,6 @@ namespace valor {
         static const int kNumOfXSecSyst = 17;
         static const int kNumOfRHCXSecSyst = 17;
 #endif
-#ifdef __NUMUONLY__
-        static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
-        static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
-#else
 #ifdef __NUEONLY__
         static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
         static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
@@ -65,8 +61,7 @@ namespace valor {
         static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
         static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
 #endif
-#endif
-        
+      
 #elif defined(__USE_NIWG2013__)
 #if BANFF_BINS == 1
         static const int kNumOfXSecSyst = 21;
