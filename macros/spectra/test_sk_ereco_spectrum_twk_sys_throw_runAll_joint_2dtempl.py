@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
 import sys
 import optparse
@@ -14,7 +14,8 @@ a ROOT file with the outputs. Things you can change are:
  - postfit_config - configuration file for BANFF postfit
  - prefit_config - configuration file for BANFF prefit
  - oscparam - the oscillation parameters you want to calculate shifts relative to (defaults to global best fits - you can specify more than 1 set of parameters to run over)
-            - (Note that if sinsqtheta13 is identical in 2 cases, you'll need to add another distinguisher to the label definition at the end of root macro, otherwise the tex won't compile)
+            - Give each of the oscparam lists a tag and they will be compared side by side
+            - Also specify which oscillation parameters are to be randomized by a string eg ss23ss13dcpss12dmsq23dmsq12 or ss23ss13dcpss12 (Macro uses reactor constraint by default)
  - save_toy_expts - save the toy experiment ereco spectra? Warning: will produce big files! (20000 toy spectra per syst!)
  - make_summary - should we write a summary table for publication
  
@@ -24,13 +25,13 @@ It will then create the .root in the current working directory
 """
 
 # 15 bins theta    
-#postfit_config  = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml"
-#prefit_config  = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml" 
+postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
+prefit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_prefit.xml"
 
 # 1 bin theta
 #postfit_config  = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml"
-postfit_config  = "analysis_configuration_test_theta_1bin_NIWG2015c.xml"
-prefit_config  = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
+#prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_prefit.xml"
 
 prior_file = ""
 
@@ -60,13 +61,14 @@ optionParser.add_option("--skip-prefit" , action="store_true", dest="skip_prefit
 optionParser.add_option("--skip-postfit", action="store_true", dest="skip_postfit", default=False, help="If don't want to run postfit jobs")
 optionParser.add_option("--skip-osc"  , action="store_true", dest="skip_osc"  , default=False, help="If don't want to run oscillated jobs")
 optionParser.add_option("--skip-unosc", action="store_true", dest="skip_unosc", default=False, help="If don't want to run unoscillated jobs")
+optionParser.add_option("--randomise-osc", action="store", dest="random_osc", default="ss12dmsq12ss13", help="Which params I want randomized in random osc toys")
 optionParser.add_option("--clear", action="store_true", dest="clear", default=False, help="Get rid of output of other jobs first.")
 
 optionParser.add_option("-p","--prob-nh", action="store", dest="prob_nh", default=0.5, help="Prior for Normal Hierarchy")
 optionParser.add_option("-d","--do-marg", action="store", dest="domarg", default=False, help="Flag for marginalization")
 #optionParser.add_option("-x","--mixparamoctant", action="store", dest="mixparamoctant", type="string", default="two", help="Mixing param octant: two")
 #optionParser.add_option("-z","--rethrow-unphysical-toys", action="store", dest="rethrow_toys", default=False, help="Flag to rethrow unphysical toys")
-optionParser.add_option("-u","--dnovern-new-def", action="store", dest="dnovern", default=False, help="Use new definition for dn/n")
+optionParser.add_option("-u","--dnovern-new-def", action="store", dest="dnovern", default=True, help="Use new definition for dn/n")
 
 #optionParser.add_option("-z","--do-totsyst-squaresum", action="store", dest="dototsyssum", default=True, help="")
 #optionParser.add_option("-p","--do-plot-osc", action="store", dest="plotosc", default=True, help="")
@@ -98,7 +100,7 @@ mixparamchoice = opt.mixparamchoice
 fitparamlist = opt.fitparamlist
 do_not_run_jobs = opt.do_not_run
 store_throws = "true" if opt.storethrows else "false"
-
+random_osc = opt.random_osc
 if args:
   print "Unrecognised arguments: ",args
   exit(-1)
@@ -128,104 +130,64 @@ save_toy_expts = "false"
 
 name_modes = []
 latex_name_modes = []
+modes = []
 
-# modes = [662,664,12,1,9]
-# # modes = 662
-# name_modes.append("banff62_fhcprhc")
-# latex_name_modes.append("NC other")
-# # modes = 664
-# name_modes.append("banff64_fhcprhc")
-# latex_name_modes.append("NC 1gamma")
-# # modes = 12
-# name_modes.append("NueNumu") 
-# latex_name_modes.append("XSec nue/numu")
-# # modes = 1
-# name_modes.append("BANFF") 
-# latex_name_modes.append("BANFF Tot")
 # # modes = 9
-# name_modes.append("SKDet_FSI") 
-# latex_name_modes.append("SKDet+FSI+SI")
-
-# modes = [9,7,8,650,666,1,11,0]
-# # modes = 9
+# modes.append(9)
 # name_modes.append("SKDet_FSI") 
 # latex_name_modes.append("SKDet+FSI+SI")
 # # modes = 7
+# modes.append(7)
 # name_modes.append("BANFF_flux") 
 # latex_name_modes.append("Flux")
 # # modes = 8
+# modes.append(8)
 # name_modes.append("BANFF_xsec") 
 # latex_name_modes.append("XSec")
 # # modes = 650
+# modes.append(650)
 # name_modes.append("banff50_fhcprhc")
 # latex_name_modes.append("MEC")
 # # modes = 666
+# modes.append(666)
 # name_modes.append("banff66_fhcprhc")
 # latex_name_modes.append("MECbar")
+# # modes = 662
+# modes.append(662)
+# name_modes.append("banff62_fhcprhc")
+# latex_name_modes.append("NC other")
+# # modes = 664
+# modes.append(664)
+# name_modes.append("banff64_fhcprhc")
+# latex_name_modes.append("NC 1gamma")
+# # modes = 12
+# modes.append(12)
+# name_modes.append("NueNumu") 
+# latex_name_modes.append("XSec nue/numu")
+# modes = 13
+modes.append(13)
+name_modes.append("skdetfsi_banff") 
+latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
 # # modes = 1
+# modes.append(1)
 # name_modes.append("BANFF") 
 # latex_name_modes.append("BANFF Tot")
 # # modes = 1 (prefit)
+# modes.append(1)
 # name_modes.append("BANFFprefit") 
 # latex_name_modes.append("BANFF Tot (prefit)")
-# # modes = 11
-# name_modes.append("Osc_param") 
-# latex_name_modes.append("Oscillations")
-# # modes = 0
-# name_modes.append("all") 
-# latex_name_modes.append("All")
-# # modes = 0 (prefit)
-# name_modes.append("allprefit") 
-# latex_name_modes.append("All (prefit)")
-
-# modes = [13]
-# # modes = 13
-# name_modes.append("skdetfsi_banff") 
-# latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
-
-modes = [9,7,8,650,666,662,664,12,13,1,11,0]
-# modes = 9
-name_modes.append("SKDet_FSI") 
-latex_name_modes.append("SKDet+FSI+SI")
-# modes = 7
-name_modes.append("BANFF_flux") 
-latex_name_modes.append("Flux")
-# modes = 8
-name_modes.append("BANFF_xsec") 
-latex_name_modes.append("XSec")
-# modes = 650
-name_modes.append("banff50_fhcprhc")
-latex_name_modes.append("MEC")
-# modes = 666
-name_modes.append("banff66_fhcprhc")
-latex_name_modes.append("MECbar")
-# modes = 662
-name_modes.append("banff62_fhcprhc")
-latex_name_modes.append("NC other")
-# modes = 664
-name_modes.append("banff64_fhcprhc")
-latex_name_modes.append("NC 1gamma")
-# modes = 12
-name_modes.append("NueNumu") 
-latex_name_modes.append("XSec nue/numu")
-# modes = 13
-name_modes.append("skdetfsi_banff") 
-latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
-# modes = 1
-name_modes.append("BANFF") 
-latex_name_modes.append("BANFF Tot")
-# modes = 1 (prefit)
-name_modes.append("BANFFprefit") 
-latex_name_modes.append("BANFF Tot (prefit)")
 # modes = 11
+modes.append(11)
 name_modes.append("Osc_param") 
 latex_name_modes.append("Oscillations")
 # modes = 0
+modes.append(0)
 name_modes.append("all") 
 latex_name_modes.append("All")
-# modes = 0 (prefit)
-name_modes.append("allprefit") 
-latex_name_modes.append("All (prefit)")
+# # modes = 0 (prefit)
+# modes.append(0)
+# name_modes.append("allprefit") 
+# latex_name_modes.append("All (prefit)")
 
 
 
@@ -233,24 +195,29 @@ if opt.mode is not None:
   modes = [int(opt.mode)]
 
 oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, theta23, deltacp, dmsq12, dmsq23, betabar hypothesis
+oscparams_tag = []
 
-#if not opt.skip_unosc  : oscparams.append([-99, -999, -999, -999, -99, -999, 0]) #use global best fits!
-if not opt.skip_unosc: oscparams.append([  0,   0,   0,   0,   -99,   -99,  -99]) #no oscillations!
-
+if not opt.skip_osc  :
+  oscparams.append([0.304, 0.0217, 0.528, -1.601, 0.0000753, 0.002509,  -99]) # use global best fits!
+  oscparams_tag.append("Toy_A")
+#if not opt.skip_unosc: oscparams.append([  0,   0,   0,   0,   -99,   -99,  -99]) #no oscillations!
+if not opt.skip_osc  :
+  oscparams.append([0.304, 0.0217, 0.45,  0, 0.0000753, 0.002509,  -99]) # use global best fits!
+  oscparams_tag.append("Toy_B")
 #if not opt.skip_osc  : oscparams.append([-99, -99, -99, -99, -99, -99,  -99]) # use global best fits!
 #if not opt.skip_osc  : oscparams.append([-999, -999, -999, -99, -999, -999, -99]) # fix dcp
-if not opt.skip_osc  : oscparams.append([-999, -999, -99, -99, -999, -99, -99]) # fix theta23, dmsq23 and dcp
+#if not opt.skip_osc  : oscparams.append([-999, -999, -99, -99, -999, -99, -99]) # fix theta23, dmsq23 and dcp
 
 update = "true"
 
 if not do_not_run_jobs:
-  for osc in oscparams:
+  for osc_index, osc in enumerate(oscparams,start=0):
 
       if opt.clear: update = "false"
 
       for mode in modes:
 
-          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'")\''
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
 
 
           print command
@@ -263,7 +230,7 @@ if not do_not_run_jobs:
           
           #repeat for the banff prefit (its a different spectrum, so erros have different effects)
           if not opt.skip_prefit:
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'")\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
 
             print command
             if os.system(command) == 1:
@@ -274,43 +241,32 @@ if make_summary:
   # Synthesise nsk summary table
   # Eg table 6 in TN-155
   # Uses outputs from previous macro runs, but calculates 'all' values using quadrature.
-  files = glob.glob("sk_ereco_spectrum_*-twk_sys_throw_*txt")
-
-  if not opt.skip_unosc:
-    l = [x for x in files if unosc_tag_file in x]
-    print "\n File is:  ",x,"\n"
-    if not len(l)==1:
-        raise T2KAnaError("Found "+`len(l)`+ "txt files for no oscillation, expected 1")
-    no_osc_info = l[0]
-
-  if not opt.skip_osc:
+  files = glob.glob("*_*txt")
     
-    p = [x for x in files if sksample in x ] 
-    if not len(p)==1:
-        raise T2KAnaError("Found "+`len(p)`+ "txt files for oscillation, expected 1")
-    sample_info = p[0]
+  col_titles = []
+  col_files = []
+  
+  if "RHC" not in sksample :
+    p = [x for x in files if sksample in x and "RHC" not in x ]
+  else:
+    p = [x for x in files if sksample in x ]
 
-    l = [x for x in p if osc_tag_file in x ]
+  sample_info = p[0]
+
+  for osctag in oscparams_tag:
+    l = [x for x in p if osctag in x ]
     #l = [x for x in files if osc_tag_file in x ]
     if not len(l)==1:
-        raise T2KAnaError("Found "+`len(l)`+ "txt files for oscillation, expected 1")
-    osc_info = l[0]
+      raise T2KAnaError("Found "+`len(l)`+ "txt files for "+osctag+", expected 1")
+    col_files.append(l[0])
+    col_titles.append(osctag)
 
 
   #col_titles = ["(no oscillations)","(oscillations with typical parameter values)"]
   #col_files = [no_osc_info,osc_info]
-  
-  col_titles = []
-  col_files = []
-  if not opt.skip_unosc: 
-      col_titles.append("(no oscillations)")
-      col_files.append(no_osc_info)
-  if not opt.skip_osc: 
-      col_titles.append("(oscillations with typical parameter values)")
-      col_files.append(osc_info)    
+
 
   out_cols = []
-  
   for title,infile in zip(col_titles,col_files):
     f = open(infile)
     input_rows = dict()
@@ -333,23 +289,26 @@ if make_summary:
             
     
     # Add XSec Corr Tot
-    name_curr = "xsec_corr"
-    name_modes.append(name_curr) 
-    latex_name_modes.append("XSec Corr Tot")
-    d[name_curr] = math.sqrt( float( float(input_rows["BANFF"])**2 - float(input_rows["banff62_fhcprhc"])**2 - float(input_rows["banff64_fhcprhc"])**2 - float(input_rows["NueNumu"])**2 ) )
-    
+    if "BANFF" in input_rows and "banff62_fhcprhc" in input_rows and "banff64_fhcprhc" in input_rows and "NueNumu" in input_rows:
+      name_curr = "xsec_corr"
+      name_modes.append(name_curr)
+      latex_name_modes.append("XSec Corr Tot")
+      d[name_curr] = math.sqrt( float( float(input_rows["BANFF"])**2 - float(input_rows["banff62_fhcprhc"])**2 - float(input_rows["banff64_fhcprhc"])**2 - float(input_rows["NueNumu"])**2 ) )
+
+
     # Add Flux+XSec+SKDetFSI
-    name_curr = "flux_xsec_skdetfsi_calc"
-    name_modes.append(name_curr) 
-    latex_name_modes.append("Flux+XSec+SKDet+FSI+SI (Calculated)")
-    d[name_curr] = math.sqrt( float( float(input_rows["BANFF"])**2 + float(input_rows["SKDet_FSI"])**2 ) )
+    if "BANFF" in input_rows and "SKDet_FSI" in input_rows:
+      name_curr = "flux_xsec_skdetfsi_calc"
+      name_modes.append(name_curr)
+      latex_name_modes.append("Flux+XSec+SKDet+FSI+SI (Calculated)")
+      d[name_curr] = math.sqrt( float( float(input_rows["BANFF"])**2 + float(input_rows["SKDet_FSI"])**2 ) )
 
     
 
   f = open(table_fn,"w")
   f.write("""\\begin{table}[htb]
 \\centering
-\\begin{tabular}{| c | D{.}{.}{-1} | D{.}{.}{-1} |}
+\\begin{tabular}{| c | c | c |}
 \\hline\n""")
 
   # Takes a list of column contents (as strings), makes it into a latex table row, roughly fixed width
