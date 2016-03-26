@@ -59,11 +59,7 @@
 //
 // 800 tweak skdetfsi00
 // 801 tweak skdetfsi01
-// 800+kNumOfSKDetFSIParams tweak last skdetfsi parameter
-//
-// 900 tweak skdetfsi00_rhc
-// 901 tweak skdetfsi01_rhc
-// 900+kNumOfRHCSKDetFSIParams tweak last skdetfsi parameter
+// 800+ number of SK params tweak last skdetfsi parameter
 //
 // 999 stat only
 //
@@ -132,17 +128,17 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 11, //650, //11,                                         /* options: see above */
+ int          mode                     = 0, //650, //11,                                         /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample                = "1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample                = "1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
  // Asimov data set A
- double       input_mixing12       = -999,    
- double       input_mixing13       = -999,    
+ double       input_mixing12       = -99,    
+ double       input_mixing13       = -99,    
  double       input_mixing23       = 0.528,    
  double       input_deltacp        = -1.601,   
- double       input_dm12sq         = -999,   
+ double       input_dm12sq         = -99,   
  double       input_dm23sq         = 2.509E-3,     
  double       input_betabar        = 1,
 
@@ -158,32 +154,9 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
  bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
  bool         save_throws              = false,                                        /* save the thrown parameter values*/
  
- //
- // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
- //
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
- const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
+ const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
 
- // 
- // OLD CONFIGURATION FILES
- //
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char *config_file       = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c_Asimov_Bias.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly_Asimov.xml",
-
- const int    nexp                     = 100,                                          /* number of experiments to make */
+ const int    nexp                     = 10,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
@@ -193,7 +166,9 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
  
  const bool   doMargMH             = false,      // marginalize Mass Hierarchy
  const double PriorProbNH          = 0.5, //0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
- TString file_priors = "" // Set to "" if no user priors are used (VALOR) 
+ TString file_priors = "", // Set to "" if no user priors are used (VALOR)
+ const char*  tag                      = "nom",
+ TString       randomised_osc          = "ss23ss13dcpss12dmsq23dmsq12"
  )
 {
   using namespace std;
@@ -212,10 +187,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   TH2D *hToy_23_ih;
   TH1D *hToy_MH = new TH1D("hToy_MH","0-->NH, 1-->IH",2,0,2);
 
-  bool RHCFlag = false;
   TString str_sk_sample(sk_sample);
-  if(str_sk_sample.Contains("RHC"))
-    RHCFlag = true;
+  bool RHCFlag = str_sk_sample.Contains("RHC");
 
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {
@@ -332,12 +305,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
         modetitle = Form("banff%02d_fhcprhc",mode-600); break;
       }
       // skdetfsi fhc
-      else if(mode >= 800 && mode < 800+conv::kNumOfSKDetFSIParams) {
+      else if(mode >= 800 && mode < 900) {
         modetitle = Form("skdetfsi%03d",mode-800); break;
-      }
-      // skdetfsi rhc
-      else if(mode >= 900 && mode < 900+conv::kNumOfRHCSKDetFSIParams) {
-        modetitle = Form("skdetfsi%03d_rhc",mode-900); break;
       }
       cout << "Unknown mode " << mode << endl; exit(1); break;
   }//switch mode
@@ -347,8 +316,9 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   
   TString config_str(config_file);
   bool isprefit = config_str.Contains("prefit");
-  if(isprefit)
+  if(isprefit) {
     modetitle += "prefit";
+  }
 
   //
 
@@ -422,18 +392,18 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   cout << endl;
 
   // Analysis configuration
-  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  string sconfig(config);  
+  TString config  = TString::Format("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  string sconfig(config.Data());  
   T2KOpt::Instance()->ReadXmlPath(sconfig);    
 
   // Check whether some osc. params need to be randomized
 
-  bool randomize_mixing12   = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
-  bool randomize_mixing13   = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
-  bool randomize_mixing23   = (TMath::Abs(input_mixing23 + 999) < kASmallNum);
-  bool randomize_deltacp    = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
-  bool randomize_dm12sq     = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
-  bool randomize_dm23sq     = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
+  bool randomize_mixing12   = randomised_osc.Contains("ss12");
+  bool randomize_mixing13   = randomised_osc.Contains("ss13");
+  bool randomize_mixing23   = randomised_osc.Contains("ss23");
+  bool randomize_deltacp    = randomised_osc.Contains("dcp");
+  bool randomize_dm12sq     = randomised_osc.Contains("dmsq12");
+  bool randomize_dm23sq     = randomised_osc.Contains("dmsq23");
   
   // Set Physics Hypothesis
   PhysHypothesis ph(hypothesis);
@@ -441,19 +411,19 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   // Set oscillation parameter values and priors
 
   // util::OscParams::Instance()->SetValues(input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-  // 					 input_betabar,
-  // 					 input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-  // 					 PriorProbNH, doMargMH
-  // 					 );
+  //  input_betabar,
+  //  input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
+  //  PriorProbNH, doMargMH
+  //  );
 
   // Use same values for Nu and NuBar oscillation parameters 
   util::OscParams::Instance()->SetValues(input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-					 input_betabar,
-					 input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-					 PriorProbNH, doMargMH,
-					 input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-					 input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq
-					 );
+    input_betabar,
+    input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
+    PriorProbNH, doMargMH,
+    input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
+    input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq
+    );
   
   bool MargMixing12        = true;
   string PriorMixing12       = "gaus";   
@@ -496,21 +466,27 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   
   if(randomize_mixing23){ 
     util::OscParams::Instance()->SetPrior(conv::kPhypMixing23,    PriorMixing23, PriorParMixing23[0], PriorParMixing23[1], MixModeMixing23);      
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing23,1);
   }
   if(randomize_dm23sq){   
     util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,    PriorDm23sq,   PriorParDm23sq[0],   PriorParDm23sq[1],   ""              );  
+    util::OscParams::Instance()->SetRandomize(conv::kPhypDm23sq,1);
   }
   if(randomize_mixing13){ 
     util::OscParams::Instance()->SetPrior(conv::kPhypMixing13,    PriorMixing13, PriorParMixing13[0], PriorParMixing13[1], MixModeMixing13); // Convert to sinsqth
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing13,1);
   }
   if(randomize_deltacp){  
     util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      PriorDeltaCP,  PriorParDeltaCP[0],  PriorParDeltaCP[1],  ""              ); 
+    util::OscParams::Instance()->SetRandomize(conv::kPhypCPV,1);
   }
   if(randomize_mixing12){ 
     util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, PriorMixing12, PriorParMixing12[0], PriorParMixing12[1], MixModeMixing12); // Convert to sinsqth
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing12,1);
   }
   if(randomize_dm12sq){   
     util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              ); 
+    util::OscParams::Instance()->SetRandomize(conv::kPhypDm12sq,1);
   }
 
   // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
@@ -536,13 +512,15 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   //SuperkExpectation *skexp;
   SuperkExpectation *skexp = new SuperkExpectation;
   skexp->Read(sconfig);
-
-  //
+  
+  const SuperkDetectorFSI * skdet = skexp->GetSuperkDetectorFSI();
+  int n_total_skdetfsi_parameters = kNumOfSKDetFSIParams;
+  
   SuperkObservation skobs;
   
   //string oscparams = util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar);
   string oscparams = util::AsString(ph.Hypothesis(),
-				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar,-999,-999);
+    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar,-999,-999);
 
   cout << "input_deltacp = " << input_deltacp << endl;
   cout << oscparams << endl;
@@ -558,16 +536,12 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   int nbanff;
   if(RHCFlag) nbanff = conv::kNumOfRHCParamsInBANFFfit;
   else        nbanff = conv::kNumOfParamsInBANFFfit;
-  
-  int nfsi;
-  if(RHCFlag) nfsi = conv::kNumOfRHCSKDetFSIParams;
-  else        nfsi = conv::kNumOfRHCSKDetFSIParams;
 
   int nxsecuncorr;
   if(RHCFlag) nxsecuncorr = conv::kNumOfRHCXSecSyst;
   else        nxsecuncorr = conv::kNumOfXSecSyst;
 
-  const int sys = nbanff + nfsi + nxsecuncorr;
+  const int sys = nbanff + n_total_skdetfsi_parameters + nxsecuncorr;
 
   FitParamList * fparm = util::NamedParameterList("nuosc3f+nuisance"); 
   const int np = fparm->GetNumberParameters();
@@ -597,10 +571,10 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   ofstream * outfilep = 0;
   
   if(!update_rootfile){
-    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::trunc);
+    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s_%s.txt",sname,oscparams.c_str(),tag),ios_base::trunc);
   }
   else {
-    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::app);
+    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s_%s.txt",sname,oscparams.c_str(),tag),ios_base::app);
   }
   
   ofstream & outfile = *outfilep;
@@ -665,7 +639,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       
       // All
       if(mode == 0) {
-	skexp->TweakAllSystematics();
+        skexp->TweakAllSystematics();
       }
 
       // BANFF
@@ -700,7 +674,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 
       //SK det + FSI, FSI only or SKDet only
       if(mode == 9 || mode == 14 || mode == 15) {
-	skexp->TweakAllSampleSKDetectorFSISystematics();
+        skexp->TweakAllSKDetectorFSISystematics();
       }
       
       //unconstrained xsec + BANFF
@@ -712,42 +686,40 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       
       //sigma nue/numu (nu and nubar) xsec (they are correlated)
       if(mode == 12) {
-	skexp->GetBANFF()->TweakSampleXSecNumuNueOnly(false,0); // cholesky w/ full cov matrix
+        skexp->GetBANFF()->TweakSampleXSecNumuNueOnly(false,0); // cholesky w/ full cov matrix
       }
       
       // All expect oscillations
       if(mode == 13) {
-	skexp->TweakAllSystematics();
+        skexp->TweakAllSystematics();
       }
       
       // Energy Scale
       if(mode == 16){
-	// Same as done in SuperkExpectation::TweakAllFHCpRHCSKDetectorFSISystematics()
-	skexp->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-	skexp->GetSuperkDetectorFSI()->TweakRHCEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+        skexp->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
       }
       
       //oscillations parameters
       if(mode == 11 || mode == 0) {
-		
-	// Randomize specified osc params for current toy MC expt
-	util::OscParams::Instance()->Randomize();
-	
-	//util::OscParams::Instance()->Print(cout);
-	
-	// Set the mass hierarchy
-	//valor::util::SetMassHierarchy(skexp);
-	util::SetMassHierarchy(skexp);
+        	
+        // Randomize specified osc params for current toy MC expt
+        util::OscParams::Instance()->Randomize();
+        
+        //util::OscParams::Instance()->Print(cout);
+        
+        // Set the mass hierarchy
+        //valor::util::SetMassHierarchy(skexp);
+        util::SetMassHierarchy(skexp);
 
-	// Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
-	bool print = false;
-	util::OscParams::Instance()->UpdatePhysHypothesis(ph,print);
-	bool set_init = false;
-	util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
-	
-	// Fill toy histograms of osc params
-	util::OscParams::Instance()->FillOscToyHisto(ph);
-	
+        // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
+        bool print = false;
+        util::OscParams::Instance()->UpdatePhysHypothesis(ph,print);
+        bool set_init = false;
+        util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
+        
+        // Fill toy histograms of osc params
+        util::OscParams::Instance()->FillOscToyHisto(ph);
+        
       } // mode 11 (osc param)
 
     }//mode<100
@@ -841,7 +813,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
             int ib = mode - 400;
             v[ib] = skexp->GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
             skexp->GetBANFF()->TweakSample(true,&v);
-	    break;
+            break;
           }
           // banff rhc
           else if(mode >= 500 && mode < 500+conv::kNumOfRHCParamsInBANFFfit) {
@@ -858,31 +830,21 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
             v = skexp->GetBANFF()->FHCpRHCBestFitValues();
             int ib = mode - 600;
             v[ib] = skexp->GetBANFF()->FHCpRHCBestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib]));
-	    //cout << "Single Param Variance = " << skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib] << endl;
-	    skexp->GetBANFF()->TweakSample(true,&v);
-            break;
-          }
-
-	  // skdetfsi fhc
-          else if(mode >= 800 && mode < 800+conv::kNumOfSKDetFSIParams) {
-            TVectorD v(conv::kNumOfSKDetFSIParams);
-            for (int ipf = 0; ipf < conv::kNumOfSKDetFSIParams; ipf++) {
+            //cout << "Single Param Variance = " << skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib] << endl;
+            skexp->GetBANFF()->TweakSample(true,&v);
+                  break;
+                }
+        
+          // skdetfsi fhc
+          else if(mode >= 800 && mode < 900) {
+            TVectorD v(n_total_skdetfsi_parameters);
+            for (int ipf = 0; ipf < n_total_skdetfsi_parameters; ipf++) {
               v[ipf] = 1;
             }
             int ib = mode - 800;
-            v[ib] = 1 + (tweak * sqrt(skexp->GetSuperkDetectorFSI()->CovMatrix()[ib][ib]));
-            skexp->GetSuperkDetectorFSI()->Tweak(true,&v);
-            break;
-          }
-          // skdetfsi rhc
-          else if(mode >= 900 && mode < 900+conv::kNumOfRHCSKDetFSIParams) {
-            TVectorD v(conv::kNumOfRHCSKDetFSIParams);
-            for (int ipf = 0; ipf < conv::kNumOfRHCSKDetFSIParams; ipf++) {
-              v[ipf] = 1;
-            }
-            int ib = mode - 900;
-            v[ib] = 1 + (tweak * sqrt(skexp->GetSuperkDetectorFSI()->RHCCovMatrix()[ib][ib]));
-            skexp->GetSuperkDetectorFSI()->TweakRHC(true,&v);
+            PhysParamId_t p = skdet->WhichParam(ib);
+            v[ib] = 1 + (tweak * skdet->OneSigmaError(p));
+            skdet->Tweak(true,&v);
             break;
           }
 
@@ -963,7 +925,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       
       double N=0.;
       for (int ibinQ2 = 0 ; ibinQ2 < n_q2_bins ; ibinQ2++) {
-	N += spectrum->GetEntry(ibin,ibinQ2); 
+        N += spectrum->GetEntry(ibin,ibinQ2); 
       }
       //double N = spectrum->GetArray()[ibin]; // TO CHANGE
 
@@ -1005,10 +967,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
           hSysThrown[ip]->Fill(skexp->GetNuXSec()->CurrentValue(p));
         }
         if(util::IsSKDetFSI(p)){
-          if(RHCFlag)
-            hSysThrown[ip]->Fill(skexp->GetSuperkDetectorFSI()->RHCCurrentValue(p));
-          else 
-            hSysThrown[ip]->Fill(skexp->GetSuperkDetectorFSI()->CurrentValue(p));
+          hSysThrown[ip]->Fill(skexp->GetSuperkDetectorFSI()->CurrentValue(p));
         }
       }
     }// save throws
