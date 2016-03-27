@@ -305,7 +305,7 @@ if make_summary:
 
     
 
-  f = open(table_fn,"w")
+f = open(table_fn,"a") #append new table to file.
   f.write("""\\begin{table}[htb]
 \\centering
 \\begin{tabular}{| c | c | c |}
