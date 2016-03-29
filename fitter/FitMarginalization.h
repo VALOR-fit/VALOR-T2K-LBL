@@ -337,7 +337,15 @@ class FitMarginalization
   void SetTestStatistic(string teststatistic); // "rateonly" or "rate+shape". Always use the log-likelihood ratio
   void SetSeed(UInt_t seed) {fSeed = seed;};
   
- private:
+  //NuEBar app
+  void FillExpectedNuEBarAppHisto(SuperkObservation *skobs_data,int iterpar0,bool readbinary);
+  TH1D* GetNuEBarHisto(int i){return fNuEAppHisto[i];};
+
+private:
+
+  //NuEBar app histogram one for each value of Beta (is only initialised and 
+  //filled if beta is the only parameter of intereset 
+  TH1D* fNuEAppHisto[2];
 
   // NEW PRECISION
   TH1D *fhchisq_marg_1D; 
@@ -424,7 +432,7 @@ class FitMarginalization
   // NEW PRECISION
   //VALORArrayD *flikeVArray; //UNUSED
   VALORArrayD *fChisqMargVArray;
-  //
+  
 
   VALORArrayD *flikeToyVArray; // Fit likelihood of each toy  // NEW SPECTRA MARG
 

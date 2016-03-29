@@ -633,6 +633,13 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   fhToyMH = new TH1D("hToyMH","Toy MH: bin 1 --> NH, bin 2 --> IH",2,0,2);
 
   fStoreLikeWeights = false; // don't store the full likelihood befault
+  
+  //NuEApp Raj
+  if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[1] == kPhypUndefined){
+    for(int i = 0;i<fnbins_param[0];i++){
+      fNuEAppHisto[i] = new TH1D(Form("NuEBarAppHisto_%d",i),Form("Expected NuEBar Events; BetaBar bin %d",i),25000,0,25);
+    }
+  }
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetStoreLikeWeights(bool doStoreLikeWeights){
@@ -716,6 +723,14 @@ void FitMarginalization::CleanUp(void){
   if (treetoys                         ) { delete treetoys                         ; treetoys                = 0;}  // NEW OSC TREE
   if (filetreetoys                     ) { delete filetreetoys                     ; filetreetoys            = 0;}  // NEW OSC TREE
 #endif
+  
+  //NuEBarApp
+  if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[0] == kPhypUndefined){
+    for(int i = 0;i<fnbins_param[0];i++){
+      delete fNuEAppHisto[i];
+      fNuEAppHisto[i] = 0;
+    }
+  }
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetFullRange(){
@@ -8360,4 +8375,197 @@ double FitMarginalization::OscPhysicalRegion(conv::PhysParamId_t p,double oscval
   }
   
   return conv::kBadResult;
+}
+
+//NueBarapp RAJ
+void FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_data,int iterpar0,bool readbinary){ // NEW PRECISION
+  
+  
+#ifdef __print_chisqmarg_tstopwatch__
+  TStopwatch sw;
+#endif
+
+  
+  if(fPhysParamFree[0] != kPhypBetaBar || fPhysParamFree[1] != kPhypUndefined)
+  {
+    std::cerr <<  "FitMarg::FillExpectedNuEBarAppHisto >> Par0 is not BetaBar or Par1 is not undefined. "
+    <<  "Can't deal with this" << std::endl;
+  }
+  
+  int iterpar1 = 0;
+  
+  // NEW SPECTRA MARG
+  // Set to 0 in case it has been already calculated before, for example when fabs(chisq)<1.E-8.
+  //flikeVArray->SetEntry(0.,iterpar0,iterpar1); // not used
+  //
+  
+  fNCallsCalcChisqMargPt++;
+  
+  // Read binary file
+  if(readbinary){
+    
+    // Get file ID corresponding to the input free parameters
+    
+    int fileid = GetFileIDRead(iterpar0,iterpar1);
+    const char *tag = ftagfile.c_str();
+    
+    if( (fCurrentFileIDminim==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
+      //if( (fileid==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
+      
+#ifdef __print_chisqmarg_changebinary__
+      cout << endl;
+      cout << "Change binary file from " << fCurrentFileIDminim << " to " << fileid << endl;
+#endif
+      
+      fCurrentFileIDminim = fileid;
+      this->ReadToysFromBinary(fileid,tag);
+    }
+  }
+  
+  //cout << "iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << "   ";
+  //double currval0 = fmin_param[0] + iterpar0*fstep_param[0];
+  //double currval1 = fmin_param[1] + iterpar1*fstep_param[1];
+  //cout << "currval0 = " << currval0 << endl;
+  //cout << "currval1 = " << currval1 << endl;
+  
+  
+  
+  
+  
+  //
+  
+  
+  for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+    //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;
+    
+#ifdef __print_array_toy_fillchisq__
+    cout << endl;
+    cout << "Toy " << iexperiment << endl;
+    cout << endl;
+#endif
+    
+    // compute the likelihood for a single marginalization toy
+    double chisq = 0.;
+    
+    // Loop over the used SK samples
+    int iscount=0;
+    //for(int is = 0; is < kns; is++) {
+    //SuperkSample_t s = kSKSamples[is];
+    //if(s == kSKsUndefined) continue;
+    double NuEAppEvents= 0;
+    for(int is=0;is<fNSKsamples;is++){
+      SuperkSample_t s = this->GetSKSamples(is);
+      
+      
+      // NEW FHC+RHC JOINT
+      // Skip the sk samples which shouldn't be used in the chisq computation
+      bool usesample = this->UseSKSample(is);
+      if(!usesample){
+        iscount++; // Increase the sk-sample counter, otherwise at the next iteration it takes the wrong sample
+        continue;
+      }
+      //
+      
+      
+      
+      if( fteststatistic=="rate+shape"){
+        
+#ifdef __print_array_toy_fillchisq__
+        cout << util::AsString(s) << " --> # Ereco bins = " << util::NumErecoBins(s) << endl;
+#ifdef __USE_2D_TEMPLATES__
+        // NEW 2D TEMPLATES
+        cout << util::AsString(s) << " --> # Q2 bins = " << util::NumQ2Bins(s) << endl;
+        //
+#endif
+        double nobs_sample = 0.;
+        double chisq_sample = 0.;
+#endif
+        double nexp_sample = 0.;
+  
+        
+#ifndef __USE_2D_TEMPLATES__
+        
+        for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+          
+          // NEW PRECISION
+          
+          // NEW 2D TEMPLATES (VARRAY)
+          //double nexp = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
+          double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibin);
+          //
+          
+          nexp *= (double)fNormPOT[is];
+          double nobs = (double)skobs_data->ErecoSpectrumArray(s)[ibin];
+          if(s != kSKsRHCFCFV1RingELike)
+            chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+          else
+            nexp_sample += nexp;                                                         //
+          
+#ifdef __print_array_toy_fillchisq__
+          nexp_sample += nexp;
+          nobs_sample += nobs;	  
+          chisq_sample += valor::util::ChisqPoisson(nobs,nexp);
+#endif
+
+        } // loop over ereco bins
+
+        
+        
+#else // __USE_2D_TEMPLATES__
+        
+        // NEW 2D TEMPLATES
+        
+        for(int ibinEreco=0;ibinEreco<util::NumErecoBins(s);ibinEreco++){
+          for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
+            
+            // NEW 2D TEMPLATES (VARRAY)
+            //double nexp = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibinEreco,ibinQ2);
+            double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibinEreco,ibinQ2);
+            //
+            
+            nexp *= (double)fNormPOT[is];
+            double nobs = (double)skobs_data->TwoDSpectrumVArray(s)->GetEntry(ibinEreco,ibinQ2); // Maybe it's slower than the simple array --> TO CHECK
+            if(s != kSKsRHCFCFV1RingELike)
+              chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+            else
+              nexp_sample += nexp;
+            
+#ifdef __print_array_toy_fillchisq__
+            nobs_sample += nobs;
+            chisq_sample += valor::util::ChisqPoisson(nobs,nexp);
+#endif
+          } // loop over q2 bins
+        } // loop over ereco bins
+          //
+#endif // __USE_2D_TEMPLATES__
+        
+#ifdef __print_array_toy_fillchisq__
+        cout << "# exp sample = " << nexp_sample << " - # obs sample = " << nobs_sample << " --> chisq sample = " << chisq_sample << " --> chisq tot = " << chisq << endl;
+#endif
+        if(s == kSKsRHCFCFV1RingELike)
+          NuEAppEvents = nexp_sample;
+
+      } // rate+shape
+      
+      else{
+        cerr << endl;
+        cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
+        cerr << "The test statistic is not available: " << fteststatistic << endl;
+        cerr << endl;
+        exit(1);
+      }
+      
+      iscount++;
+    } // loop SK samples
+    
+    NuEAppEvents = Rnd::Instance()->RndToyMCstat().Poisson(NuEAppEvents);
+    
+    fNuEAppHisto[iterpar0]->Fill(NuEAppEvents,exp(-chisq/2.));
+    
+    
+    
+  } // iexperiment
+  
+  
+  
 }
