@@ -58,7 +58,7 @@ public:
   ~SuperkExpectation();
 
   // *** FitModelABC Interface ***
-  string Name(void);
+  string Name(void) const;
   
   // Read inputs from input XML file
   bool Read(string config_file, Option_t * opt = 0);
@@ -73,8 +73,8 @@ public:
   void ResetSystematics (Option_t * opt = 0);
   void PrintSystematics (std::ostream & stream = std::cout, Option_t * opt = 0) const;
   
-  PhysParamList Tweaks(void);
-  void CopyTweaksTo(PhysParamList & pl);
+  PhysParamList Tweaks(Option_t * opt = 0) const;
+  void CopyTweaksTo(PhysParamList & pl, Option_t * opt = 0) const;
   
   bool Generate (const FitParamList & fp, Option_t * opt = 0);
    
@@ -152,6 +152,12 @@ public:
   NuFlux            * GetNuFlux            (void) { return fNuFlux;            }
   NuXSec            * GetNuXSec            (void) { return fNuXSec;            }
   BANFF             * GetBANFF             (void) { return fBANFF;             }
+  // Const of above
+  const SuperkDetectorFSI * GetSuperkDetectorFSI (void) const { return fSuperkDetectorFSI; }
+  const SuperkMC          * GetSuperkMC          (void) const { return fSuperkMC;          }
+  const NuFlux            * GetNuFlux            (void) const { return fNuFlux;            }
+  const NuXSec            * GetNuXSec            (void) const { return fNuXSec;            }
+  const BANFF             * GetBANFF             (void) const { return fBANFF;             }
 
   // Print
   void PrintSystematicVariations(std::ostream & stream = std::cout) const;

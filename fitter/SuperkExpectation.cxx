@@ -1342,14 +1342,14 @@ void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
 
 }
 //________________________________________________________________________________________
-PhysParamList SuperkExpectation::Tweaks(void) 
+PhysParamList SuperkExpectation::Tweaks(Option_t * opt) const
 {
   PhysParamList pl;
-  this->CopyTweaksTo(pl);
+  this->CopyTweaksTo(pl, opt);
   return pl;
 }
 //________________________________________________________________________________________
-void SuperkExpectation::CopyTweaksTo(PhysParamList & pl) 
+void SuperkExpectation::CopyTweaksTo(PhysParamList & pl, Option_t * /*opt*/) const 
 {
   pl.Clear();
   //
@@ -1596,7 +1596,7 @@ double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
   return chisq_penalty;
   }
 //________________________________________________________________________________________
-string valor::SuperkExpectation::Name(void)
+string SuperkExpectation::Name(void) const
 {
   return "SuperkExpectation";
 }
