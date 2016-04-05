@@ -214,25 +214,6 @@ valor::conv::SKMCTemplateType_t
 }
 //____________________________________________________________________________
 void valor::util::PrintCompact(
-        const TVectorD & v, const PhysParamId_t * params, int w, int prec, Option_t * /*option*/, std::ostream & stream)
-{
-  //~ TString opt = option;
-  
-  int np = v.GetNoElements();
-  stream << fixed;
-
-  for(int ip = 0; ip < np; ip++) {
-    PhysParamId_t p = params[ip];
-     stream << "> param = " << setw(3) << ip;
-
-     stream << setw(42) << util::AsString(p);
-     stream << " ]";
-     stream << " - value = " << setw(w) << setprecision(prec) << v[ip] << endl;
-  }
-  stream << scientific;
-}
-//____________________________________________________________________________
-void valor::util::PrintCompact(
         const TVectorD & v, int w, int prec, Option_t * option, std::ostream & stream)
 {
   TString opt = option;
@@ -489,138 +470,115 @@ void valor::util::PrintCompact(
   stream << scientific;
 }
 //___________________________________________________________________________
-void valor::util::PrintCompact(
-  const TMatrixD & m, int w, int prec, std::ostream & stream)
-{
-  int nc = m.GetNcols();
-  int nr = m.GetNrows();
-  stream << fixed;
-  for(int ir=0; ir<nr; ir++) {
-    if(ir==0) {
-       stream << setw(w) << setfill(' ') << "r\\c:" << " | "; 
-       for(int ic=0; ic<nc; ic++) {
-         stream << setw(w) << setfill(' ') << setprecision(0) << ic << " | ";
-       }
-       stream << endl;
-    }
-    stream << setw(w) << setfill(' ') << setprecision(0) << ir << " | "; 
-    for(int ic=0; ic<nc; ic++) {
-         stream << setw(w) << setfill(' ') << setprecision(prec) 
-              << m[ir][ic] << " | ";
-    }//rows
-    stream << endl;
-  }//columns
-  stream << scientific;
-}
-//___________________________________________________________________________
-void valor::util::PrintCompactTex(
-				   const TMatrixD & m, int w, int prec, std::ostream & stream, TString opt)
-{
-  int nc = m.GetNcols();
-  int nr = m.GetNrows();
-  stream << fixed;
-  string columntype = "c";
-  if(opt.Contains("banff"))
-    columntype = "p{18pt}";
-  stream << "{" << endl;
-  if(opt.Contains("skdetfsi"))
-    stream << "\\small" << endl;
-  else if(opt.Contains("banff"))
-    stream << "\\tiny" << endl
-	   << "\\begin{sideways}" << endl
-	   << "\\begin{minipage}{23cm}" << endl
-	   << "{" << endl
-	   << "\\setlength{\\arraycolsep}{1pt}" << endl;
-  stream << "\\begin{equation}" << endl
-	 << "C^{";
-  if(opt.Contains("skdetfsi"))
-    stream << "SK+FSI";
-  /// NEW MULTIRING 2
-  else if(opt.Contains("multiring_skdetfsi"))
-    stream << "MultiRing SK+FSI";
-  ///
-  else if(opt.Contains("banff"))
-    stream << "banff";
-  stream << "} =";
-  if(opt.Contains("banff"))
-    stream << "\\end{equation}" << endl
-	   << "\\begin{equation*}" << endl;  
-  else
-    stream << " \\\\" << endl;
-  stream << "\\begin{blockarray}{c ";
-  for(int ic = 0; ic < nc; ic++)
-    stream << columntype;
-  stream << "}" << endl;
-
-  for(int ir=0; ir<nr; ir++) {
-    if(ir==0) {
-      if(!opt.Contains("skdetfsi") && !opt.Contains("banff"))
-	stream << setw(w) << setfill(' ') << "r\\c:"; 
-      else
-	stream << setw(w) << setfill(' ');
-      for(int ic=0; ic<nc; ic++) {
-	if(opt.Contains("skdetfsi"))
-	  stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ic]) << "}";
-	/// NEW MULTIRING 2
-	else if(opt.Contains("multiring_skdetfsi"))
-	  stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfMultiRingSKDetFSIParams[ic]) << "}";
-	///
-	else if(opt.Contains("banff"))
-	  stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "\\begin{sideways} {\\color{blue} " << util::AsStringPaperTexNoDollar((PhysParamId_t)(ic + (int)kNuisBANFF00)) << "} \\end{sideways}";
-	else
-	  stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << ic << "}";
-       }
-       stream << " \\\\ " << endl;
-       stream << "\\begin{block}{c(";
-       for(int ic = 0; ic < nc; ic++)
-	 stream << columntype;
-       if(opt.Contains("banff"))
-	 stream << "@{\\hspace*{1pt}})}" << endl;
-       else
-	 stream << "@{\\hspace*{2pt}})}" << endl;
-    }
-    if(opt.Contains("skdetfsi"))
-      stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ir]) << "}  \\vspace{0.2cm}";
-    /// NEW MULTIRING 2
-    else if(opt.Contains("multiring_skdetfsi"))
-      stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfMultiRingSKDetFSIParams[ir]) << "}  \\vspace{0.2cm}";
-    ///
-    else if(opt.Contains("banff"))
-      stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar((PhysParamId_t)(ir + (int)kNuisBANFF00)) << "}  \\vspace{0.2cm}";
-    else
-      stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << ir << "}  \\vspace{0.2cm}";
-    for(int ic=0; ic<nc; ic++) {
-      if(ic == ir)
-	stream << " & " << setw(w) << setfill(' ') << setprecision(prec) 
-	       << "{\\color{red} " << m[ir][ic] << "}";
-      else
-	stream << " & " << setw(w) << setfill(' ') << setprecision(prec) 
-	       << m[ir][ic];
-    }//rows
-    stream << " \\\\ " << endl;
-  }//columns
-  stream << "\\end{block}" << endl;
-  if(opt.Contains("skdetfsi"))
-    stream << "\\label{eq:Cskfsi}" << endl;
-  /// NEW MULTIRING 2
-  else if(opt.Contains("multiring_skdetfsi"))
-    stream << "\\label{eq:Cskfsi}" << endl;
-  ///
-  else if(opt.Contains("banff"))
-    stream << "\\label{eq:Cbanff}" << endl;
-  stream << "\\end{blockarray}" << endl;
-  if(opt.Contains("banff"))
-    stream << "\\end{equation*}" << endl;
-  else
-    stream << "\\end{equation}" << endl;
-  if(opt.Contains("banff"))
-    stream << "}" << endl
-	   << "\\end{minipage}" << endl
-	   << "\\end{sideways}" << endl;
-  stream << "\\normalsize" << endl
-	 << "}" << endl;
-  stream << scientific;
-}
+// Not in use - commented out April 2016. If we ever need this again, rewrite it generically and put it in the framework.
+//~ void valor::util::PrintCompactTex(
+				   //~ const TMatrixD & m, int w, int prec, std::ostream & stream, TString opt)
+//~ {
+  //~ int nc = m.GetNcols();
+  //~ int nr = m.GetNrows();
+  //~ stream << fixed;
+  //~ string columntype = "c";
+  //~ if(opt.Contains("banff"))
+    //~ columntype = "p{18pt}";
+  //~ stream << "{" << endl;
+  //~ if(opt.Contains("skdetfsi"))
+    //~ stream << "\\small" << endl;
+  //~ else if(opt.Contains("banff"))
+    //~ stream << "\\tiny" << endl
+	   //~ << "\\begin{sideways}" << endl
+	   //~ << "\\begin{minipage}{23cm}" << endl
+	   //~ << "{" << endl
+	   //~ << "\\setlength{\\arraycolsep}{1pt}" << endl;
+  //~ stream << "\\begin{equation}" << endl
+	 //~ << "C^{";
+  //~ if(opt.Contains("skdetfsi"))
+    //~ stream << "SK+FSI";
+  //~ /// NEW MULTIRING 2
+  //~ else if(opt.Contains("multiring_skdetfsi"))
+    //~ stream << "MultiRing SK+FSI";
+  //~ ///
+  //~ else if(opt.Contains("banff"))
+    //~ stream << "banff";
+  //~ stream << "} =";
+  //~ if(opt.Contains("banff"))
+    //~ stream << "\\end{equation}" << endl
+	   //~ << "\\begin{equation*}" << endl;  
+  //~ else
+    //~ stream << " \\\\" << endl;
+  //~ stream << "\\begin{blockarray}{c ";
+  //~ for(int ic = 0; ic < nc; ic++)
+    //~ stream << columntype;
+  //~ stream << "}" << endl;
+//~ 
+  //~ for(int ir=0; ir<nr; ir++) {
+    //~ if(ir==0) {
+      //~ if(!opt.Contains("skdetfsi") && !opt.Contains("banff"))
+	//~ stream << setw(w) << setfill(' ') << "r\\c:"; 
+      //~ else
+	//~ stream << setw(w) << setfill(' ');
+      //~ for(int ic=0; ic<nc; ic++) {
+	//~ if(opt.Contains("skdetfsi"))
+	  //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ic]) << "}";
+	//~ /// NEW MULTIRING 2
+	//~ else if(opt.Contains("multiring_skdetfsi"))
+	  //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfMultiRingSKDetFSIParams[ic]) << "}";
+	//~ ///
+	//~ else if(opt.Contains("banff"))
+	  //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "\\begin{sideways} {\\color{blue} " << util::AsStringPaperTexNoDollar((PhysParamId_t)(ic + (int)kNuisBANFF00)) << "} \\end{sideways}";
+	//~ else
+	  //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << ic << "}";
+       //~ }
+       //~ stream << " \\\\ " << endl;
+       //~ stream << "\\begin{block}{c(";
+       //~ for(int ic = 0; ic < nc; ic++)
+	 //~ stream << columntype;
+       //~ if(opt.Contains("banff"))
+	 //~ stream << "@{\\hspace*{1pt}})}" << endl;
+       //~ else
+	 //~ stream << "@{\\hspace*{2pt}})}" << endl;
+    //~ }
+    //~ if(opt.Contains("skdetfsi"))
+      //~ stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ir]) << "}  \\vspace{0.2cm}";
+    //~ /// NEW MULTIRING 2
+    //~ else if(opt.Contains("multiring_skdetfsi"))
+      //~ stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfMultiRingSKDetFSIParams[ir]) << "}  \\vspace{0.2cm}";
+    //~ ///
+    //~ else if(opt.Contains("banff"))
+      //~ stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar((PhysParamId_t)(ir + (int)kNuisBANFF00)) << "}  \\vspace{0.2cm}";
+    //~ else
+      //~ stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << ir << "}  \\vspace{0.2cm}";
+    //~ for(int ic=0; ic<nc; ic++) {
+      //~ if(ic == ir)
+	//~ stream << " & " << setw(w) << setfill(' ') << setprecision(prec) 
+	       //~ << "{\\color{red} " << m[ir][ic] << "}";
+      //~ else
+	//~ stream << " & " << setw(w) << setfill(' ') << setprecision(prec) 
+	       //~ << m[ir][ic];
+    //~ }//rows
+    //~ stream << " \\\\ " << endl;
+  //~ }//columns
+  //~ stream << "\\end{block}" << endl;
+  //~ if(opt.Contains("skdetfsi"))
+    //~ stream << "\\label{eq:Cskfsi}" << endl;
+  //~ /// NEW MULTIRING 2
+  //~ else if(opt.Contains("multiring_skdetfsi"))
+    //~ stream << "\\label{eq:Cskfsi}" << endl;
+  //~ ///
+  //~ else if(opt.Contains("banff"))
+    //~ stream << "\\label{eq:Cbanff}" << endl;
+  //~ stream << "\\end{blockarray}" << endl;
+  //~ if(opt.Contains("banff"))
+    //~ stream << "\\end{equation*}" << endl;
+  //~ else
+    //~ stream << "\\end{equation}" << endl;
+  //~ if(opt.Contains("banff"))
+    //~ stream << "}" << endl
+	   //~ << "\\end{minipage}" << endl
+	   //~ << "\\end{sideways}" << endl;
+  //~ stream << "\\normalsize" << endl
+	 //~ << "}" << endl;
+  //~ stream << scientific;
+//~ }
 //___________________________________________________________________________
 void valor::util::ApplyEnergyScaleSystematic(conv::SuperkSample_t s, double * events_per_bin, double escale_tweak)
 {

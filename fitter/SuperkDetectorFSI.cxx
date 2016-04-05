@@ -18,14 +18,14 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__
-//#define __show_init_mesg_debug__
+//~ #define __show_init_mesg_debug__
 #define __show_skdetfsiconv_check_mesg_info__
-//#define __show_skdetfsiconv_check_mesg_debug__
-//#define __show_skdetfsi_cholesky_mesg_info__
-//#define __show_skdetfsi_cholesky_mesg_debug__
-//#define __show_skdetfsi_tweak_mesg_debug__
-//#define __show_chisqpenalty_mesg_debug__
-//#define __show_skdetfsi_applysyst_mesg_debug__
+//~ #define __show_skdetfsiconv_check_mesg_debug__
+//~ #define __show_skdetfsi_cholesky_mesg_info__
+//~ #define __show_skdetfsi_cholesky_mesg_debug__
+//~ #define __show_skdetfsi_tweak_mesg_debug__
+//~ #define __show_chisqpenalty_mesg_debug__
+//~ #define __show_skdetfsi_applysyst_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -39,6 +39,7 @@
 #include "FitCore/FitParamList.h"
 #include "FitCore/PhysParamList.h"
 #include "Messenger/Messenger.h"
+#include "Utilities/UtlPrint.h"
 #include "Utilities/UtlSystem.h"
 
 #include "SuperkDetectorFSI.h"
@@ -207,23 +208,22 @@ void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * par
         }
         prev_sample_applied_to = s;
       }
-    }
-    
-    //check that they apply to all e.g. CCQE
-    // this must be done by printing to screen & analyser
+      //check that they apply to all e.g. CCQE
+      // this must be done by printing to screen & analyser
 #ifdef __show_skdetfsiconv_check_mesg_debug__
-    cout << "Effects " << util::AsString(kSKSamples[is + start_sample_index]) << endl;
-    PrintAppliesType(util::AppliesToCCQE    (modes_set[is]), "CCQE");
-    PrintAppliesType(util::AppliesToCCMEC   (modes_set[is]), "CCMEC");
-    PrintAppliesType(util::AppliesToCCcoh   (modes_set[is]), "CCcoh");
-    PrintAppliesType(util::AppliesToCC1pi   (modes_set[is]), "CC1pi");
-    PrintAppliesType(util::AppliesToCCoth   (modes_set[is]), "CCoth");
-    PrintAppliesType(util::AppliesToNC1pi0  (modes_set[is]), "NC1pi0");
-    PrintAppliesType(util::AppliesToNC1piC  (modes_set[is]), "NC1piC");
-    PrintAppliesType(util::AppliesToNCcoh   (modes_set[is]), "NCcoh");
-    PrintAppliesType(util::AppliesToNC1Gamma(modes_set[is]), "NC1Gamma");
-    PrintAppliesType(util::AppliesToNCoth   (modes_set[is]), "NCoth");
+      cout << "Effects " << util::AsString(s) << endl;
+      PrintAppliesType(util::AppliesToCCQE    (modes_set[is]), "CCQE");
+      PrintAppliesType(util::AppliesToCCMEC   (modes_set[is]), "CCMEC");
+      PrintAppliesType(util::AppliesToCCcoh   (modes_set[is]), "CCcoh");
+      PrintAppliesType(util::AppliesToCC1pi   (modes_set[is]), "CC1pi");
+      PrintAppliesType(util::AppliesToCCoth   (modes_set[is]), "CCoth");
+      PrintAppliesType(util::AppliesToNC1pi0  (modes_set[is]), "NC1pi0");
+      PrintAppliesType(util::AppliesToNC1piC  (modes_set[is]), "NC1piC");
+      PrintAppliesType(util::AppliesToNCcoh   (modes_set[is]), "NCcoh");
+      PrintAppliesType(util::AppliesToNC1Gamma(modes_set[is]), "NC1Gamma");
+      PrintAppliesType(util::AppliesToNCoth   (modes_set[is]), "NCoth");
 #endif
+    } //is
   }//ix
   
   if (failure && !fatal_no_effect) {
@@ -355,11 +355,11 @@ bool SuperkDetectorFSI::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   cout << "SuperkDetectorFSI >> " << "Error {EnergyScale;e}    : "  << fEnergyScaleRelErrE  << endl;
   cout << "SuperkDetectorFSI >> Input SuperkDetector+FSI covariance matrix: " << endl; 
   //cov.Print();
-  util::PrintCompact(cov,7,4);
+  util::PrintMatrix(cov,7,4);
   cout << "SuperkDetectorFSI >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
-  util::PrintCompact(*fCovMtrxInv,7,4);
+  util::PrintMatrix(*fCovMtrxInv,7,4);
   cout << "SuperkDetectorFSI >> check of product cov*(cov)^-1 : "<< endl;
-  util::PrintCompact(prod,7,4);
+  util::PrintMatrix(prod,7,4);
 #endif
 
   // Create/init current SuperkDetector+FSI params
@@ -493,14 +493,14 @@ void SuperkDetectorFSI::Tweak(
     TMatrixD cov(this->CovMatrix());
 #ifdef __show_skdetfsi_cholesky_mesg_debug__
     cout << "SuperkDetectorFSI/Tweak >> SuperkDetector+FSI covariance matrix: " << endl;
-    util::PrintCompact(cov,7,4);
+    util::PrintMatrix(cov,7,4);
 #endif
 
     TMatrixD L = util::CholeskyDecomposition(cov);
     fCovMtrxChoL = new TMatrixD(L);
 #ifdef __show_skdetfsi_cholesky_mesg_debug__
     cout << "SuperkDetectorFSI/Tweak >> Cholesky decomposition of SuperkDetector+FSI covariance matrix: " << endl;
-    util::PrintCompact(*fCovMtrxChoL,7,4);
+    util::PrintMatrix(*fCovMtrxChoL,7,4);
 #endif
   }
 
@@ -536,12 +536,12 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "SuperkDetectorFSI/ChisqPenalty >> SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(current_values, bestfit_values, 12,6,"SKDetFSI fit params");
+  util::PrintVectorPair(current_values, bestfit_values, fActiveSKDetFSIParams, 12,6,"SKDetFSI fit params");
 #endif
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "Exp/ChisqPenalty >> deviations in SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(TMatrixDRow(dev,0), 12,6,"SKDetFSI fit params");
+  util::PrintVector(TMatrixDRow(dev,0), fActiveSKDetFSIParams, 12,6,"SKDetFSI fit params");
 #endif
 
   //covariance matrix
@@ -550,16 +550,16 @@ double SuperkDetectorFSI::ChisqPenalty(void) const
 
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "SuperkDetectorFSI/ChisqPenalty >> SuperkDetector+FSI covariance matrix: " << endl;
-  util::PrintCompact(cov,7,4);
+  util::PrintMatrix(cov,7,4);
   cout << "SuperkDetectorFSI/ChisqPenalty >> Inverse SuperkDetector+FSI covariance matrix: " << endl;
-  util::PrintCompact(covInv,7,4);
+  util::PrintMatrix(covInv,7,4);
 #endif
 
   //Check the inverse:
   TMatrixD prod = cov*covInv;
 #ifdef __show_chisqpenalty_mesg_debug__
   cout << "SuperkDetectorFSI/ChisqPenalty >> check of product cov*(cov)^-1 : "<< endl;
-  util::PrintCompact(prod,7,4);
+  util::PrintMatrix(prod,7,4);
 #endif
 
   TMatrixD chisqpenalty =  dev * covInv * devT;
@@ -585,7 +585,7 @@ void SuperkDetectorFSI::PrintSystematicVariations(std::ostream & stream, Option_
   const TVectorD & curr_skdetfsi_params = *fCurrentValues;
   stream << "SuperkDetectorFSI >> Energy scale twk        = "  << fEnergyScaleTwkDial      << endl;
   stream << "SuperkDetectorFSI >> SuperkDetector+FSI parameters: " << endl;
-  util::PrintCompact(curr_skdetfsi_params,fActiveSKDetFSIParams,15,6,"SKDetFSI params",stream);
+  util::PrintVector(curr_skdetfsi_params,fActiveSKDetFSIParams,15,6,"SKDetFSI params",stream);
 }
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySyst(

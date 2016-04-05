@@ -15,8 +15,8 @@
  */
 //____________________________________________________________________________
 
-#ifndef _valor_utils_h_
-#define _valor_utils_h_
+#ifndef _valor_t2k_utils_h_
+#define _valor_t2k_utils_h_
 
 #include <iostream>
 #include <algorithm>
@@ -110,13 +110,9 @@ namespace valor {
         // Etc
         //
         
-        void PrintCompact (const TVectorD & v, const conv::PhysParamId_t * params, int w=15, int prec=9, Option_t * opt="", std::ostream & stream = std::cout);
-        
-        // These internally decide what params to use. They should be replaced with versions like the one above, that accept that as a generic list.
+        // These internally decide what params to use. Deprecated - use the generic ones in fmwk UtlPrint.
         void PrintCompact (const TVectorD & v, int w=15, int prec=9, Option_t * opt="", std::ostream & stream = std::cout);
         void PrintCompact (const TVectorD & current, const TVectorD & nominal, int w, int prec, Option_t * option, std::ostream & stream = std::cout);
-        void PrintCompact (const TMatrixD & m, int w=15, int prec=9, std::ostream & stream = std::cout);
-        void PrintCompactTex (const TMatrixD & m, int w=20, int prec=9, std::ostream & stream = std::cout, TString opt = "");
         
         // For python, hack
         conv::PhysParamId_t GetBANFFParam(int FHCpRHC_param_no);
