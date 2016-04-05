@@ -1,6 +1,6 @@
-print "\n==========================="
-print "Loading python with T2KOSCANA"
-print "===========================\n"
+print "\n============================="
+print   "Loading python with T2KOSCANA"
+print   "=============================\n"
 
 import ROOT
 import sys
@@ -50,3 +50,8 @@ for n in xrange(1,9):
   globals()["to"+`n`+"dp"] = "{0:."+`n`+"f}"
   globals()["to"+`n`+"sf"] = "{0:."+`n-1`+"e}"
   
+# Quick and dirty function to get every object in a file
+def fileburst(f):
+  for k in f.GetListOfKeys():
+    globals()[k.GetName()] = k.ReadObj()
+  return
