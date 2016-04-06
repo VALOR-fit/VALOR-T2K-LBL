@@ -21,9 +21,10 @@
     // log4cpp lib
   gSystem->Load("liblog4cpp");
   
+  gSystem->Load("libValorMesg.so");
+  gSystem->Load("libValorRegistry.so");
   gSystem->Load("libValorConv.so");
   gSystem->Load("libValorFitCore.so");
-  gSystem->Load("libValorMesg.so");
   gSystem->Load("libValorParse.so");
   gSystem->Load("libValorUtil.so");
   
