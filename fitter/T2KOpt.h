@@ -48,18 +48,7 @@ public:
   string fPathRHCBanffCovMatr;
   string fPathRHCBanffParam;
 
-  string fPathEscale1RmuErr;
-  string fPathEscale1ReErr;
   string fPathSKDetFSICovMatr;
-  string fPathRHCEscale1RmuErr;
-  string fPathRHCEscale1ReErr;
-  string fPathRHCSKDetFSICovMatr;
-
-  string fPathEscaleMultiRmuErr;
-  string fPathEscaleMultiReErr;
-  string fPathMultiRingSKDetFSICovMatr;
-
-  //
 
   void Print(std::ostream & stream) const;
   friend std::ostream & operator << (std::ostream & stream, const T2KOpt & opt);

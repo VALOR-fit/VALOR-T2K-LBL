@@ -25,6 +25,8 @@
 
 #include <iostream>
 
+#include "FitCore/CorrelatedSystematics.h"
+
 #include "Enumerations.h"
 #include "Conventions.h"
 #include "Utilities.h"
@@ -34,66 +36,19 @@ namespace valor {
 class FitParamList;
 class PhysParamList;
 
-class SuperkDetectorFSI: public TObject
+class SuperkDetectorFSI: public CorrelatedSystematics
 {
 public:
 
   SuperkDetectorFSI();
- ~SuperkDetectorFSI();
- 
-  using TObject::Read; // Suppress clang warnings
-  using TObject::Draw; // Suppress clang warnings
+  virtual ~SuperkDetectorFSI();
   
-  int GetNumberOfActiveParameters() const {return fNumOfActiveSKDetFSIParams;}
-  const conv::PhysParamId_t * GetActiveParameters() const {return fActiveSKDetFSIParams;}
-  
-  conv::PhysParamId_t WhichParam(int id) const {return fActiveSKDetFSIParams[id];}
-
-  // Calculate weight in response to systematic parameter variations of FSI parameters
-  double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
-  
-  // Info about the energy scale error and current energy scale tweaking factor              
-  double  EnergyScaleRelErr   (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale err 
-  double  EnergyScaleRelErr   (conv::SuperkSample_t s) const; ///< energy scale err 
-  double  EnergyScale         (conv::SuperkSample_t s, conv::SuperkMode_t m) const; ///< energy scale 
-  double  EnergyScale         (conv::SuperkSample_t s) const; ///< energy scale              
-
-  // Tweak FSI params (either force the input params or generate correlated params using the Cholesky method)
-  void TweakEnergyScale                    (double twkdial);
-
-  void Tweak (bool force_inputs = false, TVectorD * input_params = 0, Option_t * opt = "");
-  
-  // Save tweaks in a VALOR fit object
-  void CopyTweaksTo(valor::PhysParamList & ppl) const;
-  void CopyTweaksTo(valor::FitParamList & fpl) const;
-  
-  // Get tweaks from a VALOR fit object
-  void UpdateFrom(const valor::FitParamList  & fpl);
-  
-  // Or just set one
-  void SetCurrentValue(conv::PhysParamId_t p, double tweak);
-  
-  // Get current value of systematic params handled by this class
-  double CurrentValue (conv::PhysParamId_t p) const;
-  double OneSigmaError(conv::PhysParamId_t p) const; //square root of cov matrix
-
-  // Get input FSI covariance matrix and its Cholesky decomposition
-  const TMatrixD & CovMatrix         (void) const { return *fCovMtrx;       }
-  const TMatrixD & CovMatrixCholesky (void) const { return *fCovMtrxChoL;   }
-  const TMatrixD & CovMatrixInv      (void) const { return *fCovMtrxInv;    }
-  ///
-
-  // Penalty term included in the chisq if FSI nuisance terms are included in the fit       
-  double ChisqPenalty(void) const;
-  ///
-
-  // Print
-  void PrintSystematicVariations    (std::ostream & stream = std::cout, Option_t * opt = "") const;
-  ///
-
-  // Read inputs from XML file
-  bool Read (TXMLEngine* xml, XMLNodePointer_t root_node);
-  
+  // What weight to apply
+  double SystWght(
+    conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const;
+    
+  double EnergyScale(conv::SuperkSample_t /*s*/ = conv::kSKsUndefined) const;
+      
   // Apply the given FSI parameter to the given sample, mode, Ereco?
   bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco) const;
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
@@ -105,27 +60,7 @@ private:
   void CheckListOfSKDetFSISyst(int nparams, const conv::PhysParamId_t * params, const char * vname, bool allow_gaps);
   void CheckERange            (int nparams, const conv::PhysParamId_t * params, const double * erange, const char * vname);
   void CheckSKMode            (int nparams, const conv::PhysParamId_t * params, const bool * modes, const char * vname, bool fatal_no_effect);
-
-  void Init      (void);
-  void CleanUp   (void);
-  //
-  // Private data members
-  //
   
-  int fNumOfActiveSKDetFSIParams;
-  conv::PhysParamId_t * fActiveSKDetFSIParams; //![fNumOfActiveSKDetFSIParams] - the parameters in use. 
-  
-  double     fEnergyScaleRelErrMu; ///< energy scale relative error   
-  double     fEnergyScaleRelErrE;  ///< energy scale relative error   
-  double     fEnergyScaleTwkDial;  ///< Energy scale tweaking dial         
-  
-  TVectorD * fCurrentValues;    ///< Current values of FSI params
-  TVectorD * fNominalValues;    ///< Nominal values of FSI params
-  TMatrixD * fCovMtrx;          ///< FSI covariance matrix
-  TMatrixD * fCovMtrxInv;       ///< Inverse FSI covariance matrix
-  TMatrixD * fCovMtrxChoL;      ///< Triangular matrix from Cholesky decomp. of FSI covar. matrix
-  ///
-
   util::ArrIdx * arr_index; //! Pointer to singleton, do not save in TObject
   
   

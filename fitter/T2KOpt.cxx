@@ -132,22 +132,8 @@ void T2KOpt::SetDefaults(void)
   //   fPathRHCBanffCovMatr = "banff/app/covariance_matrix";
   // #endif
 
-  //
-
-  // SK Escale errors
-  fPathEscale1RmuErr = "detector_systematics/superk/energy_scale_relative_error/one_mu_ring";
-  fPathEscale1ReErr = "detector_systematics/superk/energy_scale_relative_error/one_e_ring";
-
-  // SK Escale errors RHC
-  fPathRHCEscale1RmuErr = "detector_systematics/superk/energy_scale_relative_error/one_mu_ring";
-  fPathRHCEscale1ReErr = "detector_systematics/superk/energy_scale_relative_error/one_e_ring";
-
-  // SK Escale errors MultiRing
-  fPathEscaleMultiRmuErr = "detector_systematics/superk/energy_scale_relative_error/multi_mu_ring";
-  fPathEscaleMultiReErr = "detector_systematics/superk/energy_scale_relative_error/multi_e_ring";
-
   // Get SuperkDetectorFSI covariance matrix
-  fPathSKDetFSICovMatr = "skdetfsi/covariance_matrix";
+  fPathSKDetFSICovMatr = "syst/skdetfsi/covariance_matrix";
   //
 
   fFit_1Rmu     = false;

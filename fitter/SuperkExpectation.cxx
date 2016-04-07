@@ -967,7 +967,6 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
 #endif
 
   // SKDetFSI
-  this->GetSuperkDetectorFSI()->TweakEnergyScale(0.);
   this->GetSuperkDetectorFSI()->Tweak(true,0);
 
   // NEW FHC+RHC JOINT
@@ -1085,9 +1084,7 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
   cout << "Exp >> Setting systematic parameter: " << util::AsString(p) 
        << " to value = " << twkdial << endl;
 #endif
-    
-  this->GetSuperkDetectorFSI()->TweakEnergyScale(twkdial);
-
+  
   //
   // SKDET + FSI
   //
@@ -1290,8 +1287,7 @@ void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
   cout << "Exp >> Generating random variations of all SKDET + FSI systematic params." << endl;
 #endif
 
-  this->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetSuperkDetectorFSI()->Tweak(); // <-- Cholesky method
+  this->GetSuperkDetectorFSI()->Tweak(0,0); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
