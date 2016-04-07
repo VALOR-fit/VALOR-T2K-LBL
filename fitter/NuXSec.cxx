@@ -2809,8 +2809,8 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     // NEW XSEC
     
     switch(p) {
-            
         case kNuisXSecRPA:
+        case kRHCNuisXSecRPA:
             return fRPATwkDial;
             break;
         default:

@@ -62,6 +62,8 @@ CorrelatedSystematics()
     int ifhcp = irhcp - (kRHCNuisBANFFMAQE-kNuisBANFFMAQE);
     fParam2Idx[irhcp] = ifhcp;
   }
+  
+  (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFShapeCCoth)] = 0;
 }
 //________________________________________________________________________________________
 BANFF::~BANFF()
