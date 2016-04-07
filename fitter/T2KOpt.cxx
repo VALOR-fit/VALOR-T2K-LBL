@@ -75,67 +75,7 @@ int T2KOpt::ReadXmlPath(std::string config_file)
 void T2KOpt::SetDefaults(void) 
 {
   fConfigFileName = "T2KOpt - No config file set";
-  // Get path to banff param values FHC
-#if BANFF_BINS == 1
-  fPathBanffParam = "banff/best_fit_values";
-#elif BANFF_BINS == 2
-  fPathBanffParam = "banff/disap/best_fit_values";
-#elif BANFF_BINS == 3
-  fPathBanffParam = "banff/app/best_fit_values";
-#endif
-
-  // Get path to banff covariance matrix FHC
-#if BANFF_BINS == 1
-  fPathBanffCovMatr = "banff/covariance_matrix";
-#elif BANFF_BINS == 2
-  fPathBanffCovMatr = "banff/disap/covariance_matrix";
-#elif BANFF_BINS == 3
-  fPathBanffCovMatr = "banff/app/covariance_matrix";
-#endif
-
-  // Get path to banff param values RHC
-#if BANFF_BINS == 1
-  fPathRHCBanffParam = "banff/best_fit_values";
-#elif BANFF_BINS == 2
-  fPathRHCBanffParam = "banff/disap/best_fit_values";
-#elif BANFF_BINS == 3
-  fPathRHCBanffParam = "banff/app/best_fit_values";
-#endif
-
-  // Get path to banff covariance matrix RHC
-#if BANFF_BINS == 1
-
-  // NEW FHC+RHC JOINT
-  // 
-  //#ifdef NEW_RHC_BANFF
-  //fPathRHCBanffCovMatr = "banff_rhc/covariance_matrix";
-  //#else
-  //
-  fPathRHCBanffCovMatr = "banff/covariance_matrix";
-  //#endif
-#elif BANFF_BINS == 2
-  fPathRHCBanffCovMatr = "banff/disap/covariance_matrix";
-#elif BANFF_BINS == 3
-  fPathRHCBanffCovMatr = "banff/app/covariance_matrix";
-#endif
   
-  // NEW FHC+RHC JOINT 
-  
-  // not needed at all!!!
-
-  //   // Get path to banff covariance matrix RHC
-  // #if BANFF_BINS == 1
-  //   fPathRHCBanffCovMatr = "banff/covariance_matrix";
-  // #elif BANFF_BINS == 2
-  //   fPathRHCBanffCovMatr = "banff/disap/covariance_matrix";
-  // #elif BANFF_BINS == 3
-  //   fPathRHCBanffCovMatr = "banff/app/covariance_matrix";
-  // #endif
-
-  // Get SuperkDetectorFSI covariance matrix
-  fPathSKDetFSICovMatr = "syst/skdetfsi/covariance_matrix";
-  //
-
   fFit_1Rmu     = false;
   fFit_1Re      = false;
   fFit_RHC_1Rmu = false;

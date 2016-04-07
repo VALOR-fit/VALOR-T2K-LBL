@@ -43,13 +43,6 @@ public:
   string fConfigFileName;
   int ReadXmlPath(string config_file); // returns 0 if file good, -1 if inaccessible
 
-  string fPathBanffCovMatr;
-  string fPathBanffParam;
-  string fPathRHCBanffCovMatr;
-  string fPathRHCBanffParam;
-
-  string fPathSKDetFSICovMatr;
-
   void Print(std::ostream & stream) const;
   friend std::ostream & operator << (std::ostream & stream, const T2KOpt & opt);
 

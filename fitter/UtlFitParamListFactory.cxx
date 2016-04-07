@@ -22,11 +22,13 @@ Added samples for multiring forward horn current
 
 #include "Messenger/Messenger.h"
 #include "FitCore/FitParamList.h"
+#include "Registry/Registry.h"
 #include "Utilities/UtlSystem.h"
 
 #include "UtlFitParamListFactory.h"
 #include "Enumerations.h"
 #include "Conventions.h"
+#include "BANFF.h"
 #include "SuperkDetectorFSI.h"
 #include "Utilities.h"
 
@@ -1124,7 +1126,6 @@ void util::AppendUncorrelatedXSecSystematicsApp(
 }
 #endif
 //________________________________________________________________________________________
-
 void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int /*start*/)
 {
   // Add nuisance params
@@ -1143,213 +1144,17 @@ void util::AppendAllSuperkDetectorFSISystematics(FitParamList * fparm, int /*sta
 //________________________________________________________________________________________
 void util::AppendAllCorrelatedBANFFSystematics(FitParamList * fparm, int start)
 {
-
-// Add nuisance params
-//
-
-  int ip = start; // first unallocated element in the param list
-
-  // Get the covariance matrices & best fits of FSI & BANFF from xml, 
-  // to have something sensible to initialise to
-  // Parse the input XML configuration file
-  
-  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
-  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
-
-  TXMLEngine* xml = new TXMLEngine;   
-  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
-  if (xmldoc==0) {
-    cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << "Can not parse input: " << config_file << endl;
-    delete xml;
-    exit(1);  
-  }
-  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
-  // Get BANFF fit central values
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
-
-  if(!BANFFBestFitValues) {
-    cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << " No BANFF best-fit parameter vector was found." << endl;
-    exit(1);
-  }
-  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
-  // Get BANFF fit covariance matrix
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
-
-  if(!BANFFCovMtrx) {
-    cerr << "util/AppendAllCorrelatedBANFFSystematics >> " << " No BANFF covariance matrix was found." << endl;
-    exit(1);
-  }
-  const TMatrixD & BANFFCov = *BANFFCovMtrx;
-  // Release memory
-  //~ xml->FreeNode(root_node);
-  xml->FreeDoc(xmldoc);
-  delete xml;
-
+  // Add nuisance params
   //
-  // OLD
-  //
-  //   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
-  // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)  
-  //     PhysParamId_t p = kListOfBANFFParams[i];
-  // #elif defined(__FHC_RUNNING__) 
-  //     PhysParamId_t p = kListOfBANFFParams[i];
-  // #elif defined(__RHC_RUNNING__)
-  //     PhysParamId_t p = kListOfRHCBANFFParams[i];
-  // #endif
-
-
-
-  // NEW FHC+RHC JOINT
-
-  // Take the number of banff parameters
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)  
-  #if defined(__FULLY_CORRELATED__)  
-  const int nparams = kNumOfParamsInBANFFfit;
-  #else
-  const int nparams = kNumOfFHCpRHCParamsInBANFFfit;
-  #endif
-#elif defined(__FHC_RUNNING__)
-  const int nparams = kNumOfParamsInBANFFfit;
-#elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing
-  const int nparams = kNumOfParamsInBANFFfit;
-#elif defined(__RHC_RUNNING__)
-  const int nparams = kNumOfRHCParamsInBANFFfit;
-#endif
-
-  // get parameter
-  for(int i = 0; i < nparams; i++) {  
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-    #if defined(__FULLY_CORRELATED__)  
-    PhysParamId_t p = kListOfBANFFParams[i];
-    #else
-    PhysParamId_t p = kListOfFHCpRHCBANFFParams[i];
-    #endif
-#elif defined(__FHC_RUNNING__)
-    PhysParamId_t p = kListOfBANFFParams[i];
-#elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing
-    PhysParamId_t p = kListOfBANFFParams[i];
-#elif defined(__RHC_RUNNING__)
-    PhysParamId_t p = kListOfRHCBANFFParams[i];
-#endif
-    //
-    
-    double bf = BANFFBestFit[i];
-    double err = sqrt(BANFFCov[i][i]);
-    //double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
-    double lowerr=0;
-    if(p==kNuisBANFFShapeCCoth || p==kRHCNuisBANFFShapeCCoth){
-      lowerr = bf-(err*SYST_NSIGMA);
-    }
-    else lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
-    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-  } // loop over nparams 
+  const Registry & reg = Opt::Instance()->GlobalRegistry();
   
-  if(BANFFBestFitValues ) delete BANFFBestFitValues;
-  if(BANFFCovMtrx       ) delete BANFFCovMtrx;
+  const BANFF * banff = dynamic_cast<const BANFF*>(reg.GetObject("banff"));
+  
+  if (!banff) {
+    LOG("UtilFitParamListFactory",pFATAL)<<"Failed to get banff from Opt::GlobalRegistry";
+    util::Die(-1); return;
+  }
+  
+  banff->AppendParamsTo(*fparm);
 }
 //________________________________________________________________________________________
-
-#ifdef __NUEONLY__
-//________________________________________________________________________________________
-void util::AppendCorrelatedBANFFSystematicsApp(FitParamList * fparm, int start)
-{
-
-// Add nuisance params
-//
-  int ip = start; // first unallocated element in the param list
-
-  //    Get the covariance matrices & best fits of FSI & BANFF from xml, 
-  //    to have something sensible to initialise to
-  // Parse the input XML configuration file
-  
-  //const char * config_file = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), "analysis_configuration.xml");
-  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
-
-  TXMLEngine* xml = new TXMLEngine;   
-  XMLDocPointer_t xmldoc = xml->ParseFile(config_file);
-  if (xmldoc==0) {
-    cerr << "util/AppendCorrelatedBANFFSystematicsApp >> " << "Can not parse input: " << config_file << endl;
-    delete xml;
-    exit(1);  
-  }
-  XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
-  // Get BANFF fit central values
-  TVectorD * BANFFBestFitValues = util::XML2TVectorD(xml,root_node,T2KOpt::Instance()->fPathBanffParam.c_str());
-
-  if(!BANFFBestFitValues) {
-    cerr << "util/AppendCorrelatedBANFFSystematicsApp >> No BANFF best-fit parameter vector was found." << endl;
-    exit(1);
-  }
-  const TVectorD & BANFFBestFit = *BANFFBestFitValues;
-  // Get BANFF fit covariance matrix
-  TMatrixD * BANFFCovMtrx = util::XML2TMatrixD(xml,root_node,T2KOpt::Instance()->fPathBanffCovMatr.c_str());
-
-  if(!BANFFCovMtrx) {
-    cerr << "util/AppendCorrelatedBANFFSystematicsApp >> No BANFF covariance matrix was found." << endl;
-    exit(1);
-  }
-  const TMatrixD & BANFFCov = *BANFFCovMtrx;
-  // Release memory
-  //~ xml->FreeNode(root_node);
-  xml->FreeDoc(xmldoc);
-  delete xml;
-
-  // 
-  // OLD
-  //
-  //   for(int i = 0; i < kNumOfParamsInBANFFfit; i++) {
-  // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)  
-  //     PhysParamId_t p = kListOfBANFFParams[i];
-  // #elif defined(__FHC_RUNNING__) 
-  //     PhysParamId_t p = kListOfBANFFParams[i];
-  // #elif defined(__RHC_RUNNING__)
-  //     PhysParamId_t p = kListOfRHCBANFFParams[i];
-  // #endif
- 
-
-  // NEW FHC+RHC JOINT
-
-  // Take the number of banff parameters
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)  
-  #if defined(__FULLY_CORRELATED__)  
-  const int nparams = kNumOfParamsInBANFFfit;
-  #else
-  const int nparams = kNumOfFHCpRHCParamsInBANFFfit;
-  #endif
-#elif defined(__FHC_RUNNING__)
-  const int nparams = kNumOfParamsInBANFFfit;
-#elif defined(__RHC_RUNNING__)
-  const int nparams = kNumOfRHCParamsInBANFFfit;
-#endif
-
-   // get parameter
-  for(int i = 0; i < nparams; i++) {  
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-    #if defined(__FULLY_CORRELATED__)  
-    PhysParamId_t p = kListOfBANFFParams[i];
-    #else
-    PhysParamId_t p = kListOfFHCpRHCBANFFParams[i];
-    #endif
-#elif defined(__FHC_RUNNING__) 
-    PhysParamId_t p = kListOfBANFFParams[i];
-#elif defined(__RHC_RUNNING__)
-    PhysParamId_t p = kListOfRHCBANFFParams[i];
-#endif
-    //
-
-    double bf = BANFFBestFit[i];
-    double err = sqrt(BANFFCov[i][i]);
-    //double lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
-    double lowerr=0;
-    if(p==kNuisBANFFShapeCCoth || p==kRHCNuisBANFFShapeCCoth){
-      lowerr = bf-(err*SYST_NSIGMA);
-    }
-    else lowerr = TMath::Max(0., bf-(err*SYST_NSIGMA));
-
-    fparm->AddParam(ip++, p, bf, lowerr, bf+(err*SYST_NSIGMA),  err*SYST_STEP,  false, true, AsString(p));
-  } // loop over nparams
-  
-  if(BANFFBestFitValues ) delete BANFFBestFitValues;
-  if(BANFFCovMtrx       ) delete BANFFCovMtrx;
-}
-#endif

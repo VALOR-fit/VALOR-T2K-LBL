@@ -324,12 +324,11 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
 
   // Configure each of the components 
   
+  if ( ! this->GetBANFF() -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkDetectorFSI() -> Read (xml, root_node) ) return false;
 
   // NEW FLUX FHC+RHC
 #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && !defined(__FULLY_CORRELATED__)
-  
-  if ( ! this->GetBANFF            () -> ReadFHCpRHC (xml, root_node) ) return false;
   
   if ( ! this->GetNuFlux           () -> Read (xml, root_node) ) return false;
   if ( ! this->GetNuFlux           () -> ReadRHC (xml, root_node) ) return false;
@@ -339,10 +338,6 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   // NEW FHC+RHC JOINT
   
 #else
-  //
-
-  if ( ! this->GetBANFF            () -> Read (xml, root_node) ) return false;
-  if ( ! this->GetBANFF            () -> ReadRHC (xml, root_node) ) return false;
   if ( ! this->GetNuFlux           () -> Read (xml, root_node) ) return false;
   if ( ! this->GetNuFlux           () -> ReadRHC (xml, root_node) ) return false;
   if ( ! this->GetNuXSec           () -> Read (xml, root_node) ) return false;
@@ -817,31 +812,7 @@ double SuperkExpectation::CurrPredictedErecoVsQ2SpectrumArray(valor::conv::Super
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(std::ostream & stream) const
 {
-  cout << "Exp >> SuperK PDF tweaks: " << endl;
-  
-#ifdef __FHC_RUNNING__ // NEW FLUX
-  fBANFF             -> PrintSystematicVariations(stream);
-#endif
-#ifdef __RHC_RUNNING__
-  fBANFF             -> PrintRHCSystematicVariations(stream);
-#endif
-#ifdef __FHC_RUNNING__ // NEW FLUX
-  fNuXSec            -> PrintSystematicVariations(stream);
-#endif
-#ifdef __RHC_RUNNING__
-  fNuXSec            -> PrintRHCSystematicVariations(stream);
-#endif
-#ifdef __FHC_RUNNING__
-  fSuperkDetectorFSI -> PrintSystematicVariations(stream);
-#endif
-#ifdef __RHC_RUNNING__
-  fSuperkDetectorFSI -> PrintRHCSystematicVariations(stream);
-#endif
-  /// NEW MULTIRING 2
-#ifdef __MULTIRING_FHC_RUNNING__
-  fSuperkDetectorFSI -> PrintMultiRingSystematicVariations(stream);
-#endif  
-  ///
+
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t * write_opt)
@@ -968,31 +939,9 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
 
   // SKDetFSI
   this->GetSuperkDetectorFSI()->Tweak(true,0);
-
-  // NEW FHC+RHC JOINT
-
-  //
-  // FHC+RHC 
-  //
   
-  // BANFF
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-  this->GetBANFF()->TweakFHCpRHC(true,0);
-  // SK det + FSI
-#endif
-  //
-
-
-  
-  //
-  //FHC
-  //
-  
-
-#if defined(__FHC_RUNNING__) && !defined(__RHC_RUNNING__) // NEW FHC+RHC JOINT
   // BANFF
   this->GetBANFF()->Tweak(true,0);
-#endif
 
   // X Section
 
@@ -1027,16 +976,9 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
   this->GetNuXSec()->Tweak(kNuisXSecRPA , 1.); // NEW XSEC 
 #endif
 
-
-
   //
   // RHC
   //
-
-#if !defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) // NEW FHC+RHC JOINT
-  // BANFF
-  this->GetBANFF()->TweakRHC(true,0);
-#endif
 
   // X Section
 
@@ -1093,68 +1035,14 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
   if(util::IsSKDetFSI(p)) {
     this->GetSuperkDetectorFSI()->SetCurrentValue(p,twkdial);
   }//skdetfsi
-    
+  
   //
-  // BANFF & Uncorrelated BANFF
+  // BANFF
   //
   
-  // tweak an individual BANFF parameter (ignores correlations, debug)
+  // tweak an individual FSI parameter (ignoring correlations)
   else if(util::IsBANFF(p)) {
-
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-    
-    // NEW FHC+RHC JOINT (NEW)
-
-    bool best_banff = opt && string(opt).find("best_banff")!=string::npos;
-    const int nbanff = conv::kNumOfFHCpRHCParamsInBANFFfit;
-    TVectorD twkv(this->GetBANFF()->FHCpRHCBestFitValues());
-    if(!best_banff) {
-      for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
-    }
-    int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(p);
-    if(ip < 0) {
-      cerr << "Exp >> Unknown systematic parameter (" << util::AsString(p) << ")" << endl;
-      exit(1);
-    }
-    twkv[ip] = twkdial;
-    this->GetBANFF()->TweakFHCpRHC(true,&twkv);  
-    //
-    
-#else
-  
-    bool best_banff = opt && string(opt).find("best_banff")!=string::npos;
-    bool is_rhc = util::IsRHCSystematic(p);
-    if(is_rhc) {
-      const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
-      TVectorD twkv(this->GetBANFF()->RHCBestFitValues());
-      if(!best_banff) {
-        for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
-      }
-      int ip = util::ArrIdx::Instance()->RHCBANFFSystIdx(p);
-      if(ip < 0) {
-        cerr << "Exp >> Unknown systematic parameter (" << util::AsString(p) << ")" << endl;
-        exit(1);
-      }
-      twkv[ip] = twkdial;
-      this->GetBANFF()->TweakRHC(true,&twkv);
-    }//is_rhc
-    else {
-      const int nbanff = conv::kNumOfParamsInBANFFfit;
-      TVectorD twkv(this->GetBANFF()->BestFitValues());
-      if(!best_banff) {
-        for (int ib = 0; ib < nbanff; ib++) { twkv[ib] = 1; }
-      }
-      int ip = util::ArrIdx::Instance()->BANFFSystIdx(p);
-      if(ip < 0) {
-        cerr << "Exp >> Unknown systematic parameter (" << util::AsString(p) << ")" << endl;
-        exit(1);
-      }
-      twkv[ip] = twkdial;
-      this->GetBANFF()->Tweak(true,&twkv);
-    }//!is_rhc
-
-#endif // if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-
+    this->GetBANFF()->SetCurrentValue(p,twkdial);
   }//banff
 
 
@@ -1182,94 +1070,11 @@ void SuperkExpectation::RandomizeSystematics(Option_t * /*opt*/)
 #endif
 
   // common to all the samples
-  this->TweakAllUncorrelatedXSecSystematics();  // NEW XSEC NIWG
+  this->TweakAllUncorrelatedXSecSystematics(); 
   this->GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
   this->TweakAllSKDetectorFSISystematics();
-
-#if  defined(__FHC_RUNNING__) && !defined(__RHC_RUNNING__)
   this->TweakAllBANFFSystematics();
-  this->TweakAllUncorrelatedXSecSystematics();  // NEW XSEC NIWG
-#endif
   
-#ifdef __RHC_RUNNING__   /// NEW MULTIRING 3
- 
-  #if defined(__FULLY_CORRELATED__) && defined(__FHC_RUNNING__) // RHC && FHC fully correlated
-   this->TweakAllBANFFSystematics();
-   this->GetBANFF()->SyncRHCToFHCSystematics();
-   
-   assert(!"THIS PIECE OF CODE IS NOT SUPPORTED");
-   this->GetSuperkDetectorFSI()->SyncRHCToFHCSystematics();  
- 
-   // NEW FHC+RHC JOINT 
-  #elif defined(__FHC_RUNNING__)   // RHC && FHC with correlations
-   this->TweakAllFHCpRHCBANFFSystematics();
-   //
-   
-  #else
-   this->TweakAllRHCBANFFSystematics(); // RHC only 
-  #endif
-#endif
-}
-
-
-
-
-
-
-
-
-//________________________________________________________________________________________
-void SuperkExpectation::TweakAllSampleBANFFSystematics(void)
-{
-  // NEW FHC+RHC JOINT
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
-  this->TweakAllFHCpRHCBANFFSystematics();
-#elif defined(__FHC_RUNNING__)
-  this->TweakAllBANFFSystematics();
-#elif defined(__RHC_RUNNING__)
-  this->TweakAllRHCBANFFSystematics();
-#endif
-#ifdef __MULTIRING_RUNNING__
-  this->TweakAllMultiRingBANFFSystematics();
-#endif
-  //
-
-// #ifdef __FHC_RUNNING__
-//   this->TweakAllBANFFSystematics();
-// #endif
-// #ifdef __RHC_RUNNING__
-//   this->TweakAllRHCBANFFSystematics();
-// #endif
-// #ifdef __MULTIRING_RUNNING__
-//   this->TweakAllMultiRingBANFFSystematics();
-// #endif
-}
-
-//________________________________________________________________________________________
-
-
-// NEW FHC+RHC JOINT
-void SuperkExpectation::TweakAllFHCpRHCBANFFSystematics(void)
-{
-#ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all FHC+RHC BANFF systematic params (correlated)" << endl;
-#endif
-
-  // BANFF
-  this->GetBANFF()->TweakFHCpRHC(false,0); // <-- Cholesky method
-}
-//
-
-
-//________________________________________________________________________________________
-void SuperkExpectation::TweakAllRHCBANFFSystematics(void)
-{
-#ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all RHC BANFF systematic params (correlated)" << endl;
-#endif
-
-  // BANFF
-  this->GetBANFF()->TweakRHC(false,0); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllBANFFSystematics(void)
@@ -1348,29 +1153,6 @@ PhysParamList SuperkExpectation::Tweaks(Option_t * opt) const
 void SuperkExpectation::CopyTweaksTo(PhysParamList & pl, Option_t * /*opt*/) const 
 {
   pl.Clear();
-  //
-  // BANFF
-  //
-#ifdef __FHC_RUNNING__  
-  const int nbanff = conv::kNumOfParamsInBANFFfit;
-  for(int ip = 0; ip < nbanff; ip++) {
-    PhysParamId_t p = kListOfBANFFParams[ip];
-    double v = this->GetBANFF()->CurrentValue(p);
-    pl.SetValue(p,v);
-  }
-#endif
-  
-  //
-  // RHC BANFF
-  //
-#ifdef __RHC_RUNNING__   
-  const int nbanff_rhc = conv::kNumOfRHCParamsInBANFFfit;
-  for(int ip = 0; ip < nbanff_rhc; ip++) {
-     PhysParamId_t p = kListOfRHCBANFFParams[ip];
-     double v = this->GetBANFF()->RHCCurrentValue(p);
-     pl.SetValue(p,v);
-  }
-#endif
 
   // 
   //  Uncorrelated xsec (common to FHC and RHC)
@@ -1403,6 +1185,7 @@ void SuperkExpectation::CopyTweaksTo(PhysParamList & pl, Option_t * /*opt*/) con
   pl.SetValue( kNuisXSecRPA,             this->GetNuXSec()->CurrentValue(kNuisXSecRPA)            ); 
 #endif
 
+  fBANFF->CopyTweaksTo(pl);
   fSuperkDetectorFSI->CopyTweaksTo(pl);
   
   return;
@@ -1414,105 +1197,8 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 {
   //////////////////// SKDetFSI ///////////////////
   fSuperkDetectorFSI->UpdateFrom(fp); // EScale included
-  // See how easy that was? This function should be 6 lines.
-    
-      ////////////////////// BANFF //////////////////////////
-            
-      // // use current values stored in fit param list
-      // // to tweak the BANFF object
-      // const int nbanff = conv::kNumOfParamsInBANFFfit;
-      // TVectorD twkvBANFF(nbanff);
-      // for(int ip = 0; ip < nbanff; ip++) {
-      //   PhysParamId_t p = kListOfBANFFParams[ip];
-      //   twkvBANFF[ip] = fp.CurrValue(p);
-      // }
-      // //Todo: fix this so that FHC and RHC can have different tweaks
-      // //Also that FHC and RHC can have different numbers of parameters 
-      // this->GetBANFF()->Tweak(true,&twkvBANFF);
-      //   if(fp.GetSystMode() == 3){
-      //   TVectorD twkvBANFF(nbanff);
-      //   for(int ip = 0; ip < nbanff; ip++) {
-      //       PhysParamId_t p = PhysParamId_t ((int) kRHCNuisBANFF00 + ip);
-      //       twkvBANFF[ip] = fp.CurrValue(p);
-      //   }
-      //   this->GetBANFF()->TweakRHC(true,&twkvBANFF);
-      //   }
-      //   else this->GetBANFF()->TweakRHC(true,&twkvBANFF);    
-   
-   // fhc+rhc 
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-
-   // fully correlated
-   #if defined(__FULLY_CORRELATED__)
-
-    // use current values stored in fit param list
-    // to tweak the BANFF object
-    const int nbanff = conv::kNumOfParamsInBANFFfit;
-    TVectorD twkvBANFF(nbanff);
-    for(int ip = 0; ip < nbanff; ip++) {
-      PhysParamId_t p = kListOfBANFFParams[ip];
-      twkvBANFF[ip] = fp.CurrValue(p);
-    }
-   //Todo: fix this so that FHC and RHC can have different tweaks
-   //Also that FHC and RHC can have different numbers of parameters 
-   this->GetBANFF()->Tweak(true,&twkvBANFF);
-   if(fp.GetSystMode() == 3){
-      TVectorD twkvBANFF(nbanff);
-      for(int ip = 0; ip < nbanff; ip++) {
-          PhysParamId_t p = PhysParamId_t ((int) kRHCNuisBANFF00 + ip);
-          twkvBANFF[ip] = fp.CurrValue(p);
-      }
-      this->GetBANFF()->TweakRHC(true,&twkvBANFF);
-      }
-      else this->GetBANFF()->TweakRHC(true,&twkvBANFF);
-   
-
-   // fhc/rhc correlations
-   #else
-
-   // NEW FHC+RHC JOINT 
-
-   //
-   // Since the BANFF-XSec parameters are shared by FHC and RHC,
-   // we use only the FHC ones parameters in the FHC+RHC vector.
-   // e.g. RHC-MEC is not included (use FHC-enum) --> need to use TweakFHCpRHC()!!!
-   // If Tweak() and TweakRHC() are used separately, it crashes.
-   //
-   // Use TweakFHCpRHC   
-   //
-   this->GetBANFF()->UpdateFHCpRHCCurrentValues();  
-   const int nbanff = conv::kNumOfFHCpRHCParamsInBANFFfit;
-   TVectorD twkvBANFF(nbanff);
-   for(int ip = 0; ip < nbanff; ip++) {
-    PhysParamId_t p = kListOfFHCpRHCBANFFParams[ip];
-    twkvBANFF[ip] = fp.CurrValue(p);
-   }
-   this->GetBANFF()->TweakFHCpRHC(true,&twkvBANFF);
-   // Split FHC+RHC into FHC-only and RHC-only
-   this->GetBANFF()->UpdateFHCandRHConlyCurrentValues();   
-   //
-   #endif
-   
-   // fhc only
-#elif defined(__FHC_RUNNING__)
-    const int nbanff = conv::kNumOfParamsInBANFFfit;
-    TVectorD twkvBANFF(nbanff);
-    for(int ip = 0; ip < nbanff; ip++) {
-      PhysParamId_t p = kListOfBANFFParams[ip];
-      twkvBANFF[ip] = fp.CurrValue(p);
-    }
-    this->GetBANFF()->Tweak(true,&twkvBANFF);
-    // rhc only
-#elif defined(__RHC_RUNNING__)
-    const int nbanff = conv::kNumOfRHCParamsInBANFFfit;
-    TVectorD twkvBANFF(nbanff);
-    for(int ip = 0; ip < nbanff; ip++) {
-      PhysParamId_t p = kListOfRHCBANFFParams[ip];	
-      twkvBANFF[ip] = fp.CurrValue(p);
-    }      
-    this->GetBANFF()->TweakRHC(true,&twkvBANFF);
-#endif
-    
+  
+  fBANFF->UpdateFrom(fp);
     
   /////////// UNCORRELATED XSEC //////////
   
@@ -1529,7 +1215,18 @@ void SuperkExpectation::SetNuisanceParams(const FitParamList & fp, bool /*all_ba
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematics (std::ostream & stream, Option_t * /*opt*/) const
 {
-  stream<<"SuperkExpectation/PrintSystematics not yet implemented"<<endl;
+  cout << "Exp >> SuperK PDF tweaks: " << endl;
+  
+  fBANFF             -> PrintSystematicVariations(stream);
+  
+#ifdef __FHC_RUNNING__ // NEW FLUX
+  fNuXSec            -> PrintSystematicVariations(stream);
+#endif
+#ifdef __RHC_RUNNING__
+  fNuXSec            -> PrintRHCSystematicVariations(stream);
+#endif
+
+  fSuperkDetectorFSI -> PrintSystematicVariations(stream);
 }
 //________________________________________________________________________________________
 double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
@@ -1539,26 +1236,8 @@ double SuperkExpectation::GetFitStatisticPenalty(Option_t * /*opt*/) const
   //
   // Add penalty term for BANFF params 
   //
-  
-  //double dchisq_penalty_banff = fBANFF->ChisqPenalty() + fBANFF->RHCChisqPenalty();
     
-  double dchisq_penalty_banff = 0.;
-
-  // NEW FHC+RHC JOINT
-#if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && !defined(__FULLY_CORRELATED__)
-  dchisq_penalty_banff += fBANFF->FHCpRHCChisqPenalty();
-#else
-  //
-  #if defined(__FHC_RUNNING__)
-  dchisq_penalty_banff += fBANFF->ChisqPenalty();
-  #endif
-  #if defined(__RHC_RUNNING__)
-  dchisq_penalty_banff += fBANFF->RHCChisqPenalty();
-  #endif
-  #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)
-  dchisq_penalty_banff /= 2.;
-  #endif
-#endif
+  double dchisq_penalty_banff = fBANFF->ChisqPenalty();
 
   chisq_penalty += dchisq_penalty_banff;
 #ifdef __show_contributions_to_penalty_term__
@@ -1617,5 +1296,25 @@ void SuperkExpectation::TweakAllSampleSKDetectorFSISystematics    (void)
 {
   std::cerr<<"SKExp/TweakAllSampleSKDetectorFSISystematics deprecated - Use TweakAllSKDetectorFSISystematics instead"<<std::endl;
   this->TweakAllSKDetectorFSISystematics();
+}
+void SuperkExpectation::TweakAllRHCBANFFSystematics       (void)
+{
+  std::cerr<<"SKExp/TweakAllRHCBANFFSystematics deprecated - Use TweakAllBANFFSystematics instead"<<std::endl;
+  this->TweakAllBANFFSystematics();
+}
+void SuperkExpectation::TweakAllFHCpRHCBANFFSystematics   (void)
+{
+  std::cerr<<"SKExp/TweakAllFHCpRHCBANFFSystematics deprecated - Use TweakAllBANFFSystematics instead"<<std::endl;
+  this->TweakAllBANFFSystematics();
+}
+void SuperkExpectation::TweakAllMultiRingBANFFSystematics (void)
+{
+  std::cerr<<"SKExp/TweakAllMultiRingBANFFSystematics deprecated - Use TweakAllBANFFSystematics instead"<<std::endl;
+  this->TweakAllBANFFSystematics();
+}
+void SuperkExpectation::TweakAllSampleBANFFSystematics    (void)
+{
+  std::cerr<<"SKExp/TweakAllSampleBANFFSystematics deprecated - Use TweakAllBANFFSystematics instead"<<std::endl;
+  this->TweakAllBANFFSystematics();
 }
 //________________________________________________________________________________________

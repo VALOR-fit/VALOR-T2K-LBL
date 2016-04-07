@@ -1257,12 +1257,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 	  //~ cout << "- Randomizing all systematic params except MEC in pdf..." << endl;
 	  skexp->TweakAllSystematics();
 	  //skexp->PrintSystematicVariations();
-	  TVectorD twkv(skexp->GetBANFF()->FHCpRHCCurrentValues());
-	  double MECval = skexp->GetBANFF()->FHCpRHCBestFitValue(conv::kNuisBANFFMEC);
+	  TVectorD twkv(skexp->GetBANFF()->CurrentValues());
+	  double MECval = skexp->GetBANFF()->InitialValue(conv::kNuisBANFFMEC);
 	  int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(conv::kNuisBANFFMEC);
 	  twkv[ip] = MECval;
 	  //cout << "ip = " << ip << " --> " << MECval << endl;
-	  skexp->GetBANFF()->TweakFHCpRHC(true,&twkv);	
+	  skexp->GetBANFF()->Tweak(true,&twkv);	
 	  //skexp->PrintSystematicVariations();
 #else
 	  cerr << endl;

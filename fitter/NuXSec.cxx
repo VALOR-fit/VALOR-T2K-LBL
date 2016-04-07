@@ -1176,9 +1176,9 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
         assert(wght_spl);
         if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-            tb = fBANFF->RHCBestFitValue(p);
+            tb = fBANFF->InitialValue(p);
         else
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
         wght = wght_spl->Eval(tb);
     }
     
@@ -1210,12 +1210,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         if(p == kRHCNuisBANFFMAQE       ||
            p == kRHCNuisBANFFMARES       )
         {
-            tb = fBANFF->RHCBestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else
         {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
         
@@ -1269,12 +1269,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
            p == kRHCNuisBANFFCA5        ||
            p == kRHCNuisBANFFBgRES       )
         {
-            tb = fBANFF->RHCBestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else
         {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
         
@@ -1323,7 +1323,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 #endif
             )
     {
-        wght = fBANFF->BestFitValue(p);
+        wght = fBANFF->InitialValue(p);
     }
     else if(p == kRHCNuisBANFFCCQEE0
 #if BANFF_BINS != 3
@@ -1339,7 +1339,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 #endif
             )
     {
-        wght = fBANFF->RHCBestFitValue(p);
+        wght = fBANFF->InitialValue(p);
     }
     
 #elif defined(__USE_NIWG2015__)
@@ -1365,7 +1365,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
             p == kNuisBANFFNormNuEBarToNuMuBar
             )
     {
-        wght = fBANFF->BestFitValue(p);
+        wght = fBANFF->InitialValue(p);
     }
     else if(
             p == kRHCNuisBANFFMEC         ||
@@ -1380,7 +1380,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 
             )
     {
-        wght = fBANFF->RHCBestFitValue(p);
+        wght = fBANFF->InitialValue(p);
     }
 #endif
     
@@ -1415,7 +1415,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
                 break;
             }
         }
-        cout << "Exp/NuXSec/FinTuningWght >> Got an absurd weight! "
+        cout << "Exp/NuXSec/FinTuningWght_1p >> Got an absurd weight! "
         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
         << ", Ereco = " << Ereco << " GeV"
         << ", Etrue = " << Etrue << " GeV =>"
@@ -1545,9 +1545,9 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
         assert(wght_spl);
         if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-            tb = fBANFF->RHCBestFitValue(p);
+            tb = fBANFF->InitialValue(p);
         else
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
         wght = wght_spl->Eval(tb);
     }
     
@@ -1579,12 +1579,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         if(p == kRHCNuisBANFFMAQE       ||
            p == kRHCNuisBANFFMARES       )
         {
-            tb = fBANFF->RHCBestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else
         {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
         
@@ -1638,12 +1638,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
            p == kRHCNuisBANFFCA5        ||
            p == kRHCNuisBANFFBgRES       )
         {
-            tb = fBANFF->RHCBestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else
         {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
         
@@ -1692,7 +1692,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 #endif
             )
     {
-        wght = fBANFF->BestFitValue(p);
+        wght = fBANFF->InitialValue(p);
     }
     else if(p == kRHCNuisBANFFCCQEE0
 #if BANFF_BINS != 3
@@ -1708,7 +1708,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 #endif
             )
     {
-        wght = fBANFF->RHCBestFitValue(p);
+        wght = fBANFF->InitialValue(p);
     }
     
 #elif defined(__USE_NIWG2015__)
@@ -1735,7 +1735,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 
             )
     {
-        wght = fBANFF->BestFitValue(p);
+        wght = fBANFF->InitialValue(p);
     }
     else if(
             p == kRHCNuisBANFFMEC         ||
@@ -1750,12 +1750,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 
             )
     {
-        wght = fBANFF->RHCBestFitValue(p);
+        wght = fBANFF->InitialValue(p);
     }
 #endif
     
 #ifdef __show_banff_tuning_wght_mesg_debug__
-    cout << "Exp/NuXSec/FinTuningWght >> "
+    cout << "Exp/NuXSec/FinTuningWght_1p >> "
     << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
     << ", Ereco = " << Ereco << " GeV"
     << ", Etrue = " << Etrue << " GeV"
@@ -1835,7 +1835,7 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
             p = kListOfRHCXSecSyst[isyst];
             // Was tweaked?
             if(kRHCXSecSystIncludedInBANFF[isyst])
-                dt = fabs(fBANFF->RHCCurrentValue(p) - fBANFF->RHCBestFitValue(p)); // banff parameters
+                dt = fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
             else
                 dt = fabs(this->CurrentValue(p)); // non-banff normalisations
         }//RHC
@@ -1843,7 +1843,7 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
             p = kListOfXSecSyst[isyst];
             // Was tweaked?
             if(kXSecSystIncludedInBANFF[isyst])
-                dt = fabs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
+                dt = fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
             else
                 dt = fabs(this->CurrentValue(p)); // non-banff normalisations
         }//FHC
@@ -1896,11 +1896,11 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
         assert(wght_spl);
         if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
-            tb = fBANFF->RHCBestFitValue(p);
-            tc = fBANFF->RHCCurrentValue(p);
+            tb = fBANFF->InitialValue(p);
+            tc = fBANFF->CurrentValue(p);
         }
         else {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
         }
         wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
@@ -1928,7 +1928,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
             )
     {
-        wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
     }
     else if(p == kRHCNuisBANFFCCQEE0
 #if BANFF_BINS != 3
@@ -1944,7 +1944,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
             )
     {
-        wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
     }
     
     // end NIWG2013
@@ -1977,12 +1977,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         if(p == kRHCNuisBANFFMAQE          ||
            p == kRHCNuisBANFFMARES          )
         {
-            tb = fBANFF->RHCBestFitValue(p);
-            tc = fBANFF->RHCCurrentValue(p);
+            tb = fBANFF->InitialValue(p);
+            tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
@@ -2031,12 +2031,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
            p == kRHCNuisBANFFCA5        ||
            p == kRHCNuisBANFFBgRES       )
         {
-            tb = fBANFF->RHCBestFitValue(p);
-            tc = fBANFF->RHCCurrentValue(p);
+            tb = fBANFF->InitialValue(p);
+            tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
@@ -2072,12 +2072,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         if(p == kRHCNuisBANFFFermiMom   ||
            p == kRHCNuisBANFFBindE       )
         {
-            tb = fBANFF->RHCBestFitValue(p);
-            tc = fBANFF->RHCCurrentValue(p);
+            tb = fBANFF->InitialValue(p);
+            tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
@@ -2118,7 +2118,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 
             )
     {
-        wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
     }
     else if( p == kRHCNuisBANFFMEC          ||
              p == kRHCNuisBANFFMECBar       ||
@@ -2130,7 +2130,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
             p == kRHCNuisBANFFNormNuEBarToNuMuBar
             )
     {
-        wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
     }
 #endif // NIWG2015
     
@@ -2239,7 +2239,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
                 break;
             }
         }
-        cout << "Exp/NuXSec/SystWght >> Got an absurd weight! "
+        cout << "Exp/NuXSec/SystWght_1p >> Got an absurd weight! "
         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
         << ", Ereco = " << Ereco << " GeV"
         << ", Etrue = " << Etrue << " GeV =>"
@@ -2279,7 +2279,7 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
             p = kListOfRHCXSecSyst[isyst];
             // Was tweaked?
             if(kRHCXSecSystIncludedInBANFF[isyst])
-                dt = fabs(fBANFF->RHCCurrentValue(p) - fBANFF->RHCBestFitValue(p)); // banff parameters
+                dt = fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
             else
                 dt = fabs(this->CurrentValue(p)); // non-banff normalisations
         }//RHC
@@ -2287,7 +2287,7 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
             p = kListOfXSecSyst[isyst];
             // Was tweaked?
             if(kXSecSystIncludedInBANFF[isyst])
-                dt = fabs(fBANFF->CurrentValue(p) - fBANFF->BestFitValue(p)); // banff parameters
+                dt = fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
             else
                 dt = fabs(this->CurrentValue(p)); // non-banff normalisations
         }//FHC
@@ -2340,11 +2340,11 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
         assert(wght_spl);
         if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
-            tb = fBANFF->RHCBestFitValue(p);
-            tc = fBANFF->RHCCurrentValue(p);
+            tb = fBANFF->InitialValue(p);
+            tc = fBANFF->CurrentValue(p);
         }
         else {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
         }
         wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
@@ -2372,7 +2372,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
             )
     {
-        wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
     }
     else if(p == kRHCNuisBANFFCCQEE0
 #if BANFF_BINS != 3
@@ -2388,7 +2388,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
             )
     {
-        wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
     }
     
     // end NIWG2013
@@ -2421,12 +2421,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         if(p == kRHCNuisBANFFMAQE          ||
            p == kRHCNuisBANFFMARES          )
         {
-            tb = fBANFF->RHCBestFitValue(p);
-            tc = fBANFF->RHCCurrentValue(p);
+            tb = fBANFF->InitialValue(p);
+            tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
@@ -2475,12 +2475,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
            p == kRHCNuisBANFFCA5        ||
            p == kRHCNuisBANFFBgRES       )
         {
-            tb = fBANFF->RHCBestFitValue(p);
-            tc = fBANFF->RHCCurrentValue(p);
+            tb = fBANFF->InitialValue(p);
+            tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
@@ -2516,12 +2516,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         if(p == kRHCNuisBANFFFermiMom   ||
            p == kRHCNuisBANFFBindE       )
         {
-            tb = fBANFF->RHCBestFitValue(p);
-            tc = fBANFF->RHCCurrentValue(p);
+            tb = fBANFF->InitialValue(p);
+            tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->BestFitValue(p);
+            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
@@ -2561,7 +2561,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 	     p == kNuisBANFFNormNuEBarToNuMuBar
 	     )
     {
-        wght = fBANFF->CurrentValue(p) / fBANFF->BestFitValue(p);
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
     }
     else if( p == kRHCNuisBANFFMEC          ||
              p == kRHCNuisBANFFMECBar       ||
@@ -2573,7 +2573,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 	     p == kRHCNuisBANFFNormNuEBarToNuMuBar
 	     )
       {
-        wght = fBANFF->RHCCurrentValue(p) / fBANFF->RHCBestFitValue(p);
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
       }
 #endif // NIWG2015
     
@@ -2718,6 +2718,9 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 //________________________________________________________________________________________
 double NuXSec::CurrentValue(PhysParamId_t p) const
 {
+  if (util::IsBANFF(p)) {
+    return fBANFF->CurrentValue(p);
+  }
     // NEW XSEC NIWG
     
 #if defined(__USE_NIWG2013__)
@@ -2797,44 +2800,8 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
         case kNuisRHCToFHC:
             return fNormRHCToFHCTwkDial;
             break;
-        case kNuisBANFFMAQE:
-        case kNuisBANFFMARES:
-        case kNuisBANFFCCQEE0:
-#if BANFF_BINS != 3
-        case kNuisBANFFCCQEE1:
-        case kNuisBANFFCCQEE2:
-#endif
-        case kNuisBANFFCC1piE0:
-#if BANFF_BINS != 3
-        case kNuisBANFFCC1piE1:
-#endif
-#if (BANFF_BINS != 2)
-        case kNuisBANFFNC1pi0:
-#endif
-#if BANFF_BINS == 4
-        case kNuisBANFFMECNorm:
-        case kNuisBANFFPDDDoubleCount:
-#endif
-            return fBANFF->CurrentValue(p);
-            break;
-        case kRHCNuisBANFFMAQE:
-        case kRHCNuisBANFFMARES:
-        case kRHCNuisBANFFCCQEE0:
-#if BANFF_BINS != 3
-        case kRHCNuisBANFFCCQEE1:
-        case kRHCNuisBANFFCCQEE2:
-#endif
-        case kRHCNuisBANFFCC1piE0:
-#if BANFF_BINS != 3
-        case kRHCNuisBANFFCC1piE1:
-#endif
-#if (BANFF_BINS != 2)
-        case kRHCNuisBANFFNC1pi0:
-#endif
-            return fBANFF->RHCCurrentValue(p);
-            break;
         default:
-            return 0;
+            return conv::kBadResult;
     }
     
 #elif defined(__USE_NIWG2015__)
@@ -2846,61 +2813,12 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
         case kNuisXSecRPA:
             return fRPATwkDial;
             break;
-            
-        case kNuisBANFFFermiMom:
-        case kNuisBANFFShapeCCoth:
-        case kNuisBANFFBindE:
-        case kNuisBANFFNormCCcoh:
-        case kNuisBANFFNormNCoth:
-        case kNuisBANFFNormNCcoh:
-        case kNuisBANFFNormNC1Gamma:
-        case kNuisBANFFNormNuEToNuMu:
-        case kNuisBANFFMAQE:
-        case kNuisBANFFMARES:
-        case kNuisBANFFMEC:
-        case kNuisBANFFMECBar:
-        case kNuisBANFFCA5:
-        case kNuisBANFFBgRES:
-            // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-        case kNuisBANFFSCCA:
-        case kNuisBANFFSCCV:
-#endif
-            return fBANFF->CurrentValue(p);
-            break;
-            
-        case kRHCNuisXSecRPA:
-            return fRHCRPATwkDial;
-            break;
-            
-        case kRHCNuisBANFFFermiMom:
-        case kRHCNuisBANFFShapeCCoth:
-        case kRHCNuisBANFFBindE:
-        case kRHCNuisBANFFNormCCcoh:
-        case kRHCNuisBANFFNormNCoth:
-        case kRHCNuisBANFFNormNCcoh:
-        case kRHCNuisBANFFNormNC1Gamma:
-        case kRHCNuisBANFFNormNuEToNuMu:
-        case kRHCNuisBANFFMAQE:
-        case kRHCNuisBANFFMARES:
-        case kRHCNuisBANFFMEC:
-        case kRHCNuisBANFFMECBar:
-        case kRHCNuisBANFFCA5:
-        case kRHCNuisBANFFBgRES:
-            // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-        case kRHCNuisBANFFSCCA:
-        case kRHCNuisBANFFSCCV:
-#endif
-            return fBANFF->RHCCurrentValue(p);
-            break;
-            
         default:
-            return 0;
+            return conv::kBadResult;
     }
 #endif
     
-    return 0;
+    return conv::kBadResult;
 }
 
 

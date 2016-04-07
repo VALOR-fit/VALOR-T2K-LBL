@@ -137,12 +137,13 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   arr_index = util::ArrIdx::Instance();
   
   this->Init(numOfActiveSKDetFSIParams, activeSKDetFSIParams, "skdetfsi");
+  this->SetName("SuperkDetectorFSI");
   
   (*fDefaultValues)[this->Param2Idx(conv::kNuisSuperkEnergyScale)] = 0;
   
   LOG("SuperkDetectorFSI",pINFO) << "Defined final SKDetFSI matrix rows: ";
-  for (unsigned int i = 0 ; i < numOfActiveSKDetFSIParams; i++ ) {
-    LOG("SuperkDetectorFSI",pINFO) << "\t"<<util::AsString(activeSKDetFSIParams[i])<<" (default: "<<(*fDefaultValues)[i];
+  for (unsigned int i = 0 ; i < fNSystParameters; i++ ) {
+    LOG("SuperkDetectorFSI",pINFO) << "\t"<<util::AsString(fSystParameters[i])<<" (default: "<<(*fDefaultValues)[i]<<")";
   }
   
   Registry & reg = Opt::Instance()->MutableGlobalRegistry();

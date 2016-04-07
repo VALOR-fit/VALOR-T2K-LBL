@@ -65,7 +65,7 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
   else if(tweak_systematics == 2) {
     // special tweak, increasing numu flux parameters <700MeV by 5%
     cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
-    TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+    TVectorD twkv(skexp->GetBANFF()->InitialValues());
     twkv[0] += 0.05;
     twkv[1] += 0.05;
     twkv[2] += 0.05;
@@ -83,7 +83,7 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
   }
   else if(tweak_systematics == 5) {
     cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
-    TVectorD twkv(skexp->GetBANFF()->BestFitValues());
+    TVectorD twkv(skexp->GetBANFF()->InitialValues());
     twkv[6]  += 0.15;
     twkv[7]  += 0.15;
     twkv[8]  += 0.15;

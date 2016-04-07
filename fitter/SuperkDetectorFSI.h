@@ -16,15 +16,6 @@
 #ifndef _valor_skdetfsi_h_
 #define _valor_skdetfsi_h_
 
-#include <TObject.h>
-#include <TXMLEngine.h>
-#include <TMatrixD.h>
-#include <TVectorD.h>
-#include <TH1D.h>
-#include <TH2D.h>
-
-#include <iostream>
-
 #include "FitCore/CorrelatedSystematics.h"
 
 #include "Enumerations.h"

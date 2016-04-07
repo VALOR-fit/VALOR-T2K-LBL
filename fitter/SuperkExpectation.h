@@ -90,16 +90,8 @@ public:
   void ResetSystematicVariations (void) {ResetSystematics();}    ///< reset all systematics
   
   void TweakAllSystematics                       (void) {RandomizeSystematics();}
-
   void TweakAllBANFFSystematics                  (void);        ///< random variation of all BANFF systematics
-  void TweakAllRHCBANFFSystematics               (void);        ///< random variation of all BANFF systematics
-  // NEW FHC+RHC JOINT
-  void TweakAllFHCpRHCBANFFSystematics               (void);        ///< random variation of all BANFF systematics
-  //
-  void TweakAllSampleBANFFSystematics            (void);        ///< random variation of all BANFF systematics
-
   void TweakAllUncorrelatedXSecSystematics       (void);        ///< random variation of all Uncorrelated XSec systematics
-  
   void TweakAllSKDetectorFSISystematics          (void);        ///< random variation of all SK Detector systematics
   
   // Interface method for fitters. The fit parameter list can contain info for both the 
@@ -191,11 +183,15 @@ private:
   
   
   // DEPRECATED INTERFACE, DO NOT USE
-  
+public:
   void TweakAllRHCSKDetectorFSISystematics       (void);
   void TweakAllFHCpRHCSKDetectorFSISystematics   (void);
   void TweakAllMultiRingSKDetectorFSISystematics (void);
   void TweakAllSampleSKDetectorFSISystematics    (void);
+  void TweakAllRHCBANFFSystematics               (void);
+  void TweakAllFHCpRHCBANFFSystematics           (void);
+  void TweakAllMultiRingBANFFSystematics         (void);
+  void TweakAllSampleBANFFSystematics            (void);
   
 ClassDef(SuperkExpectation, 6)
 };
