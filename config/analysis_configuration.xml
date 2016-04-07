@@ -487,43 +487,24 @@
     </untuned_parameter_central_values>
     
   </xsec>
-
-
-  <!--
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  SuperK detector systematics
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  -->
-
-  <detector_systematics>
-    <superk>
-      <energy_scale_relative_error>
-         <one_mu_ring>
-            0.024
-         </one_mu_ring>
-         <one_e_ring>
-            0.024
-         </one_e_ring>
-      </energy_scale_relative_error>
-     </superk>
-  </detector_systematics>
   
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   SKDET+FSI
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    -->
-  <skdetfsi>
-    <!--
-        Covariance matrix of SKDet FSI parameters
-    -->
-    <covariance_matrix>
-      <filename>   official/2015/skdetfsi/Joint_FHC_RHC_SKDetFSI_VaLOR_Order_BANFF_14_3_16.root </filename>
-      <objname>    covmat_skdetfsi_full </objname>          
-      <objtype>    TMatrixD              </objtype>
-    </covariance_matrix>
-    
-  </skdetfsi>
-  
+  -->
+  <syst>
+    <skdetfsi>
+      <!--
+          Covariance matrix of SKDet FSI parameters
+      -->
+      <covariance_matrix>
+        <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv7_FSIv1.root </filename>
+        <objname>    covmat_skdetfsi_full_with_escale </objname>          
+        <objtype>    TMatrixD              </objtype>
+      </covariance_matrix>
+      
+    </skdetfsi>
+  </syst>
   
 </analysis_inputs>

@@ -8,9 +8,12 @@
     FATAL, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, DEBUG.
    -->
 
-  <priority msgstream="Messenger">    DEBUG    </priority>
-  <priority msgstream="XML">          NOTICE   </priority>
-  <priority msgstream="Parser">       NOTICE   </priority>
-  <priority msgstream="NuOsc3Flavour">NOTICE   </priority>
+  <priority msgstream="Messenger">             DEBUG    </priority>
+  <priority msgstream="XML">                   NOTICE   </priority>
+  <priority msgstream="Parser">                NOTICE   </priority>
+  <priority msgstream="NuOsc3Flavour">         NOTICE   </priority>
+  <priority msgstream="Reg">                   NOTICE   </priority>
+  <priority msgstream="SuperkDetectorFSI">     NOTICE   </priority>
+  <priority msgstream="CorrelatedSystematics"> NOTICE   </priority>
 
 </messenger_config>
