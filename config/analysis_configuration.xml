@@ -346,76 +346,6 @@
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  BANFF inputs 
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  -->
-
-  <banff>
-    
-    <!--
-      Central values from BANFF fit
-    -->
-    
-    <best_fit_values>     
-      <filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
-      <objname>    postfit_params   </objname>
-      <!-- <objname>    postfit_params   </objname> --> 
-      <objtype>    TVectorD        </objtype>
-    </best_fit_values>
-    
-    <!--
-      Covariance of fit parameters                 
-    -->
-    <covariance_matrix>
-      <filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
-      <objname>    postfit_cov       </objname>
-      <!-- <objname>    postfit_cov       </objname> -->
-      <objtype>    TMatrixD         </objtype>
-    </covariance_matrix>
-   
-   
-    <disap>
-      <best_fit_values>
-	<filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
-        <objname>    postfit_params   </objname>
-        <objtype>    TVectorD        </objtype>
-      </best_fit_values>
-      <!--
-        Covariance of fit parameters
-      -->
-      <covariance_matrix>
-	<filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
-        <objname>    postfit_cov       </objname>    
-        <objtype>    TMatrixD         </objtype>
-      </covariance_matrix>
-    </disap>
-   
-    <app>
-      <best_fit_values>
-	<filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
-        <objname>    postfit_params   </objname>
-        <objtype>    TVectorD         </objtype>
-      </best_fit_values>
-      <!--           
-        Covariance of fit parameters                          
-      -->
-      <covariance_matrix>
-	<filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
-        <objname>    postfit_cov       </objname>    
-        <objtype>    TMatrixD         </objtype>
-      </covariance_matrix>
-    </app>
-    
-   <x_mec>
-     -1.0
-   </x_mec>
-   <x_pdd_mec>
-     0.0
-   </x_pdd_mec>
- </banff>
- 
-  <!--
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Neutrino cross section weight splines
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
@@ -488,12 +418,13 @@
     
   </xsec>
   
+  <!-- Systematics using CorrelatedSystematics class start here-->
+  <syst>
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   SKDET+FSI
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
-  <syst>
     <skdetfsi>
       <!--
           Covariance matrix of SKDet FSI parameters
@@ -505,6 +436,48 @@
       </covariance_matrix>
       
     </skdetfsi>
+    
+  
+    <!--
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    BANFF inputs 
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    -->
+
+    <banff>
+      <!-- Parameter untuned central values -->
+      <untuned_values>
+        <filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root  </filename>
+        <objname>    banff_untuned_central_values                      </objname>
+        <objtype>    TVectorD           </objtype>
+      </untuned_values>
+    
+      <!--
+        Central values from BANFF fit
+      -->
+      <initial_values>     
+        <filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
+        <objname>    postfit_params   </objname>
+        <objtype>    TVectorD        </objtype>
+      </initial_values>
+      
+      <!--
+        Covariance of fit parameters                 
+      -->
+      <covariance_matrix>
+        <filename>   official/2015/banff/postfit_data_1p1h_20160310_valor_order_all_plus_scc.root </filename>
+        <objname>    postfit_cov       </objname>
+        <objtype>    TMatrixD         </objtype>
+      </covariance_matrix>
+      
+     <x_mec>
+       -1.0
+     </x_mec>
+     <x_pdd_mec>
+       0.0
+     </x_pdd_mec>
+   </banff>
+ 
   </syst>
   
 </analysis_inputs>
