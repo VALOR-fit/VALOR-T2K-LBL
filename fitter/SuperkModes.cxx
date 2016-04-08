@@ -1423,40 +1423,40 @@ void valor::util::PrintAppliesType(int mode, const char * type, bool verbose)
     case 0:
       if(!verbose)
 	return;
-      std::cout << "Doesn't effect " << type << std::endl;
+      std::cout << "Doesn't affect " << type << std::endl;
       break;
     case 1:
-      std::cout << "Effects all of " << type << std::endl;
+      std::cout << " Affects all of " << type << std::endl;
       break;
     case 2:
-      std::cout << "Effects numu+numubar for " << type << std::endl;
+      std::cout << " Affects numu+numubar for " << type << std::endl;
       break;
     case 3:
-      std::cout << "Effects nue+nuebar for " << type << std::endl;
+      std::cout << " Affects nue+nuebar for " << type << std::endl;
       break;
     case 4:
-      std::cout << "Effects numu+nue for " << type << std::endl;
+      std::cout << " Affects numu+nue for " << type << std::endl;
       break;
     case 5:
-      std::cout << "Effects numubar+nuebar for " << type << std::endl;
+      std::cout << " Affects numubar+nuebar for " << type << std::endl;
       break;
     case 6:
-      std::cout << "Effects numu for " << type << std::endl;
+      std::cout << " Affects numu for " << type << std::endl;
       break;
     case 7:
-      std::cout << "Effects numubar for " << type << std::endl;
+      std::cout << " Affects numubar for " << type << std::endl;
       break;
     case 8:
-      std::cout << "Effects nue for " << type << std::endl;
+      std::cout << " Affects nue for " << type << std::endl;
       break;
     case 9:
-      std::cout << "Effects nuebar for " << type << std::endl;
+      std::cout << " Affects nuebar for " << type << std::endl;
       break;
     case 10:
-      std::cout << "Effects signue+signuebar for " << type << std::endl;
+      std::cout << " Affects signue+signuebar for " << type << std::endl;
       break;
     case 11:
-      std::cout << "Effects non-signue+non-signuebar for " << type << std::endl;
+      std::cout << " Affects non-signue+non-signuebar for " << type << std::endl;
       break;
     default:
       std::cout << "Odd effects for " << type << std::endl;
