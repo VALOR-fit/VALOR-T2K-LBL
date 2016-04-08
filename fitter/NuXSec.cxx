@@ -66,19 +66,19 @@ NuXSec::NuXSec()
 
     //check that XSecSystConv.h is setup correctly
     CheckListOfXSecSyst(kNumOfXSecSyst, kListOfXSecSyst,
-			"kListOfXSecSyst", false);
+        		"kListOfXSecSyst", false);
     CheckListOfXSecSyst(kNumOfRHCXSecSyst, kListOfRHCXSecSyst,
-			"kListOfRHCXSecSyst", false);
+        		"kListOfRHCXSecSyst", false);
     
     CheckIsSplineParam(kNumOfXSecSyst, kListOfXSecSyst,
-		       kXSecSystHasWghtSplines, "kXSecSystHasWghtSplines");
+        	       kXSecSystHasWghtSplines, "kXSecSystHasWghtSplines");
     CheckIsSplineParam(kNumOfXSecSyst, kListOfXSecSyst,
-		       kRHCXSecSystHasWghtSplines, "kRHCXSecSystHasWghtSplines");
+        	       kRHCXSecSystHasWghtSplines, "kRHCXSecSystHasWghtSplines");
     
     CheckIsBANFFParam(kNumOfXSecSyst, kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit,
-		      kListOfXSecSyst, kXSecSystIncludedInBANFF, "kXSecSystIncludedInBANFF");
+        	      kListOfXSecSyst, kXSecSystIncludedInBANFF, "kXSecSystIncludedInBANFF");
     CheckIsBANFFParam(kNumOfRHCXSecSyst, kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit,
-		      kListOfRHCXSecSyst, kRHCXSecSystIncludedInBANFF, "kRHCXSecSystIncludedInBANFF");
+        	      kListOfRHCXSecSyst, kRHCXSecSystIncludedInBANFF, "kRHCXSecSystIncludedInBANFF");
 
     CheckERange(kNumOfXSecSyst, kListOfXSecSyst, (const double *)kXSecSystErecoCut, "kXSecSystErecoCut");
     CheckERange(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const double *)kRHCXSecSystErecoCut, "kRHCXSecSystErecoCut");
@@ -113,10 +113,10 @@ void NuXSec::CheckListOfXSecSyst(int nparams, const conv::PhysParamId_t * params
 #endif
     if((int)curr != ((int)prev + 1)) {
       cerr << "NuXSec/Init >> " << vname << "[" << ix   << "] = " << curr << " " << util::AsString(curr) << endl
-	   << " comes before " << vname << "[" << ix-1 << "] = " << prev << " " << util::AsString(prev)
-	   << endl;
+           << " comes before " << vname << "[" << ix-1 << "] = " << prev << " " << util::AsString(prev)
+           << endl;
       if(is_fatal)
-	exit(-1);
+        exit(-1);
     }
   }//ix
 }
@@ -136,7 +136,7 @@ void NuXSec::CheckIsSplineParam(int nparams, const conv::PhysParamId_t * params,
     bool expected_spline = (name.find("Norm") == string::npos && name.find("Tuning") == string::npos);
     if(isspline != expected_spline) {
       cerr << "NuXSec/Init >> " << vname << (isspline ? " is" : " isn't") << " a spline. It "
-	   << (expected_spline ? "should" : "shouldn't") << " be " << util::AsString(curr) << endl;
+           << (expected_spline ? "should" : "shouldn't") << " be " << util::AsString(curr) << endl;
       //exit(-1);
     }
   }//ix
@@ -159,7 +159,7 @@ void NuXSec::CheckIsBANFFParam(int nparams, int nbanffxsecparams, const conv::Ph
   }//ix
   if(nbanff != nbanffxsecparams) {
     cerr << "NuXSec/Init >> " << vname << " has " << nbanff
-	 << " parameters. Expected " << nbanffxsecparams << endl;
+         << " parameters. Expected " << nbanffxsecparams << endl;
     exit(-1);
   }
 }
@@ -183,17 +183,17 @@ void NuXSec::CheckERange(int nparams, const PhysParamId_t * params, const double
     if(TMath::Abs(this_lo - prev_hi) > 1E-6) {
       if(TMath::Abs(prev_hi - 100) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok!
       else {
-	cerr << "NuXSec/Init >> Wrong energy range" << endl
-	     << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
-	     << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
-	     << "Should be previous high and this low should be identical (or 100 and 0)" << endl;
-	exit(-1);
+        cerr << "NuXSec/Init >> Wrong energy range" << endl
+             << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
+             << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+             << "Should be previous high and this low should be identical (or 100 and 0)" << endl;
+        exit(-1);
       }
     }
     if(TMath::Abs(this_lo + 1) < 1E-6 || TMath::Abs(this_hi + 1) < 1E-6) {
       cerr << "NuXSec/Init >> Wrong energy range" << endl
-	   << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
-	   << "XSec parameters shouldn't have -1 here" << endl;	
+           << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
+           << "XSec parameters shouldn't have -1 here" << endl;	
     }
   }//ix
 }
@@ -209,6 +209,7 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
 #endif
     vector<SuperkMode_t> first_modes_set;
     bool found_good_sample = false;
+    SuperkSample_t first_sample = conv::kSKsUndefined;
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = kSKSamples[is];
       if(s == kSKsUndefined) continue;
@@ -217,35 +218,36 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
 #endif
       vector<SuperkMode_t> modes_set;
       for(int im = 0; im < knm; im++) {
-	SuperkMode_t m = kSKReactionModes[is][im];
-	if(m == kSKmUndefined) continue;
-	bool applies_to_mode = modes[is*knm*nparams + im*nparams + ix];
-	if(applies_to_mode) {
-	  modes_set.push_back(m);
+        SuperkMode_t m = kSKReactionModes[is][im];
+        if(m == kSKmUndefined) continue;
+        bool applies_to_mode = modes[is*knm*nparams + im*nparams + ix];
+        if(applies_to_mode) {
+          modes_set.push_back(m);
 #ifdef __show_xsecsystconv_check_mesg_debug__
-	  cout << util::AsString(m) << "\t\t";
+          cout << util::AsString(m) << "\t\t";
 #endif
-	}
+        }
       }//im
 #ifdef __show_xsecsystconv_check_mesg_debug__
       cout << endl;
 #endif
       if(!found_good_sample) {
-	found_good_sample = true;
-	first_modes_set = modes_set;
+        found_good_sample = true;
+        first_modes_set = modes_set;
+        first_sample = s;
       }
       else {
-	//check that they're equal
-	if(first_modes_set != modes_set) {
-	  cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
-	       << "\tDifference between samples!" << endl;
-	  exit(-1);
-	}
+        //check that they're equal
+        if(first_modes_set != modes_set) {
+          cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
+               << "\tDifference between samples " <<util::AsString(s)<<" and good sample "<<util::AsString(first_sample)<< endl;
+          exit(-1);
+        }
       }
     }//is
     if(!first_modes_set.size()) {
       cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
-	   << "\tHas no effect on any mode!" << endl;
+           << "\tHas no effect on any mode!" << endl;
       //exit(-1);
     }
     else {
@@ -502,15 +504,15 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         if(!bin_is_not_empty)
                             continue;
 #endif
-			// ~#{ Hack for testing set multiring splines to single ring splines
-			// remove when splines are generated for samples
-			if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-			if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
-			// }#~
-			
+        		// ~#{ Hack for testing set multiring splines to single ring splines
+        		// remove when splines are generated for samples
+        		if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+        		if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+        		// }#~
+        		
                         std::string splname = this->BuildSplineName(s,m,p,ir,it);
-			
-			
+        		
+        		
 #ifdef __show_init_mesg_debug__
                         cout << "Exp/NuXSec >> Loading cross-section weight spline: "
                         << splname << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
@@ -783,10 +785,10 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                                 continue;
 #endif
                             // ~#{ Hack for testing set multiring splines to single ring splines
-			    // remove when splines are generated for samples
-			    if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-			    if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
-			    // }#~	
+        		    // remove when splines are generated for samples
+        		    if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+        		    if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+        		    // }#~	
                             std::string splname = this->BuildSplineName(s,m,p,ir,it,iv);
                             
 #ifdef __show_init_mesg_debug__
@@ -2552,26 +2554,26 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     // - BANFF param, NuEToNuMu  normalization
     //
     else if( p == kNuisBANFFMEC          ||
-	     p == kNuisBANFFMECBar       ||
-	     p == kNuisBANFFNormCCcoh    ||
-	     p == kNuisBANFFNormNCcoh    ||
-	     p == kNuisBANFFNormNCoth    ||
-	     p == kNuisBANFFNormNC1Gamma ||
-	     p == kNuisBANFFNormNuEToNuMu ||
-	     p == kNuisBANFFNormNuEBarToNuMuBar
-	     )
+             p == kNuisBANFFMECBar       ||
+             p == kNuisBANFFNormCCcoh    ||
+             p == kNuisBANFFNormNCcoh    ||
+             p == kNuisBANFFNormNCoth    ||
+             p == kNuisBANFFNormNC1Gamma ||
+             p == kNuisBANFFNormNuEToNuMu ||
+             p == kNuisBANFFNormNuEBarToNuMuBar
+             )
     {
         wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
     }
     else if( p == kRHCNuisBANFFMEC          ||
              p == kRHCNuisBANFFMECBar       ||
-	     p == kRHCNuisBANFFNormCCcoh    ||
-	     p == kRHCNuisBANFFNormNCcoh    ||
-	     p == kRHCNuisBANFFNormNCoth    ||
-	     p == kRHCNuisBANFFNormNC1Gamma ||
-	     p == kRHCNuisBANFFNormNuEToNuMu ||
-	     p == kRHCNuisBANFFNormNuEBarToNuMuBar
-	     )
+             p == kRHCNuisBANFFNormCCcoh    ||
+             p == kRHCNuisBANFFNormNCcoh    ||
+             p == kRHCNuisBANFFNormNCoth    ||
+             p == kRHCNuisBANFFNormNC1Gamma ||
+             p == kRHCNuisBANFFNormNuEToNuMu ||
+             p == kRHCNuisBANFFNormNuEBarToNuMuBar
+             )
       {
         wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
       }
@@ -3902,7 +3904,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
       // FOR TESTING ONLY 
         s = kSKsFCFV1RingMuLike;
         splname << util::AsStringCompact_splinehack(s) << "_";
-	cout << "set name to mu like" << endl;
+        cout << "set name to mu like" << endl;
     }
     else if(IsMultiRESample(s)){
       // ~#{? 
@@ -3910,7 +3912,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
       // FOR TESTING ONLY
         s = kSKsFCFV1RingELike;
         splname << util::AsStringCompact_splinehack(s) << "_";
-	cout << "set name to e like" << endl;
+        cout << "set name to e like" << endl;
     }
     else {
         splname << util::AsStringCompact_splinehack(s) << "_";
@@ -3942,7 +3944,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
       // FOR TESTING ONLY 
         s == kSKsFCFV1RingMuLike;
         splname << util::AsStringCompact_splinehack(s) << "_";
-	
+        
     else if(IsMultiRESample(s))
       // ~#{? 
       // splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
