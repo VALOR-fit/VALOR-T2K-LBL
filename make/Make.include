@@ -158,7 +158,8 @@ CXXFLAGS      = -pipe -W -Wall -Wno-long-double \
 		-fsigned-char -fno-common -flat_namespace \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
 		$(OPT_WITH_CXX_OPTIMIZ_FLAG) \
-		$(OPT_WITH_CXX_USERDEF_FLAGS) 
+		$(OPT_WITH_CXX_USERDEF_FLAGS) \
+	  $(OPT_WITH_CXX_MISC_FLAGS)
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
   CXXFLAGS += -Wno-strict-aliasing 
 endif
@@ -201,7 +202,8 @@ CXXFLAGS      = -m64 -pipe -Wshadow -W -Wall -Wno-overloaded-virtual \
 		-fsigned-char -fno-common \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
 		$(OPT_WITH_CXX_OPTIMIZ_FLAG) \
-		$(OPT_WITH_CXX_USERDEF_FLAGS)
+		$(OPT_WITH_CXX_USERDEF_FLAGS) \
+	  $(OPT_WITH_CXX_MISC_FLAGS)
 ifneq ($(strip $(GCC_GE_4_2_1)), YES) 
   ifneq ($(USING_CLANG), YES)
     CXXFLAGS   += -flat_namespace
@@ -244,12 +246,13 @@ ARCH_OK       = YES
 CXXFLAGS      = -Wall -fPIC \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
 		$(OPT_WITH_CXX_OPTIMIZ_FLAG) \
-		$(OPT_WITH_CXX_USERDEF_FLAGS) 
+		$(OPT_WITH_CXX_USERDEF_FLAGS) \
+		$(OPT_WITH_CXX_MISC_FLAGS)
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
   CXXFLAGS += -Wno-strict-aliasing 
 endif
-LDFLAGS       = -g -Wl,--no-as-needed
-SOFLAGS       = -shared
+LDFLAGS       = $(OPT_WITH_CXX_DEBUG_FLAG) -Wl,--no-as-needed
+SOFLAGS       = $(OPT_WITH_CXX_DEBUG_FLAG) -shared
 DllSuf       := so
 DllLinkSuf   := 
 StaticLibSuf := a
@@ -271,12 +274,13 @@ ARCH_OK       = YES
 CXXFLAGS      = -Wall -fPIC \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
 		$(OPT_WITH_CXX_OPTIMIZ_FLAG) \
-		$(OPT_WITH_CXX_USERDEF_FLAGS) 
+		$(OPT_WITH_CXX_USERDEF_FLAGS) \
+		$(OPT_WITH_CXX_MISC_FLAGS)
 ifeq ($(strip $(GCC_GE_4_1_0)), YES) 
   CXXFLAGS += -Wno-strict-aliasing 
 endif
-LDFLAGS       = -g -Wl,--no-as-needed
-SOFLAGS       = -shared
+LDFLAGS       = $(OPT_WITH_CXX_DEBUG_FLAG) -Wl,--no-as-needed
+SOFLAGS       = $(OPT_WITH_CXX_DEBUG_FLAG) -shared
 DllSuf       := so
 DllLinkSuf   := 
 StaticLibSuf := a
@@ -311,7 +315,8 @@ LIBRARIES := $(SYSLIBS) \
              $(VALOR_FMWK_LIBRARIES) \
              $(LOG_LIBRARIES) \
              $(ROOT_LIBRARIES) \
-             $(GPROF_LIBRARIES) 
+             $(GPROF_LIBRARIES) \
+             $(OPT_WITH_MISC_LIBS)
 
 # Default compiler and preprocessor flags
 
