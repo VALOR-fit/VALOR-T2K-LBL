@@ -60,6 +60,9 @@ ClassImp(SuperkDetectorFSI)
 //________________________________________________________________________________________
 SuperkDetectorFSI::SuperkDetectorFSI()
 {
+  
+  arr_index = ArrIdx::Instance();
+  
   // Decide what matrix definition we want.
   unsigned int numOfActiveSKDetFSIParams = 0;
   
@@ -131,10 +134,8 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   CheckERange(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
               (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
               
-  //~ CheckSKMode(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
-              //~ (const bool *)kSKDetFSIParamToSKMode, "activeSKDetFSIParams", false);
-  
-  arr_index = util::ArrIdx::Instance();
+  CheckSKMode(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
+              (const bool *)kSKDetFSIParamToSKMode, "activeSKDetFSIParams", false);
   
   this->Init(numOfActiveSKDetFSIParams, activeSKDetFSIParams, "skdetfsi");
   this->SetName("SuperkDetectorFSI");
@@ -230,18 +231,15 @@ void SuperkDetectorFSI::CheckERange(int nparams, const PhysParamId_t * params, c
 //________________________________________________________________________________________
 void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const bool * /*modes*/, const char * vname, bool fatal_no_effect)
 {
-  // Check this still does what we wanted.
-  PhysParamId_t curr;
-  
   bool found_good_sample = false;
   bool failure = false;
   //check that SK Det FSI parameters effect the correct energy range
   for(int ix = 0; ix < nparams; ix++) {
-    curr = params[ix];
+    PhysParamId_t curr = params[ix];
 #if defined(__show_skdetfsiconv_check_mesg_debug__) || defined(__show_skdetfsiconv_check_mesg_info__)
     cout << "SuperkDetectorFSI/CheckSKMode >> " << vname << " Parameter " << ix << " " << util::AsString(curr) << endl;
 #endif
-    std::vector<int> n_modes_applied_to;
+    std::vector<int> n_modes_applied_to(10);
     for(int is = 0; is <conv::kns; is++) {
       n_modes_applied_to[is] = 0;
       SuperkSample_t s = kSKSamples[is];
@@ -257,7 +255,6 @@ void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * par
         bool applies_to_mode = this->ApplySystToSKMode(curr,s,m);
         if(applies_to_mode) {
           n_modes_applied_to[is]++;
-          //~ modes_set[is].push_back(m);
 #ifdef __show_skdetfsiconv_check_mesg_debug__
           cout << util::AsString(m) << "\t\t";
 #endif
@@ -286,21 +283,6 @@ void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * par
         }
         prev_sample_applied_to = s;
       }
-      //check that they apply to all e.g. CCQE
-      // this must be done by printing to screen & analyser
-#ifdef __show_skdetfsiconv_check_mesg_debug__
-      cout << "Effects " << util::AsString(s) << endl;
-      PrintAppliesType(util::AppliesToCCQE    (modes_set[is]), "CCQE");
-      PrintAppliesType(util::AppliesToCCMEC   (modes_set[is]), "CCMEC");
-      PrintAppliesType(util::AppliesToCCcoh   (modes_set[is]), "CCcoh");
-      PrintAppliesType(util::AppliesToCC1pi   (modes_set[is]), "CC1pi");
-      PrintAppliesType(util::AppliesToCCoth   (modes_set[is]), "CCoth");
-      PrintAppliesType(util::AppliesToNC1pi0  (modes_set[is]), "NC1pi0");
-      PrintAppliesType(util::AppliesToNC1piC  (modes_set[is]), "NC1piC");
-      PrintAppliesType(util::AppliesToNCcoh   (modes_set[is]), "NCcoh");
-      PrintAppliesType(util::AppliesToNC1Gamma(modes_set[is]), "NC1Gamma");
-      PrintAppliesType(util::AppliesToNCoth   (modes_set[is]), "NCoth");
-#endif
     } //is
   }//ix
   
