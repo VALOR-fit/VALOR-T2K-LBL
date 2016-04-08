@@ -131,11 +131,11 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   CheckListOfSKDetFSISyst(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
         "kListOfSKDetFSIParams", true);
 
-  // Need a minus one here since Escale doesn't have a defined E-range.
+  // Need a minus one here since these checks don't apply to Escale
   CheckERange(numOfActiveSKDetFSIParams-1, activeSKDetFSIParams,
               (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
               
-  CheckSKMode(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
+  CheckSKMode(numOfActiveSKDetFSIParams-1, activeSKDetFSIParams,
               (const bool *)kSKDetFSIParamToSKMode, "activeSKDetFSIParams", false);
   
   this->Init(numOfActiveSKDetFSIParams, activeSKDetFSIParams, "skdetfsi");
@@ -337,6 +337,7 @@ bool SuperkDetectorFSI::ApplySyst(
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const
 {
+  if (p==conv::kNuisSuperkEnergyScale) {return true;}
   /// NEW MULTIRING 2 
   int idx;
   bool apply = false;  
