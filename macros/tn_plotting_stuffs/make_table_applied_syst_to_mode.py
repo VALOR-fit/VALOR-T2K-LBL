@@ -24,7 +24,6 @@ env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
-samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
 species   = ["numu","nue","numubar","nuebar","signue", "signuebar"]
 processes = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
 processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
@@ -33,12 +32,14 @@ processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM"
 col1_width = 30
 coln_width = 3
 
+include_empty = True
+
 #______________________________________________________________________________________________________________________________
 
 def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", skipflux=False, skipskdet=False):
   
   skexp = valor.SuperkExpectation()
-  skexp.Read(os.environ[env_var]+"/config/analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml")
+  skexp.Read(os.environ[env_var]+"/config/analysis_configuration.xml")
   skdetfsi = skexp.GetSuperkDetectorFSI()
   xsec = skexp.GetNuXSec()
   
@@ -65,7 +66,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
 \\usepackage{fullpage}
 \\usepackage{rotate}  
 \\usepackage{rotating}
-\\usepackage[paperwidth=300mm,paperheight=450mm]{geometry}
+\\usepackage[paperwidth=300mm,paperheight=600mm]{geometry}
 
 \\newcommand{\ck}{$\\checkmark$}
 \\begin{document}
@@ -97,10 +98,6 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
       else:
         entries.append("".ljust(coln_width))
     tex_output.write("& ".join(entries) + " \\\\ \hline \n")
-  
-  # SK escale
-  entries = [util.ParamAsStringPaperTex(conv.kNuisSuperkEnergyScale).ljust(col1_width)] + ["\\ck".ljust(coln_width) for m in modes]
-  tex_output.write("& ".join(entries) + " \\\\ \hline \n")
       
   # SKDetFSI
   if not skipskdet:
@@ -114,7 +111,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
           row = True
         else:
           entries.append("".ljust(coln_width))
-      if row: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
+      if row or include_empty: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
     
   # BANFF
   for param in xrange(conv.kNuis000,conv.kLastNuisParam):
@@ -135,7 +132,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
           row = True
         else:
           entries.append("".ljust(coln_width))
-      if row: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
+      if row or include_empty: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
     
     else: #banff xsec parameters
       row = False
@@ -145,7 +142,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
           row = True
         else:
           entries.append("".ljust(coln_width))
-      if row: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
+      if row or include_empty: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
       
   # XSec
   for param in xrange(conv.kNuis000,conv.kLastNuisParam):
