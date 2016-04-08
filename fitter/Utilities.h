@@ -48,8 +48,10 @@ class TAxis;
 
 #include "Conventions/Opt.h"
 #include "Utilities/UtlNumStat.h"
+#include "Utilities/UtlPrint.h"
 #include "Utilities/UtlStr.h"
 #include "Utilities/UtlStyle.h"
+#include "Utilities/UtlSystem.h"
 #include "Utilities/UtlXML.h"
 #include "Utilities/VALORArrayD.h"
 
