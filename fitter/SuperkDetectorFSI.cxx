@@ -131,7 +131,8 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   CheckListOfSKDetFSISyst(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
         "kListOfSKDetFSIParams", true);
 
-  CheckERange(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
+  // Need a minus one here since Escale doesn't have a defined E-range.
+  CheckERange(numOfActiveSKDetFSIParams-1, activeSKDetFSIParams,
               (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
               
   CheckSKMode(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
@@ -374,6 +375,8 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
 //________________________________________________________________________________________
 bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco) const
 {
+  if (p==conv::kNuisSuperkEnergyScale) {return true;}
+  
   int idx;
   
   bool isRHC = util::IsRHCSystematic(p);
