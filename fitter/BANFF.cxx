@@ -60,7 +60,7 @@ CorrelatedSystematics()
   // Somewhat hacky handling of the fact that some of our code still thinks there are RHC specific BANFF-XSEC params.
   for (int irhcp = kRHCNuisBANFFMAQE ; irhcp <= kRHCNuisBANFFMECBar; irhcp++) {
     int ifhcp = irhcp - (kRHCNuisBANFFMAQE-kNuisBANFFMAQE);
-    fParam2Idx[irhcp] = ifhcp;
+    fParam2Idx[irhcp] = fParam2Idx[ifhcp];
   }
   
   (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFShapeCCoth)] = 0;
