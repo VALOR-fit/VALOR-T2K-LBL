@@ -414,7 +414,7 @@ int main(int argc, char ** argv)
            weird_applied_neg++;
        }//applied_negevents_condition
        
-       cout << *fparm << endl;
+       //  cout << *fparm << endl;
        
      }
      
