@@ -1177,32 +1177,6 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
   // }
 }
 //____________________________________________________________________________
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//____________________________________________________________________________
 void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
 {
   
@@ -1225,12 +1199,10 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 1 (mixing23=first_bin, dcp=-3.14) ////////////////" << endl;
   
-  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(start_sinsqth23_first,-TMath::Pi()); 
   fitmarg->SetNumStartBin(1,1);
-  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
@@ -1255,12 +1227,10 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 2 (mixing23=first_bin, dcp=-pi/2.) ////////////////" << endl;
   
-  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(start_sinsqth23_first,-TMath::Pi()/2.); 
   fitmarg->SetNumStartBin(1,1);
-  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
 
@@ -1286,12 +1256,10 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 3 (mixing23=first, dcp=+pi/2.) ////////////////" << endl;
   
-  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(start_sinsqth23_first,+TMath::Pi()/2.); 
   fitmarg->SetNumStartBin(1,1);
-  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -1317,12 +1285,10 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 4 (mixing23=first, dcp=+3.14) ////////////////" << endl;
   
-  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(start_sinsqth23_first,+TMath::Pi()); 
   fitmarg->SetNumStartBin(1,1);
-  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -1348,12 +1314,10 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 5 (mixing23=last_bin, dcp=-3.14) ////////////////" << endl;
   
-  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(start_sinsqth23_last,-TMath::Pi()); 
   fitmarg->SetNumStartBin(1,1);
-  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -1378,12 +1342,10 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 6 (mixing23=last_bin, dcp=-pi/2.) ////////////////" << endl;
   
-  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(start_sinsqth23_last,-TMath::Pi()/2.); 
   fitmarg->SetNumStartBin(1,1);
-  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -1409,12 +1371,10 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 7 (mixing23=last_bin, dcp=+pi/2.) ////////////////" << endl;
   
-  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(start_sinsqth23_last,+TMath::Pi()/2.); 
   fitmarg->SetNumStartBin(1,1);
-  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -1440,12 +1400,10 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << endl;
   cout << "/////////////// Fit 8 (mixing23=last_bin, dcp=+3.14) ////////////////" << endl;
   
-  //fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),+TMath::Pi(),true);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
   fitmarg->SetStartBin(start_sinsqth23_last,+TMath::Pi()); 
   fitmarg->SetNumStartBin(1,1);
-  //fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,0.4,-TMath::Pi(),-TMath::Pi()+conv::kASmallNum);
-  fitmarg->SetGridStartRange(valsecondbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
   
@@ -1466,6 +1424,281 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   }
 }
 //____________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void valor::util::MargFit_2D_dmsq32_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
+  
+  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
+  double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
+
+  int nbinsX = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsX();
+  double valfirstbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(1);
+  double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
+  
+  int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
+  double valfirstbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(1);
+  double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
+    
+  double start_dmsq32_first = valfirstbin_X;
+  double start_dmsq32_last  = vallastbin_X;
+  
+  // Fit 1
+   
+  cout << endl;
+  cout << "/////////////// Fit 1 (dmsq32=first_bin, dcp=-3.14) ////////////////" << endl;
+  
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetStartBin(start_dmsq32_first,-TMath::Pi()); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+
+  double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_1 = fitmarg->GetParamBestFit(0);
+  double bestfit1_1 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_1 = fitmarg->GetParamBestFit(1); 
+  int nfits_1 = fitmarg->GetNumFit();
+  int fitstatus_1 = fitmarg->GetFitStatus();
+  int niterations_1 = fitmarg->GetNumIterations();
+  if(chisqmin_1<chisqmin){
+    chisqmin = chisqmin_1;
+    bestfit0 = bestfit0_1; 
+    bestfit1 = bestfit1_1; 
+    nfits = nfits_1;    
+    fitstatus = fitstatus_1;
+    niterations = niterations_1;
+  }
+    
+  // Fit 2
+  
+  cout << endl;
+  cout << "/////////////// Fit 2 (dmsq32=first_bin, dcp=-pi/2.) ////////////////" << endl;
+  
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetStartBin(start_dmsq32_first,-TMath::Pi()/2.); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+
+  double chisqmin_2 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_2 = fitmarg->GetParamBestFit(0);
+  double bestfit1_2 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_2 = fitmarg->GetParamBestFit(1); 
+  int nfits_2 = fitmarg->GetNumFit();
+  int fitstatus_2 = fitmarg->GetFitStatus();
+  int niterations_2 = fitmarg->GetNumIterations();
+  if(chisqmin_2<chisqmin){
+    chisqmin = chisqmin_2;
+    bestfit0 = bestfit0_2; 
+    bestfit1 = bestfit1_2; 
+    nfits = nfits_2;    
+    fitstatus = fitstatus_2;
+    niterations = niterations_2;
+  }
+  
+  
+  // Fit 3
+  
+  cout << endl;
+  cout << "/////////////// Fit 3 (dmsq32=first, dcp=+pi/2.) ////////////////" << endl;
+  
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetStartBin(start_dmsq32_first,+TMath::Pi()/2.); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+  
+  double chisqmin_3 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_3 = fitmarg->GetParamBestFit(0);
+  double bestfit1_3 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_3 = fitmarg->GetParamBestFit(1); 
+  int nfits_3 = fitmarg->GetNumFit();
+  int fitstatus_3 = fitmarg->GetFitStatus();
+  int niterations_3 = fitmarg->GetNumIterations();
+  if(chisqmin_3<chisqmin){
+    chisqmin = chisqmin_3;
+    bestfit0 = bestfit0_3; 
+    bestfit1 = bestfit1_3; 
+    nfits = nfits_3;    
+    fitstatus = fitstatus_3;
+    niterations = niterations_3;
+  }
+  
+  
+  // Fit 4
+  
+  cout << endl;
+  cout << "/////////////// Fit 4 (dmsq32=first, dcp=+3.14) ////////////////" << endl;
+  
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetStartBin(start_dmsq32_first,+TMath::Pi()); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+  
+  double chisqmin_4 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_4 = fitmarg->GetParamBestFit(0);
+  double bestfit1_4 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_4 = fitmarg->GetParamBestFit(1); 
+  int nfits_4 = fitmarg->GetNumFit();
+  int fitstatus_4 = fitmarg->GetFitStatus();
+  int niterations_4 = fitmarg->GetNumIterations();
+  if(chisqmin_4<chisqmin){
+    chisqmin = chisqmin_4;
+    bestfit0 = bestfit0_4; 
+    bestfit1 = bestfit1_4; 
+    nfits = nfits_4;    
+    fitstatus = fitstatus_4;
+    niterations = niterations_4;
+  }
+  
+
+  // Fit 5
+  
+  cout << endl;
+  cout << "/////////////// Fit 5 (dmsq32=last_bin, dcp=-3.14) ////////////////" << endl;
+  
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetStartBin(start_dmsq32_last,-TMath::Pi()); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+  
+  double chisqmin_5 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_5 = fitmarg->GetParamBestFit(0);
+  double bestfit1_5 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_5 = fitmarg->GetParamBestFit(1); 
+  int nfits_5 = fitmarg->GetNumFit();
+  int fitstatus_5 = fitmarg->GetFitStatus();
+  int niterations_5 = fitmarg->GetNumIterations();
+  if(chisqmin_5<chisqmin){
+    chisqmin = chisqmin_5;
+    bestfit0 = bestfit0_5; 
+    bestfit1 = bestfit1_5; 
+    nfits = nfits_5;    
+    fitstatus = fitstatus_5;
+    niterations = niterations_5;
+  }
+    
+  // Fit 6
+  
+  cout << endl;
+  cout << "/////////////// Fit 6 (dmsq32=last_bin, dcp=-pi/2.) ////////////////" << endl;
+  
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetStartBin(start_dmsq32_last,-TMath::Pi()/2.); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+  
+  double chisqmin_6 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_6 = fitmarg->GetParamBestFit(0);
+  double bestfit1_6 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_6 = fitmarg->GetParamBestFit(1); 
+  int nfits_6 = fitmarg->GetNumFit();
+  int fitstatus_6 = fitmarg->GetFitStatus();
+  int niterations_6 = fitmarg->GetNumIterations();
+  if(chisqmin_6<chisqmin){
+    chisqmin = chisqmin_6;
+    bestfit0 = bestfit0_6; 
+    bestfit1 = bestfit1_6; 
+    nfits = nfits_6;    
+    fitstatus = fitstatus_6;
+    niterations = niterations_6;
+  }
+  
+  
+  // Fit 7
+  
+  cout << endl;
+  cout << "/////////////// Fit 7 (dmsq32=last_bin, dcp=+pi/2.) ////////////////" << endl;
+  
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetStartBin(start_dmsq32_last,+TMath::Pi()/2.); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+  
+  double chisqmin_7 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_7 = fitmarg->GetParamBestFit(0);
+  double bestfit1_7 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_7 = fitmarg->GetParamBestFit(1); 
+  int nfits_7 = fitmarg->GetNumFit();
+  int fitstatus_7 = fitmarg->GetFitStatus();
+  int niterations_7 = fitmarg->GetNumIterations();
+  if(chisqmin_7<chisqmin){
+    chisqmin = chisqmin_7;
+    bestfit0 = bestfit0_7; 
+    bestfit1 = bestfit1_7; 
+    nfits = nfits_7;    
+    fitstatus = fitstatus_7;
+    niterations = niterations_7;
+  }
+  
+  
+  // Fit 8
+  
+  cout << endl;
+  cout << "/////////////// Fit 8 (dmsq32=last_bin, dcp=+3.14) ////////////////" << endl;
+  
+  fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
+  fitmarg->SetStartBin(start_dmsq32_last,+TMath::Pi()); 
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
+  
+  double chisqmin_8 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_8 = fitmarg->GetParamBestFit(0);
+  double bestfit1_8 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_8 = fitmarg->GetParamBestFit(1); 
+  int nfits_8 = fitmarg->GetNumFit();
+  int fitstatus_8 = fitmarg->GetFitStatus();
+  int niterations_8 = fitmarg->GetNumIterations();
+  if(chisqmin_8<chisqmin){
+    chisqmin = chisqmin_8;
+    bestfit0 = bestfit0_8; 
+    bestfit1 = bestfit1_8; 
+    nfits = nfits_8;    
+    fitstatus = fitstatus_8;
+    niterations = niterations_8;
+  }
+}
+//____________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
 void valor::util::MargFit_2D_sinsqth23_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
 {
     
