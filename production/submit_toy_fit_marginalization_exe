@@ -310,7 +310,7 @@ $freepar0               = "betaBar"                 unless defined $freepar0;
 $minfreepar0            = 0.                        unless defined $minfreepar0;     # Minimum free parameter allowed value
 $maxfreepar0            = 1.                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
 $npt_freepar0           = 2                         unless defined $npt_freepar0;    # of free parameter points to scan
-$freepar1               = "undefined"               unless defined $freepar1;
+$freepar1               = ""               unless defined $freepar1;
 $minfreepar1            = 0.                        unless defined $minfreepar1;     # Minimum free parameter allowed value
 $maxfreepar1            = 0.                        unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 $npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan
@@ -474,7 +474,7 @@ else{
     exit;
 }
 
-if($freepar1 eq "undefined"){
+if($freepar1 eq ""){
     $freepar1_first = 0;
     $freepar1_last  = 0;
     $i_freepar1     = 0;
