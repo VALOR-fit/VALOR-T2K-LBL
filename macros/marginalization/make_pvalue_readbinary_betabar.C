@@ -1,9 +1,9 @@
 
 // ------------------------------------------------------------------------------------------------
-//
-This macro takes the marg toys produced by buid_marg_toys and
+/*
+This macro takes the marg toys produced by buid_marg_toys and calculates the p value based on the data produced.
 Raj Shah
-//
+*/
 // ------------------------------------------------------------------------------------------------
 
 
