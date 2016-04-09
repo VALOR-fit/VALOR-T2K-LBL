@@ -924,6 +924,17 @@ FitParamList * util::NamedParameterList(string name)
    return fp;
  }
  
+  if(name == "nuosc3f_normbar") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourNormBarFit(0);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    // NEW XSEC
+#if defined(__USE_NIWG2015__)
+    //~ fp -> FixParameter (kNuisXSecRPA );
+#endif
+    //
+    return fp;
+  }
  
  //  
  
