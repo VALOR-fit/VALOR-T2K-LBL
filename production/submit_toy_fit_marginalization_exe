@@ -784,8 +784,8 @@ while($i_freepar1 < $n_freepar1) {
       #  $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
       open(CND, ">$job_dir/$tag-$irun.condor") or die("Cannot create the Condor batch script");
       print CND "Executable               = $job_dir/$tag-$irun.condorsh \n";
-      print CND "Error                    = $job_dir/toys_proc_$tag-$irun_\$\(Process\).err \n";
-      print CND "Output                   = $job_dir/toys_proc_$tag-$irun_\$\(Process\).out \n";
+      print CND "Error                    = $job_dir/toys_proc_$tag-$irun.err \n";
+      print CND "Output                   = $job_dir/toys_proc_$tag-$irun.out \n";
       print CND "Universe                 = vanilla \n";
       print CND "Getenv                   = True \n";
       print CND "should_transfer_files    = YES \n";
