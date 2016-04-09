@@ -771,11 +771,19 @@ while($i_freepar1 < $n_freepar1) {
     #
     if($resource eq "RAL") {
       $fullprogram = "";
-      $arguments =~ s/\"//g;        # All double quotes must be escaped for Condor
-      $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+      $source = `which bash`;
+      open(SH,">$job_dir/$tag-$irun.condorsh")or die("Can not create the PBS batch script");
+      print SH "#!$source\n\n";
+      print SH "cd $job_dir \n";
+      print SH "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
+      print SH "$command \n";
+      close(SH);
+
+      
+      #   $arguments =~ s/\"//g;        # All double quotes must be escaped for Condor
+      #  $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
       open(CND, ">$job_dir/$tag-$irun.condor") or die("Cannot create the Condor batch script");
-      print CND "Executable               = $program \n";
-      print CND "Arguments                = $arguments \n";
+      print CND "Executable               = $job_dir/$tag-$irun.condorsh \n";
       print CND "Error                    = $job_dir/toys_proc_$tag-$irun_\$\(Process\).err \n";
       print CND "Output                   = $job_dir/toys_proc_$tag-$irun_\$\(Process\).out \n";
       print CND "Universe                 = vanilla \n";
