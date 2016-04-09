@@ -415,6 +415,11 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="deltacp"){
     util::MargFit_2D_sinsqth23_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
   }
+
+  // 2D dmsq32 Vs dcp fit
+  else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()=="deltacp"){
+    util::MargFit_2D_dmsq32_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+  }
   
   // 2D sinsqth23 Vs dmsq32 fit
   else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="dmsq23"){
