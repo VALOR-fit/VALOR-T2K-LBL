@@ -22,6 +22,7 @@
 //#define __print_chisqmarg_ptval__
 //#define __print_chisqmarg_tstopwatch__
 //#define __print_chisqmarg_changebinary__
+//#define __print_rate_only_pvalue__
 //#define __readtoys_debug__
 //#define __print_minimization_steps__ //
 //#define __print_hesseerror__
@@ -635,11 +636,16 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   fStoreLikeWeights = false; // don't store the full likelihood befault
   
   //NuEApp Raj
-  if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[1] == kPhypUndefined){
     for(int i = 0;i<fnbins_param[0];i++){
+      if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[1] == kPhypUndefined){
       fNuEAppHisto[i] = new TH1D(Form("NuEBarAppHisto_%d",i),Form("Expected NuEBar Events; BetaBar bin %d",i),25000,0,25);
+      }
+      else
+      {
+        fNuEAppHisto[i] = 0;
+      }
     }
-  }
+  
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetStoreLikeWeights(bool doStoreLikeWeights){
@@ -725,11 +731,11 @@ void FitMarginalization::CleanUp(void){
 #endif
   
   //NuEBarApp
-  if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[0] == kPhypUndefined){
-    for(int i = 0;i<fnbins_param[0];i++){
+  for(int i=0;i<2;i++){
+      if(fNuEAppHisto[i]){
       delete fNuEAppHisto[i];
       fNuEAppHisto[i] = 0;
-    }
+      }
   }
 }
 //________________________________________________________________________________________
@@ -1904,6 +1910,16 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
   //
   
   fNCallsCalcChisqMargPt++;
+  
+  
+  if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[1] == kPhypUndefined && fteststatistic == "rate-only")
+  {
+    double bincont =  this->FillExpectedNuEBarAppHisto(skobs_data, iterpar0, readbinary);
+    if(bincont<kAVerySmallNum)bincont = kAVerySmallNum;
+    fChisqMargVArray->SetEntry(bincont,iterpar0,iterpar1);
+    if(!fIsFit2D) fhchisq_marg_1D->SetBinContent(iterpar0+1,bincont);
+    return bincont;
+  }
   
   // Read binary file
   if(readbinary){ 
@@ -8378,15 +8394,19 @@ double FitMarginalization::OscPhysicalRegion(conv::PhysParamId_t p,double oscval
 }
 
 //NueBarapp RAJ
-void FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_data,int iterpar0,bool readbinary){ // NEW PRECISION
-  
+double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_data,int iterpar0,bool readbinary){ // NEW PRECISION
   
 #ifdef __print_chisqmarg_tstopwatch__
   TStopwatch sw;
 #endif
-
+  if(fNuEAppHisto[iterpar0]->GetEntries()!=0){
+    std::cerr << "FitMarginalization/FillExpectedNuEBarAppHisto >> Histogram for beta bin: " << iterpar0
+              << " already filled. Reseting histogram."
+    << std::endl;
+    fNuEAppHisto[iterpar0]->Reset();
+  }
   
-  if(fPhysParamFree[0] != kPhypBetaBar || fPhysParamFree[1] != kPhypUndefined)
+  if(fPhysParamFree[0] != kPhypBetaBar || fPhysParamFree[1] != kPhypUndefined || fteststatistic != "rate-only")
   {
     std::cerr <<  "FitMarg::FillExpectedNuEBarAppHisto >> Par0 is not BetaBar or Par1 is not undefined. "
     <<  "Can't deal with this" << std::endl;
@@ -8422,18 +8442,6 @@ void FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_dat
     }
   }
   
-  //cout << "iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << "   ";
-  //double currval0 = fmin_param[0] + iterpar0*fstep_param[0];
-  //double currval1 = fmin_param[1] + iterpar1*fstep_param[1];
-  //cout << "currval0 = " << currval0 << endl;
-  //cout << "currval1 = " << currval1 << endl;
-  
-  
-  
-  
-  
-  //
-  
   
   for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
     //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;
@@ -8465,10 +8473,7 @@ void FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_dat
         continue;
       }
       //
-      
-      
-      
-      if( fteststatistic=="rate+shape"){
+      if( fteststatistic=="rate-only"){
         
 #ifdef __print_array_toy_fillchisq__
         cout << util::AsString(s) << " --> # Ereco bins = " << util::NumErecoBins(s) << endl;
@@ -8527,9 +8532,9 @@ void FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_dat
             double nobs = (double)skobs_data->TwoDSpectrumVArray(s)->GetEntry(ibinEreco,ibinQ2); // Maybe it's slower than the simple array --> TO CHECK
             if(s != kSKsRHCFCFV1RingELike)
               chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
-            else
+            else{
               nexp_sample += nexp;
-            
+            }
 #ifdef __print_array_toy_fillchisq__
             nobs_sample += nobs;
             chisq_sample += valor::util::ChisqPoisson(nobs,nexp);
@@ -8546,11 +8551,10 @@ void FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_dat
           NuEAppEvents = nexp_sample;
 
       } // rate+shape
-      
       else{
         cerr << endl;
-        cerr << "FitMarginalization::CalcChisqMargPtRead" << endl;
-        cerr << "The test statistic is not available: " << fteststatistic << endl;
+        cerr << "FitMarginalization::FillExpectedNuEBarAppHisto" << endl;
+        cerr << "The test statistic is not available here: " << fteststatistic << endl;
         cerr << endl;
         exit(1);
       }
@@ -8559,13 +8563,48 @@ void FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_dat
     } // loop SK samples
     
     NuEAppEvents = Rnd::Instance()->RndToyMCstat().Poisson(NuEAppEvents);
-    
     fNuEAppHisto[iterpar0]->Fill(NuEAppEvents,exp(-chisq/2.));
-    
-    
     
   } // iexperiment
   
+  //Calculate data p-value
   
+  SuperkSample_t s = kSKsRHCFCFV1RingELike;
+  double nobs_sample = 0;
+#ifndef __USE_2D_TEMPLATES__
+  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+    
+    double nobs = (double)skobs_data->ErecoSpectrumArray(s)[ibin];
+    nobs_sample += nobs;
+    
+  } // loop over ereco bins
+#else // __USE_2D_TEMPLATES__
+  
+  // NEW 2D TEMPLATES
+  
+  for(int ibinEreco=0;ibinEreco<util::NumErecoBins(s);ibinEreco++){
+    for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
+      double nobs = (double)skobs_data->TwoDSpectrumVArray(s)->GetEntry(ibinEreco,ibinQ2); // Maybe it's slower than the simple array --> TO CHECK
+      nobs_sample += nobs;
+    } // loop over q2 bins
+  } // loop over ereco bins
+    //
+#endif // __USE_2D_TEMPLATES__
+  
+#ifdef __print_array_toy_fillchisq__
+  std::cout <<"FitMarg/FillExpectedNuEBarApp>> " << util::AsString(s) <<" - # obs  = " << nobs_sample << std::endl;
+#endif
+  
+  int obs_bin = fNuEAppHisto[iterpar0]->FindBin(nobs_sample);
+  double p_value_tail = fNuEAppHisto[iterpar0]->Integral(obs_bin,fNuEAppHisto[iterpar0]->GetNbinsX());
+  double p_value_integral = fNuEAppHisto[iterpar0]->Integral();
+  double p_value = p_value_tail/p_value_integral;
+  
+#ifdef __print_rate_only_pvalue__
+  std::cout << "FitMarg/FillExpectedNuEBarApp>> " << util::AsString(s) <<" Nevents: " << nobs_sample <<" P-Value: " << p_value
+            << " tail: " << p_value_tail << " integral: " << p_value_integral
+            << std::endl;
+#endif
+  return p_value;
   
 }

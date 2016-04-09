@@ -338,7 +338,7 @@ class FitMarginalization
   void SetSeed(UInt_t seed) {fSeed = seed;};
   
   //NuEBar app
-  void FillExpectedNuEBarAppHisto(SuperkObservation *skobs_data,int iterpar0,bool readbinary);
+  double FillExpectedNuEBarAppHisto(SuperkObservation *skobs_data,int iterpar0,bool readbinary);
   TH1D* GetNuEBarHisto(int i){return fNuEAppHisto[i];};
 
 private:
