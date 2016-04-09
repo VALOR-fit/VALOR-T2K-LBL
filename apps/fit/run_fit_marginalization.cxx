@@ -211,6 +211,8 @@ int main(int argc, char ** argv)
   TH1F *hdeltachisq1D_out = new TH1F("hdeltachisq1D_out","hdeltachisq1D_out",1,0,1);
   TH2F *hstep2D_out = new TH2F("hstep2D_out","hstep2D_out",1,0,1,1,0,1);
   TH1F *hstep1D_out = new TH1F("hstep1D_out","hstep1D_out",1,0,1);
+  TH1D *hBetaBar0 = 0;
+  TH1D *hBetaBar1 = 0;
   double bestfit0=-999;
   double bestfit1=-999;
   double bestfiterrNeg0=-999;
@@ -272,6 +274,8 @@ int main(int argc, char ** argv)
   fitnt->Branch("hchisq2D",     "TH2F", &hchisq2D_out,     32000,0 );
   fitnt->Branch("hdeltachisq2D","TH2F", &hdeltachisq2D_out,32000,0 );
   fitnt->Branch("hstep2D",      "TH2F", &hstep2D_out,      32000,0 );
+  fitnt->Branch("hBetaBar0",      "TH1D", &hBetaBar0,      32000,0 );
+  fitnt->Branch("hBetaBar1",      "TH1D", &hBetaBar1,      32000,0 );
   
   fitnt->Branch("fitstatus",&fitstatus,"fitstatus/I");
   
@@ -491,8 +495,10 @@ int main(int argc, char ** argv)
        
        cout << "Calculate Chisq for betaBar = 0 and 1:" << endl;
        
-       chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(0.,truepar1,skobs_fakedata,true);  
-       chisqtrue1 = (double)fitmarg->GetChisqMargTrueRead(1.,truepar1,skobs_fakedata,true);  
+       chisqtrue0 = (double)fitmarg->GetChisqMargTrueRead(0.,truepar1,skobs_fakedata,true);
+       chisqtrue1 = (double)fitmarg->GetChisqMargTrueRead(1.,truepar1,skobs_fakedata,true);
+       fitmarg->GetNuEBarHisto(0.)->Copy(*hBetaBar0       );
+       fitmarg->GetNuEBarHisto(1.)->Copy(*hBetaBar1       );
      }
      
      // All other analyses
