@@ -305,7 +305,7 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   PhysParamId_t parfree[2];
   parfree[0] = GetFreePar(sfreeparname0);
   
-  if(sfreeparname1=="undefined")
+  if(sfreeparname1=="")
     parfree[1] = freepar1; // 1D fit
   else 
     parfree[1] = GetFreePar(sfreeparname1); // 2D fit
@@ -531,6 +531,7 @@ conv::PhysParamId_t valor::util::GetFreePar(string freeparname)
   else{
     freepar = conv::kPhypUndefined;
     cout << "UtlForMacrosT2XK/GetFreePar >> Param: "<< freeparname << " is not defined" << endl;
+    exit(1);
   }
 
   return freepar;
