@@ -305,15 +305,15 @@ $ntoys_margtoys    = 20         unless defined $ntoys_margtoys;     # of margina
 $marg_hierarchy_margtoys  = 1            unless defined $marg_hierarchy_margtoys; # marginalization of mass hierarchy in marginalization toys
 $masshierarchy_marg       = "normal"     unless defined $masshierarchy_marg;      # mass hierarchy in marginalization toys if not marginalized
 
- # 1D fit - betaBar (nuebar appearance)
- $freepar0               = "betaBar"                 unless defined $freepar0;
- $minfreepar0            = 0.                        unless defined $minfreepar0;     # Minimum free parameter allowed value
- $maxfreepar0            = 1.                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
- $npt_freepar0           = 2                         unless defined $npt_freepar0;    # of free parameter points to scan
- $freepar1               = ""                        unless defined $freepar1;
- $minfreepar1            = 0.                        unless defined $minfreepar1;     # Minimum free parameter allowed value
- $maxfreepar1            = 0.                        unless defined $maxfreepar1;     # Maximum free parameter allowed value 
- $npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan
+# 1D fit - betaBar (nuebar appearance)
+$freepar0               = "betaBar"                 unless defined $freepar0;
+$minfreepar0            = 0.                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 1.                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+$npt_freepar0           = 2                         unless defined $npt_freepar0;    # of free parameter points to scan
+$freepar1               = "undefined"               unless defined $freepar1;
+$minfreepar1            = 0.                        unless defined $minfreepar1;     # Minimum free parameter allowed value
+$maxfreepar1            = 0.                        unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+$npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan
 
 # # 1D fit - dcp
 # $freepar0          = "deltacp"     unless defined $freepar0;
@@ -474,7 +474,7 @@ else{
     exit;
 }
 
-if($freepar1 eq ""){
+if($freepar1 eq "undefined"){
     $freepar1_first = 0;
     $freepar1_last  = 0;
     $i_freepar1     = 0;
@@ -771,7 +771,7 @@ while($i_freepar1 < $n_freepar1) {
     #
     if($resource eq "RAL") {
       $fullprogram = "";
-      $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+      $arguments =~ s/\"//g;        # All double quotes must be escaped for Condor
       $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
       open(CND, ">$job_dir/$tag-$irun.condor") or die("Cannot create the Condor batch script");
       print CND "Executable               = $program \n";
