@@ -636,7 +636,7 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   fStoreLikeWeights = false; // don't store the full likelihood befault
   
   //NuEApp Raj
-    for(int i = 0;i<fnbins_param[0];i++){
+    for(int i = 0;i<2;i++){
       if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[1] == kPhypUndefined){
       fNuEAppHisto[i] = new TH1D(Form("NuEBarAppHisto_%d",i),Form("Expected NuEBar Events; BetaBar bin %d",i),25000,0,25);
       }
