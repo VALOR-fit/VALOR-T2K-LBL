@@ -173,12 +173,20 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
 
   cPValueBeta0->SetLogy();
   
-  TLegend *leg = new TLegend(0.66,0.70,0.89,0.94);
+  std::stringstream mean0;
+  std::stringstream rms0;
+  mean0 << fixed << setprecision( 3 ) << hPValueBeta0->GetMean();
+  rms0 << fixed << setprecision( 3 ) << hPValueBeta0->GetRMS();
+  
+  cout << mean0.str() << endl;
+  TLegend *leg = new TLegend(0.66,0.60,0.89,0.94);
   leg->SetBorderSize(1);
   leg->SetLineWidth(2);
   leg->SetTextFont(132);
   leg->SetTextSize(0.05);
   leg->AddEntry(hPValueBeta0,"Total","L");
+  leg->AddEntry(hPValueBeta0,Form("Mean: %s",mean0.str().c_str()),"L");
+  leg->AddEntry(hPValueBeta0,Form("RMS: %s",rms0.str().c_str()),"L");
   leg->AddEntry(hPValueBeta0_toyevt0,"# Events = 0","F");
   leg->AddEntry(hPValueBeta0_toyevt1,"# Events = 1","F");
   leg->AddEntry(hPValueBeta0_toyevt2,"# Events = 2","F");
@@ -203,6 +211,24 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   cPValueBeta1->SetLogy();
   leg->Draw();
   
+  std::stringstream mean1;
+  std::stringstream rms1;
+  mean1 << fixed << setprecision( 3 ) << hPValueBeta1->GetMean();
+  rms1 << fixed << setprecision( 3 ) << hPValueBeta1->GetRMS();
+
+  
+  TLegend *leg2 = new TLegend(0.66,0.60,0.89,0.94);
+  leg2->SetBorderSize(1);
+  leg2->SetLineWidth(2);
+  leg2->SetTextFont(132);
+  leg2->SetTextSize(0.05);
+  leg2->AddEntry(hPValueBeta1,"Total","L");
+  leg2->AddEntry(hPValueBeta1,Form("Mean: %s",mean1.str().c_str()),"L");
+  leg2->AddEntry(hPValueBeta1,Form("RMS: %s",rms1.str().c_str()),"L");
+  leg2->AddEntry(hPValueBeta1_toyevt0,"# Events = 0","F");
+  leg2->AddEntry(hPValueBeta1_toyevt1,"# Events = 1","F");
+  leg2->AddEntry(hPValueBeta1_toyevt2,"# Events = 2","F");
+  leg2->Draw();
   
   return;
 }
