@@ -49,12 +49,22 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   TH1F *hPValueBeta0_toyevt0 = new TH1F("hPValueBeta0_toyevt0","hPValueBeta0_toyevt0",200,0,1.5);
   TH1F *hPValueBeta0_toyevt1 = new TH1F("hPValueBeta0_toyevt1","hPValueBeta0_toyevt1",200,0,1.5);
   TH1F *hPValueBeta0_toyevt2 = new TH1F("hPValueBeta0_toyevt2","hPValueBeta0_toyevt2",200,0,1.5);
+  TH1F *hPValueBeta0_toyevt3 = new TH1F("hPValueBeta0_toyevt3","hPValueBeta0_toyevt3",200,0,1.5);
+  TH1F *hPValueBeta0_toyevt4 = new TH1F("hPValueBeta0_toyevt4","hPValueBeta0_toyevt4",200,0,1.5);
+  TH1F *hPValueBeta0_toyevt5 = new TH1F("hPValueBeta0_toyevt5","hPValueBeta0_toyevt5",200,0,1.5);
+  TH1F *hPValueBeta0_toyevt6 = new TH1F("hPValueBeta0_toyevt6","hPValueBeta0_toyevt6",200,0,1.5);
+
   THStack *sPValueBeta0 = new THStack("sPValueBeta0","sPValueBeta0");
   
   TH1F *hPValueBeta1 = new TH1F("hPValueBeta1","hPValueBeta1",200,0,1.5);
   TH1F *hPValueBeta1_toyevt0 = new TH1F("hPValueBeta1_toyevt0","hPValueBeta1_toyevt0",200,0,1.5);
   TH1F *hPValueBeta1_toyevt1 = new TH1F("hPValueBeta1_toyevt1","hPValueBeta1_toyevt1",200,0,1.5);
   TH1F *hPValueBeta1_toyevt2 = new TH1F("hPValueBeta1_toyevt2","hPValueBeta1_toyevt2",200,0,1.5);
+  TH1F *hPValueBeta1_toyevt3 = new TH1F("hPValueBeta1_toyevt3","hPValueBeta1_toyevt3",200,0,1.5);
+  TH1F *hPValueBeta1_toyevt4 = new TH1F("hPValueBeta1_toyevt4","hPValueBeta1_toyevt4",200,0,1.5);
+  TH1F *hPValueBeta1_toyevt5 = new TH1F("hPValueBeta1_toyevt5","hPValueBeta1_toyevt5",200,0,1.5);
+  TH1F *hPValueBeta1_toyevt6 = new TH1F("hPValueBeta1_toyevt6","hPValueBeta1_toyevt6",200,0,1.5);
+
   THStack *sPValueBeta1 = new THStack("sPValueBeta1","sPValueBeta1");
   
   
@@ -82,6 +92,10 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     if(nevents==0)      hPValueBeta0_toyevt0->Fill(pvalue_beta0);
     else if(nevents==1) hPValueBeta0_toyevt1->Fill(pvalue_beta0);
     else if(nevents==2) hPValueBeta0_toyevt2->Fill(pvalue_beta0);
+    else if(nevents==3) hPValueBeta0_toyevt3->Fill(pvalue_beta0);
+    else if(nevents==4) hPValueBeta0_toyevt4->Fill(pvalue_beta0);
+    else if(nevents==5) hPValueBeta0_toyevt5->Fill(pvalue_beta0);
+    else if(nevents==6) hPValueBeta0_toyevt6->Fill(pvalue_beta0);
     
     double pvalue_beta1 = hchisq1D_out->GetBinContent(2);
     
@@ -89,6 +103,10 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     if(nevents==0)      hPValueBeta1_toyevt0->Fill(pvalue_beta1);
     else if(nevents==1) hPValueBeta1_toyevt1->Fill(pvalue_beta1);
     else if(nevents==2) hPValueBeta1_toyevt2->Fill(pvalue_beta1);
+    else if(nevents==3) hPValueBeta1_toyevt3->Fill(pvalue_beta1);
+    else if(nevents==4) hPValueBeta1_toyevt4->Fill(pvalue_beta1);
+    else if(nevents==5) hPValueBeta1_toyevt5->Fill(pvalue_beta1);
+    else if(nevents==6) hPValueBeta1_toyevt6->Fill(pvalue_beta1);
     
     cout << "P-Values:    Beta=0: " << pvalue_beta0 << ", Beta=1: " << pvalue_beta1 << endl;
   }
@@ -172,10 +190,26 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   hPValueBeta0_toyevt1->SetLineColor(kBlue);
   hPValueBeta0_toyevt2->SetFillColor(kGreen+2);
   hPValueBeta0_toyevt2->SetLineColor(kGreen+2);
-  
+  hPValueBeta0_toyevt3->SetFillColor(kBlue+2);
+  hPValueBeta0_toyevt3->SetLineColor(kBlue+2);
+  hPValueBeta0_toyevt4->SetFillStyle(3001);
+  hPValueBeta0_toyevt4->SetFillColor(kBlue);
+  hPValueBeta0_toyevt4->SetLineColor(kBlue);
+  hPValueBeta0_toyevt5->SetFillStyle(3001);
+  hPValueBeta0_toyevt5->SetFillColor(kGreen+2);
+  hPValueBeta0_toyevt5->SetLineColor(kGreen+2);
+  hPValueBeta0_toyevt6->SetFillStyle(3001);
+  hPValueBeta0_toyevt6->SetFillColor(kBlue+2);
+  hPValueBeta0_toyevt6->SetLineColor(kBlue+2);
+
   sPValueBeta0->Add(hPValueBeta0_toyevt0);
   sPValueBeta0->Add(hPValueBeta0_toyevt1);
   sPValueBeta0->Add(hPValueBeta0_toyevt2);
+  sPValueBeta0->Add(hPValueBeta0_toyevt3);
+  sPValueBeta0->Add(hPValueBeta0_toyevt4);
+  sPValueBeta0->Add(hPValueBeta0_toyevt5);
+  sPValueBeta0->Add(hPValueBeta0_toyevt6);
+
   sPValueBeta0->Draw("same");
   hPValueBeta0->DrawCopy("same");
   
@@ -187,7 +221,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   rms0 << fixed << setprecision( 3 ) << hPValueBeta0->GetRMS();
   
   cout << mean0.str() << endl;
-  TLegend *leg = new TLegend(0.66,0.60,0.89,0.94);
+  TLegend *leg = new TLegend(0.66,0.40,0.89,0.94);
   leg->SetBorderSize(1);
   leg->SetLineWidth(2);
   leg->SetTextFont(132);
@@ -198,6 +232,10 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   leg->AddEntry(hPValueBeta0_toyevt0,"# Events = 0","F");
   leg->AddEntry(hPValueBeta0_toyevt1,"# Events = 1","F");
   leg->AddEntry(hPValueBeta0_toyevt2,"# Events = 2","F");
+  leg->AddEntry(hPValueBeta0_toyevt3,"# Events = 3","F");
+  leg->AddEntry(hPValueBeta0_toyevt4,"# Events = 4","F");
+  leg->AddEntry(hPValueBeta0_toyevt5,"# Events = 5","F");
+  leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 6","F");
   leg->Draw();
   
   TCanvas *cPValueBeta1 = new TCanvas("cPValueBeta1","cPValueBeta1");
@@ -211,9 +249,26 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   hPValueBeta1_toyevt1->SetLineColor(kBlue);
   hPValueBeta1_toyevt2->SetFillColor(kGreen+2);
   hPValueBeta1_toyevt2->SetLineColor(kGreen+2);
+  hPValueBeta1_toyevt3->SetFillColor(kBlue+2);
+  hPValueBeta1_toyevt3->SetLineColor(kBlue+2);
+  hPValueBeta1_toyevt4->SetFillStyle(3001);
+  hPValueBeta1_toyevt4->SetFillColor(kBlue);
+  hPValueBeta1_toyevt4->SetLineColor(kBlue);
+  hPValueBeta1_toyevt5->SetFillStyle(3001);
+  hPValueBeta1_toyevt5->SetFillColor(kGreen+2);
+  hPValueBeta1_toyevt5->SetLineColor(kGreen+2);
+  hPValueBeta1_toyevt6->SetFillStyle(3001);
+  hPValueBeta1_toyevt6->SetFillColor(kBlue+2);
+  hPValueBeta1_toyevt6->SetLineColor(kBlue+2);
+  
   sPValueBeta1->Add(hPValueBeta1_toyevt0);
   sPValueBeta1->Add(hPValueBeta1_toyevt1);
   sPValueBeta1->Add(hPValueBeta1_toyevt2);
+  sPValueBeta1->Add(hPValueBeta1_toyevt3);
+  sPValueBeta1->Add(hPValueBeta1_toyevt4);
+  sPValueBeta1->Add(hPValueBeta1_toyevt5);
+  sPValueBeta1->Add(hPValueBeta1_toyevt6);
+
   sPValueBeta1->Draw("same");
   hPValueBeta1->DrawCopy("same");
   cPValueBeta1->SetLogy();
@@ -225,7 +280,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   rms1 << fixed << setprecision( 3 ) << hPValueBeta1->GetRMS();
   
   
-  TLegend *leg2 = new TLegend(0.66,0.60,0.89,0.94);
+  TLegend *leg2 = new TLegend(0.66,0.40,0.89,0.94);
   leg2->SetBorderSize(1);
   leg2->SetLineWidth(2);
   leg2->SetTextFont(132);
@@ -236,6 +291,11 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   leg2->AddEntry(hPValueBeta1_toyevt0,"# Events = 0","F");
   leg2->AddEntry(hPValueBeta1_toyevt1,"# Events = 1","F");
   leg2->AddEntry(hPValueBeta1_toyevt2,"# Events = 2","F");
+  leg2->AddEntry(hPValueBeta1_toyevt3,"# Events = 3","F");
+  leg2->AddEntry(hPValueBeta1_toyevt4,"# Events = 4","F");
+  leg2->AddEntry(hPValueBeta1_toyevt5,"# Events = 5","F");
+  leg2->AddEntry(hPValueBeta1_toyevt6,"# Events = 6","F");
+
   leg2->Draw();
   
   return;
