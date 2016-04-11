@@ -23,10 +23,10 @@
 
 #include "Conventions.h"
 #include "FitCore/PhysHypothesis.h"
-#include "Utilities/NuOsc3Flavour.h"
-#include "Utilities/NuOscSterile.h"
+#include "Oscillation/NuOsc3Flavour.h"
+#include "Oscillation/NuOscSterile.h"
 #include "Utilities.h"
-#include "Utilities/VALORArray.h"
+#include "VArray/VALORArray.h"
 
 
 #include <TH3D.h> // NEW 2D TEMPLATES

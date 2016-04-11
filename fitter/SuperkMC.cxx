@@ -97,7 +97,7 @@
 #include "Utilities.h"
 #include "Conventions/Opt.h"
 #include "Utilities/Rnd.h"
-#include "Utilities/NuOscSterile.h"
+#include "Oscillation/NuOscSterile.h"
 #include "Utilities/UtlSystem.h"
 
 using std::cout;

@@ -37,7 +37,7 @@
 #include "FitCore/FitModelABC.h"
 #include "FitCore/FitParamList.h"
 #include "FitCore/PhysParamList.h"
-#include "Utilities/VALORArray.h"
+#include "VArray/VALORArray.h"
 #include "FitCore/PhysHypothesis.h"
 
 using std::string;

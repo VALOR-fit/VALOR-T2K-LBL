@@ -18,18 +18,14 @@
 #ifndef _t2xk_macros_utils_h_
 #define _t2xk_macros_utils_h_
 
-#include "Utilities/OscParams.h"
-
-#include "Enumerations.h"
-
 #include "TH2D.h"
 #include "TH1D.h"
 #include "TFile.h"
 #include "TRandom3.h"
-
 #include "TXMLEngine.h"
 
-#include "Utilities/RunOpt.h"
+#include "Oscillation/OscParams.h"
+#include "Enumerations.h"
 
 #include <string>
 
@@ -38,7 +34,7 @@ namespace valor {
   class SuperkObservation;
   class PhysHypothesis;
   class FitMarginalization;
-//class RunOpt;
+  class RunOpt;
 
 namespace util {
   

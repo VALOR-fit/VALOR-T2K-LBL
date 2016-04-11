@@ -53,7 +53,7 @@ class TAxis;
 #include "Utilities/UtlStyle.h"
 #include "Utilities/UtlSystem.h"
 #include "Utilities/UtlXML.h"
-#include "Utilities/VALORArrayD.h"
+#include "VArray/VALORArrayD.h"
 
 
 using std::string;

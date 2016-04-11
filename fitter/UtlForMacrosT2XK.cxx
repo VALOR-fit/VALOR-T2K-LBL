@@ -19,15 +19,16 @@ ChangeLog:
 #include "FitMarginalization.h"
 #include "Build.h"
 
-#include "Utilities/RunOpt.h"
 #include "Utilities/Env.h"
-#include "Utilities/OscParams.h"
 #include "Conventions/Opt.h"
 #include "Conventions/PhysParamId.h"
 #include "Conventions/PhysHypothesisId.h"
 #include "Conventions/Constants.h"
 #include "FitCore/PhysHypothesis.h"
 #include "Utilities/UtlXML.h"
+
+// Deprecated
+#include "CmdLine/RunOpt_TO_DELETE.h"
 
 #include "TSystem.h"
 #include "TCanvas.h"
