@@ -99,7 +99,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   if(draw_predicted_event_distribution){
     treein->GetEntry(0); // Do it for 1st fit in tree
     double nevents = (double)hErecoToy->Integral();
-
+    
     TCanvas *cBeta0Distribution = new TCanvas("cBeta0Distribution","cBeta0Distribution");
     hbeta0->GetYaxis()->SetTitle("# entries");
     hbeta0->GetXaxis()->SetTitle("# events");
@@ -127,8 +127,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg->SetTextSize(0.05);
     leg->AddEntry(expEvents,"# Events data","L");
     leg->AddEntry(hbeta0,"# Events prediction","L");
+    leg->AddEntry(expEvents,Form("P-Value: %d",hPValueBeta0->GetMean()),"l");
     leg->Draw();
-
+    
     
     TCanvas *cBeta1Distribution = new TCanvas("cBeta1Distribution","cBeta1Distribution");
     hbeta1->GetYaxis()->SetTitle("# entries");
@@ -141,14 +142,21 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     hbeta1->GetXaxis()->SetLabelFont(132);
     hbeta1->GetYaxis()->SetLabelSize(0.05);
     hbeta1->GetXaxis()->SetLabelSize(0.05);
-
+    
     hbeta1->SetLineColor(kBlue);
     hbeta1->SetLineWidth(5);
     hbeta1->DrawCopy();
     cBeta1Distribution->SetLogy();
     expEvents->Draw();
-    leg->Draw();
-
+    TLegend *leg2 = new TLegend(0.54,0.71,0.89,0.91);
+    leg2->SetBorderSize(1);
+    leg2->SetLineWidth(3);
+    leg2->SetTextFont(132);
+    leg2->SetTextSize(0.05);
+    leg2->AddEntry(expEvents,"# Events data","L");
+    leg2->AddEntry(hbeta0,"# Events prediction","L");
+    leg2->AddEntry(expEvents,Form("P-Value: %d",hPValueBeta1->GetMean()),"l");
+    leg2->Draw();
   }
   
   
@@ -164,13 +172,13 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   hPValueBeta0_toyevt1->SetLineColor(kBlue);
   hPValueBeta0_toyevt2->SetFillColor(kGreen+2);
   hPValueBeta0_toyevt2->SetLineColor(kGreen+2);
-
+  
   sPValueBeta0->Add(hPValueBeta0_toyevt0);
   sPValueBeta0->Add(hPValueBeta0_toyevt1);
   sPValueBeta0->Add(hPValueBeta0_toyevt2);
   sPValueBeta0->Draw("same");
   hPValueBeta0->DrawCopy("same");
-
+  
   cPValueBeta0->SetLogy();
   
   std::stringstream mean0;
@@ -215,7 +223,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   std::stringstream rms1;
   mean1 << fixed << setprecision( 3 ) << hPValueBeta1->GetMean();
   rms1 << fixed << setprecision( 3 ) << hPValueBeta1->GetRMS();
-
+  
   
   TLegend *leg2 = new TLegend(0.66,0.60,0.89,0.94);
   leg2->SetBorderSize(1);
