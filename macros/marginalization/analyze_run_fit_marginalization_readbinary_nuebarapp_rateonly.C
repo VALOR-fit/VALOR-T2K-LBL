@@ -115,7 +115,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     hbeta0->GetXaxis()->SetLabelSize(0.05);
     hbeta0->DrawCopy();
     cBeta0Distribution->SetLogy();
-    TLine *expEvents = new TLine(nevents,hbeta0->GetMinimum(),nevents,hbeta0->GetMaximum());
+    TLine *expEvents = new TLine(nevents,hbeta0->GetMinimum(),nevents,hbeta0->GetMaximum()*1.2);
     expEvents->SetLineWidth(4);
     expEvents->SetLineColor(kRed);
     expEvents->SetLineStyle(2);
