@@ -1,10 +1,10 @@
 
-// ------------------------------------------------------------------------------------------------
+/*/ ------------------------------------------------------------------------------------------------
 /*
 This macro takes the marg toys produced by buid_marg_toys and calculates the p value based on the data produced.
 Raj Shah
 */
-// ------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------/*/
 
 
 
@@ -64,7 +64,7 @@ void make_pvalue_readbinary_betabar
  
  const int    NtoysMarg            = 10000,  // # toys marginalization
  
- const bool  doMargMH             = true,   // marginalize Mass Hierarchy
+ const bool  doMargMH             = true   // marginalize Mass Hierarchy
 )
 {
 
@@ -328,7 +328,7 @@ void make_pvalue_readbinary_betabar
   // Implement the constructor giving the following input parameters:
   FitMarginalization *fitmarg = new FitMarginalization();
   fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
-  fitmarg->SetTestStatistic("rate+shape");     // Set Test Statistic ("rate-only" or "rate+shape")
+  fitmarg->SetTestStatistic("rate-only");     // Set Test Statistic ("rate-only" or "rate+shape")
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
   
   
