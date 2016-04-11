@@ -127,7 +127,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg->SetTextSize(0.05);
     leg->AddEntry(expEvents,"# Events data","L");
     leg->AddEntry(hbeta0,"# Events prediction","L");
-    leg->AddEntry(expEvents,Form("P-Value: %d",hPValueBeta0->GetMean()),"l");
+    leg->AddEntry(expEvents,Form("P-Value: %lf",hPValueBeta0->GetMean()),"l");
     leg->Draw();
     
     
@@ -155,7 +155,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg2->SetTextSize(0.05);
     leg2->AddEntry(expEvents,"# Events data","L");
     leg2->AddEntry(hbeta0,"# Events prediction","L");
-    leg2->AddEntry(expEvents,Form("P-Value: %d",hPValueBeta1->GetMean()),"l");
+    leg2->AddEntry(expEvents,Form("P-Value: %lf",hPValueBeta1->GetMean()),"l");
     leg2->Draw();
   }
   
