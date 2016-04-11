@@ -24,8 +24,8 @@
 #include "UtlForMacrosT2XK.h"
 
 #include "Utilities/UtlForMacros.h"
-#include "Utilities/OscParams.h"
-#include "Utilities/RunOpt.h"
+#include "Oscillation/OscParams.h"
+#include "CmdLine/RunOpt_TO_DELETE.h"
 #include "Utilities/Env.h"
 #include "Conventions/PhysHypothesisId.h"
 

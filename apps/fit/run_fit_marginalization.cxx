@@ -44,8 +44,8 @@
 #include "FitMarginalization.h"
 
 #include "Utilities/UtlForMacros.h"
-#include "Utilities/OscParams.h"
-#include "Utilities/RunOpt.h"
+#include "Oscillation/OscParams.h"
+#include "CmdLine/RunOpt_TO_DELETE.h"
 #include "Utilities/Env.h"
 #include "Conventions/PhysHypothesisId.h"
 
@@ -60,7 +60,6 @@
 #include "TH2D.h"
 #include "TH2F.h"
 #include "TMath.h"
-
 
 #include <sstream>
 #include <fstream>
