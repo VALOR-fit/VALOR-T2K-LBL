@@ -291,8 +291,8 @@ $use_reactors           = 1                    unless defined $use_reactors;
 $queue                  = 0                    unless defined $queue;
 
 if( !defined $cput ) {
-  #takes approx 0.03 sec per spectra
-  $sec = int ( $step_freepar0 *  $step_freepar1 * $nexpts_marg * 0.04 );
+  #takes approx 0.06 sec per spectrum
+  $sec = int ( $step_freepar0 *  $step_freepar1 * $nexpts_marg * 0.28 );
   $sec_mins = $sec % 3600;
   $seconds = $sec % 60;
   $minutes = int($sec_mins/60);
