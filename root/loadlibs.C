@@ -1,34 +1,13 @@
 {
-  TString libs0 = gSystem->GetDynamicPath();
-  TString libs  = libs0 + ":/usr/lib:/usr/lib64:/usr/local/lib:/opt/lib:/opt/local/lib";
-  gSystem->SetDynamicPath(libs.Data());
+  TString fmwk_loadlibs = ".x $VALOR_FMWK/root/loadlibs.C";
+  gSystem->ExpandPathName(fmwk_loadlibs);
+  gROOT->ProcessLine(fmwk_loadlibs.Data());
   
-  TString features(gROOT->GetConfigFeatures());
-
-  gSystem->Load("libGpad");
-  gSystem->Load("libPhysics");
-  gSystem->Load("libMatrix");
-  gSystem->Load("libHist");
-  gSystem->Load("libGraf");
-  gSystem->Load("libTree");
-  gSystem->Load("libRIO");
-  gSystem->Load("libXMLIO");
-  gSystem->Load("libMinuit");
-  gSystem->Load("libMinuit2");
+  TString baselibs = gSystem->GetDynamicPath();
+  TString t2k_libs = "$T2KOSCANA/lib:";
+  t2k_libs += baselibs;
   
-  if (features.Contains("mathmore")) {gSystem->Load("libMathMore"); }
-  
-    // log4cpp lib
-  gSystem->Load("liblog4cpp");
-  
-  gSystem->Load("libValorMesg.so");
-  gSystem->Load("libValorRegistry.so");
-  gSystem->Load("libValorConv.so");
-  gSystem->Load("libValorFitCore.so");
-  gSystem->Load("libValorParse.so");
-  gSystem->Load("libValorUtil.so");
+  gSystem->SetDynamicPath(t2k_libs.Data());
   
   gSystem->Load("libT2KNuOsc.so");
-////  gSystem->Load("$T2KOSCANA/fitter/libT2KNuOsc.so");
 }
-
