@@ -10,6 +10,7 @@ BUILD_TARGETS =    print-make-info     \
                    make-bin-lib-dir    \
                    copy-scripts-to-bin \
                    build-fitter        \
+                   build-test-apps     \
                    build-fit-apps
 
 # define targets
@@ -47,6 +48,10 @@ build-fit-apps: make-bin-lib-dir FORCE
 	@echo "** Building T2XK fit apps..."
 	$(MAKE) -C ${T2KOSCANA}/apps/fit/
 
+build-test-apps: make-bin-lib-dir FORCE
+	@echo " "
+	@echo "** Building T2XK test apps..."
+	$(MAKE) -C ${T2KOSCANA}/apps/test/
 
 clean: clean-files clean-dir
 
@@ -58,11 +63,9 @@ clean-files: FORCE
 	rm -f ${T2KOSCANA}/bin/valor_t2xk-config; \
 	rm -f ${T2KOSCANA}/bin/pyroot2k; \
 	rm -f ${T2KOSCANA}/bin/root2k; \
-	cd ${T2KOSCANA}/fitter;\
-	make clean;\
-	cd ${T2KOSCANA}/apps/fit/;\
-	make clean;\
-	cd ${T2KOSCANA};
+	make clean -C ${T2KOSCANA}/fitter;\
+	make clean -C ${T2KOSCANA}/apps/fit/;\
+	make clean -C ${T2KOSCANA}/apps/test/;
 	@echo " "
 	@echo " "
 	@echo " "
