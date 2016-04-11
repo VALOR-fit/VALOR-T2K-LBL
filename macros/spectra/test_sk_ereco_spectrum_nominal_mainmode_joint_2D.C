@@ -10,11 +10,11 @@
 
 using namespace std;
 using namespace valor;
-using namespace valor::conv;
+using namespace valor::conv; 
 
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
- const char * tag                  = "prova",
+ const char * tag                  = "spectra_prova",
  const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
@@ -28,11 +28,17 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  // double       input_betabar        = -99,
 
  // Mach3, T2K Run1-4 + reactors best fit (1)
- double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing12       = 0.306,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13       = 0.025,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_mixing23       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_deltacp        = 0., //-99,    /* deltacp, */
  double       input_deltacp        = -1.601, //-99,    /* deltacp, */
- double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ double       input_dm12sq         = 7.5E-5,    /* Dm^2_{12},  */
+ //double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
+ //double       input_dm23sq         = 0.0026847, //-99,    /* |Dm^2_{23}| */
  double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  double       input_betabar        = 1., //0., //-99,
 
@@ -48,29 +54,14 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  bool         disable_banff_tuning = false,                          /* */
  
  //
- // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
+ // NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ FIT BIAS)
  //
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
- const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
- 
- //
- // OLD CONFIGURATION FILES
- //
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_xsecterm_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_q2_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly_Asimov.xml",
+ const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FSIOnly.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml",
  
  bool         store_spectrum      = true,
  bool         print_spectrum      = true,                          /* */
@@ -88,7 +79,10 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  int          iexperiment         = 0, //4404, //4739,                       /* */
  //const char * rootfile = "data_run1to4/SKdata_Run14.root",
  const char * rootfile = "data_run1to6/SKdata_Run16.root", 
- const bool draw_data_spectra = false
+ const bool draw_data_spectra = true,
+ const bool scale_mc = false,
+
+ const bool change_banff_params = true
 
 
 )
@@ -284,6 +278,61 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     skexp.GetBANFF()->RestoreNominalMC();
   }
 
+
+
+ 
+  if(change_banff_params){
+    
+    TVectorD v(conv::kNumOfFHCpRHCParamsInBANFFfit);
+    v = skexp.GetBANFF()->FHCpRHCBestFitValues();  
+    
+    //v[50] = skexp.GetBANFF()->FHCpRHCBestFitValues()[50];  
+    
+    v[30] = 1.204; // flux numubar 1
+    v[31] = 1.210; // flux numubar 2
+    v[32] = 1.180; // flux numubar 3
+    v[33] = 1.128; // flux numubar 4
+    v[34] = 1.123; // flux numubar 5
+    v[35] = 1.118; // flux numubar 6
+    v[36] = 1.121; // flux numubar 7
+    v[37] = 1.121; // flux numubar 8
+    v[38] = 1.122; // flux numubar 9
+    v[39] = 1.112; // flux numubar 10
+    v[40] = 1.093; // flux numubar 11
+    
+    v[41] = 1.109; // flux nue 1
+    v[42] = 1.090; // flux nue 2
+    
+    v[43] = 1.193; // flux nuebar 1
+    v[44] = 1.184; // flux nuebar 2
+    v[45] = 1.167; // flux nuebar 3
+    v[46] = 1.141; // flux nuebar 4
+    v[47] = 1.120; // flux nuebar 5
+    v[48] = 1.123; // flux nuebar 6
+    v[49] = 1.180; // flux nuebar 7
+    
+    v[50] = 1.031; // mec
+    v[51] = 0.854; // ca5 
+    v[52] = 1.143; // bgres
+    v[53] = 0.948; // maqe
+    v[54] = 0.762; // mares
+    // scca
+    // sccv
+    v[57] = 0.997; // pf
+    v[58] = 0.023; // ccother 
+    v[59] = 1.002; // eb
+    v[60] = 1.076; // cccoh
+    v[61] = 0.980; // nccoh 
+    v[62] = 1.413; // ncother; 
+    v[66] = 1.;    // mecbar 
+    
+    skexp.GetBANFF()->TweakSample(true,&v);	    
+    skexp.GetBANFF()->PrintFHCpRHCSystematicVariations();
+  }
+
+
+
+
   // Generate prediction
   cout << "- Generating predictions..." << endl;
   skexp.GetSuperkMC()->SetXMEC(1);
@@ -337,6 +386,11 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     scale_q2 = 
       (int) ( 2. * ( h_data_q2->GetMaximum() / hErecoVsQ2Tot->ProjectionX()->GetMaximum() + 0.5 ) );
     
+    if(!scale_mc){
+      scale_ereco = 1.;
+      scale_q2 = 1.;
+    }
+
     hErecoTot->Scale(scale_ereco);
     hQ2Tot->Scale(scale_q2);
     
