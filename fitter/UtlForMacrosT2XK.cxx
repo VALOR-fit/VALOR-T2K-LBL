@@ -501,10 +501,6 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   cout << "Build deltaChisqMarg distribution" << endl;
   fitmarg->BuildDeltaChisqMarg(); 
 
-  // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-  if(runopt->StoreLikeWeights()){
-    fitmarg->WriteLikeToys2Binary(runopt->FileTag().c_str());
-  }
 }
 //____________________________________________________________________________
 conv::PhysParamId_t valor::util::GetFreePar(string freeparname)

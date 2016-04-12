@@ -361,7 +361,7 @@ int main(int argc, char ** argv)
      SuperkObservation * skobs_fakedata = new SuperkObservation;
      PhysHypothesis ph(runopt->Hypothesis());
 
-     //util::OscParams::Instance()->Print(cout);
+     util::OscParams::Instance()->Print(cout);
      
      // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
@@ -561,6 +561,11 @@ int main(int argc, char ** argv)
        
      }
      
+     // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+     if(runopt->StoreLikeWeights()){
+       fitmarg->WriteLikeToys2Binary(runopt->FileTag().c_str());
+     }
+
      //
      // Get fit errors
      //
