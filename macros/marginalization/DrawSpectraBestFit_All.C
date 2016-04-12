@@ -19,18 +19,21 @@ using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
+//#define USE_UNCOMPRESSED_VARRAY_FORMAT // Disable compressed files in $VALOR_FMWK/Utils/src/Utilities/VALORArray.cxx
+
+
 void DrawSpectraBestFit_All
 (
- const char *tag = "fitmarg_joint_dcp_react_nh",
+ const char *tag = "fitmarg_prova",
 
  const bool draw_histobin = false,
 
- const char * xmlfile      = "data_run1to4/data_newstruct.xml",
+ const char * xmlfile      = "",
  const char * rootfile     = "data_run1to6/SKdata_Run16.root",
  const bool using_xml_file = false,
  int   iexperiment         = 0, // data (or fake data) event to show                    
  
- const char * config_file  = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
+ const char * config_file  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
 
  const char * sk_sample    = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
@@ -39,29 +42,50 @@ void DrawSpectraBestFit_All
  
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- const char * likeinfilename = "bestfit/liketoy_fit_fitmarg_joint_dcp_react_nh_nexp_1_-1.601_-999.000-job0_toy10000_x_oscpar201_oscpar1_MHNH.bin",
-
- const double InputPar0 = -1.8221237,  // Input value of parameter 0 
- const double InputPar1 = 0., // Input value of parameter 1
-
- const char * fit_param_list        = "nuosc3f+nuisance", // dcp
-
- const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys",
+ const char * likeinfilename = "liketoy_fit_fit_marg_PROVA_nexp_1_0.450_-1.601-job0_toy1_x_oscpar81_oscpar51_MHmarg.bin",
+ //const char * likeinfilename = "liketoy_fit_fitmarg_joint_betaBar_prova_nexp_1_1.000_-999.000-job0_toy10000_x_oscpar2_oscpar1_MHmarg.bin",
  
- const int    nfiles               = 201, //201, // 1         // # of files to read
+ const double InputPar0 = 0.405,  // Input value of parameter 0 
+ const double InputPar1 = -1.2566371, // Input value of parameter 1
 
- const int    NtoysMarg            = 10000,   // # toys marginalization 
+ //const char * fit_param_list = "nuosc3f_normbar+nuisance", // betabar
+ const char * fit_param_list = "nuosc3f+nuisance", // dcp
+
+ //const char * infilename = "../TECH_NOTE_14_3_16/BETABAR/TOYS/joint_betabar_react_MargMH_10kToys/joint_betabar_niwg2015c_react_MargMH_10kToys",
+ const char * infilename = "prova",
  
- const char * freeparname0        = "deltacp",  // free parameter
- const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
- const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
- const int    NptScan0            = 201, //201, //201, // 801, 2          // # pts of free parameter to scan
- const char * freeparname1        = "",  // free parameter
- const double freeparmin1         = 0., // minimum value of free parameter
- const double freeparmax1         = 0., // maxinum value of free parameter
- const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
+ const int    nfiles               = 1, //201, // 1         // # of files to read
 
- const bool  doMargMH             = false,    // marginalize Mass Hierarchy
+ const int    NtoysMarg            = 1, //10000,   // # toys marginalization 
+ 
+ // const char * freeparname0        = "deltacp",  // free parameter
+ // const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+ // const double freeparmax0         = +3.14159265358979312e+00,         // maxinum value of free parameter
+ // const int    NptScan0            = 201,                              // # pts of free parameter to scan
+ // const char * freeparname1        = "",  // free parameter
+ // const double freeparmin1         = 0.,  // minimum value of free parameter
+ // const double freeparmax1         = 0.,  // maxinum value of free parameter
+ // const int    NptScan1            = 1,   // # pts of free parameter to scan
+
+ // const char * freeparname0        = "betaBar",  // free parameter
+ // const double freeparmin0         = 0.,         // minimum value of free parameter
+ // const double freeparmax0         = 1.,         // maxinum value of free parameter
+ // const int    NptScan0            = 2,          // # pts of free parameter to scan
+ // const char * freeparname1        = "",         // free parameter
+ // const double freeparmin1         = 0.,         // minimum value of free parameter
+ // const double freeparmax1         = 0.,         // maxinum value of free parameter
+ // const int    NptScan1            = 1,          // # pts of free parameter to scan
+
+ const char * freeparname0        = "mixing23",  // free parameter
+ const double freeparmin0         = 0.3,         // minimum value of free parameter
+ const double freeparmax0         = 0.7,         // maxinum value of free parameter
+ const int    NptScan0            = 81,          // # pts of free parameter to scan
+ const char * freeparname1        = "deltacp",         // free parameter
+ const double freeparmin1         = -3.14159265358979312e+00,         // minimum value of free parameter
+ const double freeparmax1         = +3.14159265358979312e+00 ,         // maxinum value of free parameter
+ const int    NptScan1            = 51,          // # pts of free parameter to scan
+
+ const bool  doMargMH             = true,    // marginalize Mass Hierarchy
  const char * hierarchy_marg      = "normal",     /* normal or inverted */
 
  //const char * fileosctoys         = "fit_fitmarg_joint_dcp_react_nh_nexp_1_-1.601_-999.000-job0-_0_0.root"
@@ -340,10 +364,12 @@ void DrawSpectraBestFit_All
 	//cout << h_marg_toy->GetBinCenter(i) << endl;
       }
       
-      if(fitmarg->IsFit2D())
-	LikeToy[itoy] = (double) fitmarg->GetLikeToyRead(InputPar0,truepar1,itoy,true); 
-      else
-	LikeToy[itoy] = (double) fitmarg->GetLikeToyRead(InputPar0,InputPar1,itoy,true); 
+      //if(fitmarg->IsFit2D())
+      //LikeToy[itoy] = (double) fitmarg->GetLikeToyRead(InputPar0,truepar1,itoy,true); 
+      //else
+      //LikeToy[itoy] = (double) fitmarg->GetLikeToyRead(InputPar0,InputPar1,itoy,true); 
+
+      LikeToy[itoy] = (double) fitmarg->GetLikeToyRead(InputPar0,InputPar1,itoy,true); 
       
       //cout << "toy " << itoy << " - like = " <<  LikeToy[itoy] << endl;
       
