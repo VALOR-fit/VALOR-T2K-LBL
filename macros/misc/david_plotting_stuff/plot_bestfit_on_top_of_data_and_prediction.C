@@ -17,26 +17,19 @@ using namespace valor::conv;
 
 void plot_bestfit_on_top_of_data_and_prediction
 (
- const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+ const char * sk_sample            = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
  
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_RHC1Rmu_RHC1Rmu.root",
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_notosc_RHC1Rmu.root",
-
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_1Rmu_1Rmu.root",
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_notosc_1Rmu.root",
-
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_RHC1Re_RHC1Re.root",
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_notosc_RHC1Re.root",
-
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_1Re_1Re.root",
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_notosc_1Re.root",
-
+ const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Re_2d.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_1Re_2d.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_1Rmu.root",
+ 
  const char * datafile = "data_run1to6/SKdata_Run16.root",
- //const char * datafile = "../outputs/test/SKdata_Run16.root",
 
- const char * bestfitfile = "bestfit/spectrum_bestfit_fitmarg_joint_dcp_react_nh.root",
-
- const bool draw_preliminary = true
+ //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/BETABAR/spectrum_bestfit_fitmarg_betabar1.root",  // Use betaBar toys, everything marginalized
+ const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root",  // Use betaBar toys, everything marginalized
+ 
+ const bool draw_preliminary = false
  
  )
 { 
@@ -72,8 +65,7 @@ void plot_bestfit_on_top_of_data_and_prediction
   TFile *fexp = new TFile(expfile,"READ");
   TH1D *hErecoExp = (TH1D*) fexp->Get("hErecoTot");
   TH1D *hQ2Exp = (TH1D*) fexp->Get("hQ2Tot");
-  
-  
+
   // Get Data
     
   TString datafile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), datafile));
@@ -84,9 +76,9 @@ void plot_bestfit_on_top_of_data_and_prediction
   SuperkObservation * skobs_fakedata = new SuperkObservation;
   skobs_fakedata->Read(datafile2.Data(),0,false);
 
-  TH2F *hErecoVsQ2Data = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
-  TH1F *hQ2Data = (TH1F*)hErecoVsQ2Data->ProjectionX()->Clone("hQ2Data");
-  TH1F *hErecoData = (TH1F*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
+  TH2D *hErecoVsQ2Data = (TH2D*)skobs_fakedata->TwoDSpectrum(s);
+  TH1D *hQ2Data = (TH1D*)hErecoVsQ2Data->ProjectionX()->Clone("hQ2Data");
+  TH1D *hErecoData = (TH1D*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
   
   
   // Print # of events

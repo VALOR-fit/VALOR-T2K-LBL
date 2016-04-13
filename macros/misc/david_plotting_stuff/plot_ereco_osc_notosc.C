@@ -138,10 +138,10 @@ void plot_ereco_on_top_of_prediction
     return;
   }
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
-  TH2F *hErecoVsQ2Data = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+  TH2D *hErecoVsQ2Data = (TH2D*)skobs_fakedata->TwoDSpectrum(s);
 
-  TH1F *hQ2Data = (TH1F*)hErecoVsQ2Data->ProjectionX()->Clone("hQ2Data");
-  TH1F *hErecoData = (TH1F*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
+  TH1D *hQ2Data = (TH1D*)hErecoVsQ2Data->ProjectionX()->Clone("hQ2Data");
+  TH1D *hErecoData = (TH1D*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
   
   
   // Print # of events

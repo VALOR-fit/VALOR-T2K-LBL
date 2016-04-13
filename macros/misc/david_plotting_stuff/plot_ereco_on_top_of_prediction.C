@@ -17,46 +17,18 @@ using namespace valor::conv;
 
 void plot_ereco_on_top_of_prediction
 (
- const char * sk_sample            = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+ const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
  
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_RHC1Re_RHC1Re.root",
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_1Re_1Re.root",
- const char * expfile = "spectra/template_ErecoVsTheta_2D_RHC1Rmu_RHC1Rmu.root",
- //const char * expfile = "spectra/template_ErecoVsTheta_2D_1Rmu_1Rmu.root",
+ const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_1Re_2d.root",
 
  const char * rootfile = "data_run1to6/SKdata_Run16.root",
  //const char * rootfile = "../outputs/test/SKdata_Run16.root",
 
- const bool drawdata = true,
+ const bool drawdata = false,
 
- float myscale = 7.,
+ float myscale = 1.,
  )
 {  
-
-  // // const Int_t NRGBs = 5;                                                                           
-  // // const Int_t NCont = 104;                                                        
-  // // Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };     
-  // // Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };                       
-  // // Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };                       
-  // // Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };                       
-  // // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);        
-  // // gStyle->SetNumberContours(NCont);                                               
-
-  // const Int_t NRGBs = 5;
-  // const Int_t NCont = 255;
-  // Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };                          
-  // Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };                          
-  // Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };                           
-  // Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };                           
-  // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);           
-  // // Double_t red[NRGBs] = { 1.00, 0.00, 0.00};
-  // // Double_t green[NRGBs] = { 0.00, 1.00, 0.00};
-  // // Double_t blue[NRGBs] = { 1.00, 0.00, 1.00};
-  // // Double_t stops[NRGBs] = { -1.00, 0.00, 1.00 };
-  // // TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-  // gStyle->SetNumberContours(NCont);
-
-
 
 
   // Get Expectation
@@ -138,10 +110,10 @@ void plot_ereco_on_top_of_prediction
     return;
   }
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
-  TH2F *hErecoVsQ2Data = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
+  TH2D *hErecoVsQ2Data = (TH2D*)skobs_fakedata->TwoDSpectrum(s);
 
-  TH1F *hQ2Data = (TH1F*)hErecoVsQ2Data->ProjectionX()->Clone("hQ2Data");
-  TH1F *hErecoData = (TH1F*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
+  TH1D *hQ2Data = (TH1D*)hErecoVsQ2Data->ProjectionX()->Clone("hQ2Data");
+  TH1D *hErecoData = (TH1D*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
   
   
   // Print # of events
