@@ -42,6 +42,8 @@
 
 #include <TMath.h>
 
+#include "Utilities/UtlSystem.h"
+
 #include "NuXSec.h"
 #include "BANFF.h"
 #include "Utilities.h"
@@ -65,20 +67,16 @@ NuXSec::NuXSec()
     this->Init();
 
     //check that XSecSystConv.h is setup correctly
-    CheckListOfXSecSyst(kNumOfXSecSyst, kListOfXSecSyst,
-        		"kListOfXSecSyst", false);
-    CheckListOfXSecSyst(kNumOfRHCXSecSyst, kListOfRHCXSecSyst,
-        		"kListOfRHCXSecSyst", false);
+    CheckListOfXSecSyst(kNumOfXSecSyst, kListOfXSecSyst, "kListOfXSecSyst", false);
+    CheckListOfXSecSyst(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, "kListOfRHCXSecSyst", false);
     
-    CheckIsSplineParam(kNumOfXSecSyst, kListOfXSecSyst,
-        	       kXSecSystHasWghtSplines, "kXSecSystHasWghtSplines");
-    CheckIsSplineParam(kNumOfXSecSyst, kListOfXSecSyst,
-        	       kRHCXSecSystHasWghtSplines, "kRHCXSecSystHasWghtSplines");
+    CheckIsSplineParam(kNumOfXSecSyst, kListOfXSecSyst, kXSecSystHasWghtSplines, "kXSecSystHasWghtSplines");
+    CheckIsSplineParam(kNumOfXSecSyst, kListOfXSecSyst, kRHCXSecSystHasWghtSplines, "kRHCXSecSystHasWghtSplines");
     
     CheckIsBANFFParam(kNumOfXSecSyst, kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit,
-        	      kListOfXSecSyst, kXSecSystIncludedInBANFF, "kXSecSystIncludedInBANFF");
+      kListOfXSecSyst, kXSecSystIncludedInBANFF, "kXSecSystIncludedInBANFF");
     CheckIsBANFFParam(kNumOfRHCXSecSyst, kNumOfParamsInBANFFfit - kNumOfFluxParamsInBANFFfit,
-        	      kListOfRHCXSecSyst, kRHCXSecSystIncludedInBANFF, "kRHCXSecSystIncludedInBANFF");
+      kListOfRHCXSecSyst, kRHCXSecSystIncludedInBANFF, "kRHCXSecSystIncludedInBANFF");
 
     CheckERange(kNumOfXSecSyst, kListOfXSecSyst, (const double *)kXSecSystErecoCut, "kXSecSystErecoCut");
     CheckERange(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const double *)kRHCXSecSystErecoCut, "kRHCXSecSystErecoCut");
@@ -107,16 +105,18 @@ void NuXSec::CheckListOfXSecSyst(int nparams, const conv::PhysParamId_t * params
     prev = params[ix-1];
     curr = params[ix];
 #ifdef __show_xsecsystconv_check_mesg_debug__
-    if(ix == 1)
+    if(ix == 1) {
       cout << "NuXSec/Init >> " << vname << "[" << ix-1 << "] = " << prev << " " << util::AsString(prev) << endl;
+    }
     cout << "NuXSec/Init >> " << vname << "[" << ix   << "] = " << curr << " " << util::AsString(curr) << endl;
 #endif
     if((int)curr != ((int)prev + 1)) {
       cerr << "NuXSec/Init >> " << vname << "[" << ix   << "] = " << curr << " " << util::AsString(curr) << endl
            << " comes before " << vname << "[" << ix-1 << "] = " << prev << " " << util::AsString(prev)
            << endl;
-      if(is_fatal)
-        exit(-1);
+      if(is_fatal) {
+        util::Die(-1);
+      }
     }
   }//ix
 }
@@ -137,7 +137,7 @@ void NuXSec::CheckIsSplineParam(int nparams, const conv::PhysParamId_t * params,
     if(isspline != expected_spline) {
       cerr << "NuXSec/Init >> " << vname << (isspline ? " is" : " isn't") << " a spline. It "
            << (expected_spline ? "should" : "shouldn't") << " be " << util::AsString(curr) << endl;
-      //exit(-1);
+      //~ util::Die(-1);
     }
   }//ix
 }
@@ -146,12 +146,11 @@ void NuXSec::CheckIsBANFFParam(int nparams, int nbanffxsecparams, const conv::Ph
 {
   int ix, nbanff = 0;
   bool isbanff;
-  PhysParamId_t curr;
   //Check the total number of BANFF XSec parameters are what's expected
   for(ix = 0; ix < nparams; ix++) {
-    curr    = params[ix];
     isbanff = banff[ix];
 #ifdef __show_xsecsystconv_check_mesg_debug__
+    PhysParamId_t curr    = params[ix];
     cout << "NuXSec/Init >> " << vname << "[" << ix << "] = " << isbanff << " " << util::AsString(curr) << endl;
 #endif
     if(isbanff)
@@ -160,7 +159,7 @@ void NuXSec::CheckIsBANFFParam(int nparams, int nbanffxsecparams, const conv::Ph
   if(nbanff != nbanffxsecparams) {
     cerr << "NuXSec/Init >> " << vname << " has " << nbanff
          << " parameters. Expected " << nbanffxsecparams << endl;
-    exit(-1);
+    util::Die(-1);
   }
 }
 //________________________________________________________________________________________
@@ -187,7 +186,7 @@ void NuXSec::CheckERange(int nparams, const PhysParamId_t * params, const double
              << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
              << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
              << "Should be previous high and this low should be identical (or 100 and 0)" << endl;
-        exit(-1);
+        util::Die(-1);
       }
     }
     if(TMath::Abs(this_lo + 1) < 1E-6 || TMath::Abs(this_hi + 1) < 1E-6) {
@@ -241,14 +240,17 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
         if(first_modes_set != modes_set) {
           cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
                << "\tDifference between samples " <<util::AsString(s)<<" and good sample "<<util::AsString(first_sample)<< endl;
-          exit(-1);
         }
       }
     }//is
     if(!first_modes_set.size()) {
       cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
            << "\tHas no effect on any mode!" << endl;
-      //exit(-1);
+#if defined(DISABLE_SCC)
+      if (!util::IsSCC(curr)) {util::Die(-1);}
+#else
+      util::Die(-1);
+#endif
     }
     else {
       //check that they apply to all e.g. CCQE
@@ -541,7 +543,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
                                 << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
                                 cerr << AsString(s) << endl;
-                                exit(1);
+                                util::Die(1);
 #else
                                 spl = flatspline;
 #ifdef WARN_ON_FLAT_SPLINE
@@ -560,7 +562,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                                 << ", Etrue: " << Etrue_min << "-" << Etrue_max
                                 //<< ". Spline thinks there are " << spl->GetTitle()
                                 << endl;
-                                // exit(1);
+                                // util::Die(1);
                             }
                         }
                         
@@ -578,7 +580,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                             << "; Ereco: " << Ereco - kOneMeV << " to " << util::XsecErecoBinEdges(s,ir+1)
                             << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
                             << endl;
-                            //exit(1);
+                            //util::Die(1);
                         }
 #endif
 #endif
@@ -588,7 +590,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                             cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: "
                             << splname
                             << endl;
-                            exit(1);
+                            util::Die(1);
                         }
                         
 #ifdef __show_init_mesg_debug__
@@ -819,7 +821,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
                                     << " Ereco: " << Ereco << ", Etrue: " << Etrue << ", Q2: " << Q2 << endl;
                                     cerr << AsString(s) << endl;
-                                    exit(1);
+                                    util::Die(1);
 #else
                                     spl = flatspline;
 #ifdef WARN_ON_FLAT_SPLINE
@@ -839,7 +841,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                                     << ", Q2:    " << Q2_min    << "-" << Q2_max
                                     //<< ". Spline thinks there are " << spl->GetTitle()
                                     << endl;
-                                    // exit(1);
+                                    // util::Die(1);
                                 }
                             }
                             
@@ -858,7 +860,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                                 << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
                                 << ", Q2   : " << Q2    - kOneMeV << " to " << util::XsecQ2BinEdges(s,iv+1)
                                 << endl;
-                                //exit(1);
+                                //util::Die(1);
                             }
 #endif
 #endif
@@ -868,7 +870,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                                 cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: "
                                 << splname
                                 << endl;
-                                exit(1);
+                                util::Die(1);
                             }
                             
 #ifdef __show_init_mesg_debug__
@@ -1000,19 +1002,19 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     
     if (not (fUntunedCentralValues && fRHCUntunedCentralValues) ) {
         cerr<<"Failed to read <untuned_parameter_central_values>"<<endl;
-        exit(-1);
+        util::Die(-1);
     }
     if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
         cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
         << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
         << endl;
-        exit(-1);
+        util::Die(-1);
     }
     if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
         cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
         << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
         << endl;
-        exit(-1);
+        util::Die(-1);
     }
 #endif
     
@@ -1432,7 +1434,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         else {
             cout <<"Not using spline"<<std::endl;
         }
-        exit(1);
+        util::Die(1);
     }
     return wght;
 }
@@ -1813,7 +1815,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         else {
             cout <<"Not using spline"<<std::endl;
         }
-        exit(1);
+        util::Die(1);
     }
     return wght;
 }
@@ -2256,7 +2258,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         else {
             cout <<"Not using spline"<<std::endl;
         }
-        exit(1);
+        util::Die(1);
     }
     
     return wght;
@@ -2712,7 +2714,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         else {
             cout <<"Not using spline"<<std::endl;
         }
-        exit(1);
+        util::Die(1);
     }
     
     return wght;
@@ -2989,7 +2991,7 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
         << ", Etrue = "     << Etrue << " GeV!"
         << " idx = " << idx
         << endl;
-        exit(1);
+        util::Die(1); return 0;
     }
     
 #ifdef __show_find_wght_spline_mesg_debug__
@@ -3079,7 +3081,7 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
         << ", Q2    = "     << Q2    << " GeV!"
         << " idx = " << idx
         << endl;
-        exit(1);
+        util::Die(1); return 0;
     }
     
 #ifdef __show_find_wght_spline_mesg_debug__
@@ -3871,7 +3873,7 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
 #endif
     else {
         cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;
-        exit(1);
+        util::Die(1);
     }
 }
 //________________________________________________________________________________________
