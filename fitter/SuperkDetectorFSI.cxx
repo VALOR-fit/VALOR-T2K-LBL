@@ -138,7 +138,7 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   CheckSKMode(numOfActiveSKDetFSIParams-1, activeSKDetFSIParams,
               (const bool *)kSKDetFSIParamToSKMode, "activeSKDetFSIParams", false);
   
-  this->Init(numOfActiveSKDetFSIParams, activeSKDetFSIParams, "skdetfsi");
+  this->Init(numOfActiveSKDetFSIParams, activeSKDetFSIParams, "syst/skdetfsi");
   this->SetName("SuperkDetectorFSI");
   
   (*fDefaultValues)[this->Param2Idx(conv::kNuisSuperkEnergyScale)] = 0;

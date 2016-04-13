@@ -37,11 +37,11 @@ CorrelatedSystematics()
 {
   // Should rewrite the Conv file so this #ifdef isn't necessary and we only use the FHC branch.
 #if defined(__FHC_RUNNING__)&&defined(__RHC_RUNNING__)
-  this->Init(kNumOfFHCpRHCParamsInBANFFfit, kListOfFHCpRHCBANFFParams, "banff");
+  this->Init(kNumOfFHCpRHCParamsInBANFFfit, kListOfFHCpRHCBANFFParams, "syst/banff");
 #elif defined(__FHC_RUNNING__)
-  this->Init(kNumOfParamsInBANFFfit,kListOfBANFFParams,"banff");
+  this->Init(kNumOfParamsInBANFFfit,kListOfBANFFParams,"syst/banff");
 #elif defined(__RHC_RUNNING__)
-  this->Init(kNumOfRHCParamsInBANFFfit,kListOfRHCBANFFParams, "banff");
+  this->Init(kNumOfRHCParamsInBANFFfit,kListOfRHCBANFFParams, "syst/banff");
 #else
   LOG("BANFF",pFATAL)<<"BANFF can't work out what samples are being used.";
   util::Die(-1);return;
