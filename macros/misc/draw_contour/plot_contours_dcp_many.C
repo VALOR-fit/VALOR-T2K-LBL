@@ -73,19 +73,21 @@ void plot_contours_dcp_many
     
     
 
-    // // deltaCP - Run 1-6 Data w/ reactors
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    // }
-    // ,
-  
-    // deltaCP - Run 1-6 Data T2K only
+    // deltaCP - Run 1-6 Data w/ reactors
     {
-      "../TECH_NOTE_14_3_16/DATA/files/toyfits_dcp_datanh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
-      "../TECH_NOTE_14_3_16/DATA/files/toyfits_dcp_dataih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
+      "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+      "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+      //"fit_fit_marg_PROVA_dcp_nexp_1_-1.601_-999.000-job0-_0_0.root",
+      //"fit_fit_marg_PROVA_dcp_nexp_1_-1.601_-999.000-job0-_0_0.root"
     }
     ,
+  
+    // // deltaCP - Run 1-6 Data T2K only
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/files/toyfits_dcp_datanh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/toyfits_dcp_dataih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
+    // }
+    // ,
   
     // // deltaCP - Run 1-6 Data w/ reactors - FHC only
     // {
