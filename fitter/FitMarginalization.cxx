@@ -4869,7 +4869,7 @@ void FitMarginalization::MergeInputFiles(){
 
 	    // NEW 2D TEMPLATES (VARRAY)
 	    //double bincont = fToyMargVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ib);
-	    double bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ib);
+	    float bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ib);
 	    //
 	    
 	    cout << bincont << " "; 
@@ -4881,7 +4881,7 @@ void FitMarginalization::MergeInputFiles(){
 
 	      // NEW 2D TEMPLATES (VARRAY)
 	      //double bincont = fToyMargVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ibEreco,ibQ2);
-	      double bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ibEreco,ibQ2);
+	      float bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ibEreco,ibQ2);
 	      //
 
 	      cout << bincont << " "; 
