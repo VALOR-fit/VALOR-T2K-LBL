@@ -17,102 +17,125 @@ void plot_contours_dcp_many
  const bool doGlobalMin  = true,
  const bool same_mh_color = false, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
- const bool draw_preliminary = true,
+ const bool draw_preliminary = false,
 
- const bool draw_1sigmaCL = false,
- const bool draw_90CL     = false,
- const bool draw_2sigmaCL = false,
+ const bool draw_1sigmaCL = true,
+ const bool draw_90CL     = true,
+ const bool draw_2sigmaCL = true,
  const bool draw_3sigmaCL = true,
  const bool draw_4sigmaCL = false,
- const bool draw_5sigmaCL = true,
+ const bool draw_5sigmaCL = false,
 
- const bool draw_reactors = false
-)
+ const bool draw_reactors = false,
+
+ const double critval = 1.,
+ 
+ //double mybestfit = 3.14, 
+ double mybestfit = kBadResult
+  )
 {
 
   // NIWG2015c Summer 2016 statistics
   const int Nfiles = 1;
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
+  
+    // // deltaCP - Run 1-6 Asimov A w/ reactors
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_nh_A_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   //"../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_ih_A_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    //   "fit_PROVA_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // },
+  
+    // // deltaCP - Run 1-6 Asimov B w/ reactors
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_nh_B_nexp_1_0.000_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_ih_B_nexp_1_0.000_-999.000-job0-_0_0.root"  // IH
+    // }
+    // ,
 
-    // Run16 Data
+    // // deltaCP - Run 1-6 Asimov A w/o reactors
     // {
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_react_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_react_ih_nexp_1_-1.601_-999.000-job0-_0_0.root" // IH
-    // },
-    // {
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth13_data_t2konly_nh_nexp_1_0.022_-999.000-job0-_0_0.root", 
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth13_data_t2konly_ih_nexp_1_0.022_-999.000-job0-_0_0.root" 
-    // },
-    // {
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth23_data_react_nh_nexp_1_0.528_-999.000-job0-_0_0.root", 
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_sinsqth23_data_react_ih_nexp_1_0.528_-999.000-job0-_0_0.root" 
-    // },
-    // {
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dmsq_data_react_nh_nexp_1_0.003_-999.000-job0-_0_0.root",
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dmsq_data_react_ih_nexp_1_0.003_-999.000-job0-_0_0.root"
-    // },
-    // {
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_t2konly_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_t2konly_ih_nexp_1_-1.601_-999.000-job0-_0_0.root" // IH
-    // },
-   
-    // // Run16 Data (FHC-only)
-    // {
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_data_react_nh_fhconly_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../marginalization/joint/NIWG2015c/Data/fit_fitmarg_joint_dcp_data_react_ih_fhconly_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_anh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
+    //    "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_aih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
     // },
     
-    // // Current
+    // // deltaCP - Run 1-6 Asimov B w/o reactors
     // {
-    //   "../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
-    //   "../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_ih_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    //   //"../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_t2konly_nh_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
-    //   //"../marginalization/joint/NIWG2015c/CurrentStat/fit_fitmarg_joint_dcp_t2konly_ih_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_cnh-sinsqtheta[12_0.304,13_0.022,23_0.450],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_cih-sinsqtheta[12_0.304,13_0.022,23_0.450],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
     // }
     // ,
-    // // Summer 2016
+
+
+
+
+    
+    
+
+    // // deltaCP - Run 1-6 Data w/ reactors
     // {
-    //   "../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_react_nh_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   "../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_react_ih_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   //"../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_t2konly_nh_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   //"../marginalization/joint/NIWG2015c/Summer2016/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
     // }
     // ,
-    // // Summer 2016 100/0
+  
+    // deltaCP - Run 1-6 Data T2K only
+    {
+      "../TECH_NOTE_14_3_16/DATA/files/toyfits_dcp_datanh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
+      "../TECH_NOTE_14_3_16/DATA/files/toyfits_dcp_dataih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
+    }
+    ,
+  
+    // // deltaCP - Run 1-6 Data w/ reactors - FHC only
     // {
-    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",            
-    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_nh_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_100_0_nexp_1_-1.601_-999.000-job0-_0_0.root",            
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_FHC_nexp_1_-1.601_-999.000-job0-_0_0.root", // FHC - NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_FHC_nexp_1_-1.601_-999.000-job0-_0_0.root", // FHC - IH 
     // }
-    // // Summer 2016 75/25
+    // ,
+    // // deltaCP - Run 1-6 Data w/ reactors - RHC only
     // {
-    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_nh_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_75_25_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // }
-    // // Summer 2016 50/50
-    // {
-    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_nh_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-    //   "../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_react_ih_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_nh_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root",      
-    //   //"../marginalization/joint/NIWG2015c/Summer2016_FHCRHCother/fit_fitmarg_joint_dcp_t2konly_ih_Summer2016_50_50_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_RHC_nexp_1_-1.601_-999.000-job0-_0_0.root", // RHC - NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_RHC_nexp_1_-1.601_-999.000-job0-_0_0.root"  // RHC - IH
     // }
 
-    // High Statistics (125x10^20 POT for both Nu and NuBar) 
-    {
-      "../marginalization/joint/NIWG2015c/HighStat/fit_fitmarg_joint_dcp_react_nh_125nu125nubarPOT_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-      "../marginalization/joint/NIWG2015c/HighStat/fit_fitmarg_joint_dcp_react_ih_125nu125nubarPOT_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    }
+    // // sinsqth13 - Run 1-6 Data T2K only
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth13_t2konly_nh_Data_Run16_nexp_1_0.022_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth13_t2konly_ih_Data_Run16_nexp_1_0.022_-999.000-job0-_0_0.root", // IH 
+    // }
+    // ,
+    
+    // // sinsqth23 - Run 1-6 Data w/ reactors
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth23_react_nh_Data_Run16_nexp_1_0.528_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth23_react_ih_Data_Run16_nexp_1_0.528_-999.000-job0-_0_0.root", // IH 
+    // }
+    // ,
+    
+    // // dmsq - Run 1-6 Data w/ reactors
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dmsq_react_nh_Data_Run16_nexp_1_0.003_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dmsq_react_ih_Data_Run16_nexp_1_0.003_-999.000-job0-_0_0.root", // IH 
+    // }
+    // ,
+    
+    // // deltaCP - Run 1-6 Data w/ reactors - rate-only
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_rateonly_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_rateonly_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    // }
+    // ,
+
   };
   
   char *latexname[Nfiles][Nmh] = {
     {"Normal Hierarchy","Inverted Hierarchy"},
+    //{"Neutrino - NH","Neutrino - IH"},
+    //{"AntiNeutrino - NH","AntiNeutrino - IH"},
     // {"NH","IH"},
     // {"NH all","IH all"},
-    // {"NH FHC-only","IH FHC-only"}
+    //{"NH FHC-only","IH FHC-only"}
     // {"Current - NH", "Current - IH"}
     // {"Summer Exp - NH", "Summer Exp - IH"}
     // {"Summer 100/0 - NH", "Summer 100/0 - IH"}
@@ -125,9 +148,9 @@ void plot_contours_dcp_many
   TFile *filein[Nfiles][Nmh];
   TTree *treein[Nfiles][Nmh];
 
-  TH1F *hchisq1D[Nfiles][Nmh];
-  TH1F *hdeltachisq1D[Nfiles][Nmh];
-  TH1F *hdeltachisq1D_GlobMin[Nfiles][Nmh];
+  TH1D *hchisq1D[Nfiles][Nmh];
+  TH1D *hdeltachisq1D[Nfiles][Nmh];
+  TH1D *hdeltachisq1D_GlobMin[Nfiles][Nmh];
   
   TCanvas *cChisq; //[Nfiles][Nmh];
 
@@ -149,11 +172,11 @@ void plot_contours_dcp_many
       treein[ifile][imh] = (TTree*)filein[ifile][imh]->Get("fitnt");
       
       sprintf(name,"hchisq1D_file%d_mh%d",ifile,imh);
-      hchisq1D[ifile][imh] = new TH1F(name,name,1,0,1);
+      hchisq1D[ifile][imh] = new TH1D(name,name,1,0,1);
       treein[ifile][imh]->SetBranchAddress("hchisq1D", &hchisq1D[ifile][imh] );
       
       sprintf(name,"hdeltachisq1D_file%d_mh%d",ifile,imh);
-      hdeltachisq1D[ifile][imh] = new TH1F(name,name,1,0,1);
+      hdeltachisq1D[ifile][imh] = new TH1D(name,name,1,0,1);
       treein[ifile][imh]->SetBranchAddress("hdeltachisq1D", &hdeltachisq1D[ifile][imh] );
       
       // Get event
@@ -168,7 +191,7 @@ void plot_contours_dcp_many
       cout << endl;  
     
       sprintf(name,"hdeltachisq1D_GlobMin_file%d_mh%d",ifile,imh);
-      hdeltachisq1D_GlobMin[ifile][imh] = (TH1F*)hchisq1D[ifile][imh]->Clone(name);
+      hdeltachisq1D_GlobMin[ifile][imh] = (TH1D*)hchisq1D[ifile][imh]->Clone(name);
       hdeltachisq1D_GlobMin[ifile][imh]->Reset();
       
     } // end loop Nmh
@@ -208,6 +231,68 @@ void plot_contours_dcp_many
 
   } // end loop Nfiles
   
+
+
+
+  // Calculate 1 sigma ranges
+
+  cout << endl;
+  cout << "Calculate range for critical value: " << critval << endl;
+  cout << endl;
+  
+  for(int ifile=0;ifile<Nfiles;ifile++){
+    for(int imh=0;imh<Nmh;imh++){      
+
+      cout << endl;
+      cout << infilename[ifile][imh] << endl;
+
+      cout << "mybestfit = " << mybestfit << endl;
+      double Status_range = CalcBestFitErrorsMINOS(hdeltachisq1D_GlobMin[ifile][imh],critval,mybestfit);
+      
+      if(Status_range==conv::kBadResult){
+	cout << "Range not found" << endl;
+      }
+
+      
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Init histogram
 
@@ -374,7 +459,6 @@ void plot_contours_dcp_many
   TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"PRELIMINARY");
   if(draw_preliminary) latPreliminary->Draw("same");
 
-
   // // Store in root file
   // if(SaveRootFile){
   //   TFile* f2 = new TFile(Form("%s_contour.root",tag),"recreate");    
@@ -391,3 +475,237 @@ void plot_contours_dcp_many
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){ 
+  
+  cout << endl;
+  cout << "Compute MINOS errors" << endl;
+  cout << endl;
+
+  //double error = conv::kBadResult;
+  const double CritChisq_1D = CritVal;
+  
+  // Find 68.27% CL contour (1sigma)
+  
+  double errneg = conv::kBadResult;
+  double errpos = conv::kBadResult;
+
+  int bin_bf = conv::kBadResult;        // best-fit bin
+  double chisq_min = conv::kBadResult;  // best-fit chisq
+
+  if(val_bf==conv::kBadResult){
+    chisq_min = histo->GetMinimum();
+    bin_bf = histo->GetMinimumBin();
+    val_bf = histo->GetBinCenter(bin_bf);
+
+    //cout << endl;
+    cout << "Find the global minimum:" << endl;
+    cout << "best-fit value = " << val_bf << endl;
+    cout << "best-fit chisq = " << chisq_min << endl;
+    //cout << endl;
+  }
+  else{    
+    bin_bf = histo->FindBin(val_bf);             // best-fit bin
+    chisq_min = histo->GetBinContent(bin_bf); // best-fit chisq
+
+    //cout << endl;
+    cout << "Find the global minimum:" << endl;
+    cout << "best-fit value = " << val_bf << endl;
+    cout << "best-fit chisq = " << chisq_min << endl;
+    //cout << endl;
+  }
+
+
+  // cout << endl;
+  // cout << "val_bf = " << val_bf << endl;
+  // cout << "bin_bf = " << bin_bf << endl;
+  // cout << "chisq_min = " << chisq_min << endl;
+  // cout << endl;
+
+  // Bins before (b) and after (a) the intersection with critical value
+  int bin_negsigma_a = conv::kBadResult; 
+  int bin_negsigma_b = conv::kBadResult;
+  int bin_possigma_a = conv::kBadResult;
+  int bin_possigma_b = conv::kBadResult;
+  
+  // Find param value at DeltaChisq=1 (negative error)
+  
+  for(int ibin=bin_bf;ibin>=0;ibin--){ // histogram convention     
+    
+    double bincont = histo->GetBinContent(ibin);
+    if(bincont<0.){
+      cerr << endl;
+      cerr << "CalcBestFitErrorsMINOS" << endl;
+      cerr << "Bin content is negative!" << endl;
+      cerr << "bincont = " << bincont << endl;
+      cerr << endl;
+    }
+    
+    // cout << "ibin = " << ibin 
+    // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(ibin)
+    // 	   << " - bincont = " << bincont << endl;
+    
+    if(bincont>CritChisq_1D){
+      // bins before (b) and after (a) DeltaChisq=1 (following x direction)
+      bin_negsigma_b = ibin; 
+      bin_negsigma_a = bin_negsigma_b+1; 
+      break;
+    }
+    else if(bincont<0.){
+      cerr << endl;
+      cerr << "CalcBestFitErrorsMINOS" << endl;
+      cerr << "Negative DeltaChisq 1D:" << endl;
+      cerr << "DeltaChisq_1D = " << histo->GetBinContent(ibin) << endl;
+      cerr << endl;
+      //exit(1);
+      return conv::kBadResult;
+    }
+        
+  }
+  
+   
+  // Positive error
+  
+  // cout << endl;
+  // cout << "Positive error" << endl;
+  // cout << endl;
+  
+  for(int ibin=bin_bf;ibin<=histo->GetNbinsX();ibin++){ // histogram convention 
+    double bincont = histo->GetBinContent(ibin);
+    if(bincont<0.){
+      cerr << endl;
+      cerr << "CalcBestFitErrorsMINOS" << endl;
+      cerr << "Negative DeltaChisq 1D:" << endl;
+      cerr << "DeltaChisq_1D = " << histo->GetBinContent(ibin) << endl;
+      cerr << endl;
+      //exit(1);
+      return conv::kBadResult;
+    }
+    
+    // cout << "ibin = " << ibin
+    // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(ibin)
+    //  	   << " - bincont = " << bincont << endl;
+    
+    if(bincont>CritChisq_1D){
+      // bins before (b) and after (a) DeltaChisq=1
+      bin_possigma_a = ibin; 
+      bin_possigma_b = bin_possigma_a-1; 
+      break;
+    }
+  }
+  //cout << "bin_possigma_b = " << bin_possigma_b << endl;
+  //cout << "bin_possigma_a = " << bin_possigma_a << endl;
+  
+  
+  // If no bin is found it means the 1sigma bin is outside the physical region
+  // and bin variables are still set to default value.
+  // If so set left extreme to 1 (first bin of the histogram) and right extreme
+  // to Nbins (last bin of the histogram)
+  
+  if(bin_negsigma_a == conv::kBadResult){
+    bin_negsigma_a = 1;
+    bin_negsigma_b = 1;
+  }
+  if(bin_possigma_b == conv::kBadResult){
+    bin_possigma_a = histo->GetNbinsX();
+    bin_possigma_b = histo->GetNbinsX();
+  }
+  
+  // Check if the interval bins are correctly found
+  if(bin_negsigma_a > bin_possigma_b){
+    cerr << endl;
+    cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
+    cerr << "Left extreme bin is higher than right extreme bin" << endl;
+    cerr << "The 1sigma error interval is messed up:" << endl;
+    cerr << "bin_possigma_b = " << bin_possigma_b << endl;
+    cerr << "bin_negsigma_a = " << bin_negsigma_a << endl;
+    cerr << endl;      
+    //exit(1);
+    return conv::kBadResult;
+  }
+  
+  double X1 = conv::kBadResult;
+  double Y1 = conv::kBadResult;
+  double X2 = conv::kBadResult;
+  double Y2 = conv::kBadResult;
+  double Xout = conv::kBadResult;
+  
+  // Extrapolation (left extreme). Do it only if 1sigma bin is in the physical region
+  if(bin_negsigma_a>1){
+    X1 = histo->GetXaxis()->GetBinCenter(bin_negsigma_b);
+    Y1 = histo->GetBinContent(bin_negsigma_b);
+    X2 = histo->GetXaxis()->GetBinCenter(bin_negsigma_a);
+    Y2 = histo->GetBinContent(bin_negsigma_a);
+    Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
+  }
+  else{
+    Xout = histo->GetBinCenter(bin_negsigma_a);
+  }
+
+  errneg = fabs(val_bf - Xout); 
+  //cout << "fparam_bf_errneg[0] = " << fparam_bf_errneg[0] << endl;
+  
+  // Extrapolation (right extreme). Do it only if 1sigma bin is in the physical region
+  if(bin_possigma_b < histo->GetNbinsX()){
+    X1 = histo->GetXaxis()->GetBinCenter(bin_possigma_b);
+    Y1 = histo->GetBinContent(bin_possigma_b);
+    X2 = histo->GetXaxis()->GetBinCenter(bin_possigma_a);
+    Y2 = histo->GetBinContent(bin_possigma_a);
+    Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
+  }
+  else{
+    Xout = histo->GetBinCenter(bin_possigma_b);
+  }
+  errpos[0] = fabs(val_bf - Xout); 
+  //cout << "fparam_bf_errpos[0] = " << fparam_bf_errpos[0] << endl;
+  
+  cout << endl;
+  cout << "Best-fit = " << val_bf << " + " << errpos << " - " << errneg << endl;
+  cout << endl;
+  cout << "1 sigma range:"<< endl;
+  cout << "[ " << val_bf - errneg << " ; " << val_bf + errpos << " ] " << endl;
+  cout << endl;
+}
+ 
+
+
+double GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin){
+  double slope = (Y2-Y1)/(X2-X1);
+  double Xout = (Yin-Y1)/slope + X1;
+  return Xout;
+
+  // cout << "Yin = " << Yin << endl;
+  // cout << "X1 = " << X1 << " - X2 = " << X2 << endl;
+  // cout << "Y1 = " << Y1 << " - Y2 = " << Y2 << endl;
+  // cout << "Xout = " << Xout << endl;
+  // cout << endl;
+  // double Xin = Xout;
+  // Yin = (Y2-Y1)/(X2-X1)*(Xin-X1) + Y1;
+  // cout << "Yin = " << Yin << endl;
+  //TGraph *gr = new TGraph();
+  //gr->SetPoint(0,X1,Y1);
+  //gr->SetPoint(1,X2,Y2);
+  //cout << "Eval = " << gr->Eval(Xin) << endl;
+ }
