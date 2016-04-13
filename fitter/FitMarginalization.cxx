@@ -28,6 +28,7 @@
 //#define __print_hesseerror__
 //#define __print_hesseerror_verbose__
 
+
 //#define FILL_TREE_OSCPARAM_TOYS
 
 #define NUMOFBINSAROUNDMINTOCHECK 3  // Check bins both on the right and left Emac
@@ -633,7 +634,7 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   
   fhToyMH = new TH1D("hToyMH","Toy MH: bin 1 --> NH, bin 2 --> IH",2,0,2);
 
-  fStoreLikeWeights = false; // don't store the full likelihood befault
+  fStoreLikeWeights = false; // don't store the full likelihood by default
   
   //NuEApp Raj
     for(int i = 0;i<2;i++){
@@ -1866,8 +1867,9 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
     } // ipar0 (free parameter)
   }
 
-  NtoysTot = fntoys_marg * 2;
-
+  NtoysTot = fntoys_marg;
+  //NtoysTot = fntoys_marg * 2; // Used when MH was hard-coded set with prior of 0.5
+  
   cout << endl;
   cout << "# of scanned free parameters 0: " << NparTot0 << endl; 
   cout << "# of scanned free parameters 1: " << NparTot1 << endl; 
@@ -2185,6 +2187,8 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
     if(this->fStoreLikeWeights){
       flikeToyVArray->AddToEntry(liketoy,iterpar0,iterpar1,iexperiment); // this is correct if binary files differ only for free param sub-ranges
     }
+
+
 
 
 #ifdef __print_like_toy_fillchisq__
@@ -3243,8 +3247,7 @@ void FitMarginalization::ReadLikeToysFromBinary(const char *tag){
     cerr << "FitMarginalization::WriteLikeToys2Binary" << endl;
     cerr << "Storing/Reading of toy likelihood weights is not enabled" << endl;
     cerr << endl;
-  }
-
+  }  
 }
 
 
@@ -7138,11 +7141,11 @@ double FitMarginalization::GetLikeToyRead(double valpar0,double valpar1,int iexp
 	return conv::kALargeNum;
       }
     }
-
+    
     double liketoy = conv::kBadResult;
     if(fIsFit2D) liketoy = flikeToyVArray->GetEntry(bin0-1,bin1-1,iexperiment);
-    else         liketoy = flikeToyVArray->GetEntry(bin0-1,fmin_bin_sub_param[1],iexperiment);
-    
+    else         liketoy = flikeToyVArray->GetEntry(bin0-1,fmin_bin_sub_param[1],iexperiment);    
+
     return liketoy;
   }
   else{
@@ -7483,7 +7486,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
       cerr << "Left extreme bin is higher than right extreme bin" << endl;
       cerr << "The 1sigma error interval is messed up:" << endl;
-      cerr << "bin_possigma_a = " << bin_possigma_a << endl;
+      cerr << "bin_possigma_b = " << bin_possigma_b << endl;
       cerr << "bin_negsigma_a = " << bin_negsigma_a << endl;
       cerr << endl;      
       exit(1);
