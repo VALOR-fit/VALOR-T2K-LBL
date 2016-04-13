@@ -16,69 +16,15 @@ using namespace valor::conv;
 
 void SensiPvalueFull_nuebar
 (
- // // Mach3 - 4 x 10^20 POT
- // const char * Npot = "4.0108x10^20 POT",
- // double expbkg = 1.767,
- // double data = 3.7285, // # of data events
- // double deltachisq_beta01_data = 1.72794, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // //char infilename_beta0[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_10k_A.root",
- // //char infilename_beta1[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_1_4.0108E20POT_EPS-3f+normbar_10k_A.root",
- // char infilename_beta0[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_4.0108E20POT_EPS-3f+normbar_50kToys.root",
- // char infilename_beta1[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_1_4.0108E20POT_EPS-3f+normbar_50kToys.root",
- 
-
- // Mach3 - 8 x 10^20 POT
- const char * Npot = "8x10^20 POT",
- double expbkg = 0.,
- double data = 7.43693, // # of data events
- double deltachisq_beta01_data = 3.37795, // data deltachisq 01
+ // Run 16 - Asimov A
+ const char * Npot = "4.011x10^20 POT",
+ double expbkg = 1.718,
+ double data = 3.218, // # of data events
+ double deltachisq_beta01_data = 1.41638, // data deltachisq 01
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- //char infilename_beta0[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_0_8E20POT_EPS-3f+normbar_50kToys.root",
- //char infilename_beta1[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_3/fitmarg_betabar_1_8E20POT_EPS-3f+normbar_50kToys.root",
- char infilename_beta0[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_0_8E20POT_EPS-3f+normbar_50kToys_unique.root",
- char infilename_beta1[200] = "../../outputs/marginalization/nuebarapp/EPS_RELEASE_DEV_unique/fitmarg_betabar_1_8E20POT_EPS-3f+normbar_50kToys_unique.root",
- 
-
- /////
-
-
- // // Mach3 - 4.5 x 10^20 POT
- // const char * Npot = "4.5x10^20 POT",
- // double expbkg = 1.9832349,
- // double data = 4.18289, // # of data events
- // double deltachisq_beta01_data = 1.93242, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename_beta0[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_4p5E20POT_DEV-3f+normbar_10kToys.root",
- // char infilename_beta1[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_1_4p5E20POT_DEV-3f+normbar_10kToys.root",
-
- // // Mach3 - 6.5 x 10^20 POT
- // const char * Npot = "6.5x10^20 POT",
- // double expbkg = 0.,
- // double data = 6.04195, // # of data events
- // double deltachisq_beta01_data = 2.76351, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename_beta0[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_6p5E20POT_DEV-3f+normbar_10kToys.root",
- // char infilename_beta1[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_1_6p5E20POT_DEV-3f+normbar_10kToys.root",
-
- // // Mach3 - 8 x 10^20 POT
- // const char * Npot = "8x10^20 POT",
- // double expbkg = 0.,
- // double data = 7.43625, // # of data events
- // double deltachisq_beta01_data = 3.37486, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename_beta0[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_8E20POT_DEV-3f+normbar_10kToys.root",
- // char infilename_beta1[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_1_8E20POT_DEV-3f+normbar_10kToys.root",
- 
- // // Mach3 - 9 x 10^20 POT
- // const char * Npot = "9x10^20 POT",
- // double expbkg = 0.,
- // double data = 8.36578, // # of data events
- // double deltachisq_beta01_data = 3.77671, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename_beta0[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_0_9E20POT_DEV-3f+normbar_10kToys.root",
- // char infilename_beta1[200] = "../../outputs/marginalization/nuebarapp/fitmarg_betabar_1_9E20POT_DEV-3f+normbar_10kToys.root",
- )
+ char infilename_beta0[200] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_betabar_0.root",
+ char infilename_beta1[200] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_betabar_1.root",
+  )
 {
   char name[200];
 
@@ -99,7 +45,7 @@ void SensiPvalueFull_nuebar
  
   double chisqtrue0;
   double chisqtrue1;
-  TH1D *hErecoToy;
+  TH2F *hErecoToy_RHC1Re;
   int ToyID;
 
   double Frac_Pvalue_rateonly_Bkg = 0.;
@@ -146,7 +92,7 @@ void SensiPvalueFull_nuebar
   TTree *treein = (TTree*)filein->Get("fitnt");
   treein->SetBranchAddress("chisqtrue0",&chisqtrue0);
   treein->SetBranchAddress("chisqtrue1",&chisqtrue1);
-  treein->SetBranchAddress("hErecoToy",&hErecoToy);
+  treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
   treein->SetBranchAddress("ToyID",&ToyID);
 
   int Nentries = treein->GetEntries();
@@ -156,7 +102,7 @@ void SensiPvalueFull_nuebar
 
   for(int ientry=0;ientry<Nentries;ientry++){
     treein->GetEntry(ientry);
-    double nevents = (double)hErecoToy->Integral();    
+    double nevents = (double)hErecoToy_RHC1Re->Integral();    
     if(nevents<0){
       cerr << endl;
       cerr << "ToyID: " << ToyID << endl;
@@ -178,7 +124,7 @@ void SensiPvalueFull_nuebar
   treein = (TTree*)filein->Get("fitnt");
   treein->SetBranchAddress("chisqtrue0",&chisqtrue0);
   treein->SetBranchAddress("chisqtrue1",&chisqtrue1);
-  treein->SetBranchAddress("hErecoToy",&hErecoToy);
+  treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
   treein->SetBranchAddress("ToyID",&ToyID);
 
   Nentries = treein->GetEntries();
@@ -190,7 +136,7 @@ void SensiPvalueFull_nuebar
     treein->GetEntry(ientry);
     if( !(ientry % 100) ) cout << "Compute pvalues for toy " << ientry << endl;
     
-    double nevents = (double)hErecoToy->Integral();    
+    double nevents = (double)hErecoToy_RHC1Re->Integral();    
     if(nevents<0.){
       cerr << endl;
       cerr << "ToyID: " << ToyID << endl;
@@ -314,7 +260,7 @@ void SensiPvalueFull_nuebar
   hPvalue_rateonly_6evt->SetFillColor(kCyan);
   hPvalue_rateonly_6evt->SetFillStyle(3395);
   hPvalue_rateonly->GetXaxis()->SetTitle("p-value");
-  hPvalue_rateonly->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateonly->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateonly->DrawCopy();
   // hPvalue_rateonly_3evt->DrawCopy("same");
   // hPvalue_rateonly_4evt->DrawCopy("same");
@@ -342,7 +288,7 @@ void SensiPvalueFull_nuebar
   hPvalue_rateshape_6evt->SetFillColor(kCyan);
   hPvalue_rateshape_6evt->SetFillStyle(3395);
   hPvalue_rateshape->GetXaxis()->SetTitle("p-value");
-  hPvalue_rateshape->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateshape->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape->DrawCopy();
   // hPvalue_rateshape_3evt->DrawCopy("same");
   // hPvalue_rateshape_4evt->DrawCopy("same");
@@ -371,7 +317,7 @@ void SensiPvalueFull_nuebar
   cPvalue_rateshape_3evt->SetLogy();
   hPvalue_rateshape_3evt->SetFillStyle(0);
   hPvalue_rateshape_3evt->GetXaxis()->SetTitle("p-value");
-  hPvalue_rateshape_3evt->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateshape_3evt->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape_3evt->DrawCopy();  
   sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hPvalue_rateshape_3evt->GetMean(),hPvalue_rateshape_3evt->GetRMS()); 
   TLatex *lPvalue_rateshape_3evt = new TLatex(0.70,hPvalue_rateshape_3evt->GetMaximum()*0.8,name);
@@ -384,7 +330,7 @@ void SensiPvalueFull_nuebar
   cPvalue_rateshape_4evt->SetLogy();
   hPvalue_rateshape_4evt->SetFillStyle(0);
   hPvalue_rateshape_4evt->GetXaxis()->SetTitle("p-value");
-  hPvalue_rateshape_4evt->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateshape_4evt->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape_4evt->DrawCopy();  
   sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hPvalue_rateshape_4evt->GetMean(),hPvalue_rateshape_4evt->GetRMS()); 
   TLatex *lPvalue_rateshape_4evt = new TLatex(0.70,hPvalue_rateshape_4evt->GetMaximum()*0.8,name);
@@ -397,7 +343,7 @@ void SensiPvalueFull_nuebar
   cPvalue_rateshape_5evt->SetLogy();
   hPvalue_rateshape_5evt->SetFillStyle(0);
   hPvalue_rateshape_5evt->GetXaxis()->SetTitle("p-value");
-  hPvalue_rateshape_5evt->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateshape_5evt->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape_5evt->DrawCopy();  
   sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hPvalue_rateshape_5evt->GetMean(),hPvalue_rateshape_5evt->GetRMS()); 
   TLatex *lPvalue_rateshape_5evt = new TLatex(0.70,hPvalue_rateshape_5evt->GetMaximum()*0.8,name);
@@ -410,7 +356,7 @@ void SensiPvalueFull_nuebar
   cPvalue_rateshape_6evt->SetLogy();
   hPvalue_rateshape_6evt->SetFillStyle(0);
   hPvalue_rateshape_6evt->GetXaxis()->SetTitle("p-value");
-  hPvalue_rateshape_6evt->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateshape_6evt->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape_6evt->DrawCopy();  
   sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hPvalue_rateshape_6evt->GetMean(),hPvalue_rateshape_6evt->GetRMS()); 
   TLatex *lPvalue_rateshape_6evt = new TLatex(0.70,hPvalue_rateshape_6evt->GetMaximum()*0.8,name);
@@ -429,7 +375,7 @@ void SensiPvalueFull_nuebar
   TCanvas *cPvalue_rateonly_0p10 = new TCanvas("cPvalue_rateonly_0p10","cPvalue_rateonly_0p10");
   cPvalue_rateonly_0p10->SetLogy();
   hPvalue_rateonly_0p10->GetXaxis()->SetTitle("p-value (#leq 0.10)");
-  hPvalue_rateonly_0p10->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateonly_0p10->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateonly_0p10->Draw();
   sprintf(name,"#splitline{Mean=%1.4f}{RMS=%1.4f}",hPvalue_rateonly_0p10->GetMean(),hPvalue_rateonly_0p10->GetRMS()); 
   TLatex *lPvalue_rateonly_0p10 = new TLatex(0.07,hPvalue_rateonly_0p10->GetMaximum()*0.8,name);
@@ -439,7 +385,7 @@ void SensiPvalueFull_nuebar
   TCanvas *cPvalue_rateshape_0p10 = new TCanvas("cPvalue_rateshape_0p10","cPvalue_rateshape_0p10");
   cPvalue_rateshape_0p10->SetLogy();
   hPvalue_rateshape_0p10->GetXaxis()->SetTitle("p-value (#leq 0.10)");
-  hPvalue_rateshape_0p10->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateshape_0p10->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape_0p10->Draw();
   sprintf(name,"#splitline{Mean=%1.4f}{RMS=%1.4f}",hPvalue_rateshape_0p10->GetMean(),hPvalue_rateshape_0p10->GetRMS()); 
   TLatex *lPvalue_rateshape_0p10 = new TLatex(0.07,hPvalue_rateshape_0p10->GetMaximum()*0.8,name);
@@ -449,7 +395,7 @@ void SensiPvalueFull_nuebar
   TCanvas *cPvalue_rateonly_0p05 = new TCanvas("cPvalue_rateonly_0p05","cPvalue_rateonly_0p05");
   cPvalue_rateonly_0p05->SetLogy();
   hPvalue_rateonly_0p05->GetXaxis()->SetTitle("p-value (#leq 0.05)");
-  hPvalue_rateonly_0p05->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateonly_0p05->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateonly_0p05->Draw();
   sprintf(name,"#splitline{Mean=%1.4f}{RMS=%1.4f}",hPvalue_rateonly_0p05->GetMean(),hPvalue_rateonly_0p05->GetRMS()); 
   TLatex *lPvalue_rateonly_0p05 = new TLatex(0.03,hPvalue_rateonly_0p05->GetMaximum()*0.8,name);
@@ -459,7 +405,7 @@ void SensiPvalueFull_nuebar
   TCanvas *cPvalue_rateshape_0p05 = new TCanvas("cPvalue_rateshape_0p05","cPvalue_rateshape_0p05");
   cPvalue_rateshape_0p05->SetLogy();
   hPvalue_rateshape_0p05->GetXaxis()->SetTitle("p-value (#leq 0.05)");
-  hPvalue_rateshape_0p05->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateshape_0p05->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape_0p05->Draw();
   sprintf(name,"#splitline{Mean=%1.4f}{RMS=%1.4f}",hPvalue_rateshape_0p05->GetMean(),hPvalue_rateshape_0p05->GetRMS()); 
   TLatex *lPvalue_rateshape_0p05 = new TLatex(0.03,hPvalue_rateshape_0p05->GetMaximum()*0.8,name);
@@ -475,7 +421,7 @@ void SensiPvalueFull_nuebar
   TCanvas *cPvalue_rateonly_Bkg = new TCanvas("cPvalue_rateonly_Bkg","cPvalue_rateonly_Bkg");
   cPvalue_rateonly_Bkg->SetLogy();
   hPvalue_rateonly_Bkg->GetXaxis()->SetTitle("p-value (# obs. events > # exp bkg)");
-  hPvalue_rateonly_Bkg->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateonly_Bkg->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateonly_Bkg->Draw();
   sprintf(name,"#splitline{Mean=%1.4f}{RMS=%1.4f}",hPvalue_rateonly_Bkg->GetMean(),hPvalue_rateonly_Bkg->GetRMS()); 
   hPvalue_rateonly_Bkg->Draw();
@@ -491,7 +437,7 @@ void SensiPvalueFull_nuebar
   TCanvas *cPvalue_rateshape_Bkg = new TCanvas("cPvalue_rateshape_Bkg","cPvalue_rateshape_Bkg");
   cPvalue_rateshape_Bkg->SetLogy();
   hPvalue_rateshape_Bkg->GetXaxis()->SetTitle("p-value (# obs. events > # exp bkg)");
-  hPvalue_rateshape_Bkg->GetYaxis()->SetTitle("# of entries");
+  hPvalue_rateshape_Bkg->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape_Bkg->Draw();
   sprintf(name,"#splitline{Mean=%1.4f}{RMS=%1.4f}",hPvalue_rateshape_Bkg->GetMean(),hPvalue_rateshape_Bkg->GetRMS()); 
   hPvalue_rateshape_Bkg->Draw();

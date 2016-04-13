@@ -25,12 +25,9 @@ void build_marg_toys_joint
  const int    first_bin_freepar1   = -999,   // first freepar of the sub-range
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
- const char * tag                  = "PROVA_SystAll_TemplVArray",
- //const char * tag                  = "PROVA_SystAll",
- //const char * tag                  = "PROVA_SystOsc",
- //const char * tag                  = "PROVA_NoSyst",
+ const char * tag                  = "PROVA",
  
- const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
  
  const char * fit_param_list        = "nuosc3f+nuisance", // all osc params are free
@@ -68,25 +65,28 @@ void build_marg_toys_joint
  // double       input_dm23sq_ih         = 2.509E-3, //-99,    /* |Dm^2_{23}| */ 
  // double       input_beta_bar          = -99,
 
- // const char * freeparname0          = "deltacp",  // free parameter
- // const double freeparmin0           = -3.14159265358979312e+00,     // minimum value of free parameter
- // const double freeparmax0           = +3.14159265358979312e+00,     // maxinum value of free parameter
+ const char * freeparname0          = "deltacp",  // free parameter
+ const double freeparmin0           = -3.14159265358979312e+00,     // minimum value of free parameter
+ const double freeparmax0           = +3.14159265358979312e+00,     // maxinum value of free parameter
+ const int    NptScan0              = 201, //3, //21,  // # pts of free parameter to scan
+ // const double freeparmin0           = 0.,     // minimum value of free parameter
+ // const double freeparmax0           = 0.4,     // maxinum value of free parameter
  // const int    NptScan0              = 3, //3, //21,  // # pts of free parameter to scan
- // const char * freeparname1          = "",  // free parameter
- // const double freeparmin1           = 0.,     // minimum value of free parameter
- // const double freeparmax1           = 0.,     // maxinum value of free parameter
- // const int    NptScan1              = 1,  // # pts of free parameter to scan
+ const char * freeparname1          = "",  // free parameter
+ const double freeparmin1           = 0.,     // minimum value of free parameter
+ const double freeparmax1           = 0.,     // maxinum value of free parameter
+ const int    NptScan1              = 1,  // # pts of free parameter to scan
  
- const char * freeparname0          = "mixing13",  // free parameter
- const double freeparmin0           = 0.,     // minimum value of free parameter
- const double freeparmax0           = 0.4,     // maxinum value of free parameter
- const int    NptScan0              = 2, //81,  // # pts of free parameter to scan
- const char * freeparname1          = "deltacp",  // free parameter
- const double freeparmin1           = -3.14159265358979312e+00,     // minimum value of free parameter
- const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
- const int    NptScan1              = 2, //51, //3, //21,  // # pts of free parameter to scan
+ // const char * freeparname0          = "mixing13",  // free parameter
+ // const double freeparmin0           = 0.,     // minimum value of free parameter
+ // const double freeparmax0           = 0.4,     // maxinum value of free parameter
+ // const int    NptScan0              = 2, //81,  // # pts of free parameter to scan
+ // const char * freeparname1          = "deltacp",  // free parameter
+ // const double freeparmin1           = -3.14159265358979312e+00,     // minimum value of free parameter
+ // const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
+ // const int    NptScan1              = 2, //51, //3, //21,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 100, //3, //500  // # toys marginalization 
+ const int    NtoysMarg            = 2, //3, //500  // # toys marginalization 
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = 0, //true,      // marginalize Mass Hierarchy
@@ -102,7 +102,7 @@ void build_marg_toys_joint
  //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", // Set to "" if no user priors are used (VALOR)
  TString file_priors = "", // Set to "" if no user priors are used (VALOR)
  
- bool reactors       = false // reactor constraint
+ bool reactors       = true // reactor constraint
  )
 {  
 

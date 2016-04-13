@@ -31,10 +31,10 @@ void DrawDeltaChisq_SigBkg_nuebar
   const double NBinHisto = 2000.;
   
   // Declare histograms
-  TH1F *hnevents_beta0 = new TH1F("hnevents_beta0","hnevents_beta0",NBinHisto,0.,MaxHisto);
-  TH1F *hdeltachisqDiff01_beta0 = new TH1F("hdeltachisqDiff01_beta0","hdeltachisqDiff01_beta0",NBinHisto,MinHisto,MaxHisto);
-  TH1F *hnevents_beta1 = new TH1F("hnevents_beta1","hnevents_beta1",NBinHisto,0.,MaxHisto);
-  TH1F *hdeltachisqDiff01_beta1 = new TH1F("hdeltachisqDiff01_beta1","hdeltachisqDiff01_beta1",NBinHisto,MinHisto,MaxHisto);
+  TH1D *hnevents_beta0 = new TH1D("hnevents_beta0","hnevents_beta0",NBinHisto,0.,MaxHisto);
+  TH1D *hdeltachisqDiff01_beta0 = new TH1D("hdeltachisqDiff01_beta0","hdeltachisqDiff01_beta0",NBinHisto,MinHisto,MaxHisto);
+  TH1D *hnevents_beta1 = new TH1D("hnevents_beta1","hnevents_beta1",NBinHisto,0.,MaxHisto);
+  TH1D *hdeltachisqDiff01_beta1 = new TH1D("hdeltachisqDiff01_beta1","hdeltachisqDiff01_beta1",NBinHisto,MinHisto,MaxHisto);
 
   char name[200];
   double chisqtrue0=conv::kALargeNum;

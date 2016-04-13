@@ -32,41 +32,22 @@ void analyze_run_fit_marginalization_exe
  string namepar1 = "#delta_{CP}",
 
  bool UseFullChisqFit = true,
- bool CheckSingleToy = false,
- const int ToySel = 263, //488,
+ bool CheckSingleToy = true,
+ const int ToySel = 0, //488,
 
- // Current POT
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/coverage_result/fit_submit_fitmarg_joint_dcp_nexp_10_-1.601_-999.000-job_ALL.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/0/fit_submit_fitmarg_joint_dcp_nexp_500_0.000_-999.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/m1/fit_submit_fitmarg_joint_dcp_nexp_500_-1.000_-999.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/p2/fit_submit_fitmarg_joint_dcp_nexp_500_2.000_-999.000-All.root" 
+ //char infilename[300] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_Asimov_A_nexp_1_0.500_-999.000-job0-_0_0.root"
+ //char infilename[300] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_Asimov_A_nexp_1_1.000_-999.000-job0-_0_0.root"
+ //char infilename[300] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_Asimov_A_nexp_1_1.500_-999.000-job0-_0_0.root"
+ //char infilename[300] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_Asimov_A_nexp_1_2.000_-999.000-job0-_0_0.root"
+ //char infilename[300] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_Asimov_A_nexp_1_2.500_-999.000-job0-_0_0.root"
 
- // High POT
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/m1/fit_submit_fitmarg_joint_dcp_nexp_100_-1.000_-999.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/0/fit_submit_fitmarg_joint_dcp_nexp_100_0.000_-999.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/p2/fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-All.root"
- 
- // CHECKS
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/p2_NEW/noerror/fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/highpot/p2_NEW/minos/fit_submit_fitmarg_joint_dcp_nexp_100_2.000_-999.000-All.root"
- 
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/fit_fitmarg_joint_dcp_nexp_25_-1.000_-999.000-All.root "
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/fit_fitmarg_joint_dcp_nexp_25_2.000_-999.000-All.root "
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/fit_fitmarg_joint_dcp_nexp_25_0.000_-999.000-All.root "
-
- // My
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_joint_dcp_nexp_10_-1.000_-999.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_joint_dcp_nexp_10_0.000_-999.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_joint_dcp_nexp_10_2.000_-999.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_sinsqth13Vsdcp_t2konly_nexp_1_0.020_-1.000-All.root"
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_sinsqth13Vsdcp_t2konly_nexp_1_0.022_1.500-All.root"
- char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/my/PRIOR_REACT_2014/fit_fitmarg_sinsqth13Vsdcp_t2konly_nexp_1_0.028_0.000-All.root"
-
- // Raj
- //char infilename[200] = "/Users/davidesgalaberna/Desktop/Coverage_study_Raj/raj/m1/fit_submit_fitmarg_joint_dcp_nexp_500_-1.000_-999.000-All_OLD.root"
+ char infilename[300] = "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"
+ //char infilename[300] = "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth13_t2konly_nh_Data_Run16_nexp_1_0.022_-999.000-job0-_0_0.root"
+ //char infilename[300] = "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth23_react_nh_Data_Run16_nexp_1_0.528_-999.000-job0-_0_0.root"
+ //char infilename[300] = "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dmsq_react_nh_Data_Run16_nexp_1_0.003_-999.000-job0-_0_0.root"
   )
 {
-  char name[200];
+  char name[300];
   FitParamList * fparm  = util::NamedParameterList("nuosc3f"); 
   PhysParamList * iparm = new PhysParamList;
   vector<double> myvector;
@@ -99,7 +80,9 @@ void analyze_run_fit_marginalization_exe
   int fitstatus=-999;
   double chisqmin=conv::kALargeNum;
   double chisqtrue0=conv::kALargeNum;
+  double chisqtrue1=conv::kALargeNum;
   double deltachisq0BF=conv::kALargeNum;
+  double deltachisq01=conv::kALargeNum;
 
   TH2F *hchisq2D_out = new TH2F("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
   TH1F *hchisq1D_out = new TH1F("hchisq1D_out","hchisq1D_out",1,0,1);
@@ -146,7 +129,9 @@ void analyze_run_fit_marginalization_exe
   treein->SetBranchAddress("IsFit2D",&FlagFit2D);
   treein->SetBranchAddress("chisqmin",&chisqmin);
   treein->SetBranchAddress("chisqtrue0",&chisqtrue0);
+  treein->SetBranchAddress("chisqtrue1",&chisqtrue1);
   treein->SetBranchAddress("deltachisq0BF",&deltachisq0BF);
+  treein->SetBranchAddress("deltachisq01",&deltachisq01);
   treein->SetBranchAddress("nfits",&nfits);
   treein->SetBranchAddress("nchisqcalls",&nchisqcalls);
   treein->SetBranchAddress("niterations",&niterations);
@@ -260,18 +245,20 @@ void analyze_run_fit_marginalization_exe
     if(!UseFullChisqFit) deltachisq0BF_used = chisqtrue0-chisqmin;
     else                 deltachisq0BF_used = chisqtrue0-chisqminFullChisq;
     
-    // // Print chisq
-    // int npt_chisq_x = hchisq1D_out->GetNbinsX();
-    // for(int ix=0;ix<npt_chisq_x;ix++){
-    //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
-    // }
-    // cout << endl;
-    //cout << "truepar0 = " << truepar0 << endl;
-    //cout << "bestfit0 = " << bestfit0 << endl;
-    //cout << "deltachisq (fit) = " << chisqtrue0-chisqmin << endl;
-    //cout << "deltachisq (global) = " << chisqtrue0-chisqminFullChisq << endl;
-    //cout << "deltachisq0BF (tree) = " << deltachisq0BF << endl;
-    //cout << endl;
+    // Print chisq
+    int npt_chisq_x = hchisq1D_out->GetNbinsX();
+    for(int ix=0;ix<npt_chisq_x;ix++){
+      cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+    }
+    cout << endl;
+    cout << "truepar0 = " << truepar0 << endl;
+    cout << "bestfit0 = " << bestfit0 << endl;
+    cout << "deltachisq (fit) = " << chisqtrue0-chisqmin << endl;
+    cout << "deltachisq (global) = " << chisqtrue0-chisqminFullChisq << endl;
+    cout << "deltachisq0BF (tree) = " << deltachisq0BF << endl;
+    cout << "chisq0 - chisq1 = " << chisqtrue0-chisqtrue1 << endl;
+    cout << "deltachisq01 (tree) = " << deltachisq01 << endl;
+    cout << endl;
 
     // Fill deltaChisq histogram
     
@@ -465,12 +452,12 @@ void analyze_run_fit_marginalization_exe
   hErrMINOSneg0->GetYaxis()->SetTitle("# entries");
   
   if(IsFit2D){
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (MINOS negative)",namepar0.c_str());
     hErrMINOSneg0->GetXaxis()->SetTitle(name);
   }
   else{
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (MINOS negative)",namepar0.c_str());
     hErrMINOSneg0->GetXaxis()->SetTitle(name);
   }
@@ -479,12 +466,12 @@ void analyze_run_fit_marginalization_exe
   TCanvas *cErrMINOSpos0 = new TCanvas("cErrMINOSpos0","cErrMINOSpos0");
   hErrMINOSpos0->GetYaxis()->SetTitle("# entries");
   if(IsFit2D){
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (MINOS positive)",namepar0.c_str());
     hErrMINOSpos0->GetXaxis()->SetTitle(name);
   }
   else{
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (MINOS positive)",namepar0.c_str());
     hErrMINOSpos0->GetXaxis()->SetTitle(name);
   }
@@ -495,13 +482,13 @@ void analyze_run_fit_marginalization_exe
   if(IsFit2D){
     cErrMINOSneg1 = new TCanvas("cErrMINOSneg1","cErrMINOSneg1");
     hErrMINOSneg1->GetYaxis()->SetTitle("# entries");
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (MINOS negative)",namepar1.c_str());
     hErrMINOSneg1->GetXaxis()->SetTitle(name);
     hErrMINOSneg1->DrawCopy();  
     cErrMINOSpos1 = new TCanvas("cErrMINOSpos1","cErrMINOSpos1");
     hErrMINOSpos1->GetYaxis()->SetTitle("# entries");
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (MINOS positive)",namepar1.c_str());
     hErrMINOSpos1->GetXaxis()->SetTitle(name);
     hErrMINOSpos1->DrawCopy();
@@ -510,12 +497,12 @@ void analyze_run_fit_marginalization_exe
   TCanvas *cErrHESSEsym0 = new TCanvas("cErrHESSEsym0","cErrHESSEsym0");
   hErrHESSEsym0->GetYaxis()->SetTitle("# entries");
   if(IsFit2D){
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (HESSE)",namepar0.c_str());
     hErrHESSEsym0->GetXaxis()->SetTitle(name);
   }
   else{
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (HESSE)",namepar0.c_str());
     hErrHESSEsym0->GetXaxis()->SetTitle(name);
   }
@@ -525,7 +512,7 @@ void analyze_run_fit_marginalization_exe
   if(IsFit2D){  
     cErrHESSEsym1 = new TCanvas("cErrHESSEsym1","cErrHESSEsym1");
     hErrHESSEsym1->GetYaxis()->SetTitle("# entries");
-    char name[200];
+    char name[300];
     sprintf(name,"#Delta %s (HESSE)",namepar1.c_str());
     hErrHESSEsym1->GetXaxis()->SetTitle(name);
     hErrHESSEsym1->DrawCopy();
@@ -547,12 +534,12 @@ void analyze_run_fit_marginalization_exe
   TCanvas *cpullsHESSE0 = new TCanvas("cpullsHESSE0","cpullsHESSE0");
   TLatex *lpullsHESSE0;
   if(IsFit2D){
-    char name[200];
+    char name[300];
     sprintf(name,"Pull %s (HESSE error)",namepar0.c_str());
     hpullsHESSE0->GetXaxis()->SetTitle(name);
   }
   else{
-    char name[200];
+    char name[300];
     sprintf(name,"Pull %s (HESSE error)",namepar0.c_str());
     hpullsHESSE0->GetXaxis()->SetTitle(name);
    }
@@ -567,7 +554,7 @@ void analyze_run_fit_marginalization_exe
   TLatex *lpullsHESSE1;
   if(IsFit2D){
     cpullsHESSE1 = new TCanvas("cpullsHESSE1","cpullsHESSE1");
-    char name[200];
+    char name[300];
     sprintf(name,"Pull %s (HESSE error)",namepar1.c_str());
     hpullsHESSE1->GetXaxis()->SetTitle(name);
     hpullsHESSE1->GetYaxis()->SetTitle("# entries");
@@ -580,12 +567,12 @@ void analyze_run_fit_marginalization_exe
 
   TCanvas *cpullsMINOS0 = new TCanvas("cpullsMINOS0","cpullsMINOS0");
   if(IsFit2D){
-    char name[200];
+    char name[300];
     sprintf(name,"Pull %s (MINOS error)",namepar0.c_str());
     hpullsMINOS0->GetXaxis()->SetTitle(name);
   }
   else{
-    char name[200];
+    char name[300];
     sprintf(name,"Pull %s (MINOS error)",namepar0.c_str());
     hpullsMINOS0->GetXaxis()->SetTitle(name);
   }
@@ -600,7 +587,7 @@ void analyze_run_fit_marginalization_exe
   TLatex *lpullsMINOS1;
   if(IsFit2D){
     cpullsMINOS1 = new TCanvas("cpullsMINOS1","cpullsMINOS1");
-    char name[200];
+    char name[300];
     sprintf(name,"Pull %s (MINOS error)",namepar1.c_str());
     hpullsMINOS1->GetXaxis()->SetTitle(name);
     hpullsMINOS1->GetYaxis()->SetTitle("# entries");
@@ -614,12 +601,12 @@ void analyze_run_fit_marginalization_exe
   TCanvas *cresidual0 = new TCanvas("cresidual0","cresidual0");
 
   if(IsFit2D){
-    char name[200];
+    char name[300];
     sprintf(name,"Residual %s",namepar0.c_str());
     hresidual0->GetXaxis()->SetTitle(name);
   }
   else{
-    char name[200];
+    char name[300];
     sprintf(name,"Residual %s",namepar0.c_str());
     hresidual0->GetXaxis()->SetTitle(name); 
   }
@@ -634,7 +621,7 @@ void analyze_run_fit_marginalization_exe
   TLatex *lresidual1;
   if(IsFit2D){
     cresidual1 = new TCanvas("cresidual1","cresidual1");
-    char name[200];
+    char name[300];
     sprintf(name,"Residual %s",namepar1.c_str());
     hresidual1->GetXaxis()->SetTitle(name);
     hresidual1->GetYaxis()->SetTitle("# entries");

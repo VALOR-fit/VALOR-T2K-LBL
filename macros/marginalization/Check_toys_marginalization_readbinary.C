@@ -18,20 +18,16 @@ using namespace valor::conv;
 
 void Check_toys_marginalization_readbinary
 (
- //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
- //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_ExpSummer2016_75_25.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
+ const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
 
- const char * fit_param_list        = "nuosc3fbar_numudissap_allsyst", // dcp
+ const char * fit_param_list        = "nuosc3f_normbar_fixall+nuisance", // dcp
 
- const char * sk_sample = "1Rmu",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample = "RHC1Re",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
- const char * hypothesis           = "3f_oscbar_dissap",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
+ const char * hypothesis           = "3f_osc_normbar",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
 
  double       input_mixing12       = 0.304,                         
- double       input_mixing13       = 0.0243,                         
+ double       input_mixing13       = 0.0217,                         
  double       input_mixing23       = 0.528,                         
  double       input_deltacp        = -1.601,                         
  double       input_dm12sq         = 7.53E-5,                         
@@ -45,41 +41,42 @@ void Check_toys_marginalization_readbinary
  const char * mixparamchoice      = "sinsqtheta",
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
- const int InputBin0  = 0,
+ const int InputBin0  = 1.,
  const int InputBin1  = 0,
 
  ////////////////////// MARGINALIZATION PARAMETERS ///////////////////
 
- //const char * infilename = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl_ErecoVsTheta/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl",             
- //const char * infilename = "submit_prova",
- //const char * infilename = "PROVA_SystAll",
- //const char * infilename = "submit_prova_TemplVArray_2d",
- const char * infilename = "/Users/rajs/work/studies/numudissap_sensi/toys/Run14",
+ const char * infilename = "prova",
 
  const int    nfiles               = 1, //101, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 10, //100, //10000, //1,  // # toys marginalization
+ const int    NtoysMarg            = 10000,   // # toys marginalization
  
-// const char * freeparname0        = "deltacp",  // free parameter
-// const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
-// const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
-// const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
-// 
-// const char * freeparname1        = "",  // free parameter
-// const double freeparmin1         = 0., // minimum value of free parameter
-// const double freeparmax1         = 0., // maxinum value of free parameter
-// const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
+ // const char * freeparname0        = "deltacp",  // free parameter
+ // const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+ // const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ // const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
 
-  const char * freeparname0        = "mixing23Bar",  // free parameter
-  const double freeparmin0         = 0.25,         // minimum value of free parameter
-  const double freeparmax0         = 0.75, // 10., 1         // maxinum value of free parameter
-  const int    NptScan0            = 81, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ const char * freeparname0        = "betaBar",  // free parameter
+ const double freeparmin0         = 0.,         // minimum value of free parameter
+ const double freeparmax0         = 1., // 10., 1         // maxinum value of free parameter
+ const int    NptScan0            = 2, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
-  const char * freeparname1        = "dmsq23Bar",  // free parameter
-  const double freeparmin1         = 1.8E-3, // minimum value of free parameter
-  const double freeparmax1         = 3.2E-3, // maxinum value of free parameter
-  const int    NptScan1            = 21, //201, //21,      // # pts of free parameter to scan
+ const char * freeparname1        = "",  // free parameter
+ const double freeparmin1         = 0., // minimum value of free parameter
+ const double freeparmax1         = 0., // maxinum value of free parameter
+ const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
+  // const char * freeparname0        = "mixing23Bar",  // free parameter
+  // const double freeparmin0         = 0.25,         // minimum value of free parameter
+  // const double freeparmax0         = 0.75, // 10., 1         // maxinum value of free parameter
+  // const int    NptScan0            = 81, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ 
+  // const char * freeparname1        = "dmsq23Bar",  // free parameter
+  // const double freeparmin1         = 1.8E-3, // minimum value of free parameter
+  // const double freeparmax1         = 3.2E-3, // maxinum value of free parameter
+  // const int    NptScan1            = 21, //201, //21,      // # pts of free parameter to scan
+ 
  
  const bool  doMargMH             = false,     // marginalize Mass Hierarchy
 
@@ -296,10 +293,11 @@ void Check_toys_marginalization_readbinary
   fitmarg->SetMargMassHierarchy(doMargMH); // false by default 
     
   // Set fit parameter list
+
   fitmarg->SetFitParamList(fit_param_list);
   fitmarg->PrintPhysHypothesis();
   
-  
+ 
   // Build the map fileID - sub-range
   
   fitmarg->SetMaxIterationSingleFit(2);  // Max # of iterations per fit
@@ -334,10 +332,10 @@ void Check_toys_marginalization_readbinary
   
 
   TH1F* h_marg_toy;
-  TH1F* h_up = new TH1F("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
-  TH1F* h_down = new TH1F("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_up = new TH1D("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
+  TH1D* h_down = new TH1D("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_nominal;
-  TH2F* h_2d = new TH2F("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,10);
+  TH2D* h_2d = new TH2D("h_2d","Envelope",util::NumErecoBins(s),util::ErecoBinEdges(s),2000,0,10);
   
   // Get tuned MC - with BANFF tuning
 
@@ -463,20 +461,20 @@ void Check_toys_marginalization_readbinary
     //cout << "NPOT = " << NPOT << endl;
 
     for(int i=1;i<=util::NumErecoBins(s);i++){
-      h_2d->Fill(h_marg_toy->GetBinCenter(i),h_marg_toy->GetBinContent(i));
+      h_2d->Fill((double)h_marg_toy->GetBinCenter(i),(double)h_marg_toy->GetBinContent(i));
       //cout << h_marg_toy->GetBinContent(i) / NNormPOT << " "; // normalized to # 1x10^20 POT
     }
     //cout << endl;
 	
     //store Nsk
-    double nskint = h_marg_toy->Integral();
+    double nskint = (double)h_marg_toy->Integral();
     hNsk->Fill(nskint);
     nsk_per_toy_arr[itoy] = nskint;
     
     // Store tweaks.
     for (int ibin = 0 ; ibin < n_ereco_bins ; ibin++) {
       double nom   = h_nominal->GetBinContent(ibin+1);
-      double N = h_marg_toy->GetBinContent(ibin+1);
+      double N = (double)h_marg_toy->GetBinContent(ibin+1);
       sumsq_per_bin[ibin] += (N-nom)*(N-nom);
     }
   

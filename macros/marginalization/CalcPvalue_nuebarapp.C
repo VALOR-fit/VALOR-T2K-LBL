@@ -18,27 +18,16 @@ using namespace valor::conv;
 
 void CalcPvalue_nuebarapp
 (
- // Run 1-6 (beta=0) --> Asimov
- TString tag = "pvalue_beta1_Mach3_NH",
- double data = 3.10468, // # of data events
- double deltachisq_beta01_data = 1.36409, // data deltachisq 01
+ // Run 1-6 (beta=0) --> Asimov A
+ TString tag = "pvalue_Asimov_A_betabar_1",
+ double data = 3.218, // # of data events
+ double deltachisq_beta01_data = -0.0256822, // data deltachisq 01 (betabar=0.5)
+ //double deltachisq_beta01_data = 1.41638, // data deltachisq 01 (betabar=1)
+ //double deltachisq_beta01_data = 2.87081, // data deltachisq 01 (betabar=1.5)
+ //double deltachisq_beta01_data = 4.33741, // data deltachisq 01 (betabar=2)
+ //double deltachisq_beta01_data = 5.81603, // data deltachisq 01 (betabar=2.5)
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- char infilename[200] = "fit_fitmarg_joint_betaBar_react_NoRHCelike_TOYS_nexp_10000_0.000_-999.000-job0-_0_9999.root",
-
- // // Run 1-6 (beta=0) --> Asimov
- // TString tag = "pvalue_beta1_Mach3_NH",
- // double data = 3.10468, // # of data events
- // double deltachisq_beta01_data = 1.36409, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "../NueBarAppJointFit/fit_fitmarg_joint_betaBar_react_nh_TOYS_nexp_10000_0.000_-999.000-job0-_0_9999.root",
- 
- // // Summer 2016 (beta=0) --> Asimov
- // TString tag = "pvalue_beta1_Mach3_NH",
- // double data = 7.3619, // # of data events
- // double deltachisq_beta01_data = 3.15932, // data deltachisq 01
- // double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- // char infilename[200] = "fit_fitmarg_joint_betaBar_react_ExpSummer2016_TOYS_nexp_10000_0.000_-999.000-job0-_0_9999.root",
-
+ char infilename[200] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_betabar_0.root",
 
  )
 {
@@ -47,9 +36,9 @@ void CalcPvalue_nuebarapp
   // const double MinHisto = -20.;
   // const double NBinHisto = 200.;
 
-  const double MaxHisto = 200.;
-  const double MinHisto = -200.;
-  const double NBinHisto = 2000.;
+  const double MaxHisto = 20.;
+  const double MinHisto = -20.;
+  const double NBinHisto = 200.;
   
   char name[200];
 
@@ -138,51 +127,49 @@ void CalcPvalue_nuebarapp
 
   // Declare histograms
   
-  TH1F *hnevents = new TH1F("hnevents","hnevents",NBinHisto,0.,MaxHisto);
-  TH1F *hnevents_data = new TH1F("hnevents_data","hnevents_data",NBinHisto,0,MaxHisto);
+  TH1D *hnevents = new TH1D("hnevents","hnevents",NBinHisto,0.,MaxHisto);
+  TH1D *hnevents_data = new TH1D("hnevents_data","hnevents_data",NBinHisto,0,MaxHisto);
   
-  TH1D *hnevents_WeightLike = new TH1D("hnevents_WeightLike","hnevents_WeightLike",NBinHisto,0.,MaxHisto); 
-
-  TH1F *hdeltachisqDiff0BF = new TH1F("hdeltachisqDiff0BF","hdeltachisqDiff0BF",NBinHisto,0,MaxHisto);
-  TH1F *hdeltachisqDiff0BF_toyevt0 = new TH1F("hdeltachisqDiff0BF_toyevt0","hdeltachisqDiff0BF_toyevt0",NBinHisto,0,MaxHisto);
-  TH1F *hdeltachisqDiff0BF_toyevt1 = new TH1F("hdeltachisqDiff0BF_toyevt1","hdeltachisqDiff0BF_toyevt1",NBinHisto,0,MaxHisto);
-  TH1F *hdeltachisqDiff0BF_toyevt2 = new TH1F("hdeltachisqDiff0BF_toyevt2","hdeltachisqDiff0BF_toyevt2",NBinHisto,0,MaxHisto);
+  TH1D *hdeltachisqDiff0BF = new TH1D("hdeltachisqDiff0BF","hdeltachisqDiff0BF",NBinHisto,0,MaxHisto);
+  TH1D *hdeltachisqDiff0BF_toyevt0 = new TH1D("hdeltachisqDiff0BF_toyevt0","hdeltachisqDiff0BF_toyevt0",NBinHisto,0,MaxHisto);
+  TH1D *hdeltachisqDiff0BF_toyevt1 = new TH1D("hdeltachisqDiff0BF_toyevt1","hdeltachisqDiff0BF_toyevt1",NBinHisto,0,MaxHisto);
+  TH1D *hdeltachisqDiff0BF_toyevt2 = new TH1D("hdeltachisqDiff0BF_toyevt2","hdeltachisqDiff0BF_toyevt2",NBinHisto,0,MaxHisto);
   THStack *sdeltachisqDiff0BF = new THStack("sdeltachisqDiff0BF","sdeltachisqDiff0BF");
 
-  TH1F *hdeltachisqDiff1BF = new TH1F("hdeltachisqDiff1BF","hdeltachisqDiff1BF",NBinHisto,0,MaxHisto);
-  TH1F *hdeltachisqDiff1BF_toyevt0 = new TH1F("hdeltachisqDiff1BF_toyevt0","hdeltachisqDiff1BF_toyevt0",NBinHisto,0,MaxHisto);
-  TH1F *hdeltachisqDiff1BF_toyevt1 = new TH1F("hdeltachisqDiff1BF_toyevt1","hdeltachisqDiff1BF_toyevt1",NBinHisto,0,MaxHisto);
-  TH1F *hdeltachisqDiff1BF_toyevt2 = new TH1F("hdeltachisqDiff1BF_toyevt2","hdeltachisqDiff1BF_toyevt2",NBinHisto,0,MaxHisto);
+  TH1D *hdeltachisqDiff1BF = new TH1D("hdeltachisqDiff1BF","hdeltachisqDiff1BF",NBinHisto,0,MaxHisto);
+  TH1D *hdeltachisqDiff1BF_toyevt0 = new TH1D("hdeltachisqDiff1BF_toyevt0","hdeltachisqDiff1BF_toyevt0",NBinHisto,0,MaxHisto);
+  TH1D *hdeltachisqDiff1BF_toyevt1 = new TH1D("hdeltachisqDiff1BF_toyevt1","hdeltachisqDiff1BF_toyevt1",NBinHisto,0,MaxHisto);
+  TH1D *hdeltachisqDiff1BF_toyevt2 = new TH1D("hdeltachisqDiff1BF_toyevt2","hdeltachisqDiff1BF_toyevt2",NBinHisto,0,MaxHisto);
   THStack *sdeltachisqDiff1BF = new THStack("sdeltachisqDiff1BF","sdeltachisqDiff1BF");
 
-  TH1F *hdeltachisqDiff01 = new TH1F("hdeltachisqDiff01","hdeltachisqDiff01",NBinHisto,MinHisto,MaxHisto);
-  TH1F *hdeltachisqDiff01_toyevt0 = new TH1F("hdeltachisqDiff01_toyevt0","hdeltachisqDiff01_toyevt0",NBinHisto,MinHisto,MaxHisto);
-  TH1F *hdeltachisqDiff01_toyevt1 = new TH1F("hdeltachisqDiff01_toyevt1","hdeltachisqDiff01_toyevt1",NBinHisto,MinHisto,MaxHisto);
-  TH1F *hdeltachisqDiff01_toyevt2 = new TH1F("hdeltachisqDiff01_toyevt2","hdeltachisqDiff01_toyevt2",NBinHisto,MinHisto,MaxHisto);
+  TH1D *hdeltachisqDiff01 = new TH1D("hdeltachisqDiff01","hdeltachisqDiff01",NBinHisto,MinHisto,MaxHisto);
+  TH1D *hdeltachisqDiff01_toyevt0 = new TH1D("hdeltachisqDiff01_toyevt0","hdeltachisqDiff01_toyevt0",NBinHisto,MinHisto,MaxHisto);
+  TH1D *hdeltachisqDiff01_toyevt1 = new TH1D("hdeltachisqDiff01_toyevt1","hdeltachisqDiff01_toyevt1",NBinHisto,MinHisto,MaxHisto);
+  TH1D *hdeltachisqDiff01_toyevt2 = new TH1D("hdeltachisqDiff01_toyevt2","hdeltachisqDiff01_toyevt2",NBinHisto,MinHisto,MaxHisto);
   THStack *sdeltachisqDiff01 = new THStack("sdeltachisqDiff01","sdeltachisqDiff01");
 
-  TH1F *hchisqmin = new TH1F("hchisqmin","hchisqmin",400,0,100);
-  TH1F *hchisqmin_toyevt0 = new TH1F("hchisqmin_toyevt0","hchisqmin_toyevt0",400,0,100);
-  TH1F *hchisqmin_toyevt1 = new TH1F("hchisqmin_toyevt1","hchisqmin_toyevt1",400,0,100);
-  TH1F *hchisqmin_toyevt2 = new TH1F("hchisqmin_toyevt2","hchisqmin_toyevt2",400,0,100);
+  TH1D *hchisqmin = new TH1D("hchisqmin","hchisqmin",400,0,100);
+  TH1D *hchisqmin_toyevt0 = new TH1D("hchisqmin_toyevt0","hchisqmin_toyevt0",400,0,100);
+  TH1D *hchisqmin_toyevt1 = new TH1D("hchisqmin_toyevt1","hchisqmin_toyevt1",400,0,100);
+  TH1D *hchisqmin_toyevt2 = new TH1D("hchisqmin_toyevt2","hchisqmin_toyevt2",400,0,100);
   THStack *schisqmin = new THStack("schisqmin","schisqmin");
 
-  TH1F *hchisq0 = new TH1F("hchisq0","hchisq0",400,0,100);
-  TH1F *hchisq0_toyevt0 = new TH1F("hchisq0_toyevt0","hchisq0_toyevt0",400,0,100);
-  TH1F *hchisq0_toyevt1 = new TH1F("hchisq0_toyevt1","hchisq0_toyevt1",400,0,100);
-  TH1F *hchisq0_toyevt2 = new TH1F("hchisq0_toyevt2","hchisq0_toyevt2",400,0,100);
+  TH1D *hchisq0 = new TH1D("hchisq0","hchisq0",400,0,100);
+  TH1D *hchisq0_toyevt0 = new TH1D("hchisq0_toyevt0","hchisq0_toyevt0",400,0,100);
+  TH1D *hchisq0_toyevt1 = new TH1D("hchisq0_toyevt1","hchisq0_toyevt1",400,0,100);
+  TH1D *hchisq0_toyevt2 = new TH1D("hchisq0_toyevt2","hchisq0_toyevt2",400,0,100);
   THStack *schisq0 = new THStack("schisq0","schisq0");
 
-  TH1F *hchisq1 = new TH1F("hchisq1","hchisq1",400,0,100);
-  TH1F *hchisq1_toyevt0 = new TH1F("hchisq1_toyevt0","hchisq1_toyevt0",400,0,100);
-  TH1F *hchisq1_toyevt1 = new TH1F("hchisq1_toyevt1","hchisq1_toyevt1",400,0,100);
-  TH1F *hchisq1_toyevt2 = new TH1F("hchisq1_toyevt2","hchisq1_toyevt2",400,0,100);
+  TH1D *hchisq1 = new TH1D("hchisq1","hchisq1",400,0,100);
+  TH1D *hchisq1_toyevt0 = new TH1D("hchisq1_toyevt0","hchisq1_toyevt0",400,0,100);
+  TH1D *hchisq1_toyevt1 = new TH1D("hchisq1_toyevt1","hchisq1_toyevt1",400,0,100);
+  TH1D *hchisq1_toyevt2 = new TH1D("hchisq1_toyevt2","hchisq1_toyevt2",400,0,100);
   THStack *schisq1 = new THStack("schisq1","schisq1");
 
-  TH1F *hchisq2 = new TH1F("hchisq2","hchisq2",400,0,100);
-  TH1F *hchisq2_toyevt0 = new TH1F("hchisq2_toyevt0","hchisq2_toyevt0",400,0,100);
-  TH1F *hchisq2_toyevt1 = new TH1F("hchisq2_toyevt1","hchisq2_toyevt1",400,0,100);
-  TH1F *hchisq2_toyevt2 = new TH1F("hchisq2_toyevt2","hchisq0_toyevt2",400,0,100);
+  TH1D *hchisq2 = new TH1D("hchisq2","hchisq2",400,0,100);
+  TH1D *hchisq2_toyevt0 = new TH1D("hchisq2_toyevt0","hchisq2_toyevt0",400,0,100);
+  TH1D *hchisq2_toyevt1 = new TH1D("hchisq2_toyevt1","hchisq2_toyevt1",400,0,100);
+  TH1D *hchisq2_toyevt2 = new TH1D("hchisq2_toyevt2","hchisq0_toyevt2",400,0,100);
   THStack *schisq2 = new THStack("schisq2","schisq2");
 
   TH1D *hchisqWeightLike = new TH1D("hchisqWeightLike","hchisqWeightLike",400,0,100);
@@ -211,17 +198,7 @@ void CalcPvalue_nuebarapp
     }
 
     hnevents->Fill(nevents);    
-    if(nevents<data) hnevents_data->Fill(nevents);
-    
-    //double LikeBeta1_toys = chisqtrue1;
-
-    double chisqtrue_min = chisqtrue1;
-    //double chisqtrue_min = TMath::Min(chisqtrue1,chisqtrue0);
-    double LikeBeta1_toys = TMath::Exp(-chisqtrue_min/2.);
-    //hnevents_WeightLike->Fill((double)nevents);    
-    hnevents_WeightLike->Fill((double)nevents,LikeBeta1_toys);    
-    //cout << "nevents = " << nevents << " - LikeBeta1_toys = " << LikeBeta1_toys << endl;
-    
+    if(nevents<data) hnevents_data->Fill(nevents);    
     
     //if(deltachisqtrue>-4) continue;
     //if(deltachisqtrue>-2 || deltachisqtrue<-2.2) continue;
@@ -278,7 +255,6 @@ void CalcPvalue_nuebarapp
     vec_evt_toys.push_back(nevents);
     vec_chisq_0BF.push_back(deltachisq_0BF);
     vec_chisq_01.push_back(deltachisq_01);
-    vec_like_toys.push_back(LikeBeta1_toys);
        
   } // end loop over toys
 
@@ -287,45 +263,6 @@ void CalcPvalue_nuebarapp
     cout << "deltachisq_01 = " << deltachisq_01 << endl;
     exit(1);
   }
-
-
-
-
-  
-
-
-  // Rate-only: # of obs. events weighted with likelihood
-
-  // for (std::vector<double>::iterator it=vec_like_toys.begin(); it!=vec_like_toys.end(); ++it){
-  //   cout << *it << ", ";
-  // }
-  // cout << endl;
-  // //std::sort(vec_like_toys.rbegin(),vec_like_toys.rend());
-  // //std::sort(vec_like_toys.begin(),vec_like_toys.end());
-  // // int index[10];
-  // // //TMath::Sort(10,vec_like_toys.data(),index,0);  
-  // // double * tmp_ptr = vec_like_toys.data();
-  // // TMath::Sort(10,tmp_ptr,index,0);
-  // // exit(1);
-  // for (std::vector<double>::iterator it=vec_like_toys.begin(); it!=vec_like_toys.end(); ++it){
-  //   cout << *it << ", ";
-  //   //double Weight = LikeBeta1_toys / vec_like_toys[0];
-  //   //hnevents_WeightLike->Fill((double)nevents);    
-  // }
-  // cout << endl;
-
-  //double Min = vec_like_toys[0];
-  //cout << "Min = " << Min << endl;
-
-  // for(int i=0; i<hnevents_WeightLike->GetNbinsX();i++){
-  //   double bincont = hnevents_WeightLike->GetBinContent(i+1);
-  //   double bincont_new = bincont / Min;
-    
-  //   if(bincont>0.){
-  //     hnevents_WeightLike->SetBinContent(i+1,bincont_new);
-  //   }
-  // }
- 
 
 
   
@@ -341,8 +278,6 @@ void CalcPvalue_nuebarapp
   double pvalue_01_left = GetPvalue_leftside(vec_chisq_01,Ntoys,deltachisq_beta01_data);
   double pvalue_0BF_left = GetPvalue_leftside(vec_chisq_0BF,Ntoys,deltachisq_beta0BF_data);
 
-  double pvalue_evt_histo = GetPvalue_Discrete(hnevents_WeightLike,data);
-
   // Draw histograms
   
   // treein->GetEntry(493);
@@ -355,7 +290,7 @@ void CalcPvalue_nuebarapp
   // hErecoToy_RHC1Re->DrawCopy();
 
   TCanvas *cchisqmin = new TCanvas("cchisqmin","cchisqmin");
-  hchisqmin->GetYaxis()->SetTitle("# entries");
+  hchisqmin->GetYaxis()->SetTitle("Number of entries");
   hchisqmin->GetXaxis()->SetTitle("#chi^{2} (#bar{#beta}_{BF})");
   hchisqmin->DrawCopy();
   hchisqmin_toyevt0->SetFillColor(kGreen);  
@@ -368,7 +303,7 @@ void CalcPvalue_nuebarapp
   cchisqmin->SetLogy();
 
   TCanvas *cchisq0 = new TCanvas("cchisq0","cchisq0");
-  hchisq0->GetYaxis()->SetTitle("# entries");
+  hchisq0->GetYaxis()->SetTitle("Number of entries");
   hchisq0->GetXaxis()->SetTitle("#chi^{2} (#bar{#beta=0})");
   hchisq0->DrawCopy();
   hchisq0_toyevt0->SetFillColor(kGreen);  
@@ -381,7 +316,7 @@ void CalcPvalue_nuebarapp
   cchisq0->SetLogy();
 
   TCanvas *cchisq1 = new TCanvas("cchisq1","cchisq1");
-  hchisq1->GetYaxis()->SetTitle("# entries");
+  hchisq1->GetYaxis()->SetTitle("Number of entries");
   hchisq1->GetXaxis()->SetTitle("#chi^{2} (#bar{#beta=1})");
   hchisq1->DrawCopy();
   hchisq1_toyevt0->SetFillColor(kGreen);  
@@ -395,7 +330,7 @@ void CalcPvalue_nuebarapp
 
   TCanvas *cPvalue_0BF = new TCanvas("cPvalue_0BF","cPvalue_0BF");
   cPvalue_0BF->SetLogy();
-  hdeltachisqDiff0BF->GetYaxis()->SetTitle("# entries");
+  hdeltachisqDiff0BF->GetYaxis()->SetTitle("Number of entries");
   hdeltachisqDiff0BF->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#bar{#beta}=0) - #chi^{2}(#bar{#beta}_{BF})");
   hdeltachisqDiff0BF->DrawCopy();
   hdeltachisqDiff0BF_toyevt0->SetFillColor(kGreen);  
@@ -420,16 +355,16 @@ void CalcPvalue_nuebarapp
 
   TCanvas *cPvalue_01 = new TCanvas("cPvalue_01","cPvalue_01");
   cPvalue_01->SetLogy();
-  hdeltachisqDiff01->GetYaxis()->SetTitle("# entries");
+  hdeltachisqDiff01->GetYaxis()->SetTitle("Number of entries");
   hdeltachisqDiff01->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#bar{#beta}=0) - #chi^{2}(#bar{#beta}=1)");
   hdeltachisqDiff01->DrawCopy();
-  hdeltachisqDiff01_toyevt0->SetFillColor(kGreen);  
-  hdeltachisqDiff01_toyevt1->SetFillColor(kBlue);  
-  hdeltachisqDiff01_toyevt2->SetFillColor(kCyan);  
-  sdeltachisqDiff01->Add(hdeltachisqDiff01_toyevt0);
-  sdeltachisqDiff01->Add(hdeltachisqDiff01_toyevt1);
-  sdeltachisqDiff01->Add(hdeltachisqDiff01_toyevt2);
-  sdeltachisqDiff01->Draw("same"); 
+  //hdeltachisqDiff01_toyevt0->SetFillColor(kGreen);  
+  //hdeltachisqDiff01_toyevt1->SetFillColor(kBlue);  
+  //hdeltachisqDiff01_toyevt2->SetFillColor(kCyan);  
+  // sdeltachisqDiff01->Add(hdeltachisqDiff01_toyevt0);
+  // sdeltachisqDiff01->Add(hdeltachisqDiff01_toyevt1);
+  // sdeltachisqDiff01->Add(hdeltachisqDiff01_toyevt2);
+  // sdeltachisqDiff01->Draw("same"); 
   TLine *ldeltachisqDiff01 = new TLine(deltachisq_beta01_data,0.,deltachisq_beta01_data,hdeltachisqDiff01->GetMaximum());
   ldeltachisqDiff01->SetLineColor(kRed);
   ldeltachisqDiff01->SetLineWidth(2);
@@ -466,23 +401,6 @@ void CalcPvalue_nuebarapp
   lPvalues_evt->AddEntry(ldata,name,"l");
   lPvalues_evt->Draw();
 
-
- TCanvas *cPvalue_evt_LikeWeigth = new TCanvas("cPvalue_evt_LikeWeigth","cPvalue_evt_LikeWeigth");
- //cPvalue_evt_LikeWeigth->SetLogy();
-  hnevents_WeightLike->SetLineWidth(2);
-  hnevents_WeightLike->GetXaxis()->SetTitle("# of observed events");
-  hnevents_WeightLike->GetYaxis()->SetTitle("# of entries weighted with likelihood");
-  hnevents_WeightLike->DrawCopy();
-  ldata->Draw();
-  // TLegend *lPvalues_evt = new TLegend(0.5,0.6,0.9,0.9);
-  // lPvalues_evt->SetFillColor(0);
-  // lPvalues_evt->SetLineColor(0);
-  // lPvalues_evt->SetTextFont(132);
-  // lPvalues_evt->SetTextSize(0.06);
-  // lPvalues_evt->AddEntry(hnevents,"# of toy events","l");
-  // sprintf(name,"# of data events = %1.3f",data); 
-  // lPvalues_evt->AddEntry(ldata,name,"l");
-  // lPvalues_evt->Draw();
 
 
   // Write output file
@@ -536,9 +454,6 @@ void CalcPvalue_nuebarapp
   cout << "p-value rate-only (# evt) = " << pvalue_evt_left << endl;
   cout << "p-value 01 (rate+shape) = " << pvalue_01_left << endl;
   cout << "p-value 0BF (rate+shape) = " << pvalue_0BF_left << endl;
-  cout << endl;
-  cout << "Calculate discrete right sided p-value with histogram:" << endl;
-  cout << "p-value rate-only (# evt) = " << pvalue_evt_histo << endl;
   cout << endl;
   cout << "Mean deltachisq01 = " << hdeltachisqDiff01->GetMean() << endl;
   cout << "RMS deltachisq01 = " << hdeltachisqDiff01->GetRMS() << endl;
