@@ -12,10 +12,10 @@ Added samples for multiring forward horn current
 */
 //________________________________________________________________________________________
 
-//#define __show_syst_reset_mesg__
-//#define __show_syst_tweak_mesg__
-//#define __show_syst_tweak_debug__
-//#define __show_physparamid__
+#define __show_syst_reset_mesg__
+#define __show_syst_tweak_mesg__
+#define __show_syst_tweak_debug__
+#define __show_physparamid__
 
 #include <cassert>
 #include <cstdlib>
@@ -239,7 +239,7 @@ void SuperkExpectation::CheckPhysParamId(void)
     }
   }
   for (int i=0; i<kNumOfSKDetFSIParams;i++){
-    PhysParamId_t p = ( PhysParamId_t)kListOfSKDetFSIParams[i];
+    PhysParamId_t p = (PhysParamId_t)kListOfSKDetFSIParams[i];
     if(util::AsString(p) == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfSKDetFSIParams is not defined:" 
         	<< util::AsString(p) << endl;
@@ -247,6 +247,25 @@ void SuperkExpectation::CheckPhysParamId(void)
     }    
   }
 
+   std::cout << "SuperkExpectation/CheckPhysParamId >> check FHC SuperkDetectorFSI MultiRing PhysParamId" << endl; 
+  for (int i=0; i<kNumOfSKDetFSIParamsMultiRing;i++){
+    PhysParamId_t p = (PhysParamId_t)(i+conv::kMultiRingNuisSKDetFSI_first);
+    PhysParamId_t p_list = (PhysParamId_t)kListOfMultiRingSKDetFSIParams[i];
+#ifdef __show_physparamid__
+    std::cout << util::AsString(p) << endl;
+#endif
+    if(util::AsString(p) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
+        	<< util::AsString(p) << endl;
+      util::Die(1);
+    }
+    if(util::AsString(p_list) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfSKDetFSIParams is not defined:" 
+        	<< util::AsString(p) << endl;
+      util::Die(1);
+    }    
+  }
+  
   std::cout << "SuperkExpectation/CheckPhysParamId >> check RHC SuperkDetectorFSI PhysParamId" << endl; 
   for (int i=0; i<kNumOfRHCSKDetFSIParams;i++){
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCNuisSKDetFSI000);
@@ -332,7 +351,6 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   
   if ( ! this->GetNuFlux           () -> Read (xml, root_node) ) return false;
   if ( ! this->GetNuFlux           () -> ReadRHC (xml, root_node) ) return false;
-
   if ( ! this->GetNuXSec           () -> Read (xml, root_node) ) return false;
 
   // NEW FHC+RHC JOINT
