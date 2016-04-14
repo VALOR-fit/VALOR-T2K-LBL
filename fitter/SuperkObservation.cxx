@@ -409,7 +409,7 @@ double SuperkObservation::NumOfEvents(double xvalue, double yvalue, SuperkSample
   return nev;
 }
 //________________________________________________________________________________________
-int SuperkObservation::NumOfBins()
+int SuperkObservation::NumOfBins(Option_t * /*opt*/) const
 {
   int nbins = 0;
 #ifdef __show_num_of_bins_mesg_debug__
