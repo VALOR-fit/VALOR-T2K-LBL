@@ -848,7 +848,7 @@ string valor::util::AsString(PhysParamId_t p)
       {
         // NEW SKDETFSI
         //int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-        int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+      int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
 
         string nutypes = "";
         switch(p) {
@@ -4290,10 +4290,10 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
     
     // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-    if(p >= kMultiRingNuisSKDetFSI000 && p <= kMultiRingNuisSKDetFSI005)
+    if(p >= kMultiRingNuisSKDetFSI_first && p <= kMultiRingNuisSKDetFSI_first+kNumOfSKDetFSIParamsMultiRing-1)
         return true;
 #elif defined(__USE_SKDETFSI2015__)
-    if(p >= kMultiRingNuisSKDetFSI000 && p <= kMultiRingNuisSKDetFSI011)
+    if(p >= kMultiRingNuisSKDetFSI_first && p <= kMultiRingNuisSKDetFSI_first+kNumOfSKDetFSIParamsMultiRing-1)
         return true;
 #endif
     
@@ -4302,10 +4302,10 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
     
     // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-    if(p >= kMultiRingNuisSKDetFSI006 && p <= kMultiRingNuisSKDetFSI017)
+    if(p >= kMultiRingNuisSKDetFSI_first && p <= kMultiRingNuisSKDetFSI_first+kNumOfSKDetFSIParamsMultiRing-1)
         return true;
 #elif defined(__USE_SKDETFSI2015__)
-    if(p >= kMultiRingNuisSKDetFSI012 && p <= kMultiRingNuisSKDetFSI023)
+    if(p >= kMultiRingNuisSKDetFSI_first && p <= kMultiRingNuisSKDetFSI_first+kNumOfSKDetFSIParamsMultiRing-1)
         return true;
 #endif
     
@@ -4368,62 +4368,62 @@ bool valor::util::IsBANFF(PhysParamId_t p)
 string valor::util::AsStringSpline(PhysParamId_t p)
 {
     switch(p) {
-        case ( kNuisBANFFMAQE             ) :
-        case ( kRHCNuisBANFFMAQE          ) :
+        case ( kNuisBANFFMAQE           ) :
+        case ( kRHCNuisBANFFMAQE        ) :
             return "maqe";
-        case ( kNuisBANFFMARES            ) :
-        case ( kRHCNuisBANFFMARES         ) :
+        case ( kNuisBANFFMARES          ) :
+        case ( kRHCNuisBANFFMARES       ) :
             return "manff";
             
             // NEW XSEC
-        case ( kNuisBANFFCA5              ) :
-        case ( kRHCNuisBANFFCA5           ) :
+        case ( kNuisBANFFCA5            ) :
+        case ( kRHCNuisBANFFCA5         ) :
             return "ca5";
-        case ( kNuisBANFFBgRES            ) :
-        case ( kRHCNuisBANFFBgRES         ) :
+        case ( kNuisBANFFBgRES          ) :
+        case ( kRHCNuisBANFFBgRES       ) :
             return "bgscl";
             // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
-        case ( kNuisBANFFSCCV             ) :
-        case ( kRHCNuisBANFFSCCV             ) :
+        case ( kNuisBANFFSCCV           ) :
+        case ( kRHCNuisBANFFSCCV        ) :
             return "sccvec";
-        case ( kNuisBANFFSCCA             ) :
-        case ( kRHCNuisBANFFSCCA             ) :
+        case ( kNuisBANFFSCCA           ) :
+        case ( kRHCNuisBANFFSCCA        ) :
             return "sccaxl";
 #endif
-        case ( kNuisBANFFFermiMom             ) :
-        case ( kRHCNuisBANFFFermiMom             ) :
+        case ( kNuisBANFFFermiMom       ) :
+        case ( kRHCNuisBANFFFermiMom    ) :
             return "pfo";
-        case ( kNuisBANFFShapeCCoth             ) :
-        case ( kRHCNuisBANFFShapeCCoth             ) :
+        case ( kNuisBANFFShapeCCoth     ) :
+        case ( kRHCNuisBANFFShapeCCoth  ) :
             return "dismpishp";
-        case ( kNuisBANFFBindE             ) :
-        case ( kRHCNuisBANFFBindE             ) :
+        case ( kNuisBANFFBindE          ) :
+        case ( kRHCNuisBANFFBindE       ) :
             return "ebo";
             //
             
             // NEW XSEC
-        case ( kNuisXSecRPA              ) :
-        case ( kRHCNuisXSecRPA           ) :
+        case ( kNuisXSecRPA             ) :
+        case ( kRHCNuisXSecRPA          ) :
             return "rpa";
             
-        case ( kNuisXSecBindE             ) :
-        case ( kRHCNuisXSecBindE          ) :
+        case ( kNuisXSecBindE           ) :
+        case ( kRHCNuisXSecBindE        ) :
             return "ebo";
-        case ( kNuisXSecFermiMom          ) :
-        case ( kRHCNuisXSecFermiMom       ) :
+        case ( kNuisXSecFermiMom        ) :
+        case ( kRHCNuisXSecFermiMom     ) :
             return "pfo";
-        case ( kNuisXSecShapeCCoth           ) :
-        case ( kRHCNuisXSecShapeCCoth           ) :
+        case ( kNuisXSecShapeCCoth      ) :
+        case ( kRHCNuisXSecShapeCCoth   ) :
             return "dismpishp";
-        case ( kNuisXSecPiLessDelta           ) :
-        case ( kRHCNuisXSecPiLessDelta           ) :
+        case ( kNuisXSecPiLessDelta     ) :
+        case ( kRHCNuisXSecPiLessDelta  ) :
             return "piless";
-        case ( kNuisXSecSpecFunc           ) :
-        case ( kRHCNuisXSecSpecFunc           ) :
+        case ( kNuisXSecSpecFunc        ) :
+        case ( kRHCNuisXSecSpecFunc     ) :
             return "sf";
-        case ( kNuisXSecWshape           ) :
-        case ( kRHCNuisXSecWshape           ) :
+        case ( kNuisXSecWshape          ) :
+        case ( kRHCNuisXSecWshape       ) :
             return "wshape";
             
         default:
