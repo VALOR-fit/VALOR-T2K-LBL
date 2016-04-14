@@ -238,8 +238,14 @@ Split valor::conv namespace into several smaller files
 #endif
 
 
-//
+// Check to make sure that the samples are on in MultiRing FHC Running
 
-
+#if defined(__MULTIRING_FHC_RUNNING__)
+#if !(defined(__MULTIRING_FHC_NUMU__) || defined(__MULTIRING_FHC_NUE__))
+#define __MULTIRING_FHC_NUMU__
+#define __MULTIRING_FHC_NUE__
 #endif
+#endif
+
+#endif //ana_options_h
 
