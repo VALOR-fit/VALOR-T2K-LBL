@@ -18,14 +18,14 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__
-//~ #define __show_init_mesg_debug__
+ #define __show_init_mesg_debug__
 #define __show_skdetfsiconv_check_mesg_info__
-//~ #define __show_skdetfsiconv_check_mesg_debug__
-//~ #define __show_skdetfsi_cholesky_mesg_info__
-//~ #define __show_skdetfsi_cholesky_mesg_debug__
-//~ #define __show_skdetfsi_tweak_mesg_debug__
-//~ #define __show_chisqpenalty_mesg_debug__
-//~ #define __show_skdetfsi_applysyst_mesg_debug__
+ #define __show_skdetfsiconv_check_mesg_debug__
+ #define __show_skdetfsi_cholesky_mesg_info__
+ #define __show_skdetfsi_cholesky_mesg_debug__
+ #define __show_skdetfsi_tweak_mesg_debug__
+ #define __show_chisqpenalty_mesg_debug__
+ #define __show_skdetfsi_applysyst_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -78,6 +78,8 @@ SuperkDetectorFSI::SuperkDetectorFSI()
       case (kSKsUndefined           ): break;
     }
   }
+
+  LOG("SKDetFSI",pINFO) << "Number of Active SKDetFSI parameters: " << numOfActiveSKDetFSIParams;
   
   int * number_of_relevant_systematics =  new int[conv::kns]();
   
@@ -92,6 +94,10 @@ SuperkDetectorFSI::SuperkDetectorFSI()
       case (kSKsFCFVMultiRingELike  ): number_of_relevant_systematics[is] += kNumOfSKDetFSIParamsMultiRe;  break;
       case (kSKsUndefined           ): break;
     }
+  }
+
+  for (int is = 0 ; is < conv::kns; is++) {
+    LOG("SKDetFSI",pINFO) << "Number of Relevant SKDetFSI systematics: " << number_of_relevant_systematics[is];
   }
   
   numOfActiveSKDetFSIParams = std::accumulate(number_of_relevant_systematics,number_of_relevant_systematics+conv::kns,0);
@@ -131,10 +137,27 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   CheckListOfSKDetFSISyst(numOfActiveSKDetFSIParams, activeSKDetFSIParams,
         "kListOfSKDetFSIParams", true);
 
+  LOG("SKDetFSI",pINFO) << "Checking ERange: ";
+  
   // Need a minus one here since these checks don't apply to Escale
-  CheckERange(numOfActiveSKDetFSIParams-1, activeSKDetFSIParams,
-              (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
-              
+  // Need to get the num of params that applies to the sample and the sample array and name since they are separate
+
+  // CheckERange(numOfActiveSKDetFSIParams-1, activeSKDetFSIParams,
+  // 	      (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
+
+  if (kNumOfSKDetFSIParams){
+  CheckERange(kNumOfSKDetFSIParams-1, activeSKDetFSIParams,
+  	      (const double *)kSKDetFSIParamsErecoCut, "kSKDetFSIParamsErecoCut");
+  }
+  if (kNumOfRHCSKDetFSIParams){
+  CheckERange(kNumOfRHCSKDetFSIParams, activeSKDetFSIParams,
+  	      (const double *)kRHCSKDetFSIParamsErecoCut, "kRHCSKDetFSIParamsErecoCut");
+  }
+  if (kNumOfSKDetFSIParamsMultiRing){
+  CheckERange(kNumOfSKDetFSIParamsMultiRing, activeSKDetFSIParams,
+  	      (const double *)kMultiRingSKDetFSIParamsErecoCut, "kMultiRingSKDetFSIParamsErecoCut");
+  }
+  
   CheckSKMode(numOfActiveSKDetFSIParams-1, activeSKDetFSIParams,
               (const bool *)kSKDetFSIParamToSKMode, "activeSKDetFSIParams", false);
   
@@ -198,7 +221,7 @@ void SuperkDetectorFSI::CheckListOfSKDetFSISyst(int nparams, const conv::PhysPar
 void SuperkDetectorFSI::CheckERange(int nparams, const PhysParamId_t * params, const double * erange, const char * vname)
 {
   PhysParamId_t curr, prev;
-  //check that XSec parameters effect the correct energy range
+  //check that XSec parameters affect the correct energy range
   for(int ix = 1; ix < nparams; ix++) {
     prev = params[ix-1];
     curr = params[ix];
@@ -219,7 +242,7 @@ void SuperkDetectorFSI::CheckERange(int nparams, const PhysParamId_t * params, c
              << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
              << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
              << "Should be previous high and this low should be identical (or 30 and 0, or 1.25 and 0)" << endl;
-        exit(-1);
+	util::Die(-1);
       }
     }
     if(TMath::Abs(this_lo + 1) < 1E-6 || TMath::Abs(this_hi + 1) < 1E-6) {
@@ -368,8 +391,8 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
 
 #ifdef __show_skdetfsi_applysyst_mesg_debug__
   string applystr;
-  applystr = apply ? "Passed" : "Failed";
-  cout << applystr << "\t" << util::AsString(p) << "\t" << util::AsString(s) << "\t" << util::AsString(m) << endl;
+  applystr = apply ? "Applies" : "DoesNotApply";
+  LOG("",pINFO) << applystr << " " << util::AsString(p) << " " << util::AsString(s) << " " << util::AsString(m);
 #endif
   return apply;
 }
