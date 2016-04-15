@@ -377,10 +377,6 @@ namespace valor {
 
 
 
-
-
-
-
     /// NEW MULTIRING 2
     static const PhysParamId_t kListOfMultiRingSKDetFSIParams[kNumOfSKDetFSIParamsMultiRing] =
       {
@@ -1148,13 +1144,13 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNC1pi0
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNCcoh
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNCoth
-#ifdef __USE_OSC_NUMU_MC_TEMPLATES__
+#    ifdef __USE_OSC_NUMU_MC_TEMPLATES__
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCCQE
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCC1pi
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCCcoh
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCCMEC
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCCoth
-#endif
+#    endif
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCQE
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCC1pi
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmNuMuBarCCcoh
@@ -1164,13 +1160,13 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNC1pi0
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNCcoh
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNCoth
-#ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+#    ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCC1pi
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCCcoh
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCCMEC
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCCoth
-#endif
+#    endif
         {  0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 }, // kSKmNuECCQE
         {  0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 }, // kSKmNuECC1pi
         {  0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 }, // kSKmNuECCcoh
@@ -1202,20 +1198,20 @@ namespace valor {
         {  1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuEBarCCcoh
         {  1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuEBarCCMEC
         {  1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuEBarCCoth
-#ifndef __USE_OSC_NUMU_MC_TEMPLATES__
+#    ifndef __USE_OSC_NUMU_MC_TEMPLATES__
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
-#endif
-#ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
+#    endif
+#    ifndef __USE_OSC_NUMUBAR_MC_TEMPLATES__
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmUndefined
-#endif
+#  endif
       }//MultiRe (1Re copy)
     };
 
@@ -2921,9 +2917,9 @@ namespace valor {
 #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
 
 #if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) // fhc all + skdetfsi multiring (no escale)
-#  if defined(__MULTIRING_FHC_NUMU__)
+#  if defined(__MULTIRING_FHC_NUMU__) && ! defined(__MULTIRING_FHC_NUE__)
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRmu;  // Tot # par FHC+MultiRmu
-#  elif defined (__MULTIRING_FHC_NUE__)
+#  elif defined (__MULTIRING_FHC_NUE__) && ! defined(__MULTIRING_FHC_NUMU__)
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRe;  // Tot # par FHC+MultiRmu
 #  else
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing;  // Tot # par FHC+MultiRing
@@ -2950,9 +2946,9 @@ namespace valor {
 
 #else
 #ifdef __MULTIRING_FHC_RUNNING__ // multiring fhc only
-#  if defined(__MULTIRING_FHC_NUMU__)
+#  if defined(__MULTIRING_FHC_NUMU__) && ! defined(__MULTIRING_FHC_NUE__)
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRmu;  // Tot # par FHC+MultiRmu
-#  elif defined (__MULTIRING_FHC_NUE__)
+#  elif defined (__MULTIRING_FHC_NUE__) && ! defined(__MULTIRING_FHC_NUMU__)
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRe;  // Tot # par FHC+MultiRmu
 #  else
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing;  // Tot # par FHC+MultiRing

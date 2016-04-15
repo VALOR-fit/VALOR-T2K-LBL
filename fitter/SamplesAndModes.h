@@ -90,10 +90,10 @@ namespace valor {
 #endif
 
 #ifdef __MULTIRING_FHC_RUNNING__
-#  if defined (__NUMUONLY__) || defined(__MULTIRING_FHC_NUMU__)
+#  if defined (__NUMUONLY__)  || defined(__MULTIRING_FHC_NUMU__) && !defined(__MULTIRING_FHC_NUE__)
       kSKsFCFVMultiRingMuLike,
       kSKsUndefined,
-#  elif defined (__NUEONLY__) || defined(__MULTIRING_FHC_NUE__)
+#  elif defined (__NUEONLY__) || defined(__MULTIRING_FHC_NUE__) && !defined(__MULTIRING_FHC_NUMU__)
       kSKsUndefined,
       kSKsFCFVMultiRingELike,
 #  else

@@ -18,14 +18,14 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__
- #define __show_init_mesg_debug__
+// #define __show_init_mesg_debug__
 #define __show_skdetfsiconv_check_mesg_info__
- #define __show_skdetfsiconv_check_mesg_debug__
- #define __show_skdetfsi_cholesky_mesg_info__
- #define __show_skdetfsi_cholesky_mesg_debug__
- #define __show_skdetfsi_tweak_mesg_debug__
- #define __show_chisqpenalty_mesg_debug__
- #define __show_skdetfsi_applysyst_mesg_debug__
+// #define __show_skdetfsiconv_check_mesg_debug__
+// #define __show_skdetfsi_cholesky_mesg_info__
+// #define __show_skdetfsi_cholesky_mesg_debug__
+// #define __show_skdetfsi_tweak_mesg_debug__
+// #define __show_chisqpenalty_mesg_debug__
+// #define __show_skdetfsi_applysyst_mesg_debug__
 
 #include <cassert>
 #include <cstdlib>
@@ -107,7 +107,7 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   
   // This logic needs careful checking. It should probably be replaced entirely by getting rid of the separate ListOf... arrays.
   // The intention here is that we iterate through our samples and append the relevant systematics in turn to our variable
-  // This is complicated by the fact that our FSI arrays are defined in pairs of samples, not one indiividual sample
+  // This is complicated by the fact that our FSI arrays are defined in pairs of samples, not one individual sample
   int ip = 0; // Will be used to iterate our position in the numOfActiveSKDetFSIParams variables
   int ip_by_type[3] = {}; // individually count our three types of systematic (FHC, RHC, MR)
   for (int is = 0 ; is < conv::kns; is++) {
@@ -362,9 +362,9 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
 {
   if (p==conv::kNuisSuperkEnergyScale) {return true;}
   /// NEW MULTIRING 2 
-  int idx;
+  int idx = -999;
   bool apply = false;  
-  
+
   int is = arr_index->SuperkSampleIdx(s);
   if (is == -1) return false;
   int im = arr_index->SuperkModeIdx(s,m);

@@ -203,67 +203,6 @@ void T2KOpt::SetDefaults(void)
     else
       gOscAnaTypeChoice = kAnaUndefined; 
   }
-  
-
-  // OLD
-
-// #if defined __FHC_RUNNING__ && defined __RHC_RUNNING__
-// #ifdef __NUMUONLY__
-//   fit_1Re  = false;
-//   fit_RHC_1Re  = false;
-// #endif
-// #ifdef __NUEONLY__
-//   fit_1Rmu = false;
-//   fit_RHC_1Rmu = false;
-// #endif
-// #else
-// #ifdef __FHC_RUNNING__
-// #ifdef __NUMUONLY__
-//   fit_1Re  = false;
-//   fit_RHC_1Re  = false;
-//   fit_RHC_1Rmu = false;
-// #endif
-// #ifdef __NUEONLY__
-//   fit_1Rmu = false;
-//   fit_RHC_1Rmu = false;
-//   fit_RHC_1Re  = false;
-// #endif
-// #else
-// #ifdef __RHC_RUNNING__
-// #ifdef __NUMUONLY__
-//   fit_1Re  = false;
-//   fit_RHC_1Re  = false;
-//   fit_1Rmu = false;
-// #endif
-// #ifdef __NUEONLY__
-//   fit_1Rmu = false;
-//   fit_RHC_1Rmu = false;
-//   fit_1Re  = false;
-// #endif
-// #endif
-// #endif
-// #endif
-
-  // if(fit_1Rmu && fit_1Re && fit_RHC_1Rmu && fit_RHC_1Re)
-  //   gOscAnaTypeChoice = kAnaFHCAndRHCCombined;
-  // else if(fit_1Rmu && !fit_1Re && fit_RHC_1Rmu && !fit_RHC_1Re) 
-  //   gOscAnaTypeChoice = kAnaFHCAndRHCNuMuDisappOnly;
-  // else if(!fit_1Rmu && fit_1Re && !fit_RHC_1Rmu && fit_RHC_1Re)
-  //   gOscAnaTypeChoice = kAnaFHCAndRHCNuEAppOnly;
-  // else if(fit_1Rmu && fit_1Re && !fit_RHC_1Rmu && !fit_RHC_1Re)
-  //   gOscAnaTypeChoice = kAnaCombined;
-  // else if(fit_1Rmu && !fit_1Re && !fit_RHC_1Rmu && !fit_RHC_1Re)
-  //   gOscAnaTypeChoice = kAnaNuMuDisappOnly;
-  // else if(!fit_1Rmu && fit_1Re && !fit_RHC_1Rmu && !fit_RHC_1Re)
-  //   gOscAnaTypeChoice = kAnaNuEAppOnly;
-  // else if(!fit_1Rmu && !fit_1Re && fit_RHC_1Rmu && fit_RHC_1Re)
-  //   gOscAnaTypeChoice = kAnaRHCCombined;
-  // else if(!fit_1Rmu && !fit_1Re && fit_RHC_1Rmu && !fit_RHC_1Re)
-  //   gOscAnaTypeChoice = kAnaRHCNuMuDisappOnly;
-  // else if(!fit_1Rmu && !fit_1Re && !fit_RHC_1Rmu && fit_RHC_1Re)
-  //   gOscAnaTypeChoice = kAnaRHCNuEAppOnly;
-  // else
-  //   gOscAnaTypeChoice = kAnaUndefined;
     
 }
 //____________________________________________________________________________
