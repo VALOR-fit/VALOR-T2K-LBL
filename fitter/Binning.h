@@ -3842,59 +3842,147 @@ static const double kXsQ2BinEdgesMultiRmu[kXsNQ2BinsMultiRmu+1] =
     };
 #endif
 
+
+
+
+
+
+
+
+
+
+
+/* // Theta e-like binning of xsec splines */
+/* #if THETA_XSEC_BINS_1RE == 1 */
+/* static const int kXsNQ2Bins1Re = 15; */
+/* static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] =  */
+/* { */
+/*   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100.,  */
+/*     110., 120., 130., 140., 180. */
+/* }; */
+/* static const int kRHCXsNQ2Bins1Re = 15; */
+/* static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] = */
+/* { */
+/*   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100.,  */
+/*     110., 120., 130., 140., 180. */
+/* }; */
+/* static const int kXsNQ2BinsMultiRe = 15; */
+/* static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] =  */
+/* { */
+/*   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100.,  */
+/*     110., 120., 130., 140., 180. */
+/* }; */
+/* #elif THETA_XSEC_BINS_1RE == 2 */
+/* static const int kXsNQ2Bins1Re = 1; */
+/* static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] =  */
+/* { */
+/*   0., 180. */
+/* }; */
+/* static const int kRHCXsNQ2Bins1Re = 1; */
+/* static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] = */
+/* { */
+/*   0., 180. */
+/* }; */
+/* static const int kXsNQ2BinsMultiRe = 1; */
+/* static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] =  */
+/* { */
+/*   0., 180. */
+/* }; */
+/* #elif THETA_XSEC_BINS_1RE == 3 */
+/*     static const int kXsNQ2Bins1Re = 2; */
+/*     static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] = */
+/*     { */
+/*         0., 60., 180. */
+/*     }; */
+/*     static const int kRHCXsNQ2Bins1Re = 2; */
+/*     static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] = */
+/*     { */
+/*         0.,60., 180. */
+/*     }; */
+/*     static const int kXsNQ2BinsMultiRe = 2; */
+/*     static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] = */
+/*     { */
+/*         0.,60., 180. */
+/*     }; */
+/* #endif */
+
+
+
+
 // Theta e-like binning of xsec splines
-#if THETA_XSEC_BINS_1RE == 1
+#if THETA_XSEC_BINS_1RE_FHC == 1
 static const int kXsNQ2Bins1Re = 15;
 static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] = 
 {
   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
     110., 120., 130., 140., 180.
 };
+#elif THETA_XSEC_BINS_1RE_FHC == 2
+static const int kXsNQ2Bins1Re = 1;
+static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] = 
+{
+  0., 180.
+};
+
+#elif THETA_XSEC_BINS_1RE_FHC == 3
+ static const int kXsNQ2Bins1Re = 2;
+ static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] =
+   {
+     0., 60., 180.
+   };
+#endif
+
+#if THETA_XSEC_BINS_1RE_RHC == 1
 static const int kRHCXsNQ2Bins1Re = 15;
 static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
 {
   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
     110., 120., 130., 140., 180.
 };
+#elif THETA_XSEC_BINS_1RE_RHC == 2
+static const int kRHCXsNQ2Bins1Re = 1;
+static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
+  {
+  0., 180.
+  };
+#elif THETA_XSEC_BINS_1RE_RHC == 3
+ static const int kRHCXsNQ2Bins1Re = 2;
+ static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
+   {
+     0.,60., 180.
+   };
+#endif
+
+#if THETA_XSEC_BINS_1RE_MULTIRING == 1
 static const int kXsNQ2BinsMultiRe = 15;
 static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] = 
 {
   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
     110., 120., 130., 140., 180.
 };
-#elif THETA_XSEC_BINS_1RE == 2
-static const int kXsNQ2Bins1Re = 1;
-static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] = 
-{
-  0., 180.
-};
-static const int kRHCXsNQ2Bins1Re = 1;
-static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
-{
-  0., 180.
-};
+#elif THETA_XSEC_BINS_1RE_MULTIRING == 2
 static const int kXsNQ2BinsMultiRe = 1;
 static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] = 
 {
   0., 180.
 };
-#elif THETA_XSEC_BINS_1RE == 3
-    static const int kXsNQ2Bins1Re = 2;
-    static const double kXsQ2BinEdges1Re[kXsNQ2Bins1Re+1] =
-    {
-        0., 60., 180.
-    };
-    static const int kRHCXsNQ2Bins1Re = 2;
-    static const double kRHCXsQ2BinEdges1Re[kRHCXsNQ2Bins1Re+1] =
-    {
-        0.,60., 180.
-    };
-    static const int kXsNQ2BinsMultiRe = 2;
-    static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] =
-    {
-        0.,60., 180.
-    };
+#elif THETA_XSEC_BINS_1RE_MULTIRING == 3
+ static const int kXsNQ2BinsMultiRe = 2;
+ static const double kXsQ2BinEdgesMultiRe[kXsNQ2BinsMultiRe+1] =
+   {
+     0.,60., 180.
+   };
 #endif
+
+
+
+
+
+
+
+
+
+
 
 // Theta mu-like binning of templates
 #if THETA_BINS_1RMU == 1
@@ -3935,44 +4023,102 @@ static const double kQ2BinEdgesMultiRmu[kNQ2BinsMultiRmu+1] =
 
 #endif
 
-// Theta e-like binning
-#if THETA_BINS_1RE == 1
+
+
+
+
+
+
+
+/* // Theta e-like binning */
+/* #if THETA_BINS_1RE == 1 */
+/* static const int kNQ2Bins1Re = 15; */
+/* static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] =  */
+/* { */
+/*   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100.,  */
+/*     110., 120., 130., 140., 180. */
+/* }; */
+/* static const int kRHCNQ2Bins1Re = 15; */
+/* static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] = */
+/* { */
+/*   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100.,  */
+/*     110., 120., 130., 140., 180. */
+/* }; */
+/* static const int kNQ2BinsMultiRe = 15; */
+/* static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] =  */
+/* { */
+/*   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100.,  */
+/*     110., 120., 130., 140., 180. */
+/* }; */
+/* #elif THETA_BINS_1RE == 2 */
+/* static const int kNQ2Bins1Re = 1; */
+/* static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] =  */
+/* { */
+/*   0., 180. */
+/* }; */
+/* static const int kRHCNQ2Bins1Re = 1; */
+/* static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] = */
+/* { */
+/*   0., 180. */
+/* }; */
+/* static const int kNQ2BinsMultiRe = 1; */
+/* static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] =  */
+/* { */
+/*   0., 180. */
+/* }; */
+
+/* #endif */
+
+
+ 
+#if THETA_BINS_1RE_FHC == 1
 static const int kNQ2Bins1Re = 15;
 static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] = 
 {
   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
     110., 120., 130., 140., 180.
 };
+#elif THETA_BINS_1RE_FHC == 2
+static const int kNQ2Bins1Re = 1;
+static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] = 
+{
+  0., 180.
+};
+#endif
+
+#if THETA_BINS_1RE_RHC == 1
 static const int kRHCNQ2Bins1Re = 15;
 static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] =
 {
   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
     110., 120., 130., 140., 180.
 };
+#elif THETA_BINS_1RE_RHC == 2
+static const int kRHCNQ2Bins1Re = 1;
+static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] =
+{
+  0., 180.
+};
+#endif
+
+#if THETA_BINS_1RE_MULTIRING == 1
 static const int kNQ2BinsMultiRe = 15;
 static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] = 
 {
   0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 
     110., 120., 130., 140., 180.
 };
-#elif THETA_BINS_1RE == 2
-static const int kNQ2Bins1Re = 1;
-static const double kQ2BinEdges1Re[kNQ2Bins1Re+1] = 
-{
-  0., 180.
-};
-static const int kRHCNQ2Bins1Re = 1;
-static const double kRHCQ2BinEdges1Re[kRHCNQ2Bins1Re+1] =
-{
-  0., 180.
-};
+#elif THETA_BINS_1RE_MULTIRING == 2
 static const int kNQ2BinsMultiRe = 1;
 static const double kQ2BinEdgesMultiRe[kNQ2BinsMultiRe+1] = 
 {
   0., 180.
 };
-
 #endif
+
+
+
+
 
 #endif // __ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
 
