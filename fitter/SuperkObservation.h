@@ -58,11 +58,10 @@ public:
   // Calculate the specified statistic
   // The corresponding prediction is taken from the input model.
   // Similar considerations as in Write() method, see above, apply for how this prediction is generated.
-  // This method calculates the statistical term. 
-  // The penalty terms is requested from the input model, which knows of all the systematic tweaks applied to it [TO BE IMPLEMENTED]
-  double Statistic (FitModelABC * pred, const FitParamList & fp,   Option_t * stat_opt = "likelihood-ratio");
-  double Statistic (FitModelABC * pred, const PhysHypothesis & ph, Option_t * stat_opt = "likelihood-ratio");
-  double Statistic (FitModelABC * pred, Option_t * stat_opt = "likelihood-ratio");
+  // This method calculates the statistical term. The penalty term is not included - you must ask the model for this specifically.
+  double GetFitStatistic (FitModelABC * pred, const FitParamList & fp,   Option_t * stat_opt = "likelihood-ratio");
+  double GetFitStatistic (FitModelABC * pred, const PhysHypothesis & ph, Option_t * stat_opt = "likelihood-ratio");
+  double GetFitStatistic (FitModelABC * pred, Option_t * stat_opt = "likelihood-ratio");
   
   //  *** T2K LEGACY INTERFACE ***
   bool Read(string config_file, int data_set_id, bool is_xml = true);
