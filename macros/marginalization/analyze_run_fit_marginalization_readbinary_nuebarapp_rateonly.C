@@ -108,7 +108,6 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     else if(nevents==5) hPValueBeta1_toyevt5->Fill(pvalue_beta1);
     else if(nevents==6) hPValueBeta1_toyevt6->Fill(pvalue_beta1);
     
-    cout << "P-Values:    Beta=0: " << pvalue_beta0 << ", Beta=1: " << pvalue_beta1 << endl;
   }
   
   
