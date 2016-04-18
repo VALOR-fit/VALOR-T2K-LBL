@@ -28,29 +28,26 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 (
  int          mode               = 0,                                         /* options: see above */
  bool         update_rootfile    = false,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample          = "1Rmu",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis         = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
 
- // double       input_mixing12     = -99,                                         /* */
- // double       input_mixing13     = -99,                                         /* */
- // double       input_mixing23     = -99,                                         /* */
- // double       input_deltacp      = -99,                                         /* */
- // double       input_dm12sq       = -99,                                         /* */
- // double       input_dm23sq       = -99,                                         /* */
+ double       input_mixing12     = -99,                                         /* */
+ double       input_mixing13     = -99,                                         /* */
+ double       input_mixing23     = -99,                                         /* */
+ double       input_deltacp      = -99,                                         /* */
+ double       input_dm12sq       = -99,                                         /* */
+ double       input_dm23sq       = -99,                                         /* */
 
- double       input_mixing12     = 0.,              /* */
- double       input_mixing13     = 0.,              /* */
- double       input_mixing23     = 0.,              /* */
- double       input_deltacp      = 0.,              /* */
- double       input_dm12sq       = -99,              /* */
- double       input_dm23sq       = -99,              /* */
+ // double       input_mixing12     = 0.,              /* */
+ // double       input_mixing13     = 0.,              /* */
+ // double       input_mixing23     = 0.,              /* */
+ // double       input_deltacp      = 0.,              /* */
+ // double       input_dm12sq       = -99,              /* */
+ // double       input_dm23sq       = -99,              /* */
 
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
- const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
+ const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
 
  const char * fit_param_list     = "nuosc3f+nuisance",
  

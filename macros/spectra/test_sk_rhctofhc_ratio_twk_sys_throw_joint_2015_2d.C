@@ -137,13 +137,13 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
 
- // double       input_mixing12       = 0.304,    
- // double       input_mixing13       = 0.0217, //0.0243   
- // double       input_mixing23       = 0.528,    
- // double       input_deltacp        = -1.601,   
- // double       input_dm12sq         = 7.53E-5,   
- // double       input_dm23sq         = 2.509E-3,     
- // double       input_betabar        = -99,
+ double       input_mixing12       = 0.304,    
+ double       input_mixing13       = 0.0217, //0.0243   
+ double       input_mixing23       = 0.528,    
+ double       input_deltacp        = -1.601,   
+ double       input_dm12sq         = 7.53E-5,   
+ double       input_dm23sq         = 2.509E-3,     
+ double       input_betabar        = 1.,
 
  // // Asimov A
  // double       input_mixing12       = -999,    
@@ -154,23 +154,23 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  // double       input_dm23sq         = -99,     
  // double       input_betabar        = -99,
 
- // Asimov B
- double       input_mixing12       = -999,    
- double       input_mixing13       = -999,   
- double       input_mixing23       = 0.45,    
- double       input_deltacp        = 0.,  
- double       input_dm12sq         = -999,   
- double       input_dm23sq         = -99,     
- double       input_betabar        = -99,
+ // // Asimov B
+ // double       input_mixing12       = -999,    
+ // double       input_mixing13       = -999,   
+ // double       input_mixing23       = 0.45,    
+ // double       input_deltacp        = 0.,  
+ // double       input_dm12sq         = -999,   
+ // double       input_dm23sq         = -99,     
+ // double       input_betabar        = -99,
 
  //
  // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
  //
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
+ const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
- const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
  
  //
  // OLD CONFIGURATION FILES

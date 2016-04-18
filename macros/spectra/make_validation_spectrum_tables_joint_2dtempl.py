@@ -456,13 +456,13 @@ if __name__=="__main__":
   
   
   #
-  # NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
+  # NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE)
   #
-  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml", help="Configuration file")
-  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml", help="Configuration file")
-  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml", help="Configuration file")
-  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml", help="Configuration file")
-  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml", help="Configuration file")
+  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FSIOnly.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml", help="Configuration file")
+  #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml", help="Configuration file")
   
   #
   # OLD CONFIGURATION FILES

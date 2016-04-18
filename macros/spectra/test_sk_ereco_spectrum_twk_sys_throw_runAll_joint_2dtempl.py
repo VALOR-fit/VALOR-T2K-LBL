@@ -24,9 +24,41 @@ Run this by /path/to/test_sk_ereco_spectrum_twk_sys_throw_runAll.py [--all] (you
 It will then create the .root in the current working directory
 """
 
-# 15 bins theta    
+#
+# NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ AND W/O FIT BIAS)
+#
+postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FSIOnly.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml"
+#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
+#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml"
+prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_prefit.xml"
+
+#postfit_config  = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml"
+#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml"
+#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml"
+#prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_prefit.xml"
+#prefit_config  = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h.xml"
+
+#
+# NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
+#
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml"
+#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml"
+#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml"
+#prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_prefit.xml"
+
+#
+# OLD CONFIGURATION FILES
+#
 postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
 prefit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_prefit.xml"
+#prefit_config  = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml"
 
 # 1 bin theta
 #postfit_config  = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml"
@@ -35,9 +67,11 @@ prefit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_
 
 prior_file = ""
 
-table_fn = "nsk_systematic_table_summary_PROVA.tex"
+table_fn = "nsk_systematic_table_summary_Asimov_B.tex"
 
-osc_tag_file = "dcp_-99.000"
+#osc_tag_file = "dcp_0.000" # Asimov B
+osc_tag_file = "dcp_-99.000" # Asimov A
+
 unosc_tag_file = "dcp_0.000"
 
 class T2KAnaError(Exception): pass
@@ -288,7 +322,7 @@ if make_summary:
         d[name] = float(input_rows[name])
             
     
-    # Add XSec Corr Tot
+    # Add XSec Corr Tot (TO CHECK)
     if "BANFF" in input_rows and "banff62_fhcprhc" in input_rows and "banff64_fhcprhc" in input_rows and "NueNumu" in input_rows:
       name_curr = "xsec_corr"
       name_modes.append(name_curr)

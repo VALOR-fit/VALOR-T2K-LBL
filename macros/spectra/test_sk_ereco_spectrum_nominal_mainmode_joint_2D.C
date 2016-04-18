@@ -15,7 +15,7 @@ using namespace valor::conv;
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
  const char * tag                  = "spectra_prova",
- const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
  // // No Oscillations
@@ -28,19 +28,20 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  // double       input_betabar        = -99,
 
  // Mach3, T2K Run1-4 + reactors best fit (1)
- double       input_mixing12       = 0.306,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13       = 0.025,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_mixing23       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_deltacp        = 0., //-99,    /* deltacp, */
  double       input_deltacp        = -1.601, //-99,    /* deltacp, */
- double       input_dm12sq         = 7.5E-5,    /* Dm^2_{12},  */
- //double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- //double       input_dm23sq         = 0.0026847, //-99,    /* |Dm^2_{23}| */
+ double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  double       input_betabar        = 1., //0., //-99,
+
+ //double       input_mixing12       = 0.306,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_mixing13       = 0.025,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_mixing23       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_deltacp        = 0., //-99,    /* deltacp, */
+ //double       input_dm12sq         = 7.5E-5,    /* Dm^2_{12},  */
+ //double       input_dm23sq         = 0.0026847, //-99,    /* |Dm^2_{23}| */
 
  // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 + first octant (2)
  // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -56,7 +57,10 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //
  // NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ FIT BIAS)
  //
- const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_elike_fhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ const char * config_file      = "analysis_configuration_data_theta_elike_rhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias.xml",
@@ -82,7 +86,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  const bool draw_data_spectra = true,
  const bool scale_mc = false,
 
- const bool change_banff_params = true
+ const bool change_banff_params = false
 
 
 )

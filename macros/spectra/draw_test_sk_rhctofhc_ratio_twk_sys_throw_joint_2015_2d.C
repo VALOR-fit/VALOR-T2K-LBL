@@ -6,61 +6,73 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 {
 
   string name_skdetonly[2] = {
-    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_SKDetonly.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_SKDetonly.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_SKDetonly.root",
     "SKDet"
   };
 
   string name_fsionly[2] = {
-    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_FSIonly.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_FSIonly.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_FSIonly.root",
     "FSI+SI"
   };
 
   string name_skdetfsi[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_SKDet_FSI.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_SKDet_FSI.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_SKDet_FSI.root",
     "SKDet+FSI+SI"
   };
 
   string name_flux[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_flux.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_flux.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_BANFF_flux.root",
     "Flux"
   };
 
   string name_xsec[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_xsec.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF_xsec.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_BANFF_xsec.root",
     "XSec Tot"
   };
 
   string name_banfftot[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_BANFF.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_BANFF.root",
     "Flux+XSec"
   };
   
   string name_skdetfsi_banfftot[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_skdetfsi_banff.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_skdetfsi_banff.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_skdetfsi_banff.root",
     "Flux+XSec+SDet+FSI+SI"
   }
   string name_osc[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_Osc_param.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_Osc_param.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_Osc_param.root",
     "Oscillations"
   }
 
   string name_all[2] = {
-    "Ratio_FHC_RHC/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_all.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_all.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_all.root",
     "All"
   }
 
   string name_xsec_ncother[2] = {
-    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_banff62_fhcprhc.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_banff62_fhcprhc.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_banff62_fhcprhc.root",
     "XSec NC other (uncorr)"
   };
 
   string name_xsec_nc1gamma[2] = {
-    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_banff64_fhcprhc.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_banff64_fhcprhc.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_banff64_fhcprhc.root",
     "XSec NC $1\\gamma$ (uncorr)"
   };
 
   string name_xsec_nuenumu[2] = {
-    "PROVA/sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_NueNumu.root",
+    //"sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_-99.000,dcp_-1.601,dmsq_Normal23_-99.000000eV2_NueNumu.root",
+    "sk_rhctofhc_ratio-twk_sys_throw_sinsqtheta23_0.450,dcp_0.000,dmsq_Normal23_-99.000000eV2_NueNumu.root",
     "XSec $\\nu_e$ / $\\nu_{\\mu}$ (uncorr)"
   };
 
@@ -377,6 +389,10 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   double Ratio_Err_all_elike = Ratio_RMS_all_elike / Ratio_Mean_all_elike;
 
 
+
+  
+
+
   // Write the table
 
   ofstream * outfilep = 0;
@@ -524,6 +540,125 @@ void draw_test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   // write to outfile
   outfile.write (streamer.str().c_str(),size);
   outfile.close();
+
+
+
+
+
+
+  // // Write the table systematic errors
+
+  // ofstream * outfilep = 0;
+  // char name[200];
+  // sprintf(name,"sk_err-mu-twk_sys_throw_%s.txt",tag);
+  // outfilep = new ofstream(name,ios_base::trunc);
+  // ofstream & outfile = *outfilep;
+  
+  // stringstream streamer;
+  
+  // streamer << std::fixed;
+  // streamer << std::setprecision(3);
+  
+  // streamer << endl;
+  // streamer << "\\begin{table}"   << endl;
+  // streamer << "\\begin{tabular}{| c || c | c || c | c |}" << endl;
+  // streamer << "\\hline" << endl;
+  // streamer << "Source of uncertainty & "
+  // 	   << "Mean & "
+  // 	   << "RMS &"
+  // 	   << "RMS/Mean "
+  // 	   << "\\\\"
+  // 	   << endl;
+
+  // streamer << "\\hline" << endl;
+   
+  // double mean_skdetfsi_mu = hskdetfsi_mulike->GetMean();
+  // double rms_skdetfsi_mu = hskdetfsi_mulike->GetRMS();
+
+  // streamer << name_skdetonly[1] 
+  // 	   << " & " << mean_skdetfsi_mu
+  // 	   << " & " << rms_skdetfsi_mu
+  // 	   << " & " << rms_skdetfsi_mu / mean_skdetfsi_mu
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // double fsionly_mean = fsionly_mulike->GetMean();
+  // double fsionly_rms = fsionly_mulike->GetRMS();
+
+  // streamer << name_fsionly[1] 
+  // 	   << " & " << fsionly_mean
+  // 	   << " & " << fsionly_rms
+  // 	   << " & " << fsionly_rms / fsionly_mean
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // double skdetonly_mean = skdetonly_mulike->GetMean();
+  // double skdetonly_rms = skdetonly_mulike->GetRMS();
+
+  // streamer << name_skdetfsi[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+  
+  // streamer << "\\hline" << endl;
+
+  // streamer << name_flux[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // streamer << name_xsec_ncother[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // streamer << name_xsec_nc1gamma[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // streamer << name_xsec_nuenumu[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // streamer << name_xsec[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // streamer << " \\hline" << endl;
+
+  // streamer << name_banfftot[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // streamer << " \\hline" << endl;
+
+  // streamer << name_skdetfsi_banfftot[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // streamer << " \\hline" << endl;
+
+  // streamer << name_osc[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+
+  // streamer << " \\hline" << endl;
+  
+  // streamer << name_all[1] 
+  // 	   << " \\\\ \\hline"
+  // 	   << endl;
+  
+  // streamer << "\\end{tabular}" << endl;
+  // streamer << "\\end{table}" << endl;
+
+  // cout << streamer.str() << endl;
+
+
+  // // get size of file
+  // long size;
+  // streamer.seekg(0,ifstream::end);
+  // size=streamer.tellg();
+  // streamer.seekg(0);
+  // // write to outfile
+  // outfile.write (streamer.str().c_str(),size);
+  // outfile.close();
 
   
 }
