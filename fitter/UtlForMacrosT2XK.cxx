@@ -265,7 +265,8 @@ string * valor::util::ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePoint
   return sout;
 }
 //____________________________________________________________________________
-void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool /*print*/)
+//void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool /*print*/)
+void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool /*print*/,string masshier) // NEW FC
 {    
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
@@ -348,8 +349,26 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   
 
   // Set Mass Hierarchy marginalization
-  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(runopt->Hierarchy_marg()); // needed to build the right binary file name 
   
+  if(masshier=="")
+    Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(runopt->Hierarchy_marg()); // needed to build the right binary file name 
+  else if(masshier=="NH"){
+    Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal"); // needed to build the right binary file name 
+  }
+  else if(masshier=="IH"){
+    Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted"); // needed to build the right binary file name 
+  }
+  else{
+    cerr << endl;
+    cerr << "You didn't set the marginalization file mode correctly" << endl;
+    cerr << "The following options can be chosen:" << endl;
+    cerr << " - No mode" << endl;
+    cerr << " - NH" << endl;
+    cerr << " - IH" << endl;
+    cerr << endl;
+    exit(1);
+  }
+
   //
   // MH MUST BE THE SAME AS FOR TOYS!!! TO CHECK  
   //
@@ -365,7 +384,41 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->SetMaxIterationSingleFit(2);  // Max # of iterations per fit
   fitmarg->SetMaxFitNumber(3); // Max # of fits max # of iterations
   
-  fitmarg->SetTagFileName(runopt->Infilename().c_str());
+
+
+  ////// NEW FC
+  if(masshier==""){
+    fitmarg->SetTagFileName(runopt->Infilename().c_str());
+    cout << "No Mass Hierarchy" << endl;
+    cout << runopt->Infilename().c_str() << endl;
+    cout << endl;
+  }
+  else if(masshier=="NH"){
+    fitmarg->SetTagFileName(runopt->Infilename_nh().c_str());
+    cout << "Normal Hierarchy" << endl;
+    cout << runopt->Infilename_nh().c_str() << endl;
+    cout << endl;
+  }
+  else if(masshier=="IH"){
+    fitmarg->SetTagFileName(runopt->Infilename_ih().c_str());
+    cout << "Inverted Hierarchy" << endl;
+    cout << runopt->Infilename_ih().c_str() << endl;
+    cout << endl;
+  }
+  else{
+    cerr << endl;
+    cerr << "You didn't set the marginalization file mode correctly" << endl;
+    cerr << "The following options can be chosen:" << endl;
+    cerr << " - No mode" << endl;
+    cerr << " - NH" << endl;
+    cerr << " - IH" << endl;
+    cerr << endl;
+    exit(1);
+  }
+  /////////
+
+
+
   fitmarg->SetFileID(runopt->Nfiles());
 
   // 1D deltaCP fit
