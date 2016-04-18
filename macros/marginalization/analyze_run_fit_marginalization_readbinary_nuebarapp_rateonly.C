@@ -300,7 +300,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   leg2->Draw();
   
   cout << "\n\n Average p-values! \n" <<endl;
-  cout << "Beta=0" << end;
+  cout << "Beta=0" << endl;
   cout << "0 events: " << hPValueBeta0_toyevt0->GetMean() <<  endl;
   cout << "1 event: "  <<  hPValueBeta0_toyevt1->GetMean() <<  endl;
   cout << "2 events: " <<  hPValueBeta0_toyevt2->GetMean() <<  endl;
@@ -309,7 +309,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   cout << "5 events: " <<  hPValueBeta0_toyevt5->GetMean() <<  endl;
   cout << "6 events: " <<  hPValueBeta0_toyevt6->GetMean() <<  endl;
   
-  cout << "Beta=1" << end;
+  cout << "Beta=1" << endl;
   cout << "0 events: " <<  hPValueBeta1_toyevt0->GetMean() <<  endl;
   cout << "1 event: "  <<  hPValueBeta1_toyevt1->GetMean() <<  endl;
   cout << "2 events: " <<  hPValueBeta1_toyevt2->GetMean() <<  endl;
