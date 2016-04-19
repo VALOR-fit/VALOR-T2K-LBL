@@ -136,11 +136,11 @@ $run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 -
 
 $resource        = "interactive"               unless defined $resource;
 
-$tag             = "prova_fc"  unless defined $tag;
+$tag             = "fitmarg_fc_dcp_mh"  unless defined $tag;
 
 #$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D) 
-#$nruns           = 100                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
-$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+$nruns           = 200                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+#$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 
 #
 # NEW CONFIGURATION FILES (14/3/16 BANFF WITH FIT BIAS)
@@ -148,18 +148,18 @@ $nruns           = 1                           unless defined $nruns;  # number 
 $config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
 
 #$nexpts          = 10000  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
-$nexpts          = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
+$nexpts          = 20  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 
 $first_expt      = 0   unless defined $first_exp; # first toy experiment id 
 
-# $dmsq23          = -999                    unless defined $dmsq23;
-# $dmsq12          = -999                     unless defined $dmsq12;
-# $mix23           = -999                       unless defined $mix23;
-# $mix13           = -999                      unless defined $mix13;
-# #$mix13           = 0.028                     unless defined $mix13;
-# $mix12           = -999                       unless defined $mix12;      
-# $deltacp         = -999                      unless defined $deltacp;
-# $betaBar         = 0.                          unless defined $betaBar;
+$dmsq23          = -999                    unless defined $dmsq23;
+$dmsq12          = -999                     unless defined $dmsq12;
+$mix23           = -999                       unless defined $mix23;
+$mix13           = -999                      unless defined $mix13;
+#$mix13           = 0.028                     unless defined $mix13;
+$mix12           = -999                       unless defined $mix12;      
+$deltacp         = 0.                      unless defined $deltacp;
+$betaBar         = 1.                          unless defined $betaBar;
 
 #
 # ASIMOV A
@@ -175,13 +175,13 @@ $first_expt      = 0   unless defined $first_exp; # first toy experiment id
 #
 # ASIMOV B
 #
-$dmsq23          = 2.509E-3                      unless defined $dmsq23;
-$dmsq12          = 7.53E-5                       unless defined $dmsq12;
-$mix23           = 0.45                          unless defined $mix23;
-$mix13           = 0.0217                        unless defined $mix13; # PDG 2015
-$mix12           = 0.304                         unless defined $mix12;
-$deltacp         = 0.                            unless defined $deltacp;
-$betaBar         = 1.                            unless defined $betaBar;
+# $dmsq23          = 2.509E-3                      unless defined $dmsq23;
+# $dmsq12          = 7.53E-5                       unless defined $dmsq12;
+# $mix23           = 0.45                          unless defined $mix23;
+# $mix13           = 0.0217                        unless defined $mix13; # PDG 2015
+# $mix12           = 0.304                         unless defined $mix12;
+# $deltacp         = 0.                            unless defined $deltacp;
+# $betaBar         = 1.                            unless defined $betaBar;
 
 $marg_hierarchy  = 0                           unless defined $marg_hierarchy; # toys for mass hierarchy in fake data sets
 $masshierarchy   = "normal"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
@@ -214,8 +214,8 @@ $print_syst_variation   = 0                    unless defined $print_syst_variat
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
 $sync_ih_to_nh          = 1                    unless defined $sync_ih_to_nh;
-$stat_fluct             = 0                    unless defined $stat_fluct;
-$tweak_systematics      = 0                    unless defined $tweak_systematics;
+$stat_fluct             = 1                    unless defined $stat_fluct;
+$tweak_systematics      = 1                    unless defined $tweak_systematics;
 $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 $prior_mode             = 1                    unless defined $prior_mode; # 0-->fix,1-->react,2-->t2k-only
 $save_xml               = 1                    unless defined $save_xml;
@@ -233,19 +233,17 @@ $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist; # s
 # NEW MARGINALIZATION FILES (BANFF RELEASE 14/3/16 WITH FIT BIAS)
 #
 
-$file_margtoys   = "MARGTOYS_FC_PROVA/prova_nh" unless defined $file_margtoys;
-$file_margtoys_nh   = "MARGTOYS_FC_PROVA/prova_nh" unless defined $file_margtoys_nh;
-$file_margtoys_ih   = "MARGTOYS_FC_PROVA/prova_ih" unless defined $file_margtoys_ih;
+$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $file_margtoys_nh;
+$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $file_margtoys_ih;
 
-$nfiles_margtoys   = 1           unless defined $nfiles_margtoys; # of marginalization files
+#$nfiles_margtoys   = 1           unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 2           unless defined $nfiles_margtoys; # of marginalization files
-#$nfiles_margtoys   = 201           unless defined $nfiles_margtoys; # of marginalization files
+$nfiles_margtoys   = 201           unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 546            unless defined $nfiles_margtoys; # of marginalization files        
 #$nfiles_margtoys   = 533            unless defined $nfiles_margtoys; # of marginalization files      
 #$nfiles_margtoys   = 441            unless defined $nfiles_margtoys; # of marginalization files
 
-#$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
-$ntoys_margtoys    = 2         unless defined $ntoys_margtoys;     # of marginalization toys
+$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
 
 # # 1D fit - betaBar (nuebar appearance)
 # $freepar0               = "betaBar"                 unless defined $freepar0;
@@ -642,6 +640,7 @@ while($i_freepar1 < $n_freepar1) {
 	    $do_fc                   = 1;        # flag to perform Feldman-Cousins --> make the following 2 variables useless
 	    $marg_hierarchy_margtoys = 0;        # marginalization of mass hierarchy in marginalization toys  --> No effect!
 	    $masshierarchy_marg      = "normal"; # mass hierarchy in marginalization toys if not marginalized --> No effect!
+	    $file_margtoys           = "";       # file with marginalization toys --> Not used!
 
 	    $arguments = "$softw_dir//bin/run_fc_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $ifile_first --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --file-margtoys-nh \"$file_margtoys_nh\" --file-margtoys-ih \"$file_margtoys_ih\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy_margtoys --mass-hierarchy-margtoys \"$masshierarchy_marg\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights --penalty-freepar0 $penalty_freepar0 --penalty-freepar1 $penalty_freepar1 --do-fc $do_fc";
 	    

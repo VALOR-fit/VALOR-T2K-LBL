@@ -133,7 +133,8 @@ $resource        = "interactive"               unless defined $resource;
 
 #$tag             = "fitmarg_joint_sinsqth23_react_nh_Data_Run16"  unless defined $tag;
 #$tag             = "fitmarg_joint_sinsqth13_t2konly_ih_Data_Run16"  unless defined $tag;
-#$tag             = "fitmarg_joint_dcp_react_nh_Data_Run16_RHC"  unless defined $tag;     
+$tag             = "fitmarg_joint_dcp_react_ih_Data_Run16_elike_RHConly"  unless defined $tag;     
+#$tag             = "fitmarg_joint_dcp_react_ih_Data_Run16_rateonly"  unless defined $tag;
 #$tag             = "fitmarg_joint_sinsqth23Vsdmsq_react_ih_Data_Run16"  unless defined $tag;
 #$tag             = "fitmarg_joint_sinsqth13Vsdcp_react_ih_Data_Run16"  unless defined $tag;
 
@@ -169,7 +170,9 @@ $nruns           = 1                           unless defined $nruns;  # number 
 #
 # NEW CONFIGURATION FILES (14/3/16 BANFF WITH FIT BIAS)
 #
-$config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_data_theta_elike_fhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
+$config_file    = "analysis_configuration_data_theta_elike_rhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
 #$config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml" unless defined $config_file;
 
 #
@@ -270,27 +273,43 @@ $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist; # s
 #$fitparamlist   = "nuosc3f_normbar+nuisance"  unless defined $fitparamlist; # nuebar appearance analysis  /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
 
 
+
 #
 # NEW MARGINALIZATION FILES (BANFF RELEASE 14/3/16 WITH FIT BIAS)
 #
+ 
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_betabar_react_MargMH_10kToys/joint_betabar_niwg2015c_react_MargMH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sinsqth23_react_NH_10kToys/joint_sinsqth23_niwg2015c_react_NH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sinsqth23_react_IH_10kToys/joint_sinsqth23_niwg2015c_react_IH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dmsq_react_NH_10kToys/joint_dmsq_niwg2015c_react_NH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dmsq_react_IH_10kToys/joint_dmsq_niwg2015c_react_IH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sinsqth13_t2konly_NH_10kToys/joint_sinsqth13_niwg2015c_t2konly_NH_10kToys" unless defined $file_margtoys; 
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sinsqth13_t2konly_IH_10kToys/joint_sinsqth13_niwg2015c_t2konly_IH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $file_margtoys;
 
-#$file_margtoys   = "../TECH_NOTE_14_3_16/BETABAR/TOYS/joint_betabar_react_MargMH_10kToys/joint_betabar_niwg2015c_react_MargMH_10kToys" unless defined $file_margtoys;
-#$file_margtoys   = "../TECH_NOTE_14_3_16/MARGTOYS/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $file_margtoys;
-$file_margtoys   = "MARGTOYS_FC_PROVA/prova_nh" unless defined $file_margtoys;
-#$file_margtoys   = "MARGTOYS_FC_PROVA/prova_ih" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sisqth23Vsdmsq_react_NH_10kToys/joint_sinsqth23Vsdmsq_niwg2015c_react_NH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sisqth23Vsdmsq_react_IH_10kToys/joint_sinsqth23Vsdmsq_niwg2015c_react_IH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sinsqth13Vsdcp_react_NH_10kToys/joint_sinsqth13Vsdcp_niwg2015c_react_NH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sinsqth13Vsdcp_react_IH_10kToys/joint_sinsqth13Vsdcp_niwg2015c_react_IH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sisqth23Vsdmsq_StatOnly_react_NH_10kToys/joint_sinsqth23Vsdmsq_StatOnly_niwg2015c_react_NH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sisqth23Vsdmsq_StatOnly_react_IH_10kToys/joint_sinsqth23Vsdmsq_StatOnly_niwg2015c_react_NH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sinsqth23Vsdcp_react_NH_10kToys/joint_sinsqth23Vsdcp_niwg2015c_react_MargMH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_sinsqth23Vsdcp_react_IH_10kToys/joint_sinsqth23Vsdcp_niwg2015c_react_IH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dmsqVsdcp_react_IH_10kToys/joint_dmsqVsdcp_niwg2015c_react_IH_10kToys" unless defined $file_margtoys;
 
-$nfiles_margtoys   = 1           unless defined $nfiles_margtoys; # of marginalization files
+
+#$nfiles_margtoys   = 1           unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 2           unless defined $nfiles_margtoys; # of marginalization files
-#$nfiles_margtoys   = 201           unless defined $nfiles_margtoys; # of marginalization files
+$nfiles_margtoys   = 201           unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 546            unless defined $nfiles_margtoys; # of marginalization files        
 #$nfiles_margtoys   = 533            unless defined $nfiles_margtoys; # of marginalization files      
 #$nfiles_margtoys   = 441            unless defined $nfiles_margtoys; # of marginalization files
 
-#$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
-$ntoys_margtoys    = 2         unless defined $ntoys_margtoys;     # of marginalization toys
+$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
 
 $marg_hierarchy_margtoys  = 0            unless defined $marg_hierarchy_margtoys; # marginalization of mass hierarchy in marginalization toys
-$masshierarchy_marg       = "normal"     unless defined $masshierarchy_marg;      # mass hierarchy in marginalization toys if not marginalized
+$masshierarchy_marg       = "inverted"     unless defined $masshierarchy_marg;      # mass hierarchy in marginalization toys if not marginalized
 
 # # 1D fit - betaBar (nuebar appearance)
 # $freepar0               = "betaBar"                 unless defined $freepar0;
@@ -381,6 +400,16 @@ $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parame
 # $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value  
 # $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value  
 # $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan 
+
+# 2D fit - dmsq Vs dcp
+#$freepar0          = "dmsq23"                   unless defined $freepar0;
+#$minfreepar0       = 2.E-3                      unless defined $minfreepar0;     # Minimum free parameter allowed value 
+#$maxfreepar0       = 3.E-3                      unless defined $maxfreepar0;     # Maximum free parameter allowed value
+#$npt_freepar0      = 21                         unless defined $npt_freepar0;    # of free parameter points to scan 
+#$freepar1          = "deltacp"                  unless defined $freepar1; 
+#$minfreepar1       = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value  
+#$maxfreepar1       = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value   
+#$npt_freepar1      = 51                         unless defined $npt_freepar1;    # of free parameter points to scan    
 
 $type_error        = "" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
 $draw_full_chisq   = 1             unless defined $draw_full_chisq;
