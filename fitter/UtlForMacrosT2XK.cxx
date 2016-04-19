@@ -265,13 +265,17 @@ string * valor::util::ConstructPointsToAddFromXML(TXMLEngine & xml, XMLNodePoint
   return sout;
 }
 //____________________________________________________________________________
-//void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool /*print*/)
 void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMarginalization *fitmarg, SuperkExpectation *skexp, SuperkObservation *skobs_fakedata, bool /*print*/,string masshier) // NEW FC
 {    
+  //
+  // If mass hierarchy is not set (masshier==""), use the global mass hierarchy.
+  // Needed for when Feldman-Cousins is not run
+  //
+
+  
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   //gROOT->SetBatch(true);
-  
 
   //RunOpt *runopt = new RunOpt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
   //RunOpt runopt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
@@ -346,16 +350,16 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
   fitmarg->SetStoreLikeWeights(runopt->StoreLikeWeights()); // Set if to store full likelihood for each toy (after fitmarg->Init())
   
-  
 
   // Set Mass Hierarchy marginalization
   
-  if(masshier=="")
+  if(masshier==""){ // use global mass hierarchy
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(runopt->Hierarchy_marg()); // needed to build the right binary file name 
-  else if(masshier=="NH"){
+  }
+  else if(masshier=="normal"){
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal"); // needed to build the right binary file name 
   }
-  else if(masshier=="IH"){
+  else if(masshier=="inverted"){
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted"); // needed to build the right binary file name 
   }
   else{
@@ -363,8 +367,8 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
     cerr << "You didn't set the marginalization file mode correctly" << endl;
     cerr << "The following options can be chosen:" << endl;
     cerr << " - No mode" << endl;
-    cerr << " - NH" << endl;
-    cerr << " - IH" << endl;
+    cerr << " - normal" << endl;
+    cerr << " - inverted" << endl;
     cerr << endl;
     exit(1);
   }
@@ -374,11 +378,12 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   //
   fitmarg->SetMargMassHierarchy(runopt->DoMargMH()); 
   //
-  
+
   // Set fit parameter list
-  fitmarg->SetFitParamList(runopt->Fit_param_list().c_str());
+  fitmarg->SetFitParamList(runopt->Fit_param_list().c_str());  
+
   fitmarg->PrintPhysHypothesis();
-  
+
   // Build the map fileID - sub-range
   
   fitmarg->SetMaxIterationSingleFit(2);  // Max # of iterations per fit
@@ -393,13 +398,13 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
     cout << runopt->Infilename().c_str() << endl;
     cout << endl;
   }
-  else if(masshier=="NH"){
+  else if(masshier=="normal"){
     fitmarg->SetTagFileName(runopt->Infilename_nh().c_str());
     cout << "Normal Hierarchy" << endl;
     cout << runopt->Infilename_nh().c_str() << endl;
     cout << endl;
   }
-  else if(masshier=="IH"){
+  else if(masshier=="inverted"){
     fitmarg->SetTagFileName(runopt->Infilename_ih().c_str());
     cout << "Inverted Hierarchy" << endl;
     cout << runopt->Infilename_ih().c_str() << endl;
@@ -410,14 +415,12 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
     cerr << "You didn't set the marginalization file mode correctly" << endl;
     cerr << "The following options can be chosen:" << endl;
     cerr << " - No mode" << endl;
-    cerr << " - NH" << endl;
-    cerr << " - IH" << endl;
+    cerr << " - normal" << endl;
+    cerr << " - inverted" << endl;
     cerr << endl;
     exit(1);
   }
   /////////
-
-
 
   fitmarg->SetFileID(runopt->Nfiles());
 

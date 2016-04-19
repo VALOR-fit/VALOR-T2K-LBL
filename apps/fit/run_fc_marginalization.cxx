@@ -187,7 +187,6 @@ int main(int argc, char ** argv)
   double REALtime_Minim_ih=conv::kBadResult;
   double REALtime_FullChisq_nh=conv::kBadResult;
   double REALtime_FullChisq_ih=conv::kBadResult;
-
   double CPUtime_end=conv::kBadResult;
   double REALtime_end=conv::kBadResult;
 
@@ -197,9 +196,8 @@ int main(int argc, char ** argv)
   string tag="";
   int nexpts=-999;
   int ToyID=-999;
-  double truepar0=-999;
-  double truepar1=-999;    
-  string trueMH = "";
+  
+  // fit status variables
   int nfits_nh=-999;
   int nfits_ih=-999;
   int nchisqcalls_nh=-999;
@@ -209,19 +207,57 @@ int main(int argc, char ** argv)
   int fitstatus_nh=-999;
   int fitstatus_ih=-999;
   
+  // true variables
+  double truepar0=-999;
+  double truepar1=-999;    
+  string trueMH = "";
+  double chisqtrue0=conv::kALargeNum;
+    
+  // global fit output
+  string MH_glob = "";
+  double deltachisq0BF_glob=conv::kALargeNum;  
   double chisqmin_glob=conv::kALargeNum;
-  double chisqmin_nh=conv::kALargeNum;
-  double chisqmin_ih=conv::kALargeNum;
-  double chisqtrue0_glob=conv::kALargeNum;
-  double chisqtrue0_nh=conv::kALargeNum;
-  double chisqtrue0_ih=conv::kALargeNum;
-  double chisqtrue1_glob=conv::kALargeNum;
-  double chisqtrue1_nh=conv::kALargeNum;
-  double chisqtrue1_ih=conv::kALargeNum;
-  
-  double deltachisq0BF_glob=conv::kALargeNum;
-  double deltachisq01_glob=conv::kALargeNum;
+  double bestfit0_glob=-999;
+  double bestfit1_glob=-999;
+  double bestfiterrNeg0_glob=-999;
+  double bestfiterrNeg1_glob=-999;
+  double bestfiterrPos0_glob=-999;
+  double bestfiterrPos1_glob=-999;
+  double bestfiterrSym0_glob=-999;
+  double bestfiterrSym1_glob=-999;
+  double bestfitFullChisq0_glob=-999;
+  double bestfitFullChisq1_glob=-999;
+  double chisqminFullChisq_glob=conv::kALargeNum;
 
+  // normal hierarchy fit output
+  double chisqmin_nh=conv::kALargeNum;
+  double bestfit0_nh=-999;
+  double bestfit1_nh=-999;
+  double bestfiterrNeg0_nh=-999;
+  double bestfiterrNeg1_nh=-999;
+  double bestfiterrPos0_nh=-999;
+  double bestfiterrPos1_nh=-999;
+  double bestfiterrSym0_nh=-999;
+  double bestfiterrSym1_nh=-999;
+  double bestfitFullChisq0_nh=-999;
+  double bestfitFullChisq1_nh=-999;
+  double chisqminFullChisq_nh=conv::kALargeNum;
+
+  // inverted hierarchy fit output
+  double chisqmin_ih=conv::kALargeNum;
+  double bestfit0_ih=-999;
+  double bestfit1_ih=-999;
+  double bestfiterrNeg0_ih=-999;
+  double bestfiterrNeg1_ih=-999;
+  double bestfiterrPos0_ih=-999;
+  double bestfiterrPos1_ih=-999;
+  double bestfiterrSym0_ih=-999;
+  double bestfiterrSym1_ih=-999;
+  double bestfitFullChisq0_ih=-999;
+  double bestfitFullChisq1_ih=-999;
+  double chisqminFullChisq_ih=conv::kALargeNum;
+
+  // histograms
   TH2D *hchisq2D_out_nh = new TH2D("hchisq2D_out_nh","hchisq2D_out_nh",1,0,1,1,0,1);
   TH2D *hchisq2D_out_ih = new TH2D("hchisq2D_out_ih","hchisq2D_out_ih",1,0,1,1,0,1);
   TH1D *hchisq1D_out_nh = new TH1D("hchisq1D_out_nh","hchisq1D_out_nh",1,0,1);
@@ -234,44 +270,7 @@ int main(int argc, char ** argv)
   TH2D *hstep2D_out_ih = new TH2D("hstep2D_out_ih","hstep2D_out_ih",1,0,1,1,0,1);
   TH1D *hstep1D_out_nh = new TH1D("hstep1D_out_nh","hstep1D_out_nh",1,0,1);
   TH1D *hstep1D_out_ih = new TH1D("hstep1D_out_ih","hstep1D_out_ih",1,0,1);
-  TH1D *hBetaBar0_nh = 0;
-  TH1D *hBetaBar0_ih = 0;
-  TH1D *hBetaBar1_nh = 0;
-  TH1D *hBetaBar1_ih = 0;
 
-  double bestfit0_glob=-999;
-  double bestfit0_nh=-999;
-  double bestfit0_ih=-999;
-
-  double bestfit1_glob=-999;
-  double bestfit1_nh=-999;
-  double bestfit1_ih=-999;
-  
-  double bestfiterrNeg0_nh=-999;
-  double bestfiterrNeg0_ih=-999;
-  double bestfiterrNeg1_nh=-999;
-  double bestfiterrNeg1_ih=-999;
-  double bestfiterrPos0_nh=-999;
-  double bestfiterrPos0_ih=-999;
-  double bestfiterrPos1_nh=-999;
-  double bestfiterrPos1_ih=-999;
-  double bestfiterrSym0_nh=-999;
-  double bestfiterrSym0_ih=-999;
-  double bestfiterrSym1_nh=-999;
-  double bestfiterrSym1_ih=-999;
-
-  double bestfitFullChisq0_glob=-999;
-  double bestfitFullChisq0_nh=-999;
-  double bestfitFullChisq0_ih=-999;
-  
-  double bestfitFullChisq1_glob=-999;
-  double bestfitFullChisq1_nh=-999;
-  double bestfitFullChisq1_ih=-999;
-  
-  double chisqminFullChisq_glob=conv::kALargeNum;
-  double chisqminFullChisq_nh=conv::kALargeNum;
-  double chisqminFullChisq_ih=conv::kALargeNum;
-  
 #ifndef __USE_2D_TEMPLATES__
   TH1D *hErecoToy_1Rmu = new TH1D("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1);
   TH1D *hErecoToy_1Re = new TH1D("hErecoToy_1Re","hErecoToy_1Re",1,0,1);
@@ -312,18 +311,82 @@ int main(int argc, char ** argv)
   fitnt->Branch("best_fit_params",      "valor::FitParamList",  &fparm,      1280000,0);
   fitnt->Branch("input_params",         "valor::PhysParamList", &iparm,      1280000,0);
 
+  fitnt->Branch("CPUtime_Minim_nh",&CPUtime_Minim_nh);
+  fitnt->Branch("CPUtime_Minim_ih",&CPUtime_Minim_ih);
+  fitnt->Branch("CPUtime_FullChisq_nh",&CPUtime_FullChisq_nh);
+  fitnt->Branch("CPUtime_FullChisq_ih",&CPUtime_FullChisq_ih);
+  fitnt->Branch("REALtime_Minim_nh",&REALtime_Minim_nh);
+  fitnt->Branch("REALtime_Minim_ih",&REALtime_Minim_ih);
+  fitnt->Branch("REALtime_FullChisq_nh",&REALtime_FullChisq_nh);
+  fitnt->Branch("REALtime_FullChisq_ih",&REALtime_FullChisq_ih);
+  fitnt->Branch("CPUtime_end",&CPUtime_end);
+  fitnt->Branch("REALtime_end",&REALtime_end);
+
+  fitnt->Branch("ToyID",&ToyID);
+  fitnt->Branch("Job",&run);
+  fitnt->Branch("Tag",&tag);
+  fitnt->Branch("nexpts",&nexpts);
+
+  // fit status
+  fitnt->Branch("IsFit2D_nh",&IsFit2D_nh);
+  fitnt->Branch("IsFit2D_ih",&IsFit2D_ih);
+  fitnt->Branch("fitstatus_nh",&fitstatus_nh,"fitstatus_nh/I");
+  fitnt->Branch("fitstatus_ih",&fitstatus_ih,"fitstatus_ih/I");
+  fitnt->Branch("nfits_nh",&nfits_nh,"nfits_nh/I");
+  fitnt->Branch("nfits_ih",&nfits_ih,"nfits_ih/I");
+  fitnt->Branch("nchisqcalls_nh",&nchisqcalls_nh,"nchisqcalls_nh/I");
+  fitnt->Branch("nchisqcalls_ih",&nchisqcalls_ih,"nchisqcalls_ih/I");
+  fitnt->Branch("niterations_nh",&niterations_nh,"niterations_nh/I");
+  fitnt->Branch("niterations_ih",&niterations_ih,"niterations_ih/I");
+
+  // true variables
   fitnt->Branch("truepar0", &truepar0 );
   fitnt->Branch("truepar1", &truepar1 );
   fitnt->Branch("trueMH",   &trueMH   );
-
+  fitnt->Branch("chisqtrue0",&chisqtrue0,"chisqtrue0/D");
+  
+  // global fit output
+  fitnt->Branch("deltachisq0BF_glob",&deltachisq0BF_glob,"deltachisq0BF_glob/D");
+  fitnt->Branch("MH_glob",   &MH_glob   );
+  fitnt->Branch("chisqmin_glob",&chisqmin_glob,"chisqmin_glob/D");
   fitnt->Branch("bestfit0_glob", &bestfit0_glob );
-  fitnt->Branch("bestfit0_nh", &bestfit0_nh );
-  fitnt->Branch("bestfit0_ih", &bestfit0_ih );
-
   fitnt->Branch("bestfit1_glob", &bestfit1_glob );
-  fitnt->Branch("bestfit1_nh", &bestfit1_nh );
-  fitnt->Branch("bestfit1_ih", &bestfit1_ih );
+  fitnt->Branch("bestfiterrNeg0_glob",&bestfiterrNeg0_glob);
+  fitnt->Branch("bestfiterrNeg1_glob",&bestfiterrNeg1_glob);
+  fitnt->Branch("bestfiterrPos0_glob",&bestfiterrPos0_glob);
+  fitnt->Branch("bestfiterrPos1_glob",&bestfiterrPos1_glob);
+  fitnt->Branch("bestfiterrSym0_glob",&bestfiterrSym0_glob);
+  fitnt->Branch("bestfiterrSym1_glob",&bestfiterrSym1_glob);
+  fitnt->Branch("bestfitFullChisq0_glob", &bestfitFullChisq0_glob);
+  fitnt->Branch("chisqminFullChisq_glob",&chisqminFullChisq_glob);
 
+  // normal hierarchy fit output
+  fitnt->Branch("chisqmin_nh",&chisqmin_nh,"chisqmin_nh/D");
+  fitnt->Branch("bestfit0_nh", &bestfit0_nh );
+  fitnt->Branch("bestfit1_nh", &bestfit1_nh );
+  fitnt->Branch("bestfiterrNeg0_nh",&bestfiterrNeg0_nh);
+  fitnt->Branch("bestfiterrNeg1_nh",&bestfiterrNeg1_nh);
+  fitnt->Branch("bestfiterrPos0_nh",&bestfiterrPos0_nh);
+  fitnt->Branch("bestfiterrPos1_nh",&bestfiterrPos1_nh);
+  fitnt->Branch("bestfiterrSym0_nh",&bestfiterrSym0_nh);
+  fitnt->Branch("bestfiterrSym1_nh",&bestfiterrSym1_nh);
+  fitnt->Branch("bestfitFullChisq0_nh", &bestfitFullChisq0_nh );
+  fitnt->Branch("chisqminFullChisq_nh",&chisqminFullChisq_nh);
+
+  // inverted hierarchy fit output
+  fitnt->Branch("chisqmin_ih",&chisqmin_ih,"chisqmin_ih/D");
+  fitnt->Branch("bestfit0_ih", &bestfit0_ih );
+  fitnt->Branch("bestfit1_ih", &bestfit1_ih );
+  fitnt->Branch("bestfiterrNeg0_ih",&bestfiterrNeg0_ih);
+  fitnt->Branch("bestfiterrNeg1_ih",&bestfiterrNeg1_ih);
+  fitnt->Branch("bestfiterrPos0_ih",&bestfiterrPos0_ih);
+  fitnt->Branch("bestfiterrPos1_ih",&bestfiterrPos1_ih);
+  fitnt->Branch("bestfiterrSym0_ih",&bestfiterrSym0_ih);
+  fitnt->Branch("bestfiterrSym1_ih",&bestfiterrSym1_ih);
+  fitnt->Branch("bestfitFullChisq0_ih", &bestfitFullChisq0_ih );
+  fitnt->Branch("chisqminFullChisq_ih",&chisqminFullChisq_ih);
+    
+  // histograms
   fitnt->Branch("hchisq1D_nh",     "TH1D", &hchisq1D_out_nh,     32000,0 );
   fitnt->Branch("hchisq1D_ih",     "TH1D", &hchisq1D_out_ih,     32000,0 );
   fitnt->Branch("hstep1D_nh",      "TH1D", &hstep1D_out_nh,      32000,0 );
@@ -336,80 +399,7 @@ int main(int argc, char ** argv)
   fitnt->Branch("hdeltachisq2D_ih","TH2D", &hdeltachisq2D_out_ih,32000,0 );
   fitnt->Branch("hstep2D_nh",      "TH2D", &hstep2D_out_nh,      32000,0 );
   fitnt->Branch("hstep2D_ih",      "TH2D", &hstep2D_out_ih,      32000,0 );
-  fitnt->Branch("hBetaBar0_nh",    "TH1D", &hBetaBar0_nh,        32000,0 );
-  fitnt->Branch("hBetaBar0_ih",    "TH1D", &hBetaBar0_ih,        32000,0 );
-  fitnt->Branch("hBetaBar1_nh",    "TH1D", &hBetaBar1_nh,        32000,0 );
-  fitnt->Branch("hBetaBar1_ih",    "TH1D", &hBetaBar1_ih,        32000,0 );
-  
-  fitnt->Branch("fitstatus_nh",&fitstatus_nh,"fitstatus_nh/I");
-  fitnt->Branch("fitstatus_ih",&fitstatus_ih,"fitstatus_ih/I");
-  
-  fitnt->Branch("CPUtime_Minim_nh",&CPUtime_Minim_nh);
-  fitnt->Branch("CPUtime_Minim_ih",&CPUtime_Minim_ih);
-  fitnt->Branch("CPUtime_FullChisq_nh",&CPUtime_FullChisq_nh);
-  fitnt->Branch("CPUtime_FullChisq_ih",&CPUtime_FullChisq_ih);
-  fitnt->Branch("REALtime_Minim_nh",&REALtime_Minim_nh);
-  fitnt->Branch("REALtime_Minim_ih",&REALtime_Minim_ih);
-  fitnt->Branch("REALtime_FullChisq_nh",&REALtime_FullChisq_nh);
-  fitnt->Branch("REALtime_FullChisq_ih",&REALtime_FullChisq_ih);
 
-  fitnt->Branch("CPUtime_end",&CPUtime_end);
-  fitnt->Branch("REALtime_end",&REALtime_end);
-
-  fitnt->Branch("IsFit2D_nh",&IsFit2D_nh);
-  fitnt->Branch("IsFit2D_ih",&IsFit2D_ih);
-
-  fitnt->Branch("chisqmin_glob",&chisqmin_glob,"chisqmin_glob/D");
-  fitnt->Branch("chisqmin_nh",&chisqmin_nh,"chisqmin_nh/D");
-  fitnt->Branch("chisqmin_ih",&chisqmin_ih,"chisqmin_ih/D");
-
-  fitnt->Branch("chisqtrue0_glob",&chisqtrue0_glob,"chisqtrue0_glob/D");
-  fitnt->Branch("chisqtrue0_nh",&chisqtrue0_nh,"chisqtrue0_nh/D");
-  fitnt->Branch("chisqtrue0_ih",&chisqtrue0_ih,"chisqtrue0_ih/D");
-
-  fitnt->Branch("chisqtrue1_glob",&chisqtrue1_glob,"chisqtrue1_glob/D");
-  fitnt->Branch("chisqtrue1_nh",&chisqtrue1_nh,"chisqtrue1_nh/D");
-  fitnt->Branch("chisqtrue1_ih",&chisqtrue1_ih,"chisqtrue1_ih/D");
-
-  fitnt->Branch("deltachisq0BF_glob",&deltachisq0BF_glob,"deltachisq0BF_glob/D");
-  fitnt->Branch("deltachisq01_glob",&deltachisq01_glob,"deltachisq01_glob/D");
-
-  fitnt->Branch("nfits_nh",&nfits_nh,"nfits_nh/I");
-  fitnt->Branch("nfits_ih",&nfits_ih,"nfits_ih/I");
-  fitnt->Branch("nchisqcalls_nh",&nchisqcalls_nh,"nchisqcalls_nh/I");
-  fitnt->Branch("nchisqcalls_ih",&nchisqcalls_ih,"nchisqcalls_ih/I");
-  fitnt->Branch("niterations_nh",&niterations_nh,"niterations_nh/I");
-  fitnt->Branch("niterations_ih",&niterations_ih,"niterations_ih/I");
-  fitnt->Branch("bestfiterrNeg0_nh",&bestfiterrNeg0_nh);
-  fitnt->Branch("bestfiterrNeg0_ih",&bestfiterrNeg0_ih);
-  
-  fitnt->Branch("bestfiterrNeg1_nh",&bestfiterrNeg1_nh);
-  fitnt->Branch("bestfiterrNeg1_ih",&bestfiterrNeg1_ih);
-  fitnt->Branch("bestfiterrPos0_nh",&bestfiterrPos0_nh);
-  fitnt->Branch("bestfiterrPos0_ih",&bestfiterrPos0_ih);
-  fitnt->Branch("bestfiterrPos1_nh",&bestfiterrPos1_nh);
-  fitnt->Branch("bestfiterrPos1_ih",&bestfiterrPos1_ih);
-  fitnt->Branch("bestfiterrSym0_nh",&bestfiterrSym0_nh);
-  fitnt->Branch("bestfiterrSym0_ih",&bestfiterrSym0_ih);
-  fitnt->Branch("bestfiterrSym1_nh",&bestfiterrSym1_nh);
-  fitnt->Branch("bestfiterrSym1_ih",&bestfiterrSym1_ih);
-  
-  fitnt->Branch("bestfitFullChisq0_glob", &bestfitFullChisq0_glob );
-  fitnt->Branch("bestfitFullChisq0_nh", &bestfitFullChisq0_nh );
-  fitnt->Branch("bestfitFullChisq0_ih", &bestfitFullChisq0_ih );
-
-  fitnt->Branch("bestfitFullChisq1_glob", &bestfitFullChisq1_glob );
-  fitnt->Branch("bestfitFullChisq1_nh", &bestfitFullChisq1_nh );
-  fitnt->Branch("bestfitFullChisq1_ih", &bestfitFullChisq1_ih );
-
-  fitnt->Branch("chisqminFullChisq_glob",&chisqminFullChisq_glob);
-  fitnt->Branch("chisqminFullChisq_nh",&chisqminFullChisq_nh);
-  fitnt->Branch("chisqminFullChisq_ih",&chisqminFullChisq_ih);
-
-  fitnt->Branch("ToyID",&ToyID);
-  fitnt->Branch("Job",&run);
-  fitnt->Branch("Tag",&tag);
-  fitnt->Branch("nexpts",&nexpts);
 #ifndef __USE_2D_TEMPLATES__
   fitnt->Branch("hErecoToy_1Rmu",     "TH1D",&hErecoToy_1Rmu,     32000,0);
   fitnt->Branch("hErecoToy_1Re",      "TH1D",&hErecoToy_1Re,      32000,0);
@@ -471,6 +461,9 @@ int main(int argc, char ** argv)
        // Set the mass hierarchy
        util::SetMassHierarchy(skexp);
        
+       // cout << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
+       // exit(1);
+
        // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
        util::OscParams::Instance()->UpdatePhysHypothesis(ph);
        set_init = false;
@@ -534,9 +527,7 @@ int main(int argc, char ** argv)
      FitMarginalization *fitmarg_ih = new FitMarginalization();   
      
      // Reset all the variables
-     truepar0=-999;
-     truepar1=-999;  
-     trueMH="";
+
      nfits_nh=-999;
      nfits_ih=-999;
      nchisqcalls_nh=-999;
@@ -545,45 +536,50 @@ int main(int argc, char ** argv)
      niterations_ih=-999;
      fitstatus_nh=-999;
      fitstatus_ih=-999;
+
+     truepar0=-999;
+     truepar1=-999;  
+     trueMH="";
+     chisqtrue0=conv::kALargeNum;
+     
+     deltachisq0BF_glob=conv::kALargeNum;  
+     MH_glob = "";
      chisqmin_glob=conv::kALargeNum;
-     chisqmin_nh=conv::kALargeNum;
-     chisqmin_ih=conv::kALargeNum;
-     chisqtrue0_glob=conv::kALargeNum;
-     chisqtrue0_nh=conv::kALargeNum;
-     chisqtrue0_ih=conv::kALargeNum;
-     chisqtrue1_glob=conv::kALargeNum;
-     chisqtrue1_nh=conv::kALargeNum;
-     chisqtrue1_ih=conv::kALargeNum;
      bestfit0_glob=-999;
-     bestfit0_nh=-999;
-     bestfit0_ih=-999;
      bestfit1_glob=-999;
-     bestfit1_nh=-999;
-     bestfit1_ih=-999;
-     bestfiterrNeg0_nh=-999;
-     bestfiterrNeg0_ih=-999;
-     bestfiterrNeg1_nh=-999;
-     bestfiterrNeg1_ih=-999;
-     bestfiterrPos0_nh=-999;
-     bestfiterrPos0_ih=-999;
-     bestfiterrPos1_nh=-999;
-     bestfiterrPos1_ih=-999;
-     bestfiterrSym0_nh=-999;
-     bestfiterrSym0_ih=-999;
-     bestfiterrSym1_nh=-999;  
-     bestfiterrSym1_ih=-999;  
+     bestfiterrNeg0_glob=-999;
+     bestfiterrNeg1_glob=-999;
+     bestfiterrPos0_glob=-999;
+     bestfiterrPos1_glob=-999;
+     bestfiterrSym0_glob=-999;
+     bestfiterrSym1_glob=-999;
      bestfitFullChisq0_glob=-999;
-     bestfitFullChisq0_nh=-999;
-     bestfitFullChisq0_ih=-999;
-     bestfitFullChisq1_glob=-999;
-     bestfitFullChisq1_nh=-999;
-     bestfitFullChisq1_ih=-999;
      chisqminFullChisq_glob=conv::kALargeNum;
+
+     chisqmin_nh=conv::kALargeNum;
+     bestfit0_nh=-999;
+     bestfit1_nh=-999;
+     bestfiterrNeg0_nh=-999;
+     bestfiterrNeg1_nh=-999;
+     bestfiterrPos0_nh=-999;
+     bestfiterrPos1_nh=-999;
+     bestfiterrSym0_nh=-999;
+     bestfiterrSym1_nh=-999;
+     bestfitFullChisq0_nh=-999;
      chisqminFullChisq_nh=conv::kALargeNum;
+
+     chisqmin_ih=conv::kALargeNum;
+     bestfit0_ih=-999;
+     bestfit1_ih=-999;
+     bestfiterrNeg0_ih=-999;
+     bestfiterrNeg1_ih=-999;
+     bestfiterrPos0_ih=-999;
+     bestfiterrPos1_ih=-999;
+     bestfiterrSym0_ih=-999;
+     bestfiterrSym1_ih=-999;
+     bestfitFullChisq0_ih=-999;
+     bestfitFullChisq1_ih=-999;
      chisqminFullChisq_ih=conv::kALargeNum;
-   
-     deltachisq0BF_glob=conv::kALargeNum;
-     deltachisq01_glob=conv::kALargeNum;
 
      // Perform the fit w/ marginalization
  
@@ -595,7 +591,7 @@ int main(int argc, char ** argv)
      cout << "/////////////////////////////////////" << endl;
      cout << endl;
 
-     util::PerformMargFit(argc,argv,runopt,fitmarg_nh,skexp,skobs_fakedata,false,"NH"); // Normal Hierarchy marginalization toys
+     util::PerformMargFit(argc,argv,runopt,fitmarg_nh,skexp,skobs_fakedata,false,"normal"); // Normal Hierarchy marginalization toys
 
      cout << endl;
      cout << "Fit of Normal Hierarchy is done!" << endl;
@@ -617,7 +613,7 @@ int main(int argc, char ** argv)
      cout << "///////////////////////////////////////" << endl;
      cout << endl;
      
-     util::PerformMargFit(argc,argv,runopt,fitmarg_ih,skexp,skobs_fakedata,false,"IH"); // Inverted Hierarchy marginalization toys
+     util::PerformMargFit(argc,argv,runopt,fitmarg_ih,skexp,skobs_fakedata,false,"inverted"); // Inverted Hierarchy marginalization toys
 
      cout << endl;
      cout << "Fit of Inverted Hierarchy is done!" << endl;
@@ -634,10 +630,25 @@ int main(int argc, char ** argv)
      IsFit2D_nh = fitmarg_nh->IsFit2D();
      IsFit2D_ih = fitmarg_ih->IsFit2D();
      
+     if(IsFit2D_nh != IsFit2D_ih){
+       cerr << endl;
+       cerr << "Fits for NH and IH are different!" << endl;
+       
+       if(IsFit2D_nh) cerr << "NH fit is 2D" << endl;
+       else cerr << "NH fit is not 2D" << endl;
+       
+       if(IsFit2D_ih) cerr << "IH fit is 2D" << endl;
+       else cerr << "IH fit is not 2D" << endl;
+       
+       cerr << endl;
+       exit(1);
+     }
+
      nchisqcalls_nh = fitmarg_nh->GetNCallsCalcChisqMargPt();
      nchisqcalls_ih = fitmarg_ih->GetNCallsCalcChisqMargPt();
 
-     // Get Best Fit point
+     // Get Best Fit point for each mass hierachy
+
      cout << "Get Best Fit points" << endl;
      bestfit0_nh = fitmarg_nh->GetParamBestFit(0); 
      bestfit0_ih = fitmarg_ih->GetParamBestFit(0); 
@@ -646,7 +657,7 @@ int main(int argc, char ** argv)
      chisqmin_nh = fitmarg_nh->GetChisqBestFit();
      chisqmin_ih = fitmarg_ih->GetChisqBestFit();
 
-     // Get true chisq 
+     // Get true chisq (only for true mass hierarchy)
 
      PhysParamId_t freepar0 = conv::kPhypUndefined;
      PhysParamId_t freepar1 = conv::kPhypUndefined;
@@ -658,48 +669,24 @@ int main(int argc, char ** argv)
      if(fitmarg_nh->IsFit2D()) truepar1 = fparm->InitValue(freepar1);     
      trueMH = runopt->GlobalMassHierarchy();
 
-     // BetaBar (nuebar appearance)
-     if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()==""){
-       
-       cout << "Calculate Chisq for betaBar = 0 and 1:" << endl;
-       
-       chisqtrue0_nh = (double)fitmarg_nh->GetChisqMargTrueRead(0.,truepar1,skobs_fakedata,true);
-       chisqtrue0_ih = (double)fitmarg_ih->GetChisqMargTrueRead(0.,truepar1,skobs_fakedata,true);
-       chisqtrue1_nh = (double)fitmarg_nh->GetChisqMargTrueRead(1.,truepar1,skobs_fakedata,true);
-       chisqtrue1_ih = (double)fitmarg_ih->GetChisqMargTrueRead(1.,truepar1,skobs_fakedata,true);
-       fitmarg_nh->GetNuEBarHisto(0.)->Copy(*hBetaBar0_nh       );
-       fitmarg_ih->GetNuEBarHisto(0.)->Copy(*hBetaBar0_ih       );
-       fitmarg_nh->GetNuEBarHisto(1.)->Copy(*hBetaBar1_nh       );
-       fitmarg_ih->GetNuEBarHisto(1.)->Copy(*hBetaBar1_ih       );
-     }
      
-     // All other analyses
+     // Not for BetaBar rate-only analysis with likelihood reweight method
+     
+     cout << "Calculate Chisq for true point (mass hierarchy as well):" << endl;
+     
+     if(trueMH=="normal"){
+       chisqtrue0 = (double)fitmarg_nh->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  
+     }
+     else if(trueMH=="inverted"){		       
+       chisqtrue0 = (double)fitmarg_ih->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  
+     }
      else{
-
-       cout << "Calculate Chisq for true point:" << endl;
-       
-       chisqtrue0_nh = (double)fitmarg_nh->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  // TODO
-       chisqtrue0_ih = (double)fitmarg_ih->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  // TODO
+       cerr << endl;
+       cerr << "The true Mass Hierarchy is not defined" << endl;
+       cerr << endl;
+       exit(1);
      }
-     
-     cout << endl;
-     cout << "truepar0 = " << truepar0 << endl;
-     cout << "truepar1 = " << truepar1 << endl;
-     cout << endl;    
- 
-     // // Draw Full Chisq
-     // if(runopt->DrawFullChisq()){
-     //   cout << endl;
-     //   cout << "Draw the full Chisq" << endl;
-     //   cout << endl;
-     //   //fitmarg_nh->FillChisqMarg(skobs_fakedata,true);
-     //   //fitmarg_nh->MinimizeHisto();
-     //   bestfitFullChisq0 = fitmarg_nh->GetParamBestFit(0);
-     //   if(fitmarg_nh->IsFit2D()) bestfitFullChisq1 = fitmarg_nh->GetParamBestFit(1); 
-     //   chisqminFullChisq = (double)fitmarg_nh->GetChisqBestFit();
-     //   //fitmarg_nh->BuildDeltaChisqMarg();
-     // }
-     
+
      
      // Draw Full Chisq
      
@@ -716,7 +703,6 @@ int main(int argc, char ** argv)
        CPUtime_FullChisq_nh = sw_fit.CpuTime();
        REALtime_FullChisq_nh = sw_fit.RealTime();
        sw_fit.Start(0);
-
 
        cout << "Fill Full Chisq Marg for Inverted Hierarchy" << endl;
        fitmarg_ih->FillChisqMarg(skobs_fakedata,true);
@@ -736,16 +722,22 @@ int main(int argc, char ** argv)
        
        bestfitFullChisq0_nh = fitmarg_nh->GetParamBestFit(0);
        bestfitFullChisq0_ih = fitmarg_ih->GetParamBestFit(0);
+
        if(fitmarg_nh->IsFit2D()) bestfitFullChisq1_nh = fitmarg_nh->GetParamBestFit(1); 
        if(fitmarg_ih->IsFit2D()) bestfitFullChisq1_ih = fitmarg_ih->GetParamBestFit(1); 
+
        chisqminFullChisq_nh = (double)fitmarg_nh->GetChisqBestFit();
        chisqminFullChisq_ih = (double)fitmarg_ih->GetChisqBestFit();
+       
        cout << endl;
-       cout << "Normal Hierarchy:" << endl;
+       cout << "Full Chisq Minima:" << endl;
+       cout << endl;
+       cout << " - Normal Hierarchy:" << endl;
        cout << " - bestfitFullChisq0 = " << bestfitFullChisq0_nh << endl;
        cout << " - bestfitFullChisq1 = " << bestfitFullChisq1_nh << endl;
        cout << " - chisqminFullChisq = " << chisqminFullChisq_nh << endl;
-       cout << "Inverted Hierarchy:" << endl;
+       cout << endl;
+       cout << " - Inverted Hierarchy:" << endl;
        cout << " - bestfitFullChisq0 = " << bestfitFullChisq0_ih << endl;
        cout << " - bestfitFullChisq1 = " << bestfitFullChisq1_ih << endl;
        cout << " - chisqminFullChisq = " << chisqminFullChisq_ih << endl;
@@ -755,14 +747,13 @@ int main(int argc, char ** argv)
        fitmarg_nh->BuildDeltaChisqMarg();
        fitmarg_ih->BuildDeltaChisqMarg();
        
-       
      }
      
-     // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
-     if(runopt->StoreLikeWeights()){
-       fitmarg_nh->WriteLikeToys2Binary(TString::Format("%s_nh",runopt->FileTag().c_str()));
-       fitmarg_nh->WriteLikeToys2Binary(TString::Format("%s_ih",runopt->FileTag().c_str()));
-     }
+     // // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
+     // if(runopt->StoreLikeWeights()){
+     //   fitmarg_nh->WriteLikeToys2Binary(TString::Format("%s_nh",runopt->FileTag().c_str()));
+     //   fitmarg_ih->WriteLikeToys2Binary(TString::Format("%s_ih",runopt->FileTag().c_str()));
+     // }
 
      //
      // Get fit errors
@@ -782,26 +773,59 @@ int main(int argc, char ** argv)
 
      bestfiterrNeg0_nh = fitmarg_nh->GetParamBestFitErrNeg(0);
      bestfiterrNeg0_ih = fitmarg_ih->GetParamBestFitErrNeg(0);
+     
      bestfiterrNeg1_nh = fitmarg_nh->GetParamBestFitErrNeg(1);
      bestfiterrNeg1_ih = fitmarg_ih->GetParamBestFitErrNeg(1);
+     
      bestfiterrPos0_nh = fitmarg_nh->GetParamBestFitErrPos(0);
      bestfiterrPos0_ih = fitmarg_ih->GetParamBestFitErrPos(0);
+     
      bestfiterrPos1_nh = fitmarg_nh->GetParamBestFitErrPos(1);
      bestfiterrPos1_ih = fitmarg_ih->GetParamBestFitErrPos(1);
      
      bestfiterrSym0_nh = fitmarg_nh->GetParamBestFitErrSym(0);
      bestfiterrSym0_ih = fitmarg_ih->GetParamBestFitErrSym(0);
+     
      bestfiterrSym1_nh = fitmarg_nh->GetParamBestFitErrSym(1);
      bestfiterrSym1_ih = fitmarg_ih->GetParamBestFitErrSym(1);
      
      
      // Get values of global minimum
      
-     //if(chisq_nh<chisq_ih){
-     // deltachisq0BF_glob = chisqtrue0_nh - chisqmin_nh;
-     // deltachisq01_nh  = chisqtrue0_nh - chisqtrue1_nh;  // for nuebar app (betaBar = 0,1)
-     // deltachisq01_ih  = chisqtrue0_ih - chisqtrue1_ih;  // for nuebar app (betaBar = 0,1)
-     //}
+     if(chisqmin_nh<chisqmin_ih){
+      
+       if(chisqmin_nh<chisqmin_ih){ // best-fit is normal hierarchy
+	 MH_glob = "normal";
+	 deltachisq0BF_glob = chisqtrue0 - chisqmin_nh; // chisqtrue0 is for true MH
+	 chisqmin_glob = chisqmin_nh;
+	 bestfit0_glob = bestfit0_nh;
+	 bestfit1_glob = bestfit1_nh;
+	 bestfiterrNeg0_glob = bestfiterrNeg0_nh;
+	 bestfiterrNeg1_glob = bestfiterrNeg1_nh;
+	 bestfiterrPos0_glob = bestfiterrPos0_nh;
+	 bestfiterrPos1_glob = bestfiterrPos1_nh;
+	 bestfiterrSym0_glob = bestfiterrSym0_nh;
+	 bestfiterrSym1_glob = bestfiterrSym1_nh;
+	 bestfitFullChisq0_glob = bestfitFullChisq0_nh;
+	 chisqminFullChisq_glob = chisqminFullChisq_nh;
+       }
+       else{ // best-fit is inverted hierarchy
+	 MH_glob = "inverted";
+	 deltachisq0BF_glob = chisqtrue0 - chisqmin_ih;
+	 chisqmin_glob = chisqmin_ih;
+	 bestfit0_glob = bestfit0_ih;
+	 bestfit1_glob = bestfit1_ih;
+	 bestfiterrNeg0_glob = bestfiterrNeg0_ih;
+	 bestfiterrNeg1_glob = bestfiterrNeg1_ih;
+	 bestfiterrPos0_glob = bestfiterrPos0_ih;
+	 bestfiterrPos1_glob = bestfiterrPos1_ih;
+	 bestfiterrSym0_glob = bestfiterrSym0_ih;
+	 bestfiterrSym1_glob = bestfiterrSym1_ih;
+	 bestfitFullChisq0_glob = bestfitFullChisq0_ih;
+	 chisqminFullChisq_glob = chisqminFullChisq_ih;
+       }
+     }
+     
      
      // Get the fakedata histogram
      for(int is = 0; is < kns; is++) {
@@ -907,95 +931,109 @@ int main(int argc, char ** argv)
      // Print output
      
      cout << endl;
-     cout << "True oscillation parameters:" << endl;
+     cout << "/// True parameters ///" << endl;
      cout << " - truepar0: " << runopt->Freeparname0() << " = " << truepar0 << endl;
      cout << " - truepar1: " << runopt->Freeparname1() << " = " << truepar1 << endl;
      cout << " - Mass Hierarchy: " << trueMH << endl;
+     cout << " - true chisq: " << chisqtrue0 << endl;
      cout << endl;
 
-     cout << "Normal Hierarchy:" << endl;
-     cout << endl;
-     cout << "Minimum Marginalized Chisq = " << chisqmin_nh << endl;        
-     cout << "bestfit 0 = " << bestfit0_nh;
+     cout << "/// Normal Hierarchy ///" << endl;
+     cout << " - Minimum Marginalized Chisq = " << chisqmin_nh << endl;        
+     cout << " - bestfit 0 = " << bestfit0_nh;
      cout << " +" << bestfiterrPos0_nh 
           << " -" << bestfiterrNeg0_nh
           << " (MINOS)"
           << endl;
-     cout << "bestfit 0 = " << bestfit0_nh
+     cout << " - bestfit 0 = " << bestfit0_nh
           << " +" << bestfiterrSym0_nh 
           << " -" << bestfiterrSym0_nh 
           << " (HESSE)"
           << endl;
      if(fitmarg_nh->IsFit2D()){
-       cout << "bestfit 1 = " << bestfit1_nh; 
+       cout << " - bestfit 1 = " << bestfit1_nh; 
        cout << " +" << bestfiterrPos1_nh
             << " -" << bestfiterrNeg1_nh
             << " (MINOS)"
             << endl;
-       cout << "bestfit 1 = " << bestfit1_nh
+       cout << " - bestfit 1 = " << bestfit1_nh
             << " +" << bestfiterrSym1_nh
             << " -" << bestfiterrSym1_nh 
             << " (HESSE)"
             << endl;
      }
-     cout << endl;
-     cout << "# of calls of CalcChisqMargPt(): " << nchisqcalls_nh << endl;
-     cout << endl;
-     // cout << "Chisq True 0 (" << truepar0 << "," << truepar1 << ") = " << chisqtrue0_nh << endl;
-     // cout << "Chisq True 1 (" << truepar0 << "," << truepar1 << ") = " << chisqtrue1_nh << endl;
-     // cout << "Delta Chisq = Chisq_true0 - Chisq_bf = " << deltachisq0BF_nh << endl;
-     // cout << "Delta Chisq = Chisq_true0 - Chisq_true1 = " << deltachisq01_nh << endl;
-     // cout << endl;
+     cout << " - # of calls of CalcChisqMargPt(): " << nchisqcalls_nh << endl;
      cout << "Minimum of full Chisq histogram:" << endl;
-     cout << "  - chisqmin = " << chisqminFullChisq_nh << endl; 
-     cout << "  - bestfit0 = " << bestfitFullChisq0_nh << endl; 
+     cout << " - chisqmin = " << chisqminFullChisq_nh << endl; 
+     cout << " - bestfit0 = " << bestfitFullChisq0_nh << endl; 
      if(fitmarg_nh->IsFit2D())
        cout << "  - bestfit1 = " << bestfitFullChisq1_nh << endl; 
      cout << endl;
      
-
-     cout << endl;
-     cout << "Inverted Hierarchy:" << endl;
-     cout << endl;
-     cout << "Minimum Marginalized Chisq = " << chisqmin_nh << endl;        
-     cout << "bestfit 0 = " << bestfit0_ih;
+     cout << "/// Inverted Hierarchy ///" << endl;
+     cout << " - Minimum Marginalized Chisq = " << chisqmin_ih << endl;        
+     cout << " - bestfit 0 = " << bestfit0_ih;
      cout << " +" << bestfiterrPos0_ih 
           << " -" << bestfiterrNeg0_ih
           << " (MINOS)"
           << endl;
-     cout << "bestfit 0 = " << bestfit0_ih
+     cout << " - bestfit 0 = " << bestfit0_ih
           << " +" << bestfiterrSym0_ih 
           << " -" << bestfiterrSym0_ih 
           << " (HESSE)"
           << endl;
      if(fitmarg_ih->IsFit2D()){
-       cout << "bestfit 1 = " << bestfit1_ih; 
+       cout << " - bestfit 1 = " << bestfit1_ih; 
        cout << " +" << bestfiterrPos1_ih
             << " -" << bestfiterrNeg1_ih
             << " (MINOS)"
             << endl;
-       cout << "bestfit 1 = " << bestfit1_ih
+       cout << " - bestfit 1 = " << bestfit1_ih
             << " +" << bestfiterrSym1_ih
             << " -" << bestfiterrSym1_ih 
             << " (HESSE)"
             << endl;
      }
-     cout << endl;
-     cout << "# of calls of CalcChisqMargPt(): " << nchisqcalls_ih << endl;
-     cout << endl;
-     // cout << "Chisq True 0 (" << truepar0 << "," << truepar1 << ") = " << chisqtrue0_ih << endl;
-     // cout << "Chisq True 1 (" << truepar0 << "," << truepar1 << ") = " << chisqtrue1_ih << endl;
-     // cout << "Delta Chisq = Chisq_true0 - Chisq_bf = " << deltachisq0BF_ih << endl;
-     // cout << "Delta Chisq = Chisq_true0 - Chisq_true1 = " << deltachisq01_ih << endl;
-     // cout << endl;
+     cout << " - # of calls of CalcChisqMargPt(): " << nchisqcalls_ih << endl;
      cout << "Minimum of full Chisq histogram:" << endl;
-     cout << "  - chisqmin = " << chisqminFullChisq_ih << endl; 
-     cout << "  - bestfit0 = " << bestfitFullChisq0_ih << endl; 
+     cout << " - chisqmin = " << chisqminFullChisq_ih << endl; 
+     cout << " - bestfit0 = " << bestfitFullChisq0_ih << endl; 
      if(fitmarg_ih->IsFit2D())
-       cout << "  - bestfit1 = " << bestfitFullChisq1_ih << endl; 
+       cout << " - bestfit1 = " << bestfitFullChisq1_ih << endl; 
      cout << endl;
 
-
+     cout << "/// Global minimum ///" << endl;
+     cout << " - DeltaChisq = " << deltachisq0BF_glob << endl;
+     cout << " - Minimum Marginalized Chisq = " << chisqmin_glob << endl;  
+     cout << " - Mass Hierarchy: " << MH_glob << endl;
+     cout << " - bestfit 0 = " << bestfit0_glob;
+     cout << " +" << bestfiterrPos0_glob 
+          << " -" << bestfiterrNeg0_glob
+          << " (MINOS)"
+          << endl;
+     cout << " - bestfit 0 = " << bestfit0_glob
+          << " +" << bestfiterrSym0_glob
+          << " -" << bestfiterrSym0_glob
+          << " (HESSE)"
+          << endl;
+     if(fitmarg_nh->IsFit2D()){
+       cout << " - bestfit 1 = " << bestfit1_glob; 
+       cout << " +" << bestfiterrPos1_glob
+            << " -" << bestfiterrNeg1_glob
+            << " (MINOS)"
+            << endl;
+       cout << " - bestfit 1 = " << bestfit1_glob
+            << " +" << bestfiterrSym1_glob
+            << " -" << bestfiterrSym1_glob
+            << " (HESSE)"
+            << endl;
+     }
+     cout << "Minimum of full Chisq histogram:" << endl;
+     cout << " - chisqmin = " << chisqminFullChisq_glob << endl; 
+     cout << " - bestfit0 = " << bestfitFullChisq0_glob << endl; 
+     if(fitmarg_nh->IsFit2D())
+       cout << " - bestfit1 = " << bestfitFullChisq1_glob << endl; 
+     cout << endl;
 
 
 
