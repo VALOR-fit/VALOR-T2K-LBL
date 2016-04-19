@@ -444,8 +444,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
         print PBS "#PBS -q outofhours \n";
       }
       print PBS "cd $job_dir \n";
-      print PBS "source $fmwk_dir/setup/setup_at_oxford.sh $fmwk_dir\n";
-      print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
+      print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
       print PBS "$command \n";
       close(PBS);
       `qsub $job_dir/$tag-$fileid.pbs`;

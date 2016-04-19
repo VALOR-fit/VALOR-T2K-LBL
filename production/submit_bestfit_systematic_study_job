@@ -136,7 +136,7 @@ foreach(@systlist) {
        print PBS "#PBS -o $job_dir/syst-$systematic-$irun.pbs.out \n";
        print PBS "#PBS -e $job_dir/syst-$systematic-$irun.pbs.err \n";
        print PBS "cd $job_dir/ \n";
-       print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir \n";
+       print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir \n";
        print PBS "$command \n";
        close(PBS);
        `qsub $job_dir/$batch_script`;
