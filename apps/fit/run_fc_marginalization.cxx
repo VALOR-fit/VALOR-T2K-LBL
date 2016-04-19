@@ -464,12 +464,9 @@ int main(int argc, char ** argv)
        // Randomize specified osc params for current toy MC expt
        util::OscParams::Instance()->Randomize();
        
-       // Set the mass hierarchy
+       // Set the mass hierarchy (to avoid conflicts with fitmarginalization mass hierarchy)
        util::SetMassHierarchy(skexp);
        
-       // cout << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
-       // exit(1);
-
        // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
        util::OscParams::Instance()->UpdatePhysHypothesis(ph);
        set_init = false;
@@ -601,6 +598,8 @@ int main(int argc, char ** argv)
 
      util::PerformMargFit(argc,argv,runopt,fitmarg_nh,skexp,skobs_fakedata,false,"normal"); // Normal Hierarchy marginalization toys
 
+     nchisqcalls_nh = fitmarg_nh->GetNCallsCalcChisqMargPt();
+
      cout << endl;
      cout << "Fit of Normal Hierarchy is done!" << endl;
      cout << endl;
@@ -613,6 +612,21 @@ int main(int argc, char ** argv)
      CPUtime_Minim_nh = sw_fit.CpuTime();
      sw_fit.Start(0);
 
+     if(runopt->DrawFullChisq()){
+       
+       cout << "Fill Full Chisq Marg for Normal Hierarchy" << endl;
+       fitmarg_nh->FillChisqMarg(skobs_fakedata,true);
+
+       cout << endl;
+       cout << "CPU time" << endl;
+       cout << endl;
+       sw_fit.Stop();
+       sw_fit.Print();
+       CPUtime_FullChisq_nh = sw_fit.CpuTime();
+       REALtime_FullChisq_nh = sw_fit.RealTime();
+       sw_fit.Start(0);      
+     }
+
      cout << endl;
      cout << "///////////////////////////////////////" << endl;
      cout << "//                                   //" << endl;
@@ -622,6 +636,8 @@ int main(int argc, char ** argv)
      cout << endl;
      
      util::PerformMargFit(argc,argv,runopt,fitmarg_ih,skexp,skobs_fakedata,false,"inverted"); // Inverted Hierarchy marginalization toys
+
+     nchisqcalls_ih = fitmarg_ih->GetNCallsCalcChisqMargPt();
 
      cout << endl;
      cout << "Fit of Inverted Hierarchy is done!" << endl;
@@ -634,6 +650,23 @@ int main(int argc, char ** argv)
      sw_fit.Print();
      CPUtime_Minim_ih = sw_fit.CpuTime();
      sw_fit.Start(0);
+
+     if(runopt->DrawFullChisq()){
+       
+       cout << "Fill Full Chisq Marg for Inverted Hierarchy" << endl;
+       fitmarg_ih->FillChisqMarg(skobs_fakedata,true);
+
+       cout << endl;
+       cout << "CPU time" << endl;
+       cout << endl;
+       sw_fit.Stop();
+       sw_fit.Print();
+       CPUtime_FullChisq_ih = sw_fit.CpuTime();
+       REALtime_FullChisq_ih = sw_fit.RealTime();
+       sw_fit.Start(0);      
+     }
+
+     // Checks
 
      IsFit2D_nh = fitmarg_nh->IsFit2D();
      IsFit2D_ih = fitmarg_ih->IsFit2D();
@@ -651,9 +684,6 @@ int main(int argc, char ** argv)
        cerr << endl;
        exit(1);
      }
-
-     nchisqcalls_nh = fitmarg_nh->GetNCallsCalcChisqMargPt();
-     nchisqcalls_ih = fitmarg_ih->GetNCallsCalcChisqMargPt();
 
      // Get Best Fit point for each mass hierachy
 
@@ -698,34 +728,33 @@ int main(int argc, char ** argv)
        exit(1);
      }
 
+
+     
      
      // Draw Full Chisq
      
      if(runopt->DrawFullChisq()){
        
-       cout << "Fill Full Chisq Marg for Normal Hierarchy" << endl;
-       fitmarg_nh->FillChisqMarg(skobs_fakedata,true);
-
-       cout << endl;
-       cout << "CPU time" << endl;
-       cout << endl;
-       sw_fit.Stop();
-       sw_fit.Print();
-       CPUtime_FullChisq_nh = sw_fit.CpuTime();
-       REALtime_FullChisq_nh = sw_fit.RealTime();
-       sw_fit.Start(0);
-
-       cout << "Fill Full Chisq Marg for Inverted Hierarchy" << endl;
-       fitmarg_ih->FillChisqMarg(skobs_fakedata,true);
-
-       cout << endl;
-       cout << "CPU time" << endl;
-       cout << endl;
-       sw_fit.Stop();
-       sw_fit.Print();
-       CPUtime_FullChisq_ih = sw_fit.CpuTime();
-       REALtime_FullChisq_ih = sw_fit.RealTime();
-       sw_fit.Start(0);
+       // cout << "Fill Full Chisq Marg for Normal Hierarchy" << endl;
+       // fitmarg_nh->FillChisqMarg(skobs_fakedata,true);
+       // cout << endl;
+       // cout << "CPU time" << endl;
+       // cout << endl;
+       // sw_fit.Stop();
+       // sw_fit.Print();
+       // CPUtime_FullChisq_nh = sw_fit.CpuTime();
+       // REALtime_FullChisq_nh = sw_fit.RealTime();
+       // sw_fit.Start(0);
+       // cout << "Fill Full Chisq Marg for Inverted Hierarchy" << endl;
+       // fitmarg_ih->FillChisqMarg(skobs_fakedata,true);
+       // cout << endl;
+       // cout << "CPU time" << endl;
+       // cout << endl;
+       // sw_fit.Stop();
+       // sw_fit.Print();
+       // CPUtime_FullChisq_ih = sw_fit.CpuTime();
+       // REALtime_FullChisq_ih = sw_fit.RealTime();
+       // sw_fit.Start(0);
        
        cout << "Minimize Histo" << endl;
        fitmarg_nh->MinimizeHisto();
@@ -760,12 +789,21 @@ int main(int argc, char ** argv)
        
      }
      
+ 
+
+
+
+
      // // Store toy likelihoods (needed to draw best-fit spectra w/ marginalization)
      // if(runopt->StoreLikeWeights()){
      //   fitmarg_nh->WriteLikeToys2Binary(TString::Format("%s_nh",runopt->FileTag().c_str()));
      //   fitmarg_ih->WriteLikeToys2Binary(TString::Format("%s_ih",runopt->FileTag().c_str()));
      // }
 
+
+
+
+     
      //
      // Get fit errors
      //
