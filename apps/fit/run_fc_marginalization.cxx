@@ -211,6 +211,8 @@ int main(int argc, char ** argv)
   double truepar0=-999;
   double truepar1=-999;    
   string trueMH = "";
+  string trueparname0 = "";
+  string trueparname1 = "";
   double chisqtrue0=conv::kALargeNum;
     
   // global fit output
@@ -294,6 +296,7 @@ int main(int argc, char ** argv)
   TH2D *hErecoExp_RHC1Re = new TH2D("hErecoExp2D_RHC1Re","hErecoExp2D_RHC1Re",1,0,1,1,0,1); 
   TH2D *hErecoExp_sample[conv::kns] = {};
 #endif
+
   hErecoToy_sample[conv::kSKsFCFV1RingMuLike   ] = hErecoToy_1Rmu;
   hErecoToy_sample[conv::kSKsFCFV1RingELike    ] = hErecoToy_1Re ;
   hErecoToy_sample[conv::kSKsRHCFCFV1RingMuLike] = hErecoToy_RHC1Rmu;
@@ -344,7 +347,10 @@ int main(int argc, char ** argv)
   fitnt->Branch("truepar1", &truepar1 );
   fitnt->Branch("trueMH",   &trueMH   );
   fitnt->Branch("chisqtrue0",&chisqtrue0,"chisqtrue0/D");
+  fitnt->Branch("trueparname0",&trueparname0);
+  fitnt->Branch("trueparname1",&trueparname1);
   
+
   // global fit output
   fitnt->Branch("deltachisq0BF_glob",&deltachisq0BF_glob,"deltachisq0BF_glob/D");
   fitnt->Branch("MH_glob",   &MH_glob   );
@@ -541,7 +547,9 @@ int main(int argc, char ** argv)
      truepar1=-999;  
      trueMH="";
      chisqtrue0=conv::kALargeNum;
-     
+     trueparname0="";
+     trueparname1="";
+
      deltachisq0BF_glob=conv::kALargeNum;  
      MH_glob = "";
      chisqmin_glob=conv::kALargeNum;
@@ -668,8 +676,11 @@ int main(int argc, char ** argv)
      truepar0 = fparm->InitValue(freepar0);
      if(fitmarg_nh->IsFit2D()) truepar1 = fparm->InitValue(freepar1);     
      trueMH = runopt->GlobalMassHierarchy();
-
+    
+     trueparname0 = runopt->Freeparname0();
+     trueparname1 = runopt->Freeparname1();
      
+
      // Not for BetaBar rate-only analysis with likelihood reweight method
      
      cout << "Calculate Chisq for true point (mass hierarchy as well):" << endl;
@@ -792,39 +803,37 @@ int main(int argc, char ** argv)
      
      // Get values of global minimum
      
-     if(chisqmin_nh<chisqmin_ih){
-      
-       if(chisqmin_nh<chisqmin_ih){ // best-fit is normal hierarchy
-	 MH_glob = "normal";
-	 deltachisq0BF_glob = chisqtrue0 - chisqmin_nh; // chisqtrue0 is for true MH
-	 chisqmin_glob = chisqmin_nh;
-	 bestfit0_glob = bestfit0_nh;
-	 bestfit1_glob = bestfit1_nh;
-	 bestfiterrNeg0_glob = bestfiterrNeg0_nh;
-	 bestfiterrNeg1_glob = bestfiterrNeg1_nh;
-	 bestfiterrPos0_glob = bestfiterrPos0_nh;
-	 bestfiterrPos1_glob = bestfiterrPos1_nh;
-	 bestfiterrSym0_glob = bestfiterrSym0_nh;
-	 bestfiterrSym1_glob = bestfiterrSym1_nh;
-	 bestfitFullChisq0_glob = bestfitFullChisq0_nh;
-	 chisqminFullChisq_glob = chisqminFullChisq_nh;
-       }
-       else{ // best-fit is inverted hierarchy
-	 MH_glob = "inverted";
-	 deltachisq0BF_glob = chisqtrue0 - chisqmin_ih;
-	 chisqmin_glob = chisqmin_ih;
-	 bestfit0_glob = bestfit0_ih;
-	 bestfit1_glob = bestfit1_ih;
-	 bestfiterrNeg0_glob = bestfiterrNeg0_ih;
-	 bestfiterrNeg1_glob = bestfiterrNeg1_ih;
-	 bestfiterrPos0_glob = bestfiterrPos0_ih;
-	 bestfiterrPos1_glob = bestfiterrPos1_ih;
-	 bestfiterrSym0_glob = bestfiterrSym0_ih;
-	 bestfiterrSym1_glob = bestfiterrSym1_ih;
-	 bestfitFullChisq0_glob = bestfitFullChisq0_ih;
-	 chisqminFullChisq_glob = chisqminFullChisq_ih;
-       }
+     if(chisqmin_nh<chisqmin_ih){ // best-fit is normal hierarchy
+       MH_glob = "normal";
+       deltachisq0BF_glob = chisqtrue0 - chisqmin_nh; // chisqtrue0 is for true MH
+       chisqmin_glob = chisqmin_nh;
+       bestfit0_glob = bestfit0_nh;
+       bestfit1_glob = bestfit1_nh;
+       bestfiterrNeg0_glob = bestfiterrNeg0_nh;
+       bestfiterrNeg1_glob = bestfiterrNeg1_nh;
+       bestfiterrPos0_glob = bestfiterrPos0_nh;
+       bestfiterrPos1_glob = bestfiterrPos1_nh;
+       bestfiterrSym0_glob = bestfiterrSym0_nh;
+       bestfiterrSym1_glob = bestfiterrSym1_nh;
+       bestfitFullChisq0_glob = bestfitFullChisq0_nh;
+       chisqminFullChisq_glob = chisqminFullChisq_nh;
      }
+     else{ // best-fit is inverted hierarchy
+       MH_glob = "inverted";
+       deltachisq0BF_glob = chisqtrue0 - chisqmin_ih;
+       chisqmin_glob = chisqmin_ih;
+       bestfit0_glob = bestfit0_ih;
+       bestfit1_glob = bestfit1_ih;
+       bestfiterrNeg0_glob = bestfiterrNeg0_ih;
+       bestfiterrNeg1_glob = bestfiterrNeg1_ih;
+       bestfiterrPos0_glob = bestfiterrPos0_ih;
+       bestfiterrPos1_glob = bestfiterrPos1_ih;
+       bestfiterrSym0_glob = bestfiterrSym0_ih;
+       bestfiterrSym1_glob = bestfiterrSym1_ih;
+       bestfitFullChisq0_glob = bestfitFullChisq0_ih;
+       chisqminFullChisq_glob = chisqminFullChisq_ih;
+     }
+    
      
      
      // Get the fakedata histogram
@@ -929,7 +938,7 @@ int main(int argc, char ** argv)
      
      
      // Print output
-     
+ 
      cout << endl;
      cout << "/// True parameters ///" << endl;
      cout << " - truepar0: " << runopt->Freeparname0() << " = " << truepar0 << endl;

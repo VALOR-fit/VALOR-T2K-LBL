@@ -195,7 +195,10 @@ int main(int argc, char ** argv)
   int nexpts=-999;
   int ToyID=-999;
   double truepar0=-999;
-  double truepar1=-999;    
+  double truepar1=-999;
+  string trueMH = "";
+  string trueparname0 = "";
+  string trueparname1 = "";
   int nfits=-999;
   int nchisqcalls=-999;
   int niterations=-999;
@@ -265,6 +268,10 @@ int main(int argc, char ** argv)
   fitnt->Branch("input_params",         "valor::PhysParamList", &iparm,      1280000,0);
   fitnt->Branch("truepar0", &truepar0 );
   fitnt->Branch("truepar1", &truepar1 );
+  fitnt->Branch("trueMH",   &trueMH   );
+  fitnt->Branch("trueparname0",&trueparname0);
+  fitnt->Branch("trueparname1",&trueparname1);
+
   fitnt->Branch("bestfit0", &bestfit0 );
   fitnt->Branch("bestfit1", &bestfit1 );
 
@@ -437,7 +444,11 @@ int main(int argc, char ** argv)
      
      // Reset all the variables
      truepar0=-999;
-     truepar1=-999;    
+     truepar1=-999;  
+     trueMH="";
+     trueparname0="";
+     trueparname1="";
+  
      nfits=-999;
      nchisqcalls=-999;
      niterations=-999;
@@ -491,6 +502,10 @@ int main(int argc, char ** argv)
      truepar0 = fparm->InitValue(freepar0);
      if(fitmarg->IsFit2D()) truepar1 = fparm->InitValue(freepar1);
      
+     trueMH = runopt->GlobalMassHierarchy();
+     trueparname0 = runopt->Freeparname0();
+     trueparname1 = runopt->Freeparname1();
+
      // BetaBar (nuebar appearance)
      if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()==""){
        
