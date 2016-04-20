@@ -19,15 +19,27 @@ using namespace valor::conv;
 void CalcPvalue_nuebarapp
 (
  // Run 1-6 (beta=0) --> Asimov A
- TString tag = "pvalue_Asimov_A_betabar_1",
- double data = 3.218, // # of data events
+ 
+ TString tag = "pvalue_Asimov_A_betabar_0p5",
+ 
+ double data = 2.4682565, // # of data events
  double deltachisq_beta01_data = -0.0256822, // data deltachisq 01 (betabar=0.5)
+ 
+ //double data = 3.218, // # of data events
  //double deltachisq_beta01_data = 1.41638, // data deltachisq 01 (betabar=1)
+ 
+ //double data = 3.9683603, // # of data events
  //double deltachisq_beta01_data = 2.87081, // data deltachisq 01 (betabar=1.5)
+ 
+ //double data = 4.7184122, // # of data events
  //double deltachisq_beta01_data = 4.33741, // data deltachisq 01 (betabar=2)
+ 
+ //double data = 5.4684641, // # of data events
  //double deltachisq_beta01_data = 5.81603, // data deltachisq 01 (betabar=2.5)
+ 
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- char infilename[200] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_betabar_0.root",
+ 
+ char infilename[200] = "../TECH_NOTE_14_3_16/BETABAR/FITS_TOYS/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_betabar_0.root",
 
  )
 {
