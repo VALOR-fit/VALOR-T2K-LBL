@@ -452,7 +452,7 @@ void analyze_run_fc_marginalization_exe
 	cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
 	cout << "chisqmin_glob = " << chisqmin_glob
 	     << " - bestfit0_glob = " << bestfit0_glob
-	     << " - bestfit1_glob = " << bestfit1 << endl;
+	     << " - bestfit1_glob = " << bestfit1_glob << endl;
 	cout << "chisqminFullChisq_glob = " << chisqminFullChisq_glob 
 	     << " - bestfitFullChisq0_glob = " << bestfitFullChisq0_glob 
 	     << " - bestfitFullChisq1_glob = " << bestfitFullChisq1_glob << endl;
