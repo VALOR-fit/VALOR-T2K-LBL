@@ -339,11 +339,11 @@ if make_summary:
 
     
 
-f = open(table_fn,"a") #append new table to file.
+  f = open(table_fn,"a") #append new table to file.
   f.write("""\\begin{table}[htb]
-\\centering
-\\begin{tabular}{| c | c | c |}
-\\hline\n""")
+      \\centering
+      \\begin{tabular}{| c | c | c |}
+      \\hline\n""")
 
   # Takes a list of column contents (as strings), makes it into a latex table row, roughly fixed width
   def make_row(list_of_columns,indent=2,width=30):
