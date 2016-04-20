@@ -16,15 +16,9 @@ using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
-const double err_minos_par0[2] = {0,6.28};
-const double err_minos_par1[2] = {0,6.28};
-const double err_hesse_par0[2] = {0,20.};
-const double err_hesse_par1[2] = {0,20.};
-
 const double CLfrac_1sigma = 0.6827;  // 1sigma% CL
 const double CLfrac_90CL   = 0.9;  // 90% CL
 const double CLfrac_95CL   = 0.95;  // 95% CL
-
 
 void analyze_run_fc_marginalization_exe
 ( 
@@ -34,9 +28,10 @@ void analyze_run_fc_marginalization_exe
  const bool UseFullChisqFit = true,
  const bool CheckSingleToy = false,
  const int  ToySel = 0,
- const bool PrintToy = true,
+ const bool PrintToy = false,
  
- char infilename[300] = "fit_prova_fc_nexp_2_0.000_-999.000-job0-_0_1.root"
+ //char infilename[300] = "fit_prova_fc_nexp_2_0.000_-999.000-job0-_0_1.root"
+ char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/fit_fitmarg_fc_dcp_NH_nexp_20_0.000.root"
   )
 {
   char name[300];
@@ -403,25 +398,15 @@ void analyze_run_fc_marginalization_exe
       cout << endl;
     }
     
-    continue;
-
-
+   
 
 
 
     // Find bestfit chisq and true chisq
 
     //cout << *fparm << endl;
-    
-    int bin_bestfit0 = hdeltachisq1D_out->FindBin(bestfit0);
-    double deltachisq_bestfit0 = hdeltachisq1D_out->GetBinContent(bin_bestfit0);
-
-    int bin_truepar0 = hdeltachisq1D_out->FindBin(truepar0);
-    double deltachisq_truepar0 = hdeltachisq1D_out->GetBinContent(bin_truepar0);        
-
-    double deltachisq0BF_used = conv::kBadResult;
-    
-    deltachisq0BF_used = deltachisq0BF_glob;
+        
+    double deltachisq0BF_used = deltachisq0BF_glob;
     
     //if(!UseFullChisqFit) deltachisq0BF_used = chisqtrue0-chisqmin;
     //else                 deltachisq0BF_used = chisqtrue0-chisqminFullChisq;
@@ -431,7 +416,6 @@ void analyze_run_fc_marginalization_exe
     //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
     // }
 
-
     // Fill deltaChisq histogram
     
     hdeltachisqDiff->Fill(deltachisq0BF_used);
@@ -439,18 +423,18 @@ void analyze_run_fc_marginalization_exe
     myvector.push_back(deltachisq0BF_used);
 
     // Minimized chisq distribution
-    hchisqmin->Fill(chisqmin);
+    hchisqmin->Fill(chisqmin_glob);
     hbestfit_2D->Fill(bestfit0_glob,bestfit1_glob);
     hbestfit_1D->Fill(bestfit0_glob);
 
     // Fill histograms for fit status
-    hfitstatus->Fill(fitstatus);
-    hnchisqcalls->Fill(nchisqcalls);
+    //hfitstatus->Fill(fitstatus);
+    //hnchisqcalls->Fill(nchisqcalls);
     
     // Full chisq distribution 
-    hchisqminFullChisq->Fill(chisqminFullChisq);
-    hbestfitFullChisq_2D->Fill(bestfitFullChisq0,bestfitFullChisq1);
-    hbestfitFullChisq_1D->Fill(bestfitFullChisq0);
+    hchisqminFullChisq->Fill(chisqminFullChisq_glob);
+    hbestfitFullChisq_2D->Fill(bestfitFullChisq0_glob,bestfitFullChisq1_glob);
+    hbestfitFullChisq_1D->Fill(bestfitFullChisq0_glob);
 
     // Fill variables for coverage study
     if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"1sigma") ) Nin_1sigma++;
@@ -459,7 +443,7 @@ void analyze_run_fc_marginalization_exe
     if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"2sigma") ) Nin_2sigma++;
 
     // Check that full chisq min is equal to minimized best-fit
-    if(chisqminFullChisq!=conv::kALargeNum){
+    if(chisqminFullChisq_glob!=conv::kALargeNum){
       if( fabs(chisqmin_glob-chisqminFullChisq_glob)>1.E-6 ){
 	double diff = chisqmin_glob-chisqminFullChisq_glob;
 	hchisqminDiff->Fill(diff);
@@ -495,15 +479,15 @@ void analyze_run_fc_marginalization_exe
 
   // Draw histograms
 
-  TCanvas *cnchisqcalls = new TCanvas("cnchisqcalls","cnchisqcalls");
-  hnchisqcalls->GetYaxis()->SetTitle("# entries");
-  hnchisqcalls->GetXaxis()->SetTitle("# of #chi^{2} computations");
-  hnchisqcalls->DrawCopy();
+  // TCanvas *cnchisqcalls = new TCanvas("cnchisqcalls","cnchisqcalls");
+  // hnchisqcalls->GetYaxis()->SetTitle("# entries");
+  // hnchisqcalls->GetXaxis()->SetTitle("# of #chi^{2} computations");
+  // hnchisqcalls->DrawCopy();
 
-  TCanvas *cfitstatus = new TCanvas("cfitstatus","cfitstatus");
-  hfitstatus->GetYaxis()->SetTitle("# entries");
-  hfitstatus->GetXaxis()->SetTitle("Fit Status");
-  hfitstatus->DrawCopy();
+  // TCanvas *cfitstatus = new TCanvas("cfitstatus","cfitstatus");
+  // hfitstatus->GetYaxis()->SetTitle("# entries");
+  // hfitstatus->GetXaxis()->SetTitle("Fit Status");
+  // hfitstatus->DrawCopy();
 
   TCanvas *cbestfit = new TCanvas("hbestfit","hbestfit");
   if(IsFit2D){
