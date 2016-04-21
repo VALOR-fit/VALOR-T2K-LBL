@@ -20,10 +20,10 @@ Added samples for multiring forward horn current
 
 #include <TSystem.h>
 
-#include "Messenger/Messenger.h"
-#include "FitCore/FitParamList.h"
-#include "Registry/Registry.h"
-#include "Utilities/UtlSystem.h"
+#include "valor/Messenger/Messenger.h"
+#include "valor/FitCore/FitParamList.h"
+#include "valor/Registry/Registry.h"
+#include "valor/Utilities/UtlSystem.h"
 
 #include "UtlFitParamListFactory.h"
 #include "Enumerations.h"

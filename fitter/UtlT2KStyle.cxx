@@ -20,7 +20,7 @@ ChangeLog:
 
 #include "UtlT2KStyle.h"
 #include "Utilities.h"
-#include "Utilities/Rnd.h"
+#include "valor/Utilities/Rnd.h"
 #include "Enumerations.h"
 
 using std::cout;

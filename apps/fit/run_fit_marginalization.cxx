@@ -43,11 +43,11 @@
 #include "AnalysisOptions.h"
 #include "FitMarginalization.h"
 
-#include "Utilities/UtlForMacros.h"
-#include "Oscillation/OscParams.h"
-#include "CmdLine/RunOpt_TO_DELETE.h"
-#include "Utilities/Env.h"
-#include "Conventions/PhysHypothesisId.h"
+#include "valor/Utilities/UtlForMacros.h"
+#include "valor/Oscillation/OscParams.h"
+#include "valor/CmdLine/RunOpt_TO_DELETE.h"
+#include "valor/Utilities/Env.h"
+#include "valor/Conventions/PhysHypothesisId.h"
 
 #include "TROOT.h"
 #include "TRandom3.h"

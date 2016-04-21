@@ -14,10 +14,10 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "Conventions/Opt.h"
-#include "Messenger/Messenger.h"
-#include "Registry/Registry.h"
-#include "Utilities/UtlSystem.h"
+#include "valor/Conventions/Opt.h"
+#include "valor/Messenger/Messenger.h"
+#include "valor/Registry/Registry.h"
+#include "valor/Utilities/UtlSystem.h"
 
 #include "Build.h"
 #include "BANFF.h" 

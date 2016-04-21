@@ -14,7 +14,7 @@ ChangeLog:
 #include "TSystem.h"
 
 #include "T2KOpt.h"
-#include "Utilities/Rnd.h"
+#include "valor/Utilities/Rnd.h"
 #include "Utilities.h"
 
 using std::endl;

@@ -34,11 +34,11 @@
 #include "Conventions.h"
 #include "Utilities.h"
 
-#include "FitCore/FitModelABC.h"
-#include "FitCore/FitParamList.h"
-#include "FitCore/PhysParamList.h"
-#include "VArray/VALORArray.h"
-#include "FitCore/PhysHypothesis.h"
+#include "valor/FitCore/FitModelABC.h"
+#include "valor/FitCore/FitParamList.h"
+#include "valor/FitCore/PhysParamList.h"
+#include "valor/VArray/VALORArray.h"
+#include "valor/FitCore/PhysHypothesis.h"
 
 using std::string;
 

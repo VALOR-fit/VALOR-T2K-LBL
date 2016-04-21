@@ -21,9 +21,9 @@
 class TH1D;
 class TObjArray;
 
-#include "FitCore/FitDataABC.h"
+#include "valor/FitCore/FitDataABC.h"
 
-#include "FitCore/FitParamList.h"
+#include "valor/FitCore/FitParamList.h"
 
 #include "SuperkExpectation.h"
 

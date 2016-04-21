@@ -24,7 +24,7 @@
 #include "TRandom3.h"
 #include "TXMLEngine.h"
 
-#include "Oscillation/OscParams.h"
+#include "valor/Oscillation/OscParams.h"
 #include "Enumerations.h"
 
 #include <string>

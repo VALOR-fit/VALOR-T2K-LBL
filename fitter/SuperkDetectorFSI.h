@@ -16,7 +16,7 @@
 #ifndef _valor_skdetfsi_h_
 #define _valor_skdetfsi_h_
 
-#include "FitCore/CorrelatedSystematics.h"
+#include "valor/FitCore/CorrelatedSystematics.h"
 
 #include "Enumerations.h"
 #include "Conventions.h"

@@ -9,11 +9,11 @@
 #include "Build.h"
 //~ #include "UtlForMacrosT2XK.h"
 
-//~ #include "Utilities/UtlForMacros.h"
-//~ #include "Utilities/OscParams.h"
-//~ #include "Utilities/RunOpt.h"
-#include "Utilities/Env.h"
-//~ #include "Conventions/PhysHypothesisId.h"
+//~ #include "valor/Utilities/UtlForMacros.h"
+//~ #include "valor/Utilities/OscParams.h"
+//~ #include "valor/Utilities/RunOpt.h"
+#include "valor/Utilities/Env.h"
+//~ #include "valor/Conventions/PhysHypothesisId.h"
 
 //~ #include "TROOT.h"
 //~ #include "TRandom3.h"
@@ -26,8 +26,10 @@
 //~ #include <iomanip>
 
 using namespace valor;
+using namespace valor::conv;
+using namespace std;
 
-int main(/*int argc, char ** argv*/)
+int main(int /*argc*/, char ** /*argv*/)
 {
   Env::Instance()->AutoSet("t2xk");
     
@@ -36,6 +38,8 @@ int main(/*int argc, char ** argv*/)
   
   SuperkExpectation skexp;
   skexp.Read(config.Data());
+
+  cout<<"Done!"<<endl;
 }
 
 

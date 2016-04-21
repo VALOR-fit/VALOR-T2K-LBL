@@ -22,11 +22,11 @@
 #include <vector>
 
 #include "Conventions.h"
-#include "FitCore/PhysHypothesis.h"
-#include "Oscillation/NuOsc3Flavour.h"
-#include "Oscillation/NuOscSterile.h"
+#include "valor/FitCore/PhysHypothesis.h"
+#include "valor/Oscillation/NuOsc3Flavour.h"
+#include "valor/Oscillation/NuOscSterile.h"
 #include "Utilities.h"
-#include "VArray/VALORArray.h"
+#include "valor/VArray/VALORArray.h"
 
 
 #include <TH3D.h> // NEW 2D TEMPLATES

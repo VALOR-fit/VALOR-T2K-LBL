@@ -22,7 +22,7 @@
 
 #include "AnalysisOptions.h"
 
-#include "Conventions/PhysParamId.h"
+#include "valor/Conventions/PhysParamId.h"
 
 using std::string;
 

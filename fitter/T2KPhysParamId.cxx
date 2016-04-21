@@ -20,7 +20,7 @@
 
 #include "T2KPhysParamId.h"
 #include "Utilities.h"
-#include "Utilities/NameRegistry.h"
+#include "valor/Utilities/NameRegistry.h"
 //~ #include "NuOscMixParam.h"
 #include "Enumerations.h"
 

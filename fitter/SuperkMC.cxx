@@ -95,10 +95,10 @@
 #include "NuXSec.h"
 #include "NuFlux.h"
 #include "Utilities.h"
-#include "Conventions/Opt.h"
-#include "Utilities/Rnd.h"
-#include "Oscillation/NuOscSterile.h"
-#include "Utilities/UtlSystem.h"
+#include "valor/Conventions/Opt.h"
+#include "valor/Utilities/Rnd.h"
+#include "valor/Oscillation/NuOscSterile.h"
+#include "valor/Utilities/UtlSystem.h"
 
 using std::cout;
 using std::cerr;

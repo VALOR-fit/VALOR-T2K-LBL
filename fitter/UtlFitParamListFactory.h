@@ -26,7 +26,7 @@
 
 #include "TMatrixD.h"
 
-#include "FitCore/FitParamList.h"
+#include "valor/FitCore/FitParamList.h"
 
 using std::string;
 using std::map;

@@ -36,12 +36,12 @@
 #include <TMath.h>
 
 // FMWK
-#include "FitCore/FitParamList.h"
-#include "FitCore/PhysParamList.h"
-#include "Messenger/Messenger.h"
-#include "Registry/Registry.h"
-#include "Utilities/UtlPrint.h"
-#include "Utilities/UtlSystem.h"
+#include "valor/FitCore/FitParamList.h"
+#include "valor/FitCore/PhysParamList.h"
+#include "valor/Messenger/Messenger.h"
+#include "valor/Registry/Registry.h"
+#include "valor/Utilities/UtlPrint.h"
+#include "valor/Utilities/UtlSystem.h"
 
 #include "SuperkDetectorFSI.h"
 #include "Utilities.h"

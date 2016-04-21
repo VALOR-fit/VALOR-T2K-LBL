@@ -37,9 +37,9 @@ Added samples for multiring forward horn current
 #include "NuXSec.h"
 #include "BANFF.h"
 #include "Utilities.h"
-#include "Conventions/Opt.h"
-#include "Utilities/Rnd.h"
-#include "Utilities/UtlHist.h"
+#include "valor/Conventions/Opt.h"
+#include "valor/Utilities/Rnd.h"
+#include "valor/Utilities/UtlHist.h"
 
 using std::cout;
 using std::cerr;

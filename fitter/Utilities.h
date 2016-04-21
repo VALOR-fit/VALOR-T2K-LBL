@@ -46,14 +46,14 @@ class TAxis;
 
 #include "UtlT2KStyle.h"
 
-#include "Conventions/Opt.h"
-#include "Utilities/UtlNumStat.h"
-#include "Utilities/UtlPrint.h"
-#include "Utilities/UtlStr.h"
-#include "Utilities/UtlStyle.h"
-#include "Utilities/UtlSystem.h"
-#include "Utilities/UtlXML.h"
-#include "VArray/VALORArrayD.h"
+#include "valor/Conventions/Opt.h"
+#include "valor/Utilities/UtlNumStat.h"
+#include "valor/Utilities/UtlPrint.h"
+#include "valor/Utilities/UtlStr.h"
+#include "valor/Utilities/UtlStyle.h"
+#include "valor/Utilities/UtlSystem.h"
+#include "valor/Utilities/UtlXML.h"
+#include "valor/VArray/VALORArrayD.h"
 
 
 using std::string;

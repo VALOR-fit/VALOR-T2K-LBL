@@ -79,9 +79,9 @@
 #include <TRandom3.h>
 #include <TMath.h>
 
-#include "Conventions/Opt.h"
-#include "Utilities/Rnd.h"
-#include "Utilities/UtlHist.h"
+#include "valor/Conventions/Opt.h"
+#include "valor/Utilities/Rnd.h"
+#include "valor/Utilities/UtlHist.h"
 
 #include "AnalysisOptions.h"
 #include "Build.h"

@@ -24,9 +24,9 @@
 
 #include <TNamed.h>
 
-#include "Conventions/PhysParamId.h"
-#include "FitCore/FitParamList.h"
-#include "FitCore/PhysParamList.h"
+#include "valor/Conventions/PhysParamId.h"
+#include "valor/FitCore/FitParamList.h"
+#include "valor/FitCore/PhysParamList.h"
 
 namespace valor {
 

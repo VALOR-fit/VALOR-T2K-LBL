@@ -19,16 +19,16 @@ ChangeLog:
 #include "FitMarginalization.h"
 #include "Build.h"
 
-#include "Utilities/Env.h"
-#include "Conventions/Opt.h"
-#include "Conventions/PhysParamId.h"
-#include "Conventions/PhysHypothesisId.h"
-#include "Conventions/Constants.h"
-#include "FitCore/PhysHypothesis.h"
-#include "Utilities/UtlXML.h"
+#include "valor/Utilities/Env.h"
+#include "valor/Conventions/Opt.h"
+#include "valor/Conventions/PhysParamId.h"
+#include "valor/Conventions/PhysHypothesisId.h"
+#include "valor/Conventions/Constants.h"
+#include "valor/FitCore/PhysHypothesis.h"
+#include "valor/Utilities/UtlXML.h"
 
 // Deprecated
-#include "CmdLine/RunOpt_TO_DELETE.h"
+#include "valor/CmdLine/RunOpt_TO_DELETE.h"
 
 #include "TSystem.h"
 #include "TCanvas.h"

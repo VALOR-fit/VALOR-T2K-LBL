@@ -25,7 +25,7 @@ Added samples for multiring forward horn current
 #include <TNamed.h>
 
 #include "Conventions.h"
-#include "Conventions/Opt.h"
+#include "valor/Conventions/Opt.h"
 
 namespace valor {
 

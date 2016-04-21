@@ -31,9 +31,9 @@
 
 #include "Enumerations.h"
 
-#include "VArray/VALORArrayI.h"
-#include "VArray/VALORArrayF.h"
-#include "VArray/VALORArrayD.h" // NEW PRECISION
+#include "valor/VArray/VALORArrayI.h"
+#include "valor/VArray/VALORArrayF.h"
+#include "valor/VArray/VALORArrayD.h" // NEW PRECISION
 
 // NuBar mode
 

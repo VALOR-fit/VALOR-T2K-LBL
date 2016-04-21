@@ -24,7 +24,7 @@ Changes since 2011_v0.9.0:
 #include "Build.h"
 #include "AnalysisOptions.h"
 
-#include "Conventions/Constants.h"
+#include "valor/Conventions/Constants.h"
 
 #include "BANFFSystConv.h"
 #include "XSecSystConv.h"

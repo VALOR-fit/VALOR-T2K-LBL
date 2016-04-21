@@ -23,7 +23,7 @@
 #ifndef _valor_banff_h_
 #define _valor_banff_h_
 
-#include "FitCore/CorrelatedSystematics.h"
+#include "valor/FitCore/CorrelatedSystematics.h"
 
 namespace valor {
 

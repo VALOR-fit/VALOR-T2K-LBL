@@ -42,7 +42,7 @@ Added samples for multiring forward horn current
 
 #include "Utilities.h"
 
-#include "Utilities/Rnd.h"
+#include "valor/Utilities/Rnd.h"
 
 using std::cout;
 using std::cerr;
