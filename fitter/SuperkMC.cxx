@@ -23,7 +23,7 @@
 //#define __show_init_mesg_debug__
 //#define __ereco_scale_debug__
 //#define __show_init_mesg_debug2__
-//#define __show_update_mesg_info__
+#define __show_update_mesg_info__
 //#define __show_hypothesis__
 //#define __show_hypothesis_probabilities__
 //#define __show_banfftun_syst_var_wght_mesg_debug__
@@ -48,8 +48,8 @@
 
 //#define POTWEIGHTSAREONE
 // #define FLUXWEIGHTSAREONE
-// #define BANFFTUNEISONE
-// #define XSECWEIGHTSAREONE
+//#define BANFFTUNEISONE
+//#define XSECWEIGHTSAREONE
 //#define SYSTWEIGHTSAREONE
 //#define PHYSHYPWEIGHTSAREONE
 //#define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
@@ -99,6 +99,7 @@
 #include "valor/Utilities/Rnd.h"
 #include "valor/Oscillation/NuOscSterile.h"
 #include "valor/Utilities/UtlSystem.h"
+#include "valor/Messenger/Messenger.h"
 
 using std::cout;
 using std::cerr;
@@ -504,12 +505,12 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     
     // NEW MULTIRING
 #ifdef __MULTIRING_FHC_RUNNING__
-    fMCPOTHistMultiRingNuMu       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot");
-    fMCPOTHistMultiRingNuMuBar    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot");
-    fMCPOTHistMultiRingNuE        = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot");
-    fMCPOTHistMultiRingNuEBar     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot");
-    fMCPOTHistMultiRingOscNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot");
-    fMCPOTHistMultiRingOscNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot");
+    fMCPOTHistMultiRingNuMu       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot_fhc_cc1pi");
+    fMCPOTHistMultiRingNuMuBar    = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numubar/pot_fhc_cc1pi");
+    fMCPOTHistMultiRingNuE        = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nue/pot_fhc_cc1pi");
+    fMCPOTHistMultiRingNuEBar     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/nuebar/pot_fhc_cc1pi");
+    fMCPOTHistMultiRingOscNuE     = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nue/pot_fhc_cc1pi");
+    fMCPOTHistMultiRingOscNuEBar  = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/signal_nuebar/pot_fhc_cc1pi");
     
     fMCPOTMultiRingNuMu       = fMCPOTHistMultiRingNuMu     ->GetBinContent(2) / fMCPOTHistMultiRingNuMu     ->GetBinContent(1);
     fMCPOTMultiRingNuMuBar    = fMCPOTHistMultiRingNuMuBar  ->GetBinContent(2) / fMCPOTHistMultiRingNuMuBar  ->GetBinContent(1);
@@ -4320,15 +4321,15 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
                     // Get the energy of the current bin
                     double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
                     double Ereco = util::ErecoBinEdges(s,it-1) + kOneMeV;
-                    if( skfsi_wght != 1. ||
+                    if( skfsi_wght != 1. || skfsi_wght != 0. ||
                        flux_wght  != 1. ||
                        xsec_wght  != 1. )
                     {
                         cout << "Exp/SKMC/SystVarWght >> "
                         << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
                         << ", Ereco = " << Ereco << " GeV"
-                        << ", Etrue = " << Etrue << " GeV => Weights: "
-                        << "SK+FSI = "  << skfsi_wght
+                        << ", Etrue = " << Etrue << " GeV \n=> Weights: "
+                        << "SK+FSI = "  << skfsi_wght 
                         << ", Flux = "  << flux_wght
                         << ", XSec = "  << xsec_wght
                         << " (total = " << wght << ")"
@@ -4388,7 +4389,9 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
         assert ( fabs ( (double)relativisticRPA - rpa_tweakval) < conv::kASmallNum); // Check RPA was exactly 1 or 0
         
         //~ std::cerr<<util::AsString(s)<<"\t"<<is_rhc<<"\t"<<rpa_tweakval<<"\t"<<relativisticRPA<<std::endl;
-        
+	LOG("SuperkMC",pINFO) << "Current values for SKDetFSI";
+	//	fSKDetFSI->CurrentValues().Print();
+    
         // Loop over sample modes
         for(int im = 0; im < knm; im++) {
             SuperkMode_t m = kSKReactionModes[is][im];
@@ -4451,7 +4454,9 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
 #endif
                 // Plug-in SK efficiency + FSI uncertainties
                 double skfsi_wght = fSKDetFSI->SystWght(s,m,ErecoVarMin,EtrueVarMin);
-                
+		
+		// assert(skfsi_wght > 0 && "skfsi_wght is  <= 0");
+		
                 // if(s==kSKsFCFVMultiRingMuLike || s==kSKsFCFVMultiRingELike){
                 //   util::Die(1); return;;
                 // }
@@ -4498,7 +4503,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
                     double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
                     double Ereco = util::ErecoBinEdges(s,ir-1) + kOneMeV;
                     double Q2    = util::Q2BinEdges(s,iq-1)    + kOneMeV;
-                    if( skfsi_wght != 1. ||
+                    if( skfsi_wght != 1. || skfsi_wght != 0. ||
                        flux_wght  != 1. ||
                        xsec_wght  != 1. )
                     {
@@ -4506,7 +4511,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
                         << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
                         << ", Q2 = " << Q2 << " GeV"
                         << ", Ereco = " << Ereco << " GeV"
-                        << ", Etrue = " << Etrue << " GeV => Weights: "
+                        << ", Etrue = " << Etrue << " GeV \n=> Weights: "
                         << "SK+FSI = "  << skfsi_wght
                         << ", Flux = "  << flux_wght
                         << ", XSec = "  << xsec_wght

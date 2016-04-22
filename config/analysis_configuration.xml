@@ -174,11 +174,11 @@
           </one_e_ring_rhc>
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
-          <pot>
+          <pot_fhc_cc1pi>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumu  </objname>
             <objtype>    TH1D              </objtype>
-          </pot>
+          </pot_fhc_cc1pi>
           <multi_mu_ring>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
             <objname>    tnumu   </objname>
@@ -225,11 +225,11 @@
           </one_e_ring_rhc>
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
-          <pot>
+          <pot_fhc_cc1pi>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumubar  </objname>
             <objtype>    TH1D                 </objtype>
-          </pot>
+          </pot_fhc_cc1pi>
           <multi_mu_ring>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
             <objname>    tnumubar   </objname>
@@ -276,11 +276,11 @@
           </one_e_ring_rhc>
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
-          <pot>
+          <pot_fhc_cc1pi>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnue  </objname>
             <objtype>    TH1D             </objtype>
-          </pot>
+          </pot_fhc_cc1pi>
           <multi_mu_ring>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
             <objname>    tnue   </objname>
@@ -327,11 +327,11 @@
           </one_e_ring_rhc>
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
-          <pot>
+          <pot_fhc_cc1pi>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnuebar  </objname>
             <objtype>    TH1D                </objtype>
-          </pot>
+          </pot_fhc_cc1pi>
           <multi_mu_ring>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
             <objname>    tnuebar   </objname>
@@ -378,11 +378,11 @@
           </one_e_ring_rhc>
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
-          <pot>
+          <pot_fhc_cc1pi>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignue  </objname>
             <objtype>    TH1D                </objtype>
-          </pot>
+          </pot_fhc_cc1pi>
           <multi_mu_ring>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
             <objname>    tsignue   </objname>
@@ -429,11 +429,11 @@
           </one_e_ring_rhc>
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
-          <pot>
+          <pot_fhc_cc1pi>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignuebar  </objname>
             <objtype>    TH1D                   </objtype>
-          </pot>
+          </pot_fhc_cc1pi>
           <multi_mu_ring>
             <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
             <objname>    tsignuebar   </objname>
@@ -516,6 +516,19 @@
           official/2015/xsec/2d_splines/theta/SFRPA/splines_v5_RHC1Re.root
         </filename>
       </one_e_ring_rhc>
+
+      <!-- Input the single ring splines into the MultiRing samples -->
+      <multi_mu_ring>
+        <filename>
+          official/2015/xsec/splines_v8_1Rmu.root
+        </filename>
+      </multi_mu_ring>
+      <multi_e_ring>
+        <filename>
+          official/2015/xsec/splines_v8_1Re.root
+        </filename>
+      </multi_e_ring>
+
     </weight_splines_2d>
 
     <normalisations>
