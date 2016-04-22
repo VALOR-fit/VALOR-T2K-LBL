@@ -124,11 +124,14 @@ foreach (@ARGV) {
 
 ########################### Variables to set in the script ##############################
 
-@array_freepar0_user = (0.03, 0.045); # run only on these points. If empty run on all the grid points
-#@array_freepar0_user = (); # run only on these points. If empty run on all the grid points
-@array_freepar1_user = (-1,0); # run only on these points. If empty run on all the grid points
+# @array_freepar0_user = (0.03, 0.045); # run only on these points. If empty run on all the grid points
+# @array_freepar0_user = (-3.14159265358979312); # run only on these points. If empty run on all the grid points
+# @array_freepar1_user = (-1,0); # run only on these points. If empty run on all the grid points
+# @array_freepar1_user = (); # run only on these points. If empty run on all the grid points
 
-$run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
+@array_freepar0_skip = (-3.14159265358979312, -1.5707963267949, 0., 1.5707963267949, 3.14159265358979312);
+@array_freepar1_skip = ();
+$run_fullgrid  = 1   unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
 
 ########################################################################################
 
@@ -140,8 +143,8 @@ $resource        = "interactive"               unless defined $resource;
 $tag             = "fitmarg_fc_dcp_mh"  unless defined $tag;
 
 #$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D) 
-$nruns           = 200                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
-#$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+#$nruns           = 250                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 
 #
 # NEW CONFIGURATION FILES (14/3/16 BANFF WITH FIT BIAS)
@@ -150,6 +153,7 @@ $config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h
 
 #$nexpts          = 10000  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 $nexpts          = 20  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
+#$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 
 $first_expt      = 0   unless defined $first_exp; # first toy experiment id 
 
@@ -159,7 +163,10 @@ $mix23           = -999                       unless defined $mix23;
 $mix13           = -999                      unless defined $mix13;
 #$mix13           = 0.028                     unless defined $mix13;
 $mix12           = -999                       unless defined $mix12;      
-$deltacp         = 0.                      unless defined $deltacp;
+#$deltacp         = 0.                      unless defined $deltacp;
+#$deltacp         = 1.570796                      unless defined $deltacp;
+#$deltacp         = -1.570796                      unless defined $deltacp;
+$deltacp         = 3.141                      unless defined $deltacp;
 $betaBar         = 1.                          unless defined $betaBar;
 
 #
@@ -364,7 +371,8 @@ if($freepar0 eq "deltacp"){
     $freepar0_first = -3.14159265358979312;
     $freepar0_last  = +3.14159265358979312;
     $i_freepar0     = 0;
-    $n_freepar0     = 201; # same as chisq grid
+    $n_freepar0     = 9; # (it includes pi,-pi/2,0,+pi/2)
+    #$n_freepar0     = 17; # (it includes pi,-pi/2,0,+pi/2)
     $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
     $init_freepar0  = $deltacp;
 }
@@ -520,41 +528,66 @@ while($i_freepar1 < $n_freepar1) {
 	    exit;
 	}
 	
-	# Select grid points to run. If array_freepar_user is empty, then run all the points
-	my $n_freepar1_user = @array_freepar1_user;	
-	if($n_freepar1_user>0){
+	# Skip points in array_freepar1_skip
+	my $n_freepar1_skip = @array_freepar1_skip;	
+	#print " $n_freepar1_skip \n";
+	if($n_freepar1_skip>0){
 	    $skip_point = 0;
-	    for (my $i=0; $i < $n_freepar1_user; $i++) {
-		#print "$array_freepar1_user[$i] - $array_freepar1[$i_freepar1] \n";
-		if( abs($array_freepar1_user[$i] - $array_freepar1[$i_freepar1]) < 0.01 ){
-		    print "Run the point $array_freepar1[$i_freepar1] \n"; 
-		    print "user = $array_freepar1_user[$i_freepar1] / grid = $array_freepar1[$i_freepar1] \n"; 
-		    $skip_point = 0;
-		    last;
-		}
-		else{	
+	    for (my $i=0; $i < $n_freepar1_skip; $i++) {	    	    
+		# print " $pt_freepar1";
+		# print " | $array_freepar1_skip[$i] \n";
+		if( abs($pt_freepar1 - $array_freepar1_skip[$i]) < 0.001 ){
 		    $skip_point = 1;
+		    last;
 		}
 	    }
 	    if($skip_point==1){
-		print "Skip this point of parameter 1 : ";
-		print " $array_freepar1[$i_freepar1] \n";
+		print "Skip this point parameter 1 : ";
+		print " $pt_freepar1 \n";
 		print "\n////////////////////////////// \n\n";
-		
 		$i_freepar1++;
 		next;
 	    }
 	}
 	
-    } # loop over grid
+	
+	# # Select grid points to run. If array_freepar_user is empty, then run all the points
+	# my $n_freepar1_user = @array_freepar1_user;	
+	# if($n_freepar1_user>0){
+	# $skip_point = 0;
 
+	#for (my $i=0; $i < $n_freepar1_user; $i++) {
+	# #print "$array_freepar1_user[$i] - $array_freepar1[$i_freepar1] \n";
+	# if( abs($array_freepar1_user[$i] - $array_freepar1[$i_freepar1]) < 0.01 ){
+	#print "Run the point $array_freepar1[$i_freepar1] \n"; 
+	#print "user = $array_freepar1_user[$i_freepar1] / grid = $array_freepar1[$i_freepar1] \n"; 
+	#$skip_point = 0;
+	#last;
+	#}
+	#else{	
+	#$skip_point = 1;
+	#}
+	#}
+	#if($skip_point==1){
+	#print "Skip this point of parameter 1 : ";
+	#print " $array_freepar1[$i_freepar1] \n";
+	#print "\n////////////////////////////// \n\n";
+	#
+	#$i_freepar1++;
+	#next;
+	#}
+	#}
+	
+    } # loop over grid
+    
+    
     # parameter 0 
  
     $i_freepar0     = 0;
     while($i_freepar0 < $n_freepar0) { 
         
 	$pt_freepar0 = $array_freepar0[$i_freepar0];
-	
+
 	# if running single point
 	if($run_fullgrid==0){
 	    $n_freepar0 = 1;
@@ -577,30 +610,52 @@ while($i_freepar1 < $n_freepar1) {
 	    print "Point of freepar0 $i_freepar0: $pt_freepar0 \n";
 	    print "Point of freepar1 $i_freepar1: $pt_freepar1 \n";
 	    
-	    # Select grid points to run. If array_freepar_user is empty, then run all the points
-	    my $n_freepar0_user = @array_freepar0_user;	
-	    if($n_freepar0_user>0){
+	    # Skip points in array_freepar0_skip
+	    my $n_freepar0_skip = @array_freepar0_skip;	
+	    #print " $n_freepar0_skip \n";
+	    if($n_freepar0_skip>0){
 		$skip_point = 0;
-		for (my $i=0; $i < $n_freepar0_user; $i++) {
-		    #print "$array_freepar0_user[$i] - $array_freepar0[$i_freepar0] \n";
-		    if( abs($array_freepar0_user[$i] - $array_freepar0[$i_freepar0]) < 0.01 ){
-			print "Run the point $array_freepar0[$i_freepar0] \n"; 
-			print "user = $array_freepar0_user[$i_freepar0] / grid = $array_freepar0[$i_freepar0] \n"; 
-			$skip_point = 0;
-			last;
-		    }
-		    else{		
+		for (my $i=0; $i < $n_freepar0_skip; $i++) {	    	    
+		    # print " $pt_freepar0";
+		    # print " | $array_freepar0_skip[$i] \n";
+		    if( abs($pt_freepar0 - $array_freepar0_skip[$i]) < 0.001 ){
 			$skip_point = 1;
+			last;
 		    }
 		}
 		if($skip_point==1){
 		    print "Skip this point parameter 0 : ";
-		    print " $array_freepar0[$i_freepar0] \n";
+		    print " $pt_freepar0 \n";
 		    print "\n////////////////////////////// \n\n";
 		    $i_freepar0++;
 		    next;
 		}
 	    }
+	    
+	    # # Select grid points to run. If array_freepar_user is empty, then run all the points
+	    # my $n_freepar0_user = @array_freepar0_user;	
+	    # if($n_freepar0_user>0){
+	    # $skip_point = 0;
+	    # for (my $i=0; $i < $n_freepar0_user; $i++) {
+	    # #print "$array_freepar0_user[$i] - $array_freepar0[$i_freepar0] \n";
+	    # if( abs($array_freepar0_user[$i] - $array_freepar0[$i_freepar0]) < 0.01 ){
+	    # print "Run the point $array_freepar0[$i_freepar0] \n"; 
+	    # print "user = $array_freepar0_user[$i_freepar0] / grid = $array_freepar0[$i_freepar0] \n"; 
+	    # $skip_point = 0;
+	    # last;
+	    # }
+	    # else{		
+	    # $skip_point = 1;
+	    # }
+	    # }
+	    # if($skip_point==1){
+	    # print "Skip this point parameter 0 : ";
+	    # print " $array_freepar0[$i_freepar0] \n";
+	    # print "\n////////////////////////////// \n\n";
+	    # $i_freepar0++;
+	    # next;
+	    # }
+	    # }
 	
 	} # loop over grid
 	
@@ -646,7 +701,7 @@ while($i_freepar1 < $n_freepar1) {
 
 	    $arguments = "$softw_dir//bin/run_fc_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $ifile_first --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --file-margtoys-nh \"$file_margtoys_nh\" --file-margtoys-ih \"$file_margtoys_ih\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy_margtoys --mass-hierarchy-margtoys \"$masshierarchy_marg\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights --penalty-freepar0 $penalty_freepar0 --penalty-freepar1 $penalty_freepar1 --do-fc $do_fc";
 	    
-	    #$command = "$program $arguments $arguments_bool";
+	    # # $command = "$program $arguments $arguments_bool";
 	    $command = "$program $arguments";
 
 	    #if(using_xml_file) { $command = " $command --use-xml-file $xml_file_freepar"; }
@@ -680,8 +735,9 @@ while($i_freepar1 < $n_freepar1) {
 		#`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 		#`sbatch -t 1-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 		#`sbatch -t 10:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
+		`sbatch -t 07:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 		#`sbatch -t 05:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
-		`sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
+		#`sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 		#`sbatch -t 00:15:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 		#`sbatch -t 00:02:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 	    }
