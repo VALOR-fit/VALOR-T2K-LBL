@@ -140,7 +140,7 @@ $run_fullgrid  = 1   unless defined $run_fullgrid; # 0 --> run single point, 1 -
 
 $resource        = "interactive"               unless defined $resource;
 
-$tag             = "fitmarg_fc_dcp_mh"  unless defined $tag;
+$tag             = "fitmarg_fc_dcp"  unless defined $tag;
 
 #$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D) 
 #$nruns           = 250                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
@@ -371,6 +371,7 @@ if($freepar0 eq "deltacp"){
     $freepar0_first = -3.14159265358979312;
     $freepar0_last  = +3.14159265358979312;
     $i_freepar0     = 0;
+    #$n_freepar0     = 201; # (it includes pi,-pi/2,0,+pi/2)
     $n_freepar0     = 9; # (it includes pi,-pi/2,0,+pi/2)
     #$n_freepar0     = 17; # (it includes pi,-pi/2,0,+pi/2)
     $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
@@ -677,14 +678,14 @@ while($i_freepar1 < $n_freepar1) {
 	    print "param 0: $pt_freepar0 \n";
 	    print "param 1: $pt_freepar1 \n\n";
 	    print "Oscillation parameters: \n";
+	    print "mh=$masshierarchy \n";
 	    print "dcp=$deltacp, mix13=$mix13, mix23=$mix23, dmsq23=$dmsq23 \n\n";
-
 	    
 	    # Variable to set, not by the user
 	    #$dotoys = 0;                # Don't do toys on fly but read either xml or root files
 	    #$stat_fluct_fit = 0;        # Useless for fits, since toys are read and not performed
 	    #$tweak_systematics_fit = 0; # Useless for fits, since toys are read and not performed
-	    $tag_freepar = sprintf("fit_%s_nexp_%d_%1.3f_%1.3f-job%1.0f",$tag,$nexpts,$pt_freepar0,$pt_freepar1,$irun);
+	    $tag_freepar = sprintf("fit_%s_%s_nexp_%d_%1.3f_%1.3f-job%1.0f",$tag,$masshierarchy,$nexpts,$pt_freepar0,$pt_freepar1,$irun);
 	    
 	    $tag_in = $tag_freepar; # needed for the output files
 
