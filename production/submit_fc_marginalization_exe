@@ -213,12 +213,12 @@ if( !defined $cput ) {
 
 ############################ Toy generation ################################
 $hypothesis             = "3f_osc"             unless defined $hypothesis;  
-#$hypothesis             = "3f_osc_normbar"      unless defined $hypothesis;  
+#$hypothesis            = "3f_osc_normbar"     unless defined $hypothesis;
 $do_toys                = 1                    unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
-$fakedata_root_file = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
-#$fakedata_root_file = "../outputs/test/PROVA/SKAsimov_A_Run16.root" unless defined $fakedata_root_file;
-$fakedata_xml_file  = ""  unless defined $fakedata_xml_file;
+$fakedata_root_file     = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
+#$fakedata_root_file    = "../outputs/test/PROVA/SKAsimov_A_Run16.root" unless defined $fakedata_root_file;
+$fakedata_xml_file      = ""                   unless defined $fakedata_xml_file;
 $print_syst_variation   = 0                    unless defined $print_syst_variation;
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
@@ -268,11 +268,11 @@ $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marg
 $freepar0          = "deltacp"     unless defined $freepar0;
 $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
 $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
-$npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
-$freepar1          = ""     unless defined $freepar1;
-$minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
-$maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
-$npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
+$npt_freepar0      = 201            unless defined $npt_freepar0; # of free parameter points to scan
+$freepar1          = ""             unless defined $freepar1;
+$minfreepar1       = 0              unless defined $minfreepar1;  # Min free param allowed value
+$maxfreepar1       = 0              unless defined $maxfreepar1;  # Max free param allowed value
+$npt_freepar1      = 1              unless defined $npt_freepar1; # of free parameter points to scan
 
 # # 1D fit - mixing13 (t2k only)                                                                                                                            
 # $freepar0               = "mixing13"                unless defined $freepar0;                                                                                    
@@ -344,15 +344,15 @@ $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parame
 # $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value  
 # $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan 
 
-$type_error        = "" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
-$draw_full_chisq   = 1             unless defined $draw_full_chisq;
+$type_error        = ""             unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
+$draw_full_chisq   = 1              unless defined $draw_full_chisq;
 
-$test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
+$test_stat         = "rate+shape"   unless defined $test_stat;     # "rate-only" or "rate+shape"
 
-$store_like_weights = 0   unless defined $store_like_weights;  # set to 1 only if 1 fit is run
+$store_like_weights = 0             unless defined $store_like_weights;  # set to 1 only if 1 fit is run
 
-$penalty_freepar0 = 0         unless defined $penalty_freepar0; 
-$penalty_freepar1 = 0         unless defined $penalty_freepar1; 
+$penalty_freepar0   = 0             unless defined $penalty_freepar0;
+$penalty_freepar1   = 0             unless defined $penalty_freepar1;
 
 ########################################################################################
 
@@ -665,7 +665,7 @@ while($i_freepar1 < $n_freepar1) {
 	# Not used if toys are run. See code line $irun = $nruns;
 	#
 	
-	$irun = 0;
+	$irun = $first_expt;
 	while($irun < $nruns) { # loop over the jobs
 	    
 	    $ifile_first = $irun * $nexpts;
@@ -824,12 +824,12 @@ while($i_freepar1 < $n_freepar1) {
 	    # Oxford
 	    #
 	    if($resource eq "Oxford") {
-		open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+		open(PBS, ">$job_dir/$tag_in-$irun.pbs") or die("Can not create the PBS batch script");
 		print PBS "#!/bin/bash \n";
-		print PBS "#PBS -N $tag-$irun \n";
+		print PBS "#PBS -N $tag_in-$irun \n";
 		print PBS "#PBS -l cput=$cput \n";
-		print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-		print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+		print PBS "#PBS -o $job_dir/$tag_in-$irun.pbs.out \n";
+		print PBS "#PBS -e $job_dir/$tag_in-$irun.pbs.err \n";
     if($queue eq "outofhours")
     {
       print PBS "#PBS -q outofhours \n";
@@ -840,7 +840,7 @@ while($i_freepar1 < $n_freepar1) {
 		print PBS "mailoutput(){\n echo \"Check Oxford servers\" \n grep 'root2k' $job_dir/$tag-$irun.pbs \n }\n";
 		print PBS "mailoutput | mail -s \"run_fc_dcp job done!\" rajbatchjobresult\@gmail.com\n";
 		close(PBS);
-		`qsub $job_dir/$tag-$irun.pbs`;
+		`qsub $job_dir/$tag_in-$irun.pbs`;
 	    }    #
     
 	    # Grid
