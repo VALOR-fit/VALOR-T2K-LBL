@@ -202,44 +202,6 @@ static const PhysParamId_t kLastXSecParam = kNuis093;   // Utility, should alway
  #else
  static const PhysParamId_t kNuisSKDetFSI_first = kNuisSKDetFSI006; 
  #endif
- 
-#elif defined(__USE_SKDETFSI2015__)
- // SKDET+FSI matrix 24x24
- #if FSI_BINS != 3
- static const PhysParamId_t kNuisSKDetFSI000 = kNuis101;
- static const PhysParamId_t kNuisSKDetFSI001 = kNuis102;
- static const PhysParamId_t kNuisSKDetFSI002 = kNuis103;
- static const PhysParamId_t kNuisSKDetFSI003 = kNuis104;
- static const PhysParamId_t kNuisSKDetFSI004 = kNuis105;
- static const PhysParamId_t kNuisSKDetFSI005 = kNuis106;
- static const PhysParamId_t kNuisSKDetFSI006 = kNuis107;
- static const PhysParamId_t kNuisSKDetFSI007 = kNuis108;
- static const PhysParamId_t kNuisSKDetFSI008 = kNuis109;
- static const PhysParamId_t kNuisSKDetFSI009 = kNuis110;
- static const PhysParamId_t kNuisSKDetFSI010 = kNuis111;
- static const PhysParamId_t kNuisSKDetFSI011 = kNuis112;
- #endif
- #if FSI_BINS != 2
- static const PhysParamId_t kNuisSKDetFSI012 = kNuis113;
- static const PhysParamId_t kNuisSKDetFSI013 = kNuis114;
- static const PhysParamId_t kNuisSKDetFSI014 = kNuis115;
- static const PhysParamId_t kNuisSKDetFSI015 = kNuis116;
- static const PhysParamId_t kNuisSKDetFSI016 = kNuis117;
- static const PhysParamId_t kNuisSKDetFSI017 = kNuis118;
- static const PhysParamId_t kNuisSKDetFSI018 = kNuis119;
- static const PhysParamId_t kNuisSKDetFSI019 = kNuis120;
- static const PhysParamId_t kNuisSKDetFSI020 = kNuis121;
- static const PhysParamId_t kNuisSKDetFSI021 = kNuis122;
- static const PhysParamId_t kNuisSKDetFSI022 = kNuis123;
- static const PhysParamId_t kNuisSKDetFSI023 = kNuis124;
- #endif
-
- // NEW SKDETFSI
- #if FSI_BINS != 3
- static const PhysParamId_t kNuisSKDetFSI_first = kNuisSKDetFSI000; 
- #else
- static const PhysParamId_t kNuisSKDetFSI_first = kNuisSKDetFSI012; 
- #endif
 
 #endif
 
@@ -423,44 +385,6 @@ static const PhysParamId_t kRHCLastXSecParam = kNuis270;   // Utility, should al
  static const PhysParamId_t kRHCNuisSKDetFSI_first = kRHCNuisSKDetFSI006; 
  #endif
 
-#elif defined(__USE_SKDETFSI2015__) 
- // SKDET+FSI matrix 24x24
- #if FSI_BINS != 3
- static const PhysParamId_t kRHCNuisSKDetFSI000 = kNuis271;
- static const PhysParamId_t kRHCNuisSKDetFSI001 = kNuis272;
- static const PhysParamId_t kRHCNuisSKDetFSI002 = kNuis273;
- static const PhysParamId_t kRHCNuisSKDetFSI003 = kNuis274;
- static const PhysParamId_t kRHCNuisSKDetFSI004 = kNuis275;
- static const PhysParamId_t kRHCNuisSKDetFSI005 = kNuis276;
- static const PhysParamId_t kRHCNuisSKDetFSI006 = kNuis277;
- static const PhysParamId_t kRHCNuisSKDetFSI007 = kNuis278;
- static const PhysParamId_t kRHCNuisSKDetFSI008 = kNuis279;
- static const PhysParamId_t kRHCNuisSKDetFSI009 = kNuis280;
- static const PhysParamId_t kRHCNuisSKDetFSI010 = kNuis281;
- static const PhysParamId_t kRHCNuisSKDetFSI011 = kNuis282;
-#endif
- #if FSI_BINS != 2
- static const PhysParamId_t kRHCNuisSKDetFSI012 = kNuis283;
- static const PhysParamId_t kRHCNuisSKDetFSI013 = kNuis284;
- static const PhysParamId_t kRHCNuisSKDetFSI014 = kNuis285;
- static const PhysParamId_t kRHCNuisSKDetFSI015 = kNuis286;
- static const PhysParamId_t kRHCNuisSKDetFSI016 = kNuis287;
- static const PhysParamId_t kRHCNuisSKDetFSI017 = kNuis288;
- static const PhysParamId_t kRHCNuisSKDetFSI018 = kNuis289;
- static const PhysParamId_t kRHCNuisSKDetFSI019 = kNuis290;
- static const PhysParamId_t kRHCNuisSKDetFSI020 = kNuis291;
- static const PhysParamId_t kRHCNuisSKDetFSI021 = kNuis292;
- static const PhysParamId_t kRHCNuisSKDetFSI022 = kNuis293;
- static const PhysParamId_t kRHCNuisSKDetFSI023 = kNuis294;
- #endif
-
- // NEW SKDETFSI
- #if FSI_BINS != 3
- static const PhysParamId_t kRHCNuisSKDetFSI_first = kRHCNuisSKDetFSI000; 
- #else
- static const PhysParamId_t kRHCNuisSKDetFSI_first = kRHCNuisSKDetFSI012; 
- #endif
-
 #endif 
 
 static const PhysParamId_t kRHCLastParam = kNuis295;
@@ -487,7 +411,7 @@ static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis306;   // SK e
 
 #if defined(__USE_SKDETFSI2013__)
  // SKDET+FSI matrix 18x18 
- #if FSI_BINS != 3
+ #if MR_FSI_BINS != 3
  static const PhysParamId_t kMultiRingNuisSKDetFSI000 = kNuis307;
  static const PhysParamId_t kMultiRingNuisSKDetFSI001 = kNuis308;
  static const PhysParamId_t kMultiRingNuisSKDetFSI002 = kNuis309;
@@ -495,7 +419,7 @@ static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis306;   // SK e
  static const PhysParamId_t kMultiRingNuisSKDetFSI004 = kNuis311;
  static const PhysParamId_t kMultiRingNuisSKDetFSI005 = kNuis312;
 #endif
- #if FSI_BINS != 2
+ #if MR_FSI_BINS != 2
  static const PhysParamId_t kMultiRingNuisSKDetFSI006 = kNuis313;
  static const PhysParamId_t kMultiRingNuisSKDetFSI007 = kNuis314;
  static const PhysParamId_t kMultiRingNuisSKDetFSI008 = kNuis315;
@@ -514,47 +438,10 @@ static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis306;   // SK e
  #if MR_FSI_BINS != 3
  static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI000; 
  #else
- static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI006; 
+  // Would normally be kMultiRingNuisSKDetFSI006 but don't have lowest energy bin
+ static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI007; 
  #endif
   
-#elif defined(__USE_SKDETFSI2015__)
- // SKDET+FSI matrix 24x24
- #if FSI_BINS != 3
- static const PhysParamId_t kMultiRingNuisSKDetFSI000 = kNuis307;
- static const PhysParamId_t kMultiRingNuisSKDetFSI001 = kNuis308;
- static const PhysParamId_t kMultiRingNuisSKDetFSI002 = kNuis309;
- static const PhysParamId_t kMultiRingNuisSKDetFSI003 = kNuis310;
- static const PhysParamId_t kMultiRingNuisSKDetFSI004 = kNuis311;
- static const PhysParamId_t kMultiRingNuisSKDetFSI005 = kNuis312;
- static const PhysParamId_t kMultiRingNuisSKDetFSI006 = kNuis313;
- static const PhysParamId_t kMultiRingNuisSKDetFSI007 = kNuis314;
- static const PhysParamId_t kMultiRingNuisSKDetFSI008 = kNuis315;
- static const PhysParamId_t kMultiRingNuisSKDetFSI009 = kNuis316;
- static const PhysParamId_t kMultiRingNuisSKDetFSI010 = kNuis317;
- static const PhysParamId_t kMultiRingNuisSKDetFSI011 = kNuis318;
-#endif
- #if FSI_BINS != 2
- static const PhysParamId_t kMultiRingNuisSKDetFSI012 = kNuis319;
- static const PhysParamId_t kMultiRingNuisSKDetFSI013 = kNuis320;
- static const PhysParamId_t kMultiRingNuisSKDetFSI014 = kNuis321;
- static const PhysParamId_t kMultiRingNuisSKDetFSI015 = kNuis322;
- static const PhysParamId_t kMultiRingNuisSKDetFSI016 = kNuis323;
- static const PhysParamId_t kMultiRingNuisSKDetFSI017 = kNuis324;
- static const PhysParamId_t kMultiRingNuisSKDetFSI018 = kNuis325;
- static const PhysParamId_t kMultiRingNuisSKDetFSI019 = kNuis326;
- static const PhysParamId_t kMultiRingNuisSKDetFSI020 = kNuis327;
- static const PhysParamId_t kMultiRingNuisSKDetFSI021 = kNuis328;
- static const PhysParamId_t kMultiRingNuisSKDetFSI022 = kNuis329;
- static const PhysParamId_t kMultiRingNuisSKDetFSI023 = kNuis330;
- #endif
-
- // NEW SKDETFSI
- #if MR_FSI_BINS != 3
- static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI000; 
- #else
- static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI012; 
- #endif
-
 #endif
 
  

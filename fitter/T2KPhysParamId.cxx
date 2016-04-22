@@ -827,7 +827,7 @@ string valor::util::AsString(PhysParamId_t p)
       // SKDET+FSI
       //
 #ifndef SKCORRELATIONS
-#if FSI_BINS != 3
+#if MR_FSI_BINS != 3
     case ( kMultiRingNuisSKDetFSI000 ) :
     case ( kMultiRingNuisSKDetFSI001 ) :
     case ( kMultiRingNuisSKDetFSI002 ) :
@@ -835,15 +835,6 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kMultiRingNuisSKDetFSI004 ) :
     case ( kMultiRingNuisSKDetFSI005 ) :
 
-      // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2015__)
-    case ( kMultiRingNuisSKDetFSI006 ) :
-    case ( kMultiRingNuisSKDetFSI007 ) :
-    case ( kMultiRingNuisSKDetFSI008 ) :
-    case ( kMultiRingNuisSKDetFSI009 ) :
-    case ( kMultiRingNuisSKDetFSI010 ) :
-    case ( kMultiRingNuisSKDetFSI011 ) :
-#endif
 
       {
         // NEW SKDETFSI
@@ -865,23 +856,6 @@ string valor::util::AsString(PhysParamId_t p)
           nutypes = "nue/nuebar/signue CC (MultiRmu)"; break;
         case (kMultiRingNuisSKDetFSI005) :
           nutypes = "all NC (MultiRmu)"; break;
-#elif defined(__USE_SKDETFSI2015__)
-        case (kMultiRingNuisSKDetFSI000) :
-        case (kMultiRingNuisSKDetFSI001) :
-        case (kMultiRingNuisSKDetFSI002) :
-          nutypes = "numu/numubar CCQE (1Rmu)"; break;
-        case (kMultiRingNuisSKDetFSI003) :
-        case (kMultiRingNuisSKDetFSI004) :
-        case (kMultiRingNuisSKDetFSI005) :
-          nutypes = "numu/numubar CCnQE (1Rmu)"; break;
-        case (kMultiRingNuisSKDetFSI006) :
-        case (kMultiRingNuisSKDetFSI007) :
-        case (kMultiRingNuisSKDetFSI008) :
-          nutypes = "nue/nuebar/signue CC (1Rmu)"; break;
-        case (kMultiRingNuisSKDetFSI009) :
-        case (kMultiRingNuisSKDetFSI010) :
-        case (kMultiRingNuisSKDetFSI011) :
-          nutypes = "all NC (1Rmu)"; break;
 #endif
 
         default : nutypes = "--";
@@ -891,7 +865,7 @@ string valor::util::AsString(PhysParamId_t p)
         break;
       }//FSI for MultiRmu
 #endif
-#if FSI_BINS != 2
+#if MR_FSI_BINS != 2
 
       // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
@@ -907,32 +881,9 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kMultiRingNuisSKDetFSI015 ) :
     case ( kMultiRingNuisSKDetFSI016 ) :
     case ( kMultiRingNuisSKDetFSI017 ) :
-#elif defined(__USE_SKDETFSI2015__)
-    case ( kMultiRingNuisSKDetFSI012 ) :
-    case ( kMultiRingNuisSKDetFSI013 ) :
-    case ( kMultiRingNuisSKDetFSI014 ) :
-    case ( kMultiRingNuisSKDetFSI015 ) :
-    case ( kMultiRingNuisSKDetFSI016 ) :
-    case ( kMultiRingNuisSKDetFSI017 ) :
-    case ( kMultiRingNuisSKDetFSI018 ) :
-    case ( kMultiRingNuisSKDetFSI019 ) :
-    case ( kMultiRingNuisSKDetFSI020 ) :
-    case ( kMultiRingNuisSKDetFSI021 ) :
-    case ( kMultiRingNuisSKDetFSI022 ) :
-    case ( kMultiRingNuisSKDetFSI023 ) :
 #endif
 
       {
-        //#if FSI_BINS == 3
-        // #if defined(__USE_SKDETFSI2013__)
-        //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI006;
-        // #elif defined(__USE_SKDETFSI2015__)
-        //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI012;
-        // #endif
-        // #elif FSI_BINS ==1
-        //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-        // #endif
-
         // NEW SKDETFSI
         int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
 
@@ -957,23 +908,6 @@ string valor::util::AsString(PhysParamId_t p)
         case (kMultiRingNuisSKDetFSI016) :
         case (kMultiRingNuisSKDetFSI017) :
           nutypes = "all NC (MultiRe)"; break;
-#elif defined(__USE_SKDETFSI2015__)
-        case (kMultiRingNuisSKDetFSI012) :
-        case (kMultiRingNuisSKDetFSI013) :
-        case (kMultiRingNuisSKDetFSI014) :
-          nutypes = "oscillated nue CC (1Re)"; break;
-        case (kMultiRingNuisSKDetFSI015) :
-        case (kMultiRingNuisSKDetFSI016) :
-        case (kMultiRingNuisSKDetFSI017) :
-          nutypes = "numu/numubar CC (1Re)"; break;
-        case (kMultiRingNuisSKDetFSI018) :
-        case (kMultiRingNuisSKDetFSI019) :
-        case (kMultiRingNuisSKDetFSI020) :
-          nutypes = "nue/nuebar CC (1Re)"; break;
-        case (kMultiRingNuisSKDetFSI021) :
-        case (kMultiRingNuisSKDetFSI022) :
-        case (kMultiRingNuisSKDetFSI023) :
-          nutypes = "all NC (1Re)"; break;
 #endif
 
         default : nutypes = "--";
@@ -1886,23 +1820,13 @@ string valor::util::AsStringTex(PhysParamId_t p)
             //
             //#ifdef SKFSITOGETHER
 #ifndef SKCORRELATIONS
-#if FSI_BINS != 3
+#if MR_FSI_BINS != 3
         case ( kMultiRingNuisSKDetFSI000 ) :
         case ( kMultiRingNuisSKDetFSI001 ) :
         case ( kMultiRingNuisSKDetFSI002 ) :
         case ( kMultiRingNuisSKDetFSI003 ) :
         case ( kMultiRingNuisSKDetFSI004 ) :
         case ( kMultiRingNuisSKDetFSI005 ) :
-            
-            // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2015__)
-        case ( kMultiRingNuisSKDetFSI006 ) :
-        case ( kMultiRingNuisSKDetFSI007 ) :
-        case ( kMultiRingNuisSKDetFSI008 ) :
-        case ( kMultiRingNuisSKDetFSI009 ) :
-        case ( kMultiRingNuisSKDetFSI010 ) :
-        case ( kMultiRingNuisSKDetFSI011 ) :
-#endif
             
         {
             string nutypes = "";
@@ -2760,26 +2684,16 @@ string valor::util::AsStringCompact(PhysParamId_t p)
             /// NEW MULTIRING 2
             
             //#ifdef SKFSITOGETHER
-#if FSI_BINS != 3
+#if MR_FSI_BINS != 3
         case ( kMultiRingNuisSKDetFSI000 ) : return "f_skdetfsi000_multiring"; break;
         case ( kMultiRingNuisSKDetFSI001 ) : return "f_skdetfsi001_multiring"; break;
         case ( kMultiRingNuisSKDetFSI002 ) : return "f_skdetfsi002_multiring"; break;
         case ( kMultiRingNuisSKDetFSI003 ) : return "f_skdetfsi003_multiring"; break;
         case ( kMultiRingNuisSKDetFSI004 ) : return "f_skdetfsi004_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI005 ) : return "f_skdetfsi005_multiring"; break;
-            
-            // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2015__)
-        case ( kMultiRingNuisSKDetFSI006 ) : return "f_skdetfsi006_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI007 ) : return "f_skdetfsi007_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI008 ) : return "f_skdetfsi008_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI009 ) : return "f_skdetfsi009_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI010 ) : return "f_skdetfsi010_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI011 ) : return "f_skdetfsi011_multiring"; break;
-#endif
+        case ( kMultiRingNuisSKDetFSI005 ) : return "f_skdetfsi005_multiring"; break;            
             
 #endif
-#if FSI_BINS != 2
+#if MR_FSI_BINS != 2
             
             // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
@@ -2795,22 +2709,8 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kMultiRingNuisSKDetFSI015 ) : return "f_skdetfsi015_multiring"; break;
         case ( kMultiRingNuisSKDetFSI016 ) : return "f_skdetfsi016_multiring"; break;
         case ( kMultiRingNuisSKDetFSI017 ) : return "f_skdetfsi017_multiring"; break;
-#elif defined(__USE_SKDETFSI2013__)
-        case ( kMultiRingNuisSKDetFSI012 ) : return "f_skdetfsi012_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI013 ) : return "f_skdetfsi013_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI014 ) : return "f_skdetfsi014_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI015 ) : return "f_skdetfsi015_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI016 ) : return "f_skdetfsi016_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI017 ) : return "f_skdetfsi017_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI018 ) : return "f_skdetfsi018_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI019 ) : return "f_skdetfsi019_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI020 ) : return "f_skdetfsi020_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI021 ) : return "f_skdetfsi021_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI022 ) : return "f_skdetfsi022_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI023 ) : return "f_skdetfsi023_multiring"; break;
 #endif
-            
-#endif
+#endif            
             
             // NEW SKDETFSI (start indices from 24 instead of 18)
 #ifdef SKCORRELATIONS
@@ -3505,26 +3405,15 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
             
             /// NEW MULTIRING 2
             
-#if FSI_BINS != 3
+#if MR_FSI_BINS != 3
         case ( kMultiRingNuisSKDetFSI000 ) :
         case ( kMultiRingNuisSKDetFSI001 ) :
         case ( kMultiRingNuisSKDetFSI002 ) :
         case ( kMultiRingNuisSKDetFSI003 ) :
         case ( kMultiRingNuisSKDetFSI004 ) :
         case ( kMultiRingNuisSKDetFSI005 ) :
-            
-            // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2015__)
-        case ( kMultiRingNuisSKDetFSI006 ) :
-        case ( kMultiRingNuisSKDetFSI007 ) :
-        case ( kMultiRingNuisSKDetFSI008 ) :
-        case ( kMultiRingNuisSKDetFSI009 ) :
-        case ( kMultiRingNuisSKDetFSI010 ) :
-        case ( kMultiRingNuisSKDetFSI011 ) :
 #endif
-            
-#endif
-#if FSI_BINS != 2
+#if MR_FSI_BINS != 2
             
             // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
@@ -3540,23 +3429,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kMultiRingNuisSKDetFSI015 ) :
         case ( kMultiRingNuisSKDetFSI016 ) :
         case ( kMultiRingNuisSKDetFSI017 ) :
-#elif defined(__USE_SKDETFSI2013__)
-        case ( kMultiRingNuisSKDetFSI012 ) :
-        case ( kMultiRingNuisSKDetFSI013 ) :
-        case ( kMultiRingNuisSKDetFSI014 ) :
-        case ( kMultiRingNuisSKDetFSI015 ) :
-        case ( kMultiRingNuisSKDetFSI016 ) :
-        case ( kMultiRingNuisSKDetFSI017 ) :
-        case ( kMultiRingNuisSKDetFSI018 ) :
-        case ( kMultiRingNuisSKDetFSI019 ) :
-        case ( kMultiRingNuisSKDetFSI020 ) :
-        case ( kMultiRingNuisSKDetFSI021 ) :
-        case ( kMultiRingNuisSKDetFSI022 ) :
-        case ( kMultiRingNuisSKDetFSI023 ) :
 #endif
-            
-#endif
-            
+#endif            
             // NEW SKDETFSI (start indices from 24 instead of 18)
 #ifdef SKCORRELATIONS
         case ( kMultiRingNuisSKDetFSI024 ) :
@@ -3884,26 +3758,15 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
             /// NEW MULTIRING 2
             
             //#ifdef SKFSITOGETHER
-#if FSI_BINS != 3
+#if MR_FSI_BINS != 3
         case ( kMultiRingNuisSKDetFSI000 ) : return "f_skdetfsi000_multiring"; break;
         case ( kMultiRingNuisSKDetFSI001 ) : return "f_skdetfsi001_multiring"; break;
         case ( kMultiRingNuisSKDetFSI002 ) : return "f_skdetfsi002_multiring"; break;
         case ( kMultiRingNuisSKDetFSI003 ) : return "f_skdetfsi003_multiring"; break;
         case ( kMultiRingNuisSKDetFSI004 ) : return "f_skdetfsi004_multiring"; break;
         case ( kMultiRingNuisSKDetFSI005 ) : return "f_skdetfsi005_multiring"; break;
-            
-            // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2015__)
-        case ( kMultiRingNuisSKDetFSI006 ) : return "f_skdetfsi006_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI007 ) : return "f_skdetfsi007_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI008 ) : return "f_skdetfsi008_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI009 ) : return "f_skdetfsi009_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI010 ) : return "f_skdetfsi010_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI011 ) : return "f_skdetfsi011_multiring"; break;
 #endif
-            
-#endif
-#if FSI_BINS != 2
+#if MR_FSI_BINS != 2
             
             // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
@@ -3919,19 +3782,6 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
         case ( kMultiRingNuisSKDetFSI015 ) : return "f_skdetfsi015_multiring"; break;
         case ( kMultiRingNuisSKDetFSI016 ) : return "f_skdetfsi016_multiring"; break;
         case ( kMultiRingNuisSKDetFSI017 ) : return "f_skdetfsi017_multiring"; break;
-#elif defined(__USE_SKDETFSI2013__)
-        case ( kMultiRingNuisSKDetFSI012 ) : return "f_skdetfsi012_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI013 ) : return "f_skdetfsi013_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI014 ) : return "f_skdetfsi014_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI015 ) : return "f_skdetfsi015_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI016 ) : return "f_skdetfsi016_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI017 ) : return "f_skdetfsi017_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI018 ) : return "f_skdetfsi018_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI019 ) : return "f_skdetfsi019_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI020 ) : return "f_skdetfsi020_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI021 ) : return "f_skdetfsi021_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI022 ) : return "f_skdetfsi022_multiring"; break;
-        case ( kMultiRingNuisSKDetFSI023 ) : return "f_skdetfsi023_multiring"; break;
 #endif
             
 #endif
