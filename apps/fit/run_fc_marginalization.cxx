@@ -902,28 +902,29 @@ int main(int argc, char ** argv)
        fitmarg_nh->GetChisqStep_2D    ()->Copy(*hstep2D_out_nh       );
        fitmarg_ih->GetChisqStep_2D    ()->Copy(*hstep2D_out_ih       );
      
-       // Print out the full chisq
-       cout << endl;
-       cout << "Full chisq values: Normal Hierarchy:" << endl;
-       int npt_chisq_x = hchisq2D_out_nh->GetNbinsX();
-       int npt_chisq_y = hchisq2D_out_nh->GetNbinsY();
-       for(int iy=0;iy<npt_chisq_y;iy++){
-         for(int ix=0;ix<npt_chisq_x;ix++){
-           cout << hchisq2D_out_nh->GetBinContent(ix+1,iy+1) << " ";
+       if(runopt->VerboseFit()){
+         // Print out the full chisq
+         cout << endl;
+         cout << "Full chisq values: Normal Hierarchy:" << endl;
+         int npt_chisq_x = hchisq2D_out_nh->GetNbinsX();
+         int npt_chisq_y = hchisq2D_out_nh->GetNbinsY();
+         for(int iy=0;iy<npt_chisq_y;iy++){
+           for(int ix=0;ix<npt_chisq_x;ix++){
+             cout << hchisq2D_out_nh->GetBinContent(ix+1,iy+1) << " ";
+           }
+           cout << endl;
          }
          cout << endl;
-       }
-       cout << endl;
-       cout << "Full chisq values: Inverted Hierarchy:" << endl;
-       npt_chisq_x = hchisq2D_out_ih->GetNbinsX();
-       npt_chisq_y = hchisq2D_out_ih->GetNbinsY();
-       for(int iy=0;iy<npt_chisq_y;iy++){
-         for(int ix=0;ix<npt_chisq_x;ix++){
-           cout << hchisq2D_out_ih->GetBinContent(ix+1,iy+1) << " ";
+         cout << "Full chisq values: Inverted Hierarchy:" << endl;
+         npt_chisq_x = hchisq2D_out_ih->GetNbinsX();
+         npt_chisq_y = hchisq2D_out_ih->GetNbinsY();
+         for(int iy=0;iy<npt_chisq_y;iy++){
+           for(int ix=0;ix<npt_chisq_x;ix++){
+             cout << hchisq2D_out_ih->GetBinContent(ix+1,iy+1) << " ";
+           }
+           cout << endl;
          }
-         cout << endl;
        }
-       
      }
      else{
        fitmarg_nh->GetChisqMarg1D     ()->Copy(*hchisq1D_out_nh      );
@@ -934,32 +935,34 @@ int main(int argc, char ** argv)
        fitmarg_ih->GetChisqStep_1D    ()->Copy(*hstep1D_out_ih);
 
        cout << endl;
-       cout << "Full chisq values: Normal Hierarchy:" << endl;
-       cout << " - Chisq:" << endl;
-       int npt_chisq_x = hchisq1D_out_nh->GetNbinsX();
-       for(int ix=0;ix<npt_chisq_x;ix++){
-         cout << hchisq1D_out_nh->GetBinContent(ix+1) << " ";
+       if(runopt->VerboseFit()){
+         cout << "Full chisq values: Normal Hierarchy:" << endl;
+         cout << " - Chisq:" << endl;
+         int npt_chisq_x = hchisq1D_out_nh->GetNbinsX();
+         for(int ix=0;ix<npt_chisq_x;ix++){
+           cout << hchisq1D_out_nh->GetBinContent(ix+1) << " ";
+         }
+         cout << endl;
+         cout << " - DeltaChisq:" << endl;
+         for(int ix=0;ix<npt_chisq_x;ix++){
+           cout << hdeltachisq1D_out_nh->GetBinContent(ix+1) << " ";
+         }
+         cout << endl;
+         
+         cout << endl;
+         cout << "Full chisq values: Inverted Hierarchy:" << endl;
+         cout << " - Chisq:" << endl;
+         npt_chisq_x = hchisq1D_out_ih->GetNbinsX();
+         for(int ix=0;ix<npt_chisq_x;ix++){
+           cout << hchisq1D_out_ih->GetBinContent(ix+1) << " ";
+         }
+         cout << endl;
+         cout << " - DeltaChisq:" << endl;
+         for(int ix=0;ix<npt_chisq_x;ix++){
+           cout << hdeltachisq1D_out_ih->GetBinContent(ix+1) << " ";
+         }
+         cout << endl;
        }
-       cout << endl;
-       cout << " - DeltaChisq:" << endl;
-       for(int ix=0;ix<npt_chisq_x;ix++){
-         cout << hdeltachisq1D_out_nh->GetBinContent(ix+1) << " ";
-       }
-       cout << endl;
-
-       cout << endl;
-       cout << "Full chisq values: Inverted Hierarchy:" << endl;
-       cout << " - Chisq:" << endl;
-       npt_chisq_x = hchisq1D_out_ih->GetNbinsX();
-       for(int ix=0;ix<npt_chisq_x;ix++){
-         cout << hchisq1D_out_ih->GetBinContent(ix+1) << " ";
-       }
-       cout << endl;
-       cout << " - DeltaChisq:" << endl;
-       for(int ix=0;ix<npt_chisq_x;ix++){
-         cout << hdeltachisq1D_out_ih->GetBinContent(ix+1) << " ";
-       }
-       cout << endl;
      }
      
      // Fill toy informations (toy id, run, # of experiments, tag)
@@ -1083,7 +1086,8 @@ int main(int argc, char ** argv)
      cout << endl;
 
 
-
+    //Print out # events for sample
+    
      for(int is = 0; is < kns; is++) {
        SuperkSample_t s = kSKSamples[is];
        if(s == kSKsUndefined) continue;
