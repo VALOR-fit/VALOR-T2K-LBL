@@ -112,6 +112,8 @@ private:
 
 int main(int argc, char ** argv)
 {     
+  TStopwatch sw_all;
+
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   gROOT->SetBatch(true);
@@ -192,6 +194,8 @@ int main(int argc, char ** argv)
 
   // Set Tree toy/fit
   
+  double CPUtime_all=conv::kBadResult;
+  double REALtime_all=conv::kBadResult;
   double CPUtime_Minim_nh=conv::kBadResult;
   double CPUtime_Minim_ih=conv::kBadResult;
   double CPUtime_FullChisq_nh=conv::kBadResult;
@@ -1209,6 +1213,13 @@ int main(int argc, char ** argv)
   delete hdeltachisq1D_out_ih;
   delete hstep1D_out_nh;
   delete hstep1D_out_ih;
+
+  cout << endl;
+  cout << "Total CPU time" << endl;
+  cout << endl;
+  sw_all.Stop();
+  sw_all.Print();
+  sw_all.Start(0);
 
   // Store ntuple with best-fit results
   f->cd();
