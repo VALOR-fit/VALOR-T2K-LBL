@@ -23,11 +23,24 @@
 
 
 //
-// TODO:
-// - Add string of freeparname0 and freeparname1
+// IMPORTANT:
 //
-
-
+// An issue is the mass hierarchy used in the marginalization FitMarginalization uses gMassHierarchyAssumed (the global one). 
+// This variable is the same that is set for the toys to generate the fake datasets and there could be a conflict.           
+// For this reasone util::SetMassHierarchy(skexp) is used to set MH for fake datasets at each toy iteration.
+// Furthermore when making fits of NH and IH, gMassHierarchyAssumed changes its value.
+// It's important to draw the full chisq distribution using FitMarginalization::FillChisqMarg() just after the 
+// minimization has been performed, otherwise gMassHierarchyAssumed changes (NH->IH) and the marginalization toy files get wrong path and it gives error.
+// The fit must be done with the following order:
+// - Build fake dataset with given gMassHierarchyAssumed
+// - Minimization NH (gMassHierarchyAssumed=normal)
+// - Draw Full Chisq NH (gMassHierarchyAssumed=normal)
+// - Minimization IH (gMassHierarchyAssumed=inverted)
+// - Draw Full Chisq IH (gMassHierarchyAssumed=inverted)
+// At the next event iteration gMassHierarchyAssumed is set again to the defined one for the fake datasets.
+// 
+// NEED TO BE UPDATED THE WAY WE PASS MASS HIERARCHY TO FitMarginalization in order to avoid this conflict 
+//
 
 
 #include "SuperkObservation.h"
@@ -586,8 +599,28 @@ int main(int argc, char ** argv)
      bestfitFullChisq1_ih=-999;
      chisqminFullChisq_ih=conv::kALargeNum;
 
+     //
      // Perform the fit w/ marginalization
- 
+     //
+
+     //
+     // IMPORTANT:
+     //
+     // An issue is the mass hierarchy used in the marginalization FitMarginalization uses gMassHierarchyAssumed (the global one). 
+     // This variable is the same that is set for the toys to generate the fake datasets and there could be a conflict.           
+     // For this reasone util::SetMassHierarchy(skexp) is used to set MH for fake datasets at each toy iteration.
+     // Furthermore when making fits of NH and IH, gMassHierarchyAssumed changes its value.
+     // It's important to draw the full chisq distribution using FitMarginalization::FillChisqMarg() just after the 
+     // minimization has been performed, otherwise gMassHierarchyAssumed changes (NH->IH) and the marginalization toy files get wrong path and it gives error.
+     // The fit must be done with the following order:
+     // - Build fake dataset with given gMassHierarchyAssumed
+     // - Minimization NH (gMassHierarchyAssumed=normal)
+     // - Draw Full Chisq NH (gMassHierarchyAssumed=normal)
+     // - Minimization IH (gMassHierarchyAssumed=inverted)
+     // - Draw Full Chisq IH (gMassHierarchyAssumed=inverted)
+     // At the next event iteration gMassHierarchyAssumed is set again to the defined one for the fake datasets.
+     // 
+
      cout << endl;
      cout << "/////////////////////////////////////" << endl;
      cout << "//                                 //" << endl;
@@ -716,9 +749,11 @@ int main(int argc, char ** argv)
      cout << "Calculate Chisq for true point (mass hierarchy as well):" << endl;
      
      if(trueMH=="normal"){
+       Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal"); // needed to build the right binary file name 
        chisqtrue0 = (double)fitmarg_nh->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  
      }
-     else if(trueMH=="inverted"){		       
+     else if(trueMH=="inverted"){
+       Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted"); // needed to build the right binary file name 		       
        chisqtrue0 = (double)fitmarg_ih->GetChisqMargTrueRead(truepar0,truepar1,skobs_fakedata,true);  
      }
      else{
