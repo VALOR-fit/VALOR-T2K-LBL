@@ -132,7 +132,7 @@ foreach (@ARGV) {
 
 @array_freepar0_skip = (-3.14159265358979312, -1.5707963267949, 0., 1.5707963267949, 3.14159265358979312);
 @array_freepar1_skip = ();
-$run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
+$run_fullgrid  = 1   unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
 
 ########################################################################################
 
@@ -144,8 +144,8 @@ $resource        = "interactive"               unless defined $resource;
 $tag             = "fitmarg_fc_dcp"  unless defined $tag;
 
 #$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D) 
-#$nruns           = 250                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
-$nruns           = 2                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+$nruns           = 250                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+#$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 
 #
 # NEW CONFIGURATION FILES (14/3/16 BANFF WITH FIT BIAS)
@@ -153,10 +153,10 @@ $nruns           = 2                           unless defined $nruns;  # number 
 $config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
 
 #$nexpts          = 10000  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
-#$nexpts          = 20  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
-$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
+$nexpts          = 20  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
+#$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 
-$first_expt      = 3   unless defined $first_exp; # first toy experiment id 
+$first_expt      = 0   unless defined $first_exp; # first toy experiment id 
 
 $dmsq23          = -999                    unless defined $dmsq23;
 $dmsq12          = -999                     unless defined $dmsq12;
@@ -167,8 +167,7 @@ $mix12           = -999                       unless defined $mix12;
 #$deltacp         = 0.                      unless defined $deltacp;
 #$deltacp         = 1.570796                      unless defined $deltacp;
 #$deltacp         = -1.570796                      unless defined $deltacp;
-#$deltacp         = 3.141                      unless defined $deltacp;
-$deltacp         = -2.35619449019234                      unless defined $deltacp;
+$deltacp         = 3.141                      unless defined $deltacp;
 $betaBar         = 1.                          unless defined $betaBar;
 
 #
@@ -216,16 +215,15 @@ if( !defined $cput ) {
 ############################ Toy generation ################################
 $hypothesis             = "3f_osc"             unless defined $hypothesis;  
 #$hypothesis            = "3f_osc_normbar"     unless defined $hypothesis;
-$do_toys                = 0                   unless defined $do_toys;
+$do_toys                = 1                   unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
-#$fakedata_root_file     = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
+$fakedata_root_file     = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
 #$fakedata_root_file    = "../outputs/test/PROVA/SKAsimov_A_Run16.root" unless defined $fakedata_root_file;
-$fakedata_root_file    = "../outputs/test/PROVA/Toys_fit_fitmarg_fc_dcp_normal_nexp_10_-2.356_-999.000-job0-_0_9.root" unless defined $fakedata_root_file;
 $fakedata_xml_file      = ""                   unless defined $fakedata_xml_file;
 $print_syst_variation   = 0                    unless defined $print_syst_variation;
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
-$verbose_fit            = 0                    unless defined $verbose_fit;
+$verbose_fit            = 1                    unless defined $verbose_fit;
 $sync_ih_to_nh          = 1                    unless defined $sync_ih_to_nh;
 $stat_fluct             = 1                    unless defined $stat_fluct;
 $tweak_systematics      = 1                    unless defined $tweak_systematics;
@@ -246,20 +244,20 @@ $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist; # s
 # NEW MARGINALIZATION FILES (BANFF RELEASE 14/3/16 WITH FIT BIAS)
 #
 
-#$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $file_margtoys_nh;
-#$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $file_margtoys_ih;
-$file_margtoys_nh = "MARGTOYS_FC_PROVA/prova_nh" unless defined $file_margtoys_nh;
-$file_margtoys_ih = "MARGTOYS_FC_PROVA/prova_ih" unless defined $file_margtoys_ih;
+$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $file_margtoys_nh;
+$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $file_margtoys_ih;
+#$file_margtoys_nh = "MARGTOYS_FC_PROVA/prova_nh" unless defined $file_margtoys_nh;
+#$file_margtoys_ih = "MARGTOYS_FC_PROVA/prova_ih" unless defined $file_margtoys_ih;
 
 #$nfiles_margtoys   = 1           unless defined $nfiles_margtoys; # of marginalization files
-$nfiles_margtoys   = 2           unless defined $nfiles_margtoys; # of marginalization files
-#$nfiles_margtoys   = 201           unless defined $nfiles_margtoys; # of marginalization files
+#$nfiles_margtoys   = 2           unless defined $nfiles_margtoys; # of marginalization files
+$nfiles_margtoys   = 201           unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 546            unless defined $nfiles_margtoys; # of marginalization files        
 #$nfiles_margtoys   = 533            unless defined $nfiles_margtoys; # of marginalization files      
 #$nfiles_margtoys   = 441            unless defined $nfiles_margtoys; # of marginalization files
 
-#$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
-$ntoys_margtoys    = 2         unless defined $ntoys_margtoys;     # of marginalization toys
+$ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
+#$ntoys_margtoys    = 2         unless defined $ntoys_margtoys;     # of marginalization toys
 
 # # 1D fit - betaBar (nuebar appearance)
 # $freepar0               = "betaBar"                 unless defined $freepar0;
@@ -511,6 +509,8 @@ while($i_freepar1 < $n_freepar1) {
 print "\nLoop over the grid points\n";
 print "\n////////////////////////////// \n\n";
 
+$NjobsTot = 0;
+
 # parameter 1
 
 $i_freepar1     = 0;
@@ -680,6 +680,7 @@ while($i_freepar1 < $n_freepar1) {
 	    $ifile_last  = $ifile_first + $nexpts - 1; # The "last" experiment is included
 	    
 	    print "\n";
+	    print "Submitting job: $NjobsTot \n";
 	    print "Submitting run: $irun \n";
 	    print "first: $ifile_first \n";
 	    print "last: $ifile_last \n";
@@ -865,7 +866,8 @@ while($i_freepar1 < $n_freepar1) {
 	    
 	    
 	    $irun++;
-	    
+	    $NjobsTot++;
+
 	} # loop over irun 
 	
 	$i_freepar0++;
