@@ -19,17 +19,23 @@ void plot_contours_dcp_many
  const bool same_mh_style = true, // use same style for NH and IH
  const bool draw_preliminary = false,
 
- const bool draw_1sigmaCL = true,
- const bool draw_90CL     = true,
- const bool draw_2sigmaCL = true,
- const bool draw_3sigmaCL = true,
+ const bool do_fc = true,
+
+ const bool draw_1sigmaCL = false,
+ const bool draw_90CL     = false,
+ const bool draw_2sigmaCL = false,
+ const bool draw_3sigmaCL = false,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
 
  const bool draw_reactors = false,
 
+ const bool do_range_1sigma = false,
  const double critval = 1.,
  
+ const double truepar0 = 3.141,
+ const double truepar1 = 0.,
+
  //double mybestfit = 3.14, 
  double mybestfit = kBadResult
   )
@@ -67,12 +73,6 @@ void plot_contours_dcp_many
     // }
     // ,
 
-
-
-
-    
-    
-
     // deltaCP - Run 1-6 Data w/ reactors
     {
       "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
@@ -81,6 +81,13 @@ void plot_contours_dcp_many
       //"fit_fit_marg_PROVA_dcp_nexp_1_-1.601_-999.000-job0-_0_0.root"
     }
     ,
+
+    // // deltaCP - Run 1-6 Data w/ reactors - e-like 15 bins only for RHC
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_elike_RHConly_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_elike_RHConly_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    // }
+    // ,
   
     // // deltaCP - Run 1-6 Data T2K only
     // {
@@ -131,6 +138,12 @@ void plot_contours_dcp_many
 
   };
   
+
+  // File names of Feldman-Cousins
+  char *fcname_nh = "FCgraphs.root";
+  char *fcname_ih = "FCgraphs.root";
+
+
   char *latexname[Nfiles][Nmh] = {
     {"Normal Hierarchy","Inverted Hierarchy"},
     //{"Neutrino - NH","Neutrino - IH"},
@@ -150,9 +163,9 @@ void plot_contours_dcp_many
   TFile *filein[Nfiles][Nmh];
   TTree *treein[Nfiles][Nmh];
 
-  TH1D *hchisq1D[Nfiles][Nmh];
-  TH1D *hdeltachisq1D[Nfiles][Nmh];
-  TH1D *hdeltachisq1D_GlobMin[Nfiles][Nmh];
+  TH1F *hchisq1D[Nfiles][Nmh];
+  TH1F *hdeltachisq1D[Nfiles][Nmh];
+  TH1F *hdeltachisq1D_GlobMin[Nfiles][Nmh];
   
   TCanvas *cChisq; //[Nfiles][Nmh];
 
@@ -174,11 +187,11 @@ void plot_contours_dcp_many
       treein[ifile][imh] = (TTree*)filein[ifile][imh]->Get("fitnt");
       
       sprintf(name,"hchisq1D_file%d_mh%d",ifile,imh);
-      hchisq1D[ifile][imh] = new TH1D(name,name,1,0,1);
+      hchisq1D[ifile][imh] = new TH1F(name,name,1,0,1);
       treein[ifile][imh]->SetBranchAddress("hchisq1D", &hchisq1D[ifile][imh] );
       
       sprintf(name,"hdeltachisq1D_file%d_mh%d",ifile,imh);
-      hdeltachisq1D[ifile][imh] = new TH1D(name,name,1,0,1);
+      hdeltachisq1D[ifile][imh] = new TH1F(name,name,1,0,1);
       treein[ifile][imh]->SetBranchAddress("hdeltachisq1D", &hdeltachisq1D[ifile][imh] );
       
       // Get event
@@ -193,7 +206,7 @@ void plot_contours_dcp_many
       cout << endl;  
     
       sprintf(name,"hdeltachisq1D_GlobMin_file%d_mh%d",ifile,imh);
-      hdeltachisq1D_GlobMin[ifile][imh] = (TH1D*)hchisq1D[ifile][imh]->Clone(name);
+      hdeltachisq1D_GlobMin[ifile][imh] = (TH1F*)hchisq1D[ifile][imh]->Clone(name);
       hdeltachisq1D_GlobMin[ifile][imh]->Reset();
       
     } // end loop Nmh
@@ -238,63 +251,27 @@ void plot_contours_dcp_many
 
   // Calculate 1 sigma ranges
 
-  cout << endl;
-  cout << "Calculate range for critical value: " << critval << endl;
-  cout << endl;
-  
-  for(int ifile=0;ifile<Nfiles;ifile++){
-    for(int imh=0;imh<Nmh;imh++){      
-
-      cout << endl;
-      cout << infilename[ifile][imh] << endl;
-
-      cout << "mybestfit = " << mybestfit << endl;
-      double Status_range = CalcBestFitErrorsMINOS(hdeltachisq1D_GlobMin[ifile][imh],critval,mybestfit);
-      
-      if(Status_range==conv::kBadResult){
-	cout << "Range not found" << endl;
+  if(do_range_1sigma){
+    cout << endl;
+    cout << "Calculate range for critical value: " << critval << endl;
+    cout << endl;
+    
+    for(int ifile=0;ifile<Nfiles;ifile++){
+      for(int imh=0;imh<Nmh;imh++){      
+	
+	cout << endl;
+	cout << infilename[ifile][imh] << endl;
+	
+	cout << "mybestfit = " << mybestfit << endl;
+	double Status_range = CalcBestFitErrorsMINOS(hdeltachisq1D_GlobMin[ifile][imh],critval,mybestfit);
+	
+	if(Status_range==conv::kBadResult){
+	  cout << "Range not found" << endl;
+	}
+	
       }
-
-      
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Init histogram
 
@@ -304,14 +281,56 @@ void plot_contours_dcp_many
   double upedgeX = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinUpEdge(NbinsX);
   char *TitleX = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetTitle();
   char *TitleY = hdeltachisq1D_GlobMin[0][0]->GetYaxis()->GetTitle();
-  TH1D *hInit = new TH1D("hInit","hInit",NbinsX,lowedgeX,upedgeX);
+  TH1F *hInit = new TH1F("hInit","hInit",NbinsX,lowedgeX,upedgeX);
   hInit->GetXaxis()->SetTitle(TitleX);
   hInit->GetYaxis()->SetTitle(TitleY);
+
+
+
+  // Get file of Feldman-Cousins
+  
+  TGraph *gFC90CL_nh;
+  TGraph *gFC90CL_ih;
+  TGraph *gFC2sigma_nh;
+  TGraph *gFC2sigma_ih;
+  TFile *fin_fc_nh;
+  TFile *fin_fc_ih;
+  
+  if(do_fc){
+
+    fin_fc_nh = new TFile(fcname_nh,"READ");
+    fin_fc_ih = new TFile(fcname_ih,"READ");
+    
+    gFC90CL_nh = (TGraph*)fin_fc_nh->Get("gFC90CL_nh");
+    gFC2sigma_nh = (TGraph*)fin_fc_nh->Get("gFC2sigma_nh");
+
+    gFC90CL_ih = (TGraph*)fin_fc_ih->Get("gFC90CL_ih");
+    gFC2sigma_ih = (TGraph*)fin_fc_ih->Get("gFC2sigma_ih");
+
+    gFC90CL_nh->SetLineColor(kBlue);
+    gFC90CL_ih->SetLineColor(kBlue);
+    gFC2sigma_nh->SetLineColor(kGreen);
+    gFC2sigma_ih->SetLineColor(kGreen);
+
+    gFC90CL_nh->SetMarkerColor(kBlue);
+    gFC90CL_ih->SetMarkerColor(kBlue);
+    gFC2sigma_nh->SetMarkerColor(kGreen);
+    gFC2sigma_ih->SetMarkerColor(kGreen);
+    
+    gFC90CL_nh->SetLineWidth(2);
+    gFC90CL_ih->SetLineWidth(2);
+    gFC2sigma_nh->SetLineWidth(2);
+    gFC2sigma_ih->SetLineWidth(2);
+
+    gFC90CL_ih->SetLineStyle(2);
+    gFC2sigma_ih->SetLineStyle(2);
+  }
+
+
 
   // Draw histograms
   
   // Chisq
- 
   double Max_chisq = 0.;
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
@@ -319,13 +338,10 @@ void plot_contours_dcp_many
 	Max_chisq = hchisq1D[ifile][imh]->GetMaximum();
     }
   }
-  
   sprintf(name,"cChisq1D");
   cChisq = new TCanvas(name,name);
-  
   hInit->SetMaximum(Max_chisq*1.2);
   hInit->DrawCopy();
-
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
       hchisq1D[ifile][imh]->SetMaximum(Max_chisq*1.2);
@@ -338,7 +354,6 @@ void plot_contours_dcp_many
       else hchisq1D[ifile][imh]->Draw("same");
     }
   }
-
   TLegend *lchisq = new TLegend(0.6,0.45,0.8,0.65);
   lchisq->SetFillColor(0);
   lchisq->SetLineColor(0);
@@ -351,6 +366,8 @@ void plot_contours_dcp_many
     }
   }
   lchisq->Draw();
+
+
   
   // Delta Chisq 
 
@@ -394,11 +411,11 @@ void plot_contours_dcp_many
     }
   }
 
-  TLegend *ldeltachisq = new TLegend(0.6,0.45,0.8,0.65);
+  TLegend *ldeltachisq = new TLegend(0.6,0.45,0.8,0.6);
   ldeltachisq->SetFillColor(0);
   ldeltachisq->SetLineColor(0);
   ldeltachisq->SetTextFont(132);
-  ldeltachisq->SetTextSize(0.07);
+  ldeltachisq->SetTextSize(0.05);
   for(int ifile=0;ifile<Nfiles;ifile++){
     //for(int imh=0;imh<1;imh++){
     for(int imh=0;imh<Nmh;imh++){
@@ -406,6 +423,26 @@ void plot_contours_dcp_many
     }
   }
   ldeltachisq->Draw();
+
+  if(do_fc){
+    gFC90CL_nh->Draw("pl same");
+    gFC90CL_ih->Draw("pl same");
+    gFC2sigma_nh->Draw("pl same");
+    gFC2sigma_ih->Draw("pl same");
+  }
+
+  TLegend *lcritval = new TLegend(0.6,0.45,0.8,0.75);
+  lcritval->SetFillColor(0);
+  lcritval->SetLineColor(0);
+  lcritval->SetTextFont(132);
+  lcritval->SetTextSize(0.05);
+  if(do_fc){
+    lcritval->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90%CL) - NH","l");
+    lcritval->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90%CL) - IH","l");
+    lcritval->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma) - NH","l");
+    lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
+    lcritval->Draw();
+  }
   
   TLine *l1sigma = new TLine(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(1),1.,hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinUpEdge(hdeltachisq1D_GlobMin[0][0]->GetNbinsX()),1.);
   TLine *l90 = new TLine(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(1),2.71,hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinUpEdge(hdeltachisq1D_GlobMin[0][0]->GetNbinsX()),2.71);
@@ -473,34 +510,14 @@ void plot_contours_dcp_many
   //   f2->Close();
   // }
   
+  // int truebin0 = hdeltachisq1D_GlobMin[0][0]->FindBin(truepar0);
+  // double truechisq0 = hdeltachisq1D_GlobMin[0][0]->GetBinContent(truebin0);
+  // cout << "True chisq = " << truechisq0 << endl; 
+
   return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){ 
+double CalcBestFitErrorsMINOS(TH1F *histo, double CritVal, double val_bf){ 
   
   cout << endl;
   cout << "Compute MINOS errors" << endl;
