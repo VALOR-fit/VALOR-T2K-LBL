@@ -20,9 +20,11 @@
 
 #include "T2KPhysParamId.h"
 #include "Utilities.h"
-#include "valor/Utilities/NameRegistry.h"
-//~ #include "NuOscMixParam.h"
 #include "Enumerations.h"
+#include "valor/Utilities/NameRegistry.h"
+#include "valor/Messenger/Messenger.h"
+//~ #include "NuOscMixParam.h"
+
 
 using namespace valor;
 using namespace valor::conv;
@@ -820,14 +822,14 @@ string valor::util::AsString(PhysParamId_t p)
       /// NEW MULTIRING 3
     case ( kMultiRingNuisSuperkEnergyScale     ) : return "SK energy scale; MultiRing";  break;
       ///
-
+      
       //// NEW MULTIRING 2
 
       //
       // SKDET+FSI
       //
 #ifndef SKCORRELATIONS
-#if MR_FSI_BINS != 3
+#  if MR_FSI_BINS != 3
     case ( kMultiRingNuisSKDetFSI000 ) :
     case ( kMultiRingNuisSKDetFSI001 ) :
     case ( kMultiRingNuisSKDetFSI002 ) :
@@ -838,14 +840,13 @@ string valor::util::AsString(PhysParamId_t p)
 
       {
         // NEW SKDETFSI
-        //int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-      int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+	int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
 
         string nutypes = "";
         switch(p) {
 
           // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2013__)
+#    if defined(__USE_SKDETFSI2013__)
         case (kMultiRingNuisSKDetFSI000) :
         case (kMultiRingNuisSKDetFSI001) :
         case (kMultiRingNuisSKDetFSI002) :
@@ -856,7 +857,7 @@ string valor::util::AsString(PhysParamId_t p)
           nutypes = "nue/nuebar/signue CC (MultiRmu)"; break;
         case (kMultiRingNuisSKDetFSI005) :
           nutypes = "all NC (MultiRmu)"; break;
-#endif
+#    endif
 
         default : nutypes = "--";
         }
@@ -864,11 +865,11 @@ string valor::util::AsString(PhysParamId_t p)
 				kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
         break;
       }//FSI for MultiRmu
-#endif
-#if MR_FSI_BINS != 2
+#  endif
+#  if MR_FSI_BINS != 2
 
       // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2013__)
+#    if defined(__USE_SKDETFSI2013__)
     case ( kMultiRingNuisSKDetFSI006 ) :
     case ( kMultiRingNuisSKDetFSI007 ) :
     case ( kMultiRingNuisSKDetFSI008 ) :
@@ -881,17 +882,17 @@ string valor::util::AsString(PhysParamId_t p)
     case ( kMultiRingNuisSKDetFSI015 ) :
     case ( kMultiRingNuisSKDetFSI016 ) :
     case ( kMultiRingNuisSKDetFSI017 ) :
-#endif
+#    endif
 
       {
         // NEW SKDETFSI
-        int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+	int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
 
         string nutypes = "";
         switch(p) {
 
           // NEW SKDETFSI
-#if defined(__USE_SKDETFSI2013__)
+#    if defined(__USE_SKDETFSI2013__)
         case (kMultiRingNuisSKDetFSI006) :
         case (kMultiRingNuisSKDetFSI007) :
         case (kMultiRingNuisSKDetFSI008) :
@@ -908,7 +909,7 @@ string valor::util::AsString(PhysParamId_t p)
         case (kMultiRingNuisSKDetFSI016) :
         case (kMultiRingNuisSKDetFSI017) :
           nutypes = "all NC (MultiRe)"; break;
-#endif
+#    endif
 
         default : nutypes = "--";
         }
@@ -916,8 +917,8 @@ string valor::util::AsString(PhysParamId_t p)
 				kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
         break;
       }
-#endif
-#else
+#  endif
+#  else
 
       // OTHER FSI_BINS THAN 1,2,3
 
@@ -944,8 +945,7 @@ string valor::util::AsString(PhysParamId_t p)
       
         {
           // NEW SKDETFSI
-          //int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-          int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+	  int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
 
           string nutypes = "";
           switch(p) {
@@ -993,8 +993,7 @@ string valor::util::AsString(PhysParamId_t p)
       case ( kMultiRingNuisSKDetFSI031 ) :
         {
           // NEW SKDETFSI
-          //int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-          int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+	  int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
 
           string nutypes = "";
           switch(p) {
@@ -1832,8 +1831,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
             string nutypes = "";
             
             // NEW SKDETFSI
-            //int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-            int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+	    int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
             switch(p) {
                     
@@ -1920,7 +1918,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
             // #endif
             
             // NEW SKDETFSI
-            int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+	    int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
             switch(p) {
                     
@@ -1994,8 +1992,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
         case ( kMultiRingNuisSKDetFSI019 ) :
         {
             // NEW SKDETFSI
-            //int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-            int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+	    int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
             string nutypes = "";
             switch(p) {
@@ -2043,8 +2040,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
         case ( kMultiRingNuisSKDetFSI031 ) :
         {
             // NEW SKDETFSI
-            //int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-            int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+            int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
             string nutypes = "";
             switch(p) {
@@ -3457,7 +3453,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
             // #endif
             
             // NEW SKDETFSI
-            int ip = (int)p - (int)kMultiRingNuisSKDetFSI_first;
+	    int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
             return std::string(Form("$f_{%d; t, r}^{SK+FSI}MultiRing$", ip));
             break;

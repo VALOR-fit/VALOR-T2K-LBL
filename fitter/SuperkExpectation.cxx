@@ -40,6 +40,7 @@ Added samples for multiring forward horn current
 #include "valor/Conventions/Opt.h"
 #include "valor/Utilities/Rnd.h"
 #include "valor/Utilities/UtlHist.h"
+#include "valor/Messenger/Messenger.h"
 
 using std::cout;
 using std::cerr;
@@ -133,9 +134,10 @@ void SuperkExpectation::CheckPhysParamId(void)
 {
   // Check PhysParamId_t
     
-  std::cout << "SuperkExpectation/CheckPhysParamId >> check FHC BANFF PhysParamId" << endl; 
+  LOG("SuperkExpectation", pINFO) << "Check FHC BANFF PhysParamId"; 
   for (int i=0; i<conv::kNumOfParamsInBANFFfit;i++){
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kNuisBANFF00);
+    PhysParamId_t p_list = ( PhysParamId_t)kListOfBANFFParams[i];
 #ifdef __show_physparamid__
     std::cout << util::AsString(p) << endl;
 #endif
@@ -143,114 +145,19 @@ void SuperkExpectation::CheckPhysParamId(void)
     if( parname == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
         	<< parname << endl;
-      exit(1);
+      util::Die(1);
     }
-  }
-  for (int i=0; i<kNumOfParamsInBANFFfit;i++){
-    PhysParamId_t p = ( PhysParamId_t)kListOfBANFFParams[i];
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfBANFFParams is not defined:" 
-    		<< util::AsString(p) << endl;
-      exit(1);
+    if(util::AsString(p_list) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p_list << " in kListOfBANFFParams is not defined:" 
+    		<< util::AsString(p_list) << endl;
+      util::Die(1);
     }    
   }
   
-  std::cout << "SuperkExpectation/CheckPhysParamId >> check RHC BANFF PhysParamId" << endl; 
+  LOG("SuperkExpectation", pINFO) << "Check RHC BANFF PhysParamId"; 
   for (int i=0; i<kNumOfRHCParamsInBANFFfit;i++){
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCNuisBANFF00);
-#ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
-#endif
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }
-  }
-  for (int i=0; i<kNumOfRHCParamsInBANFFfit;i++){
-    PhysParamId_t p = ( PhysParamId_t)kListOfRHCBANFFParams[i];
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfRHCBANFFParams is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }    
-  }
-  for (int i=0; i<kNumOfFHCpRHCParamsInBANFFfit;i++){
-    PhysParamId_t p = ( PhysParamId_t)kListOfFHCpRHCBANFFParams[i];
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfFHCpRHCBANFFParams is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }    
-  }
-
-  std::cout << "SuperkExpectation/CheckPhysParamId >> check FHC XSec PhysParamId" << endl; 
-  for (int i=0; i<kNumOfUncXSecSyst;i++){
-    PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kLastBANFFParam+1);
-#ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
-#endif
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }
-  }
-  for (int i=0; i<kNumOfXSecSyst;i++){
-    PhysParamId_t p = ( PhysParamId_t)kListOfXSecSyst[i];
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfXSecSyst is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }    
-  }
-
-  std::cout << "SuperkExpectation/CheckPhysParamId >> check RHC XSec PhysParamId" << endl; 
-  for (int i=0; i<kNumOfRHCUncXSecSyst;i++){
-    PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCLastBANFFParam+1);
-#ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
-#endif
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }
-  }
-  for (int i=0; i<kNumOfRHCXSecSyst;i++){
-    PhysParamId_t p = ( PhysParamId_t)kListOfRHCXSecSyst[i];
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfRHCXSecSyst is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }    
-  }
-
-  std::cout << "SuperkExpectation/CheckPhysParamId >> check FHC SuperkDetectorFSI PhysParamId" << endl; 
-  for (int i=0; i<kNumOfSKDetFSIParams;i++){
-    PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kNuisSKDetFSI000);
-#ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
-#endif
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }
-  }
-  for (int i=0; i<kNumOfSKDetFSIParams;i++){
-    PhysParamId_t p = (PhysParamId_t)kListOfSKDetFSIParams[i];
-    if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfSKDetFSIParams is not defined:" 
-        	<< util::AsString(p) << endl;
-      exit(1);
-    }    
-  }
-
-   std::cout << "SuperkExpectation/CheckPhysParamId >> check FHC SuperkDetectorFSI MultiRing PhysParamId" << endl; 
-  for (int i=0; i<kNumOfSKDetFSIParamsMultiRing;i++){
-    PhysParamId_t p = (PhysParamId_t)(i+conv::kMultiRingNuisSKDetFSI_first);
-    PhysParamId_t p_list = (PhysParamId_t)kListOfMultiRingSKDetFSIParams[i];
+    PhysParamId_t p_list = ( PhysParamId_t)kListOfRHCBANFFParams[i];
 #ifdef __show_physparamid__
     std::cout << util::AsString(p) << endl;
 #endif
@@ -260,30 +167,115 @@ void SuperkExpectation::CheckPhysParamId(void)
       util::Die(1);
     }
     if(util::AsString(p_list) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfSKDetFSIParams is not defined:" 
-        	<< util::AsString(p) << endl;
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p_list << " in kListOfRHCBANFFParams is not defined:" 
+        	<< util::AsString(p_list) << endl;
       util::Die(1);
     }    
   }
-  
-  std::cout << "SuperkExpectation/CheckPhysParamId >> check RHC SuperkDetectorFSI PhysParamId" << endl; 
-  for (int i=0; i<kNumOfRHCSKDetFSIParams;i++){
-    PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCNuisSKDetFSI000);
+  for (int i=0; i<kNumOfFHCpRHCParamsInBANFFfit;i++){
+    PhysParamId_t p_list_rhcpfhc = ( PhysParamId_t)kListOfFHCpRHCBANFFParams[i];
+    if(util::AsString(p_list_rhcpfhc) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p_list_rhcpfhc << " in kListOfFHCpRHCBANFFParams is not defined:" 
+        	<< util::AsString(p_list_rhcpfhc) << endl;
+      util::Die(1);
+    }    
+  }
+
+  LOG("SuperkExpectation", pINFO) << "Check FHC XSec PhysParamId"; 
+  for (int i=0; i<kNumOfUncXSecSyst;i++){
+    PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kLastBANFFParam+1);
+    PhysParamId_t p_list = (conv::PhysParamId_t)kListOfXSecSyst[i];
 #ifdef __show_physparamid__
     std::cout << util::AsString(p) << endl;
 #endif
     if(util::AsString(p) == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
         	<< util::AsString(p) << endl;
-      exit(1);
+      util::Die(1);
+    }
+    if(util::AsString(p_list) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p_list << " in kListOfXSecSyst is not defined:" 
+        	<< util::AsString(p_list) << endl;
+      util::Die(1);
+    }    
+  }
+
+  LOG("SuperkExpectation", pINFO) << "Check RHC XSec PhysParamId"; 
+  for (int i=0; i<kNumOfRHCUncXSecSyst;i++){
+    PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCLastBANFFParam+1);
+#ifdef __show_physparamid__
+    std::cout << util::AsString(p) << endl;
+#endif
+    if(util::AsString(p) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
+        	<< util::AsString(p) << endl;
+      util::Die(1);
     }
   }
- for (int i=0; i<kNumOfRHCSKDetFSIParams;i++){
-    PhysParamId_t p = ( PhysParamId_t)kListOfRHCSKDetFSIParams[i];
+  for (int i=0; i<kNumOfRHCXSecSyst;i++){
+    PhysParamId_t p = (conv::PhysParamId_t)kListOfRHCXSecSyst[i];
     if(util::AsString(p) == "--"){
-      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfRHCSKDetFSIParams is not defined:" 
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfRHCXSecSyst is not defined:" 
         	<< util::AsString(p) << endl;
-      exit(1);
+      util::Die(1);
+    }    
+  }
+
+  LOG("SuperkExpectation", pINFO) << "Check FHC SuperkDetectorFSI PhysParamId"; 
+  for (int i=0; i<kNumOfSKDetFSIParams;i++){
+    PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kNuisSKDetFSI000);
+    PhysParamId_t p_list = (conv::PhysParamId_t)kListOfSKDetFSIParams[i];
+#ifdef __show_physparamid__
+    std::cout << util::AsString(p) << endl;
+#endif
+    if(util::AsString(p) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
+        	<< util::AsString(p) << endl;
+      util::Die(1);
+    }
+    if(util::AsString(p_list) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p_list << " in kListOfSKDetFSIParams is not defined:" 
+		<< util::AsString(p_list) << endl;
+      util::Die(1);
+    }    
+  }
+
+   LOG("SuperkExpectation", pINFO) << "Check FHC SuperkDetectorFSI MultiRing PhysParamId"; 
+  for (int i=0; i<kNumOfSKDetFSIParamsMultiRing;i++){
+    // Check for p in MultiRingNuis doesn't currently (2016/04/25) work since there are jumps in the parameters
+    // PhysParamId_t p = (PhysParamId_t)(i+conv::kMultiRingNuisSKDetFSI_first);
+    PhysParamId_t p_list = (PhysParamId_t)kListOfMultiRingSKDetFSIParams[i];
+#ifdef __show_physparamid__
+    std::cout << p_list << " " << util::AsString(p_list) << endl;
+#endif
+    // if(util::AsString(p) == "--"){
+    //   std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
+    //     	<< util::AsString(p) << endl;
+    //   util::Die(1);
+    // }
+    if(util::AsString(p_list) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p_list << " in kListOfSKDetFSIParams is not defined:" 
+        	<< util::AsString(p_list) << endl;
+      util::Die(1);
+    }    
+  }
+  
+  LOG("SuperkExpectation", pINFO) << "Check RHC SuperkDetectorFSI PhysParamId"; 
+  for (int i=0; i<kNumOfRHCSKDetFSIParams;i++){
+    PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCNuisSKDetFSI000);
+    PhysParamId_t p_list = (conv::PhysParamId_t)kListOfRHCSKDetFSIParams[i];
+#ifdef __show_physparamid__
+    std::cout << util::AsString(p) << endl;
+#endif
+    if(util::AsString(p) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
+        	<< util::AsString(p) << endl;
+      util::Die(1);
+    }
+    if(util::AsString(p_list) == "--"){
+      std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p_list << " in kListOfRHCSKDetFSIParams is not defined:" 
+        	<< util::AsString(p_list) << endl;
+      util::Die(1);
     }    
   }
  for (int i=0; i<kNumOfFHCpRHCSKDetFSIParams;i++){
@@ -291,11 +283,11 @@ void SuperkExpectation::CheckPhysParamId(void)
     if(util::AsString(p) == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " in kListOfFHCpRHCSKDetFSIParams is not defined:" 
         	<< util::AsString(p) << endl;
-      exit(1);
+      util::Die(1);
     }    
   }
   
- std::cout << "SuperkExpectation/CheckPhysParamId >> Done check of PhysParamId" << endl;
+ LOG("SuperkExpectation", pINFO) << " Done check of PhysParamId";
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
@@ -661,16 +653,6 @@ double SuperkExpectation::CurrPredictedErecoSpectrumArray(valor::conv::SuperkSam
   return arr[i];
 }
 //________________________________________________________________________________________
-
-
-
-
-
-
-
-
-
-
 
 
 // NEW 2D TEMPLATES
