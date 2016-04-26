@@ -21,14 +21,14 @@
 //#define __show_build_xsbinning_template_mesg_debug__
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
-//#define __show_find_wght_spline_mesg_debug__
+#define __show_find_wght_spline_mesg_debug__
 //#define __save_ori_templates_init_debug__
 #define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
-//#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong. needs __use_flat_splines_for_missing_splines__
+#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong. needs __use_flat_splines_for_missing_splines__
 //#define check_spline_limits       //slow, but should be used when testing
 
 
-//#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
 #define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
@@ -43,6 +43,7 @@
 #include <TMath.h>
 
 #include "valor/Utilities/UtlSystem.h"
+#include "valor/Messenger/Messenger.h"
 
 #include "NuXSec.h"
 #include "BANFF.h"
@@ -383,7 +384,7 @@ void NuXSec::CleanUp(void)
 bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 #ifdef __show_init_mesg_info__
-    cout << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file." << endl;
+  LOG("NuXSec", pINFO) << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file.";
 #endif
     
     //
@@ -409,10 +410,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
     
     /// NEW MULTIRING (multiring-only splines)
-    spline_files[kSKsFCFVMultiRingMuLike]= util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
-    spline_files[kSKsFCFVMultiRingELike ]= util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
-    //~ spline_files[kSKsFCFVMultiRingMuLike] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
-    //~ spline_files[kSKsFCFVMultiRingELike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
+    //~ spline_files[kSKsFCFVMultiRingMuLike]= util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
+    //~ spline_files[kSKsFCFVMultiRingELike ]= util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring");
+    spline_files[kSKsFCFVMultiRingMuLike] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
+    spline_files[kSKsFCFVMultiRingELike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
     
     assert(spline_files[kSKsFCFV1RingMuLike    ]);
     assert(spline_files[kSKsFCFV1RingELike     ]);
@@ -439,7 +440,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
         if(s == kSKsUndefined) continue;
         
 #ifdef __show_init_mesg_info__
-        cout << "Exp/NuXSec >> Reading splines for " << util::AsString(s)<< endl;
+        LOG("NuXSec",pINFO) << "Reading splines for " << util::AsString(s);
 #endif
         
         bool is_rhc = util::IsRHCSample(s);
@@ -506,18 +507,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         if(!bin_is_not_empty)
                             continue;
 #endif
-        		// ~#{ Hack for testing set multiring splines to single ring splines
-        		// remove when splines are generated for samples
-        		if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-        		if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
-        		// }#~
-        		
+		      
                         std::string splname = this->BuildSplineName(s,m,p,ir,it);
         		
-        		
 #ifdef __show_init_mesg_debug__
-                        cout << "Exp/NuXSec >> Loading cross-section weight spline: "
-                        << splname << " for Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+                        LOG("NuXSec",pINFO) << "Loading cross-section weight spline: "
+                        << splname << " for Ereco: " << Ereco << ", Etrue: " << Etrue;
 #endif
                         
                         // Copy spline from input file
@@ -613,10 +608,10 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                                 }
                             }
                             if (flat) {
-                                cerr<<"Exp/NuXSec >> Warning, input spline from file is flat: "<<std::setw(40)<<std::left<<splname
+			      LOG("NuXSec",pERROR) << "Warning, input spline from file is flat: "<<std::setw(40)<<std::left<<splname
                                 <<std::fixed
                                 << "( Ereco: " << setprecision(2) << Ereco_min << "-" << setprecision(2) << Ereco_max
-                                << ", Etrue: " << setprecision(2) << Etrue_min << "-" << setprecision(2) << Etrue_max <<")"<<endl;
+                                << ", Etrue: " << setprecision(2) << Etrue_min << "-" << setprecision(2) << Etrue_max <<")";
                             }
                         }
 #endif
@@ -656,7 +651,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 #ifdef __show_init_mesg_info__
-    cout << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file." << endl;
+    LOG("NuXSec", pINFO) << "Exp/NuXSec >> Reading neutrino generator inputs (splines only) from input XML file.";
 #endif
     
     //
@@ -682,10 +677,10 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
     
     /// NEW MULTIRING (multiring-only splines)
-    spline_files[kSKsFCFVMultiRingMuLike]= util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_mu_ring");
-    spline_files[kSKsFCFVMultiRingELike ]= util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_e_ring");
-    //~ spline_files[kSKsFCFVMultiRingMuLike] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
-    //~ spline_files[kSKsFCFVMultiRingELike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
+    //~ spline_files[kSKsFCFVMultiRingMuLike]= util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_mu_ring");
+    //~ spline_files[kSKsFCFVMultiRingELike ]= util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_e_ring");
+    spline_files[kSKsFCFVMultiRingMuLike] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
+    spline_files[kSKsFCFVMultiRingELike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
     
     assert(spline_files[kSKsFCFV1RingMuLike    ]);
     assert(spline_files[kSKsFCFV1RingELike     ]);
@@ -712,7 +707,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
         if(s == kSKsUndefined) continue;
         
 #ifdef __show_init_mesg_info__
-        cout << "Exp/NuXSec >> Reading splines for " << util::AsString(s)<< endl;
+        LOG("NuXSec",pINFO) << "Reading splines for " << util::AsString(s);
 #endif
         
         bool is_rhc = util::IsRHCSample(s);
@@ -786,16 +781,11 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                             if(!bin_is_not_empty)
                                 continue;
 #endif
-                            // ~#{ Hack for testing set multiring splines to single ring splines
-        		    // remove when splines are generated for samples
-        		    if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-        		    if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
-        		    // }#~	
                             std::string splname = this->BuildSplineName(s,m,p,ir,it,iv);
                             
 #ifdef __show_init_mesg_debug__
-                            cout << "Exp/NuXSec >> Loading cross-section weight spline: "
-                            << splname << " for Ereco: " << Ereco << ", Etrue: " << Etrue << ", Q2: " << Q2 << endl;
+                            LOG("NuXSec",pINFO) << "Loading cross-section weight spline: "
+                            << splname << " for Ereco: " << Ereco << ", Etrue: " << Etrue << ", Q2: " << Q2;
 #endif
                             
                             // Copy spline from input file
@@ -893,12 +883,11 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                                     }
                                 }
                                 if (flat) {
-                                    cerr<<"Exp/NuXSec >> Warning, input spline from file is flat: "<<std::setw(40)<<std::left<<splname
+                                    LOG("NuXSec",pERROR) << "Warning, input spline from file is flat: "<<std::setw(40)<<std::left<<splname
                                     <<std::fixed
                                     << "( Ereco: " << setprecision(2) << Ereco_min << "-" << setprecision(2) << Ereco_max
                                     << ", Etrue: " << setprecision(2) << Etrue_min << "-" << setprecision(2) << Etrue_max <<")"
-                                    << ", Q2   : " << setprecision(2) << Q2_min << "-" << setprecision(2) << Q2_max <<")"
-                                    <<endl;
+                                    << ", Q2   : " << setprecision(2) << Q2_min << "-" << setprecision(2) << Q2_max <<")";
                                 }
                             }
 #endif
@@ -1170,7 +1159,8 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // BANFF param, M_{A} QE
     // BANFF param, M_{A} RES
     //
-    if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES || p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
+    if(p == kNuisBANFFMAQE    || p == kNuisBANFFMARES   ||
+       p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES )
     {
 #if SPLINE_TYPE == -1
         return wght;
@@ -1569,15 +1559,18 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // BANFF param, Eb
     //
     
-    if( p == kNuisBANFFMAQE          || p == kRHCNuisBANFFMAQE       ||
-       p == kNuisBANFFMARES         || p == kRHCNuisBANFFMARES       )
+    if( p == kNuisBANFFMAQE   || p == kRHCNuisBANFFMAQE   ||
+        p == kNuisBANFFMARES  || p == kRHCNuisBANFFMARES   )
     {
 #if SPLINE_TYPE == -1
         return wght;
 #endif
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        //~ if(!wght_spl)
-        //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
+	std::string splname_debug = this->BuildSplineName(s,m,p,Ereco,Etrue,Q2);
+	if(!wght_spl){
+	  LOG("NuXSec",pINFO) << "Couldn't find spline " << splname_debug;
+	  cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << ",\t" << Ereco << ",\t" << Etrue << ",\t" << Q2 << endl;
+	}
         assert(wght_spl);
         double untuned_value = 0;
         if(p == kRHCNuisBANFFMAQE       ||
@@ -2983,26 +2976,24 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
     
     if(idx == -1 || idx == -2)
     {
-        cerr << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
-        << "sample = "      << util::AsString(s)
-        << ", mode = "      << util::AsString(m)
-        << ", parameter = " << util::AsString(p)
-        << ", Ereco = "     << Ereco << " GeV"
-        << ", Etrue = "     << Etrue << " GeV!"
-        << " idx = " << idx
-        << endl;
+      LOG("NuXSec",pERROR) << "Didn't find weight spline for "
+			   << "sample = "      << util::AsString(s)
+			   << ", mode = "      << util::AsString(m)
+			   << ", parameter = " << util::AsString(p)
+			   << ", Ereco = "     << Ereco << " GeV"
+			   << ", Etrue = "     << Etrue << " GeV!"
+			   << " idx = " << idx;
         util::Die(1); return 0;
     }
     
 #ifdef __show_find_wght_spline_mesg_debug__
-    cout << "Exp/NuXSec/FindWghtSpline >> Looking for spline: "
-    << "sample = "      << util::AsString(s)
-    << ", mode = "      << util::AsString(m)
-    << ", parameter = " << util::AsString(p)
-    << ", Ereco = "     << Ereco << " GeV"
-    << ", Etrue = "     << Etrue << " GeV!"
-    << " idx = " << idx
-    << endl;
+    LOG("NuXSec",pDEBUG) << "Looking for spline: "
+			 << "sample = "      << util::AsString(s)
+			 << ", mode = "      << util::AsString(m)
+			 << ", parameter = " << util::AsString(p)
+			 << ", Ereco = "     << Ereco << " GeV"
+			 << ", Etrue = "     << Etrue << " GeV!"
+			 << " idx = ";
 #endif
     
     //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike,
@@ -3017,7 +3008,7 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
     // else
     //   return fXSecWghtSpl1Rmu[idx];
     
-    /// NEW MULTIRING (use 1 ring splines for multiring sample)
+    /// NEW MULTIRING 
     if(s == kSKsRHCFCFV1RingMuLike)
         return fRHCXSecWghtSpl1Rmu[idx];
     else if(s == kSKsRHCFCFV1RingELike)
@@ -3061,13 +3052,7 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
     else if ( mp == kSKmOscNuEBarCCcoh    ) { m = kSKmNuEBarCCcoh;    }
     else if ( mp == kSKmOscNuEBarCCoth    ) { m = kSKmNuEBarCCoth;  }
 #endif
-    
-    // ~#{ Hack for testing set multiring splines to single ring splines
-    // remove when splines are generated for samples
-    if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-    if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
-    // }#~
-    
+        
     int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue,Q2);
     
     if(idx == -1 || idx == -2)
@@ -3503,7 +3488,7 @@ void NuXSec::BuildXsBinningMCTemplates(
 void NuXSec::BuildXsBinningMCTemplates(TH3D * input_mctempl_array[kns][knm])
 {
 #ifdef __show_init_mesg_info__
-    cout << "Exp/NuXSec >> BuildXsBinningMCTemplates(2D) "<< endl;
+  LOG("NuXSec", pINFO) << "BuildXsBinningMCTemplates(2D) ";
 #endif
     for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
