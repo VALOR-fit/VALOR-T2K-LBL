@@ -1230,7 +1230,7 @@ void valor::util::ArrIdx::Init(void)
     // #endif
     
     // NEW SKDETFSI
-    PhysParamId_t p = PhysParamId_t ((int) kMultiRingNuisSKDetFSI_first + ip);
+    PhysParamId_t p = (PhysParamId_t)kListOfMultiRingSKDetFSIParams[ip];
 
     if(p == kPhypUndefined) continue;
     fMultiRingSKDetFSISystIdx[p] = ip;
