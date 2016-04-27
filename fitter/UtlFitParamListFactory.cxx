@@ -351,6 +351,8 @@ FitParamList * util::NamedParameterList(string name)
   if(name == "nuosc3fbar_numudissap_allsyst") {
     FitParamList * fp = FitParamList::NuOsc3FlavourBarDissapFit(kNumOfNuisanceParams);
     util::AppendAllSystematicsTo(fp, 8);
+    fp ->SetInitValue(kPhypCPV,0);
+    fp ->SetCurrentValue(kPhypCPV,0);
     fp -> FixParameter (kPhypCPV);
     fp -> SetNuisance  (kPhypMixing13 , true);
     fp -> SetNuisance  (kPhypMixing12 , true);
@@ -360,6 +362,43 @@ FitParamList * util::NamedParameterList(string name)
     fp -> SetSystMode(0);
     return fp;
   }
+
+  if(name == "nuosc3fbar_numudissap_fix23nubar") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourBarDissapFit();
+    fp ->SetInitValue(kPhypCPV,0);
+    fp ->SetCurrentValue(kPhypCPV,0);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypMixing13 );
+    fp -> FixParameter (kPhypMixing12 );
+    fp -> FixParameter (kPhypDm12sq   );
+    fp -> FixParameter (kPhypMixing23Bar );
+    //    fp -> FixParameter (kPhypMixing23 );
+    //    fp -> FixParameter (kPhypDm23sq );
+    fp -> FixParameter (kPhypDm23sqBar );
+
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+
+  if(name == "nuosc3fbar_numudissap_fix23nu") {
+    FitParamList * fp = FitParamList::NuOsc3FlavourBarDissapFit();
+    fp ->SetInitValue(kPhypCPV,0);
+    fp ->SetCurrentValue(kPhypCPV,0);
+    fp -> FixParameter (kPhypCPV);
+    fp -> FixParameter (kPhypMixing13 );
+    fp -> FixParameter (kPhypMixing12 );
+    fp -> FixParameter (kPhypDm12sq   );
+    //fp -> FixParameter (kPhypMixing23Bar );
+    fp -> FixParameter (kPhypMixing23 );
+    fp -> FixParameter (kPhypDm23sq );
+    //fp -> FixParameter (kPhypDm23sqBar );
+
+    fp -> SetParListName(name);
+    fp -> SetSystMode(0);
+    return fp;
+  }
+
 
   if(name == "nuosc3fbar_numudisapp_constrainall") {
     FitParamList * fp = FitParamList::NuOsc3FlavourBarFit();
