@@ -20,10 +20,11 @@ void plot_contours_dcp_many
  const bool draw_preliminary = false,
 
  const bool do_fc = true,
+ const bool do_const = false,
 
  const bool draw_1sigmaCL = false,
- const bool draw_90CL     = false,
- const bool draw_2sigmaCL = false,
+ const bool draw_90CL     = true,
+ const bool draw_2sigmaCL = true,
  const bool draw_3sigmaCL = false,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
@@ -33,7 +34,7 @@ void plot_contours_dcp_many
  const bool do_range_1sigma = false,
  const double critval = 1.,
  
- const double truepar0 = 3.141,
+ const double truepar0 = 3.142,
  const double truepar1 = 0.,
 
  //double mybestfit = 3.14, 
@@ -140,8 +141,7 @@ void plot_contours_dcp_many
   
 
   // File names of Feldman-Cousins
-  char *fcname_nh = "FCgraphs.root";
-  char *fcname_ih = "FCgraphs.root";
+  char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs.root";
 
 
   char *latexname[Nfiles][Nmh] = {
@@ -298,32 +298,86 @@ void plot_contours_dcp_many
   
   if(do_fc){
 
-    fin_fc_nh = new TFile(fcname_nh,"READ");
-    fin_fc_ih = new TFile(fcname_ih,"READ");
+    fin_fc = new TFile(fcname,"READ");
     
-    gFC90CL_nh = (TGraph*)fin_fc_nh->Get("gFC90CL_nh");
-    gFC2sigma_nh = (TGraph*)fin_fc_nh->Get("gFC2sigma_nh");
+    gFC90CL_nh      = (TGraph*) fin_fc->Get("gFC90CL_nh");
+    gFC90CL_nh_p1   = (TGraph*) fin_fc->Get("gFC90CL_nh_p1");
+    gFC90CL_nh_m1   = (TGraph*) fin_fc->Get("gFC90CL_nh_m1");
+    gFC2sigma_nh    = (TGraph*) fin_fc->Get("gFC2sigma_nh");
+    gFC2sigma_nh_p1 = (TGraph*) fin_fc->Get("gFC2sigma_nh_p1");
+    gFC2sigma_nh_m1 = (TGraph*) fin_fc->Get("gFC2sigma_nh_m1");
+    gFC90CL_ih      = (TGraph*) fin_fc->Get("gFC90CL_ih");
+    gFC90CL_ih_p1   = (TGraph*) fin_fc->Get("gFC90CL_ih_p1");
+    gFC90CL_ih_m1   = (TGraph*) fin_fc->Get("gFC90CL_ih_m1");
+    gFC2sigma_ih    = (TGraph*) fin_fc->Get("gFC2sigma_ih");
+    gFC2sigma_ih_p1 = (TGraph*) fin_fc->Get("gFC2sigma_ih_p1");
+    gFC2sigma_ih_m1 = (TGraph*) fin_fc->Get("gFC2sigma_ih_m1");
 
-    gFC90CL_ih = (TGraph*)fin_fc_ih->Get("gFC90CL_ih");
-    gFC2sigma_ih = (TGraph*)fin_fc_ih->Get("gFC2sigma_ih");
+    //fin_fc_nh = new TFile(fcname_nh,"READ");
+    //fin_fc_ih = new TFile(fcname_ih,"READ");    
+    //gFC90CL_nh = (TGraph*)fin_fc_nh->Get("gFC90CL_nh");
+    //gFC2sigma_nh = (TGraph*)fin_fc_nh->Get("gFC2sigma_nh");
+    //gFC90CL_ih = (TGraph*)fin_fc_ih->Get("gFC90CL_ih");
+    //gFC2sigma_ih = (TGraph*)fin_fc_ih->Get("gFC2sigma_ih");
 
-    gFC90CL_nh->SetLineColor(kBlue);
-    gFC90CL_ih->SetLineColor(kBlue);
-    gFC2sigma_nh->SetLineColor(kGreen);
-    gFC2sigma_ih->SetLineColor(kGreen);
+    gFC90CL_nh   ->SetLineColor(kBlue);
+    gFC90CL_nh_p1->SetLineColor(kBlue);
+    gFC90CL_nh_m1->SetLineColor(kBlue);
+    gFC90CL_ih   ->SetLineColor(kBlue);
+    gFC90CL_ih_p1->SetLineColor(kBlue);
+    gFC90CL_ih_m1->SetLineColor(kBlue);
+    gFC2sigma_nh   ->SetLineColor(kGreen);
+    gFC2sigma_nh_p1->SetLineColor(kGreen);
+    gFC2sigma_nh_m1->SetLineColor(kGreen);
+    gFC2sigma_ih   ->SetLineColor(kGreen);
+    gFC2sigma_ih_p1->SetLineColor(kGreen);
+    gFC2sigma_ih_m1->SetLineColor(kGreen);
 
-    gFC90CL_nh->SetMarkerColor(kBlue);
-    gFC90CL_ih->SetMarkerColor(kBlue);
-    gFC2sigma_nh->SetMarkerColor(kGreen);
-    gFC2sigma_ih->SetMarkerColor(kGreen);
+    gFC90CL_nh   ->SetMarkerColor(kBlue);
+    gFC90CL_nh_p1->SetMarkerColor(kBlue);
+    gFC90CL_nh_m1->SetMarkerColor(kBlue);
+    gFC90CL_ih   ->SetMarkerColor(kBlue);
+    gFC90CL_ih_p1->SetMarkerColor(kBlue);
+    gFC90CL_ih_m1->SetMarkerColor(kBlue);
+    gFC2sigma_nh   ->SetMarkerColor(kGreen);
+    gFC2sigma_nh_p1->SetMarkerColor(kGreen);
+    gFC2sigma_nh_m1->SetMarkerColor(kGreen);
+    gFC2sigma_ih   ->SetMarkerColor(kGreen);
+    gFC2sigma_ih_p1->SetMarkerColor(kGreen);
+    gFC2sigma_ih_m1->SetMarkerColor(kGreen);
+
+    gFC90CL_nh   ->SetMarkerSize(0.5);
+    gFC90CL_nh_p1->SetMarkerSize(0.5);
+    gFC90CL_nh_m1->SetMarkerSize(0.5);
+    gFC90CL_ih   ->SetMarkerSize(0.5);
+    gFC90CL_ih_p1->SetMarkerSize(0.5);
+    gFC90CL_ih_m1->SetMarkerSize(0.5);
+    gFC2sigma_nh   ->SetMarkerSize(0.5);
+    gFC2sigma_nh_p1->SetMarkerSize(0.5);
+    gFC2sigma_nh_m1->SetMarkerSize(0.5);
+    gFC2sigma_ih   ->SetMarkerSize(0.5);
+    gFC2sigma_ih_p1->SetMarkerSize(0.5);
+    gFC2sigma_ih_m1->SetMarkerSize(0.5);
     
-    gFC90CL_nh->SetLineWidth(2);
-    gFC90CL_ih->SetLineWidth(2);
-    gFC2sigma_nh->SetLineWidth(2);
-    gFC2sigma_ih->SetLineWidth(2);
+    gFC90CL_nh   ->SetLineWidth(2);
+    gFC90CL_nh_p1->SetLineWidth(2);
+    gFC90CL_nh_m1->SetLineWidth(2);
+    gFC90CL_ih    ->SetLineWidth(2);
+    gFC90CL_ih_p1->SetLineWidth(2);
+    gFC90CL_ih_m1->SetLineWidth(2);
+    gFC2sigma_nh   ->SetLineWidth(2);
+    gFC2sigma_nh_p1->SetLineWidth(2);
+    gFC2sigma_nh_m1->SetLineWidth(2);
+    gFC2sigma_ih   ->SetLineWidth(2);
+    gFC2sigma_ih_p1->SetLineWidth(2);
+    gFC2sigma_ih_m1->SetLineWidth(2);
 
-    gFC90CL_ih->SetLineStyle(2);
-    gFC2sigma_ih->SetLineStyle(2);
+    gFC90CL_ih    ->SetLineStyle(2);
+    gFC90CL_ih_p1->SetLineStyle(2);
+    gFC90CL_ih_m1->SetLineStyle(2);
+    gFC2sigma_ih   ->SetLineStyle(2);
+    gFC2sigma_ih_p1->SetLineStyle(2);
+    gFC2sigma_ih_m1->SetLineStyle(2);
   }
 
 
@@ -425,10 +479,22 @@ void plot_contours_dcp_many
   ldeltachisq->Draw();
 
   if(do_fc){
-    gFC90CL_nh->Draw("pl same");
-    gFC90CL_ih->Draw("pl same");
-    gFC2sigma_nh->Draw("pl same");
-    gFC2sigma_ih->Draw("pl same");
+    if(draw_90CL){
+      gFC90CL_nh   ->Draw("l same");
+      gFC90CL_nh_p1->Draw("l same");
+      gFC90CL_nh_m1->Draw("l same");
+      gFC90CL_ih   ->Draw("l same");
+      gFC90CL_ih_p1->Draw("l same");
+      gFC90CL_ih_m1->Draw("l same");
+    }
+    if(draw_2sigmaCL){
+      gFC2sigma_nh   ->Draw("l same");
+      gFC2sigma_nh_p1->Draw("l same");
+      gFC2sigma_nh_m1->Draw("l same");
+      gFC2sigma_ih   ->Draw("l same");
+      gFC2sigma_ih_p1->Draw("l same");
+      gFC2sigma_ih_m1->Draw("l same");
+    }
   }
 
   TLegend *lcritval = new TLegend(0.6,0.45,0.8,0.75);
@@ -437,10 +503,14 @@ void plot_contours_dcp_many
   lcritval->SetTextFont(132);
   lcritval->SetTextSize(0.05);
   if(do_fc){
-    lcritval->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90%CL) - NH","l");
-    lcritval->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90%CL) - IH","l");
-    lcritval->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma) - NH","l");
-    lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
+    if(draw_90CL){
+      lcritval->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90%CL) - NH","l");
+      lcritval->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90%CL) - IH","l");
+    }
+    if(draw_2sigmaCL){
+      lcritval->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma) - NH","l");
+      lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
+    }
     lcritval->Draw();
   }
   
@@ -462,12 +532,14 @@ void plot_contours_dcp_many
   l3sigma->SetLineColor(kBlue);
   l4sigma->SetLineColor(kBlue);
   l5sigma->SetLineColor(kBlue);
-  if(draw_1sigmaCL) l1sigma->Draw();
-  if(draw_90CL)     l90->Draw();
-  if(draw_2sigmaCL) l2sigma->Draw();
-  if(draw_3sigmaCL) l3sigma->Draw();
-  if(draw_4sigmaCL) l4sigma->Draw();
-  if(draw_5sigmaCL) l5sigma->Draw();
+  if(do_const){
+    if(draw_1sigmaCL) l1sigma->Draw();
+    if(draw_90CL)     l90->Draw();
+    if(draw_2sigmaCL) l2sigma->Draw();
+    if(draw_3sigmaCL) l3sigma->Draw();
+    if(draw_4sigmaCL) l4sigma->Draw();
+    if(draw_5sigmaCL) l5sigma->Draw();
+  }
   
   TLatex *latLine1Sigma = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"1#sigma");
   TLatex *latLine90CL = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),2.81,"90% CL");
@@ -487,13 +559,14 @@ void plot_contours_dcp_many
   latLine3Sigma->SetTextSize(0.07);
   latLine4Sigma->SetTextSize(0.07);
   latLine5Sigma->SetTextSize(0.07);
-  if(draw_1sigmaCL) latLine1Sigma->Draw("same");
-  if(draw_90CL)     latLine90CL->Draw("same");
-  if(draw_2sigmaCL) latLine2Sigma->Draw("same");
-  if(draw_3sigmaCL) latLine3Sigma->Draw("same");
-  if(draw_4sigmaCL) latLine4Sigma->Draw("same");
-  if(draw_5sigmaCL) latLine5Sigma->Draw("same");
-
+  if(do_const){
+    if(draw_1sigmaCL) latLine1Sigma->Draw("same");
+    if(draw_90CL)     latLine90CL->Draw("same");
+    if(draw_2sigmaCL) latLine2Sigma->Draw("same");
+    if(draw_3sigmaCL) latLine3Sigma->Draw("same");
+    if(draw_4sigmaCL) latLine4Sigma->Draw("same");
+    if(draw_5sigmaCL) latLine5Sigma->Draw("same");
+  }
 
   TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"PRELIMINARY");
   if(draw_preliminary) latPreliminary->Draw("same");
@@ -510,9 +583,9 @@ void plot_contours_dcp_many
   //   f2->Close();
   // }
   
-  // int truebin0 = hdeltachisq1D_GlobMin[0][0]->FindBin(truepar0);
-  // double truechisq0 = hdeltachisq1D_GlobMin[0][0]->GetBinContent(truebin0);
-  // cout << "True chisq = " << truechisq0 << endl; 
+  int truebin0 = hdeltachisq1D_GlobMin[0][0]->FindBin(truepar0);
+  double truechisq0 = hdeltachisq1D_GlobMin[0][0]->GetBinContent(truebin0);
+  cout << "True chisq = " << truechisq0 << endl; 
 
   return;
 }

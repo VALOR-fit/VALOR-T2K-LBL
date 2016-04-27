@@ -24,28 +24,61 @@ const double CLfrac_2sigma = 0.9545;  // 2sigma% CL
 
 void make_fc_critval_1d(){
 
-  const int Nmh = 1;
+  const int Nmh = 2;
   const int NFCpts = 8; // # of points of Feldman-Cousins
 
-  string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/";
-  string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/";
-  
-  string infilename_fc[NFCpts][Nmh] = {
-    "fit_fitmarg_fc_dcp_normal_nexp_20_-2.356.root",
-    "fit_fitmarg_fc_dcp_normal_nexp_20_-1.571.root",
-    "fit_fitmarg_fc_dcp_normal_nexp_20_-0.785.root",
-    "fit_fitmarg_fc_dcp_normal_nexp_20_0.000.root",
-    "fit_fitmarg_fc_dcp_normal_nexp_20_0.785.root",
-    "fit_fitmarg_fc_dcp_normal_nexp_20_1.571.root",
-    "fit_fitmarg_fc_dcp_normal_nexp_20_2.356.root",
-    //"fit_fitmarg_fc_dcp_normal_nexp_20_3.141.root" // +-pi
-    "fit_fitmarg_fc_dcp_normal_nexp_20_3.142.root", // +-pi 
+  string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/";
+  string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/";
+
+  const char * infilename_fc[NFCpts][Nmh] = {
+    
+    // // Inverted Hierarchy - 5k Toys
+    // "total_tree_-0.785.root",
+    // "total_tree_-2.356.root",
+    // "total_tree_0.785.root",
+    // "total_tree_2.356.root",
+    // "total_tree_halfpi.root",
+    // "total_tree_mhalfpi.root",
+    // "total_tree_pi.root",
+    // "total_tree_zero.root"
+
+    // // Normal Hierarchy - 5k Toys
+    // "fit_fitmarg_fc_dcp_normal_nexp_20_-2.356.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_20_-1.571.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_20_-0.785.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_20_0.000.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_20_0.785.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_20_1.571.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_20_2.356.root",
+    // //"fit_fitmarg_fc_dcp_normal_nexp_20_3.141.root" // +-pi
+    // "fit_fitmarg_fc_dcp_normal_nexp_20_3.142.root", // +-pi 
+
+    // // Normal Hierarchy - 10k Toys 
+    // "fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_10k_0.785.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root",
+    // "fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" // +-pi
+
+    // Normal Hierarhcy 10k Toys - Inverted Hierarchy 5k Toys 
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root", "total_tree_-2.356.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root", "total_tree_mhalfpi.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root" , "total_tree_zero.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root" , "total_tree_halfpi.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root" , "total_tree_-2.356.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" , "total_tree_pi.root"} // +-pi
+
   };
 
   const int nptcpy = 1;
   double copypt[nptcpy][2] = {
     //{ TMath::Pi(), -TMath::Pi() } // copy crit val of TMath::Pi() in -TMath::Pi()
-    { 3.141, -TMath::Pi() } // copy crit val of TMath::Pi() in -TMath::Pi()
+    { TMath::Pi(), -TMath::Pi() } // copy crit val of TMath::Pi() in -TMath::Pi()
   };
 
   TGraph *gFC90CL_nh = new TGraph();
@@ -106,10 +139,12 @@ void make_fc_critval_1d(){
       TString pathtot="";
 
       if(imh==0){
-	pathtot = TString::Format("%s%s",path_fc_nh.c_str(),infilename_fc[ifc][imh].c_str());
+	//pathtot = TString::Format("%s%s",path_fc_nh.c_str(),infilename_fc[ifc][imh].c_str());
+	pathtot = TString::Format("%s%s",path_fc_nh.c_str(),infilename_fc[ifc][imh]);
       }
       else if(imh==1){
-	pathtot = TString::Format("%s%s",path_fc_ih.c_str(),infilename_fc[ifc][imh].c_str());
+	//pathtot = TString::Format("%s%s",path_fc_ih.c_str(),infilename_fc[ifc][imh].c_str());
+	pathtot = TString::Format("%s%s",path_fc_ih.c_str(),infilename_fc[ifc][imh]);
       }
       else{
 	cerr << endl;
@@ -146,7 +181,7 @@ void make_fc_critval_1d(){
       vector<double> myvector; // vector to compute the critical value for each file
 
       int Nentries = treein_fc[ifc][imh]->GetEntries();
-      
+
       for(int ientry=0;ientry<Nentries;ientry++){ // Loop over toy experiments
 	
 	if(ientry%1000==0){
@@ -160,23 +195,27 @@ void make_fc_critval_1d(){
             
       // Get critical values 
       
-      double err = sqrt(Nentries);
-
+      //double err = sqrt(Nentries);
+      double err_1sigma = sqrt(Nentries * CLfrac_1sigma * (1.-CLfrac_1sigma) );
+      double err_90CL   = sqrt(Nentries * CLfrac_90CL   * (1.-CLfrac_90CL) );
+      double err_95CL   = sqrt(Nentries * CLfrac_95CL   * (1.-CLfrac_95CL) );
+      double err_2sigma = sqrt(Nentries * CLfrac_2sigma * (1.-CLfrac_2sigma) );
+      
       double FCCritVal_1sigma    = CalcDLcrit(myvector,CLfrac_1sigma*100.,0.); 
-      double FCCritVal_1sigma_p1 = CalcDLcrit(myvector,CLfrac_1sigma*100.,+err); 
-      double FCCritVal_1sigma_m1 = CalcDLcrit(myvector,CLfrac_1sigma*100.,-err); 
+      double FCCritVal_1sigma_p1 = CalcDLcrit(myvector,CLfrac_1sigma*100.,+err_1sigma); 
+      double FCCritVal_1sigma_m1 = CalcDLcrit(myvector,CLfrac_1sigma*100.,-err_1sigma); 
       
       double FCCritVal_90CL    = CalcDLcrit(myvector,CLfrac_90CL*100.,0.); 
-      double FCCritVal_90CL_p1 = CalcDLcrit(myvector,CLfrac_90CL*100.,+err); 
-      double FCCritVal_90CL_m1 = CalcDLcrit(myvector,CLfrac_90CL*100.,-err); 
+      double FCCritVal_90CL_p1 = CalcDLcrit(myvector,CLfrac_90CL*100.,+err_90CL); 
+      double FCCritVal_90CL_m1 = CalcDLcrit(myvector,CLfrac_90CL*100.,-err_90CL); 
       
       double FCCritVal_95CL    = CalcDLcrit(myvector,CLfrac_95CL*100.,0.); 
-      double FCCritVal_95CL_p1 = CalcDLcrit(myvector,CLfrac_95CL*100.,+err); 
-      double FCCritVal_95CL_m1 = CalcDLcrit(myvector,CLfrac_95CL*100.,-err); 
+      double FCCritVal_95CL_p1 = CalcDLcrit(myvector,CLfrac_95CL*100.,+err_95CL); 
+      double FCCritVal_95CL_m1 = CalcDLcrit(myvector,CLfrac_95CL*100.,-err_95CL); 
 
       double FCCritVal_2sigma    = CalcDLcrit(myvector,CLfrac_2sigma*100.,0.); 
-      double FCCritVal_2sigma_p1 = CalcDLcrit(myvector,CLfrac_2sigma*100.,+err); 
-      double FCCritVal_2sigma_m1 = CalcDLcrit(myvector,CLfrac_2sigma*100.,-err); 
+      double FCCritVal_2sigma_p1 = CalcDLcrit(myvector,CLfrac_2sigma*100.,+err_2sigma); 
+      double FCCritVal_2sigma_m1 = CalcDLcrit(myvector,CLfrac_2sigma*100.,-err_2sigma); 
 
       if(*trueMH=="normal"){
       	gFC90CL_nh   ->SetPoint(gFC90CL_nh   ->GetN(),truepar0,FCCritVal_90CL);
@@ -234,15 +273,31 @@ void make_fc_critval_1d(){
   
   for(int ipt=0;ipt<gFC90CL_nh->GetN();ipt++){
     
-    double x_90CL_nh,   y_90CL_nh=0;
-    double x_90CL_ih,   y_90CL_ih=0;
-    double x_2sigma_nh, y_2sigma_nh=0;
-    double x_2sigma_ih, y_2sigma_ih=0;
+    double x_90CL_nh,      y_90CL_nh=0;
+    double x_90CL_nh_p1,   y_90CL_nh_p1=0;
+    double x_90CL_nh_m1,   y_90CL_nh_m1=0;
+    double x_90CL_ih,      y_90CL_ih=0;
+    double x_90CL_ih_p1,   y_90CL_ih_p1=0;
+    double x_90CL_ih_m1,   y_90CL_ih_m1=0;
+    double x_2sigma_nh,    y_2sigma_nh=0;
+    double x_2sigma_nh_p1, y_2sigma_nh_p1=0;
+    double x_2sigma_nh_m1, y_2sigma_nh_m1=0;
+    double x_2sigma_ih,    y_2sigma_ih=0;
+    double x_2sigma_ih_p1, y_2sigma_ih_p1=0;
+    double x_2sigma_ih_m1, y_2sigma_ih_m1=0;
     
     gFC90CL_nh->GetPoint(ipt, x_90CL_nh, y_90CL_nh);
+    gFC90CL_nh_p1->GetPoint(ipt, x_90CL_nh_p1, y_90CL_nh_p1);
+    gFC90CL_nh_m1->GetPoint(ipt, x_90CL_nh_m1, y_90CL_nh_m1);
     gFC90CL_ih->GetPoint(ipt, x_90CL_ih, y_90CL_ih);
+    gFC90CL_ih_p1->GetPoint(ipt, x_90CL_ih_p1, y_90CL_ih_p1);
+    gFC90CL_ih_m1->GetPoint(ipt, x_90CL_ih_m1, y_90CL_ih_m1);
     gFC2sigma_nh->GetPoint(ipt, x_2sigma_nh, y_2sigma_nh);
+    gFC2sigma_nh_p1->GetPoint(ipt, x_2sigma_nh_p1, y_2sigma_nh_p1);
+    gFC2sigma_nh_m1->GetPoint(ipt, x_2sigma_nh_m1, y_2sigma_nh_m1);
     gFC2sigma_ih->GetPoint(ipt, x_2sigma_ih, y_2sigma_ih);
+    gFC2sigma_ih_p1->GetPoint(ipt, x_2sigma_ih_p1, y_2sigma_ih_p1);
+    gFC2sigma_ih_m1->GetPoint(ipt, x_2sigma_ih_m1, y_2sigma_ih_m1);
     
     for(int iptcpy=0;iptcpy<nptcpy;iptcpy++){      
       if( fabs( x_90CL_nh - copypt[iptcpy][0] ) < 0.0001 ){
@@ -251,38 +306,84 @@ void make_fc_critval_1d(){
 	     << " in " << copypt[iptcpy][1] << endl;
 	cout << endl;
 
-	gFC90CL_nh->SetPoint(gFC90CL_nh->GetN(),copypt[iptcpy][1],y_90CL_nh);
-	gFC90CL_ih->SetPoint(gFC90CL_ih->GetN(),copypt[iptcpy][1],y_90CL_ih);
- 	gFC2sigma_nh->SetPoint(gFC2sigma_nh->GetN(),copypt[iptcpy][1],y_2sigma_nh);
-	gFC2sigma_ih->SetPoint(gFC2sigma_ih->GetN(),copypt[iptcpy][1],y_2sigma_ih);
+	gFC90CL_nh   ->SetPoint(gFC90CL_nh   ->GetN(),copypt[iptcpy][1],y_90CL_nh);
+	gFC90CL_nh_p1->SetPoint(gFC90CL_nh_p1->GetN(),copypt[iptcpy][1],y_90CL_nh_p1);
+	gFC90CL_nh_m1->SetPoint(gFC90CL_nh_m1->GetN(),copypt[iptcpy][1],y_90CL_nh_m1);
+	gFC90CL_ih   ->SetPoint(gFC90CL_ih   ->GetN(),copypt[iptcpy][1],y_90CL_ih);
+	gFC90CL_ih_p1->SetPoint(gFC90CL_ih_p1->GetN(),copypt[iptcpy][1],y_90CL_ih_p1);
+	gFC90CL_ih_m1->SetPoint(gFC90CL_ih_m1->GetN(),copypt[iptcpy][1],y_90CL_ih_m1);
+ 	gFC2sigma_nh   ->SetPoint(gFC2sigma_nh   ->GetN(),copypt[iptcpy][1],y_2sigma_nh);
+ 	gFC2sigma_nh_p1->SetPoint(gFC2sigma_nh_p1->GetN(),copypt[iptcpy][1],y_2sigma_nh_p1);
+ 	gFC2sigma_nh_m1->SetPoint(gFC2sigma_nh_m1->GetN(),copypt[iptcpy][1],y_2sigma_nh_m1);
+	gFC2sigma_ih   ->SetPoint(gFC2sigma_ih   ->GetN(),copypt[iptcpy][1],y_2sigma_ih);
+	gFC2sigma_ih_p1->SetPoint(gFC2sigma_ih_p1->GetN(),copypt[iptcpy][1],y_2sigma_ih_p1);
+	gFC2sigma_ih_m1->SetPoint(gFC2sigma_ih_m1->GetN(),copypt[iptcpy][1],y_2sigma_ih_m1);
       }
     }
   }
 
   //
 
-  gFC90CL_nh->Sort();
-  gFC90CL_ih->Sort();
-  gFC2sigma_nh->Sort();
-  gFC2sigma_ih->Sort();
+  gFC90CL_nh   ->Sort();
+  gFC90CL_nh_p1->Sort();
+  gFC90CL_nh_m1->Sort();
+  gFC90CL_ih   ->Sort();
+  gFC90CL_ih_p1->Sort();
+  gFC90CL_ih_m1->Sort();
+  gFC2sigma_nh   ->Sort();
+  gFC2sigma_nh_p1->Sort();
+  gFC2sigma_nh_m1->Sort();
+  gFC2sigma_ih   ->Sort();
+  gFC2sigma_ih_p1->Sort();
+  gFC2sigma_ih_m1->Sort();
 
-  gFC90CL_nh->SetLineColor(kRed);
-  gFC90CL_ih->SetLineColor(kRed);
-  gFC2sigma_nh->SetLineColor(kBlue);
-  gFC2sigma_ih->SetLineColor(kBlue);
+  gFC90CL_nh   ->SetLineColor(kRed);
+  gFC90CL_nh_p1->SetLineColor(kRed);
+  gFC90CL_nh_m1->SetLineColor(kRed);
+  gFC90CL_ih   ->SetLineColor(kRed);
+  gFC90CL_ih_p1->SetLineColor(kRed);
+  gFC90CL_ih_m1->SetLineColor(kRed);
+  gFC2sigma_nh   ->SetLineColor(kBlue);
+  gFC2sigma_nh_p1->SetLineColor(kBlue);
+  gFC2sigma_nh_m1->SetLineColor(kBlue);
+  gFC2sigma_ih   ->SetLineColor(kBlue);
+  gFC2sigma_ih_p1->SetLineColor(kBlue);
+  gFC2sigma_ih_m1->SetLineColor(kBlue);
 
-  gFC90CL_ih->SetLineStyle(2);
-  gFC2sigma_ih->SetLineStyle(2);
+  gFC90CL_ih   ->SetLineStyle(2);
+  gFC90CL_ih_p1->SetLineStyle(2);
+  gFC90CL_ih_m1->SetLineStyle(2);
+  gFC2sigma_ih   ->SetLineStyle(2);
+  gFC2sigma_ih_p1->SetLineStyle(2);
+  gFC2sigma_ih_m1->SetLineStyle(2);
   
   TCanvas *cDeltaChisq = new TCanvas("cDeltaChisq","cDeltaChisq");
-  gFC90CL_nh->Draw("apl");
-  gFC2sigma_nh->Draw("pl same");
+  gFC90CL_nh   ->Draw("apl");
+  gFC90CL_nh_p1->Draw("pl same");
+  gFC90CL_nh_m1->Draw("pl same");
+  gFC2sigma_nh   ->Draw("pl same");
+  gFC2sigma_nh_p1->Draw("pl same");
+  gFC2sigma_nh_m1->Draw("pl same");
+  gFC90CL_ih   ->Draw("pl same");
+  gFC90CL_ih_p1->Draw("pl same");
+  gFC90CL_ih_m1->Draw("pl same");
+  gFC2sigma_ih   ->Draw("pl same");
+  gFC2sigma_ih_p1->Draw("pl same");
+  gFC2sigma_ih_m1->Draw("pl same");
 
   TFile *fileout_fc = new TFile("FCgraphs.root","RECREATE");
-  gFC90CL_nh->Write();
-  gFC90CL_ih->Write();
-  gFC2sigma_nh->Write();
-  gFC2sigma_ih->Write();
+  gFC90CL_nh    ->Write();
+  gFC90CL_nh_p1->Write();
+  gFC90CL_nh_m1->Write();  
+  gFC90CL_ih   ->Write();
+  gFC90CL_ih_p1->Write();
+  gFC90CL_ih_m1->Write();  
+  gFC2sigma_nh   ->Write();
+  gFC2sigma_nh_p1->Write();
+  gFC2sigma_nh_m1->Write();  
+  gFC2sigma_ih   ->Write();
+  gFC2sigma_ih_p1->Write();
+  gFC2sigma_ih_m1->Write();  
   fileout_fc->Close();
   
   return;
