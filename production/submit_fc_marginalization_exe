@@ -114,7 +114,8 @@ foreach (@ARGV) {
     elsif($_ eq '--penalty-par0'       ) { $penalty_freepar0    = $ARGV[$iarg+1]; }
     elsif($_ eq '--penatly-par1'       ) { $penalty_freepar1    = $ARGV[$iarg+1]; }
     elsif($_ eq '--queue'              ) { $queue               = $ARGV[$iarg+1]; }
-    #####################################################################################
+    elsif($_ eq '--run-fullgrid'       ) { $run_fullgrid        = $ARGV[$iarg+1]; }    
+#####################################################################################
     
     else {
 	print "Unrecognised argument ".$_."\n"; exit;
@@ -156,7 +157,7 @@ $config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h
 $nexpts          = 20  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 #$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 
-$first_expt      = 0   unless defined $first_exp; # first toy experiment id 
+$first_expt      = 0   unless defined $first_expt; # first toy experiment id 
 
 $dmsq23          = -999                    unless defined $dmsq23;
 $dmsq12          = -999                     unless defined $dmsq12;
@@ -839,7 +840,7 @@ while($i_freepar1 < $n_freepar1) {
 		print PBS "#PBS -l cput=$cput \n";
 		print PBS "#PBS -o $job_dir/$tag_in-$irun.pbs.out \n";
 		print PBS "#PBS -e $job_dir/$tag_in-$irun.pbs.err \n";
-    if($queue ne "")
+    if($queue ne "0")
     {
       print PBS "#PBS -q $queue \n";
     }
@@ -849,7 +850,7 @@ while($i_freepar1 < $n_freepar1) {
 		print PBS "mailoutput(){\n echo \"Check Oxford servers\" \n grep 'root2k' $job_dir/$tag-$irun.pbs \n }\n";
 		print PBS "mailoutput | mail -s \"run_fc_dcp job done!\" rajbatchjobresult\@gmail.com\n";
 		close(PBS);
-		`qsub $job_dir/$tag_in-$irun.pbs`;
+	#	`qsub $job_dir/$tag_in-$irun.pbs`;
 	    }    #
     
 	    # Grid
