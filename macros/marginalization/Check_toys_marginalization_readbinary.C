@@ -422,7 +422,7 @@ void Check_toys_marginalization_readbinary
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
     ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
   } else
-    if(ph.Hypothesis() == conv::kHypOsc3FBarDissap){
+    if(ph.Hypothesis() == conv::kHypOsc3FBarDisapp){
       ph.SetCurrValue(conv::kPhypMixing12,  input_mixing12);
       ph.SetCurrValue(conv::kPhypMixing13,  input_mixing13);
       ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);

@@ -246,7 +246,7 @@ void run_fit_marginalization_readbinary_joint_2d
   cout << "- The following physics hypothesis is used for fakedata sets: " << util::AsString(hyp) << endl;
 
   // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
-  if(hyp == kHypOsc3F || hyp == kHypOsc3FBarDissap) {
+  if(hyp == kHypOsc3F || hyp == kHypOsc3FBarDisapp) {
     fparm->SetInitValue(kPhypMixing12, input_mixing12);
     fparm->SetInitValue(kPhypMixing13, input_mixing13);
     fparm->SetInitValue(kPhypMixing23, input_mixing23);
@@ -254,7 +254,7 @@ void run_fit_marginalization_readbinary_joint_2d
     fparm->SetInitValue(kPhypDm12sq,   input_dm12sq);
     fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
   }
-  if(hyp == kHypOsc3FBarDissap) {
+  if(hyp == kHypOsc3FBarDisapp) {
     fparm->SetInitValue(kPhypMixing23Bar, input_mixing23Bar);
     fparm->SetInitValue(kPhypDm23sqBar,   input_dm23sqBar);
   }
@@ -429,13 +429,13 @@ void run_fit_marginalization_readbinary_joint_2d
       if (randomize_dm23sq  ) { input_dm23sq   = util::RandomizeDm23sq();   }
     }
 
-    if(hyp == kHypOsc3FBarDissap){
+    if(hyp == kHypOsc3FBarDisapp){
       if (randomize_mixing23Bar) { input_mixing23Bar = util::RandomizeMixing23(); }
       if (randomize_dm23sqBar  ) { input_dm23sqBar   = util::RandomizeDm23sq();   }
     }
       
     // set oscillation parameter inputs as necessary (used to generate toy-MC expt)
-    if(hyp == kHypOsc3F || hyp == kHypOsc3FBarDissap) {
+    if(hyp == kHypOsc3F || hyp == kHypOsc3FBarDisapp) {
       fparm->SetInitValue(kPhypMixing12, input_mixing12);
       fparm->SetInitValue(kPhypMixing13, input_mixing13);
       fparm->SetInitValue(kPhypMixing23, input_mixing23);
@@ -444,7 +444,7 @@ void run_fit_marginalization_readbinary_joint_2d
       fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
     }
     
-    if(hyp == kHypOsc3FBarDissap){
+    if(hyp == kHypOsc3FBarDisapp){
       fparm->SetInitValue(kPhypMixing23Bar, input_mixing23Bar);
       fparm->SetInitValue(kPhypDm23sqBar,   input_dm23sqBar);
     }

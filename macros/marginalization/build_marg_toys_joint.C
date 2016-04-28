@@ -237,7 +237,6 @@ void build_marg_toys_joint
   FitParamList *fparm_nh = fitmarg->GetFitParamList_NH();
   FitParamList *fparm_ih = fitmarg->GetFitParamList_IH();
   PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
-
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13_nh == -99) input_mixing13_nh = conv::kGlobFitSinsq2Theta13;
     if(input_mixing23_nh == -99) input_mixing23_nh = conv::kGlobFitSinsq2Theta23;
@@ -356,7 +355,7 @@ void build_marg_toys_joint
     fparm_ih->SetInitValue(kPhypDm23sqBar,   input_dm23sq_ih);
     fparm_ih->SetInitValue(kPhypBetaBar,     input_beta_bar);
   }
-  else if(hyp == kHypOsc3FBarDissap) {
+  else if(hyp == kHypOsc3FBarDisapp) {
     fparm_nh->SetInitValue(kPhypMixing12, input_mixing12_nh);
     fparm_nh->SetInitValue(kPhypMixing13, input_mixing13_nh);
     fparm_nh->SetInitValue(kPhypMixing23, input_mixing23_nh);
@@ -407,7 +406,7 @@ void build_marg_toys_joint
     cout << "       > " << util::AsString(kPhypDm23sqBar)    << " = " << fitmarg->GetFitParamList_NH()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
     cout << "       > " << util::AsString(kPhypBetaBar)      << " = " << fitmarg->GetFitParamList_NH()->InitValue(kPhypBetaBar    ) << endl;
   }  
-  else if(hyp == kHypOsc3FBarDissap) {
+  else if(hyp == kHypOsc3FBarDisapp) {
     cout << "       > " << util::AsString(kPhypMixing23Bar)  << " = " << fitmarg->GetFitParamList_NH()->InitValue(kPhypMixing23Bar) << endl;
     cout << "       > " << util::AsString(kPhypDm23sqBar)    << " = " << fitmarg->GetFitParamList_NH()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
   }
@@ -439,7 +438,7 @@ void build_marg_toys_joint
     cout << "       > " << util::AsString(kPhypDm23sqBar)    << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
     cout << "       > " << util::AsString(kPhypBetaBar)      << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypBetaBar    ) << endl;
   }
-  else if(hyp == kHypOsc3FBarDissap) {
+  else if(hyp == kHypOsc3FBarDisapp) {
     cout << "       > " << util::AsString(kPhypMixing23Bar)  << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypMixing23Bar) << endl;
     cout << "       > " << util::AsString(kPhypDm23sqBar)    << " = " << fitmarg->GetFitParamList_IH()->InitValue(kPhypDm23sqBar  ) << " eV^2/c^4" << endl;
   }
@@ -621,9 +620,7 @@ void build_marg_toys_joint
     fitmarg->SetPrior_IH(kPhypMixing23,"user",hPrior_23_ih);
     fitmarg->SetPrior_NH(kPhypDm23sq,"user",hPrior_23_nh);
     fitmarg->SetPrior_IH(kPhypDm23sq,"user",hPrior_23_ih);
-    cout << "setting 23bar priors " << endl;
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
-      cout << "in here" << endl;
+    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDisapp){
       fitmarg->SetPrior_NH(kPhypMixing23Bar,"user",hPrior_23_nh);
       fitmarg->SetPrior_IH(kPhypMixing23Bar,"user",hPrior_23_ih);
       fitmarg->SetPrior_NH(kPhypDm23sqBar,"user",hPrior_23_nh);
@@ -640,9 +637,7 @@ void build_marg_toys_joint
 			 conv::kPrior_Sinsq2th23_Flat_Low,
 			 conv::kPrior_Sinsq2th23_Flat_Up
 			 );
-    cout << "setting 23bar priors " << endl;
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
-      cout << "in here" << endl;
+    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDisapp){
       fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",
 			   conv::kPrior_Sinsq2th23_Flat_Low,
 			   conv::kPrior_Sinsq2th23_Flat_Up
@@ -662,9 +657,7 @@ void build_marg_toys_joint
 			 conv::kPrior_Dm23sq_Flat_Low,
 			 conv::kPrior_Dm23sq_Flat_Up
 			 );
-    cout << "setting 23bar priors " << endl;
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
-      cout << "in here" << endl;
+    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDisapp){
       fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",
 			   conv::kPrior_Dm23sq_Flat_Low,
 			   conv::kPrior_Dm23sq_Flat_Up
@@ -739,7 +732,7 @@ void build_marg_toys_joint
 
   PhysHypothesis ph(hyp);
 
-  if(ph.Contains(conv::kPhypMixing12) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12)){    
+  if(ph.Contains(conv::kPhypMixing12) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12)){
     hToyHisto_Mix12_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12));
     TCanvas *cToyHisto_Mix12_nh = new TCanvas("cToyHisto_Mix12_nh","cToyHisto_Mix12_nh");
     hToyHisto_Mix12_nh->Draw("");
