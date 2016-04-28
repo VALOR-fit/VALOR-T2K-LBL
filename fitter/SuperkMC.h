@@ -226,7 +226,7 @@ namespace valor {
     /* void ApplyPhysHypothesisToTemplates_Sterile(void);  */
     void ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates=false);
     void ApplyPhysHypothesisToTemplates_3fOscBar(const bool Use2Dtemplates=false);
-    void ApplyPhysHypothesisToTemplates_3fOscBarDissap(const bool Use2Dtemplates=false);
+    void ApplyPhysHypothesisToTemplates_3fOscBarDisapp(const bool Use2Dtemplates=false);
     
     void ApplyPhysHypothesisToTemplates_3fOscBarNormBar(const bool Use2Dtemplates=false);
     void ApplyPhysHypothesisToTemplates_3fOscNormBar(const bool Use2Dtemplates=false);

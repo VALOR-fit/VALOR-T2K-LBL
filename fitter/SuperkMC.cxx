@@ -4670,9 +4670,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     {
         this->ApplyPhysHypothesisToTemplates_3fOscBar(false); // NEW 2D TEMPLATES
     }
-    else if(hyp == kHypOsc3FBarDissap)
+    else if(hyp == kHypOsc3FBarDisapp)
     {
-      this->ApplyPhysHypothesisToTemplates_3fOscBarDissap(false); // NEW 2D TEMPLATES
+      this->ApplyPhysHypothesisToTemplates_3fOscBarDisapp(false); // NEW 2D TEMPLATES
     }
     else if(hyp == kHypOsc3FBarNormBar)
     {
@@ -4734,9 +4734,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates2D(void)
     {
         this->ApplyPhysHypothesisToTemplates_3fOscBar(true);
     }
-    else if(hyp == kHypOsc3FBarDissap)
+    else if(hyp == kHypOsc3FBarDisapp)
     {
-      this->ApplyPhysHypothesisToTemplates_3fOscBarDissap(true);
+      this->ApplyPhysHypothesisToTemplates_3fOscBarDisapp(true);
     }
     else if(hyp == kHypOsc3FBarNormBar)
     {
@@ -5236,7 +5236,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(const bool Use2Dtemplates
     return;
 }
 //________________________________________________________________________________________
-void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarDissap(const bool Use2Dtemplates) // NEW 2D TEMPLATES
+void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarDisapp(const bool Use2Dtemplates) // NEW 2D TEMPLATES
 {
   //
   // 3-flavour oscillations, separate nu and nubar
