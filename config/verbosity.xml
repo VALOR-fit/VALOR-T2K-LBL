@@ -13,7 +13,8 @@
   <priority msgstream="Parser">                NOTICE   </priority>
   <priority msgstream="NuOsc3Flavour">         NOTICE   </priority>
   <priority msgstream="Reg">                   NOTICE   </priority>
-  <priority msgstream="SuperkDetectorFSI">     NOTICE   </priority>
+  <priority msgstream="SuperkDetectorFSI">     DEBUG    </priority>
+  <priority msgstream="SuperkMC">              DEBUG    </priority>
   <priority msgstream="CorrelatedSystematics"> NOTICE   </priority>
 
 </messenger_config>

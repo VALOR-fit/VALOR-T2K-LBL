@@ -476,7 +476,7 @@
       <nc1piC>           0.3    </nc1piC>
       <nccoh>            0.3    </nccoh>
       <ncoth>            0.3    </ncoth>
-      <numu_to_nue>0      0.03  </numu_to_nue>
+      <numu_to_nue>      0.03  </numu_to_nue>
       <nu_to_antinu>      0.20  </nu_to_antinu>
       <rhc_to_fhc>        0.00  </rhc_to_fhc>
     </normalisations>
