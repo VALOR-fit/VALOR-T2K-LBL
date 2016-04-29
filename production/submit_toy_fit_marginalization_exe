@@ -194,7 +194,7 @@ $config_file    = "analysis_configuration_data_theta_elike_rhc_only_RFGRPA_NIWG2
 #$nexpts          = 10000  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 $nexpts          = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 
-$first_expt      = 0   unless defined $first_exp; # first toy experiment id 
+$first_expt      = 0   unless defined $first_expt; # first toy experiment id
 
 # $dmsq23          = -999                    unless defined $dmsq23;
 # $dmsq12          = -999                     unless defined $dmsq12;
