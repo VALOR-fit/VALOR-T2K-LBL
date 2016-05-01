@@ -221,7 +221,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   mean0 << fixed << setprecision( 3 ) << hPValueBeta0->GetMean();
   rms0 << fixed << setprecision( 3 ) << hPValueBeta0->GetRMS();
   
-  cout << mean0.str() << endl;
+  cout << "PValue0Mean: " << hPValueBeta0->GetMean() << endl;
   TLegend *leg = new TLegend(0.66,0.40,0.89,0.94);
   leg->SetBorderSize(1);
   leg->SetLineWidth(2);
