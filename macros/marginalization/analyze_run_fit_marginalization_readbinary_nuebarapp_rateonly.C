@@ -122,7 +122,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     hbeta0->GetXaxis()->SetTitle("# events");
     hbeta0->SetLineColor(kBlue);
     hbeta0->SetLineWidth(5);
-    hbeta0->GetYaxis()->SetRangeUser(hbeta0->GetMinimum() + 0.02,hbeta0->GetMaximum()*1.5);
+    hbeta0->GetYaxis()->SetRangeUser(0.02,hbeta0->GetMaximum()*1.8);
     hbeta0->GetYaxis()->SetTitleSize(0.06);
     hbeta0->GetXaxis()->SetTitleSize(0.06);
     hbeta0->GetYaxis()->SetTitleFont(132);
@@ -152,7 +152,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     TCanvas *cBeta1Distribution = new TCanvas("cBeta1Distribution","cBeta1Distribution");
     hbeta1->GetYaxis()->SetTitle("# entries");
     hbeta1->GetXaxis()->SetTitle("# events");
-    hbeta1->GetYaxis()->SetRangeUser(hbeta1->GetMinimum()+0.02,hbeta1->GetMaximum()*1.5);
+    hbeta1->GetYaxis()->SetRangeUser(0.02,hbeta1->GetMaximum()*1.8);
     hbeta1->GetYaxis()->SetTitleSize(0.06);
     hbeta1->GetXaxis()->SetTitleSize(0.06);
     hbeta1->GetYaxis()->SetTitleFont(132);
