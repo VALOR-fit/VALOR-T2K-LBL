@@ -17,22 +17,36 @@ using namespace valor::conv;
 
 void plot_bestfit_on_top_of_data_and_prediction
 (
- const char * sk_sample            = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+ const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
  
- const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Rmu.root",
- //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Re_2d.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Rmu.root",
+ const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Re_2d.root",
  //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_1Re_2d.root",
  //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_1Rmu.root",
  
  const char * datafile = "data_run1to6/SKdata_Run16.root",
 
- //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/BETABAR/spectrum_bestfit_fitmarg_betabar1.root",  // Use betaBar toys, everything marginalized
- const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root",  // Use betaBar toys, everything marginalized
- 
+ //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/BETABAR/spectrum_bestfit_fitmarg_betabar1.root", 
+ //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root", 
+ //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/NEW_VARRAY_TH1D/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root",  
+ //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcp0.root",  
+  
  const bool draw_preliminary = false
  
  )
 { 
+  const int NBestFitFiles = 2; 
+  const char * bestfitfile[NBestFitFiles] = {
+    "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcp0.root",
+    "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcpPi.root",
+  };
+  
+  const char * bestfitlatex[NBestFitFiles] = {
+    "#delta_{CP} = 0",
+    "#delta_{CP} = #pi"
+  };
+
+
   // Get SK sample
   
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
@@ -45,21 +59,22 @@ void plot_bestfit_on_top_of_data_and_prediction
   
   // Get Best-Fit
   
-  TFile *fbestfit = new TFile(bestfitfile,"READ");
-  TH1D *hBestFit;
-  if(s==kSKsFCFV1RingELike)          hBestFit = (TH1D*) fbestfit->Get("h_bestfit_marg_1Re");
-  else if(s==kSKsRHCFCFV1RingELike)  hBestFit = (TH1D*) fbestfit->Get("h_bestfit_marg_RHC1Re");
-  else if(s==kSKsFCFV1RingMuLike)    hBestFit = (TH1D*) fbestfit->Get("h_bestfit_marg_1Rmu");
-  else if(s==kSKsRHCFCFV1RingMuLike) hBestFit = (TH1D*) fbestfit->Get("h_bestfit_marg_RHC1Rmu");
-  else{
-    cerr << endl;
-    cerr << "Sample " << util::AsStringCompact(s) << " is not defined" << endl;
-    cerr << endl;
-    exit(1);
+  TFile *fbestfit[NBestFitFiles];
+  TH1D *hBestFit[NBestFitFiles];
+  for(int ifile=0;ifile<NBestFitFiles;ifile++){
+    fbestfit[ifile] = new TFile(bestfitfile[ifile],"READ");
+    if(s==kSKsFCFV1RingELike)          hBestFit[ifile] = (TH1D*) fbestfit[ifile]->Get("h_bestfit_marg_1Re");
+    else if(s==kSKsRHCFCFV1RingELike)  hBestFit[ifile] = (TH1D*) fbestfit[ifile]->Get("h_bestfit_marg_RHC1Re");
+    else if(s==kSKsFCFV1RingMuLike)    hBestFit[ifile] = (TH1D*) fbestfit[ifile]->Get("h_bestfit_marg_1Rmu");
+    else if(s==kSKsRHCFCFV1RingMuLike) hBestFit[ifile] = (TH1D*) fbestfit[ifile]->Get("h_bestfit_marg_RHC1Rmu");
+    else{
+      cerr << endl;
+      cerr << "Sample " << util::AsStringCompact(s) << " is not defined" << endl;
+      cerr << endl;
+      exit(1);
+    }
   }
 
-
-  
   // Get Expectation
   
   TFile *fexp = new TFile(expfile,"READ");
@@ -81,15 +96,32 @@ void plot_bestfit_on_top_of_data_and_prediction
   TH1D *hErecoData = (TH1D*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
   
   
+
+  // Print histograms
+
+  cout << endl;
+  for(int ifile=0;ifile<NBestFitFiles;ifile++){
+    cout << "File: " << bestfitfile[ifile] << endl;	
+    for(int ibin=0;ibin<hBestFit[ifile]->GetNbinsX();ibin++){
+      cout << hBestFit[ifile]->GetBinContent(ibin+1) << ", ";
+    }
+    cout << endl;
+  }
+
   // Print # of events
   
   cout << endl;
   cout << "Tot # of events (expected) = " << hErecoExp->Integral() << endl;
-  cout << "Tot # of events (best-fit) = " << hBestFit->Integral() << endl;
+  for(int ifile=0;ifile<NBestFitFiles;ifile++){  
+    cout << "File: " << bestfitfile[ifile] << endl;
+    cout << "Tot # of events (best-fit) = " << hBestFit[ifile]->Integral() << endl;
+  }
   cout << "Tot # of events (observed) = " << hErecoVsQ2Data->Integral() << endl;
   cout << endl;
 
-  
+ 
+
+
 
   // Draw 
   
@@ -103,22 +135,56 @@ void plot_bestfit_on_top_of_data_and_prediction
   hErecoExp->SetLineColor(kBlue);
   hErecoExp->SetLineWidth(2);
   hErecoExp->DrawCopy("histo");  
-  hBestFit->SetLineColor(kRed);
-  hBestFit->SetLineWidth(2);
-  hBestFit->Draw("same");
+  for(int ifile=0;ifile<NBestFitFiles;ifile++){
+    hBestFit[ifile]->SetLineColor(1+ifile);
+    hBestFit[ifile]->SetLineWidth(2);
+    hBestFit[ifile]->Draw("same");
+  }
   hErecoData->DrawCopy("pe same");
-  
+
   TLegend *leg_Ereco = new TLegend(0.6, 0.4, 0.9, 0.7);
   leg_Ereco->SetFillColor(0);
   leg_Ereco->SetBorderSize(0);
   leg_Ereco->AddEntry(hErecoExp,"Expected","L");
   leg_Ereco->AddEntry(hErecoData,"Data","P");
-  leg_Ereco->AddEntry(hBestFit,"Best-fit","L");
+  for(int ifile=0;ifile<NBestFitFiles;ifile++){
+    leg_Ereco->AddEntry(hBestFit[ifile],bestfitlatex[ifile],"L");
+  }
   leg_Ereco->Draw();
+    
 
-
-  TLatex *latPreliminary = new TLatex(hBestFit->GetXaxis()->GetBinLowEdge(5),hBestFit->GetMaximum(),"PRELIMINARY");
+  TLatex *latPreliminary = new TLatex(hBestFit[0]->GetXaxis()->GetBinLowEdge(5),hBestFit[0]->GetMaximum(),"PRELIMINARY");
   if(draw_preliminary) latPreliminary->Draw("same");
+
+
+  // Make checks if the # of best-fit files is > 1
+
+  if(NBestFitFiles>1){
+    
+    cout << endl;
+
+    for(int ifile=0;ifile<NBestFitFiles;ifile++){
+    
+      int bin_0p6GeV = hBestFit[ifile]->FindBin(0.6);
+      double TotEvents = hBestFit[ifile]->Integral();
+      double TotEvents_m0p6GeV = hBestFit[ifile]->Integral(1,bin_0p6GeV);
+      double FracEvents_m0p6GeV = TotEvents_m0p6GeV / TotEvents;
+      double MeanEnergy = hBestFit[ifile]->GetMean();
+
+      cout << bestfitlatex[ifile] << ":" << endl;
+      cout << " - Fraction of events below 0.6 GeV = " << FracEvents_m0p6GeV << endl;
+      cout << " - Mean Energy = " << MeanEnergy << endl;
+    }
+
+    int bin_0p6GeV_data = hErecoData->FindBin(0.6);
+    double TotEvents_data = hErecoData->Integral(); 
+    double TotEvents_m0p6GeV_data = hErecoData->Integral(1,bin_0p6GeV_data); 
+    double FracEvents_m0p6GeV_data = TotEvents_m0p6GeV_data / TotEvents_data;
+    double MeanEnergy_data = hErecoData->GetMean();
+    cout << "Data:" << endl;
+    cout << " - Fraction of events below 0.6 GeV = " << FracEvents_m0p6GeV_data << endl;
+    cout << " - Mean Energy = " << MeanEnergy_data << endl;
+  }
 
   return;
 }
