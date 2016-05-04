@@ -53,6 +53,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   TH1F *hPValueBeta0_toyevt4 = new TH1F("hPValueBeta0_toyevt4","hPValueBeta0_toyevt4",200,0,1.5);
   TH1F *hPValueBeta0_toyevt5 = new TH1F("hPValueBeta0_toyevt5","hPValueBeta0_toyevt5",200,0,1.5);
   TH1F *hPValueBeta0_toyevt6 = new TH1F("hPValueBeta0_toyevt6","hPValueBeta0_toyevt6",200,0,1.5);
+  TH1F *hPValueBeta0_toyevtH = new TH1F("hPValueBeta0_toyevtH","hPValueBeta0_toyevtH",200,0,1.5);
 
   THStack *sPValueBeta0 = new THStack("sPValueBeta0","sPValueBeta0");
   
@@ -64,6 +65,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   TH1F *hPValueBeta1_toyevt4 = new TH1F("hPValueBeta1_toyevt4","hPValueBeta1_toyevt4",200,0,1.5);
   TH1F *hPValueBeta1_toyevt5 = new TH1F("hPValueBeta1_toyevt5","hPValueBeta1_toyevt5",200,0,1.5);
   TH1F *hPValueBeta1_toyevt6 = new TH1F("hPValueBeta1_toyevt6","hPValueBeta1_toyevt6",200,0,1.5);
+  TH1F *hPValueBeta1_toyevtH = new TH1F("hPValueBeta1_toyevtH","hPValueBeta1_toyevtH",200,0,1.5);
 
   THStack *sPValueBeta1 = new THStack("sPValueBeta1","sPValueBeta1");
   
@@ -96,7 +98,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     else if(nevents==4) hPValueBeta0_toyevt4->Fill(pvalue_beta0);
     else if(nevents==5) hPValueBeta0_toyevt5->Fill(pvalue_beta0);
     else if(nevents==6) hPValueBeta0_toyevt6->Fill(pvalue_beta0);
-    
+    else     hPValueBeta0_toyevtH->Fill(pvalue_beta0);
+
     double pvalue_beta1 = hchisq1D_out->GetBinContent(2);
     
     hPValueBeta1->Fill(pvalue_beta1);
@@ -107,7 +110,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     else if(nevents==4) hPValueBeta1_toyevt4->Fill(pvalue_beta1);
     else if(nevents==5) hPValueBeta1_toyevt5->Fill(pvalue_beta1);
     else if(nevents==6) hPValueBeta1_toyevt6->Fill(pvalue_beta1);
-    
+    else     hPValueBeta1_toyevtH->Fill(pvalue_beta1);
+
   }
   
   
@@ -307,22 +311,24 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   
   cout << "\n\n Average p-values! \n" <<endl;
   cout << "Beta=0" << endl;
-  cout << "0 events: " << hPValueBeta0_toyevt0->GetMean() <<  endl;
-  cout << "1 event: "  <<  hPValueBeta0_toyevt1->GetMean() <<  endl;
-  cout << "2 events: " <<  hPValueBeta0_toyevt2->GetMean() <<  endl;
-  cout << "3 events: " <<  hPValueBeta0_toyevt3->GetMean() <<  endl;
-  cout << "4 events: " <<  hPValueBeta0_toyevt4->GetMean() <<  endl;
-  cout << "5 events: " <<  hPValueBeta0_toyevt5->GetMean() <<  endl;
-  cout << "6 events: " <<  hPValueBeta0_toyevt6->GetMean() <<  endl;
-  
+  cout << "0  events: " <<  hPValueBeta0_toyevt0->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt0->Integral() <<  endl;
+  cout << "1  event : " <<  hPValueBeta0_toyevt1->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt1->Integral() << endl;
+  cout << "2  events: " <<  hPValueBeta0_toyevt2->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt2->Integral() <<  endl;
+  cout << "3  events: " <<  hPValueBeta0_toyevt3->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt3->Integral() <<  endl;
+  cout << "4  events: " <<  hPValueBeta0_toyevt4->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt4->Integral() <<  endl;
+  cout << "5  events: " <<  hPValueBeta0_toyevt5->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt5->Integral() <<  endl;
+  cout << "6  events: " <<  hPValueBeta0_toyevt6->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt6->Integral() <<  endl;
+  cout << ">6 events: " <<  hPValueBeta0_toyevtH->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevtH->Integral() <<  endl;
+
   cout << "Beta=1" << endl;
-  cout << "0 events: " <<  hPValueBeta1_toyevt0->GetMean() <<  endl;
-  cout << "1 event: "  <<  hPValueBeta1_toyevt1->GetMean() <<  endl;
-  cout << "2 events: " <<  hPValueBeta1_toyevt2->GetMean() <<  endl;
-  cout << "3 events: " <<  hPValueBeta1_toyevt3->GetMean() <<  endl;
-  cout << "4 events: " <<  hPValueBeta1_toyevt4->GetMean() <<  endl;
-  cout << "5 events: " <<  hPValueBeta1_toyevt5->GetMean() <<  endl;
-  cout << "6 events: " <<  hPValueBeta1_toyevt6->GetMean() <<  endl;
+  cout << "0  events: " <<  hPValueBeta1_toyevt0->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt0->Integral() <<  endl;
+  cout << "1  event : " <<  hPValueBeta1_toyevt1->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt1->Integral() <<  endl;
+  cout << "2  events: " <<  hPValueBeta1_toyevt2->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt2->Integral() <<  endl;
+  cout << "3  events: " <<  hPValueBeta1_toyevt3->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt3->Integral() <<  endl;
+  cout << "4  events: " <<  hPValueBeta1_toyevt4->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt4->Integral() <<  endl;
+  cout << "5  events: " <<  hPValueBeta1_toyevt5->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt5->Integral() <<  endl;
+  cout << "6  events: " <<  hPValueBeta1_toyevt6->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt6->Integral() <<  endl;
+  cout << ">6 events: " <<  hPValueBeta1_toyevtH->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevtH->Integral() <<  endl;
 
   return;
 }
