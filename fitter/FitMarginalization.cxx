@@ -8565,9 +8565,11 @@ double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_d
       iscount++;
     } // loop SK samples
     
+    for(int nuebarextraction_int=0;nuebarextraction_int < 10000;nuebarextraction_int++)
+    {
     NuEAppEvents = Rnd::Instance()->RndToyMCstat().Poisson(NuEAppEvents);
     fNuEAppHisto[iterpar0]->Fill(NuEAppEvents,exp(-chisq/2.));
-    
+    }
   } // iexperiment
   
   //Calculate data p-value
