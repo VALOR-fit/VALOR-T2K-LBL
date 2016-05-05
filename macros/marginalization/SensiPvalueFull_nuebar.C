@@ -20,10 +20,11 @@ void SensiPvalueFull_nuebar
  const char * Npot = "4.011x10^20 POT",
  double expbkg = 1.718,
  double data = 3.218, // # of data events
- double deltachisq_beta01_data = 1.41638, // data deltachisq 01
+ //double deltachisq_beta01_data = 1.41638, // data deltachisq 01
+ double deltachisq_beta01_data = 1.4346108, // data deltachisq 01 
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- char infilename_beta0[200] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_betabar_0.root",
- char infilename_beta1[200] = "../TECH_NOTE_14_3_16/BETABAR/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_betabar_1.root",
+ char infilename_beta0[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_0_100kMargToys_react_100kToys.root",
+ char infilename_beta1[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_1_100kMargToys_react_100kToys.root",
   )
 {
   char name[200];
@@ -45,7 +46,7 @@ void SensiPvalueFull_nuebar
  
   double chisqtrue0;
   double chisqtrue1;
-  TH2F *hErecoToy_RHC1Re;
+  TH2D *hErecoToy_RHC1Re;
   int ToyID;
 
   double Frac_Pvalue_rateonly_Bkg = 0.;
@@ -96,7 +97,6 @@ void SensiPvalueFull_nuebar
   treein->SetBranchAddress("ToyID",&ToyID);
 
   int Nentries = treein->GetEntries();
-  Nentries = 10000;
 
   Ntoys_beta0 = (double) Nentries; // Get # of entries for p-value calculation
 
@@ -110,6 +110,8 @@ void SensiPvalueFull_nuebar
       cerr << endl;
       exit(1);
     }
+    
+    //if(!(ientry%1000)) cout << "Entry " << ientry << endl;
 
     double deltachisq_01 = chisqtrue0 - chisqtrue1;
 
@@ -128,13 +130,12 @@ void SensiPvalueFull_nuebar
   treein->SetBranchAddress("ToyID",&ToyID);
 
   Nentries = treein->GetEntries();
-  Nentries = 10000;
   
   Ntoys_beta1 = (double) Nentries; // Get # of entries for p-value calculation
 
   for(int ientry=0;ientry<Nentries;ientry++){
     treein->GetEntry(ientry);
-    if( !(ientry % 100) ) cout << "Compute pvalues for toy " << ientry << endl;
+    if( !(ientry % 1000) ) cout << "Compute pvalues for toy " << ientry << endl;
     
     double nevents = (double)hErecoToy_RHC1Re->Integral();    
     if(nevents<0.){

@@ -19,11 +19,9 @@ using namespace valor::conv;
 void CalcPvalue_nuebarapp
 (
  // Run 1-6 (beta=0) --> Asimov A
- 
- TString tag = "pvalue_Asimov_A_betabar_0p5",
- 
- double data = 2.4682565, // # of data events
- double deltachisq_beta01_data = -0.0256822, // data deltachisq 01 (betabar=0.5)
+ TString tag = "pvalue_Asimov_A_Marg100k_Toys100k_betabar_1",
+ double data = 3.218, // # of data events
+ //double deltachisq_beta01_data = -0.0256822, // data deltachisq 01 (betabar=0.5)
  
  //double data = 3.218, // # of data events
  //double deltachisq_beta01_data = 1.41638, // data deltachisq 01 (betabar=1)
@@ -36,10 +34,9 @@ void CalcPvalue_nuebarapp
  
  //double data = 5.4684641, // # of data events
  //double deltachisq_beta01_data = 5.81603, // data deltachisq 01 (betabar=2.5)
- 
+ double deltachisq_beta01_data = 1.43461,
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
- 
- char infilename[200] = "../TECH_NOTE_14_3_16/BETABAR/FITS_TOYS/fit_fitmarg_joint_betabar_react_margmh_10kToys_Run16_betabar_0.root",
+ char infilename[300] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_0_100kMargToys_react_100kToys.root",
 
  )
 {
@@ -195,10 +192,12 @@ void CalcPvalue_nuebarapp
   // loop over the tree  
   
   int Nentries = treein->GetEntries();
-  //Nentries = 10;
+  //Nentries = 10000;
   for(int ientry=0;ientry<Nentries;ientry++){
   
     treein->GetEntry(ientry);
+
+    if(!(ientry%500)) cout << "Entry " << ientry << endl;
 
     double nevents = (double)hErecoToy_RHC1Re->Integral();    
     if(nevents<0){
