@@ -324,14 +324,14 @@ $masshierarchy_marg       = "inverted"     unless defined $masshierarchy_marg;  
 # $npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan
 
 # 1D fit - dcp
-$freepar0          = "deltacp"     unless defined $freepar0;
-$minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
-$maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
-$npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
-$freepar1          = ""     unless defined $freepar1;
-$minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
-$maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
-$npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
+$freepar0          = "deltacp"                      unless defined $freepar0;
+$minfreepar0       = -3.14159265358979312e+00       unless defined $minfreepar0;  # Min free param allowed value
+$maxfreepar0       = +3.14159265358979312e+00       unless defined $maxfreepar0;  # Max free param allowed value
+$npt_freepar0      = 201                            unless defined $npt_freepar0; # of free parameter points to scan
+$freepar1          = ""                             unless defined $freepar1;
+$minfreepar1       = 0                              unless defined $minfreepar1;  # Min free param allowed value
+$maxfreepar1       = 0                              unless defined $maxfreepar1;  # Max free param allowed value
+$npt_freepar1      = 1                              unless defined $npt_freepar1; # of free parameter points to scan
 
 # # 1D fit - mixing13 (t2k only)                                                                                                                            
 # $freepar0               = "mixing13"                unless defined $freepar0;                                                                                    
@@ -452,7 +452,7 @@ elsif($freepar0 eq "mixing13"){
     $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
     $init_freepar0  = $mix13;
 }
-elsif($freepar0 eq "mixing23"){
+elsif($freepar0 eq "mixing23" || $freepar0 eq "mixing23Bar"){
     $freepar0_first = 0.3;
     $freepar0_last  = 0.7;
     $i_freepar0     = 0;
@@ -460,7 +460,7 @@ elsif($freepar0 eq "mixing23"){
     $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
     $init_freepar0  = $mix23;
 }
-elsif($freepar0 eq "dmsq23"){
+elsif($freepar0 eq "dmsq23" || $freepar0 eq "dmsq23Bar"){
     $freepar0_first = 2.E-3;
     $freepar0_last  = 3.E-3;
     $i_freepar0     = 0;
@@ -505,7 +505,7 @@ elsif($freepar1 eq "mixing13"){
     $step_freepar1  = ($freepar1_last - $freepar1_first) / ($n_freepar1-1);
     $init_freepar1  = $mix13;
 }
-elsif($freepar1 eq "mixing23"){
+elsif($freepar1 eq "mixing23" || $freepar1 eq "mixing23Bar"){
     $freepar1_first = 0.3;
     $freepar1_last  = 0.7;
     $i_freepar1     = 0;
@@ -513,7 +513,7 @@ elsif($freepar1 eq "mixing23"){
     $step_freepar1  = ($freepar1_last - $freepar1_first) / ($n_freepar1-1);
     $init_freepar1  = $mix23;
 }
-elsif($freepar1 eq "dmsq23"){
+elsif($freepar1 eq "dmsq23" || $freepar1 eq "dmsq23Bar"){
     $freepar1_first = 2.E-3;
     $freepar1_last  = 3.E-3;
     $i_freepar1     = 0;
