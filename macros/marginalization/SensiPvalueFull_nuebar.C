@@ -168,9 +168,6 @@ void SensiPvalueFull_nuebar
     else if(nevents==4) hPvalue_rateonly_4evt->Fill(pvalue_rateonly_itoy);
     else if(nevents==5) hPvalue_rateonly_5evt->Fill(pvalue_rateonly_itoy);
     else if(nevents==6) hPvalue_rateonly_6evt->Fill(pvalue_rateonly_itoy);   
-    else if(nevents==7) hPvalue_rateonly_7evt->Fill(pvalue_rateonly_itoy);
-    else if(nevents==8) hPvalue_rateonly_8evt->Fill(pvalue_rateonly_itoy);
-    else if(nevents==9) hPvalue_rateonly_9evt->Fill(pvalue_rateonly_itoy);
 
     double pvalue_rateshape_itoy = GetPvalue(vec_chisq_01_beta0,Ntoys_beta0,deltachisq_01);
     if(pvalue_rateshape_itoy<0. || pvalue_rateshape_itoy>1.){
@@ -269,13 +266,6 @@ void SensiPvalueFull_nuebar
   hPvalue_rateonly_5evt->SetFillStyle(3001);
   hPvalue_rateonly_6evt->SetFillColor(kBlue+2);
   hPvalue_rateonly_6evt->SetFillStyle(3001);
-
-  hPvalue_rateonly_7evt->SetFillColor(kBlue);
-  hPvalue_rateonly_7evt->SetFillStyle(3013);
-  hPvalue_rateonly_8evt->SetFillColor(kGreen+2);
-  hPvalue_rateonly_8evt->SetFillStyle(3013);
-  hPvalue_rateonly_9evt->SetFillColor(kBlue+2);
-  hPvalue_rateonly_9evt->SetFillStyle(3013);
 
   hPvalue_rateonly->GetXaxis()->SetTitle("p-value");
   hPvalue_rateonly->GetYaxis()->SetTitle("Number of entries");
