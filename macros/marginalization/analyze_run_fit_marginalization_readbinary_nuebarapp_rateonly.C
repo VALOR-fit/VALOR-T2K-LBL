@@ -390,8 +390,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
 
   
   cout << "NData > NBackground: " << hPValueBeta0_bkg->GetEntries() << " Mean pvalue: " << hPValueBeta0_bkg->GetMean() << endl;
-  cout << "Fraction below pvalue=0.1: " << hPValueBeta0->GetIntegral(0,14) << endl;
-  cout << "Fraction below pvalue=0.05: " << hPValueBeta0->GetIntegral(0,7) << endl;
+  cout << "Fraction below pvalue=0.1: " << hPValueBeta0->Integral(0,14) << endl;
+  cout << "Fraction below pvalue=0.05: " << hPValueBeta0->Integral(0,7) << endl;
 
   return;
 }
