@@ -53,6 +53,10 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   TH1F *hPValueBeta0_toyevt4 = new TH1F("hPValueBeta0_toyevt4","hPValueBeta0_toyevt4",200,0,1.5);
   TH1F *hPValueBeta0_toyevt5 = new TH1F("hPValueBeta0_toyevt5","hPValueBeta0_toyevt5",200,0,1.5);
   TH1F *hPValueBeta0_toyevt6 = new TH1F("hPValueBeta0_toyevt6","hPValueBeta0_toyevt6",200,0,1.5);
+  TH1F *hPValueBeta0_toyevt7 = new TH1F("hPValueBeta0_toyevt7","hPValueBeta0_toyevt7",200,0,1.5);
+  TH1F *hPValueBeta0_toyevt8 = new TH1F("hPValueBeta0_toyevt8","hPValueBeta0_toyevt8",200,0,1.5);
+  TH1F *hPValueBeta0_toyevt9 = new TH1F("hPValueBeta0_toyevt9","hPValueBeta0_toyevt9",200,0,1.5);
+
   TH1F *hPValueBeta0_toyevtH = new TH1F("hPValueBeta0_toyevtH","hPValueBeta0_toyevtH",200,0,1.5);
 
   THStack *sPValueBeta0 = new THStack("sPValueBeta0","sPValueBeta0");
@@ -65,6 +69,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   TH1F *hPValueBeta1_toyevt4 = new TH1F("hPValueBeta1_toyevt4","hPValueBeta1_toyevt4",200,0,1.5);
   TH1F *hPValueBeta1_toyevt5 = new TH1F("hPValueBeta1_toyevt5","hPValueBeta1_toyevt5",200,0,1.5);
   TH1F *hPValueBeta1_toyevt6 = new TH1F("hPValueBeta1_toyevt6","hPValueBeta1_toyevt6",200,0,1.5);
+  TH1F *hPValueBeta1_toyevt7 = new TH1F("hPValueBeta1_toyevt7","hPValueBeta1_toyevt7",200,0,1.5);
+  TH1F *hPValueBeta1_toyevt8 = new TH1F("hPValueBeta1_toyevt8","hPValueBeta1_toyevt8",200,0,1.5);
+  TH1F *hPValueBeta1_toyevt9 = new TH1F("hPValueBeta1_toyevt9","hPValueBeta1_toyevt9",200,0,1.5);
   TH1F *hPValueBeta1_toyevtH = new TH1F("hPValueBeta1_toyevtH","hPValueBeta1_toyevtH",200,0,1.5);
 
   THStack *sPValueBeta1 = new THStack("sPValueBeta1","sPValueBeta1");
@@ -98,6 +105,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     else if(nevents==4) hPValueBeta0_toyevt4->Fill(pvalue_beta0);
     else if(nevents==5) hPValueBeta0_toyevt5->Fill(pvalue_beta0);
     else if(nevents==6) hPValueBeta0_toyevt6->Fill(pvalue_beta0);
+    else if(nevents==7) hPValueBeta0_toyevt7->Fill(pvalue_beta0);
+    else if(nevents==8) hPValueBeta0_toyevt8->Fill(pvalue_beta0);
+    else if(nevents==9) hPValueBeta0_toyevt9->Fill(pvalue_beta0);
     else     hPValueBeta0_toyevtH->Fill(pvalue_beta0);
 
     double pvalue_beta1 = hchisq1D_out->GetBinContent(2);
@@ -110,6 +120,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     else if(nevents==4) hPValueBeta1_toyevt4->Fill(pvalue_beta1);
     else if(nevents==5) hPValueBeta1_toyevt5->Fill(pvalue_beta1);
     else if(nevents==6) hPValueBeta1_toyevt6->Fill(pvalue_beta1);
+    else if(nevents==7) hPValueBeta1_toyevt7->Fill(pvalue_beta1);
+    else if(nevents==8) hPValueBeta1_toyevt8->Fill(pvalue_beta1);
+    else if(nevents==9) hPValueBeta1_toyevt9->Fill(pvalue_beta1);
     else     hPValueBeta1_toyevtH->Fill(pvalue_beta1);
 
   }
@@ -213,6 +226,16 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   hPValueBeta0_toyevt6->SetFillColor(kBlue+2);
   hPValueBeta0_toyevt6->SetLineColor(kBlue+2);
 
+  hPValueBeta0_toyevt7->SetFillStyle(3004);
+  hPValueBeta0_toyevt7->SetFillColor(kBlue+2);
+  hPValueBeta0_toyevt7->SetLineColor(kBlue+2);
+  hPValueBeta0_toyevt8->SetFillStyle(3004);
+  hPValueBeta0_toyevt8->SetFillColor(kBlue+2);
+  hPValueBeta0_toyevt8->SetLineColor(kBlue+2);
+  hPValueBeta0_toyevt9->SetFillStyle(3004);
+  hPValueBeta0_toyevt9->SetFillColor(kBlue+2);
+  hPValueBeta0_toyevt9->SetLineColor(kBlue+2);
+
   sPValueBeta0->Add(hPValueBeta0_toyevt0);
   sPValueBeta0->Add(hPValueBeta0_toyevt1);
   sPValueBeta0->Add(hPValueBeta0_toyevt2);
@@ -220,6 +243,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   sPValueBeta0->Add(hPValueBeta0_toyevt4);
   sPValueBeta0->Add(hPValueBeta0_toyevt5);
   sPValueBeta0->Add(hPValueBeta0_toyevt6);
+  sPValueBeta0->Add(hPValueBeta0_toyevt7);
+  sPValueBeta0->Add(hPValueBeta0_toyevt8);
+  sPValueBeta0->Add(hPValueBeta0_toyevt9);
 
   sPValueBeta0->Draw("same");
   hPValueBeta0->DrawCopy("same");
@@ -247,6 +273,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   leg->AddEntry(hPValueBeta0_toyevt4,"# Events = 4","F");
   leg->AddEntry(hPValueBeta0_toyevt5,"# Events = 5","F");
   leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 6","F");
+  leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 7","F");
+  leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 8","F");
+  leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 9","F");
   leg->Draw();
   
   TCanvas *cPValueBeta1 = new TCanvas("cPValueBeta1","cPValueBeta1");
@@ -272,6 +301,16 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   hPValueBeta1_toyevt6->SetFillColor(kBlue+2);
   hPValueBeta1_toyevt6->SetLineColor(kBlue+2);
   
+  hPValueBeta1_toyevt7->SetFillStyle(3004);
+  hPValueBeta1_toyevt7->SetFillColor(kBlue+2);
+  hPValueBeta1_toyevt7->SetLineColor(kBlue+2);
+  hPValueBeta1_toyevt8->SetFillStyle(3004);
+  hPValueBeta1_toyevt8->SetFillColor(kBlue+2);
+  hPValueBeta1_toyevt8->SetLineColor(kBlue+2);
+  hPValueBeta1_toyevt9->SetFillStyle(3004);
+  hPValueBeta1_toyevt9->SetFillColor(kBlue+2);
+  hPValueBeta1_toyevt9->SetLineColor(kBlue+2);
+  
   sPValueBeta1->Add(hPValueBeta1_toyevt0);
   sPValueBeta1->Add(hPValueBeta1_toyevt1);
   sPValueBeta1->Add(hPValueBeta1_toyevt2);
@@ -279,6 +318,10 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   sPValueBeta1->Add(hPValueBeta1_toyevt4);
   sPValueBeta1->Add(hPValueBeta1_toyevt5);
   sPValueBeta1->Add(hPValueBeta1_toyevt6);
+  sPValueBeta1->Add(hPValueBeta1_toyevt7);
+  sPValueBeta1->Add(hPValueBeta1_toyevt8);
+  sPValueBeta1->Add(hPValueBeta1_toyevt9);
+
 
   sPValueBeta1->Draw("same");
   hPValueBeta1->DrawCopy("same");
@@ -306,6 +349,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   leg2->AddEntry(hPValueBeta1_toyevt4,"# Events = 4","F");
   leg2->AddEntry(hPValueBeta1_toyevt5,"# Events = 5","F");
   leg2->AddEntry(hPValueBeta1_toyevt6,"# Events = 6","F");
+  leg2->AddEntry(hPValueBeta1_toyevt7,"# Events = 7","F");
+  leg2->AddEntry(hPValueBeta1_toyevt8,"# Events = 8","F");
+  leg2->AddEntry(hPValueBeta1_toyevt9,"# Events = 9","F");
 
   leg2->Draw();
   
@@ -318,7 +364,10 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   cout << "4  events: " <<  hPValueBeta0_toyevt4->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt4->Integral() <<  endl;
   cout << "5  events: " <<  hPValueBeta0_toyevt5->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt5->Integral() <<  endl;
   cout << "6  events: " <<  hPValueBeta0_toyevt6->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt6->Integral() <<  endl;
-  cout << ">6 events: " <<  hPValueBeta0_toyevtH->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevtH->Integral() <<  endl;
+  cout << "7  events: " <<  hPValueBeta0_toyevt7->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt7->Integral() <<  endl;
+  cout << "8  events: " <<  hPValueBeta0_toyevt8->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt8->Integral() <<  endl;
+  cout << "9  events: " <<  hPValueBeta0_toyevt9->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevt9->Integral() <<  endl;
+  cout << ">9 events: " <<  hPValueBeta0_toyevtH->GetMean() << "\t\t Toys: " << hPValueBeta0_toyevtH->Integral() <<  endl;
 
   cout << "Beta=1" << endl;
   cout << "0  events: " <<  hPValueBeta1_toyevt0->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt0->Integral() <<  endl;
@@ -328,7 +377,10 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   cout << "4  events: " <<  hPValueBeta1_toyevt4->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt4->Integral() <<  endl;
   cout << "5  events: " <<  hPValueBeta1_toyevt5->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt5->Integral() <<  endl;
   cout << "6  events: " <<  hPValueBeta1_toyevt6->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt6->Integral() <<  endl;
-  cout << ">6 events: " <<  hPValueBeta1_toyevtH->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevtH->Integral() <<  endl;
+  cout << "7  events: " <<  hPValueBeta1_toyevt7->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt7->Integral() <<  endl;
+  cout << "8  events: " <<  hPValueBeta1_toyevt8->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt8->Integral() <<  endl;
+  cout << "9  events: " <<  hPValueBeta1_toyevt9->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt9->Integral() <<  endl;
+  cout << ">9 events: " <<  hPValueBeta1_toyevtH->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevtH->Integral() <<  endl;
 
   return;
 }
