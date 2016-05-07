@@ -16,7 +16,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
 (
  //char infilename[200] = "../../outputs/marginalization/nuebarapp/fitmarg_T2Kreact_dcp_23_Valor_MargMH_4p5E20POT_2-3f+normbar_10kToys.root",
  char infilename[200] = "fit_beta1_nexp_10000_1.000_-999.000-job0-_0_9999.root",
- bool draw_predicted_event_distribution = false // Only for 1st fit
+ bool draw_predicted_event_distribution = false, // Only for 1st fit
+ double exp_bkg = 1.718
 )
 {
   char name[200];
@@ -93,10 +94,14 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
       exit(1);
     }
     
-    
+
     double pvalue_beta0 = hchisq1D_out->GetBinContent(1);
     
     hPValueBeta0->Fill(pvalue_beta0);
+    
+    if(nevents > exp_bkg){
+      hPValueBeta0_bkg->Fill(pvalue_beta0)
+    }
     
     if(nevents==0)      hPValueBeta0_toyevt0->Fill(pvalue_beta0);
     else if(nevents==1) hPValueBeta0_toyevt1->Fill(pvalue_beta0);
@@ -381,6 +386,11 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   cout << "8  events: " <<  hPValueBeta1_toyevt8->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt8->Integral() <<  endl;
   cout << "9  events: " <<  hPValueBeta1_toyevt9->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevt9->Integral() <<  endl;
   cout << ">9 events: " <<  hPValueBeta1_toyevtH->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevtH->Integral() <<  endl;
+
+  
+  cout << "NData > NBackground: " << hPValueBeta0_bkg->GetEntries() < " Mean pvalue: " << hPValueBeta0_bkg->Mean() << endl;
+  cout << "Fraction below pvalue=0.1: " << hPValueBeta0->GetIntegral(0,14) << endl;
+  cout << "Fraction below pvalue=0.05: " << hPValueBeta0->GetIntegral(0,7) << endl;
 
   return;
 }
