@@ -79,6 +79,10 @@ void SensiPvalueFull_nuebar
   TH1D *hPvalue_rateonly_6evt = new TH1D("hPvalue_rateonly_6evt","hPvalue_rateonly_6evt",110,0.,1.1); 
   TH1D *hPvalue_rateshape_6evt = new TH1D("hPvalue_rateshape_6evt","hPvalue_rateshape_6evt",110,0.,1.1); 
 
+  TH1D *hPvalue_rateshape_7evt = new TH1D("hPvalue_rateshape_7evt","hPvalue_rateshape_7evt",110,0.,1.1);
+  TH1D *hPvalue_rateshape_8evt = new TH1D("hPvalue_rateshape_8evt","hPvalue_rateshape_8evt",110,0.,1.1);
+  TH1D *hPvalue_rateshape_9evt = new TH1D("hPvalue_rateshape_9evt","hPvalue_rateshape_9evt",110,0.,1.1);
+
   TH2D *hPvalueVsNevt = new TH2D("hPvalueVsNevt","hPvalueVsNevt",110,0.,1.1,12,0,12);
 
   TH1D *hPvalue_rateonly_0p05 = new TH1D("hPvalue_rateonly_0p05","hPvalue_rateonly_0p05",110,0.,0.06); 
@@ -164,6 +168,9 @@ void SensiPvalueFull_nuebar
     else if(nevents==4) hPvalue_rateonly_4evt->Fill(pvalue_rateonly_itoy);
     else if(nevents==5) hPvalue_rateonly_5evt->Fill(pvalue_rateonly_itoy);
     else if(nevents==6) hPvalue_rateonly_6evt->Fill(pvalue_rateonly_itoy);   
+    else if(nevents==7) hPvalue_rateonly_7evt->Fill(pvalue_rateonly_itoy);
+    else if(nevents==8) hPvalue_rateonly_8evt->Fill(pvalue_rateonly_itoy);
+    else if(nevents==9) hPvalue_rateonly_9evt->Fill(pvalue_rateonly_itoy);
 
     double pvalue_rateshape_itoy = GetPvalue(vec_chisq_01_beta0,Ntoys_beta0,deltachisq_01);
     if(pvalue_rateshape_itoy<0. || pvalue_rateshape_itoy>1.){
@@ -198,6 +205,9 @@ void SensiPvalueFull_nuebar
     else if(nevents==4) hPvalue_rateshape_4evt->Fill(pvalue_rateshape_itoy);
     else if(nevents==5) hPvalue_rateshape_5evt->Fill(pvalue_rateshape_itoy);
     else if(nevents==6) hPvalue_rateshape_6evt->Fill(pvalue_rateshape_itoy);
+    else if(nevents==7) hPvalue_rateshape_7evt->Fill(pvalue_rateshape_itoy);
+    else if(nevents==8) hPvalue_rateshape_8evt->Fill(pvalue_rateshape_itoy);
+    else if(nevents==9) hPvalue_rateshape_9evt->Fill(pvalue_rateshape_itoy);
    
     //
 
@@ -252,14 +262,21 @@ void SensiPvalueFull_nuebar
   
   TCanvas *cPvalue_rateonly = new TCanvas("cPvalue_rateonly","cPvalue_rateonly");
   cPvalue_rateonly->SetLogy();
-  hPvalue_rateonly_3evt->SetFillColor(kBlue);
-  hPvalue_rateonly_3evt->SetFillStyle(3305);
-  hPvalue_rateonly_4evt->SetFillColor(kRed);
-  hPvalue_rateonly_4evt->SetFillStyle(3345);
-  hPvalue_rateonly_5evt->SetFillColor(kGreen);
-  hPvalue_rateonly_5evt->SetFillStyle(3354);
-  hPvalue_rateonly_6evt->SetFillColor(kCyan);
-  hPvalue_rateonly_6evt->SetFillStyle(3395);
+  hPvalue_rateonly_3evt->SetFillColor(kBlue+2);
+  hPvalue_rateonly_4evt->SetFillColor(kBlue);
+  hPvalue_rateonly_4evt->SetFillStyle(3001);
+  hPvalue_rateonly_5evt->SetFillColor(kGreen+2);
+  hPvalue_rateonly_5evt->SetFillStyle(3001);
+  hPvalue_rateonly_6evt->SetFillColor(kBlue+2);
+  hPvalue_rateonly_6evt->SetFillStyle(3001);
+
+  hPvalue_rateonly_7evt->SetFillColor(kBlue);
+  hPvalue_rateonly_7evt->SetFillStyle(3013);
+  hPvalue_rateonly_8evt->SetFillColor(kGreen+2);
+  hPvalue_rateonly_8evt->SetFillStyle(3013);
+  hPvalue_rateonly_9evt->SetFillColor(kBlue+2);
+  hPvalue_rateonly_9evt->SetFillStyle(3013);
+
   hPvalue_rateonly->GetXaxis()->SetTitle("p-value");
   hPvalue_rateonly->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateonly->DrawCopy();
@@ -280,14 +297,20 @@ void SensiPvalueFull_nuebar
   
   TCanvas *cPvalue_rateshape = new TCanvas("cPvalue_rateshape","cPvalue_rateshape");
   cPvalue_rateshape->SetLogy();
-  hPvalue_rateshape_3evt->SetFillColor(kBlue);
-  hPvalue_rateshape_3evt->SetFillStyle(3305);
-  hPvalue_rateshape_4evt->SetFillColor(kRed);
-  hPvalue_rateshape_4evt->SetFillStyle(3345);
-  hPvalue_rateshape_5evt->SetFillColor(kGreen);
-  hPvalue_rateshape_5evt->SetFillStyle(3354);
-  hPvalue_rateshape_6evt->SetFillColor(kCyan);
-  hPvalue_rateshape_6evt->SetFillStyle(3395);
+  hPvalue_rateshape_3evt->SetFillColor(kBlue+2);
+  hPvalue_rateshape_4evt->SetFillColor(kBlue);
+  hPvalue_rateshape_4evt->SetFillStyle(3001);
+  hPvalue_rateshape_5evt->SetFillColor(kGreen+2);
+  hPvalue_rateshape_5evt->SetFillStyle(3001);
+  hPvalue_rateshape_6evt->SetFillColor(kBlue+2);
+  hPvalue_rateshape_6evt->SetFillStyle(3001);
+  
+  hPvalue_rateshape_7evt->SetFillColor(kBlue);
+  hPvalue_rateshape_7evt->SetFillStyle(3013);
+  hPvalue_rateshape_8evt->SetFillColor(kGreen+2);
+  hPvalue_rateshape_8evt->SetFillStyle(3013);
+  hPvalue_rateshape_9evt->SetFillColor(kBlue+2);
+  hPvalue_rateshape_9evt->SetFillStyle(3013);
   hPvalue_rateshape->GetXaxis()->SetTitle("p-value");
   hPvalue_rateshape->GetYaxis()->SetTitle("Number of entries");
   hPvalue_rateshape->DrawCopy();
@@ -365,6 +388,40 @@ void SensiPvalueFull_nuebar
   lPvalue_rateshape_6evt->Draw();
 
   //
+  
+  TCanvas *cPvalue_rateshape_7evt = new TCanvas("cPvalue_rateshape_7evt","cPvalue_rateshape_7evt");
+  cPvalue_rateshape_7evt->SetLogy();
+  hPvalue_rateshape_7evt->SetFillStyle(0);
+  hPvalue_rateshape_7evt->GetXaxis()->SetTitle("p-value");
+  hPvalue_rateshape_7evt->GetYaxis()->SetTitle("Number of entries");
+  hPvalue_rateshape_7evt->DrawCopy();
+  sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hPvalue_rateshape_7evt->GetMean(),hPvalue_rateshape_7evt->GetRMS());
+  TLatex *lPvalue_rateshape_7evt = new TLatex(0.70,hPvalue_rateshape_7evt->GetMaximum()*0.8,name);
+  lPvalue_rateshape_7evt->SetTextSize(0.07);
+  lPvalue_rateshape_7evt->Draw();
+
+  TCanvas *cPvalue_rateshape_8evt = new TCanvas("cPvalue_rateshape_8evt","cPvalue_rateshape_8evt");
+  cPvalue_rateshape_8evt->SetLogy();
+  hPvalue_rateshape_8evt->SetFillStyle(0);
+  hPvalue_rateshape_8evt->GetXaxis()->SetTitle("p-value");
+  hPvalue_rateshape_8evt->GetYaxis()->SetTitle("Number of entries");
+  hPvalue_rateshape_8evt->DrawCopy();
+  sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hPvalue_rateshape_8evt->GetMean(),hPvalue_rateshape_8evt->GetRMS());
+  TLatex *lPvalue_rateshape_8evt = new TLatex(0.70,hPvalue_rateshape_8evt->GetMaximum()*0.8,name);
+  lPvalue_rateshape_8evt->SetTextSize(0.07);
+  lPvalue_rateshape_8evt->Draw();
+
+  TCanvas *cPvalue_rateshape_9evt = new TCanvas("cPvalue_rateshape_9evt","cPvalue_rateshape_9evt");
+  cPvalue_rateshape_9evt->SetLogy();
+  hPvalue_rateshape_9evt->SetFillStyle(0);
+  hPvalue_rateshape_9evt->GetXaxis()->SetTitle("p-value");
+  hPvalue_rateshape_9evt->GetYaxis()->SetTitle("Number of entries");
+  hPvalue_rateshape_9evt->DrawCopy();
+  sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hPvalue_rateshape_9evt->GetMean(),hPvalue_rateshape_9evt->GetRMS());
+  TLatex *lPvalue_rateshape_9evt = new TLatex(0.70,hPvalue_rateshape_9evt->GetMaximum()*0.8,name);
+  lPvalue_rateshape_9evt->SetTextSize(0.07);
+  lPvalue_rateshape_9evt->Draw();
+
 
   TCanvas *cPvalueVsNevt = new TCanvas("hPvalueVsNevt","hPvalueVsNevt");
   hPvalueVsNevt->GetXaxis()->SetTitle("p-value");
@@ -528,6 +585,10 @@ void SensiPvalueFull_nuebar
   cPvalue_rateshape_4evt->Print("cPvalue_rateshape_4evt.pdf");
   cPvalue_rateshape_5evt->Print("cPvalue_rateshape_5evt.pdf");
   cPvalue_rateshape_6evt->Print("cPvalue_rateshape_6evt.pdf");
+  cPvalue_rateshape_7evt->Print("cPvalue_rateshape_7evt.pdf");
+  cPvalue_rateshape_8evt->Print("cPvalue_rateshape_8evt.pdf");
+  cPvalue_rateshape_9evt->Print("cPvalue_rateshape_9evt.pdf");
+
   cPvalueVsNevt->Print("cPvalueVsNevt.pdf");
   cPvalue_rateonly_0p10->Print("cPvalue_rateonly_0p10.pdf");
   cPvalue_rateshape_0p10->Print("cPvalue_rateshape_0p10.pdf");
