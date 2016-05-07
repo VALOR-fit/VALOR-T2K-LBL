@@ -273,9 +273,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   leg->AddEntry(hPValueBeta0_toyevt4,"# Events = 4","F");
   leg->AddEntry(hPValueBeta0_toyevt5,"# Events = 5","F");
   leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 6","F");
-  leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 7","F");
-  leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 8","F");
-  leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 9","F");
+  leg->AddEntry(hPValueBeta0_toyevt7,"# Events = 7","F");
+  leg->AddEntry(hPValueBeta0_toyevt8,"# Events = 8","F");
+  leg->AddEntry(hPValueBeta0_toyevt9,"# Events = 9","F");
   leg->Draw();
   
   TCanvas *cPValueBeta1 = new TCanvas("cPValueBeta1","cPValueBeta1");
