@@ -100,7 +100,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     hPValueBeta0->Fill(pvalue_beta0);
     
     if(nevents > exp_bkg){
-      hPValueBeta0_bkg->Fill(pvalue_beta0)
+      hPValueBeta0_bkg->Fill(pvalue_beta0);
     }
     
     if(nevents==0)      hPValueBeta0_toyevt0->Fill(pvalue_beta0);
