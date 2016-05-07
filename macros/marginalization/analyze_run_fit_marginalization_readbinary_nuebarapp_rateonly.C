@@ -59,6 +59,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   TH1F *hPValueBeta0_toyevt9 = new TH1F("hPValueBeta0_toyevt9","hPValueBeta0_toyevt9",200,0,1.5);
 
   TH1F *hPValueBeta0_toyevtH = new TH1F("hPValueBeta0_toyevtH","hPValueBeta0_toyevtH",200,0,1.5);
+  TH1F *hPValueBeta0_bkg = new TH1F("hPValueBeta0bkg","hPValueBeta0bkg",200,0,1.5);
 
   THStack *sPValueBeta0 = new THStack("sPValueBeta0","sPValueBeta0");
   
