@@ -389,9 +389,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   cout << ">9 events: " <<  hPValueBeta1_toyevtH->GetMean() << "\t\t Toys: " << hPValueBeta1_toyevtH->Integral() <<  endl;
 
   
-  cout << "NData > NBackground: " << hPValueBeta0_bkg->GetEntries() << " Mean pvalue: " << hPValueBeta0_bkg->GetMean() << endl;
-  cout << "Fraction below pvalue=0.1: " << hPValueBeta0->Integral(0,14) << endl;
-  cout << "Fraction below pvalue=0.05: " << hPValueBeta0->Integral(0,7) << endl;
+  cout << "NData > NBackground: " << hPValueBeta0_bkg->GetEntries() / Nentries << " Mean pvalue: " << hPValueBeta0_bkg->GetMean() << endl;
+  cout << "Fraction below pvalue=0.1: " << hPValueBeta0->Integral(0,14)/ Nentries  << endl;
+  cout << "Fraction below pvalue=0.05: " << hPValueBeta0->Integral(0,7)/ Nentries << endl;
 
   return;
 }
