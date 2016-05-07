@@ -226,13 +226,13 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   hPValueBeta0_toyevt6->SetFillColor(kBlue+2);
   hPValueBeta0_toyevt6->SetLineColor(kBlue+2);
 
-  hPValueBeta0_toyevt7->SetFillStyle(3004);
-  hPValueBeta0_toyevt7->SetFillColor(kBlue+2);
-  hPValueBeta0_toyevt7->SetLineColor(kBlue+2);
-  hPValueBeta0_toyevt8->SetFillStyle(3004);
-  hPValueBeta0_toyevt8->SetFillColor(kBlue+2);
-  hPValueBeta0_toyevt8->SetLineColor(kBlue+2);
-  hPValueBeta0_toyevt9->SetFillStyle(3004);
+  hPValueBeta0_toyevt7->SetFillStyle(3013);
+  hPValueBeta0_toyevt7->SetFillColor(kBlue);
+  hPValueBeta0_toyevt7->SetLineColor(kBlue);
+  hPValueBeta0_toyevt8->SetFillStyle(3013);
+  hPValueBeta0_toyevt8->SetFillColor(kGreen+2);
+  hPValueBeta0_toyevt8->SetLineColor(kGreen+2);
+  hPValueBeta0_toyevt9->SetFillStyle(3013);
   hPValueBeta0_toyevt9->SetFillColor(kBlue+2);
   hPValueBeta0_toyevt9->SetLineColor(kBlue+2);
 
@@ -301,13 +301,13 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   hPValueBeta1_toyevt6->SetFillColor(kBlue+2);
   hPValueBeta1_toyevt6->SetLineColor(kBlue+2);
   
-  hPValueBeta1_toyevt7->SetFillStyle(3004);
-  hPValueBeta1_toyevt7->SetFillColor(kBlue+2);
-  hPValueBeta1_toyevt7->SetLineColor(kBlue+2);
-  hPValueBeta1_toyevt8->SetFillStyle(3004);
-  hPValueBeta1_toyevt8->SetFillColor(kBlue+2);
-  hPValueBeta1_toyevt8->SetLineColor(kBlue+2);
-  hPValueBeta1_toyevt9->SetFillStyle(3004);
+  hPValueBeta1_toyevt7->SetFillStyle(3013);
+  hPValueBeta1_toyevt7->SetFillColor(kBlue);
+  hPValueBeta1_toyevt7->SetLineColor(kBlue);
+  hPValueBeta1_toyevt8->SetFillStyle(3013);
+  hPValueBeta1_toyevt8->SetFillColor(kGreen+2);
+  hPValueBeta1_toyevt8->SetLineColor(kGreen+2);
+  hPValueBeta1_toyevt9->SetFillStyle(3013);
   hPValueBeta1_toyevt9->SetFillColor(kBlue+2);
   hPValueBeta1_toyevt9->SetLineColor(kBlue+2);
   
