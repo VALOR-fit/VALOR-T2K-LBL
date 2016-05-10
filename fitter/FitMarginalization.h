@@ -326,8 +326,8 @@ class FitMarginalization
   double GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin);
 
   // MAP
-  TH1I *GetMapChisqRangeFileID_1D(void){ return fhmap_chisqrange_fileid_1D;};  
-  TH2I *GetMapChisqRangeFileID_2D(void){ return fhmap_chisqrange_fileid_2D;};  
+  TH1D *GetMapChisqRangeFileID_1D(void){ return fhmap_chisqrange_fileid_1D;};  
+  TH2D *GetMapChisqRangeFileID_2D(void){ return fhmap_chisqrange_fileid_2D;};  
   void SetTagFileName(const char *tag);
   void SetFileID(int nfiles);
   int GetFileIDRead(int binpar0,int binpar1); // need histogram bin number as input
@@ -366,8 +366,8 @@ private:
   //
 
   // MAP
-  TH1I *fhmap_chisqrange_fileid_1D;
-  TH2I *fhmap_chisqrange_fileid_2D;
+  TH1D *fhmap_chisqrange_fileid_1D;
+  TH2D *fhmap_chisqrange_fileid_2D;
 
   int fCurrentFileIDminim;
 

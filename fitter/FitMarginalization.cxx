@@ -514,6 +514,13 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   // NEW PENALTY TERM
   fhpenaltyterm_1D = (TH1D*) fhchisq_marg_1D->Clone("hpenaltyterm_1D");
   fhpenaltyterm_2D = (TH2D*) fhchisq_marg_2D->Clone("hpenaltyterm_2D");
+  // fhpenaltyterm_1D->Copy(*fhchisq_marg_1D);// = (TH1D*) Copy->() ->Clone("hpenaltyterm_1D");
+  // fhpenaltyterm_1D->SetName("hpenaltyterm_1D");
+  // fhpenaltyterm_1D->SetTitle("hpenaltyterm_1D");
+  // fhpenaltyterm_2D->Copy(*fhchisq_marg_2D);
+  // fhpenaltyterm_2D->SetName("hpenaltyterm_2D");
+  // fhpenaltyterm_2D->SetTitle("hpenaltyterm_2D");
+
   //
 
 
@@ -608,8 +615,14 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   fLastMinimBin_Y = fhchisq_marg_2D->GetNbinsY();
 
   // Set the default map
-  fhmap_chisqrange_fileid_1D = (TH1I*) fhchisq_marg_1D->Clone("hmap_chisqrange_fileid_1D");
-  fhmap_chisqrange_fileid_2D = (TH2I*) fhchisq_marg_2D->Clone("hmap_chisqrange_fileid_2D");
+  fhmap_chisqrange_fileid_1D = (TH1D*) fhchisq_marg_1D->Clone("hmap_chisqrange_fileid_1D");
+  fhmap_chisqrange_fileid_2D = (TH2D*) fhchisq_marg_2D->Clone("hmap_chisqrange_fileid_2D");
+  // fhmap_chisqrange_fileid_1D->Copy(*fhchisq_marg_1D); 
+  // fhmap_chisqrange_fileid_1D->SetName("hmap_chisqrange_fileid_1D");
+  // fhmap_chisqrange_fileid_1D->SetTitle("hmap_chisqrange_fileid_1D");
+  // fhmap_chisqrange_fileid_2D->Copy(*fhchisq_marg_2D); 
+  // fhmap_chisqrange_fileid_2D->SetName("hmap_chisqrange_fileid_2D");
+  // fhmap_chisqrange_fileid_2D->SetTitle("hmap_chisqrange_fileid_2D");
 
   fCurrentFileIDminim = conv::kBadResult; // current file ID during the chisq minimization process
 
@@ -1555,7 +1568,7 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
 
 
       //
-
+    
       
 #ifdef __print_masshierarchy__
       cout << endl;
@@ -2349,7 +2362,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 #endif
        << endl;
 #endif
-
+  
   return bincont;
 }
 //________________________________________________________________________________________
@@ -2981,6 +2994,8 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   cout << "Reading free param sub-range from binary file:" << sinname_range << endl;
 #endif
 
+  //cout << sinname_range.c_str() << endl;
+
   ifstream is(sinname_range.c_str(),ios::binary|ios::in);
   assert(is);
   is.read( (char*)&min_bin_sub_param0,sizeof(int));
@@ -3586,7 +3601,10 @@ void FitMarginalization::BuildDeltaChisqMarg()
   // 1D
   if(!fIsFit2D){
     fhdeltachisq_marg_1D = (TH1D*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D"); // NEW PRECISION
-    
+    //fhdeltachisq_marg_1D->Copy(*fhchisq_marg_1D); // NEW PRECISION
+    //fhdeltachisq_marg_1D->SetName("fhdeltachisq_marg_1D");
+    //fhdeltachisq_marg_1D->SetTitle("fhdeltachisq_marg_1D");
+
     for(int ibin=0;ibin<fhdeltachisq_marg_1D->GetNbinsX();ibin++){
       double bincont = fhdeltachisq_marg_1D->GetBinContent(ibin+1);
       if(bincont>0.){
@@ -3609,6 +3627,9 @@ void FitMarginalization::BuildDeltaChisqMarg()
   // 2D
   else{
     fhdeltachisq_marg_2D = (TH2D*) fhchisq_marg_2D->Clone("fhdeltachisq_marg_2D"); // NEW PRECISION
+    //fhdeltachisq_marg_2D->Copy(*fhchisq_marg_2D); // NEW PRECISION
+    //fhdeltachisq_marg_2D->SetName("fhdeltachisq_marg_2D");
+    //fhdeltachisq_marg_2D->SetTitle("fhdeltachisq_marg_2D");
 
     for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
       for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){
@@ -5200,6 +5221,9 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
 
   // 1D
   fhchisq_marg_1D_Step = (TH1D*)fhchisq_marg_1D->Clone("hchisq_marg_1D_Step"); // NEW PRECISION
+  //fhchisq_marg_1D_Step->Copy(*fhchisq_marg_1D); // NEW PRECISION
+  //fhchisq_marg_1D_Step->SetName("hchisq_marg_1D_Step");
+  //fhchisq_marg_1D_Step->SetTitle("hchisq_marg_1D_Step");
   for(int ibinX=0;ibinX<fhchisq_marg_1D_Step->GetNbinsX();ibinX++){
     fhchisq_marg_1D_Step->SetBinContent(ibinX+1,0.);
   }
@@ -5211,6 +5235,9 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
 
   // 2D
   fhchisq_marg_2D_Step = (TH2D*)fhchisq_marg_2D->Clone("hchisq_marg_2D_Step"); // NEW PRECISION
+  //fhchisq_marg_2D_Step->Copy(*fhchisq_marg_2D); // NEW PRECISION
+  //fhchisq_marg_2D_Step->SetName("hchisq_marg_2D_Step");
+  //fhchisq_marg_2D_Step->SetTitle("hchisq_marg_2D_Step");
   for(int ibinX=0;ibinX<fhchisq_marg_2D_Step->GetNbinsX();ibinX++){
     for(int ibinY=0;ibinY<fhchisq_marg_2D_Step->GetNbinsY();ibinY++){
       fhchisq_marg_2D_Step->SetBinContent(ibinX+1,ibinY+1,0.);
@@ -5969,6 +5996,9 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 
   // 1D
   fhchisq_marg_1D_Step = (TH1D*)fhchisq_marg_1D->Clone("hchisq_marg_1D_Step"); // NEW PRECISION
+  //fhchisq_marg_1D_Step->Copy(*fhchisq_marg_1D); // NEW PRECISION
+  //fhchisq_marg_1D_Step->SetName("hchisq_marg_1D_Step");
+  //fhchisq_marg_1D_Step->SetTitle("hchisq_marg_1D_Step");
   for(int ibinX=0;ibinX<fhchisq_marg_1D_Step->GetNbinsX();ibinX++){
     fhchisq_marg_1D_Step->SetBinContent(ibinX+1,0.);
   }
@@ -5980,6 +6010,9 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
 
   // 2D
   fhchisq_marg_2D_Step = (TH2D*)fhchisq_marg_2D->Clone("hchisq_marg_2D_Step"); // NEW PRECISION
+  //fhchisq_marg_2D_Step->Copy(*fhchisq_marg_2D); // NEW PRECISION
+  //fhchisq_marg_2D_Step->SetName("hchisq_marg_2D_Step");
+  //fhchisq_marg_2D_Step->SetTitle("hchisq_marg_2D_Step");
   for(int ibinX=0;ibinX<fhchisq_marg_2D_Step->GetNbinsX();ibinX++){
     for(int ibinY=0;ibinY<fhchisq_marg_2D_Step->GetNbinsY();ibinY++){
       fhchisq_marg_2D_Step->SetBinContent(ibinX+1,ibinY+1,0.);
