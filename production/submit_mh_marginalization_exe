@@ -127,45 +127,45 @@ foreach (@ARGV) {
 
 $resource        = "interactive"               unless defined $resource;
 
-$tag             = "fitmarg_mh"  unless defined $tag;
+$tag             = "fitmarg_masshier_nh"  unless defined $tag;
 
-#$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D) 
+$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D and betaBar 100k marg toys) 
 #$nruns           = 250                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
-$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+#$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 
 #
 # NEW CONFIGURATION FILES (14/3/16 BANFF WITH FIT BIAS)
 #
 $config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
 
-#$nexpts          = 10000  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
+$nexpts          = 10000  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 #$nexpts          = 20  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
-$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
+#$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 
 $first_expt      = 0   unless defined $first_expt; # first toy experiment id 
 
-# $dmsq23          = -999                    unless defined $dmsq23;
-# $dmsq12          = -999                     unless defined $dmsq12;
-# $mix23           = -999                       unless defined $mix23;
-# $mix13           = -999                      unless defined $mix13;
-# #$mix13           = 0.028                     unless defined $mix13;
-# $mix12           = -999                       unless defined $mix12;      
-# #$deltacp         = 0.                      unless defined $deltacp;
-# #$deltacp         = 1.570796                      unless defined $deltacp;
-# #$deltacp         = -1.570796                      unless defined $deltacp;
-# $deltacp         = -999                      unless defined $deltacp;
-# $betaBar         = 1.                          unless defined $betaBar;
+$dmsq23          = -999                    unless defined $dmsq23;
+$dmsq12          = -999                     unless defined $dmsq12;
+$mix23           = -999                       unless defined $mix23;
+$mix13           = -999                      unless defined $mix13;
+#$mix13           = 0.028                     unless defined $mix13;
+$mix12           = -999                       unless defined $mix12;      
+#$deltacp         = 0.                      unless defined $deltacp;
+#$deltacp         = 1.570796                      unless defined $deltacp;
+#$deltacp         = -1.570796                      unless defined $deltacp;
+$deltacp         = -999                      unless defined $deltacp;
+$betaBar         = 1.                          unless defined $betaBar;
 
 #
 # ASIMOV A
 #
-$dmsq23          = 2.509E-3                        unless defined $dmsq23;
-$dmsq12          = 7.53E-5                        unless defined $dmsq12;
-$mix23           = 0.528                        unless defined $mix23;
-$mix13           = 0.0217                        unless defined $mix13; # PDG 2015
-$mix12           = 0.304                        unless defined $mix12;
-$deltacp         = -1.601                        unless defined $deltacp;
-$betaBar         = 1.                          unless defined $betaBar;
+# $dmsq23          = 2.509E-3                        unless defined $dmsq23;
+# $dmsq12          = 7.53E-5                        unless defined $dmsq12;
+# $mix23           = 0.528                        unless defined $mix23;
+# $mix13           = 0.0217                        unless defined $mix13; # PDG 2015
+# $mix12           = 0.304                        unless defined $mix12;
+# $deltacp         = -1.601                        unless defined $deltacp;
+# $betaBar         = 1.                          unless defined $betaBar;
 
 #
 # ASIMOV B
@@ -199,8 +199,7 @@ if( !defined $cput ) {
 ########################################################################################
 
 ############################ Toy generation ################################
-$hypothesis             = "3f_osc"             unless defined $hypothesis;  
-#$hypothesis            = "3f_osc_normbar"     unless defined $hypothesis;
+$hypothesis            = "3f_osc_normbar"     unless defined $hypothesis;
 $do_toys                = 1                   unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
 $fakedata_root_file     = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
@@ -211,8 +210,8 @@ $rethrow_unphysical     = 1                    unless defined $rethrow_unphysica
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
 $verbose_fit            = 1                    unless defined $verbose_fit;
 $sync_ih_to_nh          = 1                    unless defined $sync_ih_to_nh;
-$stat_fluct             = 0                    unless defined $stat_fluct;
-$tweak_systematics      = 0                    unless defined $tweak_systematics;
+$stat_fluct             = 1                    unless defined $stat_fluct;
+$tweak_systematics      = 1                    unless defined $tweak_systematics;
 $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 $prior_mode             = 1                    unless defined $prior_mode; # 0-->fix,1-->react,2-->t2k-only
 $save_xml               = 1                    unless defined $save_xml;
@@ -229,10 +228,8 @@ $fitparamlist   = "nuosc3f_normbar+nuisance"  unless defined $fitparamlist; # nu
 # NEW MARGINALIZATION FILES (BANFF RELEASE 14/3/16 WITH FIT BIAS)
 #
 
-$file_margtoys_nh = "../TECH_NOTE_14_3_16/MARGTOYS/joint_betabar_react_NH_100kToys/joint_betaBar_niwg2015c_react_NH_100kToys" unless defined $file_margtoys_nh;
-$file_margtoys_ih = "../TECH_NOTE_14_3_16/MARGTOYS/joint_betabar_react_IH_100kToys/joint_betaBar_niwg2015c_react_IH_100kToys" unless defined $file_margtoys_ih;
-# $file_margtoys_nh = "MARGTOYS_MH_PROVA/joint_betaBar_nh_prova" unless defined $file_margtoys_nh;
-# $file_margtoys_ih = "MARGTOYS_MH_PROVA/joint_betaBar_ih_prova" unless defined $file_margtoys_ih;
+$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_betabar_react_NH_100kToys/joint_betaBar_niwg2015c_react_NH_100kToy" unless defined $file_margtoys_nh;
+$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_betabar_react_IH_100kToys/joint_betaBar_niwg2015c_react_IH_100kToys" unless defined $file_margtoys_ih;
 
 #$nfiles_margtoys   = 1           unless defined $nfiles_margtoys; # of marginalization files
 $nfiles_margtoys   = 2           unless defined $nfiles_margtoys; # of marginalization files
