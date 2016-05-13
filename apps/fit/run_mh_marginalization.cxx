@@ -440,7 +440,6 @@ int main(int argc, char ** argv)
      
      trueparname0 = runopt->Freeparname0();
      trueparname1 = runopt->Freeparname1();     
-
      if( trueparname0 != "betaBar" ){
        cerr << endl;
        cerr << "The true parameter name is " << trueparname0 << endl;
@@ -448,7 +447,16 @@ int main(int argc, char ** argv)
        cerr << endl;
        exit(1);
      }
+
+     PhysParamId_t freepar0 = conv::kPhypUndefined;
+     PhysParamId_t freepar1 = conv::kPhypUndefined;
      
+     freepar0 = util::GetFreePar(runopt->Freeparname0());     
+     truepar0 = fparm->InitValue(freepar0);
+
+     freepar1 = util::GetFreePar(runopt->Freeparname1());     
+     truepar1 = fparm->InitValue(freepar1);
+        
      FitMarginalization *fitmarg_nh = new FitMarginalization();   
      FitMarginalization *fitmarg_ih = new FitMarginalization();   
       
@@ -478,6 +486,7 @@ int main(int argc, char ** argv)
        
        cerr << endl;
        cerr << "truepar0 = " << truepar0 << endl;
+       cerr << "truepar1 = " << truepar1 << endl;
        cerr << endl;
        cerr << "////////////////////////////////////////////////////////////" << endl;
        cerr << "//                                                        //" << endl;
@@ -533,15 +542,8 @@ int main(int argc, char ** argv)
      }
 
 
-     // Get true chisq (only for betabar = 1)
-
-     PhysParamId_t freepar0 = conv::kPhypUndefined;
-     PhysParamId_t freepar1 = conv::kPhypUndefined;
-     
-     freepar0 = util::GetFreePar(runopt->Freeparname0());
-     
      trueMH = runopt->GlobalMassHierarchy(); 
- 
+
          
      // Get values of global minimum
      
