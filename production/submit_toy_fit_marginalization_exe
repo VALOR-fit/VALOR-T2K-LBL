@@ -108,6 +108,7 @@ foreach (@ARGV) {
     elsif($_ eq '--store-like-weights' ) { $store_like_weights  = $ARGV[$iarg+1]; }
     elsif($_ eq '--penalty-par0'       ) { $penalty_freepar0    = $ARGV[$iarg+1]; }
     elsif($_ eq '--penatly-par1'       ) { $penalty_freepar1    = $ARGV[$iarg+1]; }
+    elsif($_ eq '--queue'              ) { $queue               = $ARGV[$iarg+1]; }
     #####################################################################################
     
     else {
@@ -413,15 +414,16 @@ $npt_freepar1      = 1                              unless defined $npt_freepar1
 #$maxfreepar1       = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value   
 #$npt_freepar1      = 51                         unless defined $npt_freepar1;    # of free parameter points to scan    
 
-$type_error        = "" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
-$draw_full_chisq   = 1             unless defined $draw_full_chisq;
+$type_error        = ""             unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
+$draw_full_chisq   = 1              unless defined $draw_full_chisq;
 
-$test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
+$test_stat         = "rate+shape"   unless defined $test_stat;     # "rate-only" or "rate+shape"
 
-$store_like_weights = 0   unless defined $store_like_weights;  # set to 1 only if 1 fit is run
+$store_like_weights = 0             unless defined $store_like_weights;  # set to 1 only if 1 fit is run
 
-$penalty_freepar0 = 0         unless defined $penalty_freepar0; 
-$penalty_freepar1 = 0         unless defined $penalty_freepar1; 
+$penalty_freepar0 = 0               unless defined $penalty_freepar0;
+$penalty_freepar1 = 0               unless defined $penalty_freepar1;
+$queue            = 0               unless defined $queue;
 
 ########################################################################################
 
@@ -847,6 +849,10 @@ while($i_freepar1 < $n_freepar1) {
 		print PBS "#PBS -l cput=$cput \n";
 		print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
 		print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+    if($queue eq "outofhours")
+    {
+      print PBS "#PBS -q outofhours \n";
+    }
 		print PBS "cd $job_dir \n";
 		print PBS "source $fmwk_dir/setup/setup_at_oxford.sh $fmwk_dir\n";
 		print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
@@ -866,9 +872,9 @@ while($i_freepar1 < $n_freepar1) {
 	    #
 	    # interactive
 	    #
-	    if($resource eq "interactive") {
-		system($command);
-	    }
+    if($resource eq "interactive") {
+      system($command);
+    }
 	    
 	    
 	    $irun++;
