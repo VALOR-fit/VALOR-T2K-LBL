@@ -390,7 +390,6 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->SetMaxFitNumber(3); // Max # of fits max # of iterations
   
 
-
   ////// NEW FC
   if(masshier==""){
     fitmarg->SetTagFileName(runopt->Infilename().c_str());
@@ -424,138 +423,145 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
 
   fitmarg->SetFileID(runopt->Nfiles());
 
-  // 1D deltaCP fit
-  if(runopt->Freeparname0()=="deltacp" && runopt->Freeparname1()==""){
-    util::MargFit_1D_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-  // 1D betaBar fit (nuebar appearance)
-  else if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()=="" && runopt->Teststat()=="rate-only"){
-    util::MargFit_1D_betaBarRateOnly(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-  // 1D betaBar fit (nuebar appearance rate+shape)
-  else if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()==""){
-    util::MargFit_1D_betaBar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-  // 2D sinsqth13 Vs dcp fit
-  else if(runopt->Freeparname0()=="mixing13" && runopt->Freeparname1()=="deltacp"){
-        
-    bool penalty_par0       = runopt->PenaltyTerm0();
-    bool penalty_par1       = runopt->PenaltyTerm1();
-    bool constrain          = penalty_par0 && penalty_par1;
-    double sinsq2th13_mean  = conv::kPrior_Sinsq2th13_Used_Mean; // Used (sinsq2th13)
-    double sinsq2th13_sigma = conv::kPrior_Sinsq2th13_Used_RMS; // Used (sinsq2th13)
-    
-    if(penalty_par0 && !penalty_par1){
-      cout << endl;
-      cout << "Use penalty term only for free parameter 0:" << endl;
-      cout << " sinsq2th13_mean = "  << sinsq2th13_mean  << endl;
-      cout << " sinsq2th13_sigma = " << sinsq2th13_sigma << endl;
-      cout << endl;
-    }
-    else if(!penalty_par0 && !penalty_par1){
-      cout << endl;
-      cout << "No penalty term is used" << endl;
-      cout << endl;
-    }
-    else{
-      cerr << endl;
-      cerr << "valor::util::PerformMargFit()" << endl;
-      cerr << "Penalty term for parameter 1 is not implemented yet" << endl;
-      cerr << endl;
-      exit(1);
-    }
-       
-    fitmarg->UsePenaltyTerm(penalty_par0,penalty_par1);
-    fitmarg->SetPenaltyTerm(sinsq2th13_mean, sinsq2th13_sigma); // to be used after UsePenaltyTerm()
-    
-    util::MargFit_2D_sinsqth13_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
 
-  // 2D sinsqth23 Vs dcp fit
-  else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="deltacp"){
-    util::MargFit_2D_sinsqth23_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
 
-  // 2D dmsq32 Vs dcp fit
-  else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()=="deltacp"){
-    util::MargFit_2D_dmsq32_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-  
-  // 2D sinsqth23 Vs dmsq32 fit
-  else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="dmsq23"){
-    util::MargFit_2D_sinsqth23_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-  
-  // 2D sinsqth23bar Vs dmsq32bar fit
-  else if(runopt->Freeparname0()=="mixing23Bar" && runopt->Freeparname1()=="dmsq23Bar"){
-    util::MargFit_2D_sinsqth23_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-  
+  if(runopt->DoMinimize()) {
+    
+    // 1D deltaCP fit
+    if(runopt->Freeparname0()=="deltacp" && runopt->Freeparname1()==""){
+      util::MargFit_1D_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    // 1D betaBar fit (nuebar appearance)
+    else if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()=="" && runopt->Teststat()=="rate-only"){
+      util::MargFit_1D_betaBarRateOnly(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    // 1D betaBar fit (nuebar appearance rate+shape)
+    else if(runopt->Freeparname0()=="betaBar" && runopt->Freeparname1()==""){
+      util::MargFit_1D_betaBar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    // 2D sinsqth13 Vs dcp fit
+    else if(runopt->Freeparname0()=="mixing13" && runopt->Freeparname1()=="deltacp"){
+      
+      bool penalty_par0       = runopt->PenaltyTerm0();
+      bool penalty_par1       = runopt->PenaltyTerm1();
+      bool constrain          = penalty_par0 && penalty_par1;
+      double sinsq2th13_mean  = conv::kPrior_Sinsq2th13_Used_Mean; // Used (sinsq2th13)
+      double sinsq2th13_sigma = conv::kPrior_Sinsq2th13_Used_RMS; // Used (sinsq2th13)
+      
+      if(penalty_par0 && !penalty_par1){
+	cout << endl;
+	cout << "Use penalty term only for free parameter 0:" << endl;
+	cout << " sinsq2th13_mean = "  << sinsq2th13_mean  << endl;
+	cout << " sinsq2th13_sigma = " << sinsq2th13_sigma << endl;
+	cout << endl;
+      }
+      else if(!penalty_par0 && !penalty_par1){
+	cout << endl;
+	cout << "No penalty term is used" << endl;
+	cout << endl;
+      }
+      else{
+	cerr << endl;
+	cerr << "valor::util::PerformMargFit()" << endl;
+	cerr << "Penalty term for parameter 1 is not implemented yet" << endl;
+	cerr << endl;
+	exit(1);
+      }
+      
+      fitmarg->UsePenaltyTerm(penalty_par0,penalty_par1);
+      fitmarg->SetPenaltyTerm(sinsq2th13_mean, sinsq2th13_sigma); // to be used after UsePenaltyTerm()
+      
+      util::MargFit_2D_sinsqth13_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    
+    // 2D sinsqth23 Vs dcp fit
+    else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="deltacp"){
+      util::MargFit_2D_sinsqth23_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    
+    // 2D dmsq32 Vs dcp fit
+    else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()=="deltacp"){
+      util::MargFit_2D_dmsq32_deltaCP(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    
+    // 2D sinsqth23 Vs dmsq32 fit
+    else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="dmsq23"){
+      util::MargFit_2D_sinsqth23_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    
+    // 2D sinsqth23bar Vs dmsq32bar fit
+    else if(runopt->Freeparname0()=="mixing23Bar" && runopt->Freeparname1()=="dmsq23Bar"){
+      util::MargFit_2D_sinsqth23_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    
     // 2D sinsqth23 Vs sinsqth23bar fit
-  else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="mixing23Bar"){
+    else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()=="mixing23Bar"){
       util::MargFit_2D_sinsqth23_sinsqth23bar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
+    }
     
     // 2D dmsq32 Vs dmsq32bar fit
-  else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()=="dmsq23Bar"){
+    else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()=="dmsq23Bar"){
       util::MargFit_2D_dmsq_dmsqbar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-
-  
-
-  // 1D sinsqth13 fit
-  else if(runopt->Freeparname0()=="mixing13" && runopt->Freeparname1()==""){
-    util::MargFit_1D_sinsqth13(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }  
-  //
-  // 1D sinsqth23 fit
-  else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()==""){
-    util::MargFit_1D_sinsqth23(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-  //
-  // 1D dmsq32 fit
-  //
-  else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()==""){
-    util::MargFit_1D_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
-  }
-
-
-  else{
+    }
+    
+    // 1D sinsqth13 fit
+    else if(runopt->Freeparname0()=="mixing13" && runopt->Freeparname1()==""){
+      util::MargFit_1D_sinsqth13(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }  
+    //
+    // 1D sinsqth23 fit
+    else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()==""){
+      util::MargFit_1D_sinsqth23(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    //
+    // 1D dmsq32 fit
+    //
+    else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()==""){
+      util::MargFit_1D_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+    
+    else{
+      cout << endl;
+      cout << "/////////////////////////////////////////////////////////////" << endl;
+      cout << "//                                                         //" << endl;
+      cout << "// Minimization of the marginalized chisq is not performed //" << endl;
+      cout << "// though it suppoosed to                                  //" << endl;
+      cout << "//                                                         //" << endl;
+      cout << "/////////////////////////////////////////////////////////////" << endl;
+      cout << endl;
+      cout << endl;    
+    }
+    
+    //
+    
     cout << endl;
-    cout << "/////////////////////////////////////////////////////////////" << endl;
-    cout << "//                                                         //" << endl;
-    cout << "// Minimization of the marginalized chisq is not performed //" << endl;
-    cout << "//                                                         //" << endl;
-    cout << "/////////////////////////////////////////////////////////////" << endl;
+    cout << "Minimization is complete" << endl;
     cout << endl;
+    cout << "Set best-fit parameter values" << endl;
     cout << endl;
     
+    // Set best-fit parameters in FitMarginalization object
+    // Otherwise error computation is done with respect to a wrong minimum
+    fitmarg->SetChisqBestFit(chisqmin);
+    fitmarg->SetParamBestFit(0,bestfit0);
+    if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
+    cout << endl;
+    cout << "bestfit0 = " << bestfit0 << endl;
+    cout << "bestfit1 = " << bestfit1 << endl;
+    cout << "chisqmin = " << chisqmin << endl;
+    cout << endl; 
+    
+    
+    // Build the DeltaChisqMarg after the best-fit Chisq has been set
+    // Otherwise DeltaChisqMarg becomes negative if shifted wrt a local minimum
+    
+    cout << "Build deltaChisqMarg distribution" << endl;
+    fitmarg->BuildDeltaChisqMarg(); 
+
   }
-  //
-  
-  cout << endl;
-  cout << "Minimization is complete" << endl;
-  cout << endl;
-  cout << "Set best-fit parameter values" << endl;
-  cout << endl;
-
-  // Set best-fit parameters in FitMarginalization object
-  // Otherwise error computation is done with respect to a wrong minimum
-  fitmarg->SetChisqBestFit(chisqmin);
-  fitmarg->SetParamBestFit(0,bestfit0);
-  if(fitmarg->IsFit2D()) fitmarg->SetParamBestFit(1,bestfit1);
-  cout << endl;
-  cout << "bestfit0 = " << bestfit0 << endl;
-  cout << "bestfit1 = " << bestfit1 << endl;
-  cout << "chisqmin = " << chisqmin << endl;
-  cout << endl; 
-
-
-  // Build the DeltaChisqMarg after the best-fit Chisq has been set
-  // Otherwise DeltaChisqMarg becomes negative if shifted wrt a local minimum
-
-  cout << "Build deltaChisqMarg distribution" << endl;
-  fitmarg->BuildDeltaChisqMarg(); 
+  else{
+    cout << "Do not minimize the free parameters" << endl;
+  }
 
 }
 //____________________________________________________________________________
@@ -830,9 +836,9 @@ void valor::util::MargFit_1D_betaBar(RunOpt *runopt,FitMarginalization *fitmarg,
   fitmarg->SetStartBin(0.,1.); 
   fitmarg->SetNumStartBin(1,1);
   fitmarg->SetGridStartRange(0.,1.,0.,0.);
-  fitmarg->SetExtractStartPt("Single");
+  fitmarg->SetExtractStartPt("Single");  
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);  
-
+  
   double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
   double bestfit0_1 = fitmarg->GetParamBestFit(0);
   double bestfit1_1 = -999.;
@@ -847,8 +853,7 @@ void valor::util::MargFit_1D_betaBar(RunOpt *runopt,FitMarginalization *fitmarg,
     nfits = nfits_1;    
     fitstatus = fitstatus_1;
     niterations = niterations_1;
-  }
-
+  }  
 }
 //____________________________________________________________________________
 void valor::util::MargFit_1D_betaBarRateOnly(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)

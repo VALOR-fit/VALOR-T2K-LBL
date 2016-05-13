@@ -16,7 +16,7 @@ MAKEFILE = Makefile
 #
 include $(T2KOSCANA)/make/Make.include
 
-TGT = generate_toymc_ensemble run_fit_marginalization run_fc_marginalization
+TGT = generate_toymc_ensemble run_fit_marginalization run_fc_marginalization run_mh_marginalization
 
 all: $(TGT)
 
@@ -32,7 +32,11 @@ run_fit_marginalization: FORCE
 
 run_fc_marginalization: FORCE
 	$(CXX) $(CXXFLAGS) -c run_fc_marginalization.cxx $(INCLUDES)
-	 $(LD) $(LDFLAGS) run_fc_marginalization.o $(LIBRARIES) $(VALOR_LIBRARIES) -o $(T2KOSCANA)/bin/run_fc_marginalization	
+	$(LD) $(LDFLAGS) run_fc_marginalization.o $(LIBRARIES) $(VALOR_LIBRARIES) -o $(T2KOSCANA)/bin/run_fc_marginalization	
+
+run_mh_marginalization: FORCE
+	$(CXX) $(CXXFLAGS) -c run_mh_marginalization.cxx $(INCLUDES)
+	$(LD) $(LDFLAGS) run_mh_marginalization.o $(LIBRARIES) $(VALOR_LIBRARIES) -o $(T2KOSCANA)/bin/run_mh_marginalization   
 
 #################### CLEANING
 
@@ -43,12 +47,14 @@ clean: FORCE
 	$(RM) *.o *~ core
 	$(RM) $(T2KOSCANA)/bin/generate_toymc_ensemble
 	$(RM) $(T2KOSCANA)/bin/run_fit_marginalization
-	 $(RM) $(T2KOSCANA)/bin/run_fc_marginalization
+	$(RM) $(T2KOSCANA)/bin/run_fc_marginalization
+	$(RM) $(T2KOSCANA)/bin/run_mh_marginalization
 
 #distclean: FORCE
 #	$(RM) $(VALOR_T2XK_INSTALLATION_PATH)/bin/generate_toymc_ensemble
 #	$(RM) $(VALOR_T2XK_INSTALLATION_PATH)/bin/run_fit_marginalization
 #       $(RM) $(VALOR_T2XK_INSTALLATION_PATH)/bin/run_fc_marginalization
+#       $(RM) $(VALOR_T2XK_INSTALLATION_PATH)/bin/run_mh_marginalization 
 
 FORCE:
 
