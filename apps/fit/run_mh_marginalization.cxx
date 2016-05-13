@@ -477,12 +477,15 @@ int main(int argc, char ** argv)
      if(truepar0 != 1.){
        
        cerr << endl;
+       cerr << "truepar0 = " << truepar0 << endl;
+       cerr << endl;
        cerr << "////////////////////////////////////////////////////////////" << endl;
        cerr << "//                                                        //" << endl;
        cerr << "// WARNING: the true parameter (betaBar) must be set to 1 //" << endl;
        cerr << "//          for Mass Hierarchy fit                        //" << endl;
        cerr << "//                                                        //" << endl;
        cerr << "//          Force it to be 1!!!                           //" << endl;
+       cerr << "//                                                        //" << endl;
        cerr << "////////////////////////////////////////////////////////////" << endl;
        cerr << endl;
        
