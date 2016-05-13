@@ -454,8 +454,8 @@ int main(int argc, char ** argv)
      freepar0 = util::GetFreePar(runopt->Freeparname0());     
      truepar0 = fparm->InitValue(freepar0);
 
-     freepar1 = util::GetFreePar(runopt->Freeparname1());     
-     truepar1 = fparm->InitValue(freepar1);
+     //freepar1 = util::GetFreePar(runopt->Freeparname1());     
+     //truepar1 = fparm->InitValue(freepar1);
         
      FitMarginalization *fitmarg_nh = new FitMarginalization();   
      FitMarginalization *fitmarg_ih = new FitMarginalization();   
