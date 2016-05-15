@@ -670,10 +670,12 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
     for(int i = 0;i<2;i++){
       if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[1] == kPhypUndefined){
       fNuEAppHisto[i] = new TH1D(Form("NuEBarAppHisto_%d",i),Form("Expected NuEBar Events; BetaBar bin %d",i),25000,0,25);
+      fNuEAppHistoUnscaled[i] = new TH1D(Form("NuEBarAppHistoUnscaled_%d",i),Form("Expected NuEBar Events Unscaled; BetaBar bin %d",i),25000,0,25);
       }
       else
       {
         fNuEAppHisto[i] = 0;
+        fNuEAppHistoUnscaled[i] = 0;
       }
     }
   
@@ -767,6 +769,11 @@ void FitMarginalization::CleanUp(void){
       delete fNuEAppHisto[i];
       fNuEAppHisto[i] = 0;
       }
+    if(fNuEAppHistoUnscaled[i]){
+      delete fNuEAppHistoUnscaled[i];
+      fNuEAppHistoUnscaled[i] = 0;
+    }
+
   }
 }
 //________________________________________________________________________________________
@@ -8465,9 +8472,11 @@ double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_d
 #endif
   if(fNuEAppHisto[iterpar0]->GetEntries()!=0){
     std::cerr << "FitMarginalization/FillExpectedNuEBarAppHisto >> Histogram for beta bin: " << iterpar0
-              << " already filled. Reseting histogram."
+              << " already filled. Reseting histograms."
     << std::endl;
     fNuEAppHisto[iterpar0]->Reset();
+    fNuEAppHistoUnscaled[iterpar0]->Reset();
+
   }
   
   if(fPhysParamFree[0] != kPhypBetaBar || fPhysParamFree[1] != kPhypUndefined || fteststatistic != "rate-only")
@@ -8630,6 +8639,7 @@ double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_d
     {
     NuEAppEvents = Rnd::Instance()->RndToyMCstat().Poisson(NuEAppEvents);
     fNuEAppHisto[iterpar0]->Fill(NuEAppEvents,exp(-chisq/2.));
+    fNuEAppHistoUnscaled[iterpar0]->Fill(NuEAppEvents);
     }
   } // iexperiment
   

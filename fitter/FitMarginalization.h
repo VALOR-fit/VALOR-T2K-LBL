@@ -133,7 +133,7 @@ class FitMarginalization
   //
 
 
-  // NEW 2D TEMPLATES (VARRAY)nuosc3fbar_numudissap_allsyst
+  // NEW 2D TEMPLATES (VARRAY)nuosc3fbar_numudisapp_allsyst
   double GetNormPOT(conv::SuperkSample_t s) const;
   double GetPOT(conv::SuperkSample_t s) const;
   //
@@ -340,12 +340,16 @@ class FitMarginalization
   //NuEBar app
   double FillExpectedNuEBarAppHisto(SuperkObservation *skobs_data,int iterpar0,bool readbinary);
   TH1D* GetNuEBarHisto(int i){return fNuEAppHisto[i];};
+  // Histo below is required for p-value statistical uncertainty
+  TH1D* GetNuEBarHistoUnscaled(int i){return fNuEAppHistoUnscaled[i];};
 
 private:
 
   //NuEBar app histogram one for each value of Beta (is only initialised and 
   //filled if beta is the only parameter of intereset 
   TH1D* fNuEAppHisto[2];
+  // histo below is required for p-value statistical uncertainty
+  TH1D* fNuEAppHistoUnscaled[2];
 
   // NEW PRECISION
   TH1D *fhchisq_marg_1D; 
