@@ -12,7 +12,7 @@
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
 //#define __show_init_mesg_debug2__
-#define __show_xsecsystconv_check_mesg_info__
+//#define __show_xsecsystconv_check_mesg_info__
 //#define __show_xsecsystconv_check_mesg_debug__
 //#define __show_banff_tuning_wght_mesg_info__
 //#define __show_banff_tuning_wght_mesg_debug__
@@ -21,14 +21,15 @@
 //#define __show_build_xsbinning_template_mesg_debug__
 //#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
-#define __show_find_wght_spline_mesg_debug__
+//#define __show_find_wght_spline_mesg_debug__
 //#define __save_ori_templates_init_debug__
-#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
-#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong. needs __use_flat_splines_for_missing_splines__
+//#define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
+//#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong. needs __use_flat_splines_for_missing_splines__
 //#define check_spline_limits       //slow, but should be used when testing
+//#define __use_1Rsplines_for_MultiR_sample__
 
 
-#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+//#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 //#define WARN_ON_FLAT_SPLINE
 
 #define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
@@ -507,7 +508,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         if(!bin_is_not_empty)
                             continue;
 #endif
-		      
                         std::string splname = this->BuildSplineName(s,m,p,ir,it);
         		
 #ifdef __show_init_mesg_debug__
@@ -531,12 +531,14 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                             }
                             else {
 #ifndef __use_flat_splines_for_missing_splines__
-                                cerr << "Exp/NuXSec >> Null cross-section weight spline: "
-                                << splname
+                              LOG("NuXSec",pERROR) << "Reading from file: "
+                                                   <<  spline_files[s]->GetName() << "\n"
+                                                   << "Exp/NuXSec >> Null cross-section weight spline: "
+                                                   << splname
 #if SPLINE_TYPE == 0
                                 << ", " << AsString(m)
 #endif
-                                << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+                                << " Ereco: " << Ereco << ", Etrue: " << Etrue;
                                 cerr << AsString(s) << endl;
                                 util::Die(1);
 #else
@@ -551,13 +553,13 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         } // !spl
                         else {
                             if(!bin_is_not_empty) {
-                                cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-                                << splname
-                                << " Ereco: "  << Ereco_min << "-" << Ereco_max
-                                << ", Etrue: " << Etrue_min << "-" << Etrue_max
-                                //<< ". Spline thinks there are " << spl->GetTitle()
-                                << endl;
-                                // util::Die(1);
+                                // cerr << "Exp/NuXSec >> Spline exists for empty bin: "
+                                // << splname
+                                // << " Ereco: "  << Ereco_min << "-" << Ereco_max
+                                // << ", Etrue: " << Etrue_min << "-" << Etrue_max
+                                // //<< ". Spline thinks there are " << spl->GetTitle()
+                                // << endl;
+                                // // util::Die(1);
                             }
                         }
                         
@@ -679,8 +681,8 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
     /// NEW MULTIRING (multiring-only splines)
     //~ spline_files[kSKsFCFVMultiRingMuLike]= util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_mu_ring");
     //~ spline_files[kSKsFCFVMultiRingELike ]= util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_e_ring");
-    spline_files[kSKsFCFVMultiRingMuLike] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_mu_ring");
-    spline_files[kSKsFCFVMultiRingELike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/multi_e_ring");
+    spline_files[kSKsFCFVMultiRingMuLike] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/multi_mu_ring");
+    spline_files[kSKsFCFVMultiRingELike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/multi_e_ring");
     
     assert(spline_files[kSKsFCFV1RingMuLike    ]);
     assert(spline_files[kSKsFCFV1RingELike     ]);
@@ -707,7 +709,8 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
         if(s == kSKsUndefined) continue;
         
 #ifdef __show_init_mesg_info__
-        LOG("NuXSec",pINFO) << "Reading splines for " << util::AsString(s);
+        LOG("NuXSec",pINFO) << "Reading splines for " << util::AsString(s) << "\n"
+                            << "From file: " << spline_files[s]->GetName();
 #endif
         
         bool is_rhc = util::IsRHCSample(s);
@@ -781,6 +784,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                             if(!bin_is_not_empty)
                                 continue;
 #endif
+                            
                             std::string splname = this->BuildSplineName(s,m,p,ir,it,iv);
                             
 #ifdef __show_init_mesg_debug__
@@ -804,12 +808,14 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                                 }
                                 else {
 #ifndef __use_flat_splines_for_missing_splines__
-                                    cerr << "Exp/NuXSec >> Null cross-section weight spline: "
-                                    << splname
+                                  LOG("NuXSec",pERROR) << "Reading from file: "
+                                                       << spline_files[s]->GetName() << "\n"
+                                                       << "Exp/NuXSec >> Null cross-section weight spline: "
+                                                       << splname
 #if SPLINE_TYPE == 0
                                     << ", " << AsString(m)
 #endif
-                                    << " Ereco: " << Ereco << ", Etrue: " << Etrue << ", Q2: " << Q2 << endl;
+                                    << " Ereco: " << Ereco << ", Etrue: " << Etrue << ", Q2: " << Q2;
                                     cerr << AsString(s) << endl;
                                     util::Die(1);
 #else
@@ -824,14 +830,14 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                             } // !spl
                             else {
                                 if(!bin_is_not_empty) {
-                                    cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-                                    << splname
-                                    << " Ereco: "  << Ereco_min << "-" << Ereco_max
-                                    << ", Etrue: " << Etrue_min << "-" << Etrue_max
-                                    << ", Q2:    " << Q2_min    << "-" << Q2_max
-                                    //<< ". Spline thinks there are " << spl->GetTitle()
-                                    << endl;
-                                    // util::Die(1);
+                                    // cerr << "Exp/NuXSec >> Spline exists for empty bin: "
+                                    // << splname
+                                    // << " Ereco: "  << Ereco_min << "-" << Ereco_max
+                                    // << ", Etrue: " << Etrue_min << "-" << Etrue_max
+                                    // << ", Q2:    " << Q2_min    << "-" << Q2_max
+                                    // //<< ". Spline thinks there are " << spl->GetTitle()
+                                    // << endl;
+                                    // // util::Die(1);
                                 }
                             }
                             
@@ -3035,6 +3041,13 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
 //________________________________________________________________________________________
 TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_t mp, double Ereco, double Etrue, double Q2) const
 {
+#ifdef __use_1Rsplines_for_MultiR_sample__
+  // ~#{ Hack for testing set multiring splines to single ring splines
+  if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  // }#~
+#endif 		        
+
     SuperkMode_t m = mp; // default
     // HACK: for `osc numu' templates, use `numu' response functions
     if      ( mp == kSKmOscNuMuCCQE     ) { m = kSKmNuMuCCQE;     } //both use the same binning
@@ -3231,6 +3244,7 @@ int NuXSec::WghtSplineIdx(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, dou
     
     return idx;
 }
+
 int NuXSec::WghtSplineIdx( PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, double Q2) const
 {
     // 1-D array of weight splines is basically a linearized version of a 6-D array
@@ -3881,31 +3895,19 @@ void NuXSec::SyncRHCToFHCSystematics()
 //________________________________________________________________________________________
 std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const
 {
-    ostringstream splname;
-    splname << "spl_";
+#ifdef __use_1Rsplines_for_MultiR_sample__
+  // ~#{ Hack for testing set multiring splines to single ring splines
+  // remove when splines are generated for samples
+  if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  // }#~
+#endif
+  
+  ostringstream splname;
+  splname << "spl_";
 #if defined(__USE_NIWG2013__)
-    if(IsMultiRMuSample(s)){
-      // ~#{? 
-      //  splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
-      // Want to set the spline name such that the 1Rmu samples are read
-      // FOR TESTING ONLY 
-        s = kSKsFCFV1RingMuLike;
-        splname << util::AsStringCompact_splinehack(s) << "_";
-        cout << "set name to mu like" << endl;
-    }
-    else if(IsMultiRESample(s)){
-      // ~#{? 
-      // splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
-      // FOR TESTING ONLY
-        s = kSKsFCFV1RingELike;
-        splname << util::AsStringCompact_splinehack(s) << "_";
-        cout << "set name to e like" << endl;
-    }
-    else {
-        splname << util::AsStringCompact_splinehack(s) << "_";
-    }
-    
-    splname   << util::AsStringCompact_splinehack(m) << "_"
+    splname << util::AsStringCompact_splinehack(s) << "_";
+    splname << util::AsStringCompact_splinehack(m) << "_"
     << util::AsStringCompact_splinehack(p) << "_"
     << reco_bin << "_"
     << true_bin;
@@ -3921,27 +3923,18 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
 //________________________________________________________________________________________
 std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin, int q2bin) const
 {
+#ifdef __use_1Rsplines_for_MultiR_sample__
+  // ~#{ Hack for testing set multiring splines to single ring splines
+  // remove when splines are generated for samples
+  if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  // }#~
+#endif 		      
     ostringstream splname;
     splname << "spl_";
 #if defined(__USE_NIWG2013__)
-    if(IsMultiRMuSample(s))
-      // ~#{? 
-      //  splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingMuLike) << "_";
-      // Want to set the spline name such that the 1Rme samples are read
-      // FOR TESTING ONLY 
-        s == kSKsFCFV1RingMuLike;
-        splname << util::AsStringCompact_splinehack(s) << "_";
-        
-    else if(IsMultiRESample(s))
-      // ~#{? 
-      // splname << util::AsStringCompact_splinehack(valor::conv::kSKsFCFV1RingELike) << "_";
-      // FOR TESTING ONLY
-        s == kSKsFCFV1RingELike;
-        splname << util::AsStringCompact_splinehack(s) << "_";
-    else
-        splname << util::AsStringCompact_splinehack(s) << "_";
-    
-    splname   << util::AsStringCompact_splinehack(m) << "_"
+    splname << util::AsStringCompact_splinehack(s) << "_";
+    splname << util::AsStringCompact_splinehack(m) << "_"
     << util::AsStringCompact_splinehack(p) << "_"
     << reco_bin << "_"
     << true_bin;
