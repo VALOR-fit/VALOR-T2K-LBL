@@ -87,9 +87,9 @@ namespace valor {
 // Have 12 parameters but empty covariances in the lowest energy bins
 // 4 parameters with 3 bins each -> 12 - 4    
 #elif MR_FSI_BINS == 3 
-    static const int kNumOfSKDetFSIParamsMultiRing  = 8;
+    static const int kNumOfSKDetFSIParamsMultiRing  = 8; //12;
     static const int kNumOfSKDetFSIParamsMultiRmu = 0;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 8;    
+    static const int kNumOfSKDetFSIParamsMultiRe  = 8; //12;    
 #endif
 
 #elif defined(__USE_SKDETFSI2015__)
@@ -100,11 +100,7 @@ namespace valor {
     static const int kNumOfRHCSKDetFSIParams     = 24;
     static const int kNumOfRHCSKDetFSIParams1Rmu = 12;
     static const int kNumOfRHCSKDetFSIParams1Re  = 12;
-    /// NEW MULTIRING 2
-    static const int kNumOfSKDetFSIParamsMultiRing = 24;
-    static const int kNumOfSKDetFSIParamsMultiRmu = 12;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 12;
-    ////
+
 #elif FSI_BINS == 2
     static const int kNumOfSKDetFSIParams     = 12;
     static const int kNumOfSKDetFSIParams1Rmu = 12;
@@ -112,11 +108,7 @@ namespace valor {
     static const int kNumOfRHCSKDetFSIParams     = 12;
     static const int kNumOfRHCSKDetFSIParams1Rmu = 12;
     static const int kNumOfRHCSKDetFSIParams1Re  = 0;
-    /// NEW MULTIRING 2
-    static const int kNumOfSKDetFSIParamsMultiRing = 12;
-    static const int kNumOfSKDetFSIParamsMultiRmu = 12;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 0;
-    ///
+
 #elif FSI_BINS == 3
     static const int kNumOfSKDetFSIParams     = 12;
     static const int kNumOfSKDetFSIParams1Rmu = 0;
@@ -124,12 +116,24 @@ namespace valor {
     static const int kNumOfRHCSKDetFSIParams     = 12;
     static const int kNumOfRHCSKDetFSIParams1Rmu = 0;
     static const int kNumOfRHCSKDetFSIParams1Re  = 12;
-    /// NEW MULTIRING 2
-    static const int kNumOfSKDetFSIParamsMultiRing = 12;
-    static const int kNumOfSKDetFSIParamsMultiRmu = 0;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 12;
-    ///
 #endif
+
+#if MR_FSI_BINS == 1
+    static const int kNumOfSKDetFSIParamsMultiRing = 24;
+    static const int kNumOfSKDetFSIParamsMultiRmu = 12;
+    static const int kNumOfSKDetFSIParamsMultiRe  = 12;
+    
+#elif MR_FSI_BINS == 2
+    static const int kNumOfSKDetFSIParamsMultiRing = 12;
+    static const int kNumOfSKDetFSIParamsMultiRmu = 12;
+    static const int kNumOfSKDetFSIParamsMultiRe  = 0;
+    
+#elif MR_FSI_BINS == 3
+    static const int kNumOfSKDetFSIParamsMultiRing = 8; //12; 
+    static const int kNumOfSKDetFSIParamsMultiRmu = 0;
+    static const int kNumOfSKDetFSIParamsMultiRe  = 8; //12;
+#endif
+    
 #endif
 
     // NEW FHC+RHC JOINT
@@ -2859,7 +2863,7 @@ namespace valor {
     // It doesn't support RHC systematic parameters if not fully correlated w/ FHC sample --> to fix it
 #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
 
-#if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) // fhc all + skdetfsi multiring (no escale)
+#if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) && !defined(__RHC_RUNNING__)  // fhc all + skdetfsi multiring (no escale)
 #  if defined(__MULTIRING_FHC_NUMU__) && ! defined(__MULTIRING_FHC_NUE__)
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRmu;  // Tot # par FHC+MultiRmu
 #  elif defined (__MULTIRING_FHC_NUE__) && ! defined(__MULTIRING_FHC_NUMU__)
@@ -2870,12 +2874,19 @@ namespace valor {
     // NEW FLUX
 #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__)// fhc+rhc (fully correlated)
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
-    //
-
-    // NEW FHC+RHC JOINT
+    //    
+    
+    // NEW FHC+RHC JOINT and multiring
 #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && !defined(__FULLY_CORRELATED__) // fhc+rhc (w/ correlations)
-    static const int kNumOfNuisanceParams = kNumOfFHCpRHCParamsInBANFFfit + kNumOfFHCpRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
-    //
+#  if defined(__MULTIRING_FHC_NUMU__) && ! defined(__MULTIRING_FHC_NUE__)
+    static const int kNumOfNuisanceParams = kNumOfFHCpRHCParamsInBANFFfit + kNumOfFHCpRHCSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRmu;  // Tot # par FHC+MultiRmu
+#  elif defined (__MULTIRING_FHC_NUE__) && ! defined(__MULTIRING_FHC_NUMU__)
+    static const int kNumOfNuisanceParams = kNumOfFHCpRHCParamsInBANFFfit + kNumOfFHCpRHCSKDetFSIParams + 1/*fhc energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRe;  // Tot # par FHC+MultiRmu
+#  else
+    static const int kNumOfNuisanceParams = kNumOfFHCpRHCParamsInBANFFfit + kNumOfFHCpRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst + kNumOfSKDetFSIParamsMultiRing;
+#  endif
+    
+      //
 
 #elif defined(__FHC_RUNNING__)  // fhc only
     static const int kNumOfNuisanceParams = kNumOfParamsInBANFFfit + kNumOfSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ;
@@ -2884,7 +2895,7 @@ namespace valor {
 #elif defined(__RHC_RUNNING__) // rhc only
     static const int kNumOfNuisanceParams = kNumOfRHCParamsInBANFFfit + kNumOfRHCSKDetFSIParams + 1/*energy scale*/  + kNumOfUncXSecSyst ; // uncorr xsec is identical to fhc-only
     //
-
+    
 #endif
 
 #else
