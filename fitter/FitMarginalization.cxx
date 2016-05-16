@@ -4148,9 +4148,9 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm)
     //bool fdoMarginalize = true;
     
     if(p!=fPhysParamFree[0]) 
-      infparm->SetDoMarg(fPhysParamFree[0],true); 
+      infparm->SetDoMarg(p,true); 
     else{
-      infparm->SetDoMarg(fPhysParamFree[0],false);  // Do not marginalize if free parameter 
+      infparm->SetDoMarg(p,false);  // Do not marginalize if free parameter 
       continue; 
     }
     
