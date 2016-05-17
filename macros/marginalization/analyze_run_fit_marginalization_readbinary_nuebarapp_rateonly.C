@@ -28,9 +28,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   
   PhysParamList *iparm;
   FitParamList *fparm;
-  TH1F *hchisq1D_out;
+  TH1D *hchisq1D_out;
   int ToyID=-999;
-  TH2F *hErecoToy=0;
+  TH2D *hErecoToy=0;
   TH1D* hbeta0 = 0;
   TH1D* hbeta1 = 0;
   TH1D* hbeta0Unscaled = 0;
@@ -416,7 +416,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
 double get_error(double obs, TH1D* hbeta, TH1D* hbetaUnscaled)
 {
   int obs_bin = hbeta->FindBin(obs);
-  double pvalue = hbeta->Integral(obs_bin,hbeta->GetXaxis()->GetNBins());
+  double pvalue = hbeta->Integral(obs_bin,hbeta->GetXaxis()->GetNbins());
   double err_sqrd = 0;
   for(int i=1;i<obs_bin;i++)
   {
@@ -427,7 +427,7 @@ double get_error(double obs, TH1D* hbeta, TH1D* hbetaUnscaled)
     err_sqrd = err_sqrd + err;
   }
   
-  for(int i=obs_bin;i<=hbeta->GetXaxis()->GetNBins();i++)
+  for(int i=obs_bin;i<=hbeta->GetXaxis()->GetNbins();i++)
   {
     double pd = hbeta->Integral();
     double wr = hbeta->GetBinContent(i)/hbetaUnscaled->GetBinContent(i);
