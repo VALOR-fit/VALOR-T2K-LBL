@@ -26,7 +26,9 @@
 // #define __show_skdetfsi_tweak_mesg_debug__
 // #define __show_chisqpenalty_mesg_debug__
 // #define __show_skdetfsi_applysyst_mesg_debug__
-#define __skdetfsi_wgt_debug__
+
+// #define __use_1Rsyst_for_MultiR_sample__
+
 
 #include <cassert>
 #include <cstdlib>
@@ -163,6 +165,11 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   
   CheckSKMode(numOfActiveSKDetFSIParams-1, activeSKDetFSIParams,
               (const bool *)kSKDetFSIParamToSKMode, "activeSKDetFSIParams", false);
+
+  LOG("SuperkDetectorFSI",pINFO) << "Active parameters: ";
+  for (unsigned int i = 0; i < numOfActiveSKDetFSIParams; i++){
+    cout << activeSKDetFSIParams[i] << " " << util::AsString(activeSKDetFSIParams[i]) << "\n";
+  }
   
   this->Init(numOfActiveSKDetFSIParams, activeSKDetFSIParams, "syst/skdetfsi");
   this->SetName("SuperkDetectorFSI");
@@ -171,7 +178,7 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   
   LOG("SuperkDetectorFSI",pINFO) << "Defined final SKDetFSI matrix rows: ";
   for (unsigned int i = 0 ; i < fNSystParameters; i++ ) {
-    LOG("SuperkDetectorFSI",pINFO) << "\t"<<util::AsString(fSystParameters[i])<<" (default: "<<(*fDefaultValues)[i]<<")";
+    LOG("SuperkDetectorFSI",pINFO) << "\t" << fSystParameters[i] << " " <<util::AsString(fSystParameters[i])<<" (default: "<<(*fDefaultValues)[i]<<")";
   }
   
   Registry & reg = Opt::Instance()->MutableGlobalRegistry();
@@ -212,7 +219,7 @@ void SuperkDetectorFSI::CheckListOfSKDetFSISyst(int nparams, const conv::PhysPar
       //~ //this is to allow jumps between sample parameters
       if(allow_gaps && allowed_gaps>0) {
         allowed_gaps--;
-	LOG("",pINFO) << allowed_gaps;
+	LOG("SuperkDetectorFSI",pDEBUG) << allowed_gaps;
         continue;
       }
       LOG("SuperkDetectorFSI", pERROR) << vname << "[" << id << "] = " << curr << " " << util::AsString(curr) << "\n"
@@ -267,7 +274,7 @@ void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * par
   for(int ix = 0; ix < nparams; ix++) {
     PhysParamId_t curr = params[ix];
 #if defined(__show_skdetfsiconv_check_mesg_debug__) || defined(__show_skdetfsiconv_check_mesg_info__)
-    LOG("SuperkDetectorFSI",pINFO) << vname << " Parameter " << ix << " " << util::AsString(curr) << "\n";
+    LOG("SuperkDetectorFSI",pINFO) << vname << " Parameter " << ix << " " << util::AsString(curr);
 #endif
     std::vector<int> n_modes_applied_to(10);
     for(int is = 0; is <conv::kns; is++) {
@@ -324,6 +331,13 @@ void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * par
 double SuperkDetectorFSI::SystWght(
   conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
 {
+#ifdef __use_1Rsyst_for_MultiR_sample__
+  // ~#{ Hack for testing set multiring splines to single ring splines
+  if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
+  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  // }#~
+#endif
+  
   // find SuperkDetector+FSI param which corresponds to the current Ereco param
   int iparam = -1;
   int np = fNSystParameters;
@@ -334,15 +348,20 @@ double SuperkDetectorFSI::SystWght(
     
     // Is the current systematic parameter applied to current sample/mode end energy bin?
     bool apply = this->ApplySyst(p,s,m,Ereco);
-    if(!apply) continue;
+    if(apply) {iparam = ip; break;}
+    //~# if(!apply) continue;
     
-    iparam = ip;
+    //iparam = ip;
   } //ip
   
   if (iparam==-1) {
-    LOG("SuperkDetectorFSI",pERROR) << "Failed to get SK Systematic applied for "<<util::AsString(s)<<" with "<<util::AsString(m) <<" at energy "<<Ereco<<" GeV";
+    LOG("SuperkDetectorFSI", pERROR) << "Failed to get SK Systematic applied for "<<util::AsString(s)<<" with "<<util::AsString(m) <<" at energy "<<Ereco<<" GeV";
   }
-  
+  //LOG("SuperkDetectorFSI",pINFO) << "Current values for SKDetFSI";
+  //~# fCurrentValues->Print();
+  //~# fUntunedValues->Print();
+  //~# fInitialValues->Print();
+
   double skdetfsi_param_value = (*fCurrentValues)[iparam];
 
   // param tweaked
@@ -351,10 +370,7 @@ double SuperkDetectorFSI::SystWght(
     return 1.;
   }
   double skdetfsi_wght = skdetfsi_param_value;
-    LOG("SuperkDetectorFSI", pINFO) << "Sample and mode " << util::AsString(s) << " " << util::AsString(m)  << "Weight " << skdetfsi_wght << " Param ";
-#ifdef __skdetfsi_wgt_debug__
-
-#endif  
+  
   return skdetfsi_wght;
 }
 //________________________________________________________________________________________
@@ -371,7 +387,6 @@ bool SuperkDetectorFSI::ApplySyst(
 bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const
 {
   if (p==conv::kNuisSuperkEnergyScale) {return true;}
-  /// NEW MULTIRING 2 
   int idx = -999;
   bool apply = false;  
 
@@ -414,21 +429,12 @@ bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco
   int idx;
   
   bool isRHC = util::IsRHCSystematic(p);
-  /// NEW MULTIRING 2
   bool isFHC = util::IsFHCSystematic(p);
-  ///
-
-  // OLD
-  // if(isRHC)
-  //   idx = arr_index->RHCSKDetFSISystIdx(p);
-  // else
-  //   idx = arr_index->SKDetFSISystIdx(p);
 
   if(isRHC)
     idx = arr_index->RHCSKDetFSISystIdx(p);
   else if(isFHC)
     idx = arr_index->SKDetFSISystIdx(p);
-  /// NEW MULTIRING 2
   else
     idx = arr_index->MultiRingSKDetFSISystIdx(p);
   ///
@@ -436,14 +442,6 @@ bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco
   if (idx == -1) return false;
 
   bool apply;
-
-  // OLD
-  // if(isRHC)
-  //   apply = Ereco >= conv::kRHCSKDetFSIParamsErecoCut[idx][0] &&
-  //     Ereco <  conv::kRHCSKDetFSIParamsErecoCut[idx][1];
-  // else
-  //   apply = Ereco >= conv::kSKDetFSIParamsErecoCut[idx][0] &&
-  //     Ereco <  conv::kSKDetFSIParamsErecoCut[idx][1];
   
   if(isRHC)
     apply = Ereco >= conv::kRHCSKDetFSIParamsErecoCut[idx][0] &&
@@ -451,7 +449,6 @@ bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco
   else if(isFHC)
     apply = Ereco >= conv::kSKDetFSIParamsErecoCut[idx][0] &&
       Ereco <  conv::kSKDetFSIParamsErecoCut[idx][1];
-  /// NEW MULTIRING 2
   else
     apply = Ereco >= conv::kMultiRingSKDetFSIParamsErecoCut[idx][0] &&
       Ereco <  conv::kMultiRingSKDetFSIParamsErecoCut[idx][1];
@@ -459,8 +456,8 @@ bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco
 
 #ifdef __show_skdetfsi_applysyst_mesg_debug__
   string applystr;
-  applystr = apply ? "Passed" : "Failed";
-  cout << applystr << "\t" << util::AsString(p) << "\t" << Ereco << endl;
+  applystr = apply ? "SysBinPassed" : "SysBinFailed";
+  LOG("SuperkDetectorFSI",pINFO) << applystr << "\t" << util::AsString(p) << "\t" << Ereco;
 #endif
   return apply;
 }
