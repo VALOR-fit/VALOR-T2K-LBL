@@ -214,7 +214,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg2->Draw();
     
     double beta1_error = get_error(nevents,hbeta1,hbeta1Unscaled);
-    cout << "Beta0 pvalue: " << pvalue_beta1 << "\t   Error: " <<  beta1_error <<  endl;
+    cout << "Beta1 pvalue: " << pvalue_beta1 << "\t   Error: " <<  beta1_error <<  endl;
 
     TFile fout("nuebarapp_output.root","recreate");
     hbeta0->Write("hbeta0");
