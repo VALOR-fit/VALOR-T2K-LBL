@@ -219,8 +219,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     TFile fout("nuebarapp_output.root","recreate");
     hbeta0->Write("hbeta0");
     hbeta0Unscaled->Write("hbeta0Unscaled");
-    hbeta1->Write("hbeta0");
-    hbeta1Unscaled->Write("hbeta0Unscaled");
+    hbeta1->Write("hbeta1");
+    hbeta1Unscaled->Write("hbeta1Unscaled");
     fout.Close();
   }
   
