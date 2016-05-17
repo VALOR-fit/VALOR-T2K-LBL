@@ -748,6 +748,12 @@ int main(int argc, char ** argv)
 #else
      TH2D * mock_data[kns];
 #endif
+    //Store exp data
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+    TH1D * exp_data[kns];
+#else
+    TH2D * exp_data[kns];
+#endif
      for (int is = 0 ; is < conv::kns ; is++) {
        SuperkSample_t s = conv::kSKSamples[is];
        if (s == conv::kSKsUndefined) continue;
@@ -756,8 +762,16 @@ int main(int argc, char ** argv)
 #else
        mock_data[is] = skobs_fakedata->TwoDSpectrum(s);
 #endif
-       mock_data[is]->SetDirectory(0);     
+#ifndef __USE_2D_TEMPLATES__
+       exp_data[is] = skexp->CurrPredictedErecoSpectrum(s);
+#else
+       exp_data[is] = skexp->CurrPredictedErecoVsQ2Spectrum(s);
+#endif
+       mock_data[is]->SetDirectory(0);
+       exp_data[is]->SetDirectory(0);
        mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+       exp_data[is]->Write(Form("exp_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+       delete exp_data[is];
        delete mock_data[is];
      }//is
      
