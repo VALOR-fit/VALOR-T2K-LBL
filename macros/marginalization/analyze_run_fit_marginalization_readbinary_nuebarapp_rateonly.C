@@ -33,6 +33,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   TH2F *hErecoToy=0;
   TH1D* hbeta0 = 0;
   TH1D* hbeta1 = 0;
+  TH1D* hbeta0Unscaled = 0;
+  TH1D* hbeta1Unscaled = 0;
   
   
   treein->SetBranchAddress("best_fit_params",&fparm);
@@ -42,6 +44,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy);
   treein->SetBranchAddress("hBetaBar0",&hbeta0);
   treein->SetBranchAddress("hBetaBar1",&hbeta1);
+  treein->SetBranchAddress("hBetaBar0Unscaled",&hbeta0Unscaled);
+  treein->SetBranchAddress("hBetaBar1Unscaled",&hbeta1Unscaled);
   
   
   // Declare histograms
@@ -171,6 +175,9 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg->AddEntry(expEvents,Form("P-Value: %lf",hPValueBeta0->GetMean()),"l");
     leg->Draw();
     
+    double beta0_error = get_error(nevents,hbeta0,hbeta0Unscaled);
+    cout << "Beta0 pvalue: " << pvalue_beta0 << "\t   Error: " <<  beta0_error <<  endl;
+    
     
     TCanvas *cBeta1Distribution = new TCanvas("cBeta1Distribution","cBeta1Distribution");
     hbeta1->GetYaxis()->SetTitle("# entries");
@@ -205,6 +212,16 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg2->AddEntry(hbeta0,"# Events prediction","L");
     leg2->AddEntry(expEvents,Form("P-Value: %lf",hPValueBeta1->GetMean()),"l");
     leg2->Draw();
+    
+    double beta1_error = get_error(nevents,hbeta1,hbeta1Unscaled);
+    cout << "Beta0 pvalue: " << pvalue_beta1 << "\t   Error: " <<  beta1_error <<  endl;
+
+    TFile fout("nuebarapp_output.root","recreate");
+    hbeta0->Write("hbeta0");
+    hbeta0Unscaled->Write("hbeta0Unscaled");
+    hbeta1->Write("hbeta0");
+    hbeta1Unscaled->Write("hbeta0Unscaled");
+    fout.Close();
   }
   
   
@@ -396,3 +413,31 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   return;
 }
 
+double get_error(double obs, TH1D* hbeta, TH1D* hbetaUnscaled)
+{
+  int obs_bin = hbeta->FindBin(obs);
+  double pvalue = hbeta->Integral(obs_bin,hbeta->GetXaxis()->GetNBins());
+  double err_sqrd = 0;
+  for(int i=1;i<obs_bin;i++)
+  {
+    double pd = hbeta->Integral();
+    double wl = hbeta->GetBinContent(i)/hbetaUnscaled->GetBinContent(i);
+    double bl = hbetaUnscaled->GetBinContent(i);
+    double err = TMath::Power(wl* (pvalue) / pd, 2) * bl;
+    err_sqrd = err_sqrd + err;
+  }
+  
+  for(int i=obs_bin;i<=hbeta->GetXaxis()->GetNBins();i++)
+  {
+    double pd = hbeta->Integral();
+    double wr = hbeta->GetBinContent(i)/hbetaUnscaled->GetBinContent(i);
+    double br = hbetaUnscaled->GetBinContent(i);
+    double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
+    err_sqrd = err_sqrd + err;
+  }
+  
+  double final_error = TMath::Sqrt(err_sqrd);
+  
+  return final_error;
+  
+}
