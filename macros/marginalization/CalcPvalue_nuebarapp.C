@@ -37,14 +37,31 @@ void CalcPvalue_nuebarapp
  double deltachisq_beta01_data = 1.43461,
  double deltachisq_beta0BF_data = 99999, // data deltachisq 0BF
  char infilename[300] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_0_100kMargToys_react_100kToys.root",
-
+ char* data_fit_treefile_name  = ""
  )
 {
 
   // const double MaxHisto = 20.;
   // const double MinHisto = -20.;
   // const double NBinHisto = 200.;
-
+  
+  TFile   data_fit_treefile(data_fit_treefile_name);
+  TTree*  data_tree = data_fit_treefile->Get("fitnt");
+  TH2D*   dErecoToy_RHC1Rmu;
+  TH2D*   dErecoToy_1Re;
+  TH2D*   dErecoToy_1Rmu;
+  TH2D*   dErecoToy_RHC1Re;
+  TH1D*   dchisq1D_out;
+  data_tree->SetBranchAddress("hchisq1D_out",&dchisq1D_out);
+  data_tree->SetBranchAddress("hErecoToy_1Re",&dErecoToy_1Re);
+  data_tree->SetBranchAddress("hErecoToy_1Rmu",&dErecoToy_1Rmu);
+  data_tree->SetBranchAddress("hErecoToy_RHC1Rmu",&dErecoToy_RHC1Rmu);
+  data_tree->SetBranchAddress("hErecoToy_RHC1Re",&dErecoToy_RHC1Re);
+  data_tree->GetEntry(0);
+  
+  data = (double) dErecoToy_RHC1Re->Integral();
+  deltachisq_beta01_data = (double) dchisq1D_out->GetBinContent(1);
+  
   const double MaxHisto = 20.;
   const double MinHisto = -20.;
   const double NBinHisto = 200.;
@@ -94,6 +111,10 @@ void CalcPvalue_nuebarapp
   double chisqminFullChisq=conv::kALargeNum;
   int ToyID=-999;
   TH2D *hErecoToy_RHC1Re;
+  TH2D* hErecoExp_1Re;
+  TH2D* hErecoExp_1Rmu;
+  TH2D* hErecoExp_RHC1Rmu;
+  
 
   TBranch        *b_chisqmin_subrange;   //!
 
@@ -132,6 +153,9 @@ void CalcPvalue_nuebarapp
   treein->SetBranchAddress("chisqminFullChisq",&chisqminFullChisq);
   treein->SetBranchAddress("ToyID",&ToyID);
   treein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
+  treein->SetBranchAddress("hErecoExp_1Re",&hErecoToy_1Re);
+  treein->SetBranchAddress("hErecoExp_RHC1Rmu",&hErecoToy_RHC1Rmu);
+  treein->SetBranchAddress("hErecoExp_1Rmu",&hErecoToy_1Rmu);
 
 
   // Declare histograms
@@ -207,9 +231,18 @@ void CalcPvalue_nuebarapp
       cerr << endl;
       exit(1);
     }
+    
+    
+    double toy_weight = 0;
+    double toy_chisq = 0;
+    toy_chisq += calc_chisq(dErecoToy_RHC1Rmu,hErecoExp_RHC1Rmu);
+    toy_chisq += calc_chisq(dErecoToy_1Rmu,hErecoExp_1Rmu);
+    toy_chisq += calc_chisq(dErecoToy_1Re,hErecoExp_1Re);
+    toy_weight = TMath::Exp(-1*toy_chisq/2);
+    
 
-    hnevents->Fill(nevents);    
-    if(nevents<data) hnevents_data->Fill(nevents);    
+    hnevents->Fill(nevents,toy_weight);    
+    if(nevents<data) hnevents_data->Fill(nevents,toy_weight);
     
     //if(deltachisqtrue>-4) continue;
     //if(deltachisqtrue>-2 || deltachisqtrue<-2.2) continue;
@@ -228,38 +261,38 @@ void CalcPvalue_nuebarapp
     // }
 
     double deltachisq_0BF = chisqtrue0 - chisqmin;
-    hdeltachisqDiff0BF->Fill(deltachisq_0BF);  
-    if(nevents==0)      hdeltachisqDiff0BF_toyevt0->Fill(deltachisq_0BF);
-    else if(nevents==1) hdeltachisqDiff0BF_toyevt1->Fill(deltachisq_0BF);
-    else if(nevents==2) hdeltachisqDiff0BF_toyevt2->Fill(deltachisq_0BF);
+    hdeltachisqDiff0BF->Fill(deltachisq_0BF,toy_weight);  
+    if(nevents==0)      hdeltachisqDiff0BF_toyevt0->Fill(deltachisq_0BF,toy_weight);
+    else if(nevents==1) hdeltachisqDiff0BF_toyevt1->Fill(deltachisq_0BF,toy_weight);
+    else if(nevents==2) hdeltachisqDiff0BF_toyevt2->Fill(deltachisq_0BF,toy_weight);
 
     double deltachisq_1BF = chisqtrue1 - chisqmin;
-    hdeltachisqDiff1BF->Fill(deltachisq_1BF);
-    if(nevents==0)      hdeltachisqDiff1BF_toyevt0->Fill(deltachisq_1BF);
-    else if(nevents==1) hdeltachisqDiff1BF_toyevt1->Fill(deltachisq_1BF);
-    else if(nevents==2) hdeltachisqDiff1BF_toyevt2->Fill(deltachisq_1BF);
+    hdeltachisqDiff1BF->Fill(deltachisq_1BF,toy_weight);
+    if(nevents==0)      hdeltachisqDiff1BF_toyevt0->Fill(deltachisq_1BF,toy_weight);
+    else if(nevents==1) hdeltachisqDiff1BF_toyevt1->Fill(deltachisq_1BF,toy_weight);
+    else if(nevents==2) hdeltachisqDiff1BF_toyevt2->Fill(deltachisq_1BF,toy_weight);
     
     double deltachisq_01 = chisqtrue0 - chisqtrue1;
-    hdeltachisqDiff01->Fill(deltachisq_01);
-    if(nevents==0)      hdeltachisqDiff01_toyevt0->Fill(deltachisq_01);
-    else if(nevents==1) hdeltachisqDiff01_toyevt1->Fill(deltachisq_01);
-    else if(nevents==2) hdeltachisqDiff01_toyevt2->Fill(deltachisq_01);
+    hdeltachisqDiff01->Fill(deltachisq_01,toy_weight);
+    if(nevents==0)      hdeltachisqDiff01_toyevt0->Fill(deltachisq_01,toy_weight);
+    else if(nevents==1) hdeltachisqDiff01_toyevt1->Fill(deltachisq_01,toy_weight);
+    else if(nevents==2) hdeltachisqDiff01_toyevt2->Fill(deltachisq_01,toy_weight);
 
     // Minimized chisq distribution
-    hchisqmin->Fill(chisqmin);
-    if(nevents==0)      hchisqmin_toyevt0->Fill(chisqmin);
-    else if(nevents==1) hchisqmin_toyevt1->Fill(chisqmin);
-    else if(nevents==2) hchisqmin_toyevt2->Fill(chisqmin);
+    hchisqmin->Fill(chisqmin,toy_weight);
+    if(nevents==0)      hchisqmin_toyevt0->Fill(chisqmin,toy_weight);
+    else if(nevents==1) hchisqmin_toyevt1->Fill(chisqmin,toy_weight);
+    else if(nevents==2) hchisqmin_toyevt2->Fill(chisqmin,toy_weight);
 
-    hchisq0->Fill(chisqtrue0);
-    if(nevents==0)      hchisq0_toyevt0->Fill(chisqtrue0);
-    else if(nevents==1) hchisq0_toyevt1->Fill(chisqtrue0);
-    else if(nevents==2) hchisq0_toyevt2->Fill(chisqtrue0);
+    hchisq0->Fill(chisqtrue0,toy_weight);
+    if(nevents==0)      hchisq0_toyevt0->Fill(chisqtrue0,toy_weight);
+    else if(nevents==1) hchisq0_toyevt1->Fill(chisqtrue0,toy_weight);
+    else if(nevents==2) hchisq0_toyevt2->Fill(chisqtrue0,toy_weight);
 
-    hchisq1->Fill(chisqtrue1);
-    if(nevents==0)      hchisq1_toyevt0->Fill(chisqtrue1);
-    else if(nevents==1) hchisq1_toyevt1->Fill(chisqtrue1);
-    else if(nevents==2) hchisq1_toyevt2->Fill(chisqtrue1);
+    hchisq1->Fill(chisqtrue1,toy_weight);
+    if(nevents==0)      hchisq1_toyevt0->Fill(chisqtrue1,toy_weight);
+    else if(nevents==1) hchisq1_toyevt1->Fill(chisqtrue1,toy_weight);
+    else if(nevents==2) hchisq1_toyevt2->Fill(chisqtrue1,toy_weight);
       
     // Fill vectors for pvalue calculations
 
@@ -550,4 +583,25 @@ double GetPvalue_Discrete(TH1D *histo,double data){
   pvalue /= histo->Integral();
   
   return pvalue;
+}
+
+double calc_chisq(TH2D* hobs, TH2D* hexp)
+{
+  int nbins_x = hobs->GetNbinsX();
+  int nbins_y = hobs->GetNbinsY();
+  
+  double chisq = 0;
+  
+  for(int i=1;i<= nbins_x;i++)
+  {
+    for(int j=1;j<= nbins_x;j++)
+    {
+      double obs = hobs->GetBinContent(i,j);
+      double exp = hexp->GetBinContent(i,j);
+
+     chisq += valor::util::ChisqPoisson(obs,exp);
+    }
+  }
+  
+  return chisq;
 }
