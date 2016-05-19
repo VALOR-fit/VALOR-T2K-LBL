@@ -234,28 +234,28 @@ void valor::util::PrintCompact(
          stream << " [ ";
 
          //PhysParamId_t p = kListOfBANFFParams[ip];
-	 
-	 // NEW FHC+RHC JOINT
+         
+         // NEW FHC+RHC JOINT
        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)  
-	 PhysParamId_t p;
-	 if      (opt.Contains("FHC+RHC")) p = kListOfFHCpRHCBANFFParams[ip];
-	 else if (opt.Contains("FHC"))     p = kListOfBANFFParams[ip];   
-	 else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
-	 else {
+         PhysParamId_t p;
+         if      (opt.Contains("FHC+RHC")) p = kListOfFHCpRHCBANFFParams[ip];
+         else if (opt.Contains("FHC"))     p = kListOfBANFFParams[ip];   
+         else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
+         else {
            cerr << "BANFF options string doesn't contain any options" << endl;
            exit(1);
          }
-	 //
+         //
 
        #elif defined(__FHC_RUNNING__)
-	 PhysParamId_t p = kListOfBANFFParams[ip];
+         PhysParamId_t p = kListOfBANFFParams[ip];
        #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing
          PhysParamId_t p = kListOfBANFFParams[ip];
        #elif defined(__RHC_RUNNING__)
-	 PhysParamId_t p = kListOfRHCBANFFParams[ip];
+         PhysParamId_t p = kListOfRHCBANFFParams[ip];
        #endif
-	 //
-	 
+         //
+         
          stream << setw(42) << util::AsString(p);
          stream << " ]";
      }
@@ -265,43 +265,43 @@ void valor::util::PrintCompact(
 
        // #if FSI_BINS != 3
        //   //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
-       // 	 // NEW FLUX
+       //        // NEW FLUX
        // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-       // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+       //        PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
        // #elif defined(__FHC_RUNNING__) // fhc only
        //   PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
        // #elif defined(__RHC_RUNNING__) // rhc only
        //   PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
        // #endif
-       // 	 //
+       //        //
        // #else
-       // 	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-       // 	 // NEW FLUX
+       //        //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+       //        // NEW FLUX
        // #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-       // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+       //        PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
        // #elif defined(__FHC_RUNNING__) // fhc only
-       // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+       //        PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
        // #elif defined(__RHC_RUNNING__) // rhc only
-       // 	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
+       //        PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
        // #endif
-       // 	 
+       //        
        // #endif
  
-       	 // NEW FLUX
+                 // NEW FLUX
 
-	 // NEW SKDETFSI (use kNuisSKDetFSI_first)
+         // NEW SKDETFSI (use kNuisSKDetFSI_first)
 
          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__FHC_RUNNING__) // fhc only
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__RHC_RUNNING__) // rhc only
          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI_first + ip );
        #endif
-	 //
+         //
 
          stream << setw(30) << util::AsString(p);
          stream << " ]";
@@ -311,14 +311,14 @@ void valor::util::PrintCompact(
      if(printing_multiring_fsi_params) {
          stream << " [ ";
 
-	 // #if FSI_BINS != 3
-	 //          PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI000 + ip );
-	 // #else
-	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI006 + ip );
-	 // #endif
+         // #if FSI_BINS != 3
+         //          PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI000 + ip );
+         // #else
+         //      PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI006 + ip );
+         // #endif
 
-	 // NEW SKDETFSI (use kMultiRingNuisSKDetFSI_first)
-	 PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI_first + ip );
+         // NEW SKDETFSI (use kMultiRingNuisSKDetFSI_first)
+         PhysParamId_t p = PhysParamId_t ( (int)kMultiRingNuisSKDetFSI_first + ip );
 
          stream << setw(30) << util::AsString(p);
          stream << " ]";
@@ -328,12 +328,12 @@ void valor::util::PrintCompact(
      if(printing_selected_banff_params) {
          stream << " [ ";
          PhysParamId_t p = kPhypUndefined;
-	 if(ip == 0)
-	   p = kNuisBANFFMAQE;
-	 else if(ip == 1)
-	   p = kNuisBANFFCCQEE0;
-	 else if(ip == 2)
-	   p = kNuisBANFFCC1piE0;
+         if(ip == 0)
+           p = kNuisBANFFMAQE;
+         else if(ip == 1)
+           p = kNuisBANFFCCQEE0;
+         else if(ip == 2)
+           p = kNuisBANFFCC1piE0;
          stream << setw(30) << util::AsString(p);
          stream << " ]";
      }
@@ -364,72 +364,72 @@ void valor::util::PrintCompact(
 
          //PhysParamId_t p = kListOfBANFFParams[ip];
          
-	 // NEW FLUX
+         // NEW FLUX
 
-	 // NEW FHC+RHC JOINT
+         // NEW FHC+RHC JOINT
        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-	 PhysParamId_t p;
-	 if      (opt.Contains("FHC+RHC")) p = kListOfFHCpRHCBANFFParams[ip];
-	 else if (opt.Contains("FHC"))     p = kListOfBANFFParams[ip];   
-	 else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
-	 else {
+         PhysParamId_t p;
+         if      (opt.Contains("FHC+RHC")) p = kListOfFHCpRHCBANFFParams[ip];
+         else if (opt.Contains("FHC"))     p = kListOfBANFFParams[ip];   
+         else if (opt.Contains("RHC"))     p = kListOfRHCBANFFParams[ip];   
+         else {
            cerr << "BANFF options string doesn't contain any options" << endl;
            exit(1);
          }
-	 //
+         //
 
        #elif defined(__FHC_RUNNING__)
-	 PhysParamId_t p = kListOfBANFFParams[ip];
+         PhysParamId_t p = kListOfBANFFParams[ip];
        #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing
          PhysParamId_t p = kListOfBANFFParams[ip];
        #elif defined(__RHC_RUNNING__)
          PhysParamId_t p = kListOfRHCBANFFParams[ip];
        #endif
-	 //
+         //
 
-	 stream << setw(42) << util::AsString(p);
+         stream << setw(42) << util::AsString(p);
          stream << " ]";
      }
      if(printing_fsi_params) {
          stream << " [ ";
 
 
-	 // #if FSI_BINS != 3
-	 //          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
-	 // 	 // NEW FLUX
-	 //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-	 //          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
-	 //        #elif defined(__FHC_RUNNING__)
-	 //          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
-	 //        #elif defined(__RHC_RUNNING__)
-	 //          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
-	 //        #endif
-	 // 	 //
-	 // #else
-	 // 	 //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );	 
-	 // 	 // NEW FLUX
-	 //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
-	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-	 //        #elif defined(__FHC_RUNNING__)	 
-	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
-	 //        #elif defined(__RHC_RUNNING__)
-	 // 	 PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
-	 //        #endif
-	 // 	 //	 
-	 // #endif
+         // #if FSI_BINS != 3
+         //          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+         //      // NEW FLUX
+         //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+         //          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+         //        #elif defined(__FHC_RUNNING__)
+         //          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
+         //        #elif defined(__RHC_RUNNING__)
+         //          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI000 + ip );
+         //        #endif
+         //      //
+         // #else
+         //      //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );       
+         //      // NEW FLUX
+         //        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
+         //      PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+         //        #elif defined(__FHC_RUNNING__)        
+         //      PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI006 + ip );
+         //        #elif defined(__RHC_RUNNING__)
+         //      PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI006 + ip );
+         //        #endif
+         //      //      
+         // #endif
 
 
 
-	 // NEW FLUX
+         // NEW FLUX
 
          //PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI000 + ip );
 
-	 // NEW SKDETFSI (use kNuisSKDetFSI_first)
+         // NEW SKDETFSI (use kNuisSKDetFSI_first)
        #if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__FULLY_CORRELATED__) // fhc+rhc fully correlated
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__FHC_RUNNING__)
-	 PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
-       #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing	 
+         PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
+       #elif defined(__MULTIRING_FHC_RUNNING__) // ~#{ MultiRing         
          PhysParamId_t p = PhysParamId_t ( (int)kNuisSKDetFSI_first + ip );
        #elif defined(__RHC_RUNNING__)
          PhysParamId_t p = PhysParamId_t ( (int)kRHCNuisSKDetFSI_first + ip );
@@ -472,7 +472,7 @@ void valor::util::PrintCompact(
 //___________________________________________________________________________
 // Not in use - commented out April 2016. If we ever need this again, rewrite it generically and put it in the framework.
 //~ void valor::util::PrintCompactTex(
-				   //~ const TMatrixD & m, int w, int prec, std::ostream & stream, TString opt)
+                                   //~ const TMatrixD & m, int w, int prec, std::ostream & stream, TString opt)
 //~ {
   //~ int nc = m.GetNcols();
   //~ int nr = m.GetNrows();
@@ -485,12 +485,12 @@ void valor::util::PrintCompact(
     //~ stream << "\\small" << endl;
   //~ else if(opt.Contains("banff"))
     //~ stream << "\\tiny" << endl
-	   //~ << "\\begin{sideways}" << endl
-	   //~ << "\\begin{minipage}{23cm}" << endl
-	   //~ << "{" << endl
-	   //~ << "\\setlength{\\arraycolsep}{1pt}" << endl;
+           //~ << "\\begin{sideways}" << endl
+           //~ << "\\begin{minipage}{23cm}" << endl
+           //~ << "{" << endl
+           //~ << "\\setlength{\\arraycolsep}{1pt}" << endl;
   //~ stream << "\\begin{equation}" << endl
-	 //~ << "C^{";
+         //~ << "C^{";
   //~ if(opt.Contains("skdetfsi"))
     //~ stream << "SK+FSI";
   //~ /// NEW MULTIRING 2
@@ -502,7 +502,7 @@ void valor::util::PrintCompact(
   //~ stream << "} =";
   //~ if(opt.Contains("banff"))
     //~ stream << "\\end{equation}" << endl
-	   //~ << "\\begin{equation*}" << endl;  
+           //~ << "\\begin{equation*}" << endl;  
   //~ else
     //~ stream << " \\\\" << endl;
   //~ stream << "\\begin{blockarray}{c ";
@@ -513,29 +513,29 @@ void valor::util::PrintCompact(
   //~ for(int ir=0; ir<nr; ir++) {
     //~ if(ir==0) {
       //~ if(!opt.Contains("skdetfsi") && !opt.Contains("banff"))
-	//~ stream << setw(w) << setfill(' ') << "r\\c:"; 
+        //~ stream << setw(w) << setfill(' ') << "r\\c:"; 
       //~ else
-	//~ stream << setw(w) << setfill(' ');
+        //~ stream << setw(w) << setfill(' ');
       //~ for(int ic=0; ic<nc; ic++) {
-	//~ if(opt.Contains("skdetfsi"))
-	  //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ic]) << "}";
-	//~ /// NEW MULTIRING 2
-	//~ else if(opt.Contains("multiring_skdetfsi"))
-	  //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfMultiRingSKDetFSIParams[ic]) << "}";
-	//~ ///
-	//~ else if(opt.Contains("banff"))
-	  //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "\\begin{sideways} {\\color{blue} " << util::AsStringPaperTexNoDollar((PhysParamId_t)(ic + (int)kNuisBANFF00)) << "} \\end{sideways}";
-	//~ else
-	  //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << ic << "}";
+        //~ if(opt.Contains("skdetfsi"))
+          //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ic]) << "}";
+        //~ /// NEW MULTIRING 2
+        //~ else if(opt.Contains("multiring_skdetfsi"))
+          //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfMultiRingSKDetFSIParams[ic]) << "}";
+        //~ ///
+        //~ else if(opt.Contains("banff"))
+          //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "\\begin{sideways} {\\color{blue} " << util::AsStringPaperTexNoDollar((PhysParamId_t)(ic + (int)kNuisBANFF00)) << "} \\end{sideways}";
+        //~ else
+          //~ stream << " & " << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << ic << "}";
        //~ }
        //~ stream << " \\\\ " << endl;
        //~ stream << "\\begin{block}{c(";
        //~ for(int ic = 0; ic < nc; ic++)
-	 //~ stream << columntype;
+         //~ stream << columntype;
        //~ if(opt.Contains("banff"))
-	 //~ stream << "@{\\hspace*{1pt}})}" << endl;
+         //~ stream << "@{\\hspace*{1pt}})}" << endl;
        //~ else
-	 //~ stream << "@{\\hspace*{2pt}})}" << endl;
+         //~ stream << "@{\\hspace*{2pt}})}" << endl;
     //~ }
     //~ if(opt.Contains("skdetfsi"))
       //~ stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << util::AsStringPaperTexNoDollar(kListOfSKDetFSIParams[ir]) << "}  \\vspace{0.2cm}";
@@ -549,11 +549,11 @@ void valor::util::PrintCompact(
       //~ stream << setw(w) << setfill(' ') << setprecision(0) << "{\\color{blue} " << ir << "}  \\vspace{0.2cm}";
     //~ for(int ic=0; ic<nc; ic++) {
       //~ if(ic == ir)
-	//~ stream << " & " << setw(w) << setfill(' ') << setprecision(prec) 
-	       //~ << "{\\color{red} " << m[ir][ic] << "}";
+        //~ stream << " & " << setw(w) << setfill(' ') << setprecision(prec) 
+               //~ << "{\\color{red} " << m[ir][ic] << "}";
       //~ else
-	//~ stream << " & " << setw(w) << setfill(' ') << setprecision(prec) 
-	       //~ << m[ir][ic];
+        //~ stream << " & " << setw(w) << setfill(' ') << setprecision(prec) 
+               //~ << m[ir][ic];
     //~ }//rows
     //~ stream << " \\\\ " << endl;
   //~ }//columns
@@ -573,10 +573,10 @@ void valor::util::PrintCompact(
     //~ stream << "\\end{equation}" << endl;
   //~ if(opt.Contains("banff"))
     //~ stream << "}" << endl
-	   //~ << "\\end{minipage}" << endl
-	   //~ << "\\end{sideways}" << endl;
+           //~ << "\\end{minipage}" << endl
+           //~ << "\\end{sideways}" << endl;
   //~ stream << "\\normalsize" << endl
-	 //~ << "}" << endl;
+         //~ << "}" << endl;
   //~ stream << scientific;
 //~ }
 //___________________________________________________________________________
@@ -700,7 +700,7 @@ void valor::util::ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double * 
     
     for (int ibin = 0 ; ibin <= n_ereco_bins; ibin++) {
       if (ibin  != n_ereco_bins) {
-	total_events += events_per_bin[ibin][ibin_q2];
+        total_events += events_per_bin[ibin][ibin_q2];
       }
       unscaled_bin_edges[ibin][ibin_q2] = bin_edges[ibin];
       scaled_bin_edges  [ibin][ibin_q2] = bin_edges[ibin] * escale_tweak;
@@ -717,20 +717,20 @@ void valor::util::ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double * 
       double bin_min_s = scaled_bin_edges[ibin_s][ibin_q2];
       double bin_max_s = scaled_bin_edges[ibin_s+1][ibin_q2];
       for (int ibin_u = 0 ; ibin_u < n_ereco_bins+1 ; ibin_u++) {
-	double bin_min_u = unscaled_bin_edges[ibin_u][ibin_q2];
-	double bin_max_u = unscaled_bin_edges[ibin_u+1][ibin_q2];
+        double bin_min_u = unscaled_bin_edges[ibin_u][ibin_q2];
+        double bin_max_u = unscaled_bin_edges[ibin_u+1][ibin_q2];
       
-	if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
-	else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
-	else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
-	else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
-	else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
-	else overlap = -999; // No crossover
-	
-	if (overlap <= 0) continue;
-	
-	double new_events = events_per_bin[ibin_s][ibin_q2] * overlap / (scaled_bin_edges[ibin_s+1][ibin_q2] - scaled_bin_edges[ibin_s][ibin_q2]);
-	new_events_per_bin[ibin_u][ibin_q2] += new_events;
+        if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
+        else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
+        else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
+        else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
+        else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
+        else overlap = -999; // No crossover
+        
+        if (overlap <= 0) continue;
+        
+        double new_events = events_per_bin[ibin_s][ibin_q2] * overlap / (scaled_bin_edges[ibin_s+1][ibin_q2] - scaled_bin_edges[ibin_s][ibin_q2]);
+        new_events_per_bin[ibin_u][ibin_q2] += new_events;
       }
     }
     // Move events back into main array.
@@ -781,8 +781,8 @@ bool valor::util::IsCCQE(int neut_reaction_mode)
 bool valor::util::IsCC1pi(int neut_reaction_mode) 
 {
   bool is_cc1pi = (neut_reaction_mode == 11 || 
-		   neut_reaction_mode == 12 || 
-		   neut_reaction_mode == 13);
+                   neut_reaction_mode == 12 || 
+                   neut_reaction_mode == 13);
   return is_cc1pi;
 }
 //___________________________________________________________________________
@@ -801,10 +801,10 @@ bool valor::util::IsCCoth(int neut_reaction_mode)
 // needs to be updated if another subcategory is added
 {
   bool is_ccoth = (neut_reaction_mode == 17 ||
-		     neut_reaction_mode == 21 ||
-		     neut_reaction_mode == 22 || 
-		     neut_reaction_mode == 23 || 
-		     neut_reaction_mode == 26);
+                     neut_reaction_mode == 21 ||
+                     neut_reaction_mode == 22 || 
+                     neut_reaction_mode == 23 || 
+                     neut_reaction_mode == 26);
   return is_ccoth;
 }
 //___________________________________________________________________________
@@ -821,7 +821,7 @@ bool valor::util::IsCCoth(int neut_reaction_mode)
 bool valor::util::IsNC1pi0(int neut_reaction_mode) 
 {
   bool is_cc1pi0 = (neut_reaction_mode == 31 ||
-		    neut_reaction_mode == 32);
+                    neut_reaction_mode == 32);
   return is_cc1pi0;
 }
 //___________________________________________________________________________
@@ -835,7 +835,7 @@ bool valor::util::IsNC1Gamma(int neut_reaction_mode)
 bool valor::util::IsNC1piC(int neut_reaction_mode) 
 {
   bool is_cc1pi0 = (neut_reaction_mode == 33 ||
-		    neut_reaction_mode == 34);
+                    neut_reaction_mode == 34);
   return is_cc1pi0;
 }
 //___________________________________________________________________________
@@ -850,14 +850,14 @@ bool valor::util::IsNCoth(int neut_reaction_mode)
 {
     bool is_ncoth = ( //  neut_reaction_mode == 38 || now in NC 1 gamma!
                      //   neut_reaction_mode == 39 || now in NC 1 gamma!
-		     neut_reaction_mode == 41 ||
-		     neut_reaction_mode == 42 ||
-		     neut_reaction_mode == 43 ||
-		     neut_reaction_mode == 44 ||
-		     neut_reaction_mode == 45 ||
-		     neut_reaction_mode == 46 ||
-		     neut_reaction_mode == 51 ||
-		     neut_reaction_mode == 52);
+                     neut_reaction_mode == 41 ||
+                     neut_reaction_mode == 42 ||
+                     neut_reaction_mode == 43 ||
+                     neut_reaction_mode == 44 ||
+                     neut_reaction_mode == 45 ||
+                     neut_reaction_mode == 46 ||
+                     neut_reaction_mode == 51 ||
+                     neut_reaction_mode == 52);
   return is_ncoth;
 }
 //___________________________________________________________________________
@@ -988,8 +988,8 @@ void valor::util::ArrIdx::Init(void)
      if(s == kSKsUndefined) continue;
      if(s != (SuperkSample_t)is) {
        cerr << "SuperkSample " << (int)s << " " << util::AsString(s)
-	    << " is at the wrong position " << is << " in kSKSamples"
-	    << endl;
+            << " is at the wrong position " << is << " in kSKSamples"
+            << endl;
        exit(-1);
      }
      fSuperkSampleIdx [s] = is;
@@ -1191,8 +1191,8 @@ void valor::util::ArrIdx::Init(void)
     fFHCpRHCSKDetFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
     cout << "Util/ArrIdx >> FHC+RHC SKDet+FSI: "
-	 << p << "\t"  
-	 << util::AsString(p)
+         << p << "\t"  
+         << util::AsString(p)
           << " is at slot: " << fFHCpRHCSKDetFSISystIdx [p] << endl;
 #endif
   }
@@ -1236,12 +1236,56 @@ void valor::util::ArrIdx::Init(void)
     fMultiRingSKDetFSISystIdx[p] = ip;
 #ifdef __show_arr_idx_mesg_debug__
     cout << "Util/ArrIdx >> MultiRing SKDet+FSI: "
-	 << util::AsString(p)
-	 << " is at slot: " << fMultiRingSKDetFSISystIdx [p] << endl;
+         << util::AsString(p)
+         << " is at slot: " << fMultiRingSKDetFSISystIdx [p] << endl;
 #endif
   }
-  ///
 
+  //FHC+RHC+MR
+  for(int i = 0; i < knppmax; i++) {
+    fFHCpRHCpMRSKDetFSISystIdx[i] = -1;
+  }
+  for(int ip = 0; ip < kNumOfSKDetFSIParams; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kNuisSKDetFSI_first + ip);
+    if(p == kPhypUndefined) continue;
+    fFHCpRHCpMRSKDetFSISystIdx[p] = ip;
+#ifdef __show_arr_idx_mesg_debug__
+    cout << "Util/ArrIdx >> FHC+RHC+MR SKDet+FSI: "
+         << p << "\t"  
+         << util::AsString(p)
+         << " is at slot: " << fFHCpRHCpMRSKDetFSISystIdx [p] << endl;
+#endif
+  }
+  
+  for(int ip = 0; ip < kNumOfRHCSKDetFSIParams; ip++) {
+    PhysParamId_t p = PhysParamId_t ((int) kRHCNuisSKDetFSI_first + ip);
+    if(p == kPhypUndefined) continue;
+    fFHCpRHCpMRSKDetFSISystIdx[p] = ip+kNumOfSKDetFSIParams; // shifted because after the FHC params // NEW FHC+RHC+MR JOINT (NEW)
+#ifdef __show_arr_idx_mesg_debug__
+    cout << "Util/ArrIdx >> FHC+RHC+MR SKDet+FSI: "
+         << p << "\t" 
+         << util::AsString(p)
+         << " is at slot: " << fFHCpRHCpMRSKDetFSISystIdx [p] << endl;
+#endif
+  }
+  for(int ip = 0; ip < kNumOfSKDetFSIParamsMultiRing; ip++) {
+     
+    PhysParamId_t p = (PhysParamId_t)kListOfMultiRingSKDetFSIParams[ip];
+
+    if(p == kPhypUndefined) continue;
+    fFHCpRHCpMRSKDetFSISystIdx[p] = ip+kNumOfSKDetFSIParams+kNumOfRHCSKDetFSIParams;
+#ifdef __show_arr_idx_mesg_debug__
+    cout << "Util/ArrIdx >>  FHC+RHC+MR SKDet+FSI: "
+         << util::AsString(p)
+         << " is at slot: " << fMultiRingSKDetFSISystIdx [p] << endl;
+#endif
+  } 
+  // Escale in now included in the FSI matrix
+  PhysParamId_t p = kNuisSuperkEnergyScale;
+  fFHCpRHCpMRSKDetFSISystIdx[p] = kNumOfSKDetFSIParams+kNumOfRHCSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing;
+
+   
+    
   //PhysParam
   for(int i = 0; i < knppmax; i++) {
     fPhysParamIdx[i] = -1;
