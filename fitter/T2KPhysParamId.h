@@ -439,6 +439,7 @@ static const PhysParamId_t kMultiRingNuisSuperkEnergyScale = kNuis306;   // SK e
  static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI000; 
  #else
   // Would normally be kMultiRingNuisSKDetFSI006 but don't have lowest energy bin
+  // Set to kMultiRingNuisSKDetFSI007 to return correct description
  static const PhysParamId_t kMultiRingNuisSKDetFSI_first = kMultiRingNuisSKDetFSI007; 
  #endif
   

@@ -3908,6 +3908,7 @@ bool valor::util::IsRHCSystematic(PhysParamId_t p)
     //   <<". Assuming no."<<std::endl;
     // return false;
     
+
     /// NEW MULTIRING 2
     if(!IsSystematic(p))
         return false;
@@ -4136,10 +4137,10 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
     
     // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-    if(p >= kMultiRingNuisSKDetFSI_first && p <= kMultiRingNuisSKDetFSI_first+kNumOfSKDetFSIParamsMultiRing-1)
+    if(p >= kMultiRingNuisSKDetFSI_first && p <=  (PhysParamId_t)kListOfMultiRingSKDetFSIParams[conv::kNumOfSKDetFSIParamsMultiRing-1])
         return true;
 #elif defined(__USE_SKDETFSI2015__)
-    if(p >= kMultiRingNuisSKDetFSI_first && p <= kMultiRingNuisSKDetFSI_first+kNumOfSKDetFSIParamsMultiRing-1)
+    if(p >= kMultiRingNuisSKDetFSI_first && p <=  (PhysParamId_t)kListOfMultiRingSKDetFSIParams[conv::kNumOfSKDetFSIParamsMultiRing-1])
         return true;
 #endif
     
@@ -4148,10 +4149,10 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
     
     // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-    if(p >= kMultiRingNuisSKDetFSI_first && p <= kMultiRingNuisSKDetFSI_first+kNumOfSKDetFSIParamsMultiRing-1)
+    if(p >= kMultiRingNuisSKDetFSI_first && p <= (PhysParamId_t)kListOfMultiRingSKDetFSIParams[conv::kNumOfSKDetFSIParamsMultiRing-1])
         return true;
 #elif defined(__USE_SKDETFSI2015__)
-    if(p >= kMultiRingNuisSKDetFSI_first && p <= kMultiRingNuisSKDetFSI_first+kNumOfSKDetFSIParamsMultiRing-1)
+    if(p >= kMultiRingNuisSKDetFSI_first && p <= (PhysParamId_t)kListOfMultiRingSKDetFSIParams[conv::kNumOfSKDetFSIParamsMultiRing-1])
         return true;
 #endif
     
