@@ -263,6 +263,12 @@ FitMarginalization::FitMarginalization()
   fhPriorMH = 0;
   fhToyMH = 0;
   
+  //NuEBarAppHisto
+  for(int i = 0;i<2;i++){
+      fNuEAppHisto[i] = 0;
+      fNuEAppHistoUnscaled[i] = 0;
+  }
+  
   // NEW PENALTY TERM
   fpenalty_mean0 = 0.;
   fpenalty_mean1 = 0.;
@@ -672,11 +678,6 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
       fNuEAppHisto[i] = new TH1D(Form("NuEBarAppHisto_%d",i),Form("Expected NuEBar Events; BetaBar bin %d",i),25000,0,25);
       fNuEAppHistoUnscaled[i] = new TH1D(Form("NuEBarAppHistoUnscaled_%d",i),Form("Expected NuEBar Events Unscaled; BetaBar bin %d",i),25000,0,25);
       }
-      else
-      {
-        fNuEAppHisto[i] = 0;
-        fNuEAppHistoUnscaled[i] = 0;
-      }
     }
   
 }
@@ -769,12 +770,11 @@ void FitMarginalization::CleanUp(void){
       delete fNuEAppHisto[i];
       fNuEAppHisto[i] = 0;
       }
-    if(fNuEAppHistoUnscaled[i]){
+      if(fNuEAppHistoUnscaled[i]){
       delete fNuEAppHistoUnscaled[i];
       fNuEAppHistoUnscaled[i] = 0;
+      }
     }
-
-  }
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetFullRange(){
@@ -8635,7 +8635,7 @@ double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_d
       iscount++;
     } // loop SK samples
     
-      for(int nuebarextraction_int=0;nuebarextraction_int < 10000;nuebarextraction_int++)
+    for(int nuebarextraction_int=0;nuebarextraction_int < 10000;nuebarextraction_int++)
     {
     int NuEAppEvents_fill = Rnd::Instance()->RndToyMCstat().Poisson(NuEAppEvents);
     fNuEAppHisto[iterpar0]->Fill(NuEAppEvents_fill,exp(-chisq/2.));
