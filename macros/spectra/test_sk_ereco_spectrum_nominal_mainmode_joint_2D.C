@@ -15,7 +15,7 @@ using namespace valor::conv;
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
  const char * tag                  = "prova",
- const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample            = "MultiRe",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu", "MultiRe" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
  // // No Oscillations
@@ -44,6 +44,15 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  // double       input_betabar        = 1., //0., //-99,
+
+ // Mach3, T2K Run1-4 + reactors best fit (1)
+ // double       input_mixing12       = 0.306,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing13       = 0.0257,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_mixing23       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ // double       input_deltacp        = 0., //-99,    /* deltacp, */
+ // double       input_dm12sq         = 7.6E-5,    /* Dm^2_{12},  */
+ // double       input_dm23sq         = 2.49E-3, //-99,    /* |Dm^2_{23}| */
+ // double       input_betabar        = -99,
  
  bool         disable_banff_tuning = false,                          /* */
  
@@ -52,7 +61,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
- const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
  
@@ -62,6 +71,11 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_xsecterm_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_q2_elike_RFGRPA_NIWG2015c.xml",
+ //const char * config_file    = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_mrmc_test.xml",
+ // const char * config_file    = "analysis_configuration.xml",
+ const char * config_file     = "analysis_configuration_prefit.xml",
+ //const char * config_file    = "analysis_configuration_dummy_multiring.xml",
+ //const char * config_file  = "analysis_configuration_test_theta_elike_RFGRPA.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
@@ -219,7 +233,6 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   }
   
   
-  
   string oscparams = util::AsString(ph.Hypothesis(),
 				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar,-999,-999);
 
@@ -249,10 +262,10 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   const double * ereco_bin_edges = util::ErecoBinEdges(s);
   TH2D * hErecoVsQ2Tot = new TH2D("hErecoVsQ2Tot","hErecoVsQ2Tot",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
 
-  TH1D * hErecoMode[conv::knm]; //< contribution from each mode  
+  TH1D * hErecoMode[conv::knm];      //< contribution from each mode  
   TH1D * hErecoMode_draw[conv::knm]; //< contribution from each mode  
 
-  TH2D * hErecoVsQ2Mode[conv::knm]; //< contribution from each mode  
+  TH2D * hErecoVsQ2Modes[conv::knm];      //< contribution from each mode  
   TH2D * hErecoVsQ2Mode_draw[conv::knm]; //< contribution from each mode  
 
  
@@ -281,7 +294,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   // Disable BANFF tuning if requested
   if(disable_banff_tuning) {
     cout << "- Performing special systematic parameter variation which cancels the effect of BANFF tuning..." << endl;
-    skexp.GetBANFF()->RestoreNominalMC();
+    //skexp.GetBANFF()->RestoreNominalMC();
+    skexp.GetBANFF()->Tweak(0,0,"untuned");
   }
 
   // Generate prediction
@@ -297,13 +311,15 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     TH2D * h = skexp.CurrPredictedErecoVsQ2Spectrum(s, m);  
     assert(h);
     hErecoVsQ2Mode[im] = new TH2D(*h);
+    if (get_all_1dmodes) hErecoMode[im] =  (TH1D*)h->ProjectionY()->Clone(util::AsStringCompact(s).c_str());
     if (plot_per_50MeV) {
-      hErecoVsQ2Mode_draw[im]        = spectrum_to_per_50mev(hErecoVsQ2Mode[im]);
+      hErecoVsQ2Mode_draw[im] = spectrum_to_per_50mev(hErecoVsQ2Mode[im]);
     }
     else {
-      hErecoVsQ2Mode_draw[im]        = hErecoVsQ2Mode[im];
+      hErecoVsQ2Mode_draw[im] = hErecoVsQ2Mode[im];
     }      
   }
+  
   
   hErecoVsQ2Tot = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));  
   hErecoVsQ2Tot->GetXaxis()->SetTitle(titleX);
@@ -427,16 +443,16 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     string modestr = util::AsStringCompact(m);
         
     //cout << m << " " << modestr << " --> ";
-    if(util::IsCCQE(m)) cout << "IsCCQE" << endl;
-    else if(util::IsMEC(m)) cout << "IsMEC" << endl;
+    if     (util::IsCCQE(m))  cout << "IsCCQE"  << endl;
+    else if(util::IsMEC(m))   cout << "IsMEC"   << endl;
     else if(util::IsCCnQE(m)) cout << "IsCCnQE" << endl;
-    else if(util::IsNC(m)) cout << "IsNC" << endl;
+    else if(util::IsNC(m))    cout << "IsNC"    << endl;
     else{
       cout << "No modes!!!" << endl;
       exit(1);
     }
     cout << endl;
-
+    
     // Fill by flavor/mode    
     if(util::IsNC(m))    
       hErecoVsQ2Mode_NC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NC
@@ -444,6 +460,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
       hErecoVsQ2Mode_NumuBarToNueBar->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar->NueBar
     else if(util::IsOscNuE(m))
       hErecoVsQ2Mode_NumuToNue->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu->Nue
+      
     else if( util::IsNuMuBar(m))
       hErecoVsQ2Mode_NumuBarBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar Beam
     else if( util::IsNuMu(m))
@@ -470,7 +487,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     }
 
   } // loop over modes
-
+  
   // Get 1D projections X: Q2
   hQ2Mode_NumuBarBeam     = (TH1D*) hErecoVsQ2Mode_NumuBarBeam    ->ProjectionX()->Clone("hQ2Mode_NumuBarBeam");
   hQ2Mode_NumuBeam        = (TH1D*) hErecoVsQ2Mode_NumuBeam       ->ProjectionX()->Clone("hQ2Mode_NumuBeam");
@@ -492,7 +509,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   hErecoMode_MEC             = (TH1D*) hErecoVsQ2Mode_MEC            ->ProjectionY()->Clone("hErecoMode_MEC");
   hErecoMode_CCQE            = (TH1D*) hErecoVsQ2Mode_CCQE           ->ProjectionY()->Clone("hErecoMode_CCQE");
   hErecoMode_CCnQE           = (TH1D*) hErecoVsQ2Mode_CCnQE          ->ProjectionY()->Clone("hErecoMode_CCnQE");
-
+  
 
   // Draw 2D templates
 
@@ -790,6 +807,109 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   legY_reac->Draw();
 
 
+  //Rebinning histograms to compare with Konosuke's presentation
+  //Could also get the additional modes and stack them in the same 
+  THStack *sErecoTotReac_rebin = new THStack("sErecoTotReac_rebin","sErecoTotReac_rebin");
+  double xbins[11] = {0,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3};
+  TH1D * hErecoMode_NC_rebin    = hErecoMode_NC   ->Rebin(10,"hErecoMode_NC_rebin"   , xbins);
+  TH1D * hErecoMode_MEC_rebin   = hErecoMode_MEC  ->Rebin(10,"hErecoMode_MEC_rebin"  , xbins);
+  TH1D * hErecoMode_CCQE_rebin  = hErecoMode_CCQE ->Rebin(10,"hErecoMode_CCQE_rebin" , xbins);
+  TH1D * hErecoMode_CCnQE_rebin = hErecoMode_CCnQE->Rebin(10,"hErecoMode_CCnQE_rebin", xbins);
+  
+  sErecoTotReac_rebin->Add(hErecoMode_NC_rebin);
+  sErecoTotReac_rebin->Add(hErecoMode_MEC_rebin);
+  sErecoTotReac_rebin->Add(hErecoMode_CCQE_rebin);
+  sErecoTotReac_rebin->Add(hErecoMode_CCnQE_rebin);
+
+  TCanvas *cErecoTotReac_rebin = new TCanvas("cErecoTotReac_rebin","cErecoTotReac_rebin");
+  sErecoTotReac_rebin->Draw();
+
+  sErecoTotReac_rebin->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco    
+  sErecoTotReac_rebin->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
+  if(plot_per_50MeV) sErecoTotReac_rebin->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  else sErecoTotReac_rebin->GetYaxis()->SetTitle("Number of events");
+  cErecoTotReac_rebin->Modified();
+  gStyle->SetOptStat(0);
+  
+  TLatex latex_reac_osc;
+
+  // cout << "input_mixing12 " << input_mixing12 << "\n";
+  // cout << "input_mixing13 " << input_mixing13 << "\n";
+  // cout << "input_mixing23 " << input_mixing23 << "\n";
+  // cout << "input_deltacp  " << input_deltacp  << "\n";
+  // cout << "input_dm12sq   " << input_dm12sq   << "\n";
+  // cout << "input_dm23sq   " << input_dm23sq   << "\n";
+  
+  // const char * input_mixing12_str = Form("%s%f","sin^{2} #theta_{12} = ",input_mixing12 );
+  // const char * input_mixing13_str = Form("%s%f","sin^{2} #theta_{13} = ",input_mixing13 );
+  // const char * input_mixing23_str = Form("%s%f","sin^{2} #theta_{23} = ",input_mixing23 );  
+  // const char * input_deltacp_str  = Form("%s%f","#delta_{CP} = ",          input_deltacp);
+  // const char * input_dm12sq_str   = Form("%s%f","#Delta m^{2}_{12} = ",    input_dm12sq ); 
+  // const char * input_dm23sq_str   = Form("%s%f","#Delta m^{2}_{23} = ",    input_dm23sq ); 
+
+  // latex_reac_osc.SetTextAlign(12);
+  // latex_reac_osc.SetTextSize(0.05);
+  // double oset = 0.05;
+  // double pos_y   = 0.65;
+  // latex_reac_osc.DrawLatex(0.1,pos_y,input_mixing12_str);
+  // latex_reac_osc.DrawLatex(0.1,pos_y + 1*oset,input_mixing13_str);
+  // latex_reac_osc.DrawLatex(0.1,pos_y + 2*oset,input_mixing23_str);
+  // latex_reac_osc.DrawLatex(0.1,pos_y + 3*oset,input_deltacp_str );
+  // latex_reac_osc.DrawLatex(0.1,pos_y + 4*oset,input_dm12sq_str  );  
+  // latex_reac_osc.DrawLatex(0.1,pos_y + 5*oset,input_dm23sq_str  ); 
+
+
+  TLegend *legY_reac = new TLegend(0.6, 0.4, 0.9, 0.9);
+  legY_reac->SetFillColor(0);
+  legY_reac->SetBorderSize(0);
+  legY_reac->AddEntry(hErecoMode_NC,"NC","F");
+  legY_reac->AddEntry(hErecoMode_MEC,"MEC","F");
+  legY_reac->AddEntry(hErecoMode_CCQE,"CCQE","F");
+  legY_reac->AddEntry(hErecoMode_CCnQE,"CCnQE","F");
+  legY_reac->Draw();
+
+
+  THStack *sErecoTotFlavMode_rebin = new THStack("sErecoTotFlavMode_rebin","sErecoTotFlavMode_rebin");
+
+  TH1D * hErecoMode_NueBeam_rebin         = hErecoMode_NueBeam         ->Rebin(10,"hErecoMode_NueBeam_rebin"         ,xbins);
+  TH1D * hErecoMode_NumuBeam_rebin        = hErecoMode_NumuBeam        ->Rebin(10,"hErecoMode_NumuBeam_rebin"        ,xbins);
+  TH1D * hErecoMode_NumuBarBeam_rebin     = hErecoMode_NumuBarBeam     ->Rebin(10,"hErecoMode_NumuBarBeam_rebin"     ,xbins);
+  TH1D * hErecoMode_NumuToNue_rebin       = hErecoMode_NumuToNue       ->Rebin(10,"hErecoMode_NumuToNue_rebin"       ,xbins);
+  TH1D * hErecoMode_NumuBarToNueBar_rebin = hErecoMode_NumuBarToNueBar ->Rebin(10,"hErecoMode_NumuBarToNueBar_rebin" ,xbins);
+
+  sErecoTotFlavMode_rebin->Add(hErecoMode_NC_rebin);
+  sErecoTotFlavMode_rebin->Add(hErecoMode_NueBeam_rebin);
+  sErecoTotFlavMode_rebin->Add(hErecoMode_NumuBeam_rebin);
+  sErecoTotFlavMode_rebin->Add(hErecoMode_NumuBarBeam_rebin);
+  sErecoTotFlavMode_rebin->Add(hErecoMode_NumuToNue_rebin);
+  sErecoTotFlavMode_rebin->Add(hErecoMode_NumuBarToNueBar_rebin);
+  
+  TCanvas *cErecoTotFlavMode_rebin = new TCanvas("cErecoTotFlavMode_rebin","cErecoTotFlavMode_rebin");
+  sErecoTotFlavMode_rebin->Draw();
+  if(draw_data){
+    h_data_ereco->Draw("pe same");
+    lScaleEreco->Draw("same");
+  }
+  sErecoTotFlavMode_rebin->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco    
+  sErecoTotFlavMode_rebin->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
+  if(plot_per_50MeV) sErecoTotFlavMode_rebin->GetYaxis()->SetTitle("Events per 0.050 GeV");
+  else sErecoTotFlavMode_rebin->GetYaxis()->SetTitle("Number of events");
+  cErecoTotFlavMode_rebin->Modified();
+  gStyle->SetOptStat(0);
+
+  TLegend *legY = new TLegend(0.6, 0.4, 0.9, 0.9);
+  legY->SetFillColor(0);
+  legY->SetBorderSize(0);
+  legY->AddEntry(hErecoMode_NumuBarToNueBar,"Total","L");
+  legY->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","F");
+  legY->AddEntry(hErecoMode_NumuToNue,"#nu_{#mu} #rightarrow #nu_{e}","F");
+  legY->AddEntry(hErecoMode_NC,"NC","F");
+  legY->AddEntry(hErecoMode_NueBeam,"#nu_{e}/#bar{#nu}_{e} intrinsic","F");
+  legY->AddEntry(hErecoMode_NumuBeam,"#nu_{#mu} intrinsic","F");
+  legY->AddEntry(hErecoMode_NumuBarBeam,"#bar{#nu}_{#mu} intrinsic","F");
+  legY->Draw();
+
+  
   // Draw 1D templates: Q2
 
   if(plot_per_50MeV){
@@ -1156,6 +1276,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
     sprintf(name,"%s_%s.pdf","cErecoTotFlavMode",sk_sample);    
     cErecoTotFlavMode ->Print(name);
+
+    sprintf(name,"%s_%s.pdf","cErecoTotFlavMode_rebin",sk_sample);    
+    cErecoTotFlavMode_rebin ->Print(name);
   }
   
   return;

@@ -63,8 +63,10 @@ void MakeBinning()
   
   SuperkMC *skmc = new SuperkMC();
 
+  // Loop over samples
   for(int is = 0; is < kns; is++) {
     SuperkSample_t s = kSKSamples[is];
+    cout << "Binning for sample: " << util::AsString(s) << endl;
     if(s == kSKsUndefined){
       continue;
     }
