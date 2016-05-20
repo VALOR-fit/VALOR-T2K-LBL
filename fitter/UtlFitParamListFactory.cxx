@@ -896,7 +896,7 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 
 
 #if defined(__NUEONLY__) // nue appearance
-
+LOG("UtlFitParamListFactory",pINFO) << "Determine Append";
   #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
     
     #if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__)
@@ -905,12 +905,10 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
     util::AppendSuperkDetectorFSISystematicsApp(fparm, start+kNumOfParamsInBANFFfit);
     #if defined(__MULTIRING_FHC_NUE__)
     util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRe);
-    #else
-    #if defined(__MULTIRING_FHC_NUMU__)
+    #elif defined(__MULTIRING_FHC_NUMU__)
     util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRmu);
     #else
     util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing);
-    #endif
     #endif
     
     #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
@@ -953,12 +951,10 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
     util::AppendSuperkDetectorFSISystematicsApp(fparm, start+kNumOfParamsInBANFFfit);
     #if defined(__MULTIRING_FHC_NUE__)
     util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRe);
-    #else
-    #if defined(__MULTIRING_FHC_NUMU__)
+    #elif defined(__MULTIRING_FHC_NUMU__)
     util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRmu);
     #else
     util::AppendUncorrelatedXSecSystematicsApp (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing);
-    #endif
     #endif
     
     #endif
@@ -967,24 +963,23 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
 
 #else // joint fit and NumuDissap
 
-  #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)  
+#if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
+LOG("UtlFitParamListFactory",pINFO) << "FHC or RHC";
     #if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__)
-
+    LOG("UtlFitParamListFactory",pINFO) << "Determine Append";
     // fhc all + skdetfsi multiring 
     util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
     util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);
     #if defined(__MULTIRING_FHC_NUE__)
     util::AppendAllUncorrelatedXSecSystematics (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRe);
-    #else
-    #if defined(__MULTIRING_FHC_NUMU__)
+    #elif defined(__MULTIRING_FHC_NUMU__)
     util::AppendAllUncorrelatedXSecSystematics (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRmu);
     #else
     util::AppendAllUncorrelatedXSecSystematics (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing);
     #endif
-    #endif
     
     #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-    
+    LOG("UtlFitParamListFactory",pINFO) << "Determine Append";
       #if defined(__FULLY_CORRELATED__)
       // fhc+rhc fully correlated 
       util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
@@ -1021,12 +1016,10 @@ void util::AppendAllSystematicsTo(FitParamList * fparm, int start)
     util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);
     #if defined(__MULTIRING_FHC_NUE__)
     util::AppendAllUncorrelatedXSecSystematics (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRe);
-    #else
-    #if defined(__MULTIRING_FHC_NUMU__)
+    #elif defined(__MULTIRING_FHC_NUMU__)
     util::AppendAllUncorrelatedXSecSystematics (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRmu);
     #else
     util::AppendAllUncorrelatedXSecSystematics (fparm, start+kNumOfParamsInBANFFfit+1+kNumOfSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing);
-    #endif
     #endif
 
     #endif
