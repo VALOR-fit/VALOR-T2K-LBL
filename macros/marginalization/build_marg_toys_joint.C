@@ -30,7 +30,8 @@ void build_marg_toys_joint
  //const char * tag                  = "PROVA_SystOsc",
  //const char * tag                  = "PROVA_NoSyst",
  
- const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ // const char * config_file          = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+  const char * config_file          = "analysis_configuration.xml",
  //const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
  
  const char * fit_param_list        = "nuosc3f+nuisance", // all osc params are free
@@ -233,10 +234,10 @@ void build_marg_toys_joint
 
   //Set marginalization oscillation parameters to defaults  
 
-  FitParamList *fparm = fitmarg->GetFitParamList();
+  FitParamList *fparm    = fitmarg->GetFitParamList();
   FitParamList *fparm_nh = fitmarg->GetFitParamList_NH();
   FitParamList *fparm_ih = fitmarg->GetFitParamList_IH();
-  PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  PhysHypothesis_t hyp   = fparm->PhysicsHypothesis();
 
   if(Opt::Instance()->gOscMixingParamChoice == conv::kNuMixSinsq2Theta) {
     if(input_mixing13_nh == -99) input_mixing13_nh = conv::kGlobFitSinsq2Theta13;
