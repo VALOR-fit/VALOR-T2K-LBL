@@ -440,10 +440,15 @@ class FitMarginalization
   VALORArrayF *fToyMargVArray_1Re;
   VALORArrayF *fToyMargVArray_RHC1Rmu;
   VALORArrayF *fToyMargVArray_RHC1Re;
+
+  VALORArrayF *fToyMargVArray_MultiRe;
+  
   VALORArrayF *fToyMargVArray_Clone_1Rmu;
   VALORArrayF *fToyMargVArray_Clone_1Re;
   VALORArrayF *fToyMargVArray_Clone_RHC1Rmu;
   VALORArrayF *fToyMargVArray_Clone_RHC1Re;
+
+  VALORArrayF *fToyMargVArray_Clone_MultiRe;
   //
   
   TH1F *fhToyMargCurr[conv::kns]; // a histogram for each sk sample. Filled using fsksamples and fNSKsamples, not as usual by looping over all the samples and skipping the undefined ones 
