@@ -20,7 +20,7 @@
        4.011e+20
      </rhc>
      <multiring_fhc>
-       6.914e+20 <!-- FHC nue CC 1 pi sample based on POT Run1-4 ?-->
+       6.914e+20
      </multiring_fhc>
     </superk>
   </data_pot>
@@ -173,7 +173,7 @@
             <objtype>    TTree   </objtype>
           </one_e_ring_rhc>
 
-          <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
+          <!-- Input FHC POT MultiRing -->
           <pot_fhc_cc1pi>
             <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumu  </objname>
@@ -224,7 +224,7 @@
             <objtype>    TTree      </objtype>
           </one_e_ring_rhc>
 
-          <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
+          <!-- Input FHC POT to MultiRing -->
           <pot_fhc_cc1pi>
             <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumubar  </objname>
@@ -377,7 +377,7 @@
             <objtype>    TTree     </objtype>
           </one_e_ring_rhc>
 
-          <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
+          <!-- Input FHC POT to MultiRing -->
           <pot_fhc_cc1pi>
             <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignue  </objname>
@@ -428,7 +428,7 @@
             <objtype>    TTree        </objtype>
           </one_e_ring_rhc>
 
-          <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
+          <!-- Input FHC POT MultiRing -->
           <pot_fhc_cc1pi>
             <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignuebar  </objname>
@@ -483,12 +483,12 @@
       <!-- MultiRing sample splines -->
       <multi_mu_ring>
         <filename>
-          official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v8_MultiRe.root
+          official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
         <filename>
-	  official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v8_MultiRe.root
+	  official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root
         </filename>
       </multi_e_ring>
 
@@ -520,12 +520,12 @@
       <!-- Input the single ring splines into the MultiRing samples -->
       <multi_mu_ring>
         <filename>
-          official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v8_MultiRe.root
+          official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
         <filename>
-	  official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v8_MultiRe.root
+	  official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root
         </filename>
       </multi_e_ring>
 
@@ -545,7 +545,6 @@
       <filename>   official/2015/banff/postfit_data_1p1h_biascorrection_20160310_valor_order_all_plus_scc.root  </filename>
       <objname>    banff_xsec_untuned_central_values    </objname>
       <objtype>    TVectorD                             </objtype>
-
     </untuned_parameter_central_values>
 
   </xsec>
@@ -564,9 +563,10 @@
       -->
       <covariance_matrix>
         <!-- <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv7_FSIv1.root </filename> -->
-	<filename>   official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/Erec_Matrix_withCC1pi_03242016_VALOR_Order_stripped.root </filename>
-	<objname>    covmat_skdetfsi_nozerobins_with_escale    </objname>
-        <objtype>    TMatrixD                                  </objtype>
+	<!-- <filename>   official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/Erec_Matrix_withCC1pi_03242016_VALOR_Order_stripped.root </filename> -->
+        <filename>  official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/new_fullmatrix/Erec_Matrix_withCC1pi_04052016_VALOR_Order.root </filename>
+	<objname>   covmat_skdetfsi_nozerobins_with_escale    </objname>
+        <objtype>   TMatrixD                                  </objtype>
       </covariance_matrix>
 
     </skdetfsi>
@@ -586,7 +586,9 @@
         <objname>    banff_untuned_central_values  </objname>
         <objtype>    TVectorD                      </objtype>
       </untuned_values>
-
+      <!--
+          Postfit 
+      -->
       <!--
           Central values from BANFF fit
       -->
@@ -595,7 +597,6 @@
         <objname>    postfit_params   </objname>
         <objtype>    TVectorD         </objtype>
       </initial_values>
-
       <!--
           Covariance of fit parameters
       -->
@@ -604,7 +605,7 @@
         <objname>    postfit_cov       </objname>
         <objtype>    TMatrixD          </objtype>
       </covariance_matrix>
-
+      
       <x_mec>
         -1.0
       </x_mec>
