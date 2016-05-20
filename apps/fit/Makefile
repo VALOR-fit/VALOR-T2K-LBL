@@ -16,12 +16,16 @@ MAKEFILE = Makefile
 #
 include $(T2KOSCANA)/make/Make.include
 
-TGT = generate_toymc_ensemble run_fit_marginalization run_fc_marginalization run_mh_marginalization
+TGT = generate_toymc_ensemble run_fit_marginalization run_fc_marginalization run_mh_marginalization generate_toymc_ensemble_nuebarapp
 
 all: $(TGT)
 
 # 
 #
+generate_toymc_ensemble_nuebarapp: FORCE
+	$(CXX) $(CXXFLAGS) -c generate_toymc_ensemble_nuebarapp.cxx $(INCLUDES)
+	$(LD) $(LDFLAGS) generate_toymc_ensemble_nuebarapp.o $(LIBRARIES) $(VALOR_LIBRARIES) -o $(T2KOSCANA)/bin/generate_toymc_ensemble_nuebarapp
+
 generate_toymc_ensemble: FORCE
 	$(CXX) $(CXXFLAGS) -c generate_toymc_ensemble.cxx $(INCLUDES)
 	$(LD) $(LDFLAGS) generate_toymc_ensemble.o $(LIBRARIES) $(VALOR_LIBRARIES) -o $(T2KOSCANA)/bin/generate_toymc_ensemble
@@ -45,6 +49,7 @@ purge: FORCE
 
 clean: FORCE
 	$(RM) *.o *~ core
+	$(RM) $(T2KOSCANA)/bin/generate_toymc_ensemble_nuebarapp
 	$(RM) $(T2KOSCANA)/bin/generate_toymc_ensemble
 	$(RM) $(T2KOSCANA)/bin/run_fit_marginalization
 	$(RM) $(T2KOSCANA)/bin/run_fc_marginalization
