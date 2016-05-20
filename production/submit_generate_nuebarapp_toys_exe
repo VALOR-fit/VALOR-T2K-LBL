@@ -2,7 +2,10 @@
 
 
 #-------------------------------------------------------------------------------------------------------------------------------
-# Submit a batch of build_marg_toys.C jobs
+# Submit a batch of generate_toymc_ensemble_nuebarapp jobs
+#
+# Make toys for the statistic distribution, DoToys must be set to 0 for you to be able to pass a
+# root file which includes the data from the 3 other samples
 #
 # Inputs
 #  --resource               : Computer resource, <ETH-Monch, RAL, Oxford, Grid, interactive>. Default: interactive.
@@ -205,7 +208,7 @@ $first_expt      = 0   unless defined $first_expt; # first toy experiment id
  #$mix13          = -999                     unless defined $mix13;
  $mix12           = -999                       unless defined $mix12;      
  $deltacp         = -999                      unless defined $deltacp;
- $betaBar         = 1.                          unless defined $betaBar;
+ $betaBar         = 0.                          unless defined $betaBar;
 
 #
 #ASIMOV A
@@ -253,9 +256,9 @@ if( !defined $cput ) {
 $hypothesis             = "3f_osc_normbar"      unless defined $hypothesis;
 $do_toys                = 0                    unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
-$fakedata_root_file = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
-#$fakedata_root_file = "../outputs/test/PROVA/SKAsimov_A_Run16.root" unless defined $fakedata_root_file;
-$fakedata_xml_file  = ""  unless defined $fakedata_xml_file;
+$fakedata_root_file     = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
+#$fakedata_root_file    = "../outputs/test/PROVA/SKAsimov_A_Run16.root" unless defined $fakedata_root_file;
+$fakedata_xml_file      = ""  unless defined $fakedata_xml_file;
 $print_syst_variation   = 0                    unless defined $print_syst_variation;
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
@@ -712,9 +715,8 @@ while($i_freepar1 < $n_freepar1) {
 	    #$dotoys = 0;                # Don't do toys on fly but read either xml or root files
 	    #$stat_fluct_fit = 0;        # Useless for fits, since toys are read and not performed
 	    #$tweak_systematics_fit = 0; # Useless for fits, since toys are read and not performed
-	    $tag_freepar = sprintf("fit_%s_nexp_%d_%1.3f_%1.3f-job%1.0f",$tag,$nexpts,$pt_freepar0,$pt_freepar1,$irun);
+	    $tag_freepar = sprintf("%s_%1.0f",$tag,$irun);
 	    
-	    $tag_in = $tag_freepar; # needed for the output files
 
 	    $program = "";
 
