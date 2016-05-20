@@ -155,6 +155,8 @@ namespace valor {
     
     // NEW 2D TEMPLATES
     
+    double CalcThetaDegrees(float dir[10][3]);
+    
     double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
     double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep);
     double CalcEhad(double Enu,double Elep);
@@ -374,7 +376,8 @@ namespace valor {
     double     fBrWghtSFRFG;                 ///< branch var for reading input MC mini-DST
     double     fBrWghtRPArel;                ///< branch var for reading input MC mini-DST
     double     fBrWghtRPAnonrel;             ///< branch var for reading input MC mini-DST
-    double     fBrWghtCCcoh;                   ///< branch var for reading input MC mini-DST
+    double     fBrWghtCCcoh;                 ///< branch var for reading input MC mini-DST
+    double     fBrWghtOsc;                   ///< branch var for reading input MC mini-DST, used for comparison with p-theta analysis oscillation weights as branch
     int        fBrEvFlag;                    ///< branch var for reading input MC mini-DST
                                              // NEW 2D TEMPLATES
                                              //int        fBrNumnu;                     ///< branch var for reading input MC mini-DST
