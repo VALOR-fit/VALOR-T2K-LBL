@@ -25,7 +25,7 @@ env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
-samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
+samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re","MultiRmu","MultiRe"]
 
 col1_width = 50
 col_width = 20
@@ -61,12 +61,15 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   skexp.Read(os.environ[env_var]+"/config/"+config_file_noflux)
   
   #~ skexp.GetBANFF().SetTweaksToNominal()
-  skexp.GetBANFF().RestoreNominalMC()
-  skexp.GetBANFF().RestoreRHCNominalMC()
+  # skexp.GetBANFF().RestoreNominalMC()
+  # skexp.GetBANFF().RestoreRHCNominalMC()
   #~ skexp.GetBANFF().RestoreFHCpRHCNominalMC()
+  skexp.GetBANFF().Tweak(0,0,"untuned")
+  
   skexp.GetSuperkMC().FillTemplateArrays(False)
   
   fparm_unosc,fparm_osc = make_fit_param_lists()
+  print fparm_osc.GetParListName()
   skexp.Generate(fparm_unosc)
   nominal_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
   nominal_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
@@ -90,9 +93,11 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file)
   #~ skexp.GetBANFF().SetTweaksToNominal()
-  skexp.GetBANFF().RestoreNominalMC()
-  skexp.GetBANFF().RestoreRHCNominalMC()
+  # skexp.GetBANFF().RestoreNominalMC()
+  # skexp.GetBANFF().RestoreRHCNominalMC()
   #~ skexp.GetBANFF().RestoreFHCpRHCNominalMC()
+  skexp.GetBANFF().Tweak(0,0,"untuned")
+  
   skexp.GetSuperkMC().FillTemplateArrays(False)
   
   fparm_unosc,fparm_osc = make_fit_param_lists()
@@ -175,6 +180,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
 
 """)
   tex_output.write("\\begin{table}\n")
+  tex_output.write(util.AsString(sample))
   #~ tex_output.write("\\centering\n")
   tex_output.write("\n\n\\begin{tabular} { | c ||"+("c | "*4)+" | }\n\\hline\n")
   
@@ -407,7 +413,8 @@ def  make_fit_param_lists():
   #dm23sq   = opt.GetGlobalBestFit(conv.kPhypDm23sq)
   #deltacp  = conv.kT2KBestFitDeltaCP_NH
   
-  fparm_osc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
+  # fparm_osc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
+  fparm_osc = util.NamedParameterList("nuosc3f+nuisance")
   
   fparm_osc.SetInitValue(conv.kPhypMixing12,  0.306);
   fparm_osc.SetInitValue(conv.kPhypMixing13,  0.025);
@@ -416,7 +423,9 @@ def  make_fit_param_lists():
   fparm_osc.SetInitValue(conv.kPhypDm12sq  ,  7.5E-5);
   fparm_osc.SetInitValue(conv.kPhypDm23sq  ,  2.509E-3);
   
-  fparm_unosc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
+  # fparm_unosc = util.NamedParameterList("nuosc3f_numudisapp_fix4+nuisance")
+  fparm_unosc = util.NamedParameterList("nuosc3f+nuisance")
+  
   fparm_unosc.SetInitValue(conv.kPhypMixing12,  0.0)
   fparm_unosc.SetInitValue(conv.kPhypMixing13,  0.0)
   fparm_unosc.SetInitValue(conv.kPhypMixing23,  0.0)
@@ -437,7 +446,7 @@ if __name__=="__main__":
   
   parser.add_option('-f', '--file', dest='output_file', default="effects_of_tuning.tex", help="Name for output TeX file.")
   
-  parser.add_option('-s', '--sample' , dest='sample'      , default="1Rmu"                    , help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
+  parser.add_option('-s', '--sample' , dest='sample', default="1Rmu", help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re, MultiRmu, MultiRe)")
   
   parser.add_option('-c', '--config'        , dest='config' , default="analysis_configuration.xml", help="Configuration file")
   parser.add_option('-p', '--config-prefit' , dest='pconfig', default="analysis_configuration_prefit.xml", help="Prefit config file")

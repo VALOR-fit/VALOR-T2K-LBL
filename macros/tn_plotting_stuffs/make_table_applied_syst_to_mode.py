@@ -24,8 +24,8 @@ env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
-species   = ["numu","nue","numubar","nuebar","signue", "signuebar"]
-processes = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
+species        = ["numu","nue","numubar","nuebar","signue", "signuebar"]
+processes      = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
 processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother", "NC1pi0" , "NC1piPM", "NCcoherent", "NCother"]
 #~ processes_used = ["CCQE", "CC1pi", "CCcoherent", "CCother" , "NC1piPM", "NCother"]
 
@@ -42,7 +42,8 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
   skexp.Read(os.environ[env_var]+"/config/analysis_configuration.xml")
   skdetfsi = skexp.GetSuperkDetectorFSI()
   xsec = skexp.GetNuXSec()
-  
+
+  print "Sample enum: ", sample 
   
   # Some ridiculous voodoo to go around ROOT's inability to identify arrays of enums or 2D arrays of bools
   modes_array  = array.array("i",[-2]*conv.knm)
@@ -68,7 +69,9 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
 \\usepackage{rotating}
 \\usepackage[paperwidth=300mm,paperheight=600mm]{geometry}
 
-\\newcommand{\ck}{$\\checkmark$}
+\\usepackage[table]{xcolor} % colored cells for the output table
+
+\\newcommand{\ck}{\\cellcolor{green!50}$\\checkmark$}
 \\begin{document}
 
 {
@@ -175,7 +178,7 @@ if __name__=="__main__":
   
   parser.add_option('-f', '--file', dest='output_file', default="syst_applied_table.tex", help="Name for output TeX file.")
   
-  parser.add_option('-s', '--sample' , dest='sample'      , default="RHC1Re"                    , help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re)")
+  parser.add_option('-s', '--sample' , dest='sample'      , default="RHC1Re"                    , help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re, MultiRmu, MultiRe)")
   parser.add_option('--skip-skdetfsi', dest='skipskdetfsi', action="store_true", default=False, help="Skip the SKdetFSI parameters")
   parser.add_option('--skip-flux'    , dest='skipflux'    , action="store_true", default=False, help="Skip the flux parameters")
   
