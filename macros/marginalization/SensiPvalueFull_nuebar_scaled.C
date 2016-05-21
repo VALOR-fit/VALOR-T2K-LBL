@@ -550,14 +550,14 @@ double get_error(double obs, TH1D* _hbeta, TH1D* _hbetaUnscaled)
   double pd = _hbeta->Integral();
   double wl = _hbeta->Integral(1,obs_bin)/_hbetaUnscaled->Integral(1,obs_bin);
   double bl = _hbetaUnscaled->Integral(1,obs_bin);
-  double err = TMath::Power(wl* (pvalue) / pd, 2) * bl;
+  double err = TMath::Power(wl* (pvalue) / (pd*pd), 2) * bl;
   err_sqrd = err_sqrd + err;
   
   //Right error
   double pd = _hbeta->Integral();
   double wr = _hbeta->Integral(obs_bin,_hbeta->GetXaxis()->GetNbins())/_hbetaUnscaled->Integral(obs_bin,_hbeta->GetXaxis()->GetNbins());
   double br = _hbetaUnscaled->Integral(obs_bin,_hbeta->GetXaxis()->GetNbins());
-  double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
+  double err = TMath::Power(wr* (1 - pvalue) / (pd*pd), 2) * br;
   err_sqrd = err_sqrd + err;
   
   
