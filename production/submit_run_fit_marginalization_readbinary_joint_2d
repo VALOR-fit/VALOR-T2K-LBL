@@ -42,7 +42,7 @@ foreach (@ARGV) {
     elsif($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
     elsif($_ eq '--nexpts'                 ) { $nexpts                = $ARGV[$iarg+1]; }
     elsif($_ eq '--xml-file'               ) { $xml_file              = $ARGV[$iarg+1]; }
-    elsif($_ eq '--root-file'              ) { $root_file              = $ARGV[$iarg+1]; }
+    elsif($_ eq '--root-file'              ) { $root_file             = $ARGV[$iarg+1]; }
     elsif($_ eq '--dotoys'                 ) { $dotoys                = $ARGV[$iarg+1]; }
     
     elsif($_ eq '--dm23sq'                 ) { $dm23sq                = $ARGV[$iarg+1]; }

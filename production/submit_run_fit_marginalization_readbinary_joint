@@ -42,7 +42,7 @@ foreach (@ARGV) {
     elsif($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
     elsif($_ eq '--nexpts'                 ) { $nexpts                = $ARGV[$iarg+1]; }
     elsif($_ eq '--xml-file'               ) { $xml_file              = $ARGV[$iarg+1]; }
-    elsif($_ eq '--root-file'              ) { $root_file              = $ARGV[$iarg+1]; }
+    elsif($_ eq '--root-file'              ) { $root_file             = $ARGV[$iarg+1]; }
     elsif($_ eq '--dotoys'                 ) { $dotoys                = $ARGV[$iarg+1]; }
     
     elsif($_ eq '--dm23sq'                 ) { $dm23sq                = $ARGV[$iarg+1]; }
@@ -61,7 +61,7 @@ foreach (@ARGV) {
 
     elsif($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
     elsif($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
-    elsif($_ eq '--stat-fluctuations'      ) { $stat_fluct            = 1;              }
+    elsif($_ eq '--stat-fluctuations'      ) { $stat_fluct            = $ARGV[$iarg+1]; }
     elsif($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
     elsif($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
     elsif($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
@@ -92,7 +92,8 @@ foreach (@ARGV) {
     $iarg++;
 }
 $resource        = "interactive"               unless defined $resource;
-$tag             = "fitmarg_prova"             unless defined $tag;
+#$tag             = "fitmarg_joint_dcp_IH"      unless defined $tag;
+$tag             = "submit_prova_fits"         unless defined $tag;
 $nruns           = 1                           unless defined $nruns;   # number of jobs
 $nexpts          = 1                           unless defined $nexpts;  # number of toy experiments per job
 
@@ -111,42 +112,44 @@ $mix13           = 0.0243                      unless defined $mix13;
 $mix12           = 0.304                       unless defined $mix12;
 $deltacp         = -1.601                      unless defined $deltacp;
 
-$config_file    = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml"  unless defined $config_file;
+$config_file    =  "analysis_configuration_test_theta_elike_RFGRPA.xml" unless defined $config_file;
+#$config_file    = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml"  unless defined $config_file;
 
 $tweak_systematics      = 0                    unless defined $tweak_systematics;
 $stat_fluct             = 0                    unless defined $stat_fluct;
 
-$fitparamlist   = "nuosc3f+nuisance"      unless defined $fitparamlist;
+$fitparamlist      = "nuosc3f+nuisance"        unless defined $fitparamlist;
 
-$dmsqscheme             = "auto"                unless defined $dmsqscheme;
-$masshierarchy          = "normal"               unless defined $masshierarchy;
-$mixparamchoice         = "sinsqtheta"           unless defined $mixparamchoice;
-$mixparamoctant         = "two"                  unless defined $mixparamoctant;
+$dmsqscheme             = "auto"               unless defined $dmsqscheme;
+$masshierarchy          = "normal"             unless defined $masshierarchy;
+$mixparamchoice         = "sinsqtheta"         unless defined $mixparamchoice;
+$mixparamoctant         = "two"                unless defined $mixparamoctant;
 
 #### marginalization
 
-$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $marg_file;
-#$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $marg_file;
+$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_IH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl"  unless defined $marg_file;
+#$marg_file         = "../../inputs/marginalization/toys/JOINT/joint_dcp_react_NH_10kToys_2Dtempl/joint_dcp_t2kreact_constrall_IH_10kToys_2Dtempl" unless defined $marg_file;
 
-$nfiles_marg       = 201             unless defined $nfiles_marg;     # of marginalization files
-$nexpts_marg       = 10000         unless defined $nexpts_marg;    # of marginalization toys
+$nfiles_marg       = 201                        unless defined $nfiles_marg;     # of marginalization files
+$nexpts_marg       = 10000                      unless defined $nexpts_marg;    # of marginalization toys
 
-$freepar0          = "deltacp"     unless defined $freepar0;
-$minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
-$maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
-$npt_freepar0      = 201            unless defined $npt_freepar0; # of free parameter points to scan
+$freepar0          = "deltacp"                  unless defined $freepar0;
+$minfreepar0       = -3.14159265358979312e+00   unless defined $minfreepar0;  # Min free param allowed value
+$maxfreepar0       = +3.14159265358979312e+00   unless defined $maxfreepar0;  # Max free param allowed value
+$npt_freepar0      = 201                        unless defined $npt_freepar0; # of free parameter points to scan
 
-$marg_hierarchy    = 0             unless defined $marg_hierarchy;
-$masshierarchy_marg = "normal"     unless defined $masshierarchy_marg;
+$marg_hierarchy    = 0                          unless defined $marg_hierarchy;
+$masshierarchy_marg = "inverted"                unless defined $masshierarchy_marg;
 
-$type_error        = ""            unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
-$draw_full_chisq   = 1             unless defined $draw_full_chisq;
+$type_error        = ""                         unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
+$draw_full_chisq   = 1                          unless defined $draw_full_chisq;
 $store_like        = 0             unless defined $store_like;   # store likelihood weights for best-fit spectra w/ marginalization. To do only when 1 fit is performed 
-$test_stat         = "rate+shape"  unless defined $test_stat;     # "rate-only" or "rate+shape"
+$test_stat         = "rate+shape"               unless defined $test_stat;     # "rate-only" or "rate+shape"
 
-$job_dir           = "."               unless defined $job_dir;
-$softw_dir         = $ENV{'T2KOSCANA'} unless defined $softw_dir;
-$fmwk_dir          = $ENV{'VALOR_FMWK'} unless defined $fmwk_dir;
+$job_dir           = "."                        unless defined $job_dir;
+$softw_dir         = $ENV{'T2KOSCANA'}          unless defined $softw_dir;
+$fmwk_dir          = $ENV{'VALOR_FMWK'}         unless defined $fmwk_dir;
 
 #$using_xml_file = (defined $xml_file ? "true" : "false" );
 #$xml_file = "" unless defined $xml_file;
@@ -159,6 +162,69 @@ if( !defined $cput ) {
 
 mkpath ($job_dir, {verbose => 1, mode=>0777});
 die("$job_dir doesn't exist") unless -d $job_dir;
+
+
+# Print job arguments to file
+($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+$year = $year+1900;
+$mon  = $mon+1;
+
+open(ARGS,">$job_dir/job_args_$year-$mon-$mday.txt");
+print ARGS "#!/bin/bash \n";
+print ARGS "# \n";
+print ARGS "# Submit toys $year/$mon/$mday \n";
+print ARGS "# \n";
+print ARGS "\$T2KOSCANA/production/submit_run_fit_marginalization_readbinary_joint \\\n";
+print ARGS "--resource              '$resource' \\\n";
+print ARGS "--cpu-time               $cput \\\n";
+print ARGS "--job-dir               '$job_dir' \\\n";
+print ARGS "--softw-dir             '$softw_dir' \\\n";
+print ARGS "--fmwk-dir              '$fmwk_dir' \\\n";
+print ARGS "--tag                   '$tag' \\\n";
+print ARGS "--nruns                  $nruns \\\n";
+print ARGS "--nexpts                 $nexpts \\\n";
+print ARGS "--xml-file               $xml_file \\\n";
+print ARGS "--root-file              $root_file \\\n";
+print ARGS "--dotoys                 $dotoys \\\n";
+print ARGS "--dm23sq                 $dm23sq \\\n";
+print ARGS "--dm12sq                 $dm12sq \\\n";
+print ARGS "--mix23                  $mix23 \\\n";
+print ARGS "--mix13                  $mix13 \\\n";
+print ARGS "--mix12                  $mix12 \\\n";
+print ARGS "--deltacp                $deltacp \\\n";
+print ARGS "--dm23sqBar              $dm23sqBar \\\n";
+print ARGS "--dm12sqBar              $dm12sqBar \\\n";
+print ARGS "--mix23Bar               $mix23Bar \\\n";
+print ARGS "--mix13Bar               $mix13Bar \\\n";
+print ARGS "--mix12Bar               $mix12Bar \\\n";
+print ARGS "--deltacpBar             $deltacpBar \\\n";
+print ARGS "--betaBar                $betaBar \\\n";
+print ARGS "--config-file           '$config_file' \\\n";
+print ARGS "--tweak-systematics      $tweak_systematics \\\n";
+print ARGS "--stat-fluctuations      $stat_fluct \\\n";
+print ARGS "--fit-param-list        '$fitparamlist' \\\n";
+print ARGS "--dmsq-scheme           '$dmsqscheme' \\\n";
+print ARGS "--hierarchy             '$masshierarchy' \\\n";
+print ARGS "--mix-param-choice      '$mixparamchoice' \\\n";
+print ARGS "--mix-param-octant      '$mixparamoctant' \\\n";
+print ARGS "--marg-file             '$marg_file' \\\n";
+print ARGS "--nfiles-marg            $nfiles_marg \\\n";
+print ARGS "--nexpts-marg            $nexpts_marg \\\n";
+print ARGS "--freepar0              '$freepar0' \\\n";
+print ARGS "--minfreepar0            $minfreepar0 \\\n";
+print ARGS "--maxfreepar0            $maxfreepar0 \\\n";
+print ARGS "--npt-freepar0           $npt_freepar0 \\\n";
+print ARGS "--freepar1              '$freepar1' \\\n";
+print ARGS "--minfreepar1            $minfreepar1 \\\n";
+print ARGS "--maxfreepar1            $maxfreepar1 \\\n";
+print ARGS "--npt-freepar1           $npt_freepar1 \\\n";
+print ARGS "--marginalize-hierarchy  $marg_hierarchy \\\n";
+print ARGS "--hierarchy-marg        '$masshierarchy_marg' \\\n";
+print ARGS "--type-error            '$type_error' \\\n";
+print ARGS "--draw-full-chisq        $draw_full_chisq \\\n";
+print ARGS "--test-stat             '$test_stat' \\\n";
+close(ARGS); 
+
 
 $ifile_first = 0;
 $ifile_last = 0;
@@ -301,7 +367,28 @@ while($irun < $nruns) {
         print PBS "mailoutput | mail -s \"run_fit_dcp job done!\" rajbatchjobresult\@gmail.com\n";
         close(PBS);
         `qsub $job_dir/$tag-$irun.pbs`;
-    }    #
+    }
+    
+    #
+    # Liverpool
+    #
+    if($resource eq "Liverpool") {
+        open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
+        print PBS "#!/bin/bash \n";
+        print PBS "#PBS -N $tag-$irun \n";
+	#        print PBS "#PBS -q medium64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
+	print PBS "#PBS -q short64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
+        #print PBS "#PBS -l cput=$cput \n"; 
+        print PBS "#PBS -o /scratch/cbarry/$tag-$irun.pbs.out \n";
+        print PBS "#PBS -e /scratch/cbarry/$tag-$irun.pbs.err \n";
+        print PBS "cd $job_dir \n";
+        # print PBS "source $fmwk_dir/setup/setup_at_liverpool.sh $fmwk_dir\n";
+        print PBS "source $softw_dir/setup/setup_at_liverpool.sh $softw_dir $fmwk_dir \n";
+        print PBS "$command \n";
+        close(PBS);
+#        `qsub $job_dir/$tag-$irun.pbs`;
+    }
+    #
     # Grid
     #
     if($resource eq "Grid") {
