@@ -335,7 +335,7 @@ void CalcPvalue_nuebarapp
 
   TCanvas *cchisqmin = new TCanvas("cchisqmin","cchisqmin");
   hchisqmin->GetYaxis()->SetTitle("Number of entries");
-  hchisqmin->GetXaxis()->SetTitle("#chi^{2} (#bar{#beta}_{BF})");
+  hchisqmin->GetXaxis()->SetTitle("#chi^{2} (#beta_{BF})");
   hchisqmin->DrawCopy();
   hchisqmin_toyevt0->SetFillColor(kGreen);  
   hchisqmin_toyevt1->SetFillColor(kBlue);  
@@ -348,7 +348,7 @@ void CalcPvalue_nuebarapp
 
   TCanvas *cchisq0 = new TCanvas("cchisq0","cchisq0");
   hchisq0->GetYaxis()->SetTitle("Number of entries");
-  hchisq0->GetXaxis()->SetTitle("#chi^{2} (#bar{#beta=0})");
+  hchisq0->GetXaxis()->SetTitle("#chi^{2} (#beta=0)");
   hchisq0->DrawCopy();
   hchisq0_toyevt0->SetFillColor(kGreen);  
   hchisq0_toyevt1->SetFillColor(kBlue);  
@@ -361,7 +361,7 @@ void CalcPvalue_nuebarapp
 
   TCanvas *cchisq1 = new TCanvas("cchisq1","cchisq1");
   hchisq1->GetYaxis()->SetTitle("Number of entries");
-  hchisq1->GetXaxis()->SetTitle("#chi^{2} (#bar{#beta=1})");
+  hchisq1->GetXaxis()->SetTitle("#chi^{2} (#beta=1)");
   hchisq1->DrawCopy();
   hchisq1_toyevt0->SetFillColor(kGreen);  
   hchisq1_toyevt1->SetFillColor(kBlue);  
@@ -375,7 +375,7 @@ void CalcPvalue_nuebarapp
   TCanvas *cPvalue_0BF = new TCanvas("cPvalue_0BF","cPvalue_0BF");
   cPvalue_0BF->SetLogy();
   hdeltachisqDiff0BF->GetYaxis()->SetTitle("Number of entries");
-  hdeltachisqDiff0BF->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#bar{#beta}=0) - #chi^{2}(#bar{#beta}_{BF})");
+  hdeltachisqDiff0BF->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta_{BF})");
   hdeltachisqDiff0BF->DrawCopy();
   hdeltachisqDiff0BF_toyevt0->SetFillColor(kGreen);  
   hdeltachisqDiff0BF_toyevt1->SetFillColor(kBlue);  
@@ -400,7 +400,7 @@ void CalcPvalue_nuebarapp
   TCanvas *cPvalue_01 = new TCanvas("cPvalue_01","cPvalue_01");
   cPvalue_01->SetLogy();
   hdeltachisqDiff01->GetYaxis()->SetTitle("Number of entries");
-  hdeltachisqDiff01->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#bar{#beta}=0) - #chi^{2}(#bar{#beta}=1)");
+  hdeltachisqDiff01->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
   hdeltachisqDiff01->DrawCopy();
   //hdeltachisqDiff01_toyevt0->SetFillColor(kGreen);  
   //hdeltachisqDiff01_toyevt1->SetFillColor(kBlue);  

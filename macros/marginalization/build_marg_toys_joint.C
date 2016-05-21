@@ -7,6 +7,11 @@
 // A file .bin contains the array, while a twin file .bin contains the sub-range of the free parameter
 // Each sub-range contains the same number of toys, coming from the same random seed.
 //
+// Marginalisation of systematic parameters is controlled by the tweak_systematics integer (check FitMarginalization.cxx)
+// It does not care about what is in your FitParamList!!!
+//
+// Marginalisation of the oscillation parameters is controlled here (priors are set), parametes not be fixed
+//
 // Davide Sgalaberna                                                                                              
 //                                                                                           
 // ------------------------------------------------------------------------------------------------
