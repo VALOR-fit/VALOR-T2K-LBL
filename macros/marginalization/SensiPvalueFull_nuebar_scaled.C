@@ -74,8 +74,8 @@ void SensiPvalueFull_nuebar_scaled
   TH1D *hPvalue_rateshape_0p05 = new TH1D("hPvalue_rateshape_0p05","hPvalue_rateshape_0p05",110,0.,0.06); 
   TH1D *hPvalue_rateshape_0p10 = new TH1D("hPvalue_rateshape_0p10","hPvalue_rateshape_0p10",110,0.,0.11); 
 
-  TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",100000,-20,20);
-  TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",100000,-20,20);
+  TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",100000,-6,20);
+  TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",100000,-6,20);
   
 
   
@@ -275,7 +275,7 @@ void SensiPvalueFull_nuebar_scaled
     cPvalue_rateshape_fit->SetLogy();
     hStatisticBeta0->Rebin(500);
     hStatisticBeta0->SetFillStyle(0);
-    hStatisticBeta0->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta_0) - #chi^{2}(#beta_{1})");
+    hStatisticBeta0->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
     hStatisticBeta0->GetYaxis()->SetTitle("Number of entries");
     hStatisticBeta0->DrawCopy();
     TLine *linePvalue_rateshape_statistic = new TLine(statistic,0.,statistic,hStatisticBeta0->GetMaximum());
@@ -283,7 +283,7 @@ void SensiPvalueFull_nuebar_scaled
     linePvalue_rateshape_statistic->SetLineColor(kRed);
     linePvalue_rateshape_statistic->DrawClone();
     sprintf(name,"#Delta #chi^{2} = %1.3f p value = %1.3f #pm %1.3f",statistic,pvalue_rateshape_itoy,pvalue_error);
-    TLatex *fit_pvalue = new TLatex(0.80,hStatisticBeta0->GetMaximum()*0.9,name);
+    TLatex *fit_pvalue = new TLatex(0.50,hStatisticBeta0->GetMaximum()*0.9,name);
     fit_pvalue->SetTextSize(0.07);
     fit_pvalue->Draw();
   }
