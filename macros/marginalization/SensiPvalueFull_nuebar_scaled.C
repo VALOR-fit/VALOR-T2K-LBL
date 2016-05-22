@@ -516,7 +516,7 @@ double calc_chisq(TH2D* hobs, TH2D* hexp)
   
   for(int i=1;i<= nbins_x;i++)
   {
-    for(int j=1;j<= nbins_x;j++)
+    for(int j=1;j<= nbins_y;j++)
     {
       double obs = hobs->GetBinContent(i,j);
       double exp = hexp->GetBinContent(i,j);
