@@ -22,24 +22,43 @@ const double CLfrac_90CL   = 0.9;  // 90% CL
 const double CLfrac_95CL   = 0.95;  // 95% CL
 const double CLfrac_2sigma = 0.9545;  // 2sigma% CL
 
+const double CRITVAL_1SIGMA_1D = 1.;
+const double CRITVAL_90CL_1D =  2.71;
+const double CRITVAL_95CL_1D = 3.84;
+const double CRITVAL_2SIGMA_1D = 4.;
+
+const double CRITVAL_1SIGMA_2D = 2.3;
+const double CRITVAL_90CL_2D = 4.61;
+const double CRITVAL_95CL_2D = 5.99;
+const double CRITVAL_2SIGMA_2D = 6.18;
+
 void analyze_run_fc_marginalization_exe
 ( 
  string namepar0 = "#delta_{CP}",
  string namepar1 = "sin^{2} #theta_{13}",
 
- const bool UseFullChisqFit = true,
+ const bool UseFullChisqFit = false,
  const bool CheckSingleToy = false,
  const int  ToySel = 0,
  const bool PrintToy = false,
  
- //char infilename[300] = "fit_prova_fc_nexp_2_0.000_-999.000-job0-_0_1.root"
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/fit_fitmarg_fc_dcp_NH_nexp_20_-1.571.root"
- char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/fit_fitmarg_fc_dcp_NH_nexp_20_0.000.root",
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/fit_fitmarg_fc_dcp_NH_nexp_20_1.571.root,
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root",
+ char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root",
 
- const double mydeltachisq = 3.55154
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/total_tree_mhalfpi.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/total_tree_halfpi.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/total_tree_pi.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/total_tree_zero.root",
+
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/fit_fitmarg_fc_dcp_data_normal_nexp_1_3.142_-999.000-job0-_0_0.root",
+
+ //const double mydeltachisq = -999 // dcp=0
+ const double mydeltachisq = 3.55154 // dcp=0
+ //const double mydeltachisq = 2.22061 // dcp=+pi
  
-
+ 
   )
 {
   char name[300];
@@ -58,6 +77,10 @@ void analyze_run_fc_marginalization_exe
     cerr << "File " << infilename << " is not open" << endl;
     cerr << endl;
   }
+  
+  cout << endl;
+  cout << "Reading file" << infilename << endl;
+  cout << endl;
 
   TTree *treein = (TTree*)filein->Get("fitnt");
   if(!treein){
@@ -188,6 +211,7 @@ void analyze_run_fc_marginalization_exe
 
 
   // Create tree to store outputs
+  
   treein->SetBranchAddress("best_fit_params",&fparm);
   treein->SetBranchAddress("input_params",&iparm);
   
@@ -207,7 +231,7 @@ void analyze_run_fc_marginalization_exe
   treein->SetBranchAddress("Tag",&tag);
   treein->SetBranchAddress("nexpts",&nexpts);
 
-  // fit status
+  //fit status
   treein->SetBranchAddress("IsFit2D_nh",&IsFit2D_nh);
   treein->SetBranchAddress("IsFit2D_ih",&IsFit2D_ih);
   treein->SetBranchAddress("fitstatus_nh",&fitstatus_nh);
@@ -219,7 +243,7 @@ void analyze_run_fc_marginalization_exe
   treein->SetBranchAddress("niterations_nh",&niterations_nh);
   treein->SetBranchAddress("niterations_ih",&niterations_ih);
 
-  // true variables
+  //true variables
   treein->SetBranchAddress("truepar0", &truepar0 );
   treein->SetBranchAddress("truepar1", &truepar1 );
   treein->SetBranchAddress("trueMH",   &trueMH   );
@@ -227,7 +251,7 @@ void analyze_run_fc_marginalization_exe
   treein->SetBranchAddress("trueparname1",   &trueparname1   );
   treein->SetBranchAddress("chisqtrue0",&chisqtrue0);
   
-  // global fit output
+  //global fit output
   treein->SetBranchAddress("deltachisq0BF_glob",&deltachisq0BF_glob);
   treein->SetBranchAddress("MH_glob",   &MH_glob   );
   treein->SetBranchAddress("chisqmin_glob",&chisqmin_glob);
@@ -242,7 +266,7 @@ void analyze_run_fc_marginalization_exe
   treein->SetBranchAddress("bestfitFullChisq0_glob", &bestfitFullChisq0_glob);
   treein->SetBranchAddress("chisqminFullChisq_glob",&chisqminFullChisq_glob);
 
-  // normal hierarchy fit output
+  //normal hierarchy fit output
   treein->SetBranchAddress("chisqmin_nh",&chisqmin_nh);
   treein->SetBranchAddress("bestfit0_nh", &bestfit0_nh );
   treein->SetBranchAddress("bestfit1_nh", &bestfit1_nh );
@@ -255,7 +279,7 @@ void analyze_run_fc_marginalization_exe
   treein->SetBranchAddress("bestfitFullChisq0_nh", &bestfitFullChisq0_nh );
   treein->SetBranchAddress("chisqminFullChisq_nh",&chisqminFullChisq_nh);
 
-  // inverted hierarchy fit output
+  //inverted hierarchy fit output
   treein->SetBranchAddress("chisqmin_ih",&chisqmin_ih);
   treein->SetBranchAddress("bestfit0_ih", &bestfit0_ih );
   treein->SetBranchAddress("bestfit1_ih", &bestfit1_ih );
@@ -305,6 +329,10 @@ void analyze_run_fc_marginalization_exe
 
   ///////////// Declare histograms //////////////
 
+  TH1D *htrue_MH = new TH1D("htrue_MH","htrue_MH",2,0,2);
+  TH1D *htrue_1D = new TH1D("htrue_1D","htrue_1D",201,-3.15,3.15);
+  TH2D *htrue_2D = new TH2D("htrue_2D","htrue_2D",201,0,0.3,201,-3.15,3.15);
+  
   TH1D *hbestfitFullChisq_1D = new TH1D("hbestfitFullChisq_1D","hbestfitFullChisq_1D",201,-3.15,3.15);
   TH2D *hbestfitFullChisq_2D = new TH2D("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,0.3,201,-3.15,3.15);
 
@@ -312,6 +340,8 @@ void analyze_run_fc_marginalization_exe
   TH1D *hbestfit_1D_nh = new TH1D("hbestfit_1D_nh","hbestfit_1D_nh",201,-3.15,3.15);
   TH1D *hbestfit_1D_ih = new TH1D("hbestfit_1D_ih","hbestfit_1D_ih",201,-3.15,3.15);
 
+  TH1D *hbestfit_MH = new TH1D("hbestfit_MH","hbestfit_MH",2,0,2);
+  
   TH2D *hbestfit_2D = new TH2D("hbestfit_2D","hbestfit_2D",201,0,0.3,201,-3.15,3.15);
   TH2D *hbestfit_2D_nh = new TH2D("hbestfit_2D_nh","hbestfit_2D_nh",201,0,0.3,201,-3.15,3.15);
   TH2D *hbestfit_2D_ih = new TH2D("hbestfit_2D_ih","hbestfit_2D_ih",201,0,0.3,201,-3.15,3.15);
@@ -320,7 +350,7 @@ void analyze_run_fc_marginalization_exe
   TH1D *hdeltachisq_nh = new TH1D("hdeltachisq_nh","hdeltachisq_nh",100,-5,20);
   TH1D *hdeltachisq_ih = new TH1D("hdeltachisq_ih","hdeltachisq_ih",100,-5,20);
 
-  TH1D *hchisqmin = new TH1D("hchisqmin","hchisqmin",100,-10,100); 
+  TH1D *hchisqmin = new TH1D("hchisqmin","hchisqmin",200,-10,400); 
   TH1D *hchisqminDiff = new TH1D("hchisqminDiff","hchisqminDiff",100,-0.3,3.3);
   TH1D *hchisqminFullChisq = new TH1D("hchisqminFullChisq","hchisqminFullChisq",100,-10,100);
   TH1D *hnchisqcalls = new TH1D("hnchisqcalls","hnchisqcalls",100,0,700);
@@ -363,7 +393,6 @@ void analyze_run_fc_marginalization_exe
   int NdiffChisq = 0;
   
   int Nentries = treein->GetEntries();
-  Nentries = 10;
 
   cout << endl;
   cout << "Total # of toys = " << Nentries << endl;
@@ -378,25 +407,31 @@ void analyze_run_fc_marginalization_exe
 
     treein->GetEntry(ientry);
  
+    if(ientry%100==0){
+      cout << "Entry " << ientry << endl;
+    }
+
+    if(ToyID==0) cout << "ToyID = " << ToyID << endl;
+
+
+    //if(deltachisq0BF_glob<2) continue;
+    //if(*MH_glob=="normal") continue; // plots a sinistra
 
      // Print output
     
     if(PrintToy){
-
+      //cout << *fparm << endl;
       cout << "/////////////////" << endl;
       cout << endl;
       cout << "Toy " << ientry << endl;
       cout << "ToyID " << ToyID << endl;
-      cout << endl;
-      
-      cout << endl;
+      cout << endl;      
       cout << "/// True parameters ///" << endl;
       cout << " - truepar0: " << *trueparname0 << " = " << truepar0 << endl;
       cout << " - truepar1: " << *trueparname1 << " = " << truepar1 << endl;
       cout << " - Mass Hierarchy: " << *trueMH << endl;
       cout << " - true chisq: " << chisqtrue0 << endl;
-      cout << endl;
-      
+      cout << endl;      
       cout << "/// Normal Hierarchy ///" << endl;
       cout << " - Minimum Marginalized Chisq = " << chisqmin_nh << endl;        
       cout << " - bestfit 0 = " << bestfit0_nh << endl;
@@ -406,8 +441,7 @@ void analyze_run_fc_marginalization_exe
       cout << " - chisqmin = " << chisqminFullChisq_nh << endl; 
       cout << " - bestfit0 = " << bestfitFullChisq0_nh << endl; 
       if(IsFit2D) cout << " - bestfit1 = " << bestfitFullChisq1_nh << endl; 
-      cout << endl;
-      
+      cout << endl;      
       cout << "/// Inverted Hierarchy ///" << endl;
       cout << " - Minimum Marginalized Chisq = " << chisqmin_ih << endl;        
       cout << " - bestfit 0 = " << bestfit0_ih << endl;
@@ -417,8 +451,7 @@ void analyze_run_fc_marginalization_exe
       cout << " - chisqmin = " << chisqminFullChisq_ih << endl; 
       cout << " - bestfit0 = " << bestfitFullChisq0_ih << endl; 
       if(IsFit2D) cout << " - bestfit1 = " << bestfitFullChisq1_ih << endl; 
-      cout << endl;
-      
+      cout << endl;      
       cout << "/// Global minimum ///" << endl;
       cout << " - DeltaChisq = " << deltachisq0BF_glob << endl;
       cout << " - Minimum Marginalized Chisq = " << chisqmin_glob << endl;  
@@ -431,19 +464,31 @@ void analyze_run_fc_marginalization_exe
       if(IsFit2D) cout << " - bestfit1 = " << bestfitFullChisq1_glob << endl; 
       cout << endl;
     }
+
     
-   
+    // True variables
 
-
+    if(*trueMH=="normal")        htrue_MH->Fill(0.5);
+    else if(*trueMH=="inverted") htrue_MH->Fill(1.5);
+    else{
+      cerr << "No true Mass Hierarchy" << endl;
+      exit(1);
+    }
+    if(IsFit2D) htrue_2D->Fill(truepar0,truepar1);
+    else        htrue_1D->Fill(truepar0);
 
     // Find bestfit chisq and true chisq
-
-    //cout << *fparm << endl;
         
     double deltachisq0BF_used = deltachisq0BF_glob;
-    
-    //if(!UseFullChisqFit) deltachisq0BF_used = chisqtrue0-chisqmin;
-    //else                 deltachisq0BF_used = chisqtrue0-chisqminFullChisq;
+
+    //cout << "deltachisq0BF_used = " << deltachisq0BF_used;
+    //deltachisq0BF_used = chisqtrue0-chisqmin_glob;
+    //cout << "  " << deltachisq0BF_used;
+    //deltachisq0BF_used = chisqtrue0-chisqminFullChisq_glob;
+    //cout << "  " << deltachisq0BF_used << endl;
+    //if(!UseFullChisqFit) deltachisq0BF_used = chisqtrue0-chisqmin_glob;
+    //else                 deltachisq0BF_used = chisqtrue0-chisqminFullChisq_glob;
+
     // // Print chisq
     // int npt_chisq_x = hchisq1D_out->GetNbinsX();
     // for(int ix=0;ix<npt_chisq_x;ix++){
@@ -459,10 +504,10 @@ void analyze_run_fc_marginalization_exe
       hbestfit_2D_nh->Fill(bestfit0_nh,bestfit1_nh);
       hbestfit_1D_nh->Fill(bestfit0_nh);
       // Fill variables for coverage study
-      if(deltachisq0BF_nh <= GetConstChisq(IsFit2D,"1sigma") ) Nin_1sigma_nh++;
-      if(deltachisq0BF_nh <= GetConstChisq(IsFit2D,"90CL")   ) Nin_90CL_nh++;
-      if(deltachisq0BF_nh <= GetConstChisq(IsFit2D,"95CL")   ) Nin_95CL_nh++;
-      if(deltachisq0BF_nh <= GetConstChisq(IsFit2D,"2sigma") ) Nin_2sigma_nh++;
+      if(deltachisq0BF_nh <= CRITVAL_1SIGMA_1D ) Nin_1sigma_nh++;
+      if(deltachisq0BF_nh <= CRITVAL_90CL_1D   ) Nin_90CL_nh++;
+      if(deltachisq0BF_nh <= CRITVAL_95CL_1D   ) Nin_95CL_nh++;
+      if(deltachisq0BF_nh <= CRITVAL_2SIGMA_1D ) Nin_2sigma_nh++;
     }
     else if(*trueMH=="inverted"){
       deltachisq0BF_ih = chisqtrue0 - chisqmin_ih;
@@ -471,10 +516,10 @@ void analyze_run_fc_marginalization_exe
       hbestfit_2D_ih->Fill(bestfit0_ih,bestfit1_ih);
       hbestfit_1D_ih->Fill(bestfit0_ih);
       // Fill variables for coverage study
-      if(deltachisq0BF_ih <= GetConstChisq(IsFit2D,"1sigma") ) Nin_1sigma_ih++;
-      if(deltachisq0BF_ih <= GetConstChisq(IsFit2D,"90CL")   ) Nin_90CL_ih++;
-      if(deltachisq0BF_ih <= GetConstChisq(IsFit2D,"95CL")   ) Nin_95CL_ih++;
-      if(deltachisq0BF_ih <= GetConstChisq(IsFit2D,"2sigma") ) Nin_2sigma_ih++;
+      if(deltachisq0BF_ih <= CRITVAL_1SIGMA_1D ) Nin_1sigma_ih++;
+      if(deltachisq0BF_ih <= CRITVAL_90CL_1D   ) Nin_90CL_ih++;
+      if(deltachisq0BF_ih <= CRITVAL_95CL_1D   ) Nin_95CL_ih++;
+      if(deltachisq0BF_ih <= CRITVAL_2SIGMA_1D ) Nin_2sigma_ih++;
     }
     else{
       cout << "WARNING:" << endl;
@@ -488,23 +533,18 @@ void analyze_run_fc_marginalization_exe
     hchisqmin->Fill(chisqmin_glob);
     hbestfit_2D->Fill(bestfit0_glob,bestfit1_glob);
     hbestfit_1D->Fill(bestfit0_glob);
+    if(*MH_glob=="normal") hbestfit_MH->Fill(0.5);
+    else if(*MH_glob=="inverted") hbestfit_MH->Fill(1.5);
     // Fill variables for coverage study
-    if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"1sigma") ) Nin_1sigma++;
-    if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"90CL")   ) Nin_90CL++;
-    if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"95CL")   ) Nin_95CL++;
-    if(deltachisq0BF_used <= GetConstChisq(IsFit2D,"2sigma") ) Nin_2sigma++;
-
-    //cout << deltachisq0BF_used << " " << deltachisq0BF_nh << endl;
-    
-    // Fill histograms for fit status
-    //hfitstatus->Fill(fitstatus);
-    //hnchisqcalls->Fill(nchisqcalls);
-    
+    if(deltachisq0BF_used <= CRITVAL_1SIGMA_1D ) Nin_1sigma++;
+    if(deltachisq0BF_used <= CRITVAL_90CL_1D   ) Nin_90CL++;
+    if(deltachisq0BF_used <= CRITVAL_95CL_1D   ) Nin_95CL++;
+    if(deltachisq0BF_used <= CRITVAL_2SIGMA_1D ) Nin_2sigma++;
+        
     // Full chisq distribution 
     hchisqminFullChisq->Fill(chisqminFullChisq_glob);
     hbestfitFullChisq_2D->Fill(bestfitFullChisq0_glob,bestfitFullChisq1_glob);
     hbestfitFullChisq_1D->Fill(bestfitFullChisq0_glob);
-
 
     // Check that full chisq min is equal to minimized best-fit
     if(chisqminFullChisq_glob!=conv::kALargeNum){
@@ -525,7 +565,24 @@ void analyze_run_fc_marginalization_exe
 	NdiffChisq++;
       }
     }
-    
+    // Check that full chisq min is equal to minimized best-fit
+    if(bestfitFullChisq0_glob!=conv::kBadResult){
+      if( fabs(bestfit0_glob-bestfitFullChisq0_glob)>1.E-6 ){
+	double diff = bestfit0_glob-bestfitFullChisq0_glob;
+	//hchisqminDiff->Fill(diff);
+	cout << std::setprecision(8);
+	cout << endl;
+	cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
+	cout << "chisqmin_glob = " << chisqmin_glob
+	     << " - bestfit0_glob = " << bestfit0_glob
+	     << " - bestfit1_glob = " << bestfit1_glob << endl;
+	cout << "chisqminFullChisq_glob = " << chisqminFullChisq_glob 
+	     << " - bestfitFullChisq0_glob = " << bestfitFullChisq0_glob 
+	     << " - bestfitFullChisq1_glob = " << bestfitFullChisq1_glob << endl;
+	cout << "Difference = " << diff << endl;
+	cout << endl; 
+      }
+    }
   } // end loop over tree entries
 
   // Calculate coverage
@@ -585,15 +642,27 @@ void analyze_run_fc_marginalization_exe
 
   // Draw histograms
 
-  // TCanvas *cnchisqcalls = new TCanvas("cnchisqcalls","cnchisqcalls");
-  // hnchisqcalls->GetYaxis()->SetTitle("# entries");
-  // hnchisqcalls->GetXaxis()->SetTitle("# of #chi^{2} computations");
-  // hnchisqcalls->DrawCopy();
+  TCanvas *ctrue = new TCanvas("ctrue","ctrue");
+  if(IsFit2D){
+    htrue_2D->GetXaxis()->SetTitle(namepar0.c_str());
+    htrue_2D->GetYaxis()->SetTitle(namepar1.c_str());
+    htrue_2D->DrawCopy("colz");
+  }
+  else{
+    htrue_1D->GetYaxis()->SetTitle("# entries");
+    htrue_1D->GetXaxis()->SetTitle(namepar0.c_str());
+    htrue_1D->DrawCopy();
+  }
 
-  // TCanvas *cfitstatus = new TCanvas("cfitstatus","cfitstatus");
-  // hfitstatus->GetYaxis()->SetTitle("# entries");
-  // hfitstatus->GetXaxis()->SetTitle("Fit Status");
-  // hfitstatus->DrawCopy();
+  TCanvas *ctrue_MH = new TCanvas("ctrue_MH","ctrue_MH");
+  htrue_MH->GetXaxis()->SetBinLabel(1,"normal");
+  htrue_MH->GetXaxis()->SetLabelSize(0.09);
+  htrue_MH->GetXaxis()->SetBinLabel(2,"inverted");
+  htrue_MH->GetXaxis()->SetTitle("True Mass Hierarchy");
+  htrue_MH->GetYaxis()->SetTitle("# entries");
+  htrue_MH->Draw();
+
+
 
   TCanvas *cbestfit_nh = new TCanvas("hbestfit_nh","hbestfit_nh");
   if(IsFit2D){
@@ -643,6 +712,19 @@ void analyze_run_fc_marginalization_exe
     hbestfitFullChisq_1D->DrawCopy();
   }
 
+  TCanvas *cbestfit_MH = new TCanvas("hbestfit_MH","hbestfit_MH");
+  hbestfit_MH->GetXaxis()->SetBinLabel(1,"normal");
+  hbestfit_MH->GetXaxis()->SetLabelSize(0.09);
+  hbestfit_MH->GetXaxis()->SetBinLabel(2,"inverted");
+  hbestfit_MH->GetXaxis()->SetTitle("Mass Hierarchy");
+  hbestfit_MH->GetYaxis()->SetTitle("# entries");
+  hbestfit_MH->Draw();
+
+  TCanvas *cchisq = new TCanvas("cchisq","cchisq");
+  hchisqmin->GetYaxis()->SetTitle("# entries");
+  hchisqmin->GetXaxis()->SetTitle("#chi^{2}");
+  hchisqmin->DrawCopy();
+
   TCanvas *cchisqminDiff = new TCanvas("hchisqminDiff","hchisqminDiff");
   hchisqminDiff->GetYaxis()->SetTitle("# entries");
   hchisqminDiff->GetXaxis()->SetTitle("#chi^{2}_{Descent} - #chi^{2}_{Global}");
@@ -651,7 +733,7 @@ void analyze_run_fc_marginalization_exe
 
   TCanvas *cdeltachisq = new TCanvas("cdeltachisq","cdeltachisq");
   hdeltachisq->GetYaxis()->SetTitle("# entries");
-  hdeltachisq->GetXaxis()->SetTitle("#Delta #chi^{2}_{Descent} (no global)");
+  hdeltachisq->GetXaxis()->SetTitle("#Delta #chi^{2}");
   hdeltachisq->DrawCopy();
   TLine *lcritval_90CL = new TLine(FCCritVal_90CL,0,FCCritVal_90CL,hdeltachisq->GetMaximum());
   TLine *lcritval_2sigma = new TLine(FCCritVal_2sigma,0,FCCritVal_2sigma,hdeltachisq->GetMaximum());
@@ -682,7 +764,7 @@ void analyze_run_fc_marginalization_exe
 
   TCanvas *cdeltachisq_nh = new TCanvas("cdeltachisq_nh","cdeltachisq_nh");
   hdeltachisq_nh->GetYaxis()->SetTitle("# entries");
-  hdeltachisq_nh->GetXaxis()->SetTitle("#Delta #chi^{2}_{Descent} (no global)");
+  hdeltachisq_nh->GetXaxis()->SetTitle("#Delta #chi^{2}");
   hdeltachisq_nh->DrawCopy();
   TLine *lcritval_90CL_nh;
   TLine *lcritval_2sigma_nh;
@@ -708,7 +790,7 @@ void analyze_run_fc_marginalization_exe
 
   TCanvas *cdeltachisq_ih = new TCanvas("cdeltachisq_ih","cdeltachisq_ih");
   hdeltachisq_ih->GetYaxis()->SetTitle("# entries");
-  hdeltachisq_ih->GetXaxis()->SetTitle("#Delta #chi^{2}_{Descent} (no global)");
+  hdeltachisq_ih->GetXaxis()->SetTitle("#Delta #chi^{2}");
   hdeltachisq_ih->DrawCopy();
   TLine *lcritval_90CL_ih;
   TLine *lcritval_2sigma_ih;
@@ -808,11 +890,11 @@ void analyze_run_fc_marginalization_exe
   double storetrue0      = truepar0;
   double storetrue1      = truepar1;
   
-  cout << storetrue0 << " " << storetrue1 << endl;
+  //cout << storetrue0 << " " << storetrue1 << endl;
 
-  cdeltachisq->Print( TString::Format("deltchisq_glob_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
-  cdeltachisq_nh->Print( TString::Format("deltchisq_nh_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
-  cdeltachisq_ih->Print( TString::Format("deltchisq_ih_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  cdeltachisq->Print( TString::Format("deltachisq_glob_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  cdeltachisq_nh->Print( TString::Format("deltachisq_nh_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  cdeltachisq_ih->Print( TString::Format("deltachisq_ih_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
  
   cchisqminDiff->Print( TString::Format("cchisqminDiff_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
   
@@ -820,6 +902,8 @@ void analyze_run_fc_marginalization_exe
   cbestfit_nh->Print( TString::Format("cbestfit_nh_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
   cbestfit_ih->Print( TString::Format("cbestfit_ih_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str())  );
 
+  cbestfit_MH->Print( TString::Format("cbestfit_MH_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  
   // Print results 
   
   cout << endl;
@@ -879,7 +963,7 @@ void analyze_run_fc_marginalization_exe
 
   
   ofstream * outfilep = 0;
-  outfilep = new ofstream(TString::Format("critval_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()),ios_base::trunc);  
+  outfilep = new ofstream(TString::Format("critval_%s_%1.3f_%s_%1.3f_%s.txt",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()),ios_base::trunc);  
   ofstream & outfile = *outfilep;
   outfile << endl;
   outfile << endl;
@@ -939,7 +1023,7 @@ void analyze_run_fc_marginalization_exe
 }
 
 
-double GetConstChisq(bool Fit2D,string CL){
+inline double GetConstChisq(bool Fit2D,string CL){
   
   const double CRITVAL_1SIGMA_1D = 1.;
   const double CRITVAL_90CL_1D =  2.71;

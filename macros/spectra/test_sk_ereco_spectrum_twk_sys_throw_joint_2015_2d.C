@@ -128,36 +128,36 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 15, //650, //11,                                         /* options: see above */
+ int          mode                     = 1, //13,                                          /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
  const char * sk_sample                = "RHC1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
- // // Asimov data set A
- // double       input_mixing12       = 0.304,//-99,    
- // double       input_mixing13       = 0.0217, //-99,    
- // double       input_mixing23       = 0.528,    
- // double       input_deltacp        = -1.601,   
- // double       input_dm12sq         = 7.53E-5,   
- // double       input_dm23sq         = 2.509E-3,     
- // double       input_betabar        = 1,
-
- // Asimov data set B
- double       input_mixing12       = 0.304,    
- double       input_mixing13       = 0.0217,  
- double       input_mixing23       = 0.45,    
- double       input_deltacp        = 0.,   
+ // Asimov data set A
+ double       input_mixing12       = 0.304,//-99,    
+ double       input_mixing13       = 0.0217, //-99,    
+ double       input_mixing23       = 0.528,    
+ double       input_deltacp        = -1.601,   
  double       input_dm12sq         = 7.53E-5,   
  double       input_dm23sq         = 2.509E-3,     
  double       input_betabar        = 1,
+
+ // // Asimov data set B
+ // double       input_mixing12       = 0.304,    
+ // double       input_mixing13       = 0.0217,  
+ // double       input_mixing23       = 0.45,    
+ // double       input_deltacp        = 0.,   
+ // double       input_dm12sq         = 7.53E-5,   
+ // double       input_dm23sq         = 2.509E-3,     
+ // double       input_betabar        = 1,
  
  bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
  bool         save_throws              = false,                                        /* save the thrown parameter values*/
  
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FSIOnly.xml",
- const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml",
 
  const int    nexp                     = 10000,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
@@ -172,8 +172,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
  TString file_priors = "", // Set to "" if no user priors are used (VALOR)
  const char*  tag                      = "nom",
 
- TString       randomised_osc          = "ss23-ss13-dcp-ss12-dmsq23-dmsq12"
- //TString       randomised_osc          = ""
+ //TString       randomised_osc          = "ss23-ss13-dcp-ss12-dmsq23-dmsq12"
+ TString       randomised_osc          = ""
  )
 {
   using namespace std;
