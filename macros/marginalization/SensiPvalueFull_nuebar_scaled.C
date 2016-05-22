@@ -477,7 +477,9 @@ void SensiPvalueFull_nuebar_scaled
   cout << endl;
   
   // Print plots
+  if(draw_beta_0_distribution){
   cPvalue_rateshape_fit->Print("cPvalue_rateshape_fit.pdf");
+  }
   cPvalue_rateshape->Print("cPvalue_rateshape.pdf");
   cPvalue_rateshape_3evt->Print("cPvalue_rateshape_3evt.pdf");
   cPvalue_rateshape_4evt->Print("cPvalue_rateshape_4evt.pdf");
