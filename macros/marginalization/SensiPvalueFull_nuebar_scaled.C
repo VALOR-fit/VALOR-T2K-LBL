@@ -284,13 +284,13 @@ void SensiPvalueFull_nuebar_scaled
     linePvalue_rateshape_statistic->SetLineColor(kRed);
     linePvalue_rateshape_statistic->DrawClone();
     sprintf(name,"#Delta #chi^{2} = %1.3f",statistic);
-    TLatex *fit_pvalue = new TLatex(0.10,hStatisticBeta0->GetMaximum()*0.9,name);
+    TLatex *fit_pvalue = new TLatex(3,hStatisticBeta0->GetMaximum()*0.7,name);
     fit_pvalue->SetTextSize(0.07);
     fit_pvalue->Draw();
     sprintf(name,"p value = %1.4f #pm %1.3f",pvalue_rateshape_itoy,pvalue_error);
-    TLatex *fit_pvalue = new TLatex(0.50,hStatisticBeta0->GetMaximum()*0.7,name);
-    fit_pvalue->SetTextSize(0.07);
-    fit_pvalue->Draw();
+    TLatex *fit_pvalue_2 = new TLatex(3,hStatisticBeta0->GetMaximum()*0.6,name);
+    fit_pvalue_2->SetTextSize(0.07);
+    fit_pvalue_2->Draw();
 
   }
 
