@@ -25,7 +25,8 @@ void SensiPvalueFull_nuebar_scaled
  char infilename_beta0[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_0_100kMargToys_react_100kToys.root",
  char infilename_beta1[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_1_100kMargToys_react_100kToys.root",
  bool draw_beta_0_distribution = 1,
- bool use_toy_weights = 1
+ bool use_toy_weights = 1,
+ bool left_side_p_value = 0
  )
 {
   char name[200];
@@ -282,10 +283,15 @@ void SensiPvalueFull_nuebar_scaled
     linePvalue_rateshape_statistic->SetLineWidth(2);
     linePvalue_rateshape_statistic->SetLineColor(kRed);
     linePvalue_rateshape_statistic->DrawClone();
-    sprintf(name,"#Delta #chi^{2} = %1.3f p value = %1.4f #pm %1.3f",statistic,pvalue_rateshape_itoy,pvalue_error);
+    sprintf(name,"#Delta #chi^{2} = %1.3f",statistic);
     TLatex *fit_pvalue = new TLatex(0.10,hStatisticBeta0->GetMaximum()*0.9,name);
     fit_pvalue->SetTextSize(0.07);
     fit_pvalue->Draw();
+    sprintf(name,"p value = %1.4f #pm %1.3f",pvalue_rateshape_itoy,pvalue_error);
+    TLatex *fit_pvalue = new TLatex(0.50,hStatisticBeta0->GetMaximum()*0.7,name);
+    fit_pvalue->SetTextSize(0.07);
+    fit_pvalue->Draw();
+
   }
 
   TCanvas *cPvalue_rateshape_3evt = new TCanvas("cPvalue_rateshape_3evt","cPvalue_rateshape_3evt");
