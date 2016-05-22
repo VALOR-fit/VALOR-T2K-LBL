@@ -17,11 +17,10 @@ using namespace valor::conv;
 void SensiPvalueFull_nuebar_scaled
 (
  // Run 16 - Asimov A
- const char * Npot = "4.011x10^20 POT",
- double expbkg = 1.718,
- double data = 3.218, // # of data events
+// double expbkg = 1.718,
+// double data = 3.218, // # of data events
  //double deltachisq_beta01_data = 1.41638, // data deltachisq 01
- double pvalue_01_beta0 = 0.01, // data p-value 01
+// double pvalue_01_beta0 = 0.01, // data p-value 01
  char infilename_beta0[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_0_100kMargToys_react_100kToys.root",
  char infilename_beta1[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_1_100kMargToys_react_100kToys.root",
  bool draw_beta_0_distribution = 1,
@@ -216,9 +215,9 @@ void SensiPvalueFull_nuebar_scaled
 
     
     // Isolate p-value for # obs events > # expected bkg
-    if(dnevents > expbkg){
-      hPvalue_rateshape_Bkg->Fill(pvalue_rateshape_itoy);
-    }
+//    if(dnevents > expbkg){
+//      hPvalue_rateshape_Bkg->Fill(pvalue_rateshape_itoy);
+//    }
 
   } // end loop
 
@@ -252,10 +251,10 @@ void SensiPvalueFull_nuebar_scaled
   // hPvalue_rateshape_4evt->DrawCopy("same");
   // hPvalue_rateshape_5evt->DrawCopy("same");
   // hPvalue_rateshape_6evt->DrawCopy("same");
-  TLine *linePvalue_rateshape_Asimov = new TLine(pvalue_01_beta0,0.,pvalue_01_beta0,hPvalue_rateshape->GetMaximum());
-  linePvalue_rateshape_Asimov->SetLineWidth(2);
-  linePvalue_rateshape_Asimov->SetLineColor(kRed);
-  linePvalue_rateshape_Asimov->DrawClone();
+//  TLine *linePvalue_rateshape_Asimov = new TLine(pvalue_01_beta0,0.,pvalue_01_beta0,hPvalue_rateshape->GetMaximum());
+//  linePvalue_rateshape_Asimov->SetLineWidth(2);
+//  linePvalue_rateshape_Asimov->SetLineColor(kRed);
+//  linePvalue_rateshape_Asimov->DrawClone();
   TLegend *legPvalue_rateshape = new TLegend(0.7,0.6,1.0,0.9);
   legPvalue_rateshape->SetFillColor(0);
   legPvalue_rateshape->SetLineColor(0);
@@ -427,10 +426,10 @@ void SensiPvalueFull_nuebar_scaled
   TLatex *lPvalue_rateshape_Bkg = new TLatex(0.7,hPvalue_rateshape_Bkg->GetMaximum()*0.8,name);
   lPvalue_rateshape_Bkg->SetTextSize(0.07);
   lPvalue_rateshape_Bkg->Draw();
-  sprintf(name,"Exp Bkg = %1.3f",expbkg); 
-  TLatex *lExpBkg = new TLatex(0.4,hPvalue_rateshape_Bkg->GetMaximum()*0.8,name);
-  lExpBkg->SetTextSize(0.07);
-  lExpBkg->Draw();
+//  sprintf(name,"Exp Bkg = %1.3f",expbkg); 
+//  TLatex *lExpBkg = new TLatex(0.4,hPvalue_rateshape_Bkg->GetMaximum()*0.8,name);
+//  lExpBkg->SetTextSize(0.07);
+//  lExpBkg->Draw();
   
   
   
@@ -439,8 +438,6 @@ void SensiPvalueFull_nuebar_scaled
   // Print results
   
   cout << std::setprecision(10);
-  cout << endl;
-  cout << "Total # of POT = " << Npot << endl;
   cout << endl;
   cout << "//////////////// Asimov dataset //////////////" << endl;
   cout << "Calculate p-values (beta=0):" << endl;
@@ -552,6 +549,16 @@ double get_error(double obs, TH1D* _hbeta, TH1D* _hbetaUnscaled)
   //    err_sqrd = err_sqrd + err;
   //  }
   
+  //  for(int i=obs_bin;i<=_hbeta->GetXaxis()->GetNbins();i++)
+  //  {
+  //    double pd = _hbeta->Integral();
+  //    double wr = _hbeta->GetBinContent(i)/_hbetaUnscaled->GetBinContent(i);
+  //    double br = _hbetaUnscaled->GetBinContent(i);
+  //    double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
+  //    err_sqrd = err_sqrd + err;
+  //  }
+
+  
   //Left error
   double pd = _hbeta->Integral();
   double wl = _hbeta->Integral(1,obs_bin)/_hbetaUnscaled->Integral(1,obs_bin);
@@ -567,14 +574,6 @@ double get_error(double obs, TH1D* _hbeta, TH1D* _hbetaUnscaled)
   err_sqrd = err_sqrd + err;
   
   
-  //  for(int i=obs_bin;i<=_hbeta->GetXaxis()->GetNbins();i++)
-  //  {
-  //    double pd = _hbeta->Integral();
-  //    double wr = _hbeta->GetBinContent(i)/_hbetaUnscaled->GetBinContent(i);
-  //    double br = _hbetaUnscaled->GetBinContent(i);
-  //    double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
-  //    err_sqrd = err_sqrd + err;
-  //  }
   
   double final_error = TMath::Sqrt(err_sqrd);
   
