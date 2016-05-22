@@ -261,7 +261,7 @@ void SensiPvalueFull_nuebar_scaled
   legPvalue_rateshape->SetTextFont(132);
   legPvalue_rateshape->SetTextSize(0.06);
   legPvalue_rateshape->AddEntry(hPvalue_rateshape,"Toy experiments","l");
-  legPvalue_rateshape->AddEntry(linePvalue_rateshape_Asimov,"Asimov dataset","l");
+//  legPvalue_rateshape->AddEntry(linePvalue_rateshape_Asimov,"Asimov dataset","l");
   legPvalue_rateshape->Draw();
   sprintf(name,"#splitline{Mean=%1.2f}{RMS=%1.2f}",hPvalue_rateshape->GetMean(),hPvalue_rateshape->GetRMS()); 
   TLatex *lPvalue_rateshape = new TLatex(0.70,hPvalue_rateshape->GetMaximum()*0.8,name);
