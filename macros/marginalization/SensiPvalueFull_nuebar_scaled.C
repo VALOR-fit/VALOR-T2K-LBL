@@ -439,10 +439,10 @@ void SensiPvalueFull_nuebar_scaled
   
   cout << std::setprecision(10);
   cout << endl;
-  cout << "//////////////// Asimov dataset //////////////" << endl;
-  cout << "Calculate p-values (beta=0):" << endl;
-  cout << "p-value rate+shape = " << pvalue_01_beta0 << endl;
-  cout << endl;
+//  cout << "//////////////// Asimov dataset //////////////" << endl;
+//  cout << "Calculate p-values (beta=0):" << endl;
+//  cout << "p-value rate+shape = " << pvalue_01_beta0 << endl;
+//  cout << endl;
   cout << "//////////////// Toys p-value (all toys) //////////////" << endl;
   cout << endl;
   cout << "p-value rate+shape:" << endl;
