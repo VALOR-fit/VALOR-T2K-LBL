@@ -194,6 +194,7 @@ void SensiPvalueFull_nuebar_scaled
     
     pvalue_rateshape_itoy = GetPvalue(ddeltachisq_01,hStatisticBeta0);
     pvalue_error          = get_error(ddeltachisq_01,hStatisticBeta0,hStatisticBeta0Unscaled);
+    pvalue_rateonly_itoy  = GetPvalue(ddeltachisq_01,hStatisticBeta0);
     pvalue_rateonly_error = get_error(statistic_rateonly,hStatisticBeta0rateonly,hStatisticBeta0Unscaledrateonly);
     
     if(pvalue_rateshape_itoy<0. || pvalue_rateshape_itoy>1.){
