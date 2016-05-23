@@ -74,11 +74,11 @@ void SensiPvalueFull_nuebar_scaled
   TH1D *hPvalue_rateshape_0p05 = new TH1D("hPvalue_rateshape_0p05","hPvalue_rateshape_0p05",110,0.,0.06); 
   TH1D *hPvalue_rateshape_0p10 = new TH1D("hPvalue_rateshape_0p10","hPvalue_rateshape_0p10",110,0.,0.11); 
 
-  TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",100000,-50,20);
-  TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",100000,-50,20);
+  TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",10000000,-50,20);
+  TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",10000000,-50,20);
 
-  TH1D* hStatisticBeta0rateonly         = new TH1D("hStatisticBeta0rateonly","hStatisticBeta0rateonly",100000,-50,20);
-  TH1D* hStatisticBeta0Unscaledrateonly = new TH1D("hStatisticBeta0Unscaledrateonly","hStatisticBeta0Unscaledrateonly",100000,-50,20);
+  TH1D* hStatisticBeta0rateonly         = new TH1D("hStatisticBeta0rateonly","hStatisticBeta0rateonly",10000000,-50,20);
+  TH1D* hStatisticBeta0Unscaledrateonly = new TH1D("hStatisticBeta0Unscaledrateonly","hStatisticBeta0Unscaledrateonly",10000000,-50,20);
 
 
   
