@@ -546,8 +546,11 @@ void SensiPvalueFull_nuebar_scaled
   cPvalue_rateshape_Bkg->Print("cPvalue_rateshape_Bkg.pdf");
   
   if(draw_beta_0_distribution){
-  TFile f_out("SensiPValueFullNueBarScaled.root","recreate");
-  hStatisticBeta0->Write("hStatisticBeta0");
+    TFile f_out("SensiPValueFullNueBarScaled.root","recreate");
+    hStatisticBeta0->Write("hStatisticBeta0");
+    hStatisticBeta0Unscaledrateonly->Write("hStatisticBeta0Unscaledrateonly");
+    hStatisticBeta0Unscaled->Write("hStatisticBeta0Unscaled");
+    hStatisticBeta0rateonly->Write("hStatisticBeta0rateonly");
   f_out.Close();
   }
   
