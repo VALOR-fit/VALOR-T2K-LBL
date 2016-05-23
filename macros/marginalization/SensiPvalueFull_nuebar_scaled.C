@@ -180,8 +180,8 @@ void SensiPvalueFull_nuebar_scaled
         double fluct = Rnd::Instance()->RndToyMCstat().Poisson(number_nuebar_events);
 //        hStatisticBeta0rateonly->Fill(fluct,toy_weight);
 //        hStatisticBeta0Unscaledrateonly->Fill(fluct);
-        hStatisticBeta0rateonly->Fill(dnevents,toy_weight);
-        hStatisticBeta0Unscaledrateonly->Fill(dnevents);
+        hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
+        hStatisticBeta0Unscaledrateonly->Fill(hnevents);
       }
     }
 
