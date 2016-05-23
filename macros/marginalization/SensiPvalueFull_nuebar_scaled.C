@@ -332,7 +332,7 @@ void SensiPvalueFull_nuebar_scaled
     fit_rateonly_pvalue->SetTextSize(0.07);
     fit_rateonly_pvalue->Draw();
     sprintf(name,"p value = %1.4f #pm %1.3f",pvalue_rateonly_itoy,pvalue_rateonly_error);
-    TLatex *fit_pvalue_2 = new TLatex(4.5,hStatisticBeta0rateonly->GetMaximum()*0.1,name);
+    TLatex *fit_rateonly_pvalue_2 = new TLatex(4.5,hStatisticBeta0rateonly->GetMaximum()*0.1,name);
     fit_rateonly_pvalue_2->SetTextSize(0.07);
     fit_rateonly_pvalue_2->Draw();
     
