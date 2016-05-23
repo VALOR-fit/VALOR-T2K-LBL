@@ -76,11 +76,15 @@ void SensiPvalueFull_nuebar_scaled
 
   TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",100000,-6,20);
   TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",100000,-6,20);
-  
+
+  TH1D* hStatisticBeta0rateonly         = new TH1D("hStatisticBeta0rateonly","hStatisticBeta0rateonly",100000,-6,20);
+  TH1D* hStatisticBeta0Unscaledrateonly = new TH1D("hStatisticBeta0Unscaledrateonly","hStatisticBeta0Unscaledrateonly",100000,-6,20);
+
 
   
   // Get first file (beta=0)
   double  statistic = 0;
+  double  statistic_rateonly = 0;
   TH2D*   hErecoToy_RHC1Rmu;
   TH2D*   hErecoToy_1Re;
   TH2D*   hErecoToy_1Rmu;
@@ -93,6 +97,7 @@ void SensiPvalueFull_nuebar_scaled
   TH2D*   dErecoToy_1Rmu;
   TH2D*   dErecoToy_RHC1Rmu;
   TH2D*   dErecoToy_RHC1Re;
+  TH2D*   hErecoExp_RHC1Re;
   double  dchisqtrue0;
   double  dchisqtrue1;
   int     dToyID;
@@ -115,15 +120,21 @@ void SensiPvalueFull_nuebar_scaled
   htreein->SetBranchAddress("chisqtrue1",&hchisqtrue1);
   htreein->SetBranchAddress("hErecoExp_1Re",&hErecoToy_1Re);
   htreein->SetBranchAddress("hErecoToy_RHC1Re",&hErecoToy_RHC1Re);
+  htreein->SetBranchAddress("hErecoExp_RHC1Re",&hErecoExp_RHC1Re);
   htreein->SetBranchAddress("hErecoExp_RHC1Rmu",&hErecoToy_RHC1Rmu);
   htreein->SetBranchAddress("hErecoExp_1Rmu",&hErecoToy_1Rmu);
   htreein->SetBranchAddress("ToyID",&hToyID);
+  
+  
   
   int dNentries = dtreein->GetEntries();
   int hNentries = htreein->GetEntries();
 
   double pvalue_rateshape_itoy = 0;
   double pvalue_error          = 0;
+
+  double pvalue_rateonly_itoy           = 0;
+  double pvalue_rateonly_error          = 0;
 
   for(int ientry=0;ientry<dNentries;ientry++){
     hStatisticBeta0->Reset();
@@ -160,6 +171,12 @@ void SensiPvalueFull_nuebar_scaled
       }
       hStatisticBeta0->Fill(hdeltachisq_01,toy_weight);
       hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
+      
+      double number_nuebar_events=hErecoExp_RHC1Re->Integral();
+      for(int n_rateonly_throws=0; n_rateonly_throws<10000;n_rateonly_throws++){
+        hStatisticBeta0rateonly->Fill(util::Poisson(number_nuebar_events),toy_weight);
+        hStatisticBeta0Unscaledrateonly->Fill(util::Poisson(number_nuebar_events));
+      }
     }
 
     
@@ -169,12 +186,14 @@ void SensiPvalueFull_nuebar_scaled
 
     if(draw_beta_0_distribution){
       statistic = ddeltachisq_01;
+      statistic_rateonly = dnevents;
       cout << "statistic: " << statistic << endl;
     }
     
     pvalue_rateshape_itoy = GetPvalue(ddeltachisq_01,hStatisticBeta0);
     pvalue_error          = get_error(ddeltachisq_01,hStatisticBeta0,hStatisticBeta0Unscaled);
-
+    pvalue_rateonly_error = get_error(statistic_rateonly,hStatisticBeta0rateonly,hStatisticBeta0Unscaledrateonly);
+    
     if(pvalue_rateshape_itoy<0. || pvalue_rateshape_itoy>1.){
       cerr << endl;
       cerr << "ToyID = " << ToyID << endl;
@@ -292,6 +311,29 @@ void SensiPvalueFull_nuebar_scaled
     fit_pvalue_2->SetTextSize(0.07);
     fit_pvalue_2->Draw();
 
+    
+    
+    cPvalue_rateonly_fit = new TCanvas("cPvalue_rateonly_fit","cPvalue_rateonly_fit");
+    cPvalue_rateonly_fit->SetLogy();
+    hStatisticBeta0rateonly->Rebin(500);
+    hStatisticBeta0rateonly->SetFillStyle(0);
+    hStatisticBeta0rateonly->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
+    hStatisticBeta0rateonly->GetYaxis()->SetTitle("Number of entries");
+    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0rateonly->GetMaximum()*1.2);
+    hStatisticBeta0rateonly->DrawCopy();
+    TLine *linePvalue_rateonly_statistic = new TLine(statistic_rateonly,0.,statistic_rateonly,hStatisticBeta0rateonly->GetMaximum());
+    linePvalue_rateonly_statistic->SetLineWidth(2);
+    linePvalue_rateonly_statistic->SetLineColor(kRed);
+    linePvalue_rateonly_statistic->DrawClone();
+    sprintf(name,"#Delta #chi^{2} = %1.3f",statistic_rateonly);
+    TLatex *fit_rateonly_pvalue = new TLatex(4.5,hStatisticBeta0rateonly->GetMaximum()*0.5,name);
+    fit_rateonly_pvalue->SetTextSize(0.07);
+    fit_rateonly_pvalue->Draw();
+    sprintf(name,"p value = %1.4f #pm %1.3f",pvalue_rateonly_itoy,pvalue_rateonly_error);
+    TLatex *fit_pvalue_2 = new TLatex(4.5,hStatisticBeta0rateonly->GetMaximum()*0.1,name);
+    fit_rateonly_pvalue_2->SetTextSize(0.07);
+    fit_rateonly_pvalue_2->Draw();
+    
   }
 
   TCanvas *cPvalue_rateshape_3evt = new TCanvas("cPvalue_rateshape_3evt","cPvalue_rateshape_3evt");
