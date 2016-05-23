@@ -304,6 +304,7 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
     hStatisticBeta0->GetYaxis()->SetTitle("Number of entries");
     hStatisticBeta0->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0->GetMaximum()*1.2);
+    hStatisticBeta0->GetXaxis()->SetRangeUser(-10,24);
     hStatisticBeta0->DrawCopy();
     TLine *linePvalue_rateshape_statistic = new TLine(statistic,0.,statistic,hStatisticBeta0->GetMaximum());
     linePvalue_rateshape_statistic->SetLineWidth(2);
