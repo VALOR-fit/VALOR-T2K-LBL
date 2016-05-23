@@ -176,11 +176,12 @@ void SensiPvalueFull_nuebar_scaled
       hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
       
       double number_nuebar_events=hErecoExp_RHC1Re->Integral();
-      for(int n_rateonly_throws=0; n_rateonly_throws<10000;n_rateonly_throws++){
+      for(int n_rateonly_throws=0; n_rateonly_throws<1;n_rateonly_throws++){
         double fluct = Rnd::Instance()->RndToyMCstat().Poisson(number_nuebar_events);
-        hStatisticBeta0rateonly->Fill(fluct,toy_weight);
-        hStatisticBeta0Unscaledrateonly->Fill(fluct);
-        
+//        hStatisticBeta0rateonly->Fill(fluct,toy_weight);
+//        hStatisticBeta0Unscaledrateonly->Fill(fluct);
+        hStatisticBeta0rateonly->Fill(dnevents,toy_weight);
+        hStatisticBeta0Unscaledrateonly->Fill(dnevents);
       }
     }
 
