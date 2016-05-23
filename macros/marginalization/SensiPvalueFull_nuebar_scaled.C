@@ -139,6 +139,9 @@ void SensiPvalueFull_nuebar_scaled
   for(int ientry=0;ientry<dNentries;ientry++){
     hStatisticBeta0->Reset();
     hStatisticBeta0Unscaled->Reset();
+    hStatisticBeta0rateonly->Reset();
+    hStatisticBeta0Unscaledrateonly->Reset();
+
     dtreein->GetEntry(ientry);
     if( !(ientry % 1000) ) cout << "Compute pvalues for toy " << ientry << endl;
     double dnevents = (double)dErecoToy_RHC1Re->Integral();
