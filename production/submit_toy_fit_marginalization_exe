@@ -695,8 +695,8 @@ while($i_freepar1 < $n_freepar1) {
 	$irun = 0;
 	while($irun < $nruns) { # loop over the jobs
 	    
-	    $ifile_first = $irun * $nexpts;
-	    $ifile_last  = $ifile_first + $nexpts - 1; # The "last" experiment is included
+	    $ifile_first = $irun * $nexpts + first_expt;
+	    $ifile_last  = $ifile_first + $nexpts - 1 + first_expt; # The "last" experiment is included
 	    
 	    print "\n";
 	    print "Submitting run: $irun \n";
