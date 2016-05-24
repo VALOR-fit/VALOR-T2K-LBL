@@ -134,13 +134,14 @@ void SensiPvalueFull_nuebar_scaled
   int dNentries = dtreein->GetEntries();
   int hNentries = htreein->GetEntries();
 
-  double pvalue_rateshape_itoy = 0;
-  double pvalue_error          = 0;
-  double pvalue_error_vector          = 0;
+  double pvalue_rateshape_itoy         = 0;
+  double pvalue_error                  = 0;
+  double pvalue_error_vector           = 0;
 
-  double pvalue_rateonly_itoy           = 0;
-  double pvalue_rateonly_error_vector          = 0;
-  double ddeltachisq_01 = 0;
+  double pvalue_rateonly_itoy          = 0;
+  double pvalue_rateonly_error         = 0;
+  double pvalue_rateonly_error_vector  = 0;
+  double ddeltachisq_01                = 0;
 
   for(int ientry=0;ientry<dNentries;ientry++){
     hStatisticBeta0->Reset();
@@ -221,7 +222,7 @@ void SensiPvalueFull_nuebar_scaled
     pvalue_error_vector   = get_error_vector(right_tail_weight,left_tail_weight,pvalue_rateshape_itoy);
     pvalue_rateonly_itoy  = GetPvalue(statistic_rateonly,hStatisticBeta0rateonly);
     pvalue_rateonly_error = get_error(statistic_rateonly,hStatisticBeta0rateonly,hStatisticBeta0Unscaledrateonly);
-    pvalue_rateonly_error_vector = get_error_vector(right_tail_rateonly_weight,left_tail_rateonly_weight,pvalue_ratesonly_itoy);
+    pvalue_rateonly_error_vector = get_error_vector(right_tail_rateonly_weight,left_tail_rateonly_weight,pvalue_rateonly_itoy);
 
     if(pvalue_rateshape_itoy<0. || pvalue_rateshape_itoy>1.){
       cerr << endl;
