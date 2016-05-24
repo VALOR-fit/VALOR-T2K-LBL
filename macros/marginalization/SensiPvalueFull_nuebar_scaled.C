@@ -529,8 +529,8 @@ void SensiPvalueFull_nuebar_scaled
   cout << endl;
   cout << "Fraction of toys (rate+shape) = "
        << hPvalue_rateshape_0p10->Integral() / hPvalue_rateshape->Integral() << endl;
-  cout << "p-value rate-only:" << pvalue_rateonly_itoy  << "Error1: " << pvalue_error << "  Error2: " << pvalue_error_vector <<  endl;
-  cout << "p-value rate+shape:" << pvalue_rateshape_itoy  << "Error1: " << pvalue_rateonly_error << "  Error2: " << pvalue_rateonly_error_vector <<  endl;
+  cout << "p-value rate-only:" << pvalue_rateonly_itoy  << "  Error1: " << pvalue_error << "  Error2: " << pvalue_error_vector <<  endl;
+  cout << "p-value rate+shape:" << pvalue_rateshape_itoy  << "  Error1: " << pvalue_rateonly_error << "  Error2: " << pvalue_rateonly_error_vector <<  endl;
   cout << "Mean (histo) = " << hPvalue_rateshape_0p10->GetMean() << endl;
   cout << "RMS (histo) = " << hPvalue_rateshape_0p10->GetRMS() << endl;
   cout << endl;
@@ -675,7 +675,6 @@ double get_error_vector( std::vector<double> _right_tail_weight, std::vector<dou
   {
     error+= TMath::Power(_left_tail_weight[i]*(_pvalue),2);
     total_left+= _left_tail_weight[i];
-
   }
   
   error = error / (TMath::Power(total_left + total_right ,2));
