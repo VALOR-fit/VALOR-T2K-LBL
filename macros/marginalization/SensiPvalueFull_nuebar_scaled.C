@@ -678,7 +678,7 @@ double get_error_vector( std::vector<double> _right_tail_weight, std::vector<dou
   }
   
   error = error / (TMath::Power(total_left + total_right ,2));
-  return error;
+  return TMath::Sqrt(error);
 }
 
 
