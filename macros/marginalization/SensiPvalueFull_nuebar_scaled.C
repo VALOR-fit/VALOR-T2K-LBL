@@ -666,14 +666,14 @@ double get_error_vector( std::vector<double> _right_tail_weight, std::vector<dou
   double total_left=0;
   for(int i=0;i<_right_tail_weight.size();i++)
   {
-    error+= TMath::Power(_right_tail_weight(i)*(1-_pvalue),2);
-    total_right+= _right_tail_weight(i);
+    error+= TMath::Power(_right_tail_weight[i]*(1-_pvalue),2);
+    total_right+= _right_tail_weight[i];
   }
   
   for(int i=0;i<_left_tail_weight.size();i++)
   {
-    error+= TMath::Power(_left_tail_weight(i)*(_pvalue),2);
-    total_left+= _left_tail_weight(i);
+    error+= TMath::Power(_left_tail_weight[i]*(_pvalue),2);
+    total_left+= _left_tail_weight[i];
 
   }
   
