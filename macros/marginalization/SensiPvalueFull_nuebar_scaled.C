@@ -92,6 +92,10 @@ void SensiPvalueFull_nuebar_scaled
   double  hchisqtrue0;
   double  hchisqtrue1;
   int     hToyID;
+  std::vector<double> right_tail_rateonly_weight;
+  std::vector<double> right_tail_weight;
+  std::vector<double> left_tail_rateonly_weight;
+  std::vector<double> left_tail_weight;
 
   TH2D*   dErecoToy_1Re;
   TH2D*   dErecoToy_1Rmu;
@@ -135,13 +139,15 @@ void SensiPvalueFull_nuebar_scaled
 
   double pvalue_rateonly_itoy           = 0;
   double pvalue_rateonly_error          = 0;
+  double ddeltachisq_01 = 0;
 
   for(int ientry=0;ientry<dNentries;ientry++){
     hStatisticBeta0->Reset();
     hStatisticBeta0Unscaled->Reset();
     hStatisticBeta0rateonly->Reset();
     hStatisticBeta0Unscaledrateonly->Reset();
-
+    ddeltachisq_01 = dchisqtrue0 - dchisqtrue1;
+    
     dtreein->GetEntry(ientry);
     if( !(ientry % 1000) ) cout << "Compute pvalues for toy " << ientry << endl;
     double dnevents = (double)dErecoToy_RHC1Re->Integral();
@@ -175,6 +181,14 @@ void SensiPvalueFull_nuebar_scaled
       hStatisticBeta0->Fill(hdeltachisq_01,toy_weight);
       hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
       
+      if(hdeltachisq_01<ddeltachisq_01)
+      {
+        left_tail_weight.push_back(toy_weight);
+      }
+      else{
+        right_tail_weight.push_back(toy_weight);
+      }
+      
       double number_nuebar_events=hErecoExp_RHC1Re->Integral();
       for(int n_rateonly_throws=0; n_rateonly_throws<1;n_rateonly_throws++){
         double fluct = Rnd::Instance()->RndToyMCstat().Poisson(number_nuebar_events);
@@ -182,12 +196,17 @@ void SensiPvalueFull_nuebar_scaled
 //        hStatisticBeta0Unscaledrateonly->Fill(fluct);
         hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
         hStatisticBeta0Unscaledrateonly->Fill(hnevents);
+        if(hnevents < dnevents){
+          left_tail_rateonly_weight.push_back(toy_weight);
+        }
+        else{
+          right_tail_rateonly_weight.push_back(toy_weight);
+        }
       }
     }
 
     
     
-    double ddeltachisq_01 = dchisqtrue0 - dchisqtrue1;
     cout << "statistic: " << ddeltachisq_01 << endl;
 
     if(draw_beta_0_distribution){
@@ -198,9 +217,11 @@ void SensiPvalueFull_nuebar_scaled
     
     pvalue_rateshape_itoy = GetPvalue(ddeltachisq_01,hStatisticBeta0);
     pvalue_error          = get_error(ddeltachisq_01,hStatisticBeta0,hStatisticBeta0Unscaled);
+    pvalue_error_vector   = get_error_vector(right_tail_weight,left_tail_weight,pvalue_rateshape_itoy);
     pvalue_rateonly_itoy  = GetPvalue(statistic_rateonly,hStatisticBeta0rateonly);
     pvalue_rateonly_error = get_error(statistic_rateonly,hStatisticBeta0rateonly,hStatisticBeta0Unscaledrateonly);
-    
+    pvalue_rateonly_error_vector = get_error_vector(right_tail_rateonly_weight,left_tail_rateonly_weight,pvalue_ratesonly_itoy);
+
     if(pvalue_rateshape_itoy<0. || pvalue_rateshape_itoy>1.){
       cerr << endl;
       cerr << "ToyID = " << ToyID << endl;
@@ -506,8 +527,8 @@ void SensiPvalueFull_nuebar_scaled
   cout << endl;
   cout << "Fraction of toys (rate+shape) = "
        << hPvalue_rateshape_0p10->Integral() / hPvalue_rateshape->Integral() << endl;
-  cout << "p-value rate-only:" << endl;
-  cout << "p-value rate+shape:" << endl;
+  cout << "p-value rate-only:" << pvalue_rateonly_itoy  << "Error1: " << pvalue_error << "  Error2: " << pvalue_error_vector <<  endl;
+  cout << "p-value rate+shape:" << pvalue_rateshape_itoy  << "Error1: " << pvalue_rateonly_error << "  Error2: " << pvalue_rateonly_error_vector <<  endl;
   cout << "Mean (histo) = " << hPvalue_rateshape_0p10->GetMean() << endl;
   cout << "RMS (histo) = " << hPvalue_rateshape_0p10->GetRMS() << endl;
   cout << endl;
@@ -631,10 +652,32 @@ double get_error(double obs, TH1D* _hbeta, TH1D* _hbetaUnscaled)
   double err = TMath::Power(wr* (1 - pvalue) / (pd*pd), 2) * br;
   err_sqrd = err_sqrd + err;
   
-  
-  
   double final_error = TMath::Sqrt(err_sqrd);
   
   return final_error;
   
 }
+
+double get_error_vector( std::vector<double> _right_tail_weight, std::vector<double> _left_tail_weight, double _pvalue)
+{
+  double error = 0;
+  double total_right=0;
+  double total_left=0;
+  for(int i=0;i<_right_tail_weight.size();i++)
+  {
+    error+= TMath::Power(_right_tail_weight(i)*(1-_pvalue),2);
+    total_right+= _right_tail_weight(i);
+  }
+  
+  for(int i=0;i<_left_tail_weight.size();i++)
+  {
+    error+= TMath::Power(_left_tail_weight(i)*(_pvalue),2);
+    total_left+= _left_tail_weight(i);
+
+  }
+  
+  error = error / (TMath::Power(total_left + total_right ,2));
+  return error;
+}
+
+
