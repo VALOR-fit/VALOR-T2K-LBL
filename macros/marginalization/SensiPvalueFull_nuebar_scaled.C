@@ -136,19 +136,20 @@ void SensiPvalueFull_nuebar_scaled
 
   double pvalue_rateshape_itoy = 0;
   double pvalue_error          = 0;
+  double pvalue_error_vector          = 0;
 
   double pvalue_rateonly_itoy           = 0;
-  double pvalue_rateonly_error          = 0;
+  double pvalue_rateonly_error_vector          = 0;
   double ddeltachisq_01 = 0;
 
   for(int ientry=0;ientry<dNentries;ientry++){
     hStatisticBeta0->Reset();
     hStatisticBeta0Unscaled->Reset();
     hStatisticBeta0rateonly->Reset();
-    hStatisticBeta0Unscaledrateonly->Reset();
-    ddeltachisq_01 = dchisqtrue0 - dchisqtrue1;
-    
+    hStatisticBeta0Unscaledrateonly->Reset();    
     dtreein->GetEntry(ientry);
+    ddeltachisq_01 = dchisqtrue0 - dchisqtrue1;
+
     if( !(ientry % 1000) ) cout << "Compute pvalues for toy " << ientry << endl;
     double dnevents = (double)dErecoToy_RHC1Re->Integral();
     if(dnevents<0.){
