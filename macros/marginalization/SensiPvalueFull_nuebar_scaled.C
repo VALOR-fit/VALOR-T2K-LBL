@@ -74,11 +74,11 @@ void SensiPvalueFull_nuebar_scaled
   TH1D *hPvalue_rateshape_0p05 = new TH1D("hPvalue_rateshape_0p05","hPvalue_rateshape_0p05",110,0.,0.06); 
   TH1D *hPvalue_rateshape_0p10 = new TH1D("hPvalue_rateshape_0p10","hPvalue_rateshape_0p10",110,0.,0.11); 
 
-  TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",1000000,-50,50);
-  TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",100000,-50,50);
+  TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",1000,-50,50);
+  TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",1000,-50,50);
 
-  TH1D* hStatisticBeta0rateonly         = new TH1D("hStatisticBeta0rateonly","hStatisticBeta0rateonly",10000000,-50,50);
-  TH1D* hStatisticBeta0Unscaledrateonly = new TH1D("hStatisticBeta0Unscaledrateonly","hStatisticBeta0Unscaledrateonly",10000000,-50,50);
+  TH1D* hStatisticBeta0rateonly         = new TH1D("hStatisticBeta0rateonly","hStatisticBeta0rateonly",1000,-50,50);
+  TH1D* hStatisticBeta0Unscaledrateonly = new TH1D("hStatisticBeta0Unscaledrateonly","hStatisticBeta0Unscaledrateonly",1000,-50,50);
 
 
   
@@ -182,8 +182,8 @@ void SensiPvalueFull_nuebar_scaled
       toy_weight = TMath::Exp(-1*toy_chisq/2);
            
       }
-      //      hStatisticBeta0->Fill(hdeltachisq_01,toy_weight);
-      // hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
+        hStatisticBeta0->Fill(hdeltachisq_01,toy_weight);
+       hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
       
       if(hdeltachisq_01<ddeltachisq_01)
       {
@@ -198,8 +198,8 @@ void SensiPvalueFull_nuebar_scaled
         double fluct = Rnd::Instance()->RndToyMCstat().Poisson(number_nuebar_events);
         //hStatisticBeta0rateonly->Fill(fluct,toy_weight);
         //hStatisticBeta0Unscaledrateonly->Fill(fluct);
-	//	hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
-	//	hStatisticBeta0Unscaledrateonly->Fill(hnevents);
+        hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
+        hStatisticBeta0Unscaledrateonly->Fill(hnevents);
         if(hnevents < dnevents){
           left_tail_rateonly_weight.push_back(toy_weight);
         }
@@ -219,11 +219,11 @@ void SensiPvalueFull_nuebar_scaled
       cout << "statistic: " << statistic << endl;
     }
     
-    pvalue_rateshape_itoy = GetPvalue(ddeltachisq_01,);
-    pvalue_error          = get_error(ddeltachisq_01,hStatisticBeta0,hStatisticBeta0Unscaled);
+    pvalue_rateshape_itoy = GetPvalue(ddeltachisq_01,right_tail_weight,left_tail_weight);
+//    pvalue_error          = get_error(ddeltachisq_01,hStatisticBeta0,hStatisticBeta0Unscaled);
     pvalue_error_vector   = get_error_vector(right_tail_weight,left_tail_weight,pvalue_rateshape_itoy);
-    pvalue_rateonly_itoy  = GetPvalue(statistic_rateonly,hStatisticBeta0rateonly);
-    pvalue_rateonly_error = get_error(statistic_rateonly,hStatisticBeta0rateonly,hStatisticBeta0Unscaledrateonly);
+    pvalue_rateonly_itoy  = GetPvalue(statistic_rateonly,right_tail_rateonly_weight,left_tail_rateonly_weight);
+//    pvalue_rateonly_error = get_error(statistic_rateonly,hStatisticBeta0rateonly,hStatisticBeta0Unscaledrateonly);
     pvalue_rateonly_error_vector = get_error_vector(right_tail_rateonly_weight,left_tail_rateonly_weight,pvalue_rateonly_itoy);
 
     if(pvalue_rateshape_itoy<0. || pvalue_rateshape_itoy>1.){
@@ -531,8 +531,8 @@ void SensiPvalueFull_nuebar_scaled
   cout << endl;
   cout << "Fraction of toys (rate+shape) = "
        << hPvalue_rateshape_0p10->Integral() / hPvalue_rateshape->Integral() << endl;
-  cout << "p-value rate-only:" << pvalue_rateonly_itoy  << "  Error1: " << pvalue_error << "  Error2: " << pvalue_error_vector <<  endl;
-  cout << "p-value rate+shape:" << pvalue_rateshape_itoy  << "  Error1: " << pvalue_rateonly_error << "  Error2: " << pvalue_rateonly_error_vector <<  endl;
+  cout << "p-value rate-only:" << pvalue_rateonly_itoy  << "  Error2: " << pvalue_error_vector <<  endl;
+  cout << "p-value rate+shape:" << pvalue_rateshape_itoy  << "  Error2: " << pvalue_rateonly_error_vector <<  endl;
   cout << "Mean (histo) = " << hPvalue_rateshape_0p10->GetMean() << endl;
   cout << "RMS (histo) = " << hPvalue_rateshape_0p10->GetRMS() << endl;
   cout << endl;
@@ -615,6 +615,24 @@ double GetPvalue(double _statistic, TH1D* hstatistic)
   int bin = hstatistic->FindBin(_statistic);
   double p_value = hstatistic->Integral(bin,hstatistic->GetNbinsX()) / hstatistic->Integral();
   
+  return p_value;
+}
+
+double GetPvalue(double _statistic, std::vector<double> _right_tail_weight, std::vector<double> _left_tail_weight)
+{
+  double p_value = 1;
+  double right_tail_sum=0;
+  double left_tail_sum = 0;
+  
+  for(int i =0;i<_right_tail_weight.size(),i++){
+    right_tail_sum += _right_tail_weight[i];
+  }
+  
+  for(int i =0;i<_left_tail_weight.size(),i++){
+    left_tail_sum += _left_tail_weight[i];
+  }
+
+  p_value = right_tail_sum / (right_tail_sum+ left_tail_sum);
   return p_value;
 }
 
