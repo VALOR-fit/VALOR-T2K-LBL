@@ -625,10 +625,8 @@ double calc_chisq(TH2D* hobs, TH2D* hexp)
 
 double GetPvalue(double _statistic, TH1D* hstatistic)
 {
-
   int bin = hstatistic->FindBin(_statistic);
   double p_value = hstatistic->Integral(bin,hstatistic->GetNbinsX()) / hstatistic->Integral();
-  
   return p_value;
 }
 
