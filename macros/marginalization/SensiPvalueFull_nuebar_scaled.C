@@ -74,8 +74,8 @@ void SensiPvalueFull_nuebar_scaled
   TH1D *hPvalue_rateshape_0p05 = new TH1D("hPvalue_rateshape_0p05","hPvalue_rateshape_0p05",110,0.,0.06); 
   TH1D *hPvalue_rateshape_0p10 = new TH1D("hPvalue_rateshape_0p10","hPvalue_rateshape_0p10",110,0.,0.11); 
 
-  TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",10000000,-50,50);
-  TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",10000000,-50,50);
+  TH1D* hStatisticBeta0         = new TH1D("hStatisticBeta0","hStatisticBeta0",1000000,-50,50);
+  TH1D* hStatisticBeta0Unscaled = new TH1D("hStatisticBeta0Unscaled","hStatisticBeta0Unscaled",100000,-50,50);
 
   TH1D* hStatisticBeta0rateonly         = new TH1D("hStatisticBeta0rateonly","hStatisticBeta0rateonly",10000000,-50,50);
   TH1D* hStatisticBeta0Unscaledrateonly = new TH1D("hStatisticBeta0Unscaledrateonly","hStatisticBeta0Unscaledrateonly",10000000,-50,50);
@@ -143,7 +143,7 @@ void SensiPvalueFull_nuebar_scaled
   double pvalue_rateonly_error_vector  = 0;
   double ddeltachisq_01                = 0;
 
-  for(int ientry=0;ientry<dNentries;ientry++){
+  for(int ientry=0;ientry<dNentries;ientry++){ 
     hStatisticBeta0->Reset();
     hStatisticBeta0Unscaled->Reset();
     hStatisticBeta0rateonly->Reset();
@@ -162,6 +162,7 @@ void SensiPvalueFull_nuebar_scaled
     }
 
     for(int hientry=0;hientry<hNentries;hientry++){
+    //    for(int hientry=0;hientry<5000;hientry++){       
       htreein->GetEntry(hientry);
       double hnevents = (double)hErecoToy_RHC1Re->Integral();
       if(hnevents<0){
@@ -179,9 +180,10 @@ void SensiPvalueFull_nuebar_scaled
       toy_chisq += calc_chisq(dErecoToy_1Rmu,hErecoToy_1Rmu);
       toy_chisq += calc_chisq(dErecoToy_1Re,hErecoToy_1Re);
       toy_weight = TMath::Exp(-1*toy_chisq/2);
+           
       }
-      hStatisticBeta0->Fill(hdeltachisq_01,toy_weight);
-      hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
+      //      hStatisticBeta0->Fill(hdeltachisq_01,toy_weight);
+      // hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
       
       if(hdeltachisq_01<ddeltachisq_01)
       {
@@ -194,10 +196,10 @@ void SensiPvalueFull_nuebar_scaled
       double number_nuebar_events=hErecoExp_RHC1Re->Integral();
       for(int n_rateonly_throws=0; n_rateonly_throws<1;n_rateonly_throws++){
         double fluct = Rnd::Instance()->RndToyMCstat().Poisson(number_nuebar_events);
-//        hStatisticBeta0rateonly->Fill(fluct,toy_weight);
-//        hStatisticBeta0Unscaledrateonly->Fill(fluct);
-        hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
-        hStatisticBeta0Unscaledrateonly->Fill(hnevents);
+        //hStatisticBeta0rateonly->Fill(fluct,toy_weight);
+        //hStatisticBeta0Unscaledrateonly->Fill(fluct);
+	//	hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
+	//	hStatisticBeta0Unscaledrateonly->Fill(hnevents);
         if(hnevents < dnevents){
           left_tail_rateonly_weight.push_back(toy_weight);
         }
@@ -217,7 +219,7 @@ void SensiPvalueFull_nuebar_scaled
       cout << "statistic: " << statistic << endl;
     }
     
-    pvalue_rateshape_itoy = GetPvalue(ddeltachisq_01,hStatisticBeta0);
+    pvalue_rateshape_itoy = GetPvalue(ddeltachisq_01,);
     pvalue_error          = get_error(ddeltachisq_01,hStatisticBeta0,hStatisticBeta0Unscaled);
     pvalue_error_vector   = get_error_vector(right_tail_weight,left_tail_weight,pvalue_rateshape_itoy);
     pvalue_rateonly_itoy  = GetPvalue(statistic_rateonly,hStatisticBeta0rateonly);
