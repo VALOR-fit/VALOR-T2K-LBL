@@ -110,16 +110,24 @@ void SensiPvalueFull_nuebar_scaled
 
   dfilein = new TFile(infilename_beta1,"READ");
   dtreein = (TTree*)dfilein->Get("fitnt");
+  dtreein->SetBranchStatus("*", kFALSE);
   dtreein->SetBranchAddress("chisqtrue0",&dchisqtrue0);
   dtreein->SetBranchAddress("chisqtrue1",&dchisqtrue1);
   dtreein->SetBranchAddress("hErecoToy_1Re",&dErecoToy_1Re);
   dtreein->SetBranchAddress("hErecoToy_RHC1Re",&dErecoToy_RHC1Re);
   dtreein->SetBranchAddress("hErecoToy_RHC1Rmu",&dErecoToy_RHC1Rmu);
   dtreein->SetBranchAddress("hErecoToy_1Rmu",&dErecoToy_1Rmu);
-  dtreein->SetBranchAddress("ToyID",&dToyID);
+  
+  dtreein->SetBranchStatus("chisqtrue0",1);
+  dtreein->SetBranchStatus("chisqtrue1",1);
+  dtreein->SetBranchStatus("hErecoToy_1Re",1);
+  dtreein->SetBranchStatus("hErecoToy_RHC1Re",1);
+  dtreein->SetBranchStatus("hErecoToy_RHC1Rmu",1);
+  dtreein->SetBranchStatus("hErecoToy_1Rmu",1);
 
   hfilein = new TFile(infilename_beta0,"READ");
   htreein = (TTree*)hfilein->Get("fitnt");
+  htreein->SetBranchStatus("*", kFALSE);
   htreein->SetBranchAddress("chisqtrue0",&hchisqtrue0);
   htreein->SetBranchAddress("chisqtrue1",&hchisqtrue1);
   htreein->SetBranchAddress("hErecoExp_1Re",&hErecoToy_1Re);
@@ -127,9 +135,15 @@ void SensiPvalueFull_nuebar_scaled
   htreein->SetBranchAddress("hErecoExp_RHC1Re",&hErecoExp_RHC1Re);
   htreein->SetBranchAddress("hErecoExp_RHC1Rmu",&hErecoToy_RHC1Rmu);
   htreein->SetBranchAddress("hErecoExp_1Rmu",&hErecoToy_1Rmu);
-  htreein->SetBranchAddress("ToyID",&hToyID);
   
-  
+  htreein->SetBranchStatus("chisqtrue0",1);
+  htreein->SetBranchStatus("chisqtrue1",1);
+  htreein->SetBranchStatus("hErecoExp_1Re",1);
+  htreein->SetBranchStatus("hErecoToy_RHC1Re",1);
+  htreein->SetBranchStatus("hErecoExp_RHC1Re",1);
+  htreein->SetBranchStatus("hErecoExp_RHC1Rmu",1);
+  htreein->SetBranchStatus("hErecoExp_1Rmu",1);
+
   
   int dNentries = dtreein->GetEntries();
   int hNentries = htreein->GetEntries();
