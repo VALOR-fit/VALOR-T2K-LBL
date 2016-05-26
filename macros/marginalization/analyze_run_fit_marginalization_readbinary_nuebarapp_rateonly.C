@@ -50,14 +50,14 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   
   // Declare histograms
   
-  TH1F *hPValueBeta0 = new TH1F("hPValueBeta0","hPValueBeta0",200,0,1.5);
-  TH1F *hPValueBeta0_toyevt0 = new TH1F("hPValueBeta0_toyevt0","hPValueBeta0_toyevt0",200,0,1.5);
-  TH1F *hPValueBeta0_toyevt1 = new TH1F("hPValueBeta0_toyevt1","hPValueBeta0_toyevt1",200,0,1.5);
-  TH1F *hPValueBeta0_toyevt2 = new TH1F("hPValueBeta0_toyevt2","hPValueBeta0_toyevt2",200,0,1.5);
-  TH1F *hPValueBeta0_toyevt3 = new TH1F("hPValueBeta0_toyevt3","hPValueBeta0_toyevt3",200,0,1.5);
-  TH1F *hPValueBeta0_toyevt4 = new TH1F("hPValueBeta0_toyevt4","hPValueBeta0_toyevt4",200,0,1.5);
-  TH1F *hPValueBeta0_toyevt5 = new TH1F("hPValueBeta0_toyevt5","hPValueBeta0_toyevt5",200,0,1.5);
-  TH1F *hPValueBeta0_toyevt6 = new TH1F("hPValueBeta0_toyevt6","hPValueBeta0_toyevt6",200,0,1.5);
+  TH1D *hPValueBeta0 = new TH1D("hPValueBeta0","hPValueBeta0",200,0,1.5);
+  TH1D *hPValueBeta0_toyevt0 = new TH1D("hPValueBeta0_toyevt0","hPValueBeta0_toyevt0",200,0,1.5);
+  TH1D *hPValueBeta0_toyevt1 = new TH1D("hPValueBeta0_toyevt1","hPValueBeta0_toyevt1",200,0,1.5);
+  TH1D *hPValueBeta0_toyevt2 = new TH1D("hPValueBeta0_toyevt2","hPValueBeta0_toyevt2",200,0,1.5);
+  TH1D *hPValueBeta0_toyevt3 = new TH1D("hPValueBeta0_toyevt3","hPValueBeta0_toyevt3",200,0,1.5);
+  TH1D *hPValueBeta0_toyevt4 = new TH1D("hPValueBeta0_toyevt4","hPValueBeta0_toyevt4",200,0,1.5);
+  TH1D *hPValueBeta0_toyevt5 = new TH1D("hPValueBeta0_toyevt5","hPValueBeta0_toyevt5",200,0,1.5);
+  TH1D *hPValueBeta0_toyevt6 = new TH1D("hPValueBeta0_toyevt6","hPValueBeta0_toyevt6",200,0,1.5);
   TH1F *hPValueBeta0_toyevt7 = new TH1F("hPValueBeta0_toyevt7","hPValueBeta0_toyevt7",200,0,1.5);
   TH1F *hPValueBeta0_toyevt8 = new TH1F("hPValueBeta0_toyevt8","hPValueBeta0_toyevt8",200,0,1.5);
   TH1F *hPValueBeta0_toyevt9 = new TH1F("hPValueBeta0_toyevt9","hPValueBeta0_toyevt9",200,0,1.5);
@@ -67,14 +67,14 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   
   THStack *sPValueBeta0 = new THStack("sPValueBeta0","sPValueBeta0");
   
-  TH1F *hPValueBeta1 = new TH1F("hPValueBeta1","hPValueBeta1",200,0,1.5);
-  TH1F *hPValueBeta1_toyevt0 = new TH1F("hPValueBeta1_toyevt0","hPValueBeta1_toyevt0",200,0,1.5);
-  TH1F *hPValueBeta1_toyevt1 = new TH1F("hPValueBeta1_toyevt1","hPValueBeta1_toyevt1",200,0,1.5);
-  TH1F *hPValueBeta1_toyevt2 = new TH1F("hPValueBeta1_toyevt2","hPValueBeta1_toyevt2",200,0,1.5);
-  TH1F *hPValueBeta1_toyevt3 = new TH1F("hPValueBeta1_toyevt3","hPValueBeta1_toyevt3",200,0,1.5);
-  TH1F *hPValueBeta1_toyevt4 = new TH1F("hPValueBeta1_toyevt4","hPValueBeta1_toyevt4",200,0,1.5);
-  TH1F *hPValueBeta1_toyevt5 = new TH1F("hPValueBeta1_toyevt5","hPValueBeta1_toyevt5",200,0,1.5);
-  TH1F *hPValueBeta1_toyevt6 = new TH1F("hPValueBeta1_toyevt6","hPValueBeta1_toyevt6",200,0,1.5);
+  TH1D *hPValueBeta1 = new TH1D("hPValueBeta1","hPValueBeta1",200,0,1.5);
+  TH1D *hPValueBeta1_toyevt0 = new TH1D("hPValueBeta1_toyevt0","hPValueBeta1_toyevt0",200,0,1.5);
+  TH1D *hPValueBeta1_toyevt1 = new TH1D("hPValueBeta1_toyevt1","hPValueBeta1_toyevt1",200,0,1.5);
+  TH1D *hPValueBeta1_toyevt2 = new TH1D("hPValueBeta1_toyevt2","hPValueBeta1_toyevt2",200,0,1.5);
+  TH1D *hPValueBeta1_toyevt3 = new TH1D("hPValueBeta1_toyevt3","hPValueBeta1_toyevt3",200,0,1.5);
+  TH1D *hPValueBeta1_toyevt4 = new TH1D("hPValueBeta1_toyevt4","hPValueBeta1_toyevt4",200,0,1.5);
+  TH1D *hPValueBeta1_toyevt5 = new TH1D("hPValueBeta1_toyevt5","hPValueBeta1_toyevt5",200,0,1.5);
+  TH1D *hPValueBeta1_toyevt6 = new TH1D("hPValueBeta1_toyevt6","hPValueBeta1_toyevt6",200,0,1.5);
   TH1F *hPValueBeta1_toyevt7 = new TH1F("hPValueBeta1_toyevt7","hPValueBeta1_toyevt7",200,0,1.5);
   TH1F *hPValueBeta1_toyevt8 = new TH1F("hPValueBeta1_toyevt8","hPValueBeta1_toyevt8",200,0,1.5);
   TH1F *hPValueBeta1_toyevt9 = new TH1F("hPValueBeta1_toyevt9","hPValueBeta1_toyevt9",200,0,1.5);
@@ -86,6 +86,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   // loop over the tree
   
   int Nentries = treein->GetEntries();
+  cout << "Nfits: " << Nentries << endl;
   for(int ientry=0;ientry<Nentries;ientry++){
     
     treein->GetEntry(ientry);
@@ -160,7 +161,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     hbeta0->GetXaxis()->SetLabelSize(0.05);
     hbeta0->DrawCopy();
     cBeta0Distribution->SetLogy();
-    TLine *expEvents = new TLine(nevents,hbeta0->GetMinimum(),nevents,hbeta0->GetMaximum());
+    TLine *expEvents = new TLine(nevents,0,nevents,hbeta0->GetMaximum());
     expEvents->SetLineWidth(4);
     expEvents->SetLineColor(kRed);
     expEvents->SetLineStyle(2);
@@ -429,15 +430,15 @@ double get_error(double obs, TH1D* hbeta, TH1D* hbetaUnscaled)
   
   //Left error
   double pd = hbeta->Integral();
-  double wl = hbeta->Integral(1,i)/hbetaUnscaled->Integral(1,i);
-  double bl = hbetaUnscaled->Integral(1,i);
+  double wl = hbeta->Integral(1,obs_bin-1)/hbetaUnscaled->Integral(1,obs_bin-1);
+  double bl = hbetaUnscaled->Integral(1,obs_bin-1);
   double err = TMath::Power(wl* (pvalue) / pd, 2) * bl;
   err_sqrd = err_sqrd + err;
   
   //Right error
   double pd = hbeta->Integral();
-  double wr = hbeta->Integral(i,hbeta->GetXaxis()->GetNbins())/hbetaUnscaled->Integral(i,hbeta->GetXaxis()->GetNbins());
-  double br = hbetaUnscaled->Integral(i,hbeta->GetXaxis()->GetNbins());
+  double wr = hbeta->Integral(obs_bin,hbeta->GetXaxis()->GetNbins())/hbetaUnscaled->Integral(obs_bin,hbeta->GetXaxis()->GetNbins());
+  double br = hbetaUnscaled->Integral(obs_bin,hbeta->GetXaxis()->GetNbins());
   double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
   err_sqrd = err_sqrd + err;
   
