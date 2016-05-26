@@ -322,7 +322,7 @@ void SensiPvalueFull_nuebar_scaled
   if(draw_beta_0_distribution){
     cPvalue_rateshape_fit = new TCanvas("cPvalue_rateshape_fit","cPvalue_rateshape_fit");
     cPvalue_rateshape_fit->SetLogy();
-    hStatisticBeta0->Rebin(50000);
+//    hStatisticBeta0->Rebin(50000);
     hStatisticBeta0->SetFillStyle(0);
     hStatisticBeta0->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
     hStatisticBeta0->GetYaxis()->SetTitle("Number of entries");
@@ -346,7 +346,7 @@ void SensiPvalueFull_nuebar_scaled
     
     cPvalue_rateonly_fit = new TCanvas("cPvalue_rateonly_fit","cPvalue_rateonly_fit");
     cPvalue_rateonly_fit->SetLogy();
-    hStatisticBeta0rateonly->Rebin(50000);
+//    hStatisticBeta0rateonly->Rebin(50000);
     hStatisticBeta0rateonly->SetFillStyle(0);
     hStatisticBeta0rateonly->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
     hStatisticBeta0rateonly->GetYaxis()->SetTitle("Number of entries");
