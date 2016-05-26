@@ -620,11 +620,11 @@ double GetPvalue(double _statistic, std::vector<double> _right_tail_weight, std:
   double right_tail_sum=0;
   double left_tail_sum = 0;
   
-  for(int i =0;i<_right_tail_weight.size(),i++){
+  for(int i =0;i<_right_tail_weight.size();i++){
     right_tail_sum += _right_tail_weight[i];
   }
   
-  for(int i =0;i<_left_tail_weight.size(),i++){
+  for(int i =0;i<_left_tail_weight.size();i++){
     left_tail_sum += _left_tail_weight[i];
   }
 
