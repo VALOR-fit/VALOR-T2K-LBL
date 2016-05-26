@@ -12,13 +12,77 @@
 
 void DrawPvalues_mh_NHandIH
 (
+ //////////////
+ //          //
+ // Standard //
+ //          //
+ //////////////
+ 
  // Run 1-6
  // char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/Pvalue_NH_10kToys_Run16.root",
  // char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/Pvalue_IH_10kToys_Run16.root"
 
+ // Asimov A - dcp=-1.601
+ // char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/Pvalue_NH_10kToys_Asimov_A.root",
+ // char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/Pvalue_IH_10kToys_Asimov_A.root"
+
+ // // Asimov A - dcp=0
+ // char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/Pvalue_NH_10kToys_Asimov_A_dcp0.root",
+ // char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/Pvalue_IH_10kToys_Asimov_A_dcp0.root"
+ 
+
+ //////////////////////////
+ //                     //
+ // Standard - 50k toys //
+ //                     //
+ /////////////////////////
+
+ // Run 1-6
+ // char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_NH_100kToys_Run16_Total.root",
+ // char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_IH_100kToys_Run16_Total.root"
+
  // Asimov A
- char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/Pvalue_NH_10kToys_Asimov_A.root",
- char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/Pvalue_IH_10kToys_Asimov_A.root"
+ //char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_NH_100kToys_Asimov_A.root",
+ //char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_IH_100kToys_Asimov_A.root"
+
+ // Asimov B
+ char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_NH_100kToys_Asimov_B.root",
+ char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_IH_100kToys_Asimov_B.root"
+
+ 
+
+ /////////////////
+ //             //
+ // Fix deltaCP //
+ //             //
+ /////////////////
+ 
+ // Run 1-6 - fix dcp=-pi/2
+ //char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_NH_10kToys_Run16_fix_dcp_m_pi_over_2.root",
+ //char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_IH_10kToys_Run16_fix_dcp_m_pi_over_2.root"
+ 
+ // Run 1-6 - fix dcp=0
+ //char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_NH_10kToys_Run16_fix_dcp_0.root",
+ //char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_IH_10kToys_Run16_fix_dcp_0.root"
+
+ // Run 1-6 - fix dcp=+pi/2
+ //char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_NH_10kToys_Run16_fix_dcp_p_pi_over_2.root",
+ //char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_IH_10kToys_Run16_fix_dcp_p_pi_over_2.root"
+
+
+ // Asimov A - fix dcp=-pi/2
+ //char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_NH_10kToys_Asimov_A_fix_dcp_m_pi_over_2.root",
+ //char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_IH_10kToys_Asimov_A_fix_dcp_m_pi_over_2.root"
+ 
+ // Asimov A - fix dcp=0
+ //char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_NH_10kToys_Asimov_A_fix_dcp_0.root",
+ //char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_IH_10kToys_Asimov_A_fix_dcp_0.root"
+
+ // Asimov A - fix dcp=+pi/2
+ //char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_NH_10kToys_Asimov_A_fix_dcp_p_pi_over_2.root",
+ //char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/fixdcp/Pvalue_IH_10kToys_Asimov_A_fix_dcp_p_pi_over_2.root"
+
+
  )
 {  
   char name[300];
@@ -27,8 +91,23 @@ void DrawPvalues_mh_NHandIH
 
   TFile *filein_NH = new TFile(infilename_nh,"READ");
   
-  TH1D  *hdeltachisq_Toys_nh_ih_NH = (TH1D*)  filein_NH->Get("hdeltachisq_Toys_nh_ih");
+  TH1D  *hdeltachisq_Toys_nh_ih_post_NH = (TH1D*)  filein_NH->Get("hdeltachisq_Toys_nh_ih_post");
+  TLine *lPvalue_nh_ih_post_NH          = (TLine*) filein_NH->Get("Pvalue_nh_ih_posterior"); 
+  TLine *lPvalue_nh_ih_post_err_NH      = (TLine*) filein_NH->Get("lPvalue_nh_ih_posterior_err");
+  TLine *lZscore_nh_ih_post_NH          = (TLine*) filein_NH->Get("Zscore_nh_ih_posterior"); 
+  TLine *lZscore_nh_ih_post_perr_NH     = (TLine*) filein_NH->Get("lzscore_nh_ih_posterior_perr");
+  TLine *lZscore_nh_ih_post_merr_NH     = (TLine*) filein_NH->Get("lzscore_nh_ih_posterior_merr");
 
+  double Pvalue_nh_ih_post_NH           = lPvalue_nh_ih_post_NH->GetX1();
+  double Pvalue_nh_ih_post_err_NH       = lPvalue_nh_ih_post_err_NH->GetX1();
+  double Zscore_nh_ih_post_NH           = lZscore_nh_ih_post_NH->GetX1();
+  double Zscore_nh_ih_post_perr_NH      = lZscore_nh_ih_post_perr_NH->GetX1();
+  double Zscore_nh_ih_post_merr_NH      = lZscore_nh_ih_post_merr_NH->GetX1();
+
+  cout << "Pvalue posterior (NH) = " << Pvalue_nh_ih_post_NH << " +- " << Pvalue_nh_ih_post_err_NH << endl;
+  cout << "Z-score posterior (NH) = " << Zscore_nh_ih_post_NH << " + " << Zscore_nh_ih_post_perr_NH << " - " << Zscore_nh_ih_post_merr_NH << endl;
+
+  TH1D  *hdeltachisq_Toys_nh_ih_NH = (TH1D*)  filein_NH->Get("hdeltachisq_Toys_nh_ih");
   TLine *ldeltachisq_Data_nh_ih_NH = (TLine*) filein_NH->Get("ldeltachisq_Data_nh_ih");
   TLine *lPvalue_nh_ih_NH          = (TLine*) filein_NH->Get("Pvalue_nh_ih"); 
   TLine *lZscore_nh_ih_NH          = (TLine*) filein_NH->Get("Zscore_nh_ih"); 
@@ -49,6 +128,22 @@ void DrawPvalues_mh_NHandIH
 
   TFile *filein_IH = new TFile(infilename_ih,"READ");
   
+  TH1D  *hdeltachisq_Toys_nh_ih_post_IH = (TH1D*)  filein_IH->Get("hdeltachisq_Toys_nh_ih_post");
+  TLine *lPvalue_nh_ih_post_IH          = (TLine*) filein_IH->Get("Pvalue_nh_ih_posterior"); 
+  TLine *lPvalue_nh_ih_post_err_IH      = (TLine*) filein_IH->Get("lPvalue_nh_ih_posterior_err");
+  TLine *lZscore_nh_ih_post_IH          = (TLine*) filein_IH->Get("Zscore_nh_ih_posterior"); 
+  TLine *lZscore_nh_ih_post_perr_IH     = (TLine*) filein_IH->Get("lzscore_nh_ih_posterior_perr");
+  TLine *lZscore_nh_ih_post_merr_IH     = (TLine*) filein_IH->Get("lzscore_nh_ih_posterior_merr");
+
+  double Pvalue_nh_ih_post_IH           = lPvalue_nh_ih_post_IH->GetX1();
+  double Pvalue_nh_ih_post_err_IH       = lPvalue_nh_ih_post_err_IH->GetX1();
+  double Zscore_nh_ih_post_IH           = lZscore_nh_ih_post_IH->GetX1();
+  double Zscore_nh_ih_post_perr_IH      = lZscore_nh_ih_post_perr_IH->GetX1();
+  double Zscore_nh_ih_post_merr_IH      = lZscore_nh_ih_post_merr_IH->GetX1();
+
+  cout << "Pvalue posterior (IH) = " << Pvalue_nh_ih_post_IH << " +- " << Pvalue_nh_ih_post_err_IH << endl;
+  cout << "Z-score posterior (IH) = " << Zscore_nh_ih_post_IH << " + " << Zscore_nh_ih_post_perr_IH << " - " << Zscore_nh_ih_post_merr_IH << endl;
+
   TH1D  *hdeltachisq_Toys_nh_ih_IH = (TH1D*)  filein_IH->Get("hdeltachisq_Toys_nh_ih");
   TLine *ldeltachisq_Data_nh_ih_IH = (TLine*) filein_IH->Get("ldeltachisq_Data_nh_ih");
   TLine *lPvalue_nh_ih_IH          = (TLine*) filein_IH->Get("Pvalue_nh_ih"); 
@@ -73,6 +168,7 @@ void DrawPvalues_mh_NHandIH
     cerr << endl;
     exit(1);
   }
+
 
   // Draw p-value for chisq(NH)-chisq(IH)
 
@@ -101,9 +197,9 @@ void DrawPvalues_mh_NHandIH
   legPvalue_nh_ih->SetTextSize(0.06);
   sprintf(name,"#Delta #chi^{2}_{data} = %1.3f",deltachisq_nh_ih_data_NH); 
   legPvalue_nh_ih->AddEntry(ldeltachisq_Data_nh_ih_NH,name,"l");
-  sprintf(name,"Normal #Delta #chi^{2}_{MC}",deltachisq_nh_ih_data_NH); 
+  sprintf(name,"Normal #Delta #chi^{2}_{MC}"); //,deltachisq_nh_ih_data_NH); 
   legPvalue_nh_ih->AddEntry(hdeltachisq_Toys_nh_ih_NH,name,"l");
-  sprintf(name,"Inverted #Delta #chi^{2}_{MC}",deltachisq_nh_ih_data_IH); 
+  sprintf(name,"Inverted #Delta #chi^{2}_{MC}"); //,deltachisq_nh_ih_data_IH); 
   legPvalue_nh_ih->AddEntry(hdeltachisq_Toys_nh_ih_IH,name,"l");
   legPvalue_nh_ih->Draw();  
 
@@ -122,6 +218,54 @@ void DrawPvalues_mh_NHandIH
 
 
 
+
+
+
+  // Draw p-value for chisq(NH)-chisq(IH) (Posterior)
+
+  hdeltachisq_Toys_nh_ih_post_NH->SetLineWidth(2);
+  hdeltachisq_Toys_nh_ih_post_NH->SetLineColor(kRed);
+  hdeltachisq_Toys_nh_ih_post_IH->SetLineWidth(2);
+  hdeltachisq_Toys_nh_ih_post_IH->SetLineColor(kBlack);
+  
+  TCanvas *PValue_NH_IH_post = new TCanvas("PValue_NH_IH_post","PValue_NH_IH_post");
+  hdeltachisq_Toys_nh_ih_post_NH->Draw();
+  hdeltachisq_Toys_nh_ih_post_NH->SetMaximum( hdeltachisq_Toys_nh_ih_post_NH->GetMaximum()*1.3 );
+  hdeltachisq_Toys_nh_ih_post_NH->GetXaxis()->SetRangeUser(-5,8);
+  hdeltachisq_Toys_nh_ih_post_IH->Draw("same");
+  
+  ldeltachisq_Data_nh_ih_IH->Draw();
+
+  TLegend *legPvalue_nh_ih_post = new TLegend(0.5,0.6,0.8,0.9);
+  legPvalue_nh_ih_post->SetFillColor(0);
+  legPvalue_nh_ih_post->SetLineColor(0);
+  legPvalue_nh_ih_post->SetTextFont(132);
+  legPvalue_nh_ih_post->SetTextSize(0.06);
+  sprintf(name,"#Delta #chi^{2}_{data} = %1.3f",deltachisq_nh_ih_data_NH); 
+  legPvalue_nh_ih_post->AddEntry(ldeltachisq_Data_nh_ih_NH,name,"l");
+  sprintf(name,"Normal #Delta #chi^{2}_{MC}"); //,deltachisq_nh_ih_data_post_NH); 
+  legPvalue_nh_ih_post->AddEntry(hdeltachisq_Toys_nh_ih_post_NH,name,"l");
+  sprintf(name,"Inverted #Delta #chi^{2}_{MC}"); //,deltachisq_nh_ih_data_post_IH); 
+  legPvalue_nh_ih_post->AddEntry(hdeltachisq_Toys_nh_ih_post_IH,name,"l");
+  legPvalue_nh_ih_post->Draw();  
+
+  int binlat = hdeltachisq_Toys_nh_ih_post_NH->GetXaxis()->FindBin(0.);
+  TLatex *lat_nh_ih_post_NH = new TLatex(hdeltachisq_Toys_nh_ih_post_NH->GetXaxis()->GetBinLowEdge(binlat),hdeltachisq_Toys_nh_ih_post_NH->GetMaximum()*0.5, 
+					 TString::Format("#splitline{Normal Hierarchy}{#splitline{P-value = %1.3f #pm %1.3f}{Z-score = %1.3f +%1.3f -%1.3f #sigma}}",
+							 Pvalue_nh_ih_post_NH,Pvalue_nh_ih_post_err_NH,Zscore_nh_ih_post_NH,Zscore_nh_ih_post_perr_NH,Zscore_nh_ih_post_merr_NH).Data());
+
+  TLatex *lat_nh_ih_post_IH = new TLatex(hdeltachisq_Toys_nh_ih_post_IH->GetXaxis()->GetBinLowEdge(binlat),hdeltachisq_Toys_nh_ih_post_IH->GetMaximum()*0.5, 
+					 TString::Format("#splitline{Inverted Hierarchy}{#splitline{P-value = %1.3f #pm %1.3f}{Z-score = %1.3f +%1.3f - %1.3f #sigma}}",
+							 Pvalue_nh_ih_post_IH,Pvalue_nh_ih_post_err_IH,Zscore_nh_ih_post_IH,Zscore_nh_ih_post_perr_IH,Zscore_nh_ih_post_merr_IH).Data());
+    
+  lat_nh_ih_post_NH->Draw("same");
+  lat_nh_ih_post_NH->SetTextSize(0.06);
+  lat_nh_ih_post_IH->Draw("same");
+  lat_nh_ih_post_IH->SetTextSize(0.06);
+  
+  gPad->RedrawAxis();
+
+  
   // Draw p-value for Feldman-Cousins - Normal Hierarchy
 
   hdeltachisq_Toys_fc_NH->SetLineWidth(2);
@@ -155,7 +299,7 @@ void DrawPvalues_mh_NHandIH
   lat_fc_NH->Draw("same");
   lat_fc_NH->SetTextSize(0.06);
  
-
+  
 
   // Draw p-value for Feldman-Cousins - Inverted Hierarchy
 
@@ -191,6 +335,7 @@ void DrawPvalues_mh_NHandIH
   lat_fc_IH->SetTextSize(0.06);
 
   return;
+
 
 
 
