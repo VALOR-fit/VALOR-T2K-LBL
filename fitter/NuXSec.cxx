@@ -1346,7 +1346,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     else if(
             p == kNuisBANFFMEC         ||
             p == kNuisBANFFMECBar      ||
-            p == kNuisBANFFBgRES       ||
+//            p == kNuisBANFFBgRES       ||
             p == kNuisBANFFNormCCcoh    ||
             p == kNuisBANFFNormNCcoh    ||
             p == kNuisBANFFNormNCoth    ||
@@ -1360,7 +1360,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     else if(
             p == kRHCNuisBANFFMEC         ||
             p == kRHCNuisBANFFMECBar      ||
-            p == kRHCNuisBANFFBgRES       ||
+//            p == kRHCNuisBANFFBgRES       ||
             p == kRHCNuisBANFFNormCCcoh    ||
             p == kRHCNuisBANFFNormNCcoh    ||
             p == kRHCNuisBANFFNormNCoth    ||
@@ -1715,7 +1715,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     else if(
             p == kNuisBANFFMEC         ||
             p == kNuisBANFFMECBar      ||
-            p == kNuisBANFFBgRES       ||
+//            p == kNuisBANFFBgRES       ||
             p == kNuisBANFFNormCCcoh    ||
             p == kNuisBANFFNormNCcoh    ||
             p == kNuisBANFFNormNCoth    ||
@@ -1730,7 +1730,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     else if(
             p == kRHCNuisBANFFMEC         ||
             p == kRHCNuisBANFFMECBar      ||
-            p == kRHCNuisBANFFBgRES       ||
+//            p == kRHCNuisBANFFBgRES       ||
             p == kRHCNuisBANFFNormCCcoh    ||
             p == kRHCNuisBANFFNormNCcoh    ||
             p == kRHCNuisBANFFNormNCoth    ||
