@@ -171,7 +171,7 @@ void SensiPvalueFull_nuebar_scaled
         exit(1);
       }
       double hdeltachisq_01 = hchisqtrue0 - hchisqtrue1;
-      cout << "nevetns: " << hnevents << "  statistic: " << hdeltachisq_01 << endl;
+//      cout << "nevetns: " << hnevents << "  statistic: " << hdeltachisq_01 << endl;
       double toy_weight = 1;
       if(use_toy_weights){
       double toy_chisq = 0;
