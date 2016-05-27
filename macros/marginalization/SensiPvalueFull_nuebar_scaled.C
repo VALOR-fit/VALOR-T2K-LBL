@@ -171,12 +171,14 @@ void SensiPvalueFull_nuebar_scaled
         exit(1);
       }
       double hdeltachisq_01 = hchisqtrue0 - hchisqtrue1;
+      cout << "nevetns: " << hnevents << "  statistic: " << hdeltachisq_01 << endl;
       double toy_weight = 1;
       if(use_toy_weights){
       double toy_chisq = 0;
       toy_chisq += calc_chisq(dErecoToy_RHC1Rmu,hErecoToy_RHC1Rmu);
       toy_chisq += calc_chisq(dErecoToy_1Rmu,hErecoToy_1Rmu);
       toy_chisq += calc_chisq(dErecoToy_1Re,hErecoToy_1Re);
+      toy_chisq += calc_chisq(dErecoToy_RHC1Re,hErecoExp_RHC1Re);
       toy_weight = TMath::Exp(-1*toy_chisq/2);
            
       }
