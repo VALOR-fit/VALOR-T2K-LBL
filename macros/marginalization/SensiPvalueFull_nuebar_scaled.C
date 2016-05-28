@@ -160,7 +160,7 @@ void SensiPvalueFull_nuebar_scaled
     }
 
     for(int hientry=0;hientry<hNentries;hientry++){
-    //    for(int hientry=0;hientry<5000;hientry++){       
+    //   for(int hientry=0;hientry<10000;hientry++){       
       htreein->GetEntry(hientry);
       double hnevents = (double)hErecoToy_RHC1Re->Integral();
       if(hnevents<0){
@@ -178,17 +178,17 @@ void SensiPvalueFull_nuebar_scaled
       toy_chisq += calc_chisq(dErecoToy_RHC1Rmu,hErecoToy_RHC1Rmu);
       toy_chisq += calc_chisq(dErecoToy_1Rmu,hErecoToy_1Rmu);
       toy_chisq += calc_chisq(dErecoToy_1Re,hErecoToy_1Re);
-      toy_chisq += calc_chisq(dErecoToy_RHC1Re,hErecoExp_RHC1Re);
+      //toy_chisq += calc_chisq(dErecoToy_RHC1Re,hErecoExp_RHC1Re);
       toy_weight = TMath::Exp(-1*toy_chisq/2);
            
       }
-        hStatisticBeta0->Fill(hdeltachisq_01,toy_weight);
-       hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
+      hStatisticBeta0->Fill(hdeltachisq_01,toy_weight);
+      hStatisticBeta0Unscaled->Fill(hdeltachisq_01);
       
       if(hdeltachisq_01<ddeltachisq_01)
-      {
-        left_tail_weight.push_back(toy_weight);
-      }
+	{
+	  left_tail_weight.push_back(toy_weight);
+	}
       else{
         right_tail_weight.push_back(toy_weight);
       }
@@ -196,12 +196,13 @@ void SensiPvalueFull_nuebar_scaled
       double number_nuebar_events=hErecoExp_RHC1Re->Integral();
       for(int n_rateonly_throws=0; n_rateonly_throws<1;n_rateonly_throws++){
         double fluct = Rnd::Instance()->RndToyMCstat().Poisson(number_nuebar_events);
-        //hStatisticBeta0rateonly->Fill(fluct,toy_weight);
-        //hStatisticBeta0Unscaledrateonly->Fill(fluct);
-        hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
-        hStatisticBeta0Unscaledrateonly->Fill(hnevents);
-        if(hnevents < dnevents){
-          left_tail_rateonly_weight.push_back(toy_weight);
+        hStatisticBeta0rateonly->Fill(fluct,toy_weight);
+        hStatisticBeta0Unscaledrateonly->Fill(fluct);
+        //hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
+        //hStatisticBeta0Unscaledrateonly->Fill(hnevents);
+	// if(hnevents < dnevents){
+	if(fluct < dnevents){
+	  left_tail_rateonly_weight.push_back(toy_weight);
         }
         else{
           right_tail_rateonly_weight.push_back(toy_weight);
@@ -329,18 +330,18 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
     hStatisticBeta0->GetYaxis()->SetTitle("Number of entries");
     hStatisticBeta0->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0->GetMaximum()*1.2);
-    hStatisticBeta0->GetXaxis()->SetRangeUser(-10,24);
+    hStatisticBeta0->GetXaxis()->SetRangeUser(-5,26);
     hStatisticBeta0->DrawCopy();
     TLine *linePvalue_rateshape_statistic = new TLine(statistic,0.,statistic,hStatisticBeta0->GetMaximum());
     linePvalue_rateshape_statistic->SetLineWidth(2);
     linePvalue_rateshape_statistic->SetLineColor(kRed);
     linePvalue_rateshape_statistic->DrawClone();
     sprintf(name,"#Delta #chi^{2} = %1.3f",statistic);
-    TLatex *fit_pvalue = new TLatex(4.5,hStatisticBeta0->GetMaximum()*0.5,name);
+    TLatex *fit_pvalue = new TLatex(4.5,hStatisticBeta0->GetMaximum()*0.1,name);
     fit_pvalue->SetTextSize(0.07);
     fit_pvalue->Draw();
-    sprintf(name,"p value = %1.4f #pm %1.5f",pvalue_rateshape_itoy,pvalue_error_vector);
-    TLatex *fit_pvalue_2 = new TLatex(4.5,hStatisticBeta0->GetMaximum()*0.1,name);
+    sprintf(name,"p value = %1.3f #pm %1.4f",pvalue_rateshape_itoy,pvalue_error_vector);
+    TLatex *fit_pvalue_2 = new TLatex(4.5,hStatisticBeta0->GetMaximum()*0.01,name);
     fit_pvalue_2->SetTextSize(0.07);
     fit_pvalue_2->Draw();
 
