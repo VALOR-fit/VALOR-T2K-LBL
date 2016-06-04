@@ -25,44 +25,19 @@ It will then create the .root in the current working directory
 """
 
 #
+# NEW CONFIGURATION FILES (4/6/16 BANFF RELEASE W/ FIT BIAS AND ADDITIONAL UNCERTAINTY ON RUN 1-7 FLUX)
+#
+postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml"
+prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17_prefit.xml"
+
+#
 # NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ AND W/O FIT BIAS)
 #
-postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
 #postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FSIOnly.xml"
 #postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml"
 #postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
 #postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml"
-prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_prefit.xml"
-
-#postfit_config  = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h.xml"
-#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml"
-#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml"
-#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml"
-#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml"
-#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml"
-#prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_prefit.xml"
-#prefit_config  = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h.xml"
-
-#
-# NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
-#
-#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml"
-#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml"
-#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml"
-#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml"
-#postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml"
-#prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_prefit.xml"
-
-#
-# OLD CONFIGURATION FILES
-#
-postfit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
-prefit_config  = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_prefit.xml"
-#prefit_config  = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml"
-
-# 1 bin theta
-#postfit_config  = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml"
-#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml"
 #prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_prefit.xml"
 
 prior_file = ""
@@ -166,50 +141,50 @@ name_modes = []
 latex_name_modes = []
 modes = []
 
-# # modes = 9
-# modes.append(9)
-# name_modes.append("SKDet_FSI") 
-# latex_name_modes.append("SKDet+FSI+SI")
-# # modes = 7
-# modes.append(7)
-# name_modes.append("BANFF_flux") 
-# latex_name_modes.append("Flux")
-# # modes = 8
-# modes.append(8)
-# name_modes.append("BANFF_xsec") 
-# latex_name_modes.append("XSec")
-# # modes = 650
-# modes.append(650)
-# name_modes.append("banff50_fhcprhc")
-# latex_name_modes.append("MEC")
-# # modes = 666
-# modes.append(666)
-# name_modes.append("banff66_fhcprhc")
-# latex_name_modes.append("MECbar")
-# # modes = 662
-# modes.append(662)
-# name_modes.append("banff62_fhcprhc")
-# latex_name_modes.append("NC other")
-# # modes = 664
-# modes.append(664)
-# name_modes.append("banff64_fhcprhc")
-# latex_name_modes.append("NC 1gamma")
-# # modes = 12
-# modes.append(12)
-# name_modes.append("NueNumu") 
-# latex_name_modes.append("XSec nue/numu")
+# modes = 9
+modes.append(9)
+name_modes.append("SKDet_FSI") 
+latex_name_modes.append("SKDet+FSI+SI")
+# modes = 7
+modes.append(7)
+name_modes.append("BANFF_flux") 
+latex_name_modes.append("Flux")
+# modes = 8
+modes.append(8)
+name_modes.append("BANFF_xsec") 
+latex_name_modes.append("XSec")
+# modes = 650
+modes.append(650)
+name_modes.append("banff50_fhcprhc")
+latex_name_modes.append("MEC")
+# modes = 666
+modes.append(666)
+name_modes.append("banff66_fhcprhc")
+latex_name_modes.append("MECbar")
+# modes = 662
+modes.append(662)
+name_modes.append("banff62_fhcprhc")
+latex_name_modes.append("NC other")
+# modes = 664
+modes.append(664)
+name_modes.append("banff64_fhcprhc")
+latex_name_modes.append("NC 1gamma")
+# modes = 12
+modes.append(12)
+name_modes.append("NueNumu") 
+latex_name_modes.append("XSec nue/numu")
 # modes = 13
 modes.append(13)
 name_modes.append("skdetfsi_banff") 
 latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
-# # modes = 1
-# modes.append(1)
-# name_modes.append("BANFF") 
-# latex_name_modes.append("BANFF Tot")
-# # modes = 1 (prefit)
-# modes.append(1)
-# name_modes.append("BANFFprefit") 
-# latex_name_modes.append("BANFF Tot (prefit)")
+# modes = 1
+modes.append(1)
+name_modes.append("BANFF") 
+latex_name_modes.append("BANFF Tot")
+# modes = 1 (prefit)
+modes.append(1)
+name_modes.append("BANFFprefit") 
+latex_name_modes.append("BANFF Tot (prefit)")
 # modes = 11
 modes.append(11)
 name_modes.append("Osc_param") 
@@ -218,10 +193,10 @@ latex_name_modes.append("Oscillations")
 modes.append(0)
 name_modes.append("all") 
 latex_name_modes.append("All")
-# # modes = 0 (prefit)
-# modes.append(0)
-# name_modes.append("allprefit") 
-# latex_name_modes.append("All (prefit)")
+# modes = 0 (prefit)
+modes.append(0)
+name_modes.append("allprefit") 
+latex_name_modes.append("All (prefit)")
 
 
 
@@ -234,10 +209,13 @@ oscparams_tag = []
 if not opt.skip_osc  :
   oscparams.append([0.304, 0.0217, 0.528, -1.601, 0.0000753, 0.002509,  -99]) # use global best fits!
   oscparams_tag.append("Toy_A")
+
 #if not opt.skip_unosc: oscparams.append([  0,   0,   0,   0,   -99,   -99,  -99]) #no oscillations!
-if not opt.skip_osc  :
-  oscparams.append([0.304, 0.0217, 0.45,  0, 0.0000753, 0.002509,  -99]) # use global best fits!
-  oscparams_tag.append("Toy_B")
+
+# if not opt.skip_osc  :
+#   oscparams.append([0.304, 0.0217, 0.45,  0, 0.0000753, 0.002509,  -99]) # use global best fits!
+#   oscparams_tag.append("Toy_B")
+
 #if not opt.skip_osc  : oscparams.append([-99, -99, -99, -99, -99, -99,  -99]) # use global best fits!
 #if not opt.skip_osc  : oscparams.append([-999, -999, -999, -99, -999, -999, -99]) # fix dcp
 #if not opt.skip_osc  : oscparams.append([-999, -999, -99, -99, -999, -99, -99]) # fix theta23, dmsq23 and dcp

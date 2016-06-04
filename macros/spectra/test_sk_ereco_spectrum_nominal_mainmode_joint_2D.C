@@ -14,7 +14,7 @@ using namespace valor::conv;
 
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
- const char * tag                  = "spectra_prova",
+ const char * tag                  = "prova",
  const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
@@ -27,23 +27,18 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  // double       input_betabar        = -99,
 
- // Mach3, T2K Run1-4 + reactors best fit (1)
+ // Asimov A
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
+ //double       input_deltacp        = 0., //-99,    /* deltacp, */
  double       input_deltacp        = -1.601, //-99,    /* deltacp, */
+ //double       input_deltacp        = +TMath::Pi()/2, //-99,    /* deltacp, */
  double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  double       input_betabar        = 1., //0., //-99,
 
- //double       input_mixing12       = 0.306,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_mixing13       = 0.025,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_mixing23       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_deltacp        = 0., //-99,    /* deltacp, */
- //double       input_dm12sq         = 7.5E-5,    /* Dm^2_{12},  */
- //double       input_dm23sq         = 0.0026847, //-99,    /* |Dm^2_{23}| */
-
- // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 + first octant (2)
+ // // Asimov B
  // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  // double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  // double       input_mixing23       = 0.45, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -51,16 +46,22 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  // double       input_betabar        = 1., //0., //-99,
- 
+
  bool         disable_banff_tuning = false,                          /* */
+
+
+ //
+ // NEW CONFIGURATION FILES (4/6/16 BANFF RELEASE W/ FIT BIAS AND ADDITIONAL UNCERTAINTY ON RUN 1-7 FLUX)
+ //
+ const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17.xml", // Run 1-6 flux tuning
  
  //
  // NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ FIT BIAS)
- //
- //const char * config_file      = "analysis_configuration_data_theta_elike_fhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
- const char * config_file      = "analysis_configuration_data_theta_elike_rhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ // 
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
-
+ //const char * config_file      = "analysis_configuration_data_theta_elike_fhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_elike_rhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias.xml",
