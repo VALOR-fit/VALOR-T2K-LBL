@@ -1,3 +1,4 @@
+
 //____________________________________________________________________________
 /*!
 
@@ -227,6 +228,11 @@ Split valor::conv namespace into several smaller files
 //#define THETA_XSEC_BINS_1RE 2 // 1 single bin 
 #endif
 
+#ifndef THETA_XSEC_BINS_1RE_MULTIRING
+//#define THETA_XSEC_BINS_1RE_MULTIRING 1 // DEFAULT (15 bins) 
+#define THETA_XSEC_BINS_1RE_MULTIRING 2 // 1 single bin 
+#endif
+
 #ifndef THETA_BINS_1RMU
 //#define THETA_BINS_1RMU 1 // DEFAULT (15 bins)
 #define THETA_BINS_1RMU 2 // 1 single bin
@@ -237,6 +243,10 @@ Split valor::conv namespace into several smaller files
 //#define THETA_BINS_1RE 2 // 1 single bin
 #endif
 
+#ifndef THETA_BINS_1RE_MULTIRING
+//#define THETA_BINS_1RE_MULTIRING 1 // DEFAULT (15 bins)
+#define THETA_BINS_1RE_MULTIRING 2 // 1 single bin
+#endif
 
 // Check to make sure that the samples are on in MultiRing FHC Running
 
