@@ -137,22 +137,22 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
 
- double       input_mixing12       = 0.304,    
- double       input_mixing13       = 0.0217, //0.0243   
+ // double       input_mixing12       = 0.304,    
+ // double       input_mixing13       = 0.0217, //0.0243   
+ // double       input_mixing23       = 0.528,    
+ // double       input_deltacp        = -1.601,   
+ // double       input_dm12sq         = 7.53E-5,   
+ // double       input_dm23sq         = 2.509E-3,     
+ // double       input_betabar        = 1.,
+
+ // Asimov A
+ double       input_mixing12       = -999,    
+ double       input_mixing13       = -999,   
  double       input_mixing23       = 0.528,    
- double       input_deltacp        = -1.601,   
- double       input_dm12sq         = 7.53E-5,   
+ double       input_deltacp        = -1.601,  
+ double       input_dm12sq         = -999,   
  double       input_dm23sq         = 2.509E-3,     
  double       input_betabar        = 1.,
-
- // // Asimov A
- // double       input_mixing12       = -999,    
- // double       input_mixing13       = -999,   
- // double       input_mixing23       = -99,    
- // double       input_deltacp        = -1.601,  
- // double       input_dm12sq         = -999,   
- // double       input_dm23sq         = -99,     
- // double       input_betabar        = -99,
 
  // // Asimov B
  // double       input_mixing12       = -999,    
@@ -160,34 +160,28 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  // double       input_mixing23       = 0.45,    
  // double       input_deltacp        = 0.,  
  // double       input_dm12sq         = -999,   
- // double       input_dm23sq         = -99,     
- // double       input_betabar        = -99,
+ // double       input_dm23sq         = 2.509E-3,     
+ // double       input_betabar        = 1.,
+
+
+ //
+ // NEW CONFIGURATION FILES (4/6/16 BANFF RELEASE W/ FIT BIAS AND ADDITIONAL UNCERTAINTY ON RUN 1-7 FLUX)
+ //
+ const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17_FSIOnly.xml", // Run 5-7 flux tuning for RHC
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17_SKDetOnly.xml", // Run 5-7 flux tuning for RHC
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17.xml", // Run 1-6 flux tuning
 
  //
  // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
  //
- const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
  
- //
- // OLD CONFIGURATION FILES
- //
- //const char * config_file      = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c_Asimov_Bias.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char *config_file       = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml",
-
  const int    nexp                     = 10000,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
@@ -337,7 +331,7 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   string sample_name_1Re = util::AsStringCompact(kSKsFCFV1RingELike);
   const char * sname_1Re = sample_name_1Re.c_str();
 
-  string sample_name_1Rmu = util::AsStringCompact(kSKsRHCFCFV1RingMuLike);
+  string sample_name_1Rmu = util::AsStringCompact(kSKsFCFV1RingMuLike);
   const char * sname_1Rmu = sample_name_1Rmu.c_str();
 
   TH1D * hNsk_RHC1Re = new TH1D(Form("%s_nsk",sname_RHC1Re),Form("%s_nsk",sname_RHC1Re),100,0,10);
@@ -349,7 +343,8 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   // TH1D * hNsk_1Re = new TH1D(Form("%s_%s_nsk",sname_1Re,modetitle.c_str()),Form("%s_%s_nsk",sname_1Re,modetitle.c_str()),100,0,100);
   // TH1D * hNsk_RHC1Rmu = new TH1D(Form("%s_%s_nsk",sname_RHC1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_RHC1Rmu,modetitle.c_str()),100,0,100);
   // TH1D * hNsk_1Rmu = new TH1D(Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),100,0,300);      
-  
+ 
+
   TH1D * hRatio_FHCtoRHC_elike  = new TH1D(Form("%s_ratio","Re"),Form("%s_nsk","Re"),200,5.,12.);      
   TH1D * hRatio_FHCtoRHC_mulike = new TH1D(Form("%s_ratio","Rmu"),Form("%s_nsk","Rmu"),200,3.,5.);      
       
