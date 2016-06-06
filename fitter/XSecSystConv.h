@@ -1848,7 +1848,7 @@ namespace valor {
                 {  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /// kSKmUndefined
 #endif
 #endif
-            }//1Rmu
+            }//MultiRmu
             ,
             // > electron-like multiring
             {
@@ -2032,7 +2032,7 @@ namespace valor {
                 {  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /// kSKmUndefined
 #endif
 #endif
-            }// MR e
+            }//MultiRe
         };
         
         
