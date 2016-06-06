@@ -76,62 +76,20 @@ namespace valor {
     
 #if MR_FSI_BINS == 1
     static const int kNumOfSKDetFSIParamsMultiRing = 18;
-    static const int kNumOfSKDetFSIParamsMultiRmu = 6;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 12;
+    static const int kNumOfSKDetFSIParamsMultiRmu  = 6;
+    static const int kNumOfSKDetFSIParamsMultiRe   = 12;
     
 #elif MR_FSI_BINS == 2
     static const int kNumOfSKDetFSIParamsMultiRing = 6;
-    static const int kNumOfSKDetFSIParamsMultiRmu = 6;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 0;
+    static const int kNumOfSKDetFSIParamsMultiRmu  = 6;
+    static const int kNumOfSKDetFSIParamsMultiRe   = 0;
     
 // Have 12 parameters but empty covariances in the lowest energy bins
 // 4 parameters with 3 bins each -> 12 - 4    
 #elif MR_FSI_BINS == 3 
-    static const int kNumOfSKDetFSIParamsMultiRing  = 8; //12;
-    static const int kNumOfSKDetFSIParamsMultiRmu = 0;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 8; //12;    
-#endif
-
-#elif defined(__USE_SKDETFSI2015__)
-#if FSI_BINS == 1
-    static const int kNumOfSKDetFSIParams     = 24;
-    static const int kNumOfSKDetFSIParams1Rmu = 12;
-    static const int kNumOfSKDetFSIParams1Re  = 12;
-    static const int kNumOfRHCSKDetFSIParams     = 24;
-    static const int kNumOfRHCSKDetFSIParams1Rmu = 12;
-    static const int kNumOfRHCSKDetFSIParams1Re  = 12;
-
-#elif FSI_BINS == 2
-    static const int kNumOfSKDetFSIParams     = 12;
-    static const int kNumOfSKDetFSIParams1Rmu = 12;
-    static const int kNumOfSKDetFSIParams1Re  = 0;
-    static const int kNumOfRHCSKDetFSIParams     = 12;
-    static const int kNumOfRHCSKDetFSIParams1Rmu = 12;
-    static const int kNumOfRHCSKDetFSIParams1Re  = 0;
-
-#elif FSI_BINS == 3
-    static const int kNumOfSKDetFSIParams     = 12;
-    static const int kNumOfSKDetFSIParams1Rmu = 0;
-    static const int kNumOfSKDetFSIParams1Re  = 12;
-    static const int kNumOfRHCSKDetFSIParams     = 12;
-    static const int kNumOfRHCSKDetFSIParams1Rmu = 0;
-    static const int kNumOfRHCSKDetFSIParams1Re  = 12;
-#endif
-
-#if MR_FSI_BINS == 1
-    static const int kNumOfSKDetFSIParamsMultiRing = 24;
-    static const int kNumOfSKDetFSIParamsMultiRmu = 12;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 12;
-    
-#elif MR_FSI_BINS == 2
-    static const int kNumOfSKDetFSIParamsMultiRing = 12;
-    static const int kNumOfSKDetFSIParamsMultiRmu = 12;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 0;
-    
-#elif MR_FSI_BINS == 3
-    static const int kNumOfSKDetFSIParamsMultiRing = 8; //12; 
-    static const int kNumOfSKDetFSIParamsMultiRmu = 0;
-    static const int kNumOfSKDetFSIParamsMultiRe  = 8; //12;
+    static const int kNumOfSKDetFSIParamsMultiRing = 8; //12;
+    static const int kNumOfSKDetFSIParamsMultiRmu  = 0;
+    static const int kNumOfSKDetFSIParamsMultiRe   = 8; //12;    
 #endif
     
 #endif
@@ -987,7 +945,9 @@ namespace valor {
         // 1Rmu: CCQEmu(bar) x 3  / CCnQEmu(bar) / CCe / NC
         //
         // 1Re:  oscnueCC x 3 / numuCC x 3 / nueCC x 3 / NC x 3
-	// Removed lowest energy bins for the three categories above    
+	// Removed lowest energy bins for the three categories above
+        // Due to zeros (no events) in the lowest energy bins for the
+        // covariance matrix
         //
         { 1, 1, 0, 0,   0, 0, 0, 0 }, // kSKmNuMuCCQE
         { 0, 0, 0, 0,   0, 0, 0, 0 }, // kSKmNuMuCC1pi
