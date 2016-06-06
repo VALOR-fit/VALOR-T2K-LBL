@@ -174,18 +174,20 @@
           </one_e_ring_rhc>
 
           <!-- Input FHC POT MultiRing -->
+          <!-- 2016_02_06/mtuples_nuecc1pi_withweights 
+               2016_02_06/nue_CC1pi/  -->
           <pot_fhc_cc1pi>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumu  </objname>
             <objtype>    TH1D              </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </multi_e_ring>
@@ -226,17 +228,17 @@
 
           <!-- Input FHC POT to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumubar  </objname>
             <objtype>    TH1D                 </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
             <objname>    tnumubar   </objname>
             <objtype>    TTree      </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
             <objname>    tnumubar   </objname>
             <objtype>    TTree      </objtype>
           </multi_e_ring>
@@ -277,17 +279,17 @@
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnue  </objname>
             <objtype>    TH1D             </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </multi_e_ring>
@@ -328,17 +330,17 @@
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnuebar  </objname>
             <objtype>    TH1D                </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </multi_e_ring>
@@ -379,17 +381,17 @@
 
           <!-- Input FHC POT to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignue  </objname>
             <objtype>    TH1D                </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
             <objname>    tsignue   </objname>
             <objtype>    TTree     </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
             <objname>    tsignue   </objname>
             <objtype>    TTree     </objtype>
           </multi_e_ring>
@@ -430,17 +432,17 @@
 
           <!-- Input FHC POT MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignuebar  </objname>
             <objtype>    TH1D                   </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselecOsc.root  </filename>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </multi_e_ring>
@@ -483,49 +485,53 @@
       <!-- MultiRing sample splines -->
       <multi_mu_ring>
         <filename>
-          official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root
+          official/2015/xsec/splines_v8_1Rmu.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
         <filename>
-	  official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root
+          official/2015/SK_nue_cc1pi/2016_05_24/cc1pi_splines/splines_v3_MultiRe.root
+          <!-- official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root -->
+          <!-- official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_vzero_bin_MultiRe.root -->
         </filename>
       </multi_e_ring>
 
     </weight_splines>
 
+    <!-- 1bin/SFRPA not official splines -->
     <weight_splines_2d>
       <one_mu_ring>
         <filename>
-          official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_1Rmu.root
+          official/2015/xsec/2d_splines/theta/1bin/splines_v5_1Rmu.root
         </filename>
       </one_mu_ring>
       <one_e_ring>
         <filename>
-          official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_1Re.root
+          official/2015/xsec/2d_splines/theta/1bin/splines_v5_1Re.root
         </filename>
       </one_e_ring>
 
       <one_mu_ring_rhc>
         <filename>
-          official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_RHC1Rmu.root
+          official/2015/xsec/2d_splines/theta/1bin/splines_v5_RHC1Rmu.root
         </filename>
       </one_mu_ring_rhc>
       <one_e_ring_rhc>
         <filename>
-          official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_RHC1Re.root
+          official/2015/xsec/2d_splines/theta/1bin/splines_v5_RHC1Re.root
         </filename>
       </one_e_ring_rhc>
 
       <!-- Input the single ring splines into the MultiRing samples -->
       <multi_mu_ring>
         <filename>
-          official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root
+          official/2015/xsec/2d_splines/theta/1bin/splines_v5_1Rmu.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
         <filename>
-	  official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root
+          official/2015/SK_nue_cc1pi/2016_05_24/cc1pi_splines/splines_v3_MultiRe.root          
+          <!-- official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root -->
         </filename>
       </multi_e_ring>
 
@@ -562,8 +568,10 @@
           Covariance matrix of SKDet FSI parameters
       -->
       <covariance_matrix>
+        <!-- <filename>   official/2015/skdetfsi/SKDetFSI_valor_SKv7_FSIv1.root </filename> -->
+	<!-- <filename>   official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/Erec_Matrix_withCC1pi_03242016_VALOR_Order_stripped.root </filename> -->
         <filename>  official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/new_fullmatrix/Erec_Matrix_withCC1pi_04052016_VALOR_Order.root </filename>
-	<objname>   covmat_skdetfsi_nozerobins_with_escale    </objname>
+        <objname>   covmat_skdetfsi_nozerobins_with_escale    </objname>
         <objtype>   TMatrixD                                  </objtype>
       </covariance_matrix>
 
@@ -577,7 +585,7 @@
 
     <banff>
       <!--
-	  Parameter untuned central values
+          Parameter untuned central values
       -->
       <untuned_values>
         <filename>   official/2015/banff/postfit_data_1p1h_biascorrection_20160310_valor_order_all_plus_scc.root </filename>
@@ -585,7 +593,7 @@
         <objtype>    TVectorD                      </objtype>
       </untuned_values>
       <!--
-	  Prefit 
+          Prefit 
       -->
       <!--
           Central values from BANFF fit
