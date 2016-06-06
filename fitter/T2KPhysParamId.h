@@ -478,21 +478,25 @@ namespace util {
   /// NEW MULTIRING 2
   bool IsMultiRingSystematic    (conv::PhysParamId_t p);
   /// 
-  bool IsMixingAngle       (conv::PhysParamId_t p);
-  bool IsBANFF             (conv::PhysParamId_t p);
-  bool IsXSec              (conv::PhysParamId_t p);
-  bool IsUsingSplines      (conv::PhysParamId_t p);
-  bool IsEff               (conv::PhysParamId_t p);
-  bool IsEff1Rmu           (conv::PhysParamId_t p);
-  bool IsEff1Re            (conv::PhysParamId_t p);
-  bool IsFSI               (conv::PhysParamId_t p);
-  bool IsSKDetFSI          (conv::PhysParamId_t p);
-  bool IsFlux              (conv::PhysParamId_t p);
-  bool IsNormalisation     (conv::PhysParamId_t p);
-  bool IsEnergyScale       (conv::PhysParamId_t p);
-  bool IsBANFFUnconstrained(conv::PhysParamId_t p);
-  bool IsRPA               (conv::PhysParamId_t p);
-  bool IsSCC               (conv::PhysParamId_t p);
+  bool IsMixingAngle          (conv::PhysParamId_t p);
+  bool IsBANFF                (conv::PhysParamId_t p);
+  bool IsXSec                 (conv::PhysParamId_t p);
+  bool IsUsingSplines         (conv::PhysParamId_t p);
+  bool IsEff                  (conv::PhysParamId_t p);
+  bool IsEff1Rmu              (conv::PhysParamId_t p);
+  bool IsEff1Re               (conv::PhysParamId_t p);
+  bool IsFSI                  (conv::PhysParamId_t p);
+  bool IsSKDetFSI             (conv::PhysParamId_t p);
+  bool IsFlux                 (conv::PhysParamId_t p);
+  bool IsNormalisation        (conv::PhysParamId_t p);
+  bool IsEnergyScale          (conv::PhysParamId_t p);
+  bool IsBANFFUnconstrained   (conv::PhysParamId_t p);
+  bool IsBANFFNotUnconstrained(conv::PhysParamId_t p);  
+  bool IsRPA                  (conv::PhysParamId_t p);
+  bool IsSCC                  (conv::PhysParamId_t p);
+  bool IsNormXSecParam        (conv::PhysParamId_t p);
+  bool IsXSecNumuNue          (conv::PhysParamId_t p);
+  bool IsEScale               (conv::PhysParamId_t p); 
   
   conv::PhysParamId_t      PhysParamIdFromString     (string h);
   conv::PhysParamId_t      PhysParamIdFromLongString (string h);

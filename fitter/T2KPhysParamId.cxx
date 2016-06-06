@@ -121,7 +121,7 @@ string valor::util::AsString(PhysParamId_t p)
     // NEW XSEC
   case ( kNuisBANFFMEC            ) : return "BANFF; Norm; MEC";                    break;
   case ( kNuisBANFFCA5            ) : return "BANFF; CA5 RES";                      break;
-  case ( kNuisBANFFBgRES          ) : return "BANFF; BgRES Isospin 1/2";      break;
+  case ( kNuisBANFFBgRES          ) : return "BANFF; BgRES Isospin 1/2";            break;
     // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
   case ( kNuisBANFFSCCA           ) : return "BANFF; Second current class axial";   break;
@@ -3883,6 +3883,11 @@ bool valor::util::IsBANFFUnconstrained(PhysParamId_t p)
     return false;
 }
 //________________________________________________________________________________________
+bool valor::util::IsBANFFNotUnconstrained(PhysParamId_t p)
+{
+  return !IsBANFFUnconstrained(p);
+}
+//________________________________________________________________________________________
 bool valor::util::IsRPA(PhysParamId_t p)
 {
     switch (p) {
@@ -3969,6 +3974,55 @@ bool valor::util::IsSCC(PhysParamId_t p)
   }
 #endif
   
+  return false;
+}
+//____________________________________________________________________________
+bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
+{
+  //Determine if the BANFF nuisance parameter is normalisation
+  switch (p) {
+    case( kNuisBANFFMEC                 ) : return true; break;
+    case( kNuisBANFFMECBar              ) : return true; break;
+      //case( kNuisBANFFBgRES               ) : return true; break;
+    case( kNuisBANFFNormCCcoh           ) : return true; break;
+    case( kNuisBANFFNormNCcoh           ) : return true; break;
+    case( kNuisBANFFNormNCoth           ) : return true; break;
+    case( kNuisBANFFNormNC1Gamma        ) : return true; break;
+    case( kNuisBANFFNormNuEToNuMu       ) : return true; break;
+    case( kNuisBANFFNormNuEBarToNuMuBar ) : return true; break;
+
+    case( kRHCNuisBANFFMEC                ) : return true; break;
+    case( kRHCNuisBANFFMECBar             ) : return true; break;
+      //case( kRHCNuisBANFFBgRES              ) : return true; break;
+    case( kRHCNuisBANFFNormCCcoh          ) : return true; break;
+    case( kRHCNuisBANFFNormNCcoh          ) : return true; break;
+    case( kRHCNuisBANFFNormNCoth          ) : return true; break;
+    case( kRHCNuisBANFFNormNC1Gamma       ) : return true; break;
+    case( kRHCNuisBANFFNormNuEToNuMu      ) : return true; break;
+    case( kRHCNuisBANFFNormNuEBarToNuMuBar) : return true; break; 
+
+    default                               : return false; break;
+   }
+  return false;
+
+}
+//____________________________________________________________________________
+bool valor::util::IsXSecNumuNue(conv::PhysParamId_t p)
+{
+  switch (p) {
+    case ( kNuisBANFFNormNuEToNuMu       ) : return true; break;
+    case ( kNuisBANFFNormNuEBarToNuMuBar ) : return true; break;
+    default : return false; break;    
+  }
+  return false;
+}
+//____________________________________________________________________________
+bool valor::util::IsEScale(conv::PhysParamId_t p)
+{
+  switch (p) {
+    case (kNuisSuperkEnergyScale) : return true; break;
+    default : return false; break;
+  }
   return false;
 }
 //____________________________________________________________________________
