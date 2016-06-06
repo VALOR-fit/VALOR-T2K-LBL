@@ -800,11 +800,11 @@ bool valor::util::IsCCoth(int neut_reaction_mode)
 //this is a catch all for everything CC that is not QE, 1pi, or coh
 // needs to be updated if another subcategory is added
 {
-  bool is_ccoth = (neut_reaction_mode == 17 ||
-                     neut_reaction_mode == 21 ||
-                     neut_reaction_mode == 22 || 
-                     neut_reaction_mode == 23 || 
-                     neut_reaction_mode == 26);
+  bool is_ccoth = ( neut_reaction_mode == 17 ||
+                    neut_reaction_mode == 21 ||
+                    neut_reaction_mode == 22 || 
+                    neut_reaction_mode == 23 || 
+                    neut_reaction_mode == 26 );
   return is_ccoth;
 }
 //___________________________________________________________________________
@@ -1281,10 +1281,8 @@ void valor::util::ArrIdx::Init(void)
 #endif
   } 
   // Escale in now included in the FSI matrix
-  PhysParamId_t p = kNuisSuperkEnergyScale;
-  fFHCpRHCpMRSKDetFSISystIdx[p] = kNumOfSKDetFSIParams+kNumOfRHCSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing;
-
-   
+  //  PhysParamId_t p = kNuisSuperkEnergyScale;
+  fFHCpRHCpMRSKDetFSISystIdx[(PhysParamId_t)kNuisSuperkEnergyScale] = kNumOfSKDetFSIParams+kNumOfRHCSKDetFSIParams+kNumOfSKDetFSIParamsMultiRing;   
     
   //PhysParam
   for(int i = 0; i < knppmax; i++) {
@@ -1314,3 +1312,14 @@ int valor::util::GetSystNSigma()
   return nsig;
 }
 //____________________________________________________________________________
+  
+
+
+
+
+
+
+
+
+
+
