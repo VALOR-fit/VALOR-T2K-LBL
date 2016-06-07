@@ -30,6 +30,7 @@
 #include "Utilities/OscParams.h"
 #include "Utilities/RunOpt.h"
 #include "Utilities/Env.h"
+#include "Utilities/Rnd.h"
 #include "Conventions/PhysHypothesisId.h"
 
 #include "TROOT.h"
@@ -149,14 +150,16 @@ private:
 int main(int argc, char ** argv)
 {
   TStopwatch sw;
-  
+  TH1D* chisq_distribution = new TH1D("chisq_distribution","chisq_distribution",100000,0,1000);
+
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   gROOT->SetBatch(true);
   MyRunOpt *runopt = new MyRunOpt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
   
   TRandom3 rand(runopt->ToySeed()); //random number to see where inside a bin a toy is generated
-  
+  double scale_toys_based_on_samples_scale =  runopt->Scale_toys_based_on_samples_scale();
+
   TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), runopt->ConfigFile().c_str() ));
   TString xmlfile2(runopt->Xmlfile().c_str() );
   TString rootfile2(runopt->Rootfile().c_str());
@@ -172,7 +175,6 @@ int main(int argc, char ** argv)
     exit(1);
   }
   Opt::Instance()->SetDefaultParameterValues();
-  
   
   if(!runopt->DoToys()){
     cout << "- Reading analysis configuration from: " << config << endl;
@@ -242,8 +244,40 @@ int main(int argc, char ** argv)
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(runopt->ConfigFile().c_str());
   
-  int weird_applied_neg      = 0;
-  int weird_unphysical_tweak = 0;
+  SuperkObservation * skobs_data = new SuperkObservation;
+  
+  if(!runopt->DoToys()){
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s == conv::kSKsUndefined || s == conv::kSKsRHCFCFV1RingELike) continue;
+      
+      if(runopt->Using_xml_file()){
+        cout << "Use xml file" << endl; // Only read 1st toy
+        skobs_data->ReadSample(xmlfile2.Data(),0,runopt->Using_xml_file(),s);
+      }
+      else{
+        cout << "Use root file" << endl; // Only read 1st toy
+        skobs_data->ReadSample(rootfile2.Data(),0,runopt->Using_xml_file(),s);
+      }
+    }
+  }
+  
+  //Compare input data file with each expectation toy to weight the fake data
+  TH2D * real_data[kns];
+  
+  if(runopt->Scale_toys_based_on_samples()){
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s == conv::kSKsUndefined || s == conv::kSKsRHCFCFV1RingELike) continue;
+      real_data[is] = skobs_data->TwoDSpectrum(s);
+    }
+  }
+  
+  int scale_throws_accepted   = 0;
+  int scale_throws_rejected   = 0;
+  int weird_applied_neg       = 0;
+  int weird_unphysical_tweak  = 0;
+  
   for(int iexperiment = runopt->FirstExperiment(), last_experiment = runopt->LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
     
@@ -291,6 +325,62 @@ int main(int argc, char ** argv)
       cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
       if(applied_negevents_condition)
         weird_applied_neg++;
+      
+      bool use_it = 1;
+      
+      //Calc chisq of data and expectation
+      //Take toy based on chisq and random number
+      if(runopt->Scale_toys_based_on_samples()){
+        //Get exp data
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+        TH1D * exp_data[kns];
+#else
+        TH2D * exp_data[kns];
+#endif
+        for (int is = 0 ; is < conv::kns ; is++) {
+          SuperkSample_t s = conv::kSKSamples[is];
+          if (s == conv::kSKsUndefined) continue;
+#ifndef __USE_2D_TEMPLATES__
+          exp_data[is] = skexp->CurrPredictedErecoSpectrum(s);
+#else
+          exp_data[is] = skexp->CurrPredictedErecoVsQ2Spectrum(s);
+#endif
+          exp_data[is]->SetDirectory(0);
+        }//is
+        
+        //Calculate the chisq for 3 samples
+        double chisq = 0;
+        
+        for (int is = 0 ; is < conv::kns ; is++) {
+          SuperkSample_t s = conv::kSKSamples[is];
+          if (s == conv::kSKsUndefined || s == conv::kSKsRHCFCFV1RingELike) continue;
+          chisq += valor::util::Chisq_Penalty_TH2D(real_data[is],exp_data[is]);
+        }
+        
+        double random_number = Rnd::Instance()->RndOther().Uniform(0,1);
+        double prob = exp(-(chisq-scale_toys_based_on_samples_scale)/2);
+      
+        cout << "chisq: " << chisq << " Scale: " << scale_toys_based_on_samples_scale <<  " Prob: " << prob << " Random: " << random_number << endl;
+        if(random_number <= prob){
+          scale_throws_accepted++;
+        }
+        else{
+          scale_throws_rejected++;
+          chisq_distribution->Fill(chisq);
+          //          use_it = 0;
+        }
+        
+        for (int is = 0 ; is < conv::kns ; is++) {
+          SuperkSample_t s = conv::kSKSamples[is];
+          if (s == conv::kSKsUndefined) continue;
+          delete exp_data[is];
+        }
+        
+      }
+      
+      if(!use_it) unphysical_tweak = true; //Redo throw if toy throw failes test
+      
+      
     }//applied_negevents_condition
     
     if(!runopt->DoToys()){
@@ -390,7 +480,7 @@ int main(int argc, char ** argv)
         delete mock_data[is];
         exp_data[is]->Write(Form("exp_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
         delete exp_data[is];
-
+        
       }//is
       
       // Object for storing input oscillation and nuisance params in each toy-MC
@@ -406,7 +496,7 @@ int main(int argc, char ** argv)
       iparm->Write(Form("iparm_%d",iexperiment));
       delete iparm;
     }//save to ROOT file
-    
+    delete skobs;
   }//iexperiment
   
   //
@@ -428,11 +518,21 @@ int main(int argc, char ** argv)
   << " - Summary - " << endl
   << "    * Created " << runopt->NExperiments() << " toys" << endl
   << "    * " << weird_unphysical_tweak << " unphysical_tweaks rethrown" << endl
-  << "    * " << weird_applied_neg << " applied_negevents_condition rethrown" << endl
-  << endl;
-  
+  << "    * " << weird_applied_neg << " applied_negevents_condition rethrown" << endl;
+  if(runopt->Scale_toys_based_on_samples())
+  {
+   cout << "    * " << scale_throws_accepted << " throws accepted" << endl
+        << "    * " << scale_throws_rejected << " throws rejected" << endl
+    << endl;
+  }
+  TFile output("output.root","recreate");
+  chisq_distribution->Write();
+  output.Close();
+
   sw.Stop();
   sw.Print();
+  delete skexp;
+  delete skobs_data;
 }
 
 

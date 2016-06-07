@@ -271,6 +271,12 @@ int main(int argc, char ** argv)
 #else
      TH2D * mock_data[kns];
 #endif
+    //Get exp data
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+    TH1D * exp_data[kns];
+#else
+    TH2D * exp_data[kns];
+#endif
      for (int is = 0 ; is < conv::kns ; is++) {
        SuperkSample_t s = conv::kSKSamples[is];
        if (s == conv::kSKsUndefined) continue;
@@ -279,6 +285,12 @@ int main(int argc, char ** argv)
 #else
        mock_data[is] = skobs->TwoDSpectrum(s);
 #endif
+#ifndef __USE_2D_TEMPLATES__
+       exp_data[is] = skexp->CurrPredictedErecoSpectrum(s);
+#else
+       exp_data[is] = skexp->CurrPredictedErecoVsQ2Spectrum(s);
+#endif
+       exp_data[is]->SetDirectory(0);
        mock_data[is]->SetDirectory(0);
      }//is
       
@@ -316,10 +328,12 @@ int main(int argc, char ** argv)
        f->cd();
 
        for (int is = 0 ; is < conv::kns ; is++) {
-	 SuperkSample_t s = conv::kSKSamples[is];
-	 if (s == conv::kSKsUndefined) continue;
-	 mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
-	 delete mock_data[is];
+         SuperkSample_t s = conv::kSKSamples[is];
+         if (s == conv::kSKsUndefined) continue;
+         mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+         delete mock_data[is];
+         exp_data[is]->Write(Form("exp_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+         delete exp_data[is];
        }//is
             
        // Object for storing input oscillation and nuisance params in each toy-MC
