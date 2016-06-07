@@ -1314,16 +1314,16 @@ void valor::util::MargFit_2D_sinsqth13_deltaCP(RunOpt *runopt,FitMarginalization
 void valor::util::MargFit_2D_deltaCP_sinsqth13(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
 {
   
-  double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
-  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
+  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
+  double valsecondbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(2);
   
   int nbinsX = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsX();
-  double valfirstbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(1);
-  double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
+  double valfirstbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(1);
+  double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
   
   int nbinsY = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsY();
-  double valfirstbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(1);
-  double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
+  double valfirstbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(1);
+  double vallastbin_Y = fitmarg->GetMapChisqRangeFileID_2D()->GetYaxis()->GetBinCenter(nbinsY);
   
   
   //double start_sinsqth13_width = (vallastbin_X - valfirstbin_X) / 3.;
