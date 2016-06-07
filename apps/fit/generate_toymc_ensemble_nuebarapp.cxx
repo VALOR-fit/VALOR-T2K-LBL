@@ -150,7 +150,6 @@ private:
 int main(int argc, char ** argv)
 {
   TStopwatch sw;
-  TH1D* chisq_distribution = new TH1D("chisq_distribution","chisq_distribution",100000,0,1000);
 
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
@@ -366,8 +365,7 @@ int main(int argc, char ** argv)
         }
         else{
           scale_throws_rejected++;
-          chisq_distribution->Fill(chisq);
-          //          use_it = 0;
+          use_it = 0;
         }
         
         for (int is = 0 ; is < conv::kns ; is++) {
@@ -525,9 +523,6 @@ int main(int argc, char ** argv)
         << "    * " << scale_throws_rejected << " throws rejected" << endl
     << endl;
   }
-  TFile output("output.root","recreate");
-  chisq_distribution->Write();
-  output.Close();
 
   sw.Stop();
   sw.Print();
