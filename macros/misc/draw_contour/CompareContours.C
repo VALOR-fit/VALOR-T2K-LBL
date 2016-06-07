@@ -2,7 +2,7 @@
 // Produce VALOR contours with macros/misc/draw_contours.C
 // and read the output files
 
-#define SwapXY // Swap x and y axis of contours // does this to the chisq2d, contour and the TMarker!
+//#define SwapXY // Swap x and y axis of contours // does this to the chisq2d, contour and the TMarker!
 
 using namespace std;
 using namespace valor;
@@ -18,25 +18,59 @@ void CompareContours()
   const int Nfiles = 2;
   const char *inname[Nfiles] = {
 
+
+    //////////////////////////////////////////////
+    //                                          //
+    //      Run 1-7 -Asimov - Run 1-7 Flux      // 
+    //                                          //
+    //////////////////////////////////////////////
+
+    // // sinsqth13 Vs dcp w/ reactors - Asimov A - Run 1-7
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_A_reactors_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_A_reactors_ih_contour.root",
+
+    // sinsqth13 Vs dcp w/ reactors - Asimov B - Run 1-7
+    "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_reactors_nh_contour.root",
+    "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_reactors_ih_contour.root",
+ 
+
+    //////////////////////////////
+    //                          //
+    //      Run 1-6 -Asimov     // 
+    //                          //
+    //////////////////////////////
+
+    // sinsqth13 Vs dcp w/ reactors - Asimov A
+    //"../TECH_NOTE_14_3_16/SENSI/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Asimov_A_reactors_nh_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Asimov_A_reactors_ih_contour.root",
+
     // sinsqth13 Vs dcp w/ reactors - Asimov B
-    // "../TECH_NOTE_14_3_16/SENSI/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Asimov_B_reactors_nh_contour.root",
-    // "../TECH_NOTE_14_3_16/SENSI/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Asimov_B_reactors_ih_contour.root"
-
+    //"../TECH_NOTE_14_3_16/SENSI/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Asimov_B_reactors_nh_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Asimov_B_reactors_ih_contour.root",
+    
     // sinsqth23 Vs dmsq w/ reactors - Asimov A
-    // "../TECH_NOTE_14_3_16/SENSI/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_reactors_nh_contour.root",
-    // "../TECH_NOTE_14_3_16/SENSI/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_reactors_ih_contour.root"
+    //"../TECH_NOTE_14_3_16/SENSI/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_reactors_nh_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_reactors_ih_contour.root",
+    
+    // // sinsqth23 Vs dmsq w/ reactors - Asimov B
+    //"../TECH_NOTE_14_3_16/SENSI/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Asimov_B_reactors_nh_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Asimov_B_reactors_ih_contour.root",
 
-    // // sinsqth23 Vs dmsq w/ reactors - Asimov A
-    // "../TECH_NOTE_14_3_16/SENSI/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Asimov_B_reactors_nh_contour.root",
-    // "../TECH_NOTE_14_3_16/SENSI/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Asimov_B_reactors_ih_contour.root"
+
+
+    //////////////////////////////
+    //                          //
+    //      Run 1-6 - Data      // 
+    //                          //
+    //////////////////////////////
 
     // // sinsqth23 Vs dmsq w/ reactors - Data
     // "../TECH_NOTE_14_3_16/DATA/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run16_Data_reactors_nh_contour.root",
     // "../TECH_NOTE_14_3_16/DATA/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run16_Data_reactors_ih_contour.root"
 
     // // sinsqth13 Vs dcp T2K only - Data
-    "../TECH_NOTE_14_3_16/DATA/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_data_t2konly_nh_contour.root",
-    "../TECH_NOTE_14_3_16/DATA/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_data_t2konly_ih_contour.root"
+    //"../TECH_NOTE_14_3_16/DATA/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_data_t2konly_nh_contour.root",
+    //"../TECH_NOTE_14_3_16/DATA/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_data_t2konly_ih_contour.root"
 
     // // sinsqth13 Vs dcp w/ reactors - Data
     // "../TECH_NOTE_14_3_16/DATA/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run16_Data_reactors_nh_contour.root",
@@ -50,6 +84,24 @@ void CompareContours()
     // "../TECH_NOTE_14_3_16/DATA/contours_sinsqth23Vsdcp_react/fitmarg_joint_sinsqth23Vsdcp_Run16_Data_reactors_nh_contour.root",
     // "../TECH_NOTE_14_3_16/DATA/contours_sinsqth23Vsdcp_react/fitmarg_joint_sinsqth23Vsdcp_Run16_Data_reactors_ih_contour.root"
 
+    /////////////// NO FIT BIAS ////////////
+
+    // sinsqth13 Vs dcp T2K reactors - Asimov A 
+    //"../TECH_NOTE_14_3_16/SENSI/BANFF_NOFITBIAS_14_3_16/fitmarg_joint_sinsqth13Vsdcp_NoFitBias_Run16_Asimov_A_reactors_nh_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/BANFF_NOFITBIAS_14_3_16/fitmarg_joint_sinsqth13Vsdcp_NoFitBias_Run16_Asimov_A_reactors_ih_contour.root"
+
+    // sinsqth13 Vs dcp T2K reactors - Asimov B 
+    //"../TECH_NOTE_14_3_16/SENSI/BANFF_NOFITBIAS_14_3_16/fitmarg_joint_sinsqth13Vsdcp_NoFitBias_Run16_Asimov_B_reactors_nh_contour.root"
+    //"../TECH_NOTE_14_3_16/SENSI/BANFF_NOFITBIAS_14_3_16/fitmarg_joint_sinsqth13Vsdcp_NoFitBias_Run16_Asimov_B_reactors_ih_contour.root"
+
+    // sinsqth23 Vs dmsq T2K reactors - Asimov A 
+    //"../TECH_NOTE_14_3_16/SENSI/BANFF_NOFITBIAS_14_3_16/fitmarg_joint_sinsqth23Vsdmsq_NoFitBias_Run16_Asimov_A_reactors_nh_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/BANFF_NOFITBIAS_14_3_16/fitmarg_joint_sinsqth23Vsdmsq_NoFitBias_Run16_Asimov_A_reactors_ih_contour.root"
+
+    // sinsqth23 Vs dmsq T2K reactors - Asimov B
+    //"../TECH_NOTE_14_3_16/SENSI/BANFF_NOFITBIAS_14_3_16/fitmarg_joint_sinsqth23Vsdmsq_NoFitBias_Run16_Asimov_B_reactors_nh_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/BANFF_NOFITBIAS_14_3_16/fitmarg_joint_sinsqth23Vsdmsq_NoFitBias_Run16_Asimov_B_reactors_ih_contour.root"
+    
   };
   const int Ncont_68 = 2;
   const char *contour_68_name[Ncont_68] = { // different graph for each contour (+-)
@@ -64,14 +116,16 @@ void CompareContours()
   const char *latexname[Nfiles] = {
     "Normal Hierarchy",
     "Inverted Hierarchy",
+    //"w/ Fit Bias",
+    //"w/o Fit Bias",
   };
   const char *chisq_name = "chisq_map_2D";
   
   const char *bestfitpt_name = "best_fit_point_marker";
   
-  bool draw_reactor_band = true;
+  bool draw_reactor_band = false;
   
-  bool shiftglobal = true;
+  bool shiftglobal = false;
 
 
   ////////////////////////////////////////////////////////////////////////
@@ -129,6 +183,19 @@ void CompareContours()
 
 
 
+  // Init histogram
+
+  int NbinsX = hchisq_glob_valor[0]->GetNbinsX(); 
+  double lowedgeX = hchisq_glob_valor[0]->GetXaxis()->GetBinLowEdge(1);
+  double upedgeX = hchisq_glob_valor[0]->GetXaxis()->GetBinUpEdge(NbinsX);
+  int NbinsY = hchisq_glob_valor[0]->GetNbinsY();
+  double lowedgeY = hchisq_glob_valor[0]->GetYaxis()->GetBinLowEdge(1);
+  double upedgeY = hchisq_glob_valor[0]->GetYaxis()->GetBinUpEdge(NbinsY);
+  char *TitleX = hchisq_glob_valor[0]->GetXaxis()->GetTitle();
+  char *TitleY = hchisq_glob_valor[0]->GetYaxis()->GetTitle();
+  TH2D *hInit = new TH2D("hInit","hInit",NbinsX,lowedgeX,upedgeX,NbinsY,lowedgeY,upedgeY);
+  hInit->GetXaxis()->SetTitle(TitleX);
+  hInit->GetYaxis()->SetTitle(TitleY);
 
 
   // Get global best-fit contour
@@ -222,26 +289,27 @@ void CompareContours()
   lcontours->SetTextSize(0.05);
   for(int ifile=0;ifile<Nfiles;ifile++){
     char name[200];
-    sprintf(name,"%s - 68CL",latexname[ifile]);
+    sprintf(name,"%s - 68%%CL",latexname[ifile]);
     lcontours->AddEntry(g68_valor[0][ifile],name,"l");
-    sprintf(name,"%s - 90CL",latexname[ifile]);
+    sprintf(name,"%s - 90%%CL",latexname[ifile]);
     lcontours->AddEntry(g90_valor[0][ifile],name,"l");
   }
+  
   // Draw reactors box
-  double X1 = kGlobFitSinsqTheta13 - kGlobFitSinsqTheta13*kGlobFitErrSinsqTheta13;
-  double X2 = kGlobFitSinsqTheta13 + kGlobFitSinsqTheta13*kGlobFitErrSinsqTheta13;
+  
+  //double X1 = kGlobFitSinsqTheta13 - kGlobFitSinsqTheta13*kGlobFitErrSinsqTheta13;
+  //double X2 = kGlobFitSinsqTheta13 + kGlobFitSinsqTheta13*kGlobFitErrSinsqTheta13;
+  //cout << kGlobFitSinsqTheta13 << " +- " << kGlobFitSinsqTheta13*kGlobFitErrSinsqTheta13 << endl;
 
   const double sinsqth13_nom = 0.0219;
   const double sinsqth13_err = 0.0012;
-  X1 = sinsqth13_nom + sinsqth13_err;
-  X2 = sinsqth13_nom - sinsqth13_err;
+  double X1 = sinsqth13_nom + sinsqth13_err;
+  double X2 = sinsqth13_nom - sinsqth13_err;
   
   double Y1 = hchisq_valor[0]->GetYaxis()->GetBinLowEdge(hchisq_valor[0]->GetYaxis()->GetFirst());
   //double Y2 = hInit->GetMaximum();
   double Y2 = hchisq_valor[0]->GetYaxis()->GetBinUpEdge(hchisq_valor[0]->GetYaxis()->GetLast());
-  
-  cout << kGlobFitSinsqTheta13 << " +- " << kGlobFitSinsqTheta13*kGlobFitErrSinsqTheta13 << endl;
-
+ 
   TBox *breactors = new TBox(X1,Y1,X2,Y2);
   breactors->SetFillColor(kYellow+1);
   breactors->SetLineColor(kYellow+1);
@@ -270,9 +338,9 @@ void CompareContours()
 
 
   TCanvas *cContGlobMin = new TCanvas("cContGlobMin","cContGlobMin");
+  hInit->Draw();
   for(int ifile=0;ifile<Nfiles;ifile++){
-    if(ifile==0) hdeltachisq_glob_valor_68[ifile]->Draw("cont3");
-    else hdeltachisq_glob_valor_68[ifile]->Draw("cont3 same");
+    hdeltachisq_glob_valor_68[ifile]->Draw("cont3 same");
     hdeltachisq_glob_valor_90[ifile]->Draw("cont3 same");
 
     gbest_fit_global[ifile]->Draw("same");

@@ -15,12 +15,14 @@ using namespace valor::conv;
 void plot_contours_dcp_many
 ( 
  const bool doGlobalMin  = true,
- const bool same_mh_color = false, // use same color for NH and IH
- const bool same_mh_style = true, // use same style for NH and IH
+ const bool same_mh_color = true, // use same color for NH and IH
+ const bool same_mh_style = false, // use same style for NH and IH
  const bool draw_preliminary = false,
 
- const bool do_fc = true,
- const bool do_const = false,
+ const bool do_fc = false,
+ const bool draw_fc_err = false,
+
+ const bool do_const = true,
 
  const bool draw_1sigmaCL = false,
  const bool draw_90CL     = true,
@@ -31,40 +33,136 @@ void plot_contours_dcp_many
 
  const bool draw_reactors = false,
 
- const bool do_range_1sigma = false,
+ const bool do_range_1sigma = true,
  const double critval = 1.,
  
- const double truepar0 = 3.142,
- const double truepar1 = 0.,
+ // Compare true chisq
+ 
+ // // run 1-6 best-fit (global)
+ // const double truepar0 = -1.8535397,
+ // const string truemh0 = "normal",
 
+ // Asimov A best-fit (global)
+ const double truepar0 = -1.601,
+ const string truemh0 = "normal",
+
+ // // Asimov B best-fit (global)
+ // const double truepar0 = -2.82743339, 
+ // const string truemh0 = "inverted",
+
+ // True point
+ const double truepar1 = 0., //0., //-1.351,
+ const string truemh1 = "normal", //"inverted",
+ 
  //double mybestfit = 3.14, 
  double mybestfit = kBadResult
   )
 {
 
   // NIWG2015c Summer 2016 statistics
-  const int Nfiles = 1;
+  const int Nfiles = 2;
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
-  
-    // // deltaCP - Run 1-6 Asimov A w/ reactors
+    
+
+    //////////////////////////////////////////////
+    //                                          //
+    //      Run 1-7 -Asimov - Run 1-7 Flux      // 
+    //                                          //
+    //////////////////////////////////////////////
+
+    // // deltaCP - Run 1-7 Asimov A T2K only - Flux Run 1-7
     // {
-    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_nh_A_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
-    //   //"../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_ih_A_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    //   "fit_PROVA_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_nh_a_dcp_t2konly_run17.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_ih_a_dcp_t2konly_run17.root"
+    // },
+
+    // // deltaCP - Run 1-7 Asimov A T2K only - Flux Run 1-7
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_nh_a_dcp_t2konly_run17.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_ih_a_dcp_t2konly_run17.root"
+    // },
+    
+    // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-7
+    {
+      "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
+      "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    },
+
+    // // deltaCP - Run 1-7 Asimov B w/ reactors - Flux Run 1-7
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root"
     // },
   
+    // // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-6
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun16/files/fit_fitmarg_joint_dcp_react_nh_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun16/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // }
+    
+    
+    //////////////////////////////
+    //                          //
+    //      Run 1-6 -Asimov     // 
+    //                          //
+    //////////////////////////////
+
+    // deltaCP - Run 1-6 Asimov A w/ reactors
+    {
+      "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/fit_fitmarg_joint_dcp_react_nh_Run16_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0_TH1D.root", // NH 
+      "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/fit_fitmarg_joint_dcp_react_ih_Run16_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0_TH1D.root"  // IH
+      // "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_nh_A_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+      // "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_ih_A_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+      //"fit_PROVA_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    }, 
+    
+    // // deltaCP - FHC: 14.4e20, RHC: 7.47e20   - Asimov A w/ reactors
+    // {
+    //   "fit_fitmarg_joint_dcp_react_nh_fhc_14p4_rhc_7p47_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "fit_fitmarg_joint_dcp_react_ih_fhc_14p4_rhc_7p47_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // },
+    // // deltaCP - FHC: 10.07e20, RHC: 11.17e20 - Asimov A w/ reactors
+    // {
+    //   "fit_fitmarg_joint_dcp_react_nh_fhc_10p07_rhc_11p17_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "fit_fitmarg_joint_dcp_react_ih_fhc_10p07_rhc_11p17_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // },
+    // // deltaCP - FHC: 7.00e20, RHC: 14.87e20  - Asimov A w/ reactors
+    // {
+    //   "fit_fitmarg_joint_dcp_react_nh_fhc_7p00_rhc_14p87_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "fit_fitmarg_joint_dcp_react_ih_fhc_7p00_rhc_14p87_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    // },
+
     // // deltaCP - Run 1-6 Asimov B w/ reactors
     // {
-    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_nh_B_nexp_1_0.000_-999.000-job0-_0_0.root", // NH 
-    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_ih_B_nexp_1_0.000_-999.000-job0-_0_0.root"  // IH
+    //   "../TECH_NOTE_14_3_16/SENSI/Run16/files/valor/fit_fitmarg_joint_dcp_react_nh_Run16_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0_TH1D.root", // NH 
+    //   "../TECH_NOTE_14_3_16/SENSI/Run16/files/valor/fit_fitmarg_joint_dcp_react_ih_Run16_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0_TH1D.root"  // IH
+    // //   "../TECH_NOTE_14_3_16/SENSI/Run16/files/valor/fit_fitmarg_joint_dcp_react_nh_B_nexp_1_0.000_-999.000-job0-_0_0.root", // NH 
+    // //  "../TECH_NOTE_14_3_16/SENSI/Run16/files/valor/fit_fitmarg_joint_dcp_react_ih_B_nexp_1_0.000_-999.000-job0-_0_0.root"  // IH
     // }
     // ,
+
+    // // deltaCP - FHC: 14.4e20, RHC: 7.47e20   - Asimov A w/ reactors
+    // {
+    //   "fit_fitmarg_joint_dcp_react_nh_fhc_14p4_rhc_7p47_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root",
+    //   "fit_fitmarg_joint_dcp_react_ih_fhc_14p4_rhc_7p47_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root"
+    // },
+    // // deltaCP - FHC: 10.07e20, RHC: 11.17e20 - Asimov A w/ reactors
+    // {
+    //   "fit_fitmarg_joint_dcp_react_nh_fhc_10p07_rhc_11p17_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root",
+    //   "fit_fitmarg_joint_dcp_react_ih_fhc_10p07_rhc_11p17_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root"
+    // },
+    // // deltaCP - FHC: 7.00e20, RHC: 14.87e20  - Asimov A w/ reactors
+    // {
+    //   "fit_fitmarg_joint_dcp_react_nh_fhc_7p00_rhc_14p87_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root",
+    //   "fit_fitmarg_joint_dcp_react_ih_fhc_7p00_rhc_14p87_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root",
+    // },
+
 
     // // deltaCP - Run 1-6 Asimov A w/o reactors
     // {
     //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_anh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
-    //    "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_aih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
+    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_aih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
     // },
     
     // // deltaCP - Run 1-6 Asimov B w/o reactors
@@ -74,14 +172,22 @@ void plot_contours_dcp_many
     // }
     // ,
 
-    // deltaCP - Run 1-6 Data w/ reactors
-    {
-      "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
-      "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-      //"fit_fit_marg_PROVA_dcp_nexp_1_-1.601_-999.000-job0-_0_0.root",
-      //"fit_fit_marg_PROVA_dcp_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    }
-    ,
+    
+    //////////////////////////////
+    //                          //
+    //      Run 1-6 - Data      // 
+    //                          //
+    //////////////////////////////
+
+    // // deltaCP - Run 1-6 Data w/ reactors
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    //   //"fit_fitmarg_fc_50k_normal_nexp_1_-999.000_-999.000-job0-_0_0.root"
+    //   //"fit_fit_marg_PROVA_dcp_nexp_1_0.000_-999.000-job0-_0_0.root",
+    //   //"fit_fit_marg_PROVA_dcp_nexp_1_0.000_-999.000-job0-_0_0.root"
+    // }
+    // ,
 
     // // deltaCP - Run 1-6 Data w/ reactors - e-like 15 bins only for RHC
     // {
@@ -139,34 +245,35 @@ void plot_contours_dcp_many
 
   };
   
-
+ 
   // File names of Feldman-Cousins
-  char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs.root";
+  char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_p8k.root";
+  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_4k.root";
 
 
   char *latexname[Nfiles][Nmh] = {
-    {"Normal Hierarchy","Inverted Hierarchy"},
-    //{"Neutrino - NH","Neutrino - IH"},
-    //{"AntiNeutrino - NH","AntiNeutrino - IH"},
-    // {"NH","IH"},
-    // {"NH all","IH all"},
-    //{"NH FHC-only","IH FHC-only"}
-    // {"Current - NH", "Current - IH"}
-    // {"Summer Exp - NH", "Summer Exp - IH"}
-    // {"Summer 100/0 - NH", "Summer 100/0 - IH"}
-    // {"Summer 75/25 - NH", "Summer 75/25 - IH"}
-    // {"Summer 50/50 - NH", "Summer 50/50 - IH"}
+    //{"Normal Hierarchy","Inverted Hierarchy"},
+        
+    {"Run 1-7 - NH", "Run 1-7 - IH"},
+    {"Run 1-6 - NH", "Run 1-6 - IH"},
+    
+    // {"14.4e20 FHC + 7.47e20 RHC - NH",   "14.4e20 FHC + 7.47e20 RHC - IH"},
+    // {"10.07e20 FHC + 11.17e20 RHC - NH", "10.07e20 FHC + 11.17e20 RHC - IH"},
+    // {"7.00e20 FHC + 14.87e20 RHC - NH",  "7.00e20 FHC + 14.87e20 RHC - IH"}
   };
   
   char name[200];
-
+  
   TFile *filein[Nfiles][Nmh];
   TTree *treein[Nfiles][Nmh];
 
-  TH1F *hchisq1D[Nfiles][Nmh];
-  TH1F *hdeltachisq1D[Nfiles][Nmh];
-  TH1F *hdeltachisq1D_GlobMin[Nfiles][Nmh];
-  
+  TH1D *hchisq1D[Nfiles][Nmh];
+  TH1D *hdeltachisq1D[Nfiles][Nmh];
+  TH1D *hdeltachisq1D_GlobMin[Nfiles][Nmh];
+
+  double bestfit_x = -999.;
+  double bestfit_mh = -999.;
+
   TCanvas *cChisq; //[Nfiles][Nmh];
 
   for(int ifile=0;ifile<Nfiles;ifile++){
@@ -187,54 +294,78 @@ void plot_contours_dcp_many
       treein[ifile][imh] = (TTree*)filein[ifile][imh]->Get("fitnt");
       
       sprintf(name,"hchisq1D_file%d_mh%d",ifile,imh);
-      hchisq1D[ifile][imh] = new TH1F(name,name,1,0,1);
+      hchisq1D[ifile][imh] = new TH1D(name,name,1,0,1);
       treein[ifile][imh]->SetBranchAddress("hchisq1D", &hchisq1D[ifile][imh] );
       
       sprintf(name,"hdeltachisq1D_file%d_mh%d",ifile,imh);
-      hdeltachisq1D[ifile][imh] = new TH1F(name,name,1,0,1);
+      hdeltachisq1D[ifile][imh] = new TH1D(name,name,1,0,1);
       treein[ifile][imh]->SetBranchAddress("hdeltachisq1D", &hdeltachisq1D[ifile][imh] );
-      
+
       // Get event
       treein[ifile][imh]->GetEntry(0);
       
       // Print chisq distributions
+      cout << std::setprecision(9);
       cout << endl;
       cout << "Chisq file " << ifile << " - mh = " << imh << " :" << endl;
+      cout << "# of entries = " << hchisq1D[ifile][imh]->GetEntries() << endl;
       for(int i=0;i<hchisq1D[ifile][imh]->GetNbinsX();i++){
 	cout << hchisq1D[ifile][imh]->GetBinContent(i+1) << " ";
+      }
+      cout << endl;
+      cout << "DeltaChisq: # of entries = " << hdeltachisq1D[ifile][imh]->GetEntries() << endl;
+      for(int i=0;i<hdeltachisq1D[ifile][imh]->GetNbinsX();i++){
+      	cout << hdeltachisq1D[ifile][imh]->GetBinContent(i+1) << " ";
       }
       cout << endl;  
     
       sprintf(name,"hdeltachisq1D_GlobMin_file%d_mh%d",ifile,imh);
-      hdeltachisq1D_GlobMin[ifile][imh] = (TH1F*)hchisq1D[ifile][imh]->Clone(name);
+      hdeltachisq1D_GlobMin[ifile][imh] = (TH1D*)hchisq1D[ifile][imh]->Clone(name);
       hdeltachisq1D_GlobMin[ifile][imh]->Reset();
-      
+
     } // end loop Nmh
 
     
     // Shift the chisq wrt to the global minimum
     
     double ChisqMin_0 = hchisq1D[ifile][0]->GetMinimum();
-    double ChisqMin_1 = hchisq1D[ifile][1]->GetMinimum();
-    double ChisqMin_Glob = ChisqMin_0;
+
+    double ChisqMin_1 = 999999;
+    if(hchisq1D[ifile][1]) ChisqMin_1 = hchisq1D[ifile][1]->GetMinimum();
+    double ChisqMin_Glob = ChisqMin_0; 
     if( ChisqMin_1 < ChisqMin_Glob ) ChisqMin_Glob = ChisqMin_1;
     
     int XminBin_0 = hchisq1D[ifile][0]->GetMinimumBin();
     double Xmin_0 = hchisq1D[ifile][0]->GetBinCenter(XminBin_0);
-    int XminBin_1 = hchisq1D[ifile][1]->GetMinimumBin();
-    double Xmin_1 = hchisq1D[ifile][1]->GetBinCenter(XminBin_1);
+    
+    int XminBin_1 = -999;
+    double Xmin_1 = -999;   
+    if(hchisq1D[ifile][1]){
+      XminBin_1 = hchisq1D[ifile][1]->GetMinimumBin();
+      Xmin_1 = hchisq1D[ifile][1]->GetBinCenter(XminBin_1);
+    }
 
     cout << endl;
     cout << "Minimum for " << latexname[ifile][0] << " :" << endl;
     cout << " - X = " << Xmin_0 << endl;
     cout << " - ChisqMin " << latexname[ifile][0] << " = " << ChisqMin_0 << endl;
-    cout << "Minimum for " << latexname[ifile][1] << " :" << endl;
-    cout << " - X = " << Xmin_1 << endl;
-    cout << " - ChisqMin " << latexname[ifile][1] << " = " << ChisqMin_1 << endl;
-    cout << endl;
+
+    if(hchisq1D[ifile][1]){
+      cout << "Minimum for " << latexname[ifile][1] << " :" << endl;
+      cout << " - X = " << Xmin_1 << endl;
+      cout << " - ChisqMin " << latexname[ifile][1] << " = " << ChisqMin_1 << endl;
+      cout << endl;
+    }
+    if(ChisqMin_0<ChisqMin_1){
+      cout << "Best-fit = " << Xmin_0 << endl;
+    }
+    else{
+      cout << "Best-fit = " << Xmin_1 << endl;
+    }
     cout << "ChisqMin Glob = " << ChisqMin_Glob << endl;
     cout << endl;
-
+    
+    
     for(int imh=0;imh<Nmh;imh++){      
       double ChisqMin_Curr = hchisq1D[ifile][imh]->GetMinimum();
       for(int i=0;i<hdeltachisq1D_GlobMin[ifile][imh]->GetNbinsX();i++){
@@ -273,6 +404,36 @@ void plot_contours_dcp_many
     }
   }
 
+
+  // Marginalize deltaCP
+  
+  cout << endl;
+  cout << "Get chisq(NH) - chisq(IH)" << endl;
+  
+  double chisqMH[Nfiles][Nmh] = {conv::kBadResult};
+
+  for(int ifile=0;ifile<Nfiles;ifile++){
+    for(int imh=0;imh<Nmh;imh++){      
+
+      double like_ave = 0.;
+      for(int i=0;i<hchisq1D[ifile][imh]->GetNbinsX();i++){
+	double chisq = hchisq1D[ifile][imh]->GetBinContent(i+1);
+	double like = TMath::Exp(-chisq / 2.);
+	like_ave += like;
+      }
+      like_ave /= hchisq1D[ifile][imh]->GetNbinsX();
+      
+      chisqMH[ifile][imh] = - 2 * TMath::Log(like_ave);
+
+      cout << " - " << latexname[ifile][imh] << " :" << endl;
+      cout << "    chisq = " << chisqMH[ifile][imh] << endl;
+
+    }
+    cout << "Delta Chisq = " << chisqMH[ifile][0] - chisqMH[ifile][1] << endl;
+  }
+  cout << endl;
+
+
   // Init histogram
 
   int NbinsX = hdeltachisq1D_GlobMin[0][0]->GetNbinsX(); 
@@ -281,7 +442,7 @@ void plot_contours_dcp_many
   double upedgeX = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinUpEdge(NbinsX);
   char *TitleX = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetTitle();
   char *TitleY = hdeltachisq1D_GlobMin[0][0]->GetYaxis()->GetTitle();
-  TH1F *hInit = new TH1F("hInit","hInit",NbinsX,lowedgeX,upedgeX);
+  TH1D *hInit = new TH1D("hInit","hInit",NbinsX,lowedgeX,upedgeX);
   hInit->GetXaxis()->SetTitle(TitleX);
   hInit->GetYaxis()->SetTitle(TitleY);
 
@@ -481,19 +642,23 @@ void plot_contours_dcp_many
   if(do_fc){
     if(draw_90CL){
       gFC90CL_nh   ->Draw("l same");
-      gFC90CL_nh_p1->Draw("l same");
-      gFC90CL_nh_m1->Draw("l same");
       gFC90CL_ih   ->Draw("l same");
-      gFC90CL_ih_p1->Draw("l same");
-      gFC90CL_ih_m1->Draw("l same");
+      if(draw_fc_err){ 
+	gFC90CL_nh_p1->Draw("l same");
+	gFC90CL_nh_m1->Draw("l same");
+	gFC90CL_ih_p1->Draw("l same");
+	gFC90CL_ih_m1->Draw("l same");
+      }
     }
     if(draw_2sigmaCL){
       gFC2sigma_nh   ->Draw("l same");
-      gFC2sigma_nh_p1->Draw("l same");
-      gFC2sigma_nh_m1->Draw("l same");
       gFC2sigma_ih   ->Draw("l same");
-      gFC2sigma_ih_p1->Draw("l same");
-      gFC2sigma_ih_m1->Draw("l same");
+      if(draw_fc_err){ 
+	gFC2sigma_nh_p1->Draw("l same");
+	gFC2sigma_nh_m1->Draw("l same");
+	gFC2sigma_ih_p1->Draw("l same");
+	gFC2sigma_ih_m1->Draw("l same");
+      }
     }
   }
 
@@ -583,14 +748,48 @@ void plot_contours_dcp_many
   //   f2->Close();
   // }
   
-  int truebin0 = hdeltachisq1D_GlobMin[0][0]->FindBin(truepar0);
-  double truechisq0 = hdeltachisq1D_GlobMin[0][0]->GetBinContent(truebin0);
-  cout << "True chisq = " << truechisq0 << endl; 
+  int bfbin = -999;
+  int truebin0=-999;
+  int truebin1=-999;
+  string mh0 = "";
+  string mh1 = "";
+  int mhbin0 = -999;
+  int mhbin1 = -999;
+  
+  if(truemh0=="normal"){        
+    mhbin0 = 0;
+    mh0 = "NH";
+  }
+  else if(truemh0=="inverted"){
+    mhbin0 = 1;
+    mh0 = "IH";
+  }
 
+  if(truemh1=="normal"){        
+    mhbin1 = 0;
+    mh1 = "NH";
+  }
+  else if(truemh1=="inverted"){
+    mhbin1 = 1;
+    mh1 = "IH";
+  }
+ 
+  truebin0 = hchisq1D[0][mhbin0]->FindBin(truepar0);
+  truebin1 = hchisq1D[0][mhbin1]->FindBin(truepar1);
+  
+  double truechisq0 = hchisq1D[0][mhbin0]->GetBinContent(truebin0);
+  double truechisq1 = hchisq1D[0][mhbin1]->GetBinContent(truebin1);
+
+  cout << std::setprecision(10);
+  cout << "chisq(" << truepar0 << "," << mh0 << ") - " 
+       << "chisq(" << truepar1 << "," << mh1 << ") = "
+       << truechisq0 - truechisq1 
+       << endl;
+  
   return;
 }
 
-double CalcBestFitErrorsMINOS(TH1F *histo, double CritVal, double val_bf){ 
+double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){ 
   
   cout << endl;
   cout << "Compute MINOS errors" << endl;
