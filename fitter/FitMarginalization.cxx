@@ -8672,10 +8672,19 @@ double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_d
 #endif
   
   int obs_bin = fNuEAppHisto[iterpar0]->FindBin(nobs_sample);
-  double p_value_tail = fNuEAppHisto[iterpar0]->Integral(obs_bin,fNuEAppHisto[iterpar0]->GetNbinsX());
+  
+  double p_value_tail = 0;
+  if(iterpar0 == 0){//Right tailed p value for beta=0 null hypothesis
+    p_value_tail =   fNuEAppHisto[iterpar0]->Integral(obs_bin,fNuEAppHisto[iterpar0]->GetNbinsX());
+  }
+  else{  //Use left tailed p value for beta=1 null hypothesis
+    p_value_tail =   fNuEAppHisto[iterpar0]->Integral(1,obs_bin);
+  }
+  
   double p_value_integral = fNuEAppHisto[iterpar0]->Integral();
   double p_value = p_value_tail/p_value_integral;
   
+
 #ifdef __print_rate_only_pvalue__
   std::cout << "FitMarg/FillExpectedNuEBarApp>> " << util::AsString(s) <<" Nevents: " << nobs_sample <<" P-Value: " << p_value
             << " tail: " << p_value_tail << " integral: " << p_value_integral
