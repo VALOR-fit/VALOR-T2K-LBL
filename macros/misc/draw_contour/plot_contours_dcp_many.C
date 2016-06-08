@@ -14,6 +14,9 @@ using namespace valor::conv;
 
 void plot_contours_dcp_many
 ( 
+ const bool SaveRootFile = true,
+ const string tag = "dcp_run17_react_Asimov_B",
+
  const bool doGlobalMin  = true,
  const bool same_mh_color = true, // use same color for NH and IH
  const bool same_mh_style = false, // use same style for NH and IH
@@ -60,7 +63,7 @@ void plot_contours_dcp_many
 {
 
   // NIWG2015c Summer 2016 statistics
-  const int Nfiles = 2;
+  const int Nfiles = 1;
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
     
@@ -77,23 +80,23 @@ void plot_contours_dcp_many
     //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_ih_a_dcp_t2konly_run17.root"
     // },
 
-    // // deltaCP - Run 1-7 Asimov A T2K only - Flux Run 1-7
+    // // deltaCP - Run 1-7 Asimov B T2K only - Flux Run 1-7
     // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_nh_a_dcp_t2konly_run17.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_ih_a_dcp_t2konly_run17.root"
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_nh_b_dcp_t2konly_run17.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_ih_b_dcp_t2konly_run17.root"
     // },
     
-    // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-7
-    {
-      "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
-      "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    },
-
-    // // deltaCP - Run 1-7 Asimov B w/ reactors - Flux Run 1-7
+    // // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-7
     // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root"
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
     // },
+
+    // deltaCP - Run 1-7 Asimov B w/ reactors - Flux Run 1-7
+    {
+      "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root",
+      "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root"
+    },
   
     // // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-6
     // {
@@ -108,14 +111,14 @@ void plot_contours_dcp_many
     //                          //
     //////////////////////////////
 
-    // deltaCP - Run 1-6 Asimov A w/ reactors
-    {
-      "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/fit_fitmarg_joint_dcp_react_nh_Run16_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0_TH1D.root", // NH 
-      "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/fit_fitmarg_joint_dcp_react_ih_Run16_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0_TH1D.root"  // IH
-      // "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_nh_A_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
-      // "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_ih_A_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-      //"fit_PROVA_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    }, 
+    // // deltaCP - Run 1-6 Asimov A w/ reactors
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/fit_fitmarg_joint_dcp_react_nh_Run16_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0_TH1D.root", // NH 
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/fit_fitmarg_joint_dcp_react_ih_Run16_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0_TH1D.root"  // IH
+    //   // "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_nh_A_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   // "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_ih_A_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    //   //"fit_PROVA_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // }, 
     
     // // deltaCP - FHC: 14.4e20, RHC: 7.47e20   - Asimov A w/ reactors
     // {
@@ -161,14 +164,14 @@ void plot_contours_dcp_many
 
     // // deltaCP - Run 1-6 Asimov A w/o reactors
     // {
-    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_anh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
-    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_aih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/toyfits_dcp_anh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/toyfits_dcp_aih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
     // },
     
     // // deltaCP - Run 1-6 Asimov B w/o reactors
     // {
-    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_cnh-sinsqtheta[12_0.304,13_0.022,23_0.450],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
-    //   "../TECH_NOTE_14_3_16/SENSI/files/valor/toyfits_dcp_cih-sinsqtheta[12_0.304,13_0.022,23_0.450],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/toyfits_dcp_cnh-sinsqtheta[12_0.304,13_0.022,23_0.450],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/toyfits_dcp_cih-sinsqtheta[12_0.304,13_0.022,23_0.450],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
     // }
     // ,
 
@@ -252,10 +255,10 @@ void plot_contours_dcp_many
 
 
   char *latexname[Nfiles][Nmh] = {
-    //{"Normal Hierarchy","Inverted Hierarchy"},
+    {"Normal Hierarchy","Inverted Hierarchy"},
         
-    {"Run 1-7 - NH", "Run 1-7 - IH"},
-    {"Run 1-6 - NH", "Run 1-6 - IH"},
+    //{"Run 1-7 - NH", "Run 1-7 - IH"},
+    //{"Run 1-6 - NH", "Run 1-6 - IH"},
     
     // {"14.4e20 FHC + 7.47e20 RHC - NH",   "14.4e20 FHC + 7.47e20 RHC - IH"},
     // {"10.07e20 FHC + 11.17e20 RHC - NH", "10.07e20 FHC + 11.17e20 RHC - IH"},
@@ -736,17 +739,17 @@ void plot_contours_dcp_many
   TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"PRELIMINARY");
   if(draw_preliminary) latPreliminary->Draw("same");
 
-  // // Store in root file
-  // if(SaveRootFile){
-  //   TFile* f2 = new TFile(Form("%s_contour.root",tag),"recreate");    
-  //   for(int ifile=0;ifile<Nfiles;ifile++){
-  //     for(int imh=0;imh<Nmh;imh++){
-  // 	//sprintf(name,"hdeltachisq_%i_%i",ifile);
-  // 	hdeltachisq1D_GlobMin[ifile][imh]->Write();//(name);
-  //     }
-  //   }    
-  //   f2->Close();
-  // }
+  // Store in root file
+  if(SaveRootFile){
+    TFile* f2 = new TFile(Form("deltachisq_%s.root",tag.c_str()),"recreate");    
+    for(int ifile=0;ifile<Nfiles;ifile++){
+      for(int imh=0;imh<Nmh;imh++){
+  	sprintf(name,"hdeltachisq_File_%i_MH_%i",ifile,imh);
+  	hdeltachisq1D_GlobMin[ifile][imh]->Write();//(name);
+      }
+    }    
+    f2->Close();
+  }
   
   int bfbin = -999;
   int truebin0=-999;
