@@ -331,8 +331,14 @@ int main(int argc, char ** argv)
 
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
-  for(int iexperiment = runopt.FirstExperiment(), last_experiment = runopt.LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
-     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
+  
+  //for(int iexperiment = runopt.FirstExperiment(), last_experiment = runopt.LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
+  
+  int iexperiment = runopt.FirstExperiment();
+  int last_experiment = runopt.LastExperiment();
+  while( iexperiment <= last_experiment ){
+    
+    cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
      // Generate mock data
      cout << "- Generating toy-MC..." << endl;
@@ -445,6 +451,15 @@ int main(int argc, char ** argv)
      }
      toy_weight = TMath::Exp(-1*toy_chisq/2);
 
+     double unif_weight = rand.Uniform(0,1);
+     
+     if(toy_weight<unif_weight){
+       
+       cout << "like_unif = " << unif_weight << " > " << "like_weight = " << toy_weight << " --> reject toy" << endl;
+ 
+       continue; // if like_fakedata < like_rndm --> reject the toy
+     }
+
      //cout << "toy_chisq = " << toy_chisq << endl;
      //cout << "toy_weight = " << toy_weight << endl;
 
@@ -505,6 +520,8 @@ int main(int argc, char ** argv)
        iparm->Write(Form("iparm_%d",iexperiment));
        delete iparm;
      }//save to ROOT file
+
+     iexperiment++;
 
   }//iexperiment
 
