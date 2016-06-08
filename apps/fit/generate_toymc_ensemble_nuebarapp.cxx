@@ -304,6 +304,17 @@ int main(int argc, char ** argv)
     bool unphysical_tweak = true;
     while(applied_negevents_condition || unphysical_tweak) {
       
+      //Randomise oscillaiton parameters must be done inside this loop so
+      //they are chosen wrt to MC sampling method.
+      // Randomize specified osc params for current toy MC expt
+      util::OscParams::Instance()->Randomize();
+      
+      // Set the mass hierarchy
+      util::SetMassHierarchy(skexp);
+      
+      // Update physics hypothesis with chosen value of oscillation parameters
+      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
+      
       util::PerformSysThrow(runopt->SystTweakMode(), skexp, runopt->VerboseSystThrows());
       
       // Rethrow unphysical parameters
@@ -380,6 +391,9 @@ int main(int argc, char ** argv)
       
       
     }//applied_negevents_condition
+    
+    // Fill toy histograms of osc params. Needs to be done after toy is chosen
+    util::OscParams::Instance()->FillOscToyHisto(ph);
     
     if(!runopt->DoToys()){
       for (int is = 0 ; is < conv::kns ; is++) {
