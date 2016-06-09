@@ -855,7 +855,7 @@ while($i_freepar1 < $n_freepar1) {
 		print PBS "#PBS -l cput=$cput \n";
 		print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
 		print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
-    if($queue neq 0)
+      if($queue neq "0")
     {
       print PBS "#PBS -q $queue \n";
     }
