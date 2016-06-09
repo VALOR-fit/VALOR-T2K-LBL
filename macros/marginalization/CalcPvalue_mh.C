@@ -799,7 +799,10 @@ double calc_chisq(TH2D* hobs, TH2D* hexp){
   return chisq;
 }
 
-double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double conflev, double sigmacl){
+
+double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double conflev, double sigmacl){ 
+
+  // Get error on coverage: sigmacl = sqrt(N*p*(1-p))/N
 
   int nelem = dchisq.size();
   
@@ -817,37 +820,34 @@ double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double
   sort(dchisq.begin(), dchisq.end());
   
   // store the sorted indices --> use for both dchisq and weights
-  index = TMath::Sort(nelem,new_dchisq,index,0);
-  
-  // get the sum
-  double tot = 0.;
-  for(int i=0;i<nelem;i++){
-    tot += new_dchisq[index[i]];
-  }
-      
+  //index = TMath::Sort(nelem,new_dchisq,index,0);
+  TMath::Sort(nelem,new_dchisq,index,0);
+
   double tot_weight = 0.;
   for(int i=0;i<nelem;i++) tot_weight += new_weight[index[i]]; 
+
+  //cout << "conflev = " << conflev << endl;
   
   double sum = 0.;
   double critval = -999.;
   for(int i=0;i<nelem;i++){
-    sum += new_weight[index[i]] / tot_weight; 
+    sum += new_weight[index[i]]; 
     
-    critval = new_dchisq[index[i]];
-    //cout << critval << " ";
+    //cout << std::setprecision(16);
     //cout << sum << " ";
     
-    if(sum > 0.01 * conflev){
+    if( sum >= (0.01 * conflev + sigmacl)*tot_weight ){
+      
+      //cout << endl;
+      //cout << "sum = " << sum << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
+      
       critval = new_dchisq[index[i]]; 
-      //cout << "sum = " << sum + new_weight[index[i]] / tot_weight << endl;
-      //cout << "sum = " << sum << endl;
       break;
     }
   }
-      
+    
   return critval;
 }
-
 
 
 
