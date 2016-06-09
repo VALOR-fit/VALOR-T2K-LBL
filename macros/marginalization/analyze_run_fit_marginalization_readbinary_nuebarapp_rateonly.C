@@ -218,7 +218,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg2->SetTextSize(0.05);
     leg2->AddEntry(expEvents,"Number of events data","L");
     leg2->AddEntry(hbeta0,"Number of events prediction","L");
-    leg2->AddEntry(expEvents,Form("P-Value: %lf",hPValueBeta1->GetMean()),"l");
+    leg2->AddEntry(expEvents,Form("P-Value: %1.4f",hPValueBeta1->GetMean()),"l");
     leg2->Draw();
     
     double beta1_error = get_left_error(nevents,hbeta1,hbeta1Unscaled);
