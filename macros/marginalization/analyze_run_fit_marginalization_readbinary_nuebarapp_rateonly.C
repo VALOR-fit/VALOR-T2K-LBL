@@ -35,6 +35,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   TH1D* hbeta1 = 0;
   TH1D* hbeta0Unscaled = 0;
   TH1D* hbeta1Unscaled = 0;
+  std::vector<double> right_tail_weight;
+  std::vector<double> left_tail_weight;
   
   
   treein->SetBranchAddress("best_fit_params",&fparm);
@@ -92,6 +94,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     treein->GetEntry(ientry);
     
     double nevents = (double)hErecoToy->Integral();
+    cout << "Nevents: " << nevents << endl;
     if(nevents<0){
       cerr << endl;
       cerr << "ToyID: " << ToyID << endl;
@@ -146,11 +149,11 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     double nevents = (double)hErecoToy->Integral();
     
     TCanvas *cBeta0Distribution = new TCanvas("cBeta0Distribution","cBeta0Distribution");
-    hbeta0->GetYaxis()->SetTitle("# entries");
-    hbeta0->GetXaxis()->SetTitle("# events");
+    hbeta0->GetYaxis()->SetTitle("Number of entries");
+    hbeta0->GetXaxis()->SetTitle("Number of events");
     hbeta0->SetLineColor(kBlue);
     hbeta0->SetLineWidth(5);
-    hbeta0->GetYaxis()->SetRangeUser(0.02,hbeta0->GetMaximum()*10);
+    hbeta0->GetYaxis()->SetRangeUser(0.0002,hbeta0->GetMaximum()*10);
     hbeta0->GetYaxis()->SetTitleSize(0.06);
     hbeta0->GetXaxis()->SetTitleSize(0.06);
     hbeta0->GetYaxis()->SetTitleFont(132);
@@ -161,7 +164,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     hbeta0->GetXaxis()->SetLabelSize(0.05);
     hbeta0->DrawCopy();
     cBeta0Distribution->SetLogy();
-    TLine *expEvents = new TLine(nevents,0,nevents,hbeta0->GetMaximum());
+    TLine *expEvents = new TLine(nevents,0,nevents,hbeta0->GetBinContent(hbeta0->GetMaximumBin()));
     expEvents->SetLineWidth(4);
     expEvents->SetLineColor(kRed);
     expEvents->SetLineStyle(2);
@@ -171,9 +174,11 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg->SetLineWidth(3);
     leg->SetTextFont(132);
     leg->SetTextSize(0.05);
-    leg->AddEntry(expEvents,"# Events data","L");
-    leg->AddEntry(hbeta0,"# Events prediction","L");
-    leg->AddEntry(expEvents,Form("P-Value: %lf",hPValueBeta0->GetMean()),"l");
+    leg->AddEntry(expEvents,"Number of events data","L");
+    leg->AddEntry(hbeta0,"Number of events prediction","L");
+    char name[200];
+    sprintf(name,"P-Value: %1.4f",hPValueBeta0->GetMean());
+    leg->AddEntry(expEvents,name,"l");
     leg->Draw();
     
     double beta0_error = get_error(nevents,hbeta0,hbeta0Unscaled);
@@ -181,8 +186,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     
     
     TCanvas *cBeta1Distribution = new TCanvas("cBeta1Distribution","cBeta1Distribution");
-    hbeta1->GetYaxis()->SetTitle("# entries");
-    hbeta1->GetXaxis()->SetTitle("# events");
+    hbeta1->GetYaxis()->SetTitle("Number of entries");
+    hbeta1->GetXaxis()->SetTitle("Number of events");
     hbeta1->GetYaxis()->SetRangeUser(0.02,hbeta1->GetMaximum()*10);
     hbeta1->GetYaxis()->SetTitleSize(0.06);
     hbeta1->GetXaxis()->SetTitleSize(0.06);
@@ -209,12 +214,12 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     leg2->SetLineWidth(3);
     leg2->SetTextFont(132);
     leg2->SetTextSize(0.05);
-    leg2->AddEntry(expEvents,"# Events data","L");
-    leg2->AddEntry(hbeta0,"# Events prediction","L");
+    leg2->AddEntry(expEvents,"Number of events data","L");
+    leg2->AddEntry(hbeta0,"Number of events prediction","L");
     leg2->AddEntry(expEvents,Form("P-Value: %lf",hPValueBeta1->GetMean()),"l");
     leg2->Draw();
     
-    double beta1_error = get_error(nevents,hbeta1,hbeta1Unscaled);
+    double beta1_error = get_left_error(nevents,hbeta1,hbeta1Unscaled);
     cout << "Beta1 pvalue: " << pvalue_beta1 << "\t   Error: " <<  beta1_error <<  endl;
     
     TFile fout("nuebarapp_output.root","recreate");
@@ -228,7 +233,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   
   
   TCanvas *cPValueBeta0 = new TCanvas("cPValueBeta0","cPValueBeta0");
-  hPValueBeta0->GetYaxis()->SetTitle("# entries");
+  hPValueBeta0->GetYaxis()->SetTitle("Number of entries");
   hPValueBeta0->GetXaxis()->SetTitle("p-value");
   hPValueBeta0->SetLineWidth(2);
   hPValueBeta0->DrawCopy();
@@ -290,20 +295,20 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   leg->AddEntry(hPValueBeta0,"Total","L");
   leg->AddEntry(hPValueBeta0,Form("Mean: %s",mean0.str().c_str()),"L");
   leg->AddEntry(hPValueBeta0,Form("RMS: %s",rms0.str().c_str()),"L");
-  leg->AddEntry(hPValueBeta0_toyevt0,"# Events = 0","F");
-  leg->AddEntry(hPValueBeta0_toyevt1,"# Events = 1","F");
-  leg->AddEntry(hPValueBeta0_toyevt2,"# Events = 2","F");
-  leg->AddEntry(hPValueBeta0_toyevt3,"# Events = 3","F");
-  leg->AddEntry(hPValueBeta0_toyevt4,"# Events = 4","F");
-  leg->AddEntry(hPValueBeta0_toyevt5,"# Events = 5","F");
-  leg->AddEntry(hPValueBeta0_toyevt6,"# Events = 6","F");
-  leg->AddEntry(hPValueBeta0_toyevt7,"# Events = 7","F");
-  leg->AddEntry(hPValueBeta0_toyevt8,"# Events = 8","F");
-  leg->AddEntry(hPValueBeta0_toyevt9,"# Events = 9","F");
+  leg->AddEntry(hPValueBeta0_toyevt0,"Number of events = 0","F");
+  leg->AddEntry(hPValueBeta0_toyevt1,"Number of events = 1","F");
+  leg->AddEntry(hPValueBeta0_toyevt2,"Number of events = 2","F");
+  leg->AddEntry(hPValueBeta0_toyevt3,"Number of events = 3","F");
+  leg->AddEntry(hPValueBeta0_toyevt4,"Number of events = 4","F");
+  leg->AddEntry(hPValueBeta0_toyevt5,"Number of events = 5","F");
+  leg->AddEntry(hPValueBeta0_toyevt6,"Number of events = 6","F");
+  leg->AddEntry(hPValueBeta0_toyevt7,"Number of events = 7","F");
+  leg->AddEntry(hPValueBeta0_toyevt8,"Number of events = 8","F");
+  leg->AddEntry(hPValueBeta0_toyevt9,"Number of events = 9","F");
   leg->Draw();
   
   TCanvas *cPValueBeta1 = new TCanvas("cPValueBeta1","cPValueBeta1");
-  hPValueBeta1->GetYaxis()->SetTitle("# entries");
+  hPValueBeta1->GetYaxis()->SetTitle("Number of entries");
   hPValueBeta1->GetXaxis()->SetTitle("p-value");
   hPValueBeta1->SetLineWidth(2);
   hPValueBeta1->DrawCopy();
@@ -366,16 +371,16 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
   leg2->AddEntry(hPValueBeta1,"Total","L");
   leg2->AddEntry(hPValueBeta1,Form("Mean: %s",mean1.str().c_str()),"L");
   leg2->AddEntry(hPValueBeta1,Form("RMS: %s",rms1.str().c_str()),"L");
-  leg2->AddEntry(hPValueBeta1_toyevt0,"# Events = 0","F");
-  leg2->AddEntry(hPValueBeta1_toyevt1,"# Events = 1","F");
-  leg2->AddEntry(hPValueBeta1_toyevt2,"# Events = 2","F");
-  leg2->AddEntry(hPValueBeta1_toyevt3,"# Events = 3","F");
-  leg2->AddEntry(hPValueBeta1_toyevt4,"# Events = 4","F");
-  leg2->AddEntry(hPValueBeta1_toyevt5,"# Events = 5","F");
-  leg2->AddEntry(hPValueBeta1_toyevt6,"# Events = 6","F");
-  leg2->AddEntry(hPValueBeta1_toyevt7,"# Events = 7","F");
-  leg2->AddEntry(hPValueBeta1_toyevt8,"# Events = 8","F");
-  leg2->AddEntry(hPValueBeta1_toyevt9,"# Events = 9","F");
+  leg2->AddEntry(hPValueBeta1_toyevt0,"Number of events = 0","F");
+  leg2->AddEntry(hPValueBeta1_toyevt1,"Number of events = 1","F");
+  leg2->AddEntry(hPValueBeta1_toyevt2,"Number of events = 2","F");
+  leg2->AddEntry(hPValueBeta1_toyevt3,"Number of events = 3","F");
+  leg2->AddEntry(hPValueBeta1_toyevt4,"Number of events = 4","F");
+  leg2->AddEntry(hPValueBeta1_toyevt5,"Number of events = 5","F");
+  leg2->AddEntry(hPValueBeta1_toyevt6,"Number of events = 6","F");
+  leg2->AddEntry(hPValueBeta1_toyevt7,"Number of events = 7","F");
+  leg2->AddEntry(hPValueBeta1_toyevt8,"Number of events = 8","F");
+  leg2->AddEntry(hPValueBeta1_toyevt9,"Number of events = 9","F");
   
   leg2->Draw();
   
@@ -417,7 +422,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
 double get_error(double obs, TH1D* hbeta, TH1D* hbetaUnscaled)
 {
   int obs_bin = hbeta->FindBin(obs);
-  double pvalue = hbeta->Integral(obs_bin,hbeta->GetXaxis()->GetNbins());
+  double pvalue = hbeta->Integral(obs_bin,hbeta->GetXaxis()->GetNbins()) /  hbeta->Integral();
   double err_sqrd = 0;
   //  for(int i=1;i<obs_bin;i++)
   //  {
@@ -442,6 +447,46 @@ double get_error(double obs, TH1D* hbeta, TH1D* hbetaUnscaled)
   double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
   err_sqrd = err_sqrd + err;
   
+  //  for(int i=obs_bin;i<=hbeta->GetXaxis()->GetNbins();i++)
+  //  {
+  //    double pd = hbeta->Integral();
+  //    double wr = hbeta->GetBinContent(i)/hbetaUnscaled->GetBinContent(i);
+  //    double br = hbetaUnscaled->GetBinContent(i);
+  //    double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
+  //    err_sqrd = err_sqrd + err;
+  //  }
+  double final_error = TMath::Sqrt(err_sqrd);
+  return final_error;
+}
+
+
+double get_left_error(double obs, TH1D* hbeta, TH1D* hbetaUnscaled)
+{
+  int obs_bin = hbeta->FindBin(obs);
+  double pvalue = hbeta->Integral(1,obs_bin) / hbeta->Integral() ;
+  double err_sqrd = 0;
+  //  for(int i=1;i<obs_bin;i++)
+  //  {
+  //    double pd = hbeta->Integral();
+  //    double wl = hbeta->GetBinContent(i)/hbetaUnscaled->GetBinContent(i);
+  //    double bl = hbetaUnscaled->GetBinContent(i);
+  //    double err = TMath::Power(wl* (pvalue) / pd, 2) * bl;
+  //    err_sqrd = err_sqrd + err;
+  //  }
+  
+  //Right error
+  double pd = hbeta->Integral();
+  double wr = hbeta->Integral(obs_bin+1,hbeta->GetXaxis()->GetNbins())/hbetaUnscaled->Integral(obs_bin+1,hbeta->GetXaxis()->GetNbins());
+  double br = hbetaUnscaled->Integral(obs_bin +1,hbeta->GetXaxis()->GetNbins());
+  double err = TMath::Power(wr* (pvalue) / pd, 2) * br;
+  err_sqrd = err_sqrd + err;
+  
+  //Left error
+  double pd = hbeta->Integral();
+  double wl = hbeta->Integral(1,obs_bin)/hbetaUnscaled->Integral(1,obs_bin);
+  double bl = hbetaUnscaled->Integral(1,obs_bin);
+  double err = TMath::Power(wl* (1 - pvalue) / pd, 2) * bl;
+  err_sqrd = err_sqrd + err;
   
   //  for(int i=obs_bin;i<=hbeta->GetXaxis()->GetNbins();i++)
   //  {
@@ -451,9 +496,28 @@ double get_error(double obs, TH1D* hbeta, TH1D* hbetaUnscaled)
   //    double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
   //    err_sqrd = err_sqrd + err;
   //  }
-  
   double final_error = TMath::Sqrt(err_sqrd);
-  
   return final_error;
-  
 }
+
+double get_error_vector( std::vector<double> _right_tail_weight, std::vector<double> _left_tail_weight, double _pvalue)
+{
+  double error = 0;
+  double total_right=0;
+  double total_left=0;
+  for(int i=0;i<_right_tail_weight.size();i++)
+  {
+    error+= TMath::Power(_right_tail_weight[i]*(1-_pvalue),2);
+    total_right+= _right_tail_weight[i];
+  }
+  
+  for(int i=0;i<_left_tail_weight.size();i++)
+  {
+    error+= TMath::Power(_left_tail_weight[i]*(_pvalue),2);
+    total_left+= _left_tail_weight[i];
+  }
+  
+  error = error / (TMath::Power(total_left + total_right ,2));
+  return TMath::Sqrt(error);
+}
+
