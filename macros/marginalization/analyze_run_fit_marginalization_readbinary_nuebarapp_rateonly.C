@@ -202,13 +202,13 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     expEvents2->SetLineWidth(4);
     expEvents2->SetLineColor(kRed);
     expEvents2->SetLineStyle(2);
-    
+    expEvents2->Draw();
     
     hbeta1->SetLineColor(kBlue);
     hbeta1->SetLineWidth(5);
     hbeta1->DrawCopy();
     cBeta1Distribution->SetLogy();
-    expEvents2->Draw();
+
     TLegend *leg2 = new TLegend(0.54,0.71,0.89,0.91);
     leg2->SetBorderSize(1);
     leg2->SetLineWidth(3);
