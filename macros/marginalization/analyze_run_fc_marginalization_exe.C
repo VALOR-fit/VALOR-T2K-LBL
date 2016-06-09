@@ -42,32 +42,135 @@ void analyze_run_fc_marginalization_exe
  const int  ToySel = 0,
  const bool PrintToy = false,
  
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root",
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root",
- char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root",
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root",
+ //const char * rootfile = "data_run1to6/SKdata_Run16.root", 
+ const char * rootfile = "data_run1to6/Asimov_A_Run16.root", 
+ //const char * rootfile = "data_run1to6/Asimov_B_Run16.root", 
 
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/total_tree_mhalfpi.root",
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/total_tree_halfpi.root",
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/total_tree_pi.root",
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/total_tree_zero.root",
+ const bool use_posterior_predictive = false,
+ const bool use_post_pred_fhc_mulike = true,
+ const bool use_post_pred_fhc_elike  = true,
+ const bool use_post_pred_rhc_mulike = true,
+ const bool use_post_pred_rhc_elike  = true,
 
- //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/fit_fitmarg_fc_dcp_data_normal_nexp_1_3.142_-999.000-job0-_0_0.root",
 
- //const double mydeltachisq = -999 // dcp=0
- const double mydeltachisq = 3.55154 // dcp=0
- //const double mydeltachisq = 2.22061 // dcp=+pi
+
+ //////////////////////
+ //                  //
+ //      Run 1-6     //
+ //                  //
+ //////////////////////
+
+ // 
+ // 10k toys
+ // 
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/total_tree_mhalfpi.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/total_tree_halfpi.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/total_tree_pi.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/total_tree_zero.root", 
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/fit_fitmarg_fc_dcp_data_normal_nexp_1_3.142_-999.000-job0-_0_0.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/fit_fitmarg_fc_dcp_data_check_normal_nexp_1_1.571_-999.000-job0-_0_0.root",
+
+ //
+ // 100k toys
+ // 
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/50k/fit_fitmarg_fc_50k_dcp_0_inverted_0.000_Total100k.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/50k/fit_fitmarg_fc_50k_normal_nexp_0.00_Total100k.root",
+
+ //
+ // 50k toys
+ //
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/50k/fit_fitmarg_fc_50k_normal_nexp_0.00.root",
+ // //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/50k/fit_fitmarg_fc_50k_dcp_0_normal_nexp_0.000.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/50k/fit_fitmarg_fc_50k_inverted_nexp_-1.351.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/50k/fit_fitmarg_fc_50k_dcp_0_inverted_0.000.root",
+ // //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/50k/fit_fitmarg_fc_50k_dcp_0_inverted_0.000_Other.root",
+ 
+ //
+ // Fix sinsqth23 dcp=0 dmsq=2.5E-3
+ // 
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/Fix_sinsqth23_dcp_0_dmsq_2p5/fit_fitmarg_fc_5k_dcp_0_sinsqth23_0p35_dmsq_2p5_normal.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/Fix_sinsqth23_dcp_0_dmsq_2p5/fit_fitmarg_fc_5k_dcp_0_sinsqth23_0p5_dmsq_2p5_normal.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/Fix_sinsqth23_dcp_0_dmsq_2p5/fit_fitmarg_fc_5k_dcp_0_sinsqth23_0p65_dmsq_2p5_normal.root",
+ 
+
+
+
+ //////////////////////
+ //                  //
+ //      Run 1-7     //
+ //                  //
+ //////////////////////
+ 
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-1.571.root",
+ char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_0.000.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_1.571.root",
+ 
+
+
+
+
+
+ 
+ //string mytag = "Asimov_A_dcp_0_sinsqth23_0p65_nh",
+ string mytag = "Run17",
+ 
+ const double mydeltachisq = -999 // Don't draw data deltachisq
+
+ // Data (Run 1-6)
+ //const double mydeltachisq = 3.55154 // dcp=0 - NH
+ //const double mydeltachisq = 4.89553833 // dcp=0 - IH 
+ //const double mydeltachisq = 2.22061 // dcp=+pi - NH
+ //const double mydeltachisq = 1.6567307 // dcp=-1.351 - NH (bf of IH)
+ 
+ // Asimov A (Run 1-6)
+ //const double mydeltachisq = 1.015095234 // true: dcp=0, normal
+ //const double mydeltachisq = 0.437766552 // true: dcp=-1.351, inverted (best-fit IH)
+ //const double mydeltachisq = 2.32427549 // true: dcp=0, inverted
+ 
+ // Asimov B (Run 1-6)
+ //const double mydeltachisq = 0.10003204 // true: dcp=0, normal
+ //const double mydeltachisq = 0.359732151 // true: dcp=-1.351, inverted (best-fit IH)
+ //const double mydeltachisq = 0.1960859299 // true: dcp=0, inverted
  
  
+
   )
 {
+  const double MaxHisto = 20.;
+  const double MinHisto = -5.;
+  const int    NBinHisto = 250.;
+  const double NBinHistoMany = 2500000.;
+  const double newbinwidth = 10000.;
+
   char name[300];
   FitParamList * fparm  = util::NamedParameterList("nuosc3f"); 
   PhysParamList * iparm = new PhysParamList;
   vector<double> myvector;
   vector<double> myvector_nh;
   vector<double> myvector_ih;
+
+  vector<double> vec_like_penalty;
+
+  //TH1D *hdeltachisq_posterior = new TH1D("hdeltachisq_posterior","hdeltachisq_posterior",NBinHisto,MinHisto,MaxHisto);
+  TH1D *hdeltachisq_posterior = new TH1D("hdeltachisq_posterior","hdeltachisq_posterior",NBinHistoMany,MinHisto,MaxHisto);
+
+  //TH2D *hdeltachisq_Vs_chisqweight_posterior = new TH2D("hdeltachisq_Vs_chisqweight_posterior","hdeltachisq_Vs_chisqweight_posterior",NBinHisto,MinHisto,MaxHisto,NBinHisto,250,350);
+  TH2D *hdeltachisq_Vs_chisqweight_posterior = new TH2D("hdeltachisq_Vs_chisqweight_posterior","hdeltachisq_Vs_chisqweight_posterior",NBinHisto,MinHisto,MaxHisto,NBinHisto,0,40);
   
+  TH1D *hWeight_posterior = new TH1D("hWeight_posterior","hWeight_posterior",300,200,500);
+  
+  //TH2D *hbestfit_Vs_chisqweight_posterior = new TH2D("hbestfit_Vs_chisqweight_posterior","hbestfit_Vs_chisqweight_posterior",201,-3.15,3.15,NBinHisto,250,350);
+  TH2D *hbestfit_Vs_chisqweight_posterior = new TH2D("hbestfit_Vs_chisqweight_posterior","hbestfit_Vs_chisqweight_posterior",201,-3.15,3.15,NBinHisto,0,40);
+  TH1D *hbestfit_posterior_1D = new TH1D("hbestfit_posterior_1D","hbestfit_posterior_1D",201,-3.15,3.15);
+  
+  //TH2D *hMHbf_Vs_chisqweight_posterior = new TH2D("hMHbf_Vs_chisqweight_posterior","hMHbf_Vs_chisqweight_posterior",2,0,2,NBinHisto,250,350);
+  TH2D *hMHbf_Vs_chisqweight_posterior = new TH2D("hMHbf_Vs_chisqweight_posterior","hMHbf_Vs_chisqweight_posterior",2,0,2,NBinHisto,0,40);
+  TH1D *hMHbf_posterior_1D = new TH1D("hMHbf_posterior_1D","hMHbf_posterior_1D",2,0,2);
+
   double deltachisq0BF_nh = conv::kBadResult; 
   double deltachisq0BF_ih = conv::kBadResult; 
 
@@ -79,7 +182,7 @@ void analyze_run_fc_marginalization_exe
   }
   
   cout << endl;
-  cout << "Reading file" << infilename << endl;
+  cout << "Reading file " << infilename << endl;
   cout << endl;
 
   TTree *treein = (TTree*)filein->Get("fitnt");
@@ -327,12 +430,58 @@ void analyze_run_fc_marginalization_exe
 #endif
 
 
+
+  // Data files
+
+  TH2D *h_data_1rmu;
+  TH2D *h_data_1re;
+  TH2D *h_data_rhc1rmu;
+  TH2D *h_data_rhc1re;
+  
+  TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile));
+  SuperkObservation * skobs_fakedata = new SuperkObservation;
+  TFile *infile;
+  if(use_posterior_predictive){
+    cout << endl;
+    cout << "PERFORM A POSTERIOR PREDICTIVE ANALYSIS:" << endl;
+    cout << " - use root file " << rootfile2 << endl;
+    cout << endl;
+    infile = new TFile(rootfile2.Data(),"READ");
+    if(!infile->IsOpen()){
+      cout << endl;
+      cout << "The data root file doesn't exist: don't draw data spectra" << endl;
+      cout << endl;
+    }
+    infile->Close();
+    
+    conv::SuperkSample_t s_1rmu    = util::SKSampleFromString("1Rmu"); 
+    conv::SuperkSample_t s_1re     = util::SKSampleFromString("1Re"); 
+    conv::SuperkSample_t s_rhc1rmu = util::SKSampleFromString("RHC1Rmu"); 
+    conv::SuperkSample_t s_rhc1re  = util::SKSampleFromString("RHC1Re"); 
+    
+    //int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
+    bool using_xml_file = false;
+    int iexperiment = 0;
+    skobs_fakedata->Read(rootfile2.Data(),iexperiment,using_xml_file);
+
+    h_data_1rmu    = (TH2D*) skobs_fakedata->TwoDSpectrum(s_1rmu)   ->Clone("h_data_1rmu");
+    h_data_1re     = (TH2D*) skobs_fakedata->TwoDSpectrum(s_1re)    ->Clone("h_data_1re");
+    h_data_rhc1rmu = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1rmu)->Clone("h_data_rhc1rmu");
+    h_data_rhc1re  = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1re) ->Clone("h_data_rhc1re"); 
+
+    cout << "# of events 1Rmu = "    << h_data_1rmu->Integral()    << endl;
+    cout << "# of events 1Re = "     << h_data_1re->Integral()     << endl;
+    cout << "# of events RHC1Rmu = " << h_data_rhc1rmu->Integral() << endl;
+    cout << "# of events RHC1Re = "  << h_data_rhc1re->Integral()  << endl;
+  }
+  
+
   ///////////// Declare histograms //////////////
 
   TH1D *htrue_MH = new TH1D("htrue_MH","htrue_MH",2,0,2);
   TH1D *htrue_1D = new TH1D("htrue_1D","htrue_1D",201,-3.15,3.15);
   TH2D *htrue_2D = new TH2D("htrue_2D","htrue_2D",201,0,0.3,201,-3.15,3.15);
-  
+
   TH1D *hbestfitFullChisq_1D = new TH1D("hbestfitFullChisq_1D","hbestfitFullChisq_1D",201,-3.15,3.15);
   TH2D *hbestfitFullChisq_2D = new TH2D("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,0.3,201,-3.15,3.15);
 
@@ -346,9 +495,11 @@ void analyze_run_fc_marginalization_exe
   TH2D *hbestfit_2D_nh = new TH2D("hbestfit_2D_nh","hbestfit_2D_nh",201,0,0.3,201,-3.15,3.15);
   TH2D *hbestfit_2D_ih = new TH2D("hbestfit_2D_ih","hbestfit_2D_ih",201,0,0.3,201,-3.15,3.15);
 
-  TH1D *hdeltachisq = new TH1D("hdeltachisq","hdeltachisq",100,-5,20);
+  TH1D *hdeltachisq = new TH1D("hdeltachisq","hdeltachisq",NBinHisto,MinHisto,MaxHisto);
+  //TH1D *hdeltachisq = new TH1D("hdeltachisq","hdeltachisq",100,-5,20);
   TH1D *hdeltachisq_nh = new TH1D("hdeltachisq_nh","hdeltachisq_nh",100,-5,20);
   TH1D *hdeltachisq_ih = new TH1D("hdeltachisq_ih","hdeltachisq_ih",100,-5,20);
+
 
   TH1D *hchisqmin = new TH1D("hchisqmin","hchisqmin",200,-10,400); 
   TH1D *hchisqminDiff = new TH1D("hchisqminDiff","hchisqminDiff",100,-0.3,3.3);
@@ -356,6 +507,16 @@ void analyze_run_fc_marginalization_exe
   TH1D *hnchisqcalls = new TH1D("hnchisqcalls","hnchisqcalls",100,0,700);
   TH1D *hfitstatus = new TH1D("hfitstatus","hfitstatus",5,0,5);
 
+  TH1D *hNevents_fhc_mulike = new TH1D("hNevents_fhc_mulike","hNevents_fhc_mulike",50,0,200);
+  TH1D *hNevents_fhc_elike  = new TH1D("hNevents_fhc_elike", "hNevents_fhc_elike" ,50,0,50);
+  TH1D *hNevents_rhc_mulike = new TH1D("hNevents_rhc_mulike","hNevents_rhc_mulike",50,0,100);
+  TH1D *hNevents_rhc_elike  = new TH1D("hNevents_rhc_elike", "hNevents_rhc_elike" ,50,0,20);
+
+  TH1D *hNevents_exp_fhc_mulike = new TH1D("hNevents_exp_fhc_mulike","hNevents_exp_fhc_mulike",100,0,300);
+  TH1D *hNevents_exp_fhc_elike  = new TH1D("hNevents_exp_fhc_elike", "hNevents_exp_fhc_elike" ,100,0,100);
+  TH1D *hNevents_exp_rhc_mulike = new TH1D("hNevents_exp_rhc_mulike","hNevents_exp_rhc_mulike",100,0,100);
+  TH1D *hNevents_exp_rhc_elike  = new TH1D("hNevents_exp_rhc_elike", "hNevents_exp_rhc_elike" ,100,0,10);
+ 
   ///////////////////////////////////////////////
   
   // Check if 1D or 2D fit
@@ -393,13 +554,14 @@ void analyze_run_fc_marginalization_exe
   int NdiffChisq = 0;
   
   int Nentries = treein->GetEntries();
-
+  Nentries = 1000;
+  
   cout << endl;
   cout << "Total # of toys = " << Nentries << endl;
   cout << endl;
 
   for(int ientry=0;ientry<Nentries;ientry++){
-
+    
     if(CheckSingleToy){ 
       Nentries = 1;
       ientry = ToySel;
@@ -407,20 +569,67 @@ void analyze_run_fc_marginalization_exe
 
     treein->GetEntry(ientry);
  
-    if(ientry%100==0){
+    if(ientry%1000==0){
       cout << "Entry " << ientry << endl;
     }
+
+    //
+
+    // double nevents_rhc1re = hErecoToy_RHC1Re->Integral();    
+    // double nevents_1re = hErecoToy_1Re->Integral();    
+    // double nevents_rhc1rmu = hErecoToy_RHC1Rmu->Integral();    
+    // double nevents_1rmu = hErecoToy_1Rmu->Integral();    
+
+    // double nevents_exp_rhc1re = hErecoExp_RHC1Re->Integral();    
+    // double nevents_exp_1re = hErecoExp_1Re->Integral();    
+    // double nevents_exp_rhc1rmu = hErecoExp_RHC1Rmu->Integral();    
+    // double nevents_exp_1rmu = hErecoExp_1Rmu->Integral();    
+    
+     // if(
+    //    (nevents_rhc1re<0) ||
+    //    (nevents_1re<0) ||
+    //    (nevents_rhc1rmu<0) ||
+    //    (nevents_1rmu<0) 
+    //    ){
+    //   cerr << endl;
+    //   cerr << "ToyID: " << ToyID << endl;
+    //   cerr << "# of events RHC1Re  = " << nevents_rhc1re  << " < 0" << endl;
+    //   cerr << "# of events 1Re     = " << nevents_1re     << " < 0" << endl;
+    //   cerr << "# of events RHC1Rmu = " << nevents_rhc1rmu << " < 0" << endl;
+    //   cerr << "# of events 1Rmu    = " << nevents_1rmu    << " < 0" << endl;
+    //   cerr << endl;
+    //   exit(1);
+    // }
+    
+    //hNevents_rhc_elike->Fill(nevents_rhc1re);    
+    //hNevents_fhc_elike->Fill(nevents_1re);    
+    //hNevents_rhc_mulike->Fill(nevents_rhc1rmu);    
+    //hNevents_fhc_mulike->Fill(nevents_1rmu);
+
+    // hNevents_exp_rhc_elike->Fill(nevents_exp_rhc1re);    
+    // hNevents_exp_fhc_elike->Fill(nevents_exp_1re);    
+    // hNevents_exp_rhc_mulike->Fill(nevents_exp_rhc1rmu);    
+    // hNevents_exp_fhc_mulike->Fill(nevents_exp_1rmu);
+
+    //
+
+
+
 
     if(ToyID==0) cout << "ToyID = " << ToyID << endl;
 
 
     //if(deltachisq0BF_glob<2) continue;
     //if(*MH_glob=="normal") continue; // plots a sinistra
-
+    //if(*MH_glob=="inverted") continue; // plots a sinistra
+    //if(bestfit0_glob > 0) continue;
+    //if(bestfit0_glob < 0) continue;
+    
      // Print output
     
     if(PrintToy){
       //cout << *fparm << endl;
+      cout << std::setprecision(9);
       cout << "/////////////////" << endl;
       cout << endl;
       cout << "Toy " << ientry << endl;
@@ -464,8 +673,7 @@ void analyze_run_fc_marginalization_exe
       if(IsFit2D) cout << " - bestfit1 = " << bestfitFullChisq1_glob << endl; 
       cout << endl;
     }
-
-    
+   
     // True variables
 
     if(*trueMH=="normal")        htrue_MH->Fill(0.5);
@@ -528,6 +736,7 @@ void analyze_run_fc_marginalization_exe
     }
     
     // Global minimum
+    
     hdeltachisq->Fill(deltachisq0BF_used);
     myvector.push_back(deltachisq0BF_used);
     hchisqmin->Fill(chisqmin_glob);
@@ -541,6 +750,40 @@ void analyze_run_fc_marginalization_exe
     if(deltachisq0BF_used <= CRITVAL_95CL_1D   ) Nin_95CL++;
     if(deltachisq0BF_used <= CRITVAL_2SIGMA_1D ) Nin_2sigma++;
         
+    // Get Likelihood weights --> penalty term
+    long double toy_weight = 1.;
+    long double toy_chisq = 0;
+    if(use_posterior_predictive){
+      if(use_post_pred_fhc_mulike) 
+	toy_chisq += calc_chisq(h_data_1rmu,   hErecoExp_1Rmu);    // FHC 1Rmu
+      if(use_post_pred_fhc_elike)  
+	toy_chisq += calc_chisq(h_data_1re,    hErecoExp_1Re);     // FHC 1Re
+      if(use_post_pred_rhc_mulike) 
+	toy_chisq += calc_chisq(h_data_rhc1rmu,hErecoExp_RHC1Rmu); // RHC 1Rmu
+      if(use_post_pred_rhc_elike) 
+	toy_chisq += calc_chisq(h_data_rhc1re, hErecoExp_RHC1Re);  // RHC 1Re
+      toy_weight = TMath::Exp(-1*toy_chisq/2.);
+    }
+    vec_like_penalty.push_back(toy_weight);
+
+    hdeltachisq_posterior->Fill(deltachisq0BF_used,toy_weight);
+    hdeltachisq_Vs_chisqweight_posterior->Fill(deltachisq0BF_used,toy_chisq);
+    hWeight_posterior->Fill(toy_weight);
+    hbestfit_posterior_1D->Fill(bestfit0_glob,toy_weight);
+    hbestfit_Vs_chisqweight_posterior->Fill(bestfit0_glob,toy_chisq);
+
+    if(*MH_glob=="normal"){
+      hMHbf_posterior_1D->Fill(0.1,toy_weight);
+      //hMHbf_Vs_chisqweight_posterior->Fill(0.1,toy_chisq);
+    }
+    else if(*MH_glob=="inverted"){
+      hMHbf_posterior_1D->Fill(1.1,toy_weight);
+      //hMHbf_Vs_chisqweight_posterior->Fill(1.1,toy_chisq);
+    }
+    
+    //cout << "toy_chisq = " << toy_chisq << " - toy_weight = " << toy_weight << endl;
+ 
+
     // Full chisq distribution 
     hchisqminFullChisq->Fill(chisqminFullChisq_glob);
     hbestfitFullChisq_2D->Fill(bestfitFullChisq0_glob,bestfitFullChisq1_glob);
@@ -565,24 +808,26 @@ void analyze_run_fc_marginalization_exe
 	NdiffChisq++;
       }
     }
-    // Check that full chisq min is equal to minimized best-fit
-    if(bestfitFullChisq0_glob!=conv::kBadResult){
-      if( fabs(bestfit0_glob-bestfitFullChisq0_glob)>1.E-6 ){
-	double diff = bestfit0_glob-bestfitFullChisq0_glob;
-	//hchisqminDiff->Fill(diff);
-	cout << std::setprecision(8);
-	cout << endl;
-	cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
-	cout << "chisqmin_glob = " << chisqmin_glob
-	     << " - bestfit0_glob = " << bestfit0_glob
-	     << " - bestfit1_glob = " << bestfit1_glob << endl;
-	cout << "chisqminFullChisq_glob = " << chisqminFullChisq_glob 
-	     << " - bestfitFullChisq0_glob = " << bestfitFullChisq0_glob 
-	     << " - bestfitFullChisq1_glob = " << bestfitFullChisq1_glob << endl;
-	cout << "Difference = " << diff << endl;
-	cout << endl; 
-      }
-    }
+    //   // Check that full chisq min is equal to minimized best-fit
+    //   if(bestfitFullChisq0_glob!=conv::kBadResult){
+    //     if( fabs(bestfit0_glob-bestfitFullChisq0_glob)>1.E-6 ){
+    // 	double diff = bestfit0_glob-bestfitFullChisq0_glob;
+    // 	//hchisqminDiff->Fill(diff);
+    // 	cout << std::setprecision(8);
+    // 	cout << endl;
+    // 	cout << "Toy " << ientry << " --> ToyID = " << ToyID << endl;
+    // 	cout << "chisqmin_glob = " << chisqmin_glob
+    // 	     << " - bestfit0_glob = " << bestfit0_glob
+    // 	     << " - bestfit1_glob = " << bestfit1_glob << endl;
+    // 	cout << "chisqminFullChisq_glob = " << chisqminFullChisq_glob 
+    // 	     << " - bestfitFullChisq0_glob = " << bestfitFullChisq0_glob 
+    // 	     << " - bestfitFullChisq1_glob = " << bestfitFullChisq1_glob << endl;
+    // 	cout << "Difference = " << diff << endl;
+    // 	cout << endl; 
+    //     }
+    //   }
+    
+    
   } // end loop over tree entries
 
   // Calculate coverage
@@ -601,15 +846,11 @@ void analyze_run_fc_marginalization_exe
   double FracIn_95CL_ih   = (double) Nin_95CL_ih   / (double) Nentries;
   double FracIn_2sigma_ih = (double) Nin_2sigma_ih / (double) Nentries;  
   
-  // Calculate p-value
-
-  double pvalue = GetPvalue_rightside(myvector,mydeltachisq);
- 
-  // Calculate the quantile (p-value = gauss area of both tails --> divide by 2)
-  
+  // Calculate p-value and quantile (p-value = gauss area of both tails --> divide by 2)
+  double pvalue = GetPvalue_rightside(myvector,mydeltachisq);  
   TF1 f2("f2","ROOT::Math::gaussian_quantile(1.-(x/2.),1.) ",0.,1.);
   double zscore = f2.Eval(pvalue); 
-  
+
   // Calculate critical value
   
   double FCCritVal_1sigma = CalcDLcrit(myvector,CLfrac_1sigma*100.,0.); 
@@ -639,6 +880,48 @@ void analyze_run_fc_marginalization_exe
     FCCritVal_2sigma_ih = CalcDLcrit(myvector_ih,CLfrac_2sigma*100.,0.); 
   }
 
+  
+  // Compute p-value and quantile (use likelihood weights from data sets)
+  double pvalue_posterior = GetPvalue_posterior_rightside(myvector,vec_like_penalty,mydeltachisq);  
+  double pvalue_posterior_histo = GetPvalue_Histo_rightside(hdeltachisq_posterior,mydeltachisq);  
+  double zscore_posterior = f2.Eval(pvalue_posterior); 
+ 
+  double FCCritVal_posterior_1sigma = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_1sigma*100.,0.);
+  double FCCritVal_posterior_90CL   = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,0.);
+  double FCCritVal_posterior_95CL   = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_95CL*100.,0.);
+  double FCCritVal_posterior_2sigma = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,0.);
+
+  double FCCritVal_posterior_1sigma_histo = CalcDLcrit(hdeltachisq_posterior,CLfrac_1sigma);
+  double FCCritVal_posterior_90CL_histo   = CalcDLcrit(hdeltachisq_posterior,CLfrac_90CL);
+  double FCCritVal_posterior_95CL_histo   = CalcDLcrit(hdeltachisq_posterior,CLfrac_95CL);
+  double FCCritVal_posterior_2sigma_histo = CalcDLcrit(hdeltachisq_posterior,CLfrac_2sigma);
+
+  // Compute errors on the posterior predictive p-value and critical values
+
+  double err_1sigma = get_pvalue_error_vector(myvector,vec_like_penalty,FCCritVal_posterior_1sigma,1.-CLfrac_1sigma); // pass the "p-value"
+  double FCCritVal_posterior_1sigma_perr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_1sigma*100.,+err_1sigma);
+  FCCritVal_posterior_1sigma_perr = fabs(FCCritVal_posterior_1sigma - FCCritVal_posterior_1sigma_perr);
+  double FCCritVal_posterior_1sigma_merr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_1sigma*100.,-err_1sigma);
+  FCCritVal_posterior_1sigma_merr = fabs(FCCritVal_posterior_1sigma - FCCritVal_posterior_1sigma_merr);
+    
+  double err_90CL = get_pvalue_error_vector(myvector,vec_like_penalty,FCCritVal_posterior_90CL_histo,1.-CLfrac_90CL); // pass the "p-value"
+  double FCCritVal_posterior_90CL_perr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,+err_90CL);
+  FCCritVal_posterior_90CL_perr = fabs(FCCritVal_posterior_90CL - FCCritVal_posterior_90CL_perr);
+  double FCCritVal_posterior_90CL_merr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,-err_90CL);
+  FCCritVal_posterior_90CL_merr = fabs(FCCritVal_posterior_90CL - FCCritVal_posterior_90CL_merr);
+
+  double err_2sigma = get_pvalue_error_vector(myvector,vec_like_penalty,FCCritVal_posterior_2sigma_histo,1.-CLfrac_2sigma); // pass the "p-value"
+  double FCCritVal_posterior_2sigma_perr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,+err_2sigma);
+  FCCritVal_posterior_2sigma_perr = fabs(FCCritVal_posterior_2sigma - FCCritVal_posterior_2sigma_perr);
+  double FCCritVal_posterior_2sigma_merr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,-err_2sigma);
+  FCCritVal_posterior_2sigma_merr = fabs(FCCritVal_posterior_2sigma - FCCritVal_posterior_2sigma_merr);
+
+  double err_pvalue = get_pvalue_error_vector(myvector,vec_like_penalty,mydeltachisq,pvalue_posterior); 
+  double zscore_posterior_perr = f2.Eval(pvalue_posterior-err_pvalue); // smaller p-value gives larger significance 
+  zscore_posterior_perr = fabs(zscore_posterior-zscore_posterior_perr); 
+  double zscore_posterior_merr = f2.Eval(pvalue_posterior+err_pvalue); // larger p-value gives lower significance 
+  zscore_posterior_merr = fabs(zscore_posterior-zscore_posterior_merr); 
+
 
   // Draw histograms
 
@@ -646,12 +929,12 @@ void analyze_run_fc_marginalization_exe
   if(IsFit2D){
     htrue_2D->GetXaxis()->SetTitle(namepar0.c_str());
     htrue_2D->GetYaxis()->SetTitle(namepar1.c_str());
-    htrue_2D->DrawCopy("colz");
+    htrue_2D->DrawClone("colz");
   }
   else{
     htrue_1D->GetYaxis()->SetTitle("# entries");
     htrue_1D->GetXaxis()->SetTitle(namepar0.c_str());
-    htrue_1D->DrawCopy();
+    htrue_1D->DrawClone();
   }
 
   TCanvas *ctrue_MH = new TCanvas("ctrue_MH","ctrue_MH");
@@ -660,56 +943,98 @@ void analyze_run_fc_marginalization_exe
   htrue_MH->GetXaxis()->SetBinLabel(2,"inverted");
   htrue_MH->GetXaxis()->SetTitle("True Mass Hierarchy");
   htrue_MH->GetYaxis()->SetTitle("# entries");
-  htrue_MH->Draw();
+  htrue_MH->DrawClone();
+
+
+  TCanvas *cNevents_fhc_mulike = new TCanvas("cNevents_fhc_mulike","cNevents_fhc_mulike");
+  hNevents_fhc_mulike->GetXaxis()->SetTitle("# of events");
+  hNevents_fhc_mulike->GetYaxis()->SetTitle("# of entries");
+  hNevents_fhc_mulike->DrawClone();
+
+  TCanvas *cNevents_fhc_elike = new TCanvas("cNevents_fhc_elike","cNevents_fhc_elike");
+  hNevents_fhc_elike->GetXaxis()->SetTitle("# of events");
+  hNevents_fhc_elike->GetYaxis()->SetTitle("# of entries");
+  hNevents_fhc_elike->DrawClone();
+
+  TCanvas *cNevents_rhc_mulike = new TCanvas("cNevents_rhc_mulike","cNevents_rhc_mulike");
+  hNevents_rhc_mulike->GetXaxis()->SetTitle("# of events");
+  hNevents_rhc_mulike->GetYaxis()->SetTitle("# of entries");
+  hNevents_rhc_mulike->DrawClone();
+
+  TCanvas *cNevents_rhc_elike = new TCanvas("cNevents_rhc_elike","cNevents_rhc_elike");
+  hNevents_rhc_elike->GetXaxis()->SetTitle("# of events");
+  hNevents_rhc_elike->GetYaxis()->SetTitle("# of entries");
+  hNevents_rhc_elike->DrawClone();
+    
+
+  TCanvas *cNevents_exp_fhc_mulike = new TCanvas("cNevents_exp_fhc_mulike","cNevents_exp_fhc_mulike");
+  hNevents_exp_fhc_mulike->GetXaxis()->SetTitle("# of events");
+  hNevents_exp_fhc_mulike->GetYaxis()->SetTitle("# of entries");
+  hNevents_exp_fhc_mulike->DrawClone();
+
+  TCanvas *cNevents_exp_fhc_elike = new TCanvas("cNevents_exp_fhc_elike","cNevents_exp_fhc_elike");
+  hNevents_exp_fhc_elike->GetXaxis()->SetTitle("# of events");
+  hNevents_exp_fhc_elike->GetYaxis()->SetTitle("# of entries");
+  hNevents_exp_fhc_elike->DrawClone();
+
+  TCanvas *cNevents_exp_rhc_mulike = new TCanvas("cNevents_exp_rhc_mulike","cNevents_exp_rhc_mulike");
+  hNevents_exp_rhc_mulike->GetXaxis()->SetTitle("# of events");
+  hNevents_exp_rhc_mulike->GetYaxis()->SetTitle("# of entries");
+  hNevents_exp_rhc_mulike->DrawClone();
+
+  TCanvas *cNevents_exp_rhc_elike = new TCanvas("cNevents_exp_rhc_elike","cNevents_exp_rhc_elike");
+  hNevents_exp_rhc_elike->GetXaxis()->SetTitle("# of events");
+  hNevents_exp_rhc_elike->GetYaxis()->SetTitle("# of entries");
+  hNevents_exp_rhc_elike->DrawClone();
 
 
 
-  TCanvas *cbestfit_nh = new TCanvas("hbestfit_nh","hbestfit_nh");
+  TCanvas *cbestfit_nh = new TCanvas("cbestfit_nh","cbestfit_nh");
   if(IsFit2D){
     hbestfit_2D_nh->GetXaxis()->SetTitle(namepar0.c_str());
     hbestfit_2D_nh->GetYaxis()->SetTitle(namepar1.c_str());
-    hbestfit_2D_nh->DrawCopy("colz");
+    hbestfit_2D_nh->DrawClone("colz");
   }
   else{
     hbestfit_1D_nh->GetYaxis()->SetTitle("# entries");
     hbestfit_1D_nh->GetXaxis()->SetTitle(namepar0.c_str());
-    hbestfit_1D_nh->DrawCopy();
+    hbestfit_1D_nh->DrawClone();
   }
 
   TCanvas *cbestfit_ih = new TCanvas("hbestfit_ih","hbestfit_ih");
   if(IsFit2D){
     hbestfit_2D_ih->GetXaxis()->SetTitle(namepar0.c_str());
     hbestfit_2D_ih->GetYaxis()->SetTitle(namepar1.c_str());
-    hbestfit_2D_ih->DrawCopy("colz");
+    hbestfit_2D_ih->DrawClone("colz");
   }
   else{
     hbestfit_1D_ih->GetYaxis()->SetTitle("# entries");
     hbestfit_1D_ih->GetXaxis()->SetTitle(namepar0.c_str());
-    hbestfit_1D_ih->DrawCopy();
+    hbestfit_1D_ih->DrawClone();
   }
 
   TCanvas *cbestfit = new TCanvas("hbestfit","hbestfit");
   if(IsFit2D){
     hbestfit_2D->GetXaxis()->SetTitle(namepar0.c_str());
     hbestfit_2D->GetYaxis()->SetTitle(namepar1.c_str());
-    hbestfit_2D->DrawCopy("colz");
+    hbestfit_2D->DrawClone("colz");
   }
   else{
     hbestfit_1D->GetYaxis()->SetTitle("# entries");
     hbestfit_1D->GetXaxis()->SetTitle(namepar0.c_str());
-    hbestfit_1D->DrawCopy();
+    hbestfit_1D->DrawClone();
   }
 
   TCanvas *cbestfitFullChisq = new TCanvas("hbestfitFullChisq","hbestfitFullChisq");
   if(IsFit2D){
     hbestfitFullChisq_2D->GetXaxis()->SetTitle(namepar0.c_str());
     hbestfitFullChisq_2D->GetYaxis()->SetTitle(namepar1.c_str());
-    hbestfitFullChisq_2D->DrawCopy("colz");
+    hbestfitFullChisq_2D->DrawClone("colz");
   }
   else{
     hbestfitFullChisq_1D->GetYaxis()->SetTitle("# entries");
     hbestfitFullChisq_1D->GetXaxis()->SetTitle(namepar0.c_str());
-    hbestfitFullChisq_1D->DrawCopy();
+    hbestfitFullChisq_1D->DrawClone();
   }
 
   TCanvas *cbestfit_MH = new TCanvas("hbestfit_MH","hbestfit_MH");
@@ -718,54 +1043,54 @@ void analyze_run_fc_marginalization_exe
   hbestfit_MH->GetXaxis()->SetBinLabel(2,"inverted");
   hbestfit_MH->GetXaxis()->SetTitle("Mass Hierarchy");
   hbestfit_MH->GetYaxis()->SetTitle("# entries");
-  hbestfit_MH->Draw();
+  hbestfit_MH->DrawClone();
 
   TCanvas *cchisq = new TCanvas("cchisq","cchisq");
   hchisqmin->GetYaxis()->SetTitle("# entries");
   hchisqmin->GetXaxis()->SetTitle("#chi^{2}");
-  hchisqmin->DrawCopy();
+  hchisqmin->DrawClone();
 
   TCanvas *cchisqminDiff = new TCanvas("hchisqminDiff","hchisqminDiff");
   hchisqminDiff->GetYaxis()->SetTitle("# entries");
   hchisqminDiff->GetXaxis()->SetTitle("#chi^{2}_{Descent} - #chi^{2}_{Global}");
-  hchisqminDiff->DrawCopy();
+  hchisqminDiff->DrawClone();
 
 
   TCanvas *cdeltachisq = new TCanvas("cdeltachisq","cdeltachisq");
   hdeltachisq->GetYaxis()->SetTitle("# entries");
   hdeltachisq->GetXaxis()->SetTitle("#Delta #chi^{2}");
-  hdeltachisq->DrawCopy();
+  hdeltachisq->DrawClone();
   TLine *lcritval_90CL = new TLine(FCCritVal_90CL,0,FCCritVal_90CL,hdeltachisq->GetMaximum());
   TLine *lcritval_2sigma = new TLine(FCCritVal_2sigma,0,FCCritVal_2sigma,hdeltachisq->GetMaximum());
   lcritval_90CL->SetLineColor(kRed);
   lcritval_2sigma->SetLineColor(kBlue);
   lcritval_90CL->SetLineWidth(2);
   lcritval_2sigma->SetLineWidth(2);
-  lcritval_90CL->Draw();
-  lcritval_2sigma->Draw();
+  lcritval_90CL->DrawClone();
+  lcritval_2sigma->DrawClone();
   TLine *ldeltachisq_data = new TLine(mydeltachisq,0,mydeltachisq,hdeltachisq->GetMaximum());
   ldeltachisq_data->SetLineColor(kGreen);
   ldeltachisq_data->SetLineWidth(2);
-  if(mydeltachisq>0.) ldeltachisq_data->Draw();
-  TLegend *ldeltachisq = new TLegend(0.6,0.45,0.8,0.75);
+  if(mydeltachisq>0.) ldeltachisq_data->DrawClone();
+  TLegend *ldeltachisq = new TLegend(0.4,0.6,0.6,0.9);
   ldeltachisq->SetFillColor(0);
   ldeltachisq->SetLineColor(0);
   ldeltachisq->SetTextFont(132);
   ldeltachisq->SetTextSize(0.07);
-  ldeltachisq->AddEntry(lcritval_90CL,TString::Format("#Delta #chi^{2}_{crit}(90CL) = %1.2f",FCCritVal_90CL).Data(),"l");
+  ldeltachisq->AddEntry(lcritval_90CL,TString::Format("#Delta #chi^{2}_{crit}(90%%CL) = %1.2f",FCCritVal_90CL).Data(),"l");
   ldeltachisq->AddEntry(lcritval_2sigma,TString::Format("#Delta #chi^{2}_{crit} (2#sigma) = %1.2f",FCCritVal_2sigma).Data(),"l");
   if(mydeltachisq>0.) ldeltachisq->AddEntry(ldeltachisq_data,TString::Format("#Delta #chi^{2}_{data} = %1.3f",mydeltachisq).Data(),"l");
-  ldeltachisq->Draw();
-  TLatex *latPvalue = new TLatex(hdeltachisq->GetXaxis()->GetBinLowEdge(5),hdeltachisq->GetMaximum()*0.7, TString::Format("P-value = %1.3f",pvalue).Data() );
-  latPvalue->Draw("same");
-  TLatex *latZscore = new TLatex(hdeltachisq->GetXaxis()->GetBinLowEdge(5),hdeltachisq->GetMaximum()*0.7, TString::Format("Z = %1.2f#sigma",zscore).Data() );
-  latZscore->Draw("same");
+  ldeltachisq->DrawClone();
+  TLatex *latPvalue = new TLatex(hdeltachisq->GetXaxis()->GetBinLowEdge(50),hdeltachisq->GetMaximum()*0.3, TString::Format("P-value = %1.3f",pvalue).Data() );
+  if(mydeltachisq>0.) latPvalue->Draw("same");
+  TLatex *latZscore = new TLatex(hdeltachisq->GetXaxis()->GetBinLowEdge(50),hdeltachisq->GetMaximum()*0.1, TString::Format("Z = %1.2f#sigma",zscore).Data() );
+  if(mydeltachisq>0.) latZscore->Draw("same");
 
 
   TCanvas *cdeltachisq_nh = new TCanvas("cdeltachisq_nh","cdeltachisq_nh");
   hdeltachisq_nh->GetYaxis()->SetTitle("# entries");
   hdeltachisq_nh->GetXaxis()->SetTitle("#Delta #chi^{2}");
-  hdeltachisq_nh->DrawCopy();
+  hdeltachisq_nh->DrawClone();
   TLine *lcritval_90CL_nh;
   TLine *lcritval_2sigma_nh;
   if(*trueMH=="normal"){
@@ -773,25 +1098,25 @@ void analyze_run_fc_marginalization_exe
     lcritval_2sigma_nh = new TLine(FCCritVal_2sigma_nh,0,FCCritVal_2sigma_nh,hdeltachisq_nh->GetMaximum());
     lcritval_90CL_nh->SetLineColor(kRed);
     lcritval_2sigma_nh->SetLineColor(kBlue);
-    lcritval_90CL_nh->Draw();
-    lcritval_2sigma_nh->Draw();
+    lcritval_90CL_nh->DrawClone();
+    lcritval_2sigma_nh->DrawClone();
   }
-  if(mydeltachisq>0.) ldeltachisq_data->Draw();
+  if(mydeltachisq>0.) ldeltachisq_data->DrawClone();
   TLegend *ldeltachisq_nh = new TLegend(0.6,0.45,0.8,0.75);
   ldeltachisq_nh->SetFillColor(0);
   ldeltachisq_nh->SetLineColor(0);
   ldeltachisq_nh->SetTextFont(132);
   ldeltachisq_nh->SetTextSize(0.07);
-  ldeltachisq_nh->AddEntry(lcritval_90CL_nh,TString::Format("#Delta #chi^{2}_{crit}(90CL) = %1.2f",FCCritVal_90CL_nh).Data(),"l");
+  ldeltachisq_nh->AddEntry(lcritval_90CL_nh,TString::Format("#Delta #chi^{2}_{crit}(90%%CL) = %1.2f",FCCritVal_90CL_nh).Data(),"l");
   ldeltachisq_nh->AddEntry(lcritval_2sigma_nh,TString::Format("#Delta #chi^{2}_{crit} (2#sigma) = %1.2f",FCCritVal_2sigma_nh).Data(),"l");
   if(mydeltachisq>0.) ldeltachisq_nh->AddEntry(ldeltachisq_data,TString::Format("#Delta #chi^{2}_{data} = %1.3f",mydeltachisq).Data(),"l");
-  ldeltachisq_nh->Draw();
+  ldeltachisq_nh->DrawClone();
 
 
   TCanvas *cdeltachisq_ih = new TCanvas("cdeltachisq_ih","cdeltachisq_ih");
   hdeltachisq_ih->GetYaxis()->SetTitle("# entries");
   hdeltachisq_ih->GetXaxis()->SetTitle("#Delta #chi^{2}");
-  hdeltachisq_ih->DrawCopy();
+  hdeltachisq_ih->DrawClone();
   TLine *lcritval_90CL_ih;
   TLine *lcritval_2sigma_ih;
   if(*trueMH=="inverted"){
@@ -799,20 +1124,107 @@ void analyze_run_fc_marginalization_exe
     lcritval_2sigma_ih = new TLine(FCCritVal_2sigma_ih,0,FCCritVal_2sigma_ih,hdeltachisq_ih->GetMaximum());
     lcritval_90CL_ih->SetLineColor(kRed);
     lcritval_2sigma_ih->SetLineColor(kBlue);
-    lcritval_90CL_ih->Draw();
-    lcritval_2sigma_ih->Draw();
+    lcritval_90CL_ih->DrawClone();
+    lcritval_2sigma_ih->DrawClone();
   }
-  if(mydeltachisq>0.) ldeltachisq_data->Draw();
+  if(mydeltachisq>0.) ldeltachisq_data->DrawClone();
   TLegend *ldeltachisq_ih = new TLegend(0.6,0.45,0.8,0.75);
   ldeltachisq_ih->SetFillColor(0);
   ldeltachisq_ih->SetLineColor(0);
   ldeltachisq_ih->SetTextFont(132);
   ldeltachisq_ih->SetTextSize(0.07);
-  ldeltachisq_ih->AddEntry(lcritval_90CL_ih,TString::Format("#Delta #chi^{2}_{crit}(90CL) = %1.2f",FCCritVal_90CL_ih).Data(),"l");
+  ldeltachisq_ih->AddEntry(lcritval_90CL_ih,TString::Format("#Delta #chi^{2}_{crit}(90%%CL) = %1.2f",FCCritVal_90CL_ih).Data(),"l");
   ldeltachisq_ih->AddEntry(lcritval_2sigma_ih,TString::Format("#Delta #chi^{2}_{crit} (2#sigma) = %1.2f",FCCritVal_2sigma_ih).Data(),"l");
   if(mydeltachisq>0.) ldeltachisq_ih->AddEntry(ldeltachisq_data,TString::Format("#Delta #chi^{2}_{data} = %1.3f",mydeltachisq).Data(),"l");
-  ldeltachisq_ih->Draw();
+  ldeltachisq_ih->DrawClone();
 
+
+
+  // Posterior
+
+  TCanvas *cdeltachisq_posterior = new TCanvas("cdeltachisq_posterior","cdeltachisq_posterior");
+  hdeltachisq_posterior->Scale(1. / hdeltachisq_posterior->Integral());
+  double mergebin = newbinwidth; 
+  hdeltachisq_posterior->Rebin(mergebin);
+  hdeltachisq_posterior->GetXaxis()->SetTitle("#Delta #chi^{2} posterior");
+  hdeltachisq_posterior->GetYaxis()->SetTitle("# of entries");
+  hdeltachisq_posterior->DrawClone();
+  TLine *lcritval_1sigma_post = new TLine(FCCritVal_posterior_1sigma,0,FCCritVal_posterior_1sigma,hdeltachisq_posterior->GetMaximum());
+  TLine *lcritval_90CL_post = new TLine(FCCritVal_posterior_90CL,0,FCCritVal_posterior_90CL,hdeltachisq_posterior->GetMaximum());
+  TLine *lcritval_2sigma_post = new TLine(FCCritVal_posterior_2sigma,0,FCCritVal_posterior_2sigma,hdeltachisq_posterior->GetMaximum());
+  lcritval_90CL_post->SetLineColor(kRed);
+  lcritval_2sigma_post->SetLineColor(kBlue);
+  lcritval_90CL_post->SetLineWidth(2);
+  lcritval_2sigma_post->SetLineWidth(2);
+  lcritval_90CL_post->DrawClone();
+  lcritval_2sigma_post->DrawClone();
+
+  ldeltachisq_data->SetLineColor(kGreen);
+  ldeltachisq_data->SetLineWidth(2);
+  ldeltachisq_data->DrawClone();
+
+  TLegend *ldeltachisq_post = new TLegend(0.4,0.6,0.6,0.9);
+  ldeltachisq_post->SetFillColor(0);
+  ldeltachisq_post->SetLineColor(0);
+  ldeltachisq_post->SetTextFont(132);
+  ldeltachisq_post->SetTextSize(0.07);
+  ldeltachisq_post->AddEntry(lcritval_90CL_post,TString::Format("#Delta #chi^{2}_{crit}(90%%CL) = %1.2f",FCCritVal_posterior_90CL).Data(),"l");
+  ldeltachisq_post->AddEntry(lcritval_2sigma_post,TString::Format("#Delta #chi^{2}_{crit} (2#sigma) = %1.2f",FCCritVal_posterior_2sigma).Data(),"l");
+  if(mydeltachisq>0.) ldeltachisq_post->AddEntry(ldeltachisq_data,TString::Format("#Delta #chi^{2}_{data} = %1.3f",mydeltachisq).Data(),"l");
+  ldeltachisq_post->DrawClone();
+  TLatex *latPvalue_post = new TLatex(hdeltachisq_posterior->GetXaxis()->GetBinLowEdge(120),hdeltachisq_posterior->GetMaximum()*0.3, TString::Format("P-value = %1.3f",pvalue_posterior).Data() );
+  if(mydeltachisq>0.) latPvalue_post->Draw("same");
+  TLatex *latZscore_post = new TLatex(hdeltachisq_posterior->GetXaxis()->GetBinLowEdge(120),hdeltachisq_posterior->GetMaximum()*0.1, TString::Format("Z = %1.2f#sigma",zscore_posterior).Data() );
+  if(mydeltachisq>0.) latZscore_post->Draw("same");
+
+
+  TCanvas *cWeight_posterior = new TCanvas("cWeight_posterior","cWeight_posterior");
+  hWeight_posterior->GetXaxis()->SetTitle("L (data,fake exp)");
+  hWeight_posterior->GetYaxis()->SetTitle("# of entries");
+  hWeight_posterior->DrawClone();
+
+  TCanvas *cdeltachisq_Vs_chisqweight_posterior = new TCanvas("cdeltachisq_Vs_chisqweight_posterior","cdeltachisq_Vs_chisqweight_posterior");
+  hdeltachisq_Vs_chisqweight_posterior->GetXaxis()->SetTitle("test statistic");
+  hdeltachisq_Vs_chisqweight_posterior->GetYaxis()->SetTitle("#chi^{2} (data,fake exp)");
+  hdeltachisq_Vs_chisqweight_posterior->Draw("colz");
+
+  TCanvas *cbestfit_posterior_1D = new TCanvas("cbestfit_posterior_1D","cbestfit_posterior_1D");
+  hbestfit_posterior_1D->GetXaxis()->SetTitle("#delta_{CP} best-fit posterior");
+  hbestfit_posterior_1D->GetYaxis()->SetTitle("# of entries");
+  hbestfit_posterior_1D->DrawClone();
+
+  TCanvas *cbestfit_Vs_chisqweight_posterior = new TCanvas("cbestfit_Vs_chisqweight_posterior","cbestfit_Vs_chisqweight_posterior");
+  hbestfit_Vs_chisqweight_posterior->GetXaxis()->SetTitle("#delta_{CP} best-fit posterior");
+  hbestfit_Vs_chisqweight_posterior->GetYaxis()->SetTitle("#chi^{2} (data,fake exp)");
+  hbestfit_Vs_chisqweight_posterior->Draw("colz");
+
+  TCanvas *cMHbf_posterior_1D = new TCanvas("cMHbf_posterior_1D","cMHbf_posterior_1D");
+  hMHbf_posterior_1D->GetXaxis()->SetTitle("Mass Hierarchy best-fit posterior");
+  hMHbf_posterior_1D->GetYaxis()->SetTitle("# of entries");
+  hMHbf_posterior_1D->DrawClone();
+
+  TCanvas *cMHbf_Vs_chisqweight_posterior = new TCanvas("cMHbf_Vs_chisqweight_posterior","cMHbf_Vs_chisqweight_posterior");
+  hMHbf_Vs_chisqweight_posterior->GetXaxis()->SetTitle("Mass Hierarchy best-fit posterior");
+  hMHbf_Vs_chisqweight_posterior->GetYaxis()->SetTitle("#chi^{2} (data,fake exp)");
+  hMHbf_Vs_chisqweight_posterior->Draw("colz");
+
+
+  TCanvas *cComp_deltachisq = new TCanvas("cComp_deltachisq","cComp_deltachisq");
+  hdeltachisq->Scale(1./hdeltachisq->Integral());
+  hdeltachisq->SetLineWidth(2);
+  hdeltachisq_posterior->Scale(1./hdeltachisq_posterior->Integral());
+  hdeltachisq_posterior->SetLineColor(kRed);
+  hdeltachisq_posterior->SetLineWidth(2);
+  hdeltachisq_posterior->DrawClone();
+  hdeltachisq->DrawClone("same");
+  TLegend *ldeltachisq_comp = new TLegend(0.4,0.6,0.6,0.9);
+  ldeltachisq_comp->SetFillColor(0);
+  ldeltachisq_comp->SetLineColor(0);
+  ldeltachisq_comp->SetTextFont(132);
+  ldeltachisq_comp->SetTextSize(0.07);
+  ldeltachisq_comp->AddEntry(hdeltachisq,"#Delta #chi^{2} prior","l");
+  ldeltachisq_comp->AddEntry(hdeltachisq_posterior,"#Delta #chi^{2} posterior","l");
+  ldeltachisq_comp->DrawClone();
 
 
   // Check a single toy
@@ -892,18 +1304,73 @@ void analyze_run_fc_marginalization_exe
   
   //cout << storetrue0 << " " << storetrue1 << endl;
 
-  cdeltachisq->Print( TString::Format("deltachisq_glob_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
-  cdeltachisq_nh->Print( TString::Format("deltachisq_nh_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
-  cdeltachisq_ih->Print( TString::Format("deltachisq_ih_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  cNevents_fhc_mulike->Print( TString::Format("%s_Nevents_fhc_mulike_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  
+  cNevents_fhc_elike->Print( TString::Format("%s_Nevents_fhc_elike_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  
+  cNevents_rhc_mulike->Print( TString::Format("%s_Nevents_rhc_mulike_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  
+  cNevents_rhc_elike->Print( TString::Format("%s_Nevents_rhc_elike_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
  
-  cchisqminDiff->Print( TString::Format("cchisqminDiff_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  cbestfit_nh->Print( TString::Format("%s_cbestfit_nh_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
   
-  cbestfit->Print( TString::Format("cbestfit_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
-  cbestfit_nh->Print( TString::Format("cbestfit_nh_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
-  cbestfit_ih->Print( TString::Format("cbestfit_ih_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str())  );
+  cbestfit_ih->Print( TString::Format("%s_cbestfit_ih_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str())  );
 
-  cbestfit_MH->Print( TString::Format("cbestfit_MH_%s_%1.3f_%s_%1.3f_%s.pdf",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  cbestfit->Print( TString::Format("%s_cbestfit_%s_%1.3f_%s_%1.3f_%s.pdf",
+				   mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cbestfit_MH->Print( TString::Format("%s_cbestfit_MH_%s_%1.3f_%s_%1.3f_%s.pdf",
+				      mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cchisq->Print( TString::Format("%s_chisq_glob_%s_%1.3f_%s_%1.3f_%s.pdf",
+				 mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cdeltachisq->Print( TString::Format("%s_deltachisq_glob_%s_%1.3f_%s_%1.3f_%s.pdf",
+				      mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cdeltachisq_nh->Print( TString::Format("%s_deltachisq_nh_%s_%1.3f_%s_%1.3f_%s.pdf",
+					 mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cdeltachisq_ih->Print( TString::Format("%s_deltachisq_ih_%s_%1.3f_%s_%1.3f_%s.pdf",
+					 mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
   
+  cdeltachisq_posterior->Print( TString::Format("%s_deltachisq_posterior_%s_%1.3f_%s_%1.3f_%s.pdf",
+						mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cWeight_posterior->Print( TString::Format("%s_Weight_posterior_%s_%1.3f_%s_%1.3f_%s.pdf",
+  					    mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  
+  cdeltachisq_Vs_chisqweight_posterior->Print( TString::Format("%s_deltachisq_Vs_chisqweight_posterior_%s_%1.3f_%s_%1.3f_%s.pdf",
+  							       mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cbestfit_posterior_1D->Print( TString::Format("%s_bestfit_posterior_1D_%s_%1.3f_%s_%1.3f_%s.pdf",
+  						mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cbestfit_Vs_chisqweight_posterior->Print( TString::Format("%s_bestfit_Vs_chisqweight_posterior_%s_%1.3f_%s_%1.3f_%s.pdf",
+  							    mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cMHbf_Vs_chisqweight_posterior->Print( TString::Format("%s_MHbf_Vs_chisqweight_posterior_%s_%1.3f_%s_%1.3f_%s.pdf",
+  							 mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  cMHbf_posterior_1D->Print( TString::Format("%s_MHbf_posterior_1D_%s_%1.3f_%s_%1.3f_%s.pdf",
+  							 mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+  // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  
+  
+
+
   // Print results 
   
   cout << endl;
@@ -919,104 +1386,131 @@ void analyze_run_fc_marginalization_exe
   cout << " - Mean difference = " << hchisqminDiff->GetMean() << endl;
   cout << " - RMS difference = " << hchisqminDiff->GetRMS() << endl;
   cout << endl;
+  cout << "/// Stat+Syst event rate ///" << endl;
+  cout << " - FHC mu-like:" << endl;
+  cout << "      Mean = " << hNevents_fhc_mulike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_fhc_mulike->GetRMS() << endl; 
+  if(hNevents_fhc_mulike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_fhc_mulike->GetRMS() / hNevents_fhc_mulike->GetMean() << endl; 
+  cout << " - FHC e-like:" << endl;
+  cout << "      Mean = " << hNevents_fhc_elike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_fhc_elike->GetRMS() << endl; 
+  if(hNevents_fhc_elike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_fhc_elike->GetRMS() / hNevents_fhc_elike->GetMean() << endl; 
+  cout << " - RHC mu-like:" << endl;
+  cout << "      Mean = " << hNevents_rhc_mulike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_rhc_mulike->GetRMS() << endl; 
+  if(hNevents_rhc_mulike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_rhc_mulike->GetRMS() / hNevents_rhc_mulike->GetMean() << endl; 
+  cout << " - RHC e-like:" << endl;
+  cout << "      Mean = " << hNevents_rhc_elike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_rhc_elike->GetRMS() << endl; 
+  if(hNevents_rhc_elike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_rhc_elike->GetRMS() / hNevents_rhc_elike->GetMean() << endl; 
+  cout << endl;
+  cout << "/// Syst only event rate ///" << endl;
+  cout << " - FHC mu-like:" << endl;
+  cout << "      Mean = " << hNevents_exp_fhc_mulike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_exp_fhc_mulike->GetRMS() << endl; 
+  if(hNevents_exp_fhc_mulike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_exp_fhc_mulike->GetRMS() / hNevents_exp_fhc_mulike->GetMean() << endl; 
+  cout << " - FHC e-like:" << endl;
+  cout << "      Mean = " << hNevents_exp_fhc_elike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_exp_fhc_elike->GetRMS() << endl; 
+  if(hNevents_exp_fhc_elike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_exp_fhc_elike->GetRMS() / hNevents_exp_fhc_elike->GetMean() << endl; 
+  cout << " - RHC mu-like:" << endl;
+  cout << "      Mean = " << hNevents_exp_rhc_mulike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_exp_rhc_mulike->GetRMS() << endl; 
+  if(hNevents_exp_rhc_mulike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_exp_rhc_mulike->GetRMS() / hNevents_exp_rhc_mulike->GetMean() << endl; 
+  cout << " - RHC e-like:" << endl;
+  cout << "      Mean = " << hNevents_exp_rhc_elike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_exp_rhc_elike->GetRMS() << endl; 
+  if(hNevents_exp_rhc_elike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_exp_rhc_elike->GetRMS() / hNevents_exp_rhc_elike->GetMean() << endl; 
+  cout << endl;
   cout << "/// Global Result ///" << endl;
   cout << " - P-value = " << pvalue << endl;
   cout << " - Z = " << zscore << " sigma" << endl;
+  cout << endl;
   cout << " - Coverage:" << endl;
   cout << "     Fraction of toys inside 1sigma = " << FracIn_1sigma << endl;
-  cout << "     Fraction of toys inside 90CL   = " << FracIn_90CL   << endl;
-  cout << "     Fraction of toys inside 95CL   = " << FracIn_95CL   << endl;
+  cout << "     Fraction of toys inside 90%CL   = " << FracIn_90CL   << endl;
+  cout << "     Fraction of toys inside 95%CL   = " << FracIn_95CL   << endl;
   cout << "     Fraction of toys inside 2sigma = " << FracIn_2sigma << endl;
   cout << endl;
   cout << " - Feldman-Cousins critical values:" << endl;
   cout << "     Crit Value 1sigma = " << FCCritVal_1sigma << endl; 
-  cout << "     Crit Value 90CL   = " << FCCritVal_90CL << endl; 
-  cout << "     Crit Value 95CL   = " << FCCritVal_95CL << endl; 
+  cout << "     Crit Value 90%CL   = " << FCCritVal_90CL << endl; 
+  cout << "     Crit Value 95%CL   = " << FCCritVal_95CL << endl; 
   cout << "     Crit Value 2sigma = " << FCCritVal_2sigma << endl; 
   cout << endl;
+
+  cout << "/// Posterior predictive ///" << endl;
+  cout << "   Use the data samples:" << endl;
+  if(use_post_pred_fhc_mulike) cout << "     - FHC mu-like" << endl; 
+  if(use_post_pred_fhc_elike) cout  << "     - FHC e-like"  << endl; 
+  if(use_post_pred_fhc_mulike) cout << "     - RHC mu-like" << endl; 
+  if(use_post_pred_rhc_elike) cout  << "     - RHC e-like"  << endl; 
+  cout << "   p-value = " << pvalue_posterior 
+       << " +- " << err_pvalue
+       << endl;
+  cout << "   p-value (histo) = " << pvalue_posterior_histo << endl;
+  cout << "   z-score = " << zscore_posterior
+       << " + " << zscore_posterior_perr
+       << " - " << zscore_posterior_merr
+       << " sigma" << endl;
+  //cout << " - Coverage:" << endl;
+  //cout << "     Fraction of toys inside 1sigma = " << FracIn_1sigma << endl;
+  //cout << "     Fraction of toys inside 90%CL   = " << FracIn_90CL   << endl;
+  //cout << "     Fraction of toys inside 95%CL   = " << FracIn_95CL   << endl;
+  //cout << "     Fraction of toys inside 2sigma = " << FracIn_2sigma << endl;
+  cout << endl;
+  cout << " - Feldman-Cousins critical values:" << endl;
+  cout << "     Crit Value 1sigma = " << FCCritVal_posterior_1sigma 
+       << " + " << FCCritVal_posterior_1sigma_perr
+       << " - " << FCCritVal_posterior_1sigma_merr
+       << endl; 
+  cout << "     Crit Value 90%CL   = " << FCCritVal_posterior_90CL 
+       << " + " << FCCritVal_posterior_90CL_perr
+       << " - " << FCCritVal_posterior_90CL_merr
+       << endl; 
+  //cout << "     Crit Value 95%CL   = " << FCCritVal_posterior_95CL << endl; 
+  cout << "     Crit Value 2sigma = " << FCCritVal_posterior_2sigma
+       << " + " << FCCritVal_posterior_2sigma_perr
+       << " - " << FCCritVal_posterior_2sigma_merr
+       << endl;
+  cout << " - Feldman-Cousins critical values (histo):" << endl;
+  cout << "     Crit Value 1sigma = " << FCCritVal_posterior_1sigma_histo << endl; 
+  cout << "     Crit Value 90%CL   = " << FCCritVal_posterior_90CL_histo << endl; 
+  cout << "     Crit Value 95%CL   = " << FCCritVal_posterior_95CL_histo << endl; 
+  cout << "     Crit Value 2sigma = " << FCCritVal_posterior_2sigma_histo << endl; 
+  cout << endl;
+
   cout << "/// Normal Hierarchy Result ///" << endl;
   cout << " - Coverage:" << endl;
   cout << "     Fraction of toys inside 1sigma = " << FracIn_1sigma_nh << endl;
-  cout << "     Fraction of toys inside 90CL   = " << FracIn_90CL_nh   << endl;
-  cout << "     Fraction of toys inside 95CL   = " << FracIn_95CL_nh   << endl;
+  cout << "     Fraction of toys inside 90%CL   = " << FracIn_90CL_nh   << endl;
+  cout << "     Fraction of toys inside 95%CL   = " << FracIn_95CL_nh   << endl;
   cout << "     Fraction of toys inside 2sigma = " << FracIn_2sigma_nh << endl;
   cout << endl;
   cout << " - Feldman-Cousins critical values:" << endl;
   cout << "     Crit Value 1sigma = " << FCCritVal_1sigma_nh << endl; 
-  cout << "     Crit Value 90CL = "   << FCCritVal_90CL_nh << endl; 
-  cout << "     Crit Value 95CL = "   << FCCritVal_95CL_nh << endl; 
+  cout << "     Crit Value 90%CL = "   << FCCritVal_90CL_nh << endl; 
+  cout << "     Crit Value 95%CL = "   << FCCritVal_95CL_nh << endl; 
   cout << "     Crit Value 2sigma = " << FCCritVal_2sigma_nh << endl; 
   cout << endl;
   cout << "/// Inverted Hierarchy Result ///" << endl;
   cout << " - Coverage:" << endl;
   cout << "     Fraction of toys inside 1sigma = " << FracIn_1sigma_ih << endl;
-  cout << "     Fraction of toys inside 90CL   = " << FracIn_90CL_ih   << endl;
-  cout << "     Fraction of toys inside 95CL   = " << FracIn_95CL_ih   << endl;
+  cout << "     Fraction of toys inside 90%CL   = " << FracIn_90CL_ih   << endl;
+  cout << "     Fraction of toys inside 95%CL   = " << FracIn_95CL_ih   << endl;
   cout << "     Fraction of toys inside 2sigma = " << FracIn_2sigma_ih << endl;
   cout << endl;
   cout << " - Feldman-Cousins critical values:" << endl;
   cout << "     Crit Value 1sigma = " << FCCritVal_1sigma_ih << endl; 
-  cout << "     Crit Value 90CL   = " << FCCritVal_90CL_ih << endl; 
-  cout << "     Crit Value 95CL   = " << FCCritVal_95CL_ih << endl; 
+  cout << "     Crit Value 90%CL   = " << FCCritVal_90CL_ih << endl; 
+  cout << "     Crit Value 95%CL   = " << FCCritVal_95CL_ih << endl; 
   cout << "     Crit Value 2sigma = " << FCCritVal_2sigma_ih << endl; 
   cout << endl;
-
+  
   
   ofstream * outfilep = 0;
   outfilep = new ofstream(TString::Format("critval_%s_%1.3f_%s_%1.3f_%s.txt",storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()),ios_base::trunc);  
   ofstream & outfile = *outfilep;
-  outfile << endl;
-  outfile << endl;
-  outfile << "/// True parameters ///" << endl;
-  outfile << " - truepar0: " << *trueparname0 << " = " << truepar0 << endl;
-  outfile << " - truepar1: " << *trueparname1 << " = " << truepar1 << endl;
-  outfile << " - Mass Hierarchy: " << *trueMH << endl;
-  outfile << endl;
-  outfile << " - Difference between descent gradient and global minimum" << endl;
-  outfile << " - # of toys with different minim and full chisq minimum: "
-	  << NdiffChisq << " / " << Nentries << " toys" << endl;
-  outfile << " - Mean difference = " << hchisqminDiff->GetMean() << endl;
-  outfile << " - RMS difference = " << hchisqminDiff->GetRMS() << endl;
-  outfile << endl;
-  outfile << "/// Global Result ///" << endl;
-  outfile << " - Coverage:" << endl;
-  outfile << "     Fraction of toys inside 1sigma = " << FracIn_1sigma << endl;
-  outfile << "     Fraction of toys inside 90CL   = " << FracIn_90CL   << endl;
-  outfile << "     Fraction of toys inside 95CL   = " << FracIn_95CL   << endl;
-  outfile << "     Fraction of toys inside 2sigma = " << FracIn_2sigma << endl;
-  outfile << endl;
-  outfile << " - Feldman-Cousins critical values:" << endl;
-  outfile << "     Crit Value 1sigma = " << FCCritVal_1sigma << endl; 
-  outfile << "     Crit Value 90CL   = " << FCCritVal_90CL << endl; 
-  outfile << "     Crit Value 95CL   = " << FCCritVal_95CL << endl; 
-  outfile << "     Crit Value 2sigma = " << FCCritVal_2sigma << endl; 
-  outfile << endl;
-  outfile << "/// Normal Hierarchy Result ///" << endl;
-  outfile << " - Coverage:" << endl;
-  outfile << "     Fraction of toys inside 1sigma = " << FracIn_1sigma_nh << endl;
-  outfile << "     Fraction of toys inside 90CL   = " << FracIn_90CL_nh   << endl;
-  outfile << "     Fraction of toys inside 95CL   = " << FracIn_95CL_nh   << endl;
-  outfile << "     Fraction of toys inside 2sigma = " << FracIn_2sigma_nh << endl;
-  outfile << endl;
-  outfile << " - Feldman-Cousins critical values:" << endl;
-  outfile << "     Crit Value 1sigma = " << FCCritVal_1sigma_nh << endl; 
-  outfile << "     Crit Value 90CL = "   << FCCritVal_90CL_nh << endl; 
-  outfile << "     Crit Value 95CL = "   << FCCritVal_95CL_nh << endl; 
-  outfile << "     Crit Value 2sigma = " << FCCritVal_2sigma_nh << endl; 
-  outfile << endl;
-  outfile << "/// Inverted Hierarchy Result ///" << endl;
-  outfile << " - Coverage:" << endl;
-  outfile << "     Fraction of toys inside 1sigma = " << FracIn_1sigma_ih << endl;
-  outfile << "     Fraction of toys inside 90CL   = " << FracIn_90CL_ih   << endl;
-  outfile << "     Fraction of toys inside 95CL   = " << FracIn_95CL_ih   << endl;
-  outfile << "     Fraction of toys inside 2sigma = " << FracIn_2sigma_ih << endl;
-  outfile << endl;
-  outfile << " - Feldman-Cousins critical values:" << endl;
-  outfile << "     Crit Value 1sigma = " << FCCritVal_1sigma_ih << endl; 
-  outfile << "     Crit Value 90CL   = " << FCCritVal_90CL_ih << endl; 
-  outfile << "     Crit Value 95CL   = " << FCCritVal_95CL_ih << endl; 
-  outfile << "     Crit Value 2sigma = " << FCCritVal_2sigma_ih << endl; 
-  outfile << endl;
   outfile.close();
     
   return;
@@ -1077,14 +1571,22 @@ inline double GetConstChisq(bool Fit2D,string CL){
   return -999;
 }
 
-double CalcDLcrit(vector<double> dchisq, double conflev, double sigmacl){
-  sort(dchisq.begin(), dchisq.end()); // sort the dchisq vector   
-  vector<double>::iterator dchisqIter;
-  dchisqIter = dchisq.begin() + (int)(0.01*conflev*dchisq.size() + sigmacl);
-  double critval = (*dchisqIter);
-  return critval;
+
+double GetPvalue_Histo_rightside(TH1D *histo,double data){
+  int bin_data = histo->FindBin(data);
+  double pvalue = histo->Integral(bin_data,histo->GetNbinsX());
+  pvalue /= histo->Integral();
+  
+  return pvalue;
 }
 
+double GetPvalue_Histo_leftside(TH1D *histo,double data){
+  int bin_data = histo->FindBin(data);
+  double pvalue = histo->Integral(1,bin_data);
+  pvalue /= histo->Integral();
+  
+  return pvalue;
+}
 
 
 double GetPvalue_rightside(vector<double> vec_toys,double data){
@@ -1104,3 +1606,228 @@ double GetPvalue_rightside(vector<double> vec_toys,double data){
 
   return pvalue;
 }
+
+
+
+double GetPvalue_posterior_rightside(vector<double> vec_toys,vector<double> weight,double data){
+
+  double ntot_toys = vec_toys.size();
+
+  //cout << "Total number of toys stored in vector = " << vec_toys.size() << endl; 
+  //cout << "Input total number of toys = " << ntot_toys << endl; 
+  //cout << "Set total number of toys to vector size: " << ntot_toys << endl;
+  //cout << endl;
+
+  // double nfrac=0;
+  // for (std::vector<double>::iterator it=vec_toys.begin(); it!=vec_toys.end(); ++it){
+  //   if(*it >= data) nfrac += 1.; // If toy=data include the entry in pvalue integral range 
+  // }
+  // double pvalue =  nfrac / (double)ntot_toys;
+  
+  double tot = 0.; 
+  double nfrac=0;
+  for(int i=0;i<vec_toys.size();i++){
+    tot += weight[i];
+    double cont = vec_toys[i];
+    if(cont >= data) nfrac += weight[i];
+  }
+  double pvalue =  nfrac / tot;
+
+  return pvalue;
+}
+
+double CalcDLcrit(vector<double> dchisq, double conflev, double sigmacl){
+
+  // Get error on critical value: sigmacl = sqrt(N*p*(1-p))
+
+  sort(dchisq.begin(), dchisq.end()); // sort the dchisq vector   
+  vector<double>::iterator dchisqIter;
+  dchisqIter = dchisq.begin() + (int)(0.01*conflev*dchisq.size() + sigmacl);
+  double critval = (*dchisqIter);
+  return critval;
+}
+
+double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double conflev, double sigmacl){ 
+
+  // Get error on coverage: sigmacl = sqrt(N*p*(1-p))/N
+
+  int nelem = dchisq.size();
+  
+  double *new_dchisq = new double[nelem];
+  double *new_weight = new double[nelem];
+  int *index = new int[nelem];
+  
+  // copy vector into array
+  for(int i=0;i<nelem;i++){
+    new_dchisq[i] = dchisq[i];
+    new_weight[i] = weight[i];
+    index[i] = i;
+  }
+  
+  sort(dchisq.begin(), dchisq.end());
+  
+  // store the sorted indices --> use for both dchisq and weights
+  //index = TMath::Sort(nelem,new_dchisq,index,0);
+  TMath::Sort(nelem,new_dchisq,index,0);
+
+  double tot_weight = 0.;
+  for(int i=0;i<nelem;i++) tot_weight += new_weight[index[i]]; 
+
+  //cout << "conflev = " << conflev << endl;
+  
+  double sum = 0.;
+  double critval = -999.;
+  for(int i=0;i<nelem;i++){
+    sum += new_weight[index[i]]; 
+    
+    //cout << std::setprecision(16);
+    //cout << sum << " ";
+    
+    if( sum >= (0.01 * conflev + sigmacl)*tot_weight ){
+      
+      //cout << endl;
+      //cout << "sum = " << sum << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
+      
+      critval = new_dchisq[index[i]]; 
+      break;
+    }
+  }
+    
+  return critval;
+}
+
+
+
+
+double CalcDLcrit(TH1D *h_delta_true,double FCfrac_CL){
+  
+  //Feldman-Cousins: Calculate chi2 value at 90%CL************************
+  double ntoys_total = 0;
+  double ntoys = 0;
+  double ntoys_frac = 0;
+  int chi2_bin = 0;
+  double chi2_val = 0;
+  double dlval = 0;
+  
+  ntoys_total = h_delta_true->Integral();
+
+  for(int ibin=0;ibin<h_delta_true->GetNbinsX();ibin++){
+    ntoys += h_delta_true->GetBinContent(ibin+1);
+    ntoys_frac = ntoys/ntoys_total;
+    
+    if(ntoys_frac>=FCfrac_CL) {
+      
+      // chi2_bin = ibin+1;  // histgram rule for the # of bins!!!
+      // chi2_val = chi2_bin*h_delta_true->GetBinWidth(1) + MinDL;
+      // cout << "chi2_val = " << chi2_val << endl;
+
+      // chi2_bin = ibin;  // histogram rule for the # of bins!!!
+      // chi2_val = chi2_bin*h_delta_true->GetBinWidth(1)  
+      // 	+ h_delta_true->GetXaxis()->GetBinLowEdge(1);
+
+      chi2_val = h_delta_true->GetBinCenter(ibin+1);
+ 
+      break;
+    }
+  }
+  return chi2_val;
+}
+
+double calc_chisq(TH2D* hobs, TH2D* hexp){
+  int nbins_x = hobs->GetNbinsX();
+  int nbins_y = hobs->GetNbinsY();
+  double chisq = 0;
+  
+  for(int i=1;i<= nbins_x;i++)
+    {
+      for(int j=1;j<= nbins_y;j++)
+	{
+	  double obs = hobs->GetBinContent(i,j);
+	  double exp = hexp->GetBinContent(i,j);
+	  chisq += valor::util::ChisqPoisson(obs,exp);
+	}
+    } 
+  return chisq;
+}
+
+
+
+double get_error(double obs, TH1D* _hbeta, TH1D* _hbetaUnscaled)
+{
+  int obs_bin = _hbeta->FindBin(obs);
+  double pvalue = _hbeta->Integral(obs_bin,_hbeta->GetXaxis()->GetNbins());
+  double err_sqrd = 0;
+  //  for(int i=1;i<obs_bin;i++)
+  //  {
+  //    double pd = _hbeta->Integral();
+  //    double wl = _hbeta->GetBinContent(i)/_hbetaUnscaled->GetBinContent(i);
+  //    double bl = _hbetaUnscaled->GetBinContent(i);
+  //    double err = TMath::Power(wl* (pvalue) / pd, 2) * bl;
+  //    err_sqrd = err_sqrd + err;
+  //  }
+  
+  //  for(int i=obs_bin;i<=_hbeta->GetXaxis()->GetNbins();i++)
+  //  {
+  //    double pd = _hbeta->Integral();
+  //    double wr = _hbeta->GetBinContent(i)/_hbetaUnscaled->GetBinContent(i);
+  //    double br = _hbetaUnscaled->GetBinContent(i);
+  //    double err = TMath::Power(wr* (1 - pvalue) / pd, 2) * br;
+  //    err_sqrd = err_sqrd + err;
+  //  }
+
+  
+  //Left error
+  double pd = _hbeta->Integral();
+  double wl = _hbeta->Integral(1,obs_bin)/_hbetaUnscaled->Integral(1,obs_bin);
+  double bl = _hbetaUnscaled->Integral(1,obs_bin);
+  double err = TMath::Power(wl* (pvalue) / (pd), 2) * bl;
+  err_sqrd = err_sqrd + err;
+  
+  //Right error
+  double pd = _hbeta->Integral();
+  double wr = _hbeta->Integral(obs_bin,_hbeta->GetXaxis()->GetNbins())/_hbetaUnscaled->Integral(obs_bin,_hbeta->GetXaxis()->GetNbins());
+  double br = _hbetaUnscaled->Integral(obs_bin,_hbeta->GetXaxis()->GetNbins());
+  double err = TMath::Power(wr* (1 - pvalue) / (pd), 2) * br;
+  err_sqrd = err_sqrd + err;
+  
+  double final_error = TMath::Sqrt(err_sqrd);
+  
+  return final_error;
+  
+}
+
+double get_pvalue_error_vector(vector<double> vec_dchisq,vector<double> vec_weight, double data_critval, double pvalue) // takes the p-value not CL!!!
+{
+  double error = 0;
+  double total_right=0;
+  double total_left=0;
+  
+  std::vector<double> _right_tail_weight;
+  std::vector<double> _left_tail_weight;
+
+  for(int i=0;i<vec_dchisq.size();i++){
+    
+    double weight = vec_weight[i]; 
+
+    if(vec_dchisq[i]<data_critval){
+      _left_tail_weight.push_back(weight);
+    }
+    else{
+      _right_tail_weight.push_back(weight);
+    }
+  }
+  
+  for(int i=0;i<_right_tail_weight.size();i++){
+    error+= TMath::Power(_right_tail_weight[i]*(1-pvalue),2);
+    total_right+= _right_tail_weight[i];
+  }
+  
+  for(int i=0;i<_left_tail_weight.size();i++){
+    error+= TMath::Power(_left_tail_weight[i]*(pvalue),2);
+    total_left+= _left_tail_weight[i];
+  }
+  
+  error = error / (TMath::Power(total_left + total_right ,2));
+  return TMath::Sqrt(error);  
+}
+

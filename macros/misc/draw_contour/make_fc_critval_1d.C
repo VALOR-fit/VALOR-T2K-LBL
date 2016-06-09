@@ -27,12 +27,22 @@ void make_fc_critval_1d(){
   const int Nmh = 2;
   const int NFCpts = 8; // # of points of Feldman-Cousins
 
-  string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/NH/";
-  string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/IH/";
+  // string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/";  
+  // string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/";
+
+  string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/";  
+  string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/Raj_inverted/";
+  //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/My_inverted/";
 
   const char * infilename_fc[NFCpts][Nmh] = {
     
-    // // Inverted Hierarchy - 5k Toys
+    ///////////////////////
+    //                   //
+    //      Run 1-6      //
+    //                   //
+    ///////////////////////
+
+    // // Inverted Hierarchy - 5k Toys (Run 1-6)
     // "total_tree_-0.785.root",
     // "total_tree_-2.356.root",
     // "total_tree_0.785.root",
@@ -42,7 +52,7 @@ void make_fc_critval_1d(){
     // "total_tree_pi.root",
     // "total_tree_zero.root"
 
-    // // Normal Hierarchy - 5k Toys
+    // // Normal Hierarchy - 5k Toys (Run 1-6)
     // "fit_fitmarg_fc_dcp_normal_nexp_20_-2.356.root",
     // "fit_fitmarg_fc_dcp_normal_nexp_20_-1.571.root",
     // "fit_fitmarg_fc_dcp_normal_nexp_20_-0.785.root",
@@ -53,7 +63,7 @@ void make_fc_critval_1d(){
     // //"fit_fitmarg_fc_dcp_normal_nexp_20_3.141.root" // +-pi
     // "fit_fitmarg_fc_dcp_normal_nexp_20_3.142.root", // +-pi 
 
-    // // Normal Hierarchy - 10k Toys 
+    // // Normal Hierarchy - 10k Toys (Run 1-6)
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root",
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root",
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root",
@@ -63,21 +73,46 @@ void make_fc_critval_1d(){
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root",
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" // +-pi
 
-    // Normal Hierarhcy 10k Toys - Inverted Hierarchy 5k Toys 
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root", "total_tree_-2.356.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root", "total_tree_mhalfpi.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root" , "total_tree_zero.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root" , "total_tree_halfpi.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root" , "total_tree_-2.356.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" , "total_tree_pi.root"} // +-pi
+    // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys (Run 1-6) 
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root", "total_tree_-2.356.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root", "total_tree_mhalfpi.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root" , "total_tree_zero.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.785.root" , "total_tree_0.785.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root" , "total_tree_halfpi.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root" , "total_tree_2.356.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" , "total_tree_pi.root"} // +-pi
 
+    ///////////////////////
+    //                   //
+    //      Run 1-7      //
+    //                   //
+    ///////////////////////
+
+    // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys - Raj inverted (Run 1-7) 
+    {"fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","inverted_-2.356.root"},
+    {"fit_fitmarg_fc_nh_10k_All_normal_-1.571.root","inverted_-1.571.root"},
+    {"fit_fitmarg_fc_nh_10k_All_normal_-0.785.root","inverted_-0.785.root"},
+    {"fit_fitmarg_fc_nh_10k_All_normal_0.000.root" ,"inverted_0.000.root"},	
+    {"fit_fitmarg_fc_nh_10k_All_normal_0.785.root" ,"inverted_0.785.root"},
+    {"fit_fitmarg_fc_nh_10k_All_normal_1.571.root" ,"inverted_1.571.root"} 	
+    {"fit_fitmarg_fc_nh_10k_All_normal_2.356.root" ,"inverted_2.356.root"},
+    {"fit_fitmarg_fc_nh_10k_All_normal_3.142.root" ,"inverted_3.142.root"}, // +-pi
+
+    // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~5k Toys - My inverted (Run 1-7) 
+    // {"fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","fit_fitmarg_fc_ih_5k_Set0_inverted_-2.356.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_-1.571.root","fit_fitmarg_fc_ih_5k_Set0_inverted_-1.571.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_-0.785.root","fit_fitmarg_fc_ih_5k_Set0_inverted_-0.785.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_0.000.root" ,"fit_fitmarg_fc_ih_5k_Set0_inverted_0.000.root"},	
+    // {"fit_fitmarg_fc_nh_10k_All_normal_0.785.root" ,"fit_fitmarg_fc_ih_5k_Set0_inverted_0.785.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_1.571.root" ,"fit_fitmarg_fc_ih_5k_Set0_inverted_1.571.root"} 	
+    // {"fit_fitmarg_fc_nh_10k_All_normal_2.356.root" ,"fit_fitmarg_fc_ih_5k_Set0_inverted_2.356.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_3.142.root" ,"fit_fitmarg_fc_ih_5k_Set0_inverted_3.142.root"}, // +-pu
+  
   };
 
   const int nptcpy = 1;
   double copypt[nptcpy][2] = {
-    //{ TMath::Pi(), -TMath::Pi() } // copy crit val of TMath::Pi() in -TMath::Pi()
     { TMath::Pi(), -TMath::Pi() } // copy crit val of TMath::Pi() in -TMath::Pi()
   };
 
@@ -178,9 +213,12 @@ void make_fc_critval_1d(){
       treein_fc[ifc][imh]->SetBranchAddress("deltachisq0BF_glob",&deltachisq0BF_glob);
     
 
-      vector<double> myvector; // vector to compute the critical value for each file
+      vector<double> myvector;         // vector to compute the critical value for each file
+      vector<double> vec_like_penalty; // vector of penalty weights
 
       int Nentries = treein_fc[ifc][imh]->GetEntries();
+      
+      cout << "Tot # of entries = " << Nentries << endl;
 
       for(int ientry=0;ientry<Nentries;ientry++){ // Loop over toy experiments
 	
@@ -191,20 +229,45 @@ void make_fc_critval_1d(){
 	double deltachisq0BF_used = deltachisq0BF_glob;
 	myvector.push_back(deltachisq0BF_used);
 	
+	double weight = 1.;
+	vec_like_penalty.push_back(weight);
+	
+
       } // loop over ientry
             
       // Get critical values 
       
       //double err = sqrt(Nentries);
-      double err_1sigma = sqrt(Nentries * CLfrac_1sigma * (1.-CLfrac_1sigma) );
+      double err_1sigma = sqrt(Nentries * CLfrac_1sigma * (1.-CLfrac_1sigma) ); // 
       double err_90CL   = sqrt(Nentries * CLfrac_90CL   * (1.-CLfrac_90CL) );
       double err_95CL   = sqrt(Nentries * CLfrac_95CL   * (1.-CLfrac_95CL) );
       double err_2sigma = sqrt(Nentries * CLfrac_2sigma * (1.-CLfrac_2sigma) );
+
+
+      //CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,0.);
+      //exit(1);
+
+
+      double FCCritVal_post_1sigma    = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_1sigma*100.,0.);
+      double FCCritVal_post_1sigma_p1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_1sigma*100.,+err_1sigma / Nentries );
+      double FCCritVal_post_1sigma_m1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_1sigma*100.,-err_1sigma / Nentries );
       
+      double FCCritVal_post_90CL    = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,0.);
+      double FCCritVal_post_90CL_p1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,+err_90CL / Nentries );
+      double FCCritVal_post_90CL_m1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,-err_90CL / Nentries );
+      
+      double FCCritVal_post_95CL    = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_95CL*100.,0.);
+      double FCCritVal_post_95CL_p1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_95CL*100.,+err_95CL / Nentries );
+      double FCCritVal_post_95CL_m1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_95CL*100.,-err_95CL / Nentries );
+ 
+      double FCCritVal_post_2sigma    = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,0.);
+      double FCCritVal_post_2sigma_p1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,+err_2sigma / Nentries );
+      double FCCritVal_post_2sigma_m1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,-err_2sigma / Nentries );
+
       double FCCritVal_1sigma    = CalcDLcrit(myvector,CLfrac_1sigma*100.,0.); 
       double FCCritVal_1sigma_p1 = CalcDLcrit(myvector,CLfrac_1sigma*100.,+err_1sigma); 
       double FCCritVal_1sigma_m1 = CalcDLcrit(myvector,CLfrac_1sigma*100.,-err_1sigma); 
-      
+
       double FCCritVal_90CL    = CalcDLcrit(myvector,CLfrac_90CL*100.,0.); 
       double FCCritVal_90CL_p1 = CalcDLcrit(myvector,CLfrac_90CL*100.,+err_90CL); 
       double FCCritVal_90CL_m1 = CalcDLcrit(myvector,CLfrac_90CL*100.,-err_90CL); 
@@ -218,22 +281,22 @@ void make_fc_critval_1d(){
       double FCCritVal_2sigma_m1 = CalcDLcrit(myvector,CLfrac_2sigma*100.,-err_2sigma); 
 
       if(*trueMH=="normal"){
-      	gFC90CL_nh   ->SetPoint(gFC90CL_nh   ->GetN(),truepar0,FCCritVal_90CL);
-      	gFC90CL_nh_p1->SetPoint(gFC90CL_nh_p1->GetN(),truepar0,FCCritVal_90CL_p1);
-      	gFC90CL_nh_m1->SetPoint(gFC90CL_nh_m1->GetN(),truepar0,FCCritVal_90CL_m1);
+      	gFC90CL_nh   ->SetPoint(gFC90CL_nh   ->GetN(),truepar0,FCCritVal_post_90CL);
+      	gFC90CL_nh_p1->SetPoint(gFC90CL_nh_p1->GetN(),truepar0,FCCritVal_post_90CL_p1);
+      	gFC90CL_nh_m1->SetPoint(gFC90CL_nh_m1->GetN(),truepar0,FCCritVal_post_90CL_m1);
 
-      	gFC2sigma_nh   ->SetPoint(gFC2sigma_nh   ->GetN(),truepar0,FCCritVal_2sigma);
-      	gFC2sigma_nh_p1->SetPoint(gFC2sigma_nh_p1->GetN(),truepar0,FCCritVal_2sigma_p1);
-      	gFC2sigma_nh_m1->SetPoint(gFC2sigma_nh_m1->GetN(),truepar0,FCCritVal_2sigma_m1);
+      	gFC2sigma_nh   ->SetPoint(gFC2sigma_nh   ->GetN(),truepar0,FCCritVal_post_2sigma);
+      	gFC2sigma_nh_p1->SetPoint(gFC2sigma_nh_p1->GetN(),truepar0,FCCritVal_post_2sigma_p1);
+      	gFC2sigma_nh_m1->SetPoint(gFC2sigma_nh_m1->GetN(),truepar0,FCCritVal_post_2sigma_m1);
       }
       else if(*trueMH=="inverted"){
-      	gFC90CL_ih   ->SetPoint(gFC90CL_ih   ->GetN(),truepar0,FCCritVal_90CL);
-      	gFC90CL_ih_p1->SetPoint(gFC90CL_ih_p1->GetN(),truepar0,FCCritVal_90CL_p1);
-      	gFC90CL_ih_m1->SetPoint(gFC90CL_ih_m1->GetN(),truepar0,FCCritVal_90CL_m1);
+      	gFC90CL_ih   ->SetPoint(gFC90CL_ih   ->GetN(),truepar0,FCCritVal_post_90CL);
+      	gFC90CL_ih_p1->SetPoint(gFC90CL_ih_p1->GetN(),truepar0,FCCritVal_post_90CL_p1);
+      	gFC90CL_ih_m1->SetPoint(gFC90CL_ih_m1->GetN(),truepar0,FCCritVal_post_90CL_m1);
 
-      	gFC2sigma_ih   ->SetPoint(gFC2sigma_ih   ->GetN(),truepar0,FCCritVal_2sigma);
-      	gFC2sigma_ih_p1->SetPoint(gFC2sigma_ih_p1->GetN(),truepar0,FCCritVal_2sigma_p1);
-      	gFC2sigma_ih_m1->SetPoint(gFC2sigma_ih_m1->GetN(),truepar0,FCCritVal_2sigma_m1);
+      	gFC2sigma_ih   ->SetPoint(gFC2sigma_ih   ->GetN(),truepar0,FCCritVal_post_2sigma);
+      	gFC2sigma_ih_p1->SetPoint(gFC2sigma_ih_p1->GetN(),truepar0,FCCritVal_post_2sigma_p1);
+      	gFC2sigma_ih_m1->SetPoint(gFC2sigma_ih_m1->GetN(),truepar0,FCCritVal_post_2sigma_m1);
       }
       else {
 	cerr << endl;
@@ -261,6 +324,24 @@ void make_fc_critval_1d(){
       cout << " - 2sigma = " << FCCritVal_2sigma
 	   << " + " << fabs(FCCritVal_2sigma-FCCritVal_2sigma_p1)
 	   << " - " << fabs(FCCritVal_2sigma-FCCritVal_2sigma_m1)
+	   << endl;
+
+     cout << "Critical values posterior-like weight=1 (Used):"<< endl;
+      cout << " - 1sigma = " << FCCritVal_post_1sigma 
+	   << " + " << fabs(FCCritVal_post_1sigma-FCCritVal_post_1sigma_p1)
+	   << " - " << fabs(FCCritVal_post_1sigma-FCCritVal_post_1sigma_m1)
+	   << endl;
+      cout << " - 90% CL = " << FCCritVal_post_90CL 
+	   << " + " << fabs(FCCritVal_post_90CL-FCCritVal_post_90CL_p1)
+	   << " - " << fabs(FCCritVal_post_90CL-FCCritVal_post_90CL_m1)
+	   << endl;
+      cout << " - 95% CL = " << FCCritVal_post_95CL 
+	   << " + " << fabs(FCCritVal_post_95CL-FCCritVal_post_95CL_p1)
+	   << " - " << fabs(FCCritVal_post_95CL-FCCritVal_post_95CL_m1)
+	   << endl;
+      cout << " - 2sigma = " << FCCritVal_post_2sigma
+	   << " + " << fabs(FCCritVal_post_2sigma-FCCritVal_post_2sigma_p1)
+	   << " - " << fabs(FCCritVal_post_2sigma-FCCritVal_post_2sigma_m1)
 	   << endl;
 
     } // loop over ifc
@@ -358,6 +439,8 @@ void make_fc_critval_1d(){
   gFC2sigma_ih_m1->SetLineStyle(2);
   
   TCanvas *cDeltaChisq = new TCanvas("cDeltaChisq","cDeltaChisq");
+  gFC90CL_nh->GetXaxis()->SetTitle("#delta_{CP}");
+  gFC90CL_nh->GetYaxis()->SetTitle("#Delta #chi^{2}_{crit}");
   gFC90CL_nh   ->Draw("apl");
   gFC90CL_nh_p1->Draw("pl same");
   gFC90CL_nh_m1->Draw("pl same");
@@ -391,9 +474,61 @@ void make_fc_critval_1d(){
 
 
 double CalcDLcrit(vector<double> dchisq, double conflev, double sigmacl){
+
+  // Get error on critical value: sigmacl = sqrt(N*p*(1-p))
+
   sort(dchisq.begin(), dchisq.end()); // sort the dchisq vector   
   vector<double>::iterator dchisqIter;
-  dchisqIter = dchisq.begin() + (int)(0.01*conflev*dchisq.size() + sigmacl);
+  dchisqIter = dchisq.begin() + (int)(0.01*conflev*dchisq.size() + sigmacl);  // (int)(...) gets one toy more after the X%CL edge (if even number)
   double critval = (*dchisqIter);
+  return critval;
+}
+
+double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double conflev, double sigmacl){ 
+
+  // Get error on coverage: sigmacl = sqrt(N*p*(1-p))/N
+
+  int nelem = dchisq.size();
+  
+  double *new_dchisq = new double[nelem];
+  double *new_weight = new double[nelem];
+  int *index = new int[nelem];
+  
+  // copy vector into array
+  for(int i=0;i<nelem;i++){
+    new_dchisq[i] = dchisq[i];
+    new_weight[i] = weight[i];
+    index[i] = i;
+  }
+  
+  sort(dchisq.begin(), dchisq.end());
+  
+  // store the sorted indices --> use for both dchisq and weights
+  //index = TMath::Sort(nelem,new_dchisq,index,0);
+  TMath::Sort(nelem,new_dchisq,index,0);
+
+  double tot_weight = 0.;
+  for(int i=0;i<nelem;i++) tot_weight += new_weight[index[i]]; 
+
+  //cout << "conflev = " << conflev << endl;
+  
+  double sum = 0.;
+  double critval = -999.;
+  for(int i=0;i<nelem;i++){
+    sum += new_weight[index[i]]; 
+    
+    //cout << std::setprecision(16);
+    //cout << sum << " ";
+    
+    if( sum >= (0.01 * conflev + sigmacl)*tot_weight ){
+      
+      //cout << endl;
+      //cout << "sum = " << sum << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
+      
+      critval = new_dchisq[index[i]]; 
+      break;
+    }
+  }
+    
   return critval;
 }
