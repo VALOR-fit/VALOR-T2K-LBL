@@ -158,6 +158,7 @@ int main(int argc, char ** argv)
   
   TRandom3 rand(runopt->ToySeed()); //random number to see where inside a bin a toy is generated
   double scale_toys_based_on_samples_scale =  runopt->Scale_toys_based_on_samples_scale();
+  TH1D* chisq_distribution = new TH1D("chisq_distribution","chisq_distribution",100000,0,1000);
 
   TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), runopt->ConfigFile().c_str() ));
   TString xmlfile2(runopt->Xmlfile().c_str() );
@@ -369,7 +370,7 @@ int main(int argc, char ** argv)
         
         double random_number = Rnd::Instance()->RndOther().Uniform(0,1);
         double prob = exp(-(chisq-scale_toys_based_on_samples_scale)/2);
-      
+        chisq_distribution->Fill(chisq);
         cout << "chisq: " << chisq << " Scale: " << scale_toys_based_on_samples_scale <<  " Prob: " << prob << " Random: " << random_number << endl;
         if(random_number <= prob){
           scale_throws_accepted++;
@@ -522,6 +523,7 @@ int main(int argc, char ** argv)
   }
   if(f) {
     util::OscParams::Instance()->Write(f);
+    chisq_distribution->Write();
     f->Close();
     delete f;
   }//f
