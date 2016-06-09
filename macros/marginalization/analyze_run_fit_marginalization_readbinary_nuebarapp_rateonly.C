@@ -162,6 +162,7 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     hbeta0->GetXaxis()->SetLabelFont(132);
     hbeta0->GetYaxis()->SetLabelSize(0.05);
     hbeta0->GetXaxis()->SetLabelSize(0.05);
+    hbeta0->Scale(1./hbeta0->Integral());
     hbeta0->DrawCopy();
     cBeta0Distribution->SetLogy();
     TLine *expEvents = new TLine(nevents,0,nevents,hbeta0->GetBinContent(hbeta0->GetMaximumBin()));
@@ -197,7 +198,8 @@ void analyze_run_fit_marginalization_readbinary_nuebarapp_rateonly
     hbeta1->GetXaxis()->SetLabelFont(132);
     hbeta1->GetYaxis()->SetLabelSize(0.05);
     hbeta1->GetXaxis()->SetLabelSize(0.05);
-    
+    hbeta1->Scale(1./hbeta1->Integral());
+
 
     
     hbeta1->SetLineColor(kBlue);
