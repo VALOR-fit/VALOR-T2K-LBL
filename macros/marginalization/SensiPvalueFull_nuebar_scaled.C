@@ -159,8 +159,8 @@ void SensiPvalueFull_nuebar_scaled
       exit(1);
     }
     
-    for(int hientry=0;hientry<hNentries;hientry++){
-      //   for(int hientry=0;hientry<10000;hientry++){
+//    for(int hientry=0;hientry<hNentries;hientry++){
+         for(int hientry=0;hientry<10;hientry++){
       htreein->GetEntry(hientry);
       double hnevents = (double)hErecoToy_RHC1Re->Integral();
       if(hnevents<0){
@@ -354,7 +354,7 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0->SetFillStyle(0);
     hStatisticBeta0->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
     hStatisticBeta0->GetYaxis()->SetTitle("Number of entries");
-    hStatisticBeta0->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0->GetMaximum()*1.2);
+    hStatisticBeta0->GetYaxis()->SetRangeUser(0.0000001,hStatisticBeta0->GetMaximum()*1.2);
     hStatisticBeta0->GetXaxis()->SetRangeUser(-5,26);
     hStatisticBeta0->DrawCopy();
     TLine *linePvalue_rateshape_statistic = new TLine(statistic,0.,statistic,hStatisticBeta0->GetMaximum()*2);
@@ -389,7 +389,7 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0rateonly->SetLineColor(kBlue);
     hStatisticBeta0rateonly->SetLineWidth(5);
     hStatisticBeta0rateonly->Scale(1./hStatisticBeta0rateonly->Integral());
-    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.0002,hStatisticBeta0rateonly->GetMaximum()*10);
+    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.0000001,hStatisticBeta0rateonly->GetMaximum()*10);
     hStatisticBeta0rateonly->GetYaxis()->SetTitleSize(0.06);
     hStatisticBeta0rateonly->GetXaxis()->SetTitleSize(0.06);
     hStatisticBeta0rateonly->GetYaxis()->SetTitleFont(132);
