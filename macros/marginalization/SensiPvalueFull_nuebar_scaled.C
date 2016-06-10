@@ -230,11 +230,11 @@ void SensiPvalueFull_nuebar_scaled
     }
     else{ //swap left and right tails to get p value
       pvalue_rateshape_itoy = GetPvalue(ddeltachisq_01,left_tail_weight,right_tail_weight);
-      pvalue_error_vector   = get_error_vector(right_tail_weight,pvalue_rateshape_itoy,left_tail_weight);
+      pvalue_error_vector   = get_error_vector(left_tail_weight,right_tail_weight,pvalue_rateshape_itoy);
+      pvalue_error = get_left_error(ddeltachisq_01,hStatisticBeta0,hStatisticBeta0Unscaled);
       pvalue_rateonly_itoy  = GetPvalue(statistic_rateonly,left_tail_rateonly_weight,right_tail_rateonly_weight);
       pvalue_rateonly_error_vector = get_error_vector(left_tail_rateonly_weight,right_tail_rateonly_weight,pvalue_rateonly_itoy);
       pvalue_rateonly_error = get_left_error(statistic_rateonly,hStatisticBeta0rateonly,hStatisticBeta0Unscaledrateonly);
-      pvalue_rateonly_error = get_left_error(ddeltachisq_01,hStatisticBeta0rateonly,hStatisticBeta0Unscaledrateonly);
     }
     
     if(pvalue_rateshape_itoy<0. || pvalue_rateshape_itoy>1.){
