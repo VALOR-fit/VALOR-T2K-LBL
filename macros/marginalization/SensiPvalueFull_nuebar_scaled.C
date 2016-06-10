@@ -159,8 +159,8 @@ void SensiPvalueFull_nuebar_scaled
       exit(1);
     }
     
-//    for(int hientry=0;hientry<hNentries;hientry++){
-         for(int hientry=0;hientry<10;hientry++){
+    for(int hientry=0;hientry<hNentries;hientry++){
+//         for(int hientry=0;hientry<10;hientry++){
       htreein->GetEntry(hientry);
       double hnevents = (double)hErecoToy_RHC1Re->Integral();
       if(hnevents<0){
