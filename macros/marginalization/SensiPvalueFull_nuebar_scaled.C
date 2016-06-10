@@ -194,7 +194,7 @@ void SensiPvalueFull_nuebar_scaled
       }
       
       double number_nuebar_events=hErecoExp_RHC1Re->Integral();
-      for(int n_rateonly_throws=0; n_rateonly_throws<1;n_rateonly_throws++){
+      for(int n_rateonly_throws=0; n_rateonly_throws<1000;n_rateonly_throws++){
         double fluct = Rnd::Instance()->RndToyMCstat().Poisson(number_nuebar_events);
 //        hStatisticBeta0rateonly->Fill(fluct,toy_weight);
 //        hStatisticBeta0Unscaledrateonly->Fill(fluct);
@@ -400,11 +400,11 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0rateonly->DrawCopy();
     cBeta0Distribution->SetLogy();
     
-    TLine *linePvalue_rateonly_statistic = new TLine(statistic_rateonly,0.,statistic_rateonly,hStatisticBeta0rateonly->GetMaximum());
+    TLine *linePvalue_rateonly_statistic = new TLine(statistic_rateonly,0.,statistic_rateonly,hStatisticBeta0rateonly->GetMaximum()*3);
     linePvalue_rateonly_statistic->SetLineWidth(2);
     linePvalue_rateonly_statistic->SetLineColor(kRed);
     linePvalue_rateonly_statistic->DrawClone();
-    sprintf(name,"#Delta #chi^{2} = %1.3f",statistic_rateonly);
+    sprintf(name,"Data Events = %1.3f",statistic_rateonly);
     TLatex *fit_rateonly_pvalue = new TLatex(4.5,hStatisticBeta0rateonly->GetMaximum()*0.5,name);
     fit_rateonly_pvalue->SetTextSize(0.07);
     fit_rateonly_pvalue->Draw();
