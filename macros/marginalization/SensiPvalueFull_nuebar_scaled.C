@@ -357,7 +357,7 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0->GetYaxis()->SetRangeUser(0.0000001,hStatisticBeta0->GetMaximum()*1.2);
     hStatisticBeta0->GetXaxis()->SetRangeUser(-5,26);
     hStatisticBeta0->DrawCopy();
-    TLine *linePvalue_rateshape_statistic = new TLine(statistic,0.,statistic,hStatisticBeta0->GetMaximum()*2);
+    TLine *linePvalue_rateshape_statistic = new TLine(statistic,0.,statistic,hStatisticBeta0->GetMaximum()*1.2);
     linePvalue_rateshape_statistic->SetLineWidth(3);
     linePvalue_rateshape_statistic->SetLineColor(kRed);
     linePvalue_rateshape_statistic->DrawClone();
@@ -389,7 +389,7 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0rateonly->SetLineColor(kBlue);
     hStatisticBeta0rateonly->SetLineWidth(5);
     hStatisticBeta0rateonly->Scale(1./hStatisticBeta0rateonly->Integral());
-    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.0000001,hStatisticBeta0rateonly->GetMaximum()*10);
+    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.0000001,hStatisticBeta0rateonly->GetMaximum()*1.2);
     hStatisticBeta0rateonly->GetYaxis()->SetTitleSize(0.06);
     hStatisticBeta0rateonly->GetXaxis()->SetTitleSize(0.06);
     hStatisticBeta0rateonly->GetYaxis()->SetTitleFont(132);
@@ -402,7 +402,7 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0rateonly->DrawCopy();
     cBeta0Distribution->SetLogy();
     
-    TLine *linePvalue_rateonly_statistic = new TLine(statistic_rateonly,0.,statistic_rateonly,hStatisticBeta0rateonly->GetMaximum()*2);
+    TLine *linePvalue_rateonly_statistic = new TLine(statistic_rateonly,0.,statistic_rateonly,hStatisticBeta0rateonly->GetMaximum()*1.2);
     linePvalue_rateonly_statistic->SetLineWidth(3);
     linePvalue_rateonly_statistic->SetLineColor(kRed);
     linePvalue_rateonly_statistic->DrawClone();
