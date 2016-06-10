@@ -350,14 +350,15 @@ void SensiPvalueFull_nuebar_scaled
     cPvalue_rateshape_fit = new TCanvas("cPvalue_rateshape_fit","cPvalue_rateshape_fit");
     cPvalue_rateshape_fit->SetLogy();
     //    hStatisticBeta0->Rebin(50000);
+    hStatisticBeta0->Scale(1./hStatisticBeta0->Integral());
     hStatisticBeta0->SetFillStyle(0);
     hStatisticBeta0->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
     hStatisticBeta0->GetYaxis()->SetTitle("Number of entries");
     hStatisticBeta0->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0->GetMaximum()*1.2);
     hStatisticBeta0->GetXaxis()->SetRangeUser(-5,26);
     hStatisticBeta0->DrawCopy();
-    TLine *linePvalue_rateshape_statistic = new TLine(statistic,0.,statistic,hStatisticBeta0->GetMaximum());
-    linePvalue_rateshape_statistic->SetLineWidth(2);
+    TLine *linePvalue_rateshape_statistic = new TLine(statistic,0.,statistic,hStatisticBeta0->GetMaximum()*2);
+    linePvalue_rateshape_statistic->SetLineWidth(3);
     linePvalue_rateshape_statistic->SetLineColor(kRed);
     linePvalue_rateshape_statistic->DrawClone();
     sprintf(name,"#Delta #chi^{2} = %1.3f",statistic);
@@ -387,6 +388,7 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0rateonly->GetXaxis()->SetTitle("Number of events");
     hStatisticBeta0rateonly->SetLineColor(kBlue);
     hStatisticBeta0rateonly->SetLineWidth(5);
+    hStatisticBeta0rateonly->Scale(1./hStatisticBeta0rateonly->Integral());
     hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.0002,hStatisticBeta0rateonly->GetMaximum()*10);
     hStatisticBeta0rateonly->GetYaxis()->SetTitleSize(0.06);
     hStatisticBeta0rateonly->GetXaxis()->SetTitleSize(0.06);
@@ -400,8 +402,8 @@ void SensiPvalueFull_nuebar_scaled
     hStatisticBeta0rateonly->DrawCopy();
     cBeta0Distribution->SetLogy();
     
-    TLine *linePvalue_rateonly_statistic = new TLine(statistic_rateonly,0.,statistic_rateonly,hStatisticBeta0rateonly->GetMaximum()*3);
-    linePvalue_rateonly_statistic->SetLineWidth(2);
+    TLine *linePvalue_rateonly_statistic = new TLine(statistic_rateonly,0.,statistic_rateonly,hStatisticBeta0rateonly->GetMaximum()*2);
+    linePvalue_rateonly_statistic->SetLineWidth(3);
     linePvalue_rateonly_statistic->SetLineColor(kRed);
     linePvalue_rateonly_statistic->DrawClone();
     sprintf(name,"Data Events = %1.3f",statistic_rateonly);
