@@ -194,32 +194,32 @@ void SensiPvalueFull_nuebar_scaled
       }
       
       double number_nuebar_events=hErecoExp_RHC1Re->Integral();
-      for(int n_rateonly_throws=0; n_rateonly_throws<1000;n_rateonly_throws++){
+      for(int n_rateonly_throws=0; n_rateonly_throws<10000;n_rateonly_throws++){
         double fluct = Rnd::Instance()->RndToyMCstat().Poisson(number_nuebar_events);
-//        hStatisticBeta0rateonly->Fill(fluct,toy_weight);
-//        hStatisticBeta0Unscaledrateonly->Fill(fluct);
-        hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
-        hStatisticBeta0Unscaledrateonly->Fill(hnevents);
-  
+        hStatisticBeta0rateonly->Fill(fluct,toy_weight);
+        hStatisticBeta0Unscaledrateonly->Fill(fluct);
+        //        hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
+        //        hStatisticBeta0Unscaledrateonly->Fill(hnevents);
+        
         if(left_side_p_value)
         {
-          if(hnevents <= dnevents){
-            //        if(fluct < dnevents){
+          //          if(hnevents <= dnevents){
+          if(fluct <= dnevents){
             left_tail_rateonly_weight.push_back(toy_weight);
           }
           else{
             right_tail_rateonly_weight.push_back(toy_weight);
           }
-
+          
         }
         else{
-        if(hnevents < dnevents){
-//        if(fluct < dnevents){
-          left_tail_rateonly_weight.push_back(toy_weight);
-        }
-        else{
-          right_tail_rateonly_weight.push_back(toy_weight);
-        }
+          //        if(hnevents < dnevents){
+          if(fluct < dnevents){
+            left_tail_rateonly_weight.push_back(toy_weight);
+          }
+          else{
+            right_tail_rateonly_weight.push_back(toy_weight);
+          }
         }
       }
     }
@@ -371,17 +371,17 @@ void SensiPvalueFull_nuebar_scaled
     
     
     
-//    cPvalue_rateonly_fit = new TCanvas("cPvalue_rateonly_fit","cPvalue_rateonly_fit");
-//    cPvalue_rateonly_fit->SetLogy();
-//    //    hStatisticBeta0rateonly->Rebin(50000);
-//    hStatisticBeta0rateonly->SetFillStyle(0);
-//    hStatisticBeta0rateonly->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
-//    hStatisticBeta0rateonly->GetYaxis()->SetTitle("Number of entries");
-//    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0rateonly->GetMaximum()*1.2);
-//    hStatisticBeta0rateonly->GetXaxis()->SetRangeUser(-1,24);
-//    hStatisticBeta0rateonly->DrawCopy();
-//    
-//    
+    //    cPvalue_rateonly_fit = new TCanvas("cPvalue_rateonly_fit","cPvalue_rateonly_fit");
+    //    cPvalue_rateonly_fit->SetLogy();
+    //    //    hStatisticBeta0rateonly->Rebin(50000);
+    //    hStatisticBeta0rateonly->SetFillStyle(0);
+    //    hStatisticBeta0rateonly->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
+    //    hStatisticBeta0rateonly->GetYaxis()->SetTitle("Number of entries");
+    //    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0rateonly->GetMaximum()*1.2);
+    //    hStatisticBeta0rateonly->GetXaxis()->SetRangeUser(-1,24);
+    //    hStatisticBeta0rateonly->DrawCopy();
+    //
+    //
     TCanvas *cBeta0Distribution = new TCanvas("cBeta0Distribution","cBeta0Distribution");
     hStatisticBeta0rateonly->GetYaxis()->SetTitle("Number of entries");
     hStatisticBeta0rateonly->GetXaxis()->SetTitle("Number of events");
