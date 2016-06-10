@@ -371,15 +371,35 @@ void SensiPvalueFull_nuebar_scaled
     
     
     
-    cPvalue_rateonly_fit = new TCanvas("cPvalue_rateonly_fit","cPvalue_rateonly_fit");
-    cPvalue_rateonly_fit->SetLogy();
-    //    hStatisticBeta0rateonly->Rebin(50000);
-    hStatisticBeta0rateonly->SetFillStyle(0);
-    hStatisticBeta0rateonly->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
+//    cPvalue_rateonly_fit = new TCanvas("cPvalue_rateonly_fit","cPvalue_rateonly_fit");
+//    cPvalue_rateonly_fit->SetLogy();
+//    //    hStatisticBeta0rateonly->Rebin(50000);
+//    hStatisticBeta0rateonly->SetFillStyle(0);
+//    hStatisticBeta0rateonly->GetXaxis()->SetTitle("#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)");
+//    hStatisticBeta0rateonly->GetYaxis()->SetTitle("Number of entries");
+//    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0rateonly->GetMaximum()*1.2);
+//    hStatisticBeta0rateonly->GetXaxis()->SetRangeUser(-1,24);
+//    hStatisticBeta0rateonly->DrawCopy();
+//    
+//    
+    TCanvas *cBeta0Distribution = new TCanvas("cBeta0Distribution","cBeta0Distribution");
     hStatisticBeta0rateonly->GetYaxis()->SetTitle("Number of entries");
-    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.01,hStatisticBeta0rateonly->GetMaximum()*1.2);
-    hStatisticBeta0rateonly->GetXaxis()->SetRangeUser(-1,24);
+    hStatisticBeta0rateonly->GetXaxis()->SetTitle("Number of events");
+    hStatisticBeta0rateonly->SetLineColor(kBlue);
+    hStatisticBeta0rateonly->SetLineWidth(5);
+    hStatisticBeta0rateonly->GetYaxis()->SetRangeUser(0.0002,hStatisticBeta0rateonly->GetMaximum()*10);
+    hStatisticBeta0rateonly->GetYaxis()->SetTitleSize(0.06);
+    hStatisticBeta0rateonly->GetXaxis()->SetTitleSize(0.06);
+    hStatisticBeta0rateonly->GetYaxis()->SetTitleFont(132);
+    hStatisticBeta0rateonly->GetXaxis()->SetTitleFont(132);
+    hStatisticBeta0rateonly->GetYaxis()->SetLabelFont(132);
+    hStatisticBeta0rateonly->GetXaxis()->SetLabelFont(132);
+    hStatisticBeta0rateonly->GetYaxis()->SetLabelSize(0.05);
+    hStatisticBeta0rateonly->GetXaxis()->SetLabelSize(0.05);
+    hStatisticBeta0rateonly->Scale(1./hStatisticBeta0rateonly->Integral());
     hStatisticBeta0rateonly->DrawCopy();
+    cBeta0Distribution->SetLogy();
+    
     TLine *linePvalue_rateonly_statistic = new TLine(statistic_rateonly,0.,statistic_rateonly,hStatisticBeta0rateonly->GetMaximum());
     linePvalue_rateonly_statistic->SetLineWidth(2);
     linePvalue_rateonly_statistic->SetLineColor(kRed);
