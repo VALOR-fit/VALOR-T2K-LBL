@@ -200,12 +200,26 @@ void SensiPvalueFull_nuebar_scaled
 //        hStatisticBeta0Unscaledrateonly->Fill(fluct);
         hStatisticBeta0rateonly->Fill(hnevents,toy_weight);
         hStatisticBeta0Unscaledrateonly->Fill(hnevents);
+  
+        if(left_side_p_value)
+        {
+          if(hnevents <= dnevents){
+            //        if(fluct < dnevents){
+            left_tail_rateonly_weight.push_back(toy_weight);
+          }
+          else{
+            right_tail_rateonly_weight.push_back(toy_weight);
+          }
+
+        }
+        else{
         if(hnevents < dnevents){
 //        if(fluct < dnevents){
           left_tail_rateonly_weight.push_back(toy_weight);
         }
         else{
           right_tail_rateonly_weight.push_back(toy_weight);
+        }
         }
       }
     }
